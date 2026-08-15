@@ -136,6 +136,7 @@ function main() {
       "prisma/schema.prisma",
       "prisma/migrations/manual/2026-08-15_learning_evidence.sql",
       "prisma/migrations/manual/2026-08-15_question_metadata.sql",
+      "prisma/migrations/manual/2026-08-15_adaptive_practice_session.sql",
     ]);
     test("prisma/ hanya menyentuh additive schema/evidence Step 3C",
       () => prismaDiff.split("\n").filter(Boolean).every((l) => allowedPrisma.has(l)));
@@ -143,7 +144,7 @@ function main() {
       `git diff --name-only HEAD -- lib/gamification/ lib/award-xp.ts lib/xp.ts lib/coins.ts app/api/player/`,
       { encoding: "utf8", cwd: process.cwd() }
     ).trim().split("\n").filter(Boolean);
-    const allowedStep3B = new Set(["app/api/player/coin/route.ts", "app/api/player/learner-state/route.ts"]);
+    const allowedStep3B = new Set(["app/api/player/coin/route.ts", "app/api/player/learner-state/route.ts", "app/api/player/adaptive-practice/route.ts"]);
     test("protected reward zones tetap utuh kecuali coin add boundary Step 3B",
       () => diff.every((file) => allowedStep3B.has(file)));
     if (diff.length > 0) console.log(`  ⚠️  File berubah:\n${diff.join("\n")}`);

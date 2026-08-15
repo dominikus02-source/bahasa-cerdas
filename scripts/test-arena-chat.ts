@@ -231,7 +231,7 @@ function main() {
      () => {
        const diff = execSync(`git diff --name-only HEAD -- prisma/`, { encoding: "utf8", cwd: process.cwd() }).trim();
        const lines = diff.split("\n").filter(Boolean);
-       return lines.every((l) => l === "prisma/schema.prisma" || l === "prisma/migrations/manual/2026-08-15_learning_evidence.sql" || l === "prisma/migrations/manual/2026-08-15_question_metadata.sql");
+       return lines.every((l) => l === "prisma/schema.prisma" || l === "prisma/migrations/manual/2026-08-15_learning_evidence.sql" || l === "prisma/migrations/manual/2026-08-15_question_metadata.sql" || l === "prisma/migrations/manual/2026-08-15_adaptive_practice_session.sql");
     });
   test("migrasi manual idempoten ada: 2026-08-12_obrolan4_chat_lock.sql (ADD COLUMN IF NOT EXISTS + index)",
     () => sql.includes("ADD COLUMN IF NOT EXISTS") && sql.includes("chatLocked") && sql.includes("deletedAt") && sql.includes("deletedBy") && sql.includes("ChatMessage_groupId_deletedAt_idx"));
@@ -245,7 +245,7 @@ function main() {
         `git diff --name-only HEAD -- lib/apk.ts lib/gamification/ lib/learning-loop/ engines/ app/api/player/ app/api/group/`,
         { encoding: "utf8", cwd: process.cwd() }
       ).trim().split("\n").filter(Boolean);
-      return diff.every((file) => file === "app/api/player/coin/route.ts" || file === "app/api/player/learner-state/route.ts" || file === "lib/learning-loop/evidence.ts" || file === "lib/learner-state/calculator.ts" || file === "lib/learner-state/types.ts");
+      return diff.every((file) => file === "app/api/player/coin/route.ts" || file === "app/api/player/learner-state/route.ts" || file === "app/api/player/adaptive-practice/route.ts" || file === "lib/learning-loop/evidence.ts" || file === "lib/learner-state/calculator.ts" || file === "lib/learner-state/types.ts");
     });
   test("MuridMobileNav & murid layout: global nav /arena/chat tidak berubah",
     () => {

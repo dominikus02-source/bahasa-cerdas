@@ -87,10 +87,11 @@ check("18. zero division returns null", noData.accuracy === null && noData.recen
 check("19. repeat calculation is deterministic", JSON.stringify(calculateLearnerState([row({ attemptCount: 15, correctCount: 11, recentAttemptCount: 10, recentCorrectCount: 9, historicalAttemptCount: 5, historicalCorrectCount: 2 })])) === JSON.stringify(calculateLearnerState([row({ attemptCount: 15, correctCount: 11, recentAttemptCount: 10, recentCorrectCount: 9, historicalAttemptCount: 5, historicalCorrectCount: 2 })])));
 
 const api = read("app/api/player/learner-state/route.ts");
+const service = read("lib/learner-state/service.ts");
 check("20. learner-state API requires authenticated session", api.includes("getUser()") && api.includes("401"));
 check("21. learner-state API does not accept client state/body", !api.includes("req.json") && !api.includes("body") && !api.includes("userId:"));
-check("22. learner-state only joins APPROVED metadata", api.includes('m."status" = \'APPROVED\'') && api.includes('m."skill" IS NOT NULL'));
-check("23. learner-state query is bounded to authenticated user", api.includes('e."userId" = ${user.id}'));
+check("22. learner-state only joins APPROVED metadata", service.includes('m."status" = \'APPROVED\'') && service.includes('m."skill" IS NOT NULL'));
+check("23. learner-state query is bounded to authenticated user", service.includes('e."userId" = ${userId}'));
 check("24. learner-state has no reward engine calls", !api.includes("awardXp") && !api.includes("addCoin") && !api.includes("trackDailyStreak"));
 
 console.log(`\nHasil: ${passed} lulus, ${failed} gagal`);

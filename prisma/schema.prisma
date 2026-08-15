@@ -297,6 +297,7 @@ model User {
   learningEvidences       LearningEvidence[]
   questionMetadataCreated QuestionMetadata[]  @relation("QuestionMetadataCreatedBy")
   questionMetadataReviewed QuestionMetadata[] @relation("QuestionMetadataReviewedBy")
+  adaptivePracticeSessions AdaptivePracticeSession[]
 
   // Admin quota audit logs where this user was the acting admin
   adminQuotaActions    AdminQuotaAuditLog[]   @relation("AdminActions")
@@ -2851,6 +2852,30 @@ model QuestionMetadata {
   @@index([skill, subskill])
   @@index([difficulty])
   @@index([level])
+}
+
+/// Snapshot minimal sesi Personalized Practice v1. Tidak menyimpan answer key;
+/// evidence jawaban masuk ke LearningEvidence.
+model AdaptivePracticeSession {
+  id               String      @id @default(cuid())
+  userId           String
+  source           String
+  selectionVersion String
+  targetSkill      String?
+  targetSubskill   String?
+  targetDifficulty Difficulty?
+  reasonCode       String
+  reasonText       String
+  questionIds      Json
+  status           String      @default("IN_PROGRESS")
+  expiresAt        DateTime
+  createdAt        DateTime    @default(now())
+  completedAt      DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([userId, status])
 }
 
 /// Langganan Web Push milik satu perangkat. Satu murid bisa punya beberapa:

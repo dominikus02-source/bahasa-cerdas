@@ -164,6 +164,7 @@ function main() {
         "prisma/schema.prisma",
         "prisma/migrations/manual/2026-08-15_learning_evidence.sql",
         "prisma/migrations/manual/2026-08-15_question_metadata.sql",
+        "prisma/migrations/manual/2026-08-15_adaptive_practice_session.sql",
       ]);
       const diff = execSync(`git diff --name-only HEAD -- prisma/`, { encoding: "utf8", cwd: process.cwd() }).trim().split("\n").filter(Boolean);
       return diff.every((file) => allowed.has(file));
@@ -184,6 +185,7 @@ function main() {
         "app/api/learning-loop/activity/route.ts",
         "app/api/player/coin/route.ts",
         "app/api/player/learner-state/route.ts",
+        "app/api/player/adaptive-practice/route.ts",
         "app/api/jalur-cerdas/[unitId]/progress/route.ts",
         "app/api/jalur-cerdas/[unitId]/submit/route.ts",
         "app/api/murid/quiz/[id]/route.ts",
