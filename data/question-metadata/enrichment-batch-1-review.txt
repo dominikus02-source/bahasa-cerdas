@@ -1,0 +1,103 @@
+BATCH-1 REVIEW REPORT — enrichment-manifest-001 (READ-ONLY, NO APPROVAL EXECUTED)
+Record: 25 (slot manifest 1-25) | Status semua: NEEDS_REVIEW + AI_SUGGESTED (PENDING review manusia)
+Teks: evidence.textPreview dari manifest (<=90 char). CEFR tidak tersemat -> '-'.
+
+[01] BC-ARTIKEL-0001 | skill=READING | sub=READING_STRUKTUR_TEKS | diff=EASY | type=PILIHAN_GANDA | topic=Artikel | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Artikel adalah...
+     reason(builder): Topik "artikel" ada di whitelist READING/READING_STRUKTUR_TEKS; difficulty bank "MUDAH" → EASY
+
+[02] BC-CERITA-INSPIRATIF-0001 | skill=READING | sub=READING_INFERENSI | diff=EASY | type=PILIHAN_GANDA | topic=Cerita Inspiratif | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Cerita Inspiratif adalah...
+     reason(builder): Topik "cerita inspiratif" ada di whitelist READING/READING_INFERENSI; difficulty bank "MUDAH" → EASY
+
+[03] BC-EDITORIAL-0001 | skill=READING | sub=READING_STRUKTUR_TEKS | diff=EASY | type=PILIHAN_GANDA | topic=Editorial | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Editorial adalah...
+     reason(builder): Topik "editorial" ada di whitelist READING/READING_STRUKTUR_TEKS; difficulty bank "MUDAH" → EASY
+
+[04] BC-GAGASAN-UTAMA-0001 | skill=READING | sub=READING_IDE_POKOK | diff=EASY | type=PILIHAN_GANDA | topic=Gagasan Utama | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Gagasan Utama adalah...
+     reason(builder): Topik "gagasan utama" ada di whitelist READING/READING_IDE_POKOK; difficulty bank "MUDAH" → EASY
+
+[05] BC-IDE-POKOK-0002 | skill=READING | sub=READING_IDE_POKOK | diff=EASY | type=PILIHAN_GANDA | topic=Ide Pokok | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Ide Pokok adalah...
+     reason(builder): Topik "ide pokok" ada di whitelist READING/READING_IDE_POKOK; difficulty bank "MUDAH" → EASY
+
+[06] BC-ARTIKEL-0014 | skill=READING | sub=READING_STRUKTUR_TEKS | diff=MEDIUM | type=PILIHAN_GANDA | topic=Artikel | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Artikel adalah...
+     reason(builder): Topik "artikel" ada di whitelist READING/READING_STRUKTUR_TEKS; difficulty bank "SEDANG" → MEDIUM
+
+[07] BC-CERITA-INSPIRATIF-0014 | skill=READING | sub=READING_INFERENSI | diff=MEDIUM | type=PILIHAN_GANDA | topic=Cerita Inspiratif | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Cerita Inspiratif adalah...
+     reason(builder): Topik "cerita inspiratif" ada di whitelist READING/READING_INFERENSI; difficulty bank "SEDANG" → MEDIUM
+
+[08] BC-EDITORIAL-0014 | skill=READING | sub=READING_STRUKTUR_TEKS | diff=MEDIUM | type=PILIHAN_GANDA | topic=Editorial | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Editorial adalah...
+     reason(builder): Topik "editorial" ada di whitelist READING/READING_STRUKTUR_TEKS; difficulty bank "SEDANG" → MEDIUM
+
+[09] BC-GAGASAN-UTAMA-0014 | skill=READING | sub=READING_IDE_POKOK | diff=MEDIUM | type=PILIHAN_GANDA | topic=Gagasan Utama | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Gagasan Utama adalah...
+     reason(builder): Topik "gagasan utama" ada di whitelist READING/READING_IDE_POKOK; difficulty bank "SEDANG" → MEDIUM
+
+[10] BC-IDE-POKOK-0014 | skill=READING | sub=READING_IDE_POKOK | diff=MEDIUM | type=PILIHAN_GANDA | topic=Ide Pokok | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Ide Pokok adalah...
+     reason(builder): Topik "ide pokok" ada di whitelist READING/READING_IDE_POKOK; difficulty bank "SEDANG" → MEDIUM
+
+[11] BC-ARTIKEL-0026 | skill=READING | sub=READING_STRUKTUR_TEKS | diff=HARD | type=PILIHAN_GANDA | topic=Artikel | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Artikel adalah...
+     reason(builder): Topik "artikel" ada di whitelist READING/READING_STRUKTUR_TEKS; difficulty bank "SULIT" → HARD
+
+[12] BC-CERITA-INSPIRATIF-0026 | skill=READING | sub=READING_INFERENSI | diff=HARD | type=PILIHAN_GANDA | topic=Cerita Inspiratif | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Cerita Inspiratif adalah...
+     reason(builder): Topik "cerita inspiratif" ada di whitelist READING/READING_INFERENSI; difficulty bank "SULIT" → HARD
+
+[13] BC-EDITORIAL-0026 | skill=READING | sub=READING_STRUKTUR_TEKS | diff=HARD | type=PILIHAN_GANDA | topic=Editorial | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Editorial adalah...
+     reason(builder): Topik "editorial" ada di whitelist READING/READING_STRUKTUR_TEKS; difficulty bank "SULIT" → HARD
+
+[14] BC-GAGASAN-UTAMA-0026 | skill=READING | sub=READING_IDE_POKOK | diff=HARD | type=PILIHAN_GANDA | topic=Gagasan Utama | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Gagasan Utama adalah...
+     reason(builder): Topik "gagasan utama" ada di whitelist READING/READING_IDE_POKOK; difficulty bank "SULIT" → HARD
+
+[15] BC-IDE-POKOK-0026 | skill=READING | sub=READING_IDE_POKOK | diff=HARD | type=PILIHAN_GANDA | topic=Ide Pokok | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Ide Pokok adalah...
+     reason(builder): Topik "ide pokok" ada di whitelist READING/READING_IDE_POKOK; difficulty bank "SULIT" → HARD
+
+[16] BC-SURAT-DINAS-0001 | skill=WRITING | sub=WRITING_ORGANISASI_GAGASAN | diff=EASY | type=PILIHAN_GANDA | topic=Surat Dinas | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Surat Dinas adalah...
+     reason(builder): Topik "surat dinas" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank "MUDAH" → EASY
+
+[17] BC-SURAT-PRIBADI-0001 | skill=WRITING | sub=WRITING_ORGANISASI_GAGASAN | diff=EASY | type=PILIHAN_GANDA | topic=Surat Pribadi | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Surat Pribadi adalah...
+     reason(builder): Topik "surat pribadi" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank "MUDAH" → EASY
+
+[18] BC-SURAT-DINAS-0002 | skill=WRITING | sub=WRITING_ORGANISASI_GAGASAN | diff=EASY | type=PILIHAN_GANDA | topic=Surat Dinas | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Surat Dinas adalah...
+     reason(builder): Topik "surat dinas" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank "MUDAH" → EASY
+
+[19] BC-SURAT-PRIBADI-0002 | skill=WRITING | sub=WRITING_ORGANISASI_GAGASAN | diff=EASY | type=PILIHAN_GANDA | topic=Surat Pribadi | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Surat Pribadi adalah...
+     reason(builder): Topik "surat pribadi" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank "MUDAH" → EASY
+
+[20] BC-SURAT-DINAS-0004 | skill=WRITING | sub=WRITING_ORGANISASI_GAGASAN | diff=EASY | type=PILIHAN_GANDA | topic=Surat Dinas | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Surat Dinas adalah...
+     reason(builder): Topik "surat dinas" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank "MUDAH" → EASY
+
+[21] BC-SURAT-DINAS-0014 | skill=WRITING | sub=WRITING_ORGANISASI_GAGASAN | diff=MEDIUM | type=PILIHAN_GANDA | topic=Surat Dinas | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Surat Dinas adalah...
+     reason(builder): Topik "surat dinas" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank "SEDANG" → MEDIUM
+
+[22] BC-SURAT-PRIBADI-0014 | skill=WRITING | sub=WRITING_ORGANISASI_GAGASAN | diff=MEDIUM | type=PILIHAN_GANDA | topic=Surat Pribadi | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Surat Pribadi adalah...
+     reason(builder): Topik "surat pribadi" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank "SEDANG" → MEDIUM
+
+[23] BC-SURAT-DINAS-0016 | skill=WRITING | sub=WRITING_ORGANISASI_GAGASAN | diff=MEDIUM | type=PILIHAN_GANDA | topic=Surat Dinas | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Surat Dinas adalah...
+     reason(builder): Topik "surat dinas" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank "SEDANG" → MEDIUM
+
+[24] BC-SURAT-PRIBADI-0016 | skill=WRITING | sub=WRITING_ORGANISASI_GAGASAN | diff=MEDIUM | type=PILIHAN_GANDA | topic=Surat Pribadi | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Surat Pribadi adalah...
+     reason(builder): Topik "surat pribadi" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank "SEDANG" → MEDIUM
+
+[25] BC-SURAT-DINAS-0017 | skill=WRITING | sub=WRITING_ORGANISASI_GAGASAN | diff=MEDIUM | type=PILIHAN_GANDA | topic=Surat Dinas | conf=HIGH
+     teks: Berikut ini yang termasuk contoh Surat Dinas adalah...
+     reason(builder): Topik "surat dinas" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank "SEDANG" → MEDIUM

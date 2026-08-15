@@ -1,0 +1,1816 @@
+{
+  "manifestId": "enrichment-manifest-001",
+  "version": "1.0",
+  "purpose": "Pilot corpus metadata enrichment (AI_SUGGESTED). Kandidat WAJIB direview manusia (founder/associate) sebelum APPROVED. Deterministik — rerun builder → output identik.",
+  "rules": {
+    "maxRecords": 75,
+    "statusBefore": [
+      "NEEDS_REVIEW"
+    ],
+    "statusAfter": "APPROVED",
+    "provenanceAfter": "HUMAN_REVIEW",
+    "requireSoalExists": true,
+    "preserveTaxonomyValidation": true,
+    "noApproveAll": true,
+    "expectationMustMatch": true,
+    "noCorrectAnswerExposed": true,
+    "provenanceBefore": "AI_SUGGESTED"
+  },
+  "builder": {
+    "script": "scripts/enrichment-candidates-builder.ts",
+    "targetPerCell": 5,
+    "source": "Soal.kodeSoal (BANK_SOAL)",
+    "difficultyMap": {
+      "MUDAH": "EASY",
+      "SEDANG": "MEDIUM",
+      "SULIT": "HARD",
+      "MEDIUM": "MEDIUM",
+      "HARD": "HARD"
+    },
+    "excluded": [
+      "Soal tanpa kodeSoal (95, source AI) — tidak dapat direferensikan kontrak (source, questionId)",
+      "Jenis ISIAN/ESSAY (20) — jawaban bebas tanpa skor konsisten",
+      "Soal yang sudah punya QuestionMetadata (30, status apa pun)",
+      "Topik di luar whitelist kanonik (termasuk Anekdot, Pidato untuk SPEAKING — ambigu)"
+    ]
+  },
+  "coverage": {
+    "skills": [
+      "READING",
+      "WRITING",
+      "LISTENING",
+      "SPEAKING",
+      "GRAMMAR",
+      "VOCABULARY",
+      "LITERATURE"
+    ],
+    "difficulties": [
+      "EASY",
+      "MEDIUM",
+      "HARD",
+      "VERY_HARD"
+    ],
+    "filledCells": [
+      "GRAMMAR|EASY",
+      "GRAMMAR|HARD",
+      "GRAMMAR|MEDIUM",
+      "LITERATURE|EASY",
+      "LITERATURE|HARD",
+      "LITERATURE|MEDIUM",
+      "READING|EASY",
+      "READING|HARD",
+      "READING|MEDIUM",
+      "VOCABULARY|EASY",
+      "VOCABULARY|HARD",
+      "VOCABULARY|MEDIUM",
+      "WRITING|EASY",
+      "WRITING|HARD",
+      "WRITING|MEDIUM"
+    ],
+    "insufficientCells": [
+      {
+        "skill": "GRAMMAR",
+        "difficulty": "VERY_HARD",
+        "reason": "Bank tidak mendefinisikan level VERY_HARD (jangan dipaksa dari SULIT)",
+        "available": 0
+      },
+      {
+        "skill": "LISTENING",
+        "difficulty": "EASY",
+        "reason": "Tidak ada soal simakan/audio di bank",
+        "available": 0
+      },
+      {
+        "skill": "LISTENING",
+        "difficulty": "HARD",
+        "reason": "Tidak ada soal simakan/audio di bank",
+        "available": 0
+      },
+      {
+        "skill": "LISTENING",
+        "difficulty": "MEDIUM",
+        "reason": "Tidak ada soal simakan/audio di bank",
+        "available": 0
+      },
+      {
+        "skill": "LISTENING",
+        "difficulty": "VERY_HARD",
+        "reason": "Bank tidak mendefinisikan level VERY_HARD (jangan dipaksa dari SULIT)",
+        "available": 0
+      },
+      {
+        "skill": "LITERATURE",
+        "difficulty": "VERY_HARD",
+        "reason": "Bank tidak mendefinisikan level VERY_HARD (jangan dipaksa dari SULIT)",
+        "available": 0
+      },
+      {
+        "skill": "READING",
+        "difficulty": "VERY_HARD",
+        "reason": "Bank tidak mendefinisikan level VERY_HARD (jangan dipaksa dari SULIT)",
+        "available": 0
+      },
+      {
+        "skill": "SPEAKING",
+        "difficulty": "EASY",
+        "reason": "Topik Pidato berisi soal identifikasi materi, bukan tugas berbicara",
+        "available": 0
+      },
+      {
+        "skill": "SPEAKING",
+        "difficulty": "HARD",
+        "reason": "Topik Pidato berisi soal identifikasi materi, bukan tugas berbicara",
+        "available": 0
+      },
+      {
+        "skill": "SPEAKING",
+        "difficulty": "MEDIUM",
+        "reason": "Topik Pidato berisi soal identifikasi materi, bukan tugas berbicara",
+        "available": 0
+      },
+      {
+        "skill": "SPEAKING",
+        "difficulty": "VERY_HARD",
+        "reason": "Bank tidak mendefinisikan level VERY_HARD (jangan dipaksa dari SULIT)",
+        "available": 0
+      },
+      {
+        "skill": "VOCABULARY",
+        "difficulty": "VERY_HARD",
+        "reason": "Bank tidak mendefinisikan level VERY_HARD (jangan dipaksa dari SULIT)",
+        "available": 0
+      },
+      {
+        "skill": "WRITING",
+        "difficulty": "VERY_HARD",
+        "reason": "Bank tidak mendefinisikan level VERY_HARD (jangan dipaksa dari SULIT)",
+        "available": 0
+      }
+    ],
+    "totalCandidates": 75,
+    "targetTotal": 140,
+    "note": "Target ~140 tidak tercapai penuh: 13 sel INSUFFICIENT_CORPUS diisi kosong (honest, tanpa fabrikasi). 15 sel × 5 = 75 kandidat."
+  },
+  "generatedAt": "2026-08-15T09:16:03.649Z",
+  "records": [
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-ARTIKEL-0001",
+      "expectedSkill": "READING",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Artikel",
+      "subskill": "READING_STRUKTUR_TEKS",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"artikel\" ada di whitelist READING/READING_STRUKTUR_TEKS; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "9",
+        "isHOTS": false,
+        "textLength": 50,
+        "textPreview": "Berikut ini yang termasuk contoh Artikel adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-CERITA-INSPIRATIF-0001",
+      "expectedSkill": "READING",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Cerita Inspiratif",
+      "subskill": "READING_INFERENSI",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"cerita inspiratif\" ada di whitelist READING/READING_INFERENSI; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "9",
+        "isHOTS": false,
+        "textLength": 60,
+        "textPreview": "Berikut ini yang termasuk contoh Cerita Inspiratif adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-EDITORIAL-0001",
+      "expectedSkill": "READING",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Editorial",
+      "subskill": "READING_STRUKTUR_TEKS",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"editorial\" ada di whitelist READING/READING_STRUKTUR_TEKS; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "10",
+        "isHOTS": false,
+        "textLength": 52,
+        "textPreview": "Berikut ini yang termasuk contoh Editorial adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-GAGASAN-UTAMA-0001",
+      "expectedSkill": "READING",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Gagasan Utama",
+      "subskill": "READING_IDE_POKOK",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"gagasan utama\" ada di whitelist READING/READING_IDE_POKOK; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "8",
+        "isHOTS": false,
+        "textLength": 56,
+        "textPreview": "Berikut ini yang termasuk contoh Gagasan Utama adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-IDE-POKOK-0002",
+      "expectedSkill": "READING",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Ide Pokok",
+      "subskill": "READING_IDE_POKOK",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"ide pokok\" ada di whitelist READING/READING_IDE_POKOK; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 52,
+        "textPreview": "Berikut ini yang termasuk contoh Ide Pokok adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-ARTIKEL-0014",
+      "expectedSkill": "READING",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Artikel",
+      "subskill": "READING_STRUKTUR_TEKS",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"artikel\" ada di whitelist READING/READING_STRUKTUR_TEKS; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "9",
+        "isHOTS": false,
+        "textLength": 50,
+        "textPreview": "Berikut ini yang termasuk contoh Artikel adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-CERITA-INSPIRATIF-0014",
+      "expectedSkill": "READING",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Cerita Inspiratif",
+      "subskill": "READING_INFERENSI",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"cerita inspiratif\" ada di whitelist READING/READING_INFERENSI; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "9",
+        "isHOTS": false,
+        "textLength": 60,
+        "textPreview": "Berikut ini yang termasuk contoh Cerita Inspiratif adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-EDITORIAL-0014",
+      "expectedSkill": "READING",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Editorial",
+      "subskill": "READING_STRUKTUR_TEKS",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"editorial\" ada di whitelist READING/READING_STRUKTUR_TEKS; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "10",
+        "isHOTS": false,
+        "textLength": 52,
+        "textPreview": "Berikut ini yang termasuk contoh Editorial adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-GAGASAN-UTAMA-0014",
+      "expectedSkill": "READING",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Gagasan Utama",
+      "subskill": "READING_IDE_POKOK",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"gagasan utama\" ada di whitelist READING/READING_IDE_POKOK; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "8",
+        "isHOTS": false,
+        "textLength": 56,
+        "textPreview": "Berikut ini yang termasuk contoh Gagasan Utama adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-IDE-POKOK-0014",
+      "expectedSkill": "READING",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Ide Pokok",
+      "subskill": "READING_IDE_POKOK",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"ide pokok\" ada di whitelist READING/READING_IDE_POKOK; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 52,
+        "textPreview": "Berikut ini yang termasuk contoh Ide Pokok adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-ARTIKEL-0026",
+      "expectedSkill": "READING",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Artikel",
+      "subskill": "READING_STRUKTUR_TEKS",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"artikel\" ada di whitelist READING/READING_STRUKTUR_TEKS; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "9",
+        "isHOTS": true,
+        "textLength": 50,
+        "textPreview": "Berikut ini yang termasuk contoh Artikel adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-CERITA-INSPIRATIF-0026",
+      "expectedSkill": "READING",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Cerita Inspiratif",
+      "subskill": "READING_INFERENSI",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"cerita inspiratif\" ada di whitelist READING/READING_INFERENSI; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "9",
+        "isHOTS": true,
+        "textLength": 60,
+        "textPreview": "Berikut ini yang termasuk contoh Cerita Inspiratif adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-EDITORIAL-0026",
+      "expectedSkill": "READING",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Editorial",
+      "subskill": "READING_STRUKTUR_TEKS",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"editorial\" ada di whitelist READING/READING_STRUKTUR_TEKS; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "10",
+        "isHOTS": true,
+        "textLength": 52,
+        "textPreview": "Berikut ini yang termasuk contoh Editorial adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-GAGASAN-UTAMA-0026",
+      "expectedSkill": "READING",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Gagasan Utama",
+      "subskill": "READING_IDE_POKOK",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"gagasan utama\" ada di whitelist READING/READING_IDE_POKOK; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "8",
+        "isHOTS": true,
+        "textLength": 56,
+        "textPreview": "Berikut ini yang termasuk contoh Gagasan Utama adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-IDE-POKOK-0026",
+      "expectedSkill": "READING",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Ide Pokok",
+      "subskill": "READING_IDE_POKOK",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"ide pokok\" ada di whitelist READING/READING_IDE_POKOK; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": true,
+        "textLength": 52,
+        "textPreview": "Berikut ini yang termasuk contoh Ide Pokok adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-SURAT-DINAS-0001",
+      "expectedSkill": "WRITING",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Surat Dinas",
+      "subskill": "WRITING_ORGANISASI_GAGASAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"surat dinas\" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [
+        "BOILERPLATE_STEM",
+        "DUPLICATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 54,
+        "textPreview": "Berikut ini yang termasuk contoh Surat Dinas adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-SURAT-PRIBADI-0001",
+      "expectedSkill": "WRITING",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Surat Pribadi",
+      "subskill": "WRITING_ORGANISASI_GAGASAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"surat pribadi\" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [
+        "BOILERPLATE_STEM",
+        "DUPLICATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 56,
+        "textPreview": "Berikut ini yang termasuk contoh Surat Pribadi adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-SURAT-DINAS-0002",
+      "expectedSkill": "WRITING",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Surat Dinas",
+      "subskill": "WRITING_ORGANISASI_GAGASAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"surat dinas\" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [
+        "BOILERPLATE_STEM",
+        "DUPLICATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 54,
+        "textPreview": "Berikut ini yang termasuk contoh Surat Dinas adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-SURAT-PRIBADI-0002",
+      "expectedSkill": "WRITING",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Surat Pribadi",
+      "subskill": "WRITING_ORGANISASI_GAGASAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"surat pribadi\" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [
+        "BOILERPLATE_STEM",
+        "DUPLICATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 56,
+        "textPreview": "Berikut ini yang termasuk contoh Surat Pribadi adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-SURAT-DINAS-0004",
+      "expectedSkill": "WRITING",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Surat Dinas",
+      "subskill": "WRITING_ORGANISASI_GAGASAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"surat dinas\" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [
+        "BOILERPLATE_STEM",
+        "DUPLICATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 54,
+        "textPreview": "Berikut ini yang termasuk contoh Surat Dinas adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-SURAT-DINAS-0014",
+      "expectedSkill": "WRITING",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Surat Dinas",
+      "subskill": "WRITING_ORGANISASI_GAGASAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"surat dinas\" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM",
+        "DUPLICATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 54,
+        "textPreview": "Berikut ini yang termasuk contoh Surat Dinas adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-SURAT-PRIBADI-0014",
+      "expectedSkill": "WRITING",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Surat Pribadi",
+      "subskill": "WRITING_ORGANISASI_GAGASAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"surat pribadi\" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM",
+        "DUPLICATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 56,
+        "textPreview": "Berikut ini yang termasuk contoh Surat Pribadi adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-SURAT-DINAS-0016",
+      "expectedSkill": "WRITING",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Surat Dinas",
+      "subskill": "WRITING_ORGANISASI_GAGASAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"surat dinas\" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM",
+        "DUPLICATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 54,
+        "textPreview": "Berikut ini yang termasuk contoh Surat Dinas adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-SURAT-PRIBADI-0016",
+      "expectedSkill": "WRITING",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Surat Pribadi",
+      "subskill": "WRITING_ORGANISASI_GAGASAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"surat pribadi\" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM",
+        "DUPLICATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 56,
+        "textPreview": "Berikut ini yang termasuk contoh Surat Pribadi adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-SURAT-DINAS-0017",
+      "expectedSkill": "WRITING",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Surat Dinas",
+      "subskill": "WRITING_ORGANISASI_GAGASAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"surat dinas\" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM",
+        "DUPLICATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 54,
+        "textPreview": "Berikut ini yang termasuk contoh Surat Dinas adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-SURAT-DINAS-0026",
+      "expectedSkill": "WRITING",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Surat Dinas",
+      "subskill": "WRITING_ORGANISASI_GAGASAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"surat dinas\" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM",
+        "DUPLICATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": true,
+        "textLength": 54,
+        "textPreview": "Berikut ini yang termasuk contoh Surat Dinas adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-SURAT-PRIBADI-0026",
+      "expectedSkill": "WRITING",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Surat Pribadi",
+      "subskill": "WRITING_ORGANISASI_GAGASAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"surat pribadi\" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM",
+        "DUPLICATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": true,
+        "textLength": 56,
+        "textPreview": "Berikut ini yang termasuk contoh Surat Pribadi adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-SURAT-DINAS-0027",
+      "expectedSkill": "WRITING",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Surat Dinas",
+      "subskill": "WRITING_ORGANISASI_GAGASAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"surat dinas\" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM",
+        "DUPLICATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": true,
+        "textLength": 54,
+        "textPreview": "Berikut ini yang termasuk contoh Surat Dinas adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-SURAT-PRIBADI-0027",
+      "expectedSkill": "WRITING",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Surat Pribadi",
+      "subskill": "WRITING_ORGANISASI_GAGASAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"surat pribadi\" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM",
+        "DUPLICATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": true,
+        "textLength": 56,
+        "textPreview": "Berikut ini yang termasuk contoh Surat Pribadi adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-SURAT-DINAS-0029",
+      "expectedSkill": "WRITING",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Surat Dinas",
+      "subskill": "WRITING_ORGANISASI_GAGASAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"surat dinas\" ada di whitelist WRITING/WRITING_ORGANISASI_GAGASAN; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM",
+        "DUPLICATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": true,
+        "textLength": 54,
+        "textPreview": "Berikut ini yang termasuk contoh Surat Dinas adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-EJAAN-0002",
+      "expectedSkill": "GRAMMAR",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Ejaan",
+      "subskill": "GRAMMAR_EJAAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"ejaan\" ada di whitelist GRAMMAR/GRAMMAR_EJAAN; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 48,
+        "textPreview": "Berikut ini yang termasuk contoh Ejaan adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-IMBUHAN-0002",
+      "expectedSkill": "GRAMMAR",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Imbuhan",
+      "subskill": "GRAMMAR_IMBUHAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"imbuhan\" ada di whitelist GRAMMAR/GRAMMAR_IMBUHAN; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 50,
+        "textPreview": "Berikut ini yang termasuk contoh Imbuhan adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-KALIMAT-0001",
+      "expectedSkill": "GRAMMAR",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Kalimat",
+      "subskill": "GRAMMAR_KALIMAT_EFEKTIF",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"kalimat\" ada di whitelist GRAMMAR/GRAMMAR_KALIMAT_EFEKTIF; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 49,
+        "textPreview": "Kalimat yang menyatakan ajakan disebut kalimat..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-KALIMAT-EFEKTIF-0002",
+      "expectedSkill": "GRAMMAR",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Kalimat Efektif",
+      "subskill": "GRAMMAR_KALIMAT_EFEKTIF",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"kalimat efektif\" ada di whitelist GRAMMAR/GRAMMAR_KALIMAT_EFEKTIF; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "8",
+        "isHOTS": false,
+        "textLength": 58,
+        "textPreview": "Berikut ini yang termasuk contoh Kalimat Efektif adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-PUEBI-0001",
+      "expectedSkill": "GRAMMAR",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "PUEBI",
+      "subskill": "GRAMMAR_EJAAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"puebi\" ada di whitelist GRAMMAR/GRAMMAR_EJAAN; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "8",
+        "isHOTS": false,
+        "textLength": 48,
+        "textPreview": "Berikut ini yang termasuk contoh PUEBI adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-EJAAN-0014",
+      "expectedSkill": "GRAMMAR",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Ejaan",
+      "subskill": "GRAMMAR_EJAAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"ejaan\" ada di whitelist GRAMMAR/GRAMMAR_EJAAN; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 48,
+        "textPreview": "Berikut ini yang termasuk contoh Ejaan adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-IMBUHAN-0014",
+      "expectedSkill": "GRAMMAR",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Imbuhan",
+      "subskill": "GRAMMAR_IMBUHAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"imbuhan\" ada di whitelist GRAMMAR/GRAMMAR_IMBUHAN; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 50,
+        "textPreview": "Berikut ini yang termasuk contoh Imbuhan adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-KALIMAT-0014",
+      "expectedSkill": "GRAMMAR",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Kalimat",
+      "subskill": "GRAMMAR_KALIMAT_EFEKTIF",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"kalimat\" ada di whitelist GRAMMAR/GRAMMAR_KALIMAT_EFEKTIF; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 50,
+        "textPreview": "Berikut ini yang termasuk contoh Kalimat adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-KALIMAT-EFEKTIF-0014",
+      "expectedSkill": "GRAMMAR",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Kalimat Efektif",
+      "subskill": "GRAMMAR_KALIMAT_EFEKTIF",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"kalimat efektif\" ada di whitelist GRAMMAR/GRAMMAR_KALIMAT_EFEKTIF; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "8",
+        "isHOTS": false,
+        "textLength": 58,
+        "textPreview": "Berikut ini yang termasuk contoh Kalimat Efektif adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-PUEBI-0014",
+      "expectedSkill": "GRAMMAR",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "PUEBI",
+      "subskill": "GRAMMAR_EJAAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"puebi\" ada di whitelist GRAMMAR/GRAMMAR_EJAAN; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "8",
+        "isHOTS": false,
+        "textLength": 48,
+        "textPreview": "Berikut ini yang termasuk contoh PUEBI adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-EJAAN-0026",
+      "expectedSkill": "GRAMMAR",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Ejaan",
+      "subskill": "GRAMMAR_EJAAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"ejaan\" ada di whitelist GRAMMAR/GRAMMAR_EJAAN; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": true,
+        "textLength": 48,
+        "textPreview": "Berikut ini yang termasuk contoh Ejaan adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-IMBUHAN-0026",
+      "expectedSkill": "GRAMMAR",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Imbuhan",
+      "subskill": "GRAMMAR_IMBUHAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"imbuhan\" ada di whitelist GRAMMAR/GRAMMAR_IMBUHAN; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": true,
+        "textLength": 50,
+        "textPreview": "Berikut ini yang termasuk contoh Imbuhan adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-KALIMAT-0026",
+      "expectedSkill": "GRAMMAR",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Kalimat",
+      "subskill": "GRAMMAR_KALIMAT_EFEKTIF",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"kalimat\" ada di whitelist GRAMMAR/GRAMMAR_KALIMAT_EFEKTIF; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": true,
+        "textLength": 50,
+        "textPreview": "Berikut ini yang termasuk contoh Kalimat adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-KALIMAT-EFEKTIF-0026",
+      "expectedSkill": "GRAMMAR",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Kalimat Efektif",
+      "subskill": "GRAMMAR_KALIMAT_EFEKTIF",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"kalimat efektif\" ada di whitelist GRAMMAR/GRAMMAR_KALIMAT_EFEKTIF; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "8",
+        "isHOTS": true,
+        "textLength": 58,
+        "textPreview": "Berikut ini yang termasuk contoh Kalimat Efektif adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-PUEBI-0026",
+      "expectedSkill": "GRAMMAR",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "PUEBI",
+      "subskill": "GRAMMAR_EJAAN",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"puebi\" ada di whitelist GRAMMAR/GRAMMAR_EJAAN; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "8",
+        "isHOTS": true,
+        "textLength": 48,
+        "textPreview": "Berikut ini yang termasuk contoh PUEBI adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-ANTONIM-0001",
+      "expectedSkill": "VOCABULARY",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Antonim",
+      "subskill": "VOCABULARY_SINONIM_ANTONIM",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"antonim\" ada di whitelist VOCABULARY/VOCABULARY_SINONIM_ANTONIM; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 35,
+        "textPreview": "Antonim dari kata 'panas' adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-KATA-BAKU-0001",
+      "expectedSkill": "VOCABULARY",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Kata Baku",
+      "subskill": "VOCABULARY_KATA_BAKU",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"kata baku\" ada di whitelist VOCABULARY/VOCABULARY_KATA_BAKU; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 52,
+        "textPreview": "Berikut ini yang termasuk contoh Kata Baku adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-KATA-TIDAK-BAKU-0001",
+      "expectedSkill": "VOCABULARY",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Kata Tidak Baku",
+      "subskill": "VOCABULARY_KATA_BAKU",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"kata tidak baku\" ada di whitelist VOCABULARY/VOCABULARY_KATA_BAKU; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 58,
+        "textPreview": "Berikut ini yang termasuk contoh Kata Tidak Baku adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-MAKNA-KATA-0001",
+      "expectedSkill": "VOCABULARY",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Makna Kata",
+      "subskill": "VOCABULARY_MAKNA_KATA",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"makna kata\" ada di whitelist VOCABULARY/VOCABULARY_MAKNA_KATA; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "9",
+        "isHOTS": false,
+        "textLength": 53,
+        "textPreview": "Berikut ini yang termasuk contoh Makna Kata adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-SINONIM-0002",
+      "expectedSkill": "VOCABULARY",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Sinonim",
+      "subskill": "VOCABULARY_SINONIM_ANTONIM",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"sinonim\" ada di whitelist VOCABULARY/VOCABULARY_SINONIM_ANTONIM; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 36,
+        "textPreview": "Sinonim dari kata 'cerdas' adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-ANTONIM-0014",
+      "expectedSkill": "VOCABULARY",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Antonim",
+      "subskill": "VOCABULARY_SINONIM_ANTONIM",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"antonim\" ada di whitelist VOCABULARY/VOCABULARY_SINONIM_ANTONIM; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 50,
+        "textPreview": "Berikut ini yang termasuk contoh Antonim adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-KATA-BAKU-0014",
+      "expectedSkill": "VOCABULARY",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Kata Baku",
+      "subskill": "VOCABULARY_KATA_BAKU",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"kata baku\" ada di whitelist VOCABULARY/VOCABULARY_KATA_BAKU; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 52,
+        "textPreview": "Berikut ini yang termasuk contoh Kata Baku adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-KATA-TIDAK-BAKU-0014",
+      "expectedSkill": "VOCABULARY",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Kata Tidak Baku",
+      "subskill": "VOCABULARY_KATA_BAKU",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"kata tidak baku\" ada di whitelist VOCABULARY/VOCABULARY_KATA_BAKU; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 58,
+        "textPreview": "Berikut ini yang termasuk contoh Kata Tidak Baku adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-MAKNA-KATA-0014",
+      "expectedSkill": "VOCABULARY",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Makna Kata",
+      "subskill": "VOCABULARY_MAKNA_KATA",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"makna kata\" ada di whitelist VOCABULARY/VOCABULARY_MAKNA_KATA; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "9",
+        "isHOTS": false,
+        "textLength": 53,
+        "textPreview": "Berikut ini yang termasuk contoh Makna Kata adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-SINONIM-0014",
+      "expectedSkill": "VOCABULARY",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Sinonim",
+      "subskill": "VOCABULARY_SINONIM_ANTONIM",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"sinonim\" ada di whitelist VOCABULARY/VOCABULARY_SINONIM_ANTONIM; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 50,
+        "textPreview": "Berikut ini yang termasuk contoh Sinonim adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-ANTONIM-0026",
+      "expectedSkill": "VOCABULARY",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Antonim",
+      "subskill": "VOCABULARY_SINONIM_ANTONIM",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"antonim\" ada di whitelist VOCABULARY/VOCABULARY_SINONIM_ANTONIM; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": true,
+        "textLength": 50,
+        "textPreview": "Berikut ini yang termasuk contoh Antonim adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-KATA-BAKU-0026",
+      "expectedSkill": "VOCABULARY",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Kata Baku",
+      "subskill": "VOCABULARY_KATA_BAKU",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"kata baku\" ada di whitelist VOCABULARY/VOCABULARY_KATA_BAKU; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": true,
+        "textLength": 52,
+        "textPreview": "Berikut ini yang termasuk contoh Kata Baku adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-KATA-TIDAK-BAKU-0026",
+      "expectedSkill": "VOCABULARY",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Kata Tidak Baku",
+      "subskill": "VOCABULARY_KATA_BAKU",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"kata tidak baku\" ada di whitelist VOCABULARY/VOCABULARY_KATA_BAKU; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": true,
+        "textLength": 58,
+        "textPreview": "Berikut ini yang termasuk contoh Kata Tidak Baku adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-MAKNA-KATA-0026",
+      "expectedSkill": "VOCABULARY",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Makna Kata",
+      "subskill": "VOCABULARY_MAKNA_KATA",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"makna kata\" ada di whitelist VOCABULARY/VOCABULARY_MAKNA_KATA; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "9",
+        "isHOTS": true,
+        "textLength": 53,
+        "textPreview": "Berikut ini yang termasuk contoh Makna Kata adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-SINONIM-0026",
+      "expectedSkill": "VOCABULARY",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Sinonim",
+      "subskill": "VOCABULARY_SINONIM_ANTONIM",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"sinonim\" ada di whitelist VOCABULARY/VOCABULARY_SINONIM_ANTONIM; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": true,
+        "textLength": 50,
+        "textPreview": "Berikut ini yang termasuk contoh Sinonim adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-CERPEN-0002",
+      "expectedSkill": "LITERATURE",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Cerpen",
+      "subskill": "LITERATURE_UNSUR_CERITA",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"cerpen\" ada di whitelist LITERATURE/LITERATURE_UNSUR_CERITA; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "9",
+        "isHOTS": false,
+        "textLength": 49,
+        "textPreview": "Berikut ini yang termasuk contoh Cerpen adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-DRAMA-0001",
+      "expectedSkill": "LITERATURE",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Drama",
+      "subskill": "LITERATURE_UNSUR_CERITA",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"drama\" ada di whitelist LITERATURE/LITERATURE_UNSUR_CERITA; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "8",
+        "isHOTS": false,
+        "textLength": 48,
+        "textPreview": "Berikut ini yang termasuk contoh Drama adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-FABEL-0001",
+      "expectedSkill": "LITERATURE",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Fabel",
+      "subskill": "LITERATURE_UNSUR_CERITA",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"fabel\" ada di whitelist LITERATURE/LITERATURE_UNSUR_CERITA; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 48,
+        "textPreview": "Berikut ini yang termasuk contoh Fabel adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-GURINDAM-0001",
+      "expectedSkill": "LITERATURE",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Gurindam",
+      "subskill": "LITERATURE_APRESIASI_KARYA",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"gurindam\" ada di whitelist LITERATURE/LITERATURE_APRESIASI_KARYA; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "8",
+        "isHOTS": false,
+        "textLength": 51,
+        "textPreview": "Berikut ini yang termasuk contoh Gurindam adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-HIKAYAT-0001",
+      "expectedSkill": "LITERATURE",
+      "expectedDifficulty": "EASY",
+      "expectedTopic": "Hikayat",
+      "subskill": "LITERATURE_UNSUR_CERITA",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"hikayat\" ada di whitelist LITERATURE/LITERATURE_UNSUR_CERITA; difficulty bank \"MUDAH\" → EASY",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "10",
+        "isHOTS": false,
+        "textLength": 50,
+        "textPreview": "Berikut ini yang termasuk contoh Hikayat adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-CERPEN-0014",
+      "expectedSkill": "LITERATURE",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Cerpen",
+      "subskill": "LITERATURE_UNSUR_CERITA",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"cerpen\" ada di whitelist LITERATURE/LITERATURE_UNSUR_CERITA; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "9",
+        "isHOTS": false,
+        "textLength": 49,
+        "textPreview": "Berikut ini yang termasuk contoh Cerpen adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-DRAMA-0014",
+      "expectedSkill": "LITERATURE",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Drama",
+      "subskill": "LITERATURE_UNSUR_CERITA",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"drama\" ada di whitelist LITERATURE/LITERATURE_UNSUR_CERITA; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "8",
+        "isHOTS": false,
+        "textLength": 48,
+        "textPreview": "Berikut ini yang termasuk contoh Drama adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-FABEL-0014",
+      "expectedSkill": "LITERATURE",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Fabel",
+      "subskill": "LITERATURE_UNSUR_CERITA",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"fabel\" ada di whitelist LITERATURE/LITERATURE_UNSUR_CERITA; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": false,
+        "textLength": 48,
+        "textPreview": "Berikut ini yang termasuk contoh Fabel adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-GURINDAM-0014",
+      "expectedSkill": "LITERATURE",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Gurindam",
+      "subskill": "LITERATURE_APRESIASI_KARYA",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"gurindam\" ada di whitelist LITERATURE/LITERATURE_APRESIASI_KARYA; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "8",
+        "isHOTS": false,
+        "textLength": 51,
+        "textPreview": "Berikut ini yang termasuk contoh Gurindam adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-HIKAYAT-0014",
+      "expectedSkill": "LITERATURE",
+      "expectedDifficulty": "MEDIUM",
+      "expectedTopic": "Hikayat",
+      "subskill": "LITERATURE_UNSUR_CERITA",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"hikayat\" ada di whitelist LITERATURE/LITERATURE_UNSUR_CERITA; difficulty bank \"SEDANG\" → MEDIUM",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "10",
+        "isHOTS": false,
+        "textLength": 50,
+        "textPreview": "Berikut ini yang termasuk contoh Hikayat adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-CERPEN-0026",
+      "expectedSkill": "LITERATURE",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Cerpen",
+      "subskill": "LITERATURE_UNSUR_CERITA",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"cerpen\" ada di whitelist LITERATURE/LITERATURE_UNSUR_CERITA; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "9",
+        "isHOTS": true,
+        "textLength": 49,
+        "textPreview": "Berikut ini yang termasuk contoh Cerpen adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-DRAMA-0026",
+      "expectedSkill": "LITERATURE",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Drama",
+      "subskill": "LITERATURE_UNSUR_CERITA",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"drama\" ada di whitelist LITERATURE/LITERATURE_UNSUR_CERITA; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "8",
+        "isHOTS": true,
+        "textLength": 48,
+        "textPreview": "Berikut ini yang termasuk contoh Drama adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-FABEL-0026",
+      "expectedSkill": "LITERATURE",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Fabel",
+      "subskill": "LITERATURE_UNSUR_CERITA",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"fabel\" ada di whitelist LITERATURE/LITERATURE_UNSUR_CERITA; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "7",
+        "isHOTS": true,
+        "textLength": 48,
+        "textPreview": "Berikut ini yang termasuk contoh Fabel adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-GURINDAM-0026",
+      "expectedSkill": "LITERATURE",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Gurindam",
+      "subskill": "LITERATURE_APRESIASI_KARYA",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"gurindam\" ada di whitelist LITERATURE/LITERATURE_APRESIASI_KARYA; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "8",
+        "isHOTS": true,
+        "textLength": 51,
+        "textPreview": "Berikut ini yang termasuk contoh Gurindam adalah..."
+      }
+    },
+    {
+      "source": "BANK_SOAL",
+      "questionId": "BC-HIKAYAT-0026",
+      "expectedSkill": "LITERATURE",
+      "expectedDifficulty": "HARD",
+      "expectedTopic": "Hikayat",
+      "subskill": "LITERATURE_UNSUR_CERITA",
+      "questionType": "PILIHAN_GANDA",
+      "provenance": "AI_SUGGESTED",
+      "status": "NEEDS_REVIEW",
+      "confidence": "HIGH",
+      "reason": "Topik \"hikayat\" ada di whitelist LITERATURE/LITERATURE_UNSUR_CERITA; difficulty bank \"SULIT\" → HARD",
+      "warnings": [
+        "BOILERPLATE_STEM"
+      ],
+      "evidence": {
+        "kelas": "10",
+        "isHOTS": true,
+        "textLength": 50,
+        "textPreview": "Berikut ini yang termasuk contoh Hikayat adalah..."
+      }
+    }
+  ]
+}
