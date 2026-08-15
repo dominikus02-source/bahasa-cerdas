@@ -44,6 +44,7 @@ export function ContinueLearningCard() {
 
   const currentMyDay = myDay;
   const isAdaptive = currentMyDay.mode === "PREVIEW" && currentMyDay.actionType === "ADAPTIVE_PRACTICE";
+  const isDiagnostic = currentMyDay.mode === "PREVIEW" && currentMyDay.actionType === "DIAGNOSTIC";
   const mentorData = currentMyDay.mentor
     ? { ...currentMyDay.mentor, nextAction: null }
     : null;
@@ -69,11 +70,32 @@ export function ContinueLearningCard() {
     }
   }
 
+  async function startDiagnosticSession() {
+    setStarting(true);
+    setStartError(null);
+    try {
+      const response = await fetch("/api/player/diagnostic", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "start", size: currentMyDay.sessionSize || undefined }),
+      });
+      const data = await response.json();
+      if (!response.ok || data.mode !== "DIAGNOSTIC" || typeof data.sessionId !== "string") {
+        throw new Error(data.error || "Tes awal belum tersedia");
+      }
+      router.push(`/arena/diagnostic/${data.sessionId}`);
+    } catch {
+      setStartError("Tes awal belum bisa dimulai. Coba lagi sebentar.");
+    } finally {
+      setStarting(false);
+    }
+  }
+
   return (
     <div className="space-y-3">
       <section aria-label="Aksi hari ini" className="my-day-hero px-card px-5 py-7 md:p-8 relative overflow-hidden">
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--px-gold)] mb-2">
-          {isAdaptive ? "Aksi Hari Ini" : "Saran untukmu"}
+          {isAdaptive ? "Aksi Hari Ini" : isDiagnostic ? "Kenali Kemampuanmu" : "Saran untukmu"}
         </p>
         <div className="relative flex flex-col md:flex-row md:items-center gap-5">
           <div className="flex-1 min-w-0">
@@ -88,10 +110,10 @@ export function ContinueLearningCard() {
             {startError && <p className="mt-3 text-xs font-semibold text-red-600 dark:text-red-300">{startError}</p>}
           </div>
           <div className="shrink-0">
-            {isAdaptive ? (
+            {isAdaptive || isDiagnostic ? (
               <button
                 type="button"
-                onClick={startAdaptiveSession}
+                onClick={isDiagnostic ? startDiagnosticSession : startAdaptiveSession}
                 disabled={starting}
                 className="px-btn-gold flex items-center justify-center gap-2 text-sm font-bold px-6 py-3 disabled:cursor-wait"
                 aria-label={`Mulai ${myDay.actionTitle}`}

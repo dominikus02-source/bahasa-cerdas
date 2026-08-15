@@ -20,7 +20,7 @@ export interface SummaryRow {
 
 export interface MyDayResponse {
   mode: "PREVIEW" | "FALLBACK";
-  actionType: "ADAPTIVE_PRACTICE" | "GENERAL_LEARNING";
+  actionType: "ADAPTIVE_PRACTICE" | "DIAGNOSTIC" | "GENERAL_LEARNING";
   actionTitle: string;
   ctaLabel: string;
   targetSkill: string | null;
@@ -122,11 +122,20 @@ export function HomeDataProvider({ children }: { children: React.ReactNode }) {
     setPremiumFailed(false);
     Promise.allSettled([
       fetch("/api/player/adaptive-practice?mode=preview").then((r) => (r.ok ? r.json() : Promise.reject())),
+      fetch("/api/player/diagnostic?mode=preview").then((r) => (r.ok ? r.json() : Promise.reject())),
       fetch("/api/player/premium/status").then((r) => (r.ok ? r.json() : Promise.reject())),
-    ]).then(([myDayResult, premiumResult]) => {
+    ]).then(([myDayResult, diagnosticResult, premiumResult]) => {
       if (!alive) return;
-      if (myDayResult.status === "fulfilled") {
-        setMyDay(myDayResult.value);
+      const adaptiveValue = myDayResult.status === "fulfilled" ? (myDayResult.value as MyDayResponse | null) : null;
+      const diagnosticValue = diagnosticResult.status === "fulfilled" ? (diagnosticResult.value as MyDayResponse | null) : null;
+      const chosen =
+        adaptiveValue && adaptiveValue.actionType === "ADAPTIVE_PRACTICE"
+          ? adaptiveValue
+          : diagnosticValue && diagnosticValue.actionType === "DIAGNOSTIC"
+            ? diagnosticValue
+            : adaptiveValue;
+      if (chosen) {
+        setMyDay(chosen);
         setMyDayFailed(false);
       } else {
         setMyDayFailed(true);

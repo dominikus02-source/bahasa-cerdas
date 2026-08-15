@@ -3470,3 +3470,130 @@ CoinTransaction belum punya jaminan unik DB setingkat XPTransaction → reward k
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
 5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
+
+---
+
+## Phase STEP 4E — Diagnostic Assessment & Adaptive Placement (Aug 15, 2026)
+
+### Goal
+Tes Awal ("Kenali Kemampuanmu") yang jujur untuk murid tanpa riwayat belajar: 8–12 butir dari pool metadata APPROVED (5 kemampuan, kesulitan EASY→MEDIUM→HARD), hasil = profil baseline per-ability + placement level PROVISIONAL (L1–L12 band Dasar/Menengah/Tinggi) di kartu "Aksi Hari Ini" beranda murid. **NOT COMMITTED — menunggu Founder Review (pola fase shell).**
+
+### Keputusan Desain
+1. **Reuse tanpa migrasi**: `AdaptivePracticeSession` (reasonCode=`DIAGNOSTIC`) + `LearningEvidence`; 0 diff `prisma/`.
+2. **Diagnostik = evidence-only, TANPA XP/koin** (Part N) — tanpa sumber reward baru.
+3. **Server-authoritative** (Part O): klien hanya kirim `{action, sessionId, questionId, answer}`; jawaban dicocokkan ke `Soal.correctAnswer` server-side; sesi di-scope `where: {id, userId}`; sesi non-DIAGNOSTIC ditolak 403; payload tanpa answer key.
+4. **WEAK ≠ INSUFFICIENT_EVIDENCE** (Part I); placement SELALU `provisional: true` (Part J).
+5. **LISTENING/SPEAKING DITOLAK** — 0 aset audio produksi; ditulis jujur di laporan Part R (ZERO).
+6. **Preview**: NO evidence → actionType DIAGNOSTIC ("Kenali Kemampuanmu"/"Mulai Tes Awal"); ada evidence → GENERAL_LEARNING; pool < 8 → 503 (home jatuh ke adaptive preview). Preview fetch HANYA di home-data.tsx (konstrain test-my-day-home check 16).
+7. **Adaptive route 4D TIDAK diubah** — 2 call `await awardXp(` + `ADAPTIVE_START_RATE_LIMIT` tetap; test 4D 41/41 tetap GREEN.
+
+### Files
+| File | Aksi |
+|------|------|
+| `lib/diagnostic/config.ts` | BARU — sizes 8/10/12 (default 10), min 8, 30 mnt, skill priority 5 (tanpa LISTENING/SPEAKING), difficulty cycle EASY/MEDIUM/HARD (3/4/3), bands L1–L4/L5–L8/L9–L12, thresholds STRONG≥0.8 DEVELOPING≥0.6 |
+| `lib/diagnostic/selector.ts` | BARU — pure: pool<8 → null (jujur), anti-dup questionId, novelty (unseen > cooldown 14 hari), deterministik (tie-break id), spread skill+kesulitan |
+| `lib/diagnostic/profile.ts` | BARU — pure: kategori per skill (Kuat/Berkembang/Perlu Banyak Latihan/Belum Cukup Bukti), overall accuracy, placement band PROVISIONAL |
+| `lib/diagnostic/types.ts` | BARU — types bersama |
+| `app/api/player/diagnostic/route.ts` | BARU — GET `?mode=preview` dan `?sessionId=`; POST start (rate limit 5/30mnt `bca-diagnostic-start`)/answer/complete; tanpa awardXp/addCoin |
+| `app/arena/diagnostic/[sessionId]/page.tsx` | BARU — alur sesi + panel hasil (akurasi, band L1–L12 + bendera Sementara, rincian per kemampuan, CTA Jalur Cerdas) |
+| `components/student-home/home-data.tsx` | union `actionType` + `"DIAGNOSTIC"`; fetch preview diagnostic di home-data dan logika pilih (adaptive menang bila ADAPTIVE_PRACTICE) |
+| `components/student-home/ContinueLearningCard.tsx` | branch DIAGNOSTIC: eyebrow "Kenali Kemampuanmu", CTA "Mulai Tes Awal" → POST start → `/arena/diagnostic/{id}` |
+| `scripts/test-diagnostic-assessment.ts` | BARU — 34 checks (config/selector/profile/route security/UI = Part A–P) |
+| `scripts/check-diagnostic-pool.ts` | BARU — Part R read-only (tanpa DB → exit 0) |
+| `package.json` | +`test:diagnostic-assessment`, +`check:diagnostic-pool` |
+| `docs/PHASE_2_STEP_4E_DIAGNOSTIC_ASSESSMENT.md` | Report 23 item |
+
+### Part R — Pool Nyata (read-only, DB tersedia)
+```
+approved metadata : 87   (BANK_SOAL APPROVED) | matching Soal 87 | unique 87 | duplikat 0 | yatim 0
+tipe soal         : PILIHAN_GANDA 79, BENAR_SALAH 4, ISIAN_SINGKAT 4, CONSTRUCTED 0
+per skill×diff    : 5–6 kandidat/sel (Membaca/Menulis/Tata Bahasa/Kosakata/Sastra × EASY/MEDIUM/HARD)
+ZERO              : LISTENING, SPEAKING (semua diff), VERY_HARD (bank tak mendefinisikan)
+Kesimpulan        : pool HONEST (87 ≥ 8) — sesi 10 butir tanpa duplikasi BISA
+```
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `npm run test:diagnostic-assessment` | ✅ 34/34 |
+| `npm run test:my-day-home` | ✅ 37/37 |
+| `npm run test:adaptive-practice` | ✅ 25/25 |
+| `npm run test:adaptive-reward-hardening` (4D) | ✅ 41/41 |
+| `npm run test:adaptive-simulation` | ✅ 21/21 |
+| `npm run test:step3c-evidence-ledger` | ✅ 29/29 |
+| `npm run test:question-metadata` | ✅ 24/24 |
+| `npm run test:learner-state` | ✅ 24/24 |
+| `npm run test:student-home` | ✅ 61/61 |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (8 file) | ✅ 0 violations |
+| `npm run build` (dummy env) | ✅ exit 0 |
+| `git diff --check` | ✅ bersih |
+| Protected zones (prisma/, adaptive route 4D, gamification, learning-loop) | ✅ 0 diff |
+| Commit/push | ⛔ BELUM — menunggu Founder Review |
+
+### Remaining
+1. **Commit/push STEP 4E bila disetujui founder**
+2. TKA UTBK/Guru enrichment 30 → 150
+3. Game server revival (VPS mati)
+4. GameRoom migration SQL via Supabase dashboard
+5. UI game solo: badge-score client vs server masih beda (kosmetik)
+6. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
+
+---
+
+## Phase STEP 4E.1 — Diagnostic Quality Upgrade: Komposisi Founder + Profil Evidence (Aug 16, 2026)
+
+### Goal
+Naikkan kualitas Tes Awal di atas 4E: (1) komposisi tetap sesuai founder (Part B: 10 butir = READING 2 · GRAMMAR 2 · VOCABULARY 2 · LITERATURE 1 · WRITING 2 · LISTENING 1), (2) kesulitan per slot jujur (Part G: Q1–Q3 EASY, Q4–Q7 MEDIUM, Q8–Q10 HARD = 3/4/3), (3) profil kanonik dihitung dari DETAIL EVIDENCE per butir (bukan learner-state agregat) dengan tangga confidence, rekomendasi per skill, dan kejujuran "belum terukur" untuk skill tanpa bukti. **NOT COMMITTED — menunggu Founder Review (pola fase 4E/shell).**
+
+### Keputusan Desain (4E.1)
+1. **Komposisi target (Part B)**: `DIAGNOSTIC_COMPOSITION` per ukuran (8/10/12). LISTENING hanya direquest via komposisi — selector memilikinya sebagai target namun **fallback jujur MISSING_CORPUS** bila korpus kosong (slot dialokasikan ulang ke skill lain; dicatat di `composition.fallback` + `fallbackReason`). SPEAKING TIDAK pernah direquest (slot masa depan). Prioritas seleksi tetap 5 skill tanpa LISTENING/SPEAKING.
+2. **Kesulitan per slot (Part G)**: `DIAGNOSTIC_DIFFICULTY_CYCLE` 10 butir = EEE MMMM HHH; `difficultyPlanForSize(n)` menurunkan ~30% EASY / ~30% HARD untuk ukuran lain. Ketidaktersediaan sel → fallback `DIFFICULTY_UNAVAILABLE`.
+3. **Profil dari DETAIL EVIDENCE (jalur kanonik)**: `computeProfileFromEvidence(details)` — read-only `LearningEvidence` milik sesi (activityId=session.id, source), per skill: akurasi, kategori, confidence, band, `strongestEvidence` (difficulty tertinggi benar), `recommendation` rule-based (WEAK→EASY, DEVELOPING→MEDIUM, STRONG→HARD). `withUntestedSkills(profile, allSkills)` melengkapi skill tanpa bukti sebagai **INSUFFICIENT_EVIDENCE/“Belum terukur” — BUKAN WEAK** (Part I/Q).
+4. **Tangga confidence**: INSUFFICIENT_EVIDENCE (0 bukti) → PROVISIONAL (1 sesi) → PROFILE_CONFIDENT (attempts ≥ 5 && recent ≥ 0.7). Placement SELALU `provisional: true` (Part J).
+5. **Overall accuracy = rata-rata akurasi per skill** (tiap kemampuan berbobot sama, bukan raw item).
+6. **Route**: `buildSessionProfile()` dipakai di complete + GET COMPLETED (menggantikan `computeDiagnosticProfile(states)`); start & GET IN_PROGRESS membawa `composition` (requested/delivered/fallback) + `fallbackReason`. Adaptive route 4D TIDAK diubah (41/41 tetap).
+7. **UI**: panel hasil menampilkan insightText ("Kesimpulan untukmu"), rekomendasi + band per skill, dan banner fallbackReason jujur (amber). Literal yang dicek test statik (`L{band.minLevel}`, "Sementara", "Rincian per kemampuan", "bersifat sementara") dipertahankan.
+
+### Files
+| File | Aksi |
+|------|------|
+| `lib/diagnostic/config.ts` | UPGRADE — Komposisi Part B per ukuran, `diagnosticCompositionQueue`, difficulty cycle/plan, skill labels (7), thresholds, confidence ladder, version 1.1 |
+| `lib/diagnostic/types.ts` | UPGRADE — DiagnosticRequested/DeliveredSkill, DiagnosticFallbackEntry, DiagnosticComposition, DiagnosticSelection, DiagnosticSkillResult (confidence/band/evidenceCount/strongestEvidence/recommendation), DiagnosticEvidenceDetail, DiagnosticProfile (confidence/insightText) |
+| `lib/diagnostic/selector.ts` | UPGRADE — `summarizeComposition()`, seleksi slot-by-slot komposisi + difficulty plan + variasi tipe + fallback jujur (MISSING_CORPUS/DIFFICULTY_UNAVAILABLE/SEE_AGAIN), deterministik |
+| `lib/diagnostic/profile.ts` | UPGRADE — `computeProfileFromEvidence()`, `withUntestedSkills()`, `buildInsightText()`, confidence ladder, rekomendasi, `computeDiagnosticProfile(states)` back-compat |
+| `app/api/player/diagnostic/route.ts` | UPGRADE — `loadSessionEvidence()`/`buildSessionProfile()`; start & GET bawa composition/fallbackReason; complete & GET COMPLETED pakai profil evidence (tanpa answer key, tanpa XP/koin, rate limit & guard tetap) |
+| `app/arena/diagnostic/[sessionId]/page.tsx` | UPGRADE — panel hasil 4E.1 (insight, confidence, rekomendasi, band per skill, fallbackReason banner) |
+| `scripts/test-diagnostic-assessment.ts` | UPGRADE — 48 checks (check 2 disesuaikan Part B; +21–24 4E.1) |
+| `scripts/test-diagnostic-4e1.ts` | BARU — 36 unit test murni (determinism, komposisi, fallback jujur, profil evidence, confidence, untested skills) |
+| `package.json` | +`test:diagnostic-4e1` |
+
+### Verifikasi (semua lulus)
+| Check | Hasil |
+|-------|-------|
+| `npm run test:diagnostic-assessment` | ✅ 48/48 |
+| `npm run test:diagnostic-4e1` | ✅ 36/36 |
+| `npm run test:my-day-home` | ✅ 37/37 |
+| `npm run test:adaptive-practice` | ✅ 25/25 |
+| `npm run test:adaptive-reward-hardening` (4D) | ✅ 41/41 (route 4D 0 diff) |
+| `npm run test:adaptive-simulation` | ✅ 21/21 |
+| `npm run test:step3c-evidence` | ✅ 29/29 |
+| `npm run test:question-metadata` | ✅ 24/24 |
+| `npm run test:learner-state` | ✅ 24/24 |
+| `npm run test:student-home` | ✅ 61/61 |
+| `npm run test:arena-web` | ✅ 56/56 |
+| `npm run test:gamification-engine` | ✅ SEMUA LULUS |
+| `npm run test:premium-economy` | ✅ 63/63 |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (8 file diubah/baru) | ✅ 0 violations |
+| `npm run build` (dummy env) | ✅ exit 0 |
+| `git diff --check` | ✅ bersih |
+| Protected zones (prisma/, adaptive route 4D, gamification, learning-loop) | ✅ 0 diff |
+
+### Remaining
+1. **Commit/push STEP 4E + 4E.1 bila disetujui founder**
+2. TKA UTBK/Guru enrichment 30 → 150
+3. Game server revival (VPS mati)
+4. GameRoom migration SQL via Supabase dashboard
+5. UI game solo: badge-score client vs server masih beda (kosmetik)
+6. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
