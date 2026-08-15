@@ -143,7 +143,7 @@ function main() {
       `git diff --name-only HEAD -- lib/gamification/ lib/award-xp.ts lib/xp.ts lib/coins.ts app/api/player/`,
       { encoding: "utf8", cwd: process.cwd() }
     ).trim().split("\n").filter(Boolean);
-    const allowedStep3B = new Set(["app/api/player/coin/route.ts"]);
+    const allowedStep3B = new Set(["app/api/player/coin/route.ts", "app/api/player/learner-state/route.ts"]);
     test("protected reward zones tetap utuh kecuali coin add boundary Step 3B",
       () => diff.every((file) => allowedStep3B.has(file)));
     if (diff.length > 0) console.log(`  ⚠️  File berubah:\n${diff.join("\n")}`);

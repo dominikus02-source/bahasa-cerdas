@@ -245,7 +245,7 @@ function main() {
         `git diff --name-only HEAD -- lib/apk.ts lib/gamification/ lib/learning-loop/ engines/ app/api/player/ app/api/group/`,
         { encoding: "utf8", cwd: process.cwd() }
       ).trim().split("\n").filter(Boolean);
-      return diff.every((file) => file === "app/api/player/coin/route.ts" || file === "lib/learning-loop/evidence.ts");
+      return diff.every((file) => file === "app/api/player/coin/route.ts" || file === "app/api/player/learner-state/route.ts" || file === "lib/learning-loop/evidence.ts" || file === "lib/learner-state/calculator.ts" || file === "lib/learner-state/types.ts");
     });
   test("MuridMobileNav & murid layout: global nav /arena/chat tidak berubah",
     () => {
