@@ -13,6 +13,7 @@
 export type XpSourceName =
   | "ARENA"
   | "JALUR_CERDAS"
+  | "ADAPTIVE_PRACTICE"
   | "UPLOAD_KARYA"
   | "LIKE"
   | "KOMENTAR"
@@ -39,6 +40,7 @@ export interface XpSourceConfig {
 export const XP_CONFIG: Record<XpSourceName, XpSourceConfig> = {
   ARENA:           { label: "Arena",           baseXp: 20,  description: "Main game arena (Kuis Battle, Adu Cepat, dll.)" },
   JALUR_CERDAS:    { label: "Jalur Cerdas",    baseXp: 50,  description: "Selesaikan unit Jalur Cerdas (reward sesuai unit)" },
+  ADAPTIVE_PRACTICE: { label: "Latihan Adaptif", baseXp: 50, description: "Selesaikan sesi Adaptive Practice penuh (skala akurasi)" },
   UPLOAD_KARYA:    { label: "Upload Karya",    baseXp: 20,  description: "Terbitkan karya (puisi, cerpen, artikel, dst.)" },
   LIKE:            { label: "Like",            baseXp: 2,   description: "Menyukai karya pengguna lain" },
   KOMENTAR:        { label: "Komentar",        baseXp: 5,   description: "Memberi komentar pada karya" },

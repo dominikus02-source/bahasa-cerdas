@@ -30,6 +30,7 @@ export const XP_SOURCES = [
   "MENARA",
   "KOMPETENSI",
   "SIMULASI",
+  "ADAPTIVE_PRACTICE",
   "DAILY_QUEST",
   "BADGE",
   "ACHIEVEMENT",

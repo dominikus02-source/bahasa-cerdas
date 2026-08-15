@@ -3364,3 +3364,109 @@ Laporan lengkap: `docs/BC_AI_KNOWLEDGE_2_0.md` (8 seksi sesuai direktif).
 4. GameRoom migration SQL via Supabase dashboard
 5. UI game solo: badge-score client vs server masih beda (kosmetik)
 6. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
+
+---
+
+## Phase STEP 4B.6 — Controlled Human Review & Approval Gate (Aug 15, 2026)
+
+### Goal
+Gate approval manusia untuk 75 kandidat enrichment AI_SUGGESTED (manifest `data/question-metadata/enrichment-manifest-001.json`): founder/associate approve/reject/correct, batch maks 25, transaksional, audit JSONL, idempoten, + report overlay review state. **Founder TELAH mengeksekusi (Aug 15): 75/75 APPROVED di production** (`--execute --founder-email dominikus.02@gmail.com --batch BATCH-1/2/3`, 3×25 dalam satu `$transaction` masing-masing, audit `enrichment-approval-audit-001.jsonl` 75 baris, reviewedById founder). Manifest TIDAK pernah diubah (tetap NEEDS_REVIEW; state hidup di DB + audit).
+
+### Scripts
+| Script | Fungsi |
+|--------|--------|
+| `scripts/approve-enrichment-manifest.ts` | Gate approval. Dry-run default; `--execute` wajib + `--founder-email` + `--batch BATCH-1..3` (tanpa approve-all); `--actions reviews.json` opsional (REJECT / CORRECT_THEN_APPROVE whitelist 7 field; questionId/source/teks/kunci jawaban immutable); `--sql` cadangan. Rollback penuh via `$transaction`; pre-flight Soal_exists + conflict; idempoten ALREADY_APPROVED; audit JSONL per record tanpa secret. |
+| `scripts/report-enrichment-manifest.ts` | Report 4B.5 Part H: overlay REVIEW STATE per kandidat (APPROVED/REJECTED + reviewer email + timestamp + reason) dari audit JSONL — READ-ONLY tanpa DB. Catatan aksi audit = `APPROVE` (tanpa D) — report menerima keduanya. |
+| `scripts/check-enrichment-candidates.ts` | QA read-only: struktur/taksonomi manifest + cross-check DB (Soal exists; metadata kandidat wajib APPROVED+HUMAN_REVIEW; APPROVED sesuai audit). |
+| `scripts/test-enrichment-approval.ts` | 18 skenario QA (SEMUA LULUS): identity founder, batch, rollback, idempotensi, audit fields, no secret/answer leak, report overlay, protected zones. |
+| `scripts/enrichment-candidates-builder.ts` | Builder deterministik manifest (rerun → identik, kecuali generatedAt). |
+| `docs/PHASE_2_STEP_4B6_HUMAN_REVIEW_{AUDIT,APPROVAL}.md` | Audit Part A (design/security/perbandingan 3J) + Approval report (Part P, kini mencatat eksekusi nyata 75 APPROVED). |
+
+### Package Scripts
+`approve:enrichment-manifest` (dry-run default), `check:enrichment-candidates`, `report:enrichment-manifest`, `test:enrichment-approval`, `test:enrichment-report`.
+
+### Kunci Desain
+1. **Reviewer identity server-side**: `--founder-email` wajib pada `--execute`; diverifikasi `isFounder == true || role == "ADMIN"` (role enum tanpa FOUNDER); `reviewedById` dari DB.
+2. **Batch maks 25** (`BATCH-1` 1–25 / `BATCH-2` 26–50 / `BATCH-3` 51–75) — tidak ada approve-all.
+3. **Satu transaksi per batch** — CONFLICT/error → seluruh batch rollback, audit tidak di-append.
+4. **Audit append-only** `data/question-metadata/enrichment-approval-audit-001.jsonl`: manifestId/batch/action/questionId/performedByEmail/performedById/timestamp/before/after/reason — tanpa secret, tanpa correctAnswer/options.
+5. **Coverage tetap YELLOW** (15 sel × 5 terisi; 13 sel INSUFFICIENT jujur dicatat) — bukan GREEN.
+6. Konvensi: founder/admin emails = `dominikus.02@gmail.com`, `hdsastra47@gmail.com`, `alexsurya1968@gmail.com`.
+
+### Verifikasi (Aug 15, post-execution)
+| Check | Hasil |
+|-------|-------|
+| `npm run report:enrichment-manifest` | ✅ REVIEW STATE (audit): APPROVED=75, reviewer dominikus.02@gmail.com + timestamp (BATCH-1: 10:03:24, BATCH-2/3 selanjutnya) |
+| `npm run check:enrichment-candidates` | ✅ SEMUA CHECK PASS (termasuk metadata APPROVED+HUMAN_REVIEW 75/75 sesuai audit) |
+| `npm run test:enrichment-approval` | ✅ SEMUA LULUS |
+| `npm run test:enrichment-report` | ✅ SEMUA LULUS |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| DB production | ✅ 75 QuestionMetadata APPROVED/HUMAN_REVIEW (105 total metadata BANK_SOAL) |
+
+### Remaining
+1. Commit/push fase 4A/4B/4B.5/4B.6 (masih uncommitted; menuunggu instruksi founder)
+2. TKA UTBK/Guru enrichment 30 → 150
+3. Game server revival (VPS mati)
+4. GameRoom migration SQL via Supabase dashboard
+5. UI game solo: badge-score client vs server masih beda (kosmetik)
+6. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
+
+---
+
+## Phase STEP 4D — Adaptive Practice Reward Hardening & XP Integration (Aug 15, 2026)
+
+### Goal
+Amankan reward Adaptive Practice: (1) P0 completion gate, (2) P0 start rate limit, (3) XP exactly-once per sesi via `awardXp`. Menurut keputusan founder: coin reward + migrasi CoinTransaction DEFERRED. Tanpa migration/schema/production DB write. **FOUNDER TELAH MENYETUJUI (Aug 15): semua yang dikerjakan di-commit & di-push.**
+
+### Apa yang Dilakukan
+- **Completion gate** (`completeSession` di `app/api/player/adaptive-practice/route.ts`): atomic claim `updateMany` (id+userId+IN_PROGRESS+expiresAt>now) → gate evidence server-side (`learningEvidence` milik user untuk `activityId=session.id`) → coverage tidak penuh ditolak 409 + revert ke IN_PROGRESS + 0 XP → klaim XP `awardXp(userId, ADAPTIVE_PRACTICE, round(50*correct/assigned), sessionId)`. Client hanya boleh kirim `{ action, sessionId }` — skor/status/evidenceCount/correctAnswer/XP/coin/reward amount TIDAK pernah dipercaya.
+- **XP exactly-once**: reference = `session.id`; idempoten via `XPTransaction @@unique([userId, source, reference])` (compound key `userId_source_reference`). Replay/retry → `xpEarned: 0, replay: true, alreadyRewarded: true`. Concurrent → satu pemenang claim; yang kalah masuk recovery path (XP hanya jika belum tercatat — tidak bisa double reward). Tidak ada XP per-soal.
+- **Start rate limit**: `rateLimitRoute(req, ADAPTIVE_START_RATE_LIMIT)` hanya di `action === "start"` (setelah AUTH, sebelum START LOGIC); `{ maxRequests: 10, windowSeconds: 1800, identifier: "bca-adaptive-start" }` — session-scoped via `getClientKey` (bukan IP). answer/complete tidak di-rate-limit (idempoten).
+- **Registrasi sumber XP** (tanpa migrasi; source = String): `XP_SOURCES` (xp-engine.ts), `BATAS_XP_PER_SUBMIT: ADAPTIVE_PRACTICE: 200` (xp-guard.ts), `XP_CONFIG` + `XpSourceName` (baseXp 50, label "Latihan Adaptif"), label+ikon `"🎯"` (source-labels.ts). Formula aktual: `round(50 * correct / assigned)`.
+- **Constanta baru** `lib/adaptive-practice/config.ts`: `ADAPTIVE_SESSION_BASE_XP = 50`, `ADAPTIVE_START_RATE_LIMIT`.
+
+### Files
+| File | Perubahan |
+|------|-----------|
+| `app/api/player/adaptive-practice/route.ts` | completeSession gate + XP exactly-once + recovery path; start rate limit di POST dispatch |
+| `lib/adaptive-practice/config.ts` | +ADAPTIVE_SESSION_BASE_XP, +ADAPTIVE_START_RATE_LIMIT |
+| `lib/gamification/xp-engine.ts` | +ADAPTIVE_PRACTICE di XP_SOURCES |
+| `lib/xp-guard.ts` | +ADAPTIVE_PRACTICE: 200 |
+| `lib/gamification/xp-config.ts` | +XpSourceName +XP_CONFIG (baseXp 50, "Latihan Adaptif") |
+| `lib/gamification/source-labels.ts` | +label "Latihan Adaptif" +ikon "🎯" |
+| `scripts/test-adaptive-reward-hardening.ts` | BARU — 41 checks security/XP/rate-limit/gate |
+| `scripts/test-arena-web.ts` | Assertion protected-engines di-update (3 file registrasi XP 4D diizinkan) |
+| `scripts/test-gamification-engine.ts` | XP_CONFIG 15 → 16 sumber (+ADAPTIVE_PRACTICE) |
+| `package.json` | +`test:adaptive-reward-hardening` |
+| `docs/PHASE_2_STEP_4D_ADAPTIVE_REWARD_HARDENING.md` | Dokumentasi lengkap Step 4D |
+
+### Verifikasi (semua lulus)
+| Check | Hasil |
+|-------|-------|
+| `npm run test:adaptive-reward-hardening` | ✅ 41/41 |
+| `npm run test:adaptive-practice` | ✅ 25/25 |
+| `npm run test:adaptive-simulation` | ✅ 21/21 |
+| `npm run test:step3c-evidence` | ✅ 29/29 |
+| `npm run test:question-metadata` | ✅ 24/24 |
+| `npm run test:learner-state` | ✅ 24/24 |
+| `npm run test:my-day-home` | ✅ 37/37 |
+| `npm run test:student-home` | ✅ 61/61 |
+| `npm run test:arena-web` | ✅ 56/56 |
+| `npm run test:gamification-engine` | ✅ SEMUA LULUS |
+| `npm run test:premium-economy` | ✅ 63/63 |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| `npm run lint` | ✅ 0 violations |
+| `npm run build` (dummy env) | ✅ 368 pages, exit 0 |
+| `git diff --check` | ✅ bersih |
+| Production DB / migration / coin | 0 write / 0 migration / 0 coin (deferred) |
+| Commit/push | ✅ SEMUA fase 4A/4B/4B.5/4B.6/4C + 4D di-commit & di-push (instruksi founder Aug 15) |
+
+### COIN REWARD — DEFERRED
+CoinTransaction belum punya jaminan unik DB setingkat XPTransaction → reward koin rentan double-award. Deferred sampai migrasi unik CoinTransaction disetujui.
+
+### Remaining
+1. TKA UTBK/Guru enrichment 30 → 150
+2. Game server revival (VPS mati)
+3. GameRoom migration SQL via Supabase dashboard
+4. UI game solo: badge-score client vs server masih beda (kosmetik)
+5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)

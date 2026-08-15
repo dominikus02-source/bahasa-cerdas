@@ -151,7 +151,8 @@ ok("rank-up mengembalikan granted[] + hasNewRewards", /granted/.test(rankUp) && 
 // ── 12. XP config (Sprint 6) ──────────────────────────────────────────────
 const xpConfig = readFileSync(join(process.cwd(), "lib/gamification/xp-config.ts"), "utf8");
 const xpSources = (xpConfig.match(/^  [A-Z_]+: /gm) || []).length;
-ok(`XP_CONFIG punya 15 sumber XP (ditemukan ${xpSources})`, xpSources === 15);
+ok(`XP_CONFIG punya 16 sumber XP (ditemukan ${xpSources})`, xpSources === 16);
+ok("XP_CONFIG: ADAPTIVE_PRACTICE (Latihan Adaptif) ada", xpConfig.includes("ADAPTIVE_PRACTICE"));
 ok("XP_CONFIG: JALUR_CERDAS ada", /JALUR_CERDAS/.test(xpConfig));
 ok("XP_CONFIG: UPLOAD_KARYA ada", /UPLOAD_KARYA/.test(xpConfig));
 ok("XP_CONFIG: PENUGASAN_GURU ada", /PENUGASAN_GURU/.test(xpConfig));

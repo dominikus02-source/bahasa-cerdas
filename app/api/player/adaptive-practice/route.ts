@@ -5,12 +5,16 @@ import { getUser } from "@/lib/supabase/server";
 import { getLearnerState, isLearnerStateInfraUnavailable } from "@/lib/learner-state/service";
 import { upsertLearningEvidence, LEARNING_EVIDENCE_VERSION } from "@/lib/learning-loop/evidence";
 import { validateQuestionMetadata } from "@/lib/question-metadata/validation";
-import { ADAPTIVE_ALLOWED_SIZES, ADAPTIVE_MAX_CANDIDATES, ADAPTIVE_SELECTION_VERSION, ADAPTIVE_SUPPORTED_SOURCES } from "@/lib/adaptive-practice/config";
+import { ADAPTIVE_ALLOWED_SIZES, ADAPTIVE_MAX_CANDIDATES, ADAPTIVE_SELECTION_VERSION, ADAPTIVE_SUPPORTED_SOURCES, ADAPTIVE_SESSION_BASE_XP, ADAPTIVE_START_RATE_LIMIT } from "@/lib/adaptive-practice/config";
 import { selectAdaptivePractice } from "@/lib/adaptive-practice/selector";
 import type { AdaptiveCandidate } from "@/lib/adaptive-practice/types";
 import type { DifficultyId, QuestionTypeId } from "@/lib/question-metadata/taxonomy";
 import { dayKeyWIB } from "@/lib/learning-loop/journey";
 import { getSessionSummary } from "@/lib/learning-loop/session";
+import { awardXp } from "@/lib/award-xp";
+import { rateLimitRoute } from "@/lib/rate-limit";
+
+const ADAPTIVE_XP_SOURCE = "ADAPTIVE_PRACTICE";
 
 type JsonRecord = Record<string, unknown>;
 
@@ -299,15 +303,147 @@ async function answerSession(userId: string, body: JsonRecord) {
   return NextResponse.json({ ok: true, sessionId, questionId, correct, recorded: true });
 }
 
+/**
+ * Selesaikan sesi Adaptive Practice dengan gate keamanan penuh.
+ *
+ * Invariant (Step 4D Part A/B/G/H):
+ *   sesi sah + evidence lengkap → COMPLETED tepat sekali → XP tepat sekali.
+ *   Sesi tidak lengkap / kosong / expired / milik user lain → DITOLAK, 0 XP.
+ *
+ * Alur (race-safe):
+ *   1. Coverage gate: semua soal sesi wajib punya LearningEvidence milik user
+ *      (activityId = session.id). Client TIDAK bisa menyuplai evidence/skor.
+ *   2. Atomic claim: updateMany `status=COMPLETED` hanya untuk sesi milik user,
+ *      still IN_PROGRESS, belum expired. Dua permintaan yang bersamaan:
+ *      SATU pemenang (count=1); yang kalah → jalur recovery (4), tanpa 2× XP.
+ *   3. Klaim XP: `awardXp(..., reference = session.id)` — idempoten via
+ *      @@unique([userId, source, reference]). Hanya pemenang claim yang sampai
+ *      ke awardXp, jadi tidak ada kompetisi award langsung.
+ *   4. Recovery (count=0): saat sesi sudah COMPLETED tapi belum pernah dicairkan
+ *      XP (mis. award gagal diusulkan sebelumnya) → beri XP sekali lewat awardXp
+ *      (reference unik tetap melindungi). Selesai/expired/asing → 409, 0 XP.
+ *   5. Skor kebenaran murni dari evidence server-side — nilai klien
+ *      (score/XP/coin/correctAnswer/evidenceCount) TIDAK pernah dipakai.
+ */
 async function completeSession(userId: string, body: JsonRecord) {
   const sessionId = typeof body.sessionId === "string" ? body.sessionId : "";
   if (!sessionId) return NextResponse.json({ error: "sessionId wajib diisi" }, { status: 400 });
-  const updated = await db.adaptivePracticeSession.updateMany({
+
+  const claim = await db.adaptivePracticeSession.updateMany({
     where: { id: sessionId, userId, status: "IN_PROGRESS", expiresAt: { gt: new Date() } },
     data: { status: "COMPLETED", completedAt: new Date() },
   });
-  if (updated.count === 0) return NextResponse.json({ error: "Sesi tidak ditemukan atau sudah selesai" }, { status: 409 });
-  return NextResponse.json({ ok: true, sessionId, status: "COMPLETED" });
+
+  if (claim.count === 0) {
+    // Bukan pemenang: cek apakah ini replay/retry sesi yang sudah COMPLETED.
+    const existing = await db.adaptivePracticeSession.findFirst({
+      where: { id: sessionId, userId },
+      select: { status: true, questionIds: true },
+    });
+    if (!existing || existing.status !== "COMPLETED") {
+      return NextResponse.json({ error: "Sesi tidak ditemukan atau sudah berakhir" }, { status: 409 });
+    }
+    // Sesi sudah COMPLETED — beri XP HANYA jika belum pernah dicairkan (recovery).
+    const rewarded = await db.xPTransaction.findUnique({
+      where: { userId_source_reference: { userId, source: ADAPTIVE_XP_SOURCE, reference: sessionId } },
+      select: { amount: true },
+    });
+    if (rewarded) {
+      return NextResponse.json({
+        ok: true,
+        sessionId,
+        status: "COMPLETED",
+        xpEarned: 0,
+        replay: true,
+        alreadyRewarded: true,
+      });
+    }
+    const assigned = Array.isArray(existing.questionIds)
+      ? existing.questionIds.filter((id): id is string => typeof id === "string")
+      : [];
+    const evidenceRows = await db.learningEvidence.findMany({
+      where: { userId, activityId: sessionId, questionId: { in: assigned } },
+      select: { isCorrect: true, questionId: true },
+    });
+    const answeredSet = new Set(evidenceRows.map((row) => row.questionId));
+    if (assigned.length === 0 || answeredSet.size < assigned.length) {
+      return NextResponse.json({ error: "Sesi tidak lengkap" }, { status: 409 });
+    }
+    const correctCount = evidenceRows.filter((row) => row.isCorrect).length;
+    const xpAmount = Math.round((ADAPTIVE_SESSION_BASE_XP * correctCount) / assigned.length);
+    const hasil = await awardXp(userId, ADAPTIVE_XP_SOURCE, xpAmount, sessionId);
+    return NextResponse.json({
+      ok: true,
+      sessionId,
+      status: "COMPLETED",
+      xpEarned: hasil.xpDiberikan,
+      boosted: hasil.boosted,
+      kuotaHabis: hasil.kuotaHabis,
+      totalXp: hasil.totalXp,
+      level: hasil.levelBaru,
+      naikLevel: hasil.naikLevel,
+      recovered: true,
+    });
+  }
+
+  // Pemenang claim — (1) gate evidence terhadap soal SESI (bukan dari klien).
+  const sessionPayload = await db.adaptivePracticeSession.findUnique({
+    where: { id: sessionId },
+    select: { questionIds: true, status: true },
+  });
+  if (!sessionPayload || sessionPayload.status !== "COMPLETED") {
+    return NextResponse.json({ error: "Sesi sudah selesai. Tidak ada XP tambahan." }, { status: 409 });
+  }
+  const assigned = Array.isArray(sessionPayload.questionIds)
+    ? sessionPayload.questionIds.filter((id): id is string => typeof id === "string")
+    : [];
+  if (assigned.length === 0) {
+    await db.adaptivePracticeSession.updateMany({
+      where: { id: sessionId, userId, status: "COMPLETED" },
+      data: { status: "IN_PROGRESS", completedAt: null },
+    });
+    return NextResponse.json({ error: "Sesi tidak memiliki soal" }, { status: 409 });
+  }
+
+  const evidenceRows = await db.learningEvidence.findMany({
+    where: { userId, activityId: sessionId, questionId: { in: assigned } },
+    select: { isCorrect: true, questionId: true },
+  });
+  const answeredSet = new Set(evidenceRows.map((row) => row.questionId));
+  const answeredCount = answeredSet.size;
+  if (answeredCount < assigned.length) {
+    // (1b) Coverage tidak penuh → ubah kembali ke IN_PROGRESS + 0 XP.
+    await db.adaptivePracticeSession.updateMany({
+      where: { id: sessionId, userId, status: "COMPLETED" },
+      data: { status: "IN_PROGRESS", completedAt: null },
+    });
+    return NextResponse.json(
+      { error: `Sesi belum dikerjakan sepenuhnya (${answeredCount} dari ${assigned.length} soal dijawab)` },
+      { status: 409 }
+    );
+  }
+
+  // (3) Skor kebenaran murni dari evidence server-side (bukan klien).
+  const correctCount = evidenceRows.filter((row) => row.isCorrect).length;
+  const xpAmount = Math.round((ADAPTIVE_SESSION_BASE_XP * correctCount) / assigned.length);
+
+  // (4) Klaim XP — reference = session.id; @@unique([userId, source, reference])
+  //     menjamin retry/replay tidak pernah menambah XP dua kali.
+  const hasil = await awardXp(userId, ADAPTIVE_XP_SOURCE, xpAmount, sessionId);
+
+  return NextResponse.json({
+    ok: true,
+    sessionId,
+    status: "COMPLETED",
+    xpEarned: hasil.xpDiberikan,
+    boosted: hasil.boosted,
+    kuotaHabis: hasil.kuotaHabis,
+    totalXp: hasil.totalXp,
+    level: hasil.levelBaru,
+    naikLevel: hasil.naikLevel,
+    answered: answeredCount,
+    correct: correctCount,
+  });
 }
 
 /** One canonical endpoint: start, answer, and complete adaptive sessions. */
@@ -327,6 +463,12 @@ export async function POST(req: NextRequest) {
 
   try {
     if (body.action === "start") {
+      // Rate limit start (per user/session — getClientKey, bukan IP):
+      // 10 sesi per 30 menit. Pembelajaran sah (5-15 soal/sesi) sangat jauh
+      // di bawah itu; batas XP harian 5.000 tetap jaring pengaman terakhir.
+      const limited = await rateLimitRoute(req, ADAPTIVE_START_RATE_LIMIT);
+      if (limited) return limited;
+
       const size = body.size === undefined ? 5 : Number(body.size);
       if (!Number.isInteger(size) || !ADAPTIVE_ALLOWED_SIZES.includes(size as (typeof ADAPTIVE_ALLOWED_SIZES)[number])) {
         return NextResponse.json({ error: "Ukuran sesi harus 5, 10, atau 15" }, { status: 400 });

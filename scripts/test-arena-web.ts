@@ -169,13 +169,19 @@ function main() {
       const diff = execSync(`git diff --name-only HEAD -- prisma/`, { encoding: "utf8", cwd: process.cwd() }).trim().split("\n").filter(Boolean);
       return diff.every((file) => allowed.has(file));
     });
-  test("protected engines hanya berubah pada evidence helper Step 3C",
+  test("protected engines hanya berubah pada evidence helper Step 3C + registrasi sumber XP Step 4D",
     () => {
+      const allowed = new Set([
+        "lib/learning-loop/evidence.ts",
+        "lib/gamification/xp-engine.ts",
+        "lib/gamification/xp-config.ts",
+        "lib/gamification/source-labels.ts",
+      ]);
       const diff = execSync(
         `git diff --name-only HEAD -- lib/gamification/ lib/learning-loop/ engines/ lib/apk.ts lib/xp.ts lib/coins.ts lib/award-xp.ts`,
         { encoding: "utf8", cwd: process.cwd() }
       ).trim();
-      return diff.split("\n").filter(Boolean).every((file) => file === "lib/learning-loop/evidence.ts");
+      return diff.split("\n").filter(Boolean).every((file) => allowed.has(file));
     });
   test("app/api/ hanya berubah pada route yang diizinkan oleh fase security saat ini",
     () => {

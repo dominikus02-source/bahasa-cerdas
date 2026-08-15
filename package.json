@@ -227,11 +227,20 @@
     "test:learner-state": "npx tsx scripts/test-learner-state.ts",
     "test:adaptive-practice": "npx tsx scripts/test-adaptive-practice.ts",
     "test:adaptive-simulation": "npx tsx scripts/test-adaptive-simulation.ts",
+    "test:adaptive-reward-hardening": "npx tsx scripts/test-adaptive-reward-hardening.ts",
     "test:my-day-personalization": "npx tsx scripts/test-my-day-personalization.ts",
     "approve:metadata-manifest": "npx tsx scripts/approve-metadata-review-manifest.ts",
     "report:metadata-manifest": "npx tsx scripts/report-metadata-review-manifest.ts",
     "check:candidate-pool": "npx tsx scripts/check-adaptive-candidate-pool.ts",
-    "test:step3j-real-data": "npx tsx scripts/test-step3j-real-data.ts"
+    "test:step3j-real-data": "npx tsx scripts/test-step3j-real-data.ts",
+    "audit:step4a-schema": "npx tsx scripts/test-step4a-production-schema.ts",
+    "build:enrichment-manifest": "npx tsx scripts/enrichment-candidates-builder.ts --write",
+    "build:enrichment-manifest:dry-run": "npx tsx scripts/enrichment-candidates-builder.ts",
+    "check:enrichment-candidates": "npx tsx scripts/check-enrichment-candidates.ts",
+    "report:enrichment-manifest": "npx tsx scripts/report-enrichment-manifest.ts",
+    "test:enrichment-report": "npx tsx scripts/test-enrichment-report.ts",
+    "approve:enrichment-manifest": "npx tsx scripts/approve-enrichment-manifest.ts",
+    "test:enrichment-approval": "npx tsx scripts/test-enrichment-approval.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
