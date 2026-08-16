@@ -207,6 +207,26 @@ export async function runAgentStream(
         const msg = e instanceof ProviderChainFailedError
           ? "Layanan AI sedang sibuk. Silakan coba lagi."
           : "Gagal terhubung ke layanan AI. Silakan coba lagi.";
+        // STEP 4E.2A — kegagalan provider streaming DICATAT (sebelumnya tidak
+        // tercatat sama sekali → dashboard buta). Logging layer only.
+        logUsage({
+          userId: context.userId,
+          agentId: agent.id as never,
+          input,
+          output: null,
+          success: false,
+          error: msg,
+          errorCode: "PROVIDER_ERROR",
+          promptTokens: 0,
+          completionTokens: 0,
+          totalTokens: 0,
+          costUSD: 0,
+          provider: streamProvider || "none",
+          model: streamModel,
+          latencyMs: Date.now() - startTime,
+          durationMs: Date.now() - startTime,
+          createdAt: new Date(),
+        }).catch(() => {});
         onEvent({ type: "error", code: "PROVIDER_UNAVAILABLE", message: msg });
         onEvent({ type: "done" });
         return;
@@ -224,6 +244,26 @@ export async function runAgentStream(
           // jatuh ke error di bawah
         }
       }
+      // STEP 4E.2A — response kosong dicatat agar dashboard bisa membedakan
+      // EMPTY_RESPONSE dari kegagalan lain (logging layer only).
+      logUsage({
+        userId: context.userId,
+        agentId: agent.id as never,
+        input,
+        output: null,
+        success: false,
+        error: "AI tidak menghasilkan output. Silakan coba lagi.",
+        errorCode: "EMPTY_RESPONSE",
+        promptTokens: 0,
+        completionTokens: 0,
+        totalTokens: 0,
+        costUSD: 0,
+        provider: streamProvider || "none",
+        model: streamModel,
+        latencyMs: Date.now() - startTime,
+        durationMs: Date.now() - startTime,
+        createdAt: new Date(),
+      }).catch(() => {});
       onEvent({ type: "error", code: "EMPTY_RESPONSE", message: "AI tidak menghasilkan output. Silakan coba lagi." });
       onEvent({ type: "done" });
       return;

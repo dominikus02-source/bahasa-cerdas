@@ -45,6 +45,20 @@ export interface RunAgentOptions {
 
 const OUTPUT_VALIDATION_FAILED = "Gagal memvalidasi output. Silakan coba dengan input yang lebih spesifik.";
 
+/**
+ * STEP 4E.2A — klasifikasi stage kegagalan untuk telemetri (dashboard harus
+ * tahu: PROVIDER / PARSER / VALIDATION / EMPTY / UNKNOWN). HANYA untuk
+ * kolom errorCode AIUsage — tidak mengubah perilaku/alur apa pun.
+ */
+function errorCodeFor(error: string | null): string | null {
+  if (!error) return null;
+  if (error.includes("Layanan AI sedang sibuk") || /provider|timeout|busy/i.test(error)) return "PROVIDER_ERROR";
+  if (error.includes("Gagal memvalidasi output")) return "OUTPUT_VALIDATION_FAILED";
+  if (/empty|tidak menghasilkan|AI tidak menghasilkan/i.test(error)) return "PROVIDER_EMPTY_RESPONSE";
+  if (error.includes("Input tidak valid")) return "INVALID_INPUT";
+  return "UNKNOWN_ERROR";
+}
+
 async function attemptProviderCall(
   opts: PromptBuildOptions,
   agent: AgentDefinition<any, any>,
@@ -294,12 +308,16 @@ export async function runAgent(opts: RunAgentOptions): Promise<AgentRunResult> {
       output: finalOutput,
       success: !finalError,
       error: finalError,
+      errorCode: errorCodeFor(finalError),
       promptTokens: usageTokens.prompt,
       completionTokens: usageTokens.completion,
       totalTokens: usageTokens.total,
       costUSD: estimateCost(provider as never, usageTokens.total),
       provider,
       model,
+      // STEP 4E.2A — latencyMs WAJIB diisi di jalur apa pun (sebelumnya hanya
+      // durationMs; failure/success sama-sama null → dashboard "Latency —").
+      latencyMs: latencyMs || durationMs,
       durationMs,
       createdAt: new Date(),
     }).catch(() => {});
@@ -352,12 +370,14 @@ export async function runAgent(opts: RunAgentOptions): Promise<AgentRunResult> {
           output: fallbackOutput,
           success: true,
           error: null,
+          errorCode: null,
           promptTokens: 0,
           completionTokens: 0,
           totalTokens: 0,
           costUSD: 0,
           provider: "fallback-template",
           model,
+          latencyMs: latencyMs || durationMs,
           durationMs,
           createdAt: new Date(),
         }).catch(() => {});
@@ -404,12 +424,16 @@ export async function runAgent(opts: RunAgentOptions): Promise<AgentRunResult> {
       output: null,
       success: false,
       error: finalError,
+      errorCode: errorCodeFor(finalError),
       promptTokens: 0,
       completionTokens: 0,
       totalTokens: 0,
       costUSD: 0,
       provider,
       model,
+      // STEP 4E.2A — failure tetap merekam latency (provider latency bila ada,
+      // fallback durasi total) supaya dashboard tidak lagi menampilkan "—".
+      latencyMs: latencyMs || durationMs,
       durationMs,
       createdAt: new Date(),
     }).catch(() => {});
