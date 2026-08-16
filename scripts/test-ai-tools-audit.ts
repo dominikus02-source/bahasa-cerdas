@@ -94,10 +94,10 @@ function main() {
   });
 
   // 6. Rantai provider utuh
-  console.log("\n── 6. Rantai provider (DeepSeek→Groq→Gemini) ──");
+  console.log("\n── 6. Rantai provider (Groq primary — keputusan founder 5.1.3) ──");
   const provider = read("src/ai/core/provider.ts");
-  check("6. default priority deepseek,groq,gemini + override AI_PROVIDER_PRIORITY",
-    () => provider.includes('["deepseek", "groq", "gemini"]') && provider.includes("AI_PROVIDER_PRIORITY"));
+  check("6. default priority = groq only + override AI_PROVIDER_PRIORITY",
+    () => provider.includes('return ["groq"];') && provider.includes("AI_PROVIDER_PRIORITY"));
   check("6. Groq rantai model 120b→20b (providerModels)",
     () => provider.includes('"openai/gpt-oss-120b", "openai/gpt-oss-20b"'));
   check("6. providerModels('groq', 'deepseek-chat') = [120b, 20b]",

@@ -175,12 +175,12 @@ function main() {
       return diff.length === 1 && diff[0] === "src/ai/core/provider.ts";
     });
 
-  // 13. fallback chain tetap utuh (3 provider, priority)
-  console.log("\n── 13. Chain provider utuh ──");
-  check("13. priority default deepseek,groq,gemini + AI_PROVIDER_PRIORITY override",
-    () => provider.includes('["deepseek", "groq", "gemini"]') && provider.includes("AI_PROVIDER_PRIORITY"));
-  check("13. PROVIDER_STREAMERS mencakup ketiga provider",
-    () => provider.includes("deepseek: streamDeepSeek") && provider.includes("groq: streamGroq") && provider.includes("gemini: streamGemini"));
+  // 13. chain provider (Groq-only sesuai keputusan founder 5.1.3)
+  console.log("\n── 13. Chain provider (Groq primary) ──");
+  check("13. default priority = groq only + AI_PROVIDER_PRIORITY override",
+    () => provider.includes('return ["groq"];') && provider.includes("AI_PROVIDER_PRIORITY"));
+  check("13. streamGroq menjadi satu-satunya streamer yang aktif di default priority",
+    () => provider.includes('PROVIDER_STREAMERS["groq"]') || provider.includes("groq: streamGroq"));
 
   // 14. konsistensi: getProviderForModel masih memetakan deepseek-chat
   check("14. getProviderForModel('deepseek-chat') → 'deepseek'",

@@ -79,7 +79,10 @@ function loadPriority(): ProviderName[] {
       return parsed;
     }
   }
-  return ["deepseek", "groq", "gemini"];
+  // STEP 5.1.3 — keputusan founder: HANYA Groq yang dipakai (gpt-oss-120b →
+  // gpt-oss-20b, cepat, murah, max output 65K). DeepSeek & Gemini
+  // dinonaktifkan dari chain (implementasi tetap ada sebagai kode dorman).
+  return ["groq"];
 }
 
 const MODEL_MAP: Record<string, ProviderName> = {
