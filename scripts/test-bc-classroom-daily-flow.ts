@@ -14,9 +14,15 @@ const exists = (p: string) => existsSync(p);
 
 let passed = 0;
 let failed = 0;
-function check(name: string, ok: boolean) {
-  if (ok) { passed++; console.log(`  ✅ ${name}`); }
-  else { failed++; console.log(`  ❌ ${name}`); }
+let discovered = 0;
+function check(name: string, fn: () => boolean) {
+  discovered++;
+  try {
+    if (fn()) { passed++; console.log(`  ✅ ${name}`); }
+    else { failed++; console.log(`  ❌ ${name}`); }
+  } catch (e) {
+    failed++; console.log(`  ❌ ${name} — ${(e as Error).message}`);
+  }
 }
 
 const guruPage = read("app/(dashboard)/guru/kelasku/page.tsx");
@@ -35,7 +41,7 @@ function main() {
   check("2. TodayView ada: 'Hari Ini' + 'N aktivitas sedang berjalan'",
     () => guruPage.includes("Hari Ini") && guruPage.includes("aktivitas sedang berjalan"));
   check("2. TodayView menampilkan progress (X dari Y sudah) + tombol Tambahkan",
-    () => guruPage.includes("dari ${a.total}") && guruPage.includes("bc-btn-primary text-sm shrink-0"));
+    () => guruPage.includes("dari {a.total}") && guruPage.includes("bc-btn-primary text-sm shrink-0"));
 
   // 3. One primary action
   console.log("\n── 3. Satu primary action ──");
@@ -143,7 +149,11 @@ function main() {
     });
 
   console.log("\n" + "=".repeat(60));
-  console.log(`Hasil: ${passed} lulus, ${failed} gagal`);
+  console.log(`Discovered: ${discovered}`);
+  console.log(`Executed: ${passed + failed}`);
+  console.log(`Passed: ${passed}`);
+  console.log(`Failed: ${failed}`);
+  console.log(`Skipped: 0`);
   if (failed > 0) process.exit(1);
   process.exit(0);
 }

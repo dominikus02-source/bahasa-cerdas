@@ -87,17 +87,13 @@ export const GURU_NAV: NavGroup[] = [
     id: "kelasku",
     label: "Kelasku",
     icon: Users,
-    links: [
-      { label: "Dashboard Kelas", href: "/guru/kelasku" },
-      { label: "Tugas", href: "/guru/tugas-murid" },
-      {
-        label: "Nilai",
-        href: "/guru/penilaian",
-        // Buku Nilai (gradebook) + subhalaman nilai tetap menandai "Nilai" aktif.
-        activeOn: ["/guru/penilaian", "/guru/gradebook"],
-      },
-      { label: "Data Siswa", href: "/guru/data-siswa" },
-    ],
+    // STEP 6.8 — NAVIGATION SIMPLIFICATION: Kelasku = SATU destination.
+    // Tidak ada child nav (Dashboard Kelas/Tugas/Nilai/Data Siswa) di sidebar;
+    // semua fungsi berada DI DALAM konteks kelas (tab Aktivitas/Materi/Tugas/
+    // Nilai/Orang). Halaman lama (/guru/tugas-murid, /guru/penilaian,
+    // /guru/gradebook, /guru/data-siswa) TETAP hidup dan diakses dari dalam
+    // kelas — capability preserved, navigation disederhanakan.
+    href: "/guru/kelasku",
   },
   {
     id: "gim",

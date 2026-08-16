@@ -14,9 +14,15 @@ const exists = (p: string) => existsSync(p);
 
 let passed = 0;
 let failed = 0;
-function check(name: string, ok: boolean) {
-  if (ok) { passed++; console.log(`  ✅ ${name}`); }
-  else { failed++; console.log(`  ❌ ${name}`); }
+let discovered = 0;
+function check(name: string, fn: () => boolean) {
+  discovered++;
+  try {
+    if (fn()) { passed++; console.log(`  ✅ ${name}`); }
+    else { failed++; console.log(`  ❌ ${name}`); }
+  } catch (e) {
+    failed++; console.log(`  ❌ ${name} — ${(e as Error).message}`);
+  }
 }
 
 const muridApi = read("app/api/murid/kelasku/[id]/route.ts");
@@ -118,7 +124,11 @@ function main() {
     });
 
   console.log("\n" + "=".repeat(60));
-  console.log(`Hasil: ${passed} lulus, ${failed} gagal`);
+  console.log(`Discovered: ${discovered}`);
+  console.log(`Executed: ${passed + failed}`);
+  console.log(`Passed: ${passed}`);
+  console.log(`Failed: ${failed}`);
+  console.log(`Skipped: 0`);
   if (failed > 0) process.exit(1);
   process.exit(0);
 }

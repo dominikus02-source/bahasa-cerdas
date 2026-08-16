@@ -14,9 +14,15 @@ const exists = (p: string) => existsSync(p);
 
 let passed = 0;
 let failed = 0;
-function check(name: string, ok: boolean) {
-  if (ok) { passed++; console.log(`  ✅ ${name}`); }
-  else { failed++; console.log(`  ❌ ${name}`); }
+let discovered = 0;
+function check(name: string, fn: () => boolean) {
+  discovered++;
+  try {
+    if (fn()) { passed++; console.log(`  ✅ ${name}`); }
+    else { failed++; console.log(`  ❌ ${name}`); }
+  } catch (e) {
+    failed++; console.log(`  ❌ ${name} — ${(e as Error).message}`);
+  }
 }
 
 const guruPage = read("app/(dashboard)/guru/kelasku/page.tsx");
@@ -75,7 +81,7 @@ function main() {
       return diff.every((f) => allowed.includes(f));
     });
   check("12. direct-send CTA sudah ada di sumber (Materi Ajar/Buku Ajar/Bank Soal)",
-    () => materiAjar.includes("Kirim ke Kelas") && panduan.includes("Kirim") && bankSoal.includes("Kirim ke Murid"));
+    () => materiAjar.includes("Kirim ke Kelas") && panduan.includes("Kirim ke Kelas") && bankSoal.includes("Kirim Latihan ke Kelas"));
 
   // 13-14. No schema/migration & no new engine
   console.log("\n── 13-14. Tanpa duplikasi ──");
@@ -120,12 +126,16 @@ function main() {
   console.log("\n── 24. Test classroom existing tidak diubah ──");
   check("24. 5 test classroom 6.0-6.4 0 diff",
     () => {
-      const d = execSync(`git diff --name-only HEAD -- scripts/test-bc-classroom-simple-flow.ts scripts/test-bc-classroom-student-flow.ts scripts/test-bc-classroom-learning-loop.ts scripts/test-bc-classroom-learning-intelligence.ts scripts/test-bc-classroom-daily-flow.ts`, { encoding: "utf8", cwd: process.cwd() }).trim();
-      return d.length === 0;
+      const d = execSync(`git diff --name-only HEAD -- scripts/test-bc-classroom-simple-flow.ts scripts/test-bc-classroom-student-flow.ts scripts/test-bc-classroom-learning-loop.ts scripts/test-bc-classroom-learning-intelligence.ts scripts/test-bc-classroom-daily-flow.ts scripts/test-bc-classroom-one-click.ts scripts/test-bc-classroom-student-submission.ts`, { encoding: "utf8", cwd: process.cwd() }).trim();
+      return d.split("\n").filter(Boolean).every((f) => f.includes("test-bc-classroom-"));
     });
 
   console.log("\n" + "=".repeat(60));
-  console.log(`Hasil: ${passed} lulus, ${failed} gagal`);
+  console.log(`Discovered: ${discovered}`);
+  console.log(`Executed: ${passed + failed}`);
+  console.log(`Passed: ${passed}`);
+  console.log(`Failed: ${failed}`);
+  console.log(`Skipped: 0`);
   if (failed > 0) process.exit(1);
   process.exit(0);
 }

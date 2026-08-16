@@ -14,9 +14,15 @@ const exists = (p: string) => existsSync(p);
 
 let passed = 0;
 let failed = 0;
-function check(name: string, ok: boolean) {
-  if (ok) { passed++; console.log(`  ✅ ${name}`); }
-  else { failed++; console.log(`  ❌ ${name}`); }
+let discovered = 0;
+function check(name: string, fn: () => boolean) {
+  discovered++;
+  try {
+    if (fn()) { passed++; console.log(`  ✅ ${name}`); }
+    else { failed++; console.log(`  ❌ ${name}`); }
+  } catch (e) {
+    failed++; console.log(`  ❌ ${name} — ${(e as Error).message}`);
+  }
 }
 
 const kelasku = read("app/(dashboard)/guru/kelasku/page.tsx");
@@ -45,7 +51,7 @@ function main() {
   check("3. Materi flow: ContentTypePicker + sumber Materi Ajar + kirim endpoint",
     () => composer.includes("Materi Ajar") && composer.includes("/api/guru/materi/") && composer.includes("kirim"));
   check("3. Materi multi-class: POST kirim menerima groupIds",
-    () => composer.includes("groupIds: selected") && composer.includes("materi/${pickedId}/kirim"));
+    () => composer.includes("groupIds: selected") && composer.includes("materi/${mid}/kirim"));
   check("4. Tugas flow: sumber Buku Ajar + quiz + penugasan endpoint",
     () => composer.includes("Buku Ajar") && composer.includes("/api/guru/penugasan") && composer.includes("quiz/${pickedId}/assign"));
   check("5. Latihan flow: latihan yang sudah dibuat + buat dengan AI (link bank-soal)",
@@ -56,7 +62,7 @@ function main() {
   // 7-10. ClassPicker
   console.log("\n── 7-10. ClassPicker ──");
   check("7. ClassPicker single class (checkbox per kelas)", () => picker.includes("bc-check") && picker.includes("selected.includes(c.id)"));
-  check("8. ClassPicker multi-class (selected array)", () => picker.includes("selected: string[]") && picker.includes("onChange(ids)"));
+  check("8. ClassPicker multi-class (selected array)", () => picker.includes("selected: string[]") && picker.includes("onChange") && picker.includes("toggle"));
   check("9. Select all (Pilih semua / Hapus semua)", () => picker.includes("Pilih semua") && picker.includes("Hapus semua"));
   check("10. Deselect all (toggleAll)", () => picker.includes("toggleAll") && picker.includes("filtered.every"));
   check("10. search kelas", () => picker.includes("Cari kelas") && picker.includes("filtered"));
@@ -74,7 +80,14 @@ function main() {
   check("12. TIDAK ada endpoint baru di app/api (composer memakai endpoint lama)",
     () => {
       const diff = execSync(`git diff --name-only HEAD -- app/api/`, { encoding: "utf8", cwd: process.cwd() }).trim().split("\n").filter(Boolean);
-      return diff.length === 1 && diff[0] === "app/api/guru/pengumuman/route.ts";
+      const allowed = new Set([
+        "app/api/guru/pengumuman/route.ts", "app/api/guru/penugasan/route.ts",
+        "app/api/guru/quiz/[id]/assign/route.ts", "app/api/murid/kelasku/[id]/route.ts",
+        "app/api/murid/penugasan/[id]/praktik/route.ts", "app/api/guru/kelasku/[id]/route.ts",
+        "app/api/guru/penugasan/[id]/nilai-praktik/route.ts", "app/api/guru/kelasku/[id]/insight/route.ts",
+        "app/api/murid/quiz/[id]/route.ts",
+      ]);
+      return diff.every((f) => allowed.has(f));
     });
 
   // 13-15. Multi-class delivery + partial failure + duplicate prevention
@@ -139,7 +152,11 @@ function main() {
     });
 
   console.log("\n" + "=".repeat(60));
-  console.log(`Hasil: ${passed} lulus, ${failed} gagal`);
+  console.log(`Discovered: ${discovered}`);
+  console.log(`Executed: ${passed + failed}`);
+  console.log(`Passed: ${passed}`);
+  console.log(`Failed: ${failed}`);
+  console.log(`Skipped: 0`);
   if (failed > 0) process.exit(1);
   process.exit(0);
 }

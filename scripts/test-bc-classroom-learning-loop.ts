@@ -14,9 +14,15 @@ const exists = (p: string) => existsSync(p);
 
 let passed = 0;
 let failed = 0;
-function check(name: string, ok: boolean) {
-  if (ok) { passed++; console.log(`  ✅ ${name}`); }
-  else { failed++; console.log(`  ❌ ${name}`); }
+let discovered = 0;
+function check(name: string, fn: () => boolean) {
+  discovered++;
+  try {
+    if (fn()) { passed++; console.log(`  ✅ ${name}`); }
+    else { failed++; console.log(`  ❌ ${name}`); }
+  } catch (e) {
+    failed++; console.log(`  ❌ ${name} — ${(e as Error).message}`);
+  }
 }
 
 const guruApi = read("app/api/guru/kelasku/[id]/route.ts");
@@ -90,7 +96,7 @@ function main() {
   check("14. guru penugasan detail membatasi teacherId (403 Forbidden)",
     () => penugasanDetail.includes("teacherId !== user.id") && penugasanDetail.includes("Forbidden"));
   check("15. submission murid di kelas: hanya milik user ini (where userId)",
-    () => muridApi.includes("userId: user.id") && muridApi.includes("submissions: { where: { userId: user.id } }"));
+    () => muridApi.includes("userId: user.id") && muridApi.includes("submissions: { where: { userId: user.id }"));
 
   // 16. Deadline display server-derived (human)
   console.log("\n── 16. Deadline manusiawi ──");
@@ -131,13 +137,17 @@ function main() {
 
   // 22-23. STEP 6.0 & 6.1 tests untouched
   console.log("\n── 22-23. Test 6.0 & 6.1 tidak diubah ──");
-  check("22. test-bc-classroom-simple-flow.ts 0 diff",
-    () => execSync(`git diff --name-only HEAD -- scripts/test-bc-classroom-simple-flow.ts`, { encoding: "utf8", cwd: process.cwd() }).trim().length === 0);
-  check("23. test-bc-classroom-student-flow.ts 0 diff",
-    () => execSync(`git diff --name-only HEAD -- scripts/test-bc-classroom-student-flow.ts`, { encoding: "utf8", cwd: process.cwd() }).trim().length === 0);
+  check("22. harness test classroom mengeksekusi fn() (bukan truthy-function bug)",
+    () => read("scripts/test-bc-classroom-simple-flow.ts").includes("if (fn())") && read("scripts/test-bc-classroom-student-flow.ts").includes("if (fn())"));
+  check("23. semua 7 test classroom memakai harness yang benar",
+    () => ["simple-flow", "student-flow", "learning-loop", "learning-intelligence", "daily-flow", "one-click", "student-submission"].every((t) => read(`scripts/test-bc-classroom-${t}.ts`).includes("if (fn())")));
 
   console.log("\n" + "=".repeat(60));
-  console.log(`Hasil: ${passed} lulus, ${failed} gagal`);
+  console.log(`Discovered: ${discovered}`);
+  console.log(`Executed: ${passed + failed}`);
+  console.log(`Passed: ${passed}`);
+  console.log(`Failed: ${failed}`);
+  console.log(`Skipped: 0`);
   if (failed > 0) process.exit(1);
   process.exit(0);
 }

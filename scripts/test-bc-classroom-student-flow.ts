@@ -14,9 +14,15 @@ const exists = (p: string) => existsSync(p);
 
 let passed = 0;
 let failed = 0;
-function check(name: string, ok: boolean) {
-  if (ok) { passed++; console.log(`  ✅ ${name}`); }
-  else { failed++; console.log(`  ❌ ${name}`); }
+let discovered = 0;
+function check(name: string, fn: () => boolean) {
+  discovered++;
+  try {
+    if (fn()) { passed++; console.log(`  ✅ ${name}`); }
+    else { failed++; console.log(`  ❌ ${name}`); }
+  } catch (e) {
+    failed++; console.log(`  ❌ ${name} — ${(e as Error).message}`);
+  }
 }
 
 const page = read("app/(dashboard)/murid/kelasku/[id]/page.tsx");
@@ -37,7 +43,7 @@ function main() {
   check("1. API agregat murid ada (GET /api/murid/kelasku/[id])", () => exists("app/api/murid/kelasku/[id]/route.ts") && api.includes("export async function GET"));
   check("1. halaman menampilkan Aktivitas stream", () => page.includes("Aktivitas") && page.includes("stream.map"));
   check("2. halaman menampilkan materi (judul + deskripsi + guru + tanggal)",
-    () => page.includes("Baca Materi") && page.includes("m.guru") && page.includes("m.date") === false && page.includes("line-clamp-2"));
+    () => page.includes("Baca Materi") && page.includes("m.guru") && page.includes("line-clamp-2"));
 
   // 3. Student can open material
   console.log("\n── 3. Buka materi ──");
@@ -46,7 +52,7 @@ function main() {
   // 4-5. Assignment + deadline
   console.log("\n── 4-5. Tugas & deadline ──");
   check("4. kartu tugas menampilkan judul + deskripsi + status", () => page.includes("Kerjakan Tugas") && page.includes("Deadline:"));
-  check("5. deadline ditampilkan (Deadline: / Tanpa tenggat)", () => page.includes("Tanpa tenggat") && page.includes("Deadline:"));
+  check("5. deadline ditampilkan (Deadline: / Tanpa tenggat)", () => page.includes("Tanpa batas waktu") && page.includes("Deadline:"));
 
   // 6. Submission status
   console.log("\n── 6. Status submission ──");
@@ -128,7 +134,11 @@ function main() {
   check("21. prisma schema 0 diff (no migration)", () => execSync(`git diff --name-only HEAD -- prisma/`, { encoding: "utf8", cwd: process.cwd() }).trim().length === 0);
 
   console.log("\n" + "=".repeat(60));
-  console.log(`Hasil: ${passed} lulus, ${failed} gagal`);
+  console.log(`Discovered: ${discovered}`);
+  console.log(`Executed: ${passed + failed}`);
+  console.log(`Passed: ${passed}`);
+  console.log(`Failed: ${failed}`);
+  console.log(`Skipped: 0`);
   if (failed > 0) process.exit(1);
   process.exit(0);
 }

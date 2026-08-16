@@ -159,6 +159,7 @@
     "test:bc-classroom-daily-flow": "npx tsx scripts/test-bc-classroom-daily-flow.ts",
     "test:bc-classroom-one-click": "npx tsx scripts/test-bc-classroom-one-click.ts",
     "test:bc-classroom-student-submission": "npx tsx scripts/test-bc-classroom-student-submission.ts",
+    "test:bc-classroom-teacher-experience": "npx tsx scripts/test-bc-classroom-teacher-experience.ts",
     "test:hydration-safety": "tsx scripts/test-hydration-safety.ts",
     "test:feed-infinite-scroll": "tsx scripts/test-feed-infinite-scroll.ts",
     "test:reward-integrity": "tsx scripts/test-reward-integrity.ts",

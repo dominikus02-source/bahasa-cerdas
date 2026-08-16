@@ -373,10 +373,10 @@ export default function KelasKuPage() {
   const stream = useMemo(() => {
     if (!detail) return [];
     const items: { id: string; kind: "pengumuman" | "tugas" | "materi"; date: string; node: unknown }[] = [
-      ...detail.pengumuman.map((p) => ({ id: `p-${p.id}`, kind: "pengumuman" as const, date: p.createdAt, node: p })),
-      ...detail.tugasQuiz.map((t) => ({ id: `q-${t.id}`, kind: "tugas" as const, date: t.assignedAt, node: t })),
-      ...detail.tugasPenugasan.map((p) => ({ id: `t-${p.id}`, kind: "tugas" as const, date: p.createdAt, node: p })),
-      ...detail.materis.map((m) => ({ id: `m-${m.id}`, kind: "materi" as const, date: m.createdAt, node: m })),
+      ...(detail.pengumuman ?? []).map((p) => ({ id: `p-${p.id}`, kind: "pengumuman" as const, date: p.createdAt, node: p })),
+      ...(detail.tugasQuiz ?? []).map((t) => ({ id: `q-${t.id}`, kind: "tugas" as const, date: t.assignedAt, node: t })),
+      ...(detail.tugasPenugasan ?? []).map((p) => ({ id: `t-${p.id}`, kind: "tugas" as const, date: p.createdAt, node: p })),
+      ...(detail.materis ?? []).map((m) => ({ id: `m-${m.id}`, kind: "materi" as const, date: m.createdAt, node: m })),
     ];
     return items.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 40);
   }, [detail]);
@@ -396,10 +396,10 @@ export default function KelasKuPage() {
               </span>
               <h1 className="text-2xl md:text-[28px] font-bold text-[var(--clr-text)] mt-2 truncate">{activeGroup.name}</h1>
               <p className="flex items-center gap-1.5 text-sm text-[var(--clr-text-2)] mt-1">
-                <Users size={14} /> {detail?.stats.totalMurid ?? activeGroup.memberCount} siswa
-                {detail && detail.stats.tugasAktif > 0 && (
+                <Users size={14} /> {detail?.stats?.totalMurid ?? activeGroup.memberCount} siswa
+                {detail && (detail.stats?.tugasAktif ?? 0) > 0 && (
                   <span className="ml-2 inline-flex items-center gap-1 text-[var(--clr-warning)] font-semibold">
-                    <FileText size={13} /> {detail.stats.tugasAktif} tugas aktif
+                    <FileText size={13} /> {detail.stats?.tugasAktif ?? 0} tugas aktif
                   </span>
                 )}
               </p>
@@ -480,8 +480,8 @@ export default function KelasKuPage() {
                   item={item}
                   progress={
                     item.kind === "tugas"
-                      ? detail.ringkasanPenugasan.find((x) => x.id === (item.node as DetailData["tugasPenugasan"][number]).id)
-                      : detail.ringkasanQuiz.find((x) => x.id === (item.node as DetailData["tugasQuiz"][number]).id)
+                      ? (detail.ringkasanPenugasan ?? []).find((x) => x.id === (item.node as DetailData["tugasPenugasan"][number]).id)
+                      : (detail.ringkasanQuiz ?? []).find((x) => x.id === (item.node as DetailData["tugasQuiz"][number]).id)
                   }
                   onReview={setReviewPenugasan}
                   onEditPengumuman={setEditPengumuman}
@@ -493,14 +493,17 @@ export default function KelasKuPage() {
             )}
           </div>
         ) : tab === "materi" && detail ? (
-          detail.materis.length === 0 ? (
+          (detail.materis ?? []).length === 0 ? (
             <div className="bc-card bc-empty">
               <p className="text-sm font-bold text-[var(--clr-text)]">Belum ada materi</p>
               <p className="text-xs text-[var(--clr-text-2)] mt-1">Bagikan materi pertama dengan tombol + Tambahkan.</p>
+              <button type="button" onClick={() => openComposer(activeGroup ? [activeGroup.id] : undefined)} className="bc-btn-primary mt-4 text-sm mx-auto">
+                <Plus size={17} /> Tambahkan Materi
+              </button>
             </div>
           ) : (
             <div className="space-y-3">
-              {detail.materis.map((m) => (
+              {(detail.materis ?? []).map((m) => (
                 <div key={m.id} className="bc-card p-4 flex items-center gap-3">
                   <span className="w-10 h-10 rounded-xl bg-[var(--clr-accent-soft)] text-[var(--clr-accent-strong)] flex items-center justify-center shrink-0"><BookOpen size={18} /></span>
                   <div className="flex-1 min-w-0">
@@ -517,15 +520,18 @@ export default function KelasKuPage() {
             <SubmissionReview penugasanId={reviewPenugasan.id} groupId={activeGroup.id} onClose={() => setReviewPenugasan(null)} onGraded={() => loadDetail(activeGroup.id)} />
           ) : (
           <div className="space-y-4">
-            {detail.tugasQuiz.length === 0 && detail.tugasPenugasan.length === 0 ? (
+            {(detail.tugasQuiz ?? []).length === 0 && (detail.tugasPenugasan ?? []).length === 0 ? (
               <div className="bc-card bc-empty">
                 <p className="text-sm font-bold text-[var(--clr-text)]">Belum ada tugas</p>
                 <p className="text-xs text-[var(--clr-text-2)] mt-1">Berikan tugas pertama dengan tombol + Tambahkan.</p>
+                <button type="button" onClick={() => openComposer(activeGroup ? [activeGroup.id] : undefined)} className="bc-btn-primary mt-4 text-sm mx-auto">
+                  <Plus size={17} /> Tambahkan Tugas
+                </button>
               </div>
             ) : (
               <>
-                {detail.tugasQuiz.map((t) => {
-                  const r = detail.ringkasanQuiz.find((x) => x.id === t.id);
+                {(detail.tugasQuiz ?? []).map((t) => {
+                  const r = (detail.ringkasanQuiz ?? []).find((x) => x.id === t.id);
                   return (
                   <div key={t.id} className="bc-card p-4 flex items-center gap-3">
                     <span className="w-10 h-10 rounded-xl bg-[var(--clr-violet-soft)] text-[var(--clr-violet)] flex items-center justify-center shrink-0"><FileText size={18} /></span>
@@ -541,8 +547,8 @@ export default function KelasKuPage() {
                   </div>
                   );
                 })}
-                {detail.tugasPenugasan.map((p) => {
-                  const r = detail.ringkasanPenugasan.find((x) => x.id === p.id);
+                {(detail.tugasPenugasan ?? []).map((p) => {
+                  const r = (detail.ringkasanPenugasan ?? []).find((x) => x.id === p.id);
                   return (
                   <div key={p.id} className="bc-card p-4 flex items-center gap-3">
                     <span className="w-10 h-10 rounded-xl bg-[var(--clr-violet-soft)] text-[var(--clr-violet)] flex items-center justify-center shrink-0"><BookOpen size={18} /></span>
@@ -571,11 +577,11 @@ export default function KelasKuPage() {
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="bc-card p-5">
                 <p className="text-xs font-semibold uppercase tracking-wide text-[var(--clr-text-3)]">Rata-rata Nilai</p>
-                <p className="text-3xl font-bold text-[var(--clr-text)] mt-1">{detail.stats.nilaiRata ?? "—"}</p>
+                <p className="text-3xl font-bold text-[var(--clr-text)] mt-1">{detail.stats?.nilaiRata ?? "—"}</p>
               </div>
               <div className="bc-card p-5">
                 <p className="text-xs font-semibold uppercase tracking-wide text-[var(--clr-text-3)]">Progres Belajar</p>
-                <p className="text-3xl font-bold text-[var(--clr-text)] mt-1">{detail.stats.progressMurid}%</p>
+                <p className="text-3xl font-bold text-[var(--clr-text)] mt-1">{detail.stats?.progressMurid ?? 0}%</p>
               </div>
             </div>
             <ClassInsight groupId={activeGroup.id} />
@@ -587,7 +593,7 @@ export default function KelasKuPage() {
         ) : tab === "orang" && detail ? (
           <div className="bc-card p-5">
             <p className="text-sm font-bold text-[var(--clr-text)]">Anggota kelas</p>
-            <p className="text-sm text-[var(--clr-text-2)] mt-1">{detail.stats.totalMurid} siswa tergabung.</p>
+            <p className="text-sm text-[var(--clr-text-2)] mt-1">{detail.stats?.totalMurid ?? 0} siswa tergabung.</p>
             <div className="flex gap-2 mt-4">
               <a href="/guru/data-siswa" className="bc-btn-secondary text-xs">Kelola Data Siswa</a>
             </div>
@@ -632,13 +638,13 @@ function TodayView({ detail, lastClassIds, onAdd, onKirimLagi, onReview }: {
   onReview: (p: DetailData["tugasPenugasan"][number]) => void;
 }) {
   const active = [
-    ...detail.tugasPenugasan.map((p) => {
-      const r = detail.ringkasanPenugasan.find((x) => x.id === p.id);
-      return { id: p.id, judul: p.judul, jenis: "tugas" as const, sudah: r?.sudah ?? 0, belum: r?.belum ?? 0, total: detail.stats.totalMurid };
+    ...(detail.tugasPenugasan ?? []).map((p) => {
+      const r = (detail.ringkasanPenugasan ?? []).find((x) => x.id === p.id);
+      return { id: p.id, judul: p.judul, jenis: "tugas" as const, sudah: r?.sudah ?? 0, belum: r?.belum ?? 0, total: detail.stats?.totalMurid ?? 0 };
     }),
-    ...detail.tugasQuiz.map((t) => {
-      const r = detail.ringkasanQuiz.find((x) => x.id === t.id);
-      return { id: t.id, judul: t.quiz.title, jenis: "latihan" as const, sudah: r?.sudah ?? 0, belum: r?.belum ?? 0, total: detail.stats.totalMurid };
+    ...(detail.tugasQuiz ?? []).map((t) => {
+      const r = (detail.ringkasanQuiz ?? []).find((x) => x.id === t.id);
+      return { id: t.id, judul: t.quiz.title, jenis: "latihan" as const, sudah: r?.sudah ?? 0, belum: r?.belum ?? 0, total: detail.stats?.totalMurid ?? 0 };
     }),
   ];
 
