@@ -128,15 +128,18 @@ async function timedCall<T>(fn: () => Promise<T>): Promise<{ result: T; latencyM
 async function callDeepSeek(req: ProviderRequest, apiKey: string): Promise<ProviderResponse> {
   if (!apiKey) throw new Error("DEEPSEEK_API_KEY not configured");
 
+  // STEP 5.1 — response_format json_object DIHAPUS:
+  // DeepSeek docs (guides/json_mode): "the API may occasionally return empty
+  // content" pada mode json_object — risiko tinggi untuk generasi panjang
+  // (Soal 8000 token). Prompt sudah JSON-strict + parser menangani fences/
+  // salvage (strategi yang sama dengan streamGroq & /api/guru/latihan yang
+  // bekerja). Tanpa json_object model tidak pernah 'terkunci' ke output kosong.
   const dsBody: Record<string, unknown> = {
     model: req.model,
     messages: req.messages,
     temperature: req.temperature,
     max_tokens: req.maxTokens,
   };
-  if (req.responseFormat === "json") {
-    dsBody.response_format = { type: "json_object" };
-  }
   const { result: raw, latencyMs } = await timedCall(() =>
     fetch("https://api.deepseek.com/v1/chat/completions", {
       method: "POST",
@@ -172,15 +175,17 @@ async function callDeepSeek(req: ProviderRequest, apiKey: string): Promise<Provi
 async function callGroq(req: ProviderRequest, apiKey: string): Promise<ProviderResponse> {
   if (!apiKey) throw new Error("GROQ_API_KEY not configured");
 
+  // STEP 5.1 — response_format json_object DIHAPUS untuk gpt-oss:
+  // Groq docs (Structured Outputs): mode json_object hanya "for all other
+  // models"; gpt-oss memakai json_schema (tidak dipakai di sini). Prompt
+  // JSON-strict + parser sudah menangani format. Menghindari HTTP 400/risiko
+  // penolakan pada fallback.
   const body: Record<string, unknown> = {
     model: req.model,
     messages: req.messages,
     temperature: req.temperature,
     max_tokens: req.maxTokens,
   };
-  if (req.responseFormat === "json") {
-    body.response_format = { type: "json_object" };
-  }
 
   const { result: raw, latencyMs } = await timedCall(() =>
     fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -332,9 +337,8 @@ async function streamDeepSeek(
     max_tokens: req.maxTokens,
     stream: true,
   };
-  if (req.responseFormat === "json") {
-    streamBody.response_format = { type: "json_object" };
-  }
+  // STEP 5.1 — tanpa response_format json_object (lihat callDeepSeek): mode
+  // json_object DeepSeek terdokumentasi bisa mengembalikan konten kosong.
   const watchdog = createStreamWatchdog();
   let acc = "";
   try {
@@ -358,6 +362,11 @@ async function streamDeepSeek(
       onDelta(d);
     });
     const latencyMs = Date.now() - startTime;
+
+    // STEP 5.1 — stream SELESAI tapi kosong = kegagalan provider, bukan
+    // "respon sukses kosong": lempar agar chain berpindah ke Groq/Gemini
+    // (sebelumnya stream kosong lolos ke EMPTY_RESPONSE tanpa fallback).
+    if (!fullText.trim()) throw new ProviderEmptyError("deepseek");
 
     return {
       fullText,
@@ -469,6 +478,9 @@ async function streamGemini(
     });
     const latencyMs = Date.now() - startTime;
 
+    // STEP 5.1 — stream kosong = kegagalan (konsisten dengan DeepSeek/Groq).
+    if (!fullText.trim()) throw new ProviderEmptyError("gemini");
+
     return {
       fullText,
       provider: "gemini",
@@ -577,6 +589,9 @@ async function streamGroq(
       onDelta(d);
     });
     const latencyMs = Date.now() - startTime;
+
+    // STEP 5.1 — stream kosong = kegagalan → chain lanjut ke Gemini.
+    if (!fullText.trim()) throw new ProviderEmptyError("groq");
 
     return {
       fullText,

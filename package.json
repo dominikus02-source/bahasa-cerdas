@@ -150,6 +150,7 @@
     "test:rate-limit-nat": "tsx scripts/test-rate-limit-nat.ts",
     "test:ai-tools-jenjang": "npx tsx scripts/test-ai-tools-jenjang.ts",
     "test:soal-agent-health": "npx tsx scripts/test-soal-agent-health.ts",
+    "test:soal-generation-reliability": "npx tsx scripts/test-soal-generation-reliability.ts",
     "test:hydration-safety": "tsx scripts/test-hydration-safety.ts",
     "test:feed-infinite-scroll": "tsx scripts/test-feed-infinite-scroll.ts",
     "test:reward-integrity": "tsx scripts/test-reward-integrity.ts",
