@@ -192,6 +192,7 @@ function main() {
         "app/api/player/coin/route.ts",
         "app/api/player/learner-state/route.ts",
         "app/api/player/adaptive-practice/route.ts",
+        "app/api/player/diagnostic/route.ts",
         "app/api/jalur-cerdas/[unitId]/progress/route.ts",
         "app/api/jalur-cerdas/[unitId]/submit/route.ts",
         "app/api/murid/quiz/[id]/route.ts",

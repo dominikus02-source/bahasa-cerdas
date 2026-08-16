@@ -3597,3 +3597,64 @@ Naikkan kualitas Tes Awal di atas 4E: (1) komposisi tetap sesuai founder (Part B
 4. GameRoom migration SQL via Supabase dashboard
 5. UI game solo: badge-score client vs server masih beda (kosmetik)
 6. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
+
+---
+
+## Phase STEP 4E.2 — Diagnostic → Personalized Learning Activation (Aug 16, 2026)
+
+### Objective
+Hasil diagnostik MENGAKTIFKAN pengalaman belajar berikutnya (BC Personalization Loop): profil → next action → adaptive practice yang relevan → evidence baru → profil lebih baik. **NOT COMMITTED — menunggu Founder Review.**
+
+### Architecture
+```
+LearningEvidence → LearnerState → Diagnostic Profile → Personalized Action → Adaptive Practice → New Evidence → Profil lebih baik
+```
+- **`lib/diagnostic/personalization.ts`** (BARU, MURNI) — `buildPersonalizedAction(profile, source)` → `PersonalizedLearningAction { actionType, targetSkill, targetSkillLabel, reasonCode, title, explanation, confidence, source, recommendation }`. Deterministik: target = skill berbukti terlemah (WEAK<DEVELOPING<STRONG → akurasi naik → skill asc); tanpa skill berbukti → `CONTINUE_EVIDENCE` ("BC Masih Mengenali") — bukan "lemah". `pickTargetSkill`, `explanationFor` (confidence-aware: INSUFFICIENT→"belum cukup terukur", PROVISIONAL→hati-hati, PROFILE_CONFIDENT→klaim kuat).
+- **`lib/diagnostic/completion.ts`** (BARU, READ-ONLY) — `hasCompletedDiagnostic(userId)` (query sesi DIAGNOSTIC COMPLETED; gagal → false).
+- **Adaptive preview** (`app/api/player/adaptive-practice/route.ts`) — preview & fallback kini membawa `personalization` (dari `computeDiagnosticProfile(states)`) + `diagnosticCompleted`. Selector 4D TIDAK diubah (WEAK_SKILL tetap butuh attemptCount ≥ 5 — honest).
+- **Diagnostic preview** (`app/api/player/diagnostic/route.ts`) — STATE A: `durationLabel "±5–8 menit"` + `skillsLabel` (Membaca · Tata Bahasa · Kosakata · Sastra · Menulis, dari DIAGNOSTIC_SKILL_PRIORITY — TANPA Mendengarkan karena korpus 0); EVIDENCE_EXISTS: `personalization` + `diagnosticCompleted`.
+- **Student Home** — `home-data.tsx` (MyDayResponse + fields, preview single-source tetap di sini); `ContinueLearningCard.tsx` state eksplisit: **A** Kenali Kemampuanmu (info N soal + skills) · **B** Profil Belajarmu Sudah Siap (CTA Mulai Latihan Personal) · **C** Latihan Untukmu (target skill + explanation) · **D** BC Masih Mengenali (belum cukup terukur, CTA Lanjutkan Latihan) · FALLBACK Saran untukmu (jalur-cerdas). Semua judul/penjelasan server-derived; klien hanya kirim `{action, size/sessionId/questionId/answer}`.
+
+### Files
+| File | Aksi |
+|------|------|
+| `lib/diagnostic/personalization.ts` | BARU — engine personalisasi murni |
+| `lib/diagnostic/completion.ts` | BARU — hasCompletedDiagnostic (read-only) |
+| `app/api/player/adaptive-practice/route.ts` | preview/fallback + personalization + diagnosticCompleted (additive) |
+| `app/api/player/diagnostic/route.ts` | preview STATE A fields + EVIDENCE_EXISTS personalization |
+| `components/student-home/home-data.tsx` | MyDayResponse + personalization/diagnosticCompleted/durationLabel/skillsLabel |
+| `components/student-home/ContinueLearningCard.tsx` | State A–D + fallback jujur |
+| `scripts/test-diagnostic-personalization.ts` | BARU — 32 checks |
+| `package.json` | +`test:diagnostic-personalization` |
+| `docs/PHASE_2_STEP_4E2_DIAGNOSTIC_PERSONALIZATION.md` | BARU — laporan 21 seksi |
+
+### Personalization Rules (wajib dijaga)
+1. Target skill HANYA dari skill berbukti (attempts > 0, bukan INSUFFICIENT_EVIDENCE).
+2. Deterministik: WEAK < DEVELOPING < STRONG → akurasi naik → skill asc.
+3. Tanpa bukti → CONTINUE_EVIDENCE, NEVER "kamu lemah" (confidence ladder INSUFFICIENT→PROVISIONAL→PROFILE_CONFIDENT).
+4. Selector adaptive 4D TIDAK diubah; reason tetap jujur (WEAK_SKILL butuh ≥ 5 bukti; sebelum itu PRACTICE_GAP/NO_DATA).
+5. Klien tidak pernah mengirim skill/difficulty/level/score/confidence/reason/XP/coin.
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `npm run test:diagnostic-personalization` (BARU) | ✅ 32/32 |
+| `test:diagnostic-assessment` / `test:diagnostic-4e1` | ✅ 48/48 · ✅ 36/36 |
+| `test:adaptive-practice` / `test:adaptive-simulation` / `test:adaptive-reward-hardening` | ✅ 25/25 · ✅ 21/21 · ✅ 41/41 |
+| `test:step3c-evidence-ledger` / `test:learner-state` / `test:question-metadata` | ✅ 29/29 · ✅ 24/24 · ✅ 24/24 |
+| `test:my-day-home` / `test:student-home` / `test:arena-web` | ✅ 37/37 · ✅ 61/61 · ✅ 56/56 |
+| `test:gamification-engine` / `test:premium-economy` | ✅ SEMUA LULUS |
+| `npx tsc --noEmit` / `npm run lint` / `npm run build` / `git diff --check` | ✅ 0 errors · ✅ 0 violations · ✅ exit 0 · ✅ bersih |
+| Protected zones (prisma/, gamification, learning-loop, engines, adaptive selector, learner-state, apk, coins, award-xp) | ✅ 0 diff |
+| DB | ✅ READ ONLY — 0 write, 0 migrasi |
+
+### Verdict
+**GREEN** — personalisasi wired end-to-end (profil → aksi → adaptive → evidence → profil lebih baik), UI state A–D server-derived, protected zones 0 diff, DB read-only.
+
+### Remaining
+1. **Commit/push STEP 4E.2 bila disetujui founder** (5 modified + 4 new)
+2. TKA UTBK/Guru enrichment 30 → 150
+3. Game server revival (VPS mati)
+4. GameRoom migration SQL via Supabase dashboard
+5. UI game solo: badge-score client vs server masih beda (kosmetik)
+6. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)

@@ -9,6 +9,9 @@ import { ADAPTIVE_ALLOWED_SIZES, ADAPTIVE_MAX_CANDIDATES, ADAPTIVE_SELECTION_VER
 import { selectAdaptivePractice } from "@/lib/adaptive-practice/selector";
 import type { AdaptiveCandidate } from "@/lib/adaptive-practice/types";
 import type { DifficultyId, QuestionTypeId } from "@/lib/question-metadata/taxonomy";
+import { computeDiagnosticProfile } from "@/lib/diagnostic/profile";
+import { buildPersonalizedAction } from "@/lib/diagnostic/personalization";
+import { hasCompletedDiagnostic } from "@/lib/diagnostic/completion";
 import { dayKeyWIB } from "@/lib/learning-loop/journey";
 import { getSessionSummary } from "@/lib/learning-loop/session";
 import { awardXp } from "@/lib/award-xp";
@@ -37,6 +40,8 @@ function isMissingAdaptiveInfra(error: unknown): boolean {
 }
 
 function fallbackResponse(reasonCode = "INSUFFICIENT_METADATA", learnerState: unknown[] = []) {
+  const profile = computeDiagnosticProfile(learnerState as Parameters<typeof computeDiagnosticProfile>[0]);
+  const personalization = buildPersonalizedAction(profile, "LEARNER_STATE");
   return NextResponse.json({
     mode: "FALLBACK",
     actionType: "GENERAL_LEARNING",
@@ -52,6 +57,8 @@ function fallbackResponse(reasonCode = "INSUFFICIENT_METADATA", learnerState: un
     selectionVersion: ADAPTIVE_SELECTION_VERSION,
     reasonCode,
     reasonText: "Belum cukup data untuk latihan personal.",
+    personalization,
+    diagnosticCompleted: false,
     learnerState,
     mentor: null,
     fallback: {
@@ -159,6 +166,11 @@ async function startSession(userId: string, size: number, mode: "start" | "previ
     } catch {
       mentor = null;
     }
+    // STEP 4E.2 — personalisasi lapisan penjelasan ("Kenapa latihan ini?"):
+    // dibangun SERVER-side dari profil learner state; klien tidak mengirim apa pun.
+    const profile = computeDiagnosticProfile(states);
+    const personalization = buildPersonalizedAction(profile, "LEARNER_STATE");
+    const diagnosticCompleted = await hasCompletedDiagnostic(userId);
     return NextResponse.json({
       mode: "PREVIEW",
       actionType: "ADAPTIVE_PRACTICE",
@@ -174,6 +186,8 @@ async function startSession(userId: string, size: number, mode: "start" | "previ
       selectionVersion: selection.selectionVersion,
       reasonCode: selection.reasonCode,
       reasonText: selection.reasonText,
+      personalization,
+      diagnosticCompleted,
       learnerState: states,
       mentor,
     });

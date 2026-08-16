@@ -39,6 +39,25 @@ export interface MyDayResponse {
     insights: string[];
     today: { activities: number; xp: number; coin: number };
   } | null;
+  /** STEP 4E.2 — lapisan personalisasi server-derived ("Kenapa latihan ini?"). */
+  personalization?: PersonalizedLearningAction | null;
+  /** STEP 4E.2 — pernah menyelesaikan diagnostik (state B vs C di kartu). */
+  diagnosticCompleted?: boolean;
+  /** STEP 4E.2 — info STATE A: durasi jujur + skill yang benar-benar diuji. */
+  durationLabel?: string;
+  skillsLabel?: string;
+}
+
+export interface PersonalizedLearningAction {
+  actionType: "PERSONALIZED_PRACTICE" | "CONTINUE_EVIDENCE";
+  targetSkill: string | null;
+  targetSkillLabel: string | null;
+  reasonCode: string;
+  title: string;
+  explanation: string;
+  confidence: string;
+  source: string;
+  recommendation: "EASY" | "MEDIUM" | "HARD" | null;
 }
 
 export interface PremiumStatus {

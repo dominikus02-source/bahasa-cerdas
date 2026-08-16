@@ -220,6 +220,20 @@ export function computeDiagnosticProfile(states: LearnerSkillState[]): Diagnosti
 }
 
 /**
+ * STEP 4E.2 — profil dari LearnerState (wrapper bernama).
+ * Dipakai route saat TIDAK ada sesi diagnostik (mis. preview untuk murid yang
+ * baru berlatih adaptive) — tetap murni, tanpa DB. Ketika sesi diagnostik ada,
+ * route memakai jalur kanonik buildSessionProfile (detail evidence).
+ */
+export function profileFromLearnerState(
+  states: LearnerSkillState[],
+  allSkills: string[] = []
+): DiagnosticProfile {
+  const base = computeDiagnosticProfile(states);
+  return allSkills.length > 0 ? withUntestedSkills(base, allSkills) : base;
+}
+
+/**
  * Proyeksi per skill yang TIDAK ikut diuji sesi ini (0 evidence) — agar
  * panel hasil jujur: "Belum terukur", bukan "lemah" (Part I).
  */

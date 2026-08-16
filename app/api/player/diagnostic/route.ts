@@ -5,16 +5,23 @@ import { getUser } from "@/lib/supabase/server";
 import { getLearnerState, isLearnerStateInfraUnavailable } from "@/lib/learner-state/service";
 import { upsertLearningEvidence, LEARNING_EVIDENCE_VERSION } from "@/lib/learning-loop/evidence";
 import { validateQuestionMetadata } from "@/lib/question-metadata/validation";
-import { computeProfileFromEvidence, withUntestedSkills } from "@/lib/diagnostic/profile";
+import {
+  computeProfileFromEvidence,
+  withUntestedSkills,
+  profileFromLearnerState,
+} from "@/lib/diagnostic/profile";
 import { selectDiagnosticQuestions, summarizeComposition } from "@/lib/diagnostic/selector";
+import { buildPersonalizedAction } from "@/lib/diagnostic/personalization";
 import {
   DIAGNOSTIC_ALLOWED_SIZES,
   DIAGNOSTIC_DEFAULT_SIZE,
+  DIAGNOSTIC_ESTIMATED_MINUTES,
   DIAGNOSTIC_MIN_ITEMS,
   DIAGNOSTIC_REASON_CODE,
   DIAGNOSTIC_SELECTION_VERSION,
   DIAGNOSTIC_SESSION_MINUTES,
   DIAGNOSTIC_SKILL_LABELS,
+  DIAGNOSTIC_SKILL_PRIORITY,
   DIAGNOSTIC_SUPPORTED_SOURCES,
 } from "@/lib/diagnostic/config";
 import type { DiagnosticCandidate, DiagnosticQuestionType } from "@/lib/diagnostic/types";
@@ -227,21 +234,42 @@ async function previewDiagnostic(userId: string) {
     const states = await getLearnerState(userId);
     const hasEvidence = states.some((state) => state.attemptCount > 0);
     if (hasEvidence) {
+      // STEP 4E.2 — STATE B: diagnostik pernah selesai → profil siap + aksi
+      // personal. Jalur KANONIK 4E.1: profil dari detail evidence sesi
+      // diagnostik bila ada; fallback jujur dari learner state bila belum
+      // pernah diagnostik (murid yang baru berlatih adaptive).
+      const completedSession = await db.adaptivePracticeSession.findFirst({
+        where: { userId, reasonCode: DIAGNOSTIC_REASON_CODE, status: "COMPLETED" },
+        orderBy: { completedAt: "desc" },
+        select: { id: true, source: true },
+      });
+      let profile: ReturnType<typeof profileFromLearnerState>;
+      if (completedSession) {
+        profile = await buildSessionProfile(userId, completedSession.source, completedSession.id);
+      } else {
+        profile = profileFromLearnerState(states, Object.keys(DIAGNOSTIC_SKILL_LABELS));
+      }
+      const personalization = buildPersonalizedAction(profile, completedSession ? "DIAGNOSTIC_PROFILE" : "LEARNER_STATE");
+      const diagnosticCompleted = Boolean(completedSession);
       return NextResponse.json({
         mode: "PREVIEW",
         actionType: "GENERAL_LEARNING",
-        actionTitle: "Lanjut Belajar Hari Ini",
-        ctaLabel: "Buka Jalur Cerdas",
-        targetSkill: null,
+        actionTitle: diagnosticCompleted ? "Profil Belajarmu Sudah Siap" : "Lanjut Belajar Hari Ini",
+        ctaLabel: "Mulai Latihan Personal",
+        targetSkill: personalization.targetSkill,
         targetSubskill: null,
-        targetDifficulty: null,
+        targetDifficulty: personalization.recommendation,
         sessionSize: null,
-        reasonCode: "EVIDENCE_EXISTS",
-        reasonText: "Kamu sudah punya riwayat belajar. Lanjutkan latihan personal sesuai kemampuanmu.",
+        reasonCode: diagnosticCompleted ? "DIAGNOSTIC_COMPLETED" : "EVIDENCE_EXISTS",
+        reasonText: diagnosticCompleted
+          ? "BC sudah mulai mengenali kemampuanmu. Latihan berikutnya dipilih berdasarkan hasil belajarmu."
+          : "Kamu sudah punya riwayat belajar. Lanjutkan latihan personal sesuai kemampuanmu.",
         estimatedMinutes: null,
         confidence: "NO_DATA",
         premiumDepth: "STANDARD",
         selectionVersion: DIAGNOSTIC_SELECTION_VERSION,
+        personalization,
+        diagnosticCompleted,
         learnerState: states,
         mentor: null,
       });
@@ -265,13 +293,19 @@ async function previewDiagnostic(userId: string) {
       targetSubskill: null,
       targetDifficulty: null,
       sessionSize: DIAGNOSTIC_DEFAULT_SIZE,
+      // STEP 4E.2 — STATE A: info jujur dari server (ukuran + durasi + daftar
+      // skill yang BENAR-BENAR diuji, sesuai komposisi yang tersedia).
+      durationLabel: "±5–8 menit",
+      skillsLabel: DIAGNOSTIC_SKILL_PRIORITY.map((skill) => DIAGNOSTIC_SKILL_LABELS[skill]).join(" · "),
       reasonCode: "NO_EVIDENCE",
       reasonText:
         "Kamu belum punya riwayat latihan. Tes singkat ini memetakan kemampuanmu dulu — jawabanmu dipakai untuk menyesuaikan latihan berikutnya, tanpa nilai benar-salah yang merugikan.",
-      estimatedMinutes: 10,
+      estimatedMinutes: DIAGNOSTIC_ESTIMATED_MINUTES,
       confidence: "NO_DATA",
       premiumDepth: "STANDARD",
       selectionVersion: DIAGNOSTIC_SELECTION_VERSION,
+      personalization: null,
+      diagnosticCompleted: false,
       learnerState: states,
       mentor: null,
     });
