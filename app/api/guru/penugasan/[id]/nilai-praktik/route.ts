@@ -34,6 +34,23 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       create: { penugasanId: id, userId, status: "IN_PROGRESS", praktikNilai: skor, praktikCatatan: catatan || null, praktikDinilai: true },
     });
 
+    // STEP 6.2 — beri tahu murid tugasnya sudah dinilai (deep-link ke tugas).
+    try {
+      await db.notifikasi.create({
+        data: {
+          userId,
+          title: "Tugas Dinilai",
+          body: catatan
+            ? `"${penugasan.judul}" sudah dinilai: ${skor}. ${catatan}`
+            : `"${penugasan.judul}" sudah dinilai: ${skor}`,
+          type: "INFO",
+          data: { link: `/arena/tugas/${id}/kerjakan`, penugasanId: id },
+        },
+      });
+    } catch {
+      // best-effort — grading tetap tersimpan
+    }
+
     // Push the praktik grade into the rekap (kategori "Praktik").
     try {
       await upsertNilaiOtomatis({

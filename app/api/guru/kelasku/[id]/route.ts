@@ -28,6 +28,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
           id: true, dueDate: true, isPublished: true, assignedAt: true,
           quiz: { select: { id: true, title: true } },
           _count: { select: { submissions: true } },
+          // STEP 6.2 — breakdown status quiz submission.
+          submissions: { select: { status: true, score: true } },
         },
         orderBy: { assignedAt: "desc" },
         take: 50,
@@ -37,6 +39,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         select: {
           id: true, judul: true, jenis: true, tenggat: true, createdAt: true,
           _count: { select: { submissions: true } },
+          // STEP 6.2 — breakdown status submission untuk ringkasan "✓ sudah /
+          // ◷ sedang / — belum" (server-derived, bukan istilah backend).
+          submissions: { select: { status: true, praktikDinilai: true } },
         },
         orderBy: { createdAt: "desc" },
         take: 50,
@@ -70,6 +75,20 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     const progressMurid = memberIds.length ? Math.round((progres / memberIds.length) * 100) : 0;
     const tugasAktif = tugasAktifQuiz.filter((t) => t.isPublished || !t.dueDate || t.dueDate > new Date()).length + tugasAktifPenugasan.filter((p) => !p.tenggat || p.tenggat > new Date()).length;
 
+    // STEP 6.2 — ringkasan manusiawi per aktivitas: sudah/sedang/belum
+    // mengumpulkan (dihitung server dari submission + jumlah anggota).
+    const totalMurid = group.members.length;
+    const ringkasanPenugasan = tugasAktifPenugasan.map((p) => {
+      const sudah = p.submissions.filter((s) => s.status === "COMPLETED" || (s.praktikDinilai || s.status === "SUBMITTED")).length;
+      const sedang = p.submissions.filter((s) => s.status === "IN_PROGRESS").length;
+      return { id: p.id, sudah, sedang, belum: Math.max(0, totalMurid - sudah - sedang) };
+    });
+    const ringkasanQuiz = tugasAktifQuiz.map((q) => {
+      const sudah = q.submissions.filter((s) => s.status === "SUBMITTED" || s.status === "GRADED" || s.status === "LATE").length;
+      const sedang = q.submissions.filter((s) => s.status === "IN_PROGRESS").length;
+      return { id: q.id, sudah, sedang, belum: Math.max(0, totalMurid - sudah - sedang) };
+    });
+
     return NextResponse.json({
       stats: {
         totalMurid: group.members.length,
@@ -82,6 +101,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       tugasPenugasan: tugasAktifPenugasan,
       pengumuman,
       materis,
+      ringkasanPenugasan,
+      ringkasanQuiz,
     });
   } catch (error) {
     console.error("GET /api/guru/kelasku/[id] error:", error);

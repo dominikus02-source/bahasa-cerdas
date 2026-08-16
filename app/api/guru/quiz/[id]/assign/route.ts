@@ -85,6 +85,28 @@ export async function POST(
       console.error("Gagal buat notifikasi:", notifErr);
     }
 
+    // STEP 6.1 — notifikasi in-app untuk MURID (deep-link ke Tugasku).
+    try {
+      const memberRows = await db.groupMember.findMany({
+        where: { groupId: { in: groups.map((g) => g.id) } },
+        select: { userId: true },
+      });
+      const muridIds = [...new Set(memberRows.map((r) => r.userId))].filter((uid) => uid !== dbUser.id);
+      if (muridIds.length > 0) {
+        await db.notifikasi.createMany({
+          data: muridIds.map((userId) => ({
+            userId,
+            title: "Latihan Baru",
+            body: `Dari ${dbUser.fullName}: "${quiz.title}"`,
+            type: "INFO",
+            data: { link: "/murid/tugasku", quizId: id },
+          })),
+        });
+      }
+    } catch {
+      // best-effort
+    }
+
     // Notifikasi push ke murid di kelas yang ditugaskan. Ini pemicu yang paling
     // berdampak: "tugas baru dari gurumu" jauh lebih berguna daripada ajakan
     // belajar generik, dan tidak menjadi kebisingan karena hanya muncul saat guru

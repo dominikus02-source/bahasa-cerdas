@@ -240,7 +240,7 @@ export async function POST(
       const soalIds = submission.assignment.quiz.questions
         .filter(q => q.sourceType === "SOAL")
         .map(q => q.sourceId);
-      const soals = soalIds.length > 0 ? await db.soal.findMany({ where: { id: { in: soalIds } } }) : [];
+      const soals = soalIds.length > 0 ? await db.soal.findMany({ where: { id: { in: soalIds } }, select: { id: true, kodeSoal: true, correctAnswer: true } }) : [];
       const soalMap = new Map(soals.map(s => [s.id, s]));
 
       let correctCount = 0;
@@ -304,30 +304,65 @@ export async function POST(
         select: { quizQuestionId: true, answerIndex: true, answerText: true, isCorrect: true, pointsEarned: true },
       });
       const finalAnswerByQuestion = new Map(finalAnswers.map((answer) => [answer.quizQuestionId, answer]));
-      await replaceLearningEvidenceBatch(
-        submission.assignment.quiz.questions.map((question) => {
-          const answer = finalAnswerByQuestion.get(question.id);
-          const selectedAnswer = answer
-            ? answer.answerIndex !== null
-              ? String(answer.answerIndex)
-              : answer.answerText || null
-            : null;
-          return {
-            userId: dbUser.id,
-            source: "LATIHAN",
-            activityId: submission.id,
-            questionId: question.id,
-            selectedAnswer,
-            isCorrect: answer?.isCorrect ?? null,
-            score: answer?.pointsEarned ?? 0,
-            metadata: {
-              version: LEARNING_EVIDENCE_VERSION,
-              sourceType: question.sourceType,
-              sourceId: question.sourceId,
-            },
-          };
-        })
-      );
+
+      // STEP 6.3 — classroom quiz → LearningEvidence yang TERBACA LearnerState.
+      // Kontrak: source harus cocok dengan QuestionMetadata (BANK_SOAL) dan
+      // questionId = kodeSoal (metadata questionId) supaya JOIN aggregation
+      // menemukan skill. Skill TIDAK diinvent: soal tanpa metadata APPROVED
+      // (mis. custom/AI tanpa kodeSoal) dilewati — lebih baik tanpa evidence
+      // daripada evidence palsu. Idempoten via replaceLearningEvidenceBatch
+      // (deleteMany per aktivitas + createMany skipDuplicates).
+      const kodeSoals = [...new Set(soals.map((s) => s.kodeSoal).filter((k): k is string => Boolean(k)))];
+      const metaRows = kodeSoals.length > 0
+        ? await db.questionMetadata.findMany({
+            where: { source: "BANK_SOAL", status: "APPROVED", skill: { not: null }, questionId: { in: kodeSoals } },
+            select: { questionId: true, skill: true, difficulty: true },
+          })
+        : [];
+      const metaByKode = new Map(metaRows.map((m) => [m.questionId, m]));
+      const soalByQuizQuestion = new Map<string, { kodeSoal: string | null }>();
+      for (const q of submission.assignment.quiz.questions) {
+        if (q.sourceType !== "SOAL") continue;
+        const soal = soalMap.get(q.sourceId);
+        if (soal) soalByQuizQuestion.set(q.id, { kodeSoal: soal.kodeSoal });
+      }
+
+      const classroomEvidence = submission.assignment.quiz.questions.flatMap((question) => {
+        const answer = finalAnswerByQuestion.get(question.id);
+        const soal = soalByQuizQuestion.get(question.id);
+        if (!soal?.kodeSoal) return []; // tanpa kodeSoal → tanpa metadata → tanpa evidence
+        const meta = metaByKode.get(soal.kodeSoal);
+        if (!meta?.skill) return []; // skill tidak tersedia — DO NOT INVENT SKILL
+        const selectedAnswer = answer
+          ? answer.answerIndex !== null
+            ? String(answer.answerIndex)
+            : answer.answerText || null
+          : null;
+        return [{
+          userId: dbUser.id,
+          source: "BANK_SOAL",
+          activityId: submission.id,
+          questionId: soal.kodeSoal,
+          selectedAnswer,
+          isCorrect: answer?.isCorrect ?? null,
+          score: answer?.pointsEarned ?? 0,
+          skill: meta.skill as import("@prisma/client").LearningSkillType,
+          difficulty: meta.difficulty ?? null,
+          metadata: {
+            version: LEARNING_EVIDENCE_VERSION,
+            sourceType: question.sourceType,
+            sourceId: question.sourceId,
+            aktivitas: "CLASSROOM_QUIZ",
+          },
+        }];
+      });
+
+      // Bersihkan baris legacy source "LATIHAN" (evidence buta dari versi lama)
+      // untuk aktivitas ini — sekali jalan, idempoten, aman.
+      await db.learningEvidence.deleteMany({
+        where: { userId: dbUser.id, source: "LATIHAN", activityId: submission.id },
+      });
+      await replaceLearningEvidenceBatch(classroomEvidence);
 
       const score = pointsTotal > 0 ? (pointsEarned / pointsTotal) * 100 : 0;
       const timeSpent = submission.startedAt ? Math.floor((Date.now() - submission.startedAt.getTime()) / 1000) : 0;

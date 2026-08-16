@@ -197,6 +197,17 @@ function main() {
         "app/api/jalur-cerdas/[unitId]/submit/route.ts",
         "app/api/murid/quiz/[id]/route.ts",
         "app/api/admin/question-metadata/route.ts",
+        // BC Classroom (STEP 6.0/6.1) — additive multi-class & student class API
+        "app/api/guru/pengumuman/route.ts",
+        "app/api/guru/penugasan/route.ts",
+        "app/api/guru/quiz/[id]/assign/route.ts",
+        "app/api/murid/kelasku/[id]/route.ts",
+        "app/api/murid/penugasan/[id]/praktik/route.ts",
+        "app/api/guru/kelasku/[id]/route.ts",
+        "app/api/murid/kelasku/[id]/route.ts",
+        "app/api/guru/penugasan/[id]/nilai-praktik/route.ts",
+        "app/api/guru/kelasku/[id]/insight/route.ts",
+        "app/api/murid/quiz/[id]/route.ts",
       ]);
       const diff = execSync(`git diff --name-only HEAD -- app/api/`, { encoding: "utf8", cwd: process.cwd() })
         .trim().split("\n").filter(Boolean)

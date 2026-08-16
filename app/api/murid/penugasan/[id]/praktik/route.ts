@@ -14,6 +14,18 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     if (!url || typeof url !== "string") {
       return NextResponse.json({ error: "Berkas praktik belum ada." }, { status: 400 });
     }
+    // STEP 6.1 — validasi URL server-side: hanya http/https (BC bukan storage
+    // video; tautan YouTube/Drive/Canva didukung, javascript:/file: ditolak).
+    const trimmedUrl = url.trim();
+    let parsedUrl: URL | null = null;
+    try {
+      parsedUrl = new URL(trimmedUrl);
+    } catch {
+      return NextResponse.json({ error: "Tautan tidak valid. Gunakan tautan https:// yang benar." }, { status: 400 });
+    }
+    if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
+      return NextResponse.json({ error: "Tautan tidak valid. Gunakan tautan https:// yang benar." }, { status: 400 });
+    }
 
     const penugasan = await db.penugasan.findUnique({
       where: { id },
@@ -25,8 +37,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     await db.penugasanSubmission.upsert({
       where: { penugasanId_userId: { penugasanId: id, userId: user.id } },
-      update: { praktikUrl: url, praktikDinilai: false, startedAt: new Date() },
-      create: { penugasanId: id, userId: user.id, status: "IN_PROGRESS", praktikUrl: url, startedAt: new Date() },
+      update: { praktikUrl: trimmedUrl, praktikDinilai: false, startedAt: new Date() },
+      create: { penugasanId: id, userId: user.id, status: "IN_PROGRESS", praktikUrl: trimmedUrl, startedAt: new Date() },
     });
 
     return NextResponse.json({ success: true });

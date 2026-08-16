@@ -79,6 +79,37 @@ export default function KerjakanTugasPage() {
   const [praktikUrl, setPraktikUrl] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
+  // STEP 6.6 — tempel link karya (client hint; server tetap memvalidasi URL).
+  const [linkInput, setLinkInput] = useState("")
+  const [sendingLink, setSendingLink] = useState(false)
+  const [linkError, setLinkError] = useState("")
+
+  const sendLinkPraktik = async () => {
+    const url = linkInput.trim()
+    if (!url || sendingLink) return
+    setSendingLink(true)
+    setLinkError("")
+    try {
+      if (!/^https?:\/\//i.test(url)) {
+        setLinkError("Tautan harus dimulai dengan https:// — contoh: https://youtube.com/...")
+        return
+      }
+      const res = await fetch(`/api/murid/penugasan/${assignId}/praktik`, {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || "gagal")
+      }
+      setPraktikUrl(url)
+      setLinkInput("")
+      setError("")
+    } catch {
+      setLinkError("Tautan belum berhasil disimpan. Coba lagi.")
+    } finally {
+      setSendingLink(false)
+    }
+  }
 
   useEffect(() => {
     fetch(`/api/murid/penugasan/${assignId}`)
@@ -258,6 +289,33 @@ export default function KerjakanTugasPage() {
                 </button>
               )}
               <input ref={fileRef} type="file" accept="image/*,.pdf,.doc,.docx" hidden onChange={e => { const f = e.target.files?.[0]; if (f) uploadPraktik(f) }} />
+
+              {/* STEP 6.6 — tempel link karya (YouTube/Canva/Drive/website) */}
+              {!data.submission?.praktikDinilai && (
+                <div className="mt-3 border-t border-dashed border-gray-200 dark:border-slate-700 pt-3">
+                  <p className="text-xs font-semibold text-gray-700 dark:text-slate-300 mb-1.5">Atau tempel link karyamu</p>
+                  <div className="flex gap-2">
+                    <input
+                      value={linkInput}
+                      onChange={e => setLinkInput(e.target.value)}
+                      placeholder="https://youtube.com/... atau https://drive.google.com/..."
+                      className="flex-1 min-w-0 px-3 py-2.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-gray-900 dark:text-slate-100"
+                      aria-label="Tempel link karya"
+                    />
+                    <button
+                      onClick={sendLinkPraktik}
+                      disabled={sendingLink || !linkInput.trim()}
+                      className="shrink-0 px-4 py-2.5 rounded-xl bg-violet-600 text-white text-xs font-bold disabled:opacity-60"
+                    >
+                      {sendingLink ? <Loader2 className="w-4 h-4 animate-spin" /> : "Simpan Link"}
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-gray-400 mt-1.5">
+                    Contoh: YouTube · Canva · Google Drive · Website · dokumen lain. BC hanya menyimpan tautan, bukan video.
+                  </p>
+                  {linkError && <p className="text-[11px] text-red-500 mt-1">{linkError}</p>}
+                </div>
+              )}
             </div>
           </div>
         )}

@@ -1,0 +1,239 @@
+/* BC CLASSROOM — iOS Edu Design Tokens (semantic, light + dark first-class).
+   Scope: .bc-classroom — tidak menyentuh theme engine existing (next-themes). */
+.bc-classroom {
+  --clr-bg: #f4f5f7;
+  --clr-surface: #ffffff;
+  --clr-surface-2: #f8f9fb;
+  --clr-border: #e6e8ee;
+  --clr-border-strong: #d4d7e0;
+  --clr-text: #16181d;
+  --clr-text-2: #5b6270;
+  --clr-text-3: #8a91a0;
+  --clr-accent: #10b981;
+  --clr-accent-strong: #059669;
+  --clr-accent-soft: #ecfdf5;
+  --clr-success: #10b981;
+  --clr-warning: #f59e0b;
+  --clr-danger: #ef4444;
+  --clr-danger-soft: #fef2f2;
+  --clr-violet: #7c3aed;
+  --clr-violet-soft: #f5f3ff;
+  --shadow-card: 0 1px 3px rgba(16, 24, 40, 0.05), 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-sheet: 0 -12px 40px rgba(16, 24, 40, 0.18);
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  color-scheme: light;
+}
+
+.dark .bc-classroom {
+  --clr-bg: #0f1117;
+  --clr-surface: #171a22;
+  --clr-surface-2: #1d212b;
+  --clr-border: #262b38;
+  --clr-border-strong: #333a4b;
+  --clr-text: #f1f2f6;
+  --clr-text-2: #a6adbb;
+  --clr-text-3: #6b7280;
+  --clr-accent: #34d399;
+  --clr-accent-strong: #10b981;
+  --clr-accent-soft: #0d2b22;
+  --clr-success: #34d399;
+  --clr-warning: #fbbf24;
+  --clr-danger: #f87171;
+  --clr-danger-soft: #2b1517;
+  --clr-violet: #a78bfa;
+  --clr-violet-soft: #1e1835;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-sheet: 0 -12px 40px rgba(0, 0, 0, 0.6);
+  color-scheme: dark;
+}
+
+.bc-classroom {
+  background: var(--clr-bg);
+  color: var(--clr-text);
+  min-height: 100%;
+}
+
+/* Cards */
+.bc-card {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+/* Primary CTA */
+.bc-btn-primary {
+  background: var(--clr-accent);
+  color: #ffffff;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  min-height: 48px;
+  padding: 0 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+.bc-btn-primary:hover { background: var(--clr-accent-strong); }
+.bc-btn-primary:active { transform: scale(0.98); }
+.bc-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.bc-btn-secondary {
+  background: var(--clr-surface);
+  color: var(--clr-text);
+  border: 1px solid var(--clr-border-strong);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  min-height: 44px;
+  padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Chips / tabs */
+.bc-chip {
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--clr-text-2);
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  min-height: 40px;
+}
+.bc-chip-active {
+  background: var(--clr-accent-soft);
+  color: var(--clr-accent-strong);
+  border-color: transparent;
+}
+
+/* Inputs */
+.bc-input {
+  width: 100%;
+  min-height: 48px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--clr-border-strong);
+  background: var(--clr-surface);
+  color: var(--clr-text);
+  padding: 0 14px;
+  font-size: 15px;
+}
+.bc-input:focus { outline: 2px solid var(--clr-accent); outline-offset: 1px; }
+.bc-textarea { min-height: 96px; padding: 12px 14px; resize: vertical; }
+
+/* Sheet (mobile bottom sheet / desktop dialog) */
+.bc-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(16, 24, 40, 0.45);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+@media (min-width: 768px) {
+  .bc-sheet-overlay { align-items: center; padding: 24px; }
+}
+.bc-sheet {
+  width: 100%;
+  max-width: 560px;
+  background: var(--clr-surface);
+  border-radius: 24px 24px 0 0;
+  max-height: 92dvh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-sheet);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+@media (min-width: 768px) {
+  .bc-sheet { border-radius: 24px; max-height: 88dvh; }
+}
+
+/* Picker rows */
+.bc-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+.bc-row:hover { background: var(--clr-surface-2); }
+.bc-row-selected { background: var(--clr-accent-soft); border-color: var(--clr-accent); }
+
+/* Checkbox (besar, touch target) */
+.bc-check {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  border: 2px solid var(--clr-border-strong);
+  background: var(--clr-surface);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #fff;
+}
+.bc-check-on { background: var(--clr-accent); border-color: var(--clr-accent); }
+
+/* Empty & success states */
+.bc-empty { text-align: center; padding: 48px 20px; }
+.bc-success-banner {
+  background: var(--clr-accent-soft);
+  border: 1px solid var(--clr-accent);
+  color: var(--clr-accent-strong);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+.bc-error-banner {
+  background: var(--clr-danger-soft);
+  border: 1px solid var(--clr-danger);
+  color: var(--clr-danger);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+/* Accessibility: focus ring */
+.bc-classroom :focus-visible {
+  outline: 2px solid var(--clr-accent);
+  outline-offset: 2px;
+}
+
+/* STEP 6.1 — Student classroom: accent violet (identitas murid), token lain
+   tetap semantik dan konsisten dengan light/dark di atas. */
+.bc-classroom.bc-student {
+  --clr-accent: #7c3aed;
+  --clr-accent-strong: #6d28d9;
+  --clr-accent-soft: #f5f3ff;
+  --clr-violet: #7c3aed;
+  --clr-violet-soft: #f5f3ff;
+}
+.dark .bc-classroom.bc-student {
+  --clr-accent: #a78bfa;
+  --clr-accent-strong: #8b5cf6;
+  --clr-accent-soft: #1e1835;
+  --clr-violet: #a78bfa;
+  --clr-violet-soft: #1e1835;
+}
+
+/* Status badge submission */
+.bc-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 5px 12px;
+}
+.bc-status-belum { background: var(--clr-surface-2); color: var(--clr-text-2); border: 1px solid var(--clr-border); }
+.bc-status-sedang { background: var(--clr-warning) / 15; color: var(--clr-warning); }
+.bc-status-kumpul { background: var(--clr-violet-soft); color: var(--clr-violet); }
+.bc-status-nilai { background: var(--clr-accent-soft); color: var(--clr-accent-strong); }

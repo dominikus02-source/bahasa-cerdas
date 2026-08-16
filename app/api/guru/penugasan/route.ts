@@ -120,6 +120,28 @@ export async function POST(req: Request) {
       metadata: { groupIds, unitId, judul },
     }).catch(() => {})
 
+    // STEP 6.1 — beri tahu murid di semua kelas (deep-link ke Ruang Tugas).
+    try {
+      const memberRows = await db.groupMember.findMany({
+        where: { groupId: { in: groupIds } },
+        select: { userId: true },
+      });
+      const memberIds = [...new Set(memberRows.map((r) => r.userId))];
+      if (memberIds.length > 0) {
+        await db.notifikasi.createMany({
+          data: memberIds.map((userId) => ({
+            userId,
+            title: "Tugas Baru",
+            body: `Dari ${user.fullName}: "${judul}"`,
+            type: "INFO",
+            data: { link: "/arena/tugas", groupIds },
+          })),
+        });
+      }
+    } catch {
+      // notifikasi best-effort — jangan menggagalkan delivery
+    }
+
     return NextResponse.json({ data: penugasans })
   } catch (error) {
     console.error("POST /api/guru/penugasan error:", error)
