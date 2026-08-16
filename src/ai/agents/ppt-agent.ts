@@ -154,12 +154,16 @@ ATURAN PENTING:
    - project_based: slide panduan proyek
    - game_based: kuis dan permainan
    - storytelling: alur cerita dan narasi
-10. Sesuaikan bahasa dengan languageStyle:
+ 10. Sesuaikan bahasa dengan languageStyle:
     - ringkas: poin pendek, to the point
     - formal: bahasa baku, istilah teknis
     - anak: bahasa santai untuk SD
     - praktis: langsung bisa dipakai
-11. Gunakan Bahasa Indonesia yang baik dan benar.`,
+11. Gunakan Bahasa Indonesia yang baik dan benar.
+12. Jumlah slides HARUS PERSIS sama dengan slideCount. DILARANG mengembalikan array slides kosong.
+13. Bullets TANPA markdown (tanpa **, tanpa tanda "-" di awal, tanpa #) — teks polos ringkas.
+14. Jika total output mendekati batas panjang: PRIORITASKAN melengkapi SEMUA slides (jangan pernah menghapus slide); openingScript dan closingReflection boleh diringkas 2-3 kalimat.
+15. Output HANYA satu objek JSON — tanpa markdown fences, tanpa komentar, tanpa teks pembuka/penutup di luar JSON.`,
   defaultModel: "deepseek-chat",
   temperature: 0.7,
   maxTokens: 8000,

@@ -167,7 +167,16 @@ ATURAN PENTING:
 13. Jika difficulty="campuran", sebar soal: 40% mudah, 40% sedang, 20% sulit.
 14. Untuk HOTS (C4-C6): soal harus menuntut analisis, evaluasi, atau kreasi — bukan sekadar mengingat. Beri stimulus atau kasus yang perlu dipecahkan.
 15. Gunakan Bahasa Indonesia yang baik dan benar sesuai EYD/PUEBI.
-16. Kunci jawaban harus diverifikasi kebenarannya. Jangan buat soal yang ambigu atau multi-tafsir.`,
+16. Kunci jawaban harus diverifikasi kebenarannya. Jangan buat soal yang ambigu atau multi-tafsir.
+17. Jumlah questions HARUS PERSIS sama dengan questionCount. DILARANG mengembalikan array questions kosong.
+18. Kontrak jawaban per tipe:
+    - pilihan_ganda: field "answer" = SALIN UTUH salah satu teks dari "options" (persis, termasuk huruf besar/kecil).
+    - pilihan_ganda_kompleks: "answer" = array teks opsi yang benar (semua jawaban benar).
+    - menjodohkan: "answer" = teks pasangan yang benar (ringkas).
+    - isian_singkat: "answer" = jawaban singkat yang tepat (1-3 kata).
+    - uraian: "answer" = kunci jawaban atau poin penting yang harus ada.
+19. Jika total output mendekati batas panjang: PRIORITASKAN melengkapi SEMUA questions (jangan pernah menghapus/memotong soal); answerKeyText dan teacherNotes boleh diringkas.
+20. Output HANYA satu objek JSON — tanpa markdown fences, tanpa komentar, tanpa teks pembuka atau penutup di luar JSON.`,
   defaultModel: "deepseek-chat",
   temperature: 0.7,
   maxTokens: 8000,

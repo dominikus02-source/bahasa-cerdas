@@ -3658,3 +3658,45 @@ LearningEvidence → LearnerState → Diagnostic Profile → Personalized Action
 4. GameRoom migration SQL via Supabase dashboard
 5. UI game solo: badge-score client vs server masih beda (kosmetik)
 6. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
+
+---
+
+## Phase STEP 5.1.1 — AI Tools All-Work Audit: Soal/PPT provider & prompt hardening (Aug 16, 2026)
+
+### Goal (permintaan founder)
+Buat Alat AI Soal & PPT benar-benar bekerja + audit SEMUA alat AI agar bisa dipakai; prompt diperkuat agar hasil soal/presentasi presisi. **NOT COMMITTED — menunggu instruksi.**
+
+### Apa yang Diubah (3 file src + 1 test + package.json)
+| File | Perubahan |
+|------|-----------|
+| `src/ai/core/provider.ts` | +`providerModels()`: rantai model per provider — **Groq: openai/gpt-oss-120b → openai/gpt-oss-20b** (120b kualitas, 20b cadangan murah/cepat) dipakai di `streamProviderText` DAN `callWithFallback`; DeepSeek/Gemini model tunggal. "Pakai Groq kalau DeepSeek gagal" kini benar-benar jalan meski model Groq pertama menolak/penuh. |
+| `src/ai/agents/soal-agent.ts` | Prompt +RULE 17–20: jumlah questions PERSIS questionCount & dilarang kosong; kontrak jawaban per tipe (answer = salin utuh teks opsi; kompleks = array; isian = 1–3 kata); prioritas melengkapi semua soal saat output panjang; output satu objek JSON tanpa markdown. |
+| `src/ai/agents/ppt-agent.ts` | Prompt +RULE 12–15: jumlah slides PERSIS slideCount & dilarang kosong; bullets tanpa markdown; prioritas kelengkapan slide saat panjang; output satu objek JSON. |
+| `scripts/test-ai-tools-audit.ts` (BARU) | 40 checks: 9 agent terdaftar, kontrak lengkap, prompt↔schema selaras (soal+ppt), schema tetap ketat (fixture valid+invalid), rantai provider 120b→20b, tanpa json_object, tanpa secret, protected zones 0 diff. |
+
+### Audit SEMUA Alat AI (9 agent)
+Semua terdaftar & kontrak lengkap (inputSchema/outputSchema/systemPrompt/defaultModel deepseek-chat): rpp, soal, ppt, review, eyd, feedback, grading, text-analysis, bc-assistant. Penyebab kegagalan umum = provider json-mode berat (sudah diperbaiki 5.1: hapus json_object + empty-stream fallback; 5.1.1: rantai model Groq).
+
+### Catatan Provider (docs resmi)
+- DeepSeek: json_object "may occasionally return empty content" → TIDAK dipakai lagi (prompt JSON-strict).
+- Groq gpt-oss-120b: max output 65K, dukung JSON mode → cadangan utama; gpt-oss-20b cadangan kedua.
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `npm run test:ai-tools-audit` (BARU) | ✅ 40/40 |
+| `test:soal-agent-health` / `test:soal-generation-reliability` | ✅ 27/27 · ✅ 27/27 |
+| `test:premium-economy` / `test:guru-phase` / `test:ai-bc-*` | ✅ SEMUA LULUS |
+| `npx tsc --noEmit` / `npm run lint` / `npm run build` / `git diff --check` | ✅ 0 · ✅ 0 · ✅ exit 0 · ✅ bersih |
+| Protected zones (prisma/gamification/learning-loop/engines/apk/coins/adaptive/learner-state/diagnostic/app-api/player) | ✅ 0 diff |
+| DB | READ ONLY — 0 write, 0 migrasi |
+
+### Git status (NO COMMIT)
+```
+M src/ai/core/provider.ts
+M src/ai/agents/soal-agent.ts
+M src/ai/agents/ppt-agent.ts
+M package.json
+M AGENTS.md
+?? scripts/test-ai-tools-audit.ts
+```

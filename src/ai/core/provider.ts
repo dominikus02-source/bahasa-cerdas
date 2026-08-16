@@ -637,11 +637,25 @@ export async function streamProviderText(
     }
 
     try {
-      return await streamer({ ...req, model: getModelForProvider(providerName, req.model) }, onDelta);
+      // STEP 5.1.1 — coba rantai model dalam satu provider (Groq: 120b→20b)
+      const models = providerModels(providerName, req.model);
+      for (const model of models) {
+        try {
+          return await streamer({ ...req, model }, onDelta);
+        } catch (e) {
+          // Teks sudah mengalir ke client — berpindah provider akan menyambung
+          // dua respons berbeda jadi satu teks rusak. Lempar ke pemanggil agar
+          // teks parsial diselamatkan.
+          if (e instanceof ProviderStreamInterruptedError) throw e;
+          const message = e instanceof ProviderHttpError
+            ? `HTTP ${e.status}`
+            : e instanceof Error
+            ? e.message.slice(0, 100)
+            : "unknown error";
+          errors.push(`${providerName}/${model}: ${message}`);
+        }
+      }
     } catch (e) {
-      // Teks sudah mengalir ke client — berpindah provider akan menyambung
-      // dua respons berbeda jadi satu teks rusak. Lempar ke pemanggil agar
-      // teks parsial diselamatkan.
       if (e instanceof ProviderStreamInterruptedError) throw e;
       const message = e instanceof ProviderHttpError
         ? `HTTP ${e.status}`
@@ -664,6 +678,22 @@ function getModelForProvider(provider: string, requestedModel: string): string {
   if (provider === "groq" && requestedModel.includes("deepseek")) return "openai/gpt-oss-120b";
   if (provider === "gemini" && requestedModel.includes("deepseek")) return "gemini-2.5-flash";
   return requestedModel;
+}
+
+/**
+ * STEP 5.1.1 — daftar model per provider (rantai cadangan dalam satu provider).
+ * Groq: gpt-oss-120b (kualitas) → gpt-oss-20b (lebih murah/cepat/tersedia).
+ * DeepSeek & Gemini: model tunggal. Dipakai oleh streamProviderText DAN
+ * callWithFallback supaya "pakai Groq kalau DeepSeek gagal" benar-benar jalan
+ * meski model Groq pertama menolak/penuh.
+ */
+function providerModels(provider: ProviderName, requestedModel: string): string[] {
+  const mapped = getModelForProvider(provider, requestedModel);
+  if (provider === "groq") {
+    const chain = ["openai/gpt-oss-120b", "openai/gpt-oss-20b"];
+    return chain.includes(mapped) ? chain : [mapped, ...chain];
+  }
+  return [mapped];
 }
 
 // ─── Typed errors (internal — never leak to client) ───────
@@ -726,21 +756,24 @@ export async function callWithFallback(req: ProviderRequest): Promise<ProviderRe
       continue;
     }
 
-    // Coba tiap key (rotasi) sebelum pindah ke provider berikutnya.
-    const model = getModelForProvider(providerName, req.model);
-    for (let i = 0; i < keys.length; i++) {
-      const apiKey = nextKey(keyEnv, keys);
-      try {
-        return await caller({ ...req, model }, apiKey);
-      } catch (e) {
-        const message = e instanceof ProviderHttpError
-          ? `HTTP ${e.status}`
-          : e instanceof ProviderEmptyError
-          ? "empty response"
-          : e instanceof Error
-          ? e.message.slice(0, 100)
-          : "unknown error";
-        errors.push(`${providerName}${keys.length > 1 ? `[key${i + 1}]` : ""}: ${message}`);
+    // Coba tiap model (rantai provider — Groq 120b→20b) lalu tiap key (rotasi)
+    // sebelum pindah ke provider berikutnya.
+    const models = providerModels(providerName, req.model);
+    for (const model of models) {
+      for (let i = 0; i < keys.length; i++) {
+        const apiKey = nextKey(keyEnv, keys);
+        try {
+          return await caller({ ...req, model }, apiKey);
+        } catch (e) {
+          const message = e instanceof ProviderHttpError
+            ? `HTTP ${e.status}`
+            : e instanceof ProviderEmptyError
+            ? "empty response"
+            : e instanceof Error
+            ? e.message.slice(0, 100)
+            : "unknown error";
+          errors.push(`${providerName}/${model}${keys.length > 1 ? `[key${i + 1}]` : ""}: ${message}`);
+        }
       }
     }
   }
