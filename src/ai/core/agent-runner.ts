@@ -49,10 +49,12 @@ const OUTPUT_VALIDATION_FAILED = "Gagal memvalidasi output. Silakan coba dengan 
  * STEP 4E.2A — klasifikasi stage kegagalan untuk telemetri (dashboard harus
  * tahu: PROVIDER / PARSER / VALIDATION / EMPTY / UNKNOWN). HANYA untuk
  * kolom errorCode AIUsage — tidak mengubah perilaku/alur apa pun.
+ * STEP 5.1.2 — tambah pola "sibuk"/"AI sedang" (pesan ProviderChainFailedError
+ * berbahasa Indonesia) supaya tidak salah klasifikasi jadi UNKNOWN_ERROR.
  */
 function errorCodeFor(error: string | null): string | null {
   if (!error) return null;
-  if (error.includes("Layanan AI sedang sibuk") || /provider|timeout|busy/i.test(error)) return "PROVIDER_ERROR";
+  if (error.includes("Layanan AI sedang sibuk") || error.includes("AI sedang sibuk") || /provider|timeout|busy|sibuk/i.test(error)) return "PROVIDER_ERROR";
   if (error.includes("Gagal memvalidasi output")) return "OUTPUT_VALIDATION_FAILED";
   if (/empty|tidak menghasilkan|AI tidak menghasilkan/i.test(error)) return "PROVIDER_EMPTY_RESPONSE";
   if (error.includes("Input tidak valid")) return "INVALID_INPUT";
@@ -410,8 +412,16 @@ export async function runAgent(opts: RunAgentOptions): Promise<AgentRunResult> {
     }
 
     if (error instanceof ProviderChainFailedError) {
+      // STEP 5.1.2 — JANGAN buang detail per-provider: log server-side supaya
+      // produksi tahu persis kenapa chain gagal (mis. deepseek HTTP 401,
+      // groq HTTP 429, gemini quota). Tanpa ini error selalu jadi "sibuk".
+      console.error(
+        "[AgentRunner] Provider chain failed",
+        JSON.stringify({ agentId: agent.id, requestId: context.requestId, errors: error.errors.slice(0, 12) })
+      );
       finalError = "Layanan AI sedang sibuk. Silakan coba lagi.";
     } else if (error instanceof Error) {
+      console.error(`[AgentRunner] Agent '${agent.id}' failed (${context.requestId}):`, error);
       finalError = error.message;
     } else {
       finalError = "Terjadi kesalahan internal.";

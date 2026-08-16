@@ -68,7 +68,8 @@ function getUserFriendlyMessage(error: string): string {
   if (lower.includes("rate") || lower.includes("limit") || lower.includes("429")) {
     return "Batas penggunaan AI sementara tercapai. Coba lagi sebentar lagi atau tingkatkan paket Anda.";
   }
-  if (lower.includes("provider") || lower.includes("busy") || lower.includes("timeout")) {
+  // STEP 5.1.2 — pesan provider chain berbahasa Indonesia ("sedang sibuk").
+  if (lower.includes("provider") || lower.includes("busy") || lower.includes("timeout") || lower.includes("sibuk") || lower.includes("ai sedang")) {
     return "AI sedang sibuk. Silakan coba lagi beberapa saat.";
   }
   if (lower.includes("validasi") || lower.includes("validation") || lower.includes("output")) {

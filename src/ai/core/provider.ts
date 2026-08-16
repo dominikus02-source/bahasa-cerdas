@@ -666,6 +666,9 @@ export async function streamProviderText(
     }
   }
 
+  // STEP 5.1.2 — log ringkas detail kegagalan chain (tanpa secret) supaya
+  // produksi bisa langsung melihat penyebab per provider di server logs.
+  console.error(`[AI Provider] stream chain failed (${req.model}):`, errors.slice(0, 12).join(" | "));
   throw new ProviderChainFailedError(errors);
 }
 
@@ -778,6 +781,8 @@ export async function callWithFallback(req: ProviderRequest): Promise<ProviderRe
     }
   }
 
+  // STEP 5.1.2 — log ringkas detail kegagalan chain (tanpa secret).
+  console.error(`[AI Provider] call chain failed (${req.model}):`, errors.slice(0, 12).join(" | "));
   throw new ProviderChainFailedError(errors);
 }
 

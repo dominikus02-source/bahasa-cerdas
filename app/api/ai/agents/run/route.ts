@@ -191,15 +191,21 @@ export async function POST(req: NextRequest) {
     let errorCode: string | null = null;
     if (!result.success) {
       const err = (result.error || "").toLowerCase();
+      // STEP 5.1.2 — pola "sibuk"/"AI sedang" (pesan ProviderChainFailedError
+      // berbahasa Indonesia) harus diklasifikasi PROVIDER_ERROR, bukan
+      // UNKNOWN_ERROR.
       if (err.includes("output") && (err.includes("valid") || err.includes("format"))) {
         errorCode = "OUTPUT_VALIDATION_ERROR";
-      } else if (err.includes("provider") || err.includes("timeout") || err.includes("busy")) {
+      } else if (err.includes("provider") || err.includes("timeout") || err.includes("busy") || err.includes("sibuk")) {
         errorCode = "PROVIDER_ERROR";
       } else if (err.includes("empty") || err.includes("no output") || err.includes("tidak")) {
         errorCode = "PROVIDER_EMPTY_RESPONSE";
       } else {
         errorCode = "UNKNOWN_ERROR";
       }
+      // STEP 5.1.2 — observability: log detail kegagalan agent + klasifikasi
+      // supaya Vercel logs bisa dipakai mencari akar masalah.
+      console.error(`[AI Agents Run] Agent failed requestId=${requestId} agent=${canonicalAgentId} code=${errorCode} error=${result.error} provider=${result.provider} model=${result.model} duration=${durationMs}ms`);
     }
 
     // Deduct credits only after successful result

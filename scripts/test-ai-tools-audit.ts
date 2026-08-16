@@ -125,11 +125,32 @@ function main() {
       const diff = execSync(`git diff --name-only HEAD -- prisma/ lib/gamification/ lib/learning-loop/ engines/ lib/apk.ts lib/coins.ts lib/award-xp.ts lib/adaptive-practice/ lib/learner-state/ lib/diagnostic/ app/api/player/`, { encoding: "utf8", cwd: process.cwd() }).trim();
       return diff.length === 0;
     });
-  check("8. perubahan hanya di src/ai + package.json + scripts (file list)",
+  check("8. perubahan hanya di src/ai + app/api/ai + guru/ai-tools + package.json + scripts (file list)",
     () => {
       const diff = execSync(`git diff --name-only HEAD -- src/`, { encoding: "utf8", cwd: process.cwd() }).trim().split("\n").filter(Boolean);
       return diff.every((f) => f.startsWith("src/ai/"));
     });
+
+  // 9. STEP 5.1.2 — klasifikasi "sibuk" (UNKNOWN_ERROR fix)
+  console.log("\n── 9. Klasifikasi error provider 'sibuk' (bukan UNKNOWN_ERROR) ──");
+  const runRoute = read("app/api/ai/agents/run/route.ts");
+  check("9. route klasifikasi 'sibuk' → PROVIDER_ERROR",
+    () => runRoute.includes('err.includes("sibuk")') && runRoute.includes("PROVIDER_ERROR"));
+  check("9. runAgent errorCodeFor 'sibuk' → PROVIDER_ERROR",
+    () => runner.includes('sibuk/i.test(error)') && runner.includes("PROVIDER_ERROR"));
+  check("9. getUserFriendlyMessage 'sibuk' → pesan AI sedang sibuk",
+    () => read("app/(dashboard)/guru/ai-tools/lib/agent-api.ts").includes('lower.includes("sibuk")') && read("app/(dashboard)/guru/ai-tools/lib/agent-api.ts").includes("AI sedang sibuk. Silakan coba lagi beberapa saat."));
+
+  // 10. Observability detail chain (server logs)
+  console.log("\n── 10. Observability detail provider chain ──");
+  check("10. runAgent mencatat detail ProviderChainFailedError ke server logs",
+    () => runner.includes("Provider chain failed") && runner.includes("error.errors.slice(0, 12)"));
+  check("10. streamProviderText log detail chain gagal",
+    () => provider.includes("stream chain failed") && provider.includes("errors.slice(0, 12)"));
+  check("10. callWithFallback log detail chain gagal",
+    () => provider.includes("call chain failed") && provider.includes("errors.slice(0, 12)"));
+  check("10. run route log kegagalan agent (requestId + code + error)",
+    () => runRoute.includes("Agent failed requestId=") && runRoute.includes("code=${errorCode}"));
 
   console.log("\n" + "=".repeat(60));
   console.log(`Hasil: ${passed} lulus, ${failed} gagal`);
