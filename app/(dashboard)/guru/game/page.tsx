@@ -23,6 +23,7 @@ import {
   BellRing,
   Clock,
   BarChart3,
+  Grid3x3,
 } from "lucide-react";
 import { BadgeIcon } from "@/components/gamification/BadgeIcon";
 import { RARITY_META } from "@/lib/gamification/client-types";
@@ -132,6 +133,7 @@ const SOLO_GAMES = [
   { id: "irama-kata", title: "Irama Kata", desc: "Kata jatuh di 4 jalur — ketuk hanya yang sesuai aturan level.", href: "/guru/game/irama-kata", gradient: "from-orange-500 via-rose-500 to-red-600", icon: Zap, emoji: "🎵" },
   { id: "menara", title: "Menara Cerdas", desc: "Panjat menara dengan soal pelajaran murid! Jawab benar untuk naik.", href: "/guru/game/menara", gradient: "from-violet-500 via-purple-600 to-fuchsia-700", icon: Trophy, emoji: "🗼" },
   { id: "kata-play", title: "KataPlay", desc: "Belajar membaca dari nol! 4 tingkat, puluhan soal seru.", href: "/guru/game/kata-play", gradient: "from-violet-500 via-purple-600 to-fuchsia-700", icon: BookOpen, emoji: "📚" },
+  { id: "teka-teki-silang", title: "Teka-Teki Silang", desc: "Isi kotak, asah kosakata! 12 level, soal baru tiap main.", href: "/guru/game/teka-teki-silang", gradient: "from-sky-500 via-cyan-600 to-sky-800", icon: Grid3x3, emoji: "🧩" },
 ];
 
 const GAME_TYPE_LABEL: Record<string, string> = {
@@ -141,6 +143,7 @@ const GAME_TYPE_LABEL: Record<string, string> = {
   BENAR_SALAH: "Benar atau Salah",
   IRAMA_KATA: "Irama Kata",
   KATAPLAY: "KataPlay",
+  TEKA_TEKI_SILANG: "Teka-Teki Silang",
 };
 
 const GAME_EMOJI: Record<string, string> = {
@@ -152,6 +155,7 @@ const GAME_EMOJI: Record<string, string> = {
   "Irama Kata": "🎵",
   "Menara Cerdas": "🗼",
   KataPlay: "📚",
+  "Teka-Teki Silang": "🧩",
 };
 
 const resultGameLabel = (r: { room: RoomLite | null }): string =>
@@ -842,6 +846,7 @@ function slugToPage(slug: string): string {
     case "BENAR_SALAH": return "benar-salah";
     case "IRAMA_KATA": return "irama-kata";
     case "KATAPLAY": return "kata-play";
+    case "TEKA_TEKI_SILANG": return "teka-teki-silang";
     default: return "lari-kata";
   }
 }

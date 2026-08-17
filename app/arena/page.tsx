@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic"
 import {
   Flame, Zap, Coins, Target, Trophy, Award, Gift,
   ChevronRight, Gamepad2, CheckCircle2, Medal, Swords,
-  Clock, Mountain, TreePine, Users,
+  Clock, Mountain, TreePine, Users, Grid3x3,
 } from "lucide-react"
 import { trackDailyStreak, getOrCreateDailyQuests } from "@/lib/coins"
 import { jenjangMurid } from "@/lib/arena-junior/kurikulum"
@@ -42,6 +42,7 @@ const GIM_SEKUNDER: { title: string; desc: string; href: string; icon: any; xp: 
   { title: "Menara Cerdas", desc: "Panjat menara dengan soal pelajaranmu!", href: "/arena/game/menara", icon: Mountain, xp: "+60 XP" },
   { title: "Irama Kata", desc: "Kata jatuh di 4 jalur — ketuk yang sesuai aturan!", href: "/arena/game/irama-kata", icon: Clock, xp: "+60 XP" },
   { title: "Petualangan Kata", desc: "Bantu Zelby menangkap kata yang benar di hutan!", href: "/arena/game/petualangan-kata", icon: TreePine, xp: "+90 XP" },
+  { title: "Teka-Teki Silang", desc: "Isi kotak, asah kosakata — 12 level, soal baru tiap main!", href: "/arena/game/teka-teki-silang", icon: Grid3x3, xp: "+75 XP" },
 ]
 
 export default async function BerandaPage() {

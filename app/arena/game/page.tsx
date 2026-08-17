@@ -5,6 +5,7 @@ import { redirect } from "next/navigation"
 import Link from "next/link"
 import { Zap, Swords, Puzzle, Type, Flame, BookOpen, Users, Clock, Crown, Mountain, ThumbsUp, TreePine, Grid3x3 } from "lucide-react"
 import BattleCard from "@/components/arena/BattleCard"
+import BannerSlideshow, { type BannerSlide } from "@/components/public/BannerSlideshow"
 import GameHubLeagueTabs from "./league-tabs"
 import { MULTIPLAYER_ENABLED } from "@/lib/features"
 import { weekKey } from "@/lib/gamification/season"
@@ -148,7 +149,7 @@ export default async function ArenaGimPage() {
           <BattleCard onlineCount={onlineCount} recentBattles={recentBattles} recentPlayers={recentPlayers} />
         </div>
 
-        {/* Banner Arena — 2 informasi bersebelahan (kiri: Rank BC → Pemain, kanan: Arena Gim → Kuis Tempur) */}
+        {/* Banner Arena — 2 informasi bersebelahan (kiri: Rank BC → Pemain, kanan: slide Kuis Tempur ↔ Teka-Teki Silang) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
           <Link
             href="/arena/player"
@@ -158,20 +159,29 @@ export default async function ArenaGimPage() {
             <img
               src="/banners/rank-bc-banner.webp"
               alt="Profil Pemain — naikkan peringkatmu!"
-              className="block w-full h-auto"
+              className="block w-full h-auto transition-transform duration-300 group-hover:scale-[1.02]"
             />
           </Link>
-          <Link
-            href="/arena/game/kuis-tempur"
-            className="block relative overflow-hidden rounded-[20px] active:scale-[0.98] transition-transform group"
-            style={{ boxShadow: "0 8px 28px rgba(43,75,255,0.25)" }}
-          >
-            <img
-              src="/Rank%20BC/banner%20arena%20gim.png"
-              alt="Kuis Tempur — kini bisa main solo!"
-              className="block w-full h-auto"
-            />
-          </Link>
+          <BannerSlideshow
+            slides={[
+              {
+                src: "/Rank%20BC/banner%20arena%20gim.png",
+                alt: "Kuis Tempur — kini bisa main solo!",
+                href: "/arena/game/kuis-tempur",
+                shadow: "0 8px 28px rgba(43,75,255,0.25)",
+                fallbackTitle: "Kuis Tempur",
+                fallbackDesc: "Mode tempur langsung — jawab benar untuk menyerang, solo vs bot tersedia.",
+              },
+              {
+                src: "/banners/banners-TTS-gim.png",
+                alt: "Teka-Teki Silang — isi kotak, asah kosakata!",
+                href: "/arena/game/teka-teki-silang",
+                shadow: "0 8px 28px rgba(56,189,248,0.25)",
+                fallbackTitle: "Teka-Teki Silang",
+                fallbackDesc: "12 level, soal baru tiap main — isi kotaknya dan kumpulkan XP!",
+              },
+            ] satisfies BannerSlide[]}
+          />
         </div>
 
         {/* Petualangan Kata — Announcement Banner */}
