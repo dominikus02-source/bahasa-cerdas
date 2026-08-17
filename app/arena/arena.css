@@ -105,21 +105,39 @@
   display: none;
 }
 
-/* Game Hub dark theme */
+/* GAME HUB 2.0 — game launcher. Light/dark dikerjakan Tailwind `dark:`
+   variant (theme global .dark) — wrapper ini TIDAK memaksa warna apa pun
+   agar light mode benar-benar light dan dark mode benar-benar dark. */
 .game-hub {
-  --gh-bg: #0E0B1A;
-  --gh-surface: #16122A;
-  --gh-surface2: #1E1A35;
-  --gh-text: #F1F0FF;
-  --gh-muted: #7C7A9E;
-  --gh-border: rgba(124, 58, 237, 0.2);
-  background: var(--gh-bg);
-  color: var(--gh-text);
   min-height: 100vh;
 }
 
 .game-hub ::-webkit-scrollbar { display: none; }
 .game-hub { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Badge "Baru" — denyut halus (dipakai kartu grid & section Baru di Arena) */
+@keyframes gh-badge-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.35); }
+  50% { box-shadow: 0 0 0 5px rgba(16, 185, 129, 0); }
+}
+
+/* Fokus keyboard yang terlihat (navigasi tanpa mouse) */
+.game-hub a:focus-visible,
+.game-hub button:focus-visible {
+  outline: 2px solid #8b5cf6;
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+
+/* Reduced motion — hormati preferensi pengguna */
+@media (prefers-reduced-motion: reduce) {
+  .game-hub .game-card-anim,
+  .game-hub .glow-pulse,
+  .arena-page {
+    animation: none !important;
+    transition: none !important;
+  }
+}
 
 /* XP badge pulse glow */
 @keyframes glow-pulse {
