@@ -691,6 +691,18 @@ export default function KelasKuPage() {
 
         {toast && <Toast msg={toast} onClose={() => setToast(null)} />}
 
+        {/* Hapus tugas yang sudah dikirim — dirender juga di cabang DETAIL
+            (tombol hapus berada di tab Tugas & stream Aktivitas). */}
+        {deleteTask && (
+          <ConfirmTaskDeleteModal
+            kind={deleteTask.kind}
+            label={deleteTask.label}
+            deleting={deletingTask}
+            onCancel={() => setDeleteTask(null)}
+            onConfirm={confirmDeleteTask}
+          />
+        )}
+
         <ClassroomComposer
           open={composerOpen}
           onClose={() => setComposerOpen(false)}
