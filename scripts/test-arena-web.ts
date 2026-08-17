@@ -338,6 +338,26 @@ function main() {
   test("TTS: XP/koin tetap via engine existing — tanpa awardXp baru di komponen game",
     () => !tts.includes("awardXp(") && !tts.includes("addXp(") && !tts.includes("createXpTransaction"));
 
+  // ── 15. KUIS TTS 1.1 — REAL USER QA & GAMEPLAY FEEL ──
+  console.log("\n── 15. Kuis TTS 1.1 — Real User QA & Gameplay Feel ──");
+  test("TTS 1.1: durasi maksimal 3 pilihan (3/5/10) — keputusan <2 detik",
+    () => {
+      const m = tts.match(/TIME_OPTIONS = \[([^\]]+)\]/);
+      return !!m && m[1].split(",").map((s) => s.trim()).join(",") === "3,5,10";
+    });
+  test("TTS 1.1: timer tidak duplikat di gameplay (HUD tile + bar sisa waktu, tanpa chip header)",
+    () => (tts.match(/fmtTime\(remainingSec\)/g) || []).length === 2);
+  test("TTS 1.1: modal Keluar → /arena/game (keluar penuh, bukan ke pilih level)",
+    () => tts.includes('setConfirmExit(false); router.push("/arena/game")'));
+  test("TTS 1.1: result = reward + next action — tanpa strip statistik pemain (Tier/Rentetan/Nyawa)",
+    () => !tts.includes("grid grid-cols-3 gap-2.5 text-left"));
+  test("TTS 1.1: result menampilkan bonus rentetan & bonus nyawa sebagai chip reward transparan",
+    () => tts.includes("Bonus rentetan") && tts.includes("Bonus nyawa"));
+  test("TTS 1.1: feedback jawaban salah — pesan singkat 'Belum tepat — coba lagi.' lewat bubble maskot",
+    () => tts.includes("fireMessage") && tts.includes("Belum tepat — coba lagi."));
+  test("TTS 1.1: layar awal tanpa kartu info duplikat (kognitif ringan, 5 detik pertama jelas)",
+    () => !tts.includes("grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-4"));
+
   // ── Summary ──
   console.log(`\n${"=".repeat(60)}`);
   console.log(`📊 RESULT: ${passed} passed, ${failed} failed (${passed + failed} total)`);

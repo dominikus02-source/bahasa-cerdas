@@ -30,6 +30,15 @@
  * (aksesibilitas §35); animasi hormati prefers-reduced-motion (§28). XP tetap
  * dikirim SEKALI per sesi (xpSentRef) dan skor dicap server
  * (MAX_SCORE_PER_GAME) — anti-cheat tidak diubah.
+ *
+ * v3.2 (KUIS TTS 1.1 — real user QA): durasi cukup 3 pilihan (3/5/10 menit)
+ * biar keputusan <2 detik (§5); timer tidak tampil 3x (chip header dihapus —
+ * HUD Waktu + bar sisa waktu cukup, §15); keluar dari modal konfirmasi →
+ * /arena/game (§21); result screen = reward murni (strip statistik
+ * Tier/Rentetan/Nyawa dihapus, bonus rentetan & nyawa jadi chip reward, §19);
+ * feedback salah = pesan singkat "Belum tepat — coba lagi." lewat bubble
+ * maskot (§13); kartu info duplikat di layar awal dihapus biar 5 detik
+ * pertama jelas (§4).
  */
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
@@ -55,7 +64,7 @@ const TOTAL_LEVELS = TTS_LEVELS.length;
 
 
 const THEME = ["#FF6B6B", "#F59E0B", "#10B981", "#38BDF8", "#8B5CF6"];
-const TIME_OPTIONS = [1, 2, 3, 5, 7, 10];
+const TIME_OPTIONS = [3, 5, 10]; // KUIS TTS 1.1 (§5): maksimal 3 pilihan — keputusan <2 detik
 
 /* ---------- Maskot: Zelby (teal, ceria), Hazel (koral, hangat), Alby (emas, gagah) ---------- */
 const MASCOTS: Record<Mascot, { name: string; body: string; accent: string; cheer: string[] }> = {
@@ -367,6 +376,13 @@ export default function TekaTekiSilang() {
     cheerTimeoutRef.current = setTimeout(() => { setCelebrating(false); setCheerText(null); }, 1100);
   }, [mascot]);
 
+  /* KUIS TTS 1.1 (§13): feedback singkat tanpa animasi perayaan (jawaban belum tepat). */
+  const fireMessage = useCallback((text: string) => {
+    setCheerText(text);
+    if (cheerTimeoutRef.current) clearTimeout(cheerTimeoutRef.current);
+    cheerTimeoutRef.current = setTimeout(() => setCheerText(null), 1200);
+  }, []);
+
   /* Cek tiap kata yang menyentuh sel yang baru diisi — kalau lengkap & benar
    * dan belum pernah dirayakan, mascot merayakan + Kata Beruntun bertambah. */
   const checkWordCompletion = useCallback((row: number, col: number, nextGrid: Record<string, string>) => {
@@ -524,7 +540,8 @@ export default function TekaTekiSilang() {
       sfx.wrong();
       haptic([80, 40, 80]);
       setCombo(0);
-      // Sistem nyawa: jawaban salah = -1 nyawa (pola Duolingo).
+      // KUIS TTS 1.1 (§13): umpan balik lembut, bukan hukuman — nyawa tetap -1 (pola Duolingo).
+      fireMessage("Belum tepat — coba lagi.");
       setHeartsState((s) => spendHeart(s, Date.now()));
     }
     if (allCorrect && anyFilled) finishGame(false);
@@ -677,7 +694,8 @@ export default function TekaTekiSilang() {
               <button className={`${btn} px-5 py-3 text-white`} style={{ background: color }} onClick={() => setConfirmExit(false)}>
                 Tetap Main
               </button>
-              <button className={`${btn} px-5 py-3 bg-white`} onClick={() => { setConfirmExit(false); setScreen("levels"); }}>
+              {/* KUIS TTS 1.1 (§21): keluar = benar-benar keluar ke Game Hub, bukan ke pilih level. */}
+              <button className={`${btn} px-5 py-3 bg-white`} onClick={() => { setConfirmExit(false); router.push("/arena/game"); }}>
                 Keluar
               </button>
             </div>
@@ -706,11 +724,6 @@ export default function TekaTekiSilang() {
             <button className={`${btn} w-10 h-10 bg-white`} onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
             </button>
-            {screen === "game" && (
-              <div className={`rounded-xl border-[3px] border-[#161B3A] px-3 py-1.5 shadow-[3px_3px_0_#161B3A] font-extrabold text-sm flex items-center gap-1.5 ${timeLow ? "bg-[#FF6B6B] text-white" : "bg-white"}`}>
-                <Clock className="w-4 h-4" /> {fmtTime(remainingSec)}
-              </div>
-            )}
           </div>
         </div>
 
@@ -795,30 +808,12 @@ export default function TekaTekiSilang() {
             <p className="text-[11px] font-bold opacity-60 mt-3">
               Soal dibangkitkan tiap main dari ~320 kata — main berulang tetap terasa baru.
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-4 text-center">
-              <div className="bg-[#10B981] text-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
-                <div className="text-[10px] font-extrabold uppercase opacity-80">3 Bintang</div>
-                <div className="font-extrabold text-sm">Selesai, 0 petunjuk</div>
-              </div>
-              <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
-                <div className="text-[10px] font-extrabold uppercase opacity-70">XP & Koin</div>
-                <div className="font-extrabold text-sm">Naik tiap level</div>
-              </div>
-              <div className="bg-[#8B5CF6] text-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
-                <div className="text-[10px] font-extrabold uppercase opacity-80">Nyawa</div>
-                <div className="font-extrabold text-sm">Salah = -1, pulih 8 mnt</div>
-              </div>
-              <div className="bg-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
-                <div className="text-[10px] font-extrabold uppercase opacity-70">Bonus</div>
-                <div className="font-extrabold text-sm">Cepat +20% & rentetan</div>
-              </div>
-            </div>
           </div>
         )}
 
-        {/* ---------- HASIL: SELEBRASI UNLOCK + STATISTIK PEMAIN ---------- */}
+        {/* ---------- HASIL: SELEBRASI UNLOCK ---------- */}
         {screen === "result" && result && (
-          <div className="tts-screen mx-auto w-full max-w-2xl mb-4 flex flex-col gap-3">
+          <div className="tts-screen mx-auto w-full max-w-2xl mb-4">
             {lastUnlocked && (
               <div className="bg-[#161B3A] text-white rounded-3xl border-4 border-[#FBBF24] shadow-[6px_6px_0_#FBBF24] p-5 text-center tts-pop">
                 <div className="flex items-center justify-center gap-2 mb-1">
@@ -830,37 +825,6 @@ export default function TekaTekiSilang() {
                 </p>
               </div>
             )}
-            <div className="grid grid-cols-3 gap-2.5 text-left">
-              <div className="bg-[#161B3A] text-white border-[3px] border-[#161B3A] rounded-2xl p-3 shadow-[4px_4px_0_#38BDF8]">
-                <div className="flex items-center gap-1 text-[10px] font-extrabold uppercase opacity-70">
-                  <Trophy className="w-3.5 h-3.5 text-amber-300" /> Tier
-                </div>
-                <div className="font-extrabold text-sm leading-tight mt-0.5">{tierFor(saved.xp + result.xp).tier.name}</div>
-                {tierFor(saved.xp + result.xp).next && (
-                  <div className="text-[10px] font-bold opacity-70 mt-1">
-                    {saved.xp + result.xp} XP · {tierFor(saved.xp + result.xp).next!.min - (saved.xp + result.xp)} lagi
-                  </div>
-                )}
-              </div>
-              <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-2xl p-3 shadow-[4px_4px_0_#161B3A]">
-                <div className="flex items-center gap-1 text-[10px] font-extrabold uppercase opacity-70">
-                  <Flame className="w-3.5 h-3.5 text-orange-600" /> Rentetan
-                </div>
-                <div className="font-extrabold text-sm leading-tight mt-0.5">{streak.streak} hari</div>
-                <div className="text-[10px] font-bold opacity-70 mt-1">+{streakXpBonus(streak.streak)} XP bonus</div>
-              </div>
-              <div className="bg-white border-[3px] border-[#161B3A] rounded-2xl p-3 shadow-[4px_4px_0_#10B981]">
-                <div className="flex items-center gap-1 text-[10px] font-extrabold uppercase opacity-70">
-                  <Heart className="w-3.5 h-3.5 text-rose-500" fill="#F43F5E" /> Nyawa
-                </div>
-                <div className="flex items-center gap-1 mt-1">
-                  {Array.from({ length: HEARTS_MAX }).map((_, i) => (
-                    <Heart key={i} className={`w-3.5 h-3.5 ${i < liveHearts.hearts ? "text-rose-500" : "text-gray-300"}`} fill={i < liveHearts.hearts ? "currentColor" : "none"} />
-                  ))}
-                </div>
-                <div className="text-[10px] font-bold opacity-70 mt-1">{result.pct === 100 ? "+1 nyawa bonus!" : nextHeartLabel}</div>
-              </div>
-            </div>
           </div>
         )}
 
@@ -1264,6 +1228,7 @@ export default function TekaTekiSilang() {
               </div>
             </div>
 
+            {/* KUIS TTS 1.1 (§19): result = reward + next action — bonus jadi chip transparan. */}
             <div className="flex justify-center gap-3 mb-5 text-sm flex-wrap">
               <div className="bg-white border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
                 <Lightbulb className="w-4 h-4 inline mr-1 text-amber-500" />
@@ -1273,6 +1238,18 @@ export default function TekaTekiSilang() {
                 <Trophy className="w-4 h-4 inline mr-1 text-violet-500" />
                 Waktu dipakai <b>{fmtTime(result.time)}</b>
               </div>
+              {streak.streak >= 2 && (
+                <div className="bg-white border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
+                  <Flame className="w-4 h-4 inline mr-1 text-orange-500" />
+                  Bonus rentetan <b>+{streakXpBonus(streak.streak)} XP</b>
+                </div>
+              )}
+              {result.pct === 100 && (
+                <div className="bg-white border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
+                  <Heart className="w-4 h-4 inline mr-1 text-rose-500" fill="#F43F5E" />
+                  Bonus nyawa <b>+1</b>
+                </div>
+              )}
               {bestCombo >= 2 && (
                 <div className="bg-white border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
                   <Flame className="w-4 h-4 inline mr-1 text-orange-500" />
