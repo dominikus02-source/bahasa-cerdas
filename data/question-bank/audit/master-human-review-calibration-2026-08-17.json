@@ -1,0 +1,1160 @@
+{
+  "schemaVersion": "1.0",
+  "stamp": "2026-08-17T14:52:05.833Z",
+  "generator": "calibrate-master-human-review.ts",
+  "report": {
+    "schemaVersion": "1.0",
+    "stamp": "2026-08-17T14:52:05.833Z",
+    "total": 44,
+    "withCandidate": 42,
+    "withoutCandidate": [
+      "BC-CERPEN-0021",
+      "BC-CERPEN-0029"
+    ],
+    "bands": {
+      "MAJOR-REPAIR": 40,
+      "MINOR-REPAIR": 2,
+      "REJECT": 2
+    },
+    "goldBlocked": 40,
+    "repairable": 43,
+    "nonRepairable": 1,
+    "riskCounts": {
+      "passB:panjang-opsi-seimbang (max 32 vs min 5)": 1,
+      "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)": 18,
+      "passD:jaccard-<0.95-vs-family (family jaccard 1.00)": 18,
+      "passE:penjelasan-pedagogis (penjelasan tanpa alasan)": 6,
+      "passD:tidak-exact-vs-bank (exact duplicate di bank)": 13,
+      "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)": 13,
+      "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)": 18,
+      "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)": 21,
+      "passE:skill-benar-diuji (stem tidak menanyakan KONSEP)": 11,
+      "passD:opsi-set-unik-batch (1 opsi tabrakan antar batch)": 5,
+      "passD:opsi-set-unik-batch (3 opsi tabrakan antar batch)": 3,
+      "passD:opsi-set-unik-batch (4 opsi tabrakan antar batch)": 1,
+      "passD:opsi-set-unik-batch (5 opsi tabrakan antar batch)": 1,
+      "passD:opsi-set-unik-batch (6 opsi tabrakan antar batch)": 1,
+      "passB:tanpa-opsi-forbidden (opsi 'semua benar / tidak ada jawaban' dilarang)": 1,
+      "passD:jaccard-<0.75-vs-batch (max jaccard batch 0.78)": 1,
+      "passB:panjang-opsi-seimbang (max 22 vs min 5)": 2,
+      "passD:opsi-set-unik-batch (7 opsi tabrakan antar batch)": 1,
+      "passD:opsi-set-unik-batch (8 opsi tabrakan antar batch)": 1,
+      "passD:opsi-set-unik-batch (9 opsi tabrakan antar batch)": 1,
+      "passD:jaccard-<0.75-vs-batch (max jaccard batch 0.75)": 2,
+      "passD:opsi-set-unik-batch (2 opsi tabrakan antar batch)": 2,
+      "passD:opsi-set-unik-batch (10 opsi tabrakan antar batch)": 1,
+      "passD:opsi-set-unik-batch (11 opsi tabrakan antar batch)": 2,
+      "passD:opsi-set-unik-batch (12 opsi tabrakan antar batch)": 1,
+      "passD:opsi-set-unik-batch (13 opsi tabrakan antar batch)": 1,
+      "passD:opsi-set-unik-batch (14 opsi tabrakan antar batch)": 1,
+      "passD:jaccard-<0.75-vs-batch (max jaccard batch 0.86)": 1,
+      "passD:jaccard-<0.75-vs-batch (max jaccard batch 0.80)": 1,
+      "passD:opsi-set-unik-batch (15 opsi tabrakan antar batch)": 1,
+      "passD:jaccard-<0.75-vs-batch (max jaccard batch 0.90)": 1,
+      "passD:opsi-set-unik-batch (16 opsi tabrakan antar batch)": 1,
+      "passD:opsi-set-unik-batch (17 opsi tabrakan antar batch)": 1,
+      "passD:opsi-set-unik-batch (18 opsi tabrakan antar batch)": 1
+    },
+    "unsafeFacts": [
+      "BC-CERPEN-0016"
+    ],
+    "falsePositiveNotes": [
+      "BC-CERITA-INSPIRATIF-0025: explanation definisional ('mengandung pesan motivasi…') — FP lama penjelasan-pedagogis sudah diatasi via perluasan regex KONSEP ('adalah'/'merupakan'/'sehingga').",
+      "Kandidat yang memperbaiki soal sumber (stem menyalin source word-for-word) di-flag duplikat family/bank (jaccard 1.00) — konservatif by design; keputusan: JANGAN turunkan threshold."
+    ],
+    "verdict": "YELLOW"
+  },
+  "records": [
+    {
+      "questionId": "BC-CERITA-INSPIRATIF-0024",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 34,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 2,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 4,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 0,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passD:duplikat-vs-sumber (family/bank)"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERITA-INSPIRATIF-0025",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MINOR-REPAIR",
+      "score": 40,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 4,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 4,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": false,
+      "hardGateFails": [],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERITA-INSPIRATIF-0026",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 33,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 1,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 0,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:kunci-tidak-terbenam-di-stem",
+        "passD:tidak-exact-vs-bank",
+        "passD:tidak-near-vs-bank",
+        "passD:duplikat-vs-sumber (family/bank)"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERITA-INSPIRATIF-0027",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 36,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 4,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 0,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passD:duplikat-vs-sumber (family/bank)"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERITA-INSPIRATIF-0028",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 37,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 4,
+        "kesulitan": 4,
+        "pedagogis": 1,
+        "orisinalitas": 4,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:skill-benar-diuji"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERITA-INSPIRATIF-0029",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 38,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 4,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 2,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": false,
+      "hardGateFails": [],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERITA-INSPIRATIF-0030",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 33,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 1,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 0,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:kunci-tidak-terbenam-di-stem",
+        "passD:tidak-exact-vs-bank",
+        "passD:tidak-near-vs-bank",
+        "passD:duplikat-vs-sumber (family/bank)"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERPEN-0001",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 35,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 1,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 2,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:kunci-tidak-terbenam-di-stem"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERPEN-0003",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 37,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 4,
+        "kesulitan": 4,
+        "pedagogis": 1,
+        "orisinalitas": 4,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:skill-benar-diuji"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERPEN-0004",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 33,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 1,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 0,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:kunci-tidak-terbenam-di-stem",
+        "passD:tidak-exact-vs-bank",
+        "passD:tidak-near-vs-bank",
+        "passD:duplikat-vs-sumber (family/bank)"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERPEN-0005",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 37,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 4,
+        "kesulitan": 4,
+        "pedagogis": 1,
+        "orisinalitas": 4,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:skill-benar-diuji"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERPEN-0006",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 33,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 1,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 0,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:kunci-tidak-terbenam-di-stem",
+        "passD:tidak-exact-vs-bank",
+        "passD:tidak-near-vs-bank",
+        "passD:duplikat-vs-sumber (family/bank)"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERPEN-0007",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 33,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 1,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 0,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:kunci-tidak-terbenam-di-stem",
+        "passD:tidak-exact-vs-bank",
+        "passD:tidak-near-vs-bank",
+        "passD:duplikat-vs-sumber (family/bank)"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERPEN-0008",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 37,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 4,
+        "kesulitan": 4,
+        "pedagogis": 1,
+        "orisinalitas": 4,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:skill-benar-diuji"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERPEN-0011",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 33,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 1,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 0,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:kunci-tidak-terbenam-di-stem",
+        "passD:tidak-exact-vs-bank",
+        "passD:tidak-near-vs-bank",
+        "passD:duplikat-vs-sumber (family/bank)"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERPEN-0013",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 35,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 1,
+        "selarasKunci": 4,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 2,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:penjelasan-pedagogis"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERPEN-0015",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 37,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 4,
+        "kesulitan": 4,
+        "pedagogis": 1,
+        "orisinalitas": 4,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:skill-benar-diuji"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERPEN-0016",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 32,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 4,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 0,
+        "konteks": 0,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passB:tanpa-fakta-nama-tak-terverifikasi",
+        "passD:duplikat-vs-sumber (family/bank)"
+      ],
+      "repairable": false,
+      "note": "Opsi memuat atribusi karya bernama (\"Matahari Terbenam\" karya Sitor Situmorang…) — tidak dapat diverifikasi otomatis."
+    },
+    {
+      "questionId": "BC-CERPEN-0017",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 35,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 4,
+        "kesulitan": 4,
+        "pedagogis": 1,
+        "orisinalitas": 2,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:skill-benar-diuji"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERPEN-0018",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 33,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 0,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 1,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 4,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passB:tanpa-opsi-forbidden",
+        "passE:kunci-tidak-terbenam-di-stem"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERPEN-0019",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 38,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 4,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 2,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": false,
+      "hardGateFails": [],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERPEN-0020",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 33,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 1,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 0,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:kunci-tidak-terbenam-di-stem",
+        "passD:tidak-exact-vs-bank",
+        "passD:tidak-near-vs-bank",
+        "passD:duplikat-vs-sumber (family/bank)"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERPEN-0021",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "REJECT",
+      "score": 10,
+      "dimensions": {
+        "bahasa": 1,
+        "kunciObjektif": 1,
+        "distraktor": 1,
+        "bahasaPenjelasan": 1,
+        "selarasKunci": 1,
+        "kesulitan": 1,
+        "pedagogis": 1,
+        "orisinalitas": 1,
+        "konteks": 1,
+        "sumber": 1
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "INVALID_CONTRACT"
+      ],
+      "repairable": true,
+      "note": "Kandidat tidak dihasilkan (INVALID_CONTRACT) — perlu tulis ulang oleh AI."
+    },
+    {
+      "questionId": "BC-CERPEN-0022",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 33,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 1,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 0,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:kunci-tidak-terbenam-di-stem",
+        "passD:tidak-exact-vs-bank",
+        "passD:tidak-near-vs-bank",
+        "passD:duplikat-vs-sumber (family/bank)"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERPEN-0023",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 35,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 4,
+        "kesulitan": 4,
+        "pedagogis": 1,
+        "orisinalitas": 2,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:skill-benar-diuji"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERPEN-0024",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 36,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 4,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 0,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passD:duplikat-vs-sumber (family/bank)"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERPEN-0025",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 37,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 4,
+        "kesulitan": 4,
+        "pedagogis": 1,
+        "orisinalitas": 4,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:skill-benar-diuji"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERPEN-0026",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 33,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 1,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 0,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:kunci-tidak-terbenam-di-stem",
+        "passD:tidak-exact-vs-bank",
+        "passD:tidak-near-vs-bank",
+        "passD:duplikat-vs-sumber (family/bank)"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERPEN-0028",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 35,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 4,
+        "kesulitan": 4,
+        "pedagogis": 1,
+        "orisinalitas": 2,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:skill-benar-diuji"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-CERPEN-0029",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "REJECT",
+      "score": 10,
+      "dimensions": {
+        "bahasa": 1,
+        "kunciObjektif": 1,
+        "distraktor": 1,
+        "bahasaPenjelasan": 1,
+        "selarasKunci": 1,
+        "kesulitan": 1,
+        "pedagogis": 1,
+        "orisinalitas": 1,
+        "konteks": 1,
+        "sumber": 1
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "INVALID_CONTRACT"
+      ],
+      "repairable": true,
+      "note": "Kandidat tidak dihasilkan (INVALID_CONTRACT) — perlu tulis ulang oleh AI."
+    },
+    {
+      "questionId": "BC-CERPEN-0030",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 33,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 1,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 0,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:kunci-tidak-terbenam-di-stem",
+        "passD:tidak-exact-vs-bank",
+        "passD:tidak-near-vs-bank",
+        "passD:duplikat-vs-sumber (family/bank)"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-DRAMA-0001",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 36,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 4,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 0,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passD:duplikat-vs-sumber (family/bank)"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-DRAMA-0002",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 33,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 1,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 0,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:kunci-tidak-terbenam-di-stem",
+        "passD:tidak-exact-vs-bank",
+        "passD:tidak-near-vs-bank",
+        "passD:duplikat-vs-sumber (family/bank)"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-DRAMA-0003",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 37,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 4,
+        "kesulitan": 4,
+        "pedagogis": 1,
+        "orisinalitas": 4,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:skill-benar-diuji"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-DRAMA-0004",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 35,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 1,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 2,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:kunci-tidak-terbenam-di-stem"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-DRAMA-0005",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MINOR-REPAIR",
+      "score": 40,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 4,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 4,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": false,
+      "hardGateFails": [],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-DRAMA-0006",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 33,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 1,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 0,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:kunci-tidak-terbenam-di-stem",
+        "passD:tidak-exact-vs-bank",
+        "passD:tidak-near-vs-bank",
+        "passD:duplikat-vs-sumber (family/bank)"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-DRAMA-0007",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 33,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 1,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 0,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:kunci-tidak-terbenam-di-stem",
+        "passD:tidak-exact-vs-bank",
+        "passD:tidak-near-vs-bank",
+        "passD:duplikat-vs-sumber (family/bank)"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-DRAMA-0008",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 31,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 0,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 1,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 2,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passB:tanpa-opsi-forbidden",
+        "passE:kunci-tidak-terbenam-di-stem"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-DRAMA-0009",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 35,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 1,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 2,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:kunci-tidak-terbenam-di-stem"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-DRAMA-0010",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 35,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 1,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 2,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:kunci-tidak-terbenam-di-stem"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-DRAMA-0011",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 35,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 1,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 2,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:kunci-tidak-terbenam-di-stem"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-DRAMA-0012",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 35,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 4,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 1,
+        "kesulitan": 4,
+        "pedagogis": 4,
+        "orisinalitas": 2,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passE:kunci-tidak-terbenam-di-stem"
+      ],
+      "repairable": true,
+      "note": ""
+    },
+    {
+      "questionId": "BC-DRAMA-0013",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "band": "MAJOR-REPAIR",
+      "score": 33,
+      "dimensions": {
+        "bahasa": 4,
+        "kunciObjektif": 4,
+        "distraktor": 0,
+        "bahasaPenjelasan": 4,
+        "selarasKunci": 4,
+        "kesulitan": 4,
+        "pedagogis": 1,
+        "orisinalitas": 4,
+        "konteks": 4,
+        "sumber": 4
+      },
+      "goldBlocked": true,
+      "hardGateFails": [
+        "passB:tanpa-opsi-forbidden",
+        "passE:skill-benar-diuji"
+      ],
+      "repairable": true,
+      "note": ""
+    }
+  ]
+}

@@ -1,0 +1,5659 @@
+{
+  "summary": {
+    "schemaVersion": "master-semantic-repair-v2",
+    "generatedAt": "2026-08-17T15:46:25.339Z",
+    "source": "data/question-bank/audit/master-repair-candidates-2026-08-17.json",
+    "aiEnabled": true,
+    "aiAttemptsUsed": 24,
+    "total": 100,
+    "distribution": [
+      {
+        "bucket": "CONCEPT_TO_CONTEXT",
+        "purpose": "konsep tanpa konteks → konteks (termasuk pengisi distribusi karena KEY/TYPE < 10 tersedia)",
+        "count": 44
+      },
+      {
+        "bucket": "TAUTOLOGY",
+        "purpose": "20 tautologi → butir valid",
+        "count": 20
+      },
+      {
+        "bucket": "BAD_EXPLANATION",
+        "purpose": "20 penjelasan langsung → MCQ kontekstual",
+        "count": 20
+      },
+      {
+        "bucket": "KEY_REPAIR",
+        "purpose": "10 kunci berpotensi salah",
+        "count": 1
+      },
+      {
+        "bucket": "SINONIM_ANTONIM",
+        "purpose": "10 sinonim/antonim",
+        "count": 7
+      },
+      {
+        "bucket": "MIXED_SEMANTIC",
+        "purpose": "10 kasus semantik campuran (makna/spok/majas/ejaan/kalimat)",
+        "count": 8
+      }
+    ],
+    "decisions": {
+      "HUMAN_REVIEW": 79,
+      "GOLD": 4,
+      "REPAIR_FAILED": 13,
+      "INVALID_CONTRACT": 4
+    },
+    "confidence": {
+      "MEDIUM": 79,
+      "HIGH": 4,
+      "LOW": 17
+    },
+    "gates": {
+      "single-correct": {
+        "pass": 12,
+        "fail": 0
+      },
+      "explanation": {
+        "pass": 5,
+        "fail": 7
+      },
+      "ai-sounding": {
+        "pass": 7,
+        "fail": 5
+      },
+      "duplicate": {
+        "pass": 12,
+        "fail": 0
+      },
+      "distractor-engine": {
+        "pass": 12,
+        "fail": 0
+      }
+    },
+    "metrics": {
+      "hallucinatedFactGold": 0,
+      "multipleCorrectGold": 0,
+      "duplicateGold": 0,
+      "sourceMutated": 0,
+      "goldRate": 4
+    }
+  },
+  "records": [
+    {
+      "id": "BC-ANEKDOT-0001",
+      "sourceSha256": "c63b8c520f4e2bd2561bf71d2401fb72eabc63921be6d129369e357e9a6d7f90",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANEKDOT-0001",
+        "judul": "Anekdot #1",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+        "options": [
+          "Anekdot",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "anekdot.json"
+      },
+      "candidate": {
+        "kodeSoal": "BC-ANEKDOT-0001",
+        "judul": "Anekdot #1",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Bacalah teks berikut:\n\n\"Pak Budi pernah tersesat di pasar karena lupa membawa peta, namun ia menemukan warung sate yang menyajikan sate paling enak di kota. Karena kebetulan, pemilik warung itu ternyata sahabat lama Pak Budi, sehingga mereka mengobrol sambil menikmati sate.\"\n\nManakah pernyataan di bawah ini yang merupakan contoh anekdot?",
+        "options": [
+          "Pak Budi tersesat di pasar dan menemukan warung sate yang enak",
+          "Cerita pendek tentang petualangan di hutan yang berakhir dengan penemuan harta karun",
+          "Puisi yang menggambarkan keindahan alam dengan rima dan metafora",
+          "Laporan hasil observasi suhu harian di sekolah selama satu minggu"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot adalah cerita singkat yang bersifat nyata, menggelitik, dan biasanya mengandung unsur humor atau pelajaran moral. Pilihan pertama merupakan kisah nyata singkat tentang Pak Budi yang tersesat dan menemukan warung sate, sehingga memenuhi definisi anekdot. Pilihan lainnya bukan anekdot: pilihan dua adalah cerita fiksi panjang, pilihan tiga adalah puisi, dan pilihan empat adalah laporan ilmiah.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "anekdot.json"
+      },
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [
+        {
+          "name": "single-correct",
+          "passed": true,
+          "detail": "tepat satu jawaban benar"
+        },
+        {
+          "name": "explanation",
+          "passed": false,
+          "detail": "explanasi tidak menyinggung jawaban yang benar (tidak menjawab 'mengapa benar?')"
+        },
+        {
+          "name": "ai-sounding",
+          "passed": false,
+          "detail": "frase generik 'yang merupakan contoh'"
+        },
+        {
+          "name": "duplicate",
+          "passed": true,
+          "detail": "tidak ada duplikat (exact/near/template-family)"
+        },
+        {
+          "name": "distractor-engine",
+          "passed": true
+        }
+      ],
+      "distractorReports": [
+        {
+          "option": "Cerita pendek tentang petualangan di hutan yang berakhir dengan penemuan harta karun",
+          "whyWrong": "'Cerita pendek tentang petualangan di hutan yang berakhir dengan penemuan harta karun' bukan bagian dari konsep yang ditanyakan (anekdot)",
+          "plausible": true
+        },
+        {
+          "option": "Puisi yang menggambarkan keindahan alam dengan rima dan metafora",
+          "whyWrong": "'Puisi yang menggambarkan keindahan alam dengan rima dan metafora' bukan bagian dari konsep yang ditanyakan (anekdot)",
+          "plausible": true
+        },
+        {
+          "option": "Laporan hasil observasi suhu harian di sekolah selama satu minggu",
+          "whyWrong": "'Laporan hasil observasi suhu harian di sekolah selama satu minggu' bukan bagian dari konsep yang ditanyakan (anekdot)",
+          "plausible": true
+        }
+      ],
+      "reason": [
+        "explanasi tidak menyinggung jawaban yang benar (tidak menjawab 'mengapa benar?'); frase generik 'yang merupakan contoh'"
+      ],
+      "aiMeta": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "attempted": true
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:01.953Z"
+    },
+    {
+      "id": "BC-ANTONIM-0004",
+      "sourceSha256": "201b0383d268b9b0f1a68754caef235d5efb5c148b37c4f38a0a4e4b087932d4",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANTONIM-0004",
+        "judul": "Antonim #4",
+        "tema": "Antonim",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.4",
+        "indikator": "Memahami konsep Antonim (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+        "options": [
+          "Antonim",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "antonim",
+          "lawan kata"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "antonim.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "ANTONIM"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate ANTONIM: INSUFFICIENT_CONTEXT — butuh penilaian semantik manusia / konteks tidak cukup"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:04.097Z"
+    },
+    {
+      "id": "BC-ARTIKEL-0001",
+      "sourceSha256": "2b739a906939ee0191c5525e348230ef750bf30c3cf9bdfb66e6d6c6134791de",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ARTIKEL-0001",
+        "judul": "Artikel #1",
+        "tema": "Artikel",
+        "kelas": "9",
+        "semester": 2,
+        "kompetensi": "3.2",
+        "indikator": "Memahami konsep Artikel (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Artikel adalah...",
+        "options": [
+          "Artikel",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Artikel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "artikel"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "artikel.json"
+      },
+      "candidate": {
+        "kodeSoal": "BC-ARTIKEL-0001",
+        "judul": "Artikel #1",
+        "tema": "Artikel",
+        "kelas": "9",
+        "semester": 2,
+        "kompetensi": "3.2",
+        "indikator": "Memahami konsep Artikel (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini kutipan dari sebuah teks:\n\n\"Jakarta, 15 Mei 2024 – Pemerintah kota mengumumkan program baru untuk mengurangi kemacetan dengan memperbanyak jalur sepeda. Program ini akan dimulai pada bulan September dan diharapkan dapat menurunkan volume kendaraan sebesar 10 %.\"\n\nManakah jenis teks tersebut?",
+        "options": [
+          "Artikel berita",
+          "Cerita pendek",
+          "Puisi",
+          "Laporan resmi"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Kutipan tersebut menyajikan informasi faktual terkini tentang kebijakan pemerintah dengan gaya penulisan yang khas pada berita: mencantumkan tempat, tanggal, dan data konkret. Itu merupakan ciri utama artikel berita. \n- Cerita pendek biasanya berisi alur fiksi dengan tokoh dan konflik, bukan penyajian fakta aktual. \n- Puisi ditandai oleh penggunaan bahasa berirama, metafora, dan baris‑baris pendek, tidak ada dalam teks ini. \n- Laporan resmi memang berisi data, tetapi biasanya memiliki struktur yang lebih formal (misalnya pendahuluan, metodologi, hasil) dan tidak menampilkan gaya penulisan berita yang bersifat ringkas dan langsung kepada pembaca umum.",
+        "kataKunci": [
+          "artikel"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "artikel.json"
+      },
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "GOLD",
+      "confidence": "HIGH",
+      "gates": [
+        {
+          "name": "single-correct",
+          "passed": true,
+          "detail": "tepat satu jawaban benar"
+        },
+        {
+          "name": "explanation",
+          "passed": true,
+          "detail": "explanasi menjawab mengapa benar tanpa mengulang stimulis/jawaban atau fakta baru"
+        },
+        {
+          "name": "ai-sounding",
+          "passed": true,
+          "detail": "tidak ada pola generik/robotik terdeteksi"
+        },
+        {
+          "name": "duplicate",
+          "passed": true,
+          "detail": "tidak ada duplikat (exact/near/template-family)"
+        },
+        {
+          "name": "distractor-engine",
+          "passed": true
+        }
+      ],
+      "distractorReports": [
+        {
+          "option": "Cerita pendek",
+          "whyWrong": "'Cerita pendek' bukan bagian dari konsep yang ditanyakan (artikel)",
+          "plausible": true
+        },
+        {
+          "option": "Puisi",
+          "whyWrong": "'Puisi' bukan bagian dari konsep yang ditanyakan (artikel)",
+          "plausible": true
+        },
+        {
+          "option": "Laporan resmi",
+          "whyWrong": "'Laporan resmi' bukan bagian dari konsep yang ditanyakan (artikel)",
+          "plausible": true
+        }
+      ],
+      "reason": [
+        "kandidat AI melewati SEMUA gate"
+      ],
+      "aiMeta": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "attempted": true
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:04.098Z"
+    },
+    {
+      "id": "BC-CERITA-INSPIRATIF-0001",
+      "sourceSha256": "b74dfbf3a8f41ec3a6355406ab225ace724280bdec33f71a3590db0a42e04065",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-CERITA-INSPIRATIF-0001",
+        "judul": "Cerita Inspiratif #1",
+        "tema": "Cerita Inspiratif",
+        "kelas": "9",
+        "semester": 2,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerita Inspiratif (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Cerita Inspiratif adalah...",
+        "options": [
+          "Cerita Inspiratif",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerita Inspiratif adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "cerita inspiratif"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "cerita-inspiratif.json"
+      },
+      "candidate": {
+        "kodeSoal": "BC-CERITA-INSPIRATIF-0001",
+        "judul": "Cerita Inspiratif #1",
+        "tema": "Cerita Inspiratif",
+        "kelas": "9",
+        "semester": 2,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerita Inspiratif (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Bacalah ringkasan berikut: \n\"Ali, seorang anak petani di desa Sukamaju, harus membantu orang tuanya di sawah setiap hari. Meskipun begitu, ia tidak pernah menyerah belajar. Dengan tekad kuat, Ali berhasil mendapatkan beasiswa ke universitas teknik, lulus dengan predikat cumlaude, dan kini bekerja sebagai insinyur yang merancang sistem irigasi untuk meningkatkan hasil pertanian di desanya. Cerita perjuangan Ali menjadi contoh semangat pantang menyerah dan memberi inspirasi bagi banyak orang.\"\n\nDari keempat teks berikut, manakah yang merupakan contoh Cerita Inspiratif?",
+        "options": [
+          "Cerita tentang Ali yang berjuang mendapatkan beasiswa dan menjadi insinyur untuk membantu desanya.",
+          "Petunjuk menulis cerita pendek yang mencakup struktur pembuka, isi, dan penutup.",
+          "Kumpulan puisi tentang keindahan alam dan perasaan penulis.",
+          "Laporan hasil penelitian tentang kualitas air sungai di wilayah tersebut."
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerita Inspiratif adalah teks yang mengisahkan tokoh yang mengatasi rintangan atau kesulitan dengan semangat dan ketekunan, sehingga dapat memotivasi pembacanya. Pilihan pertama menggambarkan perjuangan Ali yang berhasil mengubah nasibnya dan memberi inspirasi kepada orang lain, sehingga memenuhi definisi tersebut. Pilihan lainnya bukanlah cerita (melainkan petunjuk menulis, puisi, atau laporan penelitian) dan tidak mengandung unsur inspirasi yang dimaksud.",
+        "kataKunci": [
+          "cerita inspiratif"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "cerita-inspiratif.json"
+      },
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [
+        {
+          "name": "single-correct",
+          "passed": true,
+          "detail": "tepat satu jawaban benar"
+        },
+        {
+          "name": "explanation",
+          "passed": false,
+          "detail": "explanasi tidak menyinggung jawaban yang benar (tidak menjawab 'mengapa benar?')"
+        },
+        {
+          "name": "ai-sounding",
+          "passed": false,
+          "detail": "frase generik 'yang merupakan contoh'"
+        },
+        {
+          "name": "duplicate",
+          "passed": true,
+          "detail": "tidak ada duplikat (exact/near/template-family)"
+        },
+        {
+          "name": "distractor-engine",
+          "passed": true
+        }
+      ],
+      "distractorReports": [
+        {
+          "option": "Petunjuk menulis cerita pendek yang mencakup struktur pembuka, isi, dan penutup.",
+          "whyWrong": "'Petunjuk menulis cerita pendek yang mencakup struktur pembuka, isi, dan penutup.' bukan bagian dari konsep yang ditanyakan (cerita inspiratif)",
+          "plausible": true
+        },
+        {
+          "option": "Kumpulan puisi tentang keindahan alam dan perasaan penulis.",
+          "whyWrong": "'Kumpulan puisi tentang keindahan alam dan perasaan penulis.' bukan bagian dari konsep yang ditanyakan (cerita inspiratif)",
+          "plausible": true
+        },
+        {
+          "option": "Laporan hasil penelitian tentang kualitas air sungai di wilayah tersebut.",
+          "whyWrong": "'Laporan hasil penelitian tentang kualitas air sungai di wilayah tersebut.' bukan bagian dari konsep yang ditanyakan (cerita inspiratif)",
+          "plausible": true
+        }
+      ],
+      "reason": [
+        "explanasi tidak menyinggung jawaban yang benar (tidak menjawab 'mengapa benar?'); frase generik 'yang merupakan contoh'"
+      ],
+      "aiMeta": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "attempted": true
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:05.949Z"
+    },
+    {
+      "id": "BC-CERPEN-0001",
+      "sourceSha256": "a4f6a5b877a9a82ac20d0133d72769f7bf7ad37280684696639fe0ce3c7ebf0c",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-CERPEN-0001",
+        "judul": "Cerpen #1",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Cerpen adalah...",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "cerpen.json"
+      },
+      "candidate": {
+        "kodeSoal": "BC-CERPEN-0001",
+        "judul": "Cerpen #1",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Bacalah teks berikut ini:\n\n\"Saat hujan turun deras, Rina berlari pulang dari sekolah. Di tengah jalan, ia menemukan seekor kucing kecil yang basah kuyup. Tanpa ragu, Rina menggendong kucing itu, membawanya ke rumah, dan merawatnya sampai kucing itu kembali sehat. Pengalaman itu mengajarkannya tentang kepedulian dan tanggung jawab.\"\n\nDari teks di atas, manakah pernyataan yang paling tepat menggambarkan jenis teks tersebut?",
+        "options": [
+          "Cerpen, karena teks tersebut menceritakan suatu peristiwa singkat dengan tokoh, alur, dan tema yang lengkap.",
+          "Puisi, karena teks tersebut menggunakan rima dan irama yang khas.",
+          "Laporan ilmiah, karena teks tersebut menyajikan data dan hasil observasi tentang perilaku kucing.",
+          "Novel, karena teks tersebut memiliki panjang cerita yang sangat luas dan banyak subplot."
+        ],
+        "correctAnswer": "0",
+        "explanation": "Teks tersebut merupakan contoh cerpen: sebuah cerita pendek yang memiliki unsur intrinsik (tokoh, alur, tema) dan disajikan dalam bentuk naratif singkat. Pilihan lain salah karena: (b) tidak ada rima atau irama; (c) tidak ada data atau analisis ilmiah; (d) cerita terlalu singkat untuk disebut novel.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "cerpen.json"
+      },
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [
+        {
+          "name": "single-correct",
+          "passed": true,
+          "detail": "tepat satu jawaban benar"
+        },
+        {
+          "name": "explanation",
+          "passed": false,
+          "detail": "explanasi tidak menyinggung jawaban yang benar (tidak menjawab 'mengapa benar?')"
+        },
+        {
+          "name": "ai-sounding",
+          "passed": true,
+          "detail": "tidak ada pola generik/robotik terdeteksi"
+        },
+        {
+          "name": "duplicate",
+          "passed": true,
+          "detail": "tidak ada duplikat (exact/near/template-family)"
+        },
+        {
+          "name": "distractor-engine",
+          "passed": true
+        }
+      ],
+      "distractorReports": [
+        {
+          "option": "Puisi, karena teks tersebut menggunakan rima dan irama yang khas.",
+          "whyWrong": "'Puisi, karena teks tersebut menggunakan rima dan irama yang khas.' bukan bagian dari konsep yang ditanyakan (cerpen, unsur intrinsik)",
+          "plausible": true
+        },
+        {
+          "option": "Laporan ilmiah, karena teks tersebut menyajikan data dan hasil observasi tentang perilaku kucing.",
+          "whyWrong": "'Laporan ilmiah, karena teks tersebut menyajikan data dan hasil observasi tentang perilaku kucing.' bukan bagian dari konsep yang ditanyakan (cerpen, unsur intrinsik)",
+          "plausible": true
+        },
+        {
+          "option": "Novel, karena teks tersebut memiliki panjang cerita yang sangat luas dan banyak subplot.",
+          "whyWrong": "'Novel, karena teks tersebut memiliki panjang cerita yang sangat luas dan banyak subplot.' bukan bagian dari konsep yang ditanyakan (cerpen, unsur intrinsik)",
+          "plausible": true
+        }
+      ],
+      "reason": [
+        "explanasi tidak menyinggung jawaban yang benar (tidak menjawab 'mengapa benar?')"
+      ],
+      "aiMeta": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "attempted": true
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:07.997Z"
+    },
+    {
+      "id": "BC-DRAMA-0001",
+      "sourceSha256": "65a113fc9d1e8aa8daa42a0abe7fd6c2b60a2dddb223172cabc109bdd0269cee",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-DRAMA-0001",
+        "judul": "Drama #1",
+        "tema": "Drama",
+        "kelas": "8",
+        "semester": 2,
+        "kompetensi": "3.10",
+        "indikator": "Memahami konsep Drama (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Drama adalah...",
+        "options": [
+          "Drama",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "drama",
+          "dialog"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "drama.json"
+      },
+      "candidate": {
+        "kodeSoal": "BC-DRAMA-0001",
+        "judul": "Drama #1",
+        "tema": "Drama",
+        "kelas": "8",
+        "semester": 2,
+        "kompetensi": "3.10",
+        "indikator": "Memahami konsep Drama (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini adalah cuplikan dialog dari sebuah karya sastra:\n\n\"Rani: Aku tak mengerti mengapa kau pergi begitu saja.\\nBudi: Karena hatiku sudah tak mampu menahan beban ini.\\nRani: Tapi kita masih bisa berbicara, kan?\\nBudi: Kadang kata‑kata tak cukup untuk menyelamatkan perasaan.\"\n\nDari contoh di atas, manakah yang merupakan contoh nyata dari sebuah drama?\n\nA. Teks dialog di atas\nB. Cerita pendek yang hanya berisi narasi tanpa dialog\nC. Puisi yang berisi rima dan irama\nD. Laporan hasil observasi ilmiah",
+        "options": [
+          "Teks dialog di atas",
+          "Cerita pendek yang hanya berisi narasi tanpa dialog",
+          "Puisi yang berisi rima dan irama",
+          "Laporan hasil observasi ilmiah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Drama ditandai dengan adanya dialog antar tokoh yang memperlihatkan aksi dan konflik. Pilihan A merupakan contoh dialog yang menampilkan interaksi dua karakter, sehingga merupakan contoh drama. Pilihan B hanya narasi tanpa dialog, tidak memenuhi ciri utama drama. Pilihan C adalah puisi, bentuk sastera yang menekankan pada rima dan irama, bukan dialog. Pilihan D adalah laporan ilmiah, bersifat faktual dan tidak mengandung unsur dialog atau aksi panggung.",
+        "kataKunci": [
+          "drama",
+          "dialog"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "drama.json"
+      },
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [
+        {
+          "name": "single-correct",
+          "passed": true,
+          "detail": "tepat satu jawaban benar"
+        },
+        {
+          "name": "explanation",
+          "passed": false,
+          "detail": "explanasi tidak menyinggung jawaban yang benar (tidak menjawab 'mengapa benar?')"
+        },
+        {
+          "name": "ai-sounding",
+          "passed": false,
+          "detail": "frase generik 'yang merupakan contoh'"
+        },
+        {
+          "name": "duplicate",
+          "passed": true,
+          "detail": "tidak ada duplikat (exact/near/template-family)"
+        },
+        {
+          "name": "distractor-engine",
+          "passed": true
+        }
+      ],
+      "distractorReports": [
+        {
+          "option": "Cerita pendek yang hanya berisi narasi tanpa dialog",
+          "whyWrong": "'Cerita pendek yang hanya berisi narasi tanpa dialog' bukan bagian dari konsep yang ditanyakan (drama, dialog)",
+          "plausible": true
+        },
+        {
+          "option": "Puisi yang berisi rima dan irama",
+          "whyWrong": "'Puisi yang berisi rima dan irama' bukan bagian dari konsep yang ditanyakan (drama, dialog)",
+          "plausible": true
+        },
+        {
+          "option": "Laporan hasil observasi ilmiah",
+          "whyWrong": "'Laporan hasil observasi ilmiah' bukan bagian dari konsep yang ditanyakan (drama, dialog)",
+          "plausible": true
+        }
+      ],
+      "reason": [
+        "explanasi tidak menyinggung jawaban yang benar (tidak menjawab 'mengapa benar?'); frase generik 'yang merupakan contoh'"
+      ],
+      "aiMeta": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "attempted": true
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:09.744Z"
+    },
+    {
+      "id": "BC-EDITORIAL-0001",
+      "sourceSha256": "6dba2bb7f69e20e6ff9b1c17cf1068c198451ffe271495c119a4923461f98b51",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-EDITORIAL-0001",
+        "judul": "Editorial #1",
+        "tema": "Editorial",
+        "kelas": "10",
+        "semester": 1,
+        "kompetensi": "3.2",
+        "indikator": "Memahami konsep Editorial (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Editorial adalah...",
+        "options": [
+          "Editorial",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Editorial adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "editorial"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "editorial.json"
+      },
+      "candidate": {
+        "kodeSoal": "BC-EDITORIAL-0001",
+        "judul": "Editorial #1",
+        "tema": "Editorial",
+        "kelas": "10",
+        "semester": 1,
+        "kompetensi": "3.2",
+        "indikator": "Memahami konsep Editorial (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini kutipan singkat dari sebuah surat kabar:\n\n\"Kebijakan baru pemerintah tentang pendidikan menimbulkan banyak pertanyaan. Menurut saya, kebijakan ini tidak cukup mempertimbangkan kebutuhan siswa di daerah terpencil.\"\n\nPernyataan di atas merupakan contoh jenis tulisan apa?\n",
+        "options": [
+          "Editorial",
+          "Berita",
+          "Cerita fiksi",
+          "Laporan investigasi"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Tulisan tersebut mengandung pendapat pribadi penulis dan kritik terhadap kebijakan pemerintah, yang merupakan ciri khas editorial. Berita hanya menyajikan fakta tanpa opini, cerita fiksi bersifat fiksi, dan laporan investigasi fokus pada penyelidikan fakta, bukan opini.",
+        "kataKunci": [
+          "editorial"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "editorial.json"
+      },
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "GOLD",
+      "confidence": "HIGH",
+      "gates": [
+        {
+          "name": "single-correct",
+          "passed": true,
+          "detail": "tepat satu jawaban benar"
+        },
+        {
+          "name": "explanation",
+          "passed": true,
+          "detail": "explanasi menjawab mengapa benar tanpa mengulang stimulis/jawaban atau fakta baru"
+        },
+        {
+          "name": "ai-sounding",
+          "passed": true,
+          "detail": "tidak ada pola generik/robotik terdeteksi"
+        },
+        {
+          "name": "duplicate",
+          "passed": true,
+          "detail": "tidak ada duplikat (exact/near/template-family)"
+        },
+        {
+          "name": "distractor-engine",
+          "passed": true
+        }
+      ],
+      "distractorReports": [
+        {
+          "option": "Berita",
+          "whyWrong": "'Berita' bukan bagian dari konsep yang ditanyakan (editorial)",
+          "plausible": true
+        },
+        {
+          "option": "Cerita fiksi",
+          "whyWrong": "'Cerita fiksi' bukan bagian dari konsep yang ditanyakan (editorial)",
+          "plausible": true
+        },
+        {
+          "option": "Laporan investigasi",
+          "whyWrong": "'Laporan investigasi' bukan bagian dari konsep yang ditanyakan (editorial)",
+          "plausible": true
+        }
+      ],
+      "reason": [
+        "kandidat AI melewati SEMUA gate"
+      ],
+      "aiMeta": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-20b",
+        "attempted": true
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:11.264Z"
+    },
+    {
+      "id": "BC-EJAAN-0001",
+      "sourceSha256": "6d104d8b4ed2f29dfcc594c817d65e294497d0a488ebd09859be0437697e4265",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-EJAAN-0001",
+        "judul": "Ejaan #1",
+        "tema": "Ejaan",
+        "kelas": "7",
+        "semester": 2,
+        "kompetensi": "3.6",
+        "indikator": "Memahami konsep Ejaan (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Ejaan adalah...",
+        "options": [
+          "Ejaan",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Ejaan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "ejaan",
+          "EYD"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "ejaan.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "EJAAN"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate EJAAN: AMBIGUOUS — tidak ada rule ejaan terverifikasi untuk opsi"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:12.652Z"
+    },
+    {
+      "id": "BC-FABEL-0001",
+      "sourceSha256": "3153144f48edffeba24b420be777e6f1485db8c697795b6be074ebb0174c3e75",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-FABEL-0001",
+        "judul": "Fabel #1",
+        "tema": "Fabel",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Fabel (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Fabel adalah...",
+        "options": [
+          "Fabel",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Fabel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "fabel",
+          "pesan moral"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "fabel.json"
+      },
+      "candidate": {
+        "kodeSoal": "BC-FABEL-0001",
+        "judul": "Fabel #1",
+        "tema": "Fabel",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Fabel (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Bacalah teks berikut!\n\n\"Seekor rubah kelaparan menemukan sepotong keju di atas meja. Ia berpura-pura menjadi teman baik bagi seekor kelinci yang lewat, lalu menipu kelinci itu untuk menukar keju dengan wortel. Akhirnya, rubah itu memakan keju itu sendiri, sementara kelinci pergi dengan perut kosong. Moral: Jangan mudah percaya pada orang yang tampak bersahabat namun memiliki niat tersembunyi.\"\\n\nDari teks di atas, jenis teks apa yang paling tepat?",
+        "options": [
+          "Fabel",
+          "Cerita rakyat",
+          "Puisi",
+          "Laporan ilmiah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Teks tersebut menampilkan hewan yang berbicara dan berperilaku seperti manusia serta menyampaikan pesan moral, ciri khas fabel. Cerita rakyat biasanya melibatkan tokoh manusia atau makhluk mitos tanpa fokus pada moral eksplisit; puisi memiliki struktur bait dan rima; laporan ilmiah menyajikan data dan analisis, bukan cerita fiktif.",
+        "kataKunci": [
+          "fabel",
+          "pesan moral"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "fabel.json"
+      },
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "GOLD",
+      "confidence": "HIGH",
+      "gates": [
+        {
+          "name": "single-correct",
+          "passed": true,
+          "detail": "tepat satu jawaban benar"
+        },
+        {
+          "name": "explanation",
+          "passed": true,
+          "detail": "explanasi menjawab mengapa benar tanpa mengulang stimulis/jawaban atau fakta baru"
+        },
+        {
+          "name": "ai-sounding",
+          "passed": true,
+          "detail": "tidak ada pola generik/robotik terdeteksi"
+        },
+        {
+          "name": "duplicate",
+          "passed": true,
+          "detail": "tidak ada duplikat (exact/near/template-family)"
+        },
+        {
+          "name": "distractor-engine",
+          "passed": true
+        }
+      ],
+      "distractorReports": [
+        {
+          "option": "Cerita rakyat",
+          "whyWrong": "'Cerita rakyat' bukan bagian dari konsep yang ditanyakan (fabel, pesan moral)",
+          "plausible": true
+        },
+        {
+          "option": "Puisi",
+          "whyWrong": "'Puisi' bukan bagian dari konsep yang ditanyakan (fabel, pesan moral)",
+          "plausible": true
+        },
+        {
+          "option": "Laporan ilmiah",
+          "whyWrong": "'Laporan ilmiah' bukan bagian dari konsep yang ditanyakan (fabel, pesan moral)",
+          "plausible": true
+        }
+      ],
+      "reason": [
+        "kandidat AI melewati SEMUA gate"
+      ],
+      "aiMeta": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "attempted": true
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:12.652Z"
+    },
+    {
+      "id": "BC-GAGASAN-UTAMA-0001",
+      "sourceSha256": "666217ade51a80befe7e20685f83355172cb21447ba9b47cd649188b87235e39",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-GAGASAN-UTAMA-0001",
+        "judul": "Gagasan Utama #1",
+        "tema": "Gagasan Utama",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.3",
+        "indikator": "Memahami konsep Gagasan Utama (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Gagasan Utama adalah...",
+        "options": [
+          "Gagasan Utama",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Gagasan Utama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "gagasan utama"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "gagasan-utama.json"
+      },
+      "candidate": {
+        "kodeSoal": "BC-GAGASAN-UTAMA-0001",
+        "judul": "Gagasan Utama #1",
+        "tema": "Gagasan Utama",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.3",
+        "indikator": "Memahami konsep Gagasan Utama (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Pada akhir pekan, warga di desa X mengadakan kegiatan bersih‑bersih lingkungan. Mereka menyiapkan alat, memisahkan sampah, dan mengajak anak‑anak belajar tentang pentingnya menjaga kebersihan. Kegiatan ini bertujuan agar lingkungan tetap bersih dan sehat bagi semua.",
+        "options": [
+          "Menjelaskan kegiatan bersih‑bersih lingkungan",
+          "Menjelaskan pentingnya menjaga kebersihan lingkungan",
+          "Menjelaskan cara memisahkan sampah",
+          "Menjelaskan manfaat kebersihan bagi kesehatan"
+        ],
+        "correctAnswer": "1",
+        "explanation": "Gagasan utama teks adalah menekankan pentingnya menjaga kebersihan lingkungan. Opsi 0, 2, dan 3 hanya menyebutkan detail atau subtopik, bukan inti pesan.",
+        "kataKunci": [
+          "gagasan utama"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "gagasan-utama.json"
+      },
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [
+        {
+          "name": "single-correct",
+          "passed": true,
+          "detail": "tepat satu jawaban benar"
+        },
+        {
+          "name": "explanation",
+          "passed": false,
+          "detail": "explanasi tidak menyinggung jawaban yang benar (tidak menjawab 'mengapa benar?')"
+        },
+        {
+          "name": "ai-sounding",
+          "passed": true,
+          "detail": "tidak ada pola generik/robotik terdeteksi"
+        },
+        {
+          "name": "duplicate",
+          "passed": true,
+          "detail": "tidak ada duplikat (exact/near/template-family)"
+        },
+        {
+          "name": "distractor-engine",
+          "passed": true
+        }
+      ],
+      "distractorReports": [
+        {
+          "option": "Menjelaskan kegiatan bersih‑bersih lingkungan",
+          "whyWrong": "'Menjelaskan kegiatan bersih‑bersih lingkungan' bukan bagian dari konsep yang ditanyakan (gagasan utama)",
+          "plausible": true
+        },
+        {
+          "option": "Menjelaskan cara memisahkan sampah",
+          "whyWrong": "'Menjelaskan cara memisahkan sampah' bukan bagian dari konsep yang ditanyakan (gagasan utama)",
+          "plausible": true
+        },
+        {
+          "option": "Menjelaskan manfaat kebersihan bagi kesehatan",
+          "whyWrong": "'Menjelaskan manfaat kebersihan bagi kesehatan' bukan bagian dari konsep yang ditanyakan (gagasan utama)",
+          "plausible": true
+        }
+      ],
+      "reason": [
+        "explanasi tidak menyinggung jawaban yang benar (tidak menjawab 'mengapa benar?')"
+      ],
+      "aiMeta": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-20b",
+        "attempted": true
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:14.119Z"
+    },
+    {
+      "id": "BC-GURINDAM-0001",
+      "sourceSha256": "71569099002147adbb281550578242d0daf05c7e79f3dc595274659062ec6102",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-GURINDAM-0001",
+        "judul": "Gurindam #1",
+        "tema": "Gurindam",
+        "kelas": "8",
+        "semester": 2,
+        "kompetensi": "3.8",
+        "indikator": "Memahami konsep Gurindam (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Gurindam adalah...",
+        "options": [
+          "Gurindam",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Gurindam adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "gurindam"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "gurindam.json"
+      },
+      "candidate": {
+        "kodeSoal": "BC-GURINDAM-0001",
+        "judul": "Gurindam #1",
+        "tema": "Gurindam",
+        "kelas": "8",
+        "semester": 2,
+        "kompetensi": "3.8",
+        "indikator": "Memahami konsep Gurindam (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini kutipan singkat yang menggambarkan Gurindam: \"Budi, jangan lupa bersih, bersih hati, bersih tubuh, bersih pikiran.\" Dari pilihan berikut, mana yang merupakan contoh Gurindam?",
+        "options": [
+          "Budi, jangan lupa bersih, bersih hati, bersih tubuh, bersih pikiran.",
+          "Budi, mari kita pergi ke pasar.",
+          "Budi, saya suka makan nasi.",
+          "Budi, semoga hari ini cerah."
+        ],
+        "correctAnswer": "0",
+        "explanation": "Gurindam adalah puisi dua baris yang mengandung pesan moral atau nasihat. Pilihan pertama memenuhi kriteria tersebut: ia berbentuk dua baris, berisi nasihat tentang kebersihan hati dan tubuh. Pilihan kedua, ketiga, dan keempat hanyalah kalimat biasa (cerita, pernyataan pribadi, atau harapan) yang tidak memiliki struktur Gurindam maupun pesan moral yang khas.",
+        "kataKunci": [
+          "gurindam"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "gurindam.json"
+      },
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [
+        {
+          "name": "single-correct",
+          "passed": true,
+          "detail": "tepat satu jawaban benar"
+        },
+        {
+          "name": "explanation",
+          "passed": false,
+          "detail": "explanasi tidak menyinggung jawaban yang benar (tidak menjawab 'mengapa benar?')"
+        },
+        {
+          "name": "ai-sounding",
+          "passed": false,
+          "detail": "frase generik 'yang merupakan contoh'"
+        },
+        {
+          "name": "duplicate",
+          "passed": true,
+          "detail": "tidak ada duplikat (exact/near/template-family)"
+        },
+        {
+          "name": "distractor-engine",
+          "passed": true
+        }
+      ],
+      "distractorReports": [
+        {
+          "option": "Budi, mari kita pergi ke pasar.",
+          "whyWrong": "'Budi, mari kita pergi ke pasar.' bukan bagian dari konsep yang ditanyakan (gurindam)",
+          "plausible": true
+        },
+        {
+          "option": "Budi, saya suka makan nasi.",
+          "whyWrong": "'Budi, saya suka makan nasi.' bukan bagian dari konsep yang ditanyakan (gurindam)",
+          "plausible": true
+        },
+        {
+          "option": "Budi, semoga hari ini cerah.",
+          "whyWrong": "'Budi, semoga hari ini cerah.' bukan bagian dari konsep yang ditanyakan (gurindam)",
+          "plausible": true
+        }
+      ],
+      "reason": [
+        "explanasi tidak menyinggung jawaban yang benar (tidak menjawab 'mengapa benar?'); frase generik 'yang merupakan contoh'"
+      ],
+      "aiMeta": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-20b",
+        "attempted": true
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:16.168Z"
+    },
+    {
+      "id": "BC-HIKAYAT-0001",
+      "sourceSha256": "e145094fed39fc0df1624a28071e4cf5ec781df9cee286748fb8d8e6eda670d0",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-HIKAYAT-0001",
+        "judul": "Hikayat #1",
+        "tema": "Hikayat",
+        "kelas": "10",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Hikayat (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Hikayat adalah...",
+        "options": [
+          "Hikayat",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Hikayat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "hikayat",
+          "sastra Melayu"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "hikayat.json"
+      },
+      "candidate": {
+        "kodeSoal": "BC-HIKAYAT-0001",
+        "judul": "Hikayat #1",
+        "tema": "Hikayat",
+        "kelas": "10",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Hikayat (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Setelah membaca cuplikan berikut: \"Pada zaman dahulu, di Tanah Melayu, terdapat seorang pahlawan bernama Hang Tuah yang terkenal dengan keberanian dan kesetiaannya kepada raja. Cerita tentang petualangannya diceritakan secara berurutan dalam bentuk prosa panjang yang menggabungkan unsur sejarah, legenda, dan nilai moral...\". Dari contoh di atas, manakah yang merupakan contoh nyata dari sebuah Hikayat?",
+        "options": [
+          "Hikayat Hang Tuah",
+          "Cerita pendek tentang persahabatan di sekolah",
+          "Puisi berjudul \"Bunga di Taman\"",
+          "Laporan berita tentang kebakaran di pasar tradisional"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Hikayat Hang Tuah adalah contoh klasik dari genre Hikayat, yaitu prosa naratif dalam sastra Melayu yang mengisahkan kepahlawanan, sejarah, dan nilai moral. Cerita pendek, puisi, dan laporan berita bukanlah Hikayat karena bentuknya berbeda: cerita pendek bersifat fiksi singkat, puisi menggunakan struktur bait dan rima, serta laporan berita bersifat faktual dan jurnalistik.",
+        "kataKunci": [
+          "hikayat",
+          "sastra Melayu"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "hikayat.json"
+      },
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [
+        {
+          "name": "single-correct",
+          "passed": true,
+          "detail": "tepat satu jawaban benar"
+        },
+        {
+          "name": "explanation",
+          "passed": true,
+          "detail": "explanasi menjawab mengapa benar tanpa mengulang stimulis/jawaban atau fakta baru"
+        },
+        {
+          "name": "ai-sounding",
+          "passed": false,
+          "detail": "frase generik 'yang merupakan contoh'"
+        },
+        {
+          "name": "duplicate",
+          "passed": true,
+          "detail": "tidak ada duplikat (exact/near/template-family)"
+        },
+        {
+          "name": "distractor-engine",
+          "passed": true
+        }
+      ],
+      "distractorReports": [
+        {
+          "option": "Cerita pendek tentang persahabatan di sekolah",
+          "whyWrong": "'Cerita pendek tentang persahabatan di sekolah' bukan bagian dari konsep yang ditanyakan (hikayat, sastra Melayu)",
+          "plausible": true
+        },
+        {
+          "option": "Puisi berjudul \"Bunga di Taman\"",
+          "whyWrong": "'Puisi berjudul \"Bunga di Taman\"' bukan bagian dari konsep yang ditanyakan (hikayat, sastra Melayu)",
+          "plausible": true
+        },
+        {
+          "option": "Laporan berita tentang kebakaran di pasar tradisional",
+          "whyWrong": "'Laporan berita tentang kebakaran di pasar tradisional' bukan bagian dari konsep yang ditanyakan (hikayat, sastra Melayu)",
+          "plausible": true
+        }
+      ],
+      "reason": [
+        "frase generik 'yang merupakan contoh'"
+      ],
+      "aiMeta": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b",
+        "attempted": true
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:18.026Z"
+    },
+    {
+      "id": "BC-IDE-POKOK-0001",
+      "sourceSha256": "2b0d0eef6bd6b392d87bf5f06cb33c57835d44097ad4db11a41147b298e5e9b7",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-IDE-POKOK-0001",
+        "judul": "Ide Pokok #1",
+        "tema": "Ide Pokok",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.3",
+        "indikator": "Memahami konsep Ide Pokok (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Ide Pokok adalah...",
+        "options": [
+          "Ide Pokok",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Ide Pokok adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "ide pokok",
+          "gagasan utama"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "ide-pokok.json"
+      },
+      "candidate": {
+        "kodeSoal": "BC-IDE-POKOK-0001",
+        "judul": "Ide Pokok #1",
+        "tema": "Ide Pokok",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.3",
+        "indikator": "Memahami konsep Ide Pokok (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini kutipan dari sebuah artikel tentang pertanian organik:\n\n\"Di sebuah desa, para petani menggunakan metode pertanian organik untuk meningkatkan hasil panen. Mereka menanam sayuran organik, menggunakan pupuk alami, dan menjaga keseimbangan ekosistem. Dengan cara ini, mereka tidak hanya mendapatkan hasil yang lebih baik, tetapi juga menjaga kesehatan tanah dan lingkungan.\" \n\nApa ide pokok dari teks tersebut?",
+        "options": [
+          "Penggunaan metode pertanian organik",
+          "Pentingnya menjaga keseimbangan ekosistem",
+          "Manfaat pupuk alami",
+          "Kegiatan petani di desa"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Ide pokok adalah gagasan utama yang menjadi inti dari teks. Dalam kutipan tersebut, inti pesan adalah bahwa para petani menggunakan metode pertanian organik untuk meningkatkan hasil panen. Pilihan lain hanya menyoroti aspek-aspek pendukung atau detail, bukan gagasan utama.",
+        "kataKunci": [
+          "ide pokok",
+          "gagasan utama"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "ide-pokok.json"
+      },
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [
+        {
+          "name": "single-correct",
+          "passed": true,
+          "detail": "tepat satu jawaban benar"
+        },
+        {
+          "name": "explanation",
+          "passed": false,
+          "detail": "explanasi tidak menyinggung jawaban yang benar (tidak menjawab 'mengapa benar?')"
+        },
+        {
+          "name": "ai-sounding",
+          "passed": true,
+          "detail": "tidak ada pola generik/robotik terdeteksi"
+        },
+        {
+          "name": "duplicate",
+          "passed": true,
+          "detail": "tidak ada duplikat (exact/near/template-family)"
+        },
+        {
+          "name": "distractor-engine",
+          "passed": true
+        }
+      ],
+      "distractorReports": [
+        {
+          "option": "Pentingnya menjaga keseimbangan ekosistem",
+          "whyWrong": "'Pentingnya menjaga keseimbangan ekosistem' bukan bagian dari konsep yang ditanyakan (ide pokok, gagasan utama)",
+          "plausible": true
+        },
+        {
+          "option": "Manfaat pupuk alami",
+          "whyWrong": "'Manfaat pupuk alami' bukan bagian dari konsep yang ditanyakan (ide pokok, gagasan utama)",
+          "plausible": true
+        },
+        {
+          "option": "Kegiatan petani di desa",
+          "whyWrong": "'Kegiatan petani di desa' bukan bagian dari konsep yang ditanyakan (ide pokok, gagasan utama)",
+          "plausible": true
+        }
+      ],
+      "reason": [
+        "explanasi tidak menyinggung jawaban yang benar (tidak menjawab 'mengapa benar?')"
+      ],
+      "aiMeta": {
+        "provider": "groq",
+        "model": "openai/gpt-oss-20b",
+        "attempted": true
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:20.177Z"
+    },
+    {
+      "id": "BC-IKLAN-0001",
+      "sourceSha256": "544b346d6e979fd2496202e9a359f9e76142bfa301ee4544f760162528b51214",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-IKLAN-0001",
+        "judul": "Iklan #1",
+        "tema": "Iklan",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.8",
+        "indikator": "Memahami konsep Iklan (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Iklan adalah...",
+        "options": [
+          "Iklan",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Iklan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "iklan"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "iklan.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "REPAIR_FAILED",
+      "confidence": "LOW",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "repair AI gagal: All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      ],
+      "aiMeta": {
+        "provider": "chain",
+        "model": "fallback",
+        "attempted": true,
+        "failureReason": "All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:21.843Z"
+    },
+    {
+      "id": "BC-IMBUHAN-0001",
+      "sourceSha256": "f3469e473298b4005b8269bb05234138a35279c369a3b3385bf257fea902e007",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-IMBUHAN-0001",
+        "judul": "Imbuhan #1",
+        "tema": "Imbuhan",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.5",
+        "indikator": "Memahami konsep Imbuhan (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Imbuhan adalah...",
+        "options": [
+          "Imbuhan",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Imbuhan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "imbuhan",
+          "prefiks",
+          "sufiks"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "imbuhan.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "REPAIR_FAILED",
+      "confidence": "LOW",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "repair AI gagal: All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      ],
+      "aiMeta": {
+        "provider": "chain",
+        "model": "fallback",
+        "attempted": true,
+        "failureReason": "All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:22.100Z"
+    },
+    {
+      "id": "BC-KALIMAT-EFEKTIF-0001",
+      "sourceSha256": "cf44dbbe396db1f6d77f9cc62d303f548940a22452dbbf51fa0c42ce09c1f02f",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-KALIMAT-EFEKTIF-0001",
+        "judul": "Kalimat Efektif #1",
+        "tema": "Kalimat Efektif",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.2",
+        "indikator": "Memahami konsep Kalimat Efektif (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Kalimat Efektif adalah...",
+        "options": [
+          "Kalimat Efektif",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Kalimat Efektif adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "kalimat efektif",
+          "kehematan"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "kalimat-efektif.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "KALIMAT_EFEKTIF"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate KALIMAT_EFEKTIF: AMBIGUOUS — verifikasi kalimat (hemat/cermat/padu/sejajar/logis via tabel)"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:22.344Z"
+    },
+    {
+      "id": "BC-KALIMAT-0004",
+      "sourceSha256": "62f3c0599ad4c4b7672ed1f4fff2c6b65aea626d8797ec20927a3766d4561201",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-KALIMAT-0004",
+        "judul": "Kalimat #4",
+        "tema": "Kalimat",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.1",
+        "indikator": "Memahami konsep Kalimat (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Kalimat adalah...",
+        "options": [
+          "Kalimat",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Kalimat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "kalimat",
+          "jenis kalimat"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "kalimat.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "REPAIR_FAILED",
+      "confidence": "LOW",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "repair AI gagal: All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      ],
+      "aiMeta": {
+        "provider": "chain",
+        "model": "fallback",
+        "attempted": true,
+        "failureReason": "All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:22.345Z"
+    },
+    {
+      "id": "BC-KATA-BAKU-0001",
+      "sourceSha256": "fd4b9aab6ceb2840e6a32172386e469ba5669cb98a1af536486ac5b1dc85c1c9",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-KATA-BAKU-0001",
+        "judul": "Kata Baku #1",
+        "tema": "Kata Baku",
+        "kelas": "7",
+        "semester": 2,
+        "kompetensi": "3.6",
+        "indikator": "Memahami konsep Kata Baku (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Kata Baku adalah...",
+        "options": [
+          "Kata Baku",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Kata Baku adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "kata baku"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "kata-baku.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "REPAIR_FAILED",
+      "confidence": "LOW",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "repair AI gagal: All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      ],
+      "aiMeta": {
+        "provider": "chain",
+        "model": "fallback",
+        "attempted": true,
+        "failureReason": "All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:22.594Z"
+    },
+    {
+      "id": "BC-KATA-TIDAK-BAKU-0001",
+      "sourceSha256": "42d3b73cfdcd3961f29984b72b18e0acc6e69c3e4db78f1402c077f1496eea89",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-KATA-TIDAK-BAKU-0001",
+        "judul": "Kata Tidak Baku #1",
+        "tema": "Kata Tidak Baku",
+        "kelas": "7",
+        "semester": 2,
+        "kompetensi": "3.6",
+        "indikator": "Memahami konsep Kata Tidak Baku (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Kata Tidak Baku adalah...",
+        "options": [
+          "Kata Tidak Baku",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Kata Tidak Baku adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "kata tidak baku"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "kata-tidak-baku.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "REPAIR_FAILED",
+      "confidence": "LOW",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "repair AI gagal: All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      ],
+      "aiMeta": {
+        "provider": "chain",
+        "model": "fallback",
+        "attempted": true,
+        "failureReason": "All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:22.946Z"
+    },
+    {
+      "id": "BC-LEGENDA-0001",
+      "sourceSha256": "c30abde9d0a2f9d25c70209f9aa5dbfcd3fb22cd786323c82b3b952c3096a1c2",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-LEGENDA-0001",
+        "judul": "Legenda #1",
+        "tema": "Legenda",
+        "kelas": "7",
+        "semester": 2,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Legenda (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Legenda adalah...",
+        "options": [
+          "Legenda",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Legenda adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "legenda"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "legenda.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "REPAIR_FAILED",
+      "confidence": "LOW",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "repair AI gagal: All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      ],
+      "aiMeta": {
+        "provider": "chain",
+        "model": "fallback",
+        "attempted": true,
+        "failureReason": "All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:23.224Z"
+    },
+    {
+      "id": "BC-ANEKDOT-0003",
+      "sourceSha256": "713d40b61abe91c93c3d7f6fb0341e9c39a294ff743bc3ec5946845ff72bb553",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANEKDOT-0003",
+        "judul": "Anekdot #3",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Anekdot adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "anekdot.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "TAUTOLOGY_TO_VALID_ITEM"
+      ],
+      "decision": "REPAIR_FAILED",
+      "confidence": "LOW",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "repair AI gagal: All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      ],
+      "aiMeta": {
+        "provider": "chain",
+        "model": "fallback",
+        "attempted": true,
+        "failureReason": "All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:23.465Z"
+    },
+    {
+      "id": "BC-ANTONIM-0008",
+      "sourceSha256": "66142b5632dec334439545268c928b6ef153734ad60828e77a21413b87ced461",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANTONIM-0008",
+        "judul": "Antonim #8",
+        "tema": "Antonim",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.4",
+        "indikator": "Memahami konsep Antonim (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 2,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Antonim adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Antonim memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "antonim",
+          "lawan kata"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "antonim.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "ANTONIM"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate ANTONIM: INSUFFICIENT_CONTEXT — butuh penilaian semantik manusia / konteks tidak cukup"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:23.720Z"
+    },
+    {
+      "id": "BC-ARTIKEL-0003",
+      "sourceSha256": "06379396bf8ef091daf4fbec304ceb79ddb8d99340d821fadb6248c57e87c567",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ARTIKEL-0003",
+        "judul": "Artikel #3",
+        "tema": "Artikel",
+        "kelas": "9",
+        "semester": 2,
+        "kompetensi": "3.2",
+        "indikator": "Memahami konsep Artikel (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Artikel adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Artikel memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "artikel"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "artikel.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "TAUTOLOGY_TO_VALID_ITEM"
+      ],
+      "decision": "REPAIR_FAILED",
+      "confidence": "LOW",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "repair AI gagal: All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      ],
+      "aiMeta": {
+        "provider": "chain",
+        "model": "fallback",
+        "attempted": true,
+        "failureReason": "All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:23.720Z"
+    },
+    {
+      "id": "BC-CERITA-INSPIRATIF-0003",
+      "sourceSha256": "f3e0f45393468612cb257ff5de1f19ad5f74cfd95361035801450c4a55b5646d",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-CERITA-INSPIRATIF-0003",
+        "judul": "Cerita Inspiratif #3",
+        "tema": "Cerita Inspiratif",
+        "kelas": "9",
+        "semester": 2,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerita Inspiratif (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Cerita Inspiratif adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerita Inspiratif memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "cerita inspiratif"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "cerita-inspiratif.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "TAUTOLOGY_TO_VALID_ITEM"
+      ],
+      "decision": "REPAIR_FAILED",
+      "confidence": "LOW",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "repair AI gagal: All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      ],
+      "aiMeta": {
+        "provider": "chain",
+        "model": "fallback",
+        "attempted": true,
+        "failureReason": "All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:23.958Z"
+    },
+    {
+      "id": "BC-CERPEN-0003",
+      "sourceSha256": "25a4c26d73ff787f426c5d5ffaa4ca98879a9aabec8e8dfc7233061c75e24c3b",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-CERPEN-0003",
+        "judul": "Cerpen #3",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Cerpen adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "cerpen.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "TAUTOLOGY_TO_VALID_ITEM"
+      ],
+      "decision": "REPAIR_FAILED",
+      "confidence": "LOW",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "repair AI gagal: All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      ],
+      "aiMeta": {
+        "provider": "chain",
+        "model": "fallback",
+        "attempted": true,
+        "failureReason": "All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:24.208Z"
+    },
+    {
+      "id": "BC-DRAMA-0003",
+      "sourceSha256": "62c05d5154533795c937d74741dff21b7f1c83b11ce9020ff876c8b9b86b1af4",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-DRAMA-0003",
+        "judul": "Drama #3",
+        "tema": "Drama",
+        "kelas": "8",
+        "semester": 2,
+        "kompetensi": "3.10",
+        "indikator": "Memahami konsep Drama (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Drama adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Drama memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "drama",
+          "dialog"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "drama.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "TAUTOLOGY_TO_VALID_ITEM"
+      ],
+      "decision": "REPAIR_FAILED",
+      "confidence": "LOW",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "repair AI gagal: All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      ],
+      "aiMeta": {
+        "provider": "chain",
+        "model": "fallback",
+        "attempted": true,
+        "failureReason": "All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:24.491Z"
+    },
+    {
+      "id": "BC-EDITORIAL-0003",
+      "sourceSha256": "38379b5f261617720af094421053db31ed713bbec717b35de647ff934101184a",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-EDITORIAL-0003",
+        "judul": "Editorial #3",
+        "tema": "Editorial",
+        "kelas": "10",
+        "semester": 1,
+        "kompetensi": "3.2",
+        "indikator": "Memahami konsep Editorial (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Editorial adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Editorial memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "editorial"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "editorial.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "TAUTOLOGY_TO_VALID_ITEM"
+      ],
+      "decision": "REPAIR_FAILED",
+      "confidence": "LOW",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "repair AI gagal: All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      ],
+      "aiMeta": {
+        "provider": "chain",
+        "model": "fallback",
+        "attempted": true,
+        "failureReason": "All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:24.789Z"
+    },
+    {
+      "id": "BC-EJAAN-0003",
+      "sourceSha256": "6f5f68ee1e4238aba1826a481fa9a22fcc352400fec86981a87a9bc1b0163e7b",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-EJAAN-0003",
+        "judul": "Ejaan #3",
+        "tema": "Ejaan",
+        "kelas": "7",
+        "semester": 2,
+        "kompetensi": "3.6",
+        "indikator": "Memahami konsep Ejaan (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Ejaan adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Ejaan memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "ejaan",
+          "EYD"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "ejaan.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "EJAAN"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate EJAAN: AMBIGUOUS — tidak ada rule ejaan terverifikasi untuk opsi"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.053Z"
+    },
+    {
+      "id": "BC-FABEL-0003",
+      "sourceSha256": "6c8ed410902f660cbe74b73019eed06759937320d943e42575f9ddae9b64bda9",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-FABEL-0003",
+        "judul": "Fabel #3",
+        "tema": "Fabel",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Fabel (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Fabel adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Fabel memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "fabel",
+          "pesan moral"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "fabel.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "TAUTOLOGY_TO_VALID_ITEM"
+      ],
+      "decision": "REPAIR_FAILED",
+      "confidence": "LOW",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "repair AI gagal: All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      ],
+      "aiMeta": {
+        "provider": "chain",
+        "model": "fallback",
+        "attempted": true,
+        "failureReason": "All AI providers failed: groq/openai/gpt-oss-120b: HTTP 429; groq/openai/gpt-oss-20b: HTTP 429"
+      },
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.054Z"
+    },
+    {
+      "id": "BC-GAGASAN-UTAMA-0003",
+      "sourceSha256": "665fcbef55b7d6aebf87de24303b18c1a30a3e4cc5b8fa1afc7719f9dccfe119",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-GAGASAN-UTAMA-0003",
+        "judul": "Gagasan Utama #3",
+        "tema": "Gagasan Utama",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.3",
+        "indikator": "Memahami konsep Gagasan Utama (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Gagasan Utama adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Gagasan Utama memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "gagasan utama"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "gagasan-utama.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "TAUTOLOGY_TO_VALID_ITEM"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.303Z"
+    },
+    {
+      "id": "BC-GURINDAM-0003",
+      "sourceSha256": "a332ceb27351f40f03c57420f298a4f188d4e26bfa219a815fa65a2113e0659a",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-GURINDAM-0003",
+        "judul": "Gurindam #3",
+        "tema": "Gurindam",
+        "kelas": "8",
+        "semester": 2,
+        "kompetensi": "3.8",
+        "indikator": "Memahami konsep Gurindam (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Gurindam adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Gurindam memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "gurindam"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "gurindam.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "TAUTOLOGY_TO_VALID_ITEM"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.303Z"
+    },
+    {
+      "id": "BC-HIKAYAT-0003",
+      "sourceSha256": "bd4fa252c556023f4bcfdc2be584cfa7e879358e2d04f7fec4ed98fc82095129",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-HIKAYAT-0003",
+        "judul": "Hikayat #3",
+        "tema": "Hikayat",
+        "kelas": "10",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Hikayat (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Hikayat adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Hikayat memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "hikayat",
+          "sastra Melayu"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "hikayat.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "TAUTOLOGY_TO_VALID_ITEM"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.303Z"
+    },
+    {
+      "id": "BC-IDE-POKOK-0003",
+      "sourceSha256": "5fbdbd870e5467bc886b9bd3eeecba79c1e1acb1fbcd4fdce0a30e3f4870b29f",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-IDE-POKOK-0003",
+        "judul": "Ide Pokok #3",
+        "tema": "Ide Pokok",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.3",
+        "indikator": "Memahami konsep Ide Pokok (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Ide Pokok adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Ide Pokok memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "ide pokok",
+          "gagasan utama"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "ide-pokok.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "TAUTOLOGY_TO_VALID_ITEM"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.304Z"
+    },
+    {
+      "id": "BC-IKLAN-0003",
+      "sourceSha256": "1e59aea40404c39ed4dca74fad9b1c2e2e6b71f7e16cd7c3b37635ff6b8f6b4f",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-IKLAN-0003",
+        "judul": "Iklan #3",
+        "tema": "Iklan",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.8",
+        "indikator": "Memahami konsep Iklan (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Iklan adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Iklan memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "iklan"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "iklan.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "TAUTOLOGY_TO_VALID_ITEM"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.304Z"
+    },
+    {
+      "id": "BC-IMBUHAN-0003",
+      "sourceSha256": "7a5221186503080f75f0058fddf89ff20e6d5affa693ef710b15c08c59a49a50",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-IMBUHAN-0003",
+        "judul": "Imbuhan #3",
+        "tema": "Imbuhan",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.5",
+        "indikator": "Memahami konsep Imbuhan (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Imbuhan adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Imbuhan memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "imbuhan",
+          "prefiks",
+          "sufiks"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "imbuhan.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "TAUTOLOGY_TO_VALID_ITEM"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.304Z"
+    },
+    {
+      "id": "BC-KALIMAT-EFEKTIF-0003",
+      "sourceSha256": "d65690afef678004cfd4fde1ba529bd53b02689cd479bb705373cec8e1759096",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-KALIMAT-EFEKTIF-0003",
+        "judul": "Kalimat Efektif #3",
+        "tema": "Kalimat Efektif",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.2",
+        "indikator": "Memahami konsep Kalimat Efektif (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Kalimat Efektif adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Kalimat Efektif memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "kalimat efektif",
+          "kehematan"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "kalimat-efektif.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "KALIMAT_EFEKTIF"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate KALIMAT_EFEKTIF: AMBIGUOUS — verifikasi kalimat (hemat/cermat/padu/sejajar/logis via tabel)"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.304Z"
+    },
+    {
+      "id": "BC-KALIMAT-0008",
+      "sourceSha256": "0da4f4b1713926ed2986f6ef93da513a7727214ae806720ac136ae89c92e0f43",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-KALIMAT-0008",
+        "judul": "Kalimat #8",
+        "tema": "Kalimat",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.1",
+        "indikator": "Memahami konsep Kalimat (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 2,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Kalimat adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Kalimat memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "kalimat",
+          "jenis kalimat"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "kalimat.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "TAUTOLOGY_TO_VALID_ITEM"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.304Z"
+    },
+    {
+      "id": "BC-KATA-BAKU-0003",
+      "sourceSha256": "b5d6b115660ebbf72624e9f12e59df8abd3d10dcacf0fd07d673ad036a7b6dd5",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-KATA-BAKU-0003",
+        "judul": "Kata Baku #3",
+        "tema": "Kata Baku",
+        "kelas": "7",
+        "semester": 2,
+        "kompetensi": "3.6",
+        "indikator": "Memahami konsep Kata Baku (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Kata Baku adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Kata Baku memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "kata baku"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "kata-baku.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "TAUTOLOGY_TO_VALID_ITEM"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.304Z"
+    },
+    {
+      "id": "BC-KATA-TIDAK-BAKU-0003",
+      "sourceSha256": "b20fef7ed22a5dd9fb85083f778f4a455cae8f0d83bc11a465499d9076b0a674",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-KATA-TIDAK-BAKU-0003",
+        "judul": "Kata Tidak Baku #3",
+        "tema": "Kata Tidak Baku",
+        "kelas": "7",
+        "semester": 2,
+        "kompetensi": "3.6",
+        "indikator": "Memahami konsep Kata Tidak Baku (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Kata Tidak Baku adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Kata Tidak Baku memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "kata tidak baku"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "kata-tidak-baku.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "TAUTOLOGY_TO_VALID_ITEM"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.304Z"
+    },
+    {
+      "id": "BC-LEGENDA-0003",
+      "sourceSha256": "210c56734c699d30bd951f0723b5329149f827dbc382b21bc99c6240f5f10849",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-LEGENDA-0003",
+        "judul": "Legenda #3",
+        "tema": "Legenda",
+        "kelas": "7",
+        "semester": 2,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Legenda (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Legenda adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Legenda memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "legenda"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "legenda.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "TAUTOLOGY_TO_VALID_ITEM"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.304Z"
+    },
+    {
+      "id": "BC-ANEKDOT-0005",
+      "sourceSha256": "80f408d0cfc02c64672e6111ce9388d424e342514c06d7d16d602446bb6fef39",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANEKDOT-0005",
+        "judul": "Anekdot #5",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Anekdot menurut pemahaman Anda.",
+        "options": [
+          "anekdot"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "anekdot.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "BAD_EXPLAIN_TO_MCQ"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.304Z"
+    },
+    {
+      "id": "BC-ANTONIM-0005",
+      "sourceSha256": "156bbc96c33fae60428627f315ff93cb9dab161d25b042b2e94a0e62e45cca70",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANTONIM-0005",
+        "judul": "Antonim #5",
+        "tema": "Antonim",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.4",
+        "indikator": "Memahami konsep Antonim (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Antonim menurut pemahaman Anda.",
+        "options": [
+          "antonim"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Antonim adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "antonim",
+          "lawan kata"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "antonim.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "ANTONIM"
+      ],
+      "decision": "INVALID_CONTRACT",
+      "confidence": "LOW",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "kontrak soal rusak (teks kosong / opsi < 2 / kunci tidak valid)"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.304Z"
+    },
+    {
+      "id": "BC-ARTIKEL-0005",
+      "sourceSha256": "71b254c710bb48fe1c7b1d5122a817a977a14aa35e74904f1c9813688813384e",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ARTIKEL-0005",
+        "judul": "Artikel #5",
+        "tema": "Artikel",
+        "kelas": "9",
+        "semester": 2,
+        "kompetensi": "3.2",
+        "indikator": "Memahami konsep Artikel (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Artikel menurut pemahaman Anda.",
+        "options": [
+          "artikel"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Artikel adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "artikel"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "artikel.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "BAD_EXPLAIN_TO_MCQ"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.304Z"
+    },
+    {
+      "id": "BC-CERITA-INSPIRATIF-0005",
+      "sourceSha256": "e1f10d465bc3758cb2b27c0388b68d1008fe8d78dc9ae1237b5cd66ade42a1fb",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-CERITA-INSPIRATIF-0005",
+        "judul": "Cerita Inspiratif #5",
+        "tema": "Cerita Inspiratif",
+        "kelas": "9",
+        "semester": 2,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerita Inspiratif (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Cerita Inspiratif menurut pemahaman Anda.",
+        "options": [
+          "cerita inspiratif"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerita Inspiratif adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "cerita inspiratif"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "cerita-inspiratif.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "BAD_EXPLAIN_TO_MCQ"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.304Z"
+    },
+    {
+      "id": "BC-CERPEN-0005",
+      "sourceSha256": "5b25ac28fd579b3407465f2101fc0632c007a4e44670beda40ca9d5aaa2dca25",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-CERPEN-0005",
+        "judul": "Cerpen #5",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Cerpen menurut pemahaman Anda.",
+        "options": [
+          "cerpen"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "cerpen.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "BAD_EXPLAIN_TO_MCQ"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.304Z"
+    },
+    {
+      "id": "BC-DRAMA-0005",
+      "sourceSha256": "450f6439c0c64edf7ee0ed29229642aca3be66d7ce71f612dac8ca61291dc377",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-DRAMA-0005",
+        "judul": "Drama #5",
+        "tema": "Drama",
+        "kelas": "8",
+        "semester": 2,
+        "kompetensi": "3.10",
+        "indikator": "Memahami konsep Drama (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Drama menurut pemahaman Anda.",
+        "options": [
+          "drama"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Drama adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "drama",
+          "dialog"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "drama.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "BAD_EXPLAIN_TO_MCQ"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.304Z"
+    },
+    {
+      "id": "BC-EDITORIAL-0005",
+      "sourceSha256": "ffd18d1d37b376740281294a51fa0650e6ce5f1fbb5a262c39a2b62a15b7f1a0",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-EDITORIAL-0005",
+        "judul": "Editorial #5",
+        "tema": "Editorial",
+        "kelas": "10",
+        "semester": 1,
+        "kompetensi": "3.2",
+        "indikator": "Memahami konsep Editorial (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Editorial menurut pemahaman Anda.",
+        "options": [
+          "editorial"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Editorial adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "editorial"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "editorial.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "BAD_EXPLAIN_TO_MCQ"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.304Z"
+    },
+    {
+      "id": "BC-EJAAN-0005",
+      "sourceSha256": "6603f685a384c0ac12381af8f26c1e4a4554146a9daf99e3bfccf8fc14a3a3c1",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-EJAAN-0005",
+        "judul": "Ejaan #5",
+        "tema": "Ejaan",
+        "kelas": "7",
+        "semester": 2,
+        "kompetensi": "3.6",
+        "indikator": "Memahami konsep Ejaan (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Ejaan menurut pemahaman Anda.",
+        "options": [
+          "ejaan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Ejaan adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "ejaan",
+          "EYD"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "ejaan.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "EJAAN"
+      ],
+      "decision": "INVALID_CONTRACT",
+      "confidence": "LOW",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "kontrak soal rusak (teks kosong / opsi < 2 / kunci tidak valid)"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.305Z"
+    },
+    {
+      "id": "BC-FABEL-0005",
+      "sourceSha256": "cdd934049037b84dd57da962eb29724e99354b35796ed1e913174dd4aa84c960",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-FABEL-0005",
+        "judul": "Fabel #5",
+        "tema": "Fabel",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Fabel (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Fabel menurut pemahaman Anda.",
+        "options": [
+          "fabel"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Fabel adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "fabel",
+          "pesan moral"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "fabel.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "BAD_EXPLAIN_TO_MCQ"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.305Z"
+    },
+    {
+      "id": "BC-GAGASAN-UTAMA-0005",
+      "sourceSha256": "fbff930c08180ce788d0a78806e85d6ed97f5d3890254721e366b13f7e77ef69",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-GAGASAN-UTAMA-0005",
+        "judul": "Gagasan Utama #5",
+        "tema": "Gagasan Utama",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.3",
+        "indikator": "Memahami konsep Gagasan Utama (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Gagasan Utama menurut pemahaman Anda.",
+        "options": [
+          "gagasan utama"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Gagasan Utama adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "gagasan utama"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "gagasan-utama.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "BAD_EXPLAIN_TO_MCQ"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.305Z"
+    },
+    {
+      "id": "BC-GURINDAM-0005",
+      "sourceSha256": "f1ddf30437f2dac034b00442c16958f42525222089e410e9a4e35f840e88348f",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-GURINDAM-0005",
+        "judul": "Gurindam #5",
+        "tema": "Gurindam",
+        "kelas": "8",
+        "semester": 2,
+        "kompetensi": "3.8",
+        "indikator": "Memahami konsep Gurindam (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Gurindam menurut pemahaman Anda.",
+        "options": [
+          "gurindam"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Gurindam adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "gurindam"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "gurindam.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "BAD_EXPLAIN_TO_MCQ"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.305Z"
+    },
+    {
+      "id": "BC-HIKAYAT-0005",
+      "sourceSha256": "a8b2f60e1ca70072d765cbedbad9eac4cba8445b7da325b858a494194f764645",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-HIKAYAT-0005",
+        "judul": "Hikayat #5",
+        "tema": "Hikayat",
+        "kelas": "10",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Hikayat (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Hikayat menurut pemahaman Anda.",
+        "options": [
+          "hikayat"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Hikayat adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "hikayat",
+          "sastra Melayu"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "hikayat.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "BAD_EXPLAIN_TO_MCQ"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.305Z"
+    },
+    {
+      "id": "BC-IDE-POKOK-0005",
+      "sourceSha256": "e2557a9ebe553454f500262ba5558155f680143674d8011474997541e8075833",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-IDE-POKOK-0005",
+        "judul": "Ide Pokok #5",
+        "tema": "Ide Pokok",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.3",
+        "indikator": "Memahami konsep Ide Pokok (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Ide Pokok menurut pemahaman Anda.",
+        "options": [
+          "ide pokok"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Ide Pokok adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "ide pokok",
+          "gagasan utama"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "ide-pokok.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "BAD_EXPLAIN_TO_MCQ"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.305Z"
+    },
+    {
+      "id": "BC-IKLAN-0005",
+      "sourceSha256": "6d46a9e238cdcc8a07fc552b4b26a809a79e71fa155006d30b8dbeb6e9d14d5e",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-IKLAN-0005",
+        "judul": "Iklan #5",
+        "tema": "Iklan",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.8",
+        "indikator": "Memahami konsep Iklan (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Iklan menurut pemahaman Anda.",
+        "options": [
+          "iklan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Iklan adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "iklan"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "iklan.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "BAD_EXPLAIN_TO_MCQ"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.306Z"
+    },
+    {
+      "id": "BC-IMBUHAN-0005",
+      "sourceSha256": "eed7edf28095712c0cfc6d750c67336e8a3ea327caef6c3fef1ee7b5b2a02502",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-IMBUHAN-0005",
+        "judul": "Imbuhan #5",
+        "tema": "Imbuhan",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.5",
+        "indikator": "Memahami konsep Imbuhan (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Imbuhan menurut pemahaman Anda.",
+        "options": [
+          "imbuhan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Imbuhan adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "imbuhan",
+          "prefiks",
+          "sufiks"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "imbuhan.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "BAD_EXPLAIN_TO_MCQ"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.306Z"
+    },
+    {
+      "id": "BC-KALIMAT-EFEKTIF-0005",
+      "sourceSha256": "14b3881a2ad38b10088a6e5ac2575661c1038a1338f1f2d1eed5da3d52c9e5b2",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-KALIMAT-EFEKTIF-0005",
+        "judul": "Kalimat Efektif #5",
+        "tema": "Kalimat Efektif",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.2",
+        "indikator": "Memahami konsep Kalimat Efektif (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Kalimat Efektif menurut pemahaman Anda.",
+        "options": [
+          "kalimat efektif"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Kalimat Efektif adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "kalimat efektif",
+          "kehematan"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "kalimat-efektif.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "KALIMAT_EFEKTIF"
+      ],
+      "decision": "INVALID_CONTRACT",
+      "confidence": "LOW",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "kontrak soal rusak (teks kosong / opsi < 2 / kunci tidak valid)"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.306Z"
+    },
+    {
+      "id": "BC-KALIMAT-0005",
+      "sourceSha256": "67adbd472bbe8857104d0fc3a8ea01892b33518b3c74a1af5ec97c82f404f1ed",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-KALIMAT-0005",
+        "judul": "Kalimat #5",
+        "tema": "Kalimat",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.1",
+        "indikator": "Memahami konsep Kalimat (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Kalimat menurut pemahaman Anda.",
+        "options": [
+          "kalimat"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Kalimat adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "kalimat",
+          "jenis kalimat"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "kalimat.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "BAD_EXPLAIN_TO_MCQ"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.306Z"
+    },
+    {
+      "id": "BC-KATA-BAKU-0005",
+      "sourceSha256": "f05eba010fea6a48f94ccfced793eb6ec47d0f698cda01d521035cf9bc85156e",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-KATA-BAKU-0005",
+        "judul": "Kata Baku #5",
+        "tema": "Kata Baku",
+        "kelas": "7",
+        "semester": 2,
+        "kompetensi": "3.6",
+        "indikator": "Memahami konsep Kata Baku (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Kata Baku menurut pemahaman Anda.",
+        "options": [
+          "kata baku"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Kata Baku adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "kata baku"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "kata-baku.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "BAD_EXPLAIN_TO_MCQ"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.306Z"
+    },
+    {
+      "id": "BC-KATA-TIDAK-BAKU-0005",
+      "sourceSha256": "00f7086668f23cea3d943de2a57cca0aa91f3773f855c21b806dd6ab1c33af1b",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-KATA-TIDAK-BAKU-0005",
+        "judul": "Kata Tidak Baku #5",
+        "tema": "Kata Tidak Baku",
+        "kelas": "7",
+        "semester": 2,
+        "kompetensi": "3.6",
+        "indikator": "Memahami konsep Kata Tidak Baku (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Kata Tidak Baku menurut pemahaman Anda.",
+        "options": [
+          "kata tidak baku"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Kata Tidak Baku adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "kata tidak baku"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "kata-tidak-baku.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "BAD_EXPLAIN_TO_MCQ"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.306Z"
+    },
+    {
+      "id": "BC-LEGENDA-0005",
+      "sourceSha256": "5ba294141babfa440f0f7dd3b4d019c5042e545318e413d12a09985da35392e4",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-LEGENDA-0005",
+        "judul": "Legenda #5",
+        "tema": "Legenda",
+        "kelas": "7",
+        "semester": 2,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Legenda (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Legenda menurut pemahaman Anda.",
+        "options": [
+          "legenda"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Legenda adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "legenda"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "legenda.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "BAD_EXPLAIN_TO_MCQ"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.306Z"
+    },
+    {
+      "id": "BC-SINONIM-0003",
+      "sourceSha256": "596e7eb31ee9afa8190141990056e5d2b5f14edb5b885dc8d78344e50ff50ef2",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-SINONIM-0003",
+        "judul": "Sinonim #3",
+        "tema": "Sinonim",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.4",
+        "indikator": "Memahami konsep Sinonim (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "BENAR_SALAH",
+        "text": "Sinonim dari kata 'berani' adalah...",
+        "options": [
+          "Takut",
+          "Pengecut",
+          "Berani",
+          "Gagah"
+        ],
+        "correctAnswer": "2",
+        "explanation": "Hati-hati: 'berani' sinonimnya 'berani' juga, atau 'gagah berani'.",
+        "kataKunci": [
+          "sinonim",
+          "persamaan kata"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "sinonim.json"
+      },
+      "candidate": {
+        "kodeSoal": "BC-SINONIM-0003",
+        "judul": "Sinonim #3",
+        "tema": "Sinonim",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.4",
+        "indikator": "Memahami konsep Sinonim (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Sinonim dari kata 'berani' adalah...",
+        "options": [
+          "Takut",
+          "Pengecut",
+          "Berani",
+          "Gagah"
+        ],
+        "correctAnswer": "3",
+        "explanation": "Berani: sinonim dari kata 'berani' adalah 'Gagah'. Pilihan lain tidak memiliki hubungan sinonim dengan 'berani'.",
+        "kataKunci": [
+          "sinonim",
+          "persamaan kata"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "sinonim.json"
+      },
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "SINONIM"
+      ],
+      "decision": "GOLD",
+      "confidence": "HIGH",
+      "gates": [
+        {
+          "name": "single-correct",
+          "passed": true,
+          "detail": "tepat satu jawaban benar"
+        },
+        {
+          "name": "explanation",
+          "passed": true,
+          "detail": "explanasi menjawab mengapa benar tanpa mengulang stimulis/jawaban atau fakta baru"
+        },
+        {
+          "name": "ai-sounding",
+          "passed": true,
+          "detail": "tidak ada pola generik/robotik terdeteksi"
+        },
+        {
+          "name": "duplicate",
+          "passed": true,
+          "detail": "tidak ada duplikat (exact/near/template-family)"
+        },
+        {
+          "name": "distractor-engine",
+          "passed": true
+        }
+      ],
+      "distractorReports": [
+        {
+          "option": "Takut",
+          "whyWrong": "'Takut' tidak memiliki relasi makna (sinonim/lawan kata) dengan 'berani' yang diminta soal",
+          "plausible": true
+        },
+        {
+          "option": "Pengecut",
+          "whyWrong": "'Pengecut' tidak memiliki relasi makna (sinonim/lawan kata) dengan 'berani' yang diminta soal",
+          "plausible": true
+        },
+        {
+          "option": "Berani",
+          "whyWrong": "'Berani' tidak memiliki relasi makna (sinonim/lawan kata) dengan 'berani' yang diminta soal",
+          "plausible": true
+        }
+      ],
+      "reason": [
+        "repair SINONIM diterapkan",
+        "skill semantik: SINONIM",
+        "semua gate semantik lulus"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.306Z"
+    },
+    {
+      "id": "BC-ANTONIM-0006",
+      "sourceSha256": "34c8b21080ecf559b63992722708fb85e4736f9e3054eaddc38b7d1c2039818a",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANTONIM-0006",
+        "judul": "Antonim #6",
+        "tema": "Antonim",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.4",
+        "indikator": "Memahami konsep Antonim (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+        "options": [
+          "Antonim",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "antonim",
+          "lawan kata"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "antonim.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "ANTONIM"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate ANTONIM: INSUFFICIENT_CONTEXT — butuh penilaian semantik manusia / konteks tidak cukup"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.330Z"
+    },
+    {
+      "id": "BC-ANTONIM-0007",
+      "sourceSha256": "cdfa64c3a32013ce3b7828d683649791bb5ffcd479e97e031c010437abb8cedc",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANTONIM-0007",
+        "judul": "Antonim #7",
+        "tema": "Antonim",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.4",
+        "indikator": "Memahami konsep Antonim (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 2,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+        "options": [
+          "Antonim",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "antonim",
+          "lawan kata"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "antonim.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "ANTONIM"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate ANTONIM: INSUFFICIENT_CONTEXT — butuh penilaian semantik manusia / konteks tidak cukup"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.330Z"
+    },
+    {
+      "id": "BC-ANTONIM-0009",
+      "sourceSha256": "552538dc5dc56e605e5322067be54c11d957b81655a93e464b4f12c853a9ae32",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANTONIM-0009",
+        "judul": "Antonim #9",
+        "tema": "Antonim",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.4",
+        "indikator": "Memahami konsep Antonim (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 2,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+        "options": [
+          "Antonim",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "antonim",
+          "lawan kata"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "antonim.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "ANTONIM"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate ANTONIM: INSUFFICIENT_CONTEXT — butuh penilaian semantik manusia / konteks tidak cukup"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.331Z"
+    },
+    {
+      "id": "BC-ANTONIM-0010",
+      "sourceSha256": "626045cf3bdbbc5de106e0f0cd99f4550e2660c9cb7ff2d050bf6095c0479681",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANTONIM-0010",
+        "judul": "Antonim #10",
+        "tema": "Antonim",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.4",
+        "indikator": "Memahami konsep Antonim (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 2,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+        "options": [
+          "Antonim",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "antonim",
+          "lawan kata"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "antonim.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "ANTONIM"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate ANTONIM: INSUFFICIENT_CONTEXT — butuh penilaian semantik manusia / konteks tidak cukup"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.331Z"
+    },
+    {
+      "id": "BC-ANTONIM-0011",
+      "sourceSha256": "3c4b4df08a09e922ec29cf24f29f2698b226a99c5ac4aa70b70d5a4e4e6330db",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANTONIM-0011",
+        "judul": "Antonim #11",
+        "tema": "Antonim",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.4",
+        "indikator": "Memahami konsep Antonim (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 2,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+        "options": [
+          "Antonim",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "antonim",
+          "lawan kata"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "antonim.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "ANTONIM"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate ANTONIM: INSUFFICIENT_CONTEXT — butuh penilaian semantik manusia / konteks tidak cukup"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.332Z"
+    },
+    {
+      "id": "BC-ANTONIM-0012",
+      "sourceSha256": "ff38123283bb04656311c4c701a03a9995f5b85cbc14f2a59d703e9f2abb1306",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANTONIM-0012",
+        "judul": "Antonim #12",
+        "tema": "Antonim",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.4",
+        "indikator": "Memahami konsep Antonim (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 2,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+        "options": [
+          "Antonim",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "antonim",
+          "lawan kata"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "antonim.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "ANTONIM"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate ANTONIM: INSUFFICIENT_CONTEXT — butuh penilaian semantik manusia / konteks tidak cukup"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.332Z"
+    },
+    {
+      "id": "BC-ANTONIM-0013",
+      "sourceSha256": "9aba931d72f2e4b94f25c2c37f90f248485a8134a69e7103cf2e12b822f5f012",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANTONIM-0013",
+        "judul": "Antonim #13",
+        "tema": "Antonim",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.4",
+        "indikator": "Memahami konsep Antonim (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 2,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Antonim adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Antonim memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "antonim",
+          "lawan kata"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "antonim.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "ANTONIM"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate ANTONIM: INSUFFICIENT_CONTEXT — butuh penilaian semantik manusia / konteks tidak cukup"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.333Z"
+    },
+    {
+      "id": "BC-MAKNA-KATA-0001",
+      "sourceSha256": "eb9562ffe918eb8dec77119600f82542a3e35a2ec9c317f54b9d694cecdc652a",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-MAKNA-KATA-0001",
+        "judul": "Makna Kata #1",
+        "tema": "Makna Kata",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.4",
+        "indikator": "Memahami konsep Makna Kata (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Makna Kata adalah...",
+        "options": [
+          "Makna Kata",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Makna Kata adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "makna kata",
+          "denotasi",
+          "konotasi"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "makna-kata.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "MAKNA_KATA"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate MAKNA_KATA: INSUFFICIENT_CONTEXT — makna kata dalam konteks kalimat"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.333Z"
+    },
+    {
+      "id": "BC-MAKNA-KATA-0002",
+      "sourceSha256": "2b9a34687c46473771784458c90e703a7daeb0032220dfc7134e18d259251a74",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-MAKNA-KATA-0002",
+        "judul": "Makna Kata #2",
+        "tema": "Makna Kata",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.4",
+        "indikator": "Memahami konsep Makna Kata (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Makna Kata adalah...",
+        "options": [
+          "Makna Kata",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Makna Kata adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "makna kata",
+          "denotasi",
+          "konotasi"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "makna-kata.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "MAKNA_KATA"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate MAKNA_KATA: INSUFFICIENT_CONTEXT — makna kata dalam konteks kalimat"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.333Z"
+    },
+    {
+      "id": "BC-SPOK-0009",
+      "sourceSha256": "4bda56ca0dc2990c4ff84a3baa7c9c50b6e8efc49cc7849d2d43c41f51c00760",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-SPOK-0009",
+        "judul": "SPOK #9",
+        "tema": "SPOK",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.1",
+        "indikator": "Memahami konsep SPOK (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 2,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh SPOK adalah...",
+        "options": [
+          "SPOK",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "SPOK adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "subjek",
+          "predikat",
+          "objek",
+          "keterangan"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "spok.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "SPOK"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate SPOK: AMBIGUOUS — verifikasi struktur SPOK (tabel terverifikasi)"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.334Z"
+    },
+    {
+      "id": "BC-SPOK-0010",
+      "sourceSha256": "8337c5e7f1287b85a29704a9ca8c88c361bc79f00222e8e2ef9f3a743dbe26ec",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-SPOK-0010",
+        "judul": "SPOK #10",
+        "tema": "SPOK",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.1",
+        "indikator": "Memahami konsep SPOK (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 2,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh SPOK adalah...",
+        "options": [
+          "SPOK",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "SPOK adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "subjek",
+          "predikat",
+          "objek",
+          "keterangan"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "spok.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "SPOK"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate SPOK: AMBIGUOUS — verifikasi struktur SPOK (tabel terverifikasi)"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.334Z"
+    },
+    {
+      "id": "BC-MAJAS-0004",
+      "sourceSha256": "9a45cff9691a5727168a9270c220a56d681fb82f713d282a85944309bdd45cc9",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-MAJAS-0004",
+        "judul": "Majas #4",
+        "tema": "Majas",
+        "kelas": "7",
+        "semester": 2,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Majas (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Majas adalah...",
+        "options": [
+          "Majas",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Majas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "majas",
+          "gaya bahasa"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "majas.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "MAJAS"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate MAJAS: INSUFFICIENT_CONTEXT — tidak ada evidence majas terverifikasi dalam stimulis"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.334Z"
+    },
+    {
+      "id": "BC-MAJAS-0005",
+      "sourceSha256": "fad36a98ea796356b25edd86d4987ae744ccff8ee6b1e40df7dc057e9db3567f",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-MAJAS-0005",
+        "judul": "Majas #5",
+        "tema": "Majas",
+        "kelas": "7",
+        "semester": 2,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Majas (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Majas menurut pemahaman Anda.",
+        "options": [
+          "majas"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Majas adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "majas",
+          "gaya bahasa"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "majas.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "MAJAS"
+      ],
+      "decision": "INVALID_CONTRACT",
+      "confidence": "LOW",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "kontrak soal rusak (teks kosong / opsi < 2 / kunci tidak valid)"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.334Z"
+    },
+    {
+      "id": "BC-EJAAN-0002",
+      "sourceSha256": "cabf60de92e30074368dc1c2caf9410687e428c117fa23f9f834fc8418432b58",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-EJAAN-0002",
+        "judul": "Ejaan #2",
+        "tema": "Ejaan",
+        "kelas": "7",
+        "semester": 2,
+        "kompetensi": "3.6",
+        "indikator": "Memahami konsep Ejaan (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Ejaan adalah...",
+        "options": [
+          "Ejaan",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Ejaan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "ejaan",
+          "EYD"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "ejaan.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "EJAAN"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate EJAAN: AMBIGUOUS — tidak ada rule ejaan terverifikasi untuk opsi"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.334Z"
+    },
+    {
+      "id": "BC-KALIMAT-EFEKTIF-0002",
+      "sourceSha256": "ec8669575331fe24137575f03e6dcd62f56f3da298741089c54e5ef5a4014cac",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-KALIMAT-EFEKTIF-0002",
+        "judul": "Kalimat Efektif #2",
+        "tema": "Kalimat Efektif",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.2",
+        "indikator": "Memahami konsep Kalimat Efektif (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Kalimat Efektif adalah...",
+        "options": [
+          "Kalimat Efektif",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Kalimat Efektif adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "kalimat efektif",
+          "kehematan"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "kalimat-efektif.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "KALIMAT_EFEKTIF"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate KALIMAT_EFEKTIF: AMBIGUOUS — verifikasi kalimat (hemat/cermat/padu/sejajar/logis via tabel)"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.334Z"
+    },
+    {
+      "id": "BC-ANEKDOT-0002",
+      "sourceSha256": "6591635a9436ef841990d70c49b8aecd2956ea0a5343e8103809850d4cc872f3",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANEKDOT-0002",
+        "judul": "Anekdot #2",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+        "options": [
+          "Anekdot",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "anekdot.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.335Z"
+    },
+    {
+      "id": "BC-ANEKDOT-0004",
+      "sourceSha256": "777a5d301bb4b4ceea972d082b541e81d2ba5d7f918e2df9e36ee05318f9d4e9",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANEKDOT-0004",
+        "judul": "Anekdot #4",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+        "options": [
+          "Anekdot",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "anekdot.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.335Z"
+    },
+    {
+      "id": "BC-ANEKDOT-0006",
+      "sourceSha256": "1d47f2335c143b4b52faaf8877f63c4e1c095d4b388e452c6fc9b5f1f19b6b71",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANEKDOT-0006",
+        "judul": "Anekdot #6",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+        "options": [
+          "Anekdot",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "anekdot.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.335Z"
+    },
+    {
+      "id": "BC-ANEKDOT-0007",
+      "sourceSha256": "f554b7a1161593ac16a21744d9608cb2df8fbe8f68d996f279dd1b5e5dbba793",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANEKDOT-0007",
+        "judul": "Anekdot #7",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 2,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+        "options": [
+          "Anekdot",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "anekdot.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.335Z"
+    },
+    {
+      "id": "BC-ANEKDOT-0009",
+      "sourceSha256": "3f24bc9732f086bef0e740f31bc816161f906d3f4d9ed89e675aa8a88dd6c0dc",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANEKDOT-0009",
+        "judul": "Anekdot #9",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 2,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+        "options": [
+          "Anekdot",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "anekdot.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.335Z"
+    },
+    {
+      "id": "BC-ANEKDOT-0010",
+      "sourceSha256": "8f95fe266e38e803725f8c7d67af45e559542238e7c4b1e8ff66e49e2482596e",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANEKDOT-0010",
+        "judul": "Anekdot #10",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 2,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+        "options": [
+          "Anekdot",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "anekdot.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.335Z"
+    },
+    {
+      "id": "BC-ANEKDOT-0011",
+      "sourceSha256": "771775d3255457ffc499d8de154ea0b1711d4c2848af2a4d2cc4257632cb3390",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANEKDOT-0011",
+        "judul": "Anekdot #11",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 2,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+        "options": [
+          "Anekdot",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "anekdot.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.335Z"
+    },
+    {
+      "id": "BC-ANEKDOT-0012",
+      "sourceSha256": "9d5a867083bdc02173fb1c1b18417283535b95b830fe53f6d48c24e820da1cbf",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANEKDOT-0012",
+        "judul": "Anekdot #12",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 2,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+        "options": [
+          "Anekdot",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "anekdot.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.336Z"
+    },
+    {
+      "id": "BC-ANEKDOT-0014",
+      "sourceSha256": "c1b4d5bce44761e4da0f362ae4b60ee9497a83603c020fd200a47b1d0c963af2",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANEKDOT-0014",
+        "judul": "Anekdot #14",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 2,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+        "options": [
+          "Anekdot",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "anekdot.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.336Z"
+    },
+    {
+      "id": "BC-ANEKDOT-0016",
+      "sourceSha256": "fbea5f40863b257fae7a3f64dbef7cee6cfea7ecfed979722ec0d0778b7f34c9",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANEKDOT-0016",
+        "judul": "Anekdot #16",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 3,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+        "options": [
+          "Anekdot",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "anekdot.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.336Z"
+    },
+    {
+      "id": "BC-ANEKDOT-0017",
+      "sourceSha256": "37817a98abf4a02d1b2cd0f712b2c4222eb5aa65c28859a408f5133c7b155abe",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANEKDOT-0017",
+        "judul": "Anekdot #17",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 3,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+        "options": [
+          "Anekdot",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "anekdot.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.336Z"
+    },
+    {
+      "id": "BC-ANEKDOT-0019",
+      "sourceSha256": "be6aaa8e528bbeafecddbc18b42622160998bae301dc7962118c71be92317784",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANEKDOT-0019",
+        "judul": "Anekdot #19",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 3,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+        "options": [
+          "Anekdot",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "anekdot.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.336Z"
+    },
+    {
+      "id": "BC-ANEKDOT-0020",
+      "sourceSha256": "9e6fd1bfcf37d50c42dab4839f8636affa25fe00e93eb6a64d0a8a6dd20a5595",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANEKDOT-0020",
+        "judul": "Anekdot #20",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 3,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+        "options": [
+          "Anekdot",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "anekdot.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.336Z"
+    },
+    {
+      "id": "BC-ANEKDOT-0021",
+      "sourceSha256": "74034016764bda34769b82b946d06475389671d508f377f09134af4f8bab3502",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANEKDOT-0021",
+        "judul": "Anekdot #21",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 4,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+        "options": [
+          "Anekdot",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "anekdot.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.336Z"
+    },
+    {
+      "id": "BC-ANEKDOT-0022",
+      "sourceSha256": "92851179706fcc665d5bdeb92584622f98357e58a8cb9e717d62c224aed9c7f8",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANEKDOT-0022",
+        "judul": "Anekdot #22",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 4,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+        "options": [
+          "Anekdot",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "anekdot.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.336Z"
+    },
+    {
+      "id": "BC-ANEKDOT-0024",
+      "sourceSha256": "8df5774e6c9b75273002c84ef8fbd10cf3bebf9b14a3cd1df38e46f06ffe2bce",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANEKDOT-0024",
+        "judul": "Anekdot #24",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 4,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+        "options": [
+          "Anekdot",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "anekdot.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.336Z"
+    },
+    {
+      "id": "BC-ANEKDOT-0026",
+      "sourceSha256": "c75b50fe428c031e4927045c7cb25e957d2b083d83c1ee87f94df16ae665c5eb",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANEKDOT-0026",
+        "judul": "Anekdot #26",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (SULIT)",
+        "difficulty": "SULIT",
+        "levelBerpikir": 4,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+        "options": [
+          "Anekdot",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": true,
+        "file": "anekdot.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.336Z"
+    },
+    {
+      "id": "BC-ANEKDOT-0027",
+      "sourceSha256": "8f7d134881762671787a5f08d48063147344da2870af4083accbacdf248fa040",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANEKDOT-0027",
+        "judul": "Anekdot #27",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (SULIT)",
+        "difficulty": "SULIT",
+        "levelBerpikir": 5,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+        "options": [
+          "Anekdot",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": true,
+        "file": "anekdot.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.336Z"
+    },
+    {
+      "id": "BC-ANEKDOT-0029",
+      "sourceSha256": "34bb606d150df9c2b1c8ef608a28233b7646e14c2b6a46e65ef37ddd733d2202",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANEKDOT-0029",
+        "judul": "Anekdot #29",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (SULIT)",
+        "difficulty": "SULIT",
+        "levelBerpikir": 5,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+        "options": [
+          "Anekdot",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": true,
+        "file": "anekdot.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.336Z"
+    },
+    {
+      "id": "BC-ANEKDOT-0030",
+      "sourceSha256": "82de1484f72ea611287117196ea42a5644282f0dd4945aee087ed14cdd25f8d6",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANEKDOT-0030",
+        "judul": "Anekdot #30",
+        "tema": "Anekdot",
+        "kelas": "8",
+        "semester": 1,
+        "kompetensi": "3.7",
+        "indikator": "Memahami konsep Anekdot (SULIT)",
+        "difficulty": "SULIT",
+        "levelBerpikir": 5,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+        "options": [
+          "Anekdot",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "anekdot"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": true,
+        "file": "anekdot.json"
+      },
+      "candidate": null,
+      "category": "CONTEXT_REPAIR",
+      "repairType": [
+        "CONCEPT_TO_CONTEXT"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "syarat CONTEXT_REPAIR butuh authoring konteks (AI/manusia); tanpa provider atau kuota → HUMAN_REVIEW, bukan karangan"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.336Z"
+    },
+    {
+      "id": "BC-ANTONIM-0014",
+      "sourceSha256": "8777582562f0a2f6ad30612845065db964ef0c1ffb69e015bb559bbd7d23415c",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANTONIM-0014",
+        "judul": "Antonim #14",
+        "tema": "Antonim",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.4",
+        "indikator": "Memahami konsep Antonim (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 2,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+        "options": [
+          "Antonim",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "antonim",
+          "lawan kata"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "antonim.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "ANTONIM"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate ANTONIM: INSUFFICIENT_CONTEXT — butuh penilaian semantik manusia / konteks tidak cukup"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.337Z"
+    },
+    {
+      "id": "BC-ANTONIM-0016",
+      "sourceSha256": "a0304e4bc2f53f531e9f4658d6c1b5d63060fab128f1760263140b0410620c11",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANTONIM-0016",
+        "judul": "Antonim #16",
+        "tema": "Antonim",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.4",
+        "indikator": "Memahami konsep Antonim (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 3,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+        "options": [
+          "Antonim",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "antonim",
+          "lawan kata"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "antonim.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "ANTONIM"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate ANTONIM: INSUFFICIENT_CONTEXT — butuh penilaian semantik manusia / konteks tidak cukup"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.337Z"
+    },
+    {
+      "id": "BC-ANTONIM-0017",
+      "sourceSha256": "bde72d14f1c3caa012368238a77cfb62f8c9c04fbaf321194583bfece119cb17",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANTONIM-0017",
+        "judul": "Antonim #17",
+        "tema": "Antonim",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.4",
+        "indikator": "Memahami konsep Antonim (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 3,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+        "options": [
+          "Antonim",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "antonim",
+          "lawan kata"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "antonim.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "ANTONIM"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate ANTONIM: INSUFFICIENT_CONTEXT — butuh penilaian semantik manusia / konteks tidak cukup"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.337Z"
+    },
+    {
+      "id": "BC-ANTONIM-0019",
+      "sourceSha256": "0c8cb237be3f5110c26f8c90449849567c44af0d11953aa068b62c849c431a3c",
+      "sourceImmutable": true,
+      "original": {
+        "kodeSoal": "BC-ANTONIM-0019",
+        "judul": "Antonim #19",
+        "tema": "Antonim",
+        "kelas": "7",
+        "semester": 1,
+        "kompetensi": "3.4",
+        "indikator": "Memahami konsep Antonim (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 3,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+        "options": [
+          "Antonim",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "antonim",
+          "lawan kata"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "antonim.json"
+      },
+      "candidate": null,
+      "category": "SEMANTIC_REPAIR",
+      "repairType": [
+        "ANTONIM"
+      ],
+      "decision": "HUMAN_REVIEW",
+      "confidence": "MEDIUM",
+      "gates": [],
+      "distractorReports": [],
+      "reason": [
+        "gate ANTONIM: INSUFFICIENT_CONTEXT — butuh penilaian semantik manusia / konteks tidak cukup"
+      ],
+      "aiMeta": null,
+      "validatorVersion": "master-semantic-repair-v2",
+      "timestamp": "2026-08-17T15:46:25.337Z"
+    }
+  ]
+}

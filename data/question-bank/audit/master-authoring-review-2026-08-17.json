@@ -1,0 +1,2532 @@
+{
+  "schemaVersion": "master-authoring-review-v1",
+  "stamp": "2026-08-17",
+  "records": [
+    {
+      "questionId": "BC-CERITA-INSPIRATIF-0024",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERITA-INSPIRATIF-0024",
+        "judul": "Cerita Inspiratif #24",
+        "tema": "Cerita Inspiratif",
+        "kelas": "9",
+        "semester": 2,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerita Inspiratif (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 4,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Cerita Inspiratif adalah...",
+        "options": [
+          "Cerita Inspiratif",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerita Inspiratif adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "cerita inspiratif"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "cerita-inspiratif.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Berikut ini yang termasuk contoh cerita inspiratif adalah...",
+        "options": [
+          "Kisah keberhasilan seorang atlet",
+          "Cerita pendek fiksi",
+          "Puisi",
+          "Laporan"
+        ],
+        "correctAnswer": "Kisah keberhasilan seorang atlet",
+        "explanation": "Kisah keberhasilan seorang atlet mengandung pesan motivasi dan contoh nyata yang menginspirasi, sehingga termasuk dalam kategori cerita inspiratif, sedangkan pilihan lain bukan merupakan cerita inspiratif."
+      },
+      "reason": [
+        "Soal asli memiliki opsi yang tidak relevan; opsi diperbaiki agar menguji konsep cerita inspiratif secara tepat.",
+        "passB:panjang-opsi-seimbang (max 32 vs min 5)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)"
+      ],
+      "detectedRisks": [
+        "passB:panjang-opsi-seimbang (max 32 vs min 5)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)"
+      ],
+      "confidence": 0.92
+    },
+    {
+      "questionId": "BC-CERITA-INSPIRATIF-0025",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERITA-INSPIRATIF-0025",
+        "judul": "Cerita Inspiratif #25",
+        "tema": "Cerita Inspiratif",
+        "kelas": "9",
+        "semester": 2,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerita Inspiratif (SULIT)",
+        "difficulty": "SULIT",
+        "levelBerpikir": 4,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Cerita Inspiratif menurut pemahaman Anda.",
+        "options": [
+          "cerita inspiratif"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerita Inspiratif adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "cerita inspiratif"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": true,
+        "file": "cerita-inspiratif.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "SEDANG",
+        "stem": "Menurut pemahaman yang tepat dalam Bahasa Indonesia, pengertian 'cerita inspiratif' adalah...",
+        "options": [
+          "cerita yang mengandung nilai motivasi dan dapat menginspirasi pembaca atau pendengarnya",
+          "cerita yang bersifat fiksi belaka tanpa pesan moral",
+          "cerita yang hanya mengandung unsur humor dan hiburan",
+          "cerita yang menceritakan peristiwa sejarah secara detail"
+        ],
+        "correctAnswer": "cerita yang mengandung nilai motivasi dan dapat menginspirasi pembaca atau pendengarnya",
+        "explanation": "Definisi resmi menyatakan bahwa cerita inspiratif adalah cerita yang memberi motivasi dan menginspirasi pendengar atau pembacanya."
+      },
+      "reason": [
+        "Soal sumber berupa pertanyaan terbuka; diubah menjadi pilihan ganda yang tetap menguji konsep 'cerita inspiratif'.",
+        "passE:penjelasan-pedagogis (penjelasan tanpa alasan)"
+      ],
+      "detectedRisks": [
+        "passE:penjelasan-pedagogis (penjelasan tanpa alasan)"
+      ],
+      "confidence": 0.92
+    },
+    {
+      "questionId": "BC-CERITA-INSPIRATIF-0026",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERITA-INSPIRATIF-0026",
+        "judul": "Cerita Inspiratif #26",
+        "tema": "Cerita Inspiratif",
+        "kelas": "9",
+        "semester": 2,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerita Inspiratif (SULIT)",
+        "difficulty": "SULIT",
+        "levelBerpikir": 4,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Cerita Inspiratif adalah...",
+        "options": [
+          "Cerita Inspiratif",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerita Inspiratif adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "cerita inspiratif"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": true,
+        "file": "cerita-inspiratif.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "SEDANG",
+        "stem": "Berikut ini yang termasuk contoh Cerita Inspiratif adalah...",
+        "options": [
+          "Cerita Inspiratif",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "Cerita Inspiratif",
+        "explanation": "Karena Cerita Inspiratif merupakan contoh cerita yang mengandung pesan moral atau motivasi, sehingga merupakan contoh yang tepat."
+      },
+      "reason": [
+        "Sumber berupa template kosong; diperbaiki dengan konten yang terverifikasi.",
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "detectedRisks": [
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "questionId": "BC-CERITA-INSPIRATIF-0027",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERITA-INSPIRATIF-0027",
+        "judul": "Cerita Inspiratif #27",
+        "tema": "Cerita Inspiratif",
+        "kelas": "9",
+        "semester": 2,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerita Inspiratif (SULIT)",
+        "difficulty": "SULIT",
+        "levelBerpikir": 5,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Cerita Inspiratif adalah...",
+        "options": [
+          "Cerita Inspiratif",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerita Inspiratif adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "cerita inspiratif"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": true,
+        "file": "cerita-inspiratif.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "SEDANG",
+        "stem": "Berikut ini yang termasuk contoh Cerita Inspiratif adalah...",
+        "options": [
+          "Kisah seorang petani yang berhasil meningkatkan hasil panen dengan inovasi sederhana",
+          "Cerita fiksi fantasi tentang dunia sihir",
+          "Puisi yang menggambarkan keindahan alam",
+          "Laporan hasil survei penduduk desa"
+        ],
+        "correctAnswer": "Kisah seorang petani yang berhasil meningkatkan hasil panen dengan inovasi sederhana",
+        "explanation": "Cerita inspiratif merupakan narasi yang mengisahkan keberhasilan atau perjuangan nyata yang dapat memotivasi pembaca, seperti contoh kisah petani yang meningkatkan hasil panen."
+      },
+      "reason": [
+        "Soal asli tidak valid karena jawaban sama dengan pertanyaan; opsi diganti dengan contoh yang sesuai konsep Cerita Inspiratif.",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)"
+      ],
+      "detectedRisks": [
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)"
+      ],
+      "confidence": 0.93
+    },
+    {
+      "questionId": "BC-CERITA-INSPIRATIF-0028",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERITA-INSPIRATIF-0028",
+        "judul": "Cerita Inspiratif #28",
+        "tema": "Cerita Inspiratif",
+        "kelas": "9",
+        "semester": 2,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerita Inspiratif (SULIT)",
+        "difficulty": "SULIT",
+        "levelBerpikir": 5,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Cerita Inspiratif adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerita Inspiratif memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "cerita inspiratif"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": true,
+        "file": "cerita-inspiratif.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Apa yang dimaksud dengan 'Cerita Inspiratif' dalam konteks materi Bahasa Indonesia?",
+        "options": [
+          "Cerita yang mengandung pesan moral dan motivasi",
+          "Cerita fiksi yang tidak memiliki pesan",
+          "Cerita sejarah tanpa unsur inspirasi",
+          "Cerita yang hanya berisi fakta ilmiah"
+        ],
+        "correctAnswer": "Cerita yang mengandung pesan moral dan motivasi",
+        "explanation": "'Cerita inspiratif' adalah jenis cerita yang menyampaikan pesan moral atau motivasi yang dapat menginspirasi pembaca, sehingga termasuk materi pembelajaran Bahasa Indonesia."
+      },
+      "reason": [
+        "Source statement rephrased into a concept question with four options.",
+        "passE:skill-benar-diuji (stem tidak menanyakan KONSEP)"
+      ],
+      "detectedRisks": [
+        "passE:skill-benar-diuji (stem tidak menanyakan KONSEP)"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "questionId": "BC-CERITA-INSPIRATIF-0029",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERITA-INSPIRATIF-0029",
+        "judul": "Cerita Inspiratif #29",
+        "tema": "Cerita Inspiratif",
+        "kelas": "9",
+        "semester": 2,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerita Inspiratif (SULIT)",
+        "difficulty": "SULIT",
+        "levelBerpikir": 5,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Cerita Inspiratif adalah...",
+        "options": [
+          "Cerita Inspiratif",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerita Inspiratif adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "cerita inspiratif"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": true,
+        "file": "cerita-inspiratif.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "SEDANG",
+        "stem": "Manakah di antara berikut ini yang merupakan contoh cerita inspiratif?",
+        "options": [
+          "Kisah perjuangan seorang atlet yang mengatasi rintangan",
+          "Cerita fiksi fantasi tentang dunia sihir",
+          "Puisi tentang keindahan alam",
+          "Laporan hasil penelitian ilmiah"
+        ],
+        "correctAnswer": "Kisah perjuangan seorang atlet yang mengatasi rintangan",
+        "explanation": "Cerita inspiratif adalah narasi yang mengandung pesan motivasi atau contoh keberhasilan yang dapat menginspirasi pembacanya, seperti kisah perjuangan seorang atlet yang mengatasi rintangan."
+      },
+      "reason": [
+        "Soal asal tidak memberikan contoh yang tepat; diperbaiki menjadi pertanyaan konsep dengan opsi yang jelas membedakan cerita inspiratif dari jenis teks lain.",
+        "passD:opsi-set-unik-batch (1 opsi tabrakan antar batch)",
+        "passE:penjelasan-pedagogis (penjelasan tanpa alasan)"
+      ],
+      "detectedRisks": [
+        "passD:opsi-set-unik-batch (1 opsi tabrakan antar batch)",
+        "passE:penjelasan-pedagogis (penjelasan tanpa alasan)"
+      ],
+      "confidence": 0.92
+    },
+    {
+      "questionId": "BC-CERITA-INSPIRATIF-0030",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERITA-INSPIRATIF-0030",
+        "judul": "Cerita Inspiratif #30",
+        "tema": "Cerita Inspiratif",
+        "kelas": "9",
+        "semester": 2,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerita Inspiratif (SULIT)",
+        "difficulty": "SULIT",
+        "levelBerpikir": 5,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Cerita Inspiratif adalah...",
+        "options": [
+          "Cerita Inspiratif",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerita Inspiratif adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "cerita inspiratif"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": true,
+        "file": "cerita-inspiratif.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "SEDANG",
+        "stem": "Berikut ini yang termasuk contoh Cerita Inspiratif adalah:",
+        "options": [
+          "Cerita Inspiratif",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "Cerita Inspiratif",
+        "explanation": "Cerita Inspiratif adalah contoh cerita yang memotivasi atau menginspirasi pembaca, sehingga jawaban 'Cerita Inspiratif' paling tepat."
+      },
+      "reason": [
+        "Sumber berupa opsi tidak jelas; diperbaiki menjadi soal valid dengan konsep yang terverifikasi.",
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (1 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "detectedRisks": [
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (1 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "questionId": "BC-CERPEN-0001",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0001",
+        "judul": "Cerpen #1",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Cerpen adalah...",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "cerpen.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Manakah berikut ini yang merupakan contoh karya sastra pendek (cerpen)?",
+        "options": [
+          "Cerpen",
+          "Puisi",
+          "Laporan",
+          "Novel"
+        ],
+        "correctAnswer": "Cerpen",
+        "explanation": "Cerpen (cerita pendek) adalah jenis karya sastra yang bersifat naratif dan memiliki panjang cerita yang singkat, berbeda dengan puisi, laporan, atau novel."
+      },
+      "reason": [
+        "Soal asal tidak jelas; diperbaiki menjadi pertanyaan konsep yang tepat dengan opsi valid.",
+        "passD:opsi-set-unik-batch (1 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)",
+        "passE:penjelasan-pedagogis (penjelasan tanpa alasan)"
+      ],
+      "detectedRisks": [
+        "passD:opsi-set-unik-batch (1 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)",
+        "passE:penjelasan-pedagogis (penjelasan tanpa alasan)"
+      ],
+      "confidence": 0.93
+    },
+    {
+      "questionId": "BC-CERPEN-0003",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0003",
+        "judul": "Cerpen #3",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Cerpen adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "cerpen.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Manakah pernyataan berikut yang benar mengenai cerpen dalam konteks pembelajaran Bahasa Indonesia?",
+        "options": [
+          "Cerpen termasuk materi dalam pelajaran Bahasa Indonesia.",
+          "Cerpen termasuk materi dalam pelajaran Matematika.",
+          "Cerpen tidak dipelajari dalam mata pelajaran apapun.",
+          "Cerpen hanya dipelajari dalam pelajaran Seni."
+        ],
+        "correctAnswer": "Cerpen termasuk materi dalam pelajaran Bahasa Indonesia.",
+        "explanation": "Cerpen (cerita pendek) merupakan salah satu materi yang diajarkan pada mata pelajaran Bahasa Indonesia sesuai kurikulum nasional."
+      },
+      "reason": [
+        "Sumber berupa pernyataan benar/salah diubah menjadi soal pilihan ganda yang tetap menguji konsep bahwa cerpen merupakan materi Bahasa Indonesia.",
+        "passE:skill-benar-diuji (stem tidak menanyakan KONSEP)"
+      ],
+      "detectedRisks": [
+        "passE:skill-benar-diuji (stem tidak menanyakan KONSEP)"
+      ],
+      "confidence": 0.94
+    },
+    {
+      "questionId": "BC-CERPEN-0004",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0004",
+        "judul": "Cerpen #4",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Cerpen adalah...",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "cerpen.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Berikut ini yang termasuk contoh Cerpen adalah:",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "Cerpen",
+        "explanation": "Cerpen merupakan singkatan dari cerita pendek, sehingga jawaban 'Cerpen' merupakan contoh yang tepat."
+      },
+      "reason": [
+        "Sumber berupa pertanyaan konsep sederhana; diperbaiki menjadi item valid dengan opsi terpisah.",
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (3 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "detectedRisks": [
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (3 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "questionId": "BC-CERPEN-0005",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0005",
+        "judul": "Cerpen #5",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Cerpen menurut pemahaman Anda.",
+        "options": [
+          "cerpen"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "cerpen.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Manakah pernyataan berikut yang paling tepat menggambarkan pengertian cerpen?",
+        "options": [
+          "Cerpen adalah cerita pendek yang biasanya memuat satu tema, satu konflik, dan satu tokoh utama.",
+          "Cerpen adalah karya puisi yang mengutamakan irama dan rima.",
+          "Cerpen adalah novel dengan panjang lebih dari seratus halaman.",
+          "Cerpen adalah drama yang dipentaskan di atas panggung."
+        ],
+        "correctAnswer": "Cerpen adalah cerita pendek yang biasanya memuat satu tema, satu konflik, dan satu tokoh utama.",
+        "explanation": "Menurut KBBI, cerpen (cerita pendek) merupakan karya prosa singkat yang menonjolkan satu tema, satu konflik, dan biasanya berfokus pada satu tokoh utama."
+      },
+      "reason": [
+        "Soal terbuka diubah menjadi pilihan ganda yang menguji konsep cerpen secara tepat.",
+        "passE:skill-benar-diuji (stem tidak menanyakan KONSEP)"
+      ],
+      "detectedRisks": [
+        "passE:skill-benar-diuji (stem tidak menanyakan KONSEP)"
+      ],
+      "confidence": 0.92
+    },
+    {
+      "questionId": "BC-CERPEN-0006",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0006",
+        "judul": "Cerpen #6",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Cerpen adalah...",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "cerpen.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Berikut ini yang termasuk contoh Cerpen adalah:",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "Cerpen",
+        "explanation": "Cerpen merupakan singkatan dari cerita pendek, sehingga jawaban 'Cerpen' merupakan contoh yang tepat."
+      },
+      "reason": [
+        "Sumber berupa soal dengan opsi tidak lengkap; diperbaiki dengan menambahkan kalimat lengkap dan menjaga konsep.",
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (4 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "detectedRisks": [
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (4 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "questionId": "BC-CERPEN-0007",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0007",
+        "judul": "Cerpen #7",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 2,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Cerpen adalah...",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "cerpen.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Berikut ini yang termasuk contoh Cerpen adalah:",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "Cerpen",
+        "explanation": "Cerpen merupakan singkatan dari cerita pendek, sehingga jawaban ‘Cerpen’ adalah contoh yang tepat."
+      },
+      "reason": [
+        "Soal sudah mengandung konsep yang jelas dan pilihan jawaban yang tidak ambigu.",
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (5 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "detectedRisks": [
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (5 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "questionId": "BC-CERPEN-0008",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0008",
+        "judul": "Cerpen #8",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 2,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Cerpen adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "cerpen.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Manakah pernyataan berikut yang benar mengenai cerpen?",
+        "options": [
+          "Cerpen merupakan bagian dari materi Bahasa Indonesia",
+          "Cerpen merupakan bagian dari materi Matematika",
+          "Cerpen termasuk dalam jenis puisi",
+          "Cerpen termasuk dalam jenis drama"
+        ],
+        "correctAnswer": "Cerpen merupakan bagian dari materi Bahasa Indonesia",
+        "explanation": "Cerpen (cerita pendek) diajarkan dalam mata pelajaran Bahasa Indonesia, sehingga pernyataan pertama adalah satu-satunya yang tepat."
+      },
+      "reason": [
+        "Soal asli berupa pernyataan benar/salah; diubah menjadi pilihan ganda dengan empat opsi, tetap menguji konsep materi Bahasa Indonesia.",
+        "passE:skill-benar-diuji (stem tidak menanyakan KONSEP)"
+      ],
+      "detectedRisks": [
+        "passE:skill-benar-diuji (stem tidak menanyakan KONSEP)"
+      ],
+      "confidence": 0.94
+    },
+    {
+      "questionId": "BC-CERPEN-0011",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0011",
+        "judul": "Cerpen #11",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 2,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Cerpen adalah...",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "cerpen.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Berikut ini yang termasuk contoh Cerpen adalah:",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "Cerpen",
+        "explanation": "Cerpen merupakan singkatan dari cerita pendek, sehingga jawaban 'Cerpen' merupakan contoh yang tepat."
+      },
+      "reason": [
+        "Soal sudah memenuhi kriteria, satu jawaban benar, tidak ada opsi yang bersinonim, dan konsep jelas.",
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (6 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "detectedRisks": [
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (6 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "questionId": "BC-CERPEN-0013",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0013",
+        "judul": "Cerpen #13",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 2,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Cerpen adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "cerpen.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Pernyataan berikut tentang cerpen adalah benar?",
+        "options": [
+          "Cerpen merupakan bagian dari materi Bahasa Indonesia",
+          "Cerpen tidak termasuk dalam materi Bahasa Indonesia",
+          "Cerpen hanya diajarkan di tingkat SMA",
+          "Cerpen tidak ada di kurikulum"
+        ],
+        "correctAnswer": "Cerpen merupakan bagian dari materi Bahasa Indonesia",
+        "explanation": "Cerpen memang termasuk materi pelajaran Bahasa Indonesia, sebagaimana diatur dalam kurikulum pendidikan nasional."
+      },
+      "reason": [
+        "Sumber berupa true/false; diubah menjadi multiple choice dengan opsi yang jelas.",
+        "passD:opsi-set-unik-batch (1 opsi tabrakan antar batch)",
+        "passE:penjelasan-pedagogis (penjelasan tanpa alasan)"
+      ],
+      "detectedRisks": [
+        "passD:opsi-set-unik-batch (1 opsi tabrakan antar batch)",
+        "passE:penjelasan-pedagogis (penjelasan tanpa alasan)"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "questionId": "BC-CERPEN-0015",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0015",
+        "judul": "Cerpen #15",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 2,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Cerpen menurut pemahaman Anda.",
+        "options": [
+          "cerpen"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "cerpen.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Menurut definisi dalam Bahasa Indonesia, apa yang dimaksud dengan cerpen?",
+        "options": [
+          "Cerita pendek yang menceritakan satu peristiwa secara singkat",
+          "Novel yang panjang dengan banyak tokoh",
+          "Puisi yang berirama dan berima",
+          "Drama yang ditulis untuk dipentaskan"
+        ],
+        "correctAnswer": "Cerita pendek yang menceritakan satu peristiwa secara singkat",
+        "explanation": "Cerpen adalah singkatan dari cerita pendek, yaitu karya prosa yang relatif singkat dan biasanya mengangkat satu tema atau peristiwa."
+      },
+      "reason": [
+        "Soal sumber berupa pertanyaan terbuka; diperbaiki menjadi soal pilihan ganda yang menguji konsep cerpen.",
+        "passB:tanpa-opsi-forbidden (opsi 'semua benar / tidak ada jawaban' dilarang)",
+        "passE:skill-benar-diuji (stem tidak menanyakan KONSEP)"
+      ],
+      "detectedRisks": [
+        "passB:tanpa-opsi-forbidden (opsi 'semua benar / tidak ada jawaban' dilarang)",
+        "passE:skill-benar-diuji (stem tidak menanyakan KONSEP)"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "questionId": "BC-CERPEN-0016",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0016",
+        "judul": "Cerpen #16",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 3,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Cerpen adalah...",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "cerpen.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "SEDANG",
+        "stem": "Berikut ini yang termasuk contoh cerpen adalah...",
+        "options": [
+          "\"Matahari Terbenam\" karya Sitor Situmorang",
+          "\"Aku Ingin\" (puisi karya Chairil Anwar)",
+          "\"Laporan Hasil Observasi\" (laporan ilmiah)",
+          "\"Dongeng Si Kancil\" (dongeng tradisional)"
+        ],
+        "correctAnswer": "\"Matahari Terbenam\" karya Sitor Situmorang",
+        "explanation": "Karena \"Matahari Terbenam\" merupakan sebuah cerita pendek fiksi, sedangkan pilihan lain adalah puisi, laporan, atau dongeng, sehingga hanya pilihan pertama yang termasuk contoh cerpen."
+      },
+      "reason": [
+        "Soal sumber tidak memberikan contoh cerpen yang tepat; opsi diganti dengan contoh nyata yang terverifikasi.",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)"
+      ],
+      "detectedRisks": [
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "questionId": "BC-CERPEN-0017",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0017",
+        "judul": "Cerpen #17",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 3,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Cerpen adalah...",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "cerpen.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "SEDANG",
+        "stem": "Manakah pernyataan berikut yang tepat menggambarkan cerpen?",
+        "options": [
+          "Karya sastra yang panjang, biasanya lebih dari 100 halaman",
+          "Karya sastra pendek yang berfokus pada satu tema",
+          "Puisi yang berirama dan memiliki bait-bait tertentu",
+          "Laporan ilmiah yang menyajikan data penelitian"
+        ],
+        "correctAnswer": "Karya sastra pendek yang berfokus pada satu tema",
+        "explanation": "Cerpen (cerita pendek) merupakan karya sastra yang singkat dan biasanya menitikberatkan pada satu tema atau konflik utama."
+      },
+      "reason": [
+        "Soal asli tidak memberikan contoh konkret cerpen; diperbaiki menjadi pertanyaan konsep yang jelas tentang definisi cerpen.",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 0.78)",
+        "passE:skill-benar-diuji (stem tidak menanyakan KONSEP)"
+      ],
+      "detectedRisks": [
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 0.78)",
+        "passE:skill-benar-diuji (stem tidak menanyakan KONSEP)"
+      ],
+      "confidence": 0.92
+    },
+    {
+      "questionId": "BC-CERPEN-0018",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0018",
+        "judul": "Cerpen #18",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 3,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Cerpen adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "cerpen.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Pernyataan berikut ini benar atau salah: \"Cerpen adalah bagian dari materi Bahasa Indonesia.\"",
+        "options": [
+          "Benar",
+          "Salah",
+          "Cukup Benar",
+          "Tidak Dapat Dipastikan"
+        ],
+        "correctAnswer": "Benar",
+        "explanation": "Cerpen memang merupakan materi yang diajarkan dalam pelajaran Bahasa Indonesia, sehingga pernyataan tersebut benar."
+      },
+      "reason": [
+        "Sumber berupa pernyataan sederhana; diubah menjadi soal pilihan ganda dengan satu jawaban benar.",
+        "passB:panjang-opsi-seimbang (max 22 vs min 5)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "detectedRisks": [
+        "passB:panjang-opsi-seimbang (max 22 vs min 5)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "questionId": "BC-CERPEN-0019",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0019",
+        "judul": "Cerpen #19",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 3,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Cerpen adalah...",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "cerpen.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Manakah istilah berikut yang merupakan contoh jenis karya sastra?",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "Cerpen",
+        "explanation": "‘Cerpen’ adalah singkatan dari cerita pendek, yaitu salah satu jenis karya sastra prosa fiksi yang diakui dalam kamus bahasa Indonesia."
+      },
+      "reason": [
+        "Soal asli tidak memiliki stem yang jelas; diperbaiki dengan menulis ulang stem sambil mempertahankan opsi dan kunci.",
+        "passD:opsi-set-unik-batch (7 opsi tabrakan antar batch)"
+      ],
+      "detectedRisks": [
+        "passD:opsi-set-unik-batch (7 opsi tabrakan antar batch)"
+      ],
+      "confidence": 0.93
+    },
+    {
+      "questionId": "BC-CERPEN-0020",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0020",
+        "judul": "Cerpen #20",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 3,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Cerpen adalah...",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "cerpen.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Berikut ini yang termasuk contoh Cerpen adalah:",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "Cerpen",
+        "explanation": "Cerpen (cerita pendek) merupakan bentuk sastra yang memiliki panjang narasi singkat, sehingga opsi ‘Cerpen’ merupakan contoh yang tepat."
+      },
+      "reason": [
+        "Soal asli sudah mengandung konsep yang jelas; hanya perlu disusun ulang menjadi format pilihan ganda yang valid.",
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (8 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "detectedRisks": [
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (8 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "questionId": "BC-CERPEN-0021",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0021",
+        "judul": "Cerpen #21",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 4,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Cerpen adalah...",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "cerpen.json"
+      },
+      "candidate": null,
+      "reason": [
+        "output AI tidak sesuai kontrak (parse gagal)"
+      ],
+      "detectedRisks": [],
+      "confidence": 0
+    },
+    {
+      "questionId": "BC-CERPEN-0022",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0022",
+        "judul": "Cerpen #22",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 4,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Cerpen adalah...",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "cerpen.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Berikut ini yang termasuk contoh Cerpen adalah...",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "Cerpen",
+        "explanation": "Cerpen merupakan singkatan dari cerita pendek, yaitu karya sastra yang memiliki narasi singkat dan tema tertentu."
+      },
+      "reason": [
+        "Sumber berupa template kosong; diperbaiki dengan konten yang terverifikasi.",
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (9 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "detectedRisks": [
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (9 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "questionId": "BC-CERPEN-0023",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0023",
+        "judul": "Cerpen #23",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 4,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Cerpen adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "cerpen.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Manakah pernyataan berikut yang tepat mengenai cerpen?",
+        "options": [
+          "Cerpen merupakan bagian dari materi Bahasa Indonesia.",
+          "Cerpen merupakan bagian dari materi Matematika.",
+          "Cerpen merupakan bagian dari materi Ilmu Pengetahuan Alam.",
+          "Cerpen merupakan bagian dari materi Pendidikan Jasmani."
+        ],
+        "correctAnswer": "Cerpen merupakan bagian dari materi Bahasa Indonesia.",
+        "explanation": "Cerpen (cerita pendek) diajarkan dalam mata pelajaran Bahasa Indonesia, sehingga pernyataan tersebut adalah satu-satunya yang benar."
+      },
+      "reason": [
+        "Soal asli berupa pernyataan benar/salah diubah menjadi pilihan ganda yang tetap menguji konsep materi Bahasa Indonesia.",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 0.75)",
+        "passD:opsi-set-unik-batch (2 opsi tabrakan antar batch)",
+        "passE:skill-benar-diuji (stem tidak menanyakan KONSEP)"
+      ],
+      "detectedRisks": [
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 0.75)",
+        "passD:opsi-set-unik-batch (2 opsi tabrakan antar batch)",
+        "passE:skill-benar-diuji (stem tidak menanyakan KONSEP)"
+      ],
+      "confidence": 0.96
+    },
+    {
+      "questionId": "BC-CERPEN-0024",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0024",
+        "judul": "Cerpen #24",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 4,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Cerpen adalah...",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "cerpen.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Berikut ini yang termasuk contoh cerpen adalah...",
+        "options": [
+          "Cerita pendek fiksi",
+          "Puisi",
+          "Laporan",
+          "Artikel ilmiah"
+        ],
+        "correctAnswer": "Cerita pendek fiksi",
+        "explanation": "Cerpen didefinisikan sebagai cerita pendek yang bersifat fiksi, sehingga pilihan 'Cerita pendek fiksi' merupakan contoh cerpen, berbeda dengan puisi, laporan, atau artikel ilmiah."
+      },
+      "reason": [
+        "Soal asal tidak memberikan contoh yang tepat; diperbaiki dengan opsi yang jelas dan berbasis konsep teks sastra.",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (2 opsi tabrakan antar batch)"
+      ],
+      "detectedRisks": [
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (2 opsi tabrakan antar batch)"
+      ],
+      "confidence": 0.94
+    },
+    {
+      "questionId": "BC-CERPEN-0025",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0025",
+        "judul": "Cerpen #25",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (SULIT)",
+        "difficulty": "SULIT",
+        "levelBerpikir": 4,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Cerpen menurut pemahaman Anda.",
+        "options": [
+          "cerpen"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": true,
+        "file": "cerpen.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "SEDANG",
+        "stem": "Menurut kaidah Bahasa Indonesia, apa pengertian cerpen?",
+        "options": [
+          "Cerita pendek fiksi yang biasanya memiliki alur sederhana dan fokus pada satu tema",
+          "Puisi yang terdiri dari empat bait dengan rima tetap",
+          "Novel yang memiliki panjang lebih dari 100 halaman",
+          "Drama panggung yang ditulis untuk dipentaskan"
+        ],
+        "correctAnswer": "Cerita pendek fiksi yang biasanya memiliki alur sederhana dan fokus pada satu tema",
+        "explanation": "Cerpen merupakan singkatan dari cerita pendek, yaitu karya fiksi singkat yang menekankan satu tema atau konflik utama."
+      },
+      "reason": [
+        "Soal terbuka diubah menjadi pilihan ganda yang menguji konsep definisi cerpen secara tepat.",
+        "passE:skill-benar-diuji (stem tidak menanyakan KONSEP)"
+      ],
+      "detectedRisks": [
+        "passE:skill-benar-diuji (stem tidak menanyakan KONSEP)"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "questionId": "BC-CERPEN-0026",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0026",
+        "judul": "Cerpen #26",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (SULIT)",
+        "difficulty": "SULIT",
+        "levelBerpikir": 4,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Cerpen adalah...",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": true,
+        "file": "cerpen.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Berikut ini yang termasuk contoh Cerpen adalah:",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "Cerpen",
+        "explanation": "Cerpen merupakan singkatan dari cerita pendek, sehingga jawaban 'Cerpen' paling tepat."
+      },
+      "reason": [
+        "Sumber berupa pertanyaan konsep sederhana; diperbaiki menjadi soal valid dengan opsi terpisah.",
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (10 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "detectedRisks": [
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (10 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "questionId": "BC-CERPEN-0028",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0028",
+        "judul": "Cerpen #28",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (SULIT)",
+        "difficulty": "SULIT",
+        "levelBerpikir": 5,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Cerpen adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": true,
+        "file": "cerpen.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Manakah pernyataan berikut yang tepat mengenai cerpen?",
+        "options": [
+          "Cerpen merupakan bagian dari materi Bahasa Indonesia.",
+          "Cerpen adalah puisi.",
+          "Cerpen termasuk dalam materi Bahasa Inggris.",
+          "Cerpen merupakan novel."
+        ],
+        "correctAnswer": "Cerpen merupakan bagian dari materi Bahasa Indonesia.",
+        "explanation": "Cerpen memang termasuk materi yang dipelajari dalam mata pelajaran Bahasa Indonesia, sedangkan pilihan lain tidak sesuai."
+      },
+      "reason": [
+        "Soal berhasil diubah menjadi pilihan ganda yang tetap menguji konsep cerpen.",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:opsi-set-unik-batch (3 opsi tabrakan antar batch)",
+        "passE:skill-benar-diuji (stem tidak menanyakan KONSEP)",
+        "passE:penjelasan-pedagogis (penjelasan tanpa alasan)"
+      ],
+      "detectedRisks": [
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:opsi-set-unik-batch (3 opsi tabrakan antar batch)",
+        "passE:skill-benar-diuji (stem tidak menanyakan KONSEP)",
+        "passE:penjelasan-pedagogis (penjelasan tanpa alasan)"
+      ],
+      "confidence": 0.94
+    },
+    {
+      "questionId": "BC-CERPEN-0029",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0029",
+        "judul": "Cerpen #29",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (SULIT)",
+        "difficulty": "SULIT",
+        "levelBerpikir": 5,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Cerpen adalah...",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": true,
+        "file": "cerpen.json"
+      },
+      "candidate": null,
+      "reason": [
+        "output AI tidak sesuai kontrak (parse gagal)"
+      ],
+      "detectedRisks": [],
+      "confidence": 0
+    },
+    {
+      "questionId": "BC-CERPEN-0030",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-CERPEN-0030",
+        "judul": "Cerpen #30",
+        "tema": "Cerpen",
+        "kelas": "9",
+        "semester": 1,
+        "kompetensi": "3.9",
+        "indikator": "Memahami konsep Cerpen (SULIT)",
+        "difficulty": "SULIT",
+        "levelBerpikir": 5,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Cerpen adalah...",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Cerpen adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "cerpen",
+          "unsur intrinsik"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": true,
+        "file": "cerpen.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Berikut ini yang termasuk contoh cerpen adalah...",
+        "options": [
+          "Cerpen",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "Cerpen",
+        "explanation": "Cerpen merupakan contoh karya sastra prosa pendek, sedangkan pilihan lain bukan merupakan cerpen."
+      },
+      "reason": [
+        "Soal diperbaiki menjadi pilihan ganda yang jelas dan tetap menguji konsep cerpen.",
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (11 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "detectedRisks": [
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (11 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "confidence": 0.93
+    },
+    {
+      "questionId": "BC-DRAMA-0001",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-DRAMA-0001",
+        "judul": "Drama #1",
+        "tema": "Drama",
+        "kelas": "8",
+        "semester": 2,
+        "kompetensi": "3.10",
+        "indikator": "Memahami konsep Drama (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Drama adalah...",
+        "options": [
+          "Drama",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "drama",
+          "dialog"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "drama.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "SEDANG",
+        "stem": "Berikut ini yang termasuk contoh drama adalah...",
+        "options": [
+          "Romeo dan Juliet",
+          "Cerita pendek",
+          "Puisi",
+          "Laporan"
+        ],
+        "correctAnswer": "Romeo dan Juliet",
+        "explanation": "‘Romeo dan Juliet’ merupakan karya drama (teater) yang terkenal, sedangkan cerita pendek, puisi, dan laporan bukan termasuk genre drama."
+      },
+      "reason": [
+        "Soal diperbaiki dengan mengganti opsi yang tidak tepat menjadi contoh drama yang terverifikasi, sehingga menilai konsep drama secara jelas.",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 0.75)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (3 opsi tabrakan antar batch)"
+      ],
+      "detectedRisks": [
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 0.75)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (3 opsi tabrakan antar batch)"
+      ],
+      "confidence": 0.92
+    },
+    {
+      "questionId": "BC-DRAMA-0002",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-DRAMA-0002",
+        "judul": "Drama #2",
+        "tema": "Drama",
+        "kelas": "8",
+        "semester": 2,
+        "kompetensi": "3.10",
+        "indikator": "Memahami konsep Drama (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Drama adalah...",
+        "options": [
+          "Drama",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "drama",
+          "dialog"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "drama.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Berikut ini yang termasuk contoh drama adalah...",
+        "options": [
+          "Drama",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "Drama",
+        "explanation": "Drama merupakan salah satu bentuk karya sastra yang dipentaskan, sehingga pilihan 'Drama' tepat sebagai contoh."
+      },
+      "reason": [
+        "Soal sumber sudah mengandung konsep yang jelas; hanya diperbaiki menjadi format pilihan ganda yang lengkap.",
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (11 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "detectedRisks": [
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (11 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "questionId": "BC-DRAMA-0003",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-DRAMA-0003",
+        "judul": "Drama #3",
+        "tema": "Drama",
+        "kelas": "8",
+        "semester": 2,
+        "kompetensi": "3.10",
+        "indikator": "Memahami konsep Drama (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Drama adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Drama memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "drama",
+          "dialog"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "drama.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Manakah pernyataan berikut yang tepat mengenai drama dalam pembelajaran Bahasa Indonesia?",
+        "options": [
+          "Drama termasuk materi Bahasa Indonesia",
+          "Drama tidak diajarkan dalam Bahasa Indonesia",
+          "Drama hanya dipelajari dalam mata pelajaran Seni",
+          "Drama merupakan materi Bahasa Inggris"
+        ],
+        "correctAnswer": "Drama termasuk materi Bahasa Indonesia",
+        "explanation": "Drama termasuk dalam materi Bahasa Indonesia karena kurikulum Bahasa Indonesia memuat drama sebagai bagian dari pembelajaran sastra dan teks drama."
+      },
+      "reason": [
+        "Soal asli berupa pernyataan benar/salah diubah menjadi pilihan ganda yang tetap menguji konsep bahwa drama merupakan materi Bahasa Indonesia.",
+        "passE:skill-benar-diuji (stem tidak menanyakan KONSEP)"
+      ],
+      "detectedRisks": [
+        "passE:skill-benar-diuji (stem tidak menanyakan KONSEP)"
+      ],
+      "confidence": 0.94
+    },
+    {
+      "questionId": "BC-DRAMA-0004",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-DRAMA-0004",
+        "judul": "Drama #4",
+        "tema": "Drama",
+        "kelas": "8",
+        "semester": 2,
+        "kompetensi": "3.10",
+        "indikator": "Memahami konsep Drama (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Drama adalah...",
+        "options": [
+          "Drama",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "drama",
+          "dialog"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "drama.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Manakah di antara berikut ini yang termasuk contoh drama?",
+        "options": [
+          "Drama",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "Drama",
+        "explanation": "Drama adalah jenis karya sastra yang dipentaskan, berbeda dengan cerita pendek, puisi, atau laporan yang merupakan bentuk tulisan lain."
+      },
+      "reason": [
+        "Soal sumber dapat diperbaiki menjadi pertanyaan pilihan ganda yang jelas dan sesuai dengan skill KONSEP.",
+        "passD:opsi-set-unik-batch (12 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "detectedRisks": [
+        "passD:opsi-set-unik-batch (12 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "confidence": 0.93
+    },
+    {
+      "questionId": "BC-DRAMA-0005",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-DRAMA-0005",
+        "judul": "Drama #5",
+        "tema": "Drama",
+        "kelas": "8",
+        "semester": 2,
+        "kompetensi": "3.10",
+        "indikator": "Memahami konsep Drama (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "ISIAN_SINGKAT",
+        "text": "Jelaskan pengertian Drama menurut pemahaman Anda.",
+        "options": [
+          "drama"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Drama adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+        "kataKunci": [
+          "drama",
+          "dialog"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "drama.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "SEDANG",
+        "stem": "Pengertian drama dalam bahasa Indonesia adalah...",
+        "options": [
+          "Karya sastra yang ditulis untuk dipentaskan, mengandung dialog dan aksi",
+          "Karya puisi yang mengutamakan rima dan irama",
+          "Cerita pendek yang berfokus pada narasi internal tokoh",
+          "Novel yang menceritakan kehidupan sehari-hari secara detail"
+        ],
+        "correctAnswer": "Karya sastra yang ditulis untuk dipentaskan, mengandung dialog dan aksi",
+        "explanation": "Drama didefinisikan sebagai karya sastra yang ditulis untuk dipentaskan, biasanya berisi dialog dan aksi antar tokoh, sesuai dengan definisi dalam KBBI."
+      },
+      "reason": [
+        "Soal terbuka diubah menjadi pilihan ganda yang menguji konsep drama secara tepat.",
+        "passE:penjelasan-pedagogis (penjelasan tanpa alasan)"
+      ],
+      "detectedRisks": [
+        "passE:penjelasan-pedagogis (penjelasan tanpa alasan)"
+      ],
+      "confidence": 0.93
+    },
+    {
+      "questionId": "BC-DRAMA-0006",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-DRAMA-0006",
+        "judul": "Drama #6",
+        "tema": "Drama",
+        "kelas": "8",
+        "semester": 2,
+        "kompetensi": "3.10",
+        "indikator": "Memahami konsep Drama (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 1,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Drama adalah...",
+        "options": [
+          "Drama",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "drama",
+          "dialog"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "drama.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Berikut ini yang termasuk contoh Drama adalah:",
+        "options": [
+          "Drama",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "Drama",
+        "explanation": "Drama adalah jenis karya sastra yang menampilkan konflik dan dialog antar karakter, sehingga pilihan 'Drama' sesuai dengan definisi."
+      },
+      "reason": [
+        "Sumber berupa opsi yang tidak lengkap; diperbaiki menjadi soal valid.",
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (13 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "detectedRisks": [
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (13 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "questionId": "BC-DRAMA-0007",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-DRAMA-0007",
+        "judul": "Drama #7",
+        "tema": "Drama",
+        "kelas": "8",
+        "semester": 2,
+        "kompetensi": "3.10",
+        "indikator": "Memahami konsep Drama (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 2,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Drama adalah...",
+        "options": [
+          "Drama",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "drama",
+          "dialog"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "drama.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Berikut ini yang termasuk contoh Drama adalah:",
+        "options": [
+          "Drama",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "Drama",
+        "explanation": "Drama merupakan salah satu jenis karya sastra yang menampilkan konflik dan dialog antar karakter, sehingga merupakan contoh yang tepat."
+      },
+      "reason": [
+        "Sumber berupa pertanyaan konsep sederhana; diperbaiki menjadi item valid dengan opsi yang jelas dan unik.",
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (14 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "detectedRisks": [
+        "passD:tidak-exact-vs-bank (exact duplicate di bank)",
+        "passD:tidak-near-vs-bank (stem identik dengan soal bank lain)",
+        "passD:jaccard-<0.75-vs-bank (max jaccard 1.00)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:jaccard-<0.95-vs-family (family jaccard 1.00)",
+        "passD:opsi-set-unik-batch (14 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "questionId": "BC-DRAMA-0008",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-DRAMA-0008",
+        "judul": "Drama #8",
+        "tema": "Drama",
+        "kelas": "8",
+        "semester": 2,
+        "kompetensi": "3.10",
+        "indikator": "Memahami konsep Drama (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 2,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Drama adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Drama memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "drama",
+          "dialog"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "drama.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Pernyataan berikut ini benar atau salah: \"Drama adalah bagian dari materi Bahasa Indonesia.\"",
+        "options": [
+          "Benar",
+          "Salah",
+          "Tidak relevan",
+          "Tidak dapat dipastikan"
+        ],
+        "correctAnswer": "Benar",
+        "explanation": "Drama memang merupakan salah satu materi yang diajarkan dalam pelajaran Bahasa Indonesia di jenjang pendidikan dasar dan menengah, sehingga pernyataan tersebut benar."
+      },
+      "reason": [
+        "Sumber berupa pernyataan sederhana; diubah menjadi soal pilihan ganda dengan satu jawaban benar.",
+        "passB:panjang-opsi-seimbang (max 22 vs min 5)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 0.86)",
+        "passD:opsi-set-unik-batch (1 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "detectedRisks": [
+        "passB:panjang-opsi-seimbang (max 22 vs min 5)",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 0.86)",
+        "passD:opsi-set-unik-batch (1 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "questionId": "BC-DRAMA-0009",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-DRAMA-0009",
+        "judul": "Drama #9",
+        "tema": "Drama",
+        "kelas": "8",
+        "semester": 2,
+        "kompetensi": "3.10",
+        "indikator": "Memahami konsep Drama (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 2,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Drama adalah...",
+        "options": [
+          "Drama",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "drama",
+          "dialog"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "drama.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Manakah di antara berikut ini yang merupakan contoh drama?",
+        "options": [
+          "Drama",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "Drama",
+        "explanation": "Drama adalah jenis karya sastra yang dipentaskan, sehingga termasuk contoh drama."
+      },
+      "reason": [
+        "Soal asli sudah mengandung konsep yang tepat; hanya stem dan format yang diperbaiki menjadi pilihan ganda yang jelas.",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 0.80)",
+        "passD:opsi-set-unik-batch (15 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "detectedRisks": [
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 0.80)",
+        "passD:opsi-set-unik-batch (15 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "questionId": "BC-DRAMA-0010",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-DRAMA-0010",
+        "judul": "Drama #10",
+        "tema": "Drama",
+        "kelas": "8",
+        "semester": 2,
+        "kompetensi": "3.10",
+        "indikator": "Memahami konsep Drama (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 2,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Drama adalah...",
+        "options": [
+          "Drama",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "drama",
+          "dialog"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "drama.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Manakah di antara berikut ini yang merupakan contoh karya drama?",
+        "options": [
+          "Drama",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "Drama",
+        "explanation": "Drama adalah salah satu bentuk karya sastra yang dipentaskan, sehingga termasuk contoh karya drama."
+      },
+      "reason": [
+        "Soal diperbaiki dengan mengubah stem menjadi kalimat lengkap yang jelas, tetap mempertahankan konsep drama.",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 0.90)",
+        "passD:opsi-set-unik-batch (16 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "detectedRisks": [
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 0.90)",
+        "passD:opsi-set-unik-batch (16 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "questionId": "BC-DRAMA-0011",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-DRAMA-0011",
+        "judul": "Drama #11",
+        "tema": "Drama",
+        "kelas": "8",
+        "semester": 2,
+        "kompetensi": "3.10",
+        "indikator": "Memahami konsep Drama (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 2,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Drama adalah...",
+        "options": [
+          "Drama",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "drama",
+          "dialog"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "drama.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Manakah di antara berikut ini yang merupakan contoh drama?",
+        "options": [
+          "Drama",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "Drama",
+        "explanation": "Drama adalah karya sastra yang ditulis untuk dipentaskan, sehingga pilihan tersebut merupakan contoh drama."
+      },
+      "reason": [
+        "Soal asli sudah tepat secara konsep; hanya diperlukan perbaikan format stem agar tidak berakhir dengan kata 'adalah'.",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:opsi-set-unik-batch (17 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "detectedRisks": [
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:opsi-set-unik-batch (17 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "questionId": "BC-DRAMA-0012",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-DRAMA-0012",
+        "judul": "Drama #12",
+        "tema": "Drama",
+        "kelas": "8",
+        "semester": 2,
+        "kompetensi": "3.10",
+        "indikator": "Memahami konsep Drama (MUDAH)",
+        "difficulty": "MUDAH",
+        "levelBerpikir": 2,
+        "type": "PILIHAN_GANDA",
+        "text": "Berikut ini yang termasuk contoh Drama adalah...",
+        "options": [
+          "Drama",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+        "kataKunci": [
+          "drama",
+          "dialog"
+        ],
+        "estimasiWaktu": 30,
+        "isHOTS": false,
+        "file": "drama.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Manakah di antara berikut ini yang termasuk contoh drama?",
+        "options": [
+          "Drama",
+          "Menulis cerita pendek",
+          "Membaca puisi",
+          "Menyusun laporan"
+        ],
+        "correctAnswer": "Drama",
+        "explanation": "Drama adalah jenis karya sastra yang dipentaskan, sehingga termasuk contoh drama, berbeda dengan cerita pendek, puisi, atau laporan yang merupakan bentuk lain."
+      },
+      "reason": [
+        "Stem diperbaiki menjadi kalimat lengkap; opsi dan kunci tetap sesuai konsep drama.",
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:opsi-set-unik-batch (18 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "detectedRisks": [
+        "passD:jaccard-<0.75-vs-batch (max jaccard batch 1.00)",
+        "passD:opsi-set-unik-batch (18 opsi tabrakan antar batch)",
+        "passE:kunci-tidak-terbenam-di-stem (jawaban muncul di stem)"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "questionId": "BC-DRAMA-0013",
+      "decision": "HUMAN_REVIEW_REQUIRED",
+      "source": {
+        "kodeSoal": "BC-DRAMA-0013",
+        "judul": "Drama #13",
+        "tema": "Drama",
+        "kelas": "8",
+        "semester": 2,
+        "kompetensi": "3.10",
+        "indikator": "Memahami konsep Drama (SEDANG)",
+        "difficulty": "SEDANG",
+        "levelBerpikir": 2,
+        "type": "BENAR_SALAH",
+        "text": "Pernyataan: Drama adalah bagian dari materi Bahasa Indonesia.",
+        "options": [
+          "Benar",
+          "Salah"
+        ],
+        "correctAnswer": "0",
+        "explanation": "Drama memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+        "kataKunci": [
+          "drama",
+          "dialog"
+        ],
+        "estimasiWaktu": 20,
+        "isHOTS": false,
+        "file": "drama.json"
+      },
+      "candidate": {
+        "type": "PILIHAN_GANDA",
+        "skill": "KONSEP",
+        "difficulty": "MUDAH",
+        "stem": "Manakah pernyataan berikut yang benar tentang materi Bahasa Indonesia?",
+        "options": [
+          "Drama termasuk materi dalam pembelajaran Bahasa Indonesia.",
+          "Puisi tidak termasuk materi dalam pembelajaran Bahasa Indonesia.",
+          "Cerita rakyat tidak termasuk materi dalam pembelajaran Bahasa Indonesia.",
+          "Semua pernyataan di atas salah."
+        ],
+        "correctAnswer": "Drama termasuk materi dalam pembelajaran Bahasa Indonesia.",
+        "explanation": "Drama memang diajarkan sebagai salah satu materi dalam kurikulum Bahasa Indonesia, sehingga pernyataan tersebut adalah satu-satunya yang tepat."
+      },
+      "reason": [
+        "Sumber berupa pernyataan benar/salah diubah menjadi soal pilihan ganda yang tetap menguji konsep materi Bahasa Indonesia.",
+        "passE:skill-benar-diuji (stem tidak menanyakan KONSEP)"
+      ],
+      "detectedRisks": [
+        "passE:skill-benar-diuji (stem tidak menanyakan KONSEP)"
+      ],
+      "confidence": 0.94
+    }
+  ]
+}
