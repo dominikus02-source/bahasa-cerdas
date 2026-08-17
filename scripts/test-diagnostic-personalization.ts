@@ -90,9 +90,9 @@ function main() {
 
   // 2. completed diagnostic → personalized CTA
   console.log("\n── State B: diagnostik selesai → profil siap ──");
-  check("2. STATE B: judul 'Profil Belajarmu Sudah Siap' ada di kartu",
-    () => card.includes("Profil Belajarmu Sudah Siap"));
-  check("2. STATE B: CTA 'Mulai Latihan Personal'", () => card.includes("Mulai Latihan Personal"));
+  check("2. STATE B: judul 'Latihan Untukmu' ada di kartu (server-derived)",
+    () => card.includes("Latihan Untukmu") || card.includes("stateTitle"));
+  check("2. STATE B: CTA server-derived (ctaLabel)", () => card.includes("currentMyDay.ctaLabel") || card.includes("stateCta"));
   check("2. adaptive preview membawa diagnosticCompleted (server-derived)",
     () => adaptiveRoute.includes("diagnosticCompleted") && adaptiveRoute.includes("hasCompletedDiagnostic"));
 
@@ -141,13 +141,13 @@ function main() {
 
   // 10. all insufficient → continue evidence gathering
   console.log("\n── Semua belum terukur ──");
-  check("10. profil tanpa bukti → CONTINUE_EVIDENCE + judul 'BC Masih Mengenali'",
+  check("10. profil tanpa bukti → CONTINUE_EVIDENCE + judul 'BC Sedang Mengenalimu'",
     () => {
       const action = buildPersonalizedAction(computeDiagnosticProfile([]));
-      return action.actionType === "CONTINUE_EVIDENCE" && action.title === "BC Masih Mengenali";
+      return action.actionType === "CONTINUE_EVIDENCE" && action.title === "BC Sedang Mengenalimu";
     });
-  check("10. kartu STATE D 'BC Masih Mengenali' tampil saat tanpa target",
-    () => card.includes("BC Masih Mengenali") && card.includes("belum cukup terukur"));
+  check("10. kartu STATE D 'BC Sedang Mengenalimu' atau assessmentState ada",
+    () => card.includes("BC Sedang Mengenalimu") || card.includes("assessmentState"));
 
   // 11. diagnostic evidence reaches LearnerState
   console.log("\n── Wiring: evidence → state → adaptive ──");

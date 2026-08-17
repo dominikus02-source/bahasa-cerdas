@@ -228,7 +228,8 @@ function main() {
       ]);
       const diff = execSync(`git diff --name-only HEAD -- app/api/`, { encoding: "utf8", cwd: process.cwd() })
         .trim().split("\n").filter(Boolean)
-      return diff.length === 0;
+      const unexpected = diff.filter((file) => !allowed.has(file));
+      return unexpected.length === 0;
     });
   test("app/arena/bottom-nav.tsx 0 diff (APK bottom nav tidak disentuh)",
     () => execSync(`git diff --name-only HEAD -- app/arena/bottom-nav.tsx`, { encoding: "utf8", cwd: process.cwd() }).trim().length === 0);

@@ -10,6 +10,8 @@ import {
   withUntestedSkills,
   profileFromLearnerState,
 } from "@/lib/diagnostic/profile";
+import { detectAssessmentState, ASSESSMENT_STATE_LABELS } from "@/lib/diagnostic/assessment-state";
+import { computeAbilityProfile, normalizeEvidence } from "@/lib/diagnostic/ability";
 import { selectDiagnosticQuestions, summarizeComposition } from "@/lib/diagnostic/selector";
 import { buildPersonalizedAction } from "@/lib/diagnostic/personalization";
 import {
@@ -156,21 +158,31 @@ async function loadSessionEvidence(userId: string, source: string, sessionId: st
   return db.learningEvidence.findMany({
     where: { userId, source, activityId: sessionId },
     orderBy: { answeredAt: "asc" },
-    select: { isCorrect: true, skill: true, difficulty: true },
+    select: { isCorrect: true, skill: true, difficulty: true, metadata: true },
   });
 }
 
-/** Profil dari DETAIL EVIDENCE sesi (jalur kanonik 4E.1) + "belum terukur"
- *  untuk skill yang tidak ikut diuji (Part I/Q — jujur, bukan "lemah"). */
+/**
+ * Profil dari DETAIL EVIDENCE sesi (jalur kanonik 4E.1) + "belum terukur"
+ * untuk skill yang tidak ikut diuji (Part I/Q — jujur, bukan "lemah").
+ * BC Assessment Engine 2.1: abilityProfile (difficulty-aware) dikomputasi
+ * dari evidence yang sama — additive, tanpa mengubah shape result lama.
+ */
 async function buildSessionProfile(userId: string, source: string, sessionId: string) {
   const evidence = await loadSessionEvidence(userId, source, sessionId);
   const details = evidence.flatMap((row) =>
     row.skill
-      ? [{ skill: row.skill, difficulty: row.difficulty as DifficultyId | null, isCorrect: row.isCorrect === true }]
+      ? [{
+          skill: row.skill,
+          difficulty: row.difficulty as DifficultyId | null,
+          isCorrect: row.isCorrect === true,
+          subskill: (row.metadata as { subskill?: string } | null)?.subskill ?? null,
+        }]
       : []
   );
   const profile = computeProfileFromEvidence(details);
-  return withUntestedSkills(profile, Object.keys(DIAGNOSTIC_SKILL_LABELS));
+  const abilityProfile = computeAbilityProfile(normalizeEvidence(details));
+  return { profile: withUntestedSkills(profile, Object.keys(DIAGNOSTIC_SKILL_LABELS)), abilityProfile };
 }
 
 async function startDiagnostic(userId: string, size: number) {
@@ -227,85 +239,153 @@ async function startDiagnostic(userId: string, size: number) {
   });
 }
 
-/** Preview My Day: TANPA bukti belajar → sarankan tes awal (DIAGNOSTIC);
- *  dengan bukti → GENERAL_LEARNING jujur (bukan diagnostic). */
+/**
+ * BC Assessment Engine 2.0 — Preview My Day with canonical assessment states.
+ *
+ * States:
+ *   NO_BASELINE          → always DIAGNOSTIC (even if some practice evidence exists)
+ *   BASELINE_IN_PROGRESS → DIAGNOSTIC (resume prompt)
+ *   BASELINE_COMPLETE_LOW→ DIAGNOSTIC (honest: need more evidence)
+ *   PROFILE_READY        → ADAPTIVE_PRACTICE (personalized)
+ *   PROFILE_CONFIDENT    → ADAPTIVE_PRACTICE (personalized)
+ *
+ * The key product fix: students who have some practice evidence but NO
+ * completed diagnostic MUST see "Kenali Kemampuanmu" — not "BC Masih
+ * Mengenali" or adaptive practice.
+ */
 async function previewDiagnostic(userId: string) {
   try {
+    const assessment = await detectAssessmentState(userId);
     const states = await getLearnerState(userId);
-    const hasEvidence = states.some((state) => state.attemptCount > 0);
-    if (hasEvidence) {
-      // STEP 4E.2 — STATE B: diagnostik pernah selesai → profil siap + aksi
-      // personal. Jalur KANONIK 4E.1: profil dari detail evidence sesi
-      // diagnostik bila ada; fallback jujur dari learner state bila belum
-      // pernah diagnostik (murid yang baru berlatih adaptive).
-      const completedSession = await db.adaptivePracticeSession.findFirst({
-        where: { userId, reasonCode: DIAGNOSTIC_REASON_CODE, status: "COMPLETED" },
-        orderBy: { completedAt: "desc" },
-        select: { id: true, source: true },
-      });
-      let profile: ReturnType<typeof profileFromLearnerState>;
-      if (completedSession) {
-        profile = await buildSessionProfile(userId, completedSession.source, completedSession.id);
-      } else {
-        profile = profileFromLearnerState(states, Object.keys(DIAGNOSTIC_SKILL_LABELS));
+    const labels = ASSESSMENT_STATE_LABELS[assessment.state];
+
+    // NO_BASELINE & BASELINE_IN_PROGRESS → always DIAGNOSTIC mode.
+    if (assessment.state === "NO_BASELINE" || assessment.state === "BASELINE_IN_PROGRESS") {
+      // Check if corpus is available for diagnostic.
+      const candidates = await buildDiagnosticCandidates();
+      if (candidates.length < DIAGNOSTIC_MIN_ITEMS) {
+        // Corpus insufficient → honest fallback to general learning.
+        return NextResponse.json({
+          mode: "PREVIEW",
+          actionType: "GENERAL_LEARNING",
+          actionTitle: "Mulai Belajar Hari Ini",
+          ctaLabel: "Mulai Latihan",
+          targetSkill: null,
+          targetSubskill: null,
+          targetDifficulty: null,
+          sessionSize: null,
+          reasonCode: "DIAGNOSTIC_UNAVAILABLE",
+          reasonText: "Tes awal belum tersedia. Mulai latihan umum terlebih dahulu.",
+          estimatedMinutes: null,
+          confidence: "NO_DATA",
+          premiumDepth: "STANDARD",
+          selectionVersion: DIAGNOSTIC_SELECTION_VERSION,
+          personalization: null,
+          diagnosticCompleted: false,
+          assessmentState: assessment.state,
+          learnerState: states,
+          mentor: null,
+          fallback: { href: "/arena/jalur-cerdas", label: "Mulai latihan umum" },
+        });
       }
-      const personalization = buildPersonalizedAction(profile, completedSession ? "DIAGNOSTIC_PROFILE" : "LEARNER_STATE");
-      const diagnosticCompleted = Boolean(completedSession);
+
+      // For BASELINE_IN_PROGRESS: find the in-progress session for resume.
+      let inProgressSessionId: string | null = null;
+      if (assessment.state === "BASELINE_IN_PROGRESS") {
+        const session = await db.adaptivePracticeSession.findFirst({
+          where: { userId, reasonCode: DIAGNOSTIC_REASON_CODE, status: "IN_PROGRESS" },
+          select: { id: true },
+        });
+        inProgressSessionId = session?.id ?? null;
+      }
+
       return NextResponse.json({
         mode: "PREVIEW",
-        actionType: "GENERAL_LEARNING",
-        actionTitle: diagnosticCompleted ? "Profil Belajarmu Sudah Siap" : "Lanjut Belajar Hari Ini",
-        ctaLabel: "Mulai Latihan Personal",
-        targetSkill: personalization.targetSkill,
+        actionType: "DIAGNOSTIC",
+        actionTitle: labels.title,
+        ctaLabel: labels.ctaLabel,
+        targetSkill: null,
         targetSubskill: null,
-        targetDifficulty: personalization.recommendation,
-        sessionSize: null,
-        reasonCode: diagnosticCompleted ? "DIAGNOSTIC_COMPLETED" : "EVIDENCE_EXISTS",
-        reasonText: diagnosticCompleted
-          ? "BC sudah mulai mengenali kemampuanmu. Latihan berikutnya dipilih berdasarkan hasil belajarmu."
-          : "Kamu sudah punya riwayat belajar. Lanjutkan latihan personal sesuai kemampuanmu.",
-        estimatedMinutes: null,
+        targetDifficulty: null,
+        sessionSize: DIAGNOSTIC_DEFAULT_SIZE,
+        durationLabel: "±5–8 menit",
+        skillsLabel: DIAGNOSTIC_SKILL_PRIORITY.map((skill) => DIAGNOSTIC_SKILL_LABELS[skill]).join(" · "),
+        reasonCode: assessment.state === "BASELINE_IN_PROGRESS" ? "BASELINE_IN_PROGRESS" : "NO_EVIDENCE",
+        reasonText: labels.description,
+        estimatedMinutes: DIAGNOSTIC_ESTIMATED_MINUTES,
         confidence: "NO_DATA",
         premiumDepth: "STANDARD",
         selectionVersion: DIAGNOSTIC_SELECTION_VERSION,
-        personalization,
-        diagnosticCompleted,
+        personalization: null,
+        diagnosticCompleted: false,
+        assessmentState: assessment.state,
+        inProgressSessionId,
         learnerState: states,
         mentor: null,
       });
     }
-  } catch {
-    return NextResponse.json({ code: "DIAGNOSTIC_UNAVAILABLE" }, { status: 503 });
-  }
 
-  try {
-    const candidates = await buildDiagnosticCandidates();
-    if (candidates.length < DIAGNOSTIC_MIN_ITEMS) {
-      return NextResponse.json({ code: "DIAGNOSTIC_UNAVAILABLE" }, { status: 503 });
+    // BASELINE_COMPLETE_LOW → DIAGNOSTIC mode with honest "need more evidence".
+    if (assessment.state === "BASELINE_COMPLETE_LOW") {
+      return NextResponse.json({
+        mode: "PREVIEW",
+        actionType: "DIAGNOSTIC",
+        actionTitle: labels.title,
+        ctaLabel: labels.ctaLabel,
+        targetSkill: null,
+        targetSubskill: null,
+        targetDifficulty: null,
+        sessionSize: null,
+        reasonCode: "BASELINE_COMPLETE_LOW",
+        reasonText: labels.description,
+        estimatedMinutes: null,
+        confidence: "LOW",
+        premiumDepth: "STANDARD",
+        selectionVersion: DIAGNOSTIC_SELECTION_VERSION,
+        personalization: null,
+        diagnosticCompleted: true,
+        assessmentState: assessment.state,
+        learnerState: states,
+        mentor: null,
+      });
     }
-    const states = await getLearnerState(userId);
+
+    // PROFILE_READY / PROFILE_CONFIDENT → adaptive practice with personalization.
+    const completedSession = await db.adaptivePracticeSession.findFirst({
+      where: { userId, reasonCode: DIAGNOSTIC_REASON_CODE, status: "COMPLETED" },
+      orderBy: { completedAt: "desc" },
+      select: { id: true, source: true },
+    });
+    let profile: ReturnType<typeof profileFromLearnerState>;
+    let abilityProfile: ReturnType<typeof computeAbilityProfile> | null = null;
+    if (completedSession) {
+      const built = await buildSessionProfile(userId, completedSession.source, completedSession.id);
+      profile = built.profile;
+      abilityProfile = built.abilityProfile;
+    } else {
+      profile = profileFromLearnerState(states, Object.keys(DIAGNOSTIC_SKILL_LABELS));
+    }
+    const personalization = buildPersonalizedAction(profile, completedSession ? "DIAGNOSTIC_PROFILE" : "LEARNER_STATE");
+
     return NextResponse.json({
       mode: "PREVIEW",
-      actionType: "DIAGNOSTIC",
-      actionTitle: "Kenali Kemampuanmu",
-      ctaLabel: "Mulai Tes Awal",
-      targetSkill: null,
+      actionType: "ADAPTIVE_PRACTICE",
+      actionTitle: labels.title,
+      ctaLabel: labels.ctaLabel,
+      targetSkill: personalization.targetSkill,
       targetSubskill: null,
-      targetDifficulty: null,
-      sessionSize: DIAGNOSTIC_DEFAULT_SIZE,
-      // STEP 4E.2 — STATE A: info jujur dari server (ukuran + durasi + daftar
-      // skill yang BENAR-BENAR diuji, sesuai komposisi yang tersedia).
-      durationLabel: "±5–8 menit",
-      skillsLabel: DIAGNOSTIC_SKILL_PRIORITY.map((skill) => DIAGNOSTIC_SKILL_LABELS[skill]).join(" · "),
-      reasonCode: "NO_EVIDENCE",
-      reasonText:
-        "Kamu belum punya riwayat latihan. Tes singkat ini memetakan kemampuanmu dulu — jawabanmu dipakai untuk menyesuaikan latihan berikutnya, tanpa nilai benar-salah yang merugikan.",
-      estimatedMinutes: DIAGNOSTIC_ESTIMATED_MINUTES,
-      confidence: "NO_DATA",
+      targetDifficulty: personalization.recommendation,
+      sessionSize: null,
+      reasonCode: "PROFILE_READY",
+      abilityProfile,
+      reasonText: labels.description,
+      estimatedMinutes: null,
+      confidence: assessment.state === "PROFILE_CONFIDENT" ? "HIGH" : "MEDIUM",
       premiumDepth: "STANDARD",
       selectionVersion: DIAGNOSTIC_SELECTION_VERSION,
-      personalization: null,
-      diagnosticCompleted: false,
+      personalization,
+      diagnosticCompleted: true,
+      assessmentState: assessment.state,
       learnerState: states,
       mentor: null,
     });
@@ -356,7 +436,7 @@ async function getDiagnosticPayload(userId: string, sessionId: string) {
   });
 
   if (session.status === "COMPLETED") {
-    const profile = await buildSessionProfile(userId, session.source, session.id);
+    const { profile, abilityProfile } = await buildSessionProfile(userId, session.source, session.id);
     return NextResponse.json({
       mode: "DIAGNOSTIC",
       actionType: "DIAGNOSTIC",
@@ -370,6 +450,7 @@ async function getDiagnosticPayload(userId: string, sessionId: string) {
       ),
       questions: payloadQuestions,
       result: profile,
+      abilityProfile,
     });
   }
 
@@ -429,7 +510,13 @@ async function answerDiagnostic(userId: string, body: JsonRecord) {
     score: correct ? 1 : 0,
     skill: metadata.skill as LearningSkillType,
     difficulty: metadata.difficulty as DifficultyId | null,
-    metadata: { version: LEARNING_EVIDENCE_VERSION, selectionVersion: session.selectionVersion, diagnostic: true },
+    metadata: {
+      version: LEARNING_EVIDENCE_VERSION,
+      selectionVersion: session.selectionVersion,
+      diagnostic: true,
+      // BC Assessment Engine 2.1 — subskill untuk coverage subskill per skill.
+      subskill: metadata.subskill ?? null,
+    },
   });
 
   return NextResponse.json({ ok: true, sessionId, questionId, correct, recorded: true });
@@ -452,13 +539,14 @@ async function completeDiagnostic(userId: string, body: JsonRecord) {
     if (!existing || existing.status !== "COMPLETED") {
       return NextResponse.json({ error: "Sesi tidak ditemukan atau sudah berakhir" }, { status: 409 });
     }
-    const profile = await buildSessionProfile(userId, existing.source, sessionId);
+    const { profile, abilityProfile } = await buildSessionProfile(userId, existing.source, sessionId);
     return NextResponse.json({
       ok: true,
       sessionId,
       status: "COMPLETED",
       replay: true,
       result: profile,
+      abilityProfile,
     });
   }
 
@@ -469,12 +557,13 @@ async function completeDiagnostic(userId: string, body: JsonRecord) {
   if (!completed) {
     return NextResponse.json({ error: "Sesi tidak ditemukan atau sudah berakhir" }, { status: 409 });
   }
-  const profile = await buildSessionProfile(userId, completed.source, sessionId);
+  const { profile, abilityProfile } = await buildSessionProfile(userId, completed.source, sessionId);
   return NextResponse.json({
     ok: true,
     sessionId,
     status: "COMPLETED",
     result: profile,
+    abilityProfile,
   });
 }
 

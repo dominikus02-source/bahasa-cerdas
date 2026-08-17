@@ -70,7 +70,7 @@ export function explanationFor(skillResult: DiagnosticSkillResult): string {
     case "STRONG":
       return `BC memilih ${label} untuk menjaga kemampuanmu tetap tajam.`;
     default:
-      return "BC masih mengenali kemampuanmu. Latihan ini membantu BC mendapatkan lebih banyak bukti tentang kemampuanmu.";
+      return "BC masih memetakan kemampuanmu. Latihan ini membantu BC mendapatkan lebih banyak bukti tentang kemampuanmu.";
   }
 }
 
@@ -97,7 +97,7 @@ export function pickTargetSkill(profile: DiagnosticProfile): DiagnosticSkillResu
  * Bangun PersonalizedLearningAction dari profil diagnostik (MURNI).
  *
  * Aturan:
- *   - Tidak ada skill berbukti → CONTINUE_EVIDENCE ("BC Masih Mengenali"),
+ *   - Tidak ada skill berbukti → CONTINUE_EVIDENCE ("BC Sedang Mengenalimu"),
  *     tanpa target — bukan "lemah".
  *   - Ada skill berbukti → target terlemah (deterministik), reasonCode
  *     WEAK_SKILL/DEVELOPING/STRONG disesuaikan, explanation confidence-aware.
@@ -113,9 +113,9 @@ export function buildPersonalizedAction(
       targetSkill: null,
       targetSkillLabel: null,
       reasonCode: "INSUFFICIENT_EVIDENCE",
-      title: "BC Masih Mengenali",
+      title: "BC Sedang Mengenalimu",
       explanation:
-        "Beberapa kemampuanmu belum cukup terukur. Latihan berikutnya membantu BC memahami kemampuanmu dengan lebih baik.",
+        "Kemampuanmu belum cukup terukur. Latihan berikutnya membantu BC memahami kemampuanmu dengan lebih baik.",
       confidence: DIAGNOSTIC_CONFIDENCE.INSUFFICIENT_EVIDENCE,
       source,
       recommendation: null,

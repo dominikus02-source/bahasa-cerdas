@@ -43,6 +43,8 @@ export interface MyDayResponse {
   personalization?: PersonalizedLearningAction | null;
   /** STEP 4E.2 — pernah menyelesaikan diagnostik (state B vs C di kartu). */
   diagnosticCompleted?: boolean;
+  /** BC Assessment Engine 2.0 — canonical assessment state. */
+  assessmentState?: string;
   /** STEP 4E.2 — info STATE A: durasi jujur + skill yang benar-benar diuji. */
   durationLabel?: string;
   skillsLabel?: string;

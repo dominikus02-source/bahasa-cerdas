@@ -8,17 +8,16 @@ import MentorCard from "@/components/arena/player/MentorCard";
 import { useHomeData } from "./home-data";
 
 /**
- * Kartu Aksi Hari Ini — STEP 4E.2 PERSONALIZATION STATES.
+ * Kartu Aksi Hari Ini — BC Assessment Engine 2.0 STATES.
  *
- * STATE A (NO_EVIDENCE)      : actionType DIAGNOSTIC        → "Kenali Kemampuanmu"
- * STATE B (DIAGNOSTIC DONE)  : ADAPTIVE + diagnosticCompleted → "Profil Belajarmu Sudah Siap"
- * STATE C (PERSONALIZED)     : ADAPTIVE + target skill       → "Latihan Untukmu"
- * STATE D (INSUFFICIENT)     : ADAPTIVE tanpa target skill   → "BC Masih Mengenali"
+ * NO_BASELINE          → DIAGNOSTIC  → "Kenali Kemampuanmu" (Mulai Tes Awal)
+ * BASELINE_IN_PROGRESS → DIAGNOSTIC  → "Lanjutkan Tes Awal"
+ * BASELINE_COMPLETE_LOW→ DIAGNOSTIC  → "BC Sedang Mengenalimu" (Lanjutkan Latihan)
+ * PROFILE_READY        → ADAPTIVE    → "Latihan Untukmu" (Mulai Latihan)
+ * PROFILE_CONFIDENT    → ADAPTIVE    → "Latihan Untukmu" (Mulai Latihan)
  *
- * Semua judul/penjelasan berasal dari SERVER (actionTitle/reasonText/
- * personalization.explanation) — klien tidak pernah mengirim skill/difficulty/
- * confidence/reason. Klik selalu: POST {action:"start"} (adaptive) atau
- * POST {action:"start"} (diagnostic) — tanpa payload skill apa pun.
+ * Server-derived: actionTitle, reasonText, ctaLabel, assessmentState.
+ * Client never sends skill/difficulty/confidence/reason.
  */
 export function ContinueLearningCard() {
   const router = useRouter();
@@ -58,9 +57,7 @@ export function ContinueLearningCard() {
   const isAdaptive = currentMyDay.mode === "PREVIEW" && currentMyDay.actionType === "ADAPTIVE_PRACTICE";
   const isDiagnostic = currentMyDay.mode === "PREVIEW" && currentMyDay.actionType === "DIAGNOSTIC";
   const personalization = currentMyDay.personalization ?? null;
-  // STATE D: adaptive tanpa target skill (belum cukup bukti) — jujur, bukan "lemah".
-  const insufficient = isAdaptive && personalization?.actionType === "CONTINUE_EVIDENCE";
-  const diagnosticReady = isAdaptive && Boolean(currentMyDay.diagnosticCompleted) && !insufficient;
+  const assessmentState = currentMyDay.assessmentState as string | undefined;
   const mentorData = currentMyDay.mentor ? { ...currentMyDay.mentor, nextAction: null } : null;
 
   async function startAdaptiveSession() {
@@ -142,23 +139,55 @@ export function ContinueLearningCard() {
     );
   }
 
-  // ── STATE D — Diagnostik ada tapi bukti belum cukup ──
-  if (isAdaptive && insufficient) {
+  // ── BASELINE_IN_PROGRESS — Resume tes awal ──
+  if (isDiagnostic && assessmentState === "BASELINE_IN_PROGRESS") {
     return (
       <section aria-label="Aksi hari ini" className="my-day-hero px-card px-5 py-7 md:p-8 relative overflow-hidden">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--px-gold)] mb-2">Aksi Hari Ini</p>
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--px-gold)] mb-2">Tes Awal</p>
+        <div className="relative flex flex-col md:flex-row md:items-center gap-5">
+          <div className="flex-1 min-w-0">
+            <h2 className="text-2xl md:text-[32px] font-semibold tracking-tight text-[var(--px-text)] mb-2 flex items-center gap-2">
+              <RotateCw size={21} strokeWidth={1.8} className="text-[var(--px-royal-2)] shrink-0" />
+              <span className="truncate">Lanjutkan Tes Awal</span>
+            </h2>
+            <p className="text-sm text-[var(--px-text-dim)] leading-relaxed">
+              {currentMyDay.reasonText}
+            </p>
+            {startError && <p className="mt-3 text-xs font-semibold text-red-600 dark:text-red-300">{startError}</p>}
+          </div>
+          <div className="shrink-0">
+            <button
+              type="button"
+              onClick={startDiagnosticSession}
+              disabled={starting}
+              className="px-btn-gold flex items-center justify-center gap-2 text-sm font-bold px-6 py-3 disabled:cursor-wait"
+              aria-label="Lanjutkan Tes Awal"
+            >
+              {starting ? <Loader2 size={16} className="animate-spin" /> : null}
+              {starting ? "Menyiapkan..." : currentMyDay.ctaLabel}
+              {!starting && <ArrowRight size={16} />}
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // ── BASELINE_COMPLETE_LOW — Tes selesai, butuh lebih banyak bukti ──
+  if (isDiagnostic && assessmentState === "BASELINE_COMPLETE_LOW") {
+    return (
+      <section aria-label="Aksi hari ini" className="my-day-hero px-card px-5 py-7 md:p-8 relative overflow-hidden">
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--px-gold)] mb-2">BC Sedang Mengenalimu</p>
         <div className="relative flex flex-col md:flex-row md:items-center gap-5">
           <div className="flex-1 min-w-0">
             <h2 className="text-2xl md:text-[32px] font-semibold tracking-tight text-[var(--px-text)] mb-2 flex items-center gap-2">
               <Target size={21} strokeWidth={1.8} className="text-[var(--px-royal-2)] shrink-0" />
-              <span className="truncate">BC Masih Mengenali</span>
+              <span className="truncate">BC Sedang Mengenalimu</span>
             </h2>
             <p className="text-sm text-[var(--px-text-dim)] leading-relaxed">
-              Beberapa kemampuanmu belum cukup terukur. Latihan berikutnya membantu BC memahami kemampuanmu dengan lebih baik.
+              {currentMyDay.reasonText}
             </p>
-            <p className="mt-2 text-xs text-[var(--px-text-dim)]">
-              {personalization?.explanation ?? currentMyDay.reasonText}
-            </p>
+            <p className="mt-2 text-[11px] text-[var(--px-text-dim)]">Profil awal — akan semakin akurat setelah kamu berlatih.</p>
             {startError && <p className="mt-3 text-xs font-semibold text-red-600 dark:text-red-300">{startError}</p>}
           </div>
           <div className="shrink-0">
@@ -170,7 +199,7 @@ export function ContinueLearningCard() {
               aria-label="Lanjutkan Latihan"
             >
               {starting ? <Loader2 size={16} className="animate-spin" /> : null}
-              {starting ? "Menyiapkan..." : "Lanjutkan Latihan"}
+              {starting ? "Menyiapkan..." : currentMyDay.ctaLabel}
               {!starting && <ArrowRight size={16} />}
             </button>
           </div>
@@ -208,21 +237,17 @@ export function ContinueLearningCard() {
     );
   }
 
-  // ── STATE B (diagnostik selesai) / STATE C (latihan personal tersedia) ──
-  // Catatan: STATE C menampilkan skill target via explanation server
-  // ("BC memilih latihan Tata Bahasa untuk ...") — klien tidak mereferensikan
-  // field skill apa pun (jaga test: no client-controlled skill).
-  const stateTitle = diagnosticReady ? "Profil Belajarmu Sudah Siap" : "Latihan Untukmu";
-  const stateDesc = diagnosticReady
-    ? "BC sudah mulai mengenali kemampuanmu. Latihan berikutnya dipilih berdasarkan hasil belajarmu."
-    : (personalization?.explanation ?? currentMyDay.reasonText);
-  const stateCta = diagnosticReady ? "Mulai Latihan Personal" : currentMyDay.ctaLabel;
+  // ── PROFILE_READY / PROFILE_CONFIDENT — Latihan personal tersedia ──
+  // Server-derived: actionTitle, reasonText, ctaLabel, personalization.explanation.
+  const stateTitle = currentMyDay.actionTitle;
+  const stateDesc = personalization?.explanation ?? currentMyDay.reasonText;
+  const stateCta = currentMyDay.ctaLabel;
 
   return (
     <div className="space-y-3">
       <section aria-label="Aksi hari ini" className="my-day-hero px-card px-5 py-7 md:p-8 relative overflow-hidden">
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--px-gold)] mb-2">
-          {diagnosticReady ? "Profil Belajarmu" : "Aksi Hari Ini"}
+          {"Aksi Hari Ini"}
         </p>
         <div className="relative flex flex-col md:flex-row md:items-center gap-5">
           <div className="flex-1 min-w-0">
@@ -231,9 +256,7 @@ export function ContinueLearningCard() {
               <span className="truncate">{stateTitle}</span>
             </h2>
             <p className="text-sm text-[var(--px-text-dim)] leading-relaxed">{stateDesc}</p>
-            {!diagnosticReady && (
-              <p className="mt-1 text-[11px] text-[var(--px-text-dim)]">Latihan dipilih berdasarkan kemampuanmu.</p>
-            )}
+            <p className="mt-1 text-[11px] text-[var(--px-text-dim)]">Latihan dipilih berdasarkan kemampuanmu.</p>
             {startError && <p className="mt-3 text-xs font-semibold text-red-600 dark:text-red-300">{startError}</p>}
           </div>
           <div className="shrink-0">

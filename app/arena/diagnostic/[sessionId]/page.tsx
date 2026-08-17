@@ -57,6 +57,26 @@ interface DiagnosticFallbackEntry {
   note: string;
 }
 
+interface AbilitySkillSummary {
+  skill: string;
+  label: string;
+  attempts: number;
+  accuracy: number | null;
+  abilityBand: "DASAR" | "MENENGAH" | "TINGGI" | null;
+  confidence: "NO_DATA" | "LOW" | "MEDIUM" | "HIGH";
+  note: string | null;
+}
+
+interface AbilityProfileSummary {
+  strongest: string[];
+  focus: string[];
+  insufficient: string[];
+  overallConfidence: "NO_DATA" | "LOW" | "MEDIUM" | "HIGH";
+  coverage: { skills: number; subskills: number; difficulties: number };
+  profileVersion: string;
+  skills: AbilitySkillSummary[];
+}
+
 interface DiagnosticSession {
   sessionId: string;
   status: "IN_PROGRESS" | "COMPLETED";
@@ -64,6 +84,7 @@ interface DiagnosticSession {
   reasonText: string;
   questions: DiagnosticQuestion[];
   result?: DiagnosticResult;
+  abilityProfile?: AbilityProfileSummary | null;
   fallback?: boolean;
   fallbackReason?: string | null;
   composition?: {
@@ -83,8 +104,12 @@ const CATEGORY_META: Record<DiagnosticSkillResult["category"], { label: string; 
   INSUFFICIENT_EVIDENCE: { label: "Belum Cukup Bukti", className: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300" },
 };
 
-function ResultPanel({ result, fallbackReason }: { result: DiagnosticResult; fallbackReason?: string | null }) {
+function ResultPanel({ result, abilityProfile, fallbackReason }: { result: DiagnosticResult; abilityProfile?: AbilityProfileSummary | null; fallbackReason?: string | null }) {
   const band = result.placement;
+  const ability = abilityProfile ?? null;
+  const abilityLabel = (skill: string): string =>
+    ability?.skills.find((s) => s.skill === skill)?.label ?? skill;
+  const confident = ability?.overallConfidence === "HIGH" || ability?.overallConfidence === "MEDIUM";
   return (
     <div className="space-y-6">
       {fallbackReason ? (
@@ -159,6 +184,47 @@ function ResultPanel({ result, fallbackReason }: { result: DiagnosticResult; fal
         </ul>
       </div>
 
+      {ability ? (
+        <div className="rounded-3xl border border-slate-200/70 bg-white/80 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900/70">
+          <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
+            <GraduationCap size={16} className="text-violet-500" /> Profil Awalmu
+          </h3>
+          <p className="mt-3 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+            Ini gambaran awal — akan semakin akurat setelah kamu berlatih.{" "}
+            {ability.overallConfidence === "HIGH"
+              ? "Kepercayaan BC terhadap profil ini sudah tinggi."
+              : ability.overallConfidence === "MEDIUM"
+                ? "Kepercayaan BC sedang — tambahkan latihan agar profil makin akurat."
+                : "Kepercayaan BC masih rendah — butuh lebih banyak bukti."}
+          </p>
+          <ul className="mt-4 space-y-2 text-sm">
+            {ability.strongest.length > 0 && (
+              <li className="flex items-start gap-2">
+                <span className="mt-0.5 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300">Mulai kuat</span>
+                <span className="text-slate-700 dark:text-slate-200">{ability.strongest.map(abilityLabel).join(", ")}</span>
+              </li>
+            )}
+            {ability.focus.length > 0 && (
+              <li className="flex items-start gap-2">
+                <span className="mt-0.5 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:bg-amber-950/50 dark:text-amber-300">Perlu dilatih</span>
+                <span className="text-slate-700 dark:text-slate-200">{ability.focus.map(abilityLabel).join(", ")}</span>
+              </li>
+            )}
+            {ability.insufficient.length > 0 && (
+              <li className="flex items-start gap-2">
+                <span className="mt-0.5 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-300">Belum terukur</span>
+                <span className="text-slate-600 dark:text-slate-300">{ability.insufficient.map(abilityLabel).join(", ")}</span>
+              </li>
+            )}
+          </ul>
+          {!confident && (
+            <p className="mt-3 text-[11px] text-slate-500 dark:text-slate-400">
+              Profil awal — akan semakin akurat setelah kamu berlatih.
+            </p>
+          )}
+        </div>
+      ) : null}
+
       {result.insightText ? (
         <div className="rounded-3xl border border-violet-200/70 bg-violet-50/60 p-6 dark:border-violet-900/60 dark:bg-violet-950/20">
           <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
@@ -203,6 +269,7 @@ export default function DiagnosticSessionPage({ params }: { params: Promise<{ se
   const [result, setResult] = useState<boolean | null>(null);
   const [answer, setAnswer] = useState("");
   const [finalResult, setFinalResult] = useState<DiagnosticResult | null>(null);
+  const [finalAbility, setFinalAbility] = useState<AbilityProfileSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -214,7 +281,10 @@ export default function DiagnosticSessionPage({ params }: { params: Promise<{ se
       .then((data) => {
         if (!alive) return;
         setSession(data);
-        if (data.status === "COMPLETED" && data.result) setFinalResult(data.result);
+        if (data.status === "COMPLETED" && data.result) {
+          setFinalResult(data.result);
+          if (data.abilityProfile) setFinalAbility(data.abilityProfile);
+        }
       })
       .catch(() => alive && setError("Tes awal belum bisa dimuat."))
       .finally(() => alive && setLoading(false));
@@ -255,7 +325,10 @@ export default function DiagnosticSessionPage({ params }: { params: Promise<{ se
         });
         const data = await response.json();
         if (!response.ok && response.status !== 409) throw new Error(data.error || "Hasil belum tersimpan.");
-        if (data.result) setFinalResult(data.result);
+        if (data.result) {
+          setFinalResult(data.result);
+          if (data.abilityProfile) setFinalAbility(data.abilityProfile);
+        }
       } catch (completeError) {
         setError(completeError instanceof Error ? completeError.message : "Hasil belum tersimpan.");
         return;
@@ -294,7 +367,7 @@ export default function DiagnosticSessionPage({ params }: { params: Promise<{ se
               <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">Hasil Tes Awal</p>
             </div>
           </div>
-          <ResultPanel result={finalResult} fallbackReason={session?.fallbackReason} />
+          <ResultPanel result={finalResult} abilityProfile={finalAbility} fallbackReason={session?.fallbackReason} />
         </main>
       );
     }
@@ -321,7 +394,7 @@ export default function DiagnosticSessionPage({ params }: { params: Promise<{ se
           </div>
           <span className="w-9" />
         </div>
-        <ResultPanel result={finalResult} fallbackReason={session?.fallbackReason} />
+        <ResultPanel result={finalResult} abilityProfile={finalAbility} fallbackReason={session?.fallbackReason} />
       </main>
     );
   }
