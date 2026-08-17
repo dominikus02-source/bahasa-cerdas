@@ -3,7 +3,7 @@ import { db } from "@/lib/db"
 import cache from "@/lib/redis"
 import { redirect } from "next/navigation"
 import Link from "next/link"
-import { Zap, Swords, Puzzle, Type, Flame, BookOpen, Users, Clock, Crown, Mountain, ThumbsUp, TreePine } from "lucide-react"
+import { Zap, Swords, Puzzle, Type, Flame, BookOpen, Users, Clock, Crown, Mountain, ThumbsUp, TreePine, Grid3x3 } from "lucide-react"
 import BattleCard from "@/components/arena/BattleCard"
 import GameHubLeagueTabs from "./league-tabs"
 import { MULTIPLAYER_ENABLED } from "@/lib/features"
@@ -45,6 +45,7 @@ const GAMES: Game[] = [
   { title: "Petualangan Kata", desc: "Bantu Si Cerdik Zelby menangkap kata yang benar di hutan! Seru, cepat, dan bikin jago Bahasa!", icon: TreePine, href: "/arena/game/petualangan-kata", accentColor: "#10B981", iconGradient: "from-emerald-500 to-green-600", featured: true, badge: { text: "Baru", type: "new" }, xp: "+90 XP", players: "Solo", time: "~1,5 mnt" },
   { title: "KataPlay", desc: "Belajar membaca dari nol! 4 tingkat, puluhan soal seru!", icon: BookOpen, href: "/arena/game/kata-play", accentColor: "#7C3AED", iconGradient: "from-violet-500 to-purple-600", badge: { text: "Baru", type: "new" }, xp: "+50 XP", players: "Solo", time: "~3 mnt" },
   { title: "Tebak Kata", desc: "Tebak dari petunjuk. Seru bareng teman!", icon: Type, href: "/arena/game/tebak-kata", accentColor: "#06B6D4", iconGradient: "from-cyan-500 to-cyan-600", xp: "+60 XP", players: "Solo", time: "~3 mnt" },
+  { title: "Teka-Teki Silang", desc: "Isi kotak, asah kosakata! 12 level, soal baru tiap main.", icon: Grid3x3, href: "/arena/game/teka-teki-silang", accentColor: "#38BDF8", iconGradient: "from-sky-500 to-cyan-500", badge: { text: "Baru", type: "new" }, xp: "+75 XP", players: "Solo", time: "~5 mnt" },
   { title: "Susun Kata", desc: "Acak huruf jadi kata benar dalam waktu limit!", icon: Puzzle, href: "/arena/game/susun-kata", accentColor: "#10B981", iconGradient: "from-emerald-500 to-emerald-600", xp: "+50 XP", players: "Solo", time: "~3 mnt" },
   { title: "Lari Kata", desc: "60 detik, 20 soal. Jawab secepat kilat!", icon: Zap, href: "/arena/game/lari-kata", accentColor: "#F59E0B", iconGradient: "from-amber-500 to-amber-600", badge: { text: "Baru", type: "new" }, xp: "+70 XP", players: "~1 mnt", time: "~1 mnt" },
 ]

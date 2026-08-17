@@ -17,6 +17,9 @@ const MAX_SCORE_PER_GAME: Record<string, number> = {
   // 10 poin per jawaban benar + 40 bonus menang; 600 memberi ruang lega untuk
   // permainan panjang yang jujur, tetapi menutup kiriman skor mengada-ada.
   RIMBA_KATA: 600,
+  // Teka-Teki Silang: sel benar × 10 + bonus tuntas (200) + bonus beruntun.
+  // Level terbesar ~90 sel → 900–1200; 1500 menutup skor mengada-ada.
+  TEKA_TEKI_SILANG: 1500,
 }
 
 export async function POST(req: NextRequest) {

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Teka-Teki Silang — 10 level berjenjang (grid & kesulitan naik bertahap),
+ * Teka-Teki Silang — 12 level berjenjang (grid & kesulitan naik bertahap),
  * pemain pilih durasi 1-10 menit sebelum mulai, maskot Zelby/Hazel/Alby
  * menemani sesi baca petunjuk dan merayakan tiap kata & puzzle yang selesai.
  * XP & Koin dihitung dari akurasi, penalti petunjuk, dan bonus kecepatan.
@@ -9,118 +9,42 @@
  * Mengikuti pola arsitektur Irama Kata: layar start -> pilih level -> atur
  * waktu -> main -> hasil, progres + ekonomi tersimpan di localStorage, XP
  * dikirim ke /api/game/xp.
+ *
+ * v2 (rilis): puzzle TIDAK statis lagi — dibangkitkan prosedural per main
+ * (lib/game/tts) dari bank kata kurasi KBBI. Mode "Hari Ini" memberi puzzle
+ * yang sama untuk semua pemain dan ganti tiap hari; mode "Acak" memberi
+ * kombinasi beda tiap main. Kata yang baru muncul ikut dihindari main
+ * berikutnya (anti-ulang), jadi main berulang tetap terasa baru. Skor server
+ * dikirim sebagai skor nyata (bukan persen) supaya XP yang dicairkan wajar.
+ *
+ * v3 (DNA Kuis Tempur): fullscreen layar lebar + HUD 5 tile (Nyawa / Level /
+ * Rentetan / Terisi / Waktu) + bar waktu ala Kuis Tempur. Sistem nyawa ala
+ * Duolingo (maks 6, -1 tiap jawaban salah saat Cek, pulih 1/8 menit, +1
+ * bonus saat sempurna, gate screen saat habis). Leveling lengkap: 12 level
+ * (11 tema + Ujian Akhir), tier pemain dari XP lokal, rentetan harian + bonus
+ * XP, dan selebrasi saat level baru terbuka.
  */
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { setQuiet } from "@/lib/notif-quiet"
 import {
   X, Play, RotateCcw, ChevronRight, Lock, Star, Trophy, Lightbulb,
   Eraser, CheckCircle2, Grid3x3, ArrowRight, ArrowDown, Clock, Coins, Zap,
+  Volume2, VolumeX, CalendarDays, Shuffle, RefreshCw, Flame, Heart,
 } from "lucide-react";
+import { buildPuzzle } from "@/lib/game/tts/generator";
+import { TTS_LEVELS } from "@/lib/game/tts/levels";
+import { dailySeed, randomSeed } from "@/lib/game/tts/seed";
+import type { Dir, Mascot, TtsWordDef as WordDef } from "@/lib/game/tts/types";
+import { sfx, isSoundOn, toggleSound, haptic } from "@/lib/game/sound";
+import {
+  HEARTS_MAX, HEART_REGEN_MS, type HeartsState, freshHearts, regenHearts, spendHeart, nextHeartInMs,
+  type StreakState, STREAK_KEY, tierFor, bumpStreak, streakXpBonus,
+} from "@/lib/game/tts/economy";
 
 /* ---------- Data ---------- */
-type Dir = "A" | "D";
-type WordDef = { number: number; dir: Dir; answer: string; clue: string; row: number; col: number };
-type Mascot = "zelby" | "hazel" | "alby";
-type Puzzle = { id: number; title: string; subtitle: string; mascot: Mascot; rows: number; cols: number; words: WordDef[] };
+type Puzzle = ReturnType<typeof buildPuzzle>;
+const TOTAL_LEVELS = TTS_LEVELS.length;
 
-const PUZZLES: Puzzle[] = [
-  { id: 1, title: "Keluarga Inti", subtitle: "Kosakata dasar seputar keluarga", mascot: "zelby", rows: 5, cols: 5, words: [
-    { number: 1, dir: "A", answer: "IBU", clue: "Orang tua perempuan", row: 0, col: 1 },
-    { number: 2, dir: "D", answer: "BAPAK", clue: "Orang tua laki-laki", row: 0, col: 2 },
-    { number: 3, dir: "D", answer: "ADIK", clue: "Saudara yang lebih muda", row: 1, col: 0 },
-    { number: 4, dir: "A", answer: "KAKAK", clue: "Saudara yang lebih tua", row: 4, col: 0 },
-  ]},
-  { id: 2, title: "Kelas Kata", subtitle: "Kenali jenis-jenis kata dasar", mascot: "zelby", rows: 8, cols: 8, words: [
-    { number: 1, dir: "D", answer: "VERBA", clue: "Kata kerja, contoh: makan, lari", row: 0, col: 7 },
-    { number: 2, dir: "A", answer: "NOMINA", clue: "Kata benda, contoh: meja, kucing", row: 4, col: 2 },
-    { number: 2, dir: "D", answer: "NAMA", clue: "Sebutan atau identitas seseorang", row: 4, col: 2 },
-    { number: 3, dir: "D", answer: "IBU", clue: "Orang tua perempuan", row: 4, col: 5 },
-    { number: 4, dir: "A", answer: "ADA", clue: "Kata yang menyatakan keberadaan", row: 5, col: 0 },
-    { number: 5, dir: "A", answer: "MATA", clue: "Indra penglihatan", row: 7, col: 1 },
-  ]},
-  { id: 3, title: "Ejaan Baku", subtitle: "Bedakan ejaan baku dan tidak baku", mascot: "zelby", rows: 11, cols: 6, words: [
-    { number: 1, dir: "A", answer: "KARIER", clue: "Ejaan baku dari 'karir'", row: 0, col: 0 },
-    { number: 2, dir: "D", answer: "RISIKO", clue: "Ejaan baku dari 'resiko'", row: 0, col: 2 },
-    { number: 3, dir: "D", answer: "NASIHAT", clue: "Ejaan baku dari 'nasehat'", row: 4, col: 0 },
-    { number: 4, dir: "D", answer: "TEKNIK", clue: "Ejaan baku dari 'tehnik'", row: 4, col: 4 },
-    { number: 5, dir: "A", answer: "APOTEK", clue: "Ejaan baku untuk tempat membeli obat (bukan apotik)", row: 5, col: 0 },
-    { number: 6, dir: "A", answer: "IZIN", clue: "Ejaan baku dari 'ijin'", row: 8, col: 2 },
-  ]},
-  { id: 4, title: "Sinonim", subtitle: "Cari padanan kata yang bermakna sama", mascot: "hazel", rows: 10, cols: 7, words: [
-    { number: 1, dir: "A", answer: "MUNGIL", clue: "Sinonim dari 'kecil' (bernada imut)", row: 0, col: 0 },
-    { number: 2, dir: "D", answer: "INDAH", clue: "Sinonim dari 'cantik' (untuk pemandangan)", row: 0, col: 4 },
-    { number: 3, dir: "A", answer: "PANDAI", clue: "Sinonim dari 'pintar'", row: 3, col: 0 },
-    { number: 4, dir: "D", answer: "AGUNG", clue: "Sinonim dari 'besar' (bermakna mulia)", row: 3, col: 1 },
-    { number: 5, dir: "D", answer: "RIANG", clue: "Sinonim dari 'gembira'", row: 5, col: 3 },
-    { number: 6, dir: "A", answer: "GIAT", clue: "Sinonim dari 'rajin'", row: 7, col: 1 },
-    { number: 7, dir: "A", answer: "TANGKAS", clue: "Sinonim dari 'cekatan'", row: 9, col: 0 },
-  ]},
-  { id: 5, title: "Antonim", subtitle: "Cari lawan kata yang tepat", mascot: "hazel", rows: 7, cols: 11, words: [
-    { number: 1, dir: "D", answer: "TINGGI", clue: "Antonim dari 'rendah'", row: 0, col: 0 },
-    { number: 2, dir: "D", answer: "CEPAT", clue: "Antonim dari 'lambat'", row: 0, col: 3 },
-    { number: 3, dir: "A", answer: "KERAS", clue: "Antonim dari 'lembut'", row: 1, col: 2 },
-    { number: 4, dir: "D", answer: "SEMPIT", clue: "Antonim dari 'luas'", row: 1, col: 6 },
-    { number: 5, dir: "D", answer: "BASAH", clue: "Antonim dari 'kering'", row: 1, col: 10 },
-    { number: 6, dir: "A", answer: "GELAP", clue: "Antonim dari 'terang'", row: 3, col: 0 },
-    { number: 7, dir: "A", answer: "MALAS", clue: "Antonim dari 'rajin'", row: 3, col: 6 },
-    { number: 8, dir: "A", answer: "TUA", clue: "Antonim dari 'muda'", row: 6, col: 6 },
-  ]},
-  { id: 6, title: "Unsur Sastra", subtitle: "Istilah dalam karya sastra", mascot: "hazel", rows: 12, cols: 9, words: [
-    { number: 1, dir: "A", answer: "LATAR", clue: "Tempat, waktu, dan suasana dalam cerita", row: 0, col: 0 },
-    { number: 2, dir: "D", answer: "AMANAT", clue: "Pesan moral dalam sebuah cerita", row: 0, col: 1 },
-    { number: 3, dir: "A", answer: "PUISI", clue: "Karya sastra terikat rima dan irama", row: 3, col: 4 },
-    { number: 3, dir: "D", answer: "PROSA", clue: "Karya sastra bebas, tidak terikat rima", row: 3, col: 4 },
-    { number: 4, dir: "A", answer: "ALUR", clue: "Rangkaian peristiwa dalam cerita", row: 4, col: 1 },
-    { number: 5, dir: "A", answer: "TEMA", clue: "Gagasan pokok sebuah cerita", row: 7, col: 1 },
-    { number: 5, dir: "D", answer: "TOKOH", clue: "Pelaku dalam sebuah cerita", row: 7, col: 1 },
-  ]},
-  { id: 7, title: "Imbuhan", subtitle: "Kata berimbuhan me-, di-, ke-an, ber-, per-an", mascot: "hazel", rows: 12, cols: 11, words: [
-    { number: 1, dir: "D", answer: "KEBAIKAN", clue: "Bentukan kata dasar 'baik' + imbuhan ke-an", row: 0, col: 4 },
-    { number: 2, dir: "A", answer: "PENULIS", clue: "Orang yang menulis, kata dasar 'tulis' + pe-", row: 1, col: 3 },
-    { number: 3, dir: "A", answer: "MAKANAN", clue: "Bentukan kata dasar 'makan' + akhiran -an", row: 3, col: 1 },
-    { number: 4, dir: "D", answer: "BERLARI", clue: "Bentukan kata dasar 'lari' + awalan ber-", row: 4, col: 10 },
-    { number: 5, dir: "D", answer: "DIBACA", clue: "Bentukan kata dasar 'baca' + awalan di-", row: 6, col: 7 },
-    { number: 6, dir: "A", answer: "MENULIS", clue: "Bentukan kata dasar 'tulis' + awalan me-", row: 7, col: 2 },
-    { number: 7, dir: "A", answer: "PELAJAR", clue: "Bentukan kata dasar 'ajar' + awalan pe-", row: 9, col: 4 },
-    { number: 8, dir: "A", answer: "PERSATUAN", clue: "Bentukan kata dasar 'satu' + imbuhan per-an", row: 11, col: 0 },
-  ]},
-  { id: 8, title: "EYD Lanjut", subtitle: "Istilah ejaan dan tanda baca", mascot: "alby", rows: 8, cols: 12, words: [
-    { number: 1, dir: "A", answer: "SERU", clue: "Tanda baca untuk kalimat perintah/seruan", row: 0, col: 8 },
-    { number: 2, dir: "D", answer: "EJAAN", clue: "Kaidah cara menuliskan kata dan kalimat", row: 0, col: 9 },
-    { number: 3, dir: "D", answer: "KAPITAL", clue: "Jenis huruf besar di awal kalimat/nama", row: 1, col: 6 },
-    { number: 4, dir: "D", answer: "HURUF", clue: "Lambang bunyi bahasa dalam tulisan", row: 2, col: 1 },
-    { number: 5, dir: "D", answer: "TITIK", clue: "Tanda baca untuk mengakhiri kalimat berita", row: 2, col: 3 },
-    { number: 6, dir: "A", answer: "TANDA", clue: "Simbol baca seperti titik, koma, dan seru", row: 2, col: 5 },
-    { number: 7, dir: "A", answer: "KUTIP", clue: "Tanda baca untuk mengapit kalimat langsung", row: 3, col: 0 },
-    { number: 8, dir: "A", answer: "MIRING", clue: "Gaya huruf untuk istilah asing, huruf ...", row: 4, col: 5 },
-    { number: 9, dir: "A", answer: "KOMA", clue: "Tanda baca untuk jeda pendek dalam kalimat", row: 6, col: 3 },
-  ]},
-  { id: 9, title: "Majas & Gaya Bahasa", subtitle: "Istilah majas dalam karya sastra", mascot: "alby", rows: 13, cols: 12, words: [
-    { number: 1, dir: "D", answer: "PARADOKS", clue: "Majas yang tampak bertentangan tapi mengandung kebenaran", row: 0, col: 0 },
-    { number: 2, dir: "D", answer: "SINDIRAN", clue: "Ungkapan tidak langsung untuk mengkritik", row: 0, col: 7 },
-    { number: 3, dir: "A", answer: "ANTITESIS", clue: "Majas yang memakai pasangan kata berlawanan", row: 1, col: 0 },
-    { number: 4, dir: "D", answer: "HIPERBOLA", clue: "Majas yang melebih-lebihkan sesuatu", row: 3, col: 5 },
-    { number: 5, dir: "A", answer: "SIMILE", clue: "Majas perbandingan pakai kata 'seperti' atau 'bagai'", row: 4, col: 4 },
-    { number: 6, dir: "D", answer: "REPETISI", clue: "Majas pengulangan kata untuk penegasan", row: 5, col: 2 },
-    { number: 7, dir: "A", answer: "IRONI", clue: "Majas sindiran yang berlawanan dari makna sebenarnya", row: 7, col: 4 },
-    { number: 8, dir: "A", answer: "METAFORA", clue: "Majas perbandingan langsung tanpa kata 'seperti'", row: 9, col: 0 },
-    { number: 9, dir: "A", answer: "ALEGORI", clue: "Majas kiasan berbentuk cerita utuh", row: 11, col: 5 },
-  ]},
-  { id: 10, title: "Ujian Akhir", subtitle: "Campuran semua tema — level terberat", mascot: "alby", rows: 11, cols: 14, words: [
-    { number: 1, dir: "D", answer: "IRONI", clue: "Majas sindiran yang berlawanan dari makna sebenarnya", row: 0, col: 4 },
-    { number: 2, dir: "A", answer: "PROSA", clue: "Karya sastra bebas, tidak terikat rima", row: 1, col: 3 },
-    { number: 3, dir: "D", answer: "MENULIS", clue: "Bentukan kata dasar 'tulis' + awalan me-", row: 1, col: 9 },
-    { number: 4, dir: "D", answer: "KAPITAL", clue: "Jenis huruf besar di awal kalimat/nama", row: 2, col: 0 },
-    { number: 5, dir: "D", answer: "SINONIM", clue: "Kata yang bermakna sama dengan kata lain", row: 3, col: 2 },
-    { number: 6, dir: "A", answer: "AMANAT", clue: "Pesan moral dalam sebuah cerita", row: 3, col: 6 },
-    { number: 6, dir: "D", answer: "ANTONIM", clue: "Kata yang bermakna berlawanan", row: 3, col: 6 },
-    { number: 7, dir: "A", answer: "PUISI", clue: "Karya sastra terikat rima dan irama", row: 4, col: 0 },
-    { number: 8, dir: "D", answer: "TOKOH", clue: "Pelaku dalam sebuah cerita", row: 6, col: 11 },
-    { number: 9, dir: "D", answer: "EJAAN", clue: "Kaidah cara menuliskan kata dan kalimat", row: 6, col: 13 },
-    { number: 10, dir: "A", answer: "NOMINA", clue: "Kata benda, contoh: meja, kucing", row: 7, col: 2 },
-    { number: 11, dir: "A", answer: "METAFORA", clue: "Majas perbandingan langsung tanpa kata 'seperti'", row: 9, col: 6 },
-  ]},
-];
 
 const THEME = ["#FF6B6B", "#F59E0B", "#10B981", "#38BDF8", "#8B5CF6"];
 const TIME_OPTIONS = [1, 2, 3, 5, 7, 10];
@@ -191,6 +115,58 @@ function saveSaved(s: Saved) {
   try { localStorage.setItem("tts-progress-v2", JSON.stringify(s)); } catch { /* abaikan */ }
 }
 
+/* Anti-ulang: kata yang baru muncul disimpan, dihindari main berikutnya.
+ * Dibatas 60 entri (disisakan 30 terakhir) biar tetap "ingat" tanpa menumpuk. */
+const SEEN_MAX = 60;
+const SEEN_KEEP = 30;
+function loadSeen(): string[] {
+  try {
+    const raw = localStorage.getItem("tts-seen-v2");
+    if (raw) {
+      const d = JSON.parse(raw);
+      return Array.isArray(d) ? d.filter((x) => typeof x === "string") : [];
+    }
+  } catch { /* abaikan */ }
+  return [];
+}
+function saveSeen(seen: string[]) {
+  try { localStorage.setItem("tts-seen-v2", JSON.stringify(seen)); } catch { /* abaikan */ }
+}
+
+/* Nyawa: maks 6, pulih 1 per 8 menit (pola Duolingo). Disimpan sebagai
+ * { hearts, updatedAt } — pemain yang kembali setelah lama otomatis penuh. */
+const HEARTS_KEY = "tts-hearts-v2";
+function loadHearts(): HeartsState {
+  try {
+    const raw = localStorage.getItem(HEARTS_KEY);
+    if (raw) {
+      const d = JSON.parse(raw);
+      if (typeof d.hearts === "number" && typeof d.updatedAt === "number") {
+        return regenHearts({ hearts: d.hearts, updatedAt: d.updatedAt });
+      }
+    }
+  } catch { /* abaikan */ }
+  return freshHearts();
+}
+function saveHearts(s: HeartsState) {
+  try { localStorage.setItem(HEARTS_KEY, JSON.stringify(s)); } catch { /* abaikan */ }
+}
+
+/* Rentetan harian: main tiap hari berurutan → streak; bonus XP di layar hasil. */
+function loadStreak(): StreakState {
+  try {
+    const raw = localStorage.getItem(STREAK_KEY);
+    if (raw) {
+      const d = JSON.parse(raw);
+      if (typeof d.streak === "number" && typeof d.lastDate === "string") return { lastDate: d.lastDate, streak: d.streak };
+    }
+  } catch { /* abaikan */ }
+  return { lastDate: "", streak: 0 };
+}
+function saveStreak(s: StreakState) {
+  try { localStorage.setItem(STREAK_KEY, JSON.stringify(s)); } catch { /* abaikan */ }
+}
+
 function starsFor(pct: number, hintsUsed: number): number {
   if (pct >= 100 && hintsUsed === 0) return 3;
   if (pct >= 100) return 2;
@@ -201,28 +177,52 @@ function starsFor(pct: number, hintsUsed: number): number {
 /* XP: dasar naik per level, dipotong tiap petunjuk, bonus 20% kalau 100%
  * akurasi & masih sisa >20% dari waktu yang dipilih. Dibatasi biar nggak
  * bisa digrinding di level rendah. */
-function calcXP(levelId: number, pct: number, hintsUsed: number, timeUsedSec: number, timeBudgetSec: number) {
-  const base = levelId * 8;
-  let xp = base * (pct / 100) - hintsUsed * 4;
+function calcXP(levelId: number, pct: number, hintsUsed: number, timeUsedSec: number, timeBudgetSec: number, combo: number, streakBonus = 0) {
+  const base = levelId * 12;
+  let xp = base * (pct / 100) - hintsUsed * 5 + combo * 3;
   const remainRatio = timeBudgetSec > 0 ? (timeBudgetSec - timeUsedSec) / timeBudgetSec : 0;
   if (pct === 100 && remainRatio > 0.2) xp *= 1.2;
-  const cap = levelId * 12;
-  return Math.max(0, Math.min(cap, Math.round(xp)));
+  const cap = levelId * 20;
+  return Math.max(0, Math.min(cap, Math.round(xp + streakBonus)));
 }
 function calcCoins(stars: number, levelId: number) {
   return stars * levelId;
 }
 
 export default function TekaTekiSilang() {
-  const [screen, setScreen] = useState<"start" | "levels" | "setup" | "game" | "result">("start");
+  const [screen, setScreen] = useState<"start" | "levels" | "setup" | "game" | "result" | "hearts">("start");
   const [saved, setSaved] = useState<Saved>({ unlocked: [1], best: {}, xp: 0, coins: 0 });
   const [puzzleId, setPuzzleId] = useState(1);
   const [timeMinutes, setTimeMinutes] = useState(5);
 
-  const puzzle = PUZZLES.find((p) => p.id === puzzleId) || PUZZLES[0];
+  // Ekonomi v3: nyawa (regen), rentetan harian, tier dari XP lokal.
+  const [heartsState, setHeartsState] = useState<HeartsState>(() => freshHearts());
+  const [nowMs, setNowMs] = useState(() => Date.now());
+  const [streak, setStreak] = useState<StreakState>({ lastDate: "", streak: 0 });
+  const [lastUnlocked, setLastUnlocked] = useState<number | null>(null);
+
+  // Mode soal: "Hari Ini" (seed harian, sama utk semua, ganti tiap hari) vs
+  // "Acak" (seed acak tiap main). Ganti seed → puzzle baru.
+  const [seed, setSeed] = useState(() => dailySeed(1));
+  const [seedMode, setSeedMode] = useState<"daily" | "acak">("daily");
+  const [seen, setSeen] = useState<string[]>([]);
+  const [combo, setCombo] = useState(0);
+  const [bestCombo, setBestCombo] = useState(0);
+  const [soundOn, setSoundOn] = useState(true);
+
+  const puzzle = useMemo(
+    () => buildPuzzle({ level: puzzleId, seed, avoidAnswers: seen }),
+    [puzzleId, seed, seen]
+  );
   const cells = useMemo(() => buildCells(puzzle), [puzzle]);
   const color = THEME[(puzzle.id - 1) % THEME.length];
   const mascot = puzzle.mascot;
+
+  // Pratinjau tiap level untuk layar pemilihan (seed harian, stabil).
+  const previews = useMemo(
+    () => TTS_LEVELS.map((l) => buildPuzzle({ level: l.level, seed: dailySeed(l.level) })),
+    []
+  );
 
   const [grid, setGrid] = useState<Record<string, string>>({});
   const [checked, setChecked] = useState<Record<string, "correct" | "wrong" | null>>({});
@@ -244,6 +244,8 @@ export default function TekaTekiSilang() {
   const xpSentRef = useRef(false);
   const timeBudgetRef = useRef(0);
   const elapsedRef = useRef(0);
+  const savedRef = useRef<Saved>({ unlocked: [1], best: {}, xp: 0, coins: 0 });
+  const streakRef = useRef(0);
 
   // NOTIFICATION 1.0 — game quiet mode: reward global tidak menutupi gameplay;
   // reset otomatis saat keluar game/unmount (tidak ada quiet tersisa).
@@ -252,7 +254,35 @@ export default function TekaTekiSilang() {
     return () => setQuiet(false)
   }, [screen]);
 
-  useEffect(() => { setSaved(loadSaved()); }, []);
+  useEffect(() => {
+    const sv = loadSaved();
+    const st = loadStreak();
+    setSaved(sv);
+    savedRef.current = sv;
+    setSeen(loadSeen());
+    setSoundOn(isSoundOn());
+    setHeartsState(loadHearts());
+    setStreak(st);
+    streakRef.current = st.streak;
+  }, []);
+
+  // Jaga savedRef tetap sinkron (dipakai finishGame untuk deteksi unlock).
+  useEffect(() => { savedRef.current = saved; }, [saved]);
+
+  // Tick tiap detik selama nyawa belum penuh (regen + countdown gate screen).
+  const liveHearts = regenHearts(heartsState, nowMs);
+  const heartCountdown = nextHeartInMs(liveHearts, nowMs);
+  const heartsFull = liveHearts.hearts >= HEARTS_MAX;
+  useEffect(() => {
+    if (heartsFull) return;
+    const t = setInterval(() => setNowMs(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, [heartsFull]);
+
+  // Persist nyawa setiap kali berubah (setelah regen/spend/bonus).
+  useEffect(() => {
+    if (heartsState.updatedAt > 0) saveHearts(heartsState);
+  }, [heartsState]);
 
   const wordsAt = useCallback((row: number, col: number) => {
     return puzzle.words.filter((w) => {
@@ -327,7 +357,7 @@ export default function TekaTekiSilang() {
   }, [mascot]);
 
   /* Cek tiap kata yang menyentuh sel yang baru diisi — kalau lengkap & benar
-   * dan belum pernah dirayakan, mascot merayakan. */
+   * dan belum pernah dirayakan, mascot merayakan + Kata Beruntun bertambah. */
   const checkWordCompletion = useCallback((row: number, col: number, nextGrid: Record<string, string>) => {
     const involved = wordsAt(row, col);
     for (const w of involved) {
@@ -338,9 +368,15 @@ export default function TekaTekiSilang() {
       if (allCorrect) {
         completedWordsRef.current.add(key);
         fireCheer();
+        sfx.climb(combo + 1);
+        setCombo((c) => {
+          const n = c + 1;
+          setBestCombo((b) => Math.max(b, n));
+          return n;
+        });
       }
     }
-  }, [wordsAt, wordCellKeys, fireCheer]);
+  }, [wordsAt, wordCellKeys, fireCheer, combo]);
 
   const onType = (row: number, col: number, raw: string) => {
     if (timeUp) return;
@@ -384,37 +420,64 @@ export default function TekaTekiSilang() {
     const pct = totalCells === 0 ? 0 : Math.round((correctCells / totalCells) * 100);
     const stars = viaTimeout ? Math.min(1, starsFor(pct, hintsUsed)) : starsFor(pct, hintsUsed);
     const timeUsed = timeBudgetRef.current - remainingSec;
-    const xp = calcXP(puzzle.id, pct, hintsUsed, timeUsed, timeBudgetRef.current);
+    const streakBonus = streakXpBonus(streakRef.current);
+    const xp = calcXP(puzzle.id, pct, hintsUsed, timeUsed, timeBudgetRef.current, bestCombo, streakBonus);
     const coins = calcCoins(stars, puzzle.id);
     setResult({ pct, stars, hints: hintsUsed, time: timeUsed, xp, coins });
-    if (pct === 100) setBigCelebrate(true);
+    if (pct === 100) { setBigCelebrate(true); sfx.win(); } else { sfx.gameover(); }
     setScreen("result");
 
-    setSaved((prev) => {
-      const next: Saved = { unlocked: [...prev.unlocked], best: { ...prev.best }, xp: prev.xp + xp, coins: prev.coins + coins };
+    // Nyawa: selesai sempurna memulihkan 1 nyawa (cap 5) — hadiah konsistensi.
+    if (pct === 100) {
+      setHeartsState((s) => {
+        const live = regenHearts(s, Date.now());
+        return { hearts: Math.min(HEARTS_MAX, live.hearts + 1), updatedAt: Date.now() };
+      });
+    }
+
+    // Deteksi level baru terbuka (dari savedRef yang selalu sinkron).
+    const prev = savedRef.current;
+    const willUnlock = pct === 100 && puzzle.id + 1 <= TOTAL_LEVELS && !prev.unlocked.includes(puzzle.id + 1);
+    setLastUnlocked(willUnlock ? puzzle.id + 1 : null);
+
+    setSaved((prevSaved) => {
+      const next: Saved = { unlocked: [...prevSaved.unlocked], best: { ...prevSaved.best }, xp: prevSaved.xp + xp, coins: prevSaved.coins + coins };
       if (pct === 100) {
         if (!next.best[puzzle.id] || pct > next.best[puzzle.id]) next.best[puzzle.id] = pct;
         const nid = puzzle.id + 1;
-        if (nid <= PUZZLES.length && !next.unlocked.includes(nid)) next.unlocked.push(nid);
+        if (nid <= TOTAL_LEVELS && !next.unlocked.includes(nid)) next.unlocked.push(nid);
       }
+      savedRef.current = next;
       saveSaved(next);
       return next;
+    });
+
+    // Anti-ulang: catat kata yang muncul, hindari di main berikutnya.
+    const usedAnswers = puzzle.words.map((w) => w.answer);
+    setSeen((prev) => {
+      const next = [...prev, ...usedAnswers];
+      const capped = next.length > SEEN_MAX ? next.slice(-SEEN_KEEP) : next;
+      saveSeen(capped);
+      return capped;
     });
 
     if (!xpSentRef.current && xp > 0) {
       xpSentRef.current = true;
       let supabaseId = "";
       try { supabaseId = JSON.parse(localStorage.getItem("bc-user") || "{}").state?.supabaseId || ""; } catch { /* abaikan */ }
+      // Skor nyata (bukan persen): server memakai skor/10 untuk XP, jadi persen
+      // 0-100 hanya memberi ≤10 XP. Sel ≈ 10 poin + bonus tuntas + bonus beruntun.
+      const serverScore = Math.min(1500, correctCells * 10 + (pct === 100 ? 200 : 0) + bestCombo * 5);
       fetch("/api/game/xp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          score: pct, correct: correctCells, wrong: totalCells - correctCells,
-          maxStreak: 0, xpEarned: xp, gameType: "TEKA_TEKI_SILANG", supabaseId,
+          score: serverScore, correct: correctCells, wrong: totalCells - correctCells,
+          maxStreak: bestCombo, xpEarned: xp, gameType: "TEKA_TEKI_SILANG", supabaseId,
         }),
       }).catch(() => { /* abaikan */ });
     }
-  }, [totalCells, correctCells, hintsUsed, remainingSec, puzzle.id]);
+  }, [totalCells, correctCells, hintsUsed, remainingSec, puzzle, bestCombo]);
 
   /* Timer countdown */
   useEffect(() => {
@@ -438,13 +501,21 @@ export default function TekaTekiSilang() {
     const next: Record<string, "correct" | "wrong" | null> = {};
     let allCorrect = true;
     let anyFilled = false;
+    let hasWrong = false;
     cells.forEach((c, k) => {
       if (!grid[k]) { next[k] = null; allCorrect = false; return; }
       anyFilled = true;
       if (grid[k] === c.letter) next[k] = "correct";
-      else { next[k] = "wrong"; allCorrect = false; }
+      else { next[k] = "wrong"; allCorrect = false; hasWrong = true; }
     });
     setChecked(next);
+    if (hasWrong) {
+      sfx.wrong();
+      haptic([80, 40, 80]);
+      setCombo(0);
+      // Sistem nyawa: jawaban salah = -1 nyawa (pola Duolingo).
+      setHeartsState((s) => spendHeart(s, Date.now()));
+    }
     if (allCorrect && anyFilled) finishGame(false);
   };
 
@@ -461,13 +532,40 @@ export default function TekaTekiSilang() {
     });
     setChecked((c) => ({ ...c, [emptyOrWrong]: "correct" }));
     setHintsUsed((h) => h + 1);
+    setCombo(0);
+    sfx.tap();
   };
 
-  const clearAll = () => { setGrid({}); setChecked({}); };
+  const clearAll = () => { setGrid({}); setChecked({}); setCombo(0); sfx.tap(); };
 
-  const openSetup = (id: number) => { setPuzzleId(id); setScreen("setup"); };
+  const pickMode = (mode: "daily" | "acak") => {
+    setSeedMode(mode);
+    setSeed(mode === "daily" ? dailySeed(puzzleId) : randomSeed());
+    sfx.tap();
+  };
+
+  const openSetup = (id: number) => {
+    setPuzzleId(id);
+    setSeedMode("daily");
+    setSeed(dailySeed(id));
+    setScreen("setup");
+  };
 
   const startPuzzle = () => {
+    // Gate nyawa: butuh ≥ 1 nyawa untuk main (regen 1/8 menit).
+    if (liveHearts.hearts < 1) {
+      sfx.wrong();
+      haptic([100]);
+      setScreen("hearts");
+      return;
+    }
+    // Rentetan harian: main hari ini (sekali per hari) → streak + bonus XP.
+    setStreak((s) => {
+      const next = bumpStreak(s);
+      streakRef.current = next.streak;
+      saveStreak(next);
+      return next;
+    });
     setGrid({});
     setChecked({});
     setSelected(null);
@@ -478,6 +576,8 @@ export default function TekaTekiSilang() {
     setBigCelebrate(false);
     setCelebrating(false);
     setCheerText(null);
+    setCombo(0);
+    setBestCombo(0);
     completedWordsRef.current = new Set();
     xpSentRef.current = false;
     elapsedRef.current = 0;
@@ -485,6 +585,7 @@ export default function TekaTekiSilang() {
     timeBudgetRef.current = budget;
     setRemainingSec(budget);
     setScreen("game");
+    sfx.start();
   };
 
   const chunky = "border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A]";
@@ -495,6 +596,16 @@ export default function TekaTekiSilang() {
 
   const fmtTime = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
   const timeLow = remainingSec <= 20 && remainingSec > 0;
+  const bigGrid = puzzle.cols > 12 || puzzle.rows > 12;
+  const cellSize = bigGrid ? "minmax(22px, 30px)" : "minmax(28px, 38px)";
+
+  // Tier pemain (dari XP lokal) + progress menuju tier berikutnya.
+  const tierInfo = tierFor(saved.xp);
+  const fmtCountdown = (ms: number) => {
+    const total = Math.max(0, Math.ceil(ms / 1000));
+    return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, "0")}`;
+  };
+  const nextHeartLabel = liveHearts.hearts >= HEARTS_MAX ? "Penuh" : fmtCountdown(heartCountdown);
 
   return (
     <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
@@ -538,7 +649,7 @@ export default function TekaTekiSilang() {
         </div>
       )}
 
-      <div className="relative max-w-2xl mx-auto px-4 py-5 min-h-full flex flex-col">
+      <div className={`relative mx-auto px-4 py-3 min-h-full flex flex-col ${screen === "game" ? "max-w-[1280px]" : "max-w-2xl"}`}>
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2.5">
@@ -550,11 +661,16 @@ export default function TekaTekiSilang() {
               <div className="text-[11px] font-semibold opacity-60 mt-0.5">Isi kotak, asah kosakata</div>
             </div>
           </div>
-          {screen === "game" && (
-            <div className={`rounded-xl border-[3px] border-[#161B3A] px-3 py-1.5 shadow-[3px_3px_0_#161B3A] font-extrabold text-sm flex items-center gap-1.5 ${timeLow ? "bg-[#FF6B6B] text-white" : "bg-white"}`}>
-              <Clock className="w-4 h-4" /> {fmtTime(remainingSec)}
-            </div>
-          )}
+          <div className="flex items-center gap-2">
+            <button className={`${btn} w-10 h-10 bg-white`} onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+              {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+            </button>
+            {screen === "game" && (
+              <div className={`rounded-xl border-[3px] border-[#161B3A] px-3 py-1.5 shadow-[3px_3px_0_#161B3A] font-extrabold text-sm flex items-center gap-1.5 ${timeLow ? "bg-[#FF6B6B] text-white" : "bg-white"}`}>
+                <Clock className="w-4 h-4" /> {fmtTime(remainingSec)}
+              </div>
+            )}
+          </div>
         </div>
 
         {screen !== "start" && screen !== "game" && (
@@ -565,14 +681,17 @@ export default function TekaTekiSilang() {
             <span className="flex items-center gap-1 bg-white border-[3px] border-[#161B3A] rounded-full px-2.5 py-1 shadow-[2px_2px_0_#161B3A]">
               <Coins className="w-3.5 h-3.5 text-yellow-600" /> {saved.coins} Koin
             </span>
+            <span className="flex items-center gap-1 bg-white border-[3px] border-[#161B3A] rounded-full px-2.5 py-1 shadow-[2px_2px_0_#161B3A]">
+              <Heart className="w-3.5 h-3.5 text-rose-500" fill="#F43F5E" /> {liveHearts.hearts}/{HEARTS_MAX}
+            </span>
           </div>
         )}
 
         {/* ---------- MULAI ---------- */}
         {screen === "start" && (
-          <div className={`tts-screen bg-white rounded-3xl ${chunky} p-6 text-center`}>
+          <div className={`tts-screen mx-auto w-full max-w-2xl bg-white rounded-3xl ${chunky} p-6 text-center`}>
             <span className="inline-block px-4 py-1.5 bg-[#38BDF8] text-white border-[3px] border-[#161B3A] rounded-full font-extrabold text-xs shadow-[3px_3px_0_#161B3A] mb-4">
-              10 Level Berjenjang · Ditemani Zelby, Hazel & Alby
+              12 Level Berjenjang · Ditemani Zelby, Hazel & Alby
             </span>
             <div className="flex justify-center gap-2 mb-4">
               <MascotFace mascot="zelby" celebrating={false} />
@@ -583,12 +702,59 @@ export default function TekaTekiSilang() {
             <p className="opacity-70 text-sm max-w-md mx-auto mb-5">
               Mulai dari grid kecil dan kata sederhana, makin naik level makin besar & berat soalnya. Pilih durasi waktu, isi kotak, dan biarkan maskotmu merayakan tiap kata yang benar!
             </p>
+
+            {/* Statistik pemain: tier, rentetan, nyawa */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-5 text-left">
+              <div className="bg-[#161B3A] text-white border-[3px] border-[#161B3A] rounded-2xl p-3 shadow-[4px_4px_0_#38BDF8]">
+                <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase opacity-70">
+                  <Trophy className="w-3.5 h-3.5 text-amber-300" /> Tier Pemain
+                </div>
+                <div className="font-extrabold text-base leading-tight mt-0.5">{tierInfo.tier.name}</div>
+                {tierInfo.next && (
+                  <>
+                    <div className="mt-1.5 h-1.5 rounded-full bg-white/20 overflow-hidden">
+                      <div className="h-full rounded-full bg-amber-300" style={{ width: `${Math.round(tierInfo.progress * 100)}%` }} />
+                    </div>
+                    <div className="text-[10px] font-bold opacity-70 mt-1">{saved.xp} XP · {tierInfo.next.name} di {tierInfo.next.min} XP</div>
+                  </>
+                )}
+              </div>
+              <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-2xl p-3 shadow-[4px_4px_0_#161B3A]">
+                <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase opacity-70">
+                  <Flame className="w-3.5 h-3.5 text-orange-600" /> Rentetan Harian
+                </div>
+                <div className="flex items-center gap-1 font-extrabold text-base leading-tight mt-0.5">
+                  {streak.streak > 0 ? (<><Flame className="w-4 h-4 text-orange-600" /> {streak.streak} hari</>) : "Mulai hari ini!"}
+                </div>
+                <div className="text-[10px] font-bold opacity-70 mt-1">
+                  {streak.streak >= 2 ? `Bonus +${streakXpBonus(streak.streak)} XP tiap main` : "Main 2 hari berturut untuk bonus XP"}
+                </div>
+              </div>
+              <div className="bg-white border-[3px] border-[#161B3A] rounded-2xl p-3 shadow-[4px_4px_0_#10B981]">
+                <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase opacity-70">
+                  <Heart className="w-3.5 h-3.5 text-rose-500" fill="#F43F5E" /> Nyawa
+                </div>
+                <div className="flex items-center gap-1 mt-1">
+                  {Array.from({ length: HEARTS_MAX }).map((_, i) => (
+                    <Heart key={i} className={`w-4 h-4 ${i < liveHearts.hearts ? "text-rose-500" : "text-gray-300"}`} fill={i < liveHearts.hearts ? "currentColor" : "none"} />
+                  ))}
+                  <span className="font-extrabold text-sm ml-1">{liveHearts.hearts}/{HEARTS_MAX}</span>
+                </div>
+                <div className="text-[10px] font-bold opacity-70 mt-1">
+                  {liveHearts.hearts >= HEARTS_MAX ? "Nyawa penuh — siap main!" : `Nyawa berikutnya: ${nextHeartLabel}`}
+                </div>
+              </div>
+            </div>
+
             <div className="flex flex-wrap justify-center gap-3">
               <button className={`${btn} px-6 py-3.5 bg-[#38BDF8] text-white text-lg`} onClick={() => setScreen("levels")}>
                 <Play className="w-5 h-5" /> Main Sekarang
               </button>
             </div>
-            <div className="grid grid-cols-3 gap-2.5 mt-6 text-center">
+            <p className="text-[11px] font-bold opacity-60 mt-3">
+              Soal dibangkitkan tiap main dari ~320 kata — main berulang tetap terasa baru.
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-4 text-center">
               <div className="bg-[#10B981] text-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
                 <div className="text-[10px] font-extrabold uppercase opacity-80">3 Bintang</div>
                 <div className="font-extrabold text-sm">Selesai, 0 petunjuk</div>
@@ -597,9 +763,61 @@ export default function TekaTekiSilang() {
                 <div className="text-[10px] font-extrabold uppercase opacity-70">XP & Koin</div>
                 <div className="font-extrabold text-sm">Naik tiap level</div>
               </div>
+              <div className="bg-[#8B5CF6] text-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
+                <div className="text-[10px] font-extrabold uppercase opacity-80">Nyawa</div>
+                <div className="font-extrabold text-sm">Salah = -1, pulih 8 mnt</div>
+              </div>
               <div className="bg-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
                 <div className="text-[10px] font-extrabold uppercase opacity-70">Bonus</div>
-                <div className="font-extrabold text-sm">Selesai cepat +20%</div>
+                <div className="font-extrabold text-sm">Cepat +20% & rentetan</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ---------- HASIL: SELEBRASI UNLOCK + STATISTIK PEMAIN ---------- */}
+        {screen === "result" && result && (
+          <div className="tts-screen mx-auto w-full max-w-2xl mb-4 flex flex-col gap-3">
+            {lastUnlocked && (
+              <div className="bg-[#161B3A] text-white rounded-3xl border-4 border-[#FBBF24] shadow-[6px_6px_0_#FBBF24] p-5 text-center tts-pop">
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <Trophy className="w-6 h-6 text-amber-300" />
+                  <span className="font-extrabold text-2xl">Level {lastUnlocked} Terbuka!</span>
+                </div>
+                <p className="text-white/80 text-sm">
+                  {TTS_LEVELS[lastUnlocked - 1]?.title} — {TTS_LEVELS[lastUnlocked - 1]?.subtitle}
+                </p>
+              </div>
+            )}
+            <div className="grid grid-cols-3 gap-2.5 text-left">
+              <div className="bg-[#161B3A] text-white border-[3px] border-[#161B3A] rounded-2xl p-3 shadow-[4px_4px_0_#38BDF8]">
+                <div className="flex items-center gap-1 text-[10px] font-extrabold uppercase opacity-70">
+                  <Trophy className="w-3.5 h-3.5 text-amber-300" /> Tier
+                </div>
+                <div className="font-extrabold text-sm leading-tight mt-0.5">{tierFor(saved.xp + result.xp).tier.name}</div>
+                {tierFor(saved.xp + result.xp).next && (
+                  <div className="text-[10px] font-bold opacity-70 mt-1">
+                    {saved.xp + result.xp} XP · {tierFor(saved.xp + result.xp).next!.min - (saved.xp + result.xp)} lagi
+                  </div>
+                )}
+              </div>
+              <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-2xl p-3 shadow-[4px_4px_0_#161B3A]">
+                <div className="flex items-center gap-1 text-[10px] font-extrabold uppercase opacity-70">
+                  <Flame className="w-3.5 h-3.5 text-orange-600" /> Rentetan
+                </div>
+                <div className="font-extrabold text-sm leading-tight mt-0.5">{streak.streak} hari</div>
+                <div className="text-[10px] font-bold opacity-70 mt-1">+{streakXpBonus(streak.streak)} XP bonus</div>
+              </div>
+              <div className="bg-white border-[3px] border-[#161B3A] rounded-2xl p-3 shadow-[4px_4px_0_#10B981]">
+                <div className="flex items-center gap-1 text-[10px] font-extrabold uppercase opacity-70">
+                  <Heart className="w-3.5 h-3.5 text-rose-500" fill="#F43F5E" /> Nyawa
+                </div>
+                <div className="flex items-center gap-1 mt-1">
+                  {Array.from({ length: HEARTS_MAX }).map((_, i) => (
+                    <Heart key={i} className={`w-3.5 h-3.5 ${i < liveHearts.hearts ? "text-rose-500" : "text-gray-300"}`} fill={i < liveHearts.hearts ? "currentColor" : "none"} />
+                  ))}
+                </div>
+                <div className="text-[10px] font-bold opacity-70 mt-1">{result.pct === 100 ? "+1 nyawa bonus!" : nextHeartLabel}</div>
               </div>
             </div>
           </div>
@@ -616,7 +834,7 @@ export default function TekaTekiSilang() {
               <div className="w-11" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {PUZZLES.map((p) => {
+              {previews.map((p) => {
                 const unlocked = saved.unlocked.includes(p.id);
                 const best = saved.best[p.id] || 0;
                 const st = starsFor(best, 0);
@@ -658,15 +876,46 @@ export default function TekaTekiSilang() {
 
         {/* ---------- ATUR WAKTU ---------- */}
         {screen === "setup" && (
-          <div className={`tts-screen bg-white rounded-3xl ${chunky} p-6 text-center`}>
+          <div className={`tts-screen mx-auto w-full max-w-2xl bg-white rounded-3xl ${chunky} p-6 text-center`}>
             <button className={`${btn} w-11 h-11 bg-white mb-4`} onClick={() => setScreen("levels")} aria-label="Kembali">
               <X className="w-5 h-5" />
             </button>
             <div className="flex justify-center mb-3">
               <MascotFace mascot={mascot} celebrating={false} />
-            </div>
-            <h2 className="font-extrabold text-2xl mb-1">{puzzle.title}</h2>
+            </div>            <h2 className="font-extrabold text-2xl mb-1">{puzzle.title}</h2>
             <p className="opacity-70 text-sm mb-5">{puzzle.subtitle} · {puzzle.rows}×{puzzle.cols} · {puzzle.words.length} kata</p>
+
+            <p className="font-extrabold text-sm mb-2">Mode soal</p>
+            <div className="flex flex-wrap justify-center gap-2 mb-3">
+              <button
+                onClick={() => pickMode("daily")}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border-4 border-[#161B3A] font-extrabold text-xs transition-transform ${
+                  seedMode === "daily" ? "shadow-none translate-x-1 translate-y-1 bg-[#38BDF8] text-white" : "bg-white shadow-[3px_3px_0_#161B3A] hover:-translate-x-0.5 hover:-translate-y-0.5"
+                }`}
+              >
+                <CalendarDays className="w-4 h-4" /> Hari Ini
+              </button>
+              <button
+                onClick={() => pickMode("acak")}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border-4 border-[#161B3A] font-extrabold text-xs transition-transform ${
+                  seedMode === "acak" ? "shadow-none translate-x-1 translate-y-1 bg-[#8B5CF6] text-white" : "bg-white shadow-[3px_3px_0_#161B3A] hover:-translate-x-0.5 hover:-translate-y-0.5"
+                }`}
+              >
+                <Shuffle className="w-4 h-4" /> Acak
+              </button>
+              {seedMode === "acak" && (
+                <button
+                  onClick={() => { setSeed(randomSeed()); sfx.tap(); }}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border-4 border-[#161B3A] bg-[#FBBF24] font-extrabold text-xs shadow-[3px_3px_0_#161B3A] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-transform"
+                >
+                  <RefreshCw className="w-4 h-4" /> Soal Lain
+                </button>
+              )}
+            </div>
+            <p className="text-[11px] font-bold opacity-60 -mt-1 mb-4">
+              {seedMode === "daily" ? "Puzzle sama untuk semua pemain, ganti tiap hari." : "Kombinasi kata beda tiap main — tanpa pengulangan."}
+            </p>
+
             <p className="font-extrabold text-sm mb-3">Pilih durasi mengerjakan</p>
             <div className="flex flex-wrap justify-center gap-2 mb-6">
               {TIME_OPTIONS.map((m) => (
@@ -686,25 +935,109 @@ export default function TekaTekiSilang() {
             <button className={`${btn} px-8 py-3.5 text-white text-lg`} style={{ background: color }} onClick={startPuzzle}>
               <Play className="w-5 h-5" /> Mulai ({timeMinutes} menit)
             </button>
+            <p className="text-[11px] font-bold opacity-60 mt-2 flex items-center justify-center gap-1">
+              <Heart className="w-3.5 h-3.5 text-rose-500" fill="#F43F5E" />
+              {liveHearts.hearts >= 1 ? `Siap main dengan ${liveHearts.hearts} nyawa — salah saat Cek Jawaban = -1` : "Nyawa habis — pulih dulu sebelum main lagi"}
+            </p>
+          </div>
+        )}
+
+        {/* ---------- NYAWA HABIS ---------- */}
+        {screen === "hearts" && (
+          <div className={`tts-screen mx-auto w-full max-w-2xl bg-white rounded-3xl ${chunky} p-6 text-center`}>
+            <div className="flex justify-center mb-3">
+              <div className="w-20 h-20 rounded-3xl bg-[#FF6B6B] border-4 border-[#161B3A] shadow-[5px_5px_0_#161B3A] flex items-center justify-center">
+                <Heart className="w-10 h-10 text-white" fill="currentColor" />
+              </div>
+            </div>
+            <h2 className="font-extrabold text-3xl mb-2">Nyawa Habis!</h2>
+            <p className="opacity-70 text-sm max-w-sm mx-auto mb-5">
+              Jawaban yang salah mengurangi nyawa. Nyawa pulih <b>1 setiap {Math.round(HEART_REGEN_MS / 60000)} menit</b> — selesaikan sempurna untuk bonus +1 nyawa.
+            </p>
+
+            <div className="flex justify-center gap-1.5 mb-3">
+              {Array.from({ length: HEARTS_MAX }).map((_, i) => (
+                <Heart key={i} className={`w-7 h-7 ${i < liveHearts.hearts ? "text-rose-500" : "text-gray-300"}`} fill={i < liveHearts.hearts ? "currentColor" : "none"} />
+              ))}
+            </div>
+            <div className="inline-block bg-[#161B3A] text-white rounded-2xl px-6 py-3 shadow-[5px_5px_0_#FBBF24] mb-6">
+              <div className="text-[10px] font-extrabold uppercase tracking-wider opacity-70">Nyawa berikutnya</div>
+              <div className="font-extrabold text-3xl leading-none">{nextHeartLabel}</div>
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-3">
+              <button
+                className={`${btn} px-5 py-3 text-white`}
+                style={{ background: liveHearts.hearts >= 1 ? color : "#9CA3AF" }}
+                disabled={liveHearts.hearts < 1}
+                onClick={() => openSetup(puzzleId)}
+              >
+                <Play className="w-4 h-4" /> {liveHearts.hearts >= 1 ? "Nyawa Pulih — Main!" : "Tunggu Nyawa…"}
+              </button>
+              <button className={`${btn} px-5 py-3 bg-white`} onClick={() => setScreen("levels")}>
+                Pilih Level
+              </button>
+            </div>
+            <p className="text-[11px] font-bold opacity-60 mt-4">
+              Selesaikan sempurna untuk bonus +1 nyawa — pulih otomatis 1 per {Math.round(HEART_REGEN_MS / 60000)} menit.
+            </p>
           </div>
         )}
 
         {/* ---------- MAIN ---------- */}
         {screen === "game" && (
-          <div className="tts-screen flex flex-col items-center gap-3">
-            {/* HUD */}
-            <div className="w-full grid grid-cols-3 gap-2">
-              <div className="rounded-xl border-[3px] border-[#161B3A] bg-[#161B3A] text-white px-3 py-1.5 shadow-[3px_3px_0_#161B3A]">
-                <div className="text-[9px] font-extrabold uppercase opacity-70">Terisi</div>
-                <div className="font-extrabold text-lg leading-none">{filledCells}/{totalCells}</div>
+          <div className="tts-screen flex flex-col items-center gap-3 w-full max-w-[1100px] mx-auto">
+            {/* HUD 5 tile — DNA Kuis Tempur: Nyawa / Level / Rentetan / Terisi / Waktu */}
+            <div className="w-full grid grid-cols-5 gap-2">
+              <div className={`rounded-xl border-[3px] border-[#161B3A] bg-[#161B3A] text-white px-2 py-2 shadow-[3px_3px_0_#161B3A] ${liveHearts.hearts === 0 ? "opacity-60" : ""}`}>
+                <div className="text-[8px] font-extrabold uppercase opacity-70">Nyawa</div>
+                <div className="flex items-center gap-1 text-lg font-extrabold leading-none">
+                  <Heart className="w-4 h-4 text-rose-400" fill="#FB7185" /> {liveHearts.hearts}/{HEARTS_MAX}
+                </div>
               </div>
-              <div className="rounded-xl border-[3px] border-[#161B3A] px-3 py-1.5 shadow-[3px_3px_0_#161B3A]" style={{ background: color, color: "#fff" }}>
-                <div className="text-[9px] font-extrabold uppercase opacity-80">Level {puzzle.id}</div>
-                <div className="font-extrabold text-sm leading-none truncate">{puzzle.title}</div>
+              <div className="rounded-xl border-[3px] border-[#161B3A] bg-white px-2 py-2 shadow-[3px_3px_0_#161B3A]">
+                <div className="text-[8px] font-extrabold uppercase opacity-70">Level</div>
+                <div className="text-lg font-extrabold leading-none">{puzzle.id}<span className="text-[10px] font-bold opacity-60 ml-1">{puzzle.title}</span></div>
               </div>
-              <div className="rounded-xl border-[3px] border-[#161B3A] bg-[#FBBF24] px-3 py-1.5 shadow-[3px_3px_0_#161B3A]">
-                <div className="text-[9px] font-extrabold uppercase opacity-70">Petunjuk</div>
-                <div className="font-extrabold text-lg leading-none">{hintsUsed}</div>
+              <div className={`rounded-xl border-[3px] border-[#161B3A] px-2 py-2 shadow-[3px_3px_0_#161B3A] ${combo > 1 ? "bg-orange-300" : "bg-white opacity-70"}`}>
+                <div className="text-[8px] font-extrabold uppercase opacity-70">Rentetan</div>
+                <div className="text-lg font-extrabold leading-none">{combo}x</div>
+              </div>
+              <div className="rounded-xl border-[3px] border-[#161B3A] px-2 py-2 shadow-[3px_3px_0_#161B3A]" style={{ background: color, color: "#fff" }}>
+                <div className="text-[8px] font-extrabold uppercase opacity-80">Terisi</div>
+                <div className="text-lg font-extrabold leading-none">{filledCells}<span className="text-[10px] font-bold opacity-70">/{totalCells}</span></div>
+              </div>
+              <div className={`rounded-xl border-[3px] border-[#161B3A] bg-violet-500 px-2 py-2 text-white shadow-[3px_3px_0_#161B3A] ${timeLow ? "bg-rose-500" : ""}`}>
+                <div className="text-[8px] font-extrabold uppercase opacity-80">Waktu</div>
+                <div className="text-lg font-extrabold leading-none">{fmtTime(remainingSec)}</div>
+              </div>
+            </div>
+
+            {/* Bar sisa waktu — DNA Kuis Tempur */}
+            <div className="w-full">
+              <div className={`mb-1 flex items-center justify-between text-[11px] font-extrabold ${timeLow ? "text-rose-600" : "text-[#161B3A]/70"}`}>
+                <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> Sisa waktu</span>
+                <span>{fmtTime(remainingSec)}</span>
+              </div>
+              <div className="h-2 overflow-hidden rounded-full border-2 border-[#161B3A]/20 bg-[#161B3A]/10">
+                <span
+                  className={`block h-full rounded-full transition-all duration-1000 ease-linear ${timeLow ? "bg-rose-500" : "bg-violet-400"}`}
+                  style={{ width: `${timeBudgetRef.current > 0 ? (remainingSec / timeBudgetRef.current) * 100 : 0}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Progres ketepatan + kata beruntun */}
+            <div className="w-full flex items-center gap-2">
+              <div className="flex-1 h-3 rounded-full bg-[#161B3A] overflow-hidden border-2 border-[#161B3A]">
+                <div
+                  className="h-full rounded-full transition-all duration-300"
+                  style={{ width: `${totalCells ? (correctCells / totalCells) * 100 : 0}%`, background: color }}
+                />
+              </div>
+              <div className="shrink-0 rounded-full border-[3px] border-[#161B3A] bg-white px-2.5 py-1 shadow-[2px_2px_0_#161B3A] font-extrabold text-[11px] flex items-center gap-1">
+                <Heart className={`w-3.5 h-3.5 ${combo >= 2 ? "text-orange-500" : "text-gray-300"}`} />
+                {combo >= 2 ? `Beruntun ×${combo}` : `${Math.round((correctCells / Math.max(1, totalCells)) * 100)}% tepat`}
               </div>
             </div>
 
@@ -740,8 +1073,8 @@ export default function TekaTekiSilang() {
               <div
                 className="grid mx-auto bg-[#161B3A] rounded-xl border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A] p-1 gap-[3px]"
                 style={{
-                  gridTemplateColumns: `repeat(${puzzle.cols}, minmax(28px, 38px))`,
-                  gridTemplateRows: `repeat(${puzzle.rows}, minmax(28px, 38px))`,
+                  gridTemplateColumns: `repeat(${puzzle.cols}, ${cellSize})`,
+                  gridTemplateRows: `repeat(${puzzle.rows}, ${cellSize})`,
                   width: "fit-content",
                 }}
               >
@@ -775,7 +1108,8 @@ export default function TekaTekiSilang() {
                           inputMode="text"
                           autoComplete="off"
                           disabled={timeUp}
-                          className="tts-cell w-full h-full bg-transparent text-center font-extrabold text-[14px] outline-none text-[#161B3A]"
+                          style={{ fontSize: bigGrid ? 12 : 14 }}
+                          className="tts-cell w-full h-full bg-transparent text-center font-extrabold outline-none text-[#161B3A]"
                         />
                       </div>
                     );
@@ -888,13 +1222,19 @@ export default function TekaTekiSilang() {
                 <Trophy className="w-4 h-4 inline mr-1 text-violet-500" />
                 Waktu dipakai <b>{fmtTime(result.time)}</b>
               </div>
+              {bestCombo >= 2 && (
+                <div className="bg-white border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
+                  <Flame className="w-4 h-4 inline mr-1 text-orange-500" />
+                  Beruntun terbaik <b>×{bestCombo}</b>
+                </div>
+              )}
             </div>
 
             <div className="flex flex-wrap justify-center gap-3">
               <button className={`${btn} px-5 py-3 bg-white`} onClick={() => setScreen("setup")}>
                 <RotateCcw className="w-4 h-4" /> Ulangi
               </button>
-              {result.pct === 100 && puzzleId < PUZZLES.length && (
+              {result.pct === 100 && puzzleId < TOTAL_LEVELS && (
                 <button className={`${btn} px-5 py-3 bg-[#38BDF8] text-white`} onClick={() => { openSetup(puzzleId + 1); }}>
                   Level Berikutnya <ChevronRight className="w-4 h-4" />
                 </button>

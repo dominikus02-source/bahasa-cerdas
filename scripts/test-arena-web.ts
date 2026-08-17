@@ -208,6 +208,9 @@ function main() {
         "app/api/guru/penugasan/[id]/nilai-praktik/route.ts",
         "app/api/guru/kelasku/[id]/insight/route.ts",
         "app/api/murid/quiz/[id]/route.ts",
+        // Fase rilis Teka-Teki Silang: cap skor TEKA_TEKI_SILANG di MAX_SCORE_PER_GAME
+        // (pengaman skor mengada-ada untuk gameType baru yang dirilis ke hub).
+        "app/api/game/xp/route.ts",
       ]);
       const diff = execSync(`git diff --name-only HEAD -- app/api/`, { encoding: "utf8", cwd: process.cwd() })
         .trim().split("\n").filter(Boolean)

@@ -167,6 +167,7 @@
     "test:avatar-unlock": "tsx scripts/test-avatar-unlock.ts",
     "test:game-question-quality": "npx tsx scripts/test-game-question-quality.ts",
     "test:game-question-shuffle": "npx tsx scripts/test-game-question-shuffle.ts",
+    "test:tts-generator": "npx tsx scripts/test-tts-generator.ts",
     "test:kuis-tempur-progression": "npx tsx scripts/test-kuis-tempur-progression.ts",
     "test:social-proof": "npx tsx scripts/test-social-proof.ts",
     "seed:gamification:dry-run": "npx tsx scripts/seed-gamification-data.ts",
