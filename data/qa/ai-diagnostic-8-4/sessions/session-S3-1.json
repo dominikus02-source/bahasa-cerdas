@@ -1,0 +1,13 @@
+{
+  "sessionId": "4d6078a4-df0e-4354-8cf3-57a2e56c77ad",
+  "archetype": "S3",
+  "targetSize": 10,
+  "startedAt": "2026-08-17T21:34:20.285Z",
+  "durationMs": 609,
+  "aiCalls": 1,
+  "items": [],
+  "profile": null,
+  "bankFallbackNeeded": true,
+  "anyGenerationFailed": true,
+  "slot0Warnings": []
+}

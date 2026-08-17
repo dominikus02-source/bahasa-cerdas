@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-08-17T21:40:44.676Z",
+  "pass": 20,
+  "fail": 5,
+  "issues": [
+    ">=5 sesi dengan butir AI nyata",
+    ">=50 butir AI nyata total",
+    "semua archetype terwakili",
+    "tidak ada butir untuk rubrik",
+    "stress test tanpa data"
+  ],
+  "sessions": 10,
+  "realSessions": 0,
+  "realItems": 0,
+  "avgScorePerDimension": {
+    "naturalness": 0,
+    "clarity": 0,
+    "age": 0,
+    "options": 0,
+    "distractor": 0,
+    "diagnosticValue": 0,
+    "ambiguity": 0,
+    "guessability": 0
+  }
+}

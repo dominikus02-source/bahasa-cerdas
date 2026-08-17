@@ -1,0 +1,13 @@
+{
+  "sessionId": "cddce974-b489-4356-b8df-d016987e65bb",
+  "archetype": "S5",
+  "targetSize": 10,
+  "startedAt": "2026-08-17T21:34:33.833Z",
+  "durationMs": 629,
+  "aiCalls": 1,
+  "items": [],
+  "profile": null,
+  "bankFallbackNeeded": true,
+  "anyGenerationFailed": true,
+  "slot0Warnings": []
+}

@@ -87,6 +87,10 @@ interface DiagnosticSession {
   abilityProfile?: AbilityProfileSummary | null;
   fallback?: boolean;
   fallbackReason?: string | null;
+  adaptive?: boolean;
+  sessionSize?: number;
+  answeredCount?: number;
+  remaining?: number;
   composition?: {
     requested?: { skill: string; label: string; count: number }[];
     delivered?: { skill: string; label: string; count: number; questionTypes: string[] }[];
@@ -273,6 +277,7 @@ export default function DiagnosticSessionPage({ params }: { params: Promise<{ se
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [pendingAdaptive, setPendingAdaptive] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -281,10 +286,11 @@ export default function DiagnosticSessionPage({ params }: { params: Promise<{ se
       .then((data) => {
         if (!alive) return;
         setSession(data);
-        if (data.status === "COMPLETED" && data.result) {
+if (data.status === "COMPLETED" && data.result) {
           setFinalResult(data.result);
           if (data.abilityProfile) setFinalAbility(data.abilityProfile);
         }
+        setPendingAdaptive(Boolean(data.adaptive && data.status === "IN_PROGRESS" && (!data.questions || data.questions.length === 0) && data.remaining === 0));
       })
       .catch(() => alive && setError("Tes awal belum bisa dimuat."))
       .finally(() => alive && setLoading(false));
@@ -294,6 +300,9 @@ export default function DiagnosticSessionPage({ params }: { params: Promise<{ se
   }, [sessionId]);
 
   const question = session?.questions[index];
+
+  const progressCount = session?.adaptive ? session.answeredCount ?? 0 : session ? index + 1 : 0;
+  const progressTotal = session ? (session.adaptive ? (session.sessionSize ?? session.questions.length) : session.questions.length) : 1;
 
   async function submitAnswer(value: string | number) {
     if (!session || !question || submitting || result !== null || finalResult) return;
@@ -307,6 +316,13 @@ export default function DiagnosticSessionPage({ params }: { params: Promise<{ se
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Jawaban belum tersimpan.");
       setResult(Boolean(data.correct));
+      if (data.adaptive && data.nextQuestion) {
+        setSession((previous) =>
+          previous ? { ...previous, questions: [data.nextQuestion], answeredCount: (previous.answeredCount ?? 0) + 1, remaining: data.remaining } : previous
+        );
+        setIndex(0);
+        setAnswer("");
+      }
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "Jawaban belum tersimpan.");
     } finally {
@@ -316,7 +332,8 @@ export default function DiagnosticSessionPage({ params }: { params: Promise<{ se
 
   async function nextQuestion() {
     if (!session) return;
-    if (index + 1 >= session.questions.length) {
+    const lastQuestion = !session.adaptive ? index + 1 >= session.questions.length : Boolean(session.remaining === 0 || !session.questions[0]);
+    if (lastQuestion) {
       try {
         const response = await fetch("/api/player/diagnostic", {
           method: "POST",
@@ -342,6 +359,32 @@ export default function DiagnosticSessionPage({ params }: { params: Promise<{ se
 
   if (loading) {
     return <div className="min-h-[60vh] flex items-center justify-center"><Loader2 className="animate-spin text-violet-600" /></div>;
+  }
+
+  if (pendingAdaptive) {
+    return (
+      <main className="mx-auto max-w-2xl px-5 py-6 md:py-10">
+        <div className="flex items-center justify-between gap-3 mb-8">
+          <button type="button" onClick={() => router.push("/murid/beranda")} className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white" aria-label="Kembali ke Beranda">
+            <ArrowLeft size={20} />
+          </button>
+          <div className="text-center min-w-0">
+            <p className="text-[10px] uppercase tracking-[0.18em] text-violet-600 dark:text-violet-300">Tes Awal</p>
+            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">Sesi Selesai</p>
+          </div>
+          <span className="text-xs text-slate-500">{session?.answeredCount ?? 0}/{session?.sessionSize ?? "?"}</span>
+        </div>
+        <section className="rounded-3xl border border-slate-200/70 bg-white/80 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900/70 md:p-8">
+          <p className="text-sm text-slate-600 dark:text-slate-300">
+            Semua butir sesi ini sudah terjawab. Lihat hasil kemampuanmu sekarang.
+          </p>
+          <button type="button" onClick={nextQuestion} className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-violet-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-violet-700">
+            Lihat Hasil
+            <ArrowRight size={16} />
+          </button>
+        </section>
+      </main>
+    );
   }
 
   if (error || !session || !question) {
@@ -409,11 +452,11 @@ export default function DiagnosticSessionPage({ params }: { params: Promise<{ se
           <p className="text-[10px] uppercase tracking-[0.18em] text-violet-600 dark:text-violet-300">Tes Awal</p>
           <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">{session.actionTitle || "Kenali Kemampuanmu"}</p>
         </div>
-        <span className="text-xs text-slate-500">{index + 1}/{session.questions.length}</span>
+        <span className="text-xs text-slate-500">{Math.max(progressCount, 1)}/{progressTotal}</span>
       </div>
 
       <div className="h-1.5 rounded-full bg-slate-200 dark:bg-slate-800 mb-8 overflow-hidden">
-        <div className="h-full rounded-full bg-violet-600 transition-all" style={{ width: `${((index + 1) / session.questions.length) * 100}%` }} />
+        <div className="h-full rounded-full bg-violet-600 transition-all" style={{ width: `${(Math.max(progressCount, 1) / Math.max(progressTotal, 1)) * 100}%` }} />
       </div>
 
       <section className="rounded-3xl border border-slate-200/70 bg-white/80 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900/70 md:p-8">
@@ -449,7 +492,7 @@ export default function DiagnosticSessionPage({ params }: { params: Promise<{ se
               {result ? "Jawabanmu benar." : "Belum tepat. Jangan khawatir — hasil ini hanya untuk mengenali kemampuanmu."}
             </div>
             <button type="button" onClick={nextQuestion} className="mt-3 inline-flex items-center gap-2 font-semibold underline underline-offset-4">
-              {index + 1 >= session.questions.length ? "Lihat Hasil" : "Soal Berikutnya"}
+              {!session.adaptive ? (index + 1 >= session.questions.length ? "Lihat Hasil" : "Soal Berikutnya") : (session.remaining === 0 || !session.questions[0] ? "Lihat Hasil" : "Soal Berikutnya")}
               <ArrowRight size={15} />
             </button>
           </div>

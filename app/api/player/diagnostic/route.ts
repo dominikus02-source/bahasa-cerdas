@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import type { LearningSkillType } from "@prisma/client";
+import type { LearningSkillType, Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
 import { getLearnerState, isLearnerStateInfraUnavailable } from "@/lib/learner-state/service";
@@ -14,6 +14,25 @@ import { detectAssessmentState, ASSESSMENT_STATE_LABELS } from "@/lib/diagnostic
 import { computeAbilityProfile, normalizeEvidence } from "@/lib/diagnostic/ability";
 import { selectDiagnosticQuestions, summarizeComposition } from "@/lib/diagnostic/selector";
 import { buildPersonalizedAction } from "@/lib/diagnostic/personalization";
+import {
+  AI_DIAGNOSTIC_ANSWER_RATE_LIMIT,
+  AI_DIAGNOSTIC_DEFAULT_SIZE,
+  AI_DIAGNOSTIC_SELECTION_VERSION,
+  AI_DIAGNOSTIC_SESSION_MINUTES,
+  AI_DIAGNOSTIC_SOURCE,
+  aiDiagnosticEnabled,
+  AI_DIAGNOSTIC_ALLOWED_SIZES,
+} from "@/lib/diagnostic-ai/config";
+import { generateAiDiagnosticQuestion } from "@/lib/diagnostic-ai/generator";
+import {
+  buildInitialState,
+  canCompleteHonestly,
+  nextPlanForSlot,
+  summarizeSessionEvidence,
+} from "@/lib/diagnostic-ai/controller";
+import { loadAiSessionState, saveAiSessionState, evidenceMetadata } from "@/lib/diagnostic-ai/persist";
+import { pickBankFallbackCandidate, toFallbackAiItem } from "@/lib/diagnostic-ai/bank-fallback";
+import { toPublicQuestion } from "@/lib/diagnostic-ai/types";
 import {
   DIAGNOSTIC_ALLOWED_SIZES,
   DIAGNOSTIC_DEFAULT_SIZE,
@@ -185,6 +204,270 @@ async function buildSessionProfile(userId: string, source: string, sessionId: st
   return { profile: withUntestedSkills(profile, Object.keys(DIAGNOSTIC_SKILL_LABELS)), abilityProfile };
 }
 
+function isAiSession(session: { source: string }): boolean {
+  return session.source === AI_DIAGNOSTIC_SOURCE;
+}
+
+async function bankFallbackFor(
+  plan: { skill: string; difficulty: string },
+  avoidIds: string[]
+): Promise<ReturnType<typeof toFallbackAiItem> | null> {
+  const pool = await buildDiagnosticCandidates();
+  if (pool.length === 0) return null;
+  const candidate = pickBankFallbackCandidate(pool, plan, avoidIds);
+  if (!candidate) return null;
+  const question = await db.soal.findUnique({
+    where: { kodeSoal: candidate.id },
+    select: { correctAnswer: true },
+  });
+  return toFallbackAiItem(candidate, String(question?.correctAnswer ?? "0"));
+}
+
+async function startAiDiagnostic(userId: string, size: number): Promise<NextResponse | null> {
+  const plan = nextPlanForSlot(
+    { v: 1, mode: "AI-ADAPTIVE", targetSize: size, order: [], items: {}, usedTopics: [], usedSubskills: [], genFailed: false },
+    0
+  );
+  const generated = await generateAiDiagnosticQuestion(
+    plan,
+    { avoidStems: [], avoidSubskills: [], usedTopics: [], recentSummary: "" },
+    []
+  );
+  let first = generated.item;
+  if (!first) {
+    first = await bankFallbackFor(plan, []);
+  }
+  if (!first) return null;
+
+  const state = buildInitialState(size, first);
+  const reasonText =
+    "Tes awal adaptif: soal berikutnya dipilih berdasarkan jawabanmu sebelumnya. Jawab sebisamu — hasilnya dipakai untuk menyesuaikan latihan.";
+  const session = await db.adaptivePracticeSession.create({
+    data: {
+      userId,
+      source: AI_DIAGNOSTIC_SOURCE,
+      selectionVersion: AI_DIAGNOSTIC_SELECTION_VERSION,
+      targetSkill: null,
+      targetSubskill: null,
+      targetDifficulty: null,
+      reasonCode: DIAGNOSTIC_REASON_CODE,
+      reasonText,
+      questionIds: state as unknown as Prisma.InputJsonValue,
+      status: "IN_PROGRESS",
+      expiresAt: new Date(Date.now() + AI_DIAGNOSTIC_SESSION_MINUTES * 60 * 1000),
+    },
+  });
+
+  return NextResponse.json({
+    mode: "DIAGNOSTIC",
+    actionType: "DIAGNOSTIC",
+    adaptive: true,
+    sessionId: session.id,
+    selectionVersion: AI_DIAGNOSTIC_SELECTION_VERSION,
+    sessionSize: state.targetSize,
+    answeredCount: 0,
+    remaining: state.order.length,
+    reasonText,
+    questions: [toPublicQuestion(first)],
+  });
+}
+
+async function answerAiDiagnostic(
+  userId: string,
+  session: { id: string; source: string; reasonCode: string },
+  body: JsonRecord
+): Promise<NextResponse> {
+  const questionId = typeof body.questionId === "string" ? body.questionId : "";
+  const answer = typeof body.answer === "string" || typeof body.answer === "number" ? body.answer : null;
+  if (!questionId || answer === null) {
+    return NextResponse.json({ error: "sessionId, questionId, dan answer wajib diisi" }, { status: 400 });
+  }
+
+  const state = await loadAiSessionState(session.id, userId);
+  if (!state) {
+    return NextResponse.json({ error: "Sesi tidak ditemukan atau data soal hilang" }, { status: 409 });
+  }
+  if (!state.order.includes(questionId)) {
+    return NextResponse.json({ error: "Soal bukan bagian dari sesi" }, { status: 403 });
+  }
+  const item = state.items[questionId];
+  if (!item) {
+    return NextResponse.json({ error: "Data soal tidak ditemukan" }, { status: 409 });
+  }
+
+  const correct = String(answer) === String(item.correctAnswer);
+  await upsertLearningEvidence({
+    userId,
+    source: session.source,
+    activityId: session.id,
+    questionId,
+    selectedAnswer: String(answer),
+    isCorrect: correct,
+    score: correct ? 1 : 0,
+    skill: item.skill as LearningSkillType,
+    difficulty: item.difficulty as DifficultyId | null,
+    metadata: evidenceMetadata(),
+  });
+
+  state.order = state.order.filter((id) => id !== questionId);
+  const answeredCount = state.targetSize - state.order.length;
+
+  if (state.order.length > 0) {
+    const next = state.items[state.order[0]];
+    await saveAiSessionState(session.id, userId, state);
+    return NextResponse.json({
+      ok: true,
+      sessionId: session.id,
+      questionId,
+      correct,
+      recorded: true,
+      adaptive: true,
+      nextQuestion: next ? toPublicQuestion(next) : null,
+      remaining: state.order.length,
+      done: false,
+      reasonCode: "ANSWERED",
+    });
+  }
+
+  if (answeredCount >= state.targetSize) {
+    await saveAiSessionState(session.id, userId, state);
+    return NextResponse.json({
+      ok: true,
+      sessionId: session.id,
+      questionId,
+      correct,
+      recorded: true,
+      adaptive: true,
+      nextQuestion: null,
+      remaining: 0,
+      done: true,
+      reasonCode: "TARGET_REACHED",
+    });
+  }
+
+  const plan = nextPlanForSlot(state, answeredCount);
+  let next: ReturnType<typeof toPublicQuestion> | null = null;
+  let reasonCode: "ANSWERED" | "GENERATION_UNAVAILABLE" = "ANSWERED";
+
+  if (state.genFailed) {
+    const fallback = await bankFallbackFor(plan, Object.keys(state.items));
+    if (fallback) {
+      state.items[fallback.id] = fallback;
+      state.order = [fallback.id];
+      if (fallback.topic) state.usedTopics.push(fallback.topic);
+      if (fallback.subskill) state.usedSubskills.push(fallback.subskill);
+      next = toPublicQuestion(fallback);
+    } else {
+      reasonCode = "GENERATION_UNAVAILABLE";
+    }
+  } else {
+    const evidence = await loadSessionEvidence(userId, session.source, session.id);
+    const generated = await generateAiDiagnosticQuestion(
+      plan,
+      {
+        avoidStems: Object.values(state.items).map((value) => value.text),
+        avoidSubskills: state.usedSubskills,
+        usedTopics: state.usedTopics,
+        recentSummary: summarizeSessionEvidence(evidence),
+      },
+      Object.keys(state.items)
+    );
+    if (generated.item) {
+      state.items[generated.item.id] = generated.item;
+      state.order = [generated.item.id];
+      if (generated.item.topic) state.usedTopics.push(generated.item.topic);
+      if (generated.item.subskill) state.usedSubskills.push(generated.item.subskill);
+      next = toPublicQuestion(generated.item);
+    } else {
+      state.genFailed = true;
+      const fallback = await bankFallbackFor(plan, Object.keys(state.items));
+      if (fallback) {
+        state.items[fallback.id] = fallback;
+        state.order = [fallback.id];
+        if (fallback.topic) state.usedTopics.push(fallback.topic);
+        if (fallback.subskill) state.usedSubskills.push(fallback.subskill);
+        next = toPublicQuestion(fallback);
+      } else {
+        reasonCode = "GENERATION_UNAVAILABLE";
+      }
+    }
+  }
+
+  await saveAiSessionState(session.id, userId, state);
+  if (!next && reasonCode === "GENERATION_UNAVAILABLE") {
+    return NextResponse.json({
+      ok: true,
+      sessionId: session.id,
+      questionId,
+      correct,
+      recorded: true,
+      adaptive: true,
+      nextQuestion: null,
+      remaining: 0,
+      done: Boolean(canCompleteHonestly(state)),
+      reasonCode,
+    });
+  }
+  return NextResponse.json({
+    ok: true,
+    sessionId: session.id,
+    questionId,
+    correct,
+    recorded: true,
+    adaptive: true,
+    nextQuestion: next,
+    remaining: state.order.length,
+    done: false,
+    reasonCode,
+  });
+}
+
+async function getAiDiagnosticPayload(
+  userId: string,
+  session: {
+    id: string;
+    source: string;
+    status: string;
+    reasonText?: string | null;
+  }
+): Promise<NextResponse> {
+  const state = await loadAiSessionState(session.id, userId);
+  if (!state) {
+    return NextResponse.json({ error: "Sesi tidak ditemukan atau data soal hilang" }, { status: 409 });
+  }
+
+  if (session.status === "COMPLETED") {
+    const { profile, abilityProfile } = await buildSessionProfile(userId, session.source, session.id);
+    return NextResponse.json({
+      mode: "DIAGNOSTIC",
+      actionType: "DIAGNOSTIC",
+      adaptive: true,
+      sessionId: session.id,
+      status: "COMPLETED",
+      actionTitle: "Kenali Kemampuanmu",
+      sessionSize: state.targetSize,
+      questions: [],
+      result: profile,
+      abilityProfile,
+    });
+  }
+
+  const current = state.order.length > 0 ? state.items[state.order[0]] : null;
+  return NextResponse.json({
+    mode: "DIAGNOSTIC",
+    actionType: "DIAGNOSTIC",
+    adaptive: true,
+    sessionId: session.id,
+    status: "IN_PROGRESS",
+    actionTitle: "Kenali Kemampuanmu",
+    reasonText: session.reasonText ?? null,
+    sessionSize: state.targetSize,
+    answeredCount: state.targetSize - state.order.length,
+    remaining: state.order.length,
+    questions: current ? [toPublicQuestion(current)] : [],
+  });
+}
+
 async function startDiagnostic(userId: string, size: number) {
   const states = await getLearnerState(userId);
   const candidates = await buildDiagnosticCandidates();
@@ -350,7 +633,43 @@ async function previewDiagnostic(userId: string) {
       });
     }
 
-    // PROFILE_READY / PROFILE_CONFIDENT → adaptive practice with personalization.
+try {
+    if (aiDiagnosticEnabled()) {
+      const states = await getLearnerState(userId);
+      return NextResponse.json({
+        mode: "PREVIEW",
+        actionType: "DIAGNOSTIC",
+        adaptive: true,
+        actionTitle: "Kenali Kemampuanmu",
+        ctaLabel: "Mulai Tes Awal",
+        targetSkill: null,
+        targetSubskill: null,
+        targetDifficulty: null,
+        sessionSize: AI_DIAGNOSTIC_DEFAULT_SIZE,
+        durationLabel: "±5–8 menit",
+        skillsLabel: DIAGNOSTIC_SKILL_PRIORITY.map((skill) => DIAGNOSTIC_SKILL_LABELS[skill]).join(" · "),
+        reasonCode: "NO_EVIDENCE",
+        reasonText:
+          "Kamu belum punya riwayat latihan. Tes singkat ini memetakan kemampuanmu dulu — jawabanmu dipakai untuk menyesuaikan latihan berikutnya, tanpa nilai benar-salah yang merugikan.",
+        estimatedMinutes: DIAGNOSTIC_ESTIMATED_MINUTES,
+        confidence: "NO_DATA",
+        premiumDepth: "STANDARD",
+        selectionVersion: AI_DIAGNOSTIC_SELECTION_VERSION,
+        personalization: null,
+        diagnosticCompleted: false,
+        learnerState: states,
+        mentor: null,
+      });
+    }
+  } catch {
+    // lanjut ke jalur bank soal bila learner-state tidak tersedia
+  }
+
+  const candidates = await buildDiagnosticCandidates();
+  if (candidates.length < DIAGNOSTIC_MIN_ITEMS) {
+    return NextResponse.json({ code: "DIAGNOSTIC_UNAVAILABLE" }, { status: 503 });
+  }
+  // PROFILE_READY / PROFILE_CONFIDENT → adaptive practice with personalization.
     const completedSession = await db.adaptivePracticeSession.findFirst({
       where: { userId, reasonCode: DIAGNOSTIC_REASON_CODE, status: "COMPLETED" },
       orderBy: { completedAt: "desc" },
@@ -402,6 +721,9 @@ async function getDiagnosticPayload(userId: string, sessionId: string) {
   }
   if (session.status !== "IN_PROGRESS" && session.status !== "COMPLETED") {
     return NextResponse.json({ error: "Sesi sudah berakhir" }, { status: 409 });
+  }
+  if (isAiSession(session)) {
+    return await getAiDiagnosticPayload(userId, session);
   }
   const questionIds = Array.isArray(session.questionIds)
     ? session.questionIds.filter((id): id is string => typeof id === "string")
@@ -470,12 +792,10 @@ async function getDiagnosticPayload(userId: string, sessionId: string) {
   });
 }
 
-async function answerDiagnostic(userId: string, body: JsonRecord) {
+async function answerDiagnostic(req: NextRequest, userId: string, body: JsonRecord) {
   const sessionId = typeof body.sessionId === "string" ? body.sessionId : "";
-  const questionId = typeof body.questionId === "string" ? body.questionId : "";
-  const answer = typeof body.answer === "string" || typeof body.answer === "number" ? body.answer : null;
-  if (!sessionId || !questionId || answer === null) {
-    return NextResponse.json({ error: "sessionId, questionId, dan answer wajib diisi" }, { status: 400 });
+  if (!sessionId) {
+    return NextResponse.json({ error: "sessionId wajib diisi" }, { status: 400 });
   }
 
   const session = await db.adaptivePracticeSession.findFirst({ where: { id: sessionId, userId } });
@@ -485,6 +805,18 @@ async function answerDiagnostic(userId: string, body: JsonRecord) {
   }
   if (session.status !== "IN_PROGRESS" || session.expiresAt <= new Date()) {
     return NextResponse.json({ error: "Sesi sudah berakhir" }, { status: 409 });
+  }
+
+  if (isAiSession(session)) {
+    const limited = await rateLimitRoute(req, AI_DIAGNOSTIC_ANSWER_RATE_LIMIT);
+    if (limited) return limited;
+    return await answerAiDiagnostic(userId, session, body);
+  }
+
+  const questionId = typeof body.questionId === "string" ? body.questionId : "";
+  const answer = typeof body.answer === "string" || typeof body.answer === "number" ? body.answer : null;
+  if (!questionId || answer === null) {
+    return NextResponse.json({ error: "sessionId, questionId, dan answer wajib diisi" }, { status: 400 });
   }
   const questionIds = Array.isArray(session.questionIds)
     ? session.questionIds.filter((id): id is string => typeof id === "string")
@@ -587,13 +919,21 @@ export async function POST(req: NextRequest) {
       const limited = await rateLimitRoute(req, DIAGNOSTIC_RATE_LIMIT);
       if (limited) return limited;
 
-      const size = body.size === undefined ? DIAGNOSTIC_DEFAULT_SIZE : Number(body.size);
-      if (!Number.isInteger(size) || !DIAGNOSTIC_ALLOWED_SIZES.includes(size as (typeof DIAGNOSTIC_ALLOWED_SIZES)[number])) {
-        return NextResponse.json({ error: "Ukuran sesi harus 8, 10, atau 12" }, { status: 400 });
+      const aiMode = aiDiagnosticEnabled();
+      const allowedSizes: readonly number[] = aiMode ? AI_DIAGNOSTIC_ALLOWED_SIZES : DIAGNOSTIC_ALLOWED_SIZES;
+      const defaultSize = aiMode ? AI_DIAGNOSTIC_DEFAULT_SIZE : DIAGNOSTIC_DEFAULT_SIZE;
+      const size = body.size === undefined ? defaultSize : Number(body.size);
+      if (!Number.isInteger(size) || !allowedSizes.includes(size)) {
+        const list = Array.from(allowedSizes).join(", ");
+        return NextResponse.json({ error: `Ukuran sesi harus ${list}` }, { status: 400 });
+      }
+      if (aiMode) {
+        const aiResponse = await startAiDiagnostic(user.id, size);
+        if (aiResponse) return aiResponse;
       }
       return await startDiagnostic(user.id, size);
     }
-    if (body.action === "answer") return await answerDiagnostic(user.id, body);
+    if (body.action === "answer") return await answerDiagnostic(req, user.id, body);
     if (body.action === "complete") return await completeDiagnostic(user.id, body);
     return NextResponse.json({ error: "action tidak valid" }, { status: 400 });
   } catch (error) {

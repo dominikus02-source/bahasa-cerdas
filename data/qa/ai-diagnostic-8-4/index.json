@@ -1,0 +1,14 @@
+{
+  "generatedAt": "2026-08-17T21:34:34.463Z",
+  "totalSessions": 10,
+  "totalItems": 0,
+  "archetypes": {
+    "S1": "S1 Pemula (banyak salah, EASY sekalipun)",
+    "S2": "S2 Murid kuat (hampir semua benar)",
+    "S3": "S3 Membaca kuat / Tata Bahasa lemah",
+    "S4": "S4 Membaca lemah / Tata Bahasa kuat",
+    "S5": "S5 Inkonsisten (benar-salah berselang)"
+  },
+  "durationLabel": "±5–8 menit",
+  "outDir": "data/qa/ai-diagnostic-8-4/sessions"
+}
