@@ -237,3 +237,39 @@
 .bc-status-sedang { background: var(--clr-warning) / 15; color: var(--clr-warning); }
 .bc-status-kumpul { background: var(--clr-violet-soft); color: var(--clr-violet); }
 .bc-status-nilai { background: var(--clr-accent-soft); color: var(--clr-accent-strong); }
+
+/* STEP 6.9B — Class identity: palette deterministik (stable class id → index).
+   Tiap tint punya pasangan light/dark; card body tetap clean. */
+.bc-class-tint-0 { --class-accent: #7c3aed; --class-soft: #f5f3ff; --class-border: #ddd6fe; }
+.bc-class-tint-1 { --class-accent: #2563eb; --class-soft: #eff6ff; --class-border: #bfdbfe; }
+.bc-class-tint-2 { --class-accent: #059669; --class-soft: #ecfdf5; --class-border: #a7f3d0; }
+.bc-class-tint-3 { --class-accent: #ea580c; --class-soft: #fff7ed; --class-border: #fed7aa; }
+.bc-class-tint-4 { --class-accent: #e11d48; --class-soft: #fff1f2; --class-border: #fecdd3; }
+.bc-class-tint-5 { --class-accent: #4f46e5; --class-soft: #eef2ff; --class-border: #c7d2fe; }
+.bc-class-tint-6 { --class-accent: #0d9488; --class-soft: #f0fdfa; --class-border: #99f6e4; }
+.bc-class-tint-7 { --class-accent: #d97706; --class-soft: #fffbeb; --class-border: #fde68a; }
+.dark .bc-class-tint-0 { --class-accent: #a78bfa; --class-soft: #1e1835; --class-border: #3b2f63; }
+.dark .bc-class-tint-1 { --class-accent: #93c5fd; --class-soft: #15233f; --class-border: #2b4a75; }
+.dark .bc-class-tint-2 { --class-accent: #6ee7b7; --class-soft: #0d2b22; --class-border: #14532d; }
+.dark .bc-class-tint-3 { --class-accent: #fdba74; --class-soft: #2b1a0e; --class-border: #7c2d12; }
+.dark .bc-class-tint-4 { --class-accent: #fda4af; --class-soft: #2b1217; --class-border: #7f1d2d; }
+.dark .bc-class-tint-5 { --class-accent: #a5b4fc; --class-soft: #171d3f; --class-border: #3730a3; }
+.dark .bc-class-tint-6 { --class-accent: #5eead4; --class-soft: #0c2926; --class-border: #115e59; }
+.dark .bc-class-tint-7 { --class-accent: #fcd34d; --class-soft: #2b220d; --class-border: #713f12; }
+
+/* Class card: header tinted lembut, body clean, kode prominent. */
+.bc-class-header {
+  background: linear-gradient(135deg, var(--class-soft), var(--clr-surface));
+  border-bottom: 1px solid var(--class-border);
+}
+.bc-class-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--class-accent);
+}
+.dark .bc-class-code { color: var(--class-accent); }
+
+/* Class code modal (desktop dialog 440px / mobile bottom sheet) */
+.bc-code-sheet { max-width: 440px; width: 100%; }

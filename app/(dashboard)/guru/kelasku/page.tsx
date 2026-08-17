@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, BookOpen, CheckCircle2, ClipboardCopy, FileText, GraduationCap, Megaphone, Plus, Search, Trash2, Users, X, Pin, Pencil, RotateCw, Loader2 } from "lucide-react";
+import { ArrowLeft, BookOpen, CheckCircle2, ClipboardCopy, FileText, GraduationCap, Megaphone, Plus, QrCode, Search, Trash2, Users, X, Pin, Pencil, RotateCw, Loader2, MessageCircle } from "lucide-react";
 import "@/components/kelas/classroom.css";
 import { humanDeadline } from "@/lib/classroom/deadline";
 import { ClassPicker, type PickerClass } from "@/components/kelas/ClassPicker";
@@ -51,8 +51,31 @@ export default function KelasKuPage() {
 
   const [composerOpen, setComposerOpen] = useState(false);
   const [composerInitial, setComposerInitial] = useState<string[] | undefined>(undefined);
+  const [codeGroup, setCodeGroup] = useState<Group | null>(null);
   const [success, setSuccess] = useState<{ label: string; names: string[] } | null>(null);
   const [reviewPenugasan, setReviewPenugasan] = useState<DetailData["tugasPenugasan"][number] | null>(null);
+  // Hapus tugas yang sudah dikirim (per kelas / latihan penuh).
+  const [deleteTask, setDeleteTask] = useState<{ kind: "penugasan" | "latihan"; id: string; label: string } | null>(null);
+  const [deletingTask, setDeletingTask] = useState(false);
+
+  const confirmDeleteTask = async () => {
+    if (!deleteTask || deletingTask) return;
+    setDeletingTask(true);
+    try {
+      const res = await fetch(
+        deleteTask.kind === "penugasan" ? `/api/guru/penugasan/${deleteTask.id}` : `/api/guru/latihan/${deleteTask.id}`,
+        { method: "DELETE" }
+      );
+      if (!res.ok) throw new Error();
+      setDeleteTask(null);
+      setToast("Tugas berhasil dihapus.");
+      if (activeGroup) loadDetail(activeGroup.id);
+    } catch {
+      setToast("Tugas belum berhasil dihapus. Silakan coba lagi.");
+    } finally {
+      setDeletingTask(false);
+    }
+  };
   // STEP 6.5 — "Kirim lagi": pilihan kelas terakhir (localStorage, aman).
   const [lastClassIds, setLastClassIds] = useState<string[]>([]);
 
@@ -312,41 +335,61 @@ export default function KelasKuPage() {
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {filteredGroups.map((g) => (
-                <button key={g.id} type="button" onClick={() => openGroup(g)} className="bc-card p-5 text-left hover:border-[var(--clr-accent)] transition-colors group">
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="text-[11px] font-bold uppercase tracking-wide text-[var(--clr-accent-strong)] bg-[var(--clr-accent-soft)] px-2.5 py-1 rounded-full">
+                <div key={g.id} className={`bc-card overflow-hidden transition-colors bc-class-tint-${stableClassTint(g.id)}`}>
+                  {/* Header tinted — identitas visual kelas (deterministik) */}
+                  <div className="bc-class-header px-5 pt-4 pb-3 flex items-center justify-between gap-2">
+                    <span className="text-[11px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full" style={{ color: "var(--class-accent)", background: "var(--class-soft)" }}>
                       Kelas {g.grade}
                     </span>
                     <span className="text-[var(--clr-text-3)] opacity-0 group-hover:opacity-100 transition-opacity">
                       <ArrowLeft size={16} className="rotate-180" />
                     </span>
                   </div>
-                  <h3 className="text-lg font-bold text-[var(--clr-text)] mt-3 truncate">{g.name}</h3>
-                  <p className="flex items-center gap-1.5 text-sm text-[var(--clr-text-2)] mt-1">
-                    <Users size={14} /> {g.memberCount} siswa
-                  </p>
-                  <div className="flex items-center gap-2 mt-4">
-                    <code className="text-xs font-mono bg-[var(--clr-surface-2)] border border-[var(--clr-border)] rounded-lg px-2.5 py-1 text-[var(--clr-text-2)]">
-                      {g.accessCode}
-                    </code>
-                    <button
-                      type="button"
-                      onClick={(e) => { e.stopPropagation(); handleCopy(g.accessCode); }}
-                      className="text-[var(--clr-text-3)] hover:text-[var(--clr-accent-strong)] p-1.5"
-                      aria-label="Salin kode kelas"
-                    >
-                      {copied === g.accessCode ? <CheckCircle2 size={16} className="text-[var(--clr-success)]" /> : <ClipboardCopy size={16} />}
+                  <div className="px-5 py-4 space-y-3">
+                    <button type="button" onClick={() => openGroup(g)} className="w-full text-left group" aria-label={`Buka kelas ${g.name}`}>
+                      <h3 className="text-lg font-bold text-[var(--clr-text)] truncate">{g.name}</h3>
+                      <p className="flex items-center gap-1.5 text-sm text-[var(--clr-text-2)] mt-1">
+                        <Users size={14} /> {g.memberCount} siswa
+                      </p>
                     </button>
-                    <button
-                      type="button"
-                      onClick={(e) => { e.stopPropagation(); setConfirmDelete(g); }}
-                      className="text-[var(--clr-text-3)] hover:text-[var(--clr-danger)] p-1.5 ml-auto"
-                      aria-label={`Hapus kelas ${g.name}`}
-                    >
-                      <Trash2 size={16} />
-                    </button>
+
+                    {/* STEP 6.9B — KODE KELAS prominent */}
+                    <div className="flex items-center gap-3 rounded-xl border border-[var(--clr-border)] px-3 py-2.5" style={{ background: "var(--clr-surface-2)" }}>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--clr-text-3)]">Kode Kelas</p>
+                        <p className="bc-class-code truncate">{g.accessCode}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); handleCopy(g.accessCode); }}
+                        className="bc-chip text-[11px] shrink-0"
+                        aria-label={`Salin kode kelas ${g.name}`}
+                      >
+                        {copied === g.accessCode ? <CheckCircle2 size={14} className="text-[var(--clr-success)]" /> : <ClipboardCopy size={14} />}
+                        {copied === g.accessCode ? "Tersalin" : "Salin"}
+                      </button>
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-0.5">
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); setCodeGroup(g); }}
+                        className="bc-btn-secondary text-xs"
+                        aria-label={`Lihat kode kelas ${g.name}`}
+                      >
+                        <QrCode size={15} /> Lihat Kode
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); setConfirmDelete(g); }}
+                        className="text-[var(--clr-text-3)] hover:text-[var(--clr-danger)] p-2 ml-auto"
+                        aria-label={`Hapus kelas ${g.name}`}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </div>
-                </button>
+                </div>
               ))}
             </div>
           )}
@@ -375,6 +418,20 @@ export default function KelasKuPage() {
             deleting={deleting}
             onCancel={() => setConfirmDelete(null)}
             onConfirm={confirmDeleteGroup}
+          />
+        )}
+
+        {/* STEP 6.9B — modal kode kelas (Lihat Kode) */}
+        {codeGroup && <ClassCodeModal group={codeGroup} onClose={() => setCodeGroup(null)} />}
+
+        {/* Hapus tugas yang sudah dikirim */}
+        {deleteTask && (
+          <ConfirmTaskDeleteModal
+            kind={deleteTask.kind}
+            label={deleteTask.label}
+            deleting={deletingTask}
+            onCancel={() => setDeleteTask(null)}
+            onConfirm={confirmDeleteTask}
           />
         )}
 
@@ -496,6 +553,7 @@ export default function KelasKuPage() {
                       : (detail.ringkasanQuiz ?? []).find((x) => x.id === (item.node as DetailData["tugasQuiz"][number]).id)
                   }
                   onReview={setReviewPenugasan}
+                  onDeleteTask={(t) => setDeleteTask(t)}
                   onEditPengumuman={setEditPengumuman}
                   onPin={togglePin}
                   onDeletePengumuman={deletePengumuman}
@@ -556,6 +614,14 @@ export default function KelasKuPage() {
                       {r && <RingkasanChips r={r} />}
                     </div>
                     <a href={`/guru/kuis/${t.quiz.id}/results`} className="bc-btn-secondary text-xs shrink-0">Lihat Pengumpulan</a>
+                    <button
+                      type="button"
+                      onClick={() => setDeleteTask({ kind: "latihan", id: t.quiz.id, label: t.quiz.title })}
+                      className="text-[var(--clr-text-3)] hover:text-[var(--clr-danger)] p-2 shrink-0"
+                      aria-label={`Hapus latihan ${t.quiz.title}`}
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
                   );
                 })}
@@ -574,6 +640,14 @@ export default function KelasKuPage() {
                       {r && <RingkasanChips r={r} />}
                     </div>
                     <button type="button" onClick={() => setReviewPenugasan(p)} className="bc-btn-secondary text-xs shrink-0">Lihat Pengumpulan</button>
+                    <button
+                      type="button"
+                      onClick={() => setDeleteTask({ kind: "penugasan", id: p.id, label: p.judul })}
+                      className="text-[var(--clr-text-3)] hover:text-[var(--clr-danger)] p-2 shrink-0"
+                      aria-label={`Hapus tugas ${p.judul}`}
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
                   );
                 })}
@@ -744,6 +818,30 @@ const CATEGORY_LABEL: Record<string, string> = {
   BELUM_CUKUP_DATA: "Belum cukup data",
 };
 
+/** STEP 6.9B — warna kelas DETERMINISTIK dari class id (djb2 hash → index).
+ *  Kelas yang sama selalu mendapat warna yang sama (tanpa Math.random). */
+function stableClassTint(id: string): number {
+  let hash = 5381;
+  for (let i = 0; i < id.length; i++) hash = ((hash << 5) + hash + id.charCodeAt(i)) | 0;
+  return Math.abs(hash) % 8;
+}
+
+/** STEP 6.9B — message WhatsApp otomatis (frontend; tanpa backend).
+ *  Join URL memakai canonical site config (NEXT_PUBLIC_SITE_URL). */
+function waShareUrl(name: string, code: string): string {
+  const site = process.env.NEXT_PUBLIC_SITE_URL || "https://bahasacerdas.com";
+  const text = [
+    "Halo, silakan bergabung ke kelas BahasaCerdas saya.",
+    "",
+    `Kelas: ${name}`,
+    `Kode Kelas: ${code}`,
+    "",
+    "Gunakan kode tersebut untuk bergabung ke kelas.",
+    `Bergabung: ${site}/murid/gabung-kelas`,
+  ].join("\n");
+  return `https://wa.me/?text=${encodeURIComponent(text)}`;
+}
+
 /** STEP 6.3 — "Perkembangan Kelas" (tab Nilai): insight per-skill dari
  *  LearnerState anggota; skill tanpa evidence cukup → "Belum cukup data". */
 function ClassInsight({ groupId }: { groupId: string }) {
@@ -788,10 +886,11 @@ function ClassInsight({ groupId }: { groupId: string }) {
   );
 }
 
-function StreamCard({ item, progress, onReview, onEditPengumuman, onPin, onDeletePengumuman, pinBusyId }: {
+function StreamCard({ item, progress, onReview, onDeleteTask, onEditPengumuman, onPin, onDeletePengumuman, pinBusyId }: {
   item: { id: string; kind: "pengumuman" | "tugas" | "materi"; date: string; node: unknown };
   progress?: { sudah: number; sedang: number; belum: number };
   onReview: (p: DetailData["tugasPenugasan"][number]) => void;
+  onDeleteTask: (t: { kind: "penugasan" | "latihan"; id: string; label: string }) => void;
   onEditPengumuman: (p: DetailData["pengumuman"][number]) => void;
   onPin: (p: DetailData["pengumuman"][number]) => void;
   onDeletePengumuman: (p: DetailData["pengumuman"][number]) => void;
@@ -847,6 +946,18 @@ function StreamCard({ item, progress, onReview, onEditPengumuman, onPin, onDelet
         ) : (
           <a href={`/guru/kuis/${(t as DetailData["tugasQuiz"][number]).quiz.id}/results`} className="bc-btn-secondary text-xs shrink-0">Lihat Pengumpulan</a>
         )}
+        <button
+          type="button"
+          onClick={() => onDeleteTask(
+            isPenugasan
+              ? { kind: "penugasan", id: (t as DetailData["tugasPenugasan"][number]).id, label: (t as DetailData["tugasPenugasan"][number]).judul }
+              : { kind: "latihan", id: (t as DetailData["tugasQuiz"][number]).quiz.id, label: (t as DetailData["tugasQuiz"][number]).quiz.title }
+          )}
+          className="text-[var(--clr-text-3)] hover:text-[var(--clr-danger)] p-2 shrink-0"
+          aria-label={`Hapus ${isPenugasan ? "tugas" : "latihan"} ${isPenugasan ? (t as DetailData["tugasPenugasan"][number]).judul : (t as DetailData["tugasQuiz"][number]).quiz.title}`}
+        >
+          <Trash2 size={16} />
+        </button>
       </div>
     );
   }
@@ -862,8 +973,110 @@ function StreamCard({ item, progress, onReview, onEditPengumuman, onPin, onDelet
   );
 }
 
-function Toast({ msg, onClose }: { msg: string; onClose: () => void }) {
+/** STEP 6.9B — modal kode kelas: kode besar, Salin, Bagikan WhatsApp. */
+function ClassCodeModal({ group, onClose }: { group: Group; onClose: () => void }) {
+  const [copied, setCopied] = useState(false);
+  const tint = `bc-class-tint-${stableClassTint(group.id)}`;
+
+  // Escape menutup modal (a11y).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(group.accessCode);
+    } catch {
+      // Fallback: textarea + execCommand untuk browser tanpa Clipboard API.
+      const ta = document.createElement("textarea");
+      ta.value = group.accessCode;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); } catch { /* best-effort */ }
+      document.body.removeChild(ta);
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  };
+
   return (
+    <div className="bc-sheet-overlay" role="dialog" aria-modal="true" aria-label={`Kode kelas ${group.name}`}>
+      <div className={`bc-sheet bc-code-sheet ${tint}`}>
+        <div className="px-6 pt-5 pb-2 flex items-center justify-between">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-wide" style={{ color: "var(--class-accent)" }}>Kelas {group.grade}</p>
+            <h2 className="text-xl font-bold text-[var(--clr-text)]">{group.name}</h2>
+          </div>
+          <button type="button" onClick={onClose} aria-label="Tutup" className="w-10 h-10 rounded-full bg-[var(--clr-surface-2)] text-[var(--clr-text-2)] flex items-center justify-center">
+            <X size={20} />
+          </button>
+        </div>
+
+        <div className="px-6 py-5 space-y-4">
+          <div className="rounded-2xl border px-4 py-6 text-center" style={{ borderColor: "var(--class-border)", background: "var(--class-soft)" }}>
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--clr-text-3)] mb-2">Kode Kelas</p>
+            <p className="bc-class-code text-[30px] leading-tight" aria-label={`Kode kelas ${group.accessCode}`}>{group.accessCode}</p>
+          </div>
+
+          <div className="flex flex-col gap-2.5">
+            <button type="button" onClick={copy} className="bc-btn-primary w-full text-sm" aria-live="polite">
+              {copied ? <CheckCircle2 size={18} /> : <ClipboardCopy size={18} />}
+              {copied ? "✓ Kode Disalin" : "Salin Kode"}
+            </button>
+            <a
+              href={waShareUrl(group.name, group.accessCode)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bc-btn-secondary w-full text-sm"
+            >
+              <MessageCircle size={18} className="text-[#25D366]" />
+              Bagikan ke WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Konfirmasi hapus tugas/latihan yang sudah dikirim ke kelas. */
+function ConfirmTaskDeleteModal({ kind, label, deleting, onCancel, onConfirm }: {
+  kind: "penugasan" | "latihan";
+  label: string;
+  deleting: boolean;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  return (
+    <div className="bc-sheet-overlay" role="dialog" aria-modal="true" aria-label={`Hapus ${kind === "penugasan" ? "tugas" : "latihan"}`}>
+      <div className="bc-sheet">
+        <div className="px-6 py-7 space-y-4">
+          <h2 className="text-lg font-bold text-[var(--clr-text)]">
+            Hapus {kind === "penugasan" ? "tugas" : "latihan"} "{label}"?
+          </h2>
+          <p className="text-sm text-[var(--clr-text-2)]">
+            {kind === "penugasan"
+              ? "Tugas akan dihapus dari kelas ini. Pengumpulan murid ikut terhapus."
+              : "Latihan akan dihapus dari semua kelas yang menerimanya. Pengumpulan murid ikut terhapus."}
+          </p>
+          <div className="flex gap-2 pt-1">
+            <button type="button" onClick={onCancel} disabled={deleting} className="bc-btn-secondary flex-1 text-sm">Batal</button>
+            <button type="button" onClick={onConfirm} disabled={deleting} className="bc-btn-primary flex-1 text-sm" style={{ background: "var(--clr-danger)" }}>
+              {deleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+              {deleting ? "Menghapus..." : "Hapus"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Toast({ msg, onClose }: { msg: string; onClose: () => void }) {  return (
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[70] bc-card px-5 py-3 text-sm font-semibold text-[var(--clr-text)] flex items-center gap-3 shadow-lg">
       <CheckCircle2 size={17} className="text-[var(--clr-success)]" />
       {msg}
