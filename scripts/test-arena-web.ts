@@ -82,10 +82,10 @@ function main() {
   // ── 3. HOME (/arena) — ARENA HOME sederhana (bukan dashboard statistik) ──
   console.log("\n── 3. Home (/arena/page.tsx) — Arena Home ──");
   const home = read("app/arena/page.tsx");
-  test("1: Header 'Arena' + subtext 'Mainkan. Belajar. Naik level.'",
-    () => home.includes(">Arena</h1>") && home.includes("Mainkan. Belajar. Naik level."));
+  test("1: Header 'Arena' + subtext 'Mainkan. Belajar. Naik Level.'",
+    () => home.includes(">Arena</h1>") && home.includes("Mainkan. Belajar. Naik Level."));
   test("2: Hero 'Selamat datang kembali' + satu CTA MAIN SEKARANG → /arena/game",
-    () => home.includes("Selamat datang kembali") && home.includes("Main Sekarang") && home.includes('href="/arena/game"'));
+    () => home.includes("Selamat datang kembali") && home.includes("MAIN SEKARANG") && home.includes('href="/arena/game"'));
   test("2: Hero memakai zona gradient violet (bukan daftar flat)",
     () => home.includes("from-violet-600") && home.includes("to-indigo-700"));
   test("3: Quick Progress HANYA 3 info (Level / XP / Rank) + RankChip",
@@ -288,6 +288,24 @@ function main() {
     () => leaderboardPage.includes("Leaderboard") && leaderboardPage.includes("Lihat posisi kamu dan teman-temanmu."));
   test("halaman player/leaderboard/badges memakai PlayerTheme (adaptive)",
     () => read("app/arena/player/page.tsx").includes("<PlayerTheme>") && read("app/arena/player/leaderboard/page.tsx").includes("<PlayerTheme>"));
+
+  // ── 12. ARENA 2.1 — RANK BC banner & copy konsisten ──
+  console.log("\n── 12. Arena 2.1 — Rank BC Banner & Copy ──");
+  const hub = read("components/arena/game-hub/GameHubClient.tsx");
+  test("GAME HUB: banner RANK BC disematkan lagi (rank-bc-banner.webp → /arena/player)",
+    () => hub.includes("/banners/rank-bc-banner.webp") && hub.includes('href="/arena/player"') && hub.includes("naikkan peringkatmu"));
+  test("GAME HUB: promo slide Kuis Tempur ↔ TTS tetap ada di samping banner rank",
+    () => hub.includes("/Rank%20BC/banner%20arena%20gim.png") && hub.includes("/banners/banners-TTS-gim.png") && hub.includes("<BannerSlideshow"));
+  test("copy konsisten: subtext 'Naik Level.' sama di home & hub; CTA 'MAIN SEKARANG'",
+    () => home.includes("Mainkan. Belajar. Naik Level.") && hub.includes("Mainkan. Belajar. Naik Level.") && home.includes("MAIN SEKARANG") && hub.includes("MAIN SEKARANG"));
+  test("quick access Game Hub pakai label 'Badge' (terminologi konsisten)",
+    () => hub.includes('label: "Badge"') && !hub.includes('label: "Prestasi"'));
+  test("semua href registry gim punya route nyata (tidak ada dead link)",
+    () => {
+      const registry = read("lib/arena/game-registry.ts");
+      const hrefs = [...registry.matchAll(/href: "(\/arena\/game\/[^"]+)"/g)].map((m) => m[1]);
+      return hrefs.length >= 10 && hrefs.every((h) => fs.existsSync(`app${h}/page.tsx`));
+    });
 
   // ── Summary ──
   console.log(`\n${"=".repeat(60)}`);

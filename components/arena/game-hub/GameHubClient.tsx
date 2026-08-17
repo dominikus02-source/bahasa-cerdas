@@ -392,28 +392,43 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled }:
         </div>
       </section>
 
-      {/* ── PROMO — banner slide gim (Kuis Tempur ↔ Teka-Teki Silang) ── */}
-      <section className="mt-7" aria-label="Promo gim">
-        <BannerSlideshow
-          slides={[
-            {
-              src: "/Rank%20BC/banner%20arena%20gim.png",
-              alt: "Kuis Tempur — kini bisa main solo!",
-              href: "/arena/game/kuis-tempur",
-              shadow: "0 8px 28px rgba(43,75,255,0.25)",
-              fallbackTitle: "Kuis Tempur",
-              fallbackDesc: "Jawab benar untuk menyerang, solo vs bot tersedia.",
-            },
-            {
-              src: "/banners/banners-TTS-gim.png",
-              alt: "Teka-Teki Silang — isi kotak, asah kosakata!",
-              href: "/arena/game/teka-teki-silang",
-              shadow: "0 8px 28px rgba(56,189,248,0.25)",
-              fallbackTitle: "Teka-Teki Silang",
-              fallbackDesc: "12 level, soal baru tiap main — isi kotaknya dan kumpulkan XP!",
-            },
-          ] satisfies BannerSlide[]}
-        />
+      {/* ── PROMO — banner RANK BC (kiri) + slide gim Kuis Tempur ↔ Teka-Teki Silang (kanan) ── */}
+      <section className="mt-7" aria-label="Promo rank dan gim">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {/* RANK BC — apa yang harus dicapai murid (naikkan peringkatmu → Profil) */}
+          <Link
+            href="/arena/player"
+            aria-label="Profil pemain — naikkan peringkatmu!"
+            className="group relative block overflow-hidden rounded-[20px] shadow-md shadow-red-500/15 transition-all hover:shadow-lg active:scale-[0.98]"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/banners/rank-bc-banner.webp"
+              alt="Rank BC — naikkan peringkatmu!"
+              className="block w-full h-auto transition-transform duration-300 group-hover:scale-[1.02]"
+            />
+          </Link>
+          <BannerSlideshow
+            slides={[
+              {
+                src: "/Rank%20BC/banner%20arena%20gim.png",
+                alt: "Kuis Tempur — kini bisa main solo!",
+                href: "/arena/game/kuis-tempur",
+                shadow: "0 8px 28px rgba(43,75,255,0.25)",
+                fallbackTitle: "Kuis Tempur",
+                fallbackDesc: "Jawab benar untuk menyerang, solo vs bot tersedia.",
+              },
+              {
+                src: "/banners/banners-TTS-gim.png",
+                alt: "Teka-Teki Silang — isi kotak, asah kosakata!",
+                href: "/arena/game/teka-teki-silang",
+                shadow: "0 8px 28px rgba(56,189,248,0.25)",
+                fallbackTitle: "Teka-Teki Silang",
+                fallbackDesc: "12 level, soal baru tiap main — isi kotaknya dan kumpulkan XP!",
+              },
+            ] satisfies BannerSlide[]}
+          />
+        </div>
       </section>
 
       {/* ── QUICK ACCESS ── */}
@@ -422,7 +437,7 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled }:
           {[
             { label: "Leaderboard", desc: "Lihat ranking", href: "/arena/player/leaderboard", icon: Trophy, color: "text-amber-600 bg-amber-50 dark:bg-amber-400/10 dark:text-amber-400" },
             { label: "Profil", desc: "XP & peringkatmu", href: "/arena/player", icon: Gamepad2, color: "text-violet-600 bg-violet-50 dark:bg-violet-500/10 dark:text-violet-300" },
-            { label: "Prestasi", desc: "Koleksi badge", href: "/arena/player/badges", icon: Medal, color: "text-sky-600 bg-sky-50 dark:bg-sky-500/10 dark:text-sky-300" },
+            { label: "Badge", desc: "Koleksi pencapaianmu", href: "/arena/player/badges", icon: Medal, color: "text-sky-600 bg-sky-50 dark:bg-sky-500/10 dark:text-sky-300" },
             { label: "Misi", desc: "Tantangan harian", href: "/arena/misi", icon: Target, color: "text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 dark:text-emerald-300" },
           ].map((q) => (
             <Link

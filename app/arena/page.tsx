@@ -64,7 +64,7 @@ export default async function BerandaPage() {
         <div className="min-w-0">
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-600 dark:text-violet-300">BahasaCerdas</p>
           <h1 className="text-2xl font-black text-gray-900 dark:text-white">Arena</h1>
-          <p className="text-xs font-medium text-gray-500 dark:text-slate-400">Mainkan. Belajar. Naik level.</p>
+          <p className="text-xs font-medium text-gray-500 dark:text-slate-400">Mainkan. Belajar. Naik Level.</p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
           {!isGuruPreview && user.streak ? (
@@ -106,7 +106,7 @@ export default async function BerandaPage() {
             href="/arena/game"
             className="group flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-white px-7 py-3.5 text-sm font-extrabold text-violet-700 shadow-lg shadow-violet-900/20 transition-all hover:bg-violet-50 active:scale-[0.98]"
           >
-            Main Sekarang <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            MAIN SEKARANG <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>
       </section>
