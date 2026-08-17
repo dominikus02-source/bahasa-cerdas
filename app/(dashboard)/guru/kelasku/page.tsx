@@ -246,6 +246,20 @@ export default function KelasKuPage() {
 
   const pickerClasses: PickerClass[] = useMemo(() => groups.map((g) => ({ id: g.id, name: g.name, memberCount: g.memberCount })), [groups]);
 
+  // STEP 6.9 HOTFIX — hook (useMemo) WAJIB di atas semua early return:
+  // React error #310 terjadi bila jumlah hook berubah antar render
+  // (list view 0 hook tambahan vs detail view 1). stream dihitung di sini.
+  const stream = useMemo(() => {
+    if (!detail) return [];
+    const items: { id: string; kind: "pengumuman" | "tugas" | "materi"; date: string; node: unknown }[] = [
+      ...(detail.pengumuman ?? []).map((p) => ({ id: `p-${p.id}`, kind: "pengumuman" as const, date: p.createdAt, node: p })),
+      ...(detail.tugasQuiz ?? []).map((t) => ({ id: `q-${t.id}`, kind: "tugas" as const, date: t.assignedAt, node: t })),
+      ...(detail.tugasPenugasan ?? []).map((p) => ({ id: `t-${p.id}`, kind: "tugas" as const, date: p.createdAt, node: p })),
+      ...(detail.materis ?? []).map((m) => ({ id: `m-${m.id}`, kind: "materi" as const, date: m.createdAt, node: m })),
+    ];
+    return items.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 40);
+  }, [detail]);
+
   // ── Daftar kelas (tanpa kelas aktif) ────────────────────────────────────
   if (!activeGroup) {
     return (
@@ -379,17 +393,6 @@ export default function KelasKuPage() {
   }
 
   // ── Detail kelas ────────────────────────────────────────────────────────
-  const stream = useMemo(() => {
-    if (!detail) return [];
-    const items: { id: string; kind: "pengumuman" | "tugas" | "materi"; date: string; node: unknown }[] = [
-      ...(detail.pengumuman ?? []).map((p) => ({ id: `p-${p.id}`, kind: "pengumuman" as const, date: p.createdAt, node: p })),
-      ...(detail.tugasQuiz ?? []).map((t) => ({ id: `q-${t.id}`, kind: "tugas" as const, date: t.assignedAt, node: t })),
-      ...(detail.tugasPenugasan ?? []).map((p) => ({ id: `t-${p.id}`, kind: "tugas" as const, date: p.createdAt, node: p })),
-      ...(detail.materis ?? []).map((m) => ({ id: `m-${m.id}`, kind: "materi" as const, date: m.createdAt, node: m })),
-    ];
-    return items.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 40);
-  }, [detail]);
-
   return (
     <div className="bc-classroom p-4 md:p-6 lg:p-8">
       <div className="max-w-4xl mx-auto space-y-5">
