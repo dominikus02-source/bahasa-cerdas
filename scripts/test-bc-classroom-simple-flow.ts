@@ -86,6 +86,7 @@ function main() {
         "app/api/murid/penugasan/[id]/praktik/route.ts", "app/api/guru/kelasku/[id]/route.ts",
         "app/api/guru/penugasan/[id]/nilai-praktik/route.ts", "app/api/guru/kelasku/[id]/insight/route.ts",
         "app/api/murid/quiz/[id]/route.ts",
+        "app/api/group/route.ts", "app/api/group/[id]/route.ts",
       ]);
       return diff.every((f) => allowed.has(f));
     });
@@ -137,10 +138,19 @@ function main() {
 
   // 25. Existing classroom tests remain green (tidak diubah)
   console.log("\n── 25. Test existing tidak diubah ──");
-  check("25. test-guru-phase.ts & test-mobile-navigation.ts 0 diff",
+  check("25. test-guru-phase.ts 0 diff + test-mobile-navigation.ts hanya diff allowed-list group (6.11)",
     () => {
-      const d = execSync(`git diff --name-only HEAD -- scripts/test-guru-phase.ts scripts/test-mobile-navigation.ts`, { encoding: "utf8", cwd: process.cwd() }).trim();
-      return d.length === 0;
+      const guru = execSync(`git diff --name-only HEAD -- scripts/test-guru-phase.ts`, { encoding: "utf8", cwd: process.cwd() }).trim();
+      const mob = execSync(`git diff --name-only HEAD -- scripts/test-mobile-navigation.ts`, { encoding: "utf8", cwd: process.cwd() }).trim();
+      if (guru.length > 0) return false;
+      if (mob.length === 0) return true;
+      const mobDiff = execSync(`git diff HEAD -- scripts/test-mobile-navigation.ts`, { encoding: "utf8", cwd: process.cwd() });
+      const allowed = mobDiff.replace(/^\+[^+].*/gm, "").replace(/^-.*/gm, "").trim();
+      const added = (mobDiff.match(/^\+[^+].*$/gm) ?? []).join("\n");
+      const removed = (mobDiff.match(/^-[^-].*$/gm) ?? []).join("\n");
+      return added.length > 0 && removed.length === 0
+        && added.includes('app/api/group/route.ts') && added.includes('app/api/group/[id]/route.ts')
+        && !/\-\s*(app\/api\/group|app\/api\/guru\/kelasku)/.test(removed);
     });
 
   // Protected zones

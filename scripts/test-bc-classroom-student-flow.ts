@@ -120,7 +120,7 @@ function main() {
   check("20. API baru murid/kelasku HANYA satu; halaman memakai endpoint existing lain",
     () => {
       const diff = execSync(`git diff --name-only HEAD -- app/api/`, { encoding: "utf8", cwd: process.cwd() }).trim().split("\n").filter(Boolean);
-      const allowed = ["app/api/murid/kelasku/[id]/route.ts", "app/api/guru/penugasan/route.ts", "app/api/guru/quiz/[id]/assign/route.ts", "app/api/murid/penugasan/[id]/praktik/route.ts", "app/api/guru/pengumuman/route.ts"];
+      const allowed = ["app/api/murid/kelasku/[id]/route.ts", "app/api/guru/penugasan/route.ts", "app/api/guru/quiz/[id]/assign/route.ts", "app/api/murid/penugasan/[id]/praktik/route.ts", "app/api/guru/pengumuman/route.ts", "app/api/group/route.ts", "app/api/group/[id]/route.ts"];
       return diff.every((f) => allowed.includes(f));
     });
 

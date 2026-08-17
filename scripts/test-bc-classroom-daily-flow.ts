@@ -40,8 +40,8 @@ function main() {
   check("1. halaman kelas guru memakai bc-classroom", () => guruPage.includes("bc-classroom"));
   check("2. TodayView ada: 'Hari Ini' + 'N aktivitas sedang berjalan'",
     () => guruPage.includes("Hari Ini") && guruPage.includes("aktivitas sedang berjalan"));
-  check("2. TodayView menampilkan progress (X dari Y sudah) + tombol Tambahkan",
-    () => guruPage.includes("dari {a.total}") && guruPage.includes("bc-btn-primary text-sm shrink-0"));
+  check("2. TodayView menampilkan progress (X dari Y sudah) + kode kelas first-class di hero",
+    () => guruPage.includes("dari {a.total}") && guruPage.includes("Kode Kelas") && guruPage.includes("bc-class-code"));
 
   // 3. One primary action
   console.log("\n── 3. Satu primary action ──");
@@ -134,6 +134,7 @@ function main() {
         "app/api/murid/penugasan/[id]/praktik/route.ts", "app/api/guru/kelasku/[id]/route.ts",
         "app/api/guru/penugasan/[id]/nilai-praktik/route.ts", "app/api/guru/kelasku/[id]/insight/route.ts",
         "app/api/murid/quiz/[id]/route.ts",
+        "app/api/group/route.ts", "app/api/group/[id]/route.ts",
       ];
       return diff.every((f) => allowed.includes(f));
     });

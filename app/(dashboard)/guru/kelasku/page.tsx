@@ -88,12 +88,9 @@ export default function KelasKuPage() {
     setComposerOpen(true);
   };
 
-  // Pengumuman CRUD
+  // Pengumuman: edit lewat EditPengumumanModal (STEP 6.11); pembuatan via composer.
   const [editPengumuman, setEditPengumuman] = useState<DetailData["pengumuman"][number] | null>(null);
   const [pinBusyId, setPinBusyId] = useState<string | null>(null);
-  const [pengumumanForm, setPengumumanForm] = useState({ judul: "", deskripsi: "", tenggat: "" });
-  const [savingPengumuman, setSavingPengumuman] = useState(false);
-  const [pengumumanError, setPengumumanError] = useState("");
 
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -197,59 +194,54 @@ export default function KelasKuPage() {
     }
   };
 
-  const handleCopy = (code: string) => {
-    navigator.clipboard.writeText(code);
+  const handleCopy = async (code: string) => {
+    try {
+      await navigator.clipboard.writeText(code);
+    } catch {
+      // Fallback: textarea + execCommand untuk browser tanpa Clipboard API
+      // (pola sama dengan ClassCodeModal).
+      const ta = document.createElement("textarea");
+      ta.value = code;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); } catch { /* best-effort */ }
+      document.body.removeChild(ta);
+    }
     setCopied(code);
     setTimeout(() => setCopied(""), 2000);
   };
 
   const handleRefreshCode = async (groupId: string) => {
     try {
-      await fetch(`/api/group/${groupId}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({}) });
-      fetchGroups();
-    } catch { /* best-effort */ }
-  };
-
-  const savePengumuman = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!activeGroup) return;
-    setSavingPengumuman(true);
-    setPengumumanError("");
-    try {
-      const body: Record<string, unknown> = {
-        groupId: activeGroup.id,
-        judul: pengumumanForm.judul.trim(),
-        deskripsi: pengumumanForm.deskripsi.trim(),
-        tenggat: pengumumanForm.tenggat || null,
-      };
-      const res = await fetch(editPengumuman ? `/api/guru/pengumuman/${editPengumuman.id}` : "/api/guru/pengumuman", {
-        method: editPengumuman ? "PATCH" : "POST",
+      const res = await fetch(`/api/group/${groupId}`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ regenerateCode: true }),
       });
+      if (!res.ok) { setToast("Kode kelas belum berhasil diperbarui. Coba lagi."); return; }
       const data = await res.json();
-      if (!res.ok) { setPengumumanError(data.error || "Gagal menyimpan pengumuman"); return; }
-      setEditPengumuman(null);
-      setPengumumanForm({ judul: "", deskripsi: "", tenggat: "" });
-      loadDetail(activeGroup.id);
-    } catch {
-      setPengumumanError("Gagal menyimpan pengumuman. Periksa koneksi Anda.");
-    } finally {
-      setSavingPengumuman(false);
-    }
+      const newCode: string | undefined = data?.group?.accessCode;
+      setGroups((prev) => prev.map((g) => (g.id === groupId ? { ...g, accessCode: newCode ?? g.accessCode } : g)));
+      if (activeGroup?.id === groupId) setActiveGroup((prev) => (prev ? { ...prev, accessCode: newCode ?? prev.accessCode } : prev));
+      setToast("Kode kelas berhasil diperbarui.");
+      fetchGroups();
+    } catch { setToast("Kode kelas belum berhasil diperbarui. Coba lagi."); }
   };
 
   const togglePin = async (p: DetailData["pengumuman"][number]) => {
     if (!activeGroup || pinBusyId) return;
     setPinBusyId(p.id);
     try {
-      await fetch(`/api/guru/pengumuman/${p.id}`, {
+      const res = await fetch(`/api/guru/pengumuman/${p.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ pinned: !p.pinned }),
       });
+      if (!res.ok) { setToast("Gagal menyematkan pengumuman. Coba lagi."); return; }
       loadDetail(activeGroup.id);
-    } catch { /* best-effort */ } finally {
+    } catch { setToast("Gagal menyematkan pengumuman. Coba lagi."); } finally {
       setPinBusyId(null);
     }
   };
@@ -257,9 +249,10 @@ export default function KelasKuPage() {
   const deletePengumuman = async (p: DetailData["pengumuman"][number]) => {
     if (!activeGroup) return;
     try {
-      await fetch(`/api/guru/pengumuman/${p.id}`, { method: "DELETE" });
+      const res = await fetch(`/api/guru/pengumuman/${p.id}`, { method: "DELETE" });
+      if (!res.ok) { setToast("Pengumuman belum berhasil dihapus. Coba lagi."); return; }
       loadDetail(activeGroup.id);
-    } catch { /* best-effort */ }
+    } catch { setToast("Pengumuman belum berhasil dihapus. Coba lagi."); }
   };
 
   const filteredGroups = useMemo(() => {
@@ -457,10 +450,11 @@ export default function KelasKuPage() {
           <ArrowLeft size={16} /> Kelasku
         </button>
 
-        <div className="bc-card p-5 md:p-6">
+        {/* STEP 6.11 — hero: satu primary action, identitas kelas via stableClassTint */}
+        <div className={`bc-card p-5 md:p-6 bc-class-tint-${stableClassTint(activeGroup.id)}`}>
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
             <div className="min-w-0">
-              <span className="text-[11px] font-bold uppercase tracking-wide text-[var(--clr-accent-strong)] bg-[var(--clr-accent-soft)] px-2.5 py-1 rounded-full">
+              <span className="text-[11px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full" style={{ color: "var(--class-accent)", background: "var(--class-soft)" }}>
                 Kelas {activeGroup.grade}
               </span>
               <h1 className="text-2xl md:text-[28px] font-bold text-[var(--clr-text)] mt-2 truncate">{activeGroup.name}</h1>
@@ -473,17 +467,24 @@ export default function KelasKuPage() {
                 )}
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-3 shrink-0">
+              {/* Kode kelas first-class: Salin · Lihat Kode (modal: WhatsApp) · Perbarui */}
               <div className="flex items-center gap-2 bg-[var(--clr-surface-2)] border border-[var(--clr-border)] rounded-xl px-3 py-2">
-                <code className="text-xs font-mono text-[var(--clr-text-2)]">{activeGroup.accessCode}</code>
-                <button type="button" onClick={() => handleCopy(activeGroup.accessCode)} aria-label="Salin kode kelas" className="text-[var(--clr-text-3)] hover:text-[var(--clr-accent-strong)]">
+                <div className="min-w-0">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--clr-text-3)]">Kode Kelas</p>
+                  <code className="bc-class-code truncate">{activeGroup.accessCode}</code>
+                </div>
+                <button type="button" onClick={() => handleCopy(activeGroup.accessCode)} aria-label="Salin kode kelas" className="text-[var(--clr-text-3)] hover:text-[var(--clr-accent-strong)] p-1">
                   {copied === activeGroup.accessCode ? <CheckCircle2 size={16} className="text-[var(--clr-success)]" /> : <ClipboardCopy size={16} />}
                 </button>
-                <button type="button" onClick={() => handleRefreshCode(activeGroup.id)} aria-label="Perbarui kode kelas" className="text-[var(--clr-text-3)] hover:text-[var(--clr-accent-strong)]">
+                <button type="button" onClick={() => setCodeGroup(activeGroup)} aria-label="Lihat kode kelas" className="text-[var(--clr-text-3)] hover:text-[var(--clr-accent-strong)] p-1">
+                  <QrCode size={16} />
+                </button>
+                <button type="button" onClick={() => handleRefreshCode(activeGroup.id)} aria-label="Perbarui kode kelas" className="text-[var(--clr-text-3)] hover:text-[var(--clr-accent-strong)] p-1">
                   <RotateCw size={15} />
                 </button>
               </div>
-              <button type="button" onClick={() => openComposer(activeGroup ? [activeGroup.id] : undefined)} className="bc-btn-primary text-sm">
+              <button type="button" onClick={() => openComposer(activeGroup ? [activeGroup.id] : undefined)} className="bc-btn-primary text-sm shrink-0">
                 <Plus size={18} /> Tambahkan
               </button>
             </div>
@@ -499,36 +500,15 @@ export default function KelasKuPage() {
           </div>
         </div>
 
-        {detail && <TodayView detail={detail} lastClassIds={lastClassIds} onAdd={() => openComposer(activeGroup ? [activeGroup.id] : undefined)} onKirimLagi={(ids) => openComposer(ids)} onReview={setReviewPenugasan} />}
+        {detail && <TodayView detail={detail} lastClassIds={lastClassIds} onKirimLagi={(ids) => openComposer(ids)} onReview={setReviewPenugasan} />}
 
         {detailLoading && !detail ? (
           <p className="text-sm text-[var(--clr-text-3)] text-center py-10">Memuat kelas...</p>
         ) : tab === "aktivitas" && detail ? (
           <div className="space-y-3">
-            {/* Form pengumuman cepat (single class — dari kelas ini) */}
-            <form onSubmit={savePengumuman} className="bc-card p-4 space-y-3">
-              <p className="text-sm font-bold text-[var(--clr-text)]">Buat pengumuman</p>
-              <input
-                value={pengumumanForm.judul}
-                onChange={(e) => setPengumumanForm((f) => ({ ...f, judul: e.target.value }))}
-                placeholder="Judul pengumuman"
-                className="bc-input text-sm"
-                aria-label="Judul pengumuman"
-              />
-              <textarea
-                value={pengumumanForm.deskripsi}
-                onChange={(e) => setPengumumanForm((f) => ({ ...f, deskripsi: e.target.value }))}
-                placeholder="Apa yang ingin kamu sampaikan? (opsional)"
-                className="bc-input bc-textarea text-sm"
-                aria-label="Isi pengumuman"
-              />
-              {pengumumanError && <p className="text-xs font-semibold text-[var(--clr-danger)]">{pengumumanError}</p>}
-              <button type="submit" disabled={savingPengumuman || !pengumumanForm.judul.trim()} className="bc-btn-primary text-sm w-full sm:w-auto">
-                {savingPengumuman ? <Loader2 size={16} className="animate-spin" /> : <Megaphone size={16} />}
-                {editPengumuman ? "Simpan Perubahan" : "Kirim Pengumuman"}
-              </button>
-            </form>
-
+            {/* STEP 6.11 — pembuatan pengumuman lewat satu pintu: + Tambahkan → Pengumuman
+                (ClassroomComposer.ContentTypePicker). Form inline permanen dihapus.
+                Edit pengumuman tetap lewat EditPengumumanModal (PATCH). */}
             {stream.length === 0 ? (
               <div className="bc-card bc-empty">
                 <div className="w-16 h-16 rounded-2xl bg-[var(--clr-accent-soft)] text-[var(--clr-accent-strong)] flex items-center justify-center mx-auto mb-4">
@@ -691,6 +671,16 @@ export default function KelasKuPage() {
 
         {toast && <Toast msg={toast} onClose={() => setToast(null)} />}
 
+        {/* STEP 6.11 — modal edit pengumuman (sheet) + modal kode kelas (Lihat Kode di hero) */}
+        {editPengumuman && (
+          <EditPengumumanModal
+            pengumuman={editPengumuman}
+            onClose={() => setEditPengumuman(null)}
+            onSaved={() => { setEditPengumuman(null); loadDetail(activeGroup.id); }}
+          />
+        )}
+        {codeGroup && <ClassCodeModal group={codeGroup} onClose={() => setCodeGroup(null)} />}
+
         {/* Hapus tugas yang sudah dikirim — dirender juga di cabang DETAIL
             (tombol hapus berada di tab Tugas & stream Aktivitas). */}
         {deleteTask && (
@@ -708,7 +698,7 @@ export default function KelasKuPage() {
           onClose={() => setComposerOpen(false)}
           groups={pickerClasses}
           initialClassIds={activeGroup ? [activeGroup.id, ...(composerInitial ?? [])] : composerInitial}
-          onDelivered={(info) => { setSuccess(info); setLastClassIds(readLastClassIds()); }}
+          onDelivered={(info) => { setSuccess(info); setLastClassIds(readLastClassIds()); if (activeGroup) loadDetail(activeGroup.id); }}
         />
 
         {success && <SuccessBanner info={success} onClose={() => setSuccess(null)} onView={() => setSuccess(null)} onAddAgain={() => { setSuccess(null); openComposer(lastClassIds.length ? lastClassIds : undefined); }} />}
@@ -730,11 +720,11 @@ function RingkasanChips({ r }: { r: { sudah: number; sedang: number; belum: numb
   );
 }
 
-/** STEP 6.4 — "Hari Ini di Kelas X": kondisi kelas dalam beberapa detik. */
-function TodayView({ detail, lastClassIds, onAdd, onKirimLagi, onReview }: {
+/** STEP 6.4 — "Hari Ini di Kelas X": kondisi kelas dalam beberapa detik.
+ *  STEP 6.11 — tanpa tombol tambah (primary action hanya di hero). */
+function TodayView({ detail, lastClassIds, onKirimLagi, onReview }: {
   detail: DetailData;
   lastClassIds: string[];
-  onAdd: () => void;
   onKirimLagi: (ids: string[]) => void;
   onReview: (p: DetailData["tugasPenugasan"][number]) => void;
 }) {
@@ -762,9 +752,6 @@ function TodayView({ detail, lastClassIds, onAdd, onKirimLagi, onReview }: {
               : `${active.length} aktivitas sedang berjalan`}
           </p>
         </div>
-        <button type="button" onClick={onAdd} className="bc-btn-primary text-sm shrink-0">
-          <Plus size={17} /> Tambahkan
-        </button>
       </div>
 
       {/* STEP 6.4/6.5 — "Perlu perhatian" didahulukan (server-derived, tanpa AI) */}
@@ -980,6 +967,75 @@ function StreamCard({ item, progress, onReview, onDeleteTask, onEditPengumuman, 
       <div className="flex-1 min-w-0">
         <p className="text-sm font-bold text-[var(--clr-text)] truncate">{m.materi.title}</p>
         <p className="text-xs text-[var(--clr-text-3)]">{date} · materi</p>
+      </div>
+    </div>
+  );
+}
+
+/** STEP 6.11 — edit pengumuman (sheet). Pembuatan pengumuman tetap lewat
+ *  composer (ContentTypePicker → PENGUMUMAN). Capability edit dipertahankan. */
+function EditPengumumanModal({ pengumuman, onClose, onSaved }: {
+  pengumuman: DetailData["pengumuman"][number];
+  onClose: () => void;
+  onSaved: () => void;
+}) {
+  const [judul, setJudul] = useState(pengumuman.judul);
+  const [deskripsi, setDeskripsi] = useState(pengumuman.deskripsi ?? "");
+  const [tenggat, setTenggat] = useState(pengumuman.tenggat ? pengumuman.tenggat.slice(0, 10) : "");
+  const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState("");
+
+  // Escape menutup modal (a11y).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    setErr("");
+    try {
+      const res = await fetch(`/api/guru/pengumuman/${pengumuman.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          judul: judul.trim(),
+          deskripsi: deskripsi.trim(),
+          tenggat: tenggat || null,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setErr(data.error || "Gagal menyimpan pengumuman"); return; }
+      onSaved();
+    } catch {
+      setErr("Gagal menyimpan pengumuman. Periksa koneksi Anda.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="bc-sheet-overlay" role="dialog" aria-modal="true" aria-label="Edit pengumuman">
+      <div className="bc-sheet">
+        <div className="px-5 pt-5 pb-2 flex items-center justify-between">
+          <p className="text-[17px] font-bold text-[var(--clr-text)]">Edit pengumuman</p>
+          <button type="button" onClick={onClose} aria-label="Tutup" className="w-10 h-10 rounded-full bg-[var(--clr-surface-2)] text-[var(--clr-text-2)] flex items-center justify-center"><X size={20} /></button>
+        </div>
+        <form onSubmit={submit} className="px-5 pb-6 space-y-3.5 pt-3">
+          <input value={judul} onChange={(e) => setJudul(e.target.value)} placeholder="Judul pengumuman" className="bc-input text-sm" aria-label="Judul pengumuman" required />
+          <textarea value={deskripsi} onChange={(e) => setDeskripsi(e.target.value)} placeholder="Apa yang ingin kamu sampaikan? (opsional)" className="bc-input bc-textarea text-sm" aria-label="Isi pengumuman" />
+          <label className="block">
+            <span className="block text-xs font-semibold text-[var(--clr-text-2)] mb-1">Tenggat (opsional)</span>
+            <input type="date" value={tenggat} onChange={(e) => setTenggat(e.target.value)} className="bc-input text-sm" aria-label="Tenggat pengumuman" />
+          </label>
+          {err && <p className="text-xs font-semibold text-[var(--clr-danger)]">{err}</p>}
+          <button type="submit" disabled={saving || !judul.trim()} className="bc-btn-primary w-full text-sm">
+            {saving ? <Loader2 size={16} className="animate-spin" /> : <Pencil size={16} />}
+            {saving ? "Menyimpan..." : "Simpan Perubahan"}
+          </button>
+        </form>
       </div>
     </div>
   );

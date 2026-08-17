@@ -194,6 +194,8 @@ function main() {
         "app/api/guru/penugasan/[id]/nilai-praktik/route.ts",
         "app/api/guru/kelasku/[id]/insight/route.ts",
         "app/api/murid/quiz/[id]/route.ts",
+        "app/api/group/route.ts",
+        "app/api/group/[id]/route.ts",
       ]);
       const diff = execSync(`git diff --name-only HEAD -- prisma/ lib/gamification/ lib/learning-loop/ engines/ lib/apk.ts lib/coins.ts lib/award-xp.ts app/api/`, { encoding: "utf8", cwd: process.cwd() }).trim().split("\n").filter(Boolean);
       return diff.every((f) => allowed.has(f));

@@ -3,13 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { isTeacherOrStudent, getTeacherGroups } from "@/lib/teacher/students";
 import { awardGuruXp } from "@/lib/gamification/teacher-xp";
-
-function generateCode() {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  let code = "";
-  for (let i = 0; i < 8; i++) code += chars[Math.floor(Math.random() * chars.length)];
-  return code;
-}
+import { getUniqueAccessCode } from "@/lib/classroom/access-code";
 
 function isTeacherOrHigher(user: { role: string; isFounder: boolean }): boolean {
   return isTeacherOrStudent(user);
@@ -68,9 +62,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Tahun ajaran wajib diisi", code: "VALIDATION_ERROR" }, { status: 400 });
     }
 
-    let code = generateCode();
-    const existing = await db.group.findUnique({ where: { accessCode: code } });
-    if (existing) code = generateCode();
+    const code = await getUniqueAccessCode();
 
     const group = await db.group.create({
       data: {

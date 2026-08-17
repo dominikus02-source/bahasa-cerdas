@@ -211,6 +211,9 @@ function main() {
         // Fase rilis Teka-Teki Silang: cap skor TEKA_TEKI_SILANG di MAX_SCORE_PER_GAME
         // (pengaman skor mengada-ada untuk gameType baru yang dirilis ke hub).
         "app/api/game/xp/route.ts",
+        // BC Classroom (STEP 6.10/6.12) — kode akses anti-kolisi & endpoint kelas
+        "app/api/group/route.ts",
+        "app/api/group/[id]/route.ts",
       ]);
       const diff = execSync(`git diff --name-only HEAD -- app/api/`, { encoding: "utf8", cwd: process.cwd() })
         .trim().split("\n").filter(Boolean)

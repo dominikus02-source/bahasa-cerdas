@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { isTeacherOrStudent } from "@/lib/teacher/students";
+import { getUniqueAccessCode } from "@/lib/classroom/access-code";
 
 export async function GET(
   req: NextRequest,
@@ -120,7 +121,7 @@ export async function PATCH(
     if (!group || (group.teacherId !== dbUser.id && !isPrivileged)) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     const body = await req.json();
-    const { name, description, grade, tahunAjaran, isActive } = body;
+    const { name, description, grade, tahunAjaran, isActive, regenerateCode } = body;
 
     const updateData: any = {};
     if (name !== undefined) updateData.name = name;
@@ -128,6 +129,12 @@ export async function PATCH(
     if (grade !== undefined) updateData.grade = grade;
     if (tahunAjaran !== undefined) updateData.tahunAjaran = tahunAjaran;
     if (isActive !== undefined) updateData.isActive = isActive;
+
+    // STEP 6.10 — tombol "Perbarui kode kelas" (UI) kirim regenerateCode: true.
+    // Sebelumnya PATCH tidak pernah menyentuh accessCode → tombol NO-OP.
+    if (regenerateCode === true) {
+      updateData.accessCode = await getUniqueAccessCode();
+    }
 
     const updated = await db.group.update({
       where: { id },

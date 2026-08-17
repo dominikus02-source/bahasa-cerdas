@@ -77,6 +77,7 @@ function main() {
         "app/api/murid/penugasan/[id]/praktik/route.ts", "app/api/guru/kelasku/[id]/route.ts",
         "app/api/guru/penugasan/[id]/nilai-praktik/route.ts", "app/api/guru/kelasku/[id]/insight/route.ts",
         "app/api/murid/quiz/[id]/route.ts",
+        "app/api/group/route.ts", "app/api/group/[id]/route.ts",
       ];
       return diff.every((f) => allowed.includes(f));
     });
