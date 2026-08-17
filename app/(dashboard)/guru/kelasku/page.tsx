@@ -272,6 +272,15 @@ export default function KelasKuPage() {
 
           {loading ? (
             <p className="text-sm text-[var(--clr-text-3)] text-center py-10">Memuat kelas...</p>
+          ) : error ? (
+            /* STEP 6.9 — error state manusiawi + tindakan (Coba Lagi) */
+            <div className="bc-card bc-empty">
+              <p className="text-sm font-bold text-[var(--clr-text)]">Kelas belum dapat dimuat.</p>
+              <p className="text-xs text-[var(--clr-text-2)] mt-1">Periksa koneksi lalu coba lagi.</p>
+              <button type="button" onClick={() => { setLoading(true); fetchGroups().finally(() => setLoading(false)); }} className="bc-btn-primary mt-4 text-sm mx-auto">
+                <RotateCw size={16} /> Coba Lagi
+              </button>
+            </div>
           ) : filteredGroups.length === 0 ? (
             <div className="bc-card bc-empty">
               <div className="w-16 h-16 rounded-2xl bg-[var(--clr-accent-soft)] text-[var(--clr-accent-strong)] flex items-center justify-center mx-auto mb-4">
@@ -578,6 +587,9 @@ export default function KelasKuPage() {
               <div className="bc-card p-5">
                 <p className="text-xs font-semibold uppercase tracking-wide text-[var(--clr-text-3)]">Rata-rata Nilai</p>
                 <p className="text-3xl font-bold text-[var(--clr-text)] mt-1">{detail.stats?.nilaiRata ?? "—"}</p>
+                {detail.stats?.nilaiRata == null && (
+                  <p className="text-xs text-[var(--clr-text-3)] mt-1">Belum ada nilai. Nilai muncul setelah tugas dinilai.</p>
+                )}
               </div>
               <div className="bc-card p-5">
                 <p className="text-xs font-semibold uppercase tracking-wide text-[var(--clr-text-3)]">Progres Belajar</p>
