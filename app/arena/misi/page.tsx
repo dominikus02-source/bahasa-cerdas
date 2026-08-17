@@ -3,7 +3,7 @@ import { db } from "@/lib/db"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { getOrCreateDailyQuests, trackDailyStreak, getClaimedQuestIds } from "@/lib/coins"
-import { Flame, CheckCircle2, PenLine, MessageCircle, Heart, Zap, Sparkles } from "lucide-react"
+import { Flame, CheckCircle2, PenLine, MessageCircle, Heart, Zap, Sparkles, Target } from "lucide-react"
 import { ClaimButton } from "./claim-button"
 import { getQuestMeta, questProgressText } from "@/lib/quest-meta"
 
@@ -26,10 +26,16 @@ export default async function MisiHarianPage() {
 
   return (
     <div className="px-4 py-5 arena-page">
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-extrabold text-gray-900 dark:text-slate-100">Misi Harian</h1>
-        <p className="text-base text-gray-500 dark:text-slate-400 mt-1">Selesaikan misi, dapatkan koin dan XP!</p>
+      {/* Header — konsep Arena 2.0: icon chip + eyebrow + judul + subjudul */}
+      <div className="mb-6 flex items-center gap-3">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-violet-100 text-violet-600 shadow-sm dark:bg-violet-500/15 dark:text-violet-300">
+          <Target className="h-5 w-5" />
+        </span>
+        <div className="min-w-0">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-600 dark:text-violet-300">Arena BahasaCerdas</p>
+          <h1 className="text-2xl font-black text-gray-900 dark:text-white">Misi</h1>
+          <p className="text-xs font-medium text-gray-500 dark:text-slate-400">Selesaikan misi harian, kumpulkan koin dan XP!</p>
+        </div>
       </div>
 
       {/* Streak card */}
@@ -109,35 +115,35 @@ export default async function MisiHarianPage() {
         </div>
       )}
 
-      {/* Info koin */}
-      <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-2xl border border-amber-200 dark:border-amber-800 p-5">
-        <h3 className="font-bold text-amber-800 text-base mb-3 flex items-center gap-2">
+      {/* Info koin — theme-aware penuh (dark: variant utk background & chip) */}
+      <div className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-yellow-50 p-5 dark:border-amber-500/20 dark:from-amber-500/10 dark:to-yellow-500/10">
+        <h3 className="mb-3 flex items-center gap-2 text-base font-bold text-amber-800 dark:text-amber-300">
           <Zap className="w-5 h-5" /> Cara Dapat Koin
         </h3>
         <div className="space-y-3">
           <Link href="/arena/tulis" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <div className="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center"><PenLine className="w-5 h-5 text-amber-600 dark:text-amber-400" /></div>
+            <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-500/15 flex items-center justify-center"><PenLine className="w-5 h-5 text-amber-600 dark:text-amber-400" /></div>
             <div className="flex-1">
               <p className="text-sm font-semibold text-gray-800 dark:text-slate-200">Tulis Karya</p>
               <p className="text-xs text-gray-500 dark:text-slate-400">+10 koin setiap karya baru</p>
             </div>
           </Link>
           <Link href="/arena/feed" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <div className="w-9 h-9 rounded-xl bg-rose-100 flex items-center justify-center"><Heart className="w-5 h-5 text-rose-600" /></div>
+            <div className="w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-500/15 flex items-center justify-center"><Heart className="w-5 h-5 text-rose-600 dark:text-rose-400" /></div>
             <div className="flex-1">
               <p className="text-sm font-semibold text-gray-800 dark:text-slate-200">Dapat Suka</p>
               <p className="text-xs text-gray-500 dark:text-slate-400">+2 koin setiap suka dari orang lain</p>
             </div>
           </Link>
           <Link href="/arena/feed" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <div className="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center"><MessageCircle className="w-5 h-5 text-blue-600 dark:text-blue-400" /></div>
+            <div className="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-500/15 flex items-center justify-center"><MessageCircle className="w-5 h-5 text-blue-600 dark:text-blue-400" /></div>
             <div className="flex-1">
               <p className="text-sm font-semibold text-gray-800 dark:text-slate-200">Beri Komentar</p>
               <p className="text-xs text-gray-500 dark:text-slate-400">+1 koin setiap komentar</p>
             </div>
           </Link>
           <Link href="/arena/jalur-cerdas" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <div className="w-9 h-9 rounded-xl bg-orange-100 flex items-center justify-center"><Flame className="w-5 h-5 text-orange-600 dark:text-orange-400" /></div>
+            <div className="w-9 h-9 rounded-xl bg-orange-100 dark:bg-orange-500/15 flex items-center justify-center"><Flame className="w-5 h-5 text-orange-600 dark:text-orange-400" /></div>
             <div className="flex-1">
               <p className="text-sm font-semibold text-gray-800 dark:text-slate-200">Rentetan Harian</p>
               <p className="text-xs text-gray-500 dark:text-slate-400">+5 koin setiap login berturut-turut</p>

@@ -307,6 +307,37 @@ function main() {
       return hrefs.length >= 10 && hrefs.every((h) => fs.existsSync(`app${h}/page.tsx`));
     });
 
+  // ── 13. MISI — konsep Arena 2.0 ──
+  console.log("\n── 13. Misi — Header Konsep Arena + Tema ──");
+  const misiPage = read("app/arena/misi/page.tsx");
+  test("misi page: header ikon chip + eyebrow 'Arena BahasaCerdas' (konsep Arena 2.0)",
+    () => misiPage.includes("Arena BahasaCerdas") && misiPage.includes("text-[10px] font-black uppercase tracking-[0.2em]") && misiPage.includes("<Target"));
+  test("misi page: judul 'Misi' + subjudul koin/XP (satu tujuan per halaman)",
+    () => misiPage.includes(">Misi</h1>") && misiPage.includes("Selesaikan misi harian, kumpulkan koin dan XP!"));
+  test("misi page: box 'Cara Dapat Koin' theme-aware (dark: variant, bukan amber-50 gelap)",
+    () => misiPage.includes("dark:from-amber-500/10") && misiPage.includes("dark:bg-amber-500/15"));
+
+  // ── 14. KUIS TTS 1.0 — GAMEPLAY & GAME LOOP ──
+  console.log("\n── 14. Kuis TTS 1.0 — Gameplay & Game Loop ──");
+  const ttsPage = read("app/arena/game/teka-teki-silang/page.tsx");
+  const tts = read("components/game/TTSpage.tsx");
+  test("TTS route: wrapper ramping tanpa X duplikat (satu header game saja)",
+    () => ttsPage.includes("TekaTekiSilang") && !ttsPage.includes('aria-label="Keluar"'));
+  test("TTS gameplay: keluar saat ada progres → modal konfirmasi (progress tidak hilang diam-diam)",
+    () => tts.includes("adaProgress") && tts.includes("setConfirmExit(true)") && tts.includes("Keluar dari permainan?") && tts.includes("Tetap Main"));
+  test("TTS keluar TANPA progres → langsung ke levels (tanpa modal berlebihan)",
+    () => tts.includes("else setScreen(\"levels\")"));
+  test("TTS result screen: CTA utama 'Main Lagi' + sekunder 'Kembali ke Gim'",
+    () => tts.includes("Main Lagi") && tts.includes("Kembali ke Gim"));
+  test("TTS grid: tiap sel punya aria-label (Baris/kolom/petunjuk — aksesibilitas)",
+    () => tts.includes("aria-label={\`Baris ${r + 1}, kolom ${c + 1}") || tts.includes("aria-label={\`Baris"));
+  test("TTS: animasi hormati prefers-reduced-motion",
+    () => tts.includes("prefers-reduced-motion: reduce") && tts.includes("@media (prefers-reduced-motion"));
+  test("TTS: CTA result & tombol aksi punya label jelas (bukan icon buta)",
+    () => tts.includes('aria-label="Keluar dari permainan"'));
+  test("TTS: XP/koin tetap via engine existing — tanpa awardXp baru di komponen game",
+    () => !tts.includes("awardXp(") && !tts.includes("addXp(") && !tts.includes("createXpTransaction"));
+
   // ── Summary ──
   console.log(`\n${"=".repeat(60)}`);
   console.log(`📊 RESULT: ${passed} passed, ${failed} failed (${passed + failed} total)`);

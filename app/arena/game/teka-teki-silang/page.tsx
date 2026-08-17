@@ -1,18 +1,18 @@
 "use client"
 
 import TekaTekiSilang from "@/components/game/TTSpage"
-import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
 
+/**
+ * KUIS TTS — route game fullscreen.
+ *
+ * Exit/back dikelola DI DALAM komponen (TTSpage): tombol keluar di header
+ * (layar awal/gate) dan tombol keluar saat bermain yang MEMBERI KONFIRMASI
+ * bila progress akan hilang. Wrapper ini hanya menyediakan kanvas penuh —
+ * tidak ada tombol X kedua yang bisa menutup permainan tanpa konfirmasi.
+ */
 export default function TekaTekiSilangPage() {
   return (
     <div className="fixed inset-0 z-[60]">
-      <Link
-        href="/arena/game"
-        className="fixed top-3 right-3 z-[80] w-9 h-9 rounded-xl bg-[#161B3A]/10 backdrop-blur-md border border-[#161B3A]/20 shadow-md flex items-center justify-center text-[#161B3A] hover:bg-[#161B3A]/20 active:scale-95 transition-all"
-      >
-        <ArrowLeft className="w-5 h-5" />
-      </Link>
       <TekaTekiSilang />
     </div>
   )

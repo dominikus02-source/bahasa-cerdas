@@ -23,8 +23,16 @@
  * bonus saat sempurna, gate screen saat habis). Leveling lengkap: 12 level
  * (11 tema + Ujian Akhir), tier pemain dari XP lokal, rentetan harian + bonus
  * XP, dan selebrasi saat level baru terbuka.
+ *
+ * v3.1 (KUIS TTS 1.0 — gameplay audit): keluar saat bermain diberi
+ * KONFIRMASI bila progress akan hilang (§23); result screen punya CTA jelas
+ * [Main Lagi] + [Kembali ke Gim] (§15); tiap sel grid punya aria-label
+ * (aksesibilitas §35); animasi hormati prefers-reduced-motion (§28). XP tetap
+ * dikirim SEKALI per sesi (xpSentRef) dan skor dicap server
+ * (MAX_SCORE_PER_GAME) — anti-cheat tidak diubah.
  */
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { setQuiet } from "@/lib/notif-quiet"
 import {
   X, Play, RotateCcw, ChevronRight, Lock, Star, Trophy, Lightbulb,
@@ -190,6 +198,7 @@ function calcCoins(stars: number, levelId: number) {
 }
 
 export default function TekaTekiSilang() {
+  const router = useRouter();
   const [screen, setScreen] = useState<"start" | "levels" | "setup" | "game" | "result" | "hearts">("start");
   const [saved, setSaved] = useState<Saved>({ unlocked: [1], best: {}, xp: 0, coins: 0 });
   const [puzzleId, setPuzzleId] = useState(1);
@@ -236,6 +245,8 @@ export default function TekaTekiSilang() {
   const [celebrating, setCelebrating] = useState(false);
   const [cheerText, setCheerText] = useState<string | null>(null);
   const [bigCelebrate, setBigCelebrate] = useState(false);
+  // KUIS TTS 1.0: konfirmasi keluar saat progress akan hilang (§23).
+  const [confirmExit, setConfirmExit] = useState(false);
 
   const inputRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -629,6 +640,10 @@ export default function TekaTekiSilang() {
         .tts-mascot-cheer{animation:tts-cheer .7s ease}
         .tts-bubble{animation:tts-bubble 1.1s ease}
         .tts-confetti-piece{position:absolute;top:0;animation:tts-confetti 1.8s ease-in forwards}
+        /* KUIS TTS 1.0 (§28) — hormati prefers-reduced-motion */
+        @media (prefers-reduced-motion: reduce){
+          .tts-screen,.tts-star-lit,.tts-logo,.tts-wrong,.tts-mascot-idle,.tts-mascot-cheer,.tts-bubble,.tts-confetti-piece{animation:none!important;transition:none!important}
+        }
       `}</style>
       <div className="pointer-events-none fixed top-[8%] left-[3%] w-16 h-16 bg-[#38BDF8] border-4 border-[#161B3A] rounded-3xl" style={{ animation: "tts-float1 9s ease-in-out infinite" }} />
       <div className="pointer-events-none fixed top-[16%] right-[5%] w-12 h-12 bg-[#FBBF24] border-4 border-[#161B3A] rounded-full" style={{ animation: "tts-float2 10s ease-in-out infinite" }} />
@@ -649,6 +664,27 @@ export default function TekaTekiSilang() {
         </div>
       )}
 
+      {/* KUIS TTS 1.0 (§23) — konfirmasi keluar saat progress akan hilang */}
+      {confirmExit && (
+        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-[#161B3A]/60 p-5 backdrop-blur-sm">
+          <div className="tts-screen w-full max-w-sm rounded-3xl border-4 border-[#161B3A] bg-white p-6 text-center shadow-[6px_6px_0_#161B3A]">
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl border-4 border-[#161B3A] bg-[#FF6B6B] shadow-[3px_3px_0_#161B3A]">
+              <X className="w-7 h-7 text-white" />
+            </div>
+            <h3 className="text-2xl font-extrabold">Keluar dari permainan?</h3>
+            <p className="mt-1 mb-5 text-sm opacity-70">Progress permainan ini akan hilang.</p>
+            <div className="flex flex-col gap-2.5">
+              <button className={`${btn} px-5 py-3 text-white`} style={{ background: color }} onClick={() => setConfirmExit(false)}>
+                Tetap Main
+              </button>
+              <button className={`${btn} px-5 py-3 bg-white`} onClick={() => { setConfirmExit(false); setScreen("levels"); }}>
+                Keluar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className={`relative mx-auto px-4 py-3 min-h-full flex flex-col ${screen === "game" ? "max-w-[1280px]" : "max-w-2xl"}`}>
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
@@ -662,6 +698,11 @@ export default function TekaTekiSilang() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            {(screen === "start" || screen === "hearts") && (
+              <button className={`${btn} w-10 h-10 bg-white`} onClick={() => router.push("/arena/game")} aria-label="Keluar dari gim">
+                <X className="w-5 h-5" />
+              </button>
+            )}
             <button className={`${btn} w-10 h-10 bg-white`} onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
             </button>
@@ -1104,6 +1145,7 @@ export default function TekaTekiSilang() {
                           onChange={(e) => onType(r, c, e.target.value)}
                           onKeyDown={(e) => onKeyDown(r, c, e)}
                           onFocus={() => selectCell(r, c)}
+                          aria-label={`Baris ${r + 1}, kolom ${c + 1}${cell.number != null ? `, petunjuk ${cell.number}` : ""}`}
                           maxLength={1}
                           inputMode="text"
                           autoComplete="off"
@@ -1129,7 +1171,16 @@ export default function TekaTekiSilang() {
               <button className={`${btn} px-5 py-2.5 bg-[#10B981] text-white text-sm`} onClick={checkAnswers} disabled={timeUp}>
                 <CheckCircle2 className="w-4 h-4" /> Cek Jawaban
               </button>
-              <button className={`${btn} w-11 h-11 bg-white`} onClick={() => setScreen("levels")} aria-label="Keluar">
+              <button
+                className={`${btn} w-11 h-11 bg-white`}
+                onClick={() => {
+                  // KUIS TTS 1.0 (§23): keluar saat ada progress → konfirmasi.
+                  const adaProgress = filledCells > 0 || combo > 0 || timeBudgetRef.current - remainingSec > 0;
+                  if (adaProgress) setConfirmExit(true);
+                  else setScreen("levels");
+                }}
+                aria-label="Keluar dari permainan"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1230,17 +1281,20 @@ export default function TekaTekiSilang() {
               )}
             </div>
 
+            {/* KUIS TTS 1.0 (§15): MAIN LAGI (primary) + KEMBALI KE GIM (secondary).
+                Level berikutnya muncul saat sempurna — progresi natural. */}
             <div className="flex flex-wrap justify-center gap-3">
-              <button className={`${btn} px-5 py-3 bg-white`} onClick={() => setScreen("setup")}>
-                <RotateCcw className="w-4 h-4" /> Ulangi
-              </button>
-              {result.pct === 100 && puzzleId < TOTAL_LEVELS && (
-                <button className={`${btn} px-5 py-3 bg-[#38BDF8] text-white`} onClick={() => { openSetup(puzzleId + 1); }}>
+              {result.pct === 100 && puzzleId < TOTAL_LEVELS ? (
+                <button className={`${btn} px-5 py-3 text-white`} style={{ background: color }} onClick={() => { openSetup(puzzleId + 1); }}>
                   Level Berikutnya <ChevronRight className="w-4 h-4" />
                 </button>
+              ) : (
+                <button className={`${btn} px-5 py-3 text-white`} style={{ background: color }} onClick={() => setScreen("setup")}>
+                  <RotateCcw className="w-4 h-4" /> Main Lagi
+                </button>
               )}
-              <button className={`${btn} px-5 py-3 bg-[#FBBF24]`} onClick={() => setScreen("levels")}>
-                Pilih Level
+              <button className={`${btn} px-5 py-3 bg-[#FBBF24]`} onClick={() => router.push("/arena/game")}>
+                Kembali ke Gim
               </button>
             </div>
           </div>
