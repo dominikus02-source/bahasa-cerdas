@@ -152,7 +152,7 @@ export default async function RootLayout({
         <a href="#main-content" className="skip-link">
           Langsung ke konten utama
         </a>
-        <Providers>{children}</Providers>
+        <Providers nonce={nonce}>{children}</Providers>
       </body>
     </html>
   );

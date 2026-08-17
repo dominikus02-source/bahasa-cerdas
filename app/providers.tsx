@@ -6,10 +6,10 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export function Providers({ children, nonce }: { children: React.ReactNode; nonce?: string }) {
   useUser();
   return (
-    <ThemeProvider>
+    <ThemeProvider nonce={nonce}>
       <SwRegister />
       {children}
       <Analytics />
