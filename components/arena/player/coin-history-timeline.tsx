@@ -109,8 +109,8 @@ export function CoinHistoryTimeline({ limit = 20 }: { limit?: number }) {
             <p className="text-sm font-black text-emerald-300">+{formatId(summary.masuk)}</p>
           </div>
           <div className="rounded-xl bg-rose-500/10 p-2 text-center">
-            <p className="text-[10px] font-bold uppercase text-rose-300">Keluar</p>
-            <p className="text-sm font-black text-rose-300">{formatId(summary.keluar)}</p>
+            <p className="text-[10px] font-bold uppercase text-rose-500 dark:text-rose-300">Keluar</p>
+            <p className="text-sm font-black text-rose-500 dark:text-rose-300">{formatId(summary.keluar)}</p>
           </div>
           <div className="rounded-xl bg-[var(--px-gold)]/10 p-2 text-center">
             <p className="text-[10px] font-bold uppercase text-[var(--px-gold)]">Total</p>
@@ -135,11 +135,11 @@ export function CoinHistoryTimeline({ limit = 20 }: { limit?: number }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Cari…"
-          className="w-28 rounded-full border border-[var(--px-border)] bg-black/25 px-3 py-1.5 text-xs font-semibold text-white placeholder:text-[var(--px-text-faint)] focus:outline-none focus:ring-2 focus:ring-[var(--px-royal)]"
+          className="w-28 rounded-full border border-[var(--px-border)] bg-[var(--px-glass)] px-3 py-1.5 text-xs font-semibold text-[var(--px-text)] placeholder:text-[var(--px-text-faint)] focus:outline-none focus:ring-2 focus:ring-[var(--px-royal)]"
         />
       </div>
 
-      {error && <p className="mb-2 text-xs text-rose-300">{error}</p>}
+      {error && <p className="mb-2 text-xs text-rose-500 dark:text-rose-300">{error}</p>}
 
       {entries.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-[var(--px-border)] py-10 text-center">
@@ -167,7 +167,7 @@ function CoinHistoryRow({ entry }: { entry: CoinHistoryEntryView }) {
   const isIn = entry.amount > 0;
 
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-[var(--px-border)] bg-white/[0.04] px-3 py-2.5">
+    <div className="flex items-center gap-3 rounded-xl border border-[var(--px-border)] bg-[var(--px-glass)] px-3 py-2.5">
       <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-lg ${isIn ? "bg-[var(--px-gold)]/10" : "bg-rose-500/10"}`}>
         {isIn ? "🪙" : "💸"}
       </span>
@@ -175,7 +175,7 @@ function CoinHistoryRow({ entry }: { entry: CoinHistoryEntryView }) {
         <p className="truncate text-sm font-bold text-[var(--px-text)]">{entry.reason}</p>
         <p className="text-[11px] text-[var(--px-text-faint)]">{time}</p>
       </div>
-      <span className={`shrink-0 text-sm font-black ${isIn ? "text-[var(--px-gold)]" : "text-rose-300"}`}>
+      <span className={`shrink-0 text-sm font-black ${isIn ? "text-[var(--px-gold)]" : "text-rose-500 dark:text-rose-300"}`}>
         {isIn ? "+" : ""}
         {formatId(entry.amount)}
       </span>

@@ -16,7 +16,7 @@ export function ProfileTabs() {
 
   return (
     <div>
-      <div className="mb-4 flex gap-1 rounded-2xl border border-[var(--px-border)] bg-black/20 p-1">
+      <div className="mb-4 flex gap-1 rounded-2xl border border-[var(--px-border)] bg-[var(--px-glass)] p-1">
         <TabButton active={tab === "ringkasan"} onClick={() => setTab("ringkasan")} icon={<Trophy size={14} />} label="Ringkasan" />
         <TabButton active={tab === "badge"} onClick={() => setTab("badge")} icon={<Award size={14} />} label="Lencana" />
         <TabButton active={tab === "pencapaian"} onClick={() => setTab("pencapaian")} icon={<Target size={14} />} label="Pencapaian" />

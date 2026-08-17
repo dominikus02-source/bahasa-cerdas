@@ -23,7 +23,7 @@ export function LearningFeedback({ profile }: { profile: PlayerProfileView }) {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          className="flex items-start gap-3 rounded-xl border border-[var(--px-border)] bg-white/[0.04] p-3"
+          className="flex items-start gap-3 rounded-xl border border-[var(--px-border)] bg-[var(--px-glass)] p-3"
         >
           <TrendingUp size={18} className="mt-0.5 shrink-0 text-[var(--px-mint)]" />
           <div>

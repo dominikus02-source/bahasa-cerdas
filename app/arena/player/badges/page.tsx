@@ -12,7 +12,7 @@ export default async function BadgesPage() {
 
   return (
     <PlayerTheme>
-      <PlayerPageShell title="Koleksi Badge" subtitle="Semua badge yang bisa kamu raih di BahasaCerdas." name={user.fullName || user.nickname || "Pemain"}>
+      <PlayerPageShell title="Badge Saya" subtitle="Kumpulkan pencapaian dari perjalananmu di Arena." name={user.fullName || user.nickname || "Pemain"} showProfile={false}>
         <BadgeGrid />
       </PlayerPageShell>
     </PlayerTheme>

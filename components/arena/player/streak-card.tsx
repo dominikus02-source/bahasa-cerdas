@@ -36,7 +36,7 @@ export function StreakCard({ streak }: { streak: number }) {
         ))}
       </div>
 
-      <div className="mt-3 flex items-center gap-1.5 rounded-lg bg-black/20 px-3 py-2 text-[11px] font-semibold text-[var(--px-text-dim)]">
+      <div className="mt-3 flex items-center gap-1.5 rounded-lg bg-[var(--px-glass)] px-3 py-2 text-[11px] font-semibold text-[var(--px-text-dim)]">
         <Flame size={12} className="shrink-0 text-orange-400" />
         Streak dihitung per hari dari aktivitas belajarmu di BahasaCerdas.
       </div>

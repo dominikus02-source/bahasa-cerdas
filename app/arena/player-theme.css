@@ -18,6 +18,8 @@
   --px-text: #f3f7ff;
   --px-text-dim: #a9b6d9;
   --px-text-faint: #7483ad;
+  /* Track progress (track XP, quest, achievement) */
+  --px-track: rgba(0, 0, 0, 0.35);
 }
 
 .px-theme {
@@ -199,6 +201,183 @@
   background-size: 200% 100%;
   animation: px-skel 1.4s infinite;
 }
+
+/* ============================================================
+   ARENA 2.0 — ZONA PLAYER LIGHT/DARK ADAPTIVE (.px-theme-adaptive)
+   ------------------------------------------------------------
+   .px-theme (navy premium) tetap utuh untuk siapa pun yang butuh
+   tampilan navy (mis. murid/beranda .px-theme-app). Zona player
+   (/arena/player, /arena/player/leaderboard, /arena/player/badges)
+   memakai variant ini: LIGHT = permukaan terang iOS-premium,
+   DARK = navy premium seperti semula. Komponen px-* TIDAK berubah —
+   cukup menimpa token, semua ikut. */
+.px-theme-adaptive {
+  background:
+    radial-gradient(900px 360px at 12% -12%, rgba(139, 92, 246, 0.08), transparent 62%),
+    linear-gradient(180deg, #fdfcfb 0%, #faf9f7 54%, #f7f5fb 100%);
+  color: #1e293b;
+  --px-text: #1e293b;
+  --px-text-dim: #475569;
+  --px-text-faint: #94a3b8;
+  --px-glass: rgba(15, 23, 42, 0.05);
+  --px-glass-strong: rgba(15, 23, 42, 0.1);
+  --px-border: rgba(15, 23, 42, 0.12);
+  --px-track: rgba(15, 23, 42, 0.08);
+  --px-gold: #b45309;
+  --px-gold-2: #d97706;
+  --px-gold-3: #f59e0b;
+  --px-royal: #4f46e5;
+  --px-royal-2: #3b82f6;
+  --px-mint: #0d9488;
+}
+
+.px-theme-adaptive .px-card {
+  background: rgba(255, 255, 255, 0.82);
+  border-color: rgba(15, 23, 42, 0.08);
+  border-radius: 1.375rem;
+  box-shadow: 0 12px 32px -28px rgba(15, 23, 42, 0.38);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.px-theme-adaptive .px-btn-gold {
+  background: var(--px-gold-2);
+  color: #fff;
+  border-radius: 0.875rem;
+  box-shadow: 0 8px 18px -10px rgba(180, 83, 9, 0.7);
+}
+
+.px-theme-adaptive .px-btn-ghost {
+  background: transparent;
+  border-color: rgba(15, 23, 42, 0.12);
+  color: var(--px-text-dim);
+  border-radius: 0.875rem;
+}
+
+.px-theme-adaptive .px-btn-ghost:hover {
+  background: rgba(15, 23, 42, 0.045);
+  color: var(--px-text);
+}
+
+.px-theme-adaptive .px-chip {
+  background: rgba(15, 23, 42, 0.035);
+  border-color: rgba(15, 23, 42, 0.07);
+  border-radius: 0.7rem;
+  font-weight: 600;
+}
+
+.px-theme-adaptive .px-xp-track {
+  background: rgba(15, 23, 42, 0.08);
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.px-theme-adaptive .px-skeleton {
+  background: linear-gradient(100deg, rgba(15, 23, 42, 0.045) 40%, rgba(15, 23, 42, 0.09) 50%, rgba(15, 23, 42, 0.045) 60%);
+}
+
+/* Leaderboard filter — light variant di zona adaptive */
+.px-theme-adaptive .lb-ghost {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: #e2e8f0;
+  color: #475569;
+}
+.px-theme-adaptive .lb-ghost:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+.px-theme-adaptive .lb-gold {
+  background: linear-gradient(120deg, #f59e0b, #fbbf24);
+  color: #451a03;
+  box-shadow: 0 6px 16px -6px rgba(245, 158, 11, 0.55);
+}
+.px-theme-adaptive .lb-royal {
+  background: linear-gradient(120deg, #7c3aed, #2563eb);
+  color: #fff;
+  box-shadow: 0 6px 16px -6px rgba(124, 58, 237, 0.55);
+}
+
+/* Dark mode: kembali ke navy premium zona player */
+.dark .px-theme-adaptive {
+  background:
+    radial-gradient(1200px 600px at 15% -10%, rgba(47, 75, 255, 0.35), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(245, 166, 35, 0.18), transparent 55%),
+    linear-gradient(180deg, var(--px-navy) 0%, var(--px-navy-2) 45%, var(--px-navy-3) 100%);
+  color: #f3f7ff;
+  --px-text: #f3f7ff;
+  --px-text-dim: #a9b6d9;
+  --px-text-faint: #7483ad;
+  --px-glass: rgba(255, 255, 255, 0.08);
+  --px-glass-strong: rgba(255, 255, 255, 0.14);
+  --px-border: rgba(255, 255, 255, 0.14);
+  --px-track: rgba(0, 0, 0, 0.35);
+  --px-gold: #ffd24a;
+  --px-gold-2: #f5a623;
+  --px-gold-3: #ffb020;
+  --px-royal: #2b4bff;
+  --px-royal-2: #0f7bff;
+  --px-mint: #34e0b8;
+}
+
+.dark .px-theme-adaptive .px-card {
+  background: linear-gradient(160deg, var(--px-glass-strong), var(--px-glass) 55%, rgba(255, 255, 255, 0.04));
+  border-color: var(--px-border);
+  border-radius: 1.25rem;
+  box-shadow: 0 10px 30px -24px rgba(0, 0, 0, 0.5);
+}
+
+.dark .px-theme-adaptive .px-btn-gold {
+  background: linear-gradient(120deg, var(--px-gold-2), var(--px-gold-3));
+  color: #1b1205;
+  border-radius: 9999px;
+  box-shadow: 0 8px 20px -6px rgba(245, 166, 35, 0.5);
+}
+
+.dark .px-theme-adaptive .px-btn-ghost {
+  background: var(--px-glass);
+  border-color: var(--px-border);
+  color: var(--px-text);
+  border-radius: 9999px;
+}
+
+.dark .px-theme-adaptive .px-btn-ghost:hover {
+  background: var(--px-glass-strong);
+}
+
+.dark .px-theme-adaptive .px-chip {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--px-border);
+  border-radius: 9999px;
+  font-weight: 700;
+}
+
+.dark .px-theme-adaptive .px-xp-track {
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.dark .px-theme-adaptive .px-skeleton {
+  background: linear-gradient(100deg, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.14) 50%, rgba(255,255,255,0.06) 60%);
+}
+
+.dark .px-theme-adaptive .lb-ghost {
+  background: var(--px-glass);
+  border-color: var(--px-border);
+  color: var(--px-text);
+}
+.dark .px-theme-adaptive .lb-ghost:hover {
+  background: var(--px-glass-strong);
+}
+.dark .px-theme-adaptive .lb-gold {
+  background: linear-gradient(120deg, var(--px-gold-2), var(--px-gold-3));
+  color: #1b1205;
+  box-shadow: 0 8px 20px -6px rgba(245, 166, 35, 0.5);
+}
+.dark .px-theme-adaptive .lb-royal {
+  background: linear-gradient(120deg, var(--px-royal), var(--px-royal-2));
+  color: #fff;
+  box-shadow: 0 8px 20px -6px rgba(43, 75, 255, 0.5);
+}
+
 @keyframes px-skel {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }

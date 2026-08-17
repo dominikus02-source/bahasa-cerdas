@@ -77,7 +77,7 @@ export function AchievementGrid({ limit }: { limit?: number }) {
         </p>
       </div>
 
-      {error && <p className="mb-3 text-xs text-rose-300">{error}</p>}
+      {error && <p className="mb-3 text-xs text-rose-500 dark:text-rose-300">{error}</p>}
 
       <div className="space-y-2">
         {visible.map((a, i) => {
@@ -89,7 +89,7 @@ export function AchievementGrid({ limit }: { limit?: number }) {
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.03 }}
-              className="flex items-center gap-3 rounded-2xl border border-[var(--px-border)] bg-white/[0.05] p-3"
+              className="flex items-center gap-3 rounded-2xl border border-[var(--px-border)] bg-[var(--px-glass)] p-3"
             >
               <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-xl ${done ? "bg-gradient-to-br from-amber-500/40 to-orange-600/30" : "bg-white/5 dark:bg-slate-900/5 opacity-60"}`}>
                 {done ? <BadgeIcon icon={a.icon} size={34} alt={a.name} /> : <Lock size={16} />}
@@ -99,7 +99,7 @@ export function AchievementGrid({ limit }: { limit?: number }) {
                 <p className="text-sm font-bold text-[var(--px-text)]">{a.name}</p>
                 <p className="line-clamp-1 text-[11px] text-[var(--px-text-dim)]">{a.description}</p>
                 <div className="mt-1 flex items-center gap-2">
-                  <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-black/40">
+                  <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--px-track)]">
                     <motion.div
                       className={`h-full rounded-full ${done ? "bg-emerald-500" : "bg-[var(--px-royal)]"}`}
                       initial={{ width: 0 }}

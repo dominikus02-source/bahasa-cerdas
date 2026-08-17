@@ -84,7 +84,7 @@ export function DailyQuestCard({ compact = false }: { compact?: boolean }) {
       </div>
 
       {error && (
-        <p className="mb-3 rounded-lg bg-rose-500/10 px-3 py-2 text-xs font-semibold text-rose-300">{error}</p>
+        <p className="mb-3 rounded-lg bg-rose-500/10 px-3 py-2 text-xs font-semibold text-rose-500 dark:text-rose-300">{error}</p>
       )}
 
       <div className="space-y-2">
@@ -104,7 +104,7 @@ export function DailyQuestCard({ compact = false }: { compact?: boolean }) {
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-bold text-[var(--px-text)]">{meta.label}</p>
                 <div className="mt-1 flex items-center gap-2">
-                  <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-black/40">
+                  <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--px-track)]">
                     <motion.div
                       className={`h-full rounded-full ${isClaimed ? "bg-emerald-500" : "bg-[var(--px-gold)]"}`}
                       initial={{ width: 0 }}

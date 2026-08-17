@@ -13,7 +13,7 @@ import { SwRegister } from "@/components/SwRegister"
 import { ArenaClientWrapper } from "./arena-client"
 import { BottomNav } from "./bottom-nav"
 import MuridMobileNav from "@/components/dashboard/MuridMobileNav"
-import { BackHome } from "@/components/shared/BackHome"
+import { ArenaBackButton } from "@/components/arena/ArenaBackButton"
 import UserAvatar from "@/components/arena/UserAvatar"
 import { NotificationBell } from "@/components/dashboard/NotificationBell"
 import { ThemeToggle } from "@/components/theme/theme-toggle"
@@ -123,13 +123,15 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
         <>
           <SwRegister />
           {/* HEADER GLOBAL KANONIK — sama persis dengan halaman Student lain
-              (/murid/*): [← Beranda] .... [Avatar] [Bell] [Theme]. TIDAK ada
-              identitas produk (Arena/Obrolan), CTA dasbor guru, search, atau
-              logout di header — navigasi tetap via sidebar global; akses
-              guru/founder via RoleSections; logout via sidebar footer dan
-              Pemain tab. APK menurunkan BackHome (escape hatch keluar scope). */}
+              (/murid/*): [← Kembali] .... [Avatar] [Bell] [Theme]. ARENA 2.0:
+              tombol kiri = ArenaBackButton (router history + fallback logis per
+              route — BUKAN hardcode Beranda). TIDAK ada identitas produk
+              (Arena/Obrolan), CTA dasbor guru, search, atau logout di header —
+              navigasi tetap via sidebar global; akses guru/founder via
+              RoleSections; logout via sidebar footer dan Pemain tab. APK
+              menurunkan tombol kembali (escape hatch keluar scope). */}
  <header className="shrink-0 sticky top-0 z-30 flex items-center justify-between gap-2 px-4 md:px-6 h-14 bg-white/80 backdrop-blur-xl border-b border-gray-100/50 dark:bg-slate-900/80 dark:border-slate-800">
-            {!apk && <BackHome />}
+            {!apk && <ArenaBackButton />}
             <div className="flex items-center gap-1 md:gap-2">
               <UserAvatar
                 size={36}

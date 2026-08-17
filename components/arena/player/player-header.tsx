@@ -57,8 +57,8 @@ export function PlayerHeader({
               <span className="text-[var(--px-gold)]">{formatId(profile.coin)}</span>
             </span>
             <span className="px-chip">
-              <Flame size={13} className="px-flame text-orange-400" />
-              <span className="text-orange-300">{profile.streak} hari</span>
+              <Flame size={13} className="px-flame text-orange-500 dark:text-orange-400" />
+              <span className="text-orange-600 dark:text-orange-300">{profile.streak} hari</span>
             </span>
           </div>
         </div>

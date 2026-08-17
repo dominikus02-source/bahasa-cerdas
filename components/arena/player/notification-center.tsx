@@ -51,7 +51,7 @@ export function NotificationCenter({ compact = false }: { compact?: boolean }) {
         {notifications.length > 0 && <span className="px-chip">{notifications.length} terbaru</span>}
       </div>
 
-      {error && <p className="mb-2 text-xs text-rose-300">{error}</p>}
+      {error && <p className="mb-2 text-xs text-rose-500 dark:text-rose-300">{error}</p>}
 
       {notifications.length === 0 ? (
         <div className="rounded-xl border border-dashed border-[var(--px-border)] py-8 text-center">

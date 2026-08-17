@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
-import { Lock } from "lucide-react";
+import { Award, Lock } from "lucide-react";
 import { BadgeIcon } from "@/components/gamification/BadgeIcon";
 import { RARITY_META, type BadgeView } from "@/lib/gamification/client-types";
 
@@ -39,6 +40,26 @@ export function BadgeGrid({ limit }: { limit?: number }) {
   const unlocked = badges.filter((b) => b.unlocked);
   const visible = limit ? badges.slice(0, limit) : badges;
 
+  // ARENA 2.0 — empty state actionable: arahkan ke gim, bukan dead end.
+  if (!limit && badges.length === 0) {
+    return (
+      <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-[var(--px-border)] bg-[var(--px-glass)] p-8 text-center">
+        <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--px-glass-strong)]">
+          <Award size={32} className="text-[var(--px-text-faint)]" />
+        </span>
+        <div>
+          <p className="text-sm font-extrabold text-[var(--px-text)]">Belum ada badge</p>
+          <p className="mx-auto mt-1 max-w-xs text-xs leading-relaxed text-[var(--px-text-dim)]">
+            Mainkan gim dan selesaikan tantangan untuk mendapatkan badge pertamamu.
+          </p>
+        </div>
+        <Link href="/arena/game" className="px-btn-gold inline-flex items-center gap-1.5 px-6 py-2.5 text-sm font-extrabold">
+          Mainkan Gim
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="mb-3 flex items-center justify-between">
@@ -50,7 +71,7 @@ export function BadgeGrid({ limit }: { limit?: number }) {
         )}
       </div>
 
-      {error && <p className="mb-3 text-xs text-rose-300">{error}</p>}
+      {error && <p className="mb-3 text-xs text-rose-500 dark:text-rose-300">{error}</p>}
 
       <div className="grid grid-cols-3 gap-3">
         {visible.map((b, i) => {
@@ -61,7 +82,7 @@ export function BadgeGrid({ limit }: { limit?: number }) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03 }}
-              className="flex flex-col items-center gap-1.5 rounded-2xl border border-[var(--px-border)] bg-white/[0.05] p-3 text-center"
+              className="flex flex-col items-center gap-1.5 rounded-2xl border border-[var(--px-border)] bg-[var(--px-glass)] p-3 text-center"
               title={b.description}
             >
               <div

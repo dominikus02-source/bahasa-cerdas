@@ -46,6 +46,8 @@ export function LeaderboardPanel({ compact = false }: { compact?: boolean }) {
   const podium = entries?.slice(0, 3) ?? [];
   const rest = entries?.slice(3) ?? [];
   const visibleRest = compact ? rest.slice(0, 5) : rest;
+  // ARENA 2.0 — posisi kamimu (di luar podium) selalu mudah ditemukan.
+  const meOutsidePodium = entries?.find((e) => e.isMe && e.rank > 3) ?? null;
 
   return (
     <GlassCard className="p-4">
@@ -87,7 +89,7 @@ export function LeaderboardPanel({ compact = false }: { compact?: boolean }) {
         </div>
       )}
 
-      {error && <p className="text-xs text-rose-300">{error}</p>}
+      {error && <p className="text-xs text-rose-500 dark:text-rose-300">{error}</p>}
 
       {entries && entries.length === 0 && (
         <p className="py-6 text-center text-sm text-[var(--px-text-dim)]">Belum ada pemain di papan ini.</p>
@@ -130,6 +132,14 @@ export function LeaderboardPanel({ compact = false }: { compact?: boolean }) {
               </motion.div>
             );
           })}
+        </div>
+      )}
+
+      {meOutsidePodium && (
+        <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-2xl border border-[var(--px-gold)]/50 bg-[var(--px-gold)]/10 px-4 py-3">
+          <span className="text-[10px] font-black uppercase tracking-widest text-[var(--px-gold)]">Posisi kamu</span>
+          <span className="text-base font-black leading-none text-[var(--px-text)]">#{meOutsidePodium.rank}</span>
+          <span className="text-xs font-bold text-[var(--px-text-dim)]">{formatId(meOutsidePodium.score)} XP</span>
         </div>
       )}
 

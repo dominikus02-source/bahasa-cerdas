@@ -10,7 +10,7 @@ export function HistoryTabs({ initialTab = "xp" }: { initialTab?: "xp" | "koin" 
 
   return (
     <div>
-      <div className="mb-4 flex gap-1 rounded-2xl border border-[var(--px-border)] bg-black/20 p-1">
+      <div className="mb-4 flex gap-1 rounded-2xl border border-[var(--px-border)] bg-[var(--px-glass)] p-1">
         <button
           onClick={() => setTab("xp")}
           className={`flex flex-1 items-center justify-center gap-2 rounded-xl py-2 text-sm font-bold transition ${tab === "xp" ? "px-btn-royal" : "text-[var(--px-text-dim)]"}`}

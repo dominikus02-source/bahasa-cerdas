@@ -46,8 +46,9 @@ export function LevelUpModal() {
             transition={{ type: "spring", stiffness: 260, damping: 18 }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Kartu solid — tanpa transparansi, supaya teks selalu terbaca. */}
-            <div className="relative rounded-[26px] bg-[#0b1330] px-7 pb-7 pt-8 text-center">
+            {/* Kartu solid — tanpa transparansi, supaya teks selalu terbaca.
+                ARENA 2.0: light mode = kartu terang; dark mode = navy premium. */}
+            <div className="relative rounded-[26px] bg-white px-7 pb-7 pt-8 text-center dark:bg-[#0b1330]">
               {/* Cahaya lembut di belakang Zelby, tidak menyentuh area teks. */}
               <div
                 className="pointer-events-none absolute inset-x-0 top-0 h-44"
@@ -56,7 +57,7 @@ export function LevelUpModal() {
 
               <button
                 onClick={dismissLevelUp}
- className="absolute right-4 top-4 z-10 rounded-full bg-white/10 dark:bg-slate-900/10 p-1.5 text-white/70 transition hover:bg-white/20 hover:text-white"
+ className="absolute right-4 top-4 z-10 rounded-full bg-gray-100 p-1.5 text-gray-600 transition hover:bg-gray-200 hover:text-gray-900 dark:bg-white/10 dark:text-white/70 dark:hover:bg-white/20 dark:hover:text-white"
                 aria-label="Tutup"
               >
                 <X size={16} />
@@ -78,37 +79,37 @@ export function LevelUpModal() {
                 />
               </motion.div>
 
-              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#ffd24a]">
+              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#b45309] dark:text-[#ffd24a]">
                 Naik Tingkat
               </p>
 
-              <h2 className="mt-1 text-5xl font-black leading-none text-white drop-shadow-[0_2px_10px_rgba(255,210,74,0.35)]">
+              <h2 className="mt-1 text-5xl font-black leading-none text-slate-900 drop-shadow-[0_2px_10px_rgba(255,210,74,0.35)] dark:text-white">
                 {levelUp.levelAfter}
               </h2>
 
-              <p className="mt-2 text-sm font-semibold text-white/75">
+              <p className="mt-2 text-sm font-semibold text-slate-600 dark:text-white/75">
                 {naik > 1 ? (
                   <>
-                    Melompat <span className="font-black text-[#ffd24a]">{naik} level</span> sekaligus!
+                    Melompat <span className="font-black text-[#b45309] dark:text-[#ffd24a]">{naik} level</span> sekaligus!
                   </>
                 ) : (
                   <>
                     Dari level {levelUp.levelBefore} ke{" "}
-                    <span className="font-black text-[#ffd24a]">{levelUp.levelAfter}</span>
+                    <span className="font-black text-[#b45309] dark:text-[#ffd24a]">{levelUp.levelAfter}</span>
                   </>
                 )}
               </p>
 
               {/* Pangkat — ikon rank resmi, bukan sekadar teks. */}
-              <div className="mt-5 flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.07] p-3 text-left">
+              <div className="mt-5 flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-left dark:border-white/10 dark:bg-white/[0.07]">
                 <RankIcon rank={rank} size={44} glow />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/50">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-white/50">
                     Pangkat sekarang
                   </p>
                   <p className="truncate text-base font-black" style={{ color: meta.color }}>
                     {meta.label}
-                    <span className="ml-1.5 text-xs font-bold text-white/60">{meta.title}</span>
+                    <span className="ml-1.5 text-xs font-bold text-slate-500 dark:text-white/60">{meta.title}</span>
                   </p>
                 </div>
               </div>

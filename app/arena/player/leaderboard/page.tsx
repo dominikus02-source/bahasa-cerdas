@@ -12,7 +12,7 @@ export default async function LeaderboardPage() {
 
   return (
     <PlayerTheme>
-      <PlayerPageShell title="Papan Peringkat" subtitle="Bersainglah untuk menjadi yang teratas minggu ini!" name={user.fullName || user.nickname || "Pemain"}>
+      <PlayerPageShell title="Leaderboard" subtitle="Lihat posisi kamu dan teman-temanmu." name={user.fullName || user.nickname || "Pemain"}>
         <LeaderboardPanel />
       </PlayerPageShell>
     </PlayerTheme>
