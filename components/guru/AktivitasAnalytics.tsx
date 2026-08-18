@@ -82,7 +82,7 @@ export default function AktivitasAnalytics() {
                 <YAxis allowDecimals={false} tick={{ fontSize: 10, fill: "var(--clr-text-3)" }} axisLine={false} tickLine={false} />
                 <Tooltip
                   cursor={{ fill: "rgba(99,102,241,0.06)" }}
-                  contentStyle={{ borderRadius: 12, border: "1px solid #e2e8f0", fontSize: 12 }}
+                  contentStyle={{ backgroundColor: "var(--clr-surface)", color: "var(--clr-text)", border: "1px solid var(--clr-border)", borderRadius: 12, fontSize: 12 }}
                 />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
                 <Bar dataKey="karya" name="Karya" fill="#8b5cf6" radius={[4, 4, 0, 0]} maxBarSize={22} />

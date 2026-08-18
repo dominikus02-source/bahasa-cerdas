@@ -3900,8 +3900,21 @@ Jadikan seluruh web (Guru Dashboard 79 halaman + Admin Panel 21 halaman + semua 
 6. **Halaman baru guru/admin**: class light polos cukup — compat `.bc-guru`/`.bc-admin` mengubahnya otomatis di dark.
 7. **Ikon**: lucide currentColor; warna ikon ikuti token teks.
 8. **Jangan turunkan token**: harness jejak nilai (--clr-* 8.1, --secondary/--destructive 8.2) — ubah nilai = harness gagal.
-9. **Scope compat**: `.bc-guru` untuk halaman guru, `.bc-admin` untuk halaman admin (mirror identik). Murid/arena pakai semantik langsung.
-10. **Jalankan**: `npm run audit:theme-hardcoded` (kandidat) + `npm run test:guru-dashboard-theme-consistency` (149+4 assertion) setelah mengubah tema.
+9. **Scope compat**: `.bc-guru` untuk halaman guru, `.bc-admin` untuk halaman admin (mirror identik). Murid/arena pakai semantik langsung. Compat TIDAK boleh tumbuh — hanya SELECTOR yang di-mirror, token dibaca dari 1 sumber (`:root`/`.dark`); fitur BARU → semantic global token LANGSUNG.
+10. **Jalankan**: `npm run audit:theme-hardcoded` (kandidat) + `npm run test:guru-dashboard-theme-consistency` (153 assertion) setelah mengubah tema. `BLOCKING>0` = FAIL exit 1.
+
+---
+
+## NEW FEATURE THEME RULE (wajib untuk fitur baru, berlaku global)
+
+Langkah pengiriman fitur baru apapun (murid/arena/guru/admin/shared):
+
+1. **Komersial plain classes**: pakai `bg-background`, `text-foreground`, `bg-card`, `text-muted-foreground`, `border-border`, `border-input`, `ring-ring`, `bg-primary`/`text-primary-foreground`, `bg-destructive`, `bg-secondary`, `bg-muted`, `bg-accent` — semua sudah `hsl(var(--...))` dua mode (termasuk ganti `--primary`/`--secondary`/`--muted`/`--accent` hex lama).
+2. **Status/warna semantik**: HANYA primitif GLOBAL `.bc-badge-{success,warning,danger,info,violet}` ATAU token `--clr-*` (via `var()` atau utility yang sudah dipetakan compat). DILARANG `bg-emerald-500 text-white`, `bg-amber-500 text-white`, `bg-red-500 text-white` (kontras dark < 4.5).
+3. **DARK OTOMATIS**: token mengikuti `.dark`. `dark:` HANYA bila wajib (komponen khusus game) — dilarang untuk patch.
+4. **Charts**: grid/axis `var(--clr-border)`/`var(--clr-text-3)`; Tooltip `contentStyle` sertakan `backgroundColor: "var(--clr-surface)"`, `color: "var(--clr-text)"`, `border: "1px solid var(--clr-border)"`; heatmap empty `var(--clr-surface-2)`; cursor `var(--clr-violet-soft)`.
+5. **Token jangan diturunkan**: harness jejak nilai (--clr-* 8.1, --secondary/--destructive 8.2).
+6. **Jalankan sebelum kirim**: `npm run audit:theme-hardcoded` + `npm run test:guru-dashboard-theme-consistency` (153).
 
 ### Verification
 | Check | Hasil |

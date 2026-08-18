@@ -635,6 +635,17 @@
   outline-offset: 2px;
 }
 
+/* ── P0 fix 8.2.1: teks putih di atas hue solid (tombol/badge solid) — hanya
+   kombinasi .text-white + hue; token TIDAK diubah (light mode identik; dark mode
+   background digelapkan agar kontras putih ≥ ~4.8:1). Akar masalah: token hue dark
+   (accent #34d399, danger #f87171, warning #fbbf24, violet #a78bfa, info #93c5fd)
+   dirancang untuk TEKS GELAP di atasnya, bukan label putih. ── */
+.dark .bc-guru :is(.bg-emerald-500, .bg-emerald-600, .bg-emerald-700, .bg-green-500, .bg-green-600).text-white { background-color: color-mix(in srgb, var(--clr-accent-strong) 55%, var(--clr-bg)); }
+.dark .bc-guru :is(.bg-red-500, .bg-red-600).text-white { background-color: color-mix(in srgb, var(--clr-danger) 55%, var(--clr-bg)); }
+.dark .bc-guru :is(.bg-amber-500, .bg-amber-600).text-white { background-color: color-mix(in srgb, var(--clr-warning) 55%, var(--clr-bg)); }
+.dark .bc-guru :is(.bg-violet-500, .bg-violet-600, .bg-purple-500, .bg-purple-600).text-white { background-color: color-mix(in srgb, var(--clr-violet) 55%, var(--clr-bg)); }
+.dark .bc-guru :is(.bg-blue-500, .bg-blue-600).text-white { background-color: color-mix(in srgb, var(--clr-info) 55%, var(--clr-bg)); }
+
 /* ── Bagian 4: Primitif status badge GLOBAL (tanpa scope) — komponen shared
    (components/ui/badge) AA di light+dark tanpa `dark:` patch. Nilai kontras
    diverifikasi STEP 8.1: success 5.21 / warning 4.84 / danger 4.41 (UI) /
@@ -665,9 +676,15 @@
   border: 1px solid color-mix(in srgb, var(--clr-violet) 35%, transparent);
 }
 
-/* ── Bagian 5: Compatibility layer ADMIN (.bc-admin) — mirror .bc-guru,
-   dipasang di <main> admin layout. Mekanisme sama, di-approve Step 8.0
-   untuk guru; 21 halaman admin light-only kini ikut tema. ── */
+/* ── Bagian 5: Compatibility layer ADMIN (.bc-admin) ──
+   .bc-admin is a compatibility mirror for legacy Admin markup.
+   New components should use semantic global tokens directly.
+   Mekanisme identik .bc-guru (di-approve Step 8.0), dipasang di <main> admin
+   layout; 21 halaman admin light-only kini ikut tema. TIDAK ada arsitektur
+   terpisah dan TIDAK ada definisi token duplikat — token --clr-* dibaca dari
+   Bagian 1 (sumber kebenaran) yang sama, hanya SELECTOR yang di-mirror.
+   Alur: legacy Admin → .bc-admin compatibility → semantic global token;
+   fitur BARU → semantic global token langsung. ── */
 .bc-admin {
   color: var(--clr-text);
 }
@@ -893,3 +910,13 @@
   outline: 2px solid var(--clr-accent-strong);
   outline-offset: 2px;
 }
+
+/* ── P0 fix 8.2.1: teks putih di atas hue solid (admin mirror) — kombinasi
+   .text-white + hue; token TIDAK diubah (light identik; dark digelapkan agar
+   kontras putih ≥ ~4.8:1). Akar masalah: token hue dark dirancang untuk TEKS
+   GELAP di atasnya, bukan label putih. ── */
+.dark .bc-admin :is(.bg-emerald-500, .bg-emerald-600, .bg-emerald-700, .bg-green-500, .bg-green-600).text-white { background-color: color-mix(in srgb, var(--clr-accent-strong) 55%, var(--clr-bg)); }
+.dark .bc-admin :is(.bg-red-500, .bg-red-600).text-white { background-color: color-mix(in srgb, var(--clr-danger) 55%, var(--clr-bg)); }
+.dark .bc-admin :is(.bg-amber-500, .bg-amber-600).text-white { background-color: color-mix(in srgb, var(--clr-warning) 55%, var(--clr-bg)); }
+.dark .bc-admin :is(.bg-violet-500, .bg-violet-600, .bg-purple-500, .bg-purple-600).text-white { background-color: color-mix(in srgb, var(--clr-violet) 55%, var(--clr-bg)); }
+.dark .bc-admin :is(.bg-blue-500, .bg-blue-600).text-white { background-color: color-mix(in srgb, var(--clr-info) 55%, var(--clr-bg)); }

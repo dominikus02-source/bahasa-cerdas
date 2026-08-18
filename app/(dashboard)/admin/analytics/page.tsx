@@ -660,6 +660,7 @@ export default function AdminAnalyticsPage() {
                 >
                   <Tooltip
                     formatter={((value: unknown) => `${fmt(Number(value))} user`) as any}
+                    contentStyle={{ backgroundColor: "var(--clr-surface)", color: "var(--clr-text)", border: "1px solid var(--clr-border)" }}
                   />
                 </Sankey>
               </ResponsiveContainer>
@@ -727,7 +728,7 @@ export default function AdminAnalyticsPage() {
                         style={{
                           backgroundColor: cell
                             ? `rgba(139,92,246,${Math.max(0.12, Math.min(1, cell.users / heatmapMax))})`
-: "#f8fafc",
+: "var(--clr-surface-2)",
                           border: cell ? "1px solid rgba(139,92,246,0.35)" : "1px solid var(--clr-border)",
                         }}
                         title={`${DAY_LABELS[row.dow]} ${h}:00 — ${cell ? fmt(cell.users) : 0} user`}
@@ -780,8 +781,8 @@ export default function AdminAnalyticsPage() {
                               className="rounded-lg px-2 py-1.5 text-center font-bold"
                               style={{
                                 backgroundColor:
-                                  v >= 40 ? "rgba(139,92,246,0.85)" : v >= 20 ? "rgba(139,92,246,0.5)" : v > 0 ? "rgba(139,92,246,0.25)" : "#f8fafc",
-                                color: v >= 40 ? "#fff" : v >= 20 ? "#4c1d95" : "#94a3b8",
+                                  v >= 40 ? "rgba(139,92,246,0.85)" : v >= 20 ? "rgba(139,92,246,0.5)" : v > 0 ? "rgba(139,92,246,0.25)" : "var(--clr-surface-2)",
+                                color: v >= 40 ? "#fff" : v >= 20 ? "#4c1d95" : "var(--clr-text-3)",
                               }}
                             >
                               {v}%
@@ -809,7 +810,7 @@ export default function AdminAnalyticsPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--clr-border)" vertical={false} />
                   <XAxis dataKey="bucket" tick={{ fontSize: 11, fill: "var(--clr-text-3)" }} />
                   <YAxis tick={{ fontSize: 11, fill: "var(--clr-text-3)" }} />
-                  <Tooltip formatter={(v) => [fmt(Number(v)), "User"]} cursor={{ fill: "#f5f3ff" }} />
+                  <Tooltip formatter={(v) => [fmt(Number(v)), "User"]} cursor={{ fill: "var(--clr-violet-soft)" }} />
                   <Bar dataKey="users" radius={[6, 6, 0, 0]}>
                     {data.xpDist.map((_, i) => (
                       <Cell key={i} fill={["#a5b4fc", "#818cf8", "#6366f1", "#8b5cf6", "#7c3aed"][i] ?? "#8b5cf6"} />
@@ -868,9 +869,9 @@ export default function AdminAnalyticsPage() {
                 <ResponsiveContainer width="100%" height="100%">
                   <RadarChart data={data.skills.map((s) => ({ skill: SKILL_LABELS[s.skill] ?? s.skill, level: s.avgLevel }))} outerRadius="72%">
                     <PolarGrid stroke="var(--clr-border)" />
-                    <PolarAngleAxis dataKey="skill" tick={{ fontSize: 11, fill: "#475569" }} />
+                    <PolarAngleAxis dataKey="skill" tick={{ fontSize: 11, fill: "var(--clr-text-2)" }} />
                     <Radar dataKey="level" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.35} />
-                    <Tooltip formatter={(v) => [`Level ${v}`, "Rata-rata"]} />
+                    <Tooltip formatter={(v) => [`Level ${v}`, "Rata-rata"]} contentStyle={{ backgroundColor: "var(--clr-surface)", color: "var(--clr-text)", border: "1px solid var(--clr-border)" }} />
                   </RadarChart>
                 </ResponsiveContainer>
               </div>
