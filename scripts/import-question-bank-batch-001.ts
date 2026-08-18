@@ -17,11 +17,14 @@
 
 import * as fs from "fs";
 import * as path from "path";
+import { config as loadEnv } from "dotenv";
 import { db } from "../lib/db";
 import {
   validateImportEnvelope,
   validateImportBatch,
 } from "../lib/question-bank/import-validation";
+
+loadEnv({ path: ".env.local" });
 
 const BATCH_FILE = path.resolve(
   __dirname,
