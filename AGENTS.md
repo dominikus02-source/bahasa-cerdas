@@ -3700,3 +3700,159 @@ M package.json
 M AGENTS.md
 ?? scripts/test-ai-tools-audit.ts
 ```
+
+---
+
+## Phase STEP 8.4.1 — QA AI Diagnostic (GROQ ONLY, PAUSED) (Aug 18, 2026)
+
+### Status
+**DIPAUSE oleh founder** — 18 butir AI terkumpul (target 100), generasi dihentikan sementara. Lanjut nanti (kuota Groq free tier ~10 call besar/jendela ±1 jam; runner resume-capable).
+
+### Keputusan Founder
+- **Groq free tier SAJA** (tanpa DeepSeek/Gemini) — hanya key `GROQ_API_KEY` yang tersedia di `.env.local`; sisanya placeholder `[SENSITIVE]` (vercel env pull tidak pernah mengembalikan nilai real untuk sensitive var).
+- **Soal diagnistik TIDAK dipersiapkan** untuk produksi — engine sudah generate live per butir saat murid latihan (`app/api/player/diagnostic` → `generateAiDiagnosticQuestion`); bank statis hanya fallback. Corpus 8.4.1 = QA/regression, bukan sumber data produksi.
+
+### Yang Dikerjakan
+- **Runner baru** `scripts/qa-ai-diagnostic-8-4-1.ts` — 10 arketipe (S1 Pemula s.d. S10 Satu-skill), resume dari file sesi, pacing 3s, cooldown 429 = 60s (bukan exponential), budget `QA_MAX_MINUTES` (default 25, dipakai 110).
+- **Token efficiency**: `AI_DIAGNOSTIC_MAX_TOKENS` 2400 → **1200** (output item nyata ~367 token); system prompt dipadatkan (~46 → ~24 baris, 18 aturan → 15, semua field/schema tetap).
+- **Hasil**: S1=10/10, S2=5/10, S3=1, S4=1, S5=1 → **18 butir** di `data/qa/ai-diagnostic-8-4/sessions/*-1.json`.
+- **Audit script** `scripts/audit-qa-ai-diagnostic-8-4-1.ts` — sesi integrity, re-validasi tiap item via `validateAiDiagnosticItem` (R1–R16), adaptivity replay vs `nextPlanForSlot`, unik id/stem global, matriks cakupan, security scan.
+
+### BUG DITEMUKAN & DIFIX (engine nyata)
+- **`shuffleItem` (lib/diagnostic-ai/generator.ts)** mengacak opsi + remap `correctAnswer` tetapi TIDAK meremap key `misconceptionMap` → semua item hasil generate runtime melanggar R11 saat divalidasi ulang (stale map key). **Fix**: remap key map mengikuti posisi baru tiap opsi (`idxToNew` via option text). Verifikasi: 200 shuffle sintetis × R1–R16 **200/200 valid**.
+- Catatan: 18 item tersimpan dari sebelum fix tidak bisa diperbaiki (permutasi pre-shuffle hilang) — artefak QA historis, biarkan.
+
+### Files
+- DIUBAH: `lib/diagnostic-ai/generator.ts` (fix shuffle+remap), `lib/diagnostic-ai/prompts.ts` (padat), `lib/diagnostic-ai/config.ts` (max_tokens 1200), `scripts/qa-ai-diagnostic-8-4-1.ts` (cooldown 60s)
+- BARU: `scripts/audit-qa-ai-diagnostic-8-4-1.ts`
+- QA data: `data/qa/ai-diagnostic-8-4/sessions/*-1.json` (18 butir)
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `npx tsc --noEmit` | ✅ 0 errors |
+| `npx eslint` (5 file) | ✅ 0 violations |
+| Shuffle fix (200 simulasi) | ✅ 200/200 R1–R16 valid |
+| Audit 8.4.1 pada data ada | ⚠️ 50 ✅ / 16 ❌ (15 = R11 stale map artefak lama; 1 = sesi belum 10/10) |
+
+### Lanjut (saat kuota/reset atau founder minta)
+1. Lanjutkan `QA_MAX_MINUTES=110 npx tsx scripts/qa-ai-diagnostic-8-4-1.ts --sessions 10` (resume S2 dst.) sampai ≥100 butir
+2. Re-run audit → target 0 ❌ selain artefak R11 lama
+3. Bonus: bisa minta `GROQ_API_KEY_CHAT` (Vercel) untuk round-robin multi-key
+
+---
+
+## Phase STEP 8.0 — GURU DASHBOARD THEME SYSTEM (Satu Visual System, Light+Dark) (Aug 18, 2026)
+
+### Goal
+Konsolidasikan seluruh 79 halaman `/guru/*` (Light + Dark) ke SATU visual system semantic (iOS Edu) dengan reference `/guru/kelasku`. **NO COMMIT / NO PUSH — menunggu Founder Review.**
+
+### Temuan Audit
+- **Hanya 3/79 halaman punya `dark:`** (game page/history/lobby) — 76 halaman light-only (236 bg-white, 156 text-gray-400, 147 text-gray-900), dark mode praktis rusak.
+- 3 sistem hidup: (A) token shadcn global (`--primary` merah — 0 usage halaman guru), (B) palet hardcoded Tailwind (96% halaman), (C) token semantic iOS-Edu `--clr-*` (kelasku — reference).
+- `next-themes` tunggal (darkMode class), tanpa provider kedua. Arbitrary hex: 0 di luar allowlist brand (#161B3A, #FFF6E0, #25D366, #0D0A1F).
+
+### Strategi (minimal, additive)
+1. **Token `--clr-*` dipromosikan ke `:root`/`.dark`** di globals.css (18+ token, nilai identik dengan classroom.css; +`--clr-info` & `--clr-warning-soft` baru). classroom.css kelasku utuh (backward compat, `bc-student` tidak tersentuh).
+2. **`guru/layout.tsx`** import classroom.css → primitif `.bc-card/.bc-btn-primary/.bc-chip/.bc-input/.bc-sheet` kini global untuk semua halaman guru; `<main>` + class `bc-guru`.
+3. **Compat layer `.bc-guru`** (~50 mapping, scoped — murid/arena/admin tidak terpengaruh): palet lama (bg-white(/90..), bg-slate-50/100/200, bg-emerald-50/100/500/600, violet/red/amber/blue, text-gray/slate-900..300, text-emerald/violet/red/amber/blue, border-*, divide-*, hover:*, focus:ring/border-emerald, ring-emerald) → token semantic (color-mix utk alpha). `text-white` & block gelap (slate-800/900, black) sengaja TIDAK dipetakan. Light mode ≈ identik; dark mode otomatis benar untuk 76 halaman.
+
+### Aksesibilitas (dihitung dari token)
+Teks utama/sekunder/dark-semua ✅ AA. 3 known issues light (nilai = reference kelasku, butuh keputusan founder): accent dekor 2.54:1, warning 2.15:1, warning-on-soft 2.07:1. Warnings: teks tersier 3.16/3.60, accent-strong teks 3.77, danger 3.76 light.
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `npm run test:guru-dashboard-theme-consistency` (BARU) | ✅ 86/86 pass, 9 warning |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (layout + test) | ✅ 0 violations |
+| `npm run build` (dummy env) | ✅ Compiled, 0 error |
+| `git diff --check` | ✅ bersih |
+| Protected zones | ✅ 0 diff |
+| Pra-eksis (stash-verified, bukan akibat fase ini) | ⚠️ arena-chat 93/94, student-shell 33/34, unified-shell 60/61 |
+
+### File
+- `app/globals.css` (+213 baris: token global + scope `.bc-guru` + compat layer)
+- `app/(dashboard)/guru/layout.tsx` (import classroom.css; main + `bc-guru`)
+- `scripts/test-guru-dashboard-theme-consistency.ts` (BARU, 86 assertions A–G)
+- `docs/PHASE_8_STEP_0_GURU_DASHBOARD_THEME_AUDIT.md` (dokumen audit penuh)
+- `package.json` (+`test:guru-dashboard-theme-consistency`)
+
+### Keputusan Founder (lihat doc §9)
+1. Approve mekanisme compat layer (vs rewrite 79 halaman).
+2. Approve `--clr-*` sebagai kanon global.
+3. Perbaiki kontras light accent/warning (menyentuh kelasku) atau terima sebagai known issue.
+4. Dark bg dashboard: gradient emerald (sekarang) vs datar `--clr-bg` (kelasku).
+
+### Remaining (tidak berubah)
+1. Commit/push fase ini bila disetujui founder
+2. LANJUT 8.4.1 saat kuota/reset: `QA_MAX_MINUTES=110 npx tsx scripts/qa-ai-diagnostic-8-4-1.ts --sessions 10` (resume S2 dst.) sampai ≥100 butir → re-run audit → target 0 ❌
+3. TKA UTBK/Guru enrichment 30 → 150
+4. Game server revival (VPS mati)
+5. GameRoom migration SQL via Supabase dashboard
+6. UI game solo: badge-score client vs server masih beda (kosmetik)
+7. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
+
+---
+
+## Phase STEP 8.1 — GURU THEME CONTRAST HARDENING + QA HARNESS A–J (Aug 18, 2026)
+
+### Goal
+Hardening kontras + konsistensi visual Guru Dashboard (79 halaman) di atas fondasi 8.0: semua pasangan teks ≥4.5:1 / UI ≥3:1 DIHITUNG eksak dari token (light+dark), token canonical disinkron globals.css ↔ classroom.css, compat layer diperluas (hover/ring/focus/placeholder/border 45%), QA harness dikeraskan dengan kanari self-test + invariant. **NO COMMIT / NO PUSH — menunggu Founder Review (pola 8.0).**
+
+### Token Canonical Baru (tersinkron di globals.css + classroom.css)
+- **Light**: `--clr-text-3 #8a91a0→#64748b` (4.76:1), `--clr-accent #10b981→#059669` (3.77 UI), `--clr-accent-strong #059669→#047857` (5.48), `--clr-success #10b981→#059669`, `--clr-warning #f59e0b→#d97706` (3.19 UI), **`--clr-warning-strong #b45309` BARU** (5.02 teks / 4.84 di soft), `--clr-danger #ef4444→#b91c1c` (4.83; 4.41 di soft). violet/info tetap.
+- **Dark**: `--clr-text-3 #6b7280→#8b93a1` (5.62 AA), **`--clr-warning-strong #fbbf24` BARU**, lainnya tetap (semua ≥5.6).
+- classroom.css + `--clr-warning-strong`, `--clr-info` (#2563eb/#93c5fd), `--clr-info-soft` (#eff6ff/#15233f).
+- Pasangan 8.0 yang gagal (warning 2.15, danger 3.76, text-3 3.16 light) TIDAK boleh kembali — di-lock harness (jebakan).
+
+### Compat Layer Diperluas (.bc-guru)
+- text: +text-black/gray-950/slate-950 → text; emerald/green 400–700 → accent-strong; purple/violet 400–700 → violet; red 400–800 → danger; amber/yellow 400–700 → warning-strong; blue 400–700 → info.
+- bg: +violet-700, purple-500/600/700, red-700, amber-500/600/700, yellow-500/600, blue-700.
+- border: +green-500/600, purple-500/600, violet/red/amber/yellow/blue 100–300; **color-mix 30/25% → 45%**.
+- hover: red-600/700 → mix(danger 88%, text); amber-600/700 → warning-strong; blue-600/700 → mix(info 88%, text); violet-600/700 → mix(violet 88%, text); soft hovers → surface-2/soft tokens.
+- ring/focus: ring+focus:ring red→danger, amber→warning-strong, blue→info, violet→violet, emerald→accent-strong; focus:border emerald/red/blue.
+- placeholder:text-gray/slate-400/500 → text-3; global `.bc-guru :focus-visible { outline: 2px solid var(--clr-accent-strong); outline-offset: 2px }`.
+- **disabled:opacity TIDAK dipetakan** (native Tailwind) — di-lock harness.
+
+### QA Harness (TULIS ULANG PENUH — script lama yang gagal ditulis via write tool, ditulis ulang 3 bagian + concat)
+`scripts/test-guru-dashboard-theme-consistency.ts` — **149 assertion, sections A–J**:
+- A route coverage 79, B theme tunggal (next-themes, tanpa import kedua), C 55 mapping compat, D allowlist hex (#161B3A/#FFF6E0/#25D366/#0D0A1F), E kontras dihitung (13 pasangan light + 7 dark), F protected zones (prefix `z + "/"` agar `lib/diagnostic` tidak salah tangkap `lib/diagnostic-ai`), G dark coverage (76 light-only via compat, top-5 halaman terberat), H semantic/state (bg solid → white, disabled native, placeholder, focus-visible), I **kanari self-test** (1 pass + 1 fail internal wajib terdeteksi; 5 jebakan nilai 8.0), J mobile (0 min-w ≥1200, rgba hanya glass game).
+- **Invariant**: `Discovered == Executed == Passed`, `Failed == 0`, `Skipped == 0`; `warn()` advisory tidak dihitung. Kanari menjamin harness tidak bisa diplemahkan.
+- Kontras dihitung dari token yang dibaca langsung dari globals.css (WCAG relative luminance), bukan hardcoded.
+
+### Verification
+| Check | Hasil |
+|-------|-------|
+| `npm run test:guru-dashboard-theme-consistency` | ✅ 149/149, invariant terpenuhi |
+| `npm run test:guru-phase` / `test:gamification-engine` / `test:student-home` | ✅ SEMUA LULUS · ✅ SEMUA LULUS · ✅ 61/61 |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (harness) | ✅ 0 violations |
+| `npm run build` (dummy env) | ✅ Compiled 45s, prerender 371/371 |
+| `git diff --check` | ✅ bersih |
+| Protected zones | ✅ 0 diff |
+
+### Files
+- DIUBAH: `app/globals.css` (token + compat), `components/kelas/classroom.css` (token sync), `AGENTS.md`
+- BARU: `scripts/test-guru-dashboard-theme-consistency.ts` (tulis ulang), `docs/PHASE_8_STEP_1_GURU_THEME_CONTRAST_HARDENING.md`
+- 0 diff: 79 halaman guru, layout (hanya file yang sudah ada dari 8.0), prisma, app/api, engine.
+
+### Exceptions (keputusan founder)
+1. danger-on-soft 4.41:1 (teks normal <4.5) — badge/ikon dekor; terima sebagai UI atau gelapkan danger-soft.
+2. accent #059669 3.77:1 — teks putih kecil pada bg-accent; tombol teks memakai accent-strong.
+3. rgba glass `game/page.tsx` — exception visual, tidak diubah.
+4. white-on-accent-strong 5.48:1 — tombol utama kini AA teks.
+
+### Cara Menjaga
+- Setiap ubah token → jalankan harness (invariant harus tetap).
+- Utility guru baru yang belum dipetakan → tambah ke compat layer + daftar harness §C.
+- JANGAN petakan disabled:*/text-white/block gelap/gradient; JANGAN tambah provider tema kedua; JANGAN turunkan nilai token (jebakan harness akan gagal).
+
+### Remaining (tidak berubah)
+1. Commit/push fase 8.0+8.1 bila disetujui founder
+2. LANJUT 8.4.1 saat kuota/reset: `QA_MAX_MINUTES=110 npx tsx scripts/qa-ai-diagnostic-8-4-1.ts --sessions 10` (resume S2 dst.) sampai ≥100 butir → re-run audit → target 0 ❌
+3. TKA UTBK/Guru enrichment 30 → 150
+4. Game server revival (VPS mati)
+5. GameRoom migration SQL via Supabase dashboard
+6. UI game solo: badge-score client vs server masih beda (kosmetik)
+7. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)

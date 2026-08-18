@@ -331,3 +331,306 @@
   background: linear-gradient(140deg, #0B1026 0%, #171241 40%, #2E1065 76%, #4C1D95 100%);
   color: #f3f7ff;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PHASE 8 STEP 0 — GURU DASHBOARD THEME SYSTEM (Satu Visual System, Light+Dark)
+
+   Satu sistem tema untuk SELURUH /guru/* (79 halaman). Reference:
+   /guru/kelasku (components/kelas/classroom.css — iOS Edu, semantic).
+
+   Bagian 1 — Token canonical --clr-* dipromosikan ke :root / .dark
+   (sumber kebenaran). classroom.css masih menyimpan salinan scoped
+   (.bc-classroom) dengan nilai identik — backward compatible; varian
+   murid (.bc-classroom.bc-student) tidak tersentuh.
+
+   Bagian 2 — Scope .bc-guru: dipasang di <main> guru layout. Primitif
+   .bc-card / .bc-btn-primary / .bc-chip / .bc-input / .bc-sheet dll.
+   dari classroom.css kini berlaku global (token resolve di mana pun).
+
+   Bagian 3 — COMPATIBILITY LAYER untuk halaman lama yang masih memakai
+   palet hardcoded (bg-white, text-gray-900, border-slate-200, emerald
+   dll.): utility lama dipetakan ke token semantic sehingga dark mode
+   otomatis benar di SEMUA halaman guru tanpa edit halaman.
+
+   SCOPE: hanya dalam .bc-guru — murid/arena/admin tidak terpengaruh.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Bagian 1: Token canonical (nilai identik dgn classroom.css) ── */
+:root {
+  --clr-bg: #f4f5f7;
+  --clr-surface: #ffffff;
+  --clr-surface-2: #f8f9fb;
+  --clr-border: #e6e8ee;
+  --clr-border-strong: #d4d7e0;
+  --clr-text: #16181d;
+  --clr-text-2: #5b6270;
+  --clr-text-3: #64748b;
+  --clr-accent: #059669;
+  --clr-accent-strong: #047857;
+  --clr-accent-soft: #ecfdf5;
+  --clr-success: #059669;
+  --clr-warning: #d97706;
+  --clr-warning-strong: #b45309;
+  --clr-warning-soft: #fffbeb;
+  --clr-danger: #b91c1c;
+  --clr-danger-soft: #fef2f2;
+  --clr-violet: #7c3aed;
+  --clr-violet-soft: #f5f3ff;
+  --clr-info: #2563eb;
+  --clr-info-soft: #eff6ff;
+}
+
+.dark {
+  --clr-bg: #0f1117;
+  --clr-surface: #171a22;
+  --clr-surface-2: #1d212b;
+  --clr-border: #262b38;
+  --clr-border-strong: #333a4b;
+  --clr-text: #f1f2f6;
+  --clr-text-2: #a6adbb;
+  --clr-text-3: #8b93a1;
+  --clr-accent: #34d399;
+  --clr-accent-strong: #10b981;
+  --clr-accent-soft: #0d2b22;
+  --clr-success: #34d399;
+  --clr-warning: #fbbf24;
+  --clr-warning-strong: #fbbf24;
+  --clr-warning-soft: #2b220d;
+  --clr-danger: #f87171;
+  --clr-danger-soft: #2b1517;
+  --clr-violet: #a78bfa;
+  --clr-violet-soft: #1e1835;
+  --clr-info: #93c5fd;
+  --clr-info-soft: #15233f;
+}
+
+/* ── Bagian 2: Scope guru — primitif semantic tersedia untuk semua halaman ── */
+.bc-guru {
+  color: var(--clr-text);
+}
+
+/* ── Bagian 3: Compatibility layer (palet lama → token semantic) ── */
+
+/* Surface */
+.bc-guru .bg-white { background-color: var(--clr-surface); }
+.bc-guru .bg-white\/90 { background-color: color-mix(in srgb, var(--clr-surface) 90%, transparent); }
+.bc-guru .bg-white\/80 { background-color: color-mix(in srgb, var(--clr-surface) 80%, transparent); }
+.bc-guru .bg-white\/70 { background-color: color-mix(in srgb, var(--clr-surface) 70%, transparent); }
+.bc-guru .bg-white\/60 { background-color: color-mix(in srgb, var(--clr-surface) 60%, transparent); }
+.bc-guru .bg-white\/50 { background-color: color-mix(in srgb, var(--clr-surface) 50%, transparent); }
+.bc-guru .bg-white\/30 { background-color: color-mix(in srgb, var(--clr-surface) 30%, transparent); }
+.bc-guru .bg-white\/20 { background-color: color-mix(in srgb, var(--clr-surface) 20%, transparent); }
+.bc-guru .bg-white\/10 { background-color: color-mix(in srgb, var(--clr-surface) 10%, transparent); }
+.bc-guru .bg-white\/5 { background-color: color-mix(in srgb, var(--clr-surface) 5%, transparent); }
+.bc-guru .bg-slate-50,
+.bc-guru .bg-gray-50 { background-color: var(--clr-surface-2); }
+.bc-guru .bg-slate-100,
+.bc-guru .bg-gray-100 { background-color: var(--clr-surface-2); }
+.bc-guru .bg-slate-200,
+.bc-guru .bg-gray-200 { background-color: var(--clr-border); }
+.bc-guru .bg-slate-300,
+.bc-guru .bg-gray-300 { background-color: var(--clr-border-strong); }
+
+/* Accent (emerald) + semantic hues */
+.bc-guru .bg-emerald-50,
+.bc-guru .bg-emerald-100,
+.bc-guru .bg-green-50 { background-color: var(--clr-accent-soft); }
+.bc-guru .bg-emerald-500,
+.bc-guru .bg-emerald-600,
+.bc-guru .bg-green-500,
+.bc-guru .bg-green-600 { background-color: var(--clr-accent); }
+.bc-guru .bg-emerald-700 { background-color: var(--clr-accent-strong); }
+.bc-guru .bg-violet-50,
+.bc-guru .bg-violet-100,
+.bc-guru .bg-purple-50,
+.bc-guru .bg-purple-100 { background-color: var(--clr-violet-soft); }
+.bc-guru .bg-violet-500,
+.bc-guru .bg-violet-600,
+.bc-guru .bg-violet-700,
+.bc-guru .bg-purple-500,
+.bc-guru .bg-purple-600,
+.bc-guru .bg-purple-700 { background-color: var(--clr-violet); }
+.bc-guru .bg-red-50,
+.bc-guru .bg-red-100 { background-color: var(--clr-danger-soft); }
+.bc-guru .bg-red-500,
+.bc-guru .bg-red-600,
+.bc-guru .bg-red-700 { background-color: var(--clr-danger); }
+.bc-guru .bg-amber-50,
+.bc-guru .bg-amber-100,
+.bc-guru .bg-yellow-50,
+.bc-guru .bg-yellow-100 { background-color: var(--clr-warning-soft); }
+.bc-guru .bg-amber-500,
+.bc-guru .bg-amber-600,
+.bc-guru .bg-amber-700,
+.bc-guru .bg-yellow-500,
+.bc-guru .bg-yellow-600 { background-color: var(--clr-warning); }
+.bc-guru .bg-blue-50,
+.bc-guru .bg-blue-100 { background-color: var(--clr-info-soft); }
+.bc-guru .bg-blue-500,
+.bc-guru .bg-blue-600,
+.bc-guru .bg-blue-700 { background-color: var(--clr-info); }
+
+/* Text */
+.bc-guru .text-gray-900,
+.bc-guru .text-slate-900,
+.bc-guru .text-gray-800,
+.bc-guru .text-slate-800,
+.bc-guru .text-gray-950,
+.bc-guru .text-slate-950,
+.bc-guru .text-black { color: var(--clr-text); }
+.bc-guru .text-gray-700,
+.bc-guru .text-slate-700,
+.bc-guru .text-gray-600,
+.bc-guru .text-slate-600,
+.bc-guru .text-gray-500,
+.bc-guru .text-slate-500 { color: var(--clr-text-2); }
+.bc-guru .text-gray-400,
+.bc-guru .text-slate-400,
+.bc-guru .text-gray-300,
+.bc-guru .text-slate-300 { color: var(--clr-text-3); }
+.bc-guru .text-emerald-400,
+.bc-guru .text-emerald-500,
+.bc-guru .text-emerald-600,
+.bc-guru .text-emerald-700,
+.bc-guru .text-green-400,
+.bc-guru .text-green-500,
+.bc-guru .text-green-600,
+.bc-guru .text-green-700 { color: var(--clr-accent-strong); }
+.bc-guru .text-violet-500,
+.bc-guru .text-violet-400,
+.bc-guru .text-violet-600,
+.bc-guru .text-violet-700,
+.bc-guru .text-purple-400,
+.bc-guru .text-purple-500,
+.bc-guru .text-purple-600,
+.bc-guru .text-purple-700 { color: var(--clr-violet); }
+.bc-guru .text-red-400,
+.bc-guru .text-red-500,
+.bc-guru .text-red-600,
+.bc-guru .text-red-700,
+.bc-guru .text-red-800 { color: var(--clr-danger); }
+.bc-guru .text-amber-400,
+.bc-guru .text-amber-500,
+.bc-guru .text-amber-600,
+.bc-guru .text-amber-700,
+.bc-guru .text-yellow-400,
+.bc-guru .text-yellow-500,
+.bc-guru .text-yellow-600,
+.bc-guru .text-yellow-700 { color: var(--clr-warning-strong); }
+.bc-guru .text-blue-400,
+.bc-guru .text-blue-500,
+.bc-guru .text-blue-600,
+.bc-guru .text-blue-700 { color: var(--clr-info); }
+
+/* Border */
+.bc-guru .border-slate-100,
+.bc-guru .border-gray-100,
+.bc-guru .border-slate-200,
+.bc-guru .border-gray-200 { border-color: var(--clr-border); }
+.bc-guru .border-slate-300,
+.bc-guru .border-gray-300,
+.bc-guru .border-slate-400,
+.bc-guru .border-gray-400 { border-color: var(--clr-border-strong); }
+.bc-guru .border-emerald-500,
+.bc-guru .border-emerald-600,
+.bc-guru .border-green-500,
+.bc-guru .border-green-600 { border-color: var(--clr-accent); }
+.bc-guru .border-emerald-100,
+.bc-guru .border-emerald-200,
+.bc-guru .border-emerald-300,
+.bc-guru .border-green-100,
+.bc-guru .border-green-200 { border-color: color-mix(in srgb, var(--clr-accent) 45%, var(--clr-border)); }
+.bc-guru .border-violet-500,
+.bc-guru .border-violet-600,
+.bc-guru .border-purple-500,
+.bc-guru .border-purple-600 { border-color: var(--clr-violet); }
+.bc-guru .border-violet-100,
+.bc-guru .border-violet-200,
+.bc-guru .border-purple-100,
+.bc-guru .border-purple-200 { border-color: color-mix(in srgb, var(--clr-violet) 45%, var(--clr-border)); }
+.bc-guru .border-red-500,
+.bc-guru .border-red-600 { border-color: var(--clr-danger); }
+.bc-guru .border-red-100,
+.bc-guru .border-red-200,
+.bc-guru .border-red-300 { border-color: color-mix(in srgb, var(--clr-danger) 45%, var(--clr-border)); }
+.bc-guru .border-amber-500,
+.bc-guru .border-amber-600,
+.bc-guru .border-yellow-500,
+.bc-guru .border-yellow-600 { border-color: var(--clr-warning); }
+.bc-guru .border-amber-100,
+.bc-guru .border-amber-200,
+.bc-guru .border-amber-300,
+.bc-guru .border-yellow-100,
+.bc-guru .border-yellow-200 { border-color: color-mix(in srgb, var(--clr-warning) 45%, var(--clr-border)); }
+.bc-guru .border-blue-500,
+.bc-guru .border-blue-600 { border-color: var(--clr-info); }
+.bc-guru .border-blue-100,
+.bc-guru .border-blue-200,
+.bc-guru .border-blue-300 { border-color: color-mix(in srgb, var(--clr-info) 45%, var(--clr-border)); }
+
+/* Divider */
+.bc-guru .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+.bc-guru .divide-gray-100 > :not([hidden]) ~ :not([hidden]),
+.bc-guru .divide-slate-200 > :not([hidden]) ~ :not([hidden]),
+.bc-guru .divide-gray-200 > :not([hidden]) ~ :not([hidden]) { border-color: var(--clr-border); }
+
+/* Hover */
+.bc-guru .hover\:bg-gray-50:hover,
+.bc-guru .hover\:bg-slate-50:hover,
+.bc-guru .hover\:bg-gray-100:hover,
+.bc-guru .hover\:bg-slate-100:hover { background-color: var(--clr-surface-2); }
+.bc-guru .hover\:bg-emerald-50:hover { background-color: var(--clr-accent-soft); }
+.bc-guru .hover\:bg-emerald-500:hover,
+.bc-guru .hover\:bg-emerald-600:hover,
+.bc-guru .hover\:bg-emerald-700:hover { background-color: var(--clr-accent-strong); }
+.bc-guru .hover\:bg-red-50:hover { background-color: var(--clr-danger-soft); }
+.bc-guru .hover\:bg-red-600:hover,
+.bc-guru .hover\:bg-red-700:hover { background-color: color-mix(in srgb, var(--clr-danger) 88%, var(--clr-text)); }
+.bc-guru .hover\:bg-amber-50:hover { background-color: var(--clr-warning-soft); }
+.bc-guru .hover\:bg-amber-600:hover,
+.bc-guru .hover\:bg-amber-700:hover { background-color: var(--clr-warning-strong); }
+.bc-guru .hover\:bg-blue-50:hover { background-color: var(--clr-info-soft); }
+.bc-guru .hover\:bg-blue-600:hover,
+.bc-guru .hover\:bg-blue-700:hover { background-color: color-mix(in srgb, var(--clr-info) 88%, var(--clr-text)); }
+.bc-guru .hover\:bg-violet-50:hover { background-color: var(--clr-violet-soft); }
+.bc-guru .hover\:bg-violet-600:hover,
+.bc-guru .hover\:bg-violet-700:hover { background-color: color-mix(in srgb, var(--clr-violet) 88%, var(--clr-text)); }
+
+/* Ring & Focus (form) — focus ring dipakai warna HUE (bukan aksen pelan)
+   agar terlihat jelas di light+dark; warna gelap ~AA pada surface */
+.bc-guru .ring-emerald-500,
+.bc-guru .ring-emerald-400 { --tw-ring-color: var(--clr-accent-strong); }
+.bc-guru .ring-slate-200,
+.bc-guru .ring-gray-200 { --tw-ring-color: var(--clr-border); }
+.bc-guru .ring-red-500,
+.bc-guru .ring-red-400 { --tw-ring-color: var(--clr-danger); }
+.bc-guru .ring-amber-500,
+.bc-guru .ring-amber-400 { --tw-ring-color: var(--clr-warning-strong); }
+.bc-guru .ring-blue-500,
+.bc-guru .ring-blue-400 { --tw-ring-color: var(--clr-info); }
+.bc-guru .ring-violet-500,
+.bc-guru .ring-violet-400 { --tw-ring-color: var(--clr-violet); }
+.bc-guru .focus\:ring-emerald-500:focus,
+.bc-guru .focus\:ring-emerald-400:focus { --tw-ring-color: var(--clr-accent-strong); }
+.bc-guru .focus\:ring-red-500:focus,
+.bc-guru .focus\:ring-red-400:focus { --tw-ring-color: var(--clr-danger); }
+.bc-guru .focus\:ring-amber-500:focus,
+.bc-guru .focus\:ring-amber-400:focus { --tw-ring-color: var(--clr-warning-strong); }
+.bc-guru .focus\:ring-blue-500:focus,
+.bc-guru .focus\:ring-blue-400:focus { --tw-ring-color: var(--clr-info); }
+.bc-guru .focus\:border-emerald-500:focus,
+.bc-guru .focus\:border-emerald-400:focus { border-color: var(--clr-accent-strong); }
+.bc-guru .focus\:border-red-500:focus { border-color: var(--clr-danger); }
+.bc-guru .focus\:border-blue-500:focus { border-color: var(--clr-info); }
+
+/* Placeholder (forms) — ikut teks tersier agar terbaca di kedua mode */
+.bc-guru .placeholder\:text-gray-400::placeholder,
+.bc-guru .placeholder\:text-slate-400::placeholder,
+.bc-guru .placeholder\:text-gray-500::placeholder,
+.bc-guru .placeholder\:text-slate-500::placeholder { color: var(--clr-text-3); }
+
+/* Focus ring global guru — outline accent-strong TERLIHAT di light+dark */
+.bc-guru :focus-visible {
+  outline: 2px solid var(--clr-accent-strong);
+  outline-offset: 2px;
+}

@@ -19,6 +19,7 @@ import { GuruNavList, GuruMobileNav } from "@/components/dashboard/GuruNav";
 import { startGuruTrialIfEligible, shouldStartGuruTrial, getTrialStatus } from "@/lib/ai-gateway/trial-service";
 import { resolveUserAiPlan } from "@/lib/ai-gateway/plan-resolver";
 import { getRemainingCredits } from "@/lib/ai-gateway/quota-checker";
+import "@/components/kelas/classroom.css";
 
 export default async function GuruLayout({ children }: { children: React.ReactNode }) {
   const user = await getUser();
@@ -179,7 +180,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
           </div>
         </header>
       }
-      mainClassName="flex-1 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 pb-24 lg:pb-8 mx-auto max-w-[1440px] w-full"
+      mainClassName="bc-guru flex-1 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 pb-24 lg:pb-8 mx-auto max-w-[1440px] w-full"
       bottomNav={<GuruMobileNav isFounder={user.isFounder} />}
     >
       {children}
