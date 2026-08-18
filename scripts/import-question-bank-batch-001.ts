@@ -132,52 +132,50 @@ async function main() {
   for (let i = 0; i < result.valid.length; i += CHUNK) {
     const chunk = result.valid.slice(i, i + CHUNK);
     try {
-      await db.$transaction(async (tx) => {
-        for (const q of chunk) {
-          await tx.soal.create({
-            data: {
-              kodeSoal: q.kodeSoal,
-              judul: q.judul,
-              text: q.text,
-              type: q.type,
-              difficulty: q.difficulty,
-              options: q.options,
-              correctAnswer: q.correctAnswer,
-              explanation: q.explanation,
-              isHOTS: q.isHOTS,
-              kelas: q.kelas,
-              semester: q.semester,
-              topik: q.topik,
-              kompetensi: q.kompetensi,
-              indikator: q.indikator,
-              levelBerpikir: q.levelBerpikir,
-              kataKunci: q.kataKunci.length > 0 ? q.kataKunci.join(",") : null,
-              estimasiWaktu: q.estimasiWaktu,
-              subject: "Bahasa Indonesia",
-              source: "IMPORT",
-              uploaderId: uploader.id,
-            },
-          });
-
-          if (q.skill) {
-            await tx.questionMetadata.create({
-              data: {
-                source: "BANK_SOAL",
-                questionId: q.kodeSoal,
-                skill: q.skill,
-                subskill: q.subskill,
-                difficulty: q.difficulty,
-                topic: q.topic || q.topik,
-                questionType: q.type,
-                provenance: q.provenance,
-                confidence: "HIGH",
-                status: "APPROVED",
-              },
-            });
-          }
-          imported++;
-        }
+      await db.soal.createMany({
+        data: chunk.map((q) => ({
+          kodeSoal: q.kodeSoal,
+          judul: q.judul,
+          text: q.text,
+          type: q.type,
+          difficulty: q.difficulty,
+          options: q.options,
+          correctAnswer: q.correctAnswer,
+          explanation: q.explanation,
+          isHOTS: q.isHOTS,
+          kelas: q.kelas,
+          semester: q.semester,
+          topik: q.topik,
+          kompetensi: q.kompetensi,
+          indikator: q.indikator,
+          levelBerpikir: q.levelBerpikir,
+          kataKunci: q.kataKunci.length > 0 ? q.kataKunci.join(",") : null,
+          estimasiWaktu: q.estimasiWaktu,
+          subject: "Bahasa Indonesia",
+          source: "IMPORT",
+          uploaderId: uploader.id,
+        })),
       });
+
+      const withMeta = chunk.filter((q) => q.skill);
+      if (withMeta.length > 0) {
+        await db.questionMetadata.createMany({
+          data: withMeta.map((q) => ({
+            source: "BANK_SOAL",
+            questionId: q.kodeSoal,
+            skill: q.skill,
+            subskill: q.subskill,
+            difficulty: q.difficulty,
+            topic: q.topic || q.topik,
+            questionType: q.type,
+            provenance: q.provenance,
+            confidence: "HIGH",
+            status: "APPROVED",
+          })),
+        });
+      }
+
+      imported += chunk.length;
       console.log("  Chunk " + (Math.floor(i / CHUNK) + 1) + ": imported " + chunk.length + " (total: " + imported + ")");
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
