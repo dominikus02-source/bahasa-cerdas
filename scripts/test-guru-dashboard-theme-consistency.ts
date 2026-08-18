@@ -29,6 +29,7 @@ const GURU_DIR = join(ROOT, "app", "(dashboard)", "guru");
 const GLOBALS_CSS = join(ROOT, "app", "globals.css");
 const CLASSROOM_CSS = join(ROOT, "components", "kelas", "classroom.css");
 const GURU_LAYOUT = join(ROOT, "app", "(dashboard)", "guru", "layout.tsx");
+const ADMIN_LAYOUT = join(ROOT, "app", "(dashboard)", "admin", "layout.tsx");
 const TAILWIND_CONFIG = join(ROOT, "tailwind.config.ts");
 
 let discovered = 0;
@@ -160,9 +161,16 @@ assert(globals.includes(":root"), "globals.css punya :root token");
 assert(globals.includes(".dark"), "globals.css punya .dark token");
 assert(globals.includes("--clr-text") && globals.includes("--clr-surface"), "globals.css punya token --clr-* canonical");
 assert(globals.includes(".bc-guru .bg-white"), "globals.css punya .bc-guru compat layer");
+assert(globals.includes(".bc-admin .bg-white"), "globals.css punya .bc-admin compat layer (STEP 8.2)");
+assert(globals.includes(".bc-badge-success"), "globals.css punya primitif status badge global (STEP 8.2)");
+assert(
+  globals.includes("--secondary: 240 4.8% 95.9%") && globals.includes("--destructive: 0 73% 41%"),
+  "token light :root --secondary/--destructive AA (STEP 8.2)"
+);
 assert(classroom.includes(".bc-classroom") && classroom.includes("--clr-accent"), "classroom.css (kelasku, reference) utuh");
 assert(guruLayout.includes("classroom.css"), "guru layout import classroom.css");
 assert(/mainClassName="bc-guru/.test(guruLayout), "guru layout wire .bc-guru di main");
+assert(/mainClassName="bc-admin/.test(read(ADMIN_LAYOUT)), "admin layout wire .bc-admin di main (STEP 8.2)");
 assert(tailwind.includes('darkMode: ["class"]'), "tailwind darkMode class");
 assert(!tailwind.includes('darkMode: "media"') && !tailwind.includes("darkMode: ['media']"), "tidak ada darkMode media");
 assert(read(join(ROOT, "app", "providers.tsx")).includes("theme-provider"), "provider tema tunggal (next-themes via theme-provider)");

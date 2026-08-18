@@ -29,14 +29,14 @@
     --popover-foreground: 0 0% 11%;
     --primary: 0 73% 41%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 6% 10%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
     --muted: 60 5% 96%;
     --muted-foreground: 240 4% 46%;
     --accent: 60 5% 96%;
-    --accent-foreground: 240 6% 10%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 73% 41%;
+    --destructive-foreground: 0 0% 100%;
     --border: 240 6% 90%;
     --input: 240 6% 90%;
     --ring: 0 73% 41%;
@@ -631,6 +631,265 @@
 
 /* Focus ring global guru — outline accent-strong TERLIHAT di light+dark */
 .bc-guru :focus-visible {
+  outline: 2px solid var(--clr-accent-strong);
+  outline-offset: 2px;
+}
+
+/* ── Bagian 4: Primitif status badge GLOBAL (tanpa scope) — komponen shared
+   (components/ui/badge) AA di light+dark tanpa `dark:` patch. Nilai kontras
+   diverifikasi STEP 8.1: success 5.21 / warning 4.84 / danger 4.41 (UI) /
+   info 4.75 / violet ~5.0. ── */
+.bc-badge-success {
+  background: var(--clr-accent-soft);
+  color: var(--clr-accent-strong);
+  border: 1px solid color-mix(in srgb, var(--clr-accent) 35%, transparent);
+}
+.bc-badge-warning {
+  background: var(--clr-warning-soft);
+  color: var(--clr-warning-strong);
+  border: 1px solid color-mix(in srgb, var(--clr-warning) 35%, transparent);
+}
+.bc-badge-danger {
+  background: var(--clr-danger-soft);
+  color: var(--clr-danger);
+  border: 1px solid color-mix(in srgb, var(--clr-danger) 35%, transparent);
+}
+.bc-badge-info {
+  background: var(--clr-info-soft);
+  color: var(--clr-info);
+  border: 1px solid color-mix(in srgb, var(--clr-info) 35%, transparent);
+}
+.bc-badge-violet {
+  background: var(--clr-violet-soft);
+  color: var(--clr-violet);
+  border: 1px solid color-mix(in srgb, var(--clr-violet) 35%, transparent);
+}
+
+/* ── Bagian 5: Compatibility layer ADMIN (.bc-admin) — mirror .bc-guru,
+   dipasang di <main> admin layout. Mekanisme sama, di-approve Step 8.0
+   untuk guru; 21 halaman admin light-only kini ikut tema. ── */
+.bc-admin {
+  color: var(--clr-text);
+}
+
+/* Surface */
+.bc-admin .bg-white { background-color: var(--clr-surface); }
+.bc-admin .bg-white\/90 { background-color: color-mix(in srgb, var(--clr-surface) 90%, transparent); }
+.bc-admin .bg-white\/80 { background-color: color-mix(in srgb, var(--clr-surface) 80%, transparent); }
+.bc-admin .bg-white\/70 { background-color: color-mix(in srgb, var(--clr-surface) 70%, transparent); }
+.bc-admin .bg-white\/60 { background-color: color-mix(in srgb, var(--clr-surface) 60%, transparent); }
+.bc-admin .bg-white\/50 { background-color: color-mix(in srgb, var(--clr-surface) 50%, transparent); }
+.bc-admin .bg-white\/30 { background-color: color-mix(in srgb, var(--clr-surface) 30%, transparent); }
+.bc-admin .bg-white\/20 { background-color: color-mix(in srgb, var(--clr-surface) 20%, transparent); }
+.bc-admin .bg-white\/10 { background-color: color-mix(in srgb, var(--clr-surface) 10%, transparent); }
+.bc-admin .bg-white\/5 { background-color: color-mix(in srgb, var(--clr-surface) 5%, transparent); }
+.bc-admin .bg-slate-50,
+.bc-admin .bg-gray-50 { background-color: var(--clr-surface-2); }
+.bc-admin .bg-slate-100,
+.bc-admin .bg-gray-100 { background-color: var(--clr-surface-2); }
+.bc-admin .bg-slate-200,
+.bc-admin .bg-gray-200 { background-color: var(--clr-border); }
+.bc-admin .bg-slate-300,
+.bc-admin .bg-gray-300 { background-color: var(--clr-border-strong); }
+
+/* Accent (emerald) + semantic hues */
+.bc-admin .bg-emerald-50,
+.bc-admin .bg-emerald-100,
+.bc-admin .bg-green-50 { background-color: var(--clr-accent-soft); }
+.bc-admin .bg-emerald-500,
+.bc-admin .bg-emerald-600,
+.bc-admin .bg-green-500,
+.bc-admin .bg-green-600 { background-color: var(--clr-accent); }
+.bc-admin .bg-emerald-700 { background-color: var(--clr-accent-strong); }
+.bc-admin .bg-violet-50,
+.bc-admin .bg-violet-100,
+.bc-admin .bg-purple-50,
+.bc-admin .bg-purple-100 { background-color: var(--clr-violet-soft); }
+.bc-admin .bg-violet-500,
+.bc-admin .bg-violet-600,
+.bc-admin .bg-violet-700,
+.bc-admin .bg-purple-500,
+.bc-admin .bg-purple-600,
+.bc-admin .bg-purple-700 { background-color: var(--clr-violet); }
+.bc-admin .bg-red-50,
+.bc-admin .bg-red-100 { background-color: var(--clr-danger-soft); }
+.bc-admin .bg-red-500,
+.bc-admin .bg-red-600,
+.bc-admin .bg-red-700 { background-color: var(--clr-danger); }
+.bc-admin .bg-amber-50,
+.bc-admin .bg-amber-100,
+.bc-admin .bg-yellow-50,
+.bc-admin .bg-yellow-100 { background-color: var(--clr-warning-soft); }
+.bc-admin .bg-amber-500,
+.bc-admin .bg-amber-600,
+.bc-admin .bg-amber-700,
+.bc-admin .bg-yellow-500,
+.bc-admin .bg-yellow-600 { background-color: var(--clr-warning); }
+.bc-admin .bg-blue-50,
+.bc-admin .bg-blue-100 { background-color: var(--clr-info-soft); }
+.bc-admin .bg-blue-500,
+.bc-admin .bg-blue-600,
+.bc-admin .bg-blue-700 { background-color: var(--clr-info); }
+
+/* Text */
+.bc-admin .text-gray-900,
+.bc-admin .text-slate-900,
+.bc-admin .text-gray-800,
+.bc-admin .text-slate-800,
+.bc-admin .text-gray-950,
+.bc-admin .text-slate-950,
+.bc-admin .text-black { color: var(--clr-text); }
+.bc-admin .text-gray-700,
+.bc-admin .text-slate-700,
+.bc-admin .text-gray-600,
+.bc-admin .text-slate-600,
+.bc-admin .text-gray-500,
+.bc-admin .text-slate-500 { color: var(--clr-text-2); }
+.bc-admin .text-gray-400,
+.bc-admin .text-slate-400,
+.bc-admin .text-gray-300,
+.bc-admin .text-slate-300 { color: var(--clr-text-3); }
+.bc-admin .text-emerald-400,
+.bc-admin .text-emerald-500,
+.bc-admin .text-emerald-600,
+.bc-admin .text-emerald-700,
+.bc-admin .text-green-400,
+.bc-admin .text-green-500,
+.bc-admin .text-green-600,
+.bc-admin .text-green-700 { color: var(--clr-accent-strong); }
+.bc-admin .text-violet-500,
+.bc-admin .text-violet-400,
+.bc-admin .text-violet-600,
+.bc-admin .text-violet-700,
+.bc-admin .text-purple-400,
+.bc-admin .text-purple-500,
+.bc-admin .text-purple-600,
+.bc-admin .text-purple-700 { color: var(--clr-violet); }
+.bc-admin .text-red-400,
+.bc-admin .text-red-500,
+.bc-admin .text-red-600,
+.bc-admin .text-red-700,
+.bc-admin .text-red-800 { color: var(--clr-danger); }
+.bc-admin .text-amber-400,
+.bc-admin .text-amber-500,
+.bc-admin .text-amber-600,
+.bc-admin .text-amber-700,
+.bc-admin .text-yellow-400,
+.bc-admin .text-yellow-500,
+.bc-admin .text-yellow-600,
+.bc-admin .text-yellow-700 { color: var(--clr-warning-strong); }
+.bc-admin .text-blue-400,
+.bc-admin .text-blue-500,
+.bc-admin .text-blue-600,
+.bc-admin .text-blue-700 { color: var(--clr-info); }
+
+/* Border */
+.bc-admin .border-slate-100,
+.bc-admin .border-gray-100,
+.bc-admin .border-slate-200,
+.bc-admin .border-gray-200 { border-color: var(--clr-border); }
+.bc-admin .border-slate-300,
+.bc-admin .border-gray-300,
+.bc-admin .border-slate-400,
+.bc-admin .border-gray-400 { border-color: var(--clr-border-strong); }
+.bc-admin .border-emerald-500,
+.bc-admin .border-emerald-600,
+.bc-admin .border-green-500,
+.bc-admin .border-green-600 { border-color: var(--clr-accent); }
+.bc-admin .border-emerald-100,
+.bc-admin .border-emerald-200,
+.bc-admin .border-emerald-300,
+.bc-admin .border-green-100,
+.bc-admin .border-green-200 { border-color: color-mix(in srgb, var(--clr-accent) 45%, var(--clr-border)); }
+.bc-admin .border-violet-500,
+.bc-admin .border-violet-600,
+.bc-admin .border-purple-500,
+.bc-admin .border-purple-600 { border-color: var(--clr-violet); }
+.bc-admin .border-violet-100,
+.bc-admin .border-violet-200,
+.bc-admin .border-purple-100,
+.bc-admin .border-purple-200 { border-color: color-mix(in srgb, var(--clr-violet) 45%, var(--clr-border)); }
+.bc-admin .border-red-500,
+.bc-admin .border-red-600 { border-color: var(--clr-danger); }
+.bc-admin .border-red-100,
+.bc-admin .border-red-200,
+.bc-admin .border-red-300 { border-color: color-mix(in srgb, var(--clr-danger) 45%, var(--clr-border)); }
+.bc-admin .border-amber-500,
+.bc-admin .border-amber-600,
+.bc-admin .border-yellow-500,
+.bc-admin .border-yellow-600 { border-color: var(--clr-warning); }
+.bc-admin .border-amber-100,
+.bc-admin .border-amber-200,
+.bc-admin .border-amber-300,
+.bc-admin .border-yellow-100,
+.bc-admin .border-yellow-200 { border-color: color-mix(in srgb, var(--clr-warning) 45%, var(--clr-border)); }
+.bc-admin .border-blue-500,
+.bc-admin .border-blue-600 { border-color: var(--clr-info); }
+.bc-admin .border-blue-100,
+.bc-admin .border-blue-200,
+.bc-admin .border-blue-300 { border-color: color-mix(in srgb, var(--clr-info) 45%, var(--clr-border)); }
+
+/* Divider */
+.bc-admin .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+.bc-admin .divide-gray-100 > :not([hidden]) ~ :not([hidden]),
+.bc-admin .divide-slate-200 > :not([hidden]) ~ :not([hidden]),
+.bc-admin .divide-gray-200 > :not([hidden]) ~ :not([hidden]) { border-color: var(--clr-border); }
+
+/* Hover */
+.bc-admin .hover\:bg-gray-50:hover,
+.bc-admin .hover\:bg-slate-50:hover,
+.bc-admin .hover\:bg-gray-100:hover,
+.bc-admin .hover\:bg-slate-100:hover { background-color: var(--clr-surface-2); }
+.bc-admin .hover\:bg-emerald-50:hover { background-color: var(--clr-accent-soft); }
+.bc-admin .hover\:bg-emerald-500:hover,
+.bc-admin .hover\:bg-emerald-600:hover,
+.bc-admin .hover\:bg-emerald-700:hover { background-color: var(--clr-accent-strong); }
+.bc-admin .hover\:bg-red-50:hover { background-color: var(--clr-danger-soft); }
+.bc-admin .hover\:bg-red-600:hover,
+.bc-admin .hover\:bg-red-700:hover { background-color: color-mix(in srgb, var(--clr-danger) 88%, var(--clr-text)); }
+.bc-admin .hover\:bg-amber-50:hover { background-color: var(--clr-warning-soft); }
+.bc-admin .hover\:bg-amber-600:hover,
+.bc-admin .hover\:bg-amber-700:hover { background-color: var(--clr-warning-strong); }
+.bc-admin .hover\:bg-blue-50:hover { background-color: var(--clr-info-soft); }
+.bc-admin .hover\:bg-blue-600:hover,
+.bc-admin .hover\:bg-blue-700:hover { background-color: color-mix(in srgb, var(--clr-info) 88%, var(--clr-text)); }
+.bc-admin .hover\:bg-violet-50:hover { background-color: var(--clr-violet-soft); }
+.bc-admin .hover\:bg-violet-600:hover,
+.bc-admin .hover\:bg-violet-700:hover { background-color: color-mix(in srgb, var(--clr-violet) 88%, var(--clr-text)); }
+
+/* Ring & Focus (form) */
+.bc-admin .ring-emerald-500,
+.bc-admin .ring-emerald-400 { --tw-ring-color: var(--clr-accent-strong); }
+.bc-admin .ring-slate-200,
+.bc-admin .ring-gray-200 { --tw-ring-color: var(--clr-border); }
+.bc-admin .ring-red-500,
+.bc-admin .ring-red-400 { --tw-ring-color: var(--clr-danger); }
+.bc-admin .ring-amber-500,
+.bc-admin .ring-amber-400 { --tw-ring-color: var(--clr-warning-strong); }
+.bc-admin .ring-blue-500,
+.bc-admin .ring-blue-400 { --tw-ring-color: var(--clr-info); }
+.bc-admin .ring-violet-500,
+.bc-admin .ring-violet-400 { --tw-ring-color: var(--clr-violet); }
+.bc-admin .focus\:ring-emerald-500:focus,
+.bc-admin .focus\:ring-emerald-400:focus { --tw-ring-color: var(--clr-accent-strong); }
+.bc-admin .focus\:ring-red-500:focus,
+.bc-admin .focus\:ring-red-400:focus { --tw-ring-color: var(--clr-danger); }
+.bc-admin .focus\:ring-amber-500:focus,
+.bc-admin .focus\:ring-amber-400:focus { --tw-ring-color: var(--clr-warning-strong); }
+.bc-admin .focus\:ring-blue-500:focus,
+.bc-admin .focus\:ring-blue-400:focus { --tw-ring-color: var(--clr-info); }
+.bc-admin .focus\:border-emerald-500:focus,
+.bc-admin .focus\:border-emerald-400:focus { border-color: var(--clr-accent-strong); }
+.bc-admin .focus\:border-red-500:focus { border-color: var(--clr-danger); }
+
+/* Placeholder (forms) */
+.bc-admin .placeholder\:text-gray-400::placeholder,
+.bc-admin .placeholder\:text-slate-400::placeholder,
+.bc-admin .placeholder\:text-gray-500::placeholder,
+.bc-admin .placeholder\:text-slate-500::placeholder { color: var(--clr-text-3); }
+
+/* Focus ring global admin */
+.bc-admin :focus-visible {
   outline: 2px solid var(--clr-accent-strong);
   outline-offset: 2px;
 }

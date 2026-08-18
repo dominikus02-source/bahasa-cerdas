@@ -727,8 +727,8 @@ export default function AdminAnalyticsPage() {
                         style={{
                           backgroundColor: cell
                             ? `rgba(139,92,246,${Math.max(0.12, Math.min(1, cell.users / heatmapMax))})`
-                            : "#f8fafc",
-                          border: cell ? "1px solid rgba(139,92,246,0.35)" : "1px solid #f1f5f9",
+: "#f8fafc",
+                          border: cell ? "1px solid rgba(139,92,246,0.35)" : "1px solid var(--clr-border)",
                         }}
                         title={`${DAY_LABELS[row.dow]} ${h}:00 — ${cell ? fmt(cell.users) : 0} user`}
                       />
@@ -806,9 +806,9 @@ export default function AdminAnalyticsPage() {
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data.xpDist} margin={{ top: 8, right: 8, bottom: 0, left: -16 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-                  <XAxis dataKey="bucket" tick={{ fontSize: 11, fill: "#64748b" }} />
-                  <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--clr-border)" vertical={false} />
+                  <XAxis dataKey="bucket" tick={{ fontSize: 11, fill: "var(--clr-text-3)" }} />
+                  <YAxis tick={{ fontSize: 11, fill: "var(--clr-text-3)" }} />
                   <Tooltip formatter={(v) => [fmt(Number(v)), "User"]} cursor={{ fill: "#f5f3ff" }} />
                   <Bar dataKey="users" radius={[6, 6, 0, 0]}>
                     {data.xpDist.map((_, i) => (
@@ -867,7 +867,7 @@ export default function AdminAnalyticsPage() {
               <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
                   <RadarChart data={data.skills.map((s) => ({ skill: SKILL_LABELS[s.skill] ?? s.skill, level: s.avgLevel }))} outerRadius="72%">
-                    <PolarGrid stroke="#e2e8f0" />
+                    <PolarGrid stroke="var(--clr-border)" />
                     <PolarAngleAxis dataKey="skill" tick={{ fontSize: 11, fill: "#475569" }} />
                     <Radar dataKey="level" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.35} />
                     <Tooltip formatter={(v) => [`Level ${v}`, "Rata-rata"]} />

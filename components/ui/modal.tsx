@@ -31,14 +31,14 @@ export function Modal({ isOpen, onClose, children, className, title }: ModalProp
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
       <div
         className={cn(
-          "relative z-10 w-full max-w-lg rounded-xl bg-white p-6 shadow-2xl animate-fade-in",
+          "relative z-10 w-full max-w-lg rounded-xl bg-card text-card-foreground p-6 shadow-2xl animate-fade-in",
           className
         )}
       >
         {title && (
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-xl font-bold">{title}</h2>
-            <button onClick={onClose} className="rounded-full p-1 hover:bg-gray-100">
+            <button onClick={onClose} className="rounded-full p-1 hover:bg-muted">
               <X className="h-5 w-5" />
             </button>
           </div>

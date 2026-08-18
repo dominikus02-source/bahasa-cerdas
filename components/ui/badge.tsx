@@ -16,8 +16,8 @@ const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
             "border-transparent bg-secondary text-secondary-foreground": variant === "secondary",
             "border-transparent bg-destructive text-destructive-foreground": variant === "destructive",
             "text-foreground": variant === "outline",
-            "border-transparent bg-emerald-500 text-white": variant === "success",
-            "border-transparent bg-amber-500 text-white": variant === "warning",
+            "border-transparent bc-badge-success": variant === "success",
+            "border-transparent bc-badge-warning": variant === "warning",
             "border-transparent bg-gradient-to-r from-gold-400 to-gold-600 text-black": variant === "gold",
           },
           className

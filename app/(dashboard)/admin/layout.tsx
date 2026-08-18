@@ -15,7 +15,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <ShellLayout
       rootClassName="bg-slate-50 dark:bg-slate-950"
-      mainClassName="flex-1 px-4 md:px-6 py-6 pb-24 md:pb-8 mx-auto max-w-[1440px] w-full"
+      mainClassName="bc-admin flex-1 px-4 md:px-6 py-6 pb-24 md:pb-8 mx-auto max-w-[1440px] w-full"
       sidebar={
         <>
           <AdminSidebar user={{ fullName: user.fullName, avatar: user.avatar }} />

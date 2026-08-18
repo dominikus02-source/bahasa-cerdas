@@ -21,9 +21,9 @@ export function UserGrowthChart({ data }: { data: { week: string; count: number 
             <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-        <XAxis dataKey="week" tick={{ fontSize: 10, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
-        <YAxis tick={{ fontSize: 10, fill: "#94a3b8" }} axisLine={false} tickLine={false} allowDecimals={false} />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--clr-border)" />
+        <XAxis dataKey="week" tick={{ fontSize: 10, fill: "var(--clr-text-3)" }} axisLine={false} tickLine={false} />
+        <YAxis tick={{ fontSize: 10, fill: "var(--clr-text-3)" }} axisLine={false} tickLine={false} allowDecimals={false} />
         <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #e2e8f0", fontSize: 12 }} />
         <Area type="monotone" dataKey="count" stroke="#8b5cf6" strokeWidth={2} fill="url(#colorUsers)" />
       </AreaChart>
@@ -35,8 +35,8 @@ export function MiniBarChart({ data }: { data: { week: string; count: number }[]
   return (
     <ResponsiveContainer width="100%" height={180}>
       <BarChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-        <XAxis dataKey="week" tick={{ fontSize: 9, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--clr-border)" vertical={false} />
+        <XAxis dataKey="week" tick={{ fontSize: 9, fill: "var(--clr-text-3)" }} axisLine={false} tickLine={false} />
         <YAxis hide />
         <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #e2e8f0", fontSize: 12 }} />
         <Bar dataKey="count" radius={[4, 4, 0, 0]} fill="#8b5cf6" />

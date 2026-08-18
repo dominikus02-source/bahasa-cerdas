@@ -3856,3 +3856,69 @@ Hardening kontras + konsistensi visual Guru Dashboard (79 halaman) di atas fonda
 5. GameRoom migration SQL via Supabase dashboard
 6. UI game solo: badge-score client vs server masih beda (kosmetik)
 7. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
+
+---
+
+## Phase STEP 8.2 — GLOBAL SEMANTIC THEME SYSTEM (Light+Dark, Guru+Admin+Shared) (Aug 18, 2026)
+
+### Goal
+Jadikan seluruh web (Guru Dashboard 79 halaman + Admin Panel 21 halaman + semua shared components) SATU global theme system berbasis semantic tokens — fitur baru cukup `bg-background text-foreground` tanpa styling dark manual. **NO COMMIT / NO PUSH — menunggu Founder Review (pola 8.0/8.1).**
+
+### Temuan Audit (docs/PHASE_GLOBAL_SEMANTIC_THEME_AUDIT.md)
+1. **Provider sudah tunggal & benar** (components/theme/theme-provider.tsx, next-themes `class`, mounted sekali di app/providers.tsx) — TIDAK diubah.
+2. **Tailwind campuran**: border/input/ring/background/foreground/destructive/card/popover/surface*/success/warning/danger sudah `hsl(var(...))`, TAPI `primary`/`secondary`/`muted`/`accent` hardcoded hex → ditokenisasi.
+3. **Token light tidak AA**: `--secondary` `240 6% 10%` (hampir hitam, terbalik), `--destructive` `#EF4444` (putih = 3.76:1) → diperbaiki.
+4. **Admin light-only**: 88 bg-white, 101 text-slate-900, 100 border-slate-200, 51 bg-slate-50 (21 halaman) → `.bc-admin` compat mirror.
+5. **Shared components broken dark**: `ui/input` (bg-white), `ui/modal` (bg-white), `ui/tabs` (bg-gray-100) → semantik.
+6. **Charts hardcoded**: grid `#f1f5f9` nyaris invisible di dark (AdminCharts, AktivitasAnalytics, admin/analytics) → `var(--clr-border)`/`var(--clr-text-3)`.
+7. **Badge success/warning** `bg-emerald-500 text-white` (3.27 dark) / `bg-amber-500 text-white` (2.15 dark) → primitif `.bc-badge-*` global (AA dua mode).
+8. Guru 76 halaman SUDAH ter-cover `.bc-guru` compat (8.0/8.1); 4 file game dengan `dark:` eksplisit dibiarkan (legit). Admin 1191 `dark:` patch historis DIBIARKAN (debt visual, pembersihan deferred).
+
+### Perubahan
+| File | Perubahan |
+|------|-----------|
+| `app/globals.css` | :root light: `--secondary 240 4.8% 95.9%`, `--secondary-foreground 240 5.9% 10%`, `--accent-foreground 240 5.9% 10%`, `--destructive 0 73% 41%` (AA); + primitif GLOBAL `.bc-badge-{success,warning,danger,info,violet}` (soft/strong --clr-*, AA 8.1); + blok `.bc-admin` compat mirror (Bagian 5, identik .bc-guru) |
+| `tailwind.config.ts` | primary/secondary/muted/accent → `hsl(var(--...))` (primary.light/dark & gold/zinc brand tetap) |
+| `components/ui/input.tsx` | `border-input bg-background text-foreground ring-ring placeholder:text-muted-foreground` |
+| `components/ui/modal.tsx` | panel `bg-card text-card-foreground`, X `hover:bg-muted` |
+| `components/ui/tabs.tsx` | List `bg-muted text-muted-foreground`; trigger aktif `bg-background text-foreground shadow-sm` |
+| `components/ui/badge.tsx` | success/warning → `bc-badge-success/warning`; destructive kini AA via token |
+| `components/ui/button.tsx` | success → `bg-emerald-700 text-white hover:bg-emerald-600` (5.48 AA dua mode) |
+| `app/(dashboard)/admin/layout.tsx` | mainClassName + `bc-admin` |
+| Charts (3 file) | grid `var(--clr-border)`, tick `var(--clr-text-3)`, heatmap border `var(--clr-border)` |
+| `scripts/audit-theme-hardcoded.ts` (BARU) | audit kandidat warna hardcoded per zona (READ-ONLY) |
+| `scripts/test-guru-dashboard-theme-consistency.ts` | +4 assertion (bc-admin layer, bc-badge, token :root, admin layout wire) |
+| `docs/PHASE_GLOBAL_SEMANTIC_THEME_AUDIT.md` (BARU) | audit lengkap + matriks verifikasi |
+| `package.json` | + `audit:theme-hardcoded` |
+
+### THEME RULE (wajib untuk fitur baru)
+1. **Satu provider**: next-themes via `components/theme/theme-provider.tsx` saja. DILARANG provider tema kedua.
+2. **Satu token set**: pakai `bg-background`, `text-foreground`, `bg-card`, `text-muted-foreground`, `border-border`, `border-input`, `ring-ring`, `bg-primary`/`text-primary-foreground`, `bg-destructive`, `bg-secondary`, `bg-muted`, `bg-accent` — semua sudah `hsl(var(--...))` dua mode. Jangan hardcode `bg-white`/`text-slate-900`/`border-gray-200`/arbitrary `bg-[#...]` di fitur baru.
+3. **Status warna**: gunakan primitif GLOBAL `.bc-badge-{success,warning,danger,info,violet}` atau token `--clr-*` — jangan `bg-emerald-500 text-white` dll.
+4. **DARK TIDAK perlu ditulis manual**: token sudah mengikuti `.dark`. `dark:` HANYA bila benar-benar perlu (komponen khusus seperti game) — `dark:bg-black`/`dark:text-white` dilarang untuk patch.
+5. **Charts**: grid/axis `var(--clr-border)`/`var(--clr-text-3)`; seri warna brand (violet/rose/sky #8b5cf6/#fb7185/#0ea5e9) bebas.
+6. **Halaman baru guru/admin**: class light polos cukup — compat `.bc-guru`/`.bc-admin` mengubahnya otomatis di dark.
+7. **Ikon**: lucide currentColor; warna ikon ikuti token teks.
+8. **Jangan turunkan token**: harness jejak nilai (--clr-* 8.1, --secondary/--destructive 8.2) — ubah nilai = harness gagal.
+9. **Scope compat**: `.bc-guru` untuk halaman guru, `.bc-admin` untuk halaman admin (mirror identik). Murid/arena pakai semantik langsung.
+10. **Jalankan**: `npm run audit:theme-hardcoded` (kandidat) + `npm run test:guru-dashboard-theme-consistency` (149+4 assertion) setelah mengubah tema.
+
+### Verification
+| Check | Hasil |
+|-------|-------|
+| `npm run test:guru-dashboard-theme-consistency` (BARU +4) | ✅ 153/153 |
+| `npm run audit:theme-hardcoded` | ✅ READ-ONLY, kandidat per zona |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (file diubah/baru) | ✅ 0 violations |
+| `npm run build` (dummy env) | ✅ Compiled, 0 error |
+| `git diff --check` | ✅ bersih |
+| Protected zones | ✅ 0 diff (prisma/ app/api/ lib/gamification/ lib/learning-loop/ engines/ lib/apk.ts bottom-nav) |
+
+### Remaining (tidak berubah)
+1. Commit/push fase ini bila disetujui founder
+2. LANJUT 8.4.1 saat kuota/reset: `QA_MAX_MINUTES=110 npx tsx scripts/qa-ai-diagnostic-8-4-1.ts --sessions 10` (resume S2 dst.) sampai ≥100 butir → re-run audit → target 0 ❌
+3. TKA UTBK/Guru enrichment 30 → 150
+4. Game server revival (VPS mati)
+5. GameRoom migration SQL via Supabase dashboard
+6. UI game solo: badge-score client vs server masih beda (kosmetik)
+7. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)

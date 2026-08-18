@@ -77,9 +77,9 @@ export default function AktivitasAnalytics() {
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={weeks} margin={{ top: 4, right: 4, left: -18, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="minggu" tick={{ fontSize: 10, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
-                <YAxis allowDecimals={false} tick={{ fontSize: 10, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--clr-border)" vertical={false} />
+                <XAxis dataKey="minggu" tick={{ fontSize: 10, fill: "var(--clr-text-3)" }} axisLine={false} tickLine={false} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 10, fill: "var(--clr-text-3)" }} axisLine={false} tickLine={false} />
                 <Tooltip
                   cursor={{ fill: "rgba(99,102,241,0.06)" }}
                   contentStyle={{ borderRadius: 12, border: "1px solid #e2e8f0", fontSize: 12 }}
