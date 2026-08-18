@@ -1,62 +1,126 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { setQuiet } from "@/lib/notif-quiet"
-import { Play, Pause, X, Volume2, VolumeX, Heart, Trophy, Zap, RotateCcw, Clock, Star } from "lucide-react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { setQuiet } from "@/lib/notif-quiet";
+import {
+  Play,
+  Pause,
+  X,
+  Volume2,
+  VolumeX,
+  Heart,
+  Trophy,
+  Zap,
+  RotateCcw,
+  Clock,
+  Star,
+  ChevronRight,
+} from "lucide-react";
 
 /* ---------- Bank Kata ---------- */
-const KATA_BENDA = ["meja", "buku", "kursi", "sepeda", "pensil", "pohon", "burung", "rumah", "topi", "roti", "sepatu", "jemari", "kunci", "lampu", "piring", "gelas", "pintu"];
-const KATA_KERJA = ["makan", "minum", "lari", "tidur", "tulis", "baca", "lompat", "duduk", "masak", "cuci", "main", "tanam", "gambar", "nyanyi", "renang", "lukis"];
-const KATA_SIFAT = ["besar", "kecil", "tinggi", "rendah", "cantik", "rajin", "cepat", "panas", "dingin", "manis", "bersih", "kuat", "cerah", "lembut", "ringan", "berani"];
+const KATA_BENDA = [
+  "meja","buku","kursi","sepeda","pensil","pohon","burung","rumah",
+  "topi","roti","sepatu","jemari","kunci","lampu","piring","gelas","pintu",
+];
+const KATA_KERJA = [
+  "makan","minum","lari","tidur","tulis","baca","lompat","duduk",
+  "masak","cuci","main","tanam","gambar","nyanyi","renang","lukis",
+];
+const KATA_SIFAT = [
+  "besar","kecil","tinggi","rendah","cantik","rajin","cepat","panas",
+  "dingin","manis","bersih","kuat","cerah","lembut","ringan","berani",
+];
 
 type RuleKey = "BENDA" | "KERJA" | "SIFAT";
-const RULES: Record<RuleKey, { label: string; valid: string[]; invalid: string[] }> = {
-  BENDA: { label: "KATA BENDA", valid: KATA_BENDA, invalid: [...KATA_KERJA, ...KATA_SIFAT] },
-  KERJA: { label: "KATA KERJA", valid: KATA_KERJA, invalid: [...KATA_BENDA, ...KATA_SIFAT] },
-  SIFAT: { label: "KATA SIFAT", valid: KATA_SIFAT, invalid: [...KATA_BENDA, ...KATA_KERJA] },
+const RULES: Record<
+  RuleKey,
+  { label: string; color: string; valid: string[]; invalid: string[] }
+> = {
+  BENDA: {
+    label: "KATA BENDA",
+    color: "#38BDF8",
+    valid: KATA_BENDA,
+    invalid: [...KATA_KERJA, ...KATA_SIFAT],
+  },
+  KERJA: {
+    label: "KATA KERJA",
+    color: "#34D399",
+    valid: KATA_KERJA,
+    invalid: [...KATA_BENDA, ...KATA_SIFAT],
+  },
+  SIFAT: {
+    label: "KATA SIFAT",
+    color: "#F87171",
+    valid: KATA_SIFAT,
+    invalid: [...KATA_BENDA, ...KATA_KERJA],
+  },
 };
 
-/* ---------- Konfigurasi game (satu sumber nilai, tanpa magic number tersebar) ---------- */
+/* ---------- Game Config ---------- */
 const GAME_CONFIG = {
   canvas: { w: 480, h: 720 },
   durationSec: 90,
   lives: 3,
   zelby: { w: 80, h: 80, yOffset: 85, yCatch: 100 },
   banana: {
-    src: "/bananagimBC.jpeg",        // asset utama — satu visual untuk SEMUA item yang jatuh
-    w: 60, h: 93,                    // ukuran draw — mengikuti rasio konten banana (573×885)
-    // bbox piksel konten banana di dalam berkas 675×1200 (dihitung dari bbox piksel
-    // non-putih: 54,144 → 626,1028). Crop dipakai supaya yang tampil hanya banana,
-    // bukan kotak putih/abu background asset.
-    crop: { sx: 54, sy: 144, sw: 573, sh: 885 },
-    naturalW: 675, naturalH: 1200,
+    src: "/pisangzelby2.png",
+    /* pisangzelby2.png is 960x540 landscape. We draw a cropped region
+       centered on the banana body. Adjust crop to fit the actual banana sprite. */
+    crop: { sx: 0, sy: 0, sw: 960, sh: 540 },
+    naturalW: 960,
+    naturalH: 540,
+    /* Display size on canvas — landscape ratio preserved */
+    drawW: 90,
+    drawH: 50,
   },
   spawn: {
-    initialRate: 1550,                // ms — early game longgar
-    minRate: 650,                     // ms — late game rapat
-    initialSpeed: 2.3,                // px/frame — early game lambat
-    maxSpeed: 5.0,                    // px/frame — late game cepat
-    speedJitter: 1.2,                 // variasi kecepatan antar item
-    minSpawnGap: 100,                 // px — jarak horizontal minimum antar spawn berurutan
-    marginX: 60,                      // px — margin spawn dari tepi kanvas
+    initialRate: 1550,
+    minRate: 650,
+    initialSpeed: 2.3,
+    maxSpeed: 5.0,
+    speedJitter: 1.2,
+    minSpawnGap: 110,
+    marginX: 60,
     validRatio: 0.65,
   },
-  collision: { halfW: 34, halfH: 28 },// hitbox mendekati lebar visual banana (60px) → collision terasa fair
+  collision: { halfW: 38, halfH: 22 },
+  /* Star thresholds */
+  stars: { two: 200, three: 400 },
+  /* Streak system */
+  streak: {
+    threshold: 5, // streak N activates level up
+    maxLevel: 5,
+    speedBonus: 0.15, // per level
+  },
 } as const;
 
-const W = GAME_CONFIG.canvas.w, H = GAME_CONFIG.canvas.h;
+const W = GAME_CONFIG.canvas.w;
+const H = GAME_CONFIG.canvas.h;
 const DURASI_GAME = GAME_CONFIG.durationSec;
 
 /* ---------- Audio ---------- */
 let audioCtx: AudioContext | null = null;
 function ensureAudio() {
   if (!audioCtx) {
-    try { audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)(); } catch { }
+    try {
+      audioCtx = new (
+        window.AudioContext || (window as any).webkitAudioContext
+      )();
+    } catch {
+      /* noop */
+    }
   }
   if (audioCtx?.state === "suspended") audioCtx.resume();
   return audioCtx;
 }
-function playTone(muted: boolean, freq: number, type: OscillatorType, dur: number, gain: number, slideTo?: number) {
+function playTone(
+  muted: boolean,
+  freq: number,
+  type: OscillatorType,
+  dur: number,
+  gain: number,
+  slideTo?: number
+) {
   if (muted) return;
   const ctx = ensureAudio();
   if (!ctx) return;
@@ -65,25 +129,89 @@ function playTone(muted: boolean, freq: number, type: OscillatorType, dur: numbe
   const g = ctx.createGain();
   osc.type = type;
   osc.frequency.setValueAtTime(freq, t0);
-  if (slideTo) osc.frequency.exponentialRampToValueAtTime(slideTo, t0 + dur);
+  if (slideTo)
+    osc.frequency.exponentialRampToValueAtTime(slideTo, t0 + dur);
   g.gain.setValueAtTime(0, t0);
   g.gain.linearRampToValueAtTime(gain, t0 + 0.01);
   g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-  osc.connect(g); g.connect(ctx.destination);
-  osc.start(t0); osc.stop(t0 + dur + 0.02);
+  osc.connect(g);
+  g.connect(ctx.destination);
+  osc.start(t0);
+  osc.stop(t0 + dur + 0.02);
 }
 
-type Item = { id: number; x: number; y: number; word: string; valid: boolean; speed: number; age: number; caught: boolean; missed: boolean };
-type Particle = { x: number; y: number; vx: number; vy: number; color: string; life: number; size: number };
-type FloatText = { x: number; y: number; text: string; color: string; life: number };
+/* ---------- Types ---------- */
+type Item = {
+  id: number;
+  x: number;
+  y: number;
+  word: string;
+  valid: boolean;
+  speed: number;
+  age: number;
+  caught: boolean;
+  missed: boolean;
+  wobblePhase: number;
+};
+type Particle = {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  color: string;
+  life: number;
+  maxLife: number;
+  size: number;
+  shape: "circle" | "star" | "leaf";
+};
+type FloatText = {
+  x: number;
+  y: number;
+  text: string;
+  color: string;
+  life: number;
+  size: number;
+};
+type ForestLayer = {
+  trees: { x: number; h: number; w: number; shade: string }[];
+  speed: number;
+};
 
+/* ---------- Helpers ---------- */
+function makeForestLayer(
+  count: number,
+  shade: string,
+  minH: number,
+  maxH: number
+): ForestLayer["trees"] {
+  const trees: ForestLayer["trees"] = [];
+  for (let i = 0; i < count; i++) {
+    trees.push({
+      x: (i / count) * (W + 100) - 50 + (Math.random() - 0.5) * 40,
+      h: minH + Math.random() * (maxH - minH),
+      w: 28 + Math.random() * 20,
+      shade,
+    });
+  }
+  return trees;
+}
+
+/* ---------- Component ---------- */
 export default function ZelbyDash() {
   const [screen, setScreen] = useState<"start" | "game" | "over">("start");
   const [muted, setMuted] = useState(false);
   const [paused, setPaused] = useState(false);
-  const [hud, setHud] = useState<{ score: number; lives: number; combo: number; waktu: number }>({ score: 0, lives: GAME_CONFIG.lives, combo: 0, waktu: DURASI_GAME });
+  const [hud, setHud] = useState<{
+    score: number;
+    lives: number;
+    combo: number;
+    waktu: number;
+    level: number;
+  }>({ score: 0, lives: GAME_CONFIG.lives, combo: 0, waktu: DURASI_GAME, level: 1 });
   const [finalScore, setFinalScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
+  const [finalStars, setFinalStars] = useState(0);
+  const [screenFlash, setScreenFlash] = useState<string | null>(null);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<Engine | null>(null);
@@ -93,48 +221,70 @@ export default function ZelbyDash() {
   const bananaImgRef = useRef<HTMLImageElement | null>(null);
   const imagesLoaded = useRef(false);
 
-  // NOTIFICATION 1.0 — game quiet mode: reward global tidak menutupi gameplay;
-  // reset otomatis saat keluar game/unmount (tidak ada quiet tersisa).
   useEffect(() => {
-    setQuiet(screen === "game")
-    return () => setQuiet(false)
+    setQuiet(screen === "game");
+    return () => setQuiet(false);
   }, [screen]);
 
-  useEffect(() => { mutedRef.current = muted; }, [muted]);
+  useEffect(() => {
+    mutedRef.current = muted;
+  }, [muted]);
 
   useEffect(() => {
     try {
       const saved = localStorage.getItem("zelby-highscore");
       if (saved) setHighScore(parseInt(saved, 10));
-    } catch { }
+    } catch {
+      /* noop */
+    }
   }, []);
 
   useEffect(() => {
     if (screen !== "start") return;
-    try { localStorage.setItem("zelby-highscore", String(highScore)); } catch { }
+    try {
+      localStorage.setItem("zelby-highscore", String(highScore));
+    } catch {
+      /* noop */
+    }
   }, [highScore, screen]);
 
+  /* Load Zelby idle + celebrate */
   useEffect(() => {
     const idle = new Image();
     idle.src = "/junior/karakter/zelby_idle.webp";
     const cele = new Image();
     cele.src = "/junior/karakter/zelby_celebrate.webp";
     let loaded = 0;
-    const onload = () => { loaded++; if (loaded >= 2) imagesLoaded.current = true; };
+    const onload = () => {
+      loaded++;
+      if (loaded >= 2) imagesLoaded.current = true;
+    };
     idle.onload = onload;
     cele.onload = onload;
     zelbyImgRef.current = idle;
     zelbyCelebrateImgRef.current = cele;
   }, []);
 
-  // Banana asset tunggal (bananagimBC.jpeg) — semua item jatuh memakai visual yang sama.
+  /* Load pisangzelby2.png */
   useEffect(() => {
     const img = new Image();
     img.src = GAME_CONFIG.banana.src;
-    img.onload = () => { bananaImgRef.current = img; };
+    img.onload = () => {
+      bananaImgRef.current = img;
+    };
     bananaImgRef.current = img;
   }, []);
 
+  /* Screen flash effect */
+  const flash = useCallback(
+    (color: string) => {
+      setScreenFlash(color);
+      setTimeout(() => setScreenFlash(null), 200);
+    },
+    []
+  );
+
+  /* ============= ENGINE ============= */
   class Engine {
     rule: RuleKey;
     items: Item[] = [];
@@ -146,6 +296,8 @@ export default function ZelbyDash() {
     lives: number = GAME_CONFIG.lives;
     combo: number = 0;
     maxCombo: number = 0;
+    streak: number = 0;
+    level: number = 1;
     spawnTimer: number = 0;
     spawnRate: number = GAME_CONFIG.spawn.initialRate;
     baseSpeed: number = GAME_CONFIG.spawn.initialSpeed;
@@ -159,10 +311,68 @@ export default function ZelbyDash() {
     bgHue: number = 140;
     waktuSisa: number = DURASI_GAME;
     lastTimerTick: number = 0;
-    lastHud: { score: number; lives: number; combo: number; waktu: number } = { score: 0, lives: GAME_CONFIG.lives, combo: 0, waktu: DURASI_GAME };
+    lastHud: {
+      score: number;
+      lives: number;
+      combo: number;
+      waktu: number;
+      level: number;
+    } = {
+      score: 0,
+      lives: GAME_CONFIG.lives,
+      combo: 0,
+      waktu: DURASI_GAME,
+      level: 1,
+    };
+
+    /* Parallax forest layers */
+    forestLayers: ForestLayer[] = [
+      {
+        trees: makeForestLayer(12, "#0A1A0E", 200, 340),
+        speed: 0.08,
+      },
+      {
+        trees: makeForestLayer(16, "#0D2614", 140, 260),
+        speed: 0.18,
+      },
+      {
+        trees: makeForestLayer(20, "#14301E", 80, 170),
+        speed: 0.35,
+      },
+    ];
+
+    /* Parallax offset */
+    parallaxOffset: number = 0;
+
+    /* Mist particles */
+    mistParticles: {
+      x: number;
+      y: number;
+      w: number;
+      alpha: number;
+      speed: number;
+    }[] = [];
+    mistTimer: number = 0;
+
+    /* Light rays */
+    lightRays: {
+      x: number;
+      w: number;
+      alpha: number;
+      angle: number;
+    }[] = [];
 
     constructor(rule: RuleKey) {
       this.rule = rule;
+      // init light rays
+      for (let i = 0; i < 5; i++) {
+        this.lightRays.push({
+          x: 60 + Math.random() * (W - 120),
+          w: 20 + Math.random() * 30,
+          alpha: 0.03 + Math.random() * 0.04,
+          angle: -0.15 + Math.random() * 0.3,
+        });
+      }
     }
 
     start() {
@@ -173,7 +383,9 @@ export default function ZelbyDash() {
       requestAnimationFrame((t) => this.loop(t));
     }
 
-    stop() { this.running = false; }
+    stop() {
+      this.running = false;
+    }
 
     setPaused(p: boolean) {
       this.paused = p;
@@ -187,8 +399,6 @@ export default function ZelbyDash() {
       this.targetX = Math.max(40, Math.min(W - 40, x));
     }
 
-    /* Spawn yang fair: jarak horizontal minimum dari spawn sebelumnya,
-       margin dari tepi — tidak ada posisi mustahil atau tembok kata. */
     spawn() {
       const { valid, invalid } = RULES[this.rule];
       const isValid = Math.random() < GAME_CONFIG.spawn.validRatio;
@@ -198,7 +408,6 @@ export default function ZelbyDash() {
 
       let x = marginX + Math.random() * (W - marginX * 2);
       if (this.lastSpawnX !== null && Math.abs(x - this.lastSpawnX) < minSpawnGap) {
-        // dorong ke sisi yang jauh dari spawn sebelumnya; clamp agar tidak keluar kanvas
         x = x < this.lastSpawnX ? x - minSpawnGap : x + minSpawnGap;
         if (x < marginX) x = this.lastSpawnX + minSpawnGap;
         if (x > W - marginX) x = this.lastSpawnX - minSpawnGap;
@@ -216,29 +425,46 @@ export default function ZelbyDash() {
         age: 0,
         caught: false,
         missed: false,
+        wobblePhase: Math.random() * Math.PI * 2,
       });
     }
 
-    burst(x: number, y: number, color: string, count: number) {
+    burst(
+      x: number,
+      y: number,
+      color: string,
+      count: number,
+      shape: Particle["shape"] = "circle"
+    ) {
       for (let i = 0; i < count; i++) {
         const ang = Math.random() * Math.PI * 2;
         const sp = 2 + Math.random() * 5;
-        this.particles.push({ x, y, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp - 2, color, life: 30 + Math.random() * 20, size: 4 + Math.random() * 6 });
+        this.particles.push({
+          x,
+          y,
+          vx: Math.cos(ang) * sp,
+          vy: Math.sin(ang) * sp - 2,
+          color,
+          life: 30 + Math.random() * 20,
+          maxLife: 50,
+          size: 3 + Math.random() * 5,
+          shape,
+        });
       }
     }
 
-    float(x: number, y: number, text: string, color: string) {
-      this.floatTexts.push({ x, y, text, color, life: 45 });
+    float(x: number, y: number, text: string, color: string, size: number = 20) {
+      this.floatTexts.push({ x, y, text, color, life: 50, size });
     }
 
-    /* Difficulty bertahap berbasis waktu (bukan lompatan):
-       early longgar → mid menantang → late cepat, dengan kurva ease-in. */
     applyDifficulty() {
       const elapsed = DURASI_GAME - this.waktuSisa;
       const p = Math.min(1, elapsed / DURASI_GAME);
       const { spawn } = GAME_CONFIG;
-      this.spawnRate = spawn.initialRate + (spawn.minRate - spawn.initialRate) * Math.pow(p, 1.5);
-      this.baseSpeed = spawn.initialSpeed + (spawn.maxSpeed - spawn.initialSpeed) * Math.pow(p, 1.4);
+      this.spawnRate =
+        spawn.initialRate + (spawn.minRate - spawn.initialRate) * Math.pow(p, 1.5);
+      this.baseSpeed =
+        spawn.initialSpeed + (spawn.maxSpeed - spawn.initialSpeed) * Math.pow(p, 1.4);
     }
 
     loop(now: number) {
@@ -247,21 +473,29 @@ export default function ZelbyDash() {
       this.lastFrame = now;
 
       if (!this.paused) {
+        // Timer
         if (now - this.lastTimerTick >= 1000) {
           this.waktuSisa--;
           this.lastTimerTick = now;
-          if (this.waktuSisa <= 0) { this.gameOver(); return; }
+          if (this.waktuSisa <= 0) {
+            this.gameOver();
+            return;
+          }
         }
 
         this.applyDifficulty();
+
+        // Spawn
         this.spawnTimer += dt;
         if (this.spawnTimer > this.spawnRate) {
           this.spawn();
           this.spawnTimer = 0;
         }
 
-        this.zelbyX += (this.targetX - this.zelbyX) * 0.2;
+        // Zelby movement with lerp
+        this.zelbyX += (this.targetX - this.zelbyX) * 0.22;
 
+        // Frenzy
         if (this.frenzy > 0) {
           this.frenzy -= dt;
           this.bgHue = (this.bgHue + 2) % 360;
@@ -269,6 +503,31 @@ export default function ZelbyDash() {
           this.bgHue = 140;
         }
 
+        // Parallax scroll
+        this.parallaxOffset += 0.3 * (1 + this.level * 0.1);
+
+        // Mist spawn
+        this.mistTimer += dt;
+        if (this.mistTimer > 3000) {
+          this.mistTimer = 0;
+          this.mistParticles.push({
+            x: -40,
+            y: 100 + Math.random() * (H - 250),
+            w: 60 + Math.random() * 80,
+            alpha: 0.08 + Math.random() * 0.06,
+            speed: 0.15 + Math.random() * 0.2,
+          });
+        }
+
+        // Update mist
+        for (let i = this.mistParticles.length - 1; i >= 0; i--) {
+          const m = this.mistParticles[i];
+          m.x += m.speed;
+          m.alpha -= 0.0002;
+          if (m.x > W + 60 || m.alpha <= 0) this.mistParticles.splice(i, 1);
+        }
+
+        // Collision detection
         const { collision } = GAME_CONFIG;
         const zelbyY = H - GAME_CONFIG.zelby.yCatch;
 
@@ -278,56 +537,105 @@ export default function ZelbyDash() {
           it.y += it.speed * (dt / 16);
           it.age += dt;
 
-          if (it.y > zelbyY - collision.halfH && it.y < zelbyY + collision.halfH && Math.abs(it.x - this.zelbyX) < collision.halfW) {
+          if (
+            it.y > zelbyY - collision.halfH &&
+            it.y < zelbyY + collision.halfH &&
+            Math.abs(it.x - this.zelbyX) < collision.halfW
+          ) {
             it.caught = true;
             this.items.splice(i, 1);
+
             if (it.valid) {
+              // Correct catch
               this.combo++;
+              this.streak++;
               this.maxCombo = Math.max(this.maxCombo, this.combo);
-              const points = (this.frenzy > 0 ? 20 : 10) + Math.floor(this.combo / 5) * 5;
+
+              // Level up based on streak
+              if (
+                this.streak >= GAME_CONFIG.streak.threshold &&
+                this.level < GAME_CONFIG.streak.maxLevel
+              ) {
+                this.level++;
+                this.streak = 0;
+                this.baseSpeed += GAME_CONFIG.streak.speedBonus;
+                playTone(mutedRef.current, 523, "sine", 0.15, 0.2, 784);
+                this.float(W / 2, H / 2 - 60, `LEVEL ${this.level}!`, "#A78BFA", 28);
+                this.burst(W / 2, H / 2 - 60, "#A78BFA", 20, "star");
+                flash("#A78BFA");
+              }
+
+              const points =
+                (this.frenzy > 0 ? 20 : 10) + Math.floor(this.combo / 5) * 5;
               this.score += points;
+
               if (this.combo === 10 && this.frenzy <= 0) {
                 this.frenzy = 5000;
                 playTone(mutedRef.current, 800, "square", 0.5, 0.2, 1600);
+                flash("#FBBF24");
               } else {
-                playTone(mutedRef.current, 600 + this.combo * 20, "sine", 0.1, 0.15, 900);
+                playTone(
+                  mutedRef.current,
+                  600 + this.combo * 20,
+                  "sine",
+                  0.1,
+                  0.15,
+                  900
+                );
               }
-              this.burst(it.x, it.y, "#FBBF24", 10);
-              this.float(it.x, it.y - 26, `+${points}`, "#FBBF24");
+
+              this.burst(it.x, it.y, "#FBBF24", 10, "star");
+              this.float(it.x, it.y - 26, `+${points}`, "#FBBF24", 22);
             } else {
+              // Wrong catch
               this.combo = 0;
+              this.streak = 0;
               this.lives--;
               this.shake = 15;
               playTone(mutedRef.current, 150, "sawtooth", 0.3, 0.2, 80);
-              this.burst(it.x, it.y, "#EF4444", 15);
-              if (this.lives <= 0) { this.gameOver(); return; }
+              this.burst(it.x, it.y, "#EF4444", 15, "circle");
+              flash("#EF4444");
+              if (this.lives <= 0) {
+                this.gameOver();
+                return;
+              }
             }
           } else if (it.y > H + 50) {
             it.missed = true;
             this.items.splice(i, 1);
             if (it.valid) {
               this.combo = 0;
+              this.streak = 0;
               this.lives--;
               this.shake = 10;
               playTone(mutedRef.current, 200, "triangle", 0.2, 0.15, 100);
-              if (this.lives <= 0) { this.gameOver(); return; }
+              if (this.lives <= 0) {
+                this.gameOver();
+                return;
+              }
             } else {
               this.score += 5;
               playTone(mutedRef.current, 400, "sine", 0.05, 0.1);
-              this.float(it.x, H - 60, "+5", "#4ADE80");
+              this.float(it.x, H - 60, "+5", "#4ADE80", 18);
             }
           }
         }
 
+        // Update particles
         for (let i = this.particles.length - 1; i >= 0; i--) {
           const p = this.particles[i];
-          p.x += p.vx; p.y += p.vy; p.vy += 0.3; p.life--;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.3;
+          p.life--;
           if (p.life <= 0) this.particles.splice(i, 1);
         }
 
+        // Update float texts
         for (let i = this.floatTexts.length - 1; i >= 0; i--) {
           const f = this.floatTexts[i];
-          f.y -= 0.7; f.life--;
+          f.y -= 0.7;
+          f.life--;
           if (f.life <= 0) this.floatTexts.splice(i, 1);
         }
 
@@ -343,13 +651,30 @@ export default function ZelbyDash() {
       this.running = false;
       setFinalScore(this.score);
       setHighScore((prev) => Math.max(prev, this.score));
+      // Calculate stars
+      let stars = 1;
+      if (this.score >= GAME_CONFIG.stars.three) stars = 3;
+      else if (this.score >= GAME_CONFIG.stars.two) stars = 2;
+      setFinalStars(stars);
       setTimeout(() => setScreen("over"), 400);
     }
 
-    /* HUD hanya di-update saat nilai berubah — hindari re-render React 60fps. */
     updateHud() {
-      const h = { score: this.score, lives: this.lives, combo: this.combo, waktu: this.waktuSisa };
-      if (h.score === this.lastHud.score && h.lives === this.lastHud.lives && h.combo === this.lastHud.combo && h.waktu === this.lastHud.waktu) return;
+      const h = {
+        score: this.score,
+        lives: this.lives,
+        combo: this.combo,
+        waktu: this.waktuSisa,
+        level: this.level,
+      };
+      if (
+        h.score === this.lastHud.score &&
+        h.lives === this.lastHud.lives &&
+        h.combo === this.lastHud.combo &&
+        h.waktu === this.lastHud.waktu &&
+        h.level === this.lastHud.level
+      )
+        return;
       this.lastHud = h;
       setHud(h);
     }
@@ -360,280 +685,515 @@ export default function ZelbyDash() {
 
       c.save();
       if (this.shake > 0.5) {
-        c.translate((Math.random() - 0.5) * this.shake, (Math.random() - 0.5) * this.shake);
+        c.translate(
+          (Math.random() - 0.5) * this.shake,
+          (Math.random() - 0.5) * this.shake
+        );
       }
 
-      /* Background */
-      const grad = c.createLinearGradient(0, 0, 0, H);
-      grad.addColorStop(0, "#1E1840");
-      grad.addColorStop(0.5, "#1A2A3E");
-      grad.addColorStop(1, "#162318");
-      c.fillStyle = grad;
+      /* ========== BACKGROUND — REALISTIC FOREST ========== */
+
+      // Sky gradient (dusk forest)
+      const skyGrad = c.createLinearGradient(0, 0, 0, H);
+      skyGrad.addColorStop(0, "#0B1A2E");
+      skyGrad.addColorStop(0.25, "#142836");
+      skyGrad.addColorStop(0.5, "#1A3329");
+      skyGrad.addColorStop(0.75, "#152818");
+      skyGrad.addColorStop(1, "#0D1F10");
+      c.fillStyle = skyGrad;
       c.fillRect(0, 0, W, H);
 
-      /* Hutan dekorasi — pepohonan di kiri & kanan */
+      // Stars/dots in sky
+      c.fillStyle = "rgba(255,255,255,0.15)";
+      const starSeed = 42;
+      for (let i = 0; i < 30; i++) {
+        const sx = ((starSeed * (i + 1) * 7) % W);
+        const sy = ((starSeed * (i + 1) * 13) % (H * 0.35));
+        const sr = 0.5 + ((i * 3) % 3) * 0.4;
+        c.beginPath();
+        c.arc(sx, sy, sr, 0, Math.PI * 2);
+        c.fill();
+      }
+
+      // Light rays from canopy gaps
       c.save();
-      // Pohon kiri
-      c.fillStyle = "#0D1F12";
-      const treeW = 50;
-      for (let ty = 0; ty < H; ty += 90) {
-        const sway = Math.sin(ty * 0.003 + performance.now() * 0.0005) * 4;
-        c.fillRect(sway, ty, treeW + sway * 0.3, 90);
-      }
-      // Pohon kanan
-      for (let ty = 0; ty < H; ty += 90) {
-        const sway = Math.sin(ty * 0.003 + performance.now() * 0.0005 + 1) * 4;
-        c.fillRect(W - treeW + sway, ty, treeW - sway * 0.3, 90);
-      }
-      // Daun-daun di batang
-      c.fillStyle = "#1A3A22";
-      for (let ty = 20; ty < H; ty += 90) {
-        for (let side = 0; side < 2; side++) {
-          const bx = side === 0 ? 30 : W - 30;
-          const offset = Math.sin(ty * 0.05 + performance.now() * 0.002) * 8;
-          c.beginPath();
-          c.ellipse(bx + (side === 0 ? -1 : 1) * (16 + offset), ty + offset * 0.5, 18, 12, side === 0 ? -0.3 : 0.3, 0, Math.PI * 2);
-          c.fill();
-        }
+      for (const ray of this.lightRays) {
+        c.save();
+        c.translate(ray.x, 0);
+        c.rotate(ray.angle);
+        const rayGrad = c.createLinearGradient(0, 0, 0, H * 0.7);
+        rayGrad.addColorStop(0, `rgba(200,220,160,${ray.alpha})`);
+        rayGrad.addColorStop(1, "rgba(200,220,160,0)");
+        c.fillStyle = rayGrad;
+        c.fillRect(-ray.w / 2, 0, ray.w, H * 0.7);
+        c.restore();
       }
       c.restore();
 
-      /* Lebat/ranting di bawah — semak */
+      // Forest layers (back to front)
+      for (const layer of this.forestLayers) {
+        c.save();
+        for (const tree of layer.trees) {
+          const tx =
+            ((tree.x + this.parallaxOffset * layer.speed) % (W + 100)) - 50;
+          const baseY = H - 30;
+
+          // Trunk
+          c.fillStyle = tree.shade;
+          c.beginPath();
+          c.moveTo(tx - tree.w * 0.15, baseY);
+          c.lineTo(tx - tree.w * 0.08, baseY - tree.h);
+          c.lineTo(tx + tree.w * 0.08, baseY - tree.h);
+          c.lineTo(tx + tree.w * 0.15, baseY);
+          c.closePath();
+          c.fill();
+
+          // Canopy — layered ellipses for organic look
+          const canopyY = baseY - tree.h;
+          c.fillStyle = tree.shade;
+          c.beginPath();
+          c.ellipse(tx, canopyY - 10, tree.w * 0.7, tree.h * 0.35, 0, 0, Math.PI * 2);
+          c.fill();
+          c.beginPath();
+          c.ellipse(
+            tx - tree.w * 0.3,
+            canopyY + 5,
+            tree.w * 0.5,
+            tree.h * 0.25,
+            -0.2,
+            0,
+            Math.PI * 2
+          );
+          c.fill();
+          c.beginPath();
+          c.ellipse(
+            tx + tree.w * 0.3,
+            canopyY + 5,
+            tree.w * 0.5,
+            tree.h * 0.25,
+            0.2,
+            0,
+            Math.PI * 2
+          );
+          c.fill();
+
+          // Highlight on canopy
+          c.fillStyle = `rgba(40,80,50,0.3)`;
+          c.beginPath();
+          c.ellipse(
+            tx - tree.w * 0.1,
+            canopyY - 15,
+            tree.w * 0.3,
+            tree.h * 0.15,
+            -0.1,
+            0,
+            Math.PI * 2
+          );
+          c.fill();
+        }
+        c.restore();
+      }
+
+      // Mist/fog
+      c.save();
+      for (const m of this.mistParticles) {
+        const mistGrad = c.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.w);
+        mistGrad.addColorStop(0, `rgba(180,200,180,${m.alpha})`);
+        mistGrad.addColorStop(1, "rgba(180,200,180,0)");
+        c.fillStyle = mistGrad;
+        c.fillRect(m.x - m.w, m.y - m.w * 0.4, m.w * 2, m.w * 0.8);
+      }
+      c.restore();
+
+      // Ground — layered vegetation
       c.save();
       const groundY = H - 40;
-      const leafColors = ["#0D2818", "#1A3A2A", "#2D5A3E", "#1F4D2E"];
-      for (let gx = 0; gx <= W; gx += 24) {
-        const h = 30 + Math.sin(gx * 0.15) * 18 + Math.sin(gx * 0.07) * 10;
-        c.fillStyle = leafColors[Math.floor(gx / 48) % leafColors.length];
+
+      // Back layer of ground vegetation
+      const vegColors = ["#0D2818", "#1A3A2A", "#2D5A3E", "#1F4D2E"];
+      for (let gx = 0; gx <= W; gx += 18) {
+        const vh = 25 + Math.sin(gx * 0.15) * 15 + Math.sin(gx * 0.07) * 8;
+        c.fillStyle = vegColors[Math.floor(gx / 36) % vegColors.length];
         c.beginPath();
-        c.ellipse(gx, groundY + 10 - h * 0.5, 22, h * 0.6, 0, 0, Math.PI * 2);
+        c.ellipse(
+          gx,
+          groundY + 12 - vh * 0.5,
+          16,
+          vh * 0.55,
+          0,
+          0,
+          Math.PI * 2
+        );
         c.fill();
       }
-      // Lapisan semak depan
+
+      // Front ground cover
       c.fillStyle = "#0A1F10";
       c.beginPath();
       c.moveTo(0, H);
-      for (let gx = 0; gx <= W; gx += 10) {
-        c.lineTo(gx, H - 20 - Math.sin(gx * 0.12) * 14 - Math.sin(gx * 0.04) * 8);
+      for (let gx = 0; gx <= W; gx += 8) {
+        c.lineTo(
+          gx,
+          H - 18 - Math.sin(gx * 0.12) * 12 - Math.sin(gx * 0.04) * 6
+        );
       }
       c.lineTo(W, H);
       c.closePath();
       c.fill();
+
+      // Grass blades
+      c.strokeStyle = "#1A4A2A";
+      c.lineWidth = 1.5;
+      for (let gx = 5; gx < W; gx += 12) {
+        const gh = 8 + Math.sin(gx * 0.2) * 5;
+        const sway = Math.sin(performance.now() * 0.001 + gx * 0.05) * 2;
+        c.beginPath();
+        c.moveTo(gx, H - 14);
+        c.quadraticCurveTo(gx + sway, H - 14 - gh * 0.6, gx + sway * 1.5, H - 14 - gh);
+        c.stroke();
+      }
       c.restore();
 
-      /* Sulur gantung dari atas */
+      // Hanging vines
       c.save();
       c.strokeStyle = "#1A3A22";
       c.lineWidth = 2;
-      for (let vx = 40; vx < W - 40; vx += 80) {
+      for (let vx = 30; vx < W - 30; vx += 70) {
+        const len = 30 + Math.sin(vx * 0.1) * 20;
+        const sway = Math.sin(performance.now() * 0.001 + vx * 0.03) * 4;
         c.beginPath();
         c.moveTo(vx, 0);
-        const len = 40 + Math.sin(vx * 0.1) * 25;
-        c.quadraticCurveTo(vx + 20 * Math.sin(vx * 0.05), len * 0.5, vx + 4 * Math.sin(vx * 0.08), len);
+        c.quadraticCurveTo(
+          vx + sway + 15,
+          len * 0.5,
+          vx + sway,
+          len
+        );
         c.stroke();
-        // Daun kecil di ujung sulur
+        // Leaf at tip
         c.fillStyle = "#2D5A3E";
         c.beginPath();
-        c.ellipse(vx + 4 * Math.sin(vx * 0.08), len, 6, 4, 0.5, 0, Math.PI * 2);
+        c.ellipse(vx + sway, len + 3, 5, 3.5, 0.5, 0, Math.PI * 2);
         c.fill();
       }
       c.restore();
 
-      /* Rule banner */
-      c.fillStyle = "rgba(22, 27, 58, 0.9)";
+      /* ========== RULE BANNER ========== */
+      c.fillStyle = "rgba(10, 20, 40, 0.85)";
       c.beginPath();
-      if (c.roundRect) c.roundRect(40, 20, W - 80, 50, 15);
-      else c.rect(40, 20, W - 80, 50);
+      if (c.roundRect) c.roundRect(30, 16, W - 60, 44, 12);
+      else c.rect(30, 16, W - 60, 44);
       c.fill();
-      c.font = "800 18px system-ui, sans-serif";
-      c.fillStyle = "#FBBF24";
+      c.strokeStyle = RULES[this.rule].color;
+      c.lineWidth = 2;
+      c.stroke();
+      c.font = "800 16px system-ui, sans-serif";
+      c.fillStyle = RULES[this.rule].color;
       c.textAlign = "center";
-      c.fillText(`TANGKAP: ${RULES[this.rule].label}`, W / 2, 52);
+      c.fillText(`TANGKAP: ${RULES[this.rule].label}`, W / 2, 44);
 
-      /* Items — SEMUA item memakai banana yang sama (satu warna, satu asset).
-         Pemain membaca kata, bukan warna, untuk memutuskan menangkap atau menghindar. */
+      /* ========== ITEMS — pisangzelby2.png + WORD ON BANANA ========== */
       const bananaImg = bananaImgRef.current;
-      const bananaReady = !!bananaImg && bananaImg.complete && bananaImg.naturalWidth > 0;
-      const { w: bw, h: bh } = GAME_CONFIG.banana;
+      const bananaReady =
+        !!bananaImg && bananaImg.complete && bananaImg.naturalWidth > 0;
+      const { crop, naturalW, naturalH, drawW, drawH } = GAME_CONFIG.banana;
 
       for (const it of this.items) {
         if (it.caught || it.missed) continue;
         c.save();
         c.translate(it.x, it.y);
-        // Spawn pop-in halus + goyangan ringan (bukan spin penuh) agar teks tetap terbaca
+
+        // Spawn pop-in + gentle wobble
         const pop = Math.min(1, 0.35 + it.age / 130);
         c.scale(pop, pop);
-        c.rotate(Math.sin(it.y * 0.03 + it.id) * 0.18);
+        const wobble = Math.sin(it.y * 0.025 + it.wobblePhase) * 0.12;
+        c.rotate(wobble);
 
         if (bananaReady) {
-          /* Banana asset asli — identik untuk kata benar & salah.
-             Crop konten banana dari berkas (guard: jika asset diganti,
-             gambar utuh supaya tidak pernah tampak kosong). */
-          const { crop, naturalW, naturalH } = GAME_CONFIG.banana;
-          const useCrop = bananaImg.naturalWidth === naturalW && bananaImg.naturalHeight === naturalH;
-          if (useCrop) c.drawImage(bananaImg, crop.sx, crop.sy, crop.sw, crop.sh, -bw / 2, -bh / 2, bw, bh);
-          else c.drawImage(bananaImg, -bw / 2, -bh / 2, bw, bh);
+          const useCrop =
+            bananaImg.naturalWidth === naturalW &&
+            bananaImg.naturalHeight === naturalH;
+          if (useCrop) {
+            c.drawImage(
+              bananaImg,
+              crop.sx,
+              crop.sy,
+              crop.sw,
+              crop.sh,
+              -drawW / 2,
+              -drawH / 2,
+              drawW,
+              drawH
+            );
+          } else {
+            c.drawImage(
+              bananaImg,
+              -drawW / 2,
+              -drawH / 2,
+              drawW,
+              drawH
+            );
+          }
         } else {
-          /* Fallback saat asset belum termuat: bentuk banana sama untuk semua item */
+          // Fallback banana shape
           c.fillStyle = "#FBBF24";
           c.beginPath();
-          c.moveTo(-bw / 2 + 8, -bh / 2);
-          c.quadraticCurveTo(0, -bh / 2 - 10, bw / 2 - 8, -bh / 2);
-          c.quadraticCurveTo(bw / 2 + 4, -bh / 2 + 8, bw / 2 - 4, bh / 2);
-          c.quadraticCurveTo(0, bh / 2 + 6, -bw / 2 + 4, bh / 2);
-          c.quadraticCurveTo(-bw / 2 - 4, -bh / 2 + 8, -bw / 2 + 8, -bh / 2);
+          c.ellipse(0, 0, drawW / 2, drawH / 2, 0, 0, Math.PI * 2);
           c.fill();
-          c.strokeStyle = "#161B3A";
-          c.lineWidth = 3;
+          c.strokeStyle = "#D4A017";
+          c.lineWidth = 2;
           c.stroke();
-          c.fillStyle = "rgba(255,255,255,0.25)";
-          c.beginPath();
-          c.ellipse(-8, -bh / 2 + 10, 14, 6, -0.3, 0, Math.PI * 2);
-          c.fill();
         }
 
-        /* Pill putih untuk teks kata — kontras tinggi di atas banana */
-        c.fillStyle = "rgba(255,255,255,0.9)";
+        /* WORD drawn ON the banana body — natural text placement */
+        const wordLen = it.word.length;
+        const fontSize = wordLen > 6 ? 11 : wordLen > 4 ? 13 : 15;
+
+        // Text background — subtle rounded rect that follows banana body
+        const pillW = wordLen * fontSize * 0.58 + 12;
+        const pillH = fontSize + 8;
+        c.fillStyle = "rgba(255,255,255,0.88)";
         c.beginPath();
-        if (c.roundRect) c.roundRect(-37, -14, 74, 28, 14);
-        else c.rect(-37, -14, 74, 28);
+        if (c.roundRect)
+          c.roundRect(-pillW / 2, -pillH / 2, pillW, pillH, pillH / 2);
+        else c.rect(-pillW / 2, -pillH / 2, pillW, pillH);
         c.fill();
-        c.strokeStyle = "rgba(22,27,58,0.35)";
-        c.lineWidth = 2;
+
+        // Subtle border matching banana theme
+        c.strokeStyle = "rgba(200,160,30,0.35)";
+        c.lineWidth = 1;
         c.stroke();
 
-        c.fillStyle = "#161B3A";
-        c.font = "800 17px system-ui, sans-serif";
+        // Word text
+        c.fillStyle = "#1A1200";
+        c.font = `800 ${fontSize}px system-ui, sans-serif`;
         c.textAlign = "center";
         c.textBaseline = "middle";
         c.fillText(it.word, 0, 1);
+
         c.restore();
       }
 
-      /* Zelby (Tarsius) dari gambar */
-      const zX = this.zelbyX, zY = H - GAME_CONFIG.zelby.yOffset;
-      const zScale = this.frenzy > 0 ? 1.3 : 1;
-      const img = this.frenzy > 0 ? zelbyCelebrateImgRef.current : zelbyImgRef.current;
+      /* ========== ZELBY CHARACTER ========== */
+      const zX = this.zelbyX;
+      const zY = H - GAME_CONFIG.zelby.yOffset;
+      const zScale = this.frenzy > 0 ? 1.2 : 1;
+      const img =
+        this.frenzy > 0
+          ? zelbyCelebrateImgRef.current
+          : zelbyImgRef.current;
 
       if (img && imagesLoaded.current) {
         c.save();
         c.translate(zX, zY);
         c.scale(zScale, zScale);
-        const iw = GAME_CONFIG.zelby.w, ih = GAME_CONFIG.zelby.h;
+        const iw = GAME_CONFIG.zelby.w;
+        const ih = GAME_CONFIG.zelby.h;
+
+        // Shadow under Zelby
+        c.fillStyle = "rgba(0,0,0,0.2)";
+        c.beginPath();
+        c.ellipse(0, ih / 2 + 4, iw * 0.4, 4, 0, 0, Math.PI * 2);
+        c.fill();
+
+        // Zelby image
         c.drawImage(img, -iw / 2, -ih / 2, iw, ih);
 
-        /* Cahaya saat frenzy */
+        // Frenzy glow ring
         if (this.frenzy > 0) {
           c.shadowColor = "#FF6B6B";
           c.shadowBlur = 20;
           c.strokeStyle = "rgba(255,107,107,0.5)";
           c.lineWidth = 3;
-          c.beginPath(); c.arc(0, 0, 44, 0, Math.PI * 2); c.stroke();
+          c.beginPath();
+          c.arc(0, 0, 44, 0, Math.PI * 2);
+          c.stroke();
           c.shadowBlur = 0;
         }
+
+        // Level indicator under Zelby
+        if (this.level > 1) {
+          c.font = "700 9px system-ui, sans-serif";
+          c.fillStyle = "#A78BFA";
+          c.textAlign = "center";
+          c.fillText(`LV.${this.level}`, 0, ih / 2 + 14);
+        }
+
         c.restore();
       } else {
-        /* Fallback: lingkaran */
+        // Fallback: simple tarsius
         c.save();
         c.translate(zX, zY);
         c.scale(zScale, zScale);
         c.fillStyle = "#8B5CF6";
-        c.beginPath(); c.arc(0, 0, 28, 0, Math.PI * 2); c.fill();
+        c.beginPath();
+        c.arc(0, 0, 28, 0, Math.PI * 2);
+        c.fill();
         c.fillStyle = "#E9C46A";
-        c.beginPath(); c.arc(0, -2, 18, 0, Math.PI * 2); c.fill();
+        c.beginPath();
+        c.arc(0, -2, 18, 0, Math.PI * 2);
+        c.fill();
         c.fillStyle = "#161B3A";
-        c.beginPath(); c.arc(-6, -6, 4, 0, Math.PI * 2); c.fill();
-        c.beginPath(); c.arc(6, -6, 4, 0, Math.PI * 2); c.fill();
-        c.strokeStyle = "#161B3A"; c.lineWidth = 2;
-        c.beginPath(); c.arc(0, 4, 5, 0, Math.PI); c.stroke();
+        c.beginPath();
+        c.arc(-6, -6, 4, 0, Math.PI * 2);
+        c.fill();
+        c.beginPath();
+        c.arc(6, -6, 4, 0, Math.PI * 2);
+        c.fill();
+        c.strokeStyle = "#161B3A";
+        c.lineWidth = 2;
+        c.beginPath();
+        c.arc(0, 4, 5, 0, Math.PI);
+        c.stroke();
         c.restore();
       }
 
-      /* Particles */
+      /* ========== PARTICLES ========== */
       for (const p of this.particles) {
-        c.globalAlpha = Math.min(1, p.life / 30);
+        c.globalAlpha = Math.min(1, p.life / (p.maxLife * 0.4));
         c.fillStyle = p.color;
-        c.beginPath(); c.arc(p.x, p.y, p.size, 0, Math.PI * 2); c.fill();
+        if (p.shape === "star") {
+          // Star shape
+          c.save();
+          c.translate(p.x, p.y);
+          c.rotate(p.life * 0.1);
+          c.beginPath();
+          for (let j = 0; j < 5; j++) {
+            const angle = (j * 4 * Math.PI) / 5 - Math.PI / 2;
+            const r = j % 2 === 0 ? p.size : p.size * 0.45;
+            if (j === 0) c.moveTo(Math.cos(angle) * r, Math.sin(angle) * r);
+            else c.lineTo(Math.cos(angle) * r, Math.sin(angle) * r);
+          }
+          c.closePath();
+          c.fill();
+          c.restore();
+        } else {
+          c.beginPath();
+          c.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          c.fill();
+        }
       }
       c.globalAlpha = 1;
 
-      /* Floating score — feedback singkat saat skor bertambah */
+      /* ========== FLOAT TEXTS ========== */
       for (const f of this.floatTexts) {
-        c.globalAlpha = Math.min(1, f.life / 20);
-        c.font = "900 20px system-ui, sans-serif";
+        c.globalAlpha = Math.min(1, f.life / 15);
+        c.font = `900 ${f.size}px system-ui, sans-serif`;
         c.fillStyle = f.color;
         c.textAlign = "center";
         c.fillText(f.text, f.x, f.y);
       }
       c.globalAlpha = 1;
 
+      /* ========== FRENZY BANNER ========== */
       if (this.frenzy > 0) {
-        c.font = "900 32px system-ui, sans-serif";
+        c.save();
+        c.font = "900 28px system-ui, sans-serif";
         c.fillStyle = "#FF6B6B";
         c.textAlign = "center";
-        c.fillText("FRENZY MODE! 2X SKOR!", W / 2, H - 150);
+        c.shadowColor = "#FF6B6B";
+        c.shadowBlur = 15;
+        c.fillText("FRENZY MODE! 2X SKOR!", W / 2, H - 140);
+        c.shadowBlur = 0;
+        c.restore();
       }
 
+      /* ========== COMBO BANNER ========== */
       if (this.combo >= 3) {
-        c.font = "900 24px system-ui, sans-serif";
+        c.save();
+        c.font = "900 22px system-ui, sans-serif";
         c.fillStyle = "#4ADE80";
         c.textAlign = "center";
-        c.fillText(`${this.combo} RENTETAN!`, W / 2, 100);
+        c.shadowColor = "#4ADE80";
+        c.shadowBlur = 10;
+        c.fillText(`${this.combo}x RENTETAN!`, W / 2, 95);
+        c.shadowBlur = 0;
+        c.restore();
       }
 
-      c.restore();
+      c.restore(); // main save
     }
   }
 
-  const startGame = (rule: RuleKey) => {
-    ensureAudio();
-    setScreen("game");
-    setPaused(false);
-    setHud({ score: 0, lives: GAME_CONFIG.lives, combo: 0, waktu: DURASI_GAME });
-    engineRef.current?.stop();
-    const eng = new Engine(rule);
-    engineRef.current = eng;
-    requestAnimationFrame(() => eng.start());
-  };
+  /* ========== START GAME ========== */
+  const startGame = useCallback(
+    (rule: RuleKey) => {
+      ensureAudio();
+      setScreen("game");
+      setPaused(false);
+      setHud({
+        score: 0,
+        lives: GAME_CONFIG.lives,
+        combo: 0,
+        waktu: DURASI_GAME,
+        level: 1,
+      });
+      setFinalScore(0);
+      setFinalStars(0);
+      engineRef.current?.stop();
+      const eng = new Engine(rule);
+      engineRef.current = eng;
+      requestAnimationFrame(() => eng.start());
+    },
+    []
+  );
 
-  const togglePause = () => {
+  const togglePause = useCallback(() => {
     const g = engineRef.current;
     if (!g || !g.running) return;
     const next = !g.paused;
     g.setPaused(next);
     setPaused(next);
-  };
+  }, []);
 
-  const quit = () => {
+  const quit = useCallback(() => {
     engineRef.current?.stop();
     setPaused(false);
     setScreen("start");
-  };
+  }, []);
 
-  const handlePointer = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    if (!engineRef.current || engineRef.current.paused) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * W;
-    engineRef.current.move(x);
-  };
+  const handlePointer = useCallback(
+    (e: React.PointerEvent<HTMLCanvasElement>) => {
+      if (!engineRef.current || engineRef.current.paused) return;
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * W;
+      engineRef.current.move(x);
+    },
+    []
+  );
 
-  const chunky = "border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A]";
+  const chunky =
+    "border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A]";
   const btn = `inline-flex items-center justify-center gap-2 font-extrabold rounded-2xl ${chunky} transition-transform active:translate-x-1.5 active:translate-y-1.5 active:shadow-none hover:-translate-x-0.5 hover:-translate-y-0.5`;
 
   return (
     <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
       <style>{`
-        @keyframes ik-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes ik-pop{0%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.3) rotate(8deg)}100%{transform:scale(1) rotate(0)}}
-        .ik-screen{animation:ik-fade .35s ease}
-        .ik-pop{animation:ik-pop .5s ease}
+        @keyframes pk-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes pk-pop{0%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.3) rotate(8deg)}100%{transform:scale(1) rotate(0)}}
+        @keyframes pk-star1{0%{transform:scale(0) rotate(0)}50%{transform:scale(1.3) rotate(180deg)}100%{transform:scale(1) rotate(360deg)}}
+        @keyframes pk-star2{0%{transform:scale(0) rotate(0)}60%{transform:scale(1.2) rotate(200deg)}100%{transform:scale(1) rotate(360deg)}}
+        @keyframes pk-star3{0%{transform:scale(0) rotate(0)}70%{transform:scale(1.1) rotate(240deg)}100%{transform:scale(1) rotate(360deg)}}
+        .pk-screen{animation:pk-fade .35s ease}
+        .pk-pop{animation:pk-pop .5s ease}
+        .pk-star1{animation:pk-star1 .5s ease .1s both}
+        .pk-star2{animation:pk-star2 .5s ease .3s both}
+        .pk-star3{animation:pk-star3 .5s ease .5s both}
       `}</style>
 
+      {/* Screen flash overlay */}
+      {screenFlash && (
+        <div
+          className="fixed inset-0 z-[70] pointer-events-none transition-opacity duration-200"
+          style={{ backgroundColor: screenFlash, opacity: 0.25 }}
+        />
+      )}
+
       <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col items-center">
-        {/* Header dengan Zelby asli */}
+        {/* Header */}
         <div className="w-full flex items-center justify-between mb-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-11 h-11 rounded-2xl overflow-hidden border-4 border-[#161B3A] shadow-[4px_4px_0_#161B3A] shrink-0 bg-white ik-pop">
+            <div className="w-11 h-11 rounded-2xl overflow-hidden border-4 border-[#161B3A] shadow-[4px_4px_0_#161B3A] shrink-0 bg-white pk-pop">
               <img
                 src="/junior/karakter/zelby_happy.webp"
                 alt="Zelby"
@@ -641,18 +1201,30 @@ export default function ZelbyDash() {
               />
             </div>
             <div>
-              <div className="font-extrabold text-xl leading-none">Petualangan Kata</div>
-              <div className="text-[11px] font-semibold opacity-60 mt-0.5">Tangkap kata yang benar!</div>
+              <div className="font-extrabold text-xl leading-none font-game-display">
+                Petualangan Hutan Kata
+              </div>
+              <div className="text-[11px] font-semibold opacity-60 mt-0.5">
+                Tangkap kata yang benar!
+              </div>
             </div>
           </div>
-          <button onClick={() => setMuted(m => !m)} className={`${btn} w-11 h-11 bg-white`} aria-label={muted ? "Nyalakan suara" : "Matikan suara"}>
-            {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+          <button
+            onClick={() => setMuted((m) => !m)}
+            className={`${btn} w-11 h-11 bg-white`}
+            aria-label={muted ? "Nyalakan suara" : "Matikan suara"}
+          >
+            {muted ? (
+              <VolumeX className="w-5 h-5" />
+            ) : (
+              <Volume2 className="w-5 h-5" />
+            )}
           </button>
         </div>
 
-        {/* START — tanpa emoji */}
+        {/* ========== START SCREEN ========== */}
         {screen === "start" && (
-          <div className={`ik-screen bg-white rounded-3xl ${chunky} p-6 text-center w-full max-w-md`}>
+          <div className={`pk-screen bg-white rounded-3xl ${chunky} p-6 text-center w-full max-w-md`}>
             <div className="w-24 h-24 mx-auto mb-3 rounded-3xl overflow-hidden border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A]">
               <img
                 src="/junior/karakter/zelby_wave.webp"
@@ -660,12 +1232,19 @@ export default function ZelbyDash() {
                 className="w-full h-full object-cover"
               />
             </div>
-            <h1 className="font-extrabold text-3xl mb-2 font-game-display">Petualangan Hutan Kata</h1>
+            <h1 className="font-extrabold text-3xl mb-2 font-game-display">
+              Petualangan Hutan Kata
+            </h1>
             <p className="opacity-70 text-sm mb-1">
-              Bantu si cerdik Zelby menangkap <strong>kata yang benar</strong> dan hindari yang salah!
+              Bantu Zelby menangkap <strong>kata yang benar</strong> dan
+              hindari yang salah!
             </p>
-            <p className="opacity-60 text-xs mb-6">
-              <Clock className="w-3 h-3 inline mr-1" />90 detik &middot; <Heart className="w-3 h-3 inline mx-1" />3 nyawa &middot; <Zap className="w-3 h-3 inline mx-1" />rentetan untuk skor tinggi
+            <p className="opacity-60 text-xs mb-5">
+              <Clock className="w-3 h-3 inline mr-1" />
+              90 detik &middot;{" "}
+              <Heart className="w-3 h-3 inline mx-1" />3 nyawa &middot;{" "}
+              <Zap className="w-3 h-3 inline mx-1" />
+              rentetan = level naik
             </p>
 
             {highScore > 0 && (
@@ -675,43 +1254,70 @@ export default function ZelbyDash() {
             )}
 
             <div className="space-y-3">
-              <button onClick={() => startGame("BENDA")} className={`${btn} w-full px-5 py-4 bg-sky-400 text-white text-lg`}>
+              <button
+                onClick={() => startGame("BENDA")}
+                className={`${btn} w-full px-5 py-4 bg-sky-400 text-white text-lg`}
+              >
                 <Zap className="w-5 h-5" /> Kata Benda
               </button>
-              <button onClick={() => startGame("KERJA")} className={`${btn} w-full px-5 py-4 bg-emerald-400 text-lg`}>
+              <button
+                onClick={() => startGame("KERJA")}
+                className={`${btn} w-full px-5 py-4 bg-emerald-400 text-lg`}
+              >
                 <Zap className="w-5 h-5" /> Kata Kerja
               </button>
-              <button onClick={() => startGame("SIFAT")} className={`${btn} w-full px-5 py-4 bg-red-400 text-white text-lg`}>
+              <button
+                onClick={() => startGame("SIFAT")}
+                className={`${btn} w-full px-5 py-4 bg-red-400 text-white text-lg`}
+              >
                 <Star className="w-5 h-5" /> Kata Sifat
               </button>
             </div>
           </div>
         )}
 
-        {/* GAME */}
+        {/* ========== GAME SCREEN ========== */}
         {screen === "game" && (
-          <div className="ik-screen w-full flex flex-col items-center">
-            <div className="w-full max-w-[480px] grid grid-cols-4 gap-2 mb-3">
-              <div className="rounded-xl bg-[#161B3A] text-white px-2 py-2 shadow-[3px_3px_0_#161B3A] border-[3px] border-[#161B3A]">
-                <div className="text-[8px] font-extrabold uppercase opacity-70">Skor</div>
-                <div className="font-extrabold text-lg leading-none">{hud.score}</div>
+          <div className="pk-screen w-full flex flex-col items-center">
+            {/* HUD — compact, themed */}
+            <div className="w-full max-w-[480px] grid grid-cols-5 gap-1.5 mb-3">
+              <div className="rounded-xl bg-[#161B3A] text-white px-2 py-1.5 shadow-[3px_3px_0_#161B3A] border-[3px] border-[#161B3A]">
+                <div className="text-[7px] font-extrabold uppercase opacity-70">Skor</div>
+                <div className="font-extrabold text-base leading-none">{hud.score}</div>
               </div>
-              <div className="rounded-xl bg-[#FBBF24] px-2 py-2 shadow-[3px_3px_0_#161B3A] border-[3px] border-[#161B3A]">
-                <div className="text-[8px] font-extrabold uppercase opacity-70">Rentetan</div>
-                <div className="font-extrabold text-lg leading-none">{hud.combo}x</div>
+              <div className="rounded-xl bg-[#FBBF24] px-2 py-1.5 shadow-[3px_3px_0_#161B3A] border-[3px] border-[#161B3A]">
+                <div className="text-[7px] font-extrabold uppercase opacity-70">Kombo</div>
+                <div className="font-extrabold text-base leading-none">{hud.combo}x</div>
               </div>
-              <div className="rounded-xl bg-[#FF6B6B] text-white px-2 py-2 shadow-[3px_3px_0_#161B3A] border-[3px] border-[#161B3A]">
-                <div className="text-[8px] font-extrabold uppercase opacity-70">Nyawa</div>
+              <div className="rounded-xl bg-[#FF6B6B] text-white px-2 py-1.5 shadow-[3px_3px_0_#161B3A] border-[3px] border-[#161B3A]">
+                <div className="text-[7px] font-extrabold uppercase opacity-70">Nyawa</div>
                 <div className="flex gap-0.5 mt-0.5">
-                  {[0, 1, 2].map(i => <Heart key={i} size={14} fill={i < hud.lives ? "currentColor" : "none"} />)}
+                  {[0, 1, 2].map((i) => (
+                    <Heart
+                      key={i}
+                      size={12}
+                      fill={i < hud.lives ? "currentColor" : "none"}
+                    />
+                  ))}
                 </div>
               </div>
-              <div className={`rounded-xl px-2 py-2 shadow-[3px_3px_0_#161B3A] border-[3px] border-[#161B3A] ${hud.waktu <= 10 ? "bg-red-500 text-white" : "bg-white"}`}>
-                <div className="text-[8px] font-extrabold uppercase opacity-70">Waktu</div>
-                <div className="font-extrabold text-lg leading-none">{hud.waktu}s</div>
+              <div
+                className={`rounded-xl px-2 py-1.5 shadow-[3px_3px_0_#161B3A] border-[3px] border-[#161B3A] ${
+                  hud.waktu <= 10
+                    ? "bg-red-500 text-white"
+                    : "bg-white"
+                }`}
+              >
+                <div className="text-[7px] font-extrabold uppercase opacity-70">Waktu</div>
+                <div className="font-extrabold text-base leading-none">{hud.waktu}s</div>
+              </div>
+              <div className="rounded-xl bg-[#A78BFA] text-white px-2 py-1.5 shadow-[3px_3px_0_#161B3A] border-[3px] border-[#161B3A]">
+                <div className="text-[7px] font-extrabold uppercase opacity-70">Level</div>
+                <div className="font-extrabold text-base leading-none">{hud.level}</div>
               </div>
             </div>
 
+            {/* Canvas */}
             <canvas
               ref={canvasRef}
               width={W}
@@ -721,26 +1327,48 @@ export default function ZelbyDash() {
               onPointerMove={handlePointer}
             />
 
+            {/* Controls */}
             <div className="w-full max-w-[480px] flex justify-between mt-4">
-              <button onClick={quit} className={`${btn} w-12 h-12 bg-white`} aria-label="Keluar">
+              <button
+                onClick={quit}
+                className={`${btn} w-12 h-12 bg-white`}
+                aria-label="Keluar"
+              >
                 <X className="w-5 h-5" />
               </button>
               <p className="text-xs font-bold opacity-60 self-center flex items-center gap-1">
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 5v14" /><path d="M5 12h14" />
+                <svg
+                  className="w-4 h-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M12 5v14" />
+                  <path d="M5 12h14" />
                 </svg>
-                Gerakkan jari untuk mengendalikan Zelby
+                Geser jari untuk mengendalikan Zelby
               </p>
-              <button onClick={togglePause} className={`${btn} w-12 h-12 bg-white`} aria-label={paused ? "Lanjutkan" : "Jeda"}>
-                {paused ? <Play className="w-5 h-5" /> : <Pause className="w-5 h-5" />}
+              <button
+                onClick={togglePause}
+                className={`${btn} w-12 h-12 bg-white`}
+                aria-label={paused ? "Lanjutkan" : "Jeda"}
+              >
+                {paused ? (
+                  <Play className="w-5 h-5" />
+                ) : (
+                  <Pause className="w-5 h-5" />
+                )}
               </button>
             </div>
           </div>
         )}
 
-        {/* GAME OVER — tanpa emoji */}
+        {/* ========== GAME OVER SCREEN ========== */}
         {screen === "over" && (
-          <div className={`ik-screen bg-white rounded-3xl ${chunky} p-6 text-center w-full max-w-md`}>
+          <div className={`pk-screen bg-white rounded-3xl ${chunky} p-6 text-center w-full max-w-md`}>
             <div className="w-24 h-24 mx-auto mb-3 rounded-3xl overflow-hidden border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A]">
               <img
                 src="/junior/karakter/zelby_celebrate.webp"
@@ -748,25 +1376,57 @@ export default function ZelbyDash() {
                 className="w-full h-full object-cover"
               />
             </div>
-            <h2 className="font-extrabold text-3xl mb-1 font-game-display">Permainan Selesai!</h2>
-            <p className="opacity-70 text-sm mb-6">Zelby sangat senang belajar bareng kamu hari ini!</p>
+            <h2 className="font-extrabold text-3xl mb-1 font-game-display">
+              Permainan Selesai!
+            </h2>
+            <p className="opacity-70 text-sm mb-4">
+              Zelby sangat senang belajar bareng kamu hari ini!
+            </p>
 
+            {/* Stars */}
+            <div className="flex justify-center gap-2 mb-3">
+              {[1, 2, 3].map((s) => (
+                <Star
+                  key={s}
+                  size={36}
+                  className={
+                    s <= finalStars
+                      ? s === 1
+                        ? "pk-star1 text-[#FBBF24] fill-[#FBBF24]"
+                        : s === 2
+                        ? "pk-star2 text-[#FBBF24] fill-[#FBBF24]"
+                        : "pk-star3 text-[#FBBF24] fill-[#FBBF24]"
+                      : "text-gray-200 fill-gray-200"
+                  }
+                />
+              ))}
+            </div>
+
+            {/* Score card */}
             <div className="bg-[#161B3A] text-white rounded-2xl px-6 py-4 mb-4 shadow-[5px_5px_0_#FBBF24]">
-              <div className="text-[10px] font-extrabold uppercase tracking-wider opacity-70">Total Skor</div>
+              <div className="text-[10px] font-extrabold uppercase tracking-wider opacity-70">
+                Total Skor
+              </div>
               <div className="font-extrabold text-5xl leading-none">{finalScore}</div>
             </div>
 
             {finalScore > 0 && finalScore >= highScore && (
-              <div className="mb-4 text-sm font-extrabold text-amber-600 bg-amber-50 border-2 border-amber-300 rounded-xl px-4 py-2 ik-pop flex items-center justify-center gap-1.5">
+              <div className="mb-3 text-sm font-extrabold text-amber-600 bg-amber-50 border-2 border-amber-300 rounded-xl px-4 py-2 pk-pop flex items-center justify-center gap-1.5">
                 <Trophy className="w-4 h-4" /> Skor Tertinggi Baru!
               </div>
             )}
 
             <div className="flex gap-3 justify-center">
-              <button onClick={() => startGame("BENDA")} className={`${btn} px-5 py-3 bg-white`}>
+              <button
+                onClick={() => startGame("BENDA")}
+                className={`${btn} px-5 py-3 bg-white`}
+              >
                 <RotateCcw className="w-4 h-4" /> Main Lagi
               </button>
-              <button onClick={() => setScreen("start")} className={`${btn} px-5 py-3 bg-[#FBBF24]`}>
+              <button
+                onClick={() => setScreen("start")}
+                className={`${btn} px-5 py-3 bg-[#FBBF24]`}
+              >
                 Pilih Pelajaran
               </button>
             </div>
