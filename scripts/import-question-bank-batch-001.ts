@@ -9,6 +9,10 @@
  *   npx tsx scripts/import-question-bank-batch-001.ts --dry-run # validate only
  *
  * Requires: DATABASE_URL in .env.local
+ *
+ * IMPORTANT: uploaderId di tabel Soal adalah FK wajib ke User, jadi script
+ * ini menyelesaikan uploader dari user ADMIN/founder (fallback GURU) yang
+ * pertama terdaftar — TIDAK memakai string placeholder.
  */
 
 import * as fs from "fs";
@@ -66,9 +70,9 @@ async function main() {
   console.log("=== VALIDATION RESULT ===");
   console.log("Total:     " + result.stats.total);
   console.log("Valid:     " + result.stats.valid);
-  console.log("Invalid:   " + result.stats.errors.length);
-  console.log("Duplicate: " + result.stats.duplicates.length);
-  console.log("Warning:   " + result.stats.warnings.length);
+  console.log("Invalid:   " + result.stats.errors);
+  console.log("Duplicate: " + result.stats.duplicates);
+  console.log("Warning:   " + result.stats.warnings);
   console.log("\nDifficulty: " + JSON.stringify(result.stats.byDifficulty));
   console.log("Type:       " + JSON.stringify(result.stats.byType));
   console.log("With meta:  " + result.stats.withMetadata);
@@ -99,7 +103,26 @@ async function main() {
     return;
   }
 
-  console.log("\n=== IMPORTING ===");
+  console.log("=== IMPORTING ===");
+
+  const uploader =
+    (await db.user.findFirst({
+      where: { OR: [{ role: "ADMIN" }, { isFounder: true }] },
+      orderBy: { createdAt: "asc" },
+    })) ??
+    (await db.user.findFirst({
+      where: { role: "GURU" },
+      orderBy: { createdAt: "asc" },
+    }));
+
+  if (!uploader) {
+    console.error("FATAL: tidak ada user ADMIN/founder/GURU di database untuk dijadikan uploader Soal (uploaderId wajib valid FK ke User).");
+    await db.$disconnect();
+    process.exit(1);
+  }
+
+  console.log("Uploader: " + uploader.email + " (" + uploader.id + ")\n");
+
   let imported = 0;
   const CHUNK = 50;
 
@@ -129,7 +152,7 @@ async function main() {
               estimasiWaktu: q.estimasiWaktu,
               subject: "Bahasa Indonesia",
               source: "IMPORT",
-              uploaderId: "batch-001-import",
+              uploaderId: uploader.id,
             },
           });
 
