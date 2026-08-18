@@ -16,8 +16,36 @@ const RULES: Record<RuleKey, { label: string; valid: string[]; invalid: string[]
   SIFAT: { label: "KATA SIFAT", valid: KATA_SIFAT, invalid: [...KATA_BENDA, ...KATA_KERJA] },
 };
 
-const W = 480, H = 720;
-const DURASI_GAME = 90;
+/* ---------- Konfigurasi game (satu sumber nilai, tanpa magic number tersebar) ---------- */
+const GAME_CONFIG = {
+  canvas: { w: 480, h: 720 },
+  durationSec: 90,
+  lives: 3,
+  zelby: { w: 80, h: 80, yOffset: 85, yCatch: 100 },
+  banana: {
+    src: "/bananagimBC.jpeg",        // asset utama — satu visual untuk SEMUA item yang jatuh
+    w: 60, h: 93,                    // ukuran draw — mengikuti rasio konten banana (573×885)
+    // bbox piksel konten banana di dalam berkas 675×1200 (dihitung dari bbox piksel
+    // non-putih: 54,144 → 626,1028). Crop dipakai supaya yang tampil hanya banana,
+    // bukan kotak putih/abu background asset.
+    crop: { sx: 54, sy: 144, sw: 573, sh: 885 },
+    naturalW: 675, naturalH: 1200,
+  },
+  spawn: {
+    initialRate: 1550,                // ms — early game longgar
+    minRate: 650,                     // ms — late game rapat
+    initialSpeed: 2.3,                // px/frame — early game lambat
+    maxSpeed: 5.0,                    // px/frame — late game cepat
+    speedJitter: 1.2,                 // variasi kecepatan antar item
+    minSpawnGap: 100,                 // px — jarak horizontal minimum antar spawn berurutan
+    marginX: 60,                      // px — margin spawn dari tepi kanvas
+    validRatio: 0.65,
+  },
+  collision: { halfW: 34, halfH: 28 },// hitbox mendekati lebar visual banana (60px) → collision terasa fair
+} as const;
+
+const W = GAME_CONFIG.canvas.w, H = GAME_CONFIG.canvas.h;
+const DURASI_GAME = GAME_CONFIG.durationSec;
 
 /* ---------- Audio ---------- */
 let audioCtx: AudioContext | null = null;
@@ -45,13 +73,15 @@ function playTone(muted: boolean, freq: number, type: OscillatorType, dur: numbe
   osc.start(t0); osc.stop(t0 + dur + 0.02);
 }
 
-type Item = { id: number; x: number; y: number; word: string; valid: boolean; speed: number; caught: boolean; missed: boolean };
+type Item = { id: number; x: number; y: number; word: string; valid: boolean; speed: number; age: number; caught: boolean; missed: boolean };
 type Particle = { x: number; y: number; vx: number; vy: number; color: string; life: number; size: number };
+type FloatText = { x: number; y: number; text: string; color: string; life: number };
 
 export default function ZelbyDash() {
   const [screen, setScreen] = useState<"start" | "game" | "over">("start");
   const [muted, setMuted] = useState(false);
-  const [hud, setHud] = useState({ score: 0, lives: 3, combo: 0, waktu: DURASI_GAME });
+  const [paused, setPaused] = useState(false);
+  const [hud, setHud] = useState<{ score: number; lives: number; combo: number; waktu: number }>({ score: 0, lives: GAME_CONFIG.lives, combo: 0, waktu: DURASI_GAME });
   const [finalScore, setFinalScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
 
@@ -60,6 +90,7 @@ export default function ZelbyDash() {
   const mutedRef = useRef(false);
   const zelbyImgRef = useRef<HTMLImageElement | null>(null);
   const zelbyCelebrateImgRef = useRef<HTMLImageElement | null>(null);
+  const bananaImgRef = useRef<HTMLImageElement | null>(null);
   const imagesLoaded = useRef(false);
 
   // NOTIFICATION 1.0 — game quiet mode: reward global tidak menutupi gameplay;
@@ -96,19 +127,29 @@ export default function ZelbyDash() {
     zelbyCelebrateImgRef.current = cele;
   }, []);
 
+  // Banana asset tunggal (bananagimBC.jpeg) — semua item jatuh memakai visual yang sama.
+  useEffect(() => {
+    const img = new Image();
+    img.src = GAME_CONFIG.banana.src;
+    img.onload = () => { bananaImgRef.current = img; };
+    bananaImgRef.current = img;
+  }, []);
+
   class Engine {
     rule: RuleKey;
     items: Item[] = [];
     particles: Particle[] = [];
+    floatTexts: FloatText[] = [];
     zelbyX: number = W / 2;
     targetX: number = W / 2;
     score: number = 0;
-    lives: number = 3;
+    lives: number = GAME_CONFIG.lives;
     combo: number = 0;
     maxCombo: number = 0;
     spawnTimer: number = 0;
-    spawnRate: number = 1500;
-    baseSpeed: number = 2.5;
+    spawnRate: number = GAME_CONFIG.spawn.initialRate;
+    baseSpeed: number = GAME_CONFIG.spawn.initialSpeed;
+    lastSpawnX: number | null = null;
     running: boolean = false;
     paused: boolean = false;
     lastFrame: number = 0;
@@ -118,6 +159,7 @@ export default function ZelbyDash() {
     bgHue: number = 140;
     waktuSisa: number = DURASI_GAME;
     lastTimerTick: number = 0;
+    lastHud: { score: number; lives: number; combo: number; waktu: number } = { score: 0, lives: GAME_CONFIG.lives, combo: 0, waktu: DURASI_GAME };
 
     constructor(rule: RuleKey) {
       this.rule = rule;
@@ -145,19 +187,33 @@ export default function ZelbyDash() {
       this.targetX = Math.max(40, Math.min(W - 40, x));
     }
 
+    /* Spawn yang fair: jarak horizontal minimum dari spawn sebelumnya,
+       margin dari tepi — tidak ada posisi mustahil atau tembok kata. */
     spawn() {
       const { valid, invalid } = RULES[this.rule];
-      const isValid = Math.random() < 0.65;
+      const isValid = Math.random() < GAME_CONFIG.spawn.validRatio;
       const pool = isValid ? valid : invalid;
       const word = pool[Math.floor(Math.random() * pool.length)];
+      const { marginX, minSpawnGap } = GAME_CONFIG.spawn;
+
+      let x = marginX + Math.random() * (W - marginX * 2);
+      if (this.lastSpawnX !== null && Math.abs(x - this.lastSpawnX) < minSpawnGap) {
+        // dorong ke sisi yang jauh dari spawn sebelumnya; clamp agar tidak keluar kanvas
+        x = x < this.lastSpawnX ? x - minSpawnGap : x + minSpawnGap;
+        if (x < marginX) x = this.lastSpawnX + minSpawnGap;
+        if (x > W - marginX) x = this.lastSpawnX - minSpawnGap;
+        x = Math.max(marginX, Math.min(W - marginX, x));
+      }
+      this.lastSpawnX = x;
 
       this.items.push({
         id: this.itemId++,
-        x: 60 + Math.random() * (W - 120),
-        y: -50,
+        x,
+        y: -60,
         word,
         valid: isValid,
-        speed: this.baseSpeed + Math.random() * 1.5,
+        speed: this.baseSpeed + Math.random() * GAME_CONFIG.spawn.speedJitter,
+        age: 0,
         caught: false,
         missed: false,
       });
@@ -169,6 +225,20 @@ export default function ZelbyDash() {
         const sp = 2 + Math.random() * 5;
         this.particles.push({ x, y, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp - 2, color, life: 30 + Math.random() * 20, size: 4 + Math.random() * 6 });
       }
+    }
+
+    float(x: number, y: number, text: string, color: string) {
+      this.floatTexts.push({ x, y, text, color, life: 45 });
+    }
+
+    /* Difficulty bertahap berbasis waktu (bukan lompatan):
+       early longgar → mid menantang → late cepat, dengan kurva ease-in. */
+    applyDifficulty() {
+      const elapsed = DURASI_GAME - this.waktuSisa;
+      const p = Math.min(1, elapsed / DURASI_GAME);
+      const { spawn } = GAME_CONFIG;
+      this.spawnRate = spawn.initialRate + (spawn.minRate - spawn.initialRate) * Math.pow(p, 1.5);
+      this.baseSpeed = spawn.initialSpeed + (spawn.maxSpeed - spawn.initialSpeed) * Math.pow(p, 1.4);
     }
 
     loop(now: number) {
@@ -183,12 +253,11 @@ export default function ZelbyDash() {
           if (this.waktuSisa <= 0) { this.gameOver(); return; }
         }
 
+        this.applyDifficulty();
         this.spawnTimer += dt;
         if (this.spawnTimer > this.spawnRate) {
           this.spawn();
           this.spawnTimer = 0;
-          if (this.spawnRate > 700) this.spawnRate -= 4;
-          this.baseSpeed += 0.002;
         }
 
         this.zelbyX += (this.targetX - this.zelbyX) * 0.2;
@@ -200,14 +269,18 @@ export default function ZelbyDash() {
           this.bgHue = 140;
         }
 
+        const { collision } = GAME_CONFIG;
+        const zelbyY = H - GAME_CONFIG.zelby.yCatch;
+
         for (let i = this.items.length - 1; i >= 0; i--) {
           const it = this.items[i];
           if (it.caught || it.missed) continue;
           it.y += it.speed * (dt / 16);
-          const zelbyY = H - 100;
+          it.age += dt;
 
-          if (it.y > zelbyY - 30 && it.y < zelbyY + 30 && Math.abs(it.x - this.zelbyX) < 45) {
+          if (it.y > zelbyY - collision.halfH && it.y < zelbyY + collision.halfH && Math.abs(it.x - this.zelbyX) < collision.halfW) {
             it.caught = true;
+            this.items.splice(i, 1);
             if (it.valid) {
               this.combo++;
               this.maxCombo = Math.max(this.maxCombo, this.combo);
@@ -220,6 +293,7 @@ export default function ZelbyDash() {
                 playTone(mutedRef.current, 600 + this.combo * 20, "sine", 0.1, 0.15, 900);
               }
               this.burst(it.x, it.y, "#FBBF24", 10);
+              this.float(it.x, it.y - 26, `+${points}`, "#FBBF24");
             } else {
               this.combo = 0;
               this.lives--;
@@ -230,6 +304,7 @@ export default function ZelbyDash() {
             }
           } else if (it.y > H + 50) {
             it.missed = true;
+            this.items.splice(i, 1);
             if (it.valid) {
               this.combo = 0;
               this.lives--;
@@ -239,6 +314,7 @@ export default function ZelbyDash() {
             } else {
               this.score += 5;
               playTone(mutedRef.current, 400, "sine", 0.05, 0.1);
+              this.float(it.x, H - 60, "+5", "#4ADE80");
             }
           }
         }
@@ -247,6 +323,12 @@ export default function ZelbyDash() {
           const p = this.particles[i];
           p.x += p.vx; p.y += p.vy; p.vy += 0.3; p.life--;
           if (p.life <= 0) this.particles.splice(i, 1);
+        }
+
+        for (let i = this.floatTexts.length - 1; i >= 0; i--) {
+          const f = this.floatTexts[i];
+          f.y -= 0.7; f.life--;
+          if (f.life <= 0) this.floatTexts.splice(i, 1);
         }
 
         this.shake *= 0.8;
@@ -264,8 +346,12 @@ export default function ZelbyDash() {
       setTimeout(() => setScreen("over"), 400);
     }
 
+    /* HUD hanya di-update saat nilai berubah — hindari re-render React 60fps. */
     updateHud() {
-      setHud({ score: this.score, lives: this.lives, combo: this.combo, waktu: this.waktuSisa });
+      const h = { score: this.score, lives: this.lives, combo: this.combo, waktu: this.waktuSisa };
+      if (h.score === this.lastHud.score && h.lives === this.lastHud.lives && h.combo === this.lastHud.combo && h.waktu === this.lastHud.waktu) return;
+      this.lastHud = h;
+      setHud(h);
     }
 
     render() {
@@ -364,57 +450,60 @@ export default function ZelbyDash() {
       c.textAlign = "center";
       c.fillText(`TANGKAP: ${RULES[this.rule].label}`, W / 2, 52);
 
-      /* Items — kartu lebih besar dengan teks terbaca */
+      /* Items — SEMUA item memakai banana yang sama (satu warna, satu asset).
+         Pemain membaca kata, bukan warna, untuk memutuskan menangkap atau menghindar. */
+      const bananaImg = bananaImgRef.current;
+      const bananaReady = !!bananaImg && bananaImg.complete && bananaImg.naturalWidth > 0;
+      const { w: bw, h: bh } = GAME_CONFIG.banana;
+
       for (const it of this.items) {
         if (it.caught || it.missed) continue;
         c.save();
         c.translate(it.x, it.y);
-        c.rotate(it.y * 0.02);
+        // Spawn pop-in halus + goyangan ringan (bukan spin penuh) agar teks tetap terbaca
+        const pop = Math.min(1, 0.35 + it.age / 130);
+        c.scale(pop, pop);
+        c.rotate(Math.sin(it.y * 0.03 + it.id) * 0.18);
 
-        const bw = 90, bh = 50;
-        const hw = bw / 2, hh = bh / 2;
-
-        if (it.valid) {
-          /* Pisang emas dengan efek glossy */
+        if (bananaReady) {
+          /* Banana asset asli — identik untuk kata benar & salah.
+             Crop konten banana dari berkas (guard: jika asset diganti,
+             gambar utuh supaya tidak pernah tampak kosong). */
+          const { crop, naturalW, naturalH } = GAME_CONFIG.banana;
+          const useCrop = bananaImg.naturalWidth === naturalW && bananaImg.naturalHeight === naturalH;
+          if (useCrop) c.drawImage(bananaImg, crop.sx, crop.sy, crop.sw, crop.sh, -bw / 2, -bh / 2, bw, bh);
+          else c.drawImage(bananaImg, -bw / 2, -bh / 2, bw, bh);
+        } else {
+          /* Fallback saat asset belum termuat: bentuk banana sama untuk semua item */
           c.fillStyle = "#FBBF24";
           c.beginPath();
-          c.moveTo(-hw + 8, -hh);
-          c.quadraticCurveTo(0, -hh - 14, hw - 8, -hh);
-          c.quadraticCurveTo(hw + 4, -hh + 10, hw - 4, hh);
-          c.quadraticCurveTo(0, hh + 6, -hw + 4, hh);
-          c.quadraticCurveTo(-hw - 4, -hh + 10, -hw + 8, -hh);
+          c.moveTo(-bw / 2 + 8, -bh / 2);
+          c.quadraticCurveTo(0, -bh / 2 - 10, bw / 2 - 8, -bh / 2);
+          c.quadraticCurveTo(bw / 2 + 4, -bh / 2 + 8, bw / 2 - 4, bh / 2);
+          c.quadraticCurveTo(0, bh / 2 + 6, -bw / 2 + 4, bh / 2);
+          c.quadraticCurveTo(-bw / 2 - 4, -bh / 2 + 8, -bw / 2 + 8, -bh / 2);
           c.fill();
           c.strokeStyle = "#161B3A";
           c.lineWidth = 3;
           c.stroke();
-
-          /* Gloss */
           c.fillStyle = "rgba(255,255,255,0.25)";
           c.beginPath();
-          c.ellipse(-8, -hh + 10, 14, 6, -0.3, 0, Math.PI * 2);
+          c.ellipse(-8, -bh / 2 + 10, 14, 6, -0.3, 0, Math.PI * 2);
           c.fill();
-        } else {
-          /* Kartu gelap untuk kata salah */
-          c.fillStyle = "#3a3f5c";
-          c.beginPath();
-          if (c.roundRect) c.roundRect(-hw, -hh, bw, bh, 12);
-          else c.rect(-hw, -hh, bw, bh);
-          c.fill();
-          c.strokeStyle = "#2A2350";
-          c.lineWidth = 3;
-          c.stroke();
         }
 
-        /* White pill background untuk teks */
-        c.fillStyle = it.valid ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.15)";
+        /* Pill putih untuk teks kata — kontras tinggi di atas banana */
+        c.fillStyle = "rgba(255,255,255,0.9)";
         c.beginPath();
-        if (c.roundRect) c.roundRect(-30, -10, 60, 22, 11);
-        else c.rect(-30, -10, 60, 22);
+        if (c.roundRect) c.roundRect(-37, -14, 74, 28, 14);
+        else c.rect(-37, -14, 74, 28);
         c.fill();
+        c.strokeStyle = "rgba(22,27,58,0.35)";
+        c.lineWidth = 2;
+        c.stroke();
 
-        c.rotate(-it.y * 0.02);
-        c.fillStyle = it.valid ? "#161B3A" : "#FFF";
-        c.font = "800 16px system-ui, sans-serif";
+        c.fillStyle = "#161B3A";
+        c.font = "800 17px system-ui, sans-serif";
         c.textAlign = "center";
         c.textBaseline = "middle";
         c.fillText(it.word, 0, 1);
@@ -422,7 +511,7 @@ export default function ZelbyDash() {
       }
 
       /* Zelby (Tarsius) dari gambar */
-      const zX = this.zelbyX, zY = H - 85;
+      const zX = this.zelbyX, zY = H - GAME_CONFIG.zelby.yOffset;
       const zScale = this.frenzy > 0 ? 1.3 : 1;
       const img = this.frenzy > 0 ? zelbyCelebrateImgRef.current : zelbyImgRef.current;
 
@@ -430,7 +519,7 @@ export default function ZelbyDash() {
         c.save();
         c.translate(zX, zY);
         c.scale(zScale, zScale);
-        const iw = 80, ih = 80;
+        const iw = GAME_CONFIG.zelby.w, ih = GAME_CONFIG.zelby.h;
         c.drawImage(img, -iw / 2, -ih / 2, iw, ih);
 
         /* Cahaya saat frenzy */
@@ -468,6 +557,16 @@ export default function ZelbyDash() {
       }
       c.globalAlpha = 1;
 
+      /* Floating score — feedback singkat saat skor bertambah */
+      for (const f of this.floatTexts) {
+        c.globalAlpha = Math.min(1, f.life / 20);
+        c.font = "900 20px system-ui, sans-serif";
+        c.fillStyle = f.color;
+        c.textAlign = "center";
+        c.fillText(f.text, f.x, f.y);
+      }
+      c.globalAlpha = 1;
+
       if (this.frenzy > 0) {
         c.font = "900 32px system-ui, sans-serif";
         c.fillStyle = "#FF6B6B";
@@ -489,7 +588,8 @@ export default function ZelbyDash() {
   const startGame = (rule: RuleKey) => {
     ensureAudio();
     setScreen("game");
-    setHud({ score: 0, lives: 3, combo: 0, waktu: DURASI_GAME });
+    setPaused(false);
+    setHud({ score: 0, lives: GAME_CONFIG.lives, combo: 0, waktu: DURASI_GAME });
     engineRef.current?.stop();
     const eng = new Engine(rule);
     engineRef.current = eng;
@@ -499,11 +599,14 @@ export default function ZelbyDash() {
   const togglePause = () => {
     const g = engineRef.current;
     if (!g || !g.running) return;
-    g.setPaused(!g.paused);
+    const next = !g.paused;
+    g.setPaused(next);
+    setPaused(next);
   };
 
   const quit = () => {
     engineRef.current?.stop();
+    setPaused(false);
     setScreen("start");
   };
 
@@ -628,8 +731,8 @@ export default function ZelbyDash() {
                 </svg>
                 Gerakkan jari untuk mengendalikan Zelby
               </p>
-              <button onClick={togglePause} className={`${btn} w-12 h-12 bg-white`} aria-label={engineRef.current?.paused ? "Lanjutkan" : "Jeda"}>
-                {engineRef.current?.paused ? <Play className="w-5 h-5" /> : <Pause className="w-5 h-5" />}
+              <button onClick={togglePause} className={`${btn} w-12 h-12 bg-white`} aria-label={paused ? "Lanjutkan" : "Jeda"}>
+                {paused ? <Play className="w-5 h-5" /> : <Pause className="w-5 h-5" />}
               </button>
             </div>
           </div>
