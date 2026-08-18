@@ -284,7 +284,10 @@
     "pilot:master-ai-authoring": "npx tsx scripts/master-ai-authoring-pilot.ts",
     "audit:master-repair:full": "npx tsx scripts/master-ai-repair-pipeline.ts --all",
     "pilot:master-semantic-repair-v2": "npx tsx scripts/master-semantic-repair-v2-pilot.ts",
-    "test:master-semantic-repair-v2": "npx tsx scripts/test-master-semantic-repair-v2.ts"
+    "test:master-semantic-repair-v2": "npx tsx scripts/test-master-semantic-repair-v2.ts",
+    "test:question-bank-import": "npx tsx scripts/test-question-bank-import.ts",
+    "import:batch-001": "npx tsx scripts/import-question-bank-batch-001.ts",
+    "import:batch-001-dry": "npx tsx scripts/import-question-bank-batch-001.ts --dry-run"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
