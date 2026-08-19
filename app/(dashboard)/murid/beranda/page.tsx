@@ -5,6 +5,7 @@ import "@/app/arena/player-theme.css";
 import { HomeDataProvider } from "@/components/student-home/home-data";
 import { StudentHomeHero } from "@/components/student-home/StudentHomeHero";
 import { ContinueLearningCard } from "@/components/student-home/ContinueLearningCard";
+import { DailyMissionCard } from "@/components/student-home/DailyMissionCard";
 import { AIBCHomeCard } from "@/components/student-home/AIBCHomeCard";
 import { LearningJourneySection } from "@/components/student-home/LearningJourneySection";
 import { RuangBelajarSection } from "@/components/student-home/RuangBelajarSection";
@@ -18,9 +19,9 @@ import { useHomeData } from "@/components/student-home/home-data";
 
 // Hierarki My Day (learning companion):
 // 1. SAPAAN (hero) → 2. AKSI HARI INI (satu CTA dominan + mentor)
-// → 3. KEMAMPUAN + MOTIVASI (skill + arena + premium)
-// → 4. PINTAS BELAJAR (AI BC + perjalanan) → 5. RUANG BELAJAR
-// → 6. SIMULASI → 7. KARYA + KABAR KELAS
+// → 3. MISI HARIAN (XP/koin harian) → 4. KEMAMPUAN + MOTIVASI (skill + arena + premium)
+// → 5. PINTAS BELAJAR (AI BC + perjalanan) → 6. RUANG BELAJAR
+// → 7. SIMULASI → 8. KARYA + KABAR KELAS
 export default function HomeFeedPage() {
   useEffect(() => {
     const detak = () => {
@@ -58,6 +59,8 @@ function HomeContent() {
       <StudentHomeHero />
 
       <ContinueLearningCard />
+
+      <DailyMissionCard />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         <SkillRadar skills={myDay?.learnerState ?? null} loading={myDayLoading} failed={myDayFailed} />
