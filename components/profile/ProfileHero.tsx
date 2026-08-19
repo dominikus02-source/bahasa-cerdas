@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import {
   Flame, Sparkles, Settings, Heart, UserPlus, UserCheck, PenLine, Files,
-  Users, UserRound,
+  Users, UserRound, CalendarDays,
 } from "lucide-react";
 import type { PlayerRank } from "@prisma/client";
 import CosmicBackground from "@/components/profile/CosmicBackground";
@@ -30,6 +30,7 @@ export interface HeroPersona {
   streak?: number | null;
   gelar?: string | null;
   memberNumber?: string | null;
+  joinedAt?: string | null;
 }
 
 export interface HeroSocial {
@@ -253,6 +254,14 @@ export default function ProfileHero({
                 {persona.memberNumber && (
                   <span className="rounded-full px-2.5 py-1 text-[10px] font-semibold bg-slate-900/5 dark:bg-slate-900/5 border-slate-900/10 dark:border-white/10 text-slate-900/45 dark:text-white/45">
                     #{persona.memberNumber}
+                  </span>
+                )}
+                {persona.joinedAt && (
+                  <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-semibold bg-slate-900/5 dark:bg-slate-900/5 border-slate-900/10 dark:border-white/10 text-slate-900/45 dark:text-white/45">
+                    <CalendarDays size={10} /> Bergabung{" "}
+                    {new Intl.DateTimeFormat("id-ID", { month: "short", year: "numeric" }).format(
+                      new Date(persona.joinedAt),
+                    )}
                   </span>
                 )}
               </div>

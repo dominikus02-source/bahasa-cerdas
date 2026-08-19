@@ -3,9 +3,10 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
-  Plus, Settings, X, Camera, Save, CheckCircle2, AlertCircle, LogOut, Loader2,
-  Award, History, Pencil,
+  Settings, X, Camera, Save, CheckCircle2, AlertCircle, LogOut, Loader2,
+  Award, History, Pencil, BookOpen, ChevronRight, TrendingUp,
 } from "lucide-react";
+import "@/app/arena/player-theme.css";
 import { IconFlame, IconPen } from "@/lib/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,9 +16,9 @@ import { defaultNicknameFromFullName, NICKNAME_MAX_LENGTH } from "@/lib/nickname
 import { getLevelProgress, levelFromXp } from "@/lib/gamification/levels";
 import { rankFromLevel } from "@/lib/gamification/ranks";
 import type { PlayerProfileView, XpHistoryEntryView, BadgeView } from "@/lib/gamification/client-types";
+import type { LearnerSkillState } from "@/lib/learner-state/types";
 import ProfileHero, { type HeroSocial } from "@/components/profile/ProfileHero";
 import PlayerStatusBar from "@/components/profile/PlayerStatusBar";
-import ProfileMotto from "@/components/profile/ProfileMotto";
 import PlayerStatsGrid from "@/components/profile/PlayerStatsGrid";
 import ActivityFeed, { type FeedEvent } from "@/components/profile/ActivityFeed";
 import AchievementShowcase from "@/components/profile/AchievementShowcase";
@@ -25,6 +26,7 @@ import FeaturedWorksGallery from "@/components/profile/FeaturedWorksGallery";
 import SocialConnections from "@/components/profile/SocialConnections";
 import BadgeShowcasePanel from "@/components/profile/BadgeShowcasePanel";
 import ActivityChart, { type ChartDay } from "@/components/profile/ActivityChart";
+import SkillRadar from "@/components/arena/player/SkillRadar";
 
 interface UserData {
   id: string; fullName: string; nickname?: string | null; xp: number; level: number; streak: number;
@@ -67,6 +69,18 @@ const WIB_OFFSET_MS = 7 * 3600 * 1000;
 
 function wibKey(d: Date): string {
   return new Date(d.getTime() + WIB_OFFSET_MS).toISOString().slice(0, 10);
+}
+
+// Label waktu singkat (relatif) untuk baris perjalanan belajar — data nyata.
+function waktuLaluLite(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const h = Math.floor(diff / 3600000);
+  if (h < 1) return "baru saja";
+  if (h < 24) return `${h} jam lalu`;
+  const d = Math.floor(h / 24);
+  if (d === 1) return "kemarin";
+  if (d < 30) return `${d} hari lalu`;
+  return new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short" }).format(new Date(iso));
 }
 
 // Deret hari beruntun ("kebun" aktif hari ini + kemarin) — dipakai untuk
@@ -125,6 +139,7 @@ export default function MuridProfilePage() {
   const [xpHistory, setXpHistory] = useState<XpHistoryEntryView[]>([]);
   const [showcaseBadges, setShowcaseBadges] = useState<BadgeView[] | null>(null);
   const [journey, setJourney] = useState<JourneyEntry[]>([]);
+  const [skills, setSkills] = useState<LearnerSkillState[] | null>(null);
   const [karyaFilter, setKaryaFilter] = useState("SEMUA");
   const supabase = createClient();
 
@@ -174,18 +189,20 @@ export default function MuridProfilePage() {
     load();
   }, []);
 
-  // Data pemain + aktivitas + lencana showcase + perjalanan belajar — best-effort.
+  // Data pemain + aktivitas + lencana showcase + perjalanan belajar + skill — best-effort.
   useEffect(() => {
     Promise.all([
       fetch("/api/player/profile").then(r => r.ok ? r.json() : null),
       fetch("/api/player/xp/history?limit=5").then(r => r.ok ? r.json() : null),
       fetch("/api/player/badges").then(r => r.ok ? r.json() : null),
       fetch("/api/player/journey?limit=100").then(r => r.ok ? r.json() : null),
-    ]).then(([pp, xh, bd, jr]) => {
+      fetch("/api/player/skills").then(r => r.ok ? r.json() : null),
+    ]).then(([pp, xh, bd, jr, sk]) => {
       if (pp?.profile) setPlayerProfile(pp.profile);
       if (xh?.entries) setXpHistory(xh.entries);
       if (bd?.badges) setShowcaseBadges(bd.badges);
       if (jr?.entries) setJourney(jr.entries);
+      if (sk?.skills) setSkills(sk.skills);
     }).catch(() => {});
   }, []);
 
@@ -335,6 +352,7 @@ export default function MuridProfilePage() {
   ];
 
   const { days: chartDays, mode: chartMode } = buildChartDays(journey, karyaList);
+  const jalurEntries = journey.slice(0, 5);
   const totalKarya30 = karyaList.filter(k => {
     const key = k.createdAt.slice(0, 10);
     return chartDays.length > 0 && key >= chartDays[0].dayKey;
@@ -351,7 +369,7 @@ export default function MuridProfilePage() {
     : null;
 
   return (
-    <div className="mx-auto w-full max-w-[1400px] px-4 md:px-6 lg:px-8">
+    <div className="mx-auto w-full max-w-5xl px-4 md:px-6 lg:px-8">
       <style>{`
         @keyframes profile-flame{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.12) rotate(2deg)}}
         @keyframes profile-badge-pop{0%{transform:scale(0)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
@@ -378,15 +396,15 @@ export default function MuridProfilePage() {
           streak: user.streak ?? 0,
           gelar: meta?.gelar ?? null,
           memberNumber: meta?.memberNumber ?? null,
+          joinedAt: user.createdAt ?? null,
         }}
         rank={playerRank}
-        social={social}
+        // Statistik sosial (pengikut/mengikuti) dan Total Like tampil di
+        // PlayerStatsGrid — satu sumber angka, hero tetap ringkas.
+        social={null}
         isOwn
         onEditProfile={openSettings}
-        likeSummary={{
-          totalLikes: user.totalLikes || 0,
-          karyaCount: meta?.stats.karyaCount ?? karyaList.length,
-        }}
+        likeSummary={null}
       />
 
       {/* HUD status pemain — Level/XP/Koin/Streak/Rank + strip lencana */}
@@ -401,10 +419,90 @@ export default function MuridProfilePage() {
         badgesHref="/arena/player/badges"
       />
 
-      {/* Moto pribadi — bio asli + tanggal bergabung asli (pindah ke sidebar, di bawah) */}
+      {/* PERKEMBANGANMU — skill bahasa + perjalanan belajar (data nyata) */}
+      <section aria-label="Perkembanganmu" className="mb-6">
+        <div className="flex items-center gap-2 mb-3">
+          <TrendingUp size={15} className="text-violet-600 dark:text-violet-300" />
+          <h2 className="text-sm font-bold text-slate-900 dark:text-white/90">Perkembanganmu</h2>
+        </div>
+        <div className="grid gap-4 lg:grid-cols-2">
+          {/* Kemampuan bahasa — dari /api/player/skills (reuse SkillRadar beranda) */}
+          <div className="bc-card-premium overflow-hidden rounded-2xl ring-1 ring-slate-900/10 dark:ring-white/10">
+            <SkillRadar skills={skills} className="h-full" />
+          </div>
+
+          {/* Jalur Cerdas — aktivitas belajar terbaru dari journey + CTA */}
+          <div className="bc-card-premium flex flex-col rounded-2xl p-5 ring-1 ring-slate-900/10 dark:ring-white/10">
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white/90 inline-flex items-center gap-2">
+                <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shadow-sm">
+                  <BookOpen size={13} className="text-white" />
+                </span>
+                Jalur Cerdas
+              </h3>
+              <Link href="/arena/jalur-cerdas" className="text-[11px] font-semibold text-slate-900/55 dark:text-white/55 hover:text-slate-900 dark:text-white transition-colors">
+                Buka →
+              </Link>
+            </div>
+            {jalurEntries.length > 0 ? (
+              <ul className="min-w-0 flex-1 divide-y divide-slate-900/[0.06] dark:divide-white/[0.06]">
+                {jalurEntries.map((e) => (
+                  <li key={e.id} className="flex items-center gap-2.5 py-1.5">
+                    <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full bg-violet-500/60" />
+                    <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-slate-900/85 dark:text-white/85">
+                      {e.title || "Belajar"}
+                    </span>
+                    <time className="shrink-0 text-[10px] text-slate-900/50 dark:text-white/40">
+                      {waktuLaluLite(e.createdAt)}
+                    </time>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="flex-1 text-xs leading-relaxed text-slate-900/60 dark:text-white/45">
+                Mulai belajar di Jalur Cerdas agar langkah belajarmu tercatat di sini.
+              </p>
+            )}
+            <Link
+              href="/arena/jalur-cerdas"
+              className="mt-3 inline-flex h-10 items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-500 to-purple-600 px-4 text-[13px] font-bold text-white shadow-md transition-all hover:shadow-lg"
+            >
+              Lanjutkan Belajar <ChevronRight size={14} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Pencapaian terbaru — lencana asli (dari /api/player/badges, best-effort) */}
+      {showcaseBadges !== null && (
+        <section
+          className="bc-card-premium mb-6 rounded-2xl p-5 ring-1 ring-slate-900/10 dark:ring-white/10"
+
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white/90 flex items-center gap-2">
+              <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-sm">
+                <Award size={13} className="text-slate-900 dark:text-white" />
+              </span>
+              Pencapaian Terkini
+            </h3>
+            <Link href="/arena/player/badges" className="text-[11px] font-semibold text-slate-900/55 dark:text-white/55 hover:text-slate-900 dark:text-white transition-colors">
+              Lihat Semua →
+            </Link>
+          </div>
+          {showcaseBadges.some((b) => b.unlocked) ? (
+            <AchievementShowcase badges={showcaseBadges} max={6} />
+          ) : (
+            <p className="text-[13px] text-slate-900/60 dark:text-white/55 leading-relaxed">
+              Belum ada lencana. Selesaikan latihan di Jalur Cerdas, ikuti tantangan di Arena,
+              dan kumpulkan karya untuk membuka lencana pertamamu.
+            </p>
+          )}
+        </section>
+      )}
 
       {/* GRID DESKTOP 2 KOLOM — main konten + sidebar identitas (≥1024px) */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
         {/* MAIN — statistik, aktivitas, grafik, galeri karya */}
         <div className="space-y-6 min-w-0 md:col-span-2 lg:col-span-1">
           <PlayerStatsGrid
@@ -448,15 +546,8 @@ export default function MuridProfilePage() {
           />
         </div>
 
-        {/* SIDEBAR — moto, lencana, kebun kata, komunitas (sticky di desktop) */}
+        {/* SIDEBAR — kebun kata, komunitas, lencana (sticky di desktop) */}
         <div className="space-y-6 min-w-0 md:col-span-2 lg:col-span-1 lg:sticky lg:top-6">
-          <ProfileMotto
-            bio={user.bio ?? null}
-            joinedAt={user.createdAt ?? null}
-            isOwn
-            onEditProfile={openSettings}
-          />
-
           {/* Kebun Kata — naik ke atas sidebar (glance social widget) */}
           {meta && (
             <div
@@ -533,34 +624,6 @@ export default function MuridProfilePage() {
           )}
         </div>
       </div>
-
-      {/* Pencapaian terbaru — lencana asli (dari /api/player/badges, best-effort) */}
-      {showcaseBadges !== null && (
-        <section
-          className="bc-card-premium my-6 rounded-2xl p-5 ring-1 ring-slate-900/10 dark:ring-white/10"
-
-        >
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white/90 flex items-center gap-2">
-              <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-sm">
-                <Award size={13} className="text-slate-900 dark:text-white" />
-              </span>
-              Pencapaian Terkini
-            </h3>
-            <Link href="/arena/player/badges" className="text-[11px] font-semibold text-slate-900/55 dark:text-white/55 hover:text-slate-900 dark:text-white transition-colors">
-              Lihat Semua →
-            </Link>
-          </div>
-          {showcaseBadges.some((b) => b.unlocked) ? (
-            <AchievementShowcase badges={showcaseBadges} max={6} />
-          ) : (
-            <p className="text-[13px] text-slate-900/60 dark:text-white/55 leading-relaxed">
-              Belum ada lencana. Selesaikan latihan di Jalur Cerdas, ikuti tantangan di Arena,
-              dan kumpulkan karya untuk membuka lencana pertamamu.
-            </p>
-          )}
-        </section>
-      )}
 
       {/* Settings Modal */}
       {showSettings && (
