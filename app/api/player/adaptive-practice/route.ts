@@ -6,6 +6,7 @@ import { getLearnerState, isLearnerStateInfraUnavailable } from "@/lib/learner-s
 import { upsertLearningEvidence, LEARNING_EVIDENCE_VERSION } from "@/lib/learning-loop/evidence";
 import { validateQuestionMetadata } from "@/lib/question-metadata/validation";
 import { ADAPTIVE_ALLOWED_SIZES, ADAPTIVE_MAX_CANDIDATES, ADAPTIVE_SELECTION_VERSION, ADAPTIVE_SUPPORTED_SOURCES, ADAPTIVE_SESSION_BASE_XP, ADAPTIVE_START_RATE_LIMIT } from "@/lib/adaptive-practice/config";
+import { ADAPTIVE_PRACTICE_COMING_SOON } from "@/lib/diagnostic-ai/config";
 import { selectAdaptivePractice } from "@/lib/adaptive-practice/selector";
 import type { AdaptiveCandidate } from "@/lib/adaptive-practice/types";
 import type { DifficultyId, QuestionTypeId } from "@/lib/question-metadata/taxonomy";
@@ -190,6 +191,7 @@ async function startSession(userId: string, size: number, mode: "start" | "previ
       diagnosticCompleted,
       learnerState: states,
       mentor,
+      comingSoon: ADAPTIVE_PRACTICE_COMING_SOON || undefined,
     });
   }
 
@@ -477,6 +479,13 @@ export async function POST(req: NextRequest) {
 
   try {
     if (body.action === "start") {
+      // Gerbang produksi: bank soal latihan personal belum matang — belum boleh dipakai.
+      if (ADAPTIVE_PRACTICE_COMING_SOON) {
+        return NextResponse.json(
+          { code: "ADAPTIVE_PRACTICE_COMING_SOON", error: "Latihan personal belum tersedia" },
+          { status: 503 }
+        );
+      }
       // Rate limit start (per user/session — getClientKey, bukan IP):
       // 10 sesi per 30 menit. Pembelajaran sah (5-15 soal/sesi) sangat jauh
       // di bawah itu; batas XP harian 5.000 tetap jaring pengaman terakhir.

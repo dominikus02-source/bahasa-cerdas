@@ -15,6 +15,19 @@ export const AI_DIAGNOSTIC_SELECTION_VERSION = "3.0" as const;
  *   npx tsx scripts/audit-qa-ai-diagnostic-8-4-1.ts (target 0 ❌ selain artefak R11)
  */
 export const AI_DIAGNOSTIC_COMING_SOON = true;
+
+/**
+ * Gerbang produksi Latihan Personal (Adaptive Practice).
+ *
+ * TRUE  → tombol "Mulai Latihan" di "Aksi Hari Ini" diganti tanda
+ *         "Akan Segera Hadir"; POST /api/player/adaptive-practice (start)
+ *         ditolak 503. Soal latihan personal belum sempurna — murid tidak
+ *         boleh berlatih dengan bank yang belum matang.
+ * FALSE → tombol & sesi berjalan seperti biasa.
+ *
+ * Balik ke FALSE hanya ketika bank soal latihan personal siap produksi.
+ */
+export const ADAPTIVE_PRACTICE_COMING_SOON = true;
 export const AI_DIAGNOSTIC_ALLOWED_SIZES = [6, 8, 10, 12, 15] as const;
 export const AI_DIAGNOSTIC_DEFAULT_SIZE = 10 as const;
 export const AI_DIAGNOSTIC_MIN_USEFUL = 6 as const;

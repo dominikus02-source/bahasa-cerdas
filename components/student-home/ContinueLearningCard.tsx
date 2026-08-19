@@ -6,15 +6,16 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, BookOpen, Loader2, RotateCw, Target, Sparkles } from "lucide-react";
 import MentorCard from "@/components/arena/player/MentorCard";
 import { findFocusSkillRow, useHomeData } from "./home-data";
+import { ADAPTIVE_PRACTICE_COMING_SOON } from "@/lib/diagnostic-ai/config";
 
 /**
  * Kartu Aksi Hari Ini — BC Assessment Engine 2.0 STATES.
  *
- * NO_BASELINE          → DIAGNOSTIC  → "Kenali Kemampuanmu" (Mulai Tes Awal)
+ * NO_BASELINE          → DIAGNOSTIC  → "Kenali Kemampuanmu" (Segera Hadir — soal AI belum matang)
  * BASELINE_IN_PROGRESS → DIAGNOSTIC  → "Lanjutkan Tes Awal"
- * BASELINE_COMPLETE_LOW→ DIAGNOSTIC  → "BC Sedang Mengenalimu" (Lanjutkan Latihan)
- * PROFILE_READY        → ADAPTIVE    → "Latihan Untukmu" (Mulai Latihan)
- * PROFILE_CONFIDENT    → ADAPTIVE    → "Latihan Untukmu" (Mulai Latihan)
+ * BASELINE_COMPLETE_LOW→ DIAGNOSTIC  → "BC Sedang Mengenalimu" (latihan personal — Akan Segera Hadir)
+ * PROFILE_READY        → ADAPTIVE    → "Latihan Untukmu" (Akan Segera Hadir)
+ * PROFILE_CONFIDENT    → ADAPTIVE    → "Latihan Untukmu" (Akan Segera Hadir)
  *
  * Server-derived: actionTitle, reasonText, ctaLabel, assessmentState.
  * Client never sends skill/difficulty/confidence/reason.
@@ -59,27 +60,6 @@ export function ContinueLearningCard() {
   const personalization = currentMyDay.personalization ?? null;
   const assessmentState = currentMyDay.assessmentState as string | undefined;
   const mentorData = currentMyDay.mentor ? { ...currentMyDay.mentor, nextAction: null } : null;
-
-  async function startAdaptiveSession() {
-    setStarting(true);
-    setStartError(null);
-    try {
-      const response = await fetch("/api/player/adaptive-practice", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "start", size: currentMyDay.sessionSize || 5 }),
-      });
-      const data = await response.json();
-      if (!response.ok || data.mode !== "ADAPTIVE" || typeof data.sessionId !== "string") {
-        throw new Error(data.error || "Latihan personal belum tersedia");
-      }
-      router.push(`/arena/adaptive-practice/${data.sessionId}`);
-    } catch {
-      setStartError("Latihan belum bisa dimulai. Coba lagi sebentar.");
-    } finally {
-      setStarting(false);
-    }
-  }
 
   async function startDiagnosticSession() {
     setStarting(true);
@@ -137,6 +117,68 @@ export function ContinueLearningCard() {
           </div>
         </div>
       </section>
+    );
+  }
+
+  // ── ADAPTIVE (Latihan Personal) dalam penyempurnaan → "Akan Segera Hadir" ──
+  // Bank soal latihan personal belum matang — kartu informatif, tanpa tombol
+  // mulai; POST start juga ditolak server (ADAPTIVE_PRACTICE_COMING_SOON).
+  if (isAdaptive && ADAPTIVE_PRACTICE_COMING_SOON) {
+    const stateDesc = personalization?.explanation ?? currentMyDay.reasonText;
+    const focusRow = findFocusSkillRow(currentMyDay);
+    const focusPct = focusRow?.accuracy != null ? Math.round(focusRow.accuracy * 100) : null;
+    return (
+      <div className="space-y-3">
+        <section aria-label="Aksi hari ini" className="my-day-hero px-card px-5 py-7 md:p-8 relative overflow-hidden">
+          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--px-gold)] mb-2">Aksi Hari Ini</p>
+          <div className="relative flex flex-col md:flex-row md:items-center gap-5">
+            <div className="flex-1 min-w-0">
+              <h2 className="text-2xl md:text-[32px] font-semibold tracking-tight text-[var(--px-text)] mb-2 flex items-center gap-2">
+                <Sparkles size={21} strokeWidth={1.8} className="text-[var(--px-royal-2)] shrink-0" />
+                <span className="truncate">{currentMyDay.actionTitle}</span>
+              </h2>
+              <p className="text-sm font-bold text-[var(--px-royal-2)] uppercase tracking-[0.12em] text-[11px] mb-1">Kenapa?</p>
+              <p className="text-sm text-[var(--px-text-dim)] leading-relaxed">{stateDesc}</p>
+              {focusRow && focusPct !== null && (
+                <div className="mt-3 max-w-sm space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-[var(--px-text)]">{focusRow.label}</span>
+                    <span className="text-xs font-bold text-[var(--px-royal-2)]">{focusPct}%</span>
+                  </div>
+                  <div
+                    role="progressbar"
+                    aria-label={`Akurasi ${focusRow.label}`}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-valuenow={focusPct}
+                    className="h-2 w-full overflow-hidden rounded-full bg-[var(--px-royal-2)]/15"
+                  >
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-[var(--px-royal-2)] to-[var(--px-gold)]"
+                      style={{ width: `${focusPct}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+              <Link
+                href="/arena/jalur-cerdas"
+                className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-[var(--px-royal-2)] hover:opacity-80"
+              >
+                Sambil menunggu, mulai belajar dulu
+                <ArrowRight size={14} />
+              </Link>
+            </div>
+            <div className="shrink-0">
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] px-4 py-2.5 rounded-full bg-[rgba(255,210,74,0.14)] text-[var(--px-gold)] border border-[var(--px-gold)]/30">
+                <Sparkles size={13} />
+                Akan Segera Hadir
+              </span>
+            </div>
+          </div>
+        </section>
+
+        {mentorData && <MentorCard data={mentorData} focusText={stateDesc} />}
+      </div>
     );
   }
 
@@ -229,17 +271,22 @@ export function ContinueLearningCard() {
             {startError && <p className="mt-3 text-xs font-semibold text-red-600 dark:text-red-300">{startError}</p>}
           </div>
           <div className="shrink-0">
-            <button
-              type="button"
-              onClick={startAdaptiveSession}
-              disabled={starting}
-              className="px-btn-gold flex items-center justify-center gap-2 text-sm font-bold px-6 py-3 disabled:cursor-wait"
-              aria-label="Lanjutkan Latihan"
-            >
-              {starting ? <Loader2 size={16} className="animate-spin" /> : null}
-              {starting ? "Menyiapkan..." : currentMyDay.ctaLabel}
-              {!starting && <ArrowRight size={16} />}
-            </button>
+            {ADAPTIVE_PRACTICE_COMING_SOON ? (
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] px-4 py-2.5 rounded-full bg-[rgba(255,210,74,0.14)] text-[var(--px-gold)] border border-[var(--px-gold)]/30">
+                <Sparkles size={13} />
+                Akan Segera Hadir
+              </span>
+            ) : (
+              <button
+                type="button"
+                onClick={() => router.push("/arena/jalur-cerdas")}
+                className="px-btn-gold flex items-center justify-center gap-2 text-sm font-bold px-6 py-3"
+                aria-label="Lanjutkan Latihan"
+              >
+                {currentMyDay.ctaLabel}
+                <ArrowRight size={16} />
+              </button>
+            )}
           </div>
         </div>
       </section>
@@ -275,11 +322,10 @@ export function ContinueLearningCard() {
     );
   }
 
-  // ── PROFILE_READY / PROFILE_CONFIDENT — Latihan personal tersedia ──
-  // Server-derived: actionTitle, reasonText, ctaLabel, personalization.explanation.
+  // ── PROFILE_READY / PROFILE_CONFIDENT — profil siap; latihan personal
+  // sedang disempurnakan → badge "Akan Segera Hadir" (gate ADAPTIVE_PRACTICE_COMING_SOON).
   const stateTitle = currentMyDay.actionTitle;
   const stateDesc = personalization?.explanation ?? currentMyDay.reasonText;
-  const stateCta = currentMyDay.ctaLabel;
   // MURID HOME 3.0 — bar akurasi skill target (turunan data preview, tanpa fetch baru).
   const focusRow = findFocusSkillRow(currentMyDay);
   const focusPct = focusRow?.accuracy != null ? Math.round(focusRow.accuracy * 100) : null;
@@ -323,17 +369,10 @@ export function ContinueLearningCard() {
             {startError && <p className="mt-3 text-xs font-semibold text-red-600 dark:text-red-300">{startError}</p>}
           </div>
           <div className="shrink-0">
-            <button
-              type="button"
-              onClick={startAdaptiveSession}
-              disabled={starting}
-              className="px-btn-gold flex items-center justify-center gap-2 text-sm font-bold px-6 py-3 disabled:cursor-wait"
-              aria-label={`Mulai ${stateTitle}`}
-            >
-              {starting ? <Loader2 size={16} className="animate-spin" /> : null}
-              {starting ? "Menyiapkan..." : stateCta}
-              {!starting && <ArrowRight size={16} />}
-            </button>
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] px-4 py-2.5 rounded-full bg-[rgba(255,210,74,0.14)] text-[var(--px-gold)] border border-[var(--px-gold)]/30">
+              <Sparkles size={13} />
+              Akan Segera Hadir
+            </span>
           </div>
         </div>
       </section>
