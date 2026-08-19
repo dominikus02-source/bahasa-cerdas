@@ -10,8 +10,9 @@
  *  D. Positive: mapping kunci 3b ada (gradien from/via/to, ring, shadow,
  *     icon chip *-500/90, dark-override gradien putih, hover variants).
  *  E. Protected zones: git status hanya berisi file yang diizinkan.
- *
- * Run: npm run test:guru-beranda-theme
+ *  F. Teacher Command Center (hero baru): keberadaan, data props (bukan
+ *     hardcoded), route CTA benar, label Bahasa Indonesia, prioritas visual
+ *     Tugas Menunggu, children slot CreateMenu, tanpa dead icons.
  */
 
 import { execSync } from "node:child_process";
@@ -23,6 +24,7 @@ const ROOT = path.resolve(__dirname, "..");
 const GLOBALS_CSS = path.join(ROOT, "app/globals.css");
 const SCOPE_FILES = [
   "app/(dashboard)/guru/beranda/page.tsx",
+  "components/guru/TeacherCommandCenter.tsx",
   "components/guru/GuruLeaderboardCard.tsx",
   "components/guru/GuruBerkarya.tsx",
   "components/guru/GuruBerkaryaComments.tsx",
@@ -186,6 +188,62 @@ const css = fs.readFileSync(GLOBALS_CSS, "utf8");
   const banner = fs.readFileSync(path.join(ROOT, "components/public/BannerSlideshow.tsx"), "utf8");
   check("D13. BannerSlideshow desc fallback pakai text-white/70", banner.includes("text-white/70 mt-0.5"));
   check("D14. BannerSlideshow tidak lagi pakai text-slate-300 (akan ter-mapping)", !banner.includes("text-slate-300"));
+}
+
+// ── F. Teacher Command Center — hero baru beranda guru ──
+{
+  const tcPath = path.join(ROOT, "components/guru/TeacherCommandCenter.tsx");
+  const tc = fs.existsSync(tcPath) ? fs.readFileSync(tcPath, "utf8") : "";
+  const page = fs.readFileSync(path.join(ROOT, "app/(dashboard)/guru/beranda/page.tsx"), "utf8");
+
+  check("F1. TeacherCommandCenter.tsx ada dan \"use client\"", tc.startsWith('"use client"'));
+  check("F2. Komponen baru 0 variant dark:", !tc.includes("dark:"));
+  check("F3. Metric dari props (bukan hardcoded)",
+    tc.includes("totalSiswa: number") &&
+    tc.includes("kelasAktif: number") &&
+    tc.includes("tugasMenunggu: number") &&
+    tc.includes("greeting: string") &&
+    tc.includes("fullName: string"));
+  check("F4. Page meneruskan data dari fetch existing (bukan mock)",
+    page.includes("totalSiswa={stats.totalSiswa}") &&
+    page.includes("kelasAktif={nilaiStats.length}") &&
+    page.includes("tugasMenunggu={nilaiStats.reduce") &&
+    page.includes("fullName={user.fullName ?? \"Guru\"}") &&
+    page.includes("greeting={greeting}"));
+  check("F5. Route CTA benar & existing",
+    tc.includes('href="/guru/materi-ajar"') &&
+    tc.includes('href="/guru/ai-bc"') &&
+    tc.includes('href: "/guru/penilaian"') &&
+    tc.includes('href: "/guru/kelasku"') &&
+    tc.includes('href: "/guru/data-siswa"'));
+  check("F6. Label Bahasa Indonesia (hero + metric + CTA)",
+    tc.includes("Hari ini kamu memiliki") &&
+    tc.includes("Tugas Menunggu") &&
+    tc.includes("Kelas Aktif") &&
+    tc.includes("Buat Materi") &&
+    tc.includes("AI BC") &&
+    tc.includes("perlu dinilai") &&
+    tc.includes("sedang dikelola") &&
+    tc.includes("di ekosistemmu"));
+  check("F7. Prioritas visual: Tugas Menunggu pertama + ukuran besar",
+    tc.indexOf('key: "tugas"') < tc.indexOf('key: "kelas"') &&
+    tc.includes("prominent: true"));
+  check("F8. Warna metric calm & konsisten token (amber/emerald/violet 700)",
+    tc.includes("text-amber-700") &&
+    tc.includes("text-emerald-700") &&
+    tc.includes("text-violet-700"));
+  check("F9. Loading skeleton via prop loading (placeholder —)", tc.includes("loading") && tc.includes("—"));
+  check("F10. Children slot dipakai page untuk CreateMenu (flow existing utuh)",
+    tc.includes("children?: ReactNode") &&
+    page.includes("<TeacherCommandCenter") &&
+    page.includes("<CreateMenu />"));
+  check("F11. Page masih memakai TrialStatusCard (tidak terhapus)",
+    page.includes("<TrialStatusCard />") &&
+    page.includes('import { TrialStatusCard }'));
+  check("F12. Dead icons Crown/LayoutDashboard dihapus dari page",
+    !page.includes("Crown") && !page.includes("LayoutDashboard"));
+  check("F13. Component tidak memakai Library ikon kedua / emoji label",
+    !tc.includes("FontAwesome") && !tc.includes("lucide-react'"));
 }
 
 // ── E. Protected zones: git status hanya file izin ──

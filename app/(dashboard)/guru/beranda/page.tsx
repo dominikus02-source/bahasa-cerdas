@@ -6,10 +6,11 @@ import {
   BookOpen, ShoppingBag, Users, Gamepad2, Wand2, ClipboardCheck,
   TrendingUp, ChevronRight, Star, Plus, Megaphone, BookOpenCheck, FileSpreadsheet, CalendarPlus,
   FileText, Video, Presentation, Database,
-  Crown, Zap, Flame, FileUp, Upload, GraduationCap, BarChart3, Brain, LayoutDashboard
+  Zap, Flame, FileUp, Upload, GraduationCap, BarChart3, Brain
 } from "lucide-react"
 import { useUserStore } from "@/store"
 import { Badge } from "@/components/ui/badge"
+import TeacherCommandCenter from "@/components/guru/TeacherCommandCenter"
 import { TrialStatusCard } from "@/components/guru/TrialStatusCard"
 import { AiCreditBalance } from "@/components/guru/AiCreditBalance"
 import { GuruMissionCard } from "@/components/guru/misi/GuruMissionCard"
@@ -158,34 +159,19 @@ export default function GuruBerandaPage() {  const user = useUserStore()
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      <div className="flex items-start justify-between mb-8">
-        <div>
-          <p className="text-sm text-gray-400">{greeting},</p>
-          <h1 className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
-            {user.fullName}
-            {user.isFounder && (
-              <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full font-medium">
-                <Crown size={10} /> Founder
-              </span>
-            )}
-          </h1>
-          <p className="text-gray-400 text-sm mt-0.5">Dasbor Guru - BahasaCerdas</p>
-        </div>
-        <div className="flex gap-2 relative">
-          <CreateMenu />
-          <Link href="/guru/ai-tools?tool=rpp-modul" className="hidden sm:flex items-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl text-sm font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all shadow-lg shadow-emerald-500/20">
-            <Wand2 size={16} /> Buat Rencana Pembelajaran
-          </Link>
-          <Link href="/guru/kelasku" className="hidden sm:flex items-center gap-1.5 px-4 py-2.5 bg-white border-2 border-emerald-200 text-emerald-700 rounded-xl text-sm font-semibold hover:bg-emerald-50 transition-all">
-            <Users size={16} /> KelasKu
-          </Link>
-          <Link href="/arena" className="hidden sm:flex items-center gap-1.5 px-4 py-2.5 bg-white border-2 border-violet-200 text-violet-700 rounded-xl text-sm font-semibold hover:bg-violet-50 transition-all">
-            <LayoutDashboard size={16} /> Dasbor Murid
-          </Link>
-        </div>
-      </div>
+      <TeacherCommandCenter
+        greeting={greeting}
+        fullName={user.fullName ?? "Guru"}
+        isFounder={user.isFounder}
+        totalSiswa={stats.totalSiswa}
+        kelasAktif={nilaiStats.length}
+        tugasMenunggu={nilaiStats.reduce((a: number, ns: any) => a + (ns.belumDinilai || 0), 0)}
+        loading={loading}
+      >
+        <CreateMenu />
+      </TeacherCommandCenter>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6 mt-6">
         <GuruLeaderboardCard misiStatus={misiStatus} />
         <div className="flex flex-col gap-4 min-w-0">
           <BannerProgramGuruCerdas />
