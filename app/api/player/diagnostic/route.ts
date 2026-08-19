@@ -22,6 +22,7 @@ import {
   AI_DIAGNOSTIC_SOURCE,
   aiDiagnosticEnabled,
   AI_DIAGNOSTIC_ALLOWED_SIZES,
+  AI_DIAGNOSTIC_COMING_SOON,
 } from "@/lib/diagnostic-ai/config";
 import { generateAiDiagnosticQuestion } from "@/lib/diagnostic-ai/generator";
 import {
@@ -582,6 +583,12 @@ async function previewDiagnostic(userId: string) {
         inProgressSessionId = session?.id ?? null;
       }
 
+      // Gerbang "Segera Hadir": soal Tes Awal AI generatif masih dalam QA
+      // (8.4.1 dipause). Murid tanpa baseline tidak boleh memulai tes dengan
+      // soal yang belum matang — tanda datang dari server, bukan tebakan UI.
+      const aiComingSoon =
+        assessment.state === "NO_BASELINE" && aiDiagnosticEnabled() && AI_DIAGNOSTIC_COMING_SOON;
+
       return NextResponse.json({
         mode: "PREVIEW",
         actionType: "DIAGNOSTIC",
@@ -594,7 +601,9 @@ async function previewDiagnostic(userId: string) {
         durationLabel: "±5–8 menit",
         skillsLabel: DIAGNOSTIC_SKILL_PRIORITY.map((skill) => DIAGNOSTIC_SKILL_LABELS[skill]).join(" · "),
         reasonCode: assessment.state === "BASELINE_IN_PROGRESS" ? "BASELINE_IN_PROGRESS" : "NO_EVIDENCE",
-        reasonText: labels.description,
+        reasonText: aiComingSoon
+          ? "Tes Awal sedang disempurnakan dan akan segera hadir. Sambil menunggu, kamu bisa mulai belajar dulu — hasil belajarmu tetap tercatat."
+          : labels.description,
         estimatedMinutes: DIAGNOSTIC_ESTIMATED_MINUTES,
         confidence: "NO_DATA",
         premiumDepth: "STANDARD",
@@ -605,6 +614,7 @@ async function previewDiagnostic(userId: string) {
         inProgressSessionId,
         learnerState: states,
         mentor: null,
+        comingSoon: aiComingSoon || undefined,
       });
     }
 
@@ -636,6 +646,8 @@ async function previewDiagnostic(userId: string) {
 try {
     if (aiDiagnosticEnabled()) {
       const states = await getLearnerState(userId);
+      // Gerbang "Segera Hadir" juga berlaku untuk entri Tes Awal AI lainnya.
+      const aiComingSoon = AI_DIAGNOSTIC_COMING_SOON;
       return NextResponse.json({
         mode: "PREVIEW",
         actionType: "DIAGNOSTIC",
@@ -649,8 +661,9 @@ try {
         durationLabel: "±5–8 menit",
         skillsLabel: DIAGNOSTIC_SKILL_PRIORITY.map((skill) => DIAGNOSTIC_SKILL_LABELS[skill]).join(" · "),
         reasonCode: "NO_EVIDENCE",
-        reasonText:
-          "Kamu belum punya riwayat latihan. Tes singkat ini memetakan kemampuanmu dulu — jawabanmu dipakai untuk menyesuaikan latihan berikutnya, tanpa nilai benar-salah yang merugikan.",
+        reasonText: aiComingSoon
+          ? "Tes Awal sedang disempurnakan dan akan segera hadir. Sambil menunggu, kamu bisa mulai belajar dulu — hasil belajarmu tetap tercatat."
+          : "Kamu belum punya riwayat latihan. Tes singkat ini memetakan kemampuanmu dulu — jawabanmu dipakai untuk menyesuaikan latihan berikutnya, tanpa nilai benar-salah yang merugikan.",
         estimatedMinutes: DIAGNOSTIC_ESTIMATED_MINUTES,
         confidence: "NO_DATA",
         premiumDepth: "STANDARD",
@@ -659,6 +672,7 @@ try {
         diagnosticCompleted: false,
         learnerState: states,
         mentor: null,
+        comingSoon: aiComingSoon || undefined,
       });
     }
   } catch {

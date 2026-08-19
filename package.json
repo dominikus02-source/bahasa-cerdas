@@ -256,6 +256,7 @@
     "test:assessment-monotonicity": "npx tsx scripts/test-assessment-monotonicity.ts",
     "test:assessment-randomized": "npx tsx scripts/test-assessment-randomized.ts",
     "test:diagnostic-4e1": "npx tsx scripts/test-diagnostic-4e1.ts",
+    "test:diagnostic-coming-soon": "npx tsx scripts/test-diagnostic-coming-soon.ts",
     "test:ai-diagnostic": "npx tsx scripts/test-ai-diagnostic.ts",
     "qa:ai-diagnostic-8-4": "npx tsx scripts/qa-ai-diagnostic-8-4.ts",
     "qa:ai-diagnostic-8-4:dry-run": "npx tsx scripts/qa-ai-diagnostic-8-4.ts --dry-run",

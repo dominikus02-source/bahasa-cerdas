@@ -48,6 +48,8 @@ export interface MyDayResponse {
   /** STEP 4E.2 — info STATE A: durasi jujur + skill yang benar-benar diuji. */
   durationLabel?: string;
   skillsLabel?: string;
+  /** Gerbang "Segera Hadir" — entri Tes Awal AI ditandai server saat soal belum siap produksi. */
+  comingSoon?: boolean;
 }
 
 export interface PersonalizedLearningAction {

@@ -102,6 +102,44 @@ export function ContinueLearningCard() {
     }
   }
 
+  // ── STATE A+ — Tes Awal dalam penyempurnaan → "Segera Hadir" (tanpa tombol mulai) ──
+  // Server mengirim comingSoon:true saat soal Tes Awal AI belum siap produksi.
+  // Murid tidak kecewa: kartu tetap informatif, CTA diganti jalur belajar umum.
+  if (isDiagnostic && currentMyDay.comingSoon) {
+    const infoLine = `${currentMyDay.sessionSize ?? 10} soal · ${currentMyDay.durationLabel ?? "±5–8 menit"}`;
+    return (
+      <section aria-label="Aksi hari ini" className="my-day-hero px-card px-5 py-7 md:p-8 relative overflow-hidden">
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--px-gold)] mb-2">Kenali Kemampuanmu</p>
+        <div className="relative flex flex-col md:flex-row md:items-center gap-5">
+          <div className="flex-1 min-w-0">
+            <h2 className="text-2xl md:text-[32px] font-semibold tracking-tight text-[var(--px-text)] mb-2 flex items-center gap-2">
+              <BookOpen size={21} strokeWidth={1.8} className="text-[var(--px-royal-2)] shrink-0" />
+              <span className="truncate">{currentMyDay.actionTitle}</span>
+            </h2>
+            <p className="text-sm text-[var(--px-text-dim)] leading-relaxed">{currentMyDay.reasonText}</p>
+            <p className="mt-2 text-xs font-semibold text-[var(--px-royal-2)]">{infoLine}</p>
+            {currentMyDay.skillsLabel && (
+              <p className="mt-1 text-[11px] text-[var(--px-text-dim)]">{currentMyDay.skillsLabel}</p>
+            )}
+            <Link
+              href="/arena/jalur-cerdas"
+              className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-[var(--px-royal-2)] hover:opacity-80"
+            >
+              Sambil menunggu, mulai belajar dulu
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+          <div className="shrink-0">
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] px-4 py-2.5 rounded-full bg-[rgba(255,210,74,0.14)] text-[var(--px-gold)] border border-[var(--px-gold)]/30">
+              <Sparkles size={13} />
+              Segera Hadir
+            </span>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   // ── STATE A — Belum ada bukti sama sekali → Tes Awal ──
   if (isDiagnostic) {
     const infoLine = `${currentMyDay.sessionSize ?? 10} soal · ${currentMyDay.durationLabel ?? "±5–8 menit"}`;
