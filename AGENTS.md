@@ -3849,13 +3849,56 @@ Hardening kontras + konsistensi visual Guru Dashboard (79 halaman) di atas fonda
 - JANGAN petakan disabled:*/text-white/block gelap/gradient; JANGAN tambah provider tema kedua; JANGAN turunkan nilai token (jebakan harness akan gagal).
 
 ### Remaining (tidak berubah)
-1. Commit/push fase 8.0+8.1 bila disetujui founder
+1. Commit/push fase ini bila disetujui founder
 2. LANJUT 8.4.1 saat kuota/reset: `QA_MAX_MINUTES=110 npx tsx scripts/qa-ai-diagnostic-8-4-1.ts --sessions 10` (resume S2 dst.) sampai ≥100 butir → re-run audit → target 0 ❌
 3. TKA UTBK/Guru enrichment 30 → 150
 4. Game server revival (VPS mati)
 5. GameRoom migration SQL via Supabase dashboard
 6. UI game solo: badge-score client vs server masih beda (kosmetik)
 7. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
+
+---
+
+## Phase GURU BERANDA DARK MODE 2.0 — Bagian 3b Compat Layer (Aug 19, 2026)
+
+### Goal
+Buat `/guru/beranda` + komponen turunannya (16 file) dark-ready premium dengan canonical `--clr-*` + scope `.bc-guru` — murni CSS, 0 logika/JSX diubah kecuali 1 fix visual banner. **Committed & pushed oleh founder (Aug 19).**
+
+### Audit
+- 16 file scope, 0 `dark:`. Cakupan Bagian 3 (8.0/8.1) OK untuk bg-white/*, hue 50–700 dasar, text 400–700, border dasar, ring solid.
+- **Gap**: opacity soft-tint (`bg-emerald-50/60|/70`, `bg-violet-50/40`, `bg-white/40` …), hue rose/orange/sky/teal/indigo, text `*-800/900/300/*/80`, border `*-50/300`, gradien `from/via/to` (27+ kombinasi), shadow warna (`--tw-shadow-color`), hover variants, icon chip `*-500/90` (iconBg dari `lib/guru/misi-guru.ts` & `lib/guru/next-action.ts`), dan **dark-override label putih di atas gradien solid** (mekanisme identik P0 8.2.1).
+- BannerSlideshow fallback card: `text-slate-300` di atas gradien navy inline (`from-slate-900 to-slate-800`, sengaja unmapped) → `text-white/70`.
+
+### Perubahan
+| File | Perubahan |
+|------|-----------|
+| `app/globals.css` | **Bagian 3b** (+~190 baris, di antara P0 fix 8.2.1 & Bagian 4): opacity soft-tint; hue tambahan; icon chip `*-500/90`; text/border/hover/ring/focus; 13 shadow-color; semua gradien from/via/to (cascade, `--tw-gradient-to: transparent`); dark-override `.dark .bc-guru :is(...).text-white` → `color-mix(token 55%, var(--clr-bg))` |
+| `components/public/BannerSlideshow.tsx` | desc fallback `text-slate-300` → `text-white/70` |
+| `scripts/test-guru-beranda-theme.ts` | BARU — 111 assertions (A coverage 100%, B 0 dark:, C 0 hex baru, D 60+ mapping, E protected zones) |
+| `docs/PHASE_GURU_BERANDA_DARK_MODE_2.md` | BARU — audit, mapping, a11y, verifikasi |
+| `package.json` | + `test:guru-beranda-theme` |
+
+### Mapping token (kanonik)
+emerald/green/teal→`--clr-accent*`; violet/purple/indigo→`--clr-violet*`; amber/orange/yellow→`--clr-warning*`; rose/red→`--clr-danger*`; sky/cyan/blue→`--clr-info*`; gray/slate→`--clr-surface*/border*/text*`. Dark override hue solid+`text-white` → 55% mix terhadap `--clr-bg` (label putih ≥4.5:1).
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `npm run test:guru-beranda-theme` | ✅ 111/111 |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (2 file) | ✅ 0 violations |
+| `git diff --check` | ✅ bersih |
+| `npm run build` (dummy env) | ✅ Sukses |
+| Protected zones | ✅ 0 diff |
+| Commit/push | ✅ pushed ke main |
+
+### Remaining (tidak berubah)
+1. LANJUT 8.4.1 saat kuota/reset: `QA_MAX_MINUTES=110 npx tsx scripts/qa-ai-diagnostic-8-4-1.ts --sessions 10` (resume S2 dst.) sampai ≥100 butir → re-run audit → target 0 ❌
+2. TKA UTBK/Guru enrichment 30 → 150
+3. Game server revival (VPS mati)
+4. GameRoom migration SQL via Supabase dashboard
+5. UI game solo: badge-score client vs server masih beda (kosmetik)
+6. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
 
 ---
 

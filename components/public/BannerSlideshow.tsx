@@ -106,7 +106,7 @@ export default function BannerSlideshow({
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-extrabold text-white">{s.fallbackTitle}</p>
-                  <p className="text-[11px] text-slate-300 mt-0.5">
+                  <p className="text-[11px] text-white/70 mt-0.5">
                     {s.fallbackDesc || "Main sekarang — seru dan tambah XP!"}
                   </p>
                 </div>

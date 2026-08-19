@@ -153,6 +153,7 @@
     "test:soal-generation-reliability": "npx tsx scripts/test-soal-generation-reliability.ts",
     "test:ai-tools-audit": "npx tsx scripts/test-ai-tools-audit.ts",
     "test:guru-dashboard-theme-consistency": "npx tsx scripts/test-guru-dashboard-theme-consistency.ts",
+    "test:guru-beranda-theme": "npx tsx scripts/test-guru-beranda-theme.ts",
     "audit:theme-hardcoded": "npx tsx scripts/audit-theme-hardcoded.ts",
     "test:bc-classroom-simple-flow": "npx tsx scripts/test-bc-classroom-simple-flow.ts",
     "test:bc-classroom-student-flow": "npx tsx scripts/test-bc-classroom-student-flow.ts",

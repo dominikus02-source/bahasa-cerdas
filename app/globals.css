@@ -646,6 +646,198 @@
 .dark .bc-guru :is(.bg-violet-500, .bg-violet-600, .bg-purple-500, .bg-purple-600).text-white { background-color: color-mix(in srgb, var(--clr-violet) 55%, var(--clr-bg)); }
 .dark .bc-guru :is(.bg-blue-500, .bg-blue-600).text-white { background-color: color-mix(in srgb, var(--clr-info) 55%, var(--clr-bg)); }
 
+/* ── Bagian 3b: Perluasan compat layer — GURU BERANDA DARK MODE 2.0 ──
+   Menutup gap utility warna yang dipakai halaman beranda guru + komponen
+   (GuruBerkarya, leaderboard, misi, badge grid, banner, icon chip misi) tapi
+   belum dipetakan di Bagian 3: opacity soft-tint, rose/orange/sky/teal/indigo,
+   bilah gradien from/via/to, ring & shadow berwarna, hover variant, icon chip
+   `*-500/90` (iconBg dari lib/guru), dan dark-override label putih di atas
+   gradien (mekanisme identik P0 fix 8.2.1). Hanya scope .bc-guru. ── */
+
+/* Opacity bg soft-tint (tidak ada di Bagian 3) */
+.bc-guru .bg-white\/40 { background-color: color-mix(in srgb, var(--clr-surface) 40%, transparent); }
+.bc-guru .bg-violet-50\/40 { background-color: color-mix(in srgb, var(--clr-violet-soft) 40%, transparent); }
+.bc-guru .bg-violet-50\/50 { background-color: color-mix(in srgb, var(--clr-violet-soft) 50%, transparent); }
+.bc-guru .bg-emerald-50\/60 { background-color: color-mix(in srgb, var(--clr-accent-soft) 60%, transparent); }
+.bc-guru .bg-emerald-50\/70 { background-color: color-mix(in srgb, var(--clr-accent-soft) 70%, transparent); }
+.bc-guru .bg-emerald-100\/40 { background-color: color-mix(in srgb, var(--clr-accent) 30%, transparent); }
+.bc-guru .bg-amber-100\/40 { background-color: color-mix(in srgb, var(--clr-warning) 35%, transparent); }
+.bc-guru .bg-rose-50\/50 { background-color: color-mix(in srgb, var(--clr-danger-soft) 50%, transparent); }
+.bc-guru .bg-gray-50\/60 { background-color: color-mix(in srgb, var(--clr-surface-2) 60%, transparent); }
+
+/* Hue tambahan: rose → danger, orange → warning, sky → info, teal → accent */
+.bc-guru .bg-rose-50,
+.bc-guru .bg-rose-100 { background-color: var(--clr-danger-soft); }
+.bc-guru .bg-rose-600,
+.bc-guru .bg-rose-700 { background-color: var(--clr-danger); }
+.bc-guru .bg-rose-200 { background-color: color-mix(in srgb, var(--clr-danger) 25%, var(--clr-surface-2)); }
+.bc-guru .bg-orange-50,
+.bc-guru .bg-orange-100 { background-color: var(--clr-warning-soft); }
+.bc-guru .bg-orange-300 { background-color: color-mix(in srgb, var(--clr-warning) 55%, var(--clr-surface-2)); }
+.bc-guru .bg-sky-50,
+.bc-guru .bg-sky-100 { background-color: var(--clr-info-soft); }
+.bc-guru .bg-green-100 { background-color: var(--clr-accent-soft); }
+.bc-guru .bg-teal-100\/30 { background-color: color-mix(in srgb, var(--clr-accent) 25%, transparent); }
+.bc-guru .bg-emerald-400 { background-color: var(--clr-accent); }
+.bc-guru .bg-amber-400 { background-color: var(--clr-warning); }
+
+/* Icon chips misi/aksi (iconBg: lib/guru/misi-guru.ts + lib/guru/next-action.ts) */
+.bc-guru .bg-emerald-500\/90,
+.bc-guru .bg-teal-500\/90 { background-color: var(--clr-accent); }
+.bc-guru .bg-violet-500\/90,
+.bc-guru .bg-purple-500\/90,
+.bc-guru .bg-indigo-500\/90 { background-color: var(--clr-violet); }
+.bc-guru .bg-amber-500\/90,
+.bc-guru .bg-orange-500\/90 { background-color: var(--clr-warning); }
+.bc-guru .bg-sky-500\/90 { background-color: var(--clr-info); }
+
+/* Text */
+.bc-guru .text-emerald-800,
+.bc-guru .text-emerald-900 { color: var(--clr-accent-strong); }
+.bc-guru .text-violet-800,
+.bc-guru .text-violet-900 { color: var(--clr-violet); }
+.bc-guru .text-violet-300 { color: color-mix(in srgb, var(--clr-violet) 60%, var(--clr-surface)); }
+.bc-guru .text-rose-400,
+.bc-guru .text-rose-500,
+.bc-guru .text-rose-600,
+.bc-guru .text-rose-700 { color: var(--clr-danger); }
+.bc-guru .text-orange-400,
+.bc-guru .text-orange-500,
+.bc-guru .text-orange-600,
+.bc-guru .text-orange-700 { color: var(--clr-warning-strong); }
+.bc-guru .text-sky-600,
+.bc-guru .text-sky-700 { color: var(--clr-info); }
+.bc-guru .text-amber-300 { color: var(--clr-warning); }
+.bc-guru .text-amber-800,
+.bc-guru .text-amber-900,
+.bc-guru .text-amber-950 { color: var(--clr-text); }
+.bc-guru .text-amber-900\/80 { color: color-mix(in srgb, var(--clr-text) 80%, transparent); }
+.bc-guru .text-purple-700\/80 { color: color-mix(in srgb, var(--clr-violet) 80%, transparent); }
+
+/* Border */
+.bc-guru .border-gray-50,
+.bc-guru .border-slate-50 { border-color: var(--clr-border); }
+.bc-guru .border-violet-300 { border-color: color-mix(in srgb, var(--clr-violet) 55%, var(--clr-border)); }
+.bc-guru .border-rose-200 { border-color: color-mix(in srgb, var(--clr-danger) 45%, var(--clr-border)); }
+.bc-guru .border-orange-200 { border-color: color-mix(in srgb, var(--clr-warning) 45%, var(--clr-border)); }
+
+/* Hover */
+.bc-guru .hover\:bg-violet-100:hover { background-color: var(--clr-violet-soft); }
+.bc-guru .hover\:bg-amber-100:hover { background-color: var(--clr-warning-soft); }
+.bc-guru .hover\:bg-rose-100:hover { background-color: var(--clr-danger-soft); }
+.bc-guru .hover\:bg-rose-200:hover { background-color: color-mix(in srgb, var(--clr-danger) 25%, var(--clr-surface-2)); }
+.bc-guru .hover\:bg-rose-700:hover { background-color: var(--clr-danger); }
+.bc-guru .hover\:bg-green-100:hover { background-color: var(--clr-accent-soft); }
+.bc-guru .hover\:bg-emerald-50\/60:hover { background-color: color-mix(in srgb, var(--clr-accent-soft) 60%, transparent); }
+.bc-guru .hover\:border-violet-300:hover { border-color: color-mix(in srgb, var(--clr-violet) 55%, var(--clr-border)); }
+.bc-guru .hover\:border-emerald-100:hover { border-color: color-mix(in srgb, var(--clr-accent) 45%, var(--clr-border)); }
+.bc-guru .hover\:text-violet-800:hover { color: var(--clr-violet); }
+.bc-guru .hover\:text-amber-800:hover { color: var(--clr-text); }
+.bc-guru .hover\:text-emerald-700:hover { color: var(--clr-accent-strong); }
+.bc-guru .hover\:text-rose-500:hover { color: var(--clr-danger); }
+.bc-guru .hover\:from-emerald-600:hover,
+.bc-guru .hover\:from-emerald-700:hover {
+  --tw-gradient-from: var(--clr-accent-strong);
+  --tw-gradient-to: transparent;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+/* Ring & focus soft (ring-2 ring-violet-100 avatar, highlight misi, input komentar) */
+.bc-guru .ring-violet-100 { --tw-ring-color: color-mix(in srgb, var(--clr-violet) 45%, var(--clr-border)); }
+.bc-guru .ring-emerald-100 { --tw-ring-color: color-mix(in srgb, var(--clr-accent) 45%, var(--clr-border)); }
+.bc-guru .ring-emerald-200 { --tw-ring-color: color-mix(in srgb, var(--clr-accent) 60%, var(--clr-border)); }
+.bc-guru .ring-amber-100 { --tw-ring-color: color-mix(in srgb, var(--clr-warning) 45%, var(--clr-border)); }
+.bc-guru .ring-amber-200 { --tw-ring-color: color-mix(in srgb, var(--clr-warning) 60%, var(--clr-border)); }
+.bc-guru .focus\:ring-violet-100:focus { --tw-ring-color: color-mix(in srgb, var(--clr-violet) 45%, var(--clr-border)); }
+.bc-guru .focus\:border-violet-300:focus { border-color: color-mix(in srgb, var(--clr-violet) 55%, var(--clr-border)); }
+.bc-guru .focus\:bg-white:focus { background-color: var(--clr-surface); }
+
+/* Shadow warna → token (override --tw-shadow-color; shadow-lg/md/dsm tetap) */
+.bc-guru .shadow-emerald-100\/50 { --tw-shadow-color: color-mix(in srgb, var(--clr-accent) 35%, transparent); }
+.bc-guru .shadow-emerald-200 { --tw-shadow-color: color-mix(in srgb, var(--clr-accent) 40%, transparent); }
+.bc-guru .shadow-emerald-500\/20 { --tw-shadow-color: color-mix(in srgb, var(--clr-accent-strong) 20%, transparent); }
+.bc-guru .shadow-violet-100\/50 { --tw-shadow-color: color-mix(in srgb, var(--clr-violet) 35%, transparent); }
+.bc-guru .shadow-violet-200 { --tw-shadow-color: color-mix(in srgb, var(--clr-violet) 40%, transparent); }
+.bc-guru .shadow-violet-300\/50 { --tw-shadow-color: color-mix(in srgb, var(--clr-violet) 50%, transparent); }
+.bc-guru .shadow-amber-100\/50 { --tw-shadow-color: color-mix(in srgb, var(--clr-warning) 35%, transparent); }
+.bc-guru .shadow-amber-200 { --tw-shadow-color: color-mix(in srgb, var(--clr-warning) 40%, transparent); }
+.bc-guru .shadow-amber-300\/50 { --tw-shadow-color: color-mix(in srgb, var(--clr-warning) 50%, transparent); }
+.bc-guru .shadow-amber-500\/20 { --tw-shadow-color: color-mix(in srgb, var(--clr-warning-strong) 20%, transparent); }
+.bc-guru .shadow-amber-500\/30 { --tw-shadow-color: color-mix(in srgb, var(--clr-warning-strong) 30%, transparent); }
+.bc-guru .shadow-orange-200\/50 { --tw-shadow-color: color-mix(in srgb, var(--clr-warning) 40%, transparent); }
+.bc-guru .shadow-slate-300\/50 { --tw-shadow-color: color-mix(in srgb, var(--clr-border-strong) 50%, transparent); }
+
+/* Gradien — from (reset to+stops), via, lalu to. URUTAN PENTING (cascade). */
+.bc-guru :is(.from-emerald-50, .from-emerald-100) { --tw-gradient-from: var(--clr-accent-soft); --tw-gradient-to: transparent; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+.bc-guru :is(.from-emerald-400, .from-emerald-500, .from-emerald-600) { --tw-gradient-from: var(--clr-accent); --tw-gradient-to: transparent; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+.bc-guru :is(.from-violet-50, .from-indigo-50, .from-purple-50) { --tw-gradient-from: var(--clr-violet-soft); --tw-gradient-to: transparent; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+.bc-guru :is(.from-violet-400, .from-violet-500, .from-purple-500, .from-indigo-500) { --tw-gradient-from: var(--clr-violet); --tw-gradient-to: transparent; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+.bc-guru :is(.from-amber-50, .from-amber-100, .from-yellow-50) { --tw-gradient-from: var(--clr-warning-soft); --tw-gradient-to: transparent; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+.bc-guru :is(.from-amber-300, .from-amber-400, .from-amber-500, .from-amber-600, .from-orange-500) { --tw-gradient-from: var(--clr-warning); --tw-gradient-to: transparent; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+.bc-guru :is(.from-blue-50, .from-cyan-50, .from-sky-50) { --tw-gradient-from: var(--clr-info-soft); --tw-gradient-to: transparent; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+.bc-guru :is(.from-blue-400, .from-blue-500, .from-cyan-500, .from-sky-500) { --tw-gradient-from: var(--clr-info); --tw-gradient-to: transparent; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+.bc-guru :is(.from-gray-50, .from-slate-50) { --tw-gradient-from: var(--clr-surface-2); --tw-gradient-to: transparent; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+.bc-guru :is(.from-gray-300, .from-slate-300) { --tw-gradient-from: var(--clr-border-strong); --tw-gradient-to: transparent; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+.bc-guru .from-white { --tw-gradient-from: var(--clr-surface); --tw-gradient-to: transparent; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+
+.bc-guru :is(.via-white, .via-slate-50, .via-gray-50) { --tw-gradient-via: var(--clr-surface); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to); }
+.bc-guru :is(.via-purple-50, .via-indigo-50, .via-fuchsia-50, .via-violet-50) { --tw-gradient-via: var(--clr-violet-soft); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to); }
+.bc-guru :is(.via-teal-50, .via-emerald-50, .via-green-50) { --tw-gradient-via: var(--clr-accent-soft); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to); }
+.bc-guru :is(.via-yellow-400, .via-amber-400, .via-orange-400) { --tw-gradient-via: var(--clr-warning); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to); }
+
+.bc-guru :is(.to-emerald-50, .to-teal-50, .to-green-50) { --tw-gradient-to: var(--clr-accent-soft); }
+.bc-guru :is(.to-emerald-600, .to-teal-500, .to-teal-600, .to-green-600) { --tw-gradient-to: var(--clr-accent); }
+.bc-guru :is(.to-emerald-700, .to-green-700) { --tw-gradient-to: var(--clr-accent-strong); }
+.bc-guru :is(.to-violet-50, .to-purple-50, .to-indigo-50, .to-fuchsia-50) { --tw-gradient-to: var(--clr-violet-soft); }
+.bc-guru :is(.to-purple-600, .to-indigo-600, .to-violet-600) { --tw-gradient-to: var(--clr-violet); }
+.bc-guru :is(.to-amber-50, .to-yellow-50, .to-orange-50, .to-orange-100) { --tw-gradient-to: var(--clr-warning-soft); }
+.bc-guru .to-amber-50\/40 { --tw-gradient-to: color-mix(in srgb, var(--clr-warning-soft) 40%, transparent); }
+.bc-guru :is(.to-amber-500, .to-yellow-500, .to-yellow-600, .to-yellow-700, .to-orange-500, .to-orange-600) { --tw-gradient-to: var(--clr-warning); }
+.bc-guru :is(.to-cyan-50, .to-sky-50, .to-blue-50) { --tw-gradient-to: var(--clr-info-soft); }
+.bc-guru :is(.to-cyan-600, .to-sky-600, .to-blue-600) { --tw-gradient-to: var(--clr-info); }
+.bc-guru :is(.to-slate-50, .to-gray-50) { --tw-gradient-to: var(--clr-surface-2); }
+.bc-guru .to-gray-400 { --tw-gradient-to: var(--clr-text-3); }
+.bc-guru .to-white { --tw-gradient-to: var(--clr-surface); }
+
+/* Dark override: label putih di atas gradien solid (mirror P0 fix 8.2.1) */
+.dark .bc-guru :is(.from-emerald-400, .from-emerald-500, .from-emerald-600, .from-emerald-700, .from-teal-500, .from-teal-600, .from-green-600).text-white {
+  --tw-gradient-from: color-mix(in srgb, var(--clr-accent-strong) 55%, var(--clr-bg));
+  --tw-gradient-to: transparent;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+.dark .bc-guru :is(.to-emerald-600, .to-emerald-700, .to-teal-500, .to-teal-600, .to-green-600).text-white {
+  --tw-gradient-to: color-mix(in srgb, var(--clr-accent-strong) 55%, var(--clr-bg));
+}
+.dark .bc-guru :is(.from-violet-400, .from-violet-500, .from-purple-500, .from-indigo-500).text-white {
+  --tw-gradient-from: color-mix(in srgb, var(--clr-violet) 55%, var(--clr-bg));
+  --tw-gradient-to: transparent;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+.dark .bc-guru :is(.to-purple-600, .to-indigo-600, .to-violet-600).text-white {
+  --tw-gradient-to: color-mix(in srgb, var(--clr-violet) 55%, var(--clr-bg));
+}
+.dark .bc-guru :is(.from-amber-400, .from-amber-500, .from-amber-600, .from-orange-400, .from-orange-500, .from-yellow-500).text-white {
+  --tw-gradient-from: color-mix(in srgb, var(--clr-warning) 55%, var(--clr-bg));
+  --tw-gradient-to: transparent;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+.dark .bc-guru :is(.to-orange-500, .to-orange-600, .to-amber-500, .to-yellow-500, .to-yellow-600, .to-yellow-700).text-white {
+  --tw-gradient-to: color-mix(in srgb, var(--clr-warning) 55%, var(--clr-bg));
+}
+.dark .bc-guru :is(.from-blue-400, .from-blue-500, .from-cyan-500).text-white {
+  --tw-gradient-from: color-mix(in srgb, var(--clr-info) 55%, var(--clr-bg));
+  --tw-gradient-to: transparent;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+.dark .bc-guru :is(.to-cyan-600, .to-sky-600, .to-blue-600).text-white {
+  --tw-gradient-to: color-mix(in srgb, var(--clr-info) 55%, var(--clr-bg));
+}
+.dark .bc-guru :is(.bg-emerald-500\/90, .bg-teal-500\/90) { background-color: color-mix(in srgb, var(--clr-accent-strong) 55%, var(--clr-bg)); }
+.dark .bc-guru :is(.bg-violet-500\/90, .bg-purple-500\/90, .bg-indigo-500\/90) { background-color: color-mix(in srgb, var(--clr-violet) 55%, var(--clr-bg)); }
+.dark .bc-guru :is(.bg-amber-500\/90, .bg-orange-500\/90) { background-color: color-mix(in srgb, var(--clr-warning) 55%, var(--clr-bg)); }
+.dark .bc-guru :is(.bg-sky-500\/90) { background-color: color-mix(in srgb, var(--clr-info) 55%, var(--clr-bg)); }
+.dark .bc-guru :is(.bg-rose-600, .bg-rose-700).text-white { background-color: color-mix(in srgb, var(--clr-danger) 55%, var(--clr-bg)); }
+
 /* ── Bagian 4: Primitif status badge GLOBAL (tanpa scope) — komponen shared
    (components/ui/badge) AA di light+dark tanpa `dark:` patch. Nilai kontras
    diverifikasi STEP 8.1: success 5.21 / warning 4.84 / danger 4.41 (UI) /
