@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import {
   BookOpen, ShoppingBag, Users, Gamepad2, Wand2, ClipboardCheck,
-  TrendingUp, ChevronRight, Star, Plus, Megaphone, BookOpenCheck, FileSpreadsheet, CalendarPlus,
+  TrendingUp, ChevronRight, Star,
   FileText, Video, Presentation, Database,
   Zap, Flame, FileUp, Upload, GraduationCap, BarChart3, Brain
 } from "lucide-react"
@@ -59,45 +59,13 @@ function StatCardSkeleton() {
 }
 
 function CreateMenu() {
-  const [open, setOpen] = useState(false);
-  const items = [
-    { label: "Pengumuman", icon: Megaphone, href: "/guru/kelasku", color: "text-blue-600 bg-blue-50" },
-    { label: "Tugas", icon: BookOpenCheck, href: "/guru/tugas-murid", color: "text-emerald-600 bg-emerald-50" },
-    { label: "Asesmen", icon: ClipboardCheck, href: "/guru/bank-soal", color: "text-violet-600 bg-violet-50" },
-    { label: "Materi", icon: FileSpreadsheet, href: "/guru/materi-ajar", color: "text-amber-600 bg-amber-50" },
-    { label: "Event", icon: CalendarPlus, href: "/guru/olimpiade", color: "text-rose-600 bg-rose-50" },
-  ];
   return (
-    <div className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl text-sm font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all shadow-lg shadow-emerald-500/20"
-      >
-        <Plus size={16} /> Buat
-      </button>
-      {open && (
-        <>
-          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 mt-2 w-52 z-20 bg-white rounded-2xl border border-gray-100 shadow-2xl p-2">
-            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 py-1.5">Apa yang ingin dibuat?</p>
-            {items.map((it) => (
-              <Link
-                key={it.label}
-                href={it.href}
-                onClick={() => setOpen(false)}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 transition-colors"
-              >
-                <span className={`w-8 h-8 rounded-lg flex items-center justify-center ${it.color}`}>
-                  <it.icon size={16} />
-                </span>
-                <span className="text-sm font-medium text-gray-700">{it.label}</span>
-              </Link>
-            ))}
-          </div>
-        </>
-      )}
-    </div>
+    <Link
+      href="/murid/beranda"
+      className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl text-sm font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all shadow-lg shadow-emerald-500/20"
+    >
+      <GraduationCap size={16} /> Dasbor Murid
+    </Link>
   );
 }
 
