@@ -64,6 +64,18 @@ export interface PersonalizedLearningAction {
   recommendation: "EASY" | "MEDIUM" | "HARD" | null;
 }
 
+/**
+ * MURID HOME 3.0 — bar akurasi skill target di kartu Next Best Action.
+ * Murni turunan dari data preview yang sudah ada (tidak ada fetch baru):
+ * myDay.personalization.targetSkill → entri learnerState yang bersesuaian.
+ */
+export function findFocusSkillRow(myDay: MyDayResponse | null): LearnerSkillState | null {
+  const target = myDay?.personalization?.targetSkill;
+  const rows = myDay?.learnerState ?? [];
+  if (!target || rows.length === 0) return null;
+  return rows.find((row) => row.skill === target) ?? null;
+}
+
 export interface PremiumStatus {
   plan?: string;
   subscriptionStatus?: string | null;

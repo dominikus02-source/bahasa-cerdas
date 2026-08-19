@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, BookOpen, Loader2, RotateCw, Target, Sparkles } from "lucide-react";
 import MentorCard from "@/components/arena/player/MentorCard";
-import { useHomeData } from "./home-data";
+import { findFocusSkillRow, useHomeData } from "./home-data";
 
 /**
  * Kartu Aksi Hari Ini — BC Assessment Engine 2.0 STATES.
@@ -280,6 +280,9 @@ export function ContinueLearningCard() {
   const stateTitle = currentMyDay.actionTitle;
   const stateDesc = personalization?.explanation ?? currentMyDay.reasonText;
   const stateCta = currentMyDay.ctaLabel;
+  // MURID HOME 3.0 — bar akurasi skill target (turunan data preview, tanpa fetch baru).
+  const focusRow = findFocusSkillRow(currentMyDay);
+  const focusPct = focusRow?.accuracy != null ? Math.round(focusRow.accuracy * 100) : null;
 
   return (
     <div className="space-y-3">
@@ -293,8 +296,30 @@ export function ContinueLearningCard() {
               <Sparkles size={21} strokeWidth={1.8} className="text-[var(--px-royal-2)] shrink-0" />
               <span className="truncate">{stateTitle}</span>
             </h2>
+            <p className="text-sm font-bold text-[var(--px-royal-2)] uppercase tracking-[0.12em] text-[11px] mb-1">Kenapa?</p>
             <p className="text-sm text-[var(--px-text-dim)] leading-relaxed">{stateDesc}</p>
-            <p className="mt-1 text-[11px] text-[var(--px-text-dim)]">Latihan dipilih berdasarkan kemampuanmu.</p>
+            {focusRow && focusPct !== null && (
+              <div className="mt-3 max-w-sm space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-[var(--px-text)]">{focusRow.label}</span>
+                  <span className="text-xs font-bold text-[var(--px-royal-2)]">{focusPct}%</span>
+                </div>
+                <div
+                  role="progressbar"
+                  aria-label={`Akurasi ${focusRow.label}`}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={focusPct}
+                  className="h-2 w-full overflow-hidden rounded-full bg-[var(--px-royal-2)]/15"
+                >
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-[var(--px-royal-2)] to-[var(--px-gold)]"
+                    style={{ width: `${focusPct}%` }}
+                  />
+                </div>
+              </div>
+            )}
+            <p className="mt-2 text-[11px] text-[var(--px-text-dim)]">Latihan dipilih berdasarkan kemampuanmu.</p>
             {startError && <p className="mt-3 text-xs font-semibold text-red-600 dark:text-red-300">{startError}</p>}
           </div>
           <div className="shrink-0">

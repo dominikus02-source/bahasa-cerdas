@@ -17,11 +17,11 @@ import { SecondaryLearningInfo } from "@/components/student-home/SecondaryLearni
 import SkillRadar from "@/components/arena/player/SkillRadar";
 import { useHomeData } from "@/components/student-home/home-data";
 
-// Hierarki My Day (learning companion):
-// 1. SAPAAN (hero) → 2. AKSI HARI INI (satu CTA dominan + mentor)
-// → 3. MISI HARIAN (XP/koin harian) → 4. KEMAMPUAN + MOTIVASI (skill + arena + premium)
-// → 5. PINTAS BELAJAR (AI BC + perjalanan) → 6. RUANG BELAJAR
-// → 7. SIMULASI → 8. KARYA + KABAR KELAS
+// Hierarki My Day (MURID HOME 3.0 — learning-first):
+// 1. SAPAAN (hero) → 2. NEXT BEST ACTION (satu CTA dominan + kenapa + skill target)
+// → 3. KEMAMPUAN + MOTIVASI (skill + arena + premium) → 4. PINTAS BELAJAR (AI BC + perjalanan)
+// → 5. MISI HARIAN (motivasi — belajar & progres dulu, gamifikasi setelahnya)
+// → 6. RUANG BELAJAR → 7. SIMULASI → 8. KARYA + KABAR KELAS
 export default function HomeFeedPage() {
   useEffect(() => {
     const detak = () => {
@@ -60,8 +60,6 @@ function HomeContent() {
 
       <ContinueLearningCard />
 
-      <DailyMissionCard />
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         <SkillRadar skills={myDay?.learnerState ?? null} loading={myDayLoading} failed={myDayFailed} />
         <div className="space-y-6">
@@ -74,6 +72,8 @@ function HomeContent() {
         <AIBCHomeCard />
         <LearningJourneySection />
       </div>
+
+      <DailyMissionCard />
 
       <RuangBelajarSection />
       <SimulasiUjianSection />

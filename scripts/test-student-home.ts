@@ -150,6 +150,33 @@ const works = read("components/student-home/RecentWorksSection.tsx");
 check("Karya → /api/siswa/karya?limit=4", works.includes('"/api/siswa/karya?limit=4"'));
 check("Karya → CTA /murid/karya", works.includes('href="/murid/karya"') && works.includes('href="/murid/karya/tulis"'));
 
+// 10 — MURID HOME 3.0: Next Best Action dominant + learning-first order
+console.log("\nMURID HOME 3.0 (additive):\n");
+const page3 = read("app/(dashboard)/murid/beranda/page.tsx");
+check("3.0 Misi Harian (motivasi) pindah SETELAH perjalanan belajar (journey)",
+  page3.indexOf("<LearningJourneySection />") < page3.indexOf("<DailyMissionCard />"));
+check("3.0 Urutan learning-first utuh: hero → aksi → skill → journey → misi → ruang",
+  page3.indexOf("<StudentHomeHero />") < page3.indexOf("<ContinueLearningCard />") &&
+  page3.indexOf("<ContinueLearningCard />") < page3.indexOf("<SkillRadar skills=") &&
+  page3.indexOf("<SkillRadar skills=") < page3.indexOf("<LearningJourneySection />") &&
+  page3.indexOf("<LearningJourneySection />") < page3.indexOf("<DailyMissionCard />") &&
+  page3.indexOf("<DailyMissionCard />") < page3.indexOf("<RuangBelajarSection />"));
+check("3.0 CTA primary tetap satu-satunya px-btn-gold di home (di luar klaim misi harian)",
+  read("components/student-home/ContinueLearningCard.tsx").includes("px-btn-gold") &&
+  ["AIBCHomeCard.tsx", "ArenaHomeSection.tsx", "LearningJourneySection.tsx"]
+    .every((f) => !read(`components/student-home/${f}`).includes("px-btn-gold")));
+const card3 = read("components/student-home/ContinueLearningCard.tsx");
+check("3.0 'Kenapa?' eksplisit di kartu aksi (why test)", card3.includes("Kenapa?"));
+check("3.0 Bar akurasi skill target: role=progressbar + aria-valuenow (a11y)",
+  card3.includes("role=\"progressbar\"") && card3.includes("aria-valuenow"));
+check("3.0 Data bar turunan dari data preview — tanpa fetch baru",
+  !card3.includes('"/api/player/skills"') && !card3.includes('"/api/player/journey"') &&
+  read("components/student-home/home-data.tsx").includes("findFocusSkillRow"));
+check("3.0 Kartu bebas literal skill-target (guard test:my-day-home #15)",
+  !card3.includes("targetSkill"));
+check("3.0 Laporan audit ada (docs/MURID_HOME_3_0_AUDIT.md)",
+  existsSync(join(ROOT, "docs/MURID_HOME_3_0_AUDIT.md")));
+
 console.log(`\nHasil: ${pass} lulus, ${fail} gagal`);
 if (fail > 0) process.exit(1);
 process.exit(0);
