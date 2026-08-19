@@ -1,13 +1,450 @@
 {
-  "sessionId": "c67b4480-9ea0-42a1-80a4-1fde7d659c86",
+  "sessionId": "f3814afc-503c-4f09-b3e7-3be44dc7ea5c",
   "archetype": "S1",
   "targetSize": 10,
-  "startedAt": "2026-08-17T21:34:08.863Z",
-  "durationMs": 644,
-  "aiCalls": 1,
-  "items": [],
-  "profile": null,
-  "bankFallbackNeeded": true,
-  "anyGenerationFailed": true,
+  "startedAt": "2026-08-18T06:16:32.944Z",
+  "durationMs": 112093,
+  "aiCalls": 10,
+  "providerStats": {
+    "groq": 10
+  },
+  "items": [
+    {
+      "id": "0ae7c1f6-c08c-4500-a28b-6162d36f390d",
+      "slot": 0,
+      "text": "Setiap pagi, Ani selalu menyapu halaman rumahnya sebelum berangkat ke sekolah. Ia percaya bahwa lingkungan yang bersih membuat hati menjadi tenang dan membantu orang lain merasa nyaman.",
+      "options": [
+        "Untuk menciptakan lingkungan bersih yang menenangkan",
+        "Supaya tidak ada serangga masuk",
+        "Agar rumahnya terlihat rapi",
+        "Karena ibunya menyuruhnya"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "0",
+      "skill": "READING",
+      "subskill": "READING_IDE_POKOK",
+      "difficulty": "EASY",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Kebersihan Lingkungan",
+      "misconceptionMap": {
+        "0": "Banyak siswa mengira tujuan utama menyapu adalah agar rumah terlihat rapi, padahal teks menekankan manfaat kebersihan bagi perasaan.",
+        "1": "Beberapa siswa berpikir Ani melakukannya karena perintah orang tua, tetapi teks tidak menyebutkan perintah tersebut.",
+        "3": "Ada yang mengira tujuan menyapu adalah mengusir serangga, namun teks tidak membahas serangga sama sekali."
+      },
+      "evidenceTarget": {
+        "skill": "READING",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan murid dalam mengidentifikasi ide pokok sebuah teks pendek, sehingga dapat menilai pemahaman mereka terhadap informasi utama yang disampaikan.",
+      "explanation": "Jawaban yang benar adalah bahwa Ani menyapu halaman untuk menciptakan lingkungan bersih yang menenangkan. Pilihan lain mengabaikan alasan yang disebutkan dalam teks, yaitu hubungan antara kebersihan dan ketenangan hati serta kenyamanan orang lain.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": false,
+      "selected": "1"
+    },
+    {
+      "id": "a2a8d5f8-a82e-4643-949d-b92046d58ec8",
+      "slot": 1,
+      "text": "Manakah penulisan yang tepat untuk kata yang berarti “perbuatan atau kegiatan” dalam kalimat berikut? “Dia memiliki banyak ___ dalam organisasi.”",
+      "options": [
+        "akfivitas",
+        "aktiftas",
+        "aktifitas",
+        "aktivitas"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "3",
+      "skill": "GRAMMAR",
+      "subskill": "GRAMMAR_EJAAN",
+      "difficulty": "EASY",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Penulisan Kata Baku",
+      "misconceptionMap": {
+        "0": "“aktifitas” sering dipakai karena terdengar mirip, namun huruf “v” tidak ada dalam ejaan baku kata tersebut.",
+        "1": "“akfivitas” merupakan kombinasi huruf yang tidak ada dalam bahasa Indonesia, sehingga tidak dapat diterima.",
+        "3": "“aktiftas” mengubah urutan huruf sehingga menghasilkan bentuk yang tidak dikenal dalam kamus."
+      },
+      "evidenceTarget": {
+        "skill": "GRAMMAR",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan murid mengenali ejaan yang baku, sehingga dapat menilai pemahaman mereka terhadap aturan penulisan kata dalam bahasa Indonesia.",
+      "explanation": "Kata yang dimaksud adalah “aktivitas”, yang merupakan bentuk baku sesuai Kamus Besar Bahasa Indonesia. Penulisan lain seperti “aktifitas”, “akfivitas”, atau “aktiftas” tidak sesuai kaidah ejaan yang disempurnakan.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": false,
+      "selected": "0"
+    },
+    {
+      "id": "ccc19e85-d218-4204-a8c7-19e210efea29",
+      "slot": 2,
+      "text": "Kata “cerah” paling tepat sinonimnya yang mana?",
+      "options": [
+        "terang",
+        "muram",
+        "kelam",
+        "gelap"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "0",
+      "skill": "VOCABULARY",
+      "subskill": "VOCABULARY_MAKNA_KATA",
+      "difficulty": "EASY",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Sinonim Kata Sifat",
+      "misconceptionMap": {
+        "0": "“Gelap” berarti tidak ada cahaya, berlawanan dengan arti “cerah”.",
+        "2": "“Muram” lebih menggambarkan suasana hati yang suram, bukan sinonim langsung “cerah”.",
+        "3": "“Kelam” juga berarti gelap atau suram, sehingga tidak cocok sebagai sinonim “cerah”."
+      },
+      "evidenceTarget": {
+        "skill": "VOCABULARY",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Item ini mengukur kemampuan murid dalam memahami makna kata dan menemukan sinonim yang tepat, yang merupakan kompetensi dasar pada subskill Makna Kata. Pilihan kata yang sering keliru dipilih oleh murid menjadi indikator pemahaman kosakata mereka.",
+      "explanation": "Kata “cerah” berarti memiliki cahaya yang kuat atau terang, sehingga sinonim yang tepat adalah “terang”. Pilihan lain seperti “gelap”, “muram”, atau “kelam” justru menggambarkan keadaan kurang cahaya atau suasana yang suram, bukan makna yang sama dengan “cerah”.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": false,
+      "selected": "1"
+    },
+    {
+      "id": "0e89bad0-6b49-451a-b57e-8ae3c9ed728a",
+      "slot": 3,
+      "text": "Kancil ingin menyeberangi sungai, tetapi buaya menolak kecuali Kancil menjanjikan akan menghitung semua buaya di sungai. Unsur cerita apa yang ditunjukkan pada kalimat di atas?",
+      "options": [
+        "Tema",
+        "Konflik",
+        "Latar",
+        "Amanat"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "1",
+      "skill": "LITERATURE",
+      "subskill": "LITERATURE_UNSUR_CERITA",
+      "difficulty": "MEDIUM",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Unsur Konflik Cerita",
+      "misconceptionMap": {
+        "0": "Siswa sering mengira konflik adalah tema karena menganggap masalah utama cerita adalah tema.",
+        "1": "Siswa mengira latar karena kalimat menyebutkan sungai, padahal latar hanya menjelaskan tempat dan waktu.",
+        "3": "Siswa mengira amanat karena menganggap adanya pesan moral tersirat, padahal kalimat belum menyampaikan pesan moral."
+      },
+      "evidenceTarget": {
+        "skill": "LITERATURE",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan murid mengidentifikasi unsur cerita, khususnya konflik, yang penting untuk memahami struktur naratif dalam teks sastra.",
+      "explanation": "Kalimat tersebut memperlihatkan pertentangan antara keinginan Kancil menyeberang dan syarat buaya, sehingga merupakan unsur konflik. Tema adalah gagasan utama cerita, latar menjelaskan waktu dan tempat, sedangkan amanat adalah pesan moral yang ingin disampaikan.",
+      "provider": "groq",
+      "warnings": [
+        "R2: teks soal harus 20–400 karakter"
+      ],
+      "answeredCorrect": false,
+      "selected": "0"
+    },
+    {
+      "id": "bbe145fa-76bb-40b8-bbf6-35815a93d573",
+      "slot": 4,
+      "text": "Manakah penulisan yang tepat untuk kata yang berarti “aktivitas atau perbuatan”?",
+      "options": [
+        "kegiatn",
+        "kegitan",
+        "kegiatan",
+        "kegiatann"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "2",
+      "skill": "WRITING",
+      "subskill": "WRITING_EJAAN",
+      "difficulty": "MEDIUM",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Ejaan Kata Baku dalam Teks Naratif",
+      "misconceptionMap": {
+        "0": "Penulisan “kegitan” menghilangkan huruf e setelah g, padahal e diperlukan untuk membentuk suku kata yang benar.",
+        "1": "Penulisan “kegiatann” menambahkan huruf n ekstra di akhir, yang tidak ada dalam bentuk baku kata tersebut.",
+        "3": "Penulisan “kegiatn” menghilangkan huruf e dan a, sehingga kata menjadi tidak lengkap dan tidak sesuai kaidah ejaan."
+      },
+      "evidenceTarget": {
+        "skill": "WRITING",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan murid mengidentifikasi ejaan yang tepat pada kata baku yang sering dipakai dalam menulis teks naratif, sehingga dapat menilai pemahaman dasar ejaan dalam menulis.",
+      "explanation": "Kata yang benar ditulis “kegiatan” dengan huruf e setelah g dan huruf a setelah h, serta tidak ada huruf tambahan. Pilihan lain menghilangkan huruf penting atau menambahkan huruf yang tidak diperlukan, sehingga ejaannya salah.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "2"
+    },
+    {
+      "id": "b1e55838-62e7-44d6-86f2-d8e9a967cc77",
+      "slot": 5,
+      "text": "Pada akhir pekan, siswa di sekolah mengamati pertandingan sepak bola yang berlangsung di lapangan sekolah. Mereka memakai seragam sekolah dan menonton dengan antusias.",
+      "options": [
+        "Mereka berolahraga di gym",
+        "Mereka bermain sepak bola",
+        "Mereka belajar di perpustakaan",
+        "Mereka menonton pertandingan sepak bola"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "3",
+      "skill": "READING",
+      "subskill": "READING_INFORMASI_TERSURAT",
+      "difficulty": "MEDIUM",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Kegiatan Olahraga",
+      "misconceptionMap": {
+        "0": "Siswa tidak bermain sepak bola; mereka hanya mengamati.",
+        "2": "Tidak ada informasi tentang belajar di perpustakaan.",
+        "3": "Tidak disebutkan aktivitas di gym."
+      },
+      "evidenceTarget": {
+        "skill": "READING",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan siswa dalam mengekstrak informasi yang tersurat dalam teks.",
+      "explanation": "Berdasarkan kalimat \"mengamati pertandingan sepak bola\" dan \"menonton dengan antusias\", dapat disimpulkan bahwa siswa menonton pertandingan sepak bola. Pilihan lain tidak sesuai dengan informasi yang diberikan.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": false,
+      "selected": "0"
+    },
+    {
+      "id": "51042f84-f909-4c57-9965-39b6f05112d9",
+      "slot": 6,
+      "text": "Manakah kalimat berikut yang paling efektif dalam menyampaikan maksud secara singkat dan jelas?",
+      "options": [
+        "Surat saya menulis setiap hari kepada teman karena ingin kabar terbaru menyampaikan.",
+        "Setiap hari, saya menulis surat kepada teman untuk memberi kabar terbaru.",
+        "Saya menulis surat kepada teman saya setiap hari karena ingin menyampaikan kabar terbaru.",
+        "Saya menulis surat kepada teman setiap hari, karena saya ingin memberi kabar terbaru."
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "1",
+      "skill": "GRAMMAR",
+      "subskill": "GRAMMAR_KALIMAT_EFEKTIF",
+      "difficulty": "MEDIUM",
+      "cognitiveTarget": "MENGANALISIS",
+      "topic": "Kalimat Efektif dalam Surat",
+      "misconceptionMap": {
+        "0": "Berpikir bahwa menambahkan kata “saya” dua kali membuat kalimat lebih jelas, padahal itu hanya menambah kepadatan tanpa menambah makna.",
+        "2": "Menganggap urutan kata yang tidak baku tetap mudah dipahami, padahal susunan yang kacau membuat makna menjadi ambigu.",
+        "3": "Mengira pengulangan kata “saya” memperkuat maksud, padahal pengulangan yang tidak perlu membuat kalimat menjadi berulang dan kurang efektif."
+      },
+      "evidenceTarget": {
+        "skill": "GRAMMAR",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan siswa menganalisis keefektifan kalimat, khususnya dalam memilih susunan kata yang ringkas dan jelas, sesuai dengan subskill Kalimat Efektif.",
+      "explanation": "Kalimat B paling efektif karena menggunakan susunan kata yang logis, bersifat aktif, dan tidak bertele‑tele. Kalimat lain terlalu panjang, susunan kata tidak alami, atau mengulang kata yang tidak diperlukan sehingga mengurangi kejelasan.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": false,
+      "selected": "0"
+    },
+    {
+      "id": "5e62cc15-0f20-41e9-a31f-04657cfc9654",
+      "slot": 7,
+      "text": "Manakah di antara kata berikut yang merupakan antonim tepat dari kata “menyongsong”?",
+      "options": [
+        "menunda",
+        "menghindari",
+        "menyambut",
+        "menolak"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "3",
+      "skill": "VOCABULARY",
+      "subskill": "VOCABULARY_SINONIM_ANTONIM",
+      "difficulty": "HARD",
+      "cognitiveTarget": "MENGANALISIS",
+      "topic": "Kata Kerja Berimbuhan",
+      "misconceptionMap": {
+        "1": "Banyak siswa mengira “menyambut” adalah lawan kata, padahal sebenarnya kata tersebut memiliki arti yang sama dengan “menyongsong”.",
+        "2": "“Menghindari” sering dipilih karena berhubungan dengan menjauh, namun tidak secara langsung berlawanan dengan arti menerima atau menghadap. ",
+        "3": "“Menunda” berhubungan dengan penundaan waktu, sehingga tidak mencerminkan lawan makna “menyongsong”."
+      },
+      "evidenceTarget": {
+        "skill": "VOCABULARY",
+        "confidence": "HIGH"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan siswa dalam mengidentifikasi hubungan antonim‑sinonim, yang penting untuk memperkaya kosakata dan memahami nuansa makna kata dalam konteks.",
+      "explanation": "Kata “menyongsong” berarti menyambut atau menghadap dengan harapan. Antonim yang tepat adalah “menolak”, yang berarti menolak atau tidak menerima. Pilihan lain bukan antonim karena “menyambut” adalah sinonim, “menghindari” hanya menyiratkan menjauhkan diri, dan “menunda” berkaitan dengan penundaan waktu, bukan lawan makna.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": false,
+      "selected": "0"
+    },
+    {
+      "id": "19f8764f-7f77-40fb-8a39-d86da4ae23f1",
+      "slot": 8,
+      "text": "Berikut ini kalimat yang menggunakan gaya bahasa metafora. Pilih kalimat yang benar.",
+      "options": [
+        "Hujan turun seperti air mata dari langit.",
+        "Hatinya berdenyut, jam di ruang kosong.",
+        "Bunga itu mekar indah seperti senyum anak kecil.",
+        "Dia berlari cepat seperti kuda di padang."
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "1",
+      "skill": "LITERATURE",
+      "subskill": "LITERATURE_GAYA_BAHASA",
+      "difficulty": "HARD",
+      "cognitiveTarget": "MENGANALISIS",
+      "topic": "Metafora dalam puisi",
+      "misconceptionMap": {
+        "0": "Salah karena menggunakan ‘seperti’, jadi ini simile, bukan metafora.",
+        "1": "Salah karena menggunakan ‘seperti’, jadi ini simile, bukan metafora.",
+        "3": "Salah karena menggunakan ‘seperti’, jadi ini simile, bukan metafora."
+      },
+      "evidenceTarget": {
+        "skill": "LITERATURE",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan siswa dalam mengenali dan membedakan gaya bahasa metafora dan simile, yang penting untuk analisis teks sastra.",
+      "explanation": "Kalimat C mengandung metafora karena membandingkan hati dengan jam tanpa menggunakan kata perbandingan seperti ‘seperti’ atau ‘bagai’. Kalimat A, B, dan D menggunakan kata ‘seperti’, sehingga merupakan simile, bukan metafora.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": false,
+      "selected": "0"
+    },
+    {
+      "id": "618dcf7e-423a-4a8f-8487-18a5263c3328",
+      "slot": 9,
+      "text": "Pilih kalimat yang paling efektif dalam menyampaikan maksud bahwa seorang guru sedang mengajak siswa untuk membaca buku sambil menenangkan pikiran.",
+      "options": [
+        "Guru mengajak siswa membaca buku sambil menenangkan pikiran.",
+        "Guru, mengajak siswa membaca buku, sambil menenangkan pikiran.",
+        "Guru mengajak siswa membaca buku sambil menenangkan pikiran, sehingga pikiran mereka menjadi tenang.",
+        "Guru mengajak siswa membaca buku, sambil menenangkan pikiran."
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "3",
+      "skill": "WRITING",
+      "subskill": "WRITING_KALIMAT_EFEKTIF",
+      "difficulty": "HARD",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Penggunaan Tanda Baca dalam Kalimat Kompleks",
+      "misconceptionMap": {
+        "0": "Kalimat nomor satu tidak memisahkan klausa adverbial, sehingga pembaca dapat salah mengartikan ‘sambil menenangkan pikiran’ sebagai bagian dari objek ‘membaca buku’.",
+        "1": "Koma di depan ‘mengajak’ tidak sesuai kaidah, membuat kalimat terputus dan tidak jelas.",
+        "3": "Menambahkan ‘sehingga pikiran mereka menjadi tenang’ membuat kalimat terlalu panjang dan mengalihkan fokus dari maksud utama."
+      },
+      "evidenceTarget": {
+        "skill": "WRITING",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan siswa dalam menggunakan tanda baca secara tepat untuk memperjelas makna kalimat kompleks, yang penting dalam menulis efektif.",
+      "explanation": "Kalimat nomor tiga menggunakan koma sebelum ‘sambil menenangkan pikiran’ sehingga memisahkan klausa utama dengan klausa adverbial. Ini membuat makna jelas bahwa ‘sambil menenangkan pikiran’ merupakan keterangan waktu, bukan bagian dari objek ‘membaca buku’. Kalimat lain mengandung kesalahan penempatan koma, ambiguitas, atau tambahan informasi yang tidak perlu.",
+      "provider": "groq",
+      "warnings": [
+        "R8: options harus berisi 2–4 teks unik s/d 160 karakter",
+        "R9: correctAnswer harus index opsi yang valid"
+      ],
+      "answeredCorrect": false,
+      "selected": "0"
+    }
+  ],
+  "profile": {
+    "overallAccuracy": 0.1,
+    "perSkill": [
+      {
+        "skill": "GRAMMAR",
+        "label": "Tata Bahasa",
+        "attempts": 2,
+        "correct": 0,
+        "accuracy": 0,
+        "category": "WEAK",
+        "confidence": "PROVISIONAL",
+        "band": {
+          "minLevel": 1,
+          "maxLevel": 4
+        },
+        "evidenceCount": 2,
+        "strongestEvidence": null,
+        "recommendation": "EASY"
+      },
+      {
+        "skill": "LITERATURE",
+        "label": "Sastra",
+        "attempts": 2,
+        "correct": 0,
+        "accuracy": 0,
+        "category": "WEAK",
+        "confidence": "PROVISIONAL",
+        "band": {
+          "minLevel": 1,
+          "maxLevel": 4
+        },
+        "evidenceCount": 2,
+        "strongestEvidence": null,
+        "recommendation": "EASY"
+      },
+      {
+        "skill": "READING",
+        "label": "Membaca",
+        "attempts": 2,
+        "correct": 0,
+        "accuracy": 0,
+        "category": "WEAK",
+        "confidence": "PROVISIONAL",
+        "band": {
+          "minLevel": 1,
+          "maxLevel": 4
+        },
+        "evidenceCount": 2,
+        "strongestEvidence": null,
+        "recommendation": "EASY"
+      },
+      {
+        "skill": "VOCABULARY",
+        "label": "Kosakata",
+        "attempts": 2,
+        "correct": 0,
+        "accuracy": 0,
+        "category": "WEAK",
+        "confidence": "PROVISIONAL",
+        "band": {
+          "minLevel": 1,
+          "maxLevel": 4
+        },
+        "evidenceCount": 2,
+        "strongestEvidence": null,
+        "recommendation": "EASY"
+      },
+      {
+        "skill": "WRITING",
+        "label": "Menulis",
+        "attempts": 2,
+        "correct": 1,
+        "accuracy": 0.5,
+        "category": "WEAK",
+        "confidence": "PROVISIONAL",
+        "band": {
+          "minLevel": 1,
+          "maxLevel": 4
+        },
+        "evidenceCount": 2,
+        "strongestEvidence": "MEDIUM",
+        "recommendation": "EASY"
+      }
+    ],
+    "strongest": "WRITING",
+    "weakest": "GRAMMAR",
+    "developing": [],
+    "insufficient": [],
+    "confidence": "PROVISIONAL",
+    "insightText": "Kemampuan terkuatmu: Menulis. Fokus kembangkan: Tata Bahasa.",
+    "placement": {
+      "band": "DASAR",
+      "label": "Dasar",
+      "minLevel": 1,
+      "maxLevel": 4,
+      "provisional": true,
+      "note": "Akurasi keseluruhan masih rendah. Mulai dari tingkat dasar jalur belajar agar fondasi kuat."
+    }
+  },
+  "bankFallbackNeeded": false,
+  "anyGenerationFailed": false,
   "slot0Warnings": []
 }

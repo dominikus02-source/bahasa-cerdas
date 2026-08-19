@@ -1,13 +1,451 @@
 {
-  "sessionId": "4d6078a4-df0e-4354-8cf3-57a2e56c77ad",
+  "sessionId": "ce7f9549-2017-4c14-8468-986e481ac3ed",
   "archetype": "S3",
   "targetSize": 10,
-  "startedAt": "2026-08-17T21:34:20.285Z",
-  "durationMs": 609,
-  "aiCalls": 1,
-  "items": [],
-  "profile": null,
-  "bankFallbackNeeded": true,
+  "startedAt": "2026-08-18T02:54:03.672Z",
+  "durationMs": 515998,
+  "aiCalls": 18,
+  "providerStats": {
+    "groq": 9
+  },
+  "items": [
+    {
+      "id": "1f5184f3-ed71-4790-8ee4-9876b9eec323",
+      "slot": 0,
+      "text": "Di sekolah, setiap hari siswa mengikuti berbagai kegiatan seperti olahraga, seni, dan diskusi. Kegiatan ini tidak hanya menambah kesenangan, tetapi juga membantu siswa belajar bekerja sama, meningkatkan kreativitas, dan mengasah kemampuan berbicara di depan umum. Guru memfasilitasi setiap kegiatan dengan memberikan arahan dan umpan balik yang konstruktif.\n\nApa ide pokok dari paragraf di atas?",
+      "options": [
+        "Olahraga lebih penting daripada seni.",
+        "Siswa harus mengikuti semua kegiatan di sekolah.",
+        "Kegiatan sekolah membantu siswa belajar bekerja sama dan mengembangkan kreativitas.",
+        "Guru hanya mengajar di kelas."
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "2",
+      "skill": "READING",
+      "subskill": "READING_IDE_POKOK",
+      "difficulty": "EASY",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Kegiatan Sekolah",
+      "misconceptionMap": {
+        "0": "Siswa harus ikut semua kegiatan, padahal kegiatan bersifat sukarela dan disesuaikan dengan minat.",
+        "2": "Guru tidak hanya mengajar di kelas, melainkan juga memfasilitasi kegiatan di luar kelas.",
+        "3": "Olahraga tidak lebih penting daripada seni; keduanya memiliki nilai tambah yang berbeda."
+      },
+      "evidenceTarget": {
+        "skill": "READING",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan siswa memahami inti pesan dalam teks, yang penting untuk pengembangan pemahaman membaca di tingkat awal.",
+      "explanation": "Paragraf tersebut menyoroti manfaat kegiatan sekolah dalam mengembangkan kerja sama, kreativitas, dan kemampuan berbicara siswa. Ide pokoknya terletak pada peran kegiatan tersebut sebagai sarana pembelajaran yang holistik.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "2"
+    },
+    {
+      "id": "1401a9ca-2edb-43d3-8ea7-3e2983be3d6f",
+      "slot": 1,
+      "text": "Pilihlah penulisan yang tepat untuk kata yang berarti “tempat di sekitar kita” dalam kalimat berikut: “Kita harus menjaga kebersihan ___.”",
+      "options": [
+        "lingkungann",
+        "lingkungannya",
+        "lingkungannnya",
+        "lingkungan"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "3",
+      "skill": "GRAMMAR",
+      "subskill": "GRAMMAR_EJAAN",
+      "difficulty": "EASY",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Kebersihan Lingkungan",
+      "misconceptionMap": {
+        "0": "Menghilangkan huruf ‘a’ membuat kata tidak lengkap dan tidak sesuai kaidah bahasa Indonesia.",
+        "1": "Banyak siswa mengira harus menambahkan akhiran “-nya” padahal dalam kalimat ini tidak diperlukan.",
+        "2": "Penambahan ‘n’ ganda merupakan kesalahan umum karena terdengar mirip, tetapi tidak sesuai dengan ejaan yang benar."
+      },
+      "evidenceTarget": {
+        "skill": "GRAMMAR",
+        "confidence": "HIGH"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan murid mengidentifikasi ejaan yang tepat pada kata baku, penting untuk menilai pemahaman dasar tata bahasa. Dipilih karena mudah dan relevan untuk tingkat kesulitan EASY.",
+      "explanation": "Kata yang tepat adalah “lingkungan” karena bentuk dasarnya sudah lengkap dan tidak memerlukan akhiran “-nya” pada konteks tersebut. Pilihan lain menambahkan atau mengurangi huruf ‘n’ sehingga tidak sesuai dengan ejaan yang baku.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": false,
+      "selected": "0"
+    },
+    {
+      "id": "e9d9bceb-3879-4d94-99e7-678bfe7b6380",
+      "slot": 2,
+      "text": "Kata \"kereta\" memiliki arti apa?",
+      "options": [
+        "alat transportasi laut",
+        "kendaraan yang bergerak di rel",
+        "alat transportasi udara",
+        "kendaraan yang bergerak di jalan"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "1",
+      "skill": "VOCABULARY",
+      "subskill": "VOCABULARY_MAKNA_KATA",
+      "difficulty": "EASY",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Transportasi",
+      "misconceptionMap": {
+        "0": "Kereta tidak beroperasi di laut, sehingga ini salah.",
+        "1": "",
+        "2": "Kereta tidak terbang, jadi ini salah.",
+        "3": "Siswa sering mengira kereta sama dengan bus karena keduanya bergerak di jalan, padahal kereta menggunakan rel."
+      },
+      "evidenceTarget": {
+        "skill": "VOCABULARY",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Mengukur pemahaman siswa tentang arti kata dalam konteks transportasi.",
+      "explanation": "Kata \"kereta\" merujuk pada kendaraan yang berjalan di jalur rel. Sementara kendaraan yang bergerak di jalan biasanya disebut bus atau mobil, dan kereta tidak beroperasi di laut maupun udara.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "1"
+    },
+    {
+      "id": "c1f0aead-8921-49b2-8b35-c92e010ddd0a",
+      "slot": 3,
+      "text": "Berikut ini adalah contoh situasi dalam sebuah cerita. Pilihlah yang menggambarkan konflik antara tokoh utama dengan tokoh antagonis.",
+      "options": [
+        "Rudi sedang beristirahat di rumah setelah lelah belajar.",
+        "Rudi berusaha menyelamatkan desa dari monster yang mengancam.",
+        "Rudi membantu temannya menyiapkan tugas.",
+        "Rudi menulis surat kepada guru tentang liburan."
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "1",
+      "skill": "LITERATURE",
+      "subskill": "LITERATURE_UNSUR_CERITA",
+      "difficulty": "MEDIUM",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Unsur Konflik Cerita",
+      "misconceptionMap": {
+        "0": "Berpikir istirahat dapat menjadi konflik karena rasa lelah.",
+        "1": "Tidak ada miskonsepsi; ini jawaban benar.",
+        "2": "Mengira membantu teman merupakan konflik karena melibatkan dua orang.",
+        "3": "Menganggap menulis surat kepada guru sebagai konflik karena adanya perbedaan pendapat."
+      },
+      "evidenceTarget": {
+        "skill": "LITERATURE",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan murid mengidentifikasi unsur konflik dalam teks naratif, yang penting untuk memahami struktur cerita dan hubungan antar tokoh.",
+      "explanation": "Kalimat nomor 2 menunjukkan adanya pertentangan antara Rudi (tokoh utama) dengan monster (tokoh antagonis), sehingga menimbulkan konflik. Pilihan lain hanya menggambarkan kegiatan atau interaksi yang tidak melibatkan pertentangan, sehingga bukan contoh konflik.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "1"
+    },
+    {
+      "id": "390fb0fd-49aa-4515-8b26-413ea294364b",
+      "slot": 4,
+      "text": "Pilihlah penulisan yang tepat untuk kata yang berarti “makanan yang mengandung banyak vitamin”.",
+      "options": [
+        "buahbuh",
+        "buh-buahan",
+        "buah-buahan",
+        "buah buahan"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "2",
+      "skill": "WRITING",
+      "subskill": "WRITING_EJAAN",
+      "difficulty": "MEDIUM",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Makanan Sehat",
+      "misconceptionMap": {
+        "0": "Menulis tanpa spasi atau tanda hubung menjadikan kata menjadi satu rangkaian huruf yang tidak sesuai dengan aturan penulisan kata majemuk.",
+        "1": "Penambahan huruf \"h\" di tengah kata tidak terdapat dalam ejaan standar, sehingga menghasilkan bentuk yang tidak dikenali.",
+        "2": "Penulisan yang benar menggunakan tanda hubung, sehingga kata menjadi \"buah-buahan\" sesuai kaidah ejaan.",
+        "3": "Banyak siswa menulis kata majemuk tanpa tanda hubung karena menganggapnya seperti dua kata terpisah, padahal dalam ejaan baku kata tersebut harus dipisahkan dengan tanda hubung."
+      },
+      "evidenceTarget": {
+        "skill": "WRITING",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan siswa mengenali ejaan baku kata majemuk, yang penting untuk menulis teks yang jelas dan sesuai standar bahasa.",
+      "explanation": "Penulisan yang benar adalah \"buah-buahan\" karena kata majemuk ini termasuk nomina yang memerlukan tanda hubung sesuai Pedoman Umum Ejaan Bahasa Indonesia. Pada opsi lain, baik tanpa hubung, penambahan huruf yang tidak ada, atau menulis menjadi satu kata, menghasilkan bentuk yang tidak sesuai kaidah baku.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "2"
+    },
+    {
+      "id": "9c3c730d-844b-4a7a-9a1c-2c0362655ce2",
+      "slot": 5,
+      "text": "Berikut ini kutipan surat yang ditulis oleh Rani, siswa kelas 5B:\n\"Yth. Bapak Kepala Sekolah, saya, Rani, kelas 5B, ingin meminjam buku 'Petualangan Bumi' selama tiga hari, mulai Senin 12 Juni. Saya akan mengembalikannya pada hari Kamis. Terima kasih.\"\nBerdasarkan surat tersebut, berapa lama Rani berencana meminjam buku itu?",
+      "options": [
+        "2 hari",
+        "5 hari",
+        "4 hari",
+        "3 hari"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "3",
+      "skill": "READING",
+      "subskill": "READING_INFORMASI_TERSURAT",
+      "difficulty": "MEDIUM",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Perpustakaan Sekolah",
+      "misconceptionMap": {
+        "0": "Siswa sering mengira bahwa \"hari Kamis\" berarti dua hari setelah Senin, padahal ada tiga hari penuh termasuk Senin, Selasa, dan Rabu.",
+        "1": "Ada yang berpikir bahwa periode peminjaman harus lebih lama karena buku penting, padahal tidak ada informasi tambahan dalam surat.",
+        "2": "Beberapa siswa mengira bahwa \"hari Kamis\" termasuk dalam hitungan, sehingga menambahkan satu hari lagi menjadi empat hari.",
+        "3": "Tidak ada miskonsepsi; ini adalah jawaban yang benar."
+      },
+      "evidenceTarget": {
+        "skill": "READING",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan siswa dalam mengekstrak informasi spesifik dari teks surat, penting untuk mengasah kemampuan membaca informasi tersurat.",
+      "explanation": "Rani menyebutkan bahwa ia akan meminjam buku selama tiga hari, dimulai pada hari Senin dan mengembalikannya pada hari Kamis. Jadi lama peminjaman adalah tiga hari. Pilihan lain mengabaikan informasi yang jelas disebutkan dalam surat.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "3"
+    },
+    {
+      "id": "a3f79d57-356a-4368-8a65-97ee332756e3",
+      "slot": 6,
+      "text": "Manakah kalimat berikut yang paling efektif menyampaikan ide tentang pentingnya membaca setiap hari?",
+      "options": [
+        "Membaca buku setiap hari sangat penting karena dapat menambah pengetahuan, memperluas wawasan, dan juga meningkatkan kemampuan berpikir kritis.",
+        "Pentingnya membaca setiap hari terletak pada manfaatnya yang meliputi penambahan pengetahuan, perluasan wawasan, serta peningkatan kemampuan berpikir kritis.",
+        "Setiap hari, membaca buku penting.",
+        "Membaca setiap hari itu penting karena menambah pengetahuan."
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "3",
+      "skill": "GRAMMAR",
+      "subskill": "GRAMMAR_KALIMAT_EFEKTIF",
+      "difficulty": "MEDIUM",
+      "cognitiveTarget": "MENGANALISIS",
+      "topic": "Hobi Membaca",
+      "misconceptionMap": {
+        "0": "Kalimat terlalu panjang dan mengulang informasi sehingga tidak efektif.",
+        "1": "Kalimat berbelit‑belit dengan frasa yang berulang, membuatnya kurang efektif.",
+        "2": "Kalimat terlalu singkat dan tidak menjelaskan mengapa membaca penting."
+      },
+      "evidenceTarget": {
+        "skill": "GRAMMAR",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan siswa mengidentifikasi kalimat yang efektif, penting untuk menulis dengan jelas dan ringkas.",
+      "explanation": "Kalimat keempat paling efektif karena singkat, jelas, dan langsung menyebutkan manfaat utama membaca. Kalimat lain terlalu panjang, berulang, atau tidak memberikan alasan yang cukup.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": false,
+      "selected": "0"
+    },
+    {
+      "id": "02bd28c2-7e8b-48a6-b6ef-6c4a56c1d49d",
+      "slot": 7,
+      "text": "Manakah sinonim kata “gerimis” di antara pilihan berikut?",
+      "options": [
+        "salju",
+        "badai",
+        "hujan lebat",
+        "hujan rintik"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "3",
+      "skill": "VOCABULARY",
+      "subskill": "VOCABULARY_SINONIM_ANTONIM",
+      "difficulty": "HARD",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Cuaca Musiman",
+      "misconceptionMap": {
+        "0": "Mengira salju sebagai sinonim atau antonim gerimis; salju adalah bentuk presipitasi yang berbeda sama sekali.",
+        "1": "Menganggap badai sebagai antonim gerimis; sebenarnya badai adalah fenomena cuaca yang lebih ekstrem, bukan lawan kata gerimis.",
+        "2": "Mengira bahwa gerimis berarti hujan deras, padahal gerimis adalah hujan ringan.",
+        "3": "Jawaban benar: “hujan rintik” memang memiliki arti yang sama dengan gerimis."
+      },
+      "evidenceTarget": {
+        "skill": "VOCABULARY",
+        "confidence": "HIGH"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan murid mengenali sinonim kata tingkat lanjutan, penting untuk memperkaya kosakata dan memahami nuansa makna dalam teks.",
+      "explanation": "Kata “gerimis” berarti hujan yang turun dengan intensitas ringan, biasanya berupa tetesan kecil. Sinonim yang tepat adalah “hujan rintik”, sedangkan “hujan lebat”, “badai”, dan “salju” memiliki makna yang berbeda.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "3"
+    },
+    {
+      "id": "093cdf0a-caf9-4a42-badc-e57489158a34",
+      "slot": 8,
+      "text": "Berikut kutipan puisi: \"Di antara gemerisik angin, ia menari seperti bayangan di atas sungai.\" Gaya bahasa apa yang digunakan penulis?",
+      "options": [
+        "Personifikasi",
+        "Simile",
+        "Metafora",
+        "Aliterasi"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "1",
+      "skill": "LITERATURE",
+      "subskill": "LITERATURE_GAYA_BAHASA",
+      "difficulty": "HARD",
+      "cognitiveTarget": "MENGANALISIS",
+      "topic": "Kebudayaan Lokal",
+      "misconceptionMap": {
+        "0": "Personifikasi memberi sifat manusia pada benda, tidak terlihat di kutipan ini.",
+        "1": "Simile memang menggunakan kata \"seperti\" atau \"bagai\", sehingga tepat untuk kutipan ini.",
+        "2": "Metafora sering dipakai tanpa kata perbandingan, namun di sini ada kata \"seperti\" yang menandakan perbandingan, sehingga bukan metafora.",
+        "3": "Aliterasi adalah pengulangan bunyi konsonan, tidak ada pada kutipan ini."
+      },
+      "evidenceTarget": {
+        "skill": "LITERATURE",
+        "confidence": "HIGH"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan siswa dalam mengenali dan menganalisis gaya bahasa dalam teks sastra, khususnya penggunaan simile.",
+      "explanation": "Gaya bahasa yang digunakan adalah simile karena penulis menggunakan kata \"seperti\" untuk membandingkan gerakan menari dengan bayangan. Metafora tidak memakai kata perbandingan, dan personifikasi tidak ada unsur memberi sifat manusia pada benda.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "1"
+    },
+    {
+      "id": "1f997eb0-ebdb-426d-89cf-1a2aa0bdafed",
+      "slot": 9,
+      "text": "Manakah kalimat berikut yang paling efektif menyampaikan ide tentang pentingnya penggunaan teknologi dalam pembelajaran?",
+      "options": [
+        "Penggunaan teknologi dalam pembelajaran sangat penting karena dapat membantu siswa belajar lebih mudah, lebih cepat, dan lebih menyenangkan.",
+        "Dengan teknologi, proses belajar menjadi lebih kompleks namun tetap diperlukan agar siswa tidak ketinggalan zaman.",
+        "Penggunaan teknologi mempermudah proses belajar mengajar dengan memberikan akses cepat ke sumber belajar dan memotivasi siswa untuk aktif berpartisipasi.",
+        "Teknologi dapat meningkatkan kualitas belajar siswa, sehingga guru harus selalu mengintegrasikan perangkat digital dalam setiap pelajaran yang diajarkan."
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "2",
+      "skill": "WRITING",
+      "subskill": "WRITING_KALIMAT_EFEKTIF",
+      "difficulty": "HARD",
+      "cognitiveTarget": "MENGANALISIS",
+      "topic": "Teknologi dalam Pembelajaran",
+      "misconceptionMap": {
+        "0": "Murid berpikir bahwa menambahkan banyak kata sifat membuat kalimat lebih kuat, padahal justru membuatnya bertele‑tele.",
+        "1": "Murid mengira bahwa menyebutkan tantangan membuat kalimat lebih realistis, namun kata 'kompleks' menurunkan kejelasan dan efektivitas.",
+        "3": "Murid menganggap bahwa pernyataan umum lebih tepat, padahal kalimat efektif harus spesifik dan langsung pada manfaat utama."
+      },
+      "evidenceTarget": {
+        "skill": "WRITING",
+        "confidence": "HIGH"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan siswa mengidentifikasi kalimat yang efektif, yaitu kemampuan menyusun kalimat singkat, jelas, dan berfokus pada gagasan utama, yang penting dalam menulis. Soal dipilih karena tingkat kesulitan HARD menuntut analisis kritis terhadap struktur kalimat.",
+      "explanation": "Kalimat ketiga efektif karena singkat, menggunakan struktur aktif, dan langsung menyebut manfaat utama teknologi yaitu akses cepat dan motivasi siswa. Kalimat pertama terlalu berulang dan menambahkan kata sifat yang tidak perlu, kalimat kedua bersifat umum tanpa contoh konkret, dan kalimat keempat mengandung kontradiksi serta kata 'kompleks' yang memberi kesan negatif.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "2"
+    }
+  ],
+  "profile": {
+    "overallAccuracy": 0.8,
+    "perSkill": [
+      {
+        "skill": "GRAMMAR",
+        "label": "Tata Bahasa",
+        "attempts": 2,
+        "correct": 0,
+        "accuracy": 0,
+        "category": "WEAK",
+        "confidence": "PROVISIONAL",
+        "band": {
+          "minLevel": 1,
+          "maxLevel": 4
+        },
+        "evidenceCount": 2,
+        "strongestEvidence": null,
+        "recommendation": "EASY"
+      },
+      {
+        "skill": "LITERATURE",
+        "label": "Sastra",
+        "attempts": 2,
+        "correct": 2,
+        "accuracy": 1,
+        "category": "STRONG",
+        "confidence": "PROVISIONAL",
+        "band": {
+          "minLevel": 9,
+          "maxLevel": 12
+        },
+        "evidenceCount": 2,
+        "strongestEvidence": "HARD",
+        "recommendation": "HARD"
+      },
+      {
+        "skill": "READING",
+        "label": "Membaca",
+        "attempts": 2,
+        "correct": 2,
+        "accuracy": 1,
+        "category": "STRONG",
+        "confidence": "PROVISIONAL",
+        "band": {
+          "minLevel": 9,
+          "maxLevel": 12
+        },
+        "evidenceCount": 2,
+        "strongestEvidence": "MEDIUM",
+        "recommendation": "HARD"
+      },
+      {
+        "skill": "VOCABULARY",
+        "label": "Kosakata",
+        "attempts": 2,
+        "correct": 2,
+        "accuracy": 1,
+        "category": "STRONG",
+        "confidence": "PROVISIONAL",
+        "band": {
+          "minLevel": 9,
+          "maxLevel": 12
+        },
+        "evidenceCount": 2,
+        "strongestEvidence": "HARD",
+        "recommendation": "HARD"
+      },
+      {
+        "skill": "WRITING",
+        "label": "Menulis",
+        "attempts": 2,
+        "correct": 2,
+        "accuracy": 1,
+        "category": "STRONG",
+        "confidence": "PROVISIONAL",
+        "band": {
+          "minLevel": 9,
+          "maxLevel": 12
+        },
+        "evidenceCount": 2,
+        "strongestEvidence": "HARD",
+        "recommendation": "HARD"
+      }
+    ],
+    "strongest": "LITERATURE",
+    "weakest": "GRAMMAR",
+    "developing": [],
+    "insufficient": [],
+    "confidence": "PROVISIONAL",
+    "insightText": "Kemampuan terkuatmu: Sastra. Fokus kembangkan: Tata Bahasa.",
+    "placement": {
+      "band": "MENENGAH",
+      "label": "Menengah",
+      "minLevel": 5,
+      "maxLevel": 8,
+      "provisional": true,
+      "note": "Akurasi keseluruhan sedang. Mulai dari tingkat menengah jalur belajar."
+    }
+  },
+  "bankFallbackNeeded": false,
   "anyGenerationFailed": true,
   "slot0Warnings": []
 }

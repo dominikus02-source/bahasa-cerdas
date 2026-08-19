@@ -1,11 +1,45 @@
 {
-  "sessionId": "af033f28-f99d-436c-abf2-53c036f192ae",
+  "sessionId": "0bee27fc-cb77-4507-89eb-e2755a74b7f9",
   "archetype": "S5",
   "targetSize": 10,
-  "startedAt": "2026-08-17T21:34:32.016Z",
-  "durationMs": 600,
-  "aiCalls": 1,
-  "items": [],
+  "startedAt": "2026-08-18T03:18:26.049Z",
+  "durationMs": 384805,
+  "aiCalls": 7,
+  "items": [
+    {
+      "id": "56a8763a-d143-4948-9715-7784db8f766d",
+      "slot": 0,
+      "text": "Di sebuah sekolah di pinggiran kota, ada seorang siswa bernama Rafi. Setiap hari setelah jam pelajaran selesai, Rafi langsung menuju ke perpustakaan sekolah. Ia memilih buku cerita petualangan dan membaca dengan penuh semangat. Rafi merasa bahwa membaca membuat dunia menjadi lebih luas dan menambah pengetahuannya.",
+      "options": [
+        "Anak belajar membaca di sekolah",
+        "Anak suka membaca buku di perpustakaan",
+        "Anak menulis cerita",
+        "Anak menghabiskan waktu di perpustakaan membaca"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "1",
+      "skill": "READING",
+      "subskill": "READING_IDE_POKOK",
+      "difficulty": "EASY",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Kegiatan Sekolah",
+      "misconceptionMap": {
+        "1": "Siswa memang belajar membaca di sekolah, namun tidak menonjolkan kegiatan di perpustakaan.",
+        "2": "Meskipun Rafi menghabiskan waktu di perpustakaan, fokusnya adalah pada membaca, bukan sekadar menghabiskan waktu.",
+        "3": "Menulis cerita tidak disebutkan dalam teks, sehingga tidak menjadi ide pokok."
+      },
+      "evidenceTarget": {
+        "skill": "READING",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan siswa dalam menafsirkan ide pokok dari teks bacaan singkat, yang penting untuk memahami makna keseluruhan.",
+      "explanation": "Kalimat utama paragraf menekankan bahwa Rafi pergi ke perpustakaan setiap hari dan membaca buku dengan semangat. Opsi pertama mencerminkan inti cerita, sedangkan opsi lain menyoroti hal-hal yang tidak disebutkan secara langsung.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "1"
+    }
+  ],
   "profile": null,
   "bankFallbackNeeded": true,
   "anyGenerationFailed": true,

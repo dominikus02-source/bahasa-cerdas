@@ -46,7 +46,19 @@ function shuffleItem(item: AiDiagnosticItem): AiDiagnosticItem {
   const parsed = Number(item.correctAnswer);
   if (!Number.isInteger(parsed)) return item;
   const shuffled = shuffleOptions(item.options, parsed);
-  return { ...item, options: shuffled.opsi, correctAnswer: String(shuffled.jawaban) };
+  const idxToNew = new Map<string, number>();
+  item.options.forEach((option, i) => idxToNew.set(option, shuffled.opsi.indexOf(option)));
+  const misconceptionMap: Record<string, string> = {};
+  for (const [key, value] of Object.entries(item.misconceptionMap ?? {})) {
+    const newIndex = idxToNew.get(item.options[Number(key)] ?? "");
+    if (newIndex !== undefined && newIndex >= 0) misconceptionMap[String(newIndex)] = value;
+  }
+  return {
+    ...item,
+    options: shuffled.opsi,
+    correctAnswer: String(shuffled.jawaban),
+    misconceptionMap,
+  };
 }
 
 export async function generateAiDiagnosticQuestion(
@@ -74,10 +86,12 @@ export async function generateAiDiagnosticQuestion(
       });
     } catch {
       lastIssues = ["percobaan sebelumnya gagal dijalankan — coba ulang"];
+      if (attempt < AI_DIAGNOSTIC_MAX_RETRIES) await new Promise((resolve) => setTimeout(resolve, 3000 * (attempt + 1)));
       continue;
     }
     if (!response.content.trim()) {
       lastIssues = ["output kosong dari model"];
+      if (attempt < AI_DIAGNOSTIC_MAX_RETRIES) await new Promise((resolve) => setTimeout(resolve, 3000 * (attempt + 1)));
       continue;
     }
     let parsed: unknown;

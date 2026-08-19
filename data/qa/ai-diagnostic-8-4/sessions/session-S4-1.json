@@ -1,13 +1,453 @@
 {
-  "sessionId": "d356f732-9872-440c-8e14-c8cb93fc0570",
+  "sessionId": "e1c261ce-6222-482c-80b5-7c5399259de5",
   "archetype": "S4",
   "targetSize": 10,
-  "startedAt": "2026-08-17T21:34:23.956Z",
-  "durationMs": 636,
-  "aiCalls": 1,
-  "items": [],
-  "profile": null,
-  "bankFallbackNeeded": true,
+  "startedAt": "2026-08-18T03:05:12.273Z",
+  "durationMs": 347199,
+  "aiCalls": 16,
+  "providerStats": {
+    "groq": 9
+  },
+  "items": [
+    {
+      "id": "80a0ab6b-f567-4135-9f6f-42dc0523e7b4",
+      "slot": 0,
+      "text": "Bacalah teks berikut!\n\nTina dan Rudi sudah bersahabat sejak kelas tiga. Setiap sore mereka bermain bersama di lapangan sekolah. Suatu hari, Rudi jatuh dan terluka. Tina membantu Rudi pulang dan merawatnya sampai sembuh. Karena itu, mereka semakin dekat dan selalu saling membantu.\n\nIde pokok teks di atas adalah...",
+      "options": [
+        "Persahabatan yang ditunjukkan melalui tolong‑menolong",
+        "Kegiatan bermain di lapangan sekolah setiap sore",
+        "Kecelakaan yang menimpa Rudi",
+        "Kebiasaan Tina merawat teman yang sakit"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "0",
+      "skill": "READING",
+      "subskill": "READING_IDE_POKOK",
+      "difficulty": "EASY",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Persahabatan",
+      "misconceptionMap": {
+        "0": "Murid cenderung menganggap kegiatan bermain sebagai inti cerita karena disebutkan berulang kali, padahal itu hanya latar kegiatan.",
+        "1": "Kecelakaan Rudi memang penting, tetapi bukan ide utama; itu hanya peristiwa yang memperlihatkan persahabatan.",
+        "3": "Merawat teman yang sakit memang terjadi, namun itu merupakan contoh konkret dari ide utama, bukan ide pokoknya."
+      },
+      "evidenceTarget": {
+        "skill": "READING",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan murid mengidentifikasi ide pokok sebuah teks naratif, yang penting untuk memahami makna keseluruhan bacaan.",
+      "explanation": "Ide pokok teks adalah persahabatan yang terjalin kuat karena sikap tolong‑menolong antara Tina dan Rudi. Pilihan lain hanya menyoroti detail tertentu, bukan keseluruhan makna teks.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": false,
+      "selected": "1"
+    },
+    {
+      "id": "7fc99f10-29e8-486c-88c2-768b34dd1ddb",
+      "slot": 1,
+      "text": "Manakah penulisan yang tepat untuk mengisi titik kosong pada kalimat berikut: \"Dia tinggal ___ rumah neneknya.\"",
+      "options": [
+        "di dalam",
+        "di-dalam",
+        "didalem",
+        "didalam"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "0",
+      "skill": "GRAMMAR",
+      "subskill": "GRAMMAR_EJAAN",
+      "difficulty": "EASY",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Preposisi Majemuk",
+      "misconceptionMap": {
+        "0": "Tidak menyadari bahwa preposisi \"di dalam\" harus dipisah menjadi dua kata.",
+        "1": "Berpikir tanda hubung diperlukan untuk memisahkan preposisi.",
+        "2": "Mengira bahwa menulisnya menjadi satu kata lebih singkat dan benar.",
+        "3": "Menganggap \"didalam\" adalah bentuk baku karena terdengar alami."
+      },
+      "evidenceTarget": {
+        "skill": "GRAMMAR",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan siswa mengidentifikasi ejaan yang tepat pada preposisi majemuk, penting untuk menilai pemahaman aturan penulisan ruang dalam teks.",
+      "explanation": "Penulisan yang benar adalah \"di dalam\" karena merupakan preposisi yang terdiri dari dua kata terpisah. Penulisan lain seperti \"didalem\", \"di-dalam\", atau \"didalam\" tidak sesuai kaidah ejaan Bahasa Indonesia.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "0"
+    },
+    {
+      "id": "42ba7abc-fb89-48d1-ac8d-5d68af37b56a",
+      "slot": 2,
+      "text": "Pada kalimat berikut, pilihlah arti yang tepat untuk kata yang digarisbawahi: \"Ani naik **sepeda** ke sekolah setiap pagi.\"",
+      "options": [
+        "Alat musik",
+        "Alat tulis",
+        "Kendaraan yang ditarik oleh kuda",
+        "Kendaraan beroda dua yang digerakkan dengan pedal"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "3",
+      "skill": "VOCABULARY",
+      "subskill": "VOCABULARY_MAKNA_KATA",
+      "difficulty": "EASY",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Alat Transportasi",
+      "misconceptionMap": {
+        "0": "Murid mengira sepeda adalah alat musik karena terdengar mirip dengan kata 'sintetis'.",
+        "1": "Murid mengira sepeda adalah alat tulis karena kebingungan dengan kata 'pensil' yang berawalan 'p'.",
+        "2": "Murid mengira sepeda ditarik oleh hewan karena mengasosiasikannya dengan kendaraan tradisional.",
+        "3": "Jawaban benar: sepeda adalah kendaraan beroda dua yang digerakkan dengan pedal."
+      },
+      "evidenceTarget": {
+        "skill": "VOCABULARY",
+        "confidence": "HIGH"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan murid mengenali makna kata dalam konteks kalimat, penting untuk pemahaman teks dan memperkaya kosakata.",
+      "explanation": "Kata 'sepeda' berarti kendaraan beroda dua yang digerakkan dengan pedal, sehingga pilihan kedua adalah jawaban yang tepat. Pilihan pertama salah karena sepeda tidak ditarik oleh kuda, pilihan ketiga salah karena sepeda bukan alat musik, dan pilihan keempat salah karena sepeda bukan alat tulis.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "3"
+    },
+    {
+      "id": "9c7fa8dd-e3f5-47b9-9372-f4e36fc20277",
+      "slot": 3,
+      "text": "Pada suatu sore yang cerah, Dinda berlari ke pasar tradisional yang terletak di pinggir sungai. Di sana ia bertemu Pak Budi, penjual ikan yang selalu menyapa dengan senyum. Dinda membeli beberapa ikan segar untuk makan malam keluarganya.",
+      "options": [
+        "Di rumah Dinda",
+        "Di kebun binatang",
+        "Di pasar tradisional pinggir sungai",
+        "Di sebuah sekolah"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "2",
+      "skill": "LITERATURE",
+      "subskill": "LITERATURE_UNSUR_CERITA",
+      "difficulty": "MEDIUM",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Latar",
+      "misconceptionMap": {
+        "0": "Murid berpikir latar adalah rumah Dinda karena tokohnya berada di sana, padahal teks hanya menyebutkan aktivitas di pasar.",
+        "1": "Murid mengaitkan kata \"sore\" dengan kebun binatang karena menganggap suasana alam, padahal tidak ada indikasi kebun binatang dalam teks.",
+        "2": "Jawaban benar: teks menyebutkan pasar tradisional di pinggir sungai sebagai lokasi utama.",
+        "3": "Murid mengira cerita berlatar sekolah karena sering mendengar cerita sekolah di pelajaran lain."
+      },
+      "evidenceTarget": {
+        "skill": "LITERATURE",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan murid mengidentifikasi unsur latar dalam teks naratif, yang penting untuk memahami struktur cerita. Dipilih karena tingkat kesulitan menengah menantang murid mengaitkan informasi eksplisit dengan unsur cerita.",
+      "explanation": "Latar tempat cerita dapat dilihat dari keterangan lokasi yang disebutkan dalam teks, yaitu \"pasar tradisional yang terletak di pinggir sungai\". Oleh karena itu pilihan yang tepat adalah pasar tradisional. Pilihan lain tidak disebutkan dalam teks sehingga tidak sesuai.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "2"
+    },
+    {
+      "id": "59fed938-b86b-4f35-a575-6747c5510013",
+      "slot": 4,
+      "text": "Pilih penulisan yang tepat untuk melengkapi kalimat berikut: \"Setiap akhir pekan, keluarga saya suka makan ___ di warung pinggir jalan.\"",
+      "options": [
+        "sateh",
+        "sate",
+        "saté",
+        "satee"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "1",
+      "skill": "WRITING",
+      "subskill": "WRITING_EJAAN",
+      "difficulty": "MEDIUM",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Makanan Tradisional",
+      "misconceptionMap": {
+        "0": "Penambahan huruf h di akhir (sateh) muncul karena kebiasaan mendengar bunyi aspirasi, namun kaidah ejaan tidak memperbolehkan huruf h tambahan.",
+        "1": "Tidak ada miskonsepsi, ini jawaban benar",
+        "2": "Banyak siswa mengira bahwa kata serapan harus ditulis dengan aksen pada huruf e (saté), padahal dalam Kamus Besar Bahasa Indonesia tidak ada aksen tersebut.",
+        "3": "Beberapa siswa menambahkan huruf e ganda (satee) karena menganggap pengucapan panjang memerlukan penulisan ganda, padahal ejaan baku tetap satu huruf e."
+      },
+      "evidenceTarget": {
+        "skill": "WRITING",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan siswa mengidentifikasi ejaan baku kata serapan dalam konteks menulis, penting untuk menulis teks yang sesuai kaidah.",
+      "explanation": "Kata yang dimaksud adalah makanan khas Indonesia yang ejaannya tanpa tanda diakritik, yaitu \"sate\". Penambahan aksen pada huruf e, penggandaan huruf e, atau penambahan huruf h tidak sesuai kaidah ejaan Bahasa Indonesia.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "1"
+    },
+    {
+      "id": "1ea2f6e6-e182-4e48-91e3-76d0e14f141b",
+      "slot": 5,
+      "text": "Pada hari Senin, Sekolah Menengah Pertama XYZ mengadakan lomba membaca puisi. Setiap kelas mengirimkan dua perwakilan. Lomba dimulai pukul 08.00 dan berakhir pukul 10.30. Pemenang lomba akan mendapatkan piagam penghargaan dan hadiah buku cerita.",
+      "options": [
+        "4 jam",
+        "1 jam 30 menit",
+        "2 jam 30 menit",
+        "3 jam"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "2",
+      "skill": "READING",
+      "subskill": "READING_INFORMASI_TERSURAT",
+      "difficulty": "MEDIUM",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Kegiatan Sekolah",
+      "misconceptionMap": {
+        "0": "Ada yang mengira lomba berlangsung sampai tengah hari (12.00) padahal tidak ada informasi tersebut dalam teks.",
+        "1": "Murid sering mengira lomba selesai setengah jam setelah mulai, padahal teks menyebutkan selesai pada 10.30, bukan 09.30.",
+        "2": "Jawaban benar karena menghitung selisih waktu 08.00‑10.30 menjadi 2 jam 30 menit.",
+        "3": "Beberapa siswa memperkirakan durasi tiga jam dengan menambah satu jam ekstra tanpa dasar teks."
+      },
+      "evidenceTarget": {
+        "skill": "READING",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Item ini mengukur kemampuan siswa menemukan informasi faktual secara tepat dari teks singkat, keterampilan penting dalam membaca pemahaman tingkat dasar hingga menengah.",
+      "explanation": "Paragraf menyebutkan lomba dimulai pada pukul 08.00 dan selesai pada pukul 10.30, sehingga durasinya adalah 2 jam 30 menit. Pilihan lain salah karena mengabaikan atau salah menghitung selisih waktu yang disebutkan.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": false,
+      "selected": "0"
+    },
+    {
+      "id": "6d480063-2093-4a61-a0bb-9afc22380e4f",
+      "slot": 6,
+      "text": "Manakah kalimat berikut yang paling efektif dalam menyampaikan informasi tentang cuaca hari ini?",
+      "options": [
+        "Hari ini cuaca panas terik.",
+        "Hari ini cuaca sangat panas dan terik, sehingga terasa sangat panas.",
+        "Cuaca hari ini terasa panas sekali.",
+        "Cuaca hari ini sangat panas."
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "3",
+      "skill": "GRAMMAR",
+      "subskill": "GRAMMAR_KALIMAT_EFEKTIF",
+      "difficulty": "MEDIUM",
+      "cognitiveTarget": "MENGANALISIS",
+      "topic": "Deskripsi Lingkungan Sekitar",
+      "misconceptionMap": {
+        "0": "Berpikir bahwa kata \"panas terik\" sudah cukup, padahal tidak ada kata keterangan tingkat intensitas seperti \"sangat\".",
+        "1": "Menganggap bahwa menambahkan kata \"dan terik\" membuat kalimat lebih lengkap, padahal itu mengulang makna panas.",
+        "2": "Mengira penggunaan kata \"sekali\" lebih kuat, padahal \"sekali\" bersifat informal dan tidak diperlukan dalam kalimat efektif."
+      },
+      "evidenceTarget": {
+        "skill": "GRAMMAR",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan murid mengidentifikasi kalimat yang efektif, penting untuk menilai pemahaman struktur kalimat yang ringkas dan jelas.",
+      "explanation": "Kalimat \"Cuaca hari ini sangat panas\" menyampaikan informasi secara singkat tanpa pengulangan atau kata yang tidak perlu. Kalimat lain mengandung redundansi, kurangnya kata keterangan yang tepat, atau penggunaan bahasa yang kurang baku.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "3"
+    },
+    {
+      "id": "e1eda541-1d10-4768-a7d6-db0a6728725d",
+      "slot": 7,
+      "text": "Kata 'menyebar' memiliki antonim yang paling tepat adalah:",
+      "options": [
+        "menyerap",
+        "menyebarkan",
+        "mengumpulkan",
+        "menyimpan"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "3",
+      "skill": "VOCABULARY",
+      "subskill": "VOCABULARY_SINONIM_ANTONIM",
+      "difficulty": "HARD",
+      "cognitiveTarget": "MENGANALISIS",
+      "topic": "Kebudayaan",
+      "misconceptionMap": {
+        "0": "'Menyerap' berarti menyerap, bukan menahan, sehingga tidak benar sebagai antonim 'menyebar'.",
+        "1": "Siswa sering mengira antonim harus berlawanan makna secara langsung; 'menyebarkan' just intensifies spreading, not opposite.",
+        "2": "'Mengumpulkan' berarti mengumpulkan, tidak secara langsung menandakan menahan, sehingga tidak tepat sebagai antonim.",
+        "3": "Benar, 'menyimpan' berarti menahan atau menyimpan, yang berlawanan dengan 'menyebar'."
+      },
+      "evidenceTarget": {
+        "skill": "VOCABULARY",
+        "confidence": "HIGH"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan siswa dalam mengidentifikasi antonim kata, yang penting untuk memperluas kosakata dan memahami nuansa makna.",
+      "explanation": "Antonym of 'menyebar' is a word that means to keep or hold, not to spread. 'Menyimpan' means to keep or store, which is opposite of spreading. The other options either mean to spread further or have unrelated meanings.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "3"
+    },
+    {
+      "id": "41a67a21-9aaa-4b75-b661-32cef981943f",
+      "slot": 8,
+      "text": "Di tengah kota yang sibuk, suara lampu neon berkelip seperti bintang jatuh, menari di atas trotoar yang berdebu. Gaya bahasa apa yang digunakan pada kalimat di atas?",
+      "options": [
+        "Hyperbola",
+        "Simile",
+        "Metafora",
+        "Personifikasi"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "1",
+      "skill": "LITERATURE",
+      "subskill": "LITERATURE_GAYA_BAHASA",
+      "difficulty": "HARD",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Kehidupan Sehari-hari",
+      "misconceptionMap": {
+        "0": "Hyperbola berlebihan, tidak ada perbandingan.",
+        "1": "Simile memang menggunakan kata 'seperti', jadi ini jawaban benar.",
+        "2": "Metafora biasanya tidak memakai kata 'seperti', sehingga siswa salah menganggapnya sebagai perbandingan.",
+        "3": "Personifikasi memberi sifat manusia pada benda, bukan membandingkan dua hal."
+      },
+      "evidenceTarget": {
+        "skill": "LITERATURE",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Soal menilai pemahaman siswa tentang gaya bahasa, khususnya penggunaan simile, yang penting untuk analisis teks sastra. Pilihan sulit menantang siswa tingkat menengah ke atas.",
+      "explanation": "Simile menggunakan kata 'seperti' untuk membandingkan dua hal. Pada kalimat tersebut, lampu neon dibandingkan dengan bintang jatuh menggunakan kata 'seperti', sehingga gaya bahasa yang digunakan adalah Simile. Metafora tidak memakai kata perbandingan, Personifikasi memberi sifat manusia, dan Hyperbola berlebihan.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "1"
+    },
+    {
+      "id": "bf6f56d2-44e1-4b90-afa6-92201942a771",
+      "slot": 9,
+      "text": "Manakah kalimat berikut yang paling efektif untuk menyampaikan pentingnya menjaga privasi di media sosial?",
+      "options": [
+        "Kita harus selalu hati-hati saat membagikan foto dan data pribadi di media sosial karena orang lain bisa melihatnya.",
+        "Jangan pernah mengunggah foto di media sosial.",
+        "Sering-seringlah mengubah password dan periksa pengaturan privasi agar informasi pribadi tetap aman.",
+        "Kalau ada yang suka melihat postinganmu, itu tidak masalah."
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "2",
+      "skill": "WRITING",
+      "subskill": "WRITING_KALIMAT_EFEKTIF",
+      "difficulty": "HARD",
+      "cognitiveTarget": "MENGANALISIS",
+      "topic": "Media Sosial",
+      "misconceptionMap": {
+        "0": "Siswa mengira bahwa hanya mengingatkan bahaya sudah cukup, padahal tanpa tindakan spesifik pesan kurang kuat.",
+        "1": "Siswa beranggapan bahwa tidak boleh mengunggah apa pun, yang tidak praktis dalam penggunaan media sosial sehari-hari.",
+        "2": "Tidak ada miskonsepsi; kalimat ini memberikan tindakan konkret untuk melindungi privasi.",
+        "3": "Siswa berpikir bahwa orang lain melihat postingan tidak masalah, sehingga mengabaikan risiko privasi."
+      },
+      "evidenceTarget": {
+        "skill": "WRITING",
+        "confidence": "HIGH"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan siswa menganalisis dan memilih kalimat yang paling efektif dalam konteks menulis, khususnya untuk menyampaikan pesan penting secara jelas dan praktis.",
+      "explanation": "Kalimat keempat memberikan langkah konkret yang dapat langsung diterapkan, sehingga pesan tentang menjaga privasi menjadi jelas dan praktis. Kalimat pertama memang mengingatkan bahaya, tetapi kurang spesifik; kalimat kedua terlalu ekstrem sehingga tidak realistis; kalimat ketiga justru menyepelekan pentingnya privasi.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "2"
+    }
+  ],
+  "profile": {
+    "overallAccuracy": 0.8,
+    "perSkill": [
+      {
+        "skill": "GRAMMAR",
+        "label": "Tata Bahasa",
+        "attempts": 2,
+        "correct": 2,
+        "accuracy": 1,
+        "category": "STRONG",
+        "confidence": "PROVISIONAL",
+        "band": {
+          "minLevel": 9,
+          "maxLevel": 12
+        },
+        "evidenceCount": 2,
+        "strongestEvidence": "MEDIUM",
+        "recommendation": "HARD"
+      },
+      {
+        "skill": "LITERATURE",
+        "label": "Sastra",
+        "attempts": 2,
+        "correct": 2,
+        "accuracy": 1,
+        "category": "STRONG",
+        "confidence": "PROVISIONAL",
+        "band": {
+          "minLevel": 9,
+          "maxLevel": 12
+        },
+        "evidenceCount": 2,
+        "strongestEvidence": "HARD",
+        "recommendation": "HARD"
+      },
+      {
+        "skill": "READING",
+        "label": "Membaca",
+        "attempts": 2,
+        "correct": 0,
+        "accuracy": 0,
+        "category": "WEAK",
+        "confidence": "PROVISIONAL",
+        "band": {
+          "minLevel": 1,
+          "maxLevel": 4
+        },
+        "evidenceCount": 2,
+        "strongestEvidence": null,
+        "recommendation": "EASY"
+      },
+      {
+        "skill": "VOCABULARY",
+        "label": "Kosakata",
+        "attempts": 2,
+        "correct": 2,
+        "accuracy": 1,
+        "category": "STRONG",
+        "confidence": "PROVISIONAL",
+        "band": {
+          "minLevel": 9,
+          "maxLevel": 12
+        },
+        "evidenceCount": 2,
+        "strongestEvidence": "HARD",
+        "recommendation": "HARD"
+      },
+      {
+        "skill": "WRITING",
+        "label": "Menulis",
+        "attempts": 2,
+        "correct": 2,
+        "accuracy": 1,
+        "category": "STRONG",
+        "confidence": "PROVISIONAL",
+        "band": {
+          "minLevel": 9,
+          "maxLevel": 12
+        },
+        "evidenceCount": 2,
+        "strongestEvidence": "HARD",
+        "recommendation": "HARD"
+      }
+    ],
+    "strongest": "GRAMMAR",
+    "weakest": "READING",
+    "developing": [],
+    "insufficient": [],
+    "confidence": "PROVISIONAL",
+    "insightText": "Kemampuan terkuatmu: Tata Bahasa. Fokus kembangkan: Membaca.",
+    "placement": {
+      "band": "MENENGAH",
+      "label": "Menengah",
+      "minLevel": 5,
+      "maxLevel": 8,
+      "provisional": true,
+      "note": "Akurasi keseluruhan sedang. Mulai dari tingkat menengah jalur belajar."
+    }
+  },
+  "bankFallbackNeeded": false,
   "anyGenerationFailed": true,
   "slot0Warnings": []
 }

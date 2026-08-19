@@ -1,13 +1,450 @@
 {
-  "sessionId": "4cdadd7a-0b38-4fb4-8b9e-18f80ea57f2b",
+  "sessionId": "390c40c1-e47a-4b61-b6bf-ffcbc797c7ef",
   "archetype": "S2",
   "targetSize": 10,
-  "startedAt": "2026-08-17T21:34:15.088Z",
-  "durationMs": 612,
-  "aiCalls": 1,
-  "items": [],
-  "profile": null,
-  "bankFallbackNeeded": true,
+  "startedAt": "2026-08-18T02:40:48.930Z",
+  "durationMs": 41858,
+  "aiCalls": 22,
+  "providerStats": {
+    "groq": 9
+  },
+  "items": [
+    {
+      "id": "d947b84b-1332-4e3b-8d1f-6c74d821fbfe",
+      "slot": 0,
+      "text": "Setiap pagi, Ani selalu menyapu halaman rumahnya. Ia mengumpulkan sampah plastik, kertas, dan daun kering ke dalam kantong sampah. Dengan cara ini, halaman menjadi bersih dan tidak ada sampah yang berserakan.",
+      "options": [
+        "Menggunakan kantong sampah",
+        "Menjaga kebersihan lingkungan sekitar",
+        "Menyapu halaman setiap pagi",
+        "Mengumpulkan sampah plastik, kertas, dan daun kering"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "1",
+      "skill": "READING",
+      "subskill": "READING_IDE_POKOK",
+      "difficulty": "EASY",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Kebersihan Lingkungan",
+      "misconceptionMap": {
+        "0": "Murid mengira ide pokok adalah kegiatan menyapu karena itu disebut pertama kali.",
+        "1": "Murid menganggap fokus pada jenis sampah sebagai ide utama, padahal itu hanya contoh tindakan.",
+        "3": "Murid berpikir penggunaan kantong sampah adalah inti pesan, padahal itu hanya sarana."
+      },
+      "evidenceTarget": {
+        "skill": "READING",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan murid mengidentifikasi ide pokok dalam teks pendek, yang penting untuk pemahaman membaca. Dipilih karena tingkat kesulitan mudah dan cocok untuk menguji pemahaman dasar.",
+      "explanation": "Ide pokok paragraf adalah menjaga kebersihan lingkungan karena seluruh kalimat menjelaskan tindakan Ani untuk membersihkan halaman. Pilihan A dan B hanya menyebutkan detail kegiatan, sedangkan D hanya menyebutkan alat yang dipakai, sehingga tidak mencerminkan gagasan utama.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "1"
+    },
+    {
+      "id": "2c5f28db-baa3-46a0-8276-5a5ca3746d3a",
+      "slot": 1,
+      "text": "Pilih kalimat yang penulisan kata bakunya tepat!",
+      "options": [
+        "Dia suka menyebarluaskan informasi.",
+        "Aktifitas belajar sangat penting.",
+        "Aktivitas belajar sangat penting.",
+        "Mereka menuliskan surat dengan ejaan yang salah."
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "2",
+      "skill": "GRAMMAR",
+      "subskill": "GRAMMAR_EJAAN",
+      "difficulty": "EASY",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Kegiatan Belajar",
+      "misconceptionMap": {
+        "0": "Salah mengira bahwa 'f' dapat menggantikan 'v' pada kata 'aktivitas'. Padanan bakunya tetap 'v'.",
+        "2": "Kata 'menyebarluaskan' tidak sesuai Ejaan Yang Disempurnakan; yang benar adalah 'menyebarluaskan'.",
+        "3": "Kalimat ini memang mengandung ejaan yang salah, tetapi tidak memberikan contoh kata baku yang dapat dipilih."
+      },
+      "evidenceTarget": {
+        "skill": "GRAMMAR",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan murid mengenali ejaan baku dalam konteks kalimat, sehingga dapat menilai pemahaman dasar tata bahasa menulis.",
+      "explanation": "Kata yang baku adalah 'aktivitas' dengan huruf 'v', bukan 'aktifitas'. Pilihan lain mengandung ejaan tidak baku seperti 'aktifitas', 'menyebarluaskan', atau tidak menampilkan contoh ejaan baku yang jelas.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "2"
+    },
+    {
+      "id": "67b9de77-435b-4419-837c-5aaaddfd8a93",
+      "slot": 2,
+      "text": "Dalam kalimat \"Anak itu gemuk karena sering makan makanan bergizi\", kata \"gemuk\" memiliki arti apa?",
+      "options": [
+        "Berat badan lebih dari ideal",
+        "Berukuran kecil",
+        "Berwarna cerah",
+        "Pintar dalam belajar"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "0",
+      "skill": "VOCABULARY",
+      "subskill": "VOCABULARY_MAKNA_KATA",
+      "difficulty": "EASY",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Deskripsi Fisik",
+      "misconceptionMap": {
+        "0": "Berwarna cerah adalah makna yang tidak berhubungan dengan sifat fisik tubuh.",
+        "1": "Berukuran kecil merupakan kebalikan dari makna \"gemuk\" yang menekankan kelebihan berat badan.",
+        "3": "Pintar dalam belajar adalah makna yang salah karena kata tersebut tidak menggambarkan kemampuan akademik."
+      },
+      "evidenceTarget": {
+        "skill": "VOCABULARY",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan murid memahami makna kata dalam konteks kalimat, yang penting untuk memperkaya kosakata dan menghindari kesalahan interpretasi.",
+      "explanation": "Kata \"gemuk\" berarti memiliki tubuh yang berisi atau berat badan lebih dari ideal. Pada kalimat tersebut, konteksnya menjelaskan kondisi fisik anak, bukan sifat lain seperti kecerdasan atau ukuran kecil.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "0"
+    },
+    {
+      "id": "99ecbe09-4c89-4058-87e6-eb00322c5f6d",
+      "slot": 3,
+      "text": "Dalam sebuah cerita, unsur yang menjelaskan urutan peristiwa dan bagaimana peristiwa tersebut saling terhubung disebut apa?",
+      "options": [
+        "Tema",
+        "Setting",
+        "Karakter",
+        "Plot"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "3",
+      "skill": "LITERATURE",
+      "subskill": "LITERATURE_UNSUR_CERITA",
+      "difficulty": "MEDIUM",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Plot",
+      "misconceptionMap": {
+        "0": "Karakter adalah unsur cerita yang menjelaskan tokoh, bukan urutan peristiwa.",
+        "2": "Tema adalah gagasan pokok cerita, tidak menjelaskan urutan peristiwa.",
+        "3": "Setting menjelaskan latar tempat dan waktu, bukan urutan peristiwa."
+      },
+      "evidenceTarget": {
+        "skill": "LITERATURE",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Soal ini mengukur pemahaman siswa tentang unsur cerita, khususnya plot, yang penting untuk analisis narasi.",
+      "explanation": "Unsur cerita yang mengatur urutan peristiwa dan hubungan antar peristiwa disebut plot. Plot menjelaskan bagaimana konflik berkembang dan diselesaikan, sehingga pembaca dapat mengikuti alur cerita secara logis.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "3"
+    },
+    {
+      "id": "fa0a0d83-c5e2-4266-8754-15ac77fa9f02",
+      "slot": 4,
+      "text": "Pilihlah penulisan yang tepat untuk nama transportasi umum yang berjalan di atas rel.",
+      "options": [
+        "keret api",
+        "keretaap i",
+        "kereta api",
+        "keretapi"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "2",
+      "skill": "WRITING",
+      "subskill": "WRITING_EJAAN",
+      "difficulty": "MEDIUM",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Transportasi Umum",
+      "misconceptionMap": {
+        "0": "\"keret api\" salah karena huruf 't' tidak ada pada kata \"kereta\".",
+        "1": "\"keretaap i\" salah karena spasi ditempatkan di posisi yang tidak tepat; seharusnya antara \"kereta\" dan \"api\".",
+        "3": "\"keretapi\" salah karena tidak dipisahkan menjadi dua kata, padahal \"kereta api\" merupakan kata majemuk terpisah."
+      },
+      "evidenceTarget": {
+        "skill": "WRITING",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan siswa mengidentifikasi ejaan baku pada istilah umum, sehingga dapat menulis dengan tepat sesuai kaidah Bahasa Indonesia.",
+      "explanation": "Penulisan yang benar adalah \"kereta api\" karena merupakan kata majemuk yang dipisahkan oleh spasi. Pada pilihan lain terdapat kesalahan ejaan atau penempatan spasi yang tidak sesuai dengan kaidah Bahasa Indonesia.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "2"
+    },
+    {
+      "id": "0b54a7bb-25ea-4a55-bfda-88f261780043",
+      "slot": 5,
+      "text": "Berikut ini isi surat undangan yang diterima Rina:\n\nYth. Bapak/Ibu Orang Tua/Wali Murid,\nKami mengundang Anda untuk hadir dalam acara perpisahan kelas 5 yang akan dilaksanakan pada hari Sabtu, 12 Mei 2024, pukul 08.00 pagi, bertempat di aula sekolah. Kehadiran Anda sangat kami harapkan.\n\nHormat kami,\nKepala Sekolah",
+      "options": [
+        "Acara berlangsung pada hari Sabtu, 12 Mei 2024",
+        "Acara diadakan di rumah Pak Budi",
+        "Acara hanya untuk siswa kelas 5",
+        "Acara dimulai pukul 08.00 pagi"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "0",
+      "skill": "READING",
+      "subskill": "READING_INFORMASI_TERSURAT",
+      "difficulty": "MEDIUM",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Surat Undangan",
+      "misconceptionMap": {
+        "0": "Jawaban ini tepat karena sesuai dengan informasi tanggal yang disebutkan.",
+        "1": "Lokasi aula sekolah dapat disalahartikan sebagai rumah seseorang karena kurang memperhatikan konteks surat.",
+        "2": "Meskipun acara memang untuk kelas 5, pertanyaan tidak menanyakan tentang sasaran peserta.",
+        "3": "Siswa sering mengira bahwa yang ditanyakan adalah waktu, padahal pertanyaannya tentang tanggal."
+      },
+      "evidenceTarget": {
+        "skill": "READING",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan siswa mengidentifikasi informasi spesifik (tanggal) dalam teks surat, penting untuk menguji pemahaman bacaan faktual.",
+      "explanation": "Tanggal pelaksanaan acara tercantum jelas dalam surat, yaitu hari Sabtu, 12 Mei 2024. Pilihan lain mengacu pada informasi lain seperti waktu, tempat, atau sasaran yang bukan diminta dalam pertanyaan.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "0"
+    },
+    {
+      "id": "a1d84c73-b1ca-4940-9db4-e6ab041f4c19",
+      "slot": 6,
+      "text": "Manakah kalimat berikut yang paling efektif dalam menyampaikan informasi tanpa kata‑kata yang berulang atau tidak perlu?",
+      "options": [
+        "Setiap hari saya pergi ke sekolah dengan menggunakan sepeda motor setiap pagi.",
+        "Saya pergi ke sekolah setiap pagi dengan sepeda motor.",
+        "Saya naik sepeda motor ke sekolah tiap pagi.",
+        "Ke sekolah, saya naik sepeda motor tiap pagi."
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "2",
+      "skill": "GRAMMAR",
+      "subskill": "GRAMMAR_KALIMAT_EFEKTIF",
+      "difficulty": "MEDIUM",
+      "cognitiveTarget": "MENGANALISIS",
+      "topic": "Kegiatan Sehari-hari di Rumah",
+      "misconceptionMap": {
+        "0": "Mengira bahwa menambahkan kata \"setiap\" dua kali membuat kalimat lebih jelas, padahal itu menimbulkan pengulangan yang tidak perlu.",
+        "1": "Berpikir bahwa menyebutkan \"setiap pagi\" sudah cukup, namun masih ada kata \"setiap\" yang berulang di awal kalimat.",
+        "2": "Tidak ada miskonsepsi; kalimat ini sudah ringkas dan langsung pada inti pesan.",
+        "3": "Menganggap menempatkan keterangan tempat di depan kalimat tidak memengaruhi keefektifan, padahal urutan subjek‑predikat‑objek lebih natural dalam bahasa Indonesia."
+      },
+      "evidenceTarget": {
+        "skill": "GRAMMAR",
+        "confidence": "MEDIUM"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan murid mengidentifikasi dan memilih kalimat yang paling efektif, penting untuk menilai kemampuan menulis yang jelas dan ringkas.",
+      "explanation": "Kalimat \"Saya naik sepeda motor ke sekolah tiap pagi\" menyampaikan makna secara lengkap, singkat, dan menggunakan pola aktif yang jelas. Kalimat lain mengandung pengulangan waktu atau susunan kata yang membuatnya kurang efektif.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "2"
+    },
+    {
+      "id": "1ffe4855-b86d-4b5d-9f0f-61b86eb4686d",
+      "slot": 7,
+      "text": "Kata “muram” berarti sedih atau suram. Pilihlah antonim yang paling tepat untuk kata tersebut.",
+      "options": [
+        "cerah",
+        "senang",
+        "ceria",
+        "gelap"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "2",
+      "skill": "VOCABULARY",
+      "subskill": "VOCABULARY_SINONIM_ANTONIM",
+      "difficulty": "HARD",
+      "cognitiveTarget": "MEMAHAMI",
+      "topic": "Emosi dan Perasaan",
+      "misconceptionMap": {
+        "0": "“Cerah” dipilih karena berhubungan dengan cahaya, namun kata ini lebih menggambarkan kondisi visual, bukan lawan makna emosional “muram”.",
+        "1": "Siswa mengira “senang” berlawanan dengan “muram” karena keduanya menggambarkan perasaan, padahal “senang” tidak menyingkirkan kesan suram secara keseluruhan.",
+        "2": "Jawaban benar: “ceria” memang merupakan lawan arti “muram” secara semantik, menunjukkan suasana hati yang terang dan gembira.",
+        "3": "“Gelap” dipilih karena berlawanan dengan “terang”, namun dalam konteks emosional “gelap” tetap bersamaan dengan “muram”, bukan lawan kata."
+      },
+      "evidenceTarget": {
+        "skill": "VOCABULARY",
+        "confidence": "HIGH"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan murid mengidentifikasi antonim kata secara tepat, yang penting untuk memperkaya kosakata dan memahami nuansa makna dalam teks. Dipilih karena menguji pengetahuan leksikal pada tingkat kesulitan tinggi.",
+      "explanation": "Kata “ceria” memiliki arti gembira, cerah, dan penuh semangat, sehingga berlawanan dengan makna “muram” yang berarti suram atau sedih. Pilihan lain tidak tepat karena “senang” hanya menyatakan perasaan bahagia tanpa menyingkirkan kesan suram, “cerah” lebih merujuk pada cahaya atau warna, dan “gelap” justru memiliki konotasi yang mirip dengan “muram”.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "2"
+    },
+    {
+      "id": "cc9e3254-0932-4946-b2e4-395acc4aaa12",
+      "slot": 8,
+      "text": "Pada puisi berikut, kalimat \"Hujan menetes seperti air mata bumi\" menggunakan gaya bahasa apa?",
+      "options": [
+        "Metafora",
+        "Hyperbola",
+        "Personifikasi",
+        "Simile"
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "3",
+      "skill": "LITERATURE",
+      "subskill": "LITERATURE_GAYA_BAHASA",
+      "difficulty": "HARD",
+      "cognitiveTarget": "MENGANALISIS",
+      "topic": "Penggunaan Simile dalam Puisi",
+      "misconceptionMap": {
+        "0": "Salah karena metafora tidak menggunakan kata perbandingan seperti; ini hanya perbandingan literal.",
+        "1": "Salah karena hyperbola adalah pernyataan berlebihan, tidak ada dalam kalimat ini.",
+        "2": "Salah karena personifikasi memberi sifat manusia pada benda, tidak ada di sini.",
+        "3": "Benar, simile menggunakan kata \"seperti\" untuk membandingkan dua hal."
+      },
+      "evidenceTarget": {
+        "skill": "LITERATURE",
+        "confidence": "HIGH"
+      },
+      "diagnosticRationale": "Mengukur pemahaman siswa tentang penggunaan gaya bahasa dalam puisi, khususnya perbedaan antara simile dan metafora.",
+      "explanation": "Kalimat tersebut menggunakan kata \"seperti\" untuk membandingkan hujan dengan air mata bumi, sehingga merupakan contoh simile. Simile secara jelas menandai perbandingan dengan kata perbandingan seperti, sehingga tidak termasuk metafora, personifikasi, atau hyperbola.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "3"
+    },
+    {
+      "id": "6849fd4e-6e63-4224-96a7-af6c5ddf7e35",
+      "slot": 9,
+      "text": "Berikut ini adalah akhir sebuah cerita pendek tentang dua sahabat yang baru saja menyelesaikan proyek sekolah bersama: \n\"Mereka kembali ke rumah masing-masing setelah hari yang melelahkan.\"\nManakah kalimat berikut yang paling efektif untuk menyimpulkan cerita tersebut?",
+      "options": [
+        "Mereka pulang ke rumah masing-masing, dan itu membuat mereka merasa senang.",
+        "Akhirnya, mereka berdua kembali ke rumah masing-masing dengan perasaan bahagia dan harapan baru.",
+        "Setelah semua itu, mereka kembali ke rumah masing-masing.",
+        "Mereka kembali ke rumah masing-masing, karena mereka sudah lelah."
+      ],
+      "questionType": "PILIHAN_GANDA",
+      "correctAnswer": "1",
+      "skill": "WRITING",
+      "subskill": "WRITING_KALIMAT_EFEKTIF",
+      "difficulty": "HARD",
+      "cognitiveTarget": "MENGANALISIS",
+      "topic": "Penutup Cerita Pendek Persahabatan",
+      "misconceptionMap": {
+        "0": "Kalimat ini terlalu panjang dan mengulang kata 'bahagia' serta 'harapan baru' sehingga tidak efektif.",
+        "1": "Kalimat ini paling tepat karena menyampaikan penutup secara lengkap, jelas, dan memberi kesan positif.",
+        "2": "Kalimat ini terlalu singkat dan tidak memberikan detail yang cukup untuk menutup cerita.",
+        "3": "Kalimat ini menambahkan alasan 'karena mereka sudah lelah' yang tidak relevan dengan inti cerita."
+      },
+      "evidenceTarget": {
+        "skill": "WRITING",
+        "confidence": "HIGH"
+      },
+      "diagnosticRationale": "Butir ini mengukur kemampuan siswa menganalisis keefektifan kalimat dalam menutup sebuah cerita, penting untuk menilai kemampuan menulis kalimat efektif. Dipilih karena menguji pemilihan struktur, kejelasan, dan kelengkapan informasi.",
+      "explanation": "Kalimat \"Akhirnya, mereka berdua kembali ke rumah masing-masing dengan perasaan bahagia dan harapan baru\" menyampaikan penutup cerita secara lengkap, jelas, dan memberi kesan positif. Kalimat lain terlalu panjang, kurang detail, atau menambahkan informasi yang tidak relevan sehingga tidak seefektif kalimat yang dipilih.",
+      "provider": "groq",
+      "warnings": [],
+      "answeredCorrect": true,
+      "selected": "1"
+    }
+  ],
+  "profile": {
+    "overallAccuracy": 1,
+    "perSkill": [
+      {
+        "skill": "GRAMMAR",
+        "label": "Tata Bahasa",
+        "attempts": 2,
+        "correct": 2,
+        "accuracy": 1,
+        "category": "STRONG",
+        "confidence": "PROVISIONAL",
+        "band": {
+          "minLevel": 9,
+          "maxLevel": 12
+        },
+        "evidenceCount": 2,
+        "strongestEvidence": "MEDIUM",
+        "recommendation": "HARD"
+      },
+      {
+        "skill": "LITERATURE",
+        "label": "Sastra",
+        "attempts": 2,
+        "correct": 2,
+        "accuracy": 1,
+        "category": "STRONG",
+        "confidence": "PROVISIONAL",
+        "band": {
+          "minLevel": 9,
+          "maxLevel": 12
+        },
+        "evidenceCount": 2,
+        "strongestEvidence": "HARD",
+        "recommendation": "HARD"
+      },
+      {
+        "skill": "READING",
+        "label": "Membaca",
+        "attempts": 2,
+        "correct": 2,
+        "accuracy": 1,
+        "category": "STRONG",
+        "confidence": "PROVISIONAL",
+        "band": {
+          "minLevel": 9,
+          "maxLevel": 12
+        },
+        "evidenceCount": 2,
+        "strongestEvidence": "MEDIUM",
+        "recommendation": "HARD"
+      },
+      {
+        "skill": "VOCABULARY",
+        "label": "Kosakata",
+        "attempts": 2,
+        "correct": 2,
+        "accuracy": 1,
+        "category": "STRONG",
+        "confidence": "PROVISIONAL",
+        "band": {
+          "minLevel": 9,
+          "maxLevel": 12
+        },
+        "evidenceCount": 2,
+        "strongestEvidence": "HARD",
+        "recommendation": "HARD"
+      },
+      {
+        "skill": "WRITING",
+        "label": "Menulis",
+        "attempts": 2,
+        "correct": 2,
+        "accuracy": 1,
+        "category": "STRONG",
+        "confidence": "PROVISIONAL",
+        "band": {
+          "minLevel": 9,
+          "maxLevel": 12
+        },
+        "evidenceCount": 2,
+        "strongestEvidence": "HARD",
+        "recommendation": "HARD"
+      }
+    ],
+    "strongest": "GRAMMAR",
+    "weakest": "GRAMMAR",
+    "developing": [],
+    "insufficient": [],
+    "confidence": "PROVISIONAL",
+    "insightText": "Kemampuan terkuatmu: Tata Bahasa.",
+    "placement": {
+      "band": "TINGGI",
+      "label": "Tinggi",
+      "minLevel": 9,
+      "maxLevel": 12,
+      "provisional": true,
+      "note": "Akurasi keseluruhan tinggi. Mulai dari tingkat menengah ke atas jalur belajar, tetap diukur ulang setelah latihan."
+    }
+  },
+  "bankFallbackNeeded": false,
   "anyGenerationFailed": true,
   "slot0Warnings": []
 }

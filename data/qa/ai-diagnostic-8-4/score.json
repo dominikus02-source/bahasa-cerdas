@@ -1,25 +1,28 @@
 {
-  "generatedAt": "2026-08-17T21:40:44.676Z",
-  "pass": 20,
-  "fail": 5,
+  "generatedAt": "2026-08-18T03:31:53.153Z",
+  "pass": 31,
+  "fail": 8,
   "issues": [
     ">=5 sesi dengan butir AI nyata",
     ">=50 butir AI nyata total",
     "semua archetype terwakili",
-    "tidak ada butir untuk rubrik",
+    "Nilai diagnostik rata-rata >= 4",
+    "misconception menuutup semua opsi salah (>= 95% butir)",
+    "butir ditolak (naturalness/clarity/diagnostic < 4): 0",
+    "tiap sesi memakai >= 4 skill",
     "stress test tanpa data"
   ],
   "sessions": 10,
-  "realSessions": 0,
-  "realItems": 0,
+  "realSessions": 4,
+  "realItems": 4,
   "avgScorePerDimension": {
-    "naturalness": 0,
-    "clarity": 0,
-    "age": 0,
-    "options": 0,
-    "distractor": 0,
-    "diagnosticValue": 0,
-    "ambiguity": 0,
-    "guessability": 0
+    "naturalness": 5,
+    "clarity": 4.5,
+    "age": 5,
+    "options": 5,
+    "distractor": 5,
+    "diagnosticValue": 3,
+    "ambiguity": 5,
+    "guessability": 4
   }
 }
