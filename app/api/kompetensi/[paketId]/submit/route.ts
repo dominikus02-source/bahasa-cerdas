@@ -188,6 +188,10 @@ export async function POST(
   { params }: { params: Promise<{ paketId: string }> }
 ) {
   const t0 = Date.now();
+  // Hoisted di luar try agar recovery P2002 (double-submit race) di catch bisa
+  // query progres dengan paketId yang benar — sebelumnya dipakai "" sehingga
+  // recovery selalu gagal menemukan hasil dan race berakhir 500.
+  const { paketId } = await params;
   try {
     const rateLimitResponse = await rateLimitRoute(req, {
       maxRequests: 30,
@@ -196,7 +200,6 @@ export async function POST(
     });
     if (rateLimitResponse) return rateLimitResponse;
 
-    const { paketId } = await params;
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -545,7 +548,7 @@ export async function POST(
   } catch (error: any) {
     // If unique constraint fails on progres (double submit race), return existing
     if (error?.code === "P2002" && error?.meta?.target?.includes?.("attemptNumber")) {
-      const existing = await getLatestProgres((await db.user.findFirst({ where: { supabaseId: (await (await createClient()).auth.getUser()).data.user?.id } }))?.id || "", "");
+      const existing = await getLatestProgres((await db.user.findFirst({ where: { supabaseId: (await (await createClient()).auth.getUser()).data.user?.id } }))?.id || "", paketId);
       if (existing) {
         return ok({
           result: { totalScore: existing.totalScore, percentage: existing.percentage, predikat: existing.predikat },

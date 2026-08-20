@@ -48,6 +48,63 @@ export USERS='[{"email":"lt1@bc.test","password":"..."},{"email":"lt2@bc.test","
 export BASE_URL='https://staging.bahasacerdas.site'
 ```
 
+### Scenario 04 — UKBI 200-user cohort (200 disposable accounts + paket staging)
+
+Staging harus **terisolasi total** dari production (project Supabase, Redis, DB,
+dan deployment sendiri). **Dua gerbang keamanan berlapis** menjaga hal ini:
+
+1. **Staging gate 12-check** (`scripts/lib/staging-gate.ts`) — dijalankan oleh
+   `npm run verify:staging-environment`, `seed:staging-loadtest` dan
+   `loadtest:ukbi-200`. FAIL ≥1 check → STOP (exit 1) sebelum apa pun menyentuh
+   jaringan.
+2. **k6 safety interlock** (`ukbi-200-gate.mjs`, di-import script 04) — throw di
+   init-time: `BASE_URL` wajib & non-production, `PAKET_ID` wajib berawalan
+   `lt-ukbi-200-`, `UKBI_LOADTEST_ENV=staging` + `UKBI_LOADTEST_APPROVED=true`.
+
+```bash
+# 1. Isolation gate — FAIL = STOP, jangan load test
+STAGING_SUPABASE_URL='https://<ref>.supabase.co' \
+STAGING_SUPABASE_SERVICE_ROLE_KEY='<staging service-role>' \
+STAGING_DATABASE_URL='postgresql://postgres.<ref>:<pw>@...pooler.supabase.com:6543/postgres' \
+STAGING_DIRECT_URL='postgresql://postgres.<ref>:<pw>@...pooler.supabase.com:5432/postgres' \
+STAGING_REDIS_URL='https://...' STAGING_REDIS_TOKEN='<staging redis token>' \
+STAGING_BASE_URL='https://staging.bahasacerdas.com' \
+npm run verify:staging-environment            # harus 12/12 PASS
+
+# 2. Seed 200 akun disposabel + paket "UKBI Load Test Staging" (idempotent)
+STAGING_SUPABASE_URL='https://<ref>.supabase.co' \
+STAGING_SUPABASE_SERVICE_ROLE_KEY='<staging service-role>' \
+STAGING_DATABASE_URL='postgresql://postgres.<ref>:<pw>@...pooler.supabase.com:6543/postgres' \
+STAGING_DIRECT_URL='postgresql://postgres.<ref>:<pw>@...pooler.supabase.com:5432/postgres' \
+STAGING_TEST_PASSWORD='<wajib, tanpa default>' \
+npm run seed:staging-loadtest -- --execute        # dry-run tanpa --execute
+```
+
+Seed memakai `STAGING_*` saja dan **menolak** project ref production
+(`ibtlhoocaoopgtcsnvzr`). Akun: `ukbi-loadtest-001..200@loaded-test.id`
+(password: `STAGING_TEST_PASSWORD`), metadata `loadtest:true`; paket:
+"UKBI Load Test Staging" (10 soal, 2 seksi, tanpa MENDENGARKAN).
+
+```bash
+# 3. Load test kohort — WAJIB lewat launcher guarded (auth warm-up dulu,
+#    login rate limit 10/600s per IP anonymous; stag baseUrl di-override)
+USERS='[{"email":"ukbi-loadtest-001@loaded-test.id","password":"..."}]' \
+STAGING_SUPABASE_URL=... STAGING_DATABASE_URL=... STAGING_REDIS_URL=... \
+STAGING_BASE_URL='https://staging.bahasacerdas.com' \
+PAKET_ID='lt-ukbi-200-<uuid8>' \
+npm run loadtest:ukbi-200
+# Setara (tidak disarankan — bypass launcher & isolation gate):
+# k6 run -e BASE_URL=$BASE_URL -e USERS="$USERS" \
+#        -e PAKET_ID=<lt-ukbi-200-...> \
+#        -e UKBI_LOADTEST_ENV=staging -e UKBI_LOADTEST_APPROVED=true \
+#        -e PATCH_PAYLOAD='{"answers":{}}' 04-ukbi-200-users.js
+```
+
+Catatan interlock: `PAKET_ID` yang TIDAK berawalan `lt-ukbi-200-`,
+`UKBI_LOADTEST_ENV` selain `staging`, `UKBI_LOADTEST_APPROVED` selain `true`,
+atau `BASE_URL` menunjuk production → script 04 melempar error saat init,
+sebelum request pertama.
+
 ## Run
 
 ```bash
@@ -61,13 +118,21 @@ k6 run -e BASE_URL=$BASE_URL -e USERS="$USERS" 02-generate-rpp.js
 k6 run -e BASE_URL=$BASE_URL -e USERS="$USERS" \
        -e PAKET_ID=<stagingPaketId> \
        -e ANSWERS='{"<qid1>":"A","<qid2>":"B"}' 03-submit-simulasi.js
+
+# 4. UKBI 200-user cohort (one school NAT IP, full journey)
+k6 run -e BASE_URL=$BASE_URL -e USERS="$USERS" \
+       -e PAKET_ID=<stagingUkbiPaketId> \
+       -e PATCH_PAYLOAD='{"answers":{}}' 04-ukbi-200-users.js
 ```
 
 ## Reading results
 
 - `http_req_duration p(95)` — tail latency; where users start feeling pain.
 - `checks` rate — share of requests that succeeded (or degraded gracefully, e.g. 429).
-- Custom metrics: `rpp_generation_ms`, `rpp_upstream_fail`, `simulasi_submit_ms`.
+- Custom metrics: `rpp_generation_ms`, `rpp_upstream_fail`, `simulasi_submit_ms`,
+  `ukbi_submit_ok`, `ukbi_rate_limited`.
+- Scenario `04` targets `ukbi_rate_limited == 0` and `submit p95 < 5s` — the
+  production-readiness bar for a 200-student cohort from a single school NAT IP.
 
 The point where p95 latency spikes or 5xx rate climbs is your current ceiling.
 Watch the Supabase dashboard (active connections) and the `/admin/monitoring`
@@ -76,11 +141,19 @@ shows up before CPU does, which is the signal to move to the transaction pooler.
 
 ## Rate limiters to be aware of
 
-| Endpoint            | Limit (per IP)     |
-|---------------------|--------------------|
-| `/api/auth/login`   | 10 / 600s          |
-| `/api/ai/agents/run`| per-agent (varies) |
-| `.../submit`        | 30 / 60s           |
+| Endpoint            | Limit               | Scope            |
+|---------------------|---------------------|------------------|
+| `/api/auth/login`   | 10 / 600s           | session; anonymous = per IP |
+| `/api/ai/agents/run`| per-agent (varies)  | session          |
+| `.../submit`        | 30 / 60s            | session          |
+| middleware scope `ai` | 30 / 60s          | session          |
+
+Limits are **session-scoped** (`sess|<hash of auth cookie`) — 200 students behind
+one school NAT IP get 200 independent buckets on authenticated endpoints.
+Exception: anonymous requests (no session cookie) share an IP bucket — e.g.
+200 students logging in for the first time within 10 minutes from one IP will
+hit the login limit (10/600s per IP). That is intentional abuse protection;
+for cohort events, have students log in before the event.
 
 Running from a single machine tests the rate limiter as much as the backend. Use
 `k6 cloud` or several load generators to exercise real multi-IP concurrency.

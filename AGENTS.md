@@ -3978,3 +3978,103 @@ Langkah pengiriman fitur baru apapun (murid/arena/guru/admin/shared):
 5. GameRoom migration SQL via Supabase dashboard
 6. UI game solo: badge-score client vs server masih beda (kosmetik)
 7. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
+
+---
+
+## Phase UKBI 200-USER READINESS 23 — Audit Kohort Satu IP Sekolah (Aug 20, 2026)
+
+### Goal
+Verifikasi production readiness skenario 200 murid mengikuti simulasi UKBI **serentak dari SATU jaringan sekolah (1 IP publik NAT)** — jalur penuh: login → muat soal → autosave → submit → hasil. **BELUM di-commit/push — menunggu Founder Review (pola fase shell).**
+
+### Hasil Audit (verdict: READY UNTUK STAGING LOAD TEST)
+| Phase | Hasil |
+|-------|-------|
+| 1–2 Arsitektur & rate limit | ✅ Session-scoped (`sess|<hash auth-token>`), BUKAN per-IP — komentar di `lib/rate-limit.ts`: "Per session, not per IP — a whole class submits from one school NAT address." submit 30/60s per sesi; login 10/600s; GET/PATCH paket tanpa rate limit (sengaja) |
+| 4 Submit & kuota | ✅ Kuota `SIMULATION_MONTHLY_LIMIT` (Free 3/Pro 10/Founder ∞) dikonsumsi atomic DI DALAM transaksi (`consumeUsageTx` updateMany WHERE used<limit + P2002); `EMPTY_ANSWERS` guard 400; double-click aman (`skipDuplicates`/`updateMany` ber-predikat status) |
+| 5 DB concurrency | ✅ submit = batched `$transaction([...])` satu round trip (hindari P2024 pooler); GET fetch seksi `Promise.all` + `withQueryTimeout`. ⚠️ submit TIDAK pakai withQueryTimeout (observasi, fail-open, tidak fatal) |
+| 6–8 Pool/leakage/randomisasi | ✅ Pool Redis TTL 300 (`SIM_POOL_TTL`) versi `v4`, hanya non-kosong, answer-free; `correctAnswer` hanya di `*_SNAPSHOT_SELECT` server-side; soal konstruktif → client hanya `{instruction, constraints}`; seeded per sesi + anti-repeat 3 tingkat + snapshot immutable |
+| 9 Double-submit race | 🐛 **BUG DITEMUKAN & DIFIX**: recovery P2002 memakai `getLatestProgres(userId, "")` (paketId kosong — variabel di luar scope catch) → recovery selalu gagal → race double-submit 500. **Fix**: hoist `const { paketId } = await params;` di atas `try` (2026-08-20) |
+| 10 Load test asset | ✅ `loadtest/04-ukbi-200-users.js` (kohort 200 VU ramp + journey penuh + counter 429 target 0 + cek leakage di semua payload) |
+| 11 AI grading | ✅ `acquireAiSlot` pool `grade-constructed` (fail-open, self-heal) + `Promise.allSettled` + pending (tidak dihitung 0) |
+| 19 Keamanan | ✅ role-gated semua endpoint; `sb-forwarded-for` diteruskan Supabase. Observasi minor: listing `/api/kompetensi` tanpa select (hanya ID, tanpa jawaban — bukan blocker) |
+
+### File
+| File | Aksi |
+|------|------|
+| `app/api/kompetensi/[paketId]/submit/route.ts` | FIX P2002 recovery (paketId hoisted) |
+| `scripts/test-ukbi-200-user-rate-limit.ts` | BARU — 18 assertions (200 bucket independen, session-scoped, anonymous IP-shared, double-submit bucket sama, static wiring) |
+| `scripts/test-ukbi-200-user-readiness.ts` | BARU — 59 assertions (A rate limit → L loadtest assets, termasuk fix paketId) |
+| `loadtest/04-ukbi-200-users.js` | BARU — kohort k6 (ramp 0→100→200→hold→0, login→GET→PATCH→POST→retry→hasil) |
+| `loadtest/README.md` | Tabel rate limit dikoreksi: **session-scoped** (bukan per-IP); skenario 04; caveat login anonymous IP-shared |
+| `package.json` | +`test:ukbi-200-user-rate-limit`, +`test:ukbi-200-user-readiness` |
+| `docs/UKBI_200_USER_READINESS_REPORT.md` | Laporan 23 fase |
+
+### Keputusan Founder (lihat report §Yang HARUS Diketahui Founder)
+1. **Login anonymous = IP-shared 10/600s** — 200 murid login serentak pertama kali dari 1 IP NAT kena 429 di percobaan ke-11/10 menit. Solusi: murid login lebih awal ATAU bucket per-email (butuh keputusan — TIDAK diubah).
+2. Setujui penambahan opsional `withQueryTimeout` di submit.
+3. **k6 STAGING wajib** (deploy staging + 200 akun `scripts/seed-staging-loadtest.ts` + paket "UKBI Load Test Staging" + `VERCEL_BYPASS_TOKEN`) — DILARANG ke produksi dengan akun asli.
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `npm run test:ukbi-200-user-rate-limit` | ✅ 18/18 |
+| `npm run test:ukbi-200-user-readiness` | ✅ 59/59 |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (3 file) | ✅ 0 violations |
+| Commit/push | ⛔ BELUM — menunggu Founder Review |
+
+---
+
+## Phase UKBI 200-USER STAGING 2B — Harden Staging Gate, K6 Interlock, Seed Safety (Aug 20, 2026)
+
+### Goal
+Tooling load test 200-user dibuat MUSTAHIL menyentuh production: gate staging 12-check shared (sebelum seed/verify/loadtest), interlock k6 di init-time script 04, seed production-safe (tanpa password hardcoded, gate sebelum klien dibuat, cek 1:1 Auth↔Prisma), launcher guarded `loadtest:ukbi-200`, dokumentasi `STAGING INFRASTRUCTURE REQUIRED`. **BELUM di-commit/push — menunggu Founder Review. STAGING BELUM TER-PROVISION; load test TIDAK dijalankan.**
+
+### Apa yang Dikeras (dari fase sebelumnya: verify 6-check + seed + k6 04)
+| File | Perubahan |
+|------|-----------|
+| `scripts/lib/staging-gate.ts` | BARU — shared gate: `verifyStagingGate(env)` 12 checks + `assertStagingGate` (throw), `extractSupabaseRef`, `looksLikeJwt`, `hostOf`, `PRODUCTION_REF`, `PRODUCTION_HOSTS`, `LOADTEST_PAKET_PREFIX="lt-ukbi-200-"`. HANYA baca `STAGING_*`; live checks (auth admin users 1 org, Redis `/info`) hanya setelah guard string lolos. |
+| `scripts/verify-staging-environment.ts` | Ditulis ulang jadi CLI 12-check (maskRef, exit 0=12/12, 1=STOP) |
+| `scripts/seed-staging-loadtest.ts` | Hapus password hardcoded (`STAGING_TEST_PASSWORD` wajib); gate 12/12 SEBELUM klien Supabase/Prisma; pasca-write cek 1:1 auth↔prisma (mismatch → exit 1); output tanpa secret |
+| `loadtest/ukbi-200-gate.mjs` | BARU — interlock ESM murni: `enforceLoadtestGate(env)` throw — BASE_URL wajib non-production (localhost hanya `UKBI_LOADTEST_ALLOW_LOCAL=true`), PAKET_ID wajib prefix `lt-ukbi-200-`, `UKBI_LOADTEST_ENV==='staging'`, `UKBI_LOADTEST_APPROVED==='true'`. Parse host manual (k6/goja TIDAK punya global URL — bug ditemukan & difix saat uji nyata k6) |
+| `loadtest/04-ukbi-200-users.js` | Import gate SEBELUM lib.js; `const gate = enforceLoadtestGate(__ENV)`; `PAKET_ID` dari gate; baseUrl di-override |
+| `loadtest/lib.js` | Hapus fallback password/user default (`resolveUsers` strict); `CONFIG.users` jadi lazy getter agar module scope tidak error sebelum gate 04 |
+| `scripts/run-ukbi200-loadtest.ts` | BARU — launcher guarded: gate 12/12 → interlock node → spawn k6 (`-e BASE_URL/PAKET_ID/UKBI_LOADTEST_ENV=staging/UKBI_LOADTEST_APPROVED=true` + opsional USERS/ALLOW_LOCAL/VERCEL_BYPASS_TOKEN), exit status k6 |
+| `scripts/test-ukbi200-loadtest-gate.ts` | BARU — 18 assertions (node, tanpa jaringan) |
+| `package.json` | +`test:ukbi200-loadtest-gate`, +`loadtest:ukbi-200` |
+
+### Verifikasi (semua lulus, lokal)
+| Check | Hasil |
+|-------|-------|
+| `npm run test:ukbi200-loadtest-gate` | ✅ 18/18 |
+| `npm run test:ukbi-200-user-rate-limit` | ✅ 18/18 |
+| `npm run test:ukbi-200-user-readiness` | ✅ 59/59 |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (5 file) | ✅ 0 violations |
+| `git diff --check` | ✅ bersih |
+| k6 nyata: 5 skenario gagal (no BASE_URL / prod host / localhost no-allow / missing flags / prefix salah) | ✅ semua throw init SEBELUM request; happy path → gate lolos |
+| verify tanpa env / env bentuk-production (ref production disuntik ke STAGING_*) | ✅ exit 1 — hard fail #9/#10 deteksi ref production |
+| seed dry-run env bentuk-production | ✅ exit 1, 0 write (ABORT sebelum klien) |
+| `loadtest:ukbi-200` tanpa env | ✅ exit 1, k6 tidak di-spawn |
+| Production writes | 0 · Load test: NOT RUN |
+
+### Package Scripts
+`verify:staging-environment` · `seed:staging-loadtest` (--execute) · `seed:staging-loadtest:dry-run` · `loadtest:ukbi-200` · `test:ukbi200-loadtest-gate`
+
+### 12 Check Gate (ringkas)
+1 DATABASE_URL staging · 2 DIRECT_URL konsisten · 3 NEXT_PUBLIC_SUPABASE_URL staging · 4 SERVICE_ROLE_KEY milik staging (JWT + LIVE admin users) · 5 Redis staging (host ≠ prod ambient + LIVE /info) · 6 Auth project ref konsisten · 7 BASE_URL staging (localhost → ALLOW_LOCAL) · 8 Loadtest target terkunci (self-check baca k6 script + gate) · 9 Prod DB ref TIDAK terdeteksi (FAIL HARD) · 10 Prod Supabase ref TIDAK terdeteksi · 11 Prod Redis endpoint TIDAK terdeteksi · 12 Required `STAGING_*` ada (7 var)
+
+### Tutorial setelah founder provisioning
+1. `STAGING_* ... npm run verify:staging-environment` → 12/12 PASS
+2. `STAGING_* + STAGING_TEST_PASSWORD ... npm run seed:staging-loadtest -- --execute` → 200 akun + paket (idempoten, cek 1:1)
+3. Auth warm-up dulu, lalu `USERS='[...]' PAKET_ID='lt-ukbi-200-...' ... npm run loadtest:ukbi-200`
+4. JANGAN pernah arahkan k6/seed/verify ke production; secret staging zero-knowledge terhadap production.
+
+### Remaining (tidak berubah)
+1. Commit/push fase ini bila disetujui founder
+2. Provisioning staging (founder — lihat `STAGING INFRASTRUCTURE REQUIRED` di docs/UKBI_200_USER_READINESS_REPORT.md) + eksekusi k6 04-ukbi-200-users
+3. TKA UTBK/Guru enrichment 30 → 150
+4. Game server revival (VPS mati)
+5. GameRoom migration SQL via Supabase dashboard
+6. UI game solo: badge-score client vs server masih beda (kosmetik)
+7. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)

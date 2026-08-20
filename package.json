@@ -67,6 +67,11 @@
     "test:bank-soal-leakage": "npx tsx scripts/test-ukbi-tka-bank-soal-leakage.ts",
     "test:murid-quiz-leakage": "npx tsx scripts/test-murid-quiz-leakage.ts",
     "test:ukbi-tka-randomization": "npx tsx scripts/test-ukbi-tka-randomization.ts",
+    "test:ukbi-200-user-rate-limit": "npx tsx scripts/test-ukbi-200-user-rate-limit.ts",
+    "test:ukbi-200-user-readiness": "npx tsx scripts/test-ukbi-200-user-readiness.ts",
+    "seed:staging-loadtest": "npx tsx scripts/seed-staging-loadtest.ts --execute",
+    "seed:staging-loadtest:dry-run": "npx tsx scripts/seed-staging-loadtest.ts",
+    "verify:staging-environment": "npx tsx scripts/verify-staging-environment.ts",
     "test:ukbi-randomization-security": "npx tsx scripts/test-ukbi-randomization-security.ts",
     "audit:ukbi-tka-randomization": "npx tsx scripts/audit-ukbi-tka-randomization.ts",
     "test:ukbi-tka-session-snapshot": "npx tsx scripts/test-ukbi-tka-session-snapshot.ts",
@@ -290,7 +295,9 @@
     "test:master-semantic-repair-v2": "npx tsx scripts/test-master-semantic-repair-v2.ts",
     "test:question-bank-import": "npx tsx scripts/test-question-bank-import.ts",
     "import:batch-001": "npx tsx scripts/import-question-bank-batch-001.ts",
-    "import:batch-001-dry": "npx tsx scripts/import-question-bank-batch-001.ts --dry-run"
+    "import:batch-001-dry": "npx tsx scripts/import-question-bank-batch-001.ts --dry-run",
+    "test:ukbi200-loadtest-gate": "npx tsx scripts/test-ukbi200-loadtest-gate.ts",
+    "loadtest:ukbi-200": "npx tsx scripts/run-ukbi200-loadtest.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

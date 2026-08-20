@@ -3,19 +3,41 @@
 import http from 'k6/http';
 import { check } from 'k6';
 
-// BASE_URL: target being tested. Default is local; point at a STAGING deploy for
-// realistic numbers. NEVER run write-heavy scenarios (RPP/simulasi submit)
-// against production with real user accounts.
+// BASE_URL: target being tested. Default is local for quick local smoke runs;
+// REALISTIC load tests point at a STAGING deploy. NEVER run write-heavy
+// scenarios (RPP/simulasi submit) against production with real accounts.
+// Script 04-ukbi-200-users.js OVERRIDES this default via its own hard gate
+// (BASE_URL wajib diisi dari env; tidak ada default production).
+function resolveBaseUrl() {
+  return __ENV.BASE_URL || 'http://localhost:3000';
+}
+
+// Users: HARUS dari environment. Tidak ada akun/password tersimpan di source.
+function resolveUsers() {
+  const raw = __ENV.USERS;
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } catch (_e) {
+      /* fallthrough */
+    }
+  }
+  if (__ENV.TEST_EMAIL && __ENV.TEST_PASSWORD) {
+    return [{ email: __ENV.TEST_EMAIL, password: __ENV.TEST_PASSWORD }];
+  }
+  throw new Error(
+    'USERS (JSON array) atau TEST_EMAIL+TEST_PASSWORD wajib diisi dari environment. Tidak ada default.'
+  );
+}
+
 export const CONFIG = {
-  baseUrl: __ENV.BASE_URL || 'http://localhost:3000',
-  // A pool of seeded test accounts. Provide as JSON via env or fall back to one.
-  //   -e USERS='[{"email":"a@x.id","password":"..."},{"email":"b@x.id","password":"..."}]'
-  users: JSON.parse(
-    __ENV.USERS ||
-      JSON.stringify([
-        { email: __ENV.TEST_EMAIL || 'loadtest@bahasacerdas.test', password: __ENV.TEST_PASSWORD || 'changeme' },
-      ])
-  ),
+  baseUrl: resolveBaseUrl(),
+  // users HARUS dari environment; kalkulasi LAZY (getter) agar module scope
+  // tidak melempar error sebelum safety gate script 04 berjalan.
+  get users() {
+    return resolveUsers();
+  },
   // Token "Protection Bypass for Automation" dari Vercel — dibutuhkan agar k6
   // bisa menembus SSO di Preview deployment. Isi lewat env, JANGAN di-hardcode:
   //   -e VERCEL_BYPASS_TOKEN=xxxxxxxx

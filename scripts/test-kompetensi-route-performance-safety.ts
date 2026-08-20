@@ -85,9 +85,11 @@ assertInFile(route, "TKA_SNAPSHOT_SELECT", "TKA_SNAPSHOT_SELECT exists for serve
 
 // ── 3. Randomization tetap aktif ──
 console.log("\n── 3. RANDOMIZATION ──");
-assertInFile(route, "fisherYatesShuffle", "Questions are shuffled");
-assertInFile(route, "shuffleOptionsForQuestion", "Options are shuffled");
-assertInFile(route, "createSessionSeed", "Session seed is created");
+// Primitive shuffle lives in lib (session-pool/randomization); route wires it in per-session.
+assertInFile("lib/question-bank/randomization.ts", "fisherYatesShuffle", "Shuffle primitive exists (lib/question-bank/randomization.ts)");
+assertInFile("lib/question-bank/session-pool.ts", "fisherYatesShuffle", "Pool shuffle uses fisherYatesShuffle");
+assertInFile(route, "shuffleOptionsForQuestion", "Options are shuffled (route)");
+assertInFile(route, "createSessionSeed", "Session seed is created (route)");
 
 // ── 4. Snapshot tetap dibuat ──
 console.log("\n── 4. SNAPSHOT ──");
