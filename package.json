@@ -297,7 +297,11 @@
     "import:batch-001": "npx tsx scripts/import-question-bank-batch-001.ts",
     "import:batch-001-dry": "npx tsx scripts/import-question-bank-batch-001.ts --dry-run",
     "test:ukbi200-loadtest-gate": "npx tsx scripts/test-ukbi200-loadtest-gate.ts",
-    "loadtest:ukbi-200": "npx tsx scripts/run-ukbi200-loadtest.ts"
+    "loadtest:ukbi-200": "npx tsx scripts/run-ukbi200-loadtest.ts",
+    "warmup:ukbi-tokens": "npx tsx scripts/warmup-ukbi-tokens.ts --reset",
+    "preflight:ukbi-load": "npx tsx scripts/preflight-ukbi-load.ts",
+    "observe:ukbi-load": "npx tsx scripts/observe-ukbi-load.ts",
+    "audit:ukbi-load-post": "npx tsx scripts/audit-ukbi-load-post.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
