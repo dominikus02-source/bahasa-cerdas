@@ -84,7 +84,7 @@ async function deliverKaryaToEmail(buyerEmail: string, buyerName: string, karya:
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "BahasaCerdas <noreply@bahasacerdas.site>",
+        from: "BahasaCerdas <noreply@bahasacerdas.com>",
         to: buyerEmail,
         subject: `🎉 Karya "${karya.title}" berhasil diunduh - BahasaCerdas`,
         html: `
