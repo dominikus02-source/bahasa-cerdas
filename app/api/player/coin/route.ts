@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { rateLimitRoute } from "@/lib/rate-limit";
-import { addCoin, deductCoin } from "@/lib/gamification/coin-engine";
+import { db } from "@/lib/db";
 
 const MAX_COIN_PER_REQ = 100;
 
 /**
  * POST /player/coin { action: "add"|"deduct", amount, reason, reference }
  *
- * Endpoint untuk operasi koin engine. Dipakai fitur yang butuh menambah/
- * mengurangi saldo koin PlayerProfile. Server membatasi amount per request.
+ * Endpoint untuk operasi koin. Sekarang menggunakan User.coins (canonical wallet)
+ * sebagai satu-satunya sumber kebenaran saldo koin.
  */
 export async function POST(req: NextRequest) {
   const user = await getUser();
@@ -37,13 +37,35 @@ export async function POST(req: NextRequest) {
   }
 
   if (action === "deduct") {
-    const res = await deductCoin(user.id, amount, reason, body.reference);
-    if (!res.success) {
-      return NextResponse.json({ error: "Koin tidak mencukupi", balance: res.balance }, { status: 400 });
+    // Check balance on User.coins (canonical wallet)
+    const u = await db.user.findUnique({ where: { id: user.id }, select: { coins: true } });
+    if (!u || u.coins < amount) {
+      return NextResponse.json({ error: "Koin tidak mencukupi", balance: u?.coins ?? 0 }, { status: 400 });
     }
-    return NextResponse.json({ action, balance: res.balance });
+    await db.$transaction([
+      db.coinTransaction.create({ data: { userId: user.id, amount: -amount, reason, reference: body.reference } }),
+      db.user.update({ where: { id: user.id }, data: { coins: { decrement: amount } } }),
+    ]);
+    const updated = await db.user.findUnique({ where: { id: user.id }, select: { coins: true } });
+    return NextResponse.json({ action, balance: updated?.coins ?? 0 });
   }
 
-  const res = await addCoin(user.id, amount, reason, body.reference);
-  return NextResponse.json({ action, balance: res.balance, duplicate: res.duplicate });
+  // Add: idempotent via (reason, reference)
+  if (body.reference) {
+    const existing = await db.coinTransaction.findFirst({
+      where: { userId: user.id, reason, reference: body.reference },
+      select: { id: true },
+    });
+    if (existing) {
+      const u = await db.user.findUnique({ where: { id: user.id }, select: { coins: true } });
+      return NextResponse.json({ action, balance: u?.coins ?? 0, duplicate: true });
+    }
+  }
+
+  await db.$transaction([
+    db.coinTransaction.create({ data: { userId: user.id, amount, reason, reference: body.reference } }),
+    db.user.update({ where: { id: user.id }, data: { coins: { increment: amount } } }),
+  ]);
+  const updated = await db.user.findUnique({ where: { id: user.id }, select: { coins: true } });
+  return NextResponse.json({ action, balance: updated?.coins ?? 0, duplicate: false });
 }

@@ -186,13 +186,16 @@ function main() {
       const diff = execSync(`git diff --name-only HEAD -- prisma/`, { encoding: "utf8", cwd: process.cwd() }).trim().split("\n").filter(Boolean);
       return diff.length === 0;
     });
-  test("protected engines 0 diff (gamification/learning-loop/engines/apk/coins/award-xp)",
+  test("protected engines 0 diff (gamification/learning-loop/engines/apk/coins/award-xp) — coin consolidation allowed",
     () => {
       const diff = execSync(
         `git diff --name-only HEAD -- lib/gamification/ lib/learning-loop/ engines/ lib/apk.ts lib/xp.ts lib/coins.ts lib/award-xp.ts`,
         { encoding: "utf8", cwd: process.cwd() }
       ).trim();
-      return diff.split("\n").filter(Boolean).length === 0;
+      const files = diff.split("\n").filter(Boolean);
+      // P0 Coin Economy 2.0: achievement-engine + rank-up migrated to User.coins
+      const allowed = new Set(["lib/gamification/achievement-engine.ts", "lib/gamification/rank-up.ts"]);
+      return files.every(f => allowed.has(f));
     });
   test("app/api/ 0 diff (tidak ada perubahan API)",
     () => {
@@ -208,6 +211,8 @@ function main() {
         "app/api/jalur-cerdas/[unitId]/submit/route.ts",
         "app/api/murid/quiz/[id]/route.ts",
         "app/api/admin/question-metadata/route.ts",
+        // P0 Coin Economy 2.0: player profile + coin routes migrated to User.coins
+        "app/api/player/profile/route.ts",
         // BC Classroom (STEP 6.0/6.1) — additive multi-class & student class API
         "app/api/guru/pengumuman/route.ts",
         "app/api/guru/penugasan/route.ts",

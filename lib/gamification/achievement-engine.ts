@@ -1,6 +1,5 @@
 import { db } from "@/lib/db";
 import { awardXp } from "@/lib/award-xp";
-import { addCoin } from "@/lib/gamification/coin-engine";
 import type { Achievement } from "@prisma/client";
 
 /**
@@ -50,7 +49,7 @@ export async function trackAchievement(
   return { ...achievement, progress: updated.progress, completed: updated.completed, claimed: updated.claimed };
 }
 
-/** Klaim reward achievement yang sudah selesai (XP + koin engine, idempotent). */
+/** Klaim reward achievement yang sudah selesai (XP + koin, idempotent). */
 export async function claimAchievement(
   userId: string,
   code: string,
@@ -86,8 +85,18 @@ export async function claimAchievement(
     rewardXp = res.xpDiberikan;
   }
   if (achievement.rewardCoins > 0) {
-    const res = await addCoin(userId, achievement.rewardCoins, "ACHIEVEMENT", `achievement-${code}`);
-    rewardCoins = res.amount;
+    // Write to User.coins (canonical wallet) — same pattern as awardCoins
+    // in lib/coins.ts but with custom amount for achievement rewards.
+    await db.$transaction([
+      db.coinTransaction.create({
+        data: { userId, amount: achievement.rewardCoins, reason: "ACHIEVEMENT", reference: `achievement-${code}` },
+      }),
+      db.user.update({
+        where: { id: userId },
+        data: { coins: { increment: achievement.rewardCoins } },
+      }),
+    ]);
+    rewardCoins = achievement.rewardCoins;
   }
 
   return {

@@ -3,7 +3,6 @@ import type { BadgeRarity, PlayerRank } from "@prisma/client";
 import { rankFromLevel, RANK_META, minLevelForRank } from "@/lib/gamification/ranks";
 import { RANK_REWARDS } from "@/lib/gamification/rank-rewards";
 import { RANK_ORDER } from "@/lib/gamification/rank-assets";
-import { addCoin } from "@/lib/gamification/coin-engine";
 
 /**
  * RANK-UP REWARD — pencairan reward saat naik Rank (idempotent).
@@ -93,8 +92,24 @@ export async function grantRankUpRewards(userId: string): Promise<RankUpResult> 
     const reward = RANK_REWARDS[rank];
     const totalCoin = reward.coin + (reward.mysteryBox ? reward.mysteryBoxCoins : 0);
 
-    const coinRes = await addCoin(userId, totalCoin, "RANK_UP", `rank-up-${rank}`);
-    const coin = coinRes.duplicate ? 0 : totalCoin;
+    // Write to User.coins (canonical wallet) — same pattern as awardCoins
+    // in lib/coins.ts but with custom amount for rank-up rewards.
+    const rankTx = await db.coinTransaction.findFirst({
+      where: { userId, reason: "RANK_UP", reference: `rank-up-${rank}` },
+      select: { id: true },
+    });
+    const coin = rankTx ? 0 : totalCoin;
+    if (coin > 0) {
+      await db.$transaction([
+        db.coinTransaction.create({
+          data: { userId, amount: coin, reason: "RANK_UP", reference: `rank-up-${rank}` },
+        }),
+        db.user.update({
+          where: { id: userId },
+          data: { coins: { increment: coin } },
+        }),
+      ]);
+    }
 
     let badgeNew = false;
     await ensureRankBadge(rank, reward.badgeCode, reward.badgeName);

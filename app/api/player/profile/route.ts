@@ -3,7 +3,7 @@ import { getUser } from "@/lib/supabase/server";
 import { getPlayerProfile, bumpDailyStreak } from "@/lib/gamification/player";
 import { evaluateBadges } from "@/lib/gamification/badge-engine";
 import { listAchievements } from "@/lib/gamification/achievement-engine";
-import { getCoinBalance } from "@/lib/gamification/coin-engine";
+import { getBalance } from "@/lib/coins";
 import { currentPeriodKeys } from "@/lib/gamification/leaderboard";
 
 /** GET /player/profile — profil pemain BC Arena + ringkasan badge/achievement. */
@@ -17,7 +17,7 @@ export async function GET() {
     getPlayerProfile(user.id),
     evaluateBadges(user.id),
     listAchievements(user.id),
-    getCoinBalance(user.id),
+    getBalance(user.id),
     currentPeriodKeys(),
   ]);
 

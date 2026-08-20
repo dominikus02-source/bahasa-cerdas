@@ -77,6 +77,10 @@ export default async function LeaguePage({
   const myRank = meWeekly?.rank ?? weeklyRows.length + 1
   const myWeeklyXP = meWeekly?.score ?? 0
 
+  // Daily leaderboard is based on coins earned today — compute user's daily total.
+  const myDailyEntry = dailyRows.find(r => r.id === user.id)
+  const myDailyXP = (myDailyEntry as any)?.todayXP ?? 0
+
   return (
     <div className="arena-page space-y-6 p-4 md:p-6">
       {/* ARENA / LEAGUE HEADER — light premium, violet-tinted, ringkas */}
@@ -116,7 +120,7 @@ export default async function LeaguePage({
       {/* LEADERBOARD + YOUR POSITION — papan penuh canvas (tab Mingguan/Harian/HoF) */}
       <LeagueTabs
         weekly={{ rows: weeklyRows, myRank, myXP: myWeeklyXP }}
-        daily={{ rows: dailyRows, myRank: dailyRows.findIndex(r => r.id === user.id) + 1, myXP: user.coins || 0 }}
+        daily={{ rows: dailyRows, myRank: dailyRows.findIndex(r => r.id === user.id) + 1, myXP: myDailyXP }}
         hallOfFame={hallOfFame}
         userId={user.id}
         userXP={user.xp || 0}
