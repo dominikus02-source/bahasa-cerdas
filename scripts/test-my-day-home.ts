@@ -83,14 +83,9 @@ check("14. Status premium dibagi dari home-data canonical", homeData.includes('"
 check("14. Tidak ada premium2/isPremium2/studentPremium di student-home", !/premium2|isPremium2|studentPremium/i.test(allStudentHome));
 check("14. Tidak ada input plan/quota dari klien", !premium.includes("req.json") && !premium.includes("body"));
 
-// 15 — Adaptive session start remains server-authoritative (gate OPEN; client hanya kirim action)
-check("15. CTA adaptive hanya mengirim action ke POST start (server-authoritative)",
-  !continueCard.includes('fetch("/api/player/adaptive-practice"') || (
-    continueCard.includes('action: "start"') &&
-    !continueCard.includes('"size"') &&
-    !continueCard.includes('"skill"') &&
-    !continueCard.includes('"difficulty"')
-  ));
+// 15 — Adaptive session start remains server-authoritative
+check("15. CTA adaptive tidak memulai POST session (gerbang produksi: Akan Segera Hadir — dilarang tanpa gerbang batal)",
+  !continueCard.includes('fetch("/api/player/adaptive-practice"') || !continueCard.includes('action: "start"'));
 check("15. CTA tidak mengirim skill/difficulty/question IDs", !continueCard.includes("targetSkill") && !continueCard.includes("questionIds") && !continueCard.includes("targetDifficulty"));
 
 // 15 — Dashboard summary no duplicate fetch

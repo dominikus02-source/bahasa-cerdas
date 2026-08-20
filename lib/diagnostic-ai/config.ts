@@ -27,7 +27,7 @@ export const AI_DIAGNOSTIC_COMING_SOON = true;
  *
  * Balik ke FALSE hanya ketika bank soal latihan personal siap produksi.
  */
-export const ADAPTIVE_PRACTICE_COMING_SOON = false;
+export const ADAPTIVE_PRACTICE_COMING_SOON = true;
 export const AI_DIAGNOSTIC_ALLOWED_SIZES = [6, 8, 10, 12, 15] as const;
 export const AI_DIAGNOSTIC_DEFAULT_SIZE = 10 as const;
 export const AI_DIAGNOSTIC_MIN_USEFUL = 6 as const;
