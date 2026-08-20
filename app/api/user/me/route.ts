@@ -12,6 +12,7 @@ const userSessionFields = {
   id: true, supabaseId: true, email: true, fullName: true, nickname: true, nicknameUpdatedAt: true,
   avatar: true, role: true, isFounder: true, isPremium: true, premiumPlan: true, premiumUntil: true,
   xp: true, level: true, streak: true, league: true, coins: true, totalLikes: true, totalViews: true,
+  equippedNameColor: true, equippedBadge: true,
   createdAt: true,
 } as const;
 

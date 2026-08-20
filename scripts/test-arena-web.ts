@@ -194,7 +194,7 @@ function main() {
       ).trim();
       const files = diff.split("\n").filter(Boolean);
       // P0 Coin Economy 2.0: achievement-engine + rank-up migrated to User.coins
-      const allowed = new Set(["lib/gamification/achievement-engine.ts", "lib/gamification/rank-up.ts"]);
+      const allowed = new Set(["lib/gamification/achievement-engine.ts", "lib/gamification/rank-up.ts", "lib/gamification/player.ts", "lib/gamification/client-types.ts"]);
       return files.every(f => allowed.has(f));
     });
   test("app/api/ 0 diff (tidak ada perubahan API)",
@@ -222,6 +222,8 @@ function main() {
         "app/api/guru/kelasku/[id]/route.ts",
         "app/api/murid/kelasku/[id]/route.ts",
         "app/api/guru/penugasan/[id]/nilai-praktik/route.ts",
+        // P0 Coin Shop 2.1 — cosmetic fields in user/me API
+        "app/api/user/me/route.ts",
         "app/api/guru/kelasku/[id]/insight/route.ts",
         "app/api/murid/quiz/[id]/route.ts",
         // Fase rilis Teka-Teki Silang: cap skor TEKA_TEKI_SILANG di MAX_SCORE_PER_GAME

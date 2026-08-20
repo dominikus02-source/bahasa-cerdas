@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Coins, Flame, Sparkles, Zap } from "lucide-react";
 import { RankChip } from "@/components/gamification/RankChip";
 import UserAvatar from "@/components/arena/UserAvatar";
+import { nameColorStyle } from "@/lib/cosmetics";
 import { XpProgressBar } from "@/components/arena/player/xp-progress-bar";
 import { useHomeData } from "./home-data";
 
@@ -62,7 +63,7 @@ export function StudentHomeHero() {
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-xl md:text-2xl font-semibold tracking-tight text-[var(--px-text)] truncate">{name}</h1>
+              <h1 className="text-xl md:text-2xl font-semibold tracking-tight text-[var(--px-text)] truncate" style={nameColorStyle(me?.equippedNameColor, true)}>{name}</h1>
               <RankChip rank={profile.rank as never} size={18} showTitle={false} compact />
             </div>
             <p className="text-xs text-[var(--px-text-dim)] truncate">{sub}</p>

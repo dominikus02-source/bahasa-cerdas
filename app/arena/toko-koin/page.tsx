@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react"
 import Link from "next/link"
-import { ShoppingBag, Zap, Shield, Sparkles, Moon, Sticker, ArrowLeft, Coins, Loader2, Check, Palette, BookOpen, PenLine, Ticket, Timer, Heart, Trophy } from "lucide-react"
+import { ShoppingBag, Zap, Shield, Sparkles, Moon, Sticker, ArrowLeft, Coins, Loader2, Check, Palette, BookOpen, PenLine, Ticket, Timer, Heart, Trophy, Target, Rocket } from "lucide-react"
 import CosmeticPreview from "@/components/arena/CosmeticPreview"
 import { isCosmeticType, isEquippableIcon } from "@/lib/cosmetics"
 
@@ -28,6 +28,9 @@ const TYPE_ICONS: Record<string, any> = {
   BADGE: Trophy, ANSWER_EFFECT: Sparkles, HINT_TOKEN: BookOpen,
   TIME_EXTENSION: Timer, HEART_REFILL: Heart, EXTRA_TRYOUT: Ticket,
 }
+
+// Items with no working implementation — hidden from store (Coin Shop 2.1/2.2)
+const RETIRED_TYPES = new Set(["THEME", "STICKER", "HEART_REFILL", "EXTRA_TRYOUT", "TIME_EXTENSION"])
 
 const TYPE_COLORS: Record<string, string> = {
   STREAK_FREEZE: "from-cyan-500 to-blue-600",
@@ -87,7 +90,7 @@ export default function ArenaTokoKoinPage() {
   const isWearable = (item: StoreItem) => isCosmeticType(item.type) && isEquippableIcon(item.type, item.icon)
 
   const filteredItems = useMemo(() => {
-    let list = items
+    let list = items.filter(i => !RETIRED_TYPES.has(i.type))
     if (activeTab !== "all") list = list.filter(i => categorize(i.type) === activeTab)
     return list
   }, [items, activeTab])
@@ -175,6 +178,37 @@ export default function ArenaTokoKoinPage() {
           {message.text}
         </div>
       )}
+
+      {/* Value Proposition Hero */}
+      <div className="bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 dark:from-violet-950/20 dark:via-purple-950/20 dark:to-fuchsia-950/20 rounded-2xl border border-violet-200/60 dark:border-violet-800/40 p-5">
+        <h2 className="text-base font-extrabold text-gray-900 dark:text-slate-100 mb-1">Koinmu, Pilihanmu</h2>
+        <p className="text-xs text-gray-500 dark:text-slate-400 mb-4 leading-relaxed">
+          Kumpulkan koin dari aktivitas belajar, lalu tukarkan dengan item yang membuat profilmu lebih personal dan perjalanan belajarmu lebih seru.
+        </p>
+        <div className="grid grid-cols-3 gap-3">
+          <div className="text-center">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mx-auto mb-2 shadow-md">
+              <Palette size={16} className="text-white" />
+            </div>
+            <p className="text-[11px] font-bold text-gray-800 dark:text-slate-200">Personalisasi</p>
+            <p className="text-[10px] text-gray-400 dark:text-slate-500 mt-0.5">Jadikan profilmu punya ciri khas</p>
+          </div>
+          <div className="text-center">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center mx-auto mb-2 shadow-md">
+              <Rocket size={16} className="text-white" />
+            </div>
+            <p className="text-[11px] font-bold text-gray-800 dark:text-slate-200">Progress</p>
+            <p className="text-[10px] text-gray-400 dark:text-slate-500 mt-0.5">Dukung perjalanan belajarmu</p>
+          </div>
+          <div className="text-center">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center mx-auto mb-2 shadow-md">
+              <Target size={16} className="text-white" />
+            </div>
+            <p className="text-[11px] font-bold text-gray-800 dark:text-slate-200">Pencapaian</p>
+            <p className="text-[10px] text-gray-400 dark:text-slate-500 mt-0.5">Tunjukkan hasil yang kamu raih</p>
+          </div>
+        </div>
+      </div>
 
       {/* Category Tabs */}
       <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">

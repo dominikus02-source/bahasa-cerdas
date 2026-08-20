@@ -10,6 +10,8 @@ export interface MeUser {
   avatar?: string;
   school?: string;
   city?: string;
+  equippedNameColor?: string | null;
+  equippedBadge?: string | null;
 }
 
 export interface SummaryRow {

@@ -19,6 +19,8 @@ export interface PlayerProfileView {
   avatar: string | null;
   frame: string | null;
   title: string | null;
+  equippedNameColor: string | null;
+  equippedBadge: string | null;
   levelProgress: { current: number; needed: number; pct: number; remaining: number };
   xpToNextLevel: number;
   createdAt: string;

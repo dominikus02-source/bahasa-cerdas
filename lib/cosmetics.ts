@@ -142,6 +142,18 @@ export const NAME_COLORS: Record<string, NameColorStyle> = {
     dark: gradientText("linear-gradient(90deg,#FDE68A,#FCD34D 45%,#F59E0B)"),
     swatch: "linear-gradient(135deg,#B45309,#FCD34D)",
   },
+  "color-royal": {
+    label: "Royal",
+    light: gradientText("linear-gradient(90deg,#1E3A5F,#2563EB 40%,#60A5FA 70%,#1E40AF)"),
+    dark: gradientText("linear-gradient(90deg,#93C5FD,#60A5FA 45%,#3B82F6)"),
+    swatch: "linear-gradient(135deg,#1E40AF,#60A5FA)",
+  },
+  "color-aurora": {
+    label: "Aurora",
+    light: gradientText("linear-gradient(90deg,#059669,#10B981 30%,#34D399 60%,#6EE7B7)"),
+    dark: gradientText("linear-gradient(90deg,#6EE7B7,#34D399 45%,#10B981)"),
+    swatch: "linear-gradient(135deg,#059669,#6EE7B7)",
+  },
 };
 
 export function nameColorStyle(

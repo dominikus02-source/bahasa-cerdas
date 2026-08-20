@@ -29,6 +29,8 @@ export interface PlayerProfileView {
   avatar: string | null;
   frame: string | null;
   title: string | null;
+  equippedNameColor: string | null;
+  equippedBadge: string | null;
   levelProgress: { current: number; needed: number; pct: number; remaining: number };
   xpToNextLevel: number;
   createdAt: Date;
@@ -42,7 +44,7 @@ export async function getPlayerProfile(userId: string): Promise<PlayerProfileVie
     // Foto asli murid ada di User.avatar. PlayerProfile.avatar hanya penimpa
     // KOSMETIK (dari toko koin) dan tidak pernah diisi saat profil dibuat —
     // membacanya sendirian membuat semua orang kehilangan fotonya.
-    db.user.findUnique({ where: { id: userId }, select: { avatar: true } }),
+    db.user.findUnique({ where: { id: userId }, select: { avatar: true, equippedNameColor: true, equippedBadge: true } }),
   ]);
 
   const wk = weekKey();
@@ -91,6 +93,8 @@ export async function getPlayerProfile(userId: string): Promise<PlayerProfileVie
     avatar: final.avatar ?? user?.avatar ?? null,
     frame: final.frame,
     title: final.title,
+    equippedNameColor: user?.equippedNameColor ?? null,
+    equippedBadge: user?.equippedBadge ?? null,
     levelProgress,
     xpToNextLevel: levelProgress.remaining,
     createdAt: final.createdAt,

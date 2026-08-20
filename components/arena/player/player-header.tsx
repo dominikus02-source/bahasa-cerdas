@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Flame, Coins, Sparkles } from "lucide-react";
 import { formatId, InitialAvatar, RankIcon } from "./ui";
 import { XpProgressBar } from "./xp-progress-bar";
+import { nameColorStyle, getBadgeStyle } from "@/lib/cosmetics";
 import type { PlayerProfileView } from "@/lib/gamification/client-types";
 
 /** Header profil pemain — avatar, nama, rank, level, XP, koin, streak. */
@@ -39,7 +40,13 @@ export function PlayerHeader({
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h2 className="truncate text-lg font-extrabold text-[var(--px-text)]">{name}</h2>
+            <h2 className="truncate text-lg font-extrabold text-[var(--px-text)]" style={nameColorStyle(profile.equippedNameColor, true)}>{name}</h2>
+            {profile.equippedBadge && (() => { const badge = getBadgeStyle(profile.equippedBadge); return badge ? (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-white text-[10px] font-bold bg-gradient-to-br from-violet-500 to-purple-600 shadow-sm">
+                <badge.Icon size={11} />
+                {badge.label}
+              </span>
+            ) : null; })()}
             {profile.title && (
               <span className="px-chip shrink-0">
                 <Sparkles size={12} className="text-[var(--px-gold)]" />
