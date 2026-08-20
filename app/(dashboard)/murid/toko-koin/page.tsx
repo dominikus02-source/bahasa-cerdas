@@ -16,8 +16,10 @@ interface StoreItem {
 
 type EquippedMap = Record<string, string | null>;
 
-const CONSUMABLE_TYPES = new Set(["HINT_TOKEN", "TIME_EXTENSION"]);
-const AUTO_TYPES = new Set(["STREAK_FREEZE", "HEART_REFILL", "EXTRA_TRYOUT"]);
+const CONSUMABLE_TYPES = new Set(["HINT_TOKEN"]);
+const AUTO_TYPES = new Set(["STREAK_FREEZE"]);
+// Items with no working implementation — hidden from store (Coin Shop 2.1/2.2)
+const RETIRED_TYPES = new Set(["THEME", "STICKER", "HEART_REFILL", "EXTRA_TRYOUT", "TIME_EXTENSION"]);
 
 function isConsumable(type: string) { return CONSUMABLE_TYPES.has(type); }
 function isAutoItem(type: string) { return AUTO_TYPES.has(type); }
@@ -227,7 +229,7 @@ export default function TokoKoinPage() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {items.map(item => {
+        {items.filter(i => !RETIRED_TYPES.has(i.type)).map(item => {
           const Icon = TYPE_ICONS[item.type] || ShoppingBag;
           const color = TYPE_COLORS[item.type] || "from-gray-500 to-gray-600";
           const canAfford = (user?.coins || 0) >= item.price;
