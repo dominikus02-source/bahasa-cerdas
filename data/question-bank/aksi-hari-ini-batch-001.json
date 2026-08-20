@@ -4,7 +4,12 @@
     {
       "kodeSoal": "ADH-000001",
       "text": "Bacalah paragraf berikut.\n\nIndonesia merupakan negara kepulauan terbesar di dunia dengan lebih dari 17.000 pulau. Kekayaan alam Indonesia tidak hanya terletak pada jumlah pulaunya, tetapi juga pada keanekaragaman hayati yang dimiliki. Hutan hujan tropis Indonesia menjadi rumah bagi ribuan spesies tanaman dan hewan yang belum ditemukan di belahan dunia lain.\n\nGagasan utama paragraf tersebut adalah...",
-      "options": ["Indonesia memiliki banyak pulau", "Indonesia kaya akan keanekaragaman hayati", "Hutan hujan tropis sangat penting", "Spesies di Indonesia unik"],
+      "options": [
+        "Indonesia memiliki banyak pulau",
+        "Indonesia kaya akan keanekaragaman hayati",
+        "Hutan hujan tropis sangat penting",
+        "Spesies di Indonesia unik"
+      ],
       "correctAnswer": "1",
       "explanation": "Seluruh paragraf membahas kekayaan alam Indonesia, khususnya keanekaragaman hayati, bukan sekadar jumlah pulau.",
       "type": "PILIHAN_GANDA",
@@ -16,7 +21,12 @@
     {
       "kodeSoal": "ADH-000002",
       "text": "Bacalah paragraf berikut.\n\nPendidikan karakter harus dimulai sejak dini. Anak-anak yang dibiasakan untuk jujur, disiplin, dan bertanggung jawab sejak kecil akan tumbuh menjadi individu yang berintegritas. Orang tua dan guru memiliki peran sentral dalam menanamkan nilai-nilai tersebut.\n\nParagraf tersebut termasuk jenis teks...",
-      "options": ["eksposisi", "narasi", "deskripsi", "argumenasi"],
+      "options": [
+        "eksposisi",
+        "narasi",
+        "deskripsi",
+        "argumenasi"
+      ],
       "correctAnswer": "0",
       "explanation": "Paragraf tersebut menjelaskan sebuah konsep (pendidikan karakter) tanpa bercerita atau menggambarkan, sehingga termasuk teks eksposisi.",
       "type": "PILIHAN_GANDA",
@@ -28,9 +38,14 @@
     {
       "kodeSoal": "ADH-000003",
       "text": "Bacalah kalimat berikut.\n\n\"Buah mangga di kebun Pak Budi sangat manis dan harum.\"\n\nInformasi tersurat dari kalimat tersebut adalah...",
-      "options": ["Pak Budi gemar berkebun", "Buah mangga milik Pak Budi berwarna kuning", "Buah mangga di kebun Pak Budi memiliki rasa manis dan aroma harum", "Kebun Pak Budi terletak di daerah tropis"],
+      "options": [
+        "Pak Budi gemar berkebun",
+        "Buah mangga milik Pak Budi berwarna kuning",
+        "Buah mangga di kebun Pak Budi memiliki rasa manis dan aroma harum",
+        "Kebun Pak Budi terletak di daerah tropis"
+      ],
       "correctAnswer": "2",
-      "explanation": "Informasi tersurat adalah informasi yang secara langsung tertulis dalam teks, yaitu mangga manis dan harum.",
+      "explanation": "Informasi tersurat adalah informasi yang secara langsung tertulis dalam teks, yaitu mangga manis dan harum. Pilihan lain merupakan informasi tersirat atau tidak disebutkan.",
       "type": "PILIHAN_GANDA",
       "difficulty": "EASY",
       "skill": "READING",
@@ -40,7 +55,12 @@
     {
       "kodeSoal": "ADH-000004",
       "text": "Perhatikan kalimat berikut.\n\n\"Rina meminjamkan buku kepada Sinta karena Sinta sedang membutuhkannya untuk ujian.\"\n\nMakna kata \"meminjamkan\" dalam kalimat tersebut adalah...",
-      "options": ["mengambil", "memberi pinjaman", "meminjam", "menyimpan"],
+      "options": [
+        "mengambil",
+        "memberi pinjaman",
+        "meminjam",
+        "menyimpan"
+      ],
       "correctAnswer": "1",
       "explanation": "\"Meminjamkan\" berarti memberi pinjaman kepada orang lain, berbeda dengan \"meminjam\" yang berarti mengambil pinjaman.",
       "type": "PILIHAN_GANDA",
@@ -52,7 +72,12 @@
     {
       "kodeSoal": "ADH-000005",
       "text": "Bacalah paragraf berikut.\n\nPagi itu langit terlihat gelap dan awan mendung menyelimuti seluruh kota. Angin bertiup kencang membawa aroma hujan. Beberapa orang bergegas mencari tempat berteduh.\n\nDari petunjuk dalam paragraf tersebut, dapat disimpulkan bahwa...",
-      "options": ["hari itu sangat panas", "akan turun hujan", "masyarakat sedang berlibur", "cuaca sedang cerah"],
+      "options": [
+        "hari itu sangat panas",
+        "akan turun hujan",
+        "masyarakat sedang berlibur",
+        "cuaca sedang cerah"
+      ],
       "correctAnswer": "1",
       "explanation": "Awan mendung, angin kencang, dan aroma hujan merupakan petunjuk kuat bahwa akan turun hujan.",
       "type": "PILIHAN_GANDA",
@@ -64,7 +89,12 @@
     {
       "kodeSoal": "ADH-000006",
       "text": "Bacalah paragraf berikut.\n\nKopi Indonesia telah dikenal luas di pasar internasional. Kopi Gayo dari Aceh, kopi Toraja dari Sulawesi, dan kopi Java dari Jawa merupakan varian yang paling diminati. Proses penanaman dan pengolahan yang tradisional memberikan cita rasa khas pada setiap jenis kopi.\n\nParagraf tersebut membahas tentang...",
-      "options": ["sejarah kopi di Indonesia", "keunggulan kopi Indonesia di pasar internasional", "cara menanam kopi", "perbandingan kopi Indonesia dan kopi luar negeri"],
+      "options": [
+        "sejarah kopi di Indonesia",
+        "keunggulan kopi Indonesia di pasar internasional",
+        "cara menanam kopi",
+        "perbandingan kopi Indonesia dan kopi luar negeri"
+      ],
       "correctAnswer": "1",
       "explanation": "Paragraf secara spesifik membahas tentang pengenalan dan keunggulan kopi Indonesia di pasar internasional.",
       "type": "PILIHAN_GANDA",
@@ -76,7 +106,12 @@
     {
       "kodeSoal": "ADH-000007",
       "text": "Bacalah kalimat berikut.\n\n\"Dedaunan di pohon berubah menjadi kekuningan menjelang akhir musim kemarau.\"\n\nInformasi tersurat dari kalimat tersebut adalah...",
-      "options": ["pohon sedang sakit", "musim kemarau sudah berakhir", "dedaunan berubah warna menjadi kuning", "udara sangat dingin"],
+      "options": [
+        "pohon sedang sakit",
+        "musim kemarau sudah berakhir",
+        "dedaunan berubah warna menjadi kuning",
+        "udara sangat dingin"
+      ],
       "correctAnswer": "2",
       "explanation": "Informasi yang secara langsung tertulis adalah perubahan warna dedaunan menjadi kekuningan.",
       "type": "PILIHAN_GANDA",
@@ -88,7 +123,12 @@
     {
       "kodeSoal": "ADH-000008",
       "text": "Bacalah paragraf berikut.\n\nSejak pandemi COVID-19, pola belajar mengajar di Indonesia mengalami perubahan signifikan. Pembelajaran jarak jauh menjadi alternatif utama meskipun tidak semua daerah memiliki akses internet yang memadai. Kesenjangan digital menjadi tantangan besar dalam pelaksanaannya.\n\nKesimpulan yang paling tepat dari paragraf tersebut adalah...",
-      "options": ["pandemi membawa dampak positif bagi pendidikan", "pembelajaran jarak jauh sempurna untuk semua daerah", "pandemi mengubah pendidikan namun menimbulkan kesenjangan digital", "internet di Indonesia sudah merata"],
+      "options": [
+        "pandemi membawa dampak positif bagi pendidikan",
+        "pembelajaran jarak jauh sempurna untuk semua daerah",
+        "pandemi mengubah pendidikan namun menimbulkan kesenjangan digital",
+        "internet di Indonesia sudah merata"
+      ],
       "correctAnswer": "2",
       "explanation": "Paragraf menjelaskan perubahan akibat pandemi sekaligus tantangan kesenjangan digital, sehingga kesimpulan harus mencakup kedua aspek.",
       "type": "PILIHAN_GANDA",
@@ -100,7 +140,12 @@
     {
       "kodeSoal": "ADH-000009",
       "text": "Bacalah puisi berikut.\n\nTanah airku tidak kulupakan\nKau terhimpit dalam sanubariku\nAku berlari walau bagaimana\nGemuruh suppamu memanggilku\n\n— Chairil Anwar\n\nMakna puisi tersebut adalah...",
-      "options": ["penulis tidak suka pada tanah air", "penulis selalu teringat pada tanah air meskipun jauh", "penulis sedang berlari di lapangan", "tanah air sedang dalam bahaya"],
+      "options": [
+        "penulis tidak suka pada tanah air",
+        "penulis selalu teringat pada tanah air meskipun jauh",
+        "penulis sedang berlari di lapangan",
+        "tanah air sedang dalam bahaya"
+      ],
       "correctAnswer": "1",
       "explanation": "Puisi \"Tanah Airku\" mengungkapkan kerinduan mendalam sang penyair terhadap tanah air yang tak pernah ia lupakan.",
       "type": "PILIHAN_GANDA",
@@ -112,7 +157,12 @@
     {
       "kodeSoal": "ADH-000010",
       "text": "Perhatikan struktur teks berikut.\n\nJudul: Manfaat Olahraga bagi Kesehatan\nIsi: Olahraga teratur dapat meningkatkan daya tahan tubuh, mengurangi risiko penyakit kronis, dan menjaga kesehatan mental. WHO merekomendasikan minimal 150 menit aktivitas fisik moderat per minggu bagi orang dewasa.\nPenutup: Mulailah berolahraga dari sekarang untuk hidup yang lebih sehat.\n\nStruktur teks tersebut merupakan jenis teks...",
-      "options": ["narasi", "eksposisi", "deskripsi", "persuasi"],
+      "options": [
+        "narasi",
+        "eksposisi",
+        "deskripsi",
+        "persuasi"
+      ],
       "correctAnswer": "1",
       "explanation": "Teks tersebut menjelaskan informasi tentang manfaat olahraga dengan fakta dan data, sehingga termasuk eksposisi.",
       "type": "PILIHAN_GANDA",
@@ -124,7 +174,12 @@
     {
       "kodeSoal": "ADH-000011",
       "text": "Bacalah paragraf berikut.\n\nSetiap tahun, jutaan ton plastik berakhir di lautan. Plastik yang tidak terurai menjadi mikroplastik dan masuk ke rantai makanan laut. Para ilmuwan menemukan mikroplastik di dalam tubuh ikan yang dikonsumsi manusia. Dampak jangka panjangnya masih dalam penelitian.\n\nInformasi tersirat dari paragraf tersebut adalah...",
-      "options": ["ikan laut aman untuk dikonsumsi", "polusi plastik di laut berpotensi membahayakan kesehatan manusia", "ilmuwan melarang makan ikan", "mikroplastik mudah terurai"],
+      "options": [
+        "ikan laut aman untuk dikonsumsi",
+        "polusi plastik di laut berpotensi membahayakan kesehatan manusia",
+        "ilmuwan melarang makan ikan",
+        "mikroplastik mudah terurai"
+      ],
       "correctAnswer": "1",
       "explanation": "Meskipun tidak secara langsung dinyatakan, fakta bahwa mikroplastik masuk ke rantai makanan manusia mengimplikasikan potensi bahaya kesehatan.",
       "type": "PILIHAN_GANDA",
@@ -136,9 +191,14 @@
     {
       "kodeSoal": "ADH-000012",
       "text": "Bacalah paragraf berikut.\n\nMusim hujan telah tiba. Air sungai meluap dan menggenangi beberapa kampung di sekitarnya. Warga mulai menyiapkan perahu kecil untuk beraktivitas. Anak-anak tampak gembira bermain air di depan rumah mereka.\n\nInformasi tersurat dari paragraf tersebut adalah...",
-      "options": ["warga sedang mengungsi karena banjir", "anak-anak bermain air karena sungai meluap", "musim kemarau sedang berlangsung", "perahu digunakan untuk berdagang"],
+      "options": [
+        "Warga sedang mengungsi karena banjir",
+        "Musim hujan membawa dampak bagi warga di sekitar sungai",
+        "Musim kemarau sedang berlangsung di wilayah tersebut",
+        "Perahu digunakan untuk berdagang di pasar tradisional"
+      ],
       "correctAnswer": "1",
-      "explanation": "Kalimat terakhir secara eksplisit menyatakan anak-anak bermain air di depan rumah karena sungai meluap.",
+      "explanation": "Paragraf menjelaskan bahwa air sungai meluap dan menggenangi kampung. Informasi tersurat yang paling tepat adalah musim hujan membawa dampak bagi warga di sekitar sungai.",
       "type": "PILIHAN_GANDA",
       "difficulty": "MEDIUM",
       "skill": "READING",
@@ -148,7 +208,12 @@
     {
       "kodeSoal": "ADH-000013",
       "text": "Bacalah paragraf berikut.\n\nSeniman batik dari Pekalongan dikenal hingga mancanegara. Proses pembuatan batik tulis memakan waktu berminggu-minggu. Setiap goresan canting memiliki makna filosofis tersendiri. Tak heran jika batik tulis dihargai jauh lebih mahal daripada batik cetak.\n\nGagasan utama paragraf tersebut adalah...",
-      "options": ["batik tulis lebih mahal dari batik cetak", "seniman Pekalongan terkenal", "batik tulis memiliki nilai seni dan filosofi yang tinggi", "pembuatan batik memakan waktu lama"],
+      "options": [
+        "batik tulis lebih mahal dari batik cetak",
+        "seniman Pekalongan terkenal",
+        "batik tulis memiliki nilai seni dan filosofi yang tinggi",
+        "pembuatan batik memakan waktu lama"
+      ],
       "correctAnswer": "2",
       "explanation": "Seluruh paragraf menekankan pada nilai seni, filosofi, dan keunikan batik tulis yang membedakannya dari batik lain.",
       "type": "PILIHAN_GANDA",
@@ -160,7 +225,12 @@
     {
       "kodeSoal": "ADH-000014",
       "text": "Bacalah paragraf berikut.\n\nRevolusi Industri 4.0 membawa perubahan besar dalam cara manusia bekerja. Otomasi dan kecerdasan buatan menggantikan banyak pekerjaan repetitif. Namun, muncul profesi baru yang sebelumnya tidak ada, seperti data scientist dan social media specialist.\n\nKesimpulan yang paling tepat dari paragraf tersebut adalah...",
-      "options": ["revolusi industri menghapus semua pekerjaan", "teknologi hanya membawa dampak negatif", "revolusi industri 4.0 menghilangkan sekaligus menciptakan peluang kerja", "semua pekerjaan akan digantikan robot"],
+      "options": [
+        "revolusi industri menghapus semua pekerjaan",
+        "teknologi hanya membawa dampak negatif",
+        "revolusi industri 4.0 menghilangkan sekaligus menciptakan peluang kerja",
+        "semua pekerjaan akan digantikan robot"
+      ],
       "correctAnswer": "2",
       "explanation": "Paragraf menyeimbangkan dua sisi: penghapusan pekerjaan repetitif sekaligus penciptaan profesi baru.",
       "type": "PILIHAN_GANDA",
@@ -172,7 +242,12 @@
     {
       "kodeSoal": "ADH-000015",
       "text": "Bacalah puisi berikut.\n\nAku berkaca pada diriku\nMencari bayangan yang hilang\nDi cermin waktu yang tak pernah berbohong\nTerbayang wajah penuh harapan\n\nMakna tersirat dari puisi tersebut adalah...",
-      "options": ["penulis sedang bercermin di kamar", "penulis merenungkan perjalanan hidupnya", "penulis tidak suka dengan penampilannya", "penulis sedang menulis surat"],
+      "options": [
+        "penulis sedang bercermin di kamar",
+        "penulis merenungkan perjalanan hidupnya",
+        "penulis tidak suka dengan penampilannya",
+        "penulis sedang menulis surat"
+      ],
       "correctAnswer": "1",
       "explanation": "\"Berkaca pada diri\" dan \"cermin waktu\" adalah metafora untuk introspeksi dan merenungkan perjalanan hidup.",
       "type": "PILIHAN_GANDA",
@@ -184,7 +259,12 @@
     {
       "kodeSoal": "ADH-000016",
       "text": "Bacalah paragraf berikut.\n\nPemerintah Indonesia telah menetapkan program wajib belajar 12 tahun. Program ini bertujuan agar seluruh warga negara mendapatkan pendidikan minimal sampai jenjang SMA. Meskipun demikian, masih banyak daerah terpencil yang kesulitan mengimplementasikan kebijakan ini.\n\nFungsi kalimat terakhir dalam paragraf tersebut adalah...",
-      "options": ["menambah informasi latar belakang", "memberikan contoh keberhasilan program", "menunjukkan hambatan implementasi kebijakan", "menutup paragraf dengan kesimpulan"],
+      "options": [
+        "menambah informasi latar belakang",
+        "memberikan contoh keberhasilan program",
+        "menunjukkan hambatan implementasi kebijakan",
+        "menutup paragraf dengan kesimpulan"
+      ],
       "correctAnswer": "2",
       "explanation": "Kalimat terakhir menunjukkan adanya hambatan atau kendala dalam pelaksanaan program wajib belajar 12 tahun.",
       "type": "PILIHAN_GANDA",
@@ -196,7 +276,12 @@
     {
       "kodeSoal": "ADH-000017",
       "text": "Bacalah paragraf berikut.\n\nIlmuwan memprediksi bahwa suhu rata-rata global akan naik 1,5 derajat Celsius pada akhir abad ke-21. Kenaikan ini akan menyebabkan pencairan es di kutub, kenaikan permukaan air laut, dan perubahan pola cuaca ekstrem di berbagai belahan dunia.\n\nInformasi tersurat dari paragraf tersebut adalah...",
-      "options": ["ilmuwan menyarankan untuk pindah ke kutub", "suhu global akan naik 1,5 derajat pada akhir abad ke-21", "cuaca ekstrem hanya terjadi di kutub", "es di kutub sudah mencair seluruhnya"],
+      "options": [
+        "ilmuwan menyarankan untuk pindah ke kutub",
+        "suhu global akan naik 1,5 derajat pada akhir abad ke-21",
+        "cuaca ekstrem hanya terjadi di kutub",
+        "es di kutub sudah mencair seluruhnya"
+      ],
       "correctAnswer": "1",
       "explanation": "Angka 1,5 derajat Celsius dan waktu akhir abad ke-21 disebutkan secara eksplisit dalam paragraf.",
       "type": "PILIHAN_GANDA",
@@ -208,7 +293,12 @@
     {
       "kodeSoal": "ADH-000018",
       "text": "Perhatikan kalimat berikut.\n\n\"Pemerintah daerah menghimbau warga untuk tidak membakar sampah di lahan terbuka.\"\n\nArti kata \"menghimbau\" dalam kalimat tersebut adalah...",
-      "options": ["memaksa", "menyarankan dengan lembut", "melarang secara resmi", "memohon dengan keras"],
+      "options": [
+        "memaksa",
+        "menyarankan dengan lembut",
+        "melarang secara resmi",
+        "memohon dengan keras"
+      ],
       "correctAnswer": "1",
       "explanation": "\"Menghimbau\" berarti menyarankan atau meminta dengan lembut, bukan memaksa atau melarang.",
       "type": "BENAR_SALAH",
@@ -220,7 +310,12 @@
     {
       "kodeSoal": "ADH-000019",
       "text": "Bentuk baku dari kata \"akte\" adalah...",
-      "options": ["akta", "akte", "aktah", "aktae"],
+      "options": [
+        "akta",
+        "akte",
+        "aktah",
+        "aktae"
+      ],
       "correctAnswer": "0",
       "explanation": "Bentuk baku menurut KBBI adalah \"akta\", bukan \"akte\".",
       "type": "PILIHAN_GANDA",
@@ -231,8 +326,13 @@
     },
     {
       "kodeSoal": "ADH-000020",
-      "text": "Penulisan yang benar sesuai PUEBI adalah...",
-      "options": ["di rumah", "dirumah", "di-rumah", "diRumah"],
+      "text": "Perhatikan pilihan berikut.\n\nA. di rumah\nB. dirumah\nC. di-rumah\nD. diRumah\n\nPenulisan yang benar sesuai PUEBI untuk ungkapan \"di rumah\" adalah...",
+      "options": [
+        "di rumah",
+        "dirumah",
+        "di-rumah",
+        "diRumah"
+      ],
       "correctAnswer": "0",
       "explanation": "\"Di\" sebagai kata depan (preposisi) ditulis terpisah dari kata benda: \"di rumah\".",
       "type": "PILIHAN_GANDA",
@@ -244,7 +344,12 @@
     {
       "kodeSoal": "ADH-000021",
       "text": "Bentuk kata \"me-\" + \"sapu\" yang benar adalah...",
-      "options": ["mensapu", "menyapuh", "menyapu", "mesapu"],
+      "options": [
+        "mensapu",
+        "menyapuh",
+        "menyapu",
+        "mesapu"
+      ],
       "correctAnswer": "2",
       "explanation": "Huruf \"s\" luluh menjadi \"ny\" setelah awalan \"me-\": menyapu.",
       "type": "PILIHAN_GANDA",
@@ -255,8 +360,13 @@
     },
     {
       "kodeSoal": "ADH-000022",
-      "text": "Kalimat efektif yang benar adalah...",
-      "options": ["Agar supaya lulus, ia belajar keras.", "Agar lulus, ia belajar keras.", "Supaya agar lulus, ia belajar keras.", "Demi agar lulus, ia belajar keras."],
+      "text": "Kalimat yang efektif dan sesuai PUEBI adalah...",
+      "options": [
+        "Agar supaya lulus, ia belajar keras.",
+        "Agar lulus, ia belajar keras.",
+        "Supaya agar lulus, ia belajar keras.",
+        "Demi agar lulus, ia belajar keras."
+      ],
       "correctAnswer": "1",
       "explanation": "\"Agar\" dan \"supaya\" bersinonim, cukup gunakan salah satu. Penggunaan keduanya merupakan kalimat tidak efektif.",
       "type": "PILIHAN_GANDA",
@@ -268,7 +378,12 @@
     {
       "kodeSoal": "ADH-000023",
       "text": "Tanda baca yang tepat untuk kalimat \"Hai apa kabar\" adalah...",
-      "options": ["Hai, apa kabar?", "Hai apa kabar?", "Hai; apa kabar?", "Hai: apa kabar?"],
+      "options": [
+        "Hai, apa kabar?",
+        "Hai apa kabar?",
+        "Hai; apa kabar?",
+        "Hai: apa kabar?"
+      ],
       "correctAnswer": "0",
       "explanation": "Kata seru \"Hai\" diikuti koma, dan kalimat tanya diakhiri tanda tanya.",
       "type": "PILIHAN_GANDA",
@@ -280,7 +395,12 @@
     {
       "kodeSoal": "ADH-000024",
       "text": "Kalimat yang menggunakan tanda koma dengan benar adalah...",
-      "options": ["Saya membeli buku, pensil dan tas.", "Saya, membeli buku pensil dan tas.", "Saya membeli buku pensil, dan tas.", "Saya membeli buku, pensil, dan tas."],
+      "options": [
+        "Saya membeli buku, pensil dan tas.",
+        "Saya, membeli buku pensil dan tas.",
+        "Saya membeli buku pensil, dan tas.",
+        "Saya membeli buku, pensil, dan tas."
+      ],
       "correctAnswer": "3",
       "explanation": "Dalam perincian tiga item atau lebih, koma ditempatkan antar unsur: \"buku, pensil, dan tas\".",
       "type": "PILIHAN_GANDA",
@@ -291,10 +411,15 @@
     },
     {
       "kodeSoal": "ADH-000025",
-      "text": "Bentuk baku dari kata \"musik\" adalah...",
-      "options": ["musik", "musiek", "musyik", "musikah"],
+      "text": "Bentuk baku dari kata \"aktifitas\" adalah...",
+      "options": [
+        "aktivitas",
+        "aktifitas",
+        "aktipitas",
+        "aktifitah"
+      ],
       "correctAnswer": "0",
-      "explanation": "\"Musik\" sudah merupakan bentuk baku dalam bahasa Indonesia.",
+      "explanation": "Menurut KBBI, bentuk baku yang benar adalah \"aktivitas\", bukan \"aktifitas\" atau \"aktifitah\".",
       "type": "BENAR_SALAH",
       "difficulty": "EASY",
       "skill": "GRAMMAR",
@@ -304,7 +429,12 @@
     {
       "kodeSoal": "ADH-000026",
       "text": "Kata \"dimakan\" menunjukkan bahwa kata itu berjenis...",
-      "options": ["kata aktif", "kata benda", "kata sifat", "kata pasif"],
+      "options": [
+        "kata aktif",
+        "kata benda",
+        "kata sifat",
+        "kata pasif"
+      ],
       "correctAnswer": "3",
       "explanation": "Awalan \"di-\" membentuk kata kerja pasif: dimakan (oleh sesuatu).",
       "type": "PILIHAN_GANDA",
@@ -316,7 +446,12 @@
     {
       "kodeSoal": "ADH-000027",
       "text": "Perhatikan kalimat berikut.\n\n\"Ia sudah pergi sejak tadi pagi.\"\n\nKata \"sejak\" dalam kalimat tersebut berfungsi sebagai...",
-      "options": ["kata kerja", "kata depan", "keterangan", "kata sambung"],
+      "options": [
+        "kata kerja",
+        "kata depan",
+        "keterangan",
+        "kata sambung"
+      ],
       "correctAnswer": "1",
       "explanation": "\"Sejak\" berfungsi sebagai kata depan yang menunjukkan awal waktu.",
       "type": "PILIHAN_GANDA",
@@ -327,8 +462,13 @@
     },
     {
       "kodeSoal": "ADH-000028",
-      "text": "Penulisan yang benar adalah...",
-      "options": ["Ibu pergi kepasar.", "Ibu pergi ke pasar.", "Ibu pergi ke-pasar.", "Ibu pergi kePasar."],
+      "text": "Perhatikan pilihan penulisan berikut.\n\nA. Ibu pergi kepasar.\nB. Ibu pergi ke pasar.\nC. Ibu pergi ke-pasar.\nD. Ibu pergi kePasar.\n\nPenulisan yang benar adalah...",
+      "options": [
+        "Ibu pergi kepasar.",
+        "Ibu pergi ke pasar.",
+        "Ibu pergi ke-pasar.",
+        "Ibu pergi kePasar."
+      ],
       "correctAnswer": "1",
       "explanation": "\"Ke\" sebagai kata depan penunjuk arah ditulis terpisah: \"ke pasar\".",
       "type": "PILIHAN_GANDA",
@@ -339,8 +479,13 @@
     },
     {
       "kodeSoal": "ADH-000029",
-      "text": "Kalimat efektif yang benar adalah...",
-      "options": ["Para siswa-siswa berbaris di lapangan.", "Siswa-siswa berbaris di lapangan.", "Para siswa berbaris di lapangan.", "Semua para siswa berbaris di lapangan."],
+      "text": "Pilih kalimat yang efektif dan benar secara tata bahasa...",
+      "options": [
+        "Para siswa-siswa berbaris di lapangan.",
+        "Siswa-siswa berbaris di lapangan.",
+        "Para siswa berbaris di lapangan.",
+        "Semua para siswa berbaris di lapangan."
+      ],
       "correctAnswer": "2",
       "explanation": "\"Para\" sudah bermakna jamak, tidak perlu diulang dengan reduplikasi \"siswa-siswa\".",
       "type": "PILIHAN_GANDA",
@@ -352,7 +497,12 @@
     {
       "kodeSoal": "ADH-000030",
       "text": "Perhatikan kalimat berikut.\n\n\"Ani belajar____07.00 setiap hari.\"\n\nKata depan yang tepat untuk mengisi bagian yang bergaris adalah...",
-      "options": ["di", "pada", "ke", "dari"],
+      "options": [
+        "di",
+        "pada",
+        "ke",
+        "dari"
+      ],
       "correctAnswer": "1",
       "explanation": "Kata depan \"pada\" digunakan untuk menunjukkan waktu tertentu: \"pada 07.00\".",
       "type": "ISIAN_SINGKAT",
@@ -364,7 +514,12 @@
     {
       "kodeSoal": "ADH-000031",
       "text": "Bentuk kata \"me-\" + \"tulis\" yang benar adalah...",
-      "options": ["mentulis", "menyulis", "metulis", "menulis"],
+      "options": [
+        "mentulis",
+        "menyulis",
+        "metulis",
+        "menulis"
+      ],
       "correctAnswer": "3",
       "explanation": "Huruf \"t\" luluh menjadi \"n\" setelah awalan \"me-\": menulis.",
       "type": "PILIHAN_GANDA",
@@ -376,9 +531,14 @@
     {
       "kodeSoal": "ADH-000032",
       "text": "Penulisan yang benar sesuai PUEBI adalah...",
-      "options": ["tanggungjawab", "tanggung-jawab", "tanggung jawab", "tanggung jawabnya"],
+      "options": [
+        "tanggungjawab",
+        "tanggung-jawab",
+        "tanggung jawab",
+        "tanggung jawabnya"
+      ],
       "correctAnswer": "2",
-      "explanation": "\"Tanggung jawab\" ditulis terpisah karena belum berimbuhan.",
+      "explanation": "Menurut PUEBI, \"tanggung jawab\" ditulis terpisah tanpa tanda hubung.",
       "type": "PILIHAN_GANDA",
       "difficulty": "MEDIUM",
       "skill": "GRAMMAR",
@@ -388,7 +548,12 @@
     {
       "kodeSoal": "ADH-000033",
       "text": "Kalimat yang menggunakan tanda baca dengan benar adalah...",
-      "options": ["\"Ayo kita bermain, kata Budi.\"", "\"Ayo kita bermain\" kata Budi.", "\"Ayo\", kita bermain kata Budi.", "\"Ayo kita bermain,\" kata Budi."],
+      "options": [
+        "\"Ayo kita bermain, kata Budi.\"",
+        "\"Ayo kita bermain\" kata Budi.",
+        "\"Ayo\", kita bermain kata Budi.",
+        "\"Ayo kita bermain,\" kata Budi."
+      ],
       "correctAnswer": "3",
       "explanation": "Kutipan langsung diakhiri koma sebelum nama pembicara: \"...bermain,\" kata Budi.",
       "type": "PILIHAN_GANDA",
@@ -400,7 +565,12 @@
     {
       "kodeSoal": "ADH-000034",
       "text": "Kata \"terbawa\" berarti...",
-      "options": ["sengaja membawa", "tidak sengaja ikut terbawa", "sedang membawa", "akan membawa"],
+      "options": [
+        "sengaja membawa",
+        "tidak sengaja ikut terbawa",
+        "sedang membawa",
+        "akan membawa"
+      ],
       "correctAnswer": "1",
       "explanation": "Awalan \"ter-\" pada \"terbawa\" menyatakan makna tidak sengaja.",
       "type": "PILIHAN_GANDA",
@@ -412,7 +582,12 @@
     {
       "kodeSoal": "ADH-000035",
       "text": "Perhatikan kalimat berikut.\n\n\"Dia naik ke atas.\"\n\nKalimat tersebut tidak efektif karena...",
-      "options": ["mengandung kata ganda makna", "menggunakan kata depan yang salah", "tidak memiliki subjek", "tanda bacanya kurang"],
+      "options": [
+        "mengandung kata ganda makna",
+        "menggunakan kata depan yang salah",
+        "tidak memiliki subjek",
+        "tanda bacanya kurang"
+      ],
       "correctAnswer": "0",
       "explanation": "\"Naik\" sudah bermakna \"ke atas\", sehingga \"ke atas\" merupakan pengulangan makna.",
       "type": "PILIHAN_GANDA",
@@ -424,7 +599,12 @@
     {
       "kodeSoal": "ADH-000036",
       "text": "Penulisan angka dan kata yang tepat adalah...",
-      "options": ["Dia membeli 2 buah apel.", "Dia membeli 2buah apel.", "Dia membeli dua buah apel.", "Dia membeli II buah apel."],
+      "options": [
+        "Dia membeli 2 buah apel.",
+        "Dia membeli 2buah apel.",
+        "Dia membeli dua buah apel.",
+        "Dia membeli II buah apel."
+      ],
       "correctAnswer": "2",
       "explanation": "Bilangan yang dapat ditulis satu-dua kata ditulis dengan huruf: \"dua buah apel\".",
       "type": "PILIHAN_GANDA",
@@ -436,7 +616,12 @@
     {
       "kodeSoal": "ADH-000037",
       "text": "Perhatikan kalimat berikut.\n\n\"Banyak siswa-siswa hadir di kelas.\"\n\nKalimat tersebut tidak efektif karena...",
-      "options": ["kata \"banyak\" tidak cocok dengan \"siswa\"", "terjadi pengulangan jamak yang tidak perlu", "subjek dan predikat tidak sejajar", "menggunakan kata depan yang salah"],
+      "options": [
+        "kata \"banyak\" tidak cocok dengan \"siswa\"",
+        "terjadi pengulangan jamak yang tidak perlu",
+        "subjek dan predikat tidak sejajar",
+        "menggunakan kata depan yang salah"
+      ],
       "correctAnswer": "1",
       "explanation": "\"Banyak\" sudah menunjukkan jumlah jamak, sehingga \"siswa-siswa\" merupakan pengulangan.",
       "type": "PILIHAN_GANDA",
@@ -448,7 +633,12 @@
     {
       "kodeSoal": "ADH-000038",
       "text": "Perhatikan kalimat berikut.\n\n\"Kepada Bapak Kepala Sekolah waktu dan tempat kami persilakan.\"\n\nKalimat tersebut tidak efektif karena...",
-      "options": ["menggunakan bahasa terlalu formal", "objek yang dipersilakan tidak jelas", "tidak memiliki kata kerja", "terlalu banyak kata sambung"],
+      "options": [
+        "menggunakan bahasa terlalu formal",
+        "objek yang dipersilakan tidak jelas",
+        "tidak memiliki kata kerja",
+        "terlalu banyak kata sambung"
+      ],
       "correctAnswer": "1",
       "explanation": "Kalimat tersebut ambigu karena tidak jelas siapa yang dipersilakan: Bapak Kepala Sekolah atau waktu dan tempat.",
       "type": "PILIHAN_GANDA",
@@ -460,7 +650,12 @@
     {
       "kodeSoal": "ADH-000039",
       "text": "Perhatikan kalimat berikut.\n\n\"Karena ia rajin, maka ia pun berhasil.\"\n\nKalimat tersebut tidak efektif karena...",
-      "options": ["menggunakan kata \"karena\" yang salah", "terjadi pengulangan hubungan sebab-akibat", "tidak memiliki keterangan waktu", "menggunakan imbuhan yang salah"],
+      "options": [
+        "menggunakan kata \"karena\" yang salah",
+        "terjadi pengulangan hubungan sebab-akibat",
+        "tidak memiliki keterangan waktu",
+        "menggunakan imbuhan yang salah"
+      ],
       "correctAnswer": "1",
       "explanation": "\"Karena\" dan \"maka\" keduanya menyatakan hubungan sebab-akibat, sehingga penggunaan keduanya merupakan pengulangan.",
       "type": "PILIHAN_GANDA",
@@ -472,7 +667,12 @@
     {
       "kodeSoal": "ADH-000040",
       "text": "Bentuk \"ber-\" + \"main\" yang benar adalah...",
-      "options": ["bermain", "bermainan", "memain", "berimain"],
+      "options": [
+        "bermain",
+        "bermainan",
+        "memain",
+        "berimain"
+      ],
       "correctAnswer": "0",
       "explanation": "\"Ber-\" + \"main\" = \"bermain\". Tidak ada perubahan bunyi.",
       "type": "BENAR_SALAH",
@@ -484,7 +684,12 @@
     {
       "kodeSoal": "ADH-000041",
       "text": "Perhatikan kalimat berikut.\n\n\"Penulisan gelar yang benar: Rina Wati, S.Pd.\"\n\nTanda titik pada \"S.Pd\" berfungsi sebagai...",
-      "options": ["tanda akhir kalimat", "penanda singkatan gelar", "tanda desimal", "tanda baca list"],
+      "options": [
+        "tanda akhir kalimat",
+        "penanda singkatan gelar",
+        "tanda desimal",
+        "tanda baca list"
+      ],
       "correctAnswer": "1",
       "explanation": "Titik pada singkatan gelar menandakan akhir singkatan: \"S.\" = Sarjana, \"Pd.\" = Pendidikan.",
       "type": "PILIHAN_GANDA",
@@ -496,7 +701,12 @@
     {
       "kodeSoal": "ADH-000042",
       "text": "Imbuhan \"per-an\" pada kata \"perjalanan\" menyatakan...",
-      "options": ["pelaku", "tempat", "hal atau hasil", "alat"],
+      "options": [
+        "pelaku",
+        "tempat",
+        "hal atau hasil",
+        "alat"
+      ],
       "correctAnswer": "2",
       "explanation": "\"Per-an\" pada \"perjalanan\" menyatakan hal atau berkaitan dengan proses perjalanan.",
       "type": "PILIHAN_GANDA",
@@ -508,7 +718,12 @@
     {
       "kodeSoal": "ADH-000043",
       "text": "Awalan \"di-\" pada \"dijual\" membentuk kalimat...",
-      "options": ["aktif", "pasif", "tanya", "perintah"],
+      "options": [
+        "aktif",
+        "pasif",
+        "tanya",
+        "perintah"
+      ],
       "correctAnswer": "1",
       "explanation": "Awalan \"di-\" membentuk kata kerja pasif: dijual (dijual oleh seseorang).",
       "type": "BENAR_SALAH",
@@ -520,7 +735,12 @@
     {
       "kodeSoal": "ADH-000044",
       "text": "Bentuk baku dari kata \"konsekwensi\" adalah...",
-      "options": ["Konsekwensi", "Konsekuensi", "Konsequensi", "Konsekuwensi"],
+      "options": [
+        "Konsekwensi",
+        "Konsekuensi",
+        "Konsequensi",
+        "Konsekuwensi"
+      ],
       "correctAnswer": "1",
       "explanation": "Bentuk baku menurut KBBI adalah \"konsekuensi\".",
       "type": "PILIHAN_GANDA",
@@ -532,7 +752,12 @@
     {
       "kodeSoal": "ADH-000045",
       "text": "Sinonim kata \"pandai\" adalah...",
-      "options": ["bodoh", "malas", "lemah", "cerdas"],
+      "options": [
+        "bodoh",
+        "malas",
+        "lemah",
+        "cerdas"
+      ],
       "correctAnswer": "3",
       "explanation": "\"Pandai\" bersinonim dengan \"cerdas\", keduanya menyatakan kemampuan berpikir yang tinggi.",
       "type": "PILIHAN_GANDA",
@@ -544,7 +769,12 @@
     {
       "kodeSoal": "ADH-000046",
       "text": "Antonim kata \"tinggi\" adalah...",
-      "options": ["jangkung", "panjang", "besar", "rendah"],
+      "options": [
+        "jangkung",
+        "panjang",
+        "besar",
+        "rendah"
+      ],
       "correctAnswer": "3",
       "explanation": "Lawan kata \"tinggi\" adalah \"rendah\".",
       "type": "PILIHAN_GANDA",
@@ -556,7 +786,12 @@
     {
       "kodeSoal": "ADH-000047",
       "text": "Makna ungkapan \"buah tangan\" adalah...",
-      "options": ["hasil kerja", "oleh-oleh", "buah segar", "tangan kanan"],
+      "options": [
+        "hasil kerja",
+        "oleh-oleh",
+        "buah segar",
+        "tangan kanan"
+      ],
       "correctAnswer": "1",
       "explanation": "\"Buah tangan\" adalah ungkapan yang berarti oleh-oleh.",
       "type": "PILIHAN_GANDA",
@@ -568,7 +803,12 @@
     {
       "kodeSoal": "ADH-000048",
       "text": "Kata \"cantik\" termasuk jenis kata...",
-      "options": ["kata benda", "kata kerja", "kata sifat", "kata bilangan"],
+      "options": [
+        "kata benda",
+        "kata kerja",
+        "kata sifat",
+        "kata bilangan"
+      ],
       "correctAnswer": "2",
       "explanation": "\"Cantik\" menyatakan sifat, sehingga termasuk kata sifat (adjektiva).",
       "type": "PILIHAN_GANDA",
@@ -580,7 +820,12 @@
     {
       "kodeSoal": "ADH-000049",
       "text": "Sinonim kata \"indah\" adalah...",
-      "options": ["buruk", "kotor", "suram", "elok"],
+      "options": [
+        "buruk",
+        "kotor",
+        "suram",
+        "elok"
+      ],
       "correctAnswer": "3",
       "explanation": "\"Indah\" bersinonim dengan \"elok\", keduanya menyatakan keindahan.",
       "type": "PILIHAN_GANDA",
@@ -592,7 +837,12 @@
     {
       "kodeSoal": "ADH-000050",
       "text": "Makna peribahasa \"besar pasak daripada tiang\" adalah...",
-      "options": ["rajin menabung", "pengeluaran lebih besar daripada pemasukan", "rumah yang kokoh", "bekerja keras"],
+      "options": [
+        "rajin menabung",
+        "pengeluaran lebih besar daripada pemasukan",
+        "rumah yang kokoh",
+        "bekerja keras"
+      ],
       "correctAnswer": "1",
       "explanation": "Peribahasa ini bermakna pengeluaran lebih besar daripada pendapatan.",
       "type": "PILIHAN_GANDA",
@@ -604,7 +854,12 @@
     {
       "kodeSoal": "ADH-000051",
       "text": "Kata \"berlari\" termasuk jenis kata...",
-      "options": ["kata benda", "kata kerja", "kata sifat", "kata keterangan"],
+      "options": [
+        "kata benda",
+        "kata kerja",
+        "kata sifat",
+        "kata keterangan"
+      ],
       "correctAnswer": "1",
       "explanation": "\"Berlari\" menyatakan perbuatan, sehingga termasuk kata kerja (verba).",
       "type": "PILIHAN_GANDA",
@@ -616,7 +871,12 @@
     {
       "kodeSoal": "ADH-000052",
       "text": "Sinonim kata \"gembira\" adalah...",
-      "options": ["sedih", "marah", "takut", "riang"],
+      "options": [
+        "sedih",
+        "marah",
+        "takut",
+        "riang"
+      ],
       "correctAnswer": "3",
       "explanation": "\"Gembira\" bersinonim dengan \"riang\".",
       "type": "PILIHAN_GANDA",
@@ -628,7 +888,12 @@
     {
       "kodeSoal": "ADH-000053",
       "text": "Antonim kata \"mahal\" adalah...",
-      "options": ["murah", "mewah", "berharga", "langka"],
+      "options": [
+        "murah",
+        "mewah",
+        "berharga",
+        "langka"
+      ],
       "correctAnswer": "0",
       "explanation": "Lawan kata \"mahal\" adalah \"murah\".",
       "type": "PILIHAN_GANDA",
@@ -640,7 +905,12 @@
     {
       "kodeSoal": "ADH-000054",
       "text": "Makna ungkapan \"kepala dingin\" adalah...",
-      "options": ["sakit kepala", "tenang dan sabar", "marah", "kedinginan"],
+      "options": [
+        "sakit kepala",
+        "tenang dan sabar",
+        "marah",
+        "kedinginan"
+      ],
       "correctAnswer": "1",
       "explanation": "\"Kepala dingin\" berarti tenang dan sabar dalam menghadapi masalah.",
       "type": "PILIHAN_GANDA",
@@ -652,7 +922,12 @@
     {
       "kodeSoal": "ADH-000055",
       "text": "Sinonim kata \"berhemat\" adalah...",
-      "options": ["boros", "mengirit", "menghambur", "mewah"],
+      "options": [
+        "boros",
+        "mengirit",
+        "menghambur",
+        "mewah"
+      ],
       "correctAnswer": "1",
       "explanation": "\"Berhemat\" bersinonim dengan \"mengirit\".",
       "type": "PILIHAN_GANDA",
@@ -664,7 +939,12 @@
     {
       "kodeSoal": "ADH-000056",
       "text": "Antonim kata \"sederhana\" adalah...",
-      "options": ["biasa", "mewah", "lumrah", "sekadar"],
+      "options": [
+        "biasa",
+        "mewah",
+        "lumrah",
+        "sekadar"
+      ],
       "correctAnswer": "1",
       "explanation": "Lawan kata \"sederhana\" adalah \"mewah\".",
       "type": "PILIHAN_GANDA",
@@ -676,7 +956,12 @@
     {
       "kodeSoal": "ADH-000057",
       "text": "Sinonim kata \"berpikir\" adalah...",
-      "options": ["melamun", "menalar", "tidur", "bermain"],
+      "options": [
+        "melamun",
+        "menalar",
+        "tidur",
+        "bermain"
+      ],
       "correctAnswer": "1",
       "explanation": "\"Berpikir\" bersinonim dengan \"menalar\".",
       "type": "PILIHAN_GANDA",
@@ -688,7 +973,12 @@
     {
       "kodeSoal": "ADH-000058",
       "text": "Makna peribahasa \"tong kosong nyaring bunyinya\" adalah...",
-      "options": ["suara kaleng nyaring", "orang bodoh banyak bicara", "bunyi keras", "barang kosong"],
+      "options": [
+        "suara kaleng nyaring",
+        "orang bodoh banyak bicara",
+        "bunyi keras",
+        "barang kosong"
+      ],
       "correctAnswer": "1",
       "explanation": "Peribahasa ini bermakna orang yang kurang ilmu biasanya banyak bicara.",
       "type": "PILIHAN_GANDA",
@@ -700,7 +990,12 @@
     {
       "kodeSoal": "ADH-000059",
       "text": "Makna ungkapan \"naik daun\" adalah...",
-      "options": ["memanjat pohon", "sedang populer", "jatuh miskin", "merasa sedih"],
+      "options": [
+        "memanjat pohon",
+        "sedang populer",
+        "jatuh miskin",
+        "merasa sedih"
+      ],
       "correctAnswer": "1",
       "explanation": "\"Naik daun\" berarti sedang terkenal atau populer.",
       "type": "PILIHAN_GANDA",
@@ -712,7 +1007,12 @@
     {
       "kodeSoal": "ADH-000060",
       "text": "Sinonim kata \"bijaksana\" adalah...",
-      "options": ["bodoh", "arif", "ceroboh", "naif"],
+      "options": [
+        "bodoh",
+        "arif",
+        "ceroboh",
+        "naif"
+      ],
       "correctAnswer": "1",
       "explanation": "\"Bijaksana\" bersinonim dengan \"arif\".",
       "type": "PILIHAN_GANDA",
@@ -724,7 +1024,12 @@
     {
       "kodeSoal": "ADH-000061",
       "text": "Makna ungkapan \"tangan besi\" adalah...",
-      "options": ["kuat", "pemimpin yang keras", "kikir", "rapat"],
+      "options": [
+        "kuat",
+        "pemimpin yang keras",
+        "kikir",
+        "rapat"
+      ],
       "correctAnswer": "1",
       "explanation": "\"Tangan besi\" berarti kepemimpinan yang keras dan tegas.",
       "type": "PILIHAN_GANDA",
@@ -736,7 +1041,12 @@
     {
       "kodeSoal": "ADH-000062",
       "text": "Sinonim kata \"lugu\" adalah...",
-      "options": ["pintar", "polos", "licik", "cerdik"],
+      "options": [
+        "pintar",
+        "polos",
+        "licik",
+        "cerdik"
+      ],
       "correctAnswer": "1",
       "explanation": "\"Lugu\" bersinonim dengan \"polos\".",
       "type": "PILIHAN_GANDA",
@@ -748,7 +1058,12 @@
     {
       "kodeSoal": "ADH-000063",
       "text": "Makna peribahasa \"sedia payung sebelum hujan\" adalah...",
-      "options": ["membawa payung", "bersiap sebelum terjadi masalah", "takut hujan", "menunggu hujan"],
+      "options": [
+        "membawa payung",
+        "bersiap sebelum terjadi masalah",
+        "takut hujan",
+        "menunggu hujan"
+      ],
       "correctAnswer": "1",
       "explanation": "Peribahasa ini bermakna bersiap sebelum sesuatu yang buruk terjadi.",
       "type": "PILIHAN_GANDA",
@@ -760,7 +1075,12 @@
     {
       "kodeSoal": "ADH-000064",
       "text": "Makna peribahasa \"gajah di pelupuk mata tidak terlihat\" adalah...",
-      "options": ["mata besar", "tidak melihat kesalahan sendiri", "melihat jauh", "gajah besar"],
+      "options": [
+        "mata besar",
+        "tidak melihat kesalahan sendiri",
+        "melihat jauh",
+        "gajah besar"
+      ],
       "correctAnswer": "1",
       "explanation": "Peribahasa ini bermakna kesalahan sendiri tidak disadari.",
       "type": "PILIHAN_GANDA",
@@ -772,7 +1092,12 @@
     {
       "kodeSoal": "ADH-000065",
       "text": "Makna peribahasa \"air susu dibalas air tuba\" adalah...",
-      "options": ["kebaikan dibalas kejahatan", "minum susu", "saling menolong", "berbuat baik"],
+      "options": [
+        "kebaikan dibalas kejahatan",
+        "minum susu",
+        "saling menolong",
+        "berbuat baik"
+      ],
       "correctAnswer": "0",
       "explanation": "Peribahasa ini bermakna kebaikan dibalas dengan keburukan.",
       "type": "PILIHAN_GANDA",
@@ -784,7 +1109,12 @@
     {
       "kodeSoal": "ADH-000066",
       "text": "Makna ungkapan \"kabar burung\" adalah...",
-      "options": ["kabar gembira", "kabar burung terbang", "kabar yang belum pasti", "kabar duka"],
+      "options": [
+        "kabar gembira",
+        "kabar burung terbang",
+        "kabar yang belum pasti",
+        "kabar duka"
+      ],
       "correctAnswer": "2",
       "explanation": "\"Kabar burung\" berarti kabar atau berita yang belum pasti kebenarannya.",
       "type": "PILIHAN_GANDA",
@@ -796,7 +1126,12 @@
     {
       "kodeSoal": "ADH-000067",
       "text": "Makna ungkapan \"buah hati\" adalah...",
-      "options": ["hati yang sehat", "anak kesayangan", "buah segar", "organ tubuh"],
+      "options": [
+        "hati yang sehat",
+        "anak kesayangan",
+        "buah segar",
+        "organ tubuh"
+      ],
       "correctAnswer": "1",
       "explanation": "\"Buah hati\" berarti anak atau orang yang sangat disayang.",
       "type": "PILIHAN_GANDA",
@@ -808,7 +1143,12 @@
     {
       "kodeSoal": "ADH-000068",
       "text": "Sinonim kata \"kegiatan\" adalah...",
-      "options": ["aktivitas", "keadaan", "kejadian", "keterangan"],
+      "options": [
+        "aktivitas",
+        "keadaan",
+        "kejadian",
+        "keterangan"
+      ],
       "correctAnswer": "0",
       "explanation": "\"Kegiatan\" bersinonim dengan \"aktivitas\".",
       "type": "BENAR_SALAH",
@@ -820,7 +1160,12 @@
     {
       "kodeSoal": "ADH-000069",
       "text": "Makna peribahasa \"bagai kacang lupa kulitnya\" adalah...",
-      "options": ["pandai melupakan", "lupa asal-usul setelah sukses", "kacang yang hilang", "kulit kacang"],
+      "options": [
+        "pandai melupakan",
+        "lupa asal-usul setelah sukses",
+        "kacang yang hilang",
+        "kulit kacang"
+      ],
       "correctAnswer": "1",
       "explanation": "Peribahasa ini bermakna lupa asal-usul setelah mencapai kesuksesan.",
       "type": "PILIHAN_GANDA",
@@ -832,7 +1177,12 @@
     {
       "kodeSoal": "ADH-000070",
       "text": "Makna peribahasa \"sudah jatuh tertimpa tangga\" adalah...",
-      "options": ["sedang jatuh", "malang bertambah malang", "jatuh lalu ditimpa", "sering jatuh"],
+      "options": [
+        "sedang jatuh",
+        "malang bertambah malang",
+        "jatuh lalu ditimpa",
+        "sering jatuh"
+      ],
       "correctAnswer": "1",
       "explanation": "Peribahasa ini bermakna kemalangan yang bertumpuk.",
       "type": "PILIHAN_GANDA",
@@ -844,7 +1194,12 @@
     {
       "kodeSoal": "ADH-000071",
       "text": "Makna ungkapan \"membanting tulang\" adalah...",
-      "options": ["berolahraga", "bekerja keras", "mematahkan tulang", "berantem"],
+      "options": [
+        "berolahraga",
+        "bekerja keras",
+        "mematahkan tulang",
+        "berantem"
+      ],
       "correctAnswer": "1",
       "explanation": "\"Membanting tulang\" berarti bekerja keras.",
       "type": "PILIHAN_GANDA",
@@ -856,7 +1211,12 @@
     {
       "kodeSoal": "ADH-000072",
       "text": "Kalimat yang efektif adalah...",
-      "options": ["Para siswa-siswa berbaris.", "Siswa-siswa berbaris.", "Para siswa berbaris.", "Semua para siswa berbaris."],
+      "options": [
+        "Para siswa-siswa berbaris.",
+        "Siswa-siswa berbaris.",
+        "Para siswa berbaris.",
+        "Semua para siswa berbaris."
+      ],
       "correctAnswer": "2",
       "explanation": "\"Para\" sudah bermakna jamak, tidak perlu diulang dengan \"siswa-siswa\".",
       "type": "PILIHAN_GANDA",
@@ -867,8 +1227,13 @@
     },
     {
       "kodeSoal": "ADH-000073",
-      "text": "Penulisan yang benar sesuai PUEBI adalah...",
-      "options": ["Apakah", "Apa kah", "Apa-kah", "Apaakah"],
+      "text": "Penulisan yang benar sesuai PUEBI untuk kata tanya \"apakah\" adalah...",
+      "options": [
+        "Apakah",
+        "Apa kah",
+        "Apa-kah",
+        "Apaakah"
+      ],
       "correctAnswer": "0",
       "explanation": "Partikel \"-kah\" ditulis serangkai dengan kata sebelumnya: \"apakah\".",
       "type": "PILIHAN_GANDA",
@@ -880,7 +1245,12 @@
     {
       "kodeSoal": "ADH-000074",
       "text": "Nama hari seperti \"Senin\" ditulis dengan huruf...",
-      "options": ["kapital di awal", "kecil semua", "kapital semua", "miring semua"],
+      "options": [
+        "kapital di awal",
+        "kecil semua",
+        "kapital semua",
+        "miring semua"
+      ],
       "correctAnswer": "0",
       "explanation": "Nama hari diawali huruf kapital: \"Senin\", \"Selasa\", dsb.",
       "type": "PILIHAN_GANDA",
@@ -891,8 +1261,13 @@
     },
     {
       "kodeSoal": "ADH-000075",
-      "text": "Kalimat efektif yang benar adalah...",
-      "options": ["Banyak siswa-siswa hadir.", "Banyak siswa hadir.", "Banyak para siswa hadir.", "Banyak sekali siswa-siswa hadir."],
+      "text": "Pilih kalimat yang menggunakan bahasa Indonesia dengan baik dan benar...",
+      "options": [
+        "Banyak siswa-siswa hadir.",
+        "Banyak siswa hadir.",
+        "Banyak para siswa hadir.",
+        "Banyak sekali siswa-siswa hadir."
+      ],
       "correctAnswer": "1",
       "explanation": "\"Banyak\" sudah menunjukkan jamak, cukup \"Banyak siswa hadir\".",
       "type": "PILIHAN_GANDA",
@@ -903,8 +1278,13 @@
     },
     {
       "kodeSoal": "ADH-000076",
-      "text": "Kalimat efektif yang benar adalah...",
-      "options": ["Dia naik ke atas.", "Dia naik ke atas tangga atas.", "Dia naik.", "Dia naik atas."],
+      "text": "Manakah kalimat berikut yang paling efektif...",
+      "options": [
+        "Dia naik ke atas.",
+        "Dia naik ke atas tangga atas.",
+        "Dia naik.",
+        "Dia naik atas."
+      ],
       "correctAnswer": "2",
       "explanation": "\"Naik\" sudah bermakna \"ke atas\", cukup \"Dia naik\".",
       "type": "PILIHAN_GANDA",
@@ -916,7 +1296,12 @@
     {
       "kodeSoal": "ADH-000077",
       "text": "Pilihan kata yang tepat: \"Ayah ___ mobil ke kantor.\"",
-      "options": ["mengendarai", "menaiki", "menyetir", "menjalankan"],
+      "options": [
+        "mengendarai",
+        "menaiki",
+        "menyetir",
+        "menjalankan"
+      ],
       "correctAnswer": "0",
       "explanation": "Kata yang paling tepat dan baku untuk mobil adalah \"mengendarai\".",
       "type": "PILIHAN_GANDA",
@@ -928,7 +1313,12 @@
     {
       "kodeSoal": "ADH-000078",
       "text": "Kalimat yang paling efektif adalah...",
-      "options": ["Ia belajar dengan tekun supaya dapat lulus ujian.", "Ia belajar tekun agar lulus ujian.", "Supaya lulus ujian maka ia belajar.", "Dengan belajar tekun maka ia lulus."],
+      "options": [
+        "Ia belajar dengan tekun supaya dapat lulus ujian.",
+        "Ia belajar tekun agar lulus ujian.",
+        "Supaya lulus ujian maka ia belajar.",
+        "Dengan belajar tekun maka ia lulus."
+      ],
       "correctAnswer": "1",
       "explanation": "Kalimat ringkas dan langsung tanpa pengulangan kata hubung.",
       "type": "PILIHAN_GANDA",
@@ -940,9 +1330,14 @@
     {
       "kodeSoal": "ADH-000079",
       "text": "Penulisan yang benar adalah...",
-      "options": ["tanggungjawab", "tanggung-jawab", "tanggung jawab", "tanggungjawaban"],
-      "correctAnswer": "2",
-      "explanation": "\"Tanggung jawab\" ditulis terpisah karena belum berimbuhan.",
+      "options": [
+        "perangkat keras",
+        "perangkatkeras",
+        "perangkat-keras",
+        "perangat keras"
+      ],
+      "correctAnswer": "0",
+      "explanation": "Menurut PUEBI, \"perangkat keras\" ditulis terpisah tanpa tanda hubung.",
       "type": "PILIHAN_GANDA",
       "difficulty": "MEDIUM",
       "skill": "WRITING",
@@ -952,7 +1347,12 @@
     {
       "kodeSoal": "ADH-000080",
       "text": "Pilihan kata yang tepat: \"Mereka ___ acara itu berhasil.\"",
-      "options": ["menyetujui", "memutuskan", "menganggap", "mengira"],
+      "options": [
+        "menyetujui",
+        "memutuskan",
+        "menganggap",
+        "mengira"
+      ],
       "correctAnswer": "2",
       "explanation": "Kata yang tepat untuk menyatakan pendapat adalah \"menganggap\".",
       "type": "PILIHAN_GANDA",
@@ -964,7 +1364,12 @@
     {
       "kodeSoal": "ADH-000081",
       "text": "Pilihan kata yang tepat: \"Dia ___ hadiah dari ayahnya.\"",
-      "options": ["memberi", "menerima", "mengirim", "menawar"],
+      "options": [
+        "memberi",
+        "menerima",
+        "mengirim",
+        "menawar"
+      ],
       "correctAnswer": "1",
       "explanation": "\"Dari ayahnya\" menunjukkan ia sebagai penerima: \"menerima\".",
       "type": "PILIHAN_GANDA",
@@ -975,8 +1380,13 @@
     },
     {
       "kodeSoal": "ADH-000082",
-      "text": "Kalimat efektif yang benar adalah...",
-      "options": ["Kepada hadirin kami ucapkan terima kasih.", "Para hadirin sekalian.", "Terima kasih atas waktunya.", "Waktu dan tempat dipersilakan."],
+      "text": "Kalimat berikut yang paling baik dan efektif adalah...",
+      "options": [
+        "Kepada hadirin kami ucapkan terima kasih.",
+        "Para hadirin sekalian.",
+        "Terima kasih atas waktunya.",
+        "Waktu dan tempat dipersilakan."
+      ],
       "correctAnswer": "0",
       "explanation": "Kalimat tersebut memiliki subjek dan predikat yang jelas.",
       "type": "PILIHAN_GANDA",
@@ -988,7 +1398,12 @@
     {
       "kodeSoal": "ADH-000083",
       "text": "Kata \"para\" tidak perlu dipakai pada kalimat...",
-      "options": ["Para tamu undangan", "Para guru-guru", "Para siswa", "Para orang tua"],
+      "options": [
+        "Para tamu undangan",
+        "Para guru-guru",
+        "Para siswa",
+        "Para orang tua"
+      ],
       "correctAnswer": "1",
       "explanation": "\"Para\" + \"guru-guru\" merupakan ganda jamak, cukup \"para guru\".",
       "type": "PILIHAN_GANDA",
@@ -1000,7 +1415,12 @@
     {
       "kodeSoal": "ADH-000084",
       "text": "Penulisan yang benar: \"Rina Wati, S.Pd.\" Tanda titik dipakai...",
-      "options": ["di akhir nama", "setelah singkatan gelar", "tidak perlu", "di awal"],
+      "options": [
+        "di akhir nama",
+        "setelah singkatan gelar",
+        "tidak perlu",
+        "di awal"
+      ],
       "correctAnswer": "1",
       "explanation": "Singkatan gelar diakhiri titik: \"S.Pd.\" = Sarjana Pendidikan.",
       "type": "PILIHAN_GANDA",
@@ -1011,8 +1431,13 @@
     },
     {
       "kodeSoal": "ADH-000085",
-      "text": "Kalimat efektif yang benar adalah...",
-      "options": ["Ia rajin maka ia berhasil.", "Karena rajin, ia berhasil.", "Ia rajin dan berhasil.", "Rajin, maka berhasil."],
+      "text": "Perhatikan kalimat-kalimat berikut.\n\nPilih kalimat yang paling efektif...",
+      "options": [
+        "Ia rajin maka ia berhasil.",
+        "Karena rajin, ia berhasil.",
+        "Ia rajin dan berhasil.",
+        "Rajin, maka berhasil."
+      ],
       "correctAnswer": "1",
       "explanation": "Kalimat memiliki subjek dan predikat yang jelas tanpa pengulangan.",
       "type": "PILIHAN_GANDA",
@@ -1024,7 +1449,12 @@
     {
       "kodeSoal": "ADH-000086",
       "text": "Kalimat yang baku adalah...",
-      "options": ["Kepada Bapak Kepala Sekolah waktu dan tempat kami persilakan.", "Bapak Kepala Sekolah kami persilakan.", "Waktu dan tempat kami persilakan.", "Kepada waktu kami persilakan."],
+      "options": [
+        "Kepada Bapak Kepala Sekolah waktu dan tempat kami persilakan.",
+        "Bapak Kepala Sekolah kami persilakan.",
+        "Waktu dan tempat kami persilakan.",
+        "Kepada waktu kami persilakan."
+      ],
       "correctAnswer": "1",
       "explanation": "Yang dipersilakan adalah orang (Bapak Kepala Sekolah), bukan \"waktu dan tempat\".",
       "type": "PILIHAN_GANDA",
@@ -1035,8 +1465,13 @@
     },
     {
       "kodeSoal": "ADH-000087",
-      "text": "Kalimat efektif yang benar adalah...",
-      "options": ["Dengan berlatih setiap hari maka kemampuan meningkat.", "Berlatih setiap hari meningkatkan kemampuan.", "Kemampuan meningkat dengan berlatih.", "Berlatihlah setiap hari agar meningkat."],
+      "text": "Kalimat berikut yang paling sesuai dengan kaidah kebahasaan Indonesia adalah...",
+      "options": [
+        "Dengan berlatih setiap hari maka kemampuan meningkat.",
+        "Berlatih setiap hari meningkatkan kemampuan.",
+        "Kemampuan meningkat dengan berlatih.",
+        "Berlatihlah setiap hari agar meningkat."
+      ],
       "correctAnswer": "1",
       "explanation": "Kalimat ringkas dengan subjek \"berlatih\" yang jelas sebagai pelaku.",
       "type": "PILIHAN_GANDA",
@@ -1048,7 +1483,12 @@
     {
       "kodeSoal": "ADH-000088",
       "text": "Pilihan kata yang tepat: \"Ibu ___ sayur di dapur.\"",
-      "options": ["masak", "memasak", "dimasak", "termasak"],
+      "options": [
+        "masak",
+        "memasak",
+        "dimasak",
+        "termasak"
+      ],
       "correctAnswer": "1",
       "explanation": "Subjek \"Ibu\" melakukan tindakan aktif: \"memasak\".",
       "type": "PILIHAN_GANDA",
@@ -1059,10 +1499,15 @@
     },
     {
       "kodeSoal": "ADH-000089",
-      "text": "Perhatikan paragraf berikut.\n\nSiswa-siswa kelas VII mengunjungi museum nasional. Mereka sangat antusias melihat koleksi benda bersejarah. Guru pendamping menjelaskan sejarah setiap benda yang dipamerkan.\n\nParagraf tersebut memiliki kesalahan ejaan pada kata...",
-      "options": ["mengunjungi", "antusias", "bersejarah", "dipamerkan"],
+      "text": "Perhatikan paragraf berikut.\n\nSiswa-siswa kelas VII mengunjungi museum nasional. Mereka sangat antusies melihat koleksi benda bersejarah. Guru pendamping menjelaskan sejarah setiap benda yang dipamerkan.\n\nKata yang penulisannya tidak baku dalam paragraf tersebut adalah...",
+      "options": [
+        "mengunjungi",
+        "antusies",
+        "bersejarah",
+        "dipamerkan"
+      ],
       "correctAnswer": "1",
-      "explanation": "Bentuk baku adalah \"antusias\", bukan \"antusias\" — sebenarnya tidak ada kesalahan. Namun yang sering salah tulis adalah \"antusias\" vs \"entusias\". Perhatikan penggunaan konteks.",
+      "explanation": "Kata \"antusies\" tidak baku. Bentuk baku yang benar adalah \"antusias\" sesuai KBBI.",
       "type": "PILIHAN_GANDA",
       "difficulty": "MEDIUM",
       "skill": "WRITING",
@@ -1071,8 +1516,13 @@
     },
     {
       "kodeSoal": "ADH-000090",
-      "text": "Kalimat yang menggunakan tanda koma dengan benar adalah...",
-      "options": ["Saya, membeli buku pensil dan tas.", "Saya membeli buku, pensil dan tas.", "Saya membeli buku pensil, dan tas.", "Saya membeli buku, pensil, dan tas."],
+      "text": "Perhatikan penggunaan tanda baca pada kalimat-kalimat berikut.\n\nPilih kalimat yang menggunakan tanda koma dengan tepat...",
+      "options": [
+        "Saya, membeli buku pensil dan tas.",
+        "Saya membeli buku, pensil dan tas.",
+        "Saya membeli buku pensil, dan tas.",
+        "Saya membeli buku, pensil, dan tas."
+      ],
       "correctAnswer": "3",
       "explanation": "Dalam perincian, koma ditempatkan antar unsur: \"buku, pensil, dan tas\".",
       "type": "PILIHAN_GANDA",
@@ -1084,7 +1534,12 @@
     {
       "kodeSoal": "ADH-000091",
       "text": "Unsur intrinsik cerpen yang paling fundamental adalah...",
-      "options": ["latar", "tokoh", "alur", "tema"],
+      "options": [
+        "latar",
+        "tokoh",
+        "alur",
+        "tema"
+      ],
       "correctAnswer": "3",
       "explanation": "Tema merupakan unsur paling fundamental karena menjadi dasar pembangunan seluruh cerita.",
       "type": "PILIHAN_GANDA",
@@ -1096,7 +1551,12 @@
     {
       "kodeSoal": "ADH-000092",
       "text": "Perhatikan puisi berikut.\n\nMalam sunyi tanpa suara\nBintang bertaburan di langit\nHening menyelimuti bumi\nDamai terasa di hati\n\nMajalah yang digunakan dalam puisi tersebut adalah...",
-      "options": ["personifikasi", "metafora", "hiperbola", "simile"],
+      "options": [
+        "personifikasi",
+        "metafora",
+        "hiperbola",
+        "simile"
+      ],
       "correctAnswer": "0",
       "explanation": "\"Hening menyelimuti bumi\" — hening diperlakukan seperti makhluk yang menyelimuti, merupakan personifikasi.",
       "type": "PILIHAN_GANDA",
@@ -1108,7 +1568,12 @@
     {
       "kodeSoal": "ADH-000093",
       "text": "Bacalah kutipan cerpen berikut.\n\n\"Budi berjalan perlahan menuju sekolah. Udara pagi yang sejuk menyapa wajahnya. Di kejauhan, seekor burung berkicau riang.\"\n\nSuasana yang digambarkan dalam kutipan tersebut adalah...",
-      "options": ["tegang", "menyenangkan", "sedih", "menakutkan"],
+      "options": [
+        "tegang",
+        "menyenangkan",
+        "sedih",
+        "menakutkan"
+      ],
       "correctAnswer": "1",
       "explanation": "Udara sejuk dan burung berkicau riang menggambarkan suasana yang menyenangkan.",
       "type": "PILIHAN_GANDA",
@@ -1120,7 +1585,12 @@
     {
       "kodeSoal": "ADH-000094",
       "text": "Makna kata \"matahari\" dalam kalimat \"Matahari terbit dari timur\" secara literal adalah...",
-      "options": ["cahaya kehidupan", "benda langit yang memancarkan cahaya", "simbol harapan", "gambaran kekuasaan"],
+      "options": [
+        "cahaya kehidupan",
+        "benda langit yang memancarkan cahaya",
+        "simbol harapan",
+        "gambaran kekuasaan"
+      ],
       "correctAnswer": "1",
       "explanation": "Secara literal, matahari adalah benda langit yang memancarkan cahaya dan panas.",
       "type": "PILIHAN_GANDA",
@@ -1132,7 +1602,12 @@
     {
       "kodeSoal": "ADH-000095",
       "text": "Perhatikan kutipan puisi berikut.\n\n\"Langit menangis hari itu\nAir matanya membasahi bumi\"\n\nGaya bahasa yang digunakan adalah...",
-      "options": ["simile", "metafora", "personifikasi", "litotes"],
+      "options": [
+        "simile",
+        "metafora",
+        "personifikasi",
+        "litotes"
+      ],
       "correctAnswer": "2",
       "explanation": "Langit diperlakukan seperti manusia yang bisa menangis — merupakan personifikasi.",
       "type": "PILIHAN_GANDA",
@@ -1144,7 +1619,12 @@
     {
       "kodeSoal": "ADH-000096",
       "text": "Tema cerita \"Malin Kundang\" adalah...",
-      "options": ["cinta sejati", "kesetiaan seorang ibu", "dosa anak durhaka", "petualangan melaut"],
+      "options": [
+        "cinta sejati",
+        "kesetiaan seorang ibu",
+        "dosa anak durhaka",
+        "petualangan melaut"
+      ],
       "correctAnswer": "2",
       "explanation": "Cerita Malin Kundang bercerita tentang anak yang durhaka kepada ibunya dan dikutuk menjadi batu.",
       "type": "PILIHAN_GANDA",
@@ -1156,7 +1636,12 @@
     {
       "kodeSoal": "ADH-000097",
       "text": "Perhatikan puisi berikut.\n\n\"Hujan turun dengan deras\nMembasahi tanah yang kering\nMenyegarkan kembali kehidupan\nSeperti pelukan hangat dari langit\"\n\nMakna tersirat dari puisi tersebut adalah...",
-      "options": ["hujan selalu turun setiap hari", "hujan memiliki peran penting bagi kehidupan", "langit memiliki tangan", "tanah tidak pernah kering"],
+      "options": [
+        "hujan selalu turun setiap hari",
+        "hujan memiliki peran penting bagi kehidupan",
+        "langit memiliki tangan",
+        "tanah tidak pernah kering"
+      ],
       "correctAnswer": "1",
       "explanation": "Puisi menggambarkan hujan sebagai penyegar kehidupan, mengimplikasikan peran pentingnya bagi alam.",
       "type": "PILIHAN_GANDA",
@@ -1168,7 +1653,12 @@
     {
       "kodeSoal": "ADH-000098",
       "text": "Bacalah kutipan novel berikut.\n\n\"Rina duduk termenung di tepi jendela. Pandangannya tertuju pada langit yang mulai gelap. Sebuah pertanyaan besar menghantuinya: apakah keputusannya sudah benar?\"\n\nTokoh dalam kutipan tersebut digambarkan sedang...",
-      "options": ["bersiap pergi", "berdoa", "merenungkan keputusan", "menulis surat"],
+      "options": [
+        "bersiap pergi",
+        "berdoa",
+        "merenungkan keputusan",
+        "menulis surat"
+      ],
       "correctAnswer": "2",
       "explanation": "\"Duduk termenung\" dan pertanyaan tentang keputusan menunjukkan tokoh sedang merenung.",
       "type": "PILIHAN_GANDA",
@@ -1180,7 +1670,12 @@
     {
       "kodeSoal": "ADH-000099",
       "text": "Perhatikan kutipan puisi berikut.\n\n\"Bunga mekar di taman\nKupu-kupu menari riang\nAngin sepoi membawa harum\nIndahnya pagi yang bersemi\"\n\nMakna kata \"bersemi\" dalam puisi tersebut adalah...",
-      "options": ["berkembang", "mati", "layu", "tersenyum"],
+      "options": [
+        "berkembang",
+        "mati",
+        "layu",
+        "tersenyum"
+      ],
       "correctAnswer": "0",
       "explanation": "\"Bersemi\" berarti berkembang atau tumbuh subur, sesuai dengan konteks pagi yang indah.",
       "type": "ISIAN_SINGKAT",
@@ -1192,7 +1687,12 @@
     {
       "kodeSoal": "ADH-000100",
       "text": "Gaya bahasa \"Bagaikan aur dengan tebing\" bermakna...",
-      "options": ["saling bantu-membantu", "saling bertengkar", "tidak bisa dipisahkan", "saling bersaing"],
+      "options": [
+        "saling bantu-membantu",
+        "saling bertengkar",
+        "tidak bisa dipisahkan",
+        "saling bersaing"
+      ],
       "correctAnswer": "0",
       "explanation": "\"Aur dengan tebing\" melambangkan hubungan yang saling membantu dan tidak bisa dipisahkan.",
       "type": "PILIHAN_GANDA",
