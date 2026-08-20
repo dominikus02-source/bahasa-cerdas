@@ -13,9 +13,9 @@ import { ADAPTIVE_PRACTICE_COMING_SOON } from "@/lib/diagnostic-ai/config";
  *
  * NO_BASELINE          → DIAGNOSTIC  → "Kenali Kemampuanmu" (Segera Hadir — soal AI belum matang)
  * BASELINE_IN_PROGRESS → DIAGNOSTIC  → "Lanjutkan Tes Awal"
- * BASELINE_COMPLETE_LOW→ DIAGNOSTIC  → "BC Sedang Mengenalimu" (latihan personal — Akan Segera Hadir)
- * PROFILE_READY        → ADAPTIVE    → "Latihan Untukmu" (Akan Segera Hadir)
- * PROFILE_CONFIDENT    → ADAPTIVE    → "Latihan Untukmu" (Akan Segera Hadir)
+ * BASELINE_COMPLETE_LOW→ DIAGNOSTIC  → "BC Sedang Mengenalimu"
+ * PROFILE_READY        → ADAPTIVE    → "Latihan Untukmu" (Mulai Latihan Personal)
+ * PROFILE_CONFIDENT    → ADAPTIVE    → "Latihan Untukmu" (Mulai Latihan Personal)
  *
  * Server-derived: actionTitle, reasonText, ctaLabel, assessmentState.
  * Client never sends skill/difficulty/confidence/reason.
@@ -77,6 +77,27 @@ export function ContinueLearningCard() {
       router.push(`/arena/diagnostic/${data.sessionId}`);
     } catch {
       setStartError("Tes awal belum bisa dimulai. Coba lagi sebentar.");
+    } finally {
+      setStarting(false);
+    }
+  }
+
+  async function startAdaptiveSession() {
+    setStarting(true);
+    setStartError(null);
+    try {
+      const response = await fetch("/api/player/adaptive-practice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "start" }),
+      });
+      const data = await response.json();
+      if (!response.ok || typeof data.sessionId !== "string") {
+        throw new Error(data.error || "Latihan personal belum tersedia");
+      }
+      router.push(`/arena/adaptive-practice/${data.sessionId}`);
+    } catch {
+      setStartError("Latihan personal belum bisa dimulai. Coba lagi sebentar.");
     } finally {
       setStarting(false);
     }
@@ -322,8 +343,8 @@ export function ContinueLearningCard() {
     );
   }
 
-  // ── PROFILE_READY / PROFILE_CONFIDENT — profil siap; latihan personal
-  // sedang disempurnakan → badge "Akan Segera Hadir" (gate ADAPTIVE_PRACTICE_COMING_SOON).
+  // ── PROFILE_READY / PROFILE_CONFIDENT — profil siap; latihan personal.
+  // Saat gate ADAPTIVE_PRACTICE_COMING_SOON true → badge; saat false → tombol mulai.
   const stateTitle = currentMyDay.actionTitle;
   const stateDesc = personalization?.explanation ?? currentMyDay.reasonText;
   // MURID HOME 3.0 — bar akurasi skill target (turunan data preview, tanpa fetch baru).
@@ -369,10 +390,24 @@ export function ContinueLearningCard() {
             {startError && <p className="mt-3 text-xs font-semibold text-red-600 dark:text-red-300">{startError}</p>}
           </div>
           <div className="shrink-0">
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] px-4 py-2.5 rounded-full bg-[rgba(255,210,74,0.14)] text-[var(--px-gold)] border border-[var(--px-gold)]/30">
-              <Sparkles size={13} />
-              Akan Segera Hadir
-            </span>
+            {ADAPTIVE_PRACTICE_COMING_SOON ? (
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] px-4 py-2.5 rounded-full bg-[rgba(255,210,74,0.14)] text-[var(--px-gold)] border border-[var(--px-gold)]/30">
+                <Sparkles size={13} />
+                Akan Segera Hadir
+              </span>
+            ) : (
+              <button
+                type="button"
+                onClick={startAdaptiveSession}
+                disabled={starting}
+                className="px-btn-gold flex items-center justify-center gap-2 text-sm font-bold px-6 py-3 disabled:cursor-wait"
+                aria-label="Mulai Latihan Personal"
+              >
+                {starting ? <Loader2 size={16} className="animate-spin" /> : null}
+                {starting ? "Menyiapkan..." : currentMyDay.ctaLabel}
+                {!starting && <ArrowRight size={16} />}
+              </button>
+            )}
           </div>
         </div>
       </section>
