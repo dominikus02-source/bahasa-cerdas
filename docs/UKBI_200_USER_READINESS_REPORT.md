@@ -131,3 +131,103 @@ JANGAN pernah mengarahkan seed/verify/k6 ke production; jangan salin secret prod
 ### SKENARIO LOAD TEST (04-ukbi-200-users, k6)
 Masih **BLOCKED**: butuh founder provisioning staging + `UKBI_LOADTEST_APPROVED=true` + `USERS='[...]'`. Tidak dijalankan. Load test random shuffle & kohort single-IP tetap diverifikasi lewat unit test (`test:ukbi-200-user-readiness`, 59/59) dan E2E.
 
+---
+
+## FINAL PRE-LOAD GATE — EKSEKUSI Phase K–M2 (Aug 20, 2026)
+
+Phase terakhir sebelum k6: semua gerbang pre-load diverifikasi LANGSUNG di staging production (`bahasa-cerdas-staging.vercel.app`, Supabase ref `hvfkhaocukdzfvseqwdz`, paket `lt-ukbi-200-5f1dee78`). Semua script sementara dihapus setelah eksekusi; **TIDAK ada commit/push, k6 TIDAK dijalankan**.
+
+### Checklist hasil
+
+| # | Check | Hasil | Bukti |
+|---|-------|-------|-------|
+| K1 | Rate-limit suite deterministik | ✅ 18/18 PASS | `npm run test:ukbi-200-user-rate-limit` |
+| K2 | Kohort same-IP authenticated (1 IP NAT realistis) | ✅ 30×200, 0×429 | 10 user × (GET paket + PATCH autosave + POST submit), sesi terpisah per session-scoped bucket `sess|<hash>` |
+| K3 | Proteksi anonymous (IP-shared) | ✅ 429 tercapai | 10 login gagal/600s per IP — bucket anonymous tetap aktif, bukan dilemahkan |
+| K4 | 200/200 sesi login serentak | ✅ 200/200 | Phase K2 — 200 grant password serialized 1.5s (Supabase per-IP grant limit), semua `/api/user/me` 200 role MURID |
+| L1 | Data integrity staging | ✅ PASS (15/15) | Auth 200 unik = Prisma 200 unik = 1:1 id; paket 1, id prefix `lt-ukbi-200-`, pool 10/10 ada di bank, MCQ semua, totalQuestions=10; 0 user lain di auth & prisma staging |
+| L2 | Snapshot immutable + 0 leakage | ✅ PASS (13/13) | GET #1 == GET #2 (id+urutan+opsi identik); scan per-question + payload mentah: 0 `correctAnswer`/`answerKey`/`jawaban`/`rubric`/`weight`/`count`; submit 10/10 benar (snapshot = answer source of truth, predikat Istimewa 100%); snapshot tersimpan (`TestSession.questionSnapshot`) == yang disajikan (10 id identik) |
+| L3 | Double-submit idempotent | ✅ PASS | 2× submit koncurrent: HTTP 200/200 (0×500), 1× `alreadyScored=true`, progres TEPAT 1, session 1, TestAnswer 10, XPTransaction 1 (XP exactly-once via reference paketId), certificate 1, COMPLETED 100% |
+| L3b | Race ketat 8× koncurrent | ✅ PASS | 8 submit `Promise.all`: 0×500, progres 1, XP 1, cert 1, answers 10 — recovery P2002 (`paketId` hoisted) tervalidasi live |
+| M1 | Staging gate re-verify | ✅ 12/12 PASS | `npm run verify:staging-environment` — semua ref staging `hvfkhaocukdzfvseqwdz`; production DB/Supabase/Redis ref ABSENT (check 9/10/11) |
+| M2 | Isolasi production | ✅ 0 write production | Semua request/seed/audit memakai `STAGING_*`; gate memblokir ref production di semua var; paket load test hanya ada di staging (5 paket staging, 1 lt-ukbi-200) |
+| M3 | Deployment sanity | ✅ Live & benar | `GET /` 200 (~1.1s); `GET /api/kompetensi` 200 dengan paket `lt-ukbi-200-5f1dee78`; kode P2002-fix terkonfirmasi live via L3b (deploy 8h lama = `vercel --prod` manual dari working tree yang sudah berisi fix; commit `357c15a` dibuat 1h lalu) |
+
+### Verdict
+
+**✅ READY UNTUK STAGING LOAD TEST (k6 `04-ukbi-200-users`)**
+
+Semua gerbang pre-load GREEN. Tidak ada temuan yang menghalangi. Load test k6 TIDAK dijalankan (instruksi Founder — hanya check-in FUNGSIONAL yang diminta).
+
+### Yang HARUS diketahui Founder sebelum menjalankan k6
+
+1. **Login anonymous = IP-shared 10/600s** — kohort 200 login serentak pertama kali dari 1 IP NAT akan kena 429 pada percobaan ke-11 dalam 10 menit. Solusi: `USERS` dibatasi kohort yang sudah warm-up auth (token tersimpan), atau akui bare plain 429 sebagai bukti proteksi bukan kegagalan. m6m kohort session-scoped TIDAK terpengaruh (K2: 30 requests ×200 = 0×429).
+2. **Kuantum kotak submit**: 30/60s per sesi — k6 journey harus autosave dulu, submit tunggal di akhir VU, bukan loop submit.
+3. **`UKBI_LOADTEST_APPROVED=true`** wajib di env k6 (interlock) — hanya dipakai di staging, dilarang untuk production.
+4. **k6 STAGING sah** setelah ini — jangan pernah arahkan k6/seed/verify ke production.
+
+---
+
+## STAGING LOAD TEST — EKSEKUSI 20 MENIT (Aug 20, 2026)
+
+### Ringkasan Eksekusi
+
+| Metrik | Nilai |
+|--------|-------|
+| Durasi | 20m00s penuh, ramp 0→50→100→150→200→0 (mandat founder) |
+| Skenario | `loadtest/04-ukbi-200-users.js` — token pre-warmed, 1 journey/VU, VU selesai idle-mounted |
+| Journeys selesai | **200/200** (`ukbi_journey_ok` 100%) |
+| Submits sukses | **200/200** (`ukbi_submit_ok` 100%) |
+| Idempotent retry | **200/200** (`ukbi_idempotent_ok` 100%) |
+| HTTP requests | 1.800 total, **0 failed** (0.00%) |
+| Checks | **3.000/3.000 (100%)** — 0 failed |
+| Leakage | **0** (semua payload: GET list, GET paket, PATCH autosave, POST submit, GET hasil) |
+| 429 / 5xx / token-absent | **0** |
+| Warnings (k6) | **0** |
+
+### Latency (skala server sendirian, Vercel sin1-region)
+
+| Endpoint | avg | p(90) | p(95) | Threshold p(95)<5000 | Hasil |
+|----------|-----|-------|-------|----------------------|-------|
+| GET list | 302.5ms | 426.7ms | 562.4ms | ✅ | PASS |
+| GET paket (snapshot build) | 353.5ms | 426.7ms | 562.4ms | ✅ | PASS |
+| PATCH autosave | 216.4ms | 285.1ms | 356.0ms | ✅ | PASS |
+| POST submit (transaksional) | 393.9ms | 490.4ms | 1.00s | ✅ | PASS |
+| GET hasil | 199.1ms | 231.2ms | 262.5ms | ✅ | PASS |
+| **Semua req** | 238.5ms | 355.4ms | 428.3ms | — | — |
+
+Semua threshold k6 GREEN: `rate>0.90` 100%, `rate<0.02` 0%, `rate>0.95` 100%, `p(95)<5000` semua endpoint (maks 1.00s).
+
+### Infrastruktur selama beban (observer 128 sampel @10s)
+
+| Metrik | Observasi |
+|--------|-----------|
+| DB pool (`pg_stat_activity`) | total 8–13 (avg 10.3), active 1, idle-in-tx maks 2 — jauh di bawah limit pgbouncer |
+| Redis staging | **healthy 128/128** — pool Redis `SIM_POOL_TTL=300` & rate-limit bekerja selama beban penuh |
+
+### Integrity post-load (`audit-ukbi-load-post.ts` — read-only) — **FAILURES: 0**
+
+| Check | Hasil |
+|-------|-------|
+| Partisipasi | 200/200 user, 200 TestSession COMPLETED, 200 ProgresKompetensi COMPLETED |
+| Sesi duplikat | 0 — semua `attemptNumber == 1` (double-submit diblokir server-side) |
+| Jawaban | 2.000 total, min=10 max=10 per sesi (semua soal terjawab) |
+| **Scoring** | **20/20 sampel cocok persis** (recompute formula aplikasi: weight EASY=1/MEDIUM=1.5/HARD=2/else=2.5, `totalScore=round(percentage×8)`) |
+| Sertifikat | 1 = 1 user lolos threshold ≥482 (lookout konsisten, bukan duplikat) |
+| XP | 183 = 200 minus 17 user skor-0 (skor 0 sengaja TIDAK mencetak baris XP per anti-farm) — reference semuanya `= paket.id` |
+| Isolasi produksi | 0 ref produksi (`ibtlhoocaoopgtcsnvzr`) di env mana pun — staging murni |
+
+### Verdict
+
+**✅ PASS — produksi siap menangani 200 murid serentak dari 1 jaringan sekolah (1 IP NAT) untuk jalur penuh UKBI (login → muat soal → autosave → submit → hasil).**
+
+Tidak ada kegagalan aplikasi/data/infra. Latency sangat sehat (p95 < 1s untuk semua endpoint, jauh di bawah ambang 5s). Sistem rate-limit session-scoped, snapshot immutability, anti-leakage, anti-duplikasi, dan scoring semuanya tervalidasi live di bawah beban penuh.
+
+### Catatan eksekusi & perbaikan fixture selama fase ini
+
+1. **Bug fixture ditemukan & difix (reset/preflight memakai email di kolom UUID)**: `warmup-ukbi-tokens.ts --reset` dan `preflight-ukbi-load.ts` memfilter dengan `userId: { in: emails }` (string email) → 0 baris cocok, sehingga sesi COMPLETED lama kohort (001–010, 021–025) tidak terhapus dan k6 mendapat 400 `Tes sudah selesai` di GET paket. Fix: resolve `user.findMany({ where: { email: { in: emails } }, select: { id: true } })` lalu pakai array UUID. Setelah fix: hapus 270 answer / 33 sesi / 27 progres / 4 sertifikat / 25 XP.
+2. **Bug fixture #2 (kuota bulanan tidak di-reset)**: 3 VU kena 403 `FEATURE_LIMIT_REACHED` karena `PremiumUsage` (kuota `SIMULATION_MONTHLY_LIMIT`) tidak ikut di-reset. Fix: tambah `db.premiumUsage.deleteMany({ where: { userId: { in: userIds } } })` ke transaksi reset. Setelah fix: hapus 75 baris usage tambahan, preflight 0/0/0/0/0, re-run bebas 429/403.
+3. **Audit awal 2 ekspektasi salah dikoreksi**: (a) scoring bukan "jumlah benar" melainkan weighted `percentage×8` — direkomputasi sesuai formula aplikasi; (b) sertifikat 1 dan XP 183 terdokumentasikan sebagai perilaku sah (threshold ≥482; skor-0 tanpa baris XP anti-farm).
+
+Loader sklearn k6 `loadtest/ukbi-200-gate.mjs` interlock tetap aktif sepanjang eksekusi; tidak pernah ada arah ke production.
+

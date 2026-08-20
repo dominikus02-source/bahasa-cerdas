@@ -4030,6 +4030,35 @@ Verifikasi production readiness skenario 200 murid mengikuti simulasi UKBI **ser
 ### Goal
 Tooling load test 200-user dibuat MUSTAHIL menyentuh production: gate staging 12-check shared (sebelum seed/verify/loadtest), interlock k6 di init-time script 04, seed production-safe (tanpa password hardcoded, gate sebelum klien dibuat, cek 1:1 Auth↔Prisma), launcher guarded `loadtest:ukbi-200`, dokumentasi `STAGING INFRASTRUCTURE REQUIRED`. **BELUM di-commit/push — menunggu Founder Review. STAGING BELUM TER-PROVISION; load test TIDAK dijalankan.**
 
+---
+
+## Phase UKBI 200-USER LOAD TEST — EKSEKUSI STAGING 20 MENIT (Aug 20, 2026)
+
+### Status
+**LOAD TEST DIJALANKAN & SELESAI — hasil PASS. BELUM di-commit/push — menunggu Founder Review (pola fase shell).**
+
+### Hasil
+- **k6 `04-ukbi-200-users`** 20 menit penuh (ramp 0→50→100→150→200→0, mandat founder): 200/200 journeys, 200/200 submit (`ukbi_submit_ok` 100%), 200/200 idempotent, 1.800 HTTP req 0 failed, **3.000/3.000 checks pass**, **0 leakage**, 0×429, 0×5xx, 0 warnings.
+- Latency semua endpoint p(95) jauh < 5.000ms (maks 1.00s POST submit; GET paket 562ms; autosave 356ms; list 562ms; hasil 263ms).
+- Observer: DB pool 8–13 conns (avg 10.3, active 1, idle-in-tx 2), Redis staging healthy 128/128.
+- **Post-load audit `audit-ukbi-load-post.ts` — FAILURES: 0**: 200 sesi COMPLETED, 200 progres, 0 duplikat attempt, 2.000 jawaban (10/sesi), scoring 20/20 sampel cocok persis (recompute formula weighted), sertifikat 1 = 1 user lolos ≥482 (konsisten), XP 183 = 200 minus 17 user skor-0 (anti-farm sengaja tanpa baris XP), isolasi staging murni.
+
+### Bug fixture & audit yang diperbaiki selama fase ini (semua sudah live)
+1. **reset/preflight memakai email di kolom UUID** → 0 baris cocok → sesi COMPLETED lama tidak terhapus → k6 dapat 400 `Tes sudah selesai`. Fix: resolve email→UUID (`user.findMany` select id) di `warmup-ukbi-tokens.ts` & `preflight-ukbi-load.ts`.
+2. **PremiumUsage bulanan tidak di-reset** → 3 VU kena 403 `FEATURE_LIMIT_REACHED`. Fix: `db.premiumUsage.deleteMany({ where: { userId: { in: userIds } } })` di transaksi reset.
+3. **Audit awal salah ekspektasi**: scoring bukan jumlah benar melainkan weighted `percentage×8` (difiks ke formula aplikasi); sertifikat 1 & XP 183 terdokumentasi sebagai perilaku sah (threshold ≥482; skor-0 tanpa baris XP).
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `npm run test:ukbi200-loadtest-gate` | ✅ 18/18 |
+| `npm run verify:staging-environment` 12/12 + preflight 0/0/0/0/0 sebelum eksekusi | ✅ |
+| k6 04 threshold (rate>0.90, rate<0.02, rate>0.95, p95<5000 all) | ✅ GREEN |
+| `npm run audit:ukbi-load-post` | ✅ FAILURES: 0 |
+| Prod isolation | ✅ 0 ref `ibtlhoocaoopgtcsnvzr` di env mana pun |
+| TKA/library/production writes | 0 |
+| Commit/push | ⛔ BELUM — menunggu Founder Review |
+
 ### Apa yang Dikeras (dari fase sebelumnya: verify 6-check + seed + k6 04)
 | File | Perubahan |
 |------|-----------|
