@@ -5,7 +5,8 @@
  * and imports into the database via Prisma (Soal + QuestionMetadata).
  *
  * Usage:
- *   npx tsx scripts/import-question-bank-batch-001.ts          # import
+ *   npx tsx scripts/import-question-bank-batch-001.ts          # import (skip duplicates)
+ *   npx tsx scripts/import-question-bank-batch-001.ts --force  # upsert (update existing)
  *   npx tsx scripts/import-question-bank-batch-001.ts --dry-run # validate only
  *
  * Requires: DATABASE_URL in .env.local
@@ -36,8 +37,9 @@ const BATCH_FILE = path.resolve(
 
 async function main() {
   const dryRun = process.argv.includes("--dry-run");
+  const force = process.argv.includes("--force");
 
-  console.log("=== QUESTION BANK BATCH 001 " + (dryRun ? "(DRY RUN)" : "(IMPORT)") + " ===\n");
+  console.log("=== QUESTION BANK BATCH 001 " + (dryRun ? "(DRY RUN)" : (force ? "(FORCE UPDATE)" : "(IMPORT)")) + " ===\n");
 
   if (!fs.existsSync(BATCH_FILE)) {
     console.error("File not found: " + BATCH_FILE);
@@ -66,8 +68,8 @@ async function main() {
 
   const result = validateImportBatch(
     envelope.questions!,
-    existingKodeSoals,
-    existingTexts
+    force ? new Set<string>() : existingKodeSoals,
+    force ? [] : existingTexts
   );
 
   console.log("=== VALIDATION RESULT ===");
@@ -106,7 +108,7 @@ async function main() {
     return;
   }
 
-  console.log("=== IMPORTING ===");
+  console.log(force ? "=== FORCE UPDATING ===" : "=== IMPORTING ===");
 
   const uploader =
     (await db.user.findFirst({
@@ -132,47 +134,102 @@ async function main() {
   for (let i = 0; i < result.valid.length; i += CHUNK) {
     const chunk = result.valid.slice(i, i + CHUNK);
     try {
-      await db.soal.createMany({
-        data: chunk.map((q) => ({
-          kodeSoal: q.kodeSoal,
-          judul: q.judul,
-          text: q.text,
-          type: q.type,
-          difficulty: q.difficulty,
-          options: q.options,
-          correctAnswer: q.correctAnswer,
-          explanation: q.explanation,
-          isHOTS: q.isHOTS,
-          kelas: q.kelas,
-          semester: q.semester,
-          topik: q.topik,
-          kompetensi: q.kompetensi,
-          indikator: q.indikator,
-          levelBerpikir: q.levelBerpikir,
-          kataKunci: q.kataKunci.length > 0 ? q.kataKunci.join(",") : null,
-          estimasiWaktu: q.estimasiWaktu,
-          subject: "Bahasa Indonesia",
-          source: "IMPORT",
-          uploaderId: uploader.id,
-        })),
-      });
+      if (force) {
+        // Upsert: update existing or create new
+        for (const q of chunk) {
+          const existingRecord = await db.soal.findFirst({ where: { kodeSoal: q.kodeSoal } });
+          const data = {
+            judul: q.judul,
+            text: q.text,
+            type: q.type,
+            difficulty: q.difficulty,
+            options: q.options,
+            correctAnswer: q.correctAnswer,
+            explanation: q.explanation,
+            isHOTS: q.isHOTS,
+            kelas: q.kelas,
+            semester: q.semester,
+            topik: q.topik,
+            kompetensi: q.kompetensi,
+            indikator: q.indikator,
+            levelBerpikir: q.levelBerpikir,
+            kataKunci: q.kataKunci.length > 0 ? q.kataKunci.join(",") : null,
+            estimasiWaktu: q.estimasiWaktu,
+            subject: "Bahasa Indonesia",
+            source: "IMPORT",
+            uploaderId: uploader.id,
+          };
+          if (existingRecord) {
+            await db.soal.update({ where: { id: existingRecord.id }, data });
+          } else {
+            await db.soal.create({ data: { kodeSoal: q.kodeSoal, ...data } });
+          }
+        }
+      } else {
+        await db.soal.createMany({
+          data: chunk.map((q) => ({
+            kodeSoal: q.kodeSoal,
+            judul: q.judul,
+            text: q.text,
+            type: q.type,
+            difficulty: q.difficulty,
+            options: q.options,
+            correctAnswer: q.correctAnswer,
+            explanation: q.explanation,
+            isHOTS: q.isHOTS,
+            kelas: q.kelas,
+            semester: q.semester,
+            topik: q.topik,
+            kompetensi: q.kompetensi,
+            indikator: q.indikator,
+            levelBerpikir: q.levelBerpikir,
+            kataKunci: q.kataKunci.length > 0 ? q.kataKunci.join(",") : null,
+            estimasiWaktu: q.estimasiWaktu,
+            subject: "Bahasa Indonesia",
+            source: "IMPORT",
+            uploaderId: uploader.id,
+          })),
+        });
+      }
 
       const withMeta = chunk.filter((q) => q.skill);
       if (withMeta.length > 0) {
-        await db.questionMetadata.createMany({
-          data: withMeta.map((q) => ({
-            source: "BANK_SOAL",
-            questionId: q.kodeSoal,
-            skill: q.skill,
-            subskill: q.subskill,
-            difficulty: q.difficulty,
-            topic: q.topic || q.topik,
-            questionType: q.type,
-            provenance: q.provenance,
-            confidence: "HIGH",
-            status: "APPROVED",
-          })),
-        });
+        if (force) {
+          for (const q of withMeta) {
+            const existingMeta = await db.questionMetadata.findFirst({ where: { questionId: q.kodeSoal } });
+            const metaData = {
+              source: "BANK_SOAL",
+              skill: q.skill,
+              subskill: q.subskill,
+              difficulty: q.difficulty,
+              topic: q.topic || q.topik,
+              questionType: q.type,
+              provenance: q.provenance,
+              confidence: "HIGH",
+              status: "APPROVED",
+            };
+            if (existingMeta) {
+              await db.questionMetadata.update({ where: { id: existingMeta.id }, data: metaData });
+            } else {
+              await db.questionMetadata.create({ data: { questionId: q.kodeSoal, ...metaData } });
+            }
+          }
+        } else {
+          await db.questionMetadata.createMany({
+            data: withMeta.map((q) => ({
+              source: "BANK_SOAL",
+              questionId: q.kodeSoal,
+              skill: q.skill,
+              subskill: q.subskill,
+              difficulty: q.difficulty,
+              topic: q.topic || q.topik,
+              questionType: q.type,
+              provenance: q.provenance,
+              confidence: "HIGH",
+              status: "APPROVED",
+            })),
+          });
+        }
       }
 
       imported += chunk.length;
