@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import Link from "next/link"
-import { ShoppingBag, Zap, Shield, Sparkles, Moon, Sticker, ArrowLeft, Coins, Loader2, Check } from "lucide-react"
+import { ShoppingBag, Zap, Shield, Sparkles, Moon, Sticker, ArrowLeft, Coins, Loader2, Check, Palette, BookOpen, PenLine, Ticket, Timer, Heart, Trophy } from "lucide-react"
 import CosmeticPreview from "@/components/arena/CosmeticPreview"
 import { isCosmeticType, isEquippableIcon } from "@/lib/cosmetics"
 
@@ -13,9 +13,20 @@ interface StoreItem {
 
 type EquippedMap = Record<string, string | null>
 
+type Category = "all" | "cosmetic" | "boost" | "consumable"
+
+const CATEGORIES: { key: Category; label: string }[] = [
+  { key: "all", label: "Semua" },
+  { key: "cosmetic", label: "Kosmetik" },
+  { key: "boost", label: "Power-Up" },
+  { key: "consumable", label: "Bantuan" },
+]
+
 const TYPE_ICONS: Record<string, any> = {
   STREAK_FREEZE: Shield, XP_BOOST: Zap, AVATAR_FRAME: Sparkles,
-  THEME: Moon, STICKER: Sticker,
+  THEME: Moon, STICKER: Sticker, NAME_COLOR: Palette,
+  BADGE: Trophy, ANSWER_EFFECT: Sparkles, HINT_TOKEN: BookOpen,
+  TIME_EXTENSION: Timer, HEART_REFILL: Heart, EXTRA_TRYOUT: Ticket,
 }
 
 const TYPE_COLORS: Record<string, string> = {
@@ -24,6 +35,25 @@ const TYPE_COLORS: Record<string, string> = {
   AVATAR_FRAME: "from-violet-500 to-purple-600",
   THEME: "from-indigo-500 to-violet-600",
   STICKER: "from-pink-500 to-rose-600",
+  NAME_COLOR: "from-emerald-500 to-teal-600",
+  BADGE: "from-orange-400 to-red-500",
+  ANSWER_EFFECT: "from-fuchsia-500 to-pink-600",
+  HINT_TOKEN: "from-sky-400 to-blue-500",
+  TIME_EXTENSION: "from-teal-400 to-cyan-600",
+  HEART_REFILL: "from-rose-400 to-red-500",
+  EXTRA_TRYOUT: "from-amber-400 to-orange-500",
+}
+
+function getRarity(price: number): { label: string; color: string } {
+  if (price >= 1000) return { label: "Legendaris", color: "text-amber-500 bg-amber-50 border-amber-200 dark:bg-amber-950/40 dark:border-amber-700" }
+  if (price >= 300) return { label: "Epik", color: "text-violet-600 bg-violet-50 border-violet-200 dark:bg-violet-950/40 dark:border-violet-700" }
+  return { label: "Umum", color: "text-gray-500 bg-gray-50 border-gray-200 dark:bg-slate-800 dark:border-slate-700" }
+}
+
+function categorize(type: string): Category {
+  if (["AVATAR_FRAME", "NAME_COLOR", "BADGE", "ANSWER_EFFECT", "THEME", "STICKER"].includes(type)) return "cosmetic"
+  if (["XP_BOOST", "STREAK_FREEZE", "EXTRA_TRYOUT"].includes(type)) return "boost"
+  return "consumable"
 }
 
 export default function ArenaTokoKoinPage() {
@@ -35,6 +65,8 @@ export default function ArenaTokoKoinPage() {
   const [owned, setOwned] = useState<Set<string>>(new Set())
   const [equipped, setEquipped] = useState<EquippedMap>({})
   const [message, setMessage] = useState<{ type: string; text: string } | null>(null)
+  const [activeTab, setActiveTab] = useState<Category>("all")
+  const [showOwned, setShowOwned] = useState(false)
 
   useEffect(() => {
     Promise.all([
@@ -52,8 +84,15 @@ export default function ArenaTokoKoinPage() {
     })
   }, [])
 
-  // Kosmetik yang bisa dipakai (punya tampilan nyata di aplikasi)
   const isWearable = (item: StoreItem) => isCosmeticType(item.type) && isEquippableIcon(item.type, item.icon)
+
+  const filteredItems = useMemo(() => {
+    let list = items
+    if (activeTab !== "all") list = list.filter(i => categorize(i.type) === activeTab)
+    return list
+  }, [items, activeTab])
+
+  const ownedItems = useMemo(() => items.filter(i => owned.has(i.id)), [items, owned])
 
   const handleEquip = async (item: StoreItem, equip: boolean) => {
     setEquipping(item.id)
@@ -110,8 +149,9 @@ export default function ArenaTokoKoinPage() {
   )
 
   return (
-    <div className="px-4 py-4">
-      <div className="flex items-center justify-between mb-6">
+    <div className="px-4 py-4 space-y-5">
+      {/* Header */}
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link href="/arena" className="w-9 h-9 rounded-xl bg-gray-100 dark:bg-slate-800/80 flex items-center justify-center text-gray-600 active:scale-90 transition-transform">
             <ArrowLeft size={18} />
@@ -123,29 +163,105 @@ export default function ArenaTokoKoinPage() {
         </div>
         <div className="flex items-center gap-2 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 px-4 py-2 rounded-xl shrink-0">
           <Coins size={18} className="text-amber-500 dark:text-amber-400" />
-          <span className="font-bold text-amber-600 dark:text-amber-400">{user?.coins || 0}</span>
+          <span className="font-bold text-amber-600 dark:text-amber-400">{(user?.coins || 0).toLocaleString("id-ID")}</span>
         </div>
       </div>
 
+      {/* Message */}
       {message && (
-        <div className={`mb-4 px-4 py-3 rounded-xl text-sm font-medium ${
+        <div className={`px-4 py-3 rounded-xl text-sm font-medium ${
           message.type === "success" ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800" : "bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800"
         }`}>
           {message.text}
         </div>
       )}
 
+      {/* Category Tabs */}
+      <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+        {CATEGORIES.map(cat => (
+          <button
+            key={cat.key}
+            onClick={() => setActiveTab(cat.key)}
+            className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all ${
+              activeTab === cat.key
+                ? "bg-violet-600 text-white shadow-md shadow-violet-200"
+                : "bg-gray-100 dark:bg-slate-800/80 text-gray-600 dark:text-slate-400 hover:bg-gray-200 dark:hover:bg-slate-700"
+            }`}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Owned Items Banner */}
+      {ownedItems.length > 0 && (
+        <button
+          onClick={() => setShowOwned(!showOwned)}
+          className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-violet-50 dark:bg-violet-950/30 border border-violet-200 dark:border-violet-800 text-sm font-semibold text-violet-700 dark:text-violet-300 transition-all hover:bg-violet-100 dark:hover:bg-violet-950/50"
+        >
+          <span className="flex items-center gap-2">
+            <Sparkles size={16} />
+            Item Dimiliki ({ownedItems.length})
+          </span>
+          <span className="text-xs">{showOwned ? "Sembunyikan" : "Tampilkan"}</span>
+        </button>
+      )}
+
+      {/* Owned Items (collapsed section) */}
+      {showOwned && ownedItems.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {ownedItems.map(item => {
+            const Icon = TYPE_ICONS[item.type] || ShoppingBag
+            const color = TYPE_COLORS[item.type] || "from-gray-500 to-gray-600"
+            const wearable = isWearable(item)
+            const isWorn = wearable && equipped[item.type] === item.icon
+
+            return (
+              <div key={item.id} className={`bg-white dark:bg-slate-800/90 rounded-xl border p-4 ${isWorn ? "border-violet-300 ring-1 ring-violet-200 dark:border-violet-600 dark:ring-violet-700" : "border-gray-100 dark:border-slate-700"}`}>
+                <div className="flex items-center gap-3">
+                  <CosmeticPreview type={item.type} icon={item.icon}>
+                    <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center text-white shadow-md shrink-0`}>
+                      <Icon size={20} />
+                    </div>
+                  </CosmeticPreview>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-gray-900 dark:text-slate-100 truncate">{item.name}</p>
+                    {wearable ? (
+                      <button
+                        onClick={() => handleEquip(item, !isWorn)}
+                        disabled={equipping === item.id}
+                        className={`mt-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+                          isWorn
+                            ? "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400"
+                            : "bg-violet-100 dark:bg-violet-950/40 text-violet-600 dark:text-violet-400 hover:bg-violet-200"
+                        }`}
+                      >
+                        {equipping === item.id ? <Loader2 size={12} className="animate-spin" /> : isWorn ? "Dipakai" : "Pakai"}
+                      </button>
+                    ) : (
+                      <p className="mt-1 text-xs text-gray-400 dark:text-slate-500">Dimiliki</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {/* Main Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {items.map(item => {
+        {filteredItems.map(item => {
           const Icon = TYPE_ICONS[item.type] || ShoppingBag
           const color = TYPE_COLORS[item.type] || "from-gray-500 to-gray-600"
           const canAfford = (user?.coins || 0) >= item.price
           const wearable = isWearable(item)
           const isOwned = owned.has(item.id)
           const isWorn = wearable && equipped[item.type] === item.icon
+          const rarity = getRarity(item.price)
 
           return (
-            <div key={item.id} className={`bg-white dark:bg-slate-800/90 rounded-2xl border p-5 hover:shadow-lg transition-all ${isWorn ? "border-violet-300 ring-1 ring-violet-200" : "border-gray-100 dark:border-slate-800"}`}>
+            <div key={item.id} className={`bg-white dark:bg-slate-800/90 rounded-2xl border p-5 hover:shadow-lg transition-all ${isWorn ? "border-violet-300 ring-1 ring-violet-200 dark:border-violet-600 dark:ring-violet-700" : "border-gray-100 dark:border-slate-700"}`}>
               <div className="flex items-start gap-4">
                 <CosmeticPreview type={item.type} icon={item.icon}>
                   <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center text-white shadow-lg shrink-0`}>
@@ -153,11 +269,14 @@ export default function ArenaTokoKoinPage() {
                   </div>
                 </CosmeticPreview>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-gray-900 dark:text-slate-100">{item.name}</h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-bold text-gray-900 dark:text-slate-100">{item.name}</h3>
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${rarity.color}`}>{rarity.label}</span>
+                  </div>
                   <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">{item.description}</p>
                   <div className="flex items-center justify-between gap-2 mt-4">
                     <span className="flex items-center gap-1 text-sm font-semibold text-amber-600 dark:text-amber-400">
-                      <Coins size={14} className="text-amber-500 dark:text-amber-400" /> {item.price}
+                      <Coins size={14} className="text-amber-500 dark:text-amber-400" /> {item.price.toLocaleString("id-ID")}
                     </span>
                     {wearable && isOwned ? (
                       <button
@@ -176,14 +295,16 @@ export default function ArenaTokoKoinPage() {
                     ) : (
                       <button
                         onClick={() => handleBuy(item)}
-                        disabled={buying === item.id || !canAfford}
+                        disabled={buying === item.id || !canAfford || isOwned}
                         className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-                          canAfford
-                            ? "bg-violet-600 text-white hover:bg-violet-700 shadow-lg shadow-violet-200"
-                            : "bg-gray-100 dark:bg-slate-800/80 text-gray-400 cursor-not-allowed"
+                          isOwned
+                            ? "bg-gray-100 dark:bg-slate-800/80 text-gray-400 cursor-not-allowed"
+                            : canAfford
+                              ? "bg-violet-600 text-white hover:bg-violet-700 shadow-lg shadow-violet-200"
+                              : "bg-gray-100 dark:bg-slate-800/80 text-gray-400 cursor-not-allowed"
                         } disabled:opacity-50`}
                       >
-                        {buying === item.id ? <Loader2 size={16} className="animate-spin" /> : canAfford ? "Beli" : "Kurang Koin"}
+                        {buying === item.id ? <Loader2 size={16} className="animate-spin" /> : isOwned ? "Dimiliki" : canAfford ? "Beli" : "Kurang Koin"}
                       </button>
                     )}
                   </div>
@@ -194,14 +315,30 @@ export default function ArenaTokoKoinPage() {
         })}
       </div>
 
-      {items.length === 0 && (
-        <div className="text-center py-20 bg-white dark:bg-slate-800/90 rounded-2xl border border-gray-100 dark:border-slate-800">
-          <div className="w-16 h-16 rounded-full bg-violet-100 flex items-center justify-center mx-auto mb-4">
+      {/* Empty State */}
+      {filteredItems.length === 0 && (
+        <div className="text-center py-16 bg-white dark:bg-slate-800/90 rounded-2xl border border-gray-100 dark:border-slate-700">
+          <div className="w-16 h-16 rounded-full bg-violet-100 dark:bg-violet-950/40 flex items-center justify-center mx-auto mb-4">
             <ShoppingBag size={24} className="text-violet-500 dark:text-violet-400" />
           </div>
-          <p className="text-gray-500 dark:text-slate-400">Belum ada item di toko</p>
+          <p className="text-gray-500 dark:text-slate-400 font-medium">Belum ada item di kategori ini</p>
         </div>
       )}
+
+      {/* How to Earn Coins */}
+      <div className="bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950/20 dark:to-yellow-950/20 rounded-2xl border border-amber-200 dark:border-amber-800 p-5">
+        <h3 className="text-sm font-bold text-amber-800 dark:text-amber-300 mb-3 flex items-center gap-2">
+          <Coins size={16} /> Cara Mendapat Koin
+        </h3>
+        <div className="grid grid-cols-2 gap-2 text-xs text-amber-700 dark:text-amber-400">
+          <div className="flex items-center gap-2"><span className="w-5 h-5 rounded-full bg-amber-200 dark:bg-amber-800 flex items-center justify-center text-[10px] font-bold">10</span> Menulis karya</div>
+          <div className="flex items-center gap-2"><span className="w-5 h-5 rounded-full bg-amber-200 dark:bg-amber-800 flex items-center justify-center text-[10px] font-bold">5</span> Main game solo</div>
+          <div className="flex items-center gap-2"><span className="w-5 h-5 rounded-full bg-amber-200 dark:bg-amber-800 flex items-center justify-center text-[10px] font-bold">5</span> Login harian</div>
+          <div className="flex items-center gap-2"><span className="w-5 h-5 rounded-full bg-amber-200 dark:bg-amber-800 flex items-center justify-center text-[10px] font-bold">30</span> Streak 7 hari</div>
+          <div className="flex items-center gap-2"><span className="w-5 h-5 rounded-full bg-amber-200 dark:bg-amber-800 flex items-center justify-center text-[10px] font-bold">2</span> Karya di-like</div>
+          <div className="flex items-center gap-2"><span className="w-5 h-5 rounded-full bg-amber-200 dark:bg-amber-800 flex items-center justify-center text-[10px] font-bold">1</span> Memberi komentar</div>
+        </div>
+      </div>
     </div>
   )
 }

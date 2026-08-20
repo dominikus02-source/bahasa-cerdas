@@ -2,13 +2,13 @@
 
 import { usePathname } from "next/navigation"
 import Link from "next/link"
-import { Compass, Flame, Gamepad2, MessageCircle, UserCircle } from "lucide-react"
+import { Compass, Flame, Gamepad2, ShoppingBag, UserCircle } from "lucide-react"
 
 const items = [
   { href: "/arena", label: "Beranda", icon: Compass },
   { href: "/arena/feed", label: "Karya", icon: Flame },
   { href: "/arena/game", label: "Gim", icon: Gamepad2 },
-  { href: "/arena/chat", label: "Obrolan", icon: MessageCircle },
+  { href: "/arena/toko-koin", label: "Toko", icon: ShoppingBag },
   { href: "/arena/player", label: "Pemain", icon: UserCircle },
 ]
 

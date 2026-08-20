@@ -1,7 +1,7 @@
 import { getUser } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
-import { ChevronRight, Flame, Gamepad2, Layers, Trophy, UserRound, Zap } from "lucide-react"
+import { ChevronRight, Coins, Flame, Gamepad2, Layers, ShoppingBag, Trophy, UserRound, Zap } from "lucide-react"
 import { trackDailyStreak } from "@/lib/coins"
 import { jenjangMurid } from "@/lib/arena-junior/kurikulum"
 import { levelFromXp } from "@/lib/gamification/levels"
@@ -76,6 +76,16 @@ export default async function BerandaPage() {
               {user.streak}
             </span>
           ) : null}
+          {!isGuruPreview ? (
+            <Link
+              href="/arena/toko-koin"
+              title="Toko Koin"
+              className="flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-bold text-amber-700 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md dark:border-amber-500/30 dark:bg-amber-950/40 dark:text-amber-300"
+            >
+              <Coins className="h-3.5 w-3.5" />
+              {(user.coins || 0).toLocaleString("id-ID")}
+            </Link>
+          ) : null}
           <Link href="/arena/player" aria-label="Profil pemain" className="transition-transform hover:scale-105 active:scale-95">
             <UserAvatar
               size={44}
@@ -144,8 +154,8 @@ export default async function BerandaPage() {
         </div>
       </section>
 
-      {/* ── MAIN MENU — hanya 3 tujuan: Gim / Profil / Leaderboard ── */}
-      <section aria-label="Menu utama Arena" className="grid gap-4 md:grid-cols-3">
+      {/* ── MAIN MENU — Gim / Toko / Profil / Leaderboard ── */}
+      <section aria-label="Menu utama Arena" className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Link
           href="/arena/game"
           className="group flex items-center gap-3.5 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-violet-200 hover:shadow-md hover:shadow-violet-500/[0.08] dark:border-slate-700/60 dark:bg-slate-800/70 dark:hover:border-violet-500/30"
@@ -170,6 +180,19 @@ export default async function BerandaPage() {
             <p className="text-sm font-extrabold text-gray-900 dark:text-slate-100">Profil</p>
             <p className="truncate text-[11px] text-gray-400 dark:text-slate-400">Level, rank, dan progresmu</p>
             <span className="mt-1 inline-block text-[11px] font-bold text-indigo-600 dark:text-indigo-400">Lihat →</span>
+          </div>
+        </Link>
+        <Link
+          href="/arena/toko-koin"
+          className="group flex items-center gap-3.5 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-amber-200 hover:shadow-md hover:shadow-amber-500/[0.08] dark:border-slate-700/60 dark:bg-slate-800/70 dark:hover:border-amber-500/30"
+        >
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-yellow-500 text-white shadow-md shadow-amber-500/25">
+            <ShoppingBag size={22} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-extrabold text-gray-900 dark:text-slate-100">Toko Koin</p>
+            <p className="truncate text-[11px] text-gray-400 dark:text-slate-400">Tukar koin dengan item spesial</p>
+            <span className="mt-1 inline-block text-[11px] font-bold text-amber-600 dark:text-amber-400">Beli →</span>
           </div>
         </Link>
         <Link

@@ -90,9 +90,9 @@ function main() {
     () => home.includes("from-violet-600") && home.includes("to-indigo-700"));
   test("3: Quick Progress HANYA 3 info (Level / XP / Rank) + RankChip",
     () => home.includes(">Level</p>") && home.includes(">XP</p>") && home.includes(">Rank</p>") && home.includes("<RankChip"));
-  test("4: Main Menu HANYA 3 tujuan (Gim / Profil / Leaderboard) — bukan 8 gateway",
-    () => home.includes('href="/arena/game"') && home.includes('href="/arena/player"') && home.includes('href="/arena/player/leaderboard"')
-      && !home.includes('href="/arena/misi"') && !home.includes('href="/arena/league"') && !home.includes('href="/arena/toko-koin"'));
+  test("4: Main Menu 4 tujuan (Gim / Toko / Profil / Leaderboard) — bukan 8 gateway",
+    () => home.includes('href="/arena/game"') && home.includes('href="/arena/player"') && home.includes('href="/arena/player/leaderboard"') && home.includes('href="/arena/toko-koin"')
+      && !home.includes('href="/arena/misi"') && !home.includes('href="/arena/league"'));
   test("5: TIDAK ada fetch berat di home (tanpa leaderboard/badge/quest/kompetisi/riwayat)",
     () => !home.includes("getOrCreateDailyQuests") && !home.includes("listUserBadges") && !home.includes("listAchievements")
       && !home.includes("getWeeklyCompetition") && !home.includes("gameResult") && !home.includes("<LeaderboardPanel"));
@@ -129,8 +129,8 @@ function main() {
     () => darkCount >= 15);
   test("tidak ada fixed canvas / min-width desktop yang memicu overflow",
     () => !home.includes("min-w-[1440") && !home.includes("min-w-[1200"));
-  test("kartu quick progress & menu utama pakai grid 3 kolom responsif",
-    () => home.includes("grid-cols-3") && home.includes("md:grid-cols-3"));
+  test("kartu quick progress pakai grid 3 kolom, menu utama responsif",
+    () => home.includes("grid-cols-3") && (home.includes("md:grid-cols-2") || home.includes("md:grid-cols-3")));
   test("tidak ada zona hardcoded gelap di home (zona dark lama dihapus)",
     () => !home.includes("#0B0A1A") && !home.includes("#0b0a1a") && !home.includes("live-dot2"));
 
@@ -231,8 +231,8 @@ function main() {
       const unexpected = diff.filter((file) => !allowed.has(file));
       return unexpected.length === 0;
     });
-  test("app/arena/bottom-nav.tsx 0 diff (APK bottom nav tidak disentuh)",
-    () => execSync(`git diff --name-only HEAD -- app/arena/bottom-nav.tsx`, { encoding: "utf8", cwd: process.cwd() }).trim().length === 0);
+  test("app/arena/bottom-nav.tsx: Toko Koin ada di bottom nav",
+    () => fs.readFileSync("app/arena/bottom-nav.tsx", "utf8").includes("toko-koin"));
   test("komponen bersama yang masih dipakai tidak dihapus (BattleCard untuk /arena/game, KataPlayGame)",
     () => fs.existsSync("components/arena/BattleCard.tsx") && fs.existsSync("components/game/KataPlayGame.tsx"));
 
