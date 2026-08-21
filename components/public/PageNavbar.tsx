@@ -9,6 +9,7 @@ import { Menu, X, ShoppingCart, Package, User, LogOut } from "lucide-react";
 const navLinks = [
   { href: "/#untuk-murid", label: "Untuk Murid" },
   { href: "/#untuk-guru", label: "Untuk Guru" },
+  { href: "/marketplace", label: "Toko Karya" },
   { href: "/#ekosistem", label: "Ekosistem" },
   { href: "/#bigt", label: "BIGT" },
   { href: "/tentang", label: "Tentang" },
