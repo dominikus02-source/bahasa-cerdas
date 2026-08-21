@@ -5,9 +5,8 @@ import { uploadFileServer } from "@/lib/upload";
 import { isTeacherOrStudent } from "@/lib/teacher/students";
 import { awardGuruXp } from "@/lib/gamification/teacher-xp";
 
-// Folder guru: Modul Ajar / PPT / PDF — dikelompokkan dari fileType.
+// Folder guru: PPT / PDF — dikelompokkan dari fileType.
 const FOLDER_TYPES: Record<string, string[]> = {
-  MODUL: ["DOCX", "XLSX", "MP4", "ZIP"],
   PPT: ["PPTX"],
   PDF: ["PDF"],
 };
@@ -22,7 +21,7 @@ export async function GET(req: NextRequest) {
     const subject = (searchParams.get("subject") || "").trim();
     const tema = (searchParams.get("tema") || "").trim();
     const sort = searchParams.get("sort") || "recent"; // "recent" | "popular"
-    const folder = (searchParams.get("folder") || "").trim().toUpperCase(); // "MODUL" | "PPT" | "PDF"
+    const folder = (searchParams.get("folder") || "").trim().toUpperCase(); // "PPT" | "PDF"
 
     let dbUser: any = null
 
@@ -71,14 +70,9 @@ export async function GET(req: NextRequest) {
     const countsWhere: any = { OR: [{ isPublished: true }, { uploaderId: dbUser.id }] };
     if (and.length) countsWhere.AND = [...and];
 
-    // Folder guru: Modul Ajar / PPT / PDF (dari fileType). Modul juga mencakup
-    // entri lama tanpa fileType (materi konten-only).
+    // Folder guru: PPT / PDF (dari fileType).
     if (folder && FOLDER_TYPES[folder]) {
-      and.push(
-        folder === "MODUL"
-          ? { OR: [{ fileType: { in: FOLDER_TYPES.MODUL } }, { fileType: null }] }
-          : { fileType: { in: FOLDER_TYPES[folder] } }
-      );
+      and.push({ fileType: { in: FOLDER_TYPES[folder] } });
     }
 
     const where: any = { OR: [{ isPublished: true }, { uploaderId: dbUser.id }] };
@@ -88,15 +82,14 @@ export async function GET(req: NextRequest) {
       ? [{ downloads: "desc" as const }, { createdAt: "desc" as const }]
       : [{ createdAt: "desc" as const }];
 
-    const [materis, total, downloadsUsed, modulCount, pptCount, pdfCount] = await Promise.all([
+    const [materis, total, downloadsUsed, pptCount, pdfCount] = await Promise.all([
       db.materi.findMany({ where, orderBy, skip: (page - 1) * limit, take: limit }),
       db.materi.count({ where }),
       db.materiDownload.count({ where: { userId: dbUser.id } }),
-      db.materi.count({ where: { ...countsWhere, AND: [...(countsWhere.AND || []), { OR: [{ fileType: { in: FOLDER_TYPES.MODUL } }, { fileType: null }] }] } }),
       db.materi.count({ where: { ...countsWhere, AND: [...(countsWhere.AND || []), { fileType: { in: FOLDER_TYPES.PPT } }] } }),
       db.materi.count({ where: { ...countsWhere, AND: [...(countsWhere.AND || []), { fileType: { in: FOLDER_TYPES.PDF } }] } }),
     ]);
-    const folderCounts = { MODUL: modulCount, PPT: pptCount, PDF: pdfCount };
+    const folderCounts = { PPT: pptCount, PDF: pdfCount };
 
     // Kuota unduh: gratis 10 modul, premium/founder/admin tak terbatas.
     const unlimited = dbUser.isPremium || dbUser.isFounder || dbUser.role === "ADMIN";
@@ -158,8 +151,8 @@ export async function POST(req: NextRequest) {
       console.log("Uploading file:", file.name, "Size:", file.size, "Type:", file.type);
       
       const fileExt = file.name.split(".").pop()?.toLowerCase() || "pdf";
-      if (!["pdf", "docx", "pptx", "xlsx", "zip"].includes(fileExt)) {
-        return NextResponse.json({ error: "File harus PDF, DOCX, PPTX, XLSX, atau ZIP" }, { status: 400 });
+      if (!["pdf", "pptx"].includes(fileExt)) {
+        return NextResponse.json({ error: "File harus PDF atau PPTX" }, { status: 400 });
       }
 
       const maxSize = fileExt === "pptx" ? 50 * 1024 * 1024 : 20 * 1024 * 1024;

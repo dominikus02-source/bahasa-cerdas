@@ -34,7 +34,7 @@ interface Materi {
 }
 
 type LevelTab = "SD" | "SMP" | "SMA"
-type Folder = "" | "MODUL" | "PPT" | "PDF"
+type Folder = "" | "PPT" | "PDF"
 
 const GRADES_BY_LEVEL: Record<LevelTab, string[]> = {
   SD: ["SD Kelas 1", "SD Kelas 2", "SD Kelas 3", "SD Kelas 4", "SD Kelas 5", "SD Kelas 6"],
@@ -43,7 +43,6 @@ const GRADES_BY_LEVEL: Record<LevelTab, string[]> = {
 }
 
 const FOLDERS: { value: Folder; label: string; hint: string }[] = [
-  { value: "MODUL", label: "Rencana Pembelajaran", hint: "DOCX, XLSX, ZIP" },
   { value: "PPT", label: "PPT", hint: "Presentasi" },
   { value: "PDF", label: "PDF", hint: "Dokumen PDF" },
 ]
@@ -67,7 +66,7 @@ export default function MateriAjarPage() {
   const [debouncedSearch, setDebouncedSearch] = useState("")
   const [kelasFilter, setKelasFilter] = useState<string>("") // grade spesifik, "" = semua di jenjang
   const [folder, setFolder] = useState<Folder>("")
-  const [folderCounts, setFolderCounts] = useState<{ MODUL: number; PPT: number; PDF: number }>({ MODUL: 0, PPT: 0, PDF: 0 })
+  const [folderCounts, setFolderCounts] = useState<{ PPT: number; PDF: number }>({ PPT: 0, PDF: 0 })
   const [quota, setQuota] = useState<{ used: number; limit: number | null; unlimited: boolean } | null>(null)
   const [detailMateri, setDetailMateri] = useState<Materi | null>(null)
   const [kirimMateri, setKirimMateri] = useState<Materi | null>(null)
@@ -239,7 +238,7 @@ export default function MateriAjarPage() {
             >
               <Folder size={13} /> {f.label}
               <span className={`ml-0.5 px-1.5 rounded-full text-[10px] ${folder === f.value ? "bg-white/20" : "bg-gray-200 text-gray-500"}`}>
-                {folderCounts[f.value as "MODUL" | "PPT" | "PDF"] ?? 0}
+                {folderCounts[f.value as "PPT" | "PDF"] ?? 0}
               </span>
             </button>
           ))}
@@ -383,12 +382,12 @@ export default function MateriAjarPage() {
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-600 mb-1">File * <span className="font-normal text-gray-400">(bisa pilih banyak)</span></label>
-                <input type="file" multiple accept=".pdf,.docx,.pptx,.xlsx,.zip"
+                <input type="file" multiple accept=".pdf,.pptx"
                   onChange={e => {
                     const picked = Array.from(e.target.files || [])
-                    const allowed = ["pdf", "docx", "pptx", "xlsx", "zip"]
+                    const allowed = ["pdf", "pptx"]
                     const valid = picked.filter(f => allowed.includes(f.name.split(".").pop()?.toLowerCase() || ""))
-                    if (valid.length < picked.length) alert("Sebagian file dilewati — hanya PDF, DOCX, PPTX, XLSX, ZIP.")
+                    if (valid.length < picked.length) alert("Sebagian file dilewati — hanya PDF dan PPTX yang diterima.")
                     setUploadFiles(valid)
                   }}
                   className="hidden" id="materi-file-input" />
@@ -411,7 +410,7 @@ export default function MateriAjarPage() {
                     ))}
                   </div>
                 )}
-                <p className="text-[10px] text-gray-400 mt-1">Word (DOCX), PDF, PPTX, XLSX, ZIP — Maks 50MB per file</p>
+                <p className="text-[10px] text-gray-400 mt-1">PPTX atau PDF — Maks 50MB per file</p>
               </div>
               {uploadProgress && (
                 <div className="text-xs text-emerald-700 bg-emerald-50 rounded-lg px-3 py-2">
