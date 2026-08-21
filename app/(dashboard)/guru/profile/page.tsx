@@ -1,12 +1,36 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { Camera, Save, X, Loader2, GraduationCap, MapPin, BookOpen, Award, Edit3 } from "lucide-react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import {
+  Camera,
+  Save,
+  X,
+  Loader2,
+  GraduationCap,
+  MapPin,
+  BookOpen,
+  Award,
+  Edit3,
+  User,
+  Briefcase,
+  FileText,
+  CheckCircle2,
+  Heart,
+  Trophy,
+  Flame,
+  Star,
+  Wallet,
+  ChevronRight,
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { levelFromXp } from "@/lib/gamification/levels";
-import { rankFromLevel } from "@/lib/gamification/ranks";
+import { rankFromLevel, RANK_META } from "@/lib/gamification/ranks";
 import { RankChip } from "@/components/gamification/RankChip";
 import { useUserStore } from "@/store";
+
+/* ------------------------------------------------------------------ */
+/*  Types                                                              */
+/* ------------------------------------------------------------------ */
 
 interface ProfileData {
   id: string;
@@ -63,7 +87,43 @@ const EMPTY_FORM: FormState = {
 };
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+
+/* Completeness fields (11 total — must match old pengaturan Profile tab) */
+const COMPLETENESS_FIELDS: { key: keyof FormState; label: string }[] = [
+  { key: "fullName", label: "Nama Lengkap" },
+  { key: "nickname", label: "Nama Panggilan" },
+  { key: "school", label: "Sekolah" },
+  { key: "subject", label: "Mata Pelajaran" },
+  { key: "grade", label: "Jenjang" },
+  { key: "bio", label: "Bio" },
+  { key: "city", label: "Kota" },
+  { key: "province", label: "Provinsi" },
+  { key: "nip", label: "NIP" },
+  { key: "nuptk", label: "NUPTK" },
+];
+
+/* ------------------------------------------------------------------ */
+/*  Helpers                                                            */
+/* ------------------------------------------------------------------ */
+
+function calcCompleteness(p: ProfileData, hasAvatar: boolean): number {
+  let filled = hasAvatar ? 1 : 0;
+  for (const f of COMPLETENESS_FIELDS) {
+    const val = p[f.key as keyof ProfileData];
+    if (val && String(val).trim()) filled++;
+  }
+  return Math.round((filled / (COMPLETENESS_FIELDS.length + 1)) * 100);
+}
+
+function fieldRow(label: string, value: string | null | undefined) {
+  if (!value?.trim()) return null;
+  return { label, value: value.trim() };
+}
+
+/* ------------------------------------------------------------------ */
+/*  Component                                                          */
+/* ------------------------------------------------------------------ */
 
 export default function GuruProfilePage() {
   const [profile, setProfile] = useState<ProfileData | null>(null);
@@ -78,6 +138,8 @@ export default function GuruProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const supabase = createClient();
   const setUser = useUserStore((s) => s.setUser);
+
+  /* --- fetchers --------------------------------------------------- */
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -127,6 +189,8 @@ export default function GuruProfilePage() {
   useEffect(() => {
     Promise.all([fetchProfile(), fetchStats()]).finally(() => setLoading(false));
   }, [fetchProfile, fetchStats]);
+
+  /* --- edit handlers ---------------------------------------------- */
 
   const startEdit = () => {
     if (!profile) return;
@@ -255,9 +319,28 @@ export default function GuruProfilePage() {
     }
   };
 
+  /* --- derived ----------------------------------------------------- */
+
   const rank = rankFromLevel(levelFromXp(profile?.xp || 0));
+  const rankMeta = RANK_META[rank];
   const initial = (profile?.fullName || "G").charAt(0).toUpperCase();
   const displayAvatar = avatarPreview || profile?.avatar;
+  const completeness = useMemo(() => (profile ? calcCompleteness(profile, !!displayAvatar) : 0), [profile, displayAvatar]);
+
+  const profFields = useMemo(() => {
+    if (!profile) return [];
+    return [
+      fieldRow("Sekolah", profile.school),
+      fieldRow("Mata Pelajaran", profile.subject),
+      fieldRow("Jenjang", profile.grade),
+      fieldRow("NIP", profile.nip),
+      fieldRow("NUPTK", profile.nuptk),
+      fieldRow("Kota", profile.city),
+      fieldRow("Provinsi", profile.province),
+    ].filter(Boolean) as { label: string; value: string }[];
+  }, [profile]);
+
+  /* --- loading / empty states -------------------------------------- */
 
   if (loading) {
     return (
@@ -275,8 +358,292 @@ export default function GuruProfilePage() {
     );
   }
 
+  /* ================================================================= */
+  /*  AVATAR SHARED (used in both view & edit)                         */
+  /* ================================================================= */
+
+  const avatarBlock = (size: "lg" | "xl") => {
+    const dim = size === "xl" ? "w-36 h-36" : "w-28 h-28";
+    const textSize = size === "xl" ? "text-5xl" : "text-4xl";
+    return (
+      <div className="relative shrink-0">
+        <button
+          type="button"
+          onClick={handleAvatarClick}
+          className={`group relative ${dim} rounded-full overflow-hidden border-4 border-white shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2`}
+          aria-label="Ganti foto profil"
+        >
+          {displayAvatar ? (
+            /* eslint-disable-next-line @next/next/no-img-element -- blob URL / external URL */
+            <img src={displayAvatar} alt="" className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center">
+              <span className={`${textSize} font-bold text-white`}>{initial}</span>
+            </div>
+          )}
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+            <Camera size={size === "xl" ? 24 : 20} className="text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+        </button>
+        {uploadingAvatar && (
+          <div className={`absolute inset-0 rounded-full bg-black/40 flex items-center justify-center`}>
+            <Loader2 size={28} className="text-white animate-spin" />
+          </div>
+        )}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          onChange={handleAvatarChange}
+          className="hidden"
+          aria-label="Pilih foto profil"
+        />
+      </div>
+    );
+  };
+
+  /* ================================================================= */
+  /*  VIEW MODE                                                        */
+  /* ================================================================= */
+
+  if (!editing) {
+    return (
+      <div className="max-w-5xl mx-auto px-4 py-8 pb-24">
+        {/* Success toast */}
+        {message && (
+          <div
+            className={`mb-6 flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium ${
+              message.type === "success"
+                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                : "bg-red-50 text-red-700 border border-red-200"
+            }`}
+            role="alert"
+          >
+            <CheckCircle2 size={16} className="shrink-0" />
+            {message.text}
+          </div>
+        )}
+
+        <div className="grid lg:grid-cols-[1fr_300px] gap-6">
+          {/* -------- LEFT / MAIN -------- */}
+          <div className="space-y-6">
+            {/* HERO IDENTITY */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+              {/* top accent bar */}
+              <div className="h-20 bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500" />
+
+              <div className="px-6 pb-6 -mt-12">
+                <div className="flex flex-col sm:flex-row items-center sm:items-end gap-5">
+                  {/* avatar */}
+                  <div className="ring-4 ring-white rounded-full shadow-lg">
+                    {avatarBlock("xl")}
+                  </div>
+
+                  {/* identity text */}
+                  <div className="flex-1 text-center sm:text-left pb-1">
+                    <h1 className="text-2xl font-bold text-gray-900 leading-tight">
+                      {profile.fullName || "Guru"}
+                    </h1>
+                    {profile.nickname && (
+                      <p className="text-sm text-gray-400 mt-0.5">&ldquo;{profile.nickname}&rdquo;</p>
+                    )}
+                    <p className="text-sm text-emerald-700 font-medium mt-1">
+                      Guru {profile.subject || "Bahasa Indonesia"}
+                    </p>
+                    {(profile.school || profile.city) && (
+                      <div className="flex items-center justify-center sm:justify-start gap-1.5 mt-2 text-sm text-gray-500">
+                        {profile.school && (
+                          <span className="flex items-center gap-1">
+                            <GraduationCap size={14} className="text-gray-400" />
+                            {profile.school}
+                          </span>
+                        )}
+                        {profile.school && profile.city && <span className="text-gray-300">·</span>}
+                        {profile.city && (
+                          <span className="flex items-center gap-1">
+                            <MapPin size={14} className="text-gray-400" />
+                            {[profile.city, profile.province].filter(Boolean).join(", ")}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* edit button */}
+                  <button
+                    type="button"
+                    onClick={startEdit}
+                    className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+                  >
+                    <Edit3 size={16} />
+                    Edit Profil
+                  </button>
+                </div>
+
+                {/* badges row */}
+                {(profile.isFounder || profile.isPremium) && (
+                  <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100">
+                    {profile.isFounder && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-xs font-semibold border border-amber-200">
+                        <Award size={13} /> Founder
+                      </span>
+                    )}
+                    {profile.isPremium && !profile.isFounder && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-amber-50 to-yellow-50 text-amber-700 rounded-full text-xs font-semibold border border-amber-200">
+                        <Star size={13} /> Guru Pro
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* BIO */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+              <h2 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <Heart size={16} className="text-rose-400" />
+                Tentang Saya
+              </h2>
+              {profile.bio ? (
+                <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">{profile.bio}</p>
+              ) : (
+                <div className="text-center py-6">
+                  <p className="text-sm text-gray-400 italic mb-3">
+                    Tambahkan sedikit cerita tentang dirimu sebagai guru.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={startEdit}
+                    className="text-sm text-emerald-600 hover:text-emerald-700 font-semibold"
+                  >
+                    Edit Profil <ChevronRight size={14} className="inline -mt-0.5" />
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* PROFIL PROFESIONAL */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+              <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <Briefcase size={16} className="text-blue-500" />
+                Profil Profesional
+              </h2>
+              {profFields.length > 0 ? (
+                <div className="grid sm:grid-cols-2 gap-x-8 gap-y-3">
+                  {profFields.map((f) => (
+                    <div key={f.label} className="flex items-start gap-3 py-1.5">
+                      <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide w-28 shrink-0 pt-0.5">
+                        {f.label}
+                      </span>
+                      <span className="text-sm text-gray-800 font-medium">{f.value}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-400 italic">
+                  Lengkapi profil profesional agar terlihat lebih lengkap.
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* -------- RIGHT / SIDEBAR -------- */}
+          <div className="space-y-5">
+            {/* COMPLETENESS */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 text-center">
+              <div className="relative inline-flex items-center justify-center mb-3">
+                <svg className="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+                  <circle cx="40" cy="40" r="34" fill="none" stroke="#e5e7eb" strokeWidth="6" />
+                  <circle
+                    cx="40"
+                    cy="40"
+                    r="34"
+                    fill="none"
+                    stroke={completeness >= 80 ? "#059669" : completeness >= 50 ? "#f59e0b" : "#ef4444"}
+                    strokeWidth="6"
+                    strokeLinecap="round"
+                    strokeDasharray={`${(completeness / 100) * 213.6} 213.6`}
+                  />
+                </svg>
+                <span className="absolute text-lg font-bold text-gray-900">{completeness}%</span>
+              </div>
+              <p className="text-sm font-semibold text-gray-700">Kelengkapan Profil</p>
+              <p className="text-xs text-gray-400 mt-1">
+                {completeness >= 80 ? "Profil sudah lengkap!" : completeness >= 50 ? "Hampir lengkap" : "Lengkapi profil Anda"}
+              </p>
+            </div>
+
+            {/* STATS */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <Trophy size={15} className="text-amber-500" />
+                Aktivitas Guru
+              </h3>
+              <div className="space-y-3">
+                {[
+                  { icon: FileText, label: "Karya", value: stats.totalKarya, color: "text-violet-600" },
+                  { icon: GraduationCap, label: "Siswa", value: stats.totalSiswa, color: "text-blue-600" },
+                  { icon: BookOpen, label: "Kuis", value: stats.totalKuis, color: "text-emerald-600" },
+                ].map((s) => (
+                  <div key={s.label} className="flex items-center justify-between">
+                    <span className="flex items-center gap-2 text-sm text-gray-600">
+                      <s.icon size={15} className={s.color} />
+                      {s.label}
+                    </span>
+                    <span className="text-sm font-bold text-gray-900">{s.value}</span>
+                  </div>
+                ))}
+                <div className="border-t border-gray-100 pt-3 flex items-center justify-between">
+                  <span className="flex items-center gap-2 text-sm text-gray-600">
+                    <Wallet size={15} className="text-emerald-600" />
+                    Saldo
+                  </span>
+                  <span className="text-sm font-bold text-emerald-600">
+                    Rp{(stats.saldo || 0).toLocaleString("id")}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* RANK & LEVEL */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <Award size={15} className="text-violet-500" />
+                Pencapaian
+              </h3>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600">Peringkat</span>
+                  <RankChip rank={rank} size={16} />
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600">Level</span>
+                  <span className="text-sm font-bold text-gray-900" style={{ color: rankMeta?.color }}>
+                    {profile.level}
+                  </span>
+                </div>
+                {profile.streak > 0 && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Streak</span>
+                    <span className="flex items-center gap-1 text-sm font-bold text-orange-500">
+                      <Flame size={14} /> {profile.streak} hari
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ================================================================= */
+  /*  EDIT MODE                                                        */
+  /* ================================================================= */
+
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 pb-24">
+    <div className="max-w-3xl mx-auto px-4 py-8 pb-24">
       {message && (
         <div
           className={`mb-6 flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium ${
@@ -286,135 +653,63 @@ export default function GuruProfilePage() {
           }`}
           role="alert"
         >
+          <CheckCircle2 size={16} className="shrink-0" />
           {message.text}
         </div>
       )}
 
-      {/* Hero */}
-      <div className="flex flex-col items-center text-center mb-8">
-        <div className="relative mb-4">
-          <button
-            type="button"
-            onClick={handleAvatarClick}
-            className="group relative w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-            aria-label="Ganti foto profil"
-          >
-            {displayAvatar ? (
-              <img src={displayAvatar} alt="" className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center">
-                <span className="text-4xl font-bold text-white">{initial}</span>
-              </div>
-            )}
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
-              <Camera size={20} className="text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        {/* header */}
+        <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+          <h2 className="text-lg font-bold text-gray-900">Edit Profil</h2>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={cancelEdit}
+              disabled={saving}
+              className="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+            >
+              Batal
+            </button>
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving}
+              className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+            >
+              {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+              {saving ? "Menyimpan..." : "Simpan Perubahan"}
+            </button>
+          </div>
+        </div>
+
+        <div className="p-6 space-y-8">
+          {/* FOTO PROFIL */}
+          <div className="flex items-center gap-5">
+            {avatarBlock("lg")}
+            <div>
+              <p className="text-sm font-semibold text-gray-900">Foto Profil</p>
+              <p className="text-xs text-gray-400 mt-0.5">JPG, PNG, atau WebP. Maksimal 5MB.</p>
+              <button
+                type="button"
+                onClick={handleAvatarClick}
+                className="mt-2 text-sm text-emerald-600 hover:text-emerald-700 font-semibold"
+              >
+                {displayAvatar ? "Ganti Foto" : "Upload Foto"}
+              </button>
             </div>
-          </button>
-          {uploadingAvatar && (
-            <div className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center">
-              <Loader2 size={24} className="text-white animate-spin" />
-            </div>
-          )}
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            onChange={handleAvatarChange}
-            className="hidden"
-            aria-label="Pilih foto profil"
-          />
-        </div>
-
-        <h1 className="text-2xl font-bold text-gray-900">{profile.fullName || "Guru"}</h1>
-
-        <div className="flex items-center gap-2 mt-2">
-          <RankChip rank={rank} size={18} />
-          <span className="text-sm text-gray-500">Level {profile.level}</span>
-        </div>
-
-        {(profile.school || profile.subject) && (
-          <div className="flex items-center gap-2 mt-3 text-sm text-gray-600">
-            {profile.subject && (
-              <span className="flex items-center gap-1">
-                <BookOpen size={14} />
-                {profile.subject}
-              </span>
-            )}
-            {profile.subject && profile.school && <span className="text-gray-300">|</span>}
-            {profile.school && (
-              <span className="flex items-center gap-1">
-                <GraduationCap size={14} />
-                {profile.school}
-              </span>
-            )}
           </div>
-        )}
 
-        {profile.city && (
-          <div className="flex items-center gap-1 mt-1 text-xs text-gray-400">
-            <MapPin size={12} />
-            {[profile.city, profile.province].filter(Boolean).join(", ")}
-          </div>
-        )}
-
-        {profile.bio && <p className="mt-3 text-sm text-gray-600 max-w-md leading-relaxed">{profile.bio}</p>}
-
-        <div className="flex items-center gap-3 mt-4">
-          {profile.isFounder && (
-            <span className="inline-flex items-center gap-1 px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-medium">
-              <Award size={12} /> Founder
-            </span>
-          )}
-          {profile.isPremium && !profile.isFounder && (
-            <span className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-700 rounded-full text-xs font-medium border border-amber-200">
-              <Award size={12} /> Pro
-            </span>
-          )}
-        </div>
-
-        {!editing && (
-          <button
-            type="button"
-            onClick={startEdit}
-            className="mt-6 inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-          >
-            <Edit3 size={16} />
-            Edit Profil
-          </button>
-        )}
-      </div>
-
-      {/* Stats */}
-      {!editing && (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
-          <div className="grid grid-cols-4 divide-x divide-gray-100">
-            {[
-              { value: stats.totalKarya, label: "Karya" },
-              { value: stats.totalSiswa, label: "Siswa" },
-              { value: stats.totalKuis, label: "Kuis" },
-              { value: `Rp${(stats.saldo || 0).toLocaleString("id")}`, label: "Saldo", accent: true },
-            ].map((s, i) => (
-              <div key={i} className="text-center">
-                <p className={`text-lg font-bold ${s.accent ? "text-emerald-600" : "text-gray-900"}`}>{s.value}</p>
-                <p className="text-xs text-gray-500 mt-1">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Edit Mode */}
-      {editing && (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-6">Edit Profil</h2>
-
-          {/* Informasi Pribadi */}
-          <div className="mb-6">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Informasi Pribadi</h3>
+          {/* INFORMASI PRIBADI */}
+          <section>
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4 flex items-center gap-2">
+              <User size={15} className="text-gray-400" />
+              Informasi Pribadi
+            </h3>
             <div className="space-y-4">
               <div>
                 <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Nama Lengkap
+                  Nama Lengkap <span className="text-red-400">*</span>
                 </label>
                 <input
                   id="fullName"
@@ -452,11 +747,14 @@ export default function GuruProfilePage() {
                 <p className="text-xs text-gray-400 mt-1">Email tidak dapat diubah dari sini.</p>
               </div>
             </div>
-          </div>
+          </section>
 
-          {/* Profil Profesional */}
-          <div>
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Profil Profesional</h3>
+          {/* PROFIL PROFESIONAL */}
+          <section>
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4 flex items-center gap-2">
+              <Briefcase size={15} className="text-gray-400" />
+              Profil Profesional
+            </h3>
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -530,73 +828,83 @@ export default function GuruProfilePage() {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1.5">
-                    Kota / Kabupaten
-                  </label>
-                  <input
-                    id="city"
-                    type="text"
-                    value={form.city}
-                    onChange={(e) => setForm((p) => ({ ...p, city: e.target.value }))}
-                    className="w-full h-11 px-4 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    placeholder="Jakarta"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="province" className="block text-sm font-medium text-gray-700 mb-1.5">
-                    Provinsi
-                  </label>
-                  <input
-                    id="province"
-                    type="text"
-                    value={form.province}
-                    onChange={(e) => setForm((p) => ({ ...p, province: e.target.value }))}
-                    className="w-full h-11 px-4 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    placeholder="DKI Jakarta"
-                  />
-                </div>
+            </div>
+          </section>
+
+          {/* LOKASI */}
+          <section>
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4 flex items-center gap-2">
+              <MapPin size={15} className="text-gray-400" />
+              Lokasi
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Kota / Kabupaten
+                </label>
+                <input
+                  id="city"
+                  type="text"
+                  value={form.city}
+                  onChange={(e) => setForm((p) => ({ ...p, city: e.target.value }))}
+                  className="w-full h-11 px-4 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  placeholder="Jakarta"
+                />
               </div>
               <div>
-                <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Bio
+                <label htmlFor="province" className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Provinsi
                 </label>
-                <textarea
-                  id="bio"
-                  rows={3}
-                  value={form.bio}
-                  onChange={(e) => setForm((p) => ({ ...p, bio: e.target.value }))}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
-                  placeholder="Ceritakan tentang diri Anda..."
+                <input
+                  id="province"
+                  type="text"
+                  value={form.province}
+                  onChange={(e) => setForm((p) => ({ ...p, province: e.target.value }))}
+                  className="w-full h-11 px-4 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  placeholder="DKI Jakarta"
                 />
               </div>
             </div>
-          </div>
+          </section>
 
-          {/* Actions */}
-          <div className="flex items-center gap-3 mt-8">
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={saving}
-              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-            >
-              {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-              {saving ? "Menyimpan..." : "Simpan Perubahan"}
-            </button>
+          {/* TENTANG SAYA */}
+          <section>
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4 flex items-center gap-2">
+              <Heart size={15} className="text-gray-400" />
+              Tentang Saya
+            </h3>
+            <textarea
+              id="bio"
+              rows={3}
+              value={form.bio}
+              onChange={(e) => setForm((p) => ({ ...p, bio: e.target.value }))}
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
+              placeholder="Ceritakan tentang diri Anda sebagai guru..."
+            />
+          </section>
+
+          {/* BOTTOM ACTIONS (mobile) */}
+          <div className="flex items-center gap-3 pt-4 border-t border-gray-100 sm:hidden">
             <button
               type="button"
               onClick={cancelEdit}
               disabled={saving}
-              className="px-6 py-3 border border-gray-200 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-50 transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
+              className="flex-1 px-4 py-3 border border-gray-200 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-50 transition-colors disabled:opacity-50"
             >
-              <X size={16} className="inline mr-1.5 -mt-0.5" />
               Batal
+            </button>
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving}
+              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50"
+            >
+              {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+              {saving ? "Menyimpan..." : "Simpan"}
             </button>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
