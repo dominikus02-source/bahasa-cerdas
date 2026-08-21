@@ -30,8 +30,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Try to find existing user by supabaseId or email
-    let user = await db.user.findUnique({ where: { supabaseId } });
-    if (!user) user = await db.user.findFirst({ where: { email } });
+    // NOTE: explicit select avoids 500 when DB schema is behind Prisma client
+    const userSelect = {
+      id: true, supabaseId: true, email: true, fullName: true, nickname: true,
+      avatar: true, role: true, isFounder: true, isPremium: true, premiumPlan: true,
+      xp: true, level: true, streak: true, coins: true, createdAt: true,
+    } as const;
+    let user = await db.user.findUnique({ where: { supabaseId }, select: userSelect });
+    if (!user) user = await db.user.findFirst({ where: { email }, select: userSelect });
 
     if (user) {
       const updates: Record<string, unknown> = {};
@@ -46,7 +52,7 @@ export async function POST(request: NextRequest) {
       }
       return NextResponse.json({
         user: Object.keys(updates).length > 0
-          ? await db.user.findUnique({ where: { id: user.id } })
+          ? await db.user.findUnique({ where: { id: user.id }, select: userSelect })
           : user,
       });
     }
