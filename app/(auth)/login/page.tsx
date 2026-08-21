@@ -127,7 +127,7 @@ export default function LoginPage() {
             const retryData = await retryRes.json();
             const dbUser = retryData?.user;
             if (dbUser) {
-              const target = next && !next.startsWith("/login") && !next.startsWith("/register")
+              const target = next && next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/login") && !next.startsWith("/register")
                 ? next
                 : dbUser.isFounder ? "/admin" : dbUser.role === "MURID" ? "/arena" : `/${dbUser.role.toLowerCase()}/beranda`;
               window.location.href = target;
@@ -144,8 +144,9 @@ export default function LoginPage() {
 
       if (!dbUser) { setError("Gagal memuat data user"); setLoading(false); return; }
 
-      // Redirect back to previous page if coming from marketplace or other public page
-      const target = next && !next.startsWith("/login") && !next.startsWith("/register")
+      // Redirect back to previous page if coming from marketplace or other public page.
+      // Validate: must start with /, no protocol-relative (//evil.com), not login/register.
+      const target = next && next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/login") && !next.startsWith("/register")
         ? next
         : dbUser.isFounder ? "/admin" : dbUser.role === "MURID" ? "/arena" : `/${dbUser.role.toLowerCase()}/beranda`;
       window.location.href = target;
