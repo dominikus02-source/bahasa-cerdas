@@ -2075,7 +2075,7 @@ Empat permintaan founder: (1) acak posisi jawaban benar soal game + tambah soal 
 
 ### 2 — No. Absensi
 - `prisma/schema.prisma` `model Profile` + `noAbsen String?` (setelah `nisn`).
-- Migration idempotent: `prisma/migrations/manual/2026-08-02_no_absen.sql` (`ADD COLUMN IF NOT EXISTS "noAbsen" TEXT`) — **BELUM diterapkan ke Supabase, jalankan di SQL Editor**.
+- Migration idempotent: `prisma/migrations/manual/2026-08-02_no_absen.sql` (`ADD COLUMN IF NOT EXISTS "noAbsen" TEXT`) — **SUDAH dijalankan di Supabase (Agustus 2026)**.
 - `app/api/user/profile/route.ts` PATCH — destructure + tulis `noAbsen`; `/api/user/me` auto-spread profile.
 - `app/(dashboard)/murid/profile/page.tsx` — field "No. Absensi" (cth: 17) di grid berdampingan Provinsi.
 - `app/api/guru/siswa/[id]/route.ts` (baru) PATCH — guru-only, target MURID, cek `groupMemberships` ∩ kelas guru, upsert profile `noAbsen`/`nisn`.
@@ -2110,11 +2110,10 @@ Empat permintaan founder: (1) acak posisi jawaban benar soal game + tambah soal 
 - `scripts/rebalance-bank-options.ts` & `scripts/dedupe-katastra-bank.ts` sengaja dipertahankan (one-shot, berguna bila bank ditambah lagi).
 
 ### Remaining
-1. **Apply `2026-08-02_no_absen.sql` di Supabase SQL Editor** (PRODUCTION + PREVIEW) — satu-satunya langkah DB yang belum.
-2. UKBI Guru → 150 (menulis 8 + berbicara 7 constructed response)
-3. TKA UTBK/Guru enrichment 30 → 150
-4. Game server revival (VPS mati)
-5. GameRoom migration SQL via Supabase dashboard
+1. UKBI Guru → 150 (menulis 8 + berbicara 7 constructed response)
+2. TKA UTBK/Guru enrichment 30 → 150
+3. Game server revival (VPS mati)
+4. GameRoom migration SQL via Supabase dashboard
 
 ---
 
@@ -2740,15 +2739,14 @@ Hanya CASE A/B/C `safeToApply=true`.
 ### Status DB
 - `.env.local` = `[SENSITIVE]` → DB tidak dapat dibaca; dry-run = `DATABASE READ-ONLY UNAVAILABLE`. Tidak ada angka aktual yang dikarang.
 - `--apply` TIDAK dijalankan (menunggu approval founder atas policy CASE A/B/C). `DATABASE WRITES : 0`.
-- Tabel `School`/`SchoolAlias` kosong sampai migrasi `2026-08-08_school_identity.sql` dijalankan di Supabase SQL Editor.
+- Tabel `School`/`SchoolAlias` sudah dijalankan migrasi `2026-08-08_school_identity.sql` (Agustus 2026).
 
 ### Remaining
-1. Jalankan `prisma/migrations/manual/2026-08-08_school_identity.sql` di Supabase SQL Editor (PRODUCTION + PREVIEW) — syarat sebelum dry-run bermakna.
-2. Founder meninjau dry-run → setujui policy CASE A/B/C → `npm run backfill:school`.
-3. TKA UTBK/Guru enrichment 30 → 150
-4. Game server revival (VPS mati)
-5. GameRoom migration SQL via Supabase dashboard
-6. UI game solo: badge-score client vs server masih beda (kosmetik)
+1. Founder meninjau dry-run → setujui policy CASE A/B/C → `npm run backfill:school`.
+2. TKA UTBK/Guru enrichment 30 → 150
+3. Game server revival (VPS mati)
+4. GameRoom migration SQL via Supabase dashboard
+5. UI game solo: badge-score client vs server masih beda (kosmetik)
 
 ---
 
@@ -2811,7 +2809,6 @@ Kurangi 17 → 15 blok visual, hierarki naratif runut (VIDEO → BUKTI → EKOSI
 2. Game server revival (VPS mati)
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
-5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
 
 ---
 
@@ -2857,7 +2854,6 @@ Perbaikan akhir landing: (1) gabung strip "Kabar dari Ekosistem" + section video
 2. Game server revival (VPS mati)
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
-5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_integrity` (Production + Preview)
 
 ---
 
@@ -2913,7 +2909,6 @@ Perbaikan akhir landing: (1) gabung strip "Kabar dari Ekosistem" + section video
 2. Game server revival (VPS mati)
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
-5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
 
 ---
 
@@ -2974,7 +2969,6 @@ Patch 4.2.1 setelah feedback founder: (1) Back = **deterministik** `← Beranda`
 2. Game server revival (VPS mati)
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
-5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
 
 ---
 
@@ -3029,7 +3023,6 @@ SATU sistem application shell/navigation untuk SELURUH produk web: Murid, Arena,
 2. Game server revival (VPS mati)
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
-5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
 
 ---
 
@@ -3089,7 +3082,6 @@ Patch visual/UX di atas Unified Shell 5.0: (1) hilangkan duplikasi identitas "Pa
 2. Game server revival (VPS mati)
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
-5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
 
 ---
 
@@ -3164,7 +3156,6 @@ SATU sistem icon untuk SEMUA navigation/shell (Murid/Arena/Obrolan/Guru/Admin): 
 2. Game server revival (VPS mati)
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
-5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
 
 ---
 
@@ -3276,7 +3267,6 @@ Role-switch destination yang menunjuk ke konteks produk SAAT INI disembunyikan: 
 2. Game server revival (VPS mati)
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
-5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
 
 ---
 
@@ -3332,7 +3322,6 @@ Upgrade AI BC dari chatbot generik menjadi companion kontekstual per-peran (Muri
 2. Game server revival (VPS mati)
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
-5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
 
 ---
 
@@ -3363,7 +3352,6 @@ Laporan lengkap: `docs/BC_AI_KNOWLEDGE_2_0.md` (8 seksi sesuai direktif).
 3. Game server revival (VPS mati)
 4. GameRoom migration SQL via Supabase dashboard
 5. UI game solo: badge-score client vs server masih beda (kosmetik)
-6. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
 
 ---
 
@@ -3409,7 +3397,6 @@ Gate approval manusia untuk 75 kandidat enrichment AI_SUGGESTED (manifest `data/
 3. Game server revival (VPS mati)
 4. GameRoom migration SQL via Supabase dashboard
 5. UI game solo: badge-score client vs server masih beda (kosmetik)
-6. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
 
 ---
 
@@ -3469,7 +3456,6 @@ CoinTransaction belum punya jaminan unik DB setingkat XPTransaction → reward k
 2. Game server revival (VPS mati)
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
-5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
 
 ---
 
@@ -3537,7 +3523,6 @@ Kesimpulan        : pool HONEST (87 ≥ 8) — sesi 10 butir tanpa duplikasi BIS
 3. Game server revival (VPS mati)
 4. GameRoom migration SQL via Supabase dashboard
 5. UI game solo: badge-score client vs server masih beda (kosmetik)
-6. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
 
 ---
 
@@ -3596,7 +3581,6 @@ Naikkan kualitas Tes Awal di atas 4E: (1) komposisi tetap sesuai founder (Part B
 3. Game server revival (VPS mati)
 4. GameRoom migration SQL via Supabase dashboard
 5. UI game solo: badge-score client vs server masih beda (kosmetik)
-6. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
 
 ---
 
@@ -3657,7 +3641,6 @@ LearningEvidence → LearnerState → Diagnostic Profile → Personalized Action
 3. Game server revival (VPS mati)
 4. GameRoom migration SQL via Supabase dashboard
 5. UI game solo: badge-score client vs server masih beda (kosmetik)
-6. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
 
 ---
 
@@ -3791,7 +3774,6 @@ Teks utama/sekunder/dark-semua ✅ AA. 3 known issues light (nilai = reference k
 4. Game server revival (VPS mati)
 5. GameRoom migration SQL via Supabase dashboard
 6. UI game solo: badge-score client vs server masih beda (kosmetik)
-7. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
 
 ---
 
@@ -3855,7 +3837,6 @@ Hardening kontras + konsistensi visual Guru Dashboard (79 halaman) di atas fonda
 4. Game server revival (VPS mati)
 5. GameRoom migration SQL via Supabase dashboard
 6. UI game solo: badge-score client vs server masih beda (kosmetik)
-7. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
 
 ---
 
@@ -3898,7 +3879,6 @@ emerald/green/teal→`--clr-accent*`; violet/purple/indigo→`--clr-violet*`; am
 3. Game server revival (VPS mati)
 4. GameRoom migration SQL via Supabase dashboard
 5. UI game solo: badge-score client vs server masih beda (kosmetik)
-6. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
 
 ---
 
@@ -3977,7 +3957,6 @@ Langkah pengiriman fitur baru apapun (murid/arena/guru/admin/shared):
 4. Game server revival (VPS mati)
 5. GameRoom migration SQL via Supabase dashboard
 6. UI game solo: badge-score client vs server masih beda (kosmetik)
-7. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
 
 ---
 
@@ -4106,4 +4085,3 @@ Tooling load test 200-user dibuat MUSTAHIL menyentuh production: gate staging 12
 4. Game server revival (VPS mati)
 5. GameRoom migration SQL via Supabase dashboard
 6. UI game solo: badge-score client vs server masih beda (kosmetik)
-7. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
