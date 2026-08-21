@@ -10,7 +10,7 @@ async function getPopularWorks() {
     return await db.karya.findMany({
       where,
       orderBy: { downloads: "desc" },
-      take: 3,
+      take: 6,
       include: {
         seller: { select: { fullName: true } },
         _count: { select: { purchases: true } },
@@ -61,44 +61,52 @@ export default async function KaryaPopulerSection() {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {karya.length > 0 ? (
-            karya.map((k: any) => (
-              <Link
-                key={k.id}
-                href={`/marketplace/${k.id}`}
-                className="group relative bg-white rounded-2xl border border-zinc-100 overflow-hidden card-hover"
-              >
-                <div className="h-1.5 bg-gradient-to-r from-primary via-primary-dark to-primary" />
-                <div className="p-6 lg:p-8">
-                  <div className="inline-flex items-center px-3 py-1 rounded-lg bg-primary-light text-primary text-xs font-semibold mb-4">
-                    {k.type}
+            karya.map((k: any) => {
+              const imgs = (() => { try { return JSON.parse(k.images || "[]"); } catch { return []; } })();
+              return (
+                <Link
+                  key={k.id}
+                  href={`/marketplace/${k.id}`}
+                  className="group relative bg-white rounded-2xl border border-zinc-100 overflow-hidden card-hover"
+                >
+                  <div className="h-32 bg-gradient-to-br from-zinc-50 to-zinc-100 flex items-center justify-center overflow-hidden">
+                    {imgs[0] ? (
+                      <img
+                        src={imgs[0]}
+                        alt=""
+                        className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500 p-2"
+                      />
+                    ) : (
+                      <ShoppingBag size={32} className="text-zinc-200" />
+                    )}
                   </div>
-                  <h3 className="text-base lg:text-lg font-display font-bold text-zinc-900 mb-2 leading-snug line-clamp-2 group-hover:text-primary transition-colors">
-                    {k.title}
-                  </h3>
-                  <p className="text-xs text-zinc-400 mb-4">
-                    {k.seller?.fullName || "Guru Bahasa Indonesia"}
-                  </p>
-                  <div className="flex items-center gap-4 mb-5 text-xs text-zinc-400">
-                    <span className="flex items-center gap-1">
-                      <Download size={13} />
-                      {k._count?.purchases || k.downloads || 0} terjual
+                  <div className="p-4">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-md bg-primary-light text-primary text-[10px] font-semibold mb-2">
+                      {k.type}
                     </span>
+                    <h3 className="text-sm font-semibold text-zinc-900 leading-snug line-clamp-2 group-hover:text-primary transition-colors mb-1">
+                      {k.title}
+                    </h3>
+                    <p className="text-[11px] text-zinc-400 mb-3">
+                      {k.seller?.fullName || "Guru Bahasa Indonesia"}
+                    </p>
+                    <div className="flex items-center justify-between pt-3 border-t border-zinc-100">
+                      <span className="text-base font-bold text-zinc-900">
+                        {k.price > 0
+                          ? `Rp ${k.price.toLocaleString("id")}`
+                          : "Gratis"}
+                      </span>
+                      <span className="text-[10px] text-zinc-400 flex items-center gap-1">
+                        <Download size={10} />
+                        {k._count?.purchases || k.downloads || 0}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between pt-4 border-t border-zinc-100">
-                    <span className="text-lg font-bold text-zinc-900">
-                      {k.price > 0
-                        ? `Rp ${k.price.toLocaleString("id")}`
-                        : "Gratis"}
-                    </span>
-                    <span className="text-xs font-semibold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                      Lihat Detail →
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            ))
+                </Link>
+              );
+            })
           ) : (
             <div className="col-span-full text-center py-12 bg-white rounded-2xl border border-dashed border-zinc-200">
               <p className="text-zinc-400">Toko Karya sedang dikurasi.</p>

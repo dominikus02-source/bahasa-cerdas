@@ -105,11 +105,7 @@ export const GURU_NAV: NavGroup[] = [
     id: "toko",
     label: "Toko Karya",
     icon: Store,
-    links: [
-      { label: "Jual Karya", href: "/guru/toko-karya" },
-      { label: "Jelajahi Karya", href: "/marketplace" },
-      { label: "Pendapatan", href: "/guru/pengaturan/saldo" },
-    ],
+    href: "/guru/toko-karya",
   },
   {
     id: "simulasi",
