@@ -39,6 +39,24 @@ const LEVEL_ICONS: Record<string, React.ReactNode> = {
   SMA: <GraduationCap size={20} className="text-blue-600" />,
 };
 
+function extractDriveId(url: string): { id: string; type: "doc" | "slides" | "file" } | null {
+  const docMatch = url.match(/\/document\/d\/([^/]+)/);
+  if (docMatch) return { id: docMatch[1], type: "doc" };
+  const slideMatch = url.match(/\/presentation\/d\/([^/]+)/);
+  if (slideMatch) return { id: slideMatch[1], type: "slides" };
+  const fileMatch = url.match(/\/file\/d\/([^/]+)/);
+  if (fileMatch) return { id: fileMatch[1], type: "file" };
+  return null;
+}
+
+function previewUrl(sourceUrl: string): string {
+  const info = extractDriveId(sourceUrl);
+  if (!info) return sourceUrl;
+  if (info.type === "doc") return `https://docs.google.com/document/d/${info.id}/preview`;
+  if (info.type === "slides") return `https://docs.google.com/presentation/d/${info.id}/preview`;
+  return `https://drive.google.com/file/d/${info.id}/preview`;
+}
+
 function extIcon(ext: string) {
   if (ext === ".pptx" || ext === ".ppt") return Presentation;
   if (ext === ".pdf") return FileText;
@@ -183,7 +201,7 @@ export default function PerangkatAjarPage() {
                     <ExternalLink className="w-4 h-4" />
                   </a>
                   <a
-                    href={`https://docs.google.com/viewer?url=${encodeURIComponent(f.sourceUrl)}&embedded=true`}
+                    href={previewUrl(f.sourceUrl)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-2 rounded-lg hover:bg-violet-50 text-slate-400 hover:text-violet-600 transition"
