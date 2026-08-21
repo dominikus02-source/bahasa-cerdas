@@ -70,9 +70,12 @@ export async function GET(req: NextRequest) {
     const countsWhere: any = { OR: [{ isPublished: true }, { uploaderId: dbUser.id }] };
     if (and.length) countsWhere.AND = [...and];
 
-    // Folder guru: PPT / PDF (dari fileType).
+    // Folder guru: PPT / PDF (dari fileType). Selalu filter hanya tipe ini.
     if (folder && FOLDER_TYPES[folder]) {
       and.push({ fileType: { in: FOLDER_TYPES[folder] } });
+    } else {
+      // Tanpa filter folder spesifik: hanya tampilkan PPT + PDF.
+      and.push({ fileType: { in: ["PPTX", "PDF"] } });
     }
 
     const where: any = { OR: [{ isPublished: true }, { uploaderId: dbUser.id }] };

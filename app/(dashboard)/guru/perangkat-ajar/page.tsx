@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import {
   BookOpen, FileText, Presentation, File, Download,
   ExternalLink, Search, ChevronRight, Loader2, Folder,
-  ArrowLeft, Eye,
+  ArrowLeft, Eye, GraduationCap, BookMarked,
 } from "lucide-react";
 
 interface InventoryFile {
@@ -33,10 +33,10 @@ interface GradeGroup {
 
 type LevelTab = "SD" | "SMP" | "SMA";
 
-const LEVEL_ICONS: Record<string, string> = {
-  SD: "📚",
-  SMP: "📖",
-  SMA: "🎓",
+const LEVEL_ICONS: Record<string, React.ReactNode> = {
+  SD: <BookMarked size={20} className="text-emerald-600" />,
+  SMP: <BookOpen size={20} className="text-violet-600" />,
+  SMA: <GraduationCap size={20} className="text-blue-600" />,
 };
 
 function extIcon(ext: string) {
