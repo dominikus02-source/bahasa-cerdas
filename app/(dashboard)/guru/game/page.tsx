@@ -24,6 +24,13 @@ import {
   Clock,
   BarChart3,
   Grid3x3,
+  Lightbulb,
+  Hash,
+  Music,
+  Landmark,
+  Puzzle,
+  BookMarked,
+  Scale,
 } from "lucide-react";
 import { BadgeIcon } from "@/components/gamification/BadgeIcon";
 import { RARITY_META } from "@/lib/gamification/client-types";
@@ -125,15 +132,15 @@ interface SiswaRow {
 const TARGET_MINGGUAN_XP = 500;
 
 const SOLO_GAMES = [
-  { id: "kuis-tempur", title: "Kuis Tempur", desc: "Bertahan di arena melawan bot! Jawab benar untuk menyerang, salah kamu yang terluka.", href: "/guru/game/kuis-tempur", gradient: "from-red-500 via-rose-600 to-red-800", icon: Swords, emoji: "⚔️" },
-  { id: "lari-kata", title: "Lari Kata", desc: "Jawab 20 soal dalam 60 detik! Makin cepat dan rentetan tinggi, makin banyak XP.", href: "/guru/game/lari-kata", gradient: "from-violet-500 via-purple-600 to-violet-800", icon: Zap, emoji: "🏃" },
-  { id: "benar-salah", title: "Benar atau Salah", desc: "Kuis kilat 60 detik! Tentukan pernyataan yang muncul benar atau salah.", href: "/guru/game/benar-salah", gradient: "from-emerald-400 via-teal-500 to-cyan-600", icon: Star, emoji: "⚖️" },
-  { id: "susun-kata", title: "Susun Kata", desc: "Huruf-huruf acak! Susun menjadi kata yang benar. Uji kosakata Anda!", href: "/guru/game/susun-kata", gradient: "from-emerald-500 via-emerald-600 to-teal-700", icon: BookOpen, emoji: "🧩" },
-  { id: "tebak-kata", title: "Tebak Kata", desc: "Deskripsi muncul, tebak namanya! Semakin cepat, semakin tinggi skor.", href: "/guru/game/tebak-kata", gradient: "from-blue-500 via-blue-600 to-indigo-700", icon: Swords, emoji: "⚡" },
-  { id: "irama-kata", title: "Irama Kata", desc: "Kata jatuh di 4 jalur — ketuk hanya yang sesuai aturan level.", href: "/guru/game/irama-kata", gradient: "from-orange-500 via-rose-500 to-red-600", icon: Zap, emoji: "🎵" },
-  { id: "menara", title: "Menara Cerdas", desc: "Panjat menara dengan soal pelajaran murid! Jawab benar untuk naik.", href: "/guru/game/menara", gradient: "from-violet-500 via-purple-600 to-fuchsia-700", icon: Trophy, emoji: "🗼" },
-  { id: "kata-play", title: "KataPlay", desc: "Belajar membaca dari nol! 4 tingkat, puluhan soal seru.", href: "/guru/game/kata-play", gradient: "from-violet-500 via-purple-600 to-fuchsia-700", icon: BookOpen, emoji: "📚" },
-  { id: "teka-teki-silang", title: "Teka-Teki Silang", desc: "Isi kotak, asah kosakata! 12 level, soal baru tiap main.", href: "/guru/game/teka-teki-silang", gradient: "from-sky-500 via-cyan-600 to-sky-800", icon: Grid3x3, emoji: "🧩" },
+  { id: "kuis-tempur", title: "Kuis Tempur", desc: "Bertahan di arena melawan bot! Jawab benar untuk menyerang, salah kamu yang terluka.", href: "/guru/game/kuis-tempur", gradient: "from-red-500 via-rose-600 to-red-800", icon: Swords },
+  { id: "lari-kata", title: "Lari Kata", desc: "Jawab 20 soal dalam 60 detik! Makin cepat dan rentetan tinggi, makin banyak XP.", href: "/guru/game/lari-kata", gradient: "from-violet-500 via-purple-600 to-violet-800", icon: Zap },
+  { id: "benar-salah", title: "Benar atau Salah", desc: "Kuis kilat 60 detik! Tentukan pernyataan yang muncul benar atau salah.", href: "/guru/game/benar-salah", gradient: "from-emerald-400 via-teal-500 to-cyan-600", icon: Scale },
+  { id: "susun-kata", title: "Susun Kata", desc: "Huruf-huruf acak! Susun menjadi kata yang benar. Uji kosakata Anda!", href: "/guru/game/susun-kata", gradient: "from-emerald-500 via-emerald-600 to-teal-700", icon: Puzzle },
+  { id: "tebak-kata", title: "Tebak Kata", desc: "Deskripsi muncul, tebak namanya! Semakin cepat, semakin tinggi skor.", href: "/guru/game/tebak-kata", gradient: "from-blue-500 via-blue-600 to-indigo-700", icon: Lightbulb },
+  { id: "irama-kata", title: "Irama Kata", desc: "Kata jatuh di 4 jalur — ketuk hanya yang sesuai aturan level.", href: "/guru/game/irama-kata", gradient: "from-orange-500 via-rose-500 to-red-600", icon: Music },
+  { id: "menara", title: "Menara Cerdas", desc: "Panjat menara dengan soal pelajaran murid! Jawab benar untuk naik.", href: "/guru/game/menara", gradient: "from-violet-500 via-purple-600 to-fuchsia-700", icon: Landmark },
+  { id: "kata-play", title: "KataPlay", desc: "Belajar membaca dari nol! 4 tingkat, puluhan soal seru.", href: "/guru/game/kata-play", gradient: "from-violet-500 via-purple-600 to-fuchsia-700", icon: BookMarked },
+  { id: "teka-teki-silang", title: "Teka-Teki Silang", desc: "Isi kotak, asah kosakata! 12 level, soal baru tiap main.", href: "/guru/game/teka-teki-silang", gradient: "from-sky-500 via-cyan-600 to-sky-800", icon: Hash },
 ];
 
 const GAME_TYPE_LABEL: Record<string, string> = {
@@ -146,23 +153,8 @@ const GAME_TYPE_LABEL: Record<string, string> = {
   TEKA_TEKI_SILANG: "Teka-Teki Silang",
 };
 
-const GAME_EMOJI: Record<string, string> = {
-  "Kuis Tempur": "⚔️",
-  "Lari Kata": "🏃",
-  "Benar atau Salah": "⚖️",
-  "Susun Kata": "🧩",
-  "Tebak Kata": "⚡",
-  "Irama Kata": "🎵",
-  "Menara Cerdas": "🗼",
-  KataPlay: "📚",
-  "Teka-Teki Silang": "🧩",
-};
-
 const resultGameLabel = (r: { room: RoomLite | null }): string =>
   r.room?.name || r.room?.gameType || "Gim";
-
-const resultGameEmoji = (r: { room: RoomLite | null }): string =>
-  GAME_EMOJI[resultGameLabel(r)] ?? "🎮";
 
 const startOfToday = () => {
   const d = new Date();
@@ -259,7 +251,7 @@ export default function GuruGameHubPage() {
   const xpTargetPct = Math.min(100, Math.round((weeklyXp / TARGET_MINGGUAN_XP) * 100));
 
   // Last game + best score (dari riwayat XP game guru; fallback ke myResults)
-  let lastGame: { title: string; href: string; emoji: string } | null = null;
+  let lastGame: { title: string; href: string } | null = null;
   let bestScore = 0;
   for (const e of [...xpHist].reverse()) {
     if (e.source !== "GURU_GAME") continue;
@@ -270,16 +262,16 @@ export default function GuruGameHubPage() {
       const title = gt ? (GAME_TYPE_LABEL[gt] ?? gt) : "Gim";
       const slug = Object.entries(GAME_TYPE_LABEL).find(([, v]) => v === title)?.[0];
       const href = slug ? `/guru/game/${slugToPage(slug)}` : "/guru/game/lari-kata";
-      lastGame = { title, href, emoji: GAME_EMOJI[title] ?? "🎮" };
+      lastGame = { title, href };
     }
     if (lastGame) break;
   }
   if (!lastGame && (hub?.myResults?.length ?? 0) > 0) {
     const latest = hub!.myResults[0];
-    lastGame = { title: resultGameLabel(latest), href: "/guru/game/lari-kata", emoji: resultGameEmoji(latest) };
+    lastGame = { title: resultGameLabel(latest), href: "/guru/game/lari-kata" };
     bestScore = Math.max(bestScore, latest.finalScore);
   }
-  lastGame = lastGame ?? { title: "Lari Kata", href: "/guru/game/lari-kata", emoji: "🏃" };
+  lastGame = lastGame ?? { title: "Lari Kata", href: "/guru/game/lari-kata" };
 
   // Ringkasan Aktivitas Kelas
   const avgScore =
@@ -305,9 +297,9 @@ export default function GuruGameHubPage() {
 
   // Misi harian adaptif
   const dailyMissions = [
-    { id: "main-1", label: "Main 1 game hari ini", done: playedMeToday >= 1, icon: "🎮" },
-    { id: "main-5", label: "5 murid bermain hari ini", done: aktifHariIni >= 5, icon: "👥" },
-    { id: "cetak-baru", label: "Cetak skor baru (melebihi rekor terbaikmu)", done: false, icon: "🏅" },
+    { id: "main-1", label: "Main 1 game hari ini", done: playedMeToday >= 1, icon: Gamepad2 },
+    { id: "main-5", label: "5 murid bermain hari ini", done: aktifHariIni >= 5, icon: Users },
+    { id: "cetak-baru", label: "Cetak skor baru (melebihi rekor terbaikmu)", done: false, icon: Target },
   ];
   const missionsDone = dailyMissions.filter((m) => m.done).length;
 
@@ -339,7 +331,7 @@ export default function GuruGameHubPage() {
                 <div className="min-w-0">
                   <p className="text-[10px] text-emerald-200 uppercase tracking-wider font-semibold">Dasbor Aktivitas Guru</p>
                   <h1 className="text-lg lg:text-xl font-extrabold truncate">
-                    Halo, {loading ? "Guru" : (user?.nickname || user?.fullName || "Guru")} 👋
+                    Halo, {loading ? "Guru" : (user?.nickname || user?.fullName || "Guru")}
                   </h1>
                 </div>
               </div>
@@ -389,8 +381,8 @@ export default function GuruGameHubPage() {
             <div className="flex items-center gap-2 mb-2">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shrink-0"><Play className="w-4 h-4 text-white" /></div>
               <div className="min-w-0">
-                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide dark:text-slate-500">▶ Main Sekarang</p>
-                <p className="font-bold text-slate-900 text-sm truncate dark:text-slate-100">{lastGame.emoji} {lastGame.title}</p>
+                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide dark:text-slate-500">Main Sekarang</p>
+                <p className="font-bold text-slate-900 text-sm truncate dark:text-slate-100">{lastGame.title}</p>
               </div>
             </div>
             <p className="text-xs text-slate-500 mt-auto dark:text-slate-400">
@@ -409,7 +401,7 @@ export default function GuruGameHubPage() {
             <div className="flex items-center gap-2 mb-2">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center shrink-0"><Flame className="w-4 h-4 text-white" /></div>
               <div>
-                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide dark:text-slate-500">🔥 Tantangan Hari Ini</p>
+                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide dark:text-slate-500">Tantangan Hari Ini</p>
                 <p className="font-bold text-slate-900 text-sm dark:text-slate-100">Misi harian &amp; reward</p>
               </div>
             </div>
@@ -424,7 +416,7 @@ export default function GuruGameHubPage() {
             <div className="flex items-center gap-2 mb-2">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shrink-0"><Medal className="w-4 h-4 text-white" /></div>
               <div>
-                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide dark:text-slate-500">🏆 Lencana Saya</p>
+                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide dark:text-slate-500">Lencana Saya</p>
                 <p className="font-bold text-slate-900 text-sm dark:text-slate-100">{unlocked} dari {totalGuruBadges} Lencana</p>
               </div>
             </div>
@@ -436,7 +428,7 @@ export default function GuruGameHubPage() {
                 <p className="text-[10px] text-slate-400 mt-1 dark:text-slate-500">{nextBadgePct}% menuju {nextBadge.name}</p>
               </div>
             ) : (
-              <p className="text-xs text-slate-500 mt-auto dark:text-slate-400">Semua lencana guru terbuka! 🎉</p>
+              <p className="text-xs text-slate-500 mt-auto dark:text-slate-400">Semua lencana guru terbuka!</p>
             )}
           </Link>
         </div>
@@ -460,7 +452,7 @@ export default function GuruGameHubPage() {
                         m.done ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-400 dark:bg-slate-800"
                       }`}
                     >
-                      {m.done ? <CircleCheckBig className="w-4 h-4" /> : m.icon}
+                      {m.done ? <CircleCheckBig className="w-4 h-4" /> : <m.icon className="w-4 h-4" />}
                     </span>
                     <span className={`text-xs font-medium leading-tight ${m.done ? "text-emerald-600 line-through dark:text-emerald-400" : "text-slate-600 dark:text-slate-300"}`}>{m.label}</span>
                     <span className="ml-auto text-[10px] font-bold text-amber-600 shrink-0 dark:text-amber-400">+20 XP</span>
@@ -496,11 +488,11 @@ export default function GuruGameHubPage() {
                 const playCount = counts.get(game.title) ?? 0;
                 const isTrending = topGameName === game.title && playCount > 0;
                 const badge = isTrending
-                  ? { label: "🔥 Populer", cls: "bg-orange-500" }
+                  ? { label: "Populer", cls: "bg-orange-500" }
                   : game.id === "kata-play"
-                    ? { label: "⭐ Baru", cls: "bg-violet-500" }
+                    ? { label: "Baru", cls: "bg-violet-500" }
                     : game.id === "benar-salah"
-                      ? { label: "🎯 Direkomendasikan", cls: "bg-emerald-500" }
+                      ? { label: "Direkomendasikan", cls: "bg-emerald-500" }
                       : null;
                 return (
                   <Link
@@ -516,7 +508,7 @@ export default function GuruGameHubPage() {
                     </div>
                     <div className="p-3 flex flex-col flex-1">
                       <div className="flex items-start justify-between gap-2 mb-1">
-                        <h3 className="font-bold text-slate-900 text-sm flex items-center gap-1.5 dark:text-slate-100"><span>{game.emoji}</span>{game.title}</h3>
+                        <h3 className="font-bold text-slate-900 text-sm dark:text-slate-100">{game.title}</h3>
                         <span className="text-[9px] px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-semibold shrink-0 dark:bg-violet-900/40 dark:text-violet-300">MULAI</span>
                       </div>
                       <p className="text-xs text-slate-500 line-clamp-2 dark:text-slate-400">{game.desc}</p>
@@ -695,7 +687,7 @@ export default function GuruGameHubPage() {
                     <div className="min-w-0 flex-1">
                       <p className="text-xs font-semibold text-slate-700 truncate dark:text-slate-200">{res.user?.fullName || "Siswa"}</p>
                       <p className="text-[10px] text-slate-400 truncate dark:text-slate-500">
-                        <span>{resultGameEmoji(res)}</span> {resultGameLabel(res)}
+                        {resultGameLabel(res)}
                       </p>
                     </div>
                     <div className="text-right shrink-0">
@@ -741,7 +733,7 @@ export default function GuruGameHubPage() {
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-semibold text-slate-800 truncate dark:text-slate-100">{res.user?.fullName || "Siswa"}</p>
                         <p className="text-[11px] text-slate-400 truncate flex items-center gap-1 dark:text-slate-500">
-                          <span>{resultGameEmoji(res)}</span>
+                          {resultGameLabel(res)}
                           <span>{resultGameLabel(res)}</span>
                           <span className="text-slate-300 dark:text-slate-600">·</span>
                           <span className={timeStatusTone(res.createdAt)}>{timeStatusLabel(res.createdAt)}</span>
