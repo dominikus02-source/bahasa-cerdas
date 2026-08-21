@@ -4,8 +4,7 @@ import Link from "next/link";
 import { Coins, Flame, ShoppingBag, Sparkles, Zap } from "lucide-react";
 import { RankChip } from "@/components/gamification/RankChip";
 import UserAvatar from "@/components/arena/UserAvatar";
-import { nameColorStyle, getFrameStyle, getBadgeStyle, getNameplateStyle, getBackgroundStyle } from "@/lib/cosmetics";
-import { XpProgressBar } from "@/components/arena/player/xp-progress-bar";
+import { nameColorStyle, getBadgeStyle, getNameplateStyle, getBackgroundStyle } from "@/lib/cosmetics";
 import { useHomeData } from "./home-data";
 
 export function StudentHomeHero() {
@@ -86,9 +85,7 @@ export function StudentHomeHero() {
             <p className="text-xs text-[var(--px-text-dim)] truncate">{sub}</p>
             <p className="text-xs text-[var(--px-text-faint)] mt-1">Halo! Siap belajar hari ini?</p>
           </div>
-        </div>
-
-        <div className="md:ml-auto shrink-0 flex flex-col gap-3 md:items-end">
+        </div>          <div className="md:ml-auto shrink-0 flex flex-col gap-2 md:items-end">
           <div className="flex flex-wrap gap-2">
             <span className="px-chip gap-1.5" title="Rentetan harian">
               <Flame size={13} className="text-[var(--px-gold)]" />
@@ -100,14 +97,11 @@ export function StudentHomeHero() {
               <span className="font-bold group-hover:underline">{profile.coin.toLocaleString("id-ID")}</span>
               <ShoppingBag size={10} className="text-[var(--px-text-faint)] opacity-0 group-hover:opacity-100 transition-opacity" />
             </Link>
-            <span className="px-chip gap-1.5" title="XP minggu ini">
+            <span className="px-chip gap-1.5" title="Total XP">
               <Zap size={13} className="text-[var(--px-royal-2)]" />
               <span className="font-bold">{profile.weeklyXp.toLocaleString("id-ID")}</span>
               <span className="text-[var(--px-text-faint)]">XP</span>
             </span>
-          </div>
-          <div className="w-full md:w-[320px]">
-            <XpProgressBar profile={profile} compact />
           </div>
           <Link
             href="/murid/profile"
