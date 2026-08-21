@@ -140,7 +140,7 @@ export function NotificationBell() {
           of the top bar, where opening leftward is correct. max-w keeps it
           inside the viewport at any width. */}
       {open && (
-        <div className="absolute right-0 md:right-auto md:left-0 top-full mt-2 w-80 max-w-[calc(100vw-1.5rem)] bg-white rounded-xl shadow-xl border border-slate-200 z-50 overflow-hidden dark:bg-slate-900 dark:border-slate-800">
+        <div className="absolute right-0 md:right-auto md:left-0 top-full mt-2 w-80 max-w-[calc(100vw-1.5rem)] bg-white rounded-xl shadow-xl border border-slate-200 z-50 dark:bg-slate-900 dark:border-slate-800">
           <div className="p-3 border-b border-slate-100 flex items-center justify-between dark:border-slate-800">
             <h3 className="font-semibold text-sm text-slate-900 dark:text-slate-100">Notifikasi</h3>
             {notifications.length > 0 && (
@@ -152,22 +152,20 @@ export function NotificationBell() {
               </button>
             )}
           </div>
-          <div className="max-h-80 overflow-y-auto">
-            {loading ? (
-              <div className="p-8 text-center text-sm text-slate-400 dark:text-slate-500">Memuat...</div>
-            ) : notifications.length === 0 ? (
-              <div className="p-8 text-center">
-                <Bell className="w-8 h-8 text-slate-300 mx-auto mb-2 dark:text-slate-600" />
-                <p className="text-sm text-slate-400 dark:text-slate-500">Tidak ada notifikasi</p>
-              </div>
-            ) : (
-              <div className="max-h-80 overflow-y-auto p-2 space-y-1.5">
-                {notifications.map((n) => (
-                  <NotificationCard key={n.id} n={n} dense onDelete={handleDelete} />
-                ))}
-              </div>
-            )}
-          </div>
+          {loading ? (
+            <div className="p-8 text-center text-sm text-slate-400 dark:text-slate-500">Memuat...</div>
+          ) : notifications.length === 0 ? (
+            <div className="p-8 text-center">
+              <Bell className="w-8 h-8 text-slate-300 mx-auto mb-2 dark:text-slate-600" />
+              <p className="text-sm text-slate-400 dark:text-slate-500">Tidak ada notifikasi</p>
+            </div>
+          ) : (
+            <div className="max-h-80 overflow-y-auto p-2 space-y-1.5">
+              {notifications.map((n) => (
+                <NotificationCard key={n.id} n={n} dense onDelete={handleDelete} />
+              ))}
+            </div>
+          )}
           {notifications.length > 0 && (
             <div className="p-2 border-t border-slate-100 dark:border-slate-800">
               <Link
