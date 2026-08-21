@@ -26,6 +26,18 @@ const items = [
   { name: "Ekstra Tryout UKBI", description: "1 kali tryout UKBI tambahan", type: "EXTRA_TRYOUT", price: 500, icon: "ukbi", isActive: false },
   { name: "Ekstra Tryout TKA", description: "1 kali tryout TKA tambahan", type: "EXTRA_TRYOUT", price: 500, icon: "tka", isActive: false },
   { name: "Double XP 15 Menit", description: "Lipat gandakan XP selama 15 menit", type: "XP_BOOST", price: 75, icon: "boost" },
+  // Coin Shop 2.4 — Repeatable Utility
+  { name: "Hint Token ×5", description: "5 Hint Token untuk membantumu saat soal terasa sulit", type: "HINT_TOKEN_PACK", price: 100, icon: "hint-pack" },
+  // Coin Shop 2.4 — Profile Backgrounds
+  { name: "Langit Senja", description: "Latar profilmu dengan warna senja yang hangat", type: "PROFILE_BACKGROUND", price: 200, icon: "bg-sunset" },
+  { name: "Hutan Ceria", description: "Latar hijau alami yang segar dan ceria", type: "PROFILE_BACKGROUND", price: 250, icon: "bg-forest" },
+  { name: "Laut Biru", description: "Latar biru laut yang menenangkan", type: "PROFILE_BACKGROUND", price: 300, icon: "bg-ocean" },
+  { name: "Perpustakaan", description: "Latar perpustakaan hangat untuk pecinta buku", type: "PROFILE_BACKGROUND", price: 400, icon: "bg-library" },
+  { name: "Galaksi Kata", description: "Latar galaksi ungu untuk penjelajah bahasa", type: "PROFILE_BACKGROUND", price: 600, icon: "bg-galaxy" },
+  // Coin Shop 2.4 — Nameplates
+  { name: "Penjelajah Kata", description: "Nama plat untuk penjelajah bahasa", type: "NAMEPLATE", price: 200, icon: "np-explorer" },
+  { name: "Pemburu Ilmu", description: "Nama plat untuk pemburu pengetahuan", type: "NAMEPLATE", price: 300, icon: "np-hunter" },
+  { name: "Master Bahasa", description: "Nama plat untuk penguasa bahasa", type: "NAMEPLATE", price: 400, icon: "np-master" },
 ];
 
 async function seed() {

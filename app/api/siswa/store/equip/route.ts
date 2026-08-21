@@ -22,6 +22,10 @@ function patchFor(field: EquippedField, value: string | null): Prisma.UserUpdate
       return { equippedBadge: value };
     case "equippedEffect":
       return { equippedEffect: value };
+    case "equippedBackground":
+      return { equippedBackground: value };
+    case "equippedNameplate":
+      return { equippedNameplate: value };
   }
 }
 
@@ -64,6 +68,8 @@ export async function GET() {
         NAME_COLOR: user.equippedNameColor,
         BADGE: user.equippedBadge,
         ANSWER_EFFECT: user.equippedEffect,
+        PROFILE_BACKGROUND: user.equippedBackground,
+        NAMEPLATE: user.equippedNameplate,
       },
     });
   } catch (error) {

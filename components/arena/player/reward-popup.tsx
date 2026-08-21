@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { usePlayer } from "./player-context";
@@ -76,6 +77,14 @@ export function RewardPopupQueue() {
                   </p>
                 ) : (
                   current.body && <p className="truncate text-xs text-slate-500 dark:text-[var(--px-text-dim)]">{current.body}</p>
+                )}
+                {current.type === "COIN" && (
+                  <Link
+                    href="/arena/toko-koin"
+                    className="mt-0.5 inline-block text-[10px] font-bold text-amber-600 hover:underline dark:text-amber-400"
+                  >
+                    Gunakan di Toko →
+                  </Link>
                 )}
               </div>
               <button

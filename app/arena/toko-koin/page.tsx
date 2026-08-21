@@ -27,6 +27,7 @@ const TYPE_ICONS: Record<string, any> = {
   THEME: Moon, STICKER: Sticker, NAME_COLOR: Palette,
   BADGE: Trophy, ANSWER_EFFECT: Sparkles, HINT_TOKEN: BookOpen,
   TIME_EXTENSION: Timer, HEART_REFILL: Heart, EXTRA_TRYOUT: Ticket,
+  HINT_TOKEN_PACK: BookOpen, PROFILE_BACKGROUND: Sparkles, NAMEPLATE: PenLine,
 }
 
 // Items with no working implementation — hidden from store (Coin Shop 2.1/2.2)
@@ -45,6 +46,9 @@ const TYPE_COLORS: Record<string, string> = {
   TIME_EXTENSION: "from-teal-400 to-cyan-600",
   HEART_REFILL: "from-rose-400 to-red-500",
   EXTRA_TRYOUT: "from-amber-400 to-orange-500",
+  HINT_TOKEN_PACK: "from-sky-500 to-blue-600",
+  PROFILE_BACKGROUND: "from-pink-400 to-rose-500",
+  NAMEPLATE: "from-amber-400 to-yellow-500",
 }
 
 function getRarity(price: number): { label: string; color: string } {
@@ -54,9 +58,94 @@ function getRarity(price: number): { label: string; color: string } {
 }
 
 function categorize(type: string): Category {
-  if (["AVATAR_FRAME", "NAME_COLOR", "BADGE", "ANSWER_EFFECT", "THEME", "STICKER"].includes(type)) return "cosmetic"
+  if (["AVATAR_FRAME", "NAME_COLOR", "BADGE", "ANSWER_EFFECT", "THEME", "STICKER", "PROFILE_BACKGROUND", "NAMEPLATE"].includes(type)) return "cosmetic"
   if (["XP_BOOST", "STREAK_FREEZE", "EXTRA_TRYOUT"].includes(type)) return "boost"
   return "consumable"
+}
+
+const COSMETIC_TYPES = new Set(["AVATAR_FRAME", "NAME_COLOR", "BADGE", "ANSWER_EFFECT", "PROFILE_BACKGROUND", "NAMEPLATE"])
+
+/**
+ * Dynamic section: "Apa yang bisa kubeli?"
+ * Shows the BEST item the student can afford, or the nearest aspirational target.
+ *
+ * Priority for affordable items:
+ *   cosmetic > consumable > boost, then lower price first.
+ *
+ * Priority for aspirational items (none affordable):
+ *   nearest price above balance, cosmetic > consumable, then lower price.
+ */
+function SmartShopBalance({ user, items, owned }: { user: any; items: StoreItem[]; owned: Set<string> }) {
+  const coins = user?.coins || 0
+  const unowned = items.filter(i => !owned.has(i.id))
+
+  // All items owned — nothing to recommend
+  if (unowned.length === 0) {
+    const hasRepeatable = items.some(i => i.type === "HINT_TOKEN" || i.type === "HINT_TOKEN_PACK" || i.type === "XP_BOOST" || i.type === "STREAK_FREEZE")
+    return (
+      <div className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 rounded-2xl border border-emerald-200 dark:border-emerald-800 px-5 py-4">
+        <p className="text-sm font-bold text-emerald-700 dark:text-emerald-300">Koleksimu lengkap!</p>
+        {hasRepeatable && (
+          <p className="text-xs text-emerald-600/80 dark:text-emerald-400/70 mt-1">Gunakan koinmu untuk item yang bisa dipakai berulang.</p>
+        )}
+      </div>
+    )
+  }
+
+  // Sort helper: cosmetic first, then by price ascending
+  const sortByValue = (a: StoreItem, b: StoreItem) => {
+    const aCosmetic = COSMETIC_TYPES.has(a.type) ? 0 : 1
+    const bCosmetic = COSMETIC_TYPES.has(b.type) ? 0 : 1
+    if (aCosmetic !== bCosmetic) return aCosmetic - bCosmetic
+    return a.price - b.price
+  }
+
+  // Items student can afford RIGHT NOW
+  const affordable = unowned.filter(i => coins >= i.price).sort(sortByValue)
+  // Items student cannot yet afford (aspirational targets)
+  const aspirational = unowned.filter(i => coins < i.price).sort(sortByValue)
+
+  // STATE: CAN_BUY — student can afford at least one item
+  if (affordable.length > 0) {
+    const best = affordable[0]!  // best affordable: cosmetic-first, then cheapest
+    const nextTarget = aspirational[0] || null
+
+    return (
+      <div className="bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950/20 dark:to-yellow-950/20 rounded-2xl border border-amber-200 dark:border-amber-800 px-5 py-4">
+        <p className="text-xs font-bold text-amber-700 dark:text-amber-300">
+          Koinmu sudah bisa dipakai!
+        </p>
+        <p className="text-[11px] text-amber-600/80 dark:text-amber-400/70 mt-1">
+          Kamu bisa mendapatkan {best.name} — {best.price.toLocaleString("id-ID")} Koin.
+        </p>
+        {nextTarget && (
+          <p className="text-[10px] text-amber-500/60 dark:text-amber-400/50 mt-1.5">
+            Atau kumpulkan {(nextTarget.price - coins).toLocaleString("id-ID")} Koin lagi untuk {nextTarget.name}.
+          </p>
+        )}
+      </div>
+    )
+  }
+
+  // STATE: SAVING — nothing affordable, recommend nearest aspirational target
+  const target = aspirational[0]!
+  const needed = target.price - coins
+  return (
+    <div className="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-950/20 dark:to-purple-950/20 rounded-2xl border border-violet-200 dark:border-violet-800 px-5 py-4">
+      <p className="text-xs font-bold text-violet-700 dark:text-violet-300">
+        Kumpulkan {needed.toLocaleString("id-ID")} Koin lagi untuk {target.name}
+      </p>
+      <div className="mt-2 h-2 rounded-full bg-violet-200/60 dark:bg-violet-800/40 overflow-hidden">
+        <div
+          className="h-full rounded-full bg-gradient-to-r from-violet-500 to-purple-500 transition-all duration-500"
+          style={{ width: `${Math.min(100, Math.round((coins / target.price) * 100))}%` }}
+        />
+      </div>
+      <p className="text-[10px] text-violet-500/70 dark:text-violet-400/60 mt-1.5">
+        {coins.toLocaleString("id-ID")} / {target.price.toLocaleString("id-ID")} Koin
+      </p>
+    </div>
+  )
 }
 
 export default function ArenaTokoKoinPage() {
@@ -70,6 +159,7 @@ export default function ArenaTokoKoinPage() {
   const [message, setMessage] = useState<{ type: string; text: string } | null>(null)
   const [activeTab, setActiveTab] = useState<Category>("all")
   const [showOwned, setShowOwned] = useState(false)
+  const [lastPurchased, setLastPurchased] = useState<StoreItem | null>(null)
 
   useEffect(() => {
     Promise.all([
@@ -132,11 +222,14 @@ export default function ArenaTokoKoinPage() {
       if (!res.ok) throw new Error(data.error)
       setUser((prev: any) => ({ ...prev, coins: (prev?.coins || 0) - item.price }))
       setOwned(prev => new Set(prev).add(item.id))
+      setLastPurchased(item)
       setMessage({
         type: "success",
-        text: isWearable(item)
-          ? `Berhasil membeli ${item.name}! Tekan "Pakai" untuk memakainya.`
-          : `Berhasil membeli ${item.name}!`,
+        text: item.type === "HINT_TOKEN_PACK"
+          ? `Berhasil dibeli! 5 Hint Token sudah masuk ke inventarismu.`
+          : isWearable(item)
+            ? `Berhasil dibeli! Pasang ${item.name} sekarang.`
+            : `Berhasil dibeli! ${item.name} sudah masuk ke koleksimu.`,
       })
     } catch (e: any) {
       setMessage({ type: "error", text: e.message })
@@ -177,6 +270,11 @@ export default function ArenaTokoKoinPage() {
         }`}>
           {message.text}
         </div>
+      )}
+
+      {/* "Apa yang bisa kubeli?" Dynamic Section */}
+      {user && (
+        <SmartShopBalance user={user} items={items.filter(i => !RETIRED_TYPES.has(i.type))} owned={owned} />
       )}
 
       {/* Value Proposition Hero */}
@@ -326,19 +424,21 @@ export default function ArenaTokoKoinPage() {
                           ? <Loader2 size={16} className="animate-spin" />
                           : isWorn ? <><Check size={14} /> Dipakai</> : "Pakai"}
                       </button>
+                    ) : isOwned ? (
+                      <span className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 dark:bg-slate-700/60 text-gray-500 dark:text-slate-400">
+                        Dimiliki
+                      </span>
                     ) : (
                       <button
                         onClick={() => handleBuy(item)}
-                        disabled={buying === item.id || !canAfford || isOwned}
+                        disabled={buying === item.id || !canAfford}
                         className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-                          isOwned
-                            ? "bg-gray-100 dark:bg-slate-800/80 text-gray-400 cursor-not-allowed"
-                            : canAfford
-                              ? "bg-violet-600 text-white hover:bg-violet-700 shadow-lg shadow-violet-200"
-                              : "bg-gray-100 dark:bg-slate-800/80 text-gray-400 cursor-not-allowed"
+                          canAfford
+                            ? "bg-violet-600 text-white hover:bg-violet-700 shadow-lg shadow-violet-200"
+                            : "bg-gray-100 dark:bg-slate-800/80 text-gray-400 cursor-not-allowed"
                         } disabled:opacity-50`}
                       >
-                        {buying === item.id ? <Loader2 size={16} className="animate-spin" /> : isOwned ? "Dimiliki" : canAfford ? "Beli" : "Kurang Koin"}
+                        {buying === item.id ? <Loader2 size={16} className="animate-spin" /> : canAfford ? "Beli" : "Kurang Koin"}
                       </button>
                     )}
                   </div>

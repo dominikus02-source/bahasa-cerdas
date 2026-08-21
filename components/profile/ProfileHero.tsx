@@ -12,6 +12,7 @@ import UserAvatar from "@/components/arena/UserAvatar";
 import UserName from "@/components/arena/UserName";
 import { RankIcon } from "@/components/gamification/RankIcon";
 import { RANK_META, nextRankOf, minLevelForRank } from "@/lib/gamification/ranks";
+import { getNameplateStyle, getBackgroundStyle } from "@/lib/cosmetics";
 
 export interface HeroPersona {
   id: string;
@@ -22,6 +23,8 @@ export interface HeroPersona {
   equippedFrame?: string | null;
   equippedNameColor?: string | null;
   equippedBadge?: string | null;
+  equippedNameplate?: string | null;
+  equippedBackground?: string | null;
   bio?: string | null;
   sekolah?: string | null;
   level: number;
@@ -158,6 +161,10 @@ export default function ProfileHero({
     <section
       aria-label="Identitas pemain"
       className="bc-hero-card relative overflow-hidden rounded-[24px] mb-6 shadow-2xl bc-profile-workspace"
+      style={(() => {
+        const bg = getBackgroundStyle(persona.equippedBackground);
+        return bg ? { background: bg.background } : undefined;
+      })()}
     >
       <style>{`
         /* Crest rank responsif: dirender 200px, discale ke 130/165 di layar kecil */
@@ -230,6 +237,12 @@ export default function ProfileHero({
                     badgeSize={20}
                   />
               </h1>
+              {(() => {
+                const np = getNameplateStyle(persona.equippedNameplate);
+                return np ? (
+                  <p className="text-xs font-bold mt-0.5" style={np.style}>{np.label}</p>
+                ) : null;
+              })()}
               {persona.nickname && persona.fullName && (
                 <p className="text-sm text-slate-900/60 dark:text-white/60 truncate">{persona.fullName}</p>
               )}

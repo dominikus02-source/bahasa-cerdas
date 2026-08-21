@@ -11,7 +11,7 @@ import { BookOpen, PenLine } from "lucide-react";
  * apa pun, dan tampilan harus persis seperti sebelum fitur ini ada.
  */
 
-export const COSMETIC_TYPES = ["AVATAR_FRAME", "NAME_COLOR", "BADGE", "ANSWER_EFFECT"] as const;
+export const COSMETIC_TYPES = ["AVATAR_FRAME", "NAME_COLOR", "BADGE", "ANSWER_EFFECT", "PROFILE_BACKGROUND", "NAMEPLATE"] as const;
 
 export type CosmeticType = (typeof COSMETIC_TYPES)[number];
 
@@ -19,7 +19,9 @@ export type EquippedField =
   | "equippedFrame"
   | "equippedNameColor"
   | "equippedBadge"
-  | "equippedEffect";
+  | "equippedEffect"
+  | "equippedBackground"
+  | "equippedNameplate";
 
 /** Tipe item toko -> kolom User yang menyimpan kosmetik yang sedang dipakai. */
 export const COSMETIC_FIELD: Record<CosmeticType, EquippedField> = {
@@ -27,6 +29,8 @@ export const COSMETIC_FIELD: Record<CosmeticType, EquippedField> = {
   NAME_COLOR: "equippedNameColor",
   BADGE: "equippedBadge",
   ANSWER_EFFECT: "equippedEffect",
+  PROFILE_BACKGROUND: "equippedBackground",
+  NAMEPLATE: "equippedNameplate",
 };
 
 export function isCosmeticType(type: string): type is CosmeticType {
@@ -45,6 +49,10 @@ export function isEquippableIcon(type: string, icon: string | null | undefined):
       return icon in COSMETIC_BADGES;
     case "ANSWER_EFFECT":
       return icon in ANSWER_EFFECTS;
+    case "PROFILE_BACKGROUND":
+      return icon in PROFILE_BACKGROUNDS;
+    case "NAMEPLATE":
+      return icon in NAMEPLATES;
     default:
       return false;
   }
@@ -195,6 +203,100 @@ export function getBadgeStyle(icon?: string | null): CosmeticBadgeStyle | undefi
 }
 
 /* ------------------------------------------------------------------ */
+/* Profile Background                                                   */
+/* ------------------------------------------------------------------ */
+
+export interface ProfileBackgroundStyle {
+  label: string;
+  /** CSS background for the profile card. */
+  background: string;
+  /** Text color override for readability on this background. */
+  textColor?: string;
+}
+
+export const PROFILE_BACKGROUNDS: Record<string, ProfileBackgroundStyle> = {
+  "bg-sunset": {
+    label: "Langit Senja",
+    background: "linear-gradient(135deg,#FDE68A 0%,#F97316 40%,#DC2626 70%,#7C2D12 100%)",
+    textColor: "#7C2D12",
+  },
+  "bg-forest": {
+    label: "Hutan Ceria",
+    background: "linear-gradient(135deg,#D1FAE5 0%,#34D399 40%,#059669 70%,#065F46 100%)",
+    textColor: "#065F46",
+  },
+  "bg-ocean": {
+    label: "Laut Biru",
+    background: "linear-gradient(135deg,#DBEAFE 0%,#60A5FA 40%,#2563EB 70%,#1E3A5F 100%)",
+    textColor: "#1E3A5F",
+  },
+  "bg-library": {
+    label: "Perpustakaan",
+    background: "linear-gradient(135deg,#FEF3C7 0%,#D97706 30%,#92400E 60%,#451A03 100%)",
+    textColor: "#451A03",
+  },
+  "bg-galaxy": {
+    label: "Galaksi Kata",
+    background: "linear-gradient(135deg,#EDE9FE 0%,#8B5CF6 30%,#6D28D9 60%,#1E1B4B 100%)",
+    textColor: "#EDE9FE",
+  },
+};
+
+export function getBackgroundStyle(icon?: string | null): ProfileBackgroundStyle | undefined {
+  return icon ? PROFILE_BACKGROUNDS[icon] : undefined;
+}
+
+/* ------------------------------------------------------------------ */
+/* Nameplate                                                            */
+/* ------------------------------------------------------------------ */
+
+export interface NameplateStyle {
+  label: string;
+  /** CSS style for the nameplate text. */
+  style: CSSProperties;
+}
+
+export const NAMEPLATES: Record<string, NameplateStyle> = {
+  "np-explorer": {
+    label: "Penjelajah Kata",
+    style: {
+      backgroundImage: "linear-gradient(90deg,#059669,#10B981 40%,#34D399 70%,#6EE7B7)",
+      backgroundClip: "text",
+      WebkitBackgroundClip: "text",
+      color: "transparent",
+      WebkitTextFillColor: "transparent",
+      fontWeight: 700,
+    },
+  },
+  "np-hunter": {
+    label: "Pemburu Ilmu",
+    style: {
+      backgroundImage: "linear-gradient(90deg,#DC2626,#F97316 40%,#FCD34D 70%,#FDE68A)",
+      backgroundClip: "text",
+      WebkitBackgroundClip: "text",
+      color: "transparent",
+      WebkitTextFillColor: "transparent",
+      fontWeight: 700,
+    },
+  },
+  "np-master": {
+    label: "Master Bahasa",
+    style: {
+      backgroundImage: "linear-gradient(90deg,#7C3AED,#A855F7 30%,#E879F9 60%,#F0ABFC)",
+      backgroundClip: "text",
+      WebkitBackgroundClip: "text",
+      color: "transparent",
+      WebkitTextFillColor: "transparent",
+      fontWeight: 700,
+    },
+  },
+};
+
+export function getNameplateStyle(icon?: string | null): NameplateStyle | undefined {
+  return icon ? NAMEPLATES[icon] : undefined;
+}
+
+/* ------------------------------------------------------------------ */
 /* Bentuk data bersama                                                 */
 /* ------------------------------------------------------------------ */
 
@@ -204,6 +306,8 @@ export interface UserCosmetics {
   equippedNameColor?: string | null;
   equippedBadge?: string | null;
   equippedEffect?: string | null;
+  equippedBackground?: string | null;
+  equippedNameplate?: string | null;
 }
 
 /** Dipakai di `select` Prisma: `{ ...COSMETIC_SELECT }`. */
@@ -212,4 +316,6 @@ export const COSMETIC_SELECT = {
   equippedNameColor: true,
   equippedBadge: true,
   equippedEffect: true,
+  equippedBackground: true,
+  equippedNameplate: true,
 } as const;

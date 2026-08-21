@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import {
   ShoppingBag, Zap, Shield, Sparkles, Moon, Sticker, Check,
-  Clock, Plus, Minus, AlertTriangle,
+  Clock, Plus, Minus, AlertTriangle, BookOpen, PenLine,
 } from "lucide-react";
 import { IconCoin, IconCheck } from "@/lib/icons";
 import CosmeticPreview from "@/components/arena/CosmeticPreview";
@@ -27,7 +27,8 @@ function isBoostType(type: string) { return type === "XP_BOOST"; }
 
 const TYPE_ICONS: Record<string, any> = {
   STREAK_FREEZE: Shield, XP_BOOST: Zap, AVATAR_FRAME: Sparkles,
-  THEME: Moon, STICKER: Sticker,
+  THEME: Moon, STICKER: Sticker, HINT_TOKEN_PACK: BookOpen,
+  PROFILE_BACKGROUND: Sparkles, NAMEPLATE: PenLine,
 };
 const TYPE_COLORS: Record<string, string> = {
   STREAK_FREEZE: "from-cyan-500 to-blue-600",
@@ -35,6 +36,9 @@ const TYPE_COLORS: Record<string, string> = {
   AVATAR_FRAME: "from-violet-500 to-purple-600",
   THEME: "from-indigo-500 to-violet-600",
   STICKER: "from-pink-500 to-rose-600",
+  HINT_TOKEN_PACK: "from-sky-500 to-blue-600",
+  PROFILE_BACKGROUND: "from-pink-400 to-rose-500",
+  NAMEPLATE: "from-amber-400 to-yellow-500",
 };
 
 export default function TokoKoinPage() {
@@ -165,8 +169,10 @@ export default function TokoKoinPage() {
       setMessage({
         type: "success",
         text: isWearable(item)
-          ? `Berhasil membeli ${item.name}! Tekan "Pakai" untuk memakainya.`
-          : `Berhasil membeli ${item.name}!`,
+          ? (item.type === "HINT_TOKEN_PACK"
+            ? `Berhasil dibeli! 5 Hint Token sudah masuk ke inventarismu.`
+            : `Berhasil dibeli! Pasang ${item.name} sekarang.`)
+          : `Berhasil dibeli! ${item.name} sudah masuk ke koleksimu.`,
       });
     } catch (e: any) {
       setMessage({ type: "error", text: e.message });

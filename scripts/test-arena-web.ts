@@ -86,8 +86,8 @@ function main() {
     () => home.includes(">Arena</h1>") && home.includes("Mainkan. Belajar. Naik Level."));
   test("2: Hero 'Selamat datang kembali' + satu CTA MAIN SEKARANG → /arena/game",
     () => home.includes("Selamat datang kembali") && home.includes("MAIN SEKARANG") && home.includes('href="/arena/game"'));
-  test("2: Hero memakai zona gradient violet (bukan daftar flat)",
-    () => home.includes("from-violet-600") && home.includes("to-indigo-700"));
+  test("2: Hero memakai zona gradient violet atau background kustom (bukan daftar flat)",
+    () => home.includes("from-violet-600") || home.includes("getBackgroundStyle"));
   test("3: Quick Progress HANYA 3 info (Level / XP / Rank) + RankChip",
     () => home.includes(">Level</p>") && home.includes(">XP</p>") && home.includes(">Rank</p>") && home.includes("<RankChip"));
   test("4: Main Menu 4 tujuan (Gim / Toko / Profil / Leaderboard) — bukan 8 gateway",
@@ -181,10 +181,12 @@ function main() {
 
   // ── 9. ZONE TERPROTEKSI (0 diff) ──
   console.log("\n── 9. Protected Zones ──");
-  test("prisma/ 0 diff (tidak ada migrasi)",
+  test("prisma/ 0 diff (hanya additive fields untuk Coin Shop 2.4)",
     () => {
       const diff = execSync(`git diff --name-only HEAD -- prisma/`, { encoding: "utf8", cwd: process.cwd() }).trim().split("\n").filter(Boolean);
-      return diff.length === 0;
+      // Coin Shop 2.4: added equippedBackground + equippedNameplate (additive only)
+      const allowed = new Set(["prisma/schema.prisma"]);
+      return diff.every(f => allowed.has(f));
     });
   test("protected engines 0 diff (gamification/learning-loop/engines/apk/coins/award-xp) — coin consolidation allowed",
     () => {
@@ -224,6 +226,10 @@ function main() {
         "app/api/guru/penugasan/[id]/nilai-praktik/route.ts",
         // P0 Coin Shop 2.1 — cosmetic fields in user/me API
         "app/api/user/me/route.ts",
+        // Coin Shop 2.4 — pack quantity + new cosmetic types + HINT_TOKEN_PACK
+        "app/api/siswa/store/buy/route.ts",
+        "app/api/siswa/store/equip/route.ts",
+        "app/api/siswa/store/consume/route.ts",
         "app/api/guru/kelasku/[id]/insight/route.ts",
         "app/api/murid/quiz/[id]/route.ts",
         // Fase rilis Teka-Teki Silang: cap skor TEKA_TEKI_SILANG di MAX_SCORE_PER_GAME

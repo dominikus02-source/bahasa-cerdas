@@ -12,6 +12,9 @@ export interface MeUser {
   city?: string;
   equippedNameColor?: string | null;
   equippedBadge?: string | null;
+  equippedFrame?: string | null;
+  equippedBackground?: string | null;
+  equippedNameplate?: string | null;
 }
 
 export interface SummaryRow {

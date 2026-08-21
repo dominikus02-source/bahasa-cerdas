@@ -9,6 +9,7 @@ import { rankFromLevel } from "@/lib/gamification/ranks"
 import { RankChip } from "@/components/gamification/RankChip"
 import { SiaranBanner } from "@/components/arena/SiaranBanner"
 import { getDisplayName } from "@/lib/nickname"
+import { nameColorStyle, getBackgroundStyle, getBadgeStyle, getNameplateStyle } from "@/lib/cosmetics"
 import UserAvatar from "@/components/arena/UserAvatar"
 
 export const dynamic = "force-dynamic"
@@ -90,6 +91,7 @@ export default async function BerandaPage() {
             <UserAvatar
               size={44}
               avatar={user.avatar}
+              frame={user.equippedFrame}
               initials={initials(playerName)}
               gradient="from-violet-500 to-purple-600"
               textClassName="text-sm"
@@ -102,19 +104,55 @@ export default async function BerandaPage() {
       {/* ── HERO — satu CTA: MAIN SEKARANG → Game Hub ── */}
       <section
         aria-label="Main sekarang"
-        className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 p-6 text-white shadow-lg shadow-violet-600/25 md:p-8"
+        className="relative overflow-hidden rounded-3xl p-6 shadow-lg md:p-8"
+        style={(() => {
+          const bg = getBackgroundStyle(user.equippedBackground);
+          return bg ? { background: bg.background, color: bg.textColor || '#fff', boxShadow: '0 4px 20px rgba(0,0,0,0.15)' } : { background: 'linear-gradient(135deg,#7c3aed 0%,#9333ea 50%,#6366f1 100%)' };
+        })()}
       >
-        <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10 blur-2xl" />
-        <div className="pointer-events-none absolute -bottom-20 -left-14 h-48 w-48 rounded-full bg-amber-300/20 blur-2xl" />
+        {(() => {
+          const hasBg = !!user.equippedBackground;
+          return hasBg ? null : (
+            <>
+              <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10 blur-2xl" />
+              <div className="pointer-events-none absolute -bottom-20 -left-14 h-48 w-48 rounded-full bg-amber-300/20 blur-2xl" />
+              <div className="pointer-events-none absolute top-1/2 right-1/4 h-32 w-32 rounded-full bg-emerald-300/15 blur-2xl" />
+            </>
+          );
+        })()}
         <div className="relative z-10 flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div className="min-w-0">
-            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-violet-200">Selamat datang kembali</p>
-            <h2 className="mt-1 truncate text-2xl font-black md:text-3xl">{playerName}</h2>
-            <p className="mt-1.5 text-sm text-violet-100/90">Pilih gim, kumpulkan XP, dan naik peringkat di Arena.</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em]" style={{ color: 'currentColor', opacity: 0.7 }}>Selamat datang kembali</p>
+            <h2 className="mt-1 truncate text-2xl font-black md:text-3xl" style={nameColorStyle(user.equippedNameColor, true)}>{playerName}</h2>
+            {(() => {
+              const badge = getBadgeStyle(user.equippedBadge);
+              const nameplate = getNameplateStyle(user.equippedNameplate);
+              if (!badge && !nameplate) return null;
+              return (
+                <div className="mt-1 flex items-center gap-2 flex-wrap">
+                  {badge && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-white text-[10px] font-bold bg-gradient-to-br from-violet-500 to-purple-600 shadow-sm">
+                      <badge.Icon size={11} />
+                      {badge.label}
+                    </span>
+                  )}
+                  {nameplate && (
+                    <span className="text-xs font-bold" style={nameplate.style}>{nameplate.label}</span>
+                  )}
+                </div>
+              );
+            })()}
+            <p className="mt-1.5 text-sm" style={{ color: 'currentColor', opacity: 0.8 }}>Pilih gim, kumpulkan XP, dan naik peringkat di Arena.</p>
           </div>
           <Link
             href="/arena/game"
-            className="group flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-white px-7 py-3.5 text-sm font-extrabold text-violet-700 shadow-lg shadow-violet-900/20 transition-all hover:bg-violet-50 active:scale-[0.98]"
+            className="group flex shrink-0 items-center justify-center gap-2 rounded-2xl px-7 py-3.5 text-sm font-extrabold shadow-lg transition-all active:scale-[0.98]"
+            style={(() => {
+              const bg = user.equippedBackground ? getBackgroundStyle(user.equippedBackground) : null;
+              if (!bg) return { background: '#fff', color: '#6d28d9' };
+              // Dark background → light CTA, light background → dark CTA
+              return { background: bg.textColor || '#fff', color: bg.background.includes('#FDE68A') || bg.background.includes('#D1FAE5') ? '#1E3A5F' : '#fff' };
+            })()}
           >
             MAIN SEKARANG <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
@@ -191,7 +229,7 @@ export default async function BerandaPage() {
           </span>
           <div className="min-w-0 flex-1">
             <p className="text-sm font-extrabold text-gray-900 dark:text-slate-100">Toko Koin</p>
-            <p className="truncate text-[11px] text-gray-400 dark:text-slate-400">Tukar koin dengan item spesial</p>
+            <p className="truncate text-[11px] text-gray-400 dark:text-slate-400">Gunakan koinmu untuk item spesial</p>
             <span className="mt-1 inline-block text-[11px] font-bold text-amber-600 dark:text-amber-400">Beli →</span>
           </div>
         </Link>

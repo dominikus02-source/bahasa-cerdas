@@ -1,6 +1,6 @@
 import UserAvatar from "@/components/arena/UserAvatar";
 import { CosmeticBadge } from "@/components/arena/UserName";
-import { AVATAR_FRAMES, COSMETIC_BADGES, NAME_COLORS } from "@/lib/cosmetics";
+import { AVATAR_FRAMES, COSMETIC_BADGES, NAME_COLORS, PROFILE_BACKGROUNDS, NAMEPLATES } from "@/lib/cosmetics";
 
 /**
  * Pratinjau kosmetik di kartu Toko Koin — supaya murid tahu apa yang dibeli.
@@ -38,6 +38,23 @@ export default function CosmeticPreview({
     return (
       <div className="w-14 h-14 rounded-2xl bg-gray-50 dark:bg-slate-800/60 border border-gray-100 dark:border-slate-800 flex items-center justify-center shrink-0">
         <CosmeticBadge badge={icon} size={30} />
+      </div>
+    );
+  }
+
+  if (type === "PROFILE_BACKGROUND" && icon && PROFILE_BACKGROUNDS[icon]) {
+    const bg = PROFILE_BACKGROUNDS[icon];
+    return (
+      <div className="w-14 h-14 rounded-2xl border border-gray-100 dark:border-slate-800 flex items-center justify-center shrink-0 overflow-hidden" style={{ background: bg.background }}>
+        <span className="text-[10px] font-bold" style={{ color: bg.textColor || '#fff' }}>Profil</span>
+      </div>
+    );
+  }
+
+  if (type === "NAMEPLATE" && icon && NAMEPLATES[icon]) {
+    return (
+      <div className="w-14 h-14 rounded-2xl bg-gray-50 dark:bg-slate-800/60 border border-gray-100 dark:border-slate-800 flex items-center justify-center shrink-0">
+        <span className="text-xs font-bold" style={NAMEPLATES[icon].style}>NP</span>
       </div>
     );
   }

@@ -33,6 +33,7 @@ interface UserData {
   league: string; avatar?: string; coins: number; totalLikes: number; totalViews: number;
   school?: string; city?: string; province?: string; grade?: string; noAbsen?: string; bio?: string; email?: string;
   equippedFrame?: string | null; equippedNameColor?: string | null; equippedBadge?: string | null;
+  equippedBackground?: string | null; equippedNameplate?: string | null;
   createdAt?: string;
 }
 
@@ -389,6 +390,8 @@ export default function MuridProfilePage() {
           equippedFrame: user.equippedFrame,
           equippedNameColor: user.equippedNameColor,
           equippedBadge: user.equippedBadge,
+          equippedNameplate: user.equippedNameplate,
+          equippedBackground: user.equippedBackground,
           bio: user.bio ?? null,
           level: playerLevel,
           xp: user.xp || 0,

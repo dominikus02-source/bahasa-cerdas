@@ -13,6 +13,10 @@ import { db } from "@/lib/db";
 const CONSUMABLE_TYPES = ["HINT_TOKEN", "TIME_EXTENSION"] as const;
 type ConsumableType = (typeof CONSUMABLE_TYPES)[number];
 
+// Coin Shop 2.4 — HINT_TOKEN_PACK memberikan 5 Hint Token.
+// Saat mengonsumsi HINT_TOKEN, pack juga dicek sebagai sumber.
+const HINT_SOURCE_TYPES = ["HINT_TOKEN", "HINT_TOKEN_PACK"] as const;
+
 const LABEL: Record<ConsumableType, string> = {
   HINT_TOKEN: "Hint Token",
   TIME_EXTENSION: "Time Extension",
@@ -20,6 +24,11 @@ const LABEL: Record<ConsumableType, string> = {
 
 function isConsumable(value: unknown): value is ConsumableType {
   return typeof value === "string" && (CONSUMABLE_TYPES as readonly string[]).includes(value);
+}
+
+/** Apakah tipe ini bisa dijadikan sumber HINT_TOKEN? */
+function isHintSource(type: string): boolean {
+  return (HINT_SOURCE_TYPES as readonly string[]).includes(type);
 }
 
 /** Baris inventaris yang sudah lewat masa berlaku dianggap tidak dimiliki. */
@@ -40,13 +49,13 @@ export async function GET() {
       where: {
         userId: user.id,
         quantity: { gt: 0 },
-        item: { type: { in: [...CONSUMABLE_TYPES] } },
+        item: { type: { in: [...CONSUMABLE_TYPES, ...HINT_SOURCE_TYPES] } },
         ...notExpired(new Date()),
       },
       select: { quantity: true, item: { select: { type: true } } },
     });
 
-    const items: Record<string, number> = { HINT_TOKEN: 0, TIME_EXTENSION: 0 };
+    const items: Record<string, number> = { HINT_TOKEN: 0, TIME_EXTENSION: 0, HINT_TOKEN_PACK: 0 };
     for (const row of rows) {
       items[row.item.type] = (items[row.item.type] || 0) + row.quantity;
     }
@@ -84,20 +93,25 @@ export async function POST(req: NextRequest) {
     if (!type && !itemId) {
       return NextResponse.json({ error: "Jenis item tidak dikirim" }, { status: 400 });
     }
-    if (type !== undefined && !isConsumable(type)) {
+    // Coin Shop 2.4 — HINT_TOKEN bisa diambil dari HINT_TOKEN atau HINT_TOKEN_PACK.
+    const isHintRequest = type === "HINT_TOKEN";
+    if (type !== undefined && !isConsumable(type) && !isHintRequest) {
       return NextResponse.json({ error: "Item ini tidak bisa dipakai" }, { status: 400 });
     }
 
     const now = new Date();
 
     const result = await db.$transaction(async (tx) => {
+      // Untuk HINT_TOKEN, cari dari HINT_TOKEN dulu, lalu HINT_TOKEN_PACK.
       const row = await tx.userItem.findFirst({
         where: {
           userId: user.id,
           quantity: { gt: 0 },
           ...(typeof itemId === "string" && itemId
             ? { itemId }
-            : { item: { type: type as ConsumableType } }),
+            : isHintRequest
+              ? { item: { type: { in: [...HINT_SOURCE_TYPES] } } }
+              : { item: { type: type as ConsumableType } }),
           ...notExpired(now),
         },
         select: { id: true, quantity: true, item: { select: { type: true, name: true } } },
@@ -106,8 +120,8 @@ export async function POST(req: NextRequest) {
 
       if (!row) return { ok: false as const, reason: "kosong" as const };
 
-      // Kalau dicari lewat itemId, tipenya tetap harus habis-pakai.
-      if (!isConsumable(row.item.type)) {
+      // Kalau dicari lewat itemId, tipenya tetap harus habis-pakai atau hint source.
+      if (!isConsumable(row.item.type) && !isHintSource(row.item.type)) {
         return { ok: false as const, reason: "bukan-consumable" as const };
       }
 
@@ -128,11 +142,11 @@ export async function POST(req: NextRequest) {
         await tx.userItem.delete({ where: { id: row.id } });
       }
 
-      return { ok: true as const, type: row.item.type as ConsumableType, remaining };
+      return { ok: true as const, type: row.item.type, remaining };
     });
 
     if (!result.ok) {
-      const label = isConsumable(type) ? LABEL[type] : "Item";
+      const label = isConsumable(type) ? LABEL[type as ConsumableType] : "Item";
       const message =
         result.reason === "bukan-consumable"
           ? "Item ini tidak bisa dipakai"

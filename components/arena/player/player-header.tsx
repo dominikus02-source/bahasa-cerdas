@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Flame, Coins, Sparkles } from "lucide-react";
 import { formatId, InitialAvatar, RankIcon } from "./ui";
 import { XpProgressBar } from "./xp-progress-bar";
-import { nameColorStyle, getBadgeStyle } from "@/lib/cosmetics";
+import { nameColorStyle, getBadgeStyle, getNameplateStyle } from "@/lib/cosmetics";
 import type { PlayerProfileView } from "@/lib/gamification/client-types";
 
 /** Header profil pemain — avatar, nama, rank, level, XP, koin, streak. */
@@ -54,6 +54,9 @@ export function PlayerHeader({
               </span>
             )}
           </div>
+          {profile.equippedNameplate && (() => { const np = getNameplateStyle(profile.equippedNameplate); return np ? (
+            <p className="text-xs font-bold mt-0.5" style={np.style}>{np.label}</p>
+          ) : null; })()}
           <p className="text-xs font-semibold" style={{ color: profile.rankColor }}>
             {profile.rankLabel} · {profile.rankTitle} · Tingkat {profile.level}
           </p>

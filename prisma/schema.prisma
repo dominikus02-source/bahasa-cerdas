@@ -205,6 +205,8 @@ model User {
   equippedNameColor     String?
   equippedBadge         String?
   equippedEffect        String?
+  equippedBackground    String?
+  equippedNameplate     String?
   totalLikes            Int                     @default(0)
   totalViews            Int                     @default(0)
   createdAt             DateTime                @default(now())

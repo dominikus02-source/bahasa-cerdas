@@ -28,11 +28,15 @@ export async function POST(req: NextRequest) {
     // lebih lama daripada yang dijanjikan namanya.
     const isXpBoost = item.type === "XP_BOOST";
 
+    // Coin Shop 2.4 — Pak beri quantity lebih dari 1.
+    // HINT_TOKEN_PACK memberikan 5 Hint Token sekaligus.
+    const packQuantity = item.type === "HINT_TOKEN_PACK" ? 5 : 1;
+
     if (existing) {
       await db.userItem.update({
         where: { id: existing.id },
         data: {
-          quantity: { increment: 1 },
+          quantity: { increment: packQuantity },
           // Baris UserItem unik per (userId, itemId), jadi pembelian ulang hanya
           // menambah quantity. Tanpa memperpanjang masa aktif, boost kedua yang
           // dibeli murid tidak akan pernah berlaku.
@@ -46,7 +50,7 @@ export async function POST(req: NextRequest) {
         data: {
           userId: user.id,
           itemId,
-          quantity: 1,
+          quantity: packQuantity,
           expiresAt: isXpBoost ? hitungExpiresAtBoost(item) : undefined,
         },
       });
