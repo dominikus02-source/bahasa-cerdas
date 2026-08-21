@@ -8,30 +8,24 @@ import {
   Loader2,
   GraduationCap,
   MapPin,
-  BookOpen,
-  Award,
+  Briefcase,
   Edit3,
   User,
-  Briefcase,
-  FileText,
   CheckCircle2,
   Heart,
-  Trophy,
-  Flame,
-  Star,
   Wallet,
-  ChevronRight,
   Banknote,
+  Shield,
+  Mail,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { levelFromXp } from "@/lib/gamification/levels";
-import { rankFromLevel, RANK_META } from "@/lib/gamification/ranks";
-import { RankChip } from "@/components/gamification/RankChip";
 import { useUserStore } from "@/store";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
 /* ------------------------------------------------------------------ */
+
+type EditSection = "header" | "professional" | "bio" | "rekening" | null;
 
 interface ProfileData {
   id: string;
@@ -55,13 +49,6 @@ interface ProfileData {
   bank: string | null;
   bankHolder: string | null;
   bankNumber: string | null;
-}
-
-interface Stats {
-  totalKarya: number;
-  totalSiswa: number;
-  totalKuis: number;
-  saldo: number;
 }
 
 interface FormState {
@@ -110,7 +97,6 @@ const BANK_OPTIONS = [
   { value: "bsi", label: "Bank Syariah Indonesia (BSI)" },
 ];
 
-/** Mask account number: show last 4 digits only. e.g. "•••• 5678" */
 function maskBankNumber(num: string | null | undefined): string {
   if (!num) return "";
   const digits = num.replace(/\D/g, "");
@@ -120,33 +106,6 @@ function maskBankNumber(num: string | null | undefined): string {
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
-
-/* Completeness fields (11 total — must match old pengaturan Profile tab) */
-const COMPLETENESS_FIELDS: { key: keyof FormState; label: string }[] = [
-  { key: "fullName", label: "Nama Lengkap" },
-  { key: "nickname", label: "Nama Panggilan" },
-  { key: "school", label: "Sekolah" },
-  { key: "subject", label: "Mata Pelajaran" },
-  { key: "grade", label: "Jenjang" },
-  { key: "bio", label: "Bio" },
-  { key: "city", label: "Kota" },
-  { key: "province", label: "Provinsi" },
-  { key: "nip", label: "NIP" },
-  { key: "nuptk", label: "NUPTK" },
-];
-
-/* ------------------------------------------------------------------ */
-/*  Helpers                                                            */
-/* ------------------------------------------------------------------ */
-
-function calcCompleteness(p: ProfileData, hasAvatar: boolean): number {
-  let filled = hasAvatar ? 1 : 0;
-  for (const f of COMPLETENESS_FIELDS) {
-    const val = p[f.key as keyof ProfileData];
-    if (val && String(val).trim()) filled++;
-  }
-  return Math.round((filled / (COMPLETENESS_FIELDS.length + 1)) * 100);
-}
 
 function fieldRow(label: string, value: string | null | undefined) {
   if (!value?.trim()) return null;
@@ -159,16 +118,15 @@ function fieldRow(label: string, value: string | null | undefined) {
 
 export default function GuruProfilePage() {
   const [profile, setProfile] = useState<ProfileData | null>(null);
-  const [stats, setStats] = useState<Stats>({ totalKarya: 0, totalSiswa: 0, totalKuis: 0, saldo: 0 });
   const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState(false);
+  const [editingSection, setEditingSection] = useState<EditSection>(null);
   const [saving, setSaving] = useState(false);
+  const [savingRekening, setSavingRekening] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
+  const [rekening, setRekening] = useState<RekeningFormState>(EMPTY_REKENING);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
-  const [rekening, setRekening] = useState<RekeningFormState>(EMPTY_REKENING);
-  const [savingRekening, setSavingRekening] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const supabase = createClient();
   const setUser = useUserStore((s) => s.setUser);
@@ -208,21 +166,6 @@ export default function GuruProfilePage() {
     } catch {}
   }, []);
 
-  const fetchStats = useCallback(async () => {
-    try {
-      const res = await fetch("/api/guru/dashboard");
-      if (res.ok) {
-        const d = await res.json();
-        setStats({
-          totalKarya: d.totalKarya || 0,
-          totalSiswa: d.totalSiswa || 0,
-          totalKuis: d.totalKuis || 0,
-          saldo: d.saldo || 0,
-        });
-      }
-    } catch {}
-  }, []);
-
   const fetchRekening = useCallback(async () => {
     try {
       const res = await fetch("/api/user/rekening");
@@ -238,13 +181,15 @@ export default function GuruProfilePage() {
   }, []);
 
   useEffect(() => {
-    Promise.all([fetchProfile(), fetchStats(), fetchRekening()]).finally(() => setLoading(false));
-  }, [fetchProfile, fetchStats, fetchRekening]);
+    Promise.all([fetchProfile(), fetchRekening()]).finally(() => setLoading(false));
+  }, [fetchProfile, fetchRekening]);
 
-  /* --- edit handlers ---------------------------------------------- */
+  /* --- edit helpers ----------------------------------------------- */
 
-  const startEdit = () => {
+  const openSection = (section: EditSection) => {
     if (!profile) return;
+    setMessage(null);
+    setAvatarPreview(null);
     setForm({
       fullName: profile.fullName || "",
       nickname: profile.nickname || "",
@@ -257,15 +202,21 @@ export default function GuruProfilePage() {
       subject: profile.subject || "",
       grade: profile.grade || "",
     });
-    setEditing(true);
-    setMessage(null);
+    setRekening({
+      bank: profile.bank || "",
+      holder: profile.bankHolder || "",
+      number: profile.bankNumber || "",
+    });
+    setEditingSection(section);
   };
 
   const cancelEdit = () => {
-    setEditing(false);
+    setEditingSection(null);
     setMessage(null);
     setAvatarPreview(null);
   };
+
+  /* --- avatar upload ---------------------------------------------- */
 
   const handleAvatarClick = () => fileInputRef.current?.click();
 
@@ -316,7 +267,9 @@ export default function GuruProfilePage() {
     }
   };
 
-  const handleSave = async () => {
+  /* --- per-section save handlers ---------------------------------- */
+
+  const handleSaveHeader = async () => {
     if (!form.fullName.trim()) {
       setMessage({ type: "error", text: "Nama lengkap wajib diisi." });
       return;
@@ -330,40 +283,85 @@ export default function GuruProfilePage() {
         body: JSON.stringify({
           fullName: form.fullName.trim(),
           nickname: form.nickname.trim() || null,
-          bio: form.bio.trim() || null,
-          nip: form.nip.trim() || null,
-          nuptk: form.nuptk.trim() || null,
-          school: form.school.trim() || null,
-          city: form.city.trim() || null,
-          province: form.province.trim() || null,
-          subject: form.subject.trim() || null,
-          grade: form.grade.trim() || null,
         }),
       });
       if (!res.ok) throw new Error("Gagal menyimpan profil");
 
       setProfile((prev) =>
         prev
-          ? {
-              ...prev,
-              fullName: form.fullName.trim(),
-              nickname: form.nickname.trim() || null,
-              bio: form.bio.trim() || null,
-              nip: form.nip.trim() || null,
-              nuptk: form.nuptk.trim() || null,
-              school: form.school.trim() || null,
-              city: form.city.trim() || null,
-              province: form.province.trim() || null,
-              subject: form.subject.trim() || null,
-              grade: form.grade.trim() || null,
-            }
+          ? { ...prev, fullName: form.fullName.trim(), nickname: form.nickname.trim() || null }
           : prev
       );
       setUser({ fullName: form.fullName.trim() });
-      setEditing(false);
+      setEditingSection(null);
       setMessage({ type: "success", text: "Profil berhasil disimpan!" });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal menyimpan profil";
+      setMessage({ type: "error", text: msg });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSaveProfessional = async () => {
+    setSaving(true);
+    setMessage(null);
+    try {
+      const res = await fetch("/api/user/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          school: form.school.trim() || null,
+          subject: form.subject.trim() || null,
+          grade: form.grade.trim() || null,
+          nip: form.nip.trim() || null,
+          nuptk: form.nuptk.trim() || null,
+          city: form.city.trim() || null,
+          province: form.province.trim() || null,
+        }),
+      });
+      if (!res.ok) throw new Error("Gagal menyimpan profil profesional");
+
+      setProfile((prev) =>
+        prev
+          ? {
+              ...prev,
+              school: form.school.trim() || null,
+              subject: form.subject.trim() || null,
+              grade: form.grade.trim() || null,
+              nip: form.nip.trim() || null,
+              nuptk: form.nuptk.trim() || null,
+              city: form.city.trim() || null,
+              province: form.province.trim() || null,
+            }
+          : prev
+      );
+      setEditingSection(null);
+      setMessage({ type: "success", text: "Profil profesional berhasil disimpan!" });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Gagal menyimpan profil profesional";
+      setMessage({ type: "error", text: msg });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSaveBio = async () => {
+    setSaving(true);
+    setMessage(null);
+    try {
+      const res = await fetch("/api/user/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bio: form.bio.trim() || null }),
+      });
+      if (!res.ok) throw new Error("Gagal menyimpan bio");
+
+      setProfile((prev) => (prev ? { ...prev, bio: form.bio.trim() || null } : prev));
+      setEditingSection(null);
+      setMessage({ type: "success", text: "Bio berhasil disimpan!" });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Gagal menyimpan bio";
       setMessage({ type: "error", text: msg });
     } finally {
       setSaving(false);
@@ -402,6 +400,7 @@ export default function GuruProfilePage() {
           ? { ...prev, bank: rekening.bank, bankHolder: rekening.holder.trim(), bankNumber: rekening.number.trim() }
           : prev
       );
+      setEditingSection(null);
       setMessage({ type: "success", text: "Rekening berhasil disimpan!" });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal menyimpan rekening";
@@ -413,11 +412,8 @@ export default function GuruProfilePage() {
 
   /* --- derived ----------------------------------------------------- */
 
-  const rank = rankFromLevel(levelFromXp(profile?.xp || 0));
-  const rankMeta = RANK_META[rank];
   const initial = (profile?.fullName || "G").charAt(0).toUpperCase();
   const displayAvatar = avatarPreview || profile?.avatar;
-  const completeness = useMemo(() => (profile ? calcCompleteness(profile, !!displayAvatar) : 0), [profile, displayAvatar]);
 
   const profFields = useMemo(() => {
     if (!profile) return [];
@@ -444,14 +440,14 @@ export default function GuruProfilePage() {
 
   if (!profile) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center text-gray-500">
+      <div className="min-h-[60vh] flex items-center justify-center text-gray-500 dark:text-slate-400">
         <p>Profil tidak ditemukan.</p>
       </div>
     );
   }
 
   /* ================================================================= */
-  /*  AVATAR SHARED (used in both view & edit)                         */
+  /*  AVATAR BLOCK                                                      */
   /* ================================================================= */
 
   const avatarBlock = (size: "lg" | "xl") => {
@@ -462,11 +458,11 @@ export default function GuruProfilePage() {
         <button
           type="button"
           onClick={handleAvatarClick}
-          className={`group relative ${dim} rounded-full overflow-hidden border-4 border-white shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2`}
+          className={`group relative ${dim} rounded-full overflow-hidden border-4 border-white dark:border-slate-700 shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2`}
           aria-label="Ganti foto profil"
         >
           {displayAvatar ? (
-            /* eslint-disable-next-line @next/next/no-img-element -- blob URL / external URL */
+            /* eslint-disable-next-line @next/next/no-img-element */
             <img src={displayAvatar} alt="" className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center">
@@ -478,7 +474,7 @@ export default function GuruProfilePage() {
           </div>
         </button>
         {uploadingAvatar && (
-          <div className={`absolute inset-0 rounded-full bg-black/40 flex items-center justify-center`}>
+          <div className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center">
             <Loader2 size={28} className="text-white animate-spin" />
           </div>
         )}
@@ -495,365 +491,59 @@ export default function GuruProfilePage() {
   };
 
   /* ================================================================= */
-  /*  VIEW MODE                                                        */
+  /*  MESSAGE TOAST                                                     */
   /* ================================================================= */
 
-  if (!editing) {
-    return (
-      <div className="max-w-5xl mx-auto px-4 py-8 pb-24">
-        {/* Success toast */}
-        {message && (
-          <div
-            className={`mb-6 flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium ${
-              message.type === "success"
-                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                : "bg-red-50 text-red-700 border border-red-200"
-            }`}
-            role="alert"
-          >
-            <CheckCircle2 size={16} className="shrink-0" />
-            {message.text}
-          </div>
-        )}
-
-        <div className="grid lg:grid-cols-[1fr_300px] gap-6">
-          {/* -------- LEFT / MAIN -------- */}
-          <div className="space-y-6">
-            {/* HERO IDENTITY */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-              {/* top accent bar */}
-              <div className="h-20 bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500" />
-
-              <div className="px-6 pb-6 -mt-12">
-                <div className="flex flex-col sm:flex-row items-center sm:items-end gap-5">
-                  {/* avatar */}
-                  <div className="ring-4 ring-white rounded-full shadow-lg">
-                    {avatarBlock("xl")}
-                  </div>
-
-                  {/* identity text */}
-                  <div className="flex-1 text-center sm:text-left pb-1">
-                    <h1 className="text-2xl font-bold text-gray-900 leading-tight">
-                      {profile.fullName || "Guru"}
-                    </h1>
-                    {profile.nickname && (
-                      <p className="text-sm text-gray-400 mt-0.5">&ldquo;{profile.nickname}&rdquo;</p>
-                    )}
-                    <p className="text-sm text-emerald-700 font-medium mt-1">
-                      Guru {profile.subject || "Bahasa Indonesia"}
-                    </p>
-                    {(profile.school || profile.city) && (
-                      <div className="flex items-center justify-center sm:justify-start gap-1.5 mt-2 text-sm text-gray-500">
-                        {profile.school && (
-                          <span className="flex items-center gap-1">
-                            <GraduationCap size={14} className="text-gray-400" />
-                            {profile.school}
-                          </span>
-                        )}
-                        {profile.school && profile.city && <span className="text-gray-300">·</span>}
-                        {profile.city && (
-                          <span className="flex items-center gap-1">
-                            <MapPin size={14} className="text-gray-400" />
-                            {[profile.city, profile.province].filter(Boolean).join(", ")}
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* edit button */}
-                  <button
-                    type="button"
-                    onClick={startEdit}
-                    className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-                  >
-                    <Edit3 size={16} />
-                    Edit Profil
-                  </button>
-                </div>
-
-                {/* badges row */}
-                {(profile.isFounder || profile.isPremium) && (
-                  <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100">
-                    {profile.isFounder && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-xs font-semibold border border-amber-200">
-                        <Award size={13} /> Founder
-                      </span>
-                    )}
-                    {profile.isPremium && !profile.isFounder && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-amber-50 to-yellow-50 text-amber-700 rounded-full text-xs font-semibold border border-amber-200">
-                        <Star size={13} /> Guru Pro
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* BIO */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-              <h2 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                <Heart size={16} className="text-rose-400" />
-                Tentang Saya
-              </h2>
-              {profile.bio ? (
-                <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">{profile.bio}</p>
-              ) : (
-                <div className="text-center py-6">
-                  <p className="text-sm text-gray-400 italic mb-3">
-                    Tambahkan sedikit cerita tentang dirimu sebagai guru.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={startEdit}
-                    className="text-sm text-emerald-600 hover:text-emerald-700 font-semibold"
-                  >
-                    Edit Profil <ChevronRight size={14} className="inline -mt-0.5" />
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* PROFIL PROFESIONAL */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-              <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <Briefcase size={16} className="text-blue-500" />
-                Profil Profesional
-              </h2>
-              {profFields.length > 0 ? (
-                <div className="grid sm:grid-cols-2 gap-x-8 gap-y-3">
-                  {profFields.map((f) => (
-                    <div key={f.label} className="flex items-start gap-3 py-1.5">
-                      <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide w-28 shrink-0 pt-0.5">
-                        {f.label}
-                      </span>
-                      <span className="text-sm text-gray-800 font-medium">{f.value}</span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-gray-400 italic">
-                  Lengkapi profil profesional agar terlihat lebih lengkap.
-                </p>
-              )}
-            </div>
-
-            {/* PEMBAYARAN & PENARIKAN */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-              <h2 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                <Wallet size={16} className="text-emerald-500" />
-                Pembayaran &amp; Penarikan
-              </h2>
-              {profile.bank && profile.bankHolder && profile.bankNumber ? (
-                <div className="space-y-3">
-                  <div className="grid sm:grid-cols-2 gap-x-8 gap-y-2">
-                    <div className="flex items-start gap-3 py-1.5">
-                      <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide w-28 shrink-0 pt-0.5">
-                        Bank
-                      </span>
-                      <span className="text-sm text-gray-800 font-medium">
-                        {BANK_OPTIONS.find((b) => b.value === profile.bank)?.label || profile.bank}
-                      </span>
-                    </div>
-                    <div className="flex items-start gap-3 py-1.5">
-                      <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide w-28 shrink-0 pt-0.5">
-                        No. Rekening
-                      </span>
-                      <span className="text-sm text-gray-800 font-medium font-mono">
-                        {maskBankNumber(profile.bankNumber)}
-                      </span>
-                    </div>
-                    <div className="flex items-start gap-3 py-1.5">
-                      <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide w-28 shrink-0 pt-0.5">
-                        Pemilik
-                      </span>
-                      <span className="text-sm text-gray-800 font-medium">{profile.bankHolder}</span>
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-400 pt-1">
-                    Rekening digunakan untuk pencairan royalti dari Toko Karya.
-                  </p>
-                </div>
-              ) : (
-                <div className="text-center py-5">
-                  <Wallet size={32} className="mx-auto text-gray-300 mb-2" />
-                  <p className="text-sm text-gray-400 italic mb-3">
-                    Belum ada data rekening. Tambahkan rekening untuk mencairkan saldo.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={startEdit}
-                    className="text-sm text-emerald-600 hover:text-emerald-700 font-semibold"
-                  >
-                    Tambah Rekening <ChevronRight size={14} className="inline -mt-0.5" />
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* -------- RIGHT / SIDEBAR -------- */}
-          <div className="space-y-5">
-            {/* COMPLETENESS */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 text-center">
-              <div className="relative inline-flex items-center justify-center mb-3">
-                <svg className="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
-                  <circle cx="40" cy="40" r="34" fill="none" stroke="#e5e7eb" strokeWidth="6" />
-                  <circle
-                    cx="40"
-                    cy="40"
-                    r="34"
-                    fill="none"
-                    stroke={completeness >= 80 ? "#059669" : completeness >= 50 ? "#f59e0b" : "#ef4444"}
-                    strokeWidth="6"
-                    strokeLinecap="round"
-                    strokeDasharray={`${(completeness / 100) * 213.6} 213.6`}
-                  />
-                </svg>
-                <span className="absolute text-lg font-bold text-gray-900">{completeness}%</span>
-              </div>
-              <p className="text-sm font-semibold text-gray-700">Kelengkapan Profil</p>
-              <p className="text-xs text-gray-400 mt-1">
-                {completeness >= 80 ? "Profil sudah lengkap!" : completeness >= 50 ? "Hampir lengkap" : "Lengkapi profil Anda"}
-              </p>
-            </div>
-
-            {/* STATS */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-              <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-                <Trophy size={15} className="text-amber-500" />
-                Aktivitas Guru
-              </h3>
-              <div className="space-y-3">
-                {[
-                  { icon: FileText, label: "Karya", value: stats.totalKarya, color: "text-violet-600" },
-                  { icon: GraduationCap, label: "Siswa", value: stats.totalSiswa, color: "text-blue-600" },
-                  { icon: BookOpen, label: "Kuis", value: stats.totalKuis, color: "text-emerald-600" },
-                ].map((s) => (
-                  <div key={s.label} className="flex items-center justify-between">
-                    <span className="flex items-center gap-2 text-sm text-gray-600">
-                      <s.icon size={15} className={s.color} />
-                      {s.label}
-                    </span>
-                    <span className="text-sm font-bold text-gray-900">{s.value}</span>
-                  </div>
-                ))}
-                <div className="border-t border-gray-100 pt-3 flex items-center justify-between">
-                  <span className="flex items-center gap-2 text-sm text-gray-600">
-                    <Wallet size={15} className="text-emerald-600" />
-                    Saldo
-                  </span>
-                  <span className="text-sm font-bold text-emerald-600">
-                    Rp{(stats.saldo || 0).toLocaleString("id")}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* RANK & LEVEL */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-              <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-                <Award size={15} className="text-violet-500" />
-                Pencapaian
-              </h3>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Peringkat</span>
-                  <RankChip rank={rank} size={16} />
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Level</span>
-                  <span className="text-sm font-bold text-gray-900" style={{ color: rankMeta?.color }}>
-                    {profile.level}
-                  </span>
-                </div>
-                {profile.streak > 0 && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Streak</span>
-                    <span className="flex items-center gap-1 text-sm font-bold text-orange-500">
-                      <Flame size={14} /> {profile.streak} hari
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const messageToast = message && (
+    <div
+      className={`mb-6 flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium ${
+        message.type === "success"
+          ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
+          : "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800"
+      }`}
+      role="alert"
+    >
+      <CheckCircle2 size={16} className="shrink-0" />
+      {message.text}
+    </div>
+  );
 
   /* ================================================================= */
-  /*  EDIT MODE                                                        */
+  /*  RENDER                                                            */
   /* ================================================================= */
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8 pb-24">
-      {message && (
-        <div
-          className={`mb-6 flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium ${
-            message.type === "success"
-              ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-              : "bg-red-50 text-red-700 border border-red-200"
-          }`}
-          role="alert"
-        >
-          <CheckCircle2 size={16} className="shrink-0" />
-          {message.text}
-        </div>
-      )}
+      {messageToast}
 
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        {/* header */}
-        <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-gray-900">Edit Profil</h2>
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={cancelEdit}
-              disabled={saving}
-              className="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
-            >
-              Batal
-            </button>
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={saving}
-              className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-            >
-              {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-              {saving ? "Menyimpan..." : "Simpan Perubahan"}
-            </button>
-          </div>
-        </div>
+      {/* ============================================================= */}
+      {/*  SECTION 1 — PROFILE HEADER                                    */}
+      {/* ============================================================= */}
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
+        {/* gradient top bar */}
+        <div className="h-20 bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500" />
 
-        <div className="p-6 space-y-8">
-          {/* FOTO PROFIL */}
-          <div className="flex items-center gap-5">
-            {avatarBlock("lg")}
-            <div>
-              <p className="text-sm font-semibold text-gray-900">Foto Profil</p>
-              <p className="text-xs text-gray-400 mt-0.5">JPG, PNG, atau WebP. Maksimal 5MB.</p>
-              <button
-                type="button"
-                onClick={handleAvatarClick}
-                className="mt-2 text-sm text-emerald-600 hover:text-emerald-700 font-semibold"
-              >
-                {displayAvatar ? "Ganti Foto" : "Upload Foto"}
-              </button>
-            </div>
-          </div>
+        <div className="px-6 pb-6 -mt-12">
+          {editingSection === "header" ? (
+            /* ---- EDIT HEADER ---- */
+            <div className="space-y-5 pt-14">
+              <div className="flex items-center gap-5">
+                {avatarBlock("lg")}
+                <div>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-slate-100">Foto Profil</p>
+                  <p className="text-xs text-gray-400 dark:text-slate-500 mt-0.5">JPG, PNG, atau WebP. Maks 5MB.</p>
+                  <button
+                    type="button"
+                    onClick={handleAvatarClick}
+                    className="mt-2 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold"
+                  >
+                    {displayAvatar ? "Ganti Foto" : "Upload Foto"}
+                  </button>
+                </div>
+              </div>
 
-          {/* INFORMASI PRIBADI */}
-          <section>
-            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4 flex items-center gap-2">
-              <User size={15} className="text-gray-400" />
-              Informasi Pribadi
-            </h3>
-            <div className="space-y-4">
               <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
                   Nama Lengkap <span className="text-red-400">*</span>
                 </label>
                 <input
@@ -861,12 +551,13 @@ export default function GuruProfilePage() {
                   type="text"
                   value={form.fullName}
                   onChange={(e) => setForm((p) => ({ ...p, fullName: e.target.value }))}
-                  className="w-full h-11 px-4 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   required
                 />
               </div>
+
               <div>
-                <label htmlFor="nickname" className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label htmlFor="nickname" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
                   Nama Panggilan
                 </label>
                 <input
@@ -874,117 +565,266 @@ export default function GuruProfilePage() {
                   type="text"
                   value={form.nickname}
                   onChange={(e) => setForm((p) => ({ ...p, nickname: e.target.value }))}
-                  className="w-full h-11 px-4 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   placeholder="Opsional"
                 />
               </div>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Email
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  value={profile.email}
-                  readOnly
-                  className="w-full h-11 px-4 rounded-xl border border-gray-200 bg-gray-100 text-gray-500 text-sm cursor-not-allowed"
-                />
-                <p className="text-xs text-gray-400 mt-1">Email tidak dapat diubah dari sini.</p>
+
+              <div className="flex items-center gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={handleSaveHeader}
+                  disabled={saving}
+                  className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+                >
+                  {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                  {saving ? "Menyimpan..." : "Simpan"}
+                </button>
+                <button
+                  type="button"
+                  onClick={cancelEdit}
+                  disabled={saving}
+                  className="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-slate-400 hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  Batal
+                </button>
               </div>
             </div>
-          </section>
+          ) : (
+            /* ---- VIEW HEADER ---- */
+            <>
+              <div className="flex flex-col sm:flex-row items-center sm:items-end gap-5">
+                <div className="ring-4 ring-white dark:ring-slate-800 rounded-full shadow-lg">
+                  {avatarBlock("xl")}
+                </div>
 
-          {/* PROFIL PROFESIONAL */}
-          <section>
-            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4 flex items-center gap-2">
-              <Briefcase size={15} className="text-gray-400" />
-              Profil Profesional
-            </h3>
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="school" className="block text-sm font-medium text-gray-700 mb-1.5">
-                    Sekolah
-                  </label>
-                  <input
-                    id="school"
-                    type="text"
-                    value={form.school}
-                    onChange={(e) => setForm((p) => ({ ...p, school: e.target.value }))}
-                    className="w-full h-11 px-4 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    placeholder="Nama sekolah"
-                  />
+                <div className="flex-1 text-center sm:text-left pb-1">
+                  <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100 leading-tight">
+                    {profile.fullName || "Guru"}
+                  </h1>
+                  {profile.nickname && (
+                    <p className="text-sm text-gray-400 dark:text-slate-500 mt-0.5">&ldquo;{profile.nickname}&rdquo;</p>
+                  )}
+                  <p className="text-sm text-emerald-700 dark:text-emerald-400 font-medium mt-1">
+                    Guru {profile.subject || "Bahasa Indonesia"}
+                  </p>
+                  {(profile.school || profile.city) && (
+                    <div className="flex items-center justify-center sm:justify-start gap-1.5 mt-2 text-sm text-gray-500 dark:text-slate-400">
+                      {profile.school && (
+                        <span className="flex items-center gap-1">
+                          <GraduationCap size={14} className="text-gray-400 dark:text-slate-500" />
+                          {profile.school}
+                        </span>
+                      )}
+                      {profile.school && profile.city && <span className="text-gray-300 dark:text-slate-600">·</span>}
+                      {profile.city && (
+                        <span className="flex items-center gap-1">
+                          <MapPin size={14} className="text-gray-400 dark:text-slate-500" />
+                          {[profile.city, profile.province].filter(Boolean).join(", ")}
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1.5">
-                    Mata Pelajaran
-                  </label>
-                  <input
-                    id="subject"
-                    type="text"
-                    value={form.subject}
-                    onChange={(e) => setForm((p) => ({ ...p, subject: e.target.value }))}
-                    className="w-full h-11 px-4 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    placeholder="Contoh: Bahasa Indonesia"
-                  />
-                </div>
+
+                <button
+                  type="button"
+                  onClick={() => openSection("header")}
+                  className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+                >
+                  <Edit3 size={16} />
+                  Edit Profil
+                </button>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="grade" className="block text-sm font-medium text-gray-700 mb-1.5">
-                    Jenjang / Kelas
-                  </label>
-                  <input
-                    id="grade"
-                    type="text"
-                    value={form.grade}
-                    onChange={(e) => setForm((p) => ({ ...p, grade: e.target.value }))}
-                    className="w-full h-11 px-4 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    placeholder="Contoh: SMP Kelas 7"
-                  />
+
+              {/* badges */}
+              {(profile.isFounder || profile.isPremium) && (
+                <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100 dark:border-slate-700">
+                  {profile.isFounder && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-full text-xs font-semibold border border-amber-200 dark:border-amber-800">
+                      Founder
+                    </span>
+                  )}
+                  {profile.isPremium && !profile.isFounder && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/30 dark:to-yellow-900/30 text-amber-700 dark:text-amber-300 rounded-full text-xs font-semibold border border-amber-200 dark:border-amber-800">
+                      Guru Pro
+                    </span>
+                  )}
                 </div>
-                <div />
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="nip" className="block text-sm font-medium text-gray-700 mb-1.5">
-                    NIP
-                  </label>
-                  <input
-                    id="nip"
-                    type="text"
-                    value={form.nip}
-                    onChange={(e) => setForm((p) => ({ ...p, nip: e.target.value }))}
-                    className="w-full h-11 px-4 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    placeholder="Nomor Induk Pegawai"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="nuptk" className="block text-sm font-medium text-gray-700 mb-1.5">
-                    NUPTK
-                  </label>
-                  <input
-                    id="nuptk"
-                    type="text"
-                    value={form.nuptk}
-                    onChange={(e) => setForm((p) => ({ ...p, nuptk: e.target.value }))}
-                    className="w-full h-11 px-4 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    placeholder="Nomor UKG"
-                  />
-                </div>
-              </div>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* ============================================================= */}
+      {/*  SECTION 2 — TENTANG SAYA (BIO)                                */}
+      {/* ============================================================= */}
+      <div className="mt-6 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
+            <Heart size={16} className="text-rose-400" />
+            Tentang Saya
+          </h2>
+          {editingSection !== "bio" && (
+            <button
+              type="button"
+              onClick={() => openSection("bio")}
+              className="text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold"
+            >
+              {profile.bio ? "Edit" : "Tambah"}
+            </button>
+          )}
+        </div>
+
+        {editingSection === "bio" ? (
+          <div className="space-y-4">
+            <textarea
+              id="bio"
+              rows={4}
+              value={form.bio}
+              onChange={(e) => setForm((p) => ({ ...p, bio: e.target.value }))}
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
+              placeholder="Ceritakan tentang diri Anda sebagai guru..."
+            />
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handleSaveBio}
+                disabled={saving}
+                className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+              >
+                {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                {saving ? "Menyimpan..." : "Simpan"}
+              </button>
+              <button
+                type="button"
+                onClick={cancelEdit}
+                disabled={saving}
+                className="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-slate-400 hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50"
+              >
+                Batal
+              </button>
             </div>
-          </section>
+          </div>
+        ) : profile.bio ? (
+          <p className="text-sm text-gray-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">{profile.bio}</p>
+        ) : (
+          <div className="flex items-start gap-3 py-4">
+            <Heart size={20} className="text-gray-300 dark:text-slate-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm text-gray-400 dark:text-slate-500 italic">
+                Ceritakan tentang dirimu sebagai guru untuk membantu murid mengenalmu lebih baik.
+              </p>
+              <button
+                type="button"
+                onClick={() => openSection("bio")}
+                className="mt-2 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold"
+              >
+                Tulis Sekarang
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
-          {/* LOKASI */}
-          <section>
-            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4 flex items-center gap-2">
-              <MapPin size={15} className="text-gray-400" />
-              Lokasi
-            </h3>
+      {/* ============================================================= */}
+      {/*  SECTION 3 — PROFIL PROFESIONAL                                */}
+      {/* ============================================================= */}
+      <div className="mt-6 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
+            <Briefcase size={16} className="text-blue-500" />
+            Profil Profesional
+          </h2>
+          {editingSection !== "professional" && (
+            <button
+              type="button"
+              onClick={() => openSection("professional")}
+              className="text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold"
+            >
+              {profFields.length > 0 ? "Edit" : "Lengkapi"}
+            </button>
+          )}
+        </div>
+
+        {editingSection === "professional" ? (
+          <div className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label htmlFor="school" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
+                  Sekolah
+                </label>
+                <input
+                  id="school"
+                  type="text"
+                  value={form.school}
+                  onChange={(e) => setForm((p) => ({ ...p, school: e.target.value }))}
+                  className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  placeholder="Nama sekolah"
+                />
+              </div>
+              <div>
+                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
+                  Mata Pelajaran
+                </label>
+                <input
+                  id="subject"
+                  type="text"
+                  value={form.subject}
+                  onChange={(e) => setForm((p) => ({ ...p, subject: e.target.value }))}
+                  className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  placeholder="Contoh: Bahasa Indonesia"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="grade" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
+                  Jenjang / Kelas
+                </label>
+                <input
+                  id="grade"
+                  type="text"
+                  value={form.grade}
+                  onChange={(e) => setForm((p) => ({ ...p, grade: e.target.value }))}
+                  className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  placeholder="Contoh: SMP Kelas 7"
+                />
+              </div>
+              <div />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="nip" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
+                  NIP (opsional)
+                </label>
+                <input
+                  id="nip"
+                  type="text"
+                  value={form.nip}
+                  onChange={(e) => setForm((p) => ({ ...p, nip: e.target.value }))}
+                  className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  placeholder="Nomor Induk Pegawai"
+                />
+              </div>
+              <div>
+                <label htmlFor="nuptk" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
+                  NUPTK (opsional)
+                </label>
+                <input
+                  id="nuptk"
+                  type="text"
+                  value={form.nuptk}
+                  onChange={(e) => setForm((p) => ({ ...p, nuptk: e.target.value }))}
+                  className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  placeholder="Nomor UKG"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="city" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
                   Kota / Kabupaten
                 </label>
                 <input
@@ -992,12 +832,12 @@ export default function GuruProfilePage() {
                   type="text"
                   value={form.city}
                   onChange={(e) => setForm((p) => ({ ...p, city: e.target.value }))}
-                  className="w-full h-11 px-4 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   placeholder="Jakarta"
                 />
               </div>
               <div>
-                <label htmlFor="province" className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label htmlFor="province" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
                   Provinsi
                 </label>
                 <input
@@ -1005,121 +845,246 @@ export default function GuruProfilePage() {
                   type="text"
                   value={form.province}
                   onChange={(e) => setForm((p) => ({ ...p, province: e.target.value }))}
-                  className="w-full h-11 px-4 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   placeholder="DKI Jakarta"
                 />
               </div>
             </div>
-          </section>
 
-          {/* TENTANG SAYA */}
-          <section>
-            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4 flex items-center gap-2">
-              <Heart size={15} className="text-gray-400" />
-              Tentang Saya
-            </h3>
-            <textarea
-              id="bio"
-              rows={3}
-              value={form.bio}
-              onChange={(e) => setForm((p) => ({ ...p, bio: e.target.value }))}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
-              placeholder="Ceritakan tentang diri Anda sebagai guru..."
-            />
-          </section>
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={handleSaveProfessional}
+                disabled={saving}
+                className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+              >
+                {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                {saving ? "Menyimpan..." : "Simpan"}
+              </button>
+              <button
+                type="button"
+                onClick={cancelEdit}
+                disabled={saving}
+                className="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-slate-400 hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50"
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        ) : profFields.length > 0 ? (
+          <div className="grid sm:grid-cols-2 gap-x-8 gap-y-3">
+            {profFields.map((f) => (
+              <div key={f.label} className="flex items-start gap-3 py-1.5">
+                <span className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wide w-28 shrink-0 pt-0.5">
+                  {f.label}
+                </span>
+                <span className="text-sm text-gray-800 dark:text-slate-200 font-medium">{f.value}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex items-start gap-3 py-4">
+            <Briefcase size={20} className="text-gray-300 dark:text-slate-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm text-gray-400 dark:text-slate-500 italic">
+                Lengkapi informasi profesional untuk memudahkan kolaborasi dengan guru lain.
+              </p>
+              <button
+                type="button"
+                onClick={() => openSection("professional")}
+                className="mt-2 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold"
+              >
+                Lengkapi Sekarang
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
-          {/* PEMBAYARAN & PENARIKAN */}
-          <section>
-            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4 flex items-center gap-2">
-              <Wallet size={15} className="text-gray-400" />
-              Pembayaran &amp; Penarikan
-            </h3>
-            <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 text-sm text-emerald-800 flex items-start gap-3 mb-4">
+      {/* ============================================================= */}
+      {/*  SECTION 4 — PEMBAYARAN & PENARIKAN                            */}
+      {/* ============================================================= */}
+      <div className="mt-6 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
+            <Wallet size={16} className="text-emerald-500" />
+            Pembayaran &amp; Penarikan
+          </h2>
+          {editingSection !== "rekening" && (
+            <button
+              type="button"
+              onClick={() => openSection("rekening")}
+              className="text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold"
+            >
+              {profile.bank ? "Ubah Rekening" : "Atur Rekening"}
+            </button>
+          )}
+        </div>
+
+        {editingSection === "rekening" ? (
+          <div className="space-y-4">
+            <div className="bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800 rounded-xl p-4 text-sm text-emerald-800 dark:text-emerald-300 flex items-start gap-3">
               <Banknote size={16} className="shrink-0 mt-0.5" />
               <p>Data rekening digunakan untuk pencairan royalti penjualan karya Anda.</p>
             </div>
-            <div className="space-y-4">
+            <div>
+              <label htmlFor="bank" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
+                Nama Bank
+              </label>
+              <select
+                id="bank"
+                value={rekening.bank}
+                onChange={(e) => setRekening((p) => ({ ...p, bank: e.target.value }))}
+                className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                required
+              >
+                <option value="">Pilih bank...</option>
+                {BANK_OPTIONS.map((b) => (
+                  <option key={b.value} value={b.value}>{b.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="bank" className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Nama Bank
+                <label htmlFor="bankHolder" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
+                  Nama Pemilik Rekening
                 </label>
-                <select
-                  id="bank"
-                  value={rekening.bank}
-                  onChange={(e) => setRekening((p) => ({ ...p, bank: e.target.value }))}
-                  className="w-full h-11 px-4 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                <input
+                  id="bankHolder"
+                  type="text"
+                  value={rekening.holder}
+                  onChange={(e) => setRekening((p) => ({ ...p, holder: e.target.value }))}
+                  className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  placeholder="Sesuai buku tabungan"
                   required
-                >
-                  <option value="">Pilih bank...</option>
-                  {BANK_OPTIONS.map((b) => (
-                    <option key={b.value} value={b.value}>{b.label}</option>
-                  ))}
-                </select>
+                />
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="bankHolder" className="block text-sm font-medium text-gray-700 mb-1.5">
-                    Nama Pemilik Rekening
-                  </label>
-                  <input
-                    id="bankHolder"
-                    type="text"
-                    value={rekening.holder}
-                    onChange={(e) => setRekening((p) => ({ ...p, holder: e.target.value }))}
-                    className="w-full h-11 px-4 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    placeholder="Sesuai buku tabungan"
-                    required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="bankNumber" className="block text-sm font-medium text-gray-700 mb-1.5">
-                    Nomor Rekening
-                  </label>
-                  <input
-                    id="bankNumber"
-                    type="text"
-                    value={rekening.number}
-                    onChange={(e) => setRekening((p) => ({ ...p, number: e.target.value.replace(/\D/g, "") }))}
-                    className="w-full h-11 px-4 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    placeholder="Contoh: 1234567890"
-                    maxLength={20}
-                    required
-                  />
-                </div>
+              <div>
+                <label htmlFor="bankNumber" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
+                  Nomor Rekening
+                </label>
+                <input
+                  id="bankNumber"
+                  type="text"
+                  value={rekening.number}
+                  onChange={(e) => setRekening((p) => ({ ...p, number: e.target.value.replace(/\D/g, "") }))}
+                  className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  placeholder="Contoh: 1234567890"
+                  maxLength={20}
+                  required
+                />
               </div>
             </div>
-            <div className="mt-4">
+
+            <div className="flex items-center gap-3 pt-2">
               <button
                 type="button"
                 onClick={handleRekeningSave}
                 disabled={savingRekening}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+                className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
               >
                 {savingRekening ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                 {savingRekening ? "Menyimpan..." : "Simpan Rekening"}
               </button>
+              <button
+                type="button"
+                onClick={cancelEdit}
+                disabled={savingRekening}
+                className="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-slate-400 hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50"
+              >
+                Batal
+              </button>
             </div>
-          </section>
+          </div>
+        ) : profile.bank && profile.bankHolder && profile.bankNumber ? (
+          <div className="space-y-3">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-full text-xs font-semibold border border-emerald-200 dark:border-emerald-800">
+              <CheckCircle2 size={13} />
+              Rekening penarikan aktif
+            </span>
+            <div className="grid sm:grid-cols-2 gap-x-8 gap-y-2 mt-2">
+              <div className="flex items-start gap-3 py-1.5">
+                <span className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wide w-28 shrink-0 pt-0.5">
+                  Bank
+                </span>
+                <span className="text-sm text-gray-800 dark:text-slate-200 font-medium">
+                  {BANK_OPTIONS.find((b) => b.value === profile.bank)?.label || profile.bank}
+                </span>
+              </div>
+              <div className="flex items-start gap-3 py-1.5">
+                <span className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wide w-28 shrink-0 pt-0.5">
+                  No. Rekening
+                </span>
+                <span className="text-sm text-gray-800 dark:text-slate-200 font-medium font-mono">
+                  {maskBankNumber(profile.bankNumber)}
+                </span>
+              </div>
+              <div className="flex items-start gap-3 py-1.5">
+                <span className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wide w-28 shrink-0 pt-0.5">
+                  Pemilik
+                </span>
+                <span className="text-sm text-gray-800 dark:text-slate-200 font-medium">{profile.bankHolder}</span>
+              </div>
+            </div>
+            <p className="text-xs text-gray-400 dark:text-slate-500 pt-1">
+              Rekening digunakan untuk pencairan royalti dari Toko Karya.
+            </p>
+          </div>
+        ) : (
+          <div className="flex items-start gap-3 py-4">
+            <Wallet size={32} className="text-gray-300 dark:text-slate-600 shrink-0" />
+            <div>
+              <p className="text-sm font-medium text-gray-500 dark:text-slate-400">Rekening belum disiapkan</p>
+              <p className="text-sm text-gray-400 dark:text-slate-500 italic mt-1">
+                Tambahkan rekening bank untuk menerima pembayaran dari penjualan karya.
+              </p>
+              <button
+                type="button"
+                onClick={() => openSection("rekening")}
+                className="mt-2 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold"
+              >
+                Atur Rekening
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
-          {/* BOTTOM ACTIONS (mobile) */}
-          <div className="flex items-center gap-3 pt-4 border-t border-gray-100 sm:hidden">
-            <button
-              type="button"
-              onClick={cancelEdit}
-              disabled={saving}
-              className="flex-1 px-4 py-3 border border-gray-200 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-50 transition-colors disabled:opacity-50"
-            >
-              Batal
-            </button>
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={saving}
-              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50"
-            >
-              {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-              {saving ? "Menyimpan..." : "Simpan"}
-            </button>
+      {/* ============================================================= */}
+      {/*  SECTION 5 — AKUN                                               */}
+      {/* ============================================================= */}
+      <div className="mt-6 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
+        <h2 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2 mb-4">
+          <Shield size={16} className="text-gray-400 dark:text-slate-500" />
+          Akun
+        </h2>
+
+        <div className="space-y-3">
+          <div className="flex items-center gap-3 py-2">
+            <Mail size={16} className="text-gray-400 dark:text-slate-500 shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wide">Email</p>
+              <p className="text-sm text-gray-800 dark:text-slate-200 font-medium truncate">{profile.email}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 py-2">
+            <User size={16} className="text-gray-400 dark:text-slate-500 shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wide">Status Akun</p>
+              <p className="text-sm text-gray-800 dark:text-slate-200 font-medium">
+                {profile.isFounder ? (
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="px-2 py-0.5 bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded text-xs font-semibold border border-amber-200 dark:border-amber-800">Founder</span>
+                  </span>
+                ) : profile.isPremium ? (
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded text-xs font-semibold border border-emerald-200 dark:border-emerald-800">Guru Pro</span>
+                  </span>
+                ) : (
+                  <span className="text-gray-500 dark:text-slate-400">Guru Free</span>
+                )}
+              </p>
+            </div>
           </div>
         </div>
       </div>
