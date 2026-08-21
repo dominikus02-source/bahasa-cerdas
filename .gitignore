@@ -91,3 +91,6 @@ twa/store_icon.png
 twa/*.apk
 twa/*.aab
 twa/*.idsig
+credentials/
+data/alat-ajar-import/scan-log.txt
+.freebuff/

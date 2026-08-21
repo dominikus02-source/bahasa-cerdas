@@ -77,6 +77,7 @@ export const GURU_NAV: NavGroup[] = [
     icon: BookOpen,
     links: [
       { label: "Bank Soal", href: "/guru/bank-soal" },
+      { label: "Perangkat Ajar", href: "/guru/perangkat-ajar" },
       { label: "Materi Ajar", href: "/guru/materi-ajar" },
       { label: "Buku Ajar", href: "/guru/panduan-guru" },
       // Media Pembelajaran = konsolidasi Video Pembelajaran + Artikel.

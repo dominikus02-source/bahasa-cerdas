@@ -317,6 +317,7 @@
     "clsx": "^2.1.1",
     "docx": "^9.7.1",
     "framer-motion": "^11.18.2",
+    "googleapis": "^176.0.0",
     "html2canvas": "^1.4.1",
     "lucide-react": "^0.453.0",
     "mammoth": "^1.12.0",
