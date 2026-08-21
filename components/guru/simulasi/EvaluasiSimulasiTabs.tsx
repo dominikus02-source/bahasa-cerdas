@@ -20,7 +20,7 @@ function normalizeTab(value: string | null): TabId {
 }
 
 /**
- * EvaluasiSimulasiTabs — hub "Evaluasi Simulasi".
+ * EvaluasiSimulasiTabs — hub "Laporan Simulasi".
  *
  * Satu halaman berisi 3 tab: Hasil Simulasi, Tinjau Jawaban, Dokumen Latihan.
  * State tab hidup di query string (?tab=hasil|tinjau|dokumen) agar bisa
@@ -40,7 +40,7 @@ export function EvaluasiSimulasiTabs({ guruName }: { guruName: string }) {
             <BarChart3 size={22} className="text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-900">Evaluasi Simulasi</h1>
+            <h1 className="text-xl font-bold text-slate-900">Laporan Simulasi</h1>
             <p className="text-sm text-slate-500">
               Pusat evaluasi simulasi UKBI & TKA: pantau hasil, tinjau jawaban Menulis/Berbicara, dan kelola dokumen latihan murid. {guruName ? `Halo, ${guruName}!` : ""}
             </p>

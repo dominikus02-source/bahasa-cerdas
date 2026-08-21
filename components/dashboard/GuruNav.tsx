@@ -115,9 +115,9 @@ export const GURU_NAV: NavGroup[] = [
       { label: "Simulasi UKBI", href: "/guru/simulasi/ukbi" },
       { label: "Simulasi TKA", href: "/guru/simulasi/tka" },
       {
-        // Evaluasi Simulasi = hub yang menggabungkan Hasil Simulasi,
+        // Laporan Simulasi = hub yang menggabungkan Hasil Simulasi,
         // Tinjau Jawaban, dan Dokumen Latihan Murid dalam satu halaman.
-        label: "Evaluasi Simulasi",
+        label: "Laporan Simulasi",
         href: "/guru/evaluasi-simulasi",
         // Route legacy tetap hidup (backward compatible); activeOn menjaga
         // item ini tetap aktif saat guru masuk lewat /guru/hasil-simulasi,

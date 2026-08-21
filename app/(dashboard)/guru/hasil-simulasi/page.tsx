@@ -7,7 +7,7 @@ import { HasilSimulasiView } from "@/components/guru/simulasi/HasilSimulasiView"
 export const dynamic = "force-dynamic"
 
 // Route legacy — tetap hidup (backward compatible). UI utama ada di hub
-// /guru/evaluasi-simulasi?tab=hasil (Evaluasi Simulasi).
+// /guru/evaluasi-simulasi?tab=hasil (Laporan Simulasi).
 export default async function PusatEvaluasiPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
