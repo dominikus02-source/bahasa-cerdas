@@ -21,6 +21,7 @@ import {
   Star,
   Wallet,
   ChevronRight,
+  Banknote,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { levelFromXp } from "@/lib/gamification/levels";
@@ -51,6 +52,9 @@ interface ProfileData {
   streak: number;
   isPremium: boolean;
   isFounder: boolean;
+  bank: string | null;
+  bankHolder: string | null;
+  bankNumber: string | null;
 }
 
 interface Stats {
@@ -73,6 +77,12 @@ interface FormState {
   grade: string;
 }
 
+interface RekeningFormState {
+  bank: string;
+  holder: string;
+  number: string;
+}
+
 const EMPTY_FORM: FormState = {
   fullName: "",
   nickname: "",
@@ -85,6 +95,28 @@ const EMPTY_FORM: FormState = {
   subject: "",
   grade: "",
 };
+
+const EMPTY_REKENING: RekeningFormState = {
+  bank: "",
+  holder: "",
+  number: "",
+};
+
+const BANK_OPTIONS = [
+  { value: "bca", label: "Bank Central Asia (BCA)" },
+  { value: "mandiri", label: "Bank Mandiri" },
+  { value: "bni", label: "Bank BNI" },
+  { value: "bri", label: "Bank BRI" },
+  { value: "bsi", label: "Bank Syariah Indonesia (BSI)" },
+];
+
+/** Mask account number: show last 4 digits only. e.g. "•••• 5678" */
+function maskBankNumber(num: string | null | undefined): string {
+  if (!num) return "";
+  const digits = num.replace(/\D/g, "");
+  if (digits.length <= 4) return digits;
+  return `•••• ${digits.slice(-4)}`;
+}
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
@@ -135,6 +167,8 @@ export default function GuruProfilePage() {
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [rekening, setRekening] = useState<RekeningFormState>(EMPTY_REKENING);
+  const [savingRekening, setSavingRekening] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const supabase = createClient();
   const setUser = useUserStore((s) => s.setUser);
@@ -167,6 +201,9 @@ export default function GuruProfilePage() {
         streak: u.streak || 0,
         isPremium: u.isPremium || false,
         isFounder: u.isFounder || false,
+        bank: u.bank || null,
+        bankHolder: u.bankHolder || null,
+        bankNumber: u.bankNumber || null,
       });
     } catch {}
   }, []);
@@ -186,9 +223,23 @@ export default function GuruProfilePage() {
     } catch {}
   }, []);
 
+  const fetchRekening = useCallback(async () => {
+    try {
+      const res = await fetch("/api/user/rekening");
+      if (res.ok) {
+        const d = await res.json();
+        setRekening({
+          bank: d.bank || "",
+          holder: d.holder || "",
+          number: d.number || "",
+        });
+      }
+    } catch {}
+  }, []);
+
   useEffect(() => {
-    Promise.all([fetchProfile(), fetchStats()]).finally(() => setLoading(false));
-  }, [fetchProfile, fetchStats]);
+    Promise.all([fetchProfile(), fetchStats(), fetchRekening()]).finally(() => setLoading(false));
+  }, [fetchProfile, fetchStats, fetchRekening]);
 
   /* --- edit handlers ---------------------------------------------- */
 
@@ -316,6 +367,47 @@ export default function GuruProfilePage() {
       setMessage({ type: "error", text: msg });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleRekeningSave = async () => {
+    if (!rekening.bank) {
+      setMessage({ type: "error", text: "Pilih nama bank terlebih dahulu." });
+      return;
+    }
+    if (!rekening.holder.trim()) {
+      setMessage({ type: "error", text: "Nama pemilik rekening wajib diisi." });
+      return;
+    }
+    if (!rekening.number.trim()) {
+      setMessage({ type: "error", text: "Nomor rekening wajib diisi." });
+      return;
+    }
+    setSavingRekening(true);
+    setMessage(null);
+    try {
+      const res = await fetch("/api/user/rekening", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bank: rekening.bank,
+          holder: rekening.holder.trim(),
+          number: rekening.number.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Gagal menyimpan rekening");
+      setProfile((prev) =>
+        prev
+          ? { ...prev, bank: rekening.bank, bankHolder: rekening.holder.trim(), bankNumber: rekening.number.trim() }
+          : prev
+      );
+      setMessage({ type: "success", text: "Rekening berhasil disimpan!" });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Gagal menyimpan rekening";
+      setMessage({ type: "error", text: msg });
+    } finally {
+      setSavingRekening(false);
     }
   };
 
@@ -543,6 +635,59 @@ export default function GuruProfilePage() {
                 <p className="text-sm text-gray-400 italic">
                   Lengkapi profil profesional agar terlihat lebih lengkap.
                 </p>
+              )}
+            </div>
+
+            {/* PEMBAYARAN & PENARIKAN */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+              <h2 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <Wallet size={16} className="text-emerald-500" />
+                Pembayaran &amp; Penarikan
+              </h2>
+              {profile.bank && profile.bankHolder && profile.bankNumber ? (
+                <div className="space-y-3">
+                  <div className="grid sm:grid-cols-2 gap-x-8 gap-y-2">
+                    <div className="flex items-start gap-3 py-1.5">
+                      <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide w-28 shrink-0 pt-0.5">
+                        Bank
+                      </span>
+                      <span className="text-sm text-gray-800 font-medium">
+                        {BANK_OPTIONS.find((b) => b.value === profile.bank)?.label || profile.bank}
+                      </span>
+                    </div>
+                    <div className="flex items-start gap-3 py-1.5">
+                      <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide w-28 shrink-0 pt-0.5">
+                        No. Rekening
+                      </span>
+                      <span className="text-sm text-gray-800 font-medium font-mono">
+                        {maskBankNumber(profile.bankNumber)}
+                      </span>
+                    </div>
+                    <div className="flex items-start gap-3 py-1.5">
+                      <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide w-28 shrink-0 pt-0.5">
+                        Pemilik
+                      </span>
+                      <span className="text-sm text-gray-800 font-medium">{profile.bankHolder}</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-400 pt-1">
+                    Rekening digunakan untuk pencairan royalti dari Toko Karya.
+                  </p>
+                </div>
+              ) : (
+                <div className="text-center py-5">
+                  <Wallet size={32} className="mx-auto text-gray-300 mb-2" />
+                  <p className="text-sm text-gray-400 italic mb-3">
+                    Belum ada data rekening. Tambahkan rekening untuk mencairkan saldo.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={startEdit}
+                    className="text-sm text-emerald-600 hover:text-emerald-700 font-semibold"
+                  >
+                    Tambah Rekening <ChevronRight size={14} className="inline -mt-0.5" />
+                  </button>
+                </div>
               )}
             </div>
           </div>
@@ -881,6 +1026,79 @@ export default function GuruProfilePage() {
               className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
               placeholder="Ceritakan tentang diri Anda sebagai guru..."
             />
+          </section>
+
+          {/* PEMBAYARAN & PENARIKAN */}
+          <section>
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4 flex items-center gap-2">
+              <Wallet size={15} className="text-gray-400" />
+              Pembayaran &amp; Penarikan
+            </h3>
+            <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 text-sm text-emerald-800 flex items-start gap-3 mb-4">
+              <Banknote size={16} className="shrink-0 mt-0.5" />
+              <p>Data rekening digunakan untuk pencairan royalti penjualan karya Anda.</p>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="bank" className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Nama Bank
+                </label>
+                <select
+                  id="bank"
+                  value={rekening.bank}
+                  onChange={(e) => setRekening((p) => ({ ...p, bank: e.target.value }))}
+                  className="w-full h-11 px-4 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  required
+                >
+                  <option value="">Pilih bank...</option>
+                  {BANK_OPTIONS.map((b) => (
+                    <option key={b.value} value={b.value}>{b.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="bankHolder" className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Nama Pemilik Rekening
+                  </label>
+                  <input
+                    id="bankHolder"
+                    type="text"
+                    value={rekening.holder}
+                    onChange={(e) => setRekening((p) => ({ ...p, holder: e.target.value }))}
+                    className="w-full h-11 px-4 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    placeholder="Sesuai buku tabungan"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="bankNumber" className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Nomor Rekening
+                  </label>
+                  <input
+                    id="bankNumber"
+                    type="text"
+                    value={rekening.number}
+                    onChange={(e) => setRekening((p) => ({ ...p, number: e.target.value.replace(/\D/g, "") }))}
+                    className="w-full h-11 px-4 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 text-sm font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    placeholder="Contoh: 1234567890"
+                    maxLength={20}
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="mt-4">
+              <button
+                type="button"
+                onClick={handleRekeningSave}
+                disabled={savingRekening}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+              >
+                {savingRekening ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                {savingRekening ? "Menyimpan..." : "Simpan Rekening"}
+              </button>
+            </div>
           </section>
 
           {/* BOTTOM ACTIONS (mobile) */}

@@ -140,7 +140,7 @@ export default function SaldoPage() {
         {!memuat && !rekeningLengkap && (
           <p className="text-xs mt-2 opacity-90">
             Lengkapi data rekening di{" "}
-            <Link href="/guru/pengaturan" className="underline font-semibold">Pengaturan</Link>{" "}
+            <Link href="/guru/profile" className="underline font-semibold">Profil</Link>{" "}
             untuk bisa mencairkan saldo.
           </p>
         )}
