@@ -52,7 +52,7 @@ interface NavGroup {
 /**
  * Guru Navigation V2 — Teacher Center.
  * IA target: Beranda → Pusat Literasi → Alat Ajar → Kelasku → Gim → Toko Karya
- * → Simulasi & Tes → Alat AI → Komunitas → Kalender → Akun Saya.
+ * → Simulasi & Tes → Alat AI → Komunitas → Kalender → Profil.
  * Akses Panel Admin untuk founder via RoleSections ("Akses Founder"), bukan
  * entry nav terpisah di sidebar guru.
  * Semua route lama yang dihapus dari sidebar TETAP hidup dan bisa diakses
@@ -153,15 +153,10 @@ export const GURU_NAV: NavGroup[] = [
     href: "/guru/olimpiade",
   },
   {
-    id: "akun",
-    label: "Akun Saya",
+    id: "profil",
+    label: "Profil",
     icon: User,
-    links: [
-      // Ringkasan Akun = Account Center (memuat Profil, Berlangganan,
-      // Saldo, Lencana, Notifikasi, Pengaturan sebagai section/menu internal).
-      { label: "Ringkasan Akun", href: "/guru/akun" },
-      { label: "Profil", href: "/guru/profile" },
-    ],
+    href: "/guru/profile",
   },
 ];
 
@@ -272,7 +267,7 @@ export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
     { label: "Beranda", href: "/guru/beranda", icon: Home },
     { label: "Literasi", href: "/guru/feed-karya", icon: Sparkles },
     { label: "Gim", href: "/guru/game", icon: Gamepad2 },
-    { label: "Akun", href: "/guru/akun", icon: User },
+    { label: "Profil", href: "/guru/profile", icon: User },
   ];
 
   return (

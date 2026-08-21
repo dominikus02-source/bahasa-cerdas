@@ -1,36 +1,22 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
-import { Settings, User, Banknote, Shield, Camera, Save, CheckCircle2, AlertCircle, Loader2, Crown, Eye, EyeOff, Lock, Sparkles, Video, GraduationCap, Zap } from "lucide-react";
+import { Settings, Banknote, Shield, Save, CheckCircle2, AlertCircle, Loader2, Crown, Eye, EyeOff, Lock, Sparkles, Video, GraduationCap, Zap, User } from "lucide-react";
 import Link from "next/link";
 
-type TabType = "profil" | "rekening" | "keamanan";
+type TabType = "rekening" | "keamanan";
 
 export default function GuruPengaturanPage() {
-  const [activeTab, setActiveTab] = useState<TabType>("profil");
+  const [activeTab, setActiveTab] = useState<TabType>("rekening");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [isFounder, setIsFounder] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
   const [premiumUntil, setPremiumUntil] = useState<string>("");
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const [profile, setProfile] = useState({
-    fullName: "",
-    email: "",
-    bio: "",
-    avatarUrl: "",
-    nip: "",
-    nuptk: "",
-    school: "",
-    city: "",
-    province: "",
-    subject: "",
-  });
 
   const [rekening, setRekening] = useState({
     bank: "",
@@ -50,28 +36,12 @@ export default function GuruPengaturanPage() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const result = await supabase.auth.getUser();
-        const user = result.data?.user;
-        if (!user) return;
-
         const meRes = await fetch("/api/user/me");
         if (meRes.ok) {
           const { user: dbUser } = await meRes.json();
           setIsPremium(dbUser.isPremium);
           setIsFounder(dbUser.isFounder);
           setPremiumUntil(dbUser.premiumUntil || "");
-          setProfile({
-            fullName: dbUser.fullName || "",
-            email: dbUser.email || "",
-            bio: dbUser.bio || "",
-            avatarUrl: dbUser.avatar || "",
-            nip: dbUser.nip || "",
-            nuptk: dbUser.nuptk || "",
-            school: dbUser.school || "",
-            city: dbUser.city || "",
-            province: dbUser.province || "",
-            subject: dbUser.subject || "",
-          });
         }
 
         const rekRes = await fetch("/api/user/rekening");
@@ -89,71 +59,6 @@ export default function GuruPengaturanPage() {
     };
     fetchUser();
   }, [supabase]);
-
-  const handleProfileSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage(null);
-    try {
-      const res = await fetch("/api/user/profile", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fullName: profile.fullName,
-          avatar: profile.avatarUrl,
-          bio: profile.bio,
-          nip: profile.nip,
-          nuptk: profile.nuptk,
-          school: profile.school,
-          city: profile.city,
-          province: profile.province,
-          subject: profile.subject,
-        }),
-      });
-
-      if (!res.ok) throw new Error("Gagal menyimpan");
-
-      await supabase.auth.updateUser({
-        data: {
-          full_name: profile.fullName,
-          bio: profile.bio,
-          avatar_url: profile.avatarUrl,
-          nip: profile.nip,
-          nuptk: profile.nuptk,
-          school: profile.school,
-          city: profile.city,
-          province: profile.province,
-          subject: profile.subject,
-        },
-      });
-
-      setMessage({ type: "success", text: "✓ Profil berhasil disimpan!" });
-      setTimeout(() => window.location.reload(), 1000);
-    } catch (error: any) {
-      setMessage({ type: "error", text: error.message });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setLoading(true);
-    try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `avatar-${Date.now()}.${fileExt}`;
-      const uploadResult = await supabase.storage.from("avatars").upload(fileName, file);
-      if (uploadResult.error) throw uploadResult.error;
-      const urlResult = supabase.storage.from("avatars").getPublicUrl(fileName);
-      setProfile((prev) => ({ ...prev, avatarUrl: urlResult.data.publicUrl }));
-      setMessage({ type: "success", text: "Foto berhasil diupload!" });
-    } catch (error: any) {
-      setMessage({ type: "error", text: error.message });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleRekeningSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -205,97 +110,6 @@ export default function GuruPengaturanPage() {
       setLoading(false);
     }
   };
-
-  const renderProfil = () => (
-    <form onSubmit={handleProfileSave} className="space-y-6">
-      <div className="flex items-center gap-6">
-        <div className="relative shrink-0">
-          <div className="relative w-24 h-24 rounded-full bg-slate-200 overflow-hidden border-4 border-white shadow-md flex items-center justify-center">
-            <div className="relative z-0 w-full h-full flex items-center justify-center text-slate-400">
-              <User className="w-10 h-10" />
-            </div>
-            {profile.avatarUrl && (
-              <img src={profile.avatarUrl} alt="Avatar" className="absolute inset-0 z-10 w-full h-full object-cover" onError={e => (e.currentTarget.style.display = "none")} loading="lazy" />
-            )}
-          </div>
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="absolute -bottom-2 -right-2 w-10 h-10 bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-700 transition-colors"
-          >
-            <Camera className="w-5 h-5" />
-          </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleAvatarUpload}
-            className="hidden"
-          />
-        </div>
-        <div>
-          <h3 className="font-semibold text-slate-900">Foto Profil</h3>
-          <p className="text-sm text-slate-500 mb-3">JPG, PNG. Maks 2MB</p>
-          <Button type="button" size="sm" variant="outline" onClick={() => fileInputRef.current?.click()}>
-            Ganti Foto
-          </Button>
-        </div>
-      </div>
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Nama Lengkap</label>
-            <Input value={profile.fullName} onChange={(e) => setProfile((p) => ({ ...p, fullName: e.target.value }))} className="h-11 rounded-lg" required />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
-            <Input value={profile.email} onChange={(e) => setProfile((p) => ({ ...p, email: e.target.value }))} type="email" className="h-11 rounded-lg bg-slate-50" required />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">NIP</label>
-            <Input value={profile.nip} onChange={(e) => setProfile((p) => ({ ...p, nip: e.target.value }))} placeholder="Nomor Induk Pegawai" className="h-11 rounded-lg" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">NUPTK</label>
-            <Input value={profile.nuptk} onChange={(e) => setProfile((p) => ({ ...p, nuptk: e.target.value }))} placeholder="Nomor UKG" className="h-11 rounded-lg" />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Sekolah</label>
-            <Input value={profile.school} onChange={(e) => setProfile((p) => ({ ...p, school: e.target.value }))} placeholder="Nama sekolah" className="h-11 rounded-lg" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Mata Pelajaran</label>
-            <Input value={profile.subject} onChange={(e) => setProfile((p) => ({ ...p, subject: e.target.value }))} placeholder="Contoh: Bahasa Indonesia" className="h-11 rounded-lg" />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Kota/Kabupaten</label>
-            <Input value={profile.city} onChange={(e) => setProfile((p) => ({ ...p, city: e.target.value }))} placeholder="Jakarta" className="h-11 rounded-lg" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Provinsi</label>
-            <Input value={profile.province} onChange={(e) => setProfile((p) => ({ ...p, province: e.target.value }))} placeholder="DKI Jakarta" className="h-11 rounded-lg" />
-          </div>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1.5">Bio Singkat</label>
-          <textarea rows={3} value={profile.bio} onChange={(e) => setProfile((p) => ({ ...p, bio: e.target.value }))} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none" placeholder="Ceritakan tentang diri Anda..." />
-        </div>
-      </div>
-      <Button type="submit" disabled={loading} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-5 rounded-lg h-auto">
-        {loading ? (
-          <span className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" />Menyimpan...</span>
-        ) : (
-          <span className="flex items-center gap-2"><Save className="w-4 h-4" />Simpan Perubahan</span>
-        )}
-      </Button>
-    </form>
-  );
 
   const renderRekening = () => (
     <form onSubmit={handleRekeningSave} className="space-y-6">
@@ -374,9 +188,9 @@ export default function GuruPengaturanPage() {
       <div>
         <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
           <Settings className="w-8 h-8 text-slate-700" />
-          Pengaturan Akun
+          Pengaturan
         </h1>
-        <p className="text-slate-500 mt-1">Kelola profil, pembayaran, dan keamanan akun Anda</p>
+        <p className="text-slate-500 mt-1">Kelola pembayaran dan keamanan akun Anda</p>
       </div>
 
       {message && (
@@ -419,7 +233,6 @@ export default function GuruPengaturanPage() {
       <div className="grid lg:grid-cols-4 gap-6">
         <div className="lg:col-span-1 space-y-1">
           {[
-            { id: "profil", icon: User, label: "Profil" },
             { id: "rekening", icon: Banknote, label: "Rekening" },
             { id: "keamanan", icon: Shield, label: "Keamanan" },
           ].map((tab) => (
@@ -432,11 +245,19 @@ export default function GuruPengaturanPage() {
               {tab.label}
             </button>
           ))}
+          <div className="pt-3 mt-3 border-t border-slate-100">
+            <Link
+              href="/guru/profile"
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-left text-sm text-slate-600 hover:bg-slate-50"
+            >
+              <User className="w-4 h-4" />
+              Edit Profil
+            </Link>
+          </div>
         </div>
         <div className="lg:col-span-3">
           <Card className="border-0 shadow-lg rounded-2xl">
             <div className="p-6 md:p-8">
-              {activeTab === "profil" && renderProfil()}
               {activeTab === "rekening" && renderRekening()}
               {activeTab === "keamanan" && renderKeamanan()}
             </div>
