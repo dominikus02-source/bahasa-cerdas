@@ -34,9 +34,9 @@ interface GradeGroup {
 type LevelTab = "SD" | "SMP" | "SMA";
 
 const LEVEL_ICONS: Record<string, React.ReactNode> = {
-  SD: <BookMarked size={20} className="text-emerald-600" />,
-  SMP: <BookOpen size={20} className="text-violet-600" />,
-  SMA: <GraduationCap size={20} className="text-blue-600" />,
+  SD: <BookMarked size={20} className="text-emerald-700" />,
+  SMP: <BookOpen size={20} className="text-violet-700" />,
+  SMA: <GraduationCap size={20} className="text-blue-700" />,
 };
 
 function extractDriveId(url: string): { id: string; type: "doc" | "slides" | "file" } | null {
@@ -65,10 +65,10 @@ function extIcon(ext: string) {
 }
 
 function extColor(ext: string) {
-  if (ext === ".pptx" || ext === ".ppt") return "text-orange-500 bg-orange-50";
-  if (ext === ".pdf") return "text-red-500 bg-red-50";
-  if (ext === ".xlsx" || ext === ".xls") return "text-emerald-600 bg-emerald-50";
-  return "text-blue-500 bg-blue-50";
+  if (ext === ".pptx" || ext === ".ppt") return "text-orange-600 bg-orange-50";
+  if (ext === ".pdf") return "text-red-600 bg-red-50";
+  if (ext === ".xlsx" || ext === ".xls") return "text-emerald-700 bg-emerald-50";
+  return "text-blue-600 bg-blue-50";
 }
 
 function formatSize(bytes: number) {
@@ -196,7 +196,7 @@ export default function PerangkatAjarPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-2 rounded-lg hover:bg-violet-50 text-slate-400 hover:text-violet-600 transition"
-                    title="Buka di Google Drive"
+                    title="Buka di Drive"
                   >
                     <ExternalLink className="w-4 h-4" />
                   </a>
@@ -226,7 +226,7 @@ export default function PerangkatAjarPage() {
     <div className="max-w-5xl mx-auto py-6 px-4">
       <div className="flex items-center gap-3 mb-6">
         <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center">
-          <BookOpen className="w-5 h-5 text-violet-600" />
+          <BookOpen className="w-5 h-5 text-violet-700" />
         </div>
         <div>
           <h1 className="text-xl font-bold text-slate-900">Perangkat Ajar</h1>
@@ -266,7 +266,7 @@ export default function PerangkatAjarPage() {
             className="text-left bg-white border border-slate-100 rounded-xl p-4 hover:border-violet-200 hover:shadow-md transition group"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-violet-50 flex items-center justify-center text-lg">
+              <div className="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center">
                 {LEVEL_ICONS[g.educationLevel]}
               </div>
               <div className="flex-1 min-w-0">
@@ -290,7 +290,7 @@ export default function PerangkatAjarPage() {
       )}
 
       <p className="text-xs text-slate-400 text-center mt-8">
-        {grades.reduce((sum, g) => sum + g.fileCount, 0)} file total · Sumber: Google Drive BahasaCerdas
+        {grades.reduce((sum, g) => sum + g.fileCount, 0)} file · Perangkat Pembelajaran Bahasa Indonesia
       </p>
     </div>
   );
