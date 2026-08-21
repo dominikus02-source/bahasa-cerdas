@@ -1,6 +1,9 @@
 import Link from "next/link";
-import { Download, ChevronRight, ShoppingBag } from "lucide-react";
+import { Download, ChevronRight, ShoppingBag, BookOpen, FileText, Presentation, ClipboardList, Video, File } from "lucide-react";
 import { db } from "@/lib/db";
+
+const TYPE_ICONS: Record<string, any> = { RPP: BookOpen, MODUL: FileText, PPT: Presentation, SOAL: ClipboardList, VIDEO: Video, EBOOK: BookOpen, ADMINISTRASI: File, LAINNYA: File };
+const TYPE_LABELS: Record<string, string> = { RPP: "RPP", MODUL: "Modul", PPT: "PPT", SOAL: "Soal", VIDEO: "Video", EBOOK: "Ebook", ADMINISTRASI: "Administrasi", LAINNYA: "Lainnya" };
 
 async function getPopularWorks() {
   try {
@@ -32,15 +35,15 @@ export default async function KaryaPopulerSection() {
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light border border-primary/10 mb-5">
               <ShoppingBag size={12} className="text-primary" />
               <span className="text-xs font-semibold text-primary">
-                Berkarya
+                Toko Karya
               </span>
             </div>
             <h2 className="heading-lg text-zinc-900 mb-4">
-              Ruang untuk <span className="text-primary">berkarya</span>
+              Temukan karya pembelajaran dari <span className="text-primary">guru Indonesia</span>
             </h2>
             <p className="text-zinc-500 leading-relaxed">
-              Guru berbagi pengetahuan. Murid belajar menciptakan. Bahasa Indonesia
-              tumbuh melalui karya — dari perangkat ajar hingga karya tulis siswa.
+              RPP, modul, soal, presentasi, dan media ajar — dibuat oleh guru,
+              untuk guru. Beli sekali, pakai selama.
             </p>
           </div>
           <div className="flex flex-col items-start lg:items-end gap-2">
@@ -48,14 +51,14 @@ export default async function KaryaPopulerSection() {
               href="/marketplace"
               className="group inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary-dark transition-colors shrink-0"
             >
-              Lihat Semua Karya
+              Jelajahi Toko Karya
               <ChevronRight size={16} className="transition-transform group-hover:translate-x-0.5" />
             </Link>
             <Link
-              href="/arena/tulis"
+              href="/login"
               className="group inline-flex items-center gap-2 text-sm font-semibold text-zinc-600 hover:text-primary transition-colors shrink-0"
             >
-              Mulai menulis karyamu
+              Punya karya? Jual di Toko Karya
               <ChevronRight size={16} className="transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>
@@ -78,13 +81,12 @@ export default async function KaryaPopulerSection() {
                         alt=""
                         className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500 p-2"
                       />
-                    ) : (
-                      <ShoppingBag size={32} className="text-zinc-200" />
-                    )}
+                    ) : (() => { const Icon = TYPE_ICONS[k.type] || ShoppingBag; return <Icon size={32} className="text-zinc-200" />; })()
+                    }
                   </div>
                   <div className="p-4">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-md bg-primary-light text-primary text-[10px] font-semibold mb-2">
-                      {k.type}
+                      {TYPE_LABELS[k.type] || k.type}
                     </span>
                     <h3 className="text-sm font-semibold text-zinc-900 leading-snug line-clamp-2 group-hover:text-primary transition-colors mb-1">
                       {k.title}

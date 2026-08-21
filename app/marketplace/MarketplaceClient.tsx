@@ -2,25 +2,24 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { Search, ShoppingBag, Download, ChevronRight } from "lucide-react";
+import { Search, ShoppingBag, Download, ChevronRight, BookOpen, FileText, Presentation, ClipboardList, Video, File } from "lucide-react";
 
 const TYPES = [
   { value: "", label: "Semua" },
-  { value: "RPP", label: "Rencana Pembelajaran" },
-  { value: "MODUL", label: "Rencana Pembelajaran (Modul)" },
-  { value: "PPT", label: "PPT" },
+  { value: "RPP", label: "RPP & Perangkat" },
+  { value: "MODUL", label: "Modul & Materi" },
   { value: "SOAL", label: "Bank Soal" },
-  { value: "VIDEO", label: "Video" },
-  { value: "EBOOK", label: "Ebook" },
-  { value: "ADMINISTRASI", label: "Administrasi" },
+  { value: "PPT", label: "PPT & Presentasi" },
+  { value: "MEDIA", label: "Media Pembelajaran" },
 ];
 
 const SORT_OPTIONS = [
+  { value: "popular", label: "Paling relevan" },
   { value: "newest", label: "Terbaru" },
-  { value: "popular", label: "Terpopuler" },
-  { value: "price_asc", label: "Termurah" },
-  { value: "price_desc", label: "Termahal" },
+  { value: "price_asc", label: "Harga terendah" },
 ];
+
+const TYPE_ICONS: Record<string, any> = { RPP: BookOpen, MODUL: FileText, PPT: Presentation, SOAL: ClipboardList, VIDEO: Video, EBOOK: BookOpen, ADMINISTRASI: File, LAINNYA: File };
 
 type Item = {
   id: string;
@@ -36,7 +35,7 @@ type Item = {
 export default function MarketplaceClient({ initialItems }: { initialItems: Item[] }) {
   const [items] = useState<Item[]>(initialItems);
   const [type, setType] = useState("");
-  const [sort, setSort] = useState("newest");
+  const [sort, setSort] = useState("popular");
   const [search, setSearch] = useState("");
 
   const filtered = useMemo(() => {
@@ -48,7 +47,11 @@ export default function MarketplaceClient({ initialItems }: { initialItems: Item
     }
 
     if (type) {
-      result = result.filter((i) => i.type === type);
+      if (type === "MEDIA") {
+        result = result.filter((i) => ["VIDEO", "EBOOK", "ADMINISTRASI", "LAINNYA"].includes(i.type));
+      } else {
+        result = result.filter((i) => i.type === type);
+      }
     }
 
     result.sort((a, b) => {
@@ -68,7 +71,7 @@ export default function MarketplaceClient({ initialItems }: { initialItems: Item
         <div className="bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 rounded-2xl border border-primary/10 px-6 py-8 mb-8">
           <h1 className="text-3xl font-bold text-slate-900 mb-2">Toko Karya</h1>
           <p className="text-slate-500">
-            {items.length} karya dari guru Bahasa Indonesia — RPP, PPT, Bank Soal, Video, dan lainnya.
+            RPP, modul, soal, dan media ajar dari guru Bahasa Indonesia. Beli sekali, pakai selama.
           </p>
         </div>
 
@@ -80,7 +83,7 @@ export default function MarketplaceClient({ initialItems }: { initialItems: Item
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
-              placeholder="Cari karya..."
+              placeholder="Cari RPP, modul, soal, atau topik..."
             />
           </div>
           <select
@@ -123,13 +126,12 @@ export default function MarketplaceClient({ initialItems }: { initialItems: Item
                     <div className="h-32 bg-gradient-to-br from-zinc-50 to-zinc-100 flex items-center justify-center overflow-hidden">
                       {imgs[0] ? (
                         <img src={imgs[0]} alt="" className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500 p-2" />
-                      ) : (
-                        <ShoppingBag size={32} className="text-zinc-200" />
-                      )}
+                      ) : (() => { const Icon = TYPE_ICONS[item.type] || ShoppingBag; return <Icon size={32} className="text-zinc-200" />; })()
+                      }
                     </div>
                     <div className="p-4 flex-1 flex flex-col">
                       <span className="text-[10px] px-2 py-0.5 bg-primary-light text-primary rounded-full font-medium w-fit mb-2">
-                        {TYPES.find((t) => t.value === item.type)?.label || item.type}
+                        {item.type === "MEDIA" ? "Media Pembelajaran" : TYPES.find((t) => t.value === item.type)?.label || item.type}
                       </span>
                       <h3 className="font-semibold text-slate-900 text-sm line-clamp-2 group-hover:text-primary transition-colors">
                         {item.title}
