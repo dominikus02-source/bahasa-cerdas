@@ -6,6 +6,7 @@ import { HomeDataProvider } from "@/components/student-home/home-data";
 import { StudentHomeHero } from "@/components/student-home/StudentHomeHero";
 import { ContinueLearningCard } from "@/components/student-home/ContinueLearningCard";
 import { DailyMissionCard } from "@/components/student-home/DailyMissionCard";
+import { DailyActionCard } from "@/components/student-home/DailyActionCard";
 import { AIBCHomeCard } from "@/components/student-home/AIBCHomeCard";
 import { LearningJourneySection } from "@/components/student-home/LearningJourneySection";
 import { RuangBelajarSection } from "@/components/student-home/RuangBelajarSection";
@@ -57,6 +58,8 @@ function HomeContent() {
   return (
     <>
       <StudentHomeHero />
+
+      <DailyActionCard />
 
       <ContinueLearningCard />
 

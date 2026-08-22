@@ -219,6 +219,8 @@
     "test:bahasa-cerdas-identity": "npx tsx scripts/test-bahasa-cerdas-identity.ts",
     "test:guru-berkarya-flow": "npx tsx scripts/test-guru-berkarya-flow.ts",
     "test:arena-web": "npx tsx scripts/test-arena-web.ts",
+    "test:daily-action": "npx tsx scripts/test-daily-action-engine.ts",
+    "test:daily-action-quality": "npx tsx scripts/test-daily-action-quality.ts",
     "test:arena-chat": "npx tsx scripts/test-arena-chat.ts",
     "test:arena-nav-theme": "npx tsx scripts/test-arena-nav-theme.ts",
     "test:karya-consolidation": "npx tsx scripts/test-karya-consolidation.ts",

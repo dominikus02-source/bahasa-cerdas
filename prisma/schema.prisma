@@ -301,6 +301,9 @@ model User {
   questionMetadataReviewed QuestionMetadata[] @relation("QuestionMetadataReviewedBy")
   adaptivePracticeSessions AdaptivePracticeSession[]
 
+  // Daily Action Engine (Aksi Hari Ini 1.0)
+  dailyActions             DailyAction[]
+
   // Admin quota audit logs where this user was the acting admin
   adminQuotaActions    AdminQuotaAuditLog[]   @relation("AdminActions")
 // Admin quota audit logs where this user was the target
@@ -544,6 +547,44 @@ model KompetensiCertificate {
   user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+// ─── DAILY ACTION ENGINE (Aksi Hari Ini 1.0) ─────────────────────
+// Satu tantangan bahasa per hari. Soal dipilih dari TKA/UKBI/Soal,
+// dipersist per hari, dan diselesaikan dengan single answer validation.
+// Hasilnya menjadi learning signal sah di ekosistem Learning Loop.
+//
+// Anti-repeat: gunakan LearningEvidence (bukan tabel ini) untuk cek
+// apakah soal sudah pernah dijawab. Tabel ini hanya menyimpan
+// assignment harian, bukan history jawaban.
+model DailyAction {
+  id          String   @id @default(cuid())
+  userId      String
+  date        String   // "YYYY-MM-DD" (WIB dayKey)
+
+  // Source question identification
+  source      String   // "TKA" | "UKBI" | "SOAL"
+  questionId  String   // ID from source table (TKAQuestion.id / UKBIQuestion.id / Soal.id)
+
+  // Snapshot at selection time (immutable after creation)
+  skill       String?  // LearningSkillType (derived from question metadata)
+  difficulty  String?  // Difficulty enum string
+  questionText String? // Snapshot of question text for display (no answer)
+  options     String?  // JSON-serialized options for display (no correctAnswer)
+
+  // Status
+  status      String   @default("PENDING") // PENDING | COMPLETED
+  isCorrect   Boolean? // null until answered
+  completedAt DateTime?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId, date])
+  @@index([userId, status])
 }
 
 model TestSession {
