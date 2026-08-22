@@ -576,17 +576,17 @@ export default function GuruProfilePage() {
               <img src="/batik-header-profile-bc.png" alt="" className="absolute inset-0 w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black/40" />
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/brand/bc2026-logo-light.png" alt="" className="absolute top-4 right-4 h-8 md:h-10 object-contain opacity-60 [filter:drop-shadow(0_0_6px_rgba(255,255,255,0.3))]" />
+              <img src="/brand/bc2026-logo-light.png" alt="" className="absolute top-4 right-4 h-14 md:h-16 object-contain opacity-80 [filter:drop-shadow(0_2px_8px_rgba(0,0,0,0.4))]" />
             </div>
-            <div className="px-6 sm:px-8 pb-6 -mt-16 sm:-mt-20 md:-mt-22">
+            <div className="px-6 sm:px-8 pb-6 -mt-16 sm:-mt-20 md:-mt-24">
               <div className="flex flex-col sm:flex-row items-center sm:items-end gap-5">
                 {avatarBlock("hero")}
                 <div className="flex-1 text-center sm:text-left pb-1">
-                  <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight">{profile.fullName || "Guru"}</h1>
-                  {profile.nickname && <p className="text-sm text-white/70 mt-0.5">&ldquo;{profile.nickname}&rdquo;</p>}
-                  <p className="text-base text-emerald-200 font-semibold mt-1">Guru {profile.subject || "Bahasa Indonesia"}</p>
+                  <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight [text-shadow:0_2px_12px_rgba(0,0,0,0.5)]">{profile.fullName || "Guru"}</h1>
+                  {profile.nickname && <p className="text-sm text-white/80 mt-0.5 [text-shadow:0_1px_4px_rgba(0,0,0,0.4)]">&ldquo;{profile.nickname}&rdquo;</p>}
+                  <p className="text-base text-emerald-200 font-semibold mt-1 [text-shadow:0_1px_4px_rgba(0,0,0,0.4)]">Guru {profile.subject || "Bahasa Indonesia"}</p>
                   {(profile.school || profile.city) && (
-                    <div className="flex items-center justify-center sm:justify-start gap-1.5 mt-2 text-sm text-white/70">
+                    <div className="flex items-center justify-center sm:justify-start gap-1.5 mt-2 text-sm text-white/80 [text-shadow:0_1px_4px_rgba(0,0,0,0.4)]">
                       {profile.school && <span className="flex items-center gap-1"><GraduationCap size={14} className="text-white/50" />{profile.school}</span>}
                       {profile.school && profile.city && <span className="text-white/30">&middot;</span>}
                       {profile.city && <span className="flex items-center gap-1"><MapPin size={14} className="text-white/50" />{[profile.city, profile.province].filter(Boolean).join(", ")}</span>}
