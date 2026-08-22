@@ -4,13 +4,11 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   Camera,
   Save,
-  X,
   Loader2,
   GraduationCap,
   MapPin,
   Briefcase,
   Edit3,
-  User,
   CheckCircle2,
   Heart,
   Wallet,
@@ -417,15 +415,18 @@ export default function GuruProfilePage() {
 
   const profFields = useMemo(() => {
     if (!profile) return [];
-    return [
-      fieldRow("Sekolah", profile.school),
-      fieldRow("Mata Pelajaran", profile.subject),
-      fieldRow("Jenjang", profile.grade),
-      fieldRow("NIP", profile.nip),
-      fieldRow("NUPTK", profile.nuptk),
-      fieldRow("Kota", profile.city),
-      fieldRow("Provinsi", profile.province),
-    ].filter(Boolean) as { label: string; value: string }[];
+    const fields: { label: string; value: string }[] = [];
+    const add = (label: string, value: string | null | undefined) => {
+      if (value?.trim()) fields.push({ label, value: value.trim() });
+    };
+    add("Sekolah", profile.school);
+    add("Mata Pelajaran", profile.subject);
+    add("Jenjang", profile.grade);
+    add("Kota", profile.city);
+    add("Provinsi", profile.province);
+    if (profile.nip?.trim()) fields.push({ label: "NIP", value: profile.nip.trim() });
+    if (profile.nuptk?.trim()) fields.push({ label: "NUPTK", value: profile.nuptk.trim() });
+    return fields;
   }, [profile]);
 
   /* --- loading / empty states -------------------------------------- */
@@ -450,9 +451,10 @@ export default function GuruProfilePage() {
   /*  AVATAR BLOCK                                                      */
   /* ================================================================= */
 
-  const avatarBlock = (size: "lg" | "xl") => {
-    const dim = size === "xl" ? "w-36 h-36" : "w-28 h-28";
-    const textSize = size === "xl" ? "text-5xl" : "text-4xl";
+  const avatarBlock = (size: "hero" | "edit") => {
+    const dim = size === "hero" ? "w-28 h-28 lg:w-32 lg:h-32" : "w-20 h-20";
+    const textSize = size === "hero" ? "text-4xl lg:text-5xl" : "text-3xl";
+    const cameraSize = size === "hero" ? 22 : 18;
     return (
       <div className="relative shrink-0">
         <button
@@ -470,7 +472,7 @@ export default function GuruProfilePage() {
             </div>
           )}
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
-            <Camera size={size === "xl" ? 24 : 20} className="text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+            <Camera size={cameraSize} className="text-white opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
         </button>
         {uploadingAvatar && (
@@ -508,148 +510,68 @@ export default function GuruProfilePage() {
     </div>
   );
 
-  /* ================================================================= */
-  /*  RENDER                                                            */
-  /* ================================================================= */
-
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8 pb-24">
+    <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24">
       {messageToast}
 
-      {/* ============================================================= */}
-      {/*  SECTION 1 — PROFILE HEADER                                    */}
-      {/* ============================================================= */}
+      {/* SECTION 1 — PROFILE HERO */}
       <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
-        {/* gradient top bar */}
-        <div className="h-20 bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500" />
-
-        <div className="px-6 pb-6 -mt-12">
+        <div className="h-28 sm:h-32 bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 relative">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.15),transparent_60%)]" />
+        </div>
+        <div className="px-6 sm:px-8 pb-6 -mt-16 sm:-mt-20">
           {editingSection === "header" ? (
-            /* ---- EDIT HEADER ---- */
-            <div className="space-y-5 pt-14">
+            <div className="space-y-5 pt-20">
               <div className="flex items-center gap-5">
-                {avatarBlock("lg")}
+                {avatarBlock("edit")}
                 <div>
                   <p className="text-sm font-semibold text-gray-900 dark:text-slate-100">Foto Profil</p>
                   <p className="text-xs text-gray-400 dark:text-slate-500 mt-0.5">JPG, PNG, atau WebP. Maks 5MB.</p>
-                  <button
-                    type="button"
-                    onClick={handleAvatarClick}
-                    className="mt-2 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold"
-                  >
+                  <button type="button" onClick={handleAvatarClick} className="mt-2 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">
                     {displayAvatar ? "Ganti Foto" : "Upload Foto"}
                   </button>
                 </div>
               </div>
-
               <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
-                  Nama Lengkap <span className="text-red-400">*</span>
-                </label>
-                <input
-                  id="fullName"
-                  type="text"
-                  value={form.fullName}
-                  onChange={(e) => setForm((p) => ({ ...p, fullName: e.target.value }))}
-                  className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  required
-                />
+                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Nama Lengkap <span className="text-red-400">*</span></label>
+                <input id="fullName" type="text" value={form.fullName} onChange={(e) => setForm((p) => ({ ...p, fullName: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" required />
               </div>
-
               <div>
-                <label htmlFor="nickname" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
-                  Nama Panggilan
-                </label>
-                <input
-                  id="nickname"
-                  type="text"
-                  value={form.nickname}
-                  onChange={(e) => setForm((p) => ({ ...p, nickname: e.target.value }))}
-                  className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="Opsional"
-                />
+                <label htmlFor="nickname" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Nama Panggilan</label>
+                <input id="nickname" type="text" value={form.nickname} onChange={(e) => setForm((p) => ({ ...p, nickname: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="Opsional" />
               </div>
-
               <div className="flex items-center gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={handleSaveHeader}
-                  disabled={saving}
-                  className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-                >
+                <button type="button" onClick={handleSaveHeader} disabled={saving} className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
                   {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                   {saving ? "Menyimpan..." : "Simpan"}
                 </button>
-                <button
-                  type="button"
-                  onClick={cancelEdit}
-                  disabled={saving}
-                  className="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-slate-400 hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50"
-                >
-                  Batal
-                </button>
+                <button type="button" onClick={cancelEdit} disabled={saving} className="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-slate-400 hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50">Batal</button>
               </div>
             </div>
           ) : (
-            /* ---- VIEW HEADER ---- */
             <>
               <div className="flex flex-col sm:flex-row items-center sm:items-end gap-5">
-                <div className="ring-4 ring-white dark:ring-slate-800 rounded-full shadow-lg">
-                  {avatarBlock("xl")}
-                </div>
-
+                <div className="ring-4 ring-white dark:ring-slate-800 rounded-full shadow-lg">{avatarBlock("hero")}</div>
                 <div className="flex-1 text-center sm:text-left pb-1">
-                  <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100 leading-tight">
-                    {profile.fullName || "Guru"}
-                  </h1>
-                  {profile.nickname && (
-                    <p className="text-sm text-gray-400 dark:text-slate-500 mt-0.5">&ldquo;{profile.nickname}&rdquo;</p>
-                  )}
-                  <p className="text-sm text-emerald-700 dark:text-emerald-400 font-medium mt-1">
-                    Guru {profile.subject || "Bahasa Indonesia"}
-                  </p>
+                  <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100 leading-tight">{profile.fullName || "Guru"}</h1>
+                  {profile.nickname && <p className="text-sm text-gray-400 dark:text-slate-500 mt-0.5">&ldquo;{profile.nickname}&rdquo;</p>}
+                  <p className="text-sm text-emerald-700 dark:text-emerald-400 font-medium mt-1">Guru {profile.subject || "Bahasa Indonesia"}</p>
                   {(profile.school || profile.city) && (
                     <div className="flex items-center justify-center sm:justify-start gap-1.5 mt-2 text-sm text-gray-500 dark:text-slate-400">
-                      {profile.school && (
-                        <span className="flex items-center gap-1">
-                          <GraduationCap size={14} className="text-gray-400 dark:text-slate-500" />
-                          {profile.school}
-                        </span>
-                      )}
-                      {profile.school && profile.city && <span className="text-gray-300 dark:text-slate-600">·</span>}
-                      {profile.city && (
-                        <span className="flex items-center gap-1">
-                          <MapPin size={14} className="text-gray-400 dark:text-slate-500" />
-                          {[profile.city, profile.province].filter(Boolean).join(", ")}
-                        </span>
-                      )}
+                      {profile.school && <span className="flex items-center gap-1"><GraduationCap size={14} className="text-gray-400 dark:text-slate-500" />{profile.school}</span>}
+                      {profile.school && profile.city && <span className="text-gray-300 dark:text-slate-600">&middot;</span>}
+                      {profile.city && <span className="flex items-center gap-1"><MapPin size={14} className="text-gray-400 dark:text-slate-500" />{[profile.city, profile.province].filter(Boolean).join(", ")}</span>}
                     </div>
                   )}
                 </div>
-
-                <button
-                  type="button"
-                  onClick={() => openSection("header")}
-                  className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-                >
-                  <Edit3 size={16} />
-                  Edit Profil
+                <button type="button" onClick={() => openSection("header")} className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+                  <Edit3 size={16} /> Edit Profil
                 </button>
               </div>
-
-              {/* badges */}
               {(profile.isFounder || profile.isPremium) && (
                 <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100 dark:border-slate-700">
-                  {profile.isFounder && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-full text-xs font-semibold border border-amber-200 dark:border-amber-800">
-                      Founder
-                    </span>
-                  )}
-                  {profile.isPremium && !profile.isFounder && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/30 dark:to-yellow-900/30 text-amber-700 dark:text-amber-300 rounded-full text-xs font-semibold border border-amber-200 dark:border-amber-800">
-                      Guru Pro
-                    </span>
-                  )}
+                  {profile.isFounder && <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-full text-xs font-semibold border border-amber-200 dark:border-amber-800">Founder</span>}
+                  {profile.isPremium && !profile.isFounder && <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/30 dark:to-yellow-900/30 text-amber-700 dark:text-amber-300 rounded-full text-xs font-semibold border border-amber-200 dark:border-amber-800">Guru Pro</span>}
                 </div>
               )}
             </>
@@ -657,270 +579,118 @@ export default function GuruProfilePage() {
         </div>
       </div>
 
-      {/* ============================================================= */}
-      {/*  SECTION 2 — TENTANG SAYA (BIO)                                */}
-      {/* ============================================================= */}
-      <div className="mt-6 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
-            <Heart size={16} className="text-rose-400" />
-            Tentang Saya
-          </h2>
-          {editingSection !== "bio" && (
-            <button
-              type="button"
-              onClick={() => openSection("bio")}
-              className="text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold"
-            >
-              {profile.bio ? "Edit" : "Tambah"}
-            </button>
+
+      {/* SECTION 2 — TENTANG SAYA + PROFIL PROFESIONAL (2-col) */}
+      <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Tentang Saya (left) */}
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2"><Heart size={16} className="text-rose-400" /> Tentang Saya</h2>
+            {editingSection !== "bio" && <button type="button" onClick={() => openSection("bio")} className="text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">{profile.bio ? "Edit" : "Tambah"}</button>}
+          </div>
+          {editingSection === "bio" ? (
+            <div className="space-y-4">
+              <textarea id="bio" rows={4} value={form.bio} onChange={(e) => setForm((p) => ({ ...p, bio: e.target.value }))} className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none" placeholder="Ceritakan tentang diri Anda sebagai guru..." />
+              <div className="flex items-center gap-3">
+                <button type="button" onClick={handleSaveBio} disabled={saving} className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+                  {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} {saving ? "Menyimpan..." : "Simpan"}
+                </button>
+                <button type="button" onClick={cancelEdit} disabled={saving} className="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-slate-400 hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50">Batal</button>
+              </div>
+            </div>
+          ) : profile.bio ? (
+            <p className="text-sm text-gray-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">{profile.bio}</p>
+          ) : (
+            <div className="flex items-start gap-3 py-4">
+              <Heart size={20} className="text-gray-300 dark:text-slate-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm text-gray-400 dark:text-slate-500 italic">Ceritakan tentang dirimu sebagai guru untuk membantu murid mengenalmu lebih baik.</p>
+                <button type="button" onClick={() => openSection("bio")} className="mt-2 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">Tulis Sekarang</button>
+              </div>
+            </div>
           )}
         </div>
 
-        {editingSection === "bio" ? (
-          <div className="space-y-4">
-            <textarea
-              id="bio"
-              rows={4}
-              value={form.bio}
-              onChange={(e) => setForm((p) => ({ ...p, bio: e.target.value }))}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
-              placeholder="Ceritakan tentang diri Anda sebagai guru..."
-            />
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={handleSaveBio}
-                disabled={saving}
-                className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-              >
-                {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-                {saving ? "Menyimpan..." : "Simpan"}
-              </button>
-              <button
-                type="button"
-                onClick={cancelEdit}
-                disabled={saving}
-                className="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-slate-400 hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50"
-              >
-                Batal
-              </button>
-            </div>
+        {/* Profil Profesional (right) */}
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2"><Briefcase size={16} className="text-blue-500" /> Profil Profesional</h2>
+            {editingSection !== "professional" && <button type="button" onClick={() => openSection("professional")} className="text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">{profFields.length > 0 ? "Edit" : "Lengkapi"}</button>}
           </div>
-        ) : profile.bio ? (
-          <p className="text-sm text-gray-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">{profile.bio}</p>
-        ) : (
-          <div className="flex items-start gap-3 py-4">
-            <Heart size={20} className="text-gray-300 dark:text-slate-600 shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm text-gray-400 dark:text-slate-500 italic">
-                Ceritakan tentang dirimu sebagai guru untuk membantu murid mengenalmu lebih baik.
-              </p>
-              <button
-                type="button"
-                onClick={() => openSection("bio")}
-                className="mt-2 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold"
-              >
-                Tulis Sekarang
-              </button>
+          {editingSection === "professional" ? (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="school" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Sekolah</label>
+                  <input id="school" type="text" value={form.school} onChange={(e) => setForm((p) => ({ ...p, school: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="Nama sekolah" />
+                </div>
+                <div>
+                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Mata Pelajaran</label>
+                  <input id="subject" type="text" value={form.subject} onChange={(e) => setForm((p) => ({ ...p, subject: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="Contoh: Bahasa Indonesia" />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="grade" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Jenjang / Kelas</label>
+                  <input id="grade" type="text" value={form.grade} onChange={(e) => setForm((p) => ({ ...p, grade: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="Contoh: SMP Kelas 7" />
+                </div>
+                <div />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="nip" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">NIP (opsional)</label>
+                  <input id="nip" type="text" value={form.nip} onChange={(e) => setForm((p) => ({ ...p, nip: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="Nomor Induk Pegawai" />
+                </div>
+                <div>
+                  <label htmlFor="nuptk" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">NUPTK (opsional)</label>
+                  <input id="nuptk" type="text" value={form.nuptk} onChange={(e) => setForm((p) => ({ ...p, nuptk: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="Nomor UKG" />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="city" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Kota / Kabupaten</label>
+                  <input id="city" type="text" value={form.city} onChange={(e) => setForm((p) => ({ ...p, city: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="Jakarta" />
+                </div>
+                <div>
+                  <label htmlFor="province" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Provinsi</label>
+                  <input id="province" type="text" value={form.province} onChange={(e) => setForm((p) => ({ ...p, province: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="DKI Jakarta" />
+                </div>
+              </div>
+              <div className="flex items-center gap-3 pt-2">
+                <button type="button" onClick={handleSaveProfessional} disabled={saving} className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+                  {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} {saving ? "Menyimpan..." : "Simpan"}
+                </button>
+                <button type="button" onClick={cancelEdit} disabled={saving} className="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-slate-400 hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50">Batal</button>
+              </div>
             </div>
-          </div>
-        )}
+          ) : profFields.length > 0 ? (
+            <div className="space-y-3">
+              {profFields.map((f) => (
+                <div key={f.label} className="flex items-start gap-3 py-1.5">
+                  <span className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wide w-28 shrink-0 pt-0.5">{f.label}</span>
+                  <span className="text-sm text-gray-800 dark:text-slate-200 font-medium">{f.value}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-start gap-3 py-4">
+              <Briefcase size={20} className="text-gray-300 dark:text-slate-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm text-gray-400 dark:text-slate-500 italic">Lengkapi informasi profesional untuk memudahkan kolaborasi dengan guru lain.</p>
+                <button type="button" onClick={() => openSection("professional")} className="mt-2 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">Lengkapi Sekarang</button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* ============================================================= */}
-      {/*  SECTION 3 — PROFIL PROFESIONAL                                */}
-      {/* ============================================================= */}
+
+      {/* SECTION 3 — PEMBAYARAN & PENARIKAN (full-width) */}
       <div className="mt-6 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
-            <Briefcase size={16} className="text-blue-500" />
-            Profil Profesional
-          </h2>
-          {editingSection !== "professional" && (
-            <button
-              type="button"
-              onClick={() => openSection("professional")}
-              className="text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold"
-            >
-              {profFields.length > 0 ? "Edit" : "Lengkapi"}
-            </button>
-          )}
+          <h2 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2"><Wallet size={16} className="text-emerald-500" /> Pembayaran &amp; Penarikan</h2>
+          {editingSection !== "rekening" && <button type="button" onClick={() => openSection("rekening")} className="text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">{profile.bank ? "Ubah Rekening" : "Atur Rekening"}</button>}
         </div>
-
-        {editingSection === "professional" ? (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="school" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
-                  Sekolah
-                </label>
-                <input
-                  id="school"
-                  type="text"
-                  value={form.school}
-                  onChange={(e) => setForm((p) => ({ ...p, school: e.target.value }))}
-                  className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="Nama sekolah"
-                />
-              </div>
-              <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
-                  Mata Pelajaran
-                </label>
-                <input
-                  id="subject"
-                  type="text"
-                  value={form.subject}
-                  onChange={(e) => setForm((p) => ({ ...p, subject: e.target.value }))}
-                  className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="Contoh: Bahasa Indonesia"
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="grade" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
-                  Jenjang / Kelas
-                </label>
-                <input
-                  id="grade"
-                  type="text"
-                  value={form.grade}
-                  onChange={(e) => setForm((p) => ({ ...p, grade: e.target.value }))}
-                  className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="Contoh: SMP Kelas 7"
-                />
-              </div>
-              <div />
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="nip" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
-                  NIP (opsional)
-                </label>
-                <input
-                  id="nip"
-                  type="text"
-                  value={form.nip}
-                  onChange={(e) => setForm((p) => ({ ...p, nip: e.target.value }))}
-                  className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="Nomor Induk Pegawai"
-                />
-              </div>
-              <div>
-                <label htmlFor="nuptk" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
-                  NUPTK (opsional)
-                </label>
-                <input
-                  id="nuptk"
-                  type="text"
-                  value={form.nuptk}
-                  onChange={(e) => setForm((p) => ({ ...p, nuptk: e.target.value }))}
-                  className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="Nomor UKG"
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="city" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
-                  Kota / Kabupaten
-                </label>
-                <input
-                  id="city"
-                  type="text"
-                  value={form.city}
-                  onChange={(e) => setForm((p) => ({ ...p, city: e.target.value }))}
-                  className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="Jakarta"
-                />
-              </div>
-              <div>
-                <label htmlFor="province" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
-                  Provinsi
-                </label>
-                <input
-                  id="province"
-                  type="text"
-                  value={form.province}
-                  onChange={(e) => setForm((p) => ({ ...p, province: e.target.value }))}
-                  className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="DKI Jakarta"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 pt-2">
-              <button
-                type="button"
-                onClick={handleSaveProfessional}
-                disabled={saving}
-                className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-              >
-                {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-                {saving ? "Menyimpan..." : "Simpan"}
-              </button>
-              <button
-                type="button"
-                onClick={cancelEdit}
-                disabled={saving}
-                className="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-slate-400 hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50"
-              >
-                Batal
-              </button>
-            </div>
-          </div>
-        ) : profFields.length > 0 ? (
-          <div className="grid sm:grid-cols-2 gap-x-8 gap-y-3">
-            {profFields.map((f) => (
-              <div key={f.label} className="flex items-start gap-3 py-1.5">
-                <span className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wide w-28 shrink-0 pt-0.5">
-                  {f.label}
-                </span>
-                <span className="text-sm text-gray-800 dark:text-slate-200 font-medium">{f.value}</span>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="flex items-start gap-3 py-4">
-            <Briefcase size={20} className="text-gray-300 dark:text-slate-600 shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm text-gray-400 dark:text-slate-500 italic">
-                Lengkapi informasi profesional untuk memudahkan kolaborasi dengan guru lain.
-              </p>
-              <button
-                type="button"
-                onClick={() => openSection("professional")}
-                className="mt-2 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold"
-              >
-                Lengkapi Sekarang
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* ============================================================= */}
-      {/*  SECTION 4 — PEMBAYARAN & PENARIKAN                            */}
-      {/* ============================================================= */}
-      <div className="mt-6 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
-            <Wallet size={16} className="text-emerald-500" />
-            Pembayaran &amp; Penarikan
-          </h2>
-          {editingSection !== "rekening" && (
-            <button
-              type="button"
-              onClick={() => openSection("rekening")}
-              className="text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold"
-            >
-              {profile.bank ? "Ubah Rekening" : "Atur Rekening"}
-            </button>
-          )}
-        </div>
-
         {editingSection === "rekening" ? (
           <div className="space-y-4">
             <div className="bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800 rounded-xl p-4 text-sm text-emerald-800 dark:text-emerald-300 flex items-start gap-3">
@@ -928,137 +698,65 @@ export default function GuruProfilePage() {
               <p>Data rekening digunakan untuk pencairan royalti penjualan karya Anda.</p>
             </div>
             <div>
-              <label htmlFor="bank" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
-                Nama Bank
-              </label>
-              <select
-                id="bank"
-                value={rekening.bank}
-                onChange={(e) => setRekening((p) => ({ ...p, bank: e.target.value }))}
-                className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                required
-              >
+              <label htmlFor="bank" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Nama Bank</label>
+              <select id="bank" value={rekening.bank} onChange={(e) => setRekening((p) => ({ ...p, bank: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" required>
                 <option value="">Pilih bank...</option>
-                {BANK_OPTIONS.map((b) => (
-                  <option key={b.value} value={b.value}>{b.label}</option>
-                ))}
+                {BANK_OPTIONS.map((b) => <option key={b.value} value={b.value}>{b.label}</option>)}
               </select>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="bankHolder" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
-                  Nama Pemilik Rekening
-                </label>
-                <input
-                  id="bankHolder"
-                  type="text"
-                  value={rekening.holder}
-                  onChange={(e) => setRekening((p) => ({ ...p, holder: e.target.value }))}
-                  className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="Sesuai buku tabungan"
-                  required
-                />
+                <label htmlFor="bankHolder" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Nama Pemilik Rekening</label>
+                <input id="bankHolder" type="text" value={rekening.holder} onChange={(e) => setRekening((p) => ({ ...p, holder: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="Sesuai buku tabungan" required />
               </div>
               <div>
-                <label htmlFor="bankNumber" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
-                  Nomor Rekening
-                </label>
-                <input
-                  id="bankNumber"
-                  type="text"
-                  value={rekening.number}
-                  onChange={(e) => setRekening((p) => ({ ...p, number: e.target.value.replace(/\D/g, "") }))}
-                  className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="Contoh: 1234567890"
-                  maxLength={20}
-                  required
-                />
+                <label htmlFor="bankNumber" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Nomor Rekening</label>
+                <input id="bankNumber" type="text" value={rekening.number} onChange={(e) => setRekening((p) => ({ ...p, number: e.target.value.replace(/\D/g, "") }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="Contoh: 1234567890" maxLength={20} required />
               </div>
             </div>
-
             <div className="flex items-center gap-3 pt-2">
-              <button
-                type="button"
-                onClick={handleRekeningSave}
-                disabled={savingRekening}
-                className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-              >
-                {savingRekening ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-                {savingRekening ? "Menyimpan..." : "Simpan Rekening"}
+              <button type="button" onClick={handleRekeningSave} disabled={savingRekening} className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+                {savingRekening ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} {savingRekening ? "Menyimpan..." : "Simpan Rekening"}
               </button>
-              <button
-                type="button"
-                onClick={cancelEdit}
-                disabled={savingRekening}
-                className="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-slate-400 hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50"
-              >
-                Batal
-              </button>
+              <button type="button" onClick={cancelEdit} disabled={savingRekening} className="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-slate-400 hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50">Batal</button>
             </div>
           </div>
         ) : profile.bank && profile.bankHolder && profile.bankNumber ? (
           <div className="space-y-3">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-full text-xs font-semibold border border-emerald-200 dark:border-emerald-800">
-              <CheckCircle2 size={13} />
-              Rekening penarikan aktif
+              <CheckCircle2 size={13} /> Rekening penarikan aktif
             </span>
             <div className="grid sm:grid-cols-2 gap-x-8 gap-y-2 mt-2">
               <div className="flex items-start gap-3 py-1.5">
-                <span className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wide w-28 shrink-0 pt-0.5">
-                  Bank
-                </span>
-                <span className="text-sm text-gray-800 dark:text-slate-200 font-medium">
-                  {BANK_OPTIONS.find((b) => b.value === profile.bank)?.label || profile.bank}
-                </span>
+                <span className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wide w-28 shrink-0 pt-0.5">Bank</span>
+                <span className="text-sm text-gray-800 dark:text-slate-200 font-medium">{BANK_OPTIONS.find((b) => b.value === profile.bank)?.label || profile.bank}</span>
               </div>
               <div className="flex items-start gap-3 py-1.5">
-                <span className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wide w-28 shrink-0 pt-0.5">
-                  No. Rekening
-                </span>
-                <span className="text-sm text-gray-800 dark:text-slate-200 font-medium font-mono">
-                  {maskBankNumber(profile.bankNumber)}
-                </span>
+                <span className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wide w-28 shrink-0 pt-0.5">No. Rekening</span>
+                <span className="text-sm text-gray-800 dark:text-slate-200 font-medium font-mono">{maskBankNumber(profile.bankNumber)}</span>
               </div>
               <div className="flex items-start gap-3 py-1.5">
-                <span className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wide w-28 shrink-0 pt-0.5">
-                  Pemilik
-                </span>
+                <span className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wide w-28 shrink-0 pt-0.5">Pemilik</span>
                 <span className="text-sm text-gray-800 dark:text-slate-200 font-medium">{profile.bankHolder}</span>
               </div>
             </div>
-            <p className="text-xs text-gray-400 dark:text-slate-500 pt-1">
-              Rekening digunakan untuk pencairan royalti dari Toko Karya.
-            </p>
+            <p className="text-xs text-gray-400 dark:text-slate-500 pt-1">Rekening digunakan untuk pencairan royalti dari Toko Karya.</p>
           </div>
         ) : (
           <div className="flex items-start gap-3 py-4">
             <Wallet size={32} className="text-gray-300 dark:text-slate-600 shrink-0" />
             <div>
               <p className="text-sm font-medium text-gray-500 dark:text-slate-400">Rekening belum disiapkan</p>
-              <p className="text-sm text-gray-400 dark:text-slate-500 italic mt-1">
-                Tambahkan rekening bank untuk menerima pembayaran dari penjualan karya.
-              </p>
-              <button
-                type="button"
-                onClick={() => openSection("rekening")}
-                className="mt-2 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold"
-              >
-                Atur Rekening
-              </button>
+              <p className="text-sm text-gray-400 dark:text-slate-500 italic mt-1">Tambahkan rekening bank untuk menerima pembayaran dari penjualan karya.</p>
+              <button type="button" onClick={() => openSection("rekening")} className="mt-2 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">Atur Rekening</button>
             </div>
           </div>
         )}
       </div>
 
-      {/* ============================================================= */}
-      {/*  SECTION 5 — AKUN                                               */}
-      {/* ============================================================= */}
+      {/* SECTION 4 — AKUN (full-width) */}
       <div className="mt-6 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
-        <h2 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2 mb-4">
-          <Shield size={16} className="text-gray-400 dark:text-slate-500" />
-          Akun
-        </h2>
-
+        <h2 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2 mb-4"><Shield size={16} className="text-gray-400 dark:text-slate-500" /> Akun</h2>
         <div className="space-y-3">
           <div className="flex items-center gap-3 py-2">
             <Mail size={16} className="text-gray-400 dark:text-slate-500 shrink-0" />
@@ -1068,18 +766,14 @@ export default function GuruProfilePage() {
             </div>
           </div>
           <div className="flex items-center gap-3 py-2">
-            <User size={16} className="text-gray-400 dark:text-slate-500 shrink-0" />
+            <Shield size={16} className="text-gray-400 dark:text-slate-500 shrink-0" />
             <div className="flex-1 min-w-0">
               <p className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wide">Status Akun</p>
               <p className="text-sm text-gray-800 dark:text-slate-200 font-medium">
                 {profile.isFounder ? (
-                  <span className="inline-flex items-center gap-1.5">
-                    <span className="px-2 py-0.5 bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded text-xs font-semibold border border-amber-200 dark:border-amber-800">Founder</span>
-                  </span>
+                  <span className="px-2 py-0.5 bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded text-xs font-semibold border border-amber-200 dark:border-amber-800">Founder</span>
                 ) : profile.isPremium ? (
-                  <span className="inline-flex items-center gap-1.5">
-                    <span className="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded text-xs font-semibold border border-emerald-200 dark:border-emerald-800">Guru Pro</span>
-                  </span>
+                  <span className="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded text-xs font-semibold border border-emerald-200 dark:border-emerald-800">Guru Pro</span>
                 ) : (
                   <span className="text-gray-500 dark:text-slate-400">Guru Free</span>
                 )}
