@@ -15,6 +15,9 @@ import {
   Banknote,
   Shield,
   Mail,
+  Crown,
+  BookOpen,
+  Pencil,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useUserStore } from "@/store";
@@ -452,7 +455,7 @@ export default function GuruProfilePage() {
   /* ================================================================= */
 
   const avatarBlock = (variant: "hero" | "edit") => {
-    const dim = variant === "hero" ? "w-32 h-32 md:w-36 md:h-36" : "w-20 h-20";
+    const dim = variant === "hero" ? "w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36" : "w-20 h-20";
     const textSize = variant === "hero" ? "text-4xl md:text-5xl" : "text-3xl";
     const cameraSize = variant === "hero" ? 24 : 18;
     return (
@@ -462,7 +465,7 @@ export default function GuruProfilePage() {
           onClick={handleAvatarClick}
           className={`group relative ${dim} rounded-full overflow-hidden ${
             variant === "hero"
-              ? "ring-4 ring-white/90 dark:ring-slate-800/90 shadow-2xl"
+              ? "ring-[3px] ring-white dark:ring-slate-900 shadow-xl"
               : "border-4 border-white dark:border-slate-700 shadow-lg"
           } focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2`}
           aria-label="Ganti foto profil"
@@ -529,17 +532,22 @@ export default function GuruProfilePage() {
         {editingSection === "header" ? (
           /* ── EDIT MODE HERO ── */
           <div>
-            <div className="relative h-40 sm:h-48 md:h-52 bg-gradient-to-r from-amber-50 via-amber-100 to-orange-50 dark:from-slate-700 dark:via-slate-700 dark:to-slate-600 border-l-4 border-amber-400">
+            <div className="relative h-44 sm:h-52 md:h-60 overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/batik-header-profile-bc.png" alt="" className="absolute inset-0 w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-b from-amber-500/20 via-amber-500/10 to-white dark:from-slate-900/60 dark:via-slate-900/50 dark:to-slate-900" />
               <div className="absolute top-4 left-4 z-10">
-                <span className="bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-full text-xs font-semibold px-3 py-1 border border-amber-200 dark:border-amber-800">
-                  Sedang Mengedit
+                <span className="inline-flex items-center gap-1.5 bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 rounded-full text-xs font-semibold px-3 py-1 border border-amber-200 dark:border-amber-800/50">
+                  <Pencil size={12} /> Sedang Mengedit
                 </span>
               </div>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/brand/bc2026-logo-dark.png" alt="" className="absolute top-4 right-4 h-8 md:h-10 object-contain opacity-30 dark:opacity-20" />
+              <img src="/brand/bc2026-icon.png" alt="" className="absolute top-4 right-4 h-10 sm:h-12 md:h-14 object-contain opacity-60 [filter:drop-shadow(0_2px_8px_rgba(0,0,0,0.25))] dark:hidden" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/brand/bc2026-icon-dark.png" alt="" className="absolute top-4 right-4 h-10 sm:h-12 md:h-14 object-contain opacity-60 [filter:drop-shadow(0_2px_8px_rgba(0,0,0,0.4))] hidden dark:block" />
             </div>
-            <div className="px-6 sm:px-8 pb-6 -mt-16 sm:-mt-20">
-              <div className="space-y-5 pt-20">
+            <div className="px-4 sm:px-6 md:px-8 pb-6 -mt-14 sm:-mt-16 md:-mt-20">
+              <div className="space-y-5 pt-16 sm:pt-20">
                 <div className="flex flex-col sm:flex-row items-center gap-5">
                   {avatarBlock("edit")}
                   <div className="text-center sm:text-left">
@@ -569,40 +577,94 @@ export default function GuruProfilePage() {
             </div>
           </div>
         ) : (
-          /* ── VIEW MODE HERO ── */
+          /* ── VIEW MODE HERO ── FB / Instagram / iOS Edu Style ── */
           <>
-            <div className="relative h-40 sm:h-48 md:h-52 overflow-hidden">
+            {/* Cover photo — taller, dual-mode gradient overlay */}
+            <div className="relative h-44 sm:h-52 md:h-60 overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/batik-header-profile-bc.png" alt="" className="absolute inset-0 w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-black/40" />
+              {/* Light mode: fades to white at bottom; Dark: fades to dark */}
+              <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-white/10 to-white dark:from-slate-900/40 dark:via-slate-900/50 dark:to-slate-900" />
+              {/* BC Logo Mark — single icon, dual-mode variants */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/brand/bc2026-logo-light.png" alt="" className="absolute top-4 right-4 h-14 md:h-16 object-contain opacity-80 [filter:drop-shadow(0_2px_8px_rgba(0,0,0,0.4))]" />
+              <img src="/brand/bc2026-icon.png" alt="" className="absolute top-4 right-4 h-10 sm:h-12 md:h-14 object-contain opacity-80 [filter:drop-shadow(0_2px_8px_rgba(0,0,0,0.25))] dark:hidden" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/brand/bc2026-icon-dark.png" alt="" className="absolute top-4 right-4 h-10 sm:h-12 md:h-14 object-contain opacity-80 [filter:drop-shadow(0_2px_8px_rgba(0,0,0,0.4))] hidden dark:block" />
             </div>
-            <div className="px-6 sm:px-8 pb-6 -mt-16 sm:-mt-20 md:-mt-24">
-              <div className="flex flex-col sm:flex-row items-center sm:items-end gap-5">
+
+            {/* Name / identity area — overlaps cover like Facebook */}
+            <div className="px-4 sm:px-6 md:px-8 pb-6 -mt-14 sm:-mt-16 md:-mt-20">
+              <div className="flex flex-col items-center sm:items-start gap-4">
+                {/* Avatar */}
                 {avatarBlock("hero")}
-                <div className="flex-1 text-center sm:text-left pb-1">
-                  <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight [text-shadow:0_2px_12px_rgba(0,0,0,0.5)]">{profile.fullName || "Guru"}</h1>
-                  {profile.nickname && <p className="text-sm text-white/80 mt-0.5 [text-shadow:0_1px_4px_rgba(0,0,0,0.4)]">&ldquo;{profile.nickname}&rdquo;</p>}
-                  <p className="text-base text-emerald-200 font-semibold mt-1 [text-shadow:0_1px_4px_rgba(0,0,0,0.4)]">Guru {profile.subject || "Bahasa Indonesia"}</p>
+
+                {/* Name + details — centered on mobile, left-aligned on desktop */}
+                <div className="flex-1 text-center sm:text-left pb-1 w-full">
+                  {/* Name: EXTRA BOLD, dark in light mode / white in dark mode */}
+                  <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight tracking-tight">
+                    {profile.fullName || "Guru"}
+                  </h1>
+
+                  {/* Nickname */}
+                  {profile.nickname && (
+                    <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">
+                      &ldquo;{profile.nickname}&rdquo;
+                    </p>
+                  )}
+
+                  {/* Role as pill badge */}
+                  <div className="flex items-center justify-center sm:justify-start gap-2 mt-2">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-sm font-semibold rounded-full">
+                      <BookOpen size={14} className="text-emerald-600 dark:text-emerald-400" />
+                      Guru {profile.subject || "Bahasa Indonesia"}
+                    </span>
+                  </div>
+
+                  {/* Location — icons + text, high contrast */}
                   {(profile.school || profile.city) && (
-                    <div className="flex items-center justify-center sm:justify-start gap-1.5 mt-2 text-sm text-white/80 [text-shadow:0_1px_4px_rgba(0,0,0,0.4)]">
-                      {profile.school && <span className="flex items-center gap-1"><GraduationCap size={14} className="text-white/50" />{profile.school}</span>}
-                      {profile.school && profile.city && <span className="text-white/30">&middot;</span>}
-                      {profile.city && <span className="flex items-center gap-1"><MapPin size={14} className="text-white/50" />{[profile.city, profile.province].filter(Boolean).join(", ")}</span>}
+                    <div className="flex items-center justify-center sm:justify-start gap-1.5 mt-2.5 text-sm text-gray-600 dark:text-slate-300">
+                      {profile.school && (
+                        <span className="flex items-center gap-1">
+                          <GraduationCap size={14} className="text-gray-400 dark:text-slate-500" />
+                          {profile.school}
+                        </span>
+                      )}
+                      {profile.school && profile.city && <span className="text-gray-300 dark:text-slate-600">&middot;</span>}
+                      {profile.city && (
+                        <span className="flex items-center gap-1">
+                          <MapPin size={14} className="text-gray-400 dark:text-slate-500" />
+                          {[profile.city, profile.province].filter(Boolean).join(", ")}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Pro badges */}
+                  {(profile.isFounder || profile.isPremium) && (
+                    <div className="flex items-center gap-2 mt-3">
+                      {profile.isFounder && (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-full text-xs font-semibold border border-amber-200 dark:border-amber-800/50">
+                          <Shield size={12} /> Founder
+                        </span>
+                      )}
+                      {profile.isPremium && !profile.isFounder && (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-amber-100 to-yellow-100 dark:from-amber-900/30 dark:to-yellow-900/30 text-amber-700 dark:text-amber-300 rounded-full text-xs font-semibold border border-amber-200 dark:border-amber-800/50">
+                          <Crown size={12} /> Guru Pro
+                        </span>
+                      )}
                     </div>
                   )}
                 </div>
-                <button type="button" onClick={() => openSection("header")} className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 border border-white/30 text-white hover:bg-white/10 text-sm font-semibold rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent">
+
+                {/* Edit button — outlined style (Instagram) */}
+                <button
+                  type="button"
+                  onClick={() => openSection("header")}
+                  className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700 text-sm font-semibold rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+                >
                   <Edit3 size={16} /> Edit Profil
                 </button>
               </div>
-              {(profile.isFounder || profile.isPremium) && (
-                <div className="flex items-center gap-2 mt-4 pt-4 border-t border-white/10">
-                  {profile.isFounder && <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/20 text-amber-300 rounded-full text-xs font-semibold border border-amber-400/30">Founder</span>}
-                  {profile.isPremium && !profile.isFounder && <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-amber-500/20 to-yellow-500/20 text-amber-300 rounded-full text-xs font-semibold border border-amber-400/30">Guru Pro</span>}
-                </div>
-              )}
             </div>
           </>
         )}
