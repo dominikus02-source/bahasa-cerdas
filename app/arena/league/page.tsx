@@ -40,7 +40,7 @@ export default async function LeaguePage({
       })
       const userIds = earned.map(e => e.userId)
       if (userIds.length === 0) return []
-      const users = await db.user.findMany({ where: { id: { in: userIds } }, select: { id: true, fullName: true, nickname: true, avatar: true, xp: true, level: true, coins: true, streak: true } })
+      const users = await db.user.findMany({ where: { id: { in: userIds } }, select: { id: true, fullName: true, nickname: true, avatar: true, xp: true, level: true, coins: true, streak: true, isFounder: true, isPremium: true } })
       return earned.map(e => {
         const u = users.find(us => us.id === e.userId)
         if (!u) return null
@@ -59,6 +59,8 @@ export default async function LeaguePage({
     xp: e.score,
     level: e.level,
     streak: 0,
+    isFounder: e.isFounder,
+    isPremium: e.isPremium,
   }))
 
   const hallOfFame: HallOfFameRow[] = (competition?.hallOfFame ?? []).map(h => ({

@@ -31,6 +31,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
           select: {
             id: true, fullName: true, nickname: true, avatar: true,
             equippedFrame: true, equippedNameColor: true, equippedBadge: true,
+            isFounder: true, isPremium: true,
             playerProfile: { select: { currentRank: true } },
             profile: { select: { school: true, city: true } },
           },
@@ -41,6 +42,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
               select: {
                 id: true, fullName: true, nickname: true, avatar: true,
                 equippedFrame: true, equippedNameColor: true, equippedBadge: true,
+                isFounder: true, isPremium: true,
                 playerProfile: { select: { currentRank: true } },
               },
             },

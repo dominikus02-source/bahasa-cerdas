@@ -35,6 +35,7 @@ interface UserData {
   equippedFrame?: string | null; equippedNameColor?: string | null; equippedBadge?: string | null;
   equippedBackground?: string | null; equippedNameplate?: string | null;
   createdAt?: string;
+  isFounder?: boolean; isPremium?: boolean;
 }
 
 interface KaryaItem {
@@ -400,6 +401,8 @@ export default function MuridProfilePage() {
           gelar: meta?.gelar ?? null,
           memberNumber: meta?.memberNumber ?? null,
           joinedAt: user.createdAt ?? null,
+          isFounder: user.isFounder,
+          isPremium: user.isPremium,
         }}
         rank={playerRank}
         // Statistik sosial (pengikut/mengikuti) dan Total Like tampil di

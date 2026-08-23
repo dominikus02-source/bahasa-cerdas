@@ -34,6 +34,8 @@ export interface HeroPersona {
   gelar?: string | null;
   memberNumber?: string | null;
   joinedAt?: string | null;
+  isFounder?: boolean;
+  isPremium?: boolean;
 }
 
 export interface HeroSocial {
@@ -235,6 +237,9 @@ export default function ProfileHero({
                     badge={persona.equippedBadge}
                     onDark={onDarkName}
                     badgeSize={20}
+                    isFounder={persona.isFounder}
+                    isPremium={persona.isPremium}
+                    verifiedSize={22}
                   />
               </h1>
               {(() => {

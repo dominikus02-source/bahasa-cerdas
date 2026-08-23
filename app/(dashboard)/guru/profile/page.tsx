@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useUserStore } from "@/store";
+import UserName from "@/components/arena/UserName";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -602,7 +603,12 @@ export default function GuruProfilePage() {
                 <div className="flex-1 text-center sm:text-left pb-1 w-full">
                   {/* Name: EXTRA BOLD, dark in light mode / white in dark mode */}
                   <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight tracking-tight">
-                    {profile.fullName || "Guru"}
+                    <UserName
+                      name={profile.fullName || "Guru"}
+                      onDark={false}
+                      isFounder={profile.isFounder}
+                      isPremium={profile.isPremium}
+                    />
                   </h1>
 
                   {/* Nickname */}

@@ -36,6 +36,8 @@ export interface LeaderboardEntry {
   score: number;
   weeklyXp: number;
   isMe: boolean;
+  isFounder?: boolean;
+  isPremium?: boolean;
 }
 
 const CACHE_TTL = 60; // detik
@@ -145,7 +147,7 @@ export async function getLeaderboard(params: LeaderboardParams): Promise<Leaderb
     where,
     orderBy: [{ [field]: "desc" }, { totalXP: "desc" }],
     take: limit * 3, // ambil lebih untuk filter isMe/name
-    include: { user: { select: { id: true, fullName: true, nickname: true, avatar: true } } },
+    include: { user: { select: { id: true, fullName: true, nickname: true, avatar: true, isFounder: true, isPremium: true } } },
   });
 
   // Lazy reset: weeklyXP/seasonXP baru valid selama kunci periodenya masih
@@ -179,6 +181,8 @@ export async function getLeaderboard(params: LeaderboardParams): Promise<Leaderb
         score: p[field],
         weeklyXp: p.weeklyXP,
         isMe: p.userId === params.userId,
+        isFounder: p.user.isFounder || undefined,
+        isPremium: p.user.isPremium || undefined,
       };
     });
 
@@ -186,7 +190,7 @@ export async function getLeaderboard(params: LeaderboardParams): Promise<Leaderb
   if (params.userId && !entries.some((e) => e.isMe) && (!scopeIds || scopeIds.includes(params.userId))) {
     const me = await db.playerProfile.findUnique({
       where: { userId: params.userId },
-      include: { user: { select: { id: true, fullName: true, nickname: true, avatar: true, role: true } } },
+      include: { user: { select: { id: true, fullName: true, nickname: true, avatar: true, role: true, isFounder: true, isPremium: true } } },
     });
     if (me && me.user.role === "MURID" && inCurrentPeriod(me) && me[field] > 0) {
       const above = entries.filter((e) => e.score > me[field]).length;
@@ -206,6 +210,8 @@ export async function getLeaderboard(params: LeaderboardParams): Promise<Leaderb
         score: me[field],
         weeklyXp: me.weeklyXP,
         isMe: true,
+        isFounder: me.user.isFounder || undefined,
+        isPremium: me.user.isPremium || undefined,
       });
     }
   }

@@ -48,6 +48,8 @@ interface KaryaItem {
     equippedFrame?: string | null
     equippedNameColor?: string | null
     equippedBadge?: string | null
+    isFounder?: boolean
+    isPremium?: boolean
     profile?: { school?: string; city?: string } | null
   }
   _count: {
@@ -383,6 +385,8 @@ function FeedContent({
                 badge={k.user.equippedBadge}
                 className="text-[13px] font-semibold text-gray-900 dark:text-slate-100 hover:text-violet-600 dark:hover:text-violet-300"
                 badgeSize={14}
+                isFounder={k.user.isFounder}
+                isPremium={k.user.isPremium}
               />
               <p className="text-[11px] text-gray-400 dark:text-slate-500 truncate">{k.user.profile?.school || ""}</p>
             </div>
@@ -443,6 +447,8 @@ function FeedContent({
               badge={k.user.equippedBadge}
               className="text-sm font-semibold text-gray-900 dark:text-slate-100 hover:text-violet-600 dark:hover:text-violet-300"
               badgeSize={15}
+              isFounder={k.user.isFounder}
+              isPremium={k.user.isPremium}
             />
             <p className="text-xs text-gray-400 dark:text-slate-500">{k.user.profile?.school || ""}</p>
           </div>

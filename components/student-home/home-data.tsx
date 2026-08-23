@@ -10,6 +10,8 @@ export interface MeUser {
   avatar?: string;
   school?: string;
   city?: string;
+  isFounder?: boolean;
+  isPremium?: boolean;
   equippedNameColor?: string | null;
   equippedBadge?: string | null;
   equippedFrame?: string | null;

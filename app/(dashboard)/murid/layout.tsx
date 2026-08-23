@@ -95,7 +95,7 @@ export default async function MuridLayout({ children }: { children: React.ReactN
         </main>
       </div>
 
-      <MuridMobileNav fullName={user.fullName} role={user.role} isFounder={user.isFounder} />
+      <MuridMobileNav fullName={user.fullName} role={user.role} isFounder={user.isFounder} isPremium={user.isPremium} />
       <InstallBanner />
       <AIFloatingButton />
     </div>

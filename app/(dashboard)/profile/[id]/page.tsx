@@ -196,6 +196,8 @@ export default function ProfilePage() {
           xp: user.xp || 0,
           levelProgress,
           streak: user.streak ?? 0,
+          isFounder: user.isFounder,
+          isPremium: user.isPremium,
         }}
         rank={rank}
         social={social}

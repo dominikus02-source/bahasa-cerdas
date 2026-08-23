@@ -15,6 +15,8 @@ interface CommentUser {
   equippedFrame?: string | null
   equippedNameColor?: string | null
   equippedBadge?: string | null
+  isFounder?: boolean
+  isPremium?: boolean
   rank?: string
 }
 
@@ -156,6 +158,8 @@ export default function CommentSection({ karyaId, initialComments, initialCount,
                 badge={c.user.equippedBadge}
                 className="text-xs font-bold text-gray-900 dark:text-slate-100 hover:text-violet-600"
                 badgeSize={13}
+                isFounder={c.user.isFounder}
+                isPremium={c.user.isPremium}
               />
               {c.user.rank && <RankChip rank={c.user.rank} size={13} showTitle={false} compact />}
               <span className="text-[10px] text-gray-400">{waktuLalu(c.createdAt)}</span>

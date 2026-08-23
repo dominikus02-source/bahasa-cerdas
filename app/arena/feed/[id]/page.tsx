@@ -37,6 +37,7 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
         select: {
           id: true, fullName: true, nickname: true, avatar: true,
           equippedFrame: true, equippedNameColor: true, equippedBadge: true,
+          isFounder: true, isPremium: true,
         },
       },
       _count: { select: { likes: true, comments: true } },
@@ -56,6 +57,7 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
         select: {
           id: true, fullName: true, nickname: true, avatar: true,
           equippedFrame: true, equippedNameColor: true, equippedBadge: true,
+          isFounder: true, isPremium: true,
         },
       },
     },
@@ -100,6 +102,8 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
                   badge={karya.user.equippedBadge}
                   className="font-bold text-gray-900 dark:text-slate-100 text-base"
                   badgeSize={16}
+                  isFounder={karya.user.isFounder}
+                  isPremium={karya.user.isPremium}
                 />
                 <p className="text-sm text-gray-500 dark:text-slate-400">
                   {typeLabel[karya.type] || karya.type}

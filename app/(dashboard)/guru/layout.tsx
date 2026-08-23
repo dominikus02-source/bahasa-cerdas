@@ -13,6 +13,7 @@ import { levelFromXp } from "@/lib/gamification/levels"
 import { rankFromLevel } from "@/lib/gamification/ranks"
 import { RankChip } from "@/components/gamification/RankChip"
 import { SidebarPremiumBadge } from "@/components/guru/SidebarPremiumBadge";
+import { VerifiedBadge } from "@/components/arena/UserName";
 import UserAvatar from "@/components/arena/UserAvatar";
 import ArenaLogoutButton from "@/components/arena/LogoutButton";
 import { GuruNavList, GuruMobileNav } from "@/components/dashboard/GuruNav";
@@ -119,7 +120,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
                 className="shadow-lg shrink-0"
               />
               <div className="flex-1 min-w-0">
-                <p className="shell-label text-sm font-semibold text-gray-900 truncate dark:text-slate-200">{user.fullName}</p>
+                <p className="shell-label flex items-center gap-1.5 text-sm font-semibold text-gray-900 truncate dark:text-slate-200">{user.fullName}<VerifiedBadge isFounder={user.isFounder} isPremium={user.isPremium} size={14} /></p>
                 <div className="shell-label flex items-center gap-1.5 mt-0.5">
                   <svg className="w-3 h-3 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
                   <RankChip rank={rank} size={12} showTitle={false} compact />

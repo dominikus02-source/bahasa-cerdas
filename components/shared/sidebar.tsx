@@ -25,6 +25,7 @@ import {
 import { levelFromXp } from "@/lib/gamification/levels";
 import { rankFromLevel, RANK_META } from "@/lib/gamification/ranks";
 import { RankIcon } from "@/components/gamification/RankIcon";
+import { VerifiedBadge } from "@/components/arena/UserName";
 
 const guruNavItems = [
   { href: "/guru/beranda", label: "Beranda", icon: LayoutDashboard },
@@ -101,7 +102,7 @@ export function Sidebar() {
                 <RankIcon rank={rank} size={40} glow />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="truncate text-sm font-semibold">{user.fullName || "Murid"}</p>
+                <p className="flex items-center gap-1.5 truncate text-sm font-semibold">{user.fullName || "Murid"}<VerifiedBadge isFounder={user.isFounder} isPremium={user.isPremium} size={14} /></p>
                 <div className="flex items-center gap-1 text-xs text-muted-foreground">
                   <span>{RANK_META[rank].label}</span>
                   <span>Lv.{level}</span>

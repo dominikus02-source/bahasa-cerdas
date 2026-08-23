@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Coins, Flame, ShoppingBag, Sparkles, Zap } from "lucide-react";
 import { RankChip } from "@/components/gamification/RankChip";
 import UserAvatar from "@/components/arena/UserAvatar";
+import { VerifiedBadge } from "@/components/arena/UserName";
 import { nameColorStyle, getBadgeStyle, getNameplateStyle, getBackgroundStyle } from "@/lib/cosmetics";
 import { useHomeData } from "./home-data";
 
@@ -71,6 +72,7 @@ export function StudentHomeHero() {
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-xl md:text-2xl font-semibold tracking-tight text-[var(--px-text)] truncate" style={nameColorStyle(me?.equippedNameColor, true)}>{name}</h1>
+              <VerifiedBadge isFounder={me?.isFounder} isPremium={me?.isPremium} size={22} />
               {badge && (
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-white text-[10px] font-bold bg-gradient-to-br from-violet-500 to-purple-600 shadow-sm">
                   <badge.Icon size={11} />

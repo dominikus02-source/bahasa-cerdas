@@ -12,6 +12,7 @@ import {
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import { NotificationBell } from "./NotificationBell"
+import { VerifiedBadge } from "@/components/arena/UserName"
 
 interface NavItem {
   label: string
@@ -124,7 +125,7 @@ export function GuruSidebar({ user }: Props) {
             {user.fullName.slice(0, 2).toUpperCase()}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold text-gray-900 dark:text-slate-100 truncate">{user.fullName}</p>
+            <p className="flex items-center gap-1.5 text-sm font-semibold text-gray-900 dark:text-slate-100 truncate">{user.fullName}<VerifiedBadge isFounder={user.isFounder} isPremium={user.isPremium} size={14} /></p>
             <div className="flex items-center gap-1.5 mt-0.5">
               {user.isFounder ? (
                 <span className="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-700 dark:text-amber-300 rounded-full font-medium flex items-center gap-1">

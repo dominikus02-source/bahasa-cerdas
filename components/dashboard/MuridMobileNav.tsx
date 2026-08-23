@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
 import { BackHome } from "@/components/shared/BackHome";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
+import { VerifiedBadge } from "@/components/arena/UserName";
 import {
   Home, Menu as MenuIcon, X, Bell,
   GraduationCap, User, PenLine, MessageCircle, Settings, Shield, Zap,
@@ -34,7 +35,7 @@ const DRAWER_ITEMS: { href: string; label: string; icon: any }[] = [
   { href: "/murid/pengaturan", label: "Pengaturan", icon: Settings },
 ];
 
-export default function MuridMobileNav({ fullName, role, isFounder }: { fullName: string; role: string; isFounder: boolean }) {
+export default function MuridMobileNav({ fullName, role, isFounder, isPremium }: { fullName: string; role: string; isFounder: boolean; isPremium?: boolean }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -104,7 +105,7 @@ export default function MuridMobileNav({ fullName, role, isFounder }: { fullName
                 <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
                   {fullName?.charAt(0)?.toUpperCase() || "M"}
                 </div>
-                <span className="font-bold text-gray-900 dark:text-slate-100 truncate">{fullName}</span>
+                <span className="flex items-center gap-1.5 font-bold text-gray-900 dark:text-slate-100 truncate">{fullName}<VerifiedBadge isFounder={isFounder} isPremium={isPremium} size={14} /></span>
               </div>
               <ThemeToggle />
               <button onClick={close} className="p-2 hover:bg-gray-100 rounded-xl transition-colors dark:hover:bg-slate-800">
