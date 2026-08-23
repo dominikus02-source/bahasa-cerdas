@@ -486,7 +486,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
                   >
                     {String.fromCharCode(65 + i)}
                   </span>
-                  <span className="flex-1 text-gray-800 dark:text-slate-200">{opt}</span>
+                  <span className="flex-1 text-gray-800">{opt}</span>
                 </button>
               ))}
               {q.tipe === "benar_salah" && (
@@ -494,8 +494,8 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
                   <button
                     onClick={() => handleAnswer("Benar")}
                     disabled={submitting}
-                    className={`flex-1 p-4 rounded-2xl border-2 font-semibold transition-all
- ${selectedAnswer === "Benar" ? "border-emerald-500 bg-emerald-50" : "border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 hover:border-emerald-300 hover:bg-emerald-50/50"}
+                    className={`flex-1 p-4 rounded-2xl border-2 font-semibold transition-all dark:text-slate-100
+ ${selectedAnswer === "Benar" ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40" : "border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 hover:border-emerald-300 hover:bg-emerald-50/50"}
                       ${submitting ? "opacity-50 cursor-not-allowed" : ""}
                       ${isDasar ? "p-5 text-lg" : "text-base"}
                     `}
@@ -506,8 +506,8 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
                   <button
                     onClick={() => handleAnswer("Salah")}
                     disabled={submitting}
-                    className={`flex-1 p-4 rounded-2xl border-2 font-semibold transition-all
- ${selectedAnswer === "Salah" ? "border-red-500 bg-red-50" : "border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 hover:border-red-300 hover:bg-red-50/50"}
+                    className={`flex-1 p-4 rounded-2xl border-2 font-semibold transition-all dark:text-slate-100
+ ${selectedAnswer === "Salah" ? "border-red-500 bg-red-50 dark:bg-red-950/40" : "border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 hover:border-red-300 hover:bg-red-50/50"}
                       ${submitting ? "opacity-50 cursor-not-allowed" : ""}
                       ${isDasar ? "p-5 text-lg" : "text-base"}
                     `}
@@ -528,7 +528,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
                         handleAnswer((e.target as HTMLInputElement).value.trim())
                       }
                     }}
- className={`flex-1 rounded-2xl border-2 border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 font-medium focus:border-violet-500 focus:outline-none ${isDasar ? "p-5 text-lg" : "p-4 text-base"}`}
+ className={`flex-1 rounded-2xl border-2 border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-gray-900 dark:text-slate-100 placeholder:text-gray-400 dark:placeholder:text-slate-500 font-medium focus:border-violet-500 focus:outline-none ${isDasar ? "p-5 text-lg" : "p-4 text-base"}`}
                     placeholder="Ketik jawaban..."
                   />
                   <button
