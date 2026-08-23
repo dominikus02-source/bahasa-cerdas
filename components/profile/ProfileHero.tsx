@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useTheme } from "next-themes";
+
 import {
   Flame, Sparkles, Settings, Heart, UserPlus, UserCheck, PenLine, Files,
   Users, UserRound, CalendarDays,
@@ -153,17 +153,18 @@ export default function ProfileHero({
     .toUpperCase()
     .slice(0, 2);
 
-  const { resolvedTheme } = useTheme();
   const bgCosmic = getBackgroundStyle(persona.equippedBackground);
-  // Semua gradien PROFILE_BACKGROUNDS berujung warna pekat, jadi begitu latar
-  // kosmetik dipakai hero selalu gelap — teks wajib varian terang apa pun tema.
-  const inv = resolvedTheme !== "dark" && !!bgCosmic;
-  // light: kelas terang; dark: kelas gelap. Saat inv (latar kosmetik), selalu gelap.
-  const t = (light: string, dark: string) => (inv ? dark : `${light} ${dark}`);
-  const rankLabelFilter = resolvedTheme === "dark" || inv ? undefined : "brightness(0.6)";
-  // Nama berwarna (equippedNameColor) memakai varian terang saat hero navy
-  // atau saat latar kosmetik dipakai; hero polos terang → varian gelap.
-  const onDarkName = resolvedTheme === "dark" || !!bgCosmic;
+  // Foreground ditentukan oleh luminance background kosmetik, bukan tema user.
+  // darkText=true → latar terang, pakai tinta gelap. darkText=false → latar gelap, pakai tinta putih.
+  // Tanpa kosmetik → gunakan kedua varian (system theme handles via dark: prefix).
+  const isDarkInk = bgCosmic ? !!bgCosmic.darkText : false;
+  const t = (light: string, dark: string) => (isDarkInk ? dark : `${light} ${dark}`);
+  const rankLabelFilter = isDarkInk ? undefined : "brightness(0.6)";
+
+  // Glass button: tinta gelap untuk latar terang, tinta terang untuk latar gelap/system dark
+  const glassBtn = isDarkInk
+    ? "bg-slate-900/10 text-slate-800 border-slate-900/20 hover:bg-slate-900/15"
+    : "bg-white/10 text-white border-white/20 hover:bg-white/15 dark:bg-white/10 dark:text-white dark:border-white/20 dark:hover:bg-white/15";
 
   return (
     <section
@@ -242,7 +243,7 @@ export default function ProfileHero({
                     name={persona.displayName}
                     color={persona.equippedNameColor}
                     badge={persona.equippedBadge}
-                    onDark={onDarkName}
+                    onDark={isDarkInk}
                     badgeSize={20}
                     isFounder={persona.isFounder}
                     isPremium={persona.isPremium}
@@ -396,10 +397,7 @@ export default function ProfileHero({
                 aria-pressed={!!following}
                 className={`inline-flex h-11 items-center gap-2 rounded-xl px-5 text-sm font-bold transition-all shadow-lg disabled:opacity-60 ${
                   following
- ? t(
-   "bg-slate-900/5 dark:bg-slate-900/10 text-slate-800 dark:text-white border-slate-900/20 dark:border-white/20 hover:bg-slate-900/10 dark:hover:bg-white/15",
-   "bg-white/10 text-white border border-white/20 hover:bg-white/15"
- )
+                    ? glassBtn + " border"
                     : "bg-gradient-to-r from-violet-500 to-purple-600 text-white hover:shadow-xl"
                 }`}
               >
@@ -417,10 +415,7 @@ export default function ProfileHero({
                         "bg-rose-500/20 text-rose-700 dark:text-rose-200 border-rose-300/30",
                         "bg-rose-500/25 text-rose-200 border-rose-300/40"
                       )
- : t(
-   "bg-slate-900/5 dark:bg-slate-900/10 text-slate-800 dark:text-white border-slate-900/20 dark:border-white/20 hover:bg-slate-900/10 dark:hover:bg-white/15",
-   "bg-white/10 text-white hover:bg-white/15"
- )
+                    : glassBtn
                 }`}
               >
                 <Heart

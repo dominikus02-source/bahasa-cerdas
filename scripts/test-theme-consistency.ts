@@ -308,9 +308,9 @@ test("globals.css punya .bc-card-premium + .bc-hero-card + .dark .bc-card-premiu
   const g = read("app/globals.css");
   return g.includes(".bc-card-premium") && g.includes(".bc-hero-card") && g.includes(".dark .bc-card-premium");
 });
-test("ProfileHero memakai bc-hero-card + useTheme", () => {
+test("ProfileHero memakai bc-hero-card + darkText foreground", () => {
   const ph = read("components/profile/ProfileHero.tsx");
-  return ph.includes("bc-hero-card") && ph.includes("useTheme");
+  return ph.includes("bc-hero-card") && (ph.includes("darkText") || ph.includes("isDarkInk"));
 });
 
 // ContinueLearningCard & StudentHomeHero memakai token --px-* (px-card/

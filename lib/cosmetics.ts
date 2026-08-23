@@ -212,6 +212,8 @@ export interface ProfileBackgroundStyle {
   background: string;
   /** Text color override for readability on this background. */
   textColor?: string;
+  /** True = background is light/pastel → use dark ink. False = background is dark → use white ink. */
+  darkText?: boolean;
 }
 
 export const PROFILE_BACKGROUNDS: Record<string, ProfileBackgroundStyle> = {
@@ -219,26 +221,31 @@ export const PROFILE_BACKGROUNDS: Record<string, ProfileBackgroundStyle> = {
     label: "Langit Senja",
     background: "linear-gradient(135deg,#FDE68A 0%,#F97316 40%,#DC2626 70%,#7C2D12 100%)",
     textColor: "#7C2D12",
+    darkText: true,
   },
   "bg-forest": {
     label: "Hutan Ceria",
     background: "linear-gradient(135deg,#D1FAE5 0%,#34D399 40%,#059669 70%,#065F46 100%)",
     textColor: "#065F46",
+    darkText: true,
   },
   "bg-ocean": {
     label: "Laut Biru",
     background: "linear-gradient(135deg,#DBEAFE 0%,#60A5FA 40%,#2563EB 70%,#1E3A5F 100%)",
     textColor: "#1E3A5F",
+    darkText: true,
   },
   "bg-library": {
     label: "Perpustakaan",
     background: "linear-gradient(135deg,#FEF3C7 0%,#D97706 30%,#92400E 60%,#451A03 100%)",
     textColor: "#451A03",
+    darkText: true,
   },
   "bg-galaxy": {
     label: "Galaksi Kata",
     background: "linear-gradient(135deg,#EDE9FE 0%,#8B5CF6 30%,#6D28D9 60%,#1E1B4B 100%)",
     textColor: "#EDE9FE",
+    darkText: false,
   },
 };
 
