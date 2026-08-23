@@ -8,6 +8,7 @@
  *      npx tsx scripts/seed-tka-sd-bank.ts --execute
  */
 
+import "./load-env";
 import { PrismaClient } from "@prisma/client";
 import * as fs from "fs";
 import * as path from "path";
