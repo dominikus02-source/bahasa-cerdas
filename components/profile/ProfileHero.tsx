@@ -160,9 +160,9 @@ export default function ProfileHero({
   const isDarkInk = bgCosmic ? !!bgCosmic.darkText : false;
   // Helper: prefix every class in the dark string with `dark:` so it only
   // activates when the document has the `.dark` class. When isDarkInk=true
-  // (custom dark cosmetic bg), the raw dark string is returned instead.
+  // (light cosmetic bg → dark text needed), the raw light string is returned.
   const darkPrefix = (s: string) => s.split(" ").map(c => `dark:${c}`).join(" ");
-  const t = (light: string, dark: string) => (isDarkInk ? dark : `${light} ${darkPrefix(dark)}`);
+  const t = (light: string, dark: string) => (isDarkInk ? light : `${light} ${darkPrefix(dark)}`);
   const rankLabelFilter = isDarkInk ? undefined : "brightness(0.6)";
 
   // Glass button: tinta gelap untuk latar terang, tinta terang untuk latar gelap/system dark
