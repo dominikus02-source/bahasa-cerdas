@@ -244,8 +244,8 @@ export const PROFILE_BACKGROUNDS: Record<string, ProfileBackgroundStyle> = {
   "bg-galaxy": {
     label: "Galaksi Kata",
     background: "linear-gradient(135deg,#EDE9FE 0%,#8B5CF6 30%,#6D28D9 60%,#1E1B4B 100%)",
-    textColor: "#EDE9FE",
-    darkText: false,
+    textColor: "#1E1B4B",
+    darkText: true,
   },
 };
 
