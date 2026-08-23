@@ -416,10 +416,13 @@ export default function ProfileHero({
                 className={`inline-flex h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition-all shadow-lg border disabled:opacity-60 ${
                   liked
                     ? t(
-                        "bg-rose-500/20 text-rose-700 dark:text-rose-200 border-rose-300/30",
+                        "bg-rose-500/20 text-rose-700 border-rose-300/30 hover:bg-rose-500/30",
                         "bg-rose-500/25 text-rose-200 border-rose-300/40"
                       )
-                    : glassBtn
+                    : t(
+                        "bg-rose-50 text-rose-600 border-rose-200 hover:bg-rose-100",
+                        "bg-white/10 text-white border-white/20 hover:bg-white/15"
+                      )
                 }`}
               >
                 <Heart
@@ -427,7 +430,7 @@ export default function ProfileHero({
                   className={
                     liked
                       ? t("fill-rose-600 text-rose-600", "fill-rose-400 text-rose-400")
-                      : ""
+                      : t("text-rose-500", "")
                   }
                 />
                 {liked ? "Disukai" : "Suka"} · {likeCount.toLocaleString("id-ID")}
