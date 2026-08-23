@@ -204,7 +204,7 @@ export default function ProfilePage() {
         isOwn={false}
         extraChips={
           <>
-            <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold ${isGuru ? "bg-emerald-500/25 text-emerald-200 border border-emerald-300/25" : "bg-violet-500/25 text-violet-200 border border-violet-300/25"}`}>
+            <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold ${isGuru ? "bg-emerald-100 text-emerald-700 border border-emerald-300/50 dark:bg-emerald-500/25 dark:text-emerald-200 dark:border-emerald-300/25" : "bg-violet-100 text-violet-700 border border-violet-300/50 dark:bg-violet-500/25 dark:text-violet-200 dark:border-violet-300/25"}`}>
               <GraduationCap size={11} /> {isGuru ? "Guru" : "Murid"}
             </span>
             {user.isFounder && (
@@ -218,12 +218,12 @@ export default function ProfilePage() {
               </span>
             )}
             {!user.isFounder && !user.isPremium && (
-              <span className="rounded-full px-2.5 py-1 text-[11px] font-bold bg-white/10 border border-white/15 text-white/70">
+              <span className="rounded-full px-2.5 py-1 text-[11px] font-bold bg-slate-100 border border-slate-200 text-slate-600 dark:bg-white/10 dark:border-white/15 dark:text-white/70">
                 Free
               </span>
             )}
             {user.profile?.school && (
-              <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold bg-white/5 border border-white/10 text-white/60">
+              <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold bg-slate-100 border border-slate-200 text-slate-600 dark:bg-white/5 dark:border-white/10 dark:text-white/60">
                 <School size={11} /> {user.profile.school}
               </span>
             )}
@@ -252,8 +252,8 @@ export default function ProfilePage() {
       </section>
 
       {/* Stats grid */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-6">
-        <h3 className="text-sm font-bold text-gray-900 mb-3">Statistik</h3>
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm p-4 mb-6">
+        <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">Statistik</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {[
             { icon: ShoppingBag, value: user.stats.totalKarya, label: "Karya", warna: "from-emerald-500 to-teal-600" },
@@ -263,12 +263,12 @@ export default function ProfilePage() {
             { icon: Download, value: user.stats.totalDownloads, label: "Diunduh", warna: "from-cyan-500 to-blue-600" },
             { icon: Target, value: user.stats.totalMateri, label: "Materi", warna: "from-rose-500 to-pink-600" },
           ].map((s) => (
-            <div key={s.label} className="p-3 rounded-xl bg-gray-50 border border-gray-100 text-center">
+            <div key={s.label} className="p-3 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-700 text-center">
               <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${s.warna} flex items-center justify-center mx-auto mb-1.5 shadow-sm`}>
                 <s.icon size={16} className="text-white" />
               </div>
-              <p className="text-lg font-bold text-gray-900">{s.value}</p>
-              <p className="text-[10px] text-gray-500 font-medium">{s.label}</p>
+              <p className="text-lg font-bold text-gray-900 dark:text-white">{s.value}</p>
+              <p className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">{s.label}</p>
             </div>
           ))}
         </div>
@@ -285,14 +285,14 @@ export default function ProfilePage() {
             <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-sm">
               <PenLine size={15} className="text-white" />
             </span>
-            <h3 className="font-bold text-gray-900">Karya {user.fullName.split(" ")[0]}</h3>
+            <h3 className="font-bold text-gray-900 dark:text-white">Karya {user.fullName.split(" ")[0]}</h3>
             <span className="text-xs text-gray-400">({user.stats.totalKarya})</span>
           </div>
 
           {!user.works || user.works.length === 0 ? (
-            <div className="text-center py-10 bg-gray-50 rounded-2xl border border-gray-100">
+            <div className="text-center py-10 bg-gray-50 dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700">
               <BookOpen size={28} className="mx-auto text-gray-300 mb-2" />
-              <p className="text-sm text-gray-400">Belum ada karya.</p>
+              <p className="text-sm text-gray-400 dark:text-gray-500">Belum ada karya.</p>
             </div>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2">
@@ -300,13 +300,13 @@ export default function ProfilePage() {
                 <Link
                   key={w.id}
                   href={`/arena/feed/${w.id}`}
-                  className="block bg-white rounded-2xl border border-gray-100 p-4 hover:shadow-md hover:border-violet-200 transition-all"
+                  className="block bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 p-4 hover:shadow-md hover:border-violet-200 dark:hover:border-violet-700 transition-all"
                 >
                   <span className="inline-block text-[10px] font-bold uppercase tracking-wide text-violet-600 mb-1.5">
                     {KARYA_LABELS[w.type] || "Karya"}
                   </span>
-                  <h4 className="font-bold text-sm text-gray-900 leading-snug mb-2 line-clamp-2">{w.title}</h4>
-                  <div className="flex items-center gap-3 text-xs text-gray-400">
+                  <h4 className="font-bold text-sm text-gray-900 dark:text-white leading-snug mb-2 line-clamp-2">{w.title}</h4>
+                  <div className="flex items-center gap-3 text-xs text-gray-400 dark:text-gray-500">
                     <span className="flex items-center gap-1"><Heart size={12} />{w.likesCount}</span>
                     <span className="flex items-center gap-1"><Eye size={12} />{w.viewsCount}</span>
                     <span className="ml-auto">{new Date(w.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}</span>
