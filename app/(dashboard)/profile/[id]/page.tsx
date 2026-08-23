@@ -233,9 +233,11 @@ export default function ProfilePage() {
         onLikeToggle={toggleLike}
       />
 
-      {/* Social proof strip — statistik ringkas di atas konten */}
+      {/* Social proof strip — statistik ringkas di atas konten.
+          "dark" class forces Tailwind dark: variants because the section has
+          a hardcoded dark gradient background regardless of page theme. */}
       <section
-        className="mb-6 rounded-[24px] p-4 sm:p-5 shadow-lg"
+        className="dark mb-6 rounded-[24px] p-4 sm:p-5 shadow-lg"
         style={{ background: "linear-gradient(140deg, #141230 0%, #231a52 60%, #34166e 100%)" }}
       >
         <SocialProofStrip
