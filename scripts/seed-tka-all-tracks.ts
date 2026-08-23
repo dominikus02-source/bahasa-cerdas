@@ -99,7 +99,8 @@ function loadTrackFiles(trackKey: string): { file: string; questions: QuestionIt
 function mapDifficulty(diff: number): string {
   if (diff <= 1) return "EASY";
   if (diff === 2) return "MEDIUM";
-  return "HARD";
+  if (diff === 3) return "HARD";
+  return "VERY_HARD";
 }
 
 function mapKompetensi(section: string): string {

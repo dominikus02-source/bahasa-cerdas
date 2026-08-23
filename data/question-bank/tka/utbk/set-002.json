@@ -1,0 +1,1213 @@
+{
+  "meta": {
+    "product": "TKA_PRACTICE",
+    "track": "TKA_UTBK",
+    "section": "mixed",
+    "set": "set-002",
+    "totalItems": 30,
+    "description": "Enrichment questions — Phase 3A Membaca +10, Phase 3B Kebahasaan +20",
+    "source": "BahasaCerdas Enrichment Phase 3A+3B"
+  },
+  "questions": [
+    {
+      "id": "BC-TKA-UTBK-BACA-SET002-Q001",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "membaca",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 2,
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK",
+      "stem": "Gagasan utama paragraf tersebut adalah...",
+      "passage": "Teknologi pembelajaran digital telah mengubah cara siswa mengakses informasi. Platform daring memungkinkan siswa belajar kapan saja dan di mana saja tanpa terikat jadwal tetap. Namun, akses yang luas ini tidak selalu diimbangi dengan kualitas materi. Banyak platform menyediakan konten tanpa kurikulum yang terstruktur, sehingga siswa kesulitan menentukan urutan belajar yang logis. Guru masih memegang peran penting dalam mengarahkan penggunaan teknologi agar sesuai dengan kebutuhan kurikulum nasional.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Platform daring menggantikan peran guru dalam pembelajaran."
+        },
+        {
+          "id": "B",
+          "text": "Semua platform pembelajaran digital memiliki kualitas materi yang baik."
+        },
+        {
+          "id": "C",
+          "text": "Teknologi pembelajaran digital memiliki potensi tetapi tetap memerlukan peran guru."
+        },
+        {
+          "id": "D",
+          "text": "Siswa tidak membutuhkan bimbingan guru jika sudah menggunakan teknologi."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Paragraf menyajikan dua sisi: keunggulan akses teknologi dan keterbatasan kualitas materi, lalu menyimpulkan peran guru tetap penting. Opsi A terlalu ekstrem (menggantikan), B salah (banyak platform tanpa kurikulum), D bertentangan dengan kesimpulan paragraf.",
+      "tags": [
+        "ide-pokok",
+        "wacana",
+        "teknologi-pendidikan"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3A",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-BACA-SET002-Q002",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "membaca",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 3,
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK",
+      "stem": "Berdasarkan paragraf tersebut, dapat disimpulkan bahwa...",
+      "passage": "Teknologi pembelajaran digital telah mengubah cara siswa mengakses informasi. Platform daring memungkinkan siswa belajar kapan saja dan di mana saja tanpa terikat jadwal tetap. Namun, akses yang luas ini tidak selalu diimbangi dengan kualitas materi. Banyak platform menyediakan konten tanpa kurikulum yang terstruktur, sehingga siswa kesulitan menentukan urutan belajar yang logis. Guru masih memegang peran penting dalam mengarahkan penggunaan teknologi agar sesuai dengan kebutuhan kurikulum nasional.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Penggunaan teknologi dalam pendidikan harus dihindari karena kualitasnya tidak terjamin."
+        },
+        {
+          "id": "B",
+          "text": "Platform daring hanya efektif jika digunakan oleh siswa yang sudah mandiri."
+        },
+        {
+          "id": "C",
+          "text": "Integrasi teknologi pendidikan perlu dikendalikan oleh kebijakan kurikulum yang dipandu guru."
+        },
+        {
+          "id": "D",
+          "text": "Guru tidak perlu belajar teknologi karena peran mereka sudah digantikan platform."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Pengaruh negatif teknologi pendidikan tidak dijelaskan dalam paragraf. Paragraf justru menunjukkan potensi positif teknologi (akses belajar kapan saja) meskipun ada keterbatasan. Teks menekankan perlunya pengarahan guru, bukan penolakan teknologi.",
+      "tags": [
+        "inferensi",
+        "wacana",
+        "teknologi-pendidikan"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3A",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-BACA-SET002-Q003",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "membaca",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 2,
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK",
+      "stem": "Tujuan penulis menyampaikan paragraf tersebut adalah untuk...",
+      "passage": "Teknologi pembelajaran digital telah mengubah cara siswa mengakses informasi. Platform daring memungkinkan siswa belajar kapan saja dan di mana saja tanpa terikat jadwal tetap. Namun, akses yang luas ini tidak selalu diimbangi dengan kualitas materi. Banyak platform menyediakan konten tanpa kurikulum yang terstruktur, sehingga siswa kesulitan menentukan urutan belajar yang logis. Guru masih memegang peran penting dalam mengarahkan penggunaan teknologi agar sesuai dengan kebutuhan kurikulum nasional.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Mengkritik seluruh platform pembelajaran daring yang ada saat ini."
+        },
+        {
+          "id": "B",
+          "text": "Menjelaskan bahwa teknologi pendidikan tidak berguna bagi siswa."
+        },
+        {
+          "id": "C",
+          "text": "Memberikan gambaran seimbang tentang manfaat dan keterbatasan teknologi pembelajaran."
+        },
+        {
+          "id": "D",
+          "text": "Membujuk siswa untuk berhenti menggunakan platform daring."
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "Penulis menyajikan pandangan seimbang: manfaat akses luas dan keterbatasan kualitas, lalu menegaskan peran guru. Tujuannya bukan mengkritik atau membujuk, tetapi memberikan perspektif yang komprehensif tentang teknologi pembelajaran.",
+      "tags": [
+        "tujuan-penulis",
+        "wacana",
+        "teknologi-pendidikan"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3A",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-BACA-SET002-Q004",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "membaca",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 1,
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK",
+      "stem": "Informasi yang tersurat dalam paragraf tersebut adalah...",
+      "passage": "Teknologi pembelajaran digital telah mengubah cara siswa mengakses informasi. Platform daring memungkinkan siswa belajar kapan saja dan di mana saja tanpa terikat jadwal tetap. Namun, akses yang luas ini tidak selalu diimbangi dengan kualitas materi. Banyak platform menyediakan konten tanpa kurikulum yang terstruktur, sehingga siswa kesulitan menentukan urutan belajar yang logis. Guru masih memegang peran penting dalam mengarahkan penggunaan teknologi agar sesuai dengan kebutuhan kurikulum nasional.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Seluruh platform daring memiliki kurikulum yang terstruktur."
+        },
+        {
+          "id": "B",
+          "text": "Siswa hanya bisa belajar melalui platform daring."
+        },
+        {
+          "id": "C",
+          "text": "Guru tidak memiliki peran dalam penggunaan teknologi pendidikan."
+        },
+        {
+          "id": "D",
+          "text": "Platform daring memungkinkan siswa belajar tanpa terikat jadwal tetap."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kalimat kedua secara eksplisit menyatakan bahwa platform daring memungkinkan siswa belajar kapan saja dan di mana saja tanpa terikat jadwal tetap. Opsi A bertentangan dengan teks ('banyak platform tanpa kurikulum'), C bertentangan dengan paragraf, dan D bukan informasi tersurat.",
+      "tags": [
+        "informasi-tersurat",
+        "wacana",
+        "teknologi-pendidikan"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3A",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-BACA-SET002-Q005",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "membaca",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 4,
+      "cognitive": "EVALUASI",
+      "domain": "AKADEMIK",
+      "stem": "Jika paragraf tersebut digunakan sebagai dasar argumentasi, pernyataan mana yang PALING didukung oleh teks?",
+      "passage": "Teknologi pembelajaran digital telah mengubah cara siswa mengakses informasi. Platform daring memungkinkan siswa belajar kapan saja dan di mana saja tanpa terikat jadwal tetap. Namun, akses yang luas ini tidak selalu diimbangi dengan kualitas materi. Banyak platform menyediakan konten tanpa kurikulum yang terstruktur, sehingga siswa kesulitan menentukan urutan belajar yang logis. Guru masih memegang peran penting dalam mengarahkan penggunaan teknologi agar sesuai dengan kebutuhan kurikulum nasional.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pemerintah harus melarang penggunaan platform daring dalam pendidikan."
+        },
+        {
+          "id": "B",
+          "text": "Investasi teknologi pendidikan tanpa peningkatan kapasitas guru akan mengurangi efektivitas pembelajaran."
+        },
+        {
+          "id": "C",
+          "text": "Platform daring lebih baik daripada pembelajaran tatap muka."
+        },
+        {
+          "id": "D",
+          "text": "Siswa yang tidak menggunakan teknologi akan tertinggal secara akademis."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Teks menunjukkan bahwa akses teknologi yang luas tanpa kualitas materi dan kurikulum terstruktur menyebabkan masalah, dan guru tetap penting. Argumen yang paling didukung adalah bahwa investasi teknologi perlu diimbangi dengan peningkatan kapasitas guru. Namun, opsi A (melarang) adalah respons berlebihan yang tidak didukung teks.",
+      "tags": [
+        "kesimpulan",
+        "evaluasi",
+        "teknologi-pendidikan"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3A",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-BACA-SET002-Q006",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "membaca",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 1,
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL",
+      "stem": "Pernyataan yang sesuai dengan isi teks tersebut adalah...",
+      "passage": "Kesehatan mental remaja di Indonesia menghadapi tantangan serius. survei nasional tahun 2023 menunjukkan bahwa satu dari tiga remaja mengalami stres akademik yang signifikan. Faktor utamanya meliputi tekanan ujian, ekspektasi orang tua, dan penggunaan media sosial yang berlebihan. Meskipun demikian, kesadaran masyarakat tentang pentingnya kesehatan mental masih rendah. Banyak remaja yang enggan mencari bantuan profesional karena stigma sosial yang masih kuat.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Stres akademik tidak berpengaruh signifikan terhadap kesehatan mental remaja."
+        },
+        {
+          "id": "B",
+          "text": "Penggunaan media sosial adalah satu-satunya penyebab stres pada remaja."
+        },
+        {
+          "id": "C",
+          "text": "Stigma sosial membuat sebagian remaja enggan mencari bantuan profesional."
+        },
+        {
+          "id": "D",
+          "text": "Seluruh remaja Indonesia mengalami gangguan kesehatan mental."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Teks secara eksplisit menyatakan bahwa banyak remaja enggan mencari bantuan profesional karena stigma sosial. Opsi A bertentangan dengan data survei, B terlalu sempit (ada faktor lain), D berlebihan ('seluruh').",
+      "tags": [
+        "opini-fakta",
+        "wacana",
+        "kesehatan-mental"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3A",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-BACA-SET002-Q007",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "membaca",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 3,
+      "cognitive": "ANALISIS",
+      "domain": "SOSIAL",
+      "stem": "Kutipan berikut ini merupakan opini, bukan fakta, karena...",
+      "passage": "Kesehatan mental remaja di Indonesia menghadapi tantangan serius. survei nasional tahun 2023 menunjukkan bahwa satu dari tiga remaja mengalami stres akademik yang signifikan. Faktor utamanya meliputi tekanan ujian, ekspektasi orang tua, dan penggunaan media sosial yang berlebihan. Meskipun demikian, kesadaran masyarakat tentang pentingnya kesehatan mental masih rendah. Banyak remaja yang enggan mencari bantuan profesional karena stigma sosial yang masih kuat.",
+      "options": [
+        {
+          "id": "A",
+          "text": "\"Survei nasional tahun 2023 menunjukkan bahwa satu dari tiga remaja mengalami stres akademik yang signifikan.\""
+        },
+        {
+          "id": "B",
+          "text": "\"Kesadaran masyarakat tentang pentingnya kesehatan mental masih rendah.\""
+        },
+        {
+          "id": "C",
+          "text": "\"Faktor utamanya meliputi tekanan ujian, ekspektasi orang tua, dan penggunaan media sosial yang berlebihan.\""
+        },
+        {
+          "id": "D",
+          "text": "\"Banyak remaja yang enggan mencari bantuan profesional karena stigma sosial yang masih kuat.\""
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Kutipan B adalah opini karena menggunakan kata 'masih rendah' yang merupakan penilaian subjektif tentang kondisi kesadaran masyarakat. Kutipan A adalah fakta berdasarkan data survei. Kutipan C dan D menjelaskan faktor dan fenomena yang dapat diverifikasi.",
+      "tags": [
+        "opini-fakta",
+        "wacana",
+        "kesehatan-mental"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3A",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-BACA-SET002-Q008",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "membaca",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 2,
+      "cognitive": "ANALISIS",
+      "domain": "SOSIAL",
+      "stem": "Kesimpulan yang paling tepat berdasarkan keseluruhan isi bacaan adalah...",
+      "passage": "Kesehatan mental remaja di Indonesia menghadapi tantangan serius. survei nasional tahun 2023 menunjukkan bahwa satu dari tiga remaja mengalami stres akademik yang signifikan. Faktor utamanya meliputi tekanan ujian, ekspektasi orang tua, dan penggunaan media sosial yang berlebihan. Meskipun demikian, kesadaran masyarakat tentang pentingnya kesehatan mental masih rendah. Banyak remaja yang enggan mencari bantuan profesional karena stigma sosial yang masih kuat.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Media sosial adalah penyebab utama gangguan kesehatan mental remaja."
+        },
+        {
+          "id": "B",
+          "text": "Kesehatan mental remaja perlu mendapat perhatian serius mengingat tingginya tingkat stres dan rendahnya kesadaran masyarakat."
+        },
+        {
+          "id": "C",
+          "text": "Survei nasional membuktikan bahwa seluruh remaja Indonesia mengalami stres."
+        },
+        {
+          "id": "D",
+          "text": "Stigma sosial terhadap kesehatan mental sudah hilang sepenuhnya."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Berdasarkan data stres akademik, faktor sosial (ekspektasi orang tua, media sosial), rendahnya kesadaran, dan stigma — upaya yang diperlukan bersifat komprehensif. Opsi A bertentangan dengan data, B terlalu sempit, D berlebihan.",
+      "tags": [
+        "inti-bacaan",
+        "wacana",
+        "kesehatan-mental"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3A",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-BACA-SET002-Q009",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "membaca",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 4,
+      "cognitive": "EVALUASI",
+      "domain": "SOSIAL",
+      "stem": "Jika seorang policymaker ingin menggunakan data dari teks tersebut untuk merancang kebijakan, langkah yang PALING tepat adalah...",
+      "passage": "Kesehatan mental remaja di Indonesia menghadapi tantangan serius. survei nasional tahun 2023 menunjukkan bahwa satu dari tiga remaja mengalami stres akademik yang signifikan. Faktor utamanya meliputi tekanan ujian, ekspektasi orang tua, dan penggunaan media sosial yang berlebihan. Meskipun demikian, kesadaran masyarakat tentang pentingnya kesehatan mental masih rendah. Banyak remaja yang enggan mencari bantuan profesional karena stigma sosial yang masih kuat.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Melarang seluruh penggunaan media sosial bagi remaja di bawah 18 tahun."
+        },
+        {
+          "id": "B",
+          "text": "Mengurangi beban akademis dan memperkuat layanan konseling di sekolah."
+        },
+        {
+          "id": "C",
+          "text": "Menghapus seluruh program ujian nasional untuk menghilangkan stres akademik."
+        },
+        {
+          "id": "D",
+          "text": "Mengabaikan data tersebut karena survei tidak selalu akurat."
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "Teks menunjukkan stres akademik dan rendahnya kesadaran sebagai masalah utama. Langkah paling tepat adalah mengurangi beban akademis dan memperkuat layanan konseling — ini langsung menangani akar masalah tanpa efek samping berlebihan. Opsi A dan C terlalu ekstrem, D mengabaikan data.",
+      "tags": [
+        "inferensi",
+        "evaluasi",
+        "kesehatan-mental"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3A",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-BACA-SET002-Q010",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "membaca",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 3,
+      "cognitive": "ANALISIS",
+      "domain": "SOSIAL",
+      "stem": "Kesimpulan yang paling tepat berdasarkan seluruh isi bacaan adalah...",
+      "passage": "Kesehatan mental remaja di Indonesia menghadapi tantangan serius. survei nasional tahun 2023 menunjukkan bahwa satu dari tiga remaja mengalami stres akademik yang signifikan. Faktor utamanya meliputi tekanan ujian, ekspektasi orang tua, dan penggunaan media sosial yang berlebihan. Meskipun demikian, kesadaran masyarakat tentang pentingnya kesehatan mental masih rendah. Banyak remaja yang enggan mencari bantuan profesional karena stigma sosial yang masih kuat.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Remaja Indonesia saat ini tidak memiliki masalah kesehatan mental yang signifikan."
+        },
+        {
+          "id": "B",
+          "text": "Peran orang tua dalam mendidik anak adalah faktor terpenting dalam kesehatan mental remaja."
+        },
+        {
+          "id": "C",
+          "text": "Upaya penanganan kesehatan mental remaja perlu dilakukan secara komprehensif melalui pendekatan akademis, sosial, dan profesional."
+        },
+        {
+          "id": "D",
+          "text": "Media sosial harus dihapus dari kehidupan remaja untuk mengatasi masalah kesehatan mental."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Berdasarkan data stres akademik, faktor sosial (ekspektasi orang tua, media sosial), rendahnya kesadaran, dan stigma — upaya yang diperlukan bersifat komprehensif. Opsi A bertentangan dengan data, B terlalu sempit, D berlebihan.",
+      "tags": [
+        "kesimpulan",
+        "sintesis",
+        "kesehatan-mental"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3A",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-KEB-SET001-Q001",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "kebahasaan",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 1,
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK",
+      "stem": "Makna kata \"selaras\" dalam konteks kalimat tersebut paling dekat dengan...",
+      "passage": "Pemerintah provinsi berencana merevisi regulasi transportasi daring agar lebih selaras dengan kebutuhan masyarakat urban. Revisi ini diharapkan dapat mengurangi konflik antara operator transportasi konvensional dan platform digital.",
+      "options": [
+        {
+          "id": "A",
+          "text": "berlawanan arah"
+        },
+        {
+          "id": "B",
+          "text": "sesuai dan sejalan"
+        },
+        {
+          "id": "C",
+          "text": "tumpang tindih"
+        },
+        {
+          "id": "D",
+          "text": "berlomba-lomba"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Konteks \"merevisi regulasi agar lebih selaras dengan kebutuhan\" menunjukkan bahwa regulasi harus disesuaikan dan sejalan dengan kebutuhan. Opsi A kebalikan, C dan D tidak sesuai konteks penyesuaian kebijakan.",
+      "tags": [
+        "KB-01",
+        "sinonim-kontekstual",
+        "kebijakan-publik"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3B",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-KEB-SET001-Q002",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "kebahasaan",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 2,
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK",
+      "stem": "Hubungan makna yang tepat antara pasang kata \"restorasi ekosistem\" dan \"degradasi lingkungan\" adalah...",
+      "passage": null,
+      "options": [
+        {
+          "id": "A",
+          "text": "sinonim — keduanya merujuk pada kerusakan alam"
+        },
+        {
+          "id": "B",
+          "text": "antonim — yang pertama bersifat pemulihan, yang kedua bersifat perusakan"
+        },
+        {
+          "id": "C",
+          "text": "homonim — bentuk sama tetapi makna berbeda"
+        },
+        {
+          "id": "D",
+          "text": "hiponim — yang kedua adalah jenis dari yang pertama"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "\"Restorasi ekosistem\" berarti pemulihan, sedangkan \"degradasi lingkungan\" berarti perusakan — keduanya berlawanan arah (antonim). A salah karena keduanya bukan sinonim. C salah karena bukan homonim. D salah karena bukan hubungan jenis.",
+      "tags": [
+        "KB-01",
+        "hubungan-makna",
+        "lingkungan"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3B",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-KEB-SET001-Q003",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "kebahasaan",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 3,
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK",
+      "stem": "Kata yang paling tepat untuk menggantikan kata berimbuhan \"mengkaji\" dalam konteks akademis adalah...",
+      "passage": "Tim peneliti dari Universitas Indonesia sedang mengkaji dampak perubahan iklim terhadap produktivitas pertanian di Jawa Barat. Hasil kajian ini diharapkan dapat menjadi dasar perumusan kebijakanadaptasi iklim.",
+      "options": [
+        {
+          "id": "A",
+          "text": "mempelajari secara mendalam"
+        },
+        {
+          "id": "B",
+          "text": "melihat sekilas"
+        },
+        {
+          "id": "C",
+          "text": "menulis ulang"
+        },
+        {
+          "id": "D",
+          "text": "mengabaikan sepenuhnya"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "\"Mengkaji\" dalam konteks penelitian akademis berarti mempelajari atau meneliti secara mendalam. Konteks kalimat (peneliti, universitas, dampak) memperkuat makna ini. Opsi B, C, dan D tidak sesuai dengan konteks penelitian.",
+      "tags": [
+        "KB-01",
+        "makna-imbuhan",
+        "akademis"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3B",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-KEB-SET001-Q004",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "kebahasaan",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 4,
+      "cognitive": "EVALUASI",
+      "domain": "AKADEMIK",
+      "stem": "Analisis semantik yang paling tepat terhadap penggunaan kata \"keseimbangan\" dalam konteks kebijakan publik adalah...",
+      "passage": "Pemerintah dituntut untuk menemukan keseimbangan antara pertumbuhan ekonomi dan perlindungan lingkungan. Kebijakan yang terlalu berpihak pada industrialisasi akan mengorbankan ekosistem, sementara regulasi lingkungan yang terlalu ketat dapat menghambat investasi asing.",
+      "options": [
+        {
+          "id": "A",
+          "text": "\"keseimbangan\" adalah metafora yang menggambarkan posisi netral tanpa komitmen."
+        },
+        {
+          "id": "B",
+          "text": "\"keseimbangan\" merujuk pada kompromi aktif yang mempertimbangkan dua kepentingan yang berpotensi bertentangan."
+        },
+        {
+          "id": "C",
+          "text": "\"keseimbangan\" adalah istilah teknis ekonomi yang hanya berlaku dalam konteks perdagangan."
+        },
+        {
+          "id": "D",
+          "text": "\"keseimbangan\" menggambarkan kondisi statis yang tidak berubah seiring waktu."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Dalam konteks kebijakan publik, \"keseimbangan\" merujuk pada upaya aktif mempertimbangkan dua kepentingan (ekonomi dan lingkungan) yang berpotensi bertentangan — bukan sekadar posisi netral (A), bukan istilah teknis sempit (C), dan bukan kondisi statis (D).",
+      "tags": [
+        "KB-01",
+        "analogi-semantik",
+        "kebijakan-publik"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3B",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-KEB-SET001-Q005",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "kebahasaan",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 4,
+      "cognitive": "EVALUASI",
+      "domain": "AKADEMIK",
+      "stem": "Makna kata \"inklusif\" dalam paragraf tersebut paling tepat diartikan sebagai...",
+      "passage": "Program pemberdayaan masyarakat harus bersifat inklusif, artinya tidak meninggalkan kelompok rentan seperti lansia, difabel, dan masyarakat adat. Desain program yang tidak memperhatikan keragaman justru akan memperdalam kesenjangan yang sudah ada.",
+      "options": [
+        {
+          "id": "A",
+          "text": "hanya untuk golongan tertentu yang memenuhi kriteria"
+        },
+        {
+          "id": "B",
+          "text": "merangkum semua pendapat tanpa seleksi"
+        },
+        {
+          "id": "C",
+          "text": "memperhitungkan dan melibatkan seluruh kelompok masyarakat tanpa diskriminasi"
+        },
+        {
+          "id": "D",
+          "text": "menggabungkan beberapa program menjadi satu"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Dalam konteks pemberdayaan masyarakat, \"inklusif\" berarti memperhitungkan dan melibatkan seluruh kelompok masyarakat tanpa diskriminasi. Kalimat berikutnya memperkuat makna ini dengan menyebutkan \"tidak meninggalkan kelompok rentan\". Opsi A kebalikan, B dan D tidak sesuai konteks.",
+      "tags": [
+        "KB-05",
+        "makna-kontekstual",
+        "kebijakan-sosial"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3B",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-KEB-SET001-Q006",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "kebahasaan",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 1,
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK",
+      "stem": "Makna kata \"implisit\" dalam konteks tersebut adalah...",
+      "passage": "Pernyataan presiden tentang pentingnya reformasi birokrasi mengandung pesan implisit bahwa aparat saat ini belum bekerja secara optimal.",
+      "options": [
+        {
+          "id": "A",
+          "text": "tertulis secara resmi dalam dokumen"
+        },
+        {
+          "id": "B",
+          "text": "tersembunyi dan tidak dapat dipahami"
+        },
+        {
+          "id": "C",
+          "text": "tersirat dan tidak dinyatakan secara langsung"
+        },
+        {
+          "id": "D",
+          "text": "bertentangan dengan pernyataan resmi"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "\"Implisit\" berarti tersirat atau tidak dinyatakan secara langsung tetapi dapat dipahami dari konteks. Kalimat kedua menjelaskan bahwa pesan tersebut tersirat dari pernyataan presiden. Opsi A adalah definisi \"eksplisit\", B terlalu negatif, D tidak sesuai.",
+      "tags": [
+        "KB-01",
+        "makna-kata",
+        "bahasa-resmi"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3B",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-KEB-SET001-Q007",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "kebahasaan",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 2,
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK",
+      "stem": "Paragraf berikut seharusnya diawali dengan kalimat topik yang menunjukkan...",
+      "passage": "Pendekatan belajar konstruktivis menekankan bahwa pengetahuan dibangun oleh siswa sendiri melalui interaksi dengan lingkungan. Guru berperan sebagai fasilitator, bukan satu-satunya sumber informasi. Metode seperti diskusi kelompok, proyek kolaboratif, dan pemecahan masalah nyata lebih efektif daripada ceramah satu arah.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kritik terhadap metode pembelajaran konvensional"
+        },
+        {
+          "id": "B",
+          "text": "Prinsip dasar pendekatan konstruktivis dalam pembelajaran"
+        },
+        {
+          "id": "C",
+          "text": "Perbandingan semua teori belajar yang ada"
+        },
+        {
+          "id": "D",
+          "text": "Daftar metode pembelajaran yang harus digunakan guru"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Paragraf menjelaskan prinsip dasar konstruktivis: pengetahuan dibangun siswa, guru sebagai fasilitator, dan metode yang efektif. Kalimat topik harus merangkum prinsip-prinsip ini. Opsi A terlalu sempit (bukan sekadar kritik), C berlebihan (bukan semua teori), D terlalu instruktif.",
+      "tags": [
+        "KB-02",
+        "kalimat-topik",
+        "pendidikan"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3B",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-KEB-SET001-Q008",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "kebahasaan",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 3,
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK",
+      "stem": "Urutan kalimat yang paling koheren untuk paragraf tersebut adalah...",
+      "passage": "(1) Tanpa perencanaan yang matang, proyek infrastruktur hanya akan menjadi pemborosan anggaran. (2) Pemerintah daerah telah mengalokasikan dana besar untuk pembangunan jalan tol baru. (3) Oleh karena itu, perlu dilakukan studi kelayakan sebelum proyek dimulai. (4) Namun, realisasi proyek sering kali terhambat oleh masalah pembebasan lahan.",
+      "options": [
+        {
+          "id": "A",
+          "text": "1-2-3-4"
+        },
+        {
+          "id": "B",
+          "text": "2-4-1-3"
+        },
+        {
+          "id": "C",
+          "text": "2-1-4-3"
+        },
+        {
+          "id": "D",
+          "text": "3-2-4-1"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Urutan logis: (2) pernyataan awal tentang alokasi dana → (4) masalah pembebasan lahan sebagai penghambat → (1) akibat tanpa perencanaan → (3) kesimpulan studi kelayakan. Ini membentuk alur: fakta → masalah → akibat → solusi.",
+      "tags": [
+        "KB-02",
+        "koherensi",
+        "kebijakan-infrastruktur"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3B",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-KEB-SET001-Q009",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "kebahasaan",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 3,
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK",
+      "stem": "Kalimat yang efektif dan tidak menimbulkan ambiguitas adalah...",
+      "passage": null,
+      "options": [
+        {
+          "id": "A",
+          "text": "Melihat kondisi tersebut, maka diperlukan upaya bersama."
+        },
+        {
+          "id": "B",
+          "text": "Kondisi tersebut memerlukan upaya bersama dari seluruh pemangku kepentingan."
+        },
+        {
+          "id": "C",
+          "text": "Dengan melihat kondisi tersebut, upaya bersama perlu untuk dilakukan."
+        },
+        {
+          "id": "D",
+          "text": "Upaya bersama perlu dilakukan, dengan kondisi yang melihat hal tersebut."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kalimat B efektif: subjek jelas (kondisi), predikat jelas (memerlukan), objek jelas (upaya bersama), dan pelengkap (dari seluruh pemangku kepentingan). Kalimat A menggunakan konstruksi passif yang lemah. Kalimat C dan D memiliki struktur yang rancu dan ambiguitas.",
+      "tags": [
+        "KB-03",
+        "kalimat-efektif",
+        "kejelasan-struktur"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3B",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-KEB-SET001-Q010",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "kebahasaan",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 1,
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK",
+      "stem": "Penulisan kata yang benar sesuai EYD terbaru adalah...",
+      "passage": null,
+      "options": [
+        {
+          "id": "A",
+          "text": "Akuisisi perusahaan tersebut mengubah struktur pasar telekomunikasi."
+        },
+        {
+          "id": "B",
+          "text": "Akuisisi perusahaan tersebut mengubah struktur pasar telecomunications."
+        },
+        {
+          "id": "C",
+          "text": "Akuisisi perusahaan itu mengubah struktur pasar telekomunikasi."
+        },
+        {
+          "id": "D",
+          "text": "Akuisisi perusahaan itu mengubah struktur pasar telekommunikasi."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kata \"akuisisi\" adalah bentuk serapan yang sudah diterima dalam EYD. Kata \"telekomunikasi\" ditulis dengan satu \"m\" dan satu \"k\". Opsi B menggunakan istilah Inggris. Opsi C salah ejaan \"telekomunikasi\". Opsi D memiliki huruf kembar yang salah.",
+      "tags": [
+        "KB-04",
+        "ejaan",
+        "kata-serapan"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3B",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-KEB-SET001-Q011",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "kebahasaan",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 2,
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK",
+      "stem": "Tanda baca yang paling tepat untuk melengkapi kutipan tersebut adalah...",
+      "passage": "Presiden menyatakan \"pembangunan infrastruktur harus merata ke seluruh Indonesia\" dalam pidato kenegaraannya.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Presiden menyatakan \"pembangunan infrastruktur harus merata ke seluruh Indonesia,\" dalam pidato kenegaraannya."
+        },
+        {
+          "id": "B",
+          "text": "Presiden menyatakan, \"pembangunan infrastruktur harus merata ke seluruh Indonesia\" dalam pidato kenegaraannya."
+        },
+        {
+          "id": "C",
+          "text": "Presiden menyatakan. \"pembangunan infrastruktur harus merata ke seluruh Indonesia\" dalam pidato kenegaraannya."
+        },
+        {
+          "id": "D",
+          "text": "Presiden menyatakan \"pembangunan infrastruktur harus merata ke seluruh Indonesia\" di pidato kenegaraannya."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Ketika kutipan langsung mengikuti kata kerja (\"menyatakan\"), tanda koma ditempatkan SEBELUM tanda kutip pembuka. Opsi A memiliki koma di tempat yang salah. Opsi C menggunakan titik setelah \"menyatakan\". Opsi D menggunakan \"di\" bukan \"dalam\".",
+      "tags": [
+        "KB-04",
+        "tanda-baca",
+        "kutipan"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3B",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-KEB-SET001-Q012",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "kebahasaan",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 3,
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK",
+      "stem": "Penulisan angka dan singkatan dalam kalimat berikut yang benar adalah...",
+      "passage": "Dana sebesar rp. 500 juta telah dialokasikan untuk program pemberdayaan masyarakat di 5 (lima) kecamatan.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Rp500 juta telah dialokasikan untuk program pemberdayaan masyarakat di lima kecamatan."
+        },
+        {
+          "id": "B",
+          "text": "Rp. 500 juta telah dialokasikan untuk program pemberdayaan masyarakat di 5 kecamatan."
+        },
+        {
+          "id": "C",
+          "text": "Rp 500.000.000 telah dialokasikan untuk program pemberdayaan masyarakat di 5 kecamatan."
+        },
+        {
+          "id": "D",
+          "text": "Rp500 juta telah dialokasikan untuk program pemberdayaan masyarakat di V kecamatan."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Menurut EYD: \"Rp\" ditulis tanpa titik setelahnya, tanpa spasi sebelum angka. Angka dalam kalimat sebaiknya ditulis dengan angka untuk jumlah besar, dan kata untuk angka kecil (<10). Opsi B memiliki titik setelah Rp. Opsi C terlalu detail. Opsi D menggunakan angka Romawi yang tidak tepat.",
+      "tags": [
+        "KB-04",
+        "ejaan",
+        "angka-singkatan"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3B",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-KEB-SET001-Q013",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "kebahasaan",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 3,
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK",
+      "stem": "Kata yang paling tepat untuk menggantikan kata \"memfungsikan\" agar sesuai dengan penggunaan bahasa Indonesia yang baku adalah...",
+      "passage": "Pemerintah daerah berencana memfungsikan kembali gedung bekas pabrik sebagai pusat kegiatan seni dan budaya masyarakat.",
+      "options": [
+        {
+          "id": "A",
+          "text": "mengaktifkan"
+        },
+        {
+          "id": "B",
+          "text": "menghancurkan"
+        },
+        {
+          "id": "C",
+          "text": "menjual"
+        },
+        {
+          "id": "D",
+          "text": "mengosongkan"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "\"Memfungsikan\" adalah serapan dari bahasa Inggris \"to function\" yang kurang lazim dalam bahasa Indonesia baku. Kata \"mengaktifkan\" lebih sesuai dan baku. Opsi B, C, dan D memiliki makna yang bertentangan dengan konteks \"menggunakan kembali\".",
+      "tags": [
+        "KB-05",
+        "kata-baku",
+        "kebijakan-publik"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3B",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-KEB-SET001-Q014",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "kebahasaan",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 3,
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK",
+      "stem": "Kalimat yang menggunakan imbuhan paling tepat adalah...",
+      "passage": null,
+      "options": [
+        {
+          "id": "A",
+          "text": "Kami telah menindak lanjuti laporan tersebut."
+        },
+        {
+          "id": "B",
+          "text": "Kami telah menindaklanjuti laporan tersebut."
+        },
+        {
+          "id": "C",
+          "text": "Kami telah melakukan penindaklanjutan terhadap laporan tersebut."
+        },
+        {
+          "id": "D",
+          "text": "Kami telah menindak-lanjuti laporan tersebut."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "\"Menindaklanjuti\" ditulis satu kata sesuai dengan kaidah EYD untuk kata majemuk yang sudah menyatu. Opsi A dan D memisahkan dengan spasi atau tanda hubung yang tidak baku. Opsi C menggunakan bentuk nominal yang kurang efektif.",
+      "tags": [
+        "KB-04",
+        "imbuhan",
+        "kata-majemuk"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3B",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-KEB-SET001-Q015",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "kebahasaan",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 2,
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK",
+      "stem": "Kalimat berikut yang efektif dan tidak redundan adalah...",
+      "passage": null,
+      "options": [
+        {
+          "id": "A",
+          "text": "Pada saat ini, kami sedang melakukan pembahasan terhadap masalah yang sedang menjadi permasalahan utama."
+        },
+        {
+          "id": "B",
+          "text": "Saat ini, kami sedang membahas masalah utama yang menjadi perhatian."
+        },
+        {
+          "id": "C",
+          "text": "Pada saat ini, kami sedang melakukan pembahasan terhadap masalah yang menjadi masalah utama."
+        },
+        {
+          "id": "D",
+          "text": "Saat ini kami lakukan pembahasan pada masalah yang sedang menjadi permasalahan utama."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kalimat B efektif: tidak ada redundansi, struktur jelas, dan padat. Kalimat A dan C memiliki redundansi (\"saat ini\" + \"sedang\", \"masalah\" diulang). Kalimat D menggunakan konstruksi \"lakukan pembahasan\" yang kurang efektif.",
+      "tags": [
+        "KB-03",
+        "kalimat-efektif",
+        "redundansi"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3B",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-KEB-SET001-Q016",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "kebahasaan",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 1,
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK",
+      "stem": "Kata \"autentik\" dalam konteks tersebut memiliki makna...",
+      "passage": "Museum tersebut menampilkan artefak autentik dari kerajaan Majapahit yang ditemukan di situs pemakaman royal.",
+      "options": [
+        {
+          "id": "A",
+          "text": "replika yang dibuat menyerupai asli"
+        },
+        {
+          "id": "B",
+          "text": "asli dan bukan tiruan"
+        },
+        {
+          "id": "C",
+          "text": "berusia sangat tua"
+        },
+        {
+          "id": "D",
+          "text": "memiliki nilai jual tinggi"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "\"Autentik\" berarti asli dan bukan tiruan/replika. Dalam konteks artefak museum, kata ini menegaskan keaslian benda yang ditampilkan. Opsi A kebalikan dari makna sebenarnya. Opsi C dan D mungkin benar secara kebetulan tetapi bukan definisi \"autentik\".",
+      "tags": [
+        "KB-05",
+        "makna-kata",
+        "budaya"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3B",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-KEB-SET001-Q017",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "kebahasaan",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 2,
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK",
+      "stem": "Makna kata \"optimal\" dalam kalimat tersebut paling tepat digunakan untuk menggantikan...",
+      "passage": "Pemanfaatan teknologi dalam pendidikan belum berjalan secara optimal karena keterbatasan infrastruktur di daerah terpencil.",
+      "options": [
+        {
+          "id": "A",
+          "text": "\"maksimal\" — karena keduanya memiliki makna yang sama persis"
+        },
+        {
+          "id": "B",
+          "text": "\"baik\" — karena konteks kalimat menunjukkan kondisi yang belum memuaskan"
+        },
+        {
+          "id": "C",
+          "text": "\"sempurna\" — karena \"optimal\" berarti kondisi terbaik yang mungkin dicapai"
+        },
+        {
+          "id": "D",
+          "text": "\"cukup\" — karena konteks hanya menunjukkan pemenuhan batas minimum"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "\"Optimal\" berarti kondisi terbaik yang mungkin dicapai dalam konteks tertentu — mirip dengan \"sempurna\" namun lebih realistis. Kalimat menunjukkan bahwa pemanfaatan teknologi belum mencapai kondisi terbaik. Opsi A terlalu absolut, B terlalu umum, D terlalu rendah.",
+      "tags": [
+        "KB-05",
+        "makna-kontekstual",
+        "teknologi-pendidikan"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3B",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-KEB-SET001-Q018",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "kebahasaan",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 3,
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK",
+      "stem": "Paragraf berikut menggunakan pola pengembangan deduktif karena...",
+      "passage": "Kemampuan berpikir kritis merupakan keterampilan penting yang harus dimiliki setiap siswa. Dalam dunia kerja, karyawan yang mampu menganalisis masalah secara logis dan membuat keputusan berdasarkan bukti akan lebih produktif. Oleh karena itu, sekolah harus memasukkan aktivitas yang melatih berpikir kritis dalam kurikulum.",
+      "options": [
+        {
+          "id": "A",
+          "text": "kalimat pertama berisi kesimpulan dan kalimat berikutnya berisi bukti pendukung"
+        },
+        {
+          "id": "B",
+          "text": "paragraf diawali dengan pernyataan umum lalu diikuti contoh-contoh spesifik"
+        },
+        {
+          "id": "C",
+          "text": "paragraf berisi fakta-fakta yang diurutkan berdasarkan kronologi"
+        },
+        {
+          "id": "D",
+          "text": "paragraf diakhiri dengan pertanyaan retoris"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pola deduktif dimulai dari pernyataan umum/prinsip lalu diikuti bukti atau contoh spesifik. Kalimat pertama menyatakan prinsip (pentingnya berpikir kritis), kalimat kedua memberikan bukti (dunia kerja), kalimat ketiga menyimpulkan (sekolah harus melatih).",
+      "tags": [
+        "KB-02",
+        "deduksi-induksi",
+        "struktur-paragraf"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3B",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-KEB-SET001-Q019",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "kebahasaan",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 3,
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK",
+      "stem": "Fungsi kalimat \"Oleh karena itu\" dalam paragraf tersebut adalah...",
+      "passage": "Pembangunan jalan tol baru diharapkan dapat mengurangi kemacetan di kawasan industri. Namun, realisasi proyek sering terhambat oleh masalah pembebasan lahan. Oleh karena itu, pemerintah perlu menyiapkan mekanisme kompensasi yang adil bagi warga terdampak.",
+      "options": [
+        {
+          "id": "A",
+          "text": "menambah informasi yang tidak berkaitan dengan topik sebelumnya"
+        },
+        {
+          "id": "B",
+          "text": "menunjukkan hubungan sebab-akibat dan menghubungkan masalah dengan solusi"
+        },
+        {
+          "id": "C",
+          "text": "memberikan contoh spesifik dari masalah yang dibahas"
+        },
+        {
+          "id": "D",
+          "text": "menolak pernyataan yang ada pada kalimat sebelumnya"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "\"Oleh karena itu\" menunjukkan hubungan sebab-akibat atau konsekuensi. Dalam paragraf ini, frasa ini menghubungkan masalah (hambatan pembebasan lahan) dengan solusi yang diusulkan (kompensasi yang adil).",
+      "tags": [
+        "KB-02",
+        "kohesi",
+        "penghubung-koherensi"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3B",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-UTBK-KEB-SET001-Q020",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_UTBK",
+      "section": "kebahasaan",
+      "band": "TKA_UTBK",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 2,
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK",
+      "stem": "Hubungan semantik antara \"solusi\" dan \"masalah\" dalam konteks kalimat tersebut adalah...",
+      "passage": "Setiap masalah pasti membutuhkan solusi yang tepat. Solusi yang baik harus mempertimbangkan akar masalah, bukan sekadar gejala yang terlihat di permukaan.",
+      "options": [
+        {
+          "id": "A",
+          "text": "sinonim — keduanya merujuk pada hal yang sama"
+        },
+        {
+          "id": "B",
+          "text": "antonim — keduanya merupakan konsep yang berlawanan"
+        },
+        {
+          "id": "C",
+          "text": "korelatif — keduanya saling berhubungan dan tidak dapat dipisahkan"
+        },
+        {
+          "id": "D",
+          "text": "hiponim — \"solusi\" adalah jenis dari \"masalah\""
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "\"Solusi\" dan \"masalah\" memiliki hubungan korelatif — keduanya saling berhubungan secara timbal balik. Masalah membutuhkan solusi, dan solusi muncul karena adanya masalah. Mereka bukan sinonim (A), bukan antonim murni (B), dan bukan hubungan jenis (D).",
+      "tags": [
+        "KB-01",
+        "hubungan-makna",
+        "korelasi-semantik"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3B",
+      "status": "approved"
+    }
+  ]
+}

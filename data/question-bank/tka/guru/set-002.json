@@ -1,0 +1,814 @@
+{
+  "meta": {
+    "product": "TKA_PRACTICE",
+    "track": "TKA_GURU",
+    "section": "kebahasaan",
+    "set": "set-002",
+    "totalItems": 20,
+    "description": "Enrichment questions — Phase 3C GURU Kebahasaan +20",
+    "source": "BahasaCerdas Enrichment Phase 3C"
+  },
+  "questions": [
+    {
+      "id": "BC-TKA-GURU-KEB-SET001-Q001",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_GURU",
+      "section": "kebahasaan",
+      "band": "TKA_GURU",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 1,
+      "cognitive": "PEMAHAMAN",
+      "domain": "PEDAGOGIK",
+      "stem": "Penulisan nama lembaga yang paling tepat sesuai kaidah ejaan yang berlaku adalah...",
+      "passage": "Seorang guru sedang menyusun surat resmi yang ditujukan kepada Dinas Pendidikan Provinsi Jawa Barat.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Penulisan \"Propinsi\" sudah tidak berlaku dalam ejaan terbaru."
+        },
+        {
+          "id": "B",
+          "text": "Penulisan \"Provinsi\" adalah ejaan yang benar sesuai PUEBI."
+        },
+        {
+          "id": "C",
+          "text": "Penulisan \"propinsi\" masih diterima dalam bahasa Indonesia."
+        },
+        {
+          "id": "D",
+          "text": "Penulisan \"Provinsi\" dan \"Propinsi\" keduanya benar."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "\"Provinsi\" ditulis dengan huruf kapital karena merupakan bagian nama resmi lembaga. Ejaan yang benar adalah \"provinsi\" (bukan \"propinsi\" — ejaan lama sudah tidak berlaku). Opsi A salah (\"propinsi\"). C salah (\"provinsi\" tidak kapital). D salah (\"propinsi\" dan \"jawa barat\" tidak kapital).",
+      "tags": [
+        "KB-04",
+        "ejaan",
+        "nama-lembaga",
+        "surat-dinas"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3C",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-GURU-KEB-SET001-Q002",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_GURU",
+      "section": "kebahasaan",
+      "band": "TKA_GURU",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 2,
+      "cognitive": "ANALISIS",
+      "domain": "PEDAGOGIK",
+      "stem": "Revisi tanda baca yang paling tepat untuk kalimat pertama surat tersebut adalah...",
+      "passage": "Dengan ini kami sampaikan bahwa, jadwal ujian akhir semester gasal tahun pelajaran 2025/2026 akan dilaksanakan pada tanggal 1 sampai dengan 15 Desember 2025.",
+      "options": [
+        {
+          "id": "A",
+          "text": "\"Dengan ini kami sampaikan bahwa jadwal ujian akhir semester gasal tahun pelajaran 2025/2026 akan dilaksanakan pada tanggal 1 sampai dengan 15 Desember 2025.\""
+        },
+        {
+          "id": "B",
+          "text": "\"Dengan ini kami sampaikan bahwa: jadwal ujian akhir semester gasal tahun pelajaran 2025/2026 akan dilaksanakan pada tanggal 1 sampai dengan 15 Desember 2025.\""
+        },
+        {
+          "id": "C",
+          "text": "\"Dengan ini kami sampaikan, bahwa jadwal ujian akhir semester gasal tahun pelajaran 2025/2026 akan dilaksanakan pada tanggal 1 sampai dengan 15 Desember 2025.\""
+        },
+        {
+          "id": "D",
+          "text": "\"Dengan ini kami sampaikan bahwa jadwal ujian akhir semester gasal, tahun pelajaran 2025/2026 akan dilaksanakan pada tanggal 1 sampai dengan 15 Desember 2025.\""
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Tanda koma setelah \"bahwa\" tidak diperlukan karena \"bahwa\" diikuti oleh klausul objek langsung. Tanda koma setelah \"bahwa\" hanya digunakan jika ada jeda panjang atau klausul sisipan. Opsi B menambahkan titik dua yang tidak perlu. Opsi C menambahkan koma sebelum \"bahwa\" yang tidak diperlukan. Opsi D menambahkan koma yang memecah subjek.",
+      "tags": [
+        "KB-04",
+        "tanda-baca",
+        "surat-edaran"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3C",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-GURU-KEB-SET001-Q003",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_GURU",
+      "section": "kebahasaan",
+      "band": "TKA_GURU",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 3,
+      "cognitive": "ANALISIS",
+      "domain": "PEDAGOGIK",
+      "stem": "Penulisan yang benar sesuai kaidah ejaan terbaru adalah...",
+      "passage": null,
+      "options": [
+        {
+          "id": "A",
+          "text": "Guru-guru harus memperhatikan tata tertib sekolah."
+        },
+        {
+          "id": "B",
+          "text": "Guru guru harus memperhatikan tata tertib sekolah."
+        },
+        {
+          "id": "C",
+          "text": "Guru-guru harus memperhatikan tata-tertib sekolah."
+        },
+        {
+          "id": "D",
+          "text": "Guru-guru harus memperhatikan tata tertib sekolah"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kata ulang dwipurwa menggunakan tanda hubung: \"guru-guru\". \"Tata tertib\" ditulis terpisah tanpa tanda hubung. Opsi B tidak ada tanda hubung pada kata ulang. Opsi C menambahkan tanda hubung yang tidak perlu pada \"tata tertib\". Opsi D tidak ada tanda hubung.",
+      "tags": [
+        "KB-04",
+        "kata-ulang",
+        "tanda-hubung"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3C",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-GURU-KEB-SET001-Q004",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_GURU",
+      "section": "kebahasaan",
+      "band": "TKA_GURU",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 4,
+      "cognitive": "ANALISIS",
+      "domain": "PEDAGOGIK",
+      "stem": "Kalimat yang menggunakan tanda kutip paling tepat untuk mengutip pernyataan langsung adalah...",
+      "passage": null,
+      "options": [
+        {
+          "id": "A",
+          "text": "Kepala sekolah menyatakan, \"Semua guru harus menyerahkan rapor paling lambat tanggal 20 Desember.\""
+        },
+        {
+          "id": "B",
+          "text": "Kepala sekolah menyatakan: \"Semua guru harus menyerahkan rapor paling lambat tanggal 20 Desember.\""
+        },
+        {
+          "id": "C",
+          "text": "Kepala sekolah menyatakan. \"Semua guru harus menyerahkan rapor paling lambat tanggal 20 Desember.\""
+        },
+        {
+          "id": "D",
+          "text": "\"Semua guru harus menyerahkan rapor paling lambat tanggal 20 Desember\", ujar Kepala sekolah."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Ketika kutipan langsung mengikuti kata kerja seperti \"menyatakan\", tanda koma ditempatkan sebelum tanda kutip pembuka. Opsi B menggunakan titik dua yang hanya untuk kutipan panjang atau setelah pengantar formal. Opsi C menggunakan titik yang salah. Opsi D menempatkan koma setelah kutipan tanpa struktur yang tepat.",
+      "tags": [
+        "KB-04",
+        "tanda-kutip",
+        "kutipan-langsung"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3C",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-GURU-KEB-SET001-Q005",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_GURU",
+      "section": "kebahasaan",
+      "band": "TKA_GURU",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 3,
+      "cognitive": "ANALISIS",
+      "domain": "PEDAGOGIK",
+      "stem": "Fungsi kalimat dalam paragraf tersebut yang paling tepat diidentifikasi adalah...",
+      "passage": "Pembelajaran berbasis proyek (Project-Based Learning) memungkinkan siswa mengembangkan keterampilan berpikir kritis. Dalam model ini, guru berperan sebagai fasilitator yang membimbing proses inquiry. Siswa bekerja secara kolaboratif untuk menyelesaikan masalah nyata di sekitar mereka.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kalimat 1: definisi, Kalimat 2: peran, Kalimat 3: aktivitas"
+        },
+        {
+          "id": "B",
+          "text": "Kalimat 1: argumentasi, Kalimat 2: kontradiksi, Kalimat 3: kesimpulan"
+        },
+        {
+          "id": "C",
+          "text": "Kalimat 1: pernyataan umum, Kalimat 2: bukti, Kalimat 3: contoh"
+        },
+        {
+          "id": "D",
+          "text": "Kalimat 1: hipotesis, Kalimat 2: metodologi, Kalimat 3: hasil"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat 1 mendefinisikan manfaat PBL (keterampilan berpikir kritis). Kalimat 2 menjelaskan peran guru (fasilitator). Kalimat 3 menjelaskan aktivitas siswa (bekerja kolaboratif). Struktur ini merupakan penjelasan bertahap tentang model pembelajaran.",
+      "tags": [
+        "KB-06",
+        "fungsi-kalimat",
+        "struktur-bahasa"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3C",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-GURU-KEB-SET001-Q006",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_GURU",
+      "section": "kebahasaan",
+      "band": "TKA_GURU",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 2,
+      "cognitive": "ANALISIS",
+      "domain": "PEDAGOGIK",
+      "stem": "Struktur kalimat yang menggunakan hubungan koordinasi dengan tepat adalah...",
+      "passage": null,
+      "options": [
+        {
+          "id": "A",
+          "text": "Guru menjelaskan materi, dan siswa mencatat poin-poin penting."
+        },
+        {
+          "id": "B",
+          "text": "Guru menjelaskan materi dan, siswa mencatat poin-poin penting."
+        },
+        {
+          "id": "C",
+          "text": "Guru, menjelaskan materi dan siswa mencatat poin-poin penting."
+        },
+        {
+          "id": "D",
+          "text": "Guru menjelaskan materi dan siswa, mencatat poin-poin penting."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Hubungan koordinasi \"dan\" menghubungkan dua klausa setara tanpa koma sebelumnya jika kedua klausa pendek. Koma sebelum \"dan\" digunakan hanya jika kedua klausa panjang atau untuk kejelasan. Opsi B menempatkan koma setelah \"dan\". Opsi C menempatkan koma setelah subjek. Opsi D menempatkan koma setelah \"siswa\".",
+      "tags": [
+        "KB-06",
+        "koordinasi",
+        "struktur-kalimat"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3C",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-GURU-KEB-SET001-Q007",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_GURU",
+      "section": "kebahasaan",
+      "band": "TKA_GURU",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 4,
+      "cognitive": "ANALISIS",
+      "domain": "PEDAGOGIK",
+      "stem": "Kalimat yang memiliki struktur ambiguitas syntaktis adalah...",
+      "passage": null,
+      "options": [
+        {
+          "id": "A",
+          "text": "Guru yang mengajar di kelas A dan B sedang mengadakan rapat."
+        },
+        {
+          "id": "B",
+          "text": "Rapat diadakan di ruang guru pada pukul 10.00."
+        },
+        {
+          "id": "C",
+          "text": "Semua siswa kelas VII harus membawa buku teks bahasa Indonesia."
+        },
+        {
+          "id": "D",
+          "text": "Kepala sekolah menyerahkan piagam penghargaan kepada siswa berprestasi."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat A ambigu: \"yang mengajar di kelas A dan B\" bisa dimodifikasi oleh \"guru\" (satu guru mengajar dua kelas) atau \"kelas A dan B\" (dua kelas yang berbeda). Ambiguitas ini muncul karena modifikasi apositif dapat diinterpretasikan dengan dua cara. Kalimat B, C, D tidak ambigu.",
+      "tags": [
+        "KB-06",
+        "ambiguitas",
+        "struktur-sintaktis"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3C",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-GURU-KEB-SET001-Q008",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_GURU",
+      "section": "kebahasaan",
+      "band": "TKA_GURU",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 1,
+      "cognitive": "PEMAHAMAN",
+      "domain": "PROFESIONAL",
+      "stem": "Penulisan tahun pelajaran yang benar sesuai EYD terbaru adalah...",
+      "passage": null,
+      "options": [
+        {
+          "id": "A",
+          "text": "Penulisan \"Tahun Pelajaran\" dengan huruf kapital semua sudah benar."
+        },
+        {
+          "id": "B",
+          "text": "Penulisan \"Tahun pelajaran\" dengan huruf kecil sudah benar."
+        },
+        {
+          "id": "C",
+          "text": "Penulisan \"tahun pelajaran\" dengan huruf kecil semua sudah benar."
+        },
+        {
+          "id": "D",
+          "text": "Penulisan \"Tahun Pelajaran 2025/2026\" dengan huruf kapital semua sudah benar."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "\"Tahun pelajaran\" ditulis huruf kecil semua kecuali di awal kalimat. Opsi A salah karena \"Pelajaran\" tidak perlu kapital. Opsi C dan D menggunakan format yang tidak sesuai EYD untuk tahun pelajaran.",
+      "tags": [
+        "KB-04",
+        "ejaan",
+        "tahun-pelajaran"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3C",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-GURU-KEB-SET001-Q009",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_GURU",
+      "section": "kebahasaan",
+      "band": "TKA_GURU",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 4,
+      "cognitive": "EVALUASI",
+      "domain": "PEDAGOGIK",
+      "stem": "Kalimat yang menggunakan hubungan subordinasi dengan tepat dan tidak menimbulkan ambiguitas adalah...",
+      "passage": null,
+      "options": [
+        {
+          "id": "A",
+          "text": "Ketika guru menjelaskan, siswa mencatat poin-poin penting di buku tulis."
+        },
+        {
+          "id": "B",
+          "text": "Ketika guru menjelaskan siswa mencatat poin-poin penting di buku tulis."
+        },
+        {
+          "id": "C",
+          "text": "Guru menjelaskan ketika, siswa mencatat poin-poin penting di buku tulis."
+        },
+        {
+          "id": "D",
+          "text": "Siswa mencatat poin-poin penting ketika guru, menjelaskan di buku tulis."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat subordinasi yang benar: klausul dependen (\"Ketika guru menjelaskan\") diikuti koma sebelum klausul independen (\"siswa mencatat...\"). Opsi B tidak ada koma pemisah. Opsi C menempatkan koma setelah konjungsi. Opsi D memecah subjek dengan koma.",
+      "tags": [
+        "KB-06",
+        "subordinasi",
+        "struktur-kalimat"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3C",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-GURU-KEB-SET001-Q010",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_GURU",
+      "section": "kebahasaan",
+      "band": "TKA_GURU",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 3,
+      "cognitive": "ANALISIS",
+      "domain": "PROFESIONAL",
+      "stem": "Fungsi konjungsi \"namun\" dalam paragraf tersebut adalah...",
+      "passage": "Guru telah menyiapkan bahan ajar dengan baik, namun siswa masih mengalami kesulitan memahami konsep abstrak. Hal ini menunjukkan perlunya pendekatan pembelajaran yang lebih variatif.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menambah informasi yang mendukung pernyataan sebelumnya"
+        },
+        {
+          "id": "B",
+          "text": "Menunjukkan kontras atau pertentangan antara dua pernyataan"
+        },
+        {
+          "id": "C",
+          "text": "Memberikan contoh dari pernyataan sebelumnya"
+        },
+        {
+          "id": "D",
+          "text": "Menyimpulkan pernyataan sebelumnya"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "\"Namun\" adalah konjungsi adversatif yang menunjukkan pertentangan atau kontras. Dalam paragraf ini, kontras antara \"guru menyiapkan bahan ajar dengan baik\" dan \"siswa masih mengalami kesulitan\" menunjukkan bahwa persiapan guru belum cukup menjamin pemahaman siswa.",
+      "tags": [
+        "KB-06",
+        "konjungsi",
+        "hubungan-discourse"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3C",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-GURU-KEB-SET001-Q011",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_GURU",
+      "section": "kebahasaan",
+      "band": "TKA_GURU",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 3,
+      "cognitive": "ANALISIS",
+      "domain": "PEDAGOGIK",
+      "stem": "Makna kata \"kompetensi\" dalam konteks kurikulum nasional paling tepat diartikan sebagai...",
+      "passage": "Kurikulum nasional menetapkan bahwa setiap siswa harus mencapai kompetensi minimal pada setiap mata pelajaran. Kompetensi ini mencakup aspek pengetahuan, keterampilan, dan sikap.",
+      "options": [
+        {
+          "id": "A",
+          "text": "kemampuan atau kecakapan yang harus dicapai sesuai standar"
+        },
+        {
+          "id": "B",
+          "text": "keinginan atau motivasi belajar siswa"
+        },
+        {
+          "id": "C",
+          "text": "jumlah mata pelajaran yang harus diambil"
+        },
+        {
+          "id": "D",
+          "text": "nilai ujian akhir yang harus diperoleh"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Dalam konteks kurikulum, \"kompetensi\" merujuk pada kemampuan atau kecakapan yang harus dicapai sesuai standar. Kalimat berikutnya memperkuat bahwa kompetensi mencakup pengetahuan, keterampilan, dan sikap. Opsi B adalah motivasi. Opsi C adalah jumlah mata pelajaran. Opsi D adalah nilai.",
+      "tags": [
+        "KB-01",
+        "makna-kontekstual",
+        "terminologi-pendidikan"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3C",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-GURU-KEB-SET001-Q012",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_GURU",
+      "section": "kebahasaan",
+      "band": "TKA_GURU",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 3,
+      "cognitive": "ANALISIS",
+      "domain": "PROFESIONAL",
+      "stem": "Hubungan semantik antara \"evaluasi\" dan \"asmen\" dalam konteks pendidikan adalah...",
+      "passage": "Evaluasi pembelajaran harus dilakukan secara berkelanjutan untuk memastikan siswa mencapai kompetensi yang ditargetkan.",
+      "options": [
+        {
+          "id": "A",
+          "text": "sinonim sempurna — keduanya memiliki makna yang sama persis"
+        },
+        {
+          "id": "B",
+          "text": "\"evaluasi\" lebih luas dari \"asesmen\" — evaluasi mencakup proses pengumpulan dan interpretasi data"
+        },
+        {
+          "id": "C",
+          "text": "\"asesmen\" adalah bagian dari \"evaluasi\" — asesmen adalah pengumpulan data, evaluasi adalah interpretasi"
+        },
+        {
+          "id": "D",
+          "text": "antonim — keduanya merupakan kegiatan yang berlawanan"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Dalam pendidikan, \"asesmen\" adalah proses pengumpulan informasi tentang pencapaian siswa, sedangkan \"evaluasi\" adalah proses menginterpretasi dan membuat keputusan berdasarkan informasi tersebut. Asesmen adalah komponen dari evaluasi. Opsi A terlalu simplistik. Opsi B membalik hubungan. Opsi D salah.",
+      "tags": [
+        "KB-01",
+        "hubungan-makna",
+        "terminologi-pendidikan"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3C",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-GURU-KEB-SET001-Q013",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_GURU",
+      "section": "kebahasaan",
+      "band": "TKA_GURU",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 4,
+      "cognitive": "EVALUASI",
+      "domain": "PEDAGOGIK",
+      "stem": "Analogi yang paling tepat untuk menjelaskan hubungan \"kurikulum\" dan \"pedagogi\" adalah...",
+      "passage": null,
+      "options": [
+        {
+          "id": "A",
+          "text": "kurikulum adalah resep, pedagogi adalah cara memasak"
+        },
+        {
+          "id": "B",
+          "text": "kurikulum adalah peta, pedagogi adalah kendaraan"
+        },
+        {
+          "id": "C",
+          "text": "kurikulum adalah bahan bangunan, pedagogi adalah arsitek"
+        },
+        {
+          "id": "D",
+          "text": "kurikulum adalah tujuan, pedagogi adalah jalan menuju tujuan"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "Kurikulum menetapkan TUJUAN dan standar pencapaian (apa yang harus dicapai), sedangkan pedagogi adalah CARA atau strategi mencapai tujuan tersebut (bagaimana mengajarkan). Analogi \"tujuan dan jalan\" paling tepat karena keduanya memiliki hubungan \"apa\" dan \"bagaimana\". Opsi A mendekati tapi tidak tepat (bukan resep vs cara memasak). Opsi B dan C kurang akurat.",
+      "tags": [
+        "KB-01",
+        "analogi",
+        "konsep-pendidikan"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3C",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-GURU-KEB-SET001-Q014",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_GURU",
+      "section": "kebahasaan",
+      "band": "TKA_GURU",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 2,
+      "cognitive": "ANALISIS",
+      "domain": "PROFESIONAL",
+      "stem": "Kata \"refleksi\" dalam konteks profesional guru berarti...",
+      "passage": "Setelah melaksanakan pembelajaran, guru melakukan refleksi untuk mengevaluasi efektivitas metode yang digunakan.",
+      "options": [
+        {
+          "id": "A",
+          "text": "mengulang materi yang sama tanpa perubahan"
+        },
+        {
+          "id": "B",
+          "text": "merefleksikan atau merenungkan pengalaman untuk memahami dan memperbaiki praktik"
+        },
+        {
+          "id": "C",
+          "text": "menulis laporan resmi untuk atasan"
+        },
+        {
+          "id": "D",
+          "text": "menghentikan pembelajaran sementara waktu"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Dalam konteks profesional guru, \"refleksi\" berarti merenungkan dan mengevaluasi pengalaman untuk memahami apa yang berhasil dan apa yang perlu diperbaiki. Konteks kalimat (mengevaluasi efektifitas metode) memperkuat makna ini.",
+      "tags": [
+        "KB-05",
+        "makna-kontekstual",
+        "refleksi-guru"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3C",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-GURU-KEB-SET001-Q015",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_GURU",
+      "section": "kebahasaan",
+      "band": "TKA_GURU",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 4,
+      "cognitive": "EVALUASI",
+      "domain": "PEDAGOGIK",
+      "stem": "Kalimat yang memiliki struktur koherensi dan kohesi paling baik adalah...",
+      "passage": null,
+      "options": [
+        {
+          "id": "A",
+          "text": "Pembelajaran kooperatif meningkatkan motivasi siswa. Selain itu, metode ini juga melatih keterampilan sosial. Oleh karena itu, guru sebaiknya menerapkan metode ini secara rutin."
+        },
+        {
+          "id": "B",
+          "text": "Pembelajaran kooperatif meningkatkan motivasi siswa. Metode ini juga melatih keterampilan sosial. Guru sebaiknya menerapkan metode ini secara rutin."
+        },
+        {
+          "id": "C",
+          "text": "Pembelajaran kooperatif. Motivasi siswa meningkat. Keterampilan sosial terlatih. Metode ini baik."
+        },
+        {
+          "id": "D",
+          "text": "Siswa termotivasi. Metode kooperatif. Keterampilan sosial. Guru menerapkan."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat A memiliki kohesi yang kuat melalui penggunaan konjungsi (\"Selain itu\", \"Oleh karena itu\") yang menghubungkan ide-ide secara logis. Koherensi terjaga karena ada alur: manfaat → manfaat tambahan → rekomendasi. Opsi B kurang kohesi. Opsi C dan D terputus-putus.",
+      "tags": [
+        "KB-06",
+        "koherensi-kohesi",
+        "struktur-paragraf"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3C",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-GURU-KEB-SET001-Q016",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_GURU",
+      "section": "kebahasaan",
+      "band": "TKA_GURU",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 2,
+      "cognitive": "ANALISIS",
+      "domain": "PROFESIONAL",
+      "stem": "Penggunaan kata \"mitra\" dalam konteks pendidikan paling tepat diartikan sebagai...",
+      "passage": "Sekolah menjalin kerja sama dengan berbagai mitra industri untuk memperkuat program magang siswa.",
+      "options": [
+        {
+          "id": "A",
+          "text": "pesaing yang harus dikalahkan"
+        },
+        {
+          "id": "B",
+          "text": "pihak yang bekerja sama untuk mencapai tujuan bersama"
+        },
+        {
+          "id": "C",
+          "text": "bawahan yang harus diatur"
+        },
+        {
+          "id": "D",
+          "text": "pengawas yang menilai kinerja"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "\"Mitra\" berarti pihak yang bekerja sama untuk mencapai tujuan bersama. Konteks \"menjalin kerja sama\" memperkuat makna ini. Opsi A, C, dan D tidak sesuai dengan konteks kerja sama.",
+      "tags": [
+        "KB-05",
+        "makna-kata",
+        "kerja-sama"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3C",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-GURU-KEB-SET001-Q017",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_GURU",
+      "section": "kebahasaan",
+      "band": "TKA_GURU",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 3,
+      "cognitive": "ANALISIS",
+      "domain": "PEDAGOGIK",
+      "stem": "Kalimat efektif yang tidak mengandung redundansi adalah...",
+      "passage": null,
+      "options": [
+        {
+          "id": "A",
+          "text": "Guru harus dapat memberikan umpan balik yang konstruktif kepada siswa."
+        },
+        {
+          "id": "B",
+          "text": "Guru harus dapat memberikan umpan balik yang bersifat konstruktif kepada siswa."
+        },
+        {
+          "id": "C",
+          "text": "Guru harus mampu dapat memberikan umpan balik yang konstruktif kepada siswa."
+        },
+        {
+          "id": "D",
+          "text": "Guru harus bisa dapat memberikan umpan balik yang bersifat konstruktif kepada siswa."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat A efektif dan padat: tidak ada redundansi. \"Bersifat konstruktif\" (B) redundan karena \"konstruktif\" sudah merupakan sifat. \"Harus mampu dapat\" (C) dan \"harus bisa dapat\" (D) redundan — \"mampu\" dan \"bisa\" sudah mengandung makna \"dapat\".",
+      "tags": [
+        "KB-03",
+        "kalimat-efektif",
+        "redundansi"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3C",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-GURU-KEB-SET001-Q018",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_GURU",
+      "section": "kebahasaan",
+      "band": "TKA_GURU",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 3,
+      "cognitive": "ANALISIS",
+      "domain": "PEDAGOGIK",
+      "stem": "Paragraf berikut menggunakan pola pengembangan induktif karena...",
+      "passage": "Siswa A berhasil meningkatkan nilai matematikanya dari 60 menjadi 85 setelah mengikuti bimbingan belajar. Siswa B juga menunjukkan peningkatan signifikan setelah bergabung kelompok belajar. Siswa C yang rajin berdiskusi dengan teman memperoleh nilai tertinggi di kelasnya. Dari contoh-contoh tersebut, dapat disimpulkan bahwa metode belajar kolaboratif berpengaruh positif terhadap hasil belajar.",
+      "options": [
+        {
+          "id": "A",
+          "text": "paragraf diawali dengan kesimpulan lalu diikuti bukti pendukung"
+        },
+        {
+          "id": "B",
+          "text": "paragraf diawali dengan contoh-contoh spesifik lalu diakhiri dengan kesimpulan umum"
+        },
+        {
+          "id": "C",
+          "text": "paragraf hanya berisi fakta tanpa ada kesimpulan"
+        },
+        {
+          "id": "D",
+          "text": "paragraf menggunakan logika deduksi dari yang umum ke yang khusus"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pola induktif dimulai dari contoh-contoh spesifik (siswa A, B, C) lalu diakhiri dengan kesimpulan umum (metode kolaboratif berpengaruh positif). Ini adalah pola berpikir dari khusus ke umum. Opsi A mendeskripsikan pola deduktif. Opsi C salah karena ada kesimpulan. Opsi D juga mendeskripsikan deduksi.",
+      "tags": [
+        "KB-02",
+        "induksi",
+        "pola-pengembangan"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3C",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-GURU-KEB-SET001-Q019",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_GURU",
+      "section": "kebahasaan",
+      "band": "TKA_GURU",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 3,
+      "cognitive": "ANALISIS",
+      "domain": "PROFESIONAL",
+      "stem": "Makna istilah \"diferensiasi\" dalam konteks pembelajaran adalah...",
+      "passage": "Guru melakukan diferensiasi pembelajaran dengan menyesuaikan materi, proses, dan produk berdasarkan kebutuhan dan kesiapan belajar setiap siswa.",
+      "options": [
+        {
+          "id": "A",
+          "text": "mengajar semua siswa dengan metode yang sama"
+        },
+        {
+          "id": "B",
+          "text": "membedakan atau menyesuaikan pendekatan pembelajaran berdasarkan karakteristik siswa"
+        },
+        {
+          "id": "C",
+          "text": "mengelompokkan siswa berdasarkan nilai ujian"
+        },
+        {
+          "id": "D",
+          "text": "menggunakan satu buku teks untuk seluruh kelas"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "\"Diferensiasi\" berarti membedakan atau menyesuaikan. Dalam konteks pembelajaran, diferensiasi adalah pendekatan di mana guru menyesuaikan materi, proses, dan produk berdasarkan kebutuhan dan kesiapan belajar siswa. Konteks kalimat memperkuat makna ini.",
+      "tags": [
+        "KB-05",
+        "terminologi-pendidikan",
+        "diferensiasi"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3C",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-GURU-KEB-SET001-Q020",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_GURU",
+      "section": "kebahasaan",
+      "band": "TKA_GURU",
+      "type": "PILIHAN_GANDA",
+      "difficulty": 2,
+      "cognitive": "ANALISIS",
+      "domain": "PROFESIONAL",
+      "stem": "Makna kata \"empiris\" dalam konteks penelitian pendidikan adalah...",
+      "passage": "Guru melakukan penelitian tindakan kelas berdasarkan data empiris yang dikumpulkan selama tiga bulan.",
+      "options": [
+        {
+          "id": "A",
+          "text": "berdasarkan teori semata tanpa bukti"
+        },
+        {
+          "id": "B",
+          "text": "berdasarkan pengalaman atau observasi langsung"
+        },
+        {
+          "id": "C",
+          "text": "berdasarkan opini subjektif peneliti"
+        },
+        {
+          "id": "D",
+          "text": "berdasarkan data dari buku referensi"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "\"Empiris\" berarti berdasarkan pengalaman atau observasi langsung, bukan teori semata. Dalam konteks penelitian, data empiris adalah data yang diperoleh dari pengamatan atau eksperimen. Konteks \"dikumpulkan selama tiga bulan\" memperkuat makna ini.",
+      "tags": [
+        "KB-05",
+        "makna-kata",
+        "metodologi-penelitian"
+      ],
+      "source": "BahasaCerdas Enrichment Phase 3C",
+      "status": "approved"
+    }
+  ]
+}

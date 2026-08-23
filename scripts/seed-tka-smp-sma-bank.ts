@@ -106,9 +106,10 @@ function loadBankFiles(): { file: string; track: string; data: BankFile }[] {
 }
 
 function mapDifficulty(num: number): string {
-  if (num <= 2) return "EASY";
-  if (num === 3) return "MEDIUM";
-  return "HARD";
+  if (num <= 1) return "EASY";
+  if (num === 2) return "MEDIUM";
+  if (num === 3) return "HARD";
+  return "VERY_HARD";
 }
 
 async function main() {
