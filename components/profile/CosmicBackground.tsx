@@ -1,10 +1,14 @@
 "use client";
 
+import { useTheme } from "next-themes";
+
 /**
  * CosmicBackground — latar "universe BahasaCerdas" untuk hero profil.
  *
- * Galaksi redup (navy→ungu), nebula ungu/merah muda/biru, glow magenta,
+ * Dark mode: galaksi redup (navy→ungu), nebula ungu/merah muda/biru, glow magenta,
  * debu bintang, planet dengan cincin, orbit pelan, dan satu meteor sesekali.
+ * Light mode: subtle light radial glows — violet/rose/faint-sky — to avoid
+ * dark cosmic smudges that clash with the light hero gradient.
  * Semua animasi dimatikan saat prefers-reduced-motion. Murni dekoratif:
  * pointer-events-none, aria-hidden.
  */
@@ -42,6 +46,9 @@ const DUST = Array.from({ length: 26 }, (_, i) => {
 });
 
 export default function CosmicBackground() {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
+
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
       <style>{`
@@ -78,118 +85,37 @@ export default function CosmicBackground() {
         }
       `}</style>
 
-      {/* Nebula 1 (ungu lembut) */}
-      <div
-        className="bc-cosmic-nebula absolute -top-24 -right-24 w-[480px] h-[480px] rounded-full"
-        style={{
-          background: "radial-gradient(circle, rgba(124,58,237,0.30), transparent 65%)",
-          animation: "bc-cosmic-drift 14s ease-in-out infinite",
-        }}
-      />
-      {/* Nebula 2 (merah muda jauh) */}
-      <div
-        className="bc-cosmic-nebula absolute -bottom-32 -left-20 w-[420px] h-[420px] rounded-full"
-        style={{
-          background: "radial-gradient(circle, rgba(190,24,93,0.16), transparent 65%)",
-          animation: "bc-cosmic-drift 18s ease-in-out infinite",
-        }}
-      />
-      {/* Nebula 3 (biru nebula — kontras dengan ungu) */}
-      <div
-        className="bc-cosmic-nebula absolute top-[8%] -left-24 w-[380px] h-[380px] rounded-full"
-        style={{
-          background: "radial-gradient(circle, rgba(56,189,248,0.20), transparent 62%)",
-          animation: "bc-cosmic-drift 16s ease-in-out infinite",
-        }}
-      />
+      {/* ── LIGHT MODE: subtle radial glows (violet/rose/sky) ── */}
+      {!isDark && (
+        <>
+          <div className="absolute -top-16 -right-16 w-[400px] h-[400px] rounded-full opacity-30" style={{ background: "radial-gradient(circle, rgba(139,92,246,0.25), transparent 65%)", animation: "bc-cosmic-drift 16s ease-in-out infinite" }} />
+          <div className="absolute -bottom-24 -left-16 w-[360px] h-[360px] rounded-full opacity-20" style={{ background: "radial-gradient(circle, rgba(244,63,94,0.18), transparent 65%)", animation: "bc-cosmic-drift 20s ease-in-out infinite" }} />
+          <div className="absolute top-[10%] left-[15%] w-[260px] h-[260px] rounded-full opacity-15" style={{ background: "radial-gradient(circle, rgba(56,189,248,0.15), transparent 60%)", animation: "bc-cosmic-drift 18s ease-in-out infinite" }} />
+        </>
+      )}
 
-      {/* Glow magenta di sisi kanan (aura tambahan di belakang crest rank) */}
-      <div
-        className="bc-cosmic-nebula absolute top-[40%] right-[2%] w-[300px] h-[300px] rounded-full"
-        style={{
-          background: "radial-gradient(circle, rgba(236,72,153,0.18), transparent 60%)",
-          animation: "bc-cosmic-drift 12s ease-in-out infinite",
-        }}
-      />
-
-      {/* Planet jauh (redup, kecil, dengan cincin tipis) */}
-      <div
-        className="absolute top-[18%] right-[8%]"
-        style={{ animation: "bc-cosmic-drift 20s ease-in-out infinite" }}
-      >
-        <div
-          className="w-10 h-10 rounded-full"
-          style={{ background: "radial-gradient(circle at 35% 30%, rgba(167,139,250,0.5), rgba(76,29,149,0.25) 70%)" }}
-        />
-        <div
-          className="absolute left-1/2 top-1/2 w-[74px] h-[20px] rounded-[50%]"
-          style={{
-            border: "1px solid rgba(196,181,253,0.28)",
-            transform: "translate(-50%, -50%) rotate(-18deg)",
-          }}
-        />
-      </div>
-
-      {/* Planet kedua (kecil, biru pucat di pojok kiri atas) */}
-      <div
-        className="absolute top-[6%] left-[22%] w-[14px] h-[14px] rounded-full"
-        style={{
-          background: "radial-gradient(circle at 32% 28%, rgba(186,230,253,0.6), rgba(56,189,248,0.2) 72%)",
-          animation: "bc-cosmic-shimmer 7s ease-in-out infinite",
-        }}
-      />
-
-      {/* Meteor sesekali (kanan atas → bawah kiri) */}
-      <div
-        className="bc-cosmic-meteor absolute top-[12%] right-[24%] h-[2px] w-[110px] rounded-full"
-        style={{
-          background: "linear-gradient(90deg, rgba(255,255,255,0.95), rgba(147,197,253,0.35), transparent)",
-          boxShadow: "0 0 8px rgba(255,255,255,0.45)",
-          animation: "bc-cosmic-meteor 9s ease-in-out 3s infinite",
-        }}
-      />
-
-      {/* Ring orbit sangat pelan (dekoratif di pojok kiri bawah) */}
-      <div
-        className="bc-cosmic-orbit absolute bottom-[-60px] left-1/2 -translate-x-1/2 w-[420px] h-[170px] rounded-[50%]"
-        style={{
-          border: "1px solid rgba(255,255,255,0.08)",
-          animation: "bc-cosmic-orbit 60s linear infinite",
-          transformOrigin: "center",
-        }}
-      />
-
-      {/* Bintang-bintang kecil */}
-      {STARS.map((s, i) => (
-        <span
-          key={`star-${i}`}
-          className="bc-cosmic-star absolute rounded-full bg-white dark:bg-slate-800/90"
-          style={{
-            left: s.left,
-            top: s.top,
-            width: s.size,
-            height: s.size,
-            opacity: s.opacity,
-            animation: `bc-cosmic-twinkle ${s.duration} ease-in-out ${s.delay} infinite`,
-          }}
-        />
-      ))}
-
-      {/* Debu bintang — titik sangat kecil dengan kedip sangat pelan */}
-      {DUST.map((d, i) => (
-        <span
-          key={`dust-${i}`}
-          className="bc-cosmic-dust absolute rounded-full bg-white dark:bg-slate-800/90"
-          style={{
-            left: d.left,
-            top: d.top,
-            width: d.size,
-            height: d.size,
-            opacity: d.opacity,
-            animation: `bc-cosmic-twinkle ${d.duration} ease-in-out ${d.delay} infinite`,
-          }}
-        />
-      ))}
+      {/* ── DARK MODE: full cosmic universe ── */}
+      {isDark && (
+        <>
+          <div className="bc-cosmic-nebula absolute -top-24 -right-24 w-[480px] h-[480px] rounded-full" style={{ background: "radial-gradient(circle, rgba(124,58,237,0.30), transparent 65%)", animation: "bc-cosmic-drift 14s ease-in-out infinite" }} />
+          <div className="bc-cosmic-nebula absolute -bottom-32 -left-20 w-[420px] h-[420px] rounded-full" style={{ background: "radial-gradient(circle, rgba(190,24,93,0.16), transparent 65%)", animation: "bc-cosmic-drift 18s ease-in-out infinite" }} />
+          <div className="bc-cosmic-nebula absolute top-[8%] -left-24 w-[380px] h-[380px] rounded-full" style={{ background: "radial-gradient(circle, rgba(56,189,248,0.20), transparent 62%)", animation: "bc-cosmic-drift 16s ease-in-out infinite" }} />
+          <div className="bc-cosmic-nebula absolute top-[40%] right-[2%] w-[300px] h-[300px] rounded-full" style={{ background: "radial-gradient(circle, rgba(236,72,153,0.18), transparent 60%)", animation: "bc-cosmic-drift 12s ease-in-out infinite" }} />
+          <div className="absolute top-[18%] right-[8%]" style={{ animation: "bc-cosmic-drift 20s ease-in-out infinite" }}>
+            <div className="w-10 h-10 rounded-full" style={{ background: "radial-gradient(circle at 35% 30%, rgba(167,139,250,0.5), rgba(76,29,149,0.25) 70%)" }} />
+            <div className="absolute left-1/2 top-1/2 w-[74px] h-[20px] rounded-[50%]" style={{ border: "1px solid rgba(196,181,253,0.28)", transform: "translate(-50%, -50%) rotate(-18deg)" }} />
+          </div>
+          <div className="absolute top-[6%] left-[22%] w-[14px] h-[14px] rounded-full" style={{ background: "radial-gradient(circle at 32% 28%, rgba(186,230,253,0.6), rgba(56,189,248,0.2) 72%)", animation: "bc-cosmic-shimmer 7s ease-in-out infinite" }} />
+          <div className="bc-cosmic-meteor absolute top-[12%] right-[24%] h-[2px] w-[110px] rounded-full" style={{ background: "linear-gradient(90deg, rgba(255,255,255,0.95), rgba(147,197,253,0.35), transparent)", boxShadow: "0 0 8px rgba(255,255,255,0.45)", animation: "bc-cosmic-meteor 9s ease-in-out 3s infinite" }} />
+          <div className="bc-cosmic-orbit absolute bottom-[-60px] left-1/2 -translate-x-1/2 w-[420px] h-[170px] rounded-[50%]" style={{ border: "1px solid rgba(255,255,255,0.08)", animation: "bc-cosmic-orbit 60s linear infinite", transformOrigin: "center" }} />
+          {STARS.map((s, i) => (
+            <span key={`star-${i}`} className="bc-cosmic-star absolute rounded-full bg-slate-800/90" style={{ left: s.left, top: s.top, width: s.size, height: s.size, opacity: s.opacity, animation: `bc-cosmic-twinkle ${s.duration} ease-in-out ${s.delay} infinite` }} />
+          ))}
+          {DUST.map((d, i) => (
+            <span key={`dust-${i}`} className="bc-cosmic-dust absolute rounded-full bg-slate-800/90" style={{ left: d.left, top: d.top, width: d.size, height: d.size, opacity: d.opacity, animation: `bc-cosmic-twinkle ${d.duration} ease-in-out ${d.delay} infinite` }} />
+          ))}
+        </>
+      )}
     </div>
   );
 }

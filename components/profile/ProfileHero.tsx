@@ -223,12 +223,12 @@ export default function ProfileHero({
                 initials={initials}
                 gradient=""
                 textClassName="text-4xl"
-                className={`relative backdrop-blur border-4 border-[#171241] shadow-lg ring-4 ${t("bg-slate-900/10 ring-slate-900/15", "bg-white/10 ring-white/15")}`}
+                className={`relative backdrop-blur border-4 shadow-lg ring-4 ${isDarkInk ? "border-[#171241] bg-white/10 ring-white/15" : "border-slate-300/60 dark:border-[#171241] bg-slate-900/10 dark:bg-white/10 ring-slate-900/15 dark:ring-white/15"}`}
               />
               {/* Level badge di pojok avatar */}
               <span
                 aria-hidden
-                className="absolute -bottom-1.5 -right-1.5 rounded-full px-2 py-0.5 text-[11px] font-black bg-gradient-to-br from-amber-300 to-amber-500 text-amber-950 shadow-md ring-2 ring-[#171241]"
+                className={`absolute -bottom-1.5 -right-1.5 rounded-full px-2 py-0.5 text-[11px] font-black bg-gradient-to-br from-amber-300 to-amber-500 text-amber-950 shadow-md ring-2 ${isDarkInk ? "ring-[#171241]" : "ring-white/80 dark:ring-[#171241]"}`}
               >
                 {persona.level}
               </span>
