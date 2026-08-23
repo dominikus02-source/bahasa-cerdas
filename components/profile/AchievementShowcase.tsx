@@ -40,7 +40,7 @@ export default function AchievementShowcase({
             >
               <BadgeIcon icon={b.icon} size={26} alt={b.name} />
             </span>
-            <span className="max-w-full truncate text-[11px] font-bold text-slate-900/80 dark:text-white/80">{b.name}</span>
+            <span className="max-w-full truncate text-[11px] font-bold text-slate-800 dark:text-white/80">{b.name}</span>
           </Link>
         );
       })}
@@ -53,7 +53,7 @@ export default function AchievementShowcase({
           <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-900/5 dark:bg-slate-900/5 text-slate-900/50 dark:text-white/50">
             <Lock size={18} />
           </span>
-          <span className="text-[11px] text-slate-900/50 dark:text-white/50">Terkunci</span>
+          <span className="text-[11px] text-slate-700 dark:text-white/50">Terkunci</span>
         </div>
       ))}
     </div>

@@ -40,19 +40,19 @@ export default function ProfileMotto({
         </span>
         <div className="min-w-0">
           {bio ? (
-            <p className="text-sm leading-relaxed text-slate-900/80 dark:text-white/80">{bio}</p>
+            <p className="text-sm leading-relaxed text-slate-800 dark:text-white/80">{bio}</p>
           ) : (
             isOwn && (
-              <p className="text-sm text-slate-900/60 dark:text-white/45 italic">
+              <p className="text-sm text-slate-700 dark:text-white/45 italic">
                 Belum ada moto.{" "}
-                <button onClick={onEditProfile} className="underline text-slate-900/70 dark:text-white/70 hover:text-slate-900 dark:text-white">
+                <button onClick={onEditProfile} className="underline text-violet-700 dark:text-white/70 hover:text-violet-900 dark:text-white">
                   Tulis moto singkat?
                 </button>
               </p>
             )
           )}
           {joinedText && (
-            <p className="mt-1.5 inline-flex items-center gap-1.5 text-[11px] text-slate-900/55 dark:text-white/40">
+            <p className="mt-1.5 inline-flex items-center gap-1.5 text-[11px] text-slate-700 dark:text-white/40">
               <CalendarDays size={12} /> Bergabung sejak {joinedText}
             </p>
           )}

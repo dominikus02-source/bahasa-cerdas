@@ -55,7 +55,7 @@ export default function PlayerStatusBar({
         <div className={cell}>
           <Shield size={17} className="text-violet-600 dark:text-violet-300 shrink-0" />
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-900/60 dark:text-white/45">Level</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-700 dark:text-white/45">Level</p>
             <p className="text-base font-black text-slate-900 dark:text-white tabular-nums leading-tight">{level}</p>
           </div>
         </div>
@@ -63,7 +63,7 @@ export default function PlayerStatusBar({
         <div className={cell}>
           <Sparkles size={17} className="text-amber-600 dark:text-amber-300 shrink-0" />
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-900/60 dark:text-white/45">XP</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-700 dark:text-white/45">XP</p>
             <p className="text-base font-black text-slate-900 dark:text-white tabular-nums leading-tight truncate">
               {xp.toLocaleString("id-ID")}
             </p>
@@ -73,7 +73,7 @@ export default function PlayerStatusBar({
         <div className={cell}>
           <Coins size={17} className="text-yellow-600 dark:text-yellow-300 shrink-0" />
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-900/60 dark:text-white/45">Koin</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-700 dark:text-white/45">Koin</p>
             <p className="text-base font-black text-slate-900 dark:text-white tabular-nums leading-tight truncate">
               {coins.toLocaleString("id-ID")}
             </p>
@@ -83,7 +83,7 @@ export default function PlayerStatusBar({
         <div className={cell}>
           <Flame size={17} className={streak ? "text-orange-600 dark:text-orange-400" : "text-slate-900/30 dark:text-white/30"} shrink-0 />
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-900/60 dark:text-white/45">Streak</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-700 dark:text-white/45">Streak</p>
             <p className="text-base font-black text-slate-900 dark:text-white tabular-nums leading-tight">{streak ?? 0}</p>
           </div>
         </div>
@@ -93,7 +93,7 @@ export default function PlayerStatusBar({
             <RankIcon rank={rank} size={26} />
           </div>
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-900/60 dark:text-white/45 truncate">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-700 dark:text-white/45 truncate">
               Rank
             </p>
             <p className="text-base font-black leading-tight truncate" style={{ color: meta?.color ?? "#94a3b8", filter: rankLabelFilter }}>
@@ -109,7 +109,7 @@ export default function PlayerStatusBar({
         >
           <Trophy size={17} className="text-emerald-600 dark:text-emerald-300 shrink-0" />
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-900/60 dark:text-white/45">Lencana</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-700 dark:text-white/45">Lencana</p>
             <div className="flex items-center gap-1.5">
               {mini.length > 0 ? (
                 mini.map((b) => (
@@ -118,12 +118,12 @@ export default function PlayerStatusBar({
                   </span>
                 ))
               ) : (
-                <span className="text-sm text-slate-900/55 dark:text-white/40">Belum ada</span>
+                <span className="text-sm text-slate-700 dark:text-white/40">Belum ada</span>
               )}
               {extra > 0 && (
                 <span
                   aria-hidden
-                  className="rounded-full bg-slate-900/5 dark:bg-slate-900/10 border-slate-900/10 dark:border-white/10 px-1.5 py-0.5 text-[9px] font-bold text-slate-900/70 dark:text-white/70 tabular-nums"
+                  className="rounded-full bg-slate-900/5 dark:bg-slate-900/10 border-slate-900/10 dark:border-white/10 px-1.5 py-0.5 text-[9px] font-bold text-slate-800 dark:text-white/70 tabular-nums"
                 >
                   +{extra}
                 </span>

@@ -42,7 +42,7 @@ export default function BadgeShowcasePanel({ lencana, nextBadge }: BadgeShowcase
           </span>
           Perkembangan Lencana
         </h3>
-        <span className="text-[11px] font-semibold text-slate-900/60 dark:text-white/45">
+        <span className="text-[11px] font-semibold text-slate-700 dark:text-white/45">
           {totalUnlocked}/{lencana.length}
         </span>
       </div>
@@ -64,7 +64,7 @@ export default function BadgeShowcasePanel({ lencana, nextBadge }: BadgeShowcase
               size={40}
               className={`object-contain ${l.unlocked ? "" : "grayscale opacity-30"}`}
             />
-            <span className={`text-[10px] font-semibold leading-tight ${l.unlocked ? "text-amber-700 dark:text-amber-200" : "text-slate-900/55 dark:text-white/40"}`}>
+            <span className={`text-[10px] font-semibold leading-tight ${l.unlocked ? "text-amber-700 dark:text-amber-200" : "text-slate-700 dark:text-white/40"}`}>
               {l.name}
             </span>
             {!l.unlocked && (
@@ -81,7 +81,7 @@ export default function BadgeShowcasePanel({ lencana, nextBadge }: BadgeShowcase
           type="button"
           onClick={() => setExpanded((v) => !v)}
           aria-expanded={expanded}
-          className="mt-3 w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-900/[0.05] dark:bg-white/[0.05] ring-1 ring-slate-900/10 dark:ring-white/10 px-3 py-2 text-[11px] font-bold text-slate-900/60 dark:text-white/60 transition-colors hover:bg-slate-900/[0.1] dark:bg-white/[0.1] hover:text-slate-900 dark:text-white"
+          className="mt-3 w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-900/[0.05] dark:bg-white/[0.05] ring-1 ring-slate-900/10 dark:ring-white/10 px-3 py-2 text-[11px] font-bold text-slate-700 dark:text-white/60 transition-colors hover:bg-slate-900/[0.1] dark:bg-white/[0.1] hover:text-slate-900 dark:text-white"
         >
           {expanded ? (
             <>

@@ -81,7 +81,7 @@ export default function FeaturedWorksGallery({
               className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all ring-1 ${
                 filter === t
                   ? "bg-violet-500 text-white ring-violet-400/40"
- : "bg-slate-900/5 dark:bg-slate-900/5 text-slate-900/55 dark:text-white/55 ring-slate-900/10 dark:ring-white/10 hover:bg-slate-900/10 dark:hover:bg-white/10 "
+ : "bg-slate-900/5 dark:bg-slate-900/5 text-slate-700 dark:text-white/55 ring-slate-900/10 dark:ring-white/10 hover:bg-slate-900/10 dark:hover:bg-white/10 "
               }`}
             >
               {t === "SEMUA" ? "Semua" : TYPE_BADGE[t]?.label ?? t}
@@ -92,12 +92,12 @@ export default function FeaturedWorksGallery({
 
       {filtered.length === 0 ? (
         <div className="mt-5 rounded-xl border border-dashed border-slate-900/10 dark:border-white/10 px-4 py-8 text-center">
-          <p className="text-sm text-slate-900/60 dark:text-white/45">{emptyText}</p>
+          <p className="text-sm text-slate-700 dark:text-white/45">{emptyText}</p>
         </div>
       ) : (
         <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((k) => {
-            const meta = TYPE_BADGE[k.type] ?? { label: k.type, badge: "bg-slate-900/5 dark:bg-slate-900/5 text-slate-900/60 dark:text-white/60 ring-slate-900/10 dark:ring-white/10" };
+            const meta = TYPE_BADGE[k.type] ?? { label: k.type, badge: "bg-slate-900/5 dark:bg-slate-900/5 text-slate-700 dark:text-white/60 ring-slate-900/10 dark:ring-white/10" };
             return (
               <div
                 key={k.id}
@@ -116,7 +116,7 @@ export default function FeaturedWorksGallery({
                     <button
                       onClick={() => onDelete(k.id)}
                       aria-label={`Hapus karya ${k.title}`}
-                      className="ml-auto text-slate-900/45 dark:text-white/45 hover:text-rose-500 dark:hover:text-rose-400 p-1 transition-colors"
+                      className="ml-auto text-slate-700 dark:text-white/45 hover:text-rose-500 dark:hover:text-rose-400 p-1 transition-colors"
                     >
                       <X size={14} />
                     </button>
@@ -126,11 +126,11 @@ export default function FeaturedWorksGallery({
                   <h4 className="font-semibold text-slate-900 dark:text-white text-sm leading-snug line-clamp-1 group-hover:text-violet-600 dark:group-hover:text-violet-200 transition-colors">
                     {k.title}
                   </h4>
-                  <p className="text-xs text-slate-900/60 dark:text-white/45 mt-1 line-clamp-2">
+                  <p className="text-xs text-slate-700 dark:text-white/45 mt-1 line-clamp-2">
                     {k.excerpt || k.content?.slice(0, 100)}
                   </p>
                 </Link>
-                <div className="flex items-center gap-3 mt-3 text-xs text-slate-900/55 dark:text-white/40">
+                <div className="flex items-center gap-3 mt-3 text-xs text-slate-700 dark:text-white/40">
                   <span className="flex items-center gap-1">
                     <Heart size={11} className="text-rose-600 dark:text-rose-400" /> {k.likesCount || 0}
                   </span>

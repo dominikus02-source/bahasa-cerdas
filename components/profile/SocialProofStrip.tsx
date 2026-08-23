@@ -46,7 +46,7 @@ export default function SocialProofStrip({
             <span className="text-lg font-black text-slate-900 dark:text-white tabular-nums">
               {s.value.toLocaleString("id-ID")}
             </span>
-            <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-900/50 dark:text-white/50 group-hover:text-slate-900/70 dark:text-white/70">
+            <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-700 dark:text-white/50 group-hover:text-slate-900/70 dark:group-hover:text-white/70">
               {s.label}
             </span>
           </div>

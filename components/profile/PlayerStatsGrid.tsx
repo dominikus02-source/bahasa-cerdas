@@ -41,7 +41,7 @@ export default function PlayerStatsGrid({ stats }: { stats: PlayerStatCard[] }) 
             <p className="text-2xl font-black text-slate-900 dark:text-white leading-none tabular-nums">
               {s.value.toLocaleString("id-ID")}
             </p>
-            <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-900/60 dark:text-white/45">
+            <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-700 dark:text-white/45">
               {s.label}
             </p>
           </div>

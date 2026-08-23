@@ -42,7 +42,7 @@ export default function SocialConnections({
 
   const stack = (list: ConnectionPreview[]) =>
     list.length === 0 ? (
-      <span className="text-xs text-slate-900/55 dark:text-white/35">Belum ada</span>
+      <span className="text-xs text-slate-700 dark:text-white/35">Belum ada</span>
     ) : (
       <div className="flex items-center">
         {list.slice(0, 6).map((p, i) => (
@@ -66,7 +66,7 @@ export default function SocialConnections({
           </button>
         ))}
         {extraFollowers + extraFollowing > 0 && (
-          <span className="ml-1.5 text-[11px] font-semibold text-slate-900/60 dark:text-white/45 tabular-nums">
+          <span className="ml-1.5 text-[11px] font-semibold text-slate-700 dark:text-white/45 tabular-nums">
             +{extraFollowers + extraFollowing}
           </span>
         )}
@@ -89,7 +89,7 @@ export default function SocialConnections({
         >
           <Trophy size={16} className="text-amber-600 dark:text-amber-300 shrink-0" />
           <span className="min-w-0 flex-1">
-            <span className="block text-[11px] font-semibold uppercase tracking-wider text-slate-900/60 dark:text-white/45">
+            <span className="block text-[11px] font-semibold uppercase tracking-wider text-slate-700 dark:text-white/45">
               XP Mingguan
             </span>
             <span className="block text-base font-black text-slate-900 dark:text-white tabular-nums">
@@ -97,29 +97,29 @@ export default function SocialConnections({
             </span>
           </span>
           {weeklyLabel && (
-            <span className="text-[10px] text-slate-900/55 dark:text-white/40 text-right leading-tight">{weeklyLabel}</span>
+            <span className="text-[10px] text-slate-700 dark:text-white/40 text-right leading-tight">{weeklyLabel}</span>
           )}
         </button>
       )}
 
       <div className="space-y-4">
         <div>
-          <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-900/60 dark:text-white/45">
-            Pengikut <span className="text-slate-900/80 dark:text-white/80">· {followerCount.toLocaleString("id-ID")}</span>
+          <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-700 dark:text-white/45">
+            Pengikut <span className="text-slate-800 dark:text-white/80">· {followerCount.toLocaleString("id-ID")}</span>
           </p>
           {stack(followers)}
         </div>
 
         <div>
-          <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-900/60 dark:text-white/45">
-            Mengikuti <span className="text-slate-900/80 dark:text-white/80">· {followingCount.toLocaleString("id-ID")}</span>
+          <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-700 dark:text-white/45">
+            Mengikuti <span className="text-slate-800 dark:text-white/80">· {followingCount.toLocaleString("id-ID")}</span>
           </p>
           {stack(following)}
         </div>
       </div>
 
       {followers.length === 0 && following.length === 0 && (
-        <p className="mt-4 text-xs text-slate-900/55 dark:text-white/35 leading-relaxed">
+        <p className="mt-4 text-xs text-slate-700 dark:text-white/35 leading-relaxed">
           Terhubung dengan pemain lain lewat halaman karya dan papan peringkat.
         </p>
       )}

@@ -71,15 +71,15 @@ export default function ActivityFeed({
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-slate-900 dark:text-white/85 truncate">{e.title}</p>
-          {e.detail && <p className="text-xs text-slate-900/60 dark:text-white/45 truncate">{e.detail}</p>}
-          <p className="mt-0.5 text-[10px] text-slate-900/55 dark:text-white/35">{waktuLalu(e.createdAt)}</p>
+          {e.detail && <p className="text-xs text-slate-700 dark:text-white/45 truncate">{e.detail}</p>}
+          <p className="mt-0.5 text-[10px] text-slate-600 dark:text-white/35">{waktuLalu(e.createdAt)}</p>
         </div>
         {e.amount != null && (
           <span
             className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold tabular-nums ${
               e.xp
                 ? "bg-amber-400/15 text-amber-700 dark:text-amber-200 ring-1 ring-amber-300/20"
-                : "bg-slate-900/5 dark:bg-slate-900/5 text-slate-900/60 dark:text-white/60 ring-1 ring-slate-900/10 dark:ring-white/10"
+                : "bg-slate-900/5 dark:bg-slate-900/5 text-slate-800 dark:text-white/60 ring-1 ring-slate-900/10 dark:ring-white/10"
             }`}
           >
             +{e.amount.toLocaleString("id-ID")}
@@ -104,7 +104,7 @@ export default function ActivityFeed({
         )}
       </div>
       {sorted.length === 0 ? (
-        <p className="px-4 pb-5 pt-1 text-sm text-slate-900/55 dark:text-white/40">{emptyText}</p>
+        <p className="px-4 pb-5 pt-1 text-sm text-slate-700 dark:text-white/40">{emptyText}</p>
       ) : (
         <ul className="divide-y divide-slate-900/[0.06] dark:divide-white/[0.06] pb-1">{sorted.map(row)}</ul>
       )}
