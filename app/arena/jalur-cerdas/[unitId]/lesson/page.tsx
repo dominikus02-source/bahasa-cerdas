@@ -160,7 +160,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 to-purple-100">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 to-purple-100 dark:from-[#151238] dark:via-[#0b1220] dark:to-[#1e1b4b]">
         <Loader2 className="w-8 h-8 text-violet-500 dark:text-violet-400 animate-spin" />
       </div>
     )
@@ -179,10 +179,10 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
 
   if (questions.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-violet-50 to-purple-100">
-        <BookOpen className="w-12 h-12 text-violet-300 mb-3" />
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-violet-50 to-purple-100 dark:from-[#151238] dark:via-[#0b1220] dark:to-[#1e1b4b]">
+        <BookOpen className="w-12 h-12 text-violet-300 dark:text-violet-500 mb-3" />
         <p className="text-gray-600 dark:text-slate-300 font-medium text-lg">Belum ada soal</p>
-        <p className="text-gray-400 text-sm mt-1">Soal untuk unit ini sedang disiapkan</p>
+        <p className="text-gray-400 dark:text-slate-400 text-sm mt-1">Soal untuk unit ini sedang disiapkan</p>
         <button onClick={() => router.push("/arena/jalur-cerdas")} className="mt-6 text-violet-600 dark:text-violet-400 underline text-sm">
           Kembali
         </button>
@@ -228,7 +228,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
   // ===== LESSON PHASE =====
   if (phase === "lesson" && lesson) {
     return (
-      <div className="min-h-screen flex flex-col bg-gradient-to-br from-violet-50 to-purple-100">
+      <div className="min-h-screen flex flex-col bg-gradient-to-br from-violet-50 to-purple-100 dark:from-[#151238] dark:via-[#0b1220] dark:to-[#1e1b4b]">
  <div className="sticky top-0 z-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm px-4 py-3 flex items-center gap-3">
           <button onClick={() => router.push(`/arena/jalur-cerdas/${unitId}`)} className="text-gray-500 hover:text-gray-700 dark:text-slate-300">
             <ArrowLeft className="w-5 h-5" />
@@ -241,7 +241,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
           <div className={`bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-violet-100 p-6 mb-4 mt-4 ${isDasar ? "text-lg" : isMenengah ? "text-base" : "text-sm"}`}>
             <div className="flex items-center gap-2 mb-3">
               <Star className={`${isDasar ? "w-6 h-6" : "w-5 h-5"} text-violet-500 dark:text-violet-400`} />
-              <h2 className={`font-bold text-violet-900 ${isDasar ? "text-xl" : "text-lg"}`}>Ringkasan</h2>
+              <h2 className={`font-bold text-violet-900 dark:text-violet-200 ${isDasar ? "text-xl" : "text-lg"}`}>Ringkasan</h2>
             </div>
             <p className={`text-gray-700 dark:text-slate-300 leading-relaxed ${isDasar ? "text-lg" : ""}`}>{lesson.summary}</p>
           </div>
@@ -250,7 +250,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
           <div className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-indigo-100 p-6 mb-4">
             <div className="flex items-center gap-2 mb-3">
               <BookOpen className={`${isDasar ? "w-6 h-6" : "w-5 h-5"} text-indigo-500`} />
-              <h2 className={`font-bold text-indigo-900 ${isDasar ? "text-xl" : "text-lg"}`}>Penjelasan</h2>
+              <h2 className={`font-bold text-indigo-900 dark:text-indigo-200 ${isDasar ? "text-xl" : "text-lg"}`}>Penjelasan</h2>
             </div>
             <p className={`text-gray-700 dark:text-slate-300 leading-relaxed ${isDasar ? "text-lg" : isMenengah ? "text-base" : "text-sm"}`}>
               {lesson.explanation}
@@ -260,12 +260,12 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
           {/* Examples Cards */}
           {lesson.examples.length > 0 && (
             <div className="mb-4">
-              <h3 className="font-bold text-amber-800 text-base mb-3 px-1">Contoh</h3>
+              <h3 className="font-bold text-amber-800 dark:text-amber-300 text-base mb-3 px-1">Contoh</h3>
               <div className="space-y-3">
                 {lesson.examples.map((ex, i) => (
                   <div key={i} className={`bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-2xl p-4 ${isDasar ? "text-lg" : "text-sm"}`}>
-                    <p className="font-semibold text-amber-900 mb-1">{ex.label}</p>
-                    <p className={`text-amber-800 ${isDasar ? "text-lg" : ""}`}>{ex.text}</p>
+                    <p className="font-semibold text-amber-900 dark:text-amber-200 mb-1">{ex.label}</p>
+                    <p className={`text-amber-800 dark:text-amber-100 ${isDasar ? "text-lg" : ""}`}>{ex.text}</p>
                     {ex.note && (
                       <p className={`mt-1 text-amber-600 dark:text-amber-400 italic ${isDasar ? "text-base" : "text-xs"}`}>{ex.note}</p>
                     )}
@@ -277,10 +277,10 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
 
           {/* Tips */}
           {lesson.tips.length > 0 && (
-            <div className="bg-gradient-to-br from-cyan-50 to-blue-50 border border-cyan-200 rounded-2xl p-5 mb-6">
+            <div className="bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-950/40 dark:to-blue-950/40 border border-cyan-200 dark:border-cyan-800/60 rounded-2xl p-5 mb-6">
               <div className="flex items-center gap-2 mb-3">
-                <Lightbulb className={`${isDasar ? "w-6 h-6" : "w-5 h-5"} text-cyan-600`} />
-                <h3 className={`font-bold text-cyan-900 ${isDasar ? "text-xl" : "text-lg"}`}>Tips</h3>
+                <Lightbulb className={`${isDasar ? "w-6 h-6" : "w-5 h-5"} text-cyan-600 dark:text-cyan-400`} />
+                <h3 className={`font-bold text-cyan-900 dark:text-cyan-200 ${isDasar ? "text-xl" : "text-lg"}`}>Tips</h3>
               </div>
               <ul className="space-y-2">
                 {lesson.tips.map((tip, i) => (
@@ -395,11 +395,11 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
   // sama persis terasa seperti mengisi formulir; warna yang berganti membuat
   // tiap soal terasa "tempat baru" dan menahan perhatian anak lebih lama.
   const TEMA = [
-    { latar: "from-violet-50 to-purple-100", garis: "#8b5cf6", lembut: "#f5f3ff", tepi: "#ddd6fe" },
-    { latar: "from-sky-50 to-cyan-100",      garis: "#0891b2", lembut: "#ecfeff", tepi: "#a5f3fc" },
-    { latar: "from-amber-50 to-orange-100",  garis: "#ea580c", lembut: "#fff7ed", tepi: "#fed7aa" },
-    { latar: "from-pink-50 to-rose-100",     garis: "#e11d48", lembut: "#fff1f2", tepi: "#fecdd3" },
-    { latar: "from-emerald-50 to-green-100", garis: "#16a34a", lembut: "#f0fdf4", tepi: "#bbf7d0" },
+    { latar: "from-violet-50 to-purple-100 dark:from-violet-950/40 dark:to-purple-950/60", garis: "#8b5cf6", lembut: "#f5f3ff", tepi: "#ddd6fe" },
+    { latar: "from-sky-50 to-cyan-100 dark:from-sky-950/40 dark:to-cyan-950/60",      garis: "#0891b2", lembut: "#ecfeff", tepi: "#a5f3fc" },
+    { latar: "from-amber-50 to-orange-100 dark:from-amber-950/40 dark:to-orange-950/60",  garis: "#ea580c", lembut: "#fff7ed", tepi: "#fed7aa" },
+    { latar: "from-pink-50 to-rose-100 dark:from-pink-950/40 dark:to-rose-950/60",     garis: "#e11d48", lembut: "#fff1f2", tepi: "#fecdd3" },
+    { latar: "from-emerald-50 to-green-100 dark:from-emerald-950/40 dark:to-green-950/60", garis: "#16a34a", lembut: "#f0fdf4", tepi: "#bbf7d0" },
   ]
   const tema = TEMA[currentIdx % TEMA.length]
 
@@ -451,7 +451,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
                 ) : (
                   <XCircle className="w-6 h-6 text-red-500 dark:text-red-400" />
                 )}
-                <span className={`font-bold ${result.correct ? "text-emerald-700 dark:text-emerald-300" : "text-red-700"}`}>
+                <span className={`font-bold ${result.correct ? "text-emerald-700 dark:text-emerald-300" : "text-red-700 dark:text-red-300"}`}>
                   {result.correct ? "Benar!" : "Kurang tepat"}
                 </span>
               </div>

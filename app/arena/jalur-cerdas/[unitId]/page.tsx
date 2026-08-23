@@ -82,7 +82,7 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ uni
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 to-purple-100 px-4 py-6">
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 to-purple-100 dark:from-[#151238] dark:via-[#0b1220] dark:to-[#1e1b4b] px-4 py-6">
       <Link href="/arena/jalur-cerdas" className="inline-flex items-center gap-1 text-sm text-gray-500 dark:text-slate-400 hover:text-violet-600 dark:text-violet-400 mb-4">
         <ArrowLeft className="w-4 h-4" />
         Kembali
@@ -161,10 +161,10 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ uni
         </Link>
       )}
 
-      <div className="mt-6 p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 dark:border-amber-800">
+      <div className="mt-6 p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40 border border-amber-200 dark:border-amber-800">
         <div className="flex items-center gap-2 mb-1">
           <Trophy className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-          <p className="text-sm font-semibold text-amber-800">Hadiah</p>
+          <p className="text-sm font-semibold text-amber-800 dark:text-amber-200">Hadiah</p>
         </div>
         <p className="text-sm text-amber-700 dark:text-amber-300">
           <Zap className="w-4 h-4 inline mr-0.5" />+{unit.xpReward || 50} XP

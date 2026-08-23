@@ -154,19 +154,26 @@ export default function ProfileHero({
     .slice(0, 2);
 
   const { resolvedTheme } = useTheme();
-  const rankLabelFilter = resolvedTheme === "dark" ? undefined : "brightness(0.6)";
-  // Nama berwarna (equippedNameColor) memakai varian terang saat hero navy;
-  // hero kini terang di light mode → pakai varian gelap agar nama terbaca.
-  const onDarkName = resolvedTheme === "dark";
+  const bgCosmic = getBackgroundStyle(persona.equippedBackground);
+  // Semua gradien PROFILE_BACKGROUNDS berujung warna pekat, jadi begitu latar
+  // kosmetik dipakai hero selalu gelap — teks wajib varian terang apa pun tema.
+  const inv = resolvedTheme !== "dark" && !!bgCosmic;
+  // light: kelas terang; dark: kelas gelap. Saat inv (latar kosmetik), selalu gelap.
+  const t = (light: string, dark: string) => (inv ? dark : `${light} ${dark}`);
+  const rankLabelFilter = resolvedTheme === "dark" || inv ? undefined : "brightness(0.6)";
+  // Nama berwarna (equippedNameColor) memakai varian terang saat hero navy
+  // atau saat latar kosmetik dipakai; hero polos terang → varian gelap.
+  const onDarkName = resolvedTheme === "dark" || !!bgCosmic;
 
   return (
     <section
       aria-label="Identitas pemain"
       className="bc-hero-card relative overflow-hidden rounded-[24px] mb-6 shadow-2xl bc-profile-workspace"
-      style={(() => {
-        const bg = getBackgroundStyle(persona.equippedBackground);
-        return bg ? { background: bg.background } : undefined;
-      })()}
+      style={
+        bgCosmic
+          ? { background: bgCosmic.background, color: bgCosmic.textColor }
+          : undefined
+      }
     >
       <style>{`
         /* Crest rank responsif: dirender 200px, discale ke 130/165 di layar kecil */
@@ -215,7 +222,7 @@ export default function ProfileHero({
                 initials={initials}
                 gradient=""
                 textClassName="text-4xl"
-                className="relative bg-slate-900/10 dark:bg-white/10 backdrop-blur border-4 border-[#171241] shadow-lg ring-4 ring-slate-900/15 dark:ring-white/15"
+                className={`relative backdrop-blur border-4 border-[#171241] shadow-lg ring-4 ${t("bg-slate-900/10 ring-slate-900/15", "bg-white/10 ring-white/15")}`}
               />
               {/* Level badge di pojok avatar */}
               <span
@@ -227,7 +234,7 @@ export default function ProfileHero({
             </div>
 
             <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-900/40 dark:text-white/40 mb-1">
+                <p className={t("text-[11px] font-bold uppercase tracking-[0.2em] text-slate-900/40", "text-[11px] font-bold uppercase tracking-[0.2em] text-white/40") + " mb-1"}>
                 Profil Pemain
               </p>
               <h1 className="text-2xl md:text-[28px] font-extrabold leading-tight truncate">
@@ -249,33 +256,33 @@ export default function ProfileHero({
                 ) : null;
               })()}
               {persona.nickname && persona.fullName && (
-                <p className="text-sm text-slate-900/60 dark:text-white/60 truncate">{persona.fullName}</p>
+                <p className={t("text-sm text-slate-900/60", "text-sm text-white/60") + " truncate"}>{persona.fullName}</p>
               )}
               <div className="flex flex-wrap items-center gap-2 mt-2.5">
                 {extraChips}
-                <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold bg-slate-900/10 dark:bg-white/10 border border-slate-900/15 dark:border-white/15 backdrop-blur">
-                  <Sparkles size={11} className="text-amber-600 dark:text-amber-300" />
+                <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold backdrop-blur ${t("bg-slate-900/10 border border-slate-900/15", "bg-white/10 border border-white/15")}`}>
+                  <Sparkles size={11} className={t("text-amber-600", "text-amber-300")} />
                   {meta?.title ?? rank}
-                  <span className="text-slate-900/50 dark:text-white/50">·</span>
+                  <span className={t("text-slate-900/50", "text-white/50")}>·</span>
                   {meta?.label ?? rank}
                 </span>
                 {persona.gelar && (
-                  <span className="rounded-full px-3 py-1 text-[11px] font-bold bg-amber-400/15 border border-amber-300 dark:border-amber-700/25 text-amber-700 dark:text-amber-200">
+                  <span className={`rounded-full px-3 py-1 text-[11px] font-bold bg-amber-400/15 border border-amber-300 dark:border-amber-700/25 ${t("text-amber-700", "text-amber-200")}`}>
                     {persona.gelar}
                   </span>
                 )}
                 {persona.streak != null && persona.streak > 0 && (
-                  <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold bg-orange-400/15 border border-orange-300 dark:border-orange-700/25 text-orange-700 dark:text-orange-200">
+                  <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold bg-orange-400/15 border border-orange-300 dark:border-orange-700/25 ${t("text-orange-700", "text-orange-200")}`}>
                     <Flame size={11} /> {persona.streak}
                   </span>
                 )}
                 {persona.memberNumber && (
-                  <span className="rounded-full px-2.5 py-1 text-[10px] font-semibold bg-slate-900/5 dark:bg-slate-900/5 border-slate-900/10 dark:border-white/10 text-slate-900/45 dark:text-white/45">
+                  <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold ${t("bg-slate-900/5 border-slate-900/10 text-slate-900/45", "bg-white/5 border-white/10 text-white/45")}`}>
                     #{persona.memberNumber}
                   </span>
                 )}
                 {persona.joinedAt && (
-                  <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-semibold bg-slate-900/5 dark:bg-slate-900/5 border-slate-900/10 dark:border-white/10 text-slate-900/45 dark:text-white/45">
+                  <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-semibold ${t("bg-slate-900/5 border-slate-900/10", "bg-white/5 border-white/10") + " " + t("text-slate-900/45", "text-white/45")}`}>
                     <CalendarDays size={10} /> Bergabung{" "}
                     {new Intl.DateTimeFormat("id-ID", { month: "short", year: "numeric" }).format(
                       new Date(persona.joinedAt),
@@ -302,11 +309,11 @@ export default function ProfileHero({
               <p className="text-base lg:text-lg font-black tracking-wide uppercase" style={{ color: rankColor, filter: rankLabelFilter }}>
                 {meta?.label}
               </p>
-              <p className="text-[11px] font-semibold text-slate-900/70 dark:text-white/70">
+              <p className={t("text-[11px] font-semibold text-slate-900/70", "text-[11px] font-semibold text-white/70")}>
                 Level {persona.level} · {meta?.title}
               </p>
               {next && nextMeta && (
-                <p className="text-[10px] text-slate-900/60 dark:text-white/40">
+                <p className={t("text-[10px] text-slate-900/60", "text-[10px] text-white/40")}>
                   {nextMeta.label} di Level {Math.max(persona.level + 1, minLevelForRank(next))}
                 </p>
               )}
@@ -317,15 +324,15 @@ export default function ProfileHero({
         {/* Level / XP progress — ungu → emas */}
         <div className="mt-5">
           <div className="flex items-center justify-between text-xs font-semibold mb-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-900/5 dark:bg-slate-900/10 border-slate-900/10 dark:border-white/10 px-2.5 py-1">
-              <Sparkles size={11} className="text-amber-600 dark:text-amber-300" /> Level {persona.level}
+            <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 ${t("bg-slate-900/5 border border-slate-900/10", "bg-white/5 border border-white/10")}`}>
+              <Sparkles size={11} className={t("text-amber-600", "text-amber-300")} /> Level {persona.level}
             </span>
-            <span className="text-slate-900/60 dark:text-white/60">
+            <span className={t("text-slate-900/60", "text-white/60")}>
               {persona.levelProgress.current.toLocaleString("id-ID")} / {persona.levelProgress.needed.toLocaleString("id-ID")} XP
             </span>
           </div>
           <div
-            className="h-3.5 bg-black/40 rounded-full overflow-hidden ring-1 ring-slate-900/10 dark:ring-white/10"
+            className={`h-3.5 bg-black/40 rounded-full overflow-hidden ring-1 ${t("ring-slate-900/10", "ring-white/10")}`}
             role="progressbar"
             aria-valuenow={Math.round(persona.levelProgress.pct * 100)}
             aria-valuemin={0}
@@ -342,30 +349,30 @@ export default function ProfileHero({
               }}
             />
           </div>
-          <p className="text-[11px] text-slate-900/60 dark:text-white/45 mt-2">
+          <p className={t("text-[11px] text-slate-900/60", "text-[11px] text-white/45") + " mt-2"}>
             Tinggal {persona.levelProgress.remaining.toLocaleString("id-ID")} XP menuju Level {persona.level + 1}
-            <span className="mx-1.5 text-slate-900/25 dark:text-white/25">·</span>
-            <span className="text-slate-900/60 dark:text-white/60">{Math.round(persona.levelProgress.pct * 100)}%</span>
+            <span className={"mx-1.5 " + t("text-slate-900/25", "text-white/25")}>·</span>
+            <span className={t("text-slate-900/60", "text-white/60")}>{Math.round(persona.levelProgress.pct * 100)}%</span>
           </p>
         </div>
 
         {/* Sosial — angka nyata pengikut / mengikuti (bila request sosial sukses) */}
         {social && (social.followerCount > 0 || social.followingCount > 0) && (
-          <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2">
+          <div className={`mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 ${t("text-slate-900", "text-white")}`}>
             <span className="inline-flex items-center gap-2">
-              <Users size={14} className="text-slate-900/40 dark:text-white/40" aria-hidden />
-              <span className="text-base font-black text-slate-900 dark:text-white tabular-nums leading-none">
+              <Users size={14} className={t("text-slate-900/40", "text-white/40")} aria-hidden />
+              <span className="text-base font-black tabular-nums leading-none">
                 {social.followerCount.toLocaleString("id-ID")}
               </span>
-              <span className="text-xs text-slate-900/55 dark:text-white/55">Pengikut</span>
+              <span className={t("text-xs text-slate-900/55", "text-xs text-white/55")}>Pengikut</span>
             </span>
-            <span aria-hidden className="h-4 w-px bg-slate-900/15 dark:bg-white/15" />
+            <span aria-hidden className={t("h-4 w-px bg-slate-900/15", "h-4 w-px bg-white/15")} />
             <span className="inline-flex items-center gap-2">
-              <UserRound size={14} className="text-slate-900/40 dark:text-white/40" aria-hidden />
-              <span className="text-base font-black text-slate-900 dark:text-white tabular-nums leading-none">
+              <UserRound size={14} className={t("text-slate-900/40", "text-white/40")} aria-hidden />
+              <span className="text-base font-black tabular-nums leading-none">
                 {social.followingCount.toLocaleString("id-ID")}
               </span>
-              <span className="text-xs text-slate-900/55 dark:text-white/55">Mengikuti</span>
+              <span className={t("text-xs text-slate-900/55", "text-xs text-white/55")}>Mengikuti</span>
             </span>
           </div>
         )}
@@ -389,7 +396,10 @@ export default function ProfileHero({
                 aria-pressed={!!following}
                 className={`inline-flex h-11 items-center gap-2 rounded-xl px-5 text-sm font-bold transition-all shadow-lg disabled:opacity-60 ${
                   following
- ? "bg-slate-900/5 dark:bg-slate-900/10 text-slate-800 dark:text-white border-slate-900/20 dark:border-white/20 hover:bg-slate-900/10 dark:hover:bg-white/15 "
+ ? t(
+   "bg-slate-900/5 dark:bg-slate-900/10 text-slate-800 dark:text-white border-slate-900/20 dark:border-white/20 hover:bg-slate-900/10 dark:hover:bg-white/15",
+   "bg-white/10 text-white border border-white/20 hover:bg-white/15"
+ )
                     : "bg-gradient-to-r from-violet-500 to-purple-600 text-white hover:shadow-xl"
                 }`}
               >
@@ -403,11 +413,24 @@ export default function ProfileHero({
                 aria-label={liked ? "Batal suka profil" : "Suka profil"}
                 className={`inline-flex h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition-all shadow-lg border disabled:opacity-60 ${
                   liked
-                    ? "bg-rose-500/20 text-rose-700 dark:text-rose-200 border-rose-300/30"
- : "bg-slate-900/5 dark:bg-slate-900/10 text-slate-800 dark:text-white border-slate-900/20 dark:border-white/20 hover:bg-slate-900/10 dark:hover:bg-white/15 "
+                    ? t(
+                        "bg-rose-500/20 text-rose-700 dark:text-rose-200 border-rose-300/30",
+                        "bg-rose-500/25 text-rose-200 border-rose-300/40"
+                      )
+ : t(
+   "bg-slate-900/5 dark:bg-slate-900/10 text-slate-800 dark:text-white border-slate-900/20 dark:border-white/20 hover:bg-slate-900/10 dark:hover:bg-white/15",
+   "bg-white/10 text-white hover:bg-white/15"
+ )
                 }`}
               >
-                <Heart size={16} className={liked ? "fill-rose-600 text-rose-600 dark:fill-rose-400 dark:text-rose-400" : ""} />
+                <Heart
+                  size={16}
+                  className={
+                    liked
+                      ? t("fill-rose-600 text-rose-600", "fill-rose-400 text-rose-400")
+                      : ""
+                  }
+                />
                 {liked ? "Disukai" : "Suka"} · {likeCount.toLocaleString("id-ID")}
               </button>
             </>
@@ -416,7 +439,10 @@ export default function ProfileHero({
           {!isOwn && (
             <a
               href="#karya"
-              className="inline-flex h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold bg-slate-900/10 dark:bg-white/10 border border-slate-900/15 dark:border-white/15 hover:bg-slate-900/15 dark:hover:bg-white/15 transition-all"
+              className={`inline-flex h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition-all ${t(
+                "bg-slate-900/10 border border-slate-900/15 hover:bg-slate-900/15",
+                "bg-white/10 border border-white/15 hover:bg-white/15"
+              )}`}
             >
               <PenLine size={16} /> Karya
             </a>
@@ -425,24 +451,27 @@ export default function ProfileHero({
 
         {/* Kartu Total Like (kaca) — hanya bila data seperti yang dikirim parent */}
         {likeSummary && (
-          <div className="mt-4 inline-flex items-center gap-4 rounded-2xl bg-slate-900/[0.07] dark:bg-white/[0.07] border border-slate-900/10 dark:border-white/10 backdrop-blur px-5 py-3.5">
+          <div className={`mt-4 inline-flex items-center gap-4 rounded-2xl backdrop-blur px-5 py-3.5 ${t(
+            "bg-slate-900/[0.07] border border-slate-900/10",
+            "bg-white/[0.07] border border-white/10"
+          )}`}>
             <span
               className="flex h-10 w-10 items-center justify-center rounded-xl"
               style={{ background: "radial-gradient(circle at 30% 30%, rgba(244,63,94,0.35), rgba(190,24,93,0.2))" }}
             >
-              <Heart size={18} className="fill-rose-600 dark:fill-rose-400 text-rose-600 dark:text-rose-300" />
+              <Heart size={18} className={t("fill-rose-600 text-rose-600", "fill-rose-400 text-rose-300")} />
             </span>
             <div>
-              <p className="text-xl font-black leading-none text-slate-900 dark:text-white">
+              <p className={`text-xl font-black leading-none ${t("text-slate-900", "text-white")}`}>
                 {likeSummary.totalLikes.toLocaleString("id-ID")}
               </p>
-              <p className="text-[11px] text-slate-900/55 dark:text-white/55 mt-1">
+              <p className={t("text-[11px] text-slate-900/55", "text-[11px] text-white/55") + " mt-1"}>
                 Total Like Diterima · dari {likeSummary.karyaCount.toLocaleString("id-ID")}{" "}
                 {likeSummary.karyaCount === 1 ? "karya" : "karya"}
               </p>
             </div>
             {likeSummary.karyaCount > 0 && (
-              <span aria-hidden className="hidden sm:inline-flex items-center gap-1 text-[11px] text-slate-900/60 dark:text-white/45 ml-2">
+              <span aria-hidden className={"hidden sm:inline-flex items-center gap-1 text-[11px] ml-2 " + t("text-slate-900/60", "text-white/45")}>
                 <Files size={12} /> Karya
               </span>
             )}
@@ -451,12 +480,15 @@ export default function ProfileHero({
 
         {/* Bio / tagline */}
         {persona.bio ? (
-          <p className="mt-4 text-sm text-slate-900/70 dark:text-white/70 leading-relaxed max-w-2xl">{persona.bio}</p>
+          <p className={t("mt-4 text-sm text-slate-900/70", "mt-4 text-sm text-white/70") + " leading-relaxed max-w-2xl"}>{persona.bio}</p>
         ) : (
           isOwn && (
-            <p className="mt-4 text-sm text-slate-900/60 dark:text-white/45 italic">
+            <p className={t("mt-4 text-sm text-slate-900/60", "mt-4 text-sm text-white/45") + " italic"}>
               Tambahkan sedikit tentang dirimu.{" "}
-              <button onClick={onEditProfile} className="underline text-slate-900/70 dark:text-white/70 hover:text-slate-900 dark:text-white">
+              <button onClick={onEditProfile} className={t(
+                "underline text-slate-900/70 hover:text-slate-900",
+                "underline text-white/70 hover:text-white"
+              )}>
                 Edit bio
               </button>
             </p>

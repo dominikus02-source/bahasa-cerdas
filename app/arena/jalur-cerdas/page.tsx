@@ -47,19 +47,8 @@ export default async function JalurCerdasPage() {
   }
 
   return (
-    // Latar krem hangat. Di atas putih polos, simpul warna-warni terlihat
-    // mengambang dan halaman terasa seperti formulir; krem membuat kartu putih
-    // justru menonjol sebagai pijakan.
-    <div
-      className="arena-page min-h-screen px-3 pb-10 pt-4 sm:px-4"
-      style={{
-        background: "#fdf6e9",
-        // Krem dipaksa penuh ke tepi layar: pembungkus induk punya lebar
-        // maksimum, sehingga tanpa ini sisi kanan menyisakan pita putih di HP.
-        boxShadow: "0 0 0 100vmax #fdf6e9",
-        clipPath: "inset(0 -100vmax)",
-      }}
-    >
+    // Latar krem hangat (light) / navy (dark) via kelas .jalur-page di arena.css.
+    <div className="arena-page jalur-page min-h-screen px-3 pb-10 pt-4 sm:px-4">
       <div className="text-center mb-6">
         <h1 className="text-2xl font-extrabold text-gray-900 dark:text-slate-100">Jalur Cerdas</h1>
         <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">Latihan Bahasa Indonesia dari nol sampai mahir</p>

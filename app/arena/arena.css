@@ -40,6 +40,19 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Peta Jalur Cerdas: krem hangus agar node warna-warni menonjol dan kartu putih
+   terlihat kontras. Tema gelap memakai keluarga navy arena (sama dengan latar
+   layout) supaya teks dark:text-slate-100 tetap terbaca. */
+.jalur-page {
+  background-color: #fdf6e9;
+  box-shadow: 0 0 0 100vmax #fdf6e9;
+  clip-path: inset(0 -100vmax);
+}
+.dark .jalur-page {
+  background-color: #151238;
+  box-shadow: 0 0 0 100vmax #151238;
+}
+
 /* Text balance for headings */
 .arena-balance {
   text-wrap: balance;
