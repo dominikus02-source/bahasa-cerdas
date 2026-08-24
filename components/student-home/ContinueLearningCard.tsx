@@ -342,7 +342,7 @@ export function ContinueLearningCard() {
       if (!response.ok || !data.sessionId) {
         throw new Error(data.error || "Latihan belum tersedia");
       }
-      router.push(`/arena/adaptive/${data.sessionId}`);
+      router.push(`/arena/adaptive-practice/${data.sessionId}`);
     } catch {
       setStartError("Latihan belum bisa dimulai. Coba lagi sebentar.");
     } finally {
