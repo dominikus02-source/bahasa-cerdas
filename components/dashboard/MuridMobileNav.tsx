@@ -9,7 +9,7 @@ import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { VerifiedBadge } from "@/components/arena/UserName";
 import {
   Home, Menu as MenuIcon, X, Bell,
-  GraduationCap, User, PenLine, MessageCircle, Settings, Shield, Zap,
+  GraduationCap, User, PenLine, MessageCircle, Settings, Shield, Zap, Gem,
 } from "lucide-react";
 import {
   NAV_ICON_CLASS,
@@ -32,6 +32,7 @@ const DRAWER_ITEMS: { href: string; label: string; icon: any }[] = [
   { href: "/arena", label: "Arena", icon: Zap },
   { href: "/murid/karya", label: "Karya", icon: PenLine },
   { href: "/arena/chat", label: "Obrolan", icon: MessageCircle },
+  { href: "/murid/premium", label: "Premium", icon: Gem },
   { href: "/murid/pengaturan", label: "Pengaturan", icon: Settings },
 ];
 
