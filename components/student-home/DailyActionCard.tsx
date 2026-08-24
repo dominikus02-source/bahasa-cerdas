@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Brain, CheckCircle, XCircle, Loader2, ChevronRight, PenLine } from "lucide-react";
+import { Brain, CheckCircle, XCircle, Loader2, ChevronRight, ArrowRight, BookOpen, Target } from "lucide-react";
 import type {
   DailyActionResponse,
   DailyActionPending,
@@ -28,6 +28,7 @@ export function DailyActionCard() {
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<DailyActionAnswerResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [skillHint, setSkillHint] = useState<string | null>(null);
 
   // Fetch today's action
   useEffect(() => {
@@ -37,6 +38,7 @@ export function DailyActionCard() {
         if (!res.ok) throw new Error("Gagal memuat");
         const data: DailyActionResponse = await res.json();
         setAction(data);
+        if (data.status === "PENDING") setSkillHint((data as DailyActionPending).skill ?? null);
       } catch {
         setError("Gagal memuat tantangan hari ini.");
       } finally {
@@ -68,6 +70,8 @@ export function DailyActionCard() {
 
       const data: DailyActionAnswerResult = await res.json();
       setResult(data);
+      // Track skill from result for post-answer CTA
+      if (data.skill) setSkillHint(data.skill);
 
       // Update local state to COMPLETED
       setAction((prev) =>
@@ -83,6 +87,30 @@ export function DailyActionCard() {
   }, [selectedAnswer, textInput, submitting]);
 
   // Parse options for display
+  // Skill label mapping for display
+  const SKILL_LABEL_MAP: Record<string, string> = {
+    READING: "Membaca",
+    WRITING: "Menulis",
+    LISTENING: "Mendengarkan",
+    SPEAKING: "Berbicara",
+    GRAMMAR: "Tata Bahasa",
+    VOCABULARY: "Kosakata",
+    LITERATURE: "Sastra",
+  };
+  const skillLabel = skillHint ? SKILL_LABEL_MAP[skillHint] ?? skillHint : null;
+
+  // Map skill to learning direction CTA
+  const SKILL_CTA_MAP: Record<string, { href: string; label: string }> = {
+    READING: { href: "/arena/jalur-cerdas", label: "Latih kemampuan membaca" },
+    GRAMMAR: { href: "/arena/jalur-cerdas", label: "Perkuat tata bahasa" },
+    VOCABULARY: { href: "/arena/jalur-cerdas", label: "Perluas kosakata" },
+    WRITING: { href: "/murid/karya/new", label: "Asah kemampuan menulis" },
+    LITERATURE: { href: "/arena/jalur-cerdas", label: "Jelajahi sastra" },
+    LISTENING: { href: "/arena/jalur-cerdas", label: "Latih kemampuan mendengarkan" },
+    SPEAKING: { href: "/arena/jalur-cerdas", label: "Asah kemampuan berbicara" },
+  };
+  const cta = skillHint ? SKILL_CTA_MAP[skillHint] ?? { href: "/arena/jalur-cerdas", label: "Lanjutkan belajar" } : null;
+
   const parseOptions = (optionsJson: string): string[] => {
     try {
       const parsed = JSON.parse(optionsJson);
@@ -193,6 +221,26 @@ export function DailyActionCard() {
                 Jawaban: <span className="font-medium">{result.correctAnswer}</span>
               </p>
             )}
+            {/* Skill feedback */}
+            {(result.skillLabel || skillLabel) && (
+              <div className="mt-2.5 flex items-center gap-2 rounded-lg bg-white/50 px-2.5 py-1.5 dark:bg-slate-800/40">
+                <Target size={13} className="shrink-0 text-violet-500 dark:text-violet-400" />
+                <span className="text-[11px] text-slate-600 dark:text-slate-400">
+                  Kemampuan: <span className="font-semibold text-slate-800 dark:text-slate-200">{result.skillLabel || skillLabel}</span>
+                </span>
+              </div>
+            )}
+            {/* Learning direction CTA */}
+            {cta && (
+              <a
+                href={cta.href}
+                className="mt-2.5 flex items-center gap-2 rounded-lg bg-violet-50 px-3 py-2 text-xs font-semibold text-violet-700 transition-colors hover:bg-violet-100 dark:bg-violet-900/30 dark:text-violet-300 dark:hover:bg-violet-900/50"
+              >
+                <BookOpen size={14} />
+                {cta.label}
+                <ArrowRight size={14} className="ml-auto" />
+              </a>
+            )}
           </div>
         </div>
       </div>
@@ -204,7 +252,8 @@ export function DailyActionCard() {
     const pending = action as DailyActionPending;
     const options = parseOptions(pending.options);
     const questionType = pending.questionType || "PILIHAN_GANDA";
-    const sourceLabel = pending.source === "TKA" ? "TKA" : "UKBI";
+    // Skill-first label (show skill, not source)
+    const pendingSkillLabel = pending.skill ? SKILL_LABEL_MAP[pending.skill] ?? pending.skill : null;
 
     // Type-specific labels
     const typeLabel =
@@ -226,7 +275,7 @@ export function DailyActionCard() {
               Tantangan Bahasa Hari Ini
             </p>
             <p className="text-[11px] text-slate-500 dark:text-slate-400">
-              1 soal · ±2 menit · {typeLabel} · {sourceLabel}
+              {pendingSkillLabel ? `${pendingSkillLabel} · ` : ""}1 soal · ±2 menit · {typeLabel}
             </p>
           </div>
         </div>

@@ -14,6 +14,7 @@ import type { LearningSkillType } from "@prisma/client";
 import { dayKeyWIB } from "@/lib/learning-loop/journey";
 import { XP_REWARD, COIN_REWARD } from "./config";
 import type { DailyActionAnswerResult } from "./types";
+import { SKILL_LABELS } from "@/lib/learning-loop/skills";
 
 /**
  * Answer a Daily Action question.
@@ -172,12 +173,19 @@ export async function answerDailyAction(
   // 5. Fetch explanation from source question
   const explanation = await fetchExplanation(action.source, action.questionId);
 
+  // Resolve skill label
+  const skillType = (action.skill as LearningSkillType) ?? "READING";
+  const skillLabel = SKILL_LABELS[skillType] ?? "Bahasa Indonesia";
+
   return {
     correct: isCorrect,
     explanation,
     correctAnswer: isCorrect ? null : correctAnswer, // Only reveal on incorrect
     xpEarned: xpResult.xpDiberikan,
     coinEarned: coin,
+    skill: action.skill,
+    skillLabel,
+    source: action.source,
   };
 }
 

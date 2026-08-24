@@ -49,6 +49,7 @@ export async function GET() {
         status: "COMPLETED",
         id: action.id,
         source: action.source,
+        skill: action.skill,
         isCorrect: action.isCorrect,
         date: action.date,
       };

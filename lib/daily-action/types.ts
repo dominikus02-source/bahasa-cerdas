@@ -51,6 +51,7 @@ export interface DailyActionCompleted {
   status: "COMPLETED";
   id: string;
   source: string;
+  skill: string | null;
   isCorrect: boolean | null;
   date: string;
 }
@@ -67,6 +68,12 @@ export interface DailyActionAnswerResult {
   correctAnswer: string | null;
   xpEarned: number;
   coinEarned: number;
+  /** Skill tested (e.g. READING, GRAMMAR, VOCABULARY) */
+  skill: string | null;
+  /** Human-readable skill label in Bahasa Indonesia */
+  skillLabel: string;
+  /** Source instrument used */
+  source: string;
 }
 
 export type DailyActionResponse =
