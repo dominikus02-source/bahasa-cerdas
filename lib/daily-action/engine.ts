@@ -27,6 +27,7 @@ export async function getOrCreateDailyAction(
   source: string;
   questionId: string;
   skill: string | null;
+  questionType: string;
   difficulty: string | null;
   questionText: string;
   options: string;
@@ -44,6 +45,7 @@ export async function getOrCreateDailyAction(
       source: true,
       questionId: true,
       skill: true,
+      questionType: true,
       difficulty: true,
       questionText: true,
       options: true,
@@ -56,6 +58,7 @@ export async function getOrCreateDailyAction(
   if (existing) {
     return {
       ...existing,
+      questionType: existing.questionType ?? "PILIHAN_GANDA",
       questionText: existing.questionText ?? "",
       options: existing.options ?? "[]",
     };
@@ -105,6 +108,7 @@ async function generateDailyAction(userId: string, dayKey: string) {
         source: selected.source,
         questionId: selected.id,
         skill: selected.skill,
+        questionType: selected.questionType,
         difficulty: selected.difficulty,
         questionText: selected.questionText,
         options: selected.options,
@@ -115,6 +119,7 @@ async function generateDailyAction(userId: string, dayKey: string) {
         source: true,
         questionId: true,
         skill: true,
+        questionType: true,
         difficulty: true,
         questionText: true,
         options: true,
@@ -141,6 +146,7 @@ async function generateDailyAction(userId: string, dayKey: string) {
             source: true,
             questionId: true,
             skill: true,
+            questionType: true,
             difficulty: true,
             questionText: true,
             options: true,
@@ -152,6 +158,7 @@ async function generateDailyAction(userId: string, dayKey: string) {
         if (!fallback) return null;
         return {
           ...fallback,
+          questionType: fallback.questionType ?? "PILIHAN_GANDA",
           questionText: fallback.questionText ?? "",
           options: fallback.options ?? "[]",
         };

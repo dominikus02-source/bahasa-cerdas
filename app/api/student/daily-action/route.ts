@@ -61,6 +61,7 @@ export async function GET() {
       id: action.id,
       source: action.source,
       skill: action.skill,
+      questionType: (action as { questionType?: string }).questionType ?? "PILIHAN_GANDA",
       difficulty: action.difficulty,
       questionText: action.questionText,
       options: action.options,

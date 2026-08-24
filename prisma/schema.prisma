@@ -550,7 +550,7 @@ model KompetensiCertificate {
 }
 
 // ─── DAILY ACTION ENGINE (Aksi Hari Ini 1.0) ─────────────────────
-// Satu tantangan bahasa per hari. Soal dipilih dari TKA/UKBI/Soal,
+// Satu tantangan bahasa per hari. Soal dipilih dari TKA dan UKBI saja.
 // dipersist per hari, dan diselesaikan dengan single answer validation.
 // Hasilnya menjadi learning signal sah di ekosistem Learning Loop.
 //
@@ -563,11 +563,12 @@ model DailyAction {
   date        String   // "YYYY-MM-DD" (WIB dayKey)
 
   // Source question identification
-  source      String   // "TKA" | "UKBI" | "SOAL"
+  source      String   // "TKA" | "UKBI"
   questionId  String   // ID from source table (TKAQuestion.id / UKBIQuestion.id / Soal.id)
 
   // Snapshot at selection time (immutable after creation)
   skill       String?  // LearningSkillType (derived from question metadata)
+  questionType String  @default("PILIHAN_GANDA") // PILIHAN_GANDA | BENAR_SALAH | ISIAN_SINGKAT
   difficulty  String?  // Difficulty enum string
   questionText String? // Snapshot of question text for display (no answer)
   options     String?  // JSON-serialized options for display (no correctAnswer)

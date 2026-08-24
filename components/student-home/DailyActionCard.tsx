@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Brain, CheckCircle, XCircle, Loader2, ChevronRight } from "lucide-react";
+import { Brain, CheckCircle, XCircle, Loader2, ChevronRight, PenLine } from "lucide-react";
 import type {
   DailyActionResponse,
   DailyActionPending,
@@ -13,12 +13,18 @@ import type {
  * DailyActionCard — "Tantangan Bahasa Hari Ini"
  *
  * Displays on Student Home as a daily learning challenge.
+ * Supports 3 question types:
+ *   - PILIHAN_GANDA: A/B/C/D option buttons
+ *   - BENAR_SALAH: Two big buttons (Benar / Salah)
+ *   - ISIAN_SINGKAT: Text input for short answer
+ *
  * States: LOADING → PENDING → SUBMITTING → COMPLETED (correct/incorrect)
  */
 export function DailyActionCard() {
   const [action, setAction] = useState<DailyActionResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
+  const [textInput, setTextInput] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<DailyActionAnswerResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +48,8 @@ export function DailyActionCard() {
 
   // Submit answer
   const handleSubmit = useCallback(async () => {
-    if (!selectedAnswer.trim() || submitting) return;
+    const answer = selectedAnswer.trim() || textInput.trim();
+    if (!answer || submitting) return;
 
     setSubmitting(true);
     setError(null);
@@ -51,7 +58,7 @@ export function DailyActionCard() {
       const res = await fetch("/api/student/daily-action", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answer: selectedAnswer.trim() }),
+        body: JSON.stringify({ answer }),
       });
 
       if (!res.ok) {
@@ -73,7 +80,7 @@ export function DailyActionCard() {
     } finally {
       setSubmitting(false);
     }
-  }, [selectedAnswer, submitting]);
+  }, [selectedAnswer, textInput, submitting]);
 
   // Parse options for display
   const parseOptions = (optionsJson: string): string[] => {
@@ -196,12 +203,16 @@ export function DailyActionCard() {
   if (action?.status === "PENDING") {
     const pending = action as DailyActionPending;
     const options = parseOptions(pending.options);
-    const sourceLabel =
-      pending.source === "TKA"
-        ? "TKA"
-        : pending.source === "UKBI"
-        ? "UKBI"
-        : "Bank Soal";
+    const questionType = pending.questionType || "PILIHAN_GANDA";
+    const sourceLabel = pending.source === "TKA" ? "TKA" : "UKBI";
+
+    // Type-specific labels
+    const typeLabel =
+      questionType === "BENAR_SALAH"
+        ? "Benar / Salah"
+        : questionType === "ISIAN_SINGKAT"
+          ? "Isian Singkat"
+          : "Pilihan Ganda";
 
     return (
       <div className="rounded-2xl border border-violet-200/60 bg-gradient-to-br from-violet-50/80 to-purple-50/60 p-4 dark:border-violet-800/40 dark:from-violet-950/40 dark:to-purple-950/30">
@@ -215,7 +226,7 @@ export function DailyActionCard() {
               Tantangan Bahasa Hari Ini
             </p>
             <p className="text-[11px] text-slate-500 dark:text-slate-400">
-              1 soal · ±2 menit · {sourceLabel}
+              1 soal · ±2 menit · {typeLabel} · {sourceLabel}
             </p>
           </div>
         </div>
@@ -225,26 +236,86 @@ export function DailyActionCard() {
           {pending.questionText}
         </div>
 
-        {/* Options */}
-        <div className="mb-3 space-y-1.5">
-          {options.map((opt, idx) => (
+        {/* ── PILIHAN_GANDA: A/B/C/D option buttons ── */}
+        {questionType === "PILIHAN_GANDA" && (
+          <div className="mb-3 space-y-1.5">
+            {options.map((opt, idx) => (
+              <button
+                key={idx}
+                onClick={() => setSelectedAnswer(String(idx))}
+                disabled={submitting}
+                className={`w-full rounded-xl border px-3 py-2 text-left text-sm transition-all ${
+                  selectedAnswer === String(idx)
+                    ? "border-violet-400 bg-violet-100 font-semibold text-violet-900 dark:border-violet-500 dark:bg-violet-900/40 dark:text-violet-100"
+                    : "border-slate-200 bg-white/60 text-slate-700 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-300 dark:hover:border-slate-600"
+                }`}
+              >
+                <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full border text-[10px] font-bold">
+                  {String.fromCharCode(65 + idx)}
+                </span>
+                {opt}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* ── BENAR_SALAH: Two big buttons ── */}
+        {questionType === "BENAR_SALAH" && (
+          <div className="mb-3 grid grid-cols-2 gap-3">
             <button
-              key={idx}
-              onClick={() => setSelectedAnswer(String(idx))}
+              onClick={() => setSelectedAnswer("0")}
               disabled={submitting}
-              className={`w-full rounded-xl border px-3 py-2 text-left text-sm transition-all ${
-                selectedAnswer === String(idx)
-                  ? "border-violet-400 bg-violet-100 font-semibold text-violet-900 dark:border-violet-500 dark:bg-violet-900/40 dark:text-violet-100"
-                  : "border-slate-200 bg-white/60 text-slate-700 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-300 dark:hover:border-slate-600"
+              className={`flex items-center justify-center gap-2 rounded-xl border-2 px-4 py-4 text-base font-bold transition-all ${
+                selectedAnswer === "0"
+                  ? "border-emerald-400 bg-emerald-100 text-emerald-800 dark:border-emerald-500 dark:bg-emerald-900/40 dark:text-emerald-200"
+                  : "border-slate-200 bg-white/60 text-slate-700 hover:border-emerald-300 hover:bg-emerald-50 dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-300 dark:hover:border-emerald-600"
               }`}
             >
-              <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full border text-[10px] font-bold">
-                {String.fromCharCode(65 + idx)}
-              </span>
-              {opt}
+              <CheckCircle size={20} />
+              Benar
             </button>
-          ))}
-        </div>
+            <button
+              onClick={() => setSelectedAnswer("1")}
+              disabled={submitting}
+              className={`flex items-center justify-center gap-2 rounded-xl border-2 px-4 py-4 text-base font-bold transition-all ${
+                selectedAnswer === "1"
+                  ? "border-rose-400 bg-rose-100 text-rose-800 dark:border-rose-500 dark:bg-rose-900/40 dark:text-rose-200"
+                  : "border-slate-200 bg-white/60 text-slate-700 hover:border-rose-300 hover:bg-rose-50 dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-300 dark:hover:border-rose-600"
+              }`}
+            >
+              <XCircle size={20} />
+              Salah
+            </button>
+          </div>
+        )}
+
+        {/* ── ISIAN_SINGKAT: Text input ── */}
+        {questionType === "ISIAN_SINGKAT" && (
+          <div className="mb-3">
+            <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-violet-600 dark:text-violet-400">
+              Pilih jawaban yang paling tepat:
+            </p>
+            <div className="space-y-1.5">
+              {options.map((opt, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setSelectedAnswer(String(idx))}
+                  disabled={submitting}
+                  className={`w-full rounded-xl border px-3 py-2 text-left text-sm transition-all ${
+                    selectedAnswer === String(idx)
+                      ? "border-violet-400 bg-violet-100 font-semibold text-violet-900 dark:border-violet-500 dark:bg-violet-900/40 dark:text-violet-100"
+                      : "border-slate-200 bg-white/60 text-slate-700 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-300 dark:hover:border-slate-600"
+                  }`}
+                >
+                  <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full border text-[10px] font-bold">
+                    {String.fromCharCode(65 + idx)}
+                  </span>
+                  {opt}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Submit Button */}
         {error && (
@@ -252,7 +323,7 @@ export function DailyActionCard() {
         )}
         <button
           onClick={handleSubmit}
-          disabled={!selectedAnswer.trim() || submitting}
+          disabled={(!selectedAnswer.trim() && !textInput.trim()) || submitting}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-violet-600/20 transition-all hover:from-violet-700 hover:to-purple-700 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 dark:from-violet-500 dark:to-purple-500"
         >
           {submitting ? (

@@ -135,7 +135,7 @@ function checkOptionsQuality(
 
 // ── Source Quality ──────────────────────────────────────────
 
-const VALID_SOURCES = new Set(["TKA", "UKBI", "SOAL"]);
+const VALID_SOURCES = new Set(["TKA", "UKBI"]);
 
 function checkSource(source: string): RejectionReason[] {
   if (!VALID_SOURCES.has(source)) {
@@ -173,7 +173,7 @@ function checkSkill(skill: string | null): RejectionReason[] {
  * Returns PASS if all rules pass, or REJECT with specific reasons.
  *
  * RULES (in evaluation order):
- *   1. Source must be valid (TKA / UKBI / SOAL)
+ *   1. Source must be valid (TKA / UKBI only)
  *   2. Question text must be present, not empty, not placeholder
  *   3. Options must be parseable array with ≥2 entries
  *   4. No empty option values

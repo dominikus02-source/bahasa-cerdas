@@ -7,9 +7,11 @@ export interface DailyCandidate {
   /** Unique question ID from the source table */
   id: string;
   /** Source provider */
-  source: "TKA" | "UKBI" | "SOAL";
-  /** Skill derived from question metadata (nullable for SOAL) */
+  source: "TKA" | "UKBI";
+  /** Skill derived from question metadata */
   skill: string | null;
+  /** Question type: PILIHAN_GANDA | BENAR_SALAH | ISIAN_SINGKAT */
+  questionType: string;
   /** Difficulty (nullable, fallback to DEFAULT_DIFFICULTY) */
   difficulty: string | null;
   /** Question text for snapshot */
@@ -37,6 +39,7 @@ export interface DailyActionPending {
   id: string;
   source: string;
   skill: string | null;
+  questionType: string;
   difficulty: string | null;
   questionText: string;
   options: string;

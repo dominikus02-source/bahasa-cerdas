@@ -1,8 +1,10 @@
 /**
  * Daily Action Engine 1.0 — Candidate Provider
  *
- * Fetches candidate questions from TKA, UKBI, and Soal pools.
+ * Fetches candidate questions from TKA and UKBI pools only.
  * Returns a uniform DailyCandidate[] regardless of source.
+ *
+ * Source contract: TKA + UKBI ONLY. SOAL/general pools are excluded.
  *
  * Safety: UKBI listening questions without audioUrl are excluded
  * from Aksi Hari Ini candidates (they would display broken content).
@@ -11,6 +13,9 @@ import { db } from "@/lib/db";
 import { CANDIDATE_POOL_SIZE } from "./config";
 import type { DailyCandidate } from "./types";
 
+/** Allowed sources — enforced at type level and in quality gate */
+export const ALLOWED_SOURCES = ["TKA", "UKBI"] as const;
+
 /** Fetch TKA candidates */
 async function fetchTKA(): Promise<DailyCandidate[]> {
   const rows = await db.tKAQuestion.findMany({
@@ -18,6 +23,7 @@ async function fetchTKA(): Promise<DailyCandidate[]> {
     select: {
       id: true,
       kompetensi: true,
+      type: true,
       difficulty: true,
       text: true,
       options: true,
@@ -31,6 +37,7 @@ async function fetchTKA(): Promise<DailyCandidate[]> {
     id: r.id,
     source: "TKA" as const,
     skill: mapTKASkill(r.kompetensi),
+    questionType: r.type || "PILIHAN_GANDA",
     difficulty: r.difficulty ?? null,
     questionText: r.text,
     options: JSON.stringify(r.options),
@@ -48,6 +55,7 @@ async function fetchUKBI(): Promise<DailyCandidate[]> {
     select: {
       id: true,
       seksi: true,
+      type: true,
       difficulty: true,
       text: true,
       options: true,
@@ -71,6 +79,7 @@ async function fetchUKBI(): Promise<DailyCandidate[]> {
       id: r.id,
       source: "UKBI" as const,
       skill: mapUKBISkill(r.seksi),
+      questionType: r.type || "PILIHAN_GANDA",
       difficulty: r.difficulty ?? null,
       questionText: r.text,
       options: JSON.stringify(r.options),
@@ -81,50 +90,14 @@ async function fetchUKBI(): Promise<DailyCandidate[]> {
     }));
 }
 
-/** Fetch Soal candidates */
-async function fetchSoal(): Promise<DailyCandidate[]> {
-  const rows = await db.soal.findMany({
-    where: {
-      // Only published soal with valid answers
-      bankSoal: { isPublished: true },
-    },
-    select: {
-      id: true,
-      topik: true,
-      difficulty: true,
-      text: true,
-      options: true,
-      correctAnswer: true,
-      kelas: true,
-    },
-    take: CANDIDATE_POOL_SIZE,
-  });
-
-  return rows
-    .filter((r) => r.correctAnswer && r.correctAnswer.trim() !== "")
-    .map((r) => ({
-      id: r.id,
-      source: "SOAL" as const,
-      skill: mapSoalSkill(r.topik),
-      difficulty: r.difficulty ?? null,
-      questionText: r.text,
-      options: JSON.stringify(r.options),
-      isVerified: false, // Soal questions are not individually verified
-      tingkat: r.kelas || null, // kelas as grade hint (e.g. "VII", "VIII")
-      seksi: null,
-      hasAudio: false,
-    }));
-}
-
-/** Fetch all candidates from all sources */
+/** Fetch all candidates from TKA + UKBI only */
 export async function fetchAllCandidates(): Promise<DailyCandidate[]> {
-  const [tka, ukbi, soal] = await Promise.all([
+  const [tka, ukbi] = await Promise.all([
     fetchTKA().catch(() => [] as DailyCandidate[]),
     fetchUKBI().catch(() => [] as DailyCandidate[]),
-    fetchSoal().catch(() => [] as DailyCandidate[]),
   ]);
 
-  return [...tka, ...ukbi, ...soal];
+  return [...tka, ...ukbi];
 }
 
 // ── Skill Mapping ──────────────────────────────────────────────
@@ -154,16 +127,4 @@ function mapUKBISkill(seksi: string): string | null {
     default:
       return "READING";
   }
-}
-
-function mapSoalSkill(topik: string | null): string | null {
-  if (!topik) return "READING";
-  const t = topik.toLowerCase();
-  if (/huruf|bunyi|fonetik|ejaan|kalimat|konjungsi|paragraf|tanda baca/.test(t))
-    return "GRAMMAR";
-  if (/kosakata|kata baku|sinonim|antonim|imbuhan|idiom/.test(t)) return "VOCABULARY";
-  if (/membaca|pemahaman|fakta|opini|ringkasan|teks/.test(t)) return "READING";
-  if (/menulis|karangan|cerita|cerpen|artikel/.test(t)) return "WRITING";
-  if (/puisi|prosa|sastra|drama|pantun/.test(t)) return "LITERATURE";
-  return "READING";
 }

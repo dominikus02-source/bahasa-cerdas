@@ -70,6 +70,7 @@ const tkaCandidate: types.DailyCandidate = {
   id: "tka-1",
   source: "TKA",
   skill: "READING",
+  questionType: "PILIHAN_GANDA",
   difficulty: "MEDIUM",
   questionText: "Apa yang dimaksud dengan ide pokok?",
   options: JSON.stringify(["Topik utama", "Judul karangan", "Penulis", "Tahun terbit"]),
@@ -88,6 +89,7 @@ const ukbiCandidate: types.DailyCandidate = {
   id: "ukbi-1",
   source: "UKBI",
   skill: "LISTENING",
+  questionType: "PILIHAN_GANDA",
   difficulty: "EASY",
   questionText: "Dengarkan audio berikut...",
   options: JSON.stringify(["A", "B", "C", "D"]),
@@ -100,20 +102,38 @@ assert(ukbiCandidate.source === "UKBI", "UKBI candidate source");
 assert(ukbiCandidate.seksi === "MENDENGARKAN", "UKBI candidate seksi");
 assert(ukbiCandidate.hasAudio === true, "UKBI candidate hasAudio = true");
 
-const soalCandidate: types.DailyCandidate = {
-  id: "soal-1",
-  source: "SOAL",
+const ukbiGrammarCandidate: types.DailyCandidate = {
+  id: "ukbi-2",
+  source: "UKBI",
   skill: "GRAMMAR",
+  questionType: "PILIHAN_GANDA",
   difficulty: "HARD",
-  questionText: "Pilih konjungsi yang tepat...",
+  questionText: "Pilih konjungsi yang tepat untuk kalimat berikut...",
   options: JSON.stringify(["dan", "atau", "tapi", "jika"]),
   isVerified: false,
   tingkat: "VII",
+  seksi: "MERESPONS_KAIDAH",
+  hasAudio: false,
+};
+assert(ukbiGrammarCandidate.source === "UKBI", "UKBI grammar candidate source");
+assert(ukbiGrammarCandidate.questionType === "PILIHAN_GANDA", "UKBI grammar candidate questionType");
+assert(ukbiGrammarCandidate.isVerified === false, "UKBI grammar candidate isVerified = false");
+
+const tkaBenarSalah: types.DailyCandidate = {
+  id: "tka-bs-1",
+  source: "TKA",
+  skill: "GRAMMAR",
+  questionType: "BENAR_SALAH",
+  difficulty: "MEDIUM",
+  questionText: "Kalimat 'Ibu membeli sayur di pasar' memiliki objek...",
+  options: JSON.stringify(["Ibu", "membeli", "sayur", "pasar"]),
+  isVerified: true,
+  tingkat: "SMP",
   seksi: null,
   hasAudio: false,
 };
-assert(soalCandidate.source === "SOAL", "Soal candidate source");
-assert(soalCandidate.isVerified === false, "Soal candidate isVerified = false");
+assert(tkaBenarSalah.source === "TKA", "TKA BENAR_SALAH candidate source");
+assert(tkaBenarSalah.questionType === "BENAR_SALAH", "TKA candidate questionType = BENAR_SALAH");
 
 // ── Section 5: Quality Gate ─────────────────────────────────────
 
@@ -122,6 +142,7 @@ const validCandidate: types.DailyCandidate = {
   id: "valid-1",
   source: "TKA",
   skill: "READING",
+  questionType: "PILIHAN_GANDA",
   difficulty: "MEDIUM",
   questionText: "Apa arti kata 'literasi'?",
   options: JSON.stringify(["Kemampuan membaca", "Kemampuan berhitung", "Kemampuan berenang", "Kemampuan memasak"]),
@@ -137,6 +158,7 @@ const invalidCandidate: types.DailyCandidate = {
   id: "invalid-1",
   source: "TKA",
   skill: "READING",
+  questionType: "PILIHAN_GANDA",
   difficulty: "MEDIUM",
   questionText: "",
   options: JSON.stringify([]),
@@ -156,7 +178,7 @@ assert(filtered.length === 2, "Quality gate filters batch (2 of 3 pass)");
 // ── Section 6: ScoredCandidate Structure ────────────────────────
 
 section("6. ScoredCandidate Structure");
-const scored: types.ScoredCandidate = { ...tkaCandidate, score: 1.5 };
+const scored: types.ScoredCandidate = { ...tkaCandidate, score: 1.5, questionType: "PILIHAN_GANDA" };
 assert(scored.score === 1.5, "ScoredCandidate has score field");
 assert(scored.source === "TKA", "ScoredCandidate inherits DailyCandidate fields");
 
@@ -208,6 +230,82 @@ const schema = fs.readFileSync(schemaPath, "utf-8");
 assert(schema.includes("model DailyAction"), "DailyAction model exists in schema");
 assert(schema.includes('@@unique([userId, date])'), "Unique constraint on (userId, date)");
 assert(schema.includes("user User @relation"), "User relation exists");
+
+// ── Section 13: Source Purity (Regression Guard) ──────────────
+
+section("13. Source Purity — UKBI + TKA only");
+
+// T1: Allowed sources are exactly TKA and UKBI
+assert(
+  config.SOURCE_WEIGHTS["TKA"] !== undefined && config.SOURCE_WEIGHTS["UKBI"] !== undefined,
+  "SOURCE_WEIGHTS has TKA and UKBI"
+);
+assert(
+  config.SOURCE_WEIGHTS["SOAL"] === undefined,
+  "SOURCE_WEIGHTS does NOT have SOAL"
+);
+assert(
+  Object.keys(config.SOURCE_WEIGHTS).length === 2,
+  "SOURCE_WEIGHTS has exactly 2 sources"
+);
+
+// T2: SOAL source must never be in candidate union type
+const typesContent = fs.readFileSync(path.join(process.cwd(), "lib/daily-action/types.ts"), "utf-8");
+assert(
+  !typesContent.includes('"SOAL"'),
+  "types.ts does NOT include SOAL in source type"
+);
+assert(
+  typesContent.includes('"TKA"') && typesContent.includes('"UKBI"'),
+  "types.ts includes TKA and UKBI in source type"
+);
+
+// T3: Quality gate rejects SOAL
+const qualityContent = fs.readFileSync(path.join(process.cwd(), "lib/daily-action/quality.ts"), "utf-8");
+assert(
+  !qualityContent.includes('"SOAL"'),
+  "quality.ts does NOT include SOAL in VALID_SOURCES"
+);
+
+// T4: Candidate fetcher has no fetchSoal function
+const candidateContent = fs.readFileSync(path.join(process.cwd(), "lib/daily-action/candidate.ts"), "utf-8");
+assert(
+  !candidateContent.includes("fetchSoal"),
+  "candidate.ts does NOT have fetchSoal function"
+);
+assert(
+  !candidateContent.includes('source: "SOAL"'),
+  "candidate.ts does NOT emit source SOAL"
+);
+assert(
+  candidateContent.includes('source: "TKA" as const') && candidateContent.includes('source: "UKBI" as const'),
+  "candidate.ts emits TKA and UKBI sources"
+);
+
+// T5: Answer handler has no SOAL case
+const answerContent = fs.readFileSync(path.join(process.cwd(), "lib/daily-action/answer.ts"), "utf-8");
+assert(
+  !answerContent.includes('case "SOAL"'),
+  "answer.ts does NOT have SOAL case"
+);
+
+// T6: engine.ts comment says UKBI only
+const engineContent = fs.readFileSync(path.join(process.cwd(), "lib/daily-action/engine.ts"), "utf-8");
+assert(
+  !engineContent.includes("SOAL"),
+  "engine.ts does NOT mention SOAL"
+);
+
+// T7: Candidate structure — TKA and UKBI only
+assert(tkaCandidate.source === "TKA", "TKA candidate source is TKA");
+assert(ukbiCandidate.source === "UKBI", "UKBI candidate source is UKBI");
+assert(tkaBenarSalah.source === "TKA", "TKA BENAR_SALAH source is TKA");
+
+// T8: No test fixture uses SOAL source
+assert(
+  !typesContent.includes('source: "SOAL"'),
+  "No test fixture uses SOAL source"
+);
 
 // ── Summary ─────────────────────────────────────────────────────
 

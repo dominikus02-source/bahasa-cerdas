@@ -202,13 +202,6 @@ async function fetchCorrectAnswer(
       });
       return q?.correctAnswer ?? null;
     }
-    case "SOAL": {
-      const q = await db.soal.findUnique({
-        where: { id: questionId },
-        select: { correctAnswer: true },
-      });
-      return q?.correctAnswer ?? null;
-    }
     default:
       return null;
   }
@@ -228,13 +221,6 @@ async function fetchExplanation(
     }
     case "UKBI": {
       const q = await db.uKBIQuestion.findUnique({
-        where: { id: questionId },
-        select: { explanation: true },
-      });
-      return q?.explanation ?? null;
-    }
-    case "SOAL": {
-      const q = await db.soal.findUnique({
         where: { id: questionId },
         select: { explanation: true },
       });

@@ -13,11 +13,10 @@ export const SOURCE_LOOKBACK_DAYS = 7;
 /** Maximum percentage of recent days a single source can dominate */
 export const MAX_SOURCE_RATIO = 0.6;
 
-/** Default source weights for candidate selection */
+/** Default source weights for candidate selection (UKBI + TKA only) */
 export const SOURCE_WEIGHTS: Record<string, number> = {
-  TKA: 0.4,
-  UKBI: 0.4,
-  SOAL: 0.2,
+  TKA: 0.5,
+  UKBI: 0.5,
 };
 
 /** Score multiplier when candidate matches weakest skill */

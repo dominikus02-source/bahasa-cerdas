@@ -28,6 +28,7 @@ function makeCandidate(overrides: Partial<DailyCandidate> = {}): DailyCandidate 
     id: "test-id-1",
     source: "TKA",
     skill: "READING",
+    questionType: "PILIHAN_GANDA",
     difficulty: "MEDIUM",
     questionText: "Apa yang dimaksud dengan kalimat efektif dalam bahasa Indonesia?",
     options: JSON.stringify(["Kalimat yang baik dan benar", "Kalimat yang panjang", "Kalimat yang singkat", "Kalimat yang rumit"]),
@@ -52,9 +53,9 @@ console.log("\n=== Section 1: Valid Candidate ===");
 }
 
 {
-  const c = makeCandidate({ source: "SOAL" });
+  const c = makeCandidate({ source: "TKA" });
   const r = validateCandidate(c);
-  assert(r.eligible === true, "Valid SOAL candidate passes");
+  assert(r.eligible === true, "Valid TKA candidate passes (third)");
 }
 
 // ── SECTION 2: Missing / Empty Text ────────────────────────
@@ -228,7 +229,7 @@ console.log("\n=== Section 4: Source Validation ===");
 }
 
 {
-  for (const src of ["TKA", "UKBI", "SOAL"]) {
+  for (const src of ["TKA", "UKBI"]) {
     const c = makeCandidate({ source: src as any });
     const r = validateCandidate(c);
     assert(r.eligible === true, `Source ${src} passes`);
