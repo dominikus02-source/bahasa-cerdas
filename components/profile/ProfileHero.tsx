@@ -399,9 +399,12 @@ export default function ProfileHero({
                 onClick={handleFollow}
                 disabled={busyFollow || following === null}
                 aria-pressed={!!following}
-                className={`inline-flex h-11 items-center gap-2 rounded-xl px-5 text-sm font-bold transition-all shadow-lg disabled:opacity-60 ${
+                className={`inline-flex h-11 items-center gap-2 rounded-xl px-5 text-sm font-bold transition-all shadow-lg border disabled:opacity-60 ${
                   following
-                    ? glassBtn + " border"
+                    ? t(
+                        "bg-violet-50 text-violet-700 border-violet-200 hover:bg-violet-100",
+                        "bg-white/10 text-white border-white/20 hover:bg-white/15"
+                      )
                     : "bg-gradient-to-r from-violet-500 to-purple-600 text-white hover:shadow-xl"
                 }`}
               >

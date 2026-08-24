@@ -1,8 +1,9 @@
 "use client"
 
 import Link from "next/link"
-import { Users, GraduationCap, ClipboardList, FilePlus2, Sparkles, Crown } from "lucide-react"
+import { Users, GraduationCap, ClipboardList, FilePlus2, Sparkles, Crown, Zap } from "lucide-react"
 import type { ReactNode } from "react"
+import { AiCreditBalance } from "@/components/guru/AiCreditBalance"
 
 const fmt = new Intl.NumberFormat("id-ID")
 
@@ -109,10 +110,13 @@ export default function TeacherCommandCenter({
               </span>
             )}
           </h1>
-          <p className="text-sm text-gray-500 mt-1 flex items-center gap-2">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" aria-hidden />
-            Hari ini kamu memiliki
-          </p>
+          <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+            <p className="text-sm text-gray-500 flex items-center gap-2">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" aria-hidden />
+              Hari ini kamu memiliki
+            </p>
+            <AiCreditBalance />
+          </div>
         </div>
         {children}
       </div>

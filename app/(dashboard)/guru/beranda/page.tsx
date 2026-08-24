@@ -12,7 +12,7 @@ import { useUserStore } from "@/store"
 import { Badge } from "@/components/ui/badge"
 import TeacherCommandCenter from "@/components/guru/TeacherCommandCenter"
 import { TrialStatusCard } from "@/components/guru/TrialStatusCard"
-import { AiCreditBalance } from "@/components/guru/AiCreditBalance"
+
 import { GuruMissionCard } from "@/components/guru/misi/GuruMissionCard"
 import { NextActionGuru } from "@/components/guru/misi/NextActionGuru"
 import { GuruLeaderboardCard } from "@/components/guru/GuruLeaderboardCard"
@@ -293,53 +293,7 @@ export default function GuruBerandaPage() {  const user = useUserStore()
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Link href="/guru/pengaturan/premium" className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all group">          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold text-gray-900 flex items-center gap-2 group-hover:text-emerald-700">
-              <Zap size={16} className="text-amber-500" /> Kredit AI
-            </h3>
-            <ChevronRight size={16} className="text-gray-300 group-hover:text-emerald-500" />
-          </div>
-          <AiCreditBalance />
-          {!user.isPremium && !user.isFounder && (
-            <p className="mt-2 text-xs text-amber-600 font-medium">Upgrade ke PRO untuk kuota lebih →</p>
-          )}
-        </Link>
-
-        {!loading && nilaiStats.length > 0 && (
-          <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-            <Link href="/guru/penilaian" className="flex items-center justify-between mb-4 group">
-              <h3 className="font-semibold text-gray-900 group-hover:text-emerald-700 transition-colors flex items-center gap-2">
-                <ClipboardCheck size={16} className="text-emerald-500" /> Penilaian
-              </h3>
-              <ChevronRight size={16} className="text-gray-300 group-hover:text-emerald-500" />
-            </Link>
-            <div className="space-y-3">
-              {nilaiStats.map((ns: any) => {
-                const belum = ns.belumDinilai || 0;
-                return (
-                  <div key={ns.id} className="flex items-center justify-between text-xs">
-                    <div>
-                      <span className="font-medium text-gray-700">{ns.name}</span>
-                      <span className="text-gray-400 ml-1">({ns.grade})</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      {Object.entries(ns.rataKategoris || {}).map(([nama, skor]: [string, any]) => (
-                        <span key={nama} className={`font-semibold ${skor >= 80 ? "text-emerald-600" : skor >= 60 ? "text-amber-600" : "text-red-500"}`}>
-                          {nama}: {skor}
-                        </span>
-                      ))}
-                      {belum > 0 && (
-                        <span className="text-red-500 font-semibold">{belum} blm dinilai</span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+        <div className="lg:col-span-3 bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold text-gray-900">Aksi Cepat</h3>
           </div>

@@ -48,6 +48,7 @@ export default function KelasKuPage() {
   const [confirmDelete, setConfirmDelete] = useState<Group | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [penilaianStats, setPenilaianStats] = useState<any>(null);
 
   const [composerOpen, setComposerOpen] = useState(false);
   const [composerInitial, setComposerInitial] = useState<string[] | undefined>(undefined);
@@ -150,6 +151,17 @@ export default function KelasKuPage() {
     pollRef.current = setInterval(() => loadDetail(activeGroup.id), 20000);
     return () => { if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; } };
   }, [activeGroup, loadDetail]);
+
+  useEffect(() => {
+    if (!activeGroup) { setPenilaianStats(null); return; }
+    fetch("/api/guru/nilai/stats")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        const match = d?.stats?.find((s: any) => s.id === activeGroup.id);
+        setPenilaianStats(match || null);
+      })
+      .catch(() => {});
+  }, [activeGroup]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -653,6 +665,33 @@ export default function KelasKuPage() {
                 <p className="text-3xl font-bold text-[var(--clr-text)] mt-1">{detail.stats?.progressMurid ?? 0}%</p>
               </div>
             </div>
+
+            {penilaianStats && (
+              <div className="bc-card p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-sm font-bold text-[var(--clr-text)]">Ringkasan Penilaian</h4>
+                  <a href="/guru/penilaian" className="bc-btn-secondary text-[10px] py-1 px-2">Buka Penilaian →</a>
+                </div>
+                {penilaianStats.rataKategoris && Object.keys(penilaianStats.rataKategoris).length > 0 ? (
+                  <div className="space-y-2">
+                    {Object.entries(penilaianStats.rataKategoris).map(([nama, skor]: [string, any]) => (
+                      <div key={nama} className="flex items-center justify-between text-xs">
+                        <span className="text-[var(--clr-text-2)]">{nama}</span>
+                        <span className={`font-semibold ${skor >= 80 ? "text-[var(--clr-accent)]" : skor >= 60 ? "text-[var(--clr-warning)]" : "text-[var(--clr-danger)]"}`}>
+                          {skor}
+                        </span>
+                      </div>
+                    ))}
+                    {penilaianStats.belumDinilai > 0 && (
+                      <p className="text-[10px] text-[var(--clr-danger)] font-medium pt-1">{penilaianStats.belumDinilai} nilai belum dinilai</p>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-xs text-[var(--clr-text-3)]">Belum ada kategori penilaian. Atur di halaman Penilaian.</p>
+                )}
+              </div>
+            )}
+
             <ClassInsight groupId={activeGroup.id} />
             <div className="flex flex-wrap gap-2">
               <a href="/guru/penilaian" className="bc-btn-secondary text-xs">Buka Penilaian</a>
