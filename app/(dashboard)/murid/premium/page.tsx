@@ -134,7 +134,8 @@ export default function MuridPremiumPage() {
   // ── Active Premium View ──
   if (isPremium && (status === "success" || status === "pending")) {
     return (
-      <div className="max-w-2xl mx-auto space-y-6">
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* Hero */}
         <div className="rounded-2xl bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-600 p-8 text-white text-center shadow-xl relative overflow-hidden">
           <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white/10" />
           <div className="absolute right-12 -bottom-8 h-24 w-24 rounded-full bg-white/5" />
@@ -149,6 +150,7 @@ export default function MuridPremiumPage() {
             <p className="mt-2 text-violet-100">
               Berlaku hingga{" "}
               {new Date(premiumUntil!).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
+              {daysLeft > 0 && <span className="ml-2 text-violet-200">({daysLeft} hari lagi)</span>}
             </p>
           </div>
         </div>
@@ -157,42 +159,92 @@ export default function MuridPremiumPage() {
           <div className="rounded-xl bg-amber-50 border border-amber-200 p-4">
             <div className="flex items-start gap-3">
               <Clock className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
-              <div>
+              <div className="flex-1">
                 <p className="font-semibold text-amber-900 text-sm">Premium akan berakhir dalam {daysLeft} hari</p>
-                <p className="text-xs text-amber-700 mt-1">Perpanjang sekarang agar akses tetap berlanjut.</p>
+                <p className="text-xs text-amber-700 mt-1">Perpanjang sekarang agar akses fitur premium tetap berlanjut.</p>
               </div>
+              <button
+                onClick={() => setStatus("default")}
+                className="shrink-0 px-4 py-2 rounded-lg bg-amber-500 text-white text-xs font-bold hover:bg-amber-600 transition-colors"
+              >
+                Perpanjang
+              </button>
             </div>
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="rounded-xl bg-white border border-slate-200 p-4 text-center">
-            <Target className="w-8 h-8 text-violet-500 mx-auto mb-2" />
-            <p className="text-sm font-bold text-slate-900">Latihan Personal</p>
-            <p className="text-xs text-slate-500 mt-1">Soal disesuaikan dengan kemampuanmu</p>
-          </div>
-          <div className="rounded-xl bg-white border border-slate-200 p-4 text-center">
-            <Brain className="w-8 h-8 text-violet-500 mx-auto mb-2" />
-            <p className="text-sm font-bold text-slate-900">AI Mentor</p>
-            <p className="text-xs text-slate-500 mt-1">Penjelasan kenapa kamu salah</p>
-          </div>
-          <div className="rounded-xl bg-white border border-slate-200 p-4 text-center">
-            <BarChart3 className="w-8 h-8 text-violet-500 mx-auto mb-2" />
-            <p className="text-sm font-bold text-slate-900">Insight Perkembangan</p>
-            <p className="text-xs text-slate-500 mt-1">Ringkasan mingguan pertumbuhan</p>
-          </div>
-          <div className="rounded-xl bg-white border border-slate-200 p-4 text-center">
-            <Sparkles className="w-8 h-8 text-violet-500 mx-auto mb-2" />
-            <p className="text-sm font-bold text-slate-900">Simulasi 10x</p>
-            <p className="text-xs text-slate-500 mt-1">UKBI/TKA 10 kali/bulan</p>
+        {/* What you get */}
+        <div>
+          <h2 className="text-lg font-bold text-slate-900 mb-4">Yang kamu dapatkan</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="rounded-xl bg-white border border-slate-200 p-4 text-center">
+              <Target className="w-8 h-8 text-violet-500 mx-auto mb-2" />
+              <p className="text-sm font-bold text-slate-900">Latihan Personal</p>
+              <p className="text-xs text-slate-500 mt-1">Soal disesuaikan dengan kemampuanmu</p>
+            </div>
+            <div className="rounded-xl bg-white border border-slate-200 p-4 text-center">
+              <Brain className="w-8 h-8 text-violet-500 mx-auto mb-2" />
+              <p className="text-sm font-bold text-slate-900">AI Mentor</p>
+              <p className="text-xs text-slate-500 mt-1">Penjelasan kenapa kamu salah</p>
+            </div>
+            <div className="rounded-xl bg-white border border-slate-200 p-4 text-center">
+              <BarChart3 className="w-8 h-8 text-violet-500 mx-auto mb-2" />
+              <p className="text-sm font-bold text-slate-900">Insight Perkembangan</p>
+              <p className="text-xs text-slate-500 mt-1">Ringkasan mingguan pertumbuhan</p>
+            </div>
+            <div className="rounded-xl bg-white border border-slate-200 p-4 text-center">
+              <Sparkles className="w-8 h-8 text-violet-500 mx-auto mb-2" />
+              <p className="text-sm font-bold text-slate-900">Simulasi 10x</p>
+              <p className="text-xs text-slate-500 mt-1">UKBI/TKA 10 kali/bulan</p>
+            </div>
           </div>
         </div>
 
-        <div className="text-center">
+        {/* Feature comparison (always visible) */}
+        <div>
+          <h2 className="text-lg font-bold text-slate-900 mb-4">Perbandingan Gratis vs Premium</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-200">
+                  <th className="text-left py-3 px-4 font-semibold text-slate-700">Fitur</th>
+                  <th className="text-center py-3 px-4 font-semibold text-slate-500">Gratis</th>
+                  <th className="text-center py-3 px-4 font-semibold text-violet-600">Premium ✦</th>
+                </tr>
+              </thead>
+              <tbody>
+                {PREMIUM_FEATURES.map((f) => (
+                  <tr key={f.label} className="border-b border-slate-100 last:border-0">
+                    <td className="py-3 px-4 font-medium text-slate-900">{f.label}</td>
+                    <td className="py-3 px-4 text-center">
+                      {f.freeOk ? (
+                        <span className="inline-flex items-center gap-1 text-emerald-600"><Check className="w-4 h-4" /> {f.free}</span>
+                      ) : (
+                        <span className="text-slate-300">—</span>
+                      )}
+                    </td>
+                    <td className="py-3 px-4 text-center">
+                      <span className="inline-flex items-center gap-1 text-violet-600 font-medium"><Check className="w-4 h-4" /> {f.premium}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <a href="/arena/jalur-cerdas" className="inline-flex items-center gap-2 bg-gradient-to-r from-violet-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-violet-700 hover:to-purple-700 transition-all">
             <BookOpen className="w-4 h-4" /> Mulai Belajar
             <ArrowRight className="w-4 h-4" />
           </a>
+          <button
+            onClick={() => setStatus("default")}
+            className="inline-flex items-center gap-2 border-2 border-violet-300 text-violet-700 px-6 py-3 rounded-xl font-semibold hover:bg-violet-50 transition-all"
+          >
+            <Gem className="w-4 h-4" /> {isExpiring ? "Perpanjang Sekarang" : "Beli Lagi / Perpanjang"}
+          </button>
         </div>
       </div>
     );
