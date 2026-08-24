@@ -322,13 +322,33 @@ export function ContinueLearningCard() {
     );
   }
 
-  // ── PROFILE_READY / PROFILE_CONFIDENT — profil siap; latihan personal
-  // sedang disempurnakan → badge "Akan Segera Hadir" (gate ADAPTIVE_PRACTICE_COMING_SOON).
+  // ── PROFILE_READY / PROFILE_CONFIDENT — profil siap; latihan personal aktif ──
   const stateTitle = currentMyDay.actionTitle;
   const stateDesc = personalization?.explanation ?? currentMyDay.reasonText;
   // MURID HOME 3.0 — bar akurasi skill target (turunan data preview, tanpa fetch baru).
   const focusRow = findFocusSkillRow(currentMyDay);
   const focusPct = focusRow?.accuracy != null ? Math.round(focusRow.accuracy * 100) : null;
+
+  async function startAdaptiveSession() {
+    setStarting(true);
+    setStartError(null);
+    try {
+      const response = await fetch("/api/player/adaptive-practice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "start" }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.sessionId) {
+        throw new Error(data.error || "Latihan belum tersedia");
+      }
+      router.push(`/arena/adaptive/${data.sessionId}`);
+    } catch {
+      setStartError("Latihan belum bisa dimulai. Coba lagi sebentar.");
+    } finally {
+      setStarting(false);
+    }
+  }
 
   return (
     <div className="space-y-3">
@@ -369,10 +389,24 @@ export function ContinueLearningCard() {
             {startError && <p className="mt-3 text-xs font-semibold text-red-600 dark:text-red-300">{startError}</p>}
           </div>
           <div className="shrink-0">
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] px-4 py-2.5 rounded-full bg-[rgba(255,210,74,0.14)] text-[var(--px-gold)] border border-[var(--px-gold)]/30">
-              <Sparkles size={13} />
-              Akan Segera Hadir
-            </span>
+            {ADAPTIVE_PRACTICE_COMING_SOON ? (
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] px-4 py-2.5 rounded-full bg-[rgba(255,210,74,0.14)] text-[var(--px-gold)] border border-[var(--px-gold)]/30">
+                <Sparkles size={13} />
+                Akan Segera Hadir
+              </span>
+            ) : (
+              <button
+                type="button"
+                onClick={startAdaptiveSession}
+                disabled={starting}
+                className="px-btn-gold flex items-center justify-center gap-2 text-sm font-bold px-6 py-3 disabled:cursor-wait"
+                aria-label="Mulai Latihan"
+              >
+                {starting ? <Loader2 size={16} className="animate-spin" /> : null}
+                {starting ? "Menyiapkan..." : currentMyDay.ctaLabel}
+                {!starting && <ArrowRight size={16} />}
+              </button>
+            )}
           </div>
         </div>
       </section>

@@ -60,8 +60,8 @@ const card = read("components/student-home/ContinueLearningCard.tsx");
 check("8. Kartu mengimpor flag", card.includes('import { ADAPTIVE_PRACTICE_COMING_SOON } from "@/lib/diagnostic-ai/config"'));
 check("9. Branch gate ADAPTIVE ada (isAdaptive && flag)", card.includes("isAdaptive && ADAPTIVE_PRACTICE_COMING_SOON"));
 check("10. Badge 'Akan Segera Hadir' ada di kartu", (card.match(/Akan Segera Hadir/g) || []).length >= 3);
-check("11. Tidak ada tombol mulai latihan (tanpa onClick start)",
-  !card.includes("startAdaptiveSession") && !card.includes("Mulai Latihan"));
+check("11. Tombol mulai latihan adaptive aktif (ada startAdaptiveSession)",
+  card.includes("startAdaptiveSession") && card.includes("Mulai Latihan"));
 check("12. Link 'Sambil menunggu, mulai belajar dulu' tetap (jalur belajar umum)",
   card.includes("Sambil menunggu, mulai belajar dulu") && card.includes('href="/arena/jalur-cerdas"'));
 check("13. Bar akurasi skill target tetap tampil di branch gate",
