@@ -40,6 +40,26 @@ function isMissingAdaptiveInfra(error: unknown): boolean {
   return code === "P2021" || code === "P2022";
 }
 
+/**
+ * Content quality gate — filters out template-generated garbage from MASTER_BANK.
+ * These questions are circular/nonsensical and damage the learning experience.
+ */
+function isContentQualityAcceptable(text: string, options: string[]): boolean {
+  const t = text.trim();
+  // Template MCQ: "Berikut ini yang termasuk contoh X adalah..." (answer = concept name)
+  if (/^Berikut ini yang termasuk contoh\s+.+\s+(?:adalah|yaitu|ialah)/i.test(t)) return false;
+  // Template BENAR_SALAH: "Pernyataan: X adalah bagian dari materi Bahasa Indonesia"
+  if (/^Pernyataan:\s+.+\s+adalah bagian dari materi Bahasa Indonesia/i.test(t)) return false;
+  // Template ISIAN_SINGKAT: "Jelaskan pengertian X menurut pemahaman Anda"
+  if (/^Jelaskan pengertian\s+.+\s+menurut pemahaman Anda/i.test(t)) return false;
+  // Trivial: all options are very short (< 3 avg chars) — likely template filler
+  if (options.length >= 2) {
+    const avgLen = options.reduce((sum, o) => sum + o.trim().length, 0) / options.length;
+    if (avgLen < 4 && t.length < 60) return false;
+  }
+  return true;
+}
+
 function fallbackResponse(reasonCode = "INSUFFICIENT_METADATA", learnerState: unknown[] = []) {
   const profile = computeDiagnosticProfile(learnerState as Parameters<typeof computeDiagnosticProfile>[0]);
   const personalization = buildPersonalizedAction(profile, "LEARNER_STATE");
@@ -138,6 +158,7 @@ async function startSession(userId: string, size: number, mode: "start" | "previ
     if (!validated.valid || validated.value?.status !== "APPROVED" || !validated.value.skill) continue;
     if (normalizeSoalType(question.type) !== validated.value.questionType) continue;
     if (!question.text.trim() || !Array.isArray(question.options)) continue;
+    if (!isContentQualityAcceptable(question.text, question.options)) continue;
     candidates.push({
       id: metadata.questionId,
       text: question.text,
