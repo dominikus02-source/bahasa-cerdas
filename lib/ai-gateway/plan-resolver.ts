@@ -1,14 +1,5 @@
 import type { PlanResolverResult, AiPlan } from "./gateway-types";
-
-interface UserLike {
-  role: string;
-  isFounder: boolean;
-  isPremium: boolean;
-  premiumUntil: Date | null;
-  trialEndsAt: Date | null;
-  trialStartedAt: Date | null;
-  premiumPlan: string;
-}
+import type { UserLike } from "@/lib/types/user";
 
 function getPeriod(): string {
   return new Date().toISOString().slice(0, 7);
@@ -31,7 +22,11 @@ export function resolveUserAiPlan(user: UserLike): PlanResolverResult {
     };
   }
 
-  // Murid — free, unlimited for now
+  // Murid — free, unlimited for now.
+  // AI Gateway is GURU-ONLY for credit billing.
+  // Murid Premium uses feature-tiered caps via Premium Economy (lib/premium-economy/),
+  // NOT credit-based billing via AiCreditLedger.
+  // So ALL murid (free + premium) get MURID_FREE here = unlimited AI credits.
   if (user.role === "MURID") {
     return {
       plan: "MURID_FREE",
@@ -40,7 +35,7 @@ export function resolveUserAiPlan(user: UserLike): PlanResolverResult {
       period,
       isTrial: false,
       trialEndsAt: null,
-      reason: "Murid — free access, no restrictions yet",
+      reason: "Murid — unlimited AI (feature-tiered via Premium Economy)",
     };
   }
 

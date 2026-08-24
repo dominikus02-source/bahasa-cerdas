@@ -30,10 +30,6 @@ export function getSnapScriptUrl(): string {
     : "https://app.sandbox.midtrans.com/snap/snap.js";
 }
 
-export function getMidtransApiUrl(): string {
-  return getApiBase();
-}
-
 interface SnapResult {
   transactionToken: string;
   redirectUrl: string;
@@ -104,32 +100,4 @@ export async function createTransaction(params: {
   });
 
   return { transactionToken: result.token, redirectUrl: result.redirectUrl, orderId };
-}
-
-export async function createKaryaTransaction(params: {
-  orderId: string;
-  amount: number;
-  email: string;
-  fullName: string;
-  itemId: string;
-  itemTitle: string;
-}): Promise<SnapResult> {
-  validateConfig();
-
-  try {
-    const result = await createSnap({
-      orderId: params.orderId,
-      amount: params.amount,
-      fullName: params.fullName,
-      email: params.email,
-    });
-    return { transactionToken: result.token, redirectUrl: result.redirectUrl, orderId: params.orderId };
-  } catch (err: any) {
-    console.error("Midtrans createKaryaTransaction error:", {
-      status: err?.httpStatusCode,
-      message: err?.message,
-      apiResponse: err?.apiResponse,
-    });
-    throw err;
-  }
 }

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Check, Gift, Loader2, Tag, X } from "lucide-react";
-import { formatCurrency } from "@/lib/premium";
+import { formatCurrency } from "@/lib/format";
 
 export interface AppliedCoupon {
   kode: string;

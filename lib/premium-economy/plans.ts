@@ -11,28 +11,27 @@
  */
 
 import { db } from "@/lib/db";
+import type { UserLike } from "@/lib/types/user";
 
-export type PlanCode = "FREE" | "PRO" | "FOUNDER" | (string & {});
+export type PlanCode = "FREE" | "PRO" | "MURID_PREMIUM" | "FOUNDER" | (string & {});
 
 export type SubscriptionStatusLabel = "ACTIVE" | "TRIALING" | "FOUNDER" | null;
 
-export interface UserLike {
-  role: string;
-  isFounder: boolean;
-  isPremium: boolean;
-  premiumUntil: Date | null;
-  trialEndsAt: Date | null;
-}
+export type { UserLike };
 
 /**
  * Resolusi plan murni dari flag user (tanpa DB).
  *
  * Urutan prioritas:
  *   ADMIN/founder      → FOUNDER
- *   subscription aktif → PRO        (Midtrans — ditangani resolvePlan DB)
- *   isPremium aktif    → PRO        (legacy flag, premiumUntil > now)
+ *   subscription aktif → PRO / MURID_PREMIUM  (Midtrans — ditangani resolvePlan DB)
+ *   isPremium aktif    → PRO / MURID_PREMIUM  (legacy flag, premiumUntil > now)
  *   trial berjalan     → PRO        (trial = akses PRO sementara)
  *   lainnya            → FREE       (default — user existing tidak pernah di-exclude)
+ *
+ * Role-based:
+ *   MURID + isPremium  → MURID_PREMIUM (feature-tiered, NOT credit-based)
+ *   GURU + isPremium   → PRO (credit-based via AI Gateway)
  */
 export function resolvePlanForUser(user: UserLike): {
   plan: PlanCode;
@@ -42,7 +41,10 @@ export function resolvePlanForUser(user: UserLike): {
     return { plan: "FOUNDER", subscriptionStatus: "FOUNDER" };
   }
   if (user.isPremium && user.premiumUntil && user.premiumUntil > new Date()) {
-    return { plan: "PRO", subscriptionStatus: "ACTIVE" };
+    // MURID premium uses feature-tiered model (MURID_PREMIUM)
+    // GURU premium uses credit-based model (PRO)
+    const plan: PlanCode = user.role === "MURID" ? "MURID_PREMIUM" : "PRO";
+    return { plan, subscriptionStatus: "ACTIVE" };
   }
   if (user.trialEndsAt && user.trialEndsAt > new Date()) {
     return { plan: "PRO", subscriptionStatus: "TRIALING" };

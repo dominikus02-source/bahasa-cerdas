@@ -1,17 +1,9 @@
 import { db } from "@/lib/db";
 import { resolveUserAiPlan } from "@/lib/ai-gateway/plan-resolver";
 import type { AiPlan } from "@/lib/ai-gateway/gateway-types";
+import type { UserLike } from "@/lib/types/user";
 
-interface UserLike {
-  id: string;
-  role: string;
-  isFounder: boolean;
-  isPremium: boolean;
-  premiumUntil: Date | null;
-  trialEndsAt: Date | null;
-  trialStartedAt: Date | null;
-  premiumPlan: string;
-}
+interface UserLikeWithId extends UserLike { id: string }
 
 /**
  * Batas unduh dokumen per hari (hasil AI / ekspor PDF/DOCX/PPTX).
@@ -23,6 +15,7 @@ interface UserLike {
 const DAILY_EXPORT_LIMITS: Record<AiPlan, number> = {
   FOUNDER: Infinity,
   MURID_FREE: Infinity,
+  MURID_PREMIUM: Infinity, // Murid premium = unlimited export (not credit-based)
   GURU_PRO: 10,
   GURU_PRO_TRIAL: 10,
   GURU_FREE: 1,
@@ -66,7 +59,7 @@ export async function getDailyExportCount(userId: string): Promise<number> {
 /**
  * Cek batas unduh harian. Jika redis/DB error → izinkan (tidak memblokir guru).
  */
-export async function checkDailyExportLimit(user: UserLike): Promise<{
+export async function checkDailyExportLimit(user: UserLikeWithId): Promise<{
   allowed: boolean;
   used: number;
   limit: number;

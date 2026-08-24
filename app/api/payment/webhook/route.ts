@@ -21,6 +21,14 @@ function verifyMidtransNotification(
 }
 
 function getPlanFromAmount(grossAmount: number): { durationDays: number; aiCreditsMonthly: number; planId: string } | null {
+  // Murid Premium plans (detected first — lower amounts)
+  if (grossAmount >= 180000) {
+    return { durationDays: 365, aiCreditsMonthly: 0, planId: "MURID_PREMIUM_YEARLY" };
+  }
+  if (grossAmount >= 19000) {
+    return { durationDays: 30, aiCreditsMonthly: 0, planId: "MURID_PREMIUM_MONTHLY" };
+  }
+  // Guru Pro plans
   if (grossAmount >= 399000) {
     return { durationDays: 365, aiCreditsMonthly: 500, planId: "GURU_PRO_YEARLY" };
   }
@@ -215,23 +223,22 @@ export async function POST(req: NextRequest) {
           return true;
         }
 
-        if (transaksi.type === "PREMIUM_UPGRADE") {
+        // Handle both GURU PREMIUM_UPGRADE and MURID MURID_PREMIUM
+        if (transaksi.type === "PREMIUM_UPGRADE" || transaksi.type === "MURID_PREMIUM") {
+          const isMurid = transaksi.type === "MURID_PREMIUM";
+
           // Determine plan details
           const meta = (transaksi.metadata || {}) as Record<string, any>;
-          let durationDays = 30;
-          let aiCreditsMonthly = 500;
-          let planId = "GURU_PRO_MONTHLY";
+          let durationDays = isMurid ? 30 : 30;
+          let aiCreditsMonthly = isMurid ? 0 : 500;
+          let planId = isMurid ? "MURID_PREMIUM_MONTHLY" : "GURU_PRO_MONTHLY";
 
-          if (meta.planId === "GURU_PRO_YEARLY" || meta.durationDays === 365) {
-            durationDays = 365;
-            planId = "GURU_PRO_YEARLY";
-          } else if (meta.durationDays && meta.durationDays > 30) {
-            durationDays = meta.durationDays;
-            planId = meta.planId || "GURU_PRO_YEARLY";
-          }
-
-          // Fallback: detect from amount
-          if (!meta.planId) {
+          if (meta.planId) {
+            planId = meta.planId;
+            durationDays = meta.durationDays || durationDays;
+            aiCreditsMonthly = meta.aiCreditsMonthly ?? aiCreditsMonthly;
+          } else {
+            // Fallback: detect from amount
             const fallback = getPlanFromAmount(grossAmount);
             if (fallback) {
               durationDays = fallback.durationDays;
@@ -244,7 +251,7 @@ export async function POST(req: NextRequest) {
           // transaksi yang sama dengan klaim agar tidak double-extend saat race.
           const user = await tx.user.findUnique({
             where: { id: transaksi.userId },
-            select: { premiumUntil: true },
+            select: { premiumUntil: true, role: true },
           });
 
           const now = new Date();
@@ -256,20 +263,25 @@ export async function POST(req: NextRequest) {
             premiumUntil = new Date(now.getTime() + durationDays * 24 * 60 * 60 * 1000);
           }
 
+          // Determine premiumPlan based on user role
+          const premiumPlan = isMurid ? "PRO" : "PRO";
+
           await tx.user.update({
             where: { id: transaksi.userId },
-            data: { isPremium: true, premiumPlan: "PRO", premiumUntil },
+            data: { isPremium: true, premiumPlan, premiumUntil },
           });
           await tx.notifikasi.create({
             data: {
               userId: transaksi.userId,
               title: "Pembayaran Berhasil!",
-              body: "Akunmu telah diupgrade ke PRO. Selamat menikmati fitur premium!",
+              body: isMurid
+                ? "Premium aktif! Nikmati latihan personal dan mentor AI."
+                : "Akunmu telah diupgrade ke PRO. Selamat menikmati fitur premium!",
               type: "PREMIUM",
             },
           });
-          console.log("[premium.activated]", { userId: transaksi.userId, order_id, planId, durationDays, premiumUntil: premiumUntil.toISOString() });
-          return { planId, aiCreditsMonthly };
+          console.log("[premium.activated]", { userId: transaksi.userId, order_id, planId, durationDays, isMurid, premiumUntil: premiumUntil.toISOString() });
+          return { planId, aiCreditsMonthly, isMurid };
         }
 
         if (transaksi.type === "KARYA_PURCHASE") {
@@ -347,7 +359,13 @@ export async function POST(req: NextRequest) {
 
       // Ledger kredit AI (di luar transaksi klaim — best-effort, aman dobel
       // karena syncPremiumCreditLedger idempotent: hanya menaikkan ke target).
-      if (processed && typeof processed === "object" && "planId" in processed) {
+      // Only sync for GURU plans (Murid uses feature-tiered caps, not credits).
+      if (
+        processed && typeof processed === "object" &&
+        "planId" in processed &&
+        !processed.isMurid &&
+        processed.aiCreditsMonthly > 0
+      ) {
         await syncPremiumCreditLedger(transaksi.userId, processed.planId, processed.aiCreditsMonthly);
       }
     } catch (error) {

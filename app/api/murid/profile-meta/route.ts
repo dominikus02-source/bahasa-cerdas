@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
-import { getGelarFromLevel } from "@/lib/premium";
+import { getGelarFromLevel } from "@/lib/format";
 import { listUserBadges } from "@/lib/gamification/badge-engine";
 import { nicknameRateLimitDaysLeft } from "@/lib/nickname";
 

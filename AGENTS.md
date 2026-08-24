@@ -4078,10 +4078,104 @@ Tooling load test 200-user dibuat MUSTAHIL menyentuh production: gate staging 12
 3. Auth warm-up dulu, lalu `USERS='[...]' PAKET_ID='lt-ukbi-200-...' ... npm run loadtest:ukbi-200`
 4. JANGAN pernah arahkan k6/seed/verify ke production; secret staging zero-knowledge terhadap production.
 
-### Remaining (tidak berubah)
-1. Commit/push fase ini bila disetujui founder
-2. Provisioning staging (founder — lihat `STAGING INFRASTRUCTURE REQUIRED` di docs/UKBI_200_USER_READINESS_REPORT.md) + eksekusi k6 04-ukbi-200-users
-3. TKA UTBK/Guru enrichment 30 → 150
-4. Game server revival (VPS mati)
-5. GameRoom migration SQL via Supabase dashboard
-6. UI game solo: badge-score client vs server masih beda (kosmetik)
+## Phase BILLING ARCHITECTURE AUDIT — Safe Consolidation (Aug 20, 2026)
+
+### Goal
+Konsolidasi arsitektur billing AI yang redundan: dead code removal, type consolidation, duplicate cleanup, dan forensic audit legacy→modern migration path. **NO product changes** — murni arsitektur cleanup.
+
+### Phase 0A — Legacy Extraction
+- Created `lib/format.ts` (`formatCurrency`, `getGelarFromLevel`). Updated 3 importers.
+- Cleaned `lib/premium.ts` from 170→66 lines. Deleted 10 dead functions.
+- Kept `checkAIQuota`, `recordAIUsage` (7 legacy importers still need them).
+
+### Phase 0B — Midtrans Dead Code
+- Deleted `createKaryaTransaction` (0 callers) and `getMidtransApiUrl` (0 callers) from `lib/midtrans.ts` (135→103 lines).
+
+### Phase 0C — UserLike Consolidation
+- Created canonical `lib/types/user.ts` with `UserLike` interface. Updated 4 modules.
+
+### Phase 0D — Credit Constant Audit
+- `CREDIT_COSTS` and `AI_CREDIT_COSTS` already removed. Modern system centralized.
+
+### Phase 1A — Legacy→Modern Forensic Audit (READ-ONLY)
+- Full audit at `docs/PHASE_1A_FORENSIC_AUDIT_LEGACY_TO_MODERN.md`
+- **7 routes** import legacy (`lib/premium.ts`). **10 routes** import modern (`quota-checker.ts`). **4 routes** import BOTH.
+- **Dual-system problem**: 4 routes (eyd/feedback/grading/text-analysis) run BOTH legacy count-based AND modern credit-based checks. Double logging = 2× DB rows per success.
+- **Migration plan**: Phase 1B (dual cleanup) → 1C (legacy-only migration) → 1D (delete legacy) → 1E (analytics cleanup).
+
+### Files Created
+- `lib/format.ts` — formatCurrency, getGelarFromLevel
+- `lib/types/user.ts` — canonical UserLike
+- `docs/PHASE_1A_FORENSIC_AUDIT_LEGACY_TO_MODERN.md` — full forensic report
+
+### Files Modified
+- `lib/premium.ts` — cleaned from 170→66 lines
+- `lib/midtrans.ts` — trimmed from 135→103 lines
+- `lib/billing/limits.ts` — imports canonical UserLike
+- `lib/ai-gateway/quota-checker.ts` — imports canonical UserLike
+- `lib/premium-economy/plans.ts` — imports canonical UserLike, re-exports
+- `lib/premium-economy/usage.ts` — imports canonical UserLike
+
+### Verification
+| Check | Result |
+|-------|--------|
+| `npx tsc --noEmit` | ✅ 0 errors (all phases) |
+| Dead functions removed | ✅ 10 from premium.ts, 2 from midtrans.ts |
+| Dual-system routes identified | ✅ 4 (eyd, feedback, grading, text-analysis) |
+| Legacy-only routes identified | ✅ 3 (rpp, soal, guru/latihan) |
+| Modern-only routes identified | ✅ 6 (agents/*, quota/status) |
+| No product behavior change | ✅ Confirmed |
+
+### Remaining
+1. Phase 1B: Remove legacy from 4 dual-system routes (LOW risk, HIGH value)
+2. Phase 1C: Migrate 2 legacy-only routes (soal, guru/latihan) to modern
+3. Phase 1D: Delete deprecated rpp route + remove checkAIQuota/recordAIUsage from premium.ts
+4. Provisioning staging (founder) + eksekusi k6 load test
+5. TKA UTBK/Guru enrichment 30 → 150
+6. Game server revival (VPS mati)
+7. GameRoom migration SQL via Supabase dashboard
+8. UI game solo: badge-score client vs server masih beda (kosmetik)
+
+---
+
+## Phase 1B — Dual-System Cleanup: Remove Legacy from 4 Routes (Aug 20, 2026)
+
+### Goal
+Remove legacy `checkAIQuota` + `recordAIUsage` from the 4 dual-system routes (eyd, feedback, grading, text-analysis) that were running both old count-based AND modern credit-based quota checks. **LOW risk — product behavior unchanged** (modern gateway already handles quota enforcement + deduction + logging).
+
+### What Was Changed
+Removed from each route:
+1. `import { checkAIQuota, recordAIUsage } from "@/lib/premium"` (legacy import)
+2. `checkAIQuota(user, ...)` call (redundant — modern `checkAndPrepareDeduction` already handles quota)
+3. `recordAIUsage(user.id, ...)` call (redundant — modern `logUsage` + `completeDeduction` already handles logging)
+
+Kept:
+- Modern gateway: `resolveUserAiPlan` → `checkAndPrepareDeduction` → `completeDeduction`
+- `logLegacyUsage` (analytics bridge, fire-and-forget)
+- All rate limiting, auth, provider fallback, response structure
+
+### Files Modified
+| File | Changes |
+|------|---------|
+| `app/api/ai/eyd/route.ts` | Removed legacy import, checkAIQuota block, recordAIUsage call |
+| `app/api/ai/feedback/route.ts` | Same |
+| `app/api/ai/grading/route.ts` | Same |
+| `app/api/ai/text-analysis/route.ts` | Same |
+
+### Post-Migration State
+| Category | Routes | Status |
+|----------|--------|--------|
+| **Dual-system** (removed) | eyd, feedback, grading, text-analysis | ✅ Now modern-only |
+| **Legacy-only** (still import `lib/premium.ts`) | rpp, soal, guru/latihan | ⚠️ Next target (Phase 1C) |
+| **Modern-only** | agents/*, quota/status | ✅ Clean |
+
+### Verification
+| Check | Result |
+|-------|--------|
+| `npx tsc --noEmit` | ✅ 0 errors |
+| No `lib/premium.ts` imports in modified files | ✅ Confirmed (grep: 0 matches) |
+| `test:ai-tools-audit` | ✅ 47/47 |
+| `test:soal-agent-health` | ✅ 27/27 |
+| `test:premium-economy` | ✅ 63/63 |
+| Protected zones | ✅ 0 diff (prisma/, gamification/, learning-loop/, engines/) |
+| Product behavior | ✅ Unchanged — modern gateway already handles quota |

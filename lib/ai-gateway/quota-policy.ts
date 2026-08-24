@@ -20,6 +20,14 @@ const QUOTA_LIMITS: Record<AiPlan, QuotaLimits> = {
     dailyVelocityCap: 999999,
     savedResultLimit: -1,
   },
+  // Murid Premium uses feature-tiered caps (Premium Economy), not AI credits.
+  // AI Gateway keeps MURID_FREE unlimited — no credit deduction for murid.
+  MURID_PREMIUM: {
+    creditsPerMonth: 999999,
+    maxPerRequest: 999999,
+    dailyVelocityCap: 999999,
+    savedResultLimit: -1,
+  },
   GURU_PRO: {
     creditsPerMonth: 500,
     maxPerRequest: 50,

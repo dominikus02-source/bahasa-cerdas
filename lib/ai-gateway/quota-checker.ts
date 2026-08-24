@@ -4,17 +4,9 @@ import { resolveUserAiPlan } from "./plan-resolver";
 import { calculateAgentCost, getExportCost } from "./agent-cost-policy";
 import { getQuotaLimits } from "./quota-policy";
 import { isHardMode } from "./gateway-config";
+import type { UserLike } from "@/lib/types/user";
 
-interface UserLike {
-  id: string;
-  role: string;
-  isFounder: boolean;
-  isPremium: boolean;
-  premiumUntil: Date | null;
-  trialEndsAt: Date | null;
-  trialStartedAt: Date | null;
-  premiumPlan: string;
-}
+interface UserLikeWithId extends UserLike { id: string }
 
 function getPeriod(): string {
   return new Date().toISOString().slice(0, 7);
@@ -64,7 +56,7 @@ export async function getOrCreateCreditLedger(
  * Ensure a monthly ledger exists for non-trial, non-unlimited plans.
  * Called before quota checks to guarantee the ledger is present.
  */
-export async function ensureMonthlyLedger(user: UserLike): Promise<void> {
+export async function ensureMonthlyLedger(user: UserLikeWithId): Promise<void> {
   const planInfo = resolveUserAiPlan(user);
   if (planInfo.unlimited) return;
   const period = planInfo.isTrial ? "trial" : getPeriod();
@@ -106,7 +98,7 @@ export async function getCreditUsage(
  * Soft mode: always returns allowed: true with wouldBlock warning.
  */
 export async function checkQuota(
-  user: UserLike,
+  user: UserLikeWithId,
   agentId: string,
   input: Record<string, unknown> = {}
 ): Promise<QuotaCheckResult> {
@@ -174,7 +166,7 @@ export async function checkQuota(
  * DOCX and PPTX cost 1 credit.
  */
 export async function checkExportQuota(
-  user: UserLike,
+  user: UserLikeWithId,
   format: "docx" | "pdf" | "pptx"
 ): Promise<QuotaCheckResult> {
   const planInfo = resolveUserAiPlan(user);
@@ -294,7 +286,7 @@ export async function deductCreditsAtomic(
  * 3. if allowed, return checkpoint result (caller must call deductCreditsAtomic after success)
  */
 export async function checkAndPrepareDeduction(
-  user: UserLike,
+  user: UserLikeWithId,
   agentId: string,
   input: Record<string, unknown> = {}
 ): Promise<{ blocked: boolean; quota: QuotaCheckResult; planInfo: { plan: AiPlan; unlimited: boolean; period: string; isTrial: boolean }; credits: number }> {
@@ -318,7 +310,7 @@ export async function checkAndPrepareDeduction(
 /**
  * Get remaining credits for a user (across all periods/plans).
  */
-export async function getRemainingCredits(user: UserLike): Promise<number> {
+export async function getRemainingCredits(user: UserLikeWithId): Promise<number> {
   const planInfo = resolveUserAiPlan(user);
   if (planInfo.unlimited) return 999999;
   const period = planInfo.isTrial ? "trial" : getPeriod();
@@ -329,7 +321,7 @@ export async function getRemainingCredits(user: UserLike): Promise<number> {
 /**
  * Get detailed ledger info for quota status API.
  */
-export async function getLedgerInfo(user: UserLike): Promise<{
+export async function getLedgerInfo(user: UserLikeWithId): Promise<{
   creditsUsed: number;
   creditsTotal: number;
   remainingCredits: number;

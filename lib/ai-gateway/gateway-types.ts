@@ -1,6 +1,7 @@
 export type AiPlan =
   | "FOUNDER"
   | "MURID_FREE"
+  | "MURID_PREMIUM"
   | "GURU_PRO"
   | "GURU_PRO_TRIAL"
   | "GURU_FREE"

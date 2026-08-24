@@ -4,7 +4,6 @@
 // pemanggil baru — gunakan POST /api/ai/agents/run dengan agentId yang sesuai.
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
-import { checkAIQuota, recordAIUsage } from "@/lib/premium";
 import { rateLimitRoute } from "@/lib/rate-limit";
 import { logLegacyUsage } from "@/src/ai/core/usage-logger";
 import { checkAndPrepareDeduction, deductCreditsAtomic, ensureMonthlyLedger } from "@/lib/ai-gateway/quota-checker";
@@ -20,11 +19,6 @@ export async function POST(req: NextRequest) {
 
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const oldQuota = await checkAIQuota(user, "ringkasan");
-    if (!oldQuota.allowed) {
-      return NextResponse.json({ error: "QUOTA_EXCEEDED", used: oldQuota.used, limit: oldQuota.limit }, { status: 429 });
-    }
 
     // Phase 9D — gateway quota check
     await ensureMonthlyLedger(user);
@@ -274,10 +268,8 @@ Hanya output JSON, tanpa markdown.`;
       result = result.replace(/```json\n?/g, "").replace(/\n?```/g, "");
     }
 
-    const costUSD = (tokens / 1_000_000) * 0.5;
-    await recordAIUsage(user.id, "text_analysis", tokens, costUSD);
-
     const latencyMs = Date.now() - startTime;
+    const costUSD = (tokens / 1_000_000) * 0.5;
     logLegacyUsage({ userId: user.id, feature: "legacy:text-analysis", provider: usedProvider, model: usedModel, tokens, costUSD, latencyMs, success: true, error: null }).catch(() => {});
 
     try {

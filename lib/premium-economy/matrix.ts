@@ -28,9 +28,22 @@ export const DEFAULT_ENTITLEMENT_MATRIX: Record<
     STREAK_FREEZE_MONTHLY: 0,
   },
   PRO: {
+    // Guru Pro — credit-based AI via AiCreditLedger (500 credits/mo)
+    // Feature limits below are for Premium Economy layer only.
     SIMULATION_MONTHLY_LIMIT: 10,
     AI_MENTOR_DAILY_LIMIT: "unlimited",
     AI_PRACTICE_MONTHLY_LIMIT: "unlimited",
+    PREMIUM_PROFILE: true,
+    PREMIUM_COSMETICS: true,
+    ADVANCED_STATS: true,
+    STREAK_FREEZE_MONTHLY: 1,
+  },
+  MURID_PREMIUM: {
+    // Murid Premium — feature-tiered (NO AI credits)
+    // Caps enforced via PremiumUsage atomic consumption.
+    SIMULATION_MONTHLY_LIMIT: 10,
+    AI_MENTOR_DAILY_LIMIT: 30,    // 30 explanations per day
+    AI_PRACTICE_MONTHLY_LIMIT: 50, // 50 adaptive sessions per month
     PREMIUM_PROFILE: true,
     PREMIUM_COSMETICS: true,
     ADVANCED_STATS: true,

@@ -53,8 +53,10 @@ export async function POST(req: NextRequest) {
       return err("CHECKOUT_AUTH_REQUIRED", "Silakan login terlebih dahulu.", 401);
     }
 
-    if (!["GURU", "ADMIN"].includes(user.role) && !user.isFounder) {
-      return err("CHECKOUT_FORBIDDEN_ROLE", "Hanya guru yang dapat membeli paket Guru Pro.", 403);
+    // Role gate: GURU/ADMIN/founder can buy GURU plans, MURID can buy MURID plans.
+    const allowedRoles = ["GURU", "ADMIN", "MURID"];
+    if (!allowedRoles.includes(user.role) && !user.isFounder) {
+      return err("CHECKOUT_FORBIDDEN_ROLE", "Role anda tidak dapat membeli paket ini.", 403);
     }
 
     // Step 2 — Parse plan
@@ -69,6 +71,16 @@ export async function POST(req: NextRequest) {
     const plan = getPlan(planId);
     if (!plan) {
       return err("CHECKOUT_INVALID_PLAN", "Paket tidak tersedia.", 400);
+    }
+
+    // Validate plan targetRole matches user role (skip for founder/admin)
+    if (!user.isFounder && user.role !== "ADMIN") {
+      if (plan.targetRole === "GURU" && user.role !== "GURU") {
+        return err("CHECKOUT_FORBIDDEN_ROLE", "Paket ini hanya untuk guru.", 403);
+      }
+      if (plan.targetRole === "MURID" && user.role !== "MURID") {
+        return err("CHECKOUT_FORBIDDEN_ROLE", "Paket ini hanya untuk murid.", 403);
+      }
     }
 
     // Step 2b — Validasi kupon (opsional). Harga yang ditagih = harga diskon.
@@ -117,12 +129,15 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Determine transaction type based on plan targetRole
+    const transaksiType = plan.targetRole === "MURID" ? "MURID_PREMIUM" : "PREMIUM_UPGRADE";
+
     // Step 5 — Stale pending cleanup
     try {
       const stalePending = await db.transaksi.findFirst({
         where: {
           userId: user.id,
-          type: "PREMIUM_UPGRADE",
+          type: transaksiType,
           status: "PENDING",
           createdAt: { lt: new Date(Date.now() - 2 * 60 * 1000) },
         },
@@ -176,7 +191,7 @@ export async function POST(req: NextRequest) {
         db.transaksi.create({
           data: {
             userId: user.id,
-            type: "PREMIUM_UPGRADE",
+            type: transaksiType,
             amount: hargaDiskon,
             status: "PENDING",
             reference: planId,

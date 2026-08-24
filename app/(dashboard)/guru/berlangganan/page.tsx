@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Check, Crown, Zap, AlertCircle, Loader2, X, Shield, CreditCard, Calendar, Clock, Info, Landmark, Smartphone, Gift, Sparkles } from "lucide-react";
 import { loadMidtransSnap } from "@/lib/midtrans-client";
 import CouponInput, { AppliedCoupon } from "@/components/billing/CouponInput";
-import { formatCurrency } from "@/lib/premium";
+import { formatCurrency } from "@/lib/format";
 
 interface PlanFeature {
   label: string;
