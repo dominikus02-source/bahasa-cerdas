@@ -14,7 +14,7 @@ export const AI_DIAGNOSTIC_SELECTION_VERSION = "3.0" as const;
  *   npx tsx scripts/qa-ai-diagnostic-8-4-1.ts --sessions 10 (≥100 butir)
  *   npx tsx scripts/audit-qa-ai-diagnostic-8-4-1.ts (target 0 ❌ selain artefak R11)
  */
-export const AI_DIAGNOSTIC_COMING_SOON = true;
+export const AI_DIAGNOSTIC_COMING_SOON = false;
 
 /**
  * Gerbang produksi Latihan Personal (Adaptive Practice).
@@ -27,7 +27,7 @@ export const AI_DIAGNOSTIC_COMING_SOON = true;
  *
  * Balik ke FALSE hanya ketika bank soal latihan personal siap produksi.
  */
-export const ADAPTIVE_PRACTICE_COMING_SOON = true;
+export const ADAPTIVE_PRACTICE_COMING_SOON = false;
 export const AI_DIAGNOSTIC_ALLOWED_SIZES = [6, 8, 10, 12, 15] as const;
 export const AI_DIAGNOSTIC_DEFAULT_SIZE = 10 as const;
 export const AI_DIAGNOSTIC_MIN_USEFUL = 6 as const;

@@ -42,7 +42,7 @@ console.log("Gerbang Latihan Personal (Adaptive Practice):\n");
 
 const config = read("lib/diagnostic-ai/config.ts");
 check("1. Flag ADAPTIVE_PRACTICE_COMING_SOON ada", config.includes("ADAPTIVE_PRACTICE_COMING_SOON"));
-check("2. Flag bernilai TRUE (gerbang aktif)", /ADAPTIVE_PRACTICE_COMING_SOON\s*=\s*true/.test(config));
+check("2. Flag bernilai FALSE (gerbang OFF — produksi aktif)", /ADAPTIVE_PRACTICE_COMING_SOON\s*=\s*false/.test(config));
 check("3. Regresi: AI_DIAGNOSTIC_DEFAULT_SIZE tetap ada", config.includes("AI_DIAGNOSTIC_DEFAULT_SIZE = 10"));
 
 const route = read("app/api/player/adaptive-practice/route.ts");
