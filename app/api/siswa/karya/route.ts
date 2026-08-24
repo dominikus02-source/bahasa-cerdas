@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { awardCoins, trackQuestProgress, trackDailyStreak, awardChallengeBonus, COIN_MENULIS_KARYA } from "@/lib/coins";
 import { getWeeklyChallenge } from "@/lib/weekly-challenge";
 import { karyaSchema, sanitizeTeks } from "@/lib/validations";
-import { transformImageUrl } from "@/lib/image-transform";
+
 import cache from "@/lib/redis";
 import { invalidateKaryaCache } from "@/lib/ai-queue";
 import { getDisplayName } from "@/lib/nickname";
@@ -206,7 +206,7 @@ export async function GET(req: NextRequest) {
           createdAt: typeof k.createdAt === "string" ? k.createdAt : k.createdAt.toISOString(),
           user: {
             ...k.user,
-            avatar: transformImageUrl(k.user.avatar, { width: 80, height: 80, quality: 85 }),
+            avatar: k.user.avatar || "",
             displayName: getDisplayName(k.user, "peer"),
             rank,
             rankLabel: meta?.label ?? rank,
