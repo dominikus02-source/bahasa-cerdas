@@ -153,39 +153,14 @@ export async function POST(req: NextRequest) {
 
     const orderId = generateOrderId(user.id);
 
-    // Step 6 — Create Midtrans Snap transaction
-    let snapResult: { token: string; redirectUrl: string };
-    try {
-      snapResult = await createMidtransSnapTransaction({
-        orderId,
-        amount: hargaDiskon,
-        fullName: user.fullName || user.email,
-        email: user.email,
-        items: [
-          {
-            id: plan.planId,
-            name: kuponInfo ? `${plan.label} (Kupon ${kuponInfo.kode})` : plan.label,
-            price: hargaDiskon,
-            quantity: 1,
-            category: "PREMIUM",
-          },
-        ],
-      });
-    } catch (midtransError: any) {
-      if (midtransError instanceof MidtransError) {
-        if (midtransError.code === "MIDTRANS_UNAUTHORIZED") {
-          return err("MIDTRANS_UNAUTHORIZED", "Kredensial pembayaran belum sesuai. Silakan hubungi admin.", 400);
-        }
-        if (midtransError.code === "MIDTRANS_CREATE_FAILED") {
-          return err("MIDTRANS_CREATE_FAILED", "Pembayaran belum bisa dibuat. Silakan coba lagi beberapa saat.", 400);
-        }
-      }
-      const mapped = mapMidtransError(midtransError);
-      return err(mapped.error as ErrorCode, mapped.message, mapped.httpStatus);
-    }
-
-    // Step 7 — Create local Transaksi record
-    let transaksiId: string | null = null;
+    // ────────────────────────────────────────────────────────────────
+    // Step 6 — Create local Transaksi record FIRST (payment-critical)
+    //
+    // P4.1 FIX: The local transaction MUST exist before Midtrans Snap
+    // is called. If this DB write fails, checkout MUST return an error
+    // and no payment session may be created.
+    // ────────────────────────────────────────────────────────────────
+    let transaksiId: string;
     try {
       const created = await withTimeout(
         db.transaksi.create({
@@ -210,11 +185,18 @@ export async function POST(req: NextRequest) {
         })
       );
       transaksiId = created.id;
-    } catch {
-      console.warn(`[Checkout:${requestId}] DB write failed, continuing`);
+    } catch (dbError: any) {
+      // PAYMENT-CRITICAL: hard-fail. No Midtrans call, no payment session.
+      console.error(`[Checkout:${requestId}] DB write failed — payment-critical`, {
+        userId: user.id,
+        orderId,
+        message: dbError?.message,
+      });
+      return err("CHECKOUT_DB_FAILED", "Gagal menyimpan data transaksi. Silakan coba lagi.", 500);
     }
 
-    // Step 7b — Catat pemakaian kupon (best-effort, setelah Transaksi dibuat)
+    // Step 6b — Catat pemakaian kupon (best-effort, setelah Transaksi dibuat).
+    // Non-critical: coupon usage tracking is important but not payment-blocking.
     if (kuponInfo && transaksiId) {
       try {
         await db.$transaction([
@@ -235,6 +217,57 @@ export async function POST(req: NextRequest) {
       } catch {
         console.warn(`[Checkout:${requestId}] Kupon usage write failed, continuing`);
       }
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    // Step 7 — Create Midtrans Snap transaction (AFTER local record)
+    //
+    // P4.1 FIX: Now that a local Transaksi exists, we can safely call
+    // Midtrans. If Midtrans fails, we mark the local record as FAILED
+    // so it does not stay in an ambiguous PENDING state.
+    // ────────────────────────────────────────────────────────────────
+    let snapResult: { token: string; redirectUrl: string };
+    try {
+      snapResult = await createMidtransSnapTransaction({
+        orderId,
+        amount: hargaDiskon,
+        fullName: user.fullName || user.email,
+        email: user.email,
+        items: [
+          {
+            id: plan.planId,
+            name: kuponInfo ? `${plan.label} (Kupon ${kuponInfo.kode})` : plan.label,
+            price: hargaDiskon,
+            quantity: 1,
+            category: "PREMIUM",
+          },
+        ],
+      });
+    } catch (midtransError: any) {
+      // Midtrans failed AFTER local Transaksi was created.
+      // Mark the local record as FAILED so it does not stay ambiguous PENDING.
+      try {
+        await db.transaksi.update({
+          where: { id: transaksiId },
+          data: { status: "FAILED" },
+        });
+      } catch (cleanupErr: any) {
+        console.error(`[Checkout:${requestId}] Failed to mark Transaksi as FAILED after Midtrans error`, {
+          transaksiId,
+          message: cleanupErr?.message,
+        });
+      }
+
+      if (midtransError instanceof MidtransError) {
+        if (midtransError.code === "MIDTRANS_UNAUTHORIZED") {
+          return err("MIDTRANS_UNAUTHORIZED", "Kredensial pembayaran belum sesuai. Silakan hubungi admin.", 400);
+        }
+        if (midtransError.code === "MIDTRANS_CREATE_FAILED") {
+          return err("MIDTRANS_CREATE_FAILED", "Pembayaran belum bisa dibuat. Silakan coba lagi beberapa saat.", 400);
+        }
+      }
+      const mapped = mapMidtransError(midtransError);
+      return err(mapped.error as ErrorCode, mapped.message, mapped.httpStatus);
     }
 
     return ok({

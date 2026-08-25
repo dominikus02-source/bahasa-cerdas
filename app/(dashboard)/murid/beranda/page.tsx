@@ -14,6 +14,7 @@ import { SimulasiUjianSection } from "@/components/student-home/SimulasiUjianSec
 import { RecentWorksSection } from "@/components/student-home/RecentWorksSection";
 import { ArenaHomeSection } from "@/components/student-home/ArenaHomeSection";
 import { PremiumValueCard } from "@/components/student-home/PremiumValueCard";
+import { WeeklyRecapCard } from "@/components/student-home/WeeklyRecapCard";
 import { SecondaryLearningInfo } from "@/components/student-home/SecondaryLearningInfo";
 import SkillRadar from "@/components/arena/player/SkillRadar";
 import { useHomeData } from "@/components/student-home/home-data";
@@ -53,7 +54,8 @@ export default function HomeFeedPage() {
 }
 
 function HomeContent() {
-  const { myDay, myDayLoading, myDayFailed } = useHomeData();
+  const { myDay, myDayLoading, myDayFailed, premium } = useHomeData();
+  const isPremium = premium?.plan === "PRO" || premium?.plan === "FOUNDER" || premium?.plan === "MURID_PREMIUM";
 
   return (
     <>
@@ -64,10 +66,17 @@ function HomeContent() {
       <ContinueLearningCard />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-        <SkillRadar skills={myDay?.learnerState ?? null} loading={myDayLoading} failed={myDayFailed} />
+        <SkillRadar
+          skills={myDay?.learnerState ?? null}
+          loading={myDayLoading}
+          failed={myDayFailed}
+          showRecommendation={true}
+          isPremium={isPremium}
+        />
         <div className="space-y-6">
           <ArenaHomeSection />
           <PremiumValueCard />
+          <WeeklyRecapCard />
         </div>
       </div>
 

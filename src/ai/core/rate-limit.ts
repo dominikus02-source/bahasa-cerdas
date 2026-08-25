@@ -29,6 +29,7 @@ const BASE_LIMITS: Record<string, AgentRateLimitConfig> = {
   feedback: { maxRequests: 10, windowSeconds: 60 },
   grading: { maxRequests: 10, windowSeconds: 60 },
   "text-analysis": { maxRequests: 10, windowSeconds: 60 },
+  mentor: { maxRequests: 10, windowSeconds: 60 },
 };
 
 export function getAgentRateLimit(agentId: string): AgentRateLimitConfig {

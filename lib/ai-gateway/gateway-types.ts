@@ -59,4 +59,5 @@ export type AiAgentId =
   | "text-analysis"
   | "rubric"
   | "akm-literacy"
-  | "curriculum-align";
+  | "curriculum-align"
+  | "mentor";

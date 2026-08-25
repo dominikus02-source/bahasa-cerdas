@@ -9,6 +9,7 @@ const KNOWN_AGENTS: Record<string, true> = {
   feedback: true,
   grading: true, "text-analysis": true,
   rubric: true, "akm-literacy": true, "curriculum-align": true,
+  mentor: true,
 };
 
 function getTextLength(input: Record<string, unknown>): number {
@@ -66,6 +67,9 @@ export function calculateAgentCost(
 
     case "ppt":
       return { credits: 5, weight: "heavy", reason: "PPT generation — complex output, 5 credits" };
+
+    case "mentor":
+      return { credits: 1, weight: "light", reason: "Mentor explanation — short, cheap" };
 
     default:
       return { credits: 2, weight: "medium", reason: "Default cost for unlisted agent" };

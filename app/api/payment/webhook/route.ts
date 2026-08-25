@@ -195,6 +195,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, warning: "unknown_order" });
     }
 
+    // ── P4.1 FIX: AMOUNT VALIDATION ──
+    // Compare Midtrans gross_amount against the local Transaksi amount.
+    // The local amount is canonical because coupons/discounts may change
+    // the charged amount. If they don't match, do NOT activate Premium.
+    if (grossAmount !== transaksi.amount) {
+      console.error("[Webhook] Amount mismatch — rejecting activation", {
+        order_id,
+        midtransAmount: grossAmount,
+        localAmount: transaksi.amount,
+        transaksiType: transaksi.type,
+      });
+      return NextResponse.json({ error: "Amount mismatch" }, { status: 400 });
+    }
+
     // Prevent downgrade: if already SUCCESS and new status is not SUCCESS, do nothing
     if (transaksi.status === "SUCCESS" && newStatus !== "SUCCESS") {
       return NextResponse.json({ ok: true, idempotent: true, note: "already_success_ignored" });

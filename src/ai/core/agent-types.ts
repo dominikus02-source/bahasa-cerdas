@@ -13,7 +13,8 @@ export type AgentId =
   | "text-analysis"
   | "rubric"
   | "akm-literacy"
-  | "curriculum-align";
+  | "curriculum-align"
+  | "mentor";
 
 // ─── Target users ───────────────────────────────────────────
 export type AgentTargetUser = "guru" | "murid" | "admin" | "all";
