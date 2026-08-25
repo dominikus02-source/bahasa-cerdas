@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
-import { Crown, Gem, Check, X, Loader2, Zap, ArrowRight, BookOpen, Target, Sparkles, BarChart3, Brain, Shield, Clock } from "lucide-react";
+import { Crown, Gem, Check, X, Loader2, ArrowRight, BookOpen, Target, Sparkles, BarChart3, Brain, Shield, Clock, ChevronRight } from "lucide-react";
 import { loadMidtransSnap } from "@/lib/midtrans-client";
-import { formatCurrency } from "@/lib/format";
 
 interface UserInfo {
   isPremium: boolean;
@@ -134,96 +133,145 @@ export default function MuridPremiumPage() {
   // ── Active Premium View ──
   if (isPremium && (status === "success" || status === "pending")) {
     return (
-      <div className="max-w-4xl mx-auto space-y-8">
-        {/* Hero */}
-        <div className="rounded-2xl bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-600 p-8 text-white text-center shadow-xl relative overflow-hidden">
-          <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white/10" />
-          <div className="absolute right-12 -bottom-8 h-24 w-24 rounded-full bg-white/5" />
-          <div className="relative">
-            <div className="h-16 w-16 rounded-full bg-white/20 backdrop-blur flex items-center justify-center mx-auto mb-4">
-              <Gem className="h-8 w-8 text-white" />
+      <div className="max-w-4xl mx-auto space-y-8 pb-16">
+        {/* Hero — Premium Membership Identity */}
+        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#2d1b69] via-[#4c1d95] to-[#1e1b4b] p-8 sm:p-12 text-white shadow-2xl shadow-violet-900/30">
+          {/* Decorative elements */}
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-violet-500/10 blur-3xl" />
+            <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-indigo-500/10 blur-3xl" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-purple-400/5 blur-3xl" />
+            {/* Subtle grid pattern */}
+            <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+          </div>
+
+          <div className="relative z-10">
+            {/* Membership Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-6">
+              <span className="text-amber-400 text-sm">✦</span>
+              <span className="text-[11px] font-semibold tracking-widest uppercase text-white/90">Premium Member</span>
             </div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 text-xs font-bold mb-3">
-              <span>✦</span> Premium Aktif
-            </div>
-            <h1 className="text-2xl font-bold">Premium Aktif!</h1>
-            <p className="mt-2 text-violet-100">
-              Berlaku hingga{" "}
-              {new Date(premiumUntil!).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
-              {daysLeft > 0 && <span className="ml-2 text-violet-200">({daysLeft} hari lagi)</span>}
+
+            {/* Main Heading */}
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3">
+              Belajar dengan arahan yang dipersonalisasi
+            </h1>
+            <p className="text-violet-200 text-base sm:text-lg max-w-xl">
+              BahasaCerdas memahami bagaimana cara belajarmu dan membantu menentukan langkah terbaik berikutnya.
             </p>
+
+            {/* Status Card */}
+            <div className="mt-8 inline-flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 px-6 py-4 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center">
+                  <Gem className="w-5 h-5 text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-xs text-violet-300 uppercase tracking-wider">Berlaku hingga</p>
+                  <p className="text-white font-semibold">
+                    {new Date(premiumUntil!).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
+                  </p>
+                </div>
+              </div>
+              {daysLeft > 0 && (
+                <>
+                  <div className="hidden sm:block w-px h-10 bg-white/20" />
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-violet-300" />
+                    <span className="text-sm text-violet-200">
+                      <span className="font-bold text-white">{daysLeft}</span> hari tersisa
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
+        {/* Expiry Warning — Premium Status Card */}
         {isExpiring && (
-          <div className="rounded-xl bg-amber-50 border border-amber-200 p-4">
-            <div className="flex items-start gap-3">
-              <Clock className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
+          <div className="rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/60 p-5 sm:p-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+                <Clock className="w-6 h-6 text-amber-600" />
+              </div>
               <div className="flex-1">
-                <p className="font-semibold text-amber-900 text-sm">Premium akan berakhir dalam {daysLeft} hari</p>
-                <p className="text-xs text-amber-700 mt-1">Perpanjang sekarang agar akses fitur premium tetap berlanjut.</p>
+                <p className="font-semibold text-amber-900 text-sm">Premium Anda akan berakhir</p>
+                <p className="text-xs text-amber-700 mt-1">Perpanjang sekarang untuk menjaga akses fitur Premium tetap berlanjut.</p>
               </div>
               <button
                 onClick={() => setStatus("default")}
-                className="shrink-0 px-4 py-2 rounded-lg bg-amber-500 text-white text-xs font-bold hover:bg-amber-600 transition-colors"
+                className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 text-white text-sm font-semibold hover:bg-amber-600 transition-all shadow-sm shadow-amber-200"
               >
                 Perpanjang
+                <ChevronRight className="w-4 h-4" />
               </button>
             </div>
           </div>
         )}
 
-        {/* What you get */}
+        {/* Benefit Section — Premium Capability Cards */}
         <div>
-          <h2 className="text-lg font-bold text-slate-900 mb-4">Yang kamu dapatkan</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="rounded-xl bg-white border border-slate-200 p-4 text-center">
-              <Target className="w-8 h-8 text-violet-500 mx-auto mb-2" />
-              <p className="text-sm font-bold text-slate-900">Latihan Personal</p>
-              <p className="text-xs text-slate-500 mt-1">Soal disesuaikan dengan kemampuanmu</p>
+          <h2 className="text-lg font-bold text-slate-900 mb-5">Yang kamu dapatkan</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="group relative rounded-2xl bg-gradient-to-br from-violet-50 to-purple-50/50 border border-violet-100 p-5 transition-all duration-300 hover:shadow-lg hover:shadow-violet-100 hover:-translate-y-0.5">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mb-4 shadow-lg shadow-violet-200">
+                <Target className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-base font-bold text-slate-900 mb-1">Latihan Personal</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">Soal disesuaikan dengan kemampuanmu. Fokus pada bagian yang perlu diperkuat.</p>
             </div>
-            <div className="rounded-xl bg-white border border-slate-200 p-4 text-center">
-              <Brain className="w-8 h-8 text-violet-500 mx-auto mb-2" />
-              <p className="text-sm font-bold text-slate-900">AI Mentor</p>
-              <p className="text-xs text-slate-500 mt-1">Penjelasan kenapa kamu salah</p>
+
+            <div className="group relative rounded-2xl bg-gradient-to-br from-violet-50 to-purple-50/50 border border-violet-100 p-5 transition-all duration-300 hover:shadow-lg hover:shadow-violet-100 hover:-translate-y-0.5">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mb-4 shadow-lg shadow-violet-200">
+                <Brain className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-base font-bold text-slate-900 mb-1">AI Mentor</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">Pahami bukan hanya jawabanmu, tetapi mengapa kamu salah.</p>
             </div>
-            <div className="rounded-xl bg-white border border-slate-200 p-4 text-center">
-              <BarChart3 className="w-8 h-8 text-violet-500 mx-auto mb-2" />
-              <p className="text-sm font-bold text-slate-900">Insight Perkembangan</p>
-              <p className="text-xs text-slate-500 mt-1">Ringkasan mingguan pertumbuhan</p>
+
+            <div className="group relative rounded-2xl bg-gradient-to-br from-violet-50 to-purple-50/50 border border-violet-100 p-5 transition-all duration-300 hover:shadow-lg hover:shadow-violet-100 hover:-translate-y-0.5">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mb-4 shadow-lg shadow-violet-200">
+                <BarChart3 className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-base font-bold text-slate-900 mb-1">Insight Perkembangan</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">Ringkasan mingguan pertumbuhan dan perbandingan skill.</p>
             </div>
-            <div className="rounded-xl bg-white border border-slate-200 p-4 text-center">
-              <Sparkles className="w-8 h-8 text-violet-500 mx-auto mb-2" />
-              <p className="text-sm font-bold text-slate-900">Simulasi 10x</p>
-              <p className="text-xs text-slate-500 mt-1">UKBI/TKA 10 kali/bulan</p>
+
+            <div className="group relative rounded-2xl bg-gradient-to-br from-violet-50 to-purple-50/50 border border-violet-100 p-5 transition-all duration-300 hover:shadow-lg hover:shadow-violet-100 hover:-translate-y-0.5">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mb-4 shadow-lg shadow-violet-200">
+                <Sparkles className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-base font-bold text-slate-900 mb-1">Simulasi 10x</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">UKBI/TKA 10 kali per bulan untuk latihan lebih intensif.</p>
             </div>
           </div>
         </div>
 
-        {/* Feature comparison (always visible) */}
+        {/* Feature comparison */}
         <div>
-          <h2 className="text-lg font-bold text-slate-900 mb-4">Perbandingan Gratis vs Premium</h2>
-          <div className="overflow-x-auto">
+          <h2 className="text-lg font-bold text-slate-900 mb-5">Perbandingan Gratis vs Premium</h2>
+          <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-200">
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700">Fitur</th>
-                  <th className="text-center py-3 px-4 font-semibold text-slate-500">Gratis</th>
-                  <th className="text-center py-3 px-4 font-semibold text-violet-600">Premium ✦</th>
+                <tr className="border-b border-slate-100">
+                  <th className="text-left py-4 px-5 font-semibold text-slate-600 text-xs uppercase tracking-wider">Fitur</th>
+                  <th className="text-center py-4 px-5 font-semibold text-slate-500 text-xs uppercase tracking-wider">Gratis</th>
+                  <th className="text-center py-4 px-5 font-semibold text-violet-600 text-xs uppercase tracking-wider bg-violet-50/50">Premium ✦</th>
                 </tr>
               </thead>
               <tbody>
-                {PREMIUM_FEATURES.map((f) => (
-                  <tr key={f.label} className="border-b border-slate-100 last:border-0">
-                    <td className="py-3 px-4 font-medium text-slate-900">{f.label}</td>
-                    <td className="py-3 px-4 text-center">
+                {PREMIUM_FEATURES.map((f, i) => (
+                  <tr key={f.label} className={`border-b border-slate-50 last:border-0 ${i % 2 === 0 ? "bg-slate-50/30" : ""}`}>
+                    <td className="py-3.5 px-5 font-medium text-slate-700">{f.label}</td>
+                    <td className="py-3.5 px-5 text-center">
                       {f.freeOk ? (
-                        <span className="inline-flex items-center gap-1 text-emerald-600"><Check className="w-4 h-4" /> {f.free}</span>
+                        <span className="inline-flex items-center gap-1 text-slate-500"><Check className="w-4 h-4" /> {f.free}</span>
                       ) : (
                         <span className="text-slate-300">—</span>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-center">
+                    <td className="py-3.5 px-5 text-center bg-violet-50/30">
                       <span className="inline-flex items-center gap-1 text-violet-600 font-medium"><Check className="w-4 h-4" /> {f.premium}</span>
                     </td>
                   </tr>
@@ -233,17 +281,23 @@ export default function MuridPremiumPage() {
           </div>
         </div>
 
-        {/* CTA */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <a href="/arena/jalur-cerdas" className="inline-flex items-center gap-2 bg-gradient-to-r from-violet-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-violet-700 hover:to-purple-700 transition-all">
-            <BookOpen className="w-4 h-4" /> Mulai Belajar
+        {/* CTA Section */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+          <a
+            href="/arena/jalur-cerdas"
+            className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 px-6 py-3 rounded-xl font-semibold transition-all"
+          >
+            <BookOpen className="w-4 h-4" />
+            Mulai Belajar
             <ArrowRight className="w-4 h-4" />
           </a>
           <button
             onClick={() => setStatus("default")}
-            className="inline-flex items-center gap-2 border-2 border-violet-300 text-violet-700 px-6 py-3 rounded-xl font-semibold hover:bg-violet-50 transition-all"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-violet-600 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold shadow-lg shadow-violet-200 hover:shadow-xl hover:shadow-violet-300 hover:-translate-y-0.5 transition-all"
           >
-            <Gem className="w-4 h-4" /> {isExpiring ? "Perpanjang Sekarang" : "Beli Lagi / Perpanjang"}
+            <Gem className="w-4 h-4" />
+            {isExpiring ? "Perpanjang Sekarang" : "Beli Lagi / Perpanjang"}
+            <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       </div>
@@ -253,45 +307,58 @@ export default function MuridPremiumPage() {
   // ── Pending Payment View ──
   if (status === "pending") {
     return (
-      <div className="max-w-lg mx-auto text-center py-16">
-        <div className="h-20 w-20 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center mx-auto mb-4 shadow-lg">
+      <div className="max-w-lg mx-auto text-center py-20">
+        <div className="h-20 w-20 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-violet-200">
           <div className="h-10 w-10 animate-spin border-[3px] border-white border-t-transparent rounded-full" />
         </div>
-        <h1 className="text-2xl font-bold text-slate-900">Menunggu Pembayaran</h1>
-        <p className="mt-2 text-slate-500">Selesaikan pembayaran melalui metode yang kamu pilih.</p>
+        <h1 className="text-2xl font-bold text-slate-900 mb-2">Menunggu Pembayaran</h1>
+        <p className="text-slate-500">Selesaikan pembayaran melalui metode yang kamu pilih.</p>
       </div>
     );
   }
 
   // ── Pricing / Upgrade View ──
   return (
-    <div className="max-w-4xl mx-auto space-y-10">
-      {/* Hero */}
-      <div className="text-center py-6">
-        <div className="h-16 w-16 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mx-auto mb-4 shadow-lg">
-          <Gem className="h-8 w-8 text-white" />
+    <div className="max-w-4xl mx-auto space-y-12 pb-16">
+      {/* Hero — Premium Aspiration */}
+      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#2d1b69] via-[#4c1d95] to-[#1e1b4b] p-8 sm:p-12 text-center text-white shadow-2xl shadow-violet-900/30">
+        {/* Decorative elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-violet-500/10 blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-indigo-500/10 blur-3xl" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-purple-400/5 blur-3xl" />
+          <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
         </div>
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-violet-100 text-violet-700 text-xs font-bold mb-3">
-          ✦ Premium
+
+        <div className="relative z-10">
+          {/* Membership Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-6">
+            <span className="text-amber-400 text-sm">✦</span>
+            <span className="text-[11px] font-semibold tracking-widest uppercase text-white/90">Premium</span>
+          </div>
+
+          {/* Main Heading */}
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
+            Belajar dengan arahan yang dipersonalisasi
+          </h1>
+          <p className="text-violet-200 text-base sm:text-lg max-w-xl mx-auto leading-relaxed">
+            Latihan personal, AI Mentor, dan insight perkembangan — semuanya disesuaikan untukmu.
+          </p>
         </div>
-        <h1 className="text-3xl font-bold text-slate-900">Bangun Kemampuanmu</h1>
-        <p className="mt-3 text-slate-500 max-w-md mx-auto">
-          Latihan personal, AI Mentor, dan insight perkembangan — semuanya disesuaikan untukmu.
-        </p>
       </div>
 
       {/* Error */}
       {errorMsg && (
-        <div className="max-w-lg mx-auto rounded-xl bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+        <div className="max-w-lg mx-auto rounded-2xl bg-red-50 border border-red-200 p-4 text-sm text-red-700">
           {errorMsg}
         </div>
       )}
 
       {/* Plan Toggle */}
-      <div className="flex items-center justify-center gap-2 bg-slate-100 rounded-xl p-1 w-fit mx-auto">
+      <div className="flex items-center justify-center gap-2 bg-slate-100 rounded-2xl p-1.5 w-fit mx-auto">
         <button
           onClick={() => setSelectedPlan("MURID_PREMIUM_MONTHLY")}
-          className={`px-5 py-2 rounded-lg text-sm font-medium transition-all ${
+          className={`px-6 py-2.5 rounded-xl text-sm font-medium transition-all ${
             selectedPlan === "MURID_PREMIUM_MONTHLY" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
           }`}
         >
@@ -299,7 +366,7 @@ export default function MuridPremiumPage() {
         </button>
         <button
           onClick={() => setSelectedPlan("MURID_PREMIUM_YEARLY")}
-          className={`px-5 py-2 rounded-lg text-sm font-medium transition-all ${
+          className={`px-6 py-2.5 rounded-xl text-sm font-medium transition-all ${
             selectedPlan === "MURID_PREMIUM_YEARLY" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
           }`}
         >
@@ -313,56 +380,60 @@ export default function MuridPremiumPage() {
       {/* Feature Comparison */}
       <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
         {/* Free */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-6">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
           <h2 className="text-xl font-bold text-slate-900">Gratis</h2>
           <p className="text-sm text-slate-500 mt-1">Untuk memulai</p>
-          <p className="text-3xl font-bold text-slate-900 mt-4 mb-6">Rp 0</p>
+          <p className="text-3xl font-bold text-slate-900 mt-5 mb-6">Rp 0</p>
           <ul className="space-y-3 mb-8">
             {PREMIUM_FEATURES.map((f) => (
-              <li key={f.label} className="flex items-start gap-2 text-sm">
+              <li key={f.label} className="flex items-start gap-2.5 text-sm">
                 {f.freeOk ? (
-                  <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+                  <Check className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" />
                 ) : (
-                  <X className="w-4 h-4 text-slate-300 mt-0.5 shrink-0" />
+                  <X className="w-4 h-4 text-slate-200 mt-0.5 shrink-0" />
                 )}
-                <span className={f.freeOk ? "text-slate-700" : "text-slate-400"}>
+                <span className={f.freeOk ? "text-slate-600" : "text-slate-400"}>
                   <span className="font-medium">{f.label}:</span> {f.free}
                 </span>
               </li>
             ))}
           </ul>
-          <button disabled className="w-full py-2.5 rounded-xl border border-slate-200 text-slate-400 text-sm font-medium cursor-not-allowed">
+          <button disabled className="w-full py-3 rounded-xl border border-slate-200 text-slate-400 text-sm font-medium cursor-not-allowed">
             Paket Saat Ini
           </button>
         </div>
 
         {/* Premium */}
-        <div className="rounded-2xl border-2 border-violet-300 bg-gradient-to-br from-violet-50/50 to-purple-50/50 p-6 relative overflow-hidden">
+        <div className="rounded-2xl border-2 border-violet-200 bg-gradient-to-br from-violet-50/80 to-purple-50/50 p-6 sm:p-8 relative overflow-hidden shadow-lg shadow-violet-100/50">
+          {/* Premium Badge */}
           <div className="absolute top-0 right-0">
-            <div className="bg-gradient-to-l from-violet-500 to-purple-500 text-white text-[10px] font-bold px-4 py-1 rounded-bl-lg shadow">
+            <div className="bg-gradient-to-l from-violet-600 to-purple-600 text-white text-[10px] font-bold px-5 py-1.5 rounded-bl-xl shadow-lg">
               POPULER
             </div>
           </div>
-          <div className="flex items-center gap-2 mb-1">
+
+          <div className="flex items-center gap-2.5 mb-1">
             <h2 className="text-xl font-bold text-slate-900">Premium</h2>
             <Gem className="w-5 h-5 text-violet-500" />
           </div>
           <p className="text-sm text-slate-500 mt-1">Latihan personal & mentor AI</p>
+
           {selectedPlan === "MURID_PREMIUM_YEARLY" ? (
-            <div className="mt-4 mb-6">
+            <div className="mt-5 mb-6">
               <p className="text-3xl font-bold text-slate-900">Rp 180.000</p>
               <p className="text-sm text-slate-500">per tahun (Rp 15.000/bln)</p>
-              <p className="text-xs text-emerald-600 font-medium mt-1">Hemat Rp 39.000 dari bulanan</p>
+              <p className="text-xs text-emerald-600 font-semibold mt-1.5">Hemat Rp 39.000 dari bulanan</p>
             </div>
           ) : (
-            <div className="mt-4 mb-6">
+            <div className="mt-5 mb-6">
               <p className="text-3xl font-bold text-slate-900">Rp 19.000</p>
               <p className="text-sm text-slate-500">per bulan</p>
             </div>
           )}
+
           <ul className="space-y-3 mb-8">
             {PREMIUM_FEATURES.map((f) => (
-              <li key={f.label} className="flex items-start gap-2 text-sm">
+              <li key={f.label} className="flex items-start gap-2.5 text-sm">
                 <Check className="w-4 h-4 text-violet-500 mt-0.5 shrink-0" />
                 <span className="text-slate-700">
                   <span className="font-medium">{f.label}:</span> {f.premium}
@@ -370,15 +441,16 @@ export default function MuridPremiumPage() {
               </li>
             ))}
           </ul>
+
           <button
             onClick={handleUpgrade}
             disabled={loading}
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-semibold shadow-lg shadow-violet-200/50 transition-all disabled:opacity-50"
+            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-semibold shadow-lg shadow-violet-200/50 transition-all disabled:opacity-50 hover:shadow-xl hover:-translate-y-0.5"
           >
             {loading ? (
               <span className="inline-flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Memproses...</span>
             ) : (
-              <span className="inline-flex items-center gap-2"><Zap className="w-4 h-4" /> Berlangganan Sekarang</span>
+              <span className="inline-flex items-center gap-2">Berlangganan Sekarang <ChevronRight className="w-4 h-4" /></span>
             )}
           </button>
         </div>
@@ -392,13 +464,25 @@ export default function MuridPremiumPage() {
       </div>
 
       {/* Terms */}
-      <div className="rounded-xl bg-slate-50 border border-slate-200 p-5 max-w-2xl mx-auto">
-        <h3 className="font-bold text-slate-900 mb-3 text-sm">Ketentuan</h3>
-        <ul className="space-y-2 text-xs text-slate-600">
-          <li>• Pembayaran <strong>sekali bayar</strong> — tidak diperpanjang otomatis.</li>
-          <li>• Jika Premium masih aktif, pembelian baru <strong>memperpanjang</strong> masa aktif.</li>
-          <li>• Setelah masa Premium habis, kembali ke <strong>Gratis</strong> (data profil tetap tersimpan).</li>
-          <li>• Latihan Personal & AI Mentor mulai aktif setelah pembayaran terkonfirmasi.</li>
+      <div className="rounded-2xl bg-slate-50 border border-slate-200 p-6 max-w-2xl mx-auto">
+        <h3 className="font-bold text-slate-900 mb-4 text-sm">Ketentuan</h3>
+        <ul className="space-y-2.5 text-xs text-slate-600 leading-relaxed">
+          <li className="flex items-start gap-2">
+            <span className="text-violet-400 mt-0.5">•</span>
+            <span>Pembayaran <strong>sekali bayar</strong> — tidak diperpanjang otomatis.</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-violet-400 mt-0.5">•</span>
+            <span>Jika Premium masih aktif, pembelian baru <strong>memperpanjang</strong> masa aktif.</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-violet-400 mt-0.5">•</span>
+            <span>Setelah masa Premium habis, kembali ke <strong>Gratis</strong> (data profil tetap tersimpan).</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-violet-400 mt-0.5">•</span>
+            <span>Latihan Personal & AI Mentor mulai aktif setelah pembayaran terkonfirmasi.</span>
+          </li>
         </ul>
       </div>
     </div>
