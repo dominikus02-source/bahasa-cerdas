@@ -42,6 +42,7 @@
  */
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 import { setQuiet } from "@/lib/notif-quiet"
 import {
   X, Play, RotateCcw, ChevronRight, Lock, Star, Trophy, Lightbulb,
@@ -208,6 +209,10 @@ function calcCoins(stars: number, levelId: number) {
 
 export default function TekaTekiSilang() {
   const router = useRouter();
+  // DARK MODE — game ini full-screen di atas shell Arena yang theme-aware.
+  // Semua warna permukaan mengikuti tema; warna aksen/brand tetap sama.
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
   const [screen, setScreen] = useState<"start" | "levels" | "setup" | "game" | "result" | "hearts">("start");
   const [saved, setSaved] = useState<Saved>({ unlocked: [1], best: {}, xp: 0, coins: 0 });
   const [puzzleId, setPuzzleId] = useState(1);
@@ -636,7 +641,7 @@ export default function TekaTekiSilang() {
   const nextHeartLabel = liveHearts.hearts >= HEARTS_MAX ? "Penuh" : fmtCountdown(heartCountdown);
 
   return (
-    <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+    <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#0F0D21] dark:to-[#181330] text-[#161B3A] dark:text-[#F1EDFF]">
       <style>{`
         @keyframes tts-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
         @keyframes tts-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}
@@ -684,7 +689,7 @@ export default function TekaTekiSilang() {
       {/* KUIS TTS 1.0 (§23) — konfirmasi keluar saat progress akan hilang */}
       {confirmExit && (
         <div className="fixed inset-0 z-[90] flex items-center justify-center bg-[#161B3A]/60 p-5 backdrop-blur-sm">
-          <div className="tts-screen w-full max-w-sm rounded-3xl border-4 border-[#161B3A] bg-white p-6 text-center shadow-[6px_6px_0_#161B3A]">
+          <div className="tts-screen w-full max-w-sm rounded-3xl border-4 border-[#161B3A] bg-white dark:bg-[#16122A] p-6 text-center shadow-[6px_6px_0_#161B3A]">
             <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl border-4 border-[#161B3A] bg-[#FF6B6B] shadow-[3px_3px_0_#161B3A]">
               <X className="w-7 h-7 text-white" />
             </div>
@@ -695,7 +700,7 @@ export default function TekaTekiSilang() {
                 Tetap Main
               </button>
               {/* KUIS TTS 1.1 (§21): keluar = benar-benar keluar ke Game Hub, bukan ke pilih level. */}
-              <button className={`${btn} px-5 py-3 bg-white`} onClick={() => { setConfirmExit(false); router.push("/arena/game"); }}>
+              <button className={`${btn} px-5 py-3 bg-white dark:bg-[#16122A]`} onClick={() => { setConfirmExit(false); router.push("/arena/game"); }}>
                 Keluar
               </button>
             </div>
@@ -717,11 +722,11 @@ export default function TekaTekiSilang() {
           </div>
           <div className="flex items-center gap-2">
             {(screen === "start" || screen === "hearts") && (
-              <button className={`${btn} w-10 h-10 bg-white`} onClick={() => router.push("/arena/game")} aria-label="Keluar dari gim">
+              <button className={`${btn} w-10 h-10 bg-white dark:bg-[#16122A]`} onClick={() => router.push("/arena/game")} aria-label="Keluar dari gim">
                 <X className="w-5 h-5" />
               </button>
             )}
-            <button className={`${btn} w-10 h-10 bg-white`} onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+            <button className={`${btn} w-10 h-10 bg-white dark:bg-[#16122A]`} onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
             </button>
           </div>
@@ -729,13 +734,13 @@ export default function TekaTekiSilang() {
 
         {screen !== "start" && screen !== "game" && (
           <div className="flex items-center gap-2.5 mb-4 text-xs font-extrabold">
-            <span className="flex items-center gap-1 bg-white border-[3px] border-[#161B3A] rounded-full px-2.5 py-1 shadow-[2px_2px_0_#161B3A]">
+            <span className="flex items-center gap-1 bg-white dark:bg-[#16122A] border-[3px] border-[#161B3A] rounded-full px-2.5 py-1 shadow-[2px_2px_0_#161B3A]">
               <Zap className="w-3.5 h-3.5 text-amber-500" /> {saved.xp} XP
             </span>
-            <span className="flex items-center gap-1 bg-white border-[3px] border-[#161B3A] rounded-full px-2.5 py-1 shadow-[2px_2px_0_#161B3A]">
+            <span className="flex items-center gap-1 bg-white dark:bg-[#16122A] border-[3px] border-[#161B3A] rounded-full px-2.5 py-1 shadow-[2px_2px_0_#161B3A]">
               <Coins className="w-3.5 h-3.5 text-yellow-600" /> {saved.coins} Koin
             </span>
-            <span className="flex items-center gap-1 bg-white border-[3px] border-[#161B3A] rounded-full px-2.5 py-1 shadow-[2px_2px_0_#161B3A]">
+            <span className="flex items-center gap-1 bg-white dark:bg-[#16122A] border-[3px] border-[#161B3A] rounded-full px-2.5 py-1 shadow-[2px_2px_0_#161B3A]">
               <Heart className="w-3.5 h-3.5 text-rose-500" fill="#F43F5E" /> {liveHearts.hearts}/{HEARTS_MAX}
             </span>
           </div>
@@ -743,7 +748,7 @@ export default function TekaTekiSilang() {
 
         {/* ---------- MULAI ---------- */}
         {screen === "start" && (
-          <div className={`tts-screen mx-auto w-full max-w-2xl bg-white rounded-3xl ${chunky} p-6 text-center`}>
+          <div className={`tts-screen mx-auto w-full max-w-2xl bg-white dark:bg-[#16122A] rounded-3xl ${chunky} p-6 text-center`}>
             <span className="inline-block px-4 py-1.5 bg-[#38BDF8] text-white border-[3px] border-[#161B3A] rounded-full font-extrabold text-xs shadow-[3px_3px_0_#161B3A] mb-4">
               12 Level Berjenjang · Ditemani Zelby, Hazel & Alby
             </span>
@@ -784,13 +789,13 @@ export default function TekaTekiSilang() {
                   {streak.streak >= 2 ? `Bonus +${streakXpBonus(streak.streak)} XP tiap main` : "Main 2 hari berturut untuk bonus XP"}
                 </div>
               </div>
-              <div className="bg-white border-[3px] border-[#161B3A] rounded-2xl p-3 shadow-[4px_4px_0_#10B981]">
+              <div className="bg-white dark:bg-[#16122A] border-[3px] border-[#161B3A] rounded-2xl p-3 shadow-[4px_4px_0_#10B981]">
                 <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase opacity-70">
                   <Heart className="w-3.5 h-3.5 text-rose-500" fill="#F43F5E" /> Nyawa
                 </div>
                 <div className="flex items-center gap-1 mt-1">
                   {Array.from({ length: HEARTS_MAX }).map((_, i) => (
-                    <Heart key={i} className={`w-4 h-4 ${i < liveHearts.hearts ? "text-rose-500" : "text-gray-300"}`} fill={i < liveHearts.hearts ? "currentColor" : "none"} />
+                    <Heart key={i} className={`w-4 h-4 ${i < liveHearts.hearts ? "text-rose-500" : "text-gray-300 dark:text-slate-600"}`} fill={i < liveHearts.hearts ? "currentColor" : "none"} />
                   ))}
                   <span className="font-extrabold text-sm ml-1">{liveHearts.hearts}/{HEARTS_MAX}</span>
                 </div>
@@ -830,9 +835,9 @@ export default function TekaTekiSilang() {
 
         {/* ---------- PILIH TEKA-TEKI ---------- */}
         {screen === "levels" && (
-          <div className={`tts-screen bg-white rounded-3xl ${chunky} p-5`}>
+          <div className={`tts-screen bg-white dark:bg-[#16122A] rounded-3xl ${chunky} p-5`}>
             <div className="flex items-center justify-between mb-4">
-              <button className={`${btn} w-11 h-11 bg-white`} onClick={() => setScreen("start")} aria-label="Kembali">
+              <button className={`${btn} w-11 h-11 bg-white dark:bg-[#16122A]`} onClick={() => setScreen("start")} aria-label="Kembali">
                 <X className="w-5 h-5" />
               </button>
               <h2 className="font-extrabold text-2xl">Pilih Level</h2>
@@ -850,7 +855,7 @@ export default function TekaTekiSilang() {
                     disabled={!unlocked}
                     onClick={() => unlocked && openSetup(p.id)}
                     className={`text-left rounded-2xl border-4 border-[#161B3A] p-4 transition-transform ${
-                      unlocked ? "shadow-[5px_5px_0_#161B3A] hover:-translate-x-0.5 hover:-translate-y-0.5 cursor-pointer" : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-[5px_5px_0_#9CA3AF]"
+                      unlocked ? "shadow-[5px_5px_0_#161B3A] hover:-translate-x-0.5 hover:-translate-y-0.5 cursor-pointer" : "shadow-[5px_5px_0_#9CA3AF] bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-slate-700/60 dark:text-slate-400"
                     }`}
                     style={unlocked ? { background: c, color: "#fff" } : undefined}
                   >
@@ -881,8 +886,8 @@ export default function TekaTekiSilang() {
 
         {/* ---------- ATUR WAKTU ---------- */}
         {screen === "setup" && (
-          <div className={`tts-screen mx-auto w-full max-w-2xl bg-white rounded-3xl ${chunky} p-6 text-center`}>
-            <button className={`${btn} w-11 h-11 bg-white mb-4`} onClick={() => setScreen("levels")} aria-label="Kembali">
+          <div className={`tts-screen mx-auto w-full max-w-2xl bg-white dark:bg-[#16122A] rounded-3xl ${chunky} p-6 text-center`}>
+            <button className={`${btn} w-11 h-11 bg-white dark:bg-[#16122A] mb-4`} onClick={() => setScreen("levels")} aria-label="Kembali">
               <X className="w-5 h-5" />
             </button>
             <div className="flex justify-center mb-3">
@@ -895,7 +900,7 @@ export default function TekaTekiSilang() {
               <button
                 onClick={() => pickMode("daily")}
                 className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border-4 border-[#161B3A] font-extrabold text-xs transition-transform ${
-                  seedMode === "daily" ? "shadow-none translate-x-1 translate-y-1 bg-[#38BDF8] text-white" : "bg-white shadow-[3px_3px_0_#161B3A] hover:-translate-x-0.5 hover:-translate-y-0.5"
+                  seedMode === "daily" ? "shadow-none translate-x-1 translate-y-1 bg-[#38BDF8] text-white" : "bg-white dark:bg-[#16122A] shadow-[3px_3px_0_#161B3A] hover:-translate-x-0.5 hover:-translate-y-0.5"
                 }`}
               >
                 <CalendarDays className="w-4 h-4" /> Hari Ini
@@ -903,7 +908,7 @@ export default function TekaTekiSilang() {
               <button
                 onClick={() => pickMode("acak")}
                 className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border-4 border-[#161B3A] font-extrabold text-xs transition-transform ${
-                  seedMode === "acak" ? "shadow-none translate-x-1 translate-y-1 bg-[#8B5CF6] text-white" : "bg-white shadow-[3px_3px_0_#161B3A] hover:-translate-x-0.5 hover:-translate-y-0.5"
+                  seedMode === "acak" ? "shadow-none translate-x-1 translate-y-1 bg-[#8B5CF6] text-white" : "bg-white dark:bg-[#16122A] shadow-[3px_3px_0_#161B3A] hover:-translate-x-0.5 hover:-translate-y-0.5"
                 }`}
               >
                 <Shuffle className="w-4 h-4" /> Acak
@@ -930,7 +935,7 @@ export default function TekaTekiSilang() {
                   className={`w-14 h-14 rounded-2xl border-4 border-[#161B3A] font-extrabold text-lg transition-transform ${
                     timeMinutes === m ? "shadow-none translate-x-1 translate-y-1" : "shadow-[4px_4px_0_#161B3A] hover:-translate-x-0.5 hover:-translate-y-0.5"
                   }`}
-                  style={{ background: timeMinutes === m ? color : "#fff", color: timeMinutes === m ? "#fff" : "#161B3A" }}
+                  style={{ background: timeMinutes === m ? color : isDark ? "#16122A" : "#fff", color: timeMinutes === m ? "#fff" : isDark ? "#F1EDFF" : "#161B3A" }}
                 >
                   {m}
                   <div className="text-[9px] font-bold -mt-0.5">min</div>
@@ -949,7 +954,7 @@ export default function TekaTekiSilang() {
 
         {/* ---------- NYAWA HABIS ---------- */}
         {screen === "hearts" && (
-          <div className={`tts-screen mx-auto w-full max-w-2xl bg-white rounded-3xl ${chunky} p-6 text-center`}>
+          <div className={`tts-screen mx-auto w-full max-w-2xl bg-white dark:bg-[#16122A] rounded-3xl ${chunky} p-6 text-center`}>
             <div className="flex justify-center mb-3">
               <div className="w-20 h-20 rounded-3xl bg-[#FF6B6B] border-4 border-[#161B3A] shadow-[5px_5px_0_#161B3A] flex items-center justify-center">
                 <Heart className="w-10 h-10 text-white" fill="currentColor" />
@@ -962,7 +967,7 @@ export default function TekaTekiSilang() {
 
             <div className="flex justify-center gap-1.5 mb-3">
               {Array.from({ length: HEARTS_MAX }).map((_, i) => (
-                <Heart key={i} className={`w-7 h-7 ${i < liveHearts.hearts ? "text-rose-500" : "text-gray-300"}`} fill={i < liveHearts.hearts ? "currentColor" : "none"} />
+                <Heart key={i} className={`w-7 h-7 ${i < liveHearts.hearts ? "text-rose-500" : "text-gray-300 dark:text-slate-600"}`} fill={i < liveHearts.hearts ? "currentColor" : "none"} />
               ))}
             </div>
             <div className="inline-block bg-[#161B3A] text-white rounded-2xl px-6 py-3 shadow-[5px_5px_0_#FBBF24] mb-6">
@@ -979,7 +984,7 @@ export default function TekaTekiSilang() {
               >
                 <Play className="w-4 h-4" /> {liveHearts.hearts >= 1 ? "Nyawa Pulih — Main!" : "Tunggu Nyawa…"}
               </button>
-              <button className={`${btn} px-5 py-3 bg-white`} onClick={() => setScreen("levels")}>
+              <button className={`${btn} px-5 py-3 bg-white dark:bg-[#16122A]`} onClick={() => setScreen("levels")}>
                 Pilih Level
               </button>
             </div>
@@ -1000,11 +1005,11 @@ export default function TekaTekiSilang() {
                   <Heart className="w-4 h-4 text-rose-400" fill="#FB7185" /> {liveHearts.hearts}/{HEARTS_MAX}
                 </div>
               </div>
-              <div className="rounded-xl border-[3px] border-[#161B3A] bg-white px-2 py-2 shadow-[3px_3px_0_#161B3A]">
+              <div className="rounded-xl border-[3px] border-[#161B3A] bg-white dark:bg-[#16122A] px-2 py-2 shadow-[3px_3px_0_#161B3A]">
                 <div className="text-[8px] font-extrabold uppercase opacity-70">Level</div>
                 <div className="text-lg font-extrabold leading-none">{puzzle.id}<span className="text-[10px] font-bold opacity-60 ml-1">{puzzle.title}</span></div>
               </div>
-              <div className={`rounded-xl border-[3px] border-[#161B3A] px-2 py-2 shadow-[3px_3px_0_#161B3A] ${combo > 1 ? "bg-orange-300" : "bg-white opacity-70"}`}>
+              <div className={`rounded-xl border-[3px] border-[#161B3A] px-2 py-2 shadow-[3px_3px_0_#161B3A] ${combo > 1 ? "bg-orange-300" : "bg-white dark:bg-[#16122A] opacity-70"}`}>
                 <div className="text-[8px] font-extrabold uppercase opacity-70">Rentetan</div>
                 <div className="text-lg font-extrabold leading-none">{combo}x</div>
               </div>
@@ -1040,14 +1045,14 @@ export default function TekaTekiSilang() {
                   style={{ width: `${totalCells ? (correctCells / totalCells) * 100 : 0}%`, background: color }}
                 />
               </div>
-              <div className="shrink-0 rounded-full border-[3px] border-[#161B3A] bg-white px-2.5 py-1 shadow-[2px_2px_0_#161B3A] font-extrabold text-[11px] flex items-center gap-1">
-                <Heart className={`w-3.5 h-3.5 ${combo >= 2 ? "text-orange-500" : "text-gray-300"}`} />
+              <div className="shrink-0 rounded-full border-[3px] border-[#161B3A] bg-white dark:bg-[#16122A] px-2.5 py-1 shadow-[2px_2px_0_#161B3A] font-extrabold text-[11px] flex items-center gap-1">
+                <Heart className={`w-3.5 h-3.5 ${combo >= 2 ? "text-orange-500" : "text-gray-300 dark:text-slate-600"}`} />
                 {combo >= 2 ? `Beruntun ×${combo}` : `${Math.round((correctCells / Math.max(1, totalCells)) * 100)}% tepat`}
               </div>
             </div>
 
             {/* Petunjuk aktif + maskot */}
-            <div className="w-full rounded-xl border-[3px] border-[#161B3A] bg-white px-3.5 py-2 shadow-[3px_3px_0_#161B3A] flex items-center gap-3 min-h-[60px]">
+            <div className="w-full rounded-xl border-[3px] border-[#161B3A] bg-white dark:bg-[#16122A] px-3.5 py-2 shadow-[3px_3px_0_#161B3A] flex items-center gap-3 min-h-[60px]">
               <div className="relative shrink-0">
                 <MascotFace mascot={mascot} celebrating={celebrating} />
                 {cheerText && (
@@ -1068,7 +1073,7 @@ export default function TekaTekiSilang() {
             </div>
 
             {timeUp && (
-              <div className="w-full rounded-xl border-[3px] border-[#FF6B6B] bg-[#FFE2E2] px-3.5 py-2 text-center text-sm font-extrabold text-[#991B1B]">
+              <div className="w-full rounded-xl border-[3px] border-[#FF6B6B] bg-[#FFE2E2] dark:bg-[#3A1620] px-3.5 py-2 text-center text-sm font-extrabold text-[#991B1B] dark:text-[#FCA5A5]">
                 Waktu habis! Lihat hasil di bawah.
               </div>
             )}
@@ -1091,15 +1096,16 @@ export default function TekaTekiSilang() {
                     const isSel = selected?.row === r && selected?.col === c;
                     const inActiveWord = activeWord ? wordCellKeys(activeWord).includes(key) : false;
                     const state = checked[key];
-                    let bg = "#FFFFFF";
-                    if (state === "correct") bg = "#BBF7D0";
-                    else if (state === "wrong") bg = "#FECACA";
-                    else if (isSel) bg = "#FDE68A";
-                    else if (inActiveWord) bg = "#FEF3C7";
+                    // Warna sel theme-aware (WCAG AA): kontras huruf vs latar dijaga di kedua mode.
+                    let bg = isDark ? "#241F45" : "#FFFFFF";
+                    if (state === "correct") bg = isDark ? "#12402B" : "#BBF7D0";
+                    else if (state === "wrong") bg = isDark ? "#47202E" : "#FECACA";
+                    else if (isSel) bg = isDark ? "#4A3B12" : "#FDE68A";
+                    else if (inActiveWord) bg = isDark ? "#37301A" : "#FEF3C7";
                     return (
                       <div key={key} className={`relative rounded-[3px] ${state === "wrong" ? "tts-wrong" : ""}`} style={{ background: bg }}>
                         {cell.number != null && (
-                          <span className="absolute top-[1px] left-[2px] text-[8px] font-extrabold leading-none text-[#161B3A]/70 select-none pointer-events-none">
+                          <span className={`absolute top-[1px] left-[2px] text-[8px] font-extrabold leading-none select-none pointer-events-none ${isDark ? "text-[#F1EDFF]/70" : "text-[#161B3A]/70"}`}>
                             {cell.number}
                           </span>
                         )}
@@ -1115,7 +1121,7 @@ export default function TekaTekiSilang() {
                           autoComplete="off"
                           disabled={timeUp}
                           style={{ fontSize: bigGrid ? 12 : 14 }}
-                          className="tts-cell w-full h-full bg-transparent text-center font-extrabold outline-none text-[#161B3A]"
+                          className={`tts-cell w-full h-full bg-transparent text-center font-extrabold outline-none ${isDark ? "text-[#F1EDFF]" : "text-[#161B3A]"}`}
                         />
                       </div>
                     );
@@ -1126,17 +1132,17 @@ export default function TekaTekiSilang() {
 
             {/* Aksi */}
             <div className="w-full flex flex-wrap items-center justify-center gap-2">
-              <button className={`${btn} px-4 py-2.5 bg-white text-sm`} onClick={useHint} disabled={timeUp}>
+              <button className={`${btn} px-4 py-2.5 bg-white dark:bg-[#16122A] text-sm`} onClick={useHint} disabled={timeUp}>
                 <Lightbulb className="w-4 h-4" /> Petunjuk
               </button>
-              <button className={`${btn} px-4 py-2.5 bg-white text-sm`} onClick={clearAll} disabled={timeUp}>
+              <button className={`${btn} px-4 py-2.5 bg-white dark:bg-[#16122A] text-sm`} onClick={clearAll} disabled={timeUp}>
                 <Eraser className="w-4 h-4" /> Bersihkan
               </button>
               <button className={`${btn} px-5 py-2.5 bg-[#10B981] text-white text-sm`} onClick={checkAnswers} disabled={timeUp}>
                 <CheckCircle2 className="w-4 h-4" /> Cek Jawaban
               </button>
               <button
-                className={`${btn} w-11 h-11 bg-white`}
+                className={`${btn} w-11 h-11 bg-white dark:bg-[#16122A]`}
                 onClick={() => {
                   // KUIS TTS 1.0 (§23): keluar saat ada progress → konfirmasi.
                   const adaProgress = filledCells > 0 || combo > 0 || timeBudgetRef.current - remainingSec > 0;
@@ -1151,7 +1157,7 @@ export default function TekaTekiSilang() {
 
             {/* Daftar petunjuk */}
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="bg-white rounded-2xl border-4 border-[#161B3A] shadow-[4px_4px_0_#161B3A] p-3.5">
+              <div className="bg-white dark:bg-[#16122A] rounded-2xl border-4 border-[#161B3A] shadow-[4px_4px_0_#161B3A] p-3.5">
                 <div className="flex items-center gap-1.5 font-extrabold text-sm mb-2">
                   <ArrowRight className="w-4 h-4" /> Mendatar
                 </div>
@@ -1159,7 +1165,7 @@ export default function TekaTekiSilang() {
                   {mendatar.map((w) => (
                     <li key={`A${w.number}`}>
                       <button
-                        className={`text-left text-xs font-semibold w-full rounded-lg px-2 py-1 transition-colors ${activeWordNum === w.number && dir === "A" ? "bg-[#FEF3C7]" : "hover:bg-gray-100"}`}
+                        className={`text-left text-xs font-semibold w-full rounded-lg px-2 py-1 transition-colors ${activeWordNum === w.number && dir === "A" ? "bg-[#FEF3C7] dark:bg-[#37301A]" : "hover:bg-gray-100 dark:hover:bg-white/10"}`}
                         onClick={() => { setDir("A"); selectCell(w.row, w.col); }}
                       >
                         <b>{w.number}.</b> {w.clue}
@@ -1168,7 +1174,7 @@ export default function TekaTekiSilang() {
                   ))}
                 </ul>
               </div>
-              <div className="bg-white rounded-2xl border-4 border-[#161B3A] shadow-[4px_4px_0_#161B3A] p-3.5">
+              <div className="bg-white dark:bg-[#16122A] rounded-2xl border-4 border-[#161B3A] shadow-[4px_4px_0_#161B3A] p-3.5">
                 <div className="flex items-center gap-1.5 font-extrabold text-sm mb-2">
                   <ArrowDown className="w-4 h-4" /> Menurun
                 </div>
@@ -1176,7 +1182,7 @@ export default function TekaTekiSilang() {
                   {menurun.map((w) => (
                     <li key={`D${w.number}`}>
                       <button
-                        className={`text-left text-xs font-semibold w-full rounded-lg px-2 py-1 transition-colors ${activeWordNum === w.number && dir === "D" ? "bg-[#FEF3C7]" : "hover:bg-gray-100"}`}
+                        className={`text-left text-xs font-semibold w-full rounded-lg px-2 py-1 transition-colors ${activeWordNum === w.number && dir === "D" ? "bg-[#FEF3C7] dark:bg-[#37301A]" : "hover:bg-gray-100 dark:hover:bg-white/10"}`}
                         onClick={() => { setDir("D"); selectCell(w.row, w.col); }}
                       >
                         <b>{w.number}.</b> {w.clue}
@@ -1191,11 +1197,11 @@ export default function TekaTekiSilang() {
 
         {/* ---------- HASIL ---------- */}
         {screen === "result" && result && (
-          <div className={`tts-screen bg-white rounded-3xl ${chunky} p-6 text-center`}>
+          <div className={`tts-screen bg-white dark:bg-[#16122A] rounded-3xl ${chunky} p-6 text-center`}>
             <div className="flex justify-center mb-2">
               <MascotFace mascot={mascot} celebrating={result.pct === 100} />
             </div>
-            <h2 className="font-extrabold text-3xl mb-1" style={{ color: result.pct === 100 ? "#10B981" : "#161B3A" }}>
+            <h2 className="font-extrabold text-3xl mb-1" style={{ color: result.pct === 100 ? "#10B981" : isDark ? "#F1EDFF" : "#161B3A" }}>
               {result.pct === 100 ? "Level Selesai!" : "Waktunya Selesai"}
             </h2>
             <p className="opacity-70 text-sm mb-4">
@@ -1230,28 +1236,28 @@ export default function TekaTekiSilang() {
 
             {/* KUIS TTS 1.1 (§19): result = reward + next action — bonus jadi chip transparan. */}
             <div className="flex justify-center gap-3 mb-5 text-sm flex-wrap">
-              <div className="bg-white border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
+              <div className="bg-white dark:bg-[#16122A] border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
                 <Lightbulb className="w-4 h-4 inline mr-1 text-amber-500" />
                 Petunjuk dipakai <b>{result.hints}×</b>
               </div>
-              <div className="bg-white border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
+              <div className="bg-white dark:bg-[#16122A] border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
                 <Trophy className="w-4 h-4 inline mr-1 text-violet-500" />
                 Waktu dipakai <b>{fmtTime(result.time)}</b>
               </div>
               {streak.streak >= 2 && (
-                <div className="bg-white border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
+                <div className="bg-white dark:bg-[#16122A] border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
                   <Flame className="w-4 h-4 inline mr-1 text-orange-500" />
                   Bonus rentetan <b>+{streakXpBonus(streak.streak)} XP</b>
                 </div>
               )}
               {result.pct === 100 && (
-                <div className="bg-white border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
+                <div className="bg-white dark:bg-[#16122A] border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
                   <Heart className="w-4 h-4 inline mr-1 text-rose-500" fill="#F43F5E" />
                   Bonus nyawa <b>+1</b>
                 </div>
               )}
               {bestCombo >= 2 && (
-                <div className="bg-white border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
+                <div className="bg-white dark:bg-[#16122A] border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
                   <Flame className="w-4 h-4 inline mr-1 text-orange-500" />
                   Beruntun terbaik <b>×{bestCombo}</b>
                 </div>

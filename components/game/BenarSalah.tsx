@@ -310,7 +310,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
   /* ---------- START SCREEN ---------- */
   if (screen === "start") {
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#0F0D21] dark:to-[#181330] text-[#161B3A] dark:text-[#F1EDFF]">
         <style>{`@keyframes bs-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
         @keyframes bs-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}
         @keyframes bs-pop{0%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.3) rotate(8deg)}100%{transform:scale(1) rotate(0)}}
@@ -336,12 +336,12 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
                 <div className="text-[11px] font-semibold opacity-60 mt-0.5">Tes kecepatan & ketepatan</div>
               </div>
             </div>
-            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white dark:bg-[#16122A]`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
             </button>
           </div>
 
-          <div className="bs-screen bg-white rounded-3xl p-6 text-center flex-1 flex flex-col items-center justify-center">
+          <div className="bs-screen bg-white dark:bg-[#16122A] rounded-3xl p-6 text-center flex-1 flex flex-col items-center justify-center">
             <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-full font-extrabold text-xs shadow-[3px_3px_0_#161B3A] mb-4">9 Level • 3 Nyawa</span>
             <h1 className="font-extrabold text-4xl mb-2">Benar atau <span className="text-[#FF6B6B]">Salah?</span></h1>
             <p className="opacity-70 text-sm max-w-sm mb-1">Baca soal dan jawaban yang muncul. Tentukan: jawaban itu <b>benar</b> atau <b>salah</b>?</p>
@@ -366,7 +366,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
               <button className={`${btnBase} px-6 py-3.5 bg-[#FF6B6B] text-white text-lg`} onClick={() => setScreen("levels")}>
                 <Play className="w-5 h-5" /> Pilih Tingkat
               </button>
-              <button className={`${btnBase} px-5 py-3.5 bg-white`} onClick={() => startLevel(1)}>
+              <button className={`${btnBase} px-5 py-3.5 bg-white dark:bg-[#16122A]`} onClick={() => startLevel(1)}>
                 Langsung Level 1
               </button>
             </div>
@@ -380,11 +380,11 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
   /* ---------- LEVELS SCREEN ---------- */
   if (screen === "levels") {
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#0F0D21] dark:to-[#181330] text-[#161B3A] dark:text-[#F1EDFF]">
         <style>{`.bs-screen{animation:bs-fade .35s ease}`}</style>
         {loading && (
           <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm">
-            <div className="bg-white border-4 border-[#161B3A] rounded-2xl p-6 shadow-[6px_6px_0_#161B3A]">
+            <div className="bg-white dark:bg-[#16122A] border-4 border-[#161B3A] rounded-2xl p-6 shadow-[6px_6px_0_#161B3A]">
               <Loader2 className="w-8 h-8 animate-spin text-[#161B3A] mx-auto mb-2" />
               <div className="font-bold text-sm">Memuat soal...</div>
             </div>
@@ -392,13 +392,13 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
         )}
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <button className={`${btnBase} w-11 h-11 bg-white`} onClick={() => setScreen("start")} aria-label="Kembali">
+            <button className={`${btnBase} w-11 h-11 bg-white dark:bg-[#16122A]`} onClick={() => setScreen("start")} aria-label="Kembali">
               <X className="w-5 h-5" />
             </button>
             <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
             <div className="w-11" />
           </div>
-          <div className="bs-screen bg-white rounded-3xl p-5 shadow-[6px_6px_0_#161B3A] border-4 border-[#161B3A]">
+          <div className="bs-screen bg-white dark:bg-[#16122A] rounded-3xl p-5 shadow-[6px_6px_0_#161B3A] border-4 border-[#161B3A]">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {LEVELS.map((lv) => {
                 const unlocked = saved.unlocked.includes(lv.id);
@@ -410,7 +410,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
                     disabled={!unlocked || loading}
                     onClick={() => unlocked && !loading && startLevel(lv.id)}
                     className={`text-left rounded-2xl border-4 border-[#161B3A] p-3.5 transition-transform ${
-                      unlocked ? "shadow-[5px_5px_0_#161B3A] hover:-translate-x-0.5 hover:-translate-y-0.5 cursor-pointer" : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-[5px_5px_0_#9CA3AF]"
+                      unlocked ? "shadow-[5px_5px_0_#161B3A] hover:-translate-x-0.5 hover:-translate-y-0.5 cursor-pointer" : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-[5px_5px_0_#9CA3AF] dark:bg-slate-700/60 dark:text-slate-400"
                     }`}
                     style={unlocked ? { background: lv.color, color: ["#FBBF24", "#F59E0B", "#4ADE80", "#38BDF8"].includes(lv.color) ? "#161B3A" : "#fff" } : undefined}
                   >
@@ -443,7 +443,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
   /* ---------- PLAYING SCREEN ---------- */
   if (screen === "playing") {
     return (
-      <div className="fixed inset-0 z-[60] overflow-hidden bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+      <div className="fixed inset-0 z-[60] overflow-hidden bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#0F0D21] dark:to-[#181330] text-[#161B3A] dark:text-[#F1EDFF]">
         <style>{`@keyframes bs-shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}`}</style>
         <AnimatePresence>
           {flash && (
@@ -461,7 +461,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
         <motion.div animate={controls} className="relative z-10 flex flex-col h-full max-w-md mx-auto px-5 pt-4 pb-6">
           {/* HUD */}
           <div className="flex items-center justify-between gap-2 mb-3">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 border-2 border-[#161B3A]">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 dark:bg-white/10 border-2 border-[#161B3A]">
               <Check className="w-4 h-4 text-emerald-500" />
               <span className="text-sm font-bold">{score}</span>
             </div>
@@ -472,15 +472,15 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
                 </motion.div>
               )}
             </AnimatePresence>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 border-2 border-[#161B3A]">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 dark:bg-white/10 border-2 border-[#161B3A]">
               <Heart className="w-4 h-4 text-rose-500" fill="currentColor" />
               <span className="text-sm font-bold">{lives}</span>
             </div>
-            <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 ${timeLeft <= 10 ? "bg-rose-500/25 text-rose-700 border-rose-400" : "bg-white/80 border-[#161B3A]"}`}>
+            <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 ${timeLeft <= 10 ? "bg-rose-500/25 text-rose-700 dark:text-rose-300 border-rose-400" : "bg-white/80 dark:bg-white/10 border-[#161B3A]"}`}>
               <Timer className="w-4 h-4" />
               <span className="text-sm font-bold tabular-nums">{timeLeft}s</span>
             </div>
-            <button onClick={() => { const on = toggleSound(); setSoundOn(on); }} className="w-9 h-9 rounded-xl bg-white/80 border-2 border-[#161B3A] flex items-center justify-center text-[#161B3A]/70 active:scale-90 transition-all" aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+            <button onClick={() => { const on = toggleSound(); setSoundOn(on); }} className="w-9 h-9 rounded-xl bg-white/80 dark:bg-white/10 border-2 border-[#161B3A] flex items-center justify-center text-[#161B3A]/70 dark:text-[#F1EDFF]/70 active:scale-90 transition-all" aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
             </button>
           </div>
@@ -516,7 +516,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
           </div>
 
           <div className="flex items-center justify-between">
-            <button className={`${btnBase} w-11 h-11 bg-white`} onClick={() => { stopBGM(); setScreen("levels"); }} aria-label="Keluar">
+            <button className={`${btnBase} w-11 h-11 bg-white dark:bg-[#16122A]`} onClick={() => { stopBGM(); setScreen("levels"); }} aria-label="Keluar">
               <X className="w-5 h-5" />
             </button>
             <div className="hidden md:block text-xs font-semibold opacity-60">Tombol keyboard: ← Benar • → Salah</div>
@@ -530,7 +530,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
   /* ---------- RESULT SCREEN ---------- */
   if (screen === "result" && result) {
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#0F0D21] dark:to-[#181330] text-[#161B3A] dark:text-[#F1EDFF]">
         <style>{`.bs-screen{animation:bs-fade .35s ease}`}</style>
         <Burst trigger={burst} x={50} y={38} count={28} />
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col items-center justify-center text-center">
@@ -568,14 +568,14 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
               <div className="text-[9px] font-extrabold uppercase opacity-70">Akurasi</div>
               <div className="font-extrabold text-lg">{result.accuracy}%</div>
             </div>
-            <div className="bg-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[2px_2px_0_#161B3A]">
+            <div className="bg-white dark:bg-[#16122A] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[2px_2px_0_#161B3A]">
               <div className="text-[9px] font-extrabold uppercase opacity-70">Rentetan</div>
               <div className="font-extrabold text-lg">{result.maxCombo}</div>
             </div>
           </div>
 
           {result.xpEarned > 0 && (
-            <div className="mb-5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-400/20 text-amber-700 text-xs font-bold">
+            <div className="mb-5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-400/20 text-amber-700 dark:text-amber-300 text-xs font-bold">
               <Sparkles className="w-3.5 h-3.5" /> +{result.xpEarned} XP
             </div>
           )}
@@ -592,7 +592,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
             <button onClick={() => setScreen("levels")} className={`${btnBase} w-full py-3.5 bg-[#FBBF24] font-bold`}>
               Pilih Tingkat
             </button>
-            <Link href={backHref} className={`${btnBase} w-full py-3.5 bg-white/80 text-[#161B3A]/80 font-semibold text-center`}>
+            <Link href={backHref} className={`${btnBase} w-full py-3.5 bg-white/80 dark:bg-white/10 text-[#161B3A]/80 dark:text-[#F1EDFF]/80 font-semibold text-center`}>
               Kembali ke Arena
             </Link>
           </div>
@@ -603,7 +603,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
 
   /* Fallback / Loading */
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#0F0D21] dark:to-[#181330] text-[#161B3A] dark:text-[#F1EDFF]">
       <Loader2 className="w-10 h-10 animate-spin text-[#161B3A]" />
     </div>
   );

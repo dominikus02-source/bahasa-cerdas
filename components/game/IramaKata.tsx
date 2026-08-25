@@ -631,7 +631,7 @@ export default function IramaKata() {
   const btn = `inline-flex items-center justify-center gap-2 font-extrabold rounded-2xl ${chunky} transition-transform active:translate-x-1.5 active:translate-y-1.5 active:shadow-none hover:-translate-x-0.5 hover:-translate-y-0.5`;
 
   return (
-    <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+    <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#0F0D21] dark:to-[#181330] text-[#161B3A] dark:text-[#F1EDFF]">
       <style>{`
         @keyframes ik-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
         @keyframes ik-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}
@@ -664,7 +664,7 @@ export default function IramaKata() {
           </div>
           <button
             onClick={() => setMuted((m) => !m)}
-            className={`${btn} w-11 h-11 bg-white`}
+            className={`${btn} w-11 h-11 bg-white dark:bg-[#16122A]`}
             aria-label={muted ? "Nyalakan suara" : "Matikan suara"}
           >
             {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
@@ -673,7 +673,7 @@ export default function IramaKata() {
 
         {/* ---------- MULAI ---------- */}
         {screen === "start" && (
-          <div className={`ik-screen bg-white rounded-3xl ${chunky} p-6 text-center`}>
+          <div className={`ik-screen bg-white dark:bg-[#16122A] rounded-3xl ${chunky} p-6 text-center`}>
             <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-full font-extrabold text-xs shadow-[3px_3px_0_#161B3A] mb-4">
               Sesi 60 detik · 9 level
             </span>
@@ -703,7 +703,7 @@ export default function IramaKata() {
               <button className={`${btn} px-6 py-3.5 bg-[#FF6B6B] text-white text-lg`} onClick={() => setScreen("levels")}>
                 <Play className="w-5 h-5" /> Main Sekarang
               </button>
-              <button className={`${btn} px-5 py-3.5 bg-white`} onClick={() => startLevel(1)}>
+              <button className={`${btn} px-5 py-3.5 bg-white dark:bg-[#16122A]`} onClick={() => startLevel(1)}>
                 Langsung Level 1
               </button>
             </div>
@@ -726,9 +726,9 @@ export default function IramaKata() {
 
         {/* ---------- PILIH LEVEL ---------- */}
         {screen === "levels" && (
-          <div className={`ik-screen bg-white rounded-3xl ${chunky} p-5`}>
+          <div className={`ik-screen bg-white dark:bg-[#16122A] rounded-3xl ${chunky} p-5`}>
             <div className="flex items-center justify-between mb-4">
-              <button className={`${btn} w-11 h-11 bg-white`} onClick={() => setScreen("start")} aria-label="Kembali">
+              <button className={`${btn} w-11 h-11 bg-white dark:bg-[#16122A]`} onClick={() => setScreen("start")} aria-label="Kembali">
                 <X className="w-5 h-5" />
               </button>
               <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
@@ -745,7 +745,7 @@ export default function IramaKata() {
                     disabled={!unlocked}
                     onClick={() => unlocked && startLevel(lv.id)}
                     className={`text-left rounded-2xl border-4 border-[#161B3A] p-3.5 transition-transform ${
-                      unlocked ? "shadow-[5px_5px_0_#161B3A] hover:-translate-x-0.5 hover:-translate-y-0.5 cursor-pointer" : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-[5px_5px_0_#9CA3AF]"
+                      unlocked ? "shadow-[5px_5px_0_#161B3A] hover:-translate-x-0.5 hover:-translate-y-0.5 cursor-pointer" : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-[5px_5px_0_#9CA3AF] dark:bg-slate-700/60 dark:text-slate-400"
                     }`}
                     style={unlocked ? { background: lv.color, color: lv.color === "#FBBF24" || lv.color === "#F59E0B" || lv.color === "#4ADE80" || lv.color === "#38BDF8" ? "#161B3A" : "#fff" } : undefined}
                   >
@@ -822,13 +822,13 @@ export default function IramaKata() {
             </div>
 
             <div className="w-full max-w-[480px] flex items-center justify-between mt-3">
-              <button className={`${btn} w-11 h-11 bg-white`} onClick={quit} aria-label="Keluar">
+              <button className={`${btn} w-11 h-11 bg-white dark:bg-[#16122A]`} onClick={quit} aria-label="Keluar">
                 <X className="w-5 h-5" />
               </button>
               <div className="hidden md:block text-xs font-semibold opacity-60">
                 Tombol <span className="font-mono font-extrabold">D F J K</span> · Spasi = jeda
               </div>
-              <button className={`${btn} w-11 h-11 bg-white`} onClick={togglePause} aria-label={paused ? "Lanjut" : "Jeda"}>
+              <button className={`${btn} w-11 h-11 bg-white dark:bg-[#16122A]`} onClick={togglePause} aria-label={paused ? "Lanjut" : "Jeda"}>
                 {paused ? <Play className="w-5 h-5" /> : <Pause className="w-5 h-5" />}
               </button>
             </div>
@@ -837,7 +837,7 @@ export default function IramaKata() {
 
         {/* ---------- HASIL ---------- */}
         {screen === "result" && result && (
-          <div className={`ik-screen bg-white rounded-3xl ${chunky} p-6 text-center`}>
+          <div className={`ik-screen bg-white dark:bg-[#16122A] rounded-3xl ${chunky} p-6 text-center`}>
             <h2 className="font-extrabold text-3xl mb-1" style={{ color: result.gameOver ? "#FF6B6B" : result.acc >= 90 ? "#10B981" : "#161B3A" }}>
               {result.gameOver ? "Nyawa Habis!" : result.acc >= 90 ? "Sempurna!" : "Level Selesai!"}
             </h2>
@@ -876,25 +876,25 @@ export default function IramaKata() {
                 <div className="text-[9px] font-extrabold uppercase opacity-70">Meleset</div>
                 <div className="font-extrabold text-lg">{result.stats.meleset}</div>
               </div>
-              <div className="bg-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[2px_2px_0_#161B3A]">
+              <div className="bg-white dark:bg-[#16122A] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[2px_2px_0_#161B3A]">
                 <div className="text-[9px] font-extrabold uppercase opacity-70">Salah</div>
                 <div className="font-extrabold text-lg">{result.stats.salah}</div>
               </div>
             </div>
 
             <div className="flex justify-center gap-3 mb-5 text-sm">
-              <div className="bg-white border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
+              <div className="bg-white dark:bg-[#16122A] border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
                 <Zap className="w-4 h-4 inline mr-1 text-amber-500" />
                 Rentetan maks <b>{result.maxCombo}×</b>
               </div>
-              <div className="bg-white border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
+              <div className="bg-white dark:bg-[#16122A] border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
                 <Trophy className="w-4 h-4 inline mr-1 text-violet-500" />
                 Akurasi <b>{result.acc}%</b>
               </div>
             </div>
 
             <div className="flex flex-wrap justify-center gap-3">
-              <button className={`${btn} px-5 py-3 bg-white`} onClick={() => startLevel(levelId)}>
+              <button className={`${btn} px-5 py-3 bg-white dark:bg-[#16122A]`} onClick={() => startLevel(levelId)}>
                 <RotateCcw className="w-4 h-4" /> Ulangi
               </button>
               {!result.gameOver && levelId < LEVELS.length && (
