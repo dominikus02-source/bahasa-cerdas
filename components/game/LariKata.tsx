@@ -178,7 +178,7 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
                 <div className="text-[11px] font-semibold opacity-60 mt-0.5">Sprint 60 detik, kejar skor tertinggi</div>
               </div>
             </div>
-            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white/90 dark:bg-white/15 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-orange-500/20 border-2 border-orange-400/30 hover:bg-orange-500/30`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
             </button>
           </div>
@@ -220,8 +220,8 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
         <div className="relative max-w-lg mx-auto px-5 pt-4 pb-8 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-3">
             {!hideBackButton && (
-              <button className={`${btnBase} w-12 h-12 bg-white/90 dark:bg-white/20 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25`} onClick={() => { stopBGM(); setScreen("start"); }} aria-label="Keluar">
-                <X className="w-5 h-5 text-[#161B3A] dark:text-white" />
+              <button className={`${btnBase} w-12 h-12 bg-orange-500/30 border-2 border-orange-400/40 hover:bg-orange-500/40`} onClick={() => { stopBGM(); setScreen("start"); }} aria-label="Keluar">
+                <X className="w-5 h-5 text-[#161B3A] dark:text-orange-100" />
               </button>
             )}
             <div className={`flex items-center gap-2 ${hideBackButton ? "ml-auto" : ""}`}>
@@ -335,7 +335,7 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
             <RotateCcw className="w-4 h-4" /> Main Lagi
           </button>
           {!hideBackButton && (
-            <a href={backHref} className={`${btnBase} flex-1 py-3.5 bg-white/80 dark:bg-white/20 dark:border-white/20 text-center`}>
+            <a href={backHref} className={`${btnBase} flex-1 py-3.5 bg-orange-500/20 border-2 border-orange-400/40 text-center`}>
               Menu
             </a>
           )}
