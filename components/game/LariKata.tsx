@@ -220,7 +220,7 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
         <div className="relative max-w-lg mx-auto px-5 pt-4 pb-8 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-3">
             {!hideBackButton && (
-              <button className={`${btnBase} w-12 h-12 bg-white/90 dark:bg-white/15 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25`} onClick={() => { stopBGM(); setScreen("start"); }} aria-label="Keluar">
+              <button className={`${btnBase} w-12 h-12 bg-white/90 dark:bg-white/20 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25`} onClick={() => { stopBGM(); setScreen("start"); }} aria-label="Keluar">
                 <X className="w-5 h-5 text-[#161B3A] dark:text-white" />
               </button>
             )}
@@ -335,7 +335,7 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
             <RotateCcw className="w-4 h-4" /> Main Lagi
           </button>
           {!hideBackButton && (
-            <a href={backHref} className={`${btnBase} flex-1 py-3.5 bg-white/80 dark:bg-white/15 dark:border-white/20 text-center`}>
+            <a href={backHref} className={`${btnBase} flex-1 py-3.5 bg-white/80 dark:bg-white/20 dark:border-white/20 text-center`}>
               Menu
             </a>
           )}

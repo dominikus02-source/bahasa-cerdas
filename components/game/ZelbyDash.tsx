@@ -1331,7 +1331,7 @@ export default function ZelbyDash() {
             <div className="w-full max-w-[480px] flex justify-between mt-4">
               <button
                 onClick={quit}
-                className={`${btn} w-12 h-12 bg-white/90 dark:bg-white/15 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25`}
+                className={`${btn} w-12 h-12 bg-white/90 dark:bg-white/20 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25`}
                 aria-label="Keluar"
               >
                 <X className="w-5 h-5 text-[#161B3A] dark:text-white" />
@@ -1353,7 +1353,7 @@ export default function ZelbyDash() {
               </p>
               <button
                 onClick={togglePause}
-                className={`${btn} w-12 h-12 bg-white/90 dark:bg-white/15 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25 dark:text-white`}
+                className={`${btn} w-12 h-12 bg-white/90 dark:bg-white/20 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25 dark:text-white`}
                 aria-label={paused ? "Lanjutkan" : "Jeda"}
               >
                 {paused ? (

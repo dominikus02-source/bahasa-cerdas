@@ -722,8 +722,8 @@ export default function TekaTekiSilang() {
           </div>
           <div className="flex items-center gap-2">
             {(screen === "start" || screen === "hearts") && (
-              <button className={`${btn} w-10 h-10 bg-white dark:bg-[#1A1535]`} onClick={() => router.push("/arena/game")} aria-label="Keluar dari gim">
-                <X className="w-5 h-5" />
+              <button className={`${btn} w-12 h-12 bg-white/90 dark:bg-white/20 border-2 dark:border-white/25 hover:bg-white dark:hover:bg-white/30`} onClick={() => router.push("/arena/game")} aria-label="Keluar dari gim">
+                <X className="w-5 h-5 text-[#161B3A] dark:text-white" />
               </button>
             )}
             <button className={`${btn} w-10 h-10 bg-white dark:bg-[#1A1535]`} onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
@@ -837,7 +837,7 @@ export default function TekaTekiSilang() {
         {screen === "levels" && (
           <div className={`tts-screen bg-white dark:bg-gradient-to-br dark:from-[#1A1535] dark:to-[#221C48] rounded-3xl ${chunky} p-5`}>
             <div className="flex items-center justify-between mb-4">
-              <button className={`${btn} w-12 h-12 bg-white/90 dark:bg-white/15 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25`} onClick={() => setScreen("start")} aria-label="Kembali">
+              <button className={`${btn} w-12 h-12 bg-white/90 dark:bg-white/20 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25`} onClick={() => setScreen("start")} aria-label="Kembali">
                 <X className="w-5 h-5 text-[#161B3A] dark:text-white" />
               </button>
               <h2 className="font-extrabold text-2xl">Pilih Level</h2>
@@ -887,7 +887,7 @@ export default function TekaTekiSilang() {
         {/* ---------- ATUR WAKTU ---------- */}
         {screen === "setup" && (
           <div className={`tts-screen mx-auto w-full max-w-2xl bg-white dark:bg-gradient-to-br dark:from-[#1A1535] dark:to-[#221C48] rounded-3xl ${chunky} p-6 text-center`}>
-            <button className={`${btn} w-12 h-12 bg-white/90 dark:bg-white/15 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25 mb-4`} onClick={() => setScreen("levels")} aria-label="Kembali">
+            <button className={`${btn} w-12 h-12 bg-white/90 dark:bg-white/20 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25 mb-4`} onClick={() => setScreen("levels")} aria-label="Kembali">
               <X className="w-5 h-5 text-[#161B3A] dark:text-white" />
             </button>
             <div className="flex justify-center mb-3">

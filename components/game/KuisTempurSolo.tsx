@@ -949,7 +949,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
         <Link
           href={backHref}
           aria-label="Kembali ke daftar gim"
-          className={`${btn} h-12 w-12 shrink-0 bg-white/90 dark:bg-white/15 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25`}
+          className={`${btn} h-12 w-12 shrink-0 bg-white/90 dark:bg-white/20 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25`}
         >
           <ArrowLeft className="h-5 w-5 text-[#161B3A] dark:text-white" />
         </Link>

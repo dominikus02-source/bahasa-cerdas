@@ -563,7 +563,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
         <style>{`.tk-screen{animation:tk-fade .35s ease}@keyframes tk-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}`}</style>
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <button className={`${btnBase} w-12 h-12 bg-white/90 dark:bg-white/15 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25`} onClick={() => setScreen("start")} aria-label="Kembali">
+            <button className={`${btnBase} w-12 h-12 bg-white/90 dark:bg-white/20 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25`} onClick={() => setScreen("start")} aria-label="Kembali">
               <X className="w-5 h-5 text-[#161B3A] dark:text-white" />
             </button>
             <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
@@ -618,8 +618,8 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
         <style>{`@keyframes tk-shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}`}</style>
         <div className="relative max-w-lg mx-auto px-5 pt-4 pb-8 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <button className={`${btnBase} w-10 h-10 bg-white dark:bg-[#0E2028]`} onClick={() => { stopBGM(); setScreen("levels"); }} aria-label="Keluar">
-              <X className="w-4 h-4" />
+            <button className={`${btnBase} w-12 h-12 bg-white/90 dark:bg-white/20 border-2 dark:border-white/25 hover:bg-white dark:hover:bg-white/30`} onClick={() => { stopBGM(); setScreen("levels"); }} aria-label="Keluar">
+              <X className="w-5 h-5 text-[#161B3A] dark:text-white" />
             </button>
             <div className="flex items-center gap-2">
               <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white dark:bg-[#0E2028] border-2 border-[#161B3A]">
@@ -753,7 +753,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
               Pilih Tingkat
             </button>
             {!hideBackButton && (
-              <a href={backHref} className={`${btnBase} w-full py-3.5 bg-white/80 dark:bg-white/15 dark:border-white/20 text-center`}>
+              <a href={backHref} className={`${btnBase} w-full py-3.5 bg-white/80 dark:bg-white/20 dark:border-white/20 text-center`}>
                 Kembali ke Arena
               </a>
             )}

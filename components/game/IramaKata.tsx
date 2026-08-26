@@ -728,7 +728,7 @@ export default function IramaKata() {
         {screen === "levels" && (
           <div className={`ik-screen bg-white dark:bg-gradient-to-br dark:from-[#221420] dark:to-[#2C1E2A] rounded-3xl ${chunky} p-5`}>
             <div className="flex items-center justify-between mb-4">
-            <button className={`${btn} w-12 h-12 bg-white/90 dark:bg-white/15 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25`} onClick={() => setScreen("start")} aria-label="Kembali">
+            <button className={`${btn} w-12 h-12 bg-white/90 dark:bg-white/20 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25`} onClick={() => setScreen("start")} aria-label="Kembali">
               <X className="w-5 h-5 text-[#161B3A] dark:text-white" />
             </button>
               <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
@@ -822,8 +822,8 @@ export default function IramaKata() {
             </div>
 
             <div className="w-full max-w-[480px] flex items-center justify-between mt-3">
-              <button className={`${btn} w-11 h-11 bg-white dark:bg-[#221420]`} onClick={quit} aria-label="Keluar">
-                <X className="w-5 h-5" />
+              <button className={`${btn} w-12 h-12 bg-white/90 dark:bg-white/20 border-2 dark:border-white/25 hover:bg-white dark:hover:bg-white/30`} onClick={quit} aria-label="Keluar">
+                <X className="w-5 h-5 text-[#161B3A] dark:text-white" />
               </button>
               <div className="hidden md:block text-xs font-semibold opacity-60">
                 Tombol <span className="font-mono font-extrabold">D F J K</span> · Spasi = jeda
