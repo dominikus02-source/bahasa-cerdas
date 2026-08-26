@@ -146,7 +146,7 @@ export default function TantangTemanPage() {
   if (view === "main" && soal.length > 0) {
     const s = soal[idx];
     return (
-      <div className="px-4 py-5 md:px-6 arena-page">
+      <div className="game-env px-4 py-5 md:px-6 arena-page">
         <div className="flex items-center justify-between mb-4">
           <button onClick={() => setView("list")} className="flex items-center gap-1 text-sm text-gray-500 dark:text-slate-400">
             <ArrowLeft className="w-4 h-4" /> Keluar

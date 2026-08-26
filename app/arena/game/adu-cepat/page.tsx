@@ -157,7 +157,7 @@ export default function AduCepatPage() {
   // lawan" berputar di belakangnya hanya membuat murid menunggu sia-sia.
   if (serverMati) {
     return (
-      <div className="game-fullscreen min-h-screen bg-gradient-to-b from-slate-900 via-violet-950 to-slate-900 text-white flex items-center justify-center p-6">
+      <div className="game-env game-fullscreen min-h-screen bg-gradient-to-b from-slate-900 via-violet-950 to-slate-900 text-white flex items-center justify-center p-6">
         <div className="max-w-sm text-center">
           <div className="text-5xl mb-4">🔌</div>
           <h1 className="text-xl font-extrabold mb-2">Server gim sedang tidak aktif</h1>
@@ -177,7 +177,7 @@ export default function AduCepatPage() {
   }
 
   return (
-    <div className="game-fullscreen min-h-screen bg-gradient-to-b from-slate-900 via-violet-950 to-slate-900 text-white">
+    <div className="game-env game-fullscreen min-h-screen bg-gradient-to-b from-slate-900 via-violet-950 to-slate-900 text-white">
       <button
         onClick={handleBack}
  className="fixed top-3 left-3 z-[70] w-9 h-9 rounded-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-gray-200 dark:border-slate-700 shadow-md flex items-center justify-center text-gray-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800/90 active:scale-95 transition-all arena-btn"

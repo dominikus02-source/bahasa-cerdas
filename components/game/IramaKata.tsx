@@ -631,7 +631,7 @@ export default function IramaKata() {
   const btn = `inline-flex items-center justify-center gap-2 font-extrabold rounded-2xl ${chunky} transition-transform active:translate-x-1.5 active:translate-y-1.5 active:shadow-none hover:-translate-x-0.5 hover:-translate-y-0.5`;
 
   return (
-    <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#140A12] dark:to-[#1E0E1A] text-[#161B3A] dark:text-[#F1EDFF]">
+    <div className="fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#140A12] dark:to-[#1E0E1A] text-[#161B3A] dark:text-[#F1EDFF]">
       <style>{`
         @keyframes ik-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
         @keyframes ik-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}
@@ -664,7 +664,7 @@ export default function IramaKata() {
           </div>
           <button
             onClick={() => setMuted((m) => !m)}
-            className={`${btn} w-11 h-11 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`}
+            className={`${btn} game-sound-btn w-11 h-11 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`}
             aria-label={muted ? "Nyalakan suara" : "Matikan suara"}
           >
             {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
@@ -673,7 +673,7 @@ export default function IramaKata() {
 
         {/* ---------- MULAI ---------- */}
         {screen === "start" && (
-          <div className={`ik-screen bg-white dark:bg-gradient-to-br dark:from-[#221420] dark:to-[#2C1E2A] rounded-3xl ${chunky} p-6 text-center`}>
+          <div className={`ik-screen game-env-card bg-white dark:bg-gradient-to-br dark:from-[#221420] dark:to-[#2C1E2A] rounded-3xl ${chunky} p-6 text-center`}>
             <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] dark:border-white/25 rounded-full font-extrabold text-xs shadow-[3px_3px_0_#DB2777] mb-4">
               Sesi 60 detik · 9 level
             </span>
@@ -728,7 +728,7 @@ export default function IramaKata() {
         {screen === "levels" && (
           <div className={`ik-screen bg-white dark:bg-gradient-to-br dark:from-[#221420] dark:to-[#2C1E2A] rounded-3xl ${chunky} p-5`}>
             <div className="flex items-center justify-between mb-4">
-            <button className={`${btn} w-12 h-12 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => setScreen("start")} aria-label="Kembali">
+            <button className={`${btn} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => setScreen("start")} aria-label="Kembali">
               <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
             </button>
               <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
@@ -822,13 +822,13 @@ export default function IramaKata() {
             </div>
 
             <div className="w-full max-w-[480px] flex items-center justify-between mt-3">
-              <button className={`${btn} w-12 h-12 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 hover:bg-white dark:hover:bg-white/35`} onClick={quit} aria-label="Keluar">
+              <button className={`${btn} game-back-btn w-12 h-12 hover:bg-white dark:hover:bg-white/35`} onClick={quit} aria-label="Keluar">
                 <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
               </button>
               <div className="hidden md:block text-xs font-semibold opacity-60">
                 Tombol <span className="font-mono font-extrabold">D F J K</span> · Spasi = jeda
               </div>
-              <button className={`${btn} w-11 h-11 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={togglePause} aria-label={paused ? "Lanjut" : "Jeda"}>
+              <button className={`${btn} game-sound-btn w-11 h-11 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={togglePause} aria-label={paused ? "Lanjut" : "Jeda"}>
                 {paused ? <Play className="w-5 h-5" /> : <Pause className="w-5 h-5" />}
               </button>
             </div>

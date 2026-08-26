@@ -12,7 +12,7 @@ import TekaTekiSilang from "@/components/game/TTSpage"
  */
 export default function TekaTekiSilangPage() {
   return (
-    <div className="fixed inset-0 z-[60]">
+    <div className="game-env game-env-tts fixed inset-0 z-[60]">
       <TekaTekiSilang />
     </div>
   )

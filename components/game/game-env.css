@@ -1,0 +1,432 @@
+/* ============================================================
+   BC ARENA GAME VISUAL TOKEN SYSTEM
+   ============================================================
+   
+   Self-contained visual layer for Arena games.
+   
+   PRINCIPLE: Dark Mode is a UI preference, NOT a requirement
+   that the gameplay world become black.
+   
+   Games use these CSS variables instead of raw dark: Tailwind
+   classes for their core visual tokens. This ensures:
+   
+   LIGHT MODE → bright, warm, playful
+   DARK MODE → rich, colorful, readable (NOT flat black)
+   
+   The game environment is INDEPENDENT of the global app theme.
+   ============================================================ */
+
+/* ── Game Environment Base ─────────────────────────────── */
+.game-env {
+  /* Light mode: warm cream gradient (existing BC palette) */
+  --game-bg-from: #FFF6E0;
+  --game-bg-to: #FFE2C7;
+  --game-bg-via: #FFF0D4;
+  
+  /* Surfaces */
+  --game-surface: #ffffff;
+  --game-surface-elevated: #ffffff;
+  --game-surface-raised: #fefefe;
+  
+  /* Text hierarchy */
+  --game-text: #161B3A;
+  --game-text-secondary: #4a5568;
+  --game-text-muted: #718096;
+  --game-text-faint: #a0aec0;
+  
+  /* Borders */
+  --game-border: #161B3A;
+  --game-border-light: #e2e8f0;
+  --game-border-subtle: #edf2f7;
+  
+  /* Accent colors — vibrant in BOTH modes */
+  --game-primary: #4338CA;
+  --game-primary-light: #818CF8;
+  --game-primary-glow: rgba(67, 56, 202, 0.25);
+  
+  --game-success: #059669;
+  --game-success-light: #34D399;
+  --game-success-glow: rgba(5, 150, 105, 0.25);
+  
+  --game-danger: #DC2626;
+  --game-danger-light: #F87171;
+  --game-danger-glow: rgba(220, 38, 38, 0.25);
+  
+  --game-warning: #D97706;
+  --game-warning-light: #FBBF24;
+  --game-warning-glow: rgba(217, 119, 6, 0.25);
+  
+  /* Card styling */
+  --game-card-shadow: 0 6px 24px -8px rgba(22, 27, 58, 0.18);
+  --game-card-border: 3px solid var(--game-border);
+  
+  /* Interactive glow */
+  --game-glow-primary: 0 0 20px var(--game-primary-glow);
+  --game-glow-success: 0 0 20px var(--game-success-glow);
+  --game-glow-danger: 0 0 20px var(--game-danger-glow);
+}
+
+/* ── Dark Mode: Rich & Colorful, NOT Flat Black ──────── */
+.dark .game-env {
+  /* Background: rich deep indigo with purple warmth — NOT near-black */
+  --game-bg-from: #0C0A24;
+  --game-bg-to: #161040;
+  --game-bg-via: #110E30;
+  
+  /* Surfaces: clearly elevated from background with color depth */
+  --game-surface: #1A1548;
+  --game-surface-elevated: #221C56;
+  --game-surface-raised: #2A2264;
+  
+  /* Text: warm off-white with clear hierarchy */
+  --game-text: #F1EDFF;
+  --game-text-secondary: #C4BAE8;
+  --game-text-muted: #8B80B8;
+  --game-text-faint: #5E5494;
+  
+  /* Borders: visible against dark surfaces */
+  --game-border: rgba(241, 237, 255, 0.35);
+  --game-border-light: rgba(241, 237, 255, 0.12);
+  --game-border-subtle: rgba(241, 237, 255, 0.06);
+  
+  /* Accent colors: BRIGHTER in dark mode for visibility */
+  --game-primary: #818CF8;
+  --game-primary-light: #A5B4FC;
+  --game-primary-glow: rgba(129, 140, 248, 0.4);
+  
+  --game-success: #34D399;
+  --game-success-light: #6EE7B7;
+  --game-success-glow: rgba(52, 211, 153, 0.35);
+  
+  --game-danger: #F87171;
+  --game-danger-light: #FCA5A5;
+  --game-danger-glow: rgba(248, 113, 113, 0.35);
+  
+  --game-warning: #FBBF24;
+  --game-warning-light: #FDE68A;
+  --game-warning-glow: rgba(251, 191, 36, 0.35);
+  
+  /* Card styling: colored shadow, not black */
+  --game-card-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(129, 140, 248, 0.08);
+  --game-card-border: 2px solid rgba(241, 237, 255, 0.12);
+  
+  /* Interactive glow: vibrant on dark */
+  --game-glow-primary: 0 0 24px rgba(129, 140, 248, 0.4);
+  --game-glow-success: 0 0 24px rgba(52, 211, 153, 0.35);
+  --game-glow-danger: 0 0 24px rgba(248, 113, 113, 0.35);
+}
+
+/* ── Game Environment Utility Classes ─────────────────── */
+
+/* Root game background */
+.game-env-bg {
+  background: linear-gradient(
+    to bottom,
+    var(--game-bg-from),
+    var(--game-bg-via),
+    var(--game-bg-to)
+  );
+  color: var(--game-text);
+}
+
+/* Game card/surface */
+.game-env-card {
+  background: var(--game-surface);
+  border: var(--game-card-border);
+  box-shadow: var(--game-card-shadow);
+  border-radius: 1.25rem;
+}
+
+/* Elevated game card */
+.game-env-card-elevated {
+  background: var(--game-surface-elevated);
+  border: var(--game-card-border);
+  box-shadow: var(--game-card-shadow);
+  border-radius: 1.25rem;
+}
+
+/* Game text levels */
+.game-env-text { color: var(--game-text); }
+.game-env-text-secondary { color: var(--game-text-secondary); }
+.game-env-text-muted { color: var(--game-text-muted); }
+.game-env-text-faint { color: var(--game-text-faint); }
+
+/* Game borders */
+.game-env-border { border-color: var(--game-border); }
+.game-env-border-light { border-color: var(--game-border-light); }
+
+/* ── Per-Game Accent Overrides ────────────────────────── */
+/* Each game can override the base palette with its own identity color */
+
+/* Teka-Teki Silang: Indigo-Purple (puzzle/focus) */
+.game-env-tts {
+  --game-primary: #4338CA;
+  --game-primary-light: #818CF8;
+  --game-primary-glow: rgba(67, 56, 202, 0.3);
+}
+.dark .game-env-tts {
+  --game-bg-from: #0B0A20;
+  --game-bg-to: #14103A;
+  --game-bg-via: #100E2E;
+  --game-surface: #1A1548;
+  --game-surface-elevated: #221C56;
+  --game-primary: #818CF8;
+  --game-primary-light: #A5B4FC;
+  --game-primary-glow: rgba(129, 140, 248, 0.4);
+}
+
+/* TebakKata: Teal (word discovery) */
+.game-env-tebak {
+  --game-primary: #0D9488;
+  --game-primary-light: #2DD4BF;
+  --game-primary-glow: rgba(13, 148, 136, 0.3);
+}
+.dark .game-env-tebak {
+  --game-bg-from: #061418;
+  --game-bg-to: #0C2428;
+  --game-bg-via: #091C20;
+  --game-surface: #0E2A30;
+  --game-surface-elevated: #143640;
+  --game-primary: #2DD4BF;
+  --game-primary-light: #5EEAD4;
+  --game-primary-glow: rgba(45, 212, 191, 0.4);
+}
+
+/* SusunKata: Amber-Copper (word building) */
+.game-env-susun {
+  --game-primary: #D97706;
+  --game-primary-light: #F59E0B;
+  --game-primary-glow: rgba(217, 119, 6, 0.3);
+}
+.dark .game-env-susun {
+  --game-bg-from: #141008;
+  --game-bg-to: #201A0E;
+  --game-bg-via: #1A150C;
+  --game-surface: #261E14;
+  --game-surface-elevated: #30281C;
+  --game-primary: #F59E0B;
+  --game-primary-light: #FBBF24;
+  --game-primary-glow: rgba(245, 158, 11, 0.4);
+}
+
+/* BenarSalah: Emerald-Jade (true/false) */
+.game-env-benar {
+  --game-primary: #059669;
+  --game-primary-light: #34D399;
+  --game-primary-glow: rgba(5, 150, 105, 0.3);
+}
+.dark .game-env-benar {
+  --game-bg-from: #061410;
+  --game-bg-to: #0C2018;
+  --game-bg-via: #091A14;
+  --game-surface: #0E2A22;
+  --game-surface-elevated: #14362C;
+  --game-primary: #34D399;
+  --game-primary-light: #6EE7B7;
+  --game-primary-glow: rgba(52, 211, 153, 0.4);
+}
+
+/* LariKata: Orange-Red (speed/running) */
+.game-env-lari {
+  --game-primary: #EA580C;
+  --game-primary-light: #F97316;
+  --game-primary-glow: rgba(234, 88, 12, 0.3);
+}
+.dark .game-env-lari {
+  --game-bg-from: #140C06;
+  --game-bg-to: #201408;
+  --game-bg-via: #1A100A;
+  --game-surface: #281C10;
+  --game-surface-elevated: #322418;
+  --game-primary: #F97316;
+  --game-primary-light: #FB923C;
+  --game-primary-glow: rgba(249, 115, 22, 0.4);
+}
+
+/* IramaKata: Pink-Magenta (rhythm/music) */
+.game-env-irama {
+  --game-primary: #DB2777;
+  --game-primary-light: #EC4899;
+  --game-primary-glow: rgba(219, 39, 119, 0.3);
+}
+.dark .game-env-irama {
+  --game-bg-from: #140A14;
+  --game-bg-to: #200E20;
+  --game-bg-via: #1A0C1A;
+  --game-surface: #2A1430;
+  --game-surface-elevated: #341C3A;
+  --game-primary: #EC4899;
+  --game-primary-light: #F472B6;
+  --game-primary-glow: rgba(236, 72, 153, 0.4);
+}
+
+/* MenaraCerdas: Gold-Amber (climbing/achievement) */
+.game-env-menara {
+  --game-primary: #CA8A04;
+  --game-primary-light: #EAB308;
+  --game-primary-glow: rgba(202, 138, 4, 0.3);
+}
+.dark .game-env-menara {
+  --game-bg-from: #141008;
+  --game-bg-to: #1E1A0C;
+  --game-bg-via: #1A160A;
+  --game-surface: #261E14;
+  --game-surface-elevated: #30281C;
+  --game-primary: #EAB308;
+  --game-primary-light: #FACC15;
+  --game-primary-glow: rgba(234, 179, 8, 0.4);
+}
+
+/* KuisTempurSolo: Crimson-Red (battle/competitive) */
+.game-env-kuis {
+  --game-primary: #DC2626;
+  --game-primary-light: #F87171;
+  --game-primary-glow: rgba(220, 38, 38, 0.3);
+}
+.dark .game-env-kuis {
+  --game-bg-from: #140A0A;
+  --game-bg-to: #200E0E;
+  --game-bg-via: #1A0C0C;
+  --game-surface: #2A1418;
+  --game-surface-elevated: #341C22;
+  --game-primary: #F87171;
+  --game-primary-light: #FCA5A5;
+  --game-primary-glow: rgba(248, 113, 113, 0.4);
+}
+
+/* ZelbyDash: Cyan-Teal (speed/dash) */
+.game-env-zelby {
+  --game-primary: #0891B2;
+  --game-primary-light: #22D3EE;
+  --game-primary-glow: rgba(8, 145, 178, 0.3);
+}
+.dark .game-env-zelby {
+  --game-bg-from: #061418;
+  --game-bg-to: #0A2028;
+  --game-bg-via: #081A20;
+  --game-surface: #0E2A34;
+  --game-surface-elevated: #143640;
+  --game-primary: #22D3EE;
+  --game-primary-light: #67E8F9;
+  --game-primary-glow: rgba(34, 211, 238, 0.4);
+}
+
+/* ── Game Back Button — Always Visible ────────────────── */
+.game-env .game-back-btn {
+  background: var(--game-surface-elevated);
+  border: 2px solid var(--game-border-light);
+  color: var(--game-text);
+  border-radius: 0.75rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.game-env .game-back-btn:hover {
+  background: var(--game-surface-raised);
+  border-color: var(--game-border);
+  transform: scale(1.05);
+}
+
+.game-env .game-back-btn:active {
+  transform: scale(0.95);
+}
+
+/* ── Game Sound Toggle — Consistent ──────────────────── */
+.game-env .game-sound-btn {
+  background: var(--game-surface);
+  border: 2px solid var(--game-border-light);
+  color: var(--game-text-secondary);
+  border-radius: 0.75rem;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.game-env .game-sound-btn:hover {
+  background: var(--game-surface-elevated);
+  color: var(--game-text);
+}
+
+/* ── Game Card with Accent Border Glow ────────────────── */
+.game-env .game-card-glow {
+  position: relative;
+}
+
+.dark .game-env .game-card-glow::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    var(--game-primary-glow),
+    transparent 50%,
+    var(--game-primary-glow)
+  );
+  z-index: -1;
+  opacity: 0.6;
+}
+
+/* ── Root Background Override ──────────────────────────── */
+/* game-env-bg forces the CSS variable gradient, overriding any
+   Tailwind dark:from-* / dark:to-* classes on the same element. */
+.game-env-bg {
+  background: linear-gradient(
+    to bottom,
+    var(--game-bg-from),
+    var(--game-bg-via),
+    var(--game-bg-to)
+  ) !important;
+  color: var(--game-text) !important;
+}
+
+/* ── Card Surface Override ──────────────────────────────── */
+/* game-env-card forces CSS variable surface, overriding
+   Tailwind dark:bg-* classes on cards/panels. */
+.game-env-card {
+  background: var(--game-surface) !important;
+  border-color: var(--game-border-light) !important;
+  box-shadow: var(--game-card-shadow) !important;
+}
+
+.game-env-card-elevated {
+  background: var(--game-surface-elevated) !important;
+  border-color: var(--game-border-light) !important;
+  box-shadow: var(--game-card-shadow) !important;
+}
+
+/* ── Text Override ──────────────────────────────────────── */
+.game-env-text-primary { color: var(--game-text) !important; }
+.game-env-text-secondary { color: var(--game-text-secondary) !important; }
+.game-env-text-muted { color: var(--game-text-muted) !important; }
+
+/* ── Button Overrides ──────────────────────────────────── */
+/* Override Tailwind dark:bg-* on back/sound buttons */
+.game-env .game-back-btn {
+  background: var(--game-surface-elevated) !important;
+  border-color: var(--game-border-light) !important;
+  color: var(--game-text) !important;
+}
+
+.game-env .game-sound-btn {
+  background: var(--game-surface) !important;
+  border-color: var(--game-border-light) !important;
+  color: var(--game-text-secondary) !important;
+}
+
+/* ── Reduced Motion ───────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .game-env .game-back-btn,
+  .game-env .game-sound-btn {
+    transition: none !important;
+  }
+}

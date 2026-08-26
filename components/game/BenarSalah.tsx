@@ -310,7 +310,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
   /* ---------- START SCREEN ---------- */
   if (screen === "start") {
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#071510] dark:to-[#0D2018] text-[#161B3A] dark:text-[#F1EDFF]">
+      <div className="fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#071510] dark:to-[#0D2018] text-[#161B3A] dark:text-[#F1EDFF]">
         <style>{`@keyframes bs-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
         @keyframes bs-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}
         @keyframes bs-pop{0%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.3) rotate(8deg)}100%{transform:scale(1) rotate(0)}}
@@ -336,12 +336,12 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
                 <div className="text-[11px] font-semibold opacity-60 mt-0.5">Tes kecepatan & ketepatan</div>
               </div>
             </div>
-            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} game-sound-btn w-11 h-11 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
             </button>
           </div>
 
-          <div className="bs-screen bg-white dark:bg-gradient-to-br dark:from-[#0E2820] dark:to-[#16342C] rounded-3xl p-6 text-center flex-1 flex flex-col items-center justify-center">
+          <div className="bs-screen game-env-card bg-white dark:bg-gradient-to-br dark:from-[#0E2820] dark:to-[#16342C] rounded-3xl p-6 text-center flex-1 flex flex-col items-center justify-center">
             <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] dark:border-white/25 rounded-full font-extrabold text-xs shadow-[3px_3px_0_#059669] mb-4">9 Level • 3 Nyawa</span>
             <h1 className="font-extrabold text-4xl mb-2">Benar atau <span className="text-[#FF6B6B]">Salah?</span></h1>
             <p className="opacity-70 text-sm max-w-sm mb-1">Baca soal dan jawaban yang muncul. Tentukan: jawaban itu <b>benar</b> atau <b>salah</b>?</p>
@@ -392,7 +392,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
         )}
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <button className={`${btnBase} w-12 h-12 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => setScreen("start")} aria-label="Kembali">
+            <button className={`${btnBase} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => setScreen("start")} aria-label="Kembali">
               <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
             </button>
             <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
@@ -516,7 +516,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
           </div>
 
           <div className="flex items-center justify-between">
-            <button className={`${btnBase} w-12 h-12 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 hover:bg-white dark:hover:bg-white/35`} onClick={() => { stopBGM(); setScreen("levels"); }} aria-label="Keluar">
+            <button className={`${btnBase} game-back-btn w-12 h-12 hover:bg-white dark:hover:bg-white/35`} onClick={() => { stopBGM(); setScreen("levels"); }} aria-label="Keluar">
               <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
             </button>
             <div className="hidden md:block text-xs font-semibold opacity-60">Tombol keyboard: ← Benar • → Salah</div>

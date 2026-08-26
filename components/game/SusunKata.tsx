@@ -479,7 +479,7 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
   /* ---------- START ---------- */
   if (screen === "start") {
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#12100A] dark:to-[#1C1810] text-[#161B3A] dark:text-[#F1EDFF]">
+      <div className="fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#12100A] dark:to-[#1C1810] text-[#161B3A] dark:text-[#F1EDFF]">
         <style>{`@keyframes sk-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
         @keyframes sk-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}
         @keyframes sk-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -502,12 +502,12 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
                 <div className="text-[11px] font-semibold opacity-60 mt-0.5">Rakit huruf jadi kata sebelum waktu habis</div>
               </div>
             </div>
-            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} game-sound-btn w-11 h-11 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
             </button>
           </div>
 
-          <div className="sk-screen bg-white dark:bg-gradient-to-br dark:from-[#1E1A14] dark:to-[#28241E] rounded-3xl p-6 text-center flex-1 flex flex-col items-center justify-center">
+          <div className="sk-screen game-env-card bg-white dark:bg-gradient-to-br dark:from-[#1E1A14] dark:to-[#28241E] rounded-3xl p-6 text-center flex-1 flex flex-col items-center justify-center">
             <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] dark:border-white/25 rounded-full font-extrabold text-xs shadow-[3px_3px_0_#D97706] mb-4">9 Level • 3 Nyawa</span>
             <h1 className="font-extrabold text-4xl mb-2">Susun <span className="text-[#10B981]">Kata!</span></h1>
             <p className="opacity-70 text-sm max-w-sm mb-1">Huruf teracak muncul lengkap dengan artinya. Susun jadi kata yang benar sebelum waktu habis!</p>
@@ -550,7 +550,7 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
         <style>{`.sk-screen{animation:sk-fade .35s ease}@keyframes sk-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}`}</style>
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <button className={`${btnBase} w-12 h-12 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => setScreen("start")} aria-label="Kembali">
+            <button className={`${btnBase} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => setScreen("start")} aria-label="Kembali">
               <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
             </button>
             <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
@@ -604,7 +604,7 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
       <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#12100A] dark:to-[#1C1810] text-[#161B3A] dark:text-[#F1EDFF]">
         <div className="relative max-w-lg mx-auto px-5 pt-4 pb-8 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <button className={`${btnBase} w-12 h-12 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 hover:bg-white dark:hover:bg-white/35`} onClick={() => { stopBGM(); setScreen("levels"); }} aria-label="Keluar">
+            <button className={`${btnBase} game-back-btn w-12 h-12 hover:bg-white dark:hover:bg-white/35`} onClick={() => { stopBGM(); setScreen("levels"); }} aria-label="Keluar">
               <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
             </button>
             <div className="flex items-center gap-2">

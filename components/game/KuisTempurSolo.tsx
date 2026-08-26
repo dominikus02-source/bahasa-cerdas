@@ -974,11 +974,11 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   if (fase === "pilih") {
     const pilihan = KARAKTER.map((k) => ({ id: k, nama: PROFIL[k].nama, src: gambarKarakter(k, "happy") }))
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150A0A] dark:to-[#200E0E] text-[#161B3A] dark:text-[#F1EDFF]">
+      <div className="fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150A0A] dark:to-[#200E0E] text-[#161B3A] dark:text-[#F1EDFF]">
         <style>{KT_STYLE}</style>
         <div className="relative mx-auto flex min-h-full max-w-xl flex-col items-center px-4 py-5">
           {Hdr}
-          <div className={`kt-screen w-full max-w-md rounded-3xl bg-white dark:bg-gradient-to-br dark:from-[#241218] dark:to-[#301C24] p-6 text-center ${chunky}`}>
+          <div className={`kt-screen w-full max-w-md rounded-3xl game-env-card bg-white dark:bg-gradient-to-br dark:from-[#241218] dark:to-[#301C24] p-6 text-center ${chunky}`}>
             <div className="kt-pop mx-auto mb-3 h-24 w-24 overflow-hidden rounded-3xl border-4 border-[#161B3A] dark:border-white/25 shadow-[6px_6px_0_#DC2626]">
               <img src={avatarHdr} alt="" className="h-full w-full object-cover" />
             </div>

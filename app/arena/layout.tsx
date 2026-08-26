@@ -1,5 +1,6 @@
 import "./arena.css"
 import "./player-theme.css"
+import "@/components/game/game-env.css"
 import { getUser } from "@/lib/supabase/server"
 import { isApk } from "@/lib/apk"
 import { headers } from "next/headers"

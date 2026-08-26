@@ -155,7 +155,7 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
   /* ---------- START ---------- */
   if (screen === "start") {
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150C06] dark:to-[#201008] text-[#161B3A] dark:text-[#F1EDFF]">
+      <div className="fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150C06] dark:to-[#201008] text-[#161B3A] dark:text-[#F1EDFF]">
         <style>{`@keyframes lk-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
         @keyframes lk-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}
         @keyframes lk-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -178,12 +178,12 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
                 <div className="text-[11px] font-semibold opacity-60 mt-0.5">Sprint 60 detik, kejar skor tertinggi</div>
               </div>
             </div>
-            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} game-sound-btn w-11 h-11 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
             </button>
           </div>
 
-          <div className="lk-screen bg-white dark:bg-gradient-to-br dark:from-[#221810] dark:to-[#2E2218] rounded-3xl p-6 text-center flex-1 flex flex-col items-center justify-center">
+          <div className="lk-screen game-env-card bg-white dark:bg-gradient-to-br dark:from-[#221810] dark:to-[#2E2218] rounded-3xl p-6 text-center flex-1 flex flex-col items-center justify-center">
             <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] dark:border-white/25 rounded-full font-extrabold text-xs shadow-[3px_3px_0_#EA580C] mb-4">20 Soal • 60 Detik</span>
             <h1 className="font-extrabold text-4xl mb-2">Lari <span className="text-[#F59E0B]">Kata!</span></h1>
             <p className="opacity-70 text-sm max-w-sm mb-1">Jawab soal secepat mungkin dalam 60 detik. Soal makin menantang seiring tingkatmu naik!</p>
@@ -220,7 +220,7 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
         <div className="relative max-w-lg mx-auto px-5 pt-4 pb-8 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-3">
             {!hideBackButton && (
-              <button className={`${btnBase} w-12 h-12 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => { stopBGM(); setScreen("start"); }} aria-label="Keluar">
+              <button className={`${btnBase} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => { stopBGM(); setScreen("start"); }} aria-label="Keluar">
                 <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
               </button>
             )}

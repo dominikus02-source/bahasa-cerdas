@@ -1167,7 +1167,7 @@ export default function ZelbyDash() {
   const btn = `inline-flex items-center justify-center gap-2 font-extrabold rounded-2xl ${chunky} transition-transform active:translate-x-1.5 active:translate-y-1.5 active:shadow-none hover:-translate-x-0.5 hover:-translate-y-0.5`;
 
   return (
-    <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#061214] dark:to-[#0A1C20] text-[#161B3A] dark:text-[#F1EDFF]">
+    <div className="fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#061214] dark:to-[#0A1C20] text-[#161B3A] dark:text-[#F1EDFF]">
       <style>{`
         @keyframes pk-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
         @keyframes pk-pop{0%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.3) rotate(8deg)}100%{transform:scale(1) rotate(0)}}
@@ -1211,7 +1211,7 @@ export default function ZelbyDash() {
           </div>
           <button
             onClick={() => setMuted((m) => !m)}
-            className={`${btn} w-11 h-11 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`}
+            className={`${btn} game-sound-btn w-11 h-11 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`}
             aria-label={muted ? "Nyalakan suara" : "Matikan suara"}
           >
             {muted ? (
@@ -1224,7 +1224,7 @@ export default function ZelbyDash() {
 
         {/* ========== START SCREEN ========== */}
         {screen === "start" && (
-          <div className={`pk-screen bg-white dark:bg-gradient-to-br dark:from-[#0C2228] dark:to-[#142E34] rounded-3xl ${chunky} p-6 text-center w-full max-w-md`}>
+          <div className={`pk-screen game-env-card bg-white dark:bg-gradient-to-br dark:from-[#0C2228] dark:to-[#142E34] rounded-3xl ${chunky} p-6 text-center w-full max-w-md`}>
             <div className="w-24 h-24 mx-auto mb-3 rounded-3xl overflow-hidden border-4 border-[#161B3A] dark:border-white/25 shadow-[6px_6px_0_#0891B2]">
               <img
                 src="/junior/karakter/zelby_wave.webp"
@@ -1331,7 +1331,7 @@ export default function ZelbyDash() {
             <div className="w-full max-w-[480px] flex justify-between mt-4">
               <button
                 onClick={quit}
-                className={`${btn} w-12 h-12 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`}
+                className={`${btn} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`}
                 aria-label="Keluar"
               >
                 <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
@@ -1353,7 +1353,7 @@ export default function ZelbyDash() {
               </p>
               <button
                 onClick={togglePause}
-                className={`${btn} w-12 h-12 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white`}
+                className={`${btn} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white`}
                 aria-label={paused ? "Lanjutkan" : "Jeda"}
               >
                 {paused ? (

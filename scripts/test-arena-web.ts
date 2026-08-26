@@ -238,6 +238,10 @@ function main() {
         // BC Classroom (STEP 6.10/6.12) — kode akses anti-kolisi & endpoint kelas
         "app/api/group/route.ts",
         "app/api/group/[id]/route.ts",
+        // P7C/P8B/P8C (disetujui Founder): atribusi saat join kelas, komisi +
+        // reversal di webhook, notifikasi faktual, hook risk signal
+        "app/api/group/join/route.ts",
+        "app/api/payment/webhook/route.ts",
       ]);
       const diff = execSync(`git diff --name-only HEAD -- app/api/`, { encoding: "utf8", cwd: process.cwd() })
         .trim().split("\n").filter(Boolean)

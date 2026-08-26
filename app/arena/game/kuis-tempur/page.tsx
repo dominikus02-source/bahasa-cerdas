@@ -18,10 +18,10 @@ export default function KuisTempurPage() {
   // melawan bot mengisi tempat itu: murid selalu mendapat Kuis Tempur yang jalan,
   // dan begitu NEXT_PUBLIC_MULTIPLAYER_ENABLED dinyalakan lagi, versi lawan-teman
   // kembali tanpa satu baris pun diubah.
-  if (!MULTIPLAYER_ENABLED) return <KuisTempurSolo />
+  if (!MULTIPLAYER_ENABLED) return <div className="game-env game-env-kuis"><KuisTempurSolo /></div>
 
   return (
-    <div className="game-fullscreen relative">
+    <div className="game-env game-env-kuis game-fullscreen relative">
       <button
         onClick={handleBack}
         className="fixed top-3 left-3 z-[70] w-9 h-9 rounded-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-gray-200 dark:border-slate-700 shadow-md flex items-center justify-center text-gray-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800/90 active:scale-95 transition-all arena-btn"
