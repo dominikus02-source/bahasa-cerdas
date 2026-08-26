@@ -145,7 +145,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
   /* ---------- START ---------- */
   if (phase === "start" || phase === "loading") {
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#141208] dark:to-[#1C1A0C] text-[#161B3A] dark:text-[#F1EDFF]">
+      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#16120A] dark:via-[#1A1510] dark:to-[#201A0C] dark:text-[#F5EDD6]">
         <style>{`@keyframes mc-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
         @keyframes mc-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}
         @keyframes mc-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -164,20 +164,20 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
                 <Mountain className="w-6 h-6 text-white" />
               </div>
               <div>
-                <div className="font-extrabold text-xl leading-none">Menara Cerdas</div>
-                <div className="text-[11px] font-semibold opacity-60 mt-0.5">Panjat setinggi mungkin</div>
+                <div className="font-extrabold text-xl leading-none dark:text-[#F5C542]">Menara Cerdas</div>
+                <div className="text-[11px] font-semibold dark:text-[#B89830] mt-0.5">Panjat setinggi mungkin</div>
               </div>
             </div>
-            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white dark:bg-[#1E1C14]`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white dark:bg-gradient-to-r dark:from-[#201C14] dark:to-[#262018] dark:border-amber-700/20`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
             </button>
           </div>
 
-          <div className="mc-screen bg-white dark:bg-[#1E1C14] rounded-3xl p-6 text-center flex-1 flex flex-col items-center justify-center">
+          <div className="mc-screen bg-white dark:bg-gradient-to-br dark:from-[#221E18] dark:via-[#1E1A12] dark:to-[#1A1610] dark:border-amber-600/30 rounded-3xl p-6 text-center flex-1 flex flex-col items-center justify-center">
             <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-full font-extrabold text-xs shadow-[3px_3px_0_#CA8A04] mb-4">Soal dari Pelajaranmu</span>
-            <h1 className="font-extrabold text-4xl mb-2">Menara <span className="text-[#8B5CF6]">Cerdas!</span></h1>
-            <p className="opacity-70 text-sm max-w-sm mb-1">Panjat menara dengan menjawab soal dari pelajaranmu. Setiap jawaban benar = naik 1 lantai!</p>
-            <p className="text-xs opacity-50 mb-6">Jaga 3 nyawamu, bertahanlah setinggi mungkin.</p>
+            <h1 className="font-extrabold text-4xl mb-2">Menara <span className="dark:text-[#D4A843]">Cerdas!</span></h1>
+            <p className="dark:text-[#D4C8A0] text-sm max-w-sm mb-1">Panjat menara dengan menjawab soal dari pelajaranmu. Setiap jawaban benar = naik 1 lantai!</p>
+            <p className="text-xs dark:text-[#8A7A40] mb-6">Jaga 3 nyawamu, bertahanlah setinggi mungkin.</p>
 
             <div className="grid grid-cols-3 gap-2.5 mb-6 w-full max-w-xs">
               <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]">
@@ -194,7 +194,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
               </div>
             </div>
 
-            <button onClick={start} disabled={phase === "loading"} className={`${btnBase} px-8 py-3.5 bg-[#8B5CF6] text-white text-lg disabled:opacity-70`}>
+            <button onClick={start} disabled={phase === "loading"} className={`${btnBase} px-8 py-3.5 bg-[#8B5CF6] dark:bg-gradient-to-r dark:from-amber-500 dark:to-amber-600 text-white dark:shadow-[0_0_16px_rgba(245,197,66,0.3)] text-lg disabled:opacity-70`}>
               {phase === "loading" ? <><Loader2 className="w-5 h-5 animate-spin" /> Menyiapkan…</> : <><Play className="w-5 h-5" /> Mulai Memanjat</>}
             </button>
           </div>
@@ -207,15 +207,15 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
   if (phase === "gameover") {
     const cleared = floor >= total && total > 0;
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#141208] dark:to-[#1C1A0C] text-[#161B3A] dark:text-[#F1EDFF]">
+      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#16120A] dark:via-[#1A1510] dark:to-[#201A0C] dark:text-[#F5EDD6]">
         <Burst trigger={burst} x={50} y={38} count={28} />
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col items-center justify-center text-center">
           <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 180 }}
             className={`w-24 h-24 rounded-[28px] flex items-center justify-center shadow-2xl mb-5 border-4 border-[#161B3A] ${cleared ? "bg-gradient-to-br from-amber-400 to-orange-500" : "bg-gradient-to-br from-violet-500 to-purple-600"}`}>
             {cleared ? <Trophy className="w-12 h-12 text-white" /> : <Mountain className="w-12 h-12 text-white" />}
           </motion.div>
-          <h1 className="text-2xl font-extrabold mb-1">{cleared ? "Puncak Ditaklukkan!" : "Permainan Selesai"}</h1>
-          <p className="text-sm opacity-60 mb-6">Kamu memanjat <span className="font-extrabold">{floor} lantai</span></p>
+          <h1 className="text-2xl font-extrabold dark:text-[#F5C542] mb-1">{cleared ? "Puncak Ditaklukkan!" : "Permainan Selesai"}</h1>
+          <p className="text-sm dark:text-[#D4C8A0] opacity-60 mb-6">Kamu memanjat <span className="font-extrabold">{floor} lantai</span></p>
 
           <div className="grid grid-cols-3 gap-2.5 mb-5 w-full max-w-xs">
             <div className="bg-[#8B5CF6] text-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]">
@@ -233,16 +233,16 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
           </div>
 
           {xpResult?.leveledUp && (
-            <div className="mb-5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-400/20 text-amber-700 text-xs font-bold">
+            <div className="mb-5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-400/20 dark:bg-amber-400/25 dark:text-amber-300 text-amber-700 text-xs font-bold">
               <Sparkles className="w-3.5 h-3.5" /> Naik Tingkat!
             </div>
           )}
 
           <div className="w-full max-w-xs flex flex-col gap-2.5">
-            <button onClick={start} className={`${btnBase} w-full py-3.5 bg-gradient-to-r from-violet-500 to-purple-600 text-white`}>
+            <button onClick={start} className={`${btnBase} w-full py-3.5 bg-gradient-to-r from-violet-500 to-purple-600 dark:from-amber-500 dark:to-amber-600 text-white dark:shadow-[0_0_16px_rgba(245,197,66,0.25)]`}>
               <RotateCcw className="w-4 h-4" /> Main Lagi
             </button>
-            <Link href={backHref} className={`${btnBase} w-full py-3.5 bg-white/80 dark:bg-white/10 text-center`}>
+            <Link href={backHref} className={`${btnBase} w-full py-3.5 bg-white/80 dark:bg-amber-900/30 dark:border-amber-700/20 dark:text-[#D4C8A0] text-center`}>
               Kembali ke Arena
             </Link>
           </div>
@@ -253,16 +253,16 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
 
   /* ---------- PLAYING ---------- */
   return (
-    <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#141208] dark:to-[#1C1A0C] text-[#161B3A] dark:text-[#F1EDFF]">
+    <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#16120A] dark:via-[#1A1510] dark:to-[#201A0C] dark:text-[#F5EDD6]">
       <Burst trigger={burst} x={16} y={48} />
       {confettiAktif && <ConfettiBurst trigger={confetti} />}
       <ComboFlash combo={combo} />
       <motion.div animate={controls} className="relative z-10 flex-1 flex flex-col max-w-md w-full mx-auto px-4 pt-4 pb-5 min-h-0">
         {/* HUD */}
         <div className="flex items-center justify-between mb-3">
-          <div className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white dark:bg-[#1E1C14] border-2 border-[#161B3A]">
+          <div className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white dark:bg-gradient-to-r dark:from-[#201C14] dark:to-[#262018] dark:border-amber-700/30 dark:shadow-[0_0_10px_rgba(202,138,4,0.15)] border-2 border-[#161B3A]">
             {Array.from({ length: MAX_HEARTS }).map((_, i) => (
-              <Heart key={i} className={`w-4 h-4 ${i < hearts ? "text-rose-500 fill-rose-500" : "text-gray-300 dark:text-[#4A4018]"}`} />
+              <Heart key={i} className={`w-4 h-4 ${i < hearts ? "text-rose-500 fill-rose-500" : "text-gray-300 dark:text-amber-800/40"}`} />
             ))}
           </div>
           <AnimatePresence>
@@ -287,9 +287,9 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
             <AnimatePresence mode="wait">
               <motion.div key={current?.id ?? idx} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.22 }}
                 className="flex-1 flex flex-col">
-                <div className="rounded-3xl bg-white dark:bg-gradient-to-br dark:from-[#1E1C14] dark:to-[#282620] border-4 border-[#161B3A] shadow-[5px_5px_0_#CA8A04] p-5 mb-4">
-                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#8B5CF6]">Soal {idx + 1} / {total}</span>
-                  <h2 className="text-lg font-bold mt-2 leading-snug">{current?.soal}</h2>
+                <div className="rounded-3xl bg-white dark:bg-gradient-to-br dark:from-[#221E18] dark:via-[#1E1A12] dark:to-[#1A1610] border-2 dark:border-amber-600/40 shadow-[5px_5px_0_#CA8A04] dark:shadow-[5px_5px_0_#CA8A04,0_0_20px_rgba(202,138,4,0.15)] p-5 mb-4">
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider dark:text-[#D4A843]">Soal {idx + 1} / {total}</span>
+                  <h2 className="text-lg font-bold mt-2 leading-snug dark:text-[#F5EDD6]">{current?.soal}</h2>
                 </div>
 
                 {/* Item bantuan — hanya dirender kalau murid punya Hint Token */}
@@ -319,11 +319,11 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
                     const isCorrect = i === current.jawaban;
                     const reveal = picked !== null;
                     const isDicoret = dicoret === i;
-                    let cls = "bg-white dark:bg-[#1E1C14] border-[#161B3A]";
-                    if (!reveal && isDicoret) cls = "bg-gray-100 dark:bg-slate-700/40 border-[#161B3A]/20 opacity-50 line-through";
-                    if (reveal && isCorrect) cls = "bg-emerald-100 dark:bg-emerald-500/20 border-emerald-600 dark:border-emerald-400";
-                    else if (reveal && isPicked && !isCorrect) cls = "bg-rose-100 dark:bg-rose-500/20 border-rose-600 dark:border-rose-400";
-                    else if (reveal) cls = "bg-white/50 dark:bg-white/5 border-[#161B3A]/20 opacity-50";
+                    let cls = "bg-white dark:bg-[#1C1A14] dark:border-amber-800/30 border-[#161B3A]";
+                    if (!reveal && isDicoret) cls = "bg-gray-100 dark:bg-[#1A1610]/60 dark:border-amber-800/10 border-[#161B3A]/20 opacity-50 line-through";
+                    if (reveal && isCorrect) cls = "bg-emerald-100 dark:bg-emerald-500/25 border-emerald-600 dark:border-emerald-400 dark:shadow-[0_0_12px_rgba(52,211,153,0.25)]";
+                    else if (reveal && isPicked && !isCorrect) cls = "bg-rose-100 dark:bg-rose-500/25 border-rose-600 dark:border-rose-400 dark:shadow-[0_0_12px_rgba(251,113,133,0.25)]";
+                    else if (reveal) cls = "bg-white/50 dark:bg-[#1E1A14]/60 dark:border-amber-800/10 border-[#161B3A]/20 opacity-50";
                     return (
                       <button key={i} onClick={() => choose(i)} disabled={reveal || isDicoret}
                         className={`relative w-full text-left px-4 py-3.5 rounded-2xl border-[3px] font-semibold transition-all active:scale-[0.98] shadow-[3px_3px_0_#CA8A04] ${cls}`}>
@@ -338,8 +338,8 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
                 <AnimatePresence>
                   {picked !== null && picked !== current.jawaban && current?.penjelasan && (
                     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                      className="mt-4 p-3.5 rounded-2xl bg-amber-100 dark:bg-amber-500/15 border-[3px] border-[#161B3A] shadow-[3px_3px_0_#CA8A04]">
-                      <p className="text-xs leading-relaxed"><span className="font-extrabold">Penjelasan: </span>{current.penjelasan}</p>
+                      className="mt-4 p-3.5 rounded-2xl bg-amber-100 dark:bg-amber-500/20 border-[3px] border-[#161B3A] shadow-[3px_3px_0_#CA8A04]">
+                      <p className="text-xs dark:text-[#D4C8A0] leading-relaxed"><span className="font-extrabold dark:text-[#D4A843]">Penjelasan: </span>{current.penjelasan}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -362,15 +362,15 @@ function Tower({ floor, total }: { floor: number; total: number }) {
         {cleared ? "🚩" : "⛰️"}
       </motion.div>
 
-      <div className="relative flex-1 w-full rounded-2xl overflow-hidden border-[3px] border-[#161B3A] bg-white dark:bg-[#1E1C14] shadow-[3px_3px_0_#CA8A04]">
-        <motion.div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-violet-600 via-violet-500 to-fuchsia-500"
+      <div className="relative flex-1 w-full rounded-2xl overflow-hidden border-[3px] border-[#161B3A] bg-white dark:bg-gradient-to-b dark:from-[#201C14] dark:to-[#1A1610] dark:border-amber-700/30 dark:shadow-[3px_3px_0_#CA8A04,0_0_12px_rgba(202,138,4,0.2)]">
+        <motion.div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-amber-600 via-amber-500 to-yellow-400 dark:from-amber-600 dark:via-amber-400 dark:to-yellow-300 dark:shadow-[0_0_8px_rgba(245,197,66,0.3)]"
           animate={{ height: `${pct}%` }} transition={{ type: "spring", stiffness: 120, damping: 16 }} />
 
         <div className="absolute inset-0 flex flex-col-reverse">
           {Array.from({ length: total || 1 }).map((_, i) => (
-            <div key={i} className="flex-1 border-t-2 border-[#161B3A]/10 flex items-center justify-center gap-1">
-              <span className={`w-1.5 h-1.5 rounded-[2px] ${i < floor ? "bg-amber-300" : "bg-[#161B3A]/10"}`} />
-              <span className={`w-1.5 h-1.5 rounded-[2px] ${i < floor ? "bg-amber-300" : "bg-[#161B3A]/10"}`} />
+            <div key={i} className="flex-1 border-t-2 border-[#161B3A]/10 dark:border-amber-800/15 flex items-center justify-center gap-1">
+              <span className={`w-1.5 h-1.5 rounded-[2px] ${i < floor ? "bg-amber-400 dark:bg-amber-300" : "bg-[#161B3A]/10 dark:bg-amber-800/20"}`} />
+              <span className={`w-1.5 h-1.5 rounded-[2px] ${i < floor ? "bg-amber-400 dark:bg-amber-300" : "bg-[#161B3A]/10 dark:bg-amber-800/20"}`} />
             </div>
           ))}
         </div>
@@ -381,7 +381,7 @@ function Tower({ floor, total }: { floor: number; total: number }) {
         </motion.div>
       </div>
 
-      <span className="mt-1 text-[10px] font-extrabold opacity-60">{floor}/{total}</span>
+      <span className="mt-1 text-[10px] font-extrabold dark:text-[#D4A843] opacity-60">{floor}/{total}</span>
     </div>
   );
 }
