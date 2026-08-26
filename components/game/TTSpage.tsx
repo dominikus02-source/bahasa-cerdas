@@ -621,7 +621,7 @@ export default function TekaTekiSilang() {
     sfx.start();
   };
 
-  const chunky = "border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A]";
+  const chunky = "border-4 border-[#161B3A] shadow-[6px_6px_0_#4338CA]";
   const btn = `inline-flex items-center justify-center gap-2 font-extrabold rounded-2xl ${chunky} transition-transform active:translate-x-1.5 active:translate-y-1.5 active:shadow-none hover:-translate-x-0.5 hover:-translate-y-0.5`;
 
   const mendatar = puzzle.words.filter((w) => w.dir === "A").sort((a, b) => a.number - b.number);
@@ -641,7 +641,7 @@ export default function TekaTekiSilang() {
   const nextHeartLabel = liveHearts.hearts >= HEARTS_MAX ? "Penuh" : fmtCountdown(heartCountdown);
 
   return (
-    <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#0F0D21] dark:to-[#181330] text-[#161B3A] dark:text-[#F1EDFF]">
+    <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#0B0A1A] dark:to-[#151030] text-[#161B3A] dark:text-[#F1EDFF]">
       <style>{`
         @keyframes tts-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
         @keyframes tts-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}
@@ -689,8 +689,8 @@ export default function TekaTekiSilang() {
       {/* KUIS TTS 1.0 (§23) — konfirmasi keluar saat progress akan hilang */}
       {confirmExit && (
         <div className="fixed inset-0 z-[90] flex items-center justify-center bg-[#161B3A]/60 p-5 backdrop-blur-sm">
-          <div className="tts-screen w-full max-w-sm rounded-3xl border-4 border-[#161B3A] bg-white dark:bg-[#16122A] p-6 text-center shadow-[6px_6px_0_#161B3A]">
-            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl border-4 border-[#161B3A] bg-[#FF6B6B] shadow-[3px_3px_0_#161B3A]">
+          <div className="tts-screen w-full max-w-sm rounded-3xl border-4 border-[#161B3A] bg-white dark:bg-gradient-to-br dark:from-[#1A1535] dark:to-[#221C48] p-6 text-center shadow-[6px_6px_0_#4338CA]">
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl border-4 border-[#161B3A] bg-[#FF6B6B] shadow-[3px_3px_0_#4338CA]">
               <X className="w-7 h-7 text-white" />
             </div>
             <h3 className="text-2xl font-extrabold">Keluar dari permainan?</h3>
@@ -700,7 +700,7 @@ export default function TekaTekiSilang() {
                 Tetap Main
               </button>
               {/* KUIS TTS 1.1 (§21): keluar = benar-benar keluar ke Game Hub, bukan ke pilih level. */}
-              <button className={`${btn} px-5 py-3 bg-white dark:bg-[#16122A]`} onClick={() => { setConfirmExit(false); router.push("/arena/game"); }}>
+              <button className={`${btn} px-5 py-3 bg-white dark:bg-[#1A1535]`} onClick={() => { setConfirmExit(false); router.push("/arena/game"); }}>
                 Keluar
               </button>
             </div>
@@ -712,7 +712,7 @@ export default function TekaTekiSilang() {
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2.5">
-            <div className={`tts-logo w-11 h-11 bg-[#38BDF8] rounded-2xl ${chunky} !shadow-[4px_4px_0_#161B3A] flex items-center justify-center`}>
+            <div className={`tts-logo w-11 h-11 bg-[#38BDF8] rounded-2xl ${chunky} !shadow-[4px_4px_0_#4338CA] flex items-center justify-center`}>
               <Grid3x3 className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -722,11 +722,11 @@ export default function TekaTekiSilang() {
           </div>
           <div className="flex items-center gap-2">
             {(screen === "start" || screen === "hearts") && (
-              <button className={`${btn} w-10 h-10 bg-white dark:bg-[#16122A]`} onClick={() => router.push("/arena/game")} aria-label="Keluar dari gim">
+              <button className={`${btn} w-10 h-10 bg-white dark:bg-[#1A1535]`} onClick={() => router.push("/arena/game")} aria-label="Keluar dari gim">
                 <X className="w-5 h-5" />
               </button>
             )}
-            <button className={`${btn} w-10 h-10 bg-white dark:bg-[#16122A]`} onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+            <button className={`${btn} w-10 h-10 bg-white dark:bg-[#1A1535]`} onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
             </button>
           </div>
@@ -734,13 +734,13 @@ export default function TekaTekiSilang() {
 
         {screen !== "start" && screen !== "game" && (
           <div className="flex items-center gap-2.5 mb-4 text-xs font-extrabold">
-            <span className="flex items-center gap-1 bg-white dark:bg-[#16122A] border-[3px] border-[#161B3A] rounded-full px-2.5 py-1 shadow-[2px_2px_0_#161B3A]">
+            <span className="flex items-center gap-1 bg-white dark:bg-[#1A1535] border-[3px] border-[#161B3A] rounded-full px-2.5 py-1 shadow-[2px_2px_0_#4338CA]">
               <Zap className="w-3.5 h-3.5 text-amber-500" /> {saved.xp} XP
             </span>
-            <span className="flex items-center gap-1 bg-white dark:bg-[#16122A] border-[3px] border-[#161B3A] rounded-full px-2.5 py-1 shadow-[2px_2px_0_#161B3A]">
+            <span className="flex items-center gap-1 bg-white dark:bg-[#1A1535] border-[3px] border-[#161B3A] rounded-full px-2.5 py-1 shadow-[2px_2px_0_#4338CA]">
               <Coins className="w-3.5 h-3.5 text-yellow-600" /> {saved.coins} Koin
             </span>
-            <span className="flex items-center gap-1 bg-white dark:bg-[#16122A] border-[3px] border-[#161B3A] rounded-full px-2.5 py-1 shadow-[2px_2px_0_#161B3A]">
+            <span className="flex items-center gap-1 bg-white dark:bg-[#1A1535] border-[3px] border-[#161B3A] rounded-full px-2.5 py-1 shadow-[2px_2px_0_#4338CA]">
               <Heart className="w-3.5 h-3.5 text-rose-500" fill="#F43F5E" /> {liveHearts.hearts}/{HEARTS_MAX}
             </span>
           </div>
@@ -748,8 +748,8 @@ export default function TekaTekiSilang() {
 
         {/* ---------- MULAI ---------- */}
         {screen === "start" && (
-          <div className={`tts-screen mx-auto w-full max-w-2xl bg-white dark:bg-[#16122A] rounded-3xl ${chunky} p-6 text-center`}>
-            <span className="inline-block px-4 py-1.5 bg-[#38BDF8] text-white border-[3px] border-[#161B3A] rounded-full font-extrabold text-xs shadow-[3px_3px_0_#161B3A] mb-4">
+          <div className={`tts-screen mx-auto w-full max-w-2xl bg-white dark:bg-gradient-to-br dark:from-[#1A1535] dark:to-[#221C48] rounded-3xl ${chunky} p-6 text-center`}>
+            <span className="inline-block px-4 py-1.5 bg-[#38BDF8] text-white border-[3px] border-[#161B3A] rounded-full font-extrabold text-xs shadow-[3px_3px_0_#4338CA] mb-4">
               12 Level Berjenjang · Ditemani Zelby, Hazel & Alby
             </span>
             <div className="flex justify-center gap-2 mb-4">
@@ -778,7 +778,7 @@ export default function TekaTekiSilang() {
                   </>
                 )}
               </div>
-              <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-2xl p-3 shadow-[4px_4px_0_#161B3A]">
+              <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-2xl p-3 shadow-[4px_4px_0_#4338CA]">
                 <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase opacity-70">
                   <Flame className="w-3.5 h-3.5 text-orange-600" /> Rentetan Harian
                 </div>
@@ -789,13 +789,13 @@ export default function TekaTekiSilang() {
                   {streak.streak >= 2 ? `Bonus +${streakXpBonus(streak.streak)} XP tiap main` : "Main 2 hari berturut untuk bonus XP"}
                 </div>
               </div>
-              <div className="bg-white dark:bg-[#16122A] border-[3px] border-[#161B3A] rounded-2xl p-3 shadow-[4px_4px_0_#10B981]">
+              <div className="bg-white dark:bg-[#1A1535] border-[3px] border-[#161B3A] rounded-2xl p-3 shadow-[4px_4px_0_#10B981]">
                 <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase opacity-70">
                   <Heart className="w-3.5 h-3.5 text-rose-500" fill="#F43F5E" /> Nyawa
                 </div>
                 <div className="flex items-center gap-1 mt-1">
                   {Array.from({ length: HEARTS_MAX }).map((_, i) => (
-                    <Heart key={i} className={`w-4 h-4 ${i < liveHearts.hearts ? "text-rose-500" : "text-gray-300 dark:text-slate-600"}`} fill={i < liveHearts.hearts ? "currentColor" : "none"} />
+                    <Heart key={i} className={`w-4 h-4 ${i < liveHearts.hearts ? "text-rose-500" : "text-gray-300 dark:text-[#3D3866]"}`} fill={i < liveHearts.hearts ? "currentColor" : "none"} />
                   ))}
                   <span className="font-extrabold text-sm ml-1">{liveHearts.hearts}/{HEARTS_MAX}</span>
                 </div>
@@ -835,9 +835,9 @@ export default function TekaTekiSilang() {
 
         {/* ---------- PILIH TEKA-TEKI ---------- */}
         {screen === "levels" && (
-          <div className={`tts-screen bg-white dark:bg-[#16122A] rounded-3xl ${chunky} p-5`}>
+          <div className={`tts-screen bg-white dark:bg-gradient-to-br dark:from-[#1A1535] dark:to-[#221C48] rounded-3xl ${chunky} p-5`}>
             <div className="flex items-center justify-between mb-4">
-              <button className={`${btn} w-11 h-11 bg-white dark:bg-[#16122A]`} onClick={() => setScreen("start")} aria-label="Kembali">
+              <button className={`${btn} w-11 h-11 bg-white dark:bg-[#1A1535]`} onClick={() => setScreen("start")} aria-label="Kembali">
                 <X className="w-5 h-5" />
               </button>
               <h2 className="font-extrabold text-2xl">Pilih Level</h2>
@@ -855,7 +855,7 @@ export default function TekaTekiSilang() {
                     disabled={!unlocked}
                     onClick={() => unlocked && openSetup(p.id)}
                     className={`text-left rounded-2xl border-4 border-[#161B3A] p-4 transition-transform ${
-                      unlocked ? "shadow-[5px_5px_0_#161B3A] hover:-translate-x-0.5 hover:-translate-y-0.5 cursor-pointer" : "shadow-[5px_5px_0_#9CA3AF] bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-slate-700/60 dark:text-slate-400"
+                      unlocked ? "shadow-[5px_5px_0_#4338CA] hover:-translate-x-0.5 hover:-translate-y-0.5 cursor-pointer" : "shadow-[5px_5px_0_#9CA3AF] bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-[#1E1840]/60 dark:text-[#4A4570]"
                     }`}
                     style={unlocked ? { background: c, color: "#fff" } : undefined}
                   >
@@ -886,8 +886,8 @@ export default function TekaTekiSilang() {
 
         {/* ---------- ATUR WAKTU ---------- */}
         {screen === "setup" && (
-          <div className={`tts-screen mx-auto w-full max-w-2xl bg-white dark:bg-[#16122A] rounded-3xl ${chunky} p-6 text-center`}>
-            <button className={`${btn} w-11 h-11 bg-white dark:bg-[#16122A] mb-4`} onClick={() => setScreen("levels")} aria-label="Kembali">
+          <div className={`tts-screen mx-auto w-full max-w-2xl bg-white dark:bg-gradient-to-br dark:from-[#1A1535] dark:to-[#221C48] rounded-3xl ${chunky} p-6 text-center`}>
+            <button className={`${btn} w-11 h-11 bg-white dark:bg-[#1A1535] mb-4`} onClick={() => setScreen("levels")} aria-label="Kembali">
               <X className="w-5 h-5" />
             </button>
             <div className="flex justify-center mb-3">
@@ -900,7 +900,7 @@ export default function TekaTekiSilang() {
               <button
                 onClick={() => pickMode("daily")}
                 className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border-4 border-[#161B3A] font-extrabold text-xs transition-transform ${
-                  seedMode === "daily" ? "shadow-none translate-x-1 translate-y-1 bg-[#38BDF8] text-white" : "bg-white dark:bg-[#16122A] shadow-[3px_3px_0_#161B3A] hover:-translate-x-0.5 hover:-translate-y-0.5"
+                  seedMode === "daily" ? "shadow-none translate-x-1 translate-y-1 bg-[#38BDF8] text-white" : "bg-white dark:bg-[#1A1535] shadow-[3px_3px_0_#4338CA] hover:-translate-x-0.5 hover:-translate-y-0.5"
                 }`}
               >
                 <CalendarDays className="w-4 h-4" /> Hari Ini
@@ -908,7 +908,7 @@ export default function TekaTekiSilang() {
               <button
                 onClick={() => pickMode("acak")}
                 className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border-4 border-[#161B3A] font-extrabold text-xs transition-transform ${
-                  seedMode === "acak" ? "shadow-none translate-x-1 translate-y-1 bg-[#8B5CF6] text-white" : "bg-white dark:bg-[#16122A] shadow-[3px_3px_0_#161B3A] hover:-translate-x-0.5 hover:-translate-y-0.5"
+                  seedMode === "acak" ? "shadow-none translate-x-1 translate-y-1 bg-[#8B5CF6] text-white" : "bg-white dark:bg-[#1A1535] shadow-[3px_3px_0_#4338CA] hover:-translate-x-0.5 hover:-translate-y-0.5"
                 }`}
               >
                 <Shuffle className="w-4 h-4" /> Acak
@@ -916,7 +916,7 @@ export default function TekaTekiSilang() {
               {seedMode === "acak" && (
                 <button
                   onClick={() => { setSeed(randomSeed()); sfx.tap(); }}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border-4 border-[#161B3A] bg-[#FBBF24] font-extrabold text-xs shadow-[3px_3px_0_#161B3A] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-transform"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border-4 border-[#161B3A] bg-[#FBBF24] font-extrabold text-xs shadow-[3px_3px_0_#4338CA] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-transform"
                 >
                   <RefreshCw className="w-4 h-4" /> Soal Lain
                 </button>
@@ -933,7 +933,7 @@ export default function TekaTekiSilang() {
                   key={m}
                   onClick={() => setTimeMinutes(m)}
                   className={`w-14 h-14 rounded-2xl border-4 border-[#161B3A] font-extrabold text-lg transition-transform ${
-                    timeMinutes === m ? "shadow-none translate-x-1 translate-y-1" : "shadow-[4px_4px_0_#161B3A] hover:-translate-x-0.5 hover:-translate-y-0.5"
+                    timeMinutes === m ? "shadow-none translate-x-1 translate-y-1" : "shadow-[4px_4px_0_#4338CA] hover:-translate-x-0.5 hover:-translate-y-0.5"
                   }`}
                   style={{ background: timeMinutes === m ? color : isDark ? "#16122A" : "#fff", color: timeMinutes === m ? "#fff" : isDark ? "#F1EDFF" : "#161B3A" }}
                 >
@@ -954,9 +954,9 @@ export default function TekaTekiSilang() {
 
         {/* ---------- NYAWA HABIS ---------- */}
         {screen === "hearts" && (
-          <div className={`tts-screen mx-auto w-full max-w-2xl bg-white dark:bg-[#16122A] rounded-3xl ${chunky} p-6 text-center`}>
+          <div className={`tts-screen mx-auto w-full max-w-2xl bg-white dark:bg-gradient-to-br dark:from-[#1A1535] dark:to-[#221C48] rounded-3xl ${chunky} p-6 text-center`}>
             <div className="flex justify-center mb-3">
-              <div className="w-20 h-20 rounded-3xl bg-[#FF6B6B] border-4 border-[#161B3A] shadow-[5px_5px_0_#161B3A] flex items-center justify-center">
+              <div className="w-20 h-20 rounded-3xl bg-[#FF6B6B] border-4 border-[#161B3A] shadow-[5px_5px_0_#4338CA] flex items-center justify-center">
                 <Heart className="w-10 h-10 text-white" fill="currentColor" />
               </div>
             </div>
@@ -967,7 +967,7 @@ export default function TekaTekiSilang() {
 
             <div className="flex justify-center gap-1.5 mb-3">
               {Array.from({ length: HEARTS_MAX }).map((_, i) => (
-                <Heart key={i} className={`w-7 h-7 ${i < liveHearts.hearts ? "text-rose-500" : "text-gray-300 dark:text-slate-600"}`} fill={i < liveHearts.hearts ? "currentColor" : "none"} />
+                <Heart key={i} className={`w-7 h-7 ${i < liveHearts.hearts ? "text-rose-500" : "text-gray-300 dark:text-[#3D3866]"}`} fill={i < liveHearts.hearts ? "currentColor" : "none"} />
               ))}
             </div>
             <div className="inline-block bg-[#161B3A] text-white rounded-2xl px-6 py-3 shadow-[5px_5px_0_#FBBF24] mb-6">
@@ -984,7 +984,7 @@ export default function TekaTekiSilang() {
               >
                 <Play className="w-4 h-4" /> {liveHearts.hearts >= 1 ? "Nyawa Pulih — Main!" : "Tunggu Nyawa…"}
               </button>
-              <button className={`${btn} px-5 py-3 bg-white dark:bg-[#16122A]`} onClick={() => setScreen("levels")}>
+              <button className={`${btn} px-5 py-3 bg-white dark:bg-[#1A1535]`} onClick={() => setScreen("levels")}>
                 Pilih Level
               </button>
             </div>
@@ -999,25 +999,25 @@ export default function TekaTekiSilang() {
           <div className="tts-screen flex flex-col items-center gap-3 w-full max-w-[1100px] mx-auto">
             {/* HUD 5 tile — DNA Kuis Tempur: Nyawa / Level / Rentetan / Terisi / Waktu */}
             <div className="w-full grid grid-cols-5 gap-2">
-              <div className={`rounded-xl border-[3px] border-[#161B3A] bg-[#161B3A] text-white px-2 py-2 shadow-[3px_3px_0_#161B3A] ${liveHearts.hearts === 0 ? "opacity-60" : ""}`}>
+              <div className={`rounded-xl border-[3px] border-[#161B3A] bg-[#161B3A] text-white px-2 py-2 shadow-[3px_3px_0_#4338CA] ${liveHearts.hearts === 0 ? "opacity-60" : ""}`}>
                 <div className="text-[8px] font-extrabold uppercase opacity-70">Nyawa</div>
                 <div className="flex items-center gap-1 text-lg font-extrabold leading-none">
                   <Heart className="w-4 h-4 text-rose-400" fill="#FB7185" /> {liveHearts.hearts}/{HEARTS_MAX}
                 </div>
               </div>
-              <div className="rounded-xl border-[3px] border-[#161B3A] bg-white dark:bg-[#16122A] px-2 py-2 shadow-[3px_3px_0_#161B3A]">
+              <div className="rounded-xl border-[3px] border-[#161B3A] bg-white dark:bg-[#1A1535] px-2 py-2 shadow-[3px_3px_0_#4338CA]">
                 <div className="text-[8px] font-extrabold uppercase opacity-70">Level</div>
                 <div className="text-lg font-extrabold leading-none">{puzzle.id}<span className="text-[10px] font-bold opacity-60 ml-1">{puzzle.title}</span></div>
               </div>
-              <div className={`rounded-xl border-[3px] border-[#161B3A] px-2 py-2 shadow-[3px_3px_0_#161B3A] ${combo > 1 ? "bg-orange-300" : "bg-white dark:bg-[#16122A] opacity-70"}`}>
+              <div className={`rounded-xl border-[3px] border-[#161B3A] px-2 py-2 shadow-[3px_3px_0_#4338CA] ${combo > 1 ? "bg-orange-300" : "bg-white dark:bg-[#1A1535] opacity-70"}`}>
                 <div className="text-[8px] font-extrabold uppercase opacity-70">Rentetan</div>
                 <div className="text-lg font-extrabold leading-none">{combo}x</div>
               </div>
-              <div className="rounded-xl border-[3px] border-[#161B3A] px-2 py-2 shadow-[3px_3px_0_#161B3A]" style={{ background: color, color: "#fff" }}>
+              <div className="rounded-xl border-[3px] border-[#161B3A] px-2 py-2 shadow-[3px_3px_0_#4338CA]" style={{ background: color, color: "#fff" }}>
                 <div className="text-[8px] font-extrabold uppercase opacity-80">Terisi</div>
                 <div className="text-lg font-extrabold leading-none">{filledCells}<span className="text-[10px] font-bold opacity-70">/{totalCells}</span></div>
               </div>
-              <div className={`rounded-xl border-[3px] border-[#161B3A] bg-violet-500 px-2 py-2 text-white shadow-[3px_3px_0_#161B3A] ${timeLow ? "bg-rose-500" : ""}`}>
+              <div className={`rounded-xl border-[3px] border-[#161B3A] bg-violet-500 px-2 py-2 text-white shadow-[3px_3px_0_#4338CA] ${timeLow ? "bg-rose-500" : ""}`}>
                 <div className="text-[8px] font-extrabold uppercase opacity-80">Waktu</div>
                 <div className="text-lg font-extrabold leading-none">{fmtTime(remainingSec)}</div>
               </div>
@@ -1045,14 +1045,14 @@ export default function TekaTekiSilang() {
                   style={{ width: `${totalCells ? (correctCells / totalCells) * 100 : 0}%`, background: color }}
                 />
               </div>
-              <div className="shrink-0 rounded-full border-[3px] border-[#161B3A] bg-white dark:bg-[#16122A] px-2.5 py-1 shadow-[2px_2px_0_#161B3A] font-extrabold text-[11px] flex items-center gap-1">
-                <Heart className={`w-3.5 h-3.5 ${combo >= 2 ? "text-orange-500" : "text-gray-300 dark:text-slate-600"}`} />
+              <div className="shrink-0 rounded-full border-[3px] border-[#161B3A] bg-white dark:bg-[#1A1535] px-2.5 py-1 shadow-[2px_2px_0_#4338CA] font-extrabold text-[11px] flex items-center gap-1">
+                <Heart className={`w-3.5 h-3.5 ${combo >= 2 ? "text-orange-500" : "text-gray-300 dark:text-[#3D3866]"}`} />
                 {combo >= 2 ? `Beruntun ×${combo}` : `${Math.round((correctCells / Math.max(1, totalCells)) * 100)}% tepat`}
               </div>
             </div>
 
             {/* Petunjuk aktif + maskot */}
-            <div className="w-full rounded-xl border-[3px] border-[#161B3A] bg-white dark:bg-[#16122A] px-3.5 py-2 shadow-[3px_3px_0_#161B3A] flex items-center gap-3 min-h-[60px]">
+            <div className="w-full rounded-xl border-[3px] border-[#161B3A] bg-white dark:bg-[#1A1535] px-3.5 py-2 shadow-[3px_3px_0_#4338CA] flex items-center gap-3 min-h-[60px]">
               <div className="relative shrink-0">
                 <MascotFace mascot={mascot} celebrating={celebrating} />
                 {cheerText && (
@@ -1073,7 +1073,7 @@ export default function TekaTekiSilang() {
             </div>
 
             {timeUp && (
-              <div className="w-full rounded-xl border-[3px] border-[#FF6B6B] bg-[#FFE2E2] dark:bg-[#3A1620] px-3.5 py-2 text-center text-sm font-extrabold text-[#991B1B] dark:text-[#FCA5A5]">
+              <div className="w-full rounded-xl border-[3px] border-[#FF6B6B] bg-[#FFE2E2] dark:bg-[#4A1825] px-3.5 py-2 text-center text-sm font-extrabold text-[#991B1B] dark:text-[#FCA5A5]">
                 Waktu habis! Lihat hasil di bawah.
               </div>
             )}
@@ -1081,7 +1081,7 @@ export default function TekaTekiSilang() {
             {/* Grid */}
             <div className="w-full overflow-x-auto">
               <div
-                className="grid mx-auto bg-[#161B3A] rounded-xl border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A] p-1 gap-[3px]"
+                className="grid mx-auto bg-[#161B3A] rounded-xl border-4 border-[#161B3A] shadow-[6px_6px_0_#4338CA] p-1 gap-[3px]"
                 style={{
                   gridTemplateColumns: `repeat(${puzzle.cols}, ${cellSize})`,
                   gridTemplateRows: `repeat(${puzzle.rows}, ${cellSize})`,
@@ -1132,17 +1132,17 @@ export default function TekaTekiSilang() {
 
             {/* Aksi */}
             <div className="w-full flex flex-wrap items-center justify-center gap-2">
-              <button className={`${btn} px-4 py-2.5 bg-white dark:bg-[#16122A] text-sm`} onClick={useHint} disabled={timeUp}>
+              <button className={`${btn} px-4 py-2.5 bg-white dark:bg-[#1A1535] text-sm`} onClick={useHint} disabled={timeUp}>
                 <Lightbulb className="w-4 h-4" /> Petunjuk
               </button>
-              <button className={`${btn} px-4 py-2.5 bg-white dark:bg-[#16122A] text-sm`} onClick={clearAll} disabled={timeUp}>
+              <button className={`${btn} px-4 py-2.5 bg-white dark:bg-[#1A1535] text-sm`} onClick={clearAll} disabled={timeUp}>
                 <Eraser className="w-4 h-4" /> Bersihkan
               </button>
               <button className={`${btn} px-5 py-2.5 bg-[#10B981] text-white text-sm`} onClick={checkAnswers} disabled={timeUp}>
                 <CheckCircle2 className="w-4 h-4" /> Cek Jawaban
               </button>
               <button
-                className={`${btn} w-11 h-11 bg-white dark:bg-[#16122A]`}
+                className={`${btn} w-11 h-11 bg-white dark:bg-[#1A1535]`}
                 onClick={() => {
                   // KUIS TTS 1.0 (§23): keluar saat ada progress → konfirmasi.
                   const adaProgress = filledCells > 0 || combo > 0 || timeBudgetRef.current - remainingSec > 0;
@@ -1157,7 +1157,7 @@ export default function TekaTekiSilang() {
 
             {/* Daftar petunjuk */}
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="bg-white dark:bg-[#16122A] rounded-2xl border-4 border-[#161B3A] shadow-[4px_4px_0_#161B3A] p-3.5">
+              <div className="bg-white dark:bg-[#1A1535] rounded-2xl border-4 border-[#161B3A] shadow-[4px_4px_0_#4338CA] p-3.5">
                 <div className="flex items-center gap-1.5 font-extrabold text-sm mb-2">
                   <ArrowRight className="w-4 h-4" /> Mendatar
                 </div>
@@ -1165,7 +1165,7 @@ export default function TekaTekiSilang() {
                   {mendatar.map((w) => (
                     <li key={`A${w.number}`}>
                       <button
-                        className={`text-left text-xs font-semibold w-full rounded-lg px-2 py-1 transition-colors ${activeWordNum === w.number && dir === "A" ? "bg-[#FEF3C7] dark:bg-[#37301A]" : "hover:bg-gray-100 dark:hover:bg-white/10"}`}
+                        className={`text-left text-xs font-semibold w-full rounded-lg px-2 py-1 transition-colors ${activeWordNum === w.number && dir === "A" ? "bg-[#FEF3C7] dark:bg-[#2D2060]" : "hover:bg-gray-100 dark:hover:bg-white/10"}`}
                         onClick={() => { setDir("A"); selectCell(w.row, w.col); }}
                       >
                         <b>{w.number}.</b> {w.clue}
@@ -1174,7 +1174,7 @@ export default function TekaTekiSilang() {
                   ))}
                 </ul>
               </div>
-              <div className="bg-white dark:bg-[#16122A] rounded-2xl border-4 border-[#161B3A] shadow-[4px_4px_0_#161B3A] p-3.5">
+              <div className="bg-white dark:bg-[#1A1535] rounded-2xl border-4 border-[#161B3A] shadow-[4px_4px_0_#4338CA] p-3.5">
                 <div className="flex items-center gap-1.5 font-extrabold text-sm mb-2">
                   <ArrowDown className="w-4 h-4" /> Menurun
                 </div>
@@ -1182,7 +1182,7 @@ export default function TekaTekiSilang() {
                   {menurun.map((w) => (
                     <li key={`D${w.number}`}>
                       <button
-                        className={`text-left text-xs font-semibold w-full rounded-lg px-2 py-1 transition-colors ${activeWordNum === w.number && dir === "D" ? "bg-[#FEF3C7] dark:bg-[#37301A]" : "hover:bg-gray-100 dark:hover:bg-white/10"}`}
+                        className={`text-left text-xs font-semibold w-full rounded-lg px-2 py-1 transition-colors ${activeWordNum === w.number && dir === "D" ? "bg-[#FEF3C7] dark:bg-[#2D2060]" : "hover:bg-gray-100 dark:hover:bg-white/10"}`}
                         onClick={() => { setDir("D"); selectCell(w.row, w.col); }}
                       >
                         <b>{w.number}.</b> {w.clue}
@@ -1197,7 +1197,7 @@ export default function TekaTekiSilang() {
 
         {/* ---------- HASIL ---------- */}
         {screen === "result" && result && (
-          <div className={`tts-screen bg-white dark:bg-[#16122A] rounded-3xl ${chunky} p-6 text-center`}>
+          <div className={`tts-screen bg-white dark:bg-gradient-to-br dark:from-[#1A1535] dark:to-[#221C48] rounded-3xl ${chunky} p-6 text-center`}>
             <div className="flex justify-center mb-2">
               <MascotFace mascot={mascot} celebrating={result.pct === 100} />
             </div>
@@ -1226,7 +1226,7 @@ export default function TekaTekiSilang() {
                 <div className="text-[10px] font-extrabold uppercase tracking-wider opacity-70">Ketepatan</div>
                 <div className="font-extrabold text-3xl leading-none">{result.pct}%</div>
               </div>
-              <div className="inline-block bg-[#FBBF24] rounded-2xl px-6 py-3 shadow-[5px_5px_0_#161B3A]">
+              <div className="inline-block bg-[#FBBF24] rounded-2xl px-6 py-3 shadow-[5px_5px_0_#4338CA]">
                 <div className="text-[10px] font-extrabold uppercase tracking-wider opacity-70">+XP / +Koin</div>
                 <div className="font-extrabold text-2xl leading-none flex items-center gap-1.5">
                   <Zap className="w-5 h-5" />{result.xp} <Coins className="w-5 h-5 ml-1" />{result.coins}
@@ -1236,28 +1236,28 @@ export default function TekaTekiSilang() {
 
             {/* KUIS TTS 1.1 (§19): result = reward + next action — bonus jadi chip transparan. */}
             <div className="flex justify-center gap-3 mb-5 text-sm flex-wrap">
-              <div className="bg-white dark:bg-[#16122A] border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
+              <div className="bg-white dark:bg-[#1A1535] border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#4338CA]">
                 <Lightbulb className="w-4 h-4 inline mr-1 text-amber-500" />
                 Petunjuk dipakai <b>{result.hints}×</b>
               </div>
-              <div className="bg-white dark:bg-[#16122A] border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
+              <div className="bg-white dark:bg-[#1A1535] border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#4338CA]">
                 <Trophy className="w-4 h-4 inline mr-1 text-violet-500" />
                 Waktu dipakai <b>{fmtTime(result.time)}</b>
               </div>
               {streak.streak >= 2 && (
-                <div className="bg-white dark:bg-[#16122A] border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
+                <div className="bg-white dark:bg-[#1A1535] border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#4338CA]">
                   <Flame className="w-4 h-4 inline mr-1 text-orange-500" />
                   Bonus rentetan <b>+{streakXpBonus(streak.streak)} XP</b>
                 </div>
               )}
               {result.pct === 100 && (
-                <div className="bg-white dark:bg-[#16122A] border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
+                <div className="bg-white dark:bg-[#1A1535] border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#4338CA]">
                   <Heart className="w-4 h-4 inline mr-1 text-rose-500" fill="#F43F5E" />
                   Bonus nyawa <b>+1</b>
                 </div>
               )}
               {bestCombo >= 2 && (
-                <div className="bg-white dark:bg-[#16122A] border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
+                <div className="bg-white dark:bg-[#1A1535] border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#4338CA]">
                   <Flame className="w-4 h-4 inline mr-1 text-orange-500" />
                   Beruntun terbaik <b>×{bestCombo}</b>
                 </div>

@@ -938,7 +938,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   }
 
   // ── Rangka visual chunky cream yang sama dengan gim solo lain ─────────────
-  const chunky = "border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A]"
+  const chunky = "border-4 border-[#161B3A] shadow-[6px_6px_0_#DC2626]"
   const btn = `inline-flex items-center justify-center gap-2 font-extrabold rounded-2xl ${chunky} transition-transform active:translate-x-1.5 active:translate-y-1.5 active:shadow-none`
   const avatarHasil = gambarKarakter(karakterku, hasil?.menang ? "celebrate" : "idle")
   const avatarHdr = gambarKarakter(karakterku, "happy")
@@ -949,11 +949,11 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
         <Link
           href={backHref}
           aria-label="Kembali ke daftar gim"
-          className={`${btn} h-11 w-11 shrink-0 bg-white dark:bg-[#16122A]`}
+          className={`${btn} h-11 w-11 shrink-0 bg-white dark:bg-[#241218]`}
         >
           <ArrowLeft className="h-5 w-5" />
         </Link>
-        <div className="kt-pop h-11 w-11 shrink-0 overflow-hidden rounded-2xl border-4 border-[#161B3A] bg-white dark:bg-[#16122A] shadow-[4px_4px_0_#161B3A]">
+        <div className="kt-pop h-11 w-11 shrink-0 overflow-hidden rounded-2xl border-4 border-[#161B3A] bg-white dark:bg-[#241218] shadow-[4px_4px_0_#DC2626]">
           <img src={avatarHdr} alt="" className="h-full w-full object-cover" />
         </div>
         <div>
@@ -964,7 +964,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
       <button
         onClick={gantiSuara}
         aria-label={suara ? "Matikan suara" : "Nyalakan suara"}
-        className={`${btn} h-11 w-11 bg-white dark:bg-[#16122A]`}
+        className={`${btn} h-11 w-11 bg-white dark:bg-[#241218]`}
       >
         {suara ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}
       </button>
@@ -974,12 +974,12 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   if (fase === "pilih") {
     const pilihan = KARAKTER.map((k) => ({ id: k, nama: PROFIL[k].nama, src: gambarKarakter(k, "happy") }))
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#0F0D21] dark:to-[#181330] text-[#161B3A] dark:text-[#F1EDFF]">
+      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150A0A] dark:to-[#200E0E] text-[#161B3A] dark:text-[#F1EDFF]">
         <style>{KT_STYLE}</style>
         <div className="relative mx-auto flex min-h-full max-w-xl flex-col items-center px-4 py-5">
           {Hdr}
-          <div className={`kt-screen w-full max-w-md rounded-3xl bg-white dark:bg-[#16122A] p-6 text-center ${chunky}`}>
-            <div className="kt-pop mx-auto mb-3 h-24 w-24 overflow-hidden rounded-3xl border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A]">
+          <div className={`kt-screen w-full max-w-md rounded-3xl bg-white dark:bg-gradient-to-br dark:from-[#241218] dark:to-[#301C24] p-6 text-center ${chunky}`}>
+            <div className="kt-pop mx-auto mb-3 h-24 w-24 overflow-hidden rounded-3xl border-4 border-[#161B3A] shadow-[6px_6px_0_#DC2626]">
               <img src={avatarHdr} alt="" className="h-full w-full object-cover" />
             </div>
             <h1 className="font-game-display mb-2 text-3xl font-extrabold">Kuis Tempur</h1>
@@ -1000,7 +1000,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
                   key={p.id}
                   onClick={() => { setKarakterku(p.id); simpanKarakter(p.id); sfx.tap() }}
                   className={`rounded-2xl border-[3px] p-3 text-center transition-all active:scale-95 ${
-                    karakterku === p.id ? "border-emerald-600 bg-emerald-50 dark:bg-emerald-500/15" : "border-[#161B3A]/20 bg-white dark:bg-[#16122A] shadow-[4px_4px_0_#161B3A]"
+                    karakterku === p.id ? "border-emerald-600 bg-emerald-50 dark:bg-emerald-500/15" : "border-[#161B3A]/20 bg-white dark:bg-[#241218] shadow-[4px_4px_0_#DC2626]"
                   }`}
                 >
                   <img src={p.src} alt="" className="mx-auto h-16 w-16 rounded-full object-cover" />
@@ -1033,13 +1033,13 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
 
   if (fase === "selesai") {
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#0F0D21] dark:to-[#181330] text-[#161B3A] dark:text-[#F1EDFF]">
+      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150A0A] dark:to-[#200E0E] text-[#161B3A] dark:text-[#F1EDFF]">
         <style>{KT_STYLE}</style>
         <div className="relative mx-auto flex min-h-full max-w-xl flex-col items-center justify-center px-4 py-5">
           {Hdr}
-          <div className={`kt-screen w-full max-w-md rounded-3xl bg-white dark:bg-[#16122A] p-6 text-center ${chunky}`}>
+          <div className={`kt-screen w-full max-w-md rounded-3xl bg-white dark:bg-gradient-to-br dark:from-[#241218] dark:to-[#301C24] p-6 text-center ${chunky}`}>
             <div
-              className={`kt-pop relative mx-auto mb-3 h-24 w-24 overflow-hidden rounded-3xl border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A] ${hasil?.menang ? "" : "opacity-70 grayscale"}`}
+              className={`kt-pop relative mx-auto mb-3 h-24 w-24 overflow-hidden rounded-3xl border-4 border-[#161B3A] shadow-[6px_6px_0_#DC2626] ${hasil?.menang ? "" : "opacity-70 grayscale"}`}
               style={{ boxShadow: profil && hasil?.menang ? `0 0 32px ${profil.warna}66` : undefined }}
             >
               <img src={avatarHasil} alt="" className="h-full w-full object-cover" />
@@ -1062,29 +1062,29 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
               </p>
             )}
             <div className="mb-2 grid grid-cols-2 gap-2 text-[11px] font-bold">
-              <div className="rounded-xl border-[3px] border-[#161B3A] bg-white dark:bg-[#16122A] px-2 py-1.5 shadow-[3px_3px_0_#161B3A]">
+              <div className="rounded-xl border-[3px] border-[#161B3A] bg-white dark:bg-[#241218] px-2 py-1.5 shadow-[3px_3px_0_#DC2626]">
                 <span className="opacity-60">Musuh dikalahkan</span> · {kalahkan}
               </div>
-              <div className="rounded-xl border-[3px] border-[#161B3A] bg-white dark:bg-[#16122A] px-2 py-1.5 shadow-[3px_3px_0_#161B3A]">
+              <div className="rounded-xl border-[3px] border-[#161B3A] bg-white dark:bg-[#241218] px-2 py-1.5 shadow-[3px_3px_0_#DC2626]">
                 <span className="opacity-60">Waktu bertahan</span> · {Math.floor(waktuAkhir / 60)}:{String(waktuAkhir % 60).padStart(2, "0")}
               </div>
-              <div className="rounded-xl border-[3px] border-[#161B3A] bg-white dark:bg-[#16122A] px-2 py-1.5 shadow-[3px_3px_0_#161B3A]">
+              <div className="rounded-xl border-[3px] border-[#161B3A] bg-white dark:bg-[#241218] px-2 py-1.5 shadow-[3px_3px_0_#DC2626]">
                 <span className="opacity-60">Soal dijawab</span> · {benarRef.current + salahRef.current}
               </div>
-              <div className="rounded-xl border-[3px] border-[#161B3A] bg-white dark:bg-[#16122A] px-2 py-1.5 shadow-[3px_3px_0_#161B3A]">
+              <div className="rounded-xl border-[3px] border-[#161B3A] bg-white dark:bg-[#241218] px-2 py-1.5 shadow-[3px_3px_0_#DC2626]">
                 <span className="opacity-60">Akurasi</span> · {benarRef.current + salahRef.current > 0 ? Math.round((benarRef.current / (benarRef.current + salahRef.current)) * 100) : 0}%
               </div>
             </div>
             <div className="mb-4 grid grid-cols-3 gap-2">
-              <div className="rounded-xl border-[3px] border-[#161B3A] bg-[#161B3A] px-2 py-2 text-white shadow-[3px_3px_0_#161B3A]">
+              <div className="rounded-xl border-[3px] border-[#161B3A] bg-[#161B3A] px-2 py-2 text-white shadow-[3px_3px_0_#DC2626]">
                 <div className="text-[9px] font-extrabold uppercase opacity-70">Benar</div>
                 <div className="text-lg font-extrabold leading-none">{benarRef.current}</div>
               </div>
-              <div className="rounded-xl border-[3px] border-[#161B3A] bg-rose-500 px-2 py-2 text-white shadow-[3px_3px_0_#161B3A]">
+              <div className="rounded-xl border-[3px] border-[#161B3A] bg-rose-500 px-2 py-2 text-white shadow-[3px_3px_0_#DC2626]">
                 <div className="text-[9px] font-extrabold uppercase opacity-80">Salah</div>
                 <div className="text-lg font-extrabold leading-none">{salahRef.current}</div>
               </div>
-              <div className="rounded-xl border-[3px] border-[#161B3A] bg-amber-300 px-2 py-2 text-[#161B3A] shadow-[3px_3px_0_#161B3A]">
+              <div className="rounded-xl border-[3px] border-[#161B3A] bg-amber-300 px-2 py-2 text-[#161B3A] shadow-[3px_3px_0_#DC2626]">
                 <div className="text-[9px] font-extrabold uppercase opacity-70">Rentetan</div>
                 <div className="text-lg font-extrabold leading-none">{maxComboRef.current}x</div>
               </div>
@@ -1108,32 +1108,32 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   }
 
   return (
-    <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#0F0D21] dark:to-[#181330] text-[#161B3A] dark:text-[#F1EDFF]">
+    <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150A0A] dark:to-[#200E0E] text-[#161B3A] dark:text-[#F1EDFF]">
       <style>{KT_STYLE}</style>
       <div className="relative mx-auto flex min-h-full w-full max-w-[1280px] flex-col items-center px-4 py-3">
         {Hdr}
 
         <div className="kt-screen flex w-full flex-col items-center">
           <div className="mb-2 grid w-full grid-cols-5 gap-2">
-            <div className="rounded-xl border-[3px] border-[#161B3A] bg-[#161B3A] px-2 py-2 text-white shadow-[3px_3px_0_#161B3A]">
+            <div className="rounded-xl border-[3px] border-[#161B3A] bg-[#161B3A] px-2 py-2 text-white shadow-[3px_3px_0_#DC2626]">
               <div className="text-[8px] font-extrabold uppercase opacity-70">Nyawa</div>
               <div className="flex items-center gap-1 text-lg font-extrabold leading-none">
                 <span className="text-rose-400">❤️</span> {hp}/{kurvaPemain(level).hpMax}
               </div>
             </div>
-            <div className={`rounded-xl border-[3px] border-[#161B3A] px-2 py-2 shadow-[3px_3px_0_#161B3A] ${peluru > 0 ? "bg-amber-300" : "bg-white dark:bg-[#16122A] opacity-70"}`}>
+            <div className={`rounded-xl border-[3px] border-[#161B3A] px-2 py-2 shadow-[3px_3px_0_#DC2626] ${peluru > 0 ? "bg-amber-300" : "bg-white dark:bg-[#241218] opacity-70"}`}>
               <div className="text-[8px] font-extrabold uppercase opacity-70">Peluru</div>
               <div className="text-lg font-extrabold leading-none">{peluru}</div>
             </div>
-            <div className={`rounded-xl border-[3px] border-[#161B3A] px-2 py-2 shadow-[3px_3px_0_#161B3A] ${combo > 1 ? "bg-orange-300" : "bg-white dark:bg-[#16122A] opacity-70"}`}>
+            <div className={`rounded-xl border-[3px] border-[#161B3A] px-2 py-2 shadow-[3px_3px_0_#DC2626] ${combo > 1 ? "bg-orange-300" : "bg-white dark:bg-[#241218] opacity-70"}`}>
               <div className="text-[8px] font-extrabold uppercase opacity-70">Rentetan</div>
               <div className="text-lg font-extrabold leading-none">{combo}x</div>
             </div>
-            <div className="rounded-xl border-[3px] border-[#161B3A] bg-white dark:bg-[#16122A] px-2 py-2 shadow-[3px_3px_0_#161B3A]">
+            <div className="rounded-xl border-[3px] border-[#161B3A] bg-white dark:bg-[#241218] px-2 py-2 shadow-[3px_3px_0_#DC2626]">
               <div className="text-[8px] font-extrabold uppercase opacity-70">Level</div>
               <div className="text-lg font-extrabold leading-none">{level}</div>
             </div>
-            <div className="rounded-xl border-[3px] border-[#161B3A] bg-violet-500 px-2 py-2 text-white shadow-[3px_3px_0_#161B3A]">
+            <div className="rounded-xl border-[3px] border-[#161B3A] bg-violet-500 px-2 py-2 text-white shadow-[3px_3px_0_#DC2626]">
               <div className="text-[8px] font-extrabold uppercase opacity-80">Kalahkan</div>
               <div className="text-lg font-extrabold leading-none">{kalahkan}</div>
             </div>
@@ -1188,17 +1188,17 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
                 <span key={f.id} className="rounded-lg bg-[#161B3A]/90 px-2 py-1 text-[10px] font-semibold text-white">{f.teks}</span>
               ))}
             </div>
-            <canvas ref={cvRef} className="h-[60dvh] max-h-[620px] min-h-[380px] w-full touch-none rounded-2xl border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A]" />
+            <canvas ref={cvRef} className="h-[60dvh] max-h-[620px] min-h-[380px] w-full touch-none rounded-2xl border-4 border-[#161B3A] shadow-[6px_6px_0_#DC2626]" />
           </div>
 
           <div className="mt-2 w-full max-w-[900px]">
-            <div className="mb-2 rounded-2xl border-4 border-[#161B3A] bg-white dark:bg-[#16122A] px-4 py-3 text-center shadow-[4px_4px_0_#161B3A]">
+            <div className="mb-2 rounded-2xl border-4 border-[#161B3A] bg-white dark:bg-[#241218] px-4 py-3 text-center shadow-[4px_4px_0_#DC2626]">
               <p className="text-[15px] font-bold leading-snug text-[#161B3A] dark:text-[#F1EDFF]">{soal?.q.soal}</p>
             </div>
             <div className="grid grid-cols-2 gap-2.5">
               {soal?.opsi.map((o, i) => {
                 const terbuka = dipilih !== null
-                let gaya = "bg-white dark:bg-[#241F45] border-[#161B3A] text-[#161B3A] dark:text-[#F1EDFF]"
+                let gaya = "bg-white dark:bg-[#2E1A20] border-[#161B3A] text-[#161B3A] dark:text-[#F1EDFF]"
                 if (terbuka && o.benar) gaya = "bg-emerald-200 dark:bg-emerald-500/25 border-emerald-700 dark:border-emerald-400 text-emerald-900 dark:text-emerald-200"
                 else if (terbuka && dipilih === i) gaya = "bg-rose-200 dark:bg-rose-500/25 border-rose-700 dark:border-rose-400 text-rose-900 dark:text-rose-200"
                 else if (terbuka) gaya = "bg-white/60 dark:bg-white/5 border-[#161B3A]/25 text-[#161B3A]/50 dark:text-[#F1EDFF]/40"
@@ -1207,7 +1207,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
                     key={i}
                     onClick={() => jawab(i, o.benar)}
                     disabled={kunci}
-                    className={`flex items-center gap-2 rounded-2xl border-[3px] px-3 py-3.5 text-left text-sm font-bold shadow-[3px_3px_0_#161B3A] transition-all active:scale-[0.97] ${gaya}`}
+                    className={`flex items-center gap-2 rounded-2xl border-[3px] px-3 py-3.5 text-left text-sm font-bold shadow-[3px_3px_0_#DC2626] transition-all active:scale-[0.97] ${gaya}`}
                   >
                     <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg border-2 border-current text-[11px] font-black">
                       {i === 0 ? "A" : "B"}

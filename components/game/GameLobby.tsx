@@ -354,14 +354,14 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-[#12101F] p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white dark:from-slate-950 dark:to-[#100E20] p-4">
       <div className="max-w-lg mx-auto pt-8">
         <div className="text-center mb-8">
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mx-auto mb-4 shadow-lg">
             <Zap size={32} className="text-white" />
           </div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Kuis Tempur</h1>
-          <p className="text-slate-500 dark:text-[#A9A6C9] mt-2">Pilih mode dan ajak temanmu bertanding!</p>
+          <p className="text-slate-500 dark:text-[#C4C1E8] mt-2">Pilih mode dan ajak temanmu bertanding!</p>
         </div>
 
         {isHost && (
@@ -378,7 +378,7 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
                     className={`relative rounded-2xl border-2 p-4 transition-all ${
                       isSelected
                         ? `${mode.bgColor} ${mode.borderColor} shadow-lg scale-[1.02]`
-                        : "bg-white dark:bg-[#16122A] border-slate-100 dark:border-[rgba(124,58,237,0.2)] hover:border-slate-300 dark:hover:border-violet-500/40 hover:shadow-md"
+                        : "bg-white dark:bg-[#1A1535] border-slate-100 dark:border-[rgba(124,58,237,0.2)] hover:border-slate-300 dark:hover:border-violet-500/40 hover:shadow-md"
                     }`}
                   >
                     {isSelected && (
@@ -397,7 +397,7 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
                         </div>
                       </div>
                       <h3 className={`font-bold ${isSelected ? "text-slate-900 dark:text-white" : "text-slate-700 dark:text-slate-200"}`}>{mode.name}</h3>
-                      <p className="text-[11px] text-slate-500 dark:text-[#7C7A9E] mt-1 leading-relaxed">{mode.desc}</p>
+                      <p className="text-[11px] text-slate-500 dark:text-[#9090BE] mt-1 leading-relaxed">{mode.desc}</p>
                     </div>
                   </button>
                 );
@@ -424,14 +424,14 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
                     <button
                       key={game.id}
                        onClick={() => router.push(`/${role === "GURU" ? "guru" : "murid"}/game/${game.id}`)}
-                      className={`rounded-2xl border-2 p-4 transition-all bg-white dark:bg-[#16122A] border-slate-100 dark:border-[rgba(124,58,237,0.2)] hover:border-slate-300 dark:hover:border-violet-500/40 hover:shadow-md`}
+                      className={`rounded-2xl border-2 p-4 transition-all bg-white dark:bg-[#1A1535] border-slate-100 dark:border-[rgba(124,58,237,0.2)] hover:border-slate-300 dark:hover:border-violet-500/40 hover:shadow-md`}
                     >
                       <div className="text-center">
                         <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${game.color} flex items-center justify-center mx-auto mb-2`}>
                           <GameIcon size={24} className="text-white" />
                         </div>
                         <h3 className="font-bold text-sm text-slate-900 dark:text-white">{game.name}</h3>
-                        <p className="text-[10px] text-slate-500 dark:text-[#7C7A9E] mt-0.5 leading-relaxed">{game.desc}</p>
+                        <p className="text-[10px] text-slate-500 dark:text-[#9090BE] mt-0.5 leading-relaxed">{game.desc}</p>
                       </div>
                     </button>
                   );
@@ -439,14 +439,14 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
               </div>
             </>
           ) : (
-            <div className="bg-white dark:bg-[#16122A] rounded-2xl p-6 border border-slate-200 dark:border-[rgba(124,58,237,0.2)] shadow-sm">
+            <div className="bg-white dark:bg-[#1A1535] rounded-2xl p-6 border border-slate-200 dark:border-[rgba(124,58,237,0.2)] shadow-sm">
               <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-3">Masuk ke Ruangan</p>
               <div className="flex gap-3">
                 <input
                   value={joinCode}
                   onChange={(e) => setJoinCode(e.target.value.toUpperCase().slice(0, 6))}
                   placeholder="XXXXXX"
-                  className="flex-1 rounded-xl border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-[#1E1B3A] text-slate-900 dark:text-white placeholder-slate-400 px-4 py-3 text-center text-lg font-bold tracking-widest uppercase focus:border-violet-500 focus:outline-none"
+                  className="flex-1 rounded-xl border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-gradient-to-br dark:from-[#221E42] dark:to-[#2C2650] text-slate-900 dark:text-white placeholder-slate-400 px-4 py-3 text-center text-lg font-bold tracking-widest uppercase focus:border-violet-500 focus:outline-none"
                   maxLength={6}
                 />
                 <button onClick={handleJoin} disabled={joinCode.length !== 6}
