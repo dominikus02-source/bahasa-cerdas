@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import crypto from "crypto";
 import { getMidtransConfig } from "@/lib/payments/midtrans-server";
+import { createCommissionFromTransaction, reverseCommissionForTransaction } from "@/lib/commission/engine";
+import { evaluateRapidPremiumSignal, evaluateRefundPatternSignal } from "@/lib/guru/risk/events";
 
 function verifyMidtransNotification(
   orderId: string,
@@ -195,6 +197,36 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, warning: "unknown_order" });
     }
 
+    // ── P7C: REFUND / CHARGEBACK — reversal komisi (additive) ──
+    // Sebelumnya event ini diabaikan sama sekali (guard anti-downgrade).
+    // Sekarang: klaim SUCCESS → REFUNDED (atomik, idempotent) lalu komisi
+    // dibalik dengan entry negatif append-only. Kegagalan reversal TIDAK
+    // menggagalkan webhook — payment tetap tercatat, retry aman.
+    const REFUND_EVENTS = new Set(["refund", "partial_refund", "chargeback", "partial_chargeback"]);
+    if (REFUND_EVENTS.has(transaction_status)) {
+      if (transaksi.status !== "SUCCESS") {
+        return NextResponse.json({ ok: true, idempotent: true, note: "refund_ignored_not_success" });
+      }
+      try {
+        const claimed = await db.transaksi.updateMany({
+          where: { id: transaksi.id, status: "SUCCESS" },
+          data: { status: "REFUNDED" },
+        });
+        if (claimed.count > 0) {
+          try {
+            await reverseCommissionForTransaction(transaksi.id, "REFUND");
+            // ── P8C: signal pola refund abnormal (best-effort) ──
+            await evaluateRefundPatternSignal(transaksi.id).catch(() => {});
+          } catch (err) {
+            console.error("[Webhook] Commission reversal failed (retry-safe):", err);
+          }
+        }
+      } catch (error) {
+        console.error("[Webhook] Refund processing error:", error);
+      }
+      return NextResponse.json({ ok: true });
+    }
+
     // ── P4.1 FIX: AMOUNT VALIDATION ──
     // Compare Midtrans gross_amount against the local Transaksi amount.
     // The local amount is canonical because coupons/discounts may change
@@ -381,6 +413,43 @@ export async function POST(req: NextRequest) {
         processed.aiCreditsMonthly > 0
       ) {
         await syncPremiumCreditLedger(transaksi.userId, processed.planId, processed.aiCreditsMonthly);
+      }
+
+      // ── P7C: COMMISSION ENGINE (Guru Cerdas Sejahtera) ──
+      // Setelah klaim SUCCESS berhasil & premium murid aktif, evaluasi komisi
+      // guru dari transaksi ini. NON-BLOCKING terhadap flow pembayaran:
+      // gagal → payment tetap sukses, error di-log, event bisa di-retry
+      // (idempotent via unique key + backfill tooling).
+      if (
+        processed && typeof processed === "object" &&
+        "isMurid" in processed && processed.isMurid === true &&
+        transaksi.type === "MURID_PREMIUM"
+      ) {
+        try {
+          const commission = await createCommissionFromTransaction(transaksi.id);
+          // ── P8B: notifikasi faktual ke guru (best-effort, tanpa nominal) ──
+          if (commission.created && !commission.idempotent) {
+            db.notifikasi
+              .create({
+                data: {
+                  userId: commission.teacherId,
+                  title: "Penghasilan baru tercatat",
+                  body: "Penghasilan baru tercatat dari murid Premium kamu. Lihat detailnya di Penghasilan Saya.",
+                  type: "KOMISI",
+                  data: { commissionId: commission.id },
+                },
+              })
+              .catch(() => {});
+            // ── P8C: signal akun-baru-ke-Premium (best-effort, LOW) ──
+            evaluateRapidPremiumSignal({
+              teacherId: commission.teacherId,
+              studentId: commission.studentId,
+              transaksiId: transaksi.id,
+            }).catch(() => {});
+          }
+        } catch (err) {
+          console.error("[Webhook] Commission creation failed (retry-safe):", err);
+        }
       }
     } catch (error) {
       console.error("Webhook processing error:", error);

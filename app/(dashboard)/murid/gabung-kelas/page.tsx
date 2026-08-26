@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Users, Copy, CheckCircle, BookOpen, GraduationCap, ChevronRight, Clock, RefreshCw, Crown } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { trackProductEvent } from "@/lib/analytics/product-track";
 
 interface Group {
   id: string;
@@ -15,7 +16,8 @@ interface Group {
   grade: string;
   accessCode: string;
   memberCount: number;
-  teacher: { fullName: string; avatar: string | null } | null;
+  guruNama?: string | null;
+  teacher?: { fullName: string; avatar: string | null } | null;
 }
 
 export default function GabungKelasPage() {
@@ -61,6 +63,10 @@ export default function GabungKelasPage() {
       } else {
         setSuccess(data.group);
         setCode("");
+        // P8B: koneksi guru-murid eksplisit (tanpa data finansial).
+        trackProductEvent("gcs_student_joined", {
+          classId: data.group?.id ?? "",
+        });
         setTimeout(() => router.push(berandaHref), 3000);
       }
     } catch (e) {
@@ -118,8 +124,13 @@ export default function GabungKelasPage() {
                   <span className="font-bold text-green-700 dark:text-green-400">Berhasil bergabung!</span>
                 </div>
                 <p className="text-sm text-green-700 dark:text-green-400">
-                  {success.name} - Kelas {success.grade}
+                  Anda bergabung dengan kelas {success.name} - Kelas {success.grade}
                 </p>
+                {success.guruNama && (
+                  <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                    Guru: {success.guruNama}
+                  </p>
+                )}
                 <p className="text-xs text-green-600 dark:text-green-400 mt-1">Mengalihkan ke beranda...</p>
               </div>
             )}

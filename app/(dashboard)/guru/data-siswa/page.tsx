@@ -8,6 +8,7 @@ import { Search, Users, ChevronRight, Hash } from "lucide-react";
 import { levelFromXp } from "@/lib/gamification/levels";
 import { rankFromLevel } from "@/lib/gamification/ranks";
 import { RankChip } from "@/components/gamification/RankChip";
+import { ClassShareCard } from "@/components/guru/gcs/ClassShareCard";
 
 const leagueColors: Record<string, string> = {
   BRONZE: "from-amber-600 to-amber-800",
@@ -70,6 +71,11 @@ export default function DataSiswaPage() {
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Data Siswa</h1>
         <p className="mt-1 text-sm text-gray-600">Pantau progres dan performa siswa dari kelasmu</p>
+      </div>
+
+      {/* P8B — kontekstual: bantu siswa lanjut berlatih di BahasaCerdas */}
+      <div className="mb-6">
+        <ClassShareCard variant="data-siswa" />
       </div>
 
       <Card className="p-4 mb-6">

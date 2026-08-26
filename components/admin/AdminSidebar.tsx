@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
-import { LayoutDashboard, ShoppingBag, Film, FileText, Users, LogOut, Settings, ChevronRight, BarChart3, Briefcase, MessageCircle, Presentation, Bell, BellRing, X, Coins, DollarSign, Database, Activity, Wallet, Baby, TrendingUp, Trophy, LineChart } from "lucide-react";
+import { LayoutDashboard, ShoppingBag, Film, FileText, Users, LogOut, Settings, ChevronRight, BarChart3, Briefcase, MessageCircle, Presentation, Bell, BellRing, X, Coins, DollarSign, Database, Activity, Wallet, Baby, TrendingUp, Trophy, LineChart, ShieldAlert, ShieldCheck } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import {
   NAV_ICON_CLASS,
@@ -41,6 +41,8 @@ export const NAV = [
   { label: "Pusat Data", href: "/admin/data-center", icon: Database },
   { label: "Pembayaran", href: "/admin/payments", icon: DollarSign },
   { label: "Penarikan Saldo", href: "/admin/withdrawals", icon: Wallet },
+  { label: "Risiko Guru", href: "/admin/teacher-risk", icon: ShieldAlert },
+  { label: "Payout Kontrol", href: "/admin/teacher-payouts", icon: ShieldCheck },
   { label: "Pengaturan", href: "/admin/pengaturan", icon: Settings },
   { type: "divider" as const },
   { label: "Dasbor Guru", href: "/guru/beranda", icon: ChevronRight },

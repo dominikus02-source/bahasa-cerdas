@@ -16,6 +16,22 @@
     {
       "path": "/api/cron/ajakan-harian",
       "schedule": "0 12 * * *"
+    },
+    {
+      "path": "/api/cron/teacher-commissions-release",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/teacher-commissions-reconcile",
+      "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/cron/payout-reconciliation",
+      "schedule": "30 * * * *"
+    },
+    {
+      "path": "/api/cron/risk-review",
+      "schedule": "0 * * * *"
     }
   ],
   "redirects": [

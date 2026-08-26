@@ -7,6 +7,7 @@ import { humanDeadline } from "@/lib/classroom/deadline";
 import { ClassPicker, type PickerClass } from "@/components/kelas/ClassPicker";
 import { ClassroomComposer, readLastClassIds } from "@/components/kelas/ClassroomComposer";
 import { SubmissionReview } from "@/components/kelas/SubmissionReview";
+import { ClassShareCard } from "@/components/guru/gcs/ClassShareCard";
 
 interface Group {
   id: string;
@@ -311,6 +312,9 @@ export default function KelasKuPage() {
               </button>
             </div>
           </div>
+
+          {/* P8B — Bagikan akses kelas (kontekstual, tampil bila ada kelas) */}
+          {groups.length > 0 && <ClassShareCard variant="kelasku" />}
 
           {loading ? (
             <p className="text-sm text-[var(--clr-text-3)] text-center py-10">Memuat kelas...</p>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Home, Sparkles, Store, Gamepad2, Users, BookOpen, ClipboardCheck,
-  Bot, User, CalendarDays, ChevronDown, Menu, X, LogOut,
+  Bot, User, CalendarDays, ChevronDown, Menu, X, LogOut, Wallet,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -107,6 +107,12 @@ export const GURU_NAV: NavGroup[] = [
     label: "Toko Karya",
     icon: Store,
     href: "/guru/toko-karya",
+  },
+  {
+    id: "penghasilan",
+    label: "Penghasilan",
+    icon: Wallet,
+    href: "/guru/komisi",
   },
   {
     id: "simulasi",
