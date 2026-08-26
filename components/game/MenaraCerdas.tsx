@@ -168,7 +168,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
                 <div className="text-[11px] font-semibold dark:text-[#B89830] mt-0.5">Panjat setinggi mungkin</div>
               </div>
             </div>
-            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white border-2 border-slate-200 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
             </button>
           </div>
@@ -242,7 +242,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
             <button onClick={start} className={`${btnBase} w-full py-3.5 bg-gradient-to-r from-violet-500 to-purple-600 dark:from-amber-500 dark:to-amber-600 text-white dark:shadow-[0_0_16px_rgba(245,197,66,0.25)]`}>
               <RotateCcw className="w-4 h-4" /> Main Lagi
             </button>
-            <Link href={backHref} className={`${btnBase} w-full py-3.5 bg-white border-2 border-slate-200 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 text-center`}>
+            <Link href={backHref} className={`${btnBase} w-full py-3.5 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700 text-center`}>
               Kembali ke Arena
             </Link>
           </div>

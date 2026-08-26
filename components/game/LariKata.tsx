@@ -178,7 +178,7 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
                 <div className="text-[11px] font-semibold opacity-60 mt-0.5">Sprint 60 detik, kejar skor tertinggi</div>
               </div>
             </div>
-            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white border-2 border-slate-200 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
             </button>
           </div>
@@ -220,8 +220,8 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
         <div className="relative max-w-lg mx-auto px-5 pt-4 pb-8 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-3">
             {!hideBackButton && (
-              <button className={`${btnBase} w-12 h-12 bg-white border-2 border-slate-200 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50`} onClick={() => { stopBGM(); setScreen("start"); }} aria-label="Keluar">
-                <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF] text-[#161B3A] dark:text-[#F1EDFF]" />
+              <button className={`${btnBase} w-12 h-12 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => { stopBGM(); setScreen("start"); }} aria-label="Keluar">
+                <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
               </button>
             )}
             <div className={`flex items-center gap-2 ${hideBackButton ? "ml-auto" : ""}`}>
