@@ -627,7 +627,7 @@ export default function IramaKata() {
 
   useEffect(() => () => engineRef.current?.stop(), []);
 
-  const chunky = "border-4 border-[#161B3A] shadow-[6px_6px_0_#DB2777]";
+  const chunky = "border-4 border-[#161B3A] dark:border-white/25 shadow-[6px_6px_0_#DB2777]";
   const btn = `inline-flex items-center justify-center gap-2 font-extrabold rounded-2xl ${chunky} transition-transform active:translate-x-1.5 active:translate-y-1.5 active:shadow-none hover:-translate-x-0.5 hover:-translate-y-0.5`;
 
   return (
@@ -645,10 +645,10 @@ export default function IramaKata() {
         .ik-eq span{display:block;width:8px;border-radius:3px 3px 0 0;border:2.5px solid #161B3A;box-shadow:2px 2px 0 #161B3A;animation:ik-eq 1s ease-in-out infinite alternate}
       `}</style>
       {/* Dekorasi melayang */}
-      <div className="pointer-events-none fixed top-[8%] left-[3%] w-16 h-16 bg-[#FF6B6B] border-4 border-[#161B3A] rounded-3xl" style={{ animation: "ik-float1 9s ease-in-out infinite" }} />
-      <div className="pointer-events-none fixed top-[16%] right-[5%] w-12 h-12 bg-[#38BDF8] border-4 border-[#161B3A] rounded-full" style={{ animation: "ik-float2 10s ease-in-out infinite" }} />
-      <div className="pointer-events-none fixed bottom-[14%] left-[2%] w-14 h-14 bg-[#FBBF24] border-4 border-[#161B3A] rounded-2xl" style={{ animation: "ik-float1 11s ease-in-out infinite" }} />
-      <div className="pointer-events-none fixed bottom-[10%] right-[4%] w-11 h-11 bg-[#4ADE80] border-4 border-[#161B3A] rounded-[30%_70%_70%_30%]" style={{ animation: "ik-float2 8s ease-in-out infinite" }} />
+      <div className="pointer-events-none fixed top-[8%] left-[3%] w-16 h-16 bg-[#FF6B6B] border-4 border-[#161B3A] dark:border-white/25 rounded-3xl" style={{ animation: "ik-float1 9s ease-in-out infinite" }} />
+      <div className="pointer-events-none fixed top-[16%] right-[5%] w-12 h-12 bg-[#38BDF8] border-4 border-[#161B3A] dark:border-white/25 rounded-full" style={{ animation: "ik-float2 10s ease-in-out infinite" }} />
+      <div className="pointer-events-none fixed bottom-[14%] left-[2%] w-14 h-14 bg-[#FBBF24] border-4 border-[#161B3A] dark:border-white/25 rounded-2xl" style={{ animation: "ik-float1 11s ease-in-out infinite" }} />
+      <div className="pointer-events-none fixed bottom-[10%] right-[4%] w-11 h-11 bg-[#4ADE80] border-4 border-[#161B3A] dark:border-white/25 rounded-[30%_70%_70%_30%]" style={{ animation: "ik-float2 8s ease-in-out infinite" }} />
 
       <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
         {/* Header */}
@@ -664,7 +664,7 @@ export default function IramaKata() {
           </div>
           <button
             onClick={() => setMuted((m) => !m)}
-            className={`${btn} w-11 h-11 bg-white border-2 border-slate-200 text-[#161B3A] hover:bg-slate-50`}
+            className={`${btn} w-11 h-11 bg-white border-2 border-slate-200 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50`}
             aria-label={muted ? "Nyalakan suara" : "Matikan suara"}
           >
             {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
@@ -674,7 +674,7 @@ export default function IramaKata() {
         {/* ---------- MULAI ---------- */}
         {screen === "start" && (
           <div className={`ik-screen bg-white dark:bg-gradient-to-br dark:from-[#221420] dark:to-[#2C1E2A] rounded-3xl ${chunky} p-6 text-center`}>
-            <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-full font-extrabold text-xs shadow-[3px_3px_0_#DB2777] mb-4">
+            <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] dark:border-white/25 rounded-full font-extrabold text-xs shadow-[3px_3px_0_#DB2777] mb-4">
               Sesi 60 detik · 9 level
             </span>
             {/* Equalizer */}
@@ -693,7 +693,7 @@ export default function IramaKata() {
             </p>
             <div className="flex justify-center gap-2 mb-1">
               {["D", "F", "J", "K"].map((k, i) => (
-                <div key={k} className="w-11 h-11 flex items-center justify-center font-extrabold text-lg rounded-xl border-[3px] border-[#161B3A] shadow-[3px_3px_0_#DB2777]" style={{ background: LANE_COLORS[i], color: i === 0 ? "#fff" : "#161B3A" }}>
+                <div key={k} className="w-11 h-11 flex items-center justify-center font-extrabold text-lg rounded-xl border-[3px] border-[#161B3A] dark:border-white/25 shadow-[3px_3px_0_#DB2777]" style={{ background: LANE_COLORS[i], color: i === 0 ? "#fff" : "#161B3A" }}>
                   {k}
                 </div>
               ))}
@@ -708,15 +708,15 @@ export default function IramaKata() {
               </button>
             </div>
             <div className="grid grid-cols-3 gap-2.5 mt-6 text-center">
-              <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#DB2777]">
+              <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#DB2777]">
                 <div className="text-[10px] font-extrabold uppercase opacity-70">Pas</div>
                 <div className="font-extrabold text-lg">+100</div>
               </div>
-              <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#DB2777]">
+              <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#DB2777]">
                 <div className="text-[10px] font-extrabold uppercase opacity-70">Bagus</div>
                 <div className="font-extrabold text-lg">+50</div>
               </div>
-              <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#DB2777]">
+              <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#DB2777]">
                 <div className="text-[10px] font-extrabold uppercase opacity-70">Meleset</div>
                 <div className="font-extrabold text-lg">-1 Nyawa</div>
               </div>
@@ -728,8 +728,8 @@ export default function IramaKata() {
         {screen === "levels" && (
           <div className={`ik-screen bg-white dark:bg-gradient-to-br dark:from-[#221420] dark:to-[#2C1E2A] rounded-3xl ${chunky} p-5`}>
             <div className="flex items-center justify-between mb-4">
-            <button className={`${btn} w-12 h-12 bg-white border-2 border-slate-200 text-[#161B3A] hover:bg-slate-50`} onClick={() => setScreen("start")} aria-label="Kembali">
-              <X className="w-5 h-5 text-[#161B3A] text-[#161B3A]" />
+            <button className={`${btn} w-12 h-12 bg-white border-2 border-slate-200 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50`} onClick={() => setScreen("start")} aria-label="Kembali">
+              <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF] text-[#161B3A] dark:text-[#F1EDFF]" />
             </button>
               <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
               <div className="w-11" />
@@ -744,7 +744,7 @@ export default function IramaKata() {
                     key={lv.id}
                     disabled={!unlocked}
                     onClick={() => unlocked && startLevel(lv.id)}
-                    className={`text-left rounded-2xl border-4 border-[#161B3A] p-3.5 transition-transform ${
+                    className={`text-left rounded-2xl border-4 border-[#161B3A] dark:border-white/25 p-3.5 transition-transform ${
                       unlocked ? "shadow-[5px_5px_0_#DB2777] hover:-translate-x-0.5 hover:-translate-y-0.5 cursor-pointer" : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-[5px_5px_0_#9CA3AF] dark:bg-slate-700/60 dark:text-[#4A1838]"
                     }`}
                     style={unlocked ? { background: lv.color, color: lv.color === "#FBBF24" || lv.color === "#F59E0B" || lv.color === "#4ADE80" || lv.color === "#38BDF8" ? "#161B3A" : "#fff" } : undefined}
@@ -779,15 +779,15 @@ export default function IramaKata() {
           <div className="ik-screen flex flex-col items-center">
             {/* HUD */}
             <div className="w-full max-w-[480px] grid grid-cols-3 gap-2 mb-3">
-              <div className="rounded-xl border-[3px] border-[#161B3A] bg-[#161B3A] text-white px-3 py-1.5 shadow-[3px_3px_0_#DB2777]">
+              <div className="rounded-xl border-[3px] border-[#161B3A] dark:border-white/25 bg-[#161B3A] text-white px-3 py-1.5 shadow-[3px_3px_0_#DB2777]">
                 <div className="text-[9px] font-extrabold uppercase opacity-70">Skor</div>
                 <span ref={(el) => { hudRef.current.score = el; }} className="font-extrabold text-lg leading-none">0</span>
               </div>
-              <div className="rounded-xl border-[3px] border-[#161B3A] bg-[#FBBF24] px-3 py-1.5 shadow-[3px_3px_0_#DB2777]">
+              <div className="rounded-xl border-[3px] border-[#161B3A] dark:border-white/25 bg-[#FBBF24] px-3 py-1.5 shadow-[3px_3px_0_#DB2777]">
                 <div className="text-[9px] font-extrabold uppercase opacity-70">Rentetan</div>
                 <span ref={(el) => { hudRef.current.combo = el; }} className="font-extrabold text-lg leading-none">0×</span>
               </div>
-              <div className="rounded-xl border-[3px] border-[#161B3A] bg-[#FF6B6B] px-3 py-1.5 shadow-[3px_3px_0_#DB2777]">
+              <div className="rounded-xl border-[3px] border-[#161B3A] dark:border-white/25 bg-[#FF6B6B] px-3 py-1.5 shadow-[3px_3px_0_#DB2777]">
                 <div className="text-[9px] font-extrabold uppercase text-white/80">Nyawa</div>
                 <div ref={(el) => { hudRef.current.lives = el; }} className="flex gap-0.5">
                   {[0, 1, 2].map((i) => <Heart key={i} className="w-4 h-4 text-white" fill="currentColor" />)}
@@ -799,7 +799,7 @@ export default function IramaKata() {
               ref={canvasRef}
               width={W}
               height={H}
-              className="w-full max-w-[480px] rounded-2xl border-4 border-[#161B3A] shadow-[6px_6px_0_#DB2777] touch-none"
+              className="w-full max-w-[480px] rounded-2xl border-4 border-[#161B3A] dark:border-white/25 shadow-[6px_6px_0_#DB2777] touch-none"
               onPointerDown={(e) => {
                 const rect = e.currentTarget.getBoundingClientRect();
                 const x = ((e.clientX - rect.left) / rect.width) * W;
@@ -812,7 +812,7 @@ export default function IramaKata() {
               {["D", "F", "J", "K"].map((k, i) => (
                 <button
                   key={k}
-                  className="py-4 rounded-2xl border-4 border-[#161B3A] font-extrabold text-lg shadow-[4px_4px_0_#DB2777] active:translate-y-1 active:shadow-none"
+                  className="py-4 rounded-2xl border-4 border-[#161B3A] dark:border-white/25 font-extrabold text-lg shadow-[4px_4px_0_#DB2777] active:translate-y-1 active:shadow-none"
                   style={{ background: LANE_COLORS[i], color: i === 0 ? "#fff" : "#161B3A" }}
                   onPointerDown={(e) => { e.preventDefault(); engineRef.current?.tap(i); }}
                 >
@@ -823,12 +823,12 @@ export default function IramaKata() {
 
             <div className="w-full max-w-[480px] flex items-center justify-between mt-3">
               <button className={`${btn} w-12 h-12 bg-white/90 dark:bg-white/20 border-2 dark:border-white/25 hover:bg-white dark:hover:bg-white/30`} onClick={quit} aria-label="Keluar">
-                <X className="w-5 h-5 text-[#161B3A] text-[#161B3A]" />
+                <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF] text-[#161B3A] dark:text-[#F1EDFF]" />
               </button>
               <div className="hidden md:block text-xs font-semibold opacity-60">
                 Tombol <span className="font-mono font-extrabold">D F J K</span> · Spasi = jeda
               </div>
-              <button className={`${btn} w-11 h-11 bg-white border-2 border-slate-200 text-[#161B3A] hover:bg-slate-50`} onClick={togglePause} aria-label={paused ? "Lanjut" : "Jeda"}>
+              <button className={`${btn} w-11 h-11 bg-white border-2 border-slate-200 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50`} onClick={togglePause} aria-label={paused ? "Lanjut" : "Jeda"}>
                 {paused ? <Play className="w-5 h-5" /> : <Pause className="w-5 h-5" />}
               </button>
             </div>
@@ -864,30 +864,30 @@ export default function IramaKata() {
             </div>
 
             <div className="grid grid-cols-4 gap-2 max-w-sm mx-auto mb-4 text-center">
-              <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[2px_2px_0_#DB2777]">
+              <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[2px_2px_0_#DB2777]">
                 <div className="text-[9px] font-extrabold uppercase opacity-70">Pas</div>
                 <div className="font-extrabold text-lg">{result.stats.pas}</div>
               </div>
-              <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[2px_2px_0_#DB2777]">
+              <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[2px_2px_0_#DB2777]">
                 <div className="text-[9px] font-extrabold uppercase opacity-70">Bagus</div>
                 <div className="font-extrabold text-lg">{result.stats.bagus}</div>
               </div>
-              <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[2px_2px_0_#DB2777]">
+              <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[2px_2px_0_#DB2777]">
                 <div className="text-[9px] font-extrabold uppercase opacity-70">Meleset</div>
                 <div className="font-extrabold text-lg">{result.stats.meleset}</div>
               </div>
-              <div className="bg-white dark:bg-[#221420] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[2px_2px_0_#DB2777]">
+              <div className="bg-white dark:bg-[#221420] border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[2px_2px_0_#DB2777]">
                 <div className="text-[9px] font-extrabold uppercase opacity-70">Salah</div>
                 <div className="font-extrabold text-lg">{result.stats.salah}</div>
               </div>
             </div>
 
             <div className="flex justify-center gap-3 mb-5 text-sm">
-              <div className="bg-white dark:bg-[#221420] border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#DB2777]">
+              <div className="bg-white dark:bg-[#221420] border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#DB2777]">
                 <Zap className="w-4 h-4 inline mr-1 text-amber-500" />
                 Rentetan maks <b>{result.maxCombo}×</b>
               </div>
-              <div className="bg-white dark:bg-[#221420] border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#DB2777]">
+              <div className="bg-white dark:bg-[#221420] border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#DB2777]">
                 <Trophy className="w-4 h-4 inline mr-1 text-violet-500" />
                 Akurasi <b>{result.acc}%</b>
               </div>

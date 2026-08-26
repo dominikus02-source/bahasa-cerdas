@@ -304,7 +304,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
 
   /* ---------- RENDER HELPERS ---------- */
   const timePct = (timeLeft / level.time) * 100;
-  const chunky = "border-4 border-[#161B3A] shadow-[6px_6px_0_#059669]";
+  const chunky = "border-4 border-[#161B3A] dark:border-white/25 shadow-[6px_6px_0_#059669]";
   const btnBase = `inline-flex items-center justify-center gap-2 font-extrabold rounded-2xl ${chunky} transition-transform active:translate-x-1.5 active:translate-y-1.5 active:shadow-none hover:-translate-x-0.5 hover:-translate-y-0.5`;
 
   /* ---------- START SCREEN ---------- */
@@ -320,10 +320,10 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
         .bs-star{animation:bs-pop .5s ease}
         .bs-logo{animation:bs-pulse 1.4s ease-in-out infinite}`}</style>
         {/* Dekorasi Melayang */}
-        <div className="pointer-events-none fixed top-[8%] left-[3%] w-16 h-16 bg-[#FF6B6B] border-4 border-[#161B3A] rounded-3xl" style={{ animation: "bs-float1 9s ease-in-out infinite" }} />
-        <div className="pointer-events-none fixed top-[16%] right-[5%] w-12 h-12 bg-[#38BDF8] border-4 border-[#161B3A] rounded-full" style={{ animation: "bs-float2 10s ease-in-out infinite" }} />
-        <div className="pointer-events-none fixed bottom-[14%] left-[2%] w-14 h-14 bg-[#FBBF24] border-4 border-[#161B3A] rounded-2xl" style={{ animation: "bs-float1 11s ease-in-out infinite" }} />
-        <div className="pointer-events-none fixed bottom-[10%] right-[4%] w-11 h-11 bg-[#4ADE80] border-4 border-[#161B3A] rounded-[30%_70%_70%_30%]" style={{ animation: "bs-float2 8s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed top-[8%] left-[3%] w-16 h-16 bg-[#FF6B6B] border-4 border-[#161B3A] dark:border-white/25 rounded-3xl" style={{ animation: "bs-float1 9s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed top-[16%] right-[5%] w-12 h-12 bg-[#38BDF8] border-4 border-[#161B3A] dark:border-white/25 rounded-full" style={{ animation: "bs-float2 10s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed bottom-[14%] left-[2%] w-14 h-14 bg-[#FBBF24] border-4 border-[#161B3A] dark:border-white/25 rounded-2xl" style={{ animation: "bs-float1 11s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed bottom-[10%] right-[4%] w-11 h-11 bg-[#4ADE80] border-4 border-[#161B3A] dark:border-white/25 rounded-[30%_70%_70%_30%]" style={{ animation: "bs-float2 8s ease-in-out infinite" }} />
 
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
@@ -336,27 +336,27 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
                 <div className="text-[11px] font-semibold opacity-60 mt-0.5">Tes kecepatan & ketepatan</div>
               </div>
             </div>
-            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white border-2 border-slate-200 text-[#161B3A] hover:bg-slate-50`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white border-2 border-slate-200 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
             </button>
           </div>
 
           <div className="bs-screen bg-white dark:bg-gradient-to-br dark:from-[#0E2820] dark:to-[#16342C] rounded-3xl p-6 text-center flex-1 flex flex-col items-center justify-center">
-            <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-full font-extrabold text-xs shadow-[3px_3px_0_#059669] mb-4">9 Level • 3 Nyawa</span>
+            <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] dark:border-white/25 rounded-full font-extrabold text-xs shadow-[3px_3px_0_#059669] mb-4">9 Level • 3 Nyawa</span>
             <h1 className="font-extrabold text-4xl mb-2">Benar atau <span className="text-[#FF6B6B]">Salah?</span></h1>
             <p className="opacity-70 text-sm max-w-sm mb-1">Baca soal dan jawaban yang muncul. Tentukan: jawaban itu <b>benar</b> atau <b>salah</b>?</p>
             <p className="text-xs opacity-50 mb-6">Semakin cepat & tepat, rentetan makin tinggi!</p>
 
             <div className="grid grid-cols-3 gap-2.5 mb-6 w-full max-w-xs">
-              <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#059669]">
+              <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#059669]">
                 <div className="text-[10px] font-extrabold uppercase opacity-70">Benar</div>
                 <div className="font-extrabold text-lg">+1</div>
               </div>
-              <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#059669]">
+              <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#059669]">
                 <div className="text-[10px] font-extrabold uppercase opacity-70">Rentetan</div>
                 <div className="font-extrabold text-lg">Bonus</div>
               </div>
-              <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#059669]">
+              <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#059669]">
                 <div className="text-[10px] font-extrabold uppercase opacity-70">Salah</div>
                 <div className="font-extrabold text-lg">-1 ❤️</div>
               </div>
@@ -384,21 +384,21 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
         <style>{`.bs-screen{animation:bs-fade .35s ease}`}</style>
         {loading && (
           <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm">
-            <div className="bg-white dark:bg-[#0E2820] border-4 border-[#161B3A] rounded-2xl p-6 shadow-[6px_6px_0_#059669]">
-              <Loader2 className="w-8 h-8 animate-spin text-[#161B3A] mx-auto mb-2" />
+            <div className="bg-white dark:bg-[#0E2820] border-4 border-[#161B3A] dark:border-white/25 rounded-2xl p-6 shadow-[6px_6px_0_#059669]">
+              <Loader2 className="w-8 h-8 animate-spin text-[#161B3A] dark:text-[#F1EDFF] mx-auto mb-2" />
               <div className="font-bold text-sm">Memuat soal...</div>
             </div>
           </div>
         )}
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <button className={`${btnBase} w-12 h-12 bg-white border-2 border-slate-200 text-[#161B3A] hover:bg-slate-50`} onClick={() => setScreen("start")} aria-label="Kembali">
-              <X className="w-5 h-5 text-[#161B3A] text-[#161B3A]" />
+            <button className={`${btnBase} w-12 h-12 bg-white border-2 border-slate-200 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50`} onClick={() => setScreen("start")} aria-label="Kembali">
+              <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF] text-[#161B3A] dark:text-[#F1EDFF]" />
             </button>
             <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
             <div className="w-11" />
           </div>
-          <div className="bs-screen bg-white dark:bg-gradient-to-br dark:from-[#0E2820] dark:to-[#16342C] rounded-3xl p-5 shadow-[6px_6px_0_#059669] border-4 border-[#161B3A]">
+          <div className="bs-screen bg-white dark:bg-gradient-to-br dark:from-[#0E2820] dark:to-[#16342C] rounded-3xl p-5 shadow-[6px_6px_0_#059669] border-4 border-[#161B3A] dark:border-white/25">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {LEVELS.map((lv) => {
                 const unlocked = saved.unlocked.includes(lv.id);
@@ -409,7 +409,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
                     key={lv.id}
                     disabled={!unlocked || loading}
                     onClick={() => unlocked && !loading && startLevel(lv.id)}
-                    className={`text-left rounded-2xl border-4 border-[#161B3A] p-3.5 transition-transform ${
+                    className={`text-left rounded-2xl border-4 border-[#161B3A] dark:border-white/25 p-3.5 transition-transform ${
                       unlocked ? "shadow-[5px_5px_0_#059669] hover:-translate-x-0.5 hover:-translate-y-0.5 cursor-pointer" : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-[5px_5px_0_#9CA3AF] dark:bg-slate-700/60 dark:text-[#1A4A38]"
                     }`}
                     style={unlocked ? { background: lv.color, color: ["#FBBF24", "#F59E0B", "#4ADE80", "#38BDF8"].includes(lv.color) ? "#161B3A" : "#fff" } : undefined}
@@ -461,7 +461,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
         <motion.div animate={controls} className="relative z-10 flex flex-col h-full max-w-md mx-auto px-5 pt-4 pb-6">
           {/* HUD */}
           <div className="flex items-center justify-between gap-2 mb-3">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 dark:bg-white/10 border-2 border-[#161B3A]">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 dark:bg-white/10 border-2 border-[#161B3A] dark:border-white/25">
               <Check className="w-4 h-4 text-emerald-500" />
               <span className="text-sm font-bold">{score}</span>
             </div>
@@ -472,22 +472,22 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
                 </motion.div>
               )}
             </AnimatePresence>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 dark:bg-white/10 border-2 border-[#161B3A]">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 dark:bg-white/10 border-2 border-[#161B3A] dark:border-white/25">
               <Heart className="w-4 h-4 text-rose-500" fill="currentColor" />
               <span className="text-sm font-bold">{lives}</span>
             </div>
-            <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 ${timeLeft <= 10 ? "bg-rose-500/25 text-rose-700 dark:text-rose-300 border-rose-400" : "bg-white/80 dark:bg-white/10 border-[#161B3A]"}`}>
+            <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 ${timeLeft <= 10 ? "bg-rose-500/25 text-rose-700 dark:text-rose-300 border-rose-400" : "bg-white/80 dark:bg-white/10 border-[#161B3A] dark:border-white/25"}`}>
               <Timer className="w-4 h-4" />
               <span className="text-sm font-bold tabular-nums">{timeLeft}s</span>
             </div>
-            <button onClick={() => { const on = toggleSound(); setSoundOn(on); }} className="w-9 h-9 rounded-xl bg-white/80 dark:bg-white/10 border-2 border-[#161B3A] flex items-center justify-center text-[#161B3A]/70 dark:text-[#F1EDFF]/70 active:scale-90 transition-all" aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+            <button onClick={() => { const on = toggleSound(); setSoundOn(on); }} className="w-9 h-9 rounded-xl bg-white/80 dark:bg-white/10 border-2 border-[#161B3A] dark:border-white/25 flex items-center justify-center text-[#161B3A] dark:text-[#F1EDFF]/70 active:scale-90 transition-all" aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
             </button>
           </div>
 
           {/* Timer bar */}
           <div className="mb-5">
-            <div className="h-2.5 rounded-full bg-white/60 border-2 border-[#161B3A] overflow-hidden">
+            <div className="h-2.5 rounded-full bg-white/60 border-2 border-[#161B3A] dark:border-white/25 overflow-hidden">
               <motion.div className={`h-full rounded-full ${timeLeft <= 10 ? "bg-rose-500" : "bg-gradient-to-r from-emerald-400 to-teal-500"}`} animate={{ width: `${timePct}%` }} transition={{ ease: "linear", duration: 1 }} />
             </div>
           </div>
@@ -496,20 +496,20 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
           <div className="flex-1 flex flex-col justify-center pb-6">
             <AnimatePresence mode="wait">
               <motion.div key={idx} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.18 }} className="rounded-3xl bg-white/[0.07] border border-white/10 p-6 text-center mb-6">
-                <p className="text-xs font-bold uppercase tracking-wider text-[#161B3A]/60 mb-3">Soal {idx + 1} / {questions.length}</p>
-                <h2 className="text-lg font-bold text-[#161B3A] leading-snug mb-5">{current?.soal}</h2>
+                <p className="text-xs font-bold uppercase tracking-wider text-[#161B3A] dark:text-[#F1EDFF]/60 mb-3">Soal {idx + 1} / {questions.length}</p>
+                <h2 className="text-lg font-bold text-[#161B3A] dark:text-[#F1EDFF] leading-snug mb-5">{current?.soal}</h2>
                 <div className="inline-block px-5 py-3 rounded-2xl bg-white/10 border border-white/15">
-                  <span className="text-[11px] text-[#161B3A]/50 block mb-0.5">Jawabannya:</span>
-                  <span className="text-xl font-extrabold text-[#161B3A]">{current?.opsi[candidateIdx]}</span>
+                  <span className="text-[11px] text-[#161B3A] dark:text-[#F1EDFF]/50 block mb-0.5">Jawabannya:</span>
+                  <span className="text-xl font-extrabold text-[#161B3A] dark:text-[#F1EDFF]">{current?.opsi[candidateIdx]}</span>
                 </div>
               </motion.div>
             </AnimatePresence>
 
             <div className="grid grid-cols-2 gap-3">
-              <button onClick={() => answer(true)} className={`py-5 rounded-3xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white font-extrabold text-lg shadow-lg shadow-emerald-600/30 active:scale-95 transition-all flex flex-col items-center gap-1 border-4 border-[#161B3A]`}>
+              <button onClick={() => answer(true)} className={`py-5 rounded-3xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white font-extrabold text-lg shadow-lg shadow-emerald-600/30 active:scale-95 transition-all flex flex-col items-center gap-1 border-4 border-[#161B3A] dark:border-white/25`}>
                 <Check className="w-7 h-7" /> BENAR
               </button>
-              <button onClick={() => answer(false)} className={`py-5 rounded-3xl bg-gradient-to-br from-rose-500 to-red-600 text-white font-extrabold text-lg shadow-lg shadow-rose-600/30 active:scale-95 transition-all flex flex-col items-center gap-1 border-4 border-[#161B3A]`}>
+              <button onClick={() => answer(false)} className={`py-5 rounded-3xl bg-gradient-to-br from-rose-500 to-red-600 text-white font-extrabold text-lg shadow-lg shadow-rose-600/30 active:scale-95 transition-all flex flex-col items-center gap-1 border-4 border-[#161B3A] dark:border-white/25`}>
                 <X className="w-7 h-7" /> SALAH
               </button>
             </div>
@@ -517,7 +517,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
 
           <div className="flex items-center justify-between">
             <button className={`${btnBase} w-12 h-12 bg-white/90 dark:bg-white/20 border-2 dark:border-white/25 hover:bg-white dark:hover:bg-white/30`} onClick={() => { stopBGM(); setScreen("levels"); }} aria-label="Keluar">
-              <X className="w-5 h-5 text-[#161B3A] text-[#161B3A]" />
+              <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF] text-[#161B3A] dark:text-[#F1EDFF]" />
             </button>
             <div className="hidden md:block text-xs font-semibold opacity-60">Tombol keyboard: ← Benar • → Salah</div>
             <div className="w-11" />
@@ -556,19 +556,19 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
           </div>
 
           <div className="grid grid-cols-4 gap-2 max-w-sm mx-auto mb-6 text-center">
-            <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[2px_2px_0_#059669]">
+            <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[2px_2px_0_#059669]">
               <div className="text-[9px] font-extrabold uppercase opacity-70">Benar</div>
               <div className="font-extrabold text-lg">{result.correct}</div>
             </div>
-            <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[2px_2px_0_#059669]">
+            <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[2px_2px_0_#059669]">
               <div className="text-[9px] font-extrabold uppercase opacity-70">Salah</div>
               <div className="font-extrabold text-lg">{result.wrong}</div>
             </div>
-            <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[2px_2px_0_#059669]">
+            <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[2px_2px_0_#059669]">
               <div className="text-[9px] font-extrabold uppercase opacity-70">Akurasi</div>
               <div className="font-extrabold text-lg">{result.accuracy}%</div>
             </div>
-            <div className="bg-white dark:bg-[#0E2820] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[2px_2px_0_#059669]">
+            <div className="bg-white dark:bg-[#0E2820] border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[2px_2px_0_#059669]">
               <div className="text-[9px] font-extrabold uppercase opacity-70">Rentetan</div>
               <div className="font-extrabold text-lg">{result.maxCombo}</div>
             </div>
@@ -592,7 +592,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
             <button onClick={() => setScreen("levels")} className={`${btnBase} w-full py-3.5 bg-[#FBBF24] font-bold`}>
               Pilih Tingkat
             </button>
-            <Link href={backHref} className={`${btnBase} w-full py-3.5 bg-emerald-500/20 border-2 border-emerald-400/40 text-[#161B3A]/80 dark:text-[#F1EDFF]/80 font-semibold text-center`}>
+            <Link href={backHref} className={`${btnBase} w-full py-3.5 bg-emerald-500/20 border-2 border-emerald-400/40 text-[#161B3A] dark:text-[#F1EDFF]/80 font-semibold text-center`}>
               Kembali ke Arena
             </Link>
           </div>
@@ -604,7 +604,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
   /* Fallback / Loading */
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#071510] dark:to-[#0D2018] text-[#161B3A] dark:text-[#F1EDFF]">
-      <Loader2 className="w-10 h-10 animate-spin text-[#161B3A]" />
+      <Loader2 className="w-10 h-10 animate-spin text-[#161B3A] dark:text-[#F1EDFF]" />
     </div>
   );
 }

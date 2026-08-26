@@ -139,7 +139,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
     }, isCorrect ? 650 : 1400);
   };
 
-  const chunky = "border-4 border-[#161B3A] shadow-[6px_6px_0_#CA8A04]";
+  const chunky = "border-4 border-[#161B3A] dark:border-white/25 shadow-[6px_6px_0_#CA8A04]";
   const btnBase = `inline-flex items-center justify-center gap-2 font-extrabold rounded-2xl ${chunky} transition-transform active:translate-x-1.5 active:translate-y-1.5 active:shadow-none hover:-translate-x-0.5 hover:-translate-y-0.5`;
 
   /* ---------- START ---------- */
@@ -152,10 +152,10 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
         @keyframes mc-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
         .mc-screen{animation:mc-fade .35s ease}
         .mc-logo{animation:mc-pulse 1.4s ease-in-out infinite}`}</style>
-        <div className="pointer-events-none fixed top-[8%] left-[3%] w-16 h-16 bg-[#8B5CF6] border-4 border-[#161B3A] rounded-3xl" style={{ animation: "mc-float1 9s ease-in-out infinite" }} />
-        <div className="pointer-events-none fixed top-[16%] right-[5%] w-12 h-12 bg-[#38BDF8] border-4 border-[#161B3A] rounded-full" style={{ animation: "mc-float2 10s ease-in-out infinite" }} />
-        <div className="pointer-events-none fixed bottom-[14%] left-[2%] w-14 h-14 bg-[#FBBF24] border-4 border-[#161B3A] rounded-2xl" style={{ animation: "mc-float1 11s ease-in-out infinite" }} />
-        <div className="pointer-events-none fixed bottom-[10%] right-[4%] w-11 h-11 bg-[#EC4899] border-4 border-[#161B3A] rounded-[30%_70%_70%_30%]" style={{ animation: "mc-float2 8s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed top-[8%] left-[3%] w-16 h-16 bg-[#8B5CF6] border-4 border-[#161B3A] dark:border-white/25 rounded-3xl" style={{ animation: "mc-float1 9s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed top-[16%] right-[5%] w-12 h-12 bg-[#38BDF8] border-4 border-[#161B3A] dark:border-white/25 rounded-full" style={{ animation: "mc-float2 10s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed bottom-[14%] left-[2%] w-14 h-14 bg-[#FBBF24] border-4 border-[#161B3A] dark:border-white/25 rounded-2xl" style={{ animation: "mc-float1 11s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed bottom-[10%] right-[4%] w-11 h-11 bg-[#EC4899] border-4 border-[#161B3A] dark:border-white/25 rounded-[30%_70%_70%_30%]" style={{ animation: "mc-float2 8s ease-in-out infinite" }} />
 
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
@@ -168,27 +168,27 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
                 <div className="text-[11px] font-semibold dark:text-[#B89830] mt-0.5">Panjat setinggi mungkin</div>
               </div>
             </div>
-            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white border-2 border-slate-200 text-[#161B3A] hover:bg-slate-50`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white border-2 border-slate-200 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
             </button>
           </div>
 
           <div className="mc-screen bg-white dark:bg-gradient-to-br dark:from-[#221E18] dark:via-[#1E1A12] dark:to-[#1A1610] dark:border-amber-600/30 rounded-3xl p-6 text-center flex-1 flex flex-col items-center justify-center">
-            <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-full font-extrabold text-xs shadow-[3px_3px_0_#CA8A04] mb-4">Soal dari Pelajaranmu</span>
+            <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] dark:border-white/25 rounded-full font-extrabold text-xs shadow-[3px_3px_0_#CA8A04] mb-4">Soal dari Pelajaranmu</span>
             <h1 className="font-extrabold text-4xl mb-2">Menara <span className="dark:text-[#D4A843]">Cerdas!</span></h1>
             <p className="dark:text-[#D4C8A0] text-sm max-w-sm mb-1">Panjat menara dengan menjawab soal dari pelajaranmu. Setiap jawaban benar = naik 1 lantai!</p>
             <p className="text-xs dark:text-[#8A7A40] mb-6">Jaga 3 nyawamu, bertahanlah setinggi mungkin.</p>
 
             <div className="grid grid-cols-3 gap-2.5 mb-6 w-full max-w-xs">
-              <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]">
+              <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]">
                 <div className="text-[10px] font-extrabold uppercase opacity-80">Nyawa</div>
                 <div className="font-extrabold text-lg">3 ❤️</div>
               </div>
-              <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]">
+              <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]">
                 <div className="text-[10px] font-extrabold uppercase opacity-70">Rentetan</div>
                 <div className="font-extrabold text-lg">Bonus</div>
               </div>
-              <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]">
+              <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]">
                 <div className="text-[10px] font-extrabold uppercase opacity-70">Naik</div>
                 <div className="font-extrabold text-lg">+XP</div>
               </div>
@@ -211,22 +211,22 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
         <Burst trigger={burst} x={50} y={38} count={28} />
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col items-center justify-center text-center">
           <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 180 }}
-            className={`w-24 h-24 rounded-[28px] flex items-center justify-center shadow-2xl mb-5 border-4 border-[#161B3A] ${cleared ? "bg-gradient-to-br from-amber-400 to-orange-500" : "bg-gradient-to-br from-violet-500 to-purple-600"}`}>
+            className={`w-24 h-24 rounded-[28px] flex items-center justify-center shadow-2xl mb-5 border-4 border-[#161B3A] dark:border-white/25 ${cleared ? "bg-gradient-to-br from-amber-400 to-orange-500" : "bg-gradient-to-br from-violet-500 to-purple-600"}`}>
             {cleared ? <Trophy className="w-12 h-12 text-white" /> : <Mountain className="w-12 h-12 text-white" />}
           </motion.div>
           <h1 className="text-2xl font-extrabold dark:text-[#F5C542] mb-1">{cleared ? "Puncak Ditaklukkan!" : "Permainan Selesai"}</h1>
           <p className="text-sm dark:text-[#D4C8A0] opacity-60 mb-6">Kamu memanjat <span className="font-extrabold">{floor} lantai</span></p>
 
           <div className="grid grid-cols-3 gap-2.5 mb-5 w-full max-w-xs">
-            <div className="bg-[#8B5CF6] text-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]">
+            <div className="bg-[#8B5CF6] text-white border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]">
               <div className="text-[9px] font-extrabold uppercase opacity-80">Lantai</div>
               <div className="font-extrabold text-lg">{floor}</div>
             </div>
-            <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]">
+            <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]">
               <div className="text-[9px] font-extrabold uppercase opacity-70">Rentetan</div>
               <div className="font-extrabold text-lg">{best}🔥</div>
             </div>
-            <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]">
+            <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]">
               <div className="text-[9px] font-extrabold uppercase opacity-70">XP</div>
               <div className="font-extrabold text-lg">{xpResult ? `+${xpResult.xpEarned}` : "…"}</div>
             </div>
@@ -242,7 +242,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
             <button onClick={start} className={`${btnBase} w-full py-3.5 bg-gradient-to-r from-violet-500 to-purple-600 dark:from-amber-500 dark:to-amber-600 text-white dark:shadow-[0_0_16px_rgba(245,197,66,0.25)]`}>
               <RotateCcw className="w-4 h-4" /> Main Lagi
             </button>
-            <Link href={backHref} className={`${btnBase} w-full py-3.5 bg-white border-2 border-slate-200 text-[#161B3A] hover:bg-slate-50 text-center`}>
+            <Link href={backHref} className={`${btnBase} w-full py-3.5 bg-white border-2 border-slate-200 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 text-center`}>
               Kembali ke Arena
             </Link>
           </div>
@@ -260,7 +260,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
       <motion.div animate={controls} className="relative z-10 flex-1 flex flex-col max-w-md w-full mx-auto px-4 pt-4 pb-5 min-h-0">
         {/* HUD */}
         <div className="flex items-center justify-between mb-3">
-          <div className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white dark:bg-gradient-to-r dark:from-[#201C14] dark:to-[#262018] dark:border-amber-700/30 dark:shadow-[0_0_10px_rgba(202,138,4,0.15)] border-2 border-[#161B3A]">
+          <div className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white dark:bg-gradient-to-r dark:from-[#201C14] dark:to-[#262018] dark:border-amber-700/30 dark:shadow-[0_0_10px_rgba(202,138,4,0.15)] border-2 border-[#161B3A] dark:border-white/25">
             {Array.from({ length: MAX_HEARTS }).map((_, i) => (
               <Heart key={i} className={`w-4 h-4 ${i < hearts ? "text-rose-500 fill-rose-500" : "text-gray-300 dark:text-amber-800/40"}`} />
             ))}
@@ -273,7 +273,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
               </motion.div>
             )}
           </AnimatePresence>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#8B5CF6] text-white border-2 border-[#161B3A]">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#8B5CF6] text-white border-2 border-[#161B3A] dark:border-white/25">
             <Mountain className="w-4 h-4" />
             <span className="text-sm font-bold">Lt. {floor}</span>
           </div>
@@ -296,12 +296,12 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
                 {(bolehPakaiHint || dicoret !== undefined) && (
                   <div className="mt-1 mb-1 flex items-center gap-2">
                     {dicoret !== undefined ? (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-100 dark:bg-amber-500/15 border-2 border-[#161B3A] text-[11px] font-extrabold">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-100 dark:bg-amber-500/15 border-2 border-[#161B3A] dark:border-white/25 text-[11px] font-extrabold">
                         <Lightbulb className="w-3.5 h-3.5" /> Petunjuk terpakai
                       </span>
                     ) : (
                       <button onClick={pakaiHint} disabled={hintProses}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FBBF24] border-2 border-[#161B3A] shadow-[3px_3px_0_#CA8A04] text-[11px] font-extrabold active:translate-x-0.5 active:translate-y-0.5 active:shadow-none disabled:opacity-60">
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FBBF24] border-2 border-[#161B3A] dark:border-white/25 shadow-[3px_3px_0_#CA8A04] text-[11px] font-extrabold active:translate-x-0.5 active:translate-y-0.5 active:shadow-none disabled:opacity-60">
                         <Lightbulb className="w-3.5 h-3.5" />
                         {hintProses ? "Memakai…" : `Coret 1 opsi salah (${hintCount})`}
                       </button>
@@ -319,11 +319,11 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
                     const isCorrect = i === current.jawaban;
                     const reveal = picked !== null;
                     const isDicoret = dicoret === i;
-                    let cls = "bg-white dark:bg-[#1C1A14] dark:border-amber-800/30 border-[#161B3A]";
-                    if (!reveal && isDicoret) cls = "bg-gray-100 dark:bg-[#1A1610]/60 dark:border-amber-800/10 border-[#161B3A]/20 opacity-50 line-through";
+                    let cls = "bg-white dark:bg-[#1C1A14] dark:border-amber-800/30 border-[#161B3A] dark:border-white/25";
+                    if (!reveal && isDicoret) cls = "bg-gray-100 dark:bg-[#1A1610]/60 dark:border-amber-800/10 border-[#161B3A] dark:border-white/25/20 opacity-50 line-through";
                     if (reveal && isCorrect) cls = "bg-emerald-100 dark:bg-emerald-500/25 border-emerald-600 dark:border-emerald-400 dark:shadow-[0_0_12px_rgba(52,211,153,0.25)]";
                     else if (reveal && isPicked && !isCorrect) cls = "bg-rose-100 dark:bg-rose-500/25 border-rose-600 dark:border-rose-400 dark:shadow-[0_0_12px_rgba(251,113,133,0.25)]";
-                    else if (reveal) cls = "bg-white/50 dark:bg-[#1E1A14]/60 dark:border-amber-800/10 border-[#161B3A]/20 opacity-50";
+                    else if (reveal) cls = "bg-white/50 dark:bg-[#1E1A14]/60 dark:border-amber-800/10 border-[#161B3A] dark:border-white/25/20 opacity-50";
                     return (
                       <button key={i} onClick={() => choose(i)} disabled={reveal || isDicoret}
                         className={`relative w-full text-left px-4 py-3.5 rounded-2xl border-[3px] font-semibold transition-all active:scale-[0.98] shadow-[3px_3px_0_#CA8A04] ${cls}`}>
@@ -338,7 +338,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
                 <AnimatePresence>
                   {picked !== null && picked !== current.jawaban && current?.penjelasan && (
                     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                      className="mt-4 p-3.5 rounded-2xl bg-amber-100 dark:bg-amber-500/20 border-[3px] border-[#161B3A] shadow-[3px_3px_0_#CA8A04]">
+                      className="mt-4 p-3.5 rounded-2xl bg-amber-100 dark:bg-amber-500/20 border-[3px] border-[#161B3A] dark:border-white/25 shadow-[3px_3px_0_#CA8A04]">
                       <p className="text-xs dark:text-[#D4C8A0] leading-relaxed"><span className="font-extrabold dark:text-[#D4A843]">Penjelasan: </span>{current.penjelasan}</p>
                     </motion.div>
                   )}
@@ -362,13 +362,13 @@ function Tower({ floor, total }: { floor: number; total: number }) {
         {cleared ? "🚩" : "⛰️"}
       </motion.div>
 
-      <div className="relative flex-1 w-full rounded-2xl overflow-hidden border-[3px] border-[#161B3A] bg-white dark:bg-gradient-to-b dark:from-[#201C14] dark:to-[#1A1610] dark:border-amber-700/30 dark:shadow-[3px_3px_0_#CA8A04,0_0_12px_rgba(202,138,4,0.2)]">
+      <div className="relative flex-1 w-full rounded-2xl overflow-hidden border-[3px] border-[#161B3A] dark:border-white/25 bg-white dark:bg-gradient-to-b dark:from-[#201C14] dark:to-[#1A1610] dark:border-amber-700/30 dark:shadow-[3px_3px_0_#CA8A04,0_0_12px_rgba(202,138,4,0.2)]">
         <motion.div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-amber-600 via-amber-500 to-yellow-400 dark:from-amber-600 dark:via-amber-400 dark:to-yellow-300 dark:shadow-[0_0_8px_rgba(245,197,66,0.3)]"
           animate={{ height: `${pct}%` }} transition={{ type: "spring", stiffness: 120, damping: 16 }} />
 
         <div className="absolute inset-0 flex flex-col-reverse">
           {Array.from({ length: total || 1 }).map((_, i) => (
-            <div key={i} className="flex-1 border-t-2 border-[#161B3A]/10 dark:border-amber-800/15 flex items-center justify-center gap-1">
+            <div key={i} className="flex-1 border-t-2 border-[#161B3A] dark:border-white/25/10 dark:border-amber-800/15 flex items-center justify-center gap-1">
               <span className={`w-1.5 h-1.5 rounded-[2px] ${i < floor ? "bg-amber-400 dark:bg-amber-300" : "bg-[#161B3A]/10 dark:bg-amber-800/20"}`} />
               <span className={`w-1.5 h-1.5 rounded-[2px] ${i < floor ? "bg-amber-400 dark:bg-amber-300" : "bg-[#161B3A]/10 dark:bg-amber-800/20"}`} />
             </div>

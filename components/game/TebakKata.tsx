@@ -486,7 +486,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
     setGuess(masked.replace(/_/g, ""));
   };
 
-  const chunky = "border-4 border-[#161B3A] shadow-[6px_6px_0_#0D9488]";
+  const chunky = "border-4 border-[#161B3A] dark:border-white/25 shadow-[6px_6px_0_#0D9488]";
   const btnBase = `inline-flex items-center justify-center gap-2 font-extrabold rounded-2xl ${chunky} transition-transform active:translate-x-1.5 active:translate-y-1.5 active:shadow-none hover:-translate-x-0.5 hover:-translate-y-0.5`;
 
   /* ---------- START ---------- */
@@ -499,10 +499,10 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
         @keyframes tk-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
         .tk-screen{animation:tk-fade .35s ease}
         .tk-logo{animation:tk-pulse 1.4s ease-in-out infinite}`}</style>
-        <div className="pointer-events-none fixed top-[8%] left-[3%] w-16 h-16 bg-[#8B5CF6] border-4 border-[#161B3A] rounded-3xl" style={{ animation: "tk-float1 9s ease-in-out infinite" }} />
-        <div className="pointer-events-none fixed top-[16%] right-[5%] w-12 h-12 bg-[#38BDF8] border-4 border-[#161B3A] rounded-full" style={{ animation: "tk-float2 10s ease-in-out infinite" }} />
-        <div className="pointer-events-none fixed bottom-[14%] left-[2%] w-14 h-14 bg-[#FBBF24] border-4 border-[#161B3A] rounded-2xl" style={{ animation: "tk-float1 11s ease-in-out infinite" }} />
-        <div className="pointer-events-none fixed bottom-[10%] right-[4%] w-11 h-11 bg-[#4ADE80] border-4 border-[#161B3A] rounded-[30%_70%_70%_30%]" style={{ animation: "tk-float2 8s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed top-[8%] left-[3%] w-16 h-16 bg-[#8B5CF6] border-4 border-[#161B3A] dark:border-white/25 rounded-3xl" style={{ animation: "tk-float1 9s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed top-[16%] right-[5%] w-12 h-12 bg-[#38BDF8] border-4 border-[#161B3A] dark:border-white/25 rounded-full" style={{ animation: "tk-float2 10s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed bottom-[14%] left-[2%] w-14 h-14 bg-[#FBBF24] border-4 border-[#161B3A] dark:border-white/25 rounded-2xl" style={{ animation: "tk-float1 11s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed bottom-[10%] right-[4%] w-11 h-11 bg-[#4ADE80] border-4 border-[#161B3A] dark:border-white/25 rounded-[30%_70%_70%_30%]" style={{ animation: "tk-float2 8s ease-in-out infinite" }} />
 
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
@@ -515,27 +515,27 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
                 <div className="text-[11px] font-semibold opacity-60 mt-0.5">Tebak dari petunjuk bertahap</div>
               </div>
             </div>
-            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white border-2 border-slate-200 text-[#161B3A] hover:bg-slate-50`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white border-2 border-slate-200 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
             </button>
           </div>
 
           <div className="tk-screen bg-white dark:bg-gradient-to-br dark:from-[#0E2028] dark:to-[#162C34] rounded-3xl p-6 text-center flex-1 flex flex-col items-center justify-center">
-            <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-full font-extrabold text-xs shadow-[3px_3px_0_#0D9488] mb-4">9 Level • 3 Nyawa</span>
+            <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] dark:border-white/25 rounded-full font-extrabold text-xs shadow-[3px_3px_0_#0D9488] mb-4">9 Level • 3 Nyawa</span>
             <h1 className="font-extrabold text-4xl mb-2">Tebak <span className="text-[#8B5CF6]">Kata!</span></h1>
             <p className="opacity-70 text-sm max-w-sm mb-1">Baca petunjuknya, tebak katanya. Makin cepat menjawab — sebelum petunjuk berikutnya terbuka — makin besar bonusnya!</p>
             <p className="text-xs opacity-50 mb-6">Salah 3 kali, permainan berakhir.</p>
 
             <div className="grid grid-cols-3 gap-2.5 mb-6 w-full max-w-xs">
-              <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#0D9488]">
+              <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#0D9488]">
                 <div className="text-[10px] font-extrabold uppercase opacity-70">Petunjuk 1</div>
                 <div className="font-extrabold text-lg">+150</div>
               </div>
-              <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#0D9488]">
+              <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#0D9488]">
                 <div className="text-[10px] font-extrabold uppercase opacity-70">Rentetan</div>
                 <div className="font-extrabold text-lg">Bonus</div>
               </div>
-              <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#0D9488]">
+              <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#0D9488]">
                 <div className="text-[10px] font-extrabold uppercase opacity-70">Salah</div>
                 <div className="font-extrabold text-lg">-1 ❤️</div>
               </div>
@@ -563,13 +563,13 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
         <style>{`.tk-screen{animation:tk-fade .35s ease}@keyframes tk-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}`}</style>
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <button className={`${btnBase} w-12 h-12 bg-white border-2 border-slate-200 text-[#161B3A] hover:bg-slate-50`} onClick={() => setScreen("start")} aria-label="Kembali">
-              <X className="w-5 h-5 text-[#161B3A] text-[#161B3A]" />
+            <button className={`${btnBase} w-12 h-12 bg-white border-2 border-slate-200 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50`} onClick={() => setScreen("start")} aria-label="Kembali">
+              <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF] text-[#161B3A] dark:text-[#F1EDFF]" />
             </button>
             <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
             <div className="w-11" />
           </div>
-          <div className="tk-screen bg-white dark:bg-gradient-to-br dark:from-[#0E2028] dark:to-[#162C34] rounded-3xl p-5 shadow-[6px_6px_0_#0D9488] border-4 border-[#161B3A]">
+          <div className="tk-screen bg-white dark:bg-gradient-to-br dark:from-[#0E2028] dark:to-[#162C34] rounded-3xl p-5 shadow-[6px_6px_0_#0D9488] border-4 border-[#161B3A] dark:border-white/25">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {LEVELS.map((lv) => {
                 const unlocked = saved.unlocked.includes(lv.id);
@@ -580,7 +580,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
                     key={lv.id}
                     disabled={!unlocked}
                     onClick={() => unlocked && startLevel(lv.id)}
-                    className={`text-left rounded-2xl border-4 border-[#161B3A] p-3.5 transition-transform ${
+                    className={`text-left rounded-2xl border-4 border-[#161B3A] dark:border-white/25 p-3.5 transition-transform ${
                       unlocked ? "shadow-[5px_5px_0_#0D9488] hover:-translate-x-0.5 hover:-translate-y-0.5 cursor-pointer" : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-[5px_5px_0_#9CA3AF] dark:bg-slate-700/60 dark:text-[#1A4A44]"
                     }`}
                     style={unlocked ? { background: lv.color, color: ["#FBBF24", "#F59E0B", "#4ADE80", "#38BDF8"].includes(lv.color) ? "#161B3A" : "#fff" } : undefined}
@@ -619,14 +619,14 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
         <div className="relative max-w-lg mx-auto px-5 pt-4 pb-8 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <button className={`${btnBase} w-12 h-12 bg-white/90 dark:bg-white/20 border-2 dark:border-white/25 hover:bg-white dark:hover:bg-white/30`} onClick={() => { stopBGM(); setScreen("levels"); }} aria-label="Keluar">
-              <X className="w-5 h-5 text-[#161B3A] text-[#161B3A]" />
+              <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF] text-[#161B3A] dark:text-[#F1EDFF]" />
             </button>
             <div className="flex items-center gap-2">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white dark:bg-[#0E2028] border-2 border-[#161B3A]">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white dark:bg-[#0E2028] border-2 border-[#161B3A] dark:border-white/25">
                 <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
                 <span className="text-sm font-bold">{score}</span>
               </div>
-              <div className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white dark:bg-[#0E2028] border-2 border-[#161B3A]">
+              <div className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white dark:bg-[#0E2028] border-2 border-[#161B3A] dark:border-white/25">
                 {[...Array(3)].map((_, i) => (
                   <Heart key={i} className={`w-4 h-4 ${i < lives ? "text-rose-500 fill-rose-500" : "text-gray-300 dark:text-[#1A4A44]"}`} />
                 ))}
@@ -645,20 +645,20 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
           </div>
 
           <div className="flex justify-center mb-5">
-            <span className="px-4 py-1.5 rounded-full font-extrabold text-xs border-[3px] border-[#161B3A] shadow-[3px_3px_0_#0D9488]" style={{ background: level.color, color: ["#FBBF24", "#F59E0B", "#4ADE80", "#38BDF8"].includes(level.color) ? "#161B3A" : "#fff" }}>
+            <span className="px-4 py-1.5 rounded-full font-extrabold text-xs border-[3px] border-[#161B3A] dark:border-white/25 shadow-[3px_3px_0_#0D9488]" style={{ background: level.color, color: ["#FBBF24", "#F59E0B", "#4ADE80", "#38BDF8"].includes(level.color) ? "#161B3A" : "#fff" }}>
               {currentWord.category}
             </span>
           </div>
 
           <div className="flex items-center justify-center gap-1.5 mb-6 flex-wrap">
             {currentWord.word.split("").map((_, i) => (
-              <div key={i} className="w-9 h-11 rounded-xl bg-white dark:bg-[#0E2028] border-[3px] border-[#161B3A] shadow-[2px_2px_0_#0D9488] flex items-center justify-center">
+              <div key={i} className="w-9 h-11 rounded-xl bg-white dark:bg-[#0E2028] border-[3px] border-[#161B3A] dark:border-white/25 shadow-[2px_2px_0_#0D9488] flex items-center justify-center">
                 <span className={`text-sm font-extrabold ${isDark ? "text-[#F1EDFF]/25" : "text-[#161B3A]/25"}`}>{i + 1}</span>
               </div>
             ))}
           </div>
 
-          <div className="bg-white dark:bg-[#0E2028] rounded-2xl p-5 mb-5 border-4 border-[#161B3A] shadow-[5px_5px_0_#0D9488]">
+          <div className="bg-white dark:bg-[#0E2028] rounded-2xl p-5 mb-5 border-4 border-[#161B3A] dark:border-white/25 shadow-[5px_5px_0_#0D9488]">
             <p className="text-xs font-extrabold uppercase tracking-wider opacity-50 mb-3">Petunjuk</p>
             <AnimatePresence mode="wait">
               <motion.div key={currentClue} initial={{ x: 16, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -16, opacity: 0 }} className="space-y-2.5">
@@ -678,7 +678,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
               onChange={(e) => setGuess(e.target.value.toUpperCase().replace(/[^A-Z ]/g, ""))}
               onKeyDown={(e) => e.key === "Enter" && checkAnswer()}
               placeholder="Ketik jawaban..."
-              className={`w-full border-4 border-[#161B3A] rounded-2xl px-5 py-4 text-center text-xl font-extrabold tracking-widest focus:outline-none shadow-[4px_4px_0_#0D9488] bg-white dark:bg-[#0E2028] placeholder-[#161B3A]/25 dark:placeholder-[#F1EDFF]/25 dark:text-[#F1EDFF]`}
+              className={`w-full border-4 border-[#161B3A] dark:border-white/25 rounded-2xl px-5 py-4 text-center text-xl font-extrabold tracking-widest focus:outline-none shadow-[4px_4px_0_#0D9488] bg-white dark:bg-[#0E2028] placeholder-[#161B3A]/25 dark:placeholder-[#F1EDFF]/25 dark:text-[#F1EDFF]`}
               maxLength={currentWord.word.length + 5}
               autoFocus
             />
@@ -695,7 +695,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
 
           <AnimatePresence>
             {feedback && (
-              <motion.div initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -16, opacity: 0 }} className={`p-4 rounded-2xl text-center border-[3px] border-[#161B3A] shadow-[3px_3px_0_#0D9488] ${feedback.correct ? "bg-emerald-100 dark:bg-emerald-500/15" : "bg-rose-100 dark:bg-rose-500/15"}`}>
+              <motion.div initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -16, opacity: 0 }} className={`p-4 rounded-2xl text-center border-[3px] border-[#161B3A] dark:border-white/25 shadow-[3px_3px_0_#0D9488] ${feedback.correct ? "bg-emerald-100 dark:bg-emerald-500/15" : "bg-rose-100 dark:bg-rose-500/15"}`}>
                 <p className={`text-lg font-extrabold ${feedback.correct ? "text-emerald-700 dark:text-emerald-300" : "text-rose-700 dark:text-rose-300"}`}>{feedback.message}</p>
               </motion.div>
             )}
@@ -729,7 +729,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
           </div>
 
           <div className="flex justify-center gap-3 mb-5 text-sm">
-            <div className="bg-white dark:bg-[#0E2028] border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#0D9488]">
+            <div className="bg-white dark:bg-[#0E2028] border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#0D9488]">
               <Zap className="w-4 h-4 inline mr-1 text-amber-500" /> Rentetan maks <b>{result.bestStreak}</b>
             </div>
           </div>
