@@ -242,7 +242,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
             <button onClick={start} className={`${btnBase} w-full py-3.5 bg-gradient-to-r from-violet-500 to-purple-600 dark:from-amber-500 dark:to-amber-600 text-white dark:shadow-[0_0_16px_rgba(245,197,66,0.25)]`}>
               <RotateCcw className="w-4 h-4" /> Main Lagi
             </button>
-            <Link href={backHref} className={`${btnBase} w-full py-3.5 bg-white/80 dark:bg-amber-900/30 dark:border-amber-700/20 dark:text-[#D4C8A0] text-center`}>
+            <Link href={backHref} className={`${btnBase} w-full py-3.5 bg-white/80 dark:bg-white/15 dark:border-white/20 text-center`}>
               Kembali ke Arena
             </Link>
           </div>

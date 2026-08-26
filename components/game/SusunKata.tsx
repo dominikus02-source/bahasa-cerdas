@@ -550,8 +550,8 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
         <style>{`.sk-screen{animation:sk-fade .35s ease}@keyframes sk-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}`}</style>
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <button className={`${btnBase} w-11 h-11 bg-white dark:bg-[#1E1A14]`} onClick={() => setScreen("start")} aria-label="Kembali">
-              <X className="w-5 h-5" />
+            <button className={`${btnBase} w-12 h-12 bg-white/90 dark:bg-white/15 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25`} onClick={() => setScreen("start")} aria-label="Kembali">
+              <X className="w-5 h-5 text-[#161B3A] dark:text-white" />
             </button>
             <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
             <div className="w-11" />
@@ -739,7 +739,7 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
               Pilih Tingkat
             </button>
             {!hideBackButton && (
-              <a href={backHref} className={`${btnBase} w-full py-3.5 bg-white/80 dark:bg-white/10 text-center`}>
+              <a href={backHref} className={`${btnBase} w-full py-3.5 bg-white/80 dark:bg-white/15 dark:border-white/20 text-center`}>
                 Kembali ke Arena
               </a>
             )}

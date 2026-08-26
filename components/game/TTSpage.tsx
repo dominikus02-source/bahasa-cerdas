@@ -837,8 +837,8 @@ export default function TekaTekiSilang() {
         {screen === "levels" && (
           <div className={`tts-screen bg-white dark:bg-gradient-to-br dark:from-[#1A1535] dark:to-[#221C48] rounded-3xl ${chunky} p-5`}>
             <div className="flex items-center justify-between mb-4">
-              <button className={`${btn} w-11 h-11 bg-white dark:bg-[#1A1535]`} onClick={() => setScreen("start")} aria-label="Kembali">
-                <X className="w-5 h-5" />
+              <button className={`${btn} w-12 h-12 bg-white/90 dark:bg-white/15 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25`} onClick={() => setScreen("start")} aria-label="Kembali">
+                <X className="w-5 h-5 text-[#161B3A] dark:text-white" />
               </button>
               <h2 className="font-extrabold text-2xl">Pilih Level</h2>
               <div className="w-11" />
@@ -887,8 +887,8 @@ export default function TekaTekiSilang() {
         {/* ---------- ATUR WAKTU ---------- */}
         {screen === "setup" && (
           <div className={`tts-screen mx-auto w-full max-w-2xl bg-white dark:bg-gradient-to-br dark:from-[#1A1535] dark:to-[#221C48] rounded-3xl ${chunky} p-6 text-center`}>
-            <button className={`${btn} w-11 h-11 bg-white dark:bg-[#1A1535] mb-4`} onClick={() => setScreen("levels")} aria-label="Kembali">
-              <X className="w-5 h-5" />
+            <button className={`${btn} w-12 h-12 bg-white/90 dark:bg-white/15 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25 mb-4`} onClick={() => setScreen("levels")} aria-label="Kembali">
+              <X className="w-5 h-5 text-[#161B3A] dark:text-white" />
             </button>
             <div className="flex justify-center mb-3">
               <MascotFace mascot={mascot} celebrating={false} />
@@ -1276,7 +1276,7 @@ export default function TekaTekiSilang() {
                   <RotateCcw className="w-4 h-4" /> Main Lagi
                 </button>
               )}
-              <button className={`${btn} px-5 py-3 bg-[#FBBF24]`} onClick={() => router.push("/arena/game")}>
+              <button className={`${btn} px-5 py-3 bg-[#FBBF24] hover:brightness-110`} onClick={() => router.push("/arena/game")}>
                 Kembali ke Gim
               </button>
             </div>

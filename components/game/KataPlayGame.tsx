@@ -470,8 +470,8 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
         </div>
         <div className="relative z-10 px-5 pt-6 pb-4">
           <div className="flex items-center gap-3 mb-6">
-            <button onClick={() => { setPhase("levels"); setSelectedLevel(null) }} className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: "rgba(255,255,255,0.06)" }}>
-              <ArrowLeft size={16} className="text-white" />
+            <button onClick={() => { setPhase("levels"); setSelectedLevel(null) }} className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/15 hover:bg-white/25 border border-white/20">
+              <ArrowLeft size={18} className="text-white" />
             </button>
             <div>
               <h2 className="text-xl font-extrabold text-white">{selectedLevel.title}</h2>
@@ -840,7 +840,7 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
           <button onClick={restart} className="w-full py-4 rounded-2xl font-bold text-white transition-all active:scale-[0.98]" style={{ background: "linear-gradient(135deg, #7C3AED, #6D28D9)" }}>
             <RefreshCw size={18} className="inline mr-2" /> Main Lagi
           </button>
-          <button onClick={() => { setPhase("levels"); setSelectedLevel(null) }} className="w-full py-4 rounded-2xl font-bold transition-all active:scale-[0.98]" style={{ background: "rgba(255,255,255,0.06)", color: "#7C7A9E", border: "1px solid rgba(255,255,255,0.06)" }}>
+          <button onClick={() => { setPhase("levels"); setSelectedLevel(null) }} className="w-full py-4 rounded-2xl font-bold transition-all active:scale-[0.98] bg-white/15 hover:bg-white/25 text-[#B0AED0] border border-white/20">
             Kembali ke Tingkat
           </button>
         </div>

@@ -392,8 +392,8 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
         )}
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <button className={`${btnBase} w-11 h-11 bg-white dark:bg-[#0E2820]`} onClick={() => setScreen("start")} aria-label="Kembali">
-              <X className="w-5 h-5" />
+            <button className={`${btnBase} w-12 h-12 bg-white/90 dark:bg-white/15 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25`} onClick={() => setScreen("start")} aria-label="Kembali">
+              <X className="w-5 h-5 text-[#161B3A] dark:text-white" />
             </button>
             <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
             <div className="w-11" />
@@ -592,7 +592,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
             <button onClick={() => setScreen("levels")} className={`${btnBase} w-full py-3.5 bg-[#FBBF24] font-bold`}>
               Pilih Tingkat
             </button>
-            <Link href={backHref} className={`${btnBase} w-full py-3.5 bg-white/80 dark:bg-white/10 text-[#161B3A]/80 dark:text-[#F1EDFF]/80 font-semibold text-center`}>
+            <Link href={backHref} className={`${btnBase} w-full py-3.5 bg-white/80 dark:bg-white/15 dark:border-white/20 text-[#161B3A]/80 dark:text-[#F1EDFF]/80 font-semibold text-center`}>
               Kembali ke Arena
             </Link>
           </div>

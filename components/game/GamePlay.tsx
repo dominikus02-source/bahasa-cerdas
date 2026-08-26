@@ -302,7 +302,7 @@ export default function GamePlay({ roomCode, onFinish }: GamePlayProps) {
           )}
 
           <div className="flex gap-3">
-            <button onClick={onFinish} className="flex-1 bg-white/10 backdrop-blur-md border border-white/30 text-white rounded-2xl py-3 font-semibold hover:bg-white/20 transition-all">
+            <button onClick={onFinish} className="flex-1 bg-white/15 backdrop-blur-md border border-white/30 text-white rounded-2xl py-3 font-semibold hover:bg-white/25 transition-all">
               Kembali ke Lobby
             </button>
           </div>

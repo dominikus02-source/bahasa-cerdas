@@ -1331,10 +1331,10 @@ export default function ZelbyDash() {
             <div className="w-full max-w-[480px] flex justify-between mt-4">
               <button
                 onClick={quit}
-                className={`${btn} w-12 h-12 bg-white dark:bg-[#0C2228]`}
+                className={`${btn} w-12 h-12 bg-white/90 dark:bg-white/15 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25`}
                 aria-label="Keluar"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5 text-[#161B3A] dark:text-white" />
               </button>
               <p className="text-xs font-bold opacity-60 self-center flex items-center gap-1">
                 <svg
@@ -1353,7 +1353,7 @@ export default function ZelbyDash() {
               </p>
               <button
                 onClick={togglePause}
-                className={`${btn} w-12 h-12 bg-white dark:bg-[#0C2228]`}
+                className={`${btn} w-12 h-12 bg-white/90 dark:bg-white/15 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25 dark:text-white`}
                 aria-label={paused ? "Lanjutkan" : "Jeda"}
               >
                 {paused ? (
@@ -1425,7 +1425,7 @@ export default function ZelbyDash() {
               </button>
               <button
                 onClick={() => setScreen("start")}
-                className={`${btn} px-5 py-3 bg-[#FBBF24]`}
+                className={`${btn} px-5 py-3 bg-[#FBBF24] hover:brightness-110`}
               >
                 Pilih Pelajaran
               </button>
