@@ -1211,7 +1211,7 @@ export default function ZelbyDash() {
           </div>
           <button
             onClick={() => setMuted((m) => !m)}
-            className={`${btn} w-11 h-11 bg-white dark:bg-[#0C2228]`}
+            className={`${btn} w-11 h-11 bg-white/90 dark:bg-white/15 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25`}
             aria-label={muted ? "Nyalakan suara" : "Matikan suara"}
           >
             {muted ? (

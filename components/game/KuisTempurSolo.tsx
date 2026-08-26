@@ -964,7 +964,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
       <button
         onClick={gantiSuara}
         aria-label={suara ? "Matikan suara" : "Nyalakan suara"}
-        className={`${btn} h-11 w-11 bg-white dark:bg-[#241218]`}
+        className={`${btn} h-11 w-11 bg-white/90 dark:bg-white/15 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25`}
       >
         {suara ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}
       </button>

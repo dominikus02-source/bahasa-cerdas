@@ -726,7 +726,7 @@ export default function TekaTekiSilang() {
                 <X className="w-5 h-5 text-[#161B3A] dark:text-white" />
               </button>
             )}
-            <button className={`${btn} w-10 h-10 bg-white dark:bg-[#1A1535]`} onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+            <button className={`${btn} w-11 h-11 bg-white/90 dark:bg-white/15 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25`} onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
             </button>
           </div>
@@ -1142,7 +1142,7 @@ export default function TekaTekiSilang() {
                 <CheckCircle2 className="w-4 h-4" /> Cek Jawaban
               </button>
               <button
-                className={`${btn} w-11 h-11 bg-white dark:bg-[#1A1535]`}
+                className={`${btn} w-12 h-12 bg-white/90 dark:bg-white/20 border-2 dark:border-white/25 hover:bg-white dark:hover:bg-white/30`}
                 onClick={() => {
                   // KUIS TTS 1.0 (§23): keluar saat ada progress → konfirmasi.
                   const adaProgress = filledCells > 0 || combo > 0 || timeBudgetRef.current - remainingSec > 0;
@@ -1151,7 +1151,7 @@ export default function TekaTekiSilang() {
                 }}
                 aria-label="Keluar dari permainan"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5 text-[#161B3A] dark:text-white" />
               </button>
             </div>
 

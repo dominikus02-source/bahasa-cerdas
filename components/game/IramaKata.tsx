@@ -664,7 +664,7 @@ export default function IramaKata() {
           </div>
           <button
             onClick={() => setMuted((m) => !m)}
-            className={`${btn} w-11 h-11 bg-white dark:bg-[#221420]`}
+            className={`${btn} w-11 h-11 bg-white/90 dark:bg-white/15 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25`}
             aria-label={muted ? "Nyalakan suara" : "Matikan suara"}
           >
             {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
@@ -828,7 +828,7 @@ export default function IramaKata() {
               <div className="hidden md:block text-xs font-semibold opacity-60">
                 Tombol <span className="font-mono font-extrabold">D F J K</span> · Spasi = jeda
               </div>
-              <button className={`${btn} w-11 h-11 bg-white dark:bg-[#221420]`} onClick={togglePause} aria-label={paused ? "Lanjut" : "Jeda"}>
+              <button className={`${btn} w-11 h-11 bg-white/90 dark:bg-white/15 border-2 dark:border-white/20 hover:bg-white dark:hover:bg-white/25`} onClick={togglePause} aria-label={paused ? "Lanjut" : "Jeda"}>
                 {paused ? <Play className="w-5 h-5" /> : <Pause className="w-5 h-5" />}
               </button>
             </div>
