@@ -949,9 +949,9 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
         <Link
           href={backHref}
           aria-label="Kembali ke daftar gim"
-          className={`${btn} h-12 w-12 shrink-0 bg-red-500/30 border-2 border-red-400/40 hover:bg-red-500/40`}
+          className={`${btn} h-12 w-12 shrink-0 bg-white border-2 border-slate-200 text-[#161B3A] hover:bg-slate-50`}
         >
-          <ArrowLeft className="h-5 w-5 text-[#161B3A] dark:text-red-100" />
+          <ArrowLeft className="h-5 w-5 text-[#161B3A] text-[#161B3A]" />
         </Link>
         <div className="kt-pop h-11 w-11 shrink-0 overflow-hidden rounded-2xl border-4 border-[#161B3A] bg-white dark:bg-[#241218] shadow-[4px_4px_0_#DC2626]">
           <img src={avatarHdr} alt="" className="h-full w-full object-cover" />
@@ -964,7 +964,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
       <button
         onClick={gantiSuara}
         aria-label={suara ? "Matikan suara" : "Nyalakan suara"}
-        className={`${btn} h-11 w-11 bg-red-500/20 border-2 border-red-400/30 hover:bg-red-500/30`}
+        className={`${btn} h-11 w-11 bg-white border-2 border-slate-200 text-[#161B3A] hover:bg-slate-50`}
       >
         {suara ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}
       </button>

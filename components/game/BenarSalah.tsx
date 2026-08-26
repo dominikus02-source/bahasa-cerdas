@@ -336,7 +336,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
                 <div className="text-[11px] font-semibold opacity-60 mt-0.5">Tes kecepatan & ketepatan</div>
               </div>
             </div>
-            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-emerald-500/20 border-2 border-emerald-400/30 hover:bg-emerald-500/30`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white border-2 border-slate-200 text-[#161B3A] hover:bg-slate-50`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
             </button>
           </div>
@@ -392,8 +392,8 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
         )}
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <button className={`${btnBase} w-12 h-12 bg-emerald-500/30 border-2 border-emerald-400/40 hover:bg-emerald-500/40`} onClick={() => setScreen("start")} aria-label="Kembali">
-              <X className="w-5 h-5 text-[#161B3A] dark:text-emerald-100" />
+            <button className={`${btnBase} w-12 h-12 bg-white border-2 border-slate-200 text-[#161B3A] hover:bg-slate-50`} onClick={() => setScreen("start")} aria-label="Kembali">
+              <X className="w-5 h-5 text-[#161B3A] text-[#161B3A]" />
             </button>
             <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
             <div className="w-11" />
@@ -517,7 +517,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
 
           <div className="flex items-center justify-between">
             <button className={`${btnBase} w-12 h-12 bg-white/90 dark:bg-white/20 border-2 dark:border-white/25 hover:bg-white dark:hover:bg-white/30`} onClick={() => { stopBGM(); setScreen("levels"); }} aria-label="Keluar">
-              <X className="w-5 h-5 text-[#161B3A] dark:text-emerald-100" />
+              <X className="w-5 h-5 text-[#161B3A] text-[#161B3A]" />
             </button>
             <div className="hidden md:block text-xs font-semibold opacity-60">Tombol keyboard: ← Benar • → Salah</div>
             <div className="w-11" />

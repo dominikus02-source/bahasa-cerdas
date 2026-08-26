@@ -722,11 +722,11 @@ export default function TekaTekiSilang() {
           </div>
           <div className="flex items-center gap-2">
             {(screen === "start" || screen === "hearts") && (
-              <button className={`${btn} w-12 h-12 bg-indigo-500/30 border-2 border-indigo-400/40 hover:bg-indigo-500/40`} onClick={() => router.push("/arena/game")} aria-label="Keluar dari gim">
-                <X className="w-5 h-5 text-[#161B3A] dark:text-indigo-100" />
+              <button className={`${btn} w-12 h-12 bg-white border-2 border-slate-200 text-[#161B3A] hover:bg-slate-50`} onClick={() => router.push("/arena/game")} aria-label="Keluar dari gim">
+                <X className="w-5 h-5 text-[#161B3A] text-[#161B3A]" />
               </button>
             )}
-            <button className={`${btn} w-11 h-11 bg-indigo-500/20 border-2 border-indigo-400/30 hover:bg-indigo-500/30`} onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+            <button className={`${btn} w-11 h-11 bg-white border-2 border-slate-200 text-[#161B3A] hover:bg-slate-50`} onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
             </button>
           </div>
@@ -837,8 +837,8 @@ export default function TekaTekiSilang() {
         {screen === "levels" && (
           <div className={`tts-screen bg-white dark:bg-gradient-to-br dark:from-[#1A1535] dark:to-[#221C48] rounded-3xl ${chunky} p-5`}>
             <div className="flex items-center justify-between mb-4">
-              <button className={`${btn} w-12 h-12 bg-indigo-500/30 border-2 border-indigo-400/40 hover:bg-indigo-500/40`} onClick={() => setScreen("start")} aria-label="Kembali">
-                <X className="w-5 h-5 text-[#161B3A] dark:text-indigo-100" />
+              <button className={`${btn} w-12 h-12 bg-white border-2 border-slate-200 text-[#161B3A] hover:bg-slate-50`} onClick={() => setScreen("start")} aria-label="Kembali">
+                <X className="w-5 h-5 text-[#161B3A] text-[#161B3A]" />
               </button>
               <h2 className="font-extrabold text-2xl">Pilih Level</h2>
               <div className="w-11" />
@@ -887,8 +887,8 @@ export default function TekaTekiSilang() {
         {/* ---------- ATUR WAKTU ---------- */}
         {screen === "setup" && (
           <div className={`tts-screen mx-auto w-full max-w-2xl bg-white dark:bg-gradient-to-br dark:from-[#1A1535] dark:to-[#221C48] rounded-3xl ${chunky} p-6 text-center`}>
-            <button className={`${btn} w-12 h-12 bg-indigo-500/30 border-2 border-indigo-400/40 hover:bg-indigo-500/40 mb-4`} onClick={() => setScreen("levels")} aria-label="Kembali">
-              <X className="w-5 h-5 text-[#161B3A] dark:text-indigo-100" />
+            <button className={`${btn} w-12 h-12 bg-white border-2 border-slate-200 text-[#161B3A] hover:bg-slate-50 mb-4`} onClick={() => setScreen("levels")} aria-label="Kembali">
+              <X className="w-5 h-5 text-[#161B3A] text-[#161B3A]" />
             </button>
             <div className="flex justify-center mb-3">
               <MascotFace mascot={mascot} celebrating={false} />
@@ -1142,7 +1142,7 @@ export default function TekaTekiSilang() {
                 <CheckCircle2 className="w-4 h-4" /> Cek Jawaban
               </button>
               <button
-                className={`${btn} w-12 h-12 bg-indigo-500/30 border-2 border-indigo-400/40 hover:bg-indigo-500/40`}
+                className={`${btn} w-12 h-12 bg-white border-2 border-slate-200 text-[#161B3A] hover:bg-slate-50`}
                 onClick={() => {
                   // KUIS TTS 1.0 (§23): keluar saat ada progress → konfirmasi.
                   const adaProgress = filledCells > 0 || combo > 0 || timeBudgetRef.current - remainingSec > 0;
@@ -1151,7 +1151,7 @@ export default function TekaTekiSilang() {
                 }}
                 aria-label="Keluar dari permainan"
               >
-                <X className="w-5 h-5 text-[#161B3A] dark:text-indigo-100" />
+                <X className="w-5 h-5 text-[#161B3A] text-[#161B3A]" />
               </button>
             </div>
 

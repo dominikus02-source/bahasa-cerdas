@@ -1211,7 +1211,7 @@ export default function ZelbyDash() {
           </div>
           <button
             onClick={() => setMuted((m) => !m)}
-            className={`${btn} w-11 h-11 bg-cyan-500/20 border-2 border-cyan-400/30 hover:bg-cyan-500/30`}
+            className={`${btn} w-11 h-11 bg-white border-2 border-slate-200 text-[#161B3A] hover:bg-slate-50`}
             aria-label={muted ? "Nyalakan suara" : "Matikan suara"}
           >
             {muted ? (
@@ -1331,10 +1331,10 @@ export default function ZelbyDash() {
             <div className="w-full max-w-[480px] flex justify-between mt-4">
               <button
                 onClick={quit}
-                className={`${btn} w-12 h-12 bg-cyan-500/30 border-2 border-cyan-400/40 hover:bg-cyan-500/40`}
+                className={`${btn} w-12 h-12 bg-white border-2 border-slate-200 text-[#161B3A] hover:bg-slate-50`}
                 aria-label="Keluar"
               >
-                <X className="w-5 h-5 text-[#161B3A] dark:text-cyan-100" />
+                <X className="w-5 h-5 text-[#161B3A] text-[#161B3A]" />
               </button>
               <p className="text-xs font-bold opacity-60 self-center flex items-center gap-1">
                 <svg
@@ -1353,7 +1353,7 @@ export default function ZelbyDash() {
               </p>
               <button
                 onClick={togglePause}
-                className={`${btn} w-12 h-12 bg-cyan-500/30 border-2 border-cyan-400/40 hover:bg-cyan-500/40 dark:text-white`}
+                className={`${btn} w-12 h-12 bg-white border-2 border-slate-200 text-[#161B3A] hover:bg-slate-50 dark:text-white`}
                 aria-label={paused ? "Lanjutkan" : "Jeda"}
               >
                 {paused ? (
