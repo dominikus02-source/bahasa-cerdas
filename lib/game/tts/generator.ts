@@ -26,14 +26,20 @@
 
 import type { Dir, TtsPuzzle, TtsWord, TtsWordDef } from "./types";
 import { levelConfig } from "./levels";
-import { bankForLevel } from "./word-bank";
+import { bankForLevel, themeKeyForAnswer } from "./word-bank";
 import { mulberry32, type Rng } from "./seed";
-
+import {
+  canAppearInLevel,
+  conflictAnswersFor,
+  wordDifficulty,
+} from "./difficulty";
 export interface BuildPuzzleOptions {
   level: number;
   seed: number;
   /** Jawaban yang dihindari (anti-ulang antar main). Dipakai selama masih ada alternatif. */
   avoidAnswers?: string[];
+  /** P8I: batasi tipe petunjuk agar ragam (maks 2 kata per tipe dalam satu puzzle). */
+  balanceClueTypes?: boolean;
 }
 
 interface PlacedWord {
@@ -179,7 +185,22 @@ function placeWord(board: Board, w: TtsWord, dir: Dir, row: number, col: number)
 export function buildPuzzle(options: BuildPuzzleOptions): TtsPuzzle {
   const cfg = levelConfig(options.level);
   const rng = mulberry32(options.seed);
-  const pool = bankForLevel(options.level);
+  const poolAll = bankForLevel(options.level);
+
+  // ── P8I: metadata kesulitan + gerbang level ──
+  // Kata langka (RARE) tidak boleh muncul sebelum L7; tier lain mengikuti
+  // tema (1:1 dengan level) sehingga pool tidak pernah kosong.
+  const enriched = poolAll.map((w) => ({
+    word: w,
+    ...wordDifficulty(w, themeKeyForAnswer(w.answer) ?? ""),
+  }));
+  const pool: TtsWord[] = enriched
+    .filter((e) => canAppearInLevel(e.word.answer, e.tier, options.level))
+    .map((e) => ({ ...e.word, clueType: e.clueType, tier: e.tier }));
+
+  // ── P8I: peta konflik petunjuk↔jawaban (anti-bocor perpotongan) ──
+  const conflictMap = new Map<string, Set<string>>();
+  for (const w of pool) conflictMap.set(w.answer, conflictAnswersFor(w.answer, pool));
 
   // Anti-ulang: hindari jawaban yang baru saja muncul, selama masih ada
   // alternatif cukup (≥ 2× target).
@@ -192,14 +213,36 @@ export function buildPuzzle(options: BuildPuzzleOptions): TtsPuzzle {
 
   for (let attempt = 0; attempt < maxTries; attempt++) {
     const board: Board = { letters: new Map(), hCells: new Set(), vCells: new Set(), placed: [] };
-    const remaining = shuffle(candidates, rng);
+    const shuffled = shuffle(candidates, rng);
+
+    // ── P8I: pilih kata dengan menghindari pasangan yang saling membocorkan
+    // petunjuk (konflik petunjuk↔jawaban). Bila hasil seleksi kurang dari
+    // minWords, jatuh ke daftar tanpa filter konflik (jaga solvabilitas). ──
+    function pickNonConflicting(list: typeof shuffled): typeof shuffled {
+      const out: typeof shuffled = [];
+      const used = new Set<string>();
+      for (const w of list) {
+        if (used.has(w.answer)) continue;
+        const conflicts = conflictMap.get(w.answer);
+        if (conflicts && [...conflicts].some((c) => used.has(c))) continue;
+        out.push(w);
+        used.add(w.answer);
+        if (out.length >= cfg.targetWords) break;
+      }
+      return out.length >= cfg.minWords ? out : list.slice(0, cfg.targetWords);
+    }
+    const ordered = pickNonConflicting(shuffled);
 
     // Kata pertama: terpanjang, mendatar, di baris acak dekat atas.
-    const first = remaining.reduce((a, b) => (b.answer.length > a.answer.length ? b : a));
+    if (ordered.length === 0) continue;
+    const first = ordered.reduce((a, b) => (b.answer.length > a.answer.length ? b : a));
     const firstRow = Math.floor(rng() * Math.min(3, Math.max(1, cfg.maxRows - first.answer.length)));
     placeWord(board, first, "A", firstRow, 0);
 
-    const rest = remaining.filter((w) => w.answer !== first.answer);
+    const rest = ordered.filter((w) => w.answer !== first.answer);
+    // ── P8I: ragam tipe petunjuk (maks 2 per tipe dalam satu puzzle) ──
+    const typeCount = new Map<string, number>();
+    typeCount.set(first.clueType ?? "definisi", 1);
     while (rest.length > 0 && board.placed.length < cfg.targetWords) {
       const letters = placedLetters(board);
       // Afinitas: paling banyak huruf yang cocok dengan kata terpasang.
@@ -209,11 +252,17 @@ export function buildPuzzle(options: BuildPuzzleOptions): TtsPuzzle {
         if (sa !== sb) return sb - sa;
         return b.answer.length - a.answer.length;
       });
-      const w = rest.shift()!;
+      const idx = rest.findIndex((w) => {
+        const t = w.clueType ?? "definisi";
+        return (typeCount.get(t) ?? 0) < 2;
+      });
+      const w = rest.splice(idx === -1 ? 0 : idx, 1)[0];
       const placements = candidatePlacements(board, w, cfg.maxRows, cfg.maxCols, rng);
       if (placements.length === 0) continue;
       placements.sort((a, b) => b.score - a.score);
       placeWord(board, w, placements[0].dir, placements[0].row, placements[0].col);
+      const t = w.clueType ?? "definisi";
+      typeCount.set(t, (typeCount.get(t) ?? 0) + 1);
     }
 
     if (!best || board.placed.length > best.placed.length) best = board;
@@ -222,22 +271,45 @@ export function buildPuzzle(options: BuildPuzzleOptions): TtsPuzzle {
 
   const board = best ?? { letters: new Map(), hCells: new Set(), vCells: new Set(), placed: [] };
 
-  // Relaksasi: kalau masih kurang dari minWords, paksakan sisa kata dengan
-  // aturan longgar (hanya batas grid + tidak bentrok huruf).
+  // Relaksasi: kalau masih kurang dari minWords, paksakan sisa kata —
+  // tetap WAJIB bercokolong (perpotongan) agar setiap kata bisa disilangkan;
+  // hanya jatuh ke penempatan longgar bila tidak ada opsi berpotongan sama sekali.
   if (board.placed.length < cfg.minWords) {
     const used = new Set(board.placed.map((p) => p.word.answer));
-    for (const w of candidates) {
-      if (used.has(w.answer) || board.placed.length >= cfg.minWords) continue;
-      let placed = false;
-      for (let attempt = 0; attempt < 60 && !placed; attempt++) {
-        const dir: Dir = rng() < 0.5 ? "A" : "D";
-        const row = Math.floor(rng() * Math.max(1, cfg.maxRows - (dir === "D" ? w.answer.length : 0) + 1));
-        const col = Math.floor(rng() * Math.max(1, cfg.maxCols - (dir === "A" ? w.answer.length : 0) + 1));
-        if (!tryPlace(board, w, dir, row, col, cfg.maxRows, cfg.maxCols)) continue;
-        placeWord(board, w, dir, row, col);
-        placed = true;
+    let progress = true;
+    while (board.placed.length < cfg.minWords && progress) {
+      progress = false;
+      for (const w of candidates) {
+        if (used.has(w.answer) || board.placed.length >= cfg.minWords) continue;
+        const placements = candidatePlacements(board, w, cfg.maxRows, cfg.maxCols, rng);
+        const bestPlacement = placements.sort((a, b) => b.score - a.score)[0];
+        if (!bestPlacement) continue;
+        placeWord(board, w, bestPlacement.dir, bestPlacement.row, bestPlacement.col);
+        used.add(w.answer);
+        progress = true;
       }
-      used.add(w.answer);
+    }
+  }
+
+  // ── P8I: buang kata terisolasi (0 perpotongan) selama jumlah ≥ minWords —
+  // menjamin setiap kata dapat disilangkan dan petunjuknya terhubung. ──
+  let dropped = true;
+  while (dropped && board.placed.length > cfg.minWords) {
+    dropped = false;
+    const letterCount = new Map<string, number>();
+    for (const p of board.placed) {
+      for (const [r, c] of wordCells(p)) {
+        const k = key(r, c);
+        letterCount.set(k, (letterCount.get(k) || 0) + 1);
+      }
+    }
+    for (let i = 0; i < board.placed.length && !dropped; i++) {
+      const p = board.placed[i];
+      const crosses = wordCells(p).some(([r, c]) => (letterCount.get(key(r, c)) || 0) > 1);
+      if (!crosses) {
+        board.placed.splice(i, 1);
+        dropped = true;
+      }
     }
   }
 

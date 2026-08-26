@@ -52,6 +52,7 @@ import {
 import { buildPuzzle } from "@/lib/game/tts/generator";
 import { TTS_LEVELS } from "@/lib/game/tts/levels";
 import { dailySeed, randomSeed } from "@/lib/game/tts/seed";
+import { classifyClueType, hintNudgeFor } from "@/lib/game/tts/difficulty";
 import type { Dir, Mascot, TtsWordDef as WordDef } from "@/lib/game/tts/types";
 import { sfx, isSoundOn, toggleSound, haptic } from "@/lib/game/sound";
 import {
@@ -253,6 +254,14 @@ export default function TekaTekiSilang() {
   const [dir, setDir] = useState<Dir>("A");
   const [activeWordNum, setActiveWordNum] = useState<number | null>(null);
   const [hintsUsed, setHintsUsed] = useState(0);
+  // P8I — anggaran petunjuk sisi server (maks 3, tidak reset oleh refresh).
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [hintsRemainingServer, setHintsRemainingServer] = useState<number | null>(null);
+  const [hintBusy, setHintBusy] = useState(false);
+  // P8J — nudge kontekstual gratis (sekali per kata, tanpa anggaran) + abandon.
+  const [nudgedNums, setNudgedNums] = useState<Set<number>>(new Set());
+  const [nudgeText, setNudgeText] = useState<string | null>(null);
+  const [feedbackGiven, setFeedbackGiven] = useState(false);
   const [remainingSec, setRemainingSec] = useState(0);
   const [timeUp, setTimeUp] = useState(false);
   const [result, setResult] = useState<{ pct: number; stars: number; hints: number; time: number; xp: number; coins: number } | null>(null);
@@ -493,23 +502,57 @@ export default function TekaTekiSilang() {
       return capped;
     });
 
-    if (!xpSentRef.current && xp > 0) {
+    const cellsCorrect = correctCells;
+    if (!xpSentRef.current) {
       xpSentRef.current = true;
-      let supabaseId = "";
-      try { supabaseId = JSON.parse(localStorage.getItem("bc-user") || "{}").state?.supabaseId || ""; } catch { /* abaikan */ }
-      // Skor nyata (bukan persen): server memakai skor/10 untuk XP, jadi persen
-      // 0-100 hanya memberi ≤10 XP. Sel ≈ 10 poin + bonus tuntas + bonus beruntun.
-      const serverScore = Math.min(1500, correctCells * 10 + (pct === 100 ? 200 : 0) + bestCombo * 5);
-      fetch("/api/game/xp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          score: serverScore, correct: correctCells, wrong: totalCells - correctCells,
-          maxStreak: bestCombo, xpEarned: xp, gameType: "TEKA_TEKI_SILANG", supabaseId,
-        }),
-      }).catch(() => { /* abaikan */ });
+      // ── P8I: hadiah OTORITATIF dari server — akurasi × tier kesulitan
+      // − penalti petunjuk (hitungan DB). Panggilan ulang tanpa hadiah. ──
+      if (sessionId) {
+        fetch("/api/game/tts/finish", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sessionId, cellsCorrect, cellsTotal: totalCells }),
+        })
+          .then((r) => (r.ok ? r.json() : null))
+          .then((d) => {
+            if (d?.ok && typeof d.xp === "number" && !d.idempotent) {
+              // Ganti nilai lokal dengan angka otoritatif server.
+              setResult((prev) =>
+                prev ? { ...prev, xp: d.xp, coins: d.coins, stars: d.stars, hints: d.hints } : prev
+              );
+              setSaved((prevSaved) => {
+                const delta = d.xp - xp;
+                const deltaCoins = d.coins - coins;
+                const next: Saved = {
+                  unlocked: [...prevSaved.unlocked],
+                  best: { ...prevSaved.best },
+                  xp: Math.max(0, prevSaved.xp + delta),
+                  coins: Math.max(0, prevSaved.coins + deltaCoins),
+                };
+                savedRef.current = next;
+                saveSaved(next);
+                return next;
+              });
+            }
+          })
+          .catch(() => {});
+      } else {
+        // Tanpa sesi (offline/unauthorized): kirim jalur XP lama agar tetap
+        // tercatat — nilai diturunkan server dari skor (bukan dipercaya).
+        let supabaseId = "";
+        try { supabaseId = JSON.parse(localStorage.getItem("bc-user") || "{}").state?.supabaseId || ""; } catch { /* abaikan */ }
+        const serverScore = Math.min(1500, correctCells * 10 + (pct === 100 ? 200 : 0) + bestCombo * 5);
+        fetch("/api/game/xp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            score: serverScore, correct: correctCells, wrong: totalCells - correctCells,
+            maxStreak: bestCombo, xpEarned: xp, gameType: "TEKA_TEKI_SILANG", supabaseId,
+          }),
+        }).catch(() => { /* abaikan */ });
+      }
     }
-  }, [totalCells, correctCells, hintsUsed, remainingSec, puzzle, bestCombo]);
+  }, [totalCells, correctCells, hintsUsed, remainingSec, puzzle, bestCombo, sessionId]);
 
   /* Timer countdown */
   useEffect(() => {
@@ -552,21 +595,57 @@ export default function TekaTekiSilang() {
     if (allCorrect && anyFilled) finishGame(false);
   };
 
-  const useHint = () => {
-    if (!activeWord || timeUp) return;
+  /* P8I — petunjuk terbatas sisi server: klaim anggaran dulu (atomik),
+   * baru ungkap satu huruf. Habis → tombol mati. Tanpa sesi server
+   * (offline/unauthorized) petunjuk tidak tersedia. */
+  const hintsRemaining = hintsRemainingServer ?? 0;
+  const activeWordType = activeWord
+    ? classifyClueType(activeWord.clue, puzzle.subtitle.toLowerCase())
+    : undefined;
+  const nudgeAvailable =
+    activeWordNum != null && !nudgedNums.has(activeWordNum) && !!hintNudgeFor(activeWordType);
+
+  const showNudge = () => {
+    if (activeWordNum == null) return;
+    const text = hintNudgeFor(activeWordType);
+    if (!text) return;
+    setNudgedNums((s) => new Set(s).add(activeWordNum));
+    setNudgeText(text);
+    fireMessage(`Konteks: ${text}`);
+    sfx.tap();
+  };
+
+  const useHint = async () => {
+    if (!activeWord || timeUp || hintBusy) return;
+    if (!sessionId || hintsRemaining <= 0) return;
     const keys = wordCellKeys(activeWord);
     const emptyOrWrong = keys.find((k) => grid[k] !== cells.get(k)?.letter);
     if (!emptyOrWrong) return;
-    const cell = cells.get(emptyOrWrong)!;
-    setGrid((g) => {
-      const next = { ...g, [emptyOrWrong]: cell.letter };
-      checkWordCompletion(cell.row, cell.col, next);
-      return next;
-    });
-    setChecked((c) => ({ ...c, [emptyOrWrong]: "correct" }));
-    setHintsUsed((h) => h + 1);
-    setCombo(0);
-    sfx.tap();
+
+    setHintBusy(true);
+    try {
+      const res = await fetch("/api/game/tts/hint", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId }),
+      });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok || !d.ok) return; // habis/sesi hilang — tanpa pengungkapan
+
+      const cell = cells.get(emptyOrWrong)!;
+      setGrid((g) => {
+        const next = { ...g, [emptyOrWrong]: cell.letter };
+        checkWordCompletion(cell.row, cell.col, next);
+        return next;
+      });
+      setChecked((c) => ({ ...c, [emptyOrWrong]: "correct" }));
+      setHintsUsed((h) => h + 1);
+      setHintsRemainingServer(d.hintsRemaining);
+      setCombo(0);
+      sfx.tap();
+    } finally {
+      setHintBusy(false);
+    }
   };
 
   const clearAll = () => { setGrid({}); setChecked({}); setCombo(0); sfx.tap(); };
@@ -617,6 +696,27 @@ export default function TekaTekiSilang() {
     const budget = timeMinutes * 60;
     timeBudgetRef.current = budget;
     setRemainingSec(budget);
+
+    // P8I — buka sesi server: anggaran petunjuk + validasi hadiah.
+    setSessionId(null);
+    setNudgedNums(new Set());
+    setNudgeText(null);
+    setFeedbackGiven(false);
+    setHintsRemainingServer(null);
+    fetch("/api/game/tts/session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ level: puzzleId, seed, cellsTotal: cells.size }),
+    })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d?.ok && d.sessionId) {
+          setSessionId(d.sessionId);
+          setHintsRemainingServer(d.hintsRemaining);
+        }
+      })
+      .catch(() => {});
+
     setScreen("game");
     sfx.start();
   };
@@ -641,7 +741,7 @@ export default function TekaTekiSilang() {
   const nextHeartLabel = liveHearts.hearts >= HEARTS_MAX ? "Penuh" : fmtCountdown(heartCountdown);
 
   return (
-    <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#0B0A1A] dark:to-[#151030] text-[#161B3A] dark:text-[#F1EDFF]">
+    <div className="fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#0B0A1A] dark:to-[#151030] text-[#161B3A] dark:text-[#F1EDFF]">
       <style>{`
         @keyframes tts-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
         @keyframes tts-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}
@@ -689,7 +789,7 @@ export default function TekaTekiSilang() {
       {/* KUIS TTS 1.0 (§23) — konfirmasi keluar saat progress akan hilang */}
       {confirmExit && (
         <div className="fixed inset-0 z-[90] flex items-center justify-center bg-[#161B3A]/60 p-5 backdrop-blur-sm">
-          <div className="tts-screen w-full max-w-sm rounded-3xl border-4 border-[#161B3A] dark:border-white/25 bg-white dark:bg-gradient-to-br dark:from-[#1A1535] dark:to-[#221C48] p-6 text-center shadow-[6px_6px_0_#4338CA]">
+          <div className="tts-screen w-full max-w-sm rounded-3xl border-4 border-[#161B3A] dark:border-white/25 game-env-card bg-white dark:bg-gradient-to-br dark:from-[#1A1535] dark:to-[#221C48] p-6 text-center shadow-[6px_6px_0_#4338CA]">
             <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl border-4 border-[#161B3A] dark:border-white/25 bg-[#FF6B6B] shadow-[3px_3px_0_#4338CA]">
               <X className="w-7 h-7 text-white" />
             </div>
@@ -722,11 +822,11 @@ export default function TekaTekiSilang() {
           </div>
           <div className="flex items-center gap-2">
             {(screen === "start" || screen === "hearts") && (
-              <button className={`${btn} w-12 h-12 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => router.push("/arena/game")} aria-label="Keluar dari gim">
+              <button className={`${btn} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => router.push("/arena/game")} aria-label="Keluar dari gim">
                 <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
               </button>
             )}
-            <button className={`${btn} w-11 h-11 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+            <button className={`${btn} game-sound-btn w-11 h-11 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
             </button>
           </div>
@@ -837,7 +937,7 @@ export default function TekaTekiSilang() {
         {screen === "levels" && (
           <div className={`tts-screen bg-white dark:bg-gradient-to-br dark:from-[#1A1535] dark:to-[#221C48] rounded-3xl ${chunky} p-5`}>
             <div className="flex items-center justify-between mb-4">
-              <button className={`${btn} w-12 h-12 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => setScreen("start")} aria-label="Kembali">
+              <button className={`${btn} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => setScreen("start")} aria-label="Kembali">
                 <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
               </button>
               <h2 className="font-extrabold text-2xl">Pilih Level</h2>
@@ -887,7 +987,7 @@ export default function TekaTekiSilang() {
         {/* ---------- ATUR WAKTU ---------- */}
         {screen === "setup" && (
           <div className={`tts-screen mx-auto w-full max-w-2xl bg-white dark:bg-gradient-to-br dark:from-[#1A1535] dark:to-[#221C48] rounded-3xl ${chunky} p-6 text-center`}>
-            <button className={`${btn} w-12 h-12 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700 mb-4`} onClick={() => setScreen("levels")} aria-label="Kembali">
+            <button className={`${btn} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700 mb-4`} onClick={() => setScreen("levels")} aria-label="Kembali">
               <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
             </button>
             <div className="flex justify-center mb-3">
@@ -1132,8 +1232,22 @@ export default function TekaTekiSilang() {
 
             {/* Aksi */}
             <div className="w-full flex flex-wrap items-center justify-center gap-2">
-              <button className={`${btn} px-4 py-2.5 bg-white dark:bg-[#1A1535] text-sm`} onClick={useHint} disabled={timeUp}>
-                <Lightbulb className="w-4 h-4" /> Petunjuk
+              <button
+                className={`${btn} px-4 py-2.5 bg-white dark:bg-[#1A1535] text-sm`}
+                onClick={showNudge}
+                disabled={timeUp || !nudgeAvailable || activeWordNum == null}
+                aria-label="Petunjuk konteks kata aktif"
+                title={nudgeAvailable ? "Bantuan memahami petunjuk (gratis)" : "Konteks untuk kata ini sudah ditampilkan"}
+              >
+                <Lightbulb className="w-4 h-4" /> Konteks
+              </button>
+              <button
+                className={`${btn} px-4 py-2.5 bg-white dark:bg-[#1A1535] text-sm`}
+                onClick={useHint}
+                disabled={timeUp || hintBusy || !sessionId || hintsRemaining <= 0}
+                aria-label={`Buka satu huruf, sisa ${hintsRemaining} dari 3`}
+              >
+                <Lightbulb className="w-4 h-4" /> Buka Huruf ({hintsRemaining}/3)
               </button>
               <button className={`${btn} px-4 py-2.5 bg-white dark:bg-[#1A1535] text-sm`} onClick={clearAll} disabled={timeUp}>
                 <Eraser className="w-4 h-4" /> Bersihkan
@@ -1142,7 +1256,7 @@ export default function TekaTekiSilang() {
                 <CheckCircle2 className="w-4 h-4" /> Cek Jawaban
               </button>
               <button
-                className={`${btn} w-12 h-12 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`}
+                className={`${btn} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`}
                 onClick={() => {
                   // KUIS TTS 1.0 (§23): keluar saat ada progress → konfirmasi.
                   const adaProgress = filledCells > 0 || combo > 0 || timeBudgetRef.current - remainingSec > 0;

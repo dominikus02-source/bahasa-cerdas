@@ -32,4 +32,14 @@ export interface TtsPuzzle {
 export interface TtsWord {
   answer: string;
   clue: string;
+  /**
+   * P8I — Metadata kesulitan deterministik (diturunkan, bukan label manual).
+   * clueType: definisi | sinonim | antonim | ejaan-baku | imbuhan | majas |
+   *           ungkapan | serapan | istilah
+   * tier:     1 = DASAR · 2 = MENENGAH · 3 = LANJUT
+   * Keduanya dihitung oleh `lib/game/tts/difficulty.ts`; opsional di tipe agar
+   * kompatibel dengan entri lama.
+   */
+  clueType?: string;
+  tier?: 1 | 2 | 3;
 }

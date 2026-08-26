@@ -33,9 +33,9 @@ export const TTS_BANK: TtsThemeBank[] = [
     subtitle: "Kosakata dasar seputar keluarga",
     mascot: "zelby",
     words: [
-      { answer: "IBU", clue: "Orang tua perempuan" },
-      { answer: "AYAH", clue: "Orang tua laki-laki" },
-      { answer: "BAPAK", clue: "Panggilan untuk ayah" },
+      { answer: "IBU", clue: "Orang tua kandung perempuan; sebutan untuk ibu" },
+      { answer: "AYAH", clue: "Orang tua kandung laki-laki" },
+      { answer: "BAPAK", clue: "Sebutan hormat untuk ayah" },
       { answer: "ADIK", clue: "Saudara yang lebih muda" },
       { answer: "KAKAK", clue: "Saudara yang lebih tua" },
       { answer: "NENEK", clue: "Ibu dari ayah atau ibu kita" },
@@ -54,7 +54,7 @@ export const TTS_BANK: TtsThemeBank[] = [
       { answer: "KEMBAR", clue: "Dua anak yang lahir bersamaan" },
       { answer: "YATIM", clue: "Anak yang ditinggal wafat ayahnya" },
       { answer: "PIATU", clue: "Anak yang ditinggal wafat ibunya" },
-      { answer: "ANAK", clue: "Keturunan pertama" },
+      { answer: "ANAK", clue: "Keturunan pertama dari orang tua" },
       { answer: "KERABAT", clue: "Saudara atau keluarga dekat" },
       { answer: "TUNANGAN", clue: "Calon suami atau istri" },
       { answer: "JANDA", clue: "Perempuan yang ditinggal wafat suaminya" },
@@ -230,24 +230,24 @@ export const TTS_BANK: TtsThemeBank[] = [
       { answer: "IMAJI", clue: "Gambaran angan yang ditimbulkan kata" },
       { answer: "EPILOG", clue: "Bagian penutup sebuah karya" },
       { answer: "PROLOG", clue: "Bagian pembuka sebuah karya" },
-      { answer: "KONFLIK", clue: "Pertentangan dalam cerita" },
+      { answer: "KONFLIK", clue: "Pertentangan antartokoh yang menjadi inti cerita" },
       { answer: "ANTOLOGI", clue: "Kumpulan karya tulis pilihan" },
       { answer: "BIOGRAFI", clue: "Riwayat hidup seseorang yang ditulis orang lain" },
       { answer: "SASTRA", clue: "Karya tulis yang indah, contohnya puisi dan cerpen" },
       { answer: "FIKSI", clue: "Karya sastra berdasarkan khayalan" },
-      { answer: "DIALOG", clue: "Percakapan antartokoh" },
-      { answer: "MONOLOG", clue: "Percakapan seorang diri" },
+      { answer: "DIALOG", clue: "Percakapan dua orang atau lebih dalam cerita/drama" },
+      { answer: "MONOLOG", clue: "Percakapan tokoh dengan dirinya sendiri di panggung" },
       { answer: "BABAK", clue: "Bagian besar dalam lakon drama" },
       { answer: "ADEGAN", clue: "Bagian kecil dalam babak drama" },
       { answer: "KLIMAKS", clue: "Puncak ketegangan dalam cerita" },
       { answer: "DRAMA", clue: "Karya sastra yang dipentaskan" },
       { answer: "NOVEL", clue: "Prosa panjang berbentuk cerita" },
-      { answer: "CERPEN", clue: "Cerita pendek" },
+      { answer: "CERPEN", clue: "Karya prosa fiksi pendek, bentuk ringkas dari 'cerita pendek'" },
       { answer: "PANTUN", clue: "Puisi lama bersajak a-b-a-b" },
       { answer: "SYAIR", clue: "Puisi lama bersajak a-a-a-a" },
       { answer: "GURINDAM", clue: "Puisi lama berisi nasihat" },
       { answer: "SONETA", clue: "Puisi yang terdiri atas 14 baris" },
-      { answer: "EPIK", clue: "Cerita kepahlawanan" },
+      { answer: "EPIK", clue: "Ceritra kepahlawanan berbalut legenda (KBBI)" },
       { answer: "LEGENDA", clue: "Cerita rakyat tentang asal-usul suatu tempat" },
       { answer: "MITOS", clue: "Cerita rakyat tentang dewa atau makhluk halus" },
       { answer: "FABEL", clue: "Cerita rakyat yang tokohnya binatang" },
@@ -316,7 +316,7 @@ export const TTS_BANK: TtsThemeBank[] = [
       { answer: "TANDA", clue: "Simbol baca seperti titik, koma, dan seru" },
       { answer: "KUTIP", clue: "Tanda baca untuk mengapit kalimat langsung" },
       { answer: "PETIK", clue: "Tanda baca tunggal atau ganda untuk kata/kalimat" },
-      { answer: "MIRING", clue: "Gaya huruf untuk istilah asing, huruf ..." },
+      { answer: "MIRING", clue: "Huruf ... : gaya cetak condong untuk istilah asing" },
       { answer: "KOMA", clue: "Tanda baca untuk jeda pendek dalam kalimat" },
       { answer: "KURUNG", clue: "Tanda baca untuk mengapit keterangan tambahan" },
       { answer: "HUBUNG", clue: "Tanda baca untuk merangkai kata, tanda ..." },
@@ -410,10 +410,10 @@ export const TTS_BANK: TtsThemeBank[] = [
       { answer: "POLISI", clue: "Petugas keamanan dan ketertiban (dari Belanda 'politie')" },
       { answer: "SAINS", clue: "Ilmu pengetahuan (dari Inggris 'science')" },
       { answer: "KOMPUTER", clue: "Alat elektronik pengolah data" },
-      { answer: "INTERNET", clue: "Jaringan komputer sedunia" },
+      { answer: "INTERNET", clue: "Jaringan komputer global untuk akses data dan layanan" },
       { answer: "PABRIK", clue: "Tempat memproduksi barang (dari Belanda 'fabriek')" },
       { answer: "KANTOR", clue: "Tempat bekerja (dari Belanda 'kantoor')" },
-      { answer: "SEKOLAH", clue: "Lembaga tempat belajar-mengajar" },
+      { answer: "SEKOLAH", clue: "Lembaga pendidikan tempat belajar-mengajar (dari Belanda)" },
       { answer: "BUKU", clue: "Lembaran berisi tulisan untuk dibaca (dari Belanda 'boek')" },
       { answer: "DOKTER", clue: "Profesi pengobat penyakit (dari Belanda 'dokter')" },
       { answer: "TELEPON", clue: "Alat komunikasi suara jarak jauh" },
@@ -453,4 +453,15 @@ export function mixedBank(): TtsWord[] {
 export function bankForLevel(level: number): TtsWord[] {
   if (level >= TTS_BANK.length + 1) return mixedBank();
   return TTS_BANK[level - 1]?.words ?? mixedBank();
+}
+
+// ── P8I — peta jawaban → tema (untuk penilaian kesulitan deterministik) ──
+const ANSWER_THEME = new Map<string, string>();
+for (const b of TTS_BANK) {
+  for (const w of b.words) ANSWER_THEME.set(w.answer, b.key);
+}
+
+/** Tema asal sebuah jawaban (null bila dari bank campuran yang tidak dikenal). */
+export function themeKeyForAnswer(answer: string): string | null {
+  return ANSWER_THEME.get(answer) ?? null;
 }
