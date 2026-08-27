@@ -395,9 +395,9 @@ Hanya output JSON array.`;
 
     const validation = validateAgentOutput("soal", normalizedForValidation);
 
-    if (validation.status === "invalid") {
+    if (!validation || validation.status === "invalid") {
       return NextResponse.json(
-        { error: "Output AI tidak memenuhi standar kualitas", issues: validation.issues },
+        { error: "Output AI tidak memenuhi standar kualitas", issues: validation?.issues ?? ["Validasi output gagal"] },
         { status: 422 }
       );
     }

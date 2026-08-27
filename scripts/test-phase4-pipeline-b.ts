@@ -72,7 +72,7 @@ assert(
 );
 
 assert(
-  routeSrc.includes("issues: validation.issues"),
+  routeSrc.includes("issues: validation?.issues") || routeSrc.includes("issues: validation.issues"),
   "Includes validation issues in error response"
 );
 
