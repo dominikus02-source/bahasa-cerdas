@@ -21,7 +21,7 @@ interface Group {
 
 interface DetailData {
   stats: { totalMurid: number; tugasAktif: number; pengumuman: number; nilaiRata: number | null; progressMurid: number };
-  members: { id: string; fullName: string; avatar: string | null; email: string | null; xp: number; level: number; streak: number; league: string | null; lastActiveAt: string | null; noAbsen: string | null }[];
+  members: { id: string; fullName: string; avatar: string | null; email: string | null; xp: number; level: number; streak: number; league: string | null; lastActiveAt: string | null; attendanceNumber: string | null }[];
   tugasQuiz: { id: string; dueDate: string | null; isPublished: boolean; assignedAt: string; quiz: { id: string; title: string }; _count: { submissions: number } }[];
   tugasPenugasan: { id: string; judul: string; jenis: string; tenggat: string | null; createdAt: string; _count: { submissions: number } }[];
   pengumuman: { id: string; judul: string; deskripsi?: string | null; pinned: boolean; createdAt: string; tenggat: string | null; _count: { submissions: number } }[];
@@ -734,9 +734,9 @@ export default function KelasKuPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <p className="text-sm font-semibold text-[var(--clr-text)] truncate">{m.fullName}</p>
-                        {m.noAbsen && (
+                        {m.attendanceNumber && (
                           <span className="text-[10px] font-medium text-[var(--clr-accent-strong)] bg-[var(--clr-accent-soft)] rounded-full px-1.5 py-0.5 shrink-0">
-                            #{m.noAbsen}
+                            #{m.attendanceNumber}
                           </span>
                         )}
                       </div>

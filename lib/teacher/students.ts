@@ -76,7 +76,7 @@ export async function getTeacherGroups(teacherId: string, take?: number | null) 
  */
 export async function getTeacherStudentIds(teacherId: string): Promise<string[]> {
   const groups = await getTeacherGroups(teacherId);
-  const ids = groups.flatMap((g) => g.members.map((m) => m.userId));
+  const ids = groups.flatMap((g) => g.members.map((m) => m.user.id));
   return [...new Set(ids)];
 }
 
@@ -88,9 +88,7 @@ export async function getTeacherStudentIds(teacherId: string): Promise<string[]>
 export async function getTeacherStudents(teacherId: string) {
   const groups = await getTeacherGroups(teacherId);
   const seen = new Set<string>();
-  const siswa: Array<
-    (typeof groups)[number]["members"][number]["user"] & { groupId: string; groupName: string }
-  > = [];
+  const siswa: Array<Record<string, unknown> & { id: string; groupId: string; groupName: string }> = [];
 
   for (const g of groups) {
     for (const m of g.members) {
@@ -98,6 +96,7 @@ export async function getTeacherStudents(teacherId: string) {
       seen.add(m.user.id);
       siswa.push({
         ...m.user,
+        attendanceNumber: m.attendanceNumber,
         groupId: g.id,
         groupName: g.name,
       });
@@ -116,12 +115,13 @@ export async function getTeacherStudentsForClass(teacherId: string, groupId: str
   const group = await db.group.findFirst({
     where: { id: groupId, teacherId, isActive: true },
     include: {
-      members: { include: { user: { select: STUDENT_SELECT } } },
+      members: { select: { attendanceNumber: true, user: { select: STUDENT_SELECT } } },
     },
   });
   if (!group) return [];
   return group.members.map((m) => ({
     ...m.user,
+    attendanceNumber: m.attendanceNumber,
     groupId: group.id,
     groupName: group.name,
   }));
@@ -132,7 +132,7 @@ export async function getTeacherGroupDetail(teacherId: string, groupId: string) 
   return db.group.findFirst({
     where: { id: groupId, teacherId, isActive: true },
     include: {
-      members: { include: { user: { select: STUDENT_SELECT } } },
+      members: { select: { attendanceNumber: true, user: { select: STUDENT_SELECT } } },
     },
   });
 }

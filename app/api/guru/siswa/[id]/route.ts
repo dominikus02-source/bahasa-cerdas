@@ -36,6 +36,32 @@ export async function PATCH(
     }
 
     const body = await req.json().catch(() => ({}));
+
+    // Case 1: Per-class attendance number via GroupMember
+    if (typeof body.groupId === "string" && typeof body.attendanceNumber === "string") {
+      // Validate groupId belongs to this teacher
+      const group = await db.group.findFirst({
+        where: { id: body.groupId, teacherId: dbUser.id, isActive: true },
+      });
+      if (!group) {
+        return NextResponse.json({ error: "Kelas tidak ditemukan" }, { status: 404 });
+      }
+      // Verify student is member of this group
+      const membership = await db.groupMember.findUnique({
+        where: { groupId_userId: { groupId: body.groupId, userId: id } },
+      });
+      if (!membership) {
+        return NextResponse.json({ error: "Siswa bukan anggota kelas ini" }, { status: 403 });
+      }
+      const value = body.attendanceNumber.trim() || null;
+      await db.groupMember.update({
+        where: { id: membership.id },
+        data: { attendanceNumber: value },
+      });
+      return NextResponse.json({ success: true });
+    }
+
+    // Case 2: Legacy profile fields (noAbsen, nisn)
     const data: Record<string, any> = {};
     if (typeof body.noAbsen === "string") data.noAbsen = body.noAbsen.trim() || null;
     if (typeof body.nisn === "string") data.nisn = body.nisn.trim() || null;

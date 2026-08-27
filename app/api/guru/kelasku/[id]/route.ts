@@ -19,7 +19,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     const group = await getTeacherGroupDetail(user.id, id);
     if (!group) return NextResponse.json({ error: "Kelas tidak ditemukan" }, { status: 404 });
 
-    const memberIds = group.members.map((m) => m.userId);
+    const memberIds = group.members.map((m) => m.user.id);
 
     const [tugasAktifQuiz, tugasAktifPenugasan, pengumuman, materis, nilais, progres] = await Promise.all([
       db.quizAssignment.findMany({
@@ -100,7 +100,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       streak: m.user.streak,
       league: m.user.league,
       lastActiveAt: m.user.lastActiveAt,
-      noAbsen: m.user.profile?.noAbsen ?? null,
+      attendanceNumber: m.attendanceNumber ?? null,
     }));
 
     return NextResponse.json({

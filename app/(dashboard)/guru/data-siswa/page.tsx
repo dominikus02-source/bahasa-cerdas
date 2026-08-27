@@ -68,17 +68,17 @@ export default function DataSiswaPage() {
   }, [selectedGroupId]);
 
   const saveAbsen = async (s: any) => {
-    const value = (absenDraft[s.id] ?? s.profile?.noAbsen ?? "").trim();
+    const value = (absenDraft[s.id] ?? s.attendanceNumber ?? "").trim();
     setSavingAbsen(s.id);
     try {
       const res = await fetch(`/api/guru/siswa/${s.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ noAbsen: value }),
+        body: JSON.stringify({ groupId: s.groupId, attendanceNumber: value }),
       });
       if (!res.ok) return;
       setSiswa((prev) =>
-        prev.map((x) => (x.id === s.id ? { ...x, profile: { ...x.profile, noAbsen: value } } : x))
+        prev.map((x) => (x.id === s.id ? { ...x, attendanceNumber: value } : x))
       );
     } finally {
       setSavingAbsen(null);
@@ -166,7 +166,7 @@ export default function DataSiswaPage() {
                 <div className="shrink-0 flex flex-col items-center gap-1">
                   <div className="w-12 h-12 rounded-full bg-violet-100 border-2 border-violet-300 flex items-center justify-center">
                     <span className="text-base font-bold text-violet-700">
-                      {s.profile?.noAbsen || "—"}
+                      {s.attendanceNumber || "—"}
                     </span>
                   </div>
                   <span className="text-[10px] font-medium text-gray-400">Absen</span>
@@ -188,7 +188,7 @@ export default function DataSiswaPage() {
                   </div>
                   <div className="flex items-center gap-2 mt-2">
                     <input
-                      value={absenDraft[s.id] ?? s.profile?.noAbsen ?? ""}
+                      value={absenDraft[s.id] ?? s.attendanceNumber ?? ""}
                       onChange={(e) => setAbsenDraft((d) => ({ ...d, [s.id]: e.target.value }))}
                       placeholder="No. absen"
                       className="w-24 rounded-md border border-gray-200 px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-violet-500"
