@@ -24,7 +24,7 @@ import { getAgent } from "./agent-registry";
 import { buildPrompt, type PromptBuildOptions } from "./prompt-builder";
 import { streamProviderText, estimateCost, ProviderChainFailedError, ProviderStreamInterruptedError } from "./provider";
 import { checkInput } from "./guardrails";
-import { cleanJSONOutput, tryFixJSON, validateAgentOutput } from "./output-validator";
+import { cleanJSONOutput, tryFixJSON, validateAgentOutput, type ValidationOutcome } from "./output-validator";
 import { checkEducationQuality } from "../evaluators/education-quality-checker";
 import { logUsage } from "./usage-logger";
 import { generateRPPFallback } from "./rpp-fallback-template";
@@ -296,9 +296,12 @@ export async function runAgentStream(
       if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
         try {
           finalOutput = agent.outputSchema.parse(parsed) as unknown as AgentOutput;
-          const postValidationIssue = validateAgentOutput(agent.id, parsed as Record<string, unknown>);
-          if (postValidationIssue) {
-            warn.push(postValidationIssue);
+          const validationOutcome = validateAgentOutput(agent.id, parsed as Record<string, unknown>);
+          if (validationOutcome.status === "invalid") {
+            finalOutput = null; // block invalid output
+          }
+          if (validationOutcome.issues.length > 0) {
+            warn.push(validationOutcome.issues.join("; "));
           }
         } catch {
           // Schema validation failed — will try salvage
@@ -317,9 +320,12 @@ export async function runAgentStream(
             }
             if (fixedParsed && typeof fixedParsed === "object" && !Array.isArray(fixedParsed)) {
               finalOutput = agent.outputSchema.parse(fixedParsed) as unknown as AgentOutput;
-              const postValidationIssue = validateAgentOutput(agent.id, fixedParsed as Record<string, unknown>);
-              if (postValidationIssue) {
-                warn.push(postValidationIssue);
+              const validationOutcome = validateAgentOutput(agent.id, fixedParsed as Record<string, unknown>);
+              if (validationOutcome.status === "invalid") {
+                finalOutput = null;
+              }
+              if (validationOutcome.issues.length > 0) {
+                warn.push(validationOutcome.issues.join("; "));
               }
             }
           }
@@ -382,10 +388,48 @@ export async function runAgentStream(
       const eduCheck = checkEducationQuality(outputText, "");
 
       for (const check of agent.qualityChecklist) {
+        let passed = true;
+        let message = `${check.label}: passed`;
+
+        if (agent.id === "soal") {
+          const outputObj = finalOutput as Record<string, unknown>;
+          const questions = Array.isArray(outputObj.questions)
+            ? (outputObj.questions as Record<string, unknown>[])
+            : [];
+          const metadata = outputObj.metadata as Record<string, unknown> | undefined;
+
+          switch (check.id) {
+            case "q-count": {
+              const requested = typeof metadata?.questionCount === "number" ? metadata.questionCount : 0;
+              passed = questions.length > 0 && (requested === 0 || questions.length === requested);
+              message = `${check.label}: ${passed ? "passed" : `expected ${requested}, got ${questions.length}`}`;
+              break;
+            }
+            case "q-answer-key": {
+              passed = questions.every(
+                (q) =>
+                  q.answer !== undefined &&
+                  q.answer !== null &&
+                  (typeof q.answer === "string" ? q.answer.trim().length > 0 : Array.isArray(q.answer) && q.answer.length > 0)
+              );
+              message = `${check.label}: ${passed ? "passed" : "some questions missing answers"}`;
+              break;
+            }
+            case "q-unique": {
+              const texts = questions.map((q) => String(q.question ?? "")).filter(Boolean);
+              passed = new Set(texts).size === texts.length;
+              message = `${check.label}: ${passed ? "passed" : `${texts.length - new Set(texts).size} duplicate(s)`}`;
+              break;
+            }
+            default:
+              passed = true;
+          }
+        }
+
         qualityChecks.push({
-          passed: true,
+          passed,
           checkId: check.id,
-          message: `${check.label}: passed`,
+          message,
         });
       }
 

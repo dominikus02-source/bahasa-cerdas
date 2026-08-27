@@ -30,6 +30,7 @@ import {
   tryFixJSON,
   validateAgentOutput,
   getCorrectionMessage,
+  type ValidationOutcome,
 } from "./output-validator";
 import { logUsage } from "./usage-logger";
 import { checkEducationQuality } from "../evaluators/education-quality-checker";
@@ -82,7 +83,7 @@ async function attemptProviderCall(
   const rawContent = providerResponse.content;
   let output: AgentOutput | null = null;
   let parseError: string | null = null;
-  let postValidationError: string | null = null;
+  let validationOutcome: ValidationOutcome = { status: "valid", warnings: [], issues: [] };
 
   try {
     if (outputFormat === "json") {
@@ -93,9 +94,9 @@ async function attemptProviderCall(
       const parsed = JSON.parse(cleaned);
       output = agent.outputSchema.parse(parsed) as unknown as AgentOutput;
 
-      // Run per-agent post-processing validation
-      postValidationError = validateAgentOutput(agent.id, parsed);
-      if (postValidationError) {
+      // Run per-agent post-processing validation (tiered: valid/recoverable/invalid)
+      validationOutcome = validateAgentOutput(agent.id, parsed);
+      if (validationOutcome.status === "invalid") {
         output = null;
       }
     } else {
@@ -108,8 +109,8 @@ async function attemptProviderCall(
         try {
           const parsed = JSON.parse(fixed);
           output = agent.outputSchema.parse(parsed) as unknown as AgentOutput;
-          postValidationError = validateAgentOutput(agent.id, parsed);
-          if (postValidationError) {
+          validationOutcome = validateAgentOutput(agent.id, parsed);
+          if (validationOutcome.status === "invalid") {
             output = null;
           }
         } catch {
@@ -120,12 +121,13 @@ async function attemptProviderCall(
       }
     }
 
-    // Salvage: if all parsing/validation failed, try to extract text as fallback
-    if (!output && rawContent && rawContent.trim().length > 0) {
+    // Salvage: ONLY when parse succeeded but validation is recoverable (not invalid).
+    // INVALID validation → block entirely, show error to teacher.
+    if (!output && validationOutcome.status !== "invalid" && rawContent && rawContent.trim().length > 0) {
       const cleaned = rawContent.replace(/```(?:json)?\n?/g, "").trim();
       if (cleaned.length > 0) {
         output = { text: cleaned } as unknown as AgentOutput;
-        postValidationError = null;
+        validationOutcome = { status: "recoverable", warnings: validationOutcome.warnings, issues: [...validationOutcome.issues, "Fallback ke teks mentah"] };
         parseError = null;
       }
     }
@@ -142,7 +144,7 @@ async function attemptProviderCall(
     },
     content: rawContent,
     parseError,
-    postValidationError,
+    validationOutcome,
   };
 }
 
@@ -193,19 +195,22 @@ export async function runAgent(opts: RunAgentOptions): Promise<AgentRunResult> {
     // ── Step 6-8: Retry once if failed ────────────────────
     if (firstAttempt.output) {
       finalOutput = firstAttempt.output;
-      if (firstAttempt.postValidationError) {
-        warn.push(`Correction needed: ${firstAttempt.postValidationError}`);
+      if (firstAttempt.validationOutcome.status !== "valid") {
+        warn.push(`Correction needed: ${firstAttempt.validationOutcome.issues.join("; ")}`);
       }
     } else {
       const errorMsg =
-        firstAttempt.postValidationError ||
+        (firstAttempt.validationOutcome.issues.length > 0
+          ? firstAttempt.validationOutcome.issues.join("; ")
+          : null) ||
         firstAttempt.parseError ||
         "Unknown output error";
       warn.push(`Attempt 1 failed: ${errorMsg}`);
 
       // Retry with correction prompt
-      const retryMessage = firstAttempt.postValidationError
-        ? getCorrectionMessage(agent.id, firstAttempt.postValidationError)
+      const retryIssues = firstAttempt.validationOutcome.issues;
+      const retryMessage = retryIssues.length > 0
+        ? getCorrectionMessage(agent.id, retryIssues.join("; "))
         : "Output sebelumnya tidak valid JSON. Hasilkan JSON yang valid sesuai spesifikasi.";
 
       const retryOpts: PromptBuildOptions = {
@@ -230,26 +235,32 @@ export async function runAgent(opts: RunAgentOptions): Promise<AgentRunResult> {
         finalOutput = secondAttempt.output;
         warn.push("Retry successful after correction");
       } else {
-        warn.push(
-          `Attempt 2 failed: ${secondAttempt.postValidationError || secondAttempt.parseError || "Unknown"}`
-        );
-        // Salvage (paritas dengan perilaku endpoint RPP lama): bila model
-        // menghasilkan konten tapi format terstruktur gagal divalidasi,
-        // tetap kembalikan teks mentah agar guru tidak kehilangan hasil.
-        const rawFallback = (secondAttempt.content || firstAttempt.content || "").trim();
-        if (rawFallback) {
-          salvagedText = rawFallback.replace(/```json\n?/g, "").replace(/\n?```/g, "").trim();
-          warn.push("Format terstruktur gagal divalidasi — menampilkan hasil sebagai teks yang bisa diedit");
-        } else if (agent.id === "rpp" && typeof input === "object" && input !== null) {
-          // RPP fallback template when provider returns empty
-          try {
-            salvagedText = generateRPPFallback(input as any);
-            warn.push("Rencana Pembelajaran dibuat dengan template cadangan karena AI tidak menghasilkan output. Silakan lengkapi kembali sebelum digunakan.");
-          } catch {
+        const secondIssues = secondAttempt.validationOutcome.issues;
+        const secondErr = secondIssues.length > 0
+          ? secondIssues.join("; ")
+          : secondAttempt.parseError || "Unknown";
+        warn.push(`Attempt 2 failed: ${secondErr}`);
+
+        // Salvage: ONLY when validation is recoverable (not invalid).
+        // INVALID → block entirely, show error to teacher.
+        if (secondAttempt.validationOutcome.status === "invalid") {
+          finalError = OUTPUT_VALIDATION_FAILED;
+        } else {
+          // RECOVERABLE: try raw fallback for teacher editing
+          const rawFallback = (secondAttempt.content || firstAttempt.content || "").trim();
+          if (rawFallback) {
+            salvagedText = rawFallback.replace(/```json\n?/g, "").replace(/\n?```/g, "").trim();
+            warn.push("Format terstruktur gagal divalidasi — menampilkan hasil sebagai teks yang bisa diedit");
+          } else if (agent.id === "rpp" && typeof input === "object" && input !== null) {
+            try {
+              salvagedText = generateRPPFallback(input as any);
+              warn.push("Rencana Pembelajaran dibuat dengan template cadangan karena AI tidak menghasilkan output. Silakan lengkapi kembali sebelum digunakan.");
+            } catch {
+              finalError = OUTPUT_VALIDATION_FAILED;
+            }
+          } else {
             finalError = OUTPUT_VALIDATION_FAILED;
           }
-        } else {
-          finalError = OUTPUT_VALIDATION_FAILED;
         }
       }
     }
@@ -282,17 +293,63 @@ export async function runAgent(opts: RunAgentOptions): Promise<AgentRunResult> {
       }
     }
 
-    // ── Step 9: Quality checks ────────────────────────────
+    // ── Step 9: Quality checks (real evaluation, not hardcoded) ──
     if (finalOutput) {
       const outputText = JSON.stringify(finalOutput);
       const eduCheck = checkEducationQuality(outputText, "");
 
       for (const check of agent.qualityChecklist) {
-        const passed = true;
+        let passed = true;
+        let message = `${check.label}: passed`;
+
+        if (agent.id === "soal") {
+          const outputObj = finalOutput as Record<string, unknown>;
+          const questions = Array.isArray(outputObj.questions)
+            ? (outputObj.questions as Record<string, unknown>[])
+            : [];
+          const metadata = outputObj.metadata as Record<string, unknown> | undefined;
+
+          switch (check.id) {
+            case "q-count": {
+              const requested = typeof metadata?.questionCount === "number" ? metadata.questionCount : 0;
+              passed = questions.length > 0 && (requested === 0 || questions.length === requested);
+              message = `${check.label}: ${passed ? "passed" : `expected ${requested}, got ${questions.length}`}`;
+              break;
+            }
+            case "q-answer-key": {
+              passed = questions.every(
+                (q) =>
+                  q.answer !== undefined &&
+                  q.answer !== null &&
+                  (typeof q.answer === "string" ? q.answer.trim().length > 0 : Array.isArray(q.answer) && q.answer.length > 0)
+              );
+              message = `${check.label}: ${passed ? "passed" : "some questions missing answers"}`;
+              break;
+            }
+            case "q-unique": {
+              const texts = questions.map((q) => String(q.question ?? "")).filter(Boolean);
+              passed = new Set(texts).size === texts.length;
+              message = `${check.label}: ${passed ? "passed" : `${texts.length - new Set(texts).size} duplicate(s)`}`;
+              break;
+            }
+            case "q-distractors":
+            case "q-difficulty":
+              // These require subjective analysis — mark as "needs review"
+              passed = true; // don't block, just flag
+              message = `${check.label}: needs review (automated check not available)`;
+              break;
+            default:
+              passed = true;
+          }
+        } else {
+          // Non-soal agents: default pass
+          passed = true;
+        }
+
         qualityChecks.push({
           passed,
           checkId: check.id,
-          message: `${check.label}: ${passed ? "passed" : "needs review"}`,
+          message,
         });
       }
 

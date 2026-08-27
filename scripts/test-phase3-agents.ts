@@ -17,7 +17,7 @@ import type { AgentRunContext } from "../src/ai/core/agent-types";
 // Force agent imports
 import "../src/ai/agents/rpp-agent";
 import "../src/ai/agents/soal-agent";
-import "../src/ai/agents/ppt-agent";
+// PPT agent removed in Phase 2 — skip import
 import "../src/ai/agents/bc-assistant-agent";
 import "../src/ai/agents/review-agent";
 
@@ -67,10 +67,10 @@ console.log("\n📋 Test 1: Agent Registry");
 console.log("─".repeat(50));
 
 const agents = listAgents();
-assert("agentCount >= 5", agentCount() >= 5, `Got ${agentCount()}`);
+assert("agentCount >= 4 (PPT removed in Phase 2)", agentCount() >= 4, `Got ${agentCount()}`);
 assert("RPP agent registered", !!getAgent("rpp"));
 assert("Soal agent registered", !!getAgent("soal"));
-assert("PPT agent registered", !!getAgent("ppt"));
+assert("PPT agent removed in Phase 2", !getAgent("ppt"), "PPT agent should not exist");
 assert("RPP has new input fields", "subject" in getAgent("rpp")!.inputSchema._def || true); // schema check
 
 const rppAgent = getAgent("rpp")!;
@@ -82,7 +82,51 @@ assert("RPP outputSchema has editableText", true); // schema-level check
 console.log("\n🧹 Test 2: Per-Agent Output Validation");
 console.log("─".repeat(50));
 
-// RPP validation
+// RPP validation — realistic editableText to pass structure checks (≥1200 chars)
+const VALID_RPP_EDITABLE_TEXT = [
+  "A. Identitas Dokumen",
+  "Mata Pelajaran: Bahasa Indonesia | Kelas: X | Semester: 1 | Fase: F",
+  "Topik: Teks Negosiasi | Alokasi Waktu: 2 JP (2 × 45 menit)",
+  "Model Pembelajaran: Problem Based Learning (PBL)",
+  "Kompetensi Dasar: 3.10 Menganalisis struktur dan ciri kebahasaan teks negosiasi.",
+  "",
+  "B. Informasi Umum",
+  "Mata Pelajaran: Bahasa Indonesia | Kelas/Semester: X/1",
+  "Fase: F | Model: Problem Based Learning",
+  "",
+  "C. Komponen Inti",
+  "",
+  "Tujuan Pembelajaran:",
+  "1. Siswa mampu memahami pengertian dan fungsi teks negosiasi.",
+  "2. Siswa mampu mengidentifikasi struktur teks negosiasi.",
+  "3. Siswa mampu menganalisis ciri kebahasaan teks negosiasi.",
+  "",
+  "Kegiatan Pembelajaran:",
+  "Pendahuluan (10 menit): Salam, doa, presensi, apersepsi tentang negosiasi dalam kehidupan sehari-hari.",
+  "Inti (70 menit):",
+  "  - Orientasi: Siswa membaca teks negosiasi tentang pembelian barang.",
+  "  - Investigasi: Siswa mengidentifikasi struktur teks (proposisi, kontraproposi, kesepakatan).",
+  "  - Pengorganisasian: Siswa berdiskusi dalam kelompok tentang ciri kebahasaan.",
+  "  - Pengolahan: Siswa menyajikan hasil diskusi di depan kelas.",
+  "  - Evaluasi: Guru memberikan umpan balik dan klarifikasi.",
+  "Penutup (10 menit): Refleksi, kesimpulan, dan tindak lanjut.",
+  "",
+  "Asesmen:",
+  "Diagnostik: Pemahaman awal siswa tentang negosiasi.",
+  "Formatif: Observasi diskusi kelompok, pertanyaan lisan.",
+  "Sumatif: Tes tulis tentang struktur dan ciri kebahasaan teks negosiasi.",
+  "",
+  "D. Lampiran",
+  "1. Teks negosiasi untuk analisis siswa.",
+  "2. Lembar kerja siswa (LKS).",
+  "",
+  "E. Lembar Pengesahan",
+  "Disusun oleh Guru: ________________",
+  "Mengetahui Kepala Sekolah: ________________",
+  "",
+  "BahasaCerdas.com — RPP ini dihasilkan dengan bantuan AI.",
+].join("\n");
+
 const validRPP = {
   title: "Test",
   identity: { subject: "Indonesia", grade: "X", curriculum: "Merdeka", topic: "Test", duration: "2 JP" },
@@ -98,12 +142,14 @@ const validRPP = {
   differentiationStrategy: { content: [], process: [], product: [] },
   reflection: { teacherReflection: [], studentReflection: [] },
   teacherNotes: [],
-  editableText: "RPP Teks Negosiasi\n...",
+  greetingText: "Selamat pagi siswa",
+  editableText: VALID_RPP_EDITABLE_TEXT,
 };
-assert("RPP valid output passes", validateAgentOutput("rpp", validRPP as any) === null);
-assert("RPP missing title fails", validateAgentOutput("rpp", { ...validRPP, title: "" } as any) !== null);
-assert("RPP missing editableText fails", validateAgentOutput("rpp", { ...validRPP, editableText: "" } as any) !== null);
-assert("RPP missing learningSteps fails", validateAgentOutput("rpp", { ...validRPP, learningSteps: null } as any) !== null);
+const rppResult = validateAgentOutput("rpp", validRPP as any);
+assert("RPP valid output passes", rppResult.status === "valid", `Got ${rppResult.status}: ${rppResult.issues.join("; ")}`);
+assert("RPP missing title fails", validateAgentOutput("rpp", { ...validRPP, title: "" } as any).status !== "valid");
+assert("RPP missing editableText fails", validateAgentOutput("rpp", { ...validRPP, editableText: "" } as any).status !== "valid");
+assert("RPP missing identity fails", validateAgentOutput("rpp", { ...validRPP, identity: null } as any).status !== "valid");
 
 // Soal validation
 const validSoal = {
@@ -117,21 +163,21 @@ const validSoal = {
   teacherNotes: [],
   editableText: "Soal...",
 };
-assert("Soal valid output passes", validateAgentOutput("soal", validSoal as any) === null);
+assert("Soal valid output passes", validateAgentOutput("soal", validSoal as any).status === "valid");
 assert("Soal wrong count fails", validateAgentOutput("soal", {
   ...validSoal, metadata: { ...validSoal.metadata, questionCount: 3 },
-} as any) !== null);
+} as any).status !== "valid");
 assert("Soal missing answer fails", validateAgentOutput("soal", {
   ...validSoal, questions: [{ number: 1, type: "pilihan_ganda", question: "Test", answer: "", difficulty: "mudah", bloomLevel: "C1", learningObjective: "Test" }],
-} as any) !== null);
+} as any).status !== "valid");
 assert("Soal duplicate text fails", validateAgentOutput("soal", {
   ...validSoal, questions: [
     { number: 1, type: "pilihan_ganda", question: "Sama", options: ["A", "B", "C", "D"], answer: "A", difficulty: "mudah", bloomLevel: "C1", learningObjective: "Test" },
     { number: 2, type: "pilihan_ganda", question: "Sama", options: ["A", "B", "C", "D"], answer: "B", difficulty: "mudah", bloomLevel: "C1", learningObjective: "Test" },
   ],
-} as any) !== null);
+} as any).status !== "valid");
 
-// PPT validation
+// PPT validation — PPT agent removed, unknown agent → valid outcome
 const validPPT = {
   title: "Presentasi Test",
   metadata: { subject: "Indonesia", grade: "X", topic: "Anekdot", slideCount: 2, visualStyle: "clean_modern" },
@@ -144,13 +190,10 @@ const validPPT = {
   teacherNotes: [],
   editableText: "Slide...",
 };
-assert("PPT valid output passes", validateAgentOutput("ppt", validPPT as any) === null);
-assert("PPT wrong slide count fails", validateAgentOutput("ppt", {
-  ...validPPT, metadata: { ...validPPT.metadata, slideCount: 5 },
-} as any) !== null);
-assert("PPT missing speakerNotes fails", validateAgentOutput("ppt", {
-  ...validPPT, slides: [{ slideNumber: 1, title: "Test", bullets: ["x"], speakerNotes: "", visualSuggestion: "x" }],
-} as any) !== null);
+assert("PPT unknown agent returns valid (agent removed)", validateAgentOutput("ppt", validPPT as any).status === "valid");
+assert("PPT unknown agent always valid", validateAgentOutput("ppt", { ...validPPT, metadata: { ...validPPT.metadata, slideCount: 5 } } as any).status === "valid");
+assert("PPT unknown agent always valid (no speakerNotes)", validateAgentOutput("ppt", { slides: [{ slideNumber: 1, title: "Test", bullets: ["x"], speakerNotes: "", visualSuggestion: "x" }] } as any).status === "valid");
+// PPT agent removed — PPT validation tests removed
 
 // ── Test 3: Schema Parsing ────────────────────────────────
 
@@ -184,19 +227,7 @@ try {
   assert("Soal minimal input parses", false, e.message);
 }
 
-try {
-  const agent = getAgent("ppt")!;
-  agent.inputSchema.parse({
-    subject: "Bahasa Indonesia",
-    grade: "X",
-    topic: "Teks Anekdot",
-    slideCount: 8,
-    learningObjective: "Menganalisis struktur teks anekdot",
-  });
-  assert("PPT minimal input parses", true);
-} catch (e: any) {
-  assert("PPT minimal input parses", false, e.message);
-}
+// PPT agent removed in Phase 2 — schema test skipped
 
 // ── Test 4: Guardrails ─────────────────────────────────────
 
@@ -361,41 +392,7 @@ if (SKIP_PROVIDER) {
     assert("AKM has 3 questions", o.questions?.length === 3, `Got ${o.questions?.length}`);
   }
 
-  // PPT agent
-  console.log("\n  --- PPT Agent ---");
-  const ppt = getAgent("ppt")!;
-  const pptResult = await runAgent({
-    agent: ppt,
-    input: {
-      subject: "Bahasa Indonesia",
-      grade: "X",
-      topic: "Teks Anekdot",
-      slideCount: 8,
-      learningObjective: "Menganalisis struktur dan kebahasaan teks anekdot",
-      teachingStyle: "ceramah_interaktif",
-      visualStyle: "clean_modern",
-      includeQuiz: true,
-      includeActivity: true,
-      languageStyle: "praktis",
-    },
-    context,
-    outputFormat: "json",
-  });
-  printResult("PPT", pptResult);
-  assert("PPT succeeds", pptResult.success, pptResult.error ?? "");
-  if (pptResult.output) {
-    const o = pptResult.output as any;
-    assert("PPT has 8 slides", o.slides?.length === 8, `Got ${o.slides?.length}`);
-    assert("PPT has openingScript", typeof o.openingScript === "string");
-    assert("PPT has closingReflection", typeof o.closingReflection === "string");
-    assert("PPT has editableText", typeof o.editableText === "string");
-    assert("PPT all have speakerNotes", o.slides?.every((s: any) => s.speakerNotes && s.speakerNotes.length > 0));
-    assert("PPT all have visualSuggestion", o.slides?.every((s: any) => s.visualSuggestion && s.visualSuggestion.length > 0));
-    const hasQuiz = o.slides?.some((s: any) => s.quiz);
-    const hasActivity = o.slides?.some((s: any) => s.activityPrompt);
-    assert("PPT has quiz slide (includeQuiz=true)", hasQuiz);
-    assert("PPT has activity slide (includeActivity=true)", hasActivity);
-  }
+  // PPT agent removed in Phase 2 — skip live test
 
   // Invalid input test
   console.log("\n  --- Invalid Input Tests ---");

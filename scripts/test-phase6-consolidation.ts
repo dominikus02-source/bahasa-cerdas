@@ -2,7 +2,7 @@
  * Phase 6B Consolidation Test Script
  *
  * Tests:
- * 1. Registry includes all 9 agents
+ * 1. Registry includes all 8 agents
  * 2. GET /api/ai/agents returns safe metadata for all
  * 3. /guru/ai-tools client helper uses /api/ai/agents/run
  * 4. Save/history helper uses /api/ai/agents/saved
@@ -14,15 +14,15 @@
  * Usage: npx tsx scripts/test-phase6-consolidation.ts
  */
 
-// ─── Test 1: Registry includes all 9 agents ───────────────────
+// ─── Test 1: Registry includes all 8 agents ───────────────────
 async function testRegistry() {
-  console.log("\n[Test 1] Registry includes all 9 agents...");
+  console.log("\n[Test 1] Registry includes all 8 agents...");
 
   // The registry auto-registers on import of src/ai/index
   const { listAgents, agentCount } = await import("../src/ai/index");
 
   const expectedAgents = [
-    "rpp", "soal", "ppt", "review", "bc-assistant",
+    "rpp", "soal", "review", "bc-assistant",
     "eyd", "feedback", "grading", "text-analysis",
   ];
 
@@ -40,7 +40,7 @@ async function testRegistry() {
     process.exit(1);
   }
   if (extra.length > 0) {
-    console.log(`  NOTE: Extra agents beyond core 9: ${extra.join(", ")}`);
+    console.log(`  NOTE: Extra agents beyond core 8: ${extra.join(", ")}`);
   }
 
   for (const id of expectedAgents) {
@@ -62,9 +62,9 @@ async function testRegistry() {
   console.log("  PASS");
 }
 
-// ─── Test 2: Agent types include all 9 ────────────────────────
+// ─── Test 2: Agent types include all 8 ────────────────────────
 async function testAgentTypes() {
-  console.log("\n[Test 2] AgentId type includes all 9 agents...");
+  console.log("\n[Test 2] AgentId type includes all 8 agents...");
 
   const { listAgents } = await import("../src/ai/index");
   const registered = listAgents();
@@ -72,7 +72,7 @@ async function testAgentTypes() {
 
   // Verify all expected agents are in the registered list
   const expectedAgents = [
-    "rpp", "soal", "ppt", "review", "bc-assistant",
+    "rpp", "soal", "review", "bc-assistant",
     "eyd", "feedback", "grading", "text-analysis",
   ];
 
@@ -158,7 +158,6 @@ async function testExportHelper() {
 
   const expectedRoutes = [
     '/api/ai/agents/export/docx',
-    '/api/ai/agents/export/pptx',
     '/api/ai/agents/export/pdf',
   ];
 

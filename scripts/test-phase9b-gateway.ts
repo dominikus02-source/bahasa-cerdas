@@ -4,19 +4,18 @@
  * Tests:
  *  1. eyd cost = 1 light
  *  2. rpp cost = 5 heavy
- *  3. ppt cost = 5 heavy
- *  4. soal 5 questions = 3 medium
- *  5. soal 15 questions = 5 heavy
- *  6. text-analysis short = 2 medium
- *  7. text-analysis long (6000 chars) = 4 medium
- *  8. Murid resolves to MURID_FREE unlimited
- *  9. Founder resolves unlimited
- * 10. Premium Guru resolves GURU_PRO 500 credits
- * 11. Trial Guru resolves GURU_PRO_TRIAL 200 credits
- * 12. Free Guru resolves GURU_FREE 30 credits
- * 13. Soft quota returns allowed true even if wouldBlock true
- * 14. Circuit breaker enters cooldown after repeated failures
- * 15. Provider success resets/degraded health appropriately
+ *  3. soal 5 questions = 3 medium
+ *  4. soal 15 questions = 5 heavy
+ *  5. text-analysis short = 2 medium
+ *  6. text-analysis long (6000 chars) = 4 medium
+ *  7. Murid resolves to MURID_FREE unlimited
+ *  8. Founder resolves unlimited
+ *  9. Premium Guru resolves GURU_PRO 500 credits
+ * 10. Trial Guru resolves GURU_PRO_TRIAL 200 credits
+ * 11. Free Guru resolves GURU_FREE 30 credits
+ * 12. Soft quota returns allowed true even if wouldBlock true
+ * 13. Circuit breaker enters cooldown after repeated failures
+ * 14. Provider success resets/degraded health appropriately
  */
 
 import { calculateAgentCost } from "../lib/ai-gateway/agent-cost-policy";
@@ -67,50 +66,42 @@ function testRppCost() {
   assertEqual(result.weight, "heavy", "rpp weight");
 }
 
-// ── Test 3: ppt cost ───────────────────────────────────────
-function testPptCost() {
-  console.log("\n[Test 3] ppt cost = 5 heavy");
-  const result = calculateAgentCost("ppt");
-  assertEqual(result.credits, 5, "ppt credits");
-  assertEqual(result.weight, "heavy", "ppt weight");
-}
-
-// ── Test 4: soal 5 questions ────────────────────────────────
+// ── Test 3: soal 5 questions ────────────────────────────────
 function testSoal5() {
-  console.log("\n[Test 4] soal 5 questions = 3 medium");
+  console.log("\n[Test 3] soal 5 questions = 3 medium");
   const result = calculateAgentCost("soal", { questionCount: 5 });
   assertEqual(result.credits, 3, "soal 5 credits");
   assertEqual(result.weight, "medium", "soal 5 weight");
 }
 
-// ── Test 5: soal 15 questions ───────────────────────────────
+// ── Test 4: soal 15 questions ───────────────────────────────
 function testSoal15() {
-  console.log("\n[Test 5] soal 15 questions = 5 heavy");
+  console.log("\n[Test 4] soal 15 questions = 5 heavy");
   const result = calculateAgentCost("soal", { questionCount: 15 });
   assertEqual(result.credits, 5, "soal 15 credits");
   assertEqual(result.weight, "heavy", "soal 15 weight");
 }
 
-// ── Test 6: text-analysis short ─────────────────────────────
+// ── Test 5: text-analysis short ─────────────────────────────
 function testTextAnalysisShort() {
-  console.log("\n[Test 6] text-analysis short = 2 medium");
+  console.log("\n[Test 5] text-analysis short = 2 medium");
   const result = calculateAgentCost("text-analysis", { text: "short text" });
   assertEqual(result.credits, 2, "text-analysis short credits");
   assertEqual(result.weight, "medium", "text-analysis short weight");
 }
 
-// ── Test 7: text-analysis long ──────────────────────────────
+// ── Test 6: text-analysis long ──────────────────────────────
 function testTextAnalysisLong() {
-  console.log("\n[Test 7] text-analysis long (6000 chars) = 4 medium");
+  console.log("\n[Test 6] text-analysis long (6000 chars) = 4 medium");
   const longText = "x".repeat(6000);
   const result = calculateAgentCost("text-analysis", { text: longText });
   assertEqual(result.credits, 4, "text-analysis long credits");
   assertEqual(result.weight, "medium", "text-analysis long weight");
 }
 
-// ── Test 8: Murid resolves to MURID_FREE unlimited ──────────
+// ── Test 7: Murid resolves to MURID_FREE unlimited ──────────
 function testMuridPlan() {
-  console.log("\n[Test 8] Murid resolves to MURID_FREE unlimited");
+  console.log("\n[Test 7] Murid resolves to MURID_FREE unlimited");
   const user = {
     role: "MURID",
     isFounder: false,
@@ -125,9 +116,9 @@ function testMuridPlan() {
   assert(plan.unlimited === true, "Murid unlimited");
 }
 
-// ── Test 9: Founder resolves unlimited ──────────────────────
+// ── Test 8: Founder resolves unlimited ──────────────────────
 function testFounderPlan() {
-  console.log("\n[Test 9] Founder resolves unlimited");
+  console.log("\n[Test 8] Founder resolves unlimited");
   const user = {
     role: "GURU",
     isFounder: true,
@@ -142,9 +133,9 @@ function testFounderPlan() {
   assert(plan.unlimited === true, "Founder unlimited");
 }
 
-// ── Test 10: Premium Guru resolves GURU_PRO 500 credits ────
+// ── Test 9: Premium Guru resolves GURU_PRO 500 credits ────
 function testPremiumGuruPlan() {
-  console.log("\n[Test 10] Premium Guru resolves GURU_PRO 500 credits");
+  console.log("\n[Test 9] Premium Guru resolves GURU_PRO 500 credits");
   const future = new Date();
   future.setDate(future.getDate() + 30);
   const user = {
@@ -162,9 +153,9 @@ function testPremiumGuruPlan() {
   assert(plan.unlimited === false, "Premium Guru not unlimited");
 }
 
-// ── Test 11: Trial Guru resolves GURU_PRO_TRIAL 200 credits ─
+// ── Test 10: Trial Guru resolves GURU_PRO_TRIAL 200 credits ─
 function testTrialGuruPlan() {
-  console.log("\n[Test 11] Trial Guru resolves GURU_PRO_TRIAL 200 credits");
+  console.log("\n[Test 10] Trial Guru resolves GURU_PRO_TRIAL 200 credits");
   const future = new Date();
   future.setDate(future.getDate() + 15);
   const user = {
@@ -182,9 +173,9 @@ function testTrialGuruPlan() {
   assert(plan.isTrial === true, "Trial Guru isTrial");
 }
 
-// ── Test 12: Free Guru resolves GURU_FREE 30 credits ────────
+// ── Test 11: Free Guru resolves GURU_FREE 30 credits ────────
 function testFreeGuruPlan() {
-  console.log("\n[Test 12] Free Guru resolves GURU_FREE 30 credits");
+  console.log("\n[Test 11] Free Guru resolves GURU_FREE 30 credits");
   const user = {
     role: "GURU",
     isFounder: false,
@@ -200,9 +191,9 @@ function testFreeGuruPlan() {
   assert(plan.unlimited === false, "Free Guru not unlimited");
 }
 
-// ── Test 13: Quota limits per plan ──────────────────────────
+// ── Test 12: Quota limits per plan ──────────────────────────
 function testQuotaLimits() {
-  console.log("\n[Test 13] Quota limits per plan");
+  console.log("\n[Test 12] Quota limits per plan");
   const free = getQuotaLimits("GURU_FREE");
   assertEqual(free.creditsPerMonth, 30, "GURU_FREE creditsPerMonth");
   assertEqual(free.maxPerRequest, 10, "GURU_FREE maxPerRequest");
@@ -215,9 +206,9 @@ function testQuotaLimits() {
   assertEqual(trial.creditsPerMonth, 200, "GURU_PRO_TRIAL creditsPerMonth");
 }
 
-// ── Test 14: Circuit breaker enters cooldown after failures ─
+// ── Test 13: Circuit breaker enters cooldown after failures ─
 function testCircuitBreakerCooldown() {
-  console.log("\n[Test 14] Circuit breaker cooldown after repeated failures");
+  console.log("\n[Test 13] Circuit breaker cooldown after repeated failures");
   resetProviderHealth("test-provider-1");
 
   // Record 5 failures
@@ -235,9 +226,9 @@ function testCircuitBreakerCooldown() {
   assert(skip === true, "Should skip provider in cooldown");
 }
 
-// ── Test 15: Provider success resets health ─────────────────
+// ── Test 14: Provider success resets health ─────────────────
 function testProviderSuccessResetsHealth() {
-  console.log("\n[Test 15] Provider success resets health appropriately");
+  console.log("\n[Test 14] Provider success resets health appropriately");
   resetProviderHealth("test-provider-2");
 
   // Record 2 failures → degraded (but still healthy — not in cooldown)
@@ -269,7 +260,6 @@ function main(): void {
 
   testEydCost();
   testRppCost();
-  testPptCost();
   testSoal5();
   testSoal15();
   testTextAnalysisShort();

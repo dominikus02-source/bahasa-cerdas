@@ -60,23 +60,25 @@ export const soalOutputSchema = z.object({
       sourceNote: z.string().optional(),
     })
     .optional(),
-  questions: z.array(
-    z.object({
-      number: z.number(),
-      type: z.string(),
-      question: z.string(),
-      options: z.array(z.string()).optional(),
-      pairs: z
-        .array(z.object({ left: z.string(), right: z.string() }))
-        .optional(),
-      answer: z.union([z.string(), z.array(z.string())]),
-      explanation: z.string().optional(),
-      difficulty: z.enum(["mudah", "sedang", "sulit"]),
-      bloomLevel: z.enum(["C1", "C2", "C3", "C4", "C5", "C6"]),
-      learningObjective: z.string(),
-      rubric: rubricSchema.optional(),
-    })
-  ),
+  questions: z
+    .array(
+      z.object({
+        number: z.number(),
+        type: z.string(),
+        question: z.string(),
+        options: z.array(z.string()).optional(),
+        pairs: z
+          .array(z.object({ left: z.string(), right: z.string() }))
+          .optional(),
+        answer: z.union([z.string(), z.array(z.string())]),
+        explanation: z.string().optional(),
+        difficulty: z.enum(["mudah", "sedang", "sulit"]),
+        bloomLevel: z.enum(["C1", "C2", "C3", "C4", "C5", "C6"]),
+        learningObjective: z.string(),
+        rubric: rubricSchema.optional(),
+      })
+    )
+    .min(1, "questions tidak boleh kosong"),
   answerKeyText: z.string(),
   teacherNotes: z.array(z.string()),
   editableText: z.string().min(1, "editableText tidak boleh kosong"),

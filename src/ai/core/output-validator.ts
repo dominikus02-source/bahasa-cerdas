@@ -8,11 +8,40 @@
  * - Partial JSON recovery
  *
  * Phase 3E: Added per-agent post-processing validation.
+ * Phase 3: Validation now returns tiered outcomes (VALID/RECOVERABLE/INVALID)
+ * instead of soft warnings.
  */
 
 export interface ValidationResult {
   cleaned: string;
   warnings: string[];
+}
+
+/**
+ * Tiered validation outcome.
+ * - VALID: output passes all checks, safe to present
+ * - RECOVERABLE: has issues worth retrying (e.g., wrong answer format) — retry once, then present with warnings
+ * - INVALID: fundamental failure (no questions, empty editableText) — block output entirely, show error
+ */
+export type ValidationOutcomeStatus = "valid" | "recoverable" | "invalid";
+
+export interface ValidationOutcome {
+  status: ValidationOutcomeStatus;
+  warnings: string[];
+  issues: string[];
+}
+
+/** Convenience constructors */
+export function validOutcome(warnings: string[] = []): ValidationOutcome {
+  return { status: "valid", warnings, issues: [] };
+}
+
+export function recoverableOutcome(issues: string[], warnings: string[] = []): ValidationOutcome {
+  return { status: "recoverable", warnings, issues };
+}
+
+export function invalidOutcome(issues: string[], warnings: string[] = []): ValidationOutcome {
+  return { status: "invalid", warnings, issues };
 }
 
 /**
@@ -82,27 +111,35 @@ export function tryFixJSON(raw: string): { fixed: string; success: boolean; warn
 
 /**
  * Tiered post-processing validation.
- * Returns null if valid, or a warning message string if issues found.
- * Uses soft validation — warns instead of blocking.
+ * Returns a ValidationOutcome instead of soft warnings.
  */
 export function validateAgentOutput(
   agentId: string,
   parsed: Record<string, unknown>
-): string | null {
+): ValidationOutcome {
   switch (agentId) {
     case "rpp":
       return validateRPPOutput(parsed);
     case "soal":
       return validateSoalOutput(parsed);
-    case "ppt":
-      return validatePPTOutput(parsed);
     default:
-      return null;
+      return validOutcome();
   }
 }
 
-function validateRPPOutput(parsed: Record<string, unknown>): string | null {
+/** Legacy wrapper — returns warnings string or null (for backward compat) */
+export function validateAgentOutputLegacy(
+  agentId: string,
+  parsed: Record<string, unknown>
+): string | null {
+  const outcome = validateAgentOutput(agentId, parsed);
+  if (outcome.status === "valid") return null;
+  return outcome.issues.join("; ");
+}
+
+function validateRPPOutput(parsed: Record<string, unknown>): ValidationOutcome {
   const issues: string[] = [];
+  const warnings: string[] = [];
   const editable = parsed.editableText as string | undefined;
   const identity = parsed.identity as Record<string, unknown> | undefined;
 
@@ -117,7 +154,6 @@ function validateRPPOutput(parsed: Record<string, unknown>): string | null {
     if (!editable.includes("Identitas") && !editable.includes("A. Identitas")) {
       issues.push("editableText belum memuat bagian A. Identitas Dokumen");
     }
-    // Table-based identitas check
     if (!editable.includes("|")) {
       issues.push("editableText belum menggunakan tabel untuk Identitas Dokumen");
     }
@@ -145,7 +181,6 @@ function validateRPPOutput(parsed: Record<string, unknown>): string | null {
     if (!editable.includes("BahasaCerdas.com") && !editable.includes("bahasacerdas.com")) {
       issues.push("editableText belum memuat footer BahasaCerdas.com");
     }
-    // Check if teacher/school/principal names from input appear in document
     if (identity) {
       const schoolName = identity.schoolName as string | undefined;
       if (schoolName && !editable.includes(schoolName)) {
@@ -158,60 +193,152 @@ function validateRPPOutput(parsed: Record<string, unknown>): string | null {
     }
   }
 
-  // Secondary checks on structured fields (informational only)
   if (!parsed.title || typeof parsed.title !== "string") issues.push("Field 'title' tidak terisi");
   if (!identity || typeof identity !== "object") issues.push("Field 'identity' tidak terisi");
 
-  return issues.length > 0 ? issues.join("; ") : null;
+  if (issues.length > 0) {
+    // RPP with missing sections is recoverable — teacher can fill in
+    return recoverableOutcome(issues, warnings);
+  }
+  return validOutcome(warnings);
 }
 
-function validateSoalOutput(parsed: Record<string, unknown>): string | null {
+const SUPPORTED_QUESTION_TYPES = [
+  "pilihan_ganda",
+  "pilihan_ganda_kompleks",
+  "benar_salah",
+  "menjodohkan",
+  "isian_singkat",
+  "uraian",
+  "cloze",
+  "akm_literasi",
+  "pisa_style",
+];
+
+function validateSoalOutput(parsed: Record<string, unknown>): ValidationOutcome {
   const issues: string[] = [];
+  const warnings: string[] = [];
+
   if (!parsed.questions || !Array.isArray(parsed.questions)) {
-    issues.push("Field 'questions' wajib berupa array");
-  } else {
-    const questions = parsed.questions as Record<string, unknown>[];
-    const texts = questions.map((q) => String(q.question ?? "")).filter(Boolean);
-    const unique = new Set(texts);
-    if (unique.size !== texts.length) {
-      issues.push("Terdapat duplikasi teks pertanyaan");
-    }
+    return invalidOutcome(["Field 'questions' wajib berupa array"]);
   }
-  if (typeof parsed.editableText !== "string" || !parsed.editableText) {
-    issues.push("Field 'editableText' tidak boleh kosong");
-  }
-  return issues.length > 0 ? issues.join("; ") : null;
-}
 
-function validatePPTOutput(parsed: Record<string, unknown>): string | null {
-  const issues: string[] = [];
-  if (!parsed.slides || !Array.isArray(parsed.slides)) {
-    issues.push("Field 'slides' wajib berupa array");
-  } else {
-    const slides = parsed.slides as Record<string, unknown>[];
-    for (const slide of slides) {
-      if (!slide.title || typeof slide.title !== "string") {
-        issues.push(`Slide ${slide.slideNumber ?? "?"} tidak memiliki title`);
-        break;
-      }
-      if (!slide.bullets || !Array.isArray(slide.bullets)) {
-        issues.push(`Slide ${slide.slideNumber ?? "?"} tidak memiliki bullets array`);
-        break;
-      }
-      if (!slide.speakerNotes || typeof slide.speakerNotes !== "string") {
-        issues.push(`Slide ${slide.slideNumber ?? "?"} tidak memiliki speakerNotes`);
-        break;
-      }
-      if (!slide.visualSuggestion || typeof slide.visualSuggestion !== "string") {
-        issues.push(`Slide ${slide.slideNumber ?? "?"} tidak memiliki visualSuggestion`);
-        break;
-      }
-    }
+  const questions = parsed.questions as Record<string, unknown>[];
+  if (questions.length === 0) {
+    return invalidOutcome(["questions kosong — AI tidak menghasilkan soal apapun"]);
   }
+
   if (typeof parsed.editableText !== "string" || !parsed.editableText) {
     issues.push("Field 'editableText' tidak boleh kosong");
   }
-  return issues.length > 0 ? issues.join("; ") : null;
+
+  // Check for duplicate question text
+  const texts = questions.map((q) => String(q.question ?? "")).filter(Boolean);
+  const uniqueTexts = new Set(texts);
+  if (uniqueTexts.size !== texts.length) {
+    issues.push("Terdapat duplikasi teks pertanyaan");
+  }
+
+  // Check count mismatch: metadata.questionCount vs actual questions length
+  const meta = parsed.metadata as Record<string, unknown> | undefined;
+  if (meta && typeof meta.questionCount === "number" && meta.questionCount !== questions.length) {
+    issues.push(`Jumlah soal tidak cocok: metadata=${meta.questionCount}, aktual=${questions.length}`);
+  }
+
+  // Per-item validation — Phase 3 Step 4 (C3)
+  let invalidCount = 0;
+
+  for (const q of questions) {
+    const qNum = q.number ?? "?";
+    const qType = String(q.type ?? "");
+    const qText = String(q.question ?? "");
+    const qAnswer = q.answer;
+    const qOptions = q.options as string[] | undefined;
+
+    // 1. Question must have non-empty text
+    if (!qText || qText.trim().length === 0) {
+      issues.push(`Soal #${qNum}: teks pertanyaan kosong`);
+      invalidCount++;
+      continue; // can't validate further without question text
+    }
+
+    // 2. Type must be supported
+    if (!SUPPORTED_QUESTION_TYPES.includes(qType)) {
+      issues.push(`Soal #${qNum} ("${qText.slice(0, 30)}..."): tipe "${qType}" tidak didukung`);
+      invalidCount++;
+      continue;
+    }
+
+    // 3. Type-specific validation
+    if (qType === "pilihan_ganda" || qType === "pilihan_ganda_kompleks") {
+      if (!Array.isArray(qOptions) || qOptions.length < 2) {
+        issues.push(`Soal #${qNum} ("${qText.slice(0, 30)}..."): pilihan_ganda butuh minimal 2 opsi`);
+        invalidCount++;
+        continue;
+      }
+      if (qOptions.some((o: string) => !o || o.trim().length === 0)) {
+        issues.push(`Soal #${qNum} ("${qText.slice(0, 30)}..."): ada opsi kosong`);
+        invalidCount++;
+        continue;
+      }
+      // Check for duplicate option texts (normalized)
+      const normalized = qOptions.map((o: string) => o.trim().toLowerCase());
+      const uniqueNorm = new Set(normalized);
+      if (uniqueNorm.size !== normalized.length) {
+        issues.push(`Soal #${qNum} ("${qText.slice(0, 30)}..."): ada opsi duplikat`);
+        invalidCount++;
+        continue;
+      }
+      // Answer must be present
+      if (qAnswer === undefined || qAnswer === null || (typeof qAnswer === "string" && qAnswer.trim().length === 0)) {
+        issues.push(`Soal #${qNum} ("${qText.slice(0, 30)}..."): jawaban kosong`);
+        invalidCount++;
+        continue;
+      }
+    }
+
+    if (qType === "benar_salah") {
+      const ans = String(qAnswer ?? "").trim().toLowerCase();
+      if (ans !== "benar" && ans !== "salah") {
+        issues.push(`Soal #${qNum} ("${qText.slice(0, 30)}..."): jawaban harus "Benar" atau "Salah", dapat "${qAnswer}"`);
+        invalidCount++;
+        continue;
+      }
+    }
+
+    if (qType === "isian_singkat") {
+      if (qAnswer === undefined || qAnswer === null || String(qAnswer).trim().length === 0) {
+        issues.push(`Soal #${qNum} ("${qText.slice(0, 30)}..."): jawaban isian kosong`);
+        invalidCount++;
+        continue;
+      }
+    }
+
+    if (qType === "menjodohkan") {
+      if (!q.pairs || !Array.isArray(q.pairs) || q.pairs.length < 2) {
+        issues.push(`Soal #${qNum} ("${qText.slice(0, 30)}..."): menjodohkan butuh minimal 2 pasang`);
+        invalidCount++;
+        continue;
+      }
+    }
+
+    // Check learningObjective exists
+    if (!q.learningObjective || String(q.learningObjective).trim().length === 0) {
+      warnings.push(`Soal #${qNum} ("${qText.slice(0, 30)}..."): learningObjective kosong`);
+    }
+  }
+
+  // Classification: >50% invalid = INVALID, else RECOVERABLE
+  if (invalidCount > questions.length / 2) {
+    return invalidOutcome(
+      issues,
+      warnings
+    );
+  }
+  if (issues.length > 0) {
+    return recoverableOutcome(issues, warnings);
+  }
+  return validOutcome(warnings);
 }
 
 /**
@@ -225,8 +352,6 @@ export function getCorrectionMessage(
   switch (agentId) {
     case "soal":
       return `${safeMessage}\nKesalahan: ${validationError}\nPastikan jumlah soal tepat, semua soal punya kunci jawaban, dan tidak ada duplikasi teks.`;
-    case "ppt":
-      return `${safeMessage}\nKesalahan: ${validationError}\nPastikan jumlah slide tepat, setiap slide punya title/bullets/speakerNotes/visualSuggestion.`;
     case "rpp":
       return `${safeMessage}\nKesalahan: ${validationError}\nPastikan semua field Rencana Pembelajaran terisi lengkap dan editableText tidak kosong.`;
     default:
