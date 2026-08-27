@@ -127,9 +127,13 @@ export default function DataSiswaPage() {
             />
           </div>
         </div>
-        {selectedGroupId && (
+        {selectedGroupId ? (
           <p className="text-xs text-gray-500 mt-2">
             Menampilkan {filtered.length} siswa di {groups.find(g => g.id === selectedGroupId)?.name ?? "kelas ini"}
+          </p>
+        ) : (
+          <p className="text-xs text-gray-500 mt-2">
+            Menampilkan {filtered.length} siswa dari semua kelas.
           </p>
         )}
       </Card>
@@ -158,16 +162,22 @@ export default function DataSiswaPage() {
           {filtered.map((s) => (
             <Card key={s.id} className="p-4">
               <div className="flex items-center gap-4">
-                <div className={`h-12 w-12 rounded-full bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center text-white font-bold`}>
-                  {(s.fullName || "??").slice(0, 2).toUpperCase()}
+                {/* No. Absen — prominent circle badge */}
+                <div className="shrink-0 flex flex-col items-center gap-1">
+                  <div className="w-12 h-12 rounded-full bg-violet-100 border-2 border-violet-300 flex items-center justify-center">
+                    <span className="text-base font-bold text-violet-700">
+                      {s.profile?.noAbsen || "—"}
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-medium text-gray-400">Absen</span>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <p className="font-semibold">{s.fullName}</p>
                     <RankChip rank={rankFromLevel(levelFromXp(s.xp || 0))} size={12} showTitle={false} compact />
-                    {s.profile?.noAbsen && (
-                      <span className="inline-flex items-center gap-0.5 text-[11px] font-semibold text-violet-700 bg-violet-50 border border-violet-100 rounded-full px-2 py-0.5">
-                        <Hash size={10} /> {s.profile.noAbsen}
+                    {s.groupName && (
+                      <span className="inline-flex items-center text-[11px] font-medium text-gray-500 bg-gray-100 rounded-full px-2 py-0.5">
+                        {s.groupName}
                       </span>
                     )}
                   </div>
