@@ -89,6 +89,20 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       return { id: q.id, sudah, sedang, belum: Math.max(0, totalMurid - sudah - sedang) };
     });
 
+    // Map members to a flat shape for the "Orang" tab
+    const members = group.members.map((m) => ({
+      id: m.user.id,
+      fullName: m.user.fullName,
+      avatar: m.user.avatar,
+      email: m.user.email,
+      xp: m.user.xp,
+      level: m.user.level,
+      streak: m.user.streak,
+      league: m.user.league,
+      lastActiveAt: m.user.lastActiveAt,
+      noAbsen: m.user.profile?.noAbsen ?? null,
+    }));
+
     return NextResponse.json({
       stats: {
         totalMurid: group.members.length,
@@ -97,6 +111,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         nilaiRata,
         progressMurid,
       },
+      members,
       tugasQuiz: tugasAktifQuiz,
       tugasPenugasan: tugasAktifPenugasan,
       pengumuman,

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
-import { isTeacherOrStudent, getTeacherStudents } from "@/lib/teacher/students";
+import { isTeacherOrStudent, getTeacherStudents, getTeacherStudentsForClass } from "@/lib/teacher/students";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -14,7 +14,11 @@ export async function GET() {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const siswa = await getTeacherStudents(dbUser.id);
+    // Optional: filter by specific class membership
+    const groupId = req.nextUrl.searchParams.get("groupId");
+    const siswa = groupId
+      ? await getTeacherStudentsForClass(dbUser.id, groupId)
+      : await getTeacherStudents(dbUser.id);
 
     return NextResponse.json({ siswa });
   } catch {

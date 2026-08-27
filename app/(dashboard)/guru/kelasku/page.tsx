@@ -21,6 +21,7 @@ interface Group {
 
 interface DetailData {
   stats: { totalMurid: number; tugasAktif: number; pengumuman: number; nilaiRata: number | null; progressMurid: number };
+  members: { id: string; fullName: string; avatar: string | null; email: string | null; xp: number; level: number; streak: number; league: string | null; lastActiveAt: string | null; noAbsen: string | null }[];
   tugasQuiz: { id: string; dueDate: string | null; isPublished: boolean; assignedAt: string; quiz: { id: string; title: string }; _count: { submissions: number } }[];
   tugasPenugasan: { id: string; judul: string; jenis: string; tenggat: string | null; createdAt: string; _count: { submissions: number } }[];
   pengumuman: { id: string; judul: string; deskripsi?: string | null; pinned: boolean; createdAt: string; tenggat: string | null; _count: { submissions: number } }[];
@@ -703,12 +704,58 @@ export default function KelasKuPage() {
             </div>
           </div>
         ) : tab === "orang" && detail ? (
-          <div className="bc-card p-5">
-            <p className="text-sm font-bold text-[var(--clr-text)]">Anggota kelas</p>
-            <p className="text-sm text-[var(--clr-text-2)] mt-1">{detail.stats?.totalMurid ?? 0} siswa tergabung.</p>
-            <div className="flex gap-2 mt-4">
-              <a href="/guru/data-siswa" className="bc-btn-secondary text-xs">Kelola Data Siswa</a>
+          <div className="space-y-3">
+            <div className="bc-card p-4 flex items-center justify-between">
+              <div>
+                <p className="text-sm font-bold text-[var(--clr-text)]">Anggota Kelas</p>
+                <p className="text-xs text-[var(--clr-text-2)] mt-0.5">
+                  {detail.members?.length ?? 0} siswa tergabung di kelas ini
+                </p>
+              </div>
+              <a href="/guru/data-siswa" className="bc-btn-secondary text-xs shrink-0">Kelola Data Siswa</a>
             </div>
+            {(!detail.members || detail.members.length === 0) ? (
+              <div className="bc-card bc-empty">
+                <div className="w-14 h-14 rounded-2xl bg-[var(--clr-accent-soft)] text-[var(--clr-accent-strong)] flex items-center justify-center mx-auto mb-3">
+                  <Users size={24} />
+                </div>
+                <p className="text-sm font-bold text-[var(--clr-text)]">Belum ada anggota</p>
+                <p className="text-xs text-[var(--clr-text-2)] mt-1 max-w-xs mx-auto">
+                  Bagikan kode kelas agar siswa bisa bergabung.
+                </p>
+              </div>
+            ) : (
+              <div className="grid gap-2">
+                {(detail.members ?? []).map((m) => (
+                  <div key={m.id} className="bc-card p-3.5 flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                      {(m.fullName || "??").slice(0, 2).toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-semibold text-[var(--clr-text)] truncate">{m.fullName}</p>
+                        {m.noAbsen && (
+                          <span className="text-[10px] font-medium text-[var(--clr-accent-strong)] bg-[var(--clr-accent-soft)] rounded-full px-1.5 py-0.5 shrink-0">
+                            #{m.noAbsen}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-3 mt-0.5 text-[11px] text-[var(--clr-text-3)]">
+                        <span>Lv {m.level || 1}</span>
+                        {(m.streak ?? 0) > 0 && <span>🔥 {m.streak} streak</span>}
+                        {m.lastActiveAt && (
+                          <span>Terakhir: {new Date(m.lastActiveAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}</span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="text-sm font-bold text-[var(--clr-accent-strong)]">{(m.xp || 0).toLocaleString()}</p>
+                      <p className="text-[10px] text-[var(--clr-text-3)]">XP</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         ) : null}
 

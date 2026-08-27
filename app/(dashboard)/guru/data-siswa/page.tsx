@@ -24,9 +24,32 @@ export default function DataSiswaPage() {
   const [search, setSearch] = useState("");
   const [absenDraft, setAbsenDraft] = useState<Record<string, string>>({});
   const [savingAbsen, setSavingAbsen] = useState<string | null>(null);
+  const [groups, setGroups] = useState<{ id: string; name: string; memberCount: number }[]>([]);
+  const [selectedGroupId, setSelectedGroupId] = useState<string>("");
 
+  // Fetch groups for the class filter dropdown
   useEffect(() => {
-    fetch("/api/guru/siswa")
+    fetch("/api/group")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.groups) {
+          setGroups(data.groups.map((g: any) => ({
+            id: String(g.id),
+            name: String(g.name),
+            memberCount: Number(g.memberCount ?? g._count?.members ?? 0),
+          })));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // Fetch students, filtered by class when selected
+  useEffect(() => {
+    setLoading(true);
+    const url = selectedGroupId
+      ? `/api/guru/siswa?groupId=${selectedGroupId}`
+      : "/api/guru/siswa";
+    fetch(url)
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (data?.siswa) {
@@ -42,7 +65,7 @@ export default function DataSiswaPage() {
         setLoadError("Gagal memuat data siswa. Periksa koneksi Anda.");
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [selectedGroupId]);
 
   const saveAbsen = async (s: any) => {
     const value = (absenDraft[s.id] ?? s.profile?.noAbsen ?? "").trim();
@@ -79,15 +102,36 @@ export default function DataSiswaPage() {
       </div>
 
       <Card className="p-4 mb-6">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Cari nama siswa..."
-            className="w-full pl-10 pr-4 py-2 rounded-lg border text-sm"
-          />
+        <div className="flex flex-col sm:flex-row gap-3">
+          {groups.length > 0 && (
+            <div className="shrink-0">
+              <select
+                value={selectedGroupId}
+                onChange={(e) => setSelectedGroupId(e.target.value)}
+                className="w-full sm:w-48 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white"
+              >
+                <option value="">Semua Kelas</option>
+                {groups.map((g) => (
+                  <option key={g.id} value={g.id}>{g.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Cari nama siswa..."
+              className="w-full pl-10 pr-4 py-2 rounded-lg border text-sm"
+            />
+          </div>
         </div>
+        {selectedGroupId && (
+          <p className="text-xs text-gray-500 mt-2">
+            Menampilkan {filtered.length} siswa di {groups.find(g => g.id === selectedGroupId)?.name ?? "kelas ini"}
+          </p>
+        )}
       </Card>
 
       {loading ? (

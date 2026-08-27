@@ -107,7 +107,27 @@ export async function getTeacherStudents(teacherId: string) {
   return siswa;
 }
 
-/** Baris lengkap (atan ringkas) dari satu grup untuk dashboard class detail. */
+/**
+ * Daftar murid yang merupakan anggota kelas TERTENTU milik guru.
+ * Guard: group harus milik teacherId + isActive.
+ * Return murid dengan info kelasnya.
+ */
+export async function getTeacherStudentsForClass(teacherId: string, groupId: string) {
+  const group = await db.group.findFirst({
+    where: { id: groupId, teacherId, isActive: true },
+    include: {
+      members: { include: { user: { select: STUDENT_SELECT } } },
+    },
+  });
+  if (!group) return [];
+  return group.members.map((m) => ({
+    ...m.user,
+    groupId: group.id,
+    groupName: group.name,
+  }));
+}
+
+/** Baris lengkap (atau ringkas) dari satu grup untuk dashboard class detail. */
 export async function getTeacherGroupDetail(teacherId: string, groupId: string) {
   return db.group.findFirst({
     where: { id: groupId, teacherId, isActive: true },
