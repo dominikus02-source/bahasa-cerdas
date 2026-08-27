@@ -355,7 +355,7 @@ export default function GuruBerandaPage() {  const user = useUserStore()
               </div>
               <div>
                 <p className="text-sm font-semibold text-gray-900 group-hover:text-purple-700">Alat AI</p>
-                <p className="text-xs text-gray-500">Soal, PPT, EYD, dll.</p>
+                <p className="text-xs text-gray-500">Soal, EYD, dll.</p>
               </div>
             </Link>
           </div>

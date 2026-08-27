@@ -53,8 +53,6 @@ interface AgentResultPanelProps {
   saveError?: string | null;
   onExportDocx?: () => void;
   exportDocxState?: "idle" | "loading" | "error";
-  onExportPptx?: () => void;
-  exportPptxState?: "idle" | "loading" | "error";
   onExportPdf?: () => void;
   exportPdfState?: "idle" | "loading" | "error";
   exportError?: string | null;
@@ -421,55 +419,6 @@ function cn(...classes: (string | boolean | undefined | null)[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-function StructuredPPT({ output }: { output: Record<string, unknown> }) {
-  const slides = output.slides as any[] | undefined;
-  return (
-    <div className="space-y-3 text-sm">
-      {(slides ?? []).map((s) => (
-        <div key={s.slideNumber} className="p-3 bg-white border border-gray-100 rounded-xl">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="w-6 h-6 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold">
-              {s.slideNumber}
-            </span>
-            <p className="font-semibold text-gray-800">{s.title}</p>
-            {s.subtitle && <span className="text-xs text-gray-400">{s.subtitle}</span>}
-          </div>
-          {s.bullets?.length > 0 && (
-            <ul className="space-y-1 mb-2">
-              {s.bullets.map((b: string, j: number) => (
-                <li key={j} className="flex items-start gap-2 text-xs text-gray-600">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gray-300 mt-1.5 flex-shrink-0" />
-                  {b}
-                </li>
-              ))}
-            </ul>
-          )}
-          <p className="text-xs text-gray-400 italic mb-1">
-            <span className="font-medium">Narasi:</span> {s.speakerNotes}
-          </p>
-          <p className="text-xs text-gray-400">
-            <span className="font-medium">Visual:</span> {s.visualSuggestion}
-          </p>
-          {s.activityPrompt && (
-            <p className="text-xs text-emerald-600 font-medium mt-1">
-              Aktivitas: {s.activityPrompt}
-            </p>
-          )}
-          {s.quiz && (
-            <div className="mt-2 p-2 bg-amber-50 rounded-lg">
-              <p className="text-xs font-medium text-amber-700 mb-1">Kuis: {s.quiz.question}</p>
-              {s.quiz.options?.map((o: string, j: number) => (
-                <p key={j} className="text-xs text-amber-600">{String.fromCharCode(65 + j)}. {o}</p>
-              ))}
-              <p className="text-xs text-green-600 font-medium mt-1">Jawaban: {s.quiz.answer}</p>
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
-  );
-}
-
 function StructuredReview({ output }: { output: Record<string, unknown> }) {
   return (
     <div className="space-y-3 text-sm">
@@ -679,7 +628,7 @@ function SubSection({ label, items }: { label: string; items?: string[] }) {
   );
 }
 
-export function AgentResultPanel({ agentId, result, loading, error, errorCode, requestId, isStreaming = false, streamingText = "", streamingProvider = "", streamingModel = "", streamProgress = "", streamCancelled = false, streamIncomplete = false, onCancelStream, onRegenerate, onClear, onSuggestedAgent, onSave, saveState = "idle", saveError, onExportDocx, exportDocxState = "idle", onExportPptx, exportPptxState = "idle", onExportPdf, exportPdfState = "idle", exportError, resultSource, savedResultId }: AgentResultPanelProps) {
+export function AgentResultPanel({ agentId, result, loading, error, errorCode, requestId, isStreaming = false, streamingText = "", streamingProvider = "", streamingModel = "", streamProgress = "", streamCancelled = false, streamIncomplete = false, onCancelStream, onRegenerate, onClear, onSuggestedAgent, onSave, saveState = "idle", saveError, onExportDocx, exportDocxState = "idle", onExportPdf, exportPdfState = "idle", exportError, resultSource, savedResultId }: AgentResultPanelProps) {
   if (loading) {
     if (isStreaming && (streamingText || streamProgress || streamingProvider)) {
       return (
@@ -859,7 +808,6 @@ export function AgentResultPanel({ agentId, result, loading, error, errorCode, r
         <>
           {agentId === "rpp" && <RPPDisplay output={result.output} />}
           {agentId === "soal" && <StructuredSoal output={result.output} />}
-          {agentId === "ppt" && <StructuredPPT output={result.output} />}
           {agentId === "review" && <StructuredReview output={result.output} />}
           {agentId === "eyd" && <StructuredEYD output={result.output} />}
           {agentId === "feedback" && <StructuredFeedback output={result.output} />}
@@ -941,25 +889,6 @@ export function AgentResultPanel({ agentId, result, loading, error, errorCode, r
         ) : (agentId === "rpp" || agentId === "soal") ? (
           <Button variant="outline" size="sm" disabled className="opacity-50" title="Ekspor untuk fitur ini segera hadir.">
             <FileText className="w-3.5 h-3.5 mr-1" /> PDF
-          </Button>
-        ) : null}
-        {/* PPTX Export (PPT) */}
-        {agentId === "ppt" && onExportPptx ? (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onExportPptx}
-            disabled={exportPptxState === "loading"}
-          >
-            {exportPptxState === "loading" ? (
-              <><Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" /> Menyiapkan PPTX...</>
-            ) : (
-              <><Monitor className="w-3.5 h-3.5 mr-1" /> Download PPTX</>
-            )}
-          </Button>
-        ) : agentId === "ppt" ? (
-          <Button variant="outline" size="sm" disabled className="opacity-50" title="Ekspor untuk fitur ini segera hadir.">
-            <Monitor className="w-3.5 h-3.5 mr-1" /> PPTX
           </Button>
         ) : null}
         {/* Export untuk agent baru — disabled, coming soon */}

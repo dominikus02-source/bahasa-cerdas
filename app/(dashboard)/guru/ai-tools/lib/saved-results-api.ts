@@ -1,4 +1,4 @@
-export type AgentId = "rpp" | "soal" | "ppt" | "review" | "bc-assistant" | "eyd" | "feedback" | "grading" | "text-analysis";
+export type AgentId = "rpp" | "soal" | "review" | "bc-assistant" | "eyd" | "feedback" | "grading" | "text-analysis";
 
 export interface SavedAiResult {
   id: string;

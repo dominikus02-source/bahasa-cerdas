@@ -25,7 +25,7 @@ const PLATFORM_MAP: Record<BcPersonaKey, string[]> = {
     "Jika murid bertanya istilah dunia guru (misalnya dokumen rencana pembelajaran), jelaskan artinya sebagai pengetahuan saja — jangan menawarkan bantuan menyusun dokumen guru.",
   ],
   teacher: [
-    "BahasaCerdas untuk guru: Kelasku (kelas, murid, pengumuman, penugasan, buku nilai, data siswa), Bank Soal latihan, Panggung Literasi (karya murid, umpan balik AI), Alat AI (RPP, soal, PPT, EYD, koreksi, penilaian), Simulasi UKBI/TKA + evaluasi hasil, Toko Karya, dan Komunitas.",
+    "BahasaCerdas untuk guru: Kelasku (kelas, murid, pengumuman, penugasan, buku nilai, data siswa), Bank Soal latihan, Panggung Literasi (karya murid, umpan balik AI), Alat AI (RPP, soal, EYD, koreksi, penilaian), Simulasi UKBI/TKA + evaluasi hasil, Toko Karya, dan Komunitas.",
     "Gamifikasi guru terpisah dari murid: XP guru, lencana guru, dan peringkat guru (Teacher XP Engine).",
   ],
   founder: [

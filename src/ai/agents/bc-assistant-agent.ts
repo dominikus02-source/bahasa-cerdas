@@ -22,7 +22,7 @@ const inputSchema = z.object({
 
 const outputSchema = z.object({
   reply: z.string(),
-  suggestedAgent: z.enum(["rpp", "soal", "ppt", "review", "eyd", "feedback", "grading", "text-analysis"]).optional(),
+  suggestedAgent: z.enum(["rpp", "soal", "review", "eyd", "feedback", "grading", "text-analysis"]).optional(),
   nextQuestion: z.string().optional(),
 });
 

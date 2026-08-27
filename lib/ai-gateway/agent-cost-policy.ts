@@ -3,7 +3,6 @@ import type { AiAgentId, CostPolicyResult, CreditWeight } from "./gateway-types"
 const KNOWN_AGENTS: Record<string, true> = {
   rpp: true,
   soal: true,
-  ppt: true,
   review: true, "bc-assistant": true,
   eyd: true,
   feedback: true,
@@ -65,9 +64,6 @@ export function calculateAgentCost(
     case "rpp":
       return { credits: 5, weight: "heavy", reason: "RPP generation — long structured output, 5 credits" };
 
-    case "ppt":
-      return { credits: 5, weight: "heavy", reason: "PPT generation — complex output, 5 credits" };
-
     case "mentor":
       return { credits: 1, weight: "light", reason: "Mentor explanation — short, cheap" };
 
@@ -76,12 +72,10 @@ export function calculateAgentCost(
   }
 }
 
-export function getExportCost(format: "docx" | "pdf" | "pptx"): CostPolicyResult {
+export function getExportCost(format: "docx" | "pdf"): CostPolicyResult {
   switch (format) {
     case "docx":
       return { credits: 0, weight: "light", reason: "DOCX export — free" };
-    case "pptx":
-      return { credits: 1, weight: "light", reason: "PPTX export — 1 credit" };
     case "pdf":
       return { credits: 0, weight: "light", reason: "PDF export — free" };
   }

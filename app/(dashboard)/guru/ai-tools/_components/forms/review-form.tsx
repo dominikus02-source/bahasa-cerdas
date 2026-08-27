@@ -13,7 +13,6 @@ interface ReviewFormProps {
 const CONTENT_TYPES = [
   { value: "rpp", label: "Rencana Pembelajaran" },
   { value: "soal", label: "Soal" },
-  { value: "ppt", label: "PPT / Slide" },
   { value: "artikel", label: "Artikel / Karya" },
   { value: "lainnya", label: "Lainnya" },
 ];

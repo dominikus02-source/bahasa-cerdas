@@ -162,12 +162,11 @@ export async function checkQuota(
 
 /**
  * Check quota for export routes.
- * PDF exports are free (0 credits).
- * DOCX and PPTX cost 1 credit.
+ * PDF and DOCX exports are free (0 credits).
  */
 export async function checkExportQuota(
   user: UserLikeWithId,
-  format: "docx" | "pdf" | "pptx"
+  format: "docx" | "pdf"
 ): Promise<QuotaCheckResult> {
   const planInfo = resolveUserAiPlan(user);
   const cost = getExportCost(format);

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
-import { FileText, PenTool, Monitor, ClipboardCheck, Bot, SpellCheck, MessageSquare, CheckSquare, BookOpen, AlertTriangle, RefreshCw } from "lucide-react";
+import { FileText, PenTool, ClipboardCheck, Bot, SpellCheck, MessageSquare, CheckSquare, BookOpen, AlertTriangle, RefreshCw } from "lucide-react";
 import { AiCreditBalance } from "@/components/guru/AiCreditBalance";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +11,6 @@ import { AgentResultPanel, type AgentResultData } from "./agent-result-panel";
 import { HistoryPanel } from "./history-panel";
 import { RPPForm } from "./forms/rpp-form";
 import { SoalForm } from "./forms/soal-form";
-import { PPTForm } from "./forms/ppt-form";
 import { ReviewForm } from "./forms/review-form";
 import { BCAssistantForm } from "./forms/bc-assistant-form";
 import { EydForm } from "./forms/eyd-form";
@@ -20,7 +19,7 @@ import { GradingForm } from "./forms/grading-form";
 import { TextAnalysisForm } from "./forms/text-analysis-form";
 import { runAgent, runAgentStream, QuotaExceededError, AgentErrorWithCodeClass, type StreamCallbacks, type QuotaErrorInfo } from "../lib/agent-api";
 import { saveAiResult, listSavedResults, deleteSavedResult, updateSavedResult } from "../lib/saved-results-api";
-import { downloadDocxExport, downloadPptxExport, downloadPdfExport } from "../lib/export-api";
+import { downloadDocxExport, downloadPdfExport } from "../lib/export-api";
 import type { AgentId } from "../lib/agent-api";
 import type { SavedAiResult } from "../lib/saved-results-api";
 
@@ -39,7 +38,6 @@ const AGENTS: AgentConfig[] = [
   // Buat Materi
   { id: "rpp", name: "Rencana Pembelajaran", description: "Buat Rencana Pembelajaran Bahasa Indonesia siap pakai sesuai kurikulum.", useCase: "Guru yang ingin menyusun Rencana Pembelajaran cepat", icon: <FileText className="w-5 h-5" />, category: "buat-materi" },
   { id: "soal", name: "Buat Soal", description: "Hasilkan soal PG, essay, AKM, PISA dengan kunci jawaban dan pembahasan.", useCase: "Guru yang perlu bank soal variatif", icon: <PenTool className="w-5 h-5" />, category: "buat-materi" },
-  { id: "ppt", name: "Buat PPT", description: "Rancang slide presentasi mengajar dengan narasi dan aktivitas interaktif.", useCase: "Guru yang butuh presentasi siap pakai", icon: <Monitor className="w-5 h-5" />, category: "buat-materi" },
   // Evaluasi & Review
   { id: "review", name: "Review Materi", description: "Dapatkan feedback dan saran perbaikan untuk materi pembelajaran Anda.", useCase: "Guru yang ingin mengecek kualitas materi", icon: <ClipboardCheck className="w-5 h-5" />, category: "evaluasi" },
   { id: "feedback", name: "Feedback Siswa", description: "Beri umpan balik konstruktif untuk tulisan siswa dengan nada sesuai jenjang.", useCase: "Guru yang ingin memberi feedback personal", icon: <MessageSquare className="w-5 h-5" />, category: "evaluasi" },
@@ -70,8 +68,6 @@ function generateTitle(agentId: string, input: Record<string, unknown>, resultTe
     }
     case "soal":
       return topic ? `Soal ${subject} — ${topic}` : `Soal ${subject}`;
-    case "ppt":
-      return topic ? `PPT ${subject} — ${topic}` : `PPT ${subject}`;
     case "review":
       return "Review Materi";
     case "feedback":
@@ -123,9 +119,6 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
 
   const [exportDocxState, setExportDocxState] = useState<"idle" | "loading" | "error">("idle");
   const [exportDocxId, setExportDocxId] = useState<string | null>(null);
-
-  const [exportPptxState, setExportPptxState] = useState<"idle" | "loading" | "error">("idle");
-  const [exportPptxId, setExportPptxId] = useState<string | null>(null);
 
   const [exportPdfState, setExportPdfState] = useState<"idle" | "loading" | "error">("idle");
   const [exportPdfId, setExportPdfId] = useState<string | null>(null);
@@ -316,7 +309,6 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
     setSaveState("idle");
     setSaveError(null);
     setExportDocxState("idle");
-    setExportPptxState("idle");
     setExportPdfState("idle");
   }, []);
 
@@ -375,41 +367,6 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
         return;
       }
       setExportDocxState("idle");
-    }
-  }, [currentResult, lastPayload, selectedAgent]);
-
-  const handleExportPptx = useCallback(async (item?: SavedAiResult) => {
-    if (item) {
-      setExportPptxId(item.id);
-      try {
-        await downloadPptxExport({
-          agentId: "ppt",
-          savedResultId: item.id,
-          title: item.title,
-        });
-      } catch {
-        // silent
-      } finally {
-        setExportPptxId(null);
-      }
-    } else if (currentResult?.success && lastPayload) {
-      setExportPptxState("loading");
-      try {
-        const editableText = typeof (currentResult.output as Record<string, unknown>)?.editableText === "string"
-          ? (currentResult.output as Record<string, unknown>).editableText as string
-          : currentResult.text ?? undefined;
-        await downloadPptxExport({
-          agentId: "ppt",
-          title: generateTitle(selectedAgent, lastPayload, currentResult.text),
-          outputJson: (currentResult.output ?? {}) as Record<string, unknown>,
-          editableText,
-        });
-      } catch {
-        setExportPptxState("error");
-        setTimeout(() => setExportPptxState("idle"), 3000);
-        return;
-      }
-      setExportPptxState("idle");
     }
   }, [currentResult, lastPayload, selectedAgent]);
 
@@ -558,7 +515,6 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
     switch (id) {
       case "rpp": return "RPP";
       case "soal": return "Soal";
-      case "ppt": return "PPT";
       case "review": return "Review";
       case "feedback": return "Feedback";
       case "grading": return "Nilai";
@@ -670,7 +626,6 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
           <CardContent>
             {selectedAgent === "rpp" && <RPPForm onSubmit={(input) => handleRunAgent("rpp", input)} loading={isLoading} />}
             {selectedAgent === "soal" && <SoalForm onSubmit={(input) => handleRunAgent("soal", input)} loading={isLoading} />}
-            {selectedAgent === "ppt" && <PPTForm onSubmit={(input) => handleRunAgent("ppt", input)} loading={isLoading} />}
             {selectedAgent === "review" && <ReviewForm onSubmit={(input) => handleRunAgent("review", input)} loading={isLoading} />}
             {selectedAgent === "eyd" && <EydForm onSubmit={(input) => handleRunAgent("eyd", input)} loading={isLoading} />}
             {selectedAgent === "feedback" && <FeedbackForm onSubmit={(input) => handleRunAgent("feedback", input)} loading={isLoading} />}
@@ -728,8 +683,6 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
               saveError={saveError}
               onExportDocx={() => handleExportDocx()}
               exportDocxState={exportDocxState}
-              onExportPptx={() => handleExportPptx()}
-              exportPptxState={exportPptxState}
               onExportPdf={() => handleExportPdf()}
               exportPdfState={exportPdfState}
               exportError={exportError}
@@ -759,8 +712,6 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
           onEditingTitleChange={setEditingTitleId}
           onExportDocx={(item) => handleExportDocx(item)}
           exportDocxId={exportDocxId}
-          onExportPptx={(item) => handleExportPptx(item)}
-          exportPptxId={exportPptxId}
           onExportPdf={(item) => handleExportPdf(item)}
           exportPdfId={exportPdfId}
         />

@@ -6,14 +6,6 @@ export interface DocxExportPayload {
   editableText?: string;
 }
 
-export interface PptxExportPayload {
-  agentId: "ppt";
-  savedResultId?: string;
-  title?: string;
-  outputJson?: Record<string, unknown>;
-  editableText?: string;
-}
-
 async function downloadBlob(url: string, payload: Record<string, unknown>, defaultName: string): Promise<void> {
   const res = await fetch(url, {
     method: "POST",
@@ -51,10 +43,6 @@ async function downloadBlob(url: string, payload: Record<string, unknown>, defau
 
 export async function downloadDocxExport(payload: DocxExportPayload): Promise<void> {
   return downloadBlob("/api/ai/agents/export/docx", payload as unknown as Record<string, unknown>, "export.docx");
-}
-
-export async function downloadPptxExport(payload: PptxExportPayload): Promise<void> {
-  return downloadBlob("/api/ai/agents/export/pptx", payload as unknown as Record<string, unknown>, "export.pptx");
 }
 
 export interface PdfExportPayload {

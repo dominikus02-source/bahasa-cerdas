@@ -15,7 +15,7 @@ import { runAgent } from "../core/agent-runner";
 
 const inputSchema = z.object({
   content: z.string().min(1, "Content to review is required"),
-  contentType: z.enum(["rpp", "soal", "ppt", "artikel", "lainnya"]).default("artikel"),
+  contentType: z.enum(["rpp", "soal", "artikel", "lainnya"]).default("artikel"),
   title: z.string().optional(),
   grade: z.string().optional(),
   rubric: z.string().optional(),
@@ -79,12 +79,6 @@ Untuk review soal:
 - Tingkat kesulitan sesuai dengan kelas yang ditargetkan
 - Level Bloom/Cognitive sesuai (C1-C6)
 - Tidak ada bias gender, SARA, atau stereotip dalam soal
-
-Untuk review PPT:
-- Struktur slide: judul jelas, bullet ringkas (maks 5 poin), tidak wall of text
-- Keterbacaan: font cukup, kontras baik, visual pendukung
-- Aktivitas siswa: minimal satu slide aktivitas interaktif
-- Kesesuaian dengan tujuan pembelajaran
 
 Untuk review artikel:
 - Struktur: judul menarik, pendahuluan-isi-penutup, paragraf koheren

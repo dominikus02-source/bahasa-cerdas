@@ -4,7 +4,7 @@
  * Maps error codes to user-friendly Indonesian messages.
  */
 
-export type AgentId = "rpp" | "soal" | "ppt" | "review" | "bc-assistant" | "eyd" | "feedback" | "grading" | "text-analysis";
+export type AgentId = "rpp" | "soal" | "review" | "bc-assistant" | "eyd" | "feedback" | "grading" | "text-analysis";
 
 export interface AgentRunResponse {
   success: boolean;

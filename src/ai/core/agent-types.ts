@@ -4,7 +4,6 @@ import { z } from "zod";
 export type AgentId =
   | "rpp"
   | "soal"
-  | "ppt"
   | "bc-assistant"
   | "review"
   | "eyd"

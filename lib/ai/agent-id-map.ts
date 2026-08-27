@@ -22,12 +22,6 @@ export const AGENT_ALIASES: Record<string, string> = {
   assessment: "soal",
   asesmen: "soal",
 
-  // PPT
-  "buat-ppt": "ppt",
-  ppt: "ppt",
-  presentasi: "ppt",
-  slide: "ppt",
-
   // Review Materi
   "review-materi": "review",
   review: "review",
@@ -70,7 +64,6 @@ export const AGENT_ALIASES: Record<string, string> = {
 export const CANONICAL_AGENTS = [
   "rpp",
   "soal",
-  "ppt",
   "review",
   "feedback",
   "grading",
@@ -84,7 +77,6 @@ export type CanonicalAgentId = (typeof CANONICAL_AGENTS)[number];
 export const AGENT_LABELS: Record<CanonicalAgentId, string> = {
   rpp: "Rencana Pembelajaran",
   soal: "Buat Soal",
-  ppt: "Buat PPT",
   review: "Review Materi",
   feedback: "Feedback Siswa",
   grading: "Penilaian Otomatis",

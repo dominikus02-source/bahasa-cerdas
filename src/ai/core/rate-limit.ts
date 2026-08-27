@@ -5,7 +5,7 @@
  * Per-agent limits:
  * - bc-assistant: 30 req/min (chat is fast)
  * - review: 15 req/min
- * - rpp/soal/ppt: 5 req/min (generation is expensive)
+ * - rpp/soal: 5 req/min (generation is expensive)
  *
  * Premium users get doubled limits via lib/premium.ts helpers.
  * If premium check fails, falls back to base limit.
@@ -23,7 +23,6 @@ const BASE_LIMITS: Record<string, AgentRateLimitConfig> = {
   review: { maxRequests: 15, windowSeconds: 60 },
   rpp: { maxRequests: 5, windowSeconds: 60 },
   soal: { maxRequests: 5, windowSeconds: 60 },
-  ppt: { maxRequests: 3, windowSeconds: 60 },
   rubric: { maxRequests: 10, windowSeconds: 60 },
   eyd: { maxRequests: 15, windowSeconds: 60 },
   feedback: { maxRequests: 10, windowSeconds: 60 },

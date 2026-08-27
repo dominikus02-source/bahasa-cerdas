@@ -28,7 +28,6 @@ export { getPhaseForGrade, getBloomTargetForPhase } from "./tools/curriculum-map
 // Agent definitions (auto-register on import)
 import "./agents/rpp-agent";
 import "./agents/soal-agent";
-import "./agents/ppt-agent";
 import "./agents/bc-assistant-agent";
 import "./agents/review-agent";
 import "./agents/eyd-agent";

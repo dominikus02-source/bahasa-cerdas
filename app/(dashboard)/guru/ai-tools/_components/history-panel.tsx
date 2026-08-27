@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Clock, FileText, PenTool, Monitor, ClipboardCheck, Bot, Trash2, ExternalLink, Loader2, Search, Check, X, Edit3 } from "lucide-react";
+import { Clock, FileText, PenTool, ClipboardCheck, Bot, Trash2, ExternalLink, Loader2, Search, Check, X, Edit3 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { SavedAiResult, AgentId } from "../lib/saved-results-api";
@@ -23,8 +23,6 @@ interface HistoryPanelProps {
   onEditingTitleChange?: (id: string | null) => void;
   onExportDocx?: (item: SavedAiResult) => void;
   exportDocxId?: string | null;
-  onExportPptx?: (item: SavedAiResult) => void;
-  exportPptxId?: string | null;
   onExportPdf?: (item: SavedAiResult) => void;
   exportPdfId?: string | null;
 }
@@ -32,7 +30,6 @@ interface HistoryPanelProps {
 const AGENT_ICONS: Record<string, React.ReactNode> = {
   rpp: <FileText className="w-3.5 h-3.5" />,
   soal: <PenTool className="w-3.5 h-3.5" />,
-  ppt: <Monitor className="w-3.5 h-3.5" />,
   review: <ClipboardCheck className="w-3.5 h-3.5" />,
   "bc-assistant": <Bot className="w-3.5 h-3.5" />,
   eyd: <FileText className="w-3.5 h-3.5" />,
@@ -44,7 +41,6 @@ const AGENT_ICONS: Record<string, React.ReactNode> = {
 const AGENT_LABELS: Record<string, string> = {
   rpp: "Rencana Pembelajaran",
   soal: "Soal",
-  ppt: "PPT",
   review: "Review",
   "bc-assistant": "AI BC",
   eyd: "EYD",
@@ -64,7 +60,7 @@ function formatDate(dateStr: string): string {
   return d.toLocaleDateString("id-ID", { day: "numeric", month: "short" });
 }
 
-export function HistoryPanel({ items, loading, activeFilter, onFilterChange, onOpen, onDelete, deletingId, deleteConfirmId, onCancelDelete, searchQuery, onSearchChange, onUpdateTitle, editingTitleId, onEditingTitleChange, onExportDocx, exportDocxId, onExportPptx, exportPptxId, onExportPdf, exportPdfId }: HistoryPanelProps) {
+export function HistoryPanel({ items, loading, activeFilter, onFilterChange, onOpen, onDelete, deletingId, deleteConfirmId, onCancelDelete, searchQuery, onSearchChange, onUpdateTitle, editingTitleId, onEditingTitleChange, onExportDocx, exportDocxId, onExportPdf, exportPdfId }: HistoryPanelProps) {
   const [showAll, setShowAll] = useState(false);
   const [editValue, setEditValue] = useState("");
   const displayItems = showAll ? items : items.slice(0, 10);
@@ -73,7 +69,6 @@ export function HistoryPanel({ items, loading, activeFilter, onFilterChange, onO
     { value: "", label: "Semua" },
     { value: "rpp", label: "Rencana Pembelajaran" },
     { value: "soal", label: "Soal" },
-    { value: "ppt", label: "PPT" },
     { value: "eyd", label: "EYD" },
     { value: "feedback", label: "Feedback" },
     { value: "grading", label: "Nilai" },
@@ -244,20 +239,6 @@ export function HistoryPanel({ items, loading, activeFilter, onFilterChange, onO
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
                       ) : (
                         <FileText className="w-3.5 h-3.5" />
-                      )}
-                    </button>
-                  )}
-                  {item.agentId === "ppt" && onExportPptx && (
-                    <button
-                      onClick={() => onExportPptx(item)}
-                      disabled={exportPptxId === item.id}
-                      className="p-1.5 rounded-lg text-gray-400 hover:text-orange-600 hover:bg-orange-50"
-                      title="Unduh PPTX"
-                    >
-                      {exportPptxId === item.id ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      ) : (
-                        <Monitor className="w-3.5 h-3.5" />
                       )}
                     </button>
                   )}
