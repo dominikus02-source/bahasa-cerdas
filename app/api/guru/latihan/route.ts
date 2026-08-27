@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { checkAIQuota, recordAIUsage } from "@/lib/premium";
 import { rateLimitRoute } from "@/lib/rate-limit";
 import { isTeacherOrStudent } from "@/lib/teacher/students";
+import { validateAgentOutput, cleanJSONOutput } from "@/src/ai/core/output-validator";
 
 const THEMES = [
   "SPOK", "Kalimat Efektif", "Cerpen", "Puisi", "Pantun",
@@ -339,49 +340,97 @@ Hanya output JSON array.`;
       return NextResponse.json({ error: `Semua AI provider gagal: ${errors.join("; ")}.` }, { status: 500 });
     }
 
-    let cleaned = content;
-    if (cleaned.includes("```json")) {
-      cleaned = cleaned.replace(/```json\n?/g, "").replace(/\n?```/g, "");
-    }
-    if (cleaned.includes("```")) {
-      cleaned = cleaned.replace(/```\n?/g, "");
-    }
-
     const tokens = content.length;
     const costUSD = (tokens / 1_000_000) * 0.5;
-    await recordAIUsage(dbUser.id, "soal_generator", tokens, costUSD);
 
-    let parsedSoal: any[];
+    // Credit logging deferred to after successful persist (Step 9 — credit safety)
+
+    let parsedRaw: unknown;
     try {
-      parsedSoal = JSON.parse(cleaned);
-      if (!Array.isArray(parsedSoal)) parsedSoal = [parsedSoal];
-    } catch (parseErr: any) {
-      return NextResponse.json({ error: "Gagal memproses output AI", raw: cleaned.slice(0, 300) }, { status: 500 });
+      const { cleaned } = cleanJSONOutput(content);
+      parsedRaw = JSON.parse(cleaned);
+    } catch {
+      return NextResponse.json(
+        { error: "Gagal memproses output AI — format tidak valid" },
+        { status: 500 }
+      );
     }
 
-    const soalData = parsedSoal.map(s => ({
-      text: s.text || "",
-      type: "PILIHAN_GANDA",
-      difficulty,
-      options: s.options || [],
-      correctAnswer: String(s.correctAnswer || "0"),
-      explanation: s.explanation || null,
-      isHOTS: difficulty === "HARD" || difficulty === "VERY_HARD",
-      kelas,
-      topik: tema,
-      subject: "Bahasa Indonesia",
-      source: "AI",
-      uploaderId: dbUser.id,
-    }));
+    const rawArray = Array.isArray(parsedRaw) ? parsedRaw : [parsedRaw];
+
+    if (rawArray.length === 0) {
+      return NextResponse.json(
+        { error: "AI tidak menghasilkan soal apapun" },
+        { status: 422 }
+      );
+    }
+
+    // Normalize to validateSoalOutput shape (Pipeline A contract)
+    const normalizedForValidation = {
+      title: `Latihan: ${tema}`,
+      metadata: {
+        subject: "Bahasa Indonesia",
+        grade: kelas,
+        topic: tema,
+        difficulty,
+        questionCount: rawArray.length,
+      },
+      questions: rawArray.map((s: any, idx: number) => ({
+        number: idx + 1,
+        type: "pilihan_ganda",
+        question: String(s.text || ""),
+        options: Array.isArray(s.options) ? s.options : [],
+        answer: String(s.correctAnswer ?? ""),
+        explanation: String(s.explanation || ""),
+        difficulty: difficulty === "HARD" || difficulty === "VERY_HARD" ? "sulit" : difficulty === "EASY" || difficulty === "MUDAH" ? "mudah" : "sedang",
+        bloomLevel: "C2",
+        learningObjective: "",
+      })),
+      answerKeyText: "",
+      teacherNotes: [],
+      editableText: rawArray.map((s: any, i: number) =>
+        `${i + 1}. ${s.text || ""}\nJawaban: ${s.correctAnswer ?? ""}\nPenjelasan: ${s.explanation || ""}`
+      ).join("\n\n"),
+    };
+
+    const validation = validateAgentOutput("soal", normalizedForValidation);
+
+    if (validation.status === "invalid") {
+      return NextResponse.json(
+        { error: "Output AI tidak memenuhi standar kualitas", issues: validation.issues },
+        { status: 422 }
+      );
+    }
+
+    // Map normalized questions back to Pipeline B soal shape for persistence
+    const soalData = normalizedForValidation.questions
+      .filter((q) => q.question.trim().length > 0 && q.options.length >= 2 && q.answer.trim().length > 0)
+      .map((q) => ({
+        text: q.question,
+        type: "PILIHAN_GANDA" as const,
+        difficulty,
+        options: q.options,
+        correctAnswer: q.answer,
+        explanation: q.explanation || null,
+        isHOTS: difficulty === "HARD" || difficulty === "VERY_HARD",
+        kelas,
+        topik: tema,
+        subject: "Bahasa Indonesia",
+        source: "AI",
+        uploaderId: dbUser.id,
+      }));
 
     const createdSoals = await db.soal.createManyAndReturn({
       data: soalData,
     });
 
+    // Step 9: Credit logging AFTER successful persist (prevents double-charge on failure)
+    await recordAIUsage(dbUser.id, "soal_generator", tokens, costUSD);
+
     const quiz = await db.quiz.create({
       data: {
         title: judul || `Latihan: ${tema}`,
-        description: `Latihan ${tema} kelas ${kelas} — ${count} soal`,
+        description: `Latihan ${tema} kelas ${kelas} — ${createdSoals.length} soal validated`,
         type: "LATIHAN",
         status: "PUBLISHED",
         kelas,
