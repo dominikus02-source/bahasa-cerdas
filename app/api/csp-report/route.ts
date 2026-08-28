@@ -5,7 +5,6 @@
  * returns 204; never throws.
  */
 import { NextResponse } from "next/server";
-import * as Sentry from "@sentry/nextjs";
 
 export const dynamic = "force-dynamic";
 
@@ -19,10 +18,6 @@ export async function POST(req: Request) {
       const directive = report["violated-directive"] || report.effectiveDirective || "unknown";
       const docUri = report["document-uri"] || report.documentURL || "unknown";
       console.warn(`[CSP] blocked ${blocked} (${directive}) on ${docUri}`);
-      Sentry.captureMessage("CSP violation", {
-        level: "warning",
-        extra: { blocked, directive, docUri, report },
-      });
     }
   } catch {
     /* never let reporting throw */
