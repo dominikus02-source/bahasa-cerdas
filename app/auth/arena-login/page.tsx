@@ -42,68 +42,44 @@ export default function ArenaLoginPage() {
     setLoading(true)
     setError("")
 
-    const supabase = createClient()
-    // Retry otomatis saat Supabase 429 (rate limit per-IP sekolah berbagi
-    // satu NAT; bucket 30 lalu refill ~1,7/detik).
-    let result: Awaited<ReturnType<typeof supabase.auth.signInWithPassword>> | null = null
-    for (let attempt = 1; attempt <= 3; attempt++) {
-      const res = await supabase.auth.signInWithPassword({
-        email: email.toLowerCase(),
-        password,
+    try {
+      // ── Server-side login (NO direct Supabase Auth call) ──
+      // Routes through /api/auth/login which does NOT forward the school IP
+      // to Supabase Auth, preventing per-IP rate limit from blocking schools.
+      const loginRes = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email.toLowerCase(),
+          password,
+        }),
       })
-      if (!res.error || res.error.status !== 429 || attempt === 3) {
-        result = res
-        break
-      }
-      await new Promise((r) => setTimeout(r, 4000 * attempt))
-    }
-    const authError = result?.error
-    const user = result?.data?.user
+      const loginData = await loginRes.json().catch(() => ({}))
 
-    if (authError) {
+      if (!loginRes.ok) {
+        setError(loginData.error || "Gagal masuk. Silakan coba lagi.")
+        setLoading(false)
+        return
+      }
+
+      const dbUser = loginData.user
+      if (!dbUser) { setError("Gagal memuat data user"); setLoading(false); return }
+      if (dbUser.role !== "MURID" && !dbUser.isFounder) {
+        setError("Akun ini bukan akun murid. Silakan login di dasbor guru.")
+        setLoading(false)
+        return
+      }
+
+      router.push("/arena")
+    } catch (err: any) {
+      console.error("Login error:", err)
       setError(
-        authError.message === "Invalid login credentials"
-          ? "Email atau password salah"
-          : authError.message === "Email not confirmed"
-          ? "Email belum dikonfirmasi. Cek inbox/spam kamu."
-          : authError.status === 429
-          ? "Sementara ini banyak murid login dari jaringan sekolah ini secara bersamaan. Tunggu sebentar lalu coba lagi — akunmu tidak bermasalah."
-          : authError.message
+        err?.message?.includes("Failed to fetch")
+          ? "Koneksi terputus. Periksa koneksi internet kamu."
+          : "Terjadi kesalahan. Silakan coba lagi."
       )
       setLoading(false)
-      return
     }
-
-    if (!user) { setError("Gagal masuk"); setLoading(false); return }
-
-    const createRes = await fetch("/api/user/me", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        supabaseId: user.id,
-        email: user.email,
-        fullName: user.user_metadata?.full_name,
-        role: user.user_metadata?.role || "MURID",
-      }),
-    })
-    if (!createRes.ok) {
-      const errData = await createRes.json().catch(() => ({}))
-      await supabase.auth.signOut()
-      setError(errData?.error || "Gagal login")
-      setLoading(false)
-      return
-    }
-
-    const me = (await createRes.json())?.user
-    if (!me) { setError("Gagal memuat data"); setLoading(false); return }
-    if (me.role !== "MURID" && !me.isFounder) {
-      await supabase.auth.signOut()
-      setError("Akun ini bukan akun murid. Silakan login di dasbor guru.")
-      setLoading(false)
-      return
-    }
-
-    router.push("/arena")
   }
 
   const handleResetPassword = async (e: React.FormEvent) => {

@@ -56,93 +56,32 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const supabase = createClient();
-
-      // Retry otomatis saat Supabase 429 (rate limit per-IP, kapasitas bucket
-      // 30). Murid sekelas berbagi satu IP sekolah — yang lolos 30 pertama,
-      // sisanya menunggu refill ~1,7/detik lalu dicoba lagi otomatis.
-      let result: Awaited<ReturnType<typeof supabase.auth.signInWithPassword>> | null = null;
-      for (let attempt = 1; attempt <= 3; attempt++) {
-        const res = await supabase.auth.signInWithPassword({
-          email: email.toLowerCase(),
-          password,
-        });
-        if (!res.error || res.error.status !== 429 || attempt === 3) {
-          result = res;
-          break;
-        }
-        await new Promise((r) => setTimeout(r, 4000 * attempt));
-      }
-      const authError = result?.error;
-      const user = result?.data?.user;
-
-      if (authError) {
-        setError(
-          authError.message === "Invalid login credentials"
-            ? "Email atau kata sandi salah"
-            : authError.message === "Email not confirmed"
-            ? "Email belum dikonfirmasi. Cek inbox/spam kamu."
-            : authError.status === 429
-            ? "Sementara ini banyak murid login dari jaringan sekolah ini secara bersamaan. Tunggu sebentar lalu coba lagi — akunmu tidak bermasalah."
-            : authError.message
-        );
-        setLoading(false);
-        return;
-      }
-
-      if (!user) {
-        setError("Gagal masuk. Silakan coba lagi.");
-        setLoading(false);
-        return;
-      }
-
-      // Create/get user in DB by passing client-side auth data directly
-      // (avoids cookie-based server auth issues with Supabase SSR)
-      const createRes = await fetch("/api/user/me", {
+      // ── Server-side login (NO direct Supabase Auth call) ──
+      // Login routes through /api/auth/login which does NOT forward the
+      // school IP to Supabase Auth. This prevents the per-IP rate limit
+      // from blocking entire schools that share one NAT IP.
+      const loginRes = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          supabaseId: user.id,
-          email: user.email,
-          fullName: user.user_metadata?.full_name,
-          role: user.user_metadata?.role || "MURID",
+          email: email.toLowerCase(),
+          password,
         }),
       });
-      const createData = await createRes.json().catch(() => ({}));
-      if (!createRes.ok) {
-          const errMsg = createData?.error || "Akun belum terdaftar. Silakan daftar terlebih dahulu.";
-          // If server error, try simpler upsert endpoint as fallback
-          if (createRes.status >= 500) {
-            const retryRes = await fetch("/api/user/simple-upsert", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                supabaseId: user.id,
-                email: user.email,
-                fullName: user.user_metadata?.full_name || user.email?.split("@")[0] || "User",
-                role: user.user_metadata?.role || "MURID",
-              }),
-            });
-            if (retryRes.ok) {
-            const retryData = await retryRes.json();
-            const dbUser = retryData?.user;
-            if (dbUser) {
-              const target = next && next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/login") && !next.startsWith("/register")
-                ? next
-                : dbUser.isFounder ? "/admin" : dbUser.role === "MURID" ? "/arena" : `/${dbUser.role.toLowerCase()}/beranda`;
-              window.location.href = target;
-              return;
-            }
-          }
-          }
-          await supabase.auth.signOut();
-          setError(errMsg);
-          setLoading(false);
-          return;
-        }
-      const dbUser = createData?.user;
+      const loginData = await loginRes.json().catch(() => ({}));
 
-      if (!dbUser) { setError("Gagal memuat data user"); setLoading(false); return; }
+      if (!loginRes.ok) {
+        setError(loginData.error || "Gagal masuk. Silakan coba lagi.");
+        setLoading(false);
+        return;
+      }
+
+      const dbUser = loginData.user;
+      if (!dbUser) {
+        setError("Gagal memuat data user");
+        setLoading(false);
+        return;
+      }
 
       // Redirect back to previous page if coming from marketplace or other public page.
       // Validate: must start with /, no protocol-relative (//evil.com), not login/register.
@@ -153,9 +92,7 @@ export default function LoginPage() {
     } catch (err: any) {
       console.error("Login error:", err);
       setError(
-        err?.status === 429
-          ? "Terlalu banyak murid login dari jaringan sekolah ini secara bersamaan. Tunggu sekitar 5 menit, lalu coba lagi — akunmu tidak bermasalah."
-          : err?.message?.includes("Failed to fetch")
+        err?.message?.includes("Failed to fetch")
           ? "Koneksi terputus. Periksa koneksi internet kamu."
           : "Terjadi kesalahan. Silakan coba lagi."
       );
