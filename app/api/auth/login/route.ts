@@ -7,15 +7,24 @@ import { db } from "@/lib/db";
  * POST /api/auth/login
  *
  * Server-side login endpoint. Routes authentication through our server
- * WITHOUT forwarding the client IP to Supabase Auth. This means:
+ * WITHOUT forwarding the client IP to Supabase Auth.
  *
- * 1. Supabase Auth rate-limits per Vercel egress IP (distributed across
- *    many IPs) instead of per school NAT IP.
- * 2. 100+ students from one school can all log in without triggering 429.
- * 3. Brute-force protection is handled by our own per-email rate limit.
+ * Rate limiting strategy (two layers):
  *
- * Rate limit: 10 login attempts per email per 10 minutes (Upstash Redis).
- * If Redis is unavailable, rate limit is bypassed (fail-open).
+ * 1. Per-EMAIL (all attempts): 10 per 10 minutes
+ *    → Protects individual accounts from brute-force
+ *    → Keyed by normalized email address
+ *
+ * 2. Per-IP (FAILED attempts only): 30 per 10 minutes
+ *    → Protects against credential stuffing from one source
+ *    → School-safe: normal school traffic has many DIFFERENT emails
+ *      with mostly SUCCESSFUL logins, so the failed-attempt counter
+ *      stays low even with 100+ students
+ *    → Credential stuffing has many FAILURES from one IP → blocked
+ *
+ * IMPORTANT: Per-IP limit tracks ONLY failed attempts.
+ * Successful logins from a school IP do NOT count toward this limit.
+ * This is the key design that makes it school-safe.
  */
 export async function POST(req: NextRequest) {
   try {
@@ -31,9 +40,14 @@ export async function POST(req: NextRequest) {
 
     const normalizedEmail = email.toLowerCase().trim();
 
-    // ── Per-email rate limit (brute-force protection) ──
-    // Key by email, NOT by IP. This protects individual accounts from
-    // brute-force while allowing many students from the same school IP.
+    // ── Extract client IP for failed-attempt tracking ──
+    const clientIp =
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      req.headers.get("x-real-ip") ||
+      "unknown";
+
+    // ── Layer 1: Per-email rate limit (all attempts) ──
+    // Protects individual accounts from brute-force regardless of source IP.
     if (cache) {
       try {
         const rlKey = `login-attempts:${normalizedEmail}`;
@@ -61,6 +75,30 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // ── Layer 2: Per-IP failed-attempt rate limit (BEFORE auth call) ──
+    // Check if this IP has too many recent failures. If so, block early
+    // to avoid hitting Supabase Auth at all.
+    if (cache && clientIp !== "unknown") {
+      try {
+        const failKey = `login-fail-ip:${clientIp}`;
+        const failCount = await cache.get<number>(failKey);
+        const MAX_IP_FAILS = 30;
+        const IP_WINDOW = 600; // 10 minutes
+
+        if (failCount !== null && failCount >= MAX_IP_FAILS) {
+          return NextResponse.json(
+            {
+              error: "Terlalu banyak percobaan dari jaringan ini. Tunggu beberapa menit lalu coba lagi.",
+              retryAfter: IP_WINDOW,
+            },
+            { status: 429 }
+          );
+        }
+      } catch {
+        // Redis unavailable — fail-open
+      }
+    }
+
     // ── Supabase Auth (via server, NO sb-forwarded-for) ──
     const supabase = await createLoginClient();
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -69,6 +107,24 @@ export async function POST(req: NextRequest) {
     });
 
     if (error) {
+      // ── Track FAILED attempt per IP ──
+      // Only failures increment the IP counter. Successful logins do NOT.
+      // This is what makes it school-safe: 100 students logging in
+      // successfully = 0 IP failures = no blocking.
+      if (cache && clientIp !== "unknown") {
+        try {
+          const failKey = `login-fail-ip:${clientIp}`;
+          const current = await cache.get<number>(failKey);
+          if (current === null) {
+            await cache.set(failKey, 1, 600);
+          } else {
+            await cache.set(failKey, current + 1, 600);
+          }
+        } catch {
+          // Ignore
+        }
+      }
+
       // Map Supabase errors to friendly messages
       const message =
         error.message === "Invalid login credentials"
@@ -112,7 +168,7 @@ export async function POST(req: NextRequest) {
       // DB error — still return session, let /api/user/me handle DB sync
     }
 
-    // ── Reset rate limit on successful login ──
+    // ── Reset per-email rate limit on SUCCESSFUL login ──
     if (cache) {
       try {
         await cache.set(`login-attempts:${normalizedEmail}`, 0, 600);

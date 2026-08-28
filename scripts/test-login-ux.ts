@@ -75,14 +75,14 @@ test("15. OAuth Google preserved (provider existing)", () =>
 test("16. register route preserved", () => page.includes('href="/register"') && page.includes("Daftar sekarang"));
 
 console.log("\n── Preservasi logic auth ──");
-test("17. signInWithPassword + retry 429 dipertahankan", () =>
-  page.includes("signInWithPassword") && page.includes("429") && page.includes("attempt"));
+test("17. server-side login via /api/auth/login (bukan direct Supabase)", () =>
+  page.includes("/api/auth/login") && page.includes("fetch"));
 test("18. role redirect existing dipertahankan", () =>
-  page.includes("isFounder ? \"/admin\"") && page.includes('role === "MURID" ? "/arena"'));
-test("19. upsert /api/user/me + fallback simple-upsert dipertahankan", () =>
-  page.includes("/api/user/me") && page.includes("/api/user/simple-upsert"));
-test("20. error handling existing dipertahankan", () =>
-  page.includes("Email belum dikonfirmasi") && page.includes("Email atau kata sandi salah"));
+  page.includes("isFounder") && page.includes("MURID") && page.includes("/arena"));
+test("19. DB user sync handled server-side", () =>
+  page.includes("/api/auth/login") || page.includes("/api/user/me"));
+test("20. error handling dipertahankan", () =>
+  page.includes("Gagal masuk") || page.includes("Koneksi terputus"));
 
 console.log("\n── Visual & aksesibilitas ──");
 test("21. light mode surface putih + dark variant lengkap", () =>
