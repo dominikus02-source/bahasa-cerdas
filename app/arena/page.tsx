@@ -4,19 +4,17 @@ import { trackDailyStreak } from "@/lib/coins"
 import { jenjangMurid } from "@/lib/arena-junior/kurikulum"
 import { SiaranBanner } from "@/components/arena/SiaranBanner"
 import ArenaHomepage from "@/components/arena/ArenaHomepage"
+import { getPlayerProfile } from "@/lib/gamification/player"
 
 export const dynamic = "force-dynamic"
 
 /**
  * ARENA 2.0 — ARENA HOME (Game Hub Experience)
  *
- * Server component: fetches user data, tracks streak, redirects juniors.
- * Client component (ArenaHomepage): renders the game lobby UI with
- * contextual hero, featured game, leaderboard, rank journey, and quick access.
+ * Server component: fetches user data + PlayerProfile for real weeklyXp/seasonXp.
+ * Client component (ArenaHomepage): renders the game lobby UI.
  *
- * All gamification data (XP, level, rank, coins, streak) comes from the
- * server — no client-side entitlement spoofing.
- * Leaderboard is fetched client-side from existing API for freshness.
+ * All gamification data comes from the server — no client-side entitlement spoofing.
  */
 export default async function BerandaPage() {
   const user = await getUser()
@@ -30,6 +28,9 @@ export default async function BerandaPage() {
 
   const isGuruPreview = user.role !== "MURID" && !user.isFounder
   if (!isGuruPreview) await trackDailyStreak(user.id)
+
+  // Query PlayerProfile for real weeklyXp/seasonXp (same source as leaderboard).
+  const profile = await getPlayerProfile(user.id)
 
   return (
     <div className="arena-page">
@@ -47,8 +48,8 @@ export default async function BerandaPage() {
         equippedBadge={user.equippedBadge}
         equippedNameColor={user.equippedNameColor}
         equippedNameplate={user.equippedNameplate}
-        weeklyXp={0}
-        seasonXp={0}
+        weeklyXp={profile.weeklyXp}
+        seasonXp={profile.seasonXp}
         isFounder={!!user.isFounder}
       />
     </div>

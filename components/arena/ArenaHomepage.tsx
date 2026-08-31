@@ -4,21 +4,20 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ChevronRight, Flame, Coins, Trophy, Zap, Gamepad2, Target,
-  Medal, ShoppingBag, Play, Clock, Users, Sparkles, ArrowUp,
-  TrendingUp, Crown,
+  Medal, Play, Clock, Users, Sparkles, Crown, Loader2,
 } from "lucide-react";
 import type { PlayerRank } from "@prisma/client";
 import {
   GAME_REGISTRY, featuredGame,
   type GameDefinition,
 } from "@/lib/arena/game-registry";
-import { RANK_META, RANK_BANDS, nextRankOf } from "@/lib/gamification/ranks";
+import { RANK_META, RANK_BANDS, nextRankOf, rankFromLevel } from "@/lib/gamification/ranks";
 import { levelFromXp, getLevelProgress } from "@/lib/gamification/levels";
 import UserAvatar from "@/components/arena/UserAvatar";
 import { RankChip } from "@/components/gamification/RankChip";
 import { RankIcon } from "@/components/gamification/RankIcon";
-import { nameColorStyle, getBadgeStyle, getNameplateStyle } from "@/lib/cosmetics";
-import { getLeaderboard, type LeaderboardPeriod } from "@/lib/gamification/leaderboard";
+import { nameColorStyle } from "@/lib/cosmetics";
+import type { LeaderboardPeriod } from "@/lib/gamification/leaderboard";
 import type { LeaderboardEntryView } from "@/lib/gamification/client-types";
 
 // ─── Props ────────────────────────────────────────────────────────────
@@ -60,14 +59,10 @@ function heroCopy(streak: number, xp: number, level: number, rank: string): { ti
   return { title: "Arena sedang menunggumu", subtitle: "Pilih gim, kumpulkan XP, dan buktikan kemampuanmu." };
 }
 
-// ─── Section: Player Header ───────────────────────────────────────────
-function PlayerHeader({
-  user, level, rank, xp,
-}: {
-  user: ArenaHomepageProps;
-  level: number;
-  rank: string;
-  xp: number;
+// ─── Section 1: Player Header ─────────────────────────────────────────
+// TIER 1 — identity + progression. Compact but information-dense.
+function PlayerHeader({ user, level, rank, xp }: {
+  user: ArenaHomepageProps; level: number; rank: string; xp: number;
 }) {
   const lp = getLevelProgress(xp);
   const rankMeta = RANK_META[rank as keyof typeof RANK_META];
@@ -75,19 +70,13 @@ function PlayerHeader({
   return (
     <section className="relative rounded-3xl bg-white dark:bg-[#16122A] border border-gray-100 dark:border-violet-500/15 p-4 sm:p-5 shadow-sm">
       <div className="flex items-center gap-4">
-        {/* Avatar */}
         <Link href="/arena/player" className="shrink-0 transition-transform hover:scale-105 active:scale-95">
           <UserAvatar
-            name={user.fullName}
-            avatar={user.avatar}
-            frame={user.equippedFrame}
-            size={56}
-            gradient="from-violet-500 to-purple-600"
-            textClassName="text-lg"
+            name={user.fullName} avatar={user.avatar} frame={user.equippedFrame}
+            size={56} gradient="from-violet-500 to-purple-600" textClassName="text-lg"
           />
         </Link>
 
-        {/* Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <h2
@@ -96,7 +85,6 @@ function PlayerHeader({
             >
               {user.nickname || user.fullName}
             </h2>
-            {/* Streak */}
             {user.streak > 0 && (
               <span className="inline-flex items-center gap-1 rounded-full bg-orange-50 dark:bg-orange-500/15 px-2 py-0.5 text-[10px] font-bold text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-500/20">
                 <Flame size={10} /> {user.streak}
@@ -104,12 +92,11 @@ function PlayerHeader({
             )}
           </div>
 
-          {/* Rank chip */}
           <div className="mt-1 flex items-center gap-2">
             <RankChip rank={rank} size={16} showTitle compact />
           </div>
 
-          {/* XP bar */}
+          {/* XP bar — primary progression signal */}
           <div className="mt-2.5">
             <div className="flex items-center justify-between text-[10px] font-bold">
               <span className="text-gray-400 dark:text-slate-500">Level {level}</span>
@@ -129,7 +116,6 @@ function PlayerHeader({
           </div>
         </div>
 
-        {/* Coins */}
         <Link
           href="/arena/toko-koin"
           className="shrink-0 flex items-center gap-1.5 rounded-full bg-amber-50 dark:bg-amber-500/15 border border-amber-200 dark:border-amber-500/20 px-3 py-1.5 text-xs font-bold text-amber-700 dark:text-amber-400 transition-all hover:scale-105 active:scale-95"
@@ -141,15 +127,10 @@ function PlayerHeader({
   );
 }
 
-// ─── Section: Hero ────────────────────────────────────────────────────
-function ArenaHero({
-  streak, xp, level, rank, ctaHref,
-}: {
-  streak: number;
-  xp: number;
-  level: number;
-  rank: string;
-  ctaHref: string;
+// ─── Section 2: Hero ──────────────────────────────────────────────────
+// TIER 1 — dominant CTA. The biggest, most colorful element on the page.
+function ArenaHero({ streak, xp, level, rank, ctaHref }: {
+  streak: number; xp: number; level: number; rank: string; ctaHref: string;
 }) {
   const { title, subtitle } = heroCopy(streak, xp, level, rank);
 
@@ -158,7 +139,6 @@ function ArenaHero({
       className="relative overflow-hidden rounded-3xl text-white shadow-lg"
       style={{ background: "linear-gradient(135deg, #7c3aed 0%, #6d28d9 40%, #4c1d95 100%)" }}
     >
-      {/* Glow orbs */}
       <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-white/10 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-16 -left-10 h-40 w-40 rounded-full bg-amber-300/15 blur-2xl" />
 
@@ -183,7 +163,8 @@ function ArenaHero({
   );
 }
 
-// ─── Section: Featured Game ───────────────────────────────────────────
+// ─── Section 3: Featured Game ─────────────────────────────────────────
+// TIER 2 — desire & discovery. Visually distinct from generic cards.
 function FeaturedGameSection({ game }: { game: GameDefinition }) {
   return (
     <section aria-label="Game unggulan">
@@ -197,7 +178,6 @@ function FeaturedGameSection({ game }: { game: GameDefinition }) {
         href={game.href}
         className="group relative block overflow-hidden rounded-3xl border border-gray-100 dark:border-violet-500/15 bg-white dark:bg-[#16122A] shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.98]"
       >
-        {/* Top accent */}
         <div className="absolute inset-x-0 top-0 h-1" style={{ background: game.accentColor }} />
 
         <div className="relative p-5 sm:p-6">
@@ -224,7 +204,6 @@ function FeaturedGameSection({ game }: { game: GameDefinition }) {
                 </span>
               </div>
             </div>
-            {/* Game icon */}
             <div className={`shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br ${game.gradient} flex items-center justify-center shadow-lg transition-transform group-hover:scale-105`}>
               <game.icon size={32} className="text-white" />
             </div>
@@ -240,14 +219,16 @@ function FeaturedGameSection({ game }: { game: GameDefinition }) {
   );
 }
 
-// ─── Section: Leaderboard Preview ─────────────────────────────────────
+// ─── Section 4: Leaderboard Preview ───────────────────────────────────
+// TIER 2 — competition hook. Podium for top 3, personal position highlighted.
 function LeaderboardPreview({
-  entries, myRank, period, onPeriodChange,
+  entries, myRank, period, onPeriodChange, loading,
 }: {
   entries: LeaderboardEntryView[];
   myRank: LeaderboardEntryView | null;
   period: LeaderboardPeriod;
   onPeriodChange: (p: LeaderboardPeriod) => void;
+  loading: boolean;
 }) {
   const top3 = entries.filter((e) => e.rank <= 3);
   const rest = entries.filter((e) => e.rank > 3);
@@ -278,11 +259,25 @@ function LeaderboardPreview({
         </div>
       </div>
 
-      {entries.length === 0 ? (
-        <div className="rounded-2xl bg-white dark:bg-[#16122A] border border-gray-100 dark:border-violet-500/15 p-6 text-center">
-          <p className="text-sm text-gray-400 dark:text-slate-500">Belum ada data peringkat minggu ini.</p>
+      {/* Loading state */}
+      {loading && entries.length === 0 && (
+        <div className="rounded-2xl bg-white dark:bg-[#16122A] border border-gray-100 dark:border-violet-500/15 p-8 text-center">
+          <Loader2 size={20} className="mx-auto animate-spin text-violet-400" />
+          <p className="mt-2 text-xs text-gray-400 dark:text-slate-500">Memuat peringkat...</p>
         </div>
-      ) : (
+      )}
+
+      {/* Empty state */}
+      {!loading && entries.length === 0 && (
+        <div className="rounded-2xl bg-white dark:bg-[#16122A] border border-gray-100 dark:border-violet-500/15 p-6 text-center">
+          <Trophy size={24} className="mx-auto text-gray-300 dark:text-slate-600" />
+          <p className="mt-2 text-sm text-gray-400 dark:text-slate-500">Belum ada data peringkat minggu ini.</p>
+          <p className="mt-1 text-[11px] text-gray-300 dark:text-slate-600">Main game untuk mulai mengumpulkan XP!</p>
+        </div>
+      )}
+
+      {/* Data loaded */}
+      {!loading && entries.length > 0 && (
         <div className="rounded-2xl bg-white dark:bg-[#16122A] border border-gray-100 dark:border-violet-500/15 overflow-hidden">
           {/* Top 3 podium */}
           {top3.length > 0 && (
@@ -291,18 +286,17 @@ function LeaderboardPreview({
                 {top3.map((e) => {
                   const isFirst = e.rank === 1;
                   return (
-                    <div key={e.userId} className={`flex flex-col items-center ${isFirst ? "order-0" : ""}`}>
+                    <div key={e.userId} className="flex flex-col items-center">
                       <div className={`relative ${isFirst ? "mb-1" : ""}`}>
                         <UserAvatar
-                          name={e.name}
-                          avatar={e.avatar}
+                          name={e.name} avatar={e.avatar}
                           size={isFirst ? 52 : 40}
                           gradient="from-violet-500 to-purple-600"
                           textClassName={isFirst ? "text-base" : "text-sm"}
                           className={isFirst ? "ring-2 ring-amber-400 shadow-lg shadow-amber-400/30" : ""}
                         />
                         {isFirst && (
-                          <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-lg">
+                          <span className="absolute -top-2 left-1/2 -translate-x-1/2">
                             <Crown size={18} className="text-amber-500" />
                           </span>
                         )}
@@ -352,7 +346,7 @@ function LeaderboardPreview({
             </div>
           )}
 
-          {/* My position */}
+          {/* My position — always visible if not in top 3 */}
           {myRank && myRank.rank > 3 && (
             <div className="border-t border-violet-100 dark:border-violet-500/20 bg-violet-50/50 dark:bg-violet-500/5 px-4 py-2.5">
               <div className="flex items-center gap-3">
@@ -370,7 +364,6 @@ function LeaderboardPreview({
             </div>
           )}
 
-          {/* CTA */}
           <div className="px-4 py-3 border-t border-gray-50 dark:border-white/5">
             <Link
               href="/arena/player/leaderboard"
@@ -385,14 +378,13 @@ function LeaderboardPreview({
   );
 }
 
-// ─── Section: Rank Journey ────────────────────────────────────────────
+// ─── Section 5: Rank Journey ──────────────────────────────────────────
+// TIER 3 — aspirational. Rank emblem with glow, progress, mini journey.
 function RankJourneySection({ level, rank, xp }: { level: number; rank: string; xp: number }) {
   const currentRank = rank as keyof typeof RANK_META;
   const nextRank = nextRankOf(currentRank as PlayerRank);
-  const lp = getLevelProgress(xp);
 
-
-  const band = RANK_BANDS.find((b) => b.rank === currentRank as PlayerRank);
+  const band = RANK_BANDS.find((b) => b.rank === (currentRank as PlayerRank));
   const rankProgress = band
     ? Math.min(1, (level - band.min) / (band.max - band.min + 1))
     : 0;
@@ -438,24 +430,23 @@ function RankJourneySection({ level, rank, xp }: { level: number; rank: string; 
           </div>
         </div>
 
-        {/* Mini journey */}
+        {/* Mini journey — 9 rank dots */}
         <div className="mt-4 flex items-center justify-between">
           {RANK_BANDS.map((b, i) => {
             const isActive = b.rank === (currentRank as PlayerRank);
-            const isPast = RANK_BANDS.findIndex((x) => x.rank === (currentRank as PlayerRank)) > i;
+            const currentIdx = RANK_BANDS.findIndex((x) => x.rank === (currentRank as PlayerRank));
+            const isPast = currentIdx > i;
             return (
               <div key={b.rank} className="flex items-center">
                 <div
-                  className={`w-2 h-2 rounded-full transition-all ${
+                  className={`rounded-full transition-all ${
                     isActive
                       ? "w-3 h-3 ring-2 ring-offset-1 ring-offset-white dark:ring-offset-[#16122A]"
-                      : isPast
-                      ? "opacity-60"
-                      : "opacity-30"
-                  }`}
+                      : "w-2 h-2"
+                  } ${isPast ? "opacity-60" : "opacity-30"}`}
                   style={{
                     background: RANK_META[b.rank]?.color ?? "#94a3b8",
-                    ...(isActive ? { ringColor: RANK_META[b.rank]?.color ?? "#8b5cf6" } : {}),
+                    ...(isActive ? { boxShadow: `0 0 8px ${RANK_META[b.rank]?.color ?? "#8b5cf6"}44` } : {}),
                   }}
                   title={RANK_META[b.rank]?.title}
                 />
@@ -480,7 +471,41 @@ function RankJourneySection({ level, rank, xp }: { level: number; rank: string; 
   );
 }
 
-// ─── Section: Quick Access ────────────────────────────────────────────
+// ─── Section 6: Coming Soon ───────────────────────────────────────────
+// TIER 4 — discovery. Muted, clearly non-interactive.
+function ComingSoonSection({ games }: { games: GameDefinition[] }) {
+  if (games.length === 0) return null;
+  return (
+    <section aria-label="Segera hadir">
+      <div className="flex items-center gap-2 mb-3">
+        <Clock size={14} className="text-gray-400" />
+        <h2 className="text-xs font-extrabold uppercase tracking-[1.5px] text-gray-400 dark:text-slate-500">
+          Segera Hadir
+        </h2>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        {games.map((g) => (
+          <div
+            key={g.id}
+            className="relative overflow-hidden rounded-2xl border border-gray-100 dark:border-violet-500/10 bg-gray-50 dark:bg-[#12101F] p-4 opacity-60 select-none"
+          >
+            <div className="absolute inset-x-0 top-0 h-[3px] bg-gray-200 dark:bg-slate-700" />
+            <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${g.gradient} opacity-50 flex items-center justify-center`}>
+              <g.icon size={22} className="text-white" />
+            </div>
+            <p className="mt-3 text-sm font-bold text-gray-600 dark:text-slate-400">{g.title}</p>
+            <span className="mt-2 inline-block rounded-full bg-gray-200 dark:bg-slate-800 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-wider text-gray-500 dark:text-slate-500">
+              Segera Hadir
+            </span>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ─── Section 7: Quick Access ──────────────────────────────────────────
+// TIER 4 — navigation. Compact, functional.
 function QuickAccess() {
   const items = [
     { label: "Gim", desc: "Semua game", href: "/arena/game", icon: Gamepad2, color: "text-violet-600 bg-violet-50 dark:bg-violet-500/10 dark:text-violet-300" },
@@ -515,16 +540,9 @@ function QuickAccess() {
 
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────
 export default function ArenaHomepage(props: ArenaHomepageProps) {
-  const { userId, xp, streak, coins } = props;
+  const { xp, streak } = props;
   const level = levelFromXp(xp);
-  const rank = RANK_META[level >= 80 ? "LEGEND" : level >= 70 ? "MASTER" : level >= 60 ? "DIAMOND" : level >= 50 ? "SAPPHIRE" : level >= 40 ? "RUBY" : level >= 30 ? "EMERALD" : level >= 20 ? "GOLD" : level >= 10 ? "SILVER" : "BRONZE"] ? (() => {
-    const RANKS_ORDER: PlayerRank[] = ["BRONZE","SILVER","GOLD","EMERALD","RUBY","SAPPHIRE","DIAMOND","MASTER","LEGEND"];
-    for (const r of RANKS_ORDER) {
-      const m = RANK_META[r];
-      if (m && level >= m.minLevel && level <= m.maxLevel) return r;
-    }
-    return "LEGEND" as PlayerRank;
-  })() : "BRONZE";
+  const rank = rankFromLevel(level);
 
   const hero = featuredGame();
 
@@ -544,7 +562,7 @@ export default function ArenaHomepage(props: ArenaHomepageProps) {
       setLbEntries(entries);
       setMyLbRank(entries.find((e: LeaderboardEntryView) => e.isMe) ?? null);
     } catch {
-      // silent
+      // silent — loading state will persist
     } finally {
       setLbLoading(false);
     }
@@ -564,69 +582,33 @@ export default function ArenaHomepage(props: ArenaHomepageProps) {
 
   return (
     <div className="arena-page mx-auto w-full max-w-[1280px] space-y-5 px-4 py-5 md:px-6">
-      {/* 1. PLAYER HEADER */}
+      {/* 1. PLAYER HEADER — TIER 1 */}
       {!isGuruPreview && (
-        <PlayerHeader
-          user={props}
-          level={level}
-          rank={rank}
-          xp={xp}
-        />
+        <PlayerHeader user={props} level={level} rank={rank} xp={xp} />
       )}
 
-      {/* 2. HERO — contextual CTA */}
-      <ArenaHero
-        streak={streak}
-        xp={xp}
-        level={level}
-        rank={rank}
-        ctaHref="/arena/game"
-      />
+      {/* 2. HERO — TIER 1 (dominant CTA) */}
+      <ArenaHero streak={streak} xp={xp} level={level} rank={rank} ctaHref="/arena/game" />
 
-      {/* 3. FEATURED GAME */}
+      {/* 3. FEATURED GAME — TIER 2 */}
       <FeaturedGameSection game={hero} />
 
-      {/* 4. LEADERBOARD PREVIEW */}
+      {/* 4. LEADERBOARD — TIER 2 */}
       <LeaderboardPreview
         entries={lbEntries}
         myRank={myLbRank}
         period={period}
         onPeriodChange={setPeriod}
+        loading={lbLoading}
       />
 
-      {/* 5. RANK JOURNEY */}
+      {/* 5. RANK JOURNEY — TIER 3 */}
       <RankJourneySection level={level} rank={rank} xp={xp} />
 
-      {/* 6. COMING SOON */}
-      {comingSoonGames.length > 0 && (
-        <section aria-label="Segera hadir">
-          <div className="flex items-center gap-2 mb-3">
-            <Clock size={14} className="text-gray-400" />
-            <h2 className="text-xs font-extrabold uppercase tracking-[1.5px] text-gray-400 dark:text-slate-500">
-              Segera Hadir
-            </h2>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {comingSoonGames.map((g) => (
-              <div
-                key={g.id}
-                className="relative overflow-hidden rounded-2xl border border-gray-100 dark:border-violet-500/10 bg-gray-50 dark:bg-[#12101F] p-4 opacity-60 select-none"
-              >
-                <div className="absolute inset-x-0 top-0 h-[3px] bg-gray-200 dark:bg-slate-700" />
-                <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${g.gradient} opacity-50 flex items-center justify-center`}>
-                  <g.icon size={22} className="text-white" />
-                </div>
-                <p className="mt-3 text-sm font-bold text-gray-600 dark:text-slate-400">{g.title}</p>
-                <span className="mt-2 inline-block rounded-full bg-gray-200 dark:bg-slate-800 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-wider text-gray-500 dark:text-slate-500">
-                  Segera Hadir
-                </span>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+      {/* 6. COMING SOON — TIER 4 */}
+      <ComingSoonSection games={comingSoonGames} />
 
-      {/* 7. QUICK ACCESS */}
+      {/* 7. QUICK ACCESS — TIER 4 */}
       <QuickAccess />
     </div>
   );
