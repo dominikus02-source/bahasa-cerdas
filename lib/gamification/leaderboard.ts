@@ -193,7 +193,35 @@ export async function getLeaderboard(params: LeaderboardParams): Promise<Leaderb
       include: { user: { select: { id: true, fullName: true, nickname: true, avatar: true, role: true, isFounder: true, isPremium: true } } },
     });
     if (me && me.user.role === "MURID" && inCurrentPeriod(me) && me[field] > 0) {
-      const above = entries.filter((e) => e.score > me[field]).length;
+      // Jangan menghitung posisi dari `entries`: daftar itu sengaja dibatasi
+      // untuk UI. Pemain di luar Top N sebelumnya bisa terlihat #11 padahal
+      // ada puluhan skor lebih tinggi yang belum dimuat. Hitung dari sumber
+      // data yang sama dengan urutan papan (skor periode, lalu total XP).
+      const above = field === "totalXP"
+        ? await db.playerProfile.count({
+          where: { ...where, totalXP: { gt: me.totalXP } },
+        })
+        : field === "weeklyXP"
+          ? await db.playerProfile.count({
+            where: {
+              ...where,
+              weeklyXPWeekKey: wk,
+              OR: [
+                { weeklyXP: { gt: me.weeklyXP } },
+                { weeklyXP: me.weeklyXP, totalXP: { gt: me.totalXP } },
+              ],
+            },
+          })
+          : await db.playerProfile.count({
+            where: {
+              ...where,
+              seasonPeriodKey: sk,
+              OR: [
+                { seasonXP: { gt: me.seasonXP } },
+                { seasonXP: me.seasonXP, totalXP: { gt: me.totalXP } },
+              ],
+            },
+          });
       const meta = RANK_META[me.currentRank];
       entries.push({
         rank: above + 1,

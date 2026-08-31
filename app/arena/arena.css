@@ -35,6 +35,30 @@
   animation: arena-fade-in 0.25s ease-out;
 }
 
+/* Player HQ — hierarchy is intentionally surface-led, not a stack of white cards. */
+.arena-hq { padding-bottom: 2rem; }
+.arena-player-hero { background: linear-gradient(132deg, #321060 0%, #6d28d9 48%, #312e81 100%); }
+.arena-player-hero-orb { pointer-events: none; position: absolute; border-radius: 999px; filter: blur(3px); }
+.arena-player-hero-orb-one { width: 25rem; height: 25rem; right: -10rem; top: -12rem; background: radial-gradient(circle, rgba(250, 204, 21, .34), transparent 68%); }
+.arena-player-hero-orb-two { width: 20rem; height: 20rem; left: 28%; bottom: -15rem; background: radial-gradient(circle, rgba(196, 181, 253, .32), transparent 67%); }
+.arena-rank-art::before { content: ""; position: absolute; inset: 10px; border: 1px solid rgba(255,255,255,.12); border-radius: 22px; pointer-events: none; }
+.arena-featured-game { background: linear-gradient(128deg, #4c1d95 0%, #6d28d9 52%, #312e81 100%); }
+.arena-featured-game-orb { position: absolute; width: 20rem; height: 20rem; right: 28%; bottom: -15rem; border-radius: 999px; background: radial-gradient(circle, rgba(250,204,21,.22), transparent 68%); pointer-events: none; }
+.arena-game-tile { background: linear-gradient(145deg, rgba(255,255,255,.98), rgba(245,243,255,.88)); border: 1px solid rgba(124,58,237,.13); }
+.dark .arena-game-tile { background: linear-gradient(145deg, rgba(30,24,56,.98), rgba(20,16,39,.96)); border-color: rgba(167,139,250,.18); }
+.arena-leaderboard-surface { background: linear-gradient(145deg, #fffdf6 0%, #fff 48%, #f5f3ff 100%); border: 1px solid rgba(217, 119, 6, .16); }
+.dark .arena-leaderboard-surface { background: linear-gradient(145deg, #211a38 0%, #16122a 58%, #1e1b4b 100%); border-color: rgba(250, 204, 21, .14); }
+.arena-progress-surface { background: linear-gradient(145deg, #f5f3ff, #fff); border: 1px solid rgba(124,58,237,.16); }
+.dark .arena-progress-surface { background: linear-gradient(145deg, #211a38, #16122a); border-color: rgba(167,139,250,.18); }
+.arena-target-surface { background: linear-gradient(145deg, #ecfdf5, #fff); border: 1px solid rgba(5,150,105,.16); }
+.dark .arena-target-surface { background: linear-gradient(145deg, #132c2a, #161c2b); border-color: rgba(52,211,153,.16); }
+.arena-coming-soon-card { background: linear-gradient(135deg, #3b176b, #6d28d9 62%, #312e81); border: 1px solid rgba(196,181,253,.25); }
+
+@media (max-width: 640px) {
+  .arena-hq { gap: 2rem; }
+  .arena-player-hero-orb-one { right: -14rem; }
+}
+
 @keyframes arena-fade-in {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }

@@ -1,18 +1,17 @@
 import { getUser } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
-import { trackDailyStreak } from "@/lib/coins"
+import { getOrCreateDailyQuests, trackDailyStreak } from "@/lib/coins"
 import { jenjangMurid } from "@/lib/arena-junior/kurikulum"
 import { SiaranBanner } from "@/components/arena/SiaranBanner"
 import ArenaHomepage from "@/components/arena/ArenaHomepage"
-import { getPlayerProfile } from "@/lib/gamification/player"
 
 export const dynamic = "force-dynamic"
 
 /**
  * ARENA 2.0 — ARENA HOME (Game Hub Experience)
  *
- * Server component: fetches user data + PlayerProfile for real weeklyXp/seasonXp.
- * Client component (ArenaHomepage): renders the game lobby UI.
+ * Server component: only reads the canonical player/quest sources. Client
+ * component (ArenaHomepage) renders the Player HQ composition.
  *
  * All gamification data comes from the server — no client-side entitlement spoofing.
  */
@@ -29,28 +28,30 @@ export default async function BerandaPage() {
   const isGuruPreview = user.role !== "MURID" && !user.isFounder
   if (!isGuruPreview) await trackDailyStreak(user.id)
 
-  // Query PlayerProfile for real weeklyXp/seasonXp (same source as leaderboard).
-  const profile = await getPlayerProfile(user.id)
+  // Real daily quest rows are passed as a small, serializable view. Reward
+  // claiming remains on /arena/misi; this page is read-only.
+  const quests = await getOrCreateDailyQuests(user.id)
 
   return (
     <div className="arena-page">
       <SiaranBanner />
       <ArenaHomepage
-        userId={user.id}
         fullName={user.fullName}
         nickname={user.nickname}
         avatar={user.avatar}
         xp={user.xp || 0}
         streak={user.streak || 0}
         coins={user.coins || 0}
-        equippedBackground={user.equippedBackground}
         equippedFrame={user.equippedFrame}
-        equippedBadge={user.equippedBadge}
         equippedNameColor={user.equippedNameColor}
-        equippedNameplate={user.equippedNameplate}
-        weeklyXp={profile.weeklyXp}
-        seasonXp={profile.seasonXp}
-        isFounder={!!user.isFounder}
+        quests={quests.map((quest) => ({
+          id: quest.id,
+          questType: quest.questType,
+          target: quest.target,
+          progress: quest.progress,
+          completed: quest.completed,
+          rewardCoins: quest.rewardCoins,
+        }))}
       />
     </div>
   )
