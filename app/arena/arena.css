@@ -47,9 +47,19 @@
 .arena-featured-game { background: linear-gradient(128deg, #4c1d95 0%, #6d28d9 52%, #312e81 100%); box-shadow: 0 20px 50px -12px rgba(109,40,217,.45), 0 0 0 1px rgba(139,92,246,.2); }
 .arena-featured-game-orb { position: absolute; width: 20rem; height: 20rem; right: 28%; bottom: -15rem; border-radius: 999px; background: radial-gradient(circle, rgba(250,204,21,.22), transparent 68%); pointer-events: none; }
 
-/* Game tiles — subordinate to featured, subtle elevation only. */
-.arena-game-tile { background: linear-gradient(145deg, rgba(255,255,255,.98), rgba(245,243,255,.88)); border: 1px solid rgba(124,58,237,.13); }
+/* Game tiles — subordinate to featured, elevated via interaction + glow. */
+.arena-game-tile { background: linear-gradient(145deg, rgba(255,255,255,.98), rgba(245,243,255,.88)); border: 1px solid rgba(124,58,237,.13); transition: box-shadow .22s ease, border-color .22s ease, transform .22s ease; }
+.arena-game-tile::before { content: ""; position: absolute; inset: 0; border-radius: inherit; opacity: 0; background: radial-gradient(circle at 30% 25%, var(--tile-glow, rgba(139,92,246,.07)) 0%, transparent 60%); transition: opacity .25s ease; pointer-events: none; }
+.arena-game-tile:hover::before, .arena-game-tile:focus-visible::before { opacity: 1; }
+.arena-game-tile:hover { border-color: rgba(124,58,237,.3); box-shadow: 0 6px 20px -4px rgba(124,58,237,.12); }
 .dark .arena-game-tile { background: linear-gradient(145deg, rgba(30,24,56,.98), rgba(20,16,39,.96)); border-color: rgba(167,139,250,.18); }
+.dark .arena-game-tile:hover { border-color: rgba(167,139,250,.35); box-shadow: 0 6px 20px -4px rgba(139,92,246,.18); }
+.arena-game-badge { position: absolute; top: 8px; right: 8px; }
+
+/* Play CTA — the single strongest action in the arena. */
+.arena-play-cta { position: relative; }
+.arena-play-cta::after { content: ""; position: absolute; inset: -1px; border-radius: inherit; background: linear-gradient(135deg, rgba(250,204,21,.28), rgba(236,72,153,.22), rgba(139,92,246,.28)); opacity: 0; transition: opacity .25s ease; pointer-events: none; z-index: -1; filter: blur(6px); }
+.arena-play-cta:hover::after, .arena-play-cta:focus-visible::after { opacity: 1; }
 
 /* Leaderboard — warm gold-tinted surface signals competition/achievement. */
 .arena-leaderboard-surface { background: linear-gradient(145deg, #fffdf6 0%, #fff 48%, #f5f3ff 100%); border: 1px solid rgba(217, 119, 6, .16); }
@@ -66,6 +76,16 @@
 /* Coming soon — intentionally muted, dark purple to signal "not yet". */
 .arena-coming-soon-card { background: linear-gradient(135deg, #3b176b, #6d28d9 62%, #312e81); border: 1px solid rgba(196,181,253,.25); opacity: .88; }
 .dark .arena-coming-soon-card { opacity: .82; }
+
+/* Coming soon teaser — compact horizontal banner instead of lonely cards. */
+.arena-coming-banner { background: linear-gradient(135deg, #3b176b 0%, #6d28d9 48%, #4c1d95 100%); border: 1px solid rgba(196,181,253,.2); }
+.arena-coming-teaser { position: relative; overflow: hidden; border-radius: 14px; padding: 14px 16px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); transition: background .2s ease, transform .2s ease; }
+.arena-coming-teaser:hover { background: rgba(255,255,255,.1); }
+.arena-coming-teaser::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 3px; background: var(--accent, rgba(250,204,21,.5)); }
+
+/* Momentum arc — thin progress stripe under completed quests */
+.arena-quest-done .arena-quest-stripe { position: relative; overflow: hidden; }
+.arena-quest-done .arena-quest-stripe::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(16,185,129,.06), rgba(16,185,129,0)); border-radius: inherit; }
 
 @media (max-width: 640px) {
   .arena-hq { gap: 2rem; }
@@ -183,7 +203,11 @@
 @media (prefers-reduced-motion: reduce) {
   .game-hub .game-card-anim,
   .game-hub .glow-pulse,
-  .arena-page {
+  .arena-page,
+  .arena-play-cta::after,
+  .arena-game-tile,
+  .arena-game-tile::before,
+  .arena-coming-teaser {
     animation: none !important;
     transition: none !important;
   }
