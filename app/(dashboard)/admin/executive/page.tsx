@@ -4,7 +4,7 @@ import Link from "next/link";
 import {
   Users, TrendingUp, TrendingDown, Minus, Crown, DollarSign,
   Activity, BookOpen, Sparkles, BrainCircuit, ArrowRight, Target,
-  UserPlus, Repeat, GraduationCap, PenLine,
+  UserPlus, Repeat, GraduationCap, PenLine, AlertTriangle, ShieldAlert,
 } from "lucide-react";
 
 // ════════════════════════════════════════════════════════════════════
@@ -78,7 +78,6 @@ function MetricRow({ label, value, trend }: { label: string; value: string; tren
 
 async function getExecutiveData() {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  // Use direct fetch with cookies from the server component
   const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
   const cookieHeader = cookieStore.toString();
@@ -88,10 +87,22 @@ async function getExecutiveData() {
     cache: "no-store",
   });
 
-  if (!res.ok) {
-    throw new Error(`Executive API returned ${res.status}`);
-  }
+  if (!res.ok) throw new Error(`Executive API returned ${res.status}`);
+  return res.json();
+}
 
+async function getPaymentHealth() {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const { cookies } = await import("next/headers");
+  const cookieStore = await cookies();
+  const cookieHeader = cookieStore.toString();
+
+  const res = await fetch(`${baseUrl}/api/admin/analytics/payment-health`, {
+    headers: { cookie: cookieHeader },
+    cache: "no-store",
+  });
+
+  if (!res.ok) return null;
   return res.json();
 }
 
@@ -100,8 +111,12 @@ export default async function ExecutiveDashboard() {
   if (!user || !user.isFounder) redirect("/login");
 
   let data;
+  let paymentHealth;
   try {
-    data = await getExecutiveData();
+    [data, paymentHealth] = await Promise.all([
+      getExecutiveData(),
+      getPaymentHealth(),
+    ]);
   } catch {
     return (
       <div className="space-y-6">
@@ -214,6 +229,86 @@ export default async function ExecutiveDashboard() {
           href="/arena/feed"
         />
       </div>
+
+      {/* Payment Health Alert */}
+      {paymentHealth && paymentHealth.summary.totalAffected > 0 && (
+        <Link href="/admin/payments"
+          className="block bg-gradient-to-r from-red-50 via-red-50/50 to-white dark:from-red-950/40 dark:via-red-950/20 dark:to-slate-800/90 rounded-2xl border-2 border-red-300 dark:border-red-700 p-5 hover:shadow-lg transition-shadow">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-red-100 dark:bg-red-900/60 flex items-center justify-center shrink-0">
+              <ShieldAlert size={24} className="text-red-600 dark:text-red-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="text-sm font-bold text-red-800 dark:text-red-200">⚠️ Payment Without Entitlement</h3>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-600 text-white animate-pulse">
+                  {paymentHealth.summary.totalAffected} AFFECTED
+                </span>
+              </div>
+              <p className="text-xs text-red-600 dark:text-red-400">
+                {paymentHealth.summary.totalAffected} user membayar SUCCESS tapi premium tidak aktif.
+                Revenue at risk: {formatRp(paymentHealth.summary.totalRevenueAtRisk)}.
+                {" "}
+                <span className="font-medium">
+                  ({paymentHealth.summary.affectedByRole.murid} murid · {paymentHealth.summary.affectedByRole.guru} guru)
+                </span>
+              </p>
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {paymentHealth.affectedUsers.slice(0, 3).map((u: { userId: string; fullName: string; totalPaid: number }) => (
+                  <span key={u.userId} className="inline-flex items-center gap-1 px-2 py-0.5 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 rounded-full text-[10px]">
+                    {u.fullName} — {formatRp(u.totalPaid)}
+                  </span>
+                ))}
+                {paymentHealth.summary.totalAffected > 3 && (
+                  <span className="inline-flex items-center px-2 py-0.5 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 rounded-full text-[10px]">
+                    +{paymentHealth.summary.totalAffected - 3} lainnya
+                  </span>
+                )}
+              </div>
+            </div>
+            <ArrowRight size={16} className="text-red-400 shrink-0 mt-1" />
+          </div>
+          {paymentHealth.affectedUsers.length > 0 && (
+            <div className="mt-4 pt-3 border-t border-red-200 dark:border-red-800">
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="text-left text-red-600 dark:text-red-400">
+                      <th className="pb-1 font-medium">User</th>
+                      <th className="pb-1 font-medium">Role</th>
+                      <th className="pb-1 font-medium">Total Dibayar</th>
+                      <th className="pb-1 font-medium">Transaksi</th>
+                      <th className="pb-1 font-medium">isPremium</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paymentHealth.affectedUsers.map((u: { userId: string; fullName: string; email: string; role: string; totalPaid: number; transactions: { id: string; type: string; amount: number; reference: string | null; createdAt: string }[] }) => (
+                      <tr key={u.userId} className="border-t border-red-100 dark:border-red-900/50">
+                        <td className="py-1.5">
+                          <p className="font-medium text-slate-900 dark:text-slate-100">{u.fullName}</p>
+                          <p className="text-[10px] text-slate-400">{u.email}</p>
+                        </td>
+                        <td className="py-1.5 text-slate-600 dark:text-slate-300">{u.role}</td>
+                        <td className="py-1.5 font-semibold text-red-700 dark:text-red-300">{formatRp(u.totalPaid)}</td>
+                        <td className="py-1.5 text-slate-500 dark:text-slate-400">
+                          {u.transactions.map((t) => (
+                            <span key={t.id} className="block">{t.reference || t.type} — {new Date(t.createdAt).toLocaleDateString("id-ID")}</span>
+                          ))}
+                        </td>
+                        <td className="py-1.5">
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300">
+                            ❌ false
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </Link>
+      )}
 
       {/* Row 3: Detailed metrics */}
       <div className="grid lg:grid-cols-3 gap-6">
