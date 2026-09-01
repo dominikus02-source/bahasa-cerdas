@@ -1,0 +1,272 @@
+{
+  "generatedAt": "2026-09-01T18:14:02.344Z",
+  "period": "2026-09-01",
+  "metrics": [
+    {
+      "name": "Registered Users",
+      "value": "2.428",
+      "period": "2026-09-01",
+      "source": "Production DB (User)",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Students (MURID)",
+      "value": "1.949",
+      "period": "2026-09-01",
+      "source": "Production DB (User)",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Teachers (GURU)",
+      "value": "476",
+      "period": "2026-09-01",
+      "source": "Production DB (User)",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Admins (ADMIN)",
+      "value": "3",
+      "period": "2026-09-01",
+      "source": "Production DB (User)",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Paying Teachers (Pro)",
+      "value": "4",
+      "period": "2026-09-01",
+      "source": "Production DB (User)",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Guru Trial Active",
+      "value": "273",
+      "period": "2026-09-01",
+      "source": "Production DB (User)",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Active Users (7d)",
+      "value": "396",
+      "period": "7d rolling",
+      "source": "XPTransaction",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Active Users (30d)",
+      "value": "853",
+      "period": "30d rolling",
+      "source": "XPTransaction",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "AI Generations (total)",
+      "value": "1.237",
+      "period": "all-time",
+      "source": "AIUsage",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "RPP Generated",
+      "value": "0",
+      "period": "all-time",
+      "source": "AIUsage (feature=rpp)",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Soal Generated",
+      "value": "0",
+      "period": "all-time",
+      "source": "AIUsage (feature=soal)",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Feedback Generated",
+      "value": "0",
+      "period": "all-time",
+      "source": "AIUsage (feature=feedback)",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Grading Generated",
+      "value": "0",
+      "period": "all-time",
+      "source": "AIUsage (feature=grading)",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Learning Events (Jalur Cerdas)",
+      "value": "3.372",
+      "period": "all-time",
+      "source": "UserUnitProgress",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Completed Learning Units",
+      "value": "3.342",
+      "period": "all-time",
+      "source": "UserUnitProgress",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Student Karya",
+      "value": "1.584",
+      "period": "all-time",
+      "source": "StudentKarya",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Quiz Submissions",
+      "value": "89",
+      "period": "all-time",
+      "source": "QuizSubmission",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Penugasan Submissions",
+      "value": "56",
+      "period": "all-time",
+      "source": "PenugasanSubmission",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Total XP Awarded",
+      "value": "560.466",
+      "period": "all-time",
+      "source": "XPTransaction",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Coin Transactions",
+      "value": "25.747",
+      "period": "all-time",
+      "source": "CoinTransaction",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Badges Earned",
+      "value": "4.362",
+      "period": "all-time",
+      "source": "UserBadge",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Achievements Claimed",
+      "value": "0",
+      "period": "all-time",
+      "source": "UserAchievement",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Player Profiles",
+      "value": "2.274",
+      "period": "2026-09-01",
+      "source": "PlayerProfile",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "UKBI/TKA Sessions",
+      "value": "514",
+      "period": "all-time",
+      "source": "ProgresKompetensi",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "UKBI/TKA Completed",
+      "value": "514",
+      "period": "all-time",
+      "source": "ProgresKompetensi",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Adaptive Practice Sessions",
+      "value": "229",
+      "period": "all-time",
+      "source": "AdaptivePracticeSession",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Diagnostic Sessions",
+      "value": "168",
+      "period": "all-time",
+      "source": "AdaptivePracticeSession",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Transactions (total)",
+      "value": "17",
+      "period": "all-time",
+      "source": "Transaksi",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Transactions (success)",
+      "value": "4",
+      "period": "all-time",
+      "source": "Transaksi",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Total Revenue",
+      "value": "Rp 438.000",
+      "period": "all-time",
+      "source": "Transaksi",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Game Results",
+      "value": "888",
+      "period": "all-time",
+      "source": "GameResult",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Game Sessions",
+      "value": "1.212",
+      "period": "all-time",
+      "source": "GameSession",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Soal (bank soal)",
+      "value": "1.685",
+      "period": "2026-09-01",
+      "source": "Soal",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Quizzes",
+      "value": "33",
+      "period": "2026-09-01",
+      "source": "Quiz",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Unique School Names",
+      "value": "984",
+      "period": "2026-09-01",
+      "source": "Profile.school",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Groups (classes)",
+      "value": "142",
+      "period": "2026-09-01",
+      "source": "Group",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "Group Members",
+      "value": "1.254",
+      "period": "2026-09-01",
+      "source": "GroupMember",
+      "status": "VERIFIED"
+    },
+    {
+      "name": "School Records",
+      "value": "0",
+      "period": "2026-09-01",
+      "source": "School",
+      "status": "VERIFIED"
+    }
+  ]
+}
