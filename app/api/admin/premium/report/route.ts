@@ -142,24 +142,47 @@ export async function GET(req: NextRequest) {
     const expiredCount = await db.user.count({ where: expiredWhere });
 
     // --- PAGINATED DATA ---
-    // Fetch premium users (active + expiring) OR users with historical premium transactions
-    const usersWhere = {
-      OR: [
-        // Active or expiring premium
-        {
-          isPremium: true,
-          premiumUntil: { not: null, gt: new Date(0) },
-        },
-        // Historical premium transactions
-        {
+    // Build status-specific where clause for data rows
+    const dataStatusFilter = (() => {
+      if (status === "ACTIVE") {
+        return { isPremium: true, premiumUntil: { gt: now } };
+      }
+      if (status === "EXPIRING_SOON") {
+        return { isPremium: true, premiumUntil: { gt: now, lte: sevenDaysFromNow } };
+      }
+      if (status === "EXPIRED") {
+        return {
+          OR: [
+            { isPremium: false },
+            { premiumUntil: null },
+            { premiumUntil: { lte: now } },
+          ],
           transaksi: {
             some: {
               type: { in: ["MURID_PREMIUM", "PREMIUM_UPGRADE"] },
               status: "SUCCESS",
             },
           },
-        },
-      ],
+        };
+      }
+      // ALL: return active/expiring OR historical premium transactions
+      return {
+        OR: [
+          { isPremium: true, premiumUntil: { not: null, gt: new Date(0) } },
+          {
+            transaksi: {
+              some: {
+                type: { in: ["MURID_PREMIUM", "PREMIUM_UPGRADE"] },
+                status: "SUCCESS",
+              },
+            },
+          },
+        ],
+      };
+    })();
+
+    const usersWhere = {
+      ...dataStatusFilter,
       ...roleFilter,
       ...(search
         ? {

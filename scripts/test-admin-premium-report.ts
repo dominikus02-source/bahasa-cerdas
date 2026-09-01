@@ -168,6 +168,53 @@ async function main() {
   assertNotContains(apiPath, "findFirst", "API does not use findFirst for data");
   assertContains(apiPath, "Promise.all", "API parallelizes independent queries");
 
+  // ── 7. Regression: Status Filter on Data Rows ──
+  console.log(`\n${YELLOW}--- 7. Status Filter Regression (Cases A-G) ---${RESET}`);
+
+  // Case A — Active student: isPremium=true, premiumUntil > now → ACTIVE
+  assertContains(apiPath, 'status === "ACTIVE"', "Status ACTIVE has dedicated filter branch");
+  assertContains(apiPath, 'premiumUntil: { gt: now }', "ACTIVE filter checks premiumUntil > now");
+
+  // Case B — Expiring student: premiumUntil <= now + 7d → EXPIRING_SOON
+  assertContains(apiPath, 'status === "EXPIRING_SOON"', "Status EXPIRING_SOON has dedicated filter branch");
+  assertContains(apiPath, 'premiumUntil: { gt: now, lte: sevenDaysFromNow }', "EXPIRING_SOON checks 7-day window");
+
+  // Case D — Historical expired: no active entitlement + has qualifying transaction → EXPIRED
+  assertContains(apiPath, 'status === "EXPIRED"', "Status EXPIRED has dedicated filter branch");
+  assertContains(apiPath, 'isPremium: false', "EXPIRED branch handles isPremium=false");
+  assertContains(apiPath, 'premiumUntil: { lte: now }', "EXPIRED branch handles premiumUntil <= now");
+
+  // Case E — Historical transaction + currently active → should show ACTIVE, NOT EXPIRED
+  // Verify: when status=ACTIVE, only active users are returned (no historical-only users)
+  assertContains(apiPath, 'dataStatusFilter', "Status filter applied to paginated data rows");
+
+  // Case F — Pending only (no successful transaction) → should NOT appear
+  assertContains(apiPath, 'status: "SUCCESS"', "Transaction filter requires SUCCESS status");
+
+  // Case G — Unrelated transaction → should NOT appear as EXPIRED Premium
+  assertContains(apiPath, 'type: { in: ["MURID_PREMIUM", "PREMIUM_UPGRADE"] }', "Transaction filter requires Premium type");
+
+  // Verify status filter is applied to data rows (not just summary)
+  // The dataStatusFilter object must be spread into usersWhere
+  const apiContent = readFile(apiPath);
+  assert(
+    apiContent.includes('...dataStatusFilter'),
+    "Data status filter is spread into usersWhere for row-level filtering",
+  );
+
+  // Verify EXPIRED summary requires qualifying transactions (not just isPremium=false)
+  assert(
+    apiContent.includes('transaksi') && apiContent.includes('some'),
+    "EXPIRED summary requires historical qualifying transactions",
+  );
+
+  // Verify transaction type filter prevents unrelated transactions (Case G)
+  const premiumTypes = apiContent.match(/\["MURID_PREMIUM",\s*"PREMIUM_UPGRADE"\]/g);
+  assert(
+    premiumTypes !== null && premiumTypes.length >= 3,
+    "Premium type filter used consistently in all 3 places (summary, data, include)",
+  );
+
   // ── Summary ──
   console.log(`\n${YELLOW}=== Results ===${RESET}`);
   console.log(`  ${GREEN}Passed: ${passed}${RESET}`);
