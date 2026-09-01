@@ -8,6 +8,7 @@ import { detectUnitSkill } from "@/lib/learning-loop/skills"
 import { generateRecommendations } from "@/lib/learning-loop/recommend"
 import { refreshNextAction } from "@/lib/learning-loop/next-action"
 import { isJalurAnswerCorrect, scoreJalurAnswers } from "@/lib/jalur-cerdas/scoring"
+import { trackAchievement } from "@/lib/gamification/achievement-engine"
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ unitId: string }> }) {
   try {
@@ -167,6 +168,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ un
     // the response — quest bookkeeping must never slow down or fail the lesson.
     after(async () => {
       try { await trackQuestProgress(user.id, "BACA_MATERI"); } catch { /* best-effort */ }
+      // Achievement: increment belajar counter for each unit completed.
+      try { await trackAchievement(user.id, "ach-belajar-1"); await trackAchievement(user.id, "ach-belajar-10"); await trackAchievement(user.id, "ach-belajar-50"); } catch { /* best-effort */ }
     });
 
     // Record the payout in the coin ledger.

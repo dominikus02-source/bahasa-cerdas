@@ -8,6 +8,7 @@ import { ERR } from "@/lib/api/errors";
 import type { AttemptSnapshot, AttemptAnswerDetails, UserAnswerRecord } from "@/lib/types/snapshot";
 import { gradeConstructed } from "@/lib/penilaian/ai-grade";
 import { acquireAiSlot } from "@/lib/ai-concurrency";
+import { trackAchievement } from "@/lib/gamification/achievement-engine";
 
 const PERF_LOG = true;
 
@@ -518,6 +519,13 @@ export async function POST(
 
     const totalMs = Date.now() - t0;
     perfLog("SUBMIT_OK", { paketId, answersCount: answerRows.length, scoringMs, writeMs, totalMs });
+
+    // Achievement: track UKBI/TKA milestones (fire-and-forget, best-effort).
+    if (isUKBI) {
+      trackAchievement(dbUser.id, "ach-ukbi-1").catch(() => {});
+    } else {
+      trackAchievement(dbUser.id, "ach-tka-1").catch(() => {});
+    }
 
     const resultPayload: Record<string, unknown> = {
       totalScore: finalScore,

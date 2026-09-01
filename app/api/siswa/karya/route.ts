@@ -12,6 +12,7 @@ import { recordActivity } from "@/lib/learning-loop/activity";
 import { refreshNextAction } from "@/lib/learning-loop/next-action";
 import { RANK_META } from "@/lib/gamification/ranks";
 import { awardGuruXp, getMuridGuruIds, notifyGuruMurid } from "@/lib/gamification/teacher-xp";
+import { trackAchievement } from "@/lib/gamification/achievement-engine";
 import { resolveKaryaFeedScope, buildKaryaScopeWhere } from "@/lib/karya/feed-scope";
 import type { PlayerRank } from "@prisma/client";
 
@@ -269,6 +270,9 @@ export async function POST(req: NextRequest) {
     // used to say "TULIS_KARYA", which matches nothing, so the "Tulis 1
     // Karya" daily quest could never actually be completed by writing one.
     trackQuestProgress(user.id, "MENULIS").catch(() => {});
+    // Achievement: track karya milestones (best-effort, fire-and-forget).
+    trackAchievement(user.id, "ach-karya-1").catch(() => {});
+    trackAchievement(user.id, "ach-karya-5").catch(() => {});
     if (!user.isFounder) trackDailyStreak(user.id).catch(() => {});
 
     // Learning Loop: catat aktivitas + skill + segarkan CTA (best-effort).

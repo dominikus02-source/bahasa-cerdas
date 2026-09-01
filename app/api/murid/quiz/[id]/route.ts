@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { sanitizeSoalForStudent } from "@/lib/security";
 import { LEARNING_EVIDENCE_VERSION, replaceLearningEvidenceBatch } from "@/lib/learning-loop/evidence";
+import { trackAchievement } from "@/lib/gamification/achievement-engine";
 
 export async function GET(
   req: NextRequest,
@@ -381,6 +382,10 @@ export async function POST(
           timeSpent,
         },
       });
+
+      // Achievement: track kuis milestones (fire-and-forget, best-effort).
+      trackAchievement(dbUser.id, "ach-kuis-10").catch(() => {});
+      trackAchievement(dbUser.id, "ach-kuis-100").catch(() => {});
 
       return NextResponse.json({ submission: updated, score, correctCount, wrongCount, skippedCount, pointsEarned, pointsTotal });
     }

@@ -138,17 +138,35 @@ async function main() {
     console.log(`    ${f.feature}: ${f._count}`);
   }
 
-  const rppGenerated = await prisma.aIUsage.count({ where: { feature: "rpp" } });
-  const soalGenerated = await prisma.aIUsage.count({ where: { feature: "soal" } });
-  const feedbackGenerated = await prisma.aIUsage.count({ where: { feature: "feedback" } });
-  const gradingGenerated = await prisma.aIUsage.count({ where: { feature: "grading" } });
+  // AIUsage stores feature as "agent:<agentId>" (see src/ai/core/usage-logger.ts).
+  // Query with startsWith to match all agent-prefixed features, then group manually.
+  const rppGenerated = await prisma.aIUsage.count({ where: { feature: { startsWith: "agent:" } } });
+  // Group agent features for breakdown
+  const agentFeatures = await prisma.aIUsage.groupBy({
+    by: ["feature"],
+    where: { feature: { startsWith: "agent:" } },
+    _count: true,
+    orderBy: { _count: { feature: "desc" } },
+  });
+  const agentBreakdown = agentFeatures.map(f => ({
+    feature: f.feature.replace("agent:", ""),
+    count: f._count,
+  }));
+  console.log(`  Agent usage breakdown:`);
+  for (const a of agentBreakdown) {
+    console.log(`    ${a.feature}: ${a.count}`);
+  }
 
   metrics.push(
     { name: "AI Generations (total)", value: fmt(aiUsageCount), period: "all-time", source: "AIUsage", status: "VERIFIED" },
-    { name: "RPP Generated", value: fmt(rppGenerated), period: "all-time", source: "AIUsage (feature=rpp)", status: "VERIFIED" },
-    { name: "Soal Generated", value: fmt(soalGenerated), period: "all-time", source: "AIUsage (feature=soal)", status: "VERIFIED" },
-    { name: "Feedback Generated", value: fmt(feedbackGenerated), period: "all-time", source: "AIUsage (feature=feedback)", status: "VERIFIED" },
-    { name: "Grading Generated", value: fmt(gradingGenerated), period: "all-time", source: "AIUsage (feature=grading)", status: "VERIFIED" },
+    { name: "Agent Usage (all agents)", value: fmt(rppGenerated), period: "all-time", source: "AIUsage (feature=agent:*)", status: "VERIFIED" },
+    ...agentBreakdown.map(a => ({
+      name: `Agent: ${a.feature}`,
+      value: fmt(a.count),
+      period: "all-time",
+      source: `AIUsage (feature=agent:${a.feature})`,
+      status: "VERIFIED" as const,
+    })),
   );
 
 // Teacher-created groups
@@ -438,6 +456,105 @@ for (const s of soalByType) {
   } catch {
     console.log(`  Notifications: N/A`);
   }
+
+  // ─── 21. RETENTION (D7/D30) ───────────────────────────────
+  console.log("\n── 21. RETENTION (D7/D30) ──");
+
+  // Retention = of users who registered in cohort week, how many were active (XP) in week+N?
+  // We use 4-week cohorts: W0 (4w ago), W1 (3w ago), W2 (2w ago), W3 (1w ago)
+  const cohortWeeks = [
+    { label: "W-4 (4w ago)", offsetWeeks: 4 },
+    { label: "W-3 (3w ago)", offsetWeeks: 3 },
+    { label: "W-2 (2w ago)", offsetWeeks: 2 },
+    { label: "W-1 (1w ago)", offsetWeeks: 1 },
+  ];
+
+  for (const cohort of cohortWeeks) {
+    const weekStartMs = now.getTime() - cohort.offsetWeeks * 7 * 24 * 60 * 60 * 1000;
+    const weekEndMs = weekStartMs + 7 * 24 * 60 * 60 * 1000;
+    const weekStart = new Date(weekStartMs);
+    const weekEnd = new Date(weekEndMs);
+
+    // Users registered in this cohort week
+    const cohortUsers = await prisma.user.findMany({
+      where: { createdAt: { gte: weekStart, lt: weekEnd } },
+      select: { id: true },
+    });
+    const cohortCount = cohortUsers.length;
+    if (cohortCount === 0) {
+      console.log(`  ${cohort.label}: 0 users registered, skipping`);
+      continue;
+    }
+    const cohortIds = new Set(cohortUsers.map(u => u.id));
+
+    // D7 retention: active in the SAME week as registration
+    const d7Active = await prisma.xPTransaction.groupBy({
+      by: ["userId"],
+      where: { createdAt: { gte: weekStart, lt: weekEnd }, userId: { in: [...cohortIds] } },
+    });
+    const d7Count = d7Active.length;
+    const d7Pct = cohortCount > 0 ? Math.round((d7Count / cohortCount) * 100) : 0;
+
+    // D30 retention: active any time AFTER registration week
+    const postWeekStart = weekEnd;
+    const d30Active = await prisma.xPTransaction.groupBy({
+      by: ["userId"],
+      where: { createdAt: { gte: postWeekStart }, userId: { in: [...cohortIds] } },
+    });
+    const d30Count = d30Active.length;
+    const d30Pct = cohortCount > 0 ? Math.round((d30Count / cohortCount) * 100) : 0;
+
+    console.log(`  ${cohort.label}: ${cohortCount} registered, D7=${d7Count} (${d7Pct}%), D30=${d30Count} (${d30Pct}%)`);
+
+    metrics.push(
+      { name: `Retention D7 (${cohort.label})`, value: `${d7Pct}% (${d7Count}/${cohortCount})`, period: cohort.label, source: "User+XPTransaction", status: "VERIFIED" },
+      { name: `Retention D30 (${cohort.label})`, value: `${d30Pct}% (${d30Count}/${cohortCount})`, period: cohort.label, source: "User+XPTransaction", status: "VERIFIED" },
+    );
+  }
+
+  // ─── 22. MRR (Monthly Recurring Revenue) ──────────────────
+  console.log("\n── 22. MRR (Monthly Recurring Revenue) ──
+");
+
+  // Group successful transactions by month
+  const allSuccessTxns = await prisma.transaksi.findMany({
+    where: { status: "SUCCESS" },
+    select: { amount: true, createdAt: true, type: true },
+    orderBy: { createdAt: "asc" },
+  });
+
+  const monthlyRevenue: Record<string, { total: number; count: number; types: Record<string, number> }> = {};
+  for (const t of allSuccessTxns) {
+    const month = t.createdAt.toISOString().slice(0, 7); // YYYY-MM
+    if (!monthlyRevenue[month]) monthlyRevenue[month] = { total: 0, count: 0, types: {} };
+    monthlyRevenue[month].total += t.amount || 0;
+    monthlyRevenue[month].count += 1;
+    monthlyRevenue[month].types[t.type] = (monthlyRevenue[month].types[t.type] || 0) + 1;
+  }
+
+  for (const [month, data] of Object.entries(monthlyRevenue)) {
+    console.log(`  ${month}: Rp ${fmt(data.total)} (${data.count} txns) ${JSON.stringify(data.types)}`);
+    metrics.push(
+      { name: `MRR (${month})`, value: `Rp ${fmt(data.total)}`, period: month, source: "Transaksi (SUCCESS)", status: "VERIFIED" },
+    );
+  }
+
+  // Current MRR (last month with transactions)
+  const latestMonth = Object.keys(monthlyRevenue).pop();
+  if (latestMonth) {
+    const currentMRR = monthlyRevenue[latestMonth].total;
+    console.log(`  Current MRR: Rp ${fmt(currentMRR)} (${latestMonth})`);
+    metrics.push(
+      { name: "Current MRR", value: `Rp ${fmt(currentMRR)}`, period: latestMonth, source: "Transaksi (SUCCESS)", status: "VERIFIED" },
+    );
+  }
+
+  // ─── 23. SUPABASE PROJECT INVENTORY ──────────────────────
+  console.log("\n── 23. SUPABASE PROJECT INVENTORY ──
+");
+  console.log("  NOTE: Run 'npx supabase projects list' manually to check for unused projects.");
+  console.log("  Known projects: Bahasa Cerdas DB (prod), bahasa-cerdas-staging, sepedamania");
+  console.log("  ACTION: Pause any unused Pro-plan projects to save $25/month each.");
 
   // ═══════════════════════════════════════════════════════════
   // SUMMARY TABLE

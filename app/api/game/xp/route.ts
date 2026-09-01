@@ -6,6 +6,7 @@ import { rateLimitRoute } from "@/lib/rate-limit"
 import { awardXp } from "@/lib/award-xp"
 import { awardGuruXp } from "@/lib/gamification/teacher-xp"
 import { awardCoins, COIN_MAIN_GAME } from "@/lib/coins"
+import { trackAchievement } from "@/lib/gamification/achievement-engine"
 
 // Skor wajar maksimum per jenis game — di atas ini klien berbohong.
 // KataPlay: 10 ronde × (50 + streak×10) = maks 1050. Jaring pengaman kedua
@@ -119,6 +120,9 @@ export async function POST(req: NextRequest) {
     } as any)
 
     await invalidateLeagueCache(dbUser.id)
+
+    // Achievement: track game milestones (fire-and-forget, best-effort).
+    trackAchievement(dbUser.id, "ach-game-5").catch(() => {})
 
     return NextResponse.json({
       xpEarned: hasil.xpDiberikan,
