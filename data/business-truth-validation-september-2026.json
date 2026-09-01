@@ -1,0 +1,1429 @@
+{
+  "metrics": [
+    {
+      "metric": "teacher.forensic.total",
+      "value": 477,
+      "status": "VERIFIED",
+      "source": "section1",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacher.forensic.withStudents",
+      "value": 15,
+      "status": "VERIFIED",
+      "source": "section1",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacher.forensic.withoutStudents",
+      "value": 462,
+      "status": "VERIFIED",
+      "source": "section1",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacher.forensic.withAi",
+      "value": 70,
+      "status": "VERIFIED",
+      "source": "section1",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacher.forensic.withClasses",
+      "value": 49,
+      "status": "VERIFIED",
+      "source": "section1",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacher.forensic.withoutStudents_noActivity",
+      "value": 394,
+      "status": "VERIFIED",
+      "source": "section1",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "relationship.total_teachers",
+      "value": 477,
+      "status": "VERIFIED",
+      "source": "section2",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "relationship.noClass",
+      "value": 428,
+      "status": "VERIFIED",
+      "source": "section2",
+      "confidence": "HIGH",
+      "notes": "Teachers who never created any group"
+    },
+    {
+      "metric": "relationship.classNoStudents",
+      "value": 34,
+      "status": "VERIFIED",
+      "source": "section2",
+      "confidence": "HIGH",
+      "notes": "Teachers with groups but zero members"
+    },
+    {
+      "metric": "relationship.classWithStudents",
+      "value": 15,
+      "status": "VERIFIED",
+      "source": "section2",
+      "confidence": "HIGH",
+      "notes": "Teachers with groups AND at least 1 member"
+    },
+    {
+      "metric": "relationship.totalGroups",
+      "value": 142,
+      "status": "VERIFIED",
+      "source": "section2",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "relationship.totalEnrollments",
+      "value": 1254,
+      "status": "VERIFIED",
+      "source": "section2",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "relationship.uniqueStudentsInGroups",
+      "value": 1239,
+      "status": "VERIFIED",
+      "source": "section2",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "relationship.studentsWithoutGroup",
+      "value": 713,
+      "status": "VERIFIED",
+      "source": "section2",
+      "confidence": "HIGH",
+      "notes": "MURID users with no GroupMember record"
+    },
+    {
+      "metric": "zeroStudent.rootCause.A_neverCreatedClass",
+      "value": 426,
+      "status": "VERIFIED",
+      "source": "section3",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "zeroStudent.rootCause.B_classNoStudents",
+      "value": 34,
+      "status": "VERIFIED",
+      "source": "section3",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "zeroStudent.rootCause.F_testDemo",
+      "value": 2,
+      "status": "VERIFIED",
+      "source": "section3",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "zeroStudent.rootCause.G_other",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section3",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "zeroStudent.rootCause.D_studentsUnderSchool_notTeacher",
+      "value": 44,
+      "status": "VERIFIED",
+      "source": "section3",
+      "confidence": "HIGH",
+      "notes": "Students sharing teacher's school name but not in their class"
+    },
+    {
+      "metric": "zeroStudent.rootCause.E_legacyMigration",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section3",
+      "confidence": "HIGH",
+      "notes": "Teachers created before June 2026 with no classes"
+    },
+    {
+      "metric": "zeroStudent.total",
+      "value": 462,
+      "status": "VERIFIED",
+      "source": "section3",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "school.rawUniqueNames",
+      "value": 986,
+      "status": "VERIFIED",
+      "source": "section4",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "school.normalizedNames",
+      "value": 672,
+      "status": "VERIFIED",
+      "source": "section4",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "school.nameCollisions",
+      "value": 106,
+      "status": "VERIFIED",
+      "source": "section5",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "school.phantom",
+      "value": 772,
+      "status": "VERIFIED",
+      "source": "section6",
+      "confidence": "HIGH",
+      "notes": "No meaningful activity"
+    },
+    {
+      "metric": "school.singleUser",
+      "value": 130,
+      "status": "VERIFIED",
+      "source": "section6",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "school.emerging",
+      "value": 48,
+      "status": "VERIFIED",
+      "source": "section6",
+      "confidence": "HIGH",
+      "notes": "2-4 users"
+    },
+    {
+      "metric": "school.cluster",
+      "value": 28,
+      "status": "VERIFIED",
+      "source": "section6",
+      "confidence": "HIGH",
+      "notes": "5-19 users"
+    },
+    {
+      "metric": "school.strongCluster",
+      "value": 7,
+      "status": "VERIFIED",
+      "source": "section6",
+      "confidence": "HIGH",
+      "notes": "20+ users"
+    },
+    {
+      "metric": "school.cluster.top50_totalUsers",
+      "value": 167,
+      "status": "VERIFIED",
+      "source": "section7",
+      "confidence": "HIGH",
+      "notes": "Largest school"
+    },
+    {
+      "metric": "school.cluster.top50_count",
+      "value": 50,
+      "status": "VERIFIED",
+      "source": "section7",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "school.cluster.top50_hasClass",
+      "value": 5,
+      "status": "VERIFIED",
+      "source": "section7",
+      "confidence": "HIGH",
+      "notes": "Top 50 schools with classes"
+    },
+    {
+      "metric": "school.cluster.top50_hasActivity",
+      "value": 32,
+      "status": "VERIFIED",
+      "source": "section7",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "school.cohort.2026-09.newSchools",
+      "value": 986,
+      "status": "VERIFIED",
+      "source": "section8",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "school.cohort.2026-09.active",
+      "value": 178,
+      "status": "VERIFIED",
+      "source": "section8",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "school.cohort.2026-09.multiUser",
+      "value": 180,
+      "status": "VERIFIED",
+      "source": "section8",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "school.cohort.2026-09.cluster",
+      "value": 45,
+      "status": "VERIFIED",
+      "source": "section8",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacherDistribution.medianStudentsPerTeacher",
+      "value": 36,
+      "status": "VERIFIED",
+      "source": "section9",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacherDistribution.medianTimeToFirstStudentDays",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section9",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacherDistribution.teachersWith1Plus",
+      "value": 15,
+      "status": "VERIFIED",
+      "source": "section9",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacherDistribution.teachersWith5Plus",
+      "value": 11,
+      "status": "VERIFIED",
+      "source": "section9",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacherDistribution.teachersWith10Plus",
+      "value": 11,
+      "status": "VERIFIED",
+      "source": "section9",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacherDistribution.teachersWith25Plus",
+      "value": 8,
+      "status": "VERIFIED",
+      "source": "section9",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacherDistribution.zeroStudents",
+      "value": 462,
+      "status": "VERIFIED",
+      "source": "section9",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacherDistribution.oneToFive",
+      "value": 4,
+      "status": "VERIFIED",
+      "source": "section9",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacherDistribution.sixToTen",
+      "value": 1,
+      "status": "VERIFIED",
+      "source": "section9",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacherDistribution.elevenTo25",
+      "value": 2,
+      "status": "VERIFIED",
+      "source": "section9",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacherDistribution.twentySixTo50",
+      "value": 1,
+      "status": "VERIFIED",
+      "source": "section9",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacherDistribution.fiftyPlus",
+      "value": 7,
+      "status": "VERIFIED",
+      "source": "section9",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "studentOrigin.total",
+      "value": 1950,
+      "status": "VERIFIED",
+      "source": "section10",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "studentOrigin.viaClass",
+      "value": 1239,
+      "status": "VERIFIED",
+      "source": "section10",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "studentOrigin.viaAttribution",
+      "value": 35,
+      "status": "VERIFIED",
+      "source": "section10",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "studentOrigin.viaBoth",
+      "value": 35,
+      "status": "VERIFIED",
+      "source": "section10",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "studentOrigin.viaNeither",
+      "value": 711,
+      "status": "VERIFIED",
+      "source": "section10",
+      "confidence": "HIGH",
+      "notes": "Students without class membership OR attribution"
+    },
+    {
+      "metric": "studentOrigin.instrumented",
+      "value": 1239,
+      "status": "VERIFIED",
+      "source": "section10",
+      "confidence": "HIGH",
+      "notes": "Students with at least one tracking mechanism"
+    },
+    {
+      "metric": "studentOrigin.attribution.CLASS_ENROLLMENT",
+      "value": 35,
+      "status": "VERIFIED",
+      "source": "section10",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "studentJourney.total",
+      "value": 1950,
+      "status": "VERIFIED",
+      "source": "section11",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "studentJourney.highlyActive",
+      "value": 451,
+      "status": "VERIFIED",
+      "source": "section11",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "studentJourney.moderatelyActive",
+      "value": 638,
+      "status": "VERIFIED",
+      "source": "section11",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "studentJourney.inactive",
+      "value": 804,
+      "status": "VERIFIED",
+      "source": "section11",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-06.total",
+      "value": 39,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-06.activated",
+      "value": 17,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-06.d14",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH",
+      "notes": "0.0% of activated"
+    },
+    {
+      "metric": "retention.2026-06.d30",
+      "value": 13,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH",
+      "notes": "76.5% of activated"
+    },
+    {
+      "metric": "retention.2026-06.schoolLinked.d30",
+      "value": 5,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-06.nonSchoolLinked.d30",
+      "value": 8,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-07.total",
+      "value": 1301,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-07.activated",
+      "value": 903,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-07.d14",
+      "value": 349,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH",
+      "notes": "38.6% of activated"
+    },
+    {
+      "metric": "retention.2026-07.d30",
+      "value": 257,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH",
+      "notes": "28.5% of activated"
+    },
+    {
+      "metric": "retention.2026-07.schoolLinked.d30",
+      "value": 218,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-07.nonSchoolLinked.d30",
+      "value": 39,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-08.total",
+      "value": 606,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-08.activated",
+      "value": 233,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-08.d14",
+      "value": 13,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH",
+      "notes": "5.6% of activated"
+    },
+    {
+      "metric": "retention.2026-08.d30",
+      "value": 33,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH",
+      "notes": "14.2% of activated"
+    },
+    {
+      "metric": "retention.2026-08.schoolLinked.d30",
+      "value": 29,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-08.nonSchoolLinked.d30",
+      "value": 4,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-09.total",
+      "value": 4,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-09.activated",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-09.d14",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH",
+      "notes": "0% of activated"
+    },
+    {
+      "metric": "retention.2026-09.d30",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH",
+      "notes": "0% of activated"
+    },
+    {
+      "metric": "retention.2026-09.schoolLinked.d30",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-09.nonSchoolLinked.d30",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section12",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retentionByBehavior.diagnostic.users",
+      "value": 20,
+      "status": "VERIFIED",
+      "source": "section13",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retentionByBehavior.diagnostic.activated",
+      "value": 20,
+      "status": "VERIFIED",
+      "source": "section13",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retentionByBehavior.diagnostic.d30",
+      "value": 13,
+      "status": "VERIFIED",
+      "source": "section13",
+      "confidence": "HIGH",
+      "notes": "65.0% of activated"
+    },
+    {
+      "metric": "retentionByBehavior.jalurCerdas.users",
+      "value": 414,
+      "status": "VERIFIED",
+      "source": "section13",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retentionByBehavior.jalurCerdas.activated",
+      "value": 414,
+      "status": "VERIFIED",
+      "source": "section13",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retentionByBehavior.jalurCerdas.d30",
+      "value": 151,
+      "status": "VERIFIED",
+      "source": "section13",
+      "confidence": "HIGH",
+      "notes": "36.5% of activated"
+    },
+    {
+      "metric": "retentionByBehavior.karya.users",
+      "value": 612,
+      "status": "VERIFIED",
+      "source": "section13",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retentionByBehavior.karya.activated",
+      "value": 612,
+      "status": "VERIFIED",
+      "source": "section13",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retentionByBehavior.karya.d30",
+      "value": 226,
+      "status": "VERIFIED",
+      "source": "section13",
+      "confidence": "HIGH",
+      "notes": "36.9% of activated"
+    },
+    {
+      "metric": "retentionByBehavior.ukbi.users",
+      "value": 309,
+      "status": "VERIFIED",
+      "source": "section13",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retentionByBehavior.ukbi.activated",
+      "value": 306,
+      "status": "VERIFIED",
+      "source": "section13",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retentionByBehavior.ukbi.d30",
+      "value": 118,
+      "status": "VERIFIED",
+      "source": "section13",
+      "confidence": "HIGH",
+      "notes": "38.6% of activated"
+    },
+    {
+      "metric": "retentionByBehavior.game.users",
+      "value": 341,
+      "status": "VERIFIED",
+      "source": "section13",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retentionByBehavior.game.activated",
+      "value": 337,
+      "status": "VERIFIED",
+      "source": "section13",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retentionByBehavior.game.d30",
+      "value": 102,
+      "status": "VERIFIED",
+      "source": "section13",
+      "confidence": "HIGH",
+      "notes": "30.3% of activated"
+    },
+    {
+      "metric": "retentionByBehavior.anyXp.users",
+      "value": 1093,
+      "status": "VERIFIED",
+      "source": "section13",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retentionByBehavior.anyXp.activated",
+      "value": 1061,
+      "status": "VERIFIED",
+      "source": "section13",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retentionByBehavior.anyXp.d30",
+      "value": 240,
+      "status": "VERIFIED",
+      "source": "section13",
+      "confidence": "HIGH",
+      "notes": "22.6% of activated"
+    },
+    {
+      "metric": "ai.total",
+      "value": 1249,
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.success",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.error",
+      "value": 465,
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.null",
+      "value": 784,
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.rawErrorRate",
+      "value": "37.2%",
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.userVisibleFailures",
+      "value": 465,
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH",
+      "notes": "All errors are user-visible (no fallback tracking in AIUsage)"
+    },
+    {
+      "metric": "ai.providerError",
+      "value": 109,
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.timeout",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.quotaRateLimit",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.validationFailure",
+      "value": 1,
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.agent:bc-assistant.total",
+      "value": 1008,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.agent:bc-assistant.success",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.agent:bc-assistant.errorRate",
+      "value": "35.2%",
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.simulasi:review.total",
+      "value": 11,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.simulasi:review.success",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.simulasi:review.errorRate",
+      "value": "0.0%",
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.agent:soal.total",
+      "value": 70,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.agent:soal.success",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.agent:soal.errorRate",
+      "value": "92.9%",
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.ai_export_pdf:rpp.total",
+      "value": 9,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.ai_export_pdf:rpp.success",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.ai_export_pdf:rpp.errorRate",
+      "value": "0.0%",
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.agent:rpp.total",
+      "value": 52,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.agent:rpp.success",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.agent:rpp.errorRate",
+      "value": "7.7%",
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.agent:ppt.total",
+      "value": 41,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.agent:ppt.success",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.agent:ppt.errorRate",
+      "value": "97.6%",
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.ai_export_docx:rpp.total",
+      "value": 23,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.ai_export_docx:rpp.success",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.ai_export_docx:rpp.errorRate",
+      "value": "0.0%",
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.agent:text-analysis.total",
+      "value": 5,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.agent:text-analysis.success",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.agent:text-analysis.errorRate",
+      "value": "20.0%",
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.soal_generator.total",
+      "value": 19,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.soal_generator.success",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.soal_generator.errorRate",
+      "value": "0.0%",
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.agent:eyd.total",
+      "value": 3,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.agent:eyd.success",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.agent:eyd.errorRate",
+      "value": "0.0%",
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.agent:review.total",
+      "value": 3,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.agent:review.success",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.agent:review.errorRate",
+      "value": "0.0%",
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.rpp_generator.total",
+      "value": 5,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.rpp_generator.success",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.feature.rpp_generator.errorRate",
+      "value": "0.0%",
+      "status": "VERIFIED",
+      "source": "section15",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.provider.groq.total",
+      "value": 673,
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.provider.groq.success",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.provider.groq.errorRate",
+      "value": "0.0%",
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.provider.unknown.total",
+      "value": 411,
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.provider.unknown.success",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.provider.unknown.errorRate",
+      "value": "0.0%",
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.provider.fallback.total",
+      "value": 11,
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.provider.fallback.success",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.provider.fallback.errorRate",
+      "value": "0.0%",
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.provider.none.total",
+      "value": 109,
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.provider.none.success",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.provider.none.errorRate",
+      "value": "0.0%",
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.provider.fallback-template.total",
+      "value": 45,
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.provider.fallback-template.success",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.provider.fallback-template.errorRate",
+      "value": "0.0%",
+      "status": "VERIFIED",
+      "source": "section14",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "trial.totalTrialUsers",
+      "value": 465,
+      "status": "VERIFIED",
+      "source": "section16",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "trial.nonFounderTrials",
+      "value": 465,
+      "status": "VERIFIED",
+      "source": "section16",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "trial.activeTrials",
+      "value": 274,
+      "status": "VERIFIED",
+      "source": "section16",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "trial.checkoutInitiated",
+      "value": 6,
+      "status": "VERIFIED",
+      "source": "section16",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "trial.converted",
+      "value": 2,
+      "status": "VERIFIED",
+      "source": "section16",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "trial.conversionRate",
+      "value": "0.4%",
+      "status": "VERIFIED",
+      "source": "section16",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "payment.totalTransactions",
+      "value": 17,
+      "status": "VERIFIED",
+      "source": "section17",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "payment.successful",
+      "value": 4,
+      "status": "VERIFIED",
+      "source": "section17",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "payment.failed",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section17",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "payment.pending",
+      "value": 7,
+      "status": "VERIFIED",
+      "source": "section17",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "payment.totalRevenue",
+      "value": 438000,
+      "unit": "IDR",
+      "status": "VERIFIED",
+      "source": "section17",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "payment.premiumUsers",
+      "value": 4,
+      "status": "VERIFIED",
+      "source": "section17",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "payment.avgTransactionValue",
+      "value": 109500,
+      "unit": "IDR",
+      "status": "VERIFIED",
+      "source": "section17",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "payment.premiumUsageRecords",
+      "value": 336,
+      "status": "VERIFIED",
+      "source": "section17",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "premium.avgAiCalls",
+      "value": 9,
+      "status": "VERIFIED",
+      "source": "section18",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "premium.avgQuizzes",
+      "value": 2,
+      "status": "VERIFIED",
+      "source": "section18",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "free.active.avgAiCalls",
+      "value": 1,
+      "status": "VERIFIED",
+      "source": "section18",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "free.active.avgQuizzes",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section18",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "dataQuality.totalUsers",
+      "value": 2430,
+      "status": "VERIFIED",
+      "source": "section20",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "dataQuality.testAccounts",
+      "value": 21,
+      "status": "VERIFIED",
+      "source": "section20",
+      "confidence": "HIGH",
+      "notes": "murid@demo.com, devitasyaroh@gmail.com, khaliqadzahin474@gmail.com, guru@demo.com, qatrunnadayyuuki@gmail.com, qatrunnada.yuuki.student@shb.sch.id, luthfiaqarina@gmail.com, afiqarastiaulia@gmail.com, test-check@verify.com, kelvin.devantez.student@shb.sch.id, laylaqamali@gmail.com, afiqaaulia002@gmail.com, jessica.devanta.student@shb.sch.id, sisilayuk6@gmail.com, devvnrahman@gmail.com, afiqahputriz12@gmail.com, laiqaanamibowo@gmail.com, deven.dharmawan@santa-laurensia.sch.id, loadtest_concurrency_001@loadtest.bahasacerdas.com, sitiqailazhafira1@gmail.com, devin.kurnia@santa-laurensia.sch.id"
+    },
+    {
+      "metric": "dataQuality.internalAccounts",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section20",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "dataQuality.founders",
+      "value": 3,
+      "status": "VERIFIED",
+      "source": "section20",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "dataQuality.noProfile",
+      "value": 5,
+      "status": "VERIFIED",
+      "source": "section20",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "dataQuality.noAvatar",
+      "value": 1715,
+      "status": "VERIFIED",
+      "source": "section20",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "entityConsistency.groupMembers_withoutUser",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section21",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "entityConsistency.groupMembers_withoutGroup",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section21",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "entityConsistency.groups_withoutTeacher",
+      "value": 18,
+      "status": "DATA_QUALITY_ISSUE",
+      "source": "section21",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "entityConsistency.xpLedger_withoutUser",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section21",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "entityConsistency.quizSubmissions_withoutUser",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section21",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "entityConsistency.aiUsage_withoutUser",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section21",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "entityConsistency.studentKarya_withoutUser",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section21",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "entityConsistency.transaksi_withoutUser",
+      "value": 0,
+      "status": "VERIFIED",
+      "source": "section21",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "reconciliation.users",
+      "value": {
+        "phase25": 2430
+      },
+      "status": "VERIFIED",
+      "source": "section23",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "reconciliation.teachers",
+      "value": {
+        "phase25": 477
+      },
+      "status": "VERIFIED",
+      "source": "section23",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "reconciliation.students",
+      "value": {
+        "phase25": 1950
+      },
+      "status": "VERIFIED",
+      "source": "section23",
+      "confidence": "HIGH"
+    }
+  ],
+  "generatedAt": "2026-09-01T15:08:16.902Z"
+}

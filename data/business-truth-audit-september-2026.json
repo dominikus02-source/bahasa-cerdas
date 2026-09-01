@@ -1,0 +1,2479 @@
+{
+  "cutoff": "2026-09-01T16:59:59.000Z",
+  "historical": "2026-08-01T17:00:00.000Z",
+  "metricCount": 301,
+  "metrics": [
+    {
+      "metric": "users.total",
+      "value": 2430,
+      "unit": "users",
+      "period": "all",
+      "status": "VERIFIED",
+      "source": "User.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "users.by_role.admin",
+      "value": 3,
+      "unit": "users",
+      "period": "all",
+      "status": "VERIFIED",
+      "source": "User.groupBy(role)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "users.by_role.murid",
+      "value": 1950,
+      "unit": "users",
+      "period": "all",
+      "status": "VERIFIED",
+      "source": "User.groupBy(role)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "users.by_role.guru",
+      "value": 477,
+      "unit": "users",
+      "period": "all",
+      "status": "VERIFIED",
+      "source": "User.groupBy(role)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "users.founders",
+      "value": 3,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "User.count(isFounder)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "users.admins",
+      "value": 3,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "User.count(role=ADMIN)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "users.potentially_internal",
+      "value": 7,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "User.findMany(demo/test/admin/founder)",
+      "confidence": "HIGH",
+      "notes": "murid@demo.com(MURID), guru@demo.com(GURU), hdsastra47@gmail.com(ADMIN/founder), test-check@verify.com(MURID), loadtest_concurrency_001@loadtest.bahasacerdas.com(MURID), dominikus.02@gmail.com(ADMIN/founder), alexsurya1968@gmail.com(ADMIN/founder)"
+    },
+    {
+      "metric": "cohorts.2026-06.total",
+      "value": 53,
+      "unit": "users",
+      "period": "2026-06",
+      "status": "VERIFIED",
+      "source": "User.createdAt grouped",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "cohorts.2026-06.guru",
+      "value": 11,
+      "unit": "users",
+      "period": "2026-06",
+      "status": "VERIFIED",
+      "source": "User.createdAt grouped",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "cohorts.2026-06.murid",
+      "value": 39,
+      "unit": "users",
+      "period": "2026-06",
+      "status": "VERIFIED",
+      "source": "User.createdAt grouped",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "cohorts.2026-07.total",
+      "value": 1480,
+      "unit": "users",
+      "period": "2026-07",
+      "status": "VERIFIED",
+      "source": "User.createdAt grouped",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "cohorts.2026-07.guru",
+      "value": 179,
+      "unit": "users",
+      "period": "2026-07",
+      "status": "VERIFIED",
+      "source": "User.createdAt grouped",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "cohorts.2026-07.murid",
+      "value": 1301,
+      "unit": "users",
+      "period": "2026-07",
+      "status": "VERIFIED",
+      "source": "User.createdAt grouped",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "cohorts.2026-08.total",
+      "value": 880,
+      "unit": "users",
+      "period": "2026-08",
+      "status": "VERIFIED",
+      "source": "User.createdAt grouped",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "cohorts.2026-08.guru",
+      "value": 285,
+      "unit": "users",
+      "period": "2026-08",
+      "status": "VERIFIED",
+      "source": "User.createdAt grouped",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "cohorts.2026-08.murid",
+      "value": 595,
+      "unit": "users",
+      "period": "2026-08",
+      "status": "VERIFIED",
+      "source": "User.createdAt grouped",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "cohorts.2026-09.total",
+      "value": 17,
+      "unit": "users",
+      "period": "2026-09",
+      "status": "VERIFIED",
+      "source": "User.createdAt grouped",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "cohorts.2026-09.guru",
+      "value": 2,
+      "unit": "users",
+      "period": "2026-09",
+      "status": "VERIFIED",
+      "source": "User.createdAt grouped",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "cohorts.2026-09.murid",
+      "value": 15,
+      "unit": "users",
+      "period": "2026-09",
+      "status": "VERIFIED",
+      "source": "User.createdAt grouped",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "activation.students.with_xp",
+      "value": 1093,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "User.count(role=MURID, xp>0)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "activation.students.with_unit_progress",
+      "value": 419,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "UserUnitProgress.groupBy(userId)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "activation.students.with_learning_evidence",
+      "value": 239,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "LearningEvidence.groupBy(userId)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "activation.students.with_karya",
+      "value": 618,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "StudentKarya.groupBy(userId)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "activation.students.any_activity",
+      "value": 1199,
+      "unit": "users",
+      "status": "DERIVED",
+      "source": "Union of xp>0 | unitProgress | learningEvidence | karya",
+      "confidence": "HIGH",
+      "formula": "|{u | u.role=MURID AND (xp>0 OR has UnitProgress OR has LearningEvidence OR has Karya)}|"
+    },
+    {
+      "metric": "activation.teachers.with_groups",
+      "value": 52,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "Group.groupBy(teacherId)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "activation.teachers.with_ai_saved",
+      "value": 7,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "AiSavedResult.groupBy(userId)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "activation.teachers.with_rpp",
+      "value": 1,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "GeneratedRPP.groupBy(uploaderId)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "activation.teachers.with_quizzes",
+      "value": 15,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "Quiz.groupBy(creatorId)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "activation.teachers.any_activity",
+      "value": 57,
+      "unit": "users",
+      "status": "DERIVED",
+      "source": "Union of groups | aiSaved | rpp | quizzes",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "schools.raw_unique_names",
+      "value": 649,
+      "unit": "schools",
+      "status": "VERIFIED",
+      "source": "DISTINCT Profile.school normalized",
+      "confidence": "HIGH",
+      "notes": "2048 profiles with school name"
+    },
+    {
+      "metric": "schools.canonical_count",
+      "value": 0,
+      "unit": "schools",
+      "status": "VERIFIED",
+      "source": "School.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "schools.aliases_count",
+      "value": 0,
+      "unit": "aliases",
+      "status": "VERIFIED",
+      "source": "SchoolAlias.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "schools.profiles_mapped",
+      "value": 0,
+      "unit": "profiles",
+      "status": "VERIFIED",
+      "source": "Profile.count(schoolId != null)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "schools.name_collisions",
+      "value": 97,
+      "unit": "schools",
+      "status": "VERIFIED",
+      "source": "Count normalized names mapping to >1 raw name",
+      "confidence": "HIGH",
+      "notes": "Schools where same normalized name has different raw spellings"
+    },
+    {
+      "metric": "schools.users_per_school.median",
+      "value": 1,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "Profile.school → count users",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "schools.users_per_school.p75",
+      "value": 1,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "Profile.school → count users",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "schools.users_per_school.p90",
+      "value": 2,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "Profile.school → count users",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "schools.users_per_school.max",
+      "value": 204,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "Profile.school → count users",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "schools.users_per_school.mean",
+      "value": 3.16,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "Profile.school → count users",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "schools.tier.1_user.count",
+      "value": 525,
+      "unit": "schools",
+      "status": "DERIVED",
+      "source": "Profile.school → count users",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "schools.tier.1_user.teachers",
+      "value": 344,
+      "unit": "users",
+      "status": "DERIVED",
+      "source": "Profile.school → count users × role",
+      "confidence": "MEDIUM"
+    },
+    {
+      "metric": "schools.tier.1_user.students",
+      "value": 180,
+      "unit": "users",
+      "status": "DERIVED",
+      "source": "Profile.school → count users × role",
+      "confidence": "MEDIUM"
+    },
+    {
+      "metric": "schools.tier.2_5_users.count",
+      "value": 86,
+      "unit": "schools",
+      "status": "DERIVED",
+      "source": "Profile.school → count users",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "schools.tier.2_5_users.teachers",
+      "value": 95,
+      "unit": "users",
+      "status": "DERIVED",
+      "source": "Profile.school → count users × role",
+      "confidence": "MEDIUM"
+    },
+    {
+      "metric": "schools.tier.2_5_users.students",
+      "value": 115,
+      "unit": "users",
+      "status": "DERIVED",
+      "source": "Profile.school → count users × role",
+      "confidence": "MEDIUM"
+    },
+    {
+      "metric": "schools.tier.6_10_users.count",
+      "value": 9,
+      "unit": "schools",
+      "status": "DERIVED",
+      "source": "Profile.school → count users",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "schools.tier.6_10_users.teachers",
+      "value": 1,
+      "unit": "users",
+      "status": "DERIVED",
+      "source": "Profile.school → count users × role",
+      "confidence": "MEDIUM"
+    },
+    {
+      "metric": "schools.tier.6_10_users.students",
+      "value": 66,
+      "unit": "users",
+      "status": "DERIVED",
+      "source": "Profile.school → count users × role",
+      "confidence": "MEDIUM"
+    },
+    {
+      "metric": "schools.tier.11_25_users.count",
+      "value": 14,
+      "unit": "schools",
+      "status": "DERIVED",
+      "source": "Profile.school → count users",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "schools.tier.11_25_users.teachers",
+      "value": 10,
+      "unit": "users",
+      "status": "DERIVED",
+      "source": "Profile.school → count users × role",
+      "confidence": "MEDIUM"
+    },
+    {
+      "metric": "schools.tier.11_25_users.students",
+      "value": 207,
+      "unit": "users",
+      "status": "DERIVED",
+      "source": "Profile.school → count users × role",
+      "confidence": "MEDIUM"
+    },
+    {
+      "metric": "schools.tier.26_50_users.count",
+      "value": 9,
+      "unit": "schools",
+      "status": "DERIVED",
+      "source": "Profile.school → count users",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "schools.tier.26_50_users.teachers",
+      "value": 8,
+      "unit": "users",
+      "status": "DERIVED",
+      "source": "Profile.school → count users × role",
+      "confidence": "MEDIUM"
+    },
+    {
+      "metric": "schools.tier.26_50_users.students",
+      "value": 342,
+      "unit": "users",
+      "status": "DERIVED",
+      "source": "Profile.school → count users × role",
+      "confidence": "MEDIUM"
+    },
+    {
+      "metric": "schools.tier.51_100_users.count",
+      "value": 4,
+      "unit": "schools",
+      "status": "DERIVED",
+      "source": "Profile.school → count users",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "schools.tier.51_100_users.teachers",
+      "value": 3,
+      "unit": "users",
+      "status": "DERIVED",
+      "source": "Profile.school → count users × role",
+      "confidence": "MEDIUM"
+    },
+    {
+      "metric": "schools.tier.51_100_users.students",
+      "value": 312,
+      "unit": "users",
+      "status": "DERIVED",
+      "source": "Profile.school → count users × role",
+      "confidence": "MEDIUM"
+    },
+    {
+      "metric": "schools.tier.100_plus_users.count",
+      "value": 2,
+      "unit": "schools",
+      "status": "DERIVED",
+      "source": "Profile.school → count users",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "schools.tier.100_plus_users.teachers",
+      "value": 3,
+      "unit": "users",
+      "status": "DERIVED",
+      "source": "Profile.school → count users × role",
+      "confidence": "MEDIUM"
+    },
+    {
+      "metric": "schools.tier.100_plus_users.students",
+      "value": 359,
+      "unit": "users",
+      "status": "DERIVED",
+      "source": "Profile.school → count users × role",
+      "confidence": "MEDIUM"
+    },
+    {
+      "metric": "classes.total",
+      "value": 142,
+      "unit": "classes",
+      "status": "VERIFIED",
+      "source": "Group.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "classes.active",
+      "value": 131,
+      "unit": "classes",
+      "status": "VERIFIED",
+      "source": "Group.count(isActive=true)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "enrollments.total",
+      "value": 1254,
+      "unit": "enrollments",
+      "status": "VERIFIED",
+      "source": "GroupMember.findMany",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "enrollments.unique_students",
+      "value": 1218,
+      "unit": "students",
+      "status": "DERIVED",
+      "source": "DISTINCT GroupMember.userId WHERE role=member",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "enrollments.multi_class_students",
+      "value": 12,
+      "unit": "students",
+      "status": "DERIVED",
+      "source": "COUNT users enrolled in >1 class",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "enrollments.teachers_with_classes",
+      "value": 52,
+      "unit": "teachers",
+      "status": "VERIFIED",
+      "source": "Group.groupBy(teacherId)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "classes.per_teacher.median",
+      "value": 1,
+      "unit": "classes",
+      "status": "VERIFIED",
+      "source": "Group.groupBy(teacherId) → count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "classes.per_teacher.max",
+      "value": 10,
+      "unit": "classes",
+      "status": "VERIFIED",
+      "source": "Group.groupBy(teacherId) → count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacher_student.students_per_teacher.median",
+      "value": 57,
+      "unit": "students",
+      "status": "VERIFIED",
+      "source": "Group → GroupMember → count unique students per teacher",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacher_student.students_per_teacher.p75",
+      "value": 119,
+      "unit": "students",
+      "status": "VERIFIED",
+      "source": "Group → GroupMember → count unique students per teacher",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacher_student.students_per_teacher.p90",
+      "value": 166,
+      "unit": "students",
+      "status": "VERIFIED",
+      "source": "Group → GroupMember → count unique students per teacher",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacher_student.students_per_teacher.max",
+      "value": 176,
+      "unit": "students",
+      "status": "VERIFIED",
+      "source": "Group → GroupMember → count unique students per teacher",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacher_student.teachers_with_0_students",
+      "value": 462,
+      "unit": "teachers",
+      "status": "DERIVED",
+      "source": "Teachers not in teacherStudentMap",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacher_student.distribution.0_students",
+      "value": 462,
+      "unit": "teachers",
+      "status": "DERIVED",
+      "source": "teacherStudentMap distribution",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacher_student.distribution.1_5_students",
+      "value": 4,
+      "unit": "teachers",
+      "status": "DERIVED",
+      "source": "teacherStudentMap distribution",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacher_student.distribution.6_10_students",
+      "value": 1,
+      "unit": "teachers",
+      "status": "DERIVED",
+      "source": "teacherStudentMap distribution",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacher_student.distribution.11_25_students",
+      "value": 2,
+      "unit": "teachers",
+      "status": "DERIVED",
+      "source": "teacherStudentMap distribution",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacher_student.distribution.26_50_students",
+      "value": 1,
+      "unit": "teachers",
+      "status": "DERIVED",
+      "source": "teacherStudentMap distribution",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacher_student.distribution.50_plus_students",
+      "value": 10,
+      "unit": "teachers",
+      "status": "DERIVED",
+      "source": "teacherStudentMap distribution",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "teacher_student.activation_rate",
+      "value": 3.77,
+      "unit": "%",
+      "status": "DERIVED",
+      "source": "teachers_with_students / total_teachers",
+      "confidence": "HIGH",
+      "formula": "18 / 477 × 100"
+    },
+    {
+      "metric": "retention.2026-06.registered",
+      "value": 53,
+      "unit": "users",
+      "period": "2026-06",
+      "status": "VERIFIED",
+      "source": "User.count(createdAt)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-06.activated",
+      "value": 21,
+      "unit": "users",
+      "period": "2026-06",
+      "status": "DERIVED",
+      "source": "Users with ≥1 activity event",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-06.d7_rate",
+      "value": 100,
+      "unit": "%",
+      "period": "2026-06",
+      "status": "PROXY",
+      "source": "Proxy: last activity ≥7 days after signup",
+      "confidence": "MEDIUM",
+      "notes": "Proxy: checks if user's last activity was ≥7 days after signup, not true D7 return"
+    },
+    {
+      "metric": "retention.2026-06.d14_rate",
+      "value": 100,
+      "unit": "%",
+      "period": "2026-06",
+      "status": "PROXY",
+      "source": "Proxy: last activity ≥14 days after signup",
+      "confidence": "MEDIUM"
+    },
+    {
+      "metric": "retention.2026-06.d30_rate",
+      "value": 100,
+      "unit": "%",
+      "period": "2026-06",
+      "status": "PROXY",
+      "source": "Proxy: last activity ≥30 days after signup",
+      "confidence": "MEDIUM"
+    },
+    {
+      "metric": "retention.2026-07.registered",
+      "value": 1480,
+      "unit": "users",
+      "period": "2026-07",
+      "status": "VERIFIED",
+      "source": "User.count(createdAt)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-07.activated",
+      "value": 825,
+      "unit": "users",
+      "period": "2026-07",
+      "status": "DERIVED",
+      "source": "Users with ≥1 activity event",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-07.d7_rate",
+      "value": 100,
+      "unit": "%",
+      "period": "2026-07",
+      "status": "PROXY",
+      "source": "Proxy: last activity ≥7 days after signup",
+      "confidence": "MEDIUM",
+      "notes": "Proxy: checks if user's last activity was ≥7 days after signup, not true D7 return"
+    },
+    {
+      "metric": "retention.2026-07.d14_rate",
+      "value": 54.67,
+      "unit": "%",
+      "period": "2026-07",
+      "status": "PROXY",
+      "source": "Proxy: last activity ≥14 days after signup",
+      "confidence": "MEDIUM"
+    },
+    {
+      "metric": "retention.2026-07.d30_rate",
+      "value": 40.85,
+      "unit": "%",
+      "period": "2026-07",
+      "status": "PROXY",
+      "source": "Proxy: last activity ≥30 days after signup",
+      "confidence": "MEDIUM"
+    },
+    {
+      "metric": "retention.2026-08.registered",
+      "value": 880,
+      "unit": "users",
+      "period": "2026-08",
+      "status": "VERIFIED",
+      "source": "User.count(createdAt)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-08.activated",
+      "value": 279,
+      "unit": "users",
+      "period": "2026-08",
+      "status": "DERIVED",
+      "source": "Users with ≥1 activity event",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-08.d7_rate",
+      "value": 100,
+      "unit": "%",
+      "period": "2026-08",
+      "status": "PROXY",
+      "source": "Proxy: last activity ≥7 days after signup",
+      "confidence": "MEDIUM",
+      "notes": "Proxy: checks if user's last activity was ≥7 days after signup, not true D7 return"
+    },
+    {
+      "metric": "retention.2026-08.d14_rate",
+      "value": 12.54,
+      "unit": "%",
+      "period": "2026-08",
+      "status": "PROXY",
+      "source": "Proxy: last activity ≥14 days after signup",
+      "confidence": "MEDIUM"
+    },
+    {
+      "metric": "retention.2026-08.d30_rate",
+      "value": 0,
+      "unit": "%",
+      "period": "2026-08",
+      "status": "PROXY",
+      "source": "Proxy: last activity ≥30 days after signup",
+      "confidence": "MEDIUM"
+    },
+    {
+      "metric": "retention.2026-09.registered",
+      "value": 17,
+      "unit": "users",
+      "period": "2026-09",
+      "status": "VERIFIED",
+      "source": "User.count(createdAt)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-09.activated",
+      "value": 9,
+      "unit": "users",
+      "period": "2026-09",
+      "status": "DERIVED",
+      "source": "Users with ≥1 activity event",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "retention.2026-09.d7_rate",
+      "value": 0,
+      "unit": "%",
+      "period": "2026-09",
+      "status": "PROXY",
+      "source": "Proxy: last activity ≥7 days after signup",
+      "confidence": "MEDIUM",
+      "notes": "Proxy: checks if user's last activity was ≥7 days after signup, not true D7 return"
+    },
+    {
+      "metric": "retention.2026-09.d14_rate",
+      "value": 0,
+      "unit": "%",
+      "period": "2026-09",
+      "status": "PROXY",
+      "source": "Proxy: last activity ≥14 days after signup",
+      "confidence": "MEDIUM"
+    },
+    {
+      "metric": "retention.2026-09.d30_rate",
+      "value": 0,
+      "unit": "%",
+      "period": "2026-09",
+      "status": "PROXY",
+      "source": "Proxy: last activity ≥30 days after signup",
+      "confidence": "MEDIUM"
+    },
+    {
+      "metric": "learning.unit_progress.total",
+      "value": 3374,
+      "unit": "events",
+      "status": "VERIFIED",
+      "source": "UserUnitProgress.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning.unit_progress.completed",
+      "value": 3344,
+      "unit": "events",
+      "status": "VERIFIED",
+      "source": "UserUnitProgress.count(completed=true)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning.unit_progress.completion_rate",
+      "value": 99.11,
+      "unit": "%",
+      "status": "DERIVED",
+      "source": "completed / total",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning.unit_progress.unique_students",
+      "value": 419,
+      "unit": "students",
+      "status": "VERIFIED",
+      "source": "UserUnitProgress.groupBy(userId)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning.evidence.total",
+      "value": 12319,
+      "unit": "events",
+      "status": "VERIFIED",
+      "source": "LearningEvidence.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning.evidence.unique_students",
+      "value": 239,
+      "unit": "students",
+      "status": "VERIFIED",
+      "source": "LearningEvidence.groupBy(userId)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning.skills.total",
+      "value": 1711,
+      "unit": "records",
+      "status": "VERIFIED",
+      "source": "LearningSkill.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning.skills.unique_students",
+      "value": 683,
+      "unit": "students",
+      "status": "VERIFIED",
+      "source": "LearningSkill.groupBy(userId)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning.player_activities.total",
+      "value": 2304,
+      "unit": "events",
+      "status": "VERIFIED",
+      "source": "PlayerActivity.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning.evidence.per_student.median",
+      "value": 41,
+      "unit": "evidence",
+      "status": "VERIFIED",
+      "source": "LearningEvidence.groupBy(userId) → count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning.evidence.per_student.p75",
+      "value": 70,
+      "unit": "evidence",
+      "status": "VERIFIED",
+      "source": "LearningEvidence.groupBy(userId) → count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning.evidence.per_student.p90",
+      "value": 110,
+      "unit": "evidence",
+      "status": "VERIFIED",
+      "source": "LearningEvidence.groupBy(userId) → count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning.evidence.per_student.max",
+      "value": 250,
+      "unit": "evidence",
+      "status": "VERIFIED",
+      "source": "LearningEvidence.groupBy(userId) → count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning.evidence.by_skill.null",
+      "value": 12021,
+      "unit": "events",
+      "status": "VERIFIED",
+      "source": "LearningEvidence.groupBy(skill)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning.evidence.by_skill.LITERATURE",
+      "value": 19,
+      "unit": "events",
+      "status": "VERIFIED",
+      "source": "LearningEvidence.groupBy(skill)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning.evidence.by_skill.GRAMMAR",
+      "value": 23,
+      "unit": "events",
+      "status": "VERIFIED",
+      "source": "LearningEvidence.groupBy(skill)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning.evidence.by_skill.VOCABULARY",
+      "value": 49,
+      "unit": "events",
+      "status": "VERIFIED",
+      "source": "LearningEvidence.groupBy(skill)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning.evidence.by_skill.READING",
+      "value": 180,
+      "unit": "events",
+      "status": "VERIFIED",
+      "source": "LearningEvidence.groupBy(skill)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning.evidence.by_skill.WRITING",
+      "value": 27,
+      "unit": "events",
+      "status": "VERIFIED",
+      "source": "LearningEvidence.groupBy(skill)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning.evidence.by_source.AI_DIAGNOSTIC",
+      "value": 130,
+      "unit": "events",
+      "status": "VERIFIED",
+      "source": "LearningEvidence.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning.evidence.by_source.LATIHAN",
+      "value": 30,
+      "unit": "events",
+      "status": "VERIFIED",
+      "source": "LearningEvidence.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning.evidence.by_source.BANK_SOAL",
+      "value": 168,
+      "unit": "events",
+      "status": "VERIFIED",
+      "source": "LearningEvidence.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning.evidence.by_source.JALUR_CERDAS",
+      "value": 11991,
+      "unit": "events",
+      "status": "VERIFIED",
+      "source": "LearningEvidence.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "karya.total",
+      "value": 1590,
+      "unit": "karya",
+      "status": "VERIFIED",
+      "source": "StudentKarya.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "karya.unique_authors",
+      "value": 618,
+      "unit": "students",
+      "status": "VERIFIED",
+      "source": "StudentKarya.groupBy(userId)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "karya.by_type.PUISI",
+      "value": 396,
+      "unit": "karya",
+      "status": "VERIFIED",
+      "source": "StudentKarya.groupBy(type)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "karya.by_type.CERPEN",
+      "value": 44,
+      "unit": "karya",
+      "status": "VERIFIED",
+      "source": "StudentKarya.groupBy(type)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "karya.by_type.ARTIKEL",
+      "value": 148,
+      "unit": "karya",
+      "status": "VERIFIED",
+      "source": "StudentKarya.groupBy(type)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "karya.by_type.ANEKDOT",
+      "value": 10,
+      "unit": "karya",
+      "status": "VERIFIED",
+      "source": "StudentKarya.groupBy(type)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "karya.by_type.PANTUN",
+      "value": 522,
+      "unit": "karya",
+      "status": "VERIFIED",
+      "source": "StudentKarya.groupBy(type)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "karya.by_type.OPINI",
+      "value": 470,
+      "unit": "karya",
+      "status": "VERIFIED",
+      "source": "StudentKarya.groupBy(type)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "karya.likes.total",
+      "value": 6620,
+      "unit": "likes",
+      "status": "VERIFIED",
+      "source": "StudentKaryaLike.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "karya.likes.unique_users",
+      "value": 555,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "StudentKaryaLike.groupBy(userId)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "karya.comments.total",
+      "value": 3523,
+      "unit": "comments",
+      "status": "VERIFIED",
+      "source": "StudentKaryaComment.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "karya.comments.unique_users",
+      "value": 421,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "StudentKaryaComment.groupBy(userId)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "karya.per_author.median",
+      "value": 2,
+      "unit": "karya",
+      "status": "VERIFIED",
+      "source": "StudentKarya.groupBy(userId) → count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "karya.per_author.p75",
+      "value": 3,
+      "unit": "karya",
+      "status": "VERIFIED",
+      "source": "StudentKarya.groupBy(userId) → count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "karya.per_author.max",
+      "value": 26,
+      "unit": "karya",
+      "status": "VERIFIED",
+      "source": "StudentKarya.groupBy(userId) → count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "assessment.ukbi.sessions",
+      "value": 521,
+      "unit": "sessions",
+      "status": "VERIFIED",
+      "source": "ProgresKompetensi.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "assessment.ukbi.completed",
+      "value": 521,
+      "unit": "sessions",
+      "status": "VERIFIED",
+      "source": "ProgresKompetensi.count(status=COMPLETED)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "assessment.ukbi.completion_rate",
+      "value": 100,
+      "unit": "%",
+      "status": "DERIVED",
+      "source": "completed / total",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "assessment.ukbi.unique_users",
+      "value": 325,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "ProgresKompetensi.groupBy(userId)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "assessment.ukbi.certificates",
+      "value": 445,
+      "unit": "certs",
+      "status": "VERIFIED",
+      "source": "KompetensiCertificate.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "assessment.test_sessions",
+      "value": 475,
+      "unit": "sessions",
+      "status": "VERIFIED",
+      "source": "TestSession.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "assessment.test_completed",
+      "value": 278,
+      "unit": "sessions",
+      "status": "VERIFIED",
+      "source": "TestSession.count(status=COMPLETED)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "assessment.adaptive.sessions",
+      "value": 230,
+      "unit": "sessions",
+      "status": "VERIFIED",
+      "source": "AdaptivePracticeSession.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "assessment.adaptive.completed",
+      "value": 31,
+      "unit": "sessions",
+      "status": "VERIFIED",
+      "source": "AdaptivePracticeSession.count(status=COMPLETED)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "assessment.adaptive.unique_users",
+      "value": 83,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "AdaptivePracticeSession.groupBy(userId)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "assessment.daily_action.total",
+      "value": 0,
+      "unit": "actions",
+      "status": "VERIFIED",
+      "source": "DailyAction.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "assessment.daily_action.completed",
+      "value": 0,
+      "unit": "actions",
+      "status": "VERIFIED",
+      "source": "DailyAction.count(status=COMPLETED)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "assessment.daily_action.unique_users",
+      "value": 0,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "DailyAction.groupBy(userId)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "assessment.ukbi.score_distribution.mean",
+      "value": 79.12,
+      "unit": "%",
+      "status": "VERIFIED",
+      "source": "ProgresKompetensi(percentage) mean",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "assessment.ukbi.score_distribution.median",
+      "value": 85.91549295774648,
+      "unit": "%",
+      "status": "VERIFIED",
+      "source": "ProgresKompetensi(percentage) median",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "assessment.ukbi.score_distribution.min",
+      "value": 0,
+      "unit": "%",
+      "status": "VERIFIED",
+      "source": "ProgresKompetensi(percentage) min",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "assessment.ukbi.score_distribution.max",
+      "value": 500,
+      "unit": "%",
+      "status": "VERIFIED",
+      "source": "ProgresKompetensi(percentage) max",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.xp.total",
+      "value": 915609,
+      "unit": "xp",
+      "status": "VERIFIED",
+      "source": "XpLedger.aggregate(sum)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.xp.transactions",
+      "value": 15085,
+      "unit": "transactions",
+      "status": "VERIFIED",
+      "source": "XpLedger.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.xp.by_source.PENUGASAN",
+      "value": 1600,
+      "unit": "xp",
+      "status": "VERIFIED",
+      "source": "XpLedger.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.xp.by_source.GURU_TUGAS",
+      "value": 480,
+      "unit": "xp",
+      "status": "VERIFIED",
+      "source": "XpLedger.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.xp.by_source.SYSTEM",
+      "value": 2470,
+      "unit": "xp",
+      "status": "VERIFIED",
+      "source": "XpLedger.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.xp.by_source.MURID_KOMENTAR",
+      "value": 2637,
+      "unit": "xp",
+      "status": "VERIFIED",
+      "source": "XpLedger.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.xp.by_source.GURU_FEATURED",
+      "value": 50,
+      "unit": "xp",
+      "status": "VERIFIED",
+      "source": "XpLedger.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.xp.by_source.GAME",
+      "value": 222468,
+      "unit": "xp",
+      "status": "VERIFIED",
+      "source": "XpLedger.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.xp.by_source.ADAPTIVE_PRACTICE",
+      "value": 1220,
+      "unit": "xp",
+      "status": "VERIFIED",
+      "source": "XpLedger.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.xp.by_source.KOMPETENSI",
+      "value": 15559,
+      "unit": "xp",
+      "status": "VERIFIED",
+      "source": "XpLedger.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.xp.by_source.JALUR_CERDAS",
+      "value": 101220,
+      "unit": "xp",
+      "status": "VERIFIED",
+      "source": "XpLedger.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.xp.by_source.GURU_PENGUMUMAN",
+      "value": 45,
+      "unit": "xp",
+      "status": "VERIFIED",
+      "source": "XpLedger.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.xp.by_source.GURU_GAME",
+      "value": 2110,
+      "unit": "xp",
+      "status": "VERIFIED",
+      "source": "XpLedger.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.xp.by_source.MURID_LIKE",
+      "value": 3606,
+      "unit": "xp",
+      "status": "VERIFIED",
+      "source": "XpLedger.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.xp.by_source.TANTANG",
+      "value": 21940,
+      "unit": "xp",
+      "status": "VERIFIED",
+      "source": "XpLedger.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.xp.by_source.PODIUM",
+      "value": 3500,
+      "unit": "xp",
+      "status": "VERIFIED",
+      "source": "XpLedger.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.xp.by_source.MURID_KARYA",
+      "value": 4530,
+      "unit": "xp",
+      "status": "VERIFIED",
+      "source": "XpLedger.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.xp.by_source.MENARA",
+      "value": 30830,
+      "unit": "xp",
+      "status": "VERIFIED",
+      "source": "XpLedger.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.xp.by_source.KATASTRA",
+      "value": 500214,
+      "unit": "xp",
+      "status": "VERIFIED",
+      "source": "XpLedger.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.xp.by_source.GURU_KELAS",
+      "value": 1080,
+      "unit": "xp",
+      "status": "VERIFIED",
+      "source": "XpLedger.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.xp.by_source.GURU_PUISI",
+      "value": 50,
+      "unit": "xp",
+      "status": "VERIFIED",
+      "source": "XpLedger.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.badges_awarded",
+      "value": 4368,
+      "unit": "badges",
+      "status": "VERIFIED",
+      "source": "UserBadge.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.badges_unique_users",
+      "value": 1538,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "UserBadge.groupBy(userId)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.achievements_completed",
+      "value": 0,
+      "unit": "achievements",
+      "status": "VERIFIED",
+      "source": "UserAchievement.count(completed=true)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.achievements_claimed",
+      "value": 0,
+      "unit": "achievements",
+      "status": "VERIFIED",
+      "source": "UserAchievement.count(claimed=true)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.coin_transactions",
+      "value": 25786,
+      "unit": "transactions",
+      "status": "VERIFIED",
+      "source": "CoinTransaction.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.player_profiles",
+      "value": 2276,
+      "unit": "profiles",
+      "status": "VERIFIED",
+      "source": "PlayerProfile.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "gamification.xp_transactions",
+      "value": 0,
+      "unit": "transactions",
+      "status": "VERIFIED",
+      "source": "XPTransaction.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "game.rooms",
+      "value": 606,
+      "unit": "rooms",
+      "status": "VERIFIED",
+      "source": "GameRoom.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "game.sessions",
+      "value": 1212,
+      "unit": "sessions",
+      "status": "VERIFIED",
+      "source": "GameSession.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "game.results",
+      "value": 888,
+      "unit": "results",
+      "status": "VERIFIED",
+      "source": "GameResult.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "game.unique_players",
+      "value": 342,
+      "unit": "players",
+      "status": "VERIFIED",
+      "source": "GameResult.groupBy(userId)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "game.rooms_by_type.KUIS_BATTLE",
+      "value": 606,
+      "unit": "rooms",
+      "status": "VERIFIED",
+      "source": "GameRoom.groupBy(gameType)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.usage.total",
+      "value": 1249,
+      "unit": "calls",
+      "status": "VERIFIED",
+      "source": "AIUsage.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.usage.by_feature.agent:bc-assistant",
+      "value": 1008,
+      "unit": "calls",
+      "status": "VERIFIED",
+      "source": "AIUsage.groupBy(feature)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.usage.by_feature.agent:eyd",
+      "value": 3,
+      "unit": "calls",
+      "status": "VERIFIED",
+      "source": "AIUsage.groupBy(feature)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.usage.by_feature.agent:ppt",
+      "value": 41,
+      "unit": "calls",
+      "status": "VERIFIED",
+      "source": "AIUsage.groupBy(feature)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.usage.by_feature.agent:review",
+      "value": 3,
+      "unit": "calls",
+      "status": "VERIFIED",
+      "source": "AIUsage.groupBy(feature)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.usage.by_feature.agent:rpp",
+      "value": 52,
+      "unit": "calls",
+      "status": "VERIFIED",
+      "source": "AIUsage.groupBy(feature)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.usage.by_feature.agent:soal",
+      "value": 70,
+      "unit": "calls",
+      "status": "VERIFIED",
+      "source": "AIUsage.groupBy(feature)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.usage.by_feature.agent:text-analysis",
+      "value": 5,
+      "unit": "calls",
+      "status": "VERIFIED",
+      "source": "AIUsage.groupBy(feature)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.usage.by_feature.ai_export_docx:rpp",
+      "value": 23,
+      "unit": "calls",
+      "status": "VERIFIED",
+      "source": "AIUsage.groupBy(feature)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.usage.by_feature.ai_export_pdf:rpp",
+      "value": 9,
+      "unit": "calls",
+      "status": "VERIFIED",
+      "source": "AIUsage.groupBy(feature)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.usage.by_feature.rpp_generator",
+      "value": 5,
+      "unit": "calls",
+      "status": "VERIFIED",
+      "source": "AIUsage.groupBy(feature)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.usage.by_feature.simulasi:review",
+      "value": 11,
+      "unit": "calls",
+      "status": "VERIFIED",
+      "source": "AIUsage.groupBy(feature)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.usage.by_feature.soal_generator",
+      "value": 19,
+      "unit": "calls",
+      "status": "VERIFIED",
+      "source": "AIUsage.groupBy(feature)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.usage.by_status.error",
+      "value": 465,
+      "unit": "calls",
+      "status": "VERIFIED",
+      "source": "AIUsage.groupBy(status)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.usage.by_status.success",
+      "value": 760,
+      "unit": "calls",
+      "status": "VERIFIED",
+      "source": "AIUsage.groupBy(status)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.usage.by_status.null",
+      "value": 24,
+      "unit": "calls",
+      "status": "VERIFIED",
+      "source": "AIUsage.groupBy(status)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.usage.unique_users",
+      "value": 163,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "AIUsage.groupBy(userId)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "ai.saved_results",
+      "value": 9,
+      "unit": "results",
+      "status": "VERIFIED",
+      "source": "AiSavedResult.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "monetization.transactions.expired",
+      "value": 6,
+      "unit": "transactions",
+      "status": "VERIFIED",
+      "source": "Transaksi.groupBy(status)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "monetization.transactions.pending",
+      "value": 7,
+      "unit": "transactions",
+      "status": "VERIFIED",
+      "source": "Transaksi.groupBy(status)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "monetization.transactions.success",
+      "value": 4,
+      "unit": "transactions",
+      "status": "VERIFIED",
+      "source": "Transaksi.groupBy(status)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "monetization.transactions.type.PREMIUM_UPGRADE",
+      "value": 9,
+      "unit": "transactions",
+      "status": "VERIFIED",
+      "source": "Transaksi.groupBy(type)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "monetization.revenue.type.PREMIUM_UPGRADE",
+      "value": 1443000,
+      "unit": "IDR",
+      "status": "VERIFIED",
+      "source": "Transaksi.amount where type AND status=SUCCESS",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "monetization.transactions.type.MURID_PREMIUM",
+      "value": 8,
+      "unit": "transactions",
+      "status": "VERIFIED",
+      "source": "Transaksi.groupBy(type)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "monetization.revenue.type.MURID_PREMIUM",
+      "value": 474000,
+      "unit": "IDR",
+      "status": "VERIFIED",
+      "source": "Transaksi.amount where type AND status=SUCCESS",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "monetization.transactions.total",
+      "value": 17,
+      "unit": "transactions",
+      "status": "VERIFIED",
+      "source": "Transaksi.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "monetization.transactions.successful",
+      "value": 4,
+      "unit": "transactions",
+      "status": "VERIFIED",
+      "source": "Transaksi.count(status=SUCCESS)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "monetization.revenue.total",
+      "value": 438000,
+      "unit": "IDR",
+      "status": "VERIFIED",
+      "source": "SUM(Transaksi.amount) WHERE status=SUCCESS",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "monetization.premium_users",
+      "value": 2,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "User.count(isPremium=true, !isFounder, GURU)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "monetization.trial_users",
+      "value": 465,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "User.count(trialStartedAt != null, GURU)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "monetization.trial_active",
+      "value": 274,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "User.count(trialEndsAt > now, GURU)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "monetization.subscriptions",
+      "value": 0,
+      "unit": "subscriptions",
+      "status": "VERIFIED",
+      "source": "Subscription.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "monetization.active_subscriptions",
+      "value": 0,
+      "unit": "subscriptions",
+      "status": "VERIFIED",
+      "source": "Subscription.count(status=ACTIVE)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "monetization.marketplace.purchases",
+      "value": 0,
+      "unit": "purchases",
+      "status": "VERIFIED",
+      "source": "Pembelian.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "monetization.marketplace.successful",
+      "value": 0,
+      "unit": "purchases",
+      "status": "VERIFIED",
+      "source": "Pembelian.count(status=PAID)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "monetization.credit_ledger",
+      "value": 522,
+      "unit": "records",
+      "status": "VERIFIED",
+      "source": "AiCreditLedger.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "monetization.trial_to_paid_rate",
+      "value": 0.43,
+      "unit": "%",
+      "status": "DERIVED",
+      "source": "premiumUsers / trialUsers",
+      "confidence": "HIGH",
+      "formula": "2 / 465 × 100"
+    },
+    {
+      "metric": "commission.wallets",
+      "value": 0,
+      "unit": "wallets",
+      "status": "VERIFIED",
+      "source": "TeacherWallet.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "commission.commissions",
+      "value": 0,
+      "unit": "commissions",
+      "status": "VERIFIED",
+      "source": "TeacherCommission.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "commission.attributions",
+      "value": 35,
+      "unit": "attributions",
+      "status": "VERIFIED",
+      "source": "TeacherAttribution.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "commission.withdrawals",
+      "value": 0,
+      "unit": "withdrawals",
+      "status": "VERIFIED",
+      "source": "TeacherCommissionWithdrawal.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "commission.payouts",
+      "value": 0,
+      "unit": "payouts",
+      "status": "VERIFIED",
+      "source": "TeacherPayout.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "content.soal.total",
+      "value": 1685,
+      "unit": "questions",
+      "status": "VERIFIED",
+      "source": "Soal.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "content.soal.by_type.ISIAN",
+      "value": 10,
+      "unit": "questions",
+      "status": "VERIFIED",
+      "source": "Soal.groupBy(type)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "content.soal.by_type.ESSAY",
+      "value": 10,
+      "unit": "questions",
+      "status": "VERIFIED",
+      "source": "Soal.groupBy(type)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "content.soal.by_type.ISIAN_SINGKAT",
+      "value": 152,
+      "unit": "questions",
+      "status": "VERIFIED",
+      "source": "Soal.groupBy(type)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "content.soal.by_type.BENAR_SALAH",
+      "value": 305,
+      "unit": "questions",
+      "status": "VERIFIED",
+      "source": "Soal.groupBy(type)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "content.soal.by_type.PILIHAN_GANDA",
+      "value": 1208,
+      "unit": "questions",
+      "status": "VERIFIED",
+      "source": "Soal.groupBy(type)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "content.soal.by_source.AI",
+      "value": 95,
+      "unit": "questions",
+      "status": "VERIFIED",
+      "source": "Soal.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "content.soal.by_source.IMPORT",
+      "value": 90,
+      "unit": "questions",
+      "status": "VERIFIED",
+      "source": "Soal.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "content.soal.by_source.MASTER_BANK",
+      "value": 1500,
+      "unit": "questions",
+      "status": "VERIFIED",
+      "source": "Soal.groupBy(source)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "content.quizzes",
+      "value": 33,
+      "unit": "quizzes",
+      "status": "VERIFIED",
+      "source": "Quiz.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "content.quizzes.by_type.LATIHAN",
+      "value": 33,
+      "unit": "quizzes",
+      "status": "VERIFIED",
+      "source": "Quiz.groupBy(type)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "content.quiz_submissions",
+      "value": 67,
+      "unit": "submissions",
+      "status": "VERIFIED",
+      "source": "QuizSubmission.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "content.quiz_completed",
+      "value": 67,
+      "unit": "submissions",
+      "status": "VERIFIED",
+      "source": "QuizSubmission.count(status=GRADED|SUBMITTED)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "content.generated_rpps",
+      "value": 1,
+      "unit": "rpps",
+      "status": "VERIFIED",
+      "source": "GeneratedRPP.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "content.ukbi_questions",
+      "value": 1330,
+      "unit": "questions",
+      "status": "VERIFIED",
+      "source": "UKBIQuestion.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "content.tka_questions",
+      "value": 355,
+      "unit": "questions",
+      "status": "VERIFIED",
+      "source": "TKAQuestion.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "content.levels",
+      "value": 24,
+      "unit": "levels",
+      "status": "VERIFIED",
+      "source": "LearningLevel.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "content.units",
+      "value": 284,
+      "unit": "units",
+      "status": "VERIFIED",
+      "source": "LearningUnit.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "social.follows",
+      "value": 172,
+      "unit": "follows",
+      "status": "VERIFIED",
+      "source": "Follow.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "social.profile_likes",
+      "value": 77,
+      "unit": "likes",
+      "status": "VERIFIED",
+      "source": "ProfileLike.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "social.communities",
+      "value": 64,
+      "unit": "communities",
+      "status": "VERIFIED",
+      "source": "Community.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "social.community_members",
+      "value": 42,
+      "unit": "members",
+      "status": "VERIFIED",
+      "source": "CommunityMember.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "social.community_posts",
+      "value": 1,
+      "unit": "posts",
+      "status": "VERIFIED",
+      "source": "CommunityPost.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "penugasan.total",
+      "value": 25,
+      "unit": "assignments",
+      "status": "VERIFIED",
+      "source": "Penugasan.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "penugasan.submissions",
+      "value": 56,
+      "unit": "submissions",
+      "status": "VERIFIED",
+      "source": "PenugasanSubmission.count",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "penugasan.completed",
+      "value": 56,
+      "unit": "submissions",
+      "status": "VERIFIED",
+      "source": "PenugasanSubmission.count(status=COMPLETED)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "growth.users.historical",
+      "value": 1542,
+      "unit": "users",
+      "period": "2026-08-01",
+      "status": "VERIFIED",
+      "source": "User.count(createdAt ≤ historical)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "growth.users.current",
+      "value": 2430,
+      "unit": "users",
+      "period": "2026-09-01",
+      "status": "VERIFIED",
+      "source": "User.count(createdAt ≤ cutoff)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "growth.users.absolute",
+      "value": 888,
+      "unit": "users",
+      "status": "DERIVED",
+      "source": "current - historical",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "growth.users.percentage",
+      "value": 57.59,
+      "unit": "%",
+      "status": "DERIVED",
+      "source": "(current - historical) / historical × 100",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "growth.guru.historical",
+      "value": 199,
+      "unit": "users",
+      "period": "2026-08-01",
+      "status": "VERIFIED",
+      "source": "User.count(GURU, ≤ historical)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "growth.guru.absolute",
+      "value": 278,
+      "unit": "users",
+      "status": "DERIVED",
+      "source": "current - historical",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "growth.guru.percentage",
+      "value": 139.7,
+      "unit": "%",
+      "status": "DERIVED",
+      "source": "(current - historical) / historical × 100",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "growth.karya.historical",
+      "value": 705,
+      "unit": "karya",
+      "period": "2026-08-01",
+      "status": "VERIFIED",
+      "source": "StudentKarya.count(≤ historical)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "growth.karya.absolute",
+      "value": 885,
+      "unit": "karya",
+      "status": "DERIVED",
+      "source": "current - historical",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "growth.karya.percentage",
+      "value": 125.53,
+      "unit": "%",
+      "status": "DERIVED",
+      "source": "(current - historical) / historical × 100",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "growth.signup_velocity.2026-06",
+      "value": 53,
+      "unit": "users",
+      "period": "2026-06",
+      "status": "VERIFIED",
+      "source": "cohorts data",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "growth.signup_velocity.2026-07",
+      "value": 1480,
+      "unit": "users",
+      "period": "2026-07",
+      "status": "VERIFIED",
+      "source": "cohorts data",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "growth.signup_velocity.2026-08",
+      "value": 880,
+      "unit": "users",
+      "period": "2026-08",
+      "status": "VERIFIED",
+      "source": "cohorts data",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "growth.signup_velocity.2026-09",
+      "value": 17,
+      "unit": "users",
+      "period": "2026-09",
+      "status": "VERIFIED",
+      "source": "cohorts data",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "data_quality.test_accounts",
+      "value": 4,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "User.count(email LIKE demo/test/example/dev/staging)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "data_quality.internal_accounts",
+      "value": 6,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "founders + admins",
+      "confidence": "HIGH",
+      "notes": "founders: 3, admins: 3"
+    },
+    {
+      "metric": "data_quality.users_no_avatar",
+      "value": 1715,
+      "unit": "users",
+      "status": "PROXY",
+      "source": "User.count(avatar=null)",
+      "confidence": "MEDIUM",
+      "notes": "Proxy for incomplete profiles"
+    },
+    {
+      "metric": "data_quality.profiles_empty",
+      "value": 372,
+      "unit": "profiles",
+      "status": "VERIFIED",
+      "source": "Profile.count(all fields null)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "data_quality.unknown_contamination_risk",
+      "value": 10,
+      "unit": "users",
+      "status": "DATA_QUALITY_ISSUE",
+      "source": "test + internal accounts",
+      "confidence": "HIGH",
+      "notes": "These users may contaminate growth/engagement metrics if not excluded"
+    },
+    {
+      "metric": "learning_outcome.users_with_both_assessment",
+      "value": 15,
+      "unit": "users",
+      "status": "DERIVED",
+      "source": "Users with both UKBI+diagnostic completed",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning_outcome.ukbi_only_users",
+      "value": 325,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "ProgresKompetensi(COMPLETED) unique users",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "learning_outcome.diagnostic_only_users",
+      "value": 22,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "AdaptivePracticeSession(COMPLETED) unique users",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "north_star.weekly_active_learners",
+      "value": 436,
+      "unit": "users",
+      "period": "7d",
+      "status": "DERIVED",
+      "source": "Union of weekly xp | evidence | progress | karya users",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "north_star.monthly_active_learners",
+      "value": 866,
+      "unit": "users",
+      "period": "30d",
+      "status": "DERIVED",
+      "source": "Union of monthly xp | evidence users",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "premium_funnel.eligible_gurus",
+      "value": 477,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "User.count(GURU)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "premium_funnel.trial_started",
+      "value": 465,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "User.count(trialStartedAt != null)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "premium_funnel.checkout_initiated",
+      "value": 17,
+      "unit": "transactions",
+      "status": "PROXY",
+      "source": "Transaksi.count(type LIKE PREMIUM)",
+      "confidence": "MEDIUM",
+      "notes": "Proxy — not all premium types may be captured"
+    },
+    {
+      "metric": "premium_funnel.payment_successful",
+      "value": 4,
+      "unit": "transactions",
+      "status": "VERIFIED",
+      "source": "Transaksi.count(type LIKE PREMIUM, status=SUCCESS)",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "premium_funnel.missing",
+      "value": [
+        "premium_viewed",
+        "checkout_abandoned"
+      ],
+      "unit": "events",
+      "status": "UNVERIFIED",
+      "source": "No instrumentation found",
+      "confidence": "NONE",
+      "notes": "These events are not tracked in the database"
+    },
+    {
+      "metric": "school_funnel.stage1_name_exists",
+      "value": 649,
+      "unit": "schools",
+      "status": "VERIFIED",
+      "source": "DISTINCT Profile.school",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "school_funnel.stage2_has_teacher",
+      "value": 403,
+      "unit": "schools",
+      "status": "DERIVED",
+      "source": "Schools with ≥1 GURU profile",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "school_funnel.stage3_has_class",
+      "value": 44,
+      "unit": "schools",
+      "status": "DERIVED",
+      "source": "Schools where teacher has ≥1 Group",
+      "confidence": "MEDIUM"
+    },
+    {
+      "metric": "school_funnel.stage4_has_student",
+      "value": 262,
+      "unit": "schools",
+      "status": "DERIVED",
+      "source": "Schools with ≥1 MURID profile",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "feature_adoption.teacher.ai_tools",
+      "value": 7,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "Various tables",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "feature_adoption.teacher.rpp_generated",
+      "value": 1,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "Various tables",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "feature_adoption.teacher.soal_created",
+      "value": 33,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "Various tables",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "feature_adoption.teacher.classes_managed",
+      "value": 52,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "Various tables",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "feature_adoption.teacher.students_imported",
+      "value": 1218,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "Various tables",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "feature_adoption.student.jalur_cerdas",
+      "value": 419,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "Various tables",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "feature_adoption.student.learning_evidence",
+      "value": 239,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "Various tables",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "feature_adoption.student.karya_written",
+      "value": 618,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "Various tables",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "feature_adoption.student.ukbi_attempted",
+      "value": 325,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "Various tables",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "feature_adoption.student.adaptive_attempted",
+      "value": 83,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "Various tables",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "feature_adoption.student.daily_action",
+      "value": 0,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "Various tables",
+      "confidence": "HIGH"
+    },
+    {
+      "metric": "feature_adoption.student.game_played",
+      "value": 342,
+      "unit": "users",
+      "status": "VERIFIED",
+      "source": "Various tables",
+      "confidence": "HIGH"
+    }
+  ]
+}

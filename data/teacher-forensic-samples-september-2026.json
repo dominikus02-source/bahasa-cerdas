@@ -1,0 +1,2880 @@
+{
+  "activeWithStudents": [
+    {
+      "userId": "cmrbck8tj0000npbbods1lfw1",
+      "email": "bombolyohana14@gmail.com",
+      "fullName": "Yohana Bombol",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-08T00:36:01.063Z",
+      "lastActiveAt": "2026-09-01T04:11:26.868Z",
+      "schoolRaw": "SMP Santa Laurensia",
+      "schoolId": null,
+      "groupCount": 6,
+      "totalStudents": 120,
+      "groups": [
+        {
+          "id": "cmriyigbv0001ajsl8izd8e0r",
+          "name": "Kelas 7G",
+          "memberCount": 0
+        },
+        {
+          "id": "cmry9dphr0019iwcpph8axt01",
+          "name": "8H",
+          "memberCount": 2
+        },
+        {
+          "id": "cms2j0c77002710tfuach8g4v",
+          "name": "8G",
+          "memberCount": 28
+        },
+        {
+          "id": "cms2j0mj5002c10tfp0yp2mjg",
+          "name": "8H",
+          "memberCount": 30
+        },
+        {
+          "id": "cms2j0xol002h10tfd2bso8cs",
+          "name": "7F",
+          "memberCount": 30
+        },
+        {
+          "id": "cms2j1b82002p10tfqmuwk9l4",
+          "name": "7G",
+          "memberCount": 30
+        }
+      ],
+      "aiUsageCount": 2,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-08T00:36:26.489Z",
+      "trialEndsAt": "2026-08-07T00:36:26.489Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmrbfi7fr0000lsu5a92srfyi",
+      "email": "christanti@santa-laurensia.sch.id",
+      "fullName": "Christanti, S.Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-08T01:58:24.807Z",
+      "lastActiveAt": "2026-08-28T02:22:07.667Z",
+      "schoolRaw": "SMA Santa Laurensia Alam Sutera",
+      "schoolId": null,
+      "groupCount": 2,
+      "totalStudents": 59,
+      "groups": [
+        {
+          "id": "cms2m9zc60013j76a1hnlxeab",
+          "name": "7D B.INDO 26/27",
+          "memberCount": 29
+        },
+        {
+          "id": "cms2mbdz8001mq0tidylluv29",
+          "name": "7E B.INDO 26/27",
+          "memberCount": 30
+        }
+      ],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-08T01:59:12.558Z",
+      "trialEndsAt": "2026-08-07T01:59:12.558Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmrbr3eg00000mdbxd6j42wnt",
+      "email": "martha.simamora@shb.sch.id",
+      "fullName": "Martha Yuliana Simamora,S.Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-08T07:22:49.440Z",
+      "lastActiveAt": null,
+      "schoolRaw": null,
+      "schoolId": null,
+      "groupCount": 4,
+      "totalStudents": 23,
+      "groups": [
+        {
+          "id": "cms429i8m00earmmnj2bulr0x",
+          "name": "10 A",
+          "memberCount": 0
+        },
+        {
+          "id": "cms429yq900ecrmmnfypjv4r6",
+          "name": "10 B",
+          "memberCount": 3
+        },
+        {
+          "id": "cms42acac00eermmn16fm2gp7",
+          "name": "11",
+          "memberCount": 0
+        },
+        {
+          "id": "cms42apxf00egrmmn441y5qnq",
+          "name": "12",
+          "memberCount": 20
+        }
+      ],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-08T07:29:39.945Z",
+      "trialEndsAt": "2026-08-07T07:29:39.945Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmrlpmwro0000dn4tfcdpyg6m",
+      "email": "kristina.lestari@oel.sch.id",
+      "fullName": "Kristina Dwi Lestari",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-15T06:39:42.180Z",
+      "lastActiveAt": "2026-08-25T05:22:19.460Z",
+      "schoolRaw": "SMPK ORA et LABORA BSD ",
+      "schoolId": null,
+      "groupCount": 3,
+      "totalStudents": 2,
+      "groups": [
+        {
+          "id": "cmt87jsy20001vef8cwbi4cb7",
+          "name": "Kelas Bahasa Indonesia -7A",
+          "memberCount": 2
+        },
+        {
+          "id": "cmt87wi1i000p10dhgsgwsvct",
+          "name": "Kelas Bahasa Indonesia-7B",
+          "memberCount": 0
+        },
+        {
+          "id": "cmt87xbnq001010dhid8jurj3",
+          "name": "Kelas Bahasa Indonesia-7C",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 8,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-15T06:40:07.476Z",
+      "trialEndsAt": "2026-08-14T06:40:07.476Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmrlqrrro000018782agwd6co",
+      "email": "karina.hayu@santa-laurensia.sch.id",
+      "fullName": "FE Karina Hayu Nugraheny",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-15T07:11:28.597Z",
+      "lastActiveAt": "2026-08-29T12:07:26.636Z",
+      "schoolRaw": "SMP Santa Laurensia",
+      "schoolId": null,
+      "groupCount": 5,
+      "totalStudents": 155,
+      "groups": [
+        {
+          "id": "cmrwun30r00051vcb0iiawoie",
+          "name": "7B",
+          "memberCount": 32
+        },
+        {
+          "id": "cmry9itct001yiwcpdn0usp0f",
+          "name": "8E",
+          "memberCount": 31
+        },
+        {
+          "id": "cmrybs5qt00b9rr25ea7q5twk",
+          "name": "8F",
+          "memberCount": 29
+        },
+        {
+          "id": "cmrylm4cn00804gpi7kj1zx9r",
+          "name": "7C",
+          "memberCount": 33
+        },
+        {
+          "id": "cmrylmir8008b4gpio70g7zax",
+          "name": "8D",
+          "memberCount": 30
+        }
+      ],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-15T07:12:00.719Z",
+      "trialEndsAt": "2026-08-14T07:12:00.719Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmrsr92sy00005g7d2de27447",
+      "email": "ibrahimlubis509@gmail.com",
+      "fullName": "Ibrahim Lubis",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-20T04:59:19.282Z",
+      "lastActiveAt": "2026-08-24T07:46:00.128Z",
+      "schoolRaw": "SMA AL-FITYAN SCHOOL TANGERANG ",
+      "schoolId": null,
+      "groupCount": 10,
+      "totalStudents": 119,
+      "groups": [
+        {
+          "id": "cmrw25ter000l3p96dbjkmd5w",
+          "name": "Bahasa Indonesia Kelas 10A SMA AFISTA",
+          "memberCount": 22
+        },
+        {
+          "id": "cmrw26mgr000n3p965d5n6q8s",
+          "name": "Bahasa Indonesia Kelas 10B SMA AFISTA",
+          "memberCount": 15
+        },
+        {
+          "id": "cmrw27ixa000p3p96e373tb9b",
+          "name": "Bahasa Indonesia Kelas 11A SMA AFISTA",
+          "memberCount": 8
+        },
+        {
+          "id": "cmrw28fjp0009xxn0f27l2w2u",
+          "name": "Bahasa Indonesia Kelas 11B SMA AFISTA",
+          "memberCount": 16
+        },
+        {
+          "id": "cmrw298yh000bxxn02v9rvrm9",
+          "name": "Bahasa Indonesia Kelas 11C SMA AFISTA",
+          "memberCount": 13
+        },
+        {
+          "id": "cmrw2aclk000r3p96ku0axg0q",
+          "name": "Bahasa Indonesia Kelas 11D SMA AFISTA",
+          "memberCount": 12
+        },
+        {
+          "id": "cmrw2azwo000t3p96rp4pby31",
+          "name": "Bahasa Indonesia Kelas 12A SMA AFISTA",
+          "memberCount": 7
+        },
+        {
+          "id": "cmrw2blme000v3p96n2mnb697",
+          "name": "Bahasa Indonesia Kelas 12B",
+          "memberCount": 13
+        },
+        {
+          "id": "cmrw2cdeh000x3p96y3hmyox5",
+          "name": "Bahasa Indonesia Kelas 12C SMA AFISTA",
+          "memberCount": 12
+        },
+        {
+          "id": "cmsn9cfoq000r31u6hey6ys8k",
+          "name": "Kelas Uji Coba",
+          "memberCount": 1
+        }
+      ],
+      "aiUsageCount": 23,
+      "quizCount": 6,
+      "rppCount": 0,
+      "premiumPlan": "PRO",
+      "isPremium": true,
+      "trialStartedAt": "2026-07-20T04:59:50.370Z",
+      "trialEndsAt": "2026-08-19T04:59:50.370Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cms0bwa3m000082m5ypmf27j0",
+      "email": "noormawatijunaidi@gmail.com",
+      "fullName": "Noormawati J.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-25T12:11:37.378Z",
+      "lastActiveAt": "2026-08-29T12:08:38.036Z",
+      "schoolRaw": "SMP Negeri 1 Jenamas",
+      "schoolId": null,
+      "groupCount": 4,
+      "totalStudents": 18,
+      "groups": [
+        {
+          "id": "cmte5v6pp0062wdqcgdf4fq21",
+          "name": "BAHASA INDONESIA 7A",
+          "memberCount": 1
+        },
+        {
+          "id": "cmte5wuh30016b20x8a7t2ps5",
+          "name": "BAHASA INDONESIA 7B",
+          "memberCount": 1
+        },
+        {
+          "id": "cmte5xqrh001nb20xfcm9hxcg",
+          "name": "BAHASA INDONESIA 8",
+          "memberCount": 0
+        },
+        {
+          "id": "cmte5ybk2001yb20x1rn2hmep",
+          "name": "BAHASA INDONESIA 9",
+          "memberCount": 16
+        }
+      ],
+      "aiUsageCount": 2,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-25T12:11:52.636Z",
+      "trialEndsAt": "2026-08-24T12:11:52.636Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cms2ipzds0004kvfh4gduingu",
+      "email": "yunibta@21gmai.com",
+      "fullName": "Yuni Wulandari, S.Pd",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-27T00:58:13.217Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMP N 2 OKU",
+      "schoolId": null,
+      "groupCount": 2,
+      "totalStudents": 69,
+      "groups": [
+        {
+          "id": "cms2jd2t5008d5ejdws31yizt",
+          "name": "B.Indonesia Yuni Wulandari, S.Pd",
+          "memberCount": 37
+        },
+        {
+          "id": "cms2jfayh00328k9kspgbpnod",
+          "name": "B.Indonesia Yuni Wulandari, S.Pd",
+          "memberCount": 32
+        }
+      ],
+      "aiUsageCount": 1,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-27T00:58:21.890Z",
+      "trialEndsAt": "2026-08-26T00:58:21.890Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cms2ozw1j001s9i72abgfm3h3",
+      "email": "rinamelani72@gmail.com",
+      "fullName": "Dorothea Susanti R Melani",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-27T03:53:53.144Z",
+      "lastActiveAt": "2026-09-01T08:15:44.533Z",
+      "schoolRaw": "SMP Santa Laurensia",
+      "schoolId": null,
+      "groupCount": 6,
+      "totalStudents": 169,
+      "groups": [
+        {
+          "id": "cms2pathr005ea4pnilb5175i",
+          "name": "8A - BINDO - 2627",
+          "memberCount": 30
+        },
+        {
+          "id": "cms2pbj6w0064a4pnnlbpp9k2",
+          "name": "8B - BINDO - 2627",
+          "memberCount": 30
+        },
+        {
+          "id": "cms2pe1hk007aa4pnn1ps18p7",
+          "name": "9F - BINDO -2627",
+          "memberCount": 30
+        },
+        {
+          "id": "cms2peme0003x1fobt97og0ue",
+          "name": "9G - BINDO -2627",
+          "memberCount": 23
+        },
+        {
+          "id": "cms2pf7fk0034wtdo7ske1f7h",
+          "name": "9H - BINDO - 2627",
+          "memberCount": 26
+        },
+        {
+          "id": "cms2pdb0o002ewtdox3iafqbk",
+          "name": "8C - BINDO - 2627",
+          "memberCount": 30
+        }
+      ],
+      "aiUsageCount": 0,
+      "quizCount": 3,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-27T03:54:15.282Z",
+      "trialEndsAt": "2026-08-26T03:54:15.282Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cms5h4zjb000412yplngfks39",
+      "email": "bayumurdiyanto@gmail.com",
+      "fullName": "BAYU MURDIYANTO",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-29T02:37:12.552Z",
+      "lastActiveAt": "2026-07-30T06:27:56.728Z",
+      "schoolRaw": "SMAS HelloMotion",
+      "schoolId": null,
+      "groupCount": 9,
+      "totalStudents": 1,
+      "groups": [
+        {
+          "id": "cms5hid3j000go7v9wn7wxx04",
+          "name": "Bahasa Indonesia X1",
+          "memberCount": 1
+        },
+        {
+          "id": "cms5hjme70001knsb903bwe21",
+          "name": "Bahasa Indonesia X2",
+          "memberCount": 0
+        },
+        {
+          "id": "cms5hk86j000asbqb7tsbdj6s",
+          "name": "Bahasa Indonesia X3",
+          "memberCount": 0
+        },
+        {
+          "id": "cms5hkzmf000q7tp20jwhf2u0",
+          "name": "Bahasa Indonesia XI1",
+          "memberCount": 0
+        },
+        {
+          "id": "cms5hlkn00001gv52y1bsopte",
+          "name": "Bahasa Indonesia XI2",
+          "memberCount": 0
+        },
+        {
+          "id": "cms5hm6uv000jgv52lzqw3mka",
+          "name": "Bahasa Indonesia XI3",
+          "memberCount": 0
+        },
+        {
+          "id": "cms5hn8fh001fgv52ap445b82",
+          "name": "Bahasa Indonesia XII1",
+          "memberCount": 0
+        },
+        {
+          "id": "cms5hnsvp000466y9os0lr5hs",
+          "name": "Bahasa Indonesia XII2",
+          "memberCount": 0
+        },
+        {
+          "id": "cms5hobij000da5bzshf94caj",
+          "name": "Bahasa Indonesia XII3",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 0,
+      "quizCount": 1,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-29T02:37:49.014Z",
+      "trialEndsAt": "2026-08-28T02:37:49.014Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cms5lrvkq000o5ohcf50it584",
+      "email": "wahyukristanti43@guru.sd.belajar.id",
+      "fullName": "WAHYU KRISTANTI",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-29T04:46:58.970Z",
+      "lastActiveAt": "2026-09-01T12:58:14.933Z",
+      "schoolRaw": "SD Yos Sudarso ",
+      "schoolId": null,
+      "groupCount": 1,
+      "totalStudents": 36,
+      "groups": [
+        {
+          "id": "cms6uigxr000cpuzxf95s2xde",
+          "name": "KKA _ Arcus Class",
+          "memberCount": 36
+        }
+      ],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-29T04:47:25.799Z",
+      "trialEndsAt": "2026-08-28T04:47:25.799Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmsitygxu0000ny4wnainukef",
+      "email": "purwaningsihhenny416@gmail.com",
+      "fullName": "Henny Purwaningsih, S. Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-08-07T10:57:03.810Z",
+      "lastActiveAt": "2026-08-16T06:58:24.822Z",
+      "schoolRaw": "SMPN 1 Semanding",
+      "schoolId": null,
+      "groupCount": 7,
+      "totalStudents": 1,
+      "groups": [
+        {
+          "id": "cmssoknz8001l10zqkgvk5jic",
+          "name": "Bahasa Indonesia 7E",
+          "memberCount": 1
+        },
+        {
+          "id": "cmssnxa2v00v34c8s96uyiytt",
+          "name": "7 D",
+          "memberCount": 0
+        },
+        {
+          "id": "cmssp7efz0001spseyri1ivi9",
+          "name": "Bahasa Indonesia 7D",
+          "memberCount": 0
+        },
+        {
+          "id": "cmssooqlm003w10zqc4c1tzk0",
+          "name": "Bahasa Indonesia 7F",
+          "memberCount": 0
+        },
+        {
+          "id": "cmssopza3004d10zqy6l0s83l",
+          "name": "Bahasa Indonesia 7G",
+          "memberCount": 0
+        },
+        {
+          "id": "cmsvg26mm004aqzx04lr6y6k3",
+          "name": "Bahasa Indonesia 7D",
+          "memberCount": 0
+        },
+        {
+          "id": "cmsvg39oc004nqzx0xjeqmomy",
+          "name": "Bahasa Indonesia 7E",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 3,
+      "quizCount": 9,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-08-07T10:57:24.224Z",
+      "trialEndsAt": "2026-09-06T10:57:24.224Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmsj2abhy000014atvid0lo6i",
+      "email": "melvagukguk28@guru.smp.belajar.id",
+      "fullName": "Melva Roseni Raja Gukguk, S.Pd., M.Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-08-07T14:50:13.559Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPN Satu Atap 3 Sematu Jaya ",
+      "schoolId": null,
+      "groupCount": 2,
+      "totalStudents": 1,
+      "groups": [
+        {
+          "id": "cmsj2id7i0035bjrsvnipg84o",
+          "name": "Bahasa Indonesia Kls VII",
+          "memberCount": 0
+        },
+        {
+          "id": "cmsjp0kwd000b7iayimmu1utv",
+          "name": "Bahasa Indonesia VIII",
+          "memberCount": 1
+        }
+      ],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-08-07T14:50:58.003Z",
+      "trialEndsAt": "2026-09-06T14:50:58.003Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmsu6khfw0003bhiz017wmg34",
+      "email": "ellimarlina51@guru.smp.belajar.id",
+      "fullName": "Elli Marlina",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-08-15T09:35:34.220Z",
+      "lastActiveAt": "2026-08-30T13:18:50.094Z",
+      "schoolRaw": "SMP NEGERI 6 BINJAI ",
+      "schoolId": null,
+      "groupCount": 3,
+      "totalStudents": 57,
+      "groups": [
+        {
+          "id": "cmszmadxv000bsch7gjml8lu5",
+          "name": "F",
+          "memberCount": 23
+        },
+        {
+          "id": "cmt3owfgc000912hhurvbqkxl",
+          "name": "99",
+          "memberCount": 21
+        },
+        {
+          "id": "cmt6l0aos0015igpmi23xc3q4",
+          "name": "910 ceria",
+          "memberCount": 13
+        }
+      ],
+      "aiUsageCount": 17,
+      "quizCount": 1,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-08-15T09:35:55.532Z",
+      "trialEndsAt": "2026-09-14T09:35:55.532Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmtcsqofg00009z8pv2ycyxfp",
+      "email": "alba.kikiqlima@gmail.com",
+      "fullName": "Al Baikhatus Iqlima, S. Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-08-28T10:16:05.932Z",
+      "lastActiveAt": "2026-08-30T01:49:30.171Z",
+      "schoolRaw": "SMP NEGERI 3 SAMPIT",
+      "schoolId": null,
+      "groupCount": 4,
+      "totalStudents": 10,
+      "groups": [
+        {
+          "id": "cmtct3umx000r14ix0bq6n28z",
+          "name": "7 RUANG 3",
+          "memberCount": 5
+        },
+        {
+          "id": "cmtct5vib001it4kx3nqtzjvy",
+          "name": "VII RUANG 5",
+          "memberCount": 2
+        },
+        {
+          "id": "cmtctb2d1003ft4kxqd76hlut",
+          "name": "9 RUANG 1",
+          "memberCount": 0
+        },
+        {
+          "id": "cmtctcquf008yxh0cxtvmpgnx",
+          "name": "9 RUANG 2",
+          "memberCount": 3
+        }
+      ],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-08-28T10:16:24.920Z",
+      "trialEndsAt": "2026-09-27T10:16:24.920Z",
+      "hasActivity": true
+    }
+  ],
+  "inactiveNoActivity": [
+    {
+      "userId": "cmr0imcqn0000xs27luxjjuwe",
+      "email": "rinokusumoke2@gmail.com",
+      "fullName": "Rino kusumo, S.Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-30T10:40:09.215Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPS TARUNA MANDIRI",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-06-30T10:40:36.058Z",
+      "trialEndsAt": "2026-07-30T10:40:36.058Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmr0imffw0003xs273oktkv96",
+      "email": "sabilarosy@gmail.com",
+      "fullName": "Sabila Rosyida, S.Hum.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-30T10:40:12.716Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPIT BINTANG",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-06-30T10:40:35.915Z",
+      "trialEndsAt": "2026-07-30T10:40:35.915Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmr0k32qx000011c8vogoyg2t",
+      "email": "agustinus.awal@gmail.com",
+      "fullName": "Agustinus Awal, S.Pd",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-30T11:21:09.033Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMP Katolik Ricci II ",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-06-30T11:22:02.244Z",
+      "trialEndsAt": "2026-07-30T11:22:02.244Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmr0kth65000bpraizmxgqtd6",
+      "email": "khaliqadzahin474@gmail.com",
+      "fullName": "Ikin Sodikin",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-30T11:41:40.781Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPN 16 Kota Tangerang Selatan",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-06-30T11:42:06.873Z",
+      "trialEndsAt": "2026-07-30T11:42:06.873Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmr0kwrkf0008i2kicm216pk2",
+      "email": "rahmawati.5526@gmail.com",
+      "fullName": "Rahmawati, S.Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-30T11:44:14.224Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPIT Cordova ",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-06-30T11:44:41.326Z",
+      "trialEndsAt": "2026-07-30T11:44:41.326Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmr0kzmst0004j0qn0wbb5uus",
+      "email": "ashpia@smpisinarcendekia.sch.id",
+      "fullName": "Ashpia Latifah, S.Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-30T11:46:28.013Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMP Islam Sinar Cendekia",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-06-30T11:46:49.871Z",
+      "trialEndsAt": "2026-07-30T11:46:49.871Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmr0njxj200003un4kml5em08",
+      "email": "marcelina.lulut@gmail.com",
+      "fullName": "Marcelina",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-30T12:58:14.270Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMA Anderson ",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-06-30T12:59:02.293Z",
+      "trialEndsAt": "2026-07-30T12:59:02.293Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmr0ubjvh0000gd1ou1c6bi0e",
+      "email": "ifatfatimahsetiyo@gmail.com",
+      "fullName": "N.Ifat Fatimah, S.Pd",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-30T16:07:40.638Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPN 20 TANGSEL",
+      "schoolId": null,
+      "groupCount": 1,
+      "totalStudents": 0,
+      "groups": [
+        {
+          "id": "cmrexnl1q000i10jc0mzmeaih",
+          "name": "Bahasa Indonesia kls 8.9",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-06-30T16:08:24.093Z",
+      "trialEndsAt": "2026-07-30T16:08:24.093Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmral4pyo0000yegu4e3b97n9",
+      "email": "antonius.sudarto61@gmail.com",
+      "fullName": "Anton Darto",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-07T11:48:07.152Z",
+      "lastActiveAt": null,
+      "schoolRaw": null,
+      "schoolId": null,
+      "groupCount": 1,
+      "totalStudents": 0,
+      "groups": [
+        {
+          "id": "cmrctgsap00012vnup4rblcrv",
+          "name": "7A",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-07T11:50:29.782Z",
+      "trialEndsAt": "2026-08-06T11:50:29.782Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmrbrd2l20009mdbxpu05z3e1",
+      "email": "linahidayati27@guru.smp.belajar.id",
+      "fullName": "Lina Hidayati, S. Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-08T07:30:20.630Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMP Regina Pacis Bogor ",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-08T07:32:44.570Z",
+      "trialEndsAt": "2026-08-07T07:32:44.570Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmrbw5q6k0000vzqb0g8u5ijx",
+      "email": "nopembriansetiyaji@gmail.com",
+      "fullName": "Nopembrian Setiyaji",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-08T09:44:36.044Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMAK GS",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-08T09:45:01.591Z",
+      "trialEndsAt": "2026-08-07T09:45:01.591Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmrbyzkbo000011gm1t5ev9d5",
+      "email": "lusiaari82a@gmail.com",
+      "fullName": "L. Ari Witbiyanti",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-08T11:03:47.364Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPS Santo Yoseph",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-08T11:04:18.931Z",
+      "trialEndsAt": "2026-08-07T11:04:18.931Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmrd5timk0000o6mrkh5qp8qa",
+      "email": "yulia@insanharapan.sch.id",
+      "fullName": "Yuli Rahmawati,S.E",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-09T07:02:48.717Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMP IT Insan Harapan",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-09T07:03:25.366Z",
+      "trialEndsAt": "2026-08-08T07:03:25.366Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmrdk55hb00003fka8to0erz1",
+      "email": "revitriano212@gmail.com",
+      "fullName": "Revi Triano,S.Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-09T13:43:46.175Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPN 7",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-09T13:44:27.333Z",
+      "trialEndsAt": "2026-08-08T13:44:27.333Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmre8uyfd0000aacdbrldeb5m",
+      "email": "12otonurfalah04@gmail.com",
+      "fullName": "Oto Nurfalah, S.Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-10T01:15:40.873Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMP N 5 Woyla",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-10T01:16:13.338Z",
+      "trialEndsAt": "2026-08-09T01:16:13.338Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmre91xk600005bi4kulmmpjd",
+      "email": "eka.puji3328@guru.smp.belajar.id",
+      "fullName": "Eka Puji Mutiara, S.Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-10T01:21:06.343Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPIT Ar Ruhama ",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-10T01:21:31.157Z",
+      "trialEndsAt": "2026-08-09T01:21:31.157Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmre9u8km00008pca1scgu3zw",
+      "email": "ugie3110@gmail.com",
+      "fullName": "Sugiharti, S.Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-10T01:43:06.982Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMP Sabiluna",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-10T01:43:37.735Z",
+      "trialEndsAt": "2026-08-09T01:43:37.735Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmreajryw0000jtoqpa0frjd6",
+      "email": "hilda.apriliani68@guru.smp.belajar.id",
+      "fullName": "Hilda Apriliani, S.Pd",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-10T02:02:58.520Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPIT Cordova",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-10T02:03:32.855Z",
+      "trialEndsAt": "2026-08-09T02:03:32.855Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmreau4ch0000u7lnfey5bbu7",
+      "email": "triwardono@gmail.com",
+      "fullName": "Heribertus Triwardono, M.Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-10T02:11:01.121Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMA Santo Yosef Lahat",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-10T02:12:25.502Z",
+      "trialEndsAt": "2026-08-09T02:12:25.502Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmrebee060000zwcagqqd9j41",
+      "email": "windruoktarine26@guru.smp.belajar.id",
+      "fullName": "Windru Oktarine",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-10T02:26:46.758Z",
+      "lastActiveAt": null,
+      "schoolRaw": "windruSMP",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-10T02:27:50.729Z",
+      "trialEndsAt": "2026-08-09T02:27:50.729Z",
+      "hasActivity": false
+    }
+  ],
+  "aiUsers": [
+    {
+      "userId": "cmqxd86to0000wrkfj8ijeoym",
+      "email": "guru@demo.com",
+      "fullName": "Drs. Siti Rahayu, M.Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-28T05:45:51.755Z",
+      "lastActiveAt": null,
+      "schoolRaw": null,
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 2,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": null,
+      "trialEndsAt": null,
+      "hasActivity": true
+    },
+    {
+      "userId": "cmqxh3uor000dy3w3l1l4m2th",
+      "email": "obahmamah.indonesia@gmail.com",
+      "fullName": "Super Admin BC",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-28T07:34:27.867Z",
+      "lastActiveAt": "2026-08-25T08:43:33.695Z",
+      "schoolRaw": "Official BC",
+      "schoolId": null,
+      "groupCount": 1,
+      "totalStudents": 0,
+      "groups": [
+        {
+          "id": "cmt2sa4na0009390mpxeoi9w9",
+          "name": "7A-Asik",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 6,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-06-28T07:34:58.793Z",
+      "trialEndsAt": "2026-07-28T07:34:58.793Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmr0kocqh0002praio9wgbv3l",
+      "email": "alfinadhan@mitracendekiaindonesia.sch.id",
+      "fullName": "Alfin Adhan, S.Pd.,Gr.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-30T11:37:41.753Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMP Mitra Cendekia Indonesia",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 1,
+      "quizCount": 0,
+      "rppCount": 1,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-06-30T11:38:10.940Z",
+      "trialEndsAt": "2026-07-30T11:38:10.940Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmra85mg900008ed8y8pzfxkr",
+      "email": "fransiscadafrosa@gmail.com",
+      "fullName": "fransisca dafrosa",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-07T05:44:54.249Z",
+      "lastActiveAt": "2026-08-05T08:14:29.300Z",
+      "schoolRaw": null,
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 1,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-07T05:58:45.409Z",
+      "trialEndsAt": "2026-08-06T05:58:45.409Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmrbck8tj0000npbbods1lfw1",
+      "email": "bombolyohana14@gmail.com",
+      "fullName": "Yohana Bombol",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-08T00:36:01.063Z",
+      "lastActiveAt": "2026-09-01T04:11:26.868Z",
+      "schoolRaw": "SMP Santa Laurensia",
+      "schoolId": null,
+      "groupCount": 6,
+      "totalStudents": 120,
+      "groups": [
+        {
+          "id": "cmriyigbv0001ajsl8izd8e0r",
+          "name": "Kelas 7G",
+          "memberCount": 0
+        },
+        {
+          "id": "cmry9dphr0019iwcpph8axt01",
+          "name": "8H",
+          "memberCount": 2
+        },
+        {
+          "id": "cms2j0c77002710tfuach8g4v",
+          "name": "8G",
+          "memberCount": 28
+        },
+        {
+          "id": "cms2j0mj5002c10tfp0yp2mjg",
+          "name": "8H",
+          "memberCount": 30
+        },
+        {
+          "id": "cms2j0xol002h10tfd2bso8cs",
+          "name": "7F",
+          "memberCount": 30
+        },
+        {
+          "id": "cms2j1b82002p10tfqmuwk9l4",
+          "name": "7G",
+          "memberCount": 30
+        }
+      ],
+      "aiUsageCount": 2,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-08T00:36:26.489Z",
+      "trialEndsAt": "2026-08-07T00:36:26.489Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmre96pyh0005aacd0c8ja8do",
+      "email": "dewimustikasari24@guru.smp.belajar.id",
+      "fullName": "Dewi Mustikasari",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-10T01:24:49.769Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPN 3 JONGKAT",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 1,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-10T01:25:19.106Z",
+      "trialEndsAt": "2026-08-09T01:25:19.106Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmremv7m90000429qyrizuoje",
+      "email": "mariajenfrida@gmail.com",
+      "fullName": "Maria",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-10T07:47:47.409Z",
+      "lastActiveAt": null,
+      "schoolRaw": "Bukitsion",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 2,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-10T07:48:19.243Z",
+      "trialEndsAt": "2026-08-09T07:48:19.243Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmrlpmwro0000dn4tfcdpyg6m",
+      "email": "kristina.lestari@oel.sch.id",
+      "fullName": "Kristina Dwi Lestari",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-15T06:39:42.180Z",
+      "lastActiveAt": "2026-08-25T05:22:19.460Z",
+      "schoolRaw": "SMPK ORA et LABORA BSD ",
+      "schoolId": null,
+      "groupCount": 3,
+      "totalStudents": 2,
+      "groups": [
+        {
+          "id": "cmt87jsy20001vef8cwbi4cb7",
+          "name": "Kelas Bahasa Indonesia -7A",
+          "memberCount": 2
+        },
+        {
+          "id": "cmt87wi1i000p10dhgsgwsvct",
+          "name": "Kelas Bahasa Indonesia-7B",
+          "memberCount": 0
+        },
+        {
+          "id": "cmt87xbnq001010dhid8jurj3",
+          "name": "Kelas Bahasa Indonesia-7C",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 8,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-15T06:40:07.476Z",
+      "trialEndsAt": "2026-08-14T06:40:07.476Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmrls17dd000010w6xbjv5w4f",
+      "email": "edi.humaidi@gmail.com",
+      "fullName": "Edy Humaedi",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-15T07:46:48.338Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMP Islam Al Syukro Universal",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 7,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-15T07:49:40.183Z",
+      "trialEndsAt": "2026-08-14T07:49:40.183Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmrolnpul00009rterj09m8px",
+      "email": "ricoleonard66@gmail.com",
+      "fullName": "Rico Leonard",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-17T07:11:39.933Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMAS MUTIARA HARAPAN",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 1,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-17T07:12:14.941Z",
+      "trialEndsAt": "2026-08-16T07:12:14.941Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmrsr92sy00005g7d2de27447",
+      "email": "ibrahimlubis509@gmail.com",
+      "fullName": "Ibrahim Lubis",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-20T04:59:19.282Z",
+      "lastActiveAt": "2026-08-24T07:46:00.128Z",
+      "schoolRaw": "SMA AL-FITYAN SCHOOL TANGERANG ",
+      "schoolId": null,
+      "groupCount": 10,
+      "totalStudents": 119,
+      "groups": [
+        {
+          "id": "cmrw25ter000l3p96dbjkmd5w",
+          "name": "Bahasa Indonesia Kelas 10A SMA AFISTA",
+          "memberCount": 22
+        },
+        {
+          "id": "cmrw26mgr000n3p965d5n6q8s",
+          "name": "Bahasa Indonesia Kelas 10B SMA AFISTA",
+          "memberCount": 15
+        },
+        {
+          "id": "cmrw27ixa000p3p96e373tb9b",
+          "name": "Bahasa Indonesia Kelas 11A SMA AFISTA",
+          "memberCount": 8
+        },
+        {
+          "id": "cmrw28fjp0009xxn0f27l2w2u",
+          "name": "Bahasa Indonesia Kelas 11B SMA AFISTA",
+          "memberCount": 16
+        },
+        {
+          "id": "cmrw298yh000bxxn02v9rvrm9",
+          "name": "Bahasa Indonesia Kelas 11C SMA AFISTA",
+          "memberCount": 13
+        },
+        {
+          "id": "cmrw2aclk000r3p96ku0axg0q",
+          "name": "Bahasa Indonesia Kelas 11D SMA AFISTA",
+          "memberCount": 12
+        },
+        {
+          "id": "cmrw2azwo000t3p96rp4pby31",
+          "name": "Bahasa Indonesia Kelas 12A SMA AFISTA",
+          "memberCount": 7
+        },
+        {
+          "id": "cmrw2blme000v3p96n2mnb697",
+          "name": "Bahasa Indonesia Kelas 12B",
+          "memberCount": 13
+        },
+        {
+          "id": "cmrw2cdeh000x3p96y3hmyox5",
+          "name": "Bahasa Indonesia Kelas 12C SMA AFISTA",
+          "memberCount": 12
+        },
+        {
+          "id": "cmsn9cfoq000r31u6hey6ys8k",
+          "name": "Kelas Uji Coba",
+          "memberCount": 1
+        }
+      ],
+      "aiUsageCount": 23,
+      "quizCount": 6,
+      "rppCount": 0,
+      "premiumPlan": "PRO",
+      "isPremium": true,
+      "trialStartedAt": "2026-07-20T04:59:50.370Z",
+      "trialEndsAt": "2026-08-19T04:59:50.370Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmrtetq3g00005zegrjnuffdt",
+      "email": "masnuri34@guru.smp.belajar.id",
+      "fullName": "MASNURI",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-20T15:59:13.757Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMP PGRI PADARINCANG",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 2,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-20T15:59:48.981Z",
+      "trialEndsAt": "2026-08-19T15:59:48.981Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmrtfa0nl0000wsdwh8uxw88w",
+      "email": "masnuri_20605199100004@madrasah.kemenag.go.id",
+      "fullName": "MASNURI",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-20T16:11:53.937Z",
+      "lastActiveAt": null,
+      "schoolRaw": "MAS AL-KHAIRIYAH RANCARANJI",
+      "schoolId": null,
+      "groupCount": 2,
+      "totalStudents": 0,
+      "groups": [
+        {
+          "id": "cmrtfeytv000b14l80vi7mniw",
+          "name": "BAHASA INDONESIA",
+          "memberCount": 0
+        },
+        {
+          "id": "cmrtfg0my000d14l89weqej5y",
+          "name": "BAHASA INDONESIA",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 1,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-20T16:12:02.580Z",
+      "trialEndsAt": "2026-08-19T16:12:02.580Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmrtwoqhe00003zsugetdptol",
+      "email": "tutiksman8rangsel@gmail.com",
+      "fullName": "Tutik Purwanti, M.Pd",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-21T00:19:14.066Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMAN 8 TANGERANG SELATAN ",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 2,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-21T00:20:00.736Z",
+      "trialEndsAt": "2026-08-20T00:20:00.736Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmrtyjfa9000c13i1bstb475x",
+      "email": "nurmaulfa77@gmail.com",
+      "fullName": "Nurma Ulfa, S.Pd",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-21T01:11:05.505Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPN 17 Kota Tangerang Selatan",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 1,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-21T01:11:18.273Z",
+      "trialEndsAt": "2026-08-20T01:11:18.273Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmru0p5ua0000wn37jwj04cfs",
+      "email": "sofiah3p@guru.smp.belajar.id",
+      "fullName": "Sofiah, M.Pd",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-21T02:11:32.434Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPIT AS SALAAMAH",
+      "schoolId": null,
+      "groupCount": 1,
+      "totalStudents": 0,
+      "groups": [
+        {
+          "id": "cmru1k8rz0001r8mj5o0hv0pu",
+          "name": "Bahasa Indonesia",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 1,
+      "quizCount": 2,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-21T02:12:05.507Z",
+      "trialEndsAt": "2026-08-20T02:12:05.507Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmru2e3eu0000q06fxzk6krb4",
+      "email": "josephmaniez@smpn1kalimanah.sch.id",
+      "fullName": "Joseph Maniez",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-21T02:58:55.302Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMP Negeri 1 Kalimanah",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 1,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-21T02:59:10.804Z",
+      "trialEndsAt": "2026-08-20T02:59:10.804Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmru4qjuo002eaml23ew5ffs4",
+      "email": "mumunmuntikoh76@guru.sma.belajar.id",
+      "fullName": "Mumun Muntikoh",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-21T04:04:35.712Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMAN 7 Pandeglang",
+      "schoolId": null,
+      "groupCount": 1,
+      "totalStudents": 0,
+      "groups": [
+        {
+          "id": "cmru5ehk80047bjjix574kjdr",
+          "name": "XI 6",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 3,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-21T04:04:45.041Z",
+      "trialEndsAt": "2026-08-20T04:04:45.041Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmru4z4kw002310eh2658mysv",
+      "email": "ferryaulia40@guru.sma.belajar.id",
+      "fullName": "Ferry Aulia",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-21T04:11:15.825Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMA NEGERI 1 RUNDENG ",
+      "schoolId": null,
+      "groupCount": 1,
+      "totalStudents": 0,
+      "groups": [
+        {
+          "id": "cmsenrfzj015hdf6pl1kioud4",
+          "name": "BHS INDONESA KLS X",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 3,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-21T04:11:30.242Z",
+      "trialEndsAt": "2026-08-20T04:11:30.242Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmru5ye5w0057pib2eax2cpv6",
+      "email": "mayasarikutacane@gmail.com",
+      "fullName": "Maya Sari,S.Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-21T04:38:41.204Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMAS HIDAYATULLAH ",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 2,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-21T04:38:55.687Z",
+      "trialEndsAt": "2026-08-20T04:38:55.687Z",
+      "hasActivity": true
+    }
+  ],
+  "withClasses": [
+    {
+      "userId": "cmqxh3uor000dy3w3l1l4m2th",
+      "email": "obahmamah.indonesia@gmail.com",
+      "fullName": "Super Admin BC",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-28T07:34:27.867Z",
+      "lastActiveAt": "2026-08-25T08:43:33.695Z",
+      "schoolRaw": "Official BC",
+      "schoolId": null,
+      "groupCount": 1,
+      "totalStudents": 0,
+      "groups": [
+        {
+          "id": "cmt2sa4na0009390mpxeoi9w9",
+          "name": "7A-Asik",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 6,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-06-28T07:34:58.793Z",
+      "trialEndsAt": "2026-07-28T07:34:58.793Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmr0ubjvh0000gd1ou1c6bi0e",
+      "email": "ifatfatimahsetiyo@gmail.com",
+      "fullName": "N.Ifat Fatimah, S.Pd",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-30T16:07:40.638Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPN 20 TANGSEL",
+      "schoolId": null,
+      "groupCount": 1,
+      "totalStudents": 0,
+      "groups": [
+        {
+          "id": "cmrexnl1q000i10jc0mzmeaih",
+          "name": "Bahasa Indonesia kls 8.9",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-06-30T16:08:24.093Z",
+      "trialEndsAt": "2026-07-30T16:08:24.093Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmral4pyo0000yegu4e3b97n9",
+      "email": "antonius.sudarto61@gmail.com",
+      "fullName": "Anton Darto",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-07T11:48:07.152Z",
+      "lastActiveAt": null,
+      "schoolRaw": null,
+      "schoolId": null,
+      "groupCount": 1,
+      "totalStudents": 0,
+      "groups": [
+        {
+          "id": "cmrctgsap00012vnup4rblcrv",
+          "name": "7A",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-07T11:50:29.782Z",
+      "trialEndsAt": "2026-08-06T11:50:29.782Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmrbck8tj0000npbbods1lfw1",
+      "email": "bombolyohana14@gmail.com",
+      "fullName": "Yohana Bombol",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-08T00:36:01.063Z",
+      "lastActiveAt": "2026-09-01T04:11:26.868Z",
+      "schoolRaw": "SMP Santa Laurensia",
+      "schoolId": null,
+      "groupCount": 6,
+      "totalStudents": 120,
+      "groups": [
+        {
+          "id": "cmriyigbv0001ajsl8izd8e0r",
+          "name": "Kelas 7G",
+          "memberCount": 0
+        },
+        {
+          "id": "cmry9dphr0019iwcpph8axt01",
+          "name": "8H",
+          "memberCount": 2
+        },
+        {
+          "id": "cms2j0c77002710tfuach8g4v",
+          "name": "8G",
+          "memberCount": 28
+        },
+        {
+          "id": "cms2j0mj5002c10tfp0yp2mjg",
+          "name": "8H",
+          "memberCount": 30
+        },
+        {
+          "id": "cms2j0xol002h10tfd2bso8cs",
+          "name": "7F",
+          "memberCount": 30
+        },
+        {
+          "id": "cms2j1b82002p10tfqmuwk9l4",
+          "name": "7G",
+          "memberCount": 30
+        }
+      ],
+      "aiUsageCount": 2,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-08T00:36:26.489Z",
+      "trialEndsAt": "2026-08-07T00:36:26.489Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmrbfi7fr0000lsu5a92srfyi",
+      "email": "christanti@santa-laurensia.sch.id",
+      "fullName": "Christanti, S.Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-08T01:58:24.807Z",
+      "lastActiveAt": "2026-08-28T02:22:07.667Z",
+      "schoolRaw": "SMA Santa Laurensia Alam Sutera",
+      "schoolId": null,
+      "groupCount": 2,
+      "totalStudents": 59,
+      "groups": [
+        {
+          "id": "cms2m9zc60013j76a1hnlxeab",
+          "name": "7D B.INDO 26/27",
+          "memberCount": 29
+        },
+        {
+          "id": "cms2mbdz8001mq0tidylluv29",
+          "name": "7E B.INDO 26/27",
+          "memberCount": 30
+        }
+      ],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-08T01:59:12.558Z",
+      "trialEndsAt": "2026-08-07T01:59:12.558Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmrbr3eg00000mdbxd6j42wnt",
+      "email": "martha.simamora@shb.sch.id",
+      "fullName": "Martha Yuliana Simamora,S.Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-08T07:22:49.440Z",
+      "lastActiveAt": null,
+      "schoolRaw": null,
+      "schoolId": null,
+      "groupCount": 4,
+      "totalStudents": 23,
+      "groups": [
+        {
+          "id": "cms429i8m00earmmnj2bulr0x",
+          "name": "10 A",
+          "memberCount": 0
+        },
+        {
+          "id": "cms429yq900ecrmmnfypjv4r6",
+          "name": "10 B",
+          "memberCount": 3
+        },
+        {
+          "id": "cms42acac00eermmn16fm2gp7",
+          "name": "11",
+          "memberCount": 0
+        },
+        {
+          "id": "cms42apxf00egrmmn441y5qnq",
+          "name": "12",
+          "memberCount": 20
+        }
+      ],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-08T07:29:39.945Z",
+      "trialEndsAt": "2026-08-07T07:29:39.945Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmrlpmwro0000dn4tfcdpyg6m",
+      "email": "kristina.lestari@oel.sch.id",
+      "fullName": "Kristina Dwi Lestari",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-15T06:39:42.180Z",
+      "lastActiveAt": "2026-08-25T05:22:19.460Z",
+      "schoolRaw": "SMPK ORA et LABORA BSD ",
+      "schoolId": null,
+      "groupCount": 3,
+      "totalStudents": 2,
+      "groups": [
+        {
+          "id": "cmt87jsy20001vef8cwbi4cb7",
+          "name": "Kelas Bahasa Indonesia -7A",
+          "memberCount": 2
+        },
+        {
+          "id": "cmt87wi1i000p10dhgsgwsvct",
+          "name": "Kelas Bahasa Indonesia-7B",
+          "memberCount": 0
+        },
+        {
+          "id": "cmt87xbnq001010dhid8jurj3",
+          "name": "Kelas Bahasa Indonesia-7C",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 8,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-15T06:40:07.476Z",
+      "trialEndsAt": "2026-08-14T06:40:07.476Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmrlqrrro000018782agwd6co",
+      "email": "karina.hayu@santa-laurensia.sch.id",
+      "fullName": "FE Karina Hayu Nugraheny",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-15T07:11:28.597Z",
+      "lastActiveAt": "2026-08-29T12:07:26.636Z",
+      "schoolRaw": "SMP Santa Laurensia",
+      "schoolId": null,
+      "groupCount": 5,
+      "totalStudents": 155,
+      "groups": [
+        {
+          "id": "cmrwun30r00051vcb0iiawoie",
+          "name": "7B",
+          "memberCount": 32
+        },
+        {
+          "id": "cmry9itct001yiwcpdn0usp0f",
+          "name": "8E",
+          "memberCount": 31
+        },
+        {
+          "id": "cmrybs5qt00b9rr25ea7q5twk",
+          "name": "8F",
+          "memberCount": 29
+        },
+        {
+          "id": "cmrylm4cn00804gpi7kj1zx9r",
+          "name": "7C",
+          "memberCount": 33
+        },
+        {
+          "id": "cmrylmir8008b4gpio70g7zax",
+          "name": "8D",
+          "memberCount": 30
+        }
+      ],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-15T07:12:00.719Z",
+      "trialEndsAt": "2026-08-14T07:12:00.719Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmrm0pdro0000vw7y2j873uvj",
+      "email": "sofiah30@guru.smp.belajar.id",
+      "fullName": "Dra. Sofiah, M.Pd",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-15T11:49:33.300Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPIT As Saalamah ",
+      "schoolId": null,
+      "groupCount": 1,
+      "totalStudents": 0,
+      "groups": [
+        {
+          "id": "cmrm0v31t0009sr1npkyy4q6f",
+          "name": "Kelas 7",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 0,
+      "quizCount": 1,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-15T11:50:51.946Z",
+      "trialEndsAt": "2026-08-14T11:50:51.946Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmrsr92sy00005g7d2de27447",
+      "email": "ibrahimlubis509@gmail.com",
+      "fullName": "Ibrahim Lubis",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-20T04:59:19.282Z",
+      "lastActiveAt": "2026-08-24T07:46:00.128Z",
+      "schoolRaw": "SMA AL-FITYAN SCHOOL TANGERANG ",
+      "schoolId": null,
+      "groupCount": 10,
+      "totalStudents": 119,
+      "groups": [
+        {
+          "id": "cmrw25ter000l3p96dbjkmd5w",
+          "name": "Bahasa Indonesia Kelas 10A SMA AFISTA",
+          "memberCount": 22
+        },
+        {
+          "id": "cmrw26mgr000n3p965d5n6q8s",
+          "name": "Bahasa Indonesia Kelas 10B SMA AFISTA",
+          "memberCount": 15
+        },
+        {
+          "id": "cmrw27ixa000p3p96e373tb9b",
+          "name": "Bahasa Indonesia Kelas 11A SMA AFISTA",
+          "memberCount": 8
+        },
+        {
+          "id": "cmrw28fjp0009xxn0f27l2w2u",
+          "name": "Bahasa Indonesia Kelas 11B SMA AFISTA",
+          "memberCount": 16
+        },
+        {
+          "id": "cmrw298yh000bxxn02v9rvrm9",
+          "name": "Bahasa Indonesia Kelas 11C SMA AFISTA",
+          "memberCount": 13
+        },
+        {
+          "id": "cmrw2aclk000r3p96ku0axg0q",
+          "name": "Bahasa Indonesia Kelas 11D SMA AFISTA",
+          "memberCount": 12
+        },
+        {
+          "id": "cmrw2azwo000t3p96rp4pby31",
+          "name": "Bahasa Indonesia Kelas 12A SMA AFISTA",
+          "memberCount": 7
+        },
+        {
+          "id": "cmrw2blme000v3p96n2mnb697",
+          "name": "Bahasa Indonesia Kelas 12B",
+          "memberCount": 13
+        },
+        {
+          "id": "cmrw2cdeh000x3p96y3hmyox5",
+          "name": "Bahasa Indonesia Kelas 12C SMA AFISTA",
+          "memberCount": 12
+        },
+        {
+          "id": "cmsn9cfoq000r31u6hey6ys8k",
+          "name": "Kelas Uji Coba",
+          "memberCount": 1
+        }
+      ],
+      "aiUsageCount": 23,
+      "quizCount": 6,
+      "rppCount": 0,
+      "premiumPlan": "PRO",
+      "isPremium": true,
+      "trialStartedAt": "2026-07-20T04:59:50.370Z",
+      "trialEndsAt": "2026-08-19T04:59:50.370Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmrt2q1d7000014bt5s4i8pnv",
+      "email": "abdullah.d.saragih@gmail.com",
+      "fullName": "ABDULLAH DARMAWAN",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-20T10:20:26.348Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMP Negeri 1 Kota Binjai ",
+      "schoolId": null,
+      "groupCount": 1,
+      "totalStudents": 0,
+      "groups": [
+        {
+          "id": "cmrt2tc970007g7r53lw23nf2",
+          "name": "Bahasa Indonesia Kelas IX.5",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-20T10:20:52.300Z",
+      "trialEndsAt": "2026-08-19T10:20:52.300Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmrtf3yyx0000prswt6f34zuw",
+      "email": "nurmini.nurhan@gmail.com",
+      "fullName": "Nurmini, M. Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-20T16:07:11.818Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMA Negeri 20 Palembang",
+      "schoolId": null,
+      "groupCount": 1,
+      "totalStudents": 0,
+      "groups": [
+        {
+          "id": "cmrtfa2bl0001diyc0v5znh1x",
+          "name": "Bahasa Indonesia",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-20T16:07:40.710Z",
+      "trialEndsAt": "2026-08-19T16:07:40.710Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmrtfa0nl0000wsdwh8uxw88w",
+      "email": "masnuri_20605199100004@madrasah.kemenag.go.id",
+      "fullName": "MASNURI",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-20T16:11:53.937Z",
+      "lastActiveAt": null,
+      "schoolRaw": "MAS AL-KHAIRIYAH RANCARANJI",
+      "schoolId": null,
+      "groupCount": 2,
+      "totalStudents": 0,
+      "groups": [
+        {
+          "id": "cmrtfeytv000b14l80vi7mniw",
+          "name": "BAHASA INDONESIA",
+          "memberCount": 0
+        },
+        {
+          "id": "cmrtfg0my000d14l89weqej5y",
+          "name": "BAHASA INDONESIA",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 1,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-20T16:12:02.580Z",
+      "trialEndsAt": "2026-08-19T16:12:02.580Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmru0p5ua0000wn37jwj04cfs",
+      "email": "sofiah3p@guru.smp.belajar.id",
+      "fullName": "Sofiah, M.Pd",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-21T02:11:32.434Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPIT AS SALAAMAH",
+      "schoolId": null,
+      "groupCount": 1,
+      "totalStudents": 0,
+      "groups": [
+        {
+          "id": "cmru1k8rz0001r8mj5o0hv0pu",
+          "name": "Bahasa Indonesia",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 1,
+      "quizCount": 2,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-21T02:12:05.507Z",
+      "trialEndsAt": "2026-08-20T02:12:05.507Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmru4qjuo002eaml23ew5ffs4",
+      "email": "mumunmuntikoh76@guru.sma.belajar.id",
+      "fullName": "Mumun Muntikoh",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-21T04:04:35.712Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMAN 7 Pandeglang",
+      "schoolId": null,
+      "groupCount": 1,
+      "totalStudents": 0,
+      "groups": [
+        {
+          "id": "cmru5ehk80047bjjix574kjdr",
+          "name": "XI 6",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 3,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-21T04:04:45.041Z",
+      "trialEndsAt": "2026-08-20T04:04:45.041Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmru4z4kw002310eh2658mysv",
+      "email": "ferryaulia40@guru.sma.belajar.id",
+      "fullName": "Ferry Aulia",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-21T04:11:15.825Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMA NEGERI 1 RUNDENG ",
+      "schoolId": null,
+      "groupCount": 1,
+      "totalStudents": 0,
+      "groups": [
+        {
+          "id": "cmsenrfzj015hdf6pl1kioud4",
+          "name": "BHS INDONESA KLS X",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 3,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-21T04:11:30.242Z",
+      "trialEndsAt": "2026-08-20T04:11:30.242Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmru79oeh00091cb8ng8ajjr9",
+      "email": "candysadaputri1@gmail.com",
+      "fullName": "Candy Sada Putri",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-21T05:15:27.305Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPN SATAP 3 KARAU KUALA",
+      "schoolId": null,
+      "groupCount": 1,
+      "totalStudents": 0,
+      "groups": [
+        {
+          "id": "cmrub0rpx00gm10h57erdrdfs",
+          "name": "BAHASA INDONESIA IX",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 1,
+      "quizCount": 1,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-21T05:15:40.273Z",
+      "trialEndsAt": "2026-08-20T05:15:40.273Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmrxfw97w0000y1na4c7xeaer",
+      "email": "rika162@guru.sma.belajar.id",
+      "fullName": "Rika Farikhah Rochmawati Djadjas, S.Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-23T11:40:16.172Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMAN 11 Pandeglang",
+      "schoolId": null,
+      "groupCount": 1,
+      "totalStudents": 0,
+      "groups": [
+        {
+          "id": "cmrxg3kgz0003fx7654ztbla0",
+          "name": "Bahasa Indonesia Kelas F XII-1",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 0,
+      "quizCount": 1,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-23T11:40:34.599Z",
+      "trialEndsAt": "2026-08-22T11:40:34.599Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cms0bwa3m000082m5ypmf27j0",
+      "email": "noormawatijunaidi@gmail.com",
+      "fullName": "Noormawati J.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-25T12:11:37.378Z",
+      "lastActiveAt": "2026-08-29T12:08:38.036Z",
+      "schoolRaw": "SMP Negeri 1 Jenamas",
+      "schoolId": null,
+      "groupCount": 4,
+      "totalStudents": 18,
+      "groups": [
+        {
+          "id": "cmte5v6pp0062wdqcgdf4fq21",
+          "name": "BAHASA INDONESIA 7A",
+          "memberCount": 1
+        },
+        {
+          "id": "cmte5wuh30016b20x8a7t2ps5",
+          "name": "BAHASA INDONESIA 7B",
+          "memberCount": 1
+        },
+        {
+          "id": "cmte5xqrh001nb20xfcm9hxcg",
+          "name": "BAHASA INDONESIA 8",
+          "memberCount": 0
+        },
+        {
+          "id": "cmte5ybk2001yb20x1rn2hmep",
+          "name": "BAHASA INDONESIA 9",
+          "memberCount": 16
+        }
+      ],
+      "aiUsageCount": 2,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-25T12:11:52.636Z",
+      "trialEndsAt": "2026-08-24T12:11:52.636Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cms0gi8yu0000dg6jzwexumoj",
+      "email": "ari24setyawati@gmail.com",
+      "fullName": "Ari Setyawati",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-25T14:20:40.807Z",
+      "lastActiveAt": "2026-08-27T14:19:26.469Z",
+      "schoolRaw": "SDN Krt 10",
+      "schoolId": null,
+      "groupCount": 1,
+      "totalStudents": 0,
+      "groups": [
+        {
+          "id": "cms0gkfs90001n1xfa1xq83d2",
+          "name": "4C IBU  ARI",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 3,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-25T14:20:58.229Z",
+      "trialEndsAt": "2026-08-24T14:20:58.229Z",
+      "hasActivity": true
+    }
+  ],
+  "zeroStudents": [
+    {
+      "userId": "cmqxd86to0000wrkfj8ijeoym",
+      "email": "guru@demo.com",
+      "fullName": "Drs. Siti Rahayu, M.Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-28T05:45:51.755Z",
+      "lastActiveAt": null,
+      "schoolRaw": null,
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 2,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": null,
+      "trialEndsAt": null,
+      "hasActivity": true
+    },
+    {
+      "userId": "cmqxh3uor000dy3w3l1l4m2th",
+      "email": "obahmamah.indonesia@gmail.com",
+      "fullName": "Super Admin BC",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-28T07:34:27.867Z",
+      "lastActiveAt": "2026-08-25T08:43:33.695Z",
+      "schoolRaw": "Official BC",
+      "schoolId": null,
+      "groupCount": 1,
+      "totalStudents": 0,
+      "groups": [
+        {
+          "id": "cmt2sa4na0009390mpxeoi9w9",
+          "name": "7A-Asik",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 6,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-06-28T07:34:58.793Z",
+      "trialEndsAt": "2026-07-28T07:34:58.793Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmr0imcqn0000xs27luxjjuwe",
+      "email": "rinokusumoke2@gmail.com",
+      "fullName": "Rino kusumo, S.Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-30T10:40:09.215Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPS TARUNA MANDIRI",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-06-30T10:40:36.058Z",
+      "trialEndsAt": "2026-07-30T10:40:36.058Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmr0imffw0003xs273oktkv96",
+      "email": "sabilarosy@gmail.com",
+      "fullName": "Sabila Rosyida, S.Hum.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-30T10:40:12.716Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPIT BINTANG",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-06-30T10:40:35.915Z",
+      "trialEndsAt": "2026-07-30T10:40:35.915Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmr0k32qx000011c8vogoyg2t",
+      "email": "agustinus.awal@gmail.com",
+      "fullName": "Agustinus Awal, S.Pd",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-30T11:21:09.033Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMP Katolik Ricci II ",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-06-30T11:22:02.244Z",
+      "trialEndsAt": "2026-07-30T11:22:02.244Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmr0kocqh0002praio9wgbv3l",
+      "email": "alfinadhan@mitracendekiaindonesia.sch.id",
+      "fullName": "Alfin Adhan, S.Pd.,Gr.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-30T11:37:41.753Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMP Mitra Cendekia Indonesia",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 1,
+      "quizCount": 0,
+      "rppCount": 1,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-06-30T11:38:10.940Z",
+      "trialEndsAt": "2026-07-30T11:38:10.940Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmr0kth65000bpraizmxgqtd6",
+      "email": "khaliqadzahin474@gmail.com",
+      "fullName": "Ikin Sodikin",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-30T11:41:40.781Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPN 16 Kota Tangerang Selatan",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-06-30T11:42:06.873Z",
+      "trialEndsAt": "2026-07-30T11:42:06.873Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmr0kwrkf0008i2kicm216pk2",
+      "email": "rahmawati.5526@gmail.com",
+      "fullName": "Rahmawati, S.Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-30T11:44:14.224Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPIT Cordova ",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-06-30T11:44:41.326Z",
+      "trialEndsAt": "2026-07-30T11:44:41.326Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmr0kzmst0004j0qn0wbb5uus",
+      "email": "ashpia@smpisinarcendekia.sch.id",
+      "fullName": "Ashpia Latifah, S.Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-30T11:46:28.013Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMP Islam Sinar Cendekia",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-06-30T11:46:49.871Z",
+      "trialEndsAt": "2026-07-30T11:46:49.871Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmr0njxj200003un4kml5em08",
+      "email": "marcelina.lulut@gmail.com",
+      "fullName": "Marcelina",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-30T12:58:14.270Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMA Anderson ",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-06-30T12:59:02.293Z",
+      "trialEndsAt": "2026-07-30T12:59:02.293Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmr0ubjvh0000gd1ou1c6bi0e",
+      "email": "ifatfatimahsetiyo@gmail.com",
+      "fullName": "N.Ifat Fatimah, S.Pd",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-06-30T16:07:40.638Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPN 20 TANGSEL",
+      "schoolId": null,
+      "groupCount": 1,
+      "totalStudents": 0,
+      "groups": [
+        {
+          "id": "cmrexnl1q000i10jc0mzmeaih",
+          "name": "Bahasa Indonesia kls 8.9",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-06-30T16:08:24.093Z",
+      "trialEndsAt": "2026-07-30T16:08:24.093Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmra85mg900008ed8y8pzfxkr",
+      "email": "fransiscadafrosa@gmail.com",
+      "fullName": "fransisca dafrosa",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-07T05:44:54.249Z",
+      "lastActiveAt": "2026-08-05T08:14:29.300Z",
+      "schoolRaw": null,
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 1,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-07T05:58:45.409Z",
+      "trialEndsAt": "2026-08-06T05:58:45.409Z",
+      "hasActivity": true
+    },
+    {
+      "userId": "cmral4pyo0000yegu4e3b97n9",
+      "email": "antonius.sudarto61@gmail.com",
+      "fullName": "Anton Darto",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-07T11:48:07.152Z",
+      "lastActiveAt": null,
+      "schoolRaw": null,
+      "schoolId": null,
+      "groupCount": 1,
+      "totalStudents": 0,
+      "groups": [
+        {
+          "id": "cmrctgsap00012vnup4rblcrv",
+          "name": "7A",
+          "memberCount": 0
+        }
+      ],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-07T11:50:29.782Z",
+      "trialEndsAt": "2026-08-06T11:50:29.782Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmrbrd2l20009mdbxpu05z3e1",
+      "email": "linahidayati27@guru.smp.belajar.id",
+      "fullName": "Lina Hidayati, S. Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-08T07:30:20.630Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMP Regina Pacis Bogor ",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-08T07:32:44.570Z",
+      "trialEndsAt": "2026-08-07T07:32:44.570Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmrbw5q6k0000vzqb0g8u5ijx",
+      "email": "nopembriansetiyaji@gmail.com",
+      "fullName": "Nopembrian Setiyaji",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-08T09:44:36.044Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMAK GS",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-08T09:45:01.591Z",
+      "trialEndsAt": "2026-08-07T09:45:01.591Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmrbyzkbo000011gm1t5ev9d5",
+      "email": "lusiaari82a@gmail.com",
+      "fullName": "L. Ari Witbiyanti",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-08T11:03:47.364Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPS Santo Yoseph",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-08T11:04:18.931Z",
+      "trialEndsAt": "2026-08-07T11:04:18.931Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmrd5timk0000o6mrkh5qp8qa",
+      "email": "yulia@insanharapan.sch.id",
+      "fullName": "Yuli Rahmawati,S.E",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-09T07:02:48.717Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMP IT Insan Harapan",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-09T07:03:25.366Z",
+      "trialEndsAt": "2026-08-08T07:03:25.366Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmrdk55hb00003fka8to0erz1",
+      "email": "revitriano212@gmail.com",
+      "fullName": "Revi Triano,S.Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-09T13:43:46.175Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPN 7",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-09T13:44:27.333Z",
+      "trialEndsAt": "2026-08-08T13:44:27.333Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmre8uyfd0000aacdbrldeb5m",
+      "email": "12otonurfalah04@gmail.com",
+      "fullName": "Oto Nurfalah, S.Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-10T01:15:40.873Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMP N 5 Woyla",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-10T01:16:13.338Z",
+      "trialEndsAt": "2026-08-09T01:16:13.338Z",
+      "hasActivity": false
+    },
+    {
+      "userId": "cmre91xk600005bi4kulmmpjd",
+      "email": "eka.puji3328@guru.smp.belajar.id",
+      "fullName": "Eka Puji Mutiara, S.Pd.",
+      "role": "GURU",
+      "isFounder": false,
+      "createdAt": "2026-07-10T01:21:06.343Z",
+      "lastActiveAt": null,
+      "schoolRaw": "SMPIT Ar Ruhama ",
+      "schoolId": null,
+      "groupCount": 0,
+      "totalStudents": 0,
+      "groups": [],
+      "aiUsageCount": 0,
+      "quizCount": 0,
+      "rppCount": 0,
+      "premiumPlan": "FREE",
+      "isPremium": false,
+      "trialStartedAt": "2026-07-10T01:21:31.157Z",
+      "trialEndsAt": "2026-08-09T01:21:31.157Z",
+      "hasActivity": false
+    }
+  ]
+}

@@ -1,0 +1,143 @@
+{
+  "classifications": {
+    "total": 1249,
+    "success": 0,
+    "error": 465,
+    "null": 784,
+    "providerError": 109,
+    "timeout": 0,
+    "validationFailure": 1,
+    "malformedOutput": 0,
+    "quotaRateLimit": 0,
+    "userCancellation": 0,
+    "applicationError": 355,
+    "fallbackSuccess": 0,
+    "fallbackFailure": 0,
+    "hardFailure": 465
+  },
+  "byFeature": {
+    "agent:bc-assistant": {
+      "total": 1008,
+      "success": 0,
+      "error": 355,
+      "primaryFailures": 355,
+      "fallbackSuccess": 0,
+      "userVisibleFailures": 355
+    },
+    "simulasi:review": {
+      "total": 11,
+      "success": 0,
+      "error": 0,
+      "primaryFailures": 0,
+      "fallbackSuccess": 0,
+      "userVisibleFailures": 0
+    },
+    "agent:soal": {
+      "total": 70,
+      "success": 0,
+      "error": 65,
+      "primaryFailures": 65,
+      "fallbackSuccess": 0,
+      "userVisibleFailures": 65
+    },
+    "ai_export_pdf:rpp": {
+      "total": 9,
+      "success": 0,
+      "error": 0,
+      "primaryFailures": 0,
+      "fallbackSuccess": 0,
+      "userVisibleFailures": 0
+    },
+    "agent:rpp": {
+      "total": 52,
+      "success": 0,
+      "error": 4,
+      "primaryFailures": 4,
+      "fallbackSuccess": 0,
+      "userVisibleFailures": 4
+    },
+    "agent:ppt": {
+      "total": 41,
+      "success": 0,
+      "error": 40,
+      "primaryFailures": 40,
+      "fallbackSuccess": 0,
+      "userVisibleFailures": 40
+    },
+    "ai_export_docx:rpp": {
+      "total": 23,
+      "success": 0,
+      "error": 0,
+      "primaryFailures": 0,
+      "fallbackSuccess": 0,
+      "userVisibleFailures": 0
+    },
+    "agent:text-analysis": {
+      "total": 5,
+      "success": 0,
+      "error": 1,
+      "primaryFailures": 1,
+      "fallbackSuccess": 0,
+      "userVisibleFailures": 1
+    },
+    "soal_generator": {
+      "total": 19,
+      "success": 0,
+      "error": 0,
+      "primaryFailures": 0,
+      "fallbackSuccess": 0,
+      "userVisibleFailures": 0
+    },
+    "agent:eyd": {
+      "total": 3,
+      "success": 0,
+      "error": 0,
+      "primaryFailures": 0,
+      "fallbackSuccess": 0,
+      "userVisibleFailures": 0
+    },
+    "agent:review": {
+      "total": 3,
+      "success": 0,
+      "error": 0,
+      "primaryFailures": 0,
+      "fallbackSuccess": 0,
+      "userVisibleFailures": 0
+    },
+    "rpp_generator": {
+      "total": 5,
+      "success": 0,
+      "error": 0,
+      "primaryFailures": 0,
+      "fallbackSuccess": 0,
+      "userVisibleFailures": 0
+    }
+  },
+  "byProvider": {
+    "groq": {
+      "total": 673,
+      "success": 0,
+      "error": 0
+    },
+    "unknown": {
+      "total": 411,
+      "success": 0,
+      "error": 0
+    },
+    "fallback": {
+      "total": 11,
+      "success": 0,
+      "error": 0
+    },
+    "none": {
+      "total": 109,
+      "success": 0,
+      "error": 0
+    },
+    "fallback-template": {
+      "total": 45,
+      "success": 0,
+      "error": 0
+    }
+  }
+}
