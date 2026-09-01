@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import {
   Search, RefreshCw, Loader2, ChevronLeft, ChevronRight,
   Crown, Users, Clock, XCircle, AlertTriangle, Sparkles,
-  Shield, GraduationCap, Filter,
+  Shield, GraduationCap, Filter, DollarSign, TrendingUp, Repeat, AlertCircle,
 } from "lucide-react";
 
 interface PremiumUser {
@@ -37,6 +37,10 @@ interface Summary {
   guruActive: number;
   expiringSoon: number;
   expired: number;
+  mrr: { total: number; monthly: number; yearly: number };
+  revenueByAudience: { murid: number; guru: number };
+  funnel: { registered: number; activePremium: number; renewed: number };
+  churnRisk: { expiringIn7d: number; expiringIn14d: number; expiringIn30d: number };
 }
 
 const STATUS_LABEL: Record<string, string> = {
@@ -166,6 +170,113 @@ export default function AdminPremiumReportPage() {
               <p className="text-xs text-amber-500 dark:text-amber-400">Segera Berakhir</p>
             </div>
             <p className="text-2xl font-bold text-amber-700 dark:text-amber-300">{data.summary.expiringSoon}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Premium Command Center */}
+      {data?.summary?.mrr && (
+        <div className="grid md:grid-cols-3 gap-4">
+          {/* MRR */}
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 rounded-2xl border border-green-200 dark:border-green-800 p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <DollarSign size={16} className="text-green-600 dark:text-green-400" />
+              <h3 className="text-sm font-semibold text-green-800 dark:text-green-200">MRR (Monthly Recurring Revenue)</h3>
+            </div>
+            <p className="text-3xl font-bold text-green-900 dark:text-green-100">Rp {(data.summary.mrr.total / 1000).toFixed(0)}rb</p>
+            <div className="mt-3 space-y-1.5">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-green-700 dark:text-green-300">Bulanan</span>
+                <span className="font-semibold text-green-800 dark:text-green-200">Rp {(data.summary.mrr.monthly / 1000).toFixed(0)}rb</span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-green-700 dark:text-green-300">Tahunan (÷12)</span>
+                <span className="font-semibold text-green-800 dark:text-green-200">Rp {(data.summary.mrr.yearly / 1000).toFixed(0)}rb</span>
+              </div>
+            </div>
+            <div className="mt-3 pt-3 border-t border-green-200 dark:border-green-800">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-green-700 dark:text-green-300">Revenue Murid</span>
+                <span className="font-semibold text-green-800 dark:text-green-200">Rp {(data.summary.revenueByAudience.murid / 1000).toFixed(0)}rb</span>
+              </div>
+              <div className="flex items-center justify-between text-xs mt-1">
+                <span className="text-green-700 dark:text-green-300">Revenue Guru</span>
+                <span className="font-semibold text-green-800 dark:text-green-200">Rp {(data.summary.revenueByAudience.guru / 1000).toFixed(0)}rb</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Conversion Funnel */}
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-2xl border border-blue-200 dark:border-blue-800 p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <TrendingUp size={16} className="text-blue-600 dark:text-blue-400" />
+              <h3 className="text-sm font-semibold text-blue-800 dark:text-blue-200">Conversion Funnel</h3>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <div className="flex items-center justify-between text-xs mb-1">
+                  <span className="text-blue-700 dark:text-blue-300">Registered</span>
+                  <span className="font-semibold text-blue-800 dark:text-blue-200">{data.summary.funnel.registered.toLocaleString()}</span>
+                </div>
+                <div className="h-2 rounded-full bg-blue-200 dark:bg-blue-800">
+                  <div className="h-full rounded-full bg-blue-500" style={{ width: "100%" }} />
+                </div>
+              </div>
+              <div>
+                <div className="flex items-center justify-between text-xs mb-1">
+                  <span className="text-blue-700 dark:text-blue-300">Active Premium</span>
+                  <span className="font-semibold text-blue-800 dark:text-blue-200">{data.summary.funnel.activePremium}</span>
+                </div>
+                <div className="h-2 rounded-full bg-blue-200 dark:bg-blue-800">
+                  <div className="h-full rounded-full bg-blue-500" style={{ width: `${data.summary.funnel.registered > 0 ? (data.summary.funnel.activePremium / data.summary.funnel.registered) * 100 : 0}%` }} />
+                </div>
+              </div>
+              <div>
+                <div className="flex items-center justify-between text-xs mb-1">
+                  <span className="text-blue-700 dark:text-blue-300">Renewed</span>
+                  <span className="font-semibold text-blue-800 dark:text-blue-200">{data.summary.funnel.renewed}</span>
+                </div>
+                <div className="h-2 rounded-full bg-blue-200 dark:bg-blue-800">
+                  <div className="h-full rounded-full bg-blue-500" style={{ width: `${data.summary.funnel.registered > 0 ? (data.summary.funnel.renewed / data.summary.funnel.registered) * 100 : 0}%` }} />
+                </div>
+              </div>
+            </div>
+            <p className="mt-3 text-[10px] text-blue-600 dark:text-blue-400">
+              Conversion: {data.summary.funnel.registered > 0 ? ((data.summary.funnel.activePremium / data.summary.funnel.registered) * 100).toFixed(1) : 0}%
+              {" · "}Renewal: {data.summary.funnel.activePremium > 0 ? ((data.summary.funnel.renewed / data.summary.funnel.activePremium) * 100).toFixed(1) : 0}%
+            </p>
+          </div>
+
+          {/* Churn Risk */}
+          <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-2xl border border-amber-200 dark:border-amber-800 p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <AlertCircle size={16} className="text-amber-600 dark:text-amber-400" />
+              <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-200">Churn Risk</h3>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-2xl font-bold text-amber-900 dark:text-amber-100">{data.summary.churnRisk.expiringIn7d}</p>
+                  <p className="text-[10px] text-amber-600 dark:text-amber-400">Berakhir ≤7 hari</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-lg font-bold text-amber-700 dark:text-amber-300">{data.summary.churnRisk.expiringIn14d}</p>
+                  <p className="text-[10px] text-amber-600 dark:text-amber-400">≤14 hari</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between pt-2 border-t border-amber-200 dark:border-amber-800">
+                <div>
+                  <p className="text-lg font-bold text-amber-700 dark:text-amber-300">{data.summary.churnRisk.expiringIn30d}</p>
+                  <p className="text-[10px] text-amber-600 dark:text-amber-400">≤30 hari</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-semibold text-amber-800 dark:text-amber-200">
+                    {data.summary.totalActive > 0 ? ((data.summary.churnRisk.expiringIn30d / data.summary.totalActive) * 100).toFixed(0) : 0}%
+                  </p>
+                  <p className="text-[10px] text-amber-600 dark:text-amber-400">dari total aktif</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

@@ -100,6 +100,7 @@
     "test:simulation-workflow": "npx tsx scripts/test-phase-simulation-workflow.ts",
     "test:admin-premium-report": "npx tsx scripts/test-admin-premium-report.ts",
     "test:executive-dashboard": "npx tsx scripts/test-executive-dashboard.ts",
+    "test:premium-command-center": "npx tsx scripts/test-premium-command-center.ts",
     "recover:murid-premium:dry-run": "npx tsx scripts/recover-murid-premium.ts",
     "recover:murid-premium": "npx tsx scripts/recover-murid-premium.ts --execute",
     "test:murid-premium-activation": "npx tsx scripts/test-murid-premium-activation.ts",

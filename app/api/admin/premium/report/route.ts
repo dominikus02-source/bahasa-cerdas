@@ -278,6 +278,76 @@ export async function GET(req: NextRequest) {
       };
     });
 
+    // ── PREMIUM COMMAND CENTER METRICS ──────────────────────────
+    // MRR by plan (Monthly = raw amount, Yearly = amount/12 weighted)
+    const mrrByPlanRaw = await db.transaksi.groupBy({
+      by: ["reference"],
+      where: {
+        type: { in: ["MURID_PREMIUM", "PREMIUM_UPGRADE"] },
+        status: "SUCCESS",
+      },
+      _sum: { amount: true },
+      _count: true,
+    });
+
+    let mrrMonthly = 0;
+    let mrrYearly = 0;
+    for (const row of mrrByPlanRaw) {
+      const amt = row._sum.amount || 0;
+      if (row.reference?.includes("YEARLY")) {
+        mrrYearly += Math.round(amt / 12);
+      } else {
+        mrrMonthly += amt;
+      }
+    }
+    const mrrTotal = mrrMonthly + mrrYearly;
+
+    // Revenue by audience (sum of successful premium transactions)
+    const [muridRevenueAgg, guruRevenueAgg] = await Promise.all([
+      db.transaksi.aggregate({
+        _sum: { amount: true },
+        where: { type: "MURID_PREMIUM", status: "SUCCESS" },
+      }),
+      db.transaksi.aggregate({
+        _sum: { amount: true },
+        where: { type: "PREMIUM_UPGRADE", status: "SUCCESS" },
+      }),
+    ]);
+    const muridRevenue = muridRevenueAgg._sum.amount || 0;
+    const guruRevenue = guruRevenueAgg._sum.amount || 0;
+
+    // Conversion funnel: Registered → Active Premium → Renewed
+    const totalRegistered = await db.user.count({ where: { ...roleFilter, isFounder: false } });
+    // "Renewed" = users with >1 successful premium transaction
+    const renewedUsers = await db.user.findMany({
+      where: {
+        ...roleFilter,
+        isFounder: false,
+        transaksi: {
+          some: { type: { in: ["MURID_PREMIUM", "PREMIUM_UPGRADE"] }, status: "SUCCESS" },
+        },
+      },
+      select: {
+        id: true,
+        _count: {
+          select: {
+            transaksi: { where: { type: { in: ["MURID_PREMIUM", "PREMIUM_UPGRADE"] }, status: "SUCCESS" } },
+          },
+        },
+      },
+    });
+    const renewedCount = renewedUsers.filter(u => u._count.transaksi > 1).length;
+
+    // Churn risk: active users expiring within 7/14/30 days
+    const fourteenDaysFromNow = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
+    const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+    const [churn7d, churn14d, churn30d] = await Promise.all([
+      db.user.count({ where: { ...roleFilter, isPremium: true, premiumUntil: { gt: now, lte: sevenDaysFromNow } } }),
+      db.user.count({ where: { ...roleFilter, isPremium: true, premiumUntil: { gt: now, lte: fourteenDaysFromNow } } }),
+      db.user.count({ where: { ...roleFilter, isPremium: true, premiumUntil: { gt: now, lte: thirtyDaysFromNow } } }),
+    ]);
+
     return NextResponse.json({
       success: true,
       summary: {
@@ -286,6 +356,26 @@ export async function GET(req: NextRequest) {
         guruActive: guruActiveCount,
         expiringSoon: expiringCount,
         expired: expiredCount,
+        // Premium Command Center
+        mrr: {
+          total: mrrTotal,
+          monthly: mrrMonthly,
+          yearly: mrrYearly,
+        },
+        revenueByAudience: {
+          murid: muridRevenue,
+          guru: guruRevenue,
+        },
+        funnel: {
+          registered: totalRegistered,
+          activePremium: activeCount,
+          renewed: renewedCount,
+        },
+        churnRisk: {
+          expiringIn7d: churn7d,
+          expiringIn14d: churn14d,
+          expiringIn30d: churn30d,
+        },
       },
       data,
       pagination: {
