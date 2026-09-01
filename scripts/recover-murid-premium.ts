@@ -24,11 +24,16 @@ const isExecute = process.argv.includes("--execute");
 async function main() {
   const now = new Date();
 
-  // Find users with at least one SUCCESS MURID_PREMIUM transaction but isPremium=false
+  // STRICT CRITERIA: all four must be true to confirm activation failure.
+  // A legitimately expired user would have isPremium=true and premiumUntil in the past.
+  // An admin-toggled user would have premiumPlan="PRO" and premiumUntil set.
+  // Only never-activated users have all three fields at default values.
   const affected = await db.user.findMany({
     where: {
       role: "MURID",
       isPremium: false,
+      premiumPlan: "FREE",
+      premiumUntil: null,
       transaksi: {
         some: {
           type: "MURID_PREMIUM",
