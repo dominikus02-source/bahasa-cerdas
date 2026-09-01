@@ -98,6 +98,7 @@
     "test:bahasa-ui": "npx tsx scripts/test-bahasa-indonesia-ui.ts",
     "test:dokumen-latihan-sanitization": "npx tsx scripts/test-dokumen-latihan-sanitization.ts",
     "test:simulation-workflow": "npx tsx scripts/test-phase-simulation-workflow.ts",
+    "test:admin-premium-report": "npx tsx scripts/test-admin-premium-report.ts",
     "validate:ukbi-tka-structure": "npx tsx scripts/validate-ukbi-tka-question-structure.ts",
     "audit:ukbi-tka-quality": "npx tsx scripts/audit-ukbi-tka-question-quality.ts",
     "fix:ukbi-tka-structure": "npx tsx scripts/fix-ukbi-tka-structure-safe.ts",

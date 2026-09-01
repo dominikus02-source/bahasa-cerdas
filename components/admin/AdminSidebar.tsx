@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
-import { LayoutDashboard, ShoppingBag, Film, FileText, Users, LogOut, Settings, ChevronRight, BarChart3, Briefcase, MessageCircle, Presentation, Bell, BellRing, X, Coins, DollarSign, Database, Activity, Wallet, Baby, TrendingUp, Trophy, LineChart, ShieldAlert, ShieldCheck } from "lucide-react";
+import { LayoutDashboard, ShoppingBag, Film, FileText, Users, LogOut, Settings, ChevronRight, BarChart3, Briefcase, MessageCircle, Presentation, Bell, BellRing, X, Coins, DollarSign, Database, Activity, Wallet, Baby, TrendingUp, Trophy, LineChart, ShieldAlert, ShieldCheck, Crown } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import {
   NAV_ICON_CLASS,
@@ -40,6 +40,7 @@ export const NAV = [
   { label: "Kuota AI", href: "/admin/ai-quota", icon: Coins },
   { label: "Pusat Data", href: "/admin/data-center", icon: Database },
   { label: "Pembayaran", href: "/admin/payments", icon: DollarSign },
+  { label: "Premium Report", href: "/admin/premium", icon: Crown },
   { label: "Penarikan Saldo", href: "/admin/withdrawals", icon: Wallet },
   { label: "Risiko Guru", href: "/admin/teacher-risk", icon: ShieldAlert },
   { label: "Payout Kontrol", href: "/admin/teacher-payouts", icon: ShieldCheck },
