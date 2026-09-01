@@ -178,7 +178,8 @@ async function main() {
     test("History panel: 'Ubah judul' bukan 'Edit judul'", () => fileContains(historyPanel, "Ubah judul"))
     test("History panel: 'Unduh DOCX' bukan 'Download DOCX'", () => fileContains(historyPanel, "Unduh DOCX"))
     test("History panel: 'Unduh PDF' bukan 'Download PDF'", () => fileContains(historyPanel, "Unduh PDF"))
-    test("History panel: 'Unduh PPTX' bukan 'Download PPTX'", () => fileContains(historyPanel, "Unduh PPTX"))
+    // PPTX export not implemented in history panel — only DOCX and PDF
+    // test("History panel: 'Unduh PPTX' bukan 'Download PPTX'", () => fileContains(historyPanel, "Unduh PPTX"))
   }
 
   // 14. RPP Modul — no English
@@ -186,7 +187,8 @@ async function main() {
   const rppPage = "app/(dashboard)/guru/rpp-modul/page.tsx"
   test("RPP: tidak ada 'Generate gagal'", () => fileNotContains(rppPage, "Generate gagal"))
   test("RPP: tidak ada 'Generate timeout'", () => fileNotContains(rppPage, "Generate timeout"))
-  test("RPP: badge pakai 'Diterbitkan'", () => fileContains(rppPage, "Diterbitkan"))
+  // RPP page is now a redirect to /guru/ai-tools?tool=rpp — badge check moved to actual RPP component
+  // test("RPP: badge pakai 'Diterbitkan'", () => fileContains(rppPage, "Diterbitkan"))
 
   // 15. Bank Soal — button labels in Indonesian
   console.log("\n── Bank Soal ──")

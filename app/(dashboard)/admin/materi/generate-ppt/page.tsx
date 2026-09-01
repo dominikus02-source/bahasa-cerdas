@@ -321,7 +321,7 @@ export default function AdminPPTGeneratorPage() {
                       {aiResult.downloadUrl && (
                         <a href={aiResult.downloadUrl} target="_blank" rel="noopener noreferrer" className="block">
                           <Button className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600">
-                            <Download className="w-4 h-4 mr-2" /> Download PPTX
+                            <Download className="w-4 h-4 mr-2" /> Unduh PPTX
                           </Button>
                         </a>
                       )}

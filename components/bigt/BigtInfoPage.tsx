@@ -20,7 +20,7 @@ export function BigtInfoPage({ role }: Props) {
             <BookOpen size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">BIGT — Bahasa Indonesia Growth Track</h1>
+            <h1 className="text-2xl font-bold">BIGT — Tes Global Bahasa Indonesia</h1>
             <p className={`text-sm ${isGuru ? "text-emerald-200" : "text-violet-200"}`}>
               Sistem pembelajaran bahasa Indonesia bertahap level A1–C2, dengan umpan balik AI dan peta kesiapan menuju UKBI.
             </p>
@@ -49,6 +49,7 @@ export function BigtInfoPage({ role }: Props) {
               <li>✓ Peta kesiapan yang menerjemahkan latihan ke gambaran hasil UKBI</li>
               <li>✓ Umpan balik menulis dan berbicara berbantuan AI</li>
               <li>✓ Laporan per keterampilan dan rekomendasi materi</li>
+              <li>✓ Pengatur waktu dan progres bagian yang terstruktur</li>
               <li>✓ Sertifikat Kesiapan — bukan sertifikat UKBI</li>
             </ul>
           </div>
@@ -58,11 +59,11 @@ export function BigtInfoPage({ role }: Props) {
       {/* Fitur BIGT */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         {[
-          { icon: <BookOpen size={24} />, title: "Jalur Belajar A1–C2", desc: "Materi terbuka bertahap sesuai skala BIPA Badan Bahasa" },
+          { icon: <BookOpen size={24} />, title: "Layar Tes", desc: "Pengatur Waktu Akurat — waktu dan progres bagian yang terstruktur" },
           { icon: <Shield size={24} />, title: "Umpan Balik AI", desc: "Latihan menulis dan berbicara dinilai otomatis, kapan saja" },
-          { icon: <Timer size={24} />, title: "Latihan Adaptif", desc: "Tingkat kesulitan menyesuaikan kemampuan secara langsung" },
+          { icon: <Timer size={24} />, title: "Progres Bagian", desc: "Hasil dan Skor — melacak kemajuan per bagian" },
           { icon: <FileText size={24} />, title: "6 Area Latihan", desc: "Menyimak, Membaca, Berbicara, Menulis, Mediasi, Tugas Terintegrasi" },
-          { icon: <Award size={24} />, title: "Laporan Kemajuan", desc: "Per keterampilan, dengan rekomendasi materi berikutnya" },
+          { icon: <Award size={24} />, title: "Keamanan", desc: "Standar Tes — Sistem tanpa kebocoran jawaban" },
           { icon: <BookOpen size={24} />, title: "Sertifikat Kesiapan", desc: "Verifikasi QR — mencatat capaian belajar, bukan sertifikat UKBI" },
         ].map(f => (
           <div key={f.title} className="bg-card dark:bg-slate-900 rounded-xl border border-border p-5 hover:shadow-md transition-shadow">
