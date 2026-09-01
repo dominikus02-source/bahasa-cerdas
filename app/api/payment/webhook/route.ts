@@ -23,19 +23,19 @@ function verifyMidtransNotification(
 }
 
 function getPlanFromAmount(grossAmount: number): { durationDays: number; aiCreditsMonthly: number; planId: string } | null {
-  // Murid Premium plans (detected first — lower amounts)
-  if (grossAmount >= 180000) {
-    return { durationDays: 365, aiCreditsMonthly: 0, planId: "MURID_PREMIUM_YEARLY" };
-  }
-  if (grossAmount >= 19000) {
-    return { durationDays: 30, aiCreditsMonthly: 0, planId: "MURID_PREMIUM_MONTHLY" };
-  }
-  // Guru Pro plans
+  // Check higher amounts first to avoid Murid thresholds shadowing Guru plans.
+  // Guru Pro Yearly (399000) > Murid Yearly (180000) > Guru Pro Monthly (49000) > Murid Monthly (19000)
   if (grossAmount >= 399000) {
     return { durationDays: 365, aiCreditsMonthly: 500, planId: "GURU_PRO_YEARLY" };
   }
+  if (grossAmount >= 180000) {
+    return { durationDays: 365, aiCreditsMonthly: 0, planId: "MURID_PREMIUM_YEARLY" };
+  }
   if (grossAmount >= 49000) {
     return { durationDays: 30, aiCreditsMonthly: 500, planId: "GURU_PRO_MONTHLY" };
+  }
+  if (grossAmount >= 19000) {
+    return { durationDays: 30, aiCreditsMonthly: 0, planId: "MURID_PREMIUM_MONTHLY" };
   }
   return null;
 }

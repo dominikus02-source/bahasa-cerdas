@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Transaksi tidak ditemukan" }, { status: 404 });
     }
 
-    if (transaksi.type !== "PREMIUM_UPGRADE") {
+    if (transaksi.type !== "PREMIUM_UPGRADE" && transaksi.type !== "MURID_PREMIUM") {
       return NextResponse.json({ error: "Bukan transaksi premium upgrade" }, { status: 400 });
     }
 
@@ -44,11 +44,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Transaksi sudah SUCCESS" }, { status: 400 });
     }
 
+    const isMurid = transaksi.type === "MURID_PREMIUM";
     const meta = (transaksi.metadata || {}) as Record<string, any>;
-    let durationDays = 30;
-    const planId = meta.planId || transaksi.reference || "GURU_PRO_MONTHLY";
+    let durationDays = isMurid ? 30 : 30;
+    const planId = meta.planId || transaksi.reference || (isMurid ? "MURID_PREMIUM_MONTHLY" : "GURU_PRO_MONTHLY");
 
-    if (planId === "GURU_PRO_YEARLY" || meta.durationDays === 365) {
+    if (planId === "GURU_PRO_YEARLY" || planId === "MURID_PREMIUM_YEARLY" || meta.durationDays === 365) {
       durationDays = 365;
     }
 
