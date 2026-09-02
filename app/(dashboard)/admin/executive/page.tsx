@@ -1,6 +1,6 @@
 import { getUser } from "@/lib/supabase/server";
-import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
+import { getExecutiveDashboardData } from "@/lib/admin/executive";
 import Link from "next/link";
 import {
   Users, TrendingUp, TrendingDown, Minus, Crown, DollarSign,
@@ -78,10 +78,7 @@ function MetricRow({ label, value, trend }: { label: string; value: string; tren
   );
 }
 
-function pctChange(cur: number, prev: number): number {
-  if (prev === 0) return cur > 0 ? 100 : 0;
-  return Math.round(((cur - prev) / prev) * 100);
-}
+
 
 export const dynamic = "force-dynamic";
 
@@ -89,150 +86,9 @@ export default async function ExecutiveDashboard() {
   const user = await getUser();
   if (!user || !user.isFounder) redirect("/login");
 
-  const now = new Date();
-  const DAY_MS = 86400000;
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const yesterdayStart = new Date(todayStart.getTime() - DAY_MS);
-  const weekAgo = new Date(now.getTime() - 7 * DAY_MS);
-  const twoWeeksAgo = new Date(now.getTime() - 14 * DAY_MS);
-  const monthAgo = new Date(now.getTime() - 30 * DAY_MS);
-  const twoMonthsAgo = new Date(now.getTime() - 60 * DAY_MS);
+  const data = await getExecutiveDashboardData();
 
-  // ── Query Prisma directly (no self-fetch) ──
-  const [
-    totalUsers, totalMurid, totalGuru,
-    dau, wau, mau,
-    dauYesterday, wauPrev, mauPrev,
-    newUsers7d, newUsersPrev7d, newUsers30d, newUsersPrev30d,
-    activePremium, activePremiumPrev,
-    revenue30d, revenuePrev30d, revenueAllTime,
-    mrrCurrent, mrrPrev,
-    txSuccess30d, txPending,
-    jalurCompleted7d, jalurCompletedPrev7d,
-    ukbiSessions7d,
-    karya7d, karyaPrev7d,
-    aiGenerations7d,
-    paymentHealth,
-  ] = await Promise.all([
-    db.user.count(),
-    db.user.count({ where: { role: "MURID" } }),
-    db.user.count({ where: { role: "GURU" } }),
-
-    // DAU/WAU/MAU via XPTransaction
-    db.xPTransaction.groupBy({ by: ["userId"], where: { createdAt: { gte: todayStart } } }).then((r) => r.length),
-    db.xPTransaction.groupBy({ by: ["userId"], where: { createdAt: { gte: weekAgo } } }).then((r) => r.length),
-    db.xPTransaction.groupBy({ by: ["userId"], where: { createdAt: { gte: monthAgo } } }).then((r) => r.length),
-    db.xPTransaction.groupBy({ by: ["userId"], where: { createdAt: { gte: yesterdayStart, lt: todayStart } } }).then((r) => r.length),
-    db.xPTransaction.groupBy({ by: ["userId"], where: { createdAt: { gte: twoWeeksAgo, lt: weekAgo } } }).then((r) => r.length),
-    db.xPTransaction.groupBy({ by: ["userId"], where: { createdAt: { gte: twoMonthsAgo, lt: monthAgo } } }).then((r) => r.length),
-
-    // New users
-    db.user.count({ where: { createdAt: { gte: weekAgo } } }),
-    db.user.count({ where: { createdAt: { gte: twoWeeksAgo, lt: weekAgo } } }),
-    db.user.count({ where: { createdAt: { gte: monthAgo } } }),
-    db.user.count({ where: { createdAt: { gte: twoMonthsAgo, lt: monthAgo } } }),
-
-    // Premium
-    db.user.count({ where: { isPremium: true, premiumUntil: { gt: now }, isFounder: false } }),
-    db.user.count({ where: { isPremium: true, premiumUntil: { gt: weekAgo }, isFounder: false } }),
-
-    // Revenue
-    db.transaksi.aggregate({ _sum: { amount: true }, where: { status: "SUCCESS", createdAt: { gte: monthAgo } } }).then((r) => r._sum.amount || 0),
-    db.transaksi.aggregate({ _sum: { amount: true }, where: { status: "SUCCESS", createdAt: { gte: twoMonthsAgo, lt: monthAgo } } }).then((r) => r._sum.amount || 0),
-    db.transaksi.aggregate({ _sum: { amount: true }, where: { status: "SUCCESS" } }).then((r) => r._sum.amount || 0),
-
-    // MRR
-    db.transaksi.aggregate({ _sum: { amount: true }, where: { status: "SUCCESS", createdAt: { gte: new Date(now.getFullYear(), now.getMonth(), 1) } } }).then((r) => r._sum.amount || 0),
-    db.transaksi.aggregate({ _sum: { amount: true }, where: { status: "SUCCESS", createdAt: { gte: new Date(now.getFullYear(), now.getMonth() - 1, 1), lt: new Date(now.getFullYear(), now.getMonth(), 1) } } }).then((r) => r._sum.amount || 0),
-
-    // Transaction counts
-    db.transaksi.count({ where: { status: "SUCCESS", createdAt: { gte: monthAgo } } }),
-    db.transaksi.count({ where: { status: "PENDING" } }),
-
-    // Learning
-    db.userUnitProgress.count({ where: { completed: true, completedAt: { gte: weekAgo } } }),
-    db.userUnitProgress.count({ where: { completed: true, completedAt: { gte: twoWeeksAgo, lt: weekAgo } } }),
-    db.progresKompetensi.count({ where: { startedAt: { gte: weekAgo } } }),
-
-    // Karya
-    db.studentKarya.count({ where: { createdAt: { gte: weekAgo } } }),
-    db.studentKarya.count({ where: { createdAt: { gte: twoWeeksAgo, lt: weekAgo } } }),
-
-    // AI
-    db.aIUsage.count({ where: { createdAt: { gte: weekAgo } } }),
-
-    // Payment health: count SUCCESS transactions where user lacks active entitlement
-    db.transaksi.findMany({
-      where: { status: "SUCCESS", type: { in: ["MURID_PREMIUM", "PREMIUM_UPGRADE"] } },
-      select: {
-        id: true, type: true, amount: true, createdAt: true, userId: true,
-        user: { select: { id: true, fullName: true, email: true, isPremium: true, premiumUntil: true, role: true } },
-      },
-    }).then((txs) => {
-      const affected = txs.filter((t) => {
-        if (t.user.isPremium && t.user.premiumUntil && new Date(t.user.premiumUntil) > now) return false;
-        return true;
-      });
-      // Group by user for PaymentHealthAlert format
-      const userMap = new Map<string, { userId: string; fullName: string; email: string; role: string; totalPaid: number; transactions: any[] }>();
-      for (const t of affected) {
-        const existing = userMap.get(t.userId);
-        if (existing) { existing.totalPaid += t.amount; existing.transactions.push({ id: t.id, type: t.type, amount: t.amount, reference: null, orderId: null, createdAt: t.createdAt.toISOString() }); }
-        else { userMap.set(t.userId, { userId: t.userId, fullName: t.user.fullName, email: t.user.email, role: t.user.role, totalPaid: t.amount, transactions: [{ id: t.id, type: t.type, amount: t.amount, reference: null, orderId: null, createdAt: t.createdAt.toISOString() }] }); }
-      }
-      const affectedUsers = Array.from(userMap.values());
-      const muridCount = affectedUsers.filter((u) => u.role === "MURID").length;
-      return {
-        summary: { totalAffected: affectedUsers.length, totalRevenueAtRisk: affected.reduce((s, t) => s + t.amount, 0), affectedByRole: { murid: muridCount, guru: affectedUsers.length - muridCount } },
-        affectedUsers,
-      };
-    }),
-  ]);
-
-  // ── Retention cohorts (4 weekly) ──
-  const cohorts: { label: string; registered: number; active7d: number; active30d: number }[] = [];
-  for (let w = 0; w < 4; w++) {
-    const cohortStart = new Date(now.getTime() - (w + 1) * 7 * DAY_MS);
-    const cohortEnd = new Date(now.getTime() - w * 7 * DAY_MS);
-    const cohortUsers = await db.user.findMany({ where: { createdAt: { gte: cohortStart, lt: cohortEnd } }, select: { id: true } });
-    const ids = cohortUsers.map((u) => u.id);
-    const registered = ids.length;
-    if (registered === 0) { cohorts.push({ label: `W-${w + 1}`, registered: 0, active7d: 0, active30d: 0 }); continue; }
-    const [active7d, active30d] = await Promise.all([
-      db.xPTransaction.groupBy({ by: ["userId"], where: { createdAt: { gte: cohortStart, lt: cohortEnd }, userId: { in: ids } } }).then((r) => r.length),
-      db.xPTransaction.groupBy({ by: ["userId"], where: { createdAt: { gte: cohortEnd }, userId: { in: ids } } }).then((r) => r.length),
-    ]);
-    cohorts.push({ label: `W-${w + 1}`, registered, active7d, active30d });
-  }
-
-  // ── Derived metrics ──
-  const guruCount = Math.max(totalGuru - 3, 0); // exclude founders
-  const premiumConversionRate = guruCount > 0 ? Math.round((activePremium / guruCount) * 100) : 0;
-  const dauTrend = pctChange(dau, dauYesterday);
-  const wauTrend = pctChange(wau, wauPrev);
-  const mauTrend = pctChange(mau, mauPrev);
-  const mrrTrend = pctChange(mrrCurrent, mrrPrev);
-  const revenueTrend = pctChange(revenue30d, revenuePrev30d);
-  const premiumTrend = pctChange(activePremium, activePremiumPrev);
-  const jalurTrend = pctChange(jalurCompleted7d, jalurCompletedPrev7d);
-  const karyaTrend = pctChange(karya7d, karyaPrev7d);
-  const newUsers7dTrend = pctChange(newUsers7d, newUsersPrev7d);
-  const newUsers30dTrend = pctChange(newUsers30d, newUsersPrev30d);
-
-  const trialActive = await db.user.count({ where: { role: "GURU", trialEndsAt: { gt: now } } });
-
-  const data = {
-    users: { total: totalUsers, murid: totalMurid, guru: totalGuru },
-    active: { dau: { value: dau, trend: dauTrend }, wau: { value: wau, trend: wauTrend }, mau: { value: mau, trend: mauTrend } },
-    growth: { new7d: { value: newUsers7d, trend: newUsers7dTrend }, new30d: { value: newUsers30d, trend: newUsers30dTrend } },
-    premium: { active: { value: activePremium, trend: premiumTrend }, conversionRate: premiumConversionRate, trialActive },
-    revenue: { mrr: { value: mrrCurrent, trend: mrrTrend }, last30d: { value: revenue30d, trend: revenueTrend }, allTime: revenueAllTime, transactionsSuccess30d: txSuccess30d, transactionsPending: txPending },
-    learning: { jalurCompleted7d: { value: jalurCompleted7d, trend: jalurTrend }, ukbiSessions7d },
-    content: { karya7d: { value: karya7d, trend: karyaTrend } },
-    ai: { generations7d: aiGenerations7d },
-    retention: { cohorts },
-  };
-
+  const now = new Date(data.timestamp);
   const timeStr = now.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta" });
   const dateStr = now.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Jakarta" });
 
@@ -266,7 +122,7 @@ export default async function ExecutiveDashboard() {
       </div>
 
       {/* Payment Health Alert */}
-      {paymentHealth.summary.totalAffected > 0 && <PaymentHealthAlert data={paymentHealth} />}
+      {data.paymentHealth.summary.totalAffected > 0 && <PaymentHealthAlert data={data.paymentHealth} />}
 
       {/* Row 3: Detailed metrics */}
       <div className="grid lg:grid-cols-3 gap-6">

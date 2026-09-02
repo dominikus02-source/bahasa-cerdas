@@ -102,6 +102,7 @@
     "test:executive-dashboard": "npx tsx scripts/test-executive-dashboard.ts",
     "test:premium-command-center": "npx tsx scripts/test-premium-command-center.ts",
     "test:payment-health": "npx tsx scripts/test-payment-health.ts",
+    "test:admin-trust-gate": "npx tsx scripts/test-admin-trust-gate.ts",
     "test:reconciliation": "npx tsx scripts/test-reconciliation.ts",
     "test:data-quality": "npx tsx scripts/test-data-quality.ts",
     "recover:murid-premium:dry-run": "npx tsx scripts/recover-murid-premium.ts",
