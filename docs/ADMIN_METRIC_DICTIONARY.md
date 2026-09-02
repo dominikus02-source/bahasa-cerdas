@@ -102,6 +102,13 @@ September 2, 2026
 
 **Active entitlement rule**: `isPremium=true AND premiumUntil > NOW()`. This is the canonical state. `premiumPlan` is a fallback for plan detection, not the entitlement source.
 
+**Source of truth hierarchy**:
+1. **User.isPremium + User.premiumUntil** — the canonical Premium entitlement state. Written by webhook activation (`/api/payment/webhook`), manual activation (`/api/admin/analytics/payment-health/fix`), and reconciliation.
+2. **subscriptions table** — currently EMPTY (0 records). The entitlement resolver (`lib/premium-economy/plans.ts`) checks subscriptions first, falls back to User fields. Since subscriptions is empty, User fields are the only active source.
+3. **Transaction.reference** — evidence of payment, used only for plan detection in MRR calculation. Not an entitlement source.
+
+**When User fields and subscriptions disagree** (hypothetical — currently impossible since subscriptions is empty): User fields win. The webhook activation flow writes directly to User fields. The entitlement resolver falls back to User fields when no active subscription exists.
+
 **Expired rule**: `premiumUntil ≤ NOW()` → contributes 0 to MRR. Even if `isPremium=true`, expired entitlement is excluded.
 
 **Duplicate rule**: Each user counted exactly once via `findMany` (no GROUP BY needed). Multiple SUCCESS transactions for same user → only most recent `reference` used for plan detection.
