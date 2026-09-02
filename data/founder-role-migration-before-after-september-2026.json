@@ -1,0 +1,74 @@
+{
+  "snapshotId": "founder-role-migration-september-2026",
+  "generatedAt": "2026-09-02T00:00:00.000Z",
+  "purpose": "Before/after record of founder role separation migration",
+  "founders": [
+    {
+      "id": "cmqxema6a000013z9kefn4jm1",
+      "email": "dominikus.02@gmail.com",
+      "fullName": "Dominikus Wahyu",
+      "role": { "before": "ADMIN", "after": "GURU" },
+      "isFounder": { "before": true, "after": true, "changed": false },
+      "isPremium": { "before": true, "after": true, "changed": false },
+      "classesCount": 9,
+      "studentsCount": 136,
+      "commissionExcluded": true
+    },
+    {
+      "id": "cmqy1g9v50000zag780ik6mrg",
+      "email": "hdsastra47@gmail.com",
+      "fullName": "Washadi",
+      "role": { "before": "ADMIN", "after": "GURU" },
+      "isFounder": { "before": true, "after": true, "changed": false },
+      "isPremium": { "before": true, "after": true, "changed": false },
+      "classesCount": 3,
+      "studentsCount": 90,
+      "commissionExcluded": true
+    },
+    {
+      "id": "cmqy1ga9r0003zag7fbmqhsq4",
+      "email": "alexsurya1968@gmail.com",
+      "fullName": "Alexander Suryanta",
+      "role": { "before": "ADMIN", "after": "GURU" },
+      "isFounder": { "before": true, "after": true, "changed": false },
+      "isPremium": { "before": true, "after": true, "changed": false },
+      "classesCount": 6,
+      "studentsCount": 188,
+      "commissionExcluded": true
+    }
+  ],
+  "nonFounderTeacher": {
+    "id": "cmqxh3uor000dy3w3l1l4m2th",
+    "email": "obahmamah.indonesia@gmail.com",
+    "fullName": "Obahmamah",
+    "role": { "before": "GURU", "after": "GURU", "changed": false },
+    "isFounder": { "before": false, "after": false, "changed": false }
+  },
+  "filesRefactored": [
+    "app/api/user/me/route.ts",
+    "app/api/user/simple-upsert/route.ts",
+    "app/auth/callback/route.ts",
+    "app/api/admin/upload-materi/route.ts",
+    "app/api/admin/generate-ppt/route.ts"
+  ],
+  "filesKeptUnchanged": [
+    "app/actions/register.ts",
+    "app/api/auth/register/route.ts",
+    "lib/commission/config.ts",
+    "lib/commission/engine.ts",
+    "lib/commission/attribution.ts"
+  ],
+  "impactAnalysis": {
+    "authorizationRoutesAffected": 0,
+    "commissionSystemAffected": false,
+    "schemaChangesRequired": false,
+    "newPrismaModelsRequired": false,
+    "testFilesExpectedToPass": [
+      "test:commission-engine",
+      "test:commission-migration",
+      "test:commission-reconciliation",
+      "audit:commission-e2e",
+      "test:premium-economy"
+    ]
+  }
+}

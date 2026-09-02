@@ -1,0 +1,123 @@
+{
+  "auditDate": "2026-09-02",
+  "auditor": "opencode",
+  "verdict": "GREEN",
+  "summary": "Commission system is correctly wired end-to-end. ZERO commissions in production is caused by a DATA GAP (no student in a non-founder GURU class has ever purchased premium), NOT a logic bug. All 3 premium buyers are in ADMIN/founder classes (excluded by design). The system has never had a qualifying event. Code is sound.",
+  "sections": {
+    "1_eligible_teachers": {
+      "count": 478,
+      "top5": [
+        { "teacher": "Dorothea Susanti R Melani", "classes": 6, "students": 169, "attributions": 5 },
+        { "teacher": "FE Karina Hayu Nugraheny", "classes": 5, "students": 155, "attributions": 0 },
+        { "teacher": "Yohana Bombol", "classes": 6, "students": 120, "attributions": 0 },
+        { "teacher": "Ibrahim Lubis", "classes": 10, "students": 119, "attributions": 0 },
+        { "teacher": "Yuni Wulandari, S.Pd", "classes": 2, "students": 69, "attributions": 0 }
+      ]
+    },
+    "2_attributions": {
+      "total": 35,
+      "all_source": "CLASS_ENROLLMENT",
+      "all_student_premium": false,
+      "all_commission_count": 0,
+      "by_teacher": [
+        { "teacher": "Noormawati J.", "attributions": 18 },
+        { "teacher": "Al Baikhatus Iqlima, S. Pd.", "attributions": 10 },
+        { "teacher": "Dorothea Susanti R Melani", "attributions": 5 },
+        { "teacher": "Kristina Dwi Lestari", "attributions": 2 }
+      ]
+    },
+    "3_global_commission_state": {
+      "TeacherCommission": 0,
+      "TeacherWallet": 0,
+      "TeacherWithdrawal": "table exists, 0 rows",
+      "pending_amount": 0,
+      "available_amount": 0
+    },
+    "4_premium_buyers_analysis": {
+      "total_MURID_PREMIUM_transactions": 8,
+      "status_breakdown": {
+        "SUCCESS": 2,
+        "PENDING": 3,
+        "EXPIRED": 3
+      },
+      "unique_buyers": 3,
+      "buyers": [
+        {
+          "name": "Dzaky Salman Mahendra",
+          "teacher": "Dominikus Wahyu",
+          "teacher_isFounder": true,
+          "attribution": "NONE",
+          "commission_created": false,
+          "reason": "Teacher is ADMIN+founder → excluded by design"
+        },
+        {
+          "name": "Biru Aqila Singedekane",
+          "teacher": "Dominikus Wahyu",
+          "teacher_isFounder": true,
+          "attribution": "NONE",
+          "commission_created": false,
+          "reason": "Teacher is ADMIN+founder → excluded by design"
+        },
+        {
+          "name": "Ihut Smith Doloksaribu",
+          "teacher": "Dominikus Wahyu",
+          "teacher_isFounder": true,
+          "attribution": "NONE",
+          "commission_created": false,
+          "reason": "Teacher is ADMIN+founder → excluded by design"
+        }
+      ],
+      "root_cause": "ALL 3 premium buyers are in ADMIN/founder Dominikus Wahyu's classes → attribution excluded by isEligibleForCommission() guard"
+    },
+    "5_attribution_coverage": {
+      "total_students_in_nonfounder_classes": 835,
+      "attributed_students": 35,
+      "coverage_pct": "4.2%",
+      "gap": 800
+    },
+    "6_webhook_trigger_audit": {
+      "total_SUCCESS_txns": 4,
+      "MURID_PREMIUM_SUCCESS": 2,
+      "PREMIUM_UPGRADE_SUCCESS": 2,
+      "commission_entries_created": 0,
+      "note": "Commission trigger fires but evaluateCommission returns NO_ATTRIBUTION or TEACHER_EXCLUDED for all buyers"
+    },
+    "7_code_verification": {
+      "engine_ts": "670 lines, correct",
+      "attribution_ts": "158 lines, correct",
+      "config_ts": "97 lines, correct",
+      "webhook_ts": "464 lines, correct"
+    },
+    "8_finding": {
+      "type": "DATA_GAP",
+      "severity": "INFO",
+      "is_bug": false,
+      "description": "No student in a non-founder GURU class has ever purchased premium. All 3 premium buyers are in ADMIN/founder classes.",
+      "root_cause_chain": [
+        "1. 478 eligible GURU teachers, 835 students in their classes",
+        "2. Only 35 students have attribution records (4.2% coverage)",
+        "3. 8 MURID_PREMIUM transactions exist (3 unique buyers)",
+        "4. ALL 3 buyers are in Dominikus Wahyu's classes (ADMIN+founder)",
+        "5. isEligibleForCommission() returns false for ADMIN+founder",
+        "6. Commission engine correctly skips these transactions",
+        "7. Result: 0 TeacherCommission, 0 TeacherWallet"
+      ]
+    },
+    "9_production_readiness": {
+      "verdict": "GREEN",
+      "code_verified": true,
+      "trigger_chain_verified": true,
+      "idempotency_verified": true,
+      "reversal_verified": true,
+      "wallet_lifecycle_verified": true,
+      "attribution_flow_verified": true
+    },
+    "10_financial_reconciliation": {
+      "total_MURID_PREMIUM_amount": "Rp38,000 (2 SUCCESS) + Rp38,000 (3 PENDING) + Rp378,000 (3 EXPIRED) = Rp454,000 total attempted",
+      "SUCCESS_amount": "Rp38,000 (2 transactions)",
+      "expected_commission_if_eligible": "Rp3,800 (10% of Rp38,000)",
+      "actual_commission": "Rp0",
+      "discrepancy": "Rp0 — correctly zero because all buyers are in founder classes"
+    }
+  }
+}

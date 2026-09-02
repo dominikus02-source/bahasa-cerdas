@@ -118,7 +118,7 @@ export interface KelasInfo {
   tahunAjaran?: string | null;
 }
 
-export default function KomisiClient() {
+export default function KomisiClient({ isFounder = false }: { isFounder?: boolean }) {
   const [summary, setSummary] = useState<KomisiSummary | null>(null);
   const [students, setStudents] = useState<KomisiStudent[] | null>(null);
   const [series, setSeries] = useState<EarningsSeries | null>(null);
@@ -200,6 +200,15 @@ export default function KomisiClient() {
   const available = summary?.availableBalance ?? 0;
   const isNewTeacher = !summary || summary.lifetimeEarned === 0;
   const hasStudents = (students?.length ?? 0) > 0;
+
+  // ── Founder-aware: founder tidak mengikuti program komisi ──
+  if (isFounder) {
+    return (
+      <div className="max-w-5xl mx-auto px-4 py-6 lg:py-8 space-y-6">
+        <FounderCommissionDisclaimer />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 lg:py-8 space-y-6">
@@ -445,6 +454,30 @@ function ProfileEditModal({
 }
 
 export { formatRupiah, withdrawalStatusLabel };
+
+/* ────────────────────────────────────────────────────────────────────────────
+ * Founder Commission Disclaimer — founder tidak mengikuti program komisi
+ * ──────────────────────────────────────────────────────────────────────────── */
+function FounderCommissionDisclaimer() {
+  return (
+    <div className="rounded-2xl border border-border bg-card px-6 py-8 text-center space-y-4 max-w-lg mx-auto mt-8">
+      <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto text-3xl">
+        🏛️
+      </div>
+      <h2 className="text-lg font-semibold text-foreground">
+        Program Komisi Guru Cerdas Sejahtera
+      </h2>
+      <p className="text-sm text-muted-foreground leading-relaxed">
+        Sebagai founder BahasaCerdas, akun ini tidak mengikuti program komisi
+        Guru Cerdas Sejahtera. Komisi ditujukan untuk guru-guru pengajar yang
+        mengundang murid ke platform.
+      </p>
+      <p className="text-xs text-muted-foreground">
+        Jika ada pertanyaan, hubungi tim dukungan BahasaCerdas.
+      </p>
+    </div>
+  );
+}
 
 /* ────────────────────────────────────────────────────────────────────────────
  * P8C §14 — Banner status risiko (respectful, tanpa deteksi/score internal)

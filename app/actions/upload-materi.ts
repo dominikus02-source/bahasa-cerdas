@@ -13,22 +13,13 @@ const materiSchema = z.object({
   fileType: z.enum(["PDF", "PPTX"]),
 });
 
-function isFounderEmail(email: string): boolean {
-  if (!email) return false;
-  const founders = process.env.FOUNDER_EMAILS?.split(",")
-    .map((e) => e.trim().toLowerCase()) ?? [];
-  return founders.includes(email.toLowerCase());
-}
-
 async function getAdminUser() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
   const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
   if (!dbUser) return null;
-  const isAdmin = dbUser.role === "ADMIN" ||
-                  dbUser.isFounder === true ||
-                  isFounderEmail(user.email || "");
+  const isAdmin = dbUser.role === "ADMIN" || dbUser.isFounder === true;
   if (!isAdmin) return null;
   return dbUser;
 }

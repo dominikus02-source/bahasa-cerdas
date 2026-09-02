@@ -28,16 +28,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
     
-    // Check admin access
-    const ALLOWED_ADMIN_EMAILS = [
-      "alexsurya1968@gmail.com",
-      "hdsastra47@gmail.com",
-      "dominikus.02@gmail.com",
-    ];
-    
-    const isAdmin = dbUser.role === "ADMIN" || 
-                    dbUser.isFounder === true || 
-                    ALLOWED_ADMIN_EMAILS.includes(user.email || "");
+    // Check admin access — database role/flag only, no email
+    const isAdmin = dbUser.role === "ADMIN" || dbUser.isFounder === true;
 
     if (!isAdmin) {
       console.log("Manual PPT Upload: Not admin -", user.email);

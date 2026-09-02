@@ -10,30 +10,41 @@ export async function GET(request: Request) {
     const type = requestUrl.searchParams.get("type");
     const next = requestUrl.searchParams.get("next") ?? "/";
 
+    // ── PKCE code exchange ──
     if (code) {
       const supabase = await createClient();
-      await supabase.auth.exchangeCodeForSession(code);
+      const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+
+      if (exchangeError) {
+        console.error("[auth/callback] exchangeCodeForSession FAILED:", exchangeError.message, "| code present:", !!code, "| next:", next);
+        // Recovery-specific: redirect to reset page with error so user sees
+        // "Link Tidak Valid" instead of silently failing.
+        if (next === "/reset-password") {
+          return NextResponse.redirect(`${requestUrl.origin}/reset-password?error=exchange_failed`);
+        }
+        return NextResponse.redirect(`${requestUrl.origin}/login?error=auth`);
+      }
+      console.log("[auth/callback] exchangeCodeForSession OK | next:", next);
     }
 
     if (token_hash && type) {
       return NextResponse.redirect(`${requestUrl.origin}/confirm?token_hash=${token_hash}&type=${type}`);
     }
 
-    // Recovery flow: if next=/reset-password, honor it directly.
+    // ── Recovery flow ──
+    // If next=/reset-password, honor it directly.
     // Recovery is establishing a session to set a new password —
     // skip role-based redirect which would send user to dashboard.
     if (next === "/reset-password") {
       return NextResponse.redirect(`${requestUrl.origin}/reset-password`);
     }
 
-    // Preserve valid internal next param for contextual redirect.
-    // Validate: must start with /, no protocol-relative (//evil.com),
-    // not a login/register path to prevent redirect loops.
+    // ── Valid internal next param ──
     if (next && next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/login") && !next.startsWith("/register")) {
       return NextResponse.redirect(`${requestUrl.origin}${next}`);
     }
 
-    // Role-based redirect: look up user role to send to correct dashboard
+    // ── Role-based redirect ──
     try {
       const supabase = await createClient();
       const { data: { user } } = await supabase.auth.getUser();
@@ -50,7 +61,7 @@ export async function GET(request: Request) {
 
     return NextResponse.redirect(`${requestUrl.origin}/`);
   } catch (error) {
-    console.error("Auth callback error:", error);
+    console.error("[auth/callback] UNEXPECTED ERROR:", error);
     return NextResponse.redirect(`${requestUrl.origin}/login?error=auth`);
   }
 }

@@ -12,12 +12,6 @@ const registerApiSchema = z.object({
   supabaseId: z.string().uuid().optional(),
 });
 
-function isFounderEmail(email: string): boolean {
-  const founders = process.env.FOUNDER_EMAILS?.split(",")
-    .map((e) => e.trim().toLowerCase()) ?? [];
-  return founders.includes(email.toLowerCase());
-}
-
 export async function POST(req: NextRequest) {
   try {
     const rl = await rateLimitRoute(req, { maxRequests: 5, windowSeconds: 60, identifier: "register" });
@@ -35,7 +29,6 @@ export async function POST(req: NextRequest) {
 
     const { email, fullName, role, supabaseId } = parsed.data;
     const sanitizedName = sanitize(fullName);
-    const isFounder = isFounderEmail(email);
 
     const existingUser = await db.user.findFirst({
       where: { email: email.toLowerCase() },
@@ -55,9 +48,6 @@ export async function POST(req: NextRequest) {
         fullName: sanitizedName,
         avatar: getGravatarUrl(email),
         role,
-        isFounder,
-        isPremium: isFounder,
-        premiumPlan: isFounder ? "PRO" : "FREE",
       },
     });
 

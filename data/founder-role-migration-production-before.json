@@ -1,0 +1,60 @@
+{
+  "snapshotDate": "2026-09-01T00:00:00.000Z",
+  "purpose": "Founder Role Separation — Production Before State",
+  "founders": [
+    {
+      "id": "cmqxema6a000013z9kefn4jm1",
+      "email": "dominikus.02@gmail.com",
+      "fullName": "Dominikus Wahyu",
+      "role": "ADMIN",
+      "isFounder": true,
+      "targetRole": "GURU",
+      "classes": 9,
+      "students": 136,
+      "premiumStudents": 3
+    },
+    {
+      "id": "cmqy1g9v50000zag780ik6mrg",
+      "email": "hdsastra47@gmail.com",
+      "fullName": "Washadi",
+      "role": "ADMIN",
+      "isFounder": true,
+      "targetRole": "GURU",
+      "classes": 3,
+      "students": 90,
+      "premiumStudents": 0,
+      "note": "Supabase auth metadata says role=GURU, Prisma says ADMIN — Prisma is SSOT"
+    },
+    {
+      "id": "cmqy1ga9r0003zag7fbmqhsq4",
+      "email": "alexsurya1968@gmail.com",
+      "fullName": "Alexander Suryanta",
+      "role": "ADMIN",
+      "isFounder": true,
+      "targetRole": "GURU",
+      "classes": 6,
+      "students": 188,
+      "premiumStudents": 4
+    }
+  ],
+  "nonFounderAdmin": {
+    "id": "cmqxh3uor000dy3w3l1l4m2th",
+    "email": "obahmamah.indonesia@gmail.com",
+    "fullName": "Obahmamah",
+    "role": "ADMIN",
+    "isFounder": false,
+    "targetRole": "ADMIN",
+    "note": "NOT a founder — no change"
+  },
+  "expectedPostMigration": {
+    "founders": "role=GURU, isFounder=true",
+    "obahmamah": "role=ADMIN, isFounder=false (unchanged)",
+    "commissionExclusion": "isFounder=true → excluded (UNAFFECTED by role change)",
+    "authorizationGuards": "isFounder bypass → all pass (UNAFFECTED)"
+  },
+  "migration": {
+    "file": "prisma/migrations/manual/2026-09-01_founder_role_separation.sql",
+    "idempotent": true,
+    "rollbackAvailable": true
+  }
+}

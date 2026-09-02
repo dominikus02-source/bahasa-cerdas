@@ -1,0 +1,291 @@
+{
+  "auditDate": "2026-09-02T06:30:00.000Z",
+  "auditType": "FOUNDER_IDENTITY_ROLE_SEPARATION",
+  "readOnly": true,
+  "productionMutation": "NONE",
+
+  "totalFounders": 3,
+  "founderInventory": [
+    {
+      "userId": "cmqxema6a000013z9kefn4jm1",
+      "email": "dominikus.02@gmail.com",
+      "fullName": "Dominikus Wahyu",
+      "role": "ADMIN",
+      "isFounder": true,
+      "supabaseId": "ff95ade9-3347-4a08-8a2c-18aa42843054",
+      "createdAt": "2026-06-28T06:24:48.899Z",
+      "lastActivity": "2026-09-02T06:17:06.448Z",
+      "school": "Sekolah Harapan Bangsa",
+      "province": "Banten",
+      "city": "Kota Tangerang Selatan",
+      "isPremium": true,
+      "premiumPlan": "PRO",
+      "premiumUntil": "2026-08-30T15:45:14.876Z",
+      "classCount": 9,
+      "studentCount": 136,
+      "attributionCount": 0,
+      "commissionCount": 0,
+      "commissionAmount": 0,
+      "walletCount": 0,
+      "premiumStudents": 3,
+      "transactionCount": 0,
+      "aiUsageCount": 92,
+      "gameResultCount": 1,
+      "karyaCount": 6,
+      "assignmentCount": 6,
+      "quizCount": 1,
+      "notificationCount": 683,
+      "roleMismatch": false,
+      "notes": "Founder + creator. Has 9 classes, 136 students. All 3 premium buyers are in his classes. ADMIN role provides direct admin panel access."
+    },
+    {
+      "userId": "cmqy1g9v50000zag780ik6mrg",
+      "email": "hdsastra47@gmail.com",
+      "fullName": "Washadi",
+      "role": "ADMIN",
+      "isFounder": true,
+      "supabaseId": "f78b382e-afd8-4c7a-83b8-07e87b4d2029",
+      "createdAt": "2026-06-28T17:03:59.730Z",
+      "lastActivity": "2026-08-02T14:51:47.237Z",
+      "school": null,
+      "province": null,
+      "city": null,
+      "isPremium": true,
+      "premiumPlan": "PRO",
+      "premiumUntil": null,
+      "classCount": 3,
+      "studentCount": 90,
+      "attributionCount": 0,
+      "commissionCount": 0,
+      "commissionAmount": 0,
+      "walletCount": 0,
+      "premiumStudents": 0,
+      "transactionCount": 0,
+      "aiUsageCount": 0,
+      "gameResultCount": 0,
+      "karyaCount": 0,
+      "assignmentCount": 1,
+      "quizCount": 0,
+      "notificationCount": 50,
+      "roleMismatch": true,
+      "roleMismatchDetail": "Supabase auth.raw_user_meta_data.role='GURU' but Prisma role='ADMIN'",
+      "notes": "Founder co-admin. 3 classes, 90 students. No premium students, no commission activity."
+    },
+    {
+      "userId": "cmqy1ga9r0003zag7fbmqhsq4",
+      "email": "alexsurya1968@gmail.com",
+      "fullName": "31. Alexander Suryanta",
+      "role": "ADMIN",
+      "isFounder": true,
+      "supabaseId": "10959168-e95e-46d6-9a64-3fd90bedba5c",
+      "createdAt": "2026-06-28T17:04:00.255Z",
+      "lastActivity": "2026-09-02T00:37:53.042Z",
+      "school": "SMP Santa Laurensia AS",
+      "province": "BANTEN",
+      "city": null,
+      "isPremium": true,
+      "premiumPlan": "PRO",
+      "premiumUntil": null,
+      "classCount": 6,
+      "studentCount": 188,
+      "attributionCount": 0,
+      "commissionCount": 0,
+      "commissionAmount": 0,
+      "walletCount": 0,
+      "premiumStudents": 4,
+      "transactionCount": 0,
+      "aiUsageCount": 22,
+      "gameResultCount": 1,
+      "karyaCount": 1,
+      "assignmentCount": 2,
+      "quizCount": 0,
+      "notificationCount": 699,
+      "roleMismatch": true,
+      "roleMismatchDetail": "Supabase auth.raw_user_meta_data has no role field (null). Prisma role='ADMIN'.",
+      "notes": "Founder + active teacher. 6 BINASIA classes, 188 students. Is also a student in his own class (alexsurya1968@gmail.com in BINASIA 7A)."
+    }
+  ],
+
+  "obahmamah": {
+    "userId": "cmqxh3uor000dy3w3l1l4m2th",
+    "email": "obahmamah.indonesia@gmail.com",
+    "fullName": "Super Admin BC",
+    "role": "GURU",
+    "isFounder": false,
+    "supabaseId": "9408de1d-9b58-4bc5-86b4-e226861ebefa",
+    "school": "Official BC",
+    "classes": 1,
+    "students": 0,
+    "attributionCount": 0,
+    "commissionCount": 0,
+    "notes": "NOT a founder. Regular GURU account. 1 class, 0 students. Used as test/operator account."
+  },
+
+  "roleModel": {
+    "prismaEnum": ["GURU", "MURID", "ADMIN"],
+    "founderIsAFlag": true,
+    "founderIsNotARole": true,
+    "booleanField": "isFounder",
+    "totalUsers": 1533,
+    "totalAdmins": 3,
+    "totalFounders": 3,
+    "adminsWithoutFounder": 0
+  },
+
+  "hardcodedIdentities": [
+    {
+      "email": "dominikus.02@gmail.com",
+      "severity": "CRITICAL",
+      "files": [
+        "app/api/user/me/route.ts (line 9 — FOUNDER_EMAILS constant)",
+        "app/api/user/simple-upsert/route.ts (line 5 — FOUNDER_EMAILS constant)",
+        "app/auth/callback/route.ts (line 12 — isFounder check)",
+        "app/api/admin/upload-materi/route.ts (line 35 — isAdmin array)",
+        "app/api/admin/generate-ppt/route.ts (line 10 — isAdmin array)"
+      ]
+    },
+    {
+      "email": "hdsastra47@gmail.com",
+      "severity": "CRITICAL",
+      "files": [
+        "app/api/user/me/route.ts (line 9 — FOUNDER_EMAILS constant)",
+        "app/api/user/simple-upsert/route.ts (line 5 — FOUNDER_EMAILS constant)",
+        "app/auth/callback/route.ts (line 12 — isFounder check)",
+        "app/api/admin/upload-materi/route.ts (line 34 — isAdmin array)",
+        "app/api/admin/generate-ppt/route.ts (line 9 — isAdmin array)"
+      ]
+    },
+    {
+      "email": "alexsurya1968@gmail.com",
+      "severity": "CRITICAL",
+      "files": [
+        "app/api/user/me/route.ts (line 9 — FOUNDER_EMAILS constant)",
+        "app/api/user/simple-upsert/route.ts (line 5 — FOUNDER_EMAILS constant)",
+        "app/auth/callback/route.ts (line 12 — isFounder check)",
+        "app/api/admin/upload-materi/route.ts (line 33 — isAdmin array)",
+        "app/api/admin/generate-ppt/route.ts (line 8 — isAdmin array)"
+      ]
+    },
+    {
+      "email": "obahmamah.indonesia@gmail.com",
+      "severity": "LOW",
+      "files": [],
+      "notes": "Not hardcoded anywhere in code"
+    }
+  ],
+
+  "commissionImpact": {
+    "currentBehavior": "Founder + ADMIN → NOT eligible (isFounder=true blocks commission)",
+    "proposedBehavior": "Founder + GURU → still NOT eligible (isFounder=true blocks commission)",
+    "commissionBlockedBy": "isFounder flag, not role",
+    "allFoundersExcluded": true,
+    "noChangeNeeded": true
+  },
+
+  "classImpact": {
+    "dominantikus": {
+      "classes": 9,
+      "students": 136,
+      "premiumStudents": 3,
+      "impact": "NONE — Group.teacherId is userId, not role-based. Changing role from ADMIN to GURU does not affect class ownership."
+    },
+    "allFounders": {
+      "totalClasses": 18,
+      "totalStudents": 414,
+      "impact": "NONE — all Group.teacherId references remain valid"
+    }
+  },
+
+  "premiumImpact": {
+    "allFoundersArePro": true,
+    "planResolver": "isFounder=true → FOUNDER plan (unlimited). Independent of role.",
+    "impact": "NONE — plan resolution checks isFounder, not role"
+  },
+
+  "routeAccessMatrix": {
+    "adminRoutes": {
+      "pattern": "!user.isFounder → 403",
+      "founderBypass": true,
+      "adminBypass": true,
+      "risk": "HIGH — if Dominikus changes to role=GURU, admin routes still work via isFounder bypass"
+    },
+    "guruRoutes": {
+      "pattern": "resource ownership + ADMIN/founder bypass",
+      "founderBypass": true,
+      "risk": "LOW — already works via isFounder"
+    },
+    "muridRoutes": {
+      "pattern": "role !== MURID && !isFounder → redirect",
+      "founderBypass": true,
+      "risk": "LOW"
+    },
+    "commissionRoutes": {
+      "pattern": "role !== GURU && !isFounder → 403",
+      "founderCanAccess": true,
+      "founderCanEarn": false,
+      "risk": "NONE — founder excluded from earning by isFounder check"
+    }
+  },
+
+  "securityFindings": {
+    "guruCannotAccessAdmin": true,
+    "adminCannotAccessCommission": true,
+    "founderCanAccessEverything": true,
+    "roleBasedAuthNotMandatory": "Admin routes use isFounder, not role=ADMIN. Changing Dominikus role to GURU would NOT revoke admin access.",
+    "clientSideOnly": "None — all authorization is server-side via getUser()"
+  },
+
+  "migrationPlan": {
+    "dominikus": {
+      "current": "role=ADMIN, isFounder=true",
+      "proposed": "role=GURU, isFounder=true",
+      "routesAffected": "Admin layout (isFounder bypass already works), onboarding destination (ADMIN→/admin would change to GURU→/guru/beranda)",
+      "dataAffected": "NONE — all foreign keys use userId, not role",
+      "risk": "LOW — isFounder bypass covers all admin routes",
+      "complexity": "LOW"
+    },
+    "washadi": {
+      "current": "role=ADMIN, isFounder=true",
+      "proposed": "role=GURU, isFounder=true",
+      "routesAffected": "Same as Dominikus",
+      "dataAffected": "NONE",
+      "risk": "LOW",
+      "complexity": "LOW"
+    },
+    "alexander": {
+      "current": "role=ADMIN, isFounder=true",
+      "proposed": "role=GURU, isFounder=true",
+      "routesAffected": "Same as Dominikus",
+      "dataAffected": "NONE",
+      "risk": "LOW",
+      "complexity": "LOW"
+    }
+  },
+
+  "hardcodedEmailRemediation": {
+    "required": true,
+    "files": [
+      "app/api/user/me/route.ts — replace FOUNDER_EMAILS with DB lookup",
+      "app/api/user/simple-upsert/route.ts — replace FOUNDER_EMAILS with DB lookup",
+      "app/auth/callback/route.ts — replace hardcoded array with DB lookup",
+      "app/api/admin/upload-materi/route.ts — remove founder email list, use isFounder",
+      "app/api/admin/generate-ppt/route.ts — remove founder email list, use isFounder"
+    ]
+  },
+
+  "recommendedArchitecture": "MODEL_B",
+  "recommendedTargetState": [
+    { "email": "dominikus.02@gmail.com", "currentRole": "ADMIN", "proposedRole": "GURU", "isFounder": true, "reason": "Primary creator, active teacher" },
+    { "email": "hdsastra47@gmail.com", "currentRole": "ADMIN", "proposedRole": "GURU", "isFounder": true, "reason": "Co-founder, has classes" },
+    { "email": "alexsurya1968@gmail.com", "currentRole": "ADMIN", "proposedRole": "GURU", "isFounder": true, "reason": "Active teacher with 188 students" }
+  ],
+
+  "verdict": {
+    "roleCollision": true,
+    "collisionDetails": "All 3 founders have role=ADMIN. None have role=GURU despite being active teachers.",
+    "commissionImpact": "ZERO — founder exclusion is via isFounder flag, not role. Changing role does not affect commission.",
+    "migrationSafe": true,
+    "migrationComplexity": "LOW",
+    "blockingIssues": "NONE"
+  }
+}

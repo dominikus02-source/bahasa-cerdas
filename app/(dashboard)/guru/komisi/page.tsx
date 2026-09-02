@@ -17,5 +17,5 @@ export default async function KomisiPage() {
   if (!user) redirect("/login");
   if (user.role !== "GURU" && !user.isFounder) redirect("/murid/beranda");
 
-  return <KomisiClient />;
+  return <KomisiClient isFounder={user.isFounder === true} />;
 }

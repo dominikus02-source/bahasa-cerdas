@@ -23,10 +23,6 @@ export async function registerUser(formData: FormData) {
     const { email, supabaseId, fullName, role, school, city, province } = parsed.data;
     const sanitizedName = sanitize(fullName);
 
-    const isFounder = process.env.FOUNDER_EMAILS?.split(",")
-      .map((e) => e.trim().toLowerCase())
-      .includes(email.toLowerCase()) ?? false;
-
     const existingUser = await db.user.findFirst({ where: { email: email.toLowerCase() } });
     if (existingUser) {
       if (existingUser.supabaseId === supabaseId) {
@@ -44,9 +40,6 @@ export async function registerUser(formData: FormData) {
         email: email.toLowerCase(),
         fullName: sanitizedName,
         role,
-        isFounder,
-        isPremium: isFounder,
-        premiumPlan: isFounder ? "PRO" : "FREE",
       },
     });
 

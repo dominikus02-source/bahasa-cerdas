@@ -37,6 +37,13 @@ export default function ResetPasswordPage() {
   const router = useRouter();
 
   useEffect(() => {
+    // Check for exchange failure from callback
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("error") === "exchange_failed") {
+      setRecoveryFailed(true);
+      return;
+    }
+
     const supabase = createClient();
 
     // Listen for auth state changes — the recovery link triggers
@@ -56,10 +63,10 @@ export default function ResetPasswordPage() {
       }
     });
 
-    // Timeout: if recovery session not established in 10s, link is likely invalid
+    // Timeout: if recovery session not established in 15s, link is likely invalid
     const timeout = setTimeout(() => {
       setRecoveryFailed(true);
-    }, 10_000);
+    }, 15_000);
 
     return () => {
       subscription.unsubscribe();
@@ -99,6 +106,9 @@ export default function ResetPasswordPage() {
 
   // ── EXPIRED / INVALID RECOVERY LINK ──
   if (recoveryFailed && !recoveryReady) {
+    const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+    const isExchangeFailed = params?.get("error") === "exchange_failed";
+
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-600 via-red-700 to-blue-900 relative overflow-hidden px-4">
         <BatikDecoration />
@@ -109,17 +119,30 @@ export default function ResetPasswordPage() {
                 <AlertCircle size={32} className="text-red-600" />
               </div>
               <h1 className="text-2xl font-bold text-gray-900 mb-2">Link Tidak Valid</h1>
-              <p className="text-sm text-gray-500 mb-6">
-                Link reset password sudah tidak valid atau sudah kedaluwarsa.
+              <p className="text-sm text-gray-500 mb-2">
+                {isExchangeFailed
+                  ? "Gagal memverifikasi link reset. Link mungkin sudah kedaluwarsa."
+                  : "Link reset password sudah tidak valid atau sudah kedaluwarsa."}
               </p>
-              <Button
-                onClick={() => router.push("/login")}
-                className="w-full h-12 rounded-xl font-bold"
-                variant="outline"
-              >
-                <ArrowLeft size={16} className="mr-2" />
-                Kembali ke Login
-              </Button>
+              <p className="text-xs text-gray-400 mb-6">
+                Silakan minta link reset password baru dari halaman login.
+              </p>
+              <div className="space-y-2">
+                <Button
+                  onClick={() => router.push("/login")}
+                  className="w-full h-12 rounded-xl font-bold bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 transition-all"
+                >
+                  Minta Link Reset Baru
+                </Button>
+                <Button
+                  onClick={() => router.push("/login")}
+                  className="w-full h-10 rounded-xl"
+                  variant="ghost"
+                >
+                  <ArrowLeft size={16} className="mr-2" />
+                  Kembali ke Login
+                </Button>
+              </div>
             </div>
           </div>
         </div>

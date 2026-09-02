@@ -4179,3 +4179,90 @@ Kept:
 | `test:premium-economy` | ✅ 63/63 |
 | Protected zones | ✅ 0 diff (prisma/, gamification/, learning-loop/, engines/) |
 | Product behavior | ✅ Unchanged — modern gateway already handles quota |
+
+---
+
+## Commission Forensic Audit — Dzaky Salman Mahendra (Sept 1, 2026)
+
+### Finding
+Teacher (Dominikus Wahyu) reports student "Dzaky" is theirs but `/guru/komisi` shows Rp0. **System working as designed** — teacher is ADMIN+founder → excluded from commission system.
+
+### Root Cause
+1. **Teacher excluded by design**: `isEligibleForCommission()` in `lib/commission/config.ts:55` requires `role === 'GURU' && !isFounder`. Dominikus Wahyu is `role: "ADMIN"` + `isFounder: true` → excluded.
+2. **No attribution created**: `ensureAttributionOnClassJoin()` in `lib/commission/attribution.ts:73` checks eligibility before creating attribution. Since teacher is excluded, attribution is never created.
+3. **No commission created**: Commission engine requires attribution to create commission entries. No attribution → no commission.
+4. **Global state**: The commission system has **ZERO commission entries** and **ZERO wallets** globally. 35 attributions exist for 4 other teachers, but none have generated commission.
+
+### Data
+| Entity | Status |
+|--------|--------|
+| Student Dzaky | `isPremium: true`, PRO, expires 2026-10-01 |
+| Teacher Dominikus Wahyu | `role: "ADMIN"`, `isFounder: true` |
+| TeacherAttribution (Dzaky) | **MISSING** (teacher excluded) |
+| TeacherCommission | **ZERO** (global) |
+| TeacherWallet | **ZERO** (global) |
+| Dzaky's class | 9A, joined 2026-07-21 (before commission launch 2026-07-30) |
+| Dzaky's payments | 2 SUCCESS (Rp19,000 each), 2 EXPIRED, 1 PENDING |
+
+### Files
+- `docs/COMMISSION_FORENSIC_AUDIT_DZAKY_SEPTEMBER_2026.md` — full forensic report
+- `scripts/audit-commission-dzaky.ts` — read-only audit script
+- `package.json` — added `audit:commission-dzaky` script
+
+### Recommendation
+**Option A** (accept as designed): Founder/ADMIN excluded from commission intentionally.  
+**Option B** (allow founder): Remove `isFounder` check from `isEligibleForCommission()`, run backfill.  
+**Option C** (hybrid): Allow founder but keep ADMIN exclusion.
+
+---
+
+## Commission E2E Production Readiness Audit — September 2, 2026
+
+### Verdict: 🟢 GREEN
+Commission system is correctly wired end-to-end. ZERO commissions = DATA GAP (no qualifying event), NOT a bug.
+
+### Root Cause Chain
+1. 478 eligible GURU teachers invited 1,239+ students
+2. 835 students in non-founder classes, only 35 have attributions (4.2% coverage)
+3. 8 MURID_PREMIUM transactions exist (3 unique buyers)
+4. ALL 3 buyers are in Dominikus Wahyu's classes (ADMIN+founder → excluded by design)
+5. `isEligibleForCommission()` returns false → commission engine correctly skips
+6. Result: 0 TeacherCommission, 0 TeacherWallet
+
+### Premium Buyers Analysis
+| Buyer | Teacher | Founder? | Commission |
+|-------|---------|----------|------------|
+| Dzaky Salman Mahendra | Dominikus Wahyu | YES | ❌ Blocked |
+| Biru Aqila Singedekane | Dominikus Wahyu | YES | ❌ Blocked |
+| Ihut Smith Doloksaribu | Dominikus Wahyu | YES | ❌ Blocked |
+
+### Code Verified (ALL PASS)
+- `lib/commission/engine.ts` (670 lines): Append-only ledger, idempotent, wallet upsert
+- `lib/commission/attribution.ts` (158 lines): First-valid-wins, founder exclusion
+- `lib/commission/config.ts` (97 lines): 10% rate, 7-day holding, Rp50k min
+- `app/api/payment/webhook/route.ts` (464 lines): Commission fires ONLY for MURID_PREMIUM
+
+### Financial Reconciliation
+- Total MURID_PREMIUM attempted: Rp454,000 (8 transactions)
+- SUCCESS amount: Rp38,000 (2 transactions)
+- Expected commission if eligible: Rp3,800 (10%)
+- Actual commission: Rp0 ✅ (correctly zero)
+
+### Files
+- `data/commission-e2e-production-readiness-september-2026.json` — structured audit data
+- `docs/COMMISSION_E2E_PRODUCTION_READINESS_SEPTEMBER_2026.md` — full report
+- `scripts/audit-commission-e2e-readiness.ts` — re-runnable audit script
+- `package.json` — added `audit:commission-e2e` script
+
+### What Would Trigger First Commission
+1. Student joins a non-founder GURU's class (creates attribution)
+2. Student purchases "Premium Murid" (Rp19,000/month or Rp180,000/year)
+3. Midtrans webhook fires with type=`MURID_PREMIUM`
+4. Commission = floor(19,000 × 0.10) = Rp1,900 (ELIGIBLE, 7-day holding)
+5. After 7 days: Rp1,900 → AVAILABLE
+6. Teacher withdraws when balance ≥ Rp50,000
+
+### Recommendations
+1. No code changes needed
+2. Monitor for first MURID_PREMIUM from non-founder class
+3. Backfill attribution for 800 unmatched students

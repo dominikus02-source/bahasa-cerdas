@@ -6,8 +6,6 @@ import cache from "@/lib/redis";
 import { err } from "@/lib/api/response";
 import { ERR } from "@/lib/api/errors";
 
-const FOUNDER_EMAILS = ["hdsastra47@gmail.com", "dominikus.02@gmail.com", "alexsurya1968@gmail.com"];
-
 const userSessionFields = {
   id: true, supabaseId: true, email: true, fullName: true, nickname: true, nicknameUpdatedAt: true,
   avatar: true, role: true, isFounder: true, isPremium: true, premiumPlan: true, premiumUntil: true,
@@ -32,11 +30,6 @@ async function findOrCreateUser(opts: {
   if (user) {
     const updates: Record<string, unknown> = {};
     if (user.supabaseId !== supabaseId) updates.supabaseId = supabaseId;
-    if (FOUNDER_EMAILS.includes(lowerEmail) && !user.isFounder) {
-      updates.isFounder = true;
-      updates.isPremium = true;
-      updates.premiumPlan = "PRO";
-    }
     if (Object.keys(updates).length > 0) {
       await db.user.update({ where: { id: user.id }, data: updates });
     }
@@ -45,7 +38,6 @@ async function findOrCreateUser(opts: {
       : user;
   }
 
-  const isFounder = FOUNDER_EMAILS.includes(lowerEmail);
   const isGuru = role === "GURU";
   const newUser = await db.user.create({
     data: {
@@ -54,9 +46,6 @@ async function findOrCreateUser(opts: {
       fullName,
       avatar: getGravatarUrl(lowerEmail),
       role: isGuru ? "GURU" : "MURID",
-      isFounder,
-      isPremium: isFounder,
-      premiumPlan: isFounder ? "PRO" : "FREE",
     },
   });
 
@@ -95,11 +84,6 @@ export async function GET() {
 
     const updates: Record<string, unknown> = {};
     if (found.supabaseId !== user.id) updates.supabaseId = user.id;
-    if (FOUNDER_EMAILS.includes(email) && !found.isFounder) {
-      updates.isFounder = true;
-      updates.isPremium = true;
-      updates.premiumPlan = "PRO";
-    }
     if (Object.keys(updates).length > 0) {
       await db.user.update({ where: { id: found.id }, data: updates });
     }

@@ -9,16 +9,12 @@ async function syncUser(supabaseUserId: string, email: string, metadata: Record<
   if (!user) {
     const fullName = (metadata?.full_name as string) || email.split("@")[0];
     const role = metadata?.role === "GURU" ? "GURU" : "MURID";
-    const isFounder = ["hdsastra47@gmail.com", "dominikus.02@gmail.com", "alexsurya1968@gmail.com"].includes(email.toLowerCase());
     user = await db.user.create({
       data: {
         supabaseId: supabaseUserId,
         email: email.toLowerCase(),
         fullName,
         role,
-        isFounder,
-        isPremium: isFounder,
-        premiumPlan: isFounder ? "PRO" : "FREE",
       },
     });
     try { await db.profile.create({ data: { userId: user.id } }); } catch {}

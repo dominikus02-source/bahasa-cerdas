@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getGravatarUrl } from "@/lib/avatar";
 
-const FOUNDER_EMAILS = ["hdsastra47@gmail.com", "dominikus.02@gmail.com", "alexsurya1968@gmail.com"];
-
 export async function POST(request: NextRequest) {
   try {
     let supabaseId = "";
@@ -42,11 +40,6 @@ export async function POST(request: NextRequest) {
     if (user) {
       const updates: Record<string, unknown> = {};
       if (user.supabaseId !== supabaseId) updates.supabaseId = supabaseId;
-      if (FOUNDER_EMAILS.includes(email) && !user.isFounder) {
-        updates.isFounder = true;
-        updates.isPremium = true;
-        updates.premiumPlan = "PRO";
-      }
       if (Object.keys(updates).length > 0) {
         await db.user.update({ where: { id: user.id }, data: updates });
       }
@@ -57,8 +50,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Create new user
-    const isFounder = FOUNDER_EMAILS.includes(email);
+    // Create new user — founder flag is set via DB, not email
     const newUser = await db.user.create({
       data: {
         supabaseId,
@@ -66,9 +58,6 @@ export async function POST(request: NextRequest) {
         fullName,
         avatar: getGravatarUrl(email),
         role: role === "GURU" ? "GURU" : "MURID",
-        isFounder,
-        isPremium: isFounder,
-        premiumPlan: isFounder ? "PRO" : "FREE",
       },
     });
 
