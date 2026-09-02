@@ -1,7 +1,7 @@
 # BahasaCerdas Founder Control Tower — Metric Dictionary
 
 ## Version
-4.0
+5.0
 
 ## Last Updated
 September 2, 2026
@@ -157,6 +157,18 @@ September 2, 2026
 5. **No duplicate MRR formulas** — all modules import from `calculateMRR()` in `lib/admin/executive.ts`.
 
 ---
+
+## Founder Health Status
+
+| Metric | Definition | Source | Formula | Window | Unit | Investor-safe |
+|--------|------------|--------|---------|--------|------|---------------|
+| Health Status | Overall business health | `evaluateFounderHealth()` | Rule-based evaluation of 4 domains | current | enum | NO |
+| Founder Priority | Actionable issue for founder | `evaluateFounderHealth()` | Deterministic rules with severity P1/P2/P3 | current | object | NO |
+| MRR Breakdown | MRR by plan type | `calculateMRRBreakdown()` | Per-plan MRR contribution | current | Rp/month | YES |
+
+**Health Status** evaluates: Business (MRR, conversion), Product (DAU, retention, learning), Trust (payment health, data quality), Operations. Returns HEALTHY / ATTENTION / CRITICAL. Maximum 3 priorities.
+
+**MRR Breakdown** returns `{ muridMonthly, muridYearly, guruMonthly, guruYearly, total }`. Each active premium user counted once. `total` must equal `calculateMRR()`.
 
 ## Known Limitations
 
