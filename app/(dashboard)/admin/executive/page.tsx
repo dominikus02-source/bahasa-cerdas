@@ -147,7 +147,7 @@ export default async function ExecutiveDashboard() {
           </div>
         </div>
         <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
-          <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2 text-sm"><DollarSign size={14} className="text-green-500" /> Revenue</h2>
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2 text-sm"><DollarSign size={14} className="text-green-500" /> Financial Overview</h2>
           <div className="divide-y divide-slate-100 dark:divide-slate-700/50">
             <MetricRow label="MRR (Normalized)" value={formatRp(data.revenue.mrr.value)} trend={data.revenue.mrr.trend} />
             <MetricRow label="Cash Collected (30d)" value={formatRp(data.revenue.cashCollected30d.value)} trend={data.revenue.cashCollected30d.trend} />

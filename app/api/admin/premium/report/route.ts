@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { Role } from "@prisma/client";
+import { calculateMRR } from "@/lib/admin/executive";
 
 /**
  * GET /api/admin/premium/report
@@ -279,30 +280,18 @@ export async function GET(req: NextRequest) {
     });
 
     // ── PREMIUM COMMAND CENTER METRICS ──────────────────────────
-    // MRR by plan (Monthly = raw amount, Yearly = amount/12 weighted)
-    const mrrByPlanRaw = await db.transaksi.groupBy({
-      by: ["reference"],
-      where: {
-        type: { in: ["MURID_PREMIUM", "PREMIUM_UPGRADE"] },
-        status: "SUCCESS",
-      },
-      _sum: { amount: true },
-      _count: true,
+    // MRR: canonical formula from lib/admin/executive.ts (active subscriptions only)
+    const mrrTotal = await calculateMRR();
+
+    // Breakdown by role for display
+    const activePremiumUsers = await db.user.findMany({
+      where: { isPremium: true, premiumUntil: { gt: now }, isFounder: false },
+      select: { id: true, role: true },
     });
+    const activeMuridPremium = activePremiumUsers.filter(u => u.role === "MURID").length;
+    const activeGuruPremium = activePremiumUsers.filter(u => u.role === "GURU").length;
 
-    let mrrMonthly = 0;
-    let mrrYearly = 0;
-    for (const row of mrrByPlanRaw) {
-      const amt = row._sum.amount || 0;
-      if (row.reference?.includes("YEARLY")) {
-        mrrYearly += Math.round(amt / 12);
-      } else {
-        mrrMonthly += amt;
-      }
-    }
-    const mrrTotal = mrrMonthly + mrrYearly;
-
-    // Revenue by audience (sum of successful premium transactions)
+    // Cash Collected by audience (historical, NOT MRR)
     const [muridRevenueAgg, guruRevenueAgg] = await Promise.all([
       db.transaksi.aggregate({
         _sum: { amount: true },
@@ -313,8 +302,8 @@ export async function GET(req: NextRequest) {
         where: { type: "PREMIUM_UPGRADE", status: "SUCCESS" },
       }),
     ]);
-    const muridRevenue = muridRevenueAgg._sum.amount || 0;
-    const guruRevenue = guruRevenueAgg._sum.amount || 0;
+    const muridCashCollected = muridRevenueAgg._sum.amount || 0;
+    const guruCashCollected = guruRevenueAgg._sum.amount || 0;
 
     // Conversion funnel: Registered → Active Premium → Renewed
     const totalRegistered = await db.user.count({ where: { ...roleFilter, isFounder: false } });
@@ -356,15 +345,15 @@ export async function GET(req: NextRequest) {
         guruActive: guruActiveCount,
         expiringSoon: expiringCount,
         expired: expiredCount,
-        // Premium Command Center
+        // Premium Command Center (MRR from active subscriptions — canonical formula)
         mrr: {
           total: mrrTotal,
-          monthly: mrrMonthly,
-          yearly: mrrYearly,
+          activeMuridPremium,
+          activeGuruPremium,
         },
-        revenueByAudience: {
-          murid: muridRevenue,
-          guru: guruRevenue,
+        cashCollectedByAudience: {
+          murid: muridCashCollected,
+          guru: guruCashCollected,
         },
         funnel: {
           registered: totalRegistered,

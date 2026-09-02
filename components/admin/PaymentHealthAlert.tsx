@@ -95,7 +95,7 @@ export function PaymentHealthAlert({ data }: { data: PaymentHealthData }) {
           </div>
           <p className="text-xs text-red-600 dark:text-red-400">
             {data.summary.totalAffected} user membayar SUCCESS tapi premium tidak aktif.
-            Revenue at risk: {formatRp(data.summary.totalRevenueAtRisk)}.
+            Cash at risk: {formatRp(data.summary.totalRevenueAtRisk)}.
             {" "}
             <span className="font-medium">
               ({data.summary.affectedByRole.murid} murid · {data.summary.affectedByRole.guru} guru)

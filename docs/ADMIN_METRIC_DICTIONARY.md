@@ -1,7 +1,7 @@
 # BahasaCerdas Founder Control Tower — Metric Dictionary
 
 ## Version
-1.0
+2.0
 
 ## Last Updated
 September 2, 2026
@@ -64,7 +64,7 @@ September 2, 2026
 
 **Active Premium definition**: `isPremium=true` AND `premiumUntil > NOW()`. This represents current active entitlement, NOT historical purchase. Admin/manual activation, recovered Premium, and expired Premium are all handled correctly by this definition.
 
-**Conversion Rate denominator**: `(totalGuru - founderCount)` where `founderCount` is hardcoded as 3. This represents **Guru-eligible population** (all teachers minus founders/admins). The metric is specifically **Guru Premium Conversion Rate**, not overall.
+**Conversion Rate denominator**: `(totalGuru - founderCount)` where `founderCount` is dynamically queried (`User.count WHERE isFounder=true`). This represents **Guru-eligible population** (all teachers minus founders/admins). The metric is specifically **Guru Premium Conversion Rate**, not overall.
 
 **Edge case**: If `totalGuru <= founderCount`, denominator is 0 → conversion rate = 0.
 
@@ -133,9 +133,10 @@ September 2, 2026
 ## Consistency Rules
 
 1. **Control Tower** (`lib/admin/executive.ts`) is the canonical query service. All metrics must match this service's definitions.
-2. **Premium Command Center** (`/api/admin/premium/report`) must use the same MRR definition as Control Tower.
+2. **Premium Command Center** (`/api/admin/premium/report`) uses `calculateMRR()` from `lib/admin/executive.ts` — same canonical formula.
 3. **Payments** (`/api/admin/payments`) must filter by the same transaction types: `PREMIUM_UPGRADE` and `MURID_PREMIUM`.
-4. **Future Investor Snapshot** must consume metrics from this dictionary without recalculation.
+4. **Future Investor Snapshot** must consume metrics from `lib/admin/executive.ts` without recalculation.
+5. **No duplicate MRR formulas** — all modules import from `calculateMRR()` in `lib/admin/executive.ts`.
 
 ---
 
@@ -143,5 +144,6 @@ September 2, 2026
 
 1. **DAU timezone**: Computed as midnight UTC, not midnight WIB. Off by 7 hours.
 2. **MRR plan detection**: Uses most recent transaction `reference` field, which may not reflect current plan if user changed plans.
-3. **Retention labeling**: "D7" means "active in same week", not "active on day 7". UI should clarify.
-4. **Conversion denominator**: Hardcoded founder count (3). Should be dynamic but currently stable.
+3. **Retention labeling**: "D7" means "active in same week", not "active on day 7". "D30" means "active after registration week". This is NOT standard cohort retention.
+4. **Conversion denominator**: Founder count is now dynamically queried (no longer hardcoded).
+5. **Manual Premium**: Users activated via admin (e.g., rina.melani) appear in Active Premium but NOT in MRR (no qualifying transaction) or Cash Collected.

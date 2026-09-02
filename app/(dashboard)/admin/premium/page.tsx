@@ -37,8 +37,8 @@ interface Summary {
   guruActive: number;
   expiringSoon: number;
   expired: number;
-  mrr: { total: number; monthly: number; yearly: number };
-  revenueByAudience: { murid: number; guru: number };
+  mrr: { total: number; activeMuridPremium: number; activeGuruPremium: number };
+  cashCollectedByAudience: { murid: number; guru: number };
   funnel: { registered: number; activePremium: number; renewed: number };
   churnRisk: { expiringIn7d: number; expiringIn14d: number; expiringIn30d: number };
 }
@@ -181,27 +181,29 @@ export default function AdminPremiumReportPage() {
           <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 rounded-2xl border border-green-200 dark:border-green-800 p-5">
             <div className="flex items-center gap-2 mb-3">
               <DollarSign size={16} className="text-green-600 dark:text-green-400" />
-              <h3 className="text-sm font-semibold text-green-800 dark:text-green-200">MRR (Monthly Recurring Revenue)</h3>
+              <h3 className="text-sm font-semibold text-green-800 dark:text-green-200">MRR (Normalized)</h3>
             </div>
             <p className="text-3xl font-bold text-green-900 dark:text-green-100">Rp {(data.summary.mrr.total / 1000).toFixed(0)}rb</p>
+            <p className="text-[10px] text-green-600 dark:text-green-400 mt-1">Dari subscription aktif (bukan cash collected)</p>
             <div className="mt-3 space-y-1.5">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-green-700 dark:text-green-300">Bulanan</span>
-                <span className="font-semibold text-green-800 dark:text-green-200">Rp {(data.summary.mrr.monthly / 1000).toFixed(0)}rb</span>
+                <span className="text-green-700 dark:text-green-300">Guru Pro ({data.summary.mrr.activeGuruPremium})</span>
+                <span className="font-semibold text-green-800 dark:text-green-200">{data.summary.mrr.activeGuruPremium} aktif</span>
               </div>
               <div className="flex items-center justify-between text-xs">
-                <span className="text-green-700 dark:text-green-300">Tahunan (÷12)</span>
-                <span className="font-semibold text-green-800 dark:text-green-200">Rp {(data.summary.mrr.yearly / 1000).toFixed(0)}rb</span>
+                <span className="text-green-700 dark:text-green-300">Murid Premium ({data.summary.mrr.activeMuridPremium})</span>
+                <span className="font-semibold text-green-800 dark:text-green-200">{data.summary.mrr.activeMuridPremium} aktif</span>
               </div>
             </div>
             <div className="mt-3 pt-3 border-t border-green-200 dark:border-green-800">
+              <p className="text-[10px] text-green-600 dark:text-green-400 mb-1.5">Cash Collected (all-time)</p>
               <div className="flex items-center justify-between text-xs">
-                <span className="text-green-700 dark:text-green-300">Revenue Murid</span>
-                <span className="font-semibold text-green-800 dark:text-green-200">Rp {(data.summary.revenueByAudience.murid / 1000).toFixed(0)}rb</span>
+                <span className="text-green-700 dark:text-green-300">Murid</span>
+                <span className="font-semibold text-green-800 dark:text-green-200">Rp {(data.summary.cashCollectedByAudience.murid / 1000).toFixed(0)}rb</span>
               </div>
               <div className="flex items-center justify-between text-xs mt-1">
-                <span className="text-green-700 dark:text-green-300">Revenue Guru</span>
-                <span className="font-semibold text-green-800 dark:text-green-200">Rp {(data.summary.revenueByAudience.guru / 1000).toFixed(0)}rb</span>
+                <span className="text-green-700 dark:text-green-300">Guru</span>
+                <span className="font-semibold text-green-800 dark:text-green-200">Rp {(data.summary.cashCollectedByAudience.guru / 1000).toFixed(0)}rb</span>
               </div>
             </div>
           </div>

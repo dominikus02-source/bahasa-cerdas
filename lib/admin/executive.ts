@@ -116,14 +116,14 @@ export interface ExecutiveDashboardData {
  * | MAU                   | XPTransaction     | userId                                 | createdAt >= monthAgo                   | groupBy     | 30 days        | distinct(userId)                     | number   |
  * | newUsers7d            | User              | id                                     | createdAt >= weekAgo                    | count       | 7 days         | count(*)                             | number   |
  * | activePremium         | User              | id                                     | isPremium=true, premiumUntil>now        | count       | current        | count(*)                             | number   |
- * | MRR                   | Transaksi         | amount                                 | status=SUCCESS, createdAt>=monthStart   | sum         | current month  | sum(amount)                          | number   |
+ * | MRR                   | User + plan      | MRR_CONTRIBUTION[plan]                 | isPremium=true, premiumUntil>now        | sum         | current        | sum of active subscription MRR          | number   |
  * | revenue30d            | Transaksi         | amount                                 | status=SUCCESS, createdAt>=monthAgo     | sum         | 30 days        | sum(amount)                          | number   |
  * | revenueAllTime        | Transaksi         | amount                                 | status=SUCCESS                          | sum         | all-time       | sum(amount)                          | number   |
  * | jalurCompleted7d      | UserUnitProgress  | id                                     | completed=true, completedAt>=weekAgo    | count       | 7 days         | count(*)                             | number   |
  * | ukbiSessions7d        | ProgresKompetensi | id                                     | startedAt>=weekAgo                      | count       | 7 days         | count(*)                             | number   |
  * | karya7d               | StudentKarya      | id                                     | createdAt>=weekAgo                      | count       | 7 days         | count(*)                             | number   |
  * | aiGenerations7d       | AIUsage           | id                                     | createdAt>=weekAgo                      | count       | 7 days         | count(*)                             | number   |
- * | premiumConversionRate | derived           | activePremium / (guru - founders)      |                                         | ratio       | current        | round(activePremium / (guru-3) * 100)| percent  |
+ * | premiumConversionRate | derived           | activePremium / (guru - founderCount)  |                                         | ratio       | current        | round(activePremium / (guru-fc) * 100) | percent  |
  * | cohort D7 retention   | XPTransaction+User| userId, createdAt                      | cohort window                           | ratio       | 7 days after   | activeInWindow / registered          | percent  |
  * | cohort D30 retention  | XPTransaction+User| userId, createdAt                      | cohort window                           | ratio       | 30 days after  | activeAfterWindow / registered       | percent  |
  * | paymentHealth         | Transaksi+User    | status, isPremium, premiumUntil        | type IN (PREMIUM_UPGRADE,MURID_PREMIUM) | filter      | all-time       | mismatch detection                   | object   |
@@ -138,7 +138,7 @@ export async function getExecutiveDashboardData(): Promise<ExecutiveDashboardDat
   const twoMonthsAgo = new Date(now.getTime() - 60 * DAY_MS);
 
   const [
-    totalUsers, totalMurid, totalGuru,
+    totalUsers, totalMurid, totalGuru, founderCount,
     dau, wau, mau, dauYesterday, wauPrev, mauPrev,
     newUsers7d, newUsersPrev7d, newUsers30d, newUsersPrev30d,
     activePremium, activePremiumPrev,
@@ -154,6 +154,7 @@ export async function getExecutiveDashboardData(): Promise<ExecutiveDashboardDat
     db.user.count(),
     db.user.count({ where: { role: "MURID" } }),
     db.user.count({ where: { role: "GURU" } }),
+    db.user.count({ where: { isFounder: true } }),
 
     db.xPTransaction.groupBy({ by: ["userId"], where: { createdAt: { gte: todayStart } } }).then((r) => r.length),
     db.xPTransaction.groupBy({ by: ["userId"], where: { createdAt: { gte: weekAgo } } }).then((r) => r.length),
@@ -232,7 +233,7 @@ export async function getExecutiveDashboardData(): Promise<ExecutiveDashboardDat
     cohorts.push({ label: `W-${w + 1}`, registered, active7d, active30d });
   }
 
-  const guruCount = Math.max(totalGuru - 3, 0);
+  const guruCount = Math.max(totalGuru - founderCount, 0);
   const premiumConversionRate = guruCount > 0 ? Math.round((activePremium / guruCount) * 100) : 0;
   const trialActive = await db.user.count({ where: { role: "GURU", trialEndsAt: { gt: now } } });
 
