@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     const sortBy = searchParams.get("sortBy") || "createdAt";
     const sortDir = (searchParams.get("sortDir") || "desc") === "asc" ? "asc" : "desc";
 
-    const where: any = { type: "PREMIUM_UPGRADE" };
+    const where: any = { type: { in: ["PREMIUM_UPGRADE", "MURID_PREMIUM"] } };
     if (status) where.status = status;
     if (planId) where.reference = planId;
     if (from || to) {
@@ -71,7 +71,7 @@ export async function GET(req: NextRequest) {
       }),
     ]);
 
-    const statWhere = (s: string) => ({ type: "PREMIUM_UPGRADE", status: s });
+    const statWhere = (s: string) => ({ type: { in: ["PREMIUM_UPGRADE", "MURID_PREMIUM"] }, status: s });
     const now = new Date();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 

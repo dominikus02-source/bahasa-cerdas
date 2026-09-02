@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
 
+/**
+ * GET /api/admin/karya
+ *
+ * Admin marketplace management — teacher-sold products (Karya model).
+ * NOT student works (StudentKarya). The canonical marketplace product model
+ * represents teacher-created goods/services/content that users can purchase.
+ */
 export async function GET(req: NextRequest) {
   try {
     const user = await getUser();
@@ -13,23 +20,28 @@ export async function GET(req: NextRequest) {
     const search = searchParams.get("search") || "";
 
     const where: any = {};
-    if (search) where.title = { contains: search, mode: "insensitive" };
+    if (search) {
+      where.OR = [
+        { title: { contains: search, mode: "insensitive" } },
+        { seller: { fullName: { contains: search, mode: "insensitive" } } },
+      ];
+    }
 
-    const [karya, total] = await Promise.all([
-      db.studentKarya.findMany({
+    const [products, total] = await Promise.all([
+      db.karya.findMany({
         where,
         orderBy: { createdAt: "desc" },
         skip: (page - 1) * limit,
         take: limit,
         include: {
-          user: { select: { id: true, fullName: true, email: true } },
-          _count: { select: { likes: true, comments: true } },
+          seller: { select: { id: true, fullName: true, email: true } },
+          _count: { select: { purchases: true } },
         },
       }),
-      db.studentKarya.count({ where }),
+      db.karya.count({ where }),
     ]);
 
-    return NextResponse.json({ karya, total, page, pages: Math.ceil(total / limit) });
+    return NextResponse.json({ karya: products, total, page, pages: Math.ceil(total / limit) });
   } catch {
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
@@ -43,7 +55,7 @@ export async function DELETE(req: NextRequest) {
     const { id } = await req.json();
     if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
 
-    await db.studentKarya.delete({ where: { id } });
+    await db.karya.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
