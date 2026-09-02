@@ -34,7 +34,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
   }
 
   if (!user.onboarded) {
-    redirect("/onboarding");
+    redirect("/guru/onboarding");
   }
 
   // Phase 9C — auto-start trial for eligible Guru users on dashboard access.
