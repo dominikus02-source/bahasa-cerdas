@@ -197,6 +197,11 @@ export default async function AdminPage() {
   const user = await getUser();
   if (!user || !user.isFounder) redirect("/login");
 
+  // Control Tower is now the canonical founder dashboard.
+  // Redirect legacy /admin bookmarks to /admin/executive.
+  redirect("/admin/executive");
+
+  // Unreachable — redirect() throws. Kept for backward compatibility.
   const s = await getStats();
 
   const mainCards = [
@@ -232,7 +237,7 @@ export default async function AdminPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Admin Panel</h1>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Selamat datang, {user.fullName}</p>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Selamat datang, {user!.fullName}</p>
         </div>
         <div className="flex items-center gap-3 text-sm">
           <span className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 rounded-lg">

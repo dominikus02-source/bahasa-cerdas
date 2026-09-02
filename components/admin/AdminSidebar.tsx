@@ -4,10 +4,10 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
 import {
-  LayoutDashboard, ShoppingBag, Film, FileText, Users, LogOut, Settings,
+  ShoppingBag, Film, FileText, Users, LogOut, Settings,
   ChevronRight, BarChart3, Briefcase, MessageCircle, Presentation,
   Bell, BellRing, X, Coins, DollarSign, Database, Activity, Wallet,
-  Baby, TrendingUp, Trophy, LineChart, ShieldAlert, ShieldCheck,
+  TrendingUp, Trophy, LineChart, ShieldAlert, ShieldCheck,
   Crown, Target, ChevronDown,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -42,19 +42,42 @@ function isItem(e: NavEntry): e is NavItem {
 }
 
 /**
- * PRIMARY NAVIGATION — 7 groups (down from 24 flat items).
+ * PRIMARY NAVIGATION — 7 top-level areas.
+ *
+ * Hierarchy communicates: Founder → Business → Product → Operations.
  * Every existing route is preserved; only the sidebar layout changes.
+ *
+ * 1. Control Tower      — standalone, founder intelligence
+ * 2. Pengguna            — standalone, user management
+ * 3. Premium & Revenue   — business/financial intelligence
+ * 4. Content             — content management (group)
+ * 5. Learning & Analytics — product learning analytics (group)
+ * 6. AI & Platform       — AI usage diagnostics (group)
+ * 7. System & Operations — low-frequency operational tools (group)
  */
 const NAV: NavEntry[] = [
-  // ── Standalone: Executive overview ──
+  // ── 1. Founder intelligence ──
   { label: "Control Tower", href: "/admin/executive", icon: Target },
 
-  // ── Standalone: User management ──
+  // ── 2. User management ──
   { label: "Pengguna", href: "/admin/users", icon: Users },
 
-  // ── Group: Content management ──
+  // ── 3. Business / financial intelligence ──
   {
-    label: "Konten",
+    label: "Premium & Revenue",
+    icon: Crown,
+    items: [
+      { label: "Premium Report", href: "/admin/premium", icon: Crown },
+      { label: "Pembayaran", href: "/admin/payments", icon: DollarSign },
+      { label: "Payout Kontrol", href: "/admin/teacher-payouts", icon: ShieldCheck },
+      { label: "Penarikan Saldo", href: "/admin/withdrawals", icon: Wallet },
+      { label: "Risiko Guru", href: "/admin/teacher-risk", icon: ShieldAlert },
+    ],
+  },
+
+  // ── 4. Content management ──
+  {
+    label: "Content",
     icon: Presentation,
     items: [
       { label: "Materi Ajar", href: "/admin/materi/generate-ppt", icon: Presentation },
@@ -62,46 +85,40 @@ const NAV: NavEntry[] = [
       { label: "Toko Karya", href: "/admin/karya", icon: ShoppingBag },
       { label: "Video", href: "/admin/video", icon: Film },
       { label: "Artikel", href: "/admin/artikel", icon: FileText },
-      { label: "Lowongan", href: "/admin/loker", icon: Briefcase },
-      { label: "Komunitas", href: "/admin/komunitas", icon: MessageCircle },
     ],
   },
 
-  // ── Group: AI, analytics & engagement ──
+  // ── 5. Product learning analytics ──
   {
-    label: "AI & Learning",
+    label: "Learning & Analytics",
+    icon: LineChart,
+    items: [
+      { label: "Learning Analytics", href: "/admin/analytics", icon: LineChart },
+      { label: "Arena BC", href: "/admin/arena", icon: Trophy },
+    ],
+  },
+
+  // ── 6. AI usage diagnostics ──
+  {
+    label: "AI & Platform",
     icon: BarChart3,
     items: [
       { label: "Analitik AI", href: "/admin/ai-analytics", icon: BarChart3 },
-      { label: "Learning Analytics", href: "/admin/analytics", icon: LineChart },
       { label: "Pemakaian Fitur", href: "/admin/feature-usage", icon: TrendingUp },
-      { label: "Arena BC", href: "/admin/arena", icon: Trophy },
-      { label: "Monitoring", href: "/admin/monitoring", icon: Activity },
       { label: "Kuota AI", href: "/admin/ai-quota", icon: Coins },
     ],
   },
 
-  // ── Group: Payments, premium & payouts ──
+  // ── 7. Low-frequency operational tools ──
   {
-    label: "Pembayaran",
-    icon: DollarSign,
-    items: [
-      { label: "Premium Report", href: "/admin/premium", icon: Crown },
-      { label: "Pembayaran", href: "/admin/payments", icon: DollarSign },
-      { label: "Penarikan Saldo", href: "/admin/withdrawals", icon: Wallet },
-      { label: "Risiko Guru", href: "/admin/teacher-risk", icon: ShieldAlert },
-      { label: "Payout Kontrol", href: "/admin/teacher-payouts", icon: ShieldCheck },
-    ],
-  },
-
-  // ── Group: System & tools ──
-  {
-    label: "System",
+    label: "System & Operations",
     icon: Database,
     items: [
+      { label: "Monitoring", href: "/admin/monitoring", icon: Activity },
+      { label: "Komunitas", href: "/admin/komunitas", icon: MessageCircle },
+      { label: "Lowongan", href: "/admin/loker", icon: Briefcase },
       { label: "Pusat Data", href: "/admin/data-center", icon: Database },
       { label: "Pengaturan", href: "/admin/pengaturan", icon: Settings },
-      { label: "Arena Junior", href: "/junior", icon: Baby },
     ],
   },
 
@@ -113,7 +130,9 @@ const NAV: NavEntry[] = [
 /* ── Helper: does this group contain the active route? ──────────── */
 
 function groupHasActiveItem(group: NavGroup, pathname: string): boolean {
-  return group.items.some((item) => pathname === item.href || pathname.startsWith(item.href + "/"));
+  return group.items.some(
+    (item) => pathname === item.href || pathname.startsWith(item.href + "/")
+  );
 }
 
 /* ── Component ──────────────────────────────────────────────────── */

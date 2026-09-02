@@ -57,7 +57,7 @@ async function main() {
   test("Tidak ada 'AI Analytics'", () => fileNotContains(adminSidebar, "AI Analytics"))
   test("Tidak ada 'Data Center'", () => fileNotContains(adminSidebar, "Data Center"))
   test("Tidak ada 'Admin Panel' di label", () => fileNotContains(adminSidebar, "label:.*Admin Panel"))
-  test("Ada 'Konten'", () => fileContains(adminSidebar, "Konten"))
+  test("Ada 'Content'", () => fileContains(adminSidebar, "Content"))
   test("Ada 'Analitik AI'", () => fileContains(adminSidebar, "Analitik AI"))
   test("Ada 'Kuota AI'", () => fileContains(adminSidebar, "Kuota AI"))
   test("Ada 'Pusat Data'", () => fileContains(adminSidebar, "Pusat Data"))

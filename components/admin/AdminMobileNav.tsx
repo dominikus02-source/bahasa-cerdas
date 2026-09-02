@@ -4,11 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  LayoutDashboard, FileText, Users, DollarSign, Menu as MenuIcon, X, LogOut,
+  FileText, Users, DollarSign, Menu as MenuIcon, X, LogOut,
   Target, Presentation, ShoppingBag, Film, Briefcase, MessageCircle,
   BarChart3, LineChart, TrendingUp, Trophy, Activity, Coins,
-  Crown, Wallet, ShieldAlert, ShieldCheck, Database, Settings, Baby,
-  ChevronDown,
+  Crown, Wallet, ShieldAlert, ShieldCheck, Database, Settings,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -19,7 +18,7 @@ import {
 
 /**
  * Mobile bottom tabs — 4 quick-access items + Menu drawer.
- * Matches the new grouped sidebar structure.
+ * Mirrors the 7-group AdminSidebar structure.
  */
 const TABS = [
   { label: "Tower", href: "/admin/executive", icon: Target },
@@ -29,42 +28,42 @@ const TABS = [
 ];
 
 /**
- * Full navigation for the drawer — mirrors AdminSidebar groups.
- * Grouped so mobile users can scan by category.
+ * Full navigation for the drawer — mirrors AdminSidebar 7-group structure.
  */
 interface FlatItem { label: string; href: string; icon: LucideIcon; group?: string; }
 
 const ALL_ITEMS: FlatItem[] = [
+  // Standalone
   { label: "Control Tower", href: "/admin/executive", icon: Target },
   { label: "Pengguna", href: "/admin/users", icon: Users },
-  // Konten
-  { label: "Materi Ajar", href: "/admin/materi/generate-ppt", icon: Presentation, group: "Konten" },
-  { label: "Bank Soal", href: "/admin/bank-soal", icon: FileText, group: "Konten" },
-  { label: "Toko Karya", href: "/admin/karya", icon: ShoppingBag, group: "Konten" },
-  { label: "Video", href: "/admin/video", icon: Film, group: "Konten" },
-  { label: "Artikel", href: "/admin/artikel", icon: FileText, group: "Konten" },
-  { label: "Lowongan", href: "/admin/loker", icon: Briefcase, group: "Konten" },
-  { label: "Komunitas", href: "/admin/komunitas", icon: MessageCircle, group: "Konten" },
-  // AI & Learning
-  { label: "Analitik AI", href: "/admin/ai-analytics", icon: BarChart3, group: "AI & Learning" },
-  { label: "Learning Analytics", href: "/admin/analytics", icon: LineChart, group: "AI & Learning" },
-  { label: "Pemakaian Fitur", href: "/admin/feature-usage", icon: TrendingUp, group: "AI & Learning" },
-  { label: "Arena BC", href: "/admin/arena", icon: Trophy, group: "AI & Learning" },
-  { label: "Monitoring", href: "/admin/monitoring", icon: Activity, group: "AI & Learning" },
-  { label: "Kuota AI", href: "/admin/ai-quota", icon: Coins, group: "AI & Learning" },
-  // Pembayaran
-  { label: "Premium Report", href: "/admin/premium", icon: Crown, group: "Pembayaran" },
-  { label: "Pembayaran", href: "/admin/payments", icon: DollarSign, group: "Pembayaran" },
-  { label: "Penarikan Saldo", href: "/admin/withdrawals", icon: Wallet, group: "Pembayaran" },
-  { label: "Risiko Guru", href: "/admin/teacher-risk", icon: ShieldAlert, group: "Pembayaran" },
-  { label: "Payout Kontrol", href: "/admin/teacher-payouts", icon: ShieldCheck, group: "Pembayaran" },
-  // System
-  { label: "Pusat Data", href: "/admin/data-center", icon: Database, group: "System" },
-  { label: "Pengaturan", href: "/admin/pengaturan", icon: Settings, group: "System" },
-  { label: "Arena Junior", href: "/junior", icon: Baby, group: "System" },
+  // Premium & Revenue
+  { label: "Premium Report", href: "/admin/premium", icon: Crown, group: "Premium & Revenue" },
+  { label: "Pembayaran", href: "/admin/payments", icon: DollarSign, group: "Premium & Revenue" },
+  { label: "Payout Kontrol", href: "/admin/teacher-payouts", icon: ShieldCheck, group: "Premium & Revenue" },
+  { label: "Penarikan Saldo", href: "/admin/withdrawals", icon: Wallet, group: "Premium & Revenue" },
+  { label: "Risiko Guru", href: "/admin/teacher-risk", icon: ShieldAlert, group: "Premium & Revenue" },
+  // Content
+  { label: "Materi Ajar", href: "/admin/materi/generate-ppt", icon: Presentation, group: "Content" },
+  { label: "Bank Soal", href: "/admin/bank-soal", icon: FileText, group: "Content" },
+  { label: "Toko Karya", href: "/admin/karya", icon: ShoppingBag, group: "Content" },
+  { label: "Video", href: "/admin/video", icon: Film, group: "Content" },
+  { label: "Artikel", href: "/admin/artikel", icon: FileText, group: "Content" },
+  // Learning & Analytics
+  { label: "Learning Analytics", href: "/admin/analytics", icon: LineChart, group: "Learning & Analytics" },
+  { label: "Arena BC", href: "/admin/arena", icon: Trophy, group: "Learning & Analytics" },
+  // AI & Platform
+  { label: "Analitik AI", href: "/admin/ai-analytics", icon: BarChart3, group: "AI & Platform" },
+  { label: "Pemakaian Fitur", href: "/admin/feature-usage", icon: TrendingUp, group: "AI & Platform" },
+  { label: "Kuota AI", href: "/admin/ai-quota", icon: Coins, group: "AI & Platform" },
+  // System & Operations
+  { label: "Monitoring", href: "/admin/monitoring", icon: Activity, group: "System & Operations" },
+  { label: "Komunitas", href: "/admin/komunitas", icon: MessageCircle, group: "System & Operations" },
+  { label: "Lowongan", href: "/admin/loker", icon: Briefcase, group: "System & Operations" },
+  { label: "Pusat Data", href: "/admin/data-center", icon: Database, group: "System & Operations" },
+  { label: "Pengaturan", href: "/admin/pengaturan", icon: Settings, group: "System & Operations" },
 ];
 
-const GROUPS = ["Konten", "AI & Learning", "Pembayaran", "System"];
+const GROUPS = ["Premium & Revenue", "Content", "Learning & Analytics", "AI & Platform", "System & Operations"];
 
 export default function AdminMobileNav() {
   const pathname = usePathname();
