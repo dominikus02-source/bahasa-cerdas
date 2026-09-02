@@ -1,0 +1,603 @@
+{
+  "meta": {
+    "generatedAt": "2026-09-02T02:16:57.542Z",
+    "cutOff": "2026-09-01T16:59:59.000Z",
+    "method": "READ-ONLY production audit via raw SQL",
+    "totalTeachers": 478,
+    "totalStudents": 1951
+  },
+  "funnel": {
+    "total": 478,
+    "neverCreatedClass": 428,
+    "createdClassNoStudents": 78,
+    "createdClassWithStudents": 46,
+    "neverCreatedClassPct": "89.5",
+    "createdClassNoStudentsPct": "16.3",
+    "createdClassWithStudentsPct": "9.6"
+  },
+  "activationThresholds": [
+    {
+      "label": "created_class",
+      "count": 49
+    },
+    {
+      "label": "1_student",
+      "count": 1
+    },
+    {
+      "label": "3_students",
+      "count": 14
+    },
+    {
+      "label": "5_students",
+      "count": 14
+    },
+    {
+      "label": "10_students",
+      "count": 14
+    },
+    {
+      "label": "25_students",
+      "count": 11
+    },
+    {
+      "label": "50_students",
+      "count": 10
+    }
+  ],
+  "topTeachers": [
+    {
+      "email": "karina.hayu@santa-laurensia.sch.id",
+      "fullName": "FE Karina Hayu Nugraheny",
+      "school": "SMP Santa Laurensia",
+      "classCount": 5,
+      "studentCount": 155,
+      "learningEvents": 663,
+      "activeStudents": 106,
+      "aiUsage": 0,
+      "score": 2341,
+      "daysSignupToClass": 8
+    },
+    {
+      "email": "rinamelani72@gmail.com",
+      "fullName": "Dorothea Susanti R Melani",
+      "school": "SMP Santa Laurensia",
+      "classCount": 6,
+      "studentCount": 169,
+      "learningEvents": 9,
+      "activeStudents": 2,
+      "aiUsage": 0,
+      "score": 555,
+      "daysSignupToClass": 0
+    },
+    {
+      "email": "bombolyohana14@gmail.com",
+      "fullName": "Yohana Bombol",
+      "school": "SMP Santa Laurensia",
+      "classCount": 6,
+      "studentCount": 120,
+      "learningEvents": 38,
+      "activeStudents": 11,
+      "aiUsage": 2,
+      "score": 515,
+      "daysSignupToClass": 5
+    },
+    {
+      "email": "ibrahimlubis509@gmail.com",
+      "fullName": "Ibrahim Lubis",
+      "school": "SMA AL-FITYAN SCHOOL TANGERANG ",
+      "classCount": 10,
+      "studentCount": 119,
+      "learningEvents": 0,
+      "activeStudents": 0,
+      "aiUsage": 23,
+      "score": 423,
+      "daysSignupToClass": 2
+    },
+    {
+      "email": "yunibta@21gmai.com",
+      "fullName": "Yuni Wulandari, S.Pd",
+      "school": "SMP N 2 OKU",
+      "classCount": 2,
+      "studentCount": 69,
+      "learningEvents": 73,
+      "activeStudents": 7,
+      "aiUsage": 1,
+      "score": 410,
+      "daysSignupToClass": 0
+    },
+    {
+      "email": "ellimarlina51@guru.smp.belajar.id",
+      "fullName": "Elli Marlina",
+      "school": "SMP NEGERI 6 BINJAI ",
+      "classCount": 3,
+      "studentCount": 57,
+      "learningEvents": 2,
+      "activeStudents": 1,
+      "aiUsage": 17,
+      "score": 234,
+      "daysSignupToClass": 4
+    },
+    {
+      "email": "christanti@santa-laurensia.sch.id",
+      "fullName": "Christanti, S.Pd.",
+      "school": "SMA Santa Laurensia Alam Sutera",
+      "classCount": 2,
+      "studentCount": 59,
+      "learningEvents": 6,
+      "activeStudents": 4,
+      "aiUsage": 0,
+      "score": 229,
+      "daysSignupToClass": 19
+    },
+    {
+      "email": "wahyukristanti43@guru.sd.belajar.id",
+      "fullName": "WAHYU KRISTANTI",
+      "school": "SD Yos Sudarso ",
+      "classCount": 1,
+      "studentCount": 36,
+      "learningEvents": 4,
+      "activeStudents": 2,
+      "aiUsage": 0,
+      "score": 146,
+      "daysSignupToClass": 1
+    },
+    {
+      "email": "martha.simamora@shb.sch.id",
+      "fullName": "Martha Yuliana Simamora,S.Pd.",
+      "school": null,
+      "classCount": 4,
+      "studentCount": 23,
+      "learningEvents": 0,
+      "activeStudents": 0,
+      "aiUsage": 0,
+      "score": 89,
+      "daysSignupToClass": 20
+    },
+    {
+      "email": "noormawatijunaidi@gmail.com",
+      "fullName": "Noormawati J.",
+      "school": "SMP Negeri 1 Jenamas",
+      "classCount": 4,
+      "studentCount": 18,
+      "learningEvents": 0,
+      "activeStudents": 0,
+      "aiUsage": 2,
+      "score": 78,
+      "daysSignupToClass": 35
+    },
+    {
+      "email": "alba.kikiqlima@gmail.com",
+      "fullName": "Al Baikhatus Iqlima, S. Pd.",
+      "school": "SMP NEGERI 3 SAMPIT",
+      "classCount": 4,
+      "studentCount": 10,
+      "learningEvents": 0,
+      "activeStudents": 0,
+      "aiUsage": 0,
+      "score": 50,
+      "daysSignupToClass": 0
+    },
+    {
+      "email": "kristina.lestari@oel.sch.id",
+      "fullName": "Kristina Dwi Lestari",
+      "school": "SMPK ORA et LABORA BSD ",
+      "classCount": 3,
+      "studentCount": 2,
+      "learningEvents": 0,
+      "activeStudents": 0,
+      "aiUsage": 8,
+      "score": 42,
+      "daysSignupToClass": 41
+    },
+    {
+      "email": "purwaningsihhenny416@gmail.com",
+      "fullName": "Henny Purwaningsih, S. Pd.",
+      "school": "SMPN 1 Semanding",
+      "classCount": 7,
+      "studentCount": 1,
+      "learningEvents": 0,
+      "activeStudents": 0,
+      "aiUsage": 3,
+      "score": 29,
+      "daysSignupToClass": 7
+    },
+    {
+      "email": "bayumurdiyanto@gmail.com",
+      "fullName": "BAYU MURDIYANTO",
+      "school": "SMAS HelloMotion",
+      "classCount": 9,
+      "studentCount": 1,
+      "learningEvents": 0,
+      "activeStudents": 0,
+      "aiUsage": 0,
+      "score": 23,
+      "daysSignupToClass": 0
+    },
+    {
+      "email": "melvagukguk28@guru.smp.belajar.id",
+      "fullName": "Melva Roseni Raja Gukguk, S.Pd., M.Pd.",
+      "school": "SMPN Satu Atap 3 Sematu Jaya ",
+      "classCount": 2,
+      "studentCount": 1,
+      "learningEvents": 0,
+      "activeStudents": 0,
+      "aiUsage": 0,
+      "score": 23,
+      "daysSignupToClass": 0
+    }
+  ],
+  "timing": {
+    "reachedClass": 49,
+    "reachedStudent": 15,
+    "reachedLearning": 7,
+    "avgDaysSignupToClass": "0.0",
+    "avgDaysClassToStudent": "0.0",
+    "avgDaysStudentToLearn": "0.0",
+    "medianDaysSignupToClass": "0.1",
+    "medianDaysClassToStudent": "0.2",
+    "medianDaysStudentToLearn": "1.0"
+  },
+  "teacherRetentionByThreshold": [
+    {
+      "bucket": "1-2",
+      "teachers": 4,
+      "active7d": 0
+    },
+    {
+      "bucket": "6-10",
+      "teachers": 1,
+      "active7d": 1
+    },
+    {
+      "bucket": "11-25",
+      "teachers": 2,
+      "active7d": 1
+    },
+    {
+      "bucket": "26-50",
+      "teachers": 1,
+      "active7d": 1
+    },
+    {
+      "bucket": "50+",
+      "teachers": 10,
+      "active7d": 5
+    }
+  ],
+  "retentionBySource": [
+    {
+      "source": "school-linked",
+      "total": 1237,
+      "activeD30": 214
+    },
+    {
+      "source": "self-registered",
+      "total": 714,
+      "activeD30": 14
+    }
+  ],
+  "ahaMoment": {
+    "firstWeekClass": 39,
+    "firstWeekStudent": 10,
+    "retentionComparison": [
+      {
+        "cohort": "first_week_class",
+        "teachers": 39,
+        "active30d": 22
+      },
+      {
+        "cohort": "later_class",
+        "teachers": 10,
+        "active30d": 7
+      },
+      {
+        "cohort": "never_class",
+        "teachers": 428,
+        "active30d": 67
+      }
+    ]
+  },
+  "classSizeDistribution": {
+    "summary": {
+      "total": 142,
+      "median": 22.5,
+      "mean": "19.59375",
+      "min": 1,
+      "max": 37
+    },
+    "histogram": {
+      "0": 0,
+      "1-5": 15,
+      "6-10": 2,
+      "11-25": 18,
+      "26-50": 29,
+      "51-100": 0,
+      "100+": 0
+    }
+  },
+  "schoolActivation": {
+    "with2Plus": 130,
+    "with5Plus": 46,
+    "with10Plus": 31,
+    "top20": [
+      {
+        "schoolKey": "smpsantalaurensia",
+        "teachers": 3,
+        "students": 201
+      },
+      {
+        "schoolKey": "santalaurensia",
+        "teachers": 0,
+        "students": 159
+      },
+      {
+        "schoolKey": "smpsantalaurensiaalamsutera",
+        "teachers": 0,
+        "students": 97
+      },
+      {
+        "schoolKey": "santalaurensiaalamsutera",
+        "teachers": 0,
+        "students": 88
+      },
+      {
+        "schoolKey": "smaal-fityanschooltangerang",
+        "teachers": 1,
+        "students": 49
+      },
+      {
+        "schoolKey": "smpn2oku",
+        "teachers": 2,
+        "students": 40
+      },
+      {
+        "schoolKey": "smpnegeri6binjai",
+        "teachers": 3,
+        "students": 38
+      },
+      {
+        "schoolKey": "sekolahharapanbangsa",
+        "teachers": 1,
+        "students": 39
+      },
+      {
+        "schoolKey": "smaalfityanschooltangerang",
+        "teachers": 0,
+        "students": 39
+      },
+      {
+        "schoolKey": "smpharapanbangsa",
+        "teachers": 0,
+        "students": 36
+      },
+      {
+        "schoolKey": "smaharapanbangsamodernhill",
+        "teachers": 0,
+        "students": 32
+      },
+      {
+        "schoolKey": "smpnegeri2oku",
+        "teachers": 1,
+        "students": 29
+      },
+      {
+        "schoolKey": "smpnegeri1jenamas",
+        "teachers": 1,
+        "students": 29
+      },
+      {
+        "schoolKey": "smpn8tangerangselatan",
+        "teachers": 0,
+        "students": 25
+      },
+      {
+        "schoolKey": "smaharapanbangsa",
+        "teachers": 0,
+        "students": 23
+      },
+      {
+        "schoolKey": "smpnegeri8kotatangerangselatan",
+        "teachers": 0,
+        "students": 22
+      },
+      {
+        "schoolKey": "smpnegeri8tangerangselatan",
+        "teachers": 0,
+        "students": 22
+      },
+      {
+        "schoolKey": "smpn02oku",
+        "teachers": 0,
+        "students": 22
+      },
+      {
+        "schoolKey": "sekolahharapanbangsamodernhill",
+        "teachers": 0,
+        "students": 17
+      },
+      {
+        "schoolKey": "smpn8tangsel",
+        "teachers": 0,
+        "students": 16
+      }
+    ]
+  },
+  "growthLoop": {
+    "teacherActive7d": 45,
+    "teacherActive30d": 97,
+    "teacherRetention7dRate": "9.4",
+    "teacherRetention30dRate": "20.3",
+    "teachersWhoInvited": 18,
+    "studentsInvited": 1239,
+    "avgStudentsPerTeacher": 125
+  },
+  "onboardingGap": {
+    "teachersNeverActive": 377,
+    "teachersActiveButNoClass": 78,
+    "teachersWithStudents": 46,
+    "teachersWithLearning": 10,
+    "teachersWithAI": 70
+  },
+  "studentFirstAction": [
+    {
+      "firstAction": "ai_first",
+      "students": 41
+    },
+    {
+      "firstAction": "karya_first",
+      "students": 553
+    },
+    {
+      "firstAction": "learn_first",
+      "students": 129
+    },
+    {
+      "firstAction": "never_active",
+      "students": 1228
+    }
+  ],
+  "powerVsFailed": [
+    {
+      "tier": "power",
+      "teachers": 11,
+      "avgClasses": 4,
+      "avgStudents": 76,
+      "avgStudentLearning": 72,
+      "avgAIUsage": 4
+    },
+    {
+      "tier": "other",
+      "teachers": 4,
+      "avgClasses": 5,
+      "avgStudents": 1,
+      "avgStudentLearning": 0,
+      "avgAIUsage": 3
+    },
+    {
+      "tier": "class_no_students",
+      "teachers": 34,
+      "avgClasses": 2,
+      "avgStudents": 0,
+      "avgStudentLearning": 0,
+      "avgAIUsage": 1
+    },
+    {
+      "tier": "never_started",
+      "teachers": 428,
+      "avgClasses": 0,
+      "avgStudents": 0,
+      "avgStudentLearning": 0,
+      "avgAIUsage": 0
+    }
+  ],
+  "weeklySignups": [
+    {
+      "week": "2026-08-31",
+      "total": 25,
+      "teachers": 4,
+      "students": 21
+    },
+    {
+      "week": "2026-08-24",
+      "total": 300,
+      "teachers": 85,
+      "students": 215
+    },
+    {
+      "week": "2026-08-17",
+      "total": 227,
+      "teachers": 67,
+      "students": 160
+    },
+    {
+      "week": "2026-08-10",
+      "total": 166,
+      "teachers": 35,
+      "students": 131
+    },
+    {
+      "week": "2026-08-03",
+      "total": 135,
+      "teachers": 86,
+      "students": 49
+    },
+    {
+      "week": "2026-07-27",
+      "total": 791,
+      "teachers": 47,
+      "students": 744
+    },
+    {
+      "week": "2026-07-20",
+      "total": 635,
+      "teachers": 96,
+      "students": 539
+    },
+    {
+      "week": "2026-07-13",
+      "total": 56,
+      "teachers": 15,
+      "students": 41
+    },
+    {
+      "week": "2026-07-06",
+      "total": 43,
+      "teachers": 31,
+      "students": 12
+    },
+    {
+      "week": "2026-06-29",
+      "total": 11,
+      "teachers": 9,
+      "students": 2
+    },
+    {
+      "week": "2026-06-22",
+      "total": 42,
+      "teachers": 2,
+      "students": 37
+    }
+  ],
+  "premiumTeachers": [
+    {
+      "email": "ibrahimlubis509@gmail.com",
+      "plan": "PRO",
+      "until": "2026-09-09T14:34:43.230Z",
+      "classes": 10
+    },
+    {
+      "email": "kusum4w4@gmail.com",
+      "plan": "PRO",
+      "until": "2027-07-31T14:48:44.725Z",
+      "classes": 0
+    }
+  ],
+  "studentEngagement": [
+    {
+      "bucket": "0_units",
+      "students": 1537,
+      "activeD30": 0
+    },
+    {
+      "bucket": "1-3_units",
+      "students": 123,
+      "activeD30": 40
+    },
+    {
+      "bucket": "4-10_units",
+      "students": 189,
+      "activeD30": 107
+    },
+    {
+      "bucket": "11-25_units",
+      "students": 90,
+      "activeD30": 70
+    },
+    {
+      "bucket": "25+_units",
+      "students": 12,
+      "activeD30": 11
+    }
+  ]
+}
