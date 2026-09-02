@@ -1,0 +1,1354 @@
+{
+  "snapshotDate": "2026-09-02",
+  "topTeachersByGroups": [
+    {
+      "id": "cmrsr92sy00005g7d2de27447",
+      "fullName": "Ibrahim Lubis",
+      "email": "ibrahimlubis509@gmail.com",
+      "isFounder": false,
+      "isPremium": true,
+      "createdAt": "2026-07-20T04:59:19.282Z",
+      "groupCount": 10,
+      "studentCount": 117
+    },
+    {
+      "id": "cms5h4zjb000412yplngfks39",
+      "fullName": "BAYU MURDIYANTO",
+      "email": "bayumurdiyanto@gmail.com",
+      "isFounder": false,
+      "isPremium": false,
+      "createdAt": "2026-07-29T02:37:12.552Z",
+      "groupCount": 9,
+      "studentCount": 1
+    },
+    {
+      "id": "cmqxema6a000013z9kefn4jm1",
+      "fullName": "Dominikus Wahyu",
+      "email": "dominikus.02@gmail.com",
+      "isFounder": true,
+      "isPremium": true,
+      "createdAt": "2026-06-28T06:24:48.899Z",
+      "groupCount": 9,
+      "studentCount": 134
+    },
+    {
+      "id": "cmsitygxu0000ny4wnainukef",
+      "fullName": "Henny Purwaningsih, S. Pd.",
+      "email": "purwaningsihhenny416@gmail.com",
+      "isFounder": false,
+      "isPremium": false,
+      "createdAt": "2026-08-07T10:57:03.810Z",
+      "groupCount": 7,
+      "studentCount": 1
+    },
+    {
+      "id": "cms2ozw1j001s9i72abgfm3h3",
+      "fullName": "Dorothea Susanti R Melani",
+      "email": "rinamelani72@gmail.com",
+      "isFounder": false,
+      "isPremium": false,
+      "createdAt": "2026-07-27T03:53:53.144Z",
+      "groupCount": 6,
+      "studentCount": 169
+    },
+    {
+      "id": "cmqy1ga9r0003zag7fbmqhsq4",
+      "fullName": "31. Alexander Suryanta",
+      "email": "alexsurya1968@gmail.com",
+      "isFounder": true,
+      "isPremium": true,
+      "createdAt": "2026-06-28T17:04:00.255Z",
+      "groupCount": 6,
+      "studentCount": 180
+    },
+    {
+      "id": "cmrbck8tj0000npbbods1lfw1",
+      "fullName": "Yohana Bombol",
+      "email": "bombolyohana14@gmail.com",
+      "isFounder": false,
+      "isPremium": false,
+      "createdAt": "2026-07-08T00:36:01.063Z",
+      "groupCount": 6,
+      "studentCount": 120
+    },
+    {
+      "id": "cmrlqrrro000018782agwd6co",
+      "fullName": "FE Karina Hayu Nugraheny",
+      "email": "karina.hayu@santa-laurensia.sch.id",
+      "isFounder": false,
+      "isPremium": false,
+      "createdAt": "2026-07-15T07:11:28.597Z",
+      "groupCount": 5,
+      "studentCount": 155
+    },
+    {
+      "id": "cms1ps0fd00001i4qv1k2fsge",
+      "fullName": "Estri Andajani",
+      "email": "estriandajani64@guru.smp.belajar.id",
+      "isFounder": false,
+      "isPremium": false,
+      "createdAt": "2026-07-26T11:27:59.018Z",
+      "groupCount": 5,
+      "studentCount": 0
+    },
+    {
+      "id": "cmsiwdp8g0000qji38npfo8i5",
+      "fullName": "Endang Catur Wulaningsih, S.Pd., Gr",
+      "email": "endangwulaningsih70@guru.smp.belajar.id",
+      "isFounder": false,
+      "isPremium": false,
+      "createdAt": "2026-08-07T12:04:53.632Z",
+      "groupCount": 4,
+      "studentCount": 0
+    },
+    {
+      "id": "cmtcpckzv0003kopbm1j6oib6",
+      "fullName": "TRISNA PIRMASETIA, S.Pd",
+      "email": "jrotrisnapirmasetia@gmail.com",
+      "isFounder": false,
+      "isPremium": false,
+      "createdAt": "2026-08-28T08:41:09.451Z",
+      "groupCount": 4,
+      "studentCount": 0
+    },
+    {
+      "id": "cms0bwa3m000082m5ypmf27j0",
+      "fullName": "Noormawati J.",
+      "email": "noormawatijunaidi@gmail.com",
+      "isFounder": false,
+      "isPremium": false,
+      "createdAt": "2026-07-25T12:11:37.378Z",
+      "groupCount": 4,
+      "studentCount": 18
+    },
+    {
+      "id": "cmsirgl9k0000zf4qponj28lu",
+      "fullName": "Amos Munda&#x27; Tikupasang, S. Pd., Gr",
+      "email": "amostikupasang65@guru.smp.belajar.id",
+      "isFounder": false,
+      "isPremium": false,
+      "createdAt": "2026-08-07T09:47:10.376Z",
+      "groupCount": 4,
+      "studentCount": 0
+    },
+    {
+      "id": "cmtffnuog0000cq5b2ca92586",
+      "fullName": "Wayan Yasa, S.Pd.",
+      "email": "iyasa761@guru.smp.belajar.id",
+      "isFounder": false,
+      "isPremium": false,
+      "createdAt": "2026-08-30T06:33:17.584Z",
+      "groupCount": 4,
+      "studentCount": 0
+    },
+    {
+      "id": "cmtcsqofg00009z8pv2ycyxfp",
+      "fullName": "Al Baikhatus Iqlima, S. Pd.",
+      "email": "alba.kikiqlima@gmail.com",
+      "isFounder": false,
+      "isPremium": false,
+      "createdAt": "2026-08-28T10:16:05.932Z",
+      "groupCount": 4,
+      "studentCount": 10
+    },
+    {
+      "id": "cmrbr3eg00000mdbxd6j42wnt",
+      "fullName": "Martha Yuliana Simamora,S.Pd.",
+      "email": "martha.simamora@shb.sch.id",
+      "isFounder": false,
+      "isPremium": false,
+      "createdAt": "2026-07-08T07:22:49.440Z",
+      "groupCount": 4,
+      "studentCount": 23
+    },
+    {
+      "id": "cmt6nv97g0000z6nbajk7t6j0",
+      "fullName": "Silfi Yani S.Pd",
+      "email": "silfiyani2018@gmail.com",
+      "isFounder": false,
+      "isPremium": false,
+      "createdAt": "2026-08-24T03:13:04.348Z",
+      "groupCount": 3,
+      "studentCount": 0
+    },
+    {
+      "id": "cmqy1g9v50000zag780ik6mrg",
+      "fullName": "Washadi",
+      "email": "hdsastra47@gmail.com",
+      "isFounder": false,
+      "isPremium": true,
+      "createdAt": "2026-06-28T17:03:59.730Z",
+      "groupCount": 3,
+      "studentCount": 90
+    },
+    {
+      "id": "cmrlpmwro0000dn4tfcdpyg6m",
+      "fullName": "Kristina Dwi Lestari",
+      "email": "kristina.lestari@oel.sch.id",
+      "isFounder": false,
+      "isPremium": false,
+      "createdAt": "2026-07-15T06:39:42.180Z",
+      "groupCount": 3,
+      "studentCount": 2
+    },
+    {
+      "id": "cmsjtu7e70000dqvnjd2pvkzt",
+      "fullName": "Sumiyanti",
+      "email": "sumiyantiumikembar@gmail.com",
+      "isFounder": false,
+      "isPremium": false,
+      "createdAt": "2026-08-08T03:41:30.992Z",
+      "groupCount": 3,
+      "studentCount": 0
+    }
+  ],
+  "topTeachersByStudents": [
+    {
+      "id": "cmqy1ga9r0003zag7fbmqhsq4",
+      "fullName": "31. Alexander Suryanta",
+      "email": "alexsurya1968@gmail.com",
+      "isFounder": true,
+      "studentCount": 180,
+      "groupCount": 6
+    },
+    {
+      "id": "cms2ozw1j001s9i72abgfm3h3",
+      "fullName": "Dorothea Susanti R Melani",
+      "email": "rinamelani72@gmail.com",
+      "isFounder": false,
+      "studentCount": 169,
+      "groupCount": 6
+    },
+    {
+      "id": "cmrlqrrro000018782agwd6co",
+      "fullName": "FE Karina Hayu Nugraheny",
+      "email": "karina.hayu@santa-laurensia.sch.id",
+      "isFounder": false,
+      "studentCount": 155,
+      "groupCount": 5
+    },
+    {
+      "id": "cmqxema6a000013z9kefn4jm1",
+      "fullName": "Dominikus Wahyu",
+      "email": "dominikus.02@gmail.com",
+      "isFounder": true,
+      "studentCount": 134,
+      "groupCount": 9
+    },
+    {
+      "id": "cmrbck8tj0000npbbods1lfw1",
+      "fullName": "Yohana Bombol",
+      "email": "bombolyohana14@gmail.com",
+      "isFounder": false,
+      "studentCount": 120,
+      "groupCount": 5
+    },
+    {
+      "id": "cmrsr92sy00005g7d2de27447",
+      "fullName": "Ibrahim Lubis",
+      "email": "ibrahimlubis509@gmail.com",
+      "isFounder": false,
+      "studentCount": 117,
+      "groupCount": 10
+    },
+    {
+      "id": "cmqy1g9v50000zag780ik6mrg",
+      "fullName": "Washadi",
+      "email": "hdsastra47@gmail.com",
+      "isFounder": false,
+      "studentCount": 90,
+      "groupCount": 3
+    },
+    {
+      "id": "cms2ipzds0004kvfh4gduingu",
+      "fullName": "Yuni Wulandari, S.Pd",
+      "email": "yunibta@21gmai.com",
+      "isFounder": false,
+      "studentCount": 66,
+      "groupCount": 2
+    },
+    {
+      "id": "cmrbfi7fr0000lsu5a92srfyi",
+      "fullName": "Christanti, S.Pd.",
+      "email": "christanti@santa-laurensia.sch.id",
+      "isFounder": false,
+      "studentCount": 59,
+      "groupCount": 2
+    },
+    {
+      "id": "cmsu6khfw0003bhiz017wmg34",
+      "fullName": "Elli Marlina",
+      "email": "ellimarlina51@guru.smp.belajar.id",
+      "isFounder": false,
+      "studentCount": 57,
+      "groupCount": 3
+    },
+    {
+      "id": "cms5lrvkq000o5ohcf50it584",
+      "fullName": "WAHYU KRISTANTI",
+      "email": "wahyukristanti43@guru.sd.belajar.id",
+      "isFounder": false,
+      "studentCount": 36,
+      "groupCount": 1
+    },
+    {
+      "id": "cmrbr3eg00000mdbxd6j42wnt",
+      "fullName": "Martha Yuliana Simamora,S.Pd.",
+      "email": "martha.simamora@shb.sch.id",
+      "isFounder": false,
+      "studentCount": 23,
+      "groupCount": 2
+    },
+    {
+      "id": "cms0bwa3m000082m5ypmf27j0",
+      "fullName": "Noormawati J.",
+      "email": "noormawatijunaidi@gmail.com",
+      "isFounder": false,
+      "studentCount": 18,
+      "groupCount": 3
+    },
+    {
+      "id": "cmtcsqofg00009z8pv2ycyxfp",
+      "fullName": "Al Baikhatus Iqlima, S. Pd.",
+      "email": "alba.kikiqlima@gmail.com",
+      "isFounder": false,
+      "studentCount": 10,
+      "groupCount": 3
+    },
+    {
+      "id": "cmrlpmwro0000dn4tfcdpyg6m",
+      "fullName": "Kristina Dwi Lestari",
+      "email": "kristina.lestari@oel.sch.id",
+      "isFounder": false,
+      "studentCount": 2,
+      "groupCount": 1
+    },
+    {
+      "id": "cms5h4zjb000412yplngfks39",
+      "fullName": "BAYU MURDIYANTO",
+      "email": "bayumurdiyanto@gmail.com",
+      "isFounder": false,
+      "studentCount": 1,
+      "groupCount": 1
+    },
+    {
+      "id": "cmsitygxu0000ny4wnainukef",
+      "fullName": "Henny Purwaningsih, S. Pd.",
+      "email": "purwaningsihhenny416@gmail.com",
+      "isFounder": false,
+      "studentCount": 1,
+      "groupCount": 1
+    },
+    {
+      "id": "cmsj2abhy000014atvid0lo6i",
+      "fullName": "Melva Roseni Raja Gukguk, S.Pd., M.Pd.",
+      "email": "melvagukguk28@guru.smp.belajar.id",
+      "isFounder": false,
+      "studentCount": 1,
+      "groupCount": 1
+    }
+  ],
+  "topStudentsByXp": [
+    {
+      "id": "cmrsthgbd0000s4c6ocecdpt2",
+      "fullName": "Michael",
+      "email": "michael.chairul.student@shb.sch.id",
+      "xp": 105886,
+      "level": 62,
+      "streak": 2,
+      "coins": 379,
+      "createdAt": "2026-07-20T06:01:48.178Z"
+    },
+    {
+      "id": "cmrsthrwi000ss4c63chtq567",
+      "fullName": "Benediktus Elmo Vito",
+      "email": "benediktus.vito.student@shb.sch.id",
+      "xp": 102880,
+      "level": 62,
+      "streak": 2,
+      "coins": 517,
+      "createdAt": "2026-07-20T06:02:04.291Z"
+    },
+    {
+      "id": "cmrk95hsk000nf5t9ps3ak1ac",
+      "fullName": "🅙🅞🅢🅔🅟🅗 🅝🅐🅣🅗🅐🅝🅐🅔🅛 🅢🅘🅡🅐🅘🅣",
+      "email": "akunjosephofficial@gmail.com",
+      "xp": 60545,
+      "level": 51,
+      "streak": 1,
+      "coins": 907,
+      "createdAt": "2026-07-14T06:10:29.588Z"
+    },
+    {
+      "id": "cms5fkpvd0023t9lq1qorfhl3",
+      "fullName": "Tristan Ryu",
+      "email": "tristan.ryu@santa-laurensia.sch.id",
+      "xp": 55791,
+      "level": 50,
+      "streak": 1,
+      "coins": 1029,
+      "createdAt": "2026-07-29T01:53:27.289Z"
+    },
+    {
+      "id": "cmrya1mjc0035hduaat840hgv",
+      "fullName": "Cher Benedictus Ryu Raffael",
+      "email": "cher.raffael.student@shb.sch.id",
+      "xp": 40360,
+      "level": 43,
+      "streak": 1,
+      "coins": 97,
+      "createdAt": "2026-07-24T01:44:15.193Z"
+    },
+    {
+      "id": "cms5lqzjw000fr05jntsp9htj",
+      "fullName": "Zivaldo Marx Carsidy",
+      "email": "zivaldo.marx@santa-laurensia.sch.id",
+      "xp": 35255,
+      "level": 41,
+      "streak": 10,
+      "coins": 487,
+      "createdAt": "2026-07-29T04:46:17.468Z"
+    },
+    {
+      "id": "cmrya4j00003xhdua7jhd1vi5",
+      "fullName": "Gabriel Razzaaq Pratama",
+      "email": "gabriel.pratama.student@shb.sch.id",
+      "xp": 34530,
+      "level": 41,
+      "streak": 2,
+      "coins": 14,
+      "createdAt": "2026-07-24T01:46:30.576Z"
+    },
+    {
+      "id": "cmrya45zi004zfsspttikct8m",
+      "fullName": "Hansen Frederick Lyn",
+      "email": "hansen.lyn.student@shb.sch.id",
+      "xp": 33920,
+      "level": 41,
+      "streak": 1,
+      "coins": 17,
+      "createdAt": "2026-07-24T01:46:13.710Z"
+    },
+    {
+      "id": "cmrykpss60017i5eyc2cfzk5i",
+      "fullName": "18. Jill Jennifer D",
+      "email": "jill.jennifer@santa-laurensia.sch.id",
+      "xp": 29288,
+      "level": 38,
+      "streak": 1,
+      "coins": 432,
+      "createdAt": "2026-07-24T06:42:59.190Z"
+    },
+    {
+      "id": "cms8jjtr600048bvpmcifbyy4",
+      "fullName": "19. Joseph Larry Haryanto",
+      "email": "joseph.lh@santa-laurensia.sch.id",
+      "xp": 24487,
+      "level": 35,
+      "streak": 6,
+      "coins": 543,
+      "createdAt": "2026-07-31T06:08:02.659Z"
+    },
+    {
+      "id": "cmruagar50006o16anhll41fo",
+      "fullName": "Kadek Afika Nanda Mutiara",
+      "email": "kadek.mutiara.student@shb.sch.id",
+      "xp": 23243,
+      "level": 34,
+      "streak": 2,
+      "coins": 332,
+      "createdAt": "2026-07-21T06:44:35.058Z"
+    },
+    {
+      "id": "cmrynpp5s003wudtaqry9pgj0",
+      "fullName": "Samuel Kay Eddyson",
+      "email": "samuel.kay@santa-laurensia.sch.id",
+      "xp": 22171,
+      "level": 33,
+      "streak": 5,
+      "coins": 269,
+      "createdAt": "2026-07-24T08:06:53.344Z"
+    },
+    {
+      "id": "cms75bdg600008ajh02jc5c38",
+      "fullName": "NATHAN BARNABAS",
+      "email": "nathan.b@santa-laurensia.sch.id",
+      "xp": 22054,
+      "level": 33,
+      "streak": 3,
+      "coins": 873,
+      "createdAt": "2026-07-30T06:41:47.479Z"
+    },
+    {
+      "id": "cmrstmhmf000pgwljdgb72qk9",
+      "fullName": "Ayman Rakha Farrastaqi",
+      "email": "ayman.farrastaqi.student@shb.sch.id",
+      "xp": 19735,
+      "level": 32,
+      "streak": 1,
+      "coins": 205,
+      "createdAt": "2026-07-20T06:05:44.247Z"
+    },
+    {
+      "id": "cmscuetqo000g4dhh0ejiri1a",
+      "fullName": "Joel Christian Tjandra",
+      "email": "joel.ct@santa-laurensia.sch.id",
+      "xp": 17841,
+      "level": 31,
+      "streak": 2,
+      "coins": 106,
+      "createdAt": "2026-08-03T06:23:09.840Z"
+    },
+    {
+      "id": "cms75d2mr0000kc0jssnh47t5",
+      "fullName": "Ellirose Val Hosea",
+      "email": "ellirose.val@santa-laurensia.sch.id",
+      "xp": 16641,
+      "level": 30,
+      "streak": 1,
+      "coins": 445,
+      "createdAt": "2026-07-30T06:43:06.771Z"
+    },
+    {
+      "id": "cms75gt200000116qhwpel56k",
+      "fullName": "BRIAN MOCHRAN",
+      "email": "brian.m@santa-laurensia.sch.id",
+      "xp": 16438,
+      "level": 30,
+      "streak": 3,
+      "coins": 440,
+      "createdAt": "2026-07-30T06:46:00.984Z"
+    },
+    {
+      "id": "cms3y8dci000zdex6pb597kfx",
+      "fullName": "Farrelio Richie Chairul",
+      "email": "farrelio.chairul.student@shb.sch.id",
+      "xp": 15015,
+      "level": 28,
+      "streak": 5,
+      "coins": 141,
+      "createdAt": "2026-07-28T01:00:11.539Z"
+    },
+    {
+      "id": "cmrynjmul0080i5ey9w847f08",
+      "fullName": "Louis Amadeuz Magebura Hokeng",
+      "email": "louis.amadeuz@santa-laurensia.sch.id",
+      "xp": 14805,
+      "level": 28,
+      "streak": 2,
+      "coins": 584,
+      "createdAt": "2026-07-24T08:02:10.413Z"
+    },
+    {
+      "id": "cmruafp7c0008cxsjgx37sgac",
+      "fullName": "Biru Aqila Singedekane",
+      "email": "biruaqila19@gmail.com",
+      "xp": 11997,
+      "level": 25,
+      "streak": 1,
+      "coins": 220,
+      "createdAt": "2026-07-21T06:44:07.128Z"
+    },
+    {
+      "id": "cms5fif8n001ffr858dgglrpo",
+      "fullName": "BARTHOLOMEW ALDEN SETIAWAN",
+      "email": "bartholomew.as@santa-laurensia.sch.id",
+      "xp": 10872,
+      "level": 24,
+      "streak": 1,
+      "coins": 287,
+      "createdAt": "2026-07-29T01:51:40.199Z"
+    },
+    {
+      "id": "cms5fj0mj001ifr85xb33w5bg",
+      "fullName": "LUKAS DARIUS PRANOTO SISWANA",
+      "email": "lukas.dps@santa-laurensia.sch.id",
+      "xp": 10824,
+      "level": 23,
+      "streak": 1,
+      "coins": 193,
+      "createdAt": "2026-07-29T01:52:07.915Z"
+    },
+    {
+      "id": "cms3y9dax000hdjjbuoqnf0pr",
+      "fullName": "Axel Christopher Handdy",
+      "email": "axel.handdy.student@shb.sch.id",
+      "xp": 10157,
+      "level": 23,
+      "streak": 1,
+      "coins": 86,
+      "createdAt": "2026-07-28T01:00:58.137Z"
+    },
+    {
+      "id": "cms8d85zs0014yhnn2gs97o6u",
+      "fullName": "Jethro Putera Kartawidjaja",
+      "email": "jethro.putera@santa-laurensia.sch.id",
+      "xp": 9216,
+      "level": 22,
+      "streak": 2,
+      "coins": 110,
+      "createdAt": "2026-07-31T03:11:00.951Z"
+    },
+    {
+      "id": "cmrynpdcd003pudtayxrevygk",
+      "fullName": "Alden Levyn Susilo",
+      "email": "alden.ls@santa-laurensia.sch.id",
+      "xp": 7430,
+      "level": 20,
+      "streak": 2,
+      "coins": 58,
+      "createdAt": "2026-07-24T08:06:38.030Z"
+    },
+    {
+      "id": "cms75fvnw0000exxwtmy76jxv",
+      "fullName": "Dann River Anderson",
+      "email": "dann.river@santa-laurensia.sch.id",
+      "xp": 7288,
+      "level": 20,
+      "streak": 1,
+      "coins": 305,
+      "createdAt": "2026-07-30T06:45:17.709Z"
+    },
+    {
+      "id": "cms2wx2e80016gqskx17nkp4g",
+      "fullName": "24. OWEN GAOTAMA JASADIRNATA",
+      "email": "owen.gaotama@santa-laurensia.sch.id",
+      "xp": 7071,
+      "level": 19,
+      "streak": 1,
+      "coins": 131,
+      "createdAt": "2026-07-27T07:35:38.337Z"
+    },
+    {
+      "id": "cmso31y35000393jroov9na5b",
+      "fullName": "Rakyan El Azzamy",
+      "email": "rakyanelazzamy1@gmail.com",
+      "xp": 6817,
+      "level": 19,
+      "streak": 4,
+      "coins": 60,
+      "createdAt": "2026-08-11T03:10:33.425Z"
+    },
+    {
+      "id": "cmrk8util0000a1nvdh0tjxri",
+      "fullName": "Christomiguel Alvaro Darmawan",
+      "email": "christomiguel.darmawan.student@shb.sch.id",
+      "xp": 5969,
+      "level": 17,
+      "streak": 1,
+      "coins": 321,
+      "createdAt": "2026-07-14T06:02:11.565Z"
+    },
+    {
+      "id": "cms2wycw80030d4xe7a1wzwy0",
+      "fullName": "22. Matthew Edmund Pawitra ",
+      "email": "matthew.ep@santa-laurensia.sch.id",
+      "xp": 5776,
+      "level": 17,
+      "streak": 1,
+      "coins": 295,
+      "createdAt": "2026-07-27T07:36:38.600Z"
+    },
+    {
+      "id": "cmruafuoa0000jmfgxcogvh3k",
+      "fullName": "Mikael Rahman Pratama",
+      "email": "mikael.pratama.student@shb.sch.id",
+      "xp": 5745,
+      "level": 16,
+      "streak": 1,
+      "coins": 341,
+      "createdAt": "2026-07-21T06:44:14.219Z"
+    },
+    {
+      "id": "cmqxe3g220020t8wyu004kngn",
+      "fullName": "Michael Flynn Putra Sanjaya ",
+      "email": "flynnputra@gmail.com",
+      "xp": 5695,
+      "level": 16,
+      "streak": 1,
+      "coins": 269,
+      "createdAt": "2026-06-28T06:10:10.058Z"
+    },
+    {
+      "id": "cms5fhaj7000at9lqu5jj1imo",
+      "fullName": "Cristiano Jordan Setiawan",
+      "email": "cristiano.js@santa-laurensia.sch.id",
+      "xp": 5393,
+      "level": 16,
+      "streak": 1,
+      "coins": 323,
+      "createdAt": "2026-07-29T01:50:47.443Z"
+    },
+    {
+      "id": "cmqxe3n1m0030t8wylk4gbv69",
+      "fullName": "Fabio",
+      "email": "fabio.eleanor.student@shb.sch.id",
+      "xp": 5232,
+      "level": 15,
+      "streak": 2,
+      "coins": 260,
+      "createdAt": "2026-06-28T06:10:19.114Z"
+    },
+    {
+      "id": "cmruafxea000014gitrr89fwx",
+      "fullName": "Alikha Munira Amalia Purnomo",
+      "email": "alikha.purnomo.student@shb.sch.id",
+      "xp": 5218,
+      "level": 15,
+      "streak": 1,
+      "coins": 619,
+      "createdAt": "2026-07-21T06:44:17.746Z"
+    },
+    {
+      "id": "cmrstiiyr000rd4vtzkvdlv7j",
+      "fullName": "Narain Naveed Nugroho",
+      "email": "narain.nugroho.student@shb.sch.id",
+      "xp": 5163,
+      "level": 15,
+      "streak": 1,
+      "coins": 167,
+      "createdAt": "2026-07-20T06:02:38.519Z"
+    },
+    {
+      "id": "cms4rff2c001eql0k08mn9et8",
+      "fullName": "Kevin Chen",
+      "email": "nicholas.anderson261@gmail.com",
+      "xp": 5120,
+      "level": 15,
+      "streak": 1,
+      "coins": 5,
+      "createdAt": "2026-07-28T14:37:29.221Z"
+    },
+    {
+      "id": "cms4hq64a000054t2l08ihu03",
+      "fullName": "Sang Pangeran XP",
+      "email": "babadu_babibu@yahoo.com",
+      "xp": 5105,
+      "level": 15,
+      "streak": 1,
+      "coins": 18,
+      "createdAt": "2026-07-28T10:05:54.682Z"
+    },
+    {
+      "id": "cms2wumwa0008rbmpsecjcn17",
+      "fullName": "07. Caithlynn Odellia Halim",
+      "email": "caithlynn.odellia@santa-laurensia.sch.id",
+      "xp": 4595,
+      "level": 14,
+      "streak": 3,
+      "coins": 994,
+      "createdAt": "2026-07-27T07:33:44.938Z"
+    },
+    {
+      "id": "cms5lqzav000chct1ouim3jlm",
+      "fullName": "Sophia Charissa Bong",
+      "email": "sophia.c@santa-laurensia.sch.id",
+      "xp": 4288,
+      "level": 14,
+      "streak": 1,
+      "coins": 45,
+      "createdAt": "2026-07-29T04:46:17.143Z"
+    },
+    {
+      "id": "cms2wy9hr0031rbmpyvuwn69j",
+      "fullName": "13 Gregorio Maxio Hendarto",
+      "email": "gregorio.mh@santa-laurensia.sch.id",
+      "xp": 4281,
+      "level": 14,
+      "streak": 1,
+      "coins": 375,
+      "createdAt": "2026-07-27T07:36:34.191Z"
+    },
+    {
+      "id": "cmqxe39sd0016t8wycv4x1lc1",
+      "fullName": "Bentley C",
+      "email": "bentley.yap.student@shb.sch.id",
+      "xp": 4143,
+      "level": 13,
+      "streak": 1,
+      "coins": 257,
+      "createdAt": "2026-06-28T06:10:01.933Z"
+    },
+    {
+      "id": "cmru76fba00001cb8xuvnhik7",
+      "fullName": "BSK LUTFI",
+      "email": "lutfi.prabuaghtyanda.student@shb.sch.id",
+      "xp": 3787,
+      "level": 13,
+      "streak": 1,
+      "coins": 1341,
+      "createdAt": "2026-07-21T05:12:55.558Z"
+    },
+    {
+      "id": "cmqxe3is7002ft8wyxvaa0cjk",
+      "fullName": "Edmund Bestrand Hara Saragih",
+      "email": "edmund.bestrand.student@shb.sch.id",
+      "xp": 3748,
+      "level": 12,
+      "streak": 2,
+      "coins": 474,
+      "createdAt": "2026-06-28T06:10:13.591Z"
+    },
+    {
+      "id": "cms4aenus0023k59jqzobp7jj",
+      "fullName": "Edward Nathaniel Kurniawan",
+      "email": "edward.kurniawan.student@shb.sch.id",
+      "xp": 3700,
+      "level": 12,
+      "streak": 1,
+      "coins": 10,
+      "createdAt": "2026-07-28T06:41:00.485Z"
+    },
+    {
+      "id": "cmruakqrq000vcxsjyvhyhdsp",
+      "fullName": "Putu Ryuga Widya Satriasa",
+      "email": "putu.satriasa.student@shb.sch.id",
+      "xp": 3608,
+      "level": 12,
+      "streak": 1,
+      "coins": 242,
+      "createdAt": "2026-07-21T06:48:02.438Z"
+    },
+    {
+      "id": "cmry8mygb000nfsspkl4zcfjt",
+      "fullName": "EMMA SOPHIA HALIM",
+      "email": "emma.sh@santa-laurensia.sch.id",
+      "xp": 3548,
+      "level": 12,
+      "streak": 1,
+      "coins": 80,
+      "createdAt": "2026-07-24T01:04:51.179Z"
+    },
+    {
+      "id": "cmrynp51k00177yocv0byknnq",
+      "fullName": "14 Marc Ethan Wanandy",
+      "email": "marc.ew@santa-laurensia.sch.id",
+      "xp": 3435,
+      "level": 12,
+      "streak": 1,
+      "coins": 93,
+      "createdAt": "2026-07-24T08:06:27.272Z"
+    },
+    {
+      "id": "cms75qx370000zo1rh1iti7xf",
+      "fullName": "Arletta Callia Alamsjah",
+      "email": "arletta.callia@santa-laurensia.sch.id",
+      "xp": 3421,
+      "level": 12,
+      "streak": 1,
+      "coins": 100,
+      "createdAt": "2026-07-30T06:53:52.771Z"
+    },
+    {
+      "id": "cms2tmyqa001k9wdv61csi1ph",
+      "fullName": "czar sotaronggal sinambela",
+      "email": "czarsinambela76@gmail.com",
+      "xp": 3400,
+      "level": 12,
+      "streak": 2,
+      "coins": 90,
+      "createdAt": "2026-07-27T06:03:48.178Z"
+    },
+    {
+      "id": "cms5fi24w0012t9lqxc223ygj",
+      "fullName": "Benedict Aurelio Putra Wibowo",
+      "email": "benedict.aurelio@santa-laurensia.sch.id",
+      "xp": 3350,
+      "level": 12,
+      "streak": 1,
+      "coins": 253,
+      "createdAt": "2026-07-29T01:51:23.216Z"
+    },
+    {
+      "id": "cms5lr1r00026r87kppzwdvf9",
+      "fullName": "Kathryn Elicia Allena",
+      "email": "kathryn.e@santa-laurensia.sch.id",
+      "xp": 3285,
+      "level": 12,
+      "streak": 1,
+      "coins": 130,
+      "createdAt": "2026-07-29T04:46:20.316Z"
+    },
+    {
+      "id": "cms5fja8i001j9ow2jpt4lfdy",
+      "fullName": "Jordi Hasea Siregar",
+      "email": "jordi.hs@santa-laurensia.sch.id",
+      "xp": 3264,
+      "level": 12,
+      "streak": 1,
+      "coins": 25,
+      "createdAt": "2026-07-29T01:52:20.370Z"
+    },
+    {
+      "id": "cms5lq5uj0000a91ps37qewl7",
+      "fullName": "Zarah Bhaskara Andika Sutedjo",
+      "email": "zarah.b@santa-laurensia.sch.id",
+      "xp": 3218,
+      "level": 11,
+      "streak": 1,
+      "coins": 150,
+      "createdAt": "2026-07-29T04:45:38.971Z"
+    },
+    {
+      "id": "cmrk8v7ck0003uk60uvra5guc",
+      "fullName": "Gisella Daniel Susanto",
+      "email": "gisella.susanto.student@shb.sch.id",
+      "xp": 3179,
+      "level": 11,
+      "streak": 1,
+      "coins": 378,
+      "createdAt": "2026-07-14T06:02:29.492Z"
+    },
+    {
+      "id": "cms5fi2x4000u9ow25r7u594h",
+      "fullName": "Maximillian Heinrich Dihardja",
+      "email": "maximillian.hd@santa-laurensia.sch.id",
+      "xp": 3170,
+      "level": 11,
+      "streak": 1,
+      "coins": 88,
+      "createdAt": "2026-07-29T01:51:24.232Z"
+    },
+    {
+      "id": "cms2p23ix002dr82cibubfiuk",
+      "fullName": "Oliver Handoyo",
+      "email": "oliver.handoyo@santa-laurensia.sch.id",
+      "xp": 3168,
+      "level": 11,
+      "streak": 1,
+      "coins": 273,
+      "createdAt": "2026-07-27T03:55:36.153Z"
+    },
+    {
+      "id": "cms75iaek0000x51t0o2oq6s0",
+      "fullName": "JOSEPH ALEXANDER BONG",
+      "email": "joseph.a@santa-laurensia.sch.id",
+      "xp": 3108,
+      "level": 11,
+      "streak": 1,
+      "coins": 80,
+      "createdAt": "2026-07-30T06:47:10.125Z"
+    },
+    {
+      "id": "cmru3cpij001or8mj5qhbkaxh",
+      "fullName": "Zachary Hasiholan Mugut Panjaitan",
+      "email": "zachary.panjaitan.student@shb.sch.id",
+      "xp": 3022,
+      "level": 11,
+      "streak": 2,
+      "coins": 203,
+      "createdAt": "2026-07-21T03:25:50.252Z"
+    },
+    {
+      "id": "cmscugoow0008ju73xmukxssc",
+      "fullName": "SEBASTIAN DANIEL HARMAN",
+      "email": "sebastian.d@santa-laurensia.sch.id",
+      "xp": 2989,
+      "level": 11,
+      "streak": 1,
+      "coins": 327,
+      "createdAt": "2026-08-03T06:24:36.608Z"
+    },
+    {
+      "id": "cmrk8ulfc0000jnv3hc50rg8b",
+      "fullName": "MEGAN AURIEL VIJAYA",
+      "email": "megan.vijaya.student@shb.sch.id",
+      "xp": 2978,
+      "level": 11,
+      "streak": 1,
+      "coins": 215,
+      "createdAt": "2026-07-14T06:02:01.081Z"
+    },
+    {
+      "id": "cmru7314r0005s6e9ag7z3iio",
+      "fullName": "FIDELIS NATHANEL OSAZE",
+      "email": "fidelis.nathanelosaze.student@shb.sch.id",
+      "xp": 2929,
+      "level": 11,
+      "streak": 1,
+      "coins": 769,
+      "createdAt": "2026-07-21T05:10:17.212Z"
+    },
+    {
+      "id": "cms8eocf9000ijroz9083c3tx",
+      "fullName": "Catherine Kyla Siswanto",
+      "email": "c.kyla@santa-laurensia.sch.id",
+      "xp": 2917,
+      "level": 11,
+      "streak": 1,
+      "coins": 152,
+      "createdAt": "2026-07-31T03:51:35.397Z"
+    },
+    {
+      "id": "cmruama6k000y14gikjzdh9wt",
+      "fullName": "kelvin xavier devantez",
+      "email": "kelvin.devantez.student@shb.sch.id",
+      "xp": 2895,
+      "level": 11,
+      "streak": 1,
+      "coins": 360,
+      "createdAt": "2026-07-21T06:49:14.253Z"
+    },
+    {
+      "id": "cms75a0kt0003h0rgvmcfjps3",
+      "fullName": "Michelle Jovana Hidayat",
+      "email": "michelle.j@santa-laurensia.sch.id",
+      "xp": 2801,
+      "level": 11,
+      "streak": 2,
+      "coins": 75,
+      "createdAt": "2026-07-30T06:40:44.141Z"
+    },
+    {
+      "id": "cms73uvfl000ntdtfx8zizvcm",
+      "fullName": "Analea Diandra Naradita",
+      "email": "analea.d@santa-laurensia.sch.id",
+      "xp": 2754,
+      "level": 11,
+      "streak": 1,
+      "coins": 145,
+      "createdAt": "2026-07-30T06:00:58.018Z"
+    },
+    {
+      "id": "cms4amsyb005qutkdf5stcxhi",
+      "fullName": "red velvet",
+      "email": "kyara.prudenia.student@shb.sch.id",
+      "xp": 2750,
+      "level": 11,
+      "streak": 1,
+      "coins": 70,
+      "createdAt": "2026-07-28T06:47:20.339Z"
+    },
+    {
+      "id": "cms75idcx0000rqqo61h7weoj",
+      "fullName": "Adeline Nathania Setiawan",
+      "email": "adeline.nathania@santa-laurensia.sch.id",
+      "xp": 2722,
+      "level": 10,
+      "streak": 1,
+      "coins": 607,
+      "createdAt": "2026-07-30T06:47:13.952Z"
+    },
+    {
+      "id": "cmrge7kjh0000tfahpmdvg6rv",
+      "fullName": "Joyse Christabel Dehana Tambunan",
+      "email": "joyse.tambunan.student@shb.sch.id",
+      "xp": 2634,
+      "level": 10,
+      "streak": 1,
+      "coins": 581,
+      "createdAt": "2026-07-11T13:20:59.837Z"
+    },
+    {
+      "id": "cmruagy3u000thidz6zyzc2f1",
+      "fullName": "Philbert Hosea Tedja",
+      "email": "philbert.tedja.student@shb.sch.id",
+      "xp": 2624,
+      "level": 10,
+      "streak": 1,
+      "coins": 223,
+      "createdAt": "2026-07-21T06:45:05.322Z"
+    },
+    {
+      "id": "cms4ag03b003qmfix8ejmay9o",
+      "fullName": "Aswangga satria",
+      "email": "aswanggasatria3412@gmail.com",
+      "xp": 2610,
+      "level": 10,
+      "streak": 1,
+      "coins": 340,
+      "createdAt": "2026-07-28T06:42:02.999Z"
+    },
+    {
+      "id": "cmrynkawb00047sacgvhrrthn",
+      "fullName": "06. Emanuelle Victorio Leonardy",
+      "email": "emanuelle.vl@santa-laurensia.sch.id",
+      "xp": 2592,
+      "level": 10,
+      "streak": 1,
+      "coins": 181,
+      "createdAt": "2026-07-24T08:02:41.580Z"
+    },
+    {
+      "id": "cms5fgjwn00e9axe4a9akajei",
+      "fullName": "HEIZO HILLARY WONG",
+      "email": "heizo.hw@santa-laurensia.sch.id",
+      "xp": 2567,
+      "level": 10,
+      "streak": 1,
+      "coins": 71,
+      "createdAt": "2026-07-29T01:50:12.935Z"
+    },
+    {
+      "id": "cmrydgomm002n9jt9jtxek6kq",
+      "fullName": "Reginald Mario Tedjokusumo",
+      "email": "reginald.mt@santa-laurensia.sch.id",
+      "xp": 2532,
+      "level": 10,
+      "streak": 2,
+      "coins": 476,
+      "createdAt": "2026-07-24T03:19:56.590Z"
+    },
+    {
+      "id": "cmru3bleo001dr8mjxd1hay5v",
+      "fullName": "Dzaky Salman Mahendra",
+      "email": "dzaky.mahendra.student@shb.sch.id",
+      "xp": 2522,
+      "level": 10,
+      "streak": 2,
+      "coins": 179,
+      "createdAt": "2026-07-21T03:24:58.273Z"
+    },
+    {
+      "id": "cmscugfl200494dhhrejxvnkd",
+      "fullName": "Jorell Zhou",
+      "email": "jorell.z@santa-laurensia.sch.id",
+      "xp": 2498,
+      "level": 10,
+      "streak": 1,
+      "coins": 113,
+      "createdAt": "2026-08-03T06:24:24.807Z"
+    },
+    {
+      "id": "cmrvf47k2000i2b5q1wlpssdl",
+      "fullName": "Michael Aldrich Ginanjar",
+      "email": "michael.ginanjar.student@shb.sch.id",
+      "xp": 2466,
+      "level": 10,
+      "streak": 1,
+      "coins": 568,
+      "createdAt": "2026-07-22T01:42:55.299Z"
+    },
+    {
+      "id": "cmrvf41d5000b14jybxx0rooz",
+      "fullName": "Keimita Abigail Gurusinga",
+      "email": "keimita.gurusinga.student@shb.sch.id",
+      "xp": 2465,
+      "level": 10,
+      "streak": 1,
+      "coins": 283,
+      "createdAt": "2026-07-22T01:42:47.273Z"
+    },
+    {
+      "id": "cmrykq2ix0017t6vhgfkhpjgv",
+      "fullName": "Gavin Patrick Sudjana",
+      "email": "gavin.patrick@santa-laurensia.sch.id",
+      "xp": 2461,
+      "level": 10,
+      "streak": 1,
+      "coins": 403,
+      "createdAt": "2026-07-24T06:43:11.818Z"
+    },
+    {
+      "id": "cms5fj4yr001d9ow2ucjgnisj",
+      "fullName": "Raynard Pranata",
+      "email": "raynard.pranata@santa-laurensia.sch.id",
+      "xp": 2368,
+      "level": 10,
+      "streak": 1,
+      "coins": 70,
+      "createdAt": "2026-07-29T01:52:13.539Z"
+    },
+    {
+      "id": "cmrydg0ju002a9jt9oc6jujir",
+      "fullName": "Jerryco Hermanfu 20",
+      "email": "jerryco.h@santa-laurensia.sch.id",
+      "xp": 2366,
+      "level": 10,
+      "streak": 1,
+      "coins": 213,
+      "createdAt": "2026-07-24T03:19:25.386Z"
+    },
+    {
+      "id": "cmrydhxqb00369jt9dt0msryb",
+      "fullName": "Max Pinneri",
+      "email": "max.p@santa-laurensia.sch.id",
+      "xp": 2303,
+      "level": 10,
+      "streak": 1,
+      "coins": 293,
+      "createdAt": "2026-07-24T03:20:55.043Z"
+    },
+    {
+      "id": "cmqxe3afx0019t8wy8n9vyjrs",
+      "fullName": "Astin Aliya Irawan",
+      "email": "astin.irawan.student@shb.sch.id",
+      "xp": 2303,
+      "level": 10,
+      "streak": 2,
+      "coins": 338,
+      "createdAt": "2026-06-28T06:10:02.781Z"
+    },
+    {
+      "id": "cms5lqzu1001lr87ktib957wv",
+      "fullName": "Ethan Daffarya The",
+      "email": "ethan.dt@santa-laurensia.sch.id",
+      "xp": 2290,
+      "level": 10,
+      "streak": 1,
+      "coins": 5,
+      "createdAt": "2026-07-29T04:46:17.833Z"
+    },
+    {
+      "id": "cmru3asqq0017r8mjtikxazwn",
+      "fullName": "Bridget Paquita Aruna Gantari",
+      "email": "bridget.gantari.student@shb.sch.id",
+      "xp": 2281,
+      "level": 10,
+      "streak": 1,
+      "coins": 402,
+      "createdAt": "2026-07-21T03:24:21.123Z"
+    },
+    {
+      "id": "cms5hdh8g0000zpvtkyp4lt2x",
+      "fullName": "Theodore Adam Hadiwinata",
+      "email": "theodore.adam@santa-laurensia.sch.id",
+      "xp": 2260,
+      "level": 10,
+      "streak": 3,
+      "coins": 258,
+      "createdAt": "2026-07-29T02:43:48.735Z"
+    },
+    {
+      "id": "cmrsti4un001js4c6yt0z61hk",
+      "fullName": "Kalena Aiko Isnarto",
+      "email": "kalena.isnarto.student@shb.sch.id",
+      "xp": 2212,
+      "level": 9,
+      "streak": 2,
+      "coins": 207,
+      "createdAt": "2026-07-20T06:02:20.276Z"
+    },
+    {
+      "id": "cms8eob00000cjrozkxmcdf1c",
+      "fullName": "Brynn Emmanuelle Sophia Monintja",
+      "email": "brynn.e@santa-laurensia.sch.id",
+      "xp": 2195,
+      "level": 9,
+      "streak": 1,
+      "coins": 83,
+      "createdAt": "2026-07-31T03:51:33.552Z"
+    },
+    {
+      "id": "cmruah4yk0012hidzcj6z1mfn",
+      "fullName": "Jizelle Kyra Uziela Nerwan",
+      "email": "jizelle.nerwan.student@sch.shb.id",
+      "xp": 2185,
+      "level": 9,
+      "streak": 1,
+      "coins": 277,
+      "createdAt": "2026-07-21T06:45:14.204Z"
+    },
+    {
+      "id": "cms44ghzm000g139qd10z26zw",
+      "fullName": "Lydia Elisabeth Hardjo Sunarko",
+      "email": "lydia.ehs@santa-laurensia.sch.id",
+      "xp": 2160,
+      "level": 9,
+      "streak": 1,
+      "coins": 151,
+      "createdAt": "2026-07-28T03:54:28.498Z"
+    },
+    {
+      "id": "cms4a8w4000085mtjh8p4ah1l",
+      "fullName": "Rafael Jaime Christoffer",
+      "email": "rafael.jc@santa-laurensia.sch.id",
+      "xp": 2132,
+      "level": 9,
+      "streak": 1,
+      "coins": 5,
+      "createdAt": "2026-07-28T06:36:31.248Z"
+    },
+    {
+      "id": "cmru3ck47001lr8mj1b5wp9f0",
+      "fullName": "Larasati Alexa",
+      "email": "larasati.nugroho.student@shb.sch.id",
+      "xp": 2084,
+      "level": 9,
+      "streak": 2,
+      "coins": 754,
+      "createdAt": "2026-07-21T03:25:43.256Z"
+    },
+    {
+      "id": "cms8eoyc3000czmvjg7tt8bzi",
+      "fullName": "Ritz Clifford Mulio",
+      "email": "ritz.c@santa-laurensia.sch.id",
+      "xp": 2078,
+      "level": 9,
+      "streak": 1,
+      "coins": 129,
+      "createdAt": "2026-07-31T03:52:03.795Z"
+    },
+    {
+      "id": "cmqxe3gn70023t8wys6du2xkw",
+      "fullName": "Louis Wahyudi Rhijnsburger",
+      "email": "louiswahyudi2008@gmail.com",
+      "xp": 2053,
+      "level": 9,
+      "streak": 1,
+      "coins": 390,
+      "createdAt": "2026-06-28T06:10:10.819Z"
+    },
+    {
+      "id": "cms2puvy00053d2dfnyykry5k",
+      "fullName": "Darren Aditya Chandra",
+      "email": "darren.ac@santa-laurensia.sch.id",
+      "xp": 2030,
+      "level": 9,
+      "streak": 1,
+      "coins": 30,
+      "createdAt": "2026-07-27T04:17:59.352Z"
+    },
+    {
+      "id": "cms73u63e000l52ngk7qpvj0e",
+      "fullName": "Kimora Jocelyn Fey",
+      "email": "kimora.j@santa-laurensia.sch",
+      "xp": 2020,
+      "level": 9,
+      "streak": 1,
+      "coins": 179,
+      "createdAt": "2026-07-30T06:00:25.178Z"
+    },
+    {
+      "id": "cms73tlhz00032m9tfjjqezv6",
+      "fullName": "Renata Felice Tedjakusuma",
+      "email": "renata.f@santa-laurensia.sch.id",
+      "xp": 2001,
+      "level": 9,
+      "streak": 1,
+      "coins": 70,
+      "createdAt": "2026-07-30T05:59:58.487Z"
+    },
+    {
+      "id": "cmruakn3k001bo16atd5xda68",
+      "fullName": "Ruth Cordelia Kathleen Magar",
+      "email": "ruth.magar.student@shb.sch.id",
+      "xp": 1960,
+      "level": 8,
+      "streak": 1,
+      "coins": 312,
+      "createdAt": "2026-07-21T06:47:57.681Z"
+    },
+    {
+      "id": "cms332vgl00004jju7si39mwh",
+      "fullName": "Keanu gusty pangestu",
+      "email": "btaalesha1@gmail.com",
+      "xp": 1950,
+      "level": 8,
+      "streak": 1,
+      "coins": 441,
+      "createdAt": "2026-07-27T10:28:06.981Z"
+    },
+    {
+      "id": "cms45x5ek00pw6zgh38mlilrq",
+      "fullName": "Sebastianus Kenneth Juan Anjoly",
+      "email": "sebastianus.kenneth@santa-laurensia.sch.id",
+      "xp": 1942,
+      "level": 8,
+      "streak": 1,
+      "coins": 10,
+      "createdAt": "2026-07-28T04:35:24.957Z"
+    }
+  ],
+  "topStudentsByActivity": []
+}

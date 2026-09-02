@@ -29,9 +29,43 @@ function daysAgo(n: number): Date {
   return new Date(NOW.getTime() - n * 24 * 60 * 60 * 1000);
 }
 
-function dayKeyWib(d: Date): string {
-  const wib = new Date(d.getTime() + WIB_OFFSET);
-  return wib.toISOString().slice(0, 10);
+function safeStringify(obj: unknown): string {
+  return JSON.stringify(obj, (_key, value) =>
+    typeof value === "bigint" ? value.toString() : value, 2
+  );
+}
+
+// ─── TABLE DISCOVERY ────────────────────────────────────────────────────────
+let existingTables = new Set<string>();
+
+async function discoverTables() {
+  try {
+    const rows = await prisma.$queryRawUnsafe<{ tablename: string }[]>(
+      `SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename`
+    );
+    existingTables = new Set(rows.map(r => r.tablename));
+    console.log(`📋 Discovered ${existingTables.size} tables in production DB`);
+  } catch (e: any) {
+    console.warn("⚠️  Could not discover tables:", e.message?.slice(0, 100));
+  }
+}
+
+function hasTable(name: string): boolean {
+  return existingTables.has(name);
+}
+
+// Safe raw query — returns empty array if table doesn't exist
+async function safeQuery<T>(sql: string, label: string): Promise<T[]> {
+  try {
+    return await prisma.$queryRawUnsafe<T>(sql);
+  } catch (e: any) {
+    if (e.code === "42P01") {
+      console.log(`  ⏭️  ${label}: table not found, skipping`);
+      return [];
+    }
+    console.warn(`  ⚠️  ${label}: ${e.message?.slice(0, 80)}`);
+    return [];
+  }
 }
 
 // ─── SECTION A: USER FUNNEL ─────────────────────────────────────────────────
@@ -50,14 +84,14 @@ async function auditUserFunnel() {
   ] = await Promise.all([
     prisma.user.count(),
     prisma.user.groupBy({ by: ["role"], _count: true }),
-    prisma.user.findMany({ where: { isFounder: true }, select: { id: true, email: true, name: true, role: true } }),
+    prisma.user.findMany({ where: { isFounder: true }, select: {       id: true, email: true, fullName: true, role: true } }),
     prisma.user.count({ where: { isPremium: true, premiumUntil: { gt: NOW } } }),
     prisma.user.groupBy({ by: ["premiumPlan"], where: { isPremium: true, premiumUntil: { gt: NOW } }, _count: true }),
     prisma.user.count({ where: { role: "GURU", trialEndsAt: { gt: NOW } } }),
-    prisma.user.count({ where: { lastLoginAt: { gte: daysAgo(7) } } }),
-    prisma.user.count({ where: { lastLoginAt: { gte: daysAgo(30) } } }),
-    prisma.user.count({ where: { lastLoginAt: { gte: daysAgo(90) } } }),
-    prisma.user.count({ where: { lastLoginAt: null } }),
+    prisma.user.count({ where: { lastActiveAt: { gte: daysAgo(7) } } }),
+    prisma.user.count({ where: { lastActiveAt: { gte: daysAgo(30) } } }),
+    prisma.user.count({ where: { lastActiveAt: { gte: daysAgo(90) } } }),
+    prisma.user.count({ where: { lastActiveAt: null } }),
   ]);
 
   const roleMap = Object.fromEntries(byRole.map(r => [r.role, r._count]));
@@ -69,7 +103,7 @@ async function auditUserFunnel() {
     premiumActive,
     premiumByPlan: Object.fromEntries(premiumByPlan.map(r => [r.premiumPlan ?? "FREE", r._count])),
     trialActiveGuru: trialActive,
-    loginActivity: { last7Days: last7, last30Days: last30, last90Days: last90, neverLoggedIn: neverActive },
+    loginActivity: { last7Days: last7, last30Days: last30, last90Days: last90, neverActive: neverActive },
   };
 }
 
@@ -78,33 +112,40 @@ async function auditTeacherFunnel() {
   const [
     totalGuru,
     groupsCreated,
-    activeTeachers30d,
-    activeTeachers90d,
     groupsPerTeacher,
-    topGroupSizes,
   ] = await Promise.all([
     prisma.user.count({ where: { role: "GURU" } }),
     prisma.group.count(),
-    prisma.user.count({ where: { role: "GURU", groups: { some: {} }, createdAt: { gte: daysAgo(30) } } }),
-    prisma.user.count({ where: { role: "GURU", groups: { some: {} }, createdAt: { gte: daysAgo(90) } } }),
     prisma.group.groupBy({ by: ["teacherId"], _count: true, orderBy: { _count: { teacherId: "desc" } }, take: 20 }),
-    prisma.$queryRaw`
-      SELECT g."teacherId", g."name" as "groupName", COUNT(gm."id")::int as "memberCount"
-      FROM "Group" g
-      LEFT JOIN "GroupMember" gm ON gm."groupId" = g."id"
-      GROUP BY g."id", g."teacherId", g."name"
-      ORDER BY COUNT(gm."id") DESC
-      LIMIT 20
-    ` as Promise<{ teacherId: string; groupName: string; memberCount: number }[]>,
   ]);
 
-  // Teacher activity via DailyAction
-  const teacherActivity30 = await prisma.dailyAction.groupBy({
-    by: ["userId"],
-    where: { createdAt: { gte: daysAgo(30) }, user: { role: "GURU" } },
-    _count: true,
-    orderBy: { _count: { userId: "desc" } },
-    take: 20,
+  const topGroupSizes = hasTable("GroupMember")
+    ? await safeQuery<{ teacherId: string; groupName: string; memberCount: number }>(
+        `SELECT g."teacherId", g."name" as "groupName", COUNT(gm."id")::int as "memberCount"
+         FROM "Group" g LEFT JOIN "GroupMember" gm ON gm."groupId" = g."id"
+         GROUP BY g."id", g."teacherId", g."name"
+         ORDER BY COUNT(gm."id") DESC LIMIT 20`,
+        "topGroupSizes"
+      )
+    : [];
+
+  // Teacher activity via DailyAction (may not exist)
+  const teacherActivity30 = hasTable("DailyAction")
+    ? await safeQuery<{ userId: string; count: number }>(
+        `SELECT "userId", COUNT(*)::int as count FROM "DailyAction"
+         WHERE "createdAt" >= '${daysAgo(30).toISOString()}'
+         AND "userId" IN (SELECT "id" FROM "User" WHERE "role" = 'GURU')
+         GROUP BY "userId" ORDER BY count DESC LIMIT 20`,
+        "teacherActivity30"
+      )
+    : [];
+
+  // Teachers with groups
+  const activeTeachers30d = await prisma.user.count({
+    where: { role: "GURU", groups: { some: { createdAt: { gte: daysAgo(30) } } } },
+  });
+  const activeTeachers90d = await prisma.user.count({
+    where: { role: "GURU", groups: { some: { createdAt: { gte: daysAgo(90) } } } },
   });
 
   return {
@@ -124,105 +165,129 @@ async function auditStudentFunnel() {
   const [
     totalMurid,
     studentsInGroups,
-    studentsWithActivity,
-    studentsWithDailyAction7d,
-    studentsWithDailyAction30d,
-    studentsWithTestSession,
-    studentsWithUnitProgress,
-    studentsWithKarya,
-    studentsWithAiUsage,
   ] = await Promise.all([
     prisma.user.count({ where: { role: "MURID" } }),
     prisma.groupMember.findMany({ where: { user: { role: "MURID" } }, distinct: ["userId"], select: { userId: true } }),
-    prisma.$queryRaw`SELECT COUNT(DISTINCT "userId")::int as count FROM "DailyAction"` as Promise<{ count: number }[]>,
-    prisma.$queryRaw`SELECT COUNT(DISTINCT "userId")::int as count FROM "DailyAction" WHERE "createdAt" >= ${daysAgo(7)}` as Promise<{ count: number }[]>,
-    prisma.$queryRaw`SELECT COUNT(DISTINCT "userId")::int as count FROM "DailyAction" WHERE "createdAt" >= ${daysAgo(30)}` as Promise<{ count: number }[]>,
-    prisma.$queryRaw`SELECT COUNT(DISTINCT "userId")::int as count FROM "TestSession"` as Promise<{ count: number }[]>,
-    prisma.$queryRaw`SELECT COUNT(DISTINCT "userId")::int as count FROM "UserUnitProgress"` as Promise<{ count: number }[]>,
-    prisma.studentKarya.findMany({ distinct: ["authorId"], select: { authorId: true } }),
-    prisma.$queryRaw`SELECT COUNT(DISTINCT "userId")::int as count FROM "AIUsage" WHERE "userId" IN (SELECT "id" FROM "User" WHERE "role" = 'MURID')` as Promise<{ count: number }[]>,
   ]);
 
   const inGroupSet = new Set(studentsInGroups.map(s => s.userId));
-  const karyaSet = new Set(studentsWithKarya.map(k => k.authorId));
+
+  // DailyAction-based metrics (may not exist)
+  const activatedByAny = hasTable("DailyAction")
+    ? (await safeQuery<{ count: number }>(
+        `SELECT COUNT(DISTINCT "userId")::int as count FROM "DailyAction"`,
+        "activatedByAny"
+      ))[0]?.count ?? 0
+    : 0;
+
+  const activated7d = hasTable("DailyAction")
+    ? (await safeQuery<{ count: number }>(
+        `SELECT COUNT(DISTINCT "userId")::int as count FROM "DailyAction" WHERE "createdAt" >= '${daysAgo(7).toISOString()}'`,
+        "activated7d"
+      ))[0]?.count ?? 0
+    : 0;
+
+  const activated30d = hasTable("DailyAction")
+    ? (await safeQuery<{ count: number }>(
+        `SELECT COUNT(DISTINCT "userId")::int as count FROM "DailyAction" WHERE "createdAt" >= '${daysAgo(30).toISOString()}'`,
+        "activated30d"
+      ))[0]?.count ?? 0
+    : 0;
+
+  const withTestSession = hasTable("TestSession")
+    ? (await safeQuery<{ count: number }>(
+        `SELECT COUNT(DISTINCT "userId")::int as count FROM "TestSession"`,
+        "withTestSession"
+      ))[0]?.count ?? 0
+    : 0;
+
+  const withUnitProgress = hasTable("UserUnitProgress")
+    ? (await safeQuery<{ count: number }>(
+        `SELECT COUNT(DISTINCT "userId")::int as count FROM "UserUnitProgress"`,
+        "withUnitProgress"
+      ))[0]?.count ?? 0
+    : 0;
+
+  const withKarya = hasTable("StudentKarya")
+    ? (await safeQuery<{ count: number }>(
+        `SELECT COUNT(DISTINCT "userId")::int as count FROM "StudentKarya"`,
+        "withKarya"
+      ))[0]?.count ?? 0
+    : 0;
+
+  const withAiUsage = hasTable("AIUsage")
+    ? (await safeQuery<{ count: number }>(
+        `SELECT COUNT(DISTINCT "userId")::int as count FROM "AIUsage"
+         WHERE "userId" IN (SELECT "id" FROM "User" WHERE "role" = 'MURID')`,
+        "withAiUsage"
+      ))[0]?.count ?? 0
+    : 0;
 
   return {
     totalMurid,
     studentsInGroups: inGroupSet.size,
     percentInGroup: totalMurid > 0 ? +((inGroupSet.size / totalMurid) * 100).toFixed(1) : 0,
-    activatedByAnyActivity: studentsWithActivity[0]?.count ?? 0,
-    activated7d: studentsWithDailyAction7d[0]?.count ?? 0,
-    activated30d: studentsWithDailyAction30d[0]?.count ?? 0,
-    withTestSession: studentsWithTestSession[0]?.count ?? 0,
-    withUnitProgress: studentsWithUnitProgress[0]?.count ?? 0,
-    withKarya: karyaSet.size,
-    withAiUsage: studentsWithAiUsage[0]?.count ?? 0,
+    activatedByAnyActivity: activatedByAny,
+    activated7d,
+    activated30d,
+    withTestSession,
+    withUnitProgress,
+    withKarya,
+    withAiUsage,
   };
 }
 
 // ─── SECTION D: RETENTION ───────────────────────────────────────────────────
 async function auditRetention() {
-  // Cohort-based: users created in month X, active in month X+0 / X+1 / X+2
-  const cohorts = await prisma.$queryRaw`
-    SELECT
-      TO_CHAR(u."createdAt", 'YYYY-MM') as "cohortMonth",
-      COUNT(*)::int as "total",
-      COUNT(CASE WHEN da."userId" IS NOT NULL THEN 1 END)::int as "activeMonth0",
-      COUNT(CASE WHEN da."userId" IS NOT NULL AND da."dayKey" >= TO_CHAR(u."createdAt", 'YYYY-MM') THEN 1 END)::int as "activeInCohortMonth"
-    FROM "User" u
-    LEFT JOIN (
-      SELECT DISTINCT "userId", TO_CHAR("createdAt", 'YYYY-MM') as "dayKey"
-      FROM "DailyAction"
-    ) da ON da."userId" = u."id"
-    WHERE u."createdAt" >= '2026-01-01'
-    GROUP BY TO_CHAR(u."createdAt", 'YYYY-MM')
-    ORDER BY "cohortMonth"
-  ` as Promise<{ cohortMonth: string; total: number; activeMonth0: number; activeInCohortMonth: number }[]>;
-
-  // Simple retention: D1, D7, D30 (created users who returned)
-  const d1 = await prisma.$queryRaw`
-    SELECT COUNT(DISTINCT u."id")::int as count
-    FROM "User" u
-    INNER JOIN "DailyAction" da ON da."userId" = u."id"
-    WHERE u."createdAt" >= ${daysAgo(30)}
-    AND da."createdAt" > u."createdAt"
-    AND da."createdAt" <= u."createdAt" + INTERVAL '1 day'
-  ` as Promise<{ count: number }[]>;
-
-  const d7 = await prisma.$queryRaw`
-    SELECT COUNT(DISTINCT u."id")::int as count
-    FROM "User" u
-    INNER JOIN "DailyAction" da ON da."userId" = u."id"
-    WHERE u."createdAt" >= ${daysAgo(30)}
-    AND da."createdAt" > u."createdAt"
-    AND da."createdAt" <= u."createdAt" + INTERVAL '7 days'
-  ` as Promise<{ count: number }[]>;
-
-  const d30 = await prisma.$queryRaw`
-    SELECT COUNT(DISTINCT u."id")::int as count
-    FROM "User" u
-    INNER JOIN "DailyAction" da ON da."userId" = u."id"
-    WHERE u."createdAt" >= ${daysAgo(60)}
-    AND da."createdAt" > u."createdAt"
-    AND da."createdAt" <= u."createdAt" + INTERVAL '30 days'
-  ` as Promise<{ count: number }[]>;
-
-  // New users per month
-  const newUsersPerMonth = await prisma.$queryRaw`
-    SELECT TO_CHAR("createdAt", 'YYYY-MM') as "month", COUNT(*)::int as "count"
-    FROM "User"
-    WHERE "createdAt" >= '2026-01-01'
-    GROUP BY TO_CHAR("createdAt", 'YYYY-MM')
-    ORDER BY "month"
-  ` as Promise<{ month: string; count: number }[]>;
+  const newUsersPerMonth = hasTable("User")
+    ? await safeQuery<{ month: string; count: number }>(
+        `SELECT TO_CHAR("createdAt", 'YYYY-MM') as "month", COUNT(*)::int as "count"
+         FROM "User" WHERE "createdAt" >= '2026-01-01'
+         GROUP BY TO_CHAR("createdAt", 'YYYY-MM') ORDER BY "month"`,
+        "newUsersPerMonth"
+      )
+    : [];
 
   const recentUsers = await prisma.user.count({ where: { createdAt: { gte: daysAgo(30) } } });
 
-  return {
-    cohortMonthly: cohorts,
-    retentionFromRecent: { createdLast30d: recentUsers, returnedD1: d1[0]?.count ?? 0, returnedD7: d7[0]?.count ?? 0, returnedD30: d30[0]?.count ?? 0 },
-    newUsersPerMonth,
-  };
+  let retentionFromRecent = { createdLast30d: recentUsers, returnedD1: 0, returnedD7: 0, returnedD30: 0 };
+
+  if (hasTable("DailyAction")) {
+    const [d1, d7, d30] = await Promise.all([
+      safeQuery<{ count: number }>(
+        `SELECT COUNT(DISTINCT u."id")::int as count FROM "User" u
+         INNER JOIN "DailyAction" da ON da."userId" = u."id"
+         WHERE u."createdAt" >= '${daysAgo(30).toISOString()}'
+         AND da."createdAt" > u."createdAt"
+         AND da."createdAt" <= u."createdAt" + INTERVAL '1 day'`,
+        "retentionD1"
+      ),
+      safeQuery<{ count: number }>(
+        `SELECT COUNT(DISTINCT u."id")::int as count FROM "User" u
+         INNER JOIN "DailyAction" da ON da."userId" = u."id"
+         WHERE u."createdAt" >= '${daysAgo(30).toISOString()}'
+         AND da."createdAt" > u."createdAt"
+         AND da."createdAt" <= u."createdAt" + INTERVAL '7 days'`,
+        "retentionD7"
+      ),
+      safeQuery<{ count: number }>(
+        `SELECT COUNT(DISTINCT u."id")::int as count FROM "User" u
+         INNER JOIN "DailyAction" da ON da."userId" = u."id"
+         WHERE u."createdAt" >= '${daysAgo(60).toISOString()}'
+         AND da."createdAt" > u."createdAt"
+         AND da."createdAt" <= u."createdAt" + INTERVAL '30 days'`,
+        "retentionD30"
+      ),
+    ]);
+    retentionFromRecent = {
+      createdLast30d: recentUsers,
+      returnedD1: d1[0]?.count ?? 0,
+      returnedD7: d7[0]?.count ?? 0,
+      returnedD30: d30[0]?.count ?? 0,
+    };
+  }
+
+  return { newUsersPerMonth, retentionFromRecent };
 }
 
 // ─── SECTION E: SCHOOL ANALYSIS ─────────────────────────────────────────────
@@ -232,28 +297,36 @@ async function auditSchoolAnalysis() {
     activeSchools,
     profilesWithSchoolRaw,
     profilesWithSchoolId,
-    schoolAliases,
-    uniqueRawSchoolNames,
   ] = await Promise.all([
     prisma.school.count(),
     prisma.school.count({ where: { isActive: true } }),
     prisma.profile.count({ where: { school: { not: null } } }),
     prisma.profile.count({ where: { schoolId: { not: null } } }),
-    prisma.schoolAlias.count(),
-    prisma.$queryRaw`SELECT COUNT(DISTINCT LOWER(TRIM("school"))::text) as count FROM "Profile" WHERE "school" IS NOT NULL AND "school" != ''` as Promise<{ count: number }[]>,
   ]);
 
-  // Top raw school names
-  const topRawSchools = await prisma.$queryRaw`
-    SELECT LOWER(TRIM("school"))::text as "name", COUNT(*)::int as "count"
-    FROM "Profile"
-    WHERE "school" IS NOT NULL AND "school" != ''
-    GROUP BY LOWER(TRIM("school"))
-    ORDER BY COUNT(*) DESC
-    LIMIT 30
-  ` as Promise<{ name: string; count: number }[]>;
+  const uniqueRawSchoolNames = hasTable("Profile")
+    ? (await safeQuery<{ count: number }>(
+        `SELECT COUNT(DISTINCT LOWER(TRIM("school"))::text) as count FROM "Profile" WHERE "school" IS NOT NULL AND "school" != ''`,
+        "uniqueRawSchoolNames"
+      ))[0]?.count ?? 0
+    : 0;
 
-  // School with canonical names
+  const topRawSchools = hasTable("Profile")
+    ? await safeQuery<{ name: string; count: number }>(
+        `SELECT LOWER(TRIM("school"))::text as "name", COUNT(*)::int as "count"
+         FROM "Profile" WHERE "school" IS NOT NULL AND "school" != ''
+         GROUP BY LOWER(TRIM("school")) ORDER BY COUNT(*) DESC LIMIT 30`,
+        "topRawSchools"
+      )
+    : [];
+
+  const phantomProfiles = hasTable("Profile")
+    ? (await safeQuery<{ count: number }>(
+        `SELECT COUNT(*)::int as count FROM "Profile" WHERE "school" IS NOT NULL AND "schoolId" IS NULL`,
+        "phantomProfiles"
+      ))[0]?.count ?? 0
+    : 0;
+
   const canonicalSchools = await prisma.school.findMany({
     where: { isActive: true },
     select: { id: true, canonicalName: true, normalizedName: true, _count: { select: { profiles: true, aliases: true } } },
@@ -261,18 +334,12 @@ async function auditSchoolAnalysis() {
     take: 30,
   });
 
-  // Phantom schools (Profile.school set but schoolId null)
-  const phantomProfiles = await prisma.profile.count({
-    where: { school: { not: null }, schoolId: null },
-  });
-
   return {
     totalSchools,
     activeSchools,
     profilesWithSchoolRaw,
     profilesWithSchoolId,
-    uniqueRawSchoolNames: uniqueRawSchoolNames[0]?.count ?? 0,
-    schoolAliases,
+    uniqueRawSchoolNames,
     phantomProfilesWithoutCanonicalLink: phantomProfiles,
     topRawSchools,
     canonicalSchools,
@@ -281,177 +348,248 @@ async function auditSchoolAnalysis() {
 
 // ─── SECTION F: LEARNING ENGAGEMENT ─────────────────────────────────────────
 async function auditLearningEngagement() {
-  const [
-    dailyActionsTotal,
-    dailyActionsByType,
-    dailyActions7d,
-    dailyActions30d,
-    testSessionsTotal,
-    testSessions30d,
-    userUnitProgressTotal,
-    userUnitProgressCompleted,
-    progresKompetensiTotal,
-    progresKompetensiCompleted,
-    adaptiveSessionsTotal,
-    adaptiveCompleted,
-    karyaTotal,
-    karya30d,
-    studentKaryaTotal,
-    studentKarya30d,
-    ttsSessionsTotal,
-    quizzesTaken,
-  ] = await Promise.all([
-    prisma.dailyAction.count(),
-    prisma.dailyAction.groupBy({ by: ["type"], _count: true, orderBy: { _count: { type: "desc" } } }),
-    prisma.dailyAction.count({ where: { createdAt: { gte: daysAgo(7) } } }),
-    prisma.dailyAction.count({ where: { createdAt: { gte: daysAgo(30) } } }),
-    prisma.testSession.count(),
-    prisma.testSession.count({ where: { createdAt: { gte: daysAgo(30) } } }),
-    prisma.userUnitProgress.count(),
-    prisma.userUnitProgress.count({ where: { completed: true } }),
-    prisma.progresKompetensi.count(),
-    prisma.progresKompetensi.count({ where: { status: "COMPLETED" } }),
-    prisma.adaptivePracticeSession.count(),
-    prisma.adaptivePracticeSession.count({ where: { status: "COMPLETED" } }),
-    prisma.karya.count(),
-    prisma.karya.count({ where: { createdAt: { gte: daysAgo(30) } } }),
-    prisma.studentKarya.count(),
-    prisma.studentKarya.count({ where: { createdAt: { gte: daysAgo(30) } } }),
-    prisma.ttsSession.count(),
-    prisma.quizSession.count(),
-  ]);
+  // DailyAction metrics
+  let dailyActions = { total: 0, last7d: 0, last30d: 0, byType: [] as any[] };
+  if (hasTable("DailyAction")) {
+    const [total, last7, last30, byType] = await Promise.all([
+      safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "DailyAction"`, "dailyTotal"),
+      safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "DailyAction" WHERE "createdAt" >= '${daysAgo(7).toISOString()}'`, "daily7d"),
+      safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "DailyAction" WHERE "createdAt" >= '${daysAgo(30).toISOString()}'`, "daily30d"),
+      safeQuery<{ type: string; count: number }>(
+        `SELECT "type", COUNT(*)::int as count FROM "DailyAction" GROUP BY "type" ORDER BY count DESC`,
+        "dailyByType"
+      ),
+    ]);
+    dailyActions = {
+      total: total[0]?.count ?? 0,
+      last7d: last7[0]?.count ?? 0,
+      last30d: last30[0]?.count ?? 0,
+      byType,
+    };
+  }
 
-  return {
-    dailyActions: { total: dailyActionsTotal, last7d: dailyActions7d, last30d: dailyActions30d, byType: dailyActionsByType },
-    testSessions: { total: testSessionsTotal, last30d: testSessions30d },
-    unitProgress: { total: userUnitProgressTotal, completed: userUnitProgressCompleted },
-    progresKompetensi: { total: progresKompetensiTotal, completed: progresKompetensiCompleted },
-    adaptivePractice: { total: adaptiveSessionsTotal, completed: adaptiveCompleted },
-    karya: { total: karyaTotal, last30d: karya30d },
-    studentKarya: { total: studentKaryaTotal, last30d: studentKarya30d },
-    ttsSessions: { total: ttsSessionsTotal },
-    quizzesTaken,
-  };
+  // TestSession
+  let testSessions = { total: 0, last30d: 0 };
+  if (hasTable("TestSession")) {
+    const [total, last30] = await Promise.all([
+      safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "TestSession"`, "testTotal"),
+      safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "TestSession" WHERE "createdAt" >= '${daysAgo(30).toISOString()}'`, "test30d"),
+    ]);
+    testSessions = { total: total[0]?.count ?? 0, last30d: last30[0]?.count ?? 0 };
+  }
+
+  // UserUnitProgress
+  let unitProgress = { total: 0, completed: 0 };
+  if (hasTable("UserUnitProgress")) {
+    const [total, completed] = await Promise.all([
+      safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "UserUnitProgress"`, "unitTotal"),
+      safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "UserUnitProgress" WHERE "completed" = true`, "unitCompleted"),
+    ]);
+    unitProgress = { total: total[0]?.count ?? 0, completed: completed[0]?.count ?? 0 };
+  }
+
+  // ProgresKompetensi
+  let progresKompetensi = { total: 0, completed: 0, byStatus: [] as any[] };
+  if (hasTable("ProgresKompetensi")) {
+    const [total, completed, byStatus] = await Promise.all([
+      safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "ProgresKompetensi"`, "pkTotal"),
+      safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "ProgresKompetensi" WHERE "status" = 'COMPLETED'`, "pkCompleted"),
+      safeQuery<{ status: string; count: number }>(
+        `SELECT "status", COUNT(*)::int as count FROM "ProgresKompetensi" GROUP BY "status" ORDER BY count DESC`,
+        "pkByStatus"
+      ),
+    ]);
+    progresKompetensi = { total: total[0]?.count ?? 0, completed: completed[0]?.count ?? 0, byStatus };
+  }
+
+  // AdaptivePractice
+  let adaptivePractice = { total: 0, completed: 0 };
+  if (hasTable("AdaptivePracticeSession")) {
+    const [total, completed] = await Promise.all([
+      safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "AdaptivePracticeSession"`, "adaptiveTotal"),
+      safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "AdaptivePracticeSession" WHERE "status" = 'COMPLETED'`, "adaptiveCompleted"),
+    ]);
+    adaptivePractice = { total: total[0]?.count ?? 0, completed: completed[0]?.count ?? 0 };
+  }
+
+  // Karya
+  let karya = { total: 0, last30d: 0 };
+  if (hasTable("Karya")) {
+    const [total, last30] = await Promise.all([
+      safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "Karya"`, "karyaTotal"),
+      safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "Karya" WHERE "createdAt" >= '${daysAgo(30).toISOString()}'`, "karya30d"),
+    ]);
+    karya = { total: total[0]?.count ?? 0, last30d: last30[0]?.count ?? 0 };
+  }
+
+  // StudentKarya
+  let studentKarya = { total: 0, last30d: 0 };
+  if (hasTable("StudentKarya")) {
+    const [total, last30] = await Promise.all([
+      safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "StudentKarya"`, "skTotal"),
+      safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "StudentKarya" WHERE "createdAt" >= '${daysAgo(30).toISOString()}'`, "sk30d"),
+    ]);
+    studentKarya = { total: total[0]?.count ?? 0, last30d: last30[0]?.count ?? 0 };
+  }
+
+  // TTS
+  let ttsSessions = 0;
+  if (hasTable("TtsSession")) {
+    const r = await safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "TtsSession"`, "ttsTotal");
+    ttsSessions = r[0]?.count ?? 0;
+  }
+
+  // QuizSession
+  let quizzesTaken = 0;
+  if (hasTable("QuizSession")) {
+    const r = await safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "QuizSession"`, "quizTotal");
+    quizzesTaken = r[0]?.count ?? 0;
+  }
+
+  return { dailyActions, testSessions, unitProgress, progresKompetensi, adaptivePractice, karya, studentKarya, ttsSessions, quizzesTaken };
 }
 
 // ─── SECTION G: AI USAGE ────────────────────────────────────────────────────
 async function auditAiUsage() {
-  const [
-    totalRecords,
-    totalTokens,
-    totalCostUSD,
-    byFeature,
-    byProvider,
-    byStatus,
-    last7d,
-    last30d,
-    uniqueUsers,
-  ] = await Promise.all([
-    prisma.aIUsage.count(),
-    prisma.aIUsage.aggregate({ _sum: { tokens: true, costUSD: true } }),
-    prisma.aIUsage.groupBy({ by: ["feature"], _count: true, _sum: { tokens: true, costUSD: true }, orderBy: { _count: { feature: "desc" } } }),
-    prisma.aIUsage.groupBy({ by: ["provider"], _count: true, _sum: { tokens: true }, orderBy: { _count: { provider: "desc" } } }),
-    prisma.aIUsage.groupBy({ by: ["status"], _count: true }),
-    prisma.aIUsage.count({ where: { createdAt: { gte: daysAgo(7) } } }),
-    prisma.aIUsage.count({ where: { createdAt: { gte: daysAgo(30) } } }),
-    prisma.$queryRaw`SELECT COUNT(DISTINCT "userId")::int as count FROM "AIUsage"` as Promise<{ count: number }[]>,
+  if (!hasTable("AIUsage")) {
+    return { totalRecords: 0, totalTokens: 0, totalCostUSD: 0, uniqueUsers: 0, last7d: 0, last30d: 0, byFeature: [], byProvider: [], byStatus: [], note: "AIUsage table not found" };
+  }
+
+  const [total, tokens, byFeature, byProvider, byStatus, last7, last30, uniqueUsers] = await Promise.all([
+    safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "AIUsage"`, "aiTotal"),
+    safeQuery<{ tokens: number; cost: number }>(`SELECT COALESCE(SUM("tokens"),0)::int as tokens, COALESCE(SUM("costUSD"),0)::float as cost FROM "AIUsage"`, "aiTokens"),
+    safeQuery<{ feature: string; count: number; tokens: number; cost: number }>(
+      `SELECT "feature", COUNT(*)::int as count, COALESCE(SUM("tokens"),0)::int as tokens, COALESCE(SUM("costUSD"),0)::float as cost
+       FROM "AIUsage" GROUP BY "feature" ORDER BY count DESC`, "aiByFeature"
+    ),
+    safeQuery<{ provider: string; count: number; tokens: number }>(
+      `SELECT COALESCE("provider",'unknown') as provider, COUNT(*)::int as count, COALESCE(SUM("tokens"),0)::int as tokens
+       FROM "AIUsage" GROUP BY "provider" ORDER BY count DESC`, "aiByProvider"
+    ),
+    safeQuery<{ status: string; count: number }>(
+      `SELECT COALESCE("status",'unknown') as status, COUNT(*)::int as count FROM "AIUsage" GROUP BY "status" ORDER BY count DESC`,
+      "aiByStatus"
+    ),
+    safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "AIUsage" WHERE "createdAt" >= '${daysAgo(7).toISOString()}'`, "ai7d"),
+    safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "AIUsage" WHERE "createdAt" >= '${daysAgo(30).toISOString()}'`, "ai30d"),
+    safeQuery<{ count: number }>(`SELECT COUNT(DISTINCT "userId")::int as count FROM "AIUsage"`, "aiUnique"),
   ]);
 
   return {
-    totalRecords,
-    totalTokens: totalTokens._sum.tokens ?? 0,
-    totalCostUSD: +(totalTokens._sum.costUSD ?? 0).toFixed(4),
+    totalRecords: total[0]?.count ?? 0,
+    totalTokens: tokens[0]?.tokens ?? 0,
+    totalCostUSD: +((tokens[0]?.cost ?? 0)).toFixed(4),
     uniqueUsers: uniqueUsers[0]?.count ?? 0,
-    last7d: last7d,
-    last30d: last30d,
-    byFeature: byFeature.map(f => ({ feature: f.feature, count: f._count, tokens: f._sum.tokens ?? 0, costUSD: +(f._sum.costUSD ?? 0).toFixed(4) })),
-    byProvider: byProvider.map(p => ({ provider: p.provider ?? "unknown", count: p._count, tokens: p._sum.tokens ?? 0 })),
-    byStatus: byStatus.map(s => ({ status: s.status ?? "unknown", count: s._count })),
+    last7d: last7[0]?.count ?? 0,
+    last30d: last30[0]?.count ?? 0,
+    byFeature: byFeature.map(f => ({ feature: f.feature, count: f.count, tokens: f.tokens, costUSD: +f.cost.toFixed(4) })),
+    byProvider: byProvider.map(p => ({ provider: p.provider, count: p.count, tokens: p.tokens })),
+    byStatus: byStatus.map(s => ({ status: s.status, count: s.count })),
   };
 }
 
 // ─── SECTION H: REVENUE / TRANSAKSI ─────────────────────────────────────────
 async function auditRevenue() {
-  const [
-    totalTransaksi,
-    byType,
-    byStatus,
-    successfulPayments,
-    revenueSuccess,
-    last30dPayments,
-    last90dPayments,
-  ] = await Promise.all([
-    prisma.transaksi.count(),
-    prisma.transaksi.groupBy({ by: ["type"], _count: true, _sum: { amount: true }, orderBy: { _count: { type: "desc" } } }),
-    prisma.transaksi.groupBy({ by: ["status"], _count: true, _sum: { amount: true } }),
-    prisma.transaksi.findMany({ where: { status: "SUCCESS" }, select: { id: true, userId: true, type: true, amount: true, createdAt: true, orderId: true } }),
-    prisma.transaksi.aggregate({ where: { status: "SUCCESS" }, _sum: { amount: true }, _count: true }),
-    prisma.transaksi.count({ where: { status: "SUCCESS", createdAt: { gte: daysAgo(30) } } }),
-    prisma.transaksi.count({ where: { status: "SUCCESS", createdAt: { gte: daysAgo(90) } } }),
+  if (!hasTable("Transaksi")) {
+    return { totalTransaksi: 0, byType: [], byStatus: [], successSummary: { count: 0, totalAmount: 0 }, revenueByType: [], uniquePayingUsers: 0, last30dSuccessPayments: 0, last90dSuccessPayments: 0, successfulPayments: [], note: "Transaksi table not found" };
+  }
+
+  const [total, byType, byStatus, successSum, last30d, last90d] = await Promise.all([
+    safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "Transaksi"`, "txnTotal"),
+    safeQuery<{ type: string; count: number; amount: number }>(
+      `SELECT "type", COUNT(*)::int as count, COALESCE(SUM("amount"),0)::int as amount
+       FROM "Transaksi" GROUP BY "type" ORDER BY count DESC`, "txnByType"
+    ),
+    safeQuery<{ status: string; count: number; amount: number }>(
+      `SELECT COALESCE("status",'unknown') as status, COUNT(*)::int as count, COALESCE(SUM("amount"),0)::int as amount
+       FROM "Transaksi" GROUP BY "status" ORDER BY count DESC`, "txnByStatus"
+    ),
+    safeQuery<{ count: number; amount: number }>(
+      `SELECT COUNT(*)::int as count, COALESCE(SUM("amount"),0)::int as amount FROM "Transaksi" WHERE "status" = 'SUCCESS'`,
+      "txnSuccess"
+    ),
+    safeQuery<{ count: number }>(
+      `SELECT COUNT(*)::int as count FROM "Transaksi" WHERE "status" = 'SUCCESS' AND "createdAt" >= '${daysAgo(30).toISOString()}'`,
+      "txn30d"
+    ),
+    safeQuery<{ count: number }>(
+      `SELECT COUNT(*)::int as count FROM "Transaksi" WHERE "status" = 'SUCCESS' AND "createdAt" >= '${daysAgo(90).toISOString()}'`,
+      "txn90d"
+    ),
   ]);
 
-  const successAmount = revenueSuccess._sum.amount ?? 0;
-  const successCount = revenueSuccess._count;
+  const revenueByType = await safeQuery<{ type: string; count: number; amount: number }>(
+    `SELECT "type", COUNT(*)::int as count, COALESCE(SUM("amount"),0)::int as amount
+     FROM "Transaksi" WHERE "status" = 'SUCCESS' GROUP BY "type" ORDER BY amount DESC`,
+    "revenueByType"
+  );
 
-  // Revenue by type
-  const revenueByType = await prisma.transaksi.groupBy({
-    by: ["type"],
-    where: { status: "SUCCESS" },
-    _sum: { amount: true },
-    _count: true,
-    orderBy: { _sum: { amount: "desc" } },
-  });
+  const payingUsers = await safeQuery<{ count: number }>(
+    `SELECT COUNT(DISTINCT "userId")::int as count FROM "Transaksi" WHERE "status" = 'SUCCESS'`,
+    "payingUsers"
+  );
 
-  // Unique paying users
-  const payingUsers = await prisma.transaksi.findMany({
-    where: { status: "SUCCESS" },
-    distinct: ["userId"],
-    select: { userId: true },
-  });
+  const successfulPayments = await safeQuery<{ id: string; userId: string; type: string; amount: number; createdAt: string; orderId: string | null }>(
+    `SELECT "id", "userId", "type", "amount"::int, "createdAt"::text, "orderId"
+     FROM "Transaksi" WHERE "status" = 'SUCCESS' ORDER BY "createdAt" DESC`,
+    "successfulPayments"
+  );
 
   return {
-    totalTransaksi,
-    byType: byType.map(t => ({ type: t.type, count: t._count, totalAmount: t._sum.amount ?? 0 })),
-    byStatus: byStatus.map(s => ({ status: s.status ?? "unknown", count: s._count, totalAmount: s._sum.amount ?? 0 })),
-    successSummary: { count: successCount, totalRevenue: successCount, totalAmount: successAmount },
-    revenueByType: revenueByType.map(r => ({ type: r.type, count: r._count, totalAmount: r._sum.amount ?? 0 })),
-    uniquePayingUsers: payingUsers.length,
-    last30dSuccessPayments: last30dPayments,
-    last90dSuccessPayments: last90dPayments,
+    totalTransaksi: total[0]?.count ?? 0,
+    byType: byType.map(t => ({ type: t.type, count: t.count, totalAmount: t.amount })),
+    byStatus: byStatus.map(s => ({ status: s.status, count: s.count, totalAmount: s.amount })),
+    successSummary: { count: successSum[0]?.count ?? 0, totalAmount: successSum[0]?.amount ?? 0 },
+    revenueByType: revenueByType.map(r => ({ type: r.type, count: r.count, totalAmount: r.amount })),
+    uniquePayingUsers: payingUsers[0]?.count ?? 0,
+    last30dSuccessPayments: last30d[0]?.count ?? 0,
+    last90dSuccessPayments: last90d[0]?.count ?? 0,
     successfulPayments,
   };
 }
 
 // ─── SECTION I: COMMISSION SYSTEM ───────────────────────────────────────────
 async function auditCommission() {
-  const [
-    totalAttributions,
-    attributionsBySource,
-    totalCommissions,
-    commissionsByStatus,
-    totalWallets,
-    walletBalances,
-    totalReversals,
-  ] = await Promise.all([
-    prisma.teacherAttribution.count(),
-    prisma.teacherAttribution.groupBy({ by: ["source"], _count: true }),
-    prisma.teacherCommission.count(),
-    prisma.teacherCommission.groupBy({ by: ["status"], _count: true, _sum: { commissionAmount: true } }),
-    prisma.teacherWallet.count(),
-    prisma.teacherWallet.aggregate({ _sum: { availableBalance: true, pendingBalance: true, lifetimeEarned: true } }),
-    prisma.teacherCommission.count({ where: { entryType: "REVERSAL" } }),
+  if (!hasTable("TeacherAttribution")) {
+    return { totalAttributions: 0, totalCommissions: 0, totalWallets: 0, note: "Commission tables not found" };
+  }
+
+  const [totalAttr, totalComm, totalWallets] = await Promise.all([
+    safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "TeacherAttribution"`, "attrTotal"),
+    safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "TeacherCommission"`, "commTotal"),
+    safeQuery<{ count: number; avail: number; pending: number; earned: number }>(
+      `SELECT COUNT(*)::int as count, COALESCE(SUM("availableBalance"),0)::int as avail,
+       COALESCE(SUM("pendingBalance"),0)::int as pending, COALESCE(SUM("lifetimeEarned"),0)::int as earned
+       FROM "TeacherWallet"`, "wallets"
+    ),
   ]);
 
+  const attrBySource = await safeQuery<{ source: string; count: number }>(
+    `SELECT "source", COUNT(*)::int as count FROM "TeacherAttribution" GROUP BY "source" ORDER BY count DESC`,
+    "attrBySource"
+  );
+
+  const commByStatus = await safeQuery<{ status: string; count: number; amount: number }>(
+    `SELECT "status", COUNT(*)::int as count, COALESCE(SUM("commissionAmount"),0)::int as amount
+     FROM "TeacherCommission" GROUP BY "status" ORDER BY count DESC`,
+    "commByStatus"
+  );
+
+  const totalReversals = (await safeQuery<{ count: number }>(
+    `SELECT COUNT(*)::int as count FROM "TeacherCommission" WHERE "entryType" = 'REVERSAL'`,
+    "reversals"
+  ))[0]?.count ?? 0;
+
   return {
-    totalAttributions,
-    attributionsBySource: attributionsBySource.map(a => ({ source: a.source, count: a._count })),
-    totalCommissions,
-    commissionsByStatus: commissionsByStatus.map(c => ({ status: c.status, count: c._count, totalAmount: c._sum.commissionAmount ?? 0 })),
-    totalWallets,
+    totalAttributions: totalAttr[0]?.count ?? 0,
+    attributionsBySource: attrBySource.map(a => ({ source: a.source, count: a.count })),
+    totalCommissions: totalComm[0]?.count ?? 0,
+    commissionsByStatus: commByStatus.map(c => ({ status: c.status, count: c.count, totalAmount: c.amount })),
+    totalWallets: totalWallets[0]?.count ?? 0,
     walletBalances: {
-      totalAvailable: walletBalances._sum.availableBalance ?? 0,
-      totalPending: walletBalances._sum.pendingBalance ?? 0,
-      totalLifetimeEarned: walletBalances._sum.lifetimeEarned ?? 0,
+      totalAvailable: totalWallets[0]?.avail ?? 0,
+      totalPending: totalWallets[0]?.pending ?? 0,
+      totalLifetimeEarned: totalWallets[0]?.earned ?? 0,
     },
     totalReversals,
   };
@@ -459,195 +597,227 @@ async function auditCommission() {
 
 // ─── SECTION J: GAMIFICATION ────────────────────────────────────────────────
 async function auditGamification() {
-  const [
-    xpLedgerTotal,
-    xpBySource,
-    coinTransactionsTotal,
-    coinByType,
-    levelDistribution,
-    streakDistribution,
-    topXP,
-  ] = await Promise.all([
-    prisma.xpLedger.count(),
-    prisma.xpLedger.groupBy({ by: ["source"], _count: true, _sum: { amount: true }, orderBy: { _count: { source: "desc" } } }),
-    prisma.coinTransaction.count(),
-    prisma.coinTransaction.groupBy({ by: ["type"], _count: true, _sum: { amount: true } }),
-    prisma.user.groupBy({ by: ["level"], _count: true, where: { role: "MURID" }, orderBy: { level: "asc" } }),
-    prisma.user.groupBy({ by: ["streak"], _count: true, where: { role: "MURID", streak: { gt: 0 } }, orderBy: { streak: "desc" }, take: 20 }),
-    prisma.user.findMany({ where: { role: "MURID" }, select: { id: true, name: true, xp: true, level: true, streak: true }, orderBy: { xp: "desc" }, take: 20 }),
-  ]);
+  let xpLedger = { total: 0, bySource: [] as any[] };
+  if (hasTable("XpLedger")) {
+    const [total, bySource] = await Promise.all([
+      safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "XpLedger"`, "xpTotal"),
+      safeQuery<{ source: string; count: number; amount: number }>(
+        `SELECT "source", COUNT(*)::int as count, COALESCE(SUM("amount"),0)::int as amount
+         FROM "XpLedger" GROUP BY "source" ORDER BY count DESC`, "xpBySource"
+      ),
+    ]);
+    xpLedger = { total: total[0]?.count ?? 0, bySource };
+  }
 
-  return {
-    xpLedger: { total: xpLedgerTotal, bySource: xpBySource.map(x => ({ source: x.source, count: x._count, totalAmount: x._sum.amount ?? 0 })) },
-    coinTransactions: { total: coinTransactionsTotal, byType: coinByType.map(c => ({ type: c.type ?? "unknown", count: c._count, totalAmount: c._sum.amount ?? 0 })) },
-    levelDistribution,
-    streakDistribution,
-    topXP,
-  };
+  let coinTransactions = { total: 0, byType: [] as any[] };
+  if (hasTable("CoinTransaction")) {
+    const [total, byType] = await Promise.all([
+      safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "CoinTransaction"`, "coinTotal"),
+      safeQuery<{ reason: string; count: number; amount: number }>(
+        `SELECT COALESCE("reason",'unknown') as reason, COUNT(*)::int as count, COALESCE(SUM("amount"),0)::int as amount
+         FROM "CoinTransaction" GROUP BY "reason" ORDER BY count DESC`, "coinByReason"
+      ),
+    ]);
+    coinTransactions = { total: total[0]?.count ?? 0, byReason: byType };
+  }
+
+  const levelDistribution = await prisma.user.groupBy({
+    by: ["level"], _count: true, where: { role: "MURID" }, orderBy: { level: "asc" },
+  });
+
+  const streakDistribution = await prisma.user.groupBy({
+    by: ["streak"], _count: true, where: { role: "MURID", streak: { gt: 0 } },
+    orderBy: { streak: "desc" }, take: 20,
+  });
+
+  const topXP = await prisma.user.findMany({
+    where: { role: "MURID" },
+    select: { id: true, fullName: true, xp: true, level: true, streak: true },
+    orderBy: { xp: "desc" }, take: 20,
+  });
+
+  return { xpLedger, coinTransactions, levelDistribution, streakDistribution, topXP };
 }
 
 // ─── SECTION K: PREMIUM / BILLING ───────────────────────────────────────────
 async function auditPremium() {
-  const [
-    premiumActive,
-    premiumByPlan,
-    trialActiveGuru,
-    trialStartedCount,
-    premiumUsage,
-    transaksiByType,
-  ] = await Promise.all([
+  const [premiumActive, premiumByPlan, trialActive, trialStarted] = await Promise.all([
     prisma.user.count({ where: { isPremium: true, premiumUntil: { gt: NOW } } }),
     prisma.user.groupBy({ by: ["premiumPlan"], where: { isPremium: true, premiumUntil: { gt: NOW } }, _count: true }),
     prisma.user.count({ where: { role: "GURU", trialEndsAt: { gt: NOW } } }),
     prisma.user.count({ where: { role: "GURU", trialStartedAt: { not: null } } }),
-    prisma.premiumUsage.groupBy({ by: ["feature"], _count: true, _sum: { used: true } }),
-    prisma.transaksi.groupBy({ by: ["type"], _count: true, _sum: { amount: true }, where: { status: "SUCCESS" } }),
   ]);
+
+  let premiumUsageByFeature: any[] = [];
+  if (hasTable("PremiumUsage")) {
+    premiumUsageByFeature = await safeQuery<{ featureCode: string; count: number; used: number }>(
+      `SELECT "featureCode", COUNT(*)::int as count, COALESCE(SUM("used"),0)::int as used
+       FROM "PremiumUsage" GROUP BY "featureCode" ORDER BY count DESC`,
+      "premiumUsage"
+    );
+  }
+
+  let successfulByType: any[] = [];
+  if (hasTable("Transaksi")) {
+    successfulByType = await safeQuery<{ type: string; count: number; amount: number }>(
+      `SELECT "type", COUNT(*)::int as count, COALESCE(SUM("amount"),0)::int as amount
+       FROM "Transaksi" WHERE "status" = 'SUCCESS' GROUP BY "type" ORDER BY amount DESC`,
+      "successfulByType"
+    );
+  }
 
   return {
     premiumActive,
     premiumByPlan: premiumByPlan.map(p => ({ plan: p.premiumPlan ?? "FREE", count: p._count })),
-    trialActiveGuru,
-    trialStartedCount,
-    premiumUsageByFeature: premiumUsage.map(p => ({ feature: p.feature, count: p._count, totalUsed: p._sum.used ?? 0 })),
-    successfulTransactionsByType: transaksiByType.map(t => ({ type: t.type, count: t._count, totalAmount: t._sum.amount ?? 0 })),
+    trialActiveGuru: trialActive,
+    trialStartedCount: trialStarted,
+    premiumUsageByFeature,
+    successfulTransactionsByType: successfulByType,
   };
 }
 
 // ─── SECTION L: POWER USERS ─────────────────────────────────────────────────
 async function auditPowerUsers() {
-  // Top teachers by group count
-  const topTeachersByGroups = await prisma.user.findMany({
-    where: { role: "GURU" },
-    select: {
-      id: true, name: true, email: true, isFounder: true, isPremium: true, createdAt: true,
-      _count: { select: { groups: true, groupMembers: { where: { user: { role: "MURID" } } } } },
-    },
-    orderBy: { groups: { _count: "desc" } },
-    take: 20,
-  });
+  let topTeachersByGroups: any[] = [];
+  try {
+    topTeachersByGroups = await prisma.$queryRawUnsafe<any[]>(
+      `SELECT u."id", u."fullName", u."email", u."isFounder", u."isPremium", u."createdAt",
+        COUNT(DISTINCT g."id")::int as "groupCount",
+        COUNT(DISTINCT gm."userId")::int as "studentCount"
+      FROM "User" u
+      LEFT JOIN "Group" g ON g."teacherId" = u."id"
+      LEFT JOIN "GroupMember" gm ON gm."groupId" = g."id"
+      WHERE u."role" = 'GURU'
+      GROUP BY u."id", u."fullName", u."email", u."isFounder", u."isPremium", u."createdAt"
+      ORDER BY "groupCount" DESC
+      LIMIT 20`
+    );
+  } catch (e: any) {
+    console.warn("  ⚠️  topTeachersByGroups:", e.message?.slice(0, 80));
+  }
 
-  // Top teachers by student count (via groupMembers)
-  const topTeachersByStudents = await prisma.user.findMany({
-    where: { role: "GURU" },
-    select: {
-      id: true, name: true, email: true, isFounder: true,
-      _count: { select: { groupMembers: { where: { user: { role: "MURID" } } } } },
-    },
-    orderBy: { groupMembers: { _count: "desc" } },
-    take: 20,
-  });
+  let topTeachersByStudents: any[] = [];
+  try {
+    topTeachersByStudents = await prisma.$queryRawUnsafe<any[]>(
+      `SELECT u."id", u."fullName", u."email", u."isFounder",
+        COUNT(DISTINCT gm."userId")::int as "studentCount",
+        COUNT(DISTINCT g."id")::int as "groupCount"
+      FROM "User" u
+      INNER JOIN "Group" g ON g."teacherId" = u."id"
+      INNER JOIN "GroupMember" gm ON gm."groupId" = g."id"
+      WHERE u."role" = 'GURU'
+      GROUP BY u."id", u."fullName", u."email", u."isFounder"
+      ORDER BY "studentCount" DESC
+      LIMIT 20`
+    );
+  } catch (e: any) {
+    console.warn("  ⚠️  topTeachersByStudents:", e.message?.slice(0, 80));
+  }
 
-  // Top students by XP
   const topStudentsByXp = await prisma.user.findMany({
     where: { role: "MURID" },
-    select: { id: true, name: true, email: true, xp: true, level: true, streak: true, coins: true, createdAt: true },
+    select: { id: true, fullName: true, email: true, xp: true, level: true, streak: true, coins: true, createdAt: true },
     orderBy: { xp: "desc" },
     take: 100,
   });
 
-  // Top students by activity count
-  const topStudentsByActivity = await prisma.$queryRaw`
-    SELECT u."id", u."name", u."email", u."xp", u."level", COUNT(da."id")::int as "activityCount"
-    FROM "User" u
-    INNER JOIN "DailyAction" da ON da."userId" = u."id"
-    WHERE u."role" = 'MURID'
-    GROUP BY u."id", u."name", u."email", u."xp", u."level"
-    ORDER BY COUNT(da."id") DESC
-    LIMIT 50
-  ` as Promise<{ id: string; name: string; email: string; xp: number; level: number; activityCount: number }[]>;
+  let topStudentsByActivity: any[] = [];
+  if (hasTable("DailyAction")) {
+    topStudentsByActivity = await safeQuery<{ id: string; name: string; email: string; xp: number; level: number; activityCount: number }>(
+      `SELECT u."id", u."fullName", u."email", u."xp", u."level", COUNT(da."id")::int as "activityCount"
+       FROM "User" u INNER JOIN "DailyAction" da ON da."userId" = u."id"
+       WHERE u."role" = 'MURID'
+       GROUP BY u."id", u."fullName", u."email", u."xp", u."level"
+       ORDER BY COUNT(da."id") DESC LIMIT 50`,
+      "topStudentsByActivity"
+    );
+  }
 
-  // Most active premium students
-  const premiumStudentsActivity = await prisma.$queryRaw`
-    SELECT u."id", u."name", u."email", u."premiumPlan", u."premiumUntil",
-      COUNT(da."id")::int as "activityCount"
-    FROM "User" u
-    LEFT JOIN "DailyAction" da ON da."userId" = u."id"
-    WHERE u."role" = 'MURID' AND u."isPremium" = true AND u."premiumUntil" > ${NOW}
-    GROUP BY u."id", u."name", u."email", u."premiumPlan", u."premiumUntil"
-    ORDER BY COUNT(da."id") DESC
-    LIMIT 20
-  ` as Promise<{ id: string; name: string; email: string; premiumPlan: string; premiumUntil: Date; activityCount: number }[]>;
-
-  return {
-    topTeachersByGroups,
-    topTeachersByStudents,
-    topStudentsByXp,
-    topStudentsByActivity,
-    premiumStudentsActivity,
-  };
+  return { topTeachersByGroups, topTeachersByStudents, topStudentsByXp, topStudentsByActivity };
 }
 
 // ─── SECTION M: UKBI / TKA / SIMULATION ─────────────────────────────────────
 async function auditSimulation() {
-  const [
-    ukbiQuestions,
-    tkaQuestions,
-    progresKompetensi,
-    progresByStatus,
-    certificates,
-    lombaPeserta,
-  ] = await Promise.all([
-    prisma.uKBIQuestion.count(),
-    prisma.tKAQuestion.count(),
-    prisma.progresKompetensi.count(),
-    prisma.progresKompetensi.groupBy({ by: ["status"], _count: true }),
-    prisma.certificate.count(),
-    prisma.lombaPeserta.count(),
-  ]);
+  const ukbiCount = hasTable("UKBIQuestion")
+    ? (await safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "UKBIQuestion"`, "ukbiCount"))[0]?.count ?? 0
+    : 0;
 
-  // Simulation sessions by month
-  const sessionsByMonth = await prisma.$queryRaw`
-    SELECT TO_CHAR("createdAt", 'YYYY-MM') as "month", COUNT(*)::int as "count", COUNT(DISTINCT "userId")::int as "uniqueUsers"
-    FROM "TestSession"
-    WHERE "createdAt" >= '2026-01-01'
-    GROUP BY TO_CHAR("createdAt", 'YYYY-MM')
-    ORDER BY "month"
-  ` as Promise<{ month: string; count: number; uniqueUsers: number }[]>;
+  const tkaCount = hasTable("TKAQuestion")
+    ? (await safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "TKAQuestion"`, "tkaCount"))[0]?.count ?? 0
+    : 0;
 
-  return {
-    ukbiQuestions,
-    tkaQuestions,
-    progresKompetensi: { total: progresKompetensi, byStatus: progresByStatus.map(p => ({ status: p.status, count: p._count })) },
-    certificates,
-    lombaPeserta,
-    sessionsByMonth,
-  };
+  let progresKompetensi = { total: 0, byStatus: [] as any[] };
+  if (hasTable("ProgresKompetensi")) {
+    const [total, byStatus] = await Promise.all([
+      safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "ProgresKompetensi"`, "pkTotal"),
+      safeQuery<{ status: string; count: number }>(
+        `SELECT "status", COUNT(*)::int as count FROM "ProgresKompetensi" GROUP BY "status" ORDER BY count DESC`,
+        "pkByStatus"
+      ),
+    ]);
+    progresKompetensi = { total: total[0]?.count ?? 0, byStatus };
+  }
+
+  const certificates = hasTable("Certificate")
+    ? (await safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "Certificate"`, "certCount"))[0]?.count ?? 0
+    : 0;
+
+  const sessionsByMonth = hasTable("TestSession")
+    ? await safeQuery<{ month: string; count: number; uniqueUsers: number }>(
+        `SELECT TO_CHAR("createdAt", 'YYYY-MM') as "month", COUNT(*)::int as "count", COUNT(DISTINCT "userId")::int as "uniqueUsers"
+         FROM "TestSession" WHERE "createdAt" >= '2026-01-01'
+         GROUP BY TO_CHAR("createdAt", 'YYYY-MM') ORDER BY "month"`,
+        "sessionsByMonth"
+      )
+    : [];
+
+  return { ukbiQuestions: ukbiCount, tkaQuestions: tkaCount, progresKompetensi, certificates, sessionsByMonth };
 }
 
 // ─── SECTION N: CHAT / COMMUNITY ────────────────────────────────────────────
 async function auditChatCommunity() {
-  const [
-    chatMessages,
-    communities,
-    communityPosts,
-    notifications,
-  ] = await Promise.all([
-    prisma.chatMessage.count(),
-    prisma.community.count(),
-    prisma.communityPost.count(),
-    prisma.notifikasi.count(),
-  ]);
+  const chatMessages = hasTable("ChatMessage")
+    ? (await safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "ChatMessage"`, "chatCount"))[0]?.count ?? 0
+    : 0;
+
+  const communities = hasTable("Community")
+    ? (await safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "Community"`, "commCount"))[0]?.count ?? 0
+    : 0;
+
+  const communityPosts = hasTable("CommunityPost")
+    ? (await safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "CommunityPost"`, "commPostCount"))[0]?.count ?? 0
+    : 0;
+
+  const notifications = hasTable("Notifikasi")
+    ? (await safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "Notifikasi"`, "notifCount"))[0]?.count ?? 0
+    : 0;
 
   return { chatMessages, communities, communityPosts, notifications };
 }
 
 // ─── SECTION O: GAME SYSTEM ─────────────────────────────────────────────────
 async function auditGameSystem() {
-  const [
-    gameResults,
-    gameRooms,
-    gameSessions,
-  ] = await Promise.all([
-    prisma.gameResult.count(),
-    prisma.gameRoom.count(),
-    prisma.gameSession.count(),
-  ]);
+  const gameResultsTotal = hasTable("GameResult")
+    ? (await safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "GameResult"`, "grTotal"))[0]?.count ?? 0
+    : 0;
 
-  const gameResults30d = await prisma.gameResult.count({ where: { createdAt: { gte: daysAgo(30) } } });
+  const gameResults30d = hasTable("GameResult")
+    ? (await safeQuery<{ count: number }>(
+        `SELECT COUNT(*)::int as count FROM "GameResult" WHERE "createdAt" >= '${daysAgo(30).toISOString()}'`,
+        "gr30d"
+      ))[0]?.count ?? 0
+    : 0;
+
+  const gameRooms = hasTable("GameRoom")
+    ? (await safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "GameRoom"`, "grRoomCount"))[0]?.count ?? 0
+    : 0;
+
+  const gameSessions = hasTable("GameSession")
+    ? (await safeQuery<{ count: number }>(`SELECT COUNT(*)::int as count FROM "GameSession"`, "gsCount"))[0]?.count ?? 0
+    : 0;
 
   return {
-    gameResults: { total: gameResults, last30d: gameResults30d },
+    gameResults: { total: gameResultsTotal, last30d: gameResults30d },
     gameRooms,
     gameSessions,
   };
@@ -660,6 +830,11 @@ async function main() {
   console.log(`⏰ Started: ${nowWib.toISOString()}`);
   console.log("");
 
+  // Step 1: Discover tables
+  await discoverTables();
+
+  // Step 2: Run all sections
+  console.log("\n📊 Running audit sections...");
   const [
     userFunnel,
     teacherFunnel,
@@ -701,7 +876,8 @@ async function main() {
       script: "scripts/investor-production-truth-audit.ts",
       database: "Supabase PostgreSQL (production pooler)",
       readOnly: true,
-      note: "All numbers sourced from production DB via Prisma. No mutations.",
+      tablesDiscovered: existingTables.size,
+      note: "All numbers sourced from production DB via Prisma. No mutations. Missing tables noted per section.",
     },
     sections: {
       A_userFunnel: userFunnel,
@@ -727,41 +903,43 @@ async function main() {
   if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 
   const truthPath = path.join(dataDir, "investor-production-truth-september-2026.json");
-  fs.writeFileSync(truthPath, JSON.stringify(report, null, 2));
-  console.log(`✅ Written: ${truthPath}`);
+  fs.writeFileSync(truthPath, safeStringify(report));
+  console.log(`\n✅ Written: ${truthPath}`);
 
   const powerUsersPath = path.join(dataDir, "investor-power-users-september-2026.json");
-  fs.writeFileSync(powerUsersPath, JSON.stringify({
+  fs.writeFileSync(powerUsersPath, safeStringify({
     snapshotDate: SNAPSHOT_DATE,
     topTeachersByGroups: powerUsers.topTeachersByGroups,
     topTeachersByStudents: powerUsers.topTeachersByStudents,
     topStudentsByXp: powerUsers.topStudentsByXp,
     topStudentsByActivity: powerUsers.topStudentsByActivity,
-    premiumStudentsActivity: powerUsers.premiumStudentsActivity,
-  }, null, 2));
+  }));
   console.log(`✅ Written: ${powerUsersPath}`);
 
   const schoolPath = path.join(dataDir, "investor-school-analysis-september-2026.json");
-  fs.writeFileSync(schoolPath, JSON.stringify({
+  fs.writeFileSync(schoolPath, safeStringify({
     snapshotDate: SNAPSHOT_DATE,
     ...schoolAnalysis,
-  }, null, 2));
+  }));
   console.log(`✅ Written: ${schoolPath}`);
 
   // Summary
-  console.log("\n📊 AUDIT SUMMARY");
+  console.log("\n" + "═".repeat(60));
+  console.log("📊 AUDIT SUMMARY");
   console.log("═".repeat(60));
-  console.log(`Users: ${userFunnel.total} (GURU ${userFunnel.byRole.GURU}, MURID ${userFunnel.byRole.MURID}, ADMIN ${userFunnel.byRole.ADMIN})`);
-  console.log(`Founders: ${userFunnel.founders.length}`);
-  console.log(`Groups: ${teacherFunnel.groupsCreated}`);
-  console.log(`Students in groups: ${studentFunnel.studentsInGroups} / ${studentFunnel.totalMurid} (${studentFunnel.percentInGroup}%)`);
-  console.log(`Activated (any): ${studentFunnel.activatedByAnyActivity}`);
-  console.log(`Daily actions 30d: ${learningEngagement.dailyActions.last30d}`);
-  console.log(`AI usage records: ${aiUsage.totalRecords} (${aiUsage.totalTokens} tokens, $${aiUsage.totalCostUSD})`);
-  console.log(`Revenue (SUCCESS): Rp${revenue.successSummary.totalAmount.toLocaleString("id-ID")} (${revenue.successSummary.count} txns)`);
-  console.log(`Premium active: ${premium.premiumActive} | Trial active: ${premium.trialActiveGuru}`);
-  console.log(`Commission attributions: ${commission.totalAttributions} | Commissions: ${commission.totalCommissions}`);
-  console.log(`UKBI questions: ${simulation.ukbiQuestions} | TKA: ${simulation.tkaQuestions}`);
+  console.log(`Users:        ${userFunnel.total} (GURU ${userFunnel.byRole.GURU}, MURID ${userFunnel.byRole.MURID}, ADMIN ${userFunnel.byRole.ADMIN})`);
+  console.log(`Founders:     ${userFunnel.founders.length}`);
+  console.log(`Groups:       ${teacherFunnel.groupsCreated}`);
+  console.log(`Students:     ${studentFunnel.studentsInGroups} in groups / ${studentFunnel.totalMurid} total (${studentFunnel.percentInGroup}%)`);
+  console.log(`Activated:    ${studentFunnel.activatedByAnyActivity || "n/a (DailyAction missing)"} (any), ${studentFunnel.activated30d || "n/a"} (30d)`);
+  console.log(`DailyAction:  ${learningEngagement.dailyActions.total} total, ${learningEngagement.dailyActions.last30d} (30d)`);
+  console.log(`AI Usage:     ${aiUsage.totalRecords} records, ${aiUsage.totalTokens} tokens, $${aiUsage.totalCostUSD}`);
+  console.log(`Revenue:      Rp${revenue.successSummary.totalAmount.toLocaleString("id-ID")} (${revenue.successSummary.count} txns)`);
+  console.log(`Premium:      ${premium.premiumActive} active, ${premium.trialActiveGuru} trial`);
+  console.log(`Commission:   ${commission.totalAttributions} attributions, ${commission.totalCommissions} entries`);
+  console.log(`UKBI:         ${simulation.ukbiQuestions} questions`);
+  console.log(`TKA:          ${simulation.tkaQuestions} questions`);
+  console.log(`Game:         ${gameSystem.gameResults.total} results`);
   console.log("═".repeat(60));
 
   await prisma.$disconnect();
@@ -769,7 +947,7 @@ async function main() {
 }
 
 main().catch(async (e) => {
-  console.error("❌ Audit failed:", e);
+  console.error("❌ Audit failed:", e.message ?? e);
   await prisma.$disconnect();
   process.exit(1);
 });

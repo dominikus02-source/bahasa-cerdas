@@ -1,0 +1,132 @@
+{
+  "snapshotDate": "2026-09-02",
+  "totalSchools": 0,
+  "activeSchools": 0,
+  "profilesWithSchoolRaw": 2050,
+  "profilesWithSchoolId": 0,
+  "uniqueRawSchoolNames": "683",
+  "phantomProfilesWithoutCanonicalLink": 2050,
+  "topRawSchools": [
+    {
+      "name": "smp santa laurensia",
+      "count": 204
+    },
+    {
+      "name": "santa laurensia",
+      "count": 158
+    },
+    {
+      "name": "smp santa laurensia alam sutera",
+      "count": 96
+    },
+    {
+      "name": "santa laurensia alam sutera",
+      "count": 88
+    },
+    {
+      "name": "sma al-fityan school tangerang",
+      "count": 49
+    },
+    {
+      "name": "sekolah harapan bangsa",
+      "count": 41
+    },
+    {
+      "name": "smp negeri 6 binjai",
+      "count": 41
+    },
+    {
+      "name": "smp harapan bangsa",
+      "count": 36
+    },
+    {
+      "name": "smp n 2 oku",
+      "count": 32
+    },
+    {
+      "name": "sma harapan bangsa modernhill",
+      "count": 31
+    },
+    {
+      "name": "smp negeri 2 oku",
+      "count": 29
+    },
+    {
+      "name": "smp negeri 1 jenamas",
+      "count": 28
+    },
+    {
+      "name": "smpn 8 tangerang selatan",
+      "count": 24
+    },
+    {
+      "name": "sma harapan bangsa",
+      "count": 23
+    },
+    {
+      "name": "smp negeri 8 kota tangerang selatan",
+      "count": 22
+    },
+    {
+      "name": "sma al fityan school tangerang",
+      "count": 21
+    },
+    {
+      "name": "smp negeri 8 tangerang selatan",
+      "count": 21
+    },
+    {
+      "name": "sma alfityan school tangerang",
+      "count": 17
+    },
+    {
+      "name": "sekolah harapan bangsa modernhill",
+      "count": 17
+    },
+    {
+      "name": "smp n 02 oku",
+      "count": 17
+    },
+    {
+      "name": "smpn 8 tangsel",
+      "count": 16
+    },
+    {
+      "name": "smpn 8 kota tangerang selatan",
+      "count": 16
+    },
+    {
+      "name": "universitas sanata dharma",
+      "count": 13
+    },
+    {
+      "name": "sd yos sudarso",
+      "count": 13
+    },
+    {
+      "name": "smp negeri 8",
+      "count": 12
+    },
+    {
+      "name": "smp sekolah harapan bangsa",
+      "count": 12
+    },
+    {
+      "name": "smp negeri 6",
+      "count": 12
+    },
+    {
+      "name": "smp harapan bangsa modernhill",
+      "count": 12
+    },
+    {
+      "name": "sd yos sudarso tasikmalaya",
+      "count": 12
+    },
+    {
+      "name": "smp negeri 02 oku",
+      "count": 10
+    }
+  ],
+  "canonicalSchools": []
+}
