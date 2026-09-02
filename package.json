@@ -103,6 +103,7 @@
     "test:premium-command-center": "npx tsx scripts/test-premium-command-center.ts",
     "test:payment-health": "npx tsx scripts/test-payment-health.ts",
     "test:admin-trust-gate": "npx tsx scripts/test-admin-trust-gate.ts",
+    "test:metric-semantics": "npx tsx scripts/test-metric-semantics.ts",
     "test:reconciliation": "npx tsx scripts/test-reconciliation.ts",
     "test:data-quality": "npx tsx scripts/test-data-quality.ts",
     "recover:murid-premium:dry-run": "npx tsx scripts/recover-murid-premium.ts",
@@ -330,7 +331,8 @@
     "warmup:ukbi-tokens": "npx tsx scripts/warmup-ukbi-tokens.ts --reset",
     "preflight:ukbi-load": "npx tsx scripts/preflight-ukbi-load.ts",
     "observe:ukbi-load": "npx tsx scripts/observe-ukbi-load.ts",
-    "audit:ukbi-load-post": "npx tsx scripts/audit-ukbi-load-post.ts"
+    "audit:ukbi-load-post": "npx tsx scripts/audit-ukbi-load-post.ts",
+    "audit:commission-dzaky": "npx tsx scripts/audit-commission-dzaky.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

@@ -31,6 +31,38 @@ export const MRR_CONTRIBUTION = {
   GURU_PRO_YEARLY: Math.round(399_000 / 12), // = 33,250
 } as const;
 
+/**
+ * Calculate true MRR from currently active Premium subscriptions.
+ * For each active user, determine plan from most recent SUCCESS transaction
+ * reference, then sum MRR_CONTRIBUTION[plan].
+ */
+export async function calculateMRR(): Promise<number> {
+  const now = new Date();
+  const activeUsers = await db.user.findMany({
+    where: { isPremium: true, premiumUntil: { gt: now }, isFounder: false },
+    select: {
+      id: true, role: true, premiumPlan: true,
+      transaksi: {
+        where: { status: "SUCCESS", type: { in: ["PREMIUM_UPGRADE", "MURID_PREMIUM"] } },
+        orderBy: { createdAt: "desc" },
+        take: 1,
+        select: { reference: true, amount: true },
+      },
+    },
+  });
+
+  let totalMRR = 0;
+  for (const user of activeUsers) {
+    const tx = user.transaksi[0];
+    const ref = tx?.reference || user.premiumPlan || "";
+    const planKey = ref.includes("YEARLY")
+      ? (user.role === "MURID" ? "MURID_PREMIUM_YEARLY" : "GURU_PRO_YEARLY")
+      : (user.role === "MURID" ? "MURID_PREMIUM_MONTHLY" : "GURU_PRO_MONTHLY");
+    totalMRR += MRR_CONTRIBUTION[planKey as keyof typeof MRR_CONTRIBUTION] || 0;
+  }
+  return totalMRR;
+}
+
 export interface ExecutiveDashboardData {
   timestamp: string;
   users: { total: number; murid: number; guru: number };
@@ -50,8 +82,9 @@ export interface ExecutiveDashboardData {
   };
   revenue: {
     mrr: { value: number; trend: number };
-    last30d: { value: number; trend: number };
-    allTime: number;
+    cashCollectedMonth: { value: number; trend: number };
+    cashCollected30d: { value: number; trend: number };
+    cashCollectedAllTime: number;
     transactionsSuccess30d: number;
     transactionsPending: number;
   };
@@ -203,13 +236,16 @@ export async function getExecutiveDashboardData(): Promise<ExecutiveDashboardDat
   const premiumConversionRate = guruCount > 0 ? Math.round((activePremium / guruCount) * 100) : 0;
   const trialActive = await db.user.count({ where: { role: "GURU", trialEndsAt: { gt: now } } });
 
+  // TRUE MRR: from active subscriptions, not transaction cash
+  const trueMRR = await calculateMRR();
+
   return {
     timestamp: now.toISOString(),
     users: { total: totalUsers, murid: totalMurid, guru: totalGuru },
     active: { dau: { value: dau, trend: pctChange(dau, dauYesterday) }, wau: { value: wau, trend: pctChange(wau, wauPrev) }, mau: { value: mau, trend: pctChange(mau, mauPrev) } },
     growth: { new7d: { value: newUsers7d, trend: pctChange(newUsers7d, newUsersPrev7d) }, new30d: { value: newUsers30d, trend: pctChange(newUsers30d, newUsersPrev30d) } },
     premium: { active: { value: activePremium, trend: pctChange(activePremium, activePremiumPrev) }, conversionRate: premiumConversionRate, trialActive },
-    revenue: { mrr: { value: mrrCurrent, trend: pctChange(mrrCurrent, mrrPrev) }, last30d: { value: revenue30d, trend: pctChange(revenue30d, revenuePrev30d) }, allTime: revenueAllTime, transactionsSuccess30d: txSuccess30d, transactionsPending: txPending },
+    revenue: { mrr: { value: trueMRR, trend: 0 }, cashCollectedMonth: { value: mrrCurrent, trend: pctChange(mrrCurrent, mrrPrev) }, cashCollected30d: { value: revenue30d, trend: pctChange(revenue30d, revenuePrev30d) }, cashCollectedAllTime: revenueAllTime, transactionsSuccess30d: txSuccess30d, transactionsPending: txPending },
     learning: { jalurCompleted7d: { value: jalurCompleted7d, trend: pctChange(jalurCompleted7d, jalurCompletedPrev7d) }, ukbiSessions7d },
     content: { karya7d: { value: karya7d, trend: pctChange(karya7d, karyaPrev7d) } },
     ai: { generations7d: aiGenerations7d },

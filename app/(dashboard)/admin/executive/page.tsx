@@ -116,7 +116,7 @@ export default async function ExecutiveDashboard() {
       {/* Row 2: Revenue + Learning */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <KpiCard label="MRR (Bulan Ini)" value={formatRp(data.revenue.mrr.value)} subtitle={`${data.revenue.transactionsSuccess30d} transaksi sukses`} icon={DollarSign} color="from-green-500 to-green-600" trend={data.revenue.mrr.trend} href="/admin/payments" />
-        <KpiCard label="Revenue (30d)" value={formatRp(data.revenue.last30d.value)} subtitle={`All-time: ${formatRp(data.revenue.allTime)}`} icon={TrendingUp} color="from-teal-500 to-teal-600" trend={data.revenue.last30d.trend} />
+        <KpiCard label="Cash Collected (30d)" value={formatRp(data.revenue.cashCollected30d.value)} subtitle={`All-time: ${formatRp(data.revenue.cashCollectedAllTime)}`} icon={TrendingUp} color="from-teal-500 to-teal-600" trend={data.revenue.cashCollected30d.trend} />
         <KpiCard label="Jalur Cerdas (7d)" value={formatNum(data.learning.jalurCompleted7d.value)} subtitle={`${data.learning.ukbiSessions7d} UKBI sessions`} icon={BookOpen} color="from-indigo-500 to-indigo-600" trend={data.learning.jalurCompleted7d.trend} href="/admin/analytics" />
         <KpiCard label="Karya Siswa (7d)" value={formatNum(data.content.karya7d.value)} subtitle={`${data.ai.generations7d} AI generations`} icon={PenLine} color="from-pink-500 to-pink-600" trend={data.content.karya7d.trend} href="/arena/feed" />
       </div>
@@ -149,9 +149,9 @@ export default async function ExecutiveDashboard() {
         <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
           <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2 text-sm"><DollarSign size={14} className="text-green-500" /> Revenue</h2>
           <div className="divide-y divide-slate-100 dark:divide-slate-700/50">
-            <MetricRow label="MRR" value={formatRp(data.revenue.mrr.value)} trend={data.revenue.mrr.trend} />
-            <MetricRow label="Revenue (30d)" value={formatRp(data.revenue.last30d.value)} trend={data.revenue.last30d.trend} />
-            <MetricRow label="All-Time Revenue" value={formatRp(data.revenue.allTime)} />
+            <MetricRow label="MRR (Normalized)" value={formatRp(data.revenue.mrr.value)} trend={data.revenue.mrr.trend} />
+            <MetricRow label="Cash Collected (30d)" value={formatRp(data.revenue.cashCollected30d.value)} trend={data.revenue.cashCollected30d.trend} />
+            <MetricRow label="All-Time Cash Collected" value={formatRp(data.revenue.cashCollectedAllTime)} />
             <MetricRow label="Transactions (30d)" value={String(data.revenue.transactionsSuccess30d)} />
             <MetricRow label="Pending Payments" value={String(data.revenue.transactionsPending)} />
           </div>
