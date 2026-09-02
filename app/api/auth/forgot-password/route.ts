@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.bahasacerdas.com";
 
     const { error } = await supabase.auth.resetPasswordForEmail(email.toLowerCase(), {
-      redirectTo: `${siteUrl}/reset-password`,
+      redirectTo: `${siteUrl}/api/auth/callback?next=/reset-password`,
     });
 
     if (error?.message?.includes("rate limit")) {
@@ -49,8 +49,8 @@ export async function POST(req: NextRequest) {
                   <h2>Reset Password</h2>
                   <p>Kami menerima permintaan reset password untuk akun <strong>${email.toLowerCase()}</strong>.</p>
                   <p>Silakan klik tombol di bawah untuk membuat password baru:</p>
-                  <a href="${siteUrl}/reset-password" style="display: inline-block; margin: 16px 0; padding: 12px 32px; background: #dc2626; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
-                    Reset Password
+                  <a href="${siteUrl}/login" style="display: inline-block; margin: 16px 0; padding: 12px 32px; background: #dc2626; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                    Login & Reset Password
                   </a>
                   <p style="color: #6b7280; font-size: 12px; margin-top: 24px;">
                     Jika kamu tidak meminta reset password, abaikan email ini.

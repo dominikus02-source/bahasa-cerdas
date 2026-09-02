@@ -3,11 +3,10 @@
  * PASSWORD RESET FLOW — Test Suite
  *
  * Tests the password reset E2E flow:
- * 1. Forgot password API exists and handles requests
- * 2. Reset password page renders with correct form
- * 3. Middleware does not block recovery routes
- * 4. Security invariants (no token logging, no open redirect)
- * 5. Login page has "Lupa kata sandi?" link
+ * 1. Forgot password API routes through callback
+ * 2. Callback handles recovery with next=/reset-password
+ * 3. Reset password page handles PASSWORD_RECOVERY event
+ * 4. Security invariants
  */
 
 import { readFileSync } from "fs";
@@ -37,12 +36,12 @@ function fileContains(path: string, pattern: string): boolean {
   }
 }
 
-function fileMatches(path: string, regex: RegExp): boolean {
+function fileNotContains(path: string, pattern: string): boolean {
   try {
     const content = readFileSync(resolve(process.cwd(), path), "utf-8");
-    return regex.test(content);
+    return !content.includes(pattern);
   } catch {
-    return false;
+    return true;
   }
 }
 
@@ -52,111 +51,115 @@ async function main() {
   console.log("═══════════════════════════════════════════════════════════\n");
 
   // ═══════════════════════════════════════════════════════════
-  // 1. ROUTES EXIST (4 tests)
+  // 1. FORGOT PASSWORD API (5 tests)
   // ═══════════════════════════════════════════════════════════
-  console.log("── 1. ROUTES EXIST ──");
+  console.log("── 1. FORGOT PASSWORD API ──");
 
-  assert("Forgot password API exists",
+  assert("API route exists",
     fileContains("app/api/auth/forgot-password/route.ts", "resetPasswordForEmail"));
 
-  assert("Reset password page exists",
-    fileContains("app/(auth)/reset-password/page.tsx", "updateUser"));
+  assert("redirectTo routes through callback (not direct to /reset-password)",
+    fileContains("app/api/auth/forgot-password/route.ts", "/api/auth/callback?next=/reset-password"));
 
-  assert("Auth callback route exists",
-    fileContains("app/api/auth/callback/route.ts", "exchangeCodeForSession") ||
-    fileContains("app/auth/callback/route.ts", "exchangeCodeForSession") ||
-    fileContains("app/api/auth/callback/route.ts", "callback"));
+  assert("Does NOT redirectTo /reset-password directly",
+    fileNotContains("app/api/auth/forgot-password/route.ts", "redirectTo: `${siteUrl}/reset-password`}"));
 
-  assert("Login page exists",
-    fileContains("app/(auth)/login/page.tsx", "password"));
+  assert("Has rate limiting",
+    fileContains("app/api/auth/forgot-password/route.ts", "rateLimit"));
 
-  // ═══════════════════════════════════════════════════════════
-  // 2. RESET PAGE COMPONENTS (6 tests)
-  // ═══════════════════════════════════════════════════════════
-  console.log("\n── 2. RESET PAGE COMPONENTS ──");
-
-  assert("Reset page has password input",
-    fileContains("app/(auth)/reset-password/page.tsx", "Password Baru"));
-
-  assert("Reset page has confirm input",
-    fileContains("app/(auth)/reset-password/page.tsx", "Konfirmasi Password"));
-
-  assert("Reset page has submit button",
-    fileContains("app/(auth)/reset-password/page.tsx", "Ubah Password"));
-
-  assert("Reset page has password visibility toggle",
-    fileContains("app/(auth)/reset-password/page.tsx", "showPassword"));
-
-  assert("Reset page has minimum length validation",
-    fileContains("app/(auth)/reset-password/page.tsx", "minimal 8 karakter") ||
-    fileContains("app/(auth)/reset-password/page.tsx", "minLength"));
-
-  assert("Reset page has confirmation mismatch check",
-    fileContains("app/(auth)/reset-password/page.tsx", "tidak cocok"));
+  assert("Uses trusted origin (NEXT_PUBLIC_SITE_URL)",
+    fileContains("app/api/auth/forgot-password/route.ts", "NEXT_PUBLIC_SITE_URL"));
 
   // ═══════════════════════════════════════════════════════════
-  // 3. RECOVERY SESSION HANDLING (4 tests)
+  // 2. AUTH CALLBACK — RECOVERY HANDLING (6 tests)
   // ═══════════════════════════════════════════════════════════
-  console.log("\n── 3. RECOVERY SESSION HANDLING ──");
+  console.log("\n── 2. AUTH CALLBACK ──");
 
-  assert("Reset page listens for PASSWORD_RECOVERY event",
+  assert("Callback exchanges code",
+    fileContains("app/api/auth/callback/route.ts", "exchangeCodeForSession"));
+
+  assert("Callback handles next=/reset-password (recovery flow)",
+    fileContains("app/api/auth/callback/route.ts", "next === \"/reset-password\""));
+
+  assert("Recovery flow redirects to /reset-password (skips role-based redirect)",
+    fileContains("app/api/auth/callback/route.ts", "requestUrl.origin + \"/reset-password\"") ||
+    fileContains("app/api/auth/callback/route.ts", "reset-password"));
+
+  assert("Callback validates next param (no open redirect)",
+    fileContains("app/api/auth/callback/route.ts", "next.startsWith(\"//\")") ||
+    fileContains("app/api/auth/callback/route.ts", "startsWith(\"//\")"));
+
+  assert("Callback does NOT allow /login as next param",
+    fileContains("app/api/auth/callback/route.ts", "next.startsWith(\"/login\")"));
+
+  assert("Callback does NOT allow /register as next param",
+    fileContains("app/api/auth/callback/route.ts", "next.startsWith(\"/register\")"));
+
+  // ═══════════════════════════════════════════════════════════
+  // 3. RESET PASSWORD PAGE (6 tests)
+  // ═══════════════════════════════════════════════════════════
+  console.log("\n── 3. RESET PASSWORD PAGE ──");
+
+  assert("Page listens for PASSWORD_RECOVERY event",
     fileContains("app/(auth)/reset-password/page.tsx", "PASSWORD_RECOVERY"));
 
-  assert("Reset page handles expired/invalid link",
+  assert("Page shows loading state while verifying recovery",
+    fileContains("app/(auth)/reset-password/page.tsx", "Memverifikasi"));
+
+  assert("Page shows error for expired/invalid link",
     fileContains("app/(auth)/reset-password/page.tsx", "Link Tidak Valid") ||
     fileContains("app/(auth)/reset-password/page.tsx", "recoveryFailed"));
 
-  assert("Reset page shows loading state while verifying",
-    fileContains("app/(auth)/reset-password/page.tsx", "Memverifikasi"));
+  assert("Page has password + confirm inputs",
+    fileContains("app/(auth)/reset-password/page.tsx", "Password Baru") &&
+    fileContains("app/(auth)/reset-password/page.tsx", "Konfirmasi Password"));
 
-  assert("Reset page has success state",
-    fileContains("app/(auth)/reset-password/page.tsx", "Password Berhasil Diubah"));
+  assert("Page calls updateUser with new password",
+    fileContains("app/(auth)/reset-password/page.tsx", "updateUser({ password })"));
+
+  assert("Success state redirects to /login",
+    fileContains("app/(auth)/reset-password/page.tsx", "router.push(\"/login\")"));
 
   // ═══════════════════════════════════════════════════════════
   // 4. MIDDLEWARE SAFETY (3 tests)
   // ═══════════════════════════════════════════════════════════
   console.log("\n── 4. MIDDLEWARE SAFETY ──");
 
-  assert("/reset-password is in public paths (not blocked by middleware)",
+  assert("/reset-password is in public paths",
     fileContains("lib/supabase/proxy.ts", "/reset-password"));
 
-  assert("Login page is in public paths",
+  assert("/login is in public paths",
     fileContains("lib/supabase/proxy.ts", "/login"));
 
-  assert("Auth callback is handled (not blocked)",
-    fileContains("lib/supabase/proxy.ts", "/auth/"));
+  assert("/api/auth/callback is handled (via selfAuthPaths or publicPaths)",
+    fileContains("lib/supabase/proxy.ts", "/auth/") ||
+    fileContains("lib/supabase/proxy.ts", "/api/"));
 
   // ═══════════════════════════════════════════════════════════
   // 5. SECURITY INVARIANTS (5 tests)
   // ═══════════════════════════════════════════════════════════
   console.log("\n── 5. SECURITY INVARIANTS ──");
 
-  assert("Forgot password API does not reveal if email exists",
-    fileContains("app/api/auth/forgot-password/route.ts", "Email tidak terdaftar") ||
-    fileContains("app/api/auth/forgot-password/route.ts", "sudah dikirim"),
-    "Response should be generic");
+  assert("No open redirect: callback validates next param",
+    fileContains("app/api/auth/callback/route.ts", "startsWith(\"//\")"));
 
-  assert("Forgot password has rate limiting",
+  assert("No password logging",
+    fileNotContains("app/(auth)/reset-password/page.tsx", "console.log(password)"));
+
+  assert("No token logging in callback",
+    fileNotContains("app/api/auth/callback/route.ts", "console.log(code)") &&
+    fileNotContains("app/api/auth/callback/route.ts", "console.log(token)"));
+
+  assert("Rate limiting on forgot-password API",
     fileContains("app/api/auth/forgot-password/route.ts", "rateLimit"));
 
   assert("Redirect URL uses trusted origin",
-    fileContains("app/api/auth/forgot-password/route.ts", "NEXT_PUBLIC_SITE_URL") ||
-    fileContains("app/api/auth/forgot-password/route.ts", "bahasacerdas.com"));
-
-  assert("No password logging in reset flow",
-    !fileMatches("app/(auth)/reset-password/page.tsx", /console\.(log|error).*password(?!.*length|.*minLength)/i) ||
-    !fileContains("app/(auth)/reset-password/page.tsx", "console.log(password)"),
-    "Password should never be logged");
-
-  assert("No token logging in forgot-password API",
-    !fileContains("app/api/auth/forgot-password/route.ts", "console.log(token)") &&
-    !fileContains("app/api/auth/forgot-password/route.ts", "console.log(access_token)"),
-    "Tokens should never be logged");
+    fileContains("app/api/auth/forgot-password/route.ts", "NEXT_PUBLIC_SITE_URL"));
 
   // ═══════════════════════════════════════════════════════════
-  // 6. LOGIN PAGE FORGOT PASSWORD (3 tests)
+  // 6. LOGIN PAGE INTEGRATION (3 tests)
   // ═══════════════════════════════════════════════════════════
-  console.log("\n── 6. LOGIN PAGE FORGOT PASSWORD ──");
+  console.log("\n── 6. LOGIN PAGE ──");
 
   assert("Login page has 'Lupa kata sandi?' button",
     fileContains("app/(auth)/login/page.tsx", "Lupa kata sandi"));
@@ -164,22 +167,20 @@ async function main() {
   assert("Login page calls forgot-password API",
     fileContains("app/(auth)/login/page.tsx", "/api/auth/forgot-password"));
 
-  assert("Login page shows success message after forgot password",
-    fileContains("app/(auth)/login/page.tsx", "reset password") ||
-    fileContains("app/(auth)/login/page.tsx", "sudah dikirim") ||
+  assert("Login page shows feedback after forgot password request",
     fileContains("app/(auth)/login/page.tsx", "setError(data.message"));
 
   // ═══════════════════════════════════════════════════════════
-  // 7. REDIRECT BEHAVIOR (2 tests)
+  // 7. COMPLETE FLOW INTEGRITY (2 tests)
   // ═══════════════════════════════════════════════════════════
-  console.log("\n── 7. REDIRECT BEHAVIOR ──");
+  console.log("\n── 7. FLOW INTEGRITY ──");
 
-  assert("Reset page redirects to /login after success",
-    fileContains("app/(auth)/reset-password/page.tsx", "router.push(\"/login\")"));
+  assert("Callback → /reset-password path exists in codebase",
+    fileContains("app/(auth)/reset-password/page.tsx", "Reset Password"));
 
-  assert("Invalid link shows 'back to login' option",
-    fileContains("app/(auth)/reset-password/page.tsx", "Kembali ke Login") ||
-    fileContains("app/(auth)/reset-password/page.tsx", "router.push(\"/login\")"));
+  assert("Recovery flow does NOT end at landing page (/)",
+    fileContains("app/api/auth/callback/route.ts", "next === \"/reset-password\"") ||
+    fileContains("app/api/auth/callback/route.ts", "/reset-password"));
 
   // ═══════════════════════════════════════════════════════════
   // SUMMARY

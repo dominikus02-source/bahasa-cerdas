@@ -19,6 +19,13 @@ export async function GET(request: Request) {
       return NextResponse.redirect(`${requestUrl.origin}/confirm?token_hash=${token_hash}&type=${type}`);
     }
 
+    // Recovery flow: if next=/reset-password, honor it directly.
+    // Recovery is establishing a session to set a new password —
+    // skip role-based redirect which would send user to dashboard.
+    if (next === "/reset-password") {
+      return NextResponse.redirect(`${requestUrl.origin}/reset-password`);
+    }
+
     // Preserve valid internal next param for contextual redirect.
     // Validate: must start with /, no protocol-relative (//evil.com),
     // not a login/register path to prevent redirect loops.
