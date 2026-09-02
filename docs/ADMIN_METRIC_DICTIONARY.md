@@ -1,7 +1,7 @@
 # BahasaCerdas Founder Control Tower — Metric Dictionary
 
 ## Version
-3.0
+4.0
 
 ## Last Updated
 September 2, 2026
@@ -84,22 +84,33 @@ September 2, 2026
 ### MRR — Detailed Definition
 
 **Formula**: For each user where `isPremium=true AND premiumUntil>now AND isFounder=false`:
-- Determine plan from `user.role` + `user.premiumPlan` (or transaction reference)
-- Look up `MRR_CONTRIBUTION[plan]`
-- Sum all contributions
+1. Get most recent SUCCESS transaction (take:1, ordered by createdAt desc)
+2. Determine plan from transaction `reference` field (fallback: `user.premiumPlan`)
+3. Look up `MRR_CONTRIBUTION[plan]`
+4. Sum all contributions
+
+**Canonical pricing source**: `lib/admin/executive.ts` → `PLAN_PRICES` + `MRR_CONTRIBUTION`
 
 **Plan → MRR mapping**:
 
 | Plan | Price | MRR Contribution |
 |------|-------|-----------------|
 | MURID_PREMIUM_MONTHLY | Rp 19,000/month | Rp 19,000 |
-| MURID_PREMIUM_YEARLY | Rp 180,000/year | Rp 15,000 (=180K/12) |
+| MURID_PREMIUM_YEARLY | Rp 180,000/year | Rp 15,000 (=180K÷12) |
 | GURU_PRO_MONTHLY | Rp 49,000/month | Rp 49,000 |
-| GURU_PRO_YEARLY | Rp 399,000/year | Rp 33,250 (=399K/12) |
+| GURU_PRO_YEARLY | Rp 399,000/year | Rp 33,250 (=399K÷12) |
 
-**Why not from transactions**: Transaction-based MRR sums all SUCCESS transactions in a period, which double-counts renewals and includes one-time purchases. True MRR represents the current recurring value of active subscriptions.
+**Active entitlement rule**: `isPremium=true AND premiumUntil > NOW()`. This is the canonical state. `premiumPlan` is a fallback for plan detection, not the entitlement source.
 
-**Current limitation**: The system doesn't store which plan a user is on in a reliable way (premiumPlan field may be stale). The most accurate approach is to check the most recent SUCCESS transaction's `reference` field for each active Premium user.
+**Expired rule**: `premiumUntil ≤ NOW()` → contributes 0 to MRR. Even if `isPremium=true`, expired entitlement is excluded.
+
+**Duplicate rule**: Each user counted exactly once via `findMany` (no GROUP BY needed). Multiple SUCCESS transactions for same user → only most recent `reference` used for plan detection.
+
+**Snapshot boundary**: `premiumUntil > now` (strict greater-than). User with `premiumUntil` exactly at `now` is excluded.
+
+**Manual/comped activation**: Users activated via admin without qualifying transaction still appear in MRR if `premiumPlan` is set (fallback). This is documented — admin activation uses `premiumPlan` field for plan detection.
+
+**Why not from transactions**: Transaction-based MRR sums all SUCCESS transactions in a period, which double-counts renewals and includes one-time cash payments. True MRR represents the current recurring value of active subscriptions.
 
 ### Retention Metrics
 
