@@ -67,8 +67,9 @@ async function main() {
   assert("Has rate limiting",
     fileContains("app/api/auth/forgot-password/route.ts", "rateLimit"));
 
-  assert("Uses trusted origin (NEXT_PUBLIC_SITE_URL)",
-    fileContains("app/api/auth/forgot-password/route.ts", "NEXT_PUBLIC_SITE_URL"));
+  assert("Uses Supabase Site URL origin (matches dashboard config)",
+    fileContains("app/api/auth/forgot-password/route.ts", "SUPABASE_SITE_URL") ||
+    fileContains("app/api/auth/forgot-password/route.ts", "bahasacerdas.com"));
 
   // ═══════════════════════════════════════════════════════════
   // 2. AUTH CALLBACK — RECOVERY HANDLING (6 tests)
@@ -153,8 +154,9 @@ async function main() {
   assert("Rate limiting on forgot-password API",
     fileContains("app/api/auth/forgot-password/route.ts", "rateLimit"));
 
-  assert("Redirect URL uses trusted origin",
-    fileContains("app/api/auth/forgot-password/route.ts", "NEXT_PUBLIC_SITE_URL"));
+  assert("Redirect URL uses Supabase Site URL domain",
+    fileContains("app/api/auth/forgot-password/route.ts", "bahasacerdas.com") &&
+    fileContains("app/api/auth/forgot-password/route.ts", "/api/auth/callback"));
 
   // ═══════════════════════════════════════════════════════════
   // 6. LOGIN PAGE INTEGRATION (3 tests)
