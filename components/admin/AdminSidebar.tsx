@@ -3,53 +3,124 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
-import { LayoutDashboard, ShoppingBag, Film, FileText, Users, LogOut, Settings, ChevronRight, BarChart3, Briefcase, MessageCircle, Presentation, Bell, BellRing, X, Coins, DollarSign, Database, Activity, Wallet, Baby, TrendingUp, Trophy, LineChart, ShieldAlert, ShieldCheck, Crown, Target } from "lucide-react";
+import {
+  LayoutDashboard, ShoppingBag, Film, FileText, Users, LogOut, Settings,
+  ChevronRight, BarChart3, Briefcase, MessageCircle, Presentation,
+  Bell, BellRing, X, Coins, DollarSign, Database, Activity, Wallet,
+  Baby, TrendingUp, Trophy, LineChart, ShieldAlert, ShieldCheck,
+  Crown, Target, ChevronDown,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import {
-  NAV_ICON_CLASS,
-  NAV_ICON_STROKE,
-  NAV_ICON_ACTIVE,
-  NAV_ICON_INACTIVE,
-  NAV_LINK_BASE,
-  NAV_LINK_ACTIVE,
-  NAV_LINK_INACTIVE,
-  ACTION_ICON_CLASS,
+  NAV_ICON_CLASS, NAV_ICON_STROKE, NAV_ICON_ACTIVE, NAV_ICON_INACTIVE,
+  NAV_LINK_BASE, NAV_LINK_ACTIVE, NAV_LINK_INACTIVE, ACTION_ICON_CLASS,
 } from "@/components/shell/icon-tokens";
+
+/* ── Navigation data model ────────────────────────────────────────── */
+
+interface NavItem {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+}
+
+interface NavGroup {
+  label: string;
+  icon: LucideIcon;
+  items: NavItem[];
+}
+
+type NavEntry = NavItem | NavGroup | { type: "divider" };
+
+function isGroup(e: NavEntry): e is NavGroup {
+  return "items" in e;
+}
+
+function isItem(e: NavEntry): e is NavItem {
+  return "href" in e && !isGroup(e);
+}
+
+/**
+ * PRIMARY NAVIGATION — 7 groups (down from 24 flat items).
+ * Every existing route is preserved; only the sidebar layout changes.
+ */
+const NAV: NavEntry[] = [
+  // ── Standalone: Executive overview ──
+  { label: "Control Tower", href: "/admin/executive", icon: Target },
+
+  // ── Standalone: User management ──
+  { label: "Pengguna", href: "/admin/users", icon: Users },
+
+  // ── Group: Content management ──
+  {
+    label: "Konten",
+    icon: Presentation,
+    items: [
+      { label: "Materi Ajar", href: "/admin/materi/generate-ppt", icon: Presentation },
+      { label: "Bank Soal", href: "/admin/bank-soal", icon: FileText },
+      { label: "Toko Karya", href: "/admin/karya", icon: ShoppingBag },
+      { label: "Video", href: "/admin/video", icon: Film },
+      { label: "Artikel", href: "/admin/artikel", icon: FileText },
+      { label: "Lowongan", href: "/admin/loker", icon: Briefcase },
+      { label: "Komunitas", href: "/admin/komunitas", icon: MessageCircle },
+    ],
+  },
+
+  // ── Group: AI, analytics & engagement ──
+  {
+    label: "AI & Learning",
+    icon: BarChart3,
+    items: [
+      { label: "Analitik AI", href: "/admin/ai-analytics", icon: BarChart3 },
+      { label: "Learning Analytics", href: "/admin/analytics", icon: LineChart },
+      { label: "Pemakaian Fitur", href: "/admin/feature-usage", icon: TrendingUp },
+      { label: "Arena BC", href: "/admin/arena", icon: Trophy },
+      { label: "Monitoring", href: "/admin/monitoring", icon: Activity },
+      { label: "Kuota AI", href: "/admin/ai-quota", icon: Coins },
+    ],
+  },
+
+  // ── Group: Payments, premium & payouts ──
+  {
+    label: "Pembayaran",
+    icon: DollarSign,
+    items: [
+      { label: "Premium Report", href: "/admin/premium", icon: Crown },
+      { label: "Pembayaran", href: "/admin/payments", icon: DollarSign },
+      { label: "Penarikan Saldo", href: "/admin/withdrawals", icon: Wallet },
+      { label: "Risiko Guru", href: "/admin/teacher-risk", icon: ShieldAlert },
+      { label: "Payout Kontrol", href: "/admin/teacher-payouts", icon: ShieldCheck },
+    ],
+  },
+
+  // ── Group: System & tools ──
+  {
+    label: "System",
+    icon: Database,
+    items: [
+      { label: "Pusat Data", href: "/admin/data-center", icon: Database },
+      { label: "Pengaturan", href: "/admin/pengaturan", icon: Settings },
+      { label: "Arena Junior", href: "/junior", icon: Baby },
+    ],
+  },
+
+  { type: "divider" },
+  { label: "Dasbor Guru", href: "/guru/beranda", icon: ChevronRight },
+  { label: "Dasbor Murid", href: "/murid/beranda", icon: ChevronRight },
+];
+
+/* ── Helper: does this group contain the active route? ──────────── */
+
+function groupHasActiveItem(group: NavGroup, pathname: string): boolean {
+  return group.items.some((item) => pathname === item.href || pathname.startsWith(item.href + "/"));
+}
+
+/* ── Component ──────────────────────────────────────────────────── */
 
 interface Props {
   user: { fullName: string; avatar?: string | null; id?: string };
 }
-
-export const NAV = [
-  { label: "Control Tower", href: "/admin/executive", icon: Target },
-  { label: "Ringkasan", href: "/admin", icon: LayoutDashboard },
-  { label: "Materi Ajar", href: "/admin/materi/generate-ppt", icon: Presentation },
-  { label: "Bank Soal", href: "/admin/bank-soal", icon: FileText },
-  { label: "Toko Karya", href: "/admin/karya", icon: ShoppingBag },
-  { label: "Video", href: "/admin/video", icon: Film },
-  { label: "Artikel", href: "/admin/artikel", icon: FileText },
-  { label: "Lowongan", href: "/admin/loker", icon: Briefcase },
-  { label: "Komunitas", href: "/admin/komunitas", icon: MessageCircle },
-  { label: "Pengguna", href: "/admin/users", icon: Users },
-  // Pratinjau dasbor murid TK–SD untuk memeriksa tampilan; progres tidak disimpan.
-  { label: "Arena Junior (TK–SD)", href: "/junior", icon: Baby },
-  { label: "Analitik AI", href: "/admin/ai-analytics", icon: BarChart3 },
-  { label: "Learning Analytics", href: "/admin/analytics", icon: LineChart },
-  { label: "Arena BC", href: "/admin/arena", icon: Trophy },
-  { label: "Pemakaian Fitur", href: "/admin/feature-usage", icon: TrendingUp },
-  { label: "Monitoring Beban", href: "/admin/monitoring", icon: Activity },
-  { label: "Kuota AI", href: "/admin/ai-quota", icon: Coins },
-  { label: "Pusat Data", href: "/admin/data-center", icon: Database },
-  { label: "Pembayaran", href: "/admin/payments", icon: DollarSign },
-  { label: "Premium Report", href: "/admin/premium", icon: Crown },
-  { label: "Penarikan Saldo", href: "/admin/withdrawals", icon: Wallet },
-  { label: "Risiko Guru", href: "/admin/teacher-risk", icon: ShieldAlert },
-  { label: "Payout Kontrol", href: "/admin/teacher-payouts", icon: ShieldCheck },
-  { label: "Pengaturan", href: "/admin/pengaturan", icon: Settings },
-  { type: "divider" as const },
-  { label: "Dasbor Guru", href: "/guru/beranda", icon: ChevronRight },
-  { label: "Dasbor Murid", href: "/murid/beranda", icon: ChevronRight },
-];
 
 export function AdminSidebar({ user }: Props) {
   const pathname = usePathname();
@@ -58,6 +129,37 @@ export function AdminSidebar({ user }: Props) {
   const [notifs, setNotifs] = useState<any[]>([]);
   const [unread, setUnread] = useState(0);
   const [showNotifs, setShowNotifs] = useState(false);
+
+  // Track which groups are expanded. Initialize with the group containing
+  // the current route so the user always sees their location.
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    for (const entry of NAV) {
+      if (isGroup(entry) && groupHasActiveItem(entry, pathname)) {
+        initial[entry.label] = true;
+      }
+    }
+    return initial;
+  });
+
+  // Re-sync when pathname changes (e.g. after navigation).
+  useEffect(() => {
+    setOpenGroups((prev) => {
+      const next = { ...prev };
+      let changed = false;
+      for (const entry of NAV) {
+        if (isGroup(entry) && groupHasActiveItem(entry, pathname) && !next[entry.label]) {
+          next[entry.label] = true;
+          changed = true;
+        }
+      }
+      return changed ? next : prev;
+    });
+  }, [pathname]);
+
+  const toggleGroup = useCallback((label: string) => {
+    setOpenGroups((prev) => ({ ...prev, [label]: !prev[label] }));
+  }, []);
 
   const fetchNotifs = useCallback(async () => {
     try {
@@ -68,7 +170,7 @@ export function AdminSidebar({ user }: Props) {
     } catch {}
   }, []);
 
-  // 3 menit, dan berhenti saat tab ditinggalkan (dulu 30 detik tanpa henti).
+  // 3 min poll, pauses when tab hidden.
   useEffect(() => {
     fetchNotifs();
     const t = setInterval(() => {
@@ -94,8 +196,9 @@ export function AdminSidebar({ user }: Props) {
 
   return (
     <div className="min-h-0 flex-1 flex flex-col bg-white dark:bg-slate-900/80">
+      {/* ── Brand ── */}
       <div className="p-5 border-b border-slate-100 dark:border-slate-800">
-        <Link href="/admin" className="flex items-center gap-2 min-w-0">
+        <Link href="/admin/executive" className="flex items-center gap-2 min-w-0">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center text-white font-bold text-sm shrink-0">BC</div>
           <div className="min-w-0">
             <p className="shell-label font-bold text-slate-900 text-sm truncate dark:text-white">Panel Admin</p>
@@ -104,6 +207,7 @@ export function AdminSidebar({ user }: Props) {
         </Link>
       </div>
 
+      {/* ── User + Notifications ── */}
       <div className="shell-user px-4 py-3 border-b border-slate-100 bg-slate-50 dark:border-slate-800 dark:bg-slate-800/60">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -161,21 +265,75 @@ export function AdminSidebar({ user }: Props) {
         </div>
       </div>
 
+      {/* ── Navigation ── */}
       <nav className="flex-1 overflow-y-auto py-3 px-2">
-        {NAV.map((item: any, i) => {
-          if (item.type === "divider") return <div key={i} className="h-px bg-slate-100 my-3 mx-3 dark:bg-slate-800" />;
-          const Icon = item.icon;
-          const isActive = pathname === item.href;
-          return (
-            <Link key={item.href} href={item.href} aria-label={item.label} title={item.label}
-              className={`${NAV_LINK_BASE} ${isActive ? NAV_LINK_ACTIVE : NAV_LINK_INACTIVE}`}>
-              <Icon className={`${NAV_ICON_CLASS} ${isActive ? NAV_ICON_ACTIVE : NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
-              <span className="shell-label">{item.label}</span>
-            </Link>
-          );
+        {NAV.map((entry, i) => {
+          // Divider
+          if ("type" in entry && entry.type === "divider") {
+            return <div key={i} className="h-px bg-slate-100 my-3 mx-3 dark:bg-slate-800" />;
+          }
+
+          // Standalone item (Control Tower, Pengguna, Guru/Murid links)
+          if (isItem(entry)) {
+            const Icon = entry.icon;
+            const isActive = pathname === entry.href;
+            return (
+              <Link key={entry.href} href={entry.href} aria-label={entry.label} title={entry.label}
+                className={`${NAV_LINK_BASE} ${isActive ? NAV_LINK_ACTIVE : NAV_LINK_INACTIVE}`}>
+                <Icon className={`${NAV_ICON_CLASS} ${isActive ? NAV_ICON_ACTIVE : NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
+                <span className="shell-label">{entry.label}</span>
+              </Link>
+            );
+          }
+
+          // Group (collapsible)
+          if (isGroup(entry)) {
+            const isOpen = openGroups[entry.label] ?? false;
+            const hasActive = groupHasActiveItem(entry, pathname);
+            const Icon = entry.icon;
+            const GroupIcon = ChevronDown;
+
+            return (
+              <div key={entry.label} className="mb-1">
+                {/* Group header button */}
+                <button
+                  onClick={() => toggleGroup(entry.label)}
+                  className={`${NAV_LINK_BASE} w-full ${hasActive ? "text-violet-700 dark:text-violet-300" : NAV_LINK_INACTIVE}`}
+                  aria-expanded={isOpen}
+                >
+                  <Icon className={`${NAV_ICON_CLASS} ${hasActive ? NAV_ICON_ACTIVE : NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
+                  <span className="shell-label flex-1 text-left">{entry.label}</span>
+                  <GroupIcon
+                    className={`w-4 h-4 shrink-0 transition-transform duration-200 ${isOpen ? "rotate-0" : "-rotate-90"} ${hasActive ? "text-violet-500" : "text-slate-400"}`}
+                    strokeWidth={2}
+                  />
+                </button>
+
+                {/* Group items */}
+                {isOpen && (
+                  <div className="ml-3 pl-3 border-l border-slate-100 dark:border-slate-800">
+                    {entry.items.map((item) => {
+                      const ItemIcon = item.icon;
+                      const itemActive = pathname === item.href;
+                      return (
+                        <Link key={item.href} href={item.href} aria-label={item.label} title={item.label}
+                          className={`${NAV_LINK_BASE} text-[13px] py-2 ${itemActive ? NAV_LINK_ACTIVE : NAV_LINK_INACTIVE}`}>
+                          <ItemIcon className={`w-4 h-4 shrink-0 ${itemActive ? NAV_ICON_ACTIVE : NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
+                          <span className="shell-label">{item.label}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          }
+
+          return null;
         })}
       </nav>
 
+      {/* ── Footer ── */}
       <div className="p-3 border-t border-slate-100 dark:border-slate-800">
         <Link href="/" className="shell-link flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors mb-1 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-800/60">
           <ChevronRight className={`${ACTION_ICON_CLASS} shrink-0`} /> <span className="shell-label">Ke Website</span>

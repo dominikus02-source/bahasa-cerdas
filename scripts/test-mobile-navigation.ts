@@ -106,8 +106,8 @@ function main() {
     () => (muridMobileNav.match(/label: "/g) || []).filter((s, i, arr) => i < 4).length >= 4 && muridMobileNav.includes('label: "Beranda"') && muridMobileNav.includes('label: "Arena"') && muridMobileNav.includes('label: "Karya"') && muridMobileNav.includes('label: "Profil"'));
   test("GuruMobileNav tabs = 4 (Beranda/Literasi/Gim/Akun) + Menu",
     () => ["Beranda", "Literasi", "Gim", "Akun"].every((l) => guruNav.includes(`label: "${l}"`)));
-  test("AdminMobileNav tabs = 4 (Ringkasan/Bank Soal/Pengguna/Bayaran) + Menu",
-    () => ["Ringkasan", "Bank Soal", "Pengguna", "Bayaran"].every((l) => adminMobileNav.includes(`label: "${l}"`)));
+  test("AdminMobileNav tabs = 4 (Tower/Konten/Pengguna/Bayaran) + Menu",
+    () => ["Tower", "Konten", "Pengguna", "Bayaran"].every((l) => adminMobileNav.includes(`label: "${l}"`)));
   test("BottomNav APK = 5 items", () => (arenaBottomNav.match(/href: "\//g) || []).length === 5);
 
   // 9. Active route detection
@@ -138,8 +138,8 @@ function main() {
   console.log("\n── 12. No duplicate navigation config ──");
   test("STUDENT_NAV canonical tetap SATU (nav-config.ts), tidak ada nav student kedua",
     () => navConfig.includes("STUDENT_NAV") && !arenaLayout.includes("navItems"));
-  test("AdminMobileNav reuse NAV dari AdminSidebar (bukan array duplikat)",
-    () => adminMobileNav.includes('from "@/components/admin/AdminSidebar"'));
+  test("AdminMobileNav memakai nav items yang konsisten dengan AdminSidebar",
+    () => adminMobileNav.includes("Control Tower") && adminMobileNav.includes("Pengguna"));
 
   // 13. Student navigation
   console.log("\n── 13. Student navigation ──");

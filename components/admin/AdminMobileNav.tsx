@@ -3,37 +3,68 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, FileText, Users, DollarSign, Menu as MenuIcon, X, LogOut } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
-import { NAV } from "@/components/admin/AdminSidebar";
-import type { LucideIcon } from "lucide-react";
 import {
-  NAV_ICON_CLASS,
-  NAV_ICON_STROKE,
-  NAV_ICON_ACTIVE,
-  NAV_ICON_INACTIVE,
-  NAV_LINK_BASE,
-  NAV_LINK_ACTIVE,
-  NAV_LINK_INACTIVE,
+  LayoutDashboard, FileText, Users, DollarSign, Menu as MenuIcon, X, LogOut,
+  Target, Presentation, ShoppingBag, Film, Briefcase, MessageCircle,
+  BarChart3, LineChart, TrendingUp, Trophy, Activity, Coins,
+  Crown, Wallet, ShieldAlert, ShieldCheck, Database, Settings, Baby,
+  ChevronDown,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import {
+  NAV_ICON_CLASS, NAV_ICON_STROKE, NAV_ICON_ACTIVE, NAV_ICON_INACTIVE,
+  NAV_LINK_BASE, NAV_LINK_ACTIVE, NAV_LINK_INACTIVE,
 } from "@/components/shell/icon-tokens";
 
-type AdminNavItem = { label: string; href: string; icon: LucideIcon } | { type: "divider" };
-
-const isDivider = (item: AdminNavItem): item is { type: "divider" } => "type" in item && item.type === "divider";
-
 /**
- * STEP 5.0 — MOBILE NAVIGATION CONSOLIDATION.
- * AdminMobileNav: bottom navigation mobile untuk Panel Admin (md:hidden).
- * Konsisten dengan student/guru mobile nav: bar tetap di bawah, safe-area
- * aware, ikon+label, active state jelas, primary <= 4 + Menu drawer berisi
- * daftar lengkap ADMIN nav (reuse NAV dari AdminSidebar — no duplicate config).
+ * Mobile bottom tabs — 4 quick-access items + Menu drawer.
+ * Matches the new grouped sidebar structure.
  */
 const TABS = [
-  { label: "Ringkasan", href: "/admin", icon: LayoutDashboard },
-  { label: "Bank Soal", href: "/admin/bank-soal", icon: FileText },
+  { label: "Tower", href: "/admin/executive", icon: Target },
+  { label: "Konten", href: "/admin/bank-soal", icon: FileText },
   { label: "Pengguna", href: "/admin/users", icon: Users },
-  { label: "Bayaran", href: "/admin/payments", icon: DollarSign },
+  { label: "Bayaran", href: "/admin/premium", icon: DollarSign },
 ];
+
+/**
+ * Full navigation for the drawer — mirrors AdminSidebar groups.
+ * Grouped so mobile users can scan by category.
+ */
+interface FlatItem { label: string; href: string; icon: LucideIcon; group?: string; }
+
+const ALL_ITEMS: FlatItem[] = [
+  { label: "Control Tower", href: "/admin/executive", icon: Target },
+  { label: "Pengguna", href: "/admin/users", icon: Users },
+  // Konten
+  { label: "Materi Ajar", href: "/admin/materi/generate-ppt", icon: Presentation, group: "Konten" },
+  { label: "Bank Soal", href: "/admin/bank-soal", icon: FileText, group: "Konten" },
+  { label: "Toko Karya", href: "/admin/karya", icon: ShoppingBag, group: "Konten" },
+  { label: "Video", href: "/admin/video", icon: Film, group: "Konten" },
+  { label: "Artikel", href: "/admin/artikel", icon: FileText, group: "Konten" },
+  { label: "Lowongan", href: "/admin/loker", icon: Briefcase, group: "Konten" },
+  { label: "Komunitas", href: "/admin/komunitas", icon: MessageCircle, group: "Konten" },
+  // AI & Learning
+  { label: "Analitik AI", href: "/admin/ai-analytics", icon: BarChart3, group: "AI & Learning" },
+  { label: "Learning Analytics", href: "/admin/analytics", icon: LineChart, group: "AI & Learning" },
+  { label: "Pemakaian Fitur", href: "/admin/feature-usage", icon: TrendingUp, group: "AI & Learning" },
+  { label: "Arena BC", href: "/admin/arena", icon: Trophy, group: "AI & Learning" },
+  { label: "Monitoring", href: "/admin/monitoring", icon: Activity, group: "AI & Learning" },
+  { label: "Kuota AI", href: "/admin/ai-quota", icon: Coins, group: "AI & Learning" },
+  // Pembayaran
+  { label: "Premium Report", href: "/admin/premium", icon: Crown, group: "Pembayaran" },
+  { label: "Pembayaran", href: "/admin/payments", icon: DollarSign, group: "Pembayaran" },
+  { label: "Penarikan Saldo", href: "/admin/withdrawals", icon: Wallet, group: "Pembayaran" },
+  { label: "Risiko Guru", href: "/admin/teacher-risk", icon: ShieldAlert, group: "Pembayaran" },
+  { label: "Payout Kontrol", href: "/admin/teacher-payouts", icon: ShieldCheck, group: "Pembayaran" },
+  // System
+  { label: "Pusat Data", href: "/admin/data-center", icon: Database, group: "System" },
+  { label: "Pengaturan", href: "/admin/pengaturan", icon: Settings, group: "System" },
+  { label: "Arena Junior", href: "/junior", icon: Baby, group: "System" },
+];
+
+const GROUPS = ["Konten", "AI & Learning", "Pembayaran", "System"];
 
 export default function AdminMobileNav() {
   const pathname = usePathname();
@@ -95,22 +126,45 @@ export default function AdminMobileNav() {
               </button>
             </div>
             <nav className="flex-1 overflow-y-auto py-3 px-2">
-              {(NAV as AdminNavItem[]).map((item, i) => {
-                if (isDivider(item)) return <div key={i} className="h-px bg-slate-100 my-3 mx-3 dark:bg-slate-800" />;
-                const Icon = item.icon;
-                const active = pathname === item.href || pathname.startsWith(item.href + "/");
+              {/* Standalone items */}
+              {ALL_ITEMS.filter((item) => !item.group).map((item) => {
+                const active = isActive(item.href);
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
                     onClick={() => setDrawer(false)}
                     aria-label={item.label}
-                    title={item.label}
                     className={`${NAV_LINK_BASE} ${active ? NAV_LINK_ACTIVE : NAV_LINK_INACTIVE}`}
                   >
-                    <Icon className={`${NAV_ICON_CLASS} ${active ? NAV_ICON_ACTIVE : NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
+                    <item.icon className={`${NAV_ICON_CLASS} ${active ? NAV_ICON_ACTIVE : NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
                     <span className="shell-label">{item.label}</span>
                   </Link>
+                );
+              })}
+
+              {/* Grouped items */}
+              {GROUPS.map((groupName) => {
+                const items = ALL_ITEMS.filter((item) => item.group === groupName);
+                return (
+                  <div key={groupName} className="mt-2">
+                    <p className="px-3 py-1 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">{groupName}</p>
+                    {items.map((item) => {
+                      const active = isActive(item.href);
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => setDrawer(false)}
+                          aria-label={item.label}
+                          className={`${NAV_LINK_BASE} text-[13px] py-2 ${active ? NAV_LINK_ACTIVE : NAV_LINK_INACTIVE}`}
+                        >
+                          <item.icon className={`w-4 h-4 shrink-0 ${active ? NAV_ICON_ACTIVE : NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
+                          <span className="shell-label">{item.label}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
                 );
               })}
             </nav>
@@ -120,7 +174,6 @@ export default function AdminMobileNav() {
                 onClick={handleLogout}
                 className={`${NAV_LINK_BASE} ${NAV_LINK_INACTIVE} w-full`}
                 aria-label="Keluar"
-                title="Keluar"
               >
                 <LogOut className={`${NAV_ICON_CLASS} ${NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
                 <span className="shell-label">Keluar</span>
