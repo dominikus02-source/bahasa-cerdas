@@ -94,7 +94,8 @@ export default async function ExecutiveDashboard() {
   const data = await getExecutiveDashboardData();
 
   // ── Health evaluation ──
-  const latestD7 = data.retention.cohorts.find((c) => c.d7Rate !== null)?.d7Rate ?? null;
+  const latestD7Cohort = data.retention.cohorts.find((c) => c.d7Rate !== null);
+  const latestD7 = latestD7Cohort?.d7Rate ?? null;
   const health = evaluateFounderHealth({
     paymentMismatchCount: data.paymentHealth.summary.totalAffected,
     paymentMismatchRevenue: data.paymentHealth.summary.totalRevenueAtRisk,
@@ -103,10 +104,12 @@ export default async function ExecutiveDashboard() {
     mrrValue: data.revenue.mrr.value,
     cashCollectedAllTime: data.revenue.cashCollectedAllTime,
     premiumConversionRate: data.premium.conversionRate,
+    eligibleUserCount: data.users.guru,
     dauToday: data.dauConsecutive.today,
     dauYesterday: data.dauConsecutive.yesterday,
     dauTwoDaysAgo: data.dauConsecutive.twoDaysAgo,
     latestD7Rate: latestD7,
+    latestD7CohortSize: latestD7Cohort?.registered ?? 0,
     jalurCompleted7d: data.learning.jalurCompleted7d.value,
   });
 

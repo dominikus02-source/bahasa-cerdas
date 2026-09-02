@@ -43,20 +43,22 @@ The Founder Decision Layer transforms raw analytics into deterministic, actionab
 |---|------|-----------|----------|--------|-------------|
 | 1 | Payment mismatch | `paymentMismatchCount > 0` | Count + Rp at risk | Investigasi Pembayaran | `/admin/payments` |
 | 2 | Critical data quality | `dataQualityCriticalCount > 0` | Count of critical findings | Lihat Data Quality | `/admin/data-center` |
-| 3 | Zero active premium with historical cash | `activePremium === 0 AND cashCollectedAllTime > 0` | Cash at risk | Periksa Entitlement | `/admin/payments` |
+
+> **Removed (Phase 8 Hardening)**: "activePremium=0 AND cashAllTime>0" → P1
+> Rationale: Historical cash from expired subscriptions is not an integrity issue. Payment Health mismatch (Rule 1) already covers current payment/entitlement mismatches.
 
 ### P2 — Attention (should be addressed this week)
 
 | # | Rule | Threshold | Evidence | Action | Destination |
 |---|------|-----------|----------|--------|-------------|
-| 4 | DAU declining 3 consecutive days | `dau[today] < dau[yesterday] < dau[twoDaysAgo]` | Day-over-day values + % drop | Lihat Learning Analytics | `/admin/analytics` |
-| 5 | D7 retention below threshold | `latestD7Rate < 20%` | Rate + threshold | Analisis Retensi | `/admin/analytics` |
+| 4 | DAU declining 3 consecutive days | `dau[today] < dau[yesterday] < dau[twoDaysAgo]` AND `dauTwoDaysAgo >= 10` AND `relativeDecline >= 20%` | Day-over-day values + % drop | Lihat Learning Analytics | `/admin/analytics` |
+| 5 | D7 retention below threshold | `latestD7Rate < 20%` AND `latestD7CohortSize >= 10` | Rate + cohort size | Analisis Retensi | `/admin/analytics` |
 
 ### P3 — Growth opportunity (address when P1/P2 clear)
 
 | # | Rule | Threshold | Evidence | Action | Destination |
 |---|------|-----------|----------|--------|-------------|
-| 6 | Premium conversion low | `conversionRate < 5% AND activePremium > 0` | Rate + threshold | Review Premium | `/admin/premium` |
+| 6 | Premium conversion low | `conversionRate < 5% AND activePremium > 0 AND eligibleUserCount >= 5` | Rate + eligible count | Review Premium | `/admin/premium` |
 | 7 | No learning completions | `jalurCompleted7d === 0 AND dauToday > 0` | DAU vs completions | Lihat Analytics | `/admin/analytics` |
 
 ### Priority Ordering
@@ -148,10 +150,31 @@ For each active premium user (`isPremium=true AND premiumUntil>now AND isFounder
 All thresholds are defined as constants in `lib/admin/founder-health.ts`:
 
 ```ts
-const PREMIUM_CONVERSION_THRESHOLD = 5;  // percent
-const D7_RETENTION_THRESHOLD = 20;       // percent
-const DAU_DECLINE_THRESHOLD = 10;        // percent (for future use)
+const PREMIUM_CONVERSION_THRESHOLD = 5;       // percent — below this triggers P3
+const D7_RETENTION_THRESHOLD = 20;            // percent — below this triggers P2
+const DAU_MIN_ABSOLUTE = 10;                  // minimum DAU for decline rule
+const DAU_MIN_RELATIVE_DECLINE_PCT = 20;      // minimum % decline across 3 days
+const RETENTION_MIN_COHORT = 10;              // minimum cohort size for D7 retention
+const CONVERSION_MIN_ELIGIBLE = 5;            // minimum eligible users for conversion
 ```
+
+### Sample-Size Requirements
+
+| Metric | Minimum | Reason |
+|--------|---------|--------|
+| D7 Retention cohort | 10 users | Smaller cohorts produce unreliable retention rates |
+| Premium Conversion denominator | 5 eligible users | Smaller populations produce misleading percentages |
+
+When sample size is insufficient, the rule is NOT triggered (signal = null/unavailable). The UI does not display a warning for statistically unreliable data.
+
+### DAU Decline Safeguards
+
+The DAU decline rule requires ALL of:
+1. 3 strictly consecutive declining days
+2. DAU on day T-2 >= 10 (minimum population)
+3. Total relative decline >= 20% (prevents tiny drops like 50→49→48)
+
+This prevents false positives from natural day-to-day variation.
 
 Changes to thresholds require updating:
 1. `lib/admin/founder-health.ts`

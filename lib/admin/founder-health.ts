@@ -40,6 +40,8 @@ export interface HealthInput {
   mrrValue: number;
   cashCollectedAllTime: number;
   premiumConversionRate: number;
+  /** Total eligible users in conversion denominator (for sample-size check). */
+  eligibleUserCount: number;
 
   // DAU for consecutive decline check
   dauToday: number;
@@ -48,6 +50,8 @@ export interface HealthInput {
 
   // Retention
   latestD7Rate: number | null;
+  /** Cohort size for latest D7 retention (for sample-size check). */
+  latestD7CohortSize: number;
 
   // Learning
   jalurCompleted7d: number;
@@ -61,8 +65,18 @@ const PREMIUM_CONVERSION_THRESHOLD = 5;
 /** D7 retention below this triggers P2 */
 const D7_RETENTION_THRESHOLD = 20;
 
-/** DAU decline percentage that counts as "declining" for consecutive-day check */
-const DAU_DECLINE_THRESHOLD = 10;
+/** Minimum DAU absolute value for consecutive-day decline rule to be meaningful. */
+const DAU_MIN_ABSOLUTE = 10;
+
+/** Minimum relative decline (%) across 3 days to trigger P2.
+ *  Prevents tiny numerical declines (e.g. 50→49→48) from generating false signals. */
+const DAU_MIN_RELATIVE_DECLINE_PCT = 20;
+
+/** Minimum cohort size for D7 retention to be statistically meaningful. */
+const RETENTION_MIN_COHORT = 10;
+
+/** Minimum eligible user count for Premium Conversion to be meaningful. */
+const CONVERSION_MIN_ELIGIBLE = 5;
 
 // ── Rule evaluation ────────────────────────────────────────────────
 
@@ -71,7 +85,7 @@ function evaluatePriorities(input: HealthInput): FounderPriority[] {
 
   // ── P1: Critical trust issues ──
 
-  // Rule 1: Payment mismatch > 0
+  // Rule 1: Payment mismatch > 0 (SUCCESS payment without active entitlement)
   if (input.paymentMismatchCount > 0) {
     priorities.push({
       severity: "P1",
@@ -97,51 +111,49 @@ function evaluatePriorities(input: HealthInput): FounderPriority[] {
     });
   }
 
-  // Rule 3: Active premium = 0 but historical cash exists
-  if (input.activePremium === 0 && input.cashCollectedAllTime > 0) {
-    priorities.push({
-      severity: "P1",
-      title: "Tidak ada premium aktif",
-      description:
-        "Tidak ada user dengan premium aktif, tetapi ada riwayat pembayaran Premium.",
-      evidence: `Cash collected all-time: Rp${input.cashCollectedAllTime.toLocaleString("id-ID")} — tapi 0 user premium aktif.`,
-      actionLabel: "Periksa Entitlement",
-      href: "/admin/payments",
-    });
-  }
+  // REMOVED: "activePremium=0 AND cashAllTime>0" → P1
+  // Rationale: Historical cash from expired subscriptions is not an integrity issue.
+  // Payment Health mismatch (Rule 1) already covers current payment/entitlement mismatches.
 
   // ── P2: Business & product signals ──
 
-  // Rule 4: DAU declining 3 consecutive comparable days
+  // Rule 4: DAU declining 3 consecutive days — hardened
+  // Requires: all days have data, meaningful relative decline, minimum DAU population
   const dauDeclining3 =
     input.dauToday > 0 &&
     input.dauYesterday > 0 &&
     input.dauTwoDaysAgo > 0 &&
     input.dauYesterday < input.dauTwoDaysAgo &&
-    input.dauToday < input.dauYesterday;
+    input.dauToday < input.dauYesterday &&
+    input.dauTwoDaysAgo >= DAU_MIN_ABSOLUTE;
 
-  if (dauDeclining3) {
-    const dropPct = Math.round(
-      ((input.dauTwoDaysAgo - input.dauToday) / input.dauTwoDaysAgo) * 100,
-    );
+  const dauDropPct = dauDeclining3
+    ? Math.round(((input.dauTwoDaysAgo - input.dauToday) / input.dauTwoDaysAgo) * 100)
+    : 0;
+
+  if (dauDeclining3 && dauDropPct >= DAU_MIN_RELATIVE_DECLINE_PCT) {
     priorities.push({
       severity: "P2",
       title: "DAU menurun 3 hari berturut",
-      description: "Daily Active Users menurun selama 3 hari terakhir.",
-      evidence: `${input.dauTwoDaysAgo} → ${input.dauYesterday} → ${input.dauToday} (${dropPct}% penurunan).`,
+      description: "Daily Active Users menurun secara signifikan selama 3 hari terakhir.",
+      evidence: `${input.dauTwoDaysAgo} → ${input.dauYesterday} → ${input.dauToday} (${dauDropPct}% penurunan).`,
       actionLabel: "Lihat Learning Analytics",
       href: "/admin/analytics",
     });
   }
 
-  // Rule 5: D7 retention below threshold
-  if (input.latestD7Rate !== null && input.latestD7Rate < D7_RETENTION_THRESHOLD) {
+  // Rule 5: D7 retention below threshold — with sample-size protection
+  if (
+    input.latestD7Rate !== null &&
+    input.latestD7Rate < D7_RETENTION_THRESHOLD &&
+    input.latestD7CohortSize >= RETENTION_MIN_COHORT
+  ) {
     priorities.push({
       severity: "P2",
       title: "Retensi D7 rendah",
       description:
         `Retensi D7 berada di ${input.latestD7Rate}%, di bawah threshold ${D7_RETENTION_THRESHOLD}%.`,
-      evidence: "User baru tidak cukup aktif di hari ke-7 setelah registrasi.",
+      evidence: `Cohort ${input.latestD7CohortSize} user — ${input.latestD7Rate}% aktif di hari ke-7.`,
       actionLabel: "Analisis Retensi",
       href: "/admin/analytics",
     });
@@ -149,17 +161,18 @@ function evaluatePriorities(input: HealthInput): FounderPriority[] {
 
   // ── P3: Growth opportunities ──
 
-  // Rule 6: Premium conversion below threshold
+  // Rule 6: Premium conversion below threshold — with sample-size protection
   if (
     input.premiumConversionRate < PREMIUM_CONVERSION_THRESHOLD &&
-    input.activePremium > 0
+    input.activePremium > 0 &&
+    input.eligibleUserCount >= CONVERSION_MIN_ELIGIBLE
   ) {
     priorities.push({
       severity: "P3",
       title: "Konversi Premium rendah",
       description:
         `Premium conversion rate ${input.premiumConversionRate}% — di bawah ${PREMIUM_CONVERSION_THRESHOLD}%.`,
-      evidence: `${input.activePremium} dari total guru eligible membayar Premium.`,
+      evidence: `${input.activePremium} dari ${input.eligibleUserCount} eligible membayar Premium.`,
       actionLabel: "Review Premium",
       href: "/admin/premium",
     });
