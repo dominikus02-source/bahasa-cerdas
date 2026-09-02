@@ -168,21 +168,21 @@ export default async function ExecutiveDashboard() {
                 <tr className="text-left text-xs text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700/50">
                   <th className="pb-2 font-medium">Cohort</th>
                   <th className="pb-2 font-medium text-right">Registered</th>
-                  <th className="pb-2 font-medium text-right">Active (D7)</th>
+                  <th className="pb-2 font-medium text-right">D7 Active</th>
                   <th className="pb-2 font-medium text-right">D7 Rate</th>
-                  <th className="pb-2 font-medium text-right">Active (D30)</th>
+                  <th className="pb-2 font-medium text-right">D30 Active</th>
                   <th className="pb-2 font-medium text-right">D30 Rate</th>
                 </tr>
               </thead>
               <tbody>
-                {data.retention.cohorts.map((c: { label: string; registered: number; active7d: number; active30d: number }) => (
+                {data.retention.cohorts.map((c: { label: string; registered: number; active7d: number | null; active30d: number | null; d7Rate: number | null; d30Rate: number | null; hasEnoughData: boolean }) => (
                   <tr key={c.label} className="border-b border-slate-50 dark:border-slate-800/50 last:border-0">
                     <td className="py-2.5 font-medium text-slate-700 dark:text-slate-200">{c.label}</td>
                     <td className="py-2.5 text-right text-slate-600 dark:text-slate-300">{c.registered}</td>
-                    <td className="py-2.5 text-right text-slate-600 dark:text-slate-300">{c.active7d}</td>
-                    <td className="py-2.5 text-right"><span className={`font-medium ${c.registered > 0 && c.active7d / c.registered > 0.5 ? "text-emerald-600 dark:text-emerald-400" : "text-slate-600 dark:text-slate-300"}`}>{c.registered > 0 ? Math.round((c.active7d / c.registered) * 100) : 0}%</span></td>
-                    <td className="py-2.5 text-right text-slate-600 dark:text-slate-300">{c.active30d}</td>
-                    <td className="py-2.5 text-right"><span className={`font-medium ${c.registered > 0 && c.active30d / c.registered > 0.3 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}`}>{c.registered > 0 ? Math.round((c.active30d / c.registered) * 100) : 0}%</span></td>
+                    <td className="py-2.5 text-right text-slate-600 dark:text-slate-300">{c.active7d !== null ? c.active7d : <span className="text-slate-400">—</span>}</td>
+                    <td className="py-2.5 text-right"><span className={`font-medium ${c.d7Rate !== null && c.d7Rate > 50 ? "text-emerald-600 dark:text-emerald-400" : c.d7Rate !== null ? "text-slate-600 dark:text-slate-300" : "text-slate-400"}`}>{c.d7Rate !== null ? `${c.d7Rate}%` : <span className="text-xs">belum cukup</span>}</span></td>
+                    <td className="py-2.5 text-right text-slate-600 dark:text-slate-300">{c.active30d !== null ? c.active30d : <span className="text-slate-400">—</span>}</td>
+                    <td className="py-2.5 text-right"><span className={`font-medium ${c.d30Rate !== null && c.d30Rate > 30 ? "text-emerald-600 dark:text-emerald-400" : c.d30Rate !== null ? "text-amber-600 dark:text-amber-400" : "text-slate-400"}`}>{c.d30Rate !== null ? `${c.d30Rate}%` : <span className="text-xs">belum cukup</span>}</span></td>
                   </tr>
                 ))}
               </tbody>

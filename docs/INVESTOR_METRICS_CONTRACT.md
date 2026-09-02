@@ -8,7 +8,7 @@ It is NOT a pitch deck. It is a technical contract that ensures any investor-fac
 
 ## Version
 
-1.0
+2.0
 
 ## Last Updated
 
@@ -240,35 +240,37 @@ Premium Command Center (`/api/admin/premium/report`) uses `calculateMRR()` from 
 
 ---
 
-## D7 Retention (Weekly Cohort)
+## D7 Retention
 
-**Investor-safe**: YES (with caveat)
+**Investor-safe**: YES
 
-**Definition**: Percentage of users registered in week W-N who performed XP activity during their registration week.
+**Definition**: Percentage of users registered on a specific WIB calendar day who performed XP activity on cohort_date + 7 WIB days.
 
-**Formula**: `activeInRegistrationWeek / registeredInWeek × 100`
+**Formula**: `activeOnDay7 / registeredOnDay0 × 100`
 
-**Cohort**: Users registered in 7-day window [NOW - (N+1)×7d, NOW - N×7d)
+**Cohort**: Users registered on a specific WIB calendar day (Asia/Jakarta)
 
-**D7 window**: The same 7-day window as the registration week (DAY 0 to DAY 6)
+**D7 window**: The exact WIB calendar day that is 7 days after registration day. Only activity on that single day counts.
 
-**Qualifying activity**: Any XPTransaction during the cohort window
+**Qualifying activity**: Any XPTransaction on the D7 WIB day
 
-**IMPORTANT**: This is **same-week return rate**, NOT standard D7 retention (activity on day 7). The label "D7" refers to "active within 7 days of registration".
+**Insufficient observation**: Returns `null` if the D7 day has not yet passed. UI shows "belum cukup".
 
 ---
 
-## D30 Retention (Weekly Cohort)
+## D30 Retention
 
-**Investor-safe**: YES (with caveat)
+**Investor-safe**: YES
 
-**Definition**: Percentage of users registered in week W-N who performed XP activity after their registration week.
+**Definition**: Percentage of users registered on a specific WIB calendar day who performed XP activity on cohort_date + 30 WIB days.
 
-**Formula**: `activeAfterRegistrationWeek / registeredInWeek × 100`
+**Formula**: `activeOnDay30 / registeredOnDay0 × 100`
 
-**D30 window**: Any time after the cohort week ends
+**D30 window**: The exact WIB calendar day that is 30 days after registration day. Only activity on that single day counts.
 
-**Caveat**: For cohorts less than 30 days old, D30 is always 0 (insufficient observation period). This is honest — the metric simply cannot be computed yet.
+**Qualifying activity**: Any XPTransaction on the D30 WIB day
+
+**Insufficient observation**: Returns `null` if the D30 day has not yet passed. For cohorts less than 30 days old, D30 is always null (not 0).
 
 ---
 
@@ -310,6 +312,20 @@ Premium Command Center (`/api/admin/premium/report`) uses `calculateMRR()` from 
 
 ---
 
+## Timezone
+
+All analytics date boundaries use **Asia/Jakarta (WIB, UTC+7)**.
+
+Canonical helpers in `lib/admin/analytics-timezone.ts`:
+- `wibTodayStart()` — start of today in WIB
+- `wibDaysAgo(n)` — n WIB calendar days ago
+- `utcToWibDate()` — convert UTC timestamp to WIB date components
+- `wibDayToUtcRange()` — get UTC query range for a WIB day
+
+Database timestamps remain UTC. Only reporting period boundaries are converted.
+
+---
+
 ## How to Reproduce Any Metric
 
 1. Import `calculateMRR()` from `lib/admin/executive.ts`
@@ -327,3 +343,4 @@ Premium Command Center (`/api/admin/premium/report`) uses `calculateMRR()` from 
 | 2026-09-02 | MRR consolidated to canonical `calculateMRR()` | Phase 7 audit |
 | 2026-09-02 | Founder count made dynamic | Phase 7 audit |
 | 2026-09-02 | Premium Command Center uses canonical MRR | Phase 7 audit |
+| 2026-09-02 | v2.0 — Standard D7/D30 retention, WIB timezone, null for insufficient observation | Phase 7.1 audit |

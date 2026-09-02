@@ -1,15 +1,19 @@
 import { NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { calculateMRR } from "@/lib/admin/executive";
 
 // ════════════════════════════════════════════════════════════════════
-// FOUNDER CONTROL TOWER — Executive KPI API
+// FOUNDER CONTROL TOWER — Executive KPI API (DEPRECATED)
 //
-// Single endpoint returning all high-level metrics a founder needs:
-//   totalUsers, activeUsers (DAU/WAU/MAU), activePremium, newPremium,
-//   revenue (MRR), premiumConversionRate, retentionCohorts.
+// DEPRECATED: This endpoint is no longer used by any production code.
+// The executive dashboard page now queries Prisma directly via
+// lib/admin/executive.ts → getExecutiveDashboardData().
 //
-// Read-only, founder-only. Cache headers encouraged (60s stale).
+// MRR is now calculated via the canonical calculateMRR() function.
+// Retention uses standard D7/D30 cohort semantics.
+//
+// Kept for backward compatibility. May be removed in future cleanup.
 // ════════════════════════════════════════════════════════════════════
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -148,24 +152,10 @@ export async function GET() {
         where: { status: "SUCCESS" },
       }).then((r) => r._sum.amount || 0),
 
-      // MRR: revenue from current calendar month vs previous calendar month
-      db.transaksi.aggregate({
-        _sum: { amount: true },
-        where: {
-          status: "SUCCESS",
-          createdAt: { gte: new Date(now.getFullYear(), now.getMonth(), 1) },
-        },
-      }).then((r) => r._sum.amount || 0),
-      db.transaksi.aggregate({
-        _sum: { amount: true },
-        where: {
-          status: "SUCCESS",
-          createdAt: {
-            gte: new Date(now.getFullYear(), now.getMonth() - 1, 1),
-            lt: new Date(now.getFullYear(), now.getMonth(), 1),
-          },
-        },
-      }).then((r) => r._sum.amount || 0),
+      // MRR: canonical formula from lib/admin/executive.ts (active subscriptions)
+      // Legacy formula (sum of SUCCESS transactions) removed — use calculateMRR()
+      calculateMRR(),
+      Promise.resolve(0), // prevMRR not applicable for canonical formula
 
       // Transaction counts
       db.transaksi.count({
@@ -221,8 +211,9 @@ export async function GET() {
     }
 
     // ── Derived metrics ──
+    const founderCount = await db.user.count({ where: { isFounder: true } });
     const premiumConversionRate = totalGuru > 0
-      ? Math.round((activePremium / (totalGuru - 3)) * 100) // exclude founders
+      ? Math.round((activePremium / Math.max(totalGuru - founderCount, 0)) * 100)
       : 0;
 
     const newUsers7dTrend = pctChange(newUsers7d, newUsersPrev7d);

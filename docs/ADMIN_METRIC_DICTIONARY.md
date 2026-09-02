@@ -1,7 +1,7 @@
 # BahasaCerdas Founder Control Tower — Metric Dictionary
 
 ## Version
-2.0
+3.0
 
 ## Last Updated
 September 2, 2026
@@ -37,7 +37,7 @@ September 2, 2026
 | WAU | Distinct users with XP activity in trailing 7 days | `XPTransaction` | `groupBy(userId) WHERE createdAt >= now-7d` → `.length` | 7 days | count | YES |
 | MAU | Distinct users with XP activity in trailing 30 days | `XPTransaction` | `groupBy(userId) WHERE createdAt >= now-30d` → `.length` | 30 days | count | YES |
 
-**Timezone**: All date boundaries use `Asia/Jakarta` (WIB, UTC+7). `todayStart` = `new Date(now.getFullYear(), now.getMonth(), now.getDate())` in server-local time. Vercel functions run in UTC — `todayStart` is computed as midnight UTC, NOT midnight WIB. This means DAU boundary is off by 7 hours. Acceptable for current use but documented.
+**Timezone**: All date boundaries use `Asia/Jakarta` (WIB, UTC+7). Computed via `lib/admin/analytics-timezone.ts` canonical helpers (`wibTodayStart()`, `wibDaysAgo()`). Vercel functions run in UTC — all WIB conversions are explicit.
 
 **Edge case**: DAU ≤ WAU ≤ MAU must always hold. If violated, query is broken.
 
@@ -105,18 +105,18 @@ September 2, 2026
 
 | Metric | Definition | Source | Formula | Window | Unit | Investor-safe |
 |--------|------------|--------|---------|--------|------|---------------|
-| D7 Retention (weekly cohort) | % of cohort active in registration week | `User` + `XPTransaction` | `activeInWeek / registered × 100` | cohort week | percent | YES |
-| D30 Retention (weekly cohort) | % of cohort active after registration week | `User` + `XPTransaction` | `activeAfterWeek / registered × 100` | post-cohort | percent | YES |
+| D7 Retention | % of cohort active on cohort_date + 7 WIB days | `User` + `XPTransaction` | `activeOnDay7 / registered × 100` | cohort day +7 | percent | YES |
+| D30 Retention | % of cohort active on cohort_date + 30 WIB days | `User` + `XPTransaction` | `activeOnDay30 / registered × 100` | cohort day +30 | percent | YES |
 
-**Cohort definition**: Users registered in week W-N (where N=1,2,3,4).
+**Cohort definition**: Users registered on a specific WIB calendar day (Asia/Jakarta).
 
-**D7 window**: The same 7-day window as the registration week. Users who perform XP activity during their registration week are counted as "retained at D7".
+**D7 window**: The exact WIB calendar day that is 7 days after the registration day. Activity on that single day counts as "retained at D7". Returns `null` if the D7 day has not yet passed (insufficient observation).
 
-**D30 window**: Any time after the cohort week ends. Users who perform XP activity after their registration week are counted as "retained at D30".
+**D30 window**: The exact WIB calendar day that is 30 days after the registration day. Returns `null` if the D30 day has not yet passed.
 
-**Qualifying activity**: Any `XPTransaction` record (any XP source — learning, game, quiz, etc.).
+**Qualifying activity**: Any `XPTransaction` record (any XP source — learning, game, quiz, etc.) on the target WIB day.
 
-**Important**: This is **weekly return rate**, not true D7/D30 retention in the product analytics sense. The label "D7" refers to "active within the same week", not "active on day 7". This should be documented in the UI.
+**Insufficient observation**: Recent cohorts where the D7 or D30 day hasn't occurred yet return `null` (not 0). UI displays "belum cukup" (insufficient) for these.
 
 ### Trust / Operations Metrics
 
@@ -144,6 +144,6 @@ September 2, 2026
 
 1. **DAU timezone**: Computed as midnight UTC, not midnight WIB. Off by 7 hours.
 2. **MRR plan detection**: Uses most recent transaction `reference` field, which may not reflect current plan if user changed plans.
-3. **Retention labeling**: "D7" means "active in same week", not "active on day 7". "D30" means "active after registration week". This is NOT standard cohort retention.
+3. **Retention**: Standard D7/D30 cohort retention — D7 = activity on cohort_date + 7 WIB days, D30 = activity on cohort_date + 30 WIB days. Insufficient observation returns null.
 4. **Conversion denominator**: Founder count is now dynamically queried (no longer hardcoded).
 5. **Manual Premium**: Users activated via admin (e.g., rina.melani) appear in Active Premium but NOT in MRR (no qualifying transaction) or Cash Collected.

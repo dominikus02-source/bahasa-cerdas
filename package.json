@@ -106,6 +106,7 @@
     "test:admin-trust-gate": "npx tsx scripts/test-admin-trust-gate.ts",
     "test:metric-semantics": "npx tsx scripts/test-metric-semantics.ts",
     "test:investor-truth-gate": "npx tsx scripts/test-investor-truth-gate.ts",
+    "test:retention-semantics": "npx tsx scripts/test-retention-semantics.ts",
     "test:reconciliation": "npx tsx scripts/test-reconciliation.ts",
     "test:data-quality": "npx tsx scripts/test-data-quality.ts",
     "recover:murid-premium:dry-run": "npx tsx scripts/recover-murid-premium.ts",

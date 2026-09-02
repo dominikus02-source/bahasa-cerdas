@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { wibTodayStart, wibDaysAgo, utcToWibDate, wibDayToUtcRange } from "@/lib/admin/analytics-timezone";
 
 // ════════════════════════════════════════════════════════════════════
 // EXECUTIVE DASHBOARD SERVICE
@@ -6,6 +7,9 @@ import { db } from "@/lib/db";
 // Single source of truth for all Control Tower queries.
 // Used by: Server Component (production) AND integration tests.
 // No mocking — both paths execute real Prisma against real DB.
+//
+// All date boundaries use Asia/Jakarta (WIB, UTC+7).
+// Database timestamps remain UTC; only reporting boundaries convert.
 // ════════════════════════════════════════════════════════════════════
 
 const DAY_MS = 86_400_000;
@@ -94,7 +98,7 @@ export interface ExecutiveDashboardData {
   };
   content: { karya7d: { value: number; trend: number } };
   ai: { generations7d: number };
-  retention: { cohorts: { label: string; registered: number; active7d: number; active30d: number }[] };
+  retention: { cohorts: { label: string; registered: number; active7d: number | null; active30d: number | null; d7Rate: number | null; d30Rate: number | null; hasEnoughData: boolean }[] };
   paymentHealth: {
     summary: { totalAffected: number; totalRevenueAtRisk: number; affectedByRole: { murid: number; guru: number } };
     affectedUsers: any[];
@@ -130,12 +134,12 @@ export interface ExecutiveDashboardData {
  */
 export async function getExecutiveDashboardData(): Promise<ExecutiveDashboardData> {
   const now = new Date();
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const yesterdayStart = new Date(todayStart.getTime() - DAY_MS);
-  const weekAgo = new Date(now.getTime() - 7 * DAY_MS);
-  const twoWeeksAgo = new Date(now.getTime() - 14 * DAY_MS);
-  const monthAgo = new Date(now.getTime() - 30 * DAY_MS);
-  const twoMonthsAgo = new Date(now.getTime() - 60 * DAY_MS);
+  const todayStart = wibTodayStart(now);
+  const yesterdayStart = wibDaysAgo(1, now);
+  const weekAgo = wibDaysAgo(7, now);
+  const twoWeeksAgo = wibDaysAgo(14, now);
+  const monthAgo = wibDaysAgo(30, now);
+  const twoMonthsAgo = wibDaysAgo(60, now);
 
   const [
     totalUsers, totalMurid, totalGuru, founderCount,
@@ -217,20 +221,72 @@ export async function getExecutiveDashboardData(): Promise<ExecutiveDashboardDat
     }),
   ]);
 
-  // Retention cohorts
-  const cohorts: { label: string; registered: number; active7d: number; active30d: number }[] = [];
-  for (let w = 0; w < 4; w++) {
-    const cohortStart = new Date(now.getTime() - (w + 1) * 7 * DAY_MS);
-    const cohortEnd = new Date(now.getTime() - w * 7 * DAY_MS);
-    const cohortUsers = await db.user.findMany({ where: { createdAt: { gte: cohortStart, lt: cohortEnd } }, select: { id: true } });
+  // Retention cohorts — standard D7/D30 semantics
+  // Cohort = users registered on a specific WIB calendar day
+  // D7 = qualified activity on cohort_date + 7 calendar days (in WIB)
+  // D30 = qualified activity on cohort_date + 30 calendar days (in WIB)
+  // Returns null for insufficient observation window
+  const cohorts: { label: string; registered: number; active7d: number | null; active30d: number | null; d7Rate: number | null; d30Rate: number | null; hasEnoughData: boolean }[] = [];
+  const nowWib = utcToWibDate(now);
+
+  for (let d = 30; d >= 1; d--) {
+    // Cohort registration day in WIB, offset by d days from today
+    const cohortWibDay = new Date(Date.UTC(nowWib.year, nowWib.month, nowWib.day - d));
+    const { start: cohortDayStart, end: cohortDayEnd } = wibDayToUtcRange(cohortWibDay);
+
+    // Users who registered on this WIB day
+    const cohortUsers = await db.user.findMany({
+      where: { createdAt: { gte: cohortDayStart, lt: cohortDayEnd } },
+      select: { id: true },
+    });
     const ids = cohortUsers.map((u) => u.id);
     const registered = ids.length;
-    if (registered === 0) { cohorts.push({ label: `W-${w + 1}`, registered: 0, active7d: 0, active30d: 0 }); continue; }
-    const [active7d, active30d] = await Promise.all([
-      db.xPTransaction.groupBy({ by: ["userId"], where: { createdAt: { gte: cohortStart, lt: cohortEnd }, userId: { in: ids } } }).then((r) => r.length),
-      db.xPTransaction.groupBy({ by: ["userId"], where: { createdAt: { gte: cohortEnd }, userId: { in: ids } } }).then((r) => r.length),
-    ]);
-    cohorts.push({ label: `W-${w + 1}`, registered, active7d, active30d });
+
+    if (registered === 0) continue; // skip empty cohorts
+
+    // D7: activity on cohort_date + 7 WIB days
+    const d7Day = new Date(Date.UTC(nowWib.year, nowWib.month, nowWib.day - d + 7));
+    const hasEnoughD7 = d <= 23; // today - d + 7 <= today → d >= 7, but need the day to have passed
+    // D7 day must be strictly before today (the day must be complete)
+    const d7Complete = new Date(Date.UTC(nowWib.year, nowWib.month, nowWib.day)) > d7Day;
+
+    let active7d: number | null = null;
+    if (d7Complete && ids.length > 0) {
+      const { start: d7Start, end: d7End } = wibDayToUtcRange(d7Day);
+      active7d = (await db.xPTransaction.groupBy({
+        by: ["userId"],
+        where: { createdAt: { gte: d7Start, lt: d7End }, userId: { in: ids } },
+      })).length;
+    }
+
+    // D30: activity on cohort_date + 30 WIB days
+    const d30Day = new Date(Date.UTC(nowWib.year, nowWib.month, nowWib.day - d + 30));
+    const d30Complete = new Date(Date.UTC(nowWib.year, nowWib.month, nowWib.day)) > d30Day;
+
+    let active30d: number | null = null;
+    if (d30Complete && ids.length > 0) {
+      const { start: d30Start, end: d30End } = wibDayToUtcRange(d30Day);
+      active30d = (await db.xPTransaction.groupBy({
+        by: ["userId"],
+        where: { createdAt: { gte: d30Start, lt: d30End }, userId: { in: ids } },
+      })).length;
+    }
+
+    const label = `${nowWib.year}-${String(nowWib.month + 1).padStart(2, "0")}-${String(nowWib.day - d).padStart(2, "0")}`;
+    const d7Rate = active7d !== null && registered > 0 ? Math.round((active7d / registered) * 100) : null;
+    const d30Rate = active30d !== null && registered > 0 ? Math.round((active30d / registered) * 100) : null;
+
+    cohorts.push({
+      label,
+      registered,
+      active7d,
+      active30d,
+      d7Rate,
+      d30Rate,
+      hasEnoughData: d7Complete,
+    });
+
+    if (cohorts.length >= 10) break; // show last 10 cohorts with data
   }
 
   const guruCount = Math.max(totalGuru - founderCount, 0);

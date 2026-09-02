@@ -349,39 +349,71 @@ async function main() {
   console.log(`  📊 DAU=${dau}, WAU=${wau}, MAU=${mau}`);
 
   // ═══════════════════════════════════════════════════════════
-  // 9. RETENTION BOUNDARIES (4 tests)
+  // 9. RETENTION — STANDARD D7/D30 (5 tests)
   // ═══════════════════════════════════════════════════════════
-  console.log("\n── 9. RETENTION BOUNDARIES ──");
+  console.log("\n── 9. RETENTION — STANDARD D7/D30 ──");
 
-  for (let w = 0; w < 4; w++) {
-    const cohortStart = new Date(now.getTime() - (w + 1) * 7 * DAY_MS);
-    const cohortEnd = new Date(now.getTime() - w * 7 * DAY_MS);
+  // Import timezone helpers
+  const { utcToWibDate, wibDayToUtcRange } = await import("../lib/admin/analytics-timezone");
+  const nowWib = utcToWibDate(now);
 
-    const cohortUsers = await prisma.user.findMany({
-      where: { createdAt: { gte: cohortStart, lt: cohortEnd } },
-      select: { id: true },
-    });
-    const ids = cohortUsers.map(u => u.id);
-    const registered = ids.length;
+  // Test with cohort from 10 days ago (D7 day is 3 days ago = complete)
+  const testDayOffset = 10;
+  const cohortWibDay = new Date(Date.UTC(nowWib.year, nowWib.month, nowWib.day - testDayOffset));
+  const { start: cohortStart, end: cohortEnd } = wibDayToUtcRange(cohortWibDay);
 
-    if (registered === 0) continue;
+  const cohortUsers = await prisma.user.findMany({
+    where: { createdAt: { gte: cohortStart, lt: cohortEnd } },
+    select: { id: true },
+  });
+  const cohortIds = cohortUsers.map(u => u.id);
+  const cohortRegistered = cohortUsers.length;
 
-    // D7: active in same week as registration
+  if (cohortRegistered > 0) {
+    // D7: activity on cohort_date + 7 WIB days
+    const d7Day = new Date(Date.UTC(nowWib.year, nowWib.month, nowWib.day - testDayOffset + 7));
+    const { start: d7Start, end: d7End } = wibDayToUtcRange(d7Day);
     const d7Active = (await prisma.xPTransaction.groupBy({
       by: ["userId"],
-      where: { createdAt: { gte: cohortStart, lt: cohortEnd }, userId: { in: ids } },
+      where: { createdAt: { gte: d7Start, lt: d7End }, userId: { in: cohortIds } },
     })).length;
 
-    // D30: active after registration week
-    const d30Active = (await prisma.xPTransaction.groupBy({
+    assert(`D7 cohort: active ≤ registered`, d7Active <= cohortRegistered, `${d7Active} > ${cohortRegistered}`);
+    assert(`D7 cohort: rate 0-100%`, Math.round((d7Active / cohortRegistered) * 100) <= 100);
+
+    // D30: activity on cohort_date + 30 WIB days (should be in the future = null)
+    const d30Day = new Date(Date.UTC(nowWib.year, nowWib.month, nowWib.day - testDayOffset + 30));
+    const d30Complete = new Date(Date.UTC(nowWib.year, nowWib.month, nowWib.day)) > d30Day;
+    assert(`D30 for 10-day cohort: insufficient observation (not complete)`, !d30Complete);
+
+    console.log(`  📊 Cohort ${cohortWibDay.toISOString().slice(0, 10)}: ${cohortRegistered} reg, D7=${d7Active} (${Math.round((d7Active / cohortRegistered) * 100)}%), D30=insufficient`);
+  }
+
+  // Test with cohort from 35 days ago (both D7 and D30 should be complete)
+  const oldDayOffset = 35;
+  const oldCohortWibDay = new Date(Date.UTC(nowWib.year, nowWib.month, nowWib.day - oldDayOffset));
+  const { start: oldCohortStart, end: oldCohortEnd } = wibDayToUtcRange(oldCohortWibDay);
+
+  const oldCohortUsers = await prisma.user.findMany({
+    where: { createdAt: { gte: oldCohortStart, lt: oldCohortEnd } },
+    select: { id: true },
+  });
+  const oldCohortIds = oldCohortUsers.map(u => u.id);
+  const oldRegistered = oldCohortUsers.length;
+
+  if (oldRegistered > 0) {
+    const oldD30Day = new Date(Date.UTC(nowWib.year, nowWib.month, nowWib.day - oldDayOffset + 30));
+    const oldD30Complete = new Date(Date.UTC(nowWib.year, nowWib.month, nowWib.day)) > oldD30Day;
+    assert(`D30 for 35-day cohort: observation complete`, oldD30Complete);
+
+    const { start: oldD30Start, end: oldD30End } = wibDayToUtcRange(oldD30Day);
+    const oldD30Active = (await prisma.xPTransaction.groupBy({
       by: ["userId"],
-      where: { createdAt: { gte: cohortEnd }, userId: { in: ids } },
+      where: { createdAt: { gte: oldD30Start, lt: oldD30End }, userId: { in: oldCohortIds } },
     })).length;
 
-    assert(`W-${w + 1}: D7 ≤ registered`, d7Active <= registered, `${d7Active} > ${registered}`);
-    assert(`W-${w + 1}: D30 ≤ registered`, d30Active <= registered, `${d30Active} > ${registered}`);
-
-    console.log(`  📊 W-${w + 1}: ${registered} reg, D7=${d7Active} (${Math.round((d7Active / registered) * 100)}%), D30=${d30Active} (${Math.round((d30Active / registered) * 100)}%)`);
+    assert(`D30 cohort: active ≤ registered`, oldD30Active <= oldRegistered);
+    console.log(`  📊 Old cohort ${oldCohortWibDay.toISOString().slice(0, 10)}: ${oldRegistered} reg, D30=${oldD30Active} (${Math.round((oldD30Active / oldRegistered) * 100)}%)`);
   }
 
   // ═══════════════════════════════════════════════════════════
