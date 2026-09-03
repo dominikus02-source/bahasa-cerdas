@@ -121,6 +121,7 @@ for (const c of [
   "daily_snapshot_non_negative",
   "daily_snapshot_activity_hierarchy",
   "daily_snapshot_premium_bounds",
+  "daily_snapshot_role_bounds",
 ]) {
   assert(`migration: CHECK constraint ${c}`, migrationText.includes(c));
 }
@@ -193,6 +194,9 @@ assertThrows("inv: activePremium > totalUsers rejected", () =>
   /Premium bounds/);
 assertThrows("inv: muridPremium > muridUsers rejected", () => assertSnapshotInvariants(sampleValues({ muridPremium: 1201, activePremium: 1206, guruPremium: 5 })), /Premium bounds/);
 assertThrows("inv: guruPremium > guruUsers rejected", () => assertSnapshotInvariants(sampleValues({ guruPremium: 301, activePremium: 304 })), /Premium bounds/);
+assertThrows("inv: muridUsers + guruUsers > totalUsers rejected (role semantics)", () =>
+  assertSnapshotInvariants(sampleValues({ totalUsers: 100, muridUsers: 60, guruUsers: 50 })),
+  /Role bounds/);
 assertThrows("inv: dau > wau rejected", () => assertSnapshotInvariants(sampleValues({ dau: 500 })), /Activity hierarchy/);
 assertThrows("inv: wau > mau rejected", () => assertSnapshotInvariants(sampleValues({ wau: 900 })), /Activity hierarchy/);
 assertThrows("inv: empty calculationVersion rejected", () => assertSnapshotInvariants(sampleValues({ calculationVersion: "" })), /calculationVersion/);
@@ -365,14 +369,16 @@ const baseXp: FakeXp[] = [
   // D2. Premium end-of-day boundary semantics: expiring exactly at endOfDay is NOT
   // active at the snapshot moment; 1s later IS (state at the last instant of day D).
   const boundUsers: FakeUser[] = [
-    { id: "b1", createdAt: new Date(Date.UTC(2026, 0, 1)), role: "MURID", isPremium: true, premiumUntil: new Date(endOfDaySep3.getTime()), isFounder: false, premiumPlan: "MURID_PREMIUM_MONTHLY", transaksi: [] },
-    { id: "b2", createdAt: new Date(Date.UTC(2026, 0, 1)), role: "MURID", isPremium: true, premiumUntil: new Date(endOfDaySep3.getTime() + 1000), isFounder: false, premiumPlan: "MURID_PREMIUM_MONTHLY", transaksi: [] },
+    { id: "b0", createdAt: new Date(Date.UTC(2026, 0, 1)), role: "MURID", isPremium: true, premiumUntil: new Date(endOfDaySep3.getTime() - 1000), isFounder: false, premiumPlan: "MURID_PREMIUM_MONTHLY", transaksi: [] }, // expires 23:59:59 WIB on D → BEFORE boundary → excluded
+    { id: "b1", createdAt: new Date(Date.UTC(2026, 0, 1)), role: "MURID", isPremium: true, premiumUntil: new Date(endOfDaySep3.getTime()), isFounder: false, premiumPlan: "MURID_PREMIUM_MONTHLY", transaksi: [] }, // expires exactly AT boundary → excluded (strict >)
+    { id: "b2", createdAt: new Date(Date.UTC(2026, 0, 1)), role: "MURID", isPremium: true, premiumUntil: new Date(endOfDaySep3.getTime() + 1000), isFounder: false, premiumPlan: "MURID_PREMIUM_MONTHLY", transaksi: [] }, // expires 1s AFTER boundary → active at snapshot moment → included
   ];
   const fc2 = makeFakeClient({ users: boundUsers, xp: [] });
   const s2 = await generateDailyBusinessSnapshot(D, { client: fc2.client });
-  assertEqual("gen: premium expiring exactly at endOfDay is excluded", s2.activePremium, 1);
+  assertEqual("gen: premium expiring 1s before endOfDay is excluded", s2.activePremium, 1);
+  assertEqual("gen: premium expiring exactly at endOfDay is excluded (strict >)", s2.muridPremium, 1);
   assertEqual("gen: premium expiring 1s after endOfDay is included", s2.muridPremium, 1);
-  assertEqual("gen: boundary MRR = 19000 (one plan)", s2.mrr, 19_000);
+  assertEqual("gen: boundary MRR = 19000 (exactly one plan)", s2.mrr, 19_000);
 
   // D3. Idempotency — same date twice → same row, no second create.
   const fc3 = makeFakeClient({ users: baseUsers, xp: baseXp });
@@ -424,6 +430,12 @@ const baseXp: FakeXp[] = [
   const v1b = await generateDailyBusinessSnapshot(D, { client: fc8.client, calculationVersion: "1.0" });
   assertEqual("vers: regenerate v1 returns same row", v1b.id, v1a.id);
   assertEqual("vers: repeated generation does not mutate version", fc8.store.filter((r) => r.calculationVersion === "1.0").length, 1);
+  // Canonical-version policy: investor queries target the row whose
+  // calculationVersion equals SNAPSHOT_CALCULATION_VERSION — deterministic,
+  // exactly one such row per businessDate (no findFirst / latest-by-createdAt).
+  assertEqual("vers: canonical version constant is used by the default generator", v1a.calculationVersion, SNAPSHOT_CALCULATION_VERSION);
+  assertEqual("vers: exactly one canonical-version row per businessDate",
+    fc8.store.filter((r) => r.calculationVersion === SNAPSHOT_CALCULATION_VERSION).length, 1);
 
   // ── Summary ──
   console.log(`\nPhase 9.2 snapshot tests: ${passed} passed, ${failed} failed`);

@@ -133,6 +133,13 @@ export function assertSnapshotInvariants(v: DailySnapshotValues): void {
       `Premium bounds violated: active=${v.activePremium}/total=${v.totalUsers}, murid=${v.muridPremium}/muridUsers=${v.muridUsers}, guru=${v.guruPremium}/guruUsers=${v.guruUsers}`
     );
   }
+  // Role semantics: the User universe is GURU/MURID/ADMIN, so murid+guru
+  // can never exceed totalUsers (ADMIN/other users sit outside both buckets).
+  if (v.muridUsers + v.guruUsers > v.totalUsers) {
+    throw new SnapshotInvariantError(
+      `Role bounds violated: muridUsers=${v.muridUsers} + guruUsers=${v.guruUsers} > totalUsers=${v.totalUsers}`
+    );
+  }
   if (!v.calculationVersion) {
     throw new SnapshotInvariantError("calculationVersion must not be empty");
   }

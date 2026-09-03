@@ -300,7 +300,7 @@ model DailyBusinessSnapshot {
 | `guruPremium` | Same + `role='GURU'` |
 | `mrr` + 4 plan MRRs | `calculateMRR()` / `calculateMRRBreakdown()` — exact same queries as production |
 
-**Note on "endOfDay"**: premiumUntil comparison uses the snapshot moment (end of businessDate WIB). A premium expiring at 23:59:59 WIB on businessDate is counted; one expiring 00:00:01 WIB next day is not. This is the exact end-of-day semantics.
+**Note on "endOfDay"**: premiumUntil comparison uses the snapshot moment (end of businessDate WIB). A premium expiring at 23:59:59 WIB on businessDate is counted; one expiring 00:00:01 WIB next day is not. This is the exact end-of-day semantics. *(The two examples in this note are mutually inconsistent under any single boundary comparison — the exact, implemented rule is given in §13 and supersedes this wording.)*
 
 ---
 
@@ -378,3 +378,93 @@ CHECK: 3 + 5 = 8 ✓
 ## 12. Production Safety
 
 **NONE of the above is implemented in this phase.** This document is the contract. No schema change, no migration, no table, no cron, no backfill, no data writes, no push.
+
+---
+
+## 13. Phase 9.3 Controlled QA — Semantic Clarifications (canonical)
+
+Decisions ratified during the Phase 9.3 QA gate. Where these conflict with earlier
+wording, THIS section wins.
+
+### 13.1 Business-date boundary (half-open WIB day)
+
+`businessDate = D` denotes the half-open interval `[D 00:00:00 WIB, D+1 00:00:00 WIB)`.
+
+- `00:00:00 WIB` on D belongs to D (inclusive start).
+- `23:59:59.999 WIB` on D belongs to D (exclusive end via `lt`).
+- `D+1 00:00:00 WIB` does NOT belong to D.
+
+`businessDate` is stored as the UTC midnight carrying the same calendar label as the
+WIB day (`normalizeBusinessDate()`: `Date.UTC(y, m, d)` of the WIB components), so
+`wibDayToUtcRange(businessDate)` recovers the exact interval above. Implemented in
+`lib/admin/historical-snapshot.ts`, using only `lib/admin/analytics-timezone.ts`.
+
+### 13.2 Premium boundary — exact comparison rule
+
+The snapshot moment is the boundary instant `D+1 00:00:00.000 WIB` (the exclusive end
+of day D). A premium is counted as active in snapshot D **iff**
+
+```text
+premiumUntil > D+1 00:00:00.000 WIB      (strict greater-than)
+```
+
+- `premiumUntil` exactly at the boundary → **NOT counted** (strict `>`).
+- `premiumUntil` 1 second before the boundary (i.e. `D 23:59:59 WIB`) → **NOT counted**.
+- `premiumUntil` 1 second after the boundary → **counted** (it was active at the
+  boundary instant).
+
+This supersedes the §7 note examples (which were mutually inconsistent). Behavior is
+deterministic and covered by a boundary test with expiries at `boundary − 1s`,
+`boundary`, and `boundary + 1s`.
+
+### 13.3 Versioning — Option B retained, canonical selection is deterministic
+
+Multiple immutable versions of one `businessDate` may coexist:
+`@@unique([businessDate, calculationVersion])`. Investor-facing queries MUST select
+the canonical row with `WHERE calculationVersion = SNAPSHOT_CALCULATION_VERSION`
+(module constant, currently `"1.0"`) — this yields exactly one row per `businessDate`
+via `findUnique`, so NO `findFirst` / latest-by-`generatedAt` logic is ever needed.
+Older versions exist solely for audit/regeneration comparison. The generator default
+is always the canonical constant.
+
+### 13.4 Role semantics
+
+The verified `User.role` universe is `GURU | MURID | ADMIN`. Therefore:
+
+```text
+totalUsers = all roles
+muridUsers + guruUsers <= totalUsers        (ADMIN users sit in neither bucket)
+```
+
+Enforced by a new Layer-1 assertion (`Role bounds`) and a matching DB CHECK
+`daily_snapshot_role_bounds` (`CHECK ("muridUsers" + "guruUsers" <= "totalUsers")`)
+added to the manual migration. Existing premium-bounds CHECKs are unchanged.
+
+### 13.5 Late events — RECORDED STATE vs TRUE HISTORICAL STATE
+
+- **Engagement & registration** (XPTransaction, User.createdAt) attribute by event
+  timestamp: an event with `createdAt` inside day D — even if persisted after
+  midnight D+1 — is counted in D. Correct attribution by timestamp.
+- **Premium & MRR** reflect RECORDED STATE at generation time: the generator reads the
+  mutable `User.isPremium`/`premiumUntil` fields (filtered by `premiumUntil > boundary`).
+  It CANNOT reconstruct: (a) entitlements that started after D but are still active at
+  generation time, or (b) entitlements revoked before generation. True historical
+  premium state requires a premium event ledger (Phase 9.6+, not built). This is a
+  documented limitation, not a defect.
+
+### 13.6 Migration execution policy
+
+The manual migration creates infrastructure ONLY (table + indexes + CHECKs). It never
+populates data, runs the generator, or touches existing tables. It is idempotent
+(`IF NOT EXISTS` / `EXCEPTION duplicate_object`) and safe to apply exactly once or
+repeat. It was NOT applied in Phase 9.2 or 9.3 — no staging database exists in this
+environment and production is never used as staging. Apply order when approved:
+staging → production (Supabase SQL editor).
+
+### 13.7 Contract deviations recorded
+
+| Change | Classification |
+|--------|----------------|
+| `daily_snapshot_role_bounds` CHECK + Layer-1 assertion added | ACCEPTED REFINEMENT — required by §4 role semantics; additive, migration never applied |
+| §7 premium-boundary note superseded by §13.2 | REQUIRED CONTRACT CLARIFICATION — §7 examples were internally inconsistent |
+| Backfill listed in §11 as "Phase 9.3" | DEFERRED — Phase 9.3 became the QA/migration gate; backfill is a later controlled phase |

@@ -82,3 +82,12 @@ DO $$ BEGIN
            AND "guruPremium" <= "guruUsers");
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
+
+-- Role semantics (Phase 9.3): User universe = GURU/MURID/ADMIN, so the two
+-- split buckets can never exceed the total.
+DO $$ BEGIN
+  ALTER TABLE "DailyBusinessSnapshot"
+    ADD CONSTRAINT daily_snapshot_role_bounds
+    CHECK ("muridUsers" + "guruUsers" <= "totalUsers");
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
