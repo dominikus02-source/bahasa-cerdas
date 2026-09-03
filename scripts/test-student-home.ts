@@ -50,10 +50,12 @@ const required = [
   "SecondaryLearningInfo",
 ];
 for (const c of required) {
-  check(`Halaman merender <${c} />`, c === "SkillRadar" ? page.includes("<SkillRadar skills=") : page.includes(`<${c} />`));
+  // SkillRadar di-render multiline (<SkillRadar\n  skills=...) — cocokkan tag-nya
+  // secara whitespace-tolerant, bukan string literal kaku.
+  check(`Halaman merender <${c} />`, c === "SkillRadar" ? page.includes("<SkillRadar") && page.includes("skills=") : page.includes(`<${c} />`));
 }
 check("QuickActions TIDAK dirender", !page.includes("QuickActions"));
-const marker = (c: string) => (c === "SkillRadar" ? "<SkillRadar skills=" : `<${c} />`);
+const marker = (c: string) => (c === "SkillRadar" ? "<SkillRadar" : `<${c} />`);
 const order = (a: string, b: string, label: string) =>
   check(`Urutan: ${a} sebelum ${b} (${label})`, page.indexOf(marker(a)) < page.indexOf(marker(b)));
 order("StudentHomeHero", "ContinueLearningCard", "sapaan dulu");
@@ -157,8 +159,8 @@ check("3.0 Misi Harian (motivasi) pindah SETELAH perjalanan belajar (journey)",
   page3.indexOf("<LearningJourneySection />") < page3.indexOf("<DailyMissionCard />"));
 check("3.0 Urutan learning-first utuh: hero → aksi → skill → journey → misi → ruang",
   page3.indexOf("<StudentHomeHero />") < page3.indexOf("<ContinueLearningCard />") &&
-  page3.indexOf("<ContinueLearningCard />") < page3.indexOf("<SkillRadar skills=") &&
-  page3.indexOf("<SkillRadar skills=") < page3.indexOf("<LearningJourneySection />") &&
+  page3.indexOf("<ContinueLearningCard />") < page3.indexOf("<SkillRadar") &&
+  page3.indexOf("<SkillRadar") < page3.indexOf("<LearningJourneySection />") &&
   page3.indexOf("<LearningJourneySection />") < page3.indexOf("<DailyMissionCard />") &&
   page3.indexOf("<DailyMissionCard />") < page3.indexOf("<RuangBelajarSection />"));
 check("3.0 CTA primary tetap satu-satunya px-btn-gold di home (di luar klaim misi harian)",

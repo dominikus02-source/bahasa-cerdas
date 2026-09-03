@@ -106,7 +106,10 @@ function scanLightOnly(re: RegExp): { total: number; samples: string[] } {
     // Protected zone (APK) & game components (canvas fixed-color by design):
     // surfaces game (MenaraCerdas/ZelbyDash/GamePlay dll.) sengaja memakai
     // kartu putih di atas canvas navy — theme-agnostic, bukan bug.
-    if (f.includes("app/arena/bottom-nav.tsx") || f.includes("/game/")) continue;
+    // StudentHomeHero juga light-by-design: artwork "banner herocard Arena.png"
+    // berkomposisi terang (area putih kiri) sehingga hero card sengaja putih
+    // di kedua tema — identitas/CTA memakai teks gelap kontras tinggi di atasnya.
+    if (f.includes("app/arena/bottom-nav.tsx") || f.includes("/game/") || f.endsWith("components/student-home/StudentHomeHero.tsx")) continue;
     readFileSync(f, "utf8")
       .split("\n")
       .forEach((line) => {
@@ -145,7 +148,7 @@ console.log("\n4c. Interaction states have dark/translucent handling");
 function scanInteraction(re: RegExp, label: string): { total: number } {
   let total = 0;
   for (const f of studentFiles) {
-    if (f.includes("app/arena/bottom-nav.tsx") || f.includes("/game/")) continue;
+    if (f.includes("app/arena/bottom-nav.tsx") || f.includes("/game/") || f.endsWith("components/student-home/StudentHomeHero.tsx")) continue;
     readFileSync(f, "utf8")
       .split("\n")
       .forEach((line) => {

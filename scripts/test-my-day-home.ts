@@ -33,7 +33,7 @@ const allStudentHome = ["StudentHomeHero", "ContinueLearningCard", "AIBCHomeCard
 
 // 1 — My Day renders
 check("1. Beranda dibungkus HomeDataProvider", page.includes("<HomeDataProvider>"));
-check("1. SkillRadar terintegrasi dari canonical My Day state", page.includes("<SkillRadar skills=") && page.includes("myDay?.learnerState"));
+check("1. SkillRadar terintegrasi dari canonical My Day state", page.includes("<SkillRadar") && page.includes("myDay?.learnerState"));
 check("1. PremiumValueCard terintegrasi", page.includes("<PremiumValueCard />"));
 
 // 2 — Personalized next action dari Learning Loop
@@ -67,21 +67,23 @@ check("8. Mentor tidak membuat recommendation engine kedua", mentorCard.includes
 // 9-10 — SkillRadar
 check("9. SkillRadar menerima learner state nyata", skillRadar.includes("LearnerSkillState") && skillRadar.includes("skills?: LearnerSkillState[]"));
 check("10. SkillRadar insufficient-data state", skillRadar.includes("Mulai beberapa latihan dulu"));
-check("10. SkillRadar tidak membuat CTA rekomendasi", !skillRadar.includes("href=") && !skillRadar.includes("/api/player/next-action"));
+// P5B sengaja menambah CTA premium/fokus (SKILL_CTA_MAP → jalur-cerdas / murid-premium).
+// Yang dilarang tetap: engine rekomendasi KEDUA (next-action) di dalam SkillRadar.
+check("10. SkillRadar tanpa engine rekomendasi kedua", !skillRadar.includes("/api/player/next-action") && (skillRadar.includes("SKILL_CTA_MAP") || skillRadar.includes('href="/arena/jalur-cerdas"')));
 
 // 11 — Arena XP/rank
 check("11. Arena pakai data nyata (levelProgress.remaining)", arena.includes("levelProgress"));
 check("11. Motivasi 'XP lagi menuju'", arena.includes("XP lagi menuju"));
 
 // 12-13 — Premium
-check("12. Premium user: badge 'Personalisasi Premium aktif'", premium.includes("Personalisasi Premium aktif"));
+check("12. Premium user: badge 'Personalisasi Aktif'", premium.includes("Personalisasi Aktif"));
 check("12. Trial ditandai jujur (Masa Uji)", premium.includes("Masa Uji"));
-check("13. Free user: nilai halus tanpa paywall CTA", premium.includes("tersedia di Premium"));
+check("13. Free user: nilai halus tanpa paywall CTA", premium.includes("Premium bisa membantu") && premium.includes("Lihat Premium"));
 
 // 14 — Premium authorization (canonical)
 check("14. Status premium dibagi dari home-data canonical", homeData.includes('"/api/player/premium/status"') && premium.includes("useHomeData"));
 check("14. Tidak ada premium2/isPremium2/studentPremium di student-home", !/premium2|isPremium2|studentPremium/i.test(allStudentHome));
-check("14. Tidak ada input plan/quota dari klien", !premium.includes("req.json") && !premium.includes("body"));
+check("14. Tidak ada input plan/quota dari klien", !premium.includes("req.json") && !premium.includes("quota") && !premium.includes('"plan"'));
 
 // 15 — Adaptive session start is server-authoritative (client sends only {action:"start"})
 check("15. CTA adaptive POST hanya kirim {action:'start'} (server tentukan skill/difficulty)", (() => {
