@@ -711,3 +711,21 @@ Event-derived metrics (DAU, cash, learning activity) — already reconstructable
 ### Key Innovation
 
 The snapshot stores the **minimum** necessary to preserve historical truth. Event-derived metrics remain queryable from their source tables. State-derived metrics (MRR, active premium) are captured daily because their source fields are overwritten.
+
+---
+
+## 19. Architecture Revision (Phase 9.1A Gate)
+
+**Status: REVISED** — see `docs/HISTORICAL_SNAPSHOT_ARCHITECTURE_GATE.md`.
+
+| Item | Original (this doc, v1.0) | Revised (gate decision) | Reason |
+|------|--------------------------|-------------------------|--------|
+| Schema | Generic `MetricSnapshot` (metricKey/value/breakdown) | **Typed `DailyBusinessSnapshot`** (typed columns) | Financial invariants not enforceable in JSON |
+| Value type | `Float` | `Int` (rupiah) / `Int` (counts) | Float drift risk on money |
+| Metric validation | Documented registry | Schema = registry (compile-time) | Typo keys like `active_premuim` impossible |
+| MRR mix | `breakdown` JSON | Typed columns ×4 | Direct queries + CHECK constraint |
+| Cash/activity metrics | Stored as metricKeys | Stay in event tables (not stored) | Avoid second source of truth |
+| DAU/WAU/MAU/user counts | metricKeys | Materialized columns (events authoritative) | Cheap trend queries |
+| Versioning | Per metricKey row | Per day row | One version per day, unambiguous |
+
+**Recommended architecture (final)**: HYBRID — typed `DailyBusinessSnapshot` core + existing immutable event tables + future specialized snapshot tables (e.g., per-user premium state for churn analysis).
