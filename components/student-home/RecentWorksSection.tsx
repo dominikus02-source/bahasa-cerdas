@@ -54,7 +54,7 @@ export function RecentWorksSection() {
       <div className="flex items-end justify-between mb-4">
         <div>
           <h2 className="text-xl font-semibold tracking-tight text-[var(--px-text)] flex items-center gap-2">
-            <Sparkles size={17} className="text-[var(--px-gold)]" strokeWidth={1.8} />
+            <Sparkles size={17} className="text-violet-600 dark:text-violet-300" strokeWidth={1.8} />
             Karya Siswa Terbaru
           </h2>
           <p className="text-xs text-[var(--px-text-faint)]">Puisi, cerpen, artikel, dan lainnya</p>

@@ -527,6 +527,50 @@
   --px-mint: #34e0b8;
 }
 
+/* ---- Beranda murid: ambient functional tints (dark premium) ----
+   Perbaiki flat navy: setiap kartu px-card mendapat glow radial halus +
+   hairline aksen atas sesuai FUNGSI (5–10% tint, bukan kartu solid warna):
+     violet → learning/skill      blue → progress/motivasi
+     gold   → premium             teal/mint → weekly/activity/AI companion
+     orange → misi/reward
+   Light mode tetap permukaan putih bersih (tidak ditimpa). */
+.dark .px-theme-app .px-card.bc-tint-violet {
+  background:
+    radial-gradient(520px 220px at 92% -20%, rgba(167, 139, 250, 0.16), transparent 64%),
+    linear-gradient(160deg, var(--px-glass-strong), var(--px-glass) 55%, rgba(255, 255, 255, 0.04));
+  box-shadow: inset 0 1px 0 rgba(167, 139, 250, 0.3), 0 10px 30px -24px rgba(0, 0, 0, 0.5);
+}
+.dark .px-theme-app .px-card.bc-tint-blue {
+  background:
+    radial-gradient(520px 220px at 92% -20%, rgba(96, 165, 250, 0.15), transparent 64%),
+    linear-gradient(160deg, var(--px-glass-strong), var(--px-glass) 55%, rgba(255, 255, 255, 0.04));
+  box-shadow: inset 0 1px 0 rgba(96, 165, 250, 0.3), 0 10px 30px -24px rgba(0, 0, 0, 0.5);
+}
+.dark .px-theme-app .px-card.bc-tint-gold {
+  background:
+    radial-gradient(520px 220px at 92% -20%, rgba(245, 166, 35, 0.14), transparent 64%),
+    linear-gradient(160deg, var(--px-glass-strong), var(--px-glass) 55%, rgba(255, 255, 255, 0.04));
+  box-shadow: inset 0 1px 0 rgba(245, 166, 35, 0.26), 0 10px 30px -24px rgba(0, 0, 0, 0.5);
+}
+.dark .px-theme-app .px-card.bc-tint-teal {
+  background:
+    radial-gradient(520px 220px at 92% -20%, rgba(45, 212, 191, 0.13), transparent 64%),
+    linear-gradient(160deg, var(--px-glass-strong), var(--px-glass) 55%, rgba(255, 255, 255, 0.04));
+  box-shadow: inset 0 1px 0 rgba(45, 212, 191, 0.26), 0 10px 30px -24px rgba(0, 0, 0, 0.5);
+}
+.dark .px-theme-app .px-card.bc-tint-mint {
+  background:
+    radial-gradient(520px 220px at 92% -20%, rgba(52, 224, 184, 0.14), transparent 64%),
+    linear-gradient(160deg, var(--px-glass-strong), var(--px-glass) 55%, rgba(255, 255, 255, 0.04));
+  box-shadow: inset 0 1px 0 rgba(52, 224, 184, 0.28), 0 10px 30px -24px rgba(0, 0, 0, 0.5);
+}
+.dark .px-theme-app .px-card.bc-tint-orange {
+  background:
+    radial-gradient(520px 220px at 92% -20%, rgba(251, 146, 60, 0.14), transparent 64%),
+    linear-gradient(160deg, var(--px-glass-strong), var(--px-glass) 55%, rgba(255, 255, 255, 0.04));
+  box-shadow: inset 0 1px 0 rgba(251, 146, 60, 0.28), 0 10px 30px -24px rgba(0, 0, 0, 0.5);
+}
+
 /* ---- Leaderboard filter buttons (theme-aware default + zona navy override) ----
    /arena (app theme) memakai kelas Tailwind light/dark; di dalam zona player
    (.px-theme) gaya lama navy dipulihkan agar konsisten. */

@@ -77,7 +77,7 @@ export function DailyMissionCard() {
   // ── Loading ──
   if (quests === null && !error) {
     return (
-      <section aria-label="Misi harian" className="my-day-hero px-card px-5 py-6 space-y-4">
+      <section aria-label="Misi harian" className="my-day-hero px-card bc-tint-orange px-5 py-6 space-y-4">
         <div className="px-skeleton rounded-lg" style={{ width: 140, height: 14 }} />
         <div className="px-skeleton rounded-lg" style={{ width: "60%", height: 10 }} />
         {Array.from({ length: 3 }, (_, i) => (
@@ -90,7 +90,7 @@ export function DailyMissionCard() {
   // ── Error — dashboard tidak boleh crash ──
   if (quests === null) {
     return (
-      <section aria-label="Misi harian" className="my-day-hero px-card px-5 py-6 text-center">
+      <section aria-label="Misi harian" className="my-day-hero px-card bc-tint-orange px-5 py-6 text-center">
         <p className="text-sm font-bold text-[var(--px-text)]">Misi Harian</p>
         <p className="mt-1 text-xs text-[var(--px-text-dim)]">{error}</p>
         <button
@@ -108,7 +108,7 @@ export function DailyMissionCard() {
   // ── Kosong ──
   if (quests.length === 0) {
     return (
-      <section aria-label="Misi harian" className="my-day-hero px-card px-5 py-6 text-center">
+      <section aria-label="Misi harian" className="my-day-hero px-card bc-tint-orange px-5 py-6 text-center">
         <Gift size={20} className="mx-auto mb-2 text-[var(--px-gold)]" />
         <p className="text-sm font-bold text-[var(--px-text)]">Misi Harian</p>
         <p className="mt-1 text-xs text-[var(--px-text-dim)]">Misi baru sedang disiapkan. Kembali lagi nanti.</p>
@@ -124,7 +124,7 @@ export function DailyMissionCard() {
   const overallPct = Math.min(100, Math.round((doneCount / quests.length) * 100));
 
   return (
-    <section aria-label="Misi harian" className="my-day-hero px-card px-5 py-6">
+    <section aria-label="Misi harian" className="my-day-hero px-card bc-tint-orange px-5 py-6">
       {/* HEADER */}
       <div className="mb-3 flex items-start justify-between gap-3">
         <div className="min-w-0">

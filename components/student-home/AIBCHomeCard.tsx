@@ -8,7 +8,7 @@ const QUICK_TOPICS = ["Arti kata", "Tata bahasa", "Sinonim", "Latihan UKBI"];
 
 export function AIBCHomeCard() {
   return (
-    <section aria-label="AI BC" className="ai-bc-note px-card px-5 py-5 md:p-6 relative overflow-hidden">
+    <section aria-label="AI BC" className="ai-bc-note px-card bc-tint-mint px-5 py-5 md:p-6 relative overflow-hidden">
       <div className="relative">
         <div className="flex items-center gap-4">
           <div className="shrink-0 w-14 h-14" aria-hidden="true">

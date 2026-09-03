@@ -73,7 +73,7 @@ export function WeeklyRecapCard() {
   // FREE user teaser
   if (!isPremium) {
     return (
-      <div className="px-card px-5 py-4">
+      <div className="px-card bc-tint-teal px-5 py-4">
         <div className="flex items-center gap-3">
           <span className="shrink-0 w-8 h-8 rounded-full bg-slate-900/5 dark:bg-white/10 flex items-center justify-center">
             <Calendar size={16} className="text-[var(--px-text-faint)]" strokeWidth={1.8} />
@@ -101,7 +101,7 @@ export function WeeklyRecapCard() {
   // Loading state
   if (loading) {
     return (
-      <div className="px-card px-5 py-4">
+      <div className="px-card bc-tint-teal px-5 py-4">
         <div className="flex items-center gap-2 text-[var(--px-text-faint)]">
           <Loader2 size={14} className="animate-spin" />
           <span className="text-xs">Memuat weekly recap...</span>
@@ -113,7 +113,7 @@ export function WeeklyRecapCard() {
   // Error state
   if (error) {
     return (
-      <div className="px-card px-5 py-4">
+      <div className="px-card bc-tint-teal px-5 py-4">
         <p className="text-xs text-red-500">{error}</p>
       </div>
     );
@@ -125,10 +125,10 @@ export function WeeklyRecapCard() {
   }
 
   return (
-    <div className="px-card px-5 py-4 space-y-3">
+    <div className="px-card bc-tint-teal px-5 py-4 space-y-3">
       {/* Header */}
       <div className="flex items-center gap-2">
-        <Calendar size={16} className="text-[var(--px-royal)]" strokeWidth={1.8} />
+        <Calendar size={16} className="text-[var(--px-mint)]" strokeWidth={1.8} />
         <h3 className="text-sm font-semibold text-[var(--px-text)]">Minggu Ini</h3>
       </div>
 

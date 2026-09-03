@@ -52,7 +52,7 @@ export default function SkillRadar({
 }) {
   if (failed) {
     return (
-      <div className={`px-card p-5 text-center ${className}`}>
+      <div className={`px-card bc-tint-violet p-5 text-center ${className}`}>
         <BarChart3 size={28} className="mx-auto text-violet-300" />
         <p className="mt-2 text-sm font-bold text-[var(--px-text)]">Belum bisa memuat perkembanganmu.</p>
         <p className="mt-1 text-xs text-[var(--px-text-dim)]">Coba lagi setelah data belajar tersedia.</p>
@@ -81,7 +81,7 @@ export default function SkillRadar({
 
   if (!hasEvidence) {
     return (
-      <div className={`px-card p-5 text-center ${className}`}>
+      <div className={`px-card bc-tint-violet p-5 text-center ${className}`}>
         <BarChart3 size={28} className="mx-auto text-violet-300" />
         <p className="mt-2 text-sm font-bold text-[var(--px-text)]">Kemampuan Bahasamu</p>
         <p className="mt-1 text-xs leading-relaxed text-[var(--px-text-dim)]">
@@ -102,9 +102,9 @@ export default function SkillRadar({
   );
 
   return (
-    <div className={`skill-radar px-card p-5 md:p-6 ${className}`}>
+    <div className={`skill-radar px-card bc-tint-violet p-5 md:p-6 ${className}`}>
       <div className="mb-4 flex items-center gap-2">
-        <BarChart3 size={18} className="text-[var(--px-royal)]" strokeWidth={1.8} />
+        <BarChart3 size={18} className="text-violet-600 dark:text-violet-300" strokeWidth={1.8} />
         <h3 className="text-lg font-semibold tracking-tight text-[var(--px-text)]">Kemampuanmu</h3>
       </div>
 

@@ -60,7 +60,7 @@ export function PremiumValueCard() {
 
   if (loading || myDayLoading) {
     return (
-      <div className="px-card px-5 py-5">
+      <div className="px-card bc-tint-gold px-5 py-5">
         <div className="px-skeleton rounded-lg" style={{ width: "70%", height: 12 }} />
         <div className="px-skeleton rounded-lg mt-2" style={{ width: "90%", height: 10 }} />
       </div>
@@ -84,7 +84,7 @@ export function PremiumValueCard() {
   const weakestSkill = skillsWithEvidence.sort((a, b) => (a.accuracy ?? 0) - (b.accuracy ?? 0))[0];
 
   return (
-    <section aria-label="Status premium" className="premium-value px-card px-5 py-4">
+    <section aria-label="Status premium" className="premium-value px-card bc-tint-gold px-5 py-4">
       {isPremium ? (
         <div className="space-y-3">
           {/* Premium Header */}

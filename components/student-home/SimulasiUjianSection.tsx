@@ -10,7 +10,9 @@ const ITEMS = [
     desc: "Ukur kemampuan Bahasa Indonesiamu",
     cta: "Mulai",
     icon: Ear,
-    accent: "from-violet-500 to-purple-600 shadow-violet-500/30",
+    // Bahasa warna fungsional (keluarga asesmen yang sama, bukan rainbow):
+    // cyan/royal/teal/slate — aksen ikon muted pada chip transparan.
+    accent: "text-cyan-600 dark:text-cyan-300 bg-cyan-500/10",
   },
   {
     href: "/murid/simulasi/tka",
@@ -18,7 +20,7 @@ const ITEMS = [
     desc: "Latihan menghadapi Tes Kemampuan Akademik",
     cta: "Mulai",
     icon: BookOpenCheck,
-    accent: "from-[var(--px-royal)] to-[var(--px-royal-2)] shadow-[var(--px-royal)]/30",
+    accent: "text-[var(--px-royal)] bg-[var(--px-royal)]/10",
   },
   {
     href: "/murid/bigt",
@@ -26,7 +28,7 @@ const ITEMS = [
     desc: "Latihan bahasa Indonesia tingkat internasional",
     cta: "Mulai",
     icon: Globe2,
-    accent: "from-emerald-400 to-teal-600 shadow-emerald-500/30",
+    accent: "text-teal-600 dark:text-teal-300 bg-teal-500/10",
   },
   {
     href: "/murid/dokumen-latihan",
@@ -34,7 +36,7 @@ const ITEMS = [
     desc: "Lihat hasil dan riwayat latihanmu",
     cta: "Lihat Hasil",
     icon: FileText,
-    accent: "from-amber-400 to-orange-500 shadow-amber-500/30",
+    accent: "text-slate-500 dark:text-slate-300 bg-slate-400/10",
   },
 ];
 
@@ -60,9 +62,9 @@ export function SimulasiUjianSection() {
               className="group section-rule border-b px-2 py-4 hover:bg-slate-900/[0.025] dark:hover:bg-white/[0.05] transition-colors flex flex-col gap-2"
             >
               <span
-                className="relative w-8 h-8 flex items-center text-[var(--px-text-dim)]"
+                className={`w-8 h-8 flex items-center justify-center rounded-lg ${item.accent}`}
               >
-                <Icon size={18} strokeWidth={1.8} />
+                <Icon size={16} strokeWidth={1.8} />
               </span>
               <div className="relative">
                 <h3 className="text-sm font-medium text-[var(--px-text)]">{item.label}</h3>

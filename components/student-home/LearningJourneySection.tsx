@@ -17,28 +17,30 @@ const ITEMS = [
     label: "Jalur Cerdas",
     desc: "Belajar kosakata, tata bahasa, dan membaca",
     icon: BookOpen,
-    accent: "text-[var(--px-royal)] bg-transparent",
+    // Bahasa warna fungsional: ungu → inti belajar; biru → latihan;
+    // cyan → simulasi/asesmen; mint/teal → tugas/aktivitas.
+    accent: "text-violet-600 dark:text-violet-300",
   },
   {
     href: "/arena/game",
     label: "Latihan",
     desc: "Latihan kilat dan permainan kata",
     icon: Gamepad2,
-    accent: "text-[var(--px-text-dim)] bg-transparent",
+    accent: "text-[var(--px-royal-2)]",
   },
   {
     href: "/murid/simulasi/ukbi",
     label: "Simulasi",
     desc: "UKBI & TKA — ukur kemampuanmu",
     icon: ClipboardList,
-    accent: "text-[var(--px-text-dim)] bg-transparent",
+    accent: "text-cyan-600 dark:text-cyan-300",
   },
   {
     href: "/murid/tugasku",
     label: "Tugas",
     desc: "Kumpulkan tugas dari gurumu",
     icon: Clock,
-    accent: "text-[var(--px-text-dim)] bg-transparent",
+    accent: "text-[var(--px-mint)]",
     dynamic: true,
   },
 ];
