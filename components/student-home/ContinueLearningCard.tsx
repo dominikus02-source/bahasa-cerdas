@@ -45,7 +45,7 @@ export function ContinueLearningCard() {
         <button
           type="button"
           onClick={refreshMyDay}
-          className="px-btn-gold mt-4 inline-flex items-center gap-2 text-sm font-bold px-5 py-2.5"
+          className="px-btn-ghost mt-4 inline-flex items-center gap-2 text-sm font-semibold px-5 py-2.5"
         >
           <RotateCw size={15} />
           Coba Lagi
@@ -206,7 +206,7 @@ export function ContinueLearningCard() {
               type="button"
               onClick={startDiagnosticSession}
               disabled={starting}
-              className="px-btn-gold flex items-center justify-center gap-2 text-sm font-bold px-6 py-3 disabled:cursor-wait"
+              className="px-btn-ghost flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 disabled:cursor-wait"
               aria-label="Mulai Tes Awal"
             >
               {starting ? <Loader2 size={16} className="animate-spin" /> : null}
@@ -240,7 +240,7 @@ export function ContinueLearningCard() {
               type="button"
               onClick={startDiagnosticSession}
               disabled={starting}
-              className="px-btn-gold flex items-center justify-center gap-2 text-sm font-bold px-6 py-3 disabled:cursor-wait"
+              className="px-btn-ghost flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 disabled:cursor-wait"
               aria-label="Lanjutkan Tes Awal"
             >
               {starting ? <Loader2 size={16} className="animate-spin" /> : null}
@@ -280,7 +280,7 @@ export function ContinueLearningCard() {
               <button
                 type="button"
                 onClick={() => router.push("/arena/jalur-cerdas")}
-                className="px-btn-gold flex items-center justify-center gap-2 text-sm font-bold px-6 py-3"
+                className="px-btn-ghost flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3"
                 aria-label="Lanjutkan Latihan"
               >
                 {currentMyDay.ctaLabel}
@@ -309,7 +309,7 @@ export function ContinueLearningCard() {
               {startError && <p className="mt-3 text-xs font-semibold text-red-600 dark:text-red-300">{startError}</p>}
             </div>
             <div className="shrink-0">
-              <Link href="/arena/jalur-cerdas" className="px-btn-gold flex items-center justify-center gap-2 text-sm font-bold px-6 py-3">
+              <Link href="/arena/jalur-cerdas" className="px-btn-ghost flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3">
                 {myDay.ctaLabel}
                 <ArrowRight size={16} />
               </Link>
@@ -399,7 +399,7 @@ export function ContinueLearningCard() {
                 type="button"
                 onClick={startAdaptiveSession}
                 disabled={starting}
-                className="px-btn-gold flex items-center justify-center gap-2 text-sm font-bold px-6 py-3 disabled:cursor-wait"
+                className="px-btn-ghost flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 disabled:cursor-wait"
                 aria-label="Mulai Latihan"
               >
                 {starting ? <Loader2 size={16} className="animate-spin" /> : null}

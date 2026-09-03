@@ -106,6 +106,10 @@ check("Arena Gateway: tanpa tombol Kuis Tempur/Liga/Misi", !arena.includes("kuis
 // 6 — CTA hierarchy: primary "Lanjutkan", secondary AI
 const continueCard = read("components/student-home/ContinueLearningCard.tsx");
 check("Continue = satu primary CTA (tanpa ghost button)", !continueCard.includes("Jelajahi Jalur Cerdas"));
+// Personal Learning Home: HERO = satu-satunya CTA utama (gradient emas).
+// ContinueLearningCard demoted ke sekunder (px-btn-ghost) agar tidak bersaing,
+// tapi konten penjelas/mentor-nya tetap utuh. Klaim misi harian tetap gold
+// (aksi reward, bukan aksi belajar — di luar scope kontrak ini).
 const goldFiles = [
   "StudentHomeHero.tsx",
   "ContinueLearningCard.tsx",
@@ -119,7 +123,13 @@ const goldFiles = [
   "PremiumValueCard.tsx",
   "home-data.tsx",
 ].filter((f) => read(`components/student-home/${f}`).includes("px-btn-gold"));
-check("Satu CTA emas: hanya ContinueLearningCard", goldFiles.length === 1 && goldFiles[0] === "ContinueLearningCard.tsx");
+check(
+  "Satu CTA utama di hero (gold) — ContinueLearningCard sekunder (ghost)",
+  goldFiles.length === 0 &&
+    !continueCard.includes("px-btn-gold") &&
+    continueCard.includes("px-btn-ghost") &&
+    read("components/student-home/StudentHomeHero.tsx").includes("from-[#ffd24a]")
+);
 const aiCard = read("components/student-home/AIBCHomeCard.tsx");
 check("AI BC → /arena/ai", aiCard.includes('href="/arena/ai"'));
 check("AI BC copy companion ('Tanya BC. Kita belajar bareng.')", aiCard.includes("Kita belajar bareng"));
@@ -163,8 +173,9 @@ check("3.0 Urutan learning-first utuh: hero → aksi → skill → journey → m
   page3.indexOf("<SkillRadar") < page3.indexOf("<LearningJourneySection />") &&
   page3.indexOf("<LearningJourneySection />") < page3.indexOf("<DailyMissionCard />") &&
   page3.indexOf("<DailyMissionCard />") < page3.indexOf("<RuangBelajarSection />"));
-check("3.0 CTA primary tetap satu-satunya px-btn-gold di home (di luar klaim misi harian)",
-  read("components/student-home/ContinueLearningCard.tsx").includes("px-btn-gold") &&
+check("3.0 Hero = satu-satunya CTA utama; kartu aksi pakai ghost (di luar klaim misi harian)",
+  !read("components/student-home/ContinueLearningCard.tsx").includes("px-btn-gold") &&
+  read("components/student-home/ContinueLearningCard.tsx").includes("px-btn-ghost") &&
   ["AIBCHomeCard.tsx", "ArenaHomeSection.tsx", "LearningJourneySection.tsx"]
     .every((f) => !read(`components/student-home/${f}`).includes("px-btn-gold")));
 const card3 = read("components/student-home/ContinueLearningCard.tsx");

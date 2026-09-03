@@ -53,9 +53,15 @@ check("5. Insufficient data memiliki judul jujur", adaptiveApi.includes("Mulai L
 check("5. Insufficient data fallback ke rute belajar nyata", adaptiveApi.includes("/arena/jalur-cerdas"));
 check("5. Insufficient data tidak mengklaim adaptive", adaptiveApi.includes('mode: "FALLBACK"'));
 
-// 7 — One dominant CTA (gold hanya di ContinueLearningCard + MentorCard insight)
-check("7. Satu CTA emas di student-home", !["StudentHomeHero", "AIBCHomeCard", "LearningJourneySection", "RuangBelajarSection", "SimulasiUjianSection", "RecentWorksSection", "ArenaHomeSection", "PremiumValueCard", "SecondaryLearningInfo"]
-  .some((f) => read(`components/student-home/${f}.tsx`).includes("px-btn-gold")));
+// 7 — One dominant CTA: HERO owns the gold gradient; ContinueLearningCard is
+// demoted to ghost (secondary) so it never competes with the hero action,
+// while keeping its explanatory/mentor content intact.
+check("7. Satu CTA utama di student-home — hero gold, aksi sekunder ghost",
+  !["StudentHomeHero", "AIBCHomeCard", "LearningJourneySection", "RuangBelajarSection", "SimulasiUjianSection", "RecentWorksSection", "ArenaHomeSection", "PremiumValueCard", "SecondaryLearningInfo"]
+    .some((f) => read(`components/student-home/${f}.tsx`).includes("px-btn-gold")) &&
+  !read("components/student-home/ContinueLearningCard.tsx").includes("px-btn-gold") &&
+  read("components/student-home/ContinueLearningCard.tsx").includes("px-btn-ghost") &&
+  read("components/student-home/StudentHomeHero.tsx").includes("from-[#ffd24a]"));
 check("7. AI BC CTA sekunder (ghost)", read("components/student-home/AIBCHomeCard.tsx").includes("px-btn-ghost"));
 check("7. Arena CTA sekunder (ghost)", arena.includes("px-btn-ghost"));
 
