@@ -1,12 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { rateLimitRoute } from "@/lib/rate-limit";
+import { recordProductEvent, dayKeyWIB } from "@/lib/analytics/product-event-store";
 
 /**
  * POST /api/analytics/product-event
  * Product events ringan (P8A §31). Allowlist nama event; TIDAK menyimpan
  * data finansial sensitif sebagai properti. Log terstruktur console —
  * infrastruktur analitik penuh belum ada (jangan menebak).
+ *
+ * P0 #7 (additive): setelah console-log, event juga ditulis idempotent ke tabel
+ * `ProductEvent` (best-effort; tabel mungkin belum ada di prod sebelum migrasi
+ * manual diterapkan — kegagalan tidak menggagalkan respons). Console-logging,
+ * rate-limit, dan allowlist TIDAK berubah.
  */
 const ALLOWED_EVENTS = new Set([
   "guru_commission_viewed",
@@ -30,6 +36,10 @@ const ALLOWED_EVENTS = new Set([
   // P8C — user-facing actions only (deteksi internal = audit, bukan analytics)
   "teacher_risk_status_viewed",
   "teacher_withdrawal_review_viewed",
+  // P0 #7 — Operational Teacher Experiment funnel stages (F4 + F8)
+  "class_code_shared",
+  "class_first_join",
+  "teacher_session",
 ]);
 
 export async function POST(req: NextRequest) {
@@ -65,6 +75,24 @@ export async function POST(req: NextRequest) {
       "[product-event]",
       JSON.stringify({ name, role: user.role, userId: user.id, props, at: new Date().toISOString() })
     );
+
+    // P0 #7 — persist idempotent (additive, best-effort). logicalKey default
+    // sekali-per-hari per (user,event,entity) sehingga duplikat klien dalam sehari
+    // tidak membuat baris ganda, namun aktivitas lintas hari tetap terukur.
+    const entityType = typeof body.entityType === "string" ? body.entityType : "ANON";
+    const entityId = typeof body.entityId === "string" ? body.entityId : (props.entityId as string | undefined) ?? "";
+    const logicalKey =
+      typeof body.logicalKey === "string"
+        ? body.logicalKey
+        : `route-${name}-${dayKeyWIB()}`;
+    void recordProductEvent({
+      actorId: user.id,
+      event: name,
+      entityType,
+      entityId,
+      logicalKey,
+      props: props as Record<string, string | number | boolean | null>,
+    });
 
     return NextResponse.json({ ok: true });
   } catch (error) {

@@ -295,6 +295,8 @@
     "test:adaptive-practice": "npx tsx scripts/test-adaptive-practice.ts",
     "test:adaptive-simulation": "npx tsx scripts/test-adaptive-simulation.ts",
     "test:adaptive-reward-hardening": "npx tsx scripts/test-adaptive-reward-hardening.ts",
+    "test:operational-baseline": "npx tsx scripts/test-operational-baseline.ts",
+    "test:operational-teacher-build": "npx tsx scripts/test-operational-teacher-build.ts",
     "test:adaptive-coming-soon": "npx tsx scripts/test-adaptive-coming-soon.ts",
     "test:diagnostic-assessment": "npx tsx scripts/test-diagnostic-assessment.ts",
     "test:diagnostic-personalization": "npx tsx scripts/test-diagnostic-personalization.ts",

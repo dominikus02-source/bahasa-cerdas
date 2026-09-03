@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "snapshot": "OPERATIONAL_TEACHER_BASELINE_T0",
+    "version": "1.0",
+    "frozenAt": "2026-09-08T00:00:00.000Z",
+    "timezone": "Asia/Jakarta",
+    "immutable": true,
+    "script": "manual (Phase 9 / P0 #7 measurement lock)",
+    "database": "Supabase PostgreSQL (production pooler)",
+    "readOnly": true,
+    "note": "T-0 baseline frozen BEFORE the Operational Teacher Experiment begins. Future snapshots MUST be compared against this file; do NOT mutate this file (new versioned snapshot instead). Data source: prior read-only forensics (data/teacher-growth-forensic-september-2026.json, data/operational-teacher-experiment-spec-september-2026.json). Live canonical recomputation via lib/analytics/operational-classrooms.ts requires production DB access (local .env masked) and is pending."
+  },
+  "activation": {
+    "metric": "O1_ACTIVATION",
+    "definition": "% of cohort GURU (role=GURU, onboarded=true, non-founder for organic) with >=1 class (Group.teacherId).",
+    "denominator": "User.role=GURU + onboarded=true (non-founder for organic)",
+    "withFounders": { "eligible": 484, "activated": 54, "percent": 11.2 },
+    "exFounders": { "eligible": 482, "activated": 54, "percent": 11.2 },
+    "target": 25.0,
+    "baselinePercent": 11.2,
+    "baselineNumerator": 54,
+    "baselineDenominator": 484,
+    "source": "prior forensic: teacher-growth-forensic-september-2026.json B_teacherFunnel"
+  },
+  "operationalClassrooms": {
+    "metric": "O3_OPERATIONAL_CLASSROOMS",
+    "definition": "Group where X AND Y AND Z over same trailing-30d WIB window (X=artifact, Y=>=3 distinct active students, Z=student Z-evidence).",
+    "windowDays": 30,
+    "timezone": "Asia/Jakarta",
+    "X": "Penugasan, QuizAssignment, MateriKirim, Pengumuman (teacher-owned for group), OR >=1 StudentKarya into the group by a member",
+    "Y": ">=3 distinct GroupMember.userId each with Z evidence (studentFloor=3, target=5)",
+    "Z": "XPTransaction, QuizSubmission, UserUnitProgress, ProgresKompetensi, StudentKarya (NEVER legacy User.xp)",
+    "baselineValue": 0,
+    "baselineNote": "First-ever Operational Classroom calc did not exist at T-0; baseline is 0 (definition locked, no live recomputation at freeze). Live computation via lib/analytics/operational-classrooms.ts getOperationalClassrooms pending.",
+    "studentFloor": 3,
+    "studentTarget": 5
+  },
+  "classToArtifactWall": {
+    "metric": "CLASS_TO_ARTIFACT_WALL",
+    "definition": "% of class-creators (F3) who have shipped >=1 artifact (everTaught)",
+    "value": 14.8,
+    "numerator": 8,
+    "denominator": 54,
+    "source": "teacher-growth-forensic-september-2026.json B_teacherFunnel everTaught=8 / groupCreators=54"
+  },
+  "funnel": {
+    "metric": "FUNNEL_F1_F10",
+    "definition": "F1 Registered GURU -> F2 Onboarded -> F3 Created first class (CLIFF) -> F4 Code shared -> F5 First student joined -> F6 3rd/5th student joined -> F7 Student Z-evidence -> F8 Teacher returns/session -> F9 Class used -> F10 Operational Classroom",
+    "stages": [
+      { "stage": "F1", "name": "Registered GURU", "source": "User.role=GURU + onboarded", "schema": true, "count": 484, "withFounders": 486 },
+      { "stage": "F2", "name": "Onboarded", "source": "User.onboarded", "schema": true, "count": null, "note": "pending live canonical count" },
+      { "stage": "F3", "name": "Created first class (CLIFF)", "source": "Group.teacherId", "schema": true, "count": 54, "rateOfPrevStage": 11.2 },
+      { "stage": "F4", "name": "Code shared", "source": "proxy: first GroupMember.join OR new ProductEvent class_code_shared", "schema": "proxy", "count": null, "note": "native ProductEvent P0 #7 not yet read at freeze; proxy = F5" },
+      { "stage": "F5", "name": "First student joined", "source": "GroupMember.joinedAt", "schema": true, "count": null, "note": "pending live canonical count" },
+      { "stage": "F6", "name": "3rd/5th student joined", "source": "COUNT DISTINCT GroupMember.userId per group", "schema": true, "count": null, "note": "pending live canonical count" },
+      { "stage": "F7", "name": "Student Z-evidence", "source": "Z evidence tables in trailing-30d", "schema": true, "count": null, "note": "pending live canonical count" },
+      { "stage": "F8", "name": "Teacher session", "source": "proxy: first artifact after class create OR new ProductEvent teacher_session", "schema": "proxy", "count": null, "note": "native ProductEvent P0 #7 not yet read at freeze" },
+      { "stage": "F9", "name": "Class used", "source": "COUNT Group with any member Z-evidence", "schema": true, "count": null, "note": "pending live canonical count" },
+      { "stage": "F10", "name": "Operational Classroom", "source": "X AND Y AND Z trailing-30d", "schema": true, "count": 0, "rateOfPrevStage": "2026-09-08: 0 first-ever operational classrooms expected" }
+    ]
+  },
+  "knownGaps": [
+    "Local DB unreachable (.env.local has [SENSITIVE]) — canonical O1/O3/funnel live counts pending production DB access.",
+    "F2/F5/F6/F7/F8/F9 counts left null (pending live recomputation) — T-0 freezes METHODOLOGY + confirmed F1/F3/O1/O3/wall figures.",
+    "Native ProductEvent table not yet applied to production (migration manual/2026-09-08_product_event.sql NOT executed). F4/F8 natively start capturing from deployment; proxy fallbacks remain.",
+    "Operational Classroom baseline 0 is the locked definitional value, not a live query at T-0."
+  ]
+}

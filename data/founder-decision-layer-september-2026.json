@@ -1,0 +1,255 @@
+{
+  "generatedAt": "2026-09-03T05:00:00.000Z",
+  "phase": "7",
+  "readOnly": true,
+  "productionMutation": "NONE",
+  "evidenceBasis": "Synthesis of 17 production-truth artifacts (funnel, business truth, teacher growth forensic, investor power users, school analysis, commission E2E, founder identity/role, metric & business dictionaries). All numbers read-only from production Supabase.",
+  "evidenceHierarchy": {
+    "PROVEN": [
+      "AI tools are the #1 magnet for teachers: 73 teachers adopted an AI feature; aiTeachersLast30 = 44; bc-assistant 139 calls/33 teachers; rpp 52 calls/28 teachers.",
+      "A specific teacher archetype exists that creates a class AND drives student activity: ~10 teachers hold 50+ students, artifact-heavy teachers drive 54-97% student XP-activation vs ~30% passive.",
+      "Playbook A 'Class Operator' works: Dorothea (169 st, 6 penugasan, 9 quiz, 91 XP-active), Ibrahim (117 st, 117 XP-active in 30d, 6 quiz), Elli (57 st, 5 penugasan, 3 quiz, 13 quiz submissions).",
+      "Playbook B 'Literasi Publisher' works: Karina (155 st, 149 XP, 131 karya), Christanti (59 st, 56 XP, 48 karya), Wahyu Kristanti (36 st, 32 karya).",
+      "Commission system is wired end-to-end and safe: zero commissions are a DATA GAP (no student in a non-founder class ever purchased premium), not a logic bug."
+    ],
+    "STRONG_SIGNAL": [
+      "Premium funnel exists but is minuscule: 4/465 trials converted (0.86%); accomplished revenue Rp438,000 (~US$29) total, pre-revenue.",
+      "Feature adoption decouples from classroom creation: AI (73) >> Quiz (15) > Penugasan (8) > Karya feedback (5) > Pengumuman (2) > Game (1) > Nilai (0).",
+      "Login activity shows real base: 7d=634, 30d=1,342, 90d=1,854 logins with 583 never-active (of 2,437 users).",
+      "Students respond to teacher activation: artifact-heavy classrooms produce 54-97% student XP-activation."
+    ],
+    "PROMISING_BUT_UNPROVEN": [
+      "School/GTM effect: 0 canonical schools, 683 unique raw school names, dominant santa-laurensia + al-fityan + harapan-bangsa clusters; school motion latent and unmeasurable today.",
+      "Student retention / repeat usage curve not established (no clean cohort retention D7/D30 published for learners).",
+      "B2B/school-level monetization model not validated."
+    ],
+    "WEAK": [
+      "Classroom creation: only 54/484 GURU (11.2%) created a class; only 8 (1.7%) ever produced a teaching artifact.",
+      "Teacher activation rate: only 2 active teachers in 30d; activeRateOfCreators = 3.7%; ~430 GURU are trial 'pelamar' who never made a class.",
+      "Teacher tenure retention: F_teacherRetention shows long activation-gap (many firstGroup without firstAction).",
+      "Game host adoption: only 1 teacher hosted a game; game server dead (VPS).",
+      "Nilai/gradebook adoption: 0 teachers."
+    ],
+    "NEGATIVE_SIGNAL": [
+      "108 orphan groups (created, zero artifacts, zero activity).",
+      "Top groups lean founder-concentrated: 3 founders hold ~32% of grouped students (Alexander ~180, Dominikus ~133, Washadi ~90).",
+      "2,050 phantom student profiles without canonical schoolId.",
+      "Empty/zero-row tables: DailyAction, ActivityLog, LoginHistory, quizzesTaken, TTS."
+    ],
+    "NOT_YET_MEASURABLE": [
+      "Unit economics (CAC, LTV, payback) — no paid acquisition running.",
+      "Marketing funnel top (premium_viewed, checkout_abandoned) — no instrumentation.",
+      "Learner retention D7/D30 clean curve.",
+      "School-level revenue / deal size / sales motion.",
+      "Commission payout actually realized (0 to date)."
+    ],
+    "DATA_QUALITY_GAP": [
+      "GURU count drifts across snapshots: teacher growth forensic 2026-09-03 = 484 > investor production truth 2026-09-02 = 481 > business truth 2026-09-01 = 477. AUTHORITATIVE = 484 (forensic, most recent); drift is due to new signups + founder role remap (founders ADMIN->GURU).",
+      "School identity unresolved: 0 canonical schools, 683 raw names, phantom profiles block school-level analytics.",
+      "Admin role resolves inconsistently: investor funnel shows 0 ADMIN (founders remapped to GURU) vs business truth 3 ADMIN.",
+      "No checkout instrumentation (premium_viewed / checkout_abandoned absent).",
+      "Online/offline session tracking incomplete (no LoginHistory rows despite loginActivity aggregates)."
+    ]
+  },
+  "customerHypothesis": {
+    "icp": "The 'operational teacher' — an active Bahasa Indonesia subject teacher (SMP/SMA) who values running a real classroom on the platform: creating one or more class groups, assigning penugasan and quizzes, and seeing students engage.",
+    "evidence": "Only teachers who created a class AND produced teaching artifacts drove meaningful student activity (Playbook A/B, 54-97% XP-activation). The 11.2% who create a class are the measurable core; the other ~89% of signups (trial window-shoppers) never activated.",
+    "antiIcp": "Trial 'pelamar' who register, get AI trial, and never create a class (the ~430 inactive GURU). AI is a magnet but does NOT route to classroom — it is a separate loop.",
+    "customerMoat": "Once a teacher has live students (groups + assignments + submissions), switching cost rises; the 'operational classroom' is the retention and network moat, not the AI tools."
+  },
+  "teacherGrowthThesis": {
+    "equation": "Activations = (Teachers who create a class) × (Classrooms with teaching artifacts) × (Students who respond)",
+    "current": "484 GURU → 54 group creators (11.2%) → 8 ever-taught (1.7%) → ~2 active 30d (0.4%).",
+    "magnetTension": "AI adoption (73) is 9x classroom creation (8) — the biggest funnel is the LEAST monetizable and least retention-bearing surface.",
+    "reinforcingLoop_target": "Move teachers from 'trial AI user' to 'operational classroom operator' by making the first class + first assignment + first student-visible activity the primary success moment ('Aha'), turning the AI-heavy funnel into a classroom-heavy funnel.",
+    "correlation": "students30d and XP-activation rise only where a teacher produced artifacts (penugasan/quiz/karya) — artifact production is the leading indicator."
+  },
+  "schoolEffect": {
+    "status": "LATENT / NOT YET MEASURABLE",
+    "evidence": "0 canonical schools; 683 unique raw school names; 2,050 phantom profiles without canonical schoolId; santa-laurensia (204+158+96+88), al-fityan (49+21+17), harapan-bangsa (41+36+23+31) clusters dominate.",
+    "implication": "No school-level GTM, no school deal-size metric, no per-school revenue is currently computable. School motion must wait until school identity (Phase P1-C backfill) is resolved.",
+    "recommendation": "Do NOT pitch 'school penetration' to investors — it is unmeasurable today. Resolve school identity first, then report school-level cohorts."
+  },
+  "pmfSignalMap": {
+    "retention": "WEAK — no clean learner retention curve; 583 never-active users; 108 orphan groups; only 2 active teachers 30d.",
+    "activation": "PROVEN for artifact-heavy classrooms; WEAK overall (1.7% ever-taught).",
+    "growth": "NOT MEASURABLE — no paid acquisition, no viral coefficient measured, no organic loop quantified (though classroom spread via student email invites exists anecdotally).",
+    "monetization": "WEAK — pre-revenue Rp438k (~US$29); 4 conversions; 0.86% trial-to-paid.",
+    "revenue": "NEGATIVE_SIGNAL as a company today (pre-revenue), but the reservation is real (premiumActive=4 PRO).",
+    "verdict": "NOT PMF. Evidence shows a functional, loved-by-a-niche product (artifact teachers) but the activation and monetization loops are too small and too fragmented to claim product-market fit."
+  },
+  "monetizationReality": {
+    "revenueTotal": "Rp438,000 (~US$29) — pre-revenue status",
+    "transactions": {
+      "PREMIUM_UPGRADE": { "count": 4, "amount": 1443000, "note": "teacher PRO; 4 SUCCESS" },
+      "MURID_PREMIUM": { "count": 8, "amount": 474000, "note": "student; 3 buyers all in founder/ADMIN classes (commission-excluded)" }
+    },
+    "premiumUsers": 2,
+    "trialActive": 274,
+    "trialStarted": 465,
+    "trialToPaidRatePct": 0.86,
+    "funnel": { "checkoutInitiated": 17, "paymentSuccessful": 4, "missingEvents": ["premium_viewed", "checkout_abandoned"] },
+    "commission": { "status": "ZERO - DATA GAP not bug", "eligibleTeachers": 478, "attributions": 35, "commissions": 0, "wallets": 0 },
+    "guruProPricing": { "bulanan": "Rp49,000/30d/500 kredit", "tahunan": "Rp399,000/365d" },
+    "muridPremiumPricing": { "bulanan": "Rp19,000", "tahunan": "Rp180,000" },
+    "verdict": "Waiting on the first non-founder-class MURID_PREMIUM purchase to trigger the first-ever commission and prove the affiliate loop; product is pre-revenue and cannot yet fund acquisition."
+  },
+  "primaryBottleneck": "ACTIVATION (teacher → operational classroom) — the conversion of 484 registered GURU into the 8 who actually teach is the single biggest gap. Only 11.2% create a class; 1.7% teach. Everything else (retention, monetization, school GTM) is downstream of solving this.",
+  "ninetyDayStrategy": {
+    "days0_30": {
+      "initiatives": [
+        "Instrument checkout + activation funnel (premium_viewed, checkout_abandoned, class_created, artifact_created) so every loop is measurable.",
+        "Ship the 'operational teacher' onboarding: force a first class + first artifact (penugasan OR bank-soal quiz OR karya prompt) inside 10 minutes of signup.",
+        "Route AI-tool users (the 73-magnet) into classroom creation with post-generation CTAs ('Kirim hasil ini ke kelas Anda')."
+      ],
+      "successThreshold": "class-creation rate moves from 11% toward 20%; artifact teachers from 8 toward 15.",
+      "killRule": "If classroom creation does not move after 30d, pivot onboarding flow (not the AI tools)."
+    },
+    "days31_60": {
+      "initiatives": [
+        "Resolve school identity (apply P1-C backfill policy CASE A/B/C after founder approval) to unlock school-level cohorts.",
+        "Launch one repeatable non-founder activation experiment at scale (nudge top artifact teachers to replicate Playbook A/B).",
+        "Ship the first clean learner-retention D7/D30 cohort report."
+      ],
+      "successThreshold": "schoolId coverage > 0% and first school-cohort report; 2+ new non-founder operational teachers from nudge experiments.",
+      "killRule": "If no non-founder teacher scales an artifact playbook, de-prioritize teacher-led replication and test a school-centric model."
+    },
+    "days61_90": {
+      "initiatives": [
+        "Gate first commission: enable a non-founder-class MURID_PREMIUM purchase path and verify the affiliate/commission loop pays out.",
+        "Decide product/market direction: classroom-operator-led (B) vs school-led (C) based on days 0-60 evidence.",
+        "Prepare investor narrative v2 with real retention + activation + monetization curves for a financing round."
+      ],
+      "successThreshold": "first non-founder commission realized; a defensible 90d activation & retention curve printed; a clear monetization-repeatability signal.",
+      "killRule": "If monetization remains zero and retention flat, recommend founder to NOT seek outside capital and instead focus on a paid pilot with 1-2 partner schools."
+    }
+  },
+  "priorityExperiment": {
+    "name": "OPERATIONAL TEACHER EXPERIMENT",
+    "hypothesis": "If a newly-registered teacher is taken to a working classroom (create class → create first artifact → activate 5+ students) within one session, then the class-creation rate rises from 11% to >=25% and teacher 30d activation rises from 0.4% to >=3%.",
+    "cohort": "New GURU registrations (post-launch date) not already exposed to the treatment.",
+    "control": "Historical / holdout group using the current signup flow.",
+    "intervention": "Guided 'operational teacher' onboarding flow + post-AI CTA routing to classroom.",
+    "metrics": {
+      "primary": "teacher 30d activation rate (teacher created class + artifact + >=1 student active)",
+      "secondary": ["class-creation rate", "artifact-creation rate", "students30d per operational teacher"]
+    },
+    "baselines": { "classCreationRatePct": 11.2, "active30d": 2, "everTaught": 8 },
+    "timeWindow": "30 days post-rollout",
+    "source": "synthetic controlled rollout vs current-funnel baseline (privacy-safe, no production mutation)"
+  },
+  "northStarMetric": {
+    "name": "Operational Classrooms (Active Teacher-Classrooms)",
+    "formula": "Count of distinct (groupId) with a GROUP that (a) belongs to a non-founder GURU, (b) has >=1 teaching artifact (penugasan OR bank-soal quiz OR karya-feedback event), and (c) has >=1 student XP event in the trailing 30 days.",
+    "numerator": "distinct active groupIds",
+    "denominator": "none (absolute count, cohort-adjusted)",
+    "timeWindow": "trailing 30 days",
+    "source": "production DB (Group + artifacts + GameResult/XpLedger XpTransaction + Penugasan/QuizAssignment/Karya tables)",
+    "rationale": "It is the single metric that ties teacher activation, artifact production, and student response into one number, and is the leading indicator for retention and monetization."
+  },
+  "investorNarrative": {
+    "title": "Bahasa Indonesia classroom platform with a proven artifact-driven activation loop, pre-revenue, now proving repeatability before raising.",
+    "problem": "Indonesian teachers lack a digital home for running live Bahasa Indonesia classrooms; current digital classrooms ignore the subject's writing/literacy/assessment needs.",
+    "solution": "One platform where teachers run classes (penugasan, bank-soal quizzes, karya/literacy publishing) AND students get a gamified learning path (Jalur Cerdas, XP/rank, Karya feed) AND assessments (UKBI/TKA sims) AND AI teaching tools.",
+    "traction": "2,437+ users (484 GURU authoritative), 1,254 grouped students, 54 class creators, artifact-driven classrooms with 54-97% student XP-activation, 444+ UKBI certificates, 1,590+ Karya, functional (if latent) commission + monetization rails.",
+    "proofOfLoop": "Playbook A+B teachers prove the activation→student-response→retention loop works for the niche.",
+    "honesty": "Pre-revenue Rp438k (~US$29); 0.86% trial-to-paid; only 1.7% of teachers ever-taught; school effect unmeasurable today.",
+    "differentiation": "Subject-specific (Bahasa Indonesia) depth + integrated literacy/karya + AI tools + gamification + UKBI/TKA — not a generic classroom LMS.",
+    "market": "No inflated TAM: start with the operational-teacher niche (hundreds today, thousands addressable via MGMP/KKG networks), expand to school segment only once school identity and a lead product are proven.",
+    "unitEconomics": "Not stable enough to quote CAC/LTV yet; monetization rails exist (Pro subscriptions, karya marketplace, student premium, commission) but need the activation bottleneck solved to mean anything.",
+    "ask": "Do not raise a growth round yet. Proof-point round / pilot capital only, OR delay raising until the OPERATIONAL TEACHER EXPERIMENT prints real activation + monetization curves.",
+    "riskHonesty": "Biggest risk is activation (teacher→classroom→student); second is monetization repeatability; third is founder concentration (3 founders hold ~32% of grouped students).",
+    "northStar": "Operational Classrooms (active teacher-classrooms, 30d) as the single number that must grow."
+  },
+  "capitalStrategy": {
+    "recommendation": "DO NOT RAISE A BROAD GROWTH ROUND NOW — product is pre-revenue and activation is unsolved.",
+    "options": {
+      "A": "Bootstrapped pilot (recommended): run OPERATIONAL TEACHER EXPERIMENT + first commission with 1-2 partner schools using current funds; delay external capital until activation + monetization print real curves. Capital need: ~Rp0-50M operational.",
+      "B": "Small proof-point round (Rp0.5-1B) with milestone tranches tied to activation/retention/monetization numbers — only if a warm investor asks specifically.",
+      "C": "Founder-funded pilot: no dilution, fastest to evidence, keeps optionality.",
+      "D": "Full seed round (Rp4B+): NOT recommended at this stage — no repeatability evidence to justify valuation, and founder concentration + pre-revenue make terms poor."
+    },
+    "founderVerdictCapital": "Pursue A/C (no or minimal dilution) for the next 60-90 days; revisit D only after the experiment + first-commission gate prints."
+  },
+  "readinessScorecard": {
+    "grader": "1 = current 0-10 score, evidence-grounded; gap = what makes it higher; scoreChanger = the specific event that raises the grade.",
+    "scoreCurrentOutOf10": 3.2,
+    "items": [
+      { "item": "Market / problem clarity", "score": 6, "currentState": "Clear subject-niche + problem for operational teachers", "gap": "No quantified total-addressable evidence", "scoreChanger": "MGMP/KKG reach number (teachers who have live classrooms)" },
+      { "item": "Product / solution", "score": 6, "currentState": "Functioning breadth: classroom, karya, gamification, UKBI/TKA, AI", "gap": "Many features lag; game server dead; Nilai unused", "scoreChanger": "Game revival + one razor-clear 'job-to-be-done' per persona" },
+      { "item": "Traction / activation", "score": 2, "currentState": "11.2% class creation, 1.7% ever-taught", "gap": "Activation unsolved", "scoreChanger": "OPERATIONAL TEACHER EXPERIMENT moves class-creation to >=25%" },
+      { "item": "Retention", "score": 2, "currentState": "No clean learner retention curve; 2 active teachers 30d", "gap": "No cohort retention published", "scoreChanger": "D7/D30 learner cohort report shows >=40% D7" },
+      { "item": "Revenue", "score": 1, "currentState": "Rp438k (~US$29) pre-revenue", "gap": "No repeatable revenue", "scoreChanger": "First non-founder commission + repeated MURID_PREMIUM" },
+      { "item": "Monetization rails", "score": 5, "currentState": "Pro, karya marketplace, student premium, commission all functional", "gap": "None realized at scale", "scoreChanger": "First paying non-founder classroom cohort" },
+      { "item": "Unit economics", "score": 1, "currentState": "Not computable (no paid acquisition)", "gap": "No CAC/LTV", "scoreChanger": "Run paid test; compute CAC/LTV/payback" },
+      { "item": "Growth engine", "score": 2, "currentState": "No measured organic/paid loop; AI magnet not routed to classroom", "gap": "No growth loop", "scoreChanger": "AI-magnet→classroom routing conversion measured" },
+      { "item": "Marketplace / network effects", "score": 3, "currentState": "Karya feed + community exist; commission rails latent", "gap": "Low adoption, founder-concentrated classes", "scoreChanger": "Non-founder teacher-generated karya/commission volume" },
+      { "item": "Team / founder", "score": 5, "currentState": "Founder-led, full-stack shipped large product; 3 founders heavy on classes", "gap": "Founder concentration risk; no 2nd-in-command narrative", "scoreChanger": "Add / document advisor or COO narrative; de-concentrate classes" },
+      { "item": "Data & analytics quality", "score": 5, "currentState": "Extensive read-only audits; metric dictionaries; school/heap unresolved", "gap": "School identity, session tracking, checkout instrumentation missing", "scoreChanger": "Resolve school identity + instrument checkout + sessions" },
+      { "item": "Story / narrative", "score": 5, "currentState": "Strong subject-niche + evidence honesty; v1 narrative now exists", "gap": "No real traction numbers to anchor a raise", "scoreChanger": "90d experiment prints activation/retention/monetization curves" },
+      { "item": "Financials / model", "score": 3, "currentState": "Financial plan exists (from prior phases) but pre-revenue", "gap": "Unit economics + repeatability unproven", "scoreChanger": "Real revenue to validate model" },
+      { "item": "Competitive moat", "score": 4, "currentState": "Subject-specific depth + integrated literacy/AI/UKBI-TKA nobody else has", "gap": "Moat not demonstrated by usage; few schools", "scoreChanger": "Winning school implementations" },
+      { "item": "Terms / valuation readiness", "score": 2, "currentState": "Not ready to seek broad terms; founder concentration", "gap": "No repeatability evidence", "scoreChanger": "Proof-point + activation evidence" },
+      { "item": "De-risk milestone clarity", "score": 3, "currentState": "Primary bottleneck + THE one experiment defined", "gap": "Not yet executed", "scoreChanger": "Experiment completes with clear result in 90d" }
+    ],
+    "verdict": "3.2/10 — NOT READY TO RAISE. Score moves to >6 only after the OPERATIONAL TEACHER EXPERIMENT (activation), a D7/D30 retention curve, and a first repeated monetization event (non-founder commission) all print in the 90-day window."
+  },
+  "killKeepStart": {
+    "kill": [
+      "Do NOT pitch 'school penetration' or school-level metrics to investors (unmeasurable today; 0 canonical schools).",
+      "Do NOT invest further in Game revival as a primary growth lever until activation is solved (only 1 teacher hosted a game).",
+      "Do NOT spend on paid user acquisition before checkout/activation instrumentation exists."
+    ],
+    "keep": [
+      "AI tools as the top-of-funnel magnet (73 teachers).",
+      "Playbook A (Class Operator) + Playbook B (Literasi Publisher) as the core repeatable motion.",
+      "Karya/literacy publishing + gamification + UKBI/TKA as differentiation depth.",
+      "Commission + monetization rails (functional, safe)."
+    ],
+    "start": [
+      "Instrument activation + checkout funnels (premium_viewed, checkout_abandoned, class_created, artifact_created).",
+      "Ship the 'operational teacher' onboarding (first class + first artifact in one session).",
+      "Route AI-tool users into classroom creation (post-generation CTA).",
+      "Resolve school identity to unlock school cohorts.",
+      "Publish first clean learner D7/D30 retention + teacher activation cohort reports."
+    ]
+  },
+  "dataQuality": {
+    "authoritativeGuruCount": 484,
+    "guruCountDrift": { "forensic_2026_09_03": 484, "investor_2026_09_02": 481, "business_2026_09_01": 477 },
+    "knownGaps": [
+      "School identity unresolved (0 canonical, 683 raw, 2,050 phantom profiles)",
+      "No checkout instrumentation",
+      "No clean session tracking (LoginHistory empty)",
+      "Admin role count inconsistent across snapshots (3 vs 0 after founder remap)",
+      "Revenue/commission realized = 0 at scale"
+    ],
+    "readOnlyGuarantee": "NO production data modified; NO migration; NO fabricated metrics."
+  },
+  "founderVerdict": {
+    "whatWeKnow": [
+      "AI tools are the #1 acquisition magnet but do not route to classroom (activation bottleneck).",
+      "A specific 'operational teacher' archetype works: those who create a class + artifacts drive 54-97% student XP-activation.",
+      "Two repeatable playbooks exist (Class Operator, Literasi Publisher) proven by non-founder teachers.",
+      "Commission + monetization rails are functional and safe; zero commissions are a data gap (no non-founder purchase).",
+      "The product is pre-revenue (Rp438k / ~US$29) with strong differentiation depth but unsolved activation."
+    ],
+    "whatWeBelieve": [
+      "Routing the AI-magnet funnel into classroom creation is the highest-leverage move for the next 30-90 days.",
+      "School effect is real but latent and unmeasurable until school identity is resolved.",
+      "Founder concentration (~32% of grouped students in 3 founder classes) is a credibility + growth risk to address.",
+      "Monetization repeats only after an activated non-founder classroom produces a paying student."
+    ],
+    "whatWeDoNOTKnow": [
+      "Whether class-creation rate can be pushed from 11% to 25%+ (unproven intervention).",
+      "Clean learner retention (D7/D30) — no cohort curve yet.",
+      "Whether any non-founder teacher can produce a paying student / first commission.",
+      "School deal size and whether schools will pay (school identity + pilot unproven)."
+    ],
+    "singleThingToProve": "That a non-founder teacher can repeatedly become an 'operational classroom' (create class → artifact → activate 5+ students → retain), and that this loop triggers first monetization (student premium / commission).",
+    "ninetyDayMission": "Raise class-creation rate from 11% to >=25%, grow active teacher-classrooms from ~2 to >=15, resolve school identity for school cohorts, print a clean D7/D30 learner + teacher retention curve, and trigger the first non-founder commission.",
+    "fundraisingStatus": "NOT READY",
+    "fundraisingStatusRationale": "Pre-revenue, activation unsolved, no retention curve, no repeatable monetization, founder concentration. Pursuing capital now would yield poor terms and distract from the one experiment that can change the numbers.",
+    "nextMove": "Execute the OPERATIONAL TEACHER EXPERIMENT (days 0-30), instrument the funnel, resolve school identity (days 31-60), and trigger first non-founder commission (days 61-90). Re-score readiness at day 90; only then revisit the capital decision."
+  }
+}

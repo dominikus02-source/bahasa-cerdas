@@ -42,6 +42,11 @@ export default function GuruOnboardingPage() {
   // Step 3 — copy/share
   const [copied, setCopied] = useState(false)
 
+  // Step 4 — student milestone visibility (P0 #3c)
+  const [milestoneStep, setMilestoneStep] = useState(0) // 0-loading,1-waiting,2-first-joined,3-threesome
+  const [memberCount, setMemberCount] = useState(0)
+  const [firstStudentName, setFirstStudentName] = useState("")
+
   useEffect(() => {
     fetch("/api/user/me")
       .then(r => r.json())
@@ -99,6 +104,30 @@ export default function GuruOnboardingPage() {
     window.location.href = "/guru/beranda"
   }
 
+  // Advance from share-code (step 2) to the student-milestone screen (step 3).
+  const handleGoToMilestone = () => {
+    setMilestoneStep(1)
+    setStep(3)
+  }
+
+  // Live-poll the group's student-join milestone while on the milestone screen.
+  useEffect(() => {
+    if (step !== 3 || !createdClass?.id) return
+    const id = window.setInterval(async () => {
+      try {
+        const res = await fetch(`/api/guru/onboarding/status?groupId=${createdClass.id}`)
+        const data = await res.json()
+        if (!res.ok || !data.hasGroup) return
+        setMemberCount(data.memberCount ?? 0)
+        if (data.firstStudentName) setFirstStudentName(data.firstStudentName)
+        setMilestoneStep(
+          data.memberCount >= 3 ? 3 : data.memberCount >= 1 ? 2 : 1
+        )
+      } catch {}
+    }, 4000)
+    return () => window.clearInterval(id)
+  }, [step, createdClass?.id])
+
   const handleSkipToClass = async () => {
     try { await fetch("/api/user/onboarded", { method: "POST" }) } catch {}
     window.location.href = "/guru/kelasku"
@@ -124,7 +153,7 @@ export default function GuruOnboardingPage() {
 
         {/* Progress dots */}
         <div className="flex gap-1.5 mb-10">
-          {[0, 1, 2].map(i => (
+          {[0, 1, 2, 3].map(i => (
             <div key={i} className={`h-2 rounded-full transition-all duration-300 ${
               i === step ? "w-8 bg-emerald-500" : i < step ? "w-2 bg-emerald-300" : "w-2 bg-slate-200"
             }`} />
@@ -297,11 +326,88 @@ export default function GuruOnboardingPage() {
             </p>
 
             <button
-              onClick={handleFinish}
+              onClick={handleGoToMilestone}
               className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-200"
             >
-              Mulai Mengajar! 🚀
+              Undang Murid & Mulai Mengajar 🚀
             </button>
+          </div>
+        )}
+
+        {/* Step 4 — Milestone visibility (first student joins) */}
+        {step === 3 && createdClass && (
+          <div className="w-full text-center">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-lg mb-4 mx-auto">
+              {milestoneStep >= 2 ? <Sparkles className="w-8 h-8 text-white" /> : <Users className="w-8 h-8 text-white" />}
+            </div>
+
+            {milestoneStep === 2 || milestoneStep === 3 ? (
+              <>
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">
+                  {milestoneStep === 3 ? "Hebat! Kelasmu sudah ramai 🎉" : "Murid pertamamu bergabung! 🎉"}
+                </h2>
+                <p className="text-slate-500 text-sm mb-6">
+                  {milestoneStep === 3
+                    ? `${memberCount} murid sudah ada di "${createdClass.name}".`
+                    : (firstStudentName
+                        ? `${firstStudentName} bergabung ke "${createdClass.name}".`
+                        : `Seorang murid bergabung ke "${createdClass.name}".`)}
+                  {" "}Ajak terus murid lain agar kelasmu lebih hidup.
+                </p>
+              </>
+            ) : (
+              <>
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">
+                  Tunggu murid pertamamu
+                </h2>
+                <p className="text-slate-500 text-sm mb-6">
+                  Bagikan kode <span className="font-mono font-semibold text-emerald-600">{createdClass.accessCode}</span> ke muridmu.
+                  Halaman ini akan otomatis memperbarui begitu ada yang bergabung.
+                </p>
+              </>
+            )}
+
+            {/* Live counter */}
+            <div className="bg-slate-50 rounded-2xl border border-slate-200 p-6 mb-6">
+              <div className="flex items-center justify-center gap-3">
+                <Users className="w-5 h-5 text-emerald-600" />
+                <p className="text-sm text-slate-500">
+                  <span className="text-3xl font-bold text-slate-900">{memberCount}</span>{" "}
+                  murid bergabung
+                </p>
+              </div>
+              <div className="mt-3 flex items-center justify-center gap-1.5">
+                {[1, 2, 3].map(n => (
+                  <div key={n} className={`w-10 h-2 rounded-full ${
+                    memberCount >= n ? "bg-emerald-500" : "bg-slate-200"
+                  }`} />
+                ))}
+              </div>
+              <p className="text-xs text-slate-400 mt-3">
+                {memberCount >= 3 ? "3 murid — target kelas aktif tercapai" : "3 murid = kelas aktif"}
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <Link
+                href={`/murid/gabung-kelas`}
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white border-2 border-emerald-200 text-emerald-700 rounded-xl font-semibold hover:bg-emerald-50 transition-colors"
+              >
+                <ExternalLink className="w-5 h-5" /> Lihat Halaman Murid
+              </Link>
+              <button
+                onClick={handleSkipToClass}
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white border-2 border-slate-200 text-slate-700 rounded-xl font-semibold hover:bg-slate-50 transition-colors"
+              >
+                <ArrowRight className="w-4 h-4" /> Ke Halaman Kelasku
+              </button>
+              <button
+                onClick={handleFinish}
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-200"
+              >
+                Selesai ke Dasbor
+              </button>
+            </div>
           </div>
         )}
       </div>

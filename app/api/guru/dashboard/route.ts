@@ -3,11 +3,26 @@ import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { ok, err } from "@/lib/api/response";
 import { ERR } from "@/lib/api/errors";
+import {
+  recordProductEvent,
+  PRODUCT_EVENT_F8_TEACHER_SESSION,
+  dayKeyWIB,
+} from "@/lib/analytics/product-event-store";
 
 export async function GET() {
   try {
     const user = await getUser();
     if (!user) return err(ERR.UNAUTHORIZED.error, ERR.UNAUTHORIZED.code, ERR.UNAUTHORIZED.status);
+
+    // P0 #7 — F8 capture: guru sesi harian (fire-and-forget, sekali-per-hari WIB per guru).
+    void recordProductEvent({
+      actorId: user.id,
+      event: PRODUCT_EVENT_F8_TEACHER_SESSION,
+      entityType: "GuruDashboard",
+      entityId: user.id,
+      logicalKey: `teacher-${user.id}-${dayKeyWIB()}`,
+      props: { action: "dashboard_view" },
+    });
 
     const [karyaCount, siswaCount, kuisCount, purchases, earnings, rppCount, soalCount] = await Promise.all([
       db.karya.count({ where: { sellerId: user.id } }),

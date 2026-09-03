@@ -4,6 +4,12 @@ import { db } from "@/lib/db";
 import { isTeacherOrStudent, getTeacherGroups } from "@/lib/teacher/students";
 import { awardGuruXp } from "@/lib/gamification/teacher-xp";
 import { getUniqueAccessCode } from "@/lib/classroom/access-code";
+import {
+  recordProductEvent,
+  PRODUCT_EVENT_F4_CODE_SHARED,
+  PRODUCT_EVENT_F8_TEACHER_SESSION,
+  dayKeyWIB,
+} from "@/lib/analytics/product-event-store";
 
 function isTeacherOrHigher(user: { role: string; isFounder: boolean }): boolean {
   return isTeacherOrStudent(user);
@@ -86,6 +92,26 @@ export async function POST(req: NextRequest) {
     } catch (err) {
       console.error("GURU_KELAS XP error:", err);
     }
+
+    // P0 #7 — Operational Teacher Experiment capture hooks (best-effort, fire-and-forget).
+    // F4: kode kelas dibuat/dibagikan — sekali-per-grup (logicalKey deterministik).
+    void recordProductEvent({
+      actorId: dbUser.id,
+      event: PRODUCT_EVENT_F4_CODE_SHARED,
+      entityType: "Group",
+      entityId: group.id,
+      logicalKey: `group-${group.id}-code-shared`,
+      props: { grade, tahunAjaran },
+    });
+    // F8: sesi guru (guru mengembalikan platform / mengambil aksi) — sekali-per-hari WIB.
+    void recordProductEvent({
+      actorId: dbUser.id,
+      event: PRODUCT_EVENT_F8_TEACHER_SESSION,
+      entityType: "Group",
+      entityId: group.id,
+      logicalKey: `teacher-${dbUser.id}-${dayKeyWIB()}`,
+      props: { action: "class_created" },
+    });
 
     return NextResponse.json({ group, code: group.accessCode }, { status: 201 });
   } catch (error) {

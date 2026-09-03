@@ -1,0 +1,242 @@
+{
+  "experiment": {
+    "id": "OPERATIONAL_TEACHER_EXPERIMENT",
+    "phase": 8,
+    "status": "SPECIFICATION_ONLY",
+    "hypothesis": "Routing new non-founder GURU through an Operational Teacher onboarding that creates the first class, shares the access code, and guides >=1 artifact + >=3 student activations in ~10 minutes raises class-creation (activation) rate from 11.2% toward >=25% for new-teacher cohorts and yields first-ever Operational Classrooms.",
+    "scorecardItem16Baseline": 3,
+    "gridGoal": "Activation and Operational Classrooms kept as SEPARATE tracked metrics; never collapsed."
+  },
+  "operationalClassroomDefinition": {
+    "windowDays": 30,
+    "timezone": "Asia/Jakarta",
+    "X": "Teacher shipped >=1 artifact (Penugasan, QuizAssignment, MateriKirim, Pengumuman, or >=1 StudentKarya into the group) in trailing-30d",
+    "Y": ">=3 distinct active students in the group (distinct userId in GroupMember with Z evidence)",
+    "Z": "Student activity evidence in trailing-30d via ANY of: XPTransaction, QuizSubmission, UserUnitProgress, ProgresKompetensi, StudentKarya",
+    "compositeRule": "Operational Classrooms (30d) = Group where X AND Y AND Z over the same trailing-30d window",
+    "studentFloor": 3,
+    "studentTarget": 5,
+    "baselineValue": 0,
+    "baselineNote": "Uncomputed today (no Operational Classroom calc exists)."
+  },
+  "funnel": [
+    {
+      "stage": "F1",
+      "name": "Registered GURU",
+      "source": "User.role=GURU",
+      "schema": true
+    },
+    {
+      "stage": "F2",
+      "name": "Onboarded",
+      "source": "User.onboarded",
+      "schema": true
+    },
+    {
+      "stage": "F3",
+      "name": "Created first class (CLIFF)",
+      "source": "Group.teacherId",
+      "schema": true
+    },
+    {
+      "stage": "F4",
+      "name": "Code shared",
+      "source": "proxy: first GroupMember.join OR new ProductEvent",
+      "schema": "proxy"
+    },
+    {
+      "stage": "F5",
+      "name": "First student joined",
+      "source": "GroupMember.joinedAt",
+      "schema": true
+    },
+    {
+      "stage": "F6",
+      "name": "3rd/5th student joined",
+      "source": "COUNT(GroupMember)",
+      "schema": true
+    },
+    {
+      "stage": "F7",
+      "name": "First student activity",
+      "source": "Z evidence tables",
+      "schema": true
+    },
+    {
+      "stage": "F8",
+      "name": "Teacher returns within 7d",
+      "source": "proxy: first artifact after class create, or session event",
+      "schema": "proxy"
+    },
+    {
+      "stage": "F9",
+      "name": "ACTIVATION (primary metric)",
+      "source": "F3 reached",
+      "schema": true
+    },
+    {
+      "stage": "F10",
+      "name": "OPERATIONAL CLASSROOM (North Star)",
+      "source": "X AND Y AND Z composite",
+      "schema": true
+    }
+  ],
+  "events": {
+    "allowlistCurrent": "main + gcs_* + P8C teacher_risk/withdrawal (console-only, NO DB persistence)",
+    "productEventTableExists": false,
+    "gap": "No ProductEvent table. Funnel cannot be measured retroactively from events; F4 and F8 lack persisted timestamps.",
+    "decision": "Derive schema-backed stages now; add additive ProductEvent persistence layer (P0 #7) for F4/F8 and future stages. Backfill impossible.",
+    "forbiddenPayload": "correctAnswer / answerKey"
+  },
+  "activationWindow": {
+    "primaryMetric": "Activation = % GURU in cohort who created >=1 class (F3)",
+    "baseline": 11.2,
+    "target": 25,
+    "denominator": "distinct User.role=GURU non-founder, onboarded",
+    "caveat": "Cannot reach powered p<0.05 from available data (population ~few hundred); before/after cohort + funnel-lift design."
+  },
+  "population": {
+    "inclusion": "User.role=GURU non-founder",
+    "exclusion": "isFounder=true (Alexander, Dominikus, Washadi)",
+    "totalGuru": 484,
+    "createdClassGuru": 54,
+    "artifactGuru": 8,
+    "active30dTeachers": 2,
+    "groupedStudents": 1254,
+    "founderShareOfGroupedStudentsPercent": 32
+  },
+  "control": {
+    "design": "Pre-ship baseline cohort (teachers onboarded before go-live) + lagging existing creators",
+    "baselineMetrics": {
+      "activationPercent": 11.2,
+      "classToArtifactPercent": 14.8,
+      "artifactTeachers": 8,
+      "operationalClassrooms": 0
+    }
+  },
+  "treatment": {
+    "group": "All new non-founder GURU onboarded after go-live receive Operational Teacher onboarding",
+    "randomized": false,
+    "randomizationNote": "Product-onboarding change has no feature-flag; staggered time/count cohort. A separate Playbook A/B widget sub-experiment CAN be flag-randomized.",
+    "p0Changes": [
+      "1 Operational Teacher onboarding rewrite",
+      "2 7-day 3-artifact checklist",
+      "3 class-join reward + XP-activation visibility",
+      "4 AI->Class routing CTA",
+      "5 orphan-group re-activation"
+    ],
+    "additivePersistence": "ProductEvent table + write route (P0 #7, not counted in the 5 customer-facing P0s)"
+  },
+  "metrics": {
+    "primaryActivation": "O1 class-creation %",
+    "northStarOperational": "O3 Operational Classrooms (30d)",
+    "secondary": [
+      {
+        "id": "S1",
+        "name": "Class->artifact",
+        "baselinePercent": 14.8,
+        "targetPercent": 30
+      },
+      {
+        "id": "S2",
+        "name": "Artifact velocity",
+        "baseline": "~0/wk"
+      },
+      {
+        "id": "S3",
+        "name": "Student XP-activation",
+        "baselineRange": "30-97% by teacher"
+      },
+      {
+        "id": "S4",
+        "name": "Weekly returning teachers",
+        "baseline30d": 2
+      },
+      {
+        "id": "S5",
+        "name": "30d teacher activation",
+        "baselinePercent": 0.4,
+        "targetPercent": 1.5
+      }
+    ]
+  },
+  "successCriteria": {
+    "activation": ">=25%",
+    "northStarOperational": "first-ever Operational Classrooms sustained count > 0",
+    "classToArtifact": ">=30%",
+    "thirtyDayTeacherActivation": ">=1.5%",
+    "statisticalHonesty": "PASS = directional lift + sustained O3>0; no powered p<0.05 from volume."
+  },
+  "guardrails": [
+    "Founder separation (with/ex-founders on every cohort tile)",
+    "No double-award: teacher XP on join idempotent via @@unique[userId,source,reference]",
+    "Honest proxies: F4/F8 labeled approximation; no fabricated historical events",
+    "Rate-limit discipline: new APIs under rateLimitRoute (30/60s, session-scoped)",
+    "Protected zones: 6 protected files + User.xp denormalized flag read-only; no prod write"
+  ],
+  "productChanges": [
+    "P0#1 Operational Teacher onboarding rewrite (/guru/onboarding) - attacks F3 cliff",
+    "P0#2 7-day 3-artifact checklist + choose-playbook - attacks artifact wall",
+    "P0#3 class-join teacher XP + first-student celebration + XP-activation visibility + code-share event",
+    "P0#4 AI->Class routing CTA (73 AI users) - routes widest door to classroom",
+    "P0#5 orphan-group re-activation (post-ship) - re-activates ~108 dormant groups",
+    "P0#7 (additive) ProductEvent persistence layer for F4/F8 and future funnel stages"
+  ],
+  "uxJourney": {
+    "targetMinutes": 10,
+    "steps": [
+      "Welcome + why (~10 minutes)",
+      "Create class -> POST /api/group -> auto-copy access code",
+      "Invite students (share code via /murid/gabung-kelas or /arena/gabung-kelas; state 5-student target)",
+      "First artifact CTA (Playbook A) OR Karya challenge template (Playbook B)",
+      "Visibility: 'X dari Y muridmu aktif minggu ini' (XP>0)",
+      "First-week checklist persists on /guru/beranda until >=3 artifacts + >=1 active student"
+    ],
+    "noPageRewrite": "Phase 8 specifies only; journey is target behavior for P0 build."
+  },
+  "schoolBackfillPolicy": {
+    "status": "Deferred / out of scope for the activation experiment",
+    "note": "School identity resolution (P1-C CASE A/B/C) is a separate workstream; attribution via GroupMember join remains the classroom-cohort join basis here. No schoolId write in this phase."
+  },
+  "launchGate": {
+    "checkCount": 10,
+    "checks": [
+      "Baseline frozen to JSON before any P0 ships",
+      "Protected files (6) = 0 git diff",
+      "No production data modified (0 migration, 0 updateMany)",
+      "Activation tile and Operational Classrooms tile separate with distinct definitions",
+      "Every cohort row shows with-founders AND ex-founders",
+      "F4/F8 proxies labeled; no fabricated historical events",
+      "Onboarding reuses /api/group (single source of truth)",
+      "Teacher XP reward idempotent (replay-safe)",
+      "New events/APIs rate-limited session-scoped",
+      "CI green (tsc, ESLint, gamification-engine, guru-phase, ai-tools-audit)"
+    ]
+  },
+  "implementationPlan": {
+    "order": [
+      "1 Instrument: add ProductEvent persistence + F4/F8 hooks (Initiative 1)",
+      "2 Derive baseline from schema; wire Activation + Operational-Classroom tiles via lib/admin/executive.ts (read-only)",
+      "3 Ship P0#1 onboarding + P0#3 class-join reward/visibility",
+      "4 Ship P0#2 7-day checklist + P0#4 AI->Class CTA",
+      "5 Ship P0#5 orphan re-activation after 2-week data",
+      "6 Measure: funnel + North Star dashboards, 2-week cohort cycles"
+    ],
+    "thisPhaseWrites": "NONE - spec docs + JSON data only"
+  },
+  "investorImpact": {
+    "scorecard16_baseline": 3,
+    "moveCondition": "Executing Experiment H1 with clean Activation + North Star raises #16",
+    "scorecard1_baseline": 6,
+    "taugap": "Non-founder Operational Classroom baseline + playbook converts 'no quantified TAM' into dated market signal",
+    "headlineNumber": "ex-founders Operational Classroom WAU + activation 11.2% -> >=25%",
+    "northStarDiscipline": "every P0 traces to Operational Classrooms or the activation bottleneck"
+  },
+  "decisionTree": {
+    "gate1_activationUp": "if Activation >=25% -> continue scale onboarding, expand AI->Class routing (P0#4), track O3",
+    "gate2_northStarPositive": "if first Operational Classrooms appear (O3>0) -> Investor narrative v2 with real retention/monetization curve (Initiative 9)",
+    "gate3_activationFlat": "if Activation stays ~11.2% after 2 cycles -> iterate onboarding + checklist; re-test; do NOT collapse into North Star",
+    "gate4_playbookAB": "flag-randomized widget sub-experiment decides Playbook A vs B preference for later cohorts",
+    "founderReview": "Phase 8 deliverables uncommitted, awaiting Founder Review (no commit/push)"
+  }
+}

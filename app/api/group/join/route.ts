@@ -3,6 +3,10 @@ import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { ensureAttributionOnClassJoin } from "@/lib/commission/attribution";
 import { recordRiskSignal } from "@/lib/guru/risk/signals";
+import {
+  recordProductEvent,
+  PRODUCT_EVENT_F5_FIRST_JOIN,
+} from "@/lib/analytics/product-event-store";
 
 export async function POST(req: NextRequest) {
   try {
@@ -34,6 +38,23 @@ export async function POST(req: NextRequest) {
     const member = await db.groupMember.create({
       data: { groupId: group.id, userId: dbUser.id },
     });
+
+    // ── P0 #5 — Operational Teacher Experiment: F5 milestone (server-truth) ──
+    // First student joins the class = the observable "share worked" moment that
+    // follows F4 (code shared). Idempotent logicalKey (once per group); only
+    // fired on the actual FIRST join (memberCount === 1) so later joins don't
+    // re-record. Best-effort, fire-and-forget, safe props — never blocks join.
+    const memberCount = await db.groupMember.count({ where: { groupId: group.id } });
+    if (memberCount === 1) {
+      void recordProductEvent({
+        actorId: group.teacherId,
+        event: PRODUCT_EVENT_F5_FIRST_JOIN,
+        entityType: "Group",
+        entityId: group.id,
+        logicalKey: `group-${group.id}-first-join`,
+        props: { grade: group.grade, studentId: dbUser.id },
+      });
+    }
 
     // ── P7C: atribusi "Guru Cerdas Sejahtera" (first-valid-wins) ──
     // Best-effort: kegagalan di sini TIDAK menggagalkan join kelas. Kalau

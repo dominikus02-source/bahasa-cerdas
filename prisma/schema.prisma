@@ -3394,6 +3394,35 @@ model TeacherRiskAction {
   @@index([riskCaseId, createdAt])
 }
 
+/// Canonical product-event persistence layer (Operational Teacher Experiment P0 #7).
+/// Additive-only: menggantikan console-logging rute product-event dengan
+/// penyimpanan tahan lama, TANPA mengubah perilaku `lib/analytics/product-track.ts`
+/// atau menghapus log console yang ada.
+///
+/// Idempotensi: `@@unique([actorId, event, entityType, entityId, logicalKey])`.
+/// - `logicalKey` = token deterministik dari pemanggil (mis. "group-<id>-code-shared"
+///   untuk sekali-per-grup, atau "teacher-<id>-<hariWIB>" untuk sekali-per-hari sesi).
+///   Retry/pengulangan dengan logicalKey sama TIDAK membuat baris kedua.
+/// - Ulangan sah tetap terukur dengan logicalKey berbeda (mis. hari berbeda).
+///
+/// Keamanan: TIDAK menyimpan password/token/secret pembayaran/payload sensitif mentah.
+/// `props` hanya berisi ID/kategori, bukan email/PII yang tidak perlu.
+model ProductEvent {
+  id         String   @id @default(cuid())
+  actorId    String                        // User.id pelaku
+  event      String                        // nama event allowlist (F4/F8 dsb.)
+  entityType String                        // "GROUP" / "USER" / "CLASS_CODE" ...
+  entityId   String
+  logicalKey String                        // kontrol idempotensi (deterministik)
+  props      Json?                         // sifat aman (ID/kategori, tanpa PII/secret)
+  createdAt  DateTime @default(now())
+
+  @@unique([actorId, event, entityType, entityId, logicalKey])
+  @@index([actorId, event])
+  @@index([event, createdAt])
+  @@index([entityType, entityId])
+}
+
 /// Historical daily business snapshot — append-only, end-of-day WIB state.
 /// See docs/HISTORICAL_SNAPSHOT_FINAL_CONTRACT.md for the full contract.
 /// CHECK constraints (mrr decomposition, premium decomposition, non-negativity,
