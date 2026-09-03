@@ -21,14 +21,16 @@ function check(name: string, ok: boolean) {
 console.log("\nTEST MY DAY HOME 2B (statis, tanpa DB)\n");
 
 const page = read("app/(dashboard)/murid/beranda/page.tsx");
-const continueCard = read("components/student-home/ContinueLearningCard.tsx");
+// ContinueLearningCard dihapus dari beranda — fungsi aksi/state diambil alih
+// StudentHomeHero (single source of truth untuk learning state + CTA utama).
+const hero = read("components/student-home/StudentHomeHero.tsx");
 const mentorCard = read("components/arena/player/MentorCard.tsx");
 const skillRadar = read("components/arena/player/SkillRadar.tsx");
 const arena = read("components/student-home/ArenaHomeSection.tsx");
 const premium = read("components/student-home/PremiumValueCard.tsx");
 const homeData = read("components/student-home/home-data.tsx");
 const adaptiveApi = read("app/api/player/adaptive-practice/route.ts");
-const allStudentHome = ["StudentHomeHero", "ContinueLearningCard", "AIBCHomeCard", "LearningJourneySection", "RuangBelajarSection", "SimulasiUjianSection", "RecentWorksSection", "ArenaHomeSection", "PremiumValueCard", "SecondaryLearningInfo"]
+const allStudentHome = ["StudentHomeHero", "AIBCHomeCard", "LearningJourneySection", "RuangBelajarSection", "SimulasiUjianSection", "RecentWorksSection", "ArenaHomeSection", "PremiumValueCard", "SecondaryLearningInfo"]
   .map((f) => `components/student-home/${f}.tsx`).map(read).join("\n");
 
 // 1 — My Day renders
@@ -38,36 +40,36 @@ check("1. PremiumValueCard terintegrasi", page.includes("<PremiumValueCard />"))
 
 // 2 — Personalized next action dari Learning Loop
 check("2. Rekomendasi dari adaptive preview canonical", homeData.includes("/api/player/adaptive-practice?mode=preview") && adaptiveApi.includes("selectAdaptivePractice"));
-check("2. Primary action memakai server My Day response", continueCard.includes("myDay.actionTitle") && continueCard.includes("myDay.reasonText") && !continueCard.includes('action || {'));
+check("2. Primary action memakai server My Day response (hero)", hero.includes("myDay.actionType") && hero.includes("myDay.reasonText") && !hero.includes('action || {'));
 
 // 3 — Session loading
-check("3. Loading state eksplisit (skeleton)", continueCard.includes("myDayLoading") && continueCard.includes("px-skeleton"));
+check("3. Loading state eksplisit (skeleton)", hero.includes("myDayLoading") && hero.includes("px-skeleton"));
 
 // 4 — Session error + retry
-check("4. Error state jujur ('Belum bisa memuat rekomendasi')", continueCard.includes("Belum bisa memuat rekomendasi belajarmu."));
-check("4. Tombol Coba Lagi (retry)", continueCard.includes("Coba Lagi") && continueCard.includes("refreshMyDay"));
-check("4. Error branch tidak menampilkan rekomendasi palsu", continueCard.includes("myDayFailed") && !continueCard.includes("Lanjutkan Perjalananmu"));
+check("4. Error state jujur ('Gagal memuat profilmu.')", hero.includes("Gagal memuat profilmu."));
+check("4. Tombol Coba Lagi (retry)", hero.includes("Coba Lagi") && hero.includes("refresh"));
+check("4. Error branch tidak menampilkan rekomendasi palsu", hero.includes("profileFailed") && !hero.includes("Lanjutkan Perjalananmu"));
 
 // 5 — Empty/new student
 check("5. Insufficient data memiliki judul jujur", adaptiveApi.includes("Mulai Latihan Hari Ini") && adaptiveApi.includes("GENERAL_LEARNING"));
 check("5. Insufficient data fallback ke rute belajar nyata", adaptiveApi.includes("/arena/jalur-cerdas"));
 check("5. Insufficient data tidak mengklaim adaptive", adaptiveApi.includes('mode: "FALLBACK"'));
 
-// 7 — One dominant CTA: HERO owns the gold gradient; ContinueLearningCard is
-// demoted to ghost (secondary) so it never competes with the hero action,
-// while keeping its explanatory/mentor content intact.
-check("7. Satu CTA utama di student-home — hero gold, aksi sekunder ghost",
+// 7 — One dominant CTA: HERO owns the gold gradient. ContinueLearningCard telah
+// dihapus dari beranda (aksi/state diambil alih hero), sehingga tidak ada lagi
+// kartu yang bisa bersaing dengan aksi utama hero.
+check("7. Satu CTA utama di student-home — hero gold, tanpa px-btn-gold lain",
   !["StudentHomeHero", "AIBCHomeCard", "LearningJourneySection", "RuangBelajarSection", "SimulasiUjianSection", "RecentWorksSection", "ArenaHomeSection", "PremiumValueCard", "SecondaryLearningInfo"]
     .some((f) => read(`components/student-home/${f}.tsx`).includes("px-btn-gold")) &&
-  !read("components/student-home/ContinueLearningCard.tsx").includes("px-btn-gold") &&
-  read("components/student-home/ContinueLearningCard.tsx").includes("px-btn-ghost") &&
   read("components/student-home/StudentHomeHero.tsx").includes("from-[#ffd24a]"));
 check("7. AI BC CTA sekunder (ghost)", read("components/student-home/AIBCHomeCard.tsx").includes("px-btn-ghost"));
 check("7. Arena CTA sekunder (ghost)", arena.includes("px-btn-ghost"));
 
 // 8 — Mentor insight
-check("8. MentorCard memakai konteks My Day yang sama", continueCard.includes("<MentorCard data={mentorData}") && continueCard.includes("focusText={myDay.reasonText}"));
-check("8. MentorCard menerima data → TIDAK fetch duplikat", mentorCard.includes("data?: MentorCardData | null") && mentorCard.includes("if (data !== null)"));
+// ContinueLearningCard (yang melempar mentorData ke MentorCard) dihapus —
+// beranda tidak lagi merender blok rekomendasi/mentor duplikat di bawah hero.
+check("8. Tidak ada kartu aksi/mentor duplikat di bawah hero", !page.includes("ContinueLearningCard") && !page.includes("MentorCard"));
+check("8. MentorCard tetap presentasional (data prop → TIDAK fetch duplikat)", mentorCard.includes("data?: MentorCardData | null") && mentorCard.includes("if (data !== null)"));
 check("8. Mentor tidak membuat recommendation engine kedua", mentorCard.includes("focusText") && !mentorCard.includes("getNextAction"));
 
 // 9-10 — SkillRadar
@@ -93,10 +95,10 @@ check("14. Tidak ada input plan/quota dari klien", !premium.includes("req.json")
 
 // 15 — Adaptive session start is server-authoritative (client sends only {action:"start"})
 check("15. CTA adaptive POST hanya kirim {action:'start'} (server tentukan skill/difficulty)", (() => {
-  const fetchMatch = continueCard.match(/fetch\("\/api\/player\/adaptive-practice"[\s\S]*?action:\s*"start"/);
+  const fetchMatch = hero.match(/fetch\("\/api\/player\/adaptive-practice"[\s\S]*?action:\s*"start"/);
   return fetchMatch !== null;
 })());
-check("15. CTA tidak mengirim skill/difficulty/question IDs", !continueCard.includes("targetSkill") && !continueCard.includes("questionIds") && !continueCard.includes("targetDifficulty"));
+check("15. CTA tidak mengirim skill/difficulty/question IDs", !hero.includes("targetSkill") && !hero.includes("questionIds") && !hero.includes("targetDifficulty"));
 
 // 15 — Dashboard summary no duplicate fetch
 check("16. /api/murid/dashboard/summary hanya di home-data", (allStudentHome.match(/api\/murid\/dashboard\/summary/g) || []).length === 0 && homeData.includes('"/api/murid/dashboard/summary"'));

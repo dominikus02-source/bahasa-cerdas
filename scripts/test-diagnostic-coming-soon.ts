@@ -18,7 +18,9 @@ const noDiff = (path: string) => execSync(`git diff --name-only HEAD -- ${path}`
 
 const config = read("lib/diagnostic-ai/config.ts");
 const route = read("app/api/player/diagnostic/route.ts");
-const card = read("components/student-home/ContinueLearningCard.tsx");
+// ContinueLearningCard dihapus dari beranda — cabang coming-soon kini di
+// StudentHomeHero (comingSoon server-derived via payload preview).
+const hero = read("components/student-home/StudentHomeHero.tsx");
 const homeData = read("components/student-home/home-data.tsx");
 
 let passed = 0;
@@ -34,9 +36,13 @@ function check(name: string, ok: boolean) {
 }
 
 console.log("── Konfigurasi gerbang ──");
-check("1. AI_DIAGNOSTIC_COMING_SOON didefinisikan = true (soal AI belum siap produksi)", () =>
-  config.includes("export const AI_DIAGNOSTIC_COMING_SOON = true;"));
-check("2. komentar menjelaskan syarat balik ke false (QA ≥100 butir + audit 0 ❌)", () =>
+// Gerbang saat ini TERBUKA (flag false — Tes Awal produksi aktif, terverifikasi
+// lewat sesi nyata). Suite menguji cabang defensif di hero: jika flag dibalik
+// ke true, entri Tes Awal harus degradasi aman (tanpa tombol mulai, CTA
+// fallback ke Jalur Cerdas) tanpa mengubah route/sesi.
+check("1. AI_DIAGNOSTIC_COMING_SOON didefinisikan = false (gerbang terbuka)", () =>
+  config.includes("export const AI_DIAGNOSTIC_COMING_SOON = false;"));
+check("2. komentar menjelaskan syarat QA (≥100 butir + audit 0 ❌) untuk balik ke true", () =>
   config.includes("qa-ai-diagnostic-8-4-1") && config.includes("AI_DIAGNOSTIC_COMING_SOON = false"));
 
 console.log("\n── Route preview (server-authoritative) ──");
@@ -56,22 +62,23 @@ check("8. BASELINE_IN_PROGRESS (resume) TIDAK ditandai — murid yang sedang tes
   return !npm.includes("comingSoon");
 });
 
-console.log("\n── UI kartu Aksi Hari Ini ──");
-check("9. badge 'Segera Hadir' dirender", () => card.includes("Segera Hadir"));
-check("10. cabang coming-soon dipasang SEBELUM STATE A (Mulai Tes Awal)", () =>
-  card.indexOf("STATE A+") > -1 && card.indexOf("STATE A+") < card.indexOf("STATE A — Belum ada bukti"));
+console.log("\n── UI hero (pengganti kartu Aksi Hari Ini) ──");
+check("9. cabang coming-soon DIAGNOSTIC ada di hero (fallback jujur 'Tes awal masih disiapkan')", () =>
+  hero.includes("Tes awal masih disiapkan") && hero.includes('ctaLabel: "Mulai Belajar"'));
+check("10. cabang coming-soon dipasang SEBELUM STATE A ('Mulai Tes' normal)", () =>
+  hero.indexOf("myDay.comingSoon") > -1 && hero.indexOf("myDay.comingSoon") < hero.indexOf('ctaLabel: "Mulai Tes"'));
 check("11. cabang coming-soon TIDAK memanggil startDiagnosticSession (tanpa tombol mulai)", () => {
-  const blok = card.slice(card.indexOf("STATE A+"), card.indexOf("STATE A — Belum ada bukti"));
-  return !blok.includes("startDiagnosticSession") && blok.includes("currentMyDay.comingSoon");
+  const blok = hero.slice(hero.indexOf("if (myDay.comingSoon)"), hero.indexOf('if (state === "BASELINE_IN_PROGRESS")'));
+  return !blok.includes("startDiagnosticSession") && blok.includes('href: "/arena/jalur-cerdas"');
 });
-check("12. CTA fallback jujur ke Jalur Cerdas ('mulai belajar dulu')", () =>
-  card.includes("Sambil menunggu, mulai belajar dulu") && card.includes("href=\"/arena/jalur-cerdas\""));
-check("13. path STATE A asli utuh — 'Mulai Tes Awal' + 'Kenali Kemampuanmu' tetap ada", () =>
-  card.includes("Mulai Tes Awal") && card.includes("Kenali Kemampuanmu"));
+check("12. CTA fallback jujur ke Jalur Cerdas ('mulai belajar di Jalur Cerdas')", () =>
+  hero.includes("Sambil menunggu, mulai belajar") && hero.includes('href: "/arena/jalur-cerdas"'));
+check("13. path STATE A asli utuh — 'Mulai Tes' + 'Kenali kemampuanmu' tetap ada", () =>
+  hero.includes("Mulai Tes") && /Kenali kemampuanmu/i.test(hero));
 
 console.log("\n── Kontrak data ──");
-check("14. MyDayResponse menyertakan comingSoon?: boolean", () =>
-  homeData.includes("comingSoon?: boolean;") && homeData.includes("Segera Hadir"));
+check("14. MyDayResponse menyertakan comingSoon?: boolean dan hero membacanya", () =>
+  homeData.includes("comingSoon?: boolean;") && hero.includes("myDay.comingSoon"));
 
 console.log("\n── Protected zones & regression ──");
 check("15. prisma/ & engine gamification/learning-loop 0 diff", () =>

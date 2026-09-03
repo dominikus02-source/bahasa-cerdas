@@ -56,21 +56,33 @@ check("6. Guard start berada sebelum rate limit start",
 check("7. Preview adaptive membawa comingSoon saat flag TRUE",
   route.includes("comingSoon: ADAPTIVE_PRACTICE_COMING_SOON || undefined,"));
 
-const card = read("components/student-home/ContinueLearningCard.tsx");
-check("8. Kartu mengimpor flag", card.includes('import { ADAPTIVE_PRACTICE_COMING_SOON } from "@/lib/diagnostic-ai/config"'));
-check("9. Branch gate ADAPTIVE ada (isAdaptive && flag)", card.includes("isAdaptive && ADAPTIVE_PRACTICE_COMING_SOON"));
-check("10. Badge 'Akan Segera Hadir' ada di kartu", (card.match(/Akan Segera Hadir/g) || []).length >= 3);
+// ContinueLearningCard dihapus dari beranda — cabang gate kini di StudentHomeHero,
+// dengan comingSoon server-derived via payload preview (bukan import flag klien).
+const hero = read("components/student-home/StudentHomeHero.tsx");
+check("8. Hero TIDAK mengimpor flag — comingSoon server-derived (payload preview)",
+  !hero.includes("ADAPTIVE_PRACTICE_COMING_SOON") && hero.includes("myDay.comingSoon"));
+check("9. Branch gate ADAPTIVE ada (isAdaptive + myDay.comingSoon sebelum start)", (() => {
+  const adaptiveBlock = hero.slice(hero.indexOf("if (isAdaptive)"), hero.indexOf("// STATE C"));
+  const gate = adaptiveBlock.indexOf("myDay.comingSoon");
+  const start = adaptiveBlock.indexOf('{ kind: "start-adaptive" }');
+  return adaptiveBlock.includes("isAdaptive") && gate > -1 && (start === -1 || gate < start);
+})());
+check("10. Branch adaptive coming-soon → CTA 'Lanjutkan Belajar' tanpa start", (() => {
+  const adaptiveBlock = hero.slice(hero.indexOf("if (isAdaptive)"), hero.indexOf("// STATE C"));
+  const gateBlock = adaptiveBlock.slice(adaptiveBlock.indexOf("if (myDay.comingSoon)"), adaptiveBlock.indexOf("{ kind: \"start-adaptive\" }"));
+  return gateBlock.includes('href: "/arena/jalur-cerdas"') && !gateBlock.includes("startAdaptiveSession");
+})());
 check("11. Tombol mulai latihan adaptive aktif (ada startAdaptiveSession)",
-  card.includes("startAdaptiveSession") && card.includes("Mulai Latihan"));
-check("12. Link 'Sambil menunggu, mulai belajar dulu' tetap (jalur belajar umum)",
-  card.includes("Sambil menunggu, mulai belajar dulu") && card.includes('href="/arena/jalur-cerdas"'));
-check("13. Bar akurasi skill target tetap tampil di branch gate",
-  card.includes("role=\"progressbar\"") && card.includes("aria-label={`Akurasi ${focusRow.label}`}"));
-check("14. Kenapa? tetap eksplisit di branch gate", card.includes("Kenapa?"));
-check("15. Kartu tetap punya px-btn-gold (diagnostik & retry — CTA belajar sah)",
-  card.includes("px-btn-gold") && card.includes("Mulai Tes Awal"));
+  hero.includes("startAdaptiveSession") && hero.includes("Lanjutkan Belajar"));
+check("12. Cabang diag coming-soon jujur: 'Sambil menunggu, mulai belajar di Jalur Cerdas'",
+  hero.includes("Sambil menunggu, mulai belajar") && hero.includes('href: "/arena/jalur-cerdas"'));
+check("13. Bar akurasi skill TIDAK diduplikasi di hero (permukaan skill = SkillRadar)",
+  !hero.includes('role="progressbar"') && read("components/arena/player/SkillRadar.tsx").includes("skills"));
+check("14. Reason tetap eksplisit di hero (supporting = myDay.reasonText)", hero.includes("myDay.reasonText"));
+check("15. Hero tetap CTA utama gold gradient (diagnostik sah — bukan px-btn-gold duplikat)",
+  hero.includes("from-[#ffd24a]") && hero.includes("Mulai Tes"));
 check("16. Guard literal targetSkill tidak dilanggar (test:my-day-home #15)",
-  !card.includes("targetSkill"));
+  !hero.includes("targetSkill"));
 
 const homeData = read("components/student-home/home-data.tsx");
 check("17. Tipe preview mendukung comingSoon", homeData.includes("comingSoon?: boolean;"));

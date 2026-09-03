@@ -316,9 +316,9 @@ test("ProfileHero memakai bc-hero-card + darkText foreground", () => {
   return ph.includes("bc-hero-card") && (ph.includes("darkText") || ph.includes("isDarkInk"));
 });
 
-// ContinueLearningCard & StudentHomeHero memakai token --px-* (px-card/
-// px-chip/var(--px-text)) yang di-flip oleh .dark .px-theme-app — theme-aware
-// tanpa dark: class (pola sama dengan zona player, seksi 9).
+// StudentHomeHero (pengganti ContinueLearningCard yang dihapus) memakai token
+// --px-* (px-card/px-chip/var(--px-text)) yang di-flip oleh .dark .px-theme-app
+// — theme-aware tanpa dark: class (pola sama dengan zona player, seksi 9).
 const isPxTokenAware = (src: string) => /px-card|px-chip|px-skeleton|--px-/.test(src);
 const homeCards = [
   "AIBCHomeCard",
@@ -326,7 +326,6 @@ const homeCards = [
   "RuangBelajarSection",
   "SimulasiUjianSection",
   "LearningJourneySection",
-  "ContinueLearningCard",
   "ArenaHomeSection",
   "SecondaryLearningInfo",
   "StudentHomeHero",

@@ -34,11 +34,12 @@ check("Import player-theme.css di halaman (bukan layout)", page.includes('import
 check("Wrapper .px-theme di root", page.includes('className="px-theme'));
 check("Container max-w-[1200px]", page.includes("max-w-[1200px]"));
 
-// 2 — Hierarki My Day: HERO → AKSI (+mentor) → SKILL → MOTIVASI → PREMIUM
+// 2 — Hierarki Personal Learning Home: HERO → SKILL (kemampuan) → MOTIVASI → PREMIUM
 // → PINTAS (AI BC + JOURNEY) → RUANG → SIMULASI → KARYA → KABAR
+// ContinueLearningCard TIDAK dirender — fungsi aksi/state diambil alih Hero.
+check("ContinueLearningCard TIDAK dirender di beranda", !page.includes("ContinueLearningCard"));
 const required = [
   "StudentHomeHero",
-  "ContinueLearningCard",
   "SkillRadar",
   "ArenaHomeSection",
   "PremiumValueCard",
@@ -58,8 +59,7 @@ check("QuickActions TIDAK dirender", !page.includes("QuickActions"));
 const marker = (c: string) => (c === "SkillRadar" ? "<SkillRadar" : `<${c} />`);
 const order = (a: string, b: string, label: string) =>
   check(`Urutan: ${a} sebelum ${b} (${label})`, page.indexOf(marker(a)) < page.indexOf(marker(b)));
-order("StudentHomeHero", "ContinueLearningCard", "sapaan dulu");
-order("ContinueLearningCard", "SkillRadar", "aksi hari ini dominan");
+order("StudentHomeHero", "SkillRadar", "hero dulu, kemampuan naik natural");
 order("SkillRadar", "ArenaHomeSection", "skill sebelum motivasi");
 order("ArenaHomeSection", "PremiumValueCard", "motivasi sebelum premium");
 order("PremiumValueCard", "AIBCHomeCard", "premium sebelum pintas belajar");
@@ -82,7 +82,6 @@ check("Heartbeat timeout awal 5s", page.includes("5000"));
 check("QuickActions.tsx tidak ada (file dihapus)", noFile("components/student-home/QuickActions.tsx"));
 const allCompFiles = [
   "StudentHomeHero.tsx",
-  "ContinueLearningCard.tsx",
   "AIBCHomeCard.tsx",
   "LearningJourneySection.tsx",
   "ArenaHomeSection.tsx",
@@ -103,16 +102,12 @@ check("Arena Gateway: tidak fetch /api/murid/dashboard/summary", !arena.includes
 check("Arena Gateway: tanpa quest bars/XpSeason/posisi (tanpa getQuestMeta)", !arena.includes("getQuestMeta"));
 check("Arena Gateway: tanpa tombol Kuis Tempur/Liga/Misi", !arena.includes("kuis-tempur") && !arena.includes("/arena/league"));
 
-// 6 — CTA hierarchy: primary "Lanjutkan", secondary AI
-const continueCard = read("components/student-home/ContinueLearningCard.tsx");
-check("Continue = satu primary CTA (tanpa ghost button)", !continueCard.includes("Jelajahi Jalur Cerdas"));
-// Personal Learning Home: HERO = satu-satunya CTA utama (gradient emas).
-// ContinueLearningCard demoted ke sekunder (px-btn-ghost) agar tidak bersaing,
-// tapi konten penjelas/mentor-nya tetap utuh. Klaim misi harian tetap gold
-// (aksi reward, bukan aksi belajar — di luar scope kontrak ini).
+// 6 — CTA hierarchy: HERO = satu-satunya CTA utama (gradient emas).
+// ContinueLearningCard sudah dihapus (duplikat hero). Klaim misi harian tetap
+// gold (aksi reward, bukan aksi belajar — di luar scope kontrak ini).
+check("File ContinueLearningCard.tsx dihapus (dead code)", noFile("components/student-home/ContinueLearningCard.tsx"));
 const goldFiles = [
   "StudentHomeHero.tsx",
-  "ContinueLearningCard.tsx",
   "AIBCHomeCard.tsx",
   "LearningJourneySection.tsx",
   "ArenaHomeSection.tsx",
@@ -123,12 +118,10 @@ const goldFiles = [
   "PremiumValueCard.tsx",
   "home-data.tsx",
 ].filter((f) => read(`components/student-home/${f}`).includes("px-btn-gold"));
+const heroGold = read("components/student-home/StudentHomeHero.tsx");
 check(
-  "Satu CTA utama di hero (gold) — ContinueLearningCard sekunder (ghost)",
-  goldFiles.length === 0 &&
-    !continueCard.includes("px-btn-gold") &&
-    continueCard.includes("px-btn-ghost") &&
-    read("components/student-home/StudentHomeHero.tsx").includes("from-[#ffd24a]")
+  "Satu CTA utama: hero (gold gradient), tanpa px-btn-gold lain di student-home",
+  goldFiles.length === 0 && heroGold.includes("from-[#ffd24a]")
 );
 const aiCard = read("components/student-home/AIBCHomeCard.tsx");
 check("AI BC → /arena/ai", aiCard.includes('href="/arena/ai"'));
@@ -162,31 +155,30 @@ const works = read("components/student-home/RecentWorksSection.tsx");
 check("Karya → /api/siswa/karya?limit=4", works.includes('"/api/siswa/karya?limit=4"'));
 check("Karya → CTA /murid/karya", works.includes('href="/murid/karya"') && works.includes('href="/murid/karya/tulis"'));
 
-// 10 — MURID HOME 3.0: Next Best Action dominant + learning-first order
-console.log("\nMURID HOME 3.0 (additive):\n");
+// 10 — Personal Learning Home: hero = single learning entry + learning-first order
+console.log("\nPERSONAL LEARNING HOME (additive):\n");
 const page3 = read("app/(dashboard)/murid/beranda/page.tsx");
 check("3.0 Misi Harian (motivasi) pindah SETELAH perjalanan belajar (journey)",
   page3.indexOf("<LearningJourneySection />") < page3.indexOf("<DailyMissionCard />"));
-check("3.0 Urutan learning-first utuh: hero → aksi → skill → journey → misi → ruang",
-  page3.indexOf("<StudentHomeHero />") < page3.indexOf("<ContinueLearningCard />") &&
-  page3.indexOf("<ContinueLearningCard />") < page3.indexOf("<SkillRadar") &&
+check("3.0 Urutan learning-first utuh: hero → skill → journey → misi → ruang (tanpa kartu aksi duplikat)",
+  page3.indexOf("<StudentHomeHero />") < page3.indexOf("<SkillRadar") &&
   page3.indexOf("<SkillRadar") < page3.indexOf("<LearningJourneySection />") &&
   page3.indexOf("<LearningJourneySection />") < page3.indexOf("<DailyMissionCard />") &&
   page3.indexOf("<DailyMissionCard />") < page3.indexOf("<RuangBelajarSection />"));
-check("3.0 Hero = satu-satunya CTA utama; kartu aksi pakai ghost (di luar klaim misi harian)",
-  !read("components/student-home/ContinueLearningCard.tsx").includes("px-btn-gold") &&
-  read("components/student-home/ContinueLearningCard.tsx").includes("px-btn-ghost") &&
-  ["AIBCHomeCard.tsx", "ArenaHomeSection.tsx", "LearningJourneySection.tsx"]
-    .every((f) => !read(`components/student-home/${f}`).includes("px-btn-gold")));
-const card3 = read("components/student-home/ContinueLearningCard.tsx");
-check("3.0 'Kenapa?' eksplisit di kartu aksi (why test)", card3.includes("Kenapa?"));
-check("3.0 Bar akurasi skill target: role=progressbar + aria-valuenow (a11y)",
-  card3.includes("role=\"progressbar\"") && card3.includes("aria-valuenow"));
-check("3.0 Data bar turunan dari data preview — tanpa fetch baru",
-  !card3.includes('"/api/player/skills"') && !card3.includes('"/api/player/journey"') &&
-  read("components/student-home/home-data.tsx").includes("findFocusSkillRow"));
-check("3.0 Kartu bebas literal skill-target (guard test:my-day-home #15)",
-  !card3.includes("targetSkill"));
+const hero3 = read("components/student-home/StudentHomeHero.tsx");
+check("3.0 Hero = satu-satunya CTA utama di home (tanpa px-btn-gold lain)",
+  ["AIBCHomeCard.tsx", "ArenaHomeSection.tsx", "LearningJourneySection.tsx", "StudentHomeHero.tsx"]
+    .every((f) => !read(`components/student-home/${f}`).includes("px-btn-gold")) &&
+  hero3.includes("from-[#ffd24a]"));
+check("3.0 State machine di hero (resolveHeroContent) — tidak ada duplikat kartu",
+  hero3.includes("resolveHeroContent") &&
+  hero3.includes("assessmentState") &&
+  hero3.includes("DIAGNOSTIC") &&
+  hero3.includes("ADAPTIVE_PRACTICE") &&
+  hero3.includes("comingSoon"));
+check("3.0 Hero tanpa engine rekomendasi kedua (server-authoritative)",
+  !hero3.includes("targetSkill") && !hero3.includes("/api/player/next-action") &&
+  !hero3.includes("/api/player/skills") && !hero3.includes("/api/player/journey"));
 check("3.0 Laporan audit ada (docs/MURID_HOME_3_0_AUDIT.md)",
   existsSync(join(ROOT, "docs/MURID_HOME_3_0_AUDIT.md")));
 

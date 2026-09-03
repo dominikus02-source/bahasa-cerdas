@@ -89,12 +89,12 @@ check("2. Empty profile → explanation does NOT contain 'lemah'",
 
 // ─── 3. "BC Masih Mengenali" removed from codebase ───
 console.log("\n── BC Masih Mengenali removal ──");
-const card = read("components/student-home/ContinueLearningCard.tsx");
+const hero = read("components/student-home/StudentHomeHero.tsx");
 const personalization = read("lib/diagnostic/personalization.ts");
-check("3. ContinueLearningCard: 'BC Masih Mengenali' REMOVED",
-  !card.includes("BC Masih Mengenali"));
-check("3. ContinueLearningCard: 'BC Sedang Mengenalimu' present",
-  card.includes("BC Sedang Mengenalimu"));
+check("3. Hero (pengganti kartu): 'BC Masih Mengenali' REMOVED",
+  !hero.includes("BC Masih Mengenali"));
+check("3. Hero: branch BASELINE_COMPLETE_LOW jujur ('mulai mengenali kemampuanmu')",
+  hero.includes("BASELINE_COMPLETE_LOW") && hero.includes("mulai mengenali kemampuanmu"));
 check("3. personalization.ts: 'BC Masih Mengenali' REMOVED",
   !personalization.includes("BC Masih Mengenali"));
 check("3. personalization.ts: 'BC Sedang Mengenalimu' present",
@@ -114,18 +114,18 @@ check("4. Diagnostic route returns assessmentState in BASELINE_COMPLETE_LOW path
 check("4. Diagnostic route returns assessmentState in PROFILE_READY path",
   diagRoute.includes("PROFILE_READY"));
 
-// ─── 5. ContinueLearningCard handles all 5 states ───
-console.log("\n── ContinueLearningCard States ──");
-check("5. Card handles NO_BASELINE (isDiagnostic path)",
-  card.includes("isDiagnostic") && card.includes("Kenali Kemampuanmu"));
-check("5. Card handles BASELINE_IN_PROGRESS",
-  card.includes("BASELINE_IN_PROGRESS") && card.includes("Lanjutkan Tes Awal"));
-check("5. Card handles BASELINE_COMPLETE_LOW",
-  card.includes("BASELINE_COMPLETE_LOW") && card.includes("BC Sedang Mengenalimu"));
-check("5. Card handles PROFILE_READY/PROFILE_CONFIDENT (ADAPTIVE path)",
-  card.includes("isAdaptive") && card.includes("Latihan Untukmu"));
-check("5. Card uses assessmentState from server",
-  card.includes("assessmentState"));
+// ─── 5. StudentHomeHero (pengganti ContinueLearningCard) handles states ───
+console.log("\n── Hero States (pengganti ContinueLearningCard) ──");
+check("5. Hero handles NO_BASELINE (isDiagnostic path)",
+  hero.includes("isDiagnostic") && hero.includes("Kenali kemampuanmu."));
+check("5. Hero handles BASELINE_IN_PROGRESS",
+  hero.includes("BASELINE_IN_PROGRESS") && hero.includes("Lanjutkan Tes"));
+check("5. Hero handles BASELINE_COMPLETE_LOW",
+  hero.includes("BASELINE_COMPLETE_LOW") && hero.includes("Siap lanjut belajar?"));
+check("5. Hero handles PROFILE_READY/PROFILE_CONFIDENT (ADAPTIVE path)",
+  hero.includes("actionType === \"ADAPTIVE_PRACTICE\"") && hero.includes('{ kind: "start-adaptive" }'));
+check("5. Hero uses assessmentState from server",
+  hero.includes("assessmentState"));
 
 // ─── 6. home-data.tsx has assessmentState in MyDayResponse ───
 console.log("\n── Home Data ──");
@@ -156,10 +156,10 @@ check("8. NO_BASELINE description mentions 'tanpa nilai benar-salah yang merugik
 
 // ─── 9. No "Mulai Latihan Personal" in card (replaced with server-derived) ───
 console.log("\n── Server-Derived CTA ──");
-check("9. Card uses server-derived ctaLabel (not hardcoded 'Mulai Latihan Personal')",
-  card.includes("currentMyDay.ctaLabel") || card.includes("stateCta"));
-check("9. Card does NOT hardcode 'Mulai Latihan Personal'",
-  !card.includes("Mulai Latihan Personal"));
+check("9. Hero uses server-derived ctaLabel (resolveHeroContent, not hardcoded)",
+  hero.includes("resolveHeroContent") && hero.includes("hero.ctaLabel"));
+check("9. Hero does NOT hardcode 'Mulai Latihan Personal'",
+  !hero.includes("Mulai Latihan Personal"));
 
 // ─── Summary ───
 console.log(`\n${"=".repeat(50)}`);

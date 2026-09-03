@@ -33,7 +33,8 @@ const api = read("app/api/player/adaptive-practice/route.ts");
 const selector = read("lib/adaptive-practice/selector.ts");
 const homeData = read("components/student-home/home-data.tsx");
 const page = read("app/(dashboard)/murid/beranda/page.tsx");
-const continueCard = read("components/student-home/ContinueLearningCard.tsx");
+// ContinueLearningCard dihapus — permukaan aksi/state kini StudentHomeHero.
+const hero = read("components/student-home/StudentHomeHero.tsx");
 const sessionPage = read("app/arena/adaptive-practice/[sessionId]/page.tsx");
 const mentorCard = read("components/arena/player/MentorCard.tsx");
 const skillRadar = read("components/arena/player/SkillRadar.tsx");
@@ -43,7 +44,7 @@ const homeApi = read("app/api/player/adaptive-practice/route.ts");
 
 // 1 — Read-only preview (no side effects)
 check("1. Preview adalah GET read-only", api.includes("GET") && !api.includes("recordActivity"));
-check("1. Preview dipasang di home-data (bukan per-komponen)", homeData.includes("adaptive-practice?mode=preview") && !continueCard.includes("?mode=preview"));
+check("1. Preview dipasang di home-data (bukan per-komponen)", homeData.includes("adaptive-practice?mode=preview") && !hero.includes("?mode=preview"));
 
 // 2 — Preview reuses canonical selector, bukan engine baru
 check("2. Preview memakai selectAdaptivePractice", api.includes("selectAdaptivePractice"));
@@ -56,8 +57,8 @@ check("3. PROGRESSION → 'Lanjutkan Perkembanganmu'", selector.includes("Lanjut
 check("3. PRACTICE_GAP → 'Latihan Lagi'", selector.includes("Latihan Lagi"));
 
 // 4 — Server-authoritative start
-check("4. Start = POST dengan action server-side", continueCard.includes('action: "start"'));
-check("4. Client tidak mengirim skill/difficulty/questionIds", !continueCard.includes("targetSkill") && !continueCard.includes("targetDifficulty") && !continueCard.includes("questionIds"));
+check("4. Start = POST dengan action server-side", hero.includes('action: "start"'));
+check("4. Client tidak mengirim skill/difficulty/questionIds", !hero.includes("targetSkill") && !hero.includes("targetDifficulty") && !hero.includes("questionIds"));
 check("4. Session dipagari pemilik (findFirst id + userId)", api.includes("where: { id: sessionId, userId }"));
 
 // 5 — Answer flow without answer-key leakage
@@ -66,9 +67,9 @@ check("5. Session page POST answer dan complete", sessionPage.includes('action: 
 check("5. Session page menampilkan progress dan navigasi", sessionPage.includes("index + 1") && sessionPage.includes("Soal Berikutnya"));
 
 // 6 — My Day hierarchy: satu CTA dominan + skill + premium dari konteks
-check("6. SkillRadar membaca learnerState dari My Day", page.includes("<SkillRadar skills=") && page.includes("learnerState"));
+check("6. SkillRadar membaca learnerState dari My Day", page.includes("<SkillRadar") && page.includes("skills=") && page.includes("learnerState"));
 check("6. SkillRadar tidak fetch sendiri", !skillRadar.includes("/api/player/skills") && !skillRadar.includes("useEffect"));
-check("6. MentorCard menerima data My Day", continueCard.includes("<MentorCard") && mentorCard.includes("data?: MentorCardData"));
+check("6. Tidak ada MentorCard/aksi duplikat di beranda (hero tunggal; MentorCard data-prop opsional)", !page.includes("MentorCard") && mentorCard.includes("data?: MentorCardData"));
 
 // 7 — Insufficient data behaves honestly
 check("7. Fallback mode jujur FALLBACK + GENERAL_LEARNING", api.includes('mode: "FALLBACK"') && api.includes('actionType: "GENERAL_LEARNING"'));
@@ -76,7 +77,7 @@ check("7. Fallback mengarahkan ke rute nyata", api.includes("/arena/jalur-cerdas
 
 // 8 — Protected zones (UKBI/TKA, Premium billing, reward engine, LLM)
 check("8. Tidak menyebarkan premium/UKBI/TKA logic ke adaptive", !api.includes("PaketKompetensi") && !api.includes("premiumUntil"));
-check("8. My Day tanpa dependensi LLM", !homeData.includes("/api/ai/") && !continueCard.includes("/api/ai/"));
+check("8. My Day tanpa dependensi LLM", !homeData.includes("/api/ai/") && !hero.includes("/api/ai/"));
 check("8. Tidak ada prompt/LLM di folder adaptive", !read("lib/adaptive-practice/selector.ts").includes("Anthropic") && !read("lib/adaptive-practice/selector.ts").includes("OpenAI"));
 
 // 9 — Route contract matches docs

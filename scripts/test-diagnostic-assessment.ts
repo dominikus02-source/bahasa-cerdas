@@ -34,7 +34,8 @@ const diagTypes = read("lib/diagnostic/types.ts");
 const route = read("app/api/player/diagnostic/route.ts");
 const ui = read("app/arena/diagnostic/[sessionId]/page.tsx");
 const homeData = read("components/student-home/home-data.tsx");
-const card = read("components/student-home/ContinueLearningCard.tsx");
+// ContinueLearningCard dihapus — cabang DIAGNOSTIC kini di StudentHomeHero.
+const hero = read("components/student-home/StudentHomeHero.tsx");
 const adaptiveRoute = read("app/api/player/adaptive-practice/route.ts");
 
 // 1 — Konfigurasi & ukuran sesi (Part D)
@@ -115,11 +116,11 @@ check("19. Halaman /arena/diagnostic/[sessionId] ada", ui.includes("Kenali Kemam
 check("19. Panel hasil menampilkan band L+PROVISIONAL & kategori per-skill", ui.includes("L{band.minLevel}") && ui.includes("Sementara") && ui.includes("Rincian per kemampuan"));
 check("19. Kata-kata jujur: hasil sementara, bukan level final", ui.includes("bersifat sementara"));
 
-// 20 — Home-data + card: union DIAGNOSTIC dan branch card
+// 20 — Home-data + hero: union DIAGNOSTIC dan branch DIAGNOSTIC
 check("20. union MyDayResponse menyertakan DIAGNOSTIC", homeData.includes('actionType: "ADAPTIVE_PRACTICE" | "DIAGNOSTIC" | "GENERAL_LEARNING"'));
 check("20. home-data mem-fetch preview diagnostic di home-data (bukan komponen)", homeData.includes("/api/player/diagnostic?mode=preview"));
-check("20. Card branch DIAGNOSTIC (Mulai Tes Awal) → POST start", card.includes("isDiagnostic") && card.includes('fetch("/api/player/diagnostic"') && card.includes('action: "start"'));
-check("20. Card tidak menaruh adaptive preview di komponen", !card.includes("adaptive-practice?mode=preview"));
+check("20. Hero branch DIAGNOSTIC (Kenali kemampuanmu → Mulai Tes) POST start", hero.includes("isDiagnostic") && hero.includes('fetch("/api/player/diagnostic"') && hero.includes('action: "start"'));
+check("20. Hero tidak menaruh adaptive preview di komponen", !hero.includes("adaptive-practice?mode=preview"));
 check("20. Adaptive route 4D TIDAK diubah (2 call awardXp nyata + rate limit)", (adaptiveRoute.match(/await awardXp\(/g) || []).length === 2 && adaptiveRoute.includes("rateLimitRoute(req, ADAPTIVE_START_RATE_LIMIT)"));
 
 // 21 — 4E.1: seleksi berkomposisi + fallback jujur diharapkan EXPLICIT (Part Q)

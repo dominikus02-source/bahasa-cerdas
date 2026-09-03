@@ -62,11 +62,12 @@ test("F1.3. Progresku page shows Mulai Latihan CTA when no evidence", () => {
   return progresku.includes("Mulai Latihan") && progresku.includes("/arena/jalur-cerdas");
 });
 
-test("F1.4. ContinueLearningCard preserves existing FREE behavior", () => {
+test("F1.4. Beranda: hero = single learning entry (ContinueLearningCard dihapus)", () => {
   return (
     homePage.includes("DailyActionCard") &&
-    homePage.includes("ContinueLearningCard") &&
-    homePage.includes("SkillRadar")
+    homePage.includes("StudentHomeHero") &&
+    homePage.includes("SkillRadar") &&
+    !homePage.includes("ContinueLearningCard")
   );
 });
 
@@ -163,17 +164,17 @@ test("F6.1. Home page still includes DailyActionCard", () => {
   return homePage.includes("DailyActionCard");
 });
 
-test("F6.2. Home page still includes ContinueLearningCard", () => {
-  return homePage.includes("ContinueLearningCard");
+test("F6.2. Home page no longer includes ContinueLearningCard (hero mengambil alih)", () => {
+  return !homePage.includes("ContinueLearningCard") && homePage.includes("StudentHomeHero");
 });
 
-test("F6.3. Home page hierarchy preserved (hero → daily → continue → skills)", () => {
-  // Check that key components are present in the JSX
+test("F6.3. Home page hierarchy preserved (hero → daily action → skills, tanpa kartu aksi duplikat)", () => {
+  // Key components present in the JSX; ContinueLearningCard removed by design.
   return (
     homePage.includes("StudentHomeHero") &&
     homePage.includes("DailyActionCard") &&
-    homePage.includes("ContinueLearningCard") &&
-    homePage.includes("SkillRadar")
+    homePage.includes("SkillRadar") &&
+    !homePage.includes("ContinueLearningCard")
   );
 });
 

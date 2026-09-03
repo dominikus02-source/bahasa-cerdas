@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import "@/app/arena/player-theme.css";
 import { HomeDataProvider } from "@/components/student-home/home-data";
 import { StudentHomeHero } from "@/components/student-home/StudentHomeHero";
-import { ContinueLearningCard } from "@/components/student-home/ContinueLearningCard";
 import { DailyMissionCard } from "@/components/student-home/DailyMissionCard";
 import { DailyActionCard } from "@/components/student-home/DailyActionCard";
 import { AIBCHomeCard } from "@/components/student-home/AIBCHomeCard";
@@ -19,11 +18,11 @@ import { SecondaryLearningInfo } from "@/components/student-home/SecondaryLearni
 import SkillRadar from "@/components/arena/player/SkillRadar";
 import { useHomeData } from "@/components/student-home/home-data";
 
-// Hierarki My Day (MURID HOME 3.0 — learning-first):
-// 1. SAPAAN (hero) → 2. NEXT BEST ACTION (satu CTA dominan + kenapa + skill target)
-// → 3. KEMAMPUAN + MOTIVASI (skill + arena + premium) → 4. PINTAS BELAJAR (AI BC + perjalanan)
-// → 5. MISI HARIAN (motivasi — belajar & progres dulu, gamifikasi setelahnya)
-// → 6. RUANG BELAJAR → 7. SIMULASI → 8. KARYA + KABAR KELAS
+// Hierarki Beranda (Personal Learning Home):
+// 1. PERSONAL HERO (identitas + state belajar + CTA utama + statistik — single source of truth)
+// → 2. TANTANGAN HARI INI (DailyActionCard, bila tersedia) → 3. KEMAMPUAN + MOTIVASI (skill + arena + premium)
+// → 4. PINTAS BELAJAR (AI BC + perjalanan) → 5. MISI HARIAN → 6. RUANG BELAJAR
+// → 7. SIMULASI → 8. KARYA + KABAR KELAS
 export default function HomeFeedPage() {
   useEffect(() => {
     const detak = () => {
@@ -62,8 +61,6 @@ function HomeContent() {
       <StudentHomeHero />
 
       <DailyActionCard />
-
-      <ContinueLearningCard />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         <SkillRadar

@@ -75,7 +75,8 @@ const personalization = read("lib/diagnostic/personalization.ts");
 const adaptiveRoute = read("app/api/player/adaptive-practice/route.ts");
 const diagnosticRoute = read("app/api/player/diagnostic/route.ts");
 const homeData = read("components/student-home/home-data.tsx");
-const card = read("components/student-home/ContinueLearningCard.tsx");
+// ContinueLearningCard dihapus dari beranda — permukaan aksi/state kini StudentHomeHero.
+const hero = read("components/student-home/StudentHomeHero.tsx");
 
 function main() {
   console.log("\n📋 STEP 4E.2 — DIAGNOSTIC → PERSONALIZED LEARNING");
@@ -85,14 +86,14 @@ function main() {
   console.log("\n── State A: tanpa diagnostik → CTA Tes Awal ──");
   check("1. home-data single-source tetap fetch adaptive + diagnostic preview",
     () => homeData.includes("/api/player/adaptive-practice?mode=preview") && homeData.includes("/api/player/diagnostic?mode=preview"));
-  check("1. STATE A: kartu merender CTA Tes Awal (Mulai Tes Awal)",
-    () => card.includes("Mulai Tes Awal") && card.includes("Kenali Kemampuanmu"));
+  check("1. STATE A: hero merender CTA Tes Awal (Kenali kemampuanmu → Mulai Tes)",
+    () => hero.includes("Mulai Tes") && /Kenali kemampuanmu/i.test(hero));
 
   // 2. completed diagnostic → personalized CTA
   console.log("\n── State B: diagnostik selesai → profil siap ──");
-  check("2. STATE B: judul 'Latihan Untukmu' ada di kartu (server-derived)",
-    () => card.includes("Latihan Untukmu") || card.includes("stateTitle"));
-  check("2. STATE B: CTA server-derived (ctaLabel)", () => card.includes("currentMyDay.ctaLabel") || card.includes("stateCta"));
+  check("2. STATE B: branch ADAPTIVE ada di hero (start-adaptive, server-derived)",
+    () => hero.includes('actionType === "ADAPTIVE_PRACTICE"') && hero.includes('{ kind: "start-adaptive" }'));
+  check("2. STATE B: CTA server-derived (resolveHeroContent → hero.ctaLabel)", () => hero.includes("resolveHeroContent") && hero.includes("hero.ctaLabel"));
   check("2. adaptive preview membawa diagnosticCompleted (server-derived)",
     () => adaptiveRoute.includes("diagnosticCompleted") && adaptiveRoute.includes("hasCompletedDiagnostic"));
 
@@ -146,8 +147,8 @@ function main() {
       const action = buildPersonalizedAction(computeDiagnosticProfile([]));
       return action.actionType === "CONTINUE_EVIDENCE" && action.title === "BC Sedang Mengenalimu";
     });
-  check("10. kartu STATE D 'BC Sedang Mengenalimu' atau assessmentState ada",
-    () => card.includes("BC Sedang Mengenalimu") || card.includes("assessmentState"));
+  check("10. hero: assessmentState dari server dipakai (BASELINE_IN_PROGRESS dll)",
+    () => hero.includes("assessmentState") && hero.includes("BASELINE_IN_PROGRESS"));
 
   // 11. diagnostic evidence reaches LearnerState
   console.log("\n── Wiring: evidence → state → adaptive ──");
@@ -171,7 +172,7 @@ function main() {
 
   // 15-18. no client-controlled fields
   console.log("\n── Server-authoritative ──");
-  const clientCalls = [card, homeData];
+  const clientCalls = [hero, homeData];
   check("15. klien tidak pernah mengirim skill", () => clientCalls.every((c) => !/body:\s*JSON\.stringify\(\{[^}]*skill/i.test(c)));
   check("16. klien tidak pernah mengirim difficulty", () => clientCalls.every((c) => !/JSON\.stringify\(\{[^}]*difficulty/i.test(c)));
   check("17. klien tidak pernah mengirim level/score/confidence",
@@ -204,9 +205,12 @@ function main() {
 
   // 23. existing diagnostic tests remain green
   console.log("\n── Regression (dijalankan terpisah) ──");
-  check("23. test-diagnostic-assessment.ts & test-diagnostic-4e1.ts TIDAK diubah (0 diff)",
+  // test-diagnostic-assessment.ts SENGAJA diubah fase ini (re-point asersi
+  // ContinueLearningCard → StudentHomeHero setelah kartu dihapus dari beranda);
+  // test-diagnostic-4e1.ts harus tetap 0 diff.
+  check("23. test-diagnostic-4e1.ts TIDAK diubah (0 diff; assessment di-repoint card→hero)",
     () => {
-      const d = execSync(`git diff --name-only HEAD -- scripts/test-diagnostic-assessment.ts scripts/test-diagnostic-4e1.ts`, { encoding: "utf8", cwd: process.cwd() }).trim();
+      const d = execSync(`git diff --name-only HEAD -- scripts/test-diagnostic-4e1.ts`, { encoding: "utf8", cwd: process.cwd() }).trim();
       return d.length === 0;
     });
 
