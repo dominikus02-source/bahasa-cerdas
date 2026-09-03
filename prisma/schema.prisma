@@ -3393,3 +3393,44 @@ model TeacherRiskAction {
   @@index([teacherId, createdAt])
   @@index([riskCaseId, createdAt])
 }
+
+/// Historical daily business snapshot — append-only, end-of-day WIB state.
+/// See docs/HISTORICAL_SNAPSHOT_FINAL_CONTRACT.md for the full contract.
+/// CHECK constraints (mrr decomposition, premium decomposition, non-negativity,
+/// activity hierarchy, premium bounds) applied via prisma/migrations/manual/
+/// 2026-09-08_daily_business_snapshot.sql — Prisma cannot express CHECK.
+model DailyBusinessSnapshot {
+  id                String   @id @default(cuid())
+  /// WIB calendar day, stored as UTC midnight of that WIB day.
+  businessDate      DateTime
+  /// UTC timestamp when this snapshot was computed (audit).
+  generatedAt       DateTime @default(now())
+
+  // Users (materialized from User.createdAt — events remain authoritative)
+  totalUsers        Int
+  muridUsers        Int
+  guruUsers         Int
+
+  // Engagement (materialized from XPTransaction — events remain authoritative)
+  dau               Int
+  wau               Int
+  mau               Int
+
+  // Premium state (NOT reconstructable — core snapshot data)
+  activePremium     Int
+  muridPremium      Int
+  guruPremium       Int
+
+  // MRR (NOT reconstructable — core snapshot data, integer rupiah)
+  mrr               Int
+  muridMonthlyMrr   Int
+  muridYearlyMrr    Int
+  guruMonthlyMrr    Int
+  guruYearlyMrr     Int
+
+  // Versioning
+  calculationVersion String  @default("1.0")
+
+  @@unique([businessDate, calculationVersion])
+  @@index([businessDate])
+}

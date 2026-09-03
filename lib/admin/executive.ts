@@ -43,10 +43,16 @@ export interface MRRBreakdown {
   total: number;
 }
 
-/** Internal: fetch active premium users with plan detection data. */
-async function getActivePremiumUsers() {
-  const now = new Date();
-  return db.user.findMany({
+/** Internal: fetch active premium users with plan detection data.
+ * `now` is the snapshot moment (defaults to current time); the generator
+ * passes end-of-business-day so historical snapshots reuse this SAME formula
+ * evaluated at a different moment — never a second MRR implementation.
+ * `client` is injectable for offline tests. */
+// Narrow client surface (only user.findMany is used) so the snapshot
+// generator can inject a Pick<PrismaClient> without a full client.
+type PremiumUserClient = Pick<typeof db, "user">;
+async function getActivePremiumUsers(now: Date = new Date(), client: PremiumUserClient = db) {
+  return client.user.findMany({
     where: { isPremium: true, premiumUntil: { gt: now }, isFounder: false },
     select: {
       id: true, role: true, premiumPlan: true,
@@ -71,9 +77,10 @@ function detectPlanKey(user: { role: string; premiumPlan: string | null }, txRef
  * Calculate true MRR from currently active Premium subscriptions.
  * For each active user, determine plan from most recent SUCCESS transaction
  * reference, then sum MRR_CONTRIBUTION[plan].
+ * `now` = snapshot moment (historical snapshots pass end-of-business-day).
  */
-export async function calculateMRR(): Promise<number> {
-  const activeUsers = await getActivePremiumUsers();
+export async function calculateMRR(now: Date = new Date(), client: PremiumUserClient = db): Promise<number> {
+  const activeUsers = await getActivePremiumUsers(now, client);
   let totalMRR = 0;
   for (const user of activeUsers) {
     const planKey = detectPlanKey(user, user.transaksi[0]?.reference);
@@ -86,9 +93,10 @@ export async function calculateMRR(): Promise<number> {
  * Calculate MRR breakdown by plan type (murid/guru × monthly/yearly).
  * Each active premium user counted exactly once.
  * Plan detection: most recent SUCCESS transaction reference, fallback to premiumPlan.
+ * `now` = snapshot moment; `client` injectable for offline tests.
  */
-export async function calculateMRRBreakdown(): Promise<MRRBreakdown> {
-  const activeUsers = await getActivePremiumUsers();
+export async function calculateMRRBreakdown(now: Date = new Date(), client: PremiumUserClient = db): Promise<MRRBreakdown> {
+  const activeUsers = await getActivePremiumUsers(now, client);
   const breakdown: MRRBreakdown = { muridMonthly: 0, muridYearly: 0, guruMonthly: 0, guruYearly: 0, total: 0 };
   for (const user of activeUsers) {
     const planKey = detectPlanKey(user, user.transaksi[0]?.reference);
