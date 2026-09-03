@@ -1,0 +1,304 @@
+{
+  "phase": "9.1",
+  "title": "Historical Metrics — Proof of Correctness",
+  "generatedAt": "2026-09-03T05:06:58.623Z",
+  "dbStatus": "read-only-connected",
+  "timezone": {
+    "timezone": "Asia/Jakarta",
+    "offsetUtc": "+07:00",
+    "dbTimestampType": "timestamp without time zone",
+    "storedConvention": "UTC wall-clock value written into a naive column",
+    "reportingConvention": "reporting period boundaries converted to WIB; DB values treated as UTC",
+    "snapshotBusinessDateConvention": "DailyBusinessSnapshot.businessDate stores the UTC midnight of the WIB calendar day",
+    "verifiedBy": "information_schema.columns data_type check (User, Transaksi, XPTransaction, PlayerActivity, GameResult, ProgresKompetensi, TestSession, DailyBusinessSnapshot)"
+  },
+  "metricInventory": [
+    {
+      "metric": "newUserRegistrations",
+      "kind": "user-growth",
+      "status": "FACT",
+      "reconstructable": "windowed",
+      "windowFloor": "User.createdAt >= 2026-06-28 (Supabase migration; pre-migration history not retained)",
+      "source": "User.createdAt",
+      "note": "User.createdAt is an immutable event-like field (set once at creation), but only reconstructable after the Supabase migration that re-created accounts."
+    },
+    {
+      "metric": "dailyActiveUsers",
+      "kind": "engagement",
+      "status": "INFERENCE",
+      "reconstructable": "windowed",
+      "windowFloor": "XPTransaction >= 2026-08-03 (modern gamification engine start)",
+      "source": "XPTransaction.createdAt (distinct userId per WIB day)",
+      "note": "DAU is proxied by distinct users writing XP activity. It is an INFERENCE (XP is a proxy for 'active'), and only valid from 2026-08-03 when XPTransaction began."
+    },
+    {
+      "metric": "weeklyActiveUsers",
+      "kind": "engagement",
+      "status": "INFERENCE",
+      "reconstructable": "windowed",
+      "windowFloor": "XPTransaction >= 2026-08-03",
+      "source": "XPTransaction.createdAt (distinct userId per trailing 7 WIB days)",
+      "note": "Same XP proxy + window caveat as DAU."
+    },
+    {
+      "metric": "monthlyActiveUsers",
+      "kind": "engagement",
+      "status": "INFERENCE",
+      "reconstructable": "windowed",
+      "windowFloor": "XPTransaction >= 2026-08-03",
+      "source": "XPTransaction.createdAt (distinct userId per trailing 30 WIB days)",
+      "note": "Same XP proxy + window caveat as DAU. MAU before 2026-08-03 is unreconstructable."
+    },
+    {
+      "metric": "retentionCohorts",
+      "kind": "engagement",
+      "status": "INFERENCE",
+      "reconstructable": "windowed",
+      "windowFloor": "cohort registration >= 2026-06-28 AND activity >= 2026-08-03",
+      "source": "User.createdAt (cohort) + XPTransaction.createdAt (D7/D30 activity)",
+      "note": "Cohort membership reconstructable from User.createdAt, but D7/D30 activity can only be measured from 2026-08-03. Early cohorts have no valid activity signal. Timestamp existence alone does NOT prove retention."
+    },
+    {
+      "metric": "cashCollected",
+      "kind": "revenue",
+      "status": "FACT",
+      "reconstructable": true,
+      "source": "Transaksi (status=SUCCESS, amount, createdAt)",
+      "note": "Cash collected is an append-only ledger of SUCCESS transactions and IS reconstructable. However it is CASH, not MRR — the two must never be equated."
+    },
+    {
+      "metric": "mrr",
+      "kind": "revenue",
+      "status": "ASSUMPTION",
+      "reconstructable": "needs-snapshot",
+      "source": "NOT reconstructable from retained data",
+      "note": "MRR is a composition of ACTIVE premium subscribers at a point in time. It relies on mutable current-state fields (isPremium, premiumUntil, premiumPlan) + a live join to latest SUCCESS transaction. Past MRR values are lost — cannot be reconstructed historically. Only a daily snapshot preserves it."
+    },
+    {
+      "metric": "mrrBreakdown",
+      "kind": "revenue",
+      "status": "ASSUMPTION",
+      "reconstructable": "needs-snapshot",
+      "source": "NOT reconstructable from retained data",
+      "note": "murid/guru × monthly/yearly MRR decomposition has the same mutable-current-state dependency; history lost without a snapshot."
+    },
+    {
+      "metric": "activePremiumCount",
+      "kind": "premium",
+      "status": "ASSUMPTION",
+      "reconstructable": "needs-snapshot",
+      "source": "NOT reconstructable from retained data",
+      "note": "Count of active premium users at a past moment is unreconstructable — only the current isPremium/premiumUntil state survives; expiry/churn history is not retained as a ledger."
+    },
+    {
+      "metric": "premiumByRole",
+      "kind": "premium",
+      "status": "ASSUMPTION",
+      "reconstructable": "needs-snapshot",
+      "source": "NOT reconstructable from retained data",
+      "note": "murid vs guru premium split at a past moment depends on mutable role + premium state; role is not ledgered."
+    },
+    {
+      "metric": "activeTrialCount",
+      "kind": "premium",
+      "status": "ASSUMPTION",
+      "reconstructable": "needs-snapshot",
+      "source": "NOT reconstructable from retained data",
+      "note": "Trial-active count relies on the mutable trialEndsAt of the latest state; expired trial history is not retained."
+    },
+    {
+      "metric": "karyaPublished",
+      "kind": "content",
+      "status": "FACT",
+      "reconstructable": "windowed",
+      "windowFloor": "StudentKarya.createdAt >= 2026-07-09",
+      "source": "StudentKarya.createdAt",
+      "note": "Karya published per day is append-only and reconstructable from 2026-07-09."
+    },
+    {
+      "metric": "ukbiTkaSessions",
+      "kind": "learning",
+      "status": "FACT",
+      "reconstructable": "windowed",
+      "windowFloor": "ProgresKompetensi.startedAt >= 2026-07-07",
+      "source": "ProgresKompetensi.startedAt",
+      "note": "Simulation sessions started per day is append-only and reconstructable from 2026-07-07."
+    },
+    {
+      "metric": "jalurCompletions",
+      "kind": "learning",
+      "status": "FACT",
+      "reconstructable": "windowed",
+      "windowFloor": "UserUnitProgress.completedAt >= 2026-06-29",
+      "source": "UserUnitProgress.completedAt (completed=true)",
+      "note": "Unit completions are append-only event-like rows, reconstructable from 2026-06-29."
+    },
+    {
+      "metric": "xpAwardedBySource",
+      "kind": "gamification",
+      "status": "FACT",
+      "reconstructable": "windowed",
+      "windowFloor": "XPTransaction.createdAt >= 2026-08-03",
+      "source": "XPTransaction (amount, source, createdAt)",
+      "note": "XP awarded per source per day is a ledger and reconstructable from 2026-08-03 (modern engine). Legacy XpLedger starts 2026-07-28 but is a different engine."
+    },
+    {
+      "metric": "growthByRole",
+      "kind": "user-growth",
+      "status": "UNKNOWN",
+      "reconstructable": false,
+      "source": "NOT reconstructable (role is mutable, no role-change ledger)",
+      "note": "Role-based growth history is corruptible because User.role is a mutable field overwritten over time (e.g., founder/role migrations). Current role distribution is a FACT, but historical role-based growth is NOT reconstructable."
+    },
+    {
+      "metric": "preMigrationHistory",
+      "kind": "cross-cutting",
+      "status": "UNKNOWN",
+      "reconstructable": false,
+      "source": "NOT reconstructable (dead VPS, no retained canonical timestamps)",
+      "note": "All product activity before the Supabase migration (pre-2026-06-28) is not retained in the canonical store. This is genuinely UNKNOWN and must never be estimated."
+    }
+  ],
+  "classificationChecks": {
+    "rule1": "Mutable current-state fields (isPremium/premiumUntil/premiumPlan/role/xp/lastActiveAt) are never treated as historical truth.",
+    "rule2": "Cash collected != MRR.",
+    "rule3": "Timestamp existence alone does not prove retention validity.",
+    "rule4": "Role changes corrupt historical role-based growth; role is not ledgered.",
+    "rule5": "UNKNOWN is never converted into an estimate."
+  },
+  "liveFacts": {
+    "tableStats": [
+      {
+        "table": "User",
+        "rows": 2442,
+        "min": "2026-06-28",
+        "max": "2026-09-03"
+      },
+      {
+        "table": "Profile",
+        "rows": 2437,
+        "min": "2026-06-28",
+        "max": "2026-09-03"
+      },
+      {
+        "table": "XPTransaction",
+        "rows": 11115,
+        "min": "2026-08-03",
+        "max": "2026-09-03"
+      },
+      {
+        "table": "XpLedger",
+        "rows": 15663,
+        "min": "2026-07-28",
+        "max": "2026-09-03"
+      },
+      {
+        "table": "PlayerActivity",
+        "rows": 2390,
+        "min": "2026-08-03",
+        "max": "2026-09-03"
+      },
+      {
+        "table": "ProductEvent",
+        "rows": 0,
+        "min": null,
+        "max": null
+      },
+      {
+        "table": "DailyBusinessSnapshot",
+        "rows": 1,
+        "min": "2026-09-02",
+        "max": "2026-09-02"
+      },
+      {
+        "table": "UserUnitProgress",
+        "rows": 3418,
+        "min": "2026-06-29",
+        "max": "2026-09-03"
+      },
+      {
+        "table": "ProgresKompetensi",
+        "rows": 577,
+        "min": "2026-07-07",
+        "max": "2026-09-03"
+      },
+      {
+        "table": "StudentKarya",
+        "rows": 1633,
+        "min": "2026-07-09",
+        "max": "2026-09-03"
+      },
+      {
+        "table": "Group",
+        "rows": 144,
+        "min": "2026-07-08",
+        "max": "2026-09-02"
+      },
+      {
+        "table": "GroupMember",
+        "rows": 1254,
+        "min": "2026-07-14",
+        "max": "2026-09-01"
+      },
+      {
+        "table": "Transaksi",
+        "rows": 17,
+        "min": "2026-06-28",
+        "max": "2026-09-01"
+      },
+      {
+        "table": "AIUsage",
+        "rows": 1261,
+        "min": "2026-07-01",
+        "max": "2026-09-02"
+      }
+    ],
+    "premiumAndRevenue": {
+      "activePremium": 4,
+      "activeMuridPremium": 2,
+      "activeGuruPremium": 2,
+      "activeTrialGuru": 273,
+      "transactionsByStatus": [
+        {
+          "status": "EXPIRED",
+          "count": 6,
+          "sum": 365000
+        },
+        {
+          "status": "SUCCESS",
+          "count": 4,
+          "sum": 438000
+        },
+        {
+          "status": "PENDING",
+          "count": 7,
+          "sum": 1114000
+        }
+      ],
+      "mrrLiveRecomputed": 120250
+    },
+    "latestSnapshot": {
+      "businessDate": "2026-09-02T00:00:00.000Z",
+      "generatedAt": "2026-09-03T04:49:25.264Z",
+      "totalUsers": 2440,
+      "muridUsers": 1956,
+      "guruUsers": 484,
+      "dau": 55,
+      "wau": 429,
+      "mau": 873,
+      "activePremium": 4,
+      "mrr": 120250,
+      "calculationVersion": "1.0"
+    },
+    "reconciliation": {
+      "method": "Live recompute of MRR (non-founder active premium, plan from latest SUCCESS transaksi) vs latest DailyBusinessSnapshot.mrr",
+      "snapshotMrr": 120250,
+      "liveRecomputedMrr": 120250,
+      "match": true,
+      "interpretation": "Snapshot MRR formula is internally consistent with an independent live recompute using the SAME canonical formula."
+    },
+    "note": "Live facts are populated only when the read-only DB connection was available, else null/unavailable."
+  },
+  "architectureVerdict": "Evidence-driven hybrid is REQUIRED, not merely convenient: MRR and premium state are provably NOT reconstructable from retained data (mutable current-state only), while user/engagement/content/learning metrics ARE reconstructable from event ledgers — but only within their recorded windows. Hence: keep append-only DailyBusinessSnapshot for MRR/premium (core snapshot data), and derive reconstructable engagement metrics from primary event tables (facts) rather than materializing them.",
+  "backfillVerdict": "No historical backfill is possible for MRR or premium state before the snapshot's start (2026-09-02): the underlying point-in-time active-subscriber composition does not exist for earlier dates. Do NOT backfill MRR/premium; snapshot from now forward. For reconstructable engagement metrics, backfill from primary tables is possible but only for the recorded window (floors listed per metric)."
+}
