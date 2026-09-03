@@ -2,12 +2,13 @@ import { getUser } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getExecutiveDashboardData } from "@/lib/admin/executive";
 import { evaluateFounderHealth } from "@/lib/admin/founder-health";
+import { deriveInvestorGrowth } from "@/lib/admin/investor-growth";
 import Link from "next/link";
 import {
   Users, TrendingUp, TrendingDown, Minus, Crown, DollarSign,
   Activity, BookOpen, ArrowRight, Target,
   AlertTriangle, ShieldAlert, CheckCircle2,
-  ChevronDown, ChevronRight, Zap,
+  ChevronDown, ChevronRight, Zap, BarChart3,
 } from "lucide-react";
 import { PaymentHealthAlert } from "@/components/admin/PaymentHealthAlert";
 
@@ -112,6 +113,9 @@ export default async function ExecutiveDashboard() {
     latestD7CohortSize: latestD7Cohort?.registered ?? 0,
     jalurCompleted7d: data.learning.jalurCompleted7d.value,
   });
+
+  // ── Investor growth snapshot ──
+  const growth = deriveInvestorGrowth(data);
 
   const now = new Date(data.timestamp);
   const timeStr = now.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta" });
@@ -346,6 +350,152 @@ export default async function ExecutiveDashboard() {
           </div>
         </details>
       )}
+
+      {/* ═══ SECTION 6: Investor Growth Intelligence ═══ */}
+      <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
+        <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2 text-sm">
+          <BarChart3 size={14} className="text-blue-500" /> Investor Growth Intelligence
+        </h2>
+
+        {/* Row 1: User Growth + Engagement + Monetization */}
+        <div className="grid lg:grid-cols-3 gap-5 mb-5">
+          {/* User Growth */}
+          <div className="space-y-3">
+            <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">User Growth</h3>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-600 dark:text-slate-300">Total Users</span>
+                <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{formatNum(growth.userGrowth.totalUsers)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-600 dark:text-slate-300">New (7d)</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{formatNum(growth.userGrowth.newUsers7d.current ?? 0)}</span>
+                  <TrendArrow value={growth.userGrowth.newUsers7d.delta ?? 0} />
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-600 dark:text-slate-300">New (30d)</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{formatNum(growth.userGrowth.newUsers30d.current ?? 0)}</span>
+                  <TrendArrow value={growth.userGrowth.newUsers30d.delta ?? 0} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Engagement */}
+          <div className="space-y-3">
+            <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Engagement</h3>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-600 dark:text-slate-300">DAU</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{formatNum(growth.engagement.dau.current ?? 0)}</span>
+                  <TrendArrow value={growth.engagement.dau.delta ?? 0} />
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-600 dark:text-slate-300">WAU</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{formatNum(growth.engagement.wau.current ?? 0)}</span>
+                  <TrendArrow value={growth.engagement.wau.delta ?? 0} />
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-600 dark:text-slate-300">MAU</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{formatNum(growth.engagement.mau.current ?? 0)}</span>
+                  <TrendArrow value={growth.engagement.mau.delta ?? 0} />
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-600 dark:text-slate-300">DAU/MAU</span>
+                <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                  {growth.engagement.dauMauRatio !== null ? `${growth.engagement.dauMauRatio}%` : "—"}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Monetization */}
+          <div className="space-y-3">
+            <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Monetization</h3>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-600 dark:text-slate-300">Active Premium</span>
+                <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{growth.monetization.activePremium}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-600 dark:text-slate-300">MRR</span>
+                <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{formatRp(growth.monetization.mrr)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-600 dark:text-slate-300">Cash (30d)</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{formatRp(growth.monetization.cashCollected30d.current ?? 0)}</span>
+                  <TrendArrow value={growth.monetization.cashCollected30d.delta ?? 0} />
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-600 dark:text-slate-300">Conversion</span>
+                <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                  {growth.monetization.premiumConversion !== null ? `${growth.monetization.premiumConversion}%` : "Belum cukup data"}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Row 2: Revenue Growth + Learning Activity */}
+        <div className="grid lg:grid-cols-2 gap-5">
+          {/* Revenue Growth */}
+          <div className="space-y-3">
+            <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Revenue Growth</h3>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-600 dark:text-slate-300">Current MRR</span>
+                <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{formatRp(growth.revenueGrowth.currentMrr)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-600 dark:text-slate-300">MRR Trend</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400">
+                  {growth.revenueGrowth.available ? "Tersedia" : "Belum tersedia"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-600 dark:text-slate-300">Cash All-Time</span>
+                <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{formatRp(growth.monetization.cashCollectedAllTime)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Learning Activity */}
+          <div className="space-y-3">
+            <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Learning Activity</h3>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-600 dark:text-slate-300">Completions (7d)</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{formatNum(growth.learning.completions7d.current ?? 0)}</span>
+                  <TrendArrow value={growth.learning.completions7d.delta ?? 0} />
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-600 dark:text-slate-300">UKBI Sessions (7d)</span>
+                <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{formatNum(growth.learning.ukbiSessions7d)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-600 dark:text-slate-300">Karya Created (7d)</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{formatNum(growth.learning.karya7d.current ?? 0)}</span>
+                  <TrendArrow value={growth.learning.karya7d.delta ?? 0} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

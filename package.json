@@ -110,6 +110,7 @@
     "test:mrr-truth": "npx tsx scripts/test-mrr-truth.ts",
     "test:password-reset": "npx tsx scripts/test-password-reset-flow.ts",
     "test:founder-health": "npx tsx scripts/test-founder-health.ts",
+    "test:investor-growth": "npx tsx scripts/test-investor-growth.ts",
     "test:reconciliation": "npx tsx scripts/test-reconciliation.ts",
     "test:data-quality": "npx tsx scripts/test-data-quality.ts",
     "recover:murid-premium:dry-run": "npx tsx scripts/recover-murid-premium.ts",

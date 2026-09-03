@@ -390,7 +390,7 @@ async function testExecutiveIntegrity() {
 
   assert("No 'MRR (Bulan Ini)' label", !pageContent.includes("MRR (Bulan Ini)"));
   assert("No 'Financial Overview' panel", !pageContent.includes("Financial Overview"));
-  assert("No 'Engagement' panel", !pageContent.includes("Engagement"));
+  assert("No old 'Engagement Overview' panel", !pageContent.includes("Engagement Overview"));
   assert("No 'Premium Funnel' panel", !pageContent.includes("Premium Funnel"));
 
   // Verify new sample-size fields are passed
