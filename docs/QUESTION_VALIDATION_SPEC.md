@@ -1,6 +1,6 @@
-# BahasaCerdas — Question Validation Pipeline Specification (v1.0)
+# BahasaCerdas — Question Validation Pipeline Specification (v1.1)
 
-**Status**: SPECIFICATION (Phase 1A — DESIGN ONLY). This document defines the future pipeline through which every question must pass before it can reach a student. Nothing here is implemented; the pipeline will be built in a later code phase. It is written to **reuse** existing machinery (`bank-gate.ts`, `content-validation.ts`, `validator.ts`, leakage tests, QuestionMetadata statuses) rather than replace it.
+**Status**: SPECIFICATION (Phase 1A.2 — DESIGN ONLY). v1.1 applies the Phase 1B conditional-go corrections: V7 (distractor–misconception links are hypotheses until empirical validation — stages 3/6/10) and S2 (conjunctive publish gate at stage 9; D10 never calibration-exempt). This document defines the future pipeline through which every question must pass before it can reach a student. Nothing here is implemented; the pipeline will be built in a later code phase. It is written to **reuse** existing machinery (`bank-gate.ts`, `content-validation.ts`, `validator.ts`, leakage tests, QuestionMetadata statuses) rather than replace it.
 
 **Contract**: No item is eligible for delivery unless it exits the pipeline at **PUBLISH**. Any failure at any stage is *rejected with a reason code* (never silently repaired, never downgraded to a warning without a human decision). Codes are server-side only.
 
@@ -31,7 +31,7 @@ AUTHORING CONTRACT        (who/what/evidence — before content)
    ↓
 9. HUMAN REVIEW           (semantic dimensions; APPROVED semantics)
    ↓
-10. CALIBRATION           (empirical statistics; difficulty/discrimination confirmation)
+10. CALIBRATION           (empirical stats; difficulty confirmation + response-pattern evidence for misconception links — D10 upgrade path, never a D10 exemption)
    ↓
 11. PUBLISH               (delivery allowlist + pool eligibility)
 ```
@@ -63,8 +63,8 @@ Checks: tautology/template family (`TEMPLATE_STEM`, `FILLER_DISTRACTORS`, `KEY_I
 - Gate: deterministic codes ⇒ **REJECTED(CONTENT)**; warnings forwarded to stage 9.
 
 ### 3. PEDAGOGICAL VALIDATION (human, rubric-based — Quality Standard D2/D5/D10)
-Checks (each against the authoring contract): construct alignment — the item actually exercises `skill.subskill` at `cognitive_target` (D2); single-best-answer defensibility from the stimulus alone (D5); the item **requires** its stimulus (D4 trigger: an item answerable without the stimulus is rejected for reading constructs); diagnostic role is stated and believable (D10).
-- Artifacts: review fills `distractor_rationale` needs and flags `misconception_target` match.
+Checks (each against the authoring contract): construct alignment — the item actually exercises `skill.subskill` at `cognitive_target` (D2); single-best-answer defensibility from the stimulus alone (D5); the item **requires** its stimulus (D4 trigger: an item answerable without the stimulus is rejected for reading constructs); diagnostic role is stated and believable (D10 — an explicit D10 state per Quality Standard §4.9 is required, never satisfied by a `CALIBRATION` tag).
+- Artifacts: review fills `distractor_rationale` and records `misconception_target` as a **hypothesis** (V7); review flags whether the distractor design is *consistent with* the stated hypothesis — never asserts the link as fact.
 - Gate: fail ⇒ **REJECTED(PEDAGOGIC)**; no auto-approval possible.
 
 ### 4. LANGUAGE VALIDATION (human, checklist)
@@ -78,7 +78,7 @@ Checks: key present; key is an in-range index for PG/BS (or exact expected text 
 
 ### 6. DISTRACTOR VALIDATION (deterministic + human — D7)
 Deterministic: normalized-uniqueness (already stage 1); option length/vocabulary comparability flags; option-set reuse across items in the same batch/theme (filler detector).
-Human: each distractor is plausible **and** wrong for a reason; ≥ 1 distractor encodes a predictable error where `misconception_target` is set; no "all/none of the above"; homogeneity of content/grammar.
+Human: each distractor is plausible **and** wrong for a reason; ≥ 1 distractor is designed around a *hypothesized* predictable error where `misconception_target` is set (**V7**: hypothesis at this stage, never validated interpretation); no "all/none of the above"; homogeneity of content/grammar. Reviewer records the distractor–hypothesis link only as "consistent with" language.
 - Gate: any deterministic code ⇒ **REJECTED(DISTRACTOR)**; human verdict "no defensible wrongness" ⇒ **REJECTED(DISTRACTOR)**.
 
 ### 7. DUPLICATE DETECTION (deterministic — D11)
@@ -92,14 +92,17 @@ Deterministic sanity: `difficulty_target` is a valid cell; cognitive label is va
 
 ### 9. HUMAN REVIEW (mandatory; semantic dimensions)
 Scope (per Quality Standard §4.4, cannot be auto-approved): D1 content correctness, D2 construct, D4 stimulus, D5 clarity, D7 plausibility, D8 language, D13 cultural, D14 fairness. Reviewer scores 0–3 on every dimension; records `reviewer`, `reviewed_at`; sets `provenance=HUMAN_REVIEW`.
-- Minimum publish gate: mean ≥ 2.0; no dimension < 2 (except documented CALIBRATION allowance for D3/D9/D10); zero HARD-FAIL.
+- **Publish gate — CONJUNCTIVE (S2; Quality Standard §4.4)**: the item exits stage 9 as APPROVED **only if** every clause holds: (1) structural/content/answer valid (no deterministic reject codes); (2) no HARD-FAIL dimension < 2 and no hard-fail trigger; (3) every SCORED dimension ≥ 2 — D3/D9 accept a documented 1 only for an explicit `CALIBRATION` item with D10 ≥ 2 and D2 ≥ 2; (4) **D10 has an explicit valid state (§4.9) — D10 is never calibration-exempt**; (5) human APPROVED with reviewer recorded; (6) purpose-specific gates (§4.9). Mean ≥ 2.0 is advisory (Gold/Silver/Bronze), never sufficient.
+- The Phase 1B edge case (14 × 3 + 1 × 1 on D10, tagged CALIBRATION) **fails**: clause 3 (the 1) and clause 4 (no valid D10 state).
 - Fairness pass specifically follows the [S7] fairness pillar; any "may disadvantage group X" finding ⇒ REJECTED(FAIRNESS) or revision.
 - **Approval semantics**: `QuestionMetadata.status = APPROVED` is set only here, only by a human who read the content. This closes the audit's "83 template rows approved by taxonomy review" hole (§4.2-12).
 
-### 10. CALIBRATION (empirical — D9/D10)
-Purpose: confirm difficulty/discrimination with live responses before the item is trusted as a *calibrated* bank item (bank has `correctCount/wrongCount/usedCount` telemetry already on `Soal`).
-- Flow: new items publish in `CALIBRATION` status (eligible but flagged); after N responses (e.g., ≥ 30–50 per cell, target set in the build phase), compute p-value and point-biserial/like discrimination from telemetry; p-value outside the intended band or non-positive discrimination ⇒ either re-cell the difficulty, revise the item, or RETIRE it (no silent re-use).
-- Output: difficulty becomes *empirical*; item may move to full PUBLISHED; feeds the evidence model for adaptive routing (skill/difficulty cells).
+### 10. CALIBRATION (empirical — D9, D10 evidence upgrade)
+Purpose: (a) confirm difficulty/discrimination with live responses (D9) and (b) accumulate the **response-pattern evidence** that can upgrade a misconception *hypothesis* toward an evidence record (D10; V7). Bank telemetry already exists (`correctCount/wrongCount/usedCount` on `Soal`).
+- Flow: new items publish in `CALIBRATION` status (eligible but flagged). After N responses (e.g., ≥ 30–50 per cell, LEVEL 1 floor; pool per skill×difficulty when item-N < 30), compute p-value and point-biserial/like discrimination from telemetry; p-value outside the intended band or non-positive discrimination ⇒ either re-cell the difficulty, revise the item, or RETIRE it (no silent re-use).
+- **Calibration LEVELS (inlined from QUESTION_BANK_FOUNDATION_VERIFICATION.md §10 so this spec is self-contained)**: LEVEL 0 — author judgment (cell from the content rubric — length, vocabulary, inference distance, distractor proximity; arithmetic/sibling-copied cells rejected, D9; no statistics). LEVEL 1 — pilot proportion-correct + basic discrimination at first ~40–60 responses/item, floor **N ≥ 30 per item, or pooled per (skill, difficulty, kelas) bucket when item-N < 30**; decisions: confirm / re-cell with content re-review (never silent) / retire. LEVEL 2 — larger-sample calibration (item-N ≥ 100 per cell, or exposure-capped rotation); items earn trusted "calibrated" difficulty and enter difficulty-routed pools. LEVEL 3 — IRT (future-state, explicitly labeled; justified only at thousands of responses per skill scale with controlled exposure — do not build now).
+- **D10 upgrade path (V7)**: a `CALIBRATION` tag or p/discrimination statistics alone **never** validate a misconception. A distractor–misconception link upgrades from HYPOTHESIS only when: response-pattern data are recorded (`response_pattern`), an empirical-analysis tier (error analysis / interview / response-process sample) is run and reviewed, and the evidence record (`misconception_evidence`) supports the interpretation → `validated_misconception`. Only then may confident learner-facing messaging or misconception routing use the link.
+- Output: difficulty becomes *empirical* (D9); D10 state may rise HYPOTHESIS → REVIEWED → EMPIRICALLY_SUPPORTED (§4.9). Item may move to full PUBLISHED; feeds the evidence model for adaptive routing.
 
 ### 11. PUBLISH
 Final step: item enters the **delivery allowlist / eligible pool** only if: (a) exited stage 9 with APPROVED by a human; (b) passed stage 10 CALIBRATION where required; (c) passes the *current* delivery gates (`isMasterBankDeliverable` / `isDiagnosticSafeItem`) at every surface — the P0.6 gates remain the outer ring forever.
@@ -110,7 +113,7 @@ Final step: item enters the **delivery allowlist / eligible pool** only if: (a) 
 
 ## Reason-code vocabulary (stable; server-side only)
 
-`STRUCTURAL_*`, `CONTENT_TEMPLATE`, `CONTENT_FILLER`, `CONTENT_LEAK`, `PEDAGOGIC_NO_ALIGNMENT`, `PEDAGOGIC_AMBIGUOUS`, `PEDAGOGIC_NO_STIMULUS_NEEDED`, `LANGUAGE_*`, `ANSWER_*`, `DISTRACTOR_*`, `DUPLICATE_*`, `DIFFICULTY_MISMATCH`, `FAIRNESS_*`, `CALIBRATION_FAIL`. Existing gate codes from `bank-gate.ts` are reused verbatim where they already express the rule (see stage maps above); new codes are additive.
+`STRUCTURAL_*`, `CONTENT_TEMPLATE`, `CONTENT_FILLER`, `CONTENT_LEAK`, `PEDAGOGIC_NO_ALIGNMENT`, `PEDAGOGIC_AMBIGUOUS`, `PEDAGOGIC_NO_STIMULUS_NEEDED`, `PEDAGOGIC_D10_STATE_MISSING` (S2), `PEDAGOGIC_MISCONCEPTION_UNVALIDATED` (V7 — distractor link asserted without evidence record), `LANGUAGE_*`, `ANSWER_*`, `DISTRACTOR_*`, `DUPLICATE_*`, `DIFFICULTY_MISMATCH`, `FAIRNESS_*`, `CALIBRATION_FAIL`. Existing gate codes from `bank-gate.ts` are reused verbatim where they already express the rule (see stage maps above); new codes are additive.
 
 ## Mapping to Quality Standard dimensions
 
@@ -124,8 +127,8 @@ Final step: item enters the **delivery allowlist / eligible pool** only if: (a) 
 | 6 Distractor | D7 |
 | 7 Duplicate | D11 |
 | 8 Difficulty/cognitive | D3, D9 |
-| 9 Human review | D1, D2, D4, D5, D7, D8, D13, D14 (+ approval semantics §4.2-12) |
-| 10 Calibration | D9, D10 (empirical) |
+| 9 Human review | D1, D2, D4, D5, D7, D8, D13, D14, D10 state verification (+ approval semantics §4.2-12; conjunctive gate S2) |
+| 10 Calibration | D9 (empirical difficulty); D10 evidence upgrade (V7 — calibration never validates a misconception by itself; only the response-pattern + empirical-analysis tier does) |
 | 11 Publish | D15 + delivery-gate (containment) |
 
 ## AI-specific guardrails (Stages 0–2, 9)
