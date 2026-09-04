@@ -52,6 +52,8 @@ Blueprint §7.3 (cognitive %s: R2 25 / R3 25 / R4 35 / R5 15 → 3/3/4/2 of 12) 
 
 **Decision taken here (documented, not invented):** the §7.4 archetype list is the binding contract (it is the concrete per-item architecture; §7.3 percentages are guidance with "~"). The 12 items follow §7.4 exactly. The R2/R3/R5 shortfall vs §7.3 is **reported, not papered over** — see §11 finding F1 and the founder-decision list §12. A one-line blueprint clarification (make §7.3's parenthetical "gagasan" read "gagasan lintas-paragraf = R4; gagasan dari lead = R3") resolves it without changing any item.
 
+**P2.2 update (2026-09-04):** the F1 decision record now lives in `P2_2_REVISION_AND_FOUNDER_DECISION_REPORT.md` §2 — a **proposed** canonical resolution (DNA §5 as single R-mapping; §7.4 archetypes binding; §7.3 percentages advisory), marked `FOUNDER_DECISION_REQUIRED = TRUE`. Item labels in this artifact follow the proposal only where an allowed revision required it (TB-008 R3→R4); the remaining labels are F1-conditional until founder sign-off.
+
 ---
 
 ## 3. Stimulus inventory (5 texts, all fictional — option A per mission §6)
@@ -84,9 +86,17 @@ Each testlet = **1 diagnostic evidence unit** (Blueprint §7.5): evidence writte
 
 > Pemerintah kabupaten mengoperasikan perpustakaan keliling ke lima desa terpencil setiap hari Rabu dan Sabtu. Mobil perpustakaan itu membawa 800 buku cerita dan buku pengetahuan. Kepala Bidang Perpustakaan, Ibu Lestari Nugraha, menyampaikan bahwa jumlah pengunjung perpustakaan keliling mencapai 250 orang setiap minggu. "Sebagian besar pengunjung adalah pelajar sekolah dasar," katanya. Menurut Ibu Lestari, perpustakaan keliling sangat membantu siswa yang rumahnya jauh dari perpustakaan umum. Setiap desa menerima kunjungan mobil perpustakaan dua kali dalam sebulan. Buku yang dipinjam dapat dikembalikan pada kunjungan berikutnya.
 
-### STIM-05 — Bank Sampah SMP Harapan Jaya (117 kata)
+### STIM-05 — Bank Sampah SMP Harapan Jaya (83 kata)
 
-> Siswa SMP Harapan Jaya membentuk bank sampah sekolah pada Januari 2025. Setiap Jumat, siswa menyerahkan botol plastik, kertas bekas, dan kaleng kepada petugas bank sampah. Hasil penjualan sampah pada bulan pertama mencapai Rp350.000,00 dan digunakan untuk membeli buku tulis bagi siswa yang membutuhkan. Koordinator bank sampah, Kak Rina Maharani, mengatakan bahwa kesadaran siswa memilah sampah meningkat setelah program berjalan. "Awalnya hanya 30 siswa yang ikut, sekarang 90 siswa," ungkapnya. Setiap akhir bulan, petugas menimbang dan mencatat jumlah sampah yang terkumpul dari setiap kelas.
+> Siswa SMP Harapan Jaya membentuk bank sampah sekolah pada Januari 2025.
+>
+> Setiap Jumat, siswa menyerahkan botol plastik, kertas bekas, dan kaleng kepada petugas bank sampah. Hasil penjualan sampah pada bulan pertama mencapai Rp350.000,00 dan digunakan untuk membeli buku tulis bagi siswa yang membutuhkan.
+>
+> Koordinator bank sampah, Kak Rina Maharani, mengatakan bahwa kesadaran siswa memilah sampah meningkat setelah program berjalan. "Awalnya hanya 30 siswa yang ikut, sekarang 90 siswa," ungkapnya.
+>
+> Setiap akhir bulan, petugas menimbang dan mencatat jumlah sampah yang terkumpul dari setiap kelas.
+
+*Revision note (v1.1, 2026-09-04): pemenggalan paragraf dipulihkan (P1 = kalimat 1; P2 = kalimat 2–3; P3 = kalimat 4–5; P4 = kalimat 6) agar referen "paragraf kedua" pada TB-010 benar-benar ada di stimulus yang terkirim. Jumlah kata tidak berubah (83).*
 
 ---
 
@@ -143,11 +153,12 @@ Common fields (applied to every item; not repeated per item to keep this reviewa
 - **Difficulty target**: MEDIUM — direct fact/opinion: satu fakta terverifikasi vs tiga opini berlabel jelas.
 - **Prompt**: "Pernyataan berikut yang merupakan fakta berdasarkan teks tersebut adalah …"
 - **Options / key (0)**:
-  0. Pemerintah Desa Sukamaju menyediakan 500 buku bacaan di pos ronda dan balai desa. ✅
+  0. Gerakan "Sukamaju Membaca" menyediakan 500 buku bacaan di pos ronda dan balai desa. ✅
   1. Minat baca warga Sukamaju akan terus meningkat pada tahun-tahun mendatang.
   2. Taman bacaan masyarakat Sukamaju adalah taman bacaan terbaik di kabupaten.
   3. Semua desa sebaiknya meniru gerakan "Sukamaju Membaca".
-- **Explanation**: A dapat diverifikasi langsung dari teks (kalimat 2). B prediksi, C penilaian, D anjuran — ketiganya opini, tidak dapat diverifikasi dari isi teks.
+- **Explanation**: A dapat diverifikasi langsung dari teks (kalimat 2: "Gerakan ini menyediakan 500 buku bacaan yang ditempatkan di pos ronda dan balai desa"). B prediksi, C penilaian, D anjuran — ketiganya opini, tidak dapat diverifikasi dari isi teks.
+- **Revision note (v1.1, 2026-09-04)**: kunci diubah dari "Pemerintah Desa Sukamaju menyediakan…" menjadi "Gerakan 'Sukamaju Membaca' menyediakan…" — menghilangkan pergeseran subjek (teks menyatakan *gerakan* yang menyediakan buku; pemerintah hanya meluncurkan gerakan). Item fakta/opini yang menguji keterverifikasian teks harus berkunci verbatim. Construct (fakta/opini), cognitive target, dan tiga distraktor tidak berubah. Re-validated: structural/content PASS (gate 12/12, lihat Appendix A).
 - **Distractor rationale (hypotheses)**:
   - B: prediksi berlabel masa depan — siswa menganggap pernyataan bernada positif = fakta.
   - C: penilaian superlatif — "terbaik" tanpa bukti teks.
@@ -157,7 +168,7 @@ Common fields (applied to every item; not repeated per item to keep this reviewa
 
 ### TB-004 — Kosakata dalam konteks · `BC-TEKS-BERITA-0004`
 
-- **Stimulus**: STIM-02 · **Archetype**: L kosakata-dalam-konteks · **Skill/subskill**: READING / READING_INFERENSI (makna kata dalam konteks)
+- **Stimulus**: STIM-02 · **Archetype**: L kosakata-dalam-konteks · **Skill/subskill**: READING / READING_MAKNA_KATA
 - **Cognitive**: R3 (MENERAPKAN) — per §7.3 (kosakata-dalam-konteks di band R3).
 - **Difficulty target**: MEDIUM — makna ditentukan dari konteks kalimat, bukan kamus.
 - **Prompt**: "Kata *mengeluhkan* dalam kalimat 'pengelola taman bacaan mengeluhkan kondisi sebagian buku yang sudah usang' bermakna …"
@@ -170,8 +181,9 @@ Common fields (applied to every item; not repeated per item to keep this reviewa
 - **Distractor rationale (hypotheses)**:
   - B: distraktor konteks — kalimat sesudahnya bicara harapan bantuan; siswa menggabungkan makna kata dengan akibat kalimat.
   - C/D: tebakan makna dari bentuk kata tanpa membaca konteks kalimat.
-- **Evidence target**: { READING, READING_INFERENSI, R3, MEDIUM } — correct = context-driven meaning; incorrect = form-based guessing / context bleeding.
+- **Evidence target**: { READING, READING_MAKNA_KATA, R3, MEDIUM } — correct = context-driven meaning; incorrect = form-based guessing / context bleeding.
 - **Stimulus-dependent**: ✅ (konteks kalimat hanya ada di STIM-02).
+- **Revision note (v1.1, 2026-09-04)**: subskill dipetakan ulang dari `READING_INFERENSI` → `READING_MAKNA_KATA` — subskill ini sudah ada di taxonomy kanonik (`lib/question-metadata/taxonomy.ts`); Blueprint §7.2 yang mencatumkan hanya 4 subskill adalah stale. Tidak ada LearningSkillType baru dibuat. Item content, key, distraktor, dan cognitive target tidak berubah. Re-validated: structural/content PASS.
 
 ### TB-005 — Inferensi dua-bukti · `BC-TEKS-BERITA-0005`
 
@@ -227,24 +239,25 @@ Common fields (applied to every item; not repeated per item to keep this reviewa
 - **Evidence target**: { READING, READING_STRUKTUR_TEKS, R3, MEDIUM } — correct = headline maps lead; incorrect = sensational/unsupported headline.
 - **Stimulus-dependent**: ✅.
 
-### TB-008 — Struktur: fungsi lead · `BC-TEKS-BERITA-0008`
+### TB-008 — Struktur: fungsi kalimat dalam piramida terbalik · `BC-TEKS-BERITA-0008`
 
 - **Stimulus**: STIM-04 · **Archetype**: H struktur (headline–lead–body) · **Skill/subskill**: READING / READING_STRUKTUR_TEKS
-- **Cognitive**: R3 (MENERAPKAN) — menerapkan istilah struktur pada kalimat konkret (versi ringan; lihat catatan sulit di bawah).
-- **Difficulty target**: EASY *(deviasi dokumentasi: §7.6 menaruh "struktur" di Medium; item ini diturunkan ke EASY karena tugasnya adalah melokasi lead, hampir retrieval, dengan tiga distraktor jelas-jelas keliru — catat sebagai keputusan penulis F2, lihat §12)*.
-- **Prompt**: "Berdasarkan struktur teks berita, kalimat pertama pada teks di atas berfungsi sebagai …"
-- **Options / key (0)**:
-  0. lead yang memuat informasi pokok berita ✅
-  1. tubuh berita yang berisi rincian kejadian
-  2. penutup yang berisi simpulan penulis
-  3. judul yang menarik minat pembaca
-- **Explanation**: Kalimat pertama memuat 5W+1H pokok (siapa-mengapa-kapan) = lead/teras berita. Tubuh berisi rincian (kalimat 2–4); teks tidak memiliki penutup simpulan; judul bukan bagian tubuh teks.
+- **Cognitive**: R4 (MENGANALISIS) — menerapkan konsep struktur piramida terbalik untuk mengklasifikasikan fungsi kalimat *di tengah* teks (membedakan lead vs tubuh); bukan sekadar melokasi kalimat pertama.
+- **Difficulty target**: MEDIUM — per §7.6 (struktur = Medium; menemukan lead di kalimat pertama terlalu dekat dengan retrieval).
+- **Prompt**: "Berdasarkan struktur teks berita, kalimat kedua pada teks di atas berfungsi sebagai …"
+- **Options / key (1)**:
+  0. lead yang memuat informasi pokok berita
+  1. tubuh berita yang mengembangkan rincian informasi dari lead ✅
+  2. simpulan penulis yang merangkum isi berita
+  3. teras berita yang menjawab pertanyaan kapan dan di mana
+- **Explanation**: Kalimat pertama adalah lead/teras (memuat informasi pokok: siapa-mengapa-kapan — pemerintah kabupaten, perpustakaan keliling, setiap Rabu dan Sabtu, ke lima desa). Kalimat kedua ("Mobil perpustakaan itu membawa 800 buku cerita dan buku pengetahuan") mengembangkan klaim lead = tubuh berita. Opsi 0 dan 3 salah menempatkan fungsi lead pada kalimat kedua; opsi 2 membaca rincian sebagai simpulan.
 - **Distractor rationale (hypotheses)**:
-  - B: tidak membedakan lead vs tubuh — "kalimat pertama = awal cerita = tubuh".
-  - C: "kalimat terakhir = kesimpulan" dibalik menjadi "kalimat pertama = kesimpulan".
-  - D: istilah struktur (judul) familiar tapi salah posisi — siswa memilih kata yang dikenal tanpa fungsi.
-- **Evidence target**: { READING, READING_STRUKTUR_TEKS, R3, EASY }.
+  - 0: heuristic "kalimat awal teks = lead" — siswa tidak memverifikasi bahwa lead hanyalah kalimat pertama.
+  - 2: pattern-match isi-as-rangkuman — siswa membaca "800 buku" sebagai pernyataan akhir yang merangkum layanan, tanpa memverifikasi posisi kalimat.
+  - 3: misattribusi fungsi — siswa menghafal "lead menjawab 5W+1H", melihat "Rabu dan Sabtu / lima desa" pada kalimat pertama, lalu mengaitkan fungsi itu ke kalimat kedua.
+- **Evidence target**: { READING, READING_STRUKTUR_TEKS, R4, MEDIUM } — correct = structure-rule application; incorrect = lead-function misattribution / content-as-summary.
 - **Stimulus-dependent**: ✅.
+- **Revision note (v1.1, 2026-09-04)**: item diperkuat dari "lokasi lead (kalimat pertama)" ≈ R2/EASY menjadi klasifikasi fungsi kalimat kedua = aplikasi struktur R4/MEDIUM, sesuai mapping kanonik DNA §5 (struktur → R4) dan §7.6 (struktur = Medium). Menyelesaikan temuan P2.1 (cognitive mismatch + F2) dan temuan P2.1 distraktor-D ("judul" terlalu jelas salah untuk kalimat kedua) — distraktor 3 baru menguji misattribusi fungsi. Kunci berpindah ke indeks 1 (memecah pola 12/12 kunci-di-indeks-0; D15). Construct (struktur teks berita) dipertahankan. Re-validated: structural/content PASS.
 
 ### TB-009 — Fakta/opini (halus) · `BC-TEKS-BERITA-0009`
 
@@ -271,16 +284,17 @@ Common fields (applied to every item; not repeated per item to keep this reviewa
 - **Difficulty target**: MEDIUM — membedakan pokok kalimat dari rincian dalam paragraf yang sama dan dari paragraf lain.
 - **Prompt**: "Gagasan utama paragraf kedua pada teks di atas adalah …"
 - **Options / key (0)**:
-  0. Hasil penjualan sampah digunakan untuk membeli buku tulis bagi siswa yang membutuhkan. ✅
+  0. Siswa rutin menyetor sampah setiap Jumat dan hasil penjualannya digunakan untuk membeli buku tulis bagi siswa yang membutuhkan. ✅
   1. Setiap Jumat siswa menyerahkan sampah kepada petugas bank sampah.
   2. Bank sampah sekolah dibentuk oleh siswa SMP Harapan Jaya.
   3. Kesadaran siswa memilah sampah meningkat setelah program berjalan.
-- **Explanation**: Paragraf kedua: subjek = hasil penjualan sampah, predikat inti = digunakan membeli buku tulis. B rincian kalimat pertama paragraf yang sama; C gagasan paragraf pertama; D gagasan paragraf ketiga.
+- **Explanation**: Paragraf kedua memuat dua kalimat yang saling melengkapi: setoran rutin setiap Jumat (kalimat pertama) dan penggunaan hasil penjualan untuk membeli buku tulis (kalimat kedua). Kunci merangkum keduanya. B hanya mengulang kalimat pertama paragraf (rincian setoran) — perangkap "kalimat pertama = gagasan utama"; C gagasan paragraf pertama; D gagasan paragraf ketiga.
 - **Distractor rationale (hypotheses)**:
-  - B: "kalimat pertama paragraf = gagasan utamanya" — heuristic yang salah saat kalimat pertama hanyalah rincian.
+  - B: "kalimat pertama paragraf = gagasan utamanya" — heuristic yang salah saat paragraf memuat dua kalimat koordinatif.
   - C/D: menarik gagasan dari paragraf lain (lokasi paragraf tidak diverifikasi).
 - **Evidence target**: { READING, READING_IDE_POKOK, R3, MEDIUM }.
 - **Stimulus-dependent**: ✅.
+- **Revision note (v1.1, 2026-09-04)**: (1) pemenggalan paragraf STIM-05 dipulihkan — referen "paragraf kedua" kini eksis (defect P2.1 D4/D5 = 1, hard-fail). (2) Kunci diperluas merangkum kedua kalimat paragraf 2 — menghilangkan judgment call "ide koordinatif" yang dicatat P2.1 (D6 = 2). Construct (gagasan utama paragraf) dan cognitive target (R3 per §7.4 label; F1 canonical proposal → R2 gagasan literal, pending founder) tidak berubah. Re-validated: structural/content PASS (D4/D5/D6 re-scored ≥ 2).
 
 ### TB-011 — Inferensi dua-bukti (data) · `BC-TEKS-BERITA-0011`
 
@@ -405,9 +419,9 @@ Conjunctive rule (§4.4, S2) applied: **no item is publishable** — every item'
 
 | Axis | Blueprint | Actual (12) | Δ |
 |---|---|---|---|
-| Cognitive §7.3 | R2 3 / R3 3 / R4 4 / R5 2 | R2 2 / R3 5 / R4 4 / R5 1 | **-1/+2/0/-1 — finding F1** (archetype binding; see §2.1) |
+| Cognitive §7.3 | R2 3 / R3 3 / R4 4 / R5 2 | R2 2 / R3 4 / R4 5 / R5 1 | **-1/+1/+1/-1 — finding F1** (archetype binding; see §2.1; P2.2 revision: TB-008 R3→R4 per DNA §5 canonical proposal) |
 | Archetype §7.4 | 2/2/2/2/2/1/1 | 2/2/2/2/2/1/1 | ✅ exact |
-| Difficulty §7.6 | E 3 / M 5-6 / H 3-4 | E 3 / M 5 / H 4 | ✅ (25/42/33 vs ~25/45/30; TB-008 EASY = documented judgment F2) |
+| Difficulty §7.6 | E 3 / M 5-6 / H 3-4 | E 2 / M 6 / H 4 | ✅ (17/50/33 vs ~25/45/30; TB-008 EASY→MEDIUM = F2 resolved in P2.2) |
 | Skills | 4 subskills | 4 used; fakta/opini mapped to READING_INFERENSI (gap flag) | ✅ with flag |
 | Stimuli | 5–6 testlets × 2–3 | 5 testlets × 2–3 | ✅ |
 | Misconception | all HYPOTHESIS | all HYPOTHESIS (V7) | ✅ |
