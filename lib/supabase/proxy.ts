@@ -21,7 +21,8 @@ const publicPaths = [
 ];
 
 // Routes that handle their own auth — skip middleware getUser() to avoid rate limit
-const selfAuthPaths = ["/api/", "/arena/", "/guru/", "/admin/", "/murid/", "/game/", "/auth/", "/kompetisi/", "/junior/"];
+// /t/ handles auth in Server Component so ?next= parameter is preserved through login redirect
+const selfAuthPaths = ["/api/", "/arena/", "/guru/", "/admin/", "/murid/", "/game/", "/auth/", "/kompetisi/", "/junior/", "/t/"];
 
 // Dashboard routes that require onboarding
 const dashboardPaths = ["/guru/", "/admin/", "/murid/"];
