@@ -508,6 +508,13 @@ if (data.status === "COMPLETED" && data.result) {
           </div>
         )}
 
+        {submitting && result === null && (
+          <p role="status" className="mt-7 flex items-center justify-center gap-2 rounded-2xl border border-violet-100 bg-violet-50/70 px-4 py-3 text-sm text-violet-700 dark:border-violet-900/50 dark:bg-violet-950/20 dark:text-violet-300">
+            <Loader2 size={16} className="animate-spin text-violet-600 dark:text-violet-300" aria-hidden />
+            Menyimpan jawaban dan menyiapkan soal berikutnya…
+          </p>
+        )}
+
         {result !== null && (
           <div className={`mt-7 rounded-2xl px-4 py-3 text-sm ${result ? "bg-emerald-50 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-200" : "bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-200"}`}>
             <div className="flex items-center gap-2 font-semibold">
