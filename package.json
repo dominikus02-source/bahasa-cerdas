@@ -318,6 +318,7 @@
     "test:diagnostic-bank-gate": "npx tsx scripts/test-diagnostic-bank-gate.ts",
     "audit:diagnostic-integrity": "npx tsx scripts/audit-diagnostic-question-integrity.ts",
     "test:quiz-delivery-gate": "npx tsx scripts/test-quiz-delivery-gate.ts",
+    "test:quiz-delivery-routes": "npx tsx scripts/test-quiz-delivery-routes.ts",
     "audit:quiz-delivery-gate": "npx tsx scripts/audit-quiz-delivery-gate.ts",
     "test:my-day-personalization": "npx tsx scripts/test-my-day-personalization.ts",
     "approve:metadata-manifest": "npx tsx scripts/approve-metadata-review-manifest.ts",
