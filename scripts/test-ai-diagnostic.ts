@@ -31,6 +31,7 @@ import { parseAiQuestionRaw } from "@/lib/diagnostic-ai/generator";
 import { buildAiDiagnosticSystemPrompt, buildAiDiagnosticUserPrompt } from "@/lib/diagnostic-ai/prompts";
 import { validateAiDiagnosticItem } from "@/lib/diagnostic-ai/validator";
 import {
+  answeredCountFor,
   buildAnswerOutcome,
   buildInitialState,
   canCompleteHonestly,
@@ -176,6 +177,7 @@ console.log("\n— 5. Controller: state & perencanaan —");
   const first = { ...baseItem, id: "q-1" } as AiDiagnosticItem;
   const state = buildInitialState(10, first);
   ok("buildInitialState: order/item/used", state.order.length === 1 && state.order[0] === "q-1" && state.items["q-1"] && state.usedTopics.includes("tanda baca") && state.usedSubskills.includes("GRAMMAR_TANDA_BACA"));
+  ok("answeredCountFor 0 di awal sesi (order=[q-1], items={q-1})", answeredCountFor(state) === 0);
   ok("stateFromJson round-trip", stateFromJson(state)?.targetSize === 10 && stateFromJson({ nope: true }) === null);
   const plan0 = nextPlanForSlot(state, 0);
   ok("slot 0 EASY + READING", plan0.skill === "READING" && plan0.difficulty === "EASY");
@@ -187,7 +189,9 @@ console.log("\n— 5. Controller: state & perencanaan —");
   ok("pickAiDiagnosticSubskill hindari yang dipakai", pickAiDiagnosticSubskill("READING", ["READING_IDE_POKOK"], SUBSKILLS) !== "READING_IDE_POKOK");
   ok("pickAiDiagnosticSubskill null saat tanpa pilihan", pickAiDiagnosticSubskill("WRITING", ["x"], { WRITING: {} }) === null);
   ok("planNextQuestion CONTINUE saat ada antrean", planNextQuestion(state, true).reason === "CONTINUE");
-  const fullState: AiSessionState = { v: 1, mode: "AI-ADAPTIVE", targetSize: 10, order: [], items: Object.fromEntries(Array.from({ length: 10 }, (_, i) => [`q-${i}`, { ...baseItem, id: `q-${i}` }])), usedTopics: [], usedSubskills: [], genFailed: false };
+  const items10: Record<string, AiDiagnosticItem> = Object.fromEntries(Array.from({ length: 10 }, (_, i) => [`q-${i}`, { ...baseItem, id: `q-${i}` }]));
+  const fullState: AiSessionState = { v: 1, mode: "AI-ADAPTIVE", targetSize: 10, order: [], items: items10, usedTopics: [], usedSubskills: [], genFailed: false };
+  ok("answeredCountFor 10 saat semua butir terjawab (order kosong)", answeredCountFor(fullState) === 10);
   ok("planNextQuestion TARGET_REACHED saat penuh", planNextQuestion(fullState, true).reason === "TARGET_REACHED");
   const noGenState: AiSessionState = {
     v: 1,
@@ -202,10 +206,21 @@ console.log("\n— 5. Controller: state & perencanaan —");
   ok("planNextQuestion GENERATION_UNAVAILABLE saat genFailed tanpa pool", planNextQuestion(noGenState, false).reason === "GENERATION_UNAVAILABLE");
   ok("buildAnswerOutcome done saat TARGET_REACHED", buildAnswerOutcome(fullState, true, null, "TARGET_REACHED").done === true && buildAnswerOutcome(fullState, true, null, "TARGET_REACHED").remaining === 0);
   ok("buildAnswerOutcome nextQuestion public", buildAnswerOutcome(fullState, false, { ...baseItem, id: "q-next" } as AiDiagnosticItem, "ANSWERED").nextQuestion?.id === "q-next");
-  const answered6: AiSessionState = { v: 1, mode: "AI-ADAPTIVE", targetSize: 10, order: ["a", "b", "c", "d"], items: {}, usedTopics: [], usedSubskills: [], genFailed: false };
+  // Fixture invariant: `order ⊆ items` dan answered = |items| − |order|.
+  // 6 dijawab → 10 butir pernah dibuat, 4 tersisa (masih di order).
+  const answered6: AiSessionState = { v: 1, mode: "AI-ADAPTIVE", targetSize: 10, order: ["q-6", "q-7", "q-8", "q-9"], items: items10, usedTopics: [], usedSubskills: [], genFailed: false };
+  ok("answeredCountFor 6 saat 6 dijawab (items 10 − order 4)", answeredCountFor(answered6) === 6);
   ok("canCompleteHonestly true di 6 jawaban", canCompleteHonestly(answered6));
-  const answered4: AiSessionState = { ...answered6, order: ["a", "b", "c", "d", "e", "f"] };
+  const answered4: AiSessionState = { v: 1, mode: "AI-ADAPTIVE", targetSize: 10, order: ["q-4", "q-5", "q-6", "q-7", "q-8", "q-9"], items: items10, usedTopics: [], usedSubskills: [], genFailed: false };
+  ok("answeredCountFor 4 saat 4 dijawab (items 10 − order 6)", answeredCountFor(answered4) === 4);
   ok("canCompleteHonestly false di 4 jawaban", !canCompleteHonestly(answered4));
+  // BUG PRODUKSI (hotfix 2026-09-04): sesi adaptif membangkitkan SATU butir per
+  // langkah — order hanya berisi butir yang sedang tampil. Setelah butir itu
+  // dijawab, order = [] dan items = jumlah yang pernah dibuat. answeredCountFor
+  // harus = 1 (bukan targetSize) sehingga butir ke-2 dibangkitkan.
+  const oneAnswered: AiSessionState = { v: 1, mode: "AI-ADAPTIVE", targetSize: 10, order: [], items: { "q-1": { ...baseItem, id: "q-1" } }, usedTopics: [], usedSubskills: [], genFailed: false };
+  ok("answeredCountFor 1 setelah 1 jawaban (items 1 − order 0) — bukan 10", answeredCountFor(oneAnswered) === 1);
+  ok("canCompleteHonestly false di 1 jawaban", !canCompleteHonestly(oneAnswered));
   ok("summarizeSessionEvidence mengagregasi per skill", summarizeSessionEvidence([{ skill: "READING", isCorrect: true }, { skill: "READING", isCorrect: false }]) === "READING: 1 dari 2 benar");
   ok("summarizeSessionEvidence kosong", summarizeSessionEvidence([]) === "");
 }
@@ -237,7 +252,7 @@ console.log("\n— 7. Evidence metadata —");
 console.log("\n— 8. Prompt —");
 {
   const system = buildAiDiagnosticSystemPrompt();
-  ok("system prompt berisi aturan jawaban tidak di stem", system.includes("Jawaban benar tidak boleh tertulis ulang"));
+  ok("system prompt berisi aturan jawaban tidak di stem", system.includes("Jawaban benar TIDAK boleh tertulis ulang"));
   ok("system prompt berisi schema JSON", system.includes("misconceptionMap") && system.includes("evidenceTarget"));
   ok("system prompt tanpa klise 'Sebagai AI,'", !system.includes("Sebagai AI,"));
   const user = buildAiDiagnosticUserPrompt({ skill: "GRAMMAR", subskill: "GRAMMAR_TANDA_BACA", difficulty: "MEDIUM", topic: null }, { avoidStems: [baseItem.text], avoidSubskills: ["GRAMMAR_TANDA_BACA"], usedTopics: ["tanda baca"], recentSummary: "GRAMMAR: 1 dari 2 benar" });

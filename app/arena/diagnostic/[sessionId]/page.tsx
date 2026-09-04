@@ -316,12 +316,25 @@ if (data.status === "COMPLETED" && data.result) {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Jawaban belum tersimpan.");
       setResult(Boolean(data.correct));
-      if (data.adaptive && data.nextQuestion) {
-        setSession((previous) =>
-          previous ? { ...previous, questions: [data.nextQuestion], answeredCount: (previous.answeredCount ?? 0) + 1, remaining: data.remaining } : previous
-        );
-        setIndex(0);
-        setAnswer("");
+      if (data.adaptive) {
+        if (data.nextQuestion) {
+          setSession((previous) =>
+            previous ? { ...previous, questions: [data.nextQuestion], answeredCount: (previous.answeredCount ?? 0) + 1, remaining: data.remaining } : previous
+          );
+          setIndex(0);
+          setAnswer("");
+        } else if (data.done || data.remaining === 0) {
+          // Terminal (butir terakhir terjawab / generator+fallback habis):
+          // alihkan ke layar "Sesi Selesai → Lihat Hasil" (pendingAdaptive).
+          // Jangan biarkan index melampaui daftar soal — itu membuat murid
+          // macet di layar kosong setelah soal 1.
+          setSession((previous) =>
+            previous ? { ...previous, questions: [], answeredCount: (previous.answeredCount ?? 0) + 1, remaining: 0 } : previous
+          );
+          setIndex(0);
+          setAnswer("");
+          setPendingAdaptive(true);
+        }
       }
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "Jawaban belum tersimpan.");
@@ -343,6 +356,8 @@ if (data.status === "COMPLETED" && data.result) {
         const data = await response.json();
         if (!response.ok && response.status !== 409) throw new Error(data.error || "Hasil belum tersimpan.");
         if (data.result) {
+          setPendingAdaptive(false);
+          setResult(null); // hasil sudah ada — jangan biarkan panel umpan balik menyembunyikan ResultPanel
           setFinalResult(data.result);
           if (data.abilityProfile) setFinalAbility(data.abilityProfile);
         }
@@ -350,6 +365,14 @@ if (data.status === "COMPLETED" && data.result) {
         setError(completeError instanceof Error ? completeError.message : "Hasil belum tersimpan.");
         return;
       }
+      return;
+    }
+    if (session.adaptive) {
+      // Mode adaptif: soal berikutnya SUDAH diganti ke questions[0] saat
+      // jawaban dikirim — cukup tutup panel umpan balik, jangan setIndex(+1)
+      // (index + 1 pada daftar satu butir = soal undefined = layar macet).
+      setAnswer("");
+      setResult(null);
       return;
     }
     setIndex((value) => value + 1);
@@ -376,7 +399,7 @@ if (data.status === "COMPLETED" && data.result) {
         </div>
         <section className="rounded-3xl border border-slate-200/70 bg-white/80 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900/70 md:p-8">
           <p className="text-sm text-slate-600 dark:text-slate-300">
-            Semua butir sesi ini sudah terjawab. Lihat hasil kemampuanmu sekarang.
+            Jawabanmu sudah tercatat. Lihat hasil kemampuanmu sekarang.
           </p>
           <button type="button" onClick={nextQuestion} className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-violet-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-violet-700">
             Lihat Hasil

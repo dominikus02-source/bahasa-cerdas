@@ -22,6 +22,22 @@ async function getAuthUser() {
   }
 }
 
+/** Prisma P2021 (tabel tidak ada) / P2022 (kolom tidak ada) — infra belum siap. */
+function isMissingInfraError(err: unknown): boolean {
+  if (typeof err !== "object" || err === null) return false;
+  const code = (err as { code?: string }).code;
+  return code === "P2021" || code === "P2022";
+}
+
+/**
+ * Degrade ke "tanpa tantangan hari ini" saat tabel belum ada — kartu Beranda
+ * tidak boleh HTTP 500 hanya karena migration belum diterapkan di lingkungan.
+ */
+function infraUnavailable(): DailyActionResponse {
+  const response: DailyActionResponse = { status: "NONE" };
+  return response;
+}
+
 // ── GET: Fetch today's Daily Action ──────────────────────────
 
 export async function GET() {
@@ -70,6 +86,9 @@ export async function GET() {
     };
     return NextResponse.json(response);
   } catch (err) {
+    if (isMissingInfraError(err)) {
+      return NextResponse.json(infraUnavailable());
+    }
     console.error("Daily action GET error:", err);
     return NextResponse.json(
       { error: "Gagal memuat tantangan hari ini." },
@@ -123,6 +142,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: err.message }, { status });
     }
 
+    if (isMissingInfraError(err)) {
+      return NextResponse.json(infraUnavailable());
+    }
     console.error("Daily action POST error:", err);
     return NextResponse.json(
       { error: "Gagal memproses jawaban." },

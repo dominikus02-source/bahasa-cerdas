@@ -12,6 +12,24 @@ export interface AiPlanOutcome {
   reason: "CONTINUE" | "TARGET_REACHED" | "GENERATION_UNAVAILABLE";
 }
 
+/**
+ * Jumlah butir yang sudah dijawab dalam satu sesi.
+ *
+ * Invariant: `items` menyimpan SEMUA butir yang pernah dibuat (butir yang
+ * sudah dijawab TIDAK dihapus dari `items`), sedangkan `order` hanya memuat
+ * butir yang belum dijawab (dalam praktik: butir yang sedang tampil / akan
+ * tampil). Karena itu:
+ *   answered = |items| − |order|
+ *
+ * JANGAN pakai `targetSize − order.length`: sesi adaptif membangkitkan satu
+ * butir per langkah, jadi `order` tidak pernah memuat sisa target — formula
+ * itu membuat sesi dianggap selesai begitu butir yang sedang tampil dijawab
+ * (bug produksi: macet setelah soal 1).
+ */
+export function answeredCountFor(state: AiSessionState): number {
+  return Math.max(0, Object.keys(state.items).length - state.order.length);
+}
+
 export function buildInitialState(size: number, firstItem: AiDiagnosticItem): AiSessionState {
   return {
     v: 1,
@@ -41,7 +59,7 @@ export function planNextQuestion(
   state: AiSessionState,
   poolAvailable: boolean
 ): AiPlanOutcome {
-  const answeredCount = state.targetSize - state.order.length;
+  const answeredCount = answeredCountFor(state);
   if (state.order.length > 0) {
     return { plan: null, reason: "CONTINUE" };
   }
@@ -80,7 +98,7 @@ export function buildAnswerOutcome(
   next: AiDiagnosticItem | null,
   reason: AiAnswerOutcome["reasonCode"]
 ): AiAnswerOutcome {
-  const answeredCount = state.targetSize - state.order.length;
+  const answeredCount = answeredCountFor(state);
   const done = reason !== "ANSWERED" || (state.order.length === 0 && answeredCount >= state.targetSize);
   return {
     ok: true,
@@ -93,7 +111,7 @@ export function buildAnswerOutcome(
 }
 
 export function canCompleteHonestly(state: AiSessionState): boolean {
-  const answeredCount = state.targetSize - state.order.length;
+  const answeredCount = answeredCountFor(state);
   return answeredCount >= AI_DIAGNOSTIC_MIN_USEFUL;
 }
 

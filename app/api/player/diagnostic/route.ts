@@ -26,8 +26,8 @@ import {
 } from "@/lib/diagnostic-ai/config";
 import { generateAiDiagnosticQuestion } from "@/lib/diagnostic-ai/generator";
 import {
+  answeredCountFor,
   buildInitialState,
-  canCompleteHonestly,
   nextPlanForSlot,
   summarizeSessionEvidence,
 } from "@/lib/diagnostic-ai/controller";
@@ -311,7 +311,11 @@ async function answerAiDiagnostic(
   });
 
   state.order = state.order.filter((id) => id !== questionId);
-  const answeredCount = state.targetSize - state.order.length;
+  // answered = butir di `items` yang sudah tidak ada di `order` (sudah dijawab).
+  // Butir yang sudah dijawab TIDAK dihapus dari `items`, jadi `|items| − |order|`
+  // benar untuk sesi yang membangkitkan satu butir per langkah. Memakai
+  // `targetSize − order.length` membuat sesi "selesai" setelah satu jawaban.
+  const answeredCount = answeredCountFor(state);
 
   if (state.order.length > 0) {
     const next = state.items[state.order[0]];
@@ -396,6 +400,9 @@ async function answerAiDiagnostic(
 
   await saveAiSessionState(session.id, userId, state);
   if (!next && reasonCode === "GENERATION_UNAVAILABLE") {
+    // Tak ada butir berikutnya (generator AI + fallback bank gagal). Sesi
+    // diakhiri secara deterministik — murid TIDAK boleh macet selamanya.
+    // Alur complete menangani profil dengan bukti yang ada secara jujur.
     return NextResponse.json({
       ok: true,
       sessionId: session.id,
@@ -405,7 +412,7 @@ async function answerAiDiagnostic(
       adaptive: true,
       nextQuestion: null,
       remaining: 0,
-      done: Boolean(canCompleteHonestly(state)),
+      done: true,
       reasonCode,
     });
   }
@@ -463,7 +470,7 @@ async function getAiDiagnosticPayload(
     actionTitle: "Kenali Kemampuanmu",
     reasonText: session.reasonText ?? null,
     sessionSize: state.targetSize,
-    answeredCount: state.targetSize - state.order.length,
+    answeredCount: answeredCountFor(state),
     remaining: state.order.length,
     questions: current ? [toPublicQuestion(current)] : [],
   });
