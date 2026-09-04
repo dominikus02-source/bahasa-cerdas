@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { sanitizeSoalForStudent } from "@/lib/security";
+import { isMasterBankDeliverable, toDeliverySoal } from "@/lib/question-bank/delivery-gate";
 import { LEARNING_EVIDENCE_VERSION, replaceLearningEvidenceBatch } from "@/lib/learning-loop/evidence";
 import { trackAchievement } from "@/lib/gamification/achievement-engine";
 
@@ -66,6 +67,19 @@ export async function GET(
 
     const soalIds = assignment.quiz.questions.filter(q => q.sourceType === "SOAL").map(q => q.sourceId);
     const soals = soalIds.length > 0 ? await db.soal.findMany({ where: { id: { in: soalIds } } }) : [];
+
+    // P0.6 containment (serve-time): kuis terbit membaca `Soal` live. Bila ada
+    // butir MASTER_BANK yang belum lolos review konten, blokir seluruh
+    // assignment — jangan pernah menyajikan konten karantina ke murid.
+    const blocked = soals.filter(s => s.source === "MASTER_BANK" && !isMasterBankDeliverable(toDeliverySoal(s as any)));
+    if (blocked.length > 0) {
+      return NextResponse.json({
+        error: "Latihan ini berisi soal yang belum lolos verifikasi kualitas dan untuk sementara tidak dapat diakses. Minta gurumu mengirim ulang latihan dengan soal baru (AI Generate).",
+        code: "QUIZ_CONTENT_QUARANTINED",
+        blockedCount: blocked.length,
+      }, { status: 422 });
+    }
+
     const soalMap = new Map(soals.map(s => [s.id, s]));
 
     const questions = assignment.quiz.questions.map(q => ({

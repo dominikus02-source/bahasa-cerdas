@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { isTeacherOrStudent } from "@/lib/teacher/students";
+import { isMasterBankDeliverable, toDeliverySoal } from "@/lib/question-bank/delivery-gate";
 
 const DIFFICULTY_MAP: Record<string, string> = {
   MUDAH: "EASY",
@@ -34,42 +35,33 @@ export async function POST(req: NextRequest) {
 
     if (kelas) where.kelas = kelas;
 
-    // Count total available
-    const totalAvailable = await db.soal.count({ where });
+    // P0.6 containment: MASTER_BANK dikarantina penuh — hanya butir yang lolos
+    // REVIEW KONTEN MANUSIA (allowlist kosong saat ini) yang boleh dipilih
+    // untuk pengiriman ke murid.
+    const candidates = await db.soal.findMany({ where });
+    const deliverable = candidates.filter((s: any) => isMasterBankDeliverable(toDeliverySoal(s as any)));
+
+    const totalAvailable = deliverable.length;
 
     if (totalAvailable === 0) {
       return NextResponse.json({
-        error: "Tidak ada soal di Master Bank untuk tema ini. Pilih tema lain atau gunakan AI Generate.",
+        error: "Belum ada soal yang lolos verifikasi kualitas untuk tema ini (bank 50-tema sedang diaudit). Gunakan AI Generate untuk membuat soal baru, atau pilih tema lain.",
         totalAvailable: 0,
-      }, { status: 404 });
+      }, { status: 422 });
     }
 
-    // If difficulty specified, try to get with that filter
+    // Difficulty filter over the deliverable set (best-effort, lalu isi sisa
+    // dari set yang sama). Tidak pernah memilih dari bank mentah.
     let soals: any[] = [];
     if (difficulty) {
       const dbDiff = DIFFICULTY_MAP[difficulty as string] || difficulty;
-      const diffSoals = await db.soal.findMany({
-        where: { ...where, difficulty: dbDiff },
-        take: count,
-        orderBy: { usedCount: "asc" },
-      });
-      soals.push(...diffSoals);
+      soals.push(...deliverable.filter((s: any) => s.difficulty === dbDiff));
     }
-
-    // Fill remaining with any difficulty
     if (soals.length < count) {
-      const remaining = count - soals.length;
       const excludeIds = soals.map(s => s.id);
-      const fillSoals = await db.soal.findMany({
-        where: {
-          ...where,
-          id: { notIn: excludeIds },
-        },
-        take: remaining,
-        orderBy: { usedCount: "asc" },
-      });
-      soals.push(...fillSoals);
+      soals.push(...deliverable.filter((s: any) => !excludeIds.includes(s.id)));
     }
+    soals = soals.slice(0, count);
 
     // Shuffle
     const shuffled = [...soals].sort(() => Math.random() - 0.5);

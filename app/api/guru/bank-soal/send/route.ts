@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { rateLimitRoute } from "@/lib/rate-limit";
 import { awardGuruXp } from "@/lib/gamification/teacher-xp";
 import { isTeacherOrStudent } from "@/lib/teacher/students";
+import { isMasterBankDeliverable, toDeliverySoal } from "@/lib/question-bank/delivery-gate";
 
 const DIFFICULTY_MAP: Record<string, string> = {
   MUDAH: "EASY",
@@ -49,29 +50,36 @@ export async function POST(req: NextRequest) {
     }
 
     // Pick random questions from Master Bank
+    // P0.6 containment: MASTER_BANK dikarantina penuh untuk pengiriman ke
+    // murid — hanya butir yang lolos REVIEW KONTEN MANUSIA pasca-audit
+    // (allowlist DELIVERABLE_MASTER_KODE_SOALS, masih kosong) yang layak
+    // kirim. Audit forensik (2026-09-04): 1.480/1.500 item master adalah
+    // template sampah (RETIRE), 19 SALVAGE belum direview, 1 BROKEN.
     const count = Math.min(Math.max(jumlah, 5), 30);
     const where: any = { source: "MASTER_BANK", topik: tema, kelas };
     if (difficulty) where.difficulty = DIFFICULTY_MAP[difficulty] || difficulty;
 
-    const totalAvailable = await db.soal.count({ where });
-    if (totalAvailable === 0) {
-      return NextResponse.json({ error: `Tidak ada soal untuk tema "${tema}" kelas ${kelas}` }, { status: 404 });
+    // Ambil seluruh kandidat tema/kelas, lalu saring ke himpunan yang layak
+    // kirim. Tidak ada fallback diam-diam ke bank yang terkontaminasi.
+    const candidates = await db.soal.findMany({ where });
+    const deliverable = candidates.filter((s: any) => isMasterBankDeliverable(toDeliverySoal(s as any)));
+
+    if (deliverable.length === 0) {
+      return NextResponse.json({
+        error: `Tema "${tema}" kelas ${kelas} belum memiliki soal yang lolos verifikasi kualitas. Gunakan AI Generate untuk membuat soal baru, atau coba tema lain.`,
+        totalAvailable: 0,
+      }, { status: 422 });
     }
 
-    let soals = await db.soal.findMany({
-      where,
-      take: count,
-      orderBy: { usedCount: "asc" },
-    });
-
-    if (soals.length < count) {
-      const fillSoals = await db.soal.findMany({
-        where: { source: "MASTER_BANK", topik: tema, id: { notIn: soals.map(s => s.id) } },
-        take: count - soals.length,
-        orderBy: { usedCount: "asc" },
-      });
-      soals.push(...fillSoals);
+    if (deliverable.length < count) {
+      return NextResponse.json({
+        error: `Hanya ${deliverable.length} soal yang lolos verifikasi kualitas untuk tema "${tema}" kelas ${kelas}. Kurangi jumlah soal (minimal 1) atau gunakan AI Generate.`,
+        totalAvailable: deliverable.length,
+      }, { status: 422 });
     }
+
+    const soals = [...deliverable];
+    const totalAvailable = soals.length;
 
     const shuffled = soals.sort(() => Math.random() - 0.5).slice(0, count);
 
