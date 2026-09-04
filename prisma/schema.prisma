@@ -343,6 +343,7 @@ model User {
   riskActions                 TeacherRiskAction[]              @relation("RiskActionTeacher")
   // P8I — Sesi TTS (anggaran petunjuk sisi server)
   ttsSessions                 TtsSession[]
+  taskShareTokens             TaskShareToken[]
 
   @@index([role, lastActiveAt])
   @@index([xp])
@@ -1504,6 +1505,7 @@ model Group {
   nilais          Nilai[]
   materiKirims    MateriKirim[]
   pengumumans     Pengumuman[]
+  taskShareTokens TaskShareToken[]
   // Guru Cerdas Sejahtera — attribution source evidence (P7A)
   attributions    TeacherAttribution[] @relation("AttributionSourceGroup")
 
@@ -2183,6 +2185,7 @@ model Penugasan {
   teacher User         @relation(fields: [teacherId], references: [id], onDelete: Cascade)
 
   submissions PenugasanSubmission[]
+  taskShareTokens TaskShareToken[]
 
   @@index([groupId])
   @@index([unitId])
@@ -3462,4 +3465,24 @@ model DailyBusinessSnapshot {
 
   @@unique([businessDate, calculationVersion])
   @@index([businessDate])
+}
+
+model TaskShareToken {
+  id           String    @id @default(cuid())
+  token        String    @unique
+  taskType     String    // "QUIZ" | "PENUGASAN"
+  quizId       String?
+  penugasanId  String?
+  groupId      String
+  createdById  String
+  createdAt    DateTime  @default(now())
+
+  penugasan Penugasan? @relation(fields: [penugasanId], references: [id], onDelete: Cascade)
+  group     Group      @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  createdBy User       @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([quizId])
+  @@index([penugasanId])
+  @@index([groupId])
 }

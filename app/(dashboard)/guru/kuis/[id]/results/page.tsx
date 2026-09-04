@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, BarChart3, Users, Trophy, TrendingUp, TrendingDown, CheckCircle, XCircle, Clock, Download } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -25,7 +25,11 @@ interface Submission {
 
 export default function QuizResultsPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const quizId = params.id as string;
+  const fromKelasKu = searchParams.get("from") === "kelasku";
+  const groupId = searchParams.get("groupId");
+  const backHref = fromKelasKu && groupId ? `/guru/kelasku?tab=tugas&group=${groupId}` : "/guru/kuis";
   const [quiz, setQuiz] = useState<any>(null);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
@@ -74,7 +78,7 @@ export default function QuizResultsPage() {
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/guru/kuis" className="p-2 hover:bg-slate-100 rounded-lg">
+        <Link href={backHref} className="p-2 hover:bg-slate-100 rounded-lg">
           <ChevronLeft className="w-5 h-5 text-slate-600" />
         </Link>
         <div className="flex-1">

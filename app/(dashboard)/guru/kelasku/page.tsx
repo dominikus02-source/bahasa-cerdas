@@ -8,6 +8,7 @@ import { ClassPicker, type PickerClass } from "@/components/kelas/ClassPicker";
 import { ClassroomComposer, readLastClassIds } from "@/components/kelas/ClassroomComposer";
 import { SubmissionReview } from "@/components/kelas/SubmissionReview";
 import { ClassShareCard } from "@/components/guru/gcs/ClassShareCard";
+import ShareTaskButton from "@/components/kelas/ShareTaskButton";
 
 interface Group {
   id: string;
@@ -517,7 +518,7 @@ export default function KelasKuPage() {
           </div>
         </div>
 
-        {detail && <TodayView detail={detail} lastClassIds={lastClassIds} onKirimLagi={(ids) => openComposer(ids)} onReview={setReviewPenugasan} />}
+        {detail && <TodayView detail={detail} lastClassIds={lastClassIds} groupId={activeGroup.id} onKirimLagi={(ids) => openComposer(ids)} onReview={setReviewPenugasan} />}
 
         {detailLoading && !detail ? (
           <p className="text-sm text-[var(--clr-text-3)] text-center py-10">Memuat kelas...</p>
@@ -549,6 +550,7 @@ export default function KelasKuPage() {
                       ? (detail.ringkasanPenugasan ?? []).find((x) => x.id === (item.node as DetailData["tugasPenugasan"][number]).id)
                       : (detail.ringkasanQuiz ?? []).find((x) => x.id === (item.node as DetailData["tugasQuiz"][number]).id)
                   }
+                  groupId={activeGroup.id}
                   onReview={setReviewPenugasan}
                   onDeleteTask={(t) => setDeleteTask(t)}
                   onEditPengumuman={setEditPengumuman}
@@ -610,7 +612,8 @@ export default function KelasKuPage() {
                       </p>
                       {r && <RingkasanChips r={r} />}
                     </div>
-                    <a href={`/guru/kuis/${t.quiz.id}/results`} className="bc-btn-secondary text-xs shrink-0">Lihat Pengumpulan</a>
+                    <a href={`/guru/kuis/${t.quiz.id}/results?from=kelasku&groupId=${activeGroup.id}`} className="bc-btn-secondary text-xs shrink-0">Lihat Pengumpulan</a>
+                    <ShareTaskButton taskType="QUIZ" quizId={t.quiz.id} groupId={activeGroup.id} />
                     <button
                       type="button"
                       onClick={() => setDeleteTask({ kind: "latihan", id: t.quiz.id, label: t.quiz.title })}
@@ -637,6 +640,7 @@ export default function KelasKuPage() {
                       {r && <RingkasanChips r={r} />}
                     </div>
                     <button type="button" onClick={() => setReviewPenugasan(p)} className="bc-btn-secondary text-xs shrink-0">Lihat Pengumpulan</button>
+                    <ShareTaskButton taskType="PENUGASAN" penugasanId={p.id} groupId={activeGroup.id} />
                     <button
                       type="button"
                       onClick={() => setDeleteTask({ kind: "penugasan", id: p.id, label: p.judul })}
@@ -812,9 +816,10 @@ function RingkasanChips({ r }: { r: { sudah: number; sedang: number; belum: numb
 
 /** STEP 6.4 — "Hari Ini di Kelas X": kondisi kelas dalam beberapa detik.
  *  STEP 6.11 — tanpa tombol tambah (primary action hanya di hero). */
-function TodayView({ detail, lastClassIds, onKirimLagi, onReview }: {
+function TodayView({ detail, lastClassIds, groupId, onKirimLagi, onReview }: {
   detail: DetailData;
   lastClassIds: string[];
+  groupId: string;
   onKirimLagi: (ids: string[]) => void;
   onReview: (p: DetailData["tugasPenugasan"][number]) => void;
 }) {
@@ -854,9 +859,15 @@ function TodayView({ detail, lastClassIds, onKirimLagi, onReview }: {
                 <strong>{a.belum} siswa belum {a.jenis === "tugas" ? "mengumpulkan" : "mengerjakan"}</strong> · {a.judul}
               </p>
               {a.jenis === "tugas" ? (
-                <button type="button" onClick={() => { const p = detail.tugasPenugasan.find((x) => x.id === a.id); if (p) onReview(p); }} className="bc-chip text-[11px] shrink-0">Lihat Pengumpulan</button>
+                <div className="flex items-center gap-1">
+                  <button type="button" onClick={() => { const p = detail.tugasPenugasan.find((x) => x.id === a.id); if (p) onReview(p); }} className="bc-chip text-[11px] shrink-0">Lihat Pengumpulan</button>
+                  {(() => { const p = detail.tugasPenugasan.find((x) => x.id === a.id); return p ? <ShareTaskButton taskType="PENUGASAN" penugasanId={p.id} groupId={groupId} /> : null; })()}
+                </div>
               ) : (
-                (() => { const t = detail.tugasQuiz.find((x) => x.id === a.id); return t ? <a href={`/guru/kuis/${t.quiz.id}/results`} className="bc-chip text-[11px] shrink-0">Lihat Hasil</a> : null; })()
+                <div className="flex items-center gap-1">
+                  {(() => { const t = detail.tugasQuiz.find((x) => x.id === a.id); return t ? <a href={`/guru/kuis/${t.quiz.id}/results?from=kelasku&groupId=${groupId}`} className="bc-chip text-[11px] shrink-0">Lihat Hasil</a> : null; })()}
+                  {(() => { const t = detail.tugasQuiz.find((x) => x.id === a.id); return t ? <ShareTaskButton taskType="QUIZ" quizId={t.quiz.id} groupId={groupId} /> : null; })()}
+                </div>
               )}
             </div>
           ))}
@@ -975,9 +986,10 @@ function ClassInsight({ groupId }: { groupId: string }) {
   );
 }
 
-function StreamCard({ item, progress, onReview, onDeleteTask, onEditPengumuman, onPin, onDeletePengumuman, pinBusyId }: {
+function StreamCard({ item, progress, groupId, onReview, onDeleteTask, onEditPengumuman, onPin, onDeletePengumuman, pinBusyId }: {
   item: { id: string; kind: "pengumuman" | "tugas" | "materi"; date: string; node: unknown };
   progress?: { sudah: number; sedang: number; belum: number };
+  groupId: string;
   onReview: (p: DetailData["tugasPenugasan"][number]) => void;
   onDeleteTask: (t: { kind: "penugasan" | "latihan"; id: string; label: string }) => void;
   onEditPengumuman: (p: DetailData["pengumuman"][number]) => void;
@@ -1031,9 +1043,15 @@ function StreamCard({ item, progress, onReview, onDeleteTask, onEditPengumuman, 
           {progress && <RingkasanChips r={progress} />}
         </div>
         {isPenugasan ? (
-          <button type="button" onClick={() => onReview(t as DetailData["tugasPenugasan"][number])} className="bc-btn-secondary text-xs shrink-0">Lihat Pengumpulan</button>
+          <>
+            <button type="button" onClick={() => onReview(t as DetailData["tugasPenugasan"][number])} className="bc-btn-secondary text-xs shrink-0">Lihat Pengumpulan</button>
+            <ShareTaskButton taskType="PENUGASAN" penugasanId={(t as DetailData["tugasPenugasan"][number]).id} groupId={groupId} />
+          </>
         ) : (
-          <a href={`/guru/kuis/${(t as DetailData["tugasQuiz"][number]).quiz.id}/results`} className="bc-btn-secondary text-xs shrink-0">Lihat Pengumpulan</a>
+          <>
+            <a href={`/guru/kuis/${(t as DetailData["tugasQuiz"][number]).quiz.id}/results?from=kelasku&groupId=${groupId}`} className="bc-btn-secondary text-xs shrink-0">Lihat Pengumpulan</a>
+            <ShareTaskButton taskType="QUIZ" quizId={(t as DetailData["tugasQuiz"][number]).quiz.id} groupId={groupId} />
+          </>
         )}
         <button
           type="button"

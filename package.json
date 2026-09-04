@@ -240,6 +240,7 @@
     "test:guru-berkarya2-social-feed": "npx tsx scripts/test-guru-berkarya2-social-feed.ts",
     "test:guru-berkarya-social": "npx tsx scripts/test-guru-berkarya-social.ts",
     "test:gamification-engine": "npx tsx scripts/test-gamification-engine.ts",
+    "test:task-share-link": "npx tsx scripts/test-task-share-link.ts",
     "test:student-consolidation": "npx tsx scripts/test-student-consolidation.ts",
     "test:student-shell": "npx tsx scripts/test-student-shell.ts",
     "test:student-home": "npx tsx scripts/test-student-home.ts",
