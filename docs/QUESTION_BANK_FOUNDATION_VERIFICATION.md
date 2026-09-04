@@ -1,6 +1,7 @@
 # BahasaCerdas — Question Bank Foundation Verification (Phase 1B)
 
 **Status**: REVIEW / VERIFICATION ONLY — Phase 1B. Zero DB writes, zero question generation, zero bank edits, zero production code changes. Only this document was created; the five foundation documents were not modified.
+**Phase 1A.2 follow-up (2026-09-04)**: the two CRITICAL corrections this report identified — **V7** (misconception→evidence boundary) and **S2** (conjunctive publish rule, D10 never calibration-exempt) — were applied in Phase 1A.2 (Quality Standard v1.1 §4.4/§4.8/§4.9, Item DNA §7, Validation Spec stages 3/6/9/10, Blueprint §7.9–§7.12; correction log in Quality Standard §4.10). This document remains the historical review record; the body below is unchanged. The remaining conditions of the §16 decision are tracked against the updated docs.
 **Reviewed documents**: `QUESTION_BANK_QUALITY_STANDARD.md`, `QUESTION_ITEM_DNA.md`, `QUESTION_VALIDATION_SPEC.md`, `QUESTION_BANK_RESEARCH_BIBLIOGRAPHY.md` (Phase 1A, untracked) and `QUESTION_BANK_50_THEME_FORENSIC_AUDIT.md` (Phase 0, merged).
 **⚠ Referenced-but-absent document**: the mission brief lists `docs/QUESTION_BANK_50_THEME_BLUEPRINT.md` as an input. **It does not exist** (verified on disk, 2026-09-04). Per-theme blueprint substance lives inside the audit doc (§12, §15–§17). §6 of this report therefore audits the blueprint *as carried in the audit doc + Quality Standard*, and the missing artifact is a correction item (§15.1).
 

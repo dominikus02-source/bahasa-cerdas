@@ -1,6 +1,6 @@
-# BahasaCerdas — Question Bank Quality Standard (v1.0, Draft for Review)
+# BahasaCerdas — Question Bank Quality Standard (v1.1, Draft for Review)
 
-**Status**: SPECIFICATION (Phase 1A — DESIGN/RESEARCH ONLY). No DB writes, no bank edits, no production code changes. This document is the authoritative quality contract that governs future question creation, validation, and publication for the 50-theme Bahasa Indonesia bank.
+**Status**: SPECIFICATION (Phase 1A.2 — DESIGN/RESEARCH ONLY). v1.1 applies the Phase 1B conditional-go corrections V7 (misconception→evidence semantics, §4.8) and S2 (conjunctive publish rule + D10 states, §4.4/§4.9); correction log in §4.10. No DB writes, no bank edits, no production code changes.
 **Companion docs**: `QUESTION_ITEM_DNA.md` (logical item structure) · `QUESTION_VALIDATION_SPEC.md` (pipeline) · `QUESTION_BANK_RESEARCH_BIBLIOGRAPHY.md` (every claim keyed `[S#]`).
 
 ---
@@ -92,12 +92,12 @@ Judge: exactly one key; it is an in-range index (PG/BS) or exact expected text (
 Notes: fully checkable by the existing `bank-gate`/`diagnosticSafeIssues` rules (`KEY_MISSING`, `KEY_NOT_INDEX`, `KEY_OUT_OF_RANGE`, `KEY_IN_STEM`, `DUPLICATE_OPTION`).
 
 ### D7. Distractor quality (HARD-FAIL)
-Judge: each distractor is plausible, content-homogeneous, mutually exclusive, and evidence-based (each encodes a common error, not random noise).
+Judge: each distractor is plausible, content-homogeneous, mutually exclusive, and built around a defensible error **hypothesis** (each encodes a *theoretical* common error, not random noise). Selecting a distractor is **consistent with** that hypothesis; it is **not by itself evidence** that the student holds the misconception (V7, §4.8).
 - 0: off-topic/filler distractors, duplicates after normalization, or distractors reused across themes ([S8] homogeneity rule; filler family audit).
 - 1: on-topic but obviously wrong or near-duplicates of each other.
-- 2: plausible; at least one encodes a predictable misconception/error.
-- 3: all distractors encode diagnostic errors — the item is *usable diagnostically* precisely because wrong answers are informative ([S10] evidence model; misconception-attribution in diagnostic engine).
-Notes: "distractor_rationale" (ITEM DNA) is mandatory at 2+; code can detect dup/empty/short, human judges plausibility and misconception value.
+- 2: plausible; at least one distractor encodes a *hypothesized* predictable error/misconception (V7: hypothesis, not validated signal).
+- 3: all distractors are designed around defensible error hypotheses and the item is *usable diagnostically* — wrong answers are informative against those hypotheses ([S10] evidence model) **only after** the distractor–misconception link has empirical support (§4.8).
+Notes: "distractor_rationale" (ITEM DNA) is mandatory at 2+ and records the *hypothesis* (author/design rationale); code can detect dup/empty/short; human judges plausibility and hypothesis value. Learner-facing text must say "jawaban ini konsisten dengan …" (consistent with), never "= kesalahan berpikir X", until the response-pattern tier (§4.8) validates the link.
 
 ### D8. Language quality (HARD-FAIL)
 Judge: the Indonesian is natural, grammatical, standard (PUEBI), and register-appropriate for the grade; no typos that change meaning.
@@ -116,12 +116,12 @@ Judge: the item's difficulty *cell* (EASY/MEDIUM/HARD/VERY_HARD) is consistent w
 Notes: audit found difficulty was *arithmetic* — this dimension exists to kill that practice. Empirical stats come from `correctCount/wrongCount` telemetry already on `Soal`.
 
 ### D10. Diagnostic value (SCORED — the point of the product)
-Judge: can a correct/incorrect response update the learner model meaningfully? Does the item separate the skilled from the unskilled on its target subskill ([S10])?
+Judge: can a correct/incorrect response update the learner model meaningfully? Does the item separate the skilled from the unskilled on its target subskill ([S10])? **D10 carries an explicit state (§4.9) and is never calibration-exempt (§4.4).**
 - 0: no (any correct answer is as likely from guessing/pattern as from skill).
 - 1: weak (vocabulary/term recall where the skill is reading).
-- 2: meaningful single-item evidence (item discriminates the target subskill).
-- 3: strong (works in an adaptive chain; misconception-revealing distractors); item is a *candidate calibrator*.
-Notes: per-theme blueprints assign a target diagnostic role; a bank theme may legitimately mix HIGH-value items (reading) and supporting items (vocabulary), but *every* item must state its role.
+- 2: meaningful single-item evidence (item discriminates the target subskill); distractor hypotheses stated and human-reviewed but not yet empirically validated.
+- 3: strong (works in an adaptive chain); the item's discrimination is *empirically supported* (response-pattern tier, §4.8) and its distractor–misconception hypotheses have response-data corroboration.
+Notes: per-theme blueprints assign a target diagnostic role; a bank theme may legitimately mix HIGH-value items (reading) and supporting items (vocabulary), but *every* item must state its role **and its D10 state**. A "CALIBRATION" tag never satisfies D10 by itself — calibration evidence may *upgrade* D10 to EMPIRICALLY_SUPPORTED only after the response-pattern analysis in §4.8.
 
 ### D11. Originality / duplicate risk (HARD-FAIL; code: mostly)
 Judge: the item is not an exact or near duplicate of any other item in the theme/bank (normalized text+options+key; same-stem-different-options counts as duplicate risk).
@@ -163,18 +163,28 @@ Judge: item does not leak its key to a test-wise student and its key/rationale n
 - 3: robust (passage keyed items cannot leak by construction); leakage regression tests green.
 Notes: the existing leakage test suites (`test-murid-quiz-leakage`, `test-ukbi-tka-bank-soal-leakage`, jalur/ajal leak tests) are part of this dimension's gate.
 
-## 4.4 Gate classes and scoring policy
+## 4.4 Gate classes and publish rule (conjunctive — S2)
 
 | Gate class | Meaning | Rule |
 |---|---|---|
-| **HARD-FAIL** | Any 0 on the dimension (or a listed trigger) | Item is rejected, no minimum-score arithmetic can override. Automatic where code exists; human-confirmed otherwise. |
+| **HARD-FAIL** | Any 0 on the dimension (or a listed trigger) | Item is rejected; no arithmetic can override. Automatic where code exists; human-confirmed otherwise. |
 | **SCORED** | Contributes to the publish decision | Must reach the minimum score. |
-| **MUST-HAVE-STATED-ROLE** | D10 diagnostic role | Item cannot be published without its evidence_target role on record (ITEM DNA). |
 
-- **Minimum publish score**: overall index ≥ **2.0 mean across all 15 dimensions**, with **no HARD-FAIL dimension below 2**, **no SCORED dimension below 2** except D3/D9/D10 which accept a documented 1 only when the item is a deliberate calibration/field-test item marked `CALIBRATION` (Validation Spec §12). A mean of 2.0 with every dimension ≥ 2 is the target bar.
+**Publish rule — CONJUNCTIVE (every clause must hold; mean is advisory, never sufficient):**
+
+1. **STRUCTURAL VALID = PASS** — no stage-1/2 deterministic reject code (Validation Spec).
+2. **No HARD-FAIL dimension scores < 2** and no hard-fail trigger fires (D1, D2, D5, D6, D7, D8, D11, D13, D14, D15).
+3. **Every SCORED dimension ≥ 2** (D3, D4, D9, D10, D12).
+4. **D10 has an explicit valid state** for the item's `assessment_purpose` (§4.9). A `CALIBRATION` tag never satisfies D10 — calibration evidence may *upgrade* D10 state only through the response-pattern tier (§4.8). **D10 is never calibration-exempt.**
+5. **HUMAN REVIEW = APPROVED** — provenance `HUMAN_REVIEW`, reviewer + reviewed_at recorded; the semantic dimensions (D1, D2, D4, D5, D7, D8, D13, D14) are human-scored (auto-gates may reject, never approve).
+6. **Purpose-specific gates pass** (§4.9) — e.g., DIAGNOSTIC/ADAPTIVE additionally require evidence-target review and the stated D10-state floor.
+7. **Mean ≥ 2.0 is an advisory tier metric, not a publish condition** — used only to tag published quality (Gold ≥ 2.6 / Silver ≥ 2.3 / Bronze ≥ 2.0). A 14×3 + 1×1 item (the Phase 1B edge case) **cannot pass**: clause 3 fails on the 1, and clause 4 fails regardless of score because D10 has no valid state.
+
+- **D3/D9 calibration allowance (narrow)**: D3 (cognitive demand) and D9 (difficulty integrity) accept a documented 1 **only when** the item is an explicit field-test item marked `CALIBRATION` **and** D10 ≥ 2 **and** D2 ≥ 2. No other dimension may be 1 at publish. This allowance never extends to D10.
+- **MUST-HAVE-STATED-ROLE (folded into clause 4)**: an item cannot reach PUBLISH without its `evidence_target` and D10 role/state on record (ITEM DNA) — previously a separate gate class, now an explicit publish clause.
 - **Human-review-required dimensions (cannot be auto-approved)**: D1 (factual truth), D2 (construct), D4 (stimulus), D5 (ambiguity), D7 (plausibility), D8 (language), D13, D14 — i.e., the *semantic* half. Auto-gates may *reject*; they may never *approve*. This encodes the audit's central lesson: taxonomy approval ≠ content approval.
 - **Code-decidable today**: D6 (fully), D11 (mostly), D15 (mostly), D3/D9 metadata sanity (partially), D2's MISSING_CONTEXT heuristic, template detectors (D6/D7 overlap).
-- **Why 0–3**: three usable points force a real choice and keep inter-rater variance manageable; 0/1 both block, 2 is "clean publish", 3 is "model for the bank" — a single four-point-plus scale invites 4–7 noise and false precision (reviewed in §5 below, re-evaluated from the audit's own 10-dimension 0–3 rubric, which we keep but extend to 15 with gate semantics).
+- **Why 0–3**: three usable points force a real choice and keep inter-rater variance manageable; 0/1 both block, 2 is "clean publish", 3 is "model for the bank" — a single four-point-plus scale invites 4–7 noise and false precision (reviewed in §4.5 below, re-evaluated from the audit's own 10-dimension 0–3 rubric, which we keep but extend to 15 with gate semantics).
 
 ## 4.5 Rationale log for deviations from the audit's rubric
 
@@ -202,3 +212,67 @@ The Phase 0 audit scored 10 dimensions on 0–3. This standard:
 - This standard does **not** make MASTER_BANK items publishable retroactively (they remain quarantined until the human content-review phase re-approves them per this rubric).
 - It does **not** claim parity with UKBI/SNPMB instruments; it borrows structure (seksi coverage, process levels) and is explicit about the borrowing ([S6], [S4]).
 - It does **not** define per-theme item counts (audit §15 targets stand) — it defines per-item *admissibility*.
+
+## 4.8 Misconception → evidence semantics (V7)
+
+**Progression (author intent → validated signal):**
+
+```text
+AUTHOR INTENT
+   ↓
+MISCONCEPTION HYPOTHESIS     (misconception_target = hypothesis/intended signal, §DNA)
+   ↓
+DISTRACTOR DESIGN            (distractor_rationale = why this option is tempting under the hypothesis)
+   ↓
+STUDENT RESPONSE PATTERN     (response_pattern = observed empirical behavior: distractor selection rates)
+   ↓
+EMPIRICAL ANALYSIS           (error analysis, interviews, response-process check on a sample)
+   ↓
+VALIDATED MISCONCEPTION SIGNAL  (validated_misconception = empirically supported interpretation)
+```
+
+**Definitions (logical, not physical schema):**
+
+| Term | Meaning | Status tier |
+|---|---|---|
+| `misconception_target` | the *intended* error hypothesis an item is designed to probe (author/design intent, may be per-distractor) | HYPOTHESIS |
+| `distractor_rationale` | the design rationale: why the option is plausible *under the hypothesis* | HYPOTHESIS (authoring data) |
+| `response_pattern` | observed empirical behavior — e.g., distractor B chosen by X% of low-ability respondents | OBSERVED PATTERN |
+| `misconception_evidence` | the accumulated record (response pattern + error analysis + any interview/response-process data) | EVIDENCE RECORD |
+| `validated_misconception` | an interpretation supported by the evidence record per the calibration rules (§4.9, Validation Spec §10) | VALIDATED |
+
+**Rules:**
+1. A distractor selection is **never by itself** evidence of a misconception. Prohibited framing: "distractor B = misconception X" / "siswa memilih B berarti mengalami kesalahan X".
+2. Permitted framing until validated: "pemilihan B **konsisten dengan hipotesis** miskonsepsi X" / "B is *consistent with* misconception hypothesis X".
+3. HYPOTHESIS tags may drive **item selection and design**, and (post-validation policy) a *hypothesis-labeled* learner message at most; they may **not** drive confident learner-model claims, remediation routing, or reporting that asserts the misconception as fact.
+4. OBSERVED PATTERN alone (high selection rate of B) is correlational, not diagnostic: a plausible distractor is selected for many reasons. It upgrades to VALIDATED only with the empirical-analysis tier (error analysis/interview/response-process on a sample) per Validation Spec §10 LEVEL 1–2.
+5. Only VALIDATED misconceptions may feed confident learner-facing messaging and adaptive misconception routing.
+
+## 4.9 D10 states and publish rule by purpose (S2)
+
+**D10 allowed states** (never satisfied by a `CALIBRATION` tag alone; calibration may *upgrade* state via §4.8 tiers):
+
+| State | Meaning | Who sets it |
+|---|---|---|
+| `NOT_APPLICABLE` | item carries no diagnostic claim (pure drill item) — only permitted for PRACTICE, and even then `evidence_target` must be a real performance discriminator, not zero-evidence trivia | author + review |
+| `HYPOTHESIS` | evidence_target + distractor misconception *hypotheses* stated and human-reviewed; no empirical support yet | human review |
+| `REVIEWED` | HYPOTHESIS plus a documented evidence record (response patterns from the item's own live use or a representative sample), reviewed | human review over evidence record |
+| `EMPIRICALLY_SUPPORTED` | misconception/evidence interpretation validated per §4.8 empirical-analysis tier; item discrimination empirically confirmed | calibration (Validation Spec §10) |
+
+**Publish rule by purpose** (each purpose lists: hard-fail handling / human review / D10 treatment / calibration state / evidence requirement):
+
+| Purpose | Hard-fail & scored rule | Human review | D10 minimum state | Calibration state | Evidence requirement |
+|---|---|---|---|---|---|
+| **PRACTICE** | §4.4 clauses 1–3 | semantic dims human-scored | `HYPOTHESIS` (or `NOT_APPLICABLE` for pure drill with a real discriminator) | LEVEL 0 accepted | evidence_target recorded; no learner-model claim |
+| **ACHIEVEMENT (kuis/latihan guru)** | §4.4 clauses 1–3 | semantic dims human-scored | `HYPOTHESIS` | LEVEL 0 accepted | evidence_target recorded; scoring against rubric, no misconception claim |
+| **DIAGNOSTIC** | §4.4 clauses 1–3 + evidence-target review | semantic dims human-scored + evidence-target review | `REVIEWED` minimum (item's own or pooled response pattern documented) | LEVEL ≥ 1 for difficulty/discrimination routing | misconception claims only as *hypotheses* (§4.8) unless state = `EMPIRICALLY_SUPPORTED` |
+| **ADAPTIVE** | §4.4 clauses 1–3 + routing-semantics review | as DIAGNOSTIC | `EMPIRICALLY_SUPPORTED` for any distractor- or misconception-routed behavior; `REVIEWED` for skill×difficulty routing | LEVEL ≥ 1 (item- or bucket-calibrated) | state-backed semantics for every inference the engine makes from the response |
+
+Notes: these are the *minimum* states at publish; state may only increase over an item's life (HYPOTHESIS → REVIEWED → EMPIRICALLY_SUPPORTED), never decrease without a re-review. Practice-to-assessment reuse is allowed (upward); assessment/diagnostic items may flow down to practice; practice → diagnostic reuse requires full re-gating at the DIAGNOSTIC bar (Blueprint §3 reuse rule).
+
+## 4.10 Correction log (Phase 1A.2)
+
+| Correction | Original problem | New rule | Reason | Source |
+|---|---|---|---|---|
+| V7 | D7/D10/DNA treated distractor selection as misconception evidence ("misconception-attribution in diagnostic engine"); DNA called `misconception_target` "the predictable error the item is built to expose" | Distractor→misconception is a **hypothesis** until empirically validated; HYPOTHESIS / OBSERVED PATTERN / VALIDATED tiers; learner messaging bounded (§4.8); D7/D10 wording revised | A wrong distractor choice is correlational; treating it as a validated misconception overclaims diagnostic evidence | Phase 1B verification, finding V7-CRITICAL |
+| S2 | Publish rule allowed a 14×3 + 1×1 item (D10 = 1) to pass under the `CALIBRATION` allowance (mean ≥ 2.0 + "no dimension < 2 except CALIBRATION D3/D9/D10") | **Conjunctive publish**: structural + no hard-fail < 2 + all scored ≥ 2 + D10 explicit valid state + human APPROVED + purpose gates; D10 **never** calibration-exempt; mean is advisory (tiers); MUST-HAVE-STATED-ROLE folded into clause 4 (§4.4, §4.9) | The calibration escape hatch on D10 recreates the "diagnostic bank of low-D10 items" failure | Phase 1B verification, finding S2-CRITICAL; scoring edge-case analysis §9 |

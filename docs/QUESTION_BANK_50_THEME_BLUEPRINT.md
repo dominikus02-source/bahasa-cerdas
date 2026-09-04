@@ -15,9 +15,9 @@
 
 The blueprint **does not** restate the audit's findings beyond what a forward design must reference. It answers "how to rebuild", not "what was wrong". All claims below that touch research are keyed `[S#]`; every curriculum/TKA/UKBI relevance statement uses the established classification (SOURCE-DERIVED / RESEARCH-INFORMED / INTERNAL REQUIREMENT / INFERENCE) — and **no theme is claimed to be an official SNPMB/UKBI construct** (SNPMB framework remains NOT_VERIFIED, bibliography P4; UKBI = RESEARCH-INFORMED analog only).
 
-**Compliance notes carried from Phase 1B verification** (foundation is CONDITIONAL GO):
-- Misconceptions in this blueprint are **THEORETICAL / EXPECTED** unless explicitly marked empirically validated (none are yet — no items exist).
-- Volumes follow the evidence-cell model and the conjunctive publish rule of the Quality Standard; D10 (diagnostic value) is never calibration-exempt.
+**Compliance notes carried from Phase 1B verification** (foundation: CONDITIONAL GO — corrections V7 + S2 applied in Phase 1A.2, Quality Standard v1.1):
+- Misconceptions in this blueprint are **HYPOTHESES (THEORETICAL / INTENDED)** unless explicitly marked empirically validated (none are yet — no items exist). Distractor selections are "consistent with" a hypothesis, never "= misconception" (V7; Quality Standard §4.8).
+- Volumes follow the evidence-cell model and the **conjunctive publish rule** of the Quality Standard (S2; §4.4): no hard-fail < 2, all scored ≥ 2, explicit D10 state, human APPROVED, purpose gates; D10 (diagnostic value) is **never calibration-exempt** (§4.9).
 - Testlet rule: items sharing one stimulus form **one evidence unit** for diagnostic use.
 
 ---
@@ -105,7 +105,7 @@ Legend per purpose: **PRIMARY** (designed for it) · **SECONDARY** (usable with 
 | F7 Ejaan & Bentuk Baku | PRIMARY | PRIMARY | SECONDARY (error-detection items) | SECONDARY |
 | F8 Kosakata & Morfologi | PRIMARY | PRIMARY | SECONDARY (weak alone; supports vocabulary evidence cell) | SECONDARY |
 
-Reuse rule (Quality Standard integration): items are tagged `assessment_purpose` at authoring and locked at PUBLISH. DIAGNOSTIC/ADAPTIVE eligibility requires purpose ≥ ASSESSMENT, evidence-target review, D10 ≥ 2, and calibration LEVEL ≥ 1 (Quality Standard §4.4; Validation Spec §10). Practice items may flow *up* to assessment; calibrated items may flow *down* to practice; the reverse (practice → diagnostic) is **blocked** without full re-gating.
+Reuse rule (Quality Standard integration): items are tagged `assessment_purpose` at authoring and locked at PUBLISH under the **conjunctive publish rule** (Quality Standard §4.4, S2): no hard-fail < 2, all scored ≥ 2, **D10 in an explicit valid state — never calibration-exempt** (§4.9), human APPROVED, purpose gates passed. DIAGNOSTIC/ADAPTIVE eligibility additionally requires purpose ≥ ASSESSMENT, evidence-target review, D10 state ≥ `REVIEWED` (DIAGNOSTIC) or `EMPIRICALLY_SUPPORTED` for misconception-routed behavior (ADAPTIVE), and calibration LEVEL ≥ 1 (Quality Standard §4.9; Validation Spec §10). Practice items may flow *up* to assessment; calibrated items may flow *down* to practice; the reverse (practice → diagnostic) is **blocked** without full re-gating.
 
 ---
 
@@ -903,16 +903,16 @@ Easy ~25% / Medium ~45% / Hard ~30%. Easy = retrieval; Medium = structure + dire
 Signals: retrieval (R2), structure awareness (R3), inferential reading (R4), evaluative reading (R5). Must **not** infer: writing ability, grammar mastery, general knowledge. Evidence updates READING only; a berita testlet counts once.
 
 ### 7.9 Validation gates
-All items: stages 1–2 (structural/content), 5 (answer), 7 (duplicate incl. content-bearing cross-stimulus), 8 (cells); stages 3, 4, 6, 9 human-gated; stimulus-dependence check on 100%; leakage scan per DNA §2 list.
+All items: stages 1–2 (structural/content), 5 (answer), 7 (duplicate incl. content-bearing cross-stimulus), 8 (cells); stages 3, 4, 6, 9 human-gated; stimulus-dependence check on 100%; leakage scan per DNA §2 list. **Publish is conjunctive (Quality Standard §4.4/S2): no hard-fail < 2, all scored ≥ 2, D10 in an explicit state (target `HYPOTHESIS` at pilot authoring, upgraded to `REVIEWED` after response-pattern documentation), human APPROVED.**
 
 ### 7.10 Human review
-Per item: stimulus authenticity/neutrality (D13/D14); key answerable from text alone (D5/D7); fakta/opini keys defensible (D1); inference keys text-supported (D2); vocabulary ≤ grade (D8); two-reviewer agreement on keys and R-cells.
+Per item: stimulus authenticity/neutrality (D13/D14); key answerable from text alone (D5/D7); fakta/opini keys defensible (D1); inference keys text-supported (D2); vocabulary ≤ grade (D8); two-reviewer agreement on keys and R-cells. Misconception links are recorded as **hypotheses** only (V7 — "selection consistent with hypothesis X", never "= misconception X"); the pilot does not require a `validated_misconception` for any item.
 
 ### 7.11 Calibration
-LEVEL 0 cells on publish → LEVEL 1 after ≥ 40 responses/item (p ∈ [0.30, 0.90]; point-biserial ≥ 0.15, target 0.20; pool per skill×difficulty when item-N < 30) → revision/retire on flag (no silent re-cell) → LEVEL 2+ at N ≥ 100 where exposure allows.
+LEVEL 0 cells on publish → LEVEL 1 after ≥ 40 responses/item (p ∈ [0.30, 0.90]; point-biserial ≥ 0.15, target 0.20; pool per skill×difficulty when item-N < 30) → revision/retire on flag (no silent re-cell) → LEVEL 2+ at N ≥ 100 where exposure allows. Calibration evidence upgrades D9 difficulty and may raise D10 HYPOTHESIS → REVIEWED/EMPIRICALLY_SUPPORTED via the response-pattern + empirical-analysis tier (V7) — a `CALIBRATION` tag alone never satisfies D10 (S2).
 
 ### 7.12 Success criteria (pilot pass = all true)
-1. 100% items carry evidence/cognitive/difficulty targets + misconception flag. 2. 0 deterministic-stage rejects after authoring fixes; 0 leaks. 3. All 15 dimensions scored; none < 2; D10 ≥ 2 every item. 4. ≥95% items unanswerable without stimulus (2 reviewers). 5. Agreement ≥ 0.80 key / ≥ 0.70 cognitive cell (first 20-item rubric run). 6. LEVEL-1 calibration: ≥80% inside p-band with r ≥ 0.15; flags resolved. 7. Expert attestation: no item needs outside knowledge.
+1. 100% items carry evidence/cognitive/difficulty targets + a misconception *hypothesis* flag or explicit non-misconception note (V7 semantics). 2. 0 deterministic-stage rejects after authoring fixes; 0 leaks. 3. All 15 dimensions scored; none < 2; **conjunctive publish rule satisfied with an explicit D10 state for every item** (S2). 4. ≥95% items unanswerable without stimulus (2 reviewers). 5. Agreement ≥ 0.80 key / ≥ 0.70 cognitive cell (first 20-item rubric run). 6. LEVEL-1 calibration: ≥80% inside p-band with r ≥ 0.15; flags resolved. 7. Expert attestation: no item needs outside knowledge. 8. Learner-facing language audit: 0 instances asserting a distractor = a misconception without a validated tag (V7).
 
 ## 8. Rebuild waves (no questions generated)
 
