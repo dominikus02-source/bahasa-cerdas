@@ -585,9 +585,6 @@ export default function KelasKuPage() {
             </div>
           )
         ) : tab === "tugas" && detail ? (
-          reviewPenugasan ? (
-            <SubmissionReview penugasanId={reviewPenugasan.id} groupId={activeGroup.id} onClose={() => setReviewPenugasan(null)} onGraded={() => loadDetail(activeGroup.id)} />
-          ) : (
           <div className="space-y-4">
             {(detail.tugasQuiz ?? []).length === 0 && (detail.tugasPenugasan ?? []).length === 0 ? (
               <div className="bc-card bc-empty">
@@ -658,7 +655,6 @@ export default function KelasKuPage() {
               </>
             )}
           </div>
-          )
         ) : tab === "nilai" && detail ? (
           <div className="space-y-4">
             <div className="grid gap-3 sm:grid-cols-2">
@@ -762,6 +758,10 @@ export default function KelasKuPage() {
             )}
           </div>
         ) : null}
+
+        {reviewPenugasan && (
+          <SubmissionReview penugasanId={reviewPenugasan.id} groupId={activeGroup.id} onClose={() => setReviewPenugasan(null)} onGraded={() => loadDetail(activeGroup.id)} />
+        )}
 
         {toast && <Toast msg={toast} onClose={() => setToast(null)} />}
 
