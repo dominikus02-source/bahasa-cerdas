@@ -417,9 +417,13 @@ async function main(): Promise<void> {
   const eligibleSummary = summarize(gateEligiblePool, false);
   const rejectedByGate = pool.length - gateEligiblePool.length;
   console.log(`\n── POOL SETELAH BANK GATE (kandidat eligible yang dipakai route) ──`);
-  console.log(`  total eligible      : ${gateEligiblePool.length} (${rejectedByGate} ditolak gate)`);
+  console.log(`  raw candidates      : ${pool.length}`);
+  console.log(`  ditolak gate        : ${rejectedByGate}`);
+  console.log(`  eligible aman       : ${gateEligiblePool.length}`);
   console.log(`  hard defect tersisa : ${eligibleSummary.hard}`);
+  let poolIntegrityOk = true;
   if (eligibleSummary.hard > 0) {
+    poolIntegrityOk = false;
     console.log(`  ⚠️ masih ada butir rusak lolos gate:`);
     for (const item of gateEligiblePool.filter((i) => i.defects.length > 0).slice(0, 10)) {
       console.log(`    ❌ [${item.id}] ${item.text.slice(0, 90)}`);
@@ -464,6 +468,10 @@ async function main(): Promise<void> {
   console.log(`\nLaporan detail: /tmp/diagnostic-integrity-audit.json`);
 
   await prisma.$disconnect();
+  if (!poolIntegrityOk) {
+    console.error("POOL INTEGRITY GAGAL: ada butir rusak di pool eligible — 0 invalid wajib di pool delivery.");
+    process.exit(1);
+  }
   process.exit(0);
 }
 

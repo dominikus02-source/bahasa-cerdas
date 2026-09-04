@@ -32,7 +32,7 @@ import {
   summarizeSessionEvidence,
 } from "@/lib/diagnostic-ai/controller";
 import { loadAiSessionState, saveAiSessionState, evidenceMetadata } from "@/lib/diagnostic-ai/persist";
-import { pickBankFallbackCandidate, toFallbackAiItem } from "@/lib/diagnostic-ai/bank-fallback";
+import { pickSafeBankFallbackCandidate, toFallbackAiItem } from "@/lib/diagnostic-ai/bank-fallback";
 import { bankGateIssues } from "@/lib/diagnostic-ai/bank-gate";
 import { toPublicQuestion } from "@/lib/diagnostic-ai/types";
 import {
@@ -232,13 +232,18 @@ async function bankFallbackFor(
 ): Promise<ReturnType<typeof toFallbackAiItem> | null> {
   const pool = await buildDiagnosticCandidates();
   if (pool.length === 0) return null;
-  const candidate = pickBankFallbackCandidate(pool, plan, avoidIds, avoidStems);
-  if (!candidate) return null;
-  const question = await db.soal.findUnique({
-    where: { kodeSoal: candidate.id },
-    select: { correctAnswer: true },
+  // Defense in depth: kandidat di-gate ULANG di titik penyerahan dengan kunci
+  // jawaban asli. Kandidat tidak aman TIDAK PERNAH dikirim (pickSafe… menolak
+  // dan lanjut ke kandidat aman berikutnya; bila tak ada → null = perilaku
+  // terminal terkendali yang sudah ada).
+  const keyRows = await db.soal.findMany({
+    where: { kodeSoal: { in: pool.map((candidate) => candidate.id) } },
+    select: { kodeSoal: true, correctAnswer: true },
   });
-  return toFallbackAiItem(candidate, String(question?.correctAnswer ?? "0"));
+  const keyById = new Map(keyRows.map((row) => [row.kodeSoal, String(row.correctAnswer ?? "")]));
+  const picked = pickSafeBankFallbackCandidate(pool, plan, avoidIds, avoidStems, (id) => keyById.get(id));
+  if (!picked) return null;
+  return toFallbackAiItem(picked.candidate, picked.correctAnswer);
 }
 
 async function startAiDiagnostic(userId: string, size: number): Promise<NextResponse | null> {

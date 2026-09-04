@@ -1,6 +1,7 @@
 import type { DiagnosticCandidate } from "@/lib/diagnostic/types";
 import { AI_DIAGNOSTIC_DIFFICULTIES } from "./config";
 import { normalizeText } from "./validator";
+import { isDiagnosticSafeItem } from "./bank-gate";
 import type { AiDiagnosticItem } from "./types";
 
 export interface FallbackPlan {
@@ -34,6 +35,46 @@ export function pickBankFallbackCandidate(
     return a.id.localeCompare(b.id);
   });
   return ranked[0] ?? null;
+}
+
+/**
+ * Pilih kandidat fallback paling cocok yang LULUS bank gate (defense in depth).
+ *
+ * Kandidat terbaik per peringkat kesulitan diuji ulang dengan kunci jawaban
+ * aslinya; yang gagal disingkirkan dan dicoba kandidat aman berikutnya.
+ * MURNI (tanpa DB) — keyOf dipasok pemanggil. Kembalikan null bila tidak ada
+ * kandidat aman tersisa (pemanggil memakai perilaku terminal terkendali).
+ */
+export function pickSafeBankFallbackCandidate(
+  pool: DiagnosticCandidate[],
+  plan: FallbackPlan,
+  avoidIds: string[],
+  avoidStems: string[],
+  keyOf: (id: string) => string | undefined
+): { candidate: DiagnosticCandidate; correctAnswer: string } | null {
+  const rejected: string[] = [];
+  for (let attempt = 0; attempt <= pool.length; attempt += 1) {
+    const candidate = pickBankFallbackCandidate(pool, plan, [...avoidIds, ...rejected], avoidStems);
+    if (!candidate) return null;
+    const correctAnswer = String(keyOf(candidate.id) ?? "");
+    const result = isDiagnosticSafeItem({
+      id: candidate.id,
+      text: candidate.text,
+      options: candidate.options,
+      questionType: candidate.questionType,
+      correctAnswer,
+      avoidStems,
+    });
+    if (result.safe) return { candidate, correctAnswer };
+    // Telemetri server-side saja (tanpa kunci/isi sensitif).
+    console.warn("diagnostic fallback rejected candidate", {
+      questionId: candidate.id,
+      reasons: result.reasons,
+      source: "BANK_SOAL",
+    });
+    rejected.push(candidate.id);
+  }
+  return null;
 }
 
 export function toFallbackAiItem(
