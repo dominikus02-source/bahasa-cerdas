@@ -20,8 +20,9 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
         submissions: {
           where: { userId: user.id },
           select: {
-            status: true, score: true, completedAt: true,
-            praktikUrl: true, praktikCatatan: true, praktikNilai: true, praktikDinilai: true,
+            status: true, score: true, completedAt: true, submittedAt: true,
+            praktikUrl: true, praktikFileName: true, praktikFileType: true, praktikFileSize: true,
+            praktikCatatan: true, praktikNilai: true, praktikDinilai: true,
           },
         },
       },

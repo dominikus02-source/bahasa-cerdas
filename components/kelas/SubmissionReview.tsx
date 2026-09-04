@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ArrowLeft, CheckCircle2, ExternalLink, Loader2, Save, Search } from "lucide-react";
+import { ArrowLeft, CheckCircle2, ExternalLink, FileText, Clock, Loader2, Save, Search } from "lucide-react";
 import "@/components/kelas/classroom.css";
 
 interface MuridRow {
@@ -11,9 +11,14 @@ interface MuridRow {
   status: string;
   score: number | null;
   praktikUrl: string | null;
+  praktikFileName: string | null;
+  praktikFileType: string | null;
+  praktikFileSize: number | null;
   praktikNilai: number | null;
   praktikCatatan: string | null;
   praktikDinilai: boolean;
+  submittedAt: string | null;
+  isLate: boolean;
 }
 
 interface ReviewData {
@@ -22,22 +27,58 @@ interface ReviewData {
   jenis: string;
   unitTitle: string;
   groupName: string;
+  tenggat: string | null;
   murid: MuridRow[];
 }
 
-type FilterKey = "semua" | "belum" | "sudah";
+type FilterKey = "semua" | "belum" | "sudah" | "terlambat";
 
 function statusLabel(m: MuridRow): string {
   if (m.praktikDinilai && m.praktikNilai != null) return `Sudah dinilai · ${m.praktikNilai}`;
+  if (m.isLate) return "Terlambat";
   if (m.praktikUrl) return "Sudah dikumpulkan";
   if (m.status === "IN_PROGRESS") return "Sedang mengerjakan";
   if (m.status === "COMPLETED") return "Sudah dikumpulkan";
-  return "Belum mengerjakan";
+  return "Belum mengumpulkan";
+}
+
+function statusColor(m: MuridRow): string {
+  if (m.praktikDinilai && m.praktikNilai != null) return "text-[var(--clr-accent-strong)]";
+  if (m.isLate) return "text-amber-600";
+  if (m.praktikUrl) return "text-[var(--clr-accent-strong)]";
+  return "text-[var(--clr-text-3)]";
+}
+
+function fileIcon(m: MuridRow) {
+  if (!m.praktikUrl) return null;
+  if (m.praktikFileName) return <FileText size={14} />;
+  return <ExternalLink size={14} />;
+}
+
+function fileLabel(m: MuridRow): string {
+  if (m.praktikFileName) return m.praktikFileName;
+  if (m.praktikUrl) {
+    try { return new URL(m.praktikUrl).hostname; } catch { return "Tautan"; }
+  }
+  return "";
+}
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function formatTime(iso: string | null): string {
+  if (!iso) return "";
+  try {
+    return new Date(iso).toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+  } catch { return ""; }
 }
 
 /**
- * STEP 6.2 — Review pengumpulan tugas (guru): daftar murid + status +
- * buka submission → nilai + catatan → simpan (reuse POST nilai-praktik).
+ * Review pengumpulan tugas (guru): daftar murid + status + buka submission
+ * → nilai + catatan → simpan (reuse POST nilai-praktik).
  */
 export function SubmissionReview({ penugasanId, groupId, onClose, onGraded }: { penugasanId: string; groupId: string; onClose: () => void; onGraded: () => void }) {
   const [data, setData] = useState<ReviewData | null>(null);
@@ -112,10 +153,12 @@ export function SubmissionReview({ penugasanId, groupId, onClose, onGraded }: { 
     if (q) rows = rows.filter((m) => m.fullName.toLowerCase().includes(q));
     if (filter === "belum") rows = rows.filter((m) => !m.praktikUrl && m.status !== "COMPLETED");
     if (filter === "sudah") rows = rows.filter((m) => Boolean(m.praktikUrl) || m.status === "COMPLETED");
+    if (filter === "terlambat") rows = rows.filter((m) => m.isLate);
     return rows;
   }, [data, filter, query]);
 
   const sudahCount = data?.murid.filter((m) => m.praktikUrl || m.status === "COMPLETED").length ?? 0;
+  const terlambatCount = data?.murid.filter((m) => m.isLate).length ?? 0;
 
   return (
     <div className="bc-card p-4 md:p-5 space-y-4">
@@ -136,8 +179,14 @@ export function SubmissionReview({ penugasanId, groupId, onClose, onGraded }: { 
           <div>
             <h2 className="text-lg font-bold text-[var(--clr-text)]">{data.judul}</h2>
             <p className="text-sm text-[var(--clr-text-2)] mt-0.5">Kelas {data.groupName}</p>
+            {data.tenggat && (
+              <p className="text-xs text-[var(--clr-text-3)] mt-1">
+                Deadline: {formatTime(data.tenggat)}
+              </p>
+            )}
             <p className="mt-3 text-sm text-[var(--clr-text)]">
               <strong className="text-[var(--clr-accent-strong)]">{sudahCount} / {data.murid.length}</strong> siswa mengumpulkan
+              {terlambatCount > 0 && <span className="text-amber-600 ml-2">· {terlambatCount} terlambat</span>}
             </p>
           </div>
 
@@ -151,7 +200,7 @@ export function SubmissionReview({ penugasanId, groupId, onClose, onGraded }: { 
           ) : (
             <>
               <div className="flex flex-wrap items-center gap-2">
-                {([["semua", "Semua"], ["belum", "Belum"], ["sudah", "Sudah"]] as [FilterKey, string][]).map(([k, label]) => (
+                {([["semua", "Semua"], ["belum", "Belum"], ["sudah", "Sudah"], ["terlambat", "Terlambat"]] as [FilterKey, string][]).map(([k, label]) => (
                   <button key={k} type="button" onClick={() => setFilter(k)} className={`bc-chip text-xs ${filter === k ? "bc-chip-active" : ""}`} aria-pressed={filter === k}>
                     {label}
                   </button>
@@ -170,7 +219,10 @@ export function SubmissionReview({ penugasanId, groupId, onClose, onGraded }: { 
                     </div>
                     <span className="flex-1 min-w-0">
                       <span className="block text-sm font-semibold text-[var(--clr-text)] truncate">{m.fullName}</span>
-                      <span className="block text-xs text-[var(--clr-text-3)]">{statusLabel(m)}</span>
+                      <span className={`block text-xs ${statusColor(m)} flex items-center gap-1`}>
+                        {fileIcon(m)} {statusLabel(m)}
+                        {m.praktikFileName && <span className="text-[var(--clr-text-3)] ml-1">· {m.praktikFileName}</span>}
+                      </span>
                     </span>
                     {m.praktikDinilai && m.praktikNilai != null && (
                       <span className="text-sm font-bold text-[var(--clr-accent-strong)]">{m.praktikNilai}</span>
@@ -191,22 +243,33 @@ export function SubmissionReview({ penugasanId, groupId, onClose, onGraded }: { 
               <div>
                 <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--clr-text-3)]">Penilaian</p>
                 <h3 className="text-lg font-bold text-[var(--clr-text)]">{selected.fullName}</h3>
-                <p className="text-xs text-[var(--clr-text-3)]">{statusLabel(selected)}</p>
+                <p className="text-xs text-[var(--clr-text-3)] flex items-center gap-1">
+                  {statusLabel(selected)}
+                  {selected.isLate && <span className="text-amber-600 font-semibold">Terlambat</span>}
+                  {selected.submittedAt && <span className="ml-1">· {formatTime(selected.submittedAt)}</span>}
+                </p>
               </div>
 
               {selected.praktikUrl && (
                 <div className="bc-card p-3.5 flex items-center gap-3">
-                  <span className="w-10 h-10 rounded-xl bg-[var(--clr-accent-soft)] text-[var(--clr-accent-strong)] flex items-center justify-center shrink-0"><ExternalLink size={18} /></span>
+                  <span className="w-10 h-10 rounded-xl bg-[var(--clr-accent-soft)] text-[var(--clr-accent-strong)] flex items-center justify-center shrink-0">
+                    {selected.praktikFileName ? <FileText size={18} /> : <ExternalLink size={18} />}
+                  </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-[var(--clr-text)] truncate">Karya murid (tautan)</p>
+                    <p className="text-xs font-semibold text-[var(--clr-text)] truncate">
+                      {selected.praktikFileName || "Tautan eksternal"}
+                    </p>
                     <a href={selected.praktikUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-[var(--clr-accent-strong)] truncate block">
-                      {selected.praktikUrl}
+                      {selected.praktikFileName ? "Buka File" : selected.praktikUrl}
                     </a>
+                    {selected.praktikFileSize != null && (
+                      <span className="text-[11px] text-[var(--clr-text-3)]">{formatFileSize(selected.praktikFileSize)}</span>
+                    )}
                   </div>
                 </div>
               )}
 
-              {/* STEP 6.3 — insight berbasis evidence (reuse LearnerState + 4E.2) */}
+              {/* Insight berbasis evidence */}
               <div className="bc-card p-3.5 bg-[var(--clr-surface-2)]">
                 <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--clr-accent-strong)]">Insight BC</p>
                 {insightLoading ? (

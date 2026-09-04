@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
 import { isTeacherOrStudent } from "@/lib/teacher/students";
+
 // One assignment + every enrolled student's submission (for the teacher's review).
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -20,8 +21,6 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
             name: true,
             teacherId: true,
             members: {
-              // Semua anggota kelas (konsisten dengan hitungan `_count.members`
-              // di daftar penugasan dan daftar murid di Data Siswa / KelasKu).
               select: { user: { select: { id: true, fullName: true, avatar: true } } },
             },
           },
@@ -35,9 +34,16 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
+    const now = new Date();
+    const tenggat = penugasan.tenggat;
+
     const subByUser = new Map(penugasan.submissions.map((s) => [s.userId, s]));
     const murid = penugasan.group.members.map((m) => {
       const s = subByUser.get(m.user.id);
+      const hasSubmitted = Boolean(s?.praktikUrl);
+      const submittedAt = s?.submittedAt ?? null;
+      const isLate = tenggat && submittedAt ? submittedAt > tenggat : false;
+
       return {
         userId: m.user.id,
         fullName: m.user.fullName,
@@ -45,9 +51,14 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
         status: s?.status ?? "ASSIGNED",
         score: s?.score ?? null,
         praktikUrl: s?.praktikUrl ?? null,
+        praktikFileName: s?.praktikFileName ?? null,
+        praktikFileType: s?.praktikFileType ?? null,
+        praktikFileSize: s?.praktikFileSize ?? null,
         praktikNilai: s?.praktikNilai ?? null,
         praktikCatatan: s?.praktikCatatan ?? null,
         praktikDinilai: s?.praktikDinilai ?? false,
+        submittedAt: submittedAt?.toISOString() ?? null,
+        isLate: hasSubmitted && isLate,
       };
     });
 
@@ -58,6 +69,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
         jenis: penugasan.jenis,
         unitTitle: penugasan.unit.title,
         groupName: penugasan.group.name,
+        tenggat: penugasan.tenggat?.toISOString() ?? null,
         murid,
       },
     });
@@ -68,8 +80,6 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 }
 
 // Hapus tugas materi/latihan/kuis/praktik yang sudah dikirim ke kelas.
-// Hanya guru pemilik tugas (atau founder) yang boleh — murid yang sudah
-// mengerjakan ikut terhapus (submission cascade lewat relasi DB).
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getUser();

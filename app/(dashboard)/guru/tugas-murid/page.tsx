@@ -20,7 +20,9 @@ const JENIS_DESC: Record<string, string> = {
 };
 interface MuridRow {
   userId: string; fullName: string; avatar: string | null; status: string; score: number | null;
-  praktikUrl: string | null; praktikNilai: number | null; praktikCatatan: string | null; praktikDinilai: boolean;
+  praktikUrl: string | null; praktikFileName: string | null; praktikFileSize: number | null;
+  praktikNilai: number | null; praktikCatatan: string | null; praktikDinilai: boolean;
+  isLate: boolean;
 }
 
 export default function TugasMuridPage() {
@@ -101,6 +103,7 @@ export default function TugasMuridPage() {
                         ? <>Latihan/Kuis: <span className="font-bold text-slate-700">{m.score ?? 0}</span></>
                         : "Belum mengerjakan"}
                     </p>
+                    {m.isLate && <span className="text-[10px] font-semibold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full mt-0.5 inline-block">Terlambat</span>}
                   </div>
                   {m.status === "COMPLETED"
                     ? <CheckCircle className="w-5 h-5 text-emerald-500" />
@@ -114,8 +117,11 @@ export default function TugasMuridPage() {
                     {m.praktikUrl ? (
                       <>
                         <a href={m.praktikUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-violet-700 font-medium mb-2 bg-violet-50 px-2.5 py-1.5 rounded-lg">
-                          <FileText size={13} /> Lihat berkas praktik
+                          <FileText size={13} /> {m.praktikFileName || "Lihat berkas praktik"}
                         </a>
+                        {m.praktikFileName && m.praktikFileSize != null && (
+                          <p className="text-[11px] text-slate-400 mb-2">{m.praktikFileName}{m.praktikFileSize < 1024 * 1024 ? ` · ${(m.praktikFileSize / 1024).toFixed(1)} KB` : ` · ${(m.praktikFileSize / (1024 * 1024)).toFixed(1)} MB`}</p>
+                        )}
                         <div className="flex items-end gap-2">
                           <div className="w-20">
                             <label className="block text-[10px] text-slate-400 mb-0.5">Nilai (0–100)</label>

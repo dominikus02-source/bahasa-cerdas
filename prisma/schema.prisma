@@ -280,34 +280,34 @@ model User {
   kuponDipakai          KuponPemakaian[]
 
   // BC Arena Core Engine (universal gamification — PlayerProfile terpisah dari User)
-  playerProfile    PlayerProfile?
-  xpTransactions   XPTransaction[]
-  userBadges       UserBadge[]
-  userAchievements UserAchievement[]
+  playerProfile            PlayerProfile?
+  xpTransactions           XPTransaction[]
+  userBadges               UserBadge[]
+  userAchievements         UserAchievement[]
   // BC Premium Economy Foundation (fase P1)
-  premiumUsage     PremiumUsage[]
+  premiumUsage             PremiumUsage[]
   // Leaderboard Motivation Layer — hasil settlement podium (weekly/season) + Hall of Fame.
   leaderboardPeriodResults LeaderboardPeriodResult[]
 
   // Learning Loop Engine (Sprint 5 — aktivitas, skill, journey, rekomendasi, CTA, insight)
-  learningSkills          LearningSkill[]
-  playerActivities        PlayerActivity[]
-  learningJourney         LearningJourney[]
-  learningRecommendations LearningRecommendation[]
-  playerCTA               PlayerCTA?
-  learningInsights        LearningInsight[]
-  learningEvidences       LearningEvidence[]
-  questionMetadataCreated QuestionMetadata[]  @relation("QuestionMetadataCreatedBy")
-  questionMetadataReviewed QuestionMetadata[] @relation("QuestionMetadataReviewedBy")
+  learningSkills           LearningSkill[]
+  playerActivities         PlayerActivity[]
+  learningJourney          LearningJourney[]
+  learningRecommendations  LearningRecommendation[]
+  playerCTA                PlayerCTA?
+  learningInsights         LearningInsight[]
+  learningEvidences        LearningEvidence[]
+  questionMetadataCreated  QuestionMetadata[]        @relation("QuestionMetadataCreatedBy")
+  questionMetadataReviewed QuestionMetadata[]        @relation("QuestionMetadataReviewedBy")
   adaptivePracticeSessions AdaptivePracticeSession[]
 
   // Daily Action Engine (Aksi Hari Ini 1.0)
-  dailyActions             DailyAction[]
+  dailyActions DailyAction[]
 
   // Admin quota audit logs where this user was the acting admin
   adminQuotaActions    AdminQuotaAuditLog[]   @relation("AdminActions")
-// Admin quota audit logs where this user was the target
-  targetOfQuotaActions AdminQuotaAuditLog[] @relation("TargetActions")
+  // Admin quota audit logs where this user was the target
+  targetOfQuotaActions AdminQuotaAuditLog[]   @relation("TargetActions")
   // Admin payment audit logs where this user was the acting admin
   paymentAdminActions  AdminPaymentAuditLog[] @relation("PaymentAdminActions")
   // Admin payment audit logs where this user was the target
@@ -321,29 +321,29 @@ model User {
 
   // Sosial profil (Player Identity — Phase profil murid premium)
   // following = yang user ini ikuti, followers = yang mengikuti user ini.
-  following  Follow[]        @relation("Following")
-  followers  Follow[]        @relation("Followers")
-  profileLikesGiven  ProfileLike[] @relation("ProfileLikeLiker")
+  following            Follow[]      @relation("Following")
+  followers            Follow[]      @relation("Followers")
+  profileLikesGiven    ProfileLike[] @relation("ProfileLikeLiker")
   profileLikesReceived ProfileLike[] @relation("ProfileLikeTarget")
 
   // Guru Cerdas Sejahtera — Commission & Attribution (P7A/P7B/P7C)
-  teacherWallet               TeacherWallet?                   @relation()
-  commissionsAsTeacher        TeacherCommission[]              @relation("CommissionTeacher")
-  commissionsAsStudent        TeacherCommission[]              @relation("CommissionStudent")
-  commissionWithdrawals       TeacherCommissionWithdrawal[]    @relation("CommissionWithdrawals")
-  attributionsAsStudent       TeacherAttribution[]             @relation("AttributionStudent")
-  attributionsAsTeacher       TeacherAttribution[]             @relation("AttributionTeacher")
-  attributionEvents           TeacherAttributionEvent[]        @relation("AttributionEvents")
+  teacherWallet         TeacherWallet?                @relation()
+  commissionsAsTeacher  TeacherCommission[]           @relation("CommissionTeacher")
+  commissionsAsStudent  TeacherCommission[]           @relation("CommissionStudent")
+  commissionWithdrawals TeacherCommissionWithdrawal[] @relation("CommissionWithdrawals")
+  attributionsAsStudent TeacherAttribution[]          @relation("AttributionStudent")
+  attributionsAsTeacher TeacherAttribution[]          @relation("AttributionTeacher")
+  attributionEvents     TeacherAttributionEvent[]     @relation("AttributionEvents")
   // P7D — Payout infrastructure
-  payoutProfile               TeacherPayoutProfile?            @relation("PayoutProfileTeacher")
-  payoutsAsTeacher            TeacherPayout[]                  @relation("PayoutTeacher")
+  payoutProfile         TeacherPayoutProfile?         @relation("PayoutProfileTeacher")
+  payoutsAsTeacher      TeacherPayout[]               @relation("PayoutTeacher")
   // P8C — Risk & safety
-  riskCases                   TeacherRiskCase[]                @relation("RiskCaseTeacher")
-  riskSignals                 TeacherRiskSignal[]              @relation("RiskSignalTeacher")
-  riskActions                 TeacherRiskAction[]              @relation("RiskActionTeacher")
+  riskCases             TeacherRiskCase[]             @relation("RiskCaseTeacher")
+  riskSignals           TeacherRiskSignal[]           @relation("RiskSignalTeacher")
+  riskActions           TeacherRiskAction[]           @relation("RiskActionTeacher")
   // P8I — Sesi TTS (anggaran petunjuk sisi server)
-  ttsSessions                 TtsSession[]
-  taskShareTokens             TaskShareToken[]
+  ttsSessions           TtsSession[]
+  taskShareTokens       TaskShareToken[]
 
   @@index([role, lastActiveAt])
   @@index([xp])
@@ -367,7 +367,7 @@ model Profile {
   //   school   = legacy/raw user-entered value (display, backward compat)
   //   schoolId = canonical identity (School)
   // schoolId TIDAK pernah menjadi dasar authorization — hanya identitas/agregasi.
-  schoolId    String?
+  schoolId   String?
   city       String?
   province   String?
   subject    String?
@@ -577,28 +577,28 @@ model KompetensiCertificate {
 // apakah soal sudah pernah dijawab. Tabel ini hanya menyimpan
 // assignment harian, bukan history jawaban.
 model DailyAction {
-  id          String   @id @default(cuid())
-  userId      String
-  date        String   // "YYYY-MM-DD" (WIB dayKey)
+  id     String @id @default(cuid())
+  userId String
+  date   String // "YYYY-MM-DD" (WIB dayKey)
 
   // Source question identification
-  source      String   // "TKA" | "UKBI"
-  questionId  String   // ID from source table (TKAQuestion.id / UKBIQuestion.id / Soal.id)
+  source     String // "TKA" | "UKBI"
+  questionId String // ID from source table (TKAQuestion.id / UKBIQuestion.id / Soal.id)
 
   // Snapshot at selection time (immutable after creation)
-  skill       String?  // LearningSkillType (derived from question metadata)
+  skill        String? // LearningSkillType (derived from question metadata)
   questionType String  @default("PILIHAN_GANDA") // PILIHAN_GANDA | BENAR_SALAH | ISIAN_SINGKAT
-  difficulty  String?  // Difficulty enum string
+  difficulty   String? // Difficulty enum string
   questionText String? // Snapshot of question text for display (no answer)
-  options     String?  // JSON-serialized options for display (no correctAnswer)
+  options      String? // JSON-serialized options for display (no correctAnswer)
 
   // Status
-  status      String   @default("PENDING") // PENDING | COMPLETED
+  status      String    @default("PENDING") // PENDING | COMPLETED
   isCorrect   Boolean? // null until answered
   completedAt DateTime?
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -632,26 +632,26 @@ model TestSession {
 }
 
 model TestAnswer {
-  id            String    @id @default(cuid())
-  userId        String
-  sessionId     String?
-  paketId       String?
-  questionId    String?
-  questionType  String?
-  answer        String?
-  isCorrect     Boolean?
-  score         Float     @default(0)
-  timeSpent     Int       @default(0)
-  seksi         String?
-  sectionIndex  Int       @default(0)
-  aiFeedback    Json? // Analysis: {ringkasan, nilai, rubrik[], kelebihan[], kelemahan[], kesalahanTerbesar[], kompetensiBelum[], rekomendasi[], komentarGuru, komentarMurid, dimensi}
-  aiConfidence  Float? // 0-100 percaya diri AI
-  aiReviewedAt  DateTime?
-  reviewStatus  String? // PENDING / MENUNGGU_PERSETUJUAN / DISETUJUI / DIEDIT
-  reviewedBy    String?
-  reviewedAt    DateTime?
-  createdAt     DateTime @default(now())
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String    @id @default(cuid())
+  userId       String
+  sessionId    String?
+  paketId      String?
+  questionId   String?
+  questionType String?
+  answer       String?
+  isCorrect    Boolean?
+  score        Float     @default(0)
+  timeSpent    Int       @default(0)
+  seksi        String?
+  sectionIndex Int       @default(0)
+  aiFeedback   Json? // Analysis: {ringkasan, nilai, rubrik[], kelebihan[], kelemahan[], kesalahanTerbesar[], kompetensiBelum[], rekomendasi[], komentarGuru, komentarMurid, dimensi}
+  aiConfidence Float? // 0-100 percaya diri AI
+  aiReviewedAt DateTime?
+  reviewStatus String? // PENDING / MENUNGGU_PERSETUJUAN / DISETUJUI / DIEDIT
+  reviewedBy   String?
+  reviewedAt   DateTime?
+  createdAt    DateTime  @default(now())
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, paketId])
   @@index([sessionId])
@@ -1343,22 +1343,22 @@ model SiteSetting {
 /// (maks 3 pengungkapan huruf per puzzle) dan validasi hadiah. Status permainan
 /// harian (nyawa/streak/koin tampilan) tetap di localStorage.
 model TtsSession {
-  id             String    @id @default(cuid())
-  userId         String
-  level          Int
-  seed           Int
-  hintsRevealed  Int       @default(0) // 0..3 — diklaim atomik via updateMany
-  cellsTotal     Int
-  cellsCorrect   Int
-  xpAwarded      Int?
+  id              String    @id @default(cuid())
+  userId          String
+  level           Int
+  seed            Int
+  hintsRevealed   Int       @default(0) // 0..3 — diklaim atomik via updateMany
+  cellsTotal      Int
+  cellsCorrect    Int
+  xpAwarded       Int?
   // P8J — telemetry gameplay (tanpa data pribadi/finansial):
-  wrongAttempts  Int       @default(0) // dilaporkan klien saat finish (telemetry saja)
-  unresolvedClues Json?    // daftar clue resmi yang tak terjawol (bukan input pemain)
-  feedback       String?   // EASY | PAS | HARD — sekali isi, tidak memengaruhi reward
-  status         String    @default("ACTIVE") // ACTIVE | FINISHED | ABANDONED
-  createdAt      DateTime  @default(now())
-  finishedAt     DateTime?
-  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wrongAttempts   Int       @default(0) // dilaporkan klien saat finish (telemetry saja)
+  unresolvedClues Json? // daftar clue resmi yang tak terjawol (bukan input pemain)
+  feedback        String? // EASY | PAS | HARD — sekali isi, tidak memengaruhi reward
+  status          String    @default("ACTIVE") // ACTIVE | FINISHED | ABANDONED
+  createdAt       DateTime  @default(now())
+  finishedAt      DateTime?
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
   @@index([status, createdAt])
@@ -1420,7 +1420,7 @@ model Transaksi {
   updatedAt     DateTime               @updatedAt
   user          User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
   paymentAudits AdminPaymentAuditLog[]
-  commissions   TeacherCommission[]    // Guru Cerdas Sejahtera (P7C)
+  commissions   TeacherCommission[] // Guru Cerdas Sejahtera (P7C)
 
   @@index([userId])
   @@index([orderId])
@@ -1484,18 +1484,18 @@ model Notifikasi {
 }
 
 model Group {
-  id              String           @id @default(cuid())
+  id              String               @id @default(cuid())
   name            String
   description     String?
   grade           String
   tahunAjaran     String?
-  accessCode      String           @unique
-  isActive        Boolean          @default(true)
-  chatLocked      Boolean          @default(false)
+  accessCode      String               @unique
+  isActive        Boolean              @default(true)
+  chatLocked      Boolean              @default(false)
   teacherId       String
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  teacher         User             @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  teacher         User                 @relation(fields: [teacherId], references: [id], onDelete: Cascade)
   members         GroupMember[]
   quizzes         GroupQuiz[]
   quizAssignments QuizAssignment[]
@@ -1514,14 +1514,14 @@ model Group {
 }
 
 model GroupMember {
-  id               String    @id @default(cuid())
+  id               String   @id @default(cuid())
   groupId          String
   userId           String
-  role             String    @default("member")
+  role             String   @default("member")
   attendanceNumber String?
-  joinedAt         DateTime  @default(now())
-  group            Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  joinedAt         DateTime @default(now())
+  group            Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([groupId, userId])
   @@index([userId])
@@ -1610,9 +1610,9 @@ model GroupQuizResult {
 }
 
 model Artikel {
-  id                  String    @id @default(cuid())
+  id                  String           @id @default(cuid())
   title               String
-  slug                String    @unique
+  slug                String           @unique
   content             String
   excerpt             String?
   coverImage          String?
@@ -1623,18 +1623,18 @@ model Artikel {
   coverImageLicense   String?
   coverImageProvider  String?
   tags                String[]
-  isPublished         Boolean   @default(false)
-  readCount           Int       @default(0)
+  isPublished         Boolean          @default(false)
+  readCount           Int              @default(0)
   authorId            String
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
   publishedAt         DateTime?
   authorName          String?
   authorRole          String?
   articleType         String?
-  source              String    @default("USER_CREATED")
-  featured            Boolean   @default(false)
-  author              User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  source              String           @default("USER_CREATED")
+  featured            Boolean          @default(false)
+  author              User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
   likes               ArtikelLike[]
   comments            ArtikelComment[]
 
@@ -2184,7 +2184,7 @@ model Penugasan {
   group   Group        @relation(fields: [groupId], references: [id], onDelete: Cascade)
   teacher User         @relation(fields: [teacherId], references: [id], onDelete: Cascade)
 
-  submissions PenugasanSubmission[]
+  submissions     PenugasanSubmission[]
   taskShareTokens TaskShareToken[]
 
   @@index([groupId])
@@ -2193,18 +2193,22 @@ model Penugasan {
 }
 
 model PenugasanSubmission {
-  id             String    @id @default(cuid())
-  penugasanId    String
-  userId         String
-  status         String    @default("ASSIGNED")
-  startedAt      DateTime?
-  completedAt    DateTime?
-  score          Int?
+  id              String    @id @default(cuid())
+  penugasanId     String
+  userId          String
+  status          String    @default("ASSIGNED")
+  startedAt       DateTime?
+  completedAt     DateTime?
+  submittedAt     DateTime? // when file/link was actually submitted (for late detection)
+  score           Int?
   // Praktik (Google-Classroom style): student uploads a result, teacher grades it.
-  praktikUrl     String?
-  praktikCatatan String?
-  praktikNilai   Int?
-  praktikDinilai Boolean   @default(false)
+  praktikUrl      String? // file public URL or external link URL
+  praktikFileName String? // original filename (for display)
+  praktikFileType String? // MIME type (e.g. application/pdf)
+  praktikFileSize Int? // file size in bytes
+  praktikCatatan  String?
+  praktikNilai    Int?
+  praktikDinilai  Boolean   @default(false)
 
   penugasan Penugasan @relation(fields: [penugasanId], references: [id], onDelete: Cascade)
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -2388,7 +2392,7 @@ model Subscription {
 
 model AdminPaymentAuditLog {
   id            String   @id @default(cuid())
-  adminUserId   String?  // null = system event (cron/webhook — aksi otomatis)
+  adminUserId   String? // null = system event (cron/webhook — aksi otomatis)
   targetUserId  String?
   transactionId String?
   action        String // MANUAL_ACTIVATE, COMMISSION_CREATE, COMMISSION_REVERSE, ...
@@ -2753,17 +2757,17 @@ model WeeklySeason {
 /// weeklyXP/seasonXP agar tidak terjadi loop (no XP snowball antarminggu);
 /// ia hanya menambah XP total lewat ledger yang sama.
 model LeaderboardPeriodResult {
-  id         String   @id @default(cuid())
-  periodType String // "WEEKLY" | "SEASON"
-  periodKey  String // "2026-W31" | "2026-S1"
-  userId     String
-  rank       Int // 1..3
-  score      Int // XP yang menjadi dasar ranking (weeklyXP/seasonXP periode tsb)
-  rewardXp   Int
+  id          String   @id @default(cuid())
+  periodType  String // "WEEKLY" | "SEASON"
+  periodKey   String // "2026-W31" | "2026-S1"
+  userId      String
+  rank        Int // 1..3
+  score       Int // XP yang menjadi dasar ranking (weeklyXP/seasonXP periode tsb)
+  rewardXp    Int
   rewardCoins Int
-  badgeCode  String?
-  settledAt  DateTime @default(now())
-  createdAt  DateTime @default(now())
+  badgeCode   String?
+  settledAt   DateTime @default(now())
+  createdAt   DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -2890,7 +2894,7 @@ model LearningInsight {
 /// Evidence question-level yang diverifikasi server. Ini bukan XP, mastery,
 /// atau learner state; hanya catatan apa yang dijawab dan hasil validasinya.
 model LearningEvidence {
-  id             String            @id @default(cuid())
+  id             String             @id @default(cuid())
   userId         String
   source         String
   activityId     String
@@ -2900,10 +2904,10 @@ model LearningEvidence {
   score          Float?
   skill          LearningSkillType?
   difficulty     Difficulty?
-  answeredAt     DateTime          @default(now())
+  answeredAt     DateTime           @default(now())
   metadata       Json?
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -2918,7 +2922,7 @@ model LearningEvidence {
 /// Metadata terkontrol untuk sumber soal non-certified. Tidak menyimpan soal
 /// atau answer key; hanya taxonomy/provenance yang bisa diaudit.
 model QuestionMetadata {
-  id              String    @id @default(cuid())
+  id              String      @id @default(cuid())
   source          String
   questionId      String
   skill           String?
@@ -2930,13 +2934,13 @@ model QuestionMetadata {
   cefr            String?
   provenance      String
   confidence      String
-  status          String    @default("DRAFT")
-  taxonomyVersion String    @default("1.0")
-  metadataVersion String    @default("1.0")
+  status          String      @default("DRAFT")
+  taxonomyVersion String      @default("1.0")
+  metadataVersion String      @default("1.0")
   createdById     String?
   reviewedById    String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 
   createdBy  User? @relation("QuestionMetadataCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
   reviewedBy User? @relation("QuestionMetadataReviewedBy", fields: [reviewedById], references: [id], onDelete: SetNull)
@@ -2999,25 +3003,25 @@ model PushSubscription {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 enum AttributionSource {
-  CLASS_ENROLLMENT   // murid join kelas via accessCode (live day-1)
-  REFERRAL_LINK      // reserved: ?ref=<kode> saat signup (belum ada infra)
-  REFERRAL_CODE      // reserved: kode referral guru manual input
-  MANUAL_ADMIN       // penetapan/koreksi oleh admin
+  CLASS_ENROLLMENT // murid join kelas via accessCode (live day-1)
+  REFERRAL_LINK // reserved: ?ref=<kode> saat signup (belum ada infra)
+  REFERRAL_CODE // reserved: kode referral guru manual input
+  MANUAL_ADMIN // penetapan/koreksi oleh admin
 }
 
 enum AttributionStatus {
-  ACTIVE       // satu-satunya status yang layak dapat komisi
-  SUPERSEDED   // digantikan koreksi admin (riwayat utuh)
-  REVOKED      // dicabut admin (mis. fraud/enrollment palsu)
+  ACTIVE // satu-satunya status yang layak dapat komisi
+  SUPERSEDED // digantikan koreksi admin (riwayat utuh)
+  REVOKED // dicabut admin (mis. fraud/enrollment palsu)
 }
 
 enum CommissionStatus {
-  PENDING     // settle tanpa attribution aktif atau eligibleFrom > now
-  ELIGIBLE    // attribution ditemukan + eligibleFrom ≤ now, menunggu holding
-  AVAILABLE   // siap dicairkan (wallet balance bertambah)
-  PROCESSING  // dalam transaksi penarikan
-  PAID        // ditransfer — terminal
-  REVERSED    // refund/reversal — terminal
+  PENDING // settle tanpa attribution aktif atau eligibleFrom > now
+  ELIGIBLE // attribution ditemukan + eligibleFrom ≤ now, menunggu holding
+  AVAILABLE // siap dicairkan (wallet balance bertambah)
+  PROCESSING // dalam transaksi penarikan
+  PAID // ditransfer — terminal
+  REVERSED // refund/reversal — terminal
 }
 
 /// Jenis baris ledger komisi. P7C §4: reversal adalah ENTRY NEGATIF TERPISAH —
@@ -3028,68 +3032,68 @@ enum CommissionStatus {
 /// tingkat database untuk webhook retry, cron retry, dan manual retry.
 enum CommissionEntryType {
   COMMISSION // entry positif (komisi)
-  REVERSAL   // entry negatif (refund/cancellation) — append-only
+  REVERSAL // entry negatif (refund/cancellation) — append-only
 }
 
 enum WalletStatus {
   ACTIVE
-  SUSPENDED     // admin suspend (fraud investigation)
-  CLOSED        // guru tidak lagi memenuhi syarat
+  SUSPENDED // admin suspend (fraud investigation)
+  CLOSED // guru tidak lagi memenuhi syarat
 }
 
 enum TeacherWithdrawalStatus {
-  PENDING     // guru mengajukan
-  APPROVED    // admin menyetujui
-  REJECTED    // admin menolak (saldo kembali ke available)
+  PENDING // guru mengajukan
+  APPROVED // admin menyetujui
+  REJECTED // admin menolak (saldo kembali ke available)
   TRANSFERRED // sudah ditransfer — terminal
-  CANCELLED   // guru membatalkan sendiri — terminal
+  CANCELLED // guru membatalkan sendiri — terminal
 }
 
 /// Current-state attribution. SATU baris per murid — studentId @unique
 /// adalah enforcement anti-double-commission DAN anti-race-condition.
 /// Tidak pernah dihapus; status diubah oleh admin saja (SUPERSEDED/REVOKED).
 model TeacherAttribution {
-  id               String            @id @default(cuid())
-  studentId        String            @unique   // ← R1: kunci tunggal — satu attribusi aktif per murid
-  teacherId        String
-  source           AttributionSource
-  sourceGroupId    String?           // bukti CLASS_ENROLLMENT → Group.id
-  sourceCode       String?           // bukti REFERRAL_* → kode/link
-  status           AttributionStatus @default(ACTIVE)
+  id            String            @id @default(cuid())
+  studentId     String            @unique // ← R1: kunci tunggal — satu attribusi aktif per murid
+  teacherId     String
+  source        AttributionSource
+  sourceGroupId String? // bukti CLASS_ENROLLMENT → Group.id
+  sourceCode    String? // bukti REFERRAL_* → kode/link
+  status        AttributionStatus @default(ACTIVE)
 
-  attributedAt     DateTime          @default(now()) // momen bukti terbentuk
-  lockedAt         DateTime          @default(now()) // momen immutable (R3); backfill = tgl eksekusi
-  eligibleFrom     DateTime          @default(now()) // R4: komisi hanya utk payment >= titik ini
+  attributedAt DateTime @default(now()) // momen bukti terbentuk
+  lockedAt     DateTime @default(now()) // momen immutable (R3); backfill = tgl eksekusi
+  eligibleFrom DateTime @default(now()) // R4: komisi hanya utk payment >= titik ini
 
-  correctedBy      String?           // User.id admin terakhir
+  correctedBy      String? // User.id admin terakhir
   correctedAt      DateTime?
   correctionReason String?
-  metadata         Json?             // snapshot konteks (nama kelas, dsb.)
+  metadata         Json? // snapshot konteks (nama kelas, dsb.)
 
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  student    User                    @relation("AttributionStudent", fields: [studentId], references: [id], onDelete: Cascade)
-  teacher    User                    @relation("AttributionTeacher", fields: [teacherId], references: [id])
-  sourceGroup Group?                 @relation("AttributionSourceGroup", fields: [sourceGroupId], references: [id], onDelete: SetNull)
-  events     TeacherAttributionEvent[]
+  student     User                      @relation("AttributionStudent", fields: [studentId], references: [id], onDelete: Cascade)
+  teacher     User                      @relation("AttributionTeacher", fields: [teacherId], references: [id])
+  sourceGroup Group?                    @relation("AttributionSourceGroup", fields: [sourceGroupId], references: [id], onDelete: SetNull)
+  events      TeacherAttributionEvent[]
   commissions TeacherCommission[]
 
-  @@index([teacherId, status])          // dashboard guru: daftar murid teratribusi
+  @@index([teacherId, status]) // dashboard guru: daftar murid teratribusi
   @@index([sourceGroupId])
   @@index([createdAt])
 }
 
 /// Append-only history. Tidak pernah di-update/delete (aturan R6).
 model TeacherAttributionEvent {
-  id            String             @id @default(cuid())
+  id            String   @id @default(cuid())
   attributionId String
-  eventType     String             // CREATED | CORRECTED | REVOKED | REINSTATED
-  before        Json?              // snapshot state sebelum (utk CORRECTED/REVOKED)
-  after         Json?              // snapshot state sesudah
-  actorUserId   String?            // admin yang melakukan (null utk system CREATED)
+  eventType     String // CREATED | CORRECTED | REVOKED | REINSTATED
+  before        Json? // snapshot state sebelum (utk CORRECTED/REVOKED)
+  after         Json? // snapshot state sesudah
+  actorUserId   String? // admin yang melakukan (null utk system CREATED)
   reason        String?
-  createdAt     DateTime           @default(now())
+  createdAt     DateTime @default(now())
 
   attribution TeacherAttribution @relation(fields: [attributionId], references: [id], onDelete: Cascade)
   actor       User?              @relation("AttributionEvents", fields: [actorUserId], references: [id])
@@ -3102,71 +3106,71 @@ model TeacherAttributionEvent {
 /// Tidak pernah di-update kecuali status lifecycle (bukan data bisnis).
 /// Financial fields di-snapshot beku saat komisi dibuat.
 model TeacherCommission {
-  id               String           @id @default(cuid())
-  entryType        CommissionEntryType @default(COMMISSION) // COMMISSION = positif, REVERSAL = negatif
-  transaksiId      String           // Transaksi.id — sumber event komisi
-  teacherId        String           // guru penerima komisi
-  studentId        String           // murid yang membayar (transaksi.userId)
+  id          String              @id @default(cuid())
+  entryType   CommissionEntryType @default(COMMISSION) // COMMISSION = positif, REVERSAL = negatif
+  transaksiId String // Transaksi.id — sumber event komisi
+  teacherId   String // guru penerima komisi
+  studentId   String // murid yang membayar (transaksi.userId)
 
   // ── Snapshot attribution (beku saat komisi dibuat) ──
-  attributionId    String           // TeacherAttribution.id
-  attributionSource AttributionSource  // CLASS_ENROLLMENT / REFERRAL_LINK / MANUAL_ADMIN
-  sourceGroupId    String?          // Group.id (bukti enrollment)
-  eligibleFrom     DateTime         // kapan komisi mulai eligible
+  attributionId     String // TeacherAttribution.id
+  attributionSource AttributionSource // CLASS_ENROLLMENT / REFERRAL_LINK / MANUAL_ADMIN
+  sourceGroupId     String? // Group.id (bukti enrollment)
+  eligibleFrom      DateTime // kapan komisi mulai eligible
 
   // ── Financial ──
-  grossAmount      Int              // Transaksi.amount (pasca-kupon = actual settled)
-  commissionRate   Float            // 0.10 (10%)
-  commissionAmount Int              // floor(grossAmount × commissionRate), minimum 0
+  grossAmount      Int // Transaksi.amount (pasca-kupon = actual settled)
+  commissionRate   Float // 0.10 (10%)
+  commissionAmount Int // floor(grossAmount × commissionRate), minimum 0
 
   // ── Lifecycle ──
-  status           CommissionStatus @default(PENDING)
-  holdingEndsAt    DateTime?        // null = instant (default launch); bisa ditambah later via config
-  availableAt      DateTime?        // = now saat AVAILABLE
-  settledAt        DateTime?        // = now saat AVAILABLE (legacy alias)
+  status        CommissionStatus @default(PENDING)
+  holdingEndsAt DateTime? // null = instant (default launch); bisa ditambah later via config
+  availableAt   DateTime? // = now saat AVAILABLE
+  settledAt     DateTime? // = now saat AVAILABLE (legacy alias)
 
   // ── Reversal (hanya terisi saat REVERSED) ──
-  reversedAt       DateTime?
-  reversedReason   String?          // "REFUND" / "CANCELLATION" / "ADMIN_REVERSAL"
-  reversedBy       String?          // User.id admin (null = system/refund auto)
-  reversalEntryId  String?          // id baris reversal yang membalik baris ini
+  reversedAt      DateTime?
+  reversedReason  String? // "REFUND" / "CANCELLATION" / "ADMIN_REVERSAL"
+  reversedBy      String? // User.id admin (null = system/refund auto)
+  reversalEntryId String? // id baris reversal yang membalik baris ini
 
   // ── Metadata ──
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // ── Relations ──
-  transaksi        Transaksi        @relation(fields: [transaksiId], references: [id])
-  teacher          User             @relation("CommissionTeacher", fields: [teacherId], references: [id])
-  student          User             @relation("CommissionStudent", fields: [studentId], references: [id])
-  attribution      TeacherAttribution @relation(fields: [attributionId], references: [id])
+  transaksi   Transaksi          @relation(fields: [transaksiId], references: [id])
+  teacher     User               @relation("CommissionTeacher", fields: [teacherId], references: [id])
+  student     User               @relation("CommissionStudent", fields: [studentId], references: [id])
+  attribution TeacherAttribution @relation(fields: [attributionId], references: [id])
 
   // ── Idempotency ──
-  @@unique([transaksiId, teacherId, entryType])   // 1 komisi positif + 1 reversal per (transaksi × guru)
-  @@index([teacherId, status])         // dashboard guru: my commissions
-  @@index([status, createdAt])         // admin batch processing / holding release job
-  @@index([transaksiId])               // webhook: cari komisi existing untuk reversal
-  @@index([studentId])                 // audit: komisi per murid
+  @@unique([transaksiId, teacherId, entryType]) // 1 komisi positif + 1 reversal per (transaksi × guru)
+  @@index([teacherId, status]) // dashboard guru: my commissions
+  @@index([status, createdAt]) // admin batch processing / holding release job
+  @@index([transaksiId]) // webhook: cari komisi existing untuk reversal
+  @@index([studentId]) // audit: komisi per murid
 }
 
 /// Dompet komisi guru — TERPISAH dari User.saldo (marketplace earnings).
 /// Satu baris per guru. Created lazily saat komisi pertama dibuat.
 model TeacherWallet {
-  id               String           @id @default(cuid())
-  teacherId        String           @unique  // User.id — satu wallet per guru
-  availableBalance Int              @default(0)  // sudah AVAILABLE, siap tarik
-  pendingBalance   Int              @default(0)  // ELIGIBLE belum AVAILABLE (holding)
-  lockedBalance    Int              @default(0)  // terkunci dalam penarikan berjalan (PENDING/APPROVED)
-  lifetimeEarned   Int              @default(0)  // total komisi positif yang pernah tercipta (gross)
-  lifetimeWithdrawn Int             @default(0)  // total komisi yang sudah dibayarkan (TRANSFERRED)
-  totalPaid        Int              @default(0)  // legacy alias lifetimeWithdrawn (tetap disinkron)
-  totalReversed    Int              @default(0)  // lifetime total reversal (audit)
-  status           WalletStatus     @default(ACTIVE)
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  id                String       @id @default(cuid())
+  teacherId         String       @unique // User.id — satu wallet per guru
+  availableBalance  Int          @default(0) // sudah AVAILABLE, siap tarik
+  pendingBalance    Int          @default(0) // ELIGIBLE belum AVAILABLE (holding)
+  lockedBalance     Int          @default(0) // terkunci dalam penarikan berjalan (PENDING/APPROVED)
+  lifetimeEarned    Int          @default(0) // total komisi positif yang pernah tercipta (gross)
+  lifetimeWithdrawn Int          @default(0) // total komisi yang sudah dibayarkan (TRANSFERRED)
+  totalPaid         Int          @default(0) // legacy alias lifetimeWithdrawn (tetap disinkron)
+  totalReversed     Int          @default(0) // lifetime total reversal (audit)
+  status            WalletStatus @default(ACTIVE)
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
 
-  teacher          User             @relation(fields: [teacherId], references: [id])
-  withdrawals      TeacherCommissionWithdrawal[]
+  teacher     User                          @relation(fields: [teacherId], references: [id])
+  withdrawals TeacherCommissionWithdrawal[]
 
   @@index([status])
 }
@@ -3174,22 +3178,22 @@ model TeacherWallet {
 /// Penarikan dari TeacherWallet (bukan User.saldo).
 /// NAMA BERBEDA dari model Withdrawal marketplace untuk menghindari kebingungan.
 model TeacherCommissionWithdrawal {
-  id               String                  @id @default(cuid())
-  walletId         String
-  teacherId        String
-  amount           Int                     // nominal yang diminta
-  bankName         String                  // snapshot dari Profile saat submit
-  accountNumber    String                  // snapshot
-  accountHolder    String                  // snapshot
-  status           TeacherWithdrawalStatus @default(PENDING)
-  notes            String?                 // admin rejection reason
-  processedAt      DateTime?               // admin acted
-  createdAt        DateTime                @default(now())
-  updatedAt        DateTime                @updatedAt
+  id            String                  @id @default(cuid())
+  walletId      String
+  teacherId     String
+  amount        Int // nominal yang diminta
+  bankName      String // snapshot dari Profile saat submit
+  accountNumber String // snapshot
+  accountHolder String // snapshot
+  status        TeacherWithdrawalStatus @default(PENDING)
+  notes         String? // admin rejection reason
+  processedAt   DateTime? // admin acted
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
 
-  wallet           TeacherWallet           @relation(fields: [walletId], references: [id], onDelete: Cascade)
-  teacher          User                    @relation("CommissionWithdrawals", fields: [teacherId], references: [id])
-  payout           TeacherPayout?
+  wallet  TeacherWallet  @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  teacher User           @relation("CommissionWithdrawals", fields: [teacherId], references: [id])
+  payout  TeacherPayout?
 
   @@index([teacherId, status])
   @@index([status])
@@ -3203,28 +3207,28 @@ model TeacherCommissionWithdrawal {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 enum DestinationType {
-  BANK    // transfer rekening bank
+  BANK // transfer rekening bank
   EWALLET // e-wallet (identifier tujuan)
 }
 
 enum ProfileVerificationStatus {
   UNVERIFIED // default saat dibuat/berubah
-  VERIFIED   // lulus validasi (format / provider)
-  REJECTED   // ditolak validasi
+  VERIFIED // lulus validasi (format / provider)
+  REJECTED // ditolak validasi
 }
 
 /// Internal payout state machine (spec §10). BERBEDA dari withdrawal state
 /// (TeacherWithdrawalStatus = canonical P7C) — payout adalah ENTITAS terpisah.
 /// Unknown provider state TIDAK PERNAH dianggap FAILED (spec §11).
 enum PayoutStatus {
-  REQUESTED                 // payout intent dibuat, menunggu validasi
-  VALIDATING                // sedang validasi destinasi/profil
-  SUBMITTING                // sedang dikirim ke provider
-  PROCESSING                // diterima provider, menunggu hasil/webhook
-  PAID                      // terkonfirmasi sukses — terminal
-  FAILED                    // gagal definitif — terminal
-  RETRYABLE_FAILURE         // gagal sementara — dana tetap terlindungi
-  RECONCILIATION_REQUIRED   // state provider tidak diketahui (timeout) — wajib reconcile
+  REQUESTED // payout intent dibuat, menunggu validasi
+  VALIDATING // sedang validasi destinasi/profil
+  SUBMITTING // sedang dikirim ke provider
+  PROCESSING // diterima provider, menunggu hasil/webhook
+  PAID // terkonfirmasi sukses — terminal
+  FAILED // gagal definitif — terminal
+  RETRYABLE_FAILURE // gagal sementara — dana tetap terlindungi
+  RECONCILIATION_REQUIRED // state provider tidak diketahui (timeout) — wajib reconcile
 }
 
 /// Tujuan payout milik guru. Sensitive: hanya owner (masked) & admin (authorized).
@@ -3232,10 +3236,10 @@ enum PayoutStatus {
 model TeacherPayoutProfile {
   id                 String                    @id @default(cuid())
   teacherId          String                    @unique
-  recipientName      String                    // nama pemilik rekening/e-wallet
+  recipientName      String // nama pemilik rekening/e-wallet
   destinationType    DestinationType           @default(BANK)
-  bankName           String                    // "BCA", "GoPay", dll.
-  accountNumber      String                    // nomor rekening / identifier tujuan
+  bankName           String // "BCA", "GoPay", dll.
+  accountNumber      String // nomor rekening / identifier tujuan
   verificationStatus ProfileVerificationStatus @default(UNVERIFIED)
   verifiedAt         DateTime?
   createdAt          DateTime                  @default(now())
@@ -3250,37 +3254,37 @@ model TeacherPayoutProfile {
 /// (withdrawalId @unique). Menyimpan SNAPSHOT destinasi (spec §24) sehingga
 /// perubahan profil di kemudian hari TIDAK mengubah payout historis.
 model TeacherPayout {
-  id               String        @id @default(cuid())
-  withdrawalId     String        @unique  // ONE WITHDRAWAL = ONE LOGICAL PAYOUT
-  teacherId        String
-  provider         String        // adapter id ("mock" — provider asli belum dipilih)
-  providerReference String?      @unique  // reference dari provider (nullable sebelum submit)
-  idempotencyKey   String        @unique  // deterministik: withdrawal:{withdrawalId}
-  amount           Int
-  currency         String        @default("IDR")
+  id                String          @id @default(cuid())
+  withdrawalId      String          @unique // ONE WITHDRAWAL = ONE LOGICAL PAYOUT
+  teacherId         String
+  provider          String // adapter id ("mock" — provider asli belum dipilih)
+  providerReference String?         @unique // reference dari provider (nullable sebelum submit)
+  idempotencyKey    String          @unique // deterministik: withdrawal:{withdrawalId}
+  amount            Int
+  currency          String          @default("IDR")
   // P7E §16/§17: fee provider = biaya PLATFORM terpisah. BUKAN potongan komisi
   // guru — historical commission amount tidak pernah berubah karena fee.
-  providerFee      Int           @default(0)
-  netTransfer      Int?          // net transfer provider = amount - providerFee
-  destinationType  DestinationType
-  bankName         String        // snapshot destinasi
-  accountNumber    String        // snapshot destinasi
-  accountHolder    String        // snapshot destinasi
-  status           PayoutStatus  @default(REQUESTED)
-  providerStatus   String?       // status mentah provider terakhir
-  attemptCount     Int           @default(0)
-  nextRetryAt      DateTime?
-  lastErrorCode    String?
-  lastErrorAt      DateTime?
-  requestedAt      DateTime      @default(now())
-  submittedAt      DateTime?
-  completedAt      DateTime?
-  failedAt         DateTime?
-  failureCode      String?
-  failureReason    String?
-  metadata         Json?
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
+  providerFee       Int             @default(0)
+  netTransfer       Int? // net transfer provider = amount - providerFee
+  destinationType   DestinationType
+  bankName          String // snapshot destinasi
+  accountNumber     String // snapshot destinasi
+  accountHolder     String // snapshot destinasi
+  status            PayoutStatus    @default(REQUESTED)
+  providerStatus    String? // status mentah provider terakhir
+  attemptCount      Int             @default(0)
+  nextRetryAt       DateTime?
+  lastErrorCode     String?
+  lastErrorAt       DateTime?
+  requestedAt       DateTime        @default(now())
+  submittedAt       DateTime?
+  completedAt       DateTime?
+  failedAt          DateTime?
+  failureCode       String?
+  failureReason     String?
+  metadata          Json?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
 
   withdrawal TeacherCommissionWithdrawal @relation(fields: [withdrawalId], references: [id], onDelete: Cascade)
   teacher    User                        @relation("PayoutTeacher", fields: [teacherId], references: [id])
@@ -3298,7 +3302,7 @@ model TeacherPayoutEvent {
   id              String   @id @default(cuid())
   payoutId        String
   providerEventId String   @unique // identity event dari provider (idempotency)
-  eventType       String   // "PAYOUT.PAID" | "PAYOUT.FAILED" | dll.
+  eventType       String // "PAYOUT.PAID" | "PAYOUT.FAILED" | dll.
   raw             Json?
   processedAt     DateTime @default(now())
 
@@ -3315,61 +3319,61 @@ model TeacherPayoutEvent {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 enum RiskSeverity {
-  LOW       // dicatat saja — biasanya tanpa tindakan
-  MEDIUM    // bisa masuk review bila berulang
-  HIGH      // buat review case
-  CRITICAL  // review case + restriction payout baru (rule jelas terpenuhi)
+  LOW // dicatat saja — biasanya tanpa tindakan
+  MEDIUM // bisa masuk review bila berulang
+  HIGH // buat review case
+  CRITICAL // review case + restriction payout baru (rule jelas terpenuhi)
 }
 
 /// Status CASE. "NORMAL" = state teacher tanpa case aktif (derivasi, bukan
 /// status case). Case aktif = REVIEW / RESTRICTED; CLEARED = terminal.
 enum RiskCaseStatus {
-  REVIEW      // dalam antrean review manusia
-  RESTRICTED  // pembatasan payout baru aktif (teraudit)
-  CLEARED     // ditutup — restriction dihapus bila ada (terminal)
+  REVIEW // dalam antrean review manusia
+  RESTRICTED // pembatasan payout baru aktif (teraudit)
+  CLEARED // ditutup — restriction dihapus bila ada (terminal)
 }
 
 enum RiskActorType {
-  SYSTEM  // deteksi otomatis (rule deterministik)
-  ADMIN   // keputusan admin (wajib reason + audit)
+  SYSTEM // deteksi otomatis (rule deterministik)
+  ADMIN // keputusan admin (wajib reason + audit)
 }
 
 /// Case review — maksimal SATU case aktif per guru (anti-flood & idempoten).
 /// Append-only: status lifecycle berubah, keputusan terekam di RiskAction.
 model TeacherRiskCase {
-  id          String        @id @default(cuid())
-  teacherId   String
-  status      RiskCaseStatus @default(REVIEW)
-  severity    RiskSeverity  @default(MEDIUM)
-  reason      String        // alasan manusiawi pembuka case
-  openedAt    DateTime      @default(now())
-  resolvedAt  DateTime?
-  resolvedBy  String?       // User.id admin
-  resolution  String?       // CLEARED / RESTRICTED (alasan keputusan)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  id         String         @id @default(cuid())
+  teacherId  String
+  status     RiskCaseStatus @default(REVIEW)
+  severity   RiskSeverity   @default(MEDIUM)
+  reason     String // alasan manusiawi pembuka case
+  openedAt   DateTime       @default(now())
+  resolvedAt DateTime?
+  resolvedBy String? // User.id admin
+  resolution String? // CLEARED / RESTRICTED (alasan keputusan)
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
 
-  teacher User             @relation("RiskCaseTeacher", fields: [teacherId], references: [id])
+  teacher User                @relation("RiskCaseTeacher", fields: [teacherId], references: [id])
   signals TeacherRiskSignal[]
   actions TeacherRiskAction[]
 
   @@index([teacherId, status]) // gate: state guru (indexed, cepat)
-  @@index([status, openedAt])  // antrean review admin
+  @@index([status, openedAt]) // antrean review admin
 }
 
 /// Signal = indikasi butuh perhatian — BUKAN bukti fraud.
 /// Idempotensi: @@unique([signalType, dedupeKey]) — dedupeKey deterministik
 /// dari source event (mis. "refund:{transaksiId}").
 model TeacherRiskSignal {
-  id          String       @id @default(cuid())
-  teacherId   String
-  riskCaseId  String?      // null = signal tanpa case (LOW / belum memenuhi ambang)
-  signalType  String       // SELF_REFERRAL_ATTEMPT / RAPID_ACCOUNT_TO_PREMIUM / ABNORMAL_REFUND_PATTERN / RAPID_DESTINATION_CHANGE / WITHDRAWAL_VELOCITY
-  severity    RiskSeverity @default(LOW)
-  dedupeKey   String       // deterministik — kunci anti-duplikasi
-  evidence    Json?        // metadata aman (masked; tanpa rekening penuh)
-  detectedAt  DateTime     @default(now())
-  createdAt   DateTime     @default(now())
+  id         String       @id @default(cuid())
+  teacherId  String
+  riskCaseId String? // null = signal tanpa case (LOW / belum memenuhi ambang)
+  signalType String // SELF_REFERRAL_ATTEMPT / RAPID_ACCOUNT_TO_PREMIUM / ABNORMAL_REFUND_PATTERN / RAPID_DESTINATION_CHANGE / WITHDRAWAL_VELOCITY
+  severity   RiskSeverity @default(LOW)
+  dedupeKey  String // deterministik — kunci anti-duplikasi
+  evidence   Json? // metadata aman (masked; tanpa rekening penuh)
+  detectedAt DateTime     @default(now())
+  createdAt  DateTime     @default(now())
 
   teacher User             @relation("RiskSignalTeacher", fields: [teacherId], references: [id])
   case    TeacherRiskCase? @relation(fields: [riskCaseId], references: [id], onDelete: SetNull)
@@ -3381,14 +3385,14 @@ model TeacherRiskSignal {
 
 /// Keputusan/aksi append-only. Tidak ada destructive edit pada history.
 model TeacherRiskAction {
-  id         String         @id @default(cuid())
+  id         String        @id @default(cuid())
   teacherId  String
   riskCaseId String?
-  actionType String         // SIGNAL_RECORDED / CASE_OPENED / CASE_REVIEWED / CLEARED / RESTRICTED / RESTRICTION_REMOVED / PAYOUT_HELD / PAYOUT_RELEASED
-  actorType  RiskActorType  @default(SYSTEM)
-  actorId    String?        // User.id admin (null = system)
+  actionType String // SIGNAL_RECORDED / CASE_OPENED / CASE_REVIEWED / CLEARED / RESTRICTED / RESTRICTION_REMOVED / PAYOUT_HELD / PAYOUT_RELEASED
+  actorType  RiskActorType @default(SYSTEM)
+  actorId    String? // User.id admin (null = system)
   reason     String?
-  createdAt  DateTime       @default(now())
+  createdAt  DateTime      @default(now())
 
   teacher User             @relation("RiskActionTeacher", fields: [teacherId], references: [id])
   case    TeacherRiskCase? @relation(fields: [riskCaseId], references: [id], onDelete: SetNull)
@@ -3412,12 +3416,12 @@ model TeacherRiskAction {
 /// `props` hanya berisi ID/kategori, bukan email/PII yang tidak perlu.
 model ProductEvent {
   id         String   @id @default(cuid())
-  actorId    String                        // User.id pelaku
-  event      String                        // nama event allowlist (F4/F8 dsb.)
-  entityType String                        // "GROUP" / "USER" / "CLASS_CODE" ...
+  actorId    String // User.id pelaku
+  event      String // nama event allowlist (F4/F8 dsb.)
+  entityType String // "GROUP" / "USER" / "CLASS_CODE" ...
   entityId   String
-  logicalKey String                        // kontrol idempotensi (deterministik)
-  props      Json?                         // sifat aman (ID/kategori, tanpa PII/secret)
+  logicalKey String // kontrol idempotensi (deterministik)
+  props      Json? // sifat aman (ID/kategori, tanpa PII/secret)
   createdAt  DateTime @default(now())
 
   @@unique([actorId, event, entityType, entityId, logicalKey])
@@ -3432,50 +3436,50 @@ model ProductEvent {
 /// activity hierarchy, premium bounds) applied via prisma/migrations/manual/
 /// 2026-09-08_daily_business_snapshot.sql — Prisma cannot express CHECK.
 model DailyBusinessSnapshot {
-  id                String   @id @default(cuid())
+  id           String   @id @default(cuid())
   /// WIB calendar day, stored as UTC midnight of that WIB day.
-  businessDate      DateTime
+  businessDate DateTime
   /// UTC timestamp when this snapshot was computed (audit).
-  generatedAt       DateTime @default(now())
+  generatedAt  DateTime @default(now())
 
   // Users (materialized from User.createdAt — events remain authoritative)
-  totalUsers        Int
-  muridUsers        Int
-  guruUsers         Int
+  totalUsers Int
+  muridUsers Int
+  guruUsers  Int
 
   // Engagement (materialized from XPTransaction — events remain authoritative)
-  dau               Int
-  wau               Int
-  mau               Int
+  dau Int
+  wau Int
+  mau Int
 
   // Premium state (NOT reconstructable — core snapshot data)
-  activePremium     Int
-  muridPremium      Int
-  guruPremium       Int
+  activePremium Int
+  muridPremium  Int
+  guruPremium   Int
 
   // MRR (NOT reconstructable — core snapshot data, integer rupiah)
-  mrr               Int
-  muridMonthlyMrr   Int
-  muridYearlyMrr    Int
-  guruMonthlyMrr    Int
-  guruYearlyMrr     Int
+  mrr             Int
+  muridMonthlyMrr Int
+  muridYearlyMrr  Int
+  guruMonthlyMrr  Int
+  guruYearlyMrr   Int
 
   // Versioning
-  calculationVersion String  @default("1.0")
+  calculationVersion String @default("1.0")
 
   @@unique([businessDate, calculationVersion])
   @@index([businessDate])
 }
 
 model TaskShareToken {
-  id           String    @id @default(cuid())
-  token        String    @unique
-  taskType     String    // "QUIZ" | "PENUGASAN"
-  quizId       String?
-  penugasanId  String?
-  groupId      String
-  createdById  String
-  createdAt    DateTime  @default(now())
+  id          String   @id @default(cuid())
+  token       String   @unique
+  taskType    String // "QUIZ" | "PENUGASAN"
+  quizId      String?
+  penugasanId String?
+  groupId     String
+  createdById String
+  createdAt   DateTime @default(now())
 
   penugasan Penugasan? @relation(fields: [penugasanId], references: [id], onDelete: Cascade)
   group     Group      @relation(fields: [groupId], references: [id], onDelete: Cascade)

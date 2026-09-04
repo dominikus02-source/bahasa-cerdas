@@ -12,7 +12,9 @@ type Q = { id: string; question: string; options: string[]; tipe: "PG" | "BENAR_
 type Materi = { judul: string; isi: string[]; contoh: string[]; catatan?: string }
 type Sub = {
   status: string; score: number | null
-  praktikUrl?: string | null; praktikNilai?: number | null; praktikCatatan?: string | null; praktikDinilai?: boolean
+  praktikUrl?: string | null; praktikFileName?: string | null; praktikFileType?: string | null; praktikFileSize?: number | null
+  praktikNilai?: number | null; praktikCatatan?: string | null; praktikDinilai?: boolean
+  submittedAt?: string | null
 }
 type Data = {
   jenis: string
@@ -26,6 +28,12 @@ type Data = {
   submission: Sub | null
 }
 type Phase = "belajar" | "latihan" | "praktik" | "kuis" | "done"
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
 
 function QuestionList({ questions, answers, setAnswers }: {
   questions: Q[]; answers: Record<string, string | number>; setAnswers: (fn: (a: Record<string, string | number>) => Record<string, string | number>) => void
@@ -77,6 +85,8 @@ export default function KerjakanTugasPage() {
   const [result, setResult] = useState<{ score: number; correct: number; total: number } | null>(null)
   const [error, setError] = useState("")
   const [praktikUrl, setPraktikUrl] = useState<string | null>(null)
+  const [praktikFileName, setPraktikFileName] = useState<string | null>(null)
+  const [praktikFileSize, setPraktikFileSize] = useState<number | null>(null)
   const [uploading, setUploading] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
   // STEP 6.6 — tempel link karya (client hint; server tetap memvalidasi URL).
@@ -119,6 +129,8 @@ export default function KerjakanTugasPage() {
         setData(dt)
         setPhase(dt.jenis === "KUIS" ? "kuis" : dt.jenis === "LATIHAN" ? "latihan" : dt.jenis === "PRAKTIK" ? "praktik" : "belajar")
         setPraktikUrl(dt.submission?.praktikUrl ?? null)
+        setPraktikFileName(dt.submission?.praktikFileName ?? null)
+        setPraktikFileSize(dt.submission?.praktikFileSize ?? null)
       })
       .catch(() => setError("Gagal memuat tugas."))
       .finally(() => setLoading(false))
@@ -151,10 +163,13 @@ export default function KerjakanTugasPage() {
       const upd = await up.json()
       if (!up.ok || !upd.url) throw new Error(upd.error || "gagal")
       const res = await fetch(`/api/murid/penugasan/${assignId}/praktik`, {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url: upd.url }),
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: upd.url, fileName: file.name, fileType: file.type, fileSize: file.size }),
       })
       if (!res.ok) throw new Error()
       setPraktikUrl(upd.url)
+      setPraktikFileName(file.name)
+      setPraktikFileSize(file.size)
     } catch {
       setError("Berkas praktik belum berhasil diunggah. Coba lagi.")
     } finally { setUploading(false) }
@@ -278,7 +293,14 @@ export default function KerjakanTugasPage() {
               ) : praktikUrl ? (
                 <div className="flex items-center gap-2 bg-violet-50 dark:bg-violet-950/40 rounded-xl p-3">
                   <FileText className="w-4 h-4 text-violet-600 dark:text-violet-400 shrink-0" />
-                  <a href={praktikUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-violet-700 dark:text-violet-300 font-medium truncate flex-1">Berkas terkirim — lihat</a>
+                  <div className="flex-1 min-w-0">
+                    <a href={praktikUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-violet-700 dark:text-violet-300 font-medium truncate block">
+                      {praktikFileName || "Berkas terkirim"}
+                    </a>
+                    {praktikFileSize != null && (
+                      <span className="text-[11px] text-gray-400">{formatFileSize(praktikFileSize)}</span>
+                    )}
+                  </div>
                   <span className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1"><Clock size={12} /> Menunggu review</span>
                   <button onClick={() => fileRef.current?.click()} className="text-[11px] text-gray-400 underline shrink-0">Ganti</button>
                 </div>
