@@ -33,6 +33,7 @@ import {
 } from "@/lib/diagnostic-ai/controller";
 import { loadAiSessionState, saveAiSessionState, evidenceMetadata } from "@/lib/diagnostic-ai/persist";
 import { pickBankFallbackCandidate, toFallbackAiItem } from "@/lib/diagnostic-ai/bank-fallback";
+import { bankGateIssues } from "@/lib/diagnostic-ai/bank-gate";
 import { toPublicQuestion } from "@/lib/diagnostic-ai/types";
 import {
   DIAGNOSTIC_ALLOWED_SIZES,
@@ -118,7 +119,7 @@ async function buildDiagnosticCandidates() {
   const questionIds = metadataRows.map((row) => row.questionId);
   const questions = await db.soal.findMany({
     where: { kodeSoal: { in: questionIds } },
-    select: { kodeSoal: true, text: true, options: true, type: true },
+    select: { kodeSoal: true, text: true, options: true, type: true, correctAnswer: true },
   });
   const questionById = new Map(questions.map((question) => [question.kodeSoal, question]));
 
@@ -130,6 +131,16 @@ async function buildDiagnosticCandidates() {
     if (!type) continue;
     if (type !== metadata.questionType) continue;
     if (!question.text.trim() || !Array.isArray(question.options)) continue;
+    // Gate konten (P0.5): tolak keluarga template rusak + cacat struktur yang
+    // terbukti dikirim ke murid lewat jalur fallback bank. Tanpa mengubah data.
+    const gateIssues = bankGateIssues({
+      id: metadata.questionId,
+      text: question.text,
+      options: question.options,
+      questionType: type,
+      correctAnswer: String(question.correctAnswer ?? ""),
+    });
+    if (gateIssues.length > 0) continue;
     const validated = validateQuestionMetadata({
       source: "BANK_SOAL",
       questionId: metadata.questionId,
@@ -209,13 +220,19 @@ function isAiSession(session: { source: string }): boolean {
   return session.source === AI_DIAGNOSTIC_SOURCE;
 }
 
+/** Stem butir yang sudah dipakai sesi ini (anti konten sama dua kali). */
+function usedStemsOf(state: { items: Record<string, { text: string }> }): string[] {
+  return Object.values(state.items).map((item) => item.text);
+}
+
 async function bankFallbackFor(
   plan: { skill: string; difficulty: string },
-  avoidIds: string[]
+  avoidIds: string[],
+  avoidStems: string[] = []
 ): Promise<ReturnType<typeof toFallbackAiItem> | null> {
   const pool = await buildDiagnosticCandidates();
   if (pool.length === 0) return null;
-  const candidate = pickBankFallbackCandidate(pool, plan, avoidIds);
+  const candidate = pickBankFallbackCandidate(pool, plan, avoidIds, avoidStems);
   if (!candidate) return null;
   const question = await db.soal.findUnique({
     where: { kodeSoal: candidate.id },
@@ -355,7 +372,7 @@ async function answerAiDiagnostic(
   let reasonCode: "ANSWERED" | "GENERATION_UNAVAILABLE" = "ANSWERED";
 
   if (state.genFailed) {
-    const fallback = await bankFallbackFor(plan, Object.keys(state.items));
+    const fallback = await bankFallbackFor(plan, Object.keys(state.items), usedStemsOf(state));
     if (fallback) {
       state.items[fallback.id] = fallback;
       state.order = [fallback.id];
@@ -385,7 +402,7 @@ async function answerAiDiagnostic(
       next = toPublicQuestion(generated.item);
     } else {
       state.genFailed = true;
-      const fallback = await bankFallbackFor(plan, Object.keys(state.items));
+      const fallback = await bankFallbackFor(plan, Object.keys(state.items), usedStemsOf(state));
       if (fallback) {
         state.items[fallback.id] = fallback;
         state.order = [fallback.id];

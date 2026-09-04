@@ -1,5 +1,6 @@
 import type { DiagnosticCandidate } from "@/lib/diagnostic/types";
 import { AI_DIAGNOSTIC_DIFFICULTIES } from "./config";
+import { normalizeText } from "./validator";
 import type { AiDiagnosticItem } from "./types";
 
 export interface FallbackPlan {
@@ -10,10 +11,15 @@ export interface FallbackPlan {
 export function pickBankFallbackCandidate(
   pool: DiagnosticCandidate[],
   plan: FallbackPlan,
-  avoidIds: string[]
+  avoidIds: string[],
+  avoidStems: string[] = []
 ): DiagnosticCandidate | null {
+  const avoidStemSet = new Set(avoidStems.map((value) => normalizeText(value)));
   const eligible = pool.filter(
-    (candidate) => candidate.skill === plan.skill && !avoidIds.includes(candidate.id)
+    (candidate) =>
+      candidate.skill === plan.skill &&
+      !avoidIds.includes(candidate.id) &&
+      !avoidStemSet.has(normalizeText(String(candidate.text ?? "")))
   );
   if (eligible.length === 0) return null;
   const diffs = AI_DIAGNOSTIC_DIFFICULTIES;

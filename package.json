@@ -315,6 +315,8 @@
     "qa:ai-diagnostic-8-4:dry-run": "npx tsx scripts/qa-ai-diagnostic-8-4.ts --dry-run",
     "score:ai-diagnostic-8-4": "npx tsx scripts/score-ai-diagnostic-8-4.ts",
     "check:diagnostic-pool": "npx tsx scripts/check-diagnostic-pool.ts",
+    "test:diagnostic-bank-gate": "npx tsx scripts/test-diagnostic-bank-gate.ts",
+    "audit:diagnostic-integrity": "npx tsx scripts/audit-diagnostic-question-integrity.ts",
     "test:my-day-personalization": "npx tsx scripts/test-my-day-personalization.ts",
     "approve:metadata-manifest": "npx tsx scripts/approve-metadata-review-manifest.ts",
     "report:metadata-manifest": "npx tsx scripts/report-metadata-review-manifest.ts",
