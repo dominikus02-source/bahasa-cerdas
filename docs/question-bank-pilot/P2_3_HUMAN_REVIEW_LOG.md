@@ -19,12 +19,13 @@
 - **IMPACT on cognitive cells**: reviewers score COGNITIVE_MATCH against the canonical cells (both labels shown per item in the reviewer forms; canonical governs). Pilot item labels remain F1-conditional on the artifact until a follow-up relabel pass.
 - **BLUEPRINT CORRECTION**: NOT applied in this phase (mission §3). Follow-up documentation task recorded: formally correct Blueprint §7.3 wording to agree with the canonical mapping in a separate docs phase.
 
-**Human review session state**:
-- REVIEWER_A_ID = **PENDING** · REVIEWER_B_ID = **PENDING** (identities not provided in this execution environment; none fabricated).
-- 12-item review: **NOT STARTED**.
-- Adjudication: **NOT STARTED** (required after both forms are genuinely completed).
+**Human review session state** (updated P2.5, 2026-09-05):
+- **Role assignment (per P2.5 mission §2)**: REVIEWER_A = **Founder BahasaCerdas** (identity not yet provided in-repo) · REVIEWER_B = **External Indonesian-language / assessment-qualified reviewer — REVIEWER_B_ID = PENDING** (no identity invented; none fabricated).
+- 12-item review: **NOT STARTED** — forms are ready on main (`REVIEWER_A_FORM.md`, `REVIEWER_B_FORM.md`); no human reviewer has opened them.
+- Adjudication: **NOT STARTED** — `P2_4_ADJUDICATION_REPORT.md` will be created only after both forms genuinely contain completed human input (mission §11).
 - BLIND_REVIEW_CAPABILITY = **VALID** — Reviewer A and B forms are separate files; the answer key is a separate restricted document; reviewer instructions require independent submission before the key is opened.
-- HUMAN_SESSION_STATUS = **READY_FOR_EXTERNAL_EXECUTION** — the forms and instruments are ready; the actual human reviewers must execute them externally.
+- HUMAN_SESSION_STATUS = **WAITING_FOR_HUMAN_INPUT** — Reviewer A (founder) completes `REVIEWER_A_FORM.md` first, locks/submits, then Reviewer B receives a clean form; the key stays closed until both have submitted.
+- File integrity verified at session open (P2.5): pilot V1 byte-identical since P2.2 (git diff e7c0884 → HEAD empty); both forms carry exactly the 12 pilot IDs (BC-TEKS-BERITA-0001…0012); no item added, deleted, or modified.
 
 **CP-mapping attestation (deterministic portion — completed in P2.4, read-only)**:
 
