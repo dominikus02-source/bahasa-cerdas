@@ -63,6 +63,7 @@ import { stateGuardValidator as _stateGuardValidator } from "./state-guard";
 import { cognitiveLabelValidator as _cognitiveLabelValidator } from "./cognitive-label";
 import { distractorQualityValidator as _distractorQualityValidator } from "./distractor-quality";
 import { duplicateSimilarityValidator as _duplicateSimilarityValidator } from "./duplicate-similarity";
+import { difficultyCognitiveConsistencyValidator as _difficultyCognitiveConsistencyValidator } from "./difficulty-cognitive-consistency";
 
 export const structuralValidator = _structuralValidator;
 export const answerKeyValidator = _answerKeyValidator;
@@ -73,6 +74,7 @@ export const stateGuardValidator = _stateGuardValidator;
 export const cognitiveLabelValidator = _cognitiveLabelValidator;
 export const distractorQualityValidator = _distractorQualityValidator;
 export const duplicateSimilarityValidator = _duplicateSimilarityValidator;
+export const difficultyCognitiveConsistencyValidator = _difficultyCognitiveConsistencyValidator;
 
 // ─── Aggregation & Gate ──────────────────────────────────────────────────────
 export {
@@ -107,4 +109,6 @@ export const DEFAULT_PIPELINE: readonly Validator[] = [
   _distractorQualityValidator,
   // Stage 12: Duplicate/similarity (V12, P3.5D-1)
   _duplicateSimilarityValidator,
+  // Stage 13: Difficulty-cognitive consistency (V13, P3.5D-2)
+  _difficultyCognitiveConsistencyValidator,
 ] as const;

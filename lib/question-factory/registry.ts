@@ -405,6 +405,72 @@ export const REASON_CODES: readonly ReasonCodeEntry[] = [
     description: "Ambiguous similarity detected — not strong enough for FAIL but warrants human review.",
   },
 
+  // --- Stage 13: Difficulty-Cognitive Consistency (V13, P3.5D-2) ---
+  {
+    code: "DIFFICULTY_COGNITIVE_MISMATCH",
+    label: "Difficulty-cognitive mismatch",
+    stage: 13,
+    severity: "SOFT_FAIL",
+    blocking: false,
+    description: "Declared difficulty is inconsistent with cognitive demand (e.g., EASY difficulty with R5/R6 cognitive level, or HARD difficulty with R1 cognitive level).",
+  },
+  {
+    code: "DIFFICULTY_DEMAND_TOO_LOW",
+    label: "Difficulty demand too low",
+    stage: 13,
+    severity: "SOFT_FAIL",
+    blocking: false,
+    description: "Item structural features (stimulus, options, stem) are too simple for declared difficulty level.",
+  },
+  {
+    code: "DIFFICULTY_DEMAND_TOO_HIGH",
+    label: "Difficulty demand too high",
+    stage: 13,
+    severity: "SOFT_FAIL",
+    blocking: false,
+    description: "Item structural features suggest lower difficulty than declared (e.g., very short stem, trivial content, no stimulus).",
+  },
+  {
+    code: "DIFFICULTY_EVIDENCE_INSUFFICIENT",
+    label: "Difficulty evidence insufficient",
+    stage: 13,
+    severity: "ADVISORY",
+    blocking: false,
+    description: "Insufficient deterministic evidence to assess difficulty-cognitive consistency. Human review recommended.",
+  },
+  {
+    code: "DIFFICULTY_DISCRIMINATION_LOW",
+    label: "Difficulty discrimination low",
+    stage: 13,
+    severity: "SOFT_FAIL",
+    blocking: false,
+    description: "Distractors are all trivially wrong for declared difficulty — item lacks discrimination power.",
+  },
+  {
+    code: "DIFFICULTY_STIMULUS_COMPLEXITY_MISMATCH",
+    label: "Stimulus complexity mismatch",
+    stage: 13,
+    severity: "SOFT_FAIL",
+    blocking: false,
+    description: "Stimulus (reading passage) complexity does not match declared difficulty level.",
+  },
+  {
+    code: "DIFFICULTY_RESPONSE_COMPLEXITY_MISMATCH",
+    label: "Response complexity mismatch",
+    stage: 13,
+    severity: "SOFT_FAIL",
+    blocking: false,
+    description: "Expected response (correct answer + distractors) complexity does not match declared difficulty level.",
+  },
+  {
+    code: "DIFFICULTY_CALIBRATION_REQUIRED",
+    label: "Difficulty calibration required",
+    stage: 13,
+    severity: "ADVISORY",
+    blocking: false,
+    description: "Item has fewer than 30 responses — difficulty assignment requires empirical calibration.",
+  },
+
   // --- Advisory / Informational ---
   {
     code: "ADVISORY_MEAN_LOW",
