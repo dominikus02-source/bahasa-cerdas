@@ -3,15 +3,16 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
-  ChevronRight, Flame, Gamepad2, Medal, Play, Sparkles, Target, Trophy, Zap, Clock, Users,
+  ChevronRight, Gamepad2, Medal, Play, Sparkles, Target, Trophy, Zap, Clock, Users,
 } from "lucide-react";
 import {
   GAME_REGISTRY, GAME_CATEGORIES, featuredGame,
-  type GameDefinition, type GameCategory,
+  type GameCategory,
 } from "@/lib/arena/game-registry";
 import UserAvatar from "@/components/arena/UserAvatar";
 import { RankChip } from "@/components/gamification/RankChip";
 import BannerSlideshow, { type BannerSlide } from "@/components/public/BannerSlideshow";
+import GameCard, { type GameView } from "@/components/arena/game-hub/GameCard";
 
 /**
  * Game Hub Arena 2.0 — game launcher BahasaCerdas.
@@ -37,7 +38,7 @@ export interface GameHubClientProps {
   multiplayerEnabled: boolean;
 }
 
-type GameView = GameDefinition & { status: "LIVE" | "SOON" };
+export type { GameView };
 
 const RECENT_KEY = "arena-gamehub-recent";
 
@@ -330,65 +331,16 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled }:
           })}
         </div>
 
-        {/* Game grid */}
+        {/* Game grid — semua gim memakai satu komponen GameCard (artwork-based) */}
         <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-          {filtered.map((g, i) =>
-            g.status === "SOON" ? (
-              <div
-                key={g.id}
-                className="game-card-anim relative overflow-hidden rounded-[24px] border border-slate-200 dark:border-[rgba(124,58,237,0.15)] bg-slate-100 dark:bg-[#12101F] p-4 opacity-70 select-none"
-              >
-                <div className="absolute inset-x-0 top-0 h-[3px] bg-slate-300 dark:bg-slate-700" />
-                <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${g.gradient} opacity-60 flex items-center justify-center shadow`}>
-                  <g.icon size={22} className="text-white" />
-                </div>
-                <p className="mt-3 text-sm font-bold text-slate-700 dark:text-slate-300">{g.title}</p>
-                <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-500 line-clamp-2">{g.description}</p>
-                <span className="mt-3 inline-block rounded-full bg-slate-200 dark:bg-slate-800 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-400">
-                  Segera Hadir
-                </span>
-              </div>
-            ) : (
-              <Link
-                key={g.id}
-                href={g.href}
-                onClick={() => recordPlay(g.id)}
-                className="game-card-anim group relative flex flex-col overflow-hidden rounded-[24px] border border-slate-200 dark:border-[rgba(124,58,237,0.2)] bg-white dark:bg-[#16122A] p-4 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-xl active:scale-[0.97]"
-                style={{ transitionDelay: `${Math.min(i, 6) * 20}ms` }}
-              >
-                <div className="absolute inset-x-0 top-0 h-[3px]" style={{ background: g.accentColor }} />
-                <div className="flex items-start justify-between">
-                  <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${g.gradient} flex items-center justify-center shadow-md transition-transform duration-200 group-hover:scale-105`}>
-                    <g.icon size={22} className="text-white" />
-                  </div>
-                  {g.badge && (
-                    <span
-                      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-white ${
-                        g.badge.type === "hot" ? "bg-gradient-to-r from-red-500 to-red-600" : "bg-gradient-to-r from-emerald-500 to-green-600"
-                      }`}
-                      style={g.badge.type === "new" ? { animation: "gh-badge-pulse 2s ease-in-out infinite" } : undefined}
-                    >
-                      {g.badge.type === "hot" ? <Flame size={9} /> : <Sparkles size={9} />}
-                      {g.badge.text}
-                    </span>
-                  )}
-                </div>
-                <p className="mt-3 text-sm font-bold text-slate-900 dark:text-white leading-tight">{g.title}</p>
-                <p className="mt-1 text-[11px] text-slate-500 dark:text-[#7C7A9E] line-clamp-2 leading-relaxed">{g.description}</p>
-                <p className="mt-2 text-[10px] font-semibold text-slate-500 dark:text-[#7C7A9E]">
-                  {g.players} · {g.time}
-                </p>
-                <div className="mt-3 flex items-center justify-between pt-3 border-t border-slate-100 dark:border-white/5">
-                  <span className="inline-flex items-center gap-1 rounded-md bg-amber-100/80 dark:bg-amber-400/15 px-1.5 py-0.5 text-[10px] font-extrabold text-amber-700 dark:text-amber-400">
-                    <Zap size={10} /> {g.xp}
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-xl bg-violet-600 px-3 py-1.5 text-[11px] font-extrabold text-white shadow-sm transition-all group-hover:bg-violet-700 group-hover:gap-2 active:scale-95">
-                    MAIN
-                  </span>
-                </div>
-              </Link>
-            )
-          )}
+          {filtered.map((g, i) => (
+            <GameCard
+              key={g.id}
+              game={g}
+              index={i}
+              onPlay={recordPlay}
+            />
+          ))}
         </div>
       </section>
 
