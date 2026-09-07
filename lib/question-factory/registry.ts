@@ -363,6 +363,48 @@ export const REASON_CODES: readonly ReasonCodeEntry[] = [
     description: "Distractor tokens are predominantly contained in the correct answer — may be answer-derived.",
   },
 
+  // --- Stage 12: Duplicate/Similarity (V12, P3.5D-1) ---
+  {
+    code: "DUPLICATE_NEAR_TEXT",
+    label: "Near-text duplicate",
+    stage: 12,
+    severity: "SOFT_FAIL",
+    blocking: false,
+    description: "High text similarity detected between items (stem Lev ≥ 0.85 or token Jaccard ≥ 0.75). Requires human review.",
+  },
+  {
+    code: "DUPLICATE_STRUCTURAL",
+    label: "Structural duplicate",
+    stage: 12,
+    severity: "SOFT_FAIL",
+    blocking: false,
+    description: "Same question type, skill, subskill, cognitive target, and similar stem — may be structurally duplicated.",
+  },
+  {
+    code: "DUPLICATE_CROSS_THEME",
+    label: "Cross-theme duplicate",
+    stage: 12,
+    severity: "SOFT_FAIL",
+    blocking: false,
+    description: "Same skill and subskill, different topic, but near-identical stem — likely cross-theme duplication.",
+  },
+  {
+    code: "DUPLICATE_OPTION",
+    label: "Duplicate option in item",
+    stage: 12,
+    severity: "HARD_FAIL",
+    blocking: true,
+    description: "Two or more options within the item are near-duplicates (high Levenshtein or Jaccard similarity).",
+  },
+  {
+    code: "DUPLICATE_SIMILARITY_REVIEW",
+    label: "Duplicate similarity review",
+    stage: 12,
+    severity: "ADVISORY",
+    blocking: false,
+    description: "Ambiguous similarity detected — not strong enough for FAIL but warrants human review.",
+  },
+
   // --- Advisory / Informational ---
   {
     code: "ADVISORY_MEAN_LOW",
