@@ -64,6 +64,7 @@ import { cognitiveLabelValidator as _cognitiveLabelValidator } from "./cognitive
 import { distractorQualityValidator as _distractorQualityValidator } from "./distractor-quality";
 import { duplicateSimilarityValidator as _duplicateSimilarityValidator } from "./duplicate-similarity";
 import { difficultyCognitiveConsistencyValidator as _difficultyCognitiveConsistencyValidator } from "./difficulty-cognitive-consistency";
+import { publishCalibrationReadinessValidator as _publishCalibrationReadinessValidator } from "./publish-calibration-readiness";
 
 export const structuralValidator = _structuralValidator;
 export const answerKeyValidator = _answerKeyValidator;
@@ -75,6 +76,7 @@ export const cognitiveLabelValidator = _cognitiveLabelValidator;
 export const distractorQualityValidator = _distractorQualityValidator;
 export const duplicateSimilarityValidator = _duplicateSimilarityValidator;
 export const difficultyCognitiveConsistencyValidator = _difficultyCognitiveConsistencyValidator;
+export const publishCalibrationReadinessValidator = _publishCalibrationReadinessValidator;
 
 // ─── Aggregation & Gate ──────────────────────────────────────────────────────
 export {
@@ -88,6 +90,13 @@ export type { GateDecision } from "./aggregate";
 
 // ─── State-Transition Helpers ────────────────────────────────────────────────
 export { validateStateTransition } from "./state-guard";
+
+// ─── Publish Calibration Readiness (V14) ────────────────────────────────────
+export {
+  evaluatePublishReadiness,
+  runPublishReadinessPipeline,
+} from "./publish-calibration-readiness";
+export type { ClauseResult, CalibrationReadiness, PublishTier, PublishReadinessResult } from "./publish-calibration-readiness";
 
 // ─── Validation Pipeline ─────────────────────────────────────────────────────
 export const DEFAULT_PIPELINE: readonly Validator[] = [
@@ -111,4 +120,6 @@ export const DEFAULT_PIPELINE: readonly Validator[] = [
   _duplicateSimilarityValidator,
   // Stage 13: Difficulty-cognitive consistency (V13, P3.5D-2)
   _difficultyCognitiveConsistencyValidator,
+  // Stage 14: Publish calibration readiness (V14, P3.5D-3)
+  _publishCalibrationReadinessValidator,
 ] as const;

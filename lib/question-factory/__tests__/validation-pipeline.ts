@@ -474,9 +474,10 @@ console.log("  §H complete");
 console.log("\n§I — Aggregation Engine");
 
 const i1 = aggregateAllValidators([...DEFAULT_PIPELINE], makeItem(), ctx);
-assert(i1.passed === true, "I.1 — Aggregate all passes for clean item");
-assert(i1.publishEligible === true, "I.1 — publishEligible is true");
-assert(i1.blocked === false, "I.1 — blocked is false");
+// V14 HARD_FAIL (no HUMAN_REVIEW) makes passed=false and blocked=true
+assert(i1.passed === false, "I.1 — blocked by V14 (no HUMAN_REVIEW)");
+assert(i1.publishEligible === false, "I.1 — publishEligible is false (V14 requires HUMAN_REVIEW)");
+assert(i1.blocked === true, "I.1 — blocked is true (V14 finding)");
 
 const i2Item = makeItem();
 i2Item.identity.id = "";
@@ -489,7 +490,9 @@ assert(i2.blockers.length > 0, "I.2 — blockers non-empty");
 const i3Item = makeItem();
 i3Item.content.explanation = "";
 const i3 = aggregateAllValidators([...DEFAULT_PIPELINE], i3Item, ctx);
-assert(i3.passed === true, "I.3 — Advisory only does not block");
+// V14 blocks (no HUMAN_REVIEW), passed=false
+assert(i3.passed === false, "I.3 — blocked by V14 (no HUMAN_REVIEW)");
+assert(i3.publishEligible === false, "I.3 — publishEligible false (V14 requires HUMAN_REVIEW)");
 
 const i4 = aggregateAllValidators([...DEFAULT_PIPELINE], makeItem(), ctx);
 const gateSummary = formatGateSummary(i4);
@@ -523,7 +526,9 @@ assert(Array.isArray(j1.findings), "J.1 — findings is array");
 assert(typeof j1.summary === "object", "J.1 — summary is object");
 
 const j2 = runPipeline([...DEFAULT_PIPELINE], PASSING_ITEM, ctx);
-assert(j2.valid === true, "J.2 — PASSING_ITEM passes full pipeline");
+// V14 blocks valid=false (no HUMAN_REVIEW provenance)
+assert(j2.valid === false, "J.2 — PASSING_ITEM fails V14 (no HUMAN_REVIEW)");
+assert(j2.summary.hardFails > 0, "J.2 — PASSING_ITEM has V14 hard fail");
 
 const j3 = runPipeline([...DEFAULT_PIPELINE], createTB012(), ctx);
 assert(j3.valid === false, "J.3 — TB-012 is rejected by full pipeline");
@@ -605,7 +610,9 @@ m1Item.responseModel.questionType = "ISIAN_SINGKAT";
 m1Item.content.options = [];
 m1Item.responseModel.correctAnswer = "kalimat aktif";
 const m1 = runPipeline([...DEFAULT_PIPELINE], m1Item, makeCtx());
-assert(m1.valid === true, "M.1 — ISIAN_SINGKAT passes when valid");
+// V14 blocks valid=false (no HUMAN_REVIEW)
+assert(m1.valid === false, "M.1 — ISIAN_SINGKAT fails V14 (no HUMAN_REVIEW)");
+assert(m1.summary.hardFails > 0, "M.1 — ISIAN_SINGKAT has V14 hard fail");
 
 const m2Item = makeItem();
 m2Item.responseModel.questionType = "BENAR_SALAH";
@@ -620,14 +627,18 @@ assert(
 const m3Item = makeItem();
 m3Item.content.stem = "A".repeat(5000);
 const m3 = runPipeline([...DEFAULT_PIPELINE], m3Item, makeCtx());
-assert(m3.valid === true, "M.3 — Very long stem does not cause issues");
+// V14 blocks valid=false (no HUMAN_REVIEW)
+assert(m3.valid === false, "M.3 — Very long stem fails V14 (no HUMAN_REVIEW)");
+assert(m3.summary.hardFails > 0, "M.3 — has V14 hard fail");
 
 const m4Item = makeItem();
 m4Item.content.stem = "Kalimat berikut mengandung imbuhan yang benar adalah?";
 m4Item.content.options = ["berlari", "melepaskan", "menulis", "berjalan"];
 m4Item.responseModel.correctAnswer = "0";
 const m4 = runPipeline([...DEFAULT_PIPELINE], m4Item, makeCtx());
-assert(m4.valid === true, "M.4 — Unicode in stem and options");
+// V14 blocks valid=false (no HUMAN_REVIEW)
+assert(m4.valid === false, "M.4 — Unicode fails V14 (no HUMAN_REVIEW)");
+assert(m4.summary.hardFails > 0, "M.4 — has V14 hard fail");
 console.log("  §M complete");
 
 // ═════════════════════════════════════════════════════════════════════════════

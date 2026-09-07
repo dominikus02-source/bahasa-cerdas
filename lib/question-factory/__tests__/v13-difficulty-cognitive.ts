@@ -275,9 +275,11 @@ describe("V13 — Pipeline integration", () => {
     assert.equal(stage13!.id, "difficulty-cognitive-consistency");
   });
 
-  it("F.2 — V13 is last pipeline stage", () => {
+  it("F.2 — V13 is second-to-last pipeline stage (V14 is last)", () => {
     const maxStage = Math.max(...DEFAULT_PIPELINE.map((v) => v.stage));
-    assert.equal(maxStage, 13, "V13 should be the last pipeline stage");
+    assert.equal(maxStage, 14, "V14 should be the last pipeline stage");
+    const v13Stage = Math.max(...DEFAULT_PIPELINE.filter((v) => v.id !== "publish-calibration-readiness").map((v) => v.stage));
+    assert.equal(v13Stage, 13, "V13 should be second-to-last pipeline stage");
   });
 
   it("F.3 — pipeline runs V13 without errors on a PASS item", () => {
