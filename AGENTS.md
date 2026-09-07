@@ -4266,3 +4266,90 @@ Commission system is correctly wired end-to-end. ZERO commissions = DATA GAP (no
 1. No code changes needed
 2. Monitor for first MURID_PREMIUM from non-founder class
 3. Backfill attribution for 800 unmatched students
+
+---
+
+## Question Factory V2 — Phased Implementation
+
+### Goal
+Build a question bank quality system that ensures every item is fit for classroom use. Phases: Forensic Audit → Specification → Canonical Contract → Validator Architecture → Implementation → Scale.
+
+### Completed Phases
+
+#### P3.1 Forensic Audit (COMPLETE)
+- `docs/QUESTION_FACTORY_FORENSIC_AUDIT_P3_1.md` (14 sections)
+- 5 pipelines identified (A through E), Pipeline E (MASTER_BANK) = 98.7% template garbage
+- Production bank: 50 themes × 30 items = 1,500 items (from seed)
+- MASTER_BANK quarantined permanently as negative corpus
+- Conditional GO for V2 pilot
+
+#### P3.2 Specification (COMPLETE)
+- `docs/QUESTION_FACTORY_V2_SPECIFICATION_P3_2.md` (30 sections, ~1,200 lines)
+- F1–F7 founder decisions approved (DO NOT REOPEN)
+- V2 Pilot = 25 items; Listening/Speaking NO for V2; Human Review = Founder + 1 Teacher
+- D10 visibility = INTERNAL only; Calibration = 30 responses minimum
+- Pipeline B gated immediately; MASTER_BANK = ARCHIVE
+
+#### P3.3 Canonical Item Contract (COMPLETE)
+- `docs/QUESTION_FACTORY_CANONICAL_ITEM_CONTRACT_P3_3.md` (1,639 lines, 29 sections)
+- Status: DRAFT — awaiting founder review
+- 8 security-by-construction principles, 15-item DNA
+- 48 hard-fail conditions, 10 quality dimensions, 8 publish gates
+- D10 evidence model (4 states, monotonic progression)
+
+#### P3.4 Validator Architecture (COMPLETE)
+- `docs/QUESTION_FACTORY_VALIDATOR_ARCHITECTURE_P3_4.md` (34 sections)
+- Status: DRAFT — awaiting founder review
+- 4 validator classes: DETERMINISTIC, SEMI-DETERMINISTIC, AI-ASSISTED, HUMAN
+- 15 pipeline stages (V0–V14) with sequential execution
+- 20 hard-fail conditions (exhaustive)
+- Quality score aggregation (advisory, never sufficient)
+- Pipeline B containment, MASTER_BANK negative corpus, Human Review Boundary
+- TB-012 as calibration anchor
+- P3.5 implementation contract defined
+
+### Pending Phases
+| Phase | Status | Blocking? |
+|-------|--------|-----------|
+| P3.5A Deterministic Validation Foundation | **COMPLETE** (328/328 tests passing, 0 TypeScript errors) | No |
+| P3.5B Negative Corpus Regression Audit | **COMPLETE** (1,500/1,500 items correctly rejected, 100% rejection rate, 0 false positives) | No |
+| P3.5C AI Validators (V10–V14) | Not started | No — out of scope for P3.5A/P3.5B |
+| P2.9 Formal Adjudication | BLOCKED — human Reviewer B not completed | Yes for formal P2 completion |
+| Production Scale (250 items) | Blocked on P3.5C | Yes |
+
+### Key Files
+- `docs/QUESTION_FACTORY_FORENSIC_AUDIT_P3_1.md` — P3.1 audit
+- `docs/QUESTION_FACTORY_V2_SPECIFICATION_P3_2.md` — P3.2 spec
+- `docs/QUESTION_FACTORY_CANONICAL_ITEM_CONTRACT_P3_3.md` — P3.3 contract
+- `docs/QUESTION_FACTORY_VALIDATOR_ARCHITECTURE_P3_4.md` — P3.4 architecture
+- `docs/QUESTION_BANK_QUALITY_STANDARD.md` — 15 dimensions, D1–D15
+- `docs/QUESTION_ITEM_DNA.md` — canonical Item DNA, R1–R6
+- `docs/QUESTION_VALIDATION_SPEC.md` — validation pipeline V0–V14
+- `docs/QUESTION_BANK_50_THEME_FORENSIC_AUDIT.md` — MASTER_BANK quarantine rationale
+- `docs/question-bank-pilot/TEKS_BERITA_PILOT_V2.md` — 12 V2 items
+- `docs/question-bank-pilot/P2_7_QUESTION_FACTORY_CONTROL_GAP_ANALYSIS.md` — C1–C8 controls
+
+### P3.5A Implementation (COMPLETE)
+- Source code: `lib/question-factory/` (12 files: types, registry, interface, structural, answer-key, security, purpose-gate, duplicates, state-guard, aggregate, index, __fixtures__/tb-012)
+- Test suite: `lib/question-factory/__tests__/validation-pipeline.ts` (328 tests, sections A–R)
+- All deterministic validators V0–V9 implemented: structural, answer-key, security, purpose-gate, duplicates, state-guard
+- TB-012 golden fixture + 10 MASTER_BANK negative cases all pass correctly
+- No AI validators, no new question generation, no Pipeline B integration, no production publish integration, no DB migrations
+
+### P3.5B Negative Corpus Regression Audit (COMPLETE)
+- `docs/QUESTION_FACTORY_NEGATIVE_CORPUS_REGRESSION_P3_5B.md` (16 sections)
+- Audit script: `scripts/audit-negative-corpus-p35b.ts`
+- **Result**: 1,500/1,500 MASTER_BANK items correctly rejected (100% rejection rate, 0 false positives)
+- Top rejection reasons: PURPOSE_GATE_FAILED (100%), DUPLICATE_EXACT (88.7%), KEY_IN_STEM (69.5%), TEMPLATE_STEM_DETECTED (69.1%), STRUCTURE_ISIAN_HAS_OPTIONS (10%), STRUCTURE_INVALID_OPTION_COUNT (0.4%)
+- All 50 themes have 0% pass rate — uniform comprehensive rejection
+- Performance: 2,354 ms for 1,500 items (637 items/second)
+- Foundation confirmed fit for purpose as quality gate for Question Factory V2
+- Recommended next validators: V10 (CognitiveLabelValidator), V11 (DistractorQualityValidator)
+
+### Critical Rules
+- F1–F7 decisions (P3.2) are LOCKED — DO NOT REOPEN
+- TB-012 is the quality calibration anchor — DO NOT LOWER
+- MASTER_BANK is negative corpus — DO NOT DELETE/MODIFY/PUBLISH
+- Pipeline B items are quarantine-only — DO NOT promote without human review
+- AI is authoring assistant — NEVER represented as final quality authority
+- Human Reviewer B must complete before formal P2.9 adjudication
