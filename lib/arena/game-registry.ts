@@ -240,7 +240,7 @@ export const GAME_CARD_ARTWORK: Record<string, string> = {
   "lari-kata": "/images/GIM%20Card/lari%20kata-card2.png",
   "irama-kata": "/images/GIM%20Card/Irama%20Kata-card.png",
   "benar-salah": "/images/GIM%20Card/benar-salah-card.png",
-  "petualangan-kata": "/images/GIM%20Card/petualangan%20kata-card",
+  "petualangan-kata": "/images/GIM%20Card/petualangan%20kata-card.png",
   "kata-play": "/images/GIM%20Card/kataplay-card.png",
   "menara": "/images/GIM%20Card/menara%20kata-card.png",
   "susun-kata": "/images/GIM%20Card/Susun%20kata-card.png",
