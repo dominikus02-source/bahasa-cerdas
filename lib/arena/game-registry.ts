@@ -220,3 +220,29 @@ export function gameById(id: string): GameDefinition | undefined {
 export function featuredGame(): GameDefinition {
   return GAME_REGISTRY.find((g) => g.featured) ?? GAME_REGISTRY[0];
 }
+
+/**
+ * GAME CARD ARTWORK — peta aset visual kartu gim (public/images/GIM Card).
+ *
+ * Khusus untuk kartu gim di Game Hub (/arena/game) — TIDAK menyentuh banner
+ * hero (featuredGame().artwork tetap dipakai di sana). Setiap game dipetakan
+ * ke artwork yang paling menggambarkan gameplay-nya (game identity first).
+ *
+ * Semua 11 game aktif punya artwork (11/11). Catatan rasio: 8 aset lama
+ * 1448x1086 (4:3), 3 aset baru (menara/susun-kata/tantang) 1536x1024 (3:2) —
+ * area kartu memakai aspect-[4/3] + object-cover, jadi aset 3:2 dipotong
+ * ~11% vertikal (terpusat) agar konsisten dengan kartu lain.
+ */
+export const GAME_CARD_ARTWORK: Record<string, string> = {
+  "kuis-tempur": "/images/GIM%20Card/Kuis%20Tempur-card.png",
+  "teka-teki-silang": "/images/GIM%20Card/TTS-card.png",
+  "tebak-kata": "/images/GIM%20Card/tebak%20kata-card2.png",
+  "lari-kata": "/images/GIM%20Card/lari%20kata-card2.png",
+  "irama-kata": "/images/GIM%20Card/Irama%20Kata-card.png",
+  "benar-salah": "/images/GIM%20Card/benar-salah-card.png",
+  "petualangan-kata": "/images/GIM%20Card/petualangan%20kata-card",
+  "kata-play": "/images/GIM%20Card/kataplay-card.png",
+  "menara": "/images/GIM%20Card/menara%20kata-card.png",
+  "susun-kata": "/images/GIM%20Card/Susun%20kata-card.png",
+  "tantang": "/images/GIM%20Card/Tantang%20teman%20card.png",
+};
