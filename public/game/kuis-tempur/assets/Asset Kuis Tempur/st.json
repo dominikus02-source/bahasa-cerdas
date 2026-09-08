@@ -1,0 +1,90 @@
+{
+  "terrain": [
+    "grass_01",
+    "grass_02",
+    "dirt_01",
+    "path_01",
+    "grass_flowers",
+    "mixed_01",
+    "dirt_rocks",
+    "sand_01"
+  ],
+  "trees": [
+    "tree_01",
+    "tree_02",
+    "tree_03",
+    "tree_04",
+    "tree_05",
+    "tree_small",
+    "tree_tall",
+    "tree_wide",
+    "tree_palm",
+    "tree_bush_yellow"
+  ],
+  "houses": [
+    "house_01",
+    "house_02",
+    "house_03",
+    "house_04"
+  ],
+  "bushes": [
+    "bush_01",
+    "bush_02",
+    "bush_03",
+    "bush_04",
+    "bush_05",
+    "bush_06",
+    "bush_07",
+    "bush_08"
+  ],
+  "rocks": [
+    "rock_01",
+    "rock_02",
+    "rock_03",
+    "rock_04",
+    "rock_small",
+    "rock_cluster",
+    "rock_moss",
+    "rock_stack"
+  ],
+  "fences": [
+    "fence_01",
+    "fence_02",
+    "fence_03",
+    "fence_broken",
+    "fence_corner",
+    "fence_gate"
+  ],
+  "flowers_details": [
+    "flower_01",
+    "flower_02",
+    "flower_03",
+    "flower_04",
+    "flower_red",
+    "flower_blue",
+    "flower_mix",
+    "grass_clump"
+  ],
+  "props": [
+    "sign_wood",
+    "sign_direction",
+    "barrel",
+    "crate",
+    "hay_stack",
+    "well",
+    "lamp_post",
+    "stump",
+    "log",
+    "cart"
+  ],
+  "decals": [
+    "grass_patch_01",
+    "grass_patch_02",
+    "dirt_patch",
+    "stone_patch",
+    "leaves",
+    "flowers_scatter",
+    "footprint",
+    "shadow_soft"
+  ]
+}

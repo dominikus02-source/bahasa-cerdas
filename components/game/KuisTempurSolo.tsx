@@ -20,6 +20,18 @@ import {
   WARNA_TIPE,
   type StatBot,
 } from "@/lib/game/kuis-tempur-progression"
+import {
+  buildWorld,
+  worldColliders,
+  collidersToPixels,
+  preloadWorldImages,
+  drawWorldBackdrop,
+  drawWorldLayer,
+  getWorldImage,
+  isWorldImageReady,
+  SHADOW_SOFT_URL,
+  type WorldState,
+} from "@/lib/game/kuis-tempur-world"
 
 // Gaya "chunky cream" yang dipakai seluruh ekosistem gim solo BahasaCerdas
 // (ZelbyDash, LariKata, BenarSalah, dll). Keyframes unik per gim supaya tidak
@@ -82,6 +94,7 @@ type Pemain = {
   kedip: number
   langkah: number   // fase ayunan jalan
   hadap: number     // -1 kiri, 1 kanan
+  tinggi?: number   // denyut skala visual (kosmetik; tidak memengaruhi tabrakan)
   stat?: StatBot    // statistik arketipe bot (pemain tidak memakai ini)
 }
 type Peluru = { x: number; y: number; vx: number; vy: number; dari: number; umur: number; dmg: number }
@@ -89,7 +102,6 @@ type Partikel = { x: number; y: number; vx: number; vy: number; umur: number; wa
 type Angka = { x: number; y: number; teks: string; umur: number; warna: string }
 
 const NAMA_BOT = ["Raka", "Sari", "Bima", "Lia", "Dewi", "Andi", "Nisa", "Fajar", "Gilang", "Putri"]
-const ATAP = ["#EF4444", "#F97316", "#0EA5E9", "#8B5CF6", "#14B8A6"]
 
 function kocok<T>(arr: T[]): T[] {
   const a = [...arr]
@@ -145,9 +157,12 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   const partRef = useRef<Partikel[]>([])
   const angkaRef = useRef<Angka[]>([])
   const rintRef = useRef<Rintangan[]>([])
+  // WORLD DATA (normalisasi 0..1) — divisualkan oleh lib/game/kuis-tempur-world.
+  // rintRef di atas adalah proyeksi piksel tabrakannya (lihat collidersToPixels),
+  // dihitung ulang saat resize supaya komposisi tetap valid.
+  const worldRef = useRef<WorldState | null>(null)
   const zonaRef = useRef({ x: 0, y: 0, r: 0 })
   const rafRef = useRef(0)
-  const batikRef = useRef<HTMLImageElement | null>(null)
   const jalanRef = useRef(false)
   const benarRef = useRef(0)
   const salahRef = useRef(0)
@@ -332,48 +347,16 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
     const statku = kurvaPemain(level)
     statkuRef.current = statku
 
-    // Peta kampung: rumah dan pohon tersebar, menyisakan jalur di antaranya.
+    // Peta kampung dibangun oleh world engine (posisi normalisasi 0..1):
+    // rumah/pohon/batu menahan gerakan & peluru (tabrakan), sisanya dekorasi.
     // Rintangan menahan peluru, jadi peta inilah yang memberi murid pilihan —
     // berlindung dulu, baru berpikir.
-    const rint: Rintangan[] = []
-    const jumlahRumah = 4
-    const jumlahPohon = 11
-    const jauhDariTengah = (x: number, y: number) => Math.hypot(x - W / 2, y - H / 2) > Math.min(W, H) * 0.16
-    for (let i = 0; i < jumlahRumah; i++) {
-      for (let c = 0; c < 24; c++) {
-        const w = 58 + Math.random() * 34
-        const h = 42 + Math.random() * 22
-        const x = 16 + Math.random() * (W - w - 32)
-        const y = 60 + Math.random() * (H - h - 130)
-        if (!jauhDariTengah(x + w / 2, y + h / 2)) continue
-        if (rint.some((r) => r.jenis === "rumah" && x < r.x + r.w + 22 && x + w + 22 > r.x && y < r.y + r.h + 22 && y + h + 22 > r.y)) continue
-        rint.push({ jenis: "rumah", x, y, w, h, warna: ATAP[i % ATAP.length] })
-        break
-      }
-    }
-    for (let i = 0; i < 5; i++) {
-      for (let c = 0; c < 24; c++) {
-        const r = 13 + Math.random() * 7
-        const x = 24 + Math.random() * (W - 48)
-        const y = 70 + Math.random() * (H - 150)
-        if (!jauhDariTengah(x, y)) continue
-        if (rint.some((o) => kenaRintangan(x, y, o))) continue
-        rint.push({ jenis: "batu", x, y, r })
-        break
-      }
-    }
-    for (let i = 0; i < jumlahPohon; i++) {
-      for (let c = 0; c < 24; c++) {
-        const r = 16 + Math.random() * 8
-        const x = 24 + Math.random() * (W - 48)
-        const y = 70 + Math.random() * (H - 150)
-        if (!jauhDariTengah(x, y)) continue
-        if (rint.some((o) => kenaRintangan(x, y, o) || (o.jenis === "pohon" && Math.hypot(x - o.x, y - o.y) < r + o.r + 16))) continue
-        rint.push({ jenis: "pohon", x, y, r })
-        break
-      }
-    }
-    rintRef.current = rint
+    const world = buildWorld(W, H)
+    worldRef.current = world
+    rintRef.current = collidersToPixels(worldColliders(world), W, H)
+    preloadWorldImages(world)
+    // Hangatkan cache bayangan karakter sejak awal (fallback elips menutup).
+    getWorldImage(SHADOW_SOFT_URL)
 
     // Jumlah musuh mengikuti ronde. Wajah mereka memakai aset avatar bernomor
     // (public/avatar/1–10) — bukan karakter pemain, supaya kawan vs lawan jelas.
@@ -381,7 +364,6 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
     const botWajah = kocok(AVATAR_BOT)
     const botNama = kocok(NAMA_BOT).slice(0, lawan)
     const img = (src: string) => { const i = new Image(); i.src = src; return i }
-    if (!batikRef.current) batikRef.current = img("/batik%20bg%20bc.png")
 
     // Tiap bot lahir dengan arketipe acak (ringan/sedang/berat/penembak) yang
     // bobotnya mengikuti ronde — ronde tinggi berarti musuh lebih kuat & rajin
@@ -405,6 +387,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
         hp: stat?.hpMax ?? statku.hpMax,
         hpMax: stat?.hpMax ?? statku.hpMax,
         hidup: true, kamu, kedip: 0, langkah: 0, hadap: 1, stat,
+        tinggi: 1,
       }
     })
 
@@ -438,6 +421,13 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
       cv.width = cv.clientWidth * dpr
       cv.height = cv.clientHeight * dpr
       cv.getContext("2d")?.setTransform(dpr, 0, 0, dpr, 0, 0)
+      // Dunia memakai koordinat normalisasi, jadi komposisi tetap valid saat
+      // resize/rotasi — cukup petakan ulang tabrakan ke piksel baru. Entitas
+      // (pemain/musuh) sengaja tidak dipindah (perilaku lama dipertahankan).
+      const world = worldRef.current
+      if (world) {
+        rintRef.current = collidersToPixels(worldColliders(world), cv.clientWidth, cv.clientHeight)
+      }
     }
     atur()
     window.addEventListener("resize", atur)
@@ -598,96 +588,19 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
       const z = zonaRef.current
       const at = aturanRef.current
 
-      // Latar rumput
-      ctx.fillStyle = "#14532d"
-      ctx.fillRect(0, 0, W, H)
-      ctx.fillStyle = "rgba(34, 197, 94, 0.10)"
-      for (let gx = 0; gx < W; gx += 34) for (let gy = 0; gy < H; gy += 34) ctx.fillRect(gx, gy, 17, 17)
-
-      // Tekstur batik nusantara yang sangat tipis di atas rumput — nuansa
-      // kampung tanpa membuat arena ramai. Bunga & rumput kecil memakai posisi
-      // pseudo-acak deterministik supaya tidak melompat antar frame.
-      const btk = batikRef.current
-      if (btk?.complete && btk.naturalWidth > 0) {
-        ctx.globalAlpha = 0.06
-        ctx.drawImage(btk, 0, 0, W, H)
-        ctx.globalAlpha = 1
+      // ── WORLD ──────────────────────────────────────────────────────────
+      // Urutan lapisan: back → mid ── entitas (di bawah) ── front.
+      // Tabrakan (rintRef) dipetakan dari WORLD DATA yang sama melalui
+      // collidersToPixels, sehingga visual & logika tidak bisa meleset.
+      const world = worldRef.current
+      if (world) {
+        drawWorldBackdrop(ctx, world, W, H)
+        drawWorldLayer(ctx, world, "back", W, H)
+        drawWorldLayer(ctx, world, "mid", W, H)
+      } else {
+        ctx.fillStyle = "#5E9337"
+        ctx.fillRect(0, 0, W, H)
       }
-      const rng = (s: number) => { const x = Math.sin(s * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x) }
-      const petal = ["#FDE68A", "#FBCFE8", "#E7E5E4", "#FED7AA"]
-      for (let i = 0; i < 20; i++) {
-        const fx = (0.1 + rng(i) * 0.8) * W
-        const fy = (0.1 + rng(i + 50) * 0.8) * H
-        ctx.globalAlpha = 0.45
-        ctx.fillStyle = petal[i % 4]
-        for (let k = 0; k < 5; k++) {
-          const a = (k / 5) * Math.PI * 2 + rng(i + k)
-          ctx.beginPath(); ctx.arc(fx + Math.cos(a) * 3.2, fy + Math.sin(a) * 3.2, 2.2, 0, Math.PI * 2); ctx.fill()
-        }
-        ctx.fillStyle = "#F59E0B"
-        ctx.beginPath(); ctx.arc(fx, fy, 1.8, 0, Math.PI * 2); ctx.fill()
-      }
-      ctx.globalAlpha = 0.22
-      ctx.strokeStyle = "#BBF7D0"
-      ctx.lineWidth = 1.5
-      for (let i = 0; i < 16; i++) {
-        const gx = (0.05 + rng(i + 100) * 0.9) * W
-        const gy = (0.05 + rng(i + 150) * 0.9) * H
-        for (let b = 0; b < 3; b++) {
-          ctx.beginPath()
-          const bx = gx + b * 3 - 3
-          ctx.moveTo(bx, gy)
-          ctx.quadraticCurveTo(bx + 1, gy - 4, bx + 2 + rng(i + b) * 2 - 1, gy - 6)
-          ctx.stroke()
-        }
-      }
-      ctx.globalAlpha = 1
-
-      if (z.r > Math.min(W, H) * 0.18) z.r -= at.lajuZona
-
-      // Luar kabut digelapkan — batasnya terbaca sekali lihat tanpa teks.
-      ctx.fillStyle = "rgba(76, 29, 149, 0.45)"
-      ctx.fillRect(0, 0, W, H)
-      ctx.save()
-      ctx.globalCompositeOperation = "destination-out"
-      ctx.beginPath(); ctx.arc(z.x, z.y, z.r, 0, Math.PI * 2); ctx.fill()
-      ctx.restore()
-      ctx.beginPath(); ctx.arc(z.x, z.y, z.r, 0, Math.PI * 2)
-      ctx.strokeStyle = "rgba(196, 132, 252, 0.85)"; ctx.lineWidth = 3; ctx.stroke()
-
-      // Rintangan digambar sebelum karakter, jadi pemain tampak berdiri di depan.
-      rintRef.current.forEach((r) => {
-        if (r.jenis === "rumah") {
-          ctx.fillStyle = "rgba(0,0,0,0.28)"
-          ctx.fillRect(r.x + 3, r.y + r.h - 3, r.w, 7)
-          ctx.fillStyle = "#FEF3C7"
-          ctx.fillRect(r.x, r.y + r.h * 0.42, r.w, r.h * 0.58)
-          ctx.fillStyle = r.warna
-          ctx.beginPath()
-          ctx.moveTo(r.x - 5, r.y + r.h * 0.44)
-          ctx.lineTo(r.x + r.w / 2, r.y - 4)
-          ctx.lineTo(r.x + r.w + 5, r.y + r.h * 0.44)
-          ctx.closePath(); ctx.fill()
-          ctx.fillStyle = "#92400E"
-          ctx.fillRect(r.x + r.w * 0.42, r.y + r.h * 0.66, r.w * 0.16, r.h * 0.34)
-        } else if (r.jenis === "batu") {
-          ctx.fillStyle = "rgba(0,0,0,0.3)"
-          ctx.beginPath(); ctx.ellipse(r.x, r.y + r.r * 0.6, r.r * 0.9, r.r * 0.3, 0, 0, Math.PI * 2); ctx.fill()
-          ctx.fillStyle = "#64748B"
-          ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2); ctx.fill()
-          ctx.fillStyle = "#94A3B8"
-          ctx.beginPath(); ctx.arc(r.x - r.r * 0.3, r.y - r.r * 0.3, r.r * 0.45, 0, Math.PI * 2); ctx.fill()
-        } else {
-          ctx.fillStyle = "rgba(0,0,0,0.28)"
-          ctx.beginPath(); ctx.ellipse(r.x, r.y + r.r * 0.75, r.r * 0.8, r.r * 0.3, 0, 0, Math.PI * 2); ctx.fill()
-          ctx.fillStyle = "#78350F"
-          ctx.fillRect(r.x - 3.5, r.y, 7, r.r * 0.85)
-          ctx.fillStyle = "#16A34A"
-          ctx.beginPath(); ctx.arc(r.x, r.y - r.r * 0.2, r.r, 0, Math.PI * 2); ctx.fill()
-          ctx.fillStyle = "#22C55E"
-          ctx.beginPath(); ctx.arc(r.x - r.r * 0.3, r.y - r.r * 0.45, r.r * 0.6, 0, Math.PI * 2); ctx.fill()
-        }
-      })
 
       pRef.current.forEach((p, i) => {
         if (!p.hidup) return
@@ -705,11 +618,20 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
         }
         dorongKeluar(p)
         if (p.kedip > 0) p.kedip--
+        // nilai zona perlindungan karakter utama sesuatukan dengan luas canvas
+        if (p.kamu && p.tinggi !== undefined && p.tinggi < 1) p.tinggi += 2 * 0.01
 
         if (Math.hypot(p.x - z.x, p.y - z.y) > z.r) {
           p.hp -= 0.12
           if (p.kamu) setHp(Math.max(0, Math.round(p.hp)))
           if (p.hp <= 0) bunuh(i, "Kabut")
+        } else {
+          if (p.kamu) p.tinggi = Math.min((p.tinggi ?? 1) + 0.008, 1.5)
+          else          p.tinggi = Math.min((p.tinggi ?? 1) + 0.005, 1.5)
+        }
+
+        if (!p.kamu && p.kedip === 0) {
+          p.tinggi = Math.min((p.tinggi ?? 1) + Math.random() * 0.1, 1.5)
         }
 
         if (!p.kamu) {
@@ -755,38 +677,38 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
         const py = p.y + ayun
         const condong = bergerak ? Math.sin(p.langkah) * 0.07 * p.hadap : 0
 
-        ctx.fillStyle = "rgba(0,0,0,0.32)"
-        ctx.beginPath()
-        ctx.ellipse(p.x, p.y + R * 0.82, R * (0.62 - ayun * 0.02), R * 0.22, 0, 0, Math.PI * 2)
-        ctx.fill()
-
-        if (p.kamu) {
-          ctx.beginPath(); ctx.arc(p.x, py, R + 7, 0, Math.PI * 2)
-          ctx.fillStyle = "rgba(52, 211, 153, 0.22)"; ctx.fill()
+        // Bayangan kontak = sprite shadow_soft.png (QT-WORLD-02 §11).
+        // Elips prosedural hanya fallback saat gambar belum termuat — tidak
+        // ada lingkaran/halo/ring target di sini (dihapus QT-WORLD-01).
+        const bayang = getWorldImage(SHADOW_SOFT_URL)
+        if (isWorldImageReady(bayang)) {
+          const bw = R * 3.4
+          const bh = bw * 0.32
+          ctx.drawImage(bayang, p.x - bw / 2, p.y + R * 0.82 - bh / 2, bw, bh)
+        } else {
+          ctx.fillStyle = "rgba(0,0,0,0.28)"
+          ctx.beginPath()
+          ctx.ellipse(p.x, p.y + R * 0.82, R * (0.62 - ayun * 0.02), R * 0.22, 0, 0, Math.PI * 2)
+          ctx.fill()
         }
 
+        // Grounding karakter = bayangan kontak lembut di atas (tanpa lingkaran
+        // target/seleksi — lingkaran besar dihapus QT-WORLD-01).
         ctx.save()
         ctx.translate(p.x, py)
         ctx.rotate(condong)
         ctx.beginPath(); ctx.arc(0, 0, R, 0, Math.PI * 2); ctx.clip()
         if (p.gambar?.complete && p.gambar.naturalWidth > 0) {
-          ctx.drawImage(p.gambar, -R, -R, R * 2, R * 2)
-        } else {
+          ctx.drawImage(p.gambar, -R, -R, R * 2, R * 2)          } else {
           ctx.fillStyle = p.warna; ctx.fillRect(-R, -R, R * 2, R * 2)
         }
         ctx.restore()
-
+        // Tepi avatar tipis (2px) — penanda tim & kilatan putih saat kena.
         ctx.beginPath(); ctx.arc(p.x, py, R, 0, Math.PI * 2)
         ctx.strokeStyle = p.kedip > 0 ? "#FFFFFF" : p.kamu ? "#34D399" : p.warna
-        ctx.lineWidth = p.kamu ? 4 : 3; ctx.stroke()
+        ctx.lineWidth = 2; ctx.stroke()
 
-        // Penanda bidik pada musuh: mengajak diketuk, dan hanya menyala saat
-        // pemain punya peluru — aturannya terlihat, tidak perlu dihafal.
-        if (!p.kamu && peluruRef.current > 0) {
-          ctx.strokeStyle = "rgba(248, 113, 113, 0.9)"; ctx.lineWidth = 2
-          ctx.beginPath(); ctx.arc(p.x, py, R + 7, 0, Math.PI * 2); ctx.setLineDash([4, 5]); ctx.stroke()
-          ctx.setLineDash([])
-        }
+        // Nama & bilah nyawa tetap di atas karakter (tidak diubah).
 
         ctx.fillStyle = "#fff"; ctx.font = "bold 11px system-ui, sans-serif"; ctx.textAlign = "center"
         ctx.fillText(p.nama, p.x, py - R - 13)
@@ -794,6 +716,10 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
         ctx.fillStyle = p.hp > 35 ? "#34D399" : "#F87171"
         ctx.fillRect(p.x - 21, py - R - 9, 42 * Math.max(0, p.hp / Math.max(1, p.hpMax)), 4)
       })
+
+      // Lapisan depan (foreground jarang, tidak menutupi gameplay) — selalu di
+      // bawah peluru/partikel/UI supaya keterbacaan tempur terjaga.
+      if (world) drawWorldLayer(ctx, world, "front", W, H)
 
       for (let i = bRef.current.length - 1; i >= 0; i--) {
         const b = bRef.current[i]
@@ -841,13 +767,13 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
         a.y -= 0.8; a.umur--
         if (a.umur <= 0) { angkaRef.current.splice(i, 1); continue }
         ctx.globalAlpha = Math.min(1, a.umur / 20)
-        ctx.fillStyle = a.warna; ctx.font = "900 15px system-ui, sans-serif"; ctx.textAlign = "center"
+        ctx.fillStyle = a.warna;          ctx.font = "900 15px system-ui, sans-serif"; ctx.textAlign = "center"
         ctx.fillText(a.teks, a.x, a.y); ctx.globalAlpha = 1
       }
 
       // Bingkai dalam krem tipis — menautkan arena gelap ke chrome krem gim.
-      ctx.strokeStyle = "rgba(253, 230, 138, 0.25)"
-      ctx.lineWidth = 3
+      ctx.strokeStyle = "rgba(253, 230, 138, 0.15)"
+      ctx.lineWidth = 2
       ctx.strokeRect(1.5, 1.5, W - 3, H - 3)
 
       rafRef.current = requestAnimationFrame(gelung)

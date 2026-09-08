@@ -4353,3 +4353,64 @@ Build a question bank quality system that ensures every item is fit for classroo
 - Pipeline B items are quarantine-only — DO NOT promote without human review
 - AI is authoring assistant — NEVER represented as final quality authority
 - Human Reviewer B must complete before formal P2.9 adjudication
+
+## Phase QT-WORLD-01 — Kuis Tempur World Engine (Sept 8, 2026)
+
+### Goal
+Transformasi dunia visual Kuis Tempur: world architecture + rendering siap aset final, tanpa ubah gameplay/soal/karakter.
+
+### Temuan penting
+- Working tree berisi WIP tak-terkomit yang RUSAK di `components/game/KuisTempurSolo.tsx`: syntax error (`TS1005` line 346) + 5 referensi ke simbol yang tidak ada (`bangunDunia`, `latarDepan`, `renderLatarMakro`, `renderLatarObyek`, `ObyekLatar`). Fase ini memperbaikinya dengan implementasi bersih (bukan melanjutkan WIP mentah).
+
+### Yang dibuat
+- **`lib/game/kuis-tempur-world.ts`** (BARU, murni/testable): WORLD DATA (`WorldState`, posisi normalisasi 0..1, seed deterministik) vs WORLD VISUALS (`drawWorldBackdrop`, `drawWorldLayer` back/mid/front). Manifest `WORLD_ASSETS` = 70 sprite `public/game/kuis-tempur/assets/world/<kind>/`. Tabrakan via `worldColliders` + `collidersToPixels` (bentuk legacy Rintangan — `kenaRintangan`/dorong/peluru tidak berubah). Ganti file sprite nanti = tanpa ubah kode.
+- **`scripts/test-kuis-tempur-world.ts`** (BARU, 52/52): manifest vs file fisik, determinisme seed, portrait/landscape, collider, resize scaling, pemeriksaan statis renderer.
+
+### Yang diubah (`components/game/KuisTempurSolo.tsx`, surgical)
+- Fix syntax error + simbol WIP → panggil world engine (`buildWorld` di `mulai()`, draw back/mid sebelum entitas + front sesudah entitas).
+- Lingkaran target dihapus: halo hijau pemain (R+7), ring bidik dashed merah musuh; tepi avatar ditipiskan 4/3px → 2px (kilatan putih saat kena dipertahankan). Bayangan kontak, nama, HP bar utuh.
+- Overlay batik full-canvas dihapus (diganti terrain gradien hangat + jalur + bintik).
+- Resize: tabrakan dihitung ulang dari koordinat normalisasi (entitas tidak dipindah — perilaku lama).
+- Zona kabut tetap inert (radius besar, tidak menyusut — perilaku WIP dipertahankan, bukan gameplay HEAD).
+
+### Yang TIDAK diubah
+- Soal/jawaban/timer, spawn/gerak/serang musuh, proyektil/damage/HP, level/XP/koin/API, HUD, karakter pemain & monster.
+
+### Verifikasi
+- `test:kuis-tempur-world` 52/52, `test:kuis-tempur-progression` 43/43, `test:kuis-tempur-progression-ux` 26/26, `test:game-question-shuffle` 24/24, `tsc` 0 error, eslint 0 error, build exit 0.
+
+### Sisa untuk fase aset final
+- Sprite fallback prosedural masih dipakai sampai Image termuat; gaya "semi-realistis" penuh menunggu produksi art final (fase terpisah). Titik sisip: `WORLD_ASSETS` + file di `public/game/kuis-tempur/assets/world/`.
+
+## Phase QT-WORLD-02 — Final Visual Integration "Dunia Bahasa" (Sept 8, 2026, UNCOMMITTED)
+
+### Goal
+Integrasi visual final world Kuis Tempur dari 70 sprite produksi (QT-ASSET-05 PASS). Gameplay/karakter dilindungi penuh.
+
+### Pre-flight cleanup (§0)
+- Karantina runtime DICABUT (kedua file bersih terverifikasi).
+- `decals/flowers_scatter (1).png` (duplikat fringe parah, 676KB) DIHAPUS.
+- `terrain/arena_base_01.png` (lukisan scene utuh 2.9MB) dipindah ke `assets/Asset Kuis Tempur/arena_base_01-ARCHIVED-do-not-use-as-runtime.png`. 0 referensi runtime (terverifikasi grep).
+- Final: 70 sprite produksi (8/10/4/8/8/6/8/10/8).
+
+### Komposisi intentional (module only, welding QT-WORLD-01)
+- Elips tempur: rumah/pohon/batu/pagar dilarang masuk tengah (test: 0 pelanggaran di 16 dunia).
+- Pohon/rumah bias tepi (65%), semak & batu berkelompok (cluster 0.5-0.55), pagar berderet 2-4 segmen (test ≥60% bertetangga), bunga hindari arena.
+- Varian berbeda tanpa ulang selama jumlah ≤ berkas; rumah scale ≤1.0; front hanya flora kecil di strip bawah (≤5).
+- Terrain patches: 4-5 tile terrain alpha 0.22-0.3 di luar elips (anti repetisi).
+- groundYMin = max(60, 0.42H): tidak ada prop melayang di langit.
+
+### Shadow & scatter (§11-§12)
+- `SHADOW_SOFT_URL` + `getWorldImage`/`isWorldImageReady` (cache tunggal, fallback elips).
+- Karakter memakai sprite shadow_soft (R*3.4) — terbukti natural di screenshot HD.
+- flowers_scatter aktif jarang di decals (test: 1-24 instance/12 dunia, tak dominan).
+- Temuan QA: shadow_soft sebagai DEKORASI tampil sebagai noda raksasa (rasio 2.9:1) → dikecualikan via `PlaceOpts.exclude` (hanya bayangan karakter). Test mengunci.
+
+### Verifikasi
+- `test:kuis-tempur-world` 74/74, `tsc` 0, eslint 0 error, build exit 0.
+- Browser 5 viewport + resize: 0 console error, 0 404, 46-62 sprite/sesi, 65 file distinct termuat, 0 teks katalog, 0 halo/ring.
+- Komponen berubah HANYA di blok bayangan karakter + impor + preload (gameplay nol).
+
+### Sisa / catatan
+- Fringe kuning/hijau tipis di flowers_scatter: tak mengganggu pada skala main, catat untuk QA art.
+- Rotasi mid-game: entitas tetap di piksel lama (perilaku pra-fase, bukan regresi).

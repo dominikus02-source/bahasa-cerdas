@@ -1,0 +1,3 @@
+Kuis Tempur World Assets V1
+Individual transparent PNG candidates extracted from the master sprite sheet.
+Art-direction reference; review before production.
