@@ -419,25 +419,26 @@ export function buildWorld(W: number, H: number, opts: BuildOpts = {}): WorldSta
 
   // Bintik tekstur halus — sedikit, di bawah horizon saja (keterbacaan).
   const dots: WorldTerrain["dots"] = []
-  const nDots = landscape ? 70 : 45
+  const nDots = landscape ? 90 : 55
   for (let i = 0; i < nDots; i++) {
     dots.push({
-      x: rng(), y: 0.44 + rng() * 0.54,
+      x: rng(), y: 0.32 + rng() * 0.66,
       s: 2 + rng() * 9, a: 0.04 + rng() * 0.05,
     })
   }
 
   // Petak variasi tanah: 4–5 tile terrain (rumput/campur/tanah) digambar
   // BESAR dengan alpha rendah sebagai corak tanah — bukan ubin berulang.
-  // Selalu di luar elips tempur supaya arena tetap bersih.
+  // Dimulai lebih tinggi (y≈0.28) supaya transisi krem→hijau tertutup
+  // petak organik, bukan garis gradien tajam. Tetap di luar elips tempur.
   const patchFiles = ["grass_01.png", "grass_02.png", "mixed_01.png", "dirt_01.png", "grass_flowers.png"]
   const patches: WorldTerrainPatch[] = []
-  const nPatches = landscape ? 5 : 4
+  const nPatches = landscape ? 7 : 5
   for (let i = 0; i < nPatches; i++) {
     for (let c = 0; c < 20; c++) {
       const size = minDim * (0.35 + rng() * 0.25)
       const x = rng() * W
-      const y = H * 0.45 + rng() * H * 0.5
+      const y = H * 0.28 + rng() * H * 0.65
       if (Math.hypot(x - cx, y - cy) < clearR + size * 0.4) continue
       if (inEllipse(x, y, arenaTall)) continue
       patches.push({
@@ -664,8 +665,11 @@ export function drawWorldBackdrop(
   const horizon = t.horizonN * H
   const g = ctx.createLinearGradient(0, 0, 0, H)
   g.addColorStop(0, t.sky)
-  g.addColorStop(Math.max(0, t.horizonN - 0.02), "#F3E2B8")
-  g.addColorStop(t.horizonN, t.groundTop)
+  g.addColorStop(Math.max(0, t.horizonN - 0.28), "#E8D9A5")
+  g.addColorStop(Math.max(0, t.horizonN - 0.12), "#B5CC7A")
+  g.addColorStop(t.horizonN - 0.04, t.groundTop)
+  g.addColorStop(t.horizonN + 0.08, t.groundTop)
+  g.addColorStop(0.78, "#6EAA42")
   g.addColorStop(1, t.groundBottom)
   ctx.fillStyle = g
   ctx.fillRect(0, 0, W, H)

@@ -703,10 +703,6 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
           ctx.fillStyle = p.warna; ctx.fillRect(-R, -R, R * 2, R * 2)
         }
         ctx.restore()
-        // Tepi avatar tipis (2px) — penanda tim & kilatan putih saat kena.
-        ctx.beginPath(); ctx.arc(p.x, py, R, 0, Math.PI * 2)
-        ctx.strokeStyle = p.kedip > 0 ? "#FFFFFF" : p.kamu ? "#34D399" : p.warna
-        ctx.lineWidth = 2; ctx.stroke()
 
         // Nama & bilah nyawa tetap di atas karakter (tidak diubah).
 

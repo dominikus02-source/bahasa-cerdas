@@ -212,7 +212,7 @@ console.log("\n12. Pagar berderet + petak terrain");
   }
   ok(total > 0 && neighbor / total >= 0.6, `pagar berderet (${neighbor}/${total} punya tetangga)`);
   const w = buildWorld(1100, 700, { seed: 5 });
-  ok(w.terrain.patches.length >= 4 && w.terrain.patches.length <= 5, `${w.terrain.patches.length} petak terrain`);
+  ok(w.terrain.patches.length >= 4 && w.terrain.patches.length <= 7, `${w.terrain.patches.length} petak terrain`);
   ok(w.terrain.patches.every((p) => p.alpha <= 0.3), "petak terrain subtil (alpha ≤ 0.3)");
   const pool = ["grass_01.png", "grass_02.png", "mixed_01.png", "dirt_01.png", "grass_flowers.png"];
   ok(w.terrain.patches.every((p) => pool.includes(p.file)), "petak dari aset terrain");
