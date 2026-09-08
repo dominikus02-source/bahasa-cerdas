@@ -185,6 +185,8 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   // Untuk membedakan ketukan (menembak) dari seretan (berjalan).
   const tekanRef = useRef<{ x: number; y: number; t: number } | null>(null)
   const naikTimerRef = useRef<number>(0)
+  // Keyboard movement state: direction booleans consumed by game loop.
+  const keyRef = useRef({ up: false, down: false, left: false, right: false })
 
   useEffect(() => {
     levelRef.current = level
@@ -516,6 +518,37 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
     }
   }, [fase, tulisFeed])
 
+  // ── KEYBOARD MOVEMENT ────────────────────────────────────────────────
+  // Arrow keys + WASD. Direction state consumed by game loop for smooth
+  // continuous movement while held. Prevents browser scroll on arrow keys.
+  useEffect(() => {
+    if (fase !== "main") return
+    const k = keyRef.current
+    const down = (e: KeyboardEvent) => {
+      switch (e.code) {
+        case "ArrowUp": case "KeyW": k.up = true; e.preventDefault(); break
+        case "ArrowDown": case "KeyS": k.down = true; e.preventDefault(); break
+        case "ArrowLeft": case "KeyA": k.left = true; e.preventDefault(); break
+        case "ArrowRight": case "KeyD": k.right = true; e.preventDefault(); break
+      }
+    }
+    const up = (e: KeyboardEvent) => {
+      switch (e.code) {
+        case "ArrowUp": case "KeyW": k.up = false; break
+        case "ArrowDown": case "KeyS": k.down = false; break
+        case "ArrowLeft": case "KeyA": k.left = false; break
+        case "ArrowRight": case "KeyD": k.right = false; break
+      }
+    }
+    window.addEventListener("keydown", down)
+    window.addEventListener("keyup", up)
+    return () => {
+      k.up = k.down = k.left = k.right = false
+      window.removeEventListener("keydown", down)
+      window.removeEventListener("keyup", up)
+    }
+  }, [fase])
+
   useEffect(() => {
     if (fase !== "main") return
     const cv = cvRef.current
@@ -604,6 +637,20 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
 
       pRef.current.forEach((p, i) => {
         if (!p.hidup) return
+        // ── Keyboard movement: override tx/ty for continuous movement ──
+        if (p.kamu) {
+          const k = keyRef.current
+          const kmx = (k.left ? -1 : 0) + (k.right ? 1 : 0)
+          const kmy = (k.up ? -1 : 0) + (k.down ? 1 : 0)
+          if (kmx !== 0 || kmy !== 0) {
+            const laju = 2.6
+            const len = Math.hypot(kmx, kmy)
+            p.tx = p.x + (kmx / len) * laju
+            p.ty = p.y + (kmy / len) * laju
+            // Update facing direction for sprite flip
+            if (kmx !== 0) p.hadap = kmx > 0 ? 1 : -1
+          }
+        }
         const dx = p.tx - p.x, dy = p.ty - p.y
         const jarak = Math.hypot(dx, dy)
         const bergerak = jarak > 2

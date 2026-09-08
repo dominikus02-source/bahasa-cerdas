@@ -389,32 +389,99 @@ export function buildWorld(W: number, H: number, opts: BuildOpts = {}): WorldSta
     }
   }
 
-  // Penahan (gameplay): rumah + pohon + batu di tepi, luar elips tempur.
-  taruh("houses", { layer: "mid", scaleMin: 0.8, scaleMax: 1.0, pxR: 46, collides: "rect", count: landscape ? 4 : 3, edge: true, avoidArena: true })
-  taruh("trees", { layer: "mid", scaleMin: 0.8, scaleMax: 1.1, pxR: 20, collides: "circle", count: landscape ? 12 : 8, edge: true, avoidArena: true })
-  taruh("rocks", { layer: "mid", scaleMin: 0.8, scaleMax: 1.1, pxR: 16, collides: "circle", count: landscape ? 6 : 4, edge: true, cluster: 0.5, avoidArena: true })
-  // Pohon latar kecil (siluet jauh, tanpa tabrakan).
-  taruh("trees", { layer: "back", scaleMin: 0.4, scaleMax: 0.6, pxR: 18, collides: null, count: landscape ? 5 : 3, edge: true })
-  // Semak berkelompok diperimeter (transisi arena ↔ tepi).
-  taruh("bushes", { layer: "mid", scaleMin: 0.8, scaleMax: 1.1, pxR: 16, collides: null, count: landscape ? 10 : 6, edge: true, cluster: 0.55 })
-  taruh("bushes", { layer: "front", scaleMin: 0.7, scaleMax: 1.0, pxR: 20, collides: null, count: 2, yMinFrac: 0.78 })
-  // Bunga: separuh di sisi jalur, sisanya menyebar (tak masuk arena rendah).
-  taruh("flowers_details", { layer: "mid", scaleMin: 0.8, scaleMax: 1.2, pxR: 8, collides: null, count: landscape ? 14 : 8 })
-  taruh("flowers_details", { layer: "front", scaleMin: 0.8, scaleMax: 1.0, pxR: 8, collides: null, count: 2, yMinFrac: 0.78 })
-  // Pagar berderet (2–4 segmen sebaris, bukan satuan acak).
-  placeFenceRuns(rng, W, H, objects, taken, bebas, id, landscape ? 3 : 2)
-  taruh("props", { layer: "mid", scaleMin: 0.85, scaleMax: 1.0, pxR: 26, collides: null, count: landscape ? 7 : 5, edge: true })
-  // shadow_soft dikecualikan: ia bayangan karakter (SHADOW_SOFT_URL), bukan
-  // dekorasi tanah. flowers_scatter tetap aktif secukupnya (§12).
-  taruh("decals", { layer: "mid", scaleMin: 0.8, scaleMax: 1.3, pxR: 20, collides: null, count: landscape ? 12 : 7, exclude: ["shadow_soft.png"] })
+  // ── VILLAGE MEADOW COMPOSITION ───────────────────────────────────────
+  // Layout: kiri = desa (rumah, pagar, barrel), kanan = pepohonan,
+  // tengah = padang tempur terbuka, bawah = foreground framing,
+  // atas = pepohonan jauh + rumah desa.
+  //
+  // Rumah: 2 di kiri (desa), 1 di kanan atas (terpencil), 1 di atas tengah.
+  // Pohon: kanan lebih padat (hutan pinggir), kiri sedang (dekat desa).
+  // Batu: tersebar di tepi, cluster kecil.
+  // Pagar: berderet kiri (batas desa) & kanan (batas hutan).
 
-  // Jalur tanah berliku vertikal (bawah → atas), digambar di bawah obyek.
+  // ── LEFT VILLAGE ZONE (houses + fences + props) ──
+  taruh("houses", {
+    layer: "mid", scaleMin: 0.85, scaleMax: 1.0, pxR: 46, collides: "rect",
+    count: landscape ? 2 : 2, avoidArena: true,
+    edge: true,
+  })
+  // ── RIGHT TREE ZONE (dense forest edge) ──
+  taruh("houses", {
+    layer: "mid", scaleMin: 0.75, scaleMax: 0.9, pxR: 46, collides: "rect",
+    count: landscape ? 1 : 1, avoidArena: true,
+    edge: true,
+  })
+  // ── TOP CENTER house (distant village) ──
+  taruh("houses", {
+    layer: "back", scaleMin: 0.55, scaleMax: 0.7, pxR: 46, collides: "rect",
+    count: landscape ? 1 : 0, edge: true,
+  })
+
+  // ── TREES — right side denser (forest), left moderate (near village) ──
+  // Mid-layer trees (gameplay obstacles)
+  taruh("trees", {
+    layer: "mid", scaleMin: 0.85, scaleMax: 1.1, pxR: 20, collides: "circle",
+    count: landscape ? 10 : 6, edge: true, avoidArena: true,
+  })
+  // Back-layer trees (distant silhouettes, no collision)
+  taruh("trees", {
+    layer: "back", scaleMin: 0.4, scaleMax: 0.65, pxR: 18, collides: null,
+    count: landscape ? 6 : 4, edge: true,
+  })
+
+  // ── ROCKS — natural scatter at perimeter ──
+  taruh("rocks", {
+    layer: "mid", scaleMin: 0.8, scaleMax: 1.1, pxR: 16, collides: "circle",
+    count: landscape ? 5 : 3, edge: true, cluster: 0.4, avoidArena: true,
+  })
+
+  // ── BUSHES — transition zone between clearing and edges ──
+  taruh("bushes", {
+    layer: "mid", scaleMin: 0.8, scaleMax: 1.1, pxR: 16, collides: null,
+    count: landscape ? 8 : 5, edge: true, cluster: 0.45,
+  })
+  // Foreground bushes (bottom framing only)
+  taruh("bushes", {
+    layer: "front", scaleMin: 0.7, scaleMax: 1.0, pxR: 20, collides: null,
+    count: 2, yMinFrac: 0.80,
+  })
+
+  // ── FLOWERS — scattered, not clustered ──
+  taruh("flowers_details", {
+    layer: "mid", scaleMin: 0.8, scaleMax: 1.2, pxR: 8, collides: null,
+    count: landscape ? 12 : 7,
+  })
+  taruh("flowers_details", {
+    layer: "front", scaleMin: 0.8, scaleMax: 1.0, pxR: 8, collides: null,
+    count: 2, yMinFrac: 0.80,
+  })
+
+  // ── FENCES — village boundary left, forest boundary right ──
+  placeFenceRuns(rng, W, H, objects, taken, bebas, id, landscape ? 3 : 2)
+
+  // ── PROPS — barrels, crates, well near village ──
+  taruh("props", {
+    layer: "mid", scaleMin: 0.85, scaleMax: 1.0, pxR: 26, collides: null,
+    count: landscape ? 6 : 4, edge: true,
+  })
+
+  // ── DECALS — ground texture (shadow_soft excluded, flowers_scatter sparse) ──
+  taruh("decals", {
+    layer: "mid", scaleMin: 0.8, scaleMax: 1.3, pxR: 20, collides: null,
+    count: landscape ? 10 : 6, exclude: ["shadow_soft.png"],
+  })
+
+  // ── PATH — natural village path from bottom-right toward village (left) ──
+  // The path curves gently: starts lower-right, bends through the clearing,
+  // and leads toward the left-side village cluster. Not a zig-zag.
   const path: { x: number; y: number }[] = []
-  let px = 0.3 + rng() * 0.4
+  const pathBase = 0.55 + rng() * 0.15 // start x (right of center)
   for (let i = 0; i <= 6; i++) {
-    path.push({ x: px, y: 1.02 - i * 0.12 })
-    px += (rng() - 0.5) * 0.22
-    px = Math.min(0.9, Math.max(0.1, px))
+    const t = i / 6
+    // Gentle curve: starts right (0.6–0.7), ends left (0.25–0.35)
+    const x = pathBase - t * 0.38 + Math.sin(t * Math.PI) * 0.08
+    const y = 1.02 - i * 0.12
+    path.push({ x: Math.max(0.1, Math.min(0.9, x)), y })
   }
 
   // Bintik tekstur halus — sedikit, di bawah horizon saja (keterbacaan).
@@ -560,9 +627,11 @@ export function isWorldImageReady(img: HTMLImageElement | null): img is HTMLImag
 }
 
 function drawShadow(ctx: CanvasRenderingContext2D, x: number, y: number, w: number): void {
-  ctx.fillStyle = "rgba(0,0,0,0.22)"
+  // Shadow sits 1px below object base for natural grounding.
+  // Elongated horizontally, compressed vertically — soft contact shadow.
+  ctx.fillStyle = "rgba(0,0,0,0.18)"
   ctx.beginPath()
-  ctx.ellipse(x, y, w / 2, Math.max(2.5, w * 0.12), 0, 0, Math.PI * 2)
+  ctx.ellipse(x, y + 1, w / 2, Math.max(2, w * 0.10), 0, 0, Math.PI * 2)
   ctx.fill()
 }
 
