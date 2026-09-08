@@ -16,7 +16,8 @@
  *   L. Golden fixtures regression (57 tests — 32 fixtures × pipeline checks + edge variants)
  */
 
-import { describe, it, expect } from "vitest";
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
 import { runValidator } from "../interface";
 import type { CanonicalItem, ValidationContext, ValidationResult } from "../types";
 import {
@@ -117,15 +118,15 @@ function makeFinding(
 
 describe("V14 — A. Validator identity", () => {
   it("A.1 — has correct id", () => {
-    expect(publishCalibrationReadinessValidator.id).toBe("publish-calibration-readiness");
+    assert.strictEqual(publishCalibrationReadinessValidator.id, "publish-calibration-readiness");
   });
 
   it("A.2 — has version 1.0.0", () => {
-    expect(publishCalibrationReadinessValidator.version).toBe("1.0.0");
+    assert.strictEqual(publishCalibrationReadinessValidator.version, "1.0.0");
   });
 
   it("A.3 — is stage 14", () => {
-    expect(publishCalibrationReadinessValidator.stage).toBe(14);
+    assert.strictEqual(publishCalibrationReadinessValidator.stage, 14);
   });
 });
 
@@ -135,29 +136,29 @@ describe("V14 — B. Clause 1: Structural valid", () => {
   it("B.1 — passes with no structural rejects upstream", () => {
     const result = evaluatePublishReadiness(G01_PRACTICE_FULL_PASS, cleanUpstream());
     const clause1 = result.clauses.find((c) => c.clause === 1)!;
-    expect(clause1.passed).toBe(true);
+    assert.strictEqual(clause1.passed, true);
   });
 
   it("B.2 — fails when upstream has STRUCTURE_EMPTY_STEM", () => {
     const upstream = upstreamWith(makeFinding("structural", "STRUCTURE_EMPTY_STEM"));
     const result = evaluatePublishReadiness(G01_PRACTICE_FULL_PASS, upstream);
     const clause1 = result.clauses.find((c) => c.clause === 1)!;
-    expect(clause1.passed).toBe(false);
-    expect(clause1.findingCodes).toContain("STRUCTURE_EMPTY_STEM");
+    assert.strictEqual(clause1.passed, false);
+    assert.ok(clause1.findingCodes.includes("STRUCTURE_EMPTY_STEM"));
   });
 
   it("B.3 — fails when upstream has STRUCTURE_MISSING_FIELD", () => {
     const upstream = upstreamWith(makeFinding("structural", "STRUCTURE_MISSING_FIELD"));
     const result = evaluatePublishReadiness(G01_PRACTICE_FULL_PASS, upstream);
     const clause1 = result.clauses.find((c) => c.clause === 1)!;
-    expect(clause1.passed).toBe(false);
+    assert.strictEqual(clause1.passed, false);
   });
 
   it("B.4 — passes when upstream has non-structural failures only", () => {
     const upstream = upstreamWith(makeFinding("quality", "D1_LOW"));
     const result = evaluatePublishReadiness(G01_PRACTICE_FULL_PASS, upstream);
     const clause1 = result.clauses.find((c) => c.clause === 1)!;
-    expect(clause1.passed).toBe(true);
+    assert.strictEqual(clause1.passed, true);
   });
 });
 
@@ -167,20 +168,20 @@ describe("V14 — C. Clause 2: No HARD-FAIL below minimum", () => {
   it("C.1 — passes with all HARD-FAIL dims ≥ 2", () => {
     const result = evaluatePublishReadiness(G01_PRACTICE_FULL_PASS, cleanUpstream());
     const clause2 = result.clauses.find((c) => c.clause === 2)!;
-    expect(clause2.passed).toBe(true);
+    assert.strictEqual(clause2.passed, true);
   });
 
   it("C.2 — fails when D1=1 (HARD-FAIL dim below minimum)", () => {
     const result = evaluatePublishReadiness(G07_HARDFAIL_D1_LOW, cleanUpstream());
     const clause2 = result.clauses.find((c) => c.clause === 2)!;
-    expect(clause2.passed).toBe(false);
-    expect(clause2.reason).toContain("D1=1");
+    assert.strictEqual(clause2.passed, false);
+    assert.ok(clause2.reason!.includes("D1=1"));
   });
 
   it("C.3 — passes when quality scores are missing (other validators enforce)", () => {
     const result = evaluatePublishReadiness(G11_NO_QUALITY_SCORES, cleanUpstream());
     const clause2 = result.clauses.find((c) => c.clause === 2)!;
-    expect(clause2.passed).toBe(true);
+    assert.strictEqual(clause2.passed, true);
   });
 
   it("C.4 — fails when multiple HARD-FAIL dims are low", () => {
@@ -190,8 +191,8 @@ describe("V14 — C. Clause 2: No HARD-FAIL below minimum", () => {
     } as unknown as CanonicalItem;
     const result = evaluatePublishReadiness(item, cleanUpstream());
     const clause2 = result.clauses.find((c) => c.clause === 2)!;
-    expect(clause2.passed).toBe(false);
-    expect(clause2.findingCodes.length).toBeGreaterThanOrEqual(2);
+    assert.strictEqual(clause2.passed, false);
+    assert.ok(clause2.findingCodes.length >= 2);
   });
 });
 
@@ -201,20 +202,20 @@ describe("V14 — D. Clause 3: SCORED dimensions at minimum", () => {
   it("D.1 — passes with all SCORED dims ≥ 2", () => {
     const result = evaluatePublishReadiness(G01_PRACTICE_FULL_PASS, cleanUpstream());
     const clause3 = result.clauses.find((c) => c.clause === 3)!;
-    expect(clause3.passed).toBe(true);
+    assert.strictEqual(clause3.passed, true);
   });
 
   it("D.2 — fails when D3=1 (SCORED dim below minimum)", () => {
     const result = evaluatePublishReadiness(G08_SCORED_D3_LOW, cleanUpstream());
     const clause3 = result.clauses.find((c) => c.clause === 3)!;
-    expect(clause3.passed).toBe(false);
-    expect(clause3.reason).toContain("D3=1");
+    assert.strictEqual(clause3.passed, false);
+    assert.ok(clause3.reason!.includes("D3=1"));
   });
 
   it("D.3 — passes when quality scores are missing", () => {
     const result = evaluatePublishReadiness(G11_NO_QUALITY_SCORES, cleanUpstream());
     const clause3 = result.clauses.find((c) => c.clause === 3)!;
-    expect(clause3.passed).toBe(true);
+    assert.strictEqual(clause3.passed, true);
   });
 
   it("D.4 — fails when D9 and D12 are both low", () => {
@@ -224,8 +225,8 @@ describe("V14 — D. Clause 3: SCORED dimensions at minimum", () => {
     } as unknown as CanonicalItem;
     const result = evaluatePublishReadiness(item, cleanUpstream());
     const clause3 = result.clauses.find((c) => c.clause === 3)!;
-    expect(clause3.passed).toBe(false);
-    expect(clause3.findingCodes.length).toBeGreaterThanOrEqual(2);
+    assert.strictEqual(clause3.passed, false);
+    assert.ok(clause3.findingCodes.length >= 2);
   });
 });
 
@@ -235,32 +236,32 @@ describe("V14 — E. Clause 4: D10 valid state", () => {
   it("E.1 — PRACTICE with HYPOTHESIS passes", () => {
     const result = evaluatePublishReadiness(G01_PRACTICE_FULL_PASS, cleanUpstream());
     const clause4 = result.clauses.find((c) => c.clause === 4)!;
-    expect(clause4.passed).toBe(true);
+    assert.strictEqual(clause4.passed, true);
   });
 
   it("E.2 — PRACTICE with NOT_APPLICABLE fails (min is HYPOTHESIS)", () => {
     const result = evaluatePublishReadiness(G25_PRACTICE_D10_NA, cleanUpstream());
     const clause4 = result.clauses.find((c) => c.clause === 4)!;
-    expect(clause4.passed).toBe(false);
+    assert.strictEqual(clause4.passed, false);
   });
 
   it("E.3 — DIAGNOSTIC with HYPOTHESIS fails (needs ≥ REVIEWED)", () => {
     const result = evaluatePublishReadiness(G13_DIAGNOSTIC_D10_LOW, cleanUpstream());
     const clause4 = result.clauses.find((c) => c.clause === 4)!;
-    expect(clause4.passed).toBe(false);
-    expect(clause4.reason).toContain("D10");
+    assert.strictEqual(clause4.passed, false);
+    assert.ok(clause4.reason!.includes("D10"));
   });
 
   it("E.4 — DIAGNOSTIC with NOT_APPLICABLE fails", () => {
     const result = evaluatePublishReadiness(G14_DIAGNOSTIC_D10_NA, cleanUpstream());
     const clause4 = result.clauses.find((c) => c.clause === 4)!;
-    expect(clause4.passed).toBe(false);
+    assert.strictEqual(clause4.passed, false);
   });
 
   it("E.5 — ADAPTIVE_MISCONCEPTION with REVIEWED fails (needs EMPIRICALLY_SUPPORTED)", () => {
     const result = evaluatePublishReadiness(G15_ADAPTIVE_D10_INSUFFICIENT, cleanUpstream());
     const clause4 = result.clauses.find((c) => c.clause === 4)!;
-    expect(clause4.passed).toBe(false);
+    assert.strictEqual(clause4.passed, false);
   });
 });
 
@@ -270,38 +271,38 @@ describe("V14 — F. Clause 5: Human review approved", () => {
   it("F.1 — passes with provenance=HUMAN_REVIEW + reviewedBy", () => {
     const result = evaluatePublishReadiness(G01_PRACTICE_FULL_PASS, cleanUpstream());
     const clause5 = result.clauses.find((c) => c.clause === 5)!;
-    expect(clause5.passed).toBe(true);
+    assert.strictEqual(clause5.passed, true);
   });
 
   it("F.2 — fails with provenance=EXISTING_DATA + NOT_REVIEWED", () => {
     const result = evaluatePublishReadiness(G09_NO_HUMAN_REVIEW, cleanUpstream());
     const clause5 = result.clauses.find((c) => c.clause === 5)!;
-    expect(clause5.passed).toBe(false);
-    expect(clause5.findingCodes).toContain("HUMAN_REVIEW_MISSING");
+    assert.strictEqual(clause5.passed, false);
+    assert.ok(clause5.findingCodes.includes("HUMAN_REVIEW_MISSING"));
   });
 
   it("F.3 — fails with reviewState=PENDING + provenance=AI_ASSISTED", () => {
     const result = evaluatePublishReadiness(G19_PENDING_NOT_APPROVED, cleanUpstream());
     const clause5 = result.clauses.find((c) => c.clause === 5)!;
-    expect(clause5.passed).toBe(false);
+    assert.strictEqual(clause5.passed, false);
   });
 
   it("F.4 — fails with reviewState=IN_REVIEW", () => {
     const result = evaluatePublishReadiness(G20_IN_REVIEW_NOT_APPROVED, cleanUpstream());
     const clause5 = result.clauses.find((c) => c.clause === 5)!;
-    expect(clause5.passed).toBe(false);
+    assert.strictEqual(clause5.passed, false);
   });
 
   it("F.5 — fails with reviewState=REVISION", () => {
     const result = evaluatePublishReadiness(G21_REVISION_STATE, cleanUpstream());
     const clause5 = result.clauses.find((c) => c.clause === 5)!;
-    expect(clause5.passed).toBe(false);
+    assert.strictEqual(clause5.passed, false);
   });
 
   it("F.6 — fails with provenance=AUTHOR + NOT_REVIEWED (no reviewer)", () => {
     const result = evaluatePublishReadiness(G23_AUTHOR_NO_REVIEW, cleanUpstream());
     const clause5 = result.clauses.find((c) => c.clause === 5)!;
-    expect(clause5.passed).toBe(false);
+    assert.strictEqual(clause5.passed, false);
   });
 });
 
@@ -311,40 +312,40 @@ describe("V14 — G. Clause 6: Purpose-specific gates", () => {
   it("G.1 — PRACTICE passes (no purpose-specific requirements)", () => {
     const result = evaluatePublishReadiness(G01_PRACTICE_FULL_PASS, cleanUpstream());
     const clause6 = result.clauses.find((c) => c.clause === 6)!;
-    expect(clause6.passed).toBe(true);
+    assert.strictEqual(clause6.passed, true);
   });
 
   it("G.2 — DIAGNOSTIC fails without evidenceTarget", () => {
     const result = evaluatePublishReadiness(G16_DIAGNOSTIC_NO_EVIDENCE, cleanUpstream());
     const clause6 = result.clauses.find((c) => c.clause === 6)!;
-    expect(clause6.passed).toBe(false);
-    expect(clause6.findingCodes).toContain("EVIDENCE_TARGET_MISSING");
+    assert.strictEqual(clause6.passed, false);
+    assert.ok(clause6.findingCodes.includes("EVIDENCE_TARGET_MISSING"));
   });
 
   it("G.3 — DIAGNOSTIC fails without misconceptionTarget", () => {
     const result = evaluatePublishReadiness(G17_DIAGNOSTIC_NO_MISCONCEPTION, cleanUpstream());
     const clause6 = result.clauses.find((c) => c.clause === 6)!;
-    expect(clause6.passed).toBe(false);
-    expect(clause6.findingCodes).toContain("MISCONCEPTION_TARGET_MISSING");
+    assert.strictEqual(clause6.passed, false);
+    assert.ok(clause6.findingCodes.includes("MISCONCEPTION_TARGET_MISSING"));
   });
 
   it("G.4 — ADAPTIVE_MISCONCEPTION fails without targets", () => {
     const result = evaluatePublishReadiness(G18_ADAPTIVE_NO_TARGETS, cleanUpstream());
     const clause6 = result.clauses.find((c) => c.clause === 6)!;
-    expect(clause6.passed).toBe(false);
-    expect(clause6.findingCodes.length).toBeGreaterThanOrEqual(2);
+    assert.strictEqual(clause6.passed, false);
+    assert.ok(clause6.findingCodes.length >= 2);
   });
 
   it("G.5 — DIAGNOSTIC with targets + D10=REVIEWED passes", () => {
     const result = evaluatePublishReadiness(G03_DIAGNOSTIC_FULL, cleanUpstream());
     const clause6 = result.clauses.find((c) => c.clause === 6)!;
-    expect(clause6.passed).toBe(true);
+    assert.strictEqual(clause6.passed, true);
   });
 
   it("G.6 — ADAPTIVE_MISCONCEPTION with targets + D10=EMPIRICALLY_SUPPORTED passes", () => {
     const result = evaluatePublishReadiness(G04_ADAPTIVE_EMPIRICAL, cleanUpstream());
     const clause6 = result.clauses.find((c) => c.clause === 6)!;
-    expect(clause6.passed).toBe(true);
+    assert.strictEqual(clause6.passed, true);
   });
 });
 
@@ -354,17 +355,17 @@ describe("V14 — H. Clause 7: Quality tier advisory", () => {
   it("H.1 — clause 7 is always true (advisory, never blocks)", () => {
     const result = evaluatePublishReadiness(G29_LOW_MEAN_ADVISORY, cleanUpstream());
     const clause7 = result.clauses.find((c) => c.clause === 7)!;
-    expect(clause7.passed).toBe(true);
+    assert.strictEqual(clause7.passed, true);
   });
 
   it("H.2 — GOLD tier for mean ≥ 2.6", () => {
     const result = evaluatePublishReadiness(G01_PRACTICE_FULL_PASS, cleanUpstream());
-    expect(result.publishTier).toBe("GOLD");
+    assert.strictEqual(result.publishTier, "GOLD");
   });
 
   it("H.3 — BRONZE tier for mean = 2.0 (minimum passing)", () => {
     const result = evaluatePublishReadiness(G29_LOW_MEAN_ADVISORY, cleanUpstream());
-    expect(result.publishTier).toBe("BRONZE");
+    assert.strictEqual(result.publishTier, "BRONZE");
   });
 });
 
@@ -373,25 +374,25 @@ describe("V14 — H. Clause 7: Quality tier advisory", () => {
 describe("V14 — I. Calibration readiness states", () => {
   it("I.1 — BLOCKED when any clause fails", () => {
     const result = evaluatePublishReadiness(G09_NO_HUMAN_REVIEW, cleanUpstream());
-    expect(result.calibrationReadiness).toBe("BLOCKED");
+    assert.strictEqual(result.calibrationReadiness, "BLOCKED");
   });
 
   it("I.2 — READY_FOR_HUMAN_REVIEW when review not done", () => {
     const upstream = upstreamWith(makeFinding("structural", "STRUCTURE_EMPTY_STEM"));
     const result = evaluatePublishReadiness(G01_PRACTICE_FULL_PASS, upstream);
     // clause 1 fails → BLOCKED
-    expect(result.calibrationReadiness).toBe("BLOCKED");
+    assert.strictEqual(result.calibrationReadiness, "BLOCKED");
   });
 
   it("I.3 — READY_FOR_CALIBRATION for PRACTICE with < 30 responses", () => {
     const result = evaluatePublishReadiness(G27_PRACTICE_ZERO_RESPONSES, cleanUpstream());
     // All clauses pass, zero responses → READY_FOR_CALIBRATION
-    expect(result.calibrationReadiness).toBe("READY_FOR_CALIBRATION");
+    assert.strictEqual(result.calibrationReadiness, "READY_FOR_CALIBRATION");
   });
 
   it("I.4 — READY_FOR_PUBLISH for PRACTICE with 50 responses + all clauses pass", () => {
     const result = evaluatePublishReadiness(G01_PRACTICE_FULL_PASS, cleanUpstream());
-    expect(result.calibrationReadiness).toBe("READY_FOR_PUBLISH");
+    assert.strictEqual(result.calibrationReadiness, "READY_FOR_PUBLISH");
   });
 
   it("I.5 — CALIBRATION_INCOMPLETE for DIAGNOSTIC with < 100 responses", () => {
@@ -400,12 +401,12 @@ describe("V14 — I. Calibration readiness states", () => {
       responseCount: 50,
     } as unknown as CanonicalItem;
     const result = evaluatePublishReadiness(item, cleanUpstream());
-    expect(result.calibrationReadiness).toBe("CALIBRATION_INCOMPLETE");
+    assert.strictEqual(result.calibrationReadiness, "CALIBRATION_INCOMPLETE");
   });
 
   it("I.6 — READY_FOR_PUBLISH for DIAGNOSTIC with ≥ 100 responses", () => {
     const result = evaluatePublishReadiness(G03_DIAGNOSTIC_FULL, cleanUpstream());
-    expect(result.calibrationReadiness).toBe("READY_FOR_PUBLISH");
+    assert.strictEqual(result.calibrationReadiness, "READY_FOR_PUBLISH");
   });
 });
 
@@ -414,28 +415,28 @@ describe("V14 — I. Calibration readiness states", () => {
 describe("V14 — J. Full publish readiness", () => {
   it("J.1 — G01 is publish-ready", () => {
     const result = evaluatePublishReadiness(G01_PRACTICE_FULL_PASS, cleanUpstream());
-    expect(result.publishReady).toBe(true);
+    assert.strictEqual(result.publishReady, true);
   });
 
   it("J.2 — G09 is NOT publish-ready (no human review)", () => {
     const result = evaluatePublishReadiness(G09_NO_HUMAN_REVIEW, cleanUpstream());
-    expect(result.publishReady).toBe(false);
+    assert.strictEqual(result.publishReady, false);
   });
 
   it("J.3 — G07 is NOT publish-ready (HARD-FAIL dim below minimum)", () => {
     const result = evaluatePublishReadiness(G07_HARDFAIL_D1_LOW, cleanUpstream());
-    expect(result.publishReady).toBe(false);
+    assert.strictEqual(result.publishReady, false);
   });
 
   it("J.4 — G30 is NOT publish-ready (structural reject)", () => {
     const upstream = upstreamWith(makeFinding("structural", "STRUCTURE_EMPTY_STEM"));
     const result = evaluatePublishReadiness(G30_FAIL_CLOSED_STRUCTURAL, upstream);
-    expect(result.publishReady).toBe(false);
+    assert.strictEqual(result.publishReady, false);
   });
 
   it("J.5 — G31 is NOT publish-ready (conjunctive: two SCORED dims low)", () => {
     const result = evaluatePublishReadiness(G31_CONJUNCTIVE_TWO_LOW, cleanUpstream());
-    expect(result.publishReady).toBe(false);
+    assert.strictEqual(result.publishReady, false);
   });
 });
 
@@ -445,7 +446,7 @@ describe("V14 — K. Conjunctive gate & fail-closed", () => {
   it("K.1 — fails with upstream hard fails even if all clauses pass item-metadata", () => {
     const upstream = upstreamWith(makeFinding("quality", "D1_LOW"));
     const result = evaluatePublishReadiness(G01_PRACTICE_FULL_PASS, upstream);
-    expect(result.publishReady).toBe(false);
+    assert.strictEqual(result.publishReady, false);
   });
 
   it("K.2 — fails-closed when upstream has structural rejects", () => {
@@ -454,29 +455,29 @@ describe("V14 — K. Conjunctive gate & fail-closed", () => {
       makeFinding("structural", "STRUCTURE_MISSING_FIELD")
     );
     const result = evaluatePublishReadiness(G01_PRACTICE_FULL_PASS, upstream);
-    expect(result.clauses.find((c) => c.clause === 1)!.passed).toBe(false);
-    expect(result.publishReady).toBe(false);
+    assert.strictEqual(result.clauses.find((c) => c.clause === 1)!.passed, false);
+    assert.strictEqual(result.publishReady, false);
   });
 
   it("K.3 — all 7 clauses must pass for publishReady=true", () => {
     const result = evaluatePublishReadiness(G01_PRACTICE_FULL_PASS, cleanUpstream());
-    expect(result.clauses.every((c) => c.passed)).toBe(true);
-    expect(result.publishReady).toBe(true);
+    assert.strictEqual(result.clauses.every((c) => c.passed), true);
+    assert.strictEqual(result.publishReady, true);
   });
 
   it("K.4 — single clause failure makes publishReady=false", () => {
     const result = evaluatePublishReadiness(G12_REJECTED_STATE, cleanUpstream());
     const failedClauses = result.clauses.filter((c) => !c.passed);
-    expect(failedClauses.length).toBeGreaterThanOrEqual(1);
-    expect(result.publishReady).toBe(false);
+    assert.ok(failedClauses.length >= 1);
+    assert.strictEqual(result.publishReady, false);
   });
 
   it("K.5 — ID-independence: V14-UNIQUE-RANDOM-ID-12345 evaluates identically to G01", () => {
     const r1 = evaluatePublishReadiness(G01_PRACTICE_FULL_PASS, cleanUpstream());
     const r2 = evaluatePublishReadiness(G32_ID_INDEPENDENT, cleanUpstream());
-    expect(r1.publishReady).toBe(r2.publishReady);
-    expect(r1.publishTier).toBe(r2.publishTier);
-    expect(r1.calibrationReadiness).toBe(r2.calibrationReadiness);
+    assert.strictEqual(r1.publishReady, r2.publishReady);
+    assert.strictEqual(r1.publishTier, r2.publishTier);
+    assert.strictEqual(r1.calibrationReadiness, r2.calibrationReadiness);
   });
 
   it("K.6 — item with no ID special-casing logic (all IDs treated equally)", () => {
@@ -484,7 +485,7 @@ describe("V14 — K. Conjunctive gate & fail-closed", () => {
     // This is verified by the test checking no TB-012 string exists
     const allIds = ALL_V14_FIXTURES.map((f) => f.identity.id);
     const uniqueIds = new Set(allIds);
-    expect(uniqueIds.size).toBe(allIds.length); // All IDs unique
+    assert.strictEqual(uniqueIds.size, allIds.length); // All IDs unique
   });
 
   it("K.7 — fail-closed: missing required upstream result → FAIL", () => {
@@ -492,9 +493,9 @@ describe("V14 — K. Conjunctive gate & fail-closed", () => {
     // V14 should still evaluate clause 1 based on absence of rejects (pass)
     const result = evaluatePublishReadiness(G01_PRACTICE_FULL_PASS, cleanUpstream());
     // No structural rejects → clause 1 passes
-    expect(result.clauses.find((c) => c.clause === 1)!.passed).toBe(true);
+    assert.strictEqual(result.clauses.find((c) => c.clause === 1)!.passed, true);
     // But upstream hardFails=0, so publishReady depends on all clauses
-    expect(result.publishReady).toBe(true);
+    assert.strictEqual(result.publishReady, true);
   });
 });
 
@@ -505,7 +506,7 @@ describe("V14 — L. Golden fixtures regression", () => {
   it("L.1 — every fixture produces exactly 7 clauses", () => {
     for (const item of ALL_V14_FIXTURES) {
       const result = evaluatePublishReadiness(item, cleanUpstream());
-      expect(result.clauses.length).toBe(7);
+      assert.strictEqual(result.clauses.length, 7);
     }
   });
 
@@ -520,8 +521,8 @@ describe("V14 — L. Golden fixtures regression", () => {
     ];
     for (const item of passFixtures) {
       const result = evaluatePublishReadiness(item, cleanUpstream());
-      expect(result.publishReady).toBe(true);
-      expect(result.clauses.every((c) => c.passed)).toBe(true);
+      assert.strictEqual(result.publishReady, true);
+      assert.strictEqual(result.clauses.every((c) => c.passed), true);
     }
   });
 
@@ -562,7 +563,7 @@ describe("V14 — L. Golden fixtures regression", () => {
     ];
     for (const { item, upstream, label } of failCases) {
       const result = evaluatePublishReadiness(item, upstream);
-      expect(result.publishReady, `${label}: publishReady=${result.publishReady}`).toBe(false);
+      assert.strictEqual(result.publishReady, false, `${label}: publishReady=${result.publishReady}`);
     }
   });
 
@@ -581,7 +582,7 @@ describe("V14 — L. Golden fixtures regression", () => {
       const c4 = result.clauses.find((c) => c.clause === 4)!;
       const c6 = result.clauses.find((c) => c.clause === 6)!;
       // At least one of clause 4 or 6 must fail
-      expect(c4.passed === false || c6.passed === false).toBe(true);
+      assert.strictEqual(c4.passed === false || c6.passed === false, true);
     }
   });
 
@@ -597,33 +598,33 @@ describe("V14 — L. Golden fixtures regression", () => {
     for (const item of reviewFixtures) {
       const result = evaluatePublishReadiness(item, cleanUpstream());
       const c5 = result.clauses.find((c) => c.clause === 5)!;
-      expect(c5.passed).toBe(false);
+      assert.strictEqual(c5.passed, false);
     }
   });
 
   // L.6 — MINIMAL_DATA (G24) passes all 7 clauses
   it("L.6 — G24 MINIMAL_DATA passes all clauses", () => {
     const result = evaluatePublishReadiness(G24_MINIMAL_DATA, cleanUpstream());
-    expect(result.clauses.every((c) => c.passed)).toBe(true);
+    assert.strictEqual(result.clauses.every((c) => c.passed), true);
   });
 
   // L.7 — PRACTICE with D10=NOT_APPLICABLE (G25) fails clause 4 (min is HYPOTHESIS)
   it("L.7 — G25 fails clause 4 (PRACTICE requires ≥ HYPOTHESIS)", () => {
     const result = evaluatePublishReadiness(G25_PRACTICE_D10_NA, cleanUpstream());
-    expect(result.clauses.find((c) => c.clause === 4)!.passed).toBe(false);
+    assert.strictEqual(result.clauses.find((c) => c.clause === 4)!.passed, false);
   });
 
   // L.8 — ACHIEVEMENT with D10=NOT_APPLICABLE (G26) fails clause 4
   it("L.8 — G26 fails clause 4 (ACHIEVEMENT requires ≥ HYPOTHESIS)", () => {
     const result = evaluatePublishReadiness(G26_ACHIEVEMENT_D10_NA, cleanUpstream());
-    expect(result.clauses.find((c) => c.clause === 4)!.passed).toBe(false);
+    assert.strictEqual(result.clauses.find((c) => c.clause === 4)!.passed, false);
   });
 
   // L.9 — ADVISORY fixtures pass all 7 clauses (advisory never blocks)
   it("L.9 — G28, G29 pass all 7 clauses (advisory only)", () => {
     for (const item of [G28_CALIBRATION_PENDING, G29_LOW_MEAN_ADVISORY]) {
       const result = evaluatePublishReadiness(item, cleanUpstream());
-      expect(result.clauses.every((c) => c.passed)).toBe(true);
+      assert.strictEqual(result.clauses.every((c) => c.passed), true);
     }
   });
 
@@ -631,27 +632,27 @@ describe("V14 — L. Golden fixtures regression", () => {
   it("L.10 — G30 fails clause 1 when upstream has structural reject", () => {
     const upstream = upstreamWith(makeFinding("structural", "STRUCTURE_EMPTY_STEM"));
     const result = evaluatePublishReadiness(G30_FAIL_CLOSED_STRUCTURAL, upstream);
-    expect(result.clauses.find((c) => c.clause === 1)!.passed).toBe(false);
-    expect(result.publishReady).toBe(false);
+    assert.strictEqual(result.clauses.find((c) => c.clause === 1)!.passed, false);
+    assert.strictEqual(result.publishReady, false);
   });
 
   // L.11 — ADVERSARIAL G31 fails clause 3 (conjunctive)
   it("L.11 — G31 fails clause 3 (two SCORED dims below minimum)", () => {
     const result = evaluatePublishReadiness(G31_CONJUNCTIVE_TWO_LOW, cleanUpstream());
-    expect(result.clauses.find((c) => c.clause === 3)!.passed).toBe(false);
-    expect(result.publishReady).toBe(false);
+    assert.strictEqual(result.clauses.find((c) => c.clause === 3)!.passed, false);
+    assert.strictEqual(result.publishReady, false);
   });
 
   // L.12 — ID-independence: G32 evaluates identically to G01
   it("L.12 — G32 and G01 produce identical publishReady/tier/calibration", () => {
     const r1 = evaluatePublishReadiness(G01_PRACTICE_FULL_PASS, cleanUpstream());
     const r2 = evaluatePublishReadiness(G32_ID_INDEPENDENT, cleanUpstream());
-    expect(r1.publishReady).toBe(r2.publishReady);
-    expect(r1.publishTier).toBe(r2.publishTier);
-    expect(r1.calibrationReadiness).toBe(r2.calibrationReadiness);
+    assert.strictEqual(r1.publishReady, r2.publishReady);
+    assert.strictEqual(r1.publishTier, r2.publishTier);
+    assert.strictEqual(r1.calibrationReadiness, r2.calibrationReadiness);
     // Clause results should be identical
     for (let i = 0; i < 7; i++) {
-      expect(r1.clauses[i].passed).toBe(r2.clauses[i].passed);
+      assert.strictEqual(r1.clauses[i].passed, r2.clauses[i].passed);
     }
   });
 
@@ -669,7 +670,7 @@ describe("V14 — L. Golden fixtures regression", () => {
     for (const item of ALL_V14_FIXTURES) {
       const result = evaluatePublishReadiness(item, cleanUpstream());
       const names = result.clauses.map((c) => c.name);
-      expect(names).toEqual(expectedNames);
+      assert.deepStrictEqual(names, expectedNames);
     }
   });
 
@@ -678,7 +679,7 @@ describe("V14 — L. Golden fixtures regression", () => {
     for (const item of ALL_V14_FIXTURES) {
       const result = evaluatePublishReadiness(item, cleanUpstream());
       const numbers = result.clauses.map((c) => c.clause);
-      expect(numbers).toEqual([1, 2, 3, 4, 5, 6, 7]);
+      assert.deepStrictEqual(numbers, [1, 2, 3, 4, 5, 6, 7]);
     }
   });
 
@@ -693,7 +694,7 @@ describe("V14 — L. Golden fixtures regression", () => {
     ];
     for (const item of passFixtures) {
       const result = evaluatePublishReadiness(item, cleanUpstream());
-      expect(result.summary.hardFails).toBe(0);
+      assert.strictEqual(result.summary.hardFails, 0);
     }
   });
 });

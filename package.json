@@ -241,6 +241,7 @@
     "test:guru-berkarya2-social-feed": "npx tsx scripts/test-guru-berkarya2-social-feed.ts",
     "test:guru-berkarya-social": "npx tsx scripts/test-guru-berkarya-social.ts",
     "test:gamification-engine": "npx tsx scripts/test-gamification-engine.ts",
+    "test:v14": "npx tsx lib/question-factory/__tests__/v14-publish-readiness.ts",
     "test:task-share-link": "npx tsx scripts/test-task-share-link.ts",
     "test:student-consolidation": "npx tsx scripts/test-student-consolidation.ts",
     "test:student-shell": "npx tsx scripts/test-student-shell.ts",
@@ -410,8 +411,6 @@
     "sharp": "^0.35.3",
     "tailwindcss": "^3.4.14",
     "ts-node": "^10.9.2",
-    "typescript": "^5.6.3",
-    "vite": "^8.2.2",
-    "vitest": "^5.0.0"
+    "typescript": "^5.6.3"
   }
 }
