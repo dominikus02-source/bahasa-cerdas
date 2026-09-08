@@ -30,6 +30,14 @@ export type WorldLayer = "back" | "mid" | "front"
 export const WORLD_ASSET_BASE = "/game/kuis-tempur/assets/world"
 
 /**
+ * Arena base image — primary visual foundation (QT-ARENA-04B).
+ * 1672×941 PNG RGB, drawn scaled+centered as bottom-most layer.
+ * Visual only — no collision data extracted from this image.
+ */
+export const ARENA_BASE_URL =
+  "/game/kuis-tempur/assets/world/base/arena_base_01.png"
+
+/**
  * Manifest sprite per kategori — nama berkas yang secara fisik ada di
  * public/game/kuis-tempur/assets/world/<kind>/. Aset final nanti cukup
  * menimpa/menambah di sini tanpa menyentuh logika gim.
@@ -230,9 +238,15 @@ function placeFenceRuns(
     // Segmen se-deret TIDAK saling memblokir (jarak antar-segmen < radius
     // bebas); hanya jangkar yang diuji terhadap dunia yang sudah ada.
     const baseLen = taken.length
-    const bebasRun = (x: number, y: number) =>
-      Math.hypot(x - W / 2, y - H / 2) > Math.min(W, H) * 0.2 &&
-      !taken.slice(0, baseLen).some((t) => Math.hypot(x - t.x, y - t.y) < 30 * scale + t.r)
+    const bebasRun = (x: number, y: number) => {
+      const nx = x / W
+      const ny = y / H
+      return (
+        Math.hypot(x - W / 2, y - H / 2) > Math.min(W, H) * 0.2 &&
+        !(nx > 0.04 && nx < 0.26 && ny > 0.68 && ny < 0.96) &&
+        !taken.slice(0, baseLen).some((t) => Math.hypot(x - t.x, y - t.y) < 30 * scale + t.r)
+      )
+    }
     const run: { x: number; y: number }[] = []
     for (let i = 0; i < n; i++) {
       const x = left ? ax + i * segW : ax - i * segW
@@ -258,9 +272,11 @@ function placeFenceRuns(
  * landscape = lega & kaya obyek. Semua posisi dinormalisasi 0..1 sehingga
  * resize tidak merusak komposisi (tabrakan dihitung ulang via collidersToPixels).
  *
- * Komposisi disengaja (bukan galeri acak): pohon/rumah bias ke tepi,
- * semak & batu berkelompok, pagar dipasang berderet, bunga di sisi jalur,
- * tengah arena selalu terbuka.
+ * QT-ARENA-04B: arena_base_01 menjadi fondasi visual utama.
+ * Obyek modular ditambah SELECTIVE di atas base — bukan collase acak.
+ * Zona kolam di base (visual only) tidak ditempati obyek modular.
+ * 1 rumah central anchor menghubungkan desa kiri dengan padang tempur.
+ * Tengah arena tetap terbuka untuk gameplay.
  */
 export function buildWorld(W: number, H: number, opts: BuildOpts = {}): WorldState {
   const seed = opts.seed ?? Math.floor(Math.random() * 1_000_000_000)
@@ -275,8 +291,19 @@ export function buildWorld(W: number, H: number, opts: BuildOpts = {}): WorldSta
   const cy = H / 2
   const taken: { x: number; y: number; r: number }[] = []
   const jauhDariTengah = (x: number, y: number) => Math.hypot(x - cx, y - cy) > clearR
-  const bebas = (x: number, y: number, r: number) =>
-    jauhDariTengah(x, y) && !taken.some((t) => Math.hypot(x - t.x, y - t.y) < r + t.r)
+  // Zona kolam arena_base_01 (visual only, tidak ada collision baru).
+  // Bottom-left pond: ~(0.05–0.25, 0.70–0.95). Objek modular dihindari di zona ini.
+  const inPondZone = (nx: number, ny: number) =>
+    nx > 0.04 && nx < 0.26 && ny > 0.68 && ny < 0.96
+  const bebas = (x: number, y: number, r: number) => {
+    const nx = x / W
+    const ny = y / H
+    return (
+      jauhDariTengah(x, y) &&
+      !inPondZone(nx, ny) &&
+      !taken.some((t) => Math.hypot(x - t.x, y - t.y) < r + t.r)
+    )
+  }
 
   // Elips tempur: larangan obyek tinggi di tengah.
   const arenaTall = combatEllipse(W, H, 0)
@@ -390,55 +417,76 @@ export function buildWorld(W: number, H: number, opts: BuildOpts = {}): WorldSta
   }
 
   // ── VILLAGE MEADOW COMPOSITION ───────────────────────────────────────
-  // Layout: kiri = desa (rumah, pagar, barrel), kanan = pepohonan,
-  // tengah = padang tempur terbuka, bawah = foreground framing,
-  // atas = pepohonan jauh + rumah desa.
+  // arena_base_01 menyediakan fondasi visual kaya (vegetasi baked, kolam,
+  // jalur tanah). Obyek modular ditambah SELECTIVE — bukan collase acak.
   //
-  // Rumah: 2 di kiri (desa), 1 di kanan atas (terpencil), 1 di atas tengah.
-  // Pohon: kanan lebih padat (hutan pinggir), kiri sedang (dekat desa).
-  // Batu: tersebar di tepi, cluster kecil.
-  // Pagar: berderet kiri (batas desa) & kanan (batas hutan).
+  // Zona: kiri = desa (rumah cluster), kanan = hutan tepi,
+  //       tengah atas = 1 rumah anchor + pohon, tengah = padang tempur,
+  //       bawah = foreground framing, kolam = visual only.
+  // Rumah: 2 kiri (desa), 1 kanan atas (terpencil), 1 atas tengah (anchor).
+  // Pohon: kanan lebih padat (hutan), kiri sedang (dekat desa).
+  // Batu: sedikit, cluster tepi.
+  // Pagar: berderet kiri & kanan.
 
-  // ── LEFT VILLAGE ZONE (houses + fences + props) ──
+  // ── LEFT VILLAGE ZONE (houses cluster) ──
   taruh("houses", {
     layer: "mid", scaleMin: 0.85, scaleMax: 1.0, pxR: 46, collides: "rect",
     count: landscape ? 2 : 2, avoidArena: true,
     edge: true,
   })
-  // ── RIGHT TREE ZONE (dense forest edge) ──
+  // ── RIGHT TREE ZONE — 1 house terpencil di kanan atas ──
   taruh("houses", {
     layer: "mid", scaleMin: 0.75, scaleMax: 0.9, pxR: 46, collides: "rect",
     count: landscape ? 1 : 1, avoidArena: true,
     edge: true,
   })
-  // ── TOP CENTER house (distant village) ──
+  // ── CENTRAL ANCHOR — 1 rumah di tepi clearing (bukan absolute center) ──
+  // Rumah ini ditempatkan EKSPLISIT sedikit ke kiri-atas dari center,
+  // menjadi environmental anchor yang menghubungkan desa kiri dengan padang tempur.
+  // Menggunakan posisi deterministik (tidak random) untuk konsistensi.
+  {
+    const anchorX = W * (0.36 + rng() * 0.08)  // 0.36–0.44
+    const anchorY = H * (0.34 + rng() * 0.06)  // 0.34–0.40
+    const scale = 0.72 + rng() * 0.1
+    const pool = runtimeAssetPool("houses")
+    const file = pool[Math.floor(rng() * pool.length)]
+    const tint = pick(rng, ROOF_COLORS)
+    objects.push({
+      id: id("houses"), kind: "houses", file,
+      x: anchorX / W, y: anchorY / H, scale, layer: "mid",
+      shadow: true, tint, collides: true,
+      shape: { type: "rect", xN: (anchorX - 24) / W, yN: (anchorY - 40) / H, wN: 48 / W, hN: 40 / H },
+    })
+    taken.push({ x: anchorX, y: anchorY, r: 44 })
+  }
+  // ── TOP CENTER house (distant village silhouette) ──
   taruh("houses", {
     layer: "back", scaleMin: 0.55, scaleMax: 0.7, pxR: 46, collides: "rect",
     count: landscape ? 1 : 0, edge: true,
   })
 
-  // ── TREES — right side denser (forest), left moderate (near village) ──
+  // ── TREES — reduced (base provides baked vegetation). Right denser. ──
   // Mid-layer trees (gameplay obstacles)
   taruh("trees", {
     layer: "mid", scaleMin: 0.85, scaleMax: 1.1, pxR: 20, collides: "circle",
-    count: landscape ? 10 : 6, edge: true, avoidArena: true,
+    count: landscape ? 6 : 4, edge: true, avoidArena: true,
   })
   // Back-layer trees (distant silhouettes, no collision)
   taruh("trees", {
     layer: "back", scaleMin: 0.4, scaleMax: 0.65, pxR: 18, collides: null,
-    count: landscape ? 6 : 4, edge: true,
+    count: landscape ? 3 : 2, edge: true,
   })
 
-  // ── ROCKS — natural scatter at perimeter ──
+  // ── ROCKS — reduced, perimeter scatter ──
   taruh("rocks", {
     layer: "mid", scaleMin: 0.8, scaleMax: 1.1, pxR: 16, collides: "circle",
-    count: landscape ? 5 : 3, edge: true, cluster: 0.4, avoidArena: true,
+    count: landscape ? 3 : 2, edge: true, cluster: 0.4, avoidArena: true,
   })
 
-  // ── BUSHES — transition zone between clearing and edges ──
+  // ── BUSHES — reduced, transition zone ──
   taruh("bushes", {
     layer: "mid", scaleMin: 0.8, scaleMax: 1.1, pxR: 16, collides: null,
-    count: landscape ? 8 : 5, edge: true, cluster: 0.45,
+    count: landscape ? 5 : 3, edge: true, cluster: 0.45,
   })
   // Foreground bushes (bottom framing only)
   taruh("bushes", {
@@ -456,19 +504,19 @@ export function buildWorld(W: number, H: number, opts: BuildOpts = {}): WorldSta
     count: 2, yMinFrac: 0.80,
   })
 
-  // ── FENCES — village boundary left, forest boundary right ──
-  placeFenceRuns(rng, W, H, objects, taken, bebas, id, landscape ? 3 : 2)
+  // ── FENCES — reduced, village boundary left, forest boundary right ──
+  placeFenceRuns(rng, W, H, objects, taken, bebas, id, landscape ? 2 : 1)
 
-  // ── PROPS — barrels, crates, well near village ──
+  // ── PROPS — reduced, barrels/crates near village ──
   taruh("props", {
     layer: "mid", scaleMin: 0.85, scaleMax: 1.0, pxR: 26, collides: null,
-    count: landscape ? 6 : 4, edge: true,
+    count: landscape ? 4 : 3, edge: true,
   })
 
-  // ── DECALS — ground texture (shadow_soft excluded, flowers_scatter sparse) ──
+  // ── DECALS — reduced, ground texture (shadow_soft excluded) ──
   taruh("decals", {
     layer: "mid", scaleMin: 0.8, scaleMax: 1.3, pxR: 20, collides: null,
-    count: landscape ? 10 : 6, exclude: ["shadow_soft.png"],
+    count: landscape ? 6 : 4, exclude: ["shadow_soft.png"],
   })
 
   // ── PATH — natural village path from bottom-right toward village (left) ──
@@ -484,23 +532,21 @@ export function buildWorld(W: number, H: number, opts: BuildOpts = {}): WorldSta
     path.push({ x: Math.max(0.1, Math.min(0.9, x)), y })
   }
 
-  // Bintik tekstur halus — sedikit, di bawah horizon saja (keterbacaan).
+  // Bintik tekstur halus — sangat sedikit, base sudah punya tekstur.
   const dots: WorldTerrain["dots"] = []
-  const nDots = landscape ? 90 : 55
+  const nDots = landscape ? 40 : 25
   for (let i = 0; i < nDots; i++) {
     dots.push({
       x: rng(), y: 0.32 + rng() * 0.66,
-      s: 2 + rng() * 9, a: 0.04 + rng() * 0.05,
+      s: 2 + rng() * 9, a: 0.03 + rng() * 0.04,
     })
   }
 
-  // Petak variasi tanah: 4–5 tile terrain (rumput/campur/tanah) digambar
-  // BESAR dengan alpha rendah sebagai corak tanah — bukan ubin berulang.
-  // Dimulai lebih tinggi (y≈0.28) supaya transisi krem→hijau tertutup
-  // petak organik, bukan garis gradien tajam. Tetap di luar elips tempur.
+  // Petak variasi tanah — dikurangi, base sudah punya variasi warna.
+  // Alpha sangat rendah untuk subtilitas di atas base.
   const patchFiles = ["grass_01.png", "grass_02.png", "mixed_01.png", "dirt_01.png", "grass_flowers.png"]
   const patches: WorldTerrainPatch[] = []
-  const nPatches = landscape ? 7 : 5
+  const nPatches = landscape ? 4 : 3
   for (let i = 0; i < nPatches; i++) {
     for (let c = 0; c < 20; c++) {
       const size = minDim * (0.35 + rng() * 0.25)
@@ -510,7 +556,7 @@ export function buildWorld(W: number, H: number, opts: BuildOpts = {}): WorldSta
       if (inEllipse(x, y, arenaTall)) continue
       patches.push({
         file: patchFiles[i % patchFiles.length],
-        x: x / W, y: y / H, sizeN: size / minDim, alpha: 0.22 + rng() * 0.08,
+        x: x / W, y: y / H, sizeN: size / minDim, alpha: 0.12 + rng() * 0.06,
       })
       break
     }
@@ -597,6 +643,8 @@ function cachedImage(url: string): HTMLImageElement | null {
 /** Muat semua sprite yang dipakai dunia (fire-and-forget; fallback menutup). */
 export function preloadWorldImages(world: WorldState): void {
   if (typeof window === "undefined") return
+  // Arena base image — dimuat duluan sebagai fondasi visual utama.
+  cachedImage(ARENA_BASE_URL)
   const seen = new Set<string>()
   for (const o of world.objects) {
     const url = worldAssetUrl(o.kind, o.file)
@@ -624,6 +672,11 @@ export function getWorldImage(url: string): HTMLImageElement | null {
 
 export function isWorldImageReady(img: HTMLImageElement | null): img is HTMLImageElement {
   return imageReady(img)
+}
+
+/** Arena base image — fondasi visual utama (QT-ARENA-04B). */
+export function getArenaBaseImage(): HTMLImageElement | null {
+  return cachedImage(ARENA_BASE_URL)
 }
 
 function drawShadow(ctx: CanvasRenderingContext2D, x: number, y: number, w: number): void {
@@ -723,28 +776,48 @@ function drawFallback(
   }
 }
 
-/** Latar: langit hangat di atas horizon + tanah gradien + jalur + bintik. */
+/**
+ * Latar: arena_base_01 sebagai fondasi visual utama (QT-ARENA-04B).
+ * Gambar base scaled+centered (object-fit: cover). Gradien prosedural
+ * menjadi fallback bila base belum termuat. Terrain patches ditumpuk
+ * halus di atas base untuk variasi tekstur.
+ */
 export function drawWorldBackdrop(
   ctx: CanvasRenderingContext2D,
   world: WorldState,
   W: number,
   H: number,
 ): void {
-  const t = world.terrain
-  const horizon = t.horizonN * H
-  const g = ctx.createLinearGradient(0, 0, 0, H)
-  g.addColorStop(0, t.sky)
-  g.addColorStop(Math.max(0, t.horizonN - 0.28), "#E8D9A5")
-  g.addColorStop(Math.max(0, t.horizonN - 0.12), "#B5CC7A")
-  g.addColorStop(t.horizonN - 0.04, t.groundTop)
-  g.addColorStop(t.horizonN + 0.08, t.groundTop)
-  g.addColorStop(0.78, "#6EAA42")
-  g.addColorStop(1, t.groundBottom)
-  ctx.fillStyle = g
-  ctx.fillRect(0, 0, W, H)
+  const baseImg = getArenaBaseImage()
+  const baseReady = imageReady(baseImg)
 
-  // Petak variasi tanah dari aset terrain/ — alpha rendah, tepi ubin
-  // menyamar di atas gradien. Aset TIDAK diubah (hanya cara gambar).
+  if (baseReady) {
+    // Object-fit: cover — scale base untuk menutupi seluruh kanvas.
+    const imgW = baseImg!.naturalWidth
+    const imgH = baseImg!.naturalHeight
+    const scale = Math.max(W / imgW, H / imgH)
+    const drawW = imgW * scale
+    const drawH = imgH * scale
+    const offsetX = (W - drawW) / 2
+    const offsetY = (H - drawH) / 2
+    ctx.drawImage(baseImg!, offsetX, offsetY, drawW, drawH)
+  } else {
+    // Fallback: gradien prosedural (identik lama) sampai base termuat.
+    const t = world.terrain
+    const g = ctx.createLinearGradient(0, 0, 0, H)
+    g.addColorStop(0, t.sky)
+    g.addColorStop(Math.max(0, t.horizonN - 0.28), "#E8D9A5")
+    g.addColorStop(Math.max(0, t.horizonN - 0.12), "#B5CC7A")
+    g.addColorStop(t.horizonN - 0.04, t.groundTop)
+    g.addColorStop(t.horizonN + 0.08, t.groundTop)
+    g.addColorStop(0.78, "#6EAA42")
+    g.addColorStop(1, t.groundBottom)
+    ctx.fillStyle = g
+    ctx.fillRect(0, 0, W, H)
+  }
+
+  // Petak variasi tanah — alpha rendah, menambah tekstur di atas base.
+  const t = world.terrain
   const minDim = Math.min(W, H)
   for (const p of t.patches) {
     const img = cachedImage(worldAssetUrl("terrain", p.file))
@@ -755,25 +828,7 @@ export function drawWorldBackdrop(
     ctx.globalAlpha = 1
   }
 
-  // Jalur tanah berliku.
-  if (t.path.length > 1) {
-    ctx.strokeStyle = "rgba(222, 184, 135, 0.55)"
-    ctx.lineCap = "round"
-    ctx.lineWidth = Math.max(10, Math.min(W, H) * 0.045)
-    ctx.beginPath()
-    t.path.forEach((p, i) => {
-      const x = p.x * W
-      const y = p.y * H
-      if (i === 0) ctx.moveTo(x, y)
-      else ctx.lineTo(x, y)
-    })
-    ctx.stroke()
-    ctx.strokeStyle = "rgba(240, 214, 170, 0.5)"
-    ctx.lineWidth = Math.max(4, Math.min(W, H) * 0.018)
-    ctx.stroke()
-  }
-
-  // Bintik tekstur halus.
+  // Bintik tekstur halus — subtil di atas base.
   for (const d of t.dots) {
     ctx.fillStyle = `rgba(255,255,255,${d.a.toFixed(3)})`
     ctx.fillRect(d.x * W, d.y * H, d.s, d.s)
