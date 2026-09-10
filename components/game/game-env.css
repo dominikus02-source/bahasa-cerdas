@@ -311,6 +311,23 @@
   --game-primary-glow: rgba(34, 211, 238, 0.4);
 }
 
+/* RPG Pendekar Suryakerta: Amber-Gold (adventure/quest) */
+.game-env-rpg {
+  --game-primary: #b45309;
+  --game-primary-light: #f59e0b;
+  --game-primary-glow: rgba(180, 83, 9, 0.3);
+}
+.dark .game-env-rpg {
+  --game-bg-from: #1a1206;
+  --game-bg-to: #2a1f0e;
+  --game-bg-via: #20180a;
+  --game-surface: #2a2014;
+  --game-surface-elevated: #34281c;
+  --game-primary: #f59e0b;
+  --game-primary-light: #fbbf24;
+  --game-primary-glow: rgba(245, 158, 11, 0.4);
+}
+
 /* ── Game Back Button — Always Visible ────────────────── */
 .game-env .game-back-btn {
   background: var(--game-surface-elevated);

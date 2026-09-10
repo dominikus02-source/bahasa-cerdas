@@ -8,7 +8,7 @@
  */
 
 import {
-  Swords, Mountain, Clock, ThumbsUp, TreePine, BookOpen, Type, Grid3x3, Puzzle, Zap, Users, Gauge,
+  Swords, Mountain, Clock, ThumbsUp, TreePine, BookOpen, Type, Grid3x3, Puzzle, Zap, Users, Gauge, Shield,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -42,6 +42,21 @@ export interface GameDefinition {
 }
 
 export const GAME_REGISTRY: GameDefinition[] = [
+  {
+    id: "rpg",
+    title: "Pendekar Suryakerta",
+    description: "Jelajahi dunia Nusantara! Gerakkan karakter, temukan harta, dan mulai petualangan epik.",
+    categories: ["Tantangan"],
+    icon: Shield,
+    gradient: "from-amber-600 via-orange-600 to-amber-800",
+    accentColor: "#D97706",
+    href: "/arena/game/rpg",
+    xp: "+100 XP",
+    players: "Solo",
+    time: "~10 menit",
+    badge: { text: "Baru", type: "new" },
+    featured: true,
+  },
   {
     id: "kuis-tempur",
     title: "Kuis Tempur",
@@ -234,6 +249,7 @@ export function featuredGame(): GameDefinition {
  * ~11% vertikal (terpusat) agar konsisten dengan kartu lain.
  */
 export const GAME_CARD_ARTWORK: Record<string, string> = {
+  "rpg": "/images/GIM%20Card/RPG-card.png",
   "kuis-tempur": "/images/GIM%20Card/Kuis%20Tempur-card.png",
   "teka-teki-silang": "/images/GIM%20Card/TTS-card.png",
   "tebak-kata": "/images/GIM%20Card/tebak%20kata-card2.png",
