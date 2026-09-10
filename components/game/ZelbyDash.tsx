@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import NextImage from "next/image";
 import { setQuiet } from "@/lib/notif-quiet";
 import {
   Play,
@@ -173,29 +172,7 @@ type FloatText = {
   life: number;
   size: number;
 };
-type ForestLayer = {
-  trees: { x: number; h: number; w: number; shade: string }[];
-  speed: number;
-};
-
 /* ---------- Helpers ---------- */
-function makeForestLayer(
-  count: number,
-  shade: string,
-  minH: number,
-  maxH: number
-): ForestLayer["trees"] {
-  const trees: ForestLayer["trees"] = [];
-  for (let i = 0; i < count; i++) {
-    trees.push({
-      x: (i / count) * (W + 100) - 50 + (Math.random() - 0.5) * 40,
-      h: minH + Math.random() * (maxH - minH),
-      w: 28 + Math.random() * 20,
-      shade,
-    });
-  }
-  return trees;
-}
 
 /* ---------- Component ---------- */
 export default function ZelbyDash() {
@@ -220,6 +197,7 @@ export default function ZelbyDash() {
   const zelbyImgRef = useRef<HTMLImageElement | null>(null);
   const zelbyCelebrateImgRef = useRef<HTMLImageElement | null>(null);
   const bananaImgRef = useRef<HTMLImageElement | null>(null);
+  const bgImgRef = useRef<HTMLImageElement | null>(null);
   const imagesLoaded = useRef(false);
 
   useEffect(() => {
@@ -276,6 +254,13 @@ export default function ZelbyDash() {
     bananaImgRef.current = img;
   }, []);
 
+  /* Load Hutan Kata scene background (gameplay canvas only) */
+  useEffect(() => {
+    const img = new Image();
+    img.src = "/images/bg_petualangankata.png";
+    bgImgRef.current = img;
+  }, []);
+
   /* Screen flash effect */
   const flash = useCallback(
     (color: string) => {
@@ -326,23 +311,7 @@ export default function ZelbyDash() {
       level: 1,
     };
 
-    /* Parallax forest layers */
-    forestLayers: ForestLayer[] = [
-      {
-        trees: makeForestLayer(12, "#0A1A0E", 200, 340),
-        speed: 0.08,
-      },
-      {
-        trees: makeForestLayer(16, "#0D2614", 140, 260),
-        speed: 0.18,
-      },
-      {
-        trees: makeForestLayer(20, "#14301E", 80, 170),
-        speed: 0.35,
-      },
-    ];
-
-    /* Parallax offset */
+    /* Parallax offset (kept for future scene motion; no visual output) */
     parallaxOffset: number = 0;
 
     /* Mist particles */
@@ -692,28 +661,20 @@ export default function ZelbyDash() {
         );
       }
 
-      /* ========== BACKGROUND — REALISTIC FOREST ========== */
+      /* ========== BACKGROUND — HUTAN KATA SCENE ========== */
+      /* Artwork bg_petualangankata.png (1024x1536, 2:3) matches the canvas
+         aspect (480x720, 2:3): drawn 1:1, no stretch, no crop. The treehouse,
+         BC identity, waterfall, river and path stay fully visible. While the
+         image loads, a deep forest base fill keeps frames clean. */
 
-      // Sky gradient (dusk forest)
-      const skyGrad = c.createLinearGradient(0, 0, 0, H);
-      skyGrad.addColorStop(0, "#0B1A2E");
-      skyGrad.addColorStop(0.25, "#142836");
-      skyGrad.addColorStop(0.5, "#1A3329");
-      skyGrad.addColorStop(0.75, "#152818");
-      skyGrad.addColorStop(1, "#0D1F10");
-      c.fillStyle = skyGrad;
+      // Base fill (visible only before the artwork finishes loading)
+      c.fillStyle = "#0E2417";
       c.fillRect(0, 0, W, H);
 
-      // Stars/dots in sky
-      c.fillStyle = "rgba(255,255,255,0.15)";
-      const starSeed = 42;
-      for (let i = 0; i < 30; i++) {
-        const sx = ((starSeed * (i + 1) * 7) % W);
-        const sy = ((starSeed * (i + 1) * 13) % (H * 0.35));
-        const sr = 0.5 + ((i * 3) % 3) * 0.4;
-        c.beginPath();
-        c.arc(sx, sy, sr, 0, Math.PI * 2);
-        c.fill();
+      // Scene artwork — layer 1, behind everything gameplay
+      const bgImg = bgImgRef.current;
+      if (bgImg && bgImg.complete && bgImg.naturalWidth > 0) {
+        c.drawImage(bgImg, 0, 0, W, H);
       }
 
       // Light rays from canopy gaps
@@ -731,70 +692,6 @@ export default function ZelbyDash() {
       }
       c.restore();
 
-      // Forest layers (back to front)
-      for (const layer of this.forestLayers) {
-        c.save();
-        for (const tree of layer.trees) {
-          const tx =
-            ((tree.x + this.parallaxOffset * layer.speed) % (W + 100)) - 50;
-          const baseY = H - 30;
-
-          // Trunk
-          c.fillStyle = tree.shade;
-          c.beginPath();
-          c.moveTo(tx - tree.w * 0.15, baseY);
-          c.lineTo(tx - tree.w * 0.08, baseY - tree.h);
-          c.lineTo(tx + tree.w * 0.08, baseY - tree.h);
-          c.lineTo(tx + tree.w * 0.15, baseY);
-          c.closePath();
-          c.fill();
-
-          // Canopy — layered ellipses for organic look
-          const canopyY = baseY - tree.h;
-          c.fillStyle = tree.shade;
-          c.beginPath();
-          c.ellipse(tx, canopyY - 10, tree.w * 0.7, tree.h * 0.35, 0, 0, Math.PI * 2);
-          c.fill();
-          c.beginPath();
-          c.ellipse(
-            tx - tree.w * 0.3,
-            canopyY + 5,
-            tree.w * 0.5,
-            tree.h * 0.25,
-            -0.2,
-            0,
-            Math.PI * 2
-          );
-          c.fill();
-          c.beginPath();
-          c.ellipse(
-            tx + tree.w * 0.3,
-            canopyY + 5,
-            tree.w * 0.5,
-            tree.h * 0.25,
-            0.2,
-            0,
-            Math.PI * 2
-          );
-          c.fill();
-
-          // Highlight on canopy
-          c.fillStyle = `rgba(40,80,50,0.3)`;
-          c.beginPath();
-          c.ellipse(
-            tx - tree.w * 0.1,
-            canopyY - 15,
-            tree.w * 0.3,
-            tree.h * 0.15,
-            -0.1,
-            0,
-            Math.PI * 2
-          );
-          c.fill();
-        }
-        c.restore();
-      }
-
       // Mist/fog
       c.save();
       for (const m of this.mistParticles) {
@@ -803,79 +700,6 @@ export default function ZelbyDash() {
         mistGrad.addColorStop(1, "rgba(180,200,180,0)");
         c.fillStyle = mistGrad;
         c.fillRect(m.x - m.w, m.y - m.w * 0.4, m.w * 2, m.w * 0.8);
-      }
-      c.restore();
-
-      // Ground — layered vegetation
-      c.save();
-      const groundY = H - 40;
-
-      // Back layer of ground vegetation
-      const vegColors = ["#0D2818", "#1A3A2A", "#2D5A3E", "#1F4D2E"];
-      for (let gx = 0; gx <= W; gx += 18) {
-        const vh = 25 + Math.sin(gx * 0.15) * 15 + Math.sin(gx * 0.07) * 8;
-        c.fillStyle = vegColors[Math.floor(gx / 36) % vegColors.length];
-        c.beginPath();
-        c.ellipse(
-          gx,
-          groundY + 12 - vh * 0.5,
-          16,
-          vh * 0.55,
-          0,
-          0,
-          Math.PI * 2
-        );
-        c.fill();
-      }
-
-      // Front ground cover
-      c.fillStyle = "#0A1F10";
-      c.beginPath();
-      c.moveTo(0, H);
-      for (let gx = 0; gx <= W; gx += 8) {
-        c.lineTo(
-          gx,
-          H - 18 - Math.sin(gx * 0.12) * 12 - Math.sin(gx * 0.04) * 6
-        );
-      }
-      c.lineTo(W, H);
-      c.closePath();
-      c.fill();
-
-      // Grass blades
-      c.strokeStyle = "#1A4A2A";
-      c.lineWidth = 1.5;
-      for (let gx = 5; gx < W; gx += 12) {
-        const gh = 8 + Math.sin(gx * 0.2) * 5;
-        const sway = Math.sin(performance.now() * 0.001 + gx * 0.05) * 2;
-        c.beginPath();
-        c.moveTo(gx, H - 14);
-        c.quadraticCurveTo(gx + sway, H - 14 - gh * 0.6, gx + sway * 1.5, H - 14 - gh);
-        c.stroke();
-      }
-      c.restore();
-
-      // Hanging vines
-      c.save();
-      c.strokeStyle = "#1A3A22";
-      c.lineWidth = 2;
-      for (let vx = 30; vx < W - 30; vx += 70) {
-        const len = 30 + Math.sin(vx * 0.1) * 20;
-        const sway = Math.sin(performance.now() * 0.001 + vx * 0.03) * 4;
-        c.beginPath();
-        c.moveTo(vx, 0);
-        c.quadraticCurveTo(
-          vx + sway + 15,
-          len * 0.5,
-          vx + sway,
-          len
-        );
-        c.stroke();
-        // Leaf at tip
-        c.fillStyle = "#2D5A3E";
-        c.beginPath();
-        c.ellipse(vx + sway, len + 3, 5, 3.5, 0.5, 0, Math.PI * 2);
-        c.fill();
       }
       c.restore();
 
@@ -1181,24 +1005,6 @@ export default function ZelbyDash() {
         .pk-star2{animation:pk-star2 .5s ease .3s both}
         .pk-star3{animation:pk-star3 .5s ease .5s both}
       `}</style>
-
-      {/* Hutan Kata backdrop — clean environmental art (no game UI baked in).
-          Portrait 2:3 master; object-top keeps the treehouse + waterfall
-          recognizable on wide viewports. Readability scrim only. */}
-      <NextImage
-        src="/images/bg_petualangankata.png"
-        alt=""
-        aria-hidden
-        fill
-        priority
-        sizes="100vw"
-        draggable={false}
-        className="pointer-events-none select-none object-cover object-top dark:opacity-40"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#FFF6E0]/55 via-[#FFF6E0]/5 to-[#FFE2C7]/80 dark:from-[#061214]/85 dark:via-[#061214]/45 dark:to-[#0A1C20]/90"
-      />
 
       {/* Screen flash overlay */}
       {screenFlash && (
