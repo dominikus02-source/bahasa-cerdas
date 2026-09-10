@@ -357,7 +357,8 @@
     "observe:ukbi-load": "npx tsx scripts/observe-ukbi-load.ts",
     "audit:ukbi-load-post": "npx tsx scripts/audit-ukbi-load-post.ts",
     "audit:commission-dzaky": "npx tsx scripts/audit-commission-dzaky.ts",
-    "test:historical-metrics-proof": "npx tsx scripts/test-historical-metrics-proof.ts"
+    "test:historical-metrics-proof": "npx tsx scripts/test-historical-metrics-proof.ts",
+    "test:rpg-phase1a": "npx tsx scripts/test-rpg-phase1a.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
