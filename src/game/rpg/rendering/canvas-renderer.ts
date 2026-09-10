@@ -18,6 +18,7 @@ import type { RPGGameState } from "../core/game-state";
 import type { RPGCameraState } from "./camera";
 import { worldToScreen } from "./camera";
 import type { RPGWorldEntity } from "../world/world-state";
+import { findNearestInteraction } from "../world/interaction";
 
 /** Color palette for placeholder rendering. */
 const COLORS = {
@@ -303,6 +304,27 @@ export function createCanvasRenderer(
     drawTriangle(screen.x, screen.y, 6, player.facing, "#fff");
   }
 
+  /** Render interaction prompt when near an interactable. */
+  function renderInteractionPrompt(state: RPGGameState, camera: RPGCameraState) {
+    const nearest = findNearestInteraction(state.world, state.player.position);
+    if (!nearest) return;
+
+    const screen = worldToScreen(nearest.position, camera);
+    const promptY = screen.y - 30;
+
+    // Draw "E" prompt
+    ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+    ctx.beginPath();
+    ctx.roundRect(screen.x - 12, promptY - 10, 24, 20, 4);
+    ctx.fill();
+
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("E", screen.x, promptY);
+  }
+
   /** Main render function — called by game loop. */
   function render(state: RPGGameState, camera: RPGCameraState) {
     // Clear canvas
@@ -317,6 +339,7 @@ export function createCanvasRenderer(
     renderEntities(state, camera);
     renderInteractions(state, camera);
     renderPlayer(state, camera);
+    renderInteractionPrompt(state, camera);
   }
 
   /** Resize handler. */

@@ -18,7 +18,8 @@ export type RPGEvent =
   | { type: "QUEST_PROGRESS"; playerId: RPGId; questId: RPGId; progress: number }
   | { type: "LEARNING_RESULT"; playerId: RPGId; challengeId: RPGId; correct: boolean }
   | { type: "BATTLE_START"; battleId: RPGId; participantIds: RPGId[] }
-  | { type: "BATTLE_END"; battleId: RPGId; winnerId: RPGId | null };
+  | { type: "BATTLE_END"; battleId: RPGId; winnerId: RPGId | null }
+  | { type: "INTERACTION"; playerId: RPGId; interactionId: RPGId; result: unknown };
 
 export type RPGEventHandler = (event: RPGEvent) => void;
 

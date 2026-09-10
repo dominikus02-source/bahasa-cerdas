@@ -66,6 +66,13 @@ export function createKeyboardInputSource(
 
   /** Update key state and emit commands. */
   function handleKeyDown(e: KeyboardEvent) {
+    // Handle interaction keys (E or Enter)
+    if (e.key === "e" || e.key === "E" || e.key === "Enter") {
+      e.preventDefault();
+      pendingCommands.push({ type: "INTERACT", playerId });
+      return;
+    }
+
     const dir = keyToDirection(e.key);
     if (!dir) return;
 

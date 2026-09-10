@@ -4,6 +4,8 @@
  * This module wires together:
  * - Game loop (fixed timestep)
  * - Input → Command pipeline
+ * - Collision detection
+ * - Interaction system
  * - State updates (movement, progression)
  * - Rendering (camera + canvas)
  *
@@ -11,7 +13,7 @@
  * React components create/destroy the engine as a side effect.
  *
  * Pipeline:
- *   Input → Command → Game Logic → State → Event → Renderer
+ *   Input → Command → Collision Check → State Change → Event → Renderer
  */
 
 import type { RPGGameState } from "./game-state";
@@ -23,6 +25,8 @@ import { stepPlayer, faceDirection } from "../player/movement";
 import { grantXp } from "../player/progression";
 import type { RPGWorldState } from "../world/world-state";
 import { MAP_VILLAGE_SQUARE } from "../data/maps";
+import { checkCollision } from "../world/collision";
+import { findNearestInteraction, processInteraction, type RPGInteractionResult } from "../world/interaction";
 import type { RPGCameraState } from "../rendering/camera";
 import { createCamera, followTarget, resizeCamera } from "../rendering/camera";
 import type { CanvasRenderer } from "../rendering/canvas-renderer";
@@ -49,6 +53,10 @@ export interface RPGEngine {
   getState(): RPGGameState;
   /** Current camera state. */
   getCamera(): RPGCameraState;
+  /** Check if player is near an interactable. */
+  isNearInteractable(): boolean;
+  /** Trigger interaction with nearest object. */
+  interact(): RPGInteractionResult;
   /** Subscribe to events. */
   on(event: string, handler: (data: unknown) => void): () => void;
   /** Stop the engine and clean up. */
@@ -109,11 +117,32 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
           player = faceDirection(player, command.dir);
         }
         // Step player in facing direction
-        player = stepPlayer(player, 1 / 60, true); // dt = 1 fixed timestep
+        const stepped = stepPlayer(player, 1 / 60, true); // dt = 1 fixed timestep
+        // Apply collision detection
+        const collision = checkCollision(currentState.world, stepped.position);
+        player = { ...stepped, position: collision.position };
         return { ...currentState, player };
       }
       case "STOP_MOVE": {
         // No state change needed — just stops receiving MOVE commands
+        return currentState;
+      }
+      case "INTERACT": {
+        // Handle interaction
+        const interaction = findNearestInteraction(
+          currentState.world,
+          currentState.player.position,
+        );
+        if (interaction) {
+          const result = processInteraction(interaction, currentState.player.inventory);
+          // Emit event for UI to handle
+          eventBus.emit({
+            type: "INTERACTION",
+            playerId: currentState.session.playerId,
+            interactionId: interaction.id,
+            result,
+          });
+        }
         return currentState;
       }
       default:
@@ -173,6 +202,26 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     return camera;
   }
 
+  function isNearInteractable(): boolean {
+    return findNearestInteraction(state.world, state.player.position) !== null;
+  }
+
+  function interact(): RPGInteractionResult {
+    const interaction = findNearestInteraction(
+      state.world,
+      state.player.position,
+    );
+    if (!interaction) {
+      return {
+        success: false,
+        interaction: null,
+        type: "NONE",
+        payload: { kind: "NONE" },
+      };
+    }
+    return processInteraction(interaction, state.player.inventory);
+  }
+
   function on(event: string, handler: (data: unknown) => void): () => void {
     return eventBus.subscribe((evt) => {
       if (evt.type === event) {
@@ -189,6 +238,8 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
   return {
     getState,
     getCamera,
+    isNearInteractable,
+    interact,
     on,
     destroy,
     // Expose for keyboard adapter
