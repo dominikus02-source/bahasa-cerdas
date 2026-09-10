@@ -19,7 +19,14 @@ export type RPGEvent =
   | { type: "LEARNING_RESULT"; playerId: RPGId; challengeId: RPGId; correct: boolean }
   | { type: "BATTLE_START"; battleId: RPGId; participantIds: RPGId[] }
   | { type: "BATTLE_END"; battleId: RPGId; winnerId: RPGId | null }
-  | { type: "INTERACTION"; playerId: RPGId; interactionId: RPGId; result: unknown };
+  | { type: "INTERACTION"; playerId: RPGId; interactionId: RPGId; result: unknown }
+  | {
+      type: "MAP_TRANSITION";
+      playerId: RPGId;
+      fromMapId: RPGId;
+      toMapId: RPGId;
+      spawn: { x: number; y: number };
+    };
 
 export type RPGEventHandler = (event: RPGEvent) => void;
 

@@ -22,10 +22,20 @@ import type { RPGProgression } from "../player/player-state";
 
 /** Persistence interface — implementable for localStorage or server. */
 export interface RPGPersistence {
-  save(state: RPGGameState): boolean;
-  load(): RPGGameState | null;
+  save(state: RPGGameState & Partial<RPGMapSideState>): boolean;
+  load(): (RPGGameState & Partial<RPGMapSideState>) | null;
   clear(): void;
   exists(): boolean;
+}
+
+/**
+ * Optional map-side runtime state (quest flags, opened chests).
+ * Tracked by later phases; the save schema already carries it so first use
+ * needs no migration and no SAVE_VERSION bump (absent = defaults).
+ */
+export interface RPGMapSideState {
+  flags?: Record<string, boolean>;
+  openedChests?: string[];
 }
 
 /** Save data format — what gets serialized. */
@@ -64,6 +74,10 @@ interface RPGSaveData {
   };
   world: {
     mapId: string;
+    /** Quest flags (quests/flags.ts vocabulary). Absent = all false. */
+    flags?: Record<string, boolean>;
+    /** Opened chest ids (world/chest.ts idempotency). Absent = none. */
+    openedChests?: string[];
   };
 }
 
@@ -81,7 +95,7 @@ export function createLocalStoragePersistence(
 ): RPGPersistence {
   const saveKey = `${SAVE_KEY_PREFIX}${playerId}`;
 
-  function save(state: RPGGameState): boolean {
+  function save(state: RPGGameState & Partial<RPGMapSideState>): boolean {
     try {
       const saveData: RPGSaveData = {
         version: SAVE_VERSION,
@@ -104,6 +118,8 @@ export function createLocalStoragePersistence(
         },
         world: {
           mapId: state.world.mapId,
+          flags: state.flags,
+          openedChests: state.openedChests,
         },
       };
 
@@ -114,7 +130,7 @@ export function createLocalStoragePersistence(
     }
   }
 
-  function load(): RPGGameState | null {
+  function load(): (RPGGameState & Partial<RPGMapSideState>) | null {
     try {
       const raw = localStorage.getItem(saveKey);
       if (!raw) return null;
@@ -172,6 +188,8 @@ export function createLocalStoragePersistence(
         world: {} as RPGWorldState,
         battle: null,
         quests: { active: [], completed: [] },
+        flags: data.world?.flags ?? {},
+        openedChests: data.world?.openedChests ?? [],
         learning: {
           profile: { playerId: data.session.playerId, mastery: {} },
           activeChallengeId: null,
