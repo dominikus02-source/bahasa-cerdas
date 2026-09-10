@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import NextImage from "next/image";
 import { setQuiet } from "@/lib/notif-quiet";
 import {
   Play,
@@ -1180,6 +1181,24 @@ export default function ZelbyDash() {
         .pk-star2{animation:pk-star2 .5s ease .3s both}
         .pk-star3{animation:pk-star3 .5s ease .5s both}
       `}</style>
+
+      {/* Hutan Kata backdrop — clean environmental art (no game UI baked in).
+          Portrait 2:3 master; object-top keeps the treehouse + waterfall
+          recognizable on wide viewports. Readability scrim only. */}
+      <NextImage
+        src="/images/bg_petualangankata.png"
+        alt=""
+        aria-hidden
+        fill
+        priority
+        sizes="100vw"
+        draggable={false}
+        className="pointer-events-none select-none object-cover object-top dark:opacity-40"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#FFF6E0]/55 via-[#FFF6E0]/5 to-[#FFE2C7]/80 dark:from-[#061214]/85 dark:via-[#061214]/45 dark:to-[#0A1C20]/90"
+      />
 
       {/* Screen flash overlay */}
       {screenFlash && (
