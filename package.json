@@ -359,7 +359,8 @@
     "audit:commission-dzaky": "npx tsx scripts/audit-commission-dzaky.ts",
     "test:historical-metrics-proof": "npx tsx scripts/test-historical-metrics-proof.ts",
     "test:rpg-phase1a": "npx tsx scripts/test-rpg-phase1a.ts",
-    "test:rpg-phase1b": "npx tsx scripts/test-rpg-phase1b.ts"
+    "test:rpg-phase1b": "npx tsx scripts/test-rpg-phase1b.ts",
+    "test:rpg-unpublished": "npx tsx scripts/test-rpg-unpublished.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

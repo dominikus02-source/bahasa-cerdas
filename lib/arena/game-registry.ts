@@ -37,6 +37,21 @@ export interface GameDefinition {
   badge?: { text: string; type: "hot" | "new" };
   /** Gim unggulan (hero). Dipakai untuk game terbaru / yang sedang dipromosikan. */
   featured?: boolean;
+  /**
+   * Publikasi gim — BATAS AKSES KANONIK.
+   *
+   * - `true` (UNPUBLISHED): gim TIDAK muncul di katalog/unggulan/baru/
+   *   populer/terakhir-dimainkan mana pun, dan route langsungnya dialihkan
+   *   (lihat app/arena/game/<id>/page.tsx). Berlaku untuk SEMUA user
+   *   selama belum diluncurkan.
+   * - tidak diisi/`false` (PUBLISHED): discovery normal.
+   *
+   * Status saat ini: Pendekar Suryakerta (`rpg`) = UNPUBLISHED.
+   * Rencana launch: PUBLISHED + KHUSUS PREMIUM (entitlement server-side,
+   * memakai arsitektur Premium/entitlement proyek yang sudah ada — BUKAN
+   * sistem langganan paralel). Jangan implement launch di sini.
+   */
+  unpublished?: boolean;
   /** Aset artwork gambar yang sudah ada (public/...). Optional — fallback ke gradient+ikon. */
   artwork?: string;
 }
@@ -56,6 +71,10 @@ export const GAME_REGISTRY: GameDefinition[] = [
     time: "~10 menit",
     badge: { text: "Baru", type: "new" },
     featured: true,
+    // UNPUBLISHED — disembunyikan dari semua discovery + route diblokir.
+    // Lihat komentar `unpublished` di GameDefinition. Jangan tampilkan
+    // sampai launch resmi (PUBLISHED + KHUSUS PREMIUM).
+    unpublished: true,
   },
   {
     id: "kuis-tempur",
@@ -233,7 +252,11 @@ export function gameById(id: string): GameDefinition | undefined {
 }
 
 export function featuredGame(): GameDefinition {
-  return GAME_REGISTRY.find((g) => g.featured) ?? GAME_REGISTRY[0];
+  return (
+    GAME_REGISTRY.find((g) => g.featured && !g.unpublished) ??
+    GAME_REGISTRY.find((g) => !g.unpublished) ??
+    GAME_REGISTRY[0]
+  );
 }
 
 /**

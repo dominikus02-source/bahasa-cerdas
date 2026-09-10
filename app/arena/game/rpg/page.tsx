@@ -1,45 +1,27 @@
 /**
- * RPG Game Route — Pendekar Suryakerta: Legenda Nusantara
+ * RPG Game Route — Pendekar Suryakerta: Legenda Nusantara.
  *
- * Entry point for the RPG game. This page:
- * - Gets user session
- * - Renders the RPGGame component
- * - Provides fullscreen game environment
+ * STATUS: UNPUBLISHED (lihat `unpublished` di lib/arena/game-registry.ts).
  *
- * Follows the same pattern as Kuis Tempur and other Arena games.
+ * Guard server-side (BUKAN kondisional client/CSS):
+ * - user belum login → /arena/login (pola sama seperti /arena/game)
+ * - gim UNPUBLISHED → /arena/game untuk SEMUA user, tanpa pengecualian
+ *
+ * Launch mendatang: PUBLISHED + KHUSUS PREMIUM — ganti cabang kedua dengan
+ * cek entitlement server-side memakai arsitektur Premium proyek yang ada.
  */
 
-"use client";
+import { redirect } from "next/navigation";
+import { getUser } from "@/lib/supabase/server";
+import { gameById } from "@/lib/arena/game-registry";
+import RpgClient from "./RpgClient";
 
-import { useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
-import { RPGGame } from "@/src/game/rpg/ui/RPGGame";
+export default async function RpgPage() {
+  const user = await getUser();
+  if (!user) redirect("/arena/login");
 
-/** Hardcoded for now — will come from session/auth later. */
-const DEMO_PLAYER_ID = "player.local";
-const DEMO_PLAYER_NAME = "Pendekar";
+  const game = gameById("rpg");
+  if (!game || game.unpublished) redirect("/arena/game");
 
-export default function RPGPage() {
-  const router = useRouter();
-
-  const handleBack = useCallback(() => {
-    router.push("/arena/game");
-  }, [router]);
-
-  return (
-    <div className="game-env game-env-rpg game-fullscreen relative">
-      {/* Back button */}
-      <button
-        onClick={handleBack}
-        className="game-back-btn fixed top-3 left-3 z-[70]"
-        aria-label="Kembali ke Game Hub"
-      >
-        <ArrowLeft className="w-5 h-5" />
-      </button>
-
-      {/* RPG Game Canvas */}
-      <RPGGame playerId={DEMO_PLAYER_ID} playerName={DEMO_PLAYER_NAME} />
-    </div>
-  );
+  return <RpgClient />;
 }

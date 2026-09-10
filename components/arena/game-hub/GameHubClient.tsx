@@ -88,8 +88,11 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled }:
 
   // Terapkan status offline: gim multiplayer tanpa mode solo → "Segera Hadir"
   // dan ditenggelamkan di bawah (urutan stabil dipertahankan).
+  // Gim UNPUBLISHED (mis. RPG sebelum launch) dikeluarkan di sini sehingga
+  // TIDAK muncul di katalog, kategori, Baru, Populer, maupun Terakhir —
+  // satu titik filter untuk semua discovery hub.
   const games = useMemo<GameView[]>(() => {
-    return GAME_REGISTRY.map((g): GameView => {
+    return GAME_REGISTRY.filter((g) => !g.unpublished).map((g): GameView => {
       if (!g.multiplayer || multiplayerEnabled) return { ...g, status: "LIVE" };
       if (g.soloSaatOffline) {
         return { ...g, status: "LIVE", players: g.soloSaatOffline.players, description: g.soloSaatOffline.desc };

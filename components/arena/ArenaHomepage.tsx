@@ -43,6 +43,7 @@ export default function ArenaHomepage(props: ArenaHomepageProps) {
   const featured = featuredGame();
   const liveGames = GAME_REGISTRY.filter(
     (game) =>
+      !game.unpublished &&
       game.id !== featured.id &&
       (!game.multiplayer || Boolean(game.soloSaatOffline)),
   ).slice(0, 6);
