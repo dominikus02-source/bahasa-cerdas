@@ -47,6 +47,8 @@ export interface RPGMapSideState {
   goldLedger?: Array<{ id: string; delta: number; reason: string }>;
   /** Preserved equipment intents (unmapped prototype gear). */
   equipmentIntents?: Array<{ source: string; kind: "wpn" | "arm"; key: string }>;
+  /** Authoritative main-line quest state (P1.7). */
+  quest?: { main: number; kills: number };
 }
 
 /** Save data format — what gets serialized. */
@@ -87,6 +89,7 @@ interface RPGSaveData {
     gold?: number;
     goldLedger?: Array<{ id: string; delta: number; reason: string }>;
     equipmentIntents?: Array<{ source: string; kind: "wpn" | "arm"; key: string }>;
+    quest?: { main: number; kills: number };
   };
 }
 
@@ -134,6 +137,7 @@ export function createLocalStoragePersistence(
           gold: state.gold,
           goldLedger: state.goldLedger,
           equipmentIntents: state.equipmentIntents,
+          quest: state.quest,
         },
       };
 
@@ -211,6 +215,7 @@ export function createLocalStoragePersistence(
         gold: data.world?.gold,
         goldLedger: data.world?.goldLedger,
         equipmentIntents: data.world?.equipmentIntents,
+        quest: data.world?.quest ?? { main: 0, kills: 0 },
         learning: {
           profile: { playerId: data.session.playerId, mastery: {} },
           activeChallengeId: null,

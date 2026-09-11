@@ -184,7 +184,17 @@ console.log("\n💾 F. Persistence");
     }
     return hits.length === 0;
   })());
-  check("36. no inventory writes in shop/forge paths", !/addItem|removeItem/.test(strip(eng()).split('case "SHOP_BUY"')[1] ?? ""));
+  check("36. inventory only via appliers (no literal writes)", (() => {
+    const s = strip(eng());
+    // No hand-rolled inventory literals anywhere in the engine…
+    if (/inventory:\s*\{\s*items:/.test(s)) return false;
+    // …and SHOP_BUY/FORGE_CRAFT bodies contain no direct addItem/removeItem
+    // (they delegate to applyShopPurchase/applyForgeUpgrade).
+    const afterShop = s.split('case "SHOP_BUY"')[1] ?? "";
+    const shopBody = afterShop.split('case "SHOP_CLOSE"')[0] ?? "";
+    const forgeBody = (afterShop.split('case "FORGE_CRAFT"')[1] ?? "").split('case "FORGE_CLOSE"')[0] ?? "";
+    return !/addItem\s*\(|removeItem\s*\(/.test(shopBody) && !/addItem\s*\(|removeItem\s*\(/.test(forgeBody);
+  })());
 }
 
 console.log("\n🛡️ G. Regression guards");

@@ -84,6 +84,95 @@ export const DIALOGUE_TREES: Record<string, DialogueTree> = {
           { type: "GOLD", amount: 30 },
         ],
       },
+      progress: {
+        id: "progress",
+        speaker: "Ki Jaka",
+        lines: [
+          "Bagaimana hutan? Kamu baru mengalahkan {kills} dari 3 Korog.",
+          "Tetap waspada, Nak.",
+        ],
+      },
+      report: {
+        id: "report",
+        speaker: "Ki Jaka",
+        lines: [
+          "Hebat, Nak! Tapi... ada yang lebih besar: SANG RAJA KOROG!",
+          "Sarangnya di Goa Timur, ujung timur laut hutan!",
+          "Sebelum pergi, temui Eyang Kartala di timur desa untuk jurus sakti.",
+          "Ini 60 G untuk bekalmu. Selamat berjuang, Pendekar!",
+        ],
+        effects: [
+          { type: "QUEST", amount: 2 },
+          { type: "GOLD", amount: 60 },
+        ],
+      },
+      bossReward: {
+        id: "bossReward",
+        speaker: "Ki Jaka",
+        lines: [
+          "Sungguh luar biasa, Nak! Terimalah 100 G tanda terima kasih seisi desa!",
+          "Tapi... malam tadi Gunung Karang MELETUS!",
+          "Eyang bilang, Raja Korog hanyalah kecil... yang besar tertidur di puncak: NAGA ABU!",
+          "Masuki Goa Timur — ternyata menembus ke jantung gunung!",
+          "Siapkan senjata dari Pak Empu, dan temui Eyang!",
+        ],
+        effects: [
+          { type: "FLAG", name: "kiAfter" },
+          { type: "QUEST", amount: 4 },
+          { type: "GOLD", amount: 100 },
+        ],
+      },
+      bossRepeat: {
+        id: "bossRepeat",
+        speaker: "Ki Jaka",
+        lines: [
+          "Goa Timur terbuka ke terowongan gunung, Nak.",
+          "Bu Ratmi menjual Teh Gunung sekarang. Pak Empu punya senjata & jasa tempa!",
+        ],
+      },
+      nagaReward: {
+        id: "nagaReward",
+        speaker: "Ki Jaka",
+        lines: [
+          "Naga Abu... kalah? Sungguh kah, Nak?!",
+          "Nama ARGA akan dikenang seisi desa! Terimalah 200 G!",
+          "Dan sekarang... lihatlah puncak gunung. Ada menara berkilau muncul di sana!",
+        ],
+        effects: [
+          { type: "FLAG", name: "kiAfter2" },
+          { type: "GOLD", amount: 200 },
+        ],
+      },
+      nagaRepeat: {
+        id: "nagaRepeat",
+        speaker: "Ki Jaka",
+        lines: ["Menara Angin menantimu di puncak, Nak. Temui Eyang untuk nasihat."],
+      },
+      towerReward: {
+        id: "towerReward",
+        speaker: "Ki Jaka",
+        lines: [
+          "LEGENDA NUSANTARA kembali! Seisi desa bersorak untukmu, Nak!",
+          "Terimalah 300 G, harta pusaka desa. Kau lebih dari layak!",
+        ],
+        effects: [
+          { type: "FLAG", name: "kiAfter3" },
+          { type: "GOLD", amount: 300 },
+        ],
+      },
+      towerRepeat: {
+        id: "towerRepeat",
+        speaker: "Ki Jaka",
+        lines: ["Legenda desa... istirahatlah, Nak. Nammu akan dikenang selamanya."],
+      },
+      huntElse: {
+        id: "huntElse",
+        speaker: "Ki Jaka",
+        lines: [
+          "RAJA KOROG menunggumu di Goa Timur.",
+          "Kalau HP habis, minumlah dari sumur desa.",
+        ],
+      },
     },
   },
   sari: {
@@ -106,6 +195,28 @@ export const DIALOGUE_TREES: Record<string, DialogueTree> = {
           { type: "ITEM", key: "ram", quantity: 1 },
         ],
       },
+      progress: {
+        id: "progress",
+        speaker: "Bu Sari",
+        lines: [
+          "Bunga emasnya baru {flowers} dari 3...",
+          "Taman desa, rimba timur, dan lereng gunung ya, Nak.",
+        ],
+      },
+      complete: {
+        id: "complete",
+        speaker: "Bu Sari",
+        lines: [
+          "Bunga emas... semua lengkap! Terima kasih, Nak!",
+          "Ini jimat buatanku. Membawa keberuntungan dalam pertarungan!",
+        ],
+        effects: [{ type: "FLAG", name: "charm" }],
+      },
+      done: {
+        id: "done",
+        speaker: "Bu Sari",
+        lines: ["Jimatnya cocok di badanmu! Terlihat dari sinarmu... hihi."],
+      },
     },
   },
   eyang: {
@@ -122,6 +233,54 @@ export const DIALOGUE_TREES: Record<string, DialogueTree> = {
           "Nanti kalau levelmu naik, jurus lain akan terbuka dengan sendirinya.",
         ],
         effects: [{ type: "SKILL", key: "maha" }],
+      },
+      towerDone: {
+        id: "towerDone",
+        speaker: "Eyang Kartala",
+        lines: [
+          "Penguasa Menara tunduk... Eyang mendengar gema-nya sampai ke sini!",
+          "Kau bukan lagi murid, Arga. Kau LEGENDA.",
+          "Menara masih berdiri... kata orang, lantai di atasnya tak berujung.",
+        ],
+      },
+      towerIntro: {
+        id: "towerIntro",
+        speaker: "Eyang Kartala",
+        lines: [
+          "Naga Abu tumbang... tapi dengar, Nak. Malam ini langit bergetar!",
+          "Dari puncak Gunung Karang, bangkitlah MENARA ANGIN — menara uji para pendekar kuno!",
+          "Di dalamnya, monster yang semakin kuat tiap lantai. Di lantai 10 menunggu PENGUASA MENARA.",
+          "Masukilah gerbang cahaya di puncak. Buktikan dirimu... LEGENDA NUSANTARA!",
+        ],
+        effects: [
+          { type: "FLAG", name: "towerIntro" },
+          { type: "QUEST", amount: 6 },
+        ],
+      },
+      postIntro: {
+        id: "postIntro",
+        speaker: "Eyang Kartala",
+        lines: [
+          "Menara menguji kesabaran, bukan cuma kekuatan.",
+          "Bawa Ramuan & Teh yang cukup. Golem menjatuhkan Bijih Besi — bawa ke Pak Empu untuk menempa senjatamu!",
+        ],
+      },
+      gunungHint: {
+        id: "gunungHint",
+        speaker: "Eyang Kartala",
+        lines: [
+          "Gunung Karang? Au... Eyang dulu pernah mendaki sana.",
+          "Jika HP habis, cari Pak Pendaki di tengah jalur.",
+          "Dan ingat: Teh Gunung untuk tenaga batinmu (MP).",
+        ],
+      },
+      calmHint: {
+        id: "calmHint",
+        speaker: "Eyang Kartala",
+        lines: [
+          "Honing... kilatmu harus tajam seperti padi waktu menyala.",
+          "Ingat: sumur desa memulihkan tenagamu.",
+        ],
       },
     },
   },
@@ -143,6 +302,29 @@ export const DIALOGUE_TREES: Record<string, DialogueTree> = {
           ],
         ],
       },
+      bossTalk: {
+        id: "bossTalk",
+        speaker: "Bagas",
+        lines: [
+          "Kata Bapak Pendaki, di gunung ada golem yang jalan pelan tapi SAKIT banget kena pukulnya!",
+        ],
+      },
+      nagaTalk: {
+        id: "nagaTalk",
+        speaker: "Bagas",
+        lines: [
+          "Kak! Ada menara baru keluar dari puncak gunung! Berkilau-kilau!",
+          "Kakak mau naik? Bawa bekal banyak-banyak!",
+        ],
+      },
+      legendTalk: {
+        id: "legendTalk",
+        speaker: "Bagas",
+        lines: [
+          "KAK LEGENDA! Kata orang namamu terukir di Menara Angin!",
+          "Boleh nggak kakak ajak Bagas naik menara? ...eh, nanti kalau kakak sudah dewasa ya.",
+        ],
+      },
     },
   },
   tani: {
@@ -161,6 +343,13 @@ export const DIALOGUE_TREES: Record<string, DialogueTree> = {
           { type: "FLAG", name: "tani" },
           { type: "GOLD", amount: 25 },
           { type: "ITEM", key: "ram", quantity: 1 },
+        ],
+      },
+      repeat: {
+        id: "repeat",
+        speaker: "Pak Warsa",
+        lines: [
+          "Malam-malam begini, ikan di sungai suka laris dipancing... Coba deh, hadap sungai terus tekan aksi.",
         ],
       },
     },

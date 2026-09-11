@@ -29,6 +29,15 @@ export type QuestFlagName =
 /** Flags a quest-flag store must carry (all default false). */
 export type QuestFlags = Partial<Record<QuestFlagName, boolean>>;
 
+/** Runtime list of the 16 canonical flags (signal validation). */
+export const QUEST_FLAG_NAMES: ReadonlyArray<string> = [
+  "bossDead", "nagaDead", "towerIntro", "towerDone",
+  "sari", "sariQ", "charm", "tani",
+  "ratmiMet", "empuMet",
+  "kiAfter", "kiAfter2", "kiAfter3",
+  "end1", "end2", "end3",
+];
+
 /** Flag requirements referenced by portals (verbatim prototype `req`). */
 export const PORTAL_FLAG_REQUIREMENTS: ReadonlyArray<string> = ["bossDead", "nagaDead"];
 

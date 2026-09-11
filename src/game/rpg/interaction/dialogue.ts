@@ -46,17 +46,23 @@ export function startDialogue(
   };
 }
 
-/** Current node with resolved lines (variant applied when present). */
+/** Current node with resolved lines (variant + template slots applied). */
 export function currentNode(
   tree: DialogueTree,
   session: DialogueSession,
+  vars?: { kills?: number; flowers?: number },
 ): { node: DialogueNode; lines: string[] } | undefined {
   const node = tree.nodes[session.nodeId];
   if (!node) return undefined;
-  const lines =
+  const raw =
     node.variants && node.variants.length > 0
       ? (node.variants[session.variantIndex % node.variants.length] ?? node.lines)
       : node.lines;
+  const lines = raw.map((l) =>
+    l
+      .replace("{kills}", String(Math.min(vars?.kills ?? 0, 3)))
+      .replace("{flowers}", String(Math.min(vars?.flowers ?? 0, 3))),
+  );
   return { node, lines };
 }
 
@@ -94,4 +100,57 @@ export function collectSignals(
  */
 export function pendakiEntryNode(nowMs: number, cooldownUntilMs: number): string {
   return nowMs < cooldownUntilMs ? "cooldown" : "rest";
+}
+
+export interface BranchContext {
+  quest: number;
+  kills: number;
+  flags: Record<string, boolean>;
+  nowMs: number;
+  restCooldownUntilMs: number;
+}
+
+/**
+ * Canonical branch selection — VERBATIM transcription of prototype talkTo
+ * branch order per NPC (talkKi → towerDone/nagaDead/bossDead/quest0/quest1/
+ * else; talkSari → sari/charm; talkEyang → towerDone/nagaDead+towerIntro/
+ * nagaDead/skill/bossDead/else; talkTani → tani flag; Bagas → flag tiers).
+ *
+ * No invented branches: every arm maps to transcribed node ids. GE pickup
+ * (flowers) has no runtime system yet, so sari always resolves to `progress`
+ * while uncharmed (documented; `complete` exists in data for later).
+ * `player.skill` has no production counterpart, so eyang pre-boss always
+ * resolves to `intro` (SKILL signal, unapplied hook).
+ */
+export function selectDialogueStart(npcId: string, ctx: BranchContext): string {
+  const f = ctx.flags;
+  switch (npcId) {
+    case "ki":
+      if (f.towerDone) return f.kiAfter3 ? "towerRepeat" : "towerReward";
+      if (f.nagaDead) return f.kiAfter2 ? "nagaRepeat" : "nagaReward";
+      if (f.bossDead) return f.kiAfter ? "bossRepeat" : "bossReward";
+      if (ctx.quest === 0) return "intro";
+      if (ctx.quest === 1) return ctx.kills >= 3 ? "report" : "progress";
+      return "huntElse";
+    case "sari":
+      if (!f.sari) return "intro";
+      if (!f.charm) return "progress";
+      return "done";
+    case "eyang":
+      if (f.towerDone) return "towerDone";
+      if (f.nagaDead) return f.towerIntro ? "postIntro" : "towerIntro";
+      if (f.bossDead) return "gunungHint";
+      return "intro";
+    case "bagas":
+      if (f.towerDone) return "legendTalk";
+      if (f.nagaDead) return "nagaTalk";
+      if (f.bossDead) return "bossTalk";
+      return "intro";
+    case "tani":
+      return f.tani ? "repeat" : "intro";
+    case "pendaki":
+      return pendakiEntryNode(ctx.nowMs, ctx.restCooldownUntilMs);
+    default:
+      return getDialogueTree(npcId)?.start ?? "intro";
+  }
 }

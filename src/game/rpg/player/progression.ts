@@ -28,3 +28,23 @@ export function grantXp(progression: RPGProgression, amount: number): RPGProgres
   }
   return { level, xp, xpToNextLevel };
 }
+
+/**
+ * Canonical prototype level growth per level gained (verbatim):
+ * +14 maxHp, +6 maxMp, +2 attack, +1 defense. Additive helper — the engine
+ * applies it after grantXp reports new levels and restores HP/MP full
+ * (prototype battleVictory verbatim). No RNG. D1 curve decision untouched:
+ * this consumes grantXp output, it does not choose the curve.
+ */
+export function applyLevelGrowth(
+  stats: { maxHp: number; maxMp: number; attack: number; defense: number },
+  levelsGained: number,
+): { maxHp: number; maxMp: number; attack: number; defense: number } {
+  if (levelsGained <= 0) return { ...stats };
+  return {
+    maxHp: stats.maxHp + 14 * levelsGained,
+    maxMp: stats.maxMp + 6 * levelsGained,
+    attack: stats.attack + 2 * levelsGained,
+    defense: stats.defense + 1 * levelsGained,
+  };
+}

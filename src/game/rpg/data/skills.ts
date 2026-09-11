@@ -60,3 +60,11 @@ export const CANONICAL_SKILLS: RPGSkillDefinition[] = [
 export function skillById(id: string): RPGSkillDefinition | undefined {
   return SKILLS.find((s) => s.id === id) ?? CANONICAL_SKILLS.find((s) => s.id === id);
 }
+
+/**
+ * Skill availability derives from player level + canonical definition
+ * (no duplicated unlock booleans): unlocked iff level >= unlockLevel ?? 1.
+ */
+export function isSkillUnlocked(skill: RPGSkillDefinition, level: number): boolean {
+  return level >= (skill.unlockLevel ?? 1);
+}

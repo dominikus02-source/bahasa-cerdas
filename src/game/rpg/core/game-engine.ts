@@ -22,7 +22,7 @@ import type { RPGCommand, RPGInputSource } from "./input";
 import type { RPGPlayerState } from "../player/player-state";
 import { createDefaultPlayer } from "../player/player-state";
 import { stepPlayer, faceDirection } from "../player/movement";
-import { grantXp } from "../player/progression";
+import { grantXp, applyLevelGrowth } from "../player/progression";
 import type { RPGWorldState } from "../world/world-state";
 import { MAP_VILLAGE_SQUARE } from "../data/maps";
 import { getCanonicalMap } from "../data/world-maps";
@@ -69,12 +69,19 @@ import {
   advanceDialogue,
   collectSignals,
   currentNode,
-  pendakiEntryNode,
+  selectDialogueStart,
   type DialogueSession,
 } from "../interaction/dialogue";
 import { getDialogueTree, NPC_ROUTING } from "../data/dialogues";
 import { getShopMenu, validatePurchase, type ShopSession } from "../interaction/shop";
 import { validateForge, type ForgeSession } from "../interaction/forge";
+import {
+  createQuestLineState,
+  isValidQuestTransition,
+  type QuestLineState,
+} from "../quests/quest-engine";
+import { QUEST_FLAG_NAMES } from "../quests/flags";
+import { canonicalItemById } from "../data/items";
 import { checkCollision } from "../world/collision";
 import { findNearestInteraction, processInteraction, type RPGInteractionResult } from "../world/interaction";
 import type { RPGCameraState } from "../rendering/camera";
@@ -110,6 +117,8 @@ export interface RPGEngineConfig {
   goldLedger?: GoldLedgerEntry[];
   /** Restored equipment intents (preserved across save/load). */
   equipmentIntents?: EquipmentIntent[];
+  /** Restored main-line quest state (default fresh: quest 0, kills 0). */
+  quest?: QuestLineState;
 }
 
 /** The running engine instance. */
@@ -138,6 +147,8 @@ export interface RPGEngine {
   getGoldIntents(): Array<{ battleId: string; amount: number }>;
   /** Defeated boss instance ids (persisted, never respawn). */
   getDeadBossIds(): string[];
+  /** Authoritative main-line quest state snapshot. */
+  getQuest(): QuestLineState;
   /** Spendable gold balance (canonical economy). */
   getGold(): number;
   /** Gold audit ledger (append-only; balance must equal its sum). */
@@ -218,6 +229,9 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
   let session: DialogueSession | ShopSession | ForgeSession | null = null;
   // Pendaki campfire cooldown (wall-clock, runtime-only like prototype restT).
   let restCooldownUntilMs = 0;
+  // Authoritative main-line quest state (P1.7): {main 0..7, kills}.
+  // Dead state 5 is never admitted (validator rejects both directions).
+  let quest: QuestLineState = { ...(config.quest ?? createQuestLineState()) };
   // Throttle for gated-portal notices (prototype: once per 1.5s equivalent —
   // here: emit only when the blocked signature changes).
   let lastPortalBlocked: string | null = null;
@@ -336,9 +350,49 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
       stats: applied.stats,
       progression: applied.progression,
     };
+    // P1.7: level growth + full restore per level gained (prototype verbatim;
+    // grantXp above already advanced the level via the production curve —
+    // D1 intentionally undecided, curve untouched).
+    const gained = applied.progression.level - currentState.player.progression.level;
+    let grownPlayer = player;
+    if (gained > 0) {
+      const grown = applyLevelGrowth(
+        {
+          maxHp: player.stats.maxHp,
+          maxMp: player.stats.maxMp,
+          attack: player.stats.attack,
+          defense: player.stats.defense,
+        },
+        gained,
+      );
+      grownPlayer = {
+        ...player,
+        stats: { ...player.stats, ...grown, hp: grown.maxHp, mp: grown.maxMp },
+      };
+    }
+    // P1.7: quest signals from victory — kills++ for non-boss wins,
+    // QUEST 3 on RAJA (from quest 2), QUEST 7 on tower victory (<7).
+    // bossDead/towerDone flags already applied from flagIntents above.
+    const slainBoss = battle.enemies.some((e) => e.hp <= 0 && e.boss === true);
+    if (!slainBoss) {
+      quest = { ...quest, kills: quest.kills + 1 };
+    }
+    const bKey = battle.enemies.find((e) => e.hp <= 0)?.prototypeKey;
+    if (bKey === "b" || bKey === "tw") {
+      const to = bKey === "b" ? 3 : 7;
+      if (isValidQuestTransition(quest.main, to, { quest: quest.main, kills: quest.kills, flags })) {
+        quest = { ...quest, main: to };
+        eventBus.emit({
+          type: "QUEST_ADVANCE",
+          playerId: currentState.session.playerId,
+          quest: quest.main,
+          kills: quest.kills,
+        });
+      }
+    }
     eventBus.emit({ type: "BATTLE_END", battleId: battle.battleId, winnerId: player.id });
     activeBattle = null;
-    return { ...currentState, player, battle: null };
+    return { ...currentState, player: grownPlayer, battle: null };
   }
 
   /** Apply a LOSE result exactly once (dedup on battleId). */
@@ -543,10 +597,14 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
               } else {
                 const tree = getDialogueTree(out.npcId);
                 if (!tree) return currentState;
-                const startNode =
-                  out.npcId === "pendaki"
-                    ? pendakiEntryNode(Date.now(), restCooldownUntilMs)
-                    : undefined;
+                // Canonical branch selection (prototype talkTo order verbatim).
+                const startNode = selectDialogueStart(out.npcId, {
+                  quest: quest.main,
+                  kills: quest.kills,
+                  flags,
+                  nowMs: Date.now(),
+                  restCooldownUntilMs,
+                });
                 const sess = startDialogue(out.npcId, 0, startNode);
                 if (!sess) return currentState;
                 session = sess;
@@ -715,13 +773,24 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
           npcId,
           completed,
         });
-        // P1.7 hook: prototype side-effects as data, explicitly UNAPPLIED.
+        // P1.7: validated quest-signal application (atomic, no partials).
+        // SKILL signals record only (availability derives from level).
         if (signals.length > 0) {
+          const applied = applyQuestSignals(currentState, `dlg:${npcId}`, signals);
+          if (applied) {
+            eventBus.emit({
+              type: "INTERACTION",
+              playerId: currentState.session.playerId,
+              interactionId: `int.npc.${npcId}`,
+              result: { kind: "DIALOGUE_COMPLETE", npcId, signals, applied: applied.applied },
+            });
+            return applied.state;
+          }
           eventBus.emit({
             type: "INTERACTION",
             playerId: currentState.session.playerId,
             interactionId: `int.npc.${npcId}`,
-            result: { kind: "DIALOGUE_COMPLETE", npcId, signals, applied: false },
+            result: { kind: "DIALOGUE_COMPLETE", npcId, signals, applied: [] },
           });
         }
         return currentState;
@@ -977,6 +1046,99 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     flags = { ...flags, [flag]: value };
   }
 
+  /**
+   * Validate + apply a dialogue/victory quest-signal set atomically (P1.7).
+   * Returns applied signal kinds, or null when the set is rejected whole
+   * (no partial mutation, no RNG). QUEST validated against the canonical
+   * transition table; FLAG against the 16-name vocab; GOLD/ITEM structurally;
+   * SKILL recorded only (availability derives from level, no state).
+   */
+  function applyQuestSignals(
+    currentState: RPGGameState,
+    source: string,
+    signals: Array<{
+      type: string;
+      name?: string;
+      amount?: number;
+      key?: string;
+      quantity?: number;
+    }>,
+  ): { state: RPGGameState; applied: string[] } | null {
+    const ctx = { quest: quest.main, kills: quest.kills, flags };
+    for (const s of signals) {
+      if (s.type === "QUEST") {
+        if (typeof s.amount !== "number" || !isValidQuestTransition(quest.main, s.amount, ctx)) {
+          return null;
+        }
+      } else if (s.type === "FLAG") {
+        if (!s.name || !QUEST_FLAG_NAMES.includes(s.name)) return null;
+      } else if (s.type === "GOLD") {
+        if (typeof s.amount !== "number" || s.amount <= 0) return null;
+      } else if (s.type === "ITEM") {
+        if (!s.key || !canonicalItemById(s.key) || typeof s.quantity !== "number" || s.quantity <= 0) {
+          return null;
+        }
+      } else if (s.type === "SKILL") {
+        if (!s.key) return null;
+      } else {
+        return null;
+      }
+    }
+    let player = currentState.player;
+    const applied: string[] = [];
+    let questChanged = false;
+    for (const s of signals) {
+      if (s.type === "QUEST" && typeof s.amount === "number") {
+        if (quest.main !== s.amount) {
+          quest = { ...quest, main: s.amount };
+          questChanged = true;
+        }
+        applied.push("QUEST");
+      } else if (s.type === "FLAG" && s.name) {
+        flags = { ...flags, [s.name]: true };
+        applied.push("FLAG");
+      } else if (s.type === "GOLD" && typeof s.amount === "number") {
+        const txId = `quest:${source}`;
+        const before = gold.balance;
+        gold = creditGold(gold, txId, s.amount, `quest:${source}`);
+        if (gold.balance !== before) {
+          eventBus.emit({
+            type: "GOLD_CHANGED",
+            playerId: currentState.session.playerId,
+            balance: gold.balance,
+            delta: s.amount,
+            reason: `quest:${source}`,
+          });
+        }
+        applied.push("GOLD");
+      } else if (s.type === "ITEM" && s.key && typeof s.quantity === "number") {
+        player = {
+          ...player,
+          inventory: addItem(player.inventory, s.key, s.quantity),
+        };
+        eventBus.emit({
+          type: "ITEM_GRANTED",
+          playerId: currentState.session.playerId,
+          itemId: s.key,
+          quantity: s.quantity,
+          source: `quest:${source}`,
+        });
+        applied.push("ITEM");
+      } else if (s.type === "SKILL") {
+        applied.push("SKILL");
+      }
+    }
+    if (questChanged) {
+      eventBus.emit({
+        type: "QUEST_ADVANCE",
+        playerId: currentState.session.playerId,
+        quest: quest.main,
+        kills: quest.kills,
+      });
+    }
+    return { state: { ...currentState, player }, applied };
+  }
+
   function getFlags(): Record<string, boolean> {
     return { ...flags };
   }
@@ -995,6 +1157,7 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
       gold: gold.balance,
       goldLedger: gold.ledger.map((e) => ({ ...e })),
       equipmentIntents: equipmentIntents.map((e) => ({ ...e })),
+      quest: { ...quest },
     });
   }
 
@@ -1012,6 +1175,10 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
 
   function getDeadBossIds(): string[] {
     return [...deadBossIds];
+  }
+
+  function getQuest(): QuestLineState {
+    return { ...quest };
   }
 
   function getGold(): number {
@@ -1062,6 +1229,7 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     getLiveEnemies,
     getGoldIntents,
     getDeadBossIds,
+    getQuest,
     getGold,
     getGoldLedger,
     getEquipmentIntents,

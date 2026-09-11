@@ -65,6 +65,7 @@ export type RPGEvent =
   | { type: "ITEM_GRANTED"; playerId: RPGId; itemId: RPGId; quantity: number; source: string }
   | { type: "ITEM_CONSUMED"; playerId: RPGId; itemId: RPGId; source: string }
   | { type: "EQUIPMENT_UPGRADED"; playerId: RPGId; weaponId: RPGId; plus: number }
+  | { type: "QUEST_ADVANCE"; playerId: RPGId; quest: number; kills: number }
   | { type: "INTERACTION"; playerId: RPGId; interactionId: RPGId; result: unknown }
   | {
       type: "MAP_TRANSITION";
