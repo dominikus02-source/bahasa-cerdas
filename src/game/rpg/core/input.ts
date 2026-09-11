@@ -23,6 +23,7 @@ export type RPGCommand =
   | { type: "STOP_MOVE"; playerId: RPGId }
   | { type: "INTERACT"; playerId: RPGId; targetId?: RPGId }
   | { type: "ATTACK"; playerId: RPGId; targetId: RPGId; skillId: RPGId }
+  | { type: "BATTLE_ESCAPE"; playerId: RPGId; battleId: RPGId }
   | { type: "USE_ITEM"; playerId: RPGId; itemId: RPGId }
   | { type: "EQUIP"; playerId: RPGId; itemId: RPGId }
   | { type: "OPEN_DIALOGUE"; playerId: RPGId; npcId: RPGId }

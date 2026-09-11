@@ -362,7 +362,8 @@
     "test:rpg-phase1b": "npx tsx scripts/test-rpg-phase1b.ts",
     "test:rpg-unpublished": "npx tsx scripts/test-rpg-unpublished.ts",
     "test:rpg-world-maps": "npx tsx scripts/test-rpg-world-maps.ts",
-    "test:rpg-world-runtime": "npx tsx scripts/test-rpg-world-runtime.ts"
+    "test:rpg-world-runtime": "npx tsx scripts/test-rpg-world-runtime.ts",
+    "test:rpg-battle-core": "npx tsx scripts/test-rpg-battle-core.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

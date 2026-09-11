@@ -19,6 +19,26 @@ export type RPGEvent =
   | { type: "LEARNING_RESULT"; playerId: RPGId; challengeId: RPGId; correct: boolean }
   | { type: "BATTLE_START"; battleId: RPGId; participantIds: RPGId[] }
   | { type: "BATTLE_END"; battleId: RPGId; winnerId: RPGId | null }
+  | {
+      type: "BATTLE_ACTION_RESOLVED";
+      battleId: RPGId;
+      turn: number;
+      actorId: RPGId;
+      targetId: RPGId;
+      damage: number;
+      crit: boolean;
+    }
+  | {
+      type: "BATTLE_VICTORY";
+      battleId: RPGId;
+      xp: number;
+      deadEnemyIds: RPGId[];
+    }
+  | {
+      type: "BATTLE_DEFEAT";
+      battleId: RPGId;
+      respawn: { mapId: RPGId; x: number; y: number };
+    }
   | { type: "INTERACTION"; playerId: RPGId; interactionId: RPGId; result: unknown }
   | {
       type: "MAP_TRANSITION";

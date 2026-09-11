@@ -17,6 +17,7 @@
 
 import type { RPGGameState } from "./game-state";
 import type { RPGPlayerState } from "../player/player-state";
+import type { RPGPlayerStats } from "../player/player-state";
 import type { RPGWorldState } from "../world/world-state";
 import type { RPGProgression } from "../player/player-state";
 
@@ -51,13 +52,7 @@ interface RPGSaveData {
     name: string;
     position: { x: number; y: number };
     facing: string;
-    stats: {
-      hp: number;
-      maxHp: number;
-      attack: number;
-      defense: number;
-      speed: number;
-    };
+    stats: RPGPlayerStats;
     progression: {
       level: number;
       xp: number;
@@ -168,6 +163,8 @@ export function createLocalStoragePersistence(
           stats: data.player.stats || {
             hp: 100,
             maxHp: 100,
+            mp: 20,
+            maxMp: 20,
             attack: 10,
             defense: 5,
             speed: 1,

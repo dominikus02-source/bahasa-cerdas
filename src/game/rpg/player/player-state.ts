@@ -14,6 +14,10 @@ import type { RPGId, RPGVec2, RPGFacing } from "../core/constants";
 export interface RPGPlayerStats {
   hp: number;
   maxHp: number;
+  /** MP has one canonical source: prototype newGame (mp/maxMp 20).
+   *  HP/attack/defense/speed keep existing production canonicals. */
+  mp: number;
+  maxMp: number;
   attack: number;
   defense: number;
   speed: number;
@@ -59,7 +63,7 @@ export function createDefaultPlayer(id: RPGId, name: string): RPGPlayerState {
     name,
     position: { x: 0.5, y: 0.5 },
     facing: "down",
-    stats: { hp: 100, maxHp: 100, attack: 10, defense: 5, speed: 1 },
+    stats: { hp: 100, maxHp: 100, mp: 20, maxMp: 20, attack: 10, defense: 5, speed: 1 },
     progression: { level: 1, xp: 0, xpToNextLevel: 100 },
     inventory: { items: [] },
     equipment: { weaponId: null, armorId: null, accessoryId: null },

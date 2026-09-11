@@ -16,6 +16,14 @@ export interface RPGSkillDefinition {
   /** When true, a correct learning challenge multiplies this skill's damage. */
   learningBoost: boolean;
   description: string;
+  /** MP cost (canonical prototype SKILLS values; omitted = 0). */
+  mpCost?: number;
+  /** Damage multiplier on attack stat (canonical; omitted = 1). */
+  multiplier?: number;
+  /** Minimum player level to unlock (canonical; omitted = unlocked). */
+  unlockLevel?: number;
+  /** Prototype skill key (maha/angin/api) — lookup aid. */
+  prototypeKey?: string;
 }
 
 export const SKILLS: RPGSkillDefinition[] = [
@@ -36,3 +44,19 @@ export const SKILLS: RPGSkillDefinition[] = [
     description: "Serangan bertenaga aksara — damage melonjak jika jawaban learning benar.",
   },
 ];
+
+/**
+ * Canonical prototype skills — VERBATIM transcription (legacy lines 497-501:
+ * mp cost, mult, minL). Basic attack is skillBase 0 (prototype uses pAtk()
+ * directly); these three carry the prototype multipliers.
+ */
+export const CANONICAL_SKILLS: RPGSkillDefinition[] = [
+  { id: "skill.mahapukul", name: "MAHAPUKUL", baseDamage: 0, cost: 8, learningBoost: false, description: "Jurus turun-temurun Eyang Kartala.", mpCost: 8, multiplier: 2.2, unlockLevel: 1, prototypeKey: "maha" },
+  { id: "skill.tebas-angin", name: "TEBAS ANGIN", baseDamage: 0, cost: 12, learningBoost: false, description: "Terbuka otomatis di level 5.", mpCost: 12, multiplier: 2.8, unlockLevel: 5, prototypeKey: "angin" },
+  { id: "skill.api-suci", name: "API SUCI", baseDamage: 0, cost: 20, learningBoost: false, description: "Terbuka otomatis di level 8.", mpCost: 20, multiplier: 3.8, unlockLevel: 8, prototypeKey: "api" },
+];
+
+/** All skills (placeholders + canonical) by id. */
+export function skillById(id: string): RPGSkillDefinition | undefined {
+  return SKILLS.find((s) => s.id === id) ?? CANONICAL_SKILLS.find((s) => s.id === id);
+}

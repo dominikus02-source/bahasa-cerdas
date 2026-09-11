@@ -18,18 +18,55 @@ export interface RPGBattleActor {
   maxHp: number;
   attack: number;
   defense: number;
+  /** MP/level ride the snapshot for skill validation (enemies omit them).
+   *  Additive-optional: existing actors without these fields keep working. */
+  mp?: number;
+  maxMp?: number;
+  level?: number;
+  /** Boss flag drives escape restriction + special attacks. */
+  boss?: boolean;
+  /** Victory accounting (stamped at startBattle from enemy defs). */
+  xp?: number;
+  gold?: number;
+  /** Prototype spawn-type key (g/w/b/gl/sh/ga/na/tw) for flag/drop rules. */
+  prototypeKey?: string;
+  /** Deterministic drop resolved at kill time (e.g. "bijih"). */
+  dropIntent?: string;
+}
+
+/** Terminal battle outcome (written once, see battle-core). */
+export type RPGBattleResult = "WIN" | "LOSE" | "FLED";
+
+/** World position to restore when the battle closes. */
+export interface RPGBattleOrigin {
+  mapId: RPGId;
+  x: number;
+  y: number;
 }
 
 export interface RPGBattleState {
+  /** Correlation id (local: crypto.randomUUID — never a damage seed). */
+  battleId: RPGId;
   phase: RPGBattlePhase;
   player: RPGBattleActor;
   enemies: RPGBattleActor[];
   turn: number;
+  origin: RPGBattleOrigin;
+  /** Written exactly once at CHECK RESULT; undefined while fighting. */
+  result?: RPGBattleResult;
 }
 
 export function createBattle(
   player: RPGBattleActor,
   enemies: RPGBattleActor[],
+  opts?: { battleId?: RPGId; origin?: RPGBattleOrigin },
 ): RPGBattleState {
-  return { phase: "INTRO", player, enemies, turn: 0 };
+  return {
+    battleId: opts?.battleId ?? crypto.randomUUID(),
+    phase: "INTRO",
+    player,
+    enemies,
+    turn: 0,
+    origin: opts?.origin ?? { mapId: "", x: 0, y: 0 },
+  };
 }
