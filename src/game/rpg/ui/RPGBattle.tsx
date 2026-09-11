@@ -16,6 +16,17 @@
 
 import { useState } from "react";
 import type { BattleViewModel } from "./battle-view";
+import { itemIconFor } from "../rendering/tile-visuals";
+import { manifestLookup } from "../rendering/rpg-asset-manifest";
+
+/** READY icon URL for a canonical item id, or null (text-only button). */
+function itemIconUrl(itemId: string): string | null {
+  const assetId = itemIconFor(itemId);
+  if (!assetId) return null;
+  const entry = manifestLookup(assetId);
+  if (!entry || entry.status !== "READY") return null;
+  return entry.path;
+}
 
 export interface RPGBattleProps {
   battle: BattleViewModel;
@@ -124,16 +135,25 @@ export function RPGBattle({ battle, onAttack, onUseItem, onFlee }: RPGBattleProp
             {battle.items.length === 0 ? (
               <p className="text-sm font-bold text-[var(--game-text-muted)]">Tas kosong — kalahkan musuh atau buka peti untuk bekal.</p>
             ) : null}
-            {battle.items.map((it) => (
-              <button
-                key={it.id}
-                type="button"
-                onClick={() => onUseItem(it.id)}
-                className={`${btn} bg-white text-left text-sm text-slate-900 dark:bg-slate-800 dark:text-white`}
-              >
-                {it.name} <span className="opacity-60">×{it.quantity}</span>
-              </button>
-            ))}
+            {battle.items.map((it) => {
+              const icon = itemIconUrl(it.id);
+              return (
+                <button
+                  key={it.id}
+                  type="button"
+                  onClick={() => onUseItem(it.id)}
+                  className={`${btn} bg-white text-left text-sm text-slate-900 dark:bg-slate-800 dark:text-white flex items-center gap-2.5`}
+                >
+                  {icon ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={icon} alt="" aria-hidden width={32} height={32} className="shrink-0 rounded-lg" />
+                  ) : null}
+                  <span>
+                    {it.name} <span className="opacity-60">×{it.quantity}</span>
+                  </span>
+                </button>
+              );
+            })}
             <button type="button" onClick={() => setMenu("main")} className={`${btn} bg-transparent text-sm text-[var(--game-text-muted)]`}>
               ← Kembali
             </button>

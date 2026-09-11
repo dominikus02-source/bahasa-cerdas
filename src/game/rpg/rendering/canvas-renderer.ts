@@ -19,6 +19,8 @@ import type { RPGCameraState } from "./camera";
 import { worldToScreenScaled } from "./camera";
 import { LOGICAL_TILE_PX, clampZoom } from "./world-scale";
 import { createEmptyManifest, createSpriteLoader, diagnoseAsset, lookupAsset } from "./asset-registry";
+import { manifestLookup } from "./rpg-asset-manifest";
+import { resolveTileAsset } from "./tile-visuals";
 import { argaAssetKey } from "./arga-contract";
 import type { RPGWorldEntity } from "../world/world-state";
 import { findNearestInteraction } from "../world/interaction";
@@ -221,6 +223,18 @@ export function createCanvasRenderer(
           continue;
         }
         const tileId = tiles.tiles[y * tiles.width + x];
+        // Bound production art (P2.1): numeric tile → READY slice, drawn
+        // full-bleed at the tile rect. Unbound tiles keep the legacy color
+        // wash (zero visual regression by construction). Loads are cached;
+        // a missing image falls back to color (never throws in the loop).
+        const bound = boundTileImage(state.world.mapId, tileId, x, y);
+        if (bound) {
+          ctx.drawImage(
+            bound as unknown as CanvasImageSource,
+            sx.x - tilePx / 2, sx.y - tilePx / 2, tilePx, tilePx,
+          );
+          continue;
+        }
         const color = tileId === "ground.path" ? COLORS.path : COLORS.grass;
         drawRect(sx.x - tilePx / 2, sx.y - tilePx / 2, tilePx + 1, tilePx + 1, color);
 
@@ -230,6 +244,38 @@ export function createCanvasRenderer(
         ctx.strokeRect(sx.x - tilePx / 2, sx.y - tilePx / 2, tilePx, tilePx);
       }
     }
+  }
+
+  // ── Tile art cache (P2.1) ─────────────────────────────────────────
+  // One loader per renderer; requested-once set prevents per-frame fetch.
+  const tileLoader = createSpriteLoader(
+    (src) =>
+      new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error(`tile load failed: ${src}`));
+        img.src = src;
+      }),
+  );
+  const requestedTilePaths = new Set<string>();
+
+  /** Cached READY tile image for a bound tile, or null (color fallback). */
+  function boundTileImage(
+    mapId: string, tileId: string, x: number, y: number,
+  ): { width: number; height: number } | null {
+    const num = Number(tileId.split(".")[1]);
+    if (!Number.isInteger(num)) return null;
+    const assetId = resolveTileAsset(mapId, num, x, y);
+    if (!assetId) return null;
+    const entry = manifestLookup(assetId);
+    if (!entry || entry.status !== "READY") return null;
+    const hit = tileLoader.cached(entry.path);
+    if (hit) return hit;
+    if (!requestedTilePaths.has(entry.path)) {
+      requestedTilePaths.add(entry.path);
+      void tileLoader.load(entry.path);
+    }
+    return null;
   }
 
   /** Render world entities (trees, houses, bushes, etc.). */

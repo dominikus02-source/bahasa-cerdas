@@ -358,6 +358,7 @@
     "audit:ukbi-load-post": "npx tsx scripts/audit-ukbi-load-post.ts",
     "audit:commission-dzaky": "npx tsx scripts/audit-commission-dzaky.ts",
     "test:historical-metrics-proof": "npx tsx scripts/test-historical-metrics-proof.ts",
+    "test:bc-agent-p1-core": "npx tsx scripts/test-bc-agent-p1-core.ts",
     "test:rpg-phase1a": "npx tsx scripts/test-rpg-phase1a.ts",
     "test:rpg-phase1b": "npx tsx scripts/test-rpg-phase1b.ts",
     "test:rpg-unpublished": "npx tsx scripts/test-rpg-unpublished.ts",
@@ -375,7 +376,8 @@
     "test:rpg-learning-ux": "npx tsx scripts/test-rpg-learning-ux.ts",
     "test:rpg-vertical-slice": "npx tsx scripts/test-rpg-vertical-slice.ts",
     "test:rpg-visual-foundation": "npx tsx scripts/test-rpg-visual-foundation.ts",
-    "test:rpg-pickup-consumables": "npx tsx scripts/test-rpg-pickup-consumables.ts"
+    "test:rpg-pickup-consumables": "npx tsx scripts/test-rpg-pickup-consumables.ts",
+    "test:rpg-asset-integration": "npx tsx scripts/test-rpg-asset-integration.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
