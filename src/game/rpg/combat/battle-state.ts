@@ -44,6 +44,14 @@ export interface RPGBattleOrigin {
   y: number;
 }
 
+/** Learning substate (P1.8C): a moment inside battle, never a global mode. */
+export interface BattleLearningSubstate {
+  encounterId: string;
+  challengeId: string;
+  status: "PENDING" | "RESOLVED";
+  attemptId: string;
+}
+
 export interface RPGBattleState {
   /** Correlation id (local: crypto.randomUUID — never a damage seed). */
   battleId: RPGId;
@@ -54,6 +62,8 @@ export interface RPGBattleState {
   origin: RPGBattleOrigin;
   /** Written exactly once at CHECK RESULT; undefined while fighting. */
   result?: RPGBattleResult;
+  /** Active learning moment, if the trigger policy created one. */
+  learning?: BattleLearningSubstate;
 }
 
 export function createBattle(

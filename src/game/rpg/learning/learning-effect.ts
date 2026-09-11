@@ -93,3 +93,24 @@ export function applySubmission(
     outcome: { evaluation, applied: true },
   };
 }
+
+/**
+ * QUEST integration hook (P1.8C §12/§18): shape a quest-bound signal from
+ * an evaluation WITHOUT mutating quest state — the quest engine stays
+ * authoritative and decides application later. Null when there is no quest
+ * linkage (caller passes no questId).
+ */
+export interface QuestLearningSignal {
+  questId: string;
+  challengeId: string;
+  signal: "CORRECT" | "INCORRECT";
+}
+
+export function questSignalForEvaluation(
+  questId: string | undefined,
+  challengeId: string,
+  evaluation: { signal: "CORRECT" | "INCORRECT" },
+): QuestLearningSignal | null {
+  if (!questId) return null;
+  return { questId, challengeId, signal: evaluation.signal };
+}

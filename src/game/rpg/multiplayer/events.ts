@@ -8,6 +8,7 @@
  */
 
 import type { RPGId } from "../core/constants";
+import type { LearningChallenge } from "../learning/rpg-challenge";
 
 export type RPGEvent =
   | { type: "PLAYER_MOVE"; playerId: RPGId; x: number; y: number }
@@ -66,6 +67,21 @@ export type RPGEvent =
   | { type: "ITEM_CONSUMED"; playerId: RPGId; itemId: RPGId; source: string }
   | { type: "EQUIPMENT_UPGRADED"; playerId: RPGId; weaponId: RPGId; plus: number }
   | { type: "QUEST_ADVANCE"; playerId: RPGId; quest: number; kills: number }
+  | {
+      type: "LEARNING_CHALLENGE";
+      battleId: RPGId;
+      encounterId: RPGId;
+      challengeId: RPGId;
+      challenge: LearningChallenge;
+    }
+  | {
+      type: "LEARNING_ANSWERED";
+      battleId: RPGId;
+      encounterId: RPGId;
+      challengeId: RPGId;
+      attemptId: RPGId;
+      correct: boolean;
+    }
   | { type: "INTERACTION"; playerId: RPGId; interactionId: RPGId; result: unknown }
   | {
       type: "MAP_TRANSITION";
