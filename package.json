@@ -368,7 +368,8 @@
     "test:rpg-interaction-runtime": "npx tsx scripts/test-rpg-interaction-runtime.ts",
     "test:rpg-economy": "npx tsx scripts/test-rpg-economy.ts",
     "test:rpg-quest-progression": "npx tsx scripts/test-rpg-quest-progression.ts",
-    "test:rpg-learning-contract": "npx tsx scripts/test-rpg-learning-contract.ts"
+    "test:rpg-learning-contract": "npx tsx scripts/test-rpg-learning-contract.ts",
+    "test:rpg-learning-selector": "npx tsx scripts/test-rpg-learning-selector.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
