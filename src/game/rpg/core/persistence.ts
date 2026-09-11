@@ -208,8 +208,9 @@ export function createLocalStoragePersistence(
             accessoryId: null,
           },
         },
-        // World will be reloaded from map data by the engine
-        world: {} as RPGWorldState,
+        // World grid is rebuilt from map data by the engine; the saved mapId
+        // rides along so callers can reload the right map (P1.9C slice).
+        world: { mapId: data.world?.mapId ?? "map.village-square" } as RPGWorldState,
         battle: null,
         quests: { active: [], completed: [] },
         flags: data.world?.flags ?? {},

@@ -124,6 +124,19 @@ export interface RPGEngineConfig {
   gold?: number;
   /** Restored picked golden-flower tiles (default none). */
   pickedGe?: string[];
+  /**
+   * Restored player slice (P1.9C save/load): stats, progression, inventory,
+   * equipment, position, facing. Absent = fresh default player. Each field
+   * optional; missing pieces fall back to defaults (additive, no migration).
+   */
+  initialPlayer?: {
+    stats?: { hp: number; maxHp: number; mp: number; maxMp: number; attack: number; defense: number; speed: number };
+    progression?: { level: number; xp: number; xpToNextLevel: number };
+    inventory?: { items: Array<{ itemId: string; quantity: number }> };
+    equipment?: { weaponId: string | null; armorId: string | null; accessoryId: string | null; weaponPlus?: number };
+    position?: { x: number; y: number };
+    facing?: "up" | "down" | "left" | "right";
+  };
   /** Restored gold ledger (dedup continuity across save/load). */
   goldLedger?: GoldLedgerEntry[];
   /** Restored equipment intents (preserved across save/load). */
@@ -163,8 +176,14 @@ export interface RPGEngine {
   getLearningFeedback(): { correct: boolean } | null;
   /** P1.9A slice: submit an answer through the SUBMIT pipeline. */
   submitLearningAnswer(answer: string): boolean;
-  /** P1.9A slice: basic attack vs first living enemy. */
+  /** P1.9C slice: basic attack vs first living enemy. */
   attackBasic(): boolean;
+  /** P1.9C slice: skill attack vs first living enemy (validated in core). */
+  attackWithSkill(skillId: string): boolean;
+  /** P1.9C slice: use a consumable (world or battle, validated in core). */
+  useItem(itemId: string): boolean;
+  /** P1.9C slice: attempt escape through the canonical path. */
+  fleeBattle(): boolean;
   /** Live encounter table snapshot (debug/tests). */
   getLiveEnemies(): LiveEnemy[];
   /** Unclaimed gold intents for the future economy phase. */
@@ -205,9 +224,24 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
   const loadedWorld = canonicalStart ? loadCanonicalMap(canonicalStart.id) : null;
 
   const basePlayer = createDefaultPlayer(playerId, playerName);
-  const player = loadedWorld && canonicalStart
-    ? { ...basePlayer, position: spawnPosition(canonicalStart, canonicalStart.spawn.x, canonicalStart.spawn.y) }
+  const restored = config.initialPlayer;
+  const mergedPlayer = restored
+    ? {
+        ...basePlayer,
+        stats: { ...basePlayer.stats, ...(restored.stats ?? {}) },
+        progression: { ...basePlayer.progression, ...(restored.progression ?? {}) },
+        inventory: restored.inventory ?? basePlayer.inventory,
+        equipment: { ...basePlayer.equipment, ...(restored.equipment ?? {}) },
+        position: restored.position ?? basePlayer.position,
+        facing: restored.facing ?? basePlayer.facing,
+      }
     : basePlayer;
+  const player = loadedWorld && canonicalStart
+    ? {
+        ...mergedPlayer,
+        position: restored?.position ?? spawnPosition(canonicalStart, canonicalStart.spawn.x, canonicalStart.spawn.y),
+      }
+    : mergedPlayer;
   const map = MAP_VILLAGE_SQUARE;
 
   const world: RPGWorldState = loadedWorld ?? {
@@ -1425,6 +1459,46 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     return (activeBattle?.state.turn ?? before) > before;
   }
 
+  /** Skill attack vs first living enemy (core validates unlock/MP/turn). */
+  function attackWithSkill(skillId: string): boolean {
+    if (!activeBattle || state.battle === null) return false;
+    const foeId = activeBattle.state.enemies.find((e) => e.hp > 0)?.id;
+    if (!foeId) return false;
+    const before = activeBattle.state.turn;
+    state = processCommand(state, {
+      type: "ATTACK",
+      playerId,
+      targetId: foeId,
+      skillId,
+    });
+    return (activeBattle?.state.turn ?? before) > before;
+  }
+
+  /** Consumable through the canonical USE_ITEM path (world or battle). */
+  function useItem(itemId: string): boolean {
+    if (state.battle !== null && !activeBattle) return false;
+    if (state.battle !== null) {
+      const beforeHp = activeBattle?.state.player.hp;
+      const beforeInv = JSON.stringify(state.player.inventory);
+      state = processCommand(state, { type: "USE_ITEM", playerId, itemId });
+      return (
+        JSON.stringify(state.player.inventory) !== beforeInv ||
+        activeBattle?.state.player.hp !== beforeHp
+      );
+    }
+    const before = JSON.stringify(state.player.inventory) + JSON.stringify(state.player.stats);
+    state = processCommand(state, { type: "USE_ITEM", playerId, itemId });
+    return JSON.stringify(state.player.inventory) + JSON.stringify(state.player.stats) !== before;
+  }
+
+  /** Escape through the canonical BATTLE_ESCAPE path. */
+  function fleeBattle(): boolean {
+    if (!activeBattle || state.battle === null) return false;
+    const id = activeBattle.state.battleId;
+    state = processCommand(state, { type: "BATTLE_ESCAPE", playerId, battleId: id });
+    return activeBattle?.state.battleId !== id || activeBattle?.state.result === "FLED";
+  }
+
   function getLiveEnemies(): LiveEnemy[] {
     return liveEnemies.map((e) => ({ ...e, tile: { ...e.tile }, spawnTile: { ...e.spawnTile } }));
   }
@@ -1494,6 +1568,9 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     getLearningFeedback,
     submitLearningAnswer,
     attackBasic,
+    attackWithSkill,
+    useItem,
+    fleeBattle,
     getLiveEnemies,
     getGoldIntents,
     getDeadBossIds,

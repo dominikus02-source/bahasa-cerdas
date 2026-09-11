@@ -373,6 +373,7 @@
     "test:rpg-learning-gameplay": "npx tsx scripts/test-rpg-learning-gameplay.ts",
     "test:rpg-learning-hardening": "npx tsx scripts/test-rpg-learning-hardening.ts",
     "test:rpg-learning-ux": "npx tsx scripts/test-rpg-learning-ux.ts",
+    "test:rpg-vertical-slice": "npx tsx scripts/test-rpg-vertical-slice.ts",
     "test:rpg-pickup-consumables": "npx tsx scripts/test-rpg-pickup-consumables.ts"
   },
   "dependencies": {
