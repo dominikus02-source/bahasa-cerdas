@@ -75,18 +75,13 @@ import {
 import { getDialogueTree, NPC_ROUTING } from "../data/dialogues";
 import { getShopMenu, validatePurchase, type ShopSession } from "../interaction/shop";
 import { validateForge, type ForgeSession } from "../interaction/forge";
-import { selectChallenge } from "../learning/rpg-challenge-selector";
 import {
-  createEncounter,
-  presentEncounter,
-  answerEncounter,
-  resolveEncounter,
+  triggerBattleLearning,
+  submitBattleAnswer,
   type LearningEncounter,
-} from "../learning/rpg-encounter";
-import { evaluateAnswer } from "../learning/rpg-evaluator";
-import { resolveLearningEffect } from "../learning/learning-effect";
-import { shouldTriggerLearning, type LearningTriggerPolicy } from "../learning/learning-trigger";
-import { toClientChallenge, type SoalLike, type ResolvedChallenge } from "../learning/rpg-challenge";
+} from "../learning/learning-runtime";
+import type { SoalLike, ResolvedChallenge } from "../learning/rpg-challenge";
+import type { LearningTriggerPolicy } from "../learning/learning-trigger";
 import {
   createQuestLineState,
   isValidQuestTransition,
@@ -319,53 +314,35 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     });
     activeBattle = { state: started.state, rng: started.rng };
     for (const ev of started.events) eventBus.emit(ev);
-    // P1.8C: optional learning moment (policy-gated, boss-excluded default).
-    // Selection uses its own string seed — battle RNG is never touched here.
-    const pool = config.learning?.pool ?? [];
-    if (
-      shouldTriggerLearning({
-        policy: config.learning?.policy,
-        isBoss: foe.def.boss === true,
-        battleTurn: 0,
-        hasPool: pool.length > 0,
-      })
-    ) {
-      const sel = selectChallenge(pool, {
-        encounterId: battleId,
-        context: "BATTLE",
-        enemyId: foe.instanceId,
-        seed: `${battleId}:learn`,
-        level: playerState.progression.level,
+    // P1.8C hardening: trigger decision + encounter build live in the pure
+    // learning-runtime module (runtime-tested); the engine only stores and
+    // emits. Selection uses its own string seed — battle RNG untouched.
+    const trig = triggerBattleLearning({
+      policy: config.learning?.policy,
+      isBoss: foe.def.boss === true,
+      battleTurn: 0,
+      pool: config.learning?.pool ?? [],
+      encounterId: battleId,
+      enemyId: foe.instanceId,
+      seed: `${battleId}:learn`,
+      level: playerState.progression.level,
+    });
+    if (trig.triggered) {
+      learningChallenges.set(trig.resolved.challengeId, trig.resolved);
+      activeEncounter = trig.encounter;
+      const withLearning: RPGBattleState = {
+        ...started.state,
+        learning: { ...trig.substate },
+      };
+      activeBattle = { state: withLearning, rng: started.rng };
+      eventBus.emit({
+        type: "LEARNING_CHALLENGE",
+        battleId,
+        encounterId: trig.substate.encounterId,
+        challengeId: trig.substate.challengeId,
+        challenge: trig.client,
       });
-      if (sel.outcome === "SELECTED") {
-        learningChallenges.set(sel.resolved.challengeId, sel.resolved);
-        let enc = createEncounter({
-          encounterKey: battleId,
-          context: "BATTLE",
-          challengeId: sel.resolved.challengeId,
-          seed: `${battleId}:learn`,
-        });
-        enc = presentEncounter(enc);
-        activeEncounter = enc;
-        const withLearning: RPGBattleState = {
-          ...started.state,
-          learning: {
-            encounterId: enc.encounterId,
-            challengeId: sel.resolved.challengeId,
-            status: "PENDING",
-            attemptId: `${enc.encounterId}:attempt-0`,
-          },
-        };
-        activeBattle = { state: withLearning, rng: started.rng };
-        eventBus.emit({
-          type: "LEARNING_CHALLENGE",
-          battleId,
-          encounterId: enc.encounterId,
-          challengeId: sel.resolved.challengeId,
-          challenge: toClientChallenge(sel.resolved),
-        });
-        return { ...currentState, battle: withLearning };
-      }
+      return { ...currentState, battle: withLearning };
     }
     return { ...currentState, battle: started.state };
   }
@@ -804,40 +781,38 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
         return next;
       }
       case "SUBMIT_LEARNING_ANSWER": {
-        // P1.8C: server-side evaluation of the pending learning moment.
-        // Rejects (no mutation, no RNG): no battle, wrong player, no pending
-        // moment, terminal battle, unknown challenge, missing encounter data.
-        // Duplicate submissions after RESOLVED are rejected — exactly-once
-        // per encounter by construction (single PENDING answer slot).
+        // P1.8C hardening: evaluation pipeline lives in pure
+        // learning-runtime (submitBattleAnswer); the engine stores the
+        // outcome and emits. Rejections: no battle, wrong player, no pending
+        // moment, terminal battle, id/challenge mismatch, duplicates.
         if (!activeBattle || currentState.battle === null) return currentState;
         if (command.playerId !== playerId) return currentState;
         const sub = activeBattle.state.learning;
-        if (!sub || sub.status !== "PENDING") return currentState;
-        if (command.challengeId !== sub.challengeId) return currentState;
-        if (!activeEncounter || activeEncounter.challengeId !== sub.challengeId) {
-          return currentState;
-        }
-        const resolved = learningChallenges.get(sub.challengeId);
-        if (!resolved) return currentState;
-        const evaluation = evaluateAnswer(resolved, command.answer);
-        const effect = resolveLearningEffect(evaluation);
-        void effect;
-        const ans = answerEncounter(activeEncounter, sub.attemptId, () => evaluation);
-        if (!ans.applied) return currentState;
-        activeEncounter = resolveEncounter(ans.encounter);
-        pendingLearning = { correct: evaluation.signal === "CORRECT" };
+        const resolved = sub ? learningChallenges.get(sub.challengeId) : undefined;
+        const out = submitBattleAnswer({
+          substate: sub,
+          encounter: activeEncounter,
+          resolved,
+          answer: command.answer,
+          battleTerminal: activeBattle.state.result !== undefined,
+          attemptId: `${sub?.encounterId ?? ""}:attempt-0`,
+          claimedChallengeId: command.challengeId,
+        });
+        if (!out.accepted) return currentState;
+        activeEncounter = out.encounter;
+        pendingLearning = { correct: out.correct };
         const nb: RPGBattleState = {
           ...activeBattle.state,
-          learning: { ...sub, status: "RESOLVED" },
+          learning: sub ? { ...sub, status: "RESOLVED" } : sub,
         };
         activeBattle = { state: nb, rng: activeBattle.rng };
         eventBus.emit({
           type: "LEARNING_ANSWERED",
           battleId: nb.battleId,
-          encounterId: sub.encounterId,
-          challengeId: sub.challengeId,
-          attemptId: sub.attemptId,
-          correct: evaluation.signal === "CORRECT",
+          encounterId: sub?.encounterId ?? "",
+          challengeId: sub?.challengeId ?? "",
+          attemptId: sub?.attemptId ?? "",
+          correct: out.correct,
         });
         return { ...currentState, battle: nb };
       }
