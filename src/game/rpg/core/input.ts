@@ -24,6 +24,12 @@ export type RPGCommand =
   | { type: "INTERACT"; playerId: RPGId; targetId?: RPGId }
   | { type: "ATTACK"; playerId: RPGId; targetId: RPGId; skillId: RPGId }
   | { type: "BATTLE_ESCAPE"; playerId: RPGId; battleId: RPGId }
+  | { type: "DIALOGUE_ADVANCE"; playerId: RPGId }
+  | { type: "DIALOGUE_END"; playerId: RPGId }
+  | { type: "SHOP_BUY"; playerId: RPGId; itemId: RPGId; quantity: number }
+  | { type: "SHOP_CLOSE"; playerId: RPGId }
+  | { type: "FORGE_CRAFT"; playerId: RPGId; equipmentId: RPGId }
+  | { type: "FORGE_CLOSE"; playerId: RPGId }
   | { type: "USE_ITEM"; playerId: RPGId; itemId: RPGId }
   | { type: "EQUIP"; playerId: RPGId; itemId: RPGId }
   | { type: "OPEN_DIALOGUE"; playerId: RPGId; npcId: RPGId }

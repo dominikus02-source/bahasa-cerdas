@@ -47,6 +47,17 @@ import type { RPGBattleState } from "../combat/battle-state";
 import { applyVictory, applyDefeat } from "../combat/battle-apply";
 import { EQUIPMENT } from "../data/equipment";
 import { normToTile } from "../world/grid-coords";
+import {
+  startDialogue,
+  advanceDialogue,
+  collectSignals,
+  currentNode,
+  pendakiEntryNode,
+  type DialogueSession,
+} from "../interaction/dialogue";
+import { getDialogueTree, NPC_ROUTING } from "../data/dialogues";
+import { getShopMenu, validatePurchase, type ShopSession } from "../interaction/shop";
+import { validateForge, type ForgeSession } from "../interaction/forge";
 import { checkCollision } from "../world/collision";
 import { findNearestInteraction, processInteraction, type RPGInteractionResult } from "../world/interaction";
 import type { RPGCameraState } from "../rendering/camera";
@@ -104,11 +115,18 @@ export interface RPGEngine {
   getGoldIntents(): Array<{ battleId: string; amount: number }>;
   /** Defeated boss instance ids (persisted, never respawn). */
   getDeadBossIds(): string[];
+  /** Interaction mode: exactly one of WORLD/DIALOGUE/SHOP/FORGE/BATTLE. */
+  getMode(): RPGInteractionMode;
+  /** Active interaction session snapshot, if any. */
+  getSession(): DialogueSession | ShopSession | ForgeSession | null;
   /** Subscribe to events. */
   on(event: string, handler: (data: unknown) => void): () => void;
   /** Stop the engine and clean up. */
   destroy(): void;
 }
+
+/** Interaction mode — exactly one owner of input at a time (P1.5 §15). */
+export type RPGInteractionMode = "WORLD" | "DIALOGUE" | "SHOP" | "FORGE" | "BATTLE";
 
 /** Create and start the RPG engine. */
 export function createEngine(config: RPGEngineConfig): RPGEngine {
@@ -155,6 +173,12 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
       console.warn(`[rpg] spawn without canonical definition skipped: ${id}`);
     }
   }
+  // Interaction session (P1.5): exactly one of DIALOGUE/SHOP/FORGE, else
+  // WORLD mode. Sessions freeze world input; battle freezes sessions.
+  // Never persisted mid-session (prototype never saves open menus either).
+  let session: DialogueSession | ShopSession | ForgeSession | null = null;
+  // Pendaki campfire cooldown (wall-clock, runtime-only like prototype restT).
+  let restCooldownUntilMs = 0;
   // Throttle for gated-portal notices (prototype: once per 1.5s equivalent —
   // here: emit only when the blocked signature changes).
   let lastPortalBlocked: string | null = null;
@@ -289,8 +313,9 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
   ): RPGGameState {
     switch (command.type) {
       case "MOVE": {
-        // World movement is frozen while a battle is active (prototype mode).
-        if (currentState.battle !== null) return currentState;
+        // World movement is frozen while a battle OR interaction session
+        // (dialogue/shop/forge) is active.
+        if (currentState.battle !== null || session !== null) return currentState;
         // Update facing if direction changed
         let player = currentState.player;
         if (player.facing !== command.dir) {
@@ -369,8 +394,8 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
         return currentState;
       }
       case "INTERACT": {
-        // No world interaction while a battle is active.
-        if (currentState.battle !== null) return currentState;
+        // No world interaction while a battle OR session is active.
+        if (currentState.battle !== null || session !== null) return currentState;
         // Canonical maps: facing-adjacent tile (prototype interact order —
         // chest, then NPC). Reward keys stay canonical-verbatim here; the
         // inventory mapping is owned by a later phase (documented).
@@ -411,16 +436,54 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
                 result: { kind: "CHEST_EMPTY", chestId: out.chestId },
               });
             } else if (out.kind === "NPC") {
-              eventBus.emit({
-                type: "INTERACTION",
-                playerId: currentState.session.playerId,
-                interactionId: `int.npc.${out.npcId}`,
-                result: {
-                  kind: "DIALOGUE",
+              // Route by canonical NPC role: merchants open SHOP sessions
+              // (greeting preserved in data; met-flag persisted via flags),
+              // others open DIALOGUE sessions. No story content invented.
+              const route = NPC_ROUTING[out.npcId];
+              if (route === "SHOP") {
+                const menu = getShopMenu(out.npcId);
+                if (!menu) return currentState;
+                flags[menu.metFlag] = true;
+                session = { kind: "SHOP", npcId: out.npcId };
+                eventBus.emit({
+                  type: "SHOP_OPEN",
+                  playerId: currentState.session.playerId,
                   npcId: out.npcId,
-                  dialogueId: `dlg.${out.npcId}.intro`,
-                },
-              });
+                });
+              } else {
+                const tree = getDialogueTree(out.npcId);
+                if (!tree) return currentState;
+                const startNode =
+                  out.npcId === "pendaki"
+                    ? pendakiEntryNode(Date.now(), restCooldownUntilMs)
+                    : undefined;
+                const sess = startDialogue(out.npcId, 0, startNode);
+                if (!sess) return currentState;
+                session = sess;
+                // REST applies on display (prototype campfire): full heal.
+                const cur = currentNode(tree, sess);
+                const rest = cur?.node.effects?.some((e) => e.type === "REST") === true;
+                let playerNow = currentState.player;
+                if (rest) {
+                  playerNow = {
+                    ...playerNow,
+                    stats: {
+                      ...playerNow.stats,
+                      hp: playerNow.stats.maxHp,
+                      mp: playerNow.stats.maxMp,
+                    },
+                  };
+                  restCooldownUntilMs = Date.now() + 120000;
+                }
+                eventBus.emit({
+                  type: "DIALOGUE_START",
+                  playerId: currentState.session.playerId,
+                  npcId: out.npcId,
+                  dialogueId: tree.dialogueId,
+                  nodeId: sess.nodeId,
+                });
+                return { ...currentState, player: playerNow };
+              }
             }
           }
           return currentState;
@@ -510,6 +573,129 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
         // NOT supported in battle yet: prototype consumable keys (ram/teh/elix)
         // have no production inventory mapping (reward adapter DEFERRED).
         // Documented no-op — the inventory phase owns this command.
+        return currentState;
+      }
+      case "DIALOGUE_ADVANCE": {
+        if (!session || session.kind !== "DIALOGUE") return currentState;
+        if (command.playerId !== playerId) return currentState;
+        const tree = getDialogueTree(session.npcId);
+        if (!tree) return currentState;
+        session = advanceDialogue(tree, session);
+        eventBus.emit({
+          type: "DIALOGUE_ADVANCE",
+          playerId: currentState.session.playerId,
+          npcId: session.npcId,
+          nodeId: session.nodeId,
+        });
+        return currentState;
+      }
+      case "DIALOGUE_END": {
+        if (!session || session.kind !== "DIALOGUE") return currentState;
+        if (command.playerId !== playerId) return currentState;
+        const tree = getDialogueTree(session.npcId);
+        const signals = tree ? collectSignals(tree, session) : [];
+        const npcId = session.npcId;
+        const completed = session.atEnd;
+        session = null;
+        eventBus.emit({
+          type: "DIALOGUE_END",
+          playerId: currentState.session.playerId,
+          npcId,
+          completed,
+        });
+        // P1.7 hook: prototype side-effects as data, explicitly UNAPPLIED.
+        if (signals.length > 0) {
+          eventBus.emit({
+            type: "INTERACTION",
+            playerId: currentState.session.playerId,
+            interactionId: `int.npc.${npcId}`,
+            result: { kind: "DIALOGUE_COMPLETE", npcId, signals, applied: false },
+          });
+        }
+        return currentState;
+      }
+      case "SHOP_BUY": {
+        if (!session || session.kind !== "SHOP") return currentState;
+        if (command.playerId !== playerId) return currentState;
+        // Empu forge entry: switch SHOP → FORGE (prototype single menu).
+        if (command.itemId === "forge:open") {
+          if (session.npcId !== "empu") return currentState;
+          session = { kind: "FORGE", npcId: session.npcId };
+          eventBus.emit({
+            type: "FORGE_OPEN",
+            playerId: currentState.session.playerId,
+            npcId: session.npcId,
+          });
+          return currentState;
+        }
+        // No spendable balance exists yet (gold ledger is unclaimed-only):
+        // goldAvailable 0 → deterministic INSUFFICIENT_GOLD until economy.
+        const res = validatePurchase({
+          npcId: session.npcId,
+          itemKey: command.itemId,
+          quantity: command.quantity,
+          goldAvailable: 0,
+        });
+        if (!res.ok) return currentState;
+        eventBus.emit({
+          type: "SHOP_PURCHASE",
+          playerId: currentState.session.playerId,
+          npcId: res.intent.npcId,
+          itemId: res.intent.itemKey,
+          quantity: res.intent.quantity,
+          totalPrice: res.intent.totalPrice,
+        });
+        return currentState;
+      }
+      case "SHOP_CLOSE": {
+        if (!session || session.kind !== "SHOP") return currentState;
+        if (command.playerId !== playerId) return currentState;
+        const npcId = session.npcId;
+        session = null;
+        eventBus.emit({
+          type: "SHOP_CLOSE",
+          playerId: currentState.session.playerId,
+          npcId,
+        });
+        return currentState;
+      }
+      case "FORGE_CRAFT": {
+        if (!session || session.kind !== "FORGE") return currentState;
+        if (command.playerId !== playerId) return currentState;
+        // Forge upgrades the CURRENT weapon only (prototype verbatim).
+        if (command.equipmentId !== currentState.player.equipment.weaponId) {
+          return currentState;
+        }
+        // currentPlus/bijih/gold availability: no persisted plus state and no
+        // spendable economy yet → deterministic INSUFFICIENT_* until later.
+        const res = validateForge({
+          npcId: session.npcId,
+          weaponId: command.equipmentId,
+          currentPlus: 0,
+          bijihAvailable: 0,
+          goldAvailable: 0,
+        });
+        if (!res.ok) return currentState;
+        eventBus.emit({
+          type: "FORGE_REQUEST",
+          playerId: currentState.session.playerId,
+          npcId: res.intent.npcId,
+          equipmentId: res.intent.weaponId,
+          plus: res.intent.plus,
+        });
+        return currentState;
+      }
+      case "FORGE_CLOSE": {
+        if (!session || session.kind !== "FORGE") return currentState;
+        if (command.playerId !== playerId) return currentState;
+        const npcId = session.npcId;
+        // Return to the shop menu (prototype single menu), silently.
+        session = { kind: "SHOP", npcId };
+        eventBus.emit({
+          type: "FORGE_CLOSE",
+          playerId: currentState.session.playerId,
+          npcId,
+        });
         return currentState;
       }
       default:
@@ -637,6 +823,16 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     return [...deadBossIds];
   }
 
+  function getMode(): RPGInteractionMode {
+    if (state.battle !== null) return "BATTLE";
+    if (!session) return "WORLD";
+    return session.kind;
+  }
+
+  function getSession(): DialogueSession | ShopSession | ForgeSession | null {
+    return session ? { ...session } : null;
+  }
+
   function on(event: string, handler: (data: unknown) => void): () => void {
     return eventBus.subscribe((evt) => {
       if (evt.type === event) {
@@ -663,6 +859,8 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     getLiveEnemies,
     getGoldIntents,
     getDeadBossIds,
+    getMode,
+    getSession,
     on,
     destroy,
     // Expose for keyboard adapter

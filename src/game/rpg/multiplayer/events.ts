@@ -39,6 +39,28 @@ export type RPGEvent =
       battleId: RPGId;
       respawn: { mapId: RPGId; x: number; y: number };
     }
+  | { type: "DIALOGUE_START"; playerId: RPGId; npcId: RPGId; dialogueId: RPGId; nodeId: RPGId }
+  | { type: "DIALOGUE_ADVANCE"; playerId: RPGId; npcId: RPGId; nodeId: RPGId }
+  | { type: "DIALOGUE_END"; playerId: RPGId; npcId: RPGId; completed: boolean }
+  | { type: "SHOP_OPEN"; playerId: RPGId; npcId: RPGId }
+  | {
+      type: "SHOP_PURCHASE";
+      playerId: RPGId;
+      npcId: RPGId;
+      itemId: RPGId;
+      quantity: number;
+      totalPrice: number;
+    }
+  | { type: "SHOP_CLOSE"; playerId: RPGId; npcId: RPGId }
+  | { type: "FORGE_OPEN"; playerId: RPGId; npcId: RPGId }
+  | {
+      type: "FORGE_REQUEST";
+      playerId: RPGId;
+      npcId: RPGId;
+      equipmentId: RPGId;
+      plus: number;
+    }
+  | { type: "FORGE_CLOSE"; playerId: RPGId; npcId: RPGId }
   | { type: "INTERACTION"; playerId: RPGId; interactionId: RPGId; result: unknown }
   | {
       type: "MAP_TRANSITION";
