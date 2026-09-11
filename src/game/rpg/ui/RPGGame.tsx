@@ -22,6 +22,8 @@ import { useEffect, useRef, useState } from "react";
 import { createEngine, type RPGEngine } from "../core/game-engine";
 import { createKeyboardInputSource } from "../core/keyboard-input";
 import { RPGGameHUD } from "./RPGGameHUD";
+import { RPGBattleLearning } from "./RPGBattleLearning";
+import type { LearningChallenge } from "../learning/rpg-challenge";
 
 interface RPGGameProps {
   /** Player ID from session. */
@@ -50,6 +52,16 @@ export function RPGGame({ playerId, playerName }: RPGGameProps) {
     xpToNext: number;
     mapName: string;
   } | null>(null);
+
+  // P1.9A learning slice — read-only snapshots from the engine (same poll).
+  // Challenge is client-safe (answer stripped server-side); feedback is the
+  // retained {correct} flag. No battle truth duplicated here.
+  const [learning, setLearning] = useState<{
+    inBattle: boolean;
+    status?: "PENDING" | "RESOLVED";
+    challenge: LearningChallenge | null;
+    feedback: { correct: boolean } | null;
+  }>({ inBattle: false, challenge: null, feedback: null });
 
   // Initialize engine on mount
   useEffect(() => {
@@ -82,6 +94,13 @@ export function RPGGame({ playerId, playerName }: RPGGameProps) {
         xp: state.player.progression.xp,
         xpToNext: state.player.progression.xpToNextLevel,
         mapName: state.world.mapId,
+      });
+      const battle = engine.getBattle();
+      setLearning({
+        inBattle: battle !== null,
+        status: battle?.learning?.status,
+        challenge: engine.getLearningChallenge(),
+        feedback: engine.getLearningFeedback(),
       });
     }, 100); // 10 Hz HUD update
 
@@ -116,6 +135,18 @@ export function RPGGame({ playerId, playerName }: RPGGameProps) {
           mapName={hudState.mapName}
         />
       )}
+
+      {/* P1.9A battle learning slice — overlay over the live battle canvas.
+          Handlers go through engine pipeline entries (same validation as
+          input commands); presentation only here. */}
+      <RPGBattleLearning
+        inBattle={learning.inBattle}
+        learningStatus={learning.status}
+        challenge={learning.challenge}
+        feedback={learning.feedback}
+        onAnswer={(answer) => engineRef.current?.submitLearningAnswer(answer)}
+        onAttack={() => engineRef.current?.attackBasic()}
+      />
 
       {/* Mobile touch hint */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 md:hidden">

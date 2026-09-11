@@ -371,7 +371,8 @@
     "test:rpg-learning-contract": "npx tsx scripts/test-rpg-learning-contract.ts",
     "test:rpg-learning-selector": "npx tsx scripts/test-rpg-learning-selector.ts",
     "test:rpg-learning-gameplay": "npx tsx scripts/test-rpg-learning-gameplay.ts",
-    "test:rpg-learning-hardening": "npx tsx scripts/test-rpg-learning-hardening.ts"
+    "test:rpg-learning-hardening": "npx tsx scripts/test-rpg-learning-hardening.ts",
+    "test:rpg-learning-ux": "npx tsx scripts/test-rpg-learning-ux.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

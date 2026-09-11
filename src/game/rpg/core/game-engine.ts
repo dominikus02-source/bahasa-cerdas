@@ -80,7 +80,8 @@ import {
   submitBattleAnswer,
   type LearningEncounter,
 } from "../learning/learning-runtime";
-import type { SoalLike, ResolvedChallenge } from "../learning/rpg-challenge";
+import type { SoalLike, ResolvedChallenge, LearningChallenge } from "../learning/rpg-challenge";
+import { toClientChallenge } from "../learning/rpg-challenge";
 import type { LearningTriggerPolicy } from "../learning/learning-trigger";
 import {
   createQuestLineState,
@@ -153,6 +154,14 @@ export interface RPGEngine {
   saveGame(persist: RPGPersistence): boolean;
   /** Active battle state, if any (renderer/UI consume only). */
   getBattle(): RPGBattleState | null;
+  /** P1.9A slice: pending client-safe challenge (null unless PENDING). */
+  getLearningChallenge(): LearningChallenge | null;
+  /** P1.9A slice: last answer feedback until consumed. */
+  getLearningFeedback(): { correct: boolean } | null;
+  /** P1.9A slice: submit an answer through the SUBMIT pipeline. */
+  submitLearningAnswer(answer: string): boolean;
+  /** P1.9A slice: basic attack vs first living enemy. */
+  attackBasic(): boolean;
   /** Live encounter table snapshot (debug/tests). */
   getLiveEnemies(): LiveEnemy[];
   /** Unclaimed gold intents for the future economy phase. */
@@ -234,6 +243,9 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
   const learningChallenges = new Map<string, ResolvedChallenge>();
   let activeEncounter: LearningEncounter | null = null;
   let pendingLearning: { correct: boolean } | null = null;
+  // P1.9A: last feedback retained for UI until consumed by an attack or
+  // the battle closes (transient presentation state, never persisted).
+  let lastLearningFeedback: { correct: boolean } | null = null;
   if (canonicalStart) {
     const built = buildEncounterTable(enemySpawnsOf(canonicalStart), deadBossIds);
     liveEnemies = built.table;
@@ -284,6 +296,7 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
   function clearLearning(challengeId?: string): void {
     activeEncounter = null;
     pendingLearning = null;
+    lastLearningFeedback = null;
     if (challengeId) learningChallenges.delete(challengeId);
   }
 
@@ -720,6 +733,7 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
         const b = activeBattle;
         const learned = pendingLearning;
         pendingLearning = null;
+        lastLearningFeedback = null;
         const out = playerAct(
           b.state,
           {
@@ -801,6 +815,7 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
         if (!out.accepted) return currentState;
         activeEncounter = out.encounter;
         pendingLearning = { correct: out.correct };
+        lastLearningFeedback = { correct: out.correct };
         const nb: RPGBattleState = {
           ...activeBattle.state,
           learning: sub ? { ...sub, status: "RESOLVED" } : sub,
@@ -1264,6 +1279,52 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     return activeBattle?.state ?? null;
   }
 
+  /**
+   * P1.9A learning UX slice (thin pipeline entry points — same validation
+   * as input commands; no direct mutation, no client authority).
+   */
+
+  /** Client-safe challenge for the pending moment (null unless PENDING). */
+  function getLearningChallenge(): LearningChallenge | null {
+    const sub = activeBattle?.state.learning;
+    if (!sub || sub.status !== "PENDING") return null;
+    const resolved = learningChallenges.get(sub.challengeId);
+    return resolved ? toClientChallenge(resolved) : null;
+  }
+
+  /** Last answer feedback (retained until consumed by an attack/close). */
+  function getLearningFeedback(): { correct: boolean } | null {
+    return lastLearningFeedback ? { ...lastLearningFeedback } : null;
+  }
+
+  /** Submit an answer through the canonical SUBMIT pipeline. */
+  function submitLearningAnswer(answer: string): boolean {
+    const sub = activeBattle?.state.learning;
+    if (!sub || sub.status !== "PENDING") return false;
+    state = processCommand(state, {
+      type: "SUBMIT_LEARNING_ANSWER",
+      playerId,
+      challengeId: sub.challengeId,
+      answer,
+    });
+    return activeBattle?.state.learning?.status === "RESOLVED";
+  }
+
+  /** Attack the first living enemy with a basic attack (slice flow). */
+  function attackBasic(): boolean {
+    if (!activeBattle || state.battle === null) return false;
+    const foeId = activeBattle.state.enemies.find((e) => e.hp > 0)?.id;
+    if (!foeId) return false;
+    const before = activeBattle.state.turn;
+    state = processCommand(state, {
+      type: "ATTACK",
+      playerId,
+      targetId: foeId,
+      skillId: "basic",
+    });
+    return (activeBattle?.state.turn ?? before) > before;
+  }
+
   function getLiveEnemies(): LiveEnemy[] {
     return liveEnemies.map((e) => ({ ...e, tile: { ...e.tile }, spawnTile: { ...e.spawnTile } }));
   }
@@ -1325,6 +1386,10 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     getOpenedChests,
     saveGame,
     getBattle,
+    getLearningChallenge,
+    getLearningFeedback,
+    submitLearningAnswer,
+    attackBasic,
     getLiveEnemies,
     getGoldIntents,
     getDeadBossIds,
