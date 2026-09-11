@@ -80,6 +80,7 @@ export type PurchaseRejection =
   | "UNKNOWN_SHOP"
   | "UNKNOWN_ITEM"
   | "INVALID_QUANTITY"
+  | "EQUIPMENT_UNMAPPED"
   | "INSUFFICIENT_GOLD";
 
 export interface PurchaseIntent {
@@ -97,12 +98,19 @@ export type PurchaseResult =
 /**
  * Validate a purchase. Returns an INTENT (never mutates inventory/gold —
  * the engine/applier owns mutation). Deterministic, no RNG.
+ *
+ * `equipmentResolvable` reports whether a gear listing (slot wpn/arm) can be
+ * delivered to production equipment state. Prototype gear keys (baja/kulit/
+ * empu) have no production counterpart, so the engine passes the default
+ * (false) and gear deterministically yields EQUIPMENT_UNMAPPED — explicit,
+ * never silent, never substituted.
  */
 export function validatePurchase(args: {
   npcId: string;
   itemKey: string;
   quantity: number;
   goldAvailable: number;
+  equipmentResolvable?: (key: string) => boolean;
 }): PurchaseResult {
   const menu = SHOP_MENUS[args.npcId];
   if (!menu) return { ok: false, reason: "UNKNOWN_SHOP" };
@@ -110,6 +118,9 @@ export function validatePurchase(args: {
   if (!listing) return { ok: false, reason: "UNKNOWN_ITEM" };
   if (!Number.isInteger(args.quantity) || args.quantity <= 0) {
     return { ok: false, reason: "INVALID_QUANTITY" };
+  }
+  if (listing.slot !== "consumable" && !(args.equipmentResolvable?.(args.itemKey) === true)) {
+    return { ok: false, reason: "EQUIPMENT_UNMAPPED" };
   }
   const totalPrice = listing.price * args.quantity;
   if (args.goldAvailable < totalPrice) {

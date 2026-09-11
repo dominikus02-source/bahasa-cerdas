@@ -43,6 +43,9 @@ export interface RPGEquipment {
   weaponId: RPGId | null;
   armorId: RPGId | null;
   accessoryId: RPGId | null;
+  /** Forge enhancement on the CURRENT weapon, +0..+5 (prototype wpnPlus).
+   *  Base id stays canonical — never invent plus-suffixed ids. */
+  weaponPlus?: number;
 }
 
 /** The authoritative player slice. */
@@ -66,6 +69,6 @@ export function createDefaultPlayer(id: RPGId, name: string): RPGPlayerState {
     stats: { hp: 100, maxHp: 100, mp: 20, maxMp: 20, attack: 10, defense: 5, speed: 1 },
     progression: { level: 1, xp: 0, xpToNextLevel: 100 },
     inventory: { items: [] },
-    equipment: { weaponId: null, armorId: null, accessoryId: null },
+    equipment: { weaponId: null, armorId: null, accessoryId: null, weaponPlus: 0 },
   };
 }

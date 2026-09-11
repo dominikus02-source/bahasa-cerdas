@@ -41,6 +41,12 @@ export interface RPGMapSideState {
   deadBossIds?: string[];
   /** Unclaimed gold intents for the future economy phase (never dropped). */
   goldIntents?: Array<{ battleId: string; amount: number }>;
+  /** Spendable gold balance (canonical economy, P1.6). */
+  gold?: number;
+  /** Gold audit ledger (append-only). */
+  goldLedger?: Array<{ id: string; delta: number; reason: string }>;
+  /** Preserved equipment intents (unmapped prototype gear). */
+  equipmentIntents?: Array<{ source: string; kind: "wpn" | "arm"; key: string }>;
 }
 
 /** Save data format — what gets serialized. */
@@ -78,6 +84,9 @@ interface RPGSaveData {
     openedChests?: string[];
     deadBossIds?: string[];
     goldIntents?: Array<{ battleId: string; amount: number }>;
+    gold?: number;
+    goldLedger?: Array<{ id: string; delta: number; reason: string }>;
+    equipmentIntents?: Array<{ source: string; kind: "wpn" | "arm"; key: string }>;
   };
 }
 
@@ -122,6 +131,9 @@ export function createLocalStoragePersistence(
           openedChests: state.openedChests,
           deadBossIds: state.deadBossIds,
           goldIntents: state.goldIntents,
+          gold: state.gold,
+          goldLedger: state.goldLedger,
+          equipmentIntents: state.equipmentIntents,
         },
       };
 
@@ -196,6 +208,9 @@ export function createLocalStoragePersistence(
         openedChests: data.world?.openedChests ?? [],
         deadBossIds: data.world?.deadBossIds ?? [],
         goldIntents: data.world?.goldIntents ?? [],
+        gold: data.world?.gold,
+        goldLedger: data.world?.goldLedger,
+        equipmentIntents: data.world?.equipmentIntents,
         learning: {
           profile: { playerId: data.session.playerId, mastery: {} },
           activeChallengeId: null,

@@ -118,8 +118,8 @@ check("16. infinite canonical stock (no count field)", (() => {
   return !("stock" in m && "quantity" in (m.stock[0] as object)) || !("quantity" in (m.stock[0] as Record<string, unknown>));
 })());
 check("17. deterministic price", (() => {
-  const a = validatePurchase({ npcId: "empu", itemKey: "wpn:empu", quantity: 1, goldAvailable: 9999 });
-  return a.ok && a.intent.totalPrice === 450;
+  const a = validatePurchase({ npcId: "ratmi", itemKey: "ram", quantity: 3, goldAvailable: 9999 });
+  return a.ok && a.intent.totalPrice === 90;
 })());
 check("18. no duplicate purchase (pure, no ledger)", (() => {
   const args = { npcId: "ratmi", itemKey: "teh", quantity: 1, goldAvailable: 9999 };
@@ -175,12 +175,12 @@ console.log("\n💾 F. Persistence");
     const saved = { flags: { ratmiMet: true, empuMet: true } };
     return JSON.parse(JSON.stringify(saved)).flags.empuMet === true;
   })() && p.includes("flags"));
-  check("35. gold ledger single source", (() => {
+  check("35. gold ledger single source (no wallet/saldo)", (() => {
     const hits: string[] = [];
     const files = ["src/game/rpg/core/game-engine.ts", "src/game/rpg/core/persistence.ts", "src/game/rpg/combat/battle-apply.ts", "src/game/rpg/combat/battle-core.ts"];
     for (const f of files) {
       const s = strip(src(f));
-      if (/wallet|saldo|balance/i.test(s)) hits.push(f);
+      if (/wallet|saldo|User\.saldo/i.test(s)) hits.push(f);
     }
     return hits.length === 0;
   })());

@@ -62,12 +62,14 @@ export const FLAG_INTENT_NAGA_NOTE = "PROPOSAL-ONLY:naDead_requires_founder_appr
 /* ---------- Equipment stat snapshot (minimal resolver) ---------- */
 
 /**
- * Resolve combat attack/defense = base + equipped modifiers.
- * Unknown equipment ids are ignored (never invented). Pure.
+ * Resolve combat attack/defense = base + equipped modifiers + forge plus.
+ * The plus term transcribes prototype pAtk (atk + WPN bonus + wpnPlus) and
+ * affects combat ONLY through this pre-core boundary — damage formulas and
+ * RNG below are untouched. Unknown equipment ids are ignored (never invented).
  */
 export function resolveCombatStats(
   base: { attack: number; defense: number },
-  equipment: { weaponId: string | null; armorId: string | null; accessoryId: string | null },
+  equipment: { weaponId: string | null; armorId: string | null; accessoryId: string | null; weaponPlus?: number },
   table: RPGEquipmentDefinition[],
 ): { attack: number; defense: number } {
   let attack = base.attack;
@@ -79,6 +81,7 @@ export function resolveCombatStats(
     attack += def.modifiers.attack ?? 0;
     defense += def.modifiers.defense ?? 0;
   }
+  attack += Math.max(0, Math.min(5, equipment.weaponPlus ?? 0));
   return { attack, defense };
 }
 

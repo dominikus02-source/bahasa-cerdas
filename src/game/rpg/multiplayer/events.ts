@@ -61,6 +61,10 @@ export type RPGEvent =
       plus: number;
     }
   | { type: "FORGE_CLOSE"; playerId: RPGId; npcId: RPGId }
+  | { type: "GOLD_CHANGED"; playerId: RPGId; balance: number; delta: number; reason: string }
+  | { type: "ITEM_GRANTED"; playerId: RPGId; itemId: RPGId; quantity: number; source: string }
+  | { type: "ITEM_CONSUMED"; playerId: RPGId; itemId: RPGId; source: string }
+  | { type: "EQUIPMENT_UPGRADED"; playerId: RPGId; weaponId: RPGId; plus: number }
   | { type: "INTERACTION"; playerId: RPGId; interactionId: RPGId; result: unknown }
   | {
       type: "MAP_TRANSITION";

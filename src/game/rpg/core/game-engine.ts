@@ -48,6 +48,23 @@ import { applyVictory, applyDefeat } from "../combat/battle-apply";
 import { EQUIPMENT } from "../data/equipment";
 import { normToTile } from "../world/grid-coords";
 import {
+  createGoldState,
+  creditGold,
+  applyShopPurchase,
+  applyForgeUpgrade,
+  INITIAL_GOLD,
+  type GoldState,
+  type GoldLedgerEntry,
+} from "../economy/economy";
+import {
+  applyChestRewards,
+  applyConsume,
+  fishSellValue,
+  removeAllFish,
+  type EquipmentIntent,
+} from "../economy/rewards";
+import { addItem } from "../player/inventory";
+import {
   startDialogue,
   advanceDialogue,
   collectSignals,
@@ -87,6 +104,12 @@ export interface RPGEngineConfig {
   deadBossIds?: string[];
   /** Unclaimed gold intents carried for the future economy phase. */
   goldIntents?: Array<{ battleId: string; amount: number }>;
+  /** Spendable gold override (default INITIAL_GOLD for fresh players). */
+  gold?: number;
+  /** Restored gold ledger (dedup continuity across save/load). */
+  goldLedger?: GoldLedgerEntry[];
+  /** Restored equipment intents (preserved across save/load). */
+  equipmentIntents?: EquipmentIntent[];
 }
 
 /** The running engine instance. */
@@ -115,6 +138,12 @@ export interface RPGEngine {
   getGoldIntents(): Array<{ battleId: string; amount: number }>;
   /** Defeated boss instance ids (persisted, never respawn). */
   getDeadBossIds(): string[];
+  /** Spendable gold balance (canonical economy). */
+  getGold(): number;
+  /** Gold audit ledger (append-only; balance must equal its sum). */
+  getGoldLedger(): GoldLedgerEntry[];
+  /** Preserved equipment intents (unmapped prototype gear). */
+  getEquipmentIntents(): EquipmentIntent[];
   /** Interaction mode: exactly one of WORLD/DIALOGUE/SHOP/FORGE/BATTLE. */
   getMode(): RPGInteractionMode;
   /** Active interaction session snapshot, if any. */
@@ -164,6 +193,16 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     ...(config.goldIntents ?? []),
   ];
   const appliedBattleIds = new Set<string>();
+  // Canonical economy (P1.6): ONE spendable balance + audit ledger, both
+  // engine-owned (server-authoritative later). No wallet, no second balance.
+  let gold: GoldState = {
+    balance: config.gold ?? INITIAL_GOLD,
+    ledger: (config.goldLedger ?? []).map((e) => ({ ...e })),
+  };
+  // Preserved equipment intents (prototype wpn/arm keys without production
+  // counterpart — never silently mapped, never dropped).
+  let equipmentIntents: EquipmentIntent[] = (config.equipmentIntents ?? []).map((e) => ({ ...e }));
+  let txSeq = 0;
   let activeBattle: { state: RPGBattleState; rng: import("../combat/battle-rng").BattleRng } | null = null;
   let battleSeq = 0;
   if (canonicalStart) {
@@ -262,9 +301,38 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     for (const [k, v] of Object.entries(applied.flagsAdded)) flags[k] = v;
     for (const id of applied.deadBossIds) deadBossIds.add(id);
     for (const id of res.deadEnemyIds) liveEnemies = markDead(liveEnemies, id);
-    if (applied.goldIntent) goldIntents = [...goldIntents, applied.goldIntent];
+    if (applied.goldIntent) {
+      goldIntents = [...goldIntents, applied.goldIntent];
+      // Spendable credit through the canonical applier (dedup on battleId).
+      const before = gold.balance;
+      gold = creditGold(gold, battle.battleId, applied.goldIntent.amount, "battle-victory");
+      if (gold.balance !== before) {
+        eventBus.emit({
+          type: "GOLD_CHANGED",
+          playerId: currentState.session.playerId,
+          balance: gold.balance,
+          delta: applied.goldIntent.amount,
+          reason: "battle-victory",
+        });
+      }
+    }
+    // Battle drops (canonical bijih) go straight to inventory.
+    let dropInventory = currentState.player.inventory;
+    for (const d of res.dropIntents) {
+      if (d.kind === "bijih") {
+        dropInventory = addItem(dropInventory, "bijih", 1);
+        eventBus.emit({
+          type: "ITEM_GRANTED",
+          playerId: currentState.session.playerId,
+          itemId: "bijih",
+          quantity: 1,
+          source: battle.battleId,
+        });
+      }
+    }
     const player = {
       ...currentState.player,
+      inventory: dropInventory,
       stats: applied.stats,
       progression: applied.progression,
     };
@@ -417,17 +485,39 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
             });
             if (out.kind === "CHEST_OPENED") {
               openedChests.add(out.chestId);
+              // Canonical application: consumables/materials now, gear as
+              // preserved intents (no silent mapping, no loss).
+              const applied = applyChestRewards(
+                currentState.player.inventory,
+                out.chestId,
+                out.give,
+              );
+              const player = {
+                ...currentState.player,
+                inventory: applied.inventory,
+              };
+              equipmentIntents = [...equipmentIntents, ...applied.equipmentIntents];
+              for (const a of applied.applied) {
+                eventBus.emit({
+                  type: "ITEM_GRANTED",
+                  playerId: currentState.session.playerId,
+                  itemId: a.itemId,
+                  quantity: a.quantity,
+                  source: `chest:${out.chestId}`,
+                });
+              }
               eventBus.emit({
                 type: "INTERACTION",
                 playerId: currentState.session.playerId,
                 interactionId: `int.chest.${out.chestId}`,
                 result: {
                   kind: "LOOT",
-                  items: [],
+                  items: applied.applied.map((a) => a.itemId),
                   canonicalGive: out.give,
-                  rewardMapping: "DEFERRED",
+                  rewardMapping: "APPLIED",
                 },
               });
+              return { ...currentState, player };
             } else if (out.kind === "CHEST_EMPTY") {
               eventBus.emit({
                 type: "INTERACTION",
@@ -570,10 +660,32 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
         return next;
       }
       case "USE_ITEM": {
-        // NOT supported in battle yet: prototype consumable keys (ram/teh/elix)
-        // have no production inventory mapping (reward adapter DEFERRED).
-        // Documented no-op — the inventory phase owns this command.
-        return currentState;
+        // Consumables: WORLD mode only. Battle menu (ram/teh/elix) is a
+        // battle-UI concern owned by a later phase; the domain gate
+        // (BATTLE_RESTRICTED for fish) is already enforced by applyConsume.
+        // Prototype parity: STATUS-menu eating is world-side; BARANG-menu
+        // battle eating arrives with battle UI. Documented gap, not silence.
+        if (currentState.battle !== null || session !== null) return currentState;
+        if (command.playerId !== playerId) return currentState;
+        const res = applyConsume(
+          currentState.player.inventory,
+          currentState.player.stats,
+          command.itemId,
+          false,
+        );
+        if (!res.ok) return currentState;
+        const player = {
+          ...currentState.player,
+          inventory: res.applied.inventory,
+          stats: res.applied.stats,
+        };
+        eventBus.emit({
+          type: "ITEM_CONSUMED",
+          playerId: currentState.session.playerId,
+          itemId: command.itemId,
+          source: "world-use",
+        });
+        return { ...currentState, player };
       }
       case "DIALOGUE_ADVANCE": {
         if (!session || session.kind !== "DIALOGUE") return currentState;
@@ -628,24 +740,73 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
           });
           return currentState;
         }
-        // No spendable balance exists yet (gold ledger is unclaimed-only):
-        // goldAvailable 0 → deterministic INSUFFICIENT_GOLD until economy.
+        // Ratmi sell-all-fish (verbatim formula; counts from inventory).
+        if (command.itemId === "fish:sell-all") {
+          if (session.npcId !== "ratmi") return currentState;
+          const { total, counts } = fishSellValue(currentState.player.inventory);
+          const units = counts.f1 + counts.f2 + counts.f3;
+          if (total <= 0 || units <= 0) return currentState;
+          const txId = `fish-sell:${txSeq++}`;
+          const player = {
+            ...currentState.player,
+            inventory: removeAllFish(currentState.player.inventory),
+          };
+          gold = creditGold(gold, txId, total, "fish-sell");
+          eventBus.emit({
+            type: "SHOP_PURCHASE",
+            playerId: currentState.session.playerId,
+            npcId: session.npcId,
+            itemId: "fish:sell-all",
+            quantity: units,
+            totalPrice: total,
+          });
+          eventBus.emit({
+            type: "GOLD_CHANGED",
+            playerId: currentState.session.playerId,
+            balance: gold.balance,
+            delta: total,
+            reason: "fish-sell",
+          });
+          return { ...currentState, player };
+        }
+        // Atomic purchase: validate (real balance) → ledger-guarded apply.
         const res = validatePurchase({
           npcId: session.npcId,
           itemKey: command.itemId,
           quantity: command.quantity,
-          goldAvailable: 0,
+          goldAvailable: gold.balance,
         });
         if (!res.ok) return currentState;
-        eventBus.emit({
-          type: "SHOP_PURCHASE",
-          playerId: currentState.session.playerId,
-          npcId: res.intent.npcId,
-          itemId: res.intent.itemKey,
-          quantity: res.intent.quantity,
-          totalPrice: res.intent.totalPrice,
-        });
-        return currentState;
+        {
+          const txId = `shop:${txSeq++}`;
+          const done = applyShopPurchase(gold, currentState.player.inventory, res.intent, txId);
+          if (!done.applied) return currentState;
+          const player = { ...currentState.player, inventory: done.inventory };
+          gold = done.gold;
+          eventBus.emit({
+            type: "SHOP_PURCHASE",
+            playerId: currentState.session.playerId,
+            npcId: res.intent.npcId,
+            itemId: res.intent.itemKey,
+            quantity: res.intent.quantity,
+            totalPrice: res.intent.totalPrice,
+          });
+          eventBus.emit({
+            type: "GOLD_CHANGED",
+            playerId: currentState.session.playerId,
+            balance: gold.balance,
+            delta: -res.intent.totalPrice,
+            reason: "shop-buy",
+          });
+          eventBus.emit({
+            type: "ITEM_GRANTED",
+            playerId: currentState.session.playerId,
+            itemId: res.intent.itemKey,
+            quantity: res.intent.quantity,
+            source: txId,
+          });
+          return { ...currentState, player };
+        }
       }
       case "SHOP_CLOSE": {
         if (!session || session.kind !== "SHOP") return currentState;
@@ -666,24 +827,51 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
         if (command.equipmentId !== currentState.player.equipment.weaponId) {
           return currentState;
         }
-        // currentPlus/bijih/gold availability: no persisted plus state and no
-        // spendable economy yet → deterministic INSUFFICIENT_* until later.
+        // currentPlus/bijih/gold availability: real inventory + balance.
+        // weaponPlus has no persisted history yet → session starts at the
+        // production default (0); the cap is enforced against it (documented).
+        const bijih =
+          currentState.player.inventory.items.find((i) => i.itemId === "bijih")?.quantity ?? 0;
         const res = validateForge({
           npcId: session.npcId,
           weaponId: command.equipmentId,
-          currentPlus: 0,
-          bijihAvailable: 0,
-          goldAvailable: 0,
+          currentPlus: currentState.player.equipment.weaponPlus ?? 0,
+          bijihAvailable: bijih,
+          goldAvailable: gold.balance,
         });
         if (!res.ok) return currentState;
-        eventBus.emit({
-          type: "FORGE_REQUEST",
-          playerId: currentState.session.playerId,
-          npcId: res.intent.npcId,
-          equipmentId: res.intent.weaponId,
-          plus: res.intent.plus,
-        });
-        return currentState;
+        {
+          const txId = `forge:${txSeq++}`;
+          const done = applyForgeUpgrade(gold, currentState.player.inventory, res.intent, txId);
+          if (!done.applied || done.weaponPlus === undefined) return currentState;
+          const player = {
+            ...currentState.player,
+            inventory: done.inventory,
+            equipment: { ...currentState.player.equipment, weaponPlus: done.weaponPlus },
+          };
+          gold = done.gold;
+          eventBus.emit({
+            type: "FORGE_REQUEST",
+            playerId: currentState.session.playerId,
+            npcId: res.intent.npcId,
+            equipmentId: res.intent.weaponId,
+            plus: res.intent.plus,
+          });
+          eventBus.emit({
+            type: "GOLD_CHANGED",
+            playerId: currentState.session.playerId,
+            balance: gold.balance,
+            delta: -res.intent.goldCost,
+            reason: "forge",
+          });
+          eventBus.emit({
+            type: "EQUIPMENT_UPGRADED",
+            playerId: currentState.session.playerId,
+            weaponId: res.intent.weaponId,
+            plus: res.intent.plus,
+          });
+          return { ...currentState, player };
+        }
       }
       case "FORGE_CLOSE": {
         if (!session || session.kind !== "FORGE") return currentState;
@@ -804,6 +992,9 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
       openedChests: [...openedChests],
       deadBossIds: [...deadBossIds],
       goldIntents: goldIntents.map((g) => ({ ...g })),
+      gold: gold.balance,
+      goldLedger: gold.ledger.map((e) => ({ ...e })),
+      equipmentIntents: equipmentIntents.map((e) => ({ ...e })),
     });
   }
 
@@ -821,6 +1012,18 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
 
   function getDeadBossIds(): string[] {
     return [...deadBossIds];
+  }
+
+  function getGold(): number {
+    return gold.balance;
+  }
+
+  function getGoldLedger(): GoldLedgerEntry[] {
+    return gold.ledger.map((e) => ({ ...e }));
+  }
+
+  function getEquipmentIntents(): EquipmentIntent[] {
+    return equipmentIntents.map((e) => ({ ...e }));
   }
 
   function getMode(): RPGInteractionMode {
@@ -859,6 +1062,9 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     getLiveEnemies,
     getGoldIntents,
     getDeadBossIds,
+    getGold,
+    getGoldLedger,
+    getEquipmentIntents,
     getMode,
     getSession,
     on,

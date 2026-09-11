@@ -74,7 +74,7 @@ check("3. ATTACK routed with turn wiring", eng.includes("playerAct(") && eng.inc
 check("4. skillId passed through", eng.includes("skillId: command.skillId"));
 check("5. enemy auto-response wired", eng.includes("enemyAct(") && eng.includes("charm: flags.charm === true"));
 check("5b. escape routed", eng.includes("escapeBattle("));
-check("5c. USE_ITEM documented no-op", eng.includes('case "USE_ITEM"') && eng.includes("reward adapter DEFERRED"));
+check("5c. USE_ITEM consumes via applier (P1.6 economy)", eng.includes('case "USE_ITEM"') && eng.includes("applyConsume("));
 
 console.log("\n🏁 6-8. Exits clear battle");
 check("6-8. battle:null on WIN/DEFEAT/FLED paths", (() => {
@@ -138,7 +138,7 @@ console.log("\n🏳️ 17. Defeat respawn");
 }
 
 console.log("\n🔒 18-19. Terminal + dedup");
-check("18. engine rejects world input mid-battle", eng.includes("if (currentState.battle !== null) return currentState;"));
+check("18. engine rejects world input mid-battle", eng.includes("currentState.battle !== null || session !== null) return currentState;"));
 check("19. result guard before apply", eng.includes('res.outcome !== "WIN"') && eng.includes('res.outcome !== "LOSE"'));
 
 console.log("\n🖥️ 20-21. Purity");
