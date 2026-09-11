@@ -26,8 +26,26 @@ import { grantXp } from "../player/progression";
 import type { RPGWorldState } from "../world/world-state";
 import { MAP_VILLAGE_SQUARE } from "../data/maps";
 import { getCanonicalMap } from "../data/world-maps";
-import { loadCanonicalMap, spawnPosition } from "../world/map-loader";
-import { stepTile, interactTile } from "../world/world-step";
+import { stepTile, interactTile, facingTile } from "../world/world-step";
+import { loadCanonicalMap, spawnPosition, enemySpawnsOf } from "../world/map-loader";
+import {
+  buildEncounterTable,
+  findEncounterAt,
+  markDead,
+  tickRespawns,
+  type LiveEnemy,
+} from "../combat/encounter";
+import {
+  startBattle,
+  playerAct,
+  enemyAct,
+  escapeBattle,
+  toBattleResult,
+  hashBattleId,
+} from "../combat/battle-core";
+import type { RPGBattleState } from "../combat/battle-state";
+import { applyVictory, applyDefeat } from "../combat/battle-apply";
+import { EQUIPMENT } from "../data/equipment";
 import { normToTile } from "../world/grid-coords";
 import { checkCollision } from "../world/collision";
 import { findNearestInteraction, processInteraction, type RPGInteractionResult } from "../world/interaction";
@@ -54,6 +72,10 @@ export interface RPGEngineConfig {
   flags?: Record<string, boolean>;
   /** Already-opened chest ids (world/chest.ts idempotency). */
   openedChests?: string[];
+  /** Boss instance ids already defeated (persisted, never respawn). */
+  deadBossIds?: string[];
+  /** Unclaimed gold intents carried for the future economy phase. */
+  goldIntents?: Array<{ battleId: string; amount: number }>;
 }
 
 /** The running engine instance. */
@@ -74,6 +96,14 @@ export interface RPGEngine {
   getOpenedChests(): string[];
   /** Persist map + position + flags + chests via the persistence boundary. */
   saveGame(persist: RPGPersistence): boolean;
+  /** Active battle state, if any (renderer/UI consume only). */
+  getBattle(): RPGBattleState | null;
+  /** Live encounter table snapshot (debug/tests). */
+  getLiveEnemies(): LiveEnemy[];
+  /** Unclaimed gold intents for the future economy phase. */
+  getGoldIntents(): Array<{ battleId: string; amount: number }>;
+  /** Defeated boss instance ids (persisted, never respawn). */
+  getDeadBossIds(): string[];
   /** Subscribe to events. */
   on(event: string, handler: (data: unknown) => void): () => void;
   /** Stop the engine and clean up. */
@@ -107,6 +137,24 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
   // server-owned in multiplayer; persisted via RPGMapSideState).
   let flags: Record<string, boolean> = { ...(config.flags ?? {}) };
   const openedChests = new Set<string>(config.openedChests ?? []);
+  // Battle runtime (P1.4C): live encounter table, defeated bosses, unclaimed
+  // gold intents, applied-result dedup, and the active battle session.
+  // The BATTLE CORE stays pure — this closure owns all mutation.
+  const deadBossIds = new Set<string>(config.deadBossIds ?? []);
+  let liveEnemies: LiveEnemy[] = [];
+  let goldIntents: Array<{ battleId: string; amount: number }> = [
+    ...(config.goldIntents ?? []),
+  ];
+  const appliedBattleIds = new Set<string>();
+  let activeBattle: { state: RPGBattleState; rng: import("../combat/battle-rng").BattleRng } | null = null;
+  let battleSeq = 0;
+  if (canonicalStart) {
+    const built = buildEncounterTable(enemySpawnsOf(canonicalStart), deadBossIds);
+    liveEnemies = built.table;
+    for (const id of built.skippedSpawnIds) {
+      console.warn(`[rpg] spawn without canonical definition skipped: ${id}`);
+    }
+  }
   // Throttle for gated-portal notices (prototype: once per 1.5s equivalent —
   // here: emit only when the blocked signature changes).
   let lastPortalBlocked: string | null = null;
@@ -135,6 +183,103 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     inputSource = source;
   }
 
+  // ── Battle runtime helpers (P1.4C; pure core does resolution) ──────
+
+  /** Rebuild the live table for a map (portal transitions + defeat respawn). */
+  function reloadLiveEnemies(mapId: string): void {
+    const canon = getCanonicalMap(mapId);
+    if (!canon) return;
+    liveEnemies = buildEncounterTable(enemySpawnsOf(canon), deadBossIds).table;
+  }
+
+  /** Start a battle from a live enemy (movement frozen from here on). */
+  function startEncounterBattle(
+    currentState: RPGGameState,
+    mapId: string,
+    tile: { x: number; y: number },
+    foe: LiveEnemy,
+    playerState: RPGPlayerState,
+  ): RPGGameState {
+    const battleId = crypto.randomUUID();
+    const seed = hashBattleId(`${battleId}#${battleSeq++}`);
+    const started = startBattle({
+      battleId,
+      player: playerState,
+      equipmentTable: EQUIPMENT,
+      enemies: [{ def: foe.def, instanceId: foe.instanceId }],
+      origin: { mapId, x: tile.x, y: tile.y },
+      seed,
+    });
+    activeBattle = { state: started.state, rng: started.rng };
+    for (const ev of started.events) eventBus.emit(ev);
+    return { ...currentState, battle: started.state };
+  }
+
+  /** Apply a WIN result exactly once (dedup on battleId). */
+  function applyWinFlow(
+    currentState: RPGGameState,
+    battle: RPGBattleState,
+  ): RPGGameState {
+    if (appliedBattleIds.has(battle.battleId)) return currentState;
+    appliedBattleIds.add(battle.battleId);
+    const res = toBattleResult(battle);
+    if (!res || res.outcome !== "WIN") return currentState;
+    const bossIds = new Set(
+      liveEnemies.filter((e) => e.boss).map((e) => e.instanceId),
+    );
+    const applied = applyVictory({
+      stats: currentState.player.stats,
+      progression: currentState.player.progression,
+      battleHp: battle.player.hp,
+      battleMp: battle.player.mp ?? currentState.player.stats.mp,
+      result: res,
+      bossIds,
+    });
+    for (const [k, v] of Object.entries(applied.flagsAdded)) flags[k] = v;
+    for (const id of applied.deadBossIds) deadBossIds.add(id);
+    for (const id of res.deadEnemyIds) liveEnemies = markDead(liveEnemies, id);
+    if (applied.goldIntent) goldIntents = [...goldIntents, applied.goldIntent];
+    const player = {
+      ...currentState.player,
+      stats: applied.stats,
+      progression: applied.progression,
+    };
+    eventBus.emit({ type: "BATTLE_END", battleId: battle.battleId, winnerId: player.id });
+    activeBattle = null;
+    return { ...currentState, player, battle: null };
+  }
+
+  /** Apply a LOSE result exactly once (dedup on battleId). */
+  function applyDefeatFlow(
+    currentState: RPGGameState,
+    battle: RPGBattleState,
+    foeId: string,
+  ): RPGGameState {
+    if (appliedBattleIds.has(battle.battleId)) return currentState;
+    appliedBattleIds.add(battle.battleId);
+    const res = toBattleResult(battle);
+    if (!res || res.outcome !== "LOSE" || !res.respawn) return currentState;
+    const applied = applyDefeat({ stats: currentState.player.stats, result: res });
+    const dest = getCanonicalMap(res.respawn.mapId);
+    if (!dest) return currentState;
+    const nextWorld = loadCanonicalMap(dest.id);
+    if (!nextWorld) return currentState;
+    reloadLiveEnemies(dest.id);
+    const player = {
+      ...currentState.player,
+      stats: {
+        ...currentState.player.stats,
+        hp: applied.hp,
+        mp: applied.mp,
+      },
+      position: spawnPosition(dest, res.respawn.x, res.respawn.y),
+      facing: "down" as const,
+    };
+    eventBus.emit({ type: "BATTLE_END", battleId: battle.battleId, winnerId: foeId });
+    activeBattle = null;
+    return { ...currentState, player, world: nextWorld, battle: null };
+  }
+
   // ── State Updates ─────────────────────────────────────────────────
 
   /** Process a single command and return new state. */
@@ -144,6 +289,8 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
   ): RPGGameState {
     switch (command.type) {
       case "MOVE": {
+        // World movement is frozen while a battle is active (prototype mode).
+        if (currentState.battle !== null) return currentState;
         // Update facing if direction changed
         let player = currentState.player;
         if (player.facing !== command.dir) {
@@ -176,6 +323,7 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
                 ...player,
                 position: spawnPosition(dest, outcome.tx, outcome.ty),
               };
+              reloadLiveEnemies(dest.id);
               return { ...currentState, player, world: nextWorld };
             }
             case "PORTAL_BLOCKED": {
@@ -198,6 +346,14 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
               return { ...currentState, player };
             case "MOVED":
               lastPortalBlocked = null;
+              // Enemy encounter (prototype tryMove: portal → enemy → solid).
+              // Spawns sit on walkable tiles, so this check belongs here.
+              {
+                const foe = findEncounterAt(liveEnemies, outcome.tile);
+                if (foe) {
+                  return startEncounterBattle(currentState, canon.id, outcome.tile, foe, player);
+                }
+              }
               return { ...currentState, player: stepped };
             case "LEGACY":
               return { ...currentState, player: stepped };
@@ -213,6 +369,8 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
         return currentState;
       }
       case "INTERACT": {
+        // No world interaction while a battle is active.
+        if (currentState.battle !== null) return currentState;
         // Canonical maps: facing-adjacent tile (prototype interact order —
         // chest, then NPC). Reward keys stay canonical-verbatim here; the
         // inventory mapping is owned by a later phase (documented).
@@ -220,6 +378,12 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
         if (canon) {
           const tile = normToTile(canon, currentState.player.position);
           if (tile) {
+            // Enemy first (prototype: npc → enemy → chest-tile).
+            const facing = facingTile(tile, currentState.player.facing);
+            const foe = findEncounterAt(liveEnemies, facing);
+            if (foe) {
+              return startEncounterBattle(currentState, canon.id, tile, foe, currentState.player);
+            }
             const out = interactTile({
               mapId: canon.id,
               tile,
@@ -278,6 +442,76 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
         }
         return currentState;
       }
+      case "ATTACK": {
+        // Battle-only command (ignored outside battle). The enemy responds
+        // in the same tick (prototype turn order); victory/defeat apply once.
+        if (!activeBattle || currentState.battle === null) return currentState;
+        if (command.playerId !== playerId) return currentState;
+        const b = activeBattle;
+        const out = playerAct(
+          b.state,
+          {
+            battleId: b.state.battleId,
+            turn: b.state.turn,
+            actorId: currentState.player.id,
+            targetId: command.targetId,
+            skillId: command.skillId,
+          },
+          b.rng,
+        );
+        if (!out.ok) return currentState;
+        activeBattle = { state: out.state, rng: out.rng };
+        let next = { ...currentState, battle: out.state };
+        for (const ev of out.events) eventBus.emit(ev);
+        if (out.state.result === "WIN") return applyWinFlow(next, out.state);
+        if (out.state.result !== undefined) return next;
+        const foeId = out.state.enemies.find((e) => e.hp > 0)?.id;
+        if (!foeId) return next;
+        const eb = enemyAct(
+          out.state,
+          {
+            battleId: out.state.battleId,
+            turn: out.state.turn,
+            actorId: foeId,
+            enemyId: foeId,
+            charm: flags.charm === true,
+          },
+          out.rng,
+        );
+        if (!eb.ok) return next;
+        activeBattle = { state: eb.state, rng: eb.rng };
+        next = { ...next, battle: eb.state };
+        for (const ev of eb.events) eventBus.emit(ev);
+        if (eb.state.result === "LOSE") return applyDefeatFlow(next, eb.state, foeId);
+        return next;
+      }
+      case "BATTLE_ESCAPE": {
+        if (!activeBattle || currentState.battle === null) return currentState;
+        if (command.playerId !== playerId) return currentState;
+        const b = activeBattle;
+        const out = escapeBattle(
+          b.state,
+          { battleId: b.state.battleId, turn: b.state.turn, actorId: currentState.player.id },
+          b.rng,
+        );
+        if (!out.ok) return currentState;
+        activeBattle = { state: out.state, rng: out.rng };
+        let next: RPGGameState = { ...currentState, battle: out.state };
+        for (const ev of out.events) eventBus.emit(ev);
+        if (out.state.result === "FLED") {
+          // Enemy stays alive; player keeps position. No rewards.
+          eventBus.emit({ type: "BATTLE_END", battleId: b.state.battleId, winnerId: null });
+          activeBattle = null;
+          next = { ...next, battle: null };
+        }
+        return next;
+      }
+      case "USE_ITEM": {
+        // NOT supported in battle yet: prototype consumable keys (ram/teh/elix)
+        // have no production inventory mapping (reward adapter DEFERRED).
+        // Documented no-op — the inventory phase owns this command.
+        return currentState;
+      }
       default:
         return currentState;
     }
@@ -314,6 +548,16 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
           dir: lastDirection,
         };
         state = processCommand(state, moveCmd);
+      }
+
+      // Respawn timers for defeated non-boss enemies (canonical maps,
+      // no active battle). Wall-clock dt from the fixed-timestep loop.
+      {
+        const cm = getCanonicalMap(state.world.mapId);
+        if (cm && state.battle === null) {
+          const pt = normToTile(cm, state.player.position);
+          if (pt) liveEnemies = tickRespawns(liveEnemies, dtMs, pt);
+        }
       }
 
       // Update camera to follow player
@@ -372,7 +616,25 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
       ...state,
       flags: { ...flags },
       openedChests: [...openedChests],
+      deadBossIds: [...deadBossIds],
+      goldIntents: goldIntents.map((g) => ({ ...g })),
     });
+  }
+
+  function getBattle(): RPGBattleState | null {
+    return activeBattle?.state ?? null;
+  }
+
+  function getLiveEnemies(): LiveEnemy[] {
+    return liveEnemies.map((e) => ({ ...e, tile: { ...e.tile }, spawnTile: { ...e.spawnTile } }));
+  }
+
+  function getGoldIntents(): Array<{ battleId: string; amount: number }> {
+    return goldIntents.map((g) => ({ ...g }));
+  }
+
+  function getDeadBossIds(): string[] {
+    return [...deadBossIds];
   }
 
   function on(event: string, handler: (data: unknown) => void): () => void {
@@ -397,6 +659,10 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     getFlags,
     getOpenedChests,
     saveGame,
+    getBattle,
+    getLiveEnemies,
+    getGoldIntents,
+    getDeadBossIds,
     on,
     destroy,
     // Expose for keyboard adapter

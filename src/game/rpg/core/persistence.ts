@@ -37,6 +37,10 @@ export interface RPGPersistence {
 export interface RPGMapSideState {
   flags?: Record<string, boolean>;
   openedChests?: string[];
+  /** Defeated boss instance ids (persisted; bosses never respawn). */
+  deadBossIds?: string[];
+  /** Unclaimed gold intents for the future economy phase (never dropped). */
+  goldIntents?: Array<{ battleId: string; amount: number }>;
 }
 
 /** Save data format — what gets serialized. */
@@ -71,8 +75,9 @@ interface RPGSaveData {
     mapId: string;
     /** Quest flags (quests/flags.ts vocabulary). Absent = all false. */
     flags?: Record<string, boolean>;
-    /** Opened chest ids (world/chest.ts idempotency). Absent = none. */
     openedChests?: string[];
+    deadBossIds?: string[];
+    goldIntents?: Array<{ battleId: string; amount: number }>;
   };
 }
 
@@ -115,6 +120,8 @@ export function createLocalStoragePersistence(
           mapId: state.world.mapId,
           flags: state.flags,
           openedChests: state.openedChests,
+          deadBossIds: state.deadBossIds,
+          goldIntents: state.goldIntents,
         },
       };
 
@@ -187,6 +194,8 @@ export function createLocalStoragePersistence(
         quests: { active: [], completed: [] },
         flags: data.world?.flags ?? {},
         openedChests: data.world?.openedChests ?? [],
+        deadBossIds: data.world?.deadBossIds ?? [],
+        goldIntents: data.world?.goldIntents ?? [],
         learning: {
           profile: { playerId: data.session.playerId, mastery: {} },
           activeChallengeId: null,
