@@ -25,9 +25,10 @@ import { stepPlayer, faceDirection } from "../player/movement";
 import { grantXp, applyLevelGrowth } from "../player/progression";
 import type { RPGWorldState } from "../world/world-state";
 import { MAP_VILLAGE_SQUARE } from "../data/maps";
-import { getCanonicalMap } from "../data/world-maps";
+import { getCanonicalMap, RPG_TILES } from "../data/world-maps";
 import { stepTile, interactTile, facingTile } from "../world/world-step";
-import { loadCanonicalMap, spawnPosition, enemySpawnsOf } from "../world/map-loader";
+import { tileAt } from "../world/tiles";
+import { loadCanonicalMap, spawnPosition, enemySpawnsOf, canonicalTileId } from "../world/map-loader";
 import {
   buildEncounterTable,
   findEncounterAt,
@@ -121,6 +122,8 @@ export interface RPGEngineConfig {
   goldIntents?: Array<{ battleId: string; amount: number }>;
   /** Spendable gold override (default INITIAL_GOLD for fresh players). */
   gold?: number;
+  /** Restored picked golden-flower tiles (default none). */
+  pickedGe?: string[];
   /** Restored gold ledger (dedup continuity across save/load). */
   goldLedger?: GoldLedgerEntry[];
   /** Restored equipment intents (preserved across save/load). */
@@ -170,6 +173,8 @@ export interface RPGEngine {
   getDeadBossIds(): string[];
   /** Authoritative main-line quest state snapshot. */
   getQuest(): QuestLineState;
+  /** Picked golden-flower tiles snapshot. */
+  getPickedGe(): string[];
   /** Spendable gold balance (canonical economy). */
   getGold(): number;
   /** Gold audit ledger (append-only; balance must equal its sum). */
@@ -261,7 +266,9 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
   let restCooldownUntilMs = 0;
   // Authoritative main-line quest state (P1.7): {main 0..7, kills}.
   // Dead state 5 is never admitted (validator rejects both directions).
-  let quest: QuestLineState = { ...(config.quest ?? createQuestLineState()) };
+  let quest: QuestLineState = { ...createQuestLineState(), ...(config.quest ?? {}) };
+  // Golden-flower pickups `map:x,y` (Bunga Emas; prototype picked[] verbatim).
+  const pickedGe = new Set<string>(config.pickedGe ?? []);
   // Throttle for gated-portal notices (prototype: once per 1.5s equivalent —
   // here: emit only when the blocked signature changes).
   let lastPortalBlocked: string | null = null;
@@ -601,6 +608,29 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
             if (foe) {
               return startEncounterBattle(currentState, canon.id, tile, foe, currentState.player);
             }
+            // Golden flower pickup (prototype GE branch verbatim): first pick
+            // grants flowers+1 and turns the loaded tile to grass; re-pickup
+            // is blocked by pickedGe (canonical grids stay pristine).
+            if (tileAt(canon, facing.x, facing.y) === RPG_TILES.GE) {
+              const key = `${canon.id}:${facing.x},${facing.y}`;
+              if (!pickedGe.has(key)) {
+                pickedGe.add(key);
+                quest = { ...quest, flowers: quest.flowers + 1 };
+                const tiles = [...currentState.world.tiles.tiles];
+                tiles[facing.y * canon.width + facing.x] = canonicalTileId(RPG_TILES.GR);
+                const world = {
+                  ...currentState.world,
+                  tiles: { ...currentState.world.tiles, tiles },
+                };
+                eventBus.emit({
+                  type: "INTERACTION",
+                  playerId: currentState.session.playerId,
+                  interactionId: `int.flower.${facing.x}.${facing.y}`,
+                  result: { kind: "GE_PICKED", flowers: quest.flowers },
+                });
+                return { ...currentState, world };
+              }
+            }
             const out = interactTile({
               mapId: canon.id,
               tile,
@@ -671,6 +701,7 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
                 const startNode = selectDialogueStart(out.npcId, {
                   quest: quest.main,
                   kills: quest.kills,
+                  flowers: quest.flowers,
                   flags,
                   nowMs: Date.now(),
                   restCooldownUntilMs,
@@ -786,11 +817,21 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
         let next: RPGGameState = { ...currentState, battle: out.state };
         for (const ev of out.events) eventBus.emit(ev);
         if (out.state.result === "FLED") {
-          // Enemy stays alive; player keeps position. No rewards.
+          // Enemy stays alive; player keeps position. Snapshot HP/MP syncs
+          // back (prototype shares one player object: damage taken and heals
+          // persist through flee). No rewards.
           eventBus.emit({ type: "BATTLE_END", battleId: b.state.battleId, winnerId: null });
           activeBattle = null;
           clearLearning(out.state.learning?.challengeId);
-          next = { ...next, battle: null };
+          const fledPlayer = {
+            ...currentState.player,
+            stats: {
+              ...currentState.player.stats,
+              hp: out.state.player.hp,
+              mp: out.state.player.mp ?? currentState.player.stats.mp,
+            },
+          };
+          next = { ...next, player: fledPlayer, battle: null };
         }
         return next;
       }
@@ -832,13 +873,71 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
         return { ...currentState, battle: nb };
       }
       case "USE_ITEM": {
-        // Consumables: WORLD mode only. Battle menu (ram/teh/elix) is a
-        // battle-UI concern owned by a later phase; the domain gate
-        // (BATTLE_RESTRICTED for fish) is already enforced by applyConsume.
-        // Prototype parity: STATUS-menu eating is world-side; BARANG-menu
-        // battle eating arrives with battle UI. Documented gap, not silence.
-        if (currentState.battle !== null || session !== null) return currentState;
+        // Consumables in WORLD (STATUS-menu eating, prototype verbatim) and
+        // in BATTLE (BARANG menu: ram/teh/elix only — fish/bijih gated by
+        // applyConsume). Battle use consumes the turn and the enemy responds
+        // (prototype loop order); sessions freeze USE_ITEM.
         if (command.playerId !== playerId) return currentState;
+        if (session !== null) return currentState;
+        if (currentState.battle !== null) {
+          if (!activeBattle) return currentState;
+          const b = activeBattle;
+          if (b.state.result !== undefined || b.state.phase !== "CHALLENGE") {
+            return currentState;
+          }
+          const snapStats = {
+            hp: b.state.player.hp,
+            maxHp: b.state.player.maxHp,
+            mp: b.state.player.mp ?? currentState.player.stats.mp,
+            maxMp: b.state.player.maxMp ?? currentState.player.stats.maxMp,
+          };
+          const res = applyConsume(
+            currentState.player.inventory,
+            snapStats,
+            command.itemId,
+            true,
+          );
+          if (!res.ok) return currentState;
+          const nbattle: RPGBattleState = {
+            ...b.state,
+            player: {
+              ...b.state.player,
+              hp: res.applied.stats.hp,
+              mp: res.applied.stats.mp,
+            },
+            turn: b.state.turn + 1,
+          };
+          activeBattle = { state: nbattle, rng: b.rng };
+          const player = { ...currentState.player, inventory: res.applied.inventory };
+          let next = { ...currentState, player, battle: nbattle };
+          eventBus.emit({
+            type: "ITEM_CONSUMED",
+            playerId: currentState.session.playerId,
+            itemId: command.itemId,
+            source: "battle-use",
+          });
+          const foeId = nbattle.enemies.find((e) => e.hp > 0)?.id;
+          if (foeId && nbattle.result === undefined) {
+            const eb = enemyAct(
+              nbattle,
+              {
+                battleId: nbattle.battleId,
+                turn: nbattle.turn,
+                actorId: foeId,
+                enemyId: foeId,
+                charm: flags.charm === true,
+              },
+              b.rng,
+            );
+            if (eb.ok) {
+              activeBattle = { state: eb.state, rng: eb.rng };
+              next = { ...next, battle: eb.state };
+              for (const ev of eb.events) eventBus.emit(ev);
+              if (eb.state.result === "LOSE") return applyDefeatFlow(next, eb.state, foeId);
+            }
+          }
+          return next;
+        }
         const res = applyConsume(
           currentState.player.inventory,
           currentState.player.stats,
@@ -1272,6 +1371,7 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
       goldLedger: gold.ledger.map((e) => ({ ...e })),
       equipmentIntents: equipmentIntents.map((e) => ({ ...e })),
       quest: { ...quest },
+      pickedGe: [...pickedGe],
     });
   }
 
@@ -1341,6 +1441,10 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     return { ...quest };
   }
 
+  function getPickedGe(): string[] {
+    return [...pickedGe];
+  }
+
   function getGold(): number {
     return gold.balance;
   }
@@ -1394,6 +1498,7 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     getGoldIntents,
     getDeadBossIds,
     getQuest,
+    getPickedGe,
     getGold,
     getGoldLedger,
     getEquipmentIntents,

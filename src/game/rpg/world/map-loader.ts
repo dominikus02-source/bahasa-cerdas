@@ -17,7 +17,7 @@
  */
 
 import type { CanonicalMap, CanonicalMapId, CanonicalEnemySpawn } from "../data/world-maps";
-import { getCanonicalMap } from "../data/world-maps";
+import { getCanonicalMap, RPG_TILES } from "../data/world-maps";
 import { tileToNorm } from "./grid-coords";
 import type { RPGWorldState, RPGInteractionPoint } from "./world-state";
 
@@ -27,7 +27,10 @@ export function canonicalTileId(tile: number): string {
 }
 
 /** Load a canonical map into runtime world state. Null = unknown map id. */
-export function loadCanonicalMap(mapId: CanonicalMapId): RPGWorldState | null {
+export function loadCanonicalMap(
+  mapId: CanonicalMapId,
+  pickedGe?: ReadonlySet<string>,
+): RPGWorldState | null {
   const map = getCanonicalMap(mapId);
   if (!map) return null;
 
@@ -52,12 +55,29 @@ export function loadCanonicalMap(mapId: CanonicalMapId): RPGWorldState | null {
     })),
   ];
 
+  // Already-picked golden flowers render as grass (prototype rebuilds maps
+  // from builders on load; picked[] blocks re-pickup — same semantics here:
+  // canonical grids stay pristine, only the loaded copy is stripped).
+  const tiles = map.tiles.map(canonicalTileId);
+  if (pickedGe) {
+    for (const key of pickedGe) {
+      const [m, rest] = key.split(":");
+      if (m !== map.id || !rest) continue;
+      const [xs, ys] = rest.split(",");
+      const x = Number(xs);
+      const y = Number(ys);
+      if (Number.isInteger(x) && Number.isInteger(y) && x >= 0 && y >= 0 && x < map.width && y < map.height) {
+        tiles[y * map.width + x] = canonicalTileId(RPG_TILES.GR);
+      }
+    }
+  }
+
   return {
     mapId: map.id,
     tiles: {
       width: map.width,
       height: map.height,
-      tiles: map.tiles.map(canonicalTileId),
+      tiles,
     },
     entities: [],
     interactions,

@@ -67,25 +67,28 @@ export type ConsumeRejection =
   | "NONE_OWNED"
   | "BATTLE_RESTRICTED";
 
-export interface ConsumeApplied {
+export interface ConsumeApplied<S = RPGPlayerStats> {
   inventory: RPGInventory;
-  stats: RPGPlayerStats;
+  stats: S;
 }
 
-export type ConsumeResult =
-  | { ok: true; applied: ConsumeApplied }
+export type ConsumeResult<S = RPGPlayerStats> =
+  | { ok: true; applied: ConsumeApplied<S> }
   | { ok: false; reason: ConsumeRejection };
 
 /**
  * Consume one unit. `inBattle` gates fish out (prototype BARANG menu:
  * ram/teh/elix only; fish via STATUS menu = world-side). Pure + atomic.
+ *
+ * Stats are generic over {hp,maxHp,mp,maxMp} so battle snapshots
+ * (RPGBattleActor, no speed field) flow through the same gate.
  */
-export function applyConsume(
+export function applyConsume<S extends { hp: number; maxHp: number; mp: number; maxMp: number }>(
   inventory: RPGInventory,
-  stats: RPGPlayerStats,
+  stats: S,
   itemId: string,
   inBattle: boolean,
-): ConsumeResult {
+): ConsumeResult<S> {
   const def = canonicalItemById(itemId);
   if (!def) return { ok: false, reason: "UNKNOWN_ITEM" };
   if (def.kind === "material") return { ok: false, reason: "NOT_CONSUMABLE" };

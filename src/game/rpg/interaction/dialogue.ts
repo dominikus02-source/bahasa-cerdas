@@ -105,6 +105,7 @@ export function pendakiEntryNode(nowMs: number, cooldownUntilMs: number): string
 export interface BranchContext {
   quest: number;
   kills: number;
+  flowers: number;
   flags: Record<string, boolean>;
   nowMs: number;
   restCooldownUntilMs: number;
@@ -134,7 +135,9 @@ export function selectDialogueStart(npcId: string, ctx: BranchContext): string {
       return "huntElse";
     case "sari":
       if (!f.sari) return "intro";
-      if (!f.charm) return "progress";
+      // GE pickup has no runtime system yet EXCEPT the P1.9B facing-tile
+      // pickup: flowers count comes from quest state (min 0, cap display 3).
+      if (!f.charm) return ctx.flowers >= 3 ? "complete" : "progress";
       return "done";
     case "eyang":
       if (f.towerDone) return "towerDone";

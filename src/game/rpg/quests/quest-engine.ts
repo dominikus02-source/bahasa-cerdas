@@ -36,16 +36,18 @@ export interface RPGQuestEngine {
   advance(state: RPGQuestState, questId: RPGId, progressDelta: number): RPGQuestState;
 }
 
-/** Authoritative main-line quest state (prototype G.quest + G.kills). */
+/** Authoritative main-line quest state (prototype G.quest + G.kills + G.flowers). */
 export interface QuestLineState {
   /** Main quest 0..7 (5 is dead — validator never admits it). */
   main: number;
   /** Non-boss overworld kills (quest-1 objective: 3 Korog). */
   kills: number;
+  /** Golden flowers picked (Bunga Emas side quest: 3 for charm). */
+  flowers: number;
 }
 
 export function createQuestLineState(): QuestLineState {
-  return { main: 0, kills: 0 };
+  return { main: 0, kills: 0, flowers: 0 };
 }
 
 export interface QuestSignalContext {

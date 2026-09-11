@@ -48,7 +48,9 @@ export interface RPGMapSideState {
   /** Preserved equipment intents (unmapped prototype gear). */
   equipmentIntents?: Array<{ source: string; kind: "wpn" | "arm"; key: string }>;
   /** Authoritative main-line quest state (P1.7). */
-  quest?: { main: number; kills: number };
+  quest?: { main: number; kills: number; flowers: number };
+  /** Picked golden-flower tiles `map:x,y` (Bunga Emas, P1.9B). */
+  pickedGe?: string[];
 }
 
 /** Save data format — what gets serialized. */
@@ -89,7 +91,8 @@ interface RPGSaveData {
     gold?: number;
     goldLedger?: Array<{ id: string; delta: number; reason: string }>;
     equipmentIntents?: Array<{ source: string; kind: "wpn" | "arm"; key: string }>;
-    quest?: { main: number; kills: number };
+    quest?: { main: number; kills: number; flowers: number };
+    pickedGe?: string[];
   };
 }
 
@@ -138,6 +141,7 @@ export function createLocalStoragePersistence(
           goldLedger: state.goldLedger,
           equipmentIntents: state.equipmentIntents,
           quest: state.quest,
+          pickedGe: state.pickedGe,
         },
       };
 
@@ -215,7 +219,8 @@ export function createLocalStoragePersistence(
         gold: data.world?.gold,
         goldLedger: data.world?.goldLedger,
         equipmentIntents: data.world?.equipmentIntents,
-        quest: data.world?.quest ?? { main: 0, kills: 0 },
+        quest: data.world?.quest ?? { main: 0, kills: 0, flowers: 0 },
+        pickedGe: data.world?.pickedGe ?? [],
         learning: {
           profile: { playerId: data.session.playerId, mastery: {} },
           activeChallengeId: null,

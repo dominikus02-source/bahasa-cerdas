@@ -46,7 +46,7 @@ const BR = (npc: string, quest: number, kills = 0, flags: Record<string, boolean
   selectDialogueStart(npc, { quest, kills, flags, nowMs: 999999, restCooldownUntilMs: 0 });
 
 console.log("\n📜 QUEST (1-7)");
-check("1. initial {main:0,kills:0}", JSON.stringify(createQuestLineState()) === JSON.stringify({ main: 0, kills: 0 }));
+check("1. initial {main:0,kills:0,flowers:0}", JSON.stringify(createQuestLineState()) === JSON.stringify({ main: 0, kills: 0, flowers: 0 }));
 check("2. valid: 0→1, 1→2 (kills≥3), 2→3, 3→4 (bossDead), 4→6, 6→7",
   isValidQuestTransition(0, 1, CTX(0)) && isValidQuestTransition(1, 2, CTX(1, 3)) &&
   isValidQuestTransition(2, 3, CTX(2)) && isValidQuestTransition(3, 4, CTX(3, 9, { bossDead: true })) &&
