@@ -1,25 +1,30 @@
 /**
  * Character rendering boundary.
  *
- * Reads `player/player-state.ts` and issues draw instructions. PHASE 0 keeps
- * this a contract + coordinate helper; the sprite pipeline is built when the
- * renderer gets its canvas implementation.
+ * Reads `player/player-state.ts` and issues draw instructions. P2.0A: wired
+ * to the CANONICAL camera contract (worldToScreenScaled) instead of the
+ * removed renderer.ts duplicate. Feet-origin anchoring math lives in
+ * ./sprite-math.ts; this module only resolves the screen anchor point.
  */
 
 import type { RPGPlayerState } from "../player/player-state";
-import { worldToScreen, type RPGCamera } from "./renderer";
+import type { RPGCameraState } from "./camera";
+import { worldToScreenScaled } from "./camera";
 
 export interface RPGCharacterRenderData {
+  /** Screen point of the feet anchor (bottom-center of the sprite). */
   screen: { x: number; y: number };
   facing: string;
 }
 
 export function describeCharacterRender(
   player: RPGPlayerState,
-  camera: RPGCamera,
+  camera: RPGCameraState,
+  mapWidthTiles: number,
+  mapHeightTiles: number,
 ): RPGCharacterRenderData {
   return {
-    screen: worldToScreen(player.position, camera),
+    screen: worldToScreenScaled(player.position, camera, mapWidthTiles, mapHeightTiles),
     facing: player.facing,
   };
 }

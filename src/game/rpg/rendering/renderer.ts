@@ -25,7 +25,7 @@ export interface RPGRenderer {
   dispose(): void;
 }
 
-/** Convert normalized world coordinates to screen pixels. */
-export function worldToScreen(world: { x: number; y: number }, camera: RPGCamera): { x: number; y: number } {
-  return { x: world.x * camera.width, y: world.y * camera.height };
-}
+// NOTE (P2.0A): the duplicate worldToScreen that lived here (plain scale,
+// no camera) is REMOVED. The canonical contract is worldToScreenScaled in
+// ./camera.ts (legacy worldToScreen there is pinned for old callers).
+// Do not reintroduce a second transform.

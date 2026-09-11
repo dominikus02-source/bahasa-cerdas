@@ -11,6 +11,7 @@
  */
 
 import type { RPGVec2 } from "../core/constants";
+import { DEFAULT_ZOOM, pxPerUnit, clampZoom } from "./world-scale";
 
 /** Camera state — follows player with smooth interpolation. */
 export interface RPGCameraState {
@@ -21,6 +22,8 @@ export interface RPGCameraState {
   viewportHeight: number;
   /** Smoothing factor (0 = no follow, 1 = instant snap). */
   smoothing: number;
+  /** Logical zoom (Visual Bible range 0.8–1.25, default 1.0). */
+  zoom: number;
 }
 
 /** Create a camera centered on a position. */
@@ -34,6 +37,7 @@ export function createCamera(
     viewportWidth,
     viewportHeight,
     smoothing: 0.1, // Smooth follow
+    zoom: DEFAULT_ZOOM,
   };
 }
 
@@ -59,6 +63,9 @@ export function followTarget(
 /**
  * Convert normalized world coordinates to screen pixels.
  * Center of camera = center of viewport.
+ *
+ * LEGACY contract (pre-zoom): world unit == viewport width. Pinned by
+ * existing tests — do not change. New code uses worldToScreenScaled below.
  */
 export function worldToScreen(
   world: RPGVec2,
@@ -67,6 +74,28 @@ export function worldToScreen(
   return {
     x: (world.x - camera.position.x) * camera.viewportWidth + camera.viewportWidth / 2,
     y: (world.y - camera.position.y) * camera.viewportHeight + camera.viewportHeight / 2,
+  };
+}
+
+/**
+ * CANONICAL world→screen contract (P2.0A): normalized world → camera
+ * transform → zoom → screen pixels. World scale is authoritative
+ * (64 logical px per tile × map tile counts); screens scale around it —
+ * never the reverse. Feet-origin sprites anchor their bottom-center to the
+ * returned point (see rendering/sprite-math.ts).
+ */
+export function worldToScreenScaled(
+  world: RPGVec2,
+  camera: RPGCameraState,
+  mapWidthTiles: number,
+  mapHeightTiles: number,
+): { x: number; y: number } {
+  const zoom = camera.zoom ?? DEFAULT_ZOOM;
+  const sx = pxPerUnit(mapWidthTiles, zoom);
+  const sy = pxPerUnit(mapHeightTiles, zoom);
+  return {
+    x: (world.x - camera.position.x) * sx + camera.viewportWidth / 2,
+    y: (world.y - camera.position.y) * sy + camera.viewportHeight / 2,
   };
 }
 
@@ -91,4 +120,9 @@ export function resizeCamera(
   height: number,
 ): RPGCameraState {
   return { ...camera, viewportWidth: width, viewportHeight: height };
+}
+
+/** Set logical zoom, clamped to the Visual Bible range (0.8–1.25). */
+export function setZoom(camera: RPGCameraState, zoom: number): RPGCameraState {
+  return { ...camera, zoom: clampZoom(zoom) };
 }

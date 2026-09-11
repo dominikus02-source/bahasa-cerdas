@@ -16,9 +16,41 @@
 
 import type { RPGGameState } from "../core/game-state";
 import type { RPGCameraState } from "./camera";
-import { worldToScreen } from "./camera";
+import { worldToScreenScaled } from "./camera";
+import { LOGICAL_TILE_PX, clampZoom } from "./world-scale";
+import { createEmptyManifest, createSpriteLoader, diagnoseAsset, lookupAsset } from "./asset-registry";
+import { argaAssetKey } from "./arga-contract";
 import type { RPGWorldEntity } from "../world/world-state";
 import { findNearestInteraction } from "../world/interaction";
+
+/** Depth layer order (z sequence, then y-sort within a layer). */
+const LAYER_ORDER = [
+  "GROUND_DECOR",
+  "BEHIND_ENTITIES",
+  "ENTITIES",
+  "FRONT_OF_ENTITIES",
+  "OVERLAY",
+] as const;
+
+/**
+ * Depth comparator: layer order first, then normalized y (tall props
+ * overhang the row above; actors walk behind them). Pure — unit-tested.
+ */
+export function compareDepth(
+  a: Pick<RPGWorldEntity, "layer" | "position">,
+  b: Pick<RPGWorldEntity, "layer" | "position">,
+): number {
+  const layerDiff =
+    LAYER_ORDER.indexOf(a.layer as (typeof LAYER_ORDER)[number]) -
+    LAYER_ORDER.indexOf(b.layer as (typeof LAYER_ORDER)[number]);
+  if (layerDiff !== 0) return layerDiff;
+  return a.position.y - b.position.y;
+}
+
+/** Depth-sorted copy (never mutates state). */
+export function sortEntitiesForDepth<T extends Pick<RPGWorldEntity, "layer" | "position">>(entities: T[]): T[] {
+  return [...entities].sort(compareDepth);
+}
 
 /** Color palette for placeholder rendering. */
 const COLORS = {
@@ -39,9 +71,6 @@ const COLORS = {
   chest: "#eab308",
   portal: "#8b5cf6",
 } as const;
-
-/** Tile size in pixels (base resolution). */
-const TILE_SIZE = 32;
 
 /** Canvas renderer — reads state, issues draw calls. */
 export interface CanvasRenderer {
@@ -95,6 +124,24 @@ export function createCanvasRenderer(
     }
   });
   ro.observe(container);
+
+  // ── Arga production registry (P2.0A) ──────────────────────────────
+  // The manifest is intentionally EMPTY: no production sheets have landed.
+  // reportMissingArgaOnce() emits ONE explicit diagnostic per renderer
+  // lifetime; the DEV placeholder above keeps rendering. Missing art is
+  // reported as missing — never silently substituted, never faked.
+  const argaManifest = createEmptyManifest();
+  let argaMissingReported = false;
+
+  function reportMissingArgaOnce(): void {
+    if (argaMissingReported) return;
+    argaMissingReported = true;
+    const key = argaAssetKey("idle", "down");
+    const hit = lookupAsset(argaManifest, key);
+    if (!hit.ok) {
+      console.warn(`[rpg] ${diagnoseAsset(argaManifest, key)}`);
+    }
+  }
 
   /** Draw a filled rectangle. */
   function drawRect(
@@ -157,47 +204,45 @@ export function createCanvasRenderer(
     ctx.fill();
   }
 
-  /** Render tile grid. */
+  /** Render tile grid (world-authoritative scale + viewport culling). */
   function renderTiles(state: RPGGameState, camera: RPGCameraState) {
     const { tiles } = state.world;
-    const tileW = width / tiles.width;
-    const tileH = height / tiles.height;
+    const zoom = clampZoom(camera.zoom ?? 1);
+    const tilePx = LOGICAL_TILE_PX * zoom;
 
     for (let y = 0; y < tiles.height; y++) {
       for (let x = 0; x < tiles.width; x++) {
+        // Cull off-screen tiles (margin of one tile).
+        const sx = worldToScreenScaled(
+          { x: (x + 0.5) / tiles.width, y: (y + 0.5) / tiles.height },
+          camera, tiles.width, tiles.height,
+        );
+        if (sx.x < -tilePx || sx.y < -tilePx || sx.x > width + tilePx || sx.y > height + tilePx) {
+          continue;
+        }
         const tileId = tiles.tiles[y * tiles.width + x];
         const color = tileId === "ground.path" ? COLORS.path : COLORS.grass;
-        drawRect(x * tileW, y * tileH, tileW + 1, tileH + 1, color);
+        drawRect(sx.x - tilePx / 2, sx.y - tilePx / 2, tilePx + 1, tilePx + 1, color);
 
         // Grid lines (subtle)
         ctx.strokeStyle = "rgba(0,0,0,0.05)";
         ctx.lineWidth = 0.5;
-        ctx.strokeRect(x * tileW, y * tileH, tileW, tileH);
+        ctx.strokeRect(sx.x - tilePx / 2, sx.y - tilePx / 2, tilePx, tilePx);
       }
     }
   }
 
   /** Render world entities (trees, houses, bushes, etc.). */
   function renderEntities(state: RPGGameState, camera: RPGCameraState) {
-    // Sort by layer order, then by y position for depth
-    const layerOrder = [
-      "GROUND_DECOR",
-      "BEHIND_ENTITIES",
-      "ENTITIES",
-      "FRONT_OF_ENTITIES",
-      "OVERLAY",
-    ];
-
-    const sorted = [...state.world.entities].sort((a, b) => {
-      const layerDiff =
-        layerOrder.indexOf(a.layer) - layerOrder.indexOf(b.layer);
-      if (layerDiff !== 0) return layerDiff;
-      return a.position.y - b.position.y;
-    });
+    const zoom = clampZoom(camera.zoom ?? 1);
+    const sorted = sortEntitiesForDepth(state.world.entities);
 
     for (const entity of sorted) {
-      const screen = worldToScreen(entity.position, camera);
-      const size = 24 * entity.scale;
+      const screen = worldToScreenScaled(
+        entity.position, camera,
+        state.world.tiles.width, state.world.tiles.height,
+      );
+      const size = 24 * entity.scale * zoom;
 
       switch (entity.type) {
         case "tree":
@@ -256,15 +301,19 @@ export function createCanvasRenderer(
 
   /** Render interaction points (portals, chests). */
   function renderInteractions(state: RPGGameState, camera: RPGCameraState) {
+    const zoom = clampZoom(camera.zoom ?? 1);
     for (const interaction of state.world.interactions) {
-      const screen = worldToScreen(interaction.position, camera);
+      const screen = worldToScreenScaled(
+        interaction.position, camera,
+        state.world.tiles.width, state.world.tiles.height,
+      );
 
       switch (interaction.kind) {
         case "PORTAL":
           // Glowing portal
-          drawCircle(screen.x, screen.y, 12, COLORS.portal);
+          drawCircle(screen.x, screen.y, 12 * zoom, COLORS.portal);
           ctx.globalAlpha = 0.3;
-          drawCircle(screen.x, screen.y, 18, COLORS.portal);
+          drawCircle(screen.x, screen.y, 18 * zoom, COLORS.portal);
           ctx.globalAlpha = 1;
           break;
         case "CHEST":
@@ -280,28 +329,48 @@ export function createCanvasRenderer(
     }
   }
 
-  /** Render the player character. */
+  /**
+   * Render the player character.
+   *
+   * DEV PLACEHOLDER (explicit, P2.0A): production Arga sheets have not
+   * landed (see rendering/arga-contract.ts), so the legacy procedural disc
+   * remains — anchored at the FEET ORIGIN (bottom-center = gameplay position)
+   * with an engine-baked shadow ellipse. This must never be mistaken for
+   * final art. When sheets land, this branch resolves via the asset registry.
+   */
   function renderPlayer(state: RPGGameState, camera: RPGCameraState) {
     const player = state.player;
-    const screen = worldToScreen(player.position, camera);
+    const zoom = clampZoom(camera.zoom ?? 1);
+    // Feet origin: gameplay position == bottom-center contact point.
+    const feet = worldToScreenScaled(
+      player.position, camera,
+      state.world.tiles.width, state.world.tiles.height,
+    );
+    const r = 12 * zoom;
 
-    // Shadow
+    // Arga production lookup (explicit missing path — see below).
+    reportMissingArgaOnce();
+
+    // Shadow (engine-baked ellipse at the feet origin, never in sprite art)
     ctx.globalAlpha = 0.2;
-    drawCircle(screen.x, screen.y + 12, 10, "#000");
+    ctx.beginPath();
+    ctx.ellipse(feet.x, feet.y + 2 * zoom, r * 0.85, r * 0.28, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "#000";
+    ctx.fill();
     ctx.globalAlpha = 1;
 
-    // Body
-    drawCircle(screen.x, screen.y, 12, COLORS.player);
+    // Body (DEV placeholder disc, centered one radius above the feet)
+    drawCircle(feet.x, feet.y - r, r, COLORS.player);
 
     // Outline
     ctx.strokeStyle = COLORS.playerOutline;
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(screen.x, screen.y, 12, 0, Math.PI * 2);
+    ctx.arc(feet.x, feet.y - r, r, 0, Math.PI * 2);
     ctx.stroke();
 
     // Facing indicator
-    drawTriangle(screen.x, screen.y, 6, player.facing, "#fff");
+    drawTriangle(feet.x, feet.y - r, 6 * zoom, player.facing, "#fff");
   }
 
   /** Render interaction prompt when near an interactable. */
@@ -309,7 +378,10 @@ export function createCanvasRenderer(
     const nearest = findNearestInteraction(state.world, state.player.position);
     if (!nearest) return;
 
-    const screen = worldToScreen(nearest.position, camera);
+    const screen = worldToScreenScaled(
+      nearest.position, camera,
+      state.world.tiles.width, state.world.tiles.height,
+    );
     const promptY = screen.y - 30;
 
     // Draw "E" prompt
