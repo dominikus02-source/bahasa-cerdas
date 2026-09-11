@@ -26,6 +26,14 @@ export type RPGEvent =
       fromMapId: RPGId;
       toMapId: RPGId;
       spawn: { x: number; y: number };
+    }
+  | {
+      type: "PORTAL_BLOCKED";
+      playerId: RPGId;
+      mapId: RPGId;
+      x: number;
+      y: number;
+      requiredFlag: string;
     };
 
 export type RPGEventHandler = (event: RPGEvent) => void;
