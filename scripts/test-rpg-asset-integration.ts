@@ -10,7 +10,7 @@
  * Exit 0 = SEMUA LULUS, 1 = ada yang gagal.
  */
 
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import {
   RPG_ASSET_MANIFEST, manifestLookup, manifestByStatus, manifestDuplicateIds,
@@ -104,6 +104,37 @@ check("3. missing diagnostic explicit", manifestLookup("ref:sheet-boss-arga-idle
 }
 check("13. no duplicate registration", manifestDuplicateIds().length === 0);
 check("14. no invalid manifest paths (READY resolve on disk)", manifestByStatus("READY").every((e) => existsSync(join(PUB, e.path.replace(/^\//, "")))));
+
+console.log("\n🗂️ P2.2 conformance gate");
+{
+  // Every runtime PNG on disk has a manifest entry (no orphans either way).
+  const onDisk = new Set<string>();
+  for (const dir of ["terrain", "items"]) {
+    for (const f of readdirSync(join(PUB, "game", "rpg", dir))) {
+      if (f.endsWith(".png")) onDisk.add(f.replace(/\.png$/, ""));
+    }
+  }
+  const inManifest = new Set(manifestByStatus("READY").map((e) => e.id));
+  const orphanDisk = [...onDisk].filter((id) => !inManifest.has(id));
+  const orphanManifest = [...inManifest].filter((id) => !onDisk.has(id));
+  check("no orphan disk files (all 103 in manifest)", orphanDisk.length === 0, orphanDisk.slice(0, 3).join(","));
+  check("no orphan manifest entries (all resolve)", orphanManifest.length === 0);
+  // ONE canonical root: public/game/rpg (web delivery). src/game/rpg/assets
+  // does not exist on this branch; no code may reference it.
+  const codeRefs: string[] = [];
+  const scan = (dir: string) => {
+    for (const f of readdirSync(dir, { withFileTypes: true })) {
+      const p = join(dir, f.name);
+      if (f.isDirectory()) { if (f.name !== "legacy") scan(p); }
+      else if (f.name.endsWith(".ts") || f.name.endsWith(".tsx")) {
+        if (readFileSync(p, "utf8").includes("src/game/rpg/assets")) codeRefs.push(p);
+      }
+    }
+  };
+  scan(join(ROOT, "src", "game", "rpg"));
+  check("single asset root (no src/game/rpg/assets references)", codeRefs.length === 0, codeRefs.slice(0, 2).join(","));
+  check("arga contract frozen (bible values)", strip(src("src/game/rpg/rendering/arga-contract.ts")).includes("idle: 6"));
+}
 
 console.log("\n🗺️ 15. no canonical map mutation");
 {
