@@ -3490,3 +3490,98 @@ model TaskShareToken {
   @@index([penugasanId])
   @@index([groupId])
 }
+
+// ───────────────────────────────────────────────────────────────────────────
+// BC AGENT (P2 — Persistence + Task Engine)
+// Source of truth: docs/BC_AGENT_V0_1_BLUEPRINT.md, docs/BC_AGENT_P1_CORE_REPORT.md
+//
+// Adapter rule: P1 core (src/agent/core) stays pure. These tables persist
+// its canonical state; domain invariants (transition legality, attempt
+// isolation, 4-way approval binding) are enforced by the service layer and
+// DB constraints below. Enum values are stored as String (existing repo
+// convention) so the pure core never depends on generated Prisma types.
+// ───────────────────────────────────────────────────────────────────────────
+
+model AgentTask {
+  id          String   @id @default(cuid())
+  instruction String
+  intentType  String // TaskIntentType (open set, core/types.ts)
+  channel     String // "WEB" | "TELEGRAM"
+  createdBy   String
+  status      String   @default("PENDING") // P1 "Final 8" lifecycle
+  attemptCount Int     @default(0)
+  currentAttemptId String?
+  resolvedBy  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  attempts  TaskAttempt[]
+  events    TaskEvent[]
+  approvals AgentApproval[]
+
+  @@index([status, createdAt])
+  @@index([createdBy, createdAt])
+}
+
+model TaskAttempt {
+  id         String   @id @default(cuid())
+  taskId     String
+  sequence   Int
+  status     String   @default("ACTIVE") // ACTIVE | COMPLETED | FAILED | CANCELLED
+  startedAt  DateTime @default(now())
+  finishedAt DateTime?
+  error      String?
+  plan       Json     @default("[]")
+  decisions  Json     @default("[]")
+  verification Json   @default("{\"status\":\"NOT_REQUIRED\"}")
+  evidenceIds  Json   @default("[]")
+  toolExecutionIds Json @default("[]")
+  metadata   Json     @default("{}")
+  heartbeatAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  task AgentTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, sequence])
+  @@index([status, heartbeatAt])
+  @@index([taskId, status])
+}
+
+model TaskEvent {
+  id           String   @id @default(cuid())
+  taskId       String
+  attemptId    String?
+  seq          Int
+  eventType    String // TaskEvent type (core/types.ts)
+  previousStatus String
+  newStatus    String
+  actor        String   @default("SYSTEM")
+  metadata     Json?
+  createdAt    DateTime @default(now())
+
+  task AgentTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, seq])
+  @@index([taskId, createdAt])
+}
+
+model AgentApproval {
+  id        String   @id @default(cuid())
+  taskId    String
+  attemptId String
+  toolName  String
+  inputHash String
+  status    String   @default("PENDING") // PENDING | CONSUMED | EXPIRED | REVOKED | REJECTED
+  issuedAt  DateTime @default(now())
+  expiresAt DateTime
+  approvedBy String
+  usedAt    DateTime?
+  consumedBy String?
+  createdAt DateTime @default(now())
+
+  task AgentTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId, status])
+  @@index([attemptId])
+  @@index([status, expiresAt])
+}
