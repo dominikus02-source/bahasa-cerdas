@@ -105,6 +105,15 @@ check("3. missing diagnostic explicit", manifestLookup("ref:sheet-boss-arga-idle
 check("13. no duplicate registration", manifestDuplicateIds().length === 0);
 check("14. no invalid manifest paths (READY resolve on disk)", manifestByStatus("READY").every((e) => existsSync(join(PUB, e.path.replace(/^\//, "")))));
 
+console.log("\n📦 P2.3 runtime packs (07–11 audit)");
+check("36 pack 07–11 reference entries registered", RPG_ASSET_MANIFEST.filter((e) => e.id.startsWith("ref:rt-")).length === 36);
+check("arga engine sheets still MISSING (contract intact)", manifestLookup("ref:sheet-boss-arga-idle-down")?.status === "MISSING");
+check("new sheets NEEDS_REVIEW, never auto-READY", RPG_ASSET_MANIFEST.filter((e) => e.id.startsWith("ref:rt-") && e.status === "READY").length === 0);
+check("arga runtime refs present (9 states)", ["idle", "walk", "run", "attack", "skill", "hurt", "defeat", "victory", "interact"].every((s) => manifestLookup(`ref:rt-arga-${s}`) !== undefined));
+check("NPC refs present (5 canonical)", ["ki-jaka", "bu-ratmi", "bu-sari", "eyang-kartala", "pak-empu"].every((n) => manifestLookup(`ref:rt-npc-${n}`) !== undefined));
+check("monster refs present (4 canonical)", ["korog", "korog-perang", "golem-batu", "korog-bayangan"].every((n) => manifestLookup(`ref:rt-mon-${n}`) !== undefined));
+check("boss refs present (4 canonical)", ["raja-korog", "golem-agung", "naga-abu", "penguasa-menara"].every((n) => manifestLookup(`ref:rt-boss-${n}`) !== undefined));
+
 console.log("\n🗂️ P2.2 conformance gate");
 {
   // Every runtime PNG on disk has a manifest entry (no orphans either way).
