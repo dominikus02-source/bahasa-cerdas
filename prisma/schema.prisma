@@ -3518,6 +3518,8 @@ model AgentTask {
   attempts  TaskAttempt[]
   events    TaskEvent[]
   approvals AgentApproval[]
+  toolExecutions ToolExecution[]
+  toolEvidence   ToolEvidence[]
 
   @@index([status, createdAt])
   @@index([createdBy, createdAt])
@@ -3541,6 +3543,8 @@ model TaskAttempt {
   createdAt  DateTime @default(now())
 
   task AgentTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  toolExecutions ToolExecution[]
+  toolEvidence   ToolEvidence[]
 
   @@unique([taskId, sequence])
   @@index([status, heartbeatAt])
@@ -3584,4 +3588,60 @@ model AgentApproval {
   @@index([taskId, status])
   @@index([attemptId])
   @@index([status, expiresAt])
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// BC AGENT (P4 — Tool System)
+// Source of truth: docs/BC_AGENT_P4_TOOLS_REPORT.md, P0 blueprint §8/§10.
+// ToolExecution is the durable audit of every executor pass (including
+// rejections — policy denials and approval failures are recorded, never
+// silently dropped). outputMeta is BOUNDED METADATA ONLY: no raw tool
+// output, no file contents, no API response bodies, no secrets.
+// ToolEvidence is the provenance ledger: FACT rows always carry the
+// executionId that produced them; INFERENCE/RECOMMENDATION/UNKNOWN rows
+// have no executionId (they are not tool-supported).
+// ───────────────────────────────────────────────────────────────────────────
+
+model ToolExecution {
+  id          String    @id @default(cuid())
+  taskId      String
+  attemptId   String
+  toolName    String
+  inputHash   String
+  status      String    @default("RUNNING") // RUNNING | SUCCEEDED | FAILED | CANCELLED
+  startedAt   DateTime
+  finishedAt  DateTime?
+  durationMs  Int?
+  errorCode   String?   // ToolErrorCode (src/agent/tools/errors.ts)
+  outputMeta  Json?     // bounded summary only — never raw output
+  approvalId  String?   // set when an approval was consumed by this execution
+  createdAt   DateTime  @default(now())
+
+  task    AgentTask   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  attempt TaskAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  toolEvidence ToolEvidence[]
+
+  @@index([taskId, startedAt])
+  @@index([attemptId])
+  @@index([toolName, status])
+}
+
+model ToolEvidence {
+  id          String   @id @default(cuid())
+  taskId      String
+  attemptId   String
+  executionId String?  // FACT provenance: the execution that produced the claim (FK-enforced)
+  kind        String   // FACT | OBSERVATION | INFERENCE | RECOMMENDATION | UNKNOWN
+  claim       String   // bounded (≤500 chars); operational for FACTs, never quoted content
+  source      String   // tool name for FACTs; "agent" / "founder" otherwise
+  confidence  String   @default("HIGH") // HIGH | MEDIUM | LOW
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  task      AgentTask      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  attempt   TaskAttempt    @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  execution ToolExecution? @relation(fields: [executionId], references: [id], onDelete: Cascade)
+
+  @@index([taskId, kind])
+  @@index([executionId])
 }
