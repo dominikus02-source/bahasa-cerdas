@@ -52,7 +52,7 @@ const strip = (s: string) =>
 console.log("\n📦 1. manifest integrity");
 {
   const ready = manifestByStatus("READY");
-  check("103 READY entries", ready.length === 103, `got ${ready.length}`);
+  check("107 READY entries", ready.length === 107, `got ${ready.length}`);
   let bad = 0;
   for (const e of ready) {
     const disk = join(PUB, e.path.replace(/^\//, ""));
@@ -92,7 +92,7 @@ check("UI entries REFERENCE_ONLY", manifestLookup("ref:ui-battle-panel")?.status
 check("no UI component replaced (RPGBattle intact)", src("src/game/rpg/ui/RPGBattle.tsx").includes("onAttack("));
 
 console.log("\n📋 3/13/14. missing diagnostics + dup + paths");
-check("3. missing diagnostic explicit", manifestLookup("ref:sheet-boss-arga-idle-down")?.status === "MISSING");
+check("3. missing diagnostic explicit (NEEDS_REVIEW for A2 batch)", manifestLookup("sheet-char-arga-idle-down")?.status === "NEEDS_REVIEW");
 {
   const m0 = createEmptyManifest();
   const r1 = registerAsset(m0, {
@@ -107,7 +107,9 @@ check("14. no invalid manifest paths (READY resolve on disk)", manifestByStatus(
 
 console.log("\n📦 P2.3 runtime packs (07–11 audit)");
 check("36 pack 07–11 reference entries registered", RPG_ASSET_MANIFEST.filter((e) => e.id.startsWith("ref:rt-")).length === 36);
-check("arga engine sheets still MISSING (contract intact)", manifestLookup("ref:sheet-boss-arga-idle-down")?.status === "MISSING");
+check("arga engine sheets partially READY (4/15 rescued)", manifestByStatus("READY").filter((e) => e.id.startsWith("sheet-char-arga-")).length === 4);
+check("arga engine sheets 8 MISSING (up/side directions + other states)", manifestByStatus("MISSING").filter((e) => e.id.startsWith("sheet-char-arga-")).length === 8);
+check("arga engine sheets 3 NEEDS_REVIEW (A2 calibration batch)", manifestByStatus("NEEDS_REVIEW").filter((e) => e.id.startsWith("sheet-char-arga-")).length === 3);
 check("new sheets NEEDS_REVIEW, never auto-READY", RPG_ASSET_MANIFEST.filter((e) => e.id.startsWith("ref:rt-") && e.status === "READY").length === 0);
 check("arga runtime refs present (9 states)", ["idle", "walk", "run", "attack", "skill", "hurt", "defeat", "victory", "interact"].every((s) => manifestLookup(`ref:rt-arga-${s}`) !== undefined));
 check("NPC refs present (5 canonical)", ["ki-jaka", "bu-ratmi", "bu-sari", "eyang-kartala", "pak-empu"].every((n) => manifestLookup(`ref:rt-npc-${n}`) !== undefined));
@@ -118,16 +120,30 @@ console.log("\n🗂️ P2.2 conformance gate");
 {
   // Every runtime PNG on disk has a manifest entry (no orphans either way).
   const onDisk = new Set<string>();
-  for (const dir of ["terrain", "items"]) {
+  for (const dir of ["terrain", "items", "characters"]) {
     for (const f of readdirSync(join(PUB, "game", "rpg", dir))) {
       if (f.endsWith(".png")) onDisk.add(f.replace(/\.png$/, ""));
     }
   }
   const inManifest = new Set(manifestByStatus("READY").map((e) => e.id));
-  const orphanDisk = [...onDisk].filter((id) => !inManifest.has(id));
+  // REFERENCE_ONLY assets (master references, concept art) are expected on disk
+  // but not READY — exclude from orphan check. Match by both id and path basename.
+  const refOnlyIds = new Set(manifestByStatus("REFERENCE_ONLY").map((e) => e.id));
+  const refOnlyPaths = new Set(
+    manifestByStatus("REFERENCE_ONLY")
+      .map((e) => e.path?.replace(/^\//, "")?.replace(/\.png$/, "")?.split("/").pop())
+      .filter(Boolean)
+  );
+  const orphanDisk = [...onDisk].filter(
+    (id) => !inManifest.has(id) && !refOnlyIds.has(id) && !refOnlyPaths.has(id),
+  );
   const orphanManifest = [...inManifest].filter((id) => !onDisk.has(id));
-  check("no orphan disk files (all 103 in manifest)", orphanDisk.length === 0, orphanDisk.slice(0, 3).join(","));
-  check("no orphan manifest entries (all resolve)", orphanManifest.length === 0);
+  check("no orphan disk files (all READY in manifest)", orphanDisk.length === 0, orphanDisk.slice(0, 3).join(","));
+  check("no orphan manifest entries (all READY resolve)", orphanManifest.length === 0);
+  // NEEDS_REVIEW entries may reference files outside production dirs (review artifacts)
+  const needsReview = manifestByStatus("NEEDS_REVIEW").filter((e) => e.path && !e.path.startsWith("("));
+  const reviewOrphans = needsReview.filter((e) => !existsSync(join(PUB, e.path.replace(/^\//, ""))));
+  // Review orphans are expected (strips in /tmp for founder review) — log only, not blocking
   // ONE canonical root: public/game/rpg (web delivery). src/game/rpg/assets
   // does not exist on this branch; no code may reference it.
   const codeRefs: string[] = [];

@@ -158,6 +158,143 @@ function readyEntry(row: [string, string, string, number, number]): RpgAssetEntr
   };
 }
 
+/** Arga runtime sheets — rescued from calibration + Pack07 hurt. */
+const ARGA_RUNTIME_ENTRIES: RpgAssetEntry[] = [
+  // READY: extracted + normalized to 224×224 per frame, horizontal strip
+  {
+    id: "sheet-char-arga-walk-down", category: "characters", source: "rescued-runtime",
+    path: "/game/rpg/characters/sheet-char-arga-walk-down.png",
+    width: 1792, height: 224, frames: 8, animationState: "walk", direction: "down",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
+    status: "READY", confidence: "verified",
+    note: "rescued from calibration sheet, 8 frames, scale 2.22, feet-aligned",
+  },
+  {
+    id: "sheet-char-arga-walk-up", category: "characters", source: "rescued-runtime",
+    path: "/game/rpg/characters/sheet-char-arga-walk-up.png",
+    width: 1792, height: 224, frames: 8, animationState: "walk", direction: "up",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
+    status: "READY", confidence: "verified",
+    note: "rescued from calibration sheet, 8 frames, scale 2.17, feet-aligned",
+  },
+  {
+    id: "sheet-char-arga-walk-side", category: "characters", source: "rescued-runtime",
+    path: "/game/rpg/characters/sheet-char-arga-walk-side.png",
+    width: 1792, height: 224, frames: 8, animationState: "walk", direction: "side",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
+    status: "READY", confidence: "verified",
+    note: "rescued from calibration sheet (right row, mirrored at load), 8 frames, scale 2.33",
+  },
+  {
+    id: "sheet-char-arga-hurt-down", category: "characters", source: "rescued-runtime",
+    path: "/game/rpg/characters/sheet-char-arga-hurt-down.png",
+    width: 896, height: 224, frames: 4, animationState: "hurt", direction: "down",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
+    status: "READY", confidence: "verified",
+    note: "rescued from Pack07 hurt reference sheet down row, 4 frames, scale 2.63",
+  },
+  // NEEDS_REVIEW: P2.3D rebuild — 6 frames from side-view (04-06) via affine warp breathing cycle
+  {
+    id: "sheet-char-arga-idle-down", category: "characters", source: "p2.3d-rebuild",
+    path: "/game/rpg/characters/review/sheet-char-arga-idle-down-a2-rebuild.png",
+    width: 1344, height: 224, frames: 6, animationState: "idle", direction: "down",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
+    status: "NEEDS_REVIEW", confidence: "reviewed",
+    note: "P2.3D rebuild: side-view frames only (removed front3/4 angle mismatch), affine warp breathing, avg height=209px, baseline=216 uniform",
+  },
+  // NEEDS_REVIEW: P2.3D rebuild — frame 04 interpolated from 03+05 (was headless), backgrounds cleaned
+  {
+    id: "sheet-char-arga-run-down", category: "characters", source: "p2.3d-rebuild",
+    path: "/game/rpg/characters/review/sheet-char-arga-run-down-a2-rebuild.png",
+    width: 2240, height: 224, frames: 10, animationState: "run", direction: "down",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
+    status: "NEEDS_REVIEW", confidence: "reviewed",
+    note: "P2.3D rebuild: frame 04 morphed from 03+05 (was headless), all backgrounds cleaned, avg height=197px, baseline=216 uniform",
+  },
+  {
+    id: "sheet-char-arga-run-up", category: "characters", source: "none",
+    path: "(no extractable source artwork)",
+    width: 0, height: 0, frames: 10, animationState: "run", direction: "up",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: false,
+    status: "MISSING", confidence: "unverified",
+    note: "Pack07 ref: 4 frames/band, need 10; ~35px frames too small",
+  },
+  {
+    id: "sheet-char-arga-run-side", category: "characters", source: "none",
+    path: "(no extractable source artwork)",
+    width: 0, height: 0, frames: 10, animationState: "run", direction: "side",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: false,
+    status: "MISSING", confidence: "unverified",
+    note: "Pack07 ref: 4 frames/band, need 10; ~35px frames too small",
+  },
+  // NEEDS_REVIEW: P2.3D rebuild — frame 04 interpolated from 03+05, brown bg patches cleaned from 01-03
+  {
+    id: "sheet-char-arga-attack-down", category: "characters", source: "p2.3d-rebuild",
+    path: "/game/rpg/characters/review/sheet-char-arga-attack-down-a2-rebuild.png",
+    width: 1344, height: 224, frames: 6, animationState: "attack", direction: "down",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
+    status: "NEEDS_REVIEW", confidence: "reviewed",
+    note: "P2.3D rebuild: frame 04 morphed from 03+05 (was headless), brown bg cleaned from 01-03, avg height=201px, baseline=216 uniform",
+  },
+  // REFERENCE_ONLY: P2.4A master character reference (founder-locked canon)
+  {
+    id: "ref:arga-master-character", category: "characters", source: "p2.4a-composite",
+    path: "/game/rpg/characters/ARGA_MASTER_CHARACTER_REFERENCE.png",
+    width: 1774, height: 1100, frames: 1, animationState: "idle", direction: "down",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
+    status: "REFERENCE_ONLY", confidence: "reviewed",
+    note: "P2.4A master: Pack01 portrait + rescued Gen-A walk 4-dir composite. FOUNDER_REVIEW_REQUIRED.",
+  },
+  {
+    id: "sheet-char-arga-attack-up", category: "characters", source: "none",
+    path: "(no extractable source artwork)",
+    width: 0, height: 0, frames: 6, animationState: "attack", direction: "up",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: false,
+    status: "MISSING", confidence: "unverified",
+    note: "Pack07 ref: 4 frames/band, need 6; ~35px frames too small",
+  },
+  {
+    id: "sheet-char-arga-attack-side", category: "characters", source: "none",
+    path: "(no extractable source artwork)",
+    width: 0, height: 0, frames: 6, animationState: "attack", direction: "side",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: false,
+    status: "MISSING", confidence: "unverified",
+    note: "Pack07 ref: 4 frames/band, need 6; ~35px frames too small",
+  },
+  {
+    id: "sheet-char-arga-skill-down", category: "characters", source: "none",
+    path: "(no extractable source artwork)",
+    width: 0, height: 0, frames: 8, animationState: "skill", direction: "down",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: false,
+    status: "MISSING", confidence: "unverified",
+    note: "Pack07 ref: 3-4 frames mixed, need 8; ~35px frames too small",
+  },
+  {
+    id: "sheet-char-arga-defeat-down", category: "characters", source: "none",
+    path: "(no extractable source artwork)",
+    width: 0, height: 0, frames: 8, animationState: "defeat", direction: "down",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: false,
+    status: "MISSING", confidence: "unverified",
+    note: "Pack07 ref: 4-6 frames mixed, need 8; ~35px frames too small",
+  },
+  {
+    id: "sheet-char-arga-victory-down", category: "characters", source: "none",
+    path: "(no extractable source artwork)",
+    width: 0, height: 0, frames: 8, animationState: "victory", direction: "down",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: false,
+    status: "MISSING", confidence: "unverified",
+    note: "Pack07 ref: 1 large band, need 8 separate frames; ~35px too small",
+  },
+  {
+    id: "sheet-char-arga-interact-down", category: "characters", source: "none",
+    path: "(no extractable source artwork)",
+    width: 0, height: 0, frames: 6, animationState: "interact", direction: "down",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: false,
+    status: "MISSING", confidence: "unverified",
+    note: "Pack07 ref: 1 frame band, need 6; ~35px frames too small",
+  },
+];
+
 /** File-level reference entries (source sheets, mockups, unlabeled strips). */
 const REFERENCE_ENTRIES: RpgAssetEntry[] = [
   {
@@ -676,16 +813,11 @@ const REFERENCE_ENTRIES: RpgAssetEntry[] = [
     origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: false,
     status: "REFERENCE_ONLY", confidence: "reviewed", note: "reference doc, not runtime",
   },
-  {
-    id: "ref:sheet-boss-arga-idle-down", category: "characters", source: "pack-reference", path: "(expected delivery, absent)",
-    width: 0, height: 0, frames: 0, animationState: null, direction: null,
-    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: false,
-    status: "MISSING", confidence: "unverified", note: "engine sheet per arga-contract, not delivered",
-  },
 ];
 
 export const RPG_ASSET_MANIFEST: RpgAssetEntry[] = [
   ...READY_TABLE.map(readyEntry),
+  ...ARGA_RUNTIME_ENTRIES,
   ...REFERENCE_ENTRIES,
 ];
 
@@ -704,4 +836,18 @@ export function manifestDuplicateIds(): string[] {
   const seen = new Map<string, number>();
   for (const e of RPG_ASSET_MANIFEST) seen.set(e.id, (seen.get(e.id) ?? 0) + 1);
   return [...seen.entries()].filter(([, n]) => n > 1).map(([id]) => id);
+}
+
+/** All Arga runtime sheets that are READY (rescued). */
+export function argaRuntimeReady(): RpgAssetEntry[] {
+  return RPG_ASSET_MANIFEST.filter(
+    (e) => e.id.startsWith("sheet-char-arga-") && e.status === "READY",
+  );
+}
+
+/** All Arga runtime sheets that are MISSING (no extractable source). */
+export function argaRuntimeMissing(): RpgAssetEntry[] {
+  return RPG_ASSET_MANIFEST.filter(
+    (e) => e.id.startsWith("sheet-char-arga-") && e.status === "MISSING",
+  );
 }
