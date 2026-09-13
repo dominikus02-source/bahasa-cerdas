@@ -245,6 +245,15 @@ const ARGA_RUNTIME_ENTRIES: RpgAssetEntry[] = [
     status: "REFERENCE_ONLY", confidence: "reviewed",
     note: "P2.4A master: Pack01 portrait + rescued Gen-A walk 4-dir composite. FOUNDER_REVIEW_REQUIRED.",
   },
+  // REFERENCE_ONLY: P2.4A.2 Pack01 animation reference sheet (founder-supplied review)
+  {
+    id: "ref:arga-turnaround-v2", category: "characters", source: "p2.4a-pack01",
+    path: "/game/rpg/characters/ARGA_MASTER_TURNAROUND_V2.png",
+    width: 1536, height: 1024, frames: 1, animationState: "idle", direction: "down",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: false,
+    status: "REFERENCE_ONLY", confidence: "reviewed",
+    note: "P2.4A.2 Pack01 animation reference sheet. Founder review required. RGB, baked background.",
+  },
   {
     id: "sheet-char-arga-attack-up", category: "characters", source: "none",
     path: "(no extractable source artwork)",
