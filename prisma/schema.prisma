@@ -1,5 +1,9 @@
 generator client {
   provider = "prisma-client-js"
+  // P7 worker image (Dockerfile.worker) runs on node:22-bookworm-slim
+  // (OpenSSL 3); keep the debian-openssl-3.0.x engine alongside native so
+  // the containerized client has its query engine baked in.
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -3624,6 +3628,33 @@ model ToolExecution {
   @@index([taskId, startedAt])
   @@index([attemptId])
   @@index([toolName, status])
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// BC Agent P7 — durable worker registry.
+// A worker instance is a lifecycle entity: it registers idempotently on
+// startup, heartbeats while alive, and persists its final state on shutdown.
+// Hostname is informational only — identity is the random workerId. Stale
+// detection is a QUERY over lastHeartbeatAt; no component ever mutates
+// another worker's row (principle 13/14: restart creates a new identity,
+// recovery reads, never rewrites, foreign lifecycle rows).
+// ───────────────────────────────────────────────────────────────────────────
+
+model AgentWorker {
+  id           String   @id // "worker-<uuid>" (worker/registry.ts makeWorkerId)
+  status       String   @default("STARTING") // STARTING | RUNNING | DRAINING | STOPPED | DEGRADED
+  version      String?
+  hostname     String?
+  pid          Int?
+  currentTaskId String?
+  currentAttemptId String?
+  startedAt    DateTime @default(now())
+  lastHeartbeatAt DateTime @default(now())
+  stoppedAt    DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([status, lastHeartbeatAt])
 }
 
 model ToolEvidence {

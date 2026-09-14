@@ -14,6 +14,17 @@ export { planResponseSchema, validatePlan, PLAN_LIMITS } from "./plan";
 export type { AgentPlan, ProposedAction, PlanValidationResult } from "./plan";
 export { reclaimStaleAttempt, failOrphanedTask, parseLease } from "./lease";
 export type { AttemptLease } from "./lease";
+export {
+  registerWorker,
+  heartbeatWorker,
+  setWorkerAssignment,
+  setWorkerStatus,
+  findStaleWorkers,
+  listRecentWorkers,
+  WORKER_STALE_AFTER_MS,
+  WORKER_LIFECYCLE_STATUSES,
+} from "./registry";
+export type { WorkerLifecycleStatus, WorkerRegistration, StaleWorkerRow } from "./registry";
 export { verifyAttemptCompletion } from "./verify";
 export type { VerificationResult, VerificationStatus } from "./verify";
 export { buildTaskReport } from "./report";

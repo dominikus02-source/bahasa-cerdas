@@ -39,6 +39,10 @@ async function main(): Promise<void> {
     ...(process.env.BC_AGENT_POLL_MS ? { pollIntervalMs: Number(process.env.BC_AGENT_POLL_MS) } : {}),
     ...(process.env.BC_AGENT_CONCURRENCY ? { concurrency: Number(process.env.BC_AGENT_CONCURRENCY) } : {}),
   });
+  // P7: build/version identifier for the registry row — informational,
+  // never an identity. In the worker image this is a build arg; locally it
+  // defaults to the git short SHA when available (best-effort, bounded).
+  const version = process.env.BC_AGENT_VERSION ?? `run-ts-${new Date().toISOString().slice(0, 10)}`;
 
   // 2. Dependencies.
   const prisma = new PrismaClient({ log: ["error"] });
@@ -70,6 +74,7 @@ async function main(): Promise<void> {
     registry,
     config,
     logger,
+    version,
   });
 
   // 3. Signals — graceful shutdown, never mid-transaction (§16).

@@ -25,6 +25,7 @@
  */
 
 import { randomUUID } from "node:crypto";
+import * as os from "node:os";
 
 import type { PrismaClient } from "@prisma/client";
 import type { AgentTaskService } from "../persistence/service";
@@ -40,6 +41,13 @@ import { BACKOFF_LADDER_MS } from "./config";
 import type { WorkerLogger } from "./logger";
 import { planResponseSchema, validatePlan, type AgentPlan } from "./plan";
 import { reclaimStaleAttempt, failOrphanedTask, parseLease } from "./lease";
+import {
+  registerWorker,
+  heartbeatWorker,
+  setWorkerAssignment,
+  setWorkerStatus,
+  type WorkerLifecycleStatus,
+} from "./registry";
 import { verifyAttemptCompletion, type VerificationResult } from "./verify";
 import { buildTaskReport, type TaskReport } from "./report";
 import { recordExecution, recordEvidence } from "./execution-store";
@@ -62,6 +70,8 @@ export interface WorkerDeps {
   readonly newId?: () => string;
   /** Injectable sleep for deterministic tests. */
   readonly sleep?: (ms: number) => Promise<void>;
+  /** Build/version identifier persisted with the worker row (P7 §P2); never guessed. */
+  readonly version?: string;
 }
 
 export interface WorkerHealth {
@@ -73,6 +83,10 @@ export interface WorkerHealth {
   readonly status: "IDLE" | "PROCESSING" | "STOPPING" | "STOPPED";
   readonly tasksProcessed: number;
   readonly consecutiveErrors: number;
+  /** P7 worker-lifecycle state (STARTING/RUNNING/DRAINING/STOPPED/DEGRADED). */
+  readonly lifecycle: WorkerLifecycleStatus;
+  /** P7 registry persistence state — health consumers must know what is durable. */
+  readonly registryStatus: "REGISTERED" | "NOT_REGISTERED" | "REGISTRY_FAILED";
 }
 
 export type StopReason = "signal" | "fatal" | "max-errors";
@@ -89,7 +103,11 @@ export class Worker {
   private readonly sleep: (ms: number) => Promise<void>;
 
   private readonly workerId: string;
+  private readonly version: string | null;
   private readonly startedAt = new Date();
+  private lifecycle: WorkerLifecycleStatus = "STARTING";
+  private registryStatus: "REGISTERED" | "NOT_REGISTERED" | "REGISTRY_FAILED" = "NOT_REGISTERED";
+  private lastWorkerBeatTick = 0;
   private running = false;
   private hasRun = false;
   private stopRequested = false;
@@ -112,6 +130,7 @@ export class Worker {
     this.sleep = deps.sleep ?? ((ms) => new Promise((r) => setTimeout(r, ms)));
     // Collision-safe worker identity (§18): random UUID, not timestamp-based.
     this.workerId = `worker-${randomUUID()}`;
+    this.version = deps.version ?? null;
   }
 
   get id(): string {
@@ -136,6 +155,14 @@ export class Worker {
       status,
       tasksProcessed: this.tasksProcessed,
       consecutiveErrors: this.concurrentErrorsInternal(),
+      lifecycle: this.running
+        ? this.stopRequested
+          ? "DRAINING"
+          : this.lifecycle
+        : this.hasRun
+          ? "STOPPED"
+          : this.lifecycle,
+      registryStatus: this.registryStatus,
     };
   }
 
@@ -149,6 +176,26 @@ export class Worker {
   async run(): Promise<void> {
     this.running = true;
     this.hasRun = true;
+    // P7: durable identity FIRST — the registry row is the liveness contract
+    // (principle 13). A registry failure is logged and remembered (health
+    // shows REGISTRY_FAILED) but never blocks claiming: the task pipeline
+    // stays safe because ownership is the P2 claim, not the worker row.
+    try {
+      await registerWorker(
+        this.prisma,
+        { workerId: this.workerId, version: this.version ?? undefined, hostname: hostnameOf(), pid: process.pid },
+        new Date()
+      );
+      this.registryStatus = "REGISTERED";
+      this.lifecycle = "RUNNING";
+    } catch (err) {
+      this.registryStatus = "REGISTRY_FAILED";
+      this.log.emit("WORKER_ERROR", {
+        category: "REGISTRY_UNAVAILABLE",
+        detail: err instanceof Error ? err.message.slice(0, 160) : String(err),
+      });
+      this.lifecycle = "RUNNING"; // process still runs; truth is in the log + registryStatus
+    }
     this.log.emit("WORKER_STARTED", { detail: `worker ${this.workerId}` });
     try {
       while (this.running && !this.stopRequested) {
@@ -156,6 +203,10 @@ export class Worker {
       }
     } finally {
       this.running = false;
+      this.lifecycle = "STOPPED";
+      // Persist the final lifecycle state — best-effort: a failed terminal
+      // write leaves the row to be detected stale by query (honest, not fatal).
+      await setWorkerStatus(this.prisma, this.workerId, "STOPPED", new Date()).catch(() => undefined);
       this.log.emit("WORKER_STOPPING", { detail: this.stopReason ?? "loop-exit" });
     }
   }
@@ -165,11 +216,29 @@ export class Worker {
     if (this.stopRequested) return;
     this.stopRequested = true;
     this.stopReason = reason;
+    // P7: persist DRAINING immediately so the DB reflects the shutdown
+    // intent even if the process dies before the final STOPPED write.
+    // Draining workers keep heartbeating (startHeartbeat loop checks
+    // stopRequested only for stopping work, and tick() still beats) — and
+    // findStaleWorkers reports a quiet DRAINING row separately, never as a
+    // reclaim target.
+    void setWorkerStatus(this.prisma, this.workerId, "DRAINING", new Date()).catch(() => undefined);
   }
 
   /** One loop iteration: recover → claim → process, with bounded backoff when idle. */
   async tick(): Promise<void> {
     if (this.stopRequested) return;
+
+    // P7: the process lifecycle advances to RUNNING on the first tick —
+    // independent of registry success (registryStatus carries that truth;
+    // lifecycle describes the process).
+    if (this.lifecycle === "STARTING") this.lifecycle = "RUNNING";
+
+    // P7: bounded worker liveness beat (independent of task activity so an
+    // IDLE always-on worker is visibly alive in the DB). Throttled to the
+    // heartbeat interval; failure is logged, never fatal (ownership is the
+    // P2 claim, not the worker row).
+    await this.beatWorkerIfNeeded();
 
     // Recovery sweep (throttled) runs even when the queue is empty.
     await this.recoverStaleIfNeeded();
@@ -186,6 +255,11 @@ export class Worker {
       await this.processTask(claimed);
       this.consecutiveErrors = 0;
       this.tasksProcessed += 1;
+      // P7: error budget recovered — persist the return to healthy state.
+      if (this.lifecycle === "DEGRADED") {
+        this.lifecycle = "RUNNING";
+        await setWorkerStatus(this.prisma, this.workerId, "RUNNING", new Date()).catch(() => undefined);
+      }
     } catch (err) {
       this.consecutiveErrors += 1;
       this.log.emit("WORKER_ERROR", {
@@ -194,12 +268,59 @@ export class Worker {
         category: "WORKER_INTERNAL",
         detail: err instanceof Error ? err.message : String(err),
       });
+      // P7: persist DEGRADED — the process is alive but its error budget is
+      // burning. Truth in the DB, not only in memory (principle 13).
+      if (this.lifecycle !== "DEGRADED") {
+        this.lifecycle = "DEGRADED";
+        await setWorkerStatus(this.prisma, this.workerId, "DEGRADED", new Date()).catch(() => undefined);
+      }
       if (this.consecutiveErrors >= this.config.maxConsecutiveErrors) {
         this.stop("max-errors");
       }
     } finally {
       this.currentTaskId = null;
       this.currentAttemptId = null;
+      // P7: clear the informational assignment pointer. Awaited (single
+      // bounded UPDATE) so the persisted pointer never outlives the task.
+      try {
+        await setWorkerAssignment(this.prisma, this.workerId, null, null, new Date());
+      } catch {
+        // Registry unavailable — the pointer may persist; health consumers
+        // treat it as informational (never ownership).
+      }
+    }
+  }
+
+  /**
+   * Throttled worker-row heartbeat: at most one UPDATE per heartbeat interval.
+   * Lazily registers on first call, so ANY worker that runs — even driven by
+   * bare tick() (serverless/manual invocation) — leaves a durable identity
+   * trace before claiming work. Registration failure is remembered (health
+   * shows REGISTRY_FAILED) but never blocks claiming: ownership is the P2
+   * claim, not the worker row (principle 13 without breaking P2 atomicity).
+   */
+  private async beatWorkerIfNeeded(): Promise<void> {
+    const nowTick = Date.now();
+    if (nowTick - this.lastWorkerBeatTick < this.config.heartbeatIntervalMs) return;
+    this.lastWorkerBeatTick = nowTick;
+    try {
+      if (this.registryStatus === "NOT_REGISTERED") {
+        await registerWorker(
+          this.prisma,
+          { workerId: this.workerId, version: this.version ?? undefined, hostname: hostnameOf(), pid: process.pid },
+          new Date()
+        );
+        this.registryStatus = "REGISTERED";
+        if (this.lifecycle === "STARTING") this.lifecycle = "RUNNING";
+      } else {
+        await heartbeatWorker(this.prisma, this.workerId, new Date());
+      }
+    } catch (err) {
+      this.registryStatus = this.registryStatus === "NOT_REGISTERED" ? "REGISTRY_FAILED" : this.registryStatus;
+      this.log.emit("WORKER_ERROR", {
+        category: "REGISTRY_UNAVAILABLE",
+        detail: err instanceof Error ? err.message.slice(0, 160) : String(err),
+      });
     }
   }
 
@@ -236,6 +357,8 @@ export class Worker {
         where: { id: attempt.id },
         select: { heartbeatAt: true },
       });
+      // P7: point the durable registry row at the work being processed.
+      await setWorkerAssignment(this.prisma, this.workerId, task.id, attempt.id, new Date()).catch(() => undefined);
       this.log.emit("TASK_CLAIMED", { taskId: task.id, attemptId: attempt.id, detail: `seq ${attempt.sequence}` });
       return { taskId: task.id, attemptId: attempt.id, heartbeatAnchor: row.heartbeatAt };
     } catch (err) {
@@ -472,6 +595,9 @@ export class Worker {
         try {
           await this.taskService.heartbeat(attemptId);
           this.lastHeartbeatAt = new Date().toISOString();
+          // P7: piggyback the worker liveness beat while work is active, so a
+          // long task never lets the worker row look stale mid-flight.
+          await heartbeatWorker(this.prisma, this.workerId, new Date()).catch(() => undefined);
         } catch {
           // Heartbeat write failed → ownership uncertain (§15). Stop beating
           // and stop executing further work for this attempt.
@@ -552,6 +678,15 @@ export class Worker {
 export class InvalidPlanError extends IntelligenceError {
   constructor(reason: string) {
     super("INTELLIGENCE_RESPONSE_INVALID", `plan rejected: ${reason}`);
+  }
+}
+
+/** Bounded informational hostname for the registry row (never an identity). */
+function hostnameOf(): string {
+  try {
+    return os.hostname().slice(0, 120);
+  } catch {
+    return "unknown";
   }
 }
 

@@ -648,6 +648,12 @@ export interface WorkerHealthView {
   readonly secondsSinceHeartbeat: number | null;
   readonly activeLeases: number;
   readonly note: string;
+  /** P7 registry signal: the most recent worker row in the window (optional, additive). */
+  readonly registry?: WorkerRegistrySignal | null;
+  /** P7 query-only stale detection (RUNNING/DEGRADED rows past the threshold). */
+  readonly staleWorkers?: number;
+  /** P7 workers seen in the recent window, newest heartbeat first (bounded). */
+  readonly workers?: WorkerRegistryRowView[];
 }
 
 /** P5 keeps worker identity in the attempt lease; there is no worker table. */
@@ -696,7 +702,77 @@ export async function getWorkerHealthView(prisma: PrismaClient): Promise<WorkerH
         : runtimeState === "UNKNOWN"
           ? "Ada attempt RUNNING dengan lease tetapi heartbeat kedaluwarsa (>5 menit). Kepemilikan tidak pasti — lihat aktivitas recovery worker."
           : "Worker aktif memproses attempt dengan heartbeat segar.",
+    // P7 additive: durable worker-registry truth (query-only; never mutates worker rows).
+    ...(await getWorkerRegistryAddendum(prisma, nowMs)),
   };
+}
+
+// ─── P7 worker registry read model ──────────────────────────────────────
+
+/** Serialized view of one AgentWorker row (bounded, no secrets). */
+export interface WorkerRegistryRowView {
+  readonly workerId: string;
+  readonly status: string;
+  readonly version: string | null;
+  readonly hostname: string | null;
+  readonly currentTaskId: string | null;
+  readonly currentAttemptId: string | null;
+  readonly startedAt: string;
+  readonly lastHeartbeatAt: string;
+  readonly secondsSinceHeartbeat: number;
+}
+
+/** The most recent worker row + fleet-level stale count (additive fields). */
+export interface WorkerRegistrySignal {
+  readonly workerId: string;
+  readonly status: string;
+  readonly version: string | null;
+  readonly lastHeartbeatAt: string;
+  readonly secondsSinceHeartbeat: number;
+  readonly isStale: boolean;
+}
+
+async function getWorkerRegistryAddendum(
+  prisma: PrismaClient,
+  nowMs: number
+): Promise<{ registry: WorkerRegistrySignal | null; staleWorkers: number; workers: WorkerRegistryRowView[] }> {
+  try {
+    const { findStaleWorkers, listRecentWorkers, WORKER_STALE_AFTER_MS } = await import("../worker/registry");
+    const now = new Date(nowMs);
+    const [{ stale }, recent] = await Promise.all([
+      findStaleWorkers(prisma, WORKER_STALE_AFTER_MS, now, 5),
+      listRecentWorkers(prisma, now, 5),
+    ]);
+    const head = recent[0] ?? null;
+    return {
+      registry: head
+        ? {
+            workerId: head.id,
+            status: head.status,
+            version: head.version,
+            lastHeartbeatAt: head.lastHeartbeatAt.toISOString(),
+            secondsSinceHeartbeat: head.secondsSinceHeartbeat,
+            isStale: head.secondsSinceHeartbeat * 1000 >= WORKER_STALE_AFTER_MS,
+          }
+        : null,
+      staleWorkers: stale.length,
+      workers: recent.map((r) => ({
+        workerId: r.id,
+        status: r.status,
+        version: r.version,
+        hostname: r.hostname,
+        currentTaskId: r.currentTaskId,
+        currentAttemptId: r.currentAttemptId,
+        startedAt: r.startedAt.toISOString(),
+        lastHeartbeatAt: r.lastHeartbeatAt.toISOString(),
+        secondsSinceHeartbeat: r.secondsSinceHeartbeat,
+      })),
+    };
+  } catch {
+    // Registry unavailable (pre-migration DB, query failure) → additive
+    // fields stay absent. Never fabricate health (principle 12).
+    return { registry: null, staleWorkers: 0, workers: [] };
+  }
 }
 
 // ─── Command-center summary (bounded counts) ────────────────────────────

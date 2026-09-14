@@ -382,7 +382,8 @@
     "test:rpg-vertical-slice": "npx tsx scripts/test-rpg-vertical-slice.ts",
     "test:rpg-visual-foundation": "npx tsx scripts/test-rpg-visual-foundation.ts",
     "test:rpg-pickup-consumables": "npx tsx scripts/test-rpg-pickup-consumables.ts",
-    "test:rpg-asset-integration": "npx tsx scripts/test-rpg-asset-integration.ts"
+    "test:rpg-asset-integration": "npx tsx scripts/test-rpg-asset-integration.ts",
+    "test:bc-agent-p7-worker": "npx tsx scripts/test-bc-agent-p7-worker.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
@@ -436,6 +437,7 @@
     "sharp": "^0.35.3",
     "tailwindcss": "^3.4.14",
     "ts-node": "^10.9.2",
+    "tsx": "^4.23.13",
     "typescript": "^5.6.3"
   }
 }
