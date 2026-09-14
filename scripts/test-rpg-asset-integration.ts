@@ -52,7 +52,7 @@ const strip = (s: string) =>
 console.log("\n📦 1. manifest integrity");
 {
   const ready = manifestByStatus("READY");
-  check("107 READY entries", ready.length === 107, `got ${ready.length}`);
+  check("106 READY entries", ready.length === 106, `got ${ready.length}`);
   let bad = 0;
   for (const e of ready) {
     const disk = join(PUB, e.path.replace(/^\//, ""));
@@ -107,9 +107,10 @@ check("14. no invalid manifest paths (READY resolve on disk)", manifestByStatus(
 
 console.log("\n📦 P2.3 runtime packs (07–11 audit)");
 check("36 pack 07–11 reference entries registered", RPG_ASSET_MANIFEST.filter((e) => e.id.startsWith("ref:rt-")).length === 36);
-check("arga engine sheets partially READY (4/15 rescued)", manifestByStatus("READY").filter((e) => e.id.startsWith("sheet-char-arga-")).length === 4);
-check("arga engine sheets 8 MISSING (up/side directions + other states)", manifestByStatus("MISSING").filter((e) => e.id.startsWith("sheet-char-arga-")).length === 8);
-check("arga engine sheets 3 NEEDS_REVIEW (A2 calibration batch)", manifestByStatus("NEEDS_REVIEW").filter((e) => e.id.startsWith("sheet-char-arga-")).length === 3);
+check("arga engine sheets partially READY (3/16 expected sheets)", manifestByStatus("READY").filter((e) => e.id.startsWith("sheet-char-arga-")).length === 3);
+check("arga engine sheets 6 MISSING (up/side directions + other states)", manifestByStatus("MISSING").filter((e) => e.id.startsWith("sheet-char-arga-")).length === 6);
+check("arga engine sheets 4 NEEDS_REVIEW (P2.3D rebuilds + hurt)", manifestByStatus("NEEDS_REVIEW").filter((e) => e.id.startsWith("sheet-char-arga-")).length === 4);
+check("arga SIDE sheets 3 REFERENCE_ONLY (idle-side/run-side/attack-side P2.4C.2 extraction)", manifestByStatus("REFERENCE_ONLY").filter((e) => e.id.startsWith("sheet-char-arga-") && e.id.includes("-side")).length === 3);
 check("new sheets NEEDS_REVIEW, never auto-READY", RPG_ASSET_MANIFEST.filter((e) => e.id.startsWith("ref:rt-") && e.status === "READY").length === 0);
 check("arga runtime refs present (9 states)", ["idle", "walk", "run", "attack", "skill", "hurt", "defeat", "victory", "interact"].every((s) => manifestLookup(`ref:rt-arga-${s}`) !== undefined));
 check("NPC refs present (5 canonical)", ["ki-jaka", "bu-ratmi", "bu-sari", "eyang-kartala", "pak-empu"].every((n) => manifestLookup(`ref:rt-npc-${n}`) !== undefined));
@@ -134,8 +135,15 @@ console.log("\n🗂️ P2.2 conformance gate");
       .map((e) => e.path?.replace(/^\//, "")?.replace(/\.png$/, "")?.split("/").pop())
       .filter(Boolean)
   );
+  // NEEDS_REVIEW assets (hurt-down, A2 rebuilds) are on disk but not READY — exclude from orphan check
+  const needsReviewIds = new Set(manifestByStatus("NEEDS_REVIEW").map((e) => e.id));
+  const needsReviewPaths = new Set(
+    manifestByStatus("NEEDS_REVIEW")
+      .map((e) => e.path?.replace(/^\//, "")?.replace(/\.png$/, "")?.split("/").pop())
+      .filter(Boolean)
+  );
   const orphanDisk = [...onDisk].filter(
-    (id) => !inManifest.has(id) && !refOnlyIds.has(id) && !refOnlyPaths.has(id),
+    (id) => !inManifest.has(id) && !refOnlyIds.has(id) && !refOnlyPaths.has(id) && !needsReviewIds.has(id) && !needsReviewPaths.has(id),
   );
   const orphanManifest = [...inManifest].filter((id) => !onDisk.has(id));
   check("no orphan disk files (all READY in manifest)", orphanDisk.length === 0, orphanDisk.slice(0, 3).join(","));

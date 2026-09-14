@@ -183,15 +183,15 @@ const ARGA_RUNTIME_ENTRIES: RpgAssetEntry[] = [
     width: 1792, height: 224, frames: 8, animationState: "walk", direction: "side",
     origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
     status: "READY", confidence: "verified",
-    note: "rescued from calibration sheet (right row, mirrored at load), 8 frames, scale 2.33",
+    note: "P2.4C: canonical SIDE production asset. Rescued from calibration sheet (right row, mirrored at load), 8 frames, scale 2.33. TRUE PROFILE verified.",
   },
   {
     id: "sheet-char-arga-hurt-down", category: "characters", source: "rescued-runtime",
     path: "/game/rpg/characters/sheet-char-arga-hurt-down.png",
     width: 896, height: 224, frames: 4, animationState: "hurt", direction: "down",
     origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
-    status: "READY", confidence: "verified",
-    note: "rescued from Pack07 hurt reference sheet down row, 4 frames, scale 2.63",
+    status: "NEEDS_REVIEW", confidence: "unverified",
+    note: "INCOMPATIBLE: Gen-B blue outfit + armor. Cannot be used as Arga runtime asset. Needs replacement.",
   },
   // NEEDS_REVIEW: P2.3D rebuild — 6 frames from side-view (04-06) via affine warp breathing cycle
   {
@@ -200,7 +200,7 @@ const ARGA_RUNTIME_ENTRIES: RpgAssetEntry[] = [
     width: 1344, height: 224, frames: 6, animationState: "idle", direction: "down",
     origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
     status: "NEEDS_REVIEW", confidence: "reviewed",
-    note: "P2.3D rebuild: side-view frames only (removed front3/4 angle mismatch), affine warp breathing, avg height=209px, baseline=216 uniform",
+    note: "P2.3D rebuild: side-view frames only (removed front3/4 angle mismatch), affine warp breathing, avg height=209px, baseline=216 uniform. A2 idle-down calibration REMOVED (P2.4C.1 duplicate reconciliation).",
   },
   // NEEDS_REVIEW: P2.3D rebuild — frame 04 interpolated from 03+05 (was headless), backgrounds cleaned
   {
@@ -209,7 +209,7 @@ const ARGA_RUNTIME_ENTRIES: RpgAssetEntry[] = [
     width: 2240, height: 224, frames: 10, animationState: "run", direction: "down",
     origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
     status: "NEEDS_REVIEW", confidence: "reviewed",
-    note: "P2.3D rebuild: frame 04 morphed from 03+05 (was headless), all backgrounds cleaned, avg height=197px, baseline=216 uniform",
+    note: "P2.3D rebuild: frame 04 morphed from 03+05 (was headless), all backgrounds cleaned, avg height=197px, baseline=216 uniform. A2 run-down calibration → REFERENCE_ONLY (P2.4C.1).",
   },
   {
     id: "sheet-char-arga-run-up", category: "characters", source: "none",
@@ -220,12 +220,21 @@ const ARGA_RUNTIME_ENTRIES: RpgAssetEntry[] = [
     note: "Pack07 ref: 4 frames/band, need 10; ~35px frames too small",
   },
   {
-    id: "sheet-char-arga-run-side", category: "characters", source: "none",
-    path: "(no extractable source artwork)",
+    id: "sheet-char-arga-run-side", category: "characters", source: "pack01-extraction",
+    path: "assets-src/rpg/characters/arga/side-extraction/run-side-{1..10}-native.png",
     width: 0, height: 0, frames: 10, animationState: "run", direction: "side",
-    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: false,
-    status: "MISSING", confidence: "unverified",
-    note: "Pack07 ref: 4 frames/band, need 10; ~35px frames too small",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
+    status: "REFERENCE_ONLY", confidence: "reviewed",
+    note: "P2.4C.2: 10 frames extracted from Pack01 RIGHT row (native 13-29×65-67px). TRUE PROFILE verified. Requires upscale to 224×224 for production. NOT READY — reference only.",
+  },
+  // P2.4C: idle-side — true profile, 6 frames. Added per founder directive.
+  {
+    id: "sheet-char-arga-idle-side", category: "characters", source: "pack01-extraction",
+    path: "assets-src/rpg/characters/arga/side-extraction/idle-side-{1..5}-native.png",
+    width: 0, height: 0, frames: 5, animationState: "idle", direction: "side",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
+    status: "REFERENCE_ONLY", confidence: "reviewed",
+    note: "P2.4C.2: 5 of 6 frames extracted from Pack01 RIGHT row (native 26-42×66px). Frame 6 missing (1px gap artifact at x=79). TRUE PROFILE verified. Requires upscale to 224×224 for production. NOT READY — reference only.",
   },
   // NEEDS_REVIEW: P2.3D rebuild — frame 04 interpolated from 03+05, brown bg patches cleaned from 01-03
   {
@@ -234,9 +243,63 @@ const ARGA_RUNTIME_ENTRIES: RpgAssetEntry[] = [
     width: 1344, height: 224, frames: 6, animationState: "attack", direction: "down",
     origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
     status: "NEEDS_REVIEW", confidence: "reviewed",
-    note: "P2.3D rebuild: frame 04 morphed from 03+05 (was headless), brown bg cleaned from 01-03, avg height=201px, baseline=216 uniform",
+    note: "P2.3D rebuild: frame 04 morphed from 03+05 (was headless), brown bg cleaned from 01-03, avg height=201px, baseline=216 uniform. A2 attack-down calibration → REFERENCE_ONLY (P2.4C.1).",
   },
   // REFERENCE_ONLY: P2.4A master character reference (founder-locked canon)
+  // --- P2.4B.2: A2 Calibration Individual Frames (224×224 RGBA, transparent) ---
+  // P2.4C.1 RECONCILIATION: idle-down-a2 REMOVED (duplicate of idle-down p2.3d-rebuild).
+  // run-down-a2 and attack-down-a2 converted from NEEDS_REVIEW to REFERENCE_ONLY
+  // (A2 calibration metadata, not production candidates — no canonical state:direction duplicate).
+  {
+    id: "sheet-char-arga-run-down-a2", category: "characters", source: "pack12-a2-calibration",
+    path: "/game/rpg/characters/review/arga-run-down-a2/",
+    width: 224, height: 224, frames: 10, animationState: "run", direction: "down",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
+    status: "REFERENCE_ONLY", confidence: "reviewed",
+    note: "P2.4B.2 A2 calibration: 10 individual frames, 224×224 RGBA, transparent, canon colors present. VISUAL INCONSISTENCY with walk sheets (pixel diff 61.0). A2 motion reference only — never promote to READY.",
+  },
+  {
+    id: "sheet-char-arga-attack-down-a2", category: "characters", source: "pack12-a2-calibration",
+    path: "/game/rpg/characters/review/arga-attack-down-a2/",
+    width: 224, height: 224, frames: 6, animationState: "attack", direction: "down",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
+    status: "REFERENCE_ONLY", confidence: "reviewed",
+    note: "P2.4B.2 A2 calibration: 6 individual frames, 224×224 RGBA, transparent, canon colors present. VISUAL INCONSISTENCY with walk sheets (pixel diff 61.0). A2 motion reference only — never promote to READY.",
+  },
+  // --- P2.4B.2: Reference Sheets from Complete Animation Pack ---
+  {
+    id: "ref:arga-complete-pack-down", category: "characters", source: "complete-animation-pack",
+    path: "package/DOWN_CORE_IDLE_WALK_RUN.png",
+    width: 1536, height: 1024, frames: 1, animationState: null, direction: "down",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: false,
+    status: "REFERENCE_ONLY", confidence: "reviewed",
+    note: "P2.4B.2 Complete Pack: DOWN reference sheet (idle/walk/run, front-facing). RGB, baked background. Art-direction reference only.",
+  },
+  {
+    id: "ref:arga-complete-pack-up", category: "characters", source: "complete-animation-pack",
+    path: "package/UP_CORE_IDLE_WALK_RUN.png",
+    width: 1536, height: 1024, frames: 1, animationState: null, direction: "up",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: false,
+    status: "REFERENCE_ONLY", confidence: "reviewed",
+    note: "P2.4B.2 Complete Pack: UP reference sheet (idle/walk/run, back-facing). RGB, baked background. Art-direction reference only.",
+  },
+  {
+    id: "ref:arga-complete-pack-all", category: "characters", source: "complete-animation-pack",
+    path: "package/ALL_DIRECTIONS_ALL_STATES_REFERENCE.png",
+    width: 1536, height: 1024, frames: 1, animationState: null, direction: null,
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
+    status: "REFERENCE_ONLY", confidence: "reviewed",
+    note: "P2.4B.2 Complete Pack: All-directions all-states overview. RGBA but 99.5% opaque. Art-direction reference only.",
+  },
+  {
+    id: "ref:arga-master-turnaround-v2-founder", category: "characters", source: "complete-animation-pack",
+    path: "package/ARGA_MASTER_TURNAROUND_V2_FOUNDER_REVIEW.png",
+    width: 1536, height: 1024, frames: 1, animationState: null, direction: null,
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: false,
+    status: "REFERENCE_ONLY", confidence: "reviewed",
+    note: "P2.4B.2 Complete Pack: Master turnaround founder review copy. RGB, baked background. Canonical visual reference (FOUNDER_LOCKED).",
+  },
+  // --- P2.4A.2 existing references ---
   {
     id: "ref:arga-master-character", category: "characters", source: "p2.4a-composite",
     path: "/game/rpg/characters/ARGA_MASTER_CHARACTER_REFERENCE.png",
@@ -263,12 +326,12 @@ const ARGA_RUNTIME_ENTRIES: RpgAssetEntry[] = [
     note: "Pack07 ref: 4 frames/band, need 6; ~35px frames too small",
   },
   {
-    id: "sheet-char-arga-attack-side", category: "characters", source: "none",
-    path: "(no extractable source artwork)",
+    id: "sheet-char-arga-attack-side", category: "characters", source: "complete-animation-pack-extraction",
+    path: "assets-src/rpg/characters/arga/side-extraction/attack-side-{1..6}-native.png",
     width: 0, height: 0, frames: 6, animationState: "attack", direction: "side",
-    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: false,
-    status: "MISSING", confidence: "unverified",
-    note: "Pack07 ref: 4 frames/band, need 6; ~35px frames too small",
+    origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
+    status: "REFERENCE_ONLY", confidence: "reviewed",
+    note: "P2.4C.2: 6 frames extracted from Complete Animation Package SIDE section (native 35-37×28px). TRUE PROFILE verified. Requires upscale to 224×224 for production. NOT READY — reference only.",
   },
   {
     id: "sheet-char-arga-skill-down", category: "characters", source: "none",

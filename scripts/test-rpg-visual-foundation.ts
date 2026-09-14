@@ -155,9 +155,9 @@ console.log("\n🥷 ARGA CONTRACT (no fake assets)");
 check("9 states, bible counts (idle6/walk8/run10/attack6/skill8/hurt4/defeat8/victory8/interact6)",
   ARGA_FRAMES.idle === 6 && ARGA_FRAMES.walk === 8 && ARGA_FRAMES.run === 10 && ARGA_FRAMES.attack === 6 &&
   ARGA_FRAMES.skill === 8 && ARGA_FRAMES.hurt === 4 && ARGA_FRAMES.defeat === 8 && ARGA_FRAMES.victory === 8 && ARGA_FRAMES.interact === 6);
-check("locomotion 4-dir w/ side mirror, rest face down", argaDirsFor("walk").join() === "down,up,side" && argaDirsFor("idle").join() === "down");
+check("direction canon: locomotion authored down/up/true-profile side; idle down/side", argaDirsFor("walk").join() === "down,up,side" && argaDirsFor("run").join() === "down,up,side" && argaDirsFor("attack").join() === "down,up,side" && argaDirsFor("idle").join() === "down,side");
 check("naming sheet-char-arga-<state>-<dir>", argaAssetKey("walk", "side") === "sheet-char-arga-walk-side");
-check("expected sheet count = 3+3+3+1*6", expectedArgaSheets().length === 15);
+check("expected sheet count = idle2 + locomotion3×3 + down-only5", expectedArgaSheets().length === 16);
 check("canvas 224, 80ms, origin bottom-center", ARGA_CANVAS_PX === 224 && ARGA_FRAME_MS === 80 && ARGA_ORIGIN.x === 0.5 && ARGA_ORIGIN.y === 1.0);
 check("renderer reports Arga MISSING explicitly (no fake)", strip(src("src/game/rpg/rendering/canvas-renderer.ts")).includes("reportMissingArgaOnce") &&
   src("src/game/rpg/rendering/canvas-renderer.ts").includes("DEV PLACEHOLDER"));

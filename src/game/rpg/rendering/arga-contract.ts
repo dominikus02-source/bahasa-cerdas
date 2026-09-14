@@ -35,6 +35,9 @@ export const ARGA_FRAMES: Record<ArgaState, number> = {
 /** Directions authored per state (locomotion 4-dir with side mirror). */
 export function argaDirsFor(state: ArgaState): ArgaDir[] {
   switch (state) {
+    case "idle":
+      // P2.4C: idle-side added per founder directive (true profile, not mirror)
+      return ["down", "side"];
     case "walk":
     case "run":
     case "attack":
