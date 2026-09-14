@@ -362,6 +362,7 @@
     "test:bc-agent-p2-persistence": "npx tsx scripts/test-bc-agent-p2-persistence.ts",
     "test:bc-agent-p3-intelligence": "npx tsx scripts/test-bc-agent-p3-intelligence.ts",
     "test:bc-agent-p4-tools": "npx tsx scripts/test-bc-agent-p4-tools.ts",
+    "test:bc-agent-p5-worker": "npx tsx scripts/test-bc-agent-p5-worker.ts",
     "test:rpg-phase1a": "npx tsx scripts/test-rpg-phase1a.ts",
     "test:rpg-phase1b": "npx tsx scripts/test-rpg-phase1b.ts",
     "test:rpg-unpublished": "npx tsx scripts/test-rpg-unpublished.ts",
