@@ -86,14 +86,28 @@ async function main(): Promise<void> {
   process.on("SIGINT", () => onSignal("SIGINT"));
   process.on("SIGTERM", () => onSignal("SIGTERM"));
 
+  // Bounded shutdown: the grace budget starts when STOPPING begins, not at
+  // process boot. A fixed-cadence interval can fire immediately after a signal
+  // (observed in P7.3: force-exit 36ms into drain, row left in DRAINING), so
+  // the watchdog must measure elapsed draining time and never pre-empt the
+  // run-loop's STOPPED persistence.
+  let stopStartedAt: number | null = null;
+  const graceExceeded = (): boolean => {
+    if (stopStartedAt === null) return false;
+    return Date.now() - stopStartedAt >= config.shutdownTimeoutMs;
+  };
   const shutdownWatchdog = setInterval(() => {
     if (worker.health().status === "STOPPING") {
-      // Bounded shutdown: if a task hangs past the grace period, force exit.
-      // The task's ownership is recovered by another worker's sweep.
+      if (stopStartedAt === null) stopStartedAt = Date.now();
+    }
+    if (graceExceeded()) {
+      // Grace budget spent: force exit. The task's ownership is recovered by
+      // another worker's sweep; the row is stale-detectable if STOPPED never
+      // persisted.
       logger.emit("WORKER_ERROR", { category: "SHUTDOWN_TIMEOUT", detail: "grace period exceeded; forcing exit" });
       process.exit(exitCode);
     }
-  }, config.shutdownTimeoutMs);
+  }, 250);
   shutdownWatchdog.unref();
 
   // 4. Run to completion.
