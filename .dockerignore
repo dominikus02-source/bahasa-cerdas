@@ -1,0 +1,17 @@
+# Keep the worker build context minimal: source + prisma + lockfile only.
+node_modules
+.next
+.git
+.gitignore
+backups
+docs
+data
+assets-src
+scripts
+public
+game-server
+coverage
+*.log
+.DS_Store
+.env*
+!.env.example

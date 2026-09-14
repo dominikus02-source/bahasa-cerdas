@@ -30,7 +30,7 @@ import {
   finishAttempt as coreFinishAttempt,
   type TaskAttempt,
 } from "../core/attempt";
-import { validateApproval, consumeApproval, type Approval } from "../core/approval";
+import { validateApproval, consumeApproval, rejectApproval, type Approval } from "../core/approval";
 import { InvalidTaskTransitionError, InvalidTaskError } from "../core/errors";
 import {
   AgentNotFoundError,
@@ -361,6 +361,103 @@ export class AgentTaskService {
     const row = await this.prisma.agentApproval.findUnique({ where: { id: approvalId } });
     if (!row) throw new AgentNotFoundError("approval", approvalId);
     return toCoreApproval(row);
+  }
+
+  /**
+   * Founder rejection of a pending approval — the decisional counterpart of
+   * consumeApproval. Atomic and single-use:
+   *
+   *   1. row-lock the PENDING approval FOR UPDATE
+   *   2. validate its binding (task/attempt/tool/inputHash) — a rejection is
+   *      bound exactly like a consumption, never a bare status write
+   *   3. CAS PENDING → REJECTED (single-use: the second founder click
+   *      observes REJECTED and gets the typed error)
+   *   4. move the task with the canonical APPROVAL_REJECTED transition
+   *      (WAITING_APPROVAL → FAILED) and audit the TaskEvent — all in the
+   *      same transaction so the approval and task state can never diverge
+   *
+   * A task that moved concurrently (cancelled, already failed) makes the
+   * transition illegal; that is a legitimate race and the rejection itself
+   * still stands — the typed transition error is not raised for it.
+   */
+  async rejectApproval(input: {
+    taskId: string;
+    attemptId: string;
+    toolName: string;
+    inputHash: string;
+    rejectedBy: string;
+  }): Promise<Approval> {
+    return this.tx("rejectApproval", async (c) => {
+      const locked = await c.$queryRaw<Array<{ id: string }>>`
+        SELECT "id" FROM "AgentApproval"
+        WHERE "taskId" = ${input.taskId}
+          AND "attemptId" = ${input.attemptId}
+          AND "toolName" = ${input.toolName}
+          AND "inputHash" = ${input.inputHash}
+          AND "status" = 'PENDING'
+        ORDER BY "issuedAt" ASC
+        FOR UPDATE`;
+
+      if (locked.length === 0) {
+        const any = await c.agentApproval.findFirst({
+          where: {
+            taskId: input.taskId,
+            attemptId: input.attemptId,
+            toolName: input.toolName,
+            inputHash: input.inputHash,
+          },
+        });
+        if (!any) throw new AgentNotFoundError("approval", `${input.taskId}/${input.toolName}`);
+        const coreExisting = toCoreApproval(any);
+        const checkExisting = validateApproval(coreExisting, input, this.now());
+        if (!checkExisting.ok) throw checkExisting.error; // CONSUMED / EXPIRED / mismatch — typed
+        throw new AgentConflictError("approval", "exists but is not rejectable");
+      }
+
+      const row = await c.agentApproval.findUniqueOrThrow({ where: { id: locked[0].id } });
+      const core = toCoreApproval(row);
+      const nowIso = this.now();
+      const check = validateApproval(core, input, nowIso);
+      if (!check.ok) throw check.error; // binding/expiry — typed
+
+      const rejected = rejectApproval(core); // pure P1 decision record
+      const updated = await c.agentApproval.updateMany({
+        where: { id: row.id, status: "PENDING" },
+        data: { status: "REJECTED" },
+      });
+      if (updated.count === 0) throw new AgentConflictError("approval", "rejected concurrently");
+
+      // Canonical task transition in the same transaction (APPROVAL_REJECTED
+      // is a core-legal event from WAITING_APPROVAL).
+      const taskRow = await c.agentTask.findUnique({ where: { id: input.taskId } });
+      if (taskRow) {
+        const coreTask = toCoreTask(taskRow);
+        const result = coreTransitionTask(coreTask, { type: "APPROVAL_REJECTED" }, nowIso);
+        if (result.ok) {
+          const moved = await c.agentTask.updateMany({
+            where: { id: input.taskId, status: taskRow.status },
+            data: { status: result.task.status, updatedAt: new Date(nowIso) },
+          });
+          if (moved.count > 0) {
+            await c.taskEvent.create({
+              data: {
+                taskId: input.taskId,
+                attemptId: input.attemptId,
+                seq: await nextEventSeq(c, input.taskId),
+                eventType: "APPROVAL_REJECTED",
+                previousStatus: taskRow.status,
+                newStatus: result.task.status,
+                actor: input.rejectedBy,
+              },
+            });
+          }
+        }
+        // result not ok ⇒ task moved concurrently — rejection stands, no
+        // fabricated event (the DB is the authority, same as the worker loop).
+      }
+
+      return rejected;
+    });
   }
 
   // ── Attempt lifecycle ─────────────────────────────────────────────

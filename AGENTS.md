@@ -4414,3 +4414,36 @@ Integrasi visual final world Kuis Tempur dari 70 sprite produksi (QT-ASSET-05 PA
 ### Sisa / catatan
 - Fringe kuning/hijau tipis di flowers_scatter: tak mengganggu pada skala main, catat untuk QA art.
 - Rotasi mid-game: entitas tetap di piksel lama (perilaku pra-fase, bukan regresi).
+
+---
+
+## BC Agent Phase P7 — Always-On Worker + Remote Control Hardening (September 14, 2026)
+
+### STATUS: PASS WITH NOTES (all gates executed; production deployment NOT performed)
+
+### What Was Built
+- **Durable worker registry**: new `AgentWorker` table (id, status STARTING/RUNNING/DRAINING/STOPPED/DEGRADED, version, hostname, pid, currentTaskId/AttemptId, startedAt, lastHeartbeatAt, stoppedAt) + manual migration `prisma/migrations/manual/2026-09-14_bc_agent_p7_worker_registry.sql` (applied to local staging).
+- **`src/agent/worker/registry.ts`**: idempotent registration (upsert), cheap single-UPDATE heartbeat, assignment pointer, lifecycle transitions (default-deny unknown statuses), query-only stale detection (`WORKER_STALE_AFTER_MS = 300_000`), bounded read model. No component ever mutates a foreign worker's row.
+- **Loop integration** (`src/agent/worker/loop.ts`): register on `run()` (lazy on bare `tick()`), throttled worker beat + piggyback heartbeat during tasks, `DEGRADED` persisted on worker-INTERNAL errors (task-level failures never degrade the worker), `DRAINING` on `stop()`, `STOPPED` in run-finally, `version` dep, `health()` now carries `lifecycle` + `registryStatus` (never-run = STARTING guard).
+- **Control Center**: `WorkerHealthCard` shows registry strip (workerId, status, version, stale flag); `getWorkerHealthView` extended additively (`registry`/`staleWorkers`/`workers` — stale rows stay visible, never vanish).
+- **Health API**: `GET /api/admin/agent/health` — liveness / readiness (SELECT 1) / worker health separated; auth = founder/admin session OR `Authorization: Bearer $BC_AGENT_HEALTH_TOKEN`; zero secrets in response.
+- **Docker worker**: `Dockerfile.worker` (node:22-bookworm-slim multi-stage, npm ci, prisma generate with `binaryTargets = ["native","debian-openssl-3.0.x"]`, openssl in runtime for platform detection, non-root, **`node --import tsx` as PID 1** — npx/tsx-shim PID 1 swallows SIGTERM) + `.dockerignore`. `tsx@^4.23.13` pinned in devDependencies.
+- **Tests**: `scripts/test-bc-agent-p7-worker.ts` (53 assertions: registry primitives, loop integration, health view, adversarial matrix — forged identity/health, STOPPED-never-stale, restart separation, concurrency, registry-failure-never-blocks-claiming). Script: `test:bc-agent-p7-worker`.
+- **Docs**: `docs/BC_AGENT_P7_ALWAYS_ON_WORKER_AUDIT.md` (Phase 0 forensic audit), `docs/BC_AGENT_P7_OPERATIONS.md` (env vars, startup/shutdown, health, recovery, troubleshooting, manual deploy procedure), `docs/BC_AGENT_P7_REPORT.md` (full report).
+
+### Verification (executed, not claimed)
+| Gate | Result |
+|---|---|
+| P1–P6 regression | ✅ 183+59+89+145+64+87 = 627/627 |
+| P7 suite | ✅ 53/53 |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| `npx eslint` (8 touched files) | ✅ 0 violations |
+| `npm run build` | ✅ 423 pages |
+| Docker live smoke | ✅ container worker registered RUNNING → SIGTERM → DRAINING → **STOPPED persisted, exit 0** |
+| prisma validate | ✅ |
+
+### Contracts Preserved (P0–P6 untouched)
+P2 atomic claim = sole ownership path; approval binding 4-way + single-use; ToolExecutor the only execution path; WAITING_INTELLIGENCE park/resume semantics; recovery = CAS reclaim → durable orphan-FAIL → explicit founder retry (fresh attempt); no direct UI DB mutations; no secrets in logs/health responses.
+
+### Next Step (founder-gated)
+Apply the migration SQL to Supabase production, build/push the worker image, run it with runtime env per OPERATIONS §2, verify via Control Center health strip. No auto-deploy exists.

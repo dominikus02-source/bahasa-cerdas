@@ -1,0 +1,36 @@
+{
+  "assetKey": "sheet-char-arga-walk-down",
+  "category": "characters",
+  "characterId": "arga",
+  "version": 1,
+  "canvas": {
+    "width": 224,
+    "height": 224
+  },
+  "frame": {
+    "width": 224,
+    "height": 224,
+    "columns": 8,
+    "rows": 1,
+    "count": 8
+  },
+  "origin": {
+    "x": 0.5,
+    "y": 1.0
+  },
+  "directions": [
+    "down"
+  ],
+  "animation": {
+    "state": "walk",
+    "loop": true,
+    "frameDurationMs": 80,
+    "hitFrame": null,
+    "events": []
+  },
+  "source": {
+    "pack": "calibration",
+    "rescued": true,
+    "scale": 2.222
+  }
+}

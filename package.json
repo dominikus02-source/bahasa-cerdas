@@ -362,6 +362,8 @@
     "test:bc-agent-p2-persistence": "npx tsx scripts/test-bc-agent-p2-persistence.ts",
     "test:bc-agent-p3-intelligence": "npx tsx scripts/test-bc-agent-p3-intelligence.ts",
     "test:bc-agent-p4-tools": "npx tsx scripts/test-bc-agent-p4-tools.ts",
+    "test:bc-agent-p5-worker": "npx tsx scripts/test-bc-agent-p5-worker.ts",
+    "test:bc-agent-p6-control": "npx tsx scripts/test-bc-agent-p6-control.ts",
     "test:rpg-phase1a": "npx tsx scripts/test-rpg-phase1a.ts",
     "test:rpg-phase1b": "npx tsx scripts/test-rpg-phase1b.ts",
     "test:rpg-unpublished": "npx tsx scripts/test-rpg-unpublished.ts",
@@ -380,7 +382,8 @@
     "test:rpg-vertical-slice": "npx tsx scripts/test-rpg-vertical-slice.ts",
     "test:rpg-visual-foundation": "npx tsx scripts/test-rpg-visual-foundation.ts",
     "test:rpg-pickup-consumables": "npx tsx scripts/test-rpg-pickup-consumables.ts",
-    "test:rpg-asset-integration": "npx tsx scripts/test-rpg-asset-integration.ts"
+    "test:rpg-asset-integration": "npx tsx scripts/test-rpg-asset-integration.ts",
+    "test:bc-agent-p7-worker": "npx tsx scripts/test-bc-agent-p7-worker.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
@@ -434,6 +437,7 @@
     "sharp": "^0.35.3",
     "tailwindcss": "^3.4.14",
     "ts-node": "^10.9.2",
+    "tsx": "^4.23.13",
     "typescript": "^5.6.3"
   }
 }

@@ -1,0 +1,50 @@
+# syntax=docker/dockerfile:1
+# =============================================================================
+# BC Agent P7 — persistent worker image (build-only until founder approves ops).
+#
+# Determinism: pinned base image, npm ci from the lockfile, prisma generate in
+# the builder stage. The runtime stage contains ONLY what the worker needs:
+# node_modules, prisma schema, and the TypeScript sources tsx executes directly
+# (no build step, no Next.js, no dev server).
+#
+# Secrets: NONE baked in. All configuration arrives at runtime via env vars
+# (DATABASE_URL, AI keys, BC_AGENT_*). The build context excludes .env* via
+# .dockerignore.
+#
+# Graceful shutdown: `tsx` runs as PID 1-adjacent child of the entrypoint
+# shell; node forwards SIGTERM to the Worker which drains and persists STOPPED.
+# docker stop -t 30 gives the bounded shutdown window (worker shutdownTimeoutMs
+# default 10s is well inside it).
+# =============================================================================
+FROM node:22-bookworm-slim AS deps
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --ignore-scripts && npm rebuild esbuild --ignore-scripts
+
+FROM node:22-bookworm-slim AS build
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY prisma ./prisma
+RUN npx prisma generate
+
+FROM node:22-bookworm-slim AS runtime
+WORKDIR /app
+ENV NODE_ENV=production
+# Prisma runtime platform detection shells out to `openssl version`; without
+# the CLI it falls back to the ancient debian-openssl-1.1.x engine and crashes
+# on bookworm (OpenSSL 3). Install openssl so the 3.0.x engine is selected.
+RUN apt-get update -y && apt-get install -y --no-install-recommends openssl && rm -rf /var/lib/apt/lists/*
+# Non-root execution.
+RUN groupadd -g 10001 worker && useradd -u 10001 -g worker -m -s /usr/sbin/nologin worker
+COPY --from=build --chown=worker:worker /app/node_modules ./node_modules
+COPY --chown=worker:worker prisma ./prisma
+COPY --chown=worker:worker src ./src
+# Health/liveness is answered by GET /api/admin/agent/health on the web tier;
+# in-container verification is the DB heartbeat itself (see operations doc).
+USER worker
+# Deterministic startup, signal-honest: NODE ITSELF is PID 1 (no npx/npm/tsx
+# shim in between — each of those spawns an inner node that does NOT forward
+# SIGTERM, which SIGKILLs the worker mid-flight and leaves its row falsely
+# RUNNING). run.ts installs the SIGTERM/SIGINT handler → drain → persist
+# STOPPED → exit 0.
+CMD ["node", "--import", "tsx", "src/agent/worker/run.ts"]

@@ -1,0 +1,66 @@
+{
+  "type": "master_character_reference",
+  "character": "arga",
+  "title": "Arga — Master Character Reference",
+  "subtitle": "Pendekar Suryakerta · BahasaCerdas RPG",
+  "status": "FOUNDER_REVIEW_REQUIRED",
+  "decisionDate": "2026-09-13",
+  "lockedBy": "founder",
+  "dimensions": {
+    "width": 1774,
+    "height": 1100
+  },
+  "format": "RGBA PNG",
+  "contents": {
+    "leftPanel": {
+      "label": "Pack 01 Master Portrait (Concept Art)",
+      "source": "BahasaCerdas_RPG_Asset_Pack_01.zip → arga/arga_master_character.png",
+      "originalSize": [1233, 1275],
+      "description": "Highest quality canonical reference — cream tunic, orange patterned scarf (concept art), blue trousers, keris at hip"
+    },
+    "rightPanel": {
+      "label": "4-Direction Runtime Reference (Rescued Gen-A)",
+      "directions": {
+        "DOWN": "Front-facing, frame 0 from walk-down sheet",
+        "UP": "Back-facing, frame 0 from walk-up sheet",
+        "SIDE Left": "Left profile, frame 0 from walk-side sheet",
+        "SIDE Right": "Mirrored from left profile"
+      },
+      "sources": {
+        "walkDown": "public/game/rpg/characters/sheet-char-arga-walk-down.png",
+        "walkUp": "public/game/rpg/characters/sheet-char-arga-walk-up.png",
+        "walkSide": "public/game/rpg/characters/sheet-char-arga-walk-side.png"
+      },
+      "frameSize": [224, 224],
+      "framesPerSheet": 8,
+      "upscaledTo": [512, 512]
+    }
+  },
+  "canon": {
+    "camera": {
+      "DOWN": "front-facing",
+      "UP": "back-facing",
+      "SIDE": "left profile (mirror for right)"
+    },
+    "outfit": "cream tunic, no armor",
+    "scarf": "red solid",
+    "trousers": "dark indigo",
+    "boots": "brown leather",
+    "headband": "red-ochre",
+    "hair": "black/dark",
+    "weapon": "keris at hip",
+    "proportion": "chibi ~1:2 head:body",
+    "rendering": "Nusantara Storybook, soft painterly-flat",
+    "palette": "warm-first"
+  },
+  "runtimeConstants": {
+    "canvasPx": 224,
+    "artScale": 2,
+    "frameMs": 80,
+    "feetOrigin": { "x": 0.5, "y": 1.0 }
+  },
+  "excluded": {
+    "genB": "Blue outfit / dark armor — INCOMPATIBLE",
+    "genC": "Orange patterned scarf / side-view — TEMPORARY_REFERENCE only"
+  }
+}
