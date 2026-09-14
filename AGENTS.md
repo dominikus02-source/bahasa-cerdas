@@ -4417,6 +4417,75 @@ Integrasi visual final world Kuis Tempur dari 70 sprite produksi (QT-ASSET-05 PA
 
 ---
 
+## Phase 2D — Mac Final Organization + Google Drive Migration (September 14, 2026)
+
+### What
+Controlled mass migration of dormant projects and documents to Google Drive (`dominikus.wahyu@lajoex.com`). Maximize local SSD headroom while preserving active BC/BIGT repos, AY 2026–2027 documents, and credentials.
+
+### Results
+- **SSD reclaimed**: 14 Gi (371 Gi → 357 Gi used; 78 Gi → 91 Gi free)
+- **Drive archive**: 7 project families (849 MB payload, all hash-verified) + documents + assets
+- **Secrets remediated**: 10 `.env` files removed from Drive, preserved in `~/secure-keys/dormant-project-envs/`
+- **Zero Git operations** — working trees untouched
+- **AY 2026–2027**: All 22 AY-related documents remain local (20 in BI AY dir + 2 B2B proposals, backed up to Drive)
+
+### Drive Structure Created
+```
+01-ACTIVE-BACKUP/BC-Master/ (707 MB)
+02-PROJECTS-ARCHIVE/ (7 families: ASH, CerdasChain, KataPlay, Other)
+03-DOCUMENTS/ (Education/Business/Legal/Personal)
+04-ASSETS/ (Installers/Design/Images)
+07-MARKETING/ | 08-FINANCE/
+```
+
+### Deletions (Local)
+- `node_modules` in 5 dormant projects (~15 GB)
+- CerdasChain build/dart_tool (~4.3 GB)
+- `kataplay_old_backup` (proven 0 unique files)
+- All rebuildable; source `.git` preserved locally
+
+### Remaining Review
+- GIM (11 GB) — BLOCKED, semi-active
+- GIM non-git BC copy (4.4 GB) — historical snapshot
+- CerdasChain `apps/_archive` (3.2 GB) — unknown rebuildability
+- `kataplay_2` — 208 diffs vs kataplay
+- Downloads installers (2.7 GB) — pending Drive sync verification → local deletion
+- iCloud stale BC copy (~6 GB) — cloud ambiguity
+
+### Files Created
+- `docs/MAC_STORAGE_PHASE_2D_FINAL_MIGRATION_REPORT.md`
+- `docs/migration-manifests/ay-2026-2027-keep-local.csv`
+- `docs/migration-manifests/final-local-keep-manifest.csv`
+- `docs/migration-manifests/final-drive-migration-manifest.csv`
+- `docs/migration-manifests/ash-landing.sha256.csv`
+- `scripts/phase2d-verify-drive-copy.py`
+- `scripts/phase2d-verify-bigfiles.py`
+- `~/secure-keys/dormant-project-envs/` (10 .env files preserved)
+
+### Key File Locations
+- Phase 2D Report: `docs/MAC_STORAGE_PHASE_2D_FINAL_MIGRATION_REPORT.md`
+- Drive mounts at: `~/Library/CloudStorage/GoogleDrive-dominikus.wahyu@lajoex.com/My Drive`
+- Secret backups: `~/secure-keys/dormant-project-envs/`
+- Verify script: `scripts/phase2d-verify-drive-copy.py`
+
+---
+
+## Phase 3 — Mac Clean & Performance (September 14, 2026)
+
+### Results
+- **SSD**: 91 Gi → **~103 Gi free** (df peak 108 Gi; container 110.7 GB). Target >100 GB PASSED.
+- **Cleaned**: package caches (bun/uv/firebase/prisma ~6.2 GB), ASH projects' iOS/Android build artifacts (~6.9 GB), Claude/VS Code Electron caches (~2.3 GB, apps closed), stale logs (916 MB → 20 MB), stale browser temp files, Drive-verified installers/APKs (13 files hash-verified then deleted, ~6.7 GB).
+- **Protected/untouched**: Chrome (running — ~10.7 GB cache future win when closed), Claude `vm_bundles` 8.1 GB (REVIEW), GIM, iCloud copy, quarantine, AY 2026-2027, secrets, BC/BGIT repos (HEADs unchanged).
+- **Findings**: iOS Simulator eating 4.9 GB RAM / 262% CPU (quit when idle); updater LaunchAgents = disable candidates (founder approval).
+
+### Files
+- `docs/MAC_PHASE_3_CLEAN_PERFORMANCE_REPORT.md` — full report (top items, review list, recommendations)
+- `docs/migration-manifests/phase3-cleanup-ledger.csv` — per-item cleanup ledger (`measured` vs `estimate` labels)
+- `docs/migration-manifests/bigfile-verification-2026-09-14.log` — 13-file hash-verification transcript + Drive-side SHA-256 baseline
+- `scripts/phase2d-verify-bigfiles.py` — now chunked (pass 1-based indices) for DriveFS-speed verification
+
+---
+
 ## BC Agent Phase P7 — Always-On Worker + Remote Control Hardening (September 14, 2026)
 
 ### STATUS: PASS WITH NOTES (all gates executed; production deployment NOT performed)
@@ -4447,3 +4516,44 @@ P2 atomic claim = sole ownership path; approval binding 4-way + single-use; Tool
 
 ### Next Step (founder-gated)
 Apply the migration SQL to Supabase production, build/push the worker image, run it with runtime env per OPERATIONS §2, verify via Control Center health strip. No auto-deploy exists.
+
+---
+
+## Phase GCS MONEY-OUT MIGRATION — Xendit→Midtrans (Sept 14, 2026)
+
+### Goal
+Migrate Guru Cerdas Sejahtera money-out payout rail from Xendit to Midtrans, preserving all existing financial architecture.
+
+### Status: PHASE 1 AUDIT COMPLETE — PHASE 2 BLOCKED
+
+### Forensic Audit Complete
+- Full system audit: `docs/GCS_XENDIT_TO_MIDTRANS_FORENSIC_AUDIT.md`
+- 20 payout infrastructure files read
+- 9 database models documented
+- 25+ API routes inventoried
+- Safety gates, kill switch, idempotency, reconciliation all verified
+
+### CRITICAL FINDING
+**Midtrans does NOT provide a B2C disbursement API** for paying third parties from a merchant account. The existing `midtransPayoutProvider` STUB deterministically fails with `MIDTRANS_NOT_SUPPORTED`.
+
+### Founder Decision Required
+Before proceeding to Phase 2, founder must decide:
+1. Accept Midtrans cannot do B2C payouts → choose alternative provider (DANA, OVO, Bank APIs, etc.)
+2. Verify latest Midtrans docs for any new B2C disbursement capability
+3. Defer money-out migration entirely
+
+### Current Production State
+- All payout safety gates OFF (`PAYOUT_REAL_MONEY_ENABLED=false`)
+- Provider: mock (sandbox)
+- Zero real payouts ever made
+- Xendit adapter: PRIMARY but disabled by safety gate
+
+### Files Created
+- `docs/GCS_XENDIT_TO_MIDTRANS_FORENSIC_AUDIT.md` — Full forensic audit report
+
+### Remaining
+1. **GCS Migration Phase 2**: Midtrans capability verification (BLOCKER)
+2. TKA UTBK/Guru enrichment 30 → 150
+3. Game server revival (VPS mati)
+4. GameRoom migration SQL via Supabase dashboard
+5. UI game solo: badge-score client vs server masih beda (kosmetik)
