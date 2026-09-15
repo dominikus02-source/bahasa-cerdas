@@ -11,6 +11,7 @@ import {
   ChevronDown, ChevronRight, Zap, BarChart3,
 } from "lucide-react";
 import { PaymentHealthAlert } from "@/components/admin/PaymentHealthAlert";
+import { LivePulseCard } from "@/components/admin/LivePulseCard";
 
 // ════════════════════════════════════════════════════════════════════
 // FOUNDER CONTROL TOWER — Executive Dashboard
@@ -216,6 +217,9 @@ export default async function ExecutiveDashboard() {
           <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">All-time: {formatRp(data.revenue.cashCollectedAllTime)}</p>
         </div>
       </div>
+
+      {/* ═══ SECTION 2B: Live Pulse (Near-Real-Time Presence) ═══ */}
+      <LivePulseCard />
 
       {/* Payment Health Alert */}
       {data.paymentHealth.summary.totalAffected > 0 && <PaymentHealthAlert data={data.paymentHealth} />}
