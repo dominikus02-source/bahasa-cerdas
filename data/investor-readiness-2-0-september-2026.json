@@ -1,0 +1,1113 @@
+{
+  "generatedAt": "2026-09-15T01:21:16.719Z",
+  "dataSource": "Production Supabase PostgreSQL via Prisma (READ-ONLY)",
+  "auditVersion": "2.0",
+  "collectionTimeSeconds": 23.1,
+  "users": {
+    "total": {
+      "value": 2680,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "User.count()",
+      "notes": "Prisma User table"
+    },
+    "guru": {
+      "value": 581,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "User.count(role=GURU)",
+      "notes": ""
+    },
+    "murid": {
+      "value": 2099,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "User.count(role=MURID)",
+      "notes": ""
+    },
+    "admin": {
+      "value": 0,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "User.count(role=ADMIN)",
+      "notes": ""
+    },
+    "founders": {
+      "value": 2,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "User.count(isFounder=true)",
+      "notes": ""
+    },
+    "active7d": {
+      "value": 569,
+      "status": "INFERENCE",
+      "confidence": "MEDIUM",
+      "source": "User.lastActiveAt",
+      "notes": "lastActiveAt updated on login/api activity; may miss passive page views"
+    },
+    "active30d": {
+      "value": 1384,
+      "status": "INFERENCE",
+      "confidence": "MEDIUM",
+      "source": "User.lastActiveAt",
+      "notes": "Same limitation as 7d"
+    },
+    "emailConfirmed": {
+      "value": 0,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "User.emailConfirmed",
+      "notes": ""
+    },
+    "onboarded": {
+      "value": 2028,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "User.onboarded",
+      "notes": ""
+    }
+  },
+  "teachers": {
+    "total": {
+      "value": 581,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "User.count(role=GURU)",
+      "notes": ""
+    },
+    "createdClass": {
+      "value": 171,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "Group.count(teacher)",
+      "notes": "Distinct teachers who created >=1 class"
+    },
+    "created3Students": {
+      "value": 1,
+      "status": "INFERENCE",
+      "confidence": "HIGH",
+      "source": "SQL: Group+GroupMember",
+      "notes": "Teachers with >=3 total students across all classes"
+    },
+    "created5Students": {
+      "value": 1,
+      "status": "INFERENCE",
+      "confidence": "HIGH",
+      "source": "SQL: Group+GroupMember",
+      "notes": "Teachers with >=5 total students across all classes"
+    },
+    "teachersWithStudents": {
+      "value": 18,
+      "status": "INFERENCE",
+      "confidence": "HIGH",
+      "source": "SQL: Group+GroupMember",
+      "notes": "Teachers who ever had at least 1 student"
+    },
+    "active7d": {
+      "value": 33,
+      "status": "INFERENCE",
+      "confidence": "MEDIUM",
+      "source": "User.lastActiveAt",
+      "notes": ""
+    },
+    "active30d": {
+      "value": 114,
+      "status": "INFERENCE",
+      "confidence": "MEDIUM",
+      "source": "User.lastActiveAt",
+      "notes": ""
+    },
+    "everTaught": {
+      "value": 18,
+      "status": "INFERENCE",
+      "confidence": "HIGH",
+      "source": "SQL: Group+GroupMember",
+      "notes": "Teachers with at least 1 student across all time"
+    },
+    "premiumActive": {
+      "value": 1,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "User.isPremium+premiumUntil",
+      "notes": "Guru Pro active (paid or trial)"
+    },
+    "trialActive": {
+      "value": 157,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "User.trialEndsAt",
+      "notes": "Guru with active trial (not paid)"
+    }
+  },
+  "students": {
+    "total": {
+      "value": 2099,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "User.count(role=MURID)",
+      "notes": ""
+    },
+    "enrolledInGroups": {
+      "value": 1289,
+      "status": "INFERENCE",
+      "confidence": "HIGH",
+      "source": "SQL: GroupMember+User",
+      "notes": ""
+    },
+    "withLearningActivity": {
+      "value": 846,
+      "status": "INFERENCE",
+      "confidence": "HIGH",
+      "source": "SQL: multiple tables",
+      "notes": "Students with any learning signal (progress/quiz/assignment/assessment/game)"
+    },
+    "active7d": {
+      "value": 536,
+      "status": "INFERENCE",
+      "confidence": "MEDIUM",
+      "source": "User.lastActiveAt",
+      "notes": ""
+    },
+    "active30d": {
+      "value": 1270,
+      "status": "INFERENCE",
+      "confidence": "MEDIUM",
+      "source": "User.lastActiveAt",
+      "notes": ""
+    },
+    "avgStudentsPerActiveTeacher": {
+      "value": 71.8,
+      "status": "INFERENCE",
+      "confidence": "MEDIUM",
+      "source": "Derived",
+      "notes": ""
+    },
+    "medianStudentsPerActiveTeacher": {
+      "value": 66,
+      "status": "INFERENCE",
+      "confidence": "MEDIUM",
+      "source": "Derived",
+      "notes": ""
+    }
+  },
+  "classrooms": {
+    "totalGroups": {
+      "value": 171,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "Group.count()",
+      "notes": ""
+    },
+    "activeGroups": {
+      "value": 160,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "Group.count(isActive=true)",
+      "notes": ""
+    },
+    "groupsWith1Student": {
+      "value": 66,
+      "status": "INFERENCE",
+      "confidence": "HIGH",
+      "source": "SQL: Group+GroupMember",
+      "notes": ""
+    },
+    "groupsWith3Students": {
+      "value": 55,
+      "status": "INFERENCE",
+      "confidence": "HIGH",
+      "source": "SQL: Group+GroupMember",
+      "notes": ""
+    },
+    "groupsWith5Students": {
+      "value": 52,
+      "status": "INFERENCE",
+      "confidence": "HIGH",
+      "source": "SQL: Group+GroupMember",
+      "notes": ""
+    },
+    "groupsWithRecentActivity": {
+      "value": 8,
+      "status": "INFERENCE",
+      "confidence": "MEDIUM",
+      "source": "SQL: Penugasan+QuizAssignment",
+      "notes": "Groups with assignment/quiz activity in trailing 30d"
+    }
+  },
+  "operationalClassrooms": {
+    "count": {
+      "value": 1,
+      "status": "INFERENCE",
+      "confidence": "MEDIUM",
+      "source": "SQL: Group+Penugasan+QuizAssignment+UserUnitProgress",
+      "notes": "X AND Y AND Z trailing-30d WIB. X=artifact, Y>=3 active students, Z=evidence"
+    },
+    "uniqueTeachers": {
+      "value": 1,
+      "status": "INFERENCE",
+      "confidence": "MEDIUM",
+      "source": "Derived from operational classrooms",
+      "notes": ""
+    },
+    "uniqueStudents": {
+      "value": 13,
+      "status": "INFERENCE",
+      "confidence": "MEDIUM",
+      "source": "Derived from operational classrooms",
+      "notes": ""
+    },
+    "concentration": {
+      "value": {
+        "top5PctOfTotal": 1,
+        "top10PctOfTotal": 1,
+        "founderOwnedOperational": 0,
+        "founderOwnedTotal": 13
+      },
+      "status": "INFERENCE",
+      "confidence": "MEDIUM",
+      "source": "Derived",
+      "notes": "Concentration analysis"
+    },
+    "top10": [
+      {
+        "groupId": "cmt6l0aos0015igpmi23xc3q4",
+        "teacherId": "cmsu6khfw0003bhiz017wmg34",
+        "teacherEmail": "ellimarlina51@guru.smp.belajar.id",
+        "isFounder": false,
+        "studentCount": 13,
+        "artifactCount": 14,
+        "activeStudentCount": 13,
+        "evidenceStudentCount": 13,
+        "operational": true
+      },
+      {
+        "groupId": "cms2jd2t5008d5ejdws31yizt",
+        "teacherId": "cms2ipzds0004kvfh4gduingu",
+        "teacherEmail": "yunibta@21gmai.com",
+        "isFounder": false,
+        "studentCount": 37,
+        "artifactCount": 0,
+        "activeStudentCount": 0,
+        "evidenceStudentCount": 0,
+        "operational": false
+      },
+      {
+        "groupId": "cmrbgmepj000512xntvospoi8",
+        "teacherId": "cmqy1ga9r0003zag7fbmqhsq4",
+        "teacherEmail": "alexsurya1968@gmail.com",
+        "isFounder": true,
+        "studentCount": 36,
+        "artifactCount": 2,
+        "activeStudentCount": 2,
+        "evidenceStudentCount": 31,
+        "operational": false
+      },
+      {
+        "groupId": "cms6uigxr000cpuzxf95s2xde",
+        "teacherId": "cms5lrvkq000o5ohcf50it584",
+        "teacherEmail": "wahyukristanti43@guru.sd.belajar.id",
+        "isFounder": false,
+        "studentCount": 36,
+        "artifactCount": 0,
+        "activeStudentCount": 0,
+        "evidenceStudentCount": 3,
+        "operational": false
+      },
+      {
+        "groupId": "cmrylm4cn00804gpi7kj1zx9r",
+        "teacherId": "cmrlqrrro000018782agwd6co",
+        "teacherEmail": "karina.hayu@santa-laurensia.sch.id",
+        "isFounder": false,
+        "studentCount": 34,
+        "artifactCount": 0,
+        "activeStudentCount": 0,
+        "evidenceStudentCount": 0,
+        "operational": false
+      },
+      {
+        "groupId": "cmrwun30r00051vcb0iiawoie",
+        "teacherId": "cmrlqrrro000018782agwd6co",
+        "teacherEmail": "karina.hayu@santa-laurensia.sch.id",
+        "isFounder": false,
+        "studentCount": 32,
+        "artifactCount": 0,
+        "activeStudentCount": 0,
+        "evidenceStudentCount": 0,
+        "operational": false
+      },
+      {
+        "groupId": "cms2jfayh00328k9kspgbpnod",
+        "teacherId": "cms2ipzds0004kvfh4gduingu",
+        "teacherEmail": "yunibta@21gmai.com",
+        "isFounder": false,
+        "studentCount": 32,
+        "artifactCount": 0,
+        "activeStudentCount": 0,
+        "evidenceStudentCount": 0,
+        "operational": false
+      },
+      {
+        "groupId": "cms5d6mcx001k2jskf7wgtfhb",
+        "teacherId": "cmqy1g9v50000zag780ik6mrg",
+        "teacherEmail": "hdsastra47@gmail.com",
+        "isFounder": false,
+        "studentCount": 32,
+        "artifactCount": 1,
+        "activeStudentCount": 0,
+        "evidenceStudentCount": 0,
+        "operational": false
+      },
+      {
+        "groupId": "cms75uu2b0001rhacxf1mprx0",
+        "teacherId": "cmqy1ga9r0003zag7fbmqhsq4",
+        "teacherEmail": "alexsurya1968@gmail.com",
+        "isFounder": true,
+        "studentCount": 32,
+        "artifactCount": 1,
+        "activeStudentCount": 1,
+        "evidenceStudentCount": 6,
+        "operational": false
+      },
+      {
+        "groupId": "cmry9itct001yiwcpdn0usp0f",
+        "teacherId": "cmrlqrrro000018782agwd6co",
+        "teacherEmail": "karina.hayu@santa-laurensia.sch.id",
+        "isFounder": false,
+        "studentCount": 31,
+        "artifactCount": 0,
+        "activeStudentCount": 0,
+        "evidenceStudentCount": 0,
+        "operational": false
+      }
+    ],
+    "definition": "O3 North Star: X (artifact exists) AND Y (>=3 distinct active students in trailing-30d) AND Z (evidence students)"
+  },
+  "retention": {
+    "teacher": {
+      "d7": {
+        "value": 5,
+        "status": "INFERENCE",
+        "confidence": "MEDIUM",
+        "source": "SQL: User.lastActiveAt",
+        "notes": "27/535 teachers registered >=7d"
+      },
+      "d30": {
+        "value": 14.1,
+        "status": "INFERENCE",
+        "confidence": "MEDIUM",
+        "source": "SQL: User.lastActiveAt",
+        "notes": "45/320 teachers registered >=30d"
+      },
+      "_raw": {
+        "d7": {
+          "total": 535,
+          "retained": 27
+        },
+        "d30": {
+          "total": 320,
+          "retained": 45
+        }
+      }
+    },
+    "student": {
+      "d7": {
+        "value": 23.5,
+        "status": "INFERENCE",
+        "confidence": "MEDIUM",
+        "source": "SQL: User.lastActiveAt",
+        "notes": "477/2027 students registered >=7d"
+      },
+      "d30": {
+        "value": 55.3,
+        "status": "INFERENCE",
+        "confidence": "MEDIUM",
+        "source": "SQL: User.lastActiveAt",
+        "notes": "856/1547 students registered >=30d"
+      },
+      "_raw": {
+        "d7": {
+          "total": 2027,
+          "retained": 477
+        },
+        "d30": {
+          "total": 1547,
+          "retained": 856
+        }
+      }
+    }
+  },
+  "powerTeachers": {
+    "top10": [
+      {
+        "teacherId": "cms2ozw1j001s9i72abgfm3h3",
+        "email": "rinamelani72@gmail.com",
+        "isFounder": false,
+        "classes": 6,
+        "totalStudents": 180,
+        "activity": {
+          "penugasan": 3,
+          "quizzes": 9
+        },
+        "operationalGroups": 3
+      },
+      {
+        "teacherId": "cmqy1ga9r0003zag7fbmqhsq4",
+        "email": "alexsurya1968@gmail.com",
+        "isFounder": true,
+        "classes": 7,
+        "totalStudents": 180,
+        "activity": {
+          "penugasan": 1,
+          "quizzes": 0
+        },
+        "operationalGroups": 1
+      },
+      {
+        "teacherId": "cmrlqrrro000018782agwd6co",
+        "email": "karina.hayu@santa-laurensia.sch.id",
+        "isFounder": false,
+        "classes": 5,
+        "totalStudents": 156,
+        "activity": {
+          "penugasan": 0,
+          "quizzes": 0
+        },
+        "operationalGroups": 0
+      },
+      {
+        "teacherId": "cmqxema6a000013z9kefn4jm1",
+        "email": "dominikus.02@gmail.com",
+        "isFounder": true,
+        "classes": 9,
+        "totalStudents": 135,
+        "activity": {
+          "penugasan": 6,
+          "quizzes": 0
+        },
+        "operationalGroups": 6
+      },
+      {
+        "teacherId": "cmrbck8tj0000npbbods1lfw1",
+        "email": "bombolyohana14@gmail.com",
+        "isFounder": false,
+        "classes": 6,
+        "totalStudents": 120,
+        "activity": {
+          "penugasan": 3,
+          "quizzes": 0
+        },
+        "operationalGroups": 0
+      },
+      {
+        "teacherId": "cmrsr92sy00005g7d2de27447",
+        "email": "ibrahimlubis509@gmail.com",
+        "isFounder": false,
+        "classes": 10,
+        "totalStudents": 117,
+        "activity": {
+          "penugasan": 0,
+          "quizzes": 0
+        },
+        "operationalGroups": 0
+      },
+      {
+        "teacherId": "cmrbfi7fr0000lsu5a92srfyi",
+        "email": "christanti@santa-laurensia.sch.id",
+        "isFounder": false,
+        "classes": 4,
+        "totalStudents": 98,
+        "activity": {
+          "penugasan": 2,
+          "quizzes": 0
+        },
+        "operationalGroups": 2
+      },
+      {
+        "teacherId": "cmqy1g9v50000zag780ik6mrg",
+        "email": "hdsastra47@gmail.com",
+        "isFounder": false,
+        "classes": 3,
+        "totalStudents": 90,
+        "activity": {
+          "penugasan": 1,
+          "quizzes": 0
+        },
+        "operationalGroups": 1
+      },
+      {
+        "teacherId": "cms2ipzds0004kvfh4gduingu",
+        "email": "yunibta@21gmai.com",
+        "isFounder": false,
+        "classes": 2,
+        "totalStudents": 66,
+        "activity": {
+          "penugasan": 0,
+          "quizzes": 0
+        },
+        "operationalGroups": 0
+      },
+      {
+        "teacherId": "cmsu6khfw0003bhiz017wmg34",
+        "email": "ellimarlina51@guru.smp.belajar.id",
+        "isFounder": false,
+        "classes": 3,
+        "totalStudents": 57,
+        "activity": {
+          "penugasan": 5,
+          "quizzes": 3
+        },
+        "operationalGroups": 3
+      }
+    ],
+    "founderTeachers": [
+      {
+        "teacherId": "cmqy1ga9r0003zag7fbmqhsq4",
+        "email": "alexsurya1968@gmail.com",
+        "isFounder": true,
+        "classes": 7,
+        "totalStudents": 180,
+        "activity": {
+          "penugasan": 1,
+          "quizzes": 0
+        },
+        "operationalGroups": 1
+      },
+      {
+        "teacherId": "cmqxema6a000013z9kefn4jm1",
+        "email": "dominikus.02@gmail.com",
+        "isFounder": true,
+        "classes": 9,
+        "totalStudents": 135,
+        "activity": {
+          "penugasan": 6,
+          "quizzes": 0
+        },
+        "operationalGroups": 6
+      }
+    ],
+    "total": 69,
+    "distributionSignal": {
+      "value": "YES",
+      "status": "INFERENCE",
+      "confidence": "MEDIUM",
+      "source": "Derived",
+      "notes": "At least 1 non-founder teacher has >=10 students"
+    }
+  },
+  "learningActivity": {
+    "unitProgress": {
+      "total": {
+        "value": 4142,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "UserUnitProgress.count()",
+        "notes": ""
+      },
+      "completed": {
+        "value": 4106,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "UserUnitProgress.count(completed=true)",
+        "notes": ""
+      }
+    },
+    "quizSubmissions": {
+      "total": {
+        "value": 89,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "QuizSubmission.count()",
+        "notes": ""
+      },
+      "graded": {
+        "value": 0,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "QuizSubmission.count(status=GRADED)",
+        "notes": ""
+      }
+    },
+    "penugasanSubmissions": {
+      "total": {
+        "value": 56,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "PenugasanSubmission.count()",
+        "notes": ""
+      },
+      "completed": {
+        "value": 56,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "PenugasanSubmission.count(COMPLETED|GRADED)",
+        "notes": ""
+      }
+    },
+    "progresKompetensi": {
+      "total": {
+        "value": 613,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "ProgresKompetensi.count()",
+        "notes": ""
+      },
+      "completed": {
+        "value": 613,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "ProgresKompetensi.count(COMPLETED)",
+        "notes": ""
+      }
+    },
+    "gameResults": {
+      "value": 928,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "GameResult.count()",
+      "notes": ""
+    },
+    "studentKarya": {
+      "value": 2076,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "StudentKarya.count()",
+      "notes": ""
+    },
+    "karyaLikes": {
+      "value": 8675,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "StudentKaryaLike.count()",
+      "notes": ""
+    },
+    "jalurCerdas": {
+      "levels": {
+        "value": 12,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "LearningLevel.count(type=JALUR)",
+        "notes": ""
+      },
+      "units": {
+        "value": 72,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "LearningUnit.count(level.type=JALUR)",
+        "notes": ""
+      }
+    },
+    "aiUsage": {
+      "lifetime": {
+        "value": 1863,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "AIUsage.count()",
+        "notes": ""
+      },
+      "last30d": {
+        "value": 1669,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "AIUsage.count(30d)",
+        "notes": ""
+      },
+      "uniqueTeachers30d": {
+        "value": 163,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "AIUsage.count(DISTINCT userId, 30d)",
+        "notes": ""
+      }
+    },
+    "activeLearners30d": {
+      "value": 536,
+      "status": "INFERENCE",
+      "confidence": "MEDIUM",
+      "source": "SQL: multiple tables",
+      "notes": "Distinct murid with any learning signal in trailing 30d"
+    }
+  },
+  "monetization": {
+    "transactions": {
+      "successful": {
+        "value": 4,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "Transaksi.count(SUCCESS)",
+        "notes": ""
+      },
+      "pending": {
+        "value": 8,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "Transaksi.count(PENDING)",
+        "notes": ""
+      },
+      "expired": {
+        "value": 6,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "Transaksi.count(EXPIRED)",
+        "notes": ""
+      },
+      "failed": {
+        "value": 0,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "Transaksi.count(FAILED)",
+        "notes": ""
+      }
+    },
+    "revenue": {
+      "grossSuccess": {
+        "value": 438000,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "Transaksi.aggregate(SUCCESS).sum.amount",
+        "notes": "Rp — gross amount, not net"
+      }
+    },
+    "premium": {
+      "active": {
+        "value": 3,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "User.isPremium+premiumUntil",
+        "notes": ""
+      },
+      "guruActive": {
+        "value": 1,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "User(isPremium+premiumUntil, GURU)",
+        "notes": ""
+      },
+      "muridActive": {
+        "value": 2,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "User(isPremium+premiumUntil, MURID)",
+        "notes": ""
+      },
+      "trialActive": {
+        "value": 157,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "User.trialEndsAt",
+        "notes": ""
+      },
+      "subscriptionActive": {
+        "value": 0,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "Subscription.count(ACTIVE)",
+        "notes": ""
+      }
+    },
+    "transaksiBreakdown": [
+      {
+        "type": "MURID_PREMIUM",
+        "status": "EXPIRED",
+        "count": 3,
+        "sum": 218000
+      },
+      {
+        "type": "MURID_PREMIUM",
+        "status": "PENDING",
+        "count": 4,
+        "sum": 398000
+      },
+      {
+        "type": "MURID_PREMIUM",
+        "status": "SUCCESS",
+        "count": 2,
+        "sum": 38000
+      },
+      {
+        "type": "PREMIUM_UPGRADE",
+        "status": "EXPIRED",
+        "count": 3,
+        "sum": 147000
+      },
+      {
+        "type": "PREMIUM_UPGRADE",
+        "status": "PENDING",
+        "count": 4,
+        "sum": 896000
+      },
+      {
+        "type": "PREMIUM_UPGRADE",
+        "status": "SUCCESS",
+        "count": 2,
+        "sum": 400000
+      }
+    ],
+    "commission": {
+      "attributions": {
+        "value": 84,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "TeacherAttribution.count(ACTIVE)",
+        "notes": ""
+      },
+      "totalCommissions": {
+        "value": 0,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "TeacherCommission.count()",
+        "notes": ""
+      },
+      "eligible": {
+        "value": 0,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "TeacherCommission.count(PENDING|ELIGIBLE)",
+        "notes": ""
+      },
+      "available": {
+        "value": 0,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "TeacherCommission.count(AVAILABLE)",
+        "notes": ""
+      },
+      "paid": {
+        "value": 0,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "TeacherCommission.count(PAID)",
+        "notes": ""
+      },
+      "wallets": {
+        "value": 0,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "TeacherWallet.count()",
+        "notes": ""
+      },
+      "walletBalances": {
+        "value": {
+          "available": 0,
+          "pending": 0,
+          "locked": 0,
+          "lifetimeEarned": 0,
+          "lifetimeWithdrawn": 0
+        },
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "TeacherWallet.aggregate()",
+        "notes": ""
+      },
+      "payouts": {
+        "value": 0,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "TeacherPayout.count()",
+        "notes": ""
+      }
+    }
+  },
+  "productUsage": {
+    "aiTools": {
+      "rpp": {
+        "value": 54,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "AIUsage.count(feature=agent:rpp)",
+        "notes": ""
+      },
+      "soal": {
+        "value": 84,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "AIUsage.count(feature=agent:soal)",
+        "notes": ""
+      },
+      "ppt": {
+        "value": 41,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "AIUsage.count(feature=agent:ppt)",
+        "notes": ""
+      },
+      "feedback": {
+        "value": 0,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "AIUsage.count(feature=agent:feedback)",
+        "notes": ""
+      },
+      "eyd": {
+        "value": 3,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "AIUsage.count(feature=agent:eyd)",
+        "notes": ""
+      },
+      "grading": {
+        "value": 0,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "AIUsage.count(feature=agent:grading)",
+        "notes": ""
+      },
+      "textAnalysis": {
+        "value": 5,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "AIUsage.count(feature=agent:text-analysis)",
+        "notes": ""
+      },
+      "bcChat": {
+        "value": 0,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "AIUsage.count(feature=ai-bc-chat)",
+        "notes": ""
+      }
+    },
+    "aiUsers": {
+      "value": 199,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "AIUsage.count(DISTINCT userId)",
+      "notes": ""
+    },
+    "aiUsers30d": {
+      "value": 163,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "AIUsage.count(DISTINCT userId, 30d)",
+      "notes": ""
+    },
+    "content": {
+      "soalSets": {
+        "value": 7,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "SoalSet.count()",
+        "notes": ""
+      },
+      "ukbiQuestions": {
+        "value": 1330,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "UKBIQuestion.count()",
+        "notes": ""
+      },
+      "tkaQuestions": {
+        "value": 355,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "TKAQuestion.count()",
+        "notes": ""
+      },
+      "articles": {
+        "value": 65,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "Artikel.count()",
+        "notes": ""
+      }
+    },
+    "simulation": {
+      "sessions": {
+        "value": 564,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "TestSession.count()",
+        "notes": ""
+      },
+      "completed": {
+        "value": 346,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "TestSession.count(COMPLETED)",
+        "notes": ""
+      }
+    },
+    "assessments": {
+      "quizzes": {
+        "value": 34,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "Quiz.count()",
+        "notes": ""
+      },
+      "quizAssignments": {
+        "value": 51,
+        "status": "FACT",
+        "confidence": "HIGH",
+        "source": "QuizAssignment.count()",
+        "notes": ""
+      }
+    },
+    "notifications": {
+      "value": 19304,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "Notifikasi.count()",
+      "notes": ""
+    }
+  },
+  "dataQuality": {
+    "usersNoLastActive": {
+      "value": 666,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "User.count(lastActiveAt=null)",
+      "notes": ""
+    },
+    "usersNoSupabaseId": {
+      "value": 0,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "User.count(supabaseId='')",
+      "notes": ""
+    },
+    "duplicateEmails": {
+      "value": 0,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "SQL: duplicate check",
+      "notes": ""
+    },
+    "productEventRows": {
+      "value": 138,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "ProductEvent.count()",
+      "notes": "Expected 0 until Operational Teacher Experiment hooks fire"
+    },
+    "dailySnapshotRows": {
+      "value": 1,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "DailyBusinessSnapshot.count()",
+      "notes": "Expected 1 — snapshot started but barely populated"
+    },
+    "founderAsTeacher": {
+      "value": 2,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "User(isFounder=true, role=GURU)",
+      "notes": ""
+    },
+    "testTransactions": {
+      "value": 0,
+      "status": "FACT",
+      "confidence": "HIGH",
+      "source": "SQL: founder/test account transactions",
+      "notes": "Transactions by founder/test accounts — excluded from revenue"
+    },
+    "instrumentationGaps": [
+      "ProductEvent: 0 rows — F4/F8 hooks wired but table never populated until experiment fires",
+      "DailyBusinessSnapshot: 1 row — snapshot generation started but not recurring",
+      "MRR/premium historical: NOT reconstructable — only current-state mutable fields survive",
+      "AIUsage feature labels: migrated from legacy (rpp/soal/ppt) to agent: prefix — some old records may use legacy labels",
+      "Student engagement granularity: no per-lesson time-on-task or per-question attempt instrumentation",
+      "Passive page views: NOT tracked as learning activity (by design per hard rule 9)"
+    ]
+  }
+}
