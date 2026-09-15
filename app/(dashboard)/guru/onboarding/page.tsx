@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import {
   GraduationCap, Users, ArrowRight, ArrowLeft, Copy, Check,
-  Loader2, Sparkles, ExternalLink, MessageCircle
+  Loader2, Sparkles, ExternalLink, MessageCircle, Link2
 } from "lucide-react"
+import { buildClassJoinUrl, buildShareMessage } from "@/lib/guru/gcs-copy"
+import { trackProductEvent } from "@/lib/analytics/product-track"
 
 interface CreatedClass {
   id: string
@@ -41,6 +43,7 @@ export default function GuruOnboardingPage() {
 
   // Step 3 — copy/share
   const [copied, setCopied] = useState(false)
+  const [copiedLink, setCopiedLink] = useState(false)
 
   // Step 4 — student milestone visibility (P0 #3c)
   const [milestoneStep, setMilestoneStep] = useState(0) // 0-loading,1-waiting,2-first-joined,3-threesome
@@ -95,7 +98,20 @@ export default function GuruOnboardingPage() {
     try {
       await navigator.clipboard.writeText(createdClass.accessCode)
       setCopied(true)
+      trackProductEvent("class_invite_shared", { method: "code", flow: "onboarding" })
       setTimeout(() => setCopied(false), 2000)
+    } catch {}
+  }
+
+  const handleCopyLink = async () => {
+    if (!createdClass) return
+    const origin = typeof window !== "undefined" ? window.location.origin : "https://www.bahasacerdas.com"
+    const link = buildClassJoinUrl(origin, createdClass.accessCode)
+    try {
+      await navigator.clipboard.writeText(link)
+      setCopiedLink(true)
+      trackProductEvent("class_invite_shared", { method: "link", flow: "onboarding" })
+      setTimeout(() => setCopiedLink(false), 2000)
     } catch {}
   }
 
@@ -134,9 +150,12 @@ export default function GuruOnboardingPage() {
   }
 
   const waShareUrl = createdClass
-    ? `https://wa.me/?text=${encodeURIComponent(
-        `Hai! Bergabunglah dengan kelas "${createdClass.name}" di BahasaCerdas.\n\nKode akses: ${createdClass.accessCode}\nBuka: ${window.location.origin}/murid/gabung-kelas`
-      )}`
+    ? (() => {
+        const origin = typeof window !== "undefined" ? window.location.origin : "https://www.bahasacerdas.com"
+        const joinUrl = buildClassJoinUrl(origin, createdClass.accessCode)
+        const msg = buildShareMessage({ name: createdClass.name, accessCode: createdClass.accessCode })
+        return `https://wa.me/?text=${encodeURIComponent(msg + "\n\n" + joinUrl)}`
+      })()
     : ""
 
   if (loading) {
@@ -283,7 +302,7 @@ export default function GuruOnboardingPage() {
               Kelas "{createdClass.name}" dibuat!
             </h2>
             <p className="text-slate-500 text-sm mb-6">
-              Bagikan kode akses ini ke muridmu. Murid memasukkan kode ini di BahasaCerdas untuk bergabung.
+              Bagikan tautan atau kode ke muridmu. Cukup satu klik — murid langsung ke halaman gabung kelas.
             </p>
 
             {/* Access code display */}
@@ -294,14 +313,22 @@ export default function GuruOnboardingPage() {
               </p>
             </div>
 
-            {/* Action buttons */}
+            {/* Action buttons — deep-link primary */}
             <div className="flex flex-col gap-3 mb-6">
+              <button
+                onClick={handleCopyLink}
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-200"
+              >
+                {copiedLink ? <Check className="w-5 h-5" /> : <Link2 className="w-5 h-5" />}
+                {copiedLink ? "Tautan Tersalin!" : "Salin Tautan Undangan"}
+              </button>
+
               <button
                 onClick={handleCopyCode}
                 className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white border-2 border-emerald-200 text-emerald-700 rounded-xl font-semibold hover:bg-emerald-50 transition-colors"
               >
                 {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
-                {copied ? "Tersalin!" : "Salin Kode"}
+                {copied ? "Kode Tersalin!" : "Salin Kode Saja"}
               </button>
 
               <a
@@ -322,7 +349,7 @@ export default function GuruOnboardingPage() {
             </div>
 
             <p className="text-xs text-slate-400 mb-6">
-              Murid membuka <span className="font-medium">bahasacerdas.com/murid/gabung-kelas</span> → masukkan kode di atas
+              Murid klik tautan → buka BahasaCerdas → langsung gabung kelas
             </p>
 
             <button
@@ -390,7 +417,7 @@ export default function GuruOnboardingPage() {
 
             <div className="flex flex-col gap-3">
               <Link
-                href={`/murid/gabung-kelas`}
+                href={`/murid/gabung-kelas?kode=${createdClass.accessCode}`}
                 className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white border-2 border-emerald-200 text-emerald-700 rounded-xl font-semibold hover:bg-emerald-50 transition-colors"
               >
                 <ExternalLink className="w-5 h-5" /> Lihat Halaman Murid

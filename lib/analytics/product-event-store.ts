@@ -36,6 +36,8 @@ export interface ProductEventResult {
 export const PRODUCT_EVENT_F4_CODE_SHARED = "class_code_shared";
 export const PRODUCT_EVENT_F5_FIRST_JOIN = "class_first_join";
 export const PRODUCT_EVENT_F8_TEACHER_SESSION = "teacher_session";
+export const PRODUCT_EVENT_CLASS_INVITE_SHARED = "class_invite_shared";
+export const PRODUCT_EVENT_CLASS_INVITE_OPENED = "class_invite_opened";
 
 /** Hari WIB (Asia/Jakarta, UTC+7) dalam format "YYYY-MM-DD" untuk logicalKey harian. */
 export function dayKeyWIB(date: Date = new Date()): string {

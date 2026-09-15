@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useBerandaHref } from "@/lib/arena-scope";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Users, Copy, CheckCircle, BookOpen, GraduationCap, ChevronRight, Clock, RefreshCw, Crown } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -23,12 +23,22 @@ interface Group {
 export default function GabungKelasPage() {
   const berandaHref = useBerandaHref();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [code, setCode] = useState("");
   const [joining, setJoining] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState<Group | null>(null);
   const [myGroups, setMyGroups] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Deep-link: pre-fill code from ?kode= query param (Q1.1)
+  useEffect(() => {
+    const kode = searchParams.get("kode");
+    if (kode && kode.trim().length > 0) {
+      setCode(kode.trim().toUpperCase());
+      trackProductEvent("class_invite_opened");
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const fetchGroups = async () => {

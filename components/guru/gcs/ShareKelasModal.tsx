@@ -73,6 +73,7 @@ export function ShareKelasModal({ isOpen, onClose, kelas }: Props) {
       await navigator.clipboard.writeText(text);
       setCopied(kind);
       trackProductEvent(event);
+      trackProductEvent("class_invite_shared", { method: kind, flow: "kelasku" });
       setTimeout(() => setCopied(null), 2000);
     } catch {
       // clipboard tidak tersedia — abaikan
@@ -81,6 +82,7 @@ export function ShareKelasModal({ isOpen, onClose, kelas }: Props) {
 
   const nativeShare = async () => {
     trackProductEvent("gcs_native_share");
+    trackProductEvent("class_invite_shared", { method: "native", flow: "kelasku" });
     if (navigator.share && kelas) {
       try {
         await navigator.share({
