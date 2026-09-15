@@ -4557,3 +4557,56 @@ Before proceeding to Phase 2, founder must decide:
 3. Game server revival (VPS mati)
 4. GameRoom migration SQL via Supabase dashboard
 5. UI game solo: badge-score client vs server masih beda (kosmetik)
+
+---
+
+## Phase 11 — Investor Readiness 2.0 (Production Truth + Traction Audit) (Sept 14, 2026)
+
+### Status
+**AUDIT COMPLETE — JSON artifact + Markdown report generated. NOT committed/pushed per Phase 11 hard rules.**
+
+### Goal
+Produce comprehensive production-truth audit and investor readiness assessment from live production database. READ-ONLY. No DB mutations, no code changes, no schema changes.
+
+### What Was Done
+1. **Phase A (Repository Forensic)**: Full schema mapped. Canonical sources identified for every metric. Existing 32 audit scripts inventoried.
+2. **Audit Script**: `scripts/investor-readiness-2-0.ts` written (~970 lines). Covers users, teachers, classrooms, operational classrooms, students, learning activity, monetization, retention, power teachers, product usage, data quality.
+3. **Script Execution**: Successfully ran against production DB (27.4s). All queries pass. No DB mutations.
+4. **JSON Artifact**: `data/investor-readiness-2-0-september-2026.json` written (1112 lines, full metric tree with status/confidence/source per metric).
+5. **Markdown Report**: `docs/INVESTOR_READINESS_2_0_PRODUCTION_TRUTH_SEPTEMBER_2026.md` written (499 lines, 17 sections: exec summary, users, teachers, classrooms, O3, students, learning activity, monetization, retention, power teachers, product usage, data quality, investor comparison, signal score, fundraise readiness, 90-day plan, methodology).
+
+### Key Production Numbers (Sept 14, 2026)
+| Metric | Value | Status | Confidence |
+|--------|-------|--------|------------|
+| Total users | 2,677 | FACT | HIGH |
+| GURU | 580 | FACT | HIGH |
+| MURID | 2,097 | FACT | HIGH |
+| Teachers created class | 171 | FACT | HIGH |
+| Teachers with ≥3 students | 1 | INFERENCE | HIGH |
+| Operational classrooms (O3) | 1 | INFERENCE | MEDIUM |
+| Total groups | 171 | FACT | HIGH |
+| Groups with ≥3 students | 55 | FACT | HIGH |
+| Students enrolled | 1,289 | INFERENCE | HIGH |
+| Students with learning activity | 844 | INFERENCE | HIGH |
+| Revenue (gross) | Rp438,000 | FACT | HIGH |
+| Premium active | 3 | FACT | HIGH |
+| Trial active | 157 | FACT | HIGH |
+| Teacher retention D7 | 4.9% | INFERENCE | MEDIUM |
+| Student retention D7 | 23.2% | INFERENCE | MEDIUM |
+| Operational classrooms | 1 | INFERENCE | MEDIUM |
+| Top teacher students | 180 | FACT | HIGH |
+| AI users (all) | 197 | FACT | HIGH |
+
+### Files Created
+- `scripts/investor-readiness-2-0.ts` — Audit script (READ-ONLY, ~970 lines)
+- `data/investor-readiness-2-0-september-2026.json` — JSON artifact (1112 lines)
+
+### Remaining (Phase 11)
+1. ~~Write `docs/INVESTOR_READINESS_2_0_PRODUCTION_TRUTH_SEPTEMBER_2026.md`~~ ✅ DONE
+2. Do NOT commit or push per Phase 11 hard rules
+
+### Remaining (project)
+1. TKA UTBK/Guru enrichment 30 → 150
+2. Game server revival (VPS mati)
+3. GameRoom migration SQL via Supabase dashboard
+4. UI game solo: badge-score client vs server masih beda (kosmetik)

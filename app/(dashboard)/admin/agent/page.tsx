@@ -47,12 +47,20 @@ export default async function AgentControlCenterPage({
             Control plane Founder untuk runtime BC Agent (P1–P5). Database adalah sumber kebenaran; semua mutasi melalui layanan kanonik.
           </p>
         </div>
-        <Link
-          href="/admin/agent/approvals"
-          className="inline-flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-2 text-xs font-semibold text-amber-700 transition-colors hover:bg-amber-100 dark:border-amber-800 dark:bg-amber-950/60 dark:text-amber-300"
-        >
-          Antrean Persetujuan{summary.pendingApprovals > 0 ? ` · ${summary.pendingApprovals}` : ""}
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href="/admin/agent/approvals"
+            className="inline-flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-2 text-xs font-semibold text-amber-700 transition-colors hover:bg-amber-100 dark:border-amber-800 dark:bg-amber-950/60 dark:text-amber-300"
+          >
+            Antrean Persetujuan{summary.pendingApprovals > 0 ? ` · ${summary.pendingApprovals}` : ""}
+          </Link>
+          <Link
+            href="/admin/agent/telegram"
+            className="inline-flex items-center gap-2 rounded-xl border border-sky-200 bg-sky-50 px-3.5 py-2 text-xs font-semibold text-sky-700 transition-colors hover:bg-sky-100 dark:border-sky-800 dark:bg-sky-950/60 dark:text-sky-300"
+          >
+            Telegram Binding
+          </Link>
+        </div>
       </div>
 
       {/* 1. Agent status summary */}
