@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import { after } from "next/server";
 
 import { db } from "@/lib/db";
 import { getAgentTaskService } from "@/src/agent/control/service";
 import { handleTelegramUpdate } from "@/src/agent/telegram/gateway";
 import { makeUpstashRateLimitCounter } from "@/src/agent/telegram/rate-limit-upstash";
+import { answerTelegramCallback } from "@/src/agent/telegram/transport";
+import { safeDeliverReply } from "@/src/agent/telegram/delivery";
+import { renderCallbackAnswer } from "@/src/agent/telegram/render";
 
 export const dynamic = "force-dynamic";
 
@@ -18,9 +22,12 @@ export const dynamic = "force-dynamic";
  *     compare); everything else gets 401 pre-parse.
  *
  * This file is TRANSPORT ONLY: it never parses commands, resolves identity,
- * executes business logic, or talks to Telegram's API. Sending replies is a
- * founder-commanded P8C concern (the canonical result is durable in the DB
- * regardless — P8A §18).
+ * or executes business logic. P8C adds the OUTBOUND leg — reply delivery —
+ * as an `after()` task: the canonical result is durable BEFORE the ack, and
+ * the Telegram sendMessage happens AFTER the ack (choice B, P8C Phase 9).
+ * Telegram API latency therefore never blocks command execution, and a
+ * Telegram API failure can never alter the 2xx ack or the canonical state
+ * (delivery outcomes are typed and swallowed into telemetry).
  *
  * Telegram outage cannot affect the worker: this route shares no state with
  * the worker loop, and its failures are confined to HTTP responses (P8B
@@ -65,6 +72,28 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     { prisma: db, taskService: getAgentTaskService(), rateLimitCounter: makeUpstashRateLimitCounter() },
     body
   );
+
+  // P8C outbound leg — scheduled AFTER the ack (Phase 9 decision B).
+  //
+  // Security rule (Phase 11): replies are delivered ONLY to the chat bound
+  // to the AUTHENTICATED ACTIVE binding that initiated the command
+  // (outcome.bindingId). Outcomes without a bindingId (unauthenticated,
+  // malformed, senderless) are NEVER answered — an attacker gets no channel
+  // verification, no oracle, no reply of any kind.
+  //
+  // Both delivery calls are typed, never throw, and are DORMANT without
+  // BC_AGENT_TELEGRAM_BOT_TOKEN (zero network I/O). Their results can never
+  // influence this response or any canonical state.
+  if (outcome.callbackId) {
+    const cbId = outcome.callbackId;
+    const cbText = renderCallbackAnswer(outcome.ok ? "Diproses." : "Ditolak.");
+    after(() => answerTelegramCallback(cbId, cbText));
+  }
+  if (outcome.text && outcome.bindingId) {
+    const bindingId = outcome.bindingId;
+    const text = outcome.text;
+    after(() => safeDeliverReply(db, bindingId, text));
+  }
 
   // Always 2xx to Telegram after the secret check: retries are handled by
   // the durable dedupe ledger, and non-2xx acks would trigger webhook retry

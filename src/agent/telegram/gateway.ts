@@ -83,6 +83,15 @@ export interface GatewayOutcome {
   readonly duplicate: boolean;
   /** callback id when the update was a callback_query (transport must answer it once). */
   readonly callbackId?: string;
+  /**
+   * P8C: binding id when identity RESOLVED (active + chat-matched + founder).
+   * Present on every outcome AFTER identity success — including denied
+   * commands — so the webhook can deliver authenticated-user replies
+   * asynchronously. Absent for unauthenticated/malformed updates: those are
+   * NEVER replied to (P8C Phase 11 — no response to unauthenticated senders,
+   * which also denies attackers any channel-verification oracle).
+   */
+  readonly bindingId?: string;
 }
 
 // ─── Dedupe ledger (the ONLY gateway-owned persistence) ──────────────────
@@ -267,12 +276,12 @@ export async function handleTelegramUpdate(
   // 3. Parse command (strict vocabulary).
   const cmd = parseTelegramCommand(update);
   if (!cmd.ok) {
-    return { ok: false, text: cmd.text, duplicate: false };
+    return { ok: false, text: cmd.text, duplicate: false, bindingId: authCtx.bindingId };
   }
 
   // Forwarded messages are DATA, never commands (P8A §7).
   if (update.isForwarded) {
-    return { ok: false, text: "Pesan diteruskan tidak diproses sebagai perintah.", duplicate: false };
+    return { ok: false, text: "Pesan diteruskan tidak diproses sebagai perintah.", duplicate: false, bindingId: authCtx.bindingId };
   }
 
   // 4. Rate limit (mutations fail-closed without a counter).
@@ -283,7 +292,7 @@ export async function handleTelegramUpdate(
     deps.rateLimitConfig
   );
   if (!rl.ok) {
-    return { ok: false, text: renderRateLimited(), duplicate: false };
+    return { ok: false, text: renderRateLimited(), duplicate: false, bindingId: authCtx.bindingId };
   }
 
   // 5. Dedupe (mutations + reads share the ledger; reads may replay safely).
@@ -302,6 +311,7 @@ export async function handleTelegramUpdate(
         : "Perintah ini sudah dieksekusi sebelumnya.",
       duplicate: true,
       callbackId: update.callbackId,
+      bindingId: authCtx.bindingId,
     };
   }
 
@@ -328,7 +338,13 @@ export async function handleTelegramUpdate(
   await recordDedupeResult(deps.prisma, key, resultCode);
   await touchBinding(deps, authCtx.bindingId, new Date());
 
-  return { ok: resultCode === "OK" || resultCode === "CREATED" || resultCode === "ALREADY_EXISTS", text, duplicate: false, callbackId: update.callbackId };
+  return {
+    ok: resultCode === "OK" || resultCode === "CREATED" || resultCode === "ALREADY_EXISTS",
+    text,
+    duplicate: false,
+    callbackId: update.callbackId,
+    bindingId: authCtx.bindingId,
+  };
 }
 
 /** Exposed for tests — the canonical context construction. */

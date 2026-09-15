@@ -17,11 +17,17 @@ const MAX_REPLY_CHARS = 3500;
 
 /** Secret-shaped substrings are masked regardless of source field. */
 const SECRET_PATTERNS: ReadonlyArray<RegExp> = [
-  /bot\d{6,}:[A-Za-z0-9_-]{30,}/g, // telegram bot tokens
+  /bot\d{6,}:[A-Za-z0-9_-]{30,}/g, // telegram bot tokens (URL form bot<id>:<secret>)
+  /(?:^|[^A-Za-z0-9])\d{6,12}:[A-Za-z0-9_-]{30,50}(?![A-Za-z0-9_-])/g, // P8C: BARE telegram token shape (env-var form, no "bot" prefix)
   /sk-[A-Za-z0-9]{20,}/g, // openai-style keys
   /postgres(?:ql)?:\/\/[^\s]+/g, // database URLs
   /eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/g, // JWTs
   /-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----/g,
+  // P8C hardening: environment-variable assignments (e.g. DATABASE_URL=...
+  // or TELEGRAM_TOKEN="...") and stack-trace frames are never reply-safe.
+  /\b[A-Z][A-Z0-9_]{2,}\s*=\s*(?:"[^"]*"|'[^']*'|[^\s]{4,})/g, // ENV=value
+  /[\w.\\/-]+\.tsx?:\d+(?::\d+)?/g, // P8C: source paths with line numbers (mid-line stack frames)
+  /^\s*at\s.+$/gm, // stack frame lines ("at fn (file:line:col)" / "at file:line:col")
 ];
 
 export function redactSecrets(text: string): string {
@@ -169,4 +175,15 @@ export function renderRateLimited(): string {
 
 export function renderInternalError(): string {
   return redactSecrets("Terjadi kesalahan internal. Coba lagi nanti atau gunakan Control Center web.");
+}
+
+// ─── P8C: delivery-aware helpers ──────────────────────────────────────────
+
+/**
+ * Callback short-answer (≤200 chars) — the ephemeral toast shown before the
+ * full bounded reply arrives via sendMessage. Delivery outcomes themselves
+ * are reported via telemetry, never by mutating the canonical reply text.
+ */
+export function renderCallbackAnswer(baseText: string): string {
+  return redactSecrets(baseText).slice(0, 180);
 }
