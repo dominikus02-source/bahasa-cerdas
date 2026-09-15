@@ -66,6 +66,7 @@ assert(!presence.includes("email:") && !presence.includes("email ="), "Must not 
 assert(!presence.includes("ipAddress") && !presence.includes("ip_address"), "Must not store IP address")
 assert(!presence.includes("pageUrl") && !presence.includes("currentUrl"), "Must not store page URL")
 assert(presence.includes("r: \"GURU\"") || presence.includes("{ r: role }"), "Must store role via { r: role } pattern")
+assert(presence.includes("isPresenceAvailable"), "Must export isPresenceAvailable")
 assert(presence.includes("PresenceRole"), "Must define PresenceRole type")
 assert(presence.includes("\"GURU\"") && presence.includes("\"MURID\"") && presence.includes("\"ADMIN\""), "Must support all three roles")
 
@@ -113,6 +114,8 @@ assert(analytics.includes("onlineMurid"), "Response must include onlineMurid")
 assert(analytics.includes("totalKarya"), "Response must include totalKarya")
 assert(analytics.includes("generatedAt"), "Response must include generatedAt")
 assert(analytics.includes("presenceWindowSeconds"), "Response must include presenceWindowSeconds")
+assert(analytics.includes("presenceAvailable"), "Response must include presenceAvailable")
+assert(analytics.includes("isPresenceAvailable"), "Must call isPresenceAvailable()")
 assert(analytics.includes("force-dynamic"), "Must be force-dynamic")
 
 // Must not expose user identities in analytics response
@@ -167,10 +170,23 @@ assert(card.includes("animate-pulse") || card.includes("skeleton"), "Must have l
 assert(card.includes("TTL"), "Must show TTL info")
 assert(card.includes("Live Pulse"), "Must have 'Live Pulse' heading")
 assert(card.includes("Near-real-time"), "Must use 'Near-real-time' terminology")
+assert(card.includes("presenceAvailable"), "Must handle presenceAvailable field")
+assert(card.includes("Live Pulse tidak tersedia"), "Must show unavailable state when presenceAvailable=false")
+assert(card.includes("WifiOff"), "Must import WifiOff icon for unavailable state")
+assert(card.includes("detik lalu"), "Time label must use 'detik lalu' (not 'd lalu')")
+assert(card.includes("detik"), "Footer must use 'detik' (not 'd')")
+
+// Green indicator must be conditional on presenceAvailable
+assert(card.includes("presenceOk"), "Indicator must be conditional on presenceAvailable")
+assert(card.includes("bg-slate-400") || card.includes("bg-slate"), "Must have gray indicator for unavailable state")
 
 // Card must not expose user identities
 assert(!card.includes("getUsernames"), "Must not expose usernames")
 assert(!card.includes("email:") && !card.includes("email ="), "Must not expose emails in data")
+
+// Card must not have broken time labels
+assert(!card.includes("}d lalu"), "Must not use 'd lalu' for seconds (should be 'detik lalu')")
+assert(!card.includes("60d"), "Must not use '60d' for TTL (should be '60 detik')")
 
 // ═══════════════════════════════════════════════════════════════
 // SECTION 7: Provider wiring

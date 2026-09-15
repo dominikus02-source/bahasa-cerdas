@@ -136,4 +136,9 @@ export async function getTotalKaryaCount(): Promise<number> {
   }
 }
 
+// ─── Read: Check if Redis presence engine is available ────────
+export function isPresenceAvailable(): boolean {
+  return redis !== null
+}
+
 export { PRESENCE_TTL_SECONDS }

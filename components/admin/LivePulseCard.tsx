@@ -5,15 +5,19 @@
  *
  * Fetches GET /api/analytics/live every 15 seconds.
  * Displays:
- *  - Online users count with pulsing green dot
+ *  - Online users count with pulsing green dot (when presenceAvailable)
  *  - Role breakdown (Guru / Murid / Admin)
  *  - Total Karya count (canonical from DB)
  *  - Near-real-time indicator
  *
+ * When presenceAvailable=false:
+ *  - Shows degraded state (no fake zeros)
+ *  - Gray indicator instead of pulsing green
+ *
  * Privacy: Numbers only. No names, no emails, no pages.
  */
 import { useEffect, useState, useCallback } from "react"
-import { Users, BookOpen, Wifi } from "lucide-react"
+import { Users, BookOpen, Wifi, WifiOff } from "lucide-react"
 
 interface LivePulseData {
   onlineUsers: number
@@ -23,6 +27,7 @@ interface LivePulseData {
   totalKarya: number
   generatedAt: string
   presenceWindowSeconds: number
+  presenceAvailable: boolean
 }
 
 const POLL_INTERVAL_MS = 15_000
@@ -55,8 +60,10 @@ export function LivePulseCard() {
   }, [fetchLiveData])
 
   const timeAgo = lastUpdate
-    ? `${Math.round((Date.now() - lastUpdate.getTime()) / 1000)}d lalu`
+    ? `${Math.round((Date.now() - lastUpdate.getTime()) / 1000)} detik lalu`
     : "…"
+
+  const presenceOk = data?.presenceAvailable === true
 
   return (
     <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
@@ -75,11 +82,17 @@ export function LivePulseCard() {
             </p>
           </div>
         </div>
-        {/* Pulsing green dot */}
-        <span className="relative flex h-3 w-3">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-          <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500" />
-        </span>
+        {/* Indicator: green pulsing when available, gray static when unavailable */}
+        {presenceOk ? (
+          <span className="relative flex h-3 w-3">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500" />
+          </span>
+        ) : (
+          <span className="relative flex h-3 w-3">
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-slate-400" />
+          </span>
+        )}
       </div>
 
       {/* Error state */}
@@ -102,8 +115,8 @@ export function LivePulseCard() {
         </div>
       )}
 
-      {/* Data */}
-      {data && (
+      {/* Data available — presence healthy */}
+      {data && presenceOk && (
         <div className="space-y-4">
           {/* Main metric: Online Users */}
           <div>
@@ -157,7 +170,49 @@ export function LivePulseCard() {
           <div className="flex items-center gap-1.5 text-[10px] text-slate-400 dark:text-slate-500">
             <Users size={10} />
             <span>
-              TTL {data.presenceWindowSeconds}d · Auto-refresh 15d
+              TTL {data.presenceWindowSeconds} detik · Auto-refresh 15 detik
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Data available — presence unavailable (Redis not configured) */}
+      {data && !presenceOk && (
+        <div className="space-y-4">
+          {/* Degraded indicator */}
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <WifiOff size={16} className="text-slate-400" />
+              <p className="text-sm font-medium text-slate-600 dark:text-slate-300">
+                Live Pulse tidak tersedia
+              </p>
+            </div>
+            <p className="text-xs text-slate-400 dark:text-slate-500">
+              Presence data belum aktif. Periksa konfigurasi Redis di Vercel.
+            </p>
+          </div>
+
+          {/* Divider */}
+          <div className="border-t border-slate-100 dark:border-slate-700/50" />
+
+          {/* Canonical Karya count still shows */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <BookOpen size={14} className="text-slate-400" />
+              <span className="text-sm text-slate-600 dark:text-slate-300">
+                Total Karya
+              </span>
+            </div>
+            <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+              {data.totalKarya.toLocaleString("id-ID")}
+            </span>
+          </div>
+
+          {/* Footer */}
+          <div className="flex items-center gap-1.5 text-[10px] text-slate-400 dark:text-slate-500">
+            <Users size={10} />
+            <span>
+              Presence offline · Auto-refresh 15 detik
             </span>
           </div>
         </div>
