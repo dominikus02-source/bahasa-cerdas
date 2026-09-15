@@ -40,6 +40,9 @@ const ALLOWED_EVENTS = new Set([
   "class_code_shared",
   "class_first_join",
   "teacher_session",
+  // Q1.1 — classroom activation deep-link telemetry
+  "class_invite_shared",
+  "class_invite_opened",
 ]);
 
 export async function POST(req: NextRequest) {
