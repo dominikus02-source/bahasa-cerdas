@@ -2723,6 +2723,7 @@ model PendekarPlayer {
   questProgresses PendekarQuestProgress[]
   battleSessions  PendekarBattleSession[]
   rewardReceipts  PendekarRewardReceipt[]
+  rpgXpEntries    PendekarRpgXpEntry[]
   walletEntries   PendekarWalletEntry[]
 
   @@index([mapKey])
@@ -2872,11 +2873,32 @@ model PendekarRewardReceipt {
   updatedAt      DateTime @updatedAt
 
   player      PendekarPlayer      @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  rpgXpEntry  PendekarRpgXpEntry?
   walletEntry PendekarWalletEntry?
 
   @@unique([playerId, sourceType, sourceId])
   @@index([playerId, createdAt])
   @@index([status])
+}
+
+/// Immutable Pendekar-only RPG XP effect. One receipt can apply RPG XP once.
+/// It is deliberately unrelated to platform XPTransaction/XpLedger.
+model PendekarRpgXpEntry {
+  id          String @id @default(cuid())
+  playerId    String
+  receiptId   String @unique
+  delta       Int
+  levelBefore Int
+  levelAfter  Int
+  xpBefore    Int
+  xpAfter     Int
+  reference   String @unique
+  createdAt   DateTime @default(now())
+
+  player  PendekarPlayer       @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  receipt PendekarRewardReceipt @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+
+  @@index([playerId, createdAt])
 }
 
 model PendekarWalletEntry {

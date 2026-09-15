@@ -30,6 +30,8 @@ export type PendekarActionErrorCode =
   | "BATTLE_REWARD_NOT_ELIGIBLE"
   | "BATTLE_REWARD_INVALID_STATE"
   | "BATTLE_REWARD_REPLAY_CONFLICT"
+  | "BATTLE_SETTLEMENT_NOT_READY"
+  | "BATTLE_SETTLEMENT_INVALID_STATE"
   | "UNAUTHENTICATED"
   | "PREVIEW_DENIED"
   | "INTERNAL_ERROR";
@@ -175,6 +177,24 @@ export type CreateBattleRewardReceiptResult = {
   receipt: PendekarRewardReceiptProjection;
 };
 
+/** The browser may only request settlement of the already-owned battle receipt. */
+export type SettleBattleRewardInput = { requestKey: string };
+
+export type PendekarBattleSettlementProjection = {
+  receiptId: string;
+  sourceBattleId: string;
+  definitionVersion: string;
+  status: "SETTLED";
+  settlementReference: string;
+  applied: { rpgXp: number; gold: number };
+  settledAt: string;
+};
+
+export type SettleBattleRewardResult = {
+  category: "SETTLED" | "REPLAYED";
+  settlement: PendekarBattleSettlementProjection;
+};
+
 export type ParseStartBattleInputResult =
   | { ok: true; value: StartBattleInput }
   | { ok: false; error: PendekarActionError };
@@ -183,6 +203,7 @@ const startBattleKeys = new Set(["encounterId", "requestId"]);
 const submitLearningAnswerKeys = new Set(["answer", "requestKey"]);
 const submitBattleActionKeys = new Set(["action", "requestKey"]);
 const createBattleRewardReceiptKeys = new Set(["requestKey"]);
+const settleBattleRewardKeys = new Set(["requestKey"]);
 const requestIdPattern = /^[A-Za-z0-9._:-]{1,128}$/;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -272,6 +293,24 @@ export function parseCreateBattleRewardReceiptInput(value: unknown): ParseCreate
   }
   if (Object.keys(value).some((key) => !createBattleRewardReceiptKeys.has(key))) {
     return { ok: false, error: { code: "INVALID_INPUT", message: "Battle reward body contains unsupported fields" } };
+  }
+  if (typeof value.requestKey !== "string" || !requestIdPattern.test(value.requestKey)) {
+    return { ok: false, error: { code: "INVALID_INPUT", message: "requestKey must be an opaque replay key" } };
+  }
+  return { ok: true, value: { requestKey: value.requestKey } };
+}
+
+export type ParseSettleBattleRewardResult =
+  | { ok: true; value: SettleBattleRewardInput }
+  | { ok: false; error: PendekarActionError };
+
+/** Settlement carries intent only; all reward, owner, and source fields stay server-owned. */
+export function parseSettleBattleRewardInput(value: unknown): ParseSettleBattleRewardResult {
+  if (!isRecord(value)) {
+    return { ok: false, error: { code: "INVALID_INPUT", message: "Battle settlement body must be an object" } };
+  }
+  if (Object.keys(value).some((key) => !settleBattleRewardKeys.has(key))) {
+    return { ok: false, error: { code: "INVALID_INPUT", message: "Battle settlement body contains unsupported fields" } };
   }
   if (typeof value.requestKey !== "string" || !requestIdPattern.test(value.requestKey)) {
     return { ok: false, error: { code: "INVALID_INPUT", message: "requestKey must be an opaque replay key" } };

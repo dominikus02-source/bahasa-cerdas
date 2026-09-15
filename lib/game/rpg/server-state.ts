@@ -18,6 +18,7 @@ import { canonicalEnemyByPrototypeKey } from "@/src/game/rpg/data/enemies";
 import { getCanonicalMap } from "@/src/game/rpg/data/world-maps";
 import type { RPGFacing } from "@/src/game/rpg/core/constants";
 import type { RPGPlayerState } from "@/src/game/rpg/player/player-state";
+import { grantXp, xpForLevel } from "@/src/game/rpg/player/progression";
 import { isEligibleForGameplay } from "@/lib/game-questions/quality";
 import { selectChallenge, soalToGameQuestion } from "@/src/game/rpg/learning/rpg-challenge-selector";
 import { adaptSoalToChallenge, toClientChallenge, type ResolvedChallenge, type SoalLike } from "@/src/game/rpg/learning/rpg-challenge";
@@ -25,11 +26,14 @@ import { evaluateAnswer, normalizeAnswer } from "@/src/game/rpg/learning/rpg-eva
 import type {
   PendekarBattleActorProjection,
   PendekarBattleProjection,
+  PendekarBattleSettlementProjection,
   PendekarLearningChallengeProjection,
   PendekarRewardReceiptProjection,
   PendekarStateProjection,
   CreateBattleRewardReceiptInput,
   CreateBattleRewardReceiptResult,
+  SettleBattleRewardInput,
+  SettleBattleRewardResult,
   StartLearningResult,
   StartBattleInput,
   StartBattleResult,
@@ -125,6 +129,14 @@ export class PendekarBattleRewardError extends PendekarStateError {
       | "BATTLE_REWARD_NOT_ELIGIBLE"
       | "BATTLE_REWARD_INVALID_STATE"
       | "BATTLE_REWARD_REPLAY_CONFLICT",
+    message: string,
+  ) {
+    super(message);
+  }
+}
+export class PendekarBattleSettlementError extends PendekarStateError {
+  constructor(
+    readonly code: "BATTLE_SETTLEMENT_NOT_READY" | "BATTLE_SETTLEMENT_INVALID_STATE",
     message: string,
   ) {
     super(message);
@@ -720,6 +732,110 @@ export class PendekarStateService {
     });
   }
 
+  /**
+   * Settle one already-created battle entitlement atomically. The caller can
+   * express intent with a replay key only; receipt values, owner, battle, XP,
+   * gold, and settlement reference remain server-derived.
+   */
+  async settleAuthoritativeBattleReward(
+    userId: string,
+    battleId: string,
+    input: SettleBattleRewardInput,
+  ): Promise<SettleBattleRewardResult> {
+    nonBlank(input.requestKey, "requestKey");
+    return this.serializable(async (tx) => {
+      const battle = await tx.pendekarBattleSession.findFirst({
+        where: { id: nonBlank(battleId, "battleId"), player: { userId: nonBlank(userId, "userId") } },
+        include: {
+          learningSession: true,
+          battleActions: { orderBy: { createdAt: "desc" } },
+        },
+      });
+      if (!battle) throw new PendekarOwnershipError("Battle is not owned by this user");
+
+      const reward = this.assertAuthoritativeBattleRewardEligibility(battle);
+      await this.assertBattleLearningEvidence(tx, userId, battle);
+      const receipt = await tx.pendekarRewardReceipt.findUnique({
+        where: { playerId_sourceType_sourceId: { playerId: battle.playerId, sourceType: "BATTLE", sourceId: battle.id } },
+      });
+      if (!receipt) {
+        throw new PendekarBattleSettlementError("BATTLE_SETTLEMENT_NOT_READY", "Battle has no authoritative reward receipt");
+      }
+      this.assertBattleReceiptMatches(receipt, battle.playerId, battle.id, reward);
+      this.assertSettleableBattleReceipt(receipt);
+
+      const player = await tx.pendekarPlayer.findUnique({ where: { id: battle.playerId } });
+      if (!player || player.userId !== userId) throw new PendekarOwnershipError("Pendekar player is not owned by this user");
+      const [xpEntry, walletEntry] = await Promise.all([
+        tx.pendekarRpgXpEntry.findUnique({ where: { receiptId: receipt.id } }),
+        tx.pendekarWalletEntry.findUnique({ where: { receiptId: receipt.id } }),
+      ]);
+      const reference = settlementReference(receipt.id);
+      const walletReason = settlementWalletReason(battle.id, receipt.id);
+
+      if (receipt.status === "SETTLED") {
+        this.assertSettledBattleEffects({ receipt, xpEntry, walletEntry, reference, walletReason });
+        return {
+          category: "REPLAYED",
+          settlement: projectBattleSettlement(receipt, reference),
+        };
+      }
+      if (xpEntry || walletEntry) {
+        throw new PendekarBattleSettlementError("BATTLE_SETTLEMENT_INVALID_STATE", "Pending receipt has unexpected settlement effects");
+      }
+
+      const progression = grantXp({
+        level: player.rpgLevel,
+        xp: player.rpgXp,
+        xpToNextLevel: xpForLevel(player.rpgLevel),
+      }, receipt.rpgXp);
+      const balanceAfter = player.goldBalance + receipt.goldDelta;
+      if (balanceAfter < 0) {
+        throw new PendekarBattleSettlementError("BATTLE_SETTLEMENT_INVALID_STATE", "Reward would create a negative Pendekar balance");
+      }
+
+      await tx.pendekarRpgXpEntry.create({
+        data: {
+          playerId: player.id,
+          receiptId: receipt.id,
+          delta: receipt.rpgXp,
+          levelBefore: player.rpgLevel,
+          levelAfter: progression.level,
+          xpBefore: player.rpgXp,
+          xpAfter: progression.xp,
+          reference,
+        },
+      });
+      await tx.pendekarWalletEntry.create({
+        data: {
+          playerId: player.id,
+          receiptId: receipt.id,
+          delta: receipt.goldDelta,
+          balanceAfter,
+          reason: walletReason,
+        },
+      });
+      await tx.pendekarPlayer.update({
+        where: { id: player.id },
+        data: {
+          rpgLevel: progression.level,
+          rpgXp: progression.xp,
+          goldBalance: balanceAfter,
+          version: { increment: 1 },
+        },
+      });
+      const settledAt = new Date();
+      const settledReceipt = await tx.pendekarRewardReceipt.update({
+        where: { id: receipt.id },
+        data: { status: "SETTLED", settledAt, failureCode: null },
+      });
+      return {
+        category: "SETTLED",
+        settlement: projectBattleSettlement(settledReceipt, reference),
+      };
+    });
+  }
+
   async getQuestProgress(userId: string, questKey = DEFAULT_QUEST.key) {
     const player = await this.getOwnedPendekarPlayer(userId);
     if (!player) return null;
@@ -1102,6 +1218,77 @@ export class PendekarStateService {
     }
   }
 
+  private async assertBattleLearningEvidence(
+    tx: TransactionClient,
+    userId: string,
+    battle: { id: string; learningSession: { soalId: string; isCorrect: boolean | null } | null },
+  ): Promise<void> {
+    const learning = battle.learningSession;
+    if (!learning) {
+      throw new PendekarBattleSettlementError("BATTLE_SETTLEMENT_INVALID_STATE", "Battle learning state is missing");
+    }
+    const evidence = await tx.learningEvidence.findUnique({
+      where: {
+        userId_source_activityId_questionId: {
+          userId,
+          source: PENDEKAR_LEARNING_EVIDENCE_SOURCE,
+          activityId: battle.id,
+          questionId: learning.soalId,
+        },
+      },
+    });
+    if (!evidence || evidence.isCorrect !== learning.isCorrect || evidence.score !== (learning.isCorrect ? 1 : 0)) {
+      throw new PendekarBattleSettlementError("BATTLE_SETTLEMENT_INVALID_STATE", "Battle learning evidence cannot be verified");
+    }
+  }
+
+  private assertSettleableBattleReceipt(receipt: {
+    status: string;
+    definitionVersion: string | null;
+    rpgXp: number;
+    globalXp: number;
+    goldDelta: number;
+    itemPlan: Prisma.JsonValue | null;
+  }): void {
+    if (receipt.status !== "PENDING" && receipt.status !== "SETTLED") {
+      throw new PendekarBattleSettlementError("BATTLE_SETTLEMENT_INVALID_STATE", "Receipt is not settleable");
+    }
+    if (
+      receipt.definitionVersion !== PENDEKAR_BATTLE_REWARD_DEFINITION_VERSION
+      || receipt.globalXp !== 0
+      || receipt.itemPlan !== null
+      || !Number.isInteger(receipt.rpgXp) || receipt.rpgXp < 0
+      || !Number.isInteger(receipt.goldDelta) || receipt.goldDelta < 0
+    ) {
+      throw new PendekarBattleSettlementError("BATTLE_SETTLEMENT_INVALID_STATE", "Receipt contains unsupported settlement effects");
+    }
+  }
+
+  private assertSettledBattleEffects(args: {
+    receipt: { id: string; playerId: string; rpgXp: number; goldDelta: number; settledAt: Date | null };
+    xpEntry: { playerId: string; receiptId: string; delta: number; reference: string } | null;
+    walletEntry: { playerId: string; receiptId: string; delta: number; reason: string } | null;
+    reference: string;
+    walletReason: string;
+  }): void {
+    const { receipt, xpEntry, walletEntry, reference, walletReason } = args;
+    if (
+      !receipt.settledAt
+      || !xpEntry
+      || xpEntry.playerId !== receipt.playerId
+      || xpEntry.receiptId !== receipt.id
+      || xpEntry.delta !== receipt.rpgXp
+      || xpEntry.reference !== reference
+      || !walletEntry
+      || walletEntry.playerId !== receipt.playerId
+      || walletEntry.receiptId !== receipt.id
+      || walletEntry.delta !== receipt.goldDelta
+      || walletEntry.reason !== walletReason
+    ) {
+      throw new PendekarBattleSettlementError("BATTLE_SETTLEMENT_INVALID_STATE", "Settled receipt has incomplete settlement effects");
+    }
+  }
+
   private async resolveLearningQuestion(
     tx: TransactionClient,
     soalId: string,
@@ -1416,6 +1603,43 @@ function projectBattleRewardReceipt(receipt: {
     status: receipt.status,
     entitlement: { rpgXp: receipt.rpgXp, gold: receipt.goldDelta },
     createdAt: receipt.createdAt.toISOString(),
+  };
+}
+
+function settlementReference(receiptId: string): string {
+  return `pendekar:reward:${receiptId}:rpg-xp`;
+}
+
+function settlementWalletReason(battleId: string, receiptId: string): string {
+  return `BATTLE:${battleId}:REWARD:${receiptId}`;
+}
+
+function projectBattleSettlement(receipt: {
+  id: string;
+  sourceType: string;
+  sourceId: string;
+  definitionVersion: string | null;
+  status: string;
+  rpgXp: number;
+  goldDelta: number;
+  settledAt: Date | null;
+}, reference: string): PendekarBattleSettlementProjection {
+  if (
+    receipt.sourceType !== "BATTLE"
+    || receipt.status !== "SETTLED"
+    || !receipt.definitionVersion
+    || !receipt.settledAt
+  ) {
+    throw new PendekarBattleSettlementError("BATTLE_SETTLEMENT_INVALID_STATE", "Battle settlement is malformed");
+  }
+  return {
+    receiptId: receipt.id,
+    sourceBattleId: receipt.sourceId,
+    definitionVersion: receipt.definitionVersion,
+    status: "SETTLED",
+    settlementReference: reference,
+    applied: { rpgXp: receipt.rpgXp, gold: receipt.goldDelta },
+    settledAt: receipt.settledAt.toISOString(),
   };
 }
 

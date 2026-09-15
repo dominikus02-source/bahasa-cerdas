@@ -11,6 +11,7 @@
     "typecheck:scripts": "tsc --noEmit -p tsconfig.scripts.json",
     "test:rpg-battle-action-damage": "npx tsx scripts/test-rpg-battle-action-damage.ts",
     "test:rpg-reward-receipt": "npx tsx scripts/test-rpg-reward-receipt.ts",
+    "test:rpg-reward-settlement": "npx tsx scripts/test-rpg-reward-settlement.ts",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate deploy",
