@@ -96,6 +96,70 @@ interface RPGSaveData {
   };
 }
 
+type UnknownRecord = Record<string, unknown>;
+
+function isRecord(value: unknown): value is UnknownRecord {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((item) => typeof item === "string");
+}
+
+function isValidOptionalWorldState(world: UnknownRecord): boolean {
+  if (world.flags !== undefined && (!isRecord(world.flags) || !Object.values(world.flags).every((value) => typeof value === "boolean"))) return false;
+  if (world.openedChests !== undefined && !isStringArray(world.openedChests)) return false;
+  if (world.deadBossIds !== undefined && !isStringArray(world.deadBossIds)) return false;
+  if (world.pickedGe !== undefined && !isStringArray(world.pickedGe)) return false;
+  if (world.gold !== undefined && (!isFiniteNumber(world.gold) || world.gold < 0)) return false;
+  if (world.quest !== undefined) {
+    const quest = world.quest;
+    if (!isRecord(quest) || !["main", "kills", "flowers"].every((key) => Number.isInteger(quest[key]) && (quest[key] as number) >= 0)) return false;
+  }
+  return true;
+}
+
+/**
+ * Reject partial or cross-player JSON before it reaches the engine. The save
+ * is still deliberately browser-owned, but a damaged localStorage entry must
+ * recover to a clean slice rather than produce invalid player/world state.
+ */
+function isUsableSaveData(value: unknown, expectedPlayerId: string): value is RPGSaveData {
+  if (!isRecord(value) || value.version !== SAVE_VERSION) return false;
+  if (!isRecord(value.session) || value.session.playerId !== expectedPlayerId) return false;
+  if (!isRecord(value.player) || value.player.id !== expectedPlayerId) return false;
+  if (!isRecord(value.world) || typeof value.world.mapId !== "string" || !value.world.mapId || !isValidOptionalWorldState(value.world)) return false;
+
+  const position = value.player.position;
+  if (!isRecord(position) || !isFiniteNumber(position.x) || !isFiniteNumber(position.y)) return false;
+  if (position.x < 0 || position.x > 1 || position.y < 0 || position.y > 1) return false;
+
+  const stats = value.player.stats;
+  if (!isRecord(stats) || !["hp", "maxHp", "mp", "maxMp", "attack", "defense", "speed"].every((key) => isFiniteNumber(stats[key]))) {
+    return false;
+  }
+  if ((stats.maxHp as number) <= 0 || (stats.maxMp as number) < 0 || (stats.hp as number) < 0 || (stats.hp as number) > (stats.maxHp as number) || (stats.mp as number) < 0 || (stats.mp as number) > (stats.maxMp as number)) {
+    return false;
+  }
+
+  const progression = value.player.progression;
+  if (!isRecord(progression) || !["level", "xp", "xpToNextLevel"].every((key) => isFiniteNumber(progression[key]))) {
+    return false;
+  }
+  if ((progression.level as number) < 1 || (progression.xp as number) < 0 || (progression.xpToNextLevel as number) <= 0) return false;
+
+  const inventory = value.player.inventory;
+  const equipment = value.player.equipment;
+  if (!isRecord(inventory) || !Array.isArray(inventory.items) || !inventory.items.every((item) => isRecord(item) && typeof item.itemId === "string" && Number.isInteger(item.quantity) && (item.quantity as number) >= 0)) {
+    return false;
+  }
+  return isRecord(equipment) && ["weaponId", "armorId", "accessoryId"].every((key) => equipment[key] === null || typeof equipment[key] === "string");
+}
+
 /** Current save format version. */
 const SAVE_VERSION = 1;
 
@@ -157,18 +221,9 @@ export function createLocalStoragePersistence(
       const raw = localStorage.getItem(saveKey);
       if (!raw) return null;
 
-      const data = JSON.parse(raw) as RPGSaveData;
-
-      // Validate version
-      if (data.version !== SAVE_VERSION) {
-        console.warn("Incompatible save version, clearing");
-        localStorage.removeItem(saveKey);
-        return null;
-      }
-
-      // Validate required fields
-      if (!data.session?.playerId || !data.player?.id) {
-        console.warn("Invalid save data, clearing");
+      const data: unknown = JSON.parse(raw);
+      if (!isUsableSaveData(data, playerId)) {
+        console.warn("Invalid or incompatible RPG save, clearing");
         localStorage.removeItem(saveKey);
         return null;
       }
@@ -228,7 +283,12 @@ export function createLocalStoragePersistence(
         },
       };
     } catch (e) {
-      console.warn("Failed to load save:", e);
+      console.warn("Failed to load save, clearing:", e);
+      try {
+        localStorage.removeItem(saveKey);
+      } catch {
+        // Storage may itself be unavailable; load still safely falls back.
+      }
       return null;
     }
   }

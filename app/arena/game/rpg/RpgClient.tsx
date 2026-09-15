@@ -13,11 +13,13 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { RPGGame } from "@/src/game/rpg/ui/RPGGame";
 
-/** Hardcoded for now — will come from session/auth later. */
-const DEMO_PLAYER_ID = "player.local";
-const DEMO_PLAYER_NAME = "Pendekar";
+interface RpgClientProps {
+  /** Server-resolved Prisma user identity; never supplied by browser storage. */
+  playerId: string;
+  playerName: string;
+}
 
-export default function RpgClient() {
+export default function RpgClient({ playerId, playerName }: RpgClientProps) {
   const router = useRouter();
 
   const handleBack = useCallback(() => {
@@ -36,7 +38,7 @@ export default function RpgClient() {
       </button>
 
       {/* RPG Game Canvas */}
-      <RPGGame playerId={DEMO_PLAYER_ID} playerName={DEMO_PLAYER_NAME} />
+      <RPGGame playerId={playerId} playerName={playerName} />
     </div>
   );
 }

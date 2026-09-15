@@ -23,5 +23,5 @@ export default async function RpgPage() {
   const game = gameById("rpg");
   if (!game || game.unpublished) redirect("/arena/game");
 
-  return <RpgClient />;
+  return <RpgClient playerId={user.id} playerName={user.fullName || "Pendekar"} />;
 }

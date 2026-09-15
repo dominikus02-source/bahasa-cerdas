@@ -53,7 +53,7 @@ const BATTLE = {
 } as never;
 
 console.log("\n🌍 WORLD (slice entry)");
-check("Desa default map (RPGGame)", src("src/game/rpg/ui/RPGGame.tsx").includes('mapId = "map.desa"'));
+check("Desa default map (RPGGame)", src("src/game/rpg/ui/RPGGame.tsx").includes("mapId = DESA_VERTICAL_SLICE.mapId"));
 check("engine honors config.mapId", src("src/game/rpg/core/game-engine.ts").includes("config.mapId ? getCanonicalMap"));
 check("pool fetched for learning (canonical source)", src("src/game/rpg/ui/RPGGame.tsx").includes("/api/rpg/pool?count=20"));
 

@@ -17,13 +17,15 @@
 import type { RPGGameState } from "../core/game-state";
 import type { RPGCameraState } from "./camera";
 import { worldToScreenScaled } from "./camera";
-import { LOGICAL_TILE_PX, clampZoom } from "./world-scale";
-import { createEmptyManifest, createSpriteLoader, diagnoseAsset, lookupAsset } from "./asset-registry";
+import { HERO_CANVAS_PX, LOGICAL_TILE_PX, clampZoom } from "./world-scale";
+import { createSpriteLoader } from "./asset-registry";
 import { manifestLookup } from "./rpg-asset-manifest";
 import { resolveTileAsset } from "./tile-visuals";
-import { argaAssetKey } from "./arga-contract";
+import { frameAt, clipFor, mirrorForDirection } from "./animation";
+import { spriteDrawRect, spriteFrameRect } from "./sprite-math";
 import type { RPGWorldEntity } from "../world/world-state";
 import { findNearestInteraction } from "../world/interaction";
+import type { LiveEnemy } from "../combat/encounter";
 
 /** Depth layer order (z sequence, then y-sort within a layer). */
 const LAYER_ORDER = [
@@ -76,7 +78,12 @@ const COLORS = {
 
 /** Canvas renderer — reads state, issues draw calls. */
 export interface CanvasRenderer {
-  render(state: RPGGameState, camera: RPGCameraState): void;
+  render(
+    state: RPGGameState,
+    camera: RPGCameraState,
+    liveEnemies?: readonly LiveEnemy[],
+    allowedNpcIds?: readonly string[],
+  ): void;
   resize(width: number, height: number): void;
   dispose(): void;
 }
@@ -127,22 +134,28 @@ export function createCanvasRenderer(
   });
   ro.observe(container);
 
-  // ── Arga production registry (P2.0A) ──────────────────────────────
-  // The manifest is intentionally EMPTY: no production sheets have landed.
-  // reportMissingArgaOnce() emits ONE explicit diagnostic per renderer
-  // lifetime; the DEV placeholder above keeps rendering. Missing art is
-  // reported as missing — never silently substituted, never faked.
-  const argaManifest = createEmptyManifest();
-  let argaMissingReported = false;
+  // ── Approved Arga locomotion (P2.6C) ──────────────────────────────
+  // Only the three READY walk sheets may be loaded. There is no approved
+  // idle/attack/hurt asset, so an idle pose uses frame 0 of the appropriate
+  // READY walk sheet; it never pretends a missing animation exists.
+  const argaImages = new Map<string, HTMLImageElement>();
+  const requestedArgaPaths = new Set<string>();
+  let lastPlayerPosition: { x: number; y: number } | null = null;
+  let lastPlayerMoveAt = 0;
 
-  function reportMissingArgaOnce(): void {
-    if (argaMissingReported) return;
-    argaMissingReported = true;
-    const key = argaAssetKey("idle", "down");
-    const hit = lookupAsset(argaManifest, key);
-    if (!hit.ok) {
-      console.warn(`[rpg] ${diagnoseAsset(argaManifest, key)}`);
-    }
+  function argaEntryForFacing(facing: string) {
+    const direction = facing === "up" ? "up" : facing === "down" ? "down" : "side";
+    const entry = manifestLookup(`sheet-char-arga-walk-${direction}`);
+    return entry?.status === "READY" ? entry : null;
+  }
+
+  function requestArga(entry: NonNullable<ReturnType<typeof argaEntryForFacing>>) {
+    if (argaImages.has(entry.path) || requestedArgaPaths.has(entry.path)) return;
+    requestedArgaPaths.add(entry.path);
+    const image = new Image();
+    image.onload = () => argaImages.set(entry.path, image);
+    image.onerror = () => console.warn(`[rpg] approved Arga locomotion could not load: ${entry.path}`);
+    image.src = entry.path;
   }
 
   /** Draw a filled rectangle. */
@@ -346,9 +359,14 @@ export function createCanvasRenderer(
   }
 
   /** Render interaction points (portals, chests). */
-  function renderInteractions(state: RPGGameState, camera: RPGCameraState) {
+  function renderInteractions(state: RPGGameState, camera: RPGCameraState, allowedNpcIds?: readonly string[]) {
     const zoom = clampZoom(camera.zoom ?? 1);
     for (const interaction of state.world.interactions) {
+      if (
+        interaction.kind === "NPC" &&
+        allowedNpcIds &&
+        !allowedNpcIds.includes(interaction.ref.replace(/^npc\./, ""))
+      ) continue;
       const screen = worldToScreenScaled(
         interaction.position, camera,
         state.world.tiles.width, state.world.tiles.height,
@@ -368,21 +386,49 @@ export function createCanvasRenderer(
           drawRect(screen.x - 2, screen.y - 2, 4, 4, "#92400e");
           break;
         case "NPC":
-          // NPC marker
-          drawCircle(screen.x, screen.y - 16, 4, "#fbbf24");
+          // Intentional procedural NPC marker: no NPC sprite is approved.
+          drawCircle(screen.x, screen.y - 12, 11 * zoom, "#78350f");
+          drawCircle(screen.x, screen.y - 18, 6 * zoom, "#fbbf24");
+          if (interaction.ref === "npc.ki") {
+            ctx.fillStyle = "#fff7ed";
+            ctx.font = "bold 11px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("Ki Jaka", screen.x, screen.y - 32 * zoom);
+          }
           break;
       }
+    }
+  }
+
+  /** Procedural encounter markers; no enemy artwork is promoted here. */
+  function renderLiveEnemies(
+    state: RPGGameState,
+    camera: RPGCameraState,
+    liveEnemies: readonly LiveEnemy[],
+  ) {
+    const zoom = clampZoom(camera.zoom ?? 1);
+    for (const enemy of liveEnemies) {
+      if (!enemy.alive) continue;
+      const screen = worldToScreenScaled(
+        { x: (enemy.tile.x + 0.5) / state.world.tiles.width, y: (enemy.tile.y + 0.5) / state.world.tiles.height },
+        camera, state.world.tiles.width, state.world.tiles.height,
+      );
+      drawCircle(screen.x, screen.y - 13 * zoom, 12 * zoom, "#7f1d1d");
+      drawCircle(screen.x - 4 * zoom, screen.y - 16 * zoom, 2 * zoom, "#fef3c7");
+      drawCircle(screen.x + 4 * zoom, screen.y - 16 * zoom, 2 * zoom, "#fef3c7");
+      ctx.fillStyle = "#fee2e2";
+      ctx.font = "bold 10px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(enemy.def.name, screen.x, screen.y - 30 * zoom);
     }
   }
 
   /**
    * Render the player character.
    *
-   * DEV PLACEHOLDER (explicit, P2.0A): production Arga sheets have not
-   * landed (see rendering/arga-contract.ts), so the legacy procedural disc
-   * remains — anchored at the FEET ORIGIN (bottom-center = gameplay position)
-   * with an engine-baked shadow ellipse. This must never be mistaken for
-   * final art. When sheets land, this branch resolves via the asset registry.
+   * Uses only manifest READY walk sheets. Frame zero is the explicit technical
+   * idle fallback until approved idle art arrives; the fallback disc is shown
+   * only while the approved image is loading or unavailable at runtime.
    */
   function renderPlayer(state: RPGGameState, camera: RPGCameraState) {
     const player = state.player;
@@ -393,9 +439,15 @@ export function createCanvasRenderer(
       state.world.tiles.width, state.world.tiles.height,
     );
     const r = 12 * zoom;
-
-    // Arga production lookup (explicit missing path — see below).
-    reportMissingArgaOnce();
+    const now = performance.now();
+    if (
+      !lastPlayerPosition ||
+      Math.abs(lastPlayerPosition.x - player.position.x) > 0.000001 ||
+      Math.abs(lastPlayerPosition.y - player.position.y) > 0.000001
+    ) {
+      lastPlayerPosition = { ...player.position };
+      lastPlayerMoveAt = now;
+    }
 
     // Shadow (engine-baked ellipse at the feet origin, never in sprite art)
     ctx.globalAlpha = 0.2;
@@ -405,24 +457,57 @@ export function createCanvasRenderer(
     ctx.fill();
     ctx.globalAlpha = 1;
 
-    // Body (DEV placeholder disc, centered one radius above the feet)
-    drawCircle(feet.x, feet.y - r, r, COLORS.player);
+    const entry = argaEntryForFacing(player.facing);
+    if (entry) requestArga(entry);
+    const image = entry ? argaImages.get(entry.path) : undefined;
+    if (entry && image) {
+      const moving = now - lastPlayerMoveAt < 120;
+      const frame = moving ? frameAt(clipFor("walk", entry.frames, true, 80), now) : 0;
+      const source = spriteFrameRect({
+        frameWidthPx: entry.width / entry.frames,
+        frameHeightPx: entry.height,
+        columns: entry.frames,
+        index: frame,
+      });
+      const dest = spriteDrawRect({
+        feetX: feet.x,
+        feetY: feet.y,
+        canvasWidthPx: HERO_CANVAS_PX,
+        canvasHeightPx: HERO_CANVAS_PX,
+        scale: 0.5 * zoom,
+        mirror: mirrorForDirection(player.facing),
+      });
+      if (dest.mirror) {
+        ctx.save();
+        ctx.translate(dest.dx + dest.dw / 2, 0);
+        ctx.scale(-1, 1);
+        ctx.drawImage(image, source.sx, source.sy, source.sw, source.sh, -dest.dw / 2, dest.dy, dest.dw, dest.dh);
+        ctx.restore();
+      } else {
+        ctx.drawImage(image, source.sx, source.sy, source.sw, source.sh, dest.dx, dest.dy, dest.dw, dest.dh);
+      }
+      return;
+    }
 
-    // Outline
+    // Technical load/error fallback, visibly distinct from approved artwork.
+    drawCircle(feet.x, feet.y - r, r, COLORS.player);
     ctx.strokeStyle = COLORS.playerOutline;
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.arc(feet.x, feet.y - r, r, 0, Math.PI * 2);
     ctx.stroke();
-
-    // Facing indicator
     drawTriangle(feet.x, feet.y - r, 6 * zoom, player.facing, "#fff");
   }
 
   /** Render interaction prompt when near an interactable. */
-  function renderInteractionPrompt(state: RPGGameState, camera: RPGCameraState) {
+  function renderInteractionPrompt(state: RPGGameState, camera: RPGCameraState, allowedNpcIds?: readonly string[]) {
     const nearest = findNearestInteraction(state.world, state.player.position);
     if (!nearest) return;
+    if (
+      nearest.kind === "NPC" &&
+      allowedNpcIds &&
+      !allowedNpcIds.includes(nearest.ref.replace(/^npc\./, ""))
+    ) return;
 
     const screen = worldToScreenScaled(
       nearest.position, camera,
@@ -444,7 +529,12 @@ export function createCanvasRenderer(
   }
 
   /** Main render function — called by game loop. */
-  function render(state: RPGGameState, camera: RPGCameraState) {
+  function render(
+    state: RPGGameState,
+    camera: RPGCameraState,
+    liveEnemies: readonly LiveEnemy[] = [],
+    allowedNpcIds?: readonly string[],
+  ) {
     // Clear canvas
     ctx.clearRect(0, 0, width, height);
 
@@ -455,9 +545,10 @@ export function createCanvasRenderer(
     // Render layers in order
     renderTiles(state, camera);
     renderEntities(state, camera);
-    renderInteractions(state, camera);
+    renderInteractions(state, camera, allowedNpcIds);
+    renderLiveEnemies(state, camera, liveEnemies);
     renderPlayer(state, camera);
-    renderInteractionPrompt(state, camera);
+    renderInteractionPrompt(state, camera, allowedNpcIds);
   }
 
   /** Resize handler. */

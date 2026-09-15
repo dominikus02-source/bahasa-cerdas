@@ -159,8 +159,13 @@ check("direction canon: locomotion authored down/up/true-profile side; idle down
 check("naming sheet-char-arga-<state>-<dir>", argaAssetKey("walk", "side") === "sheet-char-arga-walk-side");
 check("expected sheet count = idle2 + locomotion3×3 + down-only5", expectedArgaSheets().length === 16);
 check("canvas 224, 80ms, origin bottom-center", ARGA_CANVAS_PX === 224 && ARGA_FRAME_MS === 80 && ARGA_ORIGIN.x === 0.5 && ARGA_ORIGIN.y === 1.0);
-check("renderer reports Arga MISSING explicitly (no fake)", strip(src("src/game/rpg/rendering/canvas-renderer.ts")).includes("reportMissingArgaOnce") &&
-  src("src/game/rpg/rendering/canvas-renderer.ts").includes("DEV PLACEHOLDER"));
+check("renderer wires only READY Arga locomotion with a technical idle fallback", (() => {
+  const renderer = strip(src("src/game/rpg/rendering/canvas-renderer.ts"));
+  return renderer.includes("sheet-char-arga-walk-${direction}") &&
+    renderer.includes('entry?.status === "READY"') &&
+    renderer.includes("moving ? frameAt") && renderer.includes(": 0;") &&
+    !renderer.includes("sheet-char-arga-hurt-down");
+})());
 
 console.log("\n🗂️ DEPTH SORTING (foundation)");
 {

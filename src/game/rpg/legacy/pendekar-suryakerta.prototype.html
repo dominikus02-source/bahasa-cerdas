@@ -1,0 +1,1789 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Pendekar Suryakerta — Legenda Nusantara</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;background:#0b0c14;overflow:hidden}
+  body{display:flex;align-items:center;justify-content:center;font-family:'VT323',monospace;color:#f2ead8}
+  #stage{position:relative;width:min(100vw,150vh);aspect-ratio:3/2;max-height:100vh;background:#000;
+         box-shadow:0 0 0 4px #10121f, 0 0 60px rgba(0,0,0,.8); user-select:none}
+  canvas{display:block;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges}
+  .hidden{display:none!important}
+  .panel{background:#161929;border:3px solid #e8ddc0;border-radius:3px;
+         box-shadow:0 0 0 3px #0d0f1c, 0 6px 0 3px rgba(0,0,0,.45)}
+  #hud{position:absolute;top:1.6%;left:1.6%;padding:.55em .7em .5em;min-width:15em;z-index:5}
+  #hud .row{display:flex;align-items:center;gap:.5em}
+  #hudName{font-family:'Press Start 2P';font-size:.55em;letter-spacing:.05em;color:#e8ddc0}
+  #hudLv{font-family:'Press Start 2P';font-size:.5em;background:#c94f3d;color:#fff;padding:.3em .45em;border:2px solid #0d0f1c}
+  .bar{position:relative;height:.75em;background:#0d0f1c;border:2px solid #0d0f1c;outline:1px solid #4a4f78;flex:1;overflow:hidden}
+  .bar i{position:absolute;inset:0;width:100%;transform-origin:left;transition:transform .25s steps(8)}
+  #hpBar i{background:#d95d39}#mpBar i{background:#3aa79b}#xpBar i{background:#a8c25a}
+  .lbl{font-family:'Press Start 2P';font-size:.42em;width:2.2em;color:#9aa0c4}
+  #goldTxt{font-family:'Press Start 2P';font-size:.5em;color:#e9b44c;display:flex;align-items:center;gap:.4em}
+  #hud .gap{height:.35em}
+  #mapName{position:absolute;top:1.6%;left:50%;transform:translateX(-50%);z-index:5;
+    font-family:'Press Start 2P';font-size:.5em;color:#e8ddc0;background:rgba(13,15,28,.7);
+    padding:.5em .8em;border:2px solid #2a2e4a}
+  #questBox{position:absolute;top:1.6%;right:1.6%;padding:.5em .7em;max-width:17em;z-index:5}
+  #questBox h4{font-family:'Press Start 2P';font-size:.45em;color:#e9b44c;margin-bottom:.5em;letter-spacing:.08em}
+  #questText{font-size:.85em;line-height:1.05;color:#f2ead8}
+  #questSide{margin-top:.4em;color:#9fd6c8;font-size:.8em}
+  #hint{position:absolute;bottom:2%;left:1.6%;font-size:.8em;color:#cfd3ea;opacity:.85;
+        background:rgba(13,15,28,.72);padding:.2em .6em;border:2px solid #2a2e4a;z-index:4}
+  .iconbtn{position:absolute;z-index:6;font-family:'Press Start 2P';font-size:.5em;color:#e8ddc0;background:#161929;
+           border:3px solid #e8ddc0;box-shadow:0 0 0 2px #0d0f1c;padding:.6em .7em;cursor:pointer}
+  .iconbtn:active{transform:translateY(2px)}
+  #menuBtn{top:11%;right:1.6%}
+  #muteBtn{top:18.5%;right:1.6%;padding:.6em .8em}
+  #muteBtn svg{display:block;width:1.6em;height:1.6em}
+  #dialog{position:absolute;left:2.5%;right:2.5%;bottom:2.5%;min-height:23%;padding:.5em .9em .7em;z-index:8;cursor:pointer}
+  #dlgName{display:inline-block;font-family:'Press Start 2P';font-size:.55em;background:#c94f3d;color:#fff;
+           padding:.35em .6em;margin-top:-1.6em;border:2px solid #0d0f1c;box-shadow:0 3px 0 #0d0f1c}
+  #dlgText{font-size:1.25em;line-height:1.12;margin-top:.35em;min-height:2.3em;white-space:pre-wrap;color:#f7f2e2}
+  #dlgNext{position:absolute;right:.9em;bottom:.35em;font-size:1em;color:#e9b44c;animation:bob .7s steps(2) infinite}
+  @keyframes bob{50%{transform:translateY(2px)}}
+  #dlgChoices{display:flex;flex-direction:column;gap:.15em;margin-top:.3em}
+  .choice{font-size:1.15em;padding:.05em .4em;color:#cfd3ea;cursor:pointer;display:flex;gap:.5em}
+  .choice.sel{background:#2a2e4a;color:#fff}
+  .choice.sel::before{content:'▶';color:#e9b44c;font-size:.9em}
+  #battleUI{position:absolute;inset:0;z-index:7;pointer-events:none}
+  #bTop{display:flex;justify-content:space-between;padding:2% 2.5% 0}
+  .bpanel{padding:.45em .7em;min-width:13em;pointer-events:auto}
+  .bpanel h3{font-family:'Press Start 2P';font-size:.55em;margin-bottom:.45em;letter-spacing:.05em}
+  #bEName{color:#f0a08a}#bPName{color:#cfe3f7}
+  #blog{position:absolute;left:50%;transform:translateX(-50%);bottom:26%;width:70%;text-align:center;
+        font-size:1.25em;color:#fff;text-shadow:2px 2px 0 #0d0f1c}
+  #bActs{position:absolute;left:50%;transform:translateX(-50%);bottom:3%;display:flex;gap:.6em;pointer-events:auto;flex-wrap:wrap;justify-content:center}
+  .act{font-family:'Press Start 2P';font-size:.6em;color:#161929;background:#e8ddc0;border:3px solid #161929;
+       box-shadow:0 4px 0 #0d0f1c;padding:.8em .7em;cursor:pointer;letter-spacing:.03em}
+  .act small{display:block;font-size:.7em;color:#7a4a2a;margin-top:.5em}
+  .act:active{transform:translateY(3px);box-shadow:0 1px 0 #0d0f1c}
+  .act:disabled{opacity:.45;cursor:default;transform:none}
+  .act.alt{background:#9fd6c8}.act.warn{background:#f2c17d}
+  #stage.shake canvas{animation:shk .3s steps(4)}
+  @keyframes shk{25%{transform:translate(4px,-3px)}50%{transform:translate(-4px,2px)}75%{transform:translate(3px,3px)}}
+  #statusMenu{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:64%;padding:1em 1.2em;z-index:9}
+  #statusMenu h3{font-family:'Press Start 2P';font-size:.7em;color:#e9b44c;margin-bottom:.7em}
+  #stBody{display:flex;gap:1.5em}
+  #stBody>div{flex:1;font-size:1.05em;line-height:1.25}
+  #stBody .k{color:#9aa0c4}
+  .stbtn{font-family:'Press Start 2P';font-size:.55em;background:#2a2e4a;color:#f2ead8;border:2px solid #e8ddc0;
+         padding:.7em .6em;cursor:pointer;margin:.35em .3em 0 0}
+  .stbtn:disabled{opacity:.4}
+  #stClose{margin-top:.9em;background:#c94f3d}
+  #fishBox{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:54%;padding:1em 1.2em;z-index:12;text-align:center}
+  #fishBox h3{font-family:'Press Start 2P';font-size:.7em;color:#e9b44c;margin-bottom:.8em}
+  #fishTrack{position:relative;height:1.4em;background:#0d0f1c;border:2px solid #4a4f78;margin:.4em 0 .6em}
+  #fishZone{position:absolute;top:0;bottom:0;background:#3f7d47;border:2px solid #8fd67e}
+  #fishMark{position:absolute;top:-4px;bottom:-4px;width:.35em;background:#fff;box-shadow:0 0 6px #fff}
+  #fishMsg{font-size:1em;min-height:1.2em;color:#cfd3ea;margin-bottom:.5em}
+  #title{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;
+         background:rgba(10,11,20,.55)}
+  #tLogo{text-align:center;margin-bottom:4%}
+  #tLogo h1{font-family:'Press Start 2P';font-size:2.1em;color:#e9b44c;text-shadow:.09em .09em 0 #8f3f3c, .18em .18em 0 #0d0f1c;line-height:1.5}
+  #tLogo p{font-size:1.3em;color:#cfd3ea;margin-top:1em;letter-spacing:.1em}
+  #title button{font-family:'Press Start 2P';font-size:.85em;color:#161929;background:#e8ddc0;border:4px solid #161929;
+        box-shadow:0 6px 0 #0d0f1c;padding:1em 1.4em;margin:.5em;cursor:pointer;min-width:18em}
+  #title button:active{transform:translateY(4px);box-shadow:0 2px 0 #0d0f1c}
+  #title button.sec{background:#9fd6c8}
+  #tHelp{margin-top:3%;font-size:1em;color:#cfd3ea;background:rgba(13,15,28,.8);padding:.4em 1em;border:2px solid #2a2e4a}
+  #endingOv{position:absolute;inset:0;z-index:22;display:flex;align-items:center;justify-content:center;background:rgba(10,11,20,.7)}
+  #endingOv .panel{width:58%;text-align:center;padding:1.4em}
+  #endingOv h2{font-family:'Press Start 2P';font-size:1.3em;color:#e9b44c;text-shadow:.1em .1em 0 #8f3f3c;margin-bottom:.8em}
+  #endingOv p{font-size:1.2em;line-height:1.2;margin-bottom:.6em}
+  #endStats{color:#9aa0c4;font-size:1em;margin-bottom:1em}
+  #toasts{position:absolute;top:24%;left:50%;transform:translateX(-50%);z-index:15;display:flex;flex-direction:column;gap:.4em;align-items:center;pointer-events:none}
+  .toast{font-size:1.05em;background:#161929;border:3px solid #e9b44c;color:#f7f2e2;padding:.25em 1em;
+         box-shadow:0 4px 0 rgba(0,0,0,.5);animation:tpop 2.4s steps(12) forwards}
+  @keyframes tpop{0%{opacity:0;transform:translateY(-.6em)}10%,80%{opacity:1;transform:none}100%{opacity:0;transform:translateY(.4em)}}
+  #wipe{position:absolute;inset:0;background:#0b0c14;z-index:30;pointer-events:none;
+        clip-path:circle(0% at 50% 50%);transition:clip-path .45s linear}
+  #wipe.on{clip-path:circle(120% at 50% 50%)}
+  #touchUI{position:absolute;inset:0;z-index:6;pointer-events:none;display:none}
+  @media (pointer:coarse){ #touchUI{display:block} #hint{display:none} }
+  #dpad{position:absolute;left:2.5%;bottom:4%;width:30%;aspect-ratio:1;pointer-events:auto}
+  #dpad button{position:absolute;width:34%;height:34%;background:rgba(22,25,41,.85);border:3px solid #e8ddc0;
+               color:#e8ddc0;font-size:1.2em;font-family:'Press Start 2P'}
+  #dU{left:33%;top:0}#dD{left:33%;bottom:0}#dL{left:0;top:33%}#dR{right:0;top:33%}
+  #btnA{position:absolute;right:3%;bottom:6%;width:14%;aspect-ratio:1;border-radius:50%;pointer-events:auto;
+        background:rgba(201,79,61,.92);border:4px solid #e8ddc0;color:#fff;font-family:'Press Start 2P';font-size:1em}
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="cv" width="480" height="320"></canvas>
+
+  <div id="hud" class="panel hidden">
+    <div class="row"><span id="hudLv">Lv 1</span><span id="hudName">ARGA</span>
+      <span id="goldTxt"><svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="#e9b44c" stroke="#8f6a1e" stroke-width="1.6"/><rect x="5" y="3" width="2" height="6" fill="#8f6a1e"/></svg><span id="goldVal">0</span></span>
+    </div>
+    <div class="gap"></div>
+    <div class="row"><span class="lbl">HP</span><div class="bar" id="hpBar"><i></i></div></div>
+    <div class="gap"></div>
+    <div class="row"><span class="lbl">MP</span><div class="bar" id="mpBar"><i></i></div></div>
+    <div class="gap"></div>
+    <div class="row"><span class="lbl">XP</span><div class="bar" id="xpBar"><i></i></div></div>
+  </div>
+
+  <div id="mapName" class="hidden">—</div>
+  <div id="questBox" class="panel hidden"><h4>▸ TUGAS</h4><div id="questText"></div><div id="questSide" class="hidden"></div></div>
+  <div id="hint" class="hidden">WASD / Panah: jalan · SPASI: bicara / aksi / pancing · C: status</div>
+
+  <button class="iconbtn hidden" id="menuBtn">STATUS</button>
+  <button class="iconbtn hidden" id="muteBtn" title="Suara">
+    <svg id="sndOn" viewBox="0 0 24 24" fill="none" stroke="#e8ddc0" stroke-width="2.4"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="#e8ddc0" stroke="none"/><path d="M16 8a5 5 0 0 1 0 8M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+    <svg id="sndOff" class="hidden" viewBox="0 0 24 24" fill="none" stroke="#e8ddc0" stroke-width="2.4"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="#e8ddc0" stroke="none"/><path d="M16 9l6 6M22 9l-6 6"/></svg>
+  </button>
+
+  <div id="dialog" class="panel hidden">
+    <span id="dlgName">???</span>
+    <div id="dlgText"></div>
+    <div id="dlgChoices"></div>
+    <div id="dlgNext" class="hidden">▼</div>
+  </div>
+
+  <div id="battleUI" class="hidden">
+    <div id="bTop">
+      <div class="bpanel panel" id="bPlayer">
+        <h3 id="bPName">ARGA</h3>
+        <div class="row" style="display:flex;align-items:center;gap:.4em"><span class="lbl" style="font-size:.38em">HP</span><div class="bar" id="bPBar" style="height:.7em"><i></i></div></div>
+        <div class="row" style="display:flex;align-items:center;gap:.4em;margin-top:.3em"><span class="lbl" style="font-size:.38em">MP</span><div class="bar" id="bPMBar" style="height:.7em"><i></i></div></div>
+      </div>
+      <div class="bpanel panel" id="bEnemy">
+        <h3 id="bEName">KOROG</h3>
+        <div class="row" style="display:flex;align-items:center;gap:.4em"><span class="lbl" style="font-size:.38em">HP</span><div class="bar" id="bEBar" style="height:.7em"><i style="background:#d95d39"></i></div></div>
+      </div>
+    </div>
+    <div id="blog"></div>
+    <div id="bActs"></div>
+  </div>
+
+  <div id="statusMenu" class="panel hidden">
+    <h3>▸ STATUS PENDEKAR</h3>
+    <div id="stBody"></div>
+    <div id="stItems" style="margin-top:.6em"></div>
+    <button class="stbtn" id="stClose">TUTUP [C]</button>
+  </div>
+
+  <div id="fishBox" class="panel hidden">
+    <h3>🎣 MEMANCING</h3>
+    <div id="fishTrack"><div id="fishZone"></div><div id="fishMark"></div></div>
+    <div id="fishMsg">Tekan SPASI saat penanda di zona hijau!</div>
+    <button class="stbtn" id="fishBtn">PANCING! [SPASI]</button>
+    <button class="stbtn" id="fishCancel" style="background:#c94f3d">BATAL [C]</button>
+  </div>
+
+  <div id="touchUI">
+    <div id="dpad">
+      <button id="dU">▲</button><button id="dL">◀</button><button id="dR">▶</button><button id="dD">▼</button>
+    </div>
+    <button id="btnA">A</button>
+  </div>
+
+  <div id="title">
+    <div id="tLogo">
+      <h1>PENDEKAR<br>SURYAKERTA</h1>
+      <p>~ Babak I · II · III — Legenda Nusantara ~</p>
+    </div>
+    <button id="btnNew">PETUALANGAN BARU</button>
+    <button id="btnCont" class="sec hidden">LANJUTKAN PETUALANGAN</button>
+    <div id="tHelp">Kalahkan para Korog, taklukkan Naga Abu,<br>dan kuasai Menara Angin!</div>
+  </div>
+
+  <div id="endingOv" class="hidden">
+    <div class="panel">
+      <h2 id="endTitle">✦ TAMAT ✦</h2>
+      <p id="endBody"></p>
+      <div id="endStats"></div>
+      <button class="stbtn" id="btnEndClose" style="font-size:.7em;padding:.9em 1.2em">LANJUT MENJELAJAH</button>
+    </div>
+  </div>
+
+  <div id="toasts"></div>
+  <div id="wipe"></div>
+</div>
+
+<script>
+/* =========================================================
+   PENDEKAR SURYAKERTA v3 — LEGENDA NUSANTARA
+   Desa & hutan · Gunung & Naga · Menara Angin tanpa ujung
+   + Memancing · Siang-Malam · Penempaan · Partikel
+   ========================================================= */
+'use strict';
+const $=id=>document.getElementById(id);
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function hash2(x,y){let h=(x*374761393+y*668265263)|0;h=(h^(h>>>13))*1274126177|0;return((h^(h>>>16))>>>0)/4294967296}
+
+const stage=$('stage'), cv=$('cv'), ctx=cv.getContext('2d');
+ctx.imageSmoothingEnabled=false;
+function fitFont(){stage.style.fontSize=Math.max(10,stage.clientWidth/48)+'px'}
+window.addEventListener('resize',fitFont);fitFont();
+
+/* ---------- penyimpanan aman + migrasi v2 ---------- */
+const SAVE_KEY='pendekar_suryakerta_v3', OLD_KEY='pendekar_suryakerta_v2';
+const store={
+  mem:{},
+  get(k){try{return localStorage.getItem(k)}catch(e){return (k in this.mem)?this.mem[k]:null}},
+  set(k,v){try{localStorage.setItem(k,v)}catch(e){this.mem[k]=v}},
+  del(k){try{localStorage.removeItem(k)}catch(e){delete this.mem[k]}}
+};
+function toast(msg){
+  const d=document.createElement('div');d.className='toast';d.textContent=msg;
+  $('toasts').appendChild(d);setTimeout(()=>d.remove(),2500);
+}
+const seenErr=new Set();
+window.addEventListener('error',ev=>{
+  const m=(ev&&ev.message)||'galat tidak diketahui';
+  if(seenErr.has(m))return;seenErr.add(m);
+  toast('Galat: '+m);
+});
+
+/* ================= AUDIO ================= */
+let AC=null, muted=false, curTrack=null, musNext=0, musStep=0;
+function initAudio(){
+  if(AC)return;
+  try{
+    AC=new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==='suspended')AC.resume();
+    startMusic('over');
+  }catch(e){AC=null}
+}
+document.addEventListener('pointerdown',()=>{if(AC&&AC.state==='suspended'){try{AC.resume()}catch(e){}}});
+function tone(f,dur,type='square',vol=.06,when=0,slide=0){
+  if(!AC)return;
+  try{
+    const o=AC.createOscillator(),g=AC.createGain();
+    o.type=type;o.frequency.setValueAtTime(f,when);
+    if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(30,f+slide),when+dur);
+    g.gain.setValueAtTime(vol,when);g.gain.exponentialRampToValueAtTime(.0001,when+dur);
+    o.connect(g).connect(AC.destination);o.start(when);o.stop(when+dur+.03);
+  }catch(e){}
+}
+function noiseS(dur,vol,when){
+  if(!AC)return;
+  try{
+    const b=AC.createBuffer(1,Math.max(1,AC.sampleRate*dur|0),AC.sampleRate),d=b.getChannelData(0);
+    for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+    const s=AC.createBufferSource();s.buffer=b;
+    const g=AC.createGain();g.gain.setValueAtTime(vol,when);g.gain.exponentialRampToValueAtTime(.0001,when+dur);
+    s.connect(g).connect(AC.destination);s.start(when);
+  }catch(e){}
+}
+function sfx(n){
+  if(!AC||muted)return;const t=AC.currentTime;
+  if(n==='blip')tone(920,.035,'square',.025,t);
+  else if(n==='sel'){tone(520,.05,'square',.05,t);tone(780,.06,'square',.05,t+.05)}
+  else if(n==='hit'){noiseS(.1,.1,t);tone(320,.1,'square',.06,t,-180)}
+  else if(n==='hurt'){noiseS(.14,.12,t);tone(160,.14,'sawtooth',.06,t,-80)}
+  else if(n==='heal'){[523,659,784].forEach((f,i)=>tone(f,.12,'triangle',.06,t+i*.07))}
+  else if(n==='coin'){tone(988,.07,'square',.05,t);tone(1319,.12,'square',.05,t+.07)}
+  else if(n==='level'){[523,659,784,1046].forEach((f,i)=>tone(f,.14,'square',.06,t+i*.11))}
+  else if(n==='battle'){tone(120,.5,'sawtooth',.07,t,700);noiseS(.3,.06,t)}
+  else if(n==='chest'){[392,523,659].forEach((f,i)=>tone(f,.1,'square',.05,t+i*.08))}
+  else if(n==='magic'){tone(660,.25,'sawtooth',.05,t,440);tone(990,.2,'square',.04,t+.1,300)}
+  else if(n==='roar'){tone(90,.6,'sawtooth',.09,t,-40);noiseS(.5,.1,t)}
+  else if(n==='splash'){noiseS(.2,.08,t);tone(500,.15,'sine',.05,t,-200)}
+  else if(n==='forge'){tone(200,.08,'square',.08,t);noiseS(.12,.1,t+.05);tone(800,.2,'triangle',.05,t+.15)}
+  else if(n==='victory'){[659,784,988,1319].forEach((f,i)=>tone(f,.16,'square',.06,t+i*.12))}
+}
+const TRACKS={
+  over:{bpm:104,step:.288,
+    mel:[7,null,5,4,5,null,4,2, 4,null,2,1,2,null,0,null, 5,null,4,5,7,null,6,5, 4,null,5,null,2,null,null,null],
+    bass:[0,null,null,null,3,null,null,null,4,null,null,null,2,null,null,null],
+    scale:[262,294,330,392,440,523,587,659]},
+  battle:{bpm:150,step:.2,
+    mel:[0,null,0,2,3,3,null,2, 4,null,3,2,3,2,0,null, 0,null,0,2,3,3,null,4, 5,4,3,2,3,null,2,null],
+    bass:[0,0,null,0,3,3,null,3, 4,4,null,4,2,2,null,2],
+    scale:[220,262,294,330,392,440,523,587]},
+  mount:{bpm:88,step:.34,
+    mel:[4,null,null,3, 4,null,5,null, 4,null,3,null, 2,null,null,null, 5,null,null,4, 5,null,6,null, 5,null,4,null, 3,null,null,null],
+    bass:[0,null,null,null,0,null,null,null,3,null,null,null,4,null,null,null],
+    scale:[196,220,262,294,330,392,440,523]}
+};
+function startMusic(name){curTrack=name;musStep=0;if(AC)musNext=AC.currentTime+.05}
+setInterval(()=>{
+  if(!AC||muted||!curTrack)return;
+  try{
+    const tr=TRACKS[curTrack];
+    while(musNext<AC.currentTime+.22){
+      const mi=tr.mel[musStep%tr.mel.length];
+      if(mi!==null)tone(tr.scale[mi],tr.step*.9,'square',.035,musNext);
+      const bi=tr.bass[musStep%tr.bass.length];
+      if(bi!==null)tone(tr.scale[bi]/2,tr.step*1.7,'triangle',.05,musNext);
+      musNext+=tr.step;musStep++;
+    }
+  }catch(e){}
+},80);
+ $('muteBtn').addEventListener('click',()=>{
+  muted=!muted;
+  $('sndOn').classList.toggle('hidden',muted);
+  $('sndOff').classList.toggle('hidden',!muted);
+});
+
+/* ================= TILE ================= */
+const TS=16;
+const T={GR:0,PA:1,TR:2,WA:3,RO:4,WL:5,RF:6,DR:7,FL:8,WE:9,CV:10,DK:11,FA:12,GD:13,RL:14,CH:15,GE:16,ST:17,SN:18,LV:19,PT:20,SR:21,GP:22,TC:23};
+const SOLID=new Set([T.TR,T.WA,T.RO,T.WL,T.RF,T.DR,T.WE,T.CV,T.DK,T.CH,T.LV,T.PT,T.GP,T.TC]);
+function newMap(w,h){return{w,h,t:new Uint8Array(w*h)}}
+const gget=(m,x,y)=>(x<0||y<0||x>=m.w||y>=m.h)?T.TR:m.t[y*m.w+x];
+const gset=(m,x,y,t)=>{if(x>=0&&y>=0&&x<m.w&&y<m.h)m.t[y*m.w+x]=t};
+const grect=(m,x,y,w,h,t)=>{for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++)gset(m,i,j,t)};
+
+/* ================= PETA 1: DESA & HUTAN ================= */
+function buildDesa(){
+  const m=newMap(46,36);
+  grect(m,0,0,46,36,T.GR);
+  grect(m,27,2,2,32,T.WA);
+  grect(m,27,17,2,1,T.DK);
+  const house=(x0,y0,dx)=>{grect(m,x0,y0,5,2,T.RF);grect(m,x0,y0+2,5,1,T.WL);gset(m,dx,y0+2,T.DR)};
+  house(4,12,6);house(11,12,13);house(5,22,7);
+  gset(m,11,18,T.WE);
+  grect(m,5,17,22,1,T.PA);
+  grect(m,12,18,1,10,T.PA);
+  grect(m,7,28,10,4,T.FA);
+  grect(m,29,2,15,32,T.GD);
+  const rnd=mulberry32(20240613);
+  for(let y=2;y<34;y++)for(let x=29;x<44;x++)
+    if(gget(m,x,y)===T.GD&&rnd()<.52)gset(m,x,y,T.TR);
+  grect(m,29,17,5,1,T.PA);
+  grect(m,33,8,2,10,T.GD);
+  grect(m,34,8,5,1,T.GD);
+  grect(m,31,18,2,9,T.GD);
+  grect(m,29,25,5,3,T.GD);
+  grect(m,39,3,5,6,T.RO);
+  grect(m,39,8,5,3,T.RL);
+  gset(m,41,8,T.CV);
+  gset(m,31,26,T.CH);
+  grect(m,32,22,3,1,T.GD);grect(m,33,21,3,3,T.GD);
+  gset(m,34,22,T.GE);
+  gset(m,4,26,T.GE);
+  const PROTECT=[[6,15],[13,15],[7,25],[11,18],[9,19],[17,20],[14,27],[12,18],[12,19],[31,26],
+    [16,20],[18,20],[17,19],[17,21],[10,18],[12,20],[13,27],[15,27],[16,16],[4,26],[34,22],[41,8],[41,9]];
+  const prot=(x,y)=>PROTECT.some(p=>Math.abs(p[0]-x)<=1&&Math.abs(p[1]-y)<=1);
+  for(let y=2;y<34;y++)for(let x=2;x<27;x++){
+    if(gget(m,x,y)!==T.GR||prot(x,y))continue;
+    const r=rnd();
+    if(r<.07)gset(m,x,y,T.FL);
+    else if(r<.09)gset(m,x,y,T.TR);
+    else if(r<.105)gset(m,x,y,T.RO);
+  }
+  for(let x=0;x<46;x++){gset(m,x,0,T.TR);gset(m,x,1,T.TR);gset(m,x,34,T.TR);gset(m,x,35,T.TR)}
+  for(let y=0;y<36;y++){gset(m,0,y,T.TR);gset(m,1,y,T.TR);gset(m,44,y,T.TR);gset(m,45,y,T.TR)}
+  return m;
+}
+/* ================= PETA 2: GUNUNG KARANG ================= */
+function buildGunung(){
+  const m=newMap(40,36);
+  grect(m,0,0,40,36,T.GD);
+  const rnd=mulberry32(777001);
+  for(let y=2;y<34;y++)for(let x=2;x<38;x++){
+    const r=rnd();
+    if(r<.30)gset(m,x,y,T.RO);
+    else if(r<.34)gset(m,x,y,T.LV);
+    else if(y<12&&r<.5)gset(m,x,y,T.SN);
+  }
+  grect(m,20,28,1,6,T.ST);
+  grect(m,12,28,9,1,T.ST);
+  grect(m,12,22,1,7,T.ST);
+  grect(m,12,22,15,1,T.ST);
+  grect(m,26,16,1,7,T.ST);
+  grect(m,14,16,13,1,T.ST);
+  grect(m,14,10,1,7,T.ST);
+  grect(m,14,10,7,1,T.ST);
+  grect(m,20,6,1,5,T.ST);
+  grect(m,17,3,7,4,T.ST);
+  grect(m,19,7,1,3,T.RO);grect(m,21,7,1,3,T.RO);
+  gset(m,20,33,T.CV);
+  gset(m,11,25,T.CH);gset(m,27,19,T.CH);gset(m,13,15,T.CH);
+  gset(m,12,24,T.GE);
+  gset(m,17,3,T.PT);gset(m,23,3,T.PT);
+  gset(m,20,3,T.GP);           // gerbang ke Menara Angin (terbuka setelah Naga)
+  gset(m,13,23,T.GD);
+  for(let x=0;x<40;x++){gset(m,x,0,T.RO);gset(m,x,1,T.RO);gset(m,x,34,T.RO);gset(m,x,35,T.RO)}
+  for(let y=0;y<36;y++){gset(m,0,y,T.RO);gset(m,1,y,T.RO);gset(m,38,y,T.RO);gset(m,39,y,T.RO)}
+  return m;
+}
+/* ================= PETA 3: MENARA ANGIN ================= */
+function buildMenara(){
+  const m=newMap(24,20);
+  grect(m,0,0,24,20,T.ST);
+  for(let x=0;x<24;x++){gset(m,x,0,T.RO);gset(m,x,19,T.RO)}
+  for(let y=0;y<20;y++){gset(m,0,y,T.RO);gset(m,23,y,T.RO)}
+  [[3,1],[8,1],[15,1],[20,1],[1,6],[1,13],[22,6],[22,13]].forEach(([x,y])=>gset(m,x,y,T.TC));
+  [[4,4],[19,4],[4,14],[19,14]].forEach(([x,y])=>gset(m,x,y,T.PT));
+  gset(m,12,17,T.GP);
+  gset(m,12,2,T.SR);
+  return m;
+}
+
+/* ================= DUNIA: definisi ================= */
+const PAL={
+  hero:{skin:'#f0c8a0',hair:'#2b2b3a',top:'#f2ead8',pants:'#3f5679',band:'#c94f3d',shoe:'#4a3b2f'},
+  ki:{skin:'#e5b48a',hair:'#d8d5cf',top:'#8a5a33',pants:'#5d4630',beard:true,prop:'staff'},
+  ratmi:{skin:'#f0c8a0',hair:'#5b3a24',top:'#c9648a',pants:'#7a4a5e',skirt:true,prop:'basket'},
+  sari:{skin:'#eec39a',hair:'#3a2a1c',top:'#5f9e6e',pants:'#4a6b5a',skirt:true},
+  eyang:{skin:'#e0b184',hair:'#e8e6df',top:'#eae5d6',pants:'#8d8fa5',beard:true,prop:'staff'},
+  bagas:{skin:'#f0c8a0',hair:'#1f1f2e',top:'#e9b44c',pants:'#4a6b8a',child:true},
+  tani:{skin:'#d9a877',hair:'#33333f',top:'#c9c3b4',pants:'#6b4f36',hat:true},
+  empu:{skin:'#d9a877',hair:'#3a3a3a',top:'#5a5f7a',pants:'#3a3f55',beard:true},
+  pendaki:{skin:'#c98f60',hair:'#8f8578',top:'#7a6a4a',pants:'#5d4f36',hat:true,beard:true},
+};
+const EDEF={
+  g :{name:'Korog',        hp:25, atk:6, def:1,xp:20, gold:12},
+  w :{name:'Korog Perang', hp:45, atk:10,def:3,xp:45, gold:30},
+  b :{name:'RAJA KOROG',   hp:160,atk:14,def:5,xp:200,gold:0, boss:true},
+  gl:{name:'Golem Batu',   hp:90, atk:13,def:7,xp:80, gold:45},
+  sh:{name:'Korog Bayangan',hp:60,atk:16,def:2,xp:75, gold:40},
+  ga:{name:'GOLEM AGUNG',  hp:200,atk:18,def:8,xp:220,gold:150,boss:true},
+  na:{name:'NAGA ABU',     hp:420,atk:22,def:9,xp:800,gold:400,boss:true},
+  tw:{name:'PENGUASA MENARA',hp:380,atk:24,def:10,xp:600,gold:300,boss:true},
+};
+const MAPS={
+  desa:{
+    name:'Desa Suryakerta', m:buildDesa(),
+    npcs:[
+      {id:'ki',   name:'Ki Jaka',       x:6, y:15,dir:'down',pal:PAL.ki},
+      {id:'ratmi',name:'Bu Ratmi',      x:13,y:15,dir:'down',pal:PAL.ratmi},
+      {id:'sari', name:'Bu Sari',       x:7, y:25,dir:'down',pal:PAL.sari},
+      {id:'eyang',name:'Eyang Kartala', x:17,y:20,dir:'down',pal:PAL.eyang},
+      {id:'bagas',name:'Bagas',         x:9, y:19,dir:'down',pal:PAL.bagas},
+      {id:'tani', name:'Pak Warsa',     x:14,y:27,dir:'down',pal:PAL.tani},
+      {id:'empu', name:'Pak Empu',      x:16,y:16,dir:'down',pal:PAL.empu},
+    ],
+    edefs:[
+      {id:'e1',type:'g',x:33,y:11,r:2},{id:'e2',type:'g',x:34,y:14,r:2},
+      {id:'e3',type:'g',x:31,y:21,r:2},{id:'e4',type:'g',x:32,y:24,r:2},
+      {id:'e5',type:'w',x:34,y:9, r:2},{id:'e6',type:'w',x:39,y:10,r:1},
+      {id:'eboss',type:'b',x:41,y:10,r:0},
+    ]
+  },
+  gunung:{
+    name:'Gunung Karang', m:buildGunung(),
+    npcs:[{id:'pendaki',name:'Pak Pendaki',x:13,y:23,dir:'down',pal:PAL.pendaki}],
+    edefs:[
+      {id:'mgl1',type:'gl',x:18,y:28,r:2},{id:'mgl2',type:'gl',x:24,y:20,r:2},
+      {id:'msh1',type:'sh',x:12,y:19,r:2},{id:'msh2',type:'sh',x:25,y:16,r:2},
+      {id:'ga',type:'ga',x:20,y:8,r:0},
+      {id:'na',type:'na',x:20,y:4,r:0},
+    ]
+  },
+  menara:{
+    name:'Menara Angin', m:buildMenara(),
+    npcs:[], edefs:[]
+  }
+};
+const PORTALS=[
+  {f:'desa',  x:41,y:8, t:'gunung',tx:20,ty:32, req:'bossDead'},
+  {f:'gunung',x:20,y:33,t:'desa',  tx:41,ty:9},
+  {f:'gunung',x:20,y:3, t:'menara',tx:12,ty:16, req:'nagaDead'},
+  {f:'menara',x:12,y:17,t:'gunung',tx:20,ty:4},
+];
+const CHESTS=[
+  {map:'desa',  x:31,y:26,id:'cv1',give:{elix:1},      msg:'Dapat 1 ELIXIR! Pemulihan penuh saat bertarung!'},
+  {map:'gunung',x:11,y:25,id:'g1', give:{wpn:'empu'},  msg:'Pedang EMPU ditemukan! Serang +9!'},
+  {map:'gunung',x:27,y:19,id:'g2', give:{arm:'baja'},  msg:'Zirah BAJA ditemukan! Tahan +7!'},
+  {map:'gunung',x:13,y:15,id:'g3', give:{teh:2,ram:1}, msg:'2 Teh Gunung & 1 Ramuan!'},
+];
+const WPN={kayu:{n:'Pedang Kayu',atk:0},baja:{n:'Pedang Baja',atk:4},empu:{n:'Pedang Empu',atk:9}};
+const ARM={kain:{n:'Baju Kain',def:0},kulit:{n:'Zirah Kulit',def:3},baja:{n:'Zirah Baja',def:7}};
+const FISH={f1:{n:'Ikan Kecil',hp:40,price:20},f2:{n:'Ikan Besar',hp:80,price:60},f3:{n:'Ikan Emas Nusantara',hp:999,price:150}};
+const SKILLS=[
+  {id:'maha', n:'MAHAPUKUL',  mp:8, mult:2.2,minL:1},
+  {id:'angin',n:'TEBAS ANGIN',mp:12,mult:2.8,minL:5},
+  {id:'api',  n:'API SUCI',   mp:20,mult:3.8,minL:8},
+];
+
+/* ================= STATE ================= */
+let mode='title', curMap='desa';
+let player, G, enemies, restT=0;
+let towerFl=1, stairWarn=false;
+function freshState(){
+  player={name:'ARGA',lvl:1,xp:0,hp:60,maxHp:60,mp:20,maxMp:20,atk:8,def:3,
+          gold:30,items:{ram:1,teh:0,elix:0,bijih:0,f1:0,f2:0,f3:0},
+          wpn:'kayu',arm:'kain',wpnPlus:0,skill:false,
+          tx:12,ty:19,px:12*TS,py:19*TS,dir:'down',moving:false,walkT:0,mtx:0,mty:0,map:'desa'};
+  G={quest:0,kills:0,flags:{},dead:[],chests:{},picked:{},flowers:0,clock:8,towerBest:0,stats:{kills:0,fish:0}};
+  loadEnemies('desa');
+}
+/* pabrik musuh — stat diskalakan per lantai menara */
+function mkEnemy(type,fl,id,x,y){
+  const b=EDEF[type], m=1+.16*(fl-1);
+  return {id,type,x,y,sx:x,sy:y,px:x*TS,py:y*TS,dir:'down',moving:false,walkT:0,mtx:0,mty:0,
+    t:1+Math.random(),alive:true,rt:0,r:4,fl,
+    name:b.name,boss:!!b.boss,
+    hp:Math.round(b.hp*m),maxHp:Math.round(b.hp*m),
+    atk:Math.max(1,Math.round(b.atk*(.85+.16*(fl-1)))),
+    def:b.def+Math.floor(fl*.6),
+    xp:Math.round(b.xp*(.8+.14*(fl-1))),
+    gold:Math.round(b.gold*(.8+.12*(fl-1)))};
+}
+function loadEnemies(mapId){
+  enemies=MAPS[mapId].edefs.filter(e=>!G.dead.includes(e.id)).map(e=>mkEnemy(e.type,1,e.id,e.x,e.y));
+}
+function spawnWave(fl){
+  stairWarn=false;enemies=[];
+  const R=mulberry32(fl*7919+13);
+  const spots=[[5,5],[18,5],[5,13],[18,13],[12,8],[8,16],[15,16]];
+  let types;
+  if(fl===5)types=['ga'];
+  else if(fl===10)types=['tw','sh'];
+  else{
+    const pool=fl<3?['g','g','w']:fl<5?['w','w','gl','sh']:fl<8?['w','gl','sh','gl']:fl<10?['sh','gl','w','ga']:['ga','sh','gl','gl'];
+    const n=Math.min(5,3+((fl/3)|0));
+    types=[];for(let i=0;i<n;i++)types.push(pool[(R()*pool.length)|0]);
+  }
+  types.forEach((t,i)=>{
+    const s=spots[(i*3+fl)%spots.length];
+    enemies.push(mkEnemy(t,fl,'twr'+fl+'_'+i,s[0],s[1]));
+  });
+}
+function ascend(){
+  towerFl++;
+  G.towerBest=Math.max(G.towerBest,towerFl);
+  player.hp=Math.min(player.maxHp,player.hp+Math.round(player.maxHp*.3));
+  player.mp=Math.min(player.maxMp,player.mp+Math.round(player.maxMp*.3));
+  spawnWave(towerFl);sfx('level');
+  toast('⬆ MENARA ANGIN — LANTAI '+towerFl);
+  refreshQuest();saveGame();
+}
+freshState();
+const pAtk=()=>player.atk+WPN[player.wpn].atk+(player.wpnPlus||0);
+const pDef=()=>player.def+ARM[player.arm].def;
+const xpNeed=l=>40+(l-1)*45;
+const CM=()=>MAPS[curMap].m;
+const mget=(x,y)=>gget(CM(),x,y);
+const mset=(x,y,t)=>gset(CM(),x,y,t);
+const npcsHere=()=>MAPS[curMap].npcs;
+const npcAt=(x,y)=>npcsHere().find(n=>n.x===x&&n.y===y);
+const enemyAt=(x,y)=>enemies.find(e=>e.alive&&(e.moving?e.mtx:e.x)===x&&(e.moving?e.mty:e.y)===y);
+const portalAt=(x,y)=>PORTALS.find(p=>p.f===curMap&&p.x===x&&p.y===y);
+const chestAt=(x,y)=>CHESTS.find(c=>c.map===curMap&&c.x===x&&c.y===y);
+function solidFor(tx,ty){
+  if(SOLID.has(mget(tx,ty)))return true;
+  if(npcAt(tx,ty))return true;
+  if(enemies.some(e=>e.alive&&(e.moving?e.mtx:e.x)===tx&&(e.moving?e.mty:e.y)===ty))return true;
+  return false;
+}
+function saveGame(){
+  player.map=curMap;
+  store.set(SAVE_KEY,JSON.stringify({
+    p:{lvl:player.lvl,xp:player.xp,hp:player.hp,maxHp:player.maxHp,mp:player.mp,maxMp:player.maxMp,
+       atk:player.atk,def:player.def,gold:player.gold,items:player.items,wpn:player.wpn,arm:player.arm,
+       wpnPlus:player.wpnPlus,skill:player.skill,tx:player.tx,ty:player.ty,dir:player.dir,map:curMap},
+    g:G}));
+}
+function parseSave(d){
+  freshState();
+  Object.assign(player,d.p);
+  player.items=Object.assign({ram:0,teh:0,elix:0,bijih:0,f1:0,f2:0,f3:0},d.p.items||{});
+  player.wpn=d.p.wpn||'kayu';player.arm=d.p.arm||'kain';player.wpnPlus=d.p.wpnPlus||0;
+  player.px=player.tx*TS;player.py=player.ty*TS;
+  G=Object.assign({quest:0,kills:0,flags:{},dead:[],chests:{},picked:{},flowers:0,clock:8,towerBest:0},d.g);
+  G.stats=Object.assign({kills:0,fish:0},(d.g&&d.g.stats)||{});
+  curMap=player.map||'desa';
+  if(curMap==='menara'){curMap='gunung';player.tx=20;player.ty=4;player.px=20*TS;player.py=4*TS;}
+  player.map=curMap;
+  loadEnemies(curMap);
+  return true;
+}
+function loadGame(){
+  try{
+    let raw=store.get(SAVE_KEY);
+    if(!raw)raw=store.get(OLD_KEY); // migrasi dari v2
+    const d=raw?JSON.parse(raw):null;
+    return d?parseSave(d):false;
+  }catch(e){return false}
+}
+
+/* ================= SPRITE ================= */
+function drawChar(c,x,y,pal,dir,t,moving){
+  const P=(px,py,w,h,col)=>{c.fillStyle=col;c.fillRect(x+px,y+py,w,h)};
+  const ch=pal.child, hy=ch?3:0, by=ch?11:8, bh=ch?3:5, ly=ch?14:13, lh=ch?2:3;
+  c.fillStyle='rgba(0,0,0,.22)';c.fillRect(x+4,y+14,9,2);
+  const sw=moving?Math.sin(t*16):0, l1=sw>0?1:0, l2=sw<0?1:0;
+  P(5,ly,2,Math.max(1,lh-l1),pal.pants);P(9,ly,2,Math.max(1,lh-l2),pal.pants);
+  P(5,ly+lh-l1,2,1,pal.shoe||'#3a3128');P(9,ly+lh-l2,2,1,pal.shoe||'#3a3128');
+  if(pal.skirt){P(3,by,10,bh,pal.top)}else{P(4,by,8,bh,pal.top)}
+  P(3,by+1,1,bh-1,pal.skin);P(12,by+1,1,bh-1,pal.skin);
+  P(3,hy,10,8,pal.skin);
+  const H=pal.hair;
+  P(3,hy,10,3,H);
+  if(dir==='down'){P(3,hy,2,7,H);P(11,hy,2,7,H)}
+  else if(dir==='up'){P(3,hy,10,6,H)}
+  else if(dir==='left'){P(8,hy,5,8,H)}
+  else if(dir==='right'){P(3,hy,5,8,H)}
+  if(dir==='down'){P(5,hy+4,1,2,'#2b2430');P(9,hy+4,1,2,'#2b2430');if(pal.beard)P(4,hy+6,8,2,'#e8e6df')}
+  else if(dir==='left')P(5,hy+4,1,2,'#2b2430');
+  else if(dir==='right')P(9,hy+4,1,2,'#2b2430');
+  if(pal.band){P(3,hy+1,10,1,pal.band);P(12,hy+2,1,2,pal.band)}
+  if(pal.hat){P(3,hy-1,10,2,'#c9a75c');P(2,hy+1,12,1,'#a8873f')}
+  if(pal.prop==='staff'){P(13,hy+2,1,13,'#7a5230');P(12,hy+1,3,2,'#9c7146')}
+  if(pal.prop==='basket'){P(1,by+1,3,4,'#a97c50');P(1,by+2,3,1,'#8a6238')}
+}
+function drawMonster(c,x,y,type,t,scale=1){
+  c.save();c.translate(x,y);c.scale(scale,scale);
+  const P=(px,py,w,h,col)=>{c.fillStyle=col;c.fillRect(px,py,w,h)};
+  if(type==='g'){
+    const sq=Math.round(Math.sin(t*6));
+    P(2,17,12,2,'rgba(0,0,0,.25)');
+    P(1,4+sq,12,9-sq,'#5fae4e');P(3,2+sq,8,2,'#5fae4e');P(1,11,12,2,'#4c9340');
+    P(3,5,3,3,'#f4f1e4');P(8,5,3,3,'#f4f1e4');P(4,6,2,2,'#20222e');P(9,6,2,2,'#20222e');
+    P(6,9,4,1,'#2c4a28');P(2,8,2,2,'#4c9340');P(10,8,2,2,'#4c9340');
+  }else if(type==='w'){
+    const sq=Math.round(Math.sin(t*7));
+    P(2,17,12,2,'rgba(0,0,0,.25)');
+    P(1,4+sq,12,9-sq,'#9c4a5e');P(3,2+sq,8,2,'#9c4a5e');P(1,11,12,2,'#7c3a4c');
+    P(2,0,2,2,'#e8e2d0');P(10,0,2,2,'#e8e2d0');P(6,-1,2,3,'#e8e2d0');
+    P(3,5,3,3,'#f4f1e4');P(8,5,3,3,'#f4f1e4');P(4,6,2,2,'#5a1f2a');P(9,6,2,2,'#5a1f2a');
+    P(3,4,3,1,'#e8e2d0');P(8,4,3,1,'#e8e2d0');P(6,9,4,1,'#3a1a22');
+  }else if(type==='gl'||type==='ga'){
+    const big=type==='ga', sq=Math.round(Math.sin(t*3));
+    const bw=big?22:16, bh=big?20:14, bx=(24-bw)/2, by=big?5:7;
+    P(4,by+bh,16,2,'rgba(0,0,0,.3)');
+    P(bx+2,by+bh-4,4,4,'#5e617a');P(bx+bw-6,by+bh-4,4,4,'#5e617a');
+    P(bx,by+sq,bw,bh,'#82859c');P(bx+2,by+2+sq,bw-4,bh-6,'#9a9eae');
+    P(bx+3,by+bh-3+sq,bw-6,3,'#6e7089');
+    P(bx-3,by+5+sq,3,8,'#74778e');P(bx+bw,by+5+sq,3,8,'#74778e');
+    P(bx+4,by+3+sq,bw-8,2,'#6f8f5c');
+    const ec=big?'#e04f3f':'#e9b44c';
+    P(bx+4,by+7+sq,3,2,ec);P(bx+bw-7,by+7+sq,3,2,ec);
+    if(big)P(bx+bw/2-2,by+11,4,4,'#e04f3f');
+  }else if(type==='sh'){
+    const w1=Math.sin(t*4), w2=Math.sin(t*4+2);
+    P(4,17,14,2,'rgba(0,0,0,.3)');
+    c.globalAlpha=.88;
+    P(4+w1|0,4,13,9,'#2b2440');P(6+w2|0,2,9,3,'#2b2440');
+    P(2+w1|0,7,3,5,'#241e38');P(16+w2|0,7,3,5,'#241e38');
+    P(3+w2|0,12,15,4,'#1d1830');
+    c.globalAlpha=1;
+    P(7,6,2,2,'#e8ecff');P(12,6,2,2,'#e8ecff');
+    P(8+w1|0,15,2,3,'#241e38');P(13+w2|0,15,2,3,'#241e38');
+  }else if(type==='na'){
+    const fl=Math.sin(t*5);
+    P(4,22,22,2,'rgba(0,0,0,.35)');
+    for(let i=0;i<5;i++){
+      const bx=4+i*4, by=16-i*2+Math.round(Math.sin(t*3+i)*1.5);
+      P(bx,by,5,4,i%2?'#4a4550':'#3c3846');
+    }
+    P(6,20,3,3,'#8a8494');P(11,17,3,3,'#8a8494');P(15,14,3,3,'#8a8494');
+    P(1,4+fl*2|0,6,7,'#2b2733');P(18,3-fl*2|0,6,7,'#2b2733');
+    P(3,6+fl*2|0,3,4,'#413c4e');P(19,5-fl*2|0,3,4,'#413c4e');
+    P(9,3,9,8,'#4a4550');P(10,9,7,2,'#3c3846');
+    P(7,1,2,3,'#d8d5cf');P(18,1,2,3,'#d8d5cf');
+    P(10,5,3,2,'#ff5a3c');P(15,5,3,2,'#ff5a3c');
+    P(9,10,9,1,'#1d1830');P(10,11,2,1,'#f4f1e4');P(15,11,2,1,'#f4f1e4');
+  }else if(type==='tw'){
+    const w1=Math.sin(t*3), w2=Math.sin(t*3+1.5);
+    P(5,26,18,2,'rgba(0,0,0,.35)');
+    P(4,6,20,14,'#2a2140');
+    for(let i=0;i<5;i++)P(4+i*4,19+((i%2?w1:w2)>0?1:0)|0,3,4,'#221a34');
+    P(0,8+w1*2|0,4,10,'#221a34');P(24,8+w2*2|0,4,10,'#221a34');
+    P(7,1,14,7,'#2a2140');P(8,0,12,2,'#221a34');
+    P(8,-3,2,3,'#d8b45a');P(11,-4,2,4,'#d8b45a');P(14,-3,2,3,'#d8b45a');P(17,-4,2,4,'#d8b45a');
+    P(9,4,4,2,'#ffd23c');P(15,4,4,2,'#ffd23c');
+    P(11,10,6,5,'#6a4fd0');P(12,11,4,2,'#c4b2ff');
+  }
+  c.restore();
+}
+
+/* ================= TILE RENDER ================= */
+let nowT=0;
+function drawTile(t,sx,sy,tx,ty){
+  const h=hash2(tx,ty);
+  const F=(x,y,w,hh,c)=>{ctx.fillStyle=c;ctx.fillRect(sx+x,sy+y,w,hh)};
+  switch(t){
+    case T.GR:F(0,0,16,16,'#7cb46b');
+      if(h<.3)F(2+h*30|0,3+((h*97)%9|0),4,3,'#8bc277');
+      else if(h>.86){F(3,6,1,3,'#6aa15c');F(6,5,1,3,'#6aa15c');F(9,7,1,3,'#6aa15c')}
+      break;
+    case T.GD:F(0,0,16,16,'#5e9152');
+      if(h<.3)F(3+((h*80)%8|0),4+((h*53)%8|0),4,3,'#548146');
+      else if(h>.88){F(4,6,1,3,'#477043');F(8,5,1,3,'#477043')}
+      break;
+    case T.PA:F(0,0,16,16,'#d9b57f');
+      F(3+((h*70)%9|0),4+((h*31)%8|0),2,1,'#c79e69');
+      F(9,11,2,1,'#c79e69');break;
+    case T.ST:F(0,0,16,16,'#9a9eae');
+      F(0,7,16,1,'#7e8294');F(8,0,1,7,'#82869a');F(3,8,1,8,'#82869a');
+      if(h>.7)F(5,3,3,1,'#82869a');
+      if(h>.95)F(10,12,3,2,'#7e8294');break;
+    case T.SN:F(0,0,16,16,'#dfe6ee');
+      if(h<.4)F(3+((h*90)%8|0),4+((h*40)%8|0),4,2,'#c6d2e0');
+      if(h>.8){F(4,4,2,2,'#fff');F(10,9,2,2,'#fff')}break;
+    case T.LV:{F(0,0,16,16,'#3a2b2b');
+      const gl=.6+.4*Math.abs(Math.sin(nowT*3+tx+ty));
+      F(2,6,12,2,`rgba(255,122,60,${gl})`);F(6,2,2,12,`rgba(255,122,60,${gl*.7})`);
+      F(0,0,16,1,'#4a3636');F(0,15,16,1,'#2b1f1f')}break;
+    case T.SR:F(0,0,16,16,'#8f92a8');
+      for(let i=0;i<3;i++)F(1,2+i*4,14,2,i%2?'#74778e':'#b9bdcf');
+      {const a=(Math.sin(nowT*4)+1)/2;
+      ctx.globalAlpha=.4+.5*a;F(6,12,4,3,'#e9b44c');ctx.globalAlpha=1}break;
+    case T.GP:{F(0,0,16,16,'#8d90a8');
+      const a=.5+.5*Math.sin(nowT*3);
+      F(2,2,12,12,'#123a4a');
+      ctx.globalAlpha=.5+.4*a;F(3,3,10,10,'#2a8fa8');ctx.globalAlpha=1;
+      F(5,5,6,6,'#7ee0f0');F(7,7,2,2,'#ffffff');
+      if(a>.7){F(1,7,2,2,'#7ee0f0');F(13,7,2,2,'#7ee0f0')}break}
+    case T.TC:F(0,0,16,16,'#74778e');
+      F(6,8,4,6,'#5a5d70');F(5,14,6,2,'#4a4d60');
+      {const f=Math.sin(nowT*9+tx*3)>0?0:1;
+      F(6,3+f,4,5,'#ff8c3c');F(7,1+f,2,4,'#ffd23c');F(7,4+f,2,2,'#fff2c0')}break;
+    case T.FA:F(0,0,16,16,'#a5793f');
+      for(let i=1;i<16;i+=4)F(0,i,16,1,'#8a6234');
+      F(2,1,2,2,'#79b061');F(9,9,2,2,'#79b061');break;
+    case T.WA:{F(0,0,16,16,'#3e88ac');
+      if(mget(tx,ty-1)!==T.WA)F(0,0,16,2,'#7ec3d6');
+      const ph=(tx*7+ty*13+nowT*7)%16;F(ph,5+((h*40)%6|0),5,1,'#69b7cd');
+      F((ph+8)%16,12,4,1,'#337190');break}
+    case T.DK:F(0,0,16,16,'#a97c50');
+      for(let i=0;i<16;i+=4)F(0,i,16,1,'#8a6238');
+      F(0,0,2,16,'#8a6238');F(14,0,2,16,'#8a6238');break;
+    case T.TR:F(0,0,16,16,'#5e9152');
+      F(7,10,3,6,'#6b4a2c');F(3,1,10,8,'#3f7d47');F(2,3,12,5,'#3f7d47');
+      F(4,2,5,3,'#518f57');F(2,7,12,2,'#35663c');
+      if(h>.6)F(10,3,2,2,'#6aa15c');break;
+    case T.RO:F(0,0,16,16,'#8d90a8');
+      F(1,1,14,13,'#8d90a8');F(2,2,6,4,'#a5a8bd');F(9,8,5,5,'#6e7089');
+      F(0,14,16,2,'#5e9152');break;
+    case T.RL:F(0,0,16,16,'#8f92a8');
+      F(0,7,16,1,'#74778e');F(7,0,1,16,'#74778e');
+      if(h>.5)F(3,3,3,1,'#a5a8bd');break;
+    case T.WL:F(0,0,16,16,'#e3d2ab');F(0,0,16,2,'#7a5230');F(0,14,16,2,'#7a5230');
+      if(h>.5){F(4,5,8,6,'#4a3b28');F(4,5,8,1,'#7a5230');F(7,5,1,6,'#7a5230')}
+      break;
+    case T.RF:F(0,0,16,16,'#b0574c');
+      for(let i=1;i<16;i+=3)F(0,i,16,1,'#8f3f3c');
+      F(0,0,16,2,'#c76f60');break;
+    case T.DR:F(0,0,16,16,'#e3d2ab');F(0,0,16,2,'#7a5230');F(0,14,16,2,'#7a5230');
+      F(4,2,8,14,'#6b4a2c');F(5,3,6,13,'#7d5a38');F(10,9,1,2,'#e9b44c');break;
+    case T.FL:F(0,0,16,16,'#7cb46b');
+      {const cs=['#e5735f','#e9b44c','#c9648a'];const c1=cs[(h*3|0)%3],c2=cs[(h*7|0)%3];
+      F(3,4,2,2,c1);F(4,3,1,1,c1);F(10,9,2,2,c2);F(11,8,1,1,c2)}
+      break;
+    case T.GE:F(0,0,16,16,'#6aa15c');
+      {const bb=Math.sin(nowT*3+tx)>0?0:1;
+      F(7,9,1,4,'#4c7a3c');
+      F(5,4+bb,5,3,'#e9b44c');F(6,3+bb,3,5,'#e9b44c');F(7,5+bb,1,1,'#f7e9b0')}break;
+    case T.WE:F(0,0,16,16,'#7cb46b');
+      F(2,0,2,9,'#7a5230');F(12,0,2,9,'#7a5230');F(1,0,14,3,'#8f3f3c');
+      F(3,8,10,7,'#8d90a8');F(4,9,8,4,'#2b2f45');F(3,14,10,1,'#6e7089');break;
+    case T.CV:F(0,0,16,16,'#8d90a8');
+      F(2,2,12,14,'#0d0f1a');F(3,0,2,3,'#6e7089');F(11,0,2,3,'#6e7089');F(6,1,4,1,'#141622');break;
+    case T.PT:F(0,0,16,16,'#9a9eae');
+      F(2,1,12,15,'#b9bdcf');F(3,2,4,13,'#cdd1e0');F(2,14,12,2,'#82869a');
+      F(4,4,8,1,'#82869a');F(4,9,8,1,'#82869a');break;
+    case T.CH:{F(0,0,16,16,'#5e9152');
+      F(2,17,12,2,'rgba(0,0,0,.25)');
+      const ch=chestAt(tx,ty);
+      if(ch&&G.chests[ch.id]){F(2,10,12,5,'#8a5a33');F(2,5,12,3,'#5d4630');F(7,10,2,5,'#d8b45a')}
+      else{F(2,7,12,8,'#8a5a33');F(2,5,12,3,'#a9713f');F(2,8,12,1,'#d8b45a');F(7,5,2,10,'#d8b45a')}
+      break}
+  }
+}
+
+/* ================= HUD / QUEST ================= */
+function refreshHUD(){
+  $('hudLv').textContent='Lv '+player.lvl;
+  $('goldVal').textContent=player.gold;
+  $('hpBar').firstElementChild.style.transform=`scaleX(${clamp(player.hp/player.maxHp,0,1)})`;
+  $('mpBar').firstElementChild.style.transform=`scaleX(${clamp(player.mp/player.maxMp,0,1)})`;
+  $('xpBar').firstElementChild.style.transform=`scaleX(${clamp(player.xp/xpNeed(player.lvl),0,1)})`;
+}
+function refreshQuest(){
+  const q=$('questText');
+  const Q={
+    0:'Temui Ki Jaka, Kepala Desa.',
+    1:`Kalahkan monster Korog di hutan timur (${Math.min(G.kills,3)}/3), lalu laporkan ke Ki Jaka.`,
+    2:'Kalahkan RAJA KOROG di Goa Timur, ujung timur laut hutan.',
+    3:'Laporkan kemenanganmu ke Ki Jaka!',
+    4:'Naiki Gunung Karang lewat Goa Timur. Taklukkan NAGA ABU di puncak!',
+    5:'Temui Eyang Kartala — ada kabar aneh dari puncak gunung...',
+    6:`Uji Menara Angin (gerbang cahaya di puncak): capai lantai 10! Rekor: Lt ${G.towerBest||0}`,
+    7:`Kau LEGENDA NUSANTARA! Menara masih menanti di lantai lebih tinggi... (Rekor: Lt ${G.towerBest||0})`
+  };
+  q.textContent=Q[G.quest]||'';
+  const side=$('questSide');
+  if(G.flags.sariQ&&!G.flags.charm){
+    side.textContent='Sampingan: Bunga Emas ('+Math.min(G.flowers,3)+'/3) untuk Bu Sari';
+    side.classList.remove('hidden');
+  }else side.classList.add('hidden');
+}
+function toastMapName(){
+  const el=$('mapName');
+  el.textContent='— '+MAPS[curMap].name+' —';
+  el.classList.remove('hidden');
+  clearTimeout(toastMapName._t);
+  toastMapName._t=setTimeout(()=>el.classList.add('hidden'),2200);
+}
+/* siang-malam */
+const DAY_LEN=150;
+function dayPhase(){return ((nowT+G.clock)%DAY_LEN)/DAY_LEN}
+function dayLabel(){
+  const p=dayPhase();
+  if(p<0.42)return'☀ Siang';if(p<0.5)return'🌇 Senja';if(p<0.9)return'🌙 Malam';return'🌅 Fajar';
+}
+
+/* ================= DIALOG ================= */
+const dlgEl=$('dialog'),dlgText=$('dlgText'),dlgName=$('dlgName'),dlgNext=$('dlgNext'),dlgCh=$('dlgChoices');
+const dlg={open:false,typing:false,line:'',shown:0,choices:null,ci:0,timer:null};
+function typeLine(s){
+  dlg.typing=true;dlg.line=s;dlg.shown=0;dlgText.textContent='';
+  clearInterval(dlg.timer);
+  dlg.timer=setInterval(()=>{
+    dlg.shown++;
+    dlgText.textContent=s.slice(0,dlg.shown);
+    if(dlg.shown%3===0)sfx('blip');
+    if(dlg.shown>=s.length){clearInterval(dlg.timer);dlg.typing=false;dlgNext.classList.remove('hidden')}
+  },20);
+}
+function say(name,lines){
+  return new Promise(res=>{
+    dlg.open=true;dlg.choices=null;
+    dlgEl.classList.remove('hidden');dlgNext.classList.add('hidden');dlgCh.innerHTML='';
+    dlgName.textContent=name||'';
+    let i=0;
+    const next=()=>{
+      if(i<lines.length)typeLine(lines[i++]);
+      else{dlg.open=false;dlgEl.classList.add('hidden');res()}
+    };
+    dlg._adv=()=>{if(dlg.typing){clearInterval(dlg.timer);dlg.typing=false;dlgText.textContent=dlg.line;dlgNext.classList.remove('hidden')}else next()};
+    next();
+  });
+}
+function choose(name,line,opts){
+  return new Promise(res=>{
+    dlg.open=true;dlgEl.classList.remove('hidden');dlgNext.classList.add('hidden');
+    dlgName.textContent=name||'';dlgText.textContent=line;dlg.choices=opts;dlg.ci=0;
+    dlgCh.innerHTML='';
+    opts.forEach((o,i)=>{
+      const d=document.createElement('div');d.className='choice'+(i===0?' sel':'');d.textContent=o;
+      d.addEventListener('click',()=>pick(i));
+      dlgCh.appendChild(d);
+    });
+    const pick=i=>{dlg.open=false;dlgEl.classList.add('hidden');dlg.choices=null;sfx('sel');res(i)};
+    dlg._pick=pick;dlg._adv=()=>{};
+  });
+}
+function dlgKeyNav(dir){
+  if(!dlg.choices)return;
+  dlg.ci=(dlg.ci+dir+dlg.choices.length)%dlg.choices.length;
+  [...dlgCh.children].forEach((c,i)=>c.classList.toggle('sel',i===dlg.ci));sfx('blip');
+}
+dlgEl.addEventListener('click',()=>{if(dlg.open&&!dlg.choices)dlg._adv&&dlg._adv()});
+
+/* ================= MEMANCING ================= */
+const fish={active:false,pos:0,dir:1,zone:40,zw:18,speed:1.2};
+function startFish(){
+  if(fish.active)return;
+  fish.active=true;menuOpen=true;
+  fish.zone=20+Math.random()*55;fish.zw=15+Math.random()*7;
+  fish.pos=Math.random()*100<50?0:100;fish.dir=fish.pos===0?1:-1;
+  fish.speed=1.1+Math.random()*.9;
+  $('fishZone').style.left=fish.zone+'%';$('fishZone').style.width=fish.zw+'%';
+  $('fishMsg').textContent='Tekan SPASI saat penanda di zona hijau!';
+  $('fishBox').classList.remove('hidden');
+}
+function stopFish(){$('fishBox').classList.add('hidden');fish.active=false;menuOpen=false}
+function fishTick(dt){
+  if(!fish.active)return;
+  fish.pos+=fish.dir*fish.speed*dt*100;
+  if(fish.pos>=100){fish.pos=100;fish.dir=-1}
+  if(fish.pos<=0){fish.pos=0;fish.dir=1}
+  $('fishMark').style.left='calc('+fish.pos+'% - .18em)';
+}
+async function fishStrike(){
+  if(!fish.active)return;
+  const c=fish.zone+fish.zw/2, d=Math.abs(fish.pos-c), half=fish.zw/2;
+  stopFish();sfx('sel');
+  if(d<=half){
+    let tier,msg;
+    if(d<=half*.3&&Math.random()<.7){tier='f3';msg='LUAR BIASA! IKAN EMAS NUSANTARA! Tangkapan langka!';sfx('level')}
+    else if(d<=half*.65){tier='f2';msg='Dapat Ikan Besar! Berat sekali, pancingmu sampai melengkung!';sfx('coin')}
+    else{tier='f1';msg='Dapat ikan kecil. Lumayan untuk bekal jalan.';sfx('coin')}
+    player.items[tier]++;G.stats.fish++;refreshHUD();saveGame();
+    await say('Hasil Pancing',[msg,'Ikan bisa dimakan lewat menu STATUS, atau dijual ke Bu Ratmi.']);
+  }else{
+    sfx('splash');
+    await say('Hasil Pancing',['Sret... ikannya lepas! Sabar, tunggu penanda pas di tengah zona.']);
+  }
+}
+ $('fishBtn').addEventListener('click',fishStrike);
+ $('fishCancel').addEventListener('click',stopFish);
+
+/* ================= INPUT ================= */
+const keys={};let touchDir=null;
+const DIRV={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
+addEventListener('keydown',e=>{
+  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();
+  if(e.repeat)return;
+  keys[e.code]=true;
+  if(fish.active){
+    if(e.code==='Space'||e.code==='Enter')fishStrike();
+    if(e.code==='KeyC')stopFish();
+    return;
+  }
+  if(e.code==='Space'||e.code==='Enter'||e.code==='KeyE'){
+    if(dlg.open){dlg.choices?dlg._pick(dlg.ci):(dlg._adv&&dlg._adv())}
+    else if(mode==='world'&&!menuOpen)interact();
+  }
+  if(dlg.choices){
+    if(e.code==='ArrowUp'||e.code==='KeyW')dlgKeyNav(-1);
+    if(e.code==='ArrowDown'||e.code==='KeyS')dlgKeyNav(1);
+  }
+  if(e.code==='KeyC'&&mode==='world'&&!dlg.open)toggleMenu();
+  if(mode==='battle'&&bState.choosing){
+    const n={Digit1:0,Digit2:1,Digit3:2,Digit4:3,Digit5:4}[e.code];
+    if(n!==undefined){const b=$('bActs').children[n];if(b&&!b.disabled)b.click()}
+  }
+});
+addEventListener('keyup',e=>keys[e.code]=false);
+function heldDir(){
+  if(touchDir)return touchDir;
+  if(keys.ArrowUp||keys.KeyW)return'up';
+  if(keys.ArrowDown||keys.KeyS)return'down';
+  if(keys.ArrowLeft||keys.KeyA)return'left';
+  if(keys.ArrowRight||keys.KeyD)return'right';
+  return null;
+}
+[['dU','up'],['dD','down'],['dL','left'],['dR','right']].forEach(([id,dir])=>{
+  const b=$(id);
+  b.addEventListener('pointerdown',e=>{e.preventDefault();touchDir=dir});
+  b.addEventListener('pointerup',()=>touchDir=null);
+  b.addEventListener('pointerleave',()=>touchDir=null);
+});
+ $('btnA').addEventListener('click',()=>{
+  if(fish.active){fishStrike();return}
+  if(dlg.open){dlg.choices?dlg._pick(dlg.ci):(dlg._adv&&dlg._adv())}
+  else if(mode==='world'&&!menuOpen)interact();
+});
+
+/* ================= GERAK DUNIA ================= */
+const MOVE_T=.16;
+async function goPortal(p){
+  sfx('sel');
+  await wipeClose();
+  curMap=p.t;
+  player.tx=p.tx;player.ty=p.ty;
+  player.px=p.tx*TS;player.py=p.ty*TS;
+  player.moving=false;player.map=curMap;
+  loadEnemies(curMap);
+  if(curMap==='menara'){towerFl=1;spawnWave(1);toast('⚔ LANTAI 1 — UJI DIMULAI!')}
+  startMusic(curMap==='desa'?'over':'mount');
+  await wipeOpen();
+  toastMapName();
+  saveGame();
+}
+function tryMove(dx,dy,dir){
+  player.dir=dir;
+  const nx=player.tx+dx,ny=player.ty+dy;
+  const p=portalAt(nx,ny);
+  if(p){
+    if(!p.req||G.flags[p.req]){goPortal(p);return}
+    if(!tryMove._warn){tryMove._warn=true;toast('Gerbang itu belum memanggilmu...');setTimeout(()=>tryMove._warn=false,1500)}
+    return;
+  }
+  const en=enemyAt(nx,ny);
+  if(en){startBattle(en);return}
+  if(solidFor(nx,ny))return;
+  player.moving=true;player.walkT=0;player.mtx=nx;player.mty=ny;
+}
+/* partikel dunia (kunang-kunang malam) */
+let worldParts=[];
+function updateWorld(dt){
+  G.clock+=dt;
+  if(!player.moving){
+    const d=heldDir();
+    if(d)tryMove(...DIRV[d],d);
+  }
+  if(player.moving){
+    player.walkT+=dt/MOVE_T;
+    if(player.walkT>=1){
+      player.tx=player.mtx;player.ty=player.mty;
+      player.px=player.tx*TS;player.py=player.ty*TS;player.moving=false;
+    }else{
+      player.px=(player.tx+(player.mtx-player.tx)*player.walkT)*TS;
+      player.py=(player.ty+(player.mty-player.ty)*player.walkT)*TS;
+    }
+  }
+  // tangga menara
+  if(curMap==='menara'&&!player.moving&&!dlg.open&&!menuOpen){
+    if(mget(player.tx,player.ty)===T.SR){
+      if(enemies.every(e=>!e.alive))ascend();
+      else if(!stairWarn){stairWarn=true;toast('Kalahkan semua monster di lantai ini dulu!')}
+    }
+  }
+  if(dlg.open||menuOpen)return;
+  // kunang-kunang
+  const p=dayPhase();
+  if(curMap!=='menara'&&p>0.5&&p<0.9&&worldParts.length<26&&Math.random()<.12){
+    worldParts.push({x:cam.x+Math.random()*cv.width,y:cam.y+Math.random()*cv.height,
+      vx:(Math.random()-.5)*8,vy:(Math.random()-.5)*8-2,t:0,life:2+Math.random()*2});
+  }
+  for(const e of enemies){
+    if(!e.alive){
+      if(curMap!=='menara'&&!EDEF[e.type].boss){
+        e.rt-=dt;
+        if(e.rt<=0){
+          if(Math.abs(player.tx-e.sx)+Math.abs(player.ty-e.sy)>3){
+            e.alive=true;e.x=e.sx;e.y=e.sy;e.px=e.x*TS;e.py=e.y*TS;e.t=1+Math.random();
+          }else e.rt=1.5;
+        }
+      }
+      continue;
+    }
+    if(e.moving){
+      e.walkT+=dt/MOVE_T;
+      if(e.walkT>=1){e.x=e.mtx;e.y=e.mty;e.px=e.x*TS;e.py=e.y*TS;e.moving=false}
+      else{e.px=(e.x+(e.mtx-e.x)*e.walkT)*TS;e.py=(e.y+(e.mty-e.y)*e.walkT)*TS}
+      continue;
+    }
+    if(e.r===0)continue;
+    e.t-=dt;
+    if(e.t>0)continue;
+    e.t=.7+Math.random()*.9;
+    const pd=Math.abs(player.tx-e.x)+Math.abs(player.ty-e.y);
+    let dir=null;
+    if(pd<=4&&Math.random()<.55){
+      dir=Math.abs(player.tx-e.x)>Math.abs(player.ty-e.y)
+        ?(player.tx>e.x?'right':'left'):(player.ty>e.y?'down':'up');
+    }else dir=['up','down','left','right'][Math.random()*4|0];
+    const[dx,dy]=DIRV[dir];
+    const nx=e.x+dx,ny=e.y+dy;
+    if(nx===player.tx&&ny===player.ty){startBattle(e);return}
+    if(curMap!=='menara'&&(Math.abs(nx-e.sx)>e.r||Math.abs(ny-e.sy)>e.r))continue;
+    if(curMap==='menara'&&(nx<2||nx>21||ny<2||ny>17))continue;
+    if(SOLID.has(gget(CM(),nx,ny))||portalAt(nx,ny)||npcAt(nx,ny))continue;
+    if(enemies.some(o=>o!==e&&o.alive&&o.x===nx&&o.y===ny))continue;
+    e.moving=true;e.walkT=0;e.mtx=nx;e.mty=ny;e.dir=dir;
+  }
+}
+
+/* ================= INTERAKSI ================= */
+async function interact(){
+  const[dx,dy]=DIRV[player.dir];
+  const fx=player.tx+dx,fy=player.ty+dy;
+  const n=npcAt(fx,fy);
+  if(n){await talkTo(n);return}
+  const en=enemyAt(fx,fy);
+  if(en){await preBattleTalk(en);return}
+  const t=mget(fx,fy);
+  if(t===T.WA){startFish();return}
+  if(t===T.WE){
+    sfx('heal');player.hp=player.maxHp;player.mp=player.maxMp;refreshHUD();saveGame();
+    await say('Sumur Desa',['Kamu meminum air sumur yang jernih dan segar...','HP dan MP pulih sepenuhnya!']);
+  }else if(t===T.CH){
+    const ch=chestAt(fx,fy);
+    if(ch&&!G.chests[ch.id]){
+      G.chests[ch.id]=true;sfx('chest');
+      const g=ch.give;
+      if(g.gold)player.gold+=g.gold;
+      if(g.ram)player.items.ram+=g.ram;
+      if(g.teh)player.items.teh+=g.teh;
+      if(g.elix)player.items.elix+=g.elix;
+      if(g.wpn)player.wpn=g.wpn;
+      if(g.arm)player.arm=g.arm;
+      refreshHUD();saveGame();
+      await say('Peti Kayu',['Kamu membukanya perlahan...',ch.msg]);
+      toast('Peti terbuka!');
+    }else await say('Peti Kayu',['Petinya sudah kosong.']);
+  }else if(t===T.GP){
+    await say('',['Pusaran cahaya berputar pelan... melangkahlah ke dalamnya.']);
+  }else if(t===T.DR){await say('',['Pintunya tertutup rapat. Penghuninya sedang keluar desa.'])}
+  else if(t===T.CV){
+    if(!G.flags.bossDead)await say('',['Mulut gua ini sangat gelap dan berangin...','Sepertinya aku harus lebih kuat dulu sebelum masuk.']);
+    else await say('',['Terowongan menuju Gunung Karang. Masuklah dengan berjalan ke dalamnya.']);
+  }else if(t===T.FA){await say('',['Ladang milik Pak Warsa. Sayangnya sempat dirusak para Korog.'])}
+  else if(t===T.GE){
+    const fid=curMap+':'+fx+','+fy;
+    if(!G.picked[fid]){
+      G.picked[fid]=true;G.flowers++;
+      mset(fx,fy,T.GR);
+      sfx('coin');saveGame();refreshQuest();
+      await say('',['Kamu memetik seikat BUNGA EMAS yang harum. ('+Math.min(G.flowers,3)+'/3)']);
+      if(G.flowers===3&&G.flags.sariQ&&!G.flags.charm)toast('Bawa ke Bu Sari!');
+    }
+  }else if(t===T.PT){await say('',['Pilar batu kuno, ukirannya sudah aus dimakan zaman.'])}
+}
+
+/* ================= DIALOG NPC ================= */
+async function talkTo(n){
+  if(n.id==='ki')return talkKi();
+  if(n.id==='ratmi')return shopRatmi();
+  if(n.id==='empu')return shopEmpu();
+  if(n.id==='pendaki')return talkPendaki();
+  if(n.id==='sari')return talkSari();
+  if(n.id==='eyang'){
+    if(G.flags.towerDone){
+      await say('Eyang Kartala',['Penguasa Menara tunduk... Eyang mendengar gema-nya sampai ke sini!','Kau bukan lagi murid, Arga. Kau LEGENDA.','Menara masih berdiri... kata orang, lantai di atasnya tak berujung.']);
+      return;
+    }
+    if(G.flags.nagaDead){
+      if(!G.flags.towerIntro){
+        G.flags.towerIntro=true;
+        if(G.quest<6){G.quest=6;refreshQuest()}
+        saveGame();sfx('level');
+        await say('Eyang Kartala',['Naga Abu tumbang... tapi dengar, Nak. Malam ini langit bergetar!','Dari puncak Gunung Karang, bangkitlah MENARA ANGIN — menara uji para pendekar kuno!','Di dalamnya, monster yang semakin kuat tiap lantai. Di lantai 10 menunggu PENGUASA MENARA.','Masukilah gerbang cahaya di puncak. Buktikan dirimu... LEGENDA NUSANTARA!']);
+        toast('BABAK III: Menara Angin!');
+      }else await say('Eyang Kartala',['Menara menguji kesabaran, bukan cuma kekuatan.','Bawa Ramuan & Teh yang cukup. Golem menjatuhkan Bijih Besi — bawa ke Pak Empu untuk menempa senjatamu!']);
+      return;
+    }
+    if(!player.skill){
+      player.skill=true;saveGame();sfx('level');
+      await say('Eyang Kartala',['Hmmm... aura pendekar muda yang kuat terasa darimu.','Baiklah, aku ajarkan jurus turun-temurun: MAHAPUKUL!','Nanti kalau levelmu naik, jurus lain akan terbuka dengan sendirinya.']);
+      toast('Jurus baru: MAHAPUKUL!');
+    }else if(G.flags.bossDead)await say('Eyang Kartala',['Gunung Karang? Au... Eyang dulu pernah mendaki sana.','Jika HP habis, cari Pak Pendaki di tengah jalur.','Dan ingat: Teh Gunung untuk tenaga batinmu (MP).']);
+    else await say('Eyang Kartala',['Honing... kilatmu harus tajam seperti padi waktu menyala.','Ingat: sumur desa memulihkan tenagamu.']);
+    return;
+  }
+  if(n.id==='bagas'){
+    const l=G.flags.towerDone
+      ?['KAK LEGENDA! Kata orang namamu terukir di Menara Angin!','Boleh nggak kakak ajak Bagas naik menara? ...eh, nanti kalau kakak sudah dewasa ya.']
+      :G.flags.nagaDead
+      ?['Kak! Ada menara baru keluar dari puncak gunung! Berkilau-kilau!','Kakak mau naik? Bawa bekal banyak-banyak!']
+      :G.flags.bossDead
+      ?['Kata Bapak Pendaki, di gunung ada golem yang jalan pelan tapi SAKIT banget kena pukulnya!']
+      :Math.random()<.5
+      ?['Kak Pendekar! Kata orang, Korog paling takut sama orang berikat kepala merah!']
+      :['Kalau kamu kalahkan Raja Korog, aku kasih kamu tempat sembunyi paling apik!','...tempatnya di belakang aku. Hihi.'];
+    await say('Bagas',l);return;
+  }
+  if(n.id==='tani'){
+    if(!G.flags.tani){
+      G.flags.tani=true;player.gold+=25;player.items.ram++;refreshHUD();saveGame();sfx('coin');
+      await say('Pak Warsa',['Ladangku rusak digerus para Korog... terima kasih mau melawan mereka, Nak.','Ambillah hasil jual panenku, plus satu ramuan. Semoga berkah!']);
+      toast('+25 G, Ramuan +1');
+    }else await say('Pak Warsa',['Malam-malam begini, ikan di sungai suka laris dipancing... Coba deh, hadap sungai terus tekan aksi.']);
+    return;
+  }
+}
+async function talkSari(){
+  if(!G.flags.sari){
+    G.flags.sari=true;G.flags.sariQ=true;player.items.ram++;refreshHUD();saveGame();refreshQuest();
+    await say('Bu Sari',['Aku takut keluar rumah... ada suara aneh dari arah hutan.','Ini, bawalah ramuan ini. Hati-hati ya, Nak.','Oh iya... kata Eyang, ada 3 BUNGA EMAS: di taman desa, rimba timur, dan lereng gunung.','Bisa Kakak carikan semuanya? Untuk jimat penyembuh.']);
+    toast('Ramuan +1 · Tugas sampingan!');
+  }else if(!G.flags.charm){
+    if(G.flowers>=3){
+      G.flags.charm=true;saveGame();sfx('level');refreshQuest();
+      await say('Bu Sari',['Bunga emas... semua lengkap! Terima kasih, Nak!','Ini jimat buatanku. Membawa keberuntungan dalam pertarungan!']);
+      toast('Jimat Keberuntungan! Kritikal naik!');
+    }else await say('Bu Sari',['Bunga emasnya baru '+Math.min(G.flowers,3)+' dari 3...','Taman desa, rimba timur, dan lereng gunung ya, Nak.']);
+  }else await say('Bu Sari',['Jimatnya cocok di badanmu! Terlihat dari sinarmu... hihi.']);
+}
+async function talkPendaki(){
+  if(nowT<restT){
+    await say('Pak Pendaki',['Hosh hosh... maaf Nak, api unggun masih dinyalakan ulang.','Kembali lagi beberapa saat lagi.']);
+    return;
+  }
+  restT=nowT+120;
+  player.hp=player.maxHp;player.mp=player.maxMp;refreshHUD();saveGame();sfx('heal');
+  await say('Pak Pendaki',['Sshh... duduk dekat unggun dulu, Nak. Minum tehnya.','(HP & MP pulih penuh!)','Waspadai GOLEM — kulitnya keras tapi geraknya lambat.','Dan jika menara itu sudah memanggilmu... bawa bekal sebanyak-banyaknya.']);
+}
+async function talkKi(){
+  if(G.flags.towerDone){
+    if(!G.flags.kiAfter3){
+      G.flags.kiAfter3=true;player.gold+=300;refreshHUD();saveGame();sfx('coin');
+      await say('Ki Jaka',['LEGENDA NUSANTARA kembali! Seisi desa bersorak untukmu, Nak!','Terimalah 300 G, harta pusaka desa. Kau lebih dari layak!']);
+      toast('+300 G');
+    }else await say('Ki Jaka',['Legenda desa... istirahatlah, Nak. Nammu akan dikenang selamanya.']);
+    return;
+  }
+  if(G.flags.nagaDead){
+    if(!G.flags.kiAfter2){
+      G.flags.kiAfter2=true;player.gold+=200;refreshHUD();saveGame();sfx('coin');
+      await say('Ki Jaka',['Naga Abu... kalah? Sungguh kah, Nak?!','Nama ARGA akan dikenang seisi desa! Terimalah 200 G!','Dan sekarang... lihatlah puncak gunung. Ada menara berkilau muncul di sana!']);
+      toast('+200 G');
+    }else await say('Ki Jaka',['Menara Angin menantimu di puncak, Nak. Temui Eyang untuk nasihat.']);
+    return;
+  }
+  if(G.flags.bossDead){
+    if(!G.flags.kiAfter){
+      G.flags.kiAfter=true;G.quest=4;player.gold+=100;
+      refreshHUD();refreshQuest();saveGame();sfx('sel');
+      await say('Ki Jaka',['Sungguh luar biasa, Nak! Terimalah 100 G tanda terima kasih seisi desa!','Tapi... malam tadi Gunung Karang MELETUS!','Eyang bilang, Raja Korog hanyalah kecil... yang besar tertidur di puncak: NAGA ABU!','Masuki Goa Timur — ternyata menembus ke jantung gunung!','Siapkan senjata dari Pak Empu, dan temui Eyang!']);
+      toast('BABAK II: Gunung Karang!');
+      toast('+100 G');
+    }else await say('Ki Jaka',['Goa Timur terbuka ke terowongan gunung, Nak.','Bu Ratmi menjual Teh Gunung sekarang. Pak Empu punya senjata & jasa tempa!']);
+    return;
+  }
+  if(G.quest===0){
+    G.quest=1;player.gold+=30;refreshHUD();refreshQuest();saveGame();sfx('sel');
+    await say('Ki Jaka',['Nak, kamu sudah datang! Syukurlah...','Para Korog keluar dari Hutan Rimba Larung. Ladang dirusak, warga ketakutan.','Mohon, kalahkan 3 Korog di hutan seberang sungai timur!','Ini bekal 30 G dariku. Bu Ratmi menjual Ramuan. Hati-hati, Nak!']);
+    toast('Tugas baru: Kalahkan 3 Korog!');
+  }else if(G.quest===1){
+    if(G.kills<3)await say('Ki Jaka',[`Bagaimana hutan? Kamu baru mengalahkan ${G.kills} dari 3 Korog.`,'Tetap waspada, Nak.']);
+    else{
+      G.quest=2;player.gold+=60;refreshHUD();refreshQuest();saveGame();sfx('coin');
+      await say('Ki Jaka',['Hebat, Nak! Tapi... ada yang lebih besar: SANG RAJA KOROG!','Sarangnya di Goa Timur, ujung timur laut hutan!','Sebelum pergi, temui Eyang Kartala di timur desa untuk jurus sakti.','Ini 60 G untuk bekalmu. Selamat berjuang, Pendekar!']);
+      toast('Tugas baru: Taklukkan Raja Korog!');
+    }
+  }else await say('Ki Jaka',['RAJA KOROG menunggumu di Goa Timur.','Kalau HP habis, minumlah dari sumur desa.']);
+}
+async function shopRatmi(){
+  await say('Bu Ratmi',G.flags.ratmiMet?['Ada yang bisa Bu Ratmi bantu, Nak?']
+    :['Selamat datang di warung Bu Ratmi! Ramuan segar, murah meriah!']);
+  G.flags.ratmiMet=true;
+  while(true){
+    const fv=player.items.f1*20+player.items.f2*60+player.items.f3*150;
+    const i=await choose('Bu Ratmi','Mau beli apa, Nak?',[
+      `Ramuan — 30 G (punya ${player.items.ram})`,
+      `Teh Gunung — 25 G (punya ${player.items.teh})`,
+      `Elixir — 80 G (punya ${player.items.elix})`,
+      `Jual semua ikan — ${fv} G`,
+      'Sudah cukup, terima kasih']);
+    if(i===4){await say('Bu Ratmi',['Hati-hati di jalan, Nak!']);break}
+    if(i===3){
+      if(fv===0){await say('Bu Ratmi',['Ikanmu masih kosong, Nak. Coba pancing di sungai!']);continue}
+      player.gold+=fv;
+      player.items.f1=player.items.f2=player.items.f3=0;
+      refreshHUD();saveGame();sfx('coin');
+      toast('Ikan terjual +'+fv+' G');
+      continue;
+    }
+    const key=['ram','teh','elix'][i], price=[30,25,80][i];
+    if(player.gold<price){await say('Bu Ratmi',['Maaf, Nak, uangmu kurang. Kumpulkan lagi ya.']);continue}
+    player.gold-=price;player.items[key]++;refreshHUD();saveGame();sfx('coin');
+    toast({ram:'Ramuan',teh:'Teh Gunung',elix:'Elixir'}[key]+' +1');
+  }
+}
+async function shopEmpu(){
+  await say('Pak Empu',G.flags.empuMet?['Ada pesanan? Baja panas, hati hangat, hahaha!']
+    :['Selamat datang di bengkel Pak Empu! Pandai besi turun-temurun.','Bawa Bijih Besi dari golem, kubuatkan senjatamu makin tajam!']);
+  G.flags.empuMet=true;
+  while(true){
+    const plus=player.wpnPlus||0;
+    const i=await choose('Pak Empu','Mau pesan apa, Nak? (Senjata: '+WPN[player.wpn].n+(plus?' +'+plus:'')+')',[
+      'Pedang Baja — 150 G (Serang +4)',
+      'Zirah Kulit — 120 G (Tahan +3)',
+      'Pedang Empu — 450 G (Serang +9)',
+      'Zirah Baja — 380 G (Tahan +7)',
+      `Tempa Senjata +1 — 100 G + 1 Bijih (Bijih: ${player.items.bijih})`,
+      'Cukup, terima kasih']);
+    if(i===5){await say('Pak Empu',['Kokoh di tangan, tenang di hati. Hati-hati, Nak!']);break}
+    if(i===4){
+      if(plus>=5){await say('Pak Empu',['Senjatamu sudah PUNCAK tempaanku! Pertahankan!']);continue}
+      if(player.items.bijih<1){await say('Pak Empu',['Bawakan aku BIJIH BESI. Golem-golem di gunung suka menjatuhkannya!']);continue}
+      if(player.gold<100){await say('Pak Empu',['Uangmu kurang untuk jasa tempaku, Nak.']);continue}
+      player.gold-=100;player.items.bijih--;player.wpnPlus=plus+1;
+      refreshHUD();saveGame();sfx('forge');
+      await say('Pak Empu',['KLETK... KLETK... SSSSSEUUUP!','JADILAH! '+WPN[player.wpn].n+' +'+player.wpnPlus+'! Tajam sepuluh kali lipat!']);
+      toast('Senjata ditempa: +'+player.wpnPlus+' Serang');
+      continue;
+    }
+    const price=[150,120,450,380][i];
+    if(player.gold<price){await say('Pak Empu',['Uangmu belum cukup, Nak. Baja ini mahal karena berkualitas!']);continue}
+    player.gold-=price;
+    if(i===0)player.wpn='baja';
+    if(i===1)player.arm='kulit';
+    if(i===2)player.wpn='empu';
+    if(i===3)player.arm='baja';
+    refreshHUD();saveGame();sfx('coin');
+    toast(i%2?ARM[i===1?'kulit':'baja'].n+' dipakai!':WPN[i===0?'baja':'empu'].n+' dipakai!');
+  }
+}
+async function preBattleTalk(e){
+  if(e.type==='na'){
+    sfx('roar');
+    await say('???',['HUDHUDHUD...!!!','SEORANG MANUSIA... MENAIKI PUNCAK-KU?!','AKU NAGA ABU. ABU-KU AKAN MENGUBUR DESA-MU!']);
+    const c=await choose('NAGA ABU','Apa yang kau lakukan?',['LAWAN HINGGA TITISAN TERAKHIR!','Mundur dulu...']);
+    if(c===1){await say('',['Kau mundur selangkah. Naga itu memelototimu...']);return}
+  }else if(e.type==='tw'){
+    sfx('roar');
+    await say('???',['...AKHIRNYA. YANG MAMPU MENEMBUS LANTAI KESEPULUH.','AKU PENGUASA MENARA. TUNJUKKAN... GIGIMU, PENDEKAR!']);
+  }else if(e.type==='ga'){
+    sfx('roar');
+    await say('???',['DUM... DUM... DUM...','GOLEM AGUNG MARGA BATU MEBLOKIR JALAN!']);
+  }else if(e.type==='gl')await say('???',['Krek... krek...','Golem itu bangkit dari kaki tanah!']);
+  else if(e.type==='sh')await say('???',['Ssssh... kau tidak melihatku, bukan...?','Korog Bayangan muncul dari bayanganmu sendiri!']);
+  else if(e.type==='b')await say('???',['GRAAA... MANUSIA KECIL...','MAU JADI SANTAPAN RAJA KOROG?!']);
+  else await say('???',['Grrr... KRAK!','Korog itu menerkam!']);
+  startBattle(e);
+}
+
+/* ================= PERTARUNGAN ================= */
+const bActs=$('bActs'),bLogEl=$('blog');
+let curEnemy=null,arenaType='forest';
+const bState={choosing:false,res:null,anim:{who:null,t:0},flash:{who:null,t:0},flashCol:'#fff',
+  floats:[],parts:[],slash:1};
+function burst(x,y,n,col,spd=70,g=120){
+  for(let i=0;i<n;i++){
+    const a=Math.random()*Math.PI*2, v=spd*(.4+Math.random()*.8);
+    bState.parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-30,g,t:0,life:.35+Math.random()*.35,col,r:1+Math.random()*2.5});
+  }
+}
+async function blog(s){bLogEl.textContent=s;await wait(780)}
+function setActions(list){
+  bActs.innerHTML='';
+  list.forEach((a,i)=>{
+    const b=document.createElement('button');
+    b.className='act'+(a.cls?' '+a.cls:'');
+    b.innerHTML=`${a.label}<small>[${i+1}]</small>`;
+    b.disabled=!!a.disabled;
+    b.addEventListener('click',()=>{if(b.disabled||!bState.choosing)return;sfx('sel');const r=bState.res;bState.choosing=false;bState.res=null;bActs.innerHTML='';r(a)});
+    bActs.appendChild(b);
+  });
+}
+const unlockedSkills=()=>SKILLS.filter(s=>player.lvl>=s.minL);
+function pickAction(){
+  return new Promise(res=>{
+    bState.choosing=true;bState.res=res;
+    setActions([
+      {k:'atk',label:'SERANG'},
+      {k:'skl',label:'JURUS ▸',disabled:!unlockedSkills().length,cls:'alt'},
+      {k:'item',label:'BARANG ▸',disabled:player.items.ram+player.items.teh+player.items.elix===0,cls:'warn'},
+      {k:'flee',label:'KABUR',disabled:!!curEnemy.boss},
+    ]);
+  });
+}
+function pickSkill(){
+  return new Promise(res=>{
+    bState.choosing=true;bState.res=res;
+    const list=unlockedSkills().map(s=>({k:s,label:s.n,disabled:player.mp<s.mp,cls:'alt'}));
+    list.push({k:null,label:'KEMBALI'});
+    setActions(list);
+  });
+}
+function pickItem(){
+  return new Promise(res=>{
+    bState.choosing=true;bState.res=res;
+    setActions([
+      {k:'ram',label:`RAMUAN ×${player.items.ram}`,disabled:!player.items.ram,cls:'warn'},
+      {k:'teh',label:`TEH ×${player.items.teh}`,disabled:!player.items.teh,cls:'warn'},
+      {k:'elix',label:`ELIXIR ×${player.items.elix}`,disabled:!player.items.elix,cls:'warn'},
+      {k:null,label:'KEMBALI'},
+    ]);
+  });
+}
+function refreshBattleHUD(){
+  $('bPBar').firstElementChild.style.transform=`scaleX(${clamp(player.hp/player.maxHp,0,1)})`;
+  $('bPMBar').firstElementChild.style.transform=`scaleX(${clamp(player.mp/player.maxMp,0,1)})`;
+  $('bEBar').firstElementChild.style.transform=`scaleX(${clamp(curEnemy.hp/curEnemy.maxHp,0,1)})`;
+  $('bPName').textContent=`ARGA  Lv${player.lvl}`;
+  $('bEName').textContent=curEnemy.name;
+}
+function calcDmg(atk,def){
+  const base=Math.max(1,Math.round((atk-def)*(0.85+Math.random()*0.3)));
+  const crit=Math.random()<(G.flags.charm?0.2:0.1);
+  return{dmg:crit?Math.round(base*1.5):base,crit};
+}
+function floatTxt(x,y,txt,col){bState.floats.push({x,y,txt,col,t:0})}
+async function wipeClose(){const w=$('wipe');w.style.clipPath='circle(120% at 50% 50%)';w.classList.add('on');await wait(480)}
+async function wipeOpen(){const w=$('wipe');w.classList.remove('on');w.style.clipPath='circle(0% at 50% 50%)';await wait(480)}
+
+async function startBattle(e){
+  if(mode!=='world')return;
+  mode='battle';sfx('battle');
+  await wipeClose();
+  arenaType=curMap==='menara'?'tower':e.type==='na'||e.type==='ga'?'mountain':e.type==='b'?'cave':'forest';
+  curEnemy={id:e.id,type:e.type,name:e.name,boss:e.boss,hp:e.hp,maxHp:e.maxHp,
+    atk:e.atk,def:e.def,xp:e.xp,gold:e.gold,fl:e.fl||1,ref:e};
+  $('battleUI').classList.remove('hidden');
+  refreshBattleHUD();bLogEl.textContent='';
+  startMusic('battle');
+  if(curEnemy.boss)sfx('roar');
+  await blog(curEnemy.boss?curEnemy.name+' MENGHALANGIMU!':curEnemy.name+' muncul!' + (curEnemy.fl>1?'  (Lantai '+curEnemy.fl+')':''));
+  let ended=null;
+  while(!ended){
+    const act=await pickAction();
+    if(act.k==='flee'){
+      if(Math.random()<.6){await blog('Arga berhasil kabur!');ended='fled';break}
+      await blog('Gagal kabur!');
+    }else if(act.k==='atk'){
+      bState.anim={who:'player',t:0};bState.slash=0;
+      await wait(200);
+      const{dmg,crit}=calcDmg(pAtk(),curEnemy.def);
+      curEnemy.hp-=dmg;bState.flash={who:'enemy',t:0};bState.flashCol='#fff';sfx('hit');
+      const sp=BSP[curEnemy.type]||BSP.g;
+      burst(sp.x+20*curEnemy.fl? sp.x+22:sp.x+22, sp.y+16, 8,'#ffffff',80);
+      floatTxt(360,110,''+dmg,crit?'#e9b44c':'#fff');
+      await blog(`Arga menebas dengan ${WPN[player.wpn].n}${player.wpnPlus?' +'+player.wpnPlus:''}! ${dmg} kerusakan${crit?' — KRITIS!':'.'}`);
+      refreshBattleHUD();
+      if(curEnemy.hp<=0){ended='win';break}
+    }else if(act.k==='skl'){
+      const sk=await pickSkill();
+      if(!sk)continue;
+      player.mp-=sk.mp;refreshBattleHUD();
+      bState.anim={who:'player',t:0};bState.slash=0;
+      await wait(200);
+      sfx('magic');
+      const sp=BSP[curEnemy.type]||BSP.g;
+      const col=sk.id==='api'?'#ff9a5c':sk.id==='angin'?'#bfe8ff':'#ffe9a0';
+      burst(sp.x+22,sp.y+16,sk.id==='api'?22:14,col,110);
+      if(sk.id==='api')burst(sp.x+22,sp.y+10,12,'#ffd23c',90);
+      const{dmg,crit}=calcDmg(Math.round(pAtk()*sk.mult),curEnemy.def);
+      curEnemy.hp-=dmg;
+      bState.flash={who:'enemy',t:0};bState.flashCol=col;
+      floatTxt(360,100,''+dmg,crit?'#e9b44c':'#ffd76e');
+      await blog(`${sk.n}!!${crit?' TEPAT SASARAN!':''} ${dmg} kerusakan!`);
+      refreshBattleHUD();
+      if(curEnemy.hp<=0){ended='win';break}
+    }else if(act.k==='item'){
+      const it=await pickItem();
+      if(!it.k)continue;
+      if(it.k==='ram'){player.items.ram--;player.hp=Math.min(player.maxHp,player.hp+40);sfx('heal');
+        floatTxt(140,150,'+40','#8fd67e');await blog('Arga meminum Ramuan. HP pulih!')}
+      else if(it.k==='teh'){player.items.teh--;player.mp=Math.min(player.maxMp,player.mp+25);sfx('heal');
+        floatTxt(140,150,'+25 MP','#7ec3d6');await blog('Arga menyeruput Teh Gunung. MP pulih!')}
+      else{player.items.elix--;player.hp=player.maxHp;player.mp=player.maxMp;sfx('heal');
+        floatTxt(140,150,'MAX','#8fd67e');await blog('Arga meminum Elixir. Tenaga pulih penuh!')}
+      refreshBattleHUD();
+    }
+    if(curEnemy.hp>0){
+      await wait(250);
+      let mult=1,txt=`${curEnemy.name} menyerang!`;
+      if(curEnemy.boss&&Math.random()<.32){
+        mult=1.4;
+        txt=curEnemy.type==='na'?'NAGA ABU MEMBILAS API ABU!!':curEnemy.type==='tw'?'PENGUASA MENARA MENGHANTAM!!':'RAJA KOROG / GOLEM MENGANAS!!';
+      }
+      bState.anim={who:'enemy',t:0};
+      await wait(200);
+      if(curEnemy.type==='na')burst(140,170,14,'#ff8c4c',110);
+      const{dmg}=calcDmg(Math.round(curEnemy.atk*mult),pDef());
+      player.hp=Math.max(0,player.hp-dmg);
+      bState.flash={who:'player',t:0};bState.flashCol='#f2785f';sfx('hurt');
+      burst(140,165,8,'#f2785f',70);
+      stage.classList.add('shake');setTimeout(()=>stage.classList.remove('shake'),320);
+      floatTxt(140,150,''+dmg,'#f2785f');
+      await blog(`${txt} Arga terkena ${dmg}!`);
+      refreshBattleHUD();
+      if(player.hp<=0){ended='lose';break}
+    }
+  }
+  if(ended==='win')await battleVictory();
+  else if(ended==='lose')await battleDefeat();
+  else{
+    $('battleUI').classList.add('hidden');
+    await wipeOpen();mode='world';
+    startMusic(curMap==='desa'?'over':'mount');
+  }
+}
+async function battleVictory(){
+  sfx('victory');
+  await blog(`${curEnemy.name} dikalahkan!`);
+  player.xp+=curEnemy.xp;player.gold+=curEnemy.gold;
+  refreshHUD();
+  await blog(curEnemy.gold>0?`Dapat ${curEnemy.xp} XP dan ${curEnemy.gold} G!`:`Dapat ${curEnemy.xp} XP!`);
+  if((curEnemy.type==='gl'||curEnemy.type==='ga')&&Math.random()<.55){
+    player.items.bijih++;
+    await blog('Dapat 1 BIJIH BESI! (bawa ke Pak Empu untuk menempa)');
+    toast('Bijih Besi +1');
+  }
+  const before=player.lvl;
+  while(player.xp>=xpNeed(player.lvl)){
+    player.xp-=xpNeed(player.lvl);player.lvl++;
+    player.maxHp+=14;player.maxMp+=6;player.atk+=2;player.def+=1;
+    player.hp=player.maxHp;player.mp=player.maxMp;
+    sfx('level');refreshHUD();
+    await blog(`Arga naik ke LEVEL ${player.lvl}! Kekuatan bertambah!`);
+  }
+  for(const s of SKILLS){
+    if(before<s.minL&&player.lvl>=s.minL){
+      await blog(`Jurus baru terbuka: ${s.n}! (${s.mp} MP)`);
+      toast('Jurus baru: '+s.n+'!');
+    }
+  }
+  const ref=curEnemy.ref;
+  ref.alive=false;
+  const inTower=curMap==='menara';
+  if(inTower){
+    G.kills++;G.stats.kills++;
+    if(curEnemy.type==='tw'){G.flags.towerDone=true;if(G.quest<7){G.quest=7;refreshQuest()}}
+    ref.rt=1e9;
+    if(enemies.every(x=>!x.alive))toast('✦ Tangga terbuka! Naiki tangga di utara! ✦');
+  }else if(curEnemy.boss){
+    G.stats.kills++;
+    G.dead.push(ref.id);
+    enemies=enemies.filter(x=>x.id!==ref.id);
+    if(curEnemy.type==='b'){G.flags.bossDead=true;G.quest=3;refreshQuest()}
+    else if(curEnemy.type==='ga')toast('Jalan ke puncak terbuka!');
+  }else{
+    G.kills++;G.stats.kills++;
+    ref.rt=70;
+    if(G.quest===1&&G.kills===3)toast('Tugas: laporkan ke Ki Jaka!');
+  }
+  saveGame();
+  $('battleUI').classList.add('hidden');
+  await wipeOpen();mode='world';
+  startMusic(curMap==='desa'?'over':'mount');
+  if(curEnemy.type==='b'){
+    await say('???',['Graa... tidak bisa... RAJA KOROG... kalah...']);
+    await say('Arga',['Huh... huh...','Angin desa terasa damai kembali.']);
+    if(!G.flags.end1){G.flags.end1=true;showEnding('b1')}
+    saveGame();
+  }else if(curEnemy.type==='na'){
+    sfx('roar');
+    await say('NAGA ABU',['Tidak... abu-ku... menyebar...','SANG PENDEKAR... KAU... MENANG...']);
+    await say('Arga',['Gunung pun hening. Hanya salju yang berjatuhan lembut...','Tapi tunggu... ada cahaya aneh dari puncak...']);
+    if(!G.flags.end2){G.flags.end2=true;showEnding('naga')}
+    saveGame();
+  }else if(curEnemy.type==='tw'){
+    await say('PENGUASA MENARA',['Begitulah... kekuatanmu... telah lulus ujian menara.','PEGANGLAH GELAR INI... LEGENDA NUSANTARA...']);
+    await say('Arga',['Menara bergemuruh lalu tenang...','Dari puncaknya, seluruh Nusantara terlihat mempesona.']);
+    if(!G.flags.end3){G.flags.end3=true;showEnding('tower')}
+    saveGame();
+  }
+}
+async function battleDefeat(){
+  await blog('Arga tumbang...');
+  await wipeClose();
+  $('battleUI').classList.add('hidden');
+  player.hp=Math.ceil(player.maxHp/2);player.mp=player.maxMp;
+  const back=curMap==='menara'?'gunung':'desa';
+  curMap=back;player.map=back;
+  if(back==='gunung'){player.tx=20;player.ty=4}else{player.tx=11;player.ty=19}
+  player.px=player.tx*TS;player.py=player.ty*TS;player.moving=false;player.dir='down';
+  loadEnemies(back);
+  mode='world';startMusic(back==='desa'?'over':'mount');
+  await wipeOpen();
+  await say('',['Kamu terbawa kembali...','"Nak, cepat pulihkan dirimu dulu!"']);
+  refreshHUD();saveGame();
+}
+
+/* ================= MENU STATUS ================= */
+let menuOpen=false;
+function toggleMenu(){if(fish.active)return;menuOpen?closeMenu():openMenu()}
+function openMenu(){
+  if(mode!=='world'||dlg.open)return;
+  menuOpen=true;$('statusMenu').classList.remove('hidden');renderMenu();
+}
+function closeMenu(){menuOpen=false;$('statusMenu').classList.add('hidden')}
+ $('menuBtn').addEventListener('click',toggleMenu);
+ $('stClose').addEventListener('click',closeMenu);
+function renderMenu(){
+  const plus=player.wpnPlus?('+'+player.wpnPlus):'';
+  $('stBody').innerHTML=`
+    <div>
+      <div><span class="k">Nama</span> : ${player.name}</div>
+      <div><span class="k">Level</span> : ${player.lvl}</div>
+      <div><span class="k">HP</span> : ${player.hp}/${player.maxHp}</div>
+      <div><span class="k">MP</span> : ${player.mp}/${player.maxMp}</div>
+      <div><span class="k">Serang</span> : ${pAtk()} (${WPN[player.wpn].n}${plus})</div>
+      <div><span class="k">Tahan</span> : ${pDef()} (${ARM[player.arm].n})</div>
+      <div><span class="k">Gold</span> : ${player.gold} G</div>
+      <div><span class="k">Jimat</span> : ${G.flags.charm?'Ada (+kritikal)':'—'}</div>
+    </div>
+    <div>
+      <div><span class="k">Jurus:</span></div>
+      ${unlockedSkills().map(s=>`<div>· ${s.n} (${s.mp} MP)</div>`).join('')||'<div>— belum ada —</div>'}
+      <div style="margin-top:.5em"><span class="k">Ramuan</span> ${player.items.ram} · <span class="k">Teh</span> ${player.items.teh} · <span class="k">Elix</span> ${player.items.elix}</div>
+      <div><span class="k">Bijih</span> ${player.items.bijih} · <span class="k">Ikan</span> ${player.items.f1}/${player.items.f2}/${player.items.f3}</div>
+      <div style="margin-top:.5em;color:#9aa0c4">Monster: ${G.stats.kills} · Ikan: ${G.stats.fish}<br>Rekor Menara: Lt ${G.towerBest||0} · ${dayLabel()}<br>${MAPS[curMap].name} · tersimpan otomatis</div>
+    </div>`;
+  const si=$('stItems');si.innerHTML='';
+  const uses=[
+    ['ram','Ramuan (HP+40)',()=>{player.items.ram--;player.hp=Math.min(player.maxHp,player.hp+40);toast('HP +40')}],
+    ['teh','Teh (MP+25)',()=>{player.items.teh--;player.mp=Math.min(player.maxMp,player.mp+25);toast('MP +25')}],
+    ['elix','Elixir (penuh)',()=>{player.items.elix--;player.hp=player.maxHp;player.mp=player.maxMp;toast('Pulih penuh!')}],
+    ['f1','Ikan Kecil (HP+40)',()=>{player.items.f1--;player.hp=Math.min(player.maxHp,player.hp+40);toast('HP +40')}],
+    ['f2','Ikan Besar (HP+80)',()=>{player.items.f2--;player.hp=Math.min(player.maxHp,player.hp+80);toast('HP +80')}],
+    ['f3','Ikan Emas (penuh)',()=>{player.items.f3--;player.hp=player.maxHp;player.mp=player.maxMp;toast('LENGKAP!')}],
+  ];
+  uses.forEach(([key,label,fn])=>{
+    const b=document.createElement('button');b.className='stbtn';
+    b.textContent=`${label} ×${player.items[key]}`;b.disabled=!player.items[key];
+    b.addEventListener('click',()=>{fn();sfx('heal');refreshHUD();renderMenu();saveGame()});
+    si.appendChild(b);
+  });
+}
+
+/* ================= RENDER DUNIA ================= */
+let cam={x:0,y:0};
+function renderWorld(){
+  const M=MAPS[curMap], m=M.m, W=cv.width, H=cv.height;
+  let focusX=player.px+8,focusY=player.py+8;
+  if(mode==='title'&&curMap==='desa'){focusX=9*TS;focusY=17*TS+Math.sin(nowT*.4)*10}
+  cam.x=clamp(focusX-W/2,0,m.w*TS-W);
+  cam.y=clamp(focusY-H/2,0,m.h*TS-H);
+  const x0=Math.floor(cam.x/TS),y0=Math.floor(cam.y/TS);
+  for(let y=y0;y<=y0+Math.ceil(H/TS);y++)
+    for(let x=x0;x<=x0+Math.ceil(W/TS);x++)
+      drawTile(gget(m,x,y),Math.round(x*TS-cam.x),Math.round(y*TS-cam.y),x,y);
+  const list=[];
+  for(const n of M.npcs)list.push({y:n.y,draw:()=>drawChar(ctx,Math.round(n.x*TS-cam.x),Math.round(n.y*TS-cam.y),n.pal,n.dir,nowT,false)});
+  for(const e of enemies)if(e.alive)list.push({y:e.y,draw:()=>drawMonster(ctx,Math.round(e.px-cam.x+2),Math.round(e.py-cam.y+2),e.type,nowT+e.x,1)});
+  list.push({y:player.py/TS,draw:()=>drawChar(ctx,Math.round(player.px-cam.x),Math.round(player.py-cam.y),PAL.hero,player.dir,player.walkT,player.moving)});
+  list.sort((a,b)=>a.y-b.y).forEach(o=>o.draw());
+  // ---- siklus siang-malam ----
+  const p=dayPhase();
+  let a=0,c='#000';
+  if(p>=0.42&&p<0.5){a=(p-0.42)/0.08*0.26;c='#ff8c4a'}
+  else if(p>=0.5&&p<0.9){a=0.30;c='#101a44'}
+  else if(p>=0.9){a=(1-p)/0.1*0.26;c='#ffb45c'}
+  if(curMap==='menara')a=Math.min(a,0.12);
+  if(a>0){ctx.globalAlpha=a;ctx.fillStyle=c;ctx.fillRect(0,0,W,H);ctx.globalAlpha=1}
+  // kunang-kunang
+  for(const pt of worldParts){
+    const al=Math.sin(Math.PI*clamp(pt.t/pt.life,0,1));
+    ctx.globalAlpha=al*.9;
+    ctx.fillStyle='#d8ff9a';
+    const sx=pt.x-cam.x, sy=pt.y-cam.y+Math.sin(nowT*3+pt.x)*3;
+    ctx.fillRect(sx,sy,2,2);
+    ctx.globalAlpha=al*.25;
+    ctx.fillRect(sx-2,sy-2,6,6);
+    ctx.globalAlpha=1;
+  }
+}
+/* ================= RENDER BATTLE ================= */
+const BSP={g:{x:340,y:110,s:5},w:{x:335,y:104,s:5.5},b:{x:300,y:96,s:5},
+  gl:{x:326,y:86,s:6.5},sh:{x:336,y:102,s:6},ga:{x:310,y:76,s:8},na:{x:288,y:60,s:9},tw:{x:296,y:52,s:9.5}};
+function renderBattle(){
+  const W=cv.width,H=cv.height;
+  if(arenaType==='forest'){
+    ctx.fillStyle='#26314a';ctx.fillRect(0,0,W,210);
+    ctx.fillStyle='#1d2740';
+    for(let i=0;i<7;i++){const bx=20+i*70;ctx.fillRect(bx,120,26,90);ctx.fillRect(bx-14,140,54,70)}
+    ctx.fillStyle='#c9a468';ctx.fillRect(0,210,W,H-210);
+    for(let i=0;i<60;i++){const h=hash2(i,7);
+      ctx.fillStyle=h<.5?'#b8935a':'#d8b57f';
+      ctx.fillRect((h*468)|0,215+((h*97)%100|0),3,2)}
+  }else if(arenaType==='cave'){
+    ctx.fillStyle='#1a1c2c';ctx.fillRect(0,0,W,210);
+    ctx.fillStyle='#141622';
+    for(let i=0;i<6;i++)ctx.fillRect(15+i*82,60,40,150);
+    ctx.fillStyle='#6e7089';ctx.fillRect(0,210,W,H-210);
+    for(let i=0;i<50;i++){const h=hash2(i,13);
+      ctx.fillStyle=h<.5?'#5e617a':'#82859c';
+      ctx.fillRect((h*468)|0,215+((h*97)%100|0),4,3)}
+  }else if(arenaType==='tower'){
+    ctx.fillStyle='#232842';ctx.fillRect(0,0,W,210);
+    ctx.fillStyle='#2e3454';
+    for(let i=0;i<5;i++){const px=20+i*100;ctx.fillRect(px,40,14,170)}
+    for(let i=0;i<4;i++){const gl2=.5+.5*Math.sin(nowT*6+i*2);
+      ctx.fillStyle=`rgba(255,210,60,${.3+.4*gl2})`;
+      ctx.fillRect(56+i*100,60,8,12)}
+    ctx.fillStyle='#565b78';ctx.fillRect(0,210,W,H-210);
+    for(let i=0;i<50;i++){const h=hash2(i,31);
+      ctx.fillStyle=h<.5?'#464b66':'#6a6f8c';
+      ctx.fillRect((h*468)|0,215+((h*97)%100|0),4,3)}
+  }else{
+    ctx.fillStyle='#2a2d40';ctx.fillRect(0,0,W,210);
+    ctx.fillStyle='#3a3e56';
+    for(let i=0;i<6;i++){const px=30+i*80;ctx.beginPath();ctx.moveTo(px,190);ctx.lineTo(px+40,60+((i*37)%50));ctx.lineTo(px+80,190);ctx.fill()}
+    ctx.fillStyle='#e8ecf4';
+    for(let i=0;i<4;i++){const px=60+i*110;ctx.beginPath();ctx.moveTo(px,110);ctx.lineTo(px+30,70);ctx.lineTo(px+60,110);ctx.fill()}
+    const gl=.5+.5*Math.sin(nowT*4);
+    ctx.fillStyle=`rgba(255,122,60,${.35+.25*gl})`;
+    ctx.fillRect(0,205,W,5);
+    ctx.fillStyle='#74778e';ctx.fillRect(0,210,W,H-210);
+    for(let i=0;i<50;i++){const h=hash2(i,29);
+      ctx.fillStyle=h<.5?'#5e617a':'#82859c';
+      ctx.fillRect((h*468)|0,215+((h*97)%100|0),4,3);
+      if(h>.9){ctx.fillStyle='rgba(255,255,255,.7)';ctx.fillRect((h*400)|0,((nowT*30+i*97)%210|0),2,2)}
+    }
+  }
+  const sp=BSP[curEnemy.type]||BSP.g;
+  let ex=sp.x,ey=sp.y;const es=sp.s;
+  if(bState.anim.who==='enemy'){const k=Math.sin(bState.anim.t*Math.PI);ex-=90*k}
+  if(bState.flash.who==='enemy'&&bState.flash.t<.25){
+    ctx.globalAlpha=.85;ctx.fillStyle=bState.flashCol;
+    ctx.fillRect(ex-2,ey-4,26*es/5,26*es/5);ctx.globalAlpha=1;
+  }
+  drawMonster(ctx,ex,ey,curEnemy.type,nowT,es);
+  let px=100,py=150;const ps=4;
+  if(bState.anim.who==='player'){const k=Math.sin(bState.anim.t*Math.PI);px+=110*k}
+  ctx.save();ctx.translate(px,py);ctx.scale(ps,ps);
+  drawChar(ctx,0,0,PAL.hero,'right',nowT,false);ctx.restore();
+  if(bState.flash.who==='player'&&bState.flash.t<.25){
+    ctx.globalAlpha=.7;ctx.fillStyle=bState.flashCol;
+    ctx.fillRect(px,py,16*ps,17*ps);ctx.globalAlpha=1;
+  }
+  // sabetan pedang
+  if(bState.slash<.25){
+    const k=bState.slash/.25;
+    ctx.strokeStyle=`rgba(255,255,255,${1-k})`;
+    ctx.lineWidth=3;
+    ctx.beginPath();
+    ctx.arc(ex+20,ey+16,24+k*26,-1.2+k*.7,1.0+k*.7);
+    ctx.stroke();
+  }
+  // partikel
+  for(const pt of bState.parts){
+    ctx.globalAlpha=clamp(1-pt.t/pt.life,0,1);
+    ctx.fillStyle=pt.col;
+    ctx.fillRect(pt.x,pt.y,pt.r,pt.r);
+    ctx.globalAlpha=1;
+  }
+  for(const f of bState.floats){
+    ctx.globalAlpha=clamp(1-f.t,0,1);
+    ctx.font='22px VT323, monospace';ctx.fillStyle='#0d0f1c';
+    ctx.fillText(f.txt,f.x+2,f.y-f.t*30+2);
+    ctx.fillStyle=f.col;ctx.fillText(f.txt,f.x,f.y-f.t*30);
+    ctx.globalAlpha=1;
+  }
+}
+/* ================= LOOP ================= */
+let last=performance.now();
+function loop(ts){
+  const dt=Math.min(.05,(ts-last)/1000);last=ts;nowT=ts/1000;
+  if(bState.anim.who){bState.anim.t+=dt*3.2;if(bState.anim.t>=1)bState.anim.who=null}
+  if(bState.flash.who){bState.flash.t+=dt;if(bState.flash.t>.3)bState.flash.who=null}
+  if(bState.slash<1)bState.slash+=dt;
+  for(const f of bState.floats)f.t+=dt*1.4;
+  bState.floats=bState.floats.filter(f=>f.t<1.2);
+  for(const pt of bState.parts){pt.t+=dt;pt.x+=pt.vx*dt;pt.y+=pt.vy*dt;pt.vy+=pt.g*dt}
+  bState.parts=bState.parts.filter(pt=>pt.t<pt.life);
+  for(const pt of worldParts){pt.t+=dt;pt.x+=pt.vx*dt;pt.y+=pt.vy*dt}
+  worldParts=worldParts.filter(pt=>pt.t<pt.life);
+  fishTick(dt);
+  if(mode==='world')updateWorld(dt);
+  if(mode==='battle')renderBattle();else renderWorld();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+/* ================= TITLE, ENDING, BOOT ================= */
+ $('btnNew').addEventListener('click',async()=>{
+  try{
+    initAudio();sfx('sel');
+    store.del(SAVE_KEY);store.del(OLD_KEY);
+    freshState();curMap='desa';
+    $('title').classList.add('hidden');
+    showGameUI();
+    mode='world';startMusic('over');
+    toastMapName();
+    await say('',['Desa Suryakerta, di pinggir Hutan Rimba Larung...',
+      'Belakangan, monster bernama KOROG keluar dari hutan dan merusak ladang warga.',
+      'Kau adalah Arga, pendekar muda satu-satunya harapan desa ini!']);
+    toast('Temui Ki Jaka di rumah kepala desa!');
+  }catch(err){toast('Galat: '+err.message)}
+});
+ $('btnCont').addEventListener('click',()=>{
+  try{
+    initAudio();sfx('sel');
+    if(loadGame()){
+      $('title').classList.add('hidden');
+      showGameUI();mode='world';
+      startMusic(curMap==='desa'?'over':'mount');
+      toastMapName();
+      toast('Petualangan dilanjutkan!');
+    }else toast('Simpanan tidak ditemukan / rusak. Mulai petualangan baru ya!');
+  }catch(err){toast('Galat: '+err.message)}
+});
+function showGameUI(){
+  ['hud','questBox','hint','menuBtn','muteBtn'].forEach(id=>$(id).classList.remove('hidden'));
+  refreshHUD();refreshQuest();
+}
+try{if(store.get(SAVE_KEY)||store.get(OLD_KEY))$('btnCont').classList.remove('hidden')}catch(e){}
+
+function showEnding(kind){
+  const E={
+    b1:{t:'✦ TAMAT BABAK I ✦',b:'Desa Suryakerta kembali damai... untuk sementara.<br><b style="color:#e9b44c">Tapi Gunung Karang mulai bergetar...</b><br>Laporkan kemenanganmu ke Ki Jaka!'},
+    naga:{t:'✦ TAMAT SEJATI ✦',b:'Naga Abu tumbang, gunung pun tertidur nyenyak.<br>Namun cahaya aneh berpendar di puncak...<br><b style="color:#9fd6c8">Temui Eyang Kartala untuk Babak III!</b>'},
+    tower:{t:'✦ LEGENDA NUSANTARA ✦',b:'Penguasa Menara tunduk!<br>Nama ARGA terukir abadi di puncak Menara Angin.<br>Menara tetap berdiri... menanti lantai yang lebih tinggi.'}
+  }[kind];
+  $('endTitle').textContent=E.t;
+  $('endBody').innerHTML=E.b;
+  $('endStats').textContent=`Level ${player.lvl} · ${player.gold} G · Monster: ${G.stats.kills} · Ikan: ${G.stats.fish} · Menara: Lt ${G.towerBest||0}`;
+  $('endingOv').classList.remove('hidden');
+  sfx('victory');saveGame();
+}
+ $('btnEndClose').addEventListener('click',()=>{$('endingOv').classList.add('hidden')});
+</script>
+</body>
+</html>

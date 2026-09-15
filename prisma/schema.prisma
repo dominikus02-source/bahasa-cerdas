@@ -288,6 +288,10 @@ model User {
   xpTransactions           XPTransaction[]
   userBadges               UserBadge[]
   userAchievements         UserAchievement[]
+  // Pendekar Suryakerta server-state foundation. The legacy technical
+  // namespace remains `rpg`; these rows are isolated from Arena progression
+  // and platform coins.
+  pendekarPlayer           PendekarPlayer?
   // BC Premium Economy Foundation (fase P1)
   premiumUsage             PremiumUsage[]
   // Leaderboard Motivation Layer — hasil settlement podium (weekly/season) + Hall of Fame.
@@ -2673,6 +2677,223 @@ model XPTransaction {
   @@index([source])
 }
 
+// ── Pendekar Suryakerta server-state foundation ────────────────────────────
+//
+// These tables are additive and deliberately isolated from `PlayerProfile`,
+// `User.coins`, and `CoinTransaction`. `rpgXp` is in-world combat progression;
+// it is not a second writer for platform XP. Browser state is never the source
+// of truth for these records.
+
+model PendekarPlayer {
+  id       String @id @default(cuid())
+  userId   String @unique
+
+  // In-world RPG progression. Platform XP remains owned by awardXp().
+  rpgLevel Int @default(1)
+  rpgXp    Int @default(0)
+
+  // Authoritative world projection. Movement authority is introduced later;
+  // there is intentionally no generic client save endpoint.
+  mapKey    String @default("map.desa")
+  positionX Float  @default(0.2717391304347826)
+  positionY Float  @default(0.5416666666666666)
+  facing    String @default("down")
+
+  // Current engine stat set kept queryable rather than as a player JSON blob.
+  hp      Int   @default(100)
+  maxHp   Int   @default(100)
+  mp      Int   @default(20)
+  maxMp   Int   @default(20)
+  attack  Int   @default(10)
+  defense Int   @default(5)
+  speed   Float @default(1)
+
+  // Pendekar-only G balance. Every mutation must have an immutable wallet row.
+  goldBalance Int @default(30)
+
+  // Optimistic concurrency and controlled server-state shape upgrades.
+  version            Int @default(1)
+  stateSchemaVersion Int @default(1)
+  lastCheckpointAt   DateTime?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  user            User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  inventoryItems  PendekarInventoryItem[]
+  questProgresses PendekarQuestProgress[]
+  battleSessions  PendekarBattleSession[]
+  rewardReceipts  PendekarRewardReceipt[]
+  walletEntries   PendekarWalletEntry[]
+
+  @@index([mapKey])
+  @@index([updatedAt])
+}
+
+model PendekarInventoryItem {
+  id        String @id @default(cuid())
+  playerId  String
+  itemKey   String
+  quantity  Int    @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  player PendekarPlayer @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@unique([playerId, itemKey])
+  @@index([playerId])
+}
+
+model PendekarQuestProgress {
+  id                String @id @default(cuid())
+  playerId          String
+  // This must be a static application/data definition key, never arbitrary
+  // browser-authored quest data.
+  questKey          String
+  status            String @default("AVAILABLE")
+  progress          Int    @default(0)
+  target            Int    @default(0)
+  definitionVersion String
+  version           Int    @default(1)
+  completedAt       DateTime?
+  turnedInAt        DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  player PendekarPlayer @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@unique([playerId, questKey])
+  @@index([playerId, status])
+}
+
+model PendekarBattleSession {
+  id                         String @id @default(cuid())
+  playerId                   String
+  // Encounter keys and definition versions are derived from static server data.
+  encounterKey               String
+  encounterDefinitionVersion String
+  status                     String @default("ACTIVE")
+  result                     String?
+  turn                       Int    @default(0)
+  actionRevision             Int    @default(0)
+  // A validated, server-written battle aggregate only; it is not player save
+  // state and is never accepted from the client.
+  battleState                Json
+  rngState                   String
+  originMapKey               String
+  originX                    Float
+  originY                    Float
+  startRequestId             String
+  startedAt                  DateTime @default(now())
+  expiresAt                  DateTime
+  endedAt                    DateTime?
+  settledAt                  DateTime?
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+
+  player          PendekarPlayer          @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  learningSession PendekarLearningSession?
+  battleActions   PendekarBattleAction[]
+
+  @@unique([playerId, startRequestId])
+  @@index([playerId, status])
+  @@index([status, expiresAt])
+  @@index([encounterKey])
+}
+
+/// Immutable, server-written action receipt. It makes a combat transition
+/// replay-safe without accepting a browser battle snapshot or damage claim.
+model PendekarBattleAction {
+  id                 String @id @default(cuid())
+  battleSessionId    String
+  // One completed learning evaluation can drive exactly one combat action in
+  // the current one-challenge controlled-slice contract.
+  learningSessionId  String @unique
+  requestKey         String @unique
+  requestFingerprint String
+  actionKind         String
+  turnBefore         Int
+  turnAfter          Int
+  // Client-safe authoritative projection only; never RNG state or a reward.
+  resultProjection   Json
+  createdAt          DateTime @default(now())
+
+  battleSession PendekarBattleSession @relation(fields: [battleSessionId], references: [id], onDelete: Cascade)
+
+  @@unique([battleSessionId, turnBefore])
+  @@index([battleSessionId, createdAt])
+}
+
+model PendekarLearningSession {
+  id              String @id @default(cuid())
+  battleSessionId String @unique
+  // References the canonical `Soal` id without duplicating question content.
+  // The foreign-key/retention decision remains explicit for a later phase.
+  soalId          String
+  questionVersion String
+  // Derived on the server from the canonical answer; never from the browser
+  // and never included in a client projection.
+  answerFingerprint String
+  attemptId       String @unique
+  status          String @default("PENDING")
+  submittedAnswer String?
+  isCorrect       Boolean?
+  answerRequestId String? @unique
+  createdAt       DateTime @default(now())
+  expiresAt       DateTime
+  answeredAt      DateTime?
+  updatedAt       DateTime @updatedAt
+
+  battleSession PendekarBattleSession @relation(fields: [battleSessionId], references: [id], onDelete: Cascade)
+
+  @@index([soalId])
+  @@index([status, expiresAt])
+}
+
+model PendekarRewardReceipt {
+  id             String @id @default(cuid())
+  playerId       String
+  sourceType     String
+  sourceId       String
+  // The immutable server-owned reward contract used to create this receipt.
+  // Legacy receipts can remain null; new battle receipts always set it.
+  definitionVersion String?
+  idempotencyKey String @unique
+  status         String @default("PENDING")
+  // All values are derived by server-side rules. `globalXp` is zero while the
+  // founder-approved policy keeps platform XP disabled for Pendekar.
+  rpgXp          Int    @default(0)
+  globalXp       Int    @default(0)
+  goldDelta      Int    @default(0)
+  itemPlan       Json?
+  failureCode    String?
+  createdAt      DateTime @default(now())
+  settledAt      DateTime?
+  voidedAt       DateTime?
+  updatedAt      DateTime @updatedAt
+
+  player      PendekarPlayer      @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  walletEntry PendekarWalletEntry?
+
+  @@unique([playerId, sourceType, sourceId])
+  @@index([playerId, createdAt])
+  @@index([status])
+}
+
+model PendekarWalletEntry {
+  id           String @id @default(cuid())
+  playerId     String
+  receiptId    String @unique
+  delta        Int
+  balanceAfter Int
+  reason       String
+  createdAt    DateTime @default(now())
+
+  player  PendekarPlayer       @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  receipt PendekarRewardReceipt @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+
+  @@index([playerId, createdAt])
+}
+
 /// Definisi badge (diseed, kondisi dalam JSON).
 model Badge {
   id          String      @id @default(cuid())
@@ -3675,4 +3896,49 @@ model ToolEvidence {
 
   @@index([taskId, kind])
   @@index([executionId])
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// BC AGENT P8B — Telegram remote control (design: P8A threat model).
+// Additive only. The Telegram adapter reads bindings and writes dedupe rows;
+// it never touches canonical business state (AgentTask/Approval/Attempt/Event/
+// ToolExecution/ToolEvidence/Worker) outside the canonical command layer.
+//
+// AgentTelegramBinding: explicit founder-enrolled Telegram identity.
+// telegramUserId is UNIQUE — at most one binding row per Telegram identity
+// ever, so an ambiguous pair of active bindings is structurally impossible.
+// Active iff revokedAt IS NULL. Re-enrollment of the same identity after
+// revocation clears revokedAt via the web Control Center (explicit founder
+// action). Never inferred from usernames/display names.
+// ───────────────────────────────────────────────────────────────────────────
+
+model AgentTelegramBinding {
+  id             String    @id @default(cuid())
+  telegramUserId String    @unique
+  telegramChatId String
+  userId         String
+  label          String?
+  boundBy        String
+  boundAt        DateTime  @default(now())
+  lastSeenAt     DateTime?
+  revokedAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+// Command idempotency ledger. dedupeKey is deterministic (e.g.
+// "tg:<updateId>:<command>"); a replay returns the recorded resultCode
+// instead of re-executing. Survives process restarts by construction.
+
+model AgentCommandDedupe {
+  id               String   @id @default(cuid())
+  dedupeKey        String   @unique
+  command          String
+  telegramUpdateId BigInt?
+  resultCode       String?
+  createdAt        DateTime @default(now())
+
+  @@index([createdAt])
 }

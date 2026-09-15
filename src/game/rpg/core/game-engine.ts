@@ -144,6 +144,14 @@ export interface RPGEngineConfig {
   /** Restored main-line quest state (default fresh: quest 0, kills 0). */
   quest?: QuestLineState;
   /**
+   * Optional controlled-slice allowlist. When supplied, only these canonical
+   * encounter instances are materialized. This is presentation/scope
+   * selection, not a new encounter model or a change to canonical map data.
+   */
+  allowedEncounterIds?: readonly string[];
+  /** Optional NPC allowlist for a deliberately narrow playable slice. */
+  allowedNpcIds?: readonly string[];
+  /**
    * Learning runtime (P1.8C): canonical Soal pool (plain data, never Prisma
    * in the engine) + trigger policy. Absent = no learning encounters.
    */
@@ -204,6 +212,10 @@ export interface RPGEngine {
   getMode(): RPGInteractionMode;
   /** Active interaction session snapshot, if any. */
   getSession(): DialogueSession | ShopSession | ForgeSession | null;
+  /** Advance the active dialogue through the canonical command path. */
+  advanceActiveDialogue(): boolean;
+  /** End the active dialogue and atomically apply its validated signals. */
+  endActiveDialogue(): boolean;
   /** Subscribe to events. */
   on(event: string, handler: (data: unknown) => void): () => void;
   /** Stop the engine and clean up. */
@@ -285,9 +297,20 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
   // P1.9A: last feedback retained for UI until consumed by an attack or
   // the battle closes (transient presentation state, never persisted).
   let lastLearningFeedback: { correct: boolean } | null = null;
+  function visibleEncounterTable(mapId: string): LiveEnemy[] {
+    const canon = getCanonicalMap(mapId);
+    if (!canon) return [];
+    const table = buildEncounterTable(enemySpawnsOf(canon), deadBossIds).table;
+    if (!config.allowedEncounterIds) return table;
+    const allowed = new Set(config.allowedEncounterIds);
+    return table.filter((enemy) => allowed.has(enemy.instanceId));
+  }
+
   if (canonicalStart) {
     const built = buildEncounterTable(enemySpawnsOf(canonicalStart), deadBossIds);
-    liveEnemies = built.table;
+    liveEnemies = config.allowedEncounterIds
+      ? built.table.filter((enemy) => config.allowedEncounterIds?.includes(enemy.instanceId))
+      : built.table;
     for (const id of built.skippedSpawnIds) {
       console.warn(`[rpg] spawn without canonical definition skipped: ${id}`);
     }
@@ -343,9 +366,7 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
 
   /** Rebuild the live table for a map (portal transitions + defeat respawn). */
   function reloadLiveEnemies(mapId: string): void {
-    const canon = getCanonicalMap(mapId);
-    if (!canon) return;
-    liveEnemies = buildEncounterTable(enemySpawnsOf(canon), deadBossIds).table;
+    liveEnemies = visibleEncounterTable(mapId);
   }
 
   /** Start a battle from a live enemy (movement frozen from here on). */
@@ -714,6 +735,9 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
                 result: { kind: "CHEST_EMPTY", chestId: out.chestId },
               });
             } else if (out.kind === "NPC") {
+              if (config.allowedNpcIds && !config.allowedNpcIds.includes(out.npcId)) {
+                return currentState;
+              }
               // Route by canonical NPC role: merchants open SHOP sessions
               // (greeting preserved in data; met-flag persisted via flags),
               // others open DIALOGUE sessions. No story content invented.
@@ -1255,7 +1279,7 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     },
     // Render (every frame)
     () => {
-      renderer.render(state, camera);
+      renderer.render(state, camera, liveEnemies, config.allowedNpcIds);
     },
   );
 
@@ -1270,7 +1294,10 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
   }
 
   function isNearInteractable(): boolean {
-    return findNearestInteraction(state.world, state.player.position) !== null;
+    const interaction = findNearestInteraction(state.world, state.player.position);
+    if (!interaction) return false;
+    if (interaction.kind !== "NPC" || !config.allowedNpcIds) return true;
+    return config.allowedNpcIds.includes(interaction.ref.replace(/^npc\./, ""));
   }
 
   function interact(): RPGInteractionResult {
@@ -1286,7 +1313,13 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
         payload: { kind: "NONE" },
       };
     }
-    return processInteraction(interaction, state.player.inventory);
+
+    const result = processInteraction(interaction, state.player.inventory);
+    // Programmatic callers (such as the touch-friendly preview control) must
+    // take the same reducer path as the E key. Returning an interaction summary
+    // alone was presentation-only and could not start a canonical dialogue.
+    state = processCommand(state, { type: "INTERACT", playerId });
+    return result;
   }
 
   function setFlag(flag: string, value: boolean): void {
@@ -1541,6 +1574,19 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     return session ? { ...session } : null;
   }
 
+  function advanceActiveDialogue(): boolean {
+    if (!session || session.kind !== "DIALOGUE") return false;
+    const before = `${session.nodeId}:${session.atEnd}`;
+    state = processCommand(state, { type: "DIALOGUE_ADVANCE", playerId });
+    return session !== null && `${session.nodeId}:${session.atEnd}` !== before;
+  }
+
+  function endActiveDialogue(): boolean {
+    if (!session || session.kind !== "DIALOGUE") return false;
+    state = processCommand(state, { type: "DIALOGUE_END", playerId });
+    return session === null;
+  }
+
   function on(event: string, handler: (data: unknown) => void): () => void {
     return eventBus.subscribe((evt) => {
       if (evt.type === event) {
@@ -1581,6 +1627,8 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     getEquipmentIntents,
     getMode,
     getSession,
+    advanceActiveDialogue,
+    endActiveDialogue,
     on,
     destroy,
     // Expose for keyboard adapter
