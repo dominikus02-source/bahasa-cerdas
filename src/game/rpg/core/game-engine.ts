@@ -28,6 +28,25 @@ import { MAP_VILLAGE_SQUARE } from "../data/maps";
 import { getCanonicalMap, RPG_TILES } from "../data/world-maps";
 import { stepTile, interactTile, facingTile } from "../world/world-step";
 import { tileAt } from "../world/tiles";
+import {
+  startServerBattle,
+  startServerLearning,
+  submitServerLearningAnswer,
+  submitServerBattleAction,
+  createServerRewardReceipt,
+  settleServerReward,
+  generateRequestKey,
+  fetchStateProjection,
+  fetchServerWithRetry,
+  projectionToBattleState,
+  type ServerApiError,
+} from "../../../../lib/game/rpg/server-api-client";
+import {
+  classifyError,
+  PendingServerCalls,
+  NetworkError,
+  type ServerCallStatus,
+} from "../../../../lib/game/rpg/network-resilience";
 import { loadCanonicalMap, spawnPosition, enemySpawnsOf, canonicalTileId } from "../world/map-loader";
 import {
   buildEncounterTable,
@@ -44,7 +63,7 @@ import {
   toBattleResult,
   hashBattleId,
 } from "../combat/battle-core";
-import type { RPGBattleState } from "../combat/battle-state";
+import type { RPGBattleState, RPGBattlePhase } from "../combat/battle-state";
 import { applyVictory, applyDefeat } from "../combat/battle-apply";
 import { EQUIPMENT } from "../data/equipment";
 import { normToTile } from "../world/grid-coords";
@@ -158,6 +177,14 @@ export interface RPGEngineConfig {
   learning?: { pool: SoalLike[]; policy?: LearningTriggerPolicy };
 }
 
+/** P2.6H.2: Server reward/settlement state for last victory. */
+export type ServerRewardState =
+  | { status: "PENDING"; battleId: string }
+  | { status: "CONFIRMED"; battleId: string; xpEarned: number; goldEarned: number }
+  | { status: "RETRYABLE_FAILURE"; battleId: string; error: string }
+  | { status: "FAILED"; battleId: string; error: string }
+  | null;
+
 /** The running engine instance. */
 export interface RPGEngine {
   /** Current game state (read-only for external consumers). */
@@ -220,6 +247,10 @@ export interface RPGEngine {
   on(event: string, handler: (data: unknown) => void): () => void;
   /** Stop the engine and clean up. */
   destroy(): void;
+  /** P2.6H: Server-authoritative battle ID (null until server responds). */
+  getServerBattleId(): string | null;
+  /** P2.6H.2: Server reward/settlement state for last victory. */
+  getServerRewardState(): ServerRewardState;
 }
 
 /** Interaction mode — exactly one owner of input at a time (P1.5 §15). */
@@ -276,6 +307,10 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     ...(config.goldIntents ?? []),
   ];
   const appliedBattleIds = new Set<string>();
+
+  // P2.6H.2: Track server reward/settlement state for last victory.
+  // Exposed via getServerRewardState() for the UI layer.
+  let serverRewardState: ServerRewardState = null;
   // Canonical economy (P1.6): ONE spendable balance + audit ledger, both
   // engine-owned (server-authoritative later). No wallet, no second balance.
   let gold: GoldState = {
@@ -297,6 +332,125 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
   // P1.9A: last feedback retained for UI until consumed by an attack or
   // the battle closes (transient presentation state, never persisted).
   let lastLearningFeedback: { correct: boolean } | null = null;
+  // P2.6H.3 GAP-3: Defeat is deferred until server reconciliation confirms
+  // the terminal state. The client optimistically applies local effects but
+  // waits for the authoritative server response before removing activeBattle.
+  let pendingDefeat: { state: RPGBattleState; foeId: string } | null = null;
+
+  // ── P2.6H server-authoritative state ──────────────────────────────────
+  // The engine keeps local RPGBattleState for synchronous rendering, but
+  // fires server API calls in the background. The server's battle ID is
+  // used for all subsequent API calls (learning, action, reward, settle).
+  let serverBattleId: string | null = null;
+  let serverLearningId: string | null = null;
+  // P2.6H.5: Track in-flight calls with explicit lifecycle (not just Set<Promise>).
+  // This allows the UI layer to inspect call status and show retry UX.
+  const pendingServerCalls = new PendingServerCalls();
+
+  /**
+   * P2.6H.5: Fire a server call as background task (non-blocking, never blocks rAF).
+   *
+   * Lifecycle: PENDING → CONFIRMED | RETRYABLE_FAILURE | FAILED | UNKNOWN
+   *
+   * For idempotent calls, this uses fetchServerWithRetry which applies bounded
+   * retry with the SAME requestKey. Non-idempotent calls get no retry.
+   */
+  function fireServerCall<T>(
+    promise: Promise<T>,
+    options?: { key?: string; idempotent?: boolean },
+  ): Promise<T> {
+    const key = options?.key ?? `call-${crypto.randomUUID()}`;
+    pendingServerCalls.track(key);
+    promise
+      .then((data) => {
+        pendingServerCalls.confirm(key, data);
+      })
+      .catch((err: unknown) => {
+        const msg = err instanceof Error ? err.message : String(err);
+        const errorClass = err instanceof NetworkError
+          ? classifyError(0, err.code)
+          : classifyError(0, "NETWORK_ERROR");
+        if (errorClass === "PERMANENT") {
+          pendingServerCalls.failed(key, msg);
+        } else {
+          // RETRYABLE or UNKNOWN — caller may inspect and retry
+          pendingServerCalls.retryableFailure(key, msg);
+        }
+      });
+    return promise;
+  }
+
+  // P2.6H.4 GAP-7: Track the last processed server revision to reject stale
+  // responses that could overwrite newer authoritative state.
+  let lastServerRevision = -1;
+
+  /** Reconcile server battle projection into local state (server = truth). */
+  function reconcileServerBattle(projection: {
+    id: string;
+    status: string;
+    phase: string;
+    turn: number;
+    actionRevision: number;
+    player: { hp: number; maxHp: number; mp?: number; maxMp?: number; attack: number; defense: number };
+    enemies: Array<{ id: string; hp: number; maxHp: number; attack: number; defense: number }>;
+  }): void {
+    if (!activeBattle) return;
+
+    // P2.6H.4 GAP-7: Stale response protection. An older server response
+    // (lower actionRevision) must not overwrite a newer one. This prevents
+    // out-of-order background calls from reverting authoritative state.
+    if (projection.actionRevision < lastServerRevision) return;
+    lastServerRevision = projection.actionRevision;
+
+    const b = activeBattle.state;
+
+    // P2.6H.4 GAP-7: Terminal state protection. Once the local battle has
+    // a result (WIN/LOSE/FLED), it must never be reopened to ACTIVE by a
+    // stale or mis-ordered server response.
+    if (b.result !== undefined && projection.status === "ACTIVE") return;
+
+    // P2.6H.4 GAP-7: Server status → local result mapping. Server is
+    // authoritative for terminal transitions.
+    if (projection.status === "WON" && b.result === undefined) {
+      b.result = "WIN";
+    } else if (projection.status === "LOST" && b.result === undefined) {
+      b.result = "LOSE";
+    } else if (projection.status === "FLED" && b.result === undefined) {
+      b.result = "FLED";
+    }
+
+    // Apply server HP/turn/phase to local state (server is authoritative).
+    const serverPlayer = {
+      ...b.player,
+      hp: projection.player.hp,
+      maxHp: projection.player.maxHp,
+      mp: projection.player.mp ?? b.player.mp,
+      maxMp: projection.player.maxMp ?? b.player.maxMp,
+      attack: projection.player.attack,
+      defense: projection.player.defense,
+    };
+    const serverEnemies = b.enemies.map((e) => {
+      const se = projection.enemies.find((s) => s.id === e.id);
+      return se ? { ...e, hp: se.hp, maxHp: se.maxHp, attack: se.attack, defense: se.defense } : e;
+    });
+    const reconciled: RPGBattleState = {
+      ...b,
+      player: serverPlayer,
+      enemies: serverEnemies,
+      turn: projection.turn,
+      phase: projection.phase as RPGBattlePhase,
+    };
+    activeBattle = { state: reconciled, rng: activeBattle.rng };
+  }
+
+  /** Get the server-authoritative battle ID (null until server responds). */
+  function getServerBattleId(): string | null { return serverBattleId; }
+  function getServerRewardState(): ServerRewardState { return serverRewardState; }
+  /** P2.6H.5: Expose server call lifecycle status for UI inspection. */
+  function getServerCallStatus(): Record<ServerCallStatus, number> {
+    return pendingServerCalls.summary();
+  }
+
   function visibleEncounterTable(mapId: string): LiveEnemy[] {
     const canon = getCanonicalMap(mapId);
     if (!canon) return [];
@@ -362,6 +516,9 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     pendingLearning = null;
     lastLearningFeedback = null;
     if (challengeId) learningChallenges.delete(challengeId);
+    // P2.6H: Reset server learning tracking on battle close.
+    serverBattleId = null;
+    serverLearningId = null;
   }
 
   /** Rebuild the live table for a map (portal transitions + defeat respawn). */
@@ -389,6 +546,24 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     });
     activeBattle = { state: started.state, rng: started.rng };
     for (const ev of started.events) eventBus.emit(ev);
+
+    // P2.6H: Fire server-authoritative battle start in background.
+    // The server creates its own battle state; we store its ID for
+    // subsequent API calls (learning, action, reward, settle).
+    // encounterId = foe.instanceId (static key like "e1", "e2", "e3").
+    const encounterId = foe.instanceId;
+    const requestKey = generateRequestKey();
+    fireServerCall(
+      startServerBattle(encounterId, requestKey).then((res) => {
+        if (res.ok && res.data.category === "STARTED") {
+          serverBattleId = res.data.battle.id;
+          // Reconcile server projection into local state (server = truth).
+          reconcileServerBattle(res.data.battle);
+        }
+      }),
+      { key: `start-${encounterId}`, idempotent: true },
+    );
+
     // P1.8C hardening: trigger decision + encounter build live in the pure
     // learning-runtime module (runtime-tested); the engine only stores and
     // emits. Selection uses its own string seed — battle RNG untouched.
@@ -417,6 +592,23 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
         challengeId: trig.substate.challengeId,
         challenge: trig.client,
       });
+
+      // P2.6H: Fire server learning start in background.
+      // Server picks its own question from the pool; we store the learning ID.
+      if (serverBattleId) {
+        fireServerCall(
+          startServerLearning(serverBattleId).then((lr) => {
+            if (lr.ok && lr.data && typeof lr.data === "object" && "learning" in lr.data) {
+              const learning = (lr.data as { learning?: { status?: string } }).learning;
+              if (learning?.status) {
+                serverLearningId = serverBattleId; // track that server learning is active
+              }
+            }
+          }),
+          { key: `learn-${serverBattleId}`, idempotent: false },
+        );
+      }
+
       return { ...currentState, battle: withLearning };
     }
     return { ...currentState, battle: started.state };
@@ -523,6 +715,65 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     eventBus.emit({ type: "BATTLE_END", battleId: battle.battleId, winnerId: player.id });
     activeBattle = null;
     clearLearning(battle.learning?.challengeId);
+
+    // P2.6H: Fire server-authoritative reward + settlement in background.
+    // Server creates a reward receipt and settles XP/gold into the DB.
+    // Client already applied rewards locally (above); server is the
+    // authoritative ledger for persistence and cross-device sync.
+    // P2.6H.5: Uses idempotent retry with same requestKey for reward
+    // receipt and settlement (both idempotent on server).
+    if (serverBattleId) {
+      const rewardKey = generateRequestKey();
+      serverRewardState = { status: "PENDING", battleId: serverBattleId };
+      fireServerCall(
+        createServerRewardReceipt(serverBattleId, rewardKey).then((receiptRes) => {
+          if (!receiptRes.ok) {
+            const msg = receiptRes.error?.message ?? "Reward receipt failed";
+            const errorClass = classifyError(receiptRes.error.status, receiptRes.error.code);
+            serverRewardState = {
+              status: errorClass === "PERMANENT" ? "FAILED" : "RETRYABLE_FAILURE",
+              battleId: serverBattleId!,
+              error: msg,
+            };
+            console.error(`[rpg] server reward receipt failed (${errorClass}): ${msg}`);
+            return;
+          }
+          const settleKey = generateRequestKey();
+          return settleServerReward(serverBattleId!, settleKey).then((settleRes) => {
+            if (!settleRes.ok) {
+              const msg = settleRes.error?.message ?? "Settlement failed";
+              const errorClass = classifyError(settleRes.error.status, settleRes.error.code);
+              serverRewardState = {
+                status: errorClass === "PERMANENT" ? "FAILED" : "RETRYABLE_FAILURE",
+                battleId: serverBattleId!,
+                error: msg,
+              };
+              console.error(`[rpg] server settlement failed (${errorClass}): ${msg}`);
+              return;
+            }
+            // Server settlement complete; XP/gold persisted to DB.
+            const entitlement = receiptRes.data.receipt?.entitlement;
+            const applied = settleRes.data.settlement?.applied;
+            serverRewardState = {
+              status: "CONFIRMED",
+              battleId: serverBattleId!,
+              xpEarned: applied?.rpgXp ?? entitlement?.rpgXp ?? 0,
+              goldEarned: applied?.gold ?? entitlement?.gold ?? 0,
+            };
+            // Fetch authoritative server state after successful settlement.
+            fetchStateProjection().catch((err) => {
+              console.warn("[rpg] post-settlement state fetch failed:", err);
+            });
+          });
+        }).catch((err) => {
+          const msg = err instanceof Error ? err.message : String(err);
+          serverRewardState = { status: "FAILED", battleId: serverBattleId!, error: msg };
+          console.error(`[rpg] server reward chain error: ${msg}`);
+        }),
+        { key: `reward-${serverBattleId}`, idempotent: true },
+      );
+    }
+
     return { ...currentState, player: grownPlayer, battle: null };
   }
 
@@ -858,7 +1109,13 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
         activeBattle = { state: eb.state, rng: eb.rng };
         next = { ...next, battle: eb.state };
         for (const ev of eb.events) eventBus.emit(ev);
-        if (eb.state.result === "LOSE") return applyDefeatFlow(next, eb.state, foeId);
+        // P2.6H.3 GAP-3: Defer defeat until server reconciliation confirms
+        // the terminal state. Apply optimistic local effects immediately but
+        // keep activeBattle alive for server reconciliation.
+        if (eb.state.result === "LOSE") {
+          pendingDefeat = { state: eb.state, foeId };
+          return next;
+        }
         return next;
       }
       case "BATTLE_ESCAPE": {
@@ -890,6 +1147,12 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
             },
           };
           next = { ...next, player: fledPlayer, battle: null };
+        }
+        // P2.6H.3 GAP-3: Handle defeat from failed flee (enemy kills player).
+        // Defer until server reconciliation confirms the terminal state.
+        if (out.state.result === "LOSE") {
+          const foe = out.state.enemies.find((e) => e.hp > 0);
+          if (foe) pendingDefeat = { state: out.state, foeId: foe.id };
         }
         return next;
       }
@@ -991,7 +1254,11 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
               activeBattle = { state: eb.state, rng: eb.rng };
               next = { ...next, battle: eb.state };
               for (const ev of eb.events) eventBus.emit(ev);
-              if (eb.state.result === "LOSE") return applyDefeatFlow(next, eb.state, foeId);
+              // P2.6H.3 GAP-3: Defer defeat until server reconciliation confirms
+              // the terminal state.
+              if (eb.state.result === "LOSE") {
+                pendingDefeat = { state: eb.state, foeId };
+              }
             }
           }
           return next;
@@ -1474,6 +1741,32 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
       challengeId: sub.challengeId,
       answer,
     });
+
+    // P2.6H: Fire server-authoritative learning answer in background.
+    // Server evaluates the answer and records the result.
+    if (serverBattleId) {
+      const requestKey = generateRequestKey();
+      fireServerCall(
+        submitServerLearningAnswer(serverBattleId, answer, requestKey).then((res) => {
+          if (res.ok && res.data.category === "EVALUATED") {
+            // P2.6H.4 GAP-5: Server evaluation is authoritative. Update
+            // feedback if the server disagrees with the local evaluation.
+            // Local processCommand already showed immediate feedback for
+            // responsiveness; this correction ensures the final displayed
+            // result matches the server's canonical answer.
+            const serverCorrect = res.data.evaluation.correct;
+            if (lastLearningFeedback && lastLearningFeedback.correct !== serverCorrect) {
+              lastLearningFeedback = { correct: serverCorrect };
+            }
+            if (pendingLearning && pendingLearning.correct !== serverCorrect) {
+              pendingLearning = { correct: serverCorrect };
+            }
+          }
+        }),
+        { key: `answer-${serverBattleId}`, idempotent: true },
+      );
+    }
+
     return activeBattle?.state.learning?.status === "RESOLVED";
   }
 
@@ -1489,6 +1782,29 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
       targetId: foeId,
       skillId: "basic",
     });
+
+    // P2.6H: Fire server-authoritative battle action in background.
+    // Server resolves damage/HP/turn and returns updated projection.
+    if (serverBattleId) {
+      const requestKey = generateRequestKey();
+      fireServerCall(
+        submitServerBattleAction(serverBattleId, "basic_attack", requestKey).then((res) => {
+          if (res.ok) {
+            reconcileServerBattle(res.data.battle);
+            // P2.6H.3 GAP-3: Settle deferred defeat after server confirms
+            // the terminal state. Only applies when server returns LOST and
+            // local defeat was deferred in processCommand.
+            if (res.data.battle.status === "LOST" && pendingDefeat) {
+              const pd = pendingDefeat;
+              pendingDefeat = null;
+              state = applyDefeatFlow(state, pd.state, pd.foeId);
+            }
+          }
+        }),
+        { key: `action-${serverBattleId}`, idempotent: true },
+      );
+    }
+
     return (activeBattle?.state.turn ?? before) > before;
   }
 
@@ -1504,6 +1820,28 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
       targetId: foeId,
       skillId,
     });
+
+    // P2.6H.2: Fire server-authoritative skill action in background.
+    // Server validates skill against canonical definitions and resolves damage.
+    if (serverBattleId) {
+      const requestKey = generateRequestKey();
+      fireServerCall(
+        submitServerBattleAction(serverBattleId, "skill", requestKey, skillId).then((res) => {
+          if (res.ok) {
+            reconcileServerBattle(res.data.battle);
+            // P2.6H.3 GAP-3: Settle deferred defeat after server confirms
+            // the terminal state.
+            if (res.data.battle.status === "LOST" && pendingDefeat) {
+              const pd = pendingDefeat;
+              pendingDefeat = null;
+              state = applyDefeatFlow(state, pd.state, pd.foeId);
+            }
+          }
+        }),
+        { key: `action-${serverBattleId}`, idempotent: true },
+      );
+    }
+
     return (activeBattle?.state.turn ?? before) > before;
   }
 
@@ -1514,6 +1852,13 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
       const beforeHp = activeBattle?.state.player.hp;
       const beforeInv = JSON.stringify(state.player.inventory);
       state = processCommand(state, { type: "USE_ITEM", playerId, itemId });
+      // P2.6H.3 GAP-3: USE_ITEM has no server call — settle deferred defeat
+      // immediately (server doesn't track item usage).
+      if (pendingDefeat) {
+        const pd = pendingDefeat;
+        pendingDefeat = null;
+        state = applyDefeatFlow(state, pd.state, pd.foeId);
+      }
       return (
         JSON.stringify(state.player.inventory) !== beforeInv ||
         activeBattle?.state.player.hp !== beforeHp
@@ -1529,6 +1874,28 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     if (!activeBattle || state.battle === null) return false;
     const id = activeBattle.state.battleId;
     state = processCommand(state, { type: "BATTLE_ESCAPE", playerId, battleId: id });
+
+    // P2.6H.3 GAP-2: Fire server-authoritative flee action in background.
+    // Server resolves flee probability, boss restriction, and persists FLED status.
+    if (serverBattleId) {
+      const requestKey = generateRequestKey();
+      fireServerCall(
+        submitServerBattleAction(serverBattleId, "flee", requestKey).then((res) => {
+          if (res.ok) {
+            reconcileServerBattle(res.data.battle);
+            // P2.6H.3 GAP-3: Settle deferred defeat after server confirms
+            // the terminal state (failed flee → enemy kills player).
+            if (res.data.battle.status === "LOST" && pendingDefeat) {
+              const pd = pendingDefeat;
+              pendingDefeat = null;
+              state = applyDefeatFlow(state, pd.state, pd.foeId);
+            }
+          }
+        }),
+        { key: `flee-${serverBattleId}`, idempotent: true },
+      );
+    }
+
     return activeBattle?.state.battleId !== id || activeBattle?.state.result === "FLED";
   }
 
@@ -1631,6 +1998,9 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     endActiveDialogue,
     on,
     destroy,
+    getServerBattleId,
+    getServerRewardState,
+    getServerCallStatus,
     // Expose for keyboard adapter
     _setInputSource: setInputSource,
     _getInputSource: () => inputSource,

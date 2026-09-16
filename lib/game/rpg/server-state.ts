@@ -10,11 +10,12 @@
 
 import { Prisma, PrismaClient, type PendekarPlayer } from "@prisma/client";
 import { createHash, randomBytes, randomUUID } from "node:crypto";
-import { BASIC_ATTACK_SKILL_ID, enemyAct, playerAct, startBattle, toBattleResult } from "@/src/game/rpg/combat/battle-core";
+import { BASIC_ATTACK_SKILL_ID, enemyAct, escapeBattle, playerAct, startBattle, toBattleResult } from "@/src/game/rpg/combat/battle-core";
 import type { BattleRng } from "@/src/game/rpg/combat/battle-rng";
 import type { RPGBattleState } from "@/src/game/rpg/combat/battle-state";
 import { EQUIPMENT } from "@/src/game/rpg/data/equipment";
 import { canonicalEnemyByPrototypeKey } from "@/src/game/rpg/data/enemies";
+import { skillById } from "@/src/game/rpg/data/skills";
 import { getCanonicalMap } from "@/src/game/rpg/data/world-maps";
 import type { RPGFacing } from "@/src/game/rpg/core/constants";
 import type { RPGPlayerState } from "@/src/game/rpg/player/player-state";
@@ -117,7 +118,9 @@ export class PendekarBattleActionError extends PendekarStateError {
       | "LEARNING_ALREADY_CONSUMED"
       | "BATTLE_ACTION_REPLAY_CONFLICT"
       | "BATTLE_ACTION_INVALID_STATE"
-      | "BATTLE_ACTION_RESOLUTION_FAILED",
+      | "BATTLE_ACTION_RESOLUTION_FAILED"
+      | "BATTLE_ACTION_INVALID_SKILL"
+      | "BATTLE_ACTION_SKILL_LOCKED",
     message: string,
   ) {
     super(message);
@@ -547,6 +550,64 @@ export class PendekarStateService {
       if (!battle) throw new PendekarOwnershipError("Battle is not owned by this user");
       this.assertActionableBattle(battle);
 
+      // ── Flee action: bypasses learning requirement ────────────────────────
+      // Flee is a server-recognized terminal transition. The browser cannot
+      // supply probability, boss restriction, or RNG values; only an opaque
+      // request key. Learning is NOT consumed by a flee action.
+      if (input.action === "flee") {
+        const state = parsePersistedBattleState(battle.battleState);
+        if (state.turn !== battle.turn || state.result !== undefined || state.phase !== "CHALLENGE") {
+          throw new PendekarBattleActionError("BATTLE_ACTION_INVALID_STATE", "Persisted battle state is not actionable");
+        }
+        const rng = parsePersistedBattleRng(battle.rngState);
+        const outcome = escapeBattle(state, { battleId: state.battleId, turn: state.turn, actorId: state.player.id }, rng);
+        if (!outcome.ok) {
+          throw new PendekarBattleActionError("BATTLE_ACTION_RESOLUTION_FAILED", `Canonical flee resolution was rejected: ${outcome.reason ?? "unknown"}`);
+        }
+
+        const terminal = outcome.state.result;
+        // FLED → status "FLED", failure → remains "ACTIVE" (turn consumed, enemy responds)
+        const status = terminal === "FLED" ? "FLED" : "ACTIVE";
+        const nextRevision = battle.actionRevision + 1;
+        const nextState = serializedBattleState(outcome.state);
+        const projection = projectBattle({
+          id: battle.id,
+          encounterKey: battle.encounterKey,
+          status,
+          turn: outcome.state.turn,
+          actionRevision: nextRevision,
+          expiresAt: battle.expiresAt,
+          battleState: nextState,
+        });
+
+        await tx.pendekarBattleSession.update({
+          where: { id: battle.id },
+          data: {
+            status,
+            result: terminal ?? null,
+            battleState: nextState,
+            rngState: JSON.stringify(outcome.rng),
+            turn: outcome.state.turn,
+            actionRevision: { increment: 1 },
+            ...(terminal === undefined ? {} : { endedAt: new Date() }),
+          },
+        });
+        await tx.pendekarBattleAction.create({
+          data: {
+            battleSessionId: battle.id,
+            learningSessionId: "", // flee does not consume learning
+            requestKey: input.requestKey,
+            requestFingerprint: fingerprint,
+            actionKind: "flee",
+            turnBefore: state.turn,
+            turnAfter: outcome.state.turn,
+            resultProjection: asInputJson(projection),
+          },
+        });
+        return { category: "RESOLVED", battle: projection };
+      }
+      // ── End flee ──────────────────────────────────────────────────────────
+
       const learning = battle.learningSession;
       if (!learning || learning.status !== "ANSWERED" || learning.isCorrect === null || !learning.answerRequestId || !learning.answeredAt) {
         throw new PendekarBattleActionError("LEARNING_RESULT_REQUIRED", "Battle action requires a completed authoritative learning result");
@@ -581,6 +642,25 @@ export class PendekarStateService {
       const target = state.enemies.find((enemy) => enemy.hp > 0);
       if (!target) throw new PendekarBattleActionError("BATTLE_ACTION_INVALID_STATE", "Battle has no living enemy");
 
+      // Resolve skillId: basic_attack → BASIC_ATTACK_SKILL_ID, mahapukul → canonical, skill → validated skillId.
+      let resolvedSkillId: string;
+      if (input.action === "basic_attack") {
+        resolvedSkillId = BASIC_ATTACK_SKILL_ID;
+      } else if (input.action === "skill") {
+        // Validate skillId against canonical definitions (server-owned).
+        const skill = skillById(input.skillId!);
+        if (!skill) {
+          throw new PendekarBattleActionError("BATTLE_ACTION_INVALID_SKILL", `Unknown skill: ${input.skillId}`);
+        }
+        const playerLevel = state.player.level ?? 1;
+        if ((skill.unlockLevel ?? 1) > playerLevel) {
+          throw new PendekarBattleActionError("BATTLE_ACTION_SKILL_LOCKED", `Skill ${input.skillId} is locked for level ${playerLevel}`);
+        }
+        resolvedSkillId = input.skillId!;
+      } else {
+        resolvedSkillId = "skill.mahapukul";
+      }
+
       const playerOutcome = playerAct(
         state,
         {
@@ -588,7 +668,7 @@ export class PendekarStateService {
           turn: state.turn,
           actorId: state.player.id,
           targetId: target.id,
-          skillId: input.action === "basic_attack" ? BASIC_ATTACK_SKILL_ID : "skill.mahapukul",
+          skillId: resolvedSkillId,
           learningCorrect: learning.isCorrect,
           charm: false,
         },

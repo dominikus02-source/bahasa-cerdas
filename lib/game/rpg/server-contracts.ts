@@ -150,7 +150,9 @@ export type SubmitLearningAnswerResult = {
 
 /** A browser selects a fixed, whitelisted intent; all target/state values are server-derived. */
 export type SubmitBattleActionInput = {
-  action: "basic_attack" | "mahapukul";
+  action: "basic_attack" | "mahapukul" | "skill" | "flee";
+  /** Required when action === "skill". Server validates against canonical skill definitions. */
+  skillId?: string;
   requestKey: string;
 };
 
@@ -201,7 +203,7 @@ export type ParseStartBattleInputResult =
 
 const startBattleKeys = new Set(["encounterId", "requestId"]);
 const submitLearningAnswerKeys = new Set(["answer", "requestKey"]);
-const submitBattleActionKeys = new Set(["action", "requestKey"]);
+const submitBattleActionKeys = new Set(["action", "skillId", "requestKey"]);
 const createBattleRewardReceiptKeys = new Set(["requestKey"]);
 const settleBattleRewardKeys = new Set(["requestKey"]);
 const requestIdPattern = /^[A-Za-z0-9._:-]{1,128}$/;
@@ -262,7 +264,7 @@ export type ParseSubmitBattleActionResult =
   | { ok: false; error: PendekarActionError };
 
 /**
- * Deliberately narrow action decoder. Target, skill ids, player/battle state,
+ * Deliberately narrow action decoder. Target, player/battle state,
  * damage, HP, crit, RNG, learning outcome, and all reward fields are not a
  * browser authority surface.
  */
@@ -273,13 +275,28 @@ export function parseSubmitBattleActionInput(value: unknown): ParseSubmitBattleA
   if (Object.keys(value).some((key) => !submitBattleActionKeys.has(key))) {
     return { ok: false, error: { code: "INVALID_INPUT", message: "Battle action body contains unsupported fields" } };
   }
-  if (value.action !== "basic_attack" && value.action !== "mahapukul") {
+  if (value.action !== "basic_attack" && value.action !== "mahapukul" && value.action !== "skill") {
     return { ok: false, error: { code: "INVALID_INPUT", message: "action is not an allowed battle intent" } };
+  }
+  if (value.action === "skill") {
+    if (typeof value.skillId !== "string" || value.skillId.length === 0 || value.skillId.length > 64) {
+      return { ok: false, error: { code: "INVALID_INPUT", message: "skillId must be a non-empty string of at most 64 characters" } };
+    }
+    if (!/^[a-z][a-z0-9._-]*$/.test(value.skillId)) {
+      return { ok: false, error: { code: "INVALID_INPUT", message: "skillId format is invalid" } };
+    }
   }
   if (typeof value.requestKey !== "string" || !requestIdPattern.test(value.requestKey)) {
     return { ok: false, error: { code: "INVALID_INPUT", message: "requestKey must be an opaque replay key" } };
   }
-  return { ok: true, value: { action: value.action, requestKey: value.requestKey } };
+  return {
+    ok: true,
+    value: {
+      action: value.action,
+      ...(value.action === "skill" ? { skillId: value.skillId as string } : {}),
+      requestKey: value.requestKey,
+    },
+  };
 }
 
 export type ParseCreateBattleRewardReceiptResult =
