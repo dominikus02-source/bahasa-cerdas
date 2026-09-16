@@ -1,9 +1,12 @@
 import { randomUUID } from "node:crypto";
 
 import Link from "next/link";
+import { refresh } from "next/cache";
 
 import { db } from "@/lib/db";
 import { authorizeFounder } from "@/src/agent/control";
+
+import { BindingForm } from "./_components/binding-form";
 
 export const dynamic = "force-dynamic";
 
@@ -28,17 +31,27 @@ function parseId(raw: FormDataEntryValue | null): string | null {
   return /^\d{3,20}$/.test(trimmed) ? trimmed : null;
 }
 
-async function createBinding(formData: FormData): Promise<string> {
+/**
+ * Result shape consumed by the client BindingForm. The boolean `ok` lets the
+ * UI color-code the message; `message` is a fixed founder-facing string —
+ * never an internal error, stack trace, or DB detail (P8D.1 requirement).
+ */
+export interface BindingActionResult {
+  ok: boolean;
+  message: string;
+}
+
+async function createBinding(formData: FormData): Promise<BindingActionResult> {
   "use server";
 
   const access = await authorizeFounder();
-  if (!access.ok) return "Akses ditolak.";
+  if (!access.ok) return { ok: false, message: "Akses ditolak." };
 
   const telegramUserId = parseId(formData.get("telegramUserId"));
   const telegramChatId = parseId(formData.get("telegramChatId"));
   const label = typeof formData.get("label") === "string" ? String(formData.get("label")).slice(0, 60) : null;
   if (!telegramUserId || !telegramChatId) {
-    return "Telegram User ID dan Chat ID harus berupa angka.";
+    return { ok: false, message: "Telegram User ID dan Chat ID harus berupa angka." };
   }
 
   try {
@@ -61,29 +74,35 @@ async function createBinding(formData: FormData): Promise<string> {
         ...(label !== null ? { label } : {}),
       },
     });
-    return "Binding tersimpan.";
-  } catch {
-    return "Gagal menyimpan binding.";
+    refresh();
+    return { ok: true, message: "Binding tersimpan." };
+  } catch (error) {
+    // Server-side only: the founder sees the generic message below; the
+    // underlying error (never secrets) is logged for diagnosis.
+    console.error("binding upsert failed:", error);
+    return { ok: false, message: "Gagal menyimpan binding." };
   }
 }
 
-async function revokeBinding(formData: FormData): Promise<string> {
+async function revokeBinding(formData: FormData): Promise<BindingActionResult> {
   "use server";
 
   const access = await authorizeFounder();
-  if (!access.ok) return "Akses ditolak.";
+  if (!access.ok) return { ok: false, message: "Akses ditolak." };
 
   const id = typeof formData.get("id") === "string" ? String(formData.get("id")) : null;
-  if (!id) return "ID binding tidak valid.";
+  if (!id) return { ok: false, message: "ID binding tidak valid." };
 
   try {
     await db.agentTelegramBinding.updateMany({
       where: { id, revokedAt: null },
       data: { revokedAt: new Date() },
     });
-    return "Binding dicabut.";
-  } catch {
-    return "Gagal mencabut binding.";
+    refresh();
+    return { ok: true, message: "Binding dicabut." };
+  } catch (error) {
+    console.error("binding revoke failed:", error);
+    return { ok: false, message: "Gagal mencabut binding." };
   }
 }
 
@@ -107,13 +126,16 @@ export default async function TelegramBindingPage() {
     },
   });
 
-  async function bindAction(formData: FormData) {
+  // P8D.1 fix: the actions now RETURN the result instead of discarding it,
+  // and refresh() (next/cache) in createBinding/revokeBinding updates the
+  // server-rendered binding list without a manual reload.
+  async function bindAction(formData: FormData): Promise<BindingActionResult> {
     "use server";
-    await createBinding(formData);
+    return createBinding(formData);
   }
-  async function revokeAction(formData: FormData) {
+  async function revokeAction(formData: FormData): Promise<BindingActionResult> {
     "use server";
-    await revokeBinding(formData);
+    return revokeBinding(formData);
   }
 
   return (
@@ -129,7 +151,13 @@ export default async function TelegramBindingPage() {
         </p>
       </header>
 
-      <form action={bindAction} className="space-y-3 rounded-lg border border-slate-200 p-4 dark:border-slate-700">
+      <BindingForm
+        action={bindAction}
+        className="space-y-3 rounded-lg border border-slate-200 p-4 dark:border-slate-700"
+        submitLabel="Simpan binding"
+        pendingLabel="Menyimpan…"
+        submitClassName="rounded bg-violet-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-violet-700"
+      >
         <h2 className="text-sm font-semibold">Tambah / perbarui binding</h2>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="text-xs font-medium">
@@ -145,10 +173,7 @@ export default async function TelegramBindingPage() {
           Label (opsional)
           <input name="label" maxLength={60} className="mt-1 w-full rounded border px-2 py-1.5 text-sm dark:bg-slate-800 dark:border-slate-600" />
         </label>
-        <button type="submit" className="rounded bg-violet-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-violet-700">
-          Simpan binding
-        </button>
-      </form>
+      </BindingForm>
 
       <section className="space-y-2">
         <h2 className="text-sm font-semibold">Binding terdaftar</h2>
@@ -162,12 +187,15 @@ export default async function TelegramBindingPage() {
                 <span className={b.revokedAt ? "text-red-500" : "text-emerald-600"}> • {b.revokedAt ? "dicabut" : "aktif"}</span>
               </div>
               {!b.revokedAt && (
-                <form action={revokeAction}>
+                <BindingForm
+                  action={revokeAction}
+                  className="inline"
+                  submitLabel="Cabut"
+                  pendingLabel="…"
+                  submitClassName="rounded border border-red-300 px-2 py-1 font-semibold text-red-600 hover:bg-red-50 dark:border-red-800"
+                >
                   <input type="hidden" name="id" value={b.id} />
-                  <button type="submit" className="rounded border border-red-300 px-2 py-1 font-semibold text-red-600 hover:bg-red-50 dark:border-red-800">
-                    Cabut
-                  </button>
-                </form>
+                </BindingForm>
               )}
             </li>
           ))}
