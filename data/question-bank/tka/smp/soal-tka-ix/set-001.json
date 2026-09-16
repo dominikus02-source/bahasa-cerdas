@@ -1,0 +1,2511 @@
+{
+  "meta": {
+    "source": "Soal TKA folder (dokumen guru: SOAL TKA BAHASA INDONESIA KELAS IX 1-3.docx + KUNCI JAWABAN I-III.docx) — original dir: /Users/user/Documents/PPT BI/Soal TKA",
+    "ingestedAt": "2026-09-16T11:53:57.967Z",
+    "provenance": "Dokumen soal + kunci asli (answer keys preserved verbatim, content-verified)",
+    "note": "MULTI_ANSWER & TRUE_FALSE_GRID disimpan dengan status blocked — engine scoring saat ini single-select (isCorrect = answer === correctAnswer); aktifkan setelah engine mendukung multi-select/grid. MULTI_ANSWER ditentukan deterministik dari bentuk kunci (>1 opsi terpilih), bukan dari hint teks."
+  },
+  "questions": [
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q01",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "sastra",
+      "band": "SEDANG",
+      "type": "multi_answer",
+      "difficulty": 2,
+      "sourceNumber": 1,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "a4c09ab236586ec1",
+      "stem": "Pilihan kata mana saja yang menunjukkan latar waktu pada puisi tersebut?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Bukit-bukit desa"
+        },
+        {
+          "id": "B",
+          "text": "Sebelum hari bermula"
+        },
+        {
+          "id": "C",
+          "text": "Akar-akar yang melata"
+        },
+        {
+          "id": "D",
+          "text": "Berlomba dengan surya"
+        }
+      ],
+      "correctAnswer": "B,D",
+      "explanation": null,
+      "status": "blocked",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Perempuan-Perempuan Perkasa\nPerempuan-perempuan yang membawa bakul di pagi buta,\ndari manakah mereka\nKe stasiun kereta mereka datang dari bukit-bukit desa\nsebelum peluit kereta pagi terjaga\nsebelum hari bermula dalam pesta kerja\nPerempuan-perempuan yang membawa bakul dalam kereta,\nke manakah mereka\nDi atas roda-roda baja mereka berkendara\nMereka berlomba dengan surya menuju ke gerbang kota\nmerebut hidup di pasar-pasar kota\nPerempuan-perempuan yang membawa bakul di pagi buta, siapakah mereka\nMereka ialah ibu-ibu yang perkasa\nakar-akar yang melata dari tanah perbukitan turun ke kota\nMereka: cinta kasih yang bergerak menghidupi desa demi desa\n(Puisi karya Hartojo Andangdjaja)\nPenulis: Sri Juliati\nEditor: Bobby Wiratama"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q02",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "sastra",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 2,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "4296e763edae3cb9",
+      "stem": "Apa makna merebut hidup di pasar-pasar kota pada teks puisi tersebut?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kegigihan dan perjuangan perempuan dalam bekerja."
+        },
+        {
+          "id": "B",
+          "text": "Keuletan dan pencapaian seseorang dalam bekerja."
+        },
+        {
+          "id": "C",
+          "text": "Aktivitas dan keseharian perempuan yang bekerja di pasar."
+        },
+        {
+          "id": "D",
+          "text": "Tanggung jawab dan kewajiban perempuan pada keluarga."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Perempuan-Perempuan Perkasa\nPerempuan-perempuan yang membawa bakul di pagi buta,\ndari manakah mereka\nKe stasiun kereta mereka datang dari bukit-bukit desa\nsebelum peluit kereta pagi terjaga\nsebelum hari bermula dalam pesta kerja\nPerempuan-perempuan yang membawa bakul dalam kereta,\nke manakah mereka\nDi atas roda-roda baja mereka berkendara\nMereka berlomba dengan surya menuju ke gerbang kota\nmerebut hidup di pasar-pasar kota\nPerempuan-perempuan yang membawa bakul di pagi buta, siapakah mereka\nMereka ialah ibu-ibu yang perkasa\nakar-akar yang melata dari tanah perbukitan turun ke kota\nMereka: cinta kasih yang bergerak menghidupi desa demi desa\n(Puisi karya Hartojo Andangdjaja)\nPenulis: Sri Juliati\nEditor: Bobby Wiratama"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q03",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "sastra",
+      "band": "SEDANG",
+      "type": "true_false_grid",
+      "difficulty": 2,
+      "sourceNumber": 3,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "2ca366f60caf1bfd",
+      "stem": "Pendapat siapa yang tepat untuk menggambarkan suasana haru yang muncul setelah membaca puisi tersebut?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Dina karena menunjukkan kekagumannya kepada para perempuan yang bekerja."
+        },
+        {
+          "id": "B",
+          "text": "Mira karena pendapatnya juga senada dengan pendapat yang disampaikan Dina."
+        },
+        {
+          "id": "C",
+          "text": "Tika karena pendapatnya menunjukkan rasa empati terhadap perempuan pekerja."
+        }
+      ],
+      "correctAnswer": "A. SetujuB. SetujuC. Tidak setuju",
+      "explanation": null,
+      "status": "blocked",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Perempuan-Perempuan Perkasa\nPerempuan-perempuan yang membawa bakul di pagi buta,\ndari manakah mereka\nKe stasiun kereta mereka datang dari bukit-bukit desa\nsebelum peluit kereta pagi terjaga\nsebelum hari bermula dalam pesta kerja\nPerempuan-perempuan yang membawa bakul dalam kereta,\nke manakah mereka\nDi atas roda-roda baja mereka berkendara\nMereka berlomba dengan surya menuju ke gerbang kota\nmerebut hidup di pasar-pasar kota\nPerempuan-perempuan yang membawa bakul di pagi buta, siapakah mereka\nMereka ialah ibu-ibu yang perkasa\nakar-akar yang melata dari tanah perbukitan turun ke kota\nMereka: cinta kasih yang bergerak menghidupi desa demi desa\n(Puisi karya Hartojo Andangdjaja)\nPenulis: Sri Juliati\nEditor: Bobby Wiratama\n\nDina: Wah, ternyata banyak perempuan hebat ya. Mereka bekerja penuh semangat!\nMira: Iya, mereka rela bangun pagi-pagi untuk bekerja.\nTika: Tapi, kasihan ya mereka pasti lelah setelah seharian bekerja."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q04",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 4,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "add5d97bf1de476f",
+      "stem": "Berdasarkan teks tersebut, alur logika sebab-akibat yang paling tepat menggambarkan dampak turunan dari FoMO adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Penggunaan media sosial → Gangguan tidur → Prestasi akademik meningkat karena banyak informasi."
+        },
+        {
+          "id": "B",
+          "text": "Melihat unggahan orang lain → Kecemasan berlebih → Gangguan tidur & Distraksi →Penurunan performa belajar & Masalah mental."
+        },
+        {
+          "id": "C",
+          "text": "Obsesi mengecek gawai → Rasa percaya diri meningkat → Lebih aktif bersosialisasi di dunia nyata."
+        },
+        {
+          "id": "D",
+          "text": "Gangguan kecemasan → FoMO → Kurang tidur → Mengantuk di sekolah."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Fenomena Fear of Missing Out (FoMO) di kalangan remaja kian mengkhawatirkan seiring masifnya penggunaan media sosial. Remaja yang mengalami FoMO memiliki kecemasan berlebih saat melihat unggahan orang lain yang tampak lebih bahagia atau sedang melakukan aktivitas seru tanpa dirinya. Akibatnya, mereka cenderung mengecek gawai secara obsesif, bahkan hingga mengganggu jam tidur. Dampak dari perilaku ini tidak berhenti pada gangguan pola tidur semata. Studi terbaru menunjukkan bahwa remaja dengan tingkat FoMO tinggi mengalami penurunan konsentrasi belajar yang signifikan di sekolah. Pikiran mereka terdistraksi oleh keinginan untuk terus terhubung dengan dunia maya. Dalam jangka panjang, kondisi ini memicu gangguan kecemasan (anxiety disorder) dan penurunan rasa percaya diri karena terus-menerus membandingkan hidupnya dengan \"panggung sandiwara\" orang lain di media sosial."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q05",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 5,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "b6695bbbb16f5072",
+      "stem": "Konflik tersirat yang paling dominan melatarbelakangi ketegangan antara tokoh Pak Karto dan Aryo adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Masalah ekonomi keluarga akibat Pak Karto malas bekerja."
+        },
+        {
+          "id": "B",
+          "text": "Persaingan bisnis antara pengrajin tradisional dan toko modern."
+        },
+        {
+          "id": "C",
+          "text": "Pertentangan nilai antara idealisme menjaga tradisi (masa lalu) dan pragmatisme gaya hidup modern (masa kini)."
+        },
+        {
+          "id": "D",
+          "text": "Ketidakpatuhan seorang anak terhadap orang tua yang sudah renta."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Pak Karto masih setia duduk di beranda, mengelus bilah bambu yang sedang dianyamnya menjadi tampah. Di seberang jalan, sebuah toko perabot plastik berwarna-warni baru saja dibuka dengan iringan musik bising. Orang-orang berkerumun di sana, memborong wadah-wadah praktis yang murah dan ringan.\n\"Sudahlah, Pak. Berhenti saja. Siapa yang mau beli anyaman bambu zaman sekarang? Berat, kasar, mahal pula,\" keluh Aryo, anaknya.\nPak Karto tersenyum tipis, matanya menatap nanar pada tumpukan tampah yang berdebu di sudut teras. \"Bambu ini bernapas, Yo. Dia hidup dari tanah kita. Plastik itu mati. Bapak tidak menjual barang, Bapak menjaga ingatan.\"\nAryo mendengus, lalu pergi meninggalkan ayahnya yang kembali tenggelam dalam sepi, diiringi suara riuh dari toko seberang yang seolah mengejek kesunyiannya."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q06",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 6,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "02878348d6ea354e",
+      "stem": "Perbedaan sudut pandang kedua penulis teks di atas dalam menanggapi kebijakan pelebaran trotoar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Teks 1 fokus pada aspek keindahan kota, Teks 2 fokus pada aspek kenyamanan pejalan kaki."
+        },
+        {
+          "id": "B",
+          "text": "Teks 1 menyoroti dampak positif lingkungan dan wisata, Teks 2 menyoroti dampak negatif ekonomi dan kemacetan."
+        },
+        {
+          "id": "C",
+          "text": "Teks 1 mendukung pedagang kaki lima, Teks 2 mendukung pemilik toko besar."
+        },
+        {
+          "id": "D",
+          "text": "Teks 1 ditulis oleh pemerintah, Teks 2 ditulis oleh ahli transportasi."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Teks 1\nPemerintah kota mulai menerapkan kebijakan \"Jalan Kaki Sehat\" dengan memperlebar trotoar di jalan protokol. Kebijakan ini disambut baik oleh para pegiat lingkungan. Menurut mereka, trotoar yang nyaman akan mendorong warga meninggalkan kendaraan pribadi untuk jarak dekat. Hal ini diklaim mampu menurunkan emisi karbon hingga 15 persen dalam setahun. Selain itu, wajah kota menjadi lebih estetik dan ramah bagi wisatawan pejalan kaki.\nTeks 2\nPelebaran trotoar di pusat kota menuai protes dari para pemilik toko dan pengguna jalan. \"Lahan parkir kami habis dimakan trotoar, pelanggan jadi malas mampir karena susah parkir. Omzet kami turun 40 persen bulan ini,\" ujar salah satu pedagang. Selain itu, penyempitan lajur jalan raya akibat pelebaran trotoar menyebabkan kemacetan semakin parah di jam sibuk, yang justru meningkatkan polusi udara dari asap kendaraan yang antre."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q07",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 7,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "1f9928fc79b41c01",
+      "stem": "Bukti logis yang mendukung simpulan bahwa \"Indonesia rentan terhadap krisis pangan jika hanya mengandalkan beras\" berdasarkan teks di atas adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Konsumsi beras Indonesia lebih rendah dibandingkan negara tetangga."
+        },
+        {
+          "id": "B",
+          "text": "Sagu dan jagung memiliki kandungan gizi yang lebih buruk daripada beras."
+        },
+        {
+          "id": "C",
+          "text": "Perubahan iklim ekstrem (El Nino) dapat menyebabkan gagal panen padi, sementara diversifikasi belum maksimal."
+        },
+        {
+          "id": "D",
+          "text": "Kampanye pangan lokal hanya slogan semata tanpa aksi nyata dari pemerintah."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Ketahanan pangan Indonesia tidak boleh selamanya bergantung pada beras. Diversifikasi pangan adalah kunci. Data Badan Pusat Statistik (BPS) menunjukkan bahwa konsumsi beras per kapita masyarakat Indonesia masih sangat tinggi, mencapai 114 kg per tahun, jauh di atas rata-rata dunia. Padahal, kita memiliki sumber karbohidrat lain seperti sagu, jagung, dan umbi-umbian yang melimpah namun belum dimaksimalkan. Jika terjadi gagal panen padi akibat perubahan iklim ekstrem, seperti El Nino yang berkepanjangan, risiko kelaparan akan mengancam jika kita tidak terbiasa mengonsumsi pangan lokal non-beras. Oleh karena itu, kampanye \"Kenyang Gak Harus Nasi\" perlu digalakkan kembali secara serius, bukan sekadar slogan."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q08",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "kebahasaan",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 8,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "af024bfea15ed29a",
+      "stem": "Perbaikan yang tepat untuk kalimat nomor (3) agar menjadi kalimat efektif adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Namun, siswa-siswa yang tinggal di daerah terpencil sering kali mengalami kesulitan sinyal sehingga akses mereka terhambat."
+        },
+        {
+          "id": "B",
+          "text": "Namun, bagi siswa di daerah terpencil sering kali kesulitan sinyal sehingga akses terhambat."
+        },
+        {
+          "id": "C",
+          "text": "Namun, para siswa di daerah terpencil sering kali mengalami kesulitan sinyal sehingga akses mereka terhambat."
+        },
+        {
+          "id": "D",
+          "text": "Namun, kesulitan sinyal sering dialami siswa di daerah terpencil sehingga akses mereka terhambat."
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "(1) Perpustakaan digital kini menjadi tren baru di dunia pendidikan. (2) Siswa dapat mengakses ribuan buku hanya dengan bermodalkan gawai pintar dan koneksi internet. (3) Namun, bagi para siswa-siswa yang tinggal di daerah terpencil sering kali mengalami kesulitan sinyal sehingga akses mereka menjadi terhambat. (4) Pemerintah perlu segera memeratakan infrastruktur digital."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q09",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 9,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "36a6be9c13ef46e5",
+      "stem": "Berdasarkan teks tersebut, kelemahan argumen yang menyatakan bahwa waktu belajar lama otomatis meningkatkan prestasi adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Tidak mempertimbangkan faktor kualitas pengajar di sekolah."
+        },
+        {
+          "id": "B",
+          "text": "Mengabaikan aspek psikologis (kelelahan) dan efektivitas penyerapan materi oleh siswa."
+        },
+        {
+          "id": "C",
+          "text": "Kurangnya fasilitas sekolah yang memadai untuk menunjang kegiatan sore hari."
+        },
+        {
+          "id": "D",
+          "text": "Orang tua tidak setuju karena biaya operasional sekolah menjadi lebih mahal."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q10",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 10,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "b0ad847f61b0ce11",
+      "stem": "Makna simbolik dari tindakan Raka membuang rapor ke sungai adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Usaha untuk melupakan kegagalan dengan cara lari dari tanggung jawab, yang justru akan menimbulkan masalah baru."
+        },
+        {
+          "id": "B",
+          "text": "Bentuk protes keras Raka terhadap sistem pendidikan yang menilainya tidak adil."
+        },
+        {
+          "id": "C",
+          "text": "Keinginan Raka untuk memulai hidup baru yang lebih bersih dan tenang seperti air."
+        },
+        {
+          "id": "D",
+          "text": "Kepedulian Raka terhadap lingkungan sungai yang kotor, menyindir orang-orang di sekitarnya."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q11",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 11,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "b3a9c5bb7088322a",
+      "stem": "Perbedaan utama dalam proses penyeduhan kedua teks tersebut terletak pada ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Suhu air yang digunakan untuk menyeduh."
+        },
+        {
+          "id": "B",
+          "text": "Jenis biji kopi yang dipakai (Arabika vs Robusta)."
+        },
+        {
+          "id": "C",
+          "text": "Teknik pemisahan ampas kopi (Pengendapan vs Penyaringan)."
+        },
+        {
+          "id": "D",
+          "text": "Waktu yang dibutuhkan untuk meminum kopi tersebut."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Teks 1 (Kopi Tubruk): Masukkan bubuk kopi kasar ke dalam gelas, tuang air mendidih, aduk rata, lalu diamkan selama 3 menit hingga ampas kopi turun ke dasar gelas (mengendap).\nTeks 2 (Kopi V60): Lipat kertas filter dan letakkan di atas dripper. Basahi kertas, masukkan bubuk kopi, lalu tuang air panas secara perlahan. Air kopi akan menetes ke bawah, sedangkan ampas tertahan di kertas."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q12",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "kebahasaan",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 12,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "35c181460119eb4e",
+      "stem": "Alasan utama kalimat tersebut dinyatakan tidak efektif adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Penggunaan kata \"dimohon\" yang kurang sopan untuk situasi formal."
+        },
+        {
+          "id": "B",
+          "text": "Terdapat pemborosan kata (pleonasme) pada subjek dan konjungsi tujuan."
+        },
+        {
+          "id": "C",
+          "text": "Tidak memiliki subjek dan predikat yang jelas dalam strukturnya."
+        },
+        {
+          "id": "D",
+          "text": "Kata \"lingkungan\" seharusnya ditulis dengan huruf kapital di awal kata."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q13",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 13,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "4c88715dfa344f90",
+      "stem": "Grafik penjualan buku cetak menurun 40?lam 5 tahun terakhir. Di sisi lain, langganan aplikasi e-book dan audiobook meningkat 200 persen. Banyak toko buku fisik yang tutup atau beralih fungsi menjadi kafe dan toko alat tulis. Jika tren ini terus berlanjut tanpa inovasi dari penerbit buku cetak, prediksi yang paling logis terjadi 10 tahun ke depan adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Masyarakat akan berhenti membaca buku sama sekali karena sibuk bermain gawai."
+        },
+        {
+          "id": "B",
+          "text": "Buku cetak akan menjadi barang koleksi (vintage) yang langka dan mahal, bukan lagi barang konsumsi massal."
+        },
+        {
+          "id": "C",
+          "text": "Sekolah akan melarang penggunaan tablet demi menyelamatkan industri toko buku."
+        },
+        {
+          "id": "D",
+          "text": "Penulis novel akan berhenti menulis karya sastra karena tidak ada yang mau mencetak bukunya."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q14",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 14,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "acac4acf6679d70f",
+      "stem": "Kalimat utama paragraf tersebut ditandai dengan nomor ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "(1)"
+        },
+        {
+          "id": "B",
+          "text": "(2)"
+        },
+        {
+          "id": "C",
+          "text": "(3)"
+        },
+        {
+          "id": "D",
+          "text": "(4)"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q15",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "kebahasaan",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 15,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "774865d86c0ffae5",
+      "stem": "Makna kata yang dicetak tebal pada teks tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Wilayah yang sering terkena banjir tahunan"
+        },
+        {
+          "id": "B",
+          "text": "Bagian permukaan bumi yang lebih rendah"
+        },
+        {
+          "id": "C",
+          "text": "Jalur tanah di kanan dan kiri sungai"
+        },
+        {
+          "id": "D",
+          "text": "Tanah lapang yang luas di perdesaan"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q16",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 16,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "1946fee596b5293e",
+      "stem": "Konflik yang terjadi dalam kutipan cerpen tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Fisik"
+        },
+        {
+          "id": "B",
+          "text": "Batin"
+        },
+        {
+          "id": "C",
+          "text": "Sosial"
+        },
+        {
+          "id": "D",
+          "text": "Lingkungan"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "\"Sudahlah, Di. Jangan terlalu dipikirkan ucapan Rino tadi,\" hibur Arya sambil menepuk pundak Aldi. Aldi hanya menghela napas panjang. Matanya menatap kosong ke arah lapangan basket.\n\"Aku hanya kecewa, Ar. Aku sudah berusaha keras latihan setiap hari, tapi dia bilang permainanku tak ada kemajuan,\" lirih Aldi."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q17",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 17,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "6432c460d89de86b",
+      "stem": "Urutan kalimat yang tepat agar menjadi teks prosedur yang padu adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "(1) - (4) - (3) - (5) - (2)"
+        },
+        {
+          "id": "B",
+          "text": "(1) - (3) - (4) - (5) - (2)"
+        },
+        {
+          "id": "C",
+          "text": "(4) - (1) - (3) - (5) - (2)"
+        },
+        {
+          "id": "D",
+          "text": "(1) - (4) - (5) - (3) - (2)"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Haluskan bawang merah, bawang putih, dan cabai.\nNasi goreng siap disajikan selagi hangat.\nMasukkan nasi putih, aduk hingga bumbu merata.\nPanaskan minyak, lalu tumis bumbu halus hingga harum.\nTambahkan kecap manis, garam, dan penyedap rasa sesuai selera."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q18",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 18,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "13bdff6133ed2ae8",
+      "stem": "Kalimat keunggulan yang tepat untuk melengkapi teks ulasan tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Sayangnya, alur cerita di bagian akhir terasa sedikit terburu-buru."
+        },
+        {
+          "id": "B",
+          "text": "Sinematografi yang indah memanjakan mata penonton sepanjang film."
+        },
+        {
+          "id": "C",
+          "text": "Film ini diadaptasi dari novel best seller karya Andrea Hirata."
+        },
+        {
+          "id": "D",
+          "text": "Banyak adegan yang kurang masuk akal bagi sebagian penonton."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Film 'Laskar Pelangi' sangat inspiratif karena mengajarkan kita untuk tidak menyerah dalam mengejar mimpi di tengah keterbatasan. [...]. Akting para pemain yang natural membuat penonton ikut merasakan emosi dalam cerita."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q19",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "kebahasaan",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 19,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "ae9b245c615f503f",
+      "stem": "Perbaikan kalimat tersebut agar menjadi kalimat efektif adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menghilangkan kata \"energi\"."
+        },
+        {
+          "id": "B",
+          "text": "Menghilangkan kata \"agar\"."
+        },
+        {
+          "id": "C",
+          "text": "Mengganti kata \"membengkak\" dengan \"naik\"."
+        },
+        {
+          "id": "D",
+          "text": "Menambahkan kata \"daripada\" sebelum tagihan."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "\"Kita harus menghemat energi listrik agar supaya tagihan tidak membengkak dan sumber daya alam terjaga.\""
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q21",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 21,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "e79bd6f6533c46ee",
+      "stem": "Penulisan judul karangan berikut yang tepat sesuai PUEBI adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Upaya Pencegahan Banjir Di Daerah Perkotaan"
+        },
+        {
+          "id": "B",
+          "text": "Upaya Pencegahan Banjir di Daerah Perkotaan"
+        },
+        {
+          "id": "C",
+          "text": "Upaya pencegahan banjir di Daerah Perkotaan"
+        },
+        {
+          "id": "D",
+          "text": "UPAYA PENCEGAHAN BANJIR DI DAERAH PERKOTAAN"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q22",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "sastra",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 22,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "8d9c2abe37a7edf0",
+      "stem": "Kalimat ajakan yang tepat untuk melengkapi teks tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "pemerintah harus membuat undang-undang yang tegas."
+        },
+        {
+          "id": "B",
+          "text": "mari kita lestarikan hutan dengan menanam pohon."
+        },
+        {
+          "id": "C",
+          "text": "hutan di Indonesia semakin hari semakin gundul."
+        },
+        {
+          "id": "D",
+          "text": "banyak bencana alam terjadi akibat ulah manusia. Teks untuk soal nomor 22-25 Di sebuah desa terpencil di lereng pegunungan, hiduplah seorang murid bernama Ranu. Setiap hari, ia berjalan hampir lima kilometer menuju sekolah. Jalanan yang ia lalui tidak selalu ramah: kadang licin saat hujan, kadang berdebu dan terjal ketika musim kemarau. Namun, tidak sekali pun Ranu absen dari sekolah. Ia percaya bahwa pendidikan adalah jembatan keluar dari keterbatasan. Sekolah Ranu sangat sederhana. Bangunan berdinding papan, atap yang beberapa bagiannya sudah berlubang, dan meja kursi yang tidak seragam. Meski begitu, para guru di sekolah itu mengajar dengan penuh semangat. Salah satunya adalah Bu Alia, guru Bahasa Indonesia yang selalu mengingatkan murid-muridnya bahwa keterbatasan bukan alasan untuk menyerah. Suatu hari, sekolah mendapat kunjungan dari relawan pendidikan kota. Para relawan itu terkejut melihat bagaimana Ranu menjelaskan proses belajar mandirinya. Ranu sering membaca buku bekas yang ia pinjam dari pos layanan desa, lalu menuliskan kembali apa yang ia pelajari dalam buku catatan lusuhnya. Semangat Ranu menginspirasi para relawan untuk menggalang bantuan. Dua bulan kemudian, sekolah Ranu menerima perpustakaan kecil, buku-buku baru, dan beberapa perangkat belajar digital. Namun, perubahan itu tidak membuat Ranu merasa cukup. Ia berkata kepada Bu Alia, \"Saya tidak ingin hanya menerima bantuan, Bu. Saya ingin membuktikan bahwa saya layak mendapatkannya.\" Sejak itu, Ranu semakin rajin belajar dan bahkan mulai membantu teman-temannya memahami pelajaran. Di akhir tahun ajaran, Ranu terpilih mewakili sekolahnya dalam lomba literasi tingkat kabupaten. Ia tidak menang juara umum, tetapi ia mendapat penghargaan sebagai peserta paling inspiratif. Bagi Ranu, penghargaan itu bukan tanda bahwa ia sudah berhasil, tetapi pengingat bahwa perjuangan baru saja dimulai."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Di sebuah desa terpencil di lereng pegunungan, hiduplah seorang murid bernama Ranu. Setiap hari, ia berjalan hampir lima kilometer menuju sekolah. Jalanan yang ia lalui tidak selalu ramah: kadang licin saat hujan, kadang berdebu dan terjal ketika musim kemarau. Namun, tidak sekali pun Ranu absen dari sekolah. Ia percaya bahwa pendidikan adalah jembatan keluar dari keterbatasan.\nSekolah Ranu sangat sederhana. Bangunan berdinding papan, atap yang beberapa bagiannya sudah berlubang, dan meja kursi yang tidak seragam. Meski begitu, para guru di sekolah itu mengajar dengan penuh semangat. Salah satunya adalah Bu Alia, guru Bahasa Indonesia yang selalu mengingatkan murid-muridnya bahwa keterbatasan bukan alasan untuk menyerah.\nSuatu hari, sekolah mendapat kunjungan dari relawan pendidikan kota. Para relawan itu terkejut melihat bagaimana Ranu menjelaskan proses belajar mandirinya. Ranu sering membaca buku bekas yang ia pinjam dari pos layanan desa, lalu menuliskan kembali apa yang ia pelajari dalam buku catatan lusuhnya. Semangat Ranu menginspirasi para relawan untuk menggalang bantuan.\nDua bulan kemudian, sekolah Ranu menerima perpustakaan kecil, buku-buku baru, dan beberapa perangkat belajar digital. Namun, perubahan itu tidak membuat Ranu merasa cukup. Ia berkata kepada Bu Alia, \"Saya\ntidak ingin hanya menerima bantuan, Bu. Saya ingin membuktikan bahwa saya layak mendapatkannya.\" Sejak itu, Ranu semakin rajin belajar dan bahkan mulai membantu teman-temannya memahami pelajaran.\nDi akhir tahun ajaran, Ranu terpilih mewakili sekolahnya dalam lomba literasi tingkat kabupaten. Ia tidak menang juara umum, tetapi ia mendapat penghargaan sebagai peserta paling inspiratif. Bagi Ranu, penghargaan itu bukan tanda bahwa ia sudah berhasil, tetapi pengingat bahwa perjuangan baru saja dimulai."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q23",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "sastra",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 23,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "57133b4b0fb2db82",
+      "stem": "Nilai moral yang tersirat dalam cerita tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Bantuan dari luar lebih penting daripada usaha diri sendiri"
+        },
+        {
+          "id": "B",
+          "text": "Keberhasilan ditentukan oleh fasilitas yang lengkap"
+        },
+        {
+          "id": "C",
+          "text": "Ketekunan dapat membuka kesempatan baru"
+        },
+        {
+          "id": "D",
+          "text": "Persaingan akademik harus dimenangkan dengan juara"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Di sebuah desa terpencil di lereng pegunungan, hiduplah seorang murid bernama Ranu. Setiap hari, ia berjalan hampir lima kilometer menuju sekolah. Jalanan yang ia lalui tidak selalu ramah: kadang licin saat hujan, kadang berdebu dan terjal ketika musim kemarau. Namun, tidak sekali pun Ranu absen dari sekolah. Ia percaya bahwa pendidikan adalah jembatan keluar dari keterbatasan.\nSekolah Ranu sangat sederhana. Bangunan berdinding papan, atap yang beberapa bagiannya sudah berlubang, dan meja kursi yang tidak seragam. Meski begitu, para guru di sekolah itu mengajar dengan penuh semangat. Salah satunya adalah Bu Alia, guru Bahasa Indonesia yang selalu mengingatkan murid-muridnya bahwa keterbatasan bukan alasan untuk menyerah.\nSuatu hari, sekolah mendapat kunjungan dari relawan pendidikan kota. Para relawan itu terkejut melihat bagaimana Ranu menjelaskan proses belajar mandirinya. Ranu sering membaca buku bekas yang ia pinjam dari pos layanan desa, lalu menuliskan kembali apa yang ia pelajari dalam buku catatan lusuhnya. Semangat Ranu menginspirasi para relawan untuk menggalang bantuan.\nDua bulan kemudian, sekolah Ranu menerima perpustakaan kecil, buku-buku baru, dan beberapa perangkat belajar digital. Namun, perubahan itu tidak membuat Ranu merasa cukup. Ia berkata kepada Bu Alia, \"Saya\ntidak ingin hanya menerima bantuan, Bu. Saya ingin membuktikan bahwa saya layak mendapatkannya.\" Sejak itu, Ranu semakin rajin belajar dan bahkan mulai membantu teman-temannya memahami pelajaran.\nDi akhir tahun ajaran, Ranu terpilih mewakili sekolahnya dalam lomba literasi tingkat kabupaten. Ia tidak menang juara umum, tetapi ia mendapat penghargaan sebagai peserta paling inspiratif. Bagi Ranu, penghargaan itu bukan tanda bahwa ia sudah berhasil, tetapi pengingat bahwa perjuangan baru saja dimulai."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q24",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "sastra",
+      "band": "SEDANG",
+      "type": "multi_answer",
+      "difficulty": 2,
+      "sourceNumber": 24,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "0d0b44e361cc95b8",
+      "stem": "Pilih jawaban lebih dari satu.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ia bergantung pada bantuan relawan untuk belajar"
+        },
+        {
+          "id": "B",
+          "text": "Ia berusaha membuktikan diri layak mendapatkan fasilitas"
+        },
+        {
+          "id": "C",
+          "text": "Ia menjadi lebih aktif membantu teman-temannya"
+        },
+        {
+          "id": "D",
+          "text": "Ia merasa perjuangannya sudah selesai setelah mendapat penghargaan"
+        }
+      ],
+      "correctAnswer": "B,C",
+      "explanation": null,
+      "status": "blocked",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Di sebuah desa terpencil di lereng pegunungan, hiduplah seorang murid bernama Ranu. Setiap hari, ia berjalan hampir lima kilometer menuju sekolah. Jalanan yang ia lalui tidak selalu ramah: kadang licin saat hujan, kadang berdebu dan terjal ketika musim kemarau. Namun, tidak sekali pun Ranu absen dari sekolah. Ia percaya bahwa pendidikan adalah jembatan keluar dari keterbatasan.\nSekolah Ranu sangat sederhana. Bangunan berdinding papan, atap yang beberapa bagiannya sudah berlubang, dan meja kursi yang tidak seragam. Meski begitu, para guru di sekolah itu mengajar dengan penuh semangat. Salah satunya adalah Bu Alia, guru Bahasa Indonesia yang selalu mengingatkan murid-muridnya bahwa keterbatasan bukan alasan untuk menyerah.\nSuatu hari, sekolah mendapat kunjungan dari relawan pendidikan kota. Para relawan itu terkejut melihat bagaimana Ranu menjelaskan proses belajar mandirinya. Ranu sering membaca buku bekas yang ia pinjam dari pos layanan desa, lalu menuliskan kembali apa yang ia pelajari dalam buku catatan lusuhnya. Semangat Ranu menginspirasi para relawan untuk menggalang bantuan.\nDua bulan kemudian, sekolah Ranu menerima perpustakaan kecil, buku-buku baru, dan beberapa perangkat belajar digital. Namun, perubahan itu tidak membuat Ranu merasa cukup. Ia berkata kepada Bu Alia, \"Saya\ntidak ingin hanya menerima bantuan, Bu. Saya ingin membuktikan bahwa saya layak mendapatkannya.\" Sejak itu, Ranu semakin rajin belajar dan bahkan mulai membantu teman-temannya memahami pelajaran.\nDi akhir tahun ajaran, Ranu terpilih mewakili sekolahnya dalam lomba literasi tingkat kabupaten. Ia tidak menang juara umum, tetapi ia mendapat penghargaan sebagai peserta paling inspiratif. Bagi Ranu, penghargaan itu bukan tanda bahwa ia sudah berhasil, tetapi pengingat bahwa perjuangan baru saja dimulai."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q25",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "sastra",
+      "band": "SEDANG",
+      "type": "true_false_grid",
+      "difficulty": 2,
+      "sourceNumber": 25,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "5da2f3efa028f723",
+      "stem": "Tentukan Benar atau Salah untuk setiap pernyataan!",
+      "options": [
+        {
+          "id": "A",
+          "text": "Karena terinspirasi oleh kedisiplinan Ranu belajar secara mandiri."
+        },
+        {
+          "id": "B",
+          "text": "Karena fasilitas sekolah sangat tertinggal."
+        },
+        {
+          "id": "C",
+          "text": "Karena Ranu meminta mereka menolong sekolahnya secara langsung."
+        },
+        {
+          "id": "D",
+          "text": "Karena para relawan ingin meningkatkan prestasi sekolah Ranu."
+        }
+      ],
+      "correctAnswer": "A. BenarB. BenarC. SalahD. Salah",
+      "explanation": null,
+      "status": "blocked",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Di sebuah desa terpencil di lereng pegunungan, hiduplah seorang murid bernama Ranu. Setiap hari, ia berjalan hampir lima kilometer menuju sekolah. Jalanan yang ia lalui tidak selalu ramah: kadang licin saat hujan, kadang berdebu dan terjal ketika musim kemarau. Namun, tidak sekali pun Ranu absen dari sekolah. Ia percaya bahwa pendidikan adalah jembatan keluar dari keterbatasan.\nSekolah Ranu sangat sederhana. Bangunan berdinding papan, atap yang beberapa bagiannya sudah berlubang, dan meja kursi yang tidak seragam. Meski begitu, para guru di sekolah itu mengajar dengan penuh semangat. Salah satunya adalah Bu Alia, guru Bahasa Indonesia yang selalu mengingatkan murid-muridnya bahwa keterbatasan bukan alasan untuk menyerah.\nSuatu hari, sekolah mendapat kunjungan dari relawan pendidikan kota. Para relawan itu terkejut melihat bagaimana Ranu menjelaskan proses belajar mandirinya. Ranu sering membaca buku bekas yang ia pinjam dari pos layanan desa, lalu menuliskan kembali apa yang ia pelajari dalam buku catatan lusuhnya. Semangat Ranu menginspirasi para relawan untuk menggalang bantuan.\nDua bulan kemudian, sekolah Ranu menerima perpustakaan kecil, buku-buku baru, dan beberapa perangkat belajar digital. Namun, perubahan itu tidak membuat Ranu merasa cukup. Ia berkata kepada Bu Alia, \"Saya\ntidak ingin hanya menerima bantuan, Bu. Saya ingin membuktikan bahwa saya layak mendapatkannya.\" Sejak itu, Ranu semakin rajin belajar dan bahkan mulai membantu teman-temannya memahami pelajaran.\nDi akhir tahun ajaran, Ranu terpilih mewakili sekolahnya dalam lomba literasi tingkat kabupaten. Ia tidak menang juara umum, tetapi ia mendapat penghargaan sebagai peserta paling inspiratif. Bagi Ranu, penghargaan itu bukan tanda bahwa ia sudah berhasil, tetapi pengingat bahwa perjuangan baru saja dimulai."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX1-Q26",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "sastra",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 26,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 1.docx",
+      "sourceHash": "8a8af3408a2154bd",
+      "stem": "Kalimat yang menunjukkan perubahan sikap Ranu setelah sekolah menerima bantuan adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "\"Bangunan sekolah berdinding papan dan atapnya berlubang.\""
+        },
+        {
+          "id": "B",
+          "text": "\"Ranu sering membaca buku bekas yang ia pinjam.\""
+        },
+        {
+          "id": "C",
+          "text": "\"Ia ingin membuktikan bahwa ia layak mendapatkannya.\""
+        },
+        {
+          "id": "D",
+          "text": "\"Relawan kota menggalang bantuan pendidikan.\""
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q01",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 1,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "655517d6ce7eef57",
+      "stem": "Argumen mendukung (pro) dalam teks tersebut terdapat pada kalimat nomor ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "(1) dan (2)"
+        },
+        {
+          "id": "B",
+          "text": "(2) dan (3)"
+        },
+        {
+          "id": "C",
+          "text": "(3) dan (4)"
+        },
+        {
+          "id": "D",
+          "text": "(1) dan (4) Teks untuk soal nomor 2-5! Perkembangan teknologi digital telah membawa perubahan besar dalam cara masyarakat memperoleh informasi. Salah satu perubahan yang paling terlihat adalah pergeseran dari membaca buku cetak ke membaca konten digital. Banyak orang berpendapat bahwa buku cetak akan semakin ditinggalkan karena kehadiran gawai yang mampu mengakses jutaan bacaan dalam hitungan detik. Namun, pendapat tersebut tidak sepenuhnya tepat. Beberapa penelitian menunjukkan bahwa membaca buku cetak menghasilkan tingkat pemahaman yang lebih baik terutama untuk bacaan panjang dan analitis. Pembaca buku cetak cenderung lebih fokus karena tidak terganggu notifikasi atau tautan yang dapat mengalihkan perhatian. Selain itu, pengalaman membaca buku cetak menciptakan hubungan fisik sekaligus emosional: sentuhan halaman, aroma kertas, hingga ritme membuka lembar demi lembar yang tidak bisa digantikan oleh layar digital. Di sisi lain, membaca digital tetap memiliki keunggulan signifikan. Aksesibilitas menjadi kelebihannya yang paling kuat. Seseorang dapat membaca kapan saja tanpa harus membawa banyak buku. Platform digital juga memungkinkan pembaca memperbesar huruf, menyorot teks, atau mencatat langsung pada layar. Karena itu, perdebatan mengenai siapa yang \"lebih unggul\" -buku cetak atau digital- sebenernya kurang relevan. Yang dibutuhkan adalah kemampuan masyarakat untuk memilih medium yang sesuai dengan tujuan membaca mereka. Untuk memahami teks panjang, buku cetak masih menjadi pilihan unggulan. Tetapi untuk membaca cepat atau mobilitas tinggi,digital menjadi solusi paling efisien."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "(1) Penggunaan gawai bagi anak-anak menuai pro dan kontra. (2) Pihak yang setuju berpendapat bahwa gawai dapat menjadi sarana belajar yang interaktif. (3) Aplikasi pendidikan membantu anak memahami materi dengan visual yang menarik. (4) Namun, pihak yang tidak setuju khawatir gawai akan membuat anak kecanduan dan malas bergerak."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q02",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 2,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "519e2dfb45482f49",
+      "stem": "Gagasan utama paragraf ke-2 adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Keunggulan pengalaman fisik membaca buku cetak"
+        },
+        {
+          "id": "B",
+          "text": "Notifikasi digital mengganggu fokus pembaca"
+        },
+        {
+          "id": "C",
+          "text": "Buku cetak lebih murah dibandingkan digital"
+        },
+        {
+          "id": "D",
+          "text": "Konten digital belum mampu menggantikan penelitian ilmiah"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Perkembangan teknologi digital telah membawa perubahan besar dalam cara masyarakat memperoleh informasi. Salah satu perubahan yang paling terlihat adalah pergeseran dari membaca buku cetak ke membaca konten digital. Banyak orang berpendapat bahwa buku cetak akan semakin ditinggalkan karena kehadiran gawai yang mampu mengakses jutaan bacaan dalam hitungan detik.\nNamun, pendapat tersebut tidak sepenuhnya tepat. Beberapa penelitian menunjukkan bahwa membaca buku cetak menghasilkan tingkat pemahaman yang lebih baik terutama untuk bacaan panjang dan analitis. Pembaca buku cetak cenderung lebih fokus karena tidak terganggu notifikasi atau tautan yang dapat mengalihkan perhatian. Selain itu, pengalaman membaca buku cetak menciptakan hubungan fisik sekaligus emosional: sentuhan halaman, aroma kertas, hingga ritme membuka lembar demi lembar yang tidak bisa digantikan oleh layar digital.\nDi sisi lain, membaca digital tetap memiliki keunggulan signifikan. Aksesibilitas menjadi kelebihannya yang paling kuat. Seseorang dapat membaca kapan saja tanpa harus membawa banyak buku. Platform digital juga memungkinkan pembaca memperbesar huruf, menyorot teks, atau mencatat langsung pada layar. Karena itu, perdebatan mengenai siapa yang \"lebih unggul\" -buku cetak atau digital- sebenernya kurang relevan. Yang dibutuhkan adalah kemampuan masyarakat untuk memilih medium yang sesuai dengan tujuan membaca mereka. Untuk memahami teks panjang, buku cetak masih menjadi pilihan unggulan. Tetapi untuk membaca cepat atau mobilitas tinggi,digital menjadi solusi paling efisien."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q03",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "true_false_grid",
+      "difficulty": 2,
+      "sourceNumber": 3,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "428f821f182853a0",
+      "stem": "Pernyataan berikut sesuai dengan isi teks adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pembaca buku cetak lebih mudah mempertahankan fokus."
+        },
+        {
+          "id": "B",
+          "text": "Buku digital selalu lebih efektif untuk memahami teks panjang."
+        },
+        {
+          "id": "C",
+          "text": "Pemilihan media membaca bergantung pada kebutuhan pembaca."
+        },
+        {
+          "id": "D",
+          "text": "Persaingan antara buku digital dan cetak semakin tidak relevan."
+        }
+      ],
+      "correctAnswer": "A. BenarB. SalahC. BenarD. Benar",
+      "explanation": null,
+      "status": "blocked",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Perkembangan teknologi digital telah membawa perubahan besar dalam cara masyarakat memperoleh informasi. Salah satu perubahan yang paling terlihat adalah pergeseran dari membaca buku cetak ke membaca konten digital. Banyak orang berpendapat bahwa buku cetak akan semakin ditinggalkan karena kehadiran gawai yang mampu mengakses jutaan bacaan dalam hitungan detik.\nNamun, pendapat tersebut tidak sepenuhnya tepat. Beberapa penelitian menunjukkan bahwa membaca buku cetak menghasilkan tingkat pemahaman yang lebih baik terutama untuk bacaan panjang dan analitis. Pembaca buku cetak cenderung lebih fokus karena tidak terganggu notifikasi atau tautan yang dapat mengalihkan perhatian. Selain itu, pengalaman membaca buku cetak menciptakan hubungan fisik sekaligus emosional: sentuhan halaman, aroma kertas, hingga ritme membuka lembar demi lembar yang tidak bisa digantikan oleh layar digital.\nDi sisi lain, membaca digital tetap memiliki keunggulan signifikan. Aksesibilitas menjadi kelebihannya yang paling kuat. Seseorang dapat membaca kapan saja tanpa harus membawa banyak buku. Platform digital juga memungkinkan pembaca memperbesar huruf, menyorot teks, atau mencatat langsung pada layar. Karena itu, perdebatan mengenai siapa yang \"lebih unggul\" -buku cetak atau digital- sebenernya kurang relevan. Yang dibutuhkan adalah kemampuan masyarakat untuk memilih medium yang sesuai dengan tujuan membaca mereka. Untuk memahami teks panjang, buku cetak masih menjadi pilihan unggulan. Tetapi untuk membaca cepat atau mobilitas tinggi,digital menjadi solusi paling efisien."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q04",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 4,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "4e0e23b140da3e81",
+      "stem": "Apa tujuan penulis menuliskan paragraf terakhir?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menegaskan bahwa buku digital adalah pilihan terbaik"
+        },
+        {
+          "id": "B",
+          "text": "Mengajak pembaca memahami fungsi masing-masing media membaca"
+        },
+        {
+          "id": "C",
+          "text": "Mengkritik masyarakat yang beralih ke gawai"
+        },
+        {
+          "id": "D",
+          "text": "Mengimbangi data penelitian dengan opini pribadi penulis"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Perkembangan teknologi digital telah membawa perubahan besar dalam cara masyarakat memperoleh informasi. Salah satu perubahan yang paling terlihat adalah pergeseran dari membaca buku cetak ke membaca konten digital. Banyak orang berpendapat bahwa buku cetak akan semakin ditinggalkan karena kehadiran gawai yang mampu mengakses jutaan bacaan dalam hitungan detik.\nNamun, pendapat tersebut tidak sepenuhnya tepat. Beberapa penelitian menunjukkan bahwa membaca buku cetak menghasilkan tingkat pemahaman yang lebih baik terutama untuk bacaan panjang dan analitis. Pembaca buku cetak cenderung lebih fokus karena tidak terganggu notifikasi atau tautan yang dapat mengalihkan perhatian. Selain itu, pengalaman membaca buku cetak menciptakan hubungan fisik sekaligus emosional: sentuhan halaman, aroma kertas, hingga ritme membuka lembar demi lembar yang tidak bisa digantikan oleh layar digital.\nDi sisi lain, membaca digital tetap memiliki keunggulan signifikan. Aksesibilitas menjadi kelebihannya yang paling kuat. Seseorang dapat membaca kapan saja tanpa harus membawa banyak buku. Platform digital juga memungkinkan pembaca memperbesar huruf, menyorot teks, atau mencatat langsung pada layar. Karena itu, perdebatan mengenai siapa yang \"lebih unggul\" -buku cetak atau digital- sebenernya kurang relevan. Yang dibutuhkan adalah kemampuan masyarakat untuk memilih medium yang sesuai dengan tujuan membaca mereka. Untuk memahami teks panjang, buku cetak masih menjadi pilihan unggulan. Tetapi untuk membaca cepat atau mobilitas tinggi,digital menjadi solusi paling efisien."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q05",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "true_false_grid",
+      "difficulty": 2,
+      "sourceNumber": 5,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "03a6e2b0742f7a38",
+      "stem": "Pernyataan berikut harus Benar atau Salah berdasarkan teks.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Buku digital tidak bisa digunakan untuk mencatat."
+        },
+        {
+          "id": "B",
+          "text": "Buku cetak unggul untuk bacaan panjang dan analitis."
+        },
+        {
+          "id": "C",
+          "text": "Pengalaman fisik tidak berpengaruh pada kenyamanan membaca."
+        },
+        {
+          "id": "D",
+          "text": "Media digital unggul dalam aksesibilitas.Bacalah teks berikut untuk menjawab soal nomor 6-9! Benteng Hijau Pesisir Indonesia Indonesia memiliki hutan mangrove terluas di dunia. Luasnya mencapai 3,36 juta hektar. Ekosistem ini memiliki fungsi ekologis yang sangat vital. Akar mangrove yang rapat mampu memecah gelombang laut. Hal ini mencegah terjadinya abrasi di sepanjang garis pantai. Selain itu, mangrove menjadi tempat pemijahan berbagai biota laut. Ikan, udang, dan kepiting kecil berlindung di sana. Mangrove juga memiliki kemampuan unik dalam menyerap karbon. Daya serapnya jauh lebih tinggi daripada hutan daratan. Namun, keberadaan mangrove kini terancam alih fungsi lahan. Banyak area mangrove diubah menjadi tambak atau pemukiman. Pencemaran limbah industri juga merusak kesehatan akar mangrove. Pemerintah kini gencar melakukan rehabilitasi hutan mangrove. Penanaman kembali dilakukan di wilayah pesisir yang kritis. Kesadaran masyarakat lokal sangat diperlukan untuk menjaga kelestarian benteng hijau ini."
+        }
+      ],
+      "correctAnswer": "A. SalahB. BenarC. SalahD. Benar",
+      "explanation": null,
+      "status": "blocked",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Perkembangan teknologi digital telah membawa perubahan besar dalam cara masyarakat memperoleh informasi. Salah satu perubahan yang paling terlihat adalah pergeseran dari membaca buku cetak ke membaca konten digital. Banyak orang berpendapat bahwa buku cetak akan semakin ditinggalkan karena kehadiran gawai yang mampu mengakses jutaan bacaan dalam hitungan detik.\nNamun, pendapat tersebut tidak sepenuhnya tepat. Beberapa penelitian menunjukkan bahwa membaca buku cetak menghasilkan tingkat pemahaman yang lebih baik terutama untuk bacaan panjang dan analitis. Pembaca buku cetak cenderung lebih fokus karena tidak terganggu notifikasi atau tautan yang dapat mengalihkan perhatian. Selain itu, pengalaman membaca buku cetak menciptakan hubungan fisik sekaligus emosional: sentuhan halaman, aroma kertas, hingga ritme membuka lembar demi lembar yang tidak bisa digantikan oleh layar digital.\nDi sisi lain, membaca digital tetap memiliki keunggulan signifikan. Aksesibilitas menjadi kelebihannya yang paling kuat. Seseorang dapat membaca kapan saja tanpa harus membawa banyak buku. Platform digital juga memungkinkan pembaca memperbesar huruf, menyorot teks, atau mencatat langsung pada layar. Karena itu, perdebatan mengenai siapa yang \"lebih unggul\" -buku cetak atau digital- sebenernya kurang relevan. Yang dibutuhkan adalah kemampuan masyarakat untuk memilih medium yang sesuai dengan tujuan membaca mereka. Untuk memahami teks panjang, buku cetak masih menjadi pilihan unggulan. Tetapi untuk membaca cepat atau mobilitas tinggi,digital menjadi solusi paling efisien."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q06",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 6,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "81c48e28a0c7e460",
+      "stem": "Berdasarkan teks tersebut, apa fungsi fisik utama dari akar mangrove bagi wilayah pesisir?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menyerap limbah industri dari pemukiman."
+        },
+        {
+          "id": "B",
+          "text": "Menjadi tempat tinggal utama bagi nelayan."
+        },
+        {
+          "id": "C",
+          "text": "Memecah gelombang dan mencegah abrasi."
+        },
+        {
+          "id": "D",
+          "text": "Menghasilkan oksigen bagi biota laut."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q07",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "multi_answer",
+      "difficulty": 2,
+      "sourceNumber": 7,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "bfd22cbaf2ee4173",
+      "stem": "Manakah yang termasuk faktor penyebab kerusakan hutan mangrove menurut teks 'Benteng Hijau Pesisir Indonesia'?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Peningkatan populasi ikan dan udang."
+        },
+        {
+          "id": "B",
+          "text": "Pencemaran limbah industri."
+        },
+        {
+          "id": "C",
+          "text": "Rehabilitasi lahan oleh pemerintah."
+        },
+        {
+          "id": "D",
+          "text": "Alih fungsi lahan menjadi pemukiman."
+        }
+      ],
+      "correctAnswer": "B,D",
+      "explanation": null,
+      "status": "blocked",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q08",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 8,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "18167a83ac4a798c",
+      "stem": "Pemerintah melakukan penanaman kembali di wilayah pesisir kritis.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Keduanya Tidak Sesuai"
+        },
+        {
+          "id": "B",
+          "text": "Sesuai; 2. Tidak Sesuai"
+        },
+        {
+          "id": "C",
+          "text": "Tidak Sesuai; 2. Sesuai"
+        },
+        {
+          "id": "D",
+          "text": "Keduanya Sesuai"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Daya serap karbon mangrove lebih rendah dari hutan daratan."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q09",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 9,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "e25aee1eaa274acc",
+      "stem": "Apa simpulan yang paling tepat mengenai hubungan antara mangrove dan perubahan iklim berdasarkan teks tersebut?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Penanaman mangrove justru mempercepat pemanasan global."
+        },
+        {
+          "id": "B",
+          "text": "Mangrove membantu mengurangi dampak perubahan iklim melalui penyerapan karbon."
+        },
+        {
+          "id": "C",
+          "text": "Perubahan iklim adalah penyebab utama mangrove menjadi kritis."
+        },
+        {
+          "id": "D",
+          "text": "Mangrove tidak berpengaruh pada perubahan iklim. Bacalah kutipan teks fiksi berikut untuk menjawab soal nomor 10 sampai 13! Cahaya di Sudut Desa Mentari pagi baru saja mengintip dari balik bukit. Bima sudah siap dengan tas lusuhnya. Perjalanan ke sekolah bukanlah hal mudah baginya. Ia harus menyeberangi sungai yang arusnya seringkali liar. Jembatan bambu yang ada sudah mulai rapuh termakan usia. Namun, semangat Bima tidak pernah padam. Di sekolah, ia adalah bintang yang paling terang. Gurunya sering memuji ketekunannya dalam membaca buku. Baginya, setiap halaman buku adalah jendela menuju dunia yang luas. Bima ingin menjadi seorang dokter kelak. Ia ingin mengobati kakeknya yang sering sakit-sakitan. Meskipun tinggal di desa terpencil, mimpinya setinggi langit. Ia percaya bahwa pendidikan adalah anak tangga untuk mengubah nasib. Setiap tetes keringatnya adalah investasi bagi masa depannya yang gemilang."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q10",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 10,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "8cb7f31f293b370e",
+      "stem": "Apa motivasi utama Bima memiliki cita-cita menjadi seorang dokter?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ingin mengobati kakeknya yang sering sakit."
+        },
+        {
+          "id": "B",
+          "text": "Ingin memperbaiki jembatan bambu yang rusak."
+        },
+        {
+          "id": "C",
+          "text": "Agar bisa pindah dari desa terpencil."
+        },
+        {
+          "id": "D",
+          "text": "Ingin mendapatkan pujian dari gurunya."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q11",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "sastra",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 11,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "396997685c55bb1c",
+      "stem": "Manakah citraan yang muncul dalam kalimat 'Mentari pagi baru saja mengintip dari balik bukit'?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Majas personifikasi."
+        },
+        {
+          "id": "B",
+          "text": "Citraan pendengaran."
+        },
+        {
+          "id": "C",
+          "text": "Citraan penglihatan."
+        },
+        {
+          "id": "D",
+          "text": "Majas hiperbola."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q12",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "true_false_grid",
+      "difficulty": 2,
+      "sourceNumber": 12,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "bd03e6753d009277",
+      "stem": "Tentukan Benar atau Salah pernyataan berikut berdasarkan karakter Bima dalam teks!",
+      "options": [
+        {
+          "id": "A",
+          "text": "Bima merasa putus asa karena jembatan sekolahnya rusak."
+        },
+        {
+          "id": "B",
+          "text": "Bima menganggap buku sebagai sarana untuk mengenal dunia luar."
+        }
+      ],
+      "correctAnswer": "A. SalahB. Benar",
+      "explanation": null,
+      "status": "blocked",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q13",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 13,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "25e5478c1d490bbf",
+      "stem": "Apa makna kias dari kalimat 'setiap tetes keringatnya adalah investasi bagi masa depannya'?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Bima sering berkeringat saat belajar di kelas."
+        },
+        {
+          "id": "B",
+          "text": "Bima harus menabung uang untuk biaya sekolahnya."
+        },
+        {
+          "id": "C",
+          "text": "Kerja keras dan perjuangan Bima akan membuahkan hasil di kemudian hari."
+        },
+        {
+          "id": "D",
+          "text": "Masa depan Bima tergantung pada cuaca saat berangkat sekolah."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q14",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "kebahasaan",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 14,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "b93ea18c17360a2a",
+      "stem": "Manakah penggunaan kata berimbuhan konfiks yang tepat dalam konteks formal?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Siswa harus belajar setiap hari."
+        },
+        {
+          "id": "B",
+          "text": "Ibu memasakkan ayah nasi goreng."
+        },
+        {
+          "id": "C",
+          "text": "Pemerintah sedang mengupayakan pemerataan akses internet."
+        },
+        {
+          "id": "D",
+          "text": "Budi sedang berlari di lapangan sekolah."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q15",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 15,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "b1c7e55f32d122a3",
+      "stem": "Apa pola hubungan antarparagraf atau antarklausa yang ditunjukkan oleh kata 'Meskipun'?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Hubungan penambahan."
+        },
+        {
+          "id": "B",
+          "text": "Hubungan pertentangan atau konsesif."
+        },
+        {
+          "id": "C",
+          "text": "Hubungan perbandingan."
+        },
+        {
+          "id": "D",
+          "text": "Hubungan sebab-akibat. Teks untuk soal nomor 16-18 Teks Ulasan 1 Pantai Glagah Pantai Glagah di Kulon Progo adalah salah satu pantai unik di selatan Yogyakarta. Pasir hitamnya memberi kesan eksotis yang berbeda dari pantai lainnya. Ombak besar yang menerjang pemecah gelombang menciptakan suasana alam yang menakjubkan. Di sisi timur, terdapat laguna tenang yang cocok untuk wisata keluarga, terutama anak-anak. Akses menuju pantai ini cukup mudah dari pusat Kota Yogyakarta. Fasilitasnya lengkap, seperti area parkir luas, warung makan, dan tempat duduk untuk bersantai. Ketika senja tiba, suasana menjadi lebih indah dengan langit yang memerah dan matahari terbenam perlahan di cakrawala. Namun, pengunjung tidak disarankan berenang karena ombaknya cukup ganas. Beberapa sudut pantai juga terlihat kurang bersih. Meski begitu, Pantai Glagah tetap menjadi tempat menenangkan diri. Teks Ulasan 2 Pantai Drini, Gunung Kidul Pantai Drini di Gunung Kidul tuh beneran hidden gem yang wajib masuk bucket list liburan kamu! Nggak cuma karena pasir putih dan air lautnya yang bening banget, tapi juga karena pulau karang kecil yang unik. Pulau itu seperti pemisah dua dunia-satu sisi ombaknya tenang, sisi lainnya agak liar. Serasa lagi liat dua kepribadian alam yang beda tapi tetap satu kesatuan. Yang bikin makin seru, kamu bisa jalan kaki ke pulau karangnya pas air laut surut. View dari atas cakep banget buat foto, apalagi pas golden hour. Banyak banget sudut estetis yang bisa kamu eksplor. Fasilitas di sini juga udah lumayan oke. Ada warung makan, parkiran luas, dan tempat duduk buat santai-santai. Pantai Drini tuh ibarat tempat nongkrongnya laut dan langit-sederhana, tapi punya vibes yang nggak bisa dibeli. Sekali datang, rasanya pengen balik lagi buat nyari tenang dalam riuhnya dunia."
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q16",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 16,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "49e80e57de34a3eb",
+      "stem": "Kosakata yang menggambarkan keserasian suara deburan alam pada teks ulasan ke-1 ditunjukkan pada frasa ....",
+      "options": [
+        {
+          "id": "A",
+          "text": "alternatif wisata"
+        },
+        {
+          "id": "B",
+          "text": "kanvas alam"
+        },
+        {
+          "id": "C",
+          "text": "panggung cahaya"
+        },
+        {
+          "id": "D",
+          "text": "harmoni alam"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Teks Ulasan 1\nPantai Glagah\nPantai Glagah di Kulon Progo adalah salah satu pantai unik di selatan Yogyakarta. Pasir hitamnya memberi kesan eksotis yang berbeda dari pantai lainnya. Ombak besar yang menerjang pemecah gelombang menciptakan suasana alam yang menakjubkan. Di sisi timur, terdapat laguna tenang yang cocok untuk wisata keluarga, terutama anak-anak.\nAkses menuju pantai ini cukup mudah dari pusat Kota Yogyakarta. Fasilitasnya lengkap, seperti area parkir luas, warung makan, dan tempat duduk untuk bersantai. Ketika senja tiba, suasana menjadi lebih indah dengan langit yang memerah dan matahari terbenam perlahan di cakrawala.\nNamun, pengunjung tidak disarankan berenang karena ombaknya cukup ganas. Beberapa sudut pantai juga terlihat kurang bersih. Meski begitu, Pantai Glagah tetap menjadi tempat menenangkan diri.\nTeks Ulasan 2\nPantai Drini, Gunung Kidul\nPantai Drini di Gunung Kidul tuh beneran hidden gem yang wajib masuk bucket list liburan kamu! Nggak cuma karena pasir putih dan air lautnya yang bening banget, tapi juga karena pulau karang kecil yang unik. Pulau itu seperti pemisah dua dunia-satu sisi ombaknya tenang, sisi lainnya agak liar. Serasa lagi liat dua kepribadian alam yang beda tapi tetap satu kesatuan.\nYang bikin makin seru, kamu bisa jalan kaki ke pulau karangnya pas air laut surut. View dari atas cakep banget buat foto, apalagi pas golden hour. Banyak banget sudut estetis yang bisa kamu eksplor.\nFasilitas di sini juga udah lumayan oke. Ada warung makan, parkiran luas, dan tempat duduk buat santai-santai. Pantai Drini tuh ibarat tempat nongkrongnya laut dan langit-sederhana, tapi punya vibes yang nggak bisa dibeli. Sekali datang, rasanya pengen balik lagi buat nyari tenang dalam riuhnya dunia."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q17",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "multi_answer",
+      "difficulty": 2,
+      "sourceNumber": 17,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "23493704dc4bb86f",
+      "stem": "Apa saja perbedaan informasi yang ada pada kedua teks tersebut?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kemudahan akses."
+        },
+        {
+          "id": "B",
+          "text": "Fasilitas yang tersedia."
+        },
+        {
+          "id": "C",
+          "text": "Tempat untuk berfoto."
+        },
+        {
+          "id": "D",
+          "text": "Keindahan saat senja."
+        }
+      ],
+      "correctAnswer": "A,C",
+      "explanation": null,
+      "status": "blocked",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Teks Ulasan 1\nPantai Glagah\nPantai Glagah di Kulon Progo adalah salah satu pantai unik di selatan Yogyakarta. Pasir hitamnya memberi kesan eksotis yang berbeda dari pantai lainnya. Ombak besar yang menerjang pemecah gelombang menciptakan suasana alam yang menakjubkan. Di sisi timur, terdapat laguna tenang yang cocok untuk wisata keluarga, terutama anak-anak.\nAkses menuju pantai ini cukup mudah dari pusat Kota Yogyakarta. Fasilitasnya lengkap, seperti area parkir luas, warung makan, dan tempat duduk untuk bersantai. Ketika senja tiba, suasana menjadi lebih indah dengan langit yang memerah dan matahari terbenam perlahan di cakrawala.\nNamun, pengunjung tidak disarankan berenang karena ombaknya cukup ganas. Beberapa sudut pantai juga terlihat kurang bersih. Meski begitu, Pantai Glagah tetap menjadi tempat menenangkan diri.\nTeks Ulasan 2\nPantai Drini, Gunung Kidul\nPantai Drini di Gunung Kidul tuh beneran hidden gem yang wajib masuk bucket list liburan kamu! Nggak cuma karena pasir putih dan air lautnya yang bening banget, tapi juga karena pulau karang kecil yang unik. Pulau itu seperti pemisah dua dunia-satu sisi ombaknya tenang, sisi lainnya agak liar. Serasa lagi liat dua kepribadian alam yang beda tapi tetap satu kesatuan.\nYang bikin makin seru, kamu bisa jalan kaki ke pulau karangnya pas air laut surut. View dari atas cakep banget buat foto, apalagi pas golden hour. Banyak banget sudut estetis yang bisa kamu eksplor.\nFasilitas di sini juga udah lumayan oke. Ada warung makan, parkiran luas, dan tempat duduk buat santai-santai. Pantai Drini tuh ibarat tempat nongkrongnya laut dan langit-sederhana, tapi punya vibes yang nggak bisa dibeli. Sekali datang, rasanya pengen balik lagi buat nyari tenang dalam riuhnya dunia."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q18",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "true_false_grid",
+      "difficulty": 2,
+      "sourceNumber": 18,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "f64995329ed28796",
+      "stem": "Tentukan Benar atau Salah untuk setiap pernyataan berikut!",
+      "options": [
+        {
+          "id": "A",
+          "text": "Gaya penyajian teks menggunakan bahasa nonformal sehingga lebih santai."
+        },
+        {
+          "id": "B",
+          "text": "Penyajian gambar pada teks yang membuat pembaca lebih tertarik membaca."
+        },
+        {
+          "id": "C",
+          "text": "Akhir ulasan dilengkapi kalimat ajakan kepada pembaca untuk mengunjungi pantai."
+        }
+      ],
+      "correctAnswer": "A. BenarB. SalahC. Salah",
+      "explanation": null,
+      "status": "blocked",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Teks Ulasan 1\nPantai Glagah\nPantai Glagah di Kulon Progo adalah salah satu pantai unik di selatan Yogyakarta. Pasir hitamnya memberi kesan eksotis yang berbeda dari pantai lainnya. Ombak besar yang menerjang pemecah gelombang menciptakan suasana alam yang menakjubkan. Di sisi timur, terdapat laguna tenang yang cocok untuk wisata keluarga, terutama anak-anak.\nAkses menuju pantai ini cukup mudah dari pusat Kota Yogyakarta. Fasilitasnya lengkap, seperti area parkir luas, warung makan, dan tempat duduk untuk bersantai. Ketika senja tiba, suasana menjadi lebih indah dengan langit yang memerah dan matahari terbenam perlahan di cakrawala.\nNamun, pengunjung tidak disarankan berenang karena ombaknya cukup ganas. Beberapa sudut pantai juga terlihat kurang bersih. Meski begitu, Pantai Glagah tetap menjadi tempat menenangkan diri.\nTeks Ulasan 2\nPantai Drini, Gunung Kidul\nPantai Drini di Gunung Kidul tuh beneran hidden gem yang wajib masuk bucket list liburan kamu! Nggak cuma karena pasir putih dan air lautnya yang bening banget, tapi juga karena pulau karang kecil yang unik. Pulau itu seperti pemisah dua dunia-satu sisi ombaknya tenang, sisi lainnya agak liar. Serasa lagi liat dua kepribadian alam yang beda tapi tetap satu kesatuan.\nYang bikin makin seru, kamu bisa jalan kaki ke pulau karangnya pas air laut surut. View dari atas cakep banget buat foto, apalagi pas golden hour. Banyak banget sudut estetis yang bisa kamu eksplor.\nFasilitas di sini juga udah lumayan oke. Ada warung makan, parkiran luas, dan tempat duduk buat santai-santai. Pantai Drini tuh ibarat tempat nongkrongnya laut dan langit-sederhana, tapi punya vibes yang nggak bisa dibeli. Sekali datang, rasanya pengen balik lagi buat nyari tenang dalam riuhnya dunia.\n\nKomar: Justru aku lebih suka ulasan pada teks 1 karena sangat jelas dan menarik minatku untuk mengunjungi pantai itu.\nMengapa penyataan Banu lebih tepat untuk menggambarkan keunggulan teks ulasan kedua yang tidak ada pada teks ulasan pertama?"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q19",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "multi_answer",
+      "difficulty": 2,
+      "sourceNumber": 19,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "645e6a5b9ccbafd3",
+      "stem": "(Pilih semua jawaban yang benar)",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menyamakan AI dengan robot adalah sebuah penyederhanaan yang kurang tepat."
+        },
+        {
+          "id": "B",
+          "text": "Fungsi utama AI adalah meniru kemampuan berpikir manusia, bukan sekadar bentuk fisiknya."
+        },
+        {
+          "id": "C",
+          "text": "Asisten virtual adalah salah satu contoh penerapan AI dalam kehidupan sehari-hari."
+        },
+        {
+          "id": "D",
+          "text": "AI hanya ada dalam bentuk fisik seperti robot humanoid."
+        }
+      ],
+      "correctAnswer": "A,B,C",
+      "explanation": null,
+      "status": "blocked",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Berdasarkan teks, manakah pernyataan yang secara akurat mengevaluasi pemahaman tentang istilah 'inteligensi artifisial'?"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q20",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 20,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "9fdb4d3b6eef38bd",
+      "stem": "Istilah 'substitusi' dalam kutipan di atas memiliki makna...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Penggantian"
+        },
+        {
+          "id": "B",
+          "text": "Penambahan"
+        },
+        {
+          "id": "C",
+          "text": "Pengurangan"
+        },
+        {
+          "id": "D",
+          "text": "Penggabungan"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q21",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "sastra",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 21,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "d2f03d4e3274785d",
+      "stem": "Seorang pengacara sedang menjelaskan kasus kepada kliennya. Manakah kalimat berikut yang menggunakan istilah hukum 'premis' dengan paling tepat dan jelas?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kita harus membangun premis yang kuat bahwa klien kita tidak berada di lokasi kejadian."
+        },
+        {
+          "id": "B",
+          "text": "Saya akan mengajukan premis kepada hakim untuk membatalkan persidangan ini."
+        },
+        {
+          "id": "C",
+          "text": "Saksi memberikan premis yang memberatkan terdakwa di pengadilan."
+        },
+        {
+          "id": "D",
+          "text": "Bukti-bukti ini adalah premis dari semua tuduhan yang kita ajukan. Teks untuk soal nomor 22-25 Kura-Kura Bijak dan Kelinci yang Tergesa (1) Di tepi hutan, gemuruh air sungai terdengar semakin keras. Kori si kura-kura menatap cemas ke arah puncak gunung, tempat awan hitam berkumpul. Ia tahu, banjir besar akan segera tiba. Tanpa membuang waktu, Kori mulai mengumpulkan ranting-ranting kayu yang kokoh, mengikatnya satu per satu dengan sulur-sulur kuat. Pekerjaannya lambat, tetapi setiap simpulnya terikat dengan saksama. (2) Tiba-tiba, Kiki si kelinci melesat datang dengan napas terengah-engah. \"Kori, apa yang kau lakukan? Lambat sekali! Lihat aku!\" serunya dengan nada mengejek. Dengan panik, Kiki menumpuk sembarang dedaunan kering dan beberapa batang kayu lapuk. Dalam sekejap, rakit ala kadarnya itu selesai. \"Kau akan hanyut dengan pekerjaan lambatmu itu!\" ejeknya lagi sebelum duduk di atas rakitnya yang reyot. (3) Benar saja, tak lama kemudian air bah datang menerjang. Rakit sederhana milik Kiki langsung hancur diterpa arus deras, membuatnya terombang-ambing tak berdaya. Sementara itu, rakit kokoh buatan Kori meluncur dengan tenang di atas air. Melihat Kiki dalam bahaya, Kori dengan sabar mengarahkan rakitnya dan membantu kelinci yang kedinginan itu naik. (4) \"Terima kasih, Kori. Aku salah telah meremehkanmu,\" ucap Kiki dengan suara bergetar. Kori hanya tersenyum bijak. \"Dalam menghadapi bahaya, ketenangan dan persiapan yang matang jauh lebih penting daripada kecepatan yang tergesa-gesa,\" nasihatnya lembut. Sejak saat itu, Kiki belajar untuk lebih menghargai proses dan tidak lagi memandang rendah orang lain."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q22",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "sastra",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 22,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "a9e82374ea3014b4",
+      "stem": "Apa ide pokok atau pesan moral utama dari cerita tersebut?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Bekerja cepat akan menghasilkan hasil yang lebih baik."
+        },
+        {
+          "id": "B",
+          "text": "Kita harus selalu membantu teman yang kesulitan."
+        },
+        {
+          "id": "C",
+          "text": "Kecermatan dan ketenangan lebih utama daripada kecepatan tanpa perhitungan."
+        },
+        {
+          "id": "D",
+          "text": "Jangan pernah menyerah dalam menghadapi bencana alam"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Kura-Kura Bijak dan Kelinci yang Tergesa\n(1) Di tepi hutan, gemuruh air sungai terdengar semakin keras. Kori si kura-kura menatap cemas ke arah puncak gunung, tempat awan hitam berkumpul. Ia tahu, banjir besar akan segera tiba. Tanpa membuang waktu, Kori mulai mengumpulkan ranting-ranting kayu yang kokoh, mengikatnya satu per satu dengan sulur-sulur kuat. Pekerjaannya lambat, tetapi setiap simpulnya terikat dengan saksama.\n(2) Tiba-tiba, Kiki si kelinci melesat datang dengan napas terengah-engah. \"Kori, apa yang kau lakukan? Lambat sekali! Lihat aku!\" serunya dengan nada mengejek. Dengan panik, Kiki menumpuk sembarang dedaunan kering dan beberapa batang kayu lapuk. Dalam sekejap, rakit ala kadarnya itu selesai. \"Kau akan hanyut dengan pekerjaan lambatmu itu!\" ejeknya lagi sebelum duduk di atas rakitnya yang reyot.\n(3) Benar saja, tak lama kemudian air bah datang menerjang. Rakit sederhana milik Kiki langsung hancur diterpa arus deras, membuatnya terombang-ambing tak berdaya. Sementara itu, rakit kokoh buatan Kori meluncur dengan tenang di atas air. Melihat Kiki dalam bahaya, Kori dengan sabar mengarahkan rakitnya dan membantu kelinci yang kedinginan itu naik.\n(4) \"Terima kasih, Kori. Aku salah telah meremehkanmu,\" ucap Kiki dengan suara bergetar. Kori hanya tersenyum bijak. \"Dalam menghadapi bahaya, ketenangan dan persiapan yang matang jauh lebih penting daripada kecepatan yang tergesa-gesa,\" nasihatnya lembut. Sejak saat itu, Kiki belajar untuk lebih menghargai proses dan tidak lagi memandang rendah orang lain."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q23",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "sastra",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 23,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "b7800b5845f67bad",
+      "stem": "Apa masalah utama yang dihadapi oleh para tokoh dalam cerita tersebut?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Persaingan antara Kori dan Kiki."
+        },
+        {
+          "id": "B",
+          "text": "Ancaman banjir yang akan datang."
+        },
+        {
+          "id": "C",
+          "text": "Kesulitan mencari bahan untuk membuat rakit."
+        },
+        {
+          "id": "D",
+          "text": "Sifat Kiki yang sombong."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Kura-Kura Bijak dan Kelinci yang Tergesa\n(1) Di tepi hutan, gemuruh air sungai terdengar semakin keras. Kori si kura-kura menatap cemas ke arah puncak gunung, tempat awan hitam berkumpul. Ia tahu, banjir besar akan segera tiba. Tanpa membuang waktu, Kori mulai mengumpulkan ranting-ranting kayu yang kokoh, mengikatnya satu per satu dengan sulur-sulur kuat. Pekerjaannya lambat, tetapi setiap simpulnya terikat dengan saksama.\n(2) Tiba-tiba, Kiki si kelinci melesat datang dengan napas terengah-engah. \"Kori, apa yang kau lakukan? Lambat sekali! Lihat aku!\" serunya dengan nada mengejek. Dengan panik, Kiki menumpuk sembarang dedaunan kering dan beberapa batang kayu lapuk. Dalam sekejap, rakit ala kadarnya itu selesai. \"Kau akan hanyut dengan pekerjaan lambatmu itu!\" ejeknya lagi sebelum duduk di atas rakitnya yang reyot.\n(3) Benar saja, tak lama kemudian air bah datang menerjang. Rakit sederhana milik Kiki langsung hancur diterpa arus deras, membuatnya terombang-ambing tak berdaya. Sementara itu, rakit kokoh buatan Kori meluncur dengan tenang di atas air. Melihat Kiki dalam bahaya, Kori dengan sabar mengarahkan rakitnya dan membantu kelinci yang kedinginan itu naik.\n(4) \"Terima kasih, Kori. Aku salah telah meremehkanmu,\" ucap Kiki dengan suara bergetar. Kori hanya tersenyum bijak. \"Dalam menghadapi bahaya, ketenangan dan persiapan yang matang jauh lebih penting daripada kecepatan yang tergesa-gesa,\" nasihatnya lembut. Sejak saat itu, Kiki belajar untuk lebih menghargai proses dan tidak lagi memandang rendah orang lain."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q24",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "sastra",
+      "band": "SEDANG",
+      "type": "multi_answer",
+      "difficulty": 2,
+      "sourceNumber": 24,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "ac07ffdc592eff78",
+      "stem": "Sifat-sifat apa yang dapat disimpulkan dari tokoh Kiki di awal cerita? (Pilih semua jawaban yang benar)",
+      "options": [
+        {
+          "id": "A",
+          "text": "Sombong"
+        },
+        {
+          "id": "B",
+          "text": "Penakut"
+        },
+        {
+          "id": "C",
+          "text": "Tergesa-gesa"
+        },
+        {
+          "id": "D",
+          "text": "Pemalas"
+        }
+      ],
+      "correctAnswer": "A,C",
+      "explanation": null,
+      "status": "blocked",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Kura-Kura Bijak dan Kelinci yang Tergesa\n(1) Di tepi hutan, gemuruh air sungai terdengar semakin keras. Kori si kura-kura menatap cemas ke arah puncak gunung, tempat awan hitam berkumpul. Ia tahu, banjir besar akan segera tiba. Tanpa membuang waktu, Kori mulai mengumpulkan ranting-ranting kayu yang kokoh, mengikatnya satu per satu dengan sulur-sulur kuat. Pekerjaannya lambat, tetapi setiap simpulnya terikat dengan saksama.\n(2) Tiba-tiba, Kiki si kelinci melesat datang dengan napas terengah-engah. \"Kori, apa yang kau lakukan? Lambat sekali! Lihat aku!\" serunya dengan nada mengejek. Dengan panik, Kiki menumpuk sembarang dedaunan kering dan beberapa batang kayu lapuk. Dalam sekejap, rakit ala kadarnya itu selesai. \"Kau akan hanyut dengan pekerjaan lambatmu itu!\" ejeknya lagi sebelum duduk di atas rakitnya yang reyot.\n(3) Benar saja, tak lama kemudian air bah datang menerjang. Rakit sederhana milik Kiki langsung hancur diterpa arus deras, membuatnya terombang-ambing tak berdaya. Sementara itu, rakit kokoh buatan Kori meluncur dengan tenang di atas air. Melihat Kiki dalam bahaya, Kori dengan sabar mengarahkan rakitnya dan membantu kelinci yang kedinginan itu naik.\n(4) \"Terima kasih, Kori. Aku salah telah meremehkanmu,\" ucap Kiki dengan suara bergetar. Kori hanya tersenyum bijak. \"Dalam menghadapi bahaya, ketenangan dan persiapan yang matang jauh lebih penting daripada kecepatan yang tergesa-gesa,\" nasihatnya lembut. Sejak saat itu, Kiki belajar untuk lebih menghargai proses dan tidak lagi memandang rendah orang lain."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX2-Q25",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "sastra",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 25,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 2.docx",
+      "sourceHash": "25085707dd89a45a",
+      "stem": "Apa tujuan utama penulis memilih hewan kura-kura dan kelinci sebagai tokoh dalam cerita ini?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Karena kura-kura dan kelinci adalah hewan yang sering ditemukan di dekat sungai"
+        },
+        {
+          "id": "B",
+          "text": "Untuk menghibur pembaca anak-anak dengan tokoh hewan yang lucu."
+        },
+        {
+          "id": "C",
+          "text": "Untuk memanfaatkan stereotip umum (kura-kura lambat, kelinci cepat) guna menyoroti kontras nilai."
+        },
+        {
+          "id": "D",
+          "text": "Karena penulis tidak memiliki ide untuk tokoh manusia."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Kura-Kura Bijak dan Kelinci yang Tergesa\n(1) Di tepi hutan, gemuruh air sungai terdengar semakin keras. Kori si kura-kura menatap cemas ke arah puncak gunung, tempat awan hitam berkumpul. Ia tahu, banjir besar akan segera tiba. Tanpa membuang waktu, Kori mulai mengumpulkan ranting-ranting kayu yang kokoh, mengikatnya satu per satu dengan sulur-sulur kuat. Pekerjaannya lambat, tetapi setiap simpulnya terikat dengan saksama.\n(2) Tiba-tiba, Kiki si kelinci melesat datang dengan napas terengah-engah. \"Kori, apa yang kau lakukan? Lambat sekali! Lihat aku!\" serunya dengan nada mengejek. Dengan panik, Kiki menumpuk sembarang dedaunan kering dan beberapa batang kayu lapuk. Dalam sekejap, rakit ala kadarnya itu selesai. \"Kau akan hanyut dengan pekerjaan lambatmu itu!\" ejeknya lagi sebelum duduk di atas rakitnya yang reyot.\n(3) Benar saja, tak lama kemudian air bah datang menerjang. Rakit sederhana milik Kiki langsung hancur diterpa arus deras, membuatnya terombang-ambing tak berdaya. Sementara itu, rakit kokoh buatan Kori meluncur dengan tenang di atas air. Melihat Kiki dalam bahaya, Kori dengan sabar mengarahkan rakitnya dan membantu kelinci yang kedinginan itu naik.\n(4) \"Terima kasih, Kori. Aku salah telah meremehkanmu,\" ucap Kiki dengan suara bergetar. Kori hanya tersenyum bijak. \"Dalam menghadapi bahaya, ketenangan dan persiapan yang matang jauh lebih penting daripada kecepatan yang tergesa-gesa,\" nasihatnya lembut. Sejak saat itu, Kiki belajar untuk lebih menghargai proses dan tidak lagi memandang rendah orang lain."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX3-Q01",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 1,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 3.docx",
+      "sourceHash": "7a0da52abd8d96aa",
+      "stem": "Berita tersebut berisikan tentang …",
+      "options": [
+        {
+          "id": "A",
+          "text": "kasus penganiayaan orang tua kandung terhadap anak"
+        },
+        {
+          "id": "B",
+          "text": "kekerasan orang tua oleh anak kandung"
+        },
+        {
+          "id": "C",
+          "text": "peristiwa pembunuhan seorang anak oleh ibu angkatnya sendiri"
+        },
+        {
+          "id": "D",
+          "text": "perlakuan layaknya budak oleh ibu angkat"
+        },
+        {
+          "id": "E",
+          "text": "peristiwa kematian seorang anak"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX3-Q02",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 2,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 3.docx",
+      "sourceHash": "060d625aea9bd22a",
+      "stem": "Urutan penyampaian informasi pada paragraf berita di atas ialah …",
+      "options": [
+        {
+          "id": "A",
+          "text": "Apa, Kenapa, Bagaimana"
+        },
+        {
+          "id": "B",
+          "text": "Siapa, mengapa, apa"
+        },
+        {
+          "id": "C",
+          "text": "Apa, apa, apa"
+        },
+        {
+          "id": "D",
+          "text": "Kenapa, siapa, apa"
+        },
+        {
+          "id": "E",
+          "text": "Siapa, kenapa, apa"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX3-Q03",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 3,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 3.docx",
+      "sourceHash": "53e727290db9ec44",
+      "stem": "Berikut ini adalah kalimat yang tepat untuk mengisi bagian rumpang pada memo di atas ialah …",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kepada bapak Sungkono, kami membutuhkan beberapa peralatan untuk menunjang administrasi perusahaan. Maka dengan ini …"
+        },
+        {
+          "id": "B",
+          "text": "Sungkono, ini loh… kelengkapan kita ini tidak lengkap. Bagaimana mau bekerja …"
+        },
+        {
+          "id": "C",
+          "text": "Bapak Sungkono yang saya hormati, tolong dicek ke ruang administrasi sekarang!"
+        },
+        {
+          "id": "D",
+          "text": "YTH. Bapak Sungkono, para karyawan bagian administrasi sangat membutuhkan tambahan alat kelengkapan. Maka dengan ini …"
+        },
+        {
+          "id": "E",
+          "text": "Sudahlah, kami sedang butuh alat-alat tambahan ini. Bagaimana Sungkono?"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Memo :\nKepada : Pimpinan PT. Adi Karya Husada\nDari : Kepala Bagian Administrasi\n… mohon agar dapat meninjau kelengkapan keterbutuhan administrasi di ruang admin.\nKepala Bagian Administrasi Surya Negara"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX3-Q04",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 4,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 3.docx",
+      "sourceHash": "9a95608cc7ea43dd",
+      "stem": "Berikut ini kalimat tanya yang tepat yang jawabannya terdapat pada memo di atas adalah …",
+      "options": [
+        {
+          "id": "A",
+          "text": "Sejak kapan Suryo negara berkirim memo dengan Sungkono?"
+        },
+        {
+          "id": "B",
+          "text": "Siapa pengirim memo yang ditujukan kepada Pimpinan PT. Adi Karya Husada?"
+        },
+        {
+          "id": "C",
+          "text": "Ada hubungan apa antara bapak Sungkono dan bapak Surya Negoro"
+        },
+        {
+          "id": "D",
+          "text": "Sejak kapan Sungkono menjadi pimpinan di PT. Adi Karya Husada?"
+        },
+        {
+          "id": "E",
+          "text": "Sejak kapan Surya Negara menjabat sebagai kepala bagian administrasi?"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX3-Q05",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "kebahasaan",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 5,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 3.docx",
+      "sourceHash": "af75a834219a0575",
+      "stem": "Berdasarkan data buku di atas, penulisan daftar pustaka yang benar di bawah ini ialah :",
+      "options": [
+        {
+          "id": "A",
+          "text": "Surya Negara. 2017. Gurita Istana. Bentang : Bandung."
+        },
+        {
+          "id": "B",
+          "text": "Surya Negara Saputra. 2017. Gurita Istana. Bandung : Bentang"
+        },
+        {
+          "id": "C",
+          "text": "Negara, Surya Saputra. 2017. Bandung. Gurita Istana : Bentang"
+        },
+        {
+          "id": "D",
+          "text": "Saputra, Surya Negara. 2017. Gurita Istana. Bandung : Bentang"
+        },
+        {
+          "id": "E",
+          "text": "Negara, Saputra Surya. 2017. Gurita Istana. Bandung : Bentang"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Judul Buku : Gurita Istana\nPenulis : Surya Negara Saputra\nPenerbit : Bentang\nTahun : 2017\nTempat : Bandung"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX3-Q06",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "sastra",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 6,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 3.docx",
+      "sourceHash": "4ecdbb0cb521a34f",
+      "stem": "Di bawah ini adalah ciri-ciri dari pantun, kecuali …",
+      "options": [
+        {
+          "id": "A",
+          "text": "Terdiri dari bait yang ganjil"
+        },
+        {
+          "id": "B",
+          "text": "Terdiri dari bait genap"
+        },
+        {
+          "id": "C",
+          "text": "Tiap bait terdiri atas sampiran dan isi"
+        },
+        {
+          "id": "D",
+          "text": "Bersajak"
+        },
+        {
+          "id": "E",
+          "text": "Semua salah"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX3-Q07",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "sastra",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 7,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 3.docx",
+      "sourceHash": "3540aac2f523cae9",
+      "stem": "Larik yang benar dan tepat untuk melengkapi pantun tersebut ialah …",
+      "options": [
+        {
+          "id": "A",
+          "text": "Alangkah senang memakan daging itik"
+        },
+        {
+          "id": "B",
+          "text": "Daging itik enak rasanya"
+        },
+        {
+          "id": "C",
+          "text": "Itik hampir mirip dengan bebek"
+        },
+        {
+          "id": "D",
+          "text": "Daging itik sangat lezat jika digoreng"
+        },
+        {
+          "id": "E",
+          "text": "Itik dan bebek tak ada bedanya"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Negeri sakura nun jauh di sana\n…\nJanganlah suka menghina\nBelum tentu dirimu lebih baik"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX3-Q08",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "kebahasaan",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 8,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 3.docx",
+      "sourceHash": "d6e2425071187412",
+      "stem": "Hal-hal yang tidak perlu diperhatikan dalam menanggapi penjelasan ketika berdiskusi adalah ….",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menyampaikan tanggapan secara logis"
+        },
+        {
+          "id": "B",
+          "text": "Kemampuan memilih ejaan yang tepat"
+        },
+        {
+          "id": "C",
+          "text": "Menyampaikan tanggapan disertai data yang akurat"
+        },
+        {
+          "id": "D",
+          "text": "Menyampaikan tanggapan dengan bahasa yang baik dan benar."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX3-Q09",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "sastra",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 9,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 3.docx",
+      "sourceHash": "0a27f6a1e6a729d0",
+      "stem": "Berikut ini yang termasuk ciri syair adalah….",
+      "options": [
+        {
+          "id": "A",
+          "text": "Syair selalu selesai dalam satu bait"
+        },
+        {
+          "id": "B",
+          "text": "Pola rimanya a-b-a-b (rima silang)"
+        },
+        {
+          "id": "C",
+          "text": "Syair terdiri atas empat baris/larik dalam setiap bait"
+        },
+        {
+          "id": "D",
+          "text": "Syair memiliki sampiran"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX3-Q10",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "sastra",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 10,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 3.docx",
+      "sourceHash": "661c143909fa8ae1",
+      "stem": "Isi syair tersebut adalah….",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kamu harus kuat menanggung beban derita"
+        },
+        {
+          "id": "B",
+          "text": "Kamu harus berkata jujur agar tidak dibebani masalah"
+        },
+        {
+          "id": "C",
+          "text": "Kamu harus berani bertanggung jawab dalam setiap perbuatan"
+        },
+        {
+          "id": "D",
+          "text": "Kamu harus selalu menghormati orang yang telah bertanggung jawab"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Pakai olehmu sifat anak jantan\nBertanggung jawab dalam perbuatan\nBeban dipikul pantang dielakkan"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX3-Q11",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 11,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 3.docx",
+      "sourceHash": "483e279de89b4a10",
+      "stem": "Berikut ini yang tidak termasuk manfaat membaca cepat adalah….",
+      "options": [
+        {
+          "id": "A",
+          "text": "Mengurangi kejenuhan"
+        },
+        {
+          "id": "B",
+          "text": "Meningkatkan wawasan"
+        },
+        {
+          "id": "C",
+          "text": "Meningkatkan pemahaman"
+        },
+        {
+          "id": "D",
+          "text": "Meningkatkan kemahiran berbahasa yang lain"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX3-Q12",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "kebahasaan",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 12,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 3.docx",
+      "sourceHash": "eda6387e631b11fd",
+      "stem": "Kata pendeta dalam kalimat tersebut mengalami gejala….",
+      "options": [
+        {
+          "id": "A",
+          "text": "Spesialisasi"
+        },
+        {
+          "id": "B",
+          "text": "Asosiasi"
+        },
+        {
+          "id": "C",
+          "text": "Peyorasi"
+        },
+        {
+          "id": "D",
+          "text": "Ameliorasi"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX3-Q13",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "kebahasaan",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 13,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 3.docx",
+      "sourceHash": "324961821c75d6d2",
+      "stem": "Kata yang mengalami penyempitan makna terdapat pada kalimat….",
+      "options": [
+        {
+          "id": "A",
+          "text": "Partai yang dipilihnya memperoleh 15 kursi"
+        },
+        {
+          "id": "B",
+          "text": "Ayah membeli kursi tamu"
+        },
+        {
+          "id": "C",
+          "text": "Di ruang itu hanya tersedia 15 kursi"
+        },
+        {
+          "id": "D",
+          "text": "Kursi yang dimilikinya sudah rusak"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX3-Q14",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 14,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 3.docx",
+      "sourceHash": "4b8d00986aad6c17",
+      "stem": "“Lukisanmu cukup bagus. Kamu dapat mengembangkan keahlian ini dengan belajar lebih tekun. Dengan begitu kamu pasti akan berhasil.” Perkataan tersebut tergolong ke dalam jenis….",
+      "options": [
+        {
+          "id": "A",
+          "text": "Makian"
+        },
+        {
+          "id": "B",
+          "text": "Pujian"
+        },
+        {
+          "id": "C",
+          "text": "Kritikan"
+        },
+        {
+          "id": "D",
+          "text": "Pelecehan"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX3-Q15",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "sastra",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 15,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 3.docx",
+      "sourceHash": "b48738a23940e024",
+      "stem": "Pernyataan yang tidak sehubungan dengan syair tersebut adalah….",
+      "options": [
+        {
+          "id": "A",
+          "text": "Terdiri atas empat larik"
+        },
+        {
+          "id": "B",
+          "text": "Mengandung pesan moral agar kita selalu menepati janji"
+        },
+        {
+          "id": "C",
+          "text": "Pola rima dala bait tersebut a-a-a-a"
+        },
+        {
+          "id": "D",
+          "text": "Dua larik pertama sampiran dan dua larik terakhir memuat isinya"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Bertanggung jawab ke tengah ke tepi\nMenjunjung sumpah menepati janji\nSupaya hidupmu tiada terkeji"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX3-Q16",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 16,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 3.docx",
+      "sourceHash": "ac7cf4174361e0a6",
+      "stem": "Susunan kerangka isi teks yang paling tepat sesuai dengan judul tersebut adalah ....",
+      "options": [
+        {
+          "id": "A",
+          "text": "1) Masalah yang timbul akibat kecanduan game online pada remaja 2) Langkah mengatasi kecanduan game online pada remaja 3) Tips mengantisipasi kecanduan game online bagi remaja 4) Pentingnya mengatasi masalah kecanduan game online pada remaja"
+        },
+        {
+          "id": "B",
+          "text": "1) Fenomena maraknya kecanduan game online pada remaja 2) Masalah yang timbul akibat kecanduan game online pada remaja 3) Langkah mengatasi kecanduan game online pada remaja 4) Tips mengantisipasi kecanduan game online pada remaja"
+        },
+        {
+          "id": "C",
+          "text": "1) Langkah mengatasi kecanduan game online pada remaja 2) Fenomena maraknya kecanduan game online pada remaja 3) Masalah yang timbul akibat kecanduan game online pada remaja 4) Tips mengantisipasi kecanduan game online pada remaja"
+        },
+        {
+          "id": "D",
+          "text": "1) Latar belakang timbulnya kecanduan game online pada remaja 2) Tips mengantisipasi kecanduan game online pada remaja 3) Langkah mengatasi kecanduan game online pada remaja 4) Masalah yang timbul akibat kecanduan game online pada remaja"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Seorang siswa diminta membuat teks dengan judul Upaya Mengatasi Kecanduan Terhadap Game Online pada Remaja."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX3-Q17",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "kebahasaan",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 17,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 3.docx",
+      "sourceHash": "7fab61fffa4b4a79",
+      "stem": "Makna kata maestro adalah ....",
+      "options": [
+        {
+          "id": "A",
+          "text": "orang yang hebat dalam bidang yang digeluti"
+        },
+        {
+          "id": "B",
+          "text": "orang yang ahli dan berprestasi di bidang tertentu"
+        },
+        {
+          "id": "C",
+          "text": "orang yang mempunyai nama besar karena kesuksesannya"
+        },
+        {
+          "id": "D",
+          "text": "orang yang menjuarai suatu pertandingan dan tidak terkalahkan"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "Banyak kalangan menyebut Rudy Hartono sebagai maestro bulu tangkis dunia."
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX3-Q18",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 18,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 3.docx",
+      "sourceHash": "fa99b79195b998f4",
+      "stem": "wacana, tetapi sudah terasa dampaknya, seperti peningkatan air pasang laut dan suhu udara yang semakin panas.” Isi pembicaraan dalam dialog interaktif terseut membahas masalah….",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kesadaran masyarakat"
+        },
+        {
+          "id": "B",
+          "text": "Dampak lingkungan"
+        },
+        {
+          "id": "C",
+          "text": "Upaya pencegahan"
+        },
+        {
+          "id": "D",
+          "text": "Upaya penyuluhan masyarakat"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX",
+      "passage": "harus ditingkatkan. Sekarang, dampak negatif dari perilaku seenaknya mulai terasa.\n Pembicara 2 : “Ya, isu global worming atau pemanasan global bukan sekedar"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX3-Q19",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 19,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 3.docx",
+      "sourceHash": "cb51a2d1ae8f56a0",
+      "stem": "Apabila beberapa orang berkumpul mengadakan tukar pikiran untuk memecahkan masalah yang dialami bersama, bentuk pertemuan tersebut disebut….",
+      "options": [
+        {
+          "id": "A",
+          "text": "Seminar"
+        },
+        {
+          "id": "B",
+          "text": "Pertemuan"
+        },
+        {
+          "id": "C",
+          "text": "Rapat khusus"
+        },
+        {
+          "id": "D",
+          "text": "Diskusi kelompok Cermati teks diskusi berikut ! Dampak Bermain Game Online pada Anak Istilah game online sudah tidak asing lagi bagi anak-anak dan remaja masa kini. Dengan daya jelajah internet yang sangat luas dan tanpa batas, game online sudah bisa dinikmati kapan pun dan di mana pun. Dampaknya pun kini mulai dirasakan banyak pihak. ( .... ) Akan tetapi, banyak juga pihak yang berpendapat bahwa game online juga memiliki sisi positif. Dengan demikian, game online kini menimbulkan pro-kontra di masyarakat."
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    },
+    {
+      "id": "BC-TKA-SMP-SOALTKA-IX3-Q20",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SMP",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "sourceNumber": 20,
+      "sourceFile": "SOAL TKA BAHASA INDONESIA KELAS IX 3.docx",
+      "sourceHash": "6a788fc5420a16d7",
+      "stem": "Kalimat yang tepat untuk melengkapi bagian yang rumpang dalam paragraf tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ada pihak yang beranggapan bahwa game online banyak menimbulkan dampak negatif."
+        },
+        {
+          "id": "B",
+          "text": "Anak-anak dan remaja pun kini bisa bermain game online melalui telepon genggam mereka."
+        },
+        {
+          "id": "C",
+          "text": "Karena itu, persoalan ini tentunya memerlukan perhatian dan pengawasan dari para orang tua."
+        },
+        {
+          "id": "D",
+          "text": "Terutama para orang tua yang memiliki anak remaja yang setiap hari gemar bermain game online."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": null,
+      "status": "approved",
+      "source": "SOAL_TKA_KELAS_IX_DOCX"
+    }
+  ]
+}
