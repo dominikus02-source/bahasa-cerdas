@@ -1,0 +1,546 @@
+{
+  "generatedAt": "2026-09-16T11:53:57.918Z",
+  "sources": [
+    {
+      "set": "IX1",
+      "questionsParsed": 25,
+      "keysParsed": 25,
+      "countMatch": true,
+      "pairings": [
+        {
+          "sourceNumber": 1,
+          "type": "MULTI_ANSWER",
+          "section": "sastra",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 2,
+          "type": "PILIHAN_GANDA",
+          "section": "sastra",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 3,
+          "type": "TRUE_FALSE_GRID",
+          "section": "sastra",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 4,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 5,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 6,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 7,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 8,
+          "type": "PILIHAN_GANDA",
+          "section": "kebahasaan",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 9,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 10,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 11,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 12,
+          "type": "PILIHAN_GANDA",
+          "section": "kebahasaan",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 13,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 14,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 15,
+          "type": "PILIHAN_GANDA",
+          "section": "kebahasaan",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 16,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 17,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 18,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 19,
+          "type": "PILIHAN_GANDA",
+          "section": "kebahasaan",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 21,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 22,
+          "type": "PILIHAN_GANDA",
+          "section": "sastra",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 23,
+          "type": "PILIHAN_GANDA",
+          "section": "sastra",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 24,
+          "type": "MULTI_ANSWER",
+          "section": "sastra",
+          "status": "OK",
+          "warnings": [
+            "reclassified-multi-from-key-shape"
+          ]
+        },
+        {
+          "sourceNumber": 25,
+          "type": "TRUE_FALSE_GRID",
+          "section": "sastra",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 26,
+          "type": "PILIHAN_GANDA",
+          "section": "sastra",
+          "status": "OK",
+          "warnings": []
+        }
+      ]
+    },
+    {
+      "set": "IX2",
+      "questionsParsed": 25,
+      "keysParsed": 25,
+      "countMatch": true,
+      "pairings": [
+        {
+          "sourceNumber": 1,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 2,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 3,
+          "type": "TRUE_FALSE_GRID",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 4,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 5,
+          "type": "TRUE_FALSE_GRID",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 6,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 7,
+          "type": "MULTI_ANSWER",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": [
+            "reclassified-multi-from-key-shape"
+          ]
+        },
+        {
+          "sourceNumber": 8,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 9,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 10,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 11,
+          "type": "PILIHAN_GANDA",
+          "section": "sastra",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 12,
+          "type": "TRUE_FALSE_GRID",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 13,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 14,
+          "type": "PILIHAN_GANDA",
+          "section": "kebahasaan",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 15,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 16,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 17,
+          "type": "MULTI_ANSWER",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 18,
+          "type": "TRUE_FALSE_GRID",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 19,
+          "type": "MULTI_ANSWER",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": [
+            "reclassified-multi-from-key-shape"
+          ]
+        },
+        {
+          "sourceNumber": 20,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 21,
+          "type": "PILIHAN_GANDA",
+          "section": "sastra",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 22,
+          "type": "PILIHAN_GANDA",
+          "section": "sastra",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 23,
+          "type": "PILIHAN_GANDA",
+          "section": "sastra",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 24,
+          "type": "MULTI_ANSWER",
+          "section": "sastra",
+          "status": "OK",
+          "warnings": [
+            "reclassified-multi-from-key-shape"
+          ]
+        },
+        {
+          "sourceNumber": 25,
+          "type": "PILIHAN_GANDA",
+          "section": "sastra",
+          "status": "OK",
+          "warnings": []
+        }
+      ]
+    },
+    {
+      "set": "IX3",
+      "questionsParsed": 20,
+      "keysParsed": 20,
+      "countMatch": true,
+      "pairings": [
+        {
+          "sourceNumber": 1,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 2,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 3,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 4,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 5,
+          "type": "PILIHAN_GANDA",
+          "section": "kebahasaan",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 6,
+          "type": "PILIHAN_GANDA",
+          "section": "sastra",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 7,
+          "type": "PILIHAN_GANDA",
+          "section": "sastra",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 8,
+          "type": "PILIHAN_GANDA",
+          "section": "kebahasaan",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 9,
+          "type": "PILIHAN_GANDA",
+          "section": "sastra",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 10,
+          "type": "PILIHAN_GANDA",
+          "section": "sastra",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 11,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 12,
+          "type": "PILIHAN_GANDA",
+          "section": "kebahasaan",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 13,
+          "type": "PILIHAN_GANDA",
+          "section": "kebahasaan",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 14,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 15,
+          "type": "PILIHAN_GANDA",
+          "section": "sastra",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 16,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 17,
+          "type": "PILIHAN_GANDA",
+          "section": "kebahasaan",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 18,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 19,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        },
+        {
+          "sourceNumber": 20,
+          "type": "PILIHAN_GANDA",
+          "section": "membaca",
+          "status": "OK",
+          "warnings": []
+        }
+      ]
+    }
+  ],
+  "blockedSources": [
+    {
+      "file": "LATIHAN SOAL TKA BAHASA INDONESIA SMPN 28 MUARO JAMBI OLEH YAYUK PURWANTI.pdf",
+      "reason": "scanned PDF without text layer (30 pages → 60 chars) — questions unreadable; its key file (Kunci_Jawaban_Latihan_Soal_TKA_Bahasa_Indonesia.docx, 30 rows) has nothing reliable to attach to",
+      "questions": 0,
+      "disposition": "BLOCKED — requires OCR or digital source from owner"
+    },
+    {
+      "file": "PAKET 1 UJI COBA TKA BAHASA INDONESIA.pdf",
+      "reason": "29 questions readable (text layer OK) but NO answer key exists anywhere in the folder",
+      "questions": 29,
+      "disposition": "BLOCKED — answer key required before ingestion (hard gate: no guessing)"
+    },
+    {
+      "file": "Kunci_Jawaban_Latihan_Soal_TKA_Bahasa_Indonesia.docx",
+      "reason": "orphaned key table (30 rows) for the unreadable Yayuk PDF",
+      "disposition": "RETAINED — will pair automatically if digital source of the questions is provided"
+    }
+  ]
+}

@@ -235,6 +235,10 @@ async function main() {
         try {
           const existing = await db.tKAQuestion.findUnique({ where: { id: item.id } });
 
+          // status "blocked" = konten & kunci terverifikasi tapi formatnya belum didukung
+          // engine scoring saat ini (multi-jawab / grid Benar-Salah) → tidak aktif.
+          const shouldBeActive = item.status !== "blocked";
+
           if (existing) {
             const changed =
               existing.text !== text ||
@@ -244,7 +248,8 @@ async function main() {
               existing.correctAnswer !== item.correctAnswer ||
               existing.explanation !== explanation ||
               existing.passage !== passage ||
-              existing.tingkat !== trackCfg.tingkat;
+              existing.tingkat !== trackCfg.tingkat ||
+              existing.isActive !== shouldBeActive;
 
             if (changed) {
               await db.tKAQuestion.update({
@@ -260,7 +265,7 @@ async function main() {
                   difficulty: difficulty as any,
                   weight: 1.0,
                   source: item.source || "BC_TKA_ORIGINAL",
-                  isActive: true,
+                  isActive: shouldBeActive,
                   isVerified: true,
                   tingkat: trackCfg.tingkat,
                 },
@@ -283,7 +288,7 @@ async function main() {
                 difficulty: difficulty as any,
                 weight: 1.0,
                 source: item.source || "BC_TKA_ORIGINAL",
-                isActive: true,
+                isActive: shouldBeActive,
                 isVerified: true,
                 tingkat: trackCfg.tingkat,
               },
