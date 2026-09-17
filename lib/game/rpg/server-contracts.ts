@@ -32,6 +32,9 @@ export type PendekarActionErrorCode =
   | "BATTLE_REWARD_REPLAY_CONFLICT"
   | "BATTLE_SETTLEMENT_NOT_READY"
   | "BATTLE_SETTLEMENT_INVALID_STATE"
+  | "QUEST_MUTATION_REPLAY_CONFLICT"
+  | "QUEST_MUTATION_INVALID_TRANSITION"
+  | "QUEST_MUTATION_INVALID_FLAG"
   | "UNAUTHENTICATED"
   | "PREVIEW_DENIED"
   | "INTERNAL_ERROR";
@@ -213,6 +216,72 @@ export type SettleBattleRewardResult = {
   category: "SETTLED" | "REPLAYED";
   settlement: PendekarBattleSettlementProjection;
 };
+
+/* ---------- P2.6I.2: Quest mutations ---------- */
+
+export type QuestMutationKind = "QUEST_ADVANCE" | "KILL" | "FLOWER_PICK" | "FLAG";
+
+export type QuestMutationInput = {
+  /** The mutation kind — client tells WHAT changed; server validates WHERE it lands. */
+  kind: QuestMutationKind;
+  /** Target quest main-line number (required when kind=QUEST_ADVANCE). */
+  to?: number;
+  /** Flag name to set true (required when kind=FLAG). */
+  flagName?: string;
+  /** Client-generated idempotency/replay key. */
+  requestKey: string;
+};
+
+export type PendekarQuestStateProjection = {
+  main: number;
+  kills: number;
+  flowers: number;
+};
+
+export type QuestMutationResult = {
+  /** Applied or deduplicated. */
+  category: "APPLIED" | "REPLAYED";
+  /** Authoritative quest state after the mutation. */
+  quest: PendekarQuestStateProjection;
+  /** Authoritative flags after the mutation. */
+  flags: Record<string, boolean>;
+  /** Which signal kinds were actually applied (empty on REPLAYED). */
+  applied: string[];
+  /** Server version counter after write. */
+  version: number;
+};
+
+export type ParseQuestMutationInputResult =
+  | { ok: true; value: QuestMutationInput }
+  | { ok: false; error: PendekarActionError };
+
+const questMutationKeys = new Set(["kind", "to", "flagName", "requestKey"]);
+
+export function parseQuestMutationInput(value: unknown): ParseQuestMutationInputResult {
+  if (!isRecord(value)) {
+    return { ok: false, error: { code: "INVALID_INPUT", message: "Quest mutation body must be an object" } };
+  }
+  if (Object.keys(value).some((key) => !questMutationKeys.has(key))) {
+    return { ok: false, error: { code: "INVALID_INPUT", message: "Quest mutation body contains unsupported fields" } };
+  }
+  if (value.kind !== "QUEST_ADVANCE" && value.kind !== "KILL" && value.kind !== "FLOWER_PICK" && value.kind !== "FLAG") {
+    return { ok: false, error: { code: "INVALID_INPUT", message: "kind must be QUEST_ADVANCE, KILL, FLOWER_PICK, or FLAG" } };
+  }
+  if (value.kind === "QUEST_ADVANCE") {
+    if (typeof value.to !== "number" || !Number.isInteger(value.to) || value.to < 0 || value.to > 7) {
+      return { ok: false, error: { code: "INVALID_INPUT", message: "to must be an integer 0..7" } };
+    }
+  }
+  if (value.kind === "FLAG") {
+    if (typeof value.flagName !== "string" || value.flagName.length === 0 || value.flagName.length > 64) {
+      return { ok: false, error: { code: "INVALID_INPUT", message: "flagName must be a non-empty string of at most 64 characters" } };
+    }
+  }
+  if (typeof value.requestKey !== "string" || !requestIdPattern.test(value.requestKey)) {
+    return { ok: false, error: { code: "INVALID_INPUT", message: "requestKey must be an opaque replay key" } };
+  }
+  return { ok: true, value: value as QuestMutationInput };
+}
 
 export type ParseStartBattleInputResult =
   | { ok: true; value: StartBattleInput }

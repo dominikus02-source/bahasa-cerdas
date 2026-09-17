@@ -32,6 +32,8 @@ import type {
   PendekarRewardReceiptProjection,
   PendekarStateProjection,
   PendekarWorldState,
+  QuestMutationInput,
+  QuestMutationResult,
   CreateBattleRewardReceiptInput,
   CreateBattleRewardReceiptResult,
   SettleBattleRewardInput,
@@ -44,6 +46,8 @@ import type {
   SubmitLearningAnswerInput,
   SubmitLearningAnswerResult,
 } from "./server-contracts";
+import { isValidQuestTransition } from "@/src/game/rpg/quests/quest-engine";
+import { QUEST_FLAG_NAMES } from "@/src/game/rpg/quests/flags";
 
 const DEFAULT_QUEST = {
   key: "jejak-korog",
@@ -146,6 +150,17 @@ export class PendekarBattleSettlementError extends PendekarStateError {
     super(message);
   }
 }
+export class PendekarQuestMutationError extends PendekarStateError {
+  constructor(
+    readonly code:
+      | "QUEST_MUTATION_REPLAY_CONFLICT"
+      | "QUEST_MUTATION_INVALID_TRANSITION"
+      | "QUEST_MUTATION_INVALID_FLAG",
+    message: string,
+  ) {
+    super(message);
+  }
+}
 
 export type ServerBattleSeed = {
   /** Derived from a static server encounter definition, never a browser body. */
@@ -224,6 +239,12 @@ function isKnownPrismaError(error: unknown, code: string): boolean {
  * A minimal transactional service for the additive persistence foundation.
  * It exposes server-only primitives; no API routes are created in P2.6F.
  */
+/**
+ * Sliding-window replay guard for quest mutations.
+ * Keyed by `${userId}:${requestKey}`. Bounded per-player to 256 entries.
+ */
+const replayGuard = new Set<string>();
+
 export class PendekarStateService {
   constructor(private readonly prisma: PrismaClient) {}
 
@@ -1015,6 +1036,125 @@ export class PendekarStateService {
       const receipt = await this.createReceiptForPlayer(tx, player.id, plan);
       const completedQuest = await tx.pendekarQuestProgress.findUniqueOrThrow({ where: { id: quest.id } });
       return { quest: completedQuest, receipt: receipt.value, completed: receipt.created };
+    });
+  }
+
+  /**
+   * P2.6I.2: Server-authoritative quest state mutation.
+   *
+   * The client reports WHAT changed (kind + optional to/flagName); the server
+   * validates against canonical transitions and the 16-flag vocabulary, then
+   * persists to the PendekarPlayer.questState JSONB column. Replay protection
+   * via requestKey deduplication within a sliding window.
+   *
+   * The server never trusts the client's quest.main/kills/flowers values.
+   * It reads the current state, validates the transition, applies it, and
+   * writes the authoritative result.
+   */
+  async mutateQuestState(
+    userId: string,
+    input: QuestMutationInput,
+  ): Promise<QuestMutationResult> {
+    const player = await this.getOwnedPendekarPlayer(userId);
+    if (!player) {
+      throw new PendekarOwnershipError("Player not found");
+    }
+
+    return this.serializable(async (tx) => {
+      // Re-fetch under serializable to avoid phantom reads.
+      const p = await tx.pendekarPlayer.findUniqueOrThrow({
+        where: { id: player.id },
+        select: { id: true, questState: true, flags: true, version: true },
+      });
+
+      const currentQuest = safeJson<{ main: number; kills: number; flowers: number }>(
+        p.questState,
+        { main: 0, kills: 0, flowers: 0 },
+      );
+      const currentFlags = safeJson<Record<string, boolean>>(p.flags, {});
+
+      // ── Replay dedup ─────────────────────────────────────
+      // Detect replays within the same server instance via an in-memory
+      // Set keyed by `${userId}:${requestKey}`.  The sliding window is
+      // bounded to 256 entries per player to prevent memory leaks.
+      const dedupKey = `${userId}:${input.requestKey}`;
+      if (!replayGuard.has(dedupKey)) {
+        replayGuard.add(dedupKey);
+        // Prune per-player guard if it exceeds the window.
+        const playerPrefix = `${userId}:`;
+        let count = 0;
+        for (const k of replayGuard) {
+          if (k.startsWith(playerPrefix)) {
+            count++;
+            if (count > 256) replayGuard.delete(k);
+          }
+        }
+      } else {
+        // Replay detected — return current state without mutation.
+        return {
+          category: "REPLAYED" as const,
+          quest: currentQuest,
+          flags: currentFlags,
+          applied: [],
+          version: p.version,
+        };
+      }
+
+      const applied: string[] = [];
+      let newQuest = { ...currentQuest };
+      let newFlags = { ...currentFlags };
+
+      // ── Validate + apply ──────────────────────────────────
+      if (input.kind === "QUEST_ADVANCE") {
+        if (typeof input.to !== "number") {
+          throw new PendekarQuestMutationError(
+            "QUEST_MUTATION_INVALID_TRANSITION",
+            "to is required for QUEST_ADVANCE",
+          );
+        }
+        const ctx = { quest: newQuest.main, kills: newQuest.kills, flags: newFlags };
+        if (!isValidQuestTransition(newQuest.main, input.to, ctx)) {
+          throw new PendekarQuestMutationError(
+            "QUEST_MUTATION_INVALID_TRANSITION",
+            `Invalid quest transition ${newQuest.main}→${input.to}`,
+          );
+        }
+        newQuest = { ...newQuest, main: input.to };
+        applied.push("QUEST");
+      } else if (input.kind === "KILL") {
+        newQuest = { ...newQuest, kills: newQuest.kills + 1 };
+        applied.push("KILL");
+      } else if (input.kind === "FLOWER_PICK") {
+        newQuest = { ...newQuest, flowers: newQuest.flowers + 1 };
+        applied.push("FLOWER");
+      } else if (input.kind === "FLAG") {
+        if (!input.flagName || !QUEST_FLAG_NAMES.includes(input.flagName)) {
+          throw new PendekarQuestMutationError(
+            "QUEST_MUTATION_INVALID_FLAG",
+            `Invalid flag name: ${input.flagName ?? "(empty)"}`,
+          );
+        }
+        newFlags = { ...newFlags, [input.flagName]: true };
+        applied.push("FLAG");
+      }
+
+      // ── Persist ───────────────────────────────────────────
+      await tx.pendekarPlayer.update({
+        where: { id: p.id },
+        data: {
+          questState: JSON.parse(JSON.stringify(newQuest)) as Prisma.InputJsonValue,
+          flags: JSON.parse(JSON.stringify(newFlags)) as Prisma.InputJsonValue,
+          version: { increment: 1 },
+        },
+      });
+
+      return {
+        category: "APPLIED",
+        quest: newQuest,
+        flags: newFlags,
+        applied,
+        version: p.version + 1,
+      };
     });
   }
 

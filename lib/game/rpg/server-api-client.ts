@@ -14,6 +14,8 @@
 
 import type {
   PendekarActionError,
+  QuestMutationInput,
+  QuestMutationResult,
   StartBattleInput,
   StartBattleResult,
   SubmitLearningAnswerInput,
@@ -246,6 +248,25 @@ export async function settleServerReward(
     `/api/rpg/battles/${encodeURIComponent(battleId)}/settle`,
     { method: "POST", body: JSON.stringify(input) },
   );
+}
+
+/* ---------- 8. POST /api/rpg/quest/mutate (P2.6I.2) ---------- */
+
+export async function mutateQuestState(
+  kind: QuestMutationInput["kind"],
+  requestKey: string,
+  options?: { to?: number; flagName?: string },
+): Promise<FetchResult<QuestMutationResult> | FetchFail> {
+  const input: QuestMutationInput = {
+    kind,
+    requestKey,
+    ...(options?.to !== undefined ? { to: options.to } : {}),
+    ...(options?.flagName ? { flagName: options.flagName } : {}),
+  };
+  return fetchServer<QuestMutationResult>("/api/rpg/quest/mutate", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
 }
 
 /* ---------- Projection → RPGBattleState mapping ---------- */

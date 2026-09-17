@@ -35,6 +35,7 @@ import {
   submitServerBattleAction,
   createServerRewardReceipt,
   settleServerReward,
+  mutateQuestState,
   generateRequestKey,
   fetchStateProjection,
   fetchServerWithRetry,
@@ -712,6 +713,29 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
         });
       }
     }
+
+    // P2.6I.2: Sync battle quest mutations to server-authoritative state.
+    // Fire-and-forget after client mutations; server validates independently.
+    // We send individual mutations so each is independently validated on the server.
+    {
+      if (!slainBoss) {
+        fireServerCall(
+          mutateQuestState("KILL", `qk-kill-${battle.battleId}`),
+          { key: `q-kill-${battle.battleId}`, idempotent: true },
+        );
+      }
+      const questTarget = battle.enemies.find((e) => e.hp <= 0)?.prototypeKey;
+      if (questTarget === "b" || questTarget === "tw") {
+        const toQ = questTarget === "b" ? 3 : 7;
+        if (isValidQuestTransition(quest.main, toQ, { quest: quest.main, kills: quest.kills, flags })) {
+          fireServerCall(
+            mutateQuestState("QUEST_ADVANCE", `qk-adv-${battle.battleId}`, { to: toQ }),
+            { key: `q-adv-${battle.battleId}`, idempotent: true },
+          );
+        }
+      }
+    }
+
     eventBus.emit({ type: "BATTLE_END", battleId: battle.battleId, winnerId: player.id });
     activeBattle = null;
     clearLearning(battle.learning?.challengeId);
@@ -922,6 +946,13 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
               if (!pickedGe.has(key)) {
                 pickedGe.add(key);
                 quest = { ...quest, flowers: quest.flowers + 1 };
+
+                // P2.6I.2: Sync flower pickup to server-authoritative state.
+                fireServerCall(
+                  mutateQuestState("FLOWER_PICK", `qk-flower-${key}`),
+                  { key: `q-flower-${key}`, idempotent: true },
+                );
+
                 const tiles = [...currentState.world.tiles.tiles];
                 tiles[facing.y * canon.width + facing.x] = canonicalTileId(RPG_TILES.GR);
                 const world = {
@@ -1683,6 +1714,30 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
         kills: quest.kills,
       });
     }
+
+    // P2.6I.2: Sync dialogue quest/flag mutations to server-authoritative state.
+    // Fire-and-forget; server validates independently.
+    if (applied.includes("QUEST")) {
+      const lastQuest = signals.findLast((s) => s.type === "QUEST" && typeof s.amount === "number");
+      if (lastQuest && typeof lastQuest.amount === "number") {
+        fireServerCall(
+          mutateQuestState("QUEST_ADVANCE", `qk-dlg-${source}`, { to: lastQuest.amount }),
+          { key: `q-dlg-${source}`, idempotent: true },
+        );
+      }
+    }
+    if (applied.includes("FLAG")) {
+      const flagSignals = signals.filter((s) => s.type === "FLAG" && typeof s.name === "string");
+      for (const fs of flagSignals) {
+        if (fs.name) {
+          fireServerCall(
+            mutateQuestState("FLAG", `qk-flag-${source}-${fs.name}`, { flagName: fs.name }),
+            { key: `q-flag-${source}-${fs.name}`, idempotent: true },
+          );
+        }
+      }
+    }
+
     return { state: { ...currentState, player }, applied };
   }
 
