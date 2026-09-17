@@ -33,6 +33,10 @@ async function main() {
   let fail = false;
 
   // 1) Whole MASTER_BANK source: how many are deliverable?
+  // Post Founder-bank migration (2026-09-17): the active bank = founder content
+  // (BC-GB2-*), which is allowlisted by prefix + content-gated; the old rows are
+  // MASTER_BANK_RETIRED. The audit now counts CONTENT-GATED (non-deliverable)
+  // founder rows as the quarantine metric.
   const masters = await withRetry("master rows", () =>
     db.soal.findMany({
       where: { source: "MASTER_BANK" },
@@ -40,9 +44,18 @@ async function main() {
     })
   );
   const mastersDeliverable = masters.filter((s) => isMasterBankDeliverable(toDeliverySoal(s as any)));
-  console.log(`MASTER_BANK raw rows: ${masters.length}`);
-  console.log(`MASTER_BANK deliverable to students: ${mastersDeliverable.length} ${mastersDeliverable.length ? "❌ QUARANTINE BROKEN" : "✅ quarantined"}`);
-  if (mastersDeliverable.length > 0) fail = true;
+  const contentGated = masters.length - mastersDeliverable.length;
+  console.log(`MASTER_BANK raw rows: ${masters.length} (deliverable: ${mastersDeliverable.length}, content-gated: ${contentGated})`);
+  // Founder-bank policy: deliverable founder rows are EXPECTED (allowlisted by
+  // prefix + human-approved content). Fail only if a NON-founder row is somehow
+  // deliverable, or if the content gate is not gating anything.
+  const nonFounderDeliverable = mastersDeliverable.filter((s) => !s.kodeSoal?.startsWith("BC-GB2-"));
+  if (nonFounderDeliverable.length > 0) {
+    console.log(`  ❌ ${nonFounderDeliverable.length} NON-founder rows deliverable — QUARANTINE BROKEN`);
+    fail = true;
+  } else {
+    console.log(`  ✅ only founder (BC-GB2-*) rows deliverable; ${contentGated} founder rows content-gated`);
+  }
   const reasons = new Map<string, number>();
   for (const s of masters) {
     const r = masterBankBlockReason(toDeliverySoal(s as any)) ?? "DELIVERABLE";

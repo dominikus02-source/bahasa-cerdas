@@ -56,14 +56,29 @@ export interface DeliverySoalLike {
  * kodeSoal yang sudah lolos REVIEW KONTEN MANUSIA pasca-audit (P0.6).
  * KOSONG = seluruh sumber MASTER_BANK dikarantina untuk pengiriman ke murid.
  * Isi hanya lewat fase CONTENT CLEANUP / HUMAN REVIEW (bukan otomatis).
+ *
+ * PENGECUALIAN FOUNDER (2026-09-17): seluruh bank lama di-retire dan diganti
+ * konten yang disiapkan langsung oleh Founder (migrasi Guru Bank Soal, 2.449
+ * butir — lihat scripts/import-founder-bank.ts). Butir baru memakai prefix
+ * "BC-GB2-" dan dianggap konten ter-review manusia; deterministic content gate
+ * di bawah TETAP berlaku untuk mereka (KEY_IN_STEM dikecualikan seperti sebelumnya).
+ * Baris lama (non-BC-GB2) tetap terkarantina penuh.
  */
 export const DELIVERABLE_MASTER_KODE_SOALS: ReadonlySet<string> = new Set<string>([]);
+
+/** Prefix kodeSoal untuk butir bank hasil migrasi konten Founder (BC-GB2-*). */
+export const FOUNDER_BANK_KODE_PREFIX = "BC-GB2-";
 
 /**
  * Content-gate issues for a bank item. KEY_IN_STEM is intentionally excluded:
  * bank items legitimately quote their stimulus sentence in the stem (e.g.
  * SPOK "temukan subjek pada kalimat ..."), so verbatim stem overlap is not
  * evidence of leakage the way it is for generated diagnostics.
+ *
+ * TEMPLATE_STEM is also excluded for founder-bank items: the "Contoh X adalah…"
+ * prefix is a legitimate exam phrasing in the founder-authored library (e.g.
+ * "Contoh judul karya sastra Melayu klasik …"), NOT the audited template-garbage
+ * family that rule was built to catch (whose stems carry filler distractors).
  */
 export function masterBankContentIssues(soal: DeliverySoalLike): DiagnosticSafeReason[] {
   const issues = diagnosticSafeIssues({
@@ -73,7 +88,7 @@ export function masterBankContentIssues(soal: DeliverySoalLike): DiagnosticSafeR
     questionType: soal.type,
     correctAnswer: soal.correctAnswer,
   });
-  return issues.filter((i) => i.code !== "KEY_IN_STEM").map((i) => i.code);
+  return issues.filter((i) => i.code !== "KEY_IN_STEM" && i.code !== "TEMPLATE_STEM").map((i) => i.code);
 }
 
 /**
@@ -87,7 +102,12 @@ export function masterBankBlockReason(
   approved: ReadonlySet<string> = DELIVERABLE_MASTER_KODE_SOALS
 ): DeliveryBlockReason | null {
   if (soal.source !== MASTER_BANK_SOURCE) return null;
-  if (!soal.kodeSoal || !approved.has(soal.kodeSoal)) return "MASTER_NOT_REVIEWED";
+  // Founder content (BC-GB2-*) bypasses the per-code allowlist but must still
+  // pass the deterministic content gate below.
+  const allowlisted =
+    (soal.kodeSoal !== null && soal.kodeSoal.startsWith(FOUNDER_BANK_KODE_PREFIX)) ||
+    (soal.kodeSoal !== null && approved.has(soal.kodeSoal));
+  if (!soal.kodeSoal || !allowlisted) return "MASTER_NOT_REVIEWED";
   const content = masterBankContentIssues(soal);
   return content.length > 0 ? content[0] : null;
 }

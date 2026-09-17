@@ -33,14 +33,17 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Tema dan kelas wajib diisi" }, { status: 400 });
     }
 
-    const where: any = { source: "MASTER_BANK", topik: tema, kelas };
+    const where: any = { source: "MASTER_BANK", topik: tema };
+    // Bank reusable (migrasi Founder): soal tersimpan dengan kelas sentinel
+    // "SEMUA" — guru memilih kelas target, jadi match kelas pilihan ATAU "SEMUA".
+    where.kelas = { in: [kelas, "SEMUA"] };
     if (difficulty) where.difficulty = DIFFICULTY_MAP[difficulty] || difficulty;
 
     const totalAvailable = await db.soal.count({ where });
     let soals = await db.soal.findMany({ where, take: jumlah, orderBy: { usedCount: "asc" } });
     if (soals.length < jumlah) {
       const fillSoals = await db.soal.findMany({
-        where: { source: "MASTER_BANK", topik: tema, id: { notIn: soals.map(s => s.id) } },
+        where: { source: "MASTER_BANK", topik: tema, kelas: { in: [kelas, "SEMUA"] }, id: { notIn: soals.map(s => s.id) } },
         take: jumlah - soals.length,
         orderBy: { usedCount: "asc" },
       });

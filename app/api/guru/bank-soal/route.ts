@@ -26,6 +26,8 @@ export async function GET() {
         themes[s.topik] = { name: s.topik, total: 0, kelas: [], difficulties: {} };
       }
       themes[s.topik].total++;
+      // "SEMUA" = sentinel bank reusable (migrasi Founder): soal tidak terkunci
+      // ke grade — guru memilih kelas saat mengirim. Tampilkan apa adanya.
       if (!themes[s.topik].kelas.includes(s.kelas)) themes[s.topik].kelas.push(s.kelas);
       themes[s.topik].difficulties[s.difficulty] = (themes[s.topik].difficulties[s.difficulty] || 0) + 1;
     }

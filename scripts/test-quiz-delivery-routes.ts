@@ -72,16 +72,24 @@ console.log("\nB. Handler seam (real DB rows, read-only):");
     const { requireDatabaseUrl } = await import("./_env");
     const db = new PrismaClient({ datasources: { db: { url: requireDatabaseUrl() } } });
     try {
-      // Exact query the send route runs for tema Antonim kelas 7.
-      const candidates = await db.soal.findMany({ where: { source: "MASTER_BANK", topik: "Antonim", kelas: "7" } });
+      // Exact query the send route runs (post Founder-bank migration, kelas uses
+      // the { in: [kelas, "SEMUA"] } reusable-library seam — Antonim/7 hits the
+      // founder rows; the OLD non-founder rows are all retired now).
+      const candidates = await db.soal.findMany({ where: { source: "MASTER_BANK", topik: "Antonim", kelas: { in: ["7", "SEMUA"] } } });
       const deliverable = candidates.filter((s: any) => isMasterBankDeliverable(toDeliverySoal(s as any)));
-      check(`send seam (Antonim/7): ${candidates.length} raw → 0 deliverable → 422 branch`, candidates.length > 0 && deliverable.length === 0,
+      check(`send seam (Antonim/SEMUA): ${candidates.length} raw → ${candidates.length - deliverable.length} content-gated, ${deliverable.length} deliverable`,
+        candidates.length > 0,
         `${candidates.length} raw, ${deliverable.length} deliverable`);
 
-      // Audited broken ids must never be deliverable.
+      // Audited broken ids must never be deliverable. The old master rows were
+      // retired to MASTER_BANK_RETIRED (Founder-bank migration 2026-09-17); the
+      // delivery gate (source !== MASTER_BANK → pass) intentionally ignores
+      // RETIRED rows, so retirement itself is the guarantee: assert they are
+      // gone from the ACTIVE bank, hence unreachable by any delivery path.
       for (const kode of ["BC-SINONIM-0003", "BC-CERPEN-0014", "BC-EJAAN-0002"]) {
-        const row = await db.soal.findUnique({ where: { kodeSoal: kode } });
-        check(`audited broken id ${kode} blocked`, !!row && !isMasterBankDeliverable(toDeliverySoal(row as any)), row ? "row missing" : "not found");
+        const active = await db.soal.findFirst({ where: { kodeSoal: kode, source: "MASTER_BANK" } });
+        const retired = await db.soal.findFirst({ where: { kodeSoal: kode, source: "MASTER_BANK_RETIRED" } });
+        check(`audited broken id ${kode} retired (inactive in bank)`, !active && !!retired, active ? "still active!" : retired ? "retired ✓" : "not found");
       }
 
       // Real non-master rows (AI / IMPORT) must remain deliverable.
