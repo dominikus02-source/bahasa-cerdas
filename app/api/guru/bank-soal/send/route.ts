@@ -56,7 +56,10 @@ export async function POST(req: NextRequest) {
     // kirim. Audit forensik (2026-09-04): 1.480/1.500 item master adalah
     // template sampah (RETIRE), 19 SALVAGE belum direview, 1 BROKEN.
     const count = Math.min(Math.max(jumlah, 5), 30);
-    const where: any = { source: "MASTER_BANK", topik: tema, kelas };
+    const where: any = { source: "MASTER_BANK", topik: tema };
+    // Bank reusable (migrasi Founder): soal kelas-sentinel "SEMUA" + kelas pilihan
+    // guru sama-sama layak dikirim ke kelas terpilih.
+    where.kelas = { in: [kelas, "SEMUA"] };
     if (difficulty) where.difficulty = DIFFICULTY_MAP[difficulty] || difficulty;
 
     // Ambil seluruh kandidat tema/kelas, lalu saring ke himpunan yang layak

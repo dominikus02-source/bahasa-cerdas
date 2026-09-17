@@ -48,7 +48,9 @@ export async function GET(req: NextRequest) {
 
     const rows = await db.soal.findMany({
       where: {
-        source: { not: "MASTER_BANK" },
+        // MASTER_BANK_RETIRED: baris bank lama yang sudah di-retire — tanpa
+        // guard ini, retire justru MEMBUKA mereka ke pool RPG (filter not).
+        source: { notIn: ["MASTER_BANK", "MASTER_BANK_RETIRED"] },
         ...(kelas ? { kelas } : {}),
         ...(topik ? { topik } : {}),
       },
