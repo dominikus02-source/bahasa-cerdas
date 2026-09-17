@@ -69,6 +69,8 @@
     "validate:jalur-lessons": "npx tsx scripts/validate-jalur-lessons.ts",
     "test:bank-soal-leakage": "npx tsx scripts/test-ukbi-tka-bank-soal-leakage.ts",
     "test:murid-quiz-leakage": "npx tsx scripts/test-murid-quiz-leakage.ts",
+    "test:tka:http-e2e": "bash scripts/run-kompetensi-e2e.sh test-tka-http-submit-e2e.ts",
+    "test:ukbi:http-e2e": "bash scripts/run-kompetensi-e2e.sh test-ukbi-http-submit-e2e.ts",
     "test:ukbi-tka-randomization": "npx tsx scripts/test-ukbi-tka-randomization.ts",
     "test:ukbi-200-user-rate-limit": "npx tsx scripts/test-ukbi-200-user-rate-limit.ts",
     "test:ukbi-200-user-readiness": "npx tsx scripts/test-ukbi-200-user-readiness.ts",
