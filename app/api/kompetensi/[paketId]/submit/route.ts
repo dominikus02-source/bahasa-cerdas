@@ -6,6 +6,7 @@ import { awardXp } from "@/lib/award-xp";
 import { ok, err } from "@/lib/api/response";
 import { ERR } from "@/lib/api/errors";
 import type { AttemptSnapshot, AttemptAnswerDetails, UserAnswerRecord } from "@/lib/types/snapshot";
+import { buildAnswerRows, ukbiScoringFn, tkaScoringFn, type AnswerMap } from "@/lib/assessment/answer-rows";
 import { gradeConstructed } from "@/lib/penilaian/ai-grade";
 import { acquireAiSlot } from "@/lib/ai-concurrency";
 import { trackAchievement } from "@/lib/gamification/achievement-engine";
@@ -92,97 +93,6 @@ function getTKAPredikat(percentage: number): string {
 }
 
 // ── Batch submission: collect answers in memory → single createMany ──
-
-interface AnswerRow {
-  userId: string;
-  sessionId: string;
-  paketId: string;
-  questionId: string;
-  questionType: string;
-  answer: string;
-  // null = not evaluated yet (AI grading unavailable), distinct from false =
-  // evaluated and wrong. score stays 0 because the column is non-nullable.
-  isCorrect: boolean | null;
-  score: number;
-  seksi: string;
-}
-
-type AnswerMap = Record<string, string>;
-
-function buildAnswerRows(
-  questions: any[],
-  answers: AnswerMap,
-  sessionId: string,
-  userId: string,
-  paketId: string,
-  scoringFn: (q: any, userAnswer: string) => { isCorrect: boolean; score: number; maxScore: number; seksi: string },
-  useCompetencyKey: boolean
-): { rows: AnswerRow[]; userAnswerRecords: UserAnswerRecord[]; totalCorrect: number; totalQuestions: number; rawScore: number; maxPossible: number; sectionScores: Record<string, { correct: number; total: number; score: number; pendingReview?: number; graded?: number; constructed?: boolean }> } {
-  const rows: AnswerRow[] = [];
-  const userAnswerRecords: UserAnswerRecord[] = [];
-  const sectionScores: Record<string, { correct: number; total: number; score: number; pendingReview?: number; graded?: number; constructed?: boolean }> = {};
-  let totalCorrect = 0;
-  let totalQuestions = 0;
-  let rawScore = 0;
-  let maxPossible = 0;
-
-  for (const q of questions) {
-    const userAnswer = answers[q.id] || "";
-    const { isCorrect, score, maxScore, seksi } = scoringFn(q, userAnswer);
-
-    // Seksi konstruktif (Menulis/Berbicara) dinilai MANUAL oleh guru — jawaban
-    // (teks / URL rekaman) tetap disimpan untuk ditinjau, tapi TIDAK ikut skor otomatis.
-    const isConstructed =
-      String(q.type || "").toUpperCase() === "CONSTRUCTED" ||
-      ["MENULIS", "BERBICARA"].includes(String(seksi).toUpperCase());
-
-    rows.push({
-      userId,
-      sessionId,
-      paketId,
-      questionId: q.id,
-      questionType: q.type || (isConstructed ? "CONSTRUCTED" : "PILIHAN_GANDA"),
-      answer: userAnswer,
-      isCorrect: isConstructed ? false : isCorrect,
-      score: isConstructed ? 0 : score,
-      seksi,
-    });
-
-    if (isConstructed) continue; // keluar dari perhitungan skor otomatis
-
-    rawScore += score;
-    maxPossible += maxScore;
-    totalQuestions++;
-    if (isCorrect) totalCorrect++;
-
-    if (!sectionScores[seksi]) sectionScores[seksi] = { correct: 0, total: 0, score: 0 };
-    sectionScores[seksi].total++;
-    if (isCorrect) {
-      sectionScores[seksi].correct++;
-      sectionScores[seksi].score += score;
-    }
-
-    if (useCompetencyKey) {
-      userAnswerRecords.push({
-        questionId: q.id,
-        selectedOptionId: userAnswer,
-        isCorrect,
-        score,
-        kompetensi: seksi,
-      } as UserAnswerRecord);
-    } else {
-      userAnswerRecords.push({
-        questionId: q.id,
-        selectedOptionId: userAnswer,
-        isCorrect,
-        score,
-        section: seksi,
-      } as UserAnswerRecord);
-    }
-  }
-
-  return { rows, userAnswerRecords, totalCorrect, totalQuestions, rawScore, maxPossible, sectionScores };
-}
 
 export async function POST(
   req: NextRequest,
@@ -324,18 +234,7 @@ export async function POST(
       session.id,
       dbUser.id,
       paketId,
-      isUKBI
-        ? (q: any, ua: string) => {
-            const isCorrect = ua === q.correctAnswer;
-            const diff = String(q.difficulty || "MEDIUM");
-            const w = diff === "EASY" ? 1 : diff === "MEDIUM" ? 1.5 : diff === "HARD" ? 2 : 2.5;
-            return { isCorrect, score: isCorrect ? w * 10 : 0, maxScore: w * 10, seksi: q.seksi || q.section || "UMUM" };
-          }
-        : (q: any, ua: string) => {
-            const isCorrect = ua === q.correctAnswer;
-            const wMax = (q.weight || 1) * 10;
-            return { isCorrect, score: isCorrect ? wMax : 0, maxScore: wMax, seksi: q.kompetensi || q.section || "UMUM" };
-          },
+      isUKBI ? ukbiScoringFn : tkaScoringFn,
       !isUKBI
     );
     const scoringMs = Date.now() - scoringT0;
