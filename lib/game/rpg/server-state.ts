@@ -31,6 +31,7 @@ import type {
   PendekarLearningChallengeProjection,
   PendekarRewardReceiptProjection,
   PendekarStateProjection,
+  PendekarWorldState,
   CreateBattleRewardReceiptInput,
   CreateBattleRewardReceiptResult,
   SettleBattleRewardInput,
@@ -203,6 +204,18 @@ function nonNegativeInteger(value: number, label: string): number {
   return value;
 }
 
+/**
+ * Safely extract a JSON world-state column from a Prisma row.
+ * Returns `fallback` if the value is null or not the expected type.
+ */
+function safeJson<T>(value: unknown, fallback: T): T {
+  if (value === null || value === undefined) return fallback;
+  if (typeof value === "string") {
+    try { return JSON.parse(value) as T; } catch { return fallback; }
+  }
+  return value as T;
+}
+
 function isKnownPrismaError(error: unknown, code: string): boolean {
   return error instanceof Prisma.PrismaClientKnownRequestError && error.code === code;
 }
@@ -272,6 +285,21 @@ export class PendekarStateService {
       },
     });
     const active = player.battleSessions[0] ?? null;
+
+    // P2.6I.1: Parse world-state columns. Nullable = clean defaults.
+    const worldState: PendekarWorldState = {
+      flags: safeJson<Record<string, boolean>>(player.flags, {}),
+      openedChests: safeJson<string[]>(player.openedChests, []),
+      deadBossIds: safeJson<string[]>(player.deadBossIds, []),
+      equipment: safeJson<PendekarWorldState["equipment"]>(player.equipment, {
+        weaponId: null, armorId: null, accessoryId: null,
+      }),
+      quest: safeJson<PendekarWorldState["quest"]>(player.questState, {
+        main: 0, kills: 0, flowers: 0,
+      }),
+      pickedGe: safeJson<string[]>(player.pickedGe, []),
+    };
+
     return {
       stateSchemaVersion: player.stateSchemaVersion,
       version: player.version,
@@ -300,6 +328,7 @@ export class PendekarStateService {
         definitionVersion: quest.definitionVersion,
         version: quest.version,
       })),
+      worldState,
       activeBattle: active ? projectBattle(active) : null,
       activeLearning: active?.learningSession
         ? {

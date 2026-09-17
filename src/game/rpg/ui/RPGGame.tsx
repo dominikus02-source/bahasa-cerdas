@@ -21,7 +21,13 @@
 import { useEffect, useRef, useState } from "react";
 import { createEngine, type RPGEngine } from "../core/game-engine";
 import { createKeyboardInputSource } from "../core/keyboard-input";
-import { createLocalStoragePersistence } from "../core/persistence";
+import {
+  createLocalStoragePersistence,
+  readServerSnapshotCache,
+  writeServerSnapshotCache,
+  clearLegacySave,
+  type ServerSnapshotCache,
+} from "../core/persistence";
 import { RPGGameHUD } from "./RPGGameHUD";
 import { RPGBattleLearning } from "./RPGBattleLearning";
 import { RPGBattle } from "./RPGBattle";
@@ -32,6 +38,7 @@ import type { SoalLike } from "../learning/rpg-challenge";
 import type { DialogueSession } from "../interaction/dialogue";
 import type { QuestLineState } from "../quests/quest-engine";
 import { DESA_VERTICAL_SLICE } from "../data/vertical-slice";
+import { xpForLevel } from "../player/progression";
 import { RPGQuestPanel } from "./RPGQuestPanel";
 import { RPGDialogue } from "./RPGDialogue";
 
@@ -94,8 +101,8 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
     // - restore authoritative slices from the persistence boundary,
     // - fetch the canonical question pool for learning encounters,
     // - save on every battle close (victory/defeat/flee).
+    // P2.6I.1: localStorage is now a cache; server snapshot is authoritative.
     const persist = createLocalStoragePersistence(playerId);
-    const saved = persist.load();
 
     let pool: SoalLike[] = [];
     let cancelled = false;
@@ -115,12 +122,90 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
       if (cancelled || !containerRef.current) return;
       setLearningReady(pool.length > 0);
 
-      // A preview save is reusable only on its originating requested map.
-      // Never let a save from a broader legacy RPG session expand this
-      // controlled one-map slice into another canonical map.
-      const sliceSave = saved && saved.world.mapId === mapId && getCanonicalMap(mapId)
-        ? saved
-        : null;
+      // P2.6I.1: Hydration priority — server snapshot > cache > legacy localStorage.
+      // Server snapshot is fetched live; cache is the offline-resume fallback;
+      // legacy localStorage is the migration path for pre-server saves.
+      let serverSnapshot: ServerSnapshotCache | null = null;
+
+      // 1. Try live server fetch
+      try {
+        const stateRes = await fetch("/api/rpg/state");
+        if (stateRes.ok) {
+          const stateData = await stateRes.json();
+          const state = stateData?.state;
+          if (state && typeof state.version === "number" && typeof state.stateSchemaVersion === "number") {
+            serverSnapshot = {
+              version: 1, // RPG_STATE_CACHE_VERSION
+              cachedAt: Date.now(),
+              playerId,
+              serverVersion: state.version,
+              stateSchemaVersion: state.stateSchemaVersion,
+              player: state.player,
+              inventory: state.inventory,
+              quests: state.quests,
+              worldState: state.worldState ?? {
+                flags: {}, openedChests: [], deadBossIds: [],
+                equipment: { weaponId: null, armorId: null, accessoryId: null },
+                quest: { main: 0, kills: 0, flowers: 0 }, pickedGe: [],
+              },
+              activeBattle: state.activeBattle ?? null,
+              activeLearning: state.activeLearning ?? null,
+            };
+            writeServerSnapshotCache(playerId, serverSnapshot);
+            // Clear legacy save after successful server hydration
+            clearLegacySave(playerId);
+          }
+        }
+      } catch {
+        // Server unreachable — fall through to cache.
+      }
+
+      // 2. Fallback to cached snapshot if live fetch failed
+      if (!serverSnapshot) {
+        serverSnapshot = readServerSnapshotCache(playerId);
+      }
+
+      // 3. Legacy localStorage (pre-P2.6I.1 migration path)
+      const legacySave = persist.load();
+
+      // Determine engine config from the best available source.
+      // Server snapshot > legacy save > fresh defaults.
+      const engineConfig = (() => {
+        // Server snapshot with matching mapId — canonical source
+        if (serverSnapshot && serverSnapshot.player.mapKey === mapId && getCanonicalMap(mapId)) {
+          return {
+            initialPlayer: {
+              stats: serverSnapshot.player.stats,
+              progression: { ...serverSnapshot.player.progression, xpToNextLevel: xpForLevel(serverSnapshot.player.progression.level) },
+              inventory: { items: serverSnapshot.inventory.map((i) => ({ itemId: i.itemKey, quantity: i.quantity })) },
+              equipment: serverSnapshot.worldState.equipment,
+              position: serverSnapshot.player.position,
+              facing: serverSnapshot.player.facing as "up" | "down" | "left" | "right",
+            },
+            flags: serverSnapshot.worldState.flags,
+            openedChests: serverSnapshot.worldState.openedChests,
+            deadBossIds: serverSnapshot.worldState.deadBossIds,
+            quest: serverSnapshot.worldState.quest,
+            pickedGe: serverSnapshot.worldState.pickedGe,
+            gold: serverSnapshot.player.wallet.goldBalance,
+          };
+        }
+        // Legacy save migration path
+        if (legacySave && legacySave.world.mapId === mapId && getCanonicalMap(mapId)) {
+          return {
+            initialPlayer: legacySave.player,
+            flags: legacySave.flags,
+            openedChests: legacySave.openedChests,
+            deadBossIds: legacySave.deadBossIds,
+            gold: legacySave.gold,
+            goldLedger: legacySave.goldLedger,
+            equipmentIntents: legacySave.equipmentIntents,
+            quest: legacySave.quest,
+            pickedGe: legacySave.pickedGe,
+          };
+        }
+        return {};
+      })();
       const bootMapId = mapId;
       const isDesaSlice = bootMapId === DESA_VERTICAL_SLICE.mapId;
 
@@ -130,24 +215,7 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
         playerId,
         playerName,
         mapId: bootMapId,
-        initialPlayer: sliceSave
-          ? {
-              stats: sliceSave.player.stats,
-              progression: sliceSave.player.progression,
-              inventory: sliceSave.player.inventory,
-              equipment: sliceSave.player.equipment,
-              position: sliceSave.player.position,
-              facing: sliceSave.player.facing,
-            }
-          : undefined,
-        flags: sliceSave?.flags,
-        openedChests: sliceSave?.openedChests,
-        deadBossIds: sliceSave?.deadBossIds,
-        gold: sliceSave?.gold,
-        goldLedger: sliceSave?.goldLedger,
-        equipmentIntents: sliceSave?.equipmentIntents,
-        quest: sliceSave?.quest,
-        pickedGe: sliceSave?.pickedGe,
+        ...engineConfig,
         allowedEncounterIds: isDesaSlice ? DESA_VERTICAL_SLICE.encounterIds : undefined,
         allowedNpcIds: isDesaSlice ? [DESA_VERTICAL_SLICE.questGiverId] : undefined,
         learning: pool.length > 0 ? { pool } : undefined,

@@ -73,6 +73,21 @@ export type PendekarLearningProjection = {
   expiresAt: string;
 };
 
+export type PendekarWorldState = {
+  /** Quest flags (Record<string, boolean>). Absent = empty object. */
+  flags: Record<string, boolean>;
+  /** Opened chest IDs. Absent = empty array. */
+  openedChests: string[];
+  /** Defeated boss instance IDs. Absent = empty array. */
+  deadBossIds: string[];
+  /** Equipment slots. Absent = all null. */
+  equipment: { weaponId: string | null; armorId: string | null; accessoryId: string | null };
+  /** Quest line state (main/kills/flowers). Absent = zeros. */
+  quest: { main: number; kills: number; flowers: number };
+  /** Picked golden-flower tile keys. Absent = empty array. */
+  pickedGe: string[];
+};
+
 export type PendekarStateProjection = {
   stateSchemaVersion: number;
   version: number;
@@ -101,6 +116,8 @@ export type PendekarStateProjection = {
     definitionVersion: string;
     version: number;
   }>;
+  /** P2.6I.1: Server-authoritative world state. */
+  worldState: PendekarWorldState;
   activeBattle: PendekarBattleProjection | null;
   activeLearning: PendekarLearningProjection | null;
 };

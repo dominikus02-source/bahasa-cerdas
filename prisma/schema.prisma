@@ -2711,6 +2711,15 @@ model PendekarPlayer {
   // Pendekar-only G balance. Every mutation must have an immutable wallet row.
   goldBalance Int @default(30)
 
+  // World-state fields (P2.6I.1 additive). These are the server-authoritative
+  // mirrors of client-side map-side state. Nullable = new players start clean.
+  flags          Json?   // Record<string, boolean> quest flags
+  openedChests   Json?   // string[] opened chest IDs
+  deadBossIds    Json?   // string[] defeated boss instance IDs
+  equipment      Json?   // { weaponId, armorId, accessoryId } equipment slots
+  questState     Json?   // { main, kills, flowers } quest line progress
+  pickedGe       Json?   // string[] picked golden-flower tile keys
+
   // Optimistic concurrency and controlled server-state shape upgrades.
   version            Int @default(1)
   stateSchemaVersion Int @default(1)

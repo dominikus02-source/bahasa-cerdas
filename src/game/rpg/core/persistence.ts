@@ -20,6 +20,8 @@ import type { RPGPlayerState } from "../player/player-state";
 import type { RPGPlayerStats } from "../player/player-state";
 import type { RPGWorldState } from "../world/world-state";
 import type { RPGProgression } from "../player/player-state";
+import type { PendekarWorldState } from "@/lib/game/rpg/server-contracts";
+import type { RPGQuestStatus } from "../quests/quest-engine";
 
 /** Persistence interface — implementable for localStorage or server. */
 export interface RPGPersistence {
@@ -51,6 +53,258 @@ export interface RPGMapSideState {
   quest?: { main: number; kills: number; flowers: number };
   /** Picked golden-flower tiles `map:x,y` (Bunga Emas, P1.9B). */
   pickedGe?: string[];
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// P2.6I.1: Server-snapshot cache — replaces legacy localStorage as authority.
+// ────────────────────────────────────────────────────────────────────────────
+
+/** Cache version — bumped when the cache schema changes. Old versions fail closed. */
+const RPG_STATE_CACHE_VERSION = 1;
+
+/** localStorage key prefix for the versioned server-snapshot cache. */
+const SERVER_CACHE_KEY_PREFIX = "bahasacerdas.rpg.server_cache.";
+
+/** Legacy save key (pre-P2.6I.1) — used only for migration detection. */
+const LEGACY_SAVE_KEY_PREFIX = "bahasacerdas.rpg.save.";
+
+export interface ServerSnapshotCache {
+  version: number;
+  cachedAt: number;
+  playerId: string;
+  /** Server version (optimistic concurrency token). */
+  serverVersion: number;
+  /** Server stateSchemaVersion. */
+  stateSchemaVersion: number;
+  player: {
+    mapKey: string;
+    position: { x: number; y: number };
+    facing: string;
+    stats: { hp: number; maxHp: number; mp: number; maxMp: number; attack: number; defense: number; speed: number };
+    progression: { level: number; xp: number };
+    wallet: { goldBalance: number };
+  };
+  inventory: Array<{ itemKey: string; quantity: number }>;
+  quests: Array<{ questKey: string; status: string; progress: number; target: number; definitionVersion: string; version: number }>;
+  worldState: PendekarWorldState;
+  activeBattle: unknown | null;
+  activeLearning: unknown | null;
+}
+
+function isServerSnapshotCache(value: unknown, expectedPlayerId: string): value is ServerSnapshotCache {
+  if (typeof value !== "object" || value === null) return false;
+  const obj = value as Record<string, unknown>;
+  if (obj.version !== RPG_STATE_CACHE_VERSION) return false;
+  if (typeof obj.playerId !== "string" || obj.playerId !== expectedPlayerId) return false;
+  if (typeof obj.serverVersion !== "number") return false;
+  if (typeof obj.stateSchemaVersion !== "number") return false;
+  if (typeof obj.player !== "object" || obj.player === null) return false;
+  return true;
+}
+
+/**
+ * Read the server-snapshot cache. Returns null if missing, stale, malformed,
+ * or belonging to a different player. Does NOT mutate localStorage.
+ */
+export function readServerSnapshotCache(playerId: string): ServerSnapshotCache | null {
+  try {
+    const key = `${SERVER_CACHE_KEY_PREFIX}${playerId}`;
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    const parsed: unknown = JSON.parse(raw);
+    if (!isServerSnapshotCache(parsed, playerId)) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Write the server-snapshot cache. Fails closed on any error (returns false).
+ */
+export function writeServerSnapshotCache(playerId: string, snapshot: ServerSnapshotCache): boolean {
+  try {
+    const key = `${SERVER_CACHE_KEY_PREFIX}${playerId}`;
+    localStorage.setItem(key, JSON.stringify(snapshot));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Clear the server-snapshot cache for a player.
+ */
+export function clearServerSnapshotCache(playerId: string): void {
+  try {
+    localStorage.removeItem(`${SERVER_CACHE_KEY_PREFIX}${playerId}`);
+  } catch {
+    // Storage may be unavailable; best-effort.
+  }
+}
+
+/**
+ * Clear the legacy localStorage save key for a player.
+ * Called after successful server hydration to prevent stale local saves
+ * from overriding server state on next load.
+ */
+export function clearLegacySave(playerId: string): void {
+  try {
+    localStorage.removeItem(`${LEGACY_SAVE_KEY_PREFIX}${playerId}`);
+  } catch {
+    // Best-effort.
+  }
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// P2.6I.1: Hydration — convert server snapshot → client game state.
+// ────────────────────────────────────────────────────────────────────────────
+
+import type { RPGEquipment } from "../player/player-state";
+import type { RPGQuestState } from "../quests/quest-engine";
+import type { RPGLearningState } from "../learning/learning-engine";
+
+/** XP required per level. Level 1 needs 100, each subsequent level +50%. */
+import { xpForLevel } from "../player/progression";
+
+const xpToNextLevel = xpForLevel;
+
+/**
+ * Hydrate a `RPGGameState` + `RPGMapSideState` from a server snapshot cache.
+ *
+ * This is the **sole bridge** between the server-authoritative persistence
+ * layer and the client game engine. The resulting state is fully populated
+ * and ready to hand to the engine's `load()` path.
+ */
+export function hydrateFromServerSnapshot(
+  snapshot: ServerSnapshotCache,
+  playerId: string,
+): RPGGameState & Partial<RPGMapSideState> {
+  const ws = snapshot.worldState;
+
+  const stats: RPGPlayerStats = {
+    hp: snapshot.player.stats.hp,
+    maxHp: snapshot.player.stats.maxHp,
+    mp: snapshot.player.stats.mp,
+    maxMp: snapshot.player.stats.maxMp,
+    attack: snapshot.player.stats.attack,
+    defense: snapshot.player.stats.defense,
+    speed: snapshot.player.stats.speed,
+  };
+
+  const level = snapshot.player.progression.level;
+  const xp = snapshot.player.progression.xp;
+
+  const progression: RPGProgression = {
+    level,
+    xp,
+    xpToNextLevel: xpToNextLevel(level),
+  };
+
+  const equipment: RPGEquipment = {
+    weaponId: ws.equipment.weaponId,
+    armorId: ws.equipment.armorId,
+    accessoryId: ws.equipment.accessoryId,
+    weaponPlus: 0,
+  };
+
+  const player: RPGPlayerState = {
+    id: playerId,
+    name: "Pendekar",
+    position: { ...snapshot.player.position },
+    facing: snapshot.player.facing as "up" | "down" | "left" | "right",
+    stats,
+    progression,
+    inventory: {
+      items: snapshot.inventory.map((it) => ({ itemId: it.itemKey, quantity: it.quantity })),
+    },
+    equipment,
+  };
+
+  const world: RPGWorldState = {
+    mapId: snapshot.player.mapKey,
+    tiles: { width: 0, height: 0, tiles: [] },
+    entities: [],
+    interactions: [],
+  } as RPGWorldState;
+
+  const quests: RPGQuestState = {
+    active: snapshot.quests
+      .filter((q) => q.status !== "COMPLETED")
+      .map((q) => ({
+        questId: q.questKey,
+        status: q.status as RPGQuestStatus,
+        progress: q.progress,
+      })),
+    completed: snapshot.quests
+      .filter((q) => q.status === "COMPLETED")
+      .map((q) => ({
+        questId: q.questKey,
+        status: "COMPLETED" as const,
+        progress: q.progress,
+      })),
+  };
+
+  const learning: RPGLearningState = {
+    profile: { playerId, mastery: {} },
+    activeChallengeId: null,
+  };
+
+  return {
+    session: {
+      sessionId: crypto.randomUUID(),
+      playerId,
+      startedAt: snapshot.cachedAt,
+      mode: "ADVENTURE",
+    },
+    player,
+    world,
+    battle: null,
+    quests,
+    learning,
+    // MapSideState (P2.6I.1 world-state columns)
+    flags: ws.flags,
+    openedChests: ws.openedChests,
+    deadBossIds: ws.deadBossIds,
+    equipmentIntents: [],
+    gold: snapshot.player.wallet.goldBalance,
+    goldLedger: [],
+    goldIntents: [],
+    quest: ws.quest,
+    pickedGe: ws.pickedGe,
+  };
+}
+
+/**
+ * Read the server-snapshot cache for a given player, hydrate it into a full
+ * game state, and optionally clear the legacy localStorage save.
+ *
+ * Returns `null` if:
+ * - No cache exists for this player
+ * - Cache is stale / malformed / cross-player
+ * - Hydration produces invalid state
+ */
+export function loadServerSnapshot(
+  playerId: string,
+  opts?: { clearLegacy?: boolean },
+): (RPGGameState & Partial<RPGMapSideState>) | null {
+  const snapshot = readServerSnapshotCache(playerId);
+  if (!snapshot) return null;
+
+  try {
+    const state = hydrateFromServerSnapshot(snapshot, playerId);
+
+    // Clear legacy save after successful hydration (one-time migration)
+    if (opts?.clearLegacy) {
+      clearLegacySave(playerId);
+    }
+
+    return state;
+  } catch {
+    // Hydration failed — treat as stale cache
+    clearServerSnapshotCache(playerId);
+    return null;
+  }
 }
 
 /** Save data format — what gets serialized. */
