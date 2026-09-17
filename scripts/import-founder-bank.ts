@@ -35,7 +35,6 @@ import crypto from "crypto";
 import { PrismaClient } from "@prisma/client";
 
 // ─────────────────────────────────────────────────────────── config ──
-const LOCAL_DIR = "/Users/user/Documents/soal-soal latihan BI/Bank Soal BC";
 const REPO_DIR = path.join(process.cwd(), "data/founder-bank-soal");
 const EXECUTE = process.argv.includes("--execute");
 const CONFIRMED = process.env.FOUNDER_IMPORT_CONFIRM === "YES";
@@ -137,7 +136,7 @@ interface ParsedQuestion {
   stemHash: string; contentHash: string; issues: string[];
 }
 interface FileReport {
-  file: string; origin: "LOCAL" | "REPO"; theme: string;
+  file: string; theme: string;
   declaredTotal: number | null;
   hotsRange: { lo: number; hi: number } | null;
   keyFormat: string;
@@ -145,10 +144,10 @@ interface FileReport {
   warnings: string[];
 }
 
-function parseFile(file: string, origin: "LOCAL" | "REPO"): FileReport {
-  const raw = fs.readFileSync(path.join(origin === "LOCAL" ? LOCAL_DIR : REPO_DIR, file), "utf8");
+function parseFile(file: string): FileReport {
+  const raw = fs.readFileSync(path.join(REPO_DIR, file), "utf8");
   let text = raw.replace(/\r\n/g, "\n");
-  if (origin === "REPO") text = unescapeDocsExport(text);
+  text = unescapeDocsExport(text);
 
   const warnings: string[] = [];
   const declaredTotal = (() => {
@@ -251,24 +250,19 @@ function parseFile(file: string, origin: "LOCAL" | "REPO"): FileReport {
 
   const valid = questions.filter((q) => q.issues.length === 0).length;
   return {
-    file, origin, theme: THEME_MAP[file], declaredTotal, hotsRange, keyFormat,
+    file, theme: THEME_MAP[file], declaredTotal, hotsRange, keyFormat,
     questions, valid, invalid: questions.length - valid, warnings,
   };
 }
 
 // ─────────────────────────────────────────────────────── main ──
-const localFiles = fs.readdirSync(LOCAL_DIR).filter((f) => f.endsWith(".md"));
-const repoFiles = fs.readdirSync(REPO_DIR).filter((f) => f.endsWith(".md"));
-const allFiles: { file: string; origin: "LOCAL" | "REPO" }[] = [
-  ...localFiles.map((f) => ({ file: f, origin: "LOCAL" as const })),
-  ...repoFiles.map((f) => ({ file: f, origin: "REPO" as const })),
-];
-for (const { file } of allFiles) if (!THEME_MAP[file]) {
+const founderFiles = fs.readdirSync(REPO_DIR).filter((f) => f.endsWith(".md"));
+for (const file of founderFiles) if (!THEME_MAP[file]) {
   console.error(`FATAL: unmapped founder file: ${file}`);
   process.exit(2);
 }
 
-const reports = allFiles.map(({ file, origin }) => parseFile(file, origin));
+const reports = founderFiles.map((file) => parseFile(file));
 
 // duplicates across the whole source
 const byContent = new Map<string, { file: string; num: number }[]>();
@@ -290,8 +284,8 @@ interface ImportRow {
 }
 const themeAgg = new Map<string, { files: string[]; rows: ImportRow[]; dupes: number; invalid: number }>();
 let seqByTheme = new Map<string, number>();
-const allParsed = reports.flatMap((r) => r.questions.map((q) => ({ r, q })));
-for (const { r, q } of allParsed) {
+const allParsedQ = reports.flatMap((r) => r.questions.map((q) => ({ r, q })));
+for (const { r, q } of allParsedQ) {
   const slug = SLUGS[r.theme];
   if (!slug) { console.error(`FATAL: no slug for theme ${r.theme}`); process.exit(2); }
   if (q.issues.length > 0) {
@@ -329,7 +323,7 @@ const totalInvalid = themes.reduce((s, t) => s + t.invalid, 0);
 
 // ─────────────────────────────────────────────── dry-run print ──
 console.log("═══════════ FOUNDER BANK IMPORT — " + (EXECUTE ? "EXECUTE" : "DRY RUN") + " ═══════════");
-console.log(`source files: ${allFiles.length} · parsed: ${allParsed.length} · valid: ${totalValid} · dupes skipped: ${totalDupes} · blocked: ${totalInvalid}`);
+console.log(`source files: ${founderFiles.length} · parsed: ${reports.length} · valid: ${totalValid} · dupes skipped: ${totalDupes} · blocked: ${totalInvalid}`);
 console.log("");
 for (const t of themes) console.log(`  ${t.topik.padEnd(28)} ${String(t.count).padStart(3)} soal${t.files.length > 1 ? `  (${t.files.length} files)` : ""}${t.dupes ? `  [${t.dupes} dupes skipped]` : ""}${t.invalid ? `  [${t.invalid} BLOCKED]` : ""}`);
 console.log(`\nthemes: ${themes.length} · total importable: ${totalValid}`);
