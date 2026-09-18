@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
-import * as fs from "fs";
-import * as path from "path";
 
+/**
+ * GET /api/admin/bank-soal — admin view of the CANONICAL active Founder bank.
+ *
+ * Source of truth = Soal rows with source "MASTER_BANK" (the Founder library,
+ * kodeSoal BC-GB2-*, kelas "SEMUA"). This is the SAME query surface as the
+ * Guru bank (/api/guru/bank-soal) so both views always describe one library.
+ * Retired rows (MASTER_BANK_RETIRED) are surfaced only as an audit count —
+ * never as active content.
+ */
 export async function GET(req: NextRequest) {
   try {
     const supabase = await createClient();
@@ -11,7 +18,9 @@ export async function GET(req: NextRequest) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser?.isFounder) return NextResponse.json({ error: "Admin only" }, { status: 403 });
+    if (!dbUser || (dbUser.role?.toUpperCase() !== "ADMIN" && !dbUser.isFounder)) {
+      return NextResponse.json({ error: "Admin only" }, { status: 403 });
+    }
 
     const { searchParams } = new URL(req.url);
     const tema = searchParams.get("tema");
@@ -20,7 +29,7 @@ export async function GET(req: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1");
     const limit = Math.min(parseInt(searchParams.get("limit") || "50"), 100);
 
-    const where: any = { source: "MASTER_BANK" };
+    const where: Record<string, unknown> = { source: "MASTER_BANK" };
     if (tema) where.topik = tema;
     if (kelas) where.kelas = kelas;
     if (search) {
@@ -31,7 +40,7 @@ export async function GET(req: NextRequest) {
       ];
     }
 
-    const [total, soals, themes] = await Promise.all([
+    const [total, soals, themeGroups, kelasGroups, retiredCount, founderCount, usageAgg] = await Promise.all([
       db.soal.count({ where }),
       db.soal.findMany({
         where,
@@ -39,19 +48,19 @@ export async function GET(req: NextRequest) {
         skip: (page - 1) * limit,
         take: limit,
       }),
-      db.soal.findMany({
+      db.soal.groupBy({ by: ["topik"], where: { source: "MASTER_BANK" }, _count: { _all: true }, orderBy: { topik: "asc" } }),
+      db.soal.groupBy({ by: ["kelas"], where: { source: "MASTER_BANK" }, _count: { _all: true } }),
+      db.soal.count({ where: { source: "MASTER_BANK_RETIRED" } }),
+      db.soal.count({ where: { source: "MASTER_BANK", kodeSoal: { startsWith: "BC-GB2-" } } }),
+      db.soal.aggregate({
         where: { source: "MASTER_BANK" },
-        select: { topik: true },
-        distinct: ["topik"],
+        _sum: { usedCount: true, correctCount: true },
       }),
     ]);
 
-    const soalWithUsage = soals.map(s => {
+    const soalWithUsage = soals.map((s) => {
       const totalPick = s.usedCount;
-      const accuracy = totalPick > 0
-        ? Math.round((s.correctCount / totalPick) * 100)
-        : null;
-
+      const accuracy = totalPick > 0 ? Math.round((s.correctCount / totalPick) * 100) : null;
       return {
         id: s.id,
         kodeSoal: s.kodeSoal,
@@ -70,23 +79,12 @@ export async function GET(req: NextRequest) {
       };
     });
 
-    // Read data files for theme info
-    let themesMeta: { id: string; count: number }[] = [];
-    try {
-      const dataDir = path.resolve(process.cwd(), "data", "question-bank", "master");
-      if (fs.existsSync(dataDir)) {
-        themesMeta = fs.readdirSync(dataDir)
-          .filter(f => f.endsWith(".json") && f !== "types.json" && f !== "index.json")
-          .map(f => {
-            const filePath = path.join(dataDir, f);
-            const content = JSON.parse(fs.readFileSync(filePath, "utf-8"));
-            return { id: f.replace(".json", ""), count: Array.isArray(content) ? content.length : 0 };
-          });
-      }
-    } catch {}
-
-    const totalInDataFiles = themesMeta.reduce((s, t) => s + t.count, 0);
-    const temaList = themes.filter(t => t.topik).map(t => t.topik!);
+    // Theme distribution from the DB (canonical), not from legacy data files.
+    const themesMeta = themeGroups.map((t) => ({ id: t.topik ?? "Umum", count: t._count._all }));
+    const globalAccuracy =
+      usageAgg._sum.usedCount && usageAgg._sum.usedCount > 0
+        ? Math.round(((usageAgg._sum.correctCount ?? 0) / usageAgg._sum.usedCount) * 100)
+        : null;
 
     return NextResponse.json({
       soals: soalWithUsage,
@@ -94,9 +92,14 @@ export async function GET(req: NextRequest) {
       page,
       limit,
       totalPages: Math.ceil(total / limit),
-      temas: temaList,
+      temas: themesMeta.map((t) => t.id),
       themesMeta,
-      totalInDataFiles,
+      // Stats (DB-truth):
+      activeTotal: total,
+      founderCount,
+      retiredCount,
+      kelasValues: kelasGroups.map((k) => k.kelas ?? "Umum"),
+      globalAccuracy,
       totalInDb: total,
     });
   } catch (error) {
