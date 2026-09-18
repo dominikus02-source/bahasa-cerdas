@@ -47,8 +47,8 @@ export interface RPGMapSideState {
   gold?: number;
   /** Gold audit ledger (append-only). */
   goldLedger?: Array<{ id: string; delta: number; reason: string }>;
-  /** Preserved equipment intents (unmapped prototype gear). */
-  equipmentIntents?: Array<{ source: string; kind: "wpn" | "arm"; key: string }>;
+  /** Preserved equipment intents (resolved prototype gear). */
+  equipmentIntents?: Array<{ source: string; kind: "wpn" | "arm"; key: string; equipmentKey: string }>;
   /** Authoritative main-line quest state (P1.7). */
   quest?: { main: number; kills: number; flowers: number };
   /** Picked golden-flower tiles `map:x,y` (Bunga Emas, P1.9B). */
@@ -205,7 +205,7 @@ export function hydrateFromServerSnapshot(
     weaponId: ws.equipment.weaponId,
     armorId: ws.equipment.armorId,
     accessoryId: ws.equipment.accessoryId,
-    weaponPlus: 0,
+    weaponPlus: ws.equipment.weaponPlus ?? 0,
   };
 
   const player: RPGPlayerState = {
@@ -344,7 +344,7 @@ interface RPGSaveData {
     goldIntents?: Array<{ battleId: string; amount: number }>;
     gold?: number;
     goldLedger?: Array<{ id: string; delta: number; reason: string }>;
-    equipmentIntents?: Array<{ source: string; kind: "wpn" | "arm"; key: string }>;
+  equipmentIntents?: Array<{ source: string; kind: "wpn" | "arm"; key: string; equipmentKey: string }>;
     quest?: { main: number; kills: number; flowers: number };
     pickedGe?: string[];
   };

@@ -20,13 +20,16 @@
 import type { RPGInventory, RPGPlayerStats } from "../player/player-state";
 import { addItem, removeItem } from "../player/inventory";
 import { canonicalItemById } from "../data/items";
+import { resolveEquipmentKey } from "../data/equipment-mapping";
 import type { CanonicalChestReward } from "../data/world-maps";
 
-/** Equipment reward that cannot yet resolve (preserved verbatim). */
+/** Equipment reward resolved to canonical production key. */
 export interface EquipmentIntent {
   source: string;
   kind: "wpn" | "arm";
   key: string;
+  /** Canonical production equipment ID (e.g. "equip.keris-singa"). */
+  equipmentKey: string;
 }
 
 export interface ChestApplied {
@@ -56,8 +59,8 @@ export function applyChestRewards(
     // Prototype chests never carry gold; the type allows it, so fail closed.
     throw new Error(`chest ${sourceId}: gold rewards have no canonical path`);
   }
-  if (give.wpn) equipmentIntents.push({ source: sourceId, kind: "wpn", key: give.wpn });
-  if (give.arm) equipmentIntents.push({ source: sourceId, kind: "arm", key: give.arm });
+  if (give.wpn) equipmentIntents.push({ source: sourceId, kind: "wpn", key: give.wpn, equipmentKey: resolveEquipmentKey(give.wpn) });
+  if (give.arm) equipmentIntents.push({ source: sourceId, kind: "arm", key: give.arm, equipmentKey: resolveEquipmentKey(give.arm) });
   return { inventory: inv, equipmentIntents, applied };
 }
 

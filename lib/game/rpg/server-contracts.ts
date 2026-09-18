@@ -83,8 +83,8 @@ export type PendekarWorldState = {
   openedChests: string[];
   /** Defeated boss instance IDs. Absent = empty array. */
   deadBossIds: string[];
-  /** Equipment slots. Absent = all null. */
-  equipment: { weaponId: string | null; armorId: string | null; accessoryId: string | null };
+  /** Equipment slots. Absent = all null. weaponPlus = forge upgrade level (0-5). */
+  equipment: { weaponId: string | null; armorId: string | null; accessoryId: string | null; weaponPlus: number };
   /** Quest line state (main/kills/flowers). Absent = zeros. */
   quest: { main: number; kills: number; flowers: number };
   /** Picked golden-flower tile keys. Absent = empty array. */
@@ -320,6 +320,56 @@ export function parseQuestMutationInput(value: unknown): ParseQuestMutationInput
   return { ok: true, value: value as QuestMutationInput };
 }
 
+/* ---------- P2.6I.5: Equipment mutations ---------- */
+
+export type EquipmentMutationKind = "FORGE_UPGRADE" | "EQUIP" | "UNEQUIP";
+
+export type EquipmentMutationInput = {
+  kind: EquipmentMutationKind;
+  /** Target equipment slot: "weapon", "armor", or "accessory". */
+  slot: "weapon" | "armor" | "accessory";
+  /** Equipment definition key (e.g. "wpn_bilah", "arm_arm"). Required for EQUIP/FORGE_UPGRADE. */
+  equipmentKey?: string;
+  /** weaponPlus level (0-5). Required for FORGE_UPGRADE. */
+  weaponPlus?: number;
+  /** Client-generated idempotency/replay key. */
+  requestKey: string;
+};
+
+export type EquipmentMutationResult = {
+  category: "APPLIED" | "REPLAYED";
+  equipment: { weaponId: string | null; armorId: string | null; accessoryId: string | null; weaponPlus: number };
+  applied: string[];
+  version: number;
+};
+
+/* ---------- P2.6I.5: Inventory mutations ---------- */
+
+export type InventoryMutationKind =
+  | "SHOP_PURCHASE"
+  | "CHEST_GRANT"
+  | "BATTLE_DROP"
+  | "CONSUME"
+  | "FISH_SELL"
+  | "FORGE_COST";
+
+export type InventoryMutationInput = {
+  kind: InventoryMutationKind;
+  /** Item key (e.g. "ram", "teh", "bijih"). Required for all except FISH_SELL. */
+  itemKey?: string;
+  /** Quantity change. Positive = add, negative = remove. */
+  quantityDelta: number;
+  /** Client-generated idempotency/replay key. */
+  requestKey: string;
+};
+
+export type InventoryMutationResult = {
+  category: "APPLIED" | "REPLAYED";
+  inventory: { itemKey: string; quantity: number }[];
+  applied: string[];
+  version: number;
+};
+
 export type ParseStartBattleInputResult =
   | { ok: true; value: StartBattleInput }
   | { ok: false; error: PendekarActionError };
@@ -456,4 +506,93 @@ export function parseSettleBattleRewardInput(value: unknown): ParseSettleBattleR
     return { ok: false, error: { code: "INVALID_INPUT", message: "requestKey must be an opaque replay key" } };
   }
   return { ok: true, value: { requestKey: value.requestKey } };
+}
+
+/* ---------- P2.6I.5: Equipment mutation parser ---------- */
+
+export type ParseEquipmentMutationInputResult =
+  | { ok: true; value: EquipmentMutationInput }
+  | { ok: false; error: PendekarActionError };
+
+const equipmentMutationKeys = new Set(["kind", "slot", "equipmentKey", "weaponPlus", "requestKey"]);
+
+export function parseEquipmentMutationInput(value: unknown): ParseEquipmentMutationInputResult {
+  if (!isRecord(value)) {
+    return { ok: false, error: { code: "INVALID_INPUT", message: "Equipment mutation body must be an object" } };
+  }
+  if (Object.keys(value).some((key) => !equipmentMutationKeys.has(key))) {
+    return { ok: false, error: { code: "INVALID_INPUT", message: "Equipment mutation body contains unsupported fields" } };
+  }
+  if (value.kind !== "FORGE_UPGRADE" && value.kind !== "EQUIP" && value.kind !== "UNEQUIP") {
+    return { ok: false, error: { code: "INVALID_INPUT", message: "kind must be FORGE_UPGRADE, EQUIP, or UNEQUIP" } };
+  }
+  if (value.slot !== "weapon" && value.slot !== "armor" && value.slot !== "accessory") {
+    return { ok: false, error: { code: "INVALID_INPUT", message: "slot must be weapon, armor, or accessory" } };
+  }
+  if (value.kind === "FORGE_UPGRADE" || value.kind === "EQUIP") {
+    if (typeof value.equipmentKey !== "string" || value.equipmentKey.length === 0) {
+      return { ok: false, error: { code: "INVALID_INPUT", message: "equipmentKey is required for EQUIP and FORGE_UPGRADE" } };
+    }
+  }
+  if (value.kind === "FORGE_UPGRADE") {
+    if (typeof value.weaponPlus !== "number" || !Number.isInteger(value.weaponPlus) || value.weaponPlus < 0 || value.weaponPlus > 5) {
+      return { ok: false, error: { code: "INVALID_INPUT", message: "weaponPlus must be an integer 0..5" } };
+    }
+  }
+  if (typeof value.requestKey !== "string" || !requestIdPattern.test(value.requestKey)) {
+    return { ok: false, error: { code: "INVALID_INPUT", message: "requestKey must be an opaque replay key" } };
+  }
+  return {
+    ok: true,
+    value: {
+      kind: value.kind,
+      slot: value.slot,
+      requestKey: value.requestKey,
+      ...(value.equipmentKey !== undefined ? { equipmentKey: value.equipmentKey as string } : {}),
+      ...(value.weaponPlus !== undefined ? { weaponPlus: value.weaponPlus as number } : {}),
+    },
+  };
+}
+
+/* ---------- P2.6I.5: Inventory mutation parser ---------- */
+
+export type ParseInventoryMutationInputResult =
+  | { ok: true; value: InventoryMutationInput }
+  | { ok: false; error: PendekarActionError };
+
+const inventoryMutationKeys = new Set(["kind", "itemKey", "quantityDelta", "requestKey"]);
+
+export function parseInventoryMutationInput(value: unknown): ParseInventoryMutationInputResult {
+  if (!isRecord(value)) {
+    return { ok: false, error: { code: "INVALID_INPUT", message: "Inventory mutation body must be an object" } };
+  }
+  if (Object.keys(value).some((key) => !inventoryMutationKeys.has(key))) {
+    return { ok: false, error: { code: "INVALID_INPUT", message: "Inventory mutation body contains unsupported fields" } };
+  }
+  if (
+    value.kind !== "SHOP_PURCHASE" && value.kind !== "CHEST_GRANT" && value.kind !== "BATTLE_DROP" &&
+    value.kind !== "CONSUME" && value.kind !== "FISH_SELL" && value.kind !== "FORGE_COST"
+  ) {
+    return { ok: false, error: { code: "INVALID_INPUT", message: "kind must be SHOP_PURCHASE, CHEST_GRANT, BATTLE_DROP, CONSUME, FISH_SELL, or FORGE_COST" } };
+  }
+  if (typeof value.quantityDelta !== "number" || !Number.isInteger(value.quantityDelta) || value.quantityDelta === 0) {
+    return { ok: false, error: { code: "INVALID_INPUT", message: "quantityDelta must be a non-zero integer" } };
+  }
+  if (value.kind !== "FISH_SELL") {
+    if (typeof value.itemKey !== "string" || value.itemKey.length === 0) {
+      return { ok: false, error: { code: "INVALID_INPUT", message: "itemKey is required for non-FISH_SELL mutations" } };
+    }
+  }
+  if (typeof value.requestKey !== "string" || !requestIdPattern.test(value.requestKey)) {
+    return { ok: false, error: { code: "INVALID_INPUT", message: "requestKey must be an opaque replay key" } };
+  }
+  return {
+    ok: true,
+    value: {
+      kind: value.kind,
+      quantityDelta: value.quantityDelta,
+      requestKey: value.requestKey,
+      ...(value.itemKey !== undefined ? { itemKey: value.itemKey as string } : {}),
+    },
+  };
 }

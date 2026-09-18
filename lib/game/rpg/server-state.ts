@@ -34,6 +34,10 @@ import type {
   PendekarWorldState,
   QuestMutationInput,
   QuestMutationResult,
+  EquipmentMutationInput,
+  EquipmentMutationResult,
+  InventoryMutationInput,
+  InventoryMutationResult,
   CreateBattleRewardReceiptInput,
   CreateBattleRewardReceiptResult,
   SettleBattleRewardInput,
@@ -313,7 +317,7 @@ export class PendekarStateService {
       openedChests: safeJson<string[]>(player.openedChests, []),
       deadBossIds: safeJson<string[]>(player.deadBossIds, []),
       equipment: safeJson<PendekarWorldState["equipment"]>(player.equipment, {
-        weaponId: null, armorId: null, accessoryId: null,
+        weaponId: null, armorId: null, accessoryId: null, weaponPlus: 0,
       }),
       quest: safeJson<PendekarWorldState["quest"]>(player.questState, {
         main: 0, kills: 0, flowers: 0,
@@ -1212,6 +1216,217 @@ export class PendekarStateService {
     });
   }
 
+  /**
+   * P2.6I.5: Mutate equipment state. Validates against EQUIPMENT catalog,
+   * applies changes to the equipment Json column, and increments version.
+   * FORGE_UPGRADE: sets weaponId + weaponPlus.
+   * EQUIP: sets armorId/accessoryId (weapon via EQUIP from weapon slot).
+   * UNEQUIP: clears the target slot.
+   */
+  async mutateEquipment(userId: string, input: EquipmentMutationInput): Promise<EquipmentMutationResult> {
+    return this.serializable(async (tx) => {
+      const p = await this.playerForUser(tx, userId);
+
+      const currentEquipment = safeJson<PendekarWorldState["equipment"]>(
+        p.equipment,
+        { weaponId: null, armorId: null, accessoryId: null, weaponPlus: 0 },
+      );
+
+      // ── Replay dedup ─────────────────────────────────────
+      const dedupKey = `${userId}:${input.requestKey}`;
+      if (!replayGuard.has(dedupKey)) {
+        replayGuard.add(dedupKey);
+        const playerPrefix = `${userId}:`;
+        let count = 0;
+        for (const k of replayGuard) {
+          if (k.startsWith(playerPrefix)) {
+            count++;
+            if (count > 256) replayGuard.delete(k);
+          }
+        }
+      } else {
+        return {
+          category: "REPLAYED" as const,
+          equipment: currentEquipment,
+          applied: [],
+          version: p.version,
+        };
+      }
+
+      // ── Validate + apply ──────────────────────────────────
+      let newEquipment = { ...currentEquipment };
+      const applied: string[] = [];
+
+      if (input.kind === "FORGE_UPGRADE") {
+        if (input.slot !== "weapon") {
+          throw new PendekarInvariantError("FORGE_UPGRADE only applies to weapon slot");
+        }
+        if (typeof input.weaponPlus !== "number" || input.weaponPlus < 0 || input.weaponPlus > 5) {
+          throw new PendekarInvariantError("weaponPlus must be 0-5");
+        }
+        if (typeof input.equipmentKey !== "string") {
+          throw new PendekarInvariantError("equipmentKey required for FORGE_UPGRADE");
+        }
+        // Validate equipment key exists in catalog
+        if (!EQUIPMENT.find((e) => e.id === input.equipmentKey)) {
+          throw new PendekarInvariantError(`Unknown equipment key: ${input.equipmentKey}`);
+        }
+        newEquipment = {
+          weaponId: input.equipmentKey,
+          armorId: currentEquipment.armorId,
+          accessoryId: currentEquipment.accessoryId,
+          weaponPlus: input.weaponPlus,
+        };
+        applied.push("FORGE_UPGRADE");
+      } else if (input.kind === "EQUIP") {
+        if (typeof input.equipmentKey !== "string") {
+          throw new PendekarInvariantError("equipmentKey required for EQUIP");
+        }
+        if (!EQUIPMENT.find((e) => e.id === input.equipmentKey)) {
+          throw new PendekarInvariantError(`Unknown equipment key: ${input.equipmentKey}`);
+        }
+        if (input.slot === "weapon") {
+          newEquipment = { ...currentEquipment, weaponId: input.equipmentKey };
+        } else if (input.slot === "armor") {
+          newEquipment = { ...currentEquipment, armorId: input.equipmentKey };
+        } else if (input.slot === "accessory") {
+          newEquipment = { ...currentEquipment, accessoryId: input.equipmentKey };
+        }
+        applied.push("EQUIP");
+      } else if (input.kind === "UNEQUIP") {
+        if (input.slot === "weapon") {
+          newEquipment = { ...currentEquipment, weaponId: null, weaponPlus: 0 };
+        } else if (input.slot === "armor") {
+          newEquipment = { ...currentEquipment, armorId: null };
+        } else if (input.slot === "accessory") {
+          newEquipment = { ...currentEquipment, accessoryId: null };
+        }
+        applied.push("UNEQUIP");
+      }
+
+      // ── Persist ───────────────────────────────────────────
+      await tx.pendekarPlayer.update({
+        where: { id: p.id },
+        data: {
+          equipment: JSON.parse(JSON.stringify(newEquipment)) as Prisma.InputJsonValue,
+          version: { increment: 1 },
+        },
+      });
+
+      return {
+        category: "APPLIED",
+        equipment: newEquipment,
+        applied,
+        version: p.version + 1,
+      };
+    });
+  }
+
+  /**
+   * P2.6I.5: Mutate inventory. Validates quantity changes, applies to
+   * PendekarInventoryItem rows, and increments version.
+   * Positive quantityDelta = add, negative = remove.
+   * Removes items with zero quantity after mutation.
+   */
+  async mutateInventory(userId: string, input: InventoryMutationInput): Promise<InventoryMutationResult> {
+    return this.serializable(async (tx) => {
+      const p = await this.playerForUser(tx, userId);
+
+      // ── Replay dedup ─────────────────────────────────────
+      const dedupKey = `${userId}:${input.requestKey}`;
+      if (!replayGuard.has(dedupKey)) {
+        replayGuard.add(dedupKey);
+        const playerPrefix = `${userId}:`;
+        let count = 0;
+        for (const k of replayGuard) {
+          if (k.startsWith(playerPrefix)) {
+            count++;
+            if (count > 256) replayGuard.delete(k);
+          }
+        }
+      } else {
+        // Return current inventory on replay
+        const currentItems = await tx.pendekarInventoryItem.findMany({
+          where: { playerId: p.id },
+          select: { itemKey: true, quantity: true },
+        });
+        return {
+          category: "REPLAYED" as const,
+          inventory: currentItems.map((i) => ({ itemKey: i.itemKey, quantity: i.quantity })),
+          applied: [],
+          version: p.version,
+        };
+      }
+
+      // ── Validate ──────────────────────────────────────────
+      if (typeof input.quantityDelta !== "number" || !Number.isInteger(input.quantityDelta) || input.quantityDelta === 0) {
+        throw new PendekarInvariantError("quantityDelta must be a non-zero integer");
+      }
+      if (input.kind !== "FISH_SELL") {
+        if (typeof input.itemKey !== "string" || input.itemKey.length === 0) {
+          throw new PendekarInvariantError("itemKey required for non-FISH_SELL mutations");
+        }
+      }
+
+      // ── Apply ─────────────────────────────────────────────
+      const applied: string[] = [];
+
+      if (input.kind === "FISH_SELL") {
+        // Remove all fish: f1, f2, f3
+        await tx.pendekarInventoryItem.deleteMany({
+          where: { playerId: p.id, itemKey: { in: ["f1", "f2", "f3"] } },
+        });
+        applied.push("FISH_SELL");
+      } else if (input.quantityDelta > 0) {
+        // Add: upsert inventory item
+        await tx.pendekarInventoryItem.upsert({
+          where: { playerId_itemKey: { playerId: p.id, itemKey: input.itemKey! } },
+          create: { playerId: p.id, itemKey: input.itemKey!, quantity: input.quantityDelta },
+          update: { quantity: { increment: input.quantityDelta } },
+        });
+        applied.push(input.kind);
+      } else {
+        // Remove: check quantity, decrement, delete if zero
+        const existing = await tx.pendekarInventoryItem.findUnique({
+          where: { playerId_itemKey: { playerId: p.id, itemKey: input.itemKey! } },
+        });
+        if (!existing || existing.quantity < Math.abs(input.quantityDelta)) {
+          throw new PendekarInvariantError(`Insufficient ${input.itemKey} quantity`);
+        }
+        const newQty = existing.quantity + input.quantityDelta;
+        if (newQty <= 0) {
+          await tx.pendekarInventoryItem.delete({
+            where: { playerId_itemKey: { playerId: p.id, itemKey: input.itemKey! } },
+          });
+        } else {
+          await tx.pendekarInventoryItem.update({
+            where: { playerId_itemKey: { playerId: p.id, itemKey: input.itemKey! } },
+            data: { quantity: newQty },
+          });
+        }
+        applied.push(input.kind);
+      }
+
+      // ── Read back ─────────────────────────────────────────
+      const items = await tx.pendekarInventoryItem.findMany({
+        where: { playerId: p.id },
+        select: { itemKey: true, quantity: true },
+      });
+
+      await tx.pendekarPlayer.update({
+        where: { id: p.id },
+        data: { version: { increment: 1 } },
+      });
+
+      return {
+        category: "APPLIED",
+        inventory: items.map((i) => ({ itemKey: i.itemKey, quantity: i.quantity })),
+        applied,
+        version: p.version + 1,
+      };
+    });
+  }
+
   async createBattleSession(userId: string, seed: ServerBattleSeed): Promise<CreateResult<Awaited<ReturnType<typeof this.getOwnedBattleSession>>>> {
     this.assertBattleSeed(seed);
     try {
@@ -1697,6 +1912,9 @@ function playerToBattleState(player: PendekarPlayer): RPGPlayerState {
   if (player.maxHp <= 0 || player.maxMp <= 0 || player.rpgLevel < 1 || player.hp > player.maxHp || player.mp > player.maxMp) {
     throw new PendekarBattleStartError("INVALID_PLAYER_STATE", "Player combat state is inconsistent");
   }
+  const equipment = safeJson<{ weaponId: string | null; armorId: string | null; accessoryId: string | null; weaponPlus: number }>(
+    player.equipment, { weaponId: null, armorId: null, accessoryId: null, weaponPlus: 0 },
+  );
   return {
     id: player.id,
     name: "Pendekar",
@@ -1713,7 +1931,7 @@ function playerToBattleState(player: PendekarPlayer): RPGPlayerState {
     },
     progression: { level: player.rpgLevel, xp: player.rpgXp, xpToNextLevel: 100 },
     inventory: { items: [] },
-    equipment: { weaponId: null, armorId: null, accessoryId: null, weaponPlus: 0 },
+    equipment: { weaponId: equipment.weaponId, armorId: equipment.armorId, accessoryId: equipment.accessoryId, weaponPlus: equipment.weaponPlus },
   };
 }
 

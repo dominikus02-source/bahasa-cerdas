@@ -36,6 +36,8 @@ import {
   createServerRewardReceipt,
   settleServerReward,
   mutateQuestState,
+  mutateEquipment,
+  mutateInventory,
   generateRequestKey,
   fetchStateProjection,
   fetchServerWithRetry,
@@ -681,6 +683,11 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
           quantity: 1,
           source: battle.battleId,
         });
+        // P2.6I.5: Persist battle drop to server inventory.
+        fireServerCall(
+          mutateInventory("BATTLE_DROP", 1, { itemKey: "bijih" }),
+          { key: `inv-battle-drop-${battle.battleId}-bijih`, idempotent: true },
+        );
       }
     }
     const player = {
@@ -1035,6 +1042,13 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
                   rewardMapping: "APPLIED",
                 },
               });
+              // P2.6I.5: Persist chest item grants to server inventory.
+              for (const a of applied.applied) {
+                fireServerCall(
+                  mutateInventory("CHEST_GRANT", a.quantity, { itemKey: a.itemId }),
+                  { key: `inv-chest-${out.chestId}-${a.itemId}-${a.quantity}`, idempotent: true },
+                );
+              }
               return { ...currentState, player };
             } else if (out.kind === "CHEST_EMPTY") {
               eventBus.emit({
@@ -1295,6 +1309,11 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
             itemId: command.itemId,
             source: "battle-use",
           });
+          // P2.6I.5: Persist consume to server inventory.
+          fireServerCall(
+            mutateInventory("CONSUME", -1, { itemKey: command.itemId }),
+            { key: `inv-consume-${command.itemId}-${Date.now()}`, idempotent: false },
+          );
           const foeId = nbattle.enemies.find((e) => e.hp > 0)?.id;
           if (foeId && nbattle.result === undefined) {
             const eb = enemyAct(
@@ -1339,6 +1358,11 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
           itemId: command.itemId,
           source: "world-use",
         });
+        // P2.6I.5: Persist consume to server inventory.
+        fireServerCall(
+          mutateInventory("CONSUME", -1, { itemKey: command.itemId }),
+          { key: `inv-consume-${command.itemId}-${Date.now()}`, idempotent: false },
+        );
         return { ...currentState, player };
       }
       case "DIALOGUE_ADVANCE": {
@@ -1432,6 +1456,11 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
             delta: total,
             reason: "fish-sell",
           });
+          // P2.6I.5: Persist fish sell inventory mutation to server.
+          fireServerCall(
+            mutateInventory("FISH_SELL", -units),
+            { key: `inv-fish-sell-${txId}`, idempotent: true },
+          );
           return { ...currentState, player };
         }
         // Atomic purchase: validate (real balance) → ledger-guarded apply.
@@ -1470,6 +1499,11 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
             quantity: res.intent.quantity,
             source: txId,
           });
+          // P2.6I.5: Persist inventory mutation to server.
+          fireServerCall(
+            mutateInventory("SHOP_PURCHASE", res.intent.quantity, { itemKey: res.intent.itemKey }),
+            { key: `inv-shop-${res.intent.itemKey}-${res.intent.quantity}-${txId}`, idempotent: true },
+          );
           return { ...currentState, player };
         }
       }
@@ -1535,6 +1569,21 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
             weaponId: res.intent.weaponId,
             plus: res.intent.plus,
           });
+          // P2.6I.5: Persist equipment mutation to server.
+          fireServerCall(
+            mutateEquipment("FORGE_UPGRADE", "weapon", {
+              equipmentKey: res.intent.weaponId,
+              weaponPlus: res.intent.plus,
+            }),
+            { key: `equip-forge-${res.intent.weaponId}-${res.intent.plus}`, idempotent: true },
+          );
+          // P2.6I.5: Persist bijih cost to server inventory.
+          if (res.intent.bijihCost > 0) {
+            fireServerCall(
+              mutateInventory("FORGE_COST", -res.intent.bijihCost, { itemKey: "bijih" }),
+              { key: `inv-forge-cost-${txId}`, idempotent: true },
+            );
+          }
           return { ...currentState, player };
         }
       }
@@ -1550,6 +1599,74 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
           npcId,
         });
         return currentState;
+      }
+      case "EQUIP": {
+        if (command.playerId !== playerId) return currentState;
+        if (session !== null) return currentState;
+        // Equip/unequip: find the item in inventory, validate slot, apply.
+        const item = currentState.player.inventory.items.find((i) => i.itemId === command.itemId);
+        const equipDef = EQUIPMENT.find((e) => e.id === command.itemId);
+        if (!item || item.quantity <= 0 || !equipDef) return currentState;
+        const currentEquip = currentState.player.equipment;
+        let newEquipment = { ...currentEquip };
+        let slot: "weapon" | "armor" | "accessory";
+        if (equipDef.slot === "weapon") {
+          slot = "weapon";
+          if (currentEquip.weaponId === command.itemId) {
+            // Unequip: server call + local state
+            newEquipment = { ...currentEquip, weaponId: null, weaponPlus: 0 };
+            fireServerCall(
+              mutateEquipment("UNEQUIP", "weapon"),
+              { key: `equip-unequip-weapon-${command.itemId}`, idempotent: true },
+            );
+          } else {
+            newEquipment = { ...currentEquip, weaponId: command.itemId };
+            fireServerCall(
+              mutateEquipment("EQUIP", "weapon", { equipmentKey: command.itemId }),
+              { key: `equip-weapon-${command.itemId}`, idempotent: true },
+            );
+          }
+        } else if (equipDef.slot === "armor") {
+          slot = "armor";
+          if (currentEquip.armorId === command.itemId) {
+            newEquipment = { ...currentEquip, armorId: null };
+            fireServerCall(
+              mutateEquipment("UNEQUIP", "armor"),
+              { key: `equip-unequip-armor-${command.itemId}`, idempotent: true },
+            );
+          } else {
+            newEquipment = { ...currentEquip, armorId: command.itemId };
+            fireServerCall(
+              mutateEquipment("EQUIP", "armor", { equipmentKey: command.itemId }),
+              { key: `equip-armor-${command.itemId}`, idempotent: true },
+            );
+          }
+        } else if (equipDef.slot === "accessory") {
+          slot = "accessory";
+          if (currentEquip.accessoryId === command.itemId) {
+            newEquipment = { ...currentEquip, accessoryId: null };
+            fireServerCall(
+              mutateEquipment("UNEQUIP", "accessory"),
+              { key: `equip-unequip-accessory-${command.itemId}`, idempotent: true },
+            );
+          } else {
+            newEquipment = { ...currentEquip, accessoryId: command.itemId };
+            fireServerCall(
+              mutateEquipment("EQUIP", "accessory", { equipmentKey: command.itemId }),
+              { key: `equip-accessory-${command.itemId}`, idempotent: true },
+            );
+          }
+        } else {
+          return currentState;
+        }
+        const player = { ...currentState.player, equipment: newEquipment };
+        eventBus.emit({
+          type: "EQUIP",
+          playerId: currentState.session.playerId,
+          itemId: command.itemId,
+          slot,
+        });
+        return { ...currentState, player };
       }
       default:
         return currentState;

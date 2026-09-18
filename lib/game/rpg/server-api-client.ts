@@ -16,6 +16,10 @@ import type {
   PendekarActionError,
   QuestMutationInput,
   QuestMutationResult,
+  EquipmentMutationInput,
+  EquipmentMutationResult,
+  InventoryMutationInput,
+  InventoryMutationResult,
   StartBattleInput,
   StartBattleResult,
   SubmitLearningAnswerInput,
@@ -267,6 +271,45 @@ export async function mutateQuestState(
     ...(options?.geKey ? { geKey: options.geKey } : {}),
   };
   return fetchServer<QuestMutationResult>("/api/rpg/quest/mutate", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
+/* ---------- P2.6I.5: POST /api/rpg/equipment/mutate ---------- */
+
+export async function mutateEquipment(
+  kind: "FORGE_UPGRADE" | "EQUIP" | "UNEQUIP",
+  slot: "weapon" | "armor" | "accessory",
+  options?: { equipmentKey?: string; weaponPlus?: number },
+): Promise<FetchResult<EquipmentMutationResult> | FetchFail> {
+  const input: EquipmentMutationInput = {
+    kind,
+    slot,
+    requestKey: generateRequestKey(),
+    ...(options?.equipmentKey ? { equipmentKey: options.equipmentKey } : {}),
+    ...(options?.weaponPlus !== undefined ? { weaponPlus: options.weaponPlus } : {}),
+  };
+  return fetchServer<EquipmentMutationResult>("/api/rpg/equipment/mutate", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
+/* ---------- P2.6I.5: POST /api/rpg/inventory/mutate ---------- */
+
+export async function mutateInventory(
+  kind: InventoryMutationInput["kind"],
+  quantityDelta: number,
+  options?: { itemKey?: string },
+): Promise<FetchResult<InventoryMutationResult> | FetchFail> {
+  const input: InventoryMutationInput = {
+    kind,
+    quantityDelta,
+    requestKey: generateRequestKey(),
+    ...(options?.itemKey ? { itemKey: options.itemKey } : {}),
+  };
+  return fetchServer<InventoryMutationResult>("/api/rpg/inventory/mutate", {
     method: "POST",
     body: JSON.stringify(input),
   });
