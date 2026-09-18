@@ -4,13 +4,8 @@ import { db } from "@/lib/db";
 import { rateLimitRoute } from "@/lib/rate-limit";
 import { awardGuruXp } from "@/lib/gamification/teacher-xp";
 import { isTeacherOrStudent } from "@/lib/teacher/students";
+import { normalizeDifficulty, pickBankSoalSet } from "@/lib/question-bank/seeded-pick";
 import { isMasterBankDeliverable, toDeliverySoal } from "@/lib/question-bank/delivery-gate";
-
-const DIFFICULTY_MAP: Record<string, string> = {
-  MUDAH: "EASY",
-  SEDANG: "MEDIUM",
-  SULIT: "HARD",
-};
 
 export async function POST(req: NextRequest) {
   try {
@@ -24,15 +19,22 @@ export async function POST(req: NextRequest) {
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
     if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Guru only" }, { status: 403 });
 
-    const { tema, kelas, groupIds, jumlah = 10, difficulty, dueDate } = await req.json();
+    const body = await req.json();
+    const tema = typeof body.tema === "string" ? body.tema : "";
+    const groupIds = Array.isArray(body.groupIds) ? body.groupIds.filter((g: unknown): g is string => typeof g === "string") : [];
+    const jumlah = Math.min(Math.max(Number(body.jumlah) || 10, 1), 30);
+    const seed = typeof body.seed === "string" ? body.seed.trim().slice(0, 64) : "";
+    const questionIds = Array.isArray(body.questionIds)
+      ? body.questionIds.filter((q: unknown): q is string => typeof q === "string")
+      : [];
 
-    if (!tema || !kelas || !groupIds || !Array.isArray(groupIds) || groupIds.length === 0) {
-      return NextResponse.json({ error: "Tema, kelas, dan groupIds wajib diisi" }, { status: 400 });
+    if (!tema || groupIds.length === 0) {
+      return NextResponse.json({ error: "Tema dan minimal 1 kelas tujuan wajib diisi" }, { status: 400 });
     }
 
     let parsedDueDate: Date | null = null;
-    if (dueDate) {
-      parsedDueDate = new Date(dueDate);
+    if (body.dueDate) {
+      parsedDueDate = new Date(body.dueDate);
       if (Number.isNaN(parsedDueDate.getTime())) {
         return NextResponse.json({ error: "Tanggal tenggat tidak valid" }, { status: 400 });
       }
@@ -41,54 +43,83 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Destination is teacher-owned only.
     const groups = await db.group.findMany({
       where: { id: { in: groupIds }, teacherId: dbUser.id },
     });
-
     if (groups.length === 0) {
       return NextResponse.json({ error: "Kelas tidak ditemukan" }, { status: 404 });
     }
+    if (groups.length < groupIds.length) {
+      return NextResponse.json({ error: "Beberapa kelas tidak ditemukan atau bukan milik Anda" }, { status: 403 });
+    }
 
-    // Pick random questions from Master Bank
+    // QUIZ.kelas is a single-string column; reuse existing semantics
+    // (group grade) — it is never used to filter Bank Soal delivery.
+    const uniqueGrades = [...new Set(groups.map((g) => g.grade || "SEMUA"))];
+    const quizKelas = uniqueGrades.length === 1 ? uniqueGrades[0] : "SEMUA";
+
+    const difficulty = normalizeDifficulty(body.difficulty);
+    if (body.difficulty && !difficulty) {
+      return NextResponse.json({ error: "Tingkat kesulitan tidak valid" }, { status: 400 });
+    }
+
     // P0.6 containment: MASTER_BANK dikarantina penuh untuk pengiriman ke
     // murid — hanya butir yang lolos REVIEW KONTEN MANUSIA pasca-audit
-    // (allowlist DELIVERABLE_MASTER_KODE_SOALS, masih kosong) yang layak
-    // kirim. Audit forensik (2026-09-04): 1.480/1.500 item master adalah
-    // template sampah (RETIRE), 19 SALVAGE belum direview, 1 BROKEN.
-    const count = Math.min(Math.max(jumlah, 5), 30);
-    const where: any = { source: "MASTER_BANK", topik: tema };
-    // Bank reusable (migrasi Founder): soal kelas-sentinel "SEMUA" + kelas pilihan
-    // guru sama-sama layak dikirim ke kelas terpilih.
-    where.kelas = { in: [kelas, "SEMUA"] };
-    if (difficulty) where.difficulty = DIFFICULTY_MAP[difficulty] || difficulty;
+    // (melewati isMasterBankDeliverable) yang layak kirim. Set dihitung dari
+    // tema+difficulty+seed yang sama dengan /preview → preview == kiriman.
+    const where: Record<string, unknown> = { source: "MASTER_BANK", topik: tema };
+    if (difficulty) where.difficulty = difficulty;
 
-    // Ambil seluruh kandidat tema/kelas, lalu saring ke himpunan yang layak
-    // kirim. Tidak ada fallback diam-diam ke bank yang terkontaminasi.
     const candidates = await db.soal.findMany({ where });
-    const deliverable = candidates.filter((s: any) => isMasterBankDeliverable(toDeliverySoal(s as any)));
+    const deliverable = candidates.filter((s) => isMasterBankDeliverable(toDeliverySoal(s)));
 
     if (deliverable.length === 0) {
       return NextResponse.json({
-        error: `Tema "${tema}" kelas ${kelas} belum memiliki soal yang lolos verifikasi kualitas. Gunakan AI Generate untuk membuat soal baru, atau coba tema lain.`,
+        error: `Tema "${tema}" belum memiliki soal yang lolos verifikasi kualitas. Gunakan AI Generate untuk membuat soal baru, atau coba tema lain.`,
         totalAvailable: 0,
       }, { status: 422 });
     }
-
-    if (deliverable.length < count) {
+    if (deliverable.length < jumlah) {
       return NextResponse.json({
-        error: `Hanya ${deliverable.length} soal yang lolos verifikasi kualitas untuk tema "${tema}" kelas ${kelas}. Kurangi jumlah soal (minimal 1) atau gunakan AI Generate.`,
+        error: `Hanya ${deliverable.length} soal yang lolos verifikasi kualitas untuk tema "${tema}". Kurangi jumlah soal atau gunakan AI Generate.`,
         totalAvailable: deliverable.length,
       }, { status: 422 });
     }
 
-    const soals = [...deliverable];
-    const totalAvailable = soals.length;
+    let selectedIds: string[];
+    if (questionIds.length > 0) {
+      // Client-provided set: server re-derives the SAME set via
+      // theme+difficulty+seed and verifies it matches (no trust in client IDs).
+      const { selected } = pickBankSoalSet(candidates, { jumlah, difficulty, seed: seed || "__none__" });
+      const derivedIds = new Set(selected.map((s) => s.id));
+      const mismatch = questionIds.some((q: string) => !derivedIds.has(q));
+      if (mismatch || questionIds.length !== selected.length) {
+        return NextResponse.json({ error: "Set soal tidak cocok dengan konfigurasi. Muat ulang preview." }, { status: 409 });
+      }
+      selectedIds = questionIds;
+    } else {
+      // No explicit set provided (e.g. backward compatibility): derive from seed.
+      const { selected } = pickBankSoalSet(candidates, { jumlah, difficulty, seed: seed || "__none__" });
+      selectedIds = selected.map((s) => s.id);
+      if (selectedIds.length < jumlah) {
+        return NextResponse.json({ error: "Soal tidak cukup tersedia" }, { status: 422 });
+      }
+    }
 
-    const shuffled = soals.sort(() => Math.random() - 0.5).slice(0, count);
+    // Preserve the PREVIEWED order: questionIds arrive in preview order and
+    // become QuizQuestion.orderIndex verbatim (DB row order is nondeterministic).
+    const soalMap = new Map(deliverable.map((s) => [s.id, s]));
+    const soals = selectedIds
+      .map((id) => soalMap.get(id))
+      .filter((s): s is (typeof deliverable)[number] => Boolean(s));
+    if (soals.length !== selectedIds.length) {
+      return NextResponse.json({ error: "Beberapa soal tidak lagi tersedia. Muat ulang preview." }, { status: 409 });
+    }
 
     // Update usedCount
     await db.soal.updateMany({
-      where: { id: { in: shuffled.map(s => s.id) } },
+      where: { id: { in: soals.map((s) => s.id) } },
       data: { usedCount: { increment: 1 } },
     });
 
@@ -96,10 +127,10 @@ export async function POST(req: NextRequest) {
     const quiz = await db.quiz.create({
       data: {
         title: `Latihan: ${tema}`,
-        description: `Latihan ${tema} kelas ${kelas} — ${shuffled.length} soal (dari Bank Soal)`,
+        description: `Latihan ${tema} — ${soals.length} soal (dari Bank Soal)`,
         type: "LATIHAN",
         status: "PUBLISHED",
-        kelas,
+        kelas: quizKelas,
         subject: "Bahasa Indonesia",
         topik: tema,
         shuffleQuestions: true,
@@ -109,7 +140,7 @@ export async function POST(req: NextRequest) {
         maxAttempts: 0,
         creatorId: dbUser.id,
         questions: {
-          create: shuffled.map((s, idx) => ({
+          create: soals.map((s, idx) => ({
             sourceType: "SOAL",
             sourceId: s.id,
             orderIndex: idx,
@@ -121,7 +152,7 @@ export async function POST(req: NextRequest) {
 
     // Create assignments
     const assignments = await Promise.all(
-      groups.map(group =>
+      groups.map((group) =>
         db.quizAssignment.create({
           data: {
             quizId: quiz.id,
@@ -134,7 +165,7 @@ export async function POST(req: NextRequest) {
     );
 
     // Notifikasi guru
-    const groupNames = groups.map(g => g.name).join(", ");
+    const groupNames = groups.map((g) => g.name).join(", ");
     try {
       await db.notifikasi.create({
         data: {
@@ -159,7 +190,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      quiz: { id: quiz.id, title: quiz.title, topik: quiz.topik, totalSoal: shuffled.length },
+      quiz: { id: quiz.id, title: quiz.title, topik: quiz.topik, totalSoal: soals.length },
       assignments: assignments.length,
       groups: groupNames,
     }, { status: 201 });
