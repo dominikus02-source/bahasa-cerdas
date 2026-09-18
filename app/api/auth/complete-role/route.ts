@@ -5,7 +5,7 @@ import {
   dashboardForRole,
   intentClearCookie,
   isAllowedGoogleRole,
-  isSafeNext,
+  resolvePostAuthDestination,
 } from "@/lib/auth/role-intent";
 import { findApplicationUser, provisionGoogleUser } from "@/lib/auth/google-provision";
 
@@ -46,10 +46,10 @@ export async function POST(req: Request) {
   const res = NextResponse.json({
     ok: true,
     role: existing ? existing.role : body.role,
+    // Existing users keep their role; safe specific `next` honored, "/"
+    // resolves to the dashboard (never the public landing page).
     redirect: existing
-      ? typeof body.next === "string" && isSafeNext(body.next)
-        ? body.next
-        : dashboardForRole(existing.role)
+      ? resolvePostAuthDestination(existing.role, body.next)
       : dashboardForRole(body.role),
   });
   res.headers.append("Set-Cookie", intentClearCookie());

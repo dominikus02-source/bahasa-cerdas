@@ -25,6 +25,7 @@ import { getSocialProofSnapshot } from "@/lib/social-proof";
 // hanya tersedia lewat satu blok FAQ: FAQSection ("Pertanyaan yang Sering Diajukan").
 import JsonLd from "@/components/aeo/JsonLd";
 import SafeMediaImage from "@/components/shared/safe-media-image";
+import AuthenticatedLandingRedirect from "@/components/auth/AuthenticatedLandingRedirect";
 
 export const revalidate = 300;
 
@@ -115,6 +116,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <AuthenticatedLandingRedirect />
       <JsonLd data={breadcrumbLd([
         { position: 1, name: "Beranda", item: "https://www.bahasacerdas.com" },
         { position: 2, name: "Arena", item: "https://www.bahasacerdas.com/arena" },

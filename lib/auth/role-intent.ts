@@ -1,5 +1,11 @@
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 
+export {
+  dashboardForRole,
+  isSafeNext,
+  resolvePostAuthDestination,
+} from "@/lib/auth/redirect";
+
 /**
  * Server-bound pending-role intent for Google OAuth.
  *
@@ -119,22 +125,4 @@ export function resolveGoogleProvisioning(opts: {
   if (opts.existingRole) return { action: "preserve" };
   if (opts.intentRole) return { action: "create", role: opts.intentRole };
   return { action: "needs-selection" };
-}
-
-/** Role-based dashboard destination (mirrors app/api/auth/callback). */
-export function dashboardForRole(role: string): string {
-  if (role === "MURID") return "/arena";
-  if (role === "ADMIN") return "/admin";
-  return "/guru/beranda";
-}
-
-/** Validate an internal `next` redirect (mirrors login/callback guards). */
-export function isSafeNext(next: string | null | undefined): boolean {
-  if (!next) return false;
-  return (
-    next.startsWith("/") &&
-    !next.startsWith("//") &&
-    !next.startsWith("/login") &&
-    !next.startsWith("/register")
-  );
 }

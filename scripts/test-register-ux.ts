@@ -144,6 +144,7 @@ test("47. protected zones 0 diff (kecuali file Google role-selection)", () => {
     // dan prisma-adjacent yang boleh berubah. Selain daftar ini = pelanggaran.
     const allowed = new Set([
       "app/api/auth/callback/route.ts",
+      "app/api/auth/complete-role/route.ts",
       "app/api/user/me/route.ts",
       "app/api/user/simple-upsert/route.ts",
     ]);

@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { LogIn, Eye, EyeOff, ShieldCheck, GraduationCap, BookOpen } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { resolvePostAuthDestination } from "@/lib/auth/redirect";
 import { BRAND_ICON, BRAND_ICON_DARK, BRAND_TAGLINE } from "@/lib/brand";
 import BatikAccent from "@/components/decorations/BatikAccent";
 
@@ -84,10 +85,13 @@ export default function LoginPage() {
       }
 
       // Redirect back to previous page if coming from marketplace or other public page.
-      // Validate: must start with /, no protocol-relative (//evil.com), not login/register.
-      const target = next && next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/login") && !next.startsWith("/register")
-        ? next
-        : dbUser.isFounder ? "/admin" : dbUser.role === "MURID" ? "/arena" : `/${dbUser.role.toLowerCase()}/beranda`;
+      // Safe specific `next` honored (open-redirect protected); "/" resolves
+      // to the role dashboard so an authenticated user never lands on the
+      // public landing page after login.
+      const target = resolvePostAuthDestination(
+        dbUser.isFounder ? "ADMIN" : dbUser.role,
+        next
+      );
       window.location.href = target;
     } catch (err: any) {
       console.error("Login error:", err);

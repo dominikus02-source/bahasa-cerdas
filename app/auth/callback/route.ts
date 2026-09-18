@@ -7,6 +7,7 @@ import {
   intentClearCookie,
   isSafeNext,
   resolveGoogleProvisioning,
+  resolvePostAuthDestination,
   verifyRoleIntent,
 } from "@/lib/auth/role-intent";
 import { findApplicationUser, provisionGoogleUser } from "@/lib/auth/google-provision";
@@ -16,7 +17,8 @@ import { findApplicationUser, provisionGoogleUser } from "@/lib/auth/google-prov
  *
  * PRODUCT RULE: Google is authentication only.
  * - Existing application User → role preserved (only backfill supabaseId),
- *   pending intent ignored, `next` honored as before.
+ *   pending intent ignored. Safe specific `next` honored; "/" resolves to
+ *   the role dashboard (never the public landing page).
  * - New User + valid pending intent → provisioned ONCE with the intent role,
  *   intent consumed, role-based redirect.
  * - New User WITHOUT valid intent → NEVER silently created as MURID.
@@ -35,7 +37,9 @@ export async function GET(request: Request) {
     return res;
   };
   const roleSelectionUrl = `${requestUrl.origin}/auth/pilih-peran${
-    isSafeNext(next) ? `?next=${encodeURIComponent(next)}` : ""
+    typeof next === "string" && next !== "/" && isSafeNext(next)
+      ? `?next=${encodeURIComponent(next)}`
+      : ""
   }`;
 
   if (code) {
@@ -67,7 +71,13 @@ export async function GET(request: Request) {
             data: { supabaseId: data.user.id },
           });
         }
-        return withClearedIntent(NextResponse.redirect(`${requestUrl.origin}${next}`));
+        // Existing user: role preserved. Never fall back to the public
+        // landing page — "/" (or absent/unsafe next) resolves to dashboard.
+        return withClearedIntent(
+          NextResponse.redirect(
+            `${requestUrl.origin}${resolvePostAuthDestination(existing.role, next)}`
+          )
+        );
       }
 
       if (decision.action === "create") {

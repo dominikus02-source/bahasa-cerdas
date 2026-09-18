@@ -6,6 +6,7 @@ import {
   intentClearCookie,
   isSafeNext,
   resolveGoogleProvisioning,
+  resolvePostAuthDestination,
   verifyRoleIntent,
 } from "@/lib/auth/role-intent";
 import { findApplicationUser, provisionGoogleUser } from "@/lib/auth/google-provision";
@@ -24,7 +25,9 @@ export async function GET(request: Request) {
       return res;
     };
     const roleSelectionUrl = `${requestUrl.origin}/auth/pilih-peran${
-      isSafeNext(next) ? `?next=${encodeURIComponent(next)}` : ""
+      typeof next === "string" && next !== "/" && isSafeNext(next)
+        ? `?next=${encodeURIComponent(next)}`
+        : ""
     }`;
 
     // ── PKCE code exchange ──
@@ -44,7 +47,8 @@ export async function GET(request: Request) {
       console.log("[auth/callback] exchangeCodeForSession OK | next:", next);
 
       // ── Google provisioning (authentication only — role from intent/selection)
-      // Existing User → preserve role, intent ignored, `next` honored as before.
+      // Existing User → preserve role, intent ignored. Safe specific `next`
+      // honored; "/" resolves to the role dashboard (never landing).
       // New User + valid intent → created once with the intent role.
       // New User without intent → role selection (NEVER silent MURID).
       try {
@@ -82,9 +86,14 @@ export async function GET(request: Request) {
           if (decision.action === "needs-selection") {
             return clearOn(NextResponse.redirect(roleSelectionUrl));
           }
-          // preserve → fall through; `next`/role redirect below, intent consumed.
-          if (isSafeNext(next)) {
-            return clearOn(NextResponse.redirect(`${requestUrl.origin}${next}`));
+          // preserve → existing role kept; converge on the role-aware
+          // destination (safe `next` honored, "/" → dashboard).
+          if (decision.action === "preserve" && existing) {
+            return clearOn(
+              NextResponse.redirect(
+                `${requestUrl.origin}${resolvePostAuthDestination(existing.role, next)}`
+              )
+            );
           }
         }
       } catch (e) {

@@ -78,7 +78,9 @@ console.log("\n── Preservasi logic auth ──");
 test("17. server-side login via /api/auth/login (bukan direct Supabase)", () =>
   page.includes("/api/auth/login") && page.includes("fetch"));
 test("18. role redirect existing dipertahankan", () =>
-  page.includes("isFounder") && page.includes("MURID") && page.includes("/arena"));
+  page.includes("isFounder") &&
+  (page.includes("resolvePostAuthDestination") ||
+    (page.includes("MURID") && page.includes("/arena"))));
 test("19. DB user sync handled server-side", () =>
   page.includes("/api/auth/login") || page.includes("/api/user/me"));
 test("20. error handling dipertahankan", () =>

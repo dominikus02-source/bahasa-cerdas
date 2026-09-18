@@ -87,14 +87,20 @@ async function main() {
     fileContains("app/api/auth/callback/route.ts", "reset-password"));
 
   // next-guard boleh inline di callback ATAU via helper isSafeNext
-  // (lib/auth/role-intent.ts) — perilakunya identik, dicek di bawah.
+  // (lib/auth/redirect.ts, dire-ekspor ulang oleh lib/auth/role-intent.ts) —
+  // perilakunya identik, dicek di bawah.
   const nextGuarded =
     fileContains("app/api/auth/callback/route.ts", "isSafeNext") ||
     fileContains("app/api/auth/callback/route.ts", "startsWith(\"//\")");
+  const guardSource =
+    fileContains("lib/auth/redirect.ts", "startsWith(\"//\")") ||
+    fileContains("lib/auth/role-intent.ts", "startsWith(\"//\")");
   const guardHelperHasAll =
-    fileContains("lib/auth/role-intent.ts", "startsWith(\"//\")") &&
-    fileContains("lib/auth/role-intent.ts", "startsWith(\"/login\")") &&
-    fileContains("lib/auth/role-intent.ts", "startsWith(\"/register\")");
+    guardSource &&
+    (fileContains("lib/auth/redirect.ts", "startsWith(\"/login\")") ||
+      fileContains("lib/auth/role-intent.ts", "startsWith(\"/login\")")) &&
+    (fileContains("lib/auth/redirect.ts", "startsWith(\"/register\")") ||
+      fileContains("lib/auth/role-intent.ts", "startsWith(\"/register\")"));
 
   assert("Callback validates next param (no open redirect)",
     nextGuarded && guardHelperHasAll);
