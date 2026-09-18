@@ -226,7 +226,8 @@ export type QuestMutationKind =
   | "FLAG"
   | "CHEST_OPEN"
   | "BOSS_KILL"
-  | "GE_PICK";
+  | "GE_PICK"
+  | "DIALOGUE_GOLD";
 
 export type QuestMutationInput = {
   /** The mutation kind — client tells WHAT changed; server validates WHERE it lands. */
@@ -241,6 +242,8 @@ export type QuestMutationInput = {
   bossId?: string;
   /** Golden-flower tile key (required when kind=GE_PICK). Format: "mapId:x,y". */
   geKey?: string;
+  /** Gold amount to credit (required when kind=DIALOGUE_GOLD). Must be a canonical dialogue amount. */
+  amount?: number;
   /** Client-generated idempotency/replay key. */
   requestKey: string;
 };
@@ -274,7 +277,14 @@ export type ParseQuestMutationInputResult =
   | { ok: true; value: QuestMutationInput }
   | { ok: false; error: PendekarActionError };
 
-const questMutationKeys = new Set(["kind", "to", "flagName", "chestId", "bossId", "geKey", "requestKey"]);
+const questMutationKeys = new Set(["kind", "to", "flagName", "chestId", "bossId", "geKey", "amount", "requestKey"]);
+
+/**
+ * Canonical dialogue GOLD amounts (src/game/rpg/data/dialogues.ts).
+ * The server never trusts arbitrary client-supplied gold values —
+ * only these exact amounts from canonical dialogue data are accepted.
+ */
+export const DIALOGUE_GOLD_ALLOWLIST: readonly number[] = [25, 30, 60, 100, 200, 300];
 
 export function parseQuestMutationInput(value: unknown): ParseQuestMutationInputResult {
   if (!isRecord(value)) {
@@ -285,9 +295,10 @@ export function parseQuestMutationInput(value: unknown): ParseQuestMutationInput
   }
   if (
     value.kind !== "QUEST_ADVANCE" && value.kind !== "KILL" && value.kind !== "FLOWER_PICK" && value.kind !== "FLAG" &&
-    value.kind !== "CHEST_OPEN" && value.kind !== "BOSS_KILL" && value.kind !== "GE_PICK"
+    value.kind !== "CHEST_OPEN" && value.kind !== "BOSS_KILL" && value.kind !== "GE_PICK" &&
+    value.kind !== "DIALOGUE_GOLD"
   ) {
-    return { ok: false, error: { code: "INVALID_INPUT", message: "kind must be QUEST_ADVANCE, KILL, FLOWER_PICK, FLAG, CHEST_OPEN, BOSS_KILL, or GE_PICK" } };
+    return { ok: false, error: { code: "INVALID_INPUT", message: "kind must be QUEST_ADVANCE, KILL, FLOWER_PICK, FLAG, CHEST_OPEN, BOSS_KILL, GE_PICK, or DIALOGUE_GOLD" } };
   }
   if (value.kind === "QUEST_ADVANCE") {
     if (typeof value.to !== "number" || !Number.isInteger(value.to) || value.to < 0 || value.to > 7) {
@@ -312,6 +323,11 @@ export function parseQuestMutationInput(value: unknown): ParseQuestMutationInput
   if (value.kind === "GE_PICK") {
     if (typeof value.geKey !== "string" || value.geKey.length === 0 || value.geKey.length > 128) {
       return { ok: false, error: { code: "INVALID_INPUT", message: "geKey must be a non-empty string of at most 128 characters" } };
+    }
+  }
+  if (value.kind === "DIALOGUE_GOLD") {
+    if (typeof value.amount !== "number" || !DIALOGUE_GOLD_ALLOWLIST.includes(value.amount)) {
+      return { ok: false, error: { code: "INVALID_INPUT", message: "amount must be a canonical dialogue gold amount" } };
     }
   }
   if (typeof value.requestKey !== "string" || !requestIdPattern.test(value.requestKey)) {
@@ -448,7 +464,7 @@ export function parseSubmitBattleActionInput(value: unknown): ParseSubmitBattleA
   if (Object.keys(value).some((key) => !submitBattleActionKeys.has(key))) {
     return { ok: false, error: { code: "INVALID_INPUT", message: "Battle action body contains unsupported fields" } };
   }
-  if (value.action !== "basic_attack" && value.action !== "mahapukul" && value.action !== "skill") {
+  if (value.action !== "basic_attack" && value.action !== "mahapukul" && value.action !== "skill" && value.action !== "flee") {
     return { ok: false, error: { code: "INVALID_INPUT", message: "action is not an allowed battle intent" } };
   }
   if (value.action === "skill") {

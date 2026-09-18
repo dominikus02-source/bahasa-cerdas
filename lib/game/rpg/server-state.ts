@@ -50,6 +50,7 @@ import type {
   SubmitLearningAnswerInput,
   SubmitLearningAnswerResult,
 } from "./server-contracts";
+import { DIALOGUE_GOLD_ALLOWLIST } from "./server-contracts";
 import { isValidQuestTransition } from "@/src/game/rpg/quests/quest-engine";
 import { QUEST_FLAG_NAMES } from "@/src/game/rpg/quests/flags";
 
@@ -1071,6 +1072,7 @@ export class PendekarStateService {
         select: {
           id: true, questState: true, flags: true, version: true,
           openedChests: true, deadBossIds: true, pickedGe: true,
+          goldBalance: true,
         },
       });
 
@@ -1119,6 +1121,7 @@ export class PendekarStateService {
       let newOpenedChests = [...currentOpenedChests];
       let newDeadBossIds = [...currentDeadBossIds];
       let newPickedGe = [...currentPickedGe];
+      let newGoldBalance = p.goldBalance;
 
       // ── Validate + apply ──────────────────────────────────
       if (input.kind === "QUEST_ADVANCE") {
@@ -1188,6 +1191,18 @@ export class PendekarStateService {
           newPickedGe = [...newPickedGe, input.geKey];
           applied.push("GE_PICK");
         }
+      } else if (input.kind === "DIALOGUE_GOLD") {
+        // P2.7: Server-authoritative dialogue gold (Ki Jaka 30G/60G, etc.).
+        // Parser already restricted amount to the canonical allowlist;
+        // re-validate here as defense in depth (service may be called directly).
+        if (typeof input.amount !== "number" || !DIALOGUE_GOLD_ALLOWLIST.includes(input.amount)) {
+          throw new PendekarQuestMutationError(
+            "QUEST_MUTATION_INVALID_TRANSITION",
+            "amount must be a canonical dialogue gold amount",
+          );
+        }
+        newGoldBalance = p.goldBalance + input.amount;
+        applied.push("DIALOGUE_GOLD");
       }
 
       // ── Persist ───────────────────────────────────────────
@@ -1199,6 +1214,7 @@ export class PendekarStateService {
           openedChests: JSON.parse(JSON.stringify(newOpenedChests)) as Prisma.InputJsonValue,
           deadBossIds: JSON.parse(JSON.stringify(newDeadBossIds)) as Prisma.InputJsonValue,
           pickedGe: JSON.parse(JSON.stringify(newPickedGe)) as Prisma.InputJsonValue,
+          goldBalance: newGoldBalance,
           version: { increment: 1 },
         },
       });

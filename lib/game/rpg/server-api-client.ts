@@ -259,7 +259,7 @@ export async function settleServerReward(
 export async function mutateQuestState(
   kind: QuestMutationInput["kind"],
   requestKey: string,
-  options?: { to?: number; flagName?: string; chestId?: string; bossId?: string; geKey?: string },
+  options?: { to?: number; flagName?: string; chestId?: string; bossId?: string; geKey?: string; amount?: number },
 ): Promise<FetchResult<QuestMutationResult> | FetchFail> {
   const input: QuestMutationInput = {
     kind,
@@ -269,6 +269,7 @@ export async function mutateQuestState(
     ...(options?.chestId ? { chestId: options.chestId } : {}),
     ...(options?.bossId ? { bossId: options.bossId } : {}),
     ...(options?.geKey ? { geKey: options.geKey } : {}),
+    ...(options?.amount !== undefined ? { amount: options.amount } : {}),
   };
   return fetchServer<QuestMutationResult>("/api/rpg/quest/mutate", {
     method: "POST",

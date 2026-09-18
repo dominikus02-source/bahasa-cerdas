@@ -1881,6 +1881,19 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
         }
       }
     }
+    // P2.7: Sync dialogue gold to server-authoritative goldBalance.
+    // Fire-and-forget; server validates amount against the canonical allowlist.
+    if (applied.includes("GOLD")) {
+      const goldSignals = signals.filter((s) => s.type === "GOLD" && typeof s.amount === "number");
+      goldSignals.forEach((gs, index) => {
+        if (typeof gs.amount === "number") {
+          fireServerCall(
+            mutateQuestState("DIALOGUE_GOLD", `qk-gold-${source}-${index}-${gs.amount}`, { amount: gs.amount }),
+            { key: `q-gold-${source}-${index}-${gs.amount}`, idempotent: true },
+          );
+        }
+      });
+    }
 
     return { state: { ...currentState, player }, applied };
   }

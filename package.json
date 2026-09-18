@@ -390,6 +390,7 @@
     "test:rpg-asset-integration": "npx tsx scripts/test-rpg-asset-integration.ts",
     "test:rpg-founder-preview": "npx tsx scripts/test-rpg-founder-preview.ts",
     "test:rpg-p2-6c-vertical-slice": "npx tsx scripts/test-rpg-p2-6c-vertical-slice.ts",
+    "test:rpg-p2-7-vertical-slice": "npx tsx scripts/test-rpg-p2-7-vertical-slice.ts",
     "test:rpg-p2-6c1-playtest-readiness": "npx tsx scripts/test-rpg-p2-6c1-playtest-readiness.ts",
     "test:rpg-p2-6h1-authority-gaps": "npx tsx scripts/test-rpg-p2-6h1-authority-gaps.ts",
     "test:rpg-server-state": "npx tsx scripts/test-rpg-server-state.ts",
