@@ -107,7 +107,12 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const soals = deliverable.filter((s) => selectedIds.includes(s.id));
+    // Preserve the PREVIEWED order: questionIds arrive in preview order and
+    // become QuizQuestion.orderIndex verbatim (DB row order is nondeterministic).
+    const soalMap = new Map(deliverable.map((s) => [s.id, s]));
+    const soals = selectedIds
+      .map((id) => soalMap.get(id))
+      .filter((s): s is (typeof deliverable)[number] => Boolean(s));
     if (soals.length !== selectedIds.length) {
       return NextResponse.json({ error: "Beberapa soal tidak lagi tersedia. Muat ulang preview." }, { status: 409 });
     }

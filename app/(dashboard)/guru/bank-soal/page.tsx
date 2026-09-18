@@ -31,7 +31,7 @@ interface ThemeData {
 interface GroupItem {
   id: string;
   name: string;
-  _count?: { members: number };
+  memberCount?: number;
 }
 
 interface LatihanItem {
@@ -144,7 +144,7 @@ export default function BankSoalPage() {
 
   const selectedEmptyGroups = selectedGroups.filter(id => {
     const g = groups.find(gr => gr.id === id);
-    return g && (g._count?.members || 0) === 0;
+    return g && (g.memberCount || 0) === 0;
   });
 
   const toggleGroup = (id: string) => {
@@ -448,7 +448,7 @@ export default function BankSoalPage() {
               <div className="space-y-1.5 max-h-48 overflow-y-auto">
                 {groups.map(g => {
                   const sel = selectedGroups.includes(g.id);
-                  const empty = (g._count?.members || 0) === 0;
+                  const empty = (g.memberCount || 0) === 0;
                   return (
                     <button
                       key={g.id}
@@ -466,7 +466,7 @@ export default function BankSoalPage() {
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900">{g.name}</p>
                         <p className={`text-xs ${empty ? "text-amber-600" : "text-gray-400"}`}>
-                          {empty ? "⚠ Belum ada murid" : `${g._count?.members || 0} murid`}
+                          {empty ? "⚠ Belum ada murid" : `${g.memberCount || 0} murid`}
                         </p>
                       </div>
                     </button>
