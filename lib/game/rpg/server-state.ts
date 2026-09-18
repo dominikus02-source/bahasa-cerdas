@@ -1064,7 +1064,10 @@ export class PendekarStateService {
       // Re-fetch under serializable to avoid phantom reads.
       const p = await tx.pendekarPlayer.findUniqueOrThrow({
         where: { id: player.id },
-        select: { id: true, questState: true, flags: true, version: true },
+        select: {
+          id: true, questState: true, flags: true, version: true,
+          openedChests: true, deadBossIds: true, pickedGe: true,
+        },
       });
 
       const currentQuest = safeJson<{ main: number; kills: number; flowers: number }>(
@@ -1072,6 +1075,9 @@ export class PendekarStateService {
         { main: 0, kills: 0, flowers: 0 },
       );
       const currentFlags = safeJson<Record<string, boolean>>(p.flags, {});
+      const currentOpenedChests = safeJson<string[]>(p.openedChests, []);
+      const currentDeadBossIds = safeJson<string[]>(p.deadBossIds, []);
+      const currentPickedGe = safeJson<string[]>(p.pickedGe, []);
 
       // ── Replay dedup ─────────────────────────────────────
       // Detect replays within the same server instance via an in-memory
@@ -1095,6 +1101,9 @@ export class PendekarStateService {
           category: "REPLAYED" as const,
           quest: currentQuest,
           flags: currentFlags,
+          openedChests: currentOpenedChests,
+          deadBossIds: currentDeadBossIds,
+          pickedGe: currentPickedGe,
           applied: [],
           version: p.version,
         };
@@ -1103,6 +1112,9 @@ export class PendekarStateService {
       const applied: string[] = [];
       let newQuest = { ...currentQuest };
       let newFlags = { ...currentFlags };
+      let newOpenedChests = [...currentOpenedChests];
+      let newDeadBossIds = [...currentDeadBossIds];
+      let newPickedGe = [...currentPickedGe];
 
       // ── Validate + apply ──────────────────────────────────
       if (input.kind === "QUEST_ADVANCE") {
@@ -1136,6 +1148,42 @@ export class PendekarStateService {
         }
         newFlags = { ...newFlags, [input.flagName]: true };
         applied.push("FLAG");
+      } else if (input.kind === "CHEST_OPEN") {
+        if (!input.chestId) {
+          throw new PendekarQuestMutationError(
+            "QUEST_MUTATION_INVALID_TRANSITION",
+            "chestId is required for CHEST_OPEN",
+          );
+        }
+        // Idempotent: skip if already opened.
+        if (!newOpenedChests.includes(input.chestId)) {
+          newOpenedChests = [...newOpenedChests, input.chestId];
+          applied.push("CHEST_OPEN");
+        }
+      } else if (input.kind === "BOSS_KILL") {
+        if (!input.bossId) {
+          throw new PendekarQuestMutationError(
+            "QUEST_MUTATION_INVALID_TRANSITION",
+            "bossId is required for BOSS_KILL",
+          );
+        }
+        // Idempotent: skip if already recorded.
+        if (!newDeadBossIds.includes(input.bossId)) {
+          newDeadBossIds = [...newDeadBossIds, input.bossId];
+          applied.push("BOSS_KILL");
+        }
+      } else if (input.kind === "GE_PICK") {
+        if (!input.geKey) {
+          throw new PendekarQuestMutationError(
+            "QUEST_MUTATION_INVALID_TRANSITION",
+            "geKey is required for GE_PICK",
+          );
+        }
+        // Idempotent: skip if already picked.
+        if (!newPickedGe.includes(input.geKey)) {
+          newPickedGe = [...newPickedGe, input.geKey];
+          applied.push("GE_PICK");
+        }
       }
 
       // ── Persist ───────────────────────────────────────────
@@ -1144,6 +1192,9 @@ export class PendekarStateService {
         data: {
           questState: JSON.parse(JSON.stringify(newQuest)) as Prisma.InputJsonValue,
           flags: JSON.parse(JSON.stringify(newFlags)) as Prisma.InputJsonValue,
+          openedChests: JSON.parse(JSON.stringify(newOpenedChests)) as Prisma.InputJsonValue,
+          deadBossIds: JSON.parse(JSON.stringify(newDeadBossIds)) as Prisma.InputJsonValue,
+          pickedGe: JSON.parse(JSON.stringify(newPickedGe)) as Prisma.InputJsonValue,
           version: { increment: 1 },
         },
       });
@@ -1152,6 +1203,9 @@ export class PendekarStateService {
         category: "APPLIED",
         quest: newQuest,
         flags: newFlags,
+        openedChests: newOpenedChests,
+        deadBossIds: newDeadBossIds,
+        pickedGe: newPickedGe,
         applied,
         version: p.version + 1,
       };

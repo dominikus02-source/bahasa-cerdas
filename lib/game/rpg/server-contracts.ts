@@ -217,9 +217,16 @@ export type SettleBattleRewardResult = {
   settlement: PendekarBattleSettlementProjection;
 };
 
-/* ---------- P2.6I.2: Quest mutations ---------- */
+/* ---------- P2.6I.2 + P2.6I.3: Quest mutations ---------- */
 
-export type QuestMutationKind = "QUEST_ADVANCE" | "KILL" | "FLOWER_PICK" | "FLAG";
+export type QuestMutationKind =
+  | "QUEST_ADVANCE"
+  | "KILL"
+  | "FLOWER_PICK"
+  | "FLAG"
+  | "CHEST_OPEN"
+  | "BOSS_KILL"
+  | "GE_PICK";
 
 export type QuestMutationInput = {
   /** The mutation kind — client tells WHAT changed; server validates WHERE it lands. */
@@ -228,6 +235,12 @@ export type QuestMutationInput = {
   to?: number;
   /** Flag name to set true (required when kind=FLAG). */
   flagName?: string;
+  /** Chest tile key (required when kind=CHEST_OPEN). Format: "mapId:x,y" or canonical chest ID. */
+  chestId?: string;
+  /** Boss instance ID (required when kind=BOSS_KILL). */
+  bossId?: string;
+  /** Golden-flower tile key (required when kind=GE_PICK). Format: "mapId:x,y". */
+  geKey?: string;
   /** Client-generated idempotency/replay key. */
   requestKey: string;
 };
@@ -245,6 +258,12 @@ export type QuestMutationResult = {
   quest: PendekarQuestStateProjection;
   /** Authoritative flags after the mutation. */
   flags: Record<string, boolean>;
+  /** Authoritative opened-chest IDs after the mutation. */
+  openedChests: string[];
+  /** Authoritative dead-boss IDs after the mutation. */
+  deadBossIds: string[];
+  /** Authoritative picked golden-flower keys after the mutation. */
+  pickedGe: string[];
   /** Which signal kinds were actually applied (empty on REPLAYED). */
   applied: string[];
   /** Server version counter after write. */
@@ -255,7 +274,7 @@ export type ParseQuestMutationInputResult =
   | { ok: true; value: QuestMutationInput }
   | { ok: false; error: PendekarActionError };
 
-const questMutationKeys = new Set(["kind", "to", "flagName", "requestKey"]);
+const questMutationKeys = new Set(["kind", "to", "flagName", "chestId", "bossId", "geKey", "requestKey"]);
 
 export function parseQuestMutationInput(value: unknown): ParseQuestMutationInputResult {
   if (!isRecord(value)) {
@@ -264,8 +283,11 @@ export function parseQuestMutationInput(value: unknown): ParseQuestMutationInput
   if (Object.keys(value).some((key) => !questMutationKeys.has(key))) {
     return { ok: false, error: { code: "INVALID_INPUT", message: "Quest mutation body contains unsupported fields" } };
   }
-  if (value.kind !== "QUEST_ADVANCE" && value.kind !== "KILL" && value.kind !== "FLOWER_PICK" && value.kind !== "FLAG") {
-    return { ok: false, error: { code: "INVALID_INPUT", message: "kind must be QUEST_ADVANCE, KILL, FLOWER_PICK, or FLAG" } };
+  if (
+    value.kind !== "QUEST_ADVANCE" && value.kind !== "KILL" && value.kind !== "FLOWER_PICK" && value.kind !== "FLAG" &&
+    value.kind !== "CHEST_OPEN" && value.kind !== "BOSS_KILL" && value.kind !== "GE_PICK"
+  ) {
+    return { ok: false, error: { code: "INVALID_INPUT", message: "kind must be QUEST_ADVANCE, KILL, FLOWER_PICK, FLAG, CHEST_OPEN, BOSS_KILL, or GE_PICK" } };
   }
   if (value.kind === "QUEST_ADVANCE") {
     if (typeof value.to !== "number" || !Number.isInteger(value.to) || value.to < 0 || value.to > 7) {
@@ -275,6 +297,21 @@ export function parseQuestMutationInput(value: unknown): ParseQuestMutationInput
   if (value.kind === "FLAG") {
     if (typeof value.flagName !== "string" || value.flagName.length === 0 || value.flagName.length > 64) {
       return { ok: false, error: { code: "INVALID_INPUT", message: "flagName must be a non-empty string of at most 64 characters" } };
+    }
+  }
+  if (value.kind === "CHEST_OPEN") {
+    if (typeof value.chestId !== "string" || value.chestId.length === 0 || value.chestId.length > 128) {
+      return { ok: false, error: { code: "INVALID_INPUT", message: "chestId must be a non-empty string of at most 128 characters" } };
+    }
+  }
+  if (value.kind === "BOSS_KILL") {
+    if (typeof value.bossId !== "string" || value.bossId.length === 0 || value.bossId.length > 128) {
+      return { ok: false, error: { code: "INVALID_INPUT", message: "bossId must be a non-empty string of at most 128 characters" } };
+    }
+  }
+  if (value.kind === "GE_PICK") {
+    if (typeof value.geKey !== "string" || value.geKey.length === 0 || value.geKey.length > 128) {
+      return { ok: false, error: { code: "INVALID_INPUT", message: "geKey must be a non-empty string of at most 128 characters" } };
     }
   }
   if (typeof value.requestKey !== "string" || !requestIdPattern.test(value.requestKey)) {

@@ -638,6 +638,22 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     for (const [k, v] of Object.entries(applied.flagsAdded)) flags[k] = v;
     for (const id of applied.deadBossIds) deadBossIds.add(id);
     for (const id of res.deadEnemyIds) liveEnemies = markDead(liveEnemies, id);
+
+    // P2.6I.3: Sync battle-origin world state to server-authoritative columns.
+    for (const id of applied.deadBossIds) {
+      fireServerCall(
+        mutateQuestState("BOSS_KILL", `qk-boss-${battle.battleId}-${id}`, { bossId: id }),
+        { key: `q-boss-${battle.battleId}-${id}`, idempotent: true },
+      );
+    }
+    for (const [k, v] of Object.entries(applied.flagsAdded)) {
+      if (v) {
+        fireServerCall(
+          mutateQuestState("FLAG", `qk-bflag-${battle.battleId}-${k}`, { flagName: k }),
+          { key: `q-bflag-${battle.battleId}-${k}`, idempotent: true },
+        );
+      }
+    }
     if (applied.goldIntent) {
       goldIntents = [...goldIntents, applied.goldIntent];
       // Spendable credit through the canonical applier (dedup on battleId).
@@ -953,6 +969,12 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
                   { key: `q-flower-${key}`, idempotent: true },
                 );
 
+                // P2.6I.3: Sync golden-flower tile key to server-authoritative world state.
+                fireServerCall(
+                  mutateQuestState("GE_PICK", `qk-ge-${key}`, { geKey: key }),
+                  { key: `q-ge-${key}`, idempotent: true },
+                );
+
                 const tiles = [...currentState.world.tiles.tiles];
                 tiles[facing.y * canon.width + facing.x] = canonicalTileId(RPG_TILES.GR);
                 const world = {
@@ -976,6 +998,11 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
             });
             if (out.kind === "CHEST_OPENED") {
               openedChests.add(out.chestId);
+              // P2.6I.3: Sync chest open to server-authoritative world state.
+              fireServerCall(
+                mutateQuestState("CHEST_OPEN", `qk-chest-${out.chestId}`, { chestId: out.chestId }),
+                { key: `q-chest-${out.chestId}`, idempotent: true },
+              );
               // Canonical application: consumables/materials now, gear as
               // preserved intents (no silent mapping, no loss).
               const applied = applyChestRewards(

@@ -255,13 +255,16 @@ export async function settleServerReward(
 export async function mutateQuestState(
   kind: QuestMutationInput["kind"],
   requestKey: string,
-  options?: { to?: number; flagName?: string },
+  options?: { to?: number; flagName?: string; chestId?: string; bossId?: string; geKey?: string },
 ): Promise<FetchResult<QuestMutationResult> | FetchFail> {
   const input: QuestMutationInput = {
     kind,
     requestKey,
     ...(options?.to !== undefined ? { to: options.to } : {}),
     ...(options?.flagName ? { flagName: options.flagName } : {}),
+    ...(options?.chestId ? { chestId: options.chestId } : {}),
+    ...(options?.bossId ? { bossId: options.bossId } : {}),
+    ...(options?.geKey ? { geKey: options.geKey } : {}),
   };
   return fetchServer<QuestMutationResult>("/api/rpg/quest/mutate", {
     method: "POST",
