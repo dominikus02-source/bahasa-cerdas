@@ -13,8 +13,6 @@ import {
   BookMarked, Library, PenTool, Globe, Megaphone, Star, ListChecks, FilePlus2,
 } from "lucide-react";
 
-const KELAS = ["1","2","3","4","5","6","7","8","9","10","11","12"];
-
 const CAT_COLORS: Record<string, { from: string; to: string; text: string; light: string; ring: string }> = {
   "Tata Bahasa":   { from: "from-emerald-500", to: "to-emerald-600",  text: "text-emerald-600", light: "bg-emerald-50",  ring: "ring-emerald-200" },
   "Sastra":        { from: "from-violet-500",  to: "to-violet-600",   text: "text-violet-600",  light: "bg-violet-50",   ring: "ring-violet-200"  },
@@ -58,37 +56,48 @@ export default function BankSoalPage() {
   const [selectedTheme, setSelectedTheme] = useState<ThemeData | null>(null);
   const [groups, setGroups] = useState<GroupItem[]>([]);
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
-  const [sendKelas, setSendKelas] = useState("");
   const [sendJumlah, setSendJumlah] = useState(10);
   const [sendDifficulty, setSendDifficulty] = useState("");
+  // Question Set: seed + ID soal di-generate SEKALI saat "Lihat Soal" —
+  // preview dan kirim memakai set yang sama persis (kelas hanyalah tujuan).
+  const [questionSet, setQuestionSet] = useState<{ seed: string; questionIds: string[] } | null>(null);
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [latihans, setLatihans] = useState<LatihanItem[]>([]);
   const [latihanLoading, setLatihanLoading] = useState(true);
   const [preview, setPreview] = useState<{
     tema: string;
-    kelas: string;
     totalAvailable: number;
+    deliverableTotal: number;
+    seed: string;
+    questionIds: string[];
     soal: { id: string; nomor: number; text: string; options: string[]; correctAnswer: string | null; explanation: string | null; difficulty: string | null }[];
   } | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
 
   const handlePreview = async () => {
-    if (!selectedTheme || !sendKelas) return;
+    if (!selectedTheme) return;
     setPreviewLoading(true);
     try {
+      const seed = Math.random().toString(36).slice(2, 12);
       const params = new URLSearchParams({
         tema: selectedTheme.name,
-        kelas: sendKelas,
         jumlah: String(sendJumlah),
+        seed,
       });
       if (sendDifficulty) params.set("difficulty", sendDifficulty);
       const res = await fetch(`/api/guru/bank-soal/preview?${params.toString()}`);
       const data = await res.json();
-      if (data.success) setPreview(data);
-      else setSuccess(`❌ ${data.error || "Gagal memuat preview"}`);
+      if (data.success) {
+        setPreview(data);
+        setQuestionSet({ seed: data.seed, questionIds: data.questionIds });
+      } else {
+        setSuccess(`❌ ${data.error || "Gagal memuat preview"}`);
+        setTimeout(() => setSuccess(null), 4000);
+      }
     } catch {
       setSuccess("❌ Gagal menghubungi server");
+      setTimeout(() => setSuccess(null), 4000);
     }
     setPreviewLoading(false);
   };
@@ -126,18 +135,34 @@ export default function BankSoalPage() {
   const handleOpenSend = (theme: ThemeData) => {
     setSelectedTheme(theme);
     setSelectedGroups([]);
-    setSendKelas("");
     setSendJumlah(10);
     setSendDifficulty("");
+    setQuestionSet(null);
+    setPreview(null);
     fetchGroups();
   };
+
+  const selectedEmptyGroups = selectedGroups.filter(id => {
+    const g = groups.find(gr => gr.id === id);
+    return g && (g._count?.members || 0) === 0;
+  });
 
   const toggleGroup = (id: string) => {
     setSelectedGroups(prev => prev.includes(id) ? prev.filter(g => g !== id) : [...prev, id]);
   };
 
   const handleSend = async () => {
-    if (!selectedTheme || !sendKelas || selectedGroups.length === 0) return;
+    if (!selectedTheme || selectedGroups.length === 0) return;
+    // Kelas tanpa murid: assignment tetap berguna (murid yang bergabung lewat
+    // kode kelas nanti bisa mengerjakan), tapi kirim harus disengaja —
+    // minta konfirmasi eksplisit, jangan diam-diam dibuat.
+    if (selectedEmptyGroups.length > 0) {
+      const names = selectedEmptyGroups.map(id => groups.find(gr => gr.id === id)?.name || id).join(", ");
+      const ok = window.confirm(
+        `${names} belum memiliki murid. Latihan tetap dikirim dan murid yang bergabung nanti dapat mengerjakannya. Lanjutkan?`
+      );
+      if (!ok) return;
+    }
     setSending(true);
     try {
       const res = await fetch("/api/guru/bank-soal/send", {
@@ -145,10 +170,11 @@ export default function BankSoalPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           tema: selectedTheme.name,
-          kelas: sendKelas,
           groupIds: selectedGroups,
           jumlah: sendJumlah,
           difficulty: sendDifficulty || undefined,
+          seed: questionSet?.seed,
+          questionIds: questionSet?.questionIds,
         }),
       });
       const data = await res.json();
@@ -156,6 +182,7 @@ export default function BankSoalPage() {
         setSuccess(`✅ "${selectedTheme.name}" terkirim ke ${selectedGroups.length} kelas`);
         setTimeout(() => setSuccess(null), 4000);
         setSelectedTheme(null);
+        setPreview(null);
         fetchThemes();
       } else {
         setSuccess(`❌ ${data.error || "Gagal mengirim"}`);
@@ -371,8 +398,8 @@ export default function BankSoalPage() {
         )}
       </div>
 
-      {/* Send Modal */}
-      <Modal isOpen={!!selectedTheme} onClose={() => setSelectedTheme(null)} title="Kirim Latihan ke Kelas" className="max-w-md">
+      {/* Send Modal — SOAL → FILTER → PREVIEW → TUJUAN */}
+      <Modal isOpen={!!selectedTheme} onClose={() => setSelectedTheme(null)} title="Siapkan Latihan" className="max-w-md">
         {selectedTheme && (() => {
           const catKey = getCategoryKey(selectedTheme.name);
           const cc = CAT_COLORS[catKey] || CAT_COLORS["Lainnya"];
@@ -386,67 +413,61 @@ export default function BankSoalPage() {
                 <p className="text-sm font-bold">{selectedTheme.name}</p>
                 <p className="text-[10px] opacity-80">{selectedTheme.total} soal tersedia</p>
               </div>
-            </div>
-
+            </div>            {/* Seksi 1 — SOAL */}
             <div>
-              <label className="block text-sm font-medium mb-1">Kelas *</label>
-              <select
-                value={sendKelas}
-                onChange={e => setSendKelas(e.target.value)}
-                className="w-full rounded-lg border px-3 py-2 text-sm bg-white"
-              >
-                <option value="">Pilih kelas</option>
-                {KELAS.filter(k => selectedTheme.kelas.includes(k) || selectedTheme.kelas.length === 0).map(k => (
-                  <option key={k} value={k}>Kelas {k}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">Jumlah Soal (5-30)</label>
+              <label className="block text-sm font-medium mb-1">Jumlah soal</label>
               <input
-                type="number" min={5} max={30}
+                type="number" min={1} max={30}
                 value={sendJumlah}
-                onChange={e => setSendJumlah(Math.min(30, Math.max(5, parseInt(e.target.value) || 5)))}
+                onChange={e => { setSendJumlah(Math.min(30, Math.max(1, parseInt(e.target.value) || 1))); setQuestionSet(null); }}
                 className="w-full rounded-lg border px-3 py-2 text-sm"
               />
+              {questionSet && (
+                <p className="mt-1 text-xs text-emerald-700">✓ {sendJumlah} soal dipilih — lihat di "Lihat Soal"</p>
+              )}
             </div>
 
+            {/* Seksi 2 — FILTER */}
             <div>
-              <label className="block text-sm font-medium mb-1">Tingkat Kesulitan (opsional)</label>
+              <label className="block text-sm font-medium mb-1">Tingkat kesulitan</label>
               <select
                 value={sendDifficulty}
-                onChange={e => setSendDifficulty(e.target.value)}
-                className="w-full rounded-lg border px-3 py-2 text-sm bg-white"
+                onChange={e => { setSendDifficulty(e.target.value); setQuestionSet(null); }}
+                className={"w-full rounded-lg border px-3 py-2 text-sm bg-white"}
               >
                 <option value="">Semua</option>
-                <option value="MUDAH">Mudah</option>
-                <option value="SEDANG">Sedang</option>
-                <option value="SULIT">Sulit</option>
+                <option value="MUDAH">Mudah / LOTS</option>
+                <option value="SEDANG">Sedang / MOTS</option>
+                <option value="SULIT">Sulit / HOTS</option>
               </select>
             </div>
 
+            {/* Seksi 4 — TUJUAN */}
             <div>
-              <label className="block text-sm font-medium mb-2">Kirim ke Kelas</label>
+              <label className="block text-sm font-semibold mb-2">Pilih Kelas</label>
               <div className="space-y-1.5 max-h-48 overflow-y-auto">
                 {groups.map(g => {
                   const sel = selectedGroups.includes(g.id);
+                  const empty = (g._count?.members || 0) === 0;
                   return (
                     <button
                       key={g.id}
                       onClick={() => toggleGroup(g.id)}
+                      aria-pressed={sel}
                       className={`w-full flex items-center gap-3 p-2.5 rounded-lg border text-left transition-all ${
                         sel ? "border-emerald-500 bg-emerald-50" : "border-gray-100 hover:border-gray-200"
                       }`}
                     >
                       <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
                         sel ? "bg-emerald-500 border-emerald-500" : "border-gray-300"
-                      }`}>
+                      }`} role="checkbox" aria-checked={sel}>
                         {sel && <Check size={12} className="text-white" />}
                       </div>
-                      <div>
+                      <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900">{g.name}</p>
-                        <p className="text-xs text-gray-400">{g._count?.members || 0} murid</p>
+                        <p className={`text-xs ${empty ? "text-amber-600" : "text-gray-400"}`}>
+                          {empty ? "⚠ Belum ada murid" : `${g._count?.members || 0} murid`}
+                        </p>
                       </div>
                     </button>
                   );
@@ -457,40 +478,45 @@ export default function BankSoalPage() {
               </div>
             </div>
 
-            <div className="flex gap-2 pt-2">
-              <Button variant="outline" onClick={() => setSelectedTheme(null)} className="flex-1">Batal</Button>
-              <Button
-                variant="outline"
-                onClick={handlePreview}
-                disabled={previewLoading || !sendKelas}
-                className="flex-1"
-              >
-                {previewLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <BookOpen size={16} className="mr-1" />}
-                Lihat Soal
-              </Button>
+            <div className="pt-2 space-y-2">
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => setSelectedTheme(null)} className="flex-1">Batal</Button>
+                <Button
+                  variant="outline"
+                  onClick={handlePreview}
+                  disabled={previewLoading}
+                  className="flex-1"
+                >
+                  {previewLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <BookOpen size={16} className="mr-1" />}
+                  Lihat Soal
+                </Button>
+              </div>
               <Button
                 onClick={handleSend}
-                disabled={sending || !sendKelas || selectedGroups.length === 0}
-                className="flex-1 bg-emerald-600"
+                disabled={sending || selectedGroups.length === 0}
+                className="w-full bg-emerald-600"
               >
                 {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send size={16} className="mr-1" />}
-                {sending ? "Mengirim..." : `Kirim ke ${selectedGroups.length} Kelas`}
+                {sending ? "Mengirim..." : "Kirim Latihan"}
               </Button>
+              <p className="text-center text-xs text-gray-400">
+                {selectedGroups.length === 0 ? "Pilih minimal 1 kelas" : `${selectedGroups.length} kelas dipilih`}
+              </p>
             </div>
           </div>);
         })()}
       </Modal>
 
-      {/* Preview Modal */}
+      {/* Preview Modal — guru-only, kunci jawaban terlihat di sini */}
       <Modal isOpen={!!preview} onClose={() => setPreview(null)} title="Lihat Soal" className="max-w-2xl">
         {preview && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <p className="text-sm font-semibold text-gray-900">
-                {preview.tema} · Kelas {preview.kelas}
+                {preview.tema} · {preview.soal.length} soal dipilih
               </p>
               <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-100">
-                {preview.soal.length} soal dari {preview.totalAvailable} tersedia
+                {preview.deliverableTotal ?? preview.totalAvailable} soal lolos verifikasi
               </Badge>
             </div>
             <div className="max-h-[50vh] overflow-y-auto pr-1 space-y-3">
@@ -529,14 +555,13 @@ export default function BankSoalPage() {
             </div>
             <div className="flex gap-2 pt-1">
               <Button variant="outline" onClick={() => setPreview(null)} className="flex-1">
-                Tutup
+                Kembali
               </Button>
               <Button
-                onClick={() => { setPreview(null); setSelectedTheme(null); }}
-                disabled={!sendKelas || selectedGroups.length === 0}
+                onClick={() => setPreview(null)}
                 className="flex-1 bg-emerald-600"
               >
-                <Send size={16} className="mr-1" /> Kirim Sekarang
+                <Check size={16} className="mr-1" /> Set ini yang dikirim
               </Button>
             </div>
           </div>
