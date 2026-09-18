@@ -38,14 +38,20 @@ async function findOrCreateUser(opts: {
       : user;
   }
 
-  const isGuru = role === "GURU";
+  // GOOGLE ROLE SELECTION: never silently provision here. New users complete
+  // provisioning via /auth/pilih-peran (POST /api/auth/complete-role) or an
+  // OAuth callback carrying a verified role intent. Only an EXPLICIT,
+  // allowlisted role may create a row — anything else returns null so the
+  // caller routes to role selection instead of a default MURID account.
+  if (role !== "GURU" && role !== "MURID") return null;
+
   const newUser = await db.user.create({
     data: {
       supabaseId,
       email: lowerEmail,
       fullName,
       avatar: getGravatarUrl(lowerEmail),
-      role: isGuru ? "GURU" : "MURID",
+      role,
     },
   });
 
@@ -71,15 +77,11 @@ export async function GET() {
     }
 
     const existing = await db.user.findFirst({ where: { email }, select: userSessionFields });
-    let found: any = existing;
-    if (!found) {
-      found = await findOrCreateUser({
-        supabaseId: user.id,
-        email,
-        fullName: user.user_metadata?.full_name || email.split("@")[0],
-        role: user.user_metadata?.role || "MURID",
-      });
-    }
+    // GOOGLE ROLE SELECTION: GET never provisions. A session without an
+    // application User means provisioning is incomplete (new Google user) —
+    // return null so clients route to /auth/pilih-peran instead of receiving
+    // a silently defaulted MURID account.
+    const found: any = existing;
     if (!found) return err(ERR.NOT_FOUND.error, ERR.NOT_FOUND.code, ERR.NOT_FOUND.status);
 
     const updates: Record<string, unknown> = {};
@@ -127,12 +129,22 @@ export async function POST(request: NextRequest) {
       return err("Data tidak lengkap", "VALIDATION", 400);
     }
 
+    // GOOGLE ROLE SELECTION: creation requires an explicit allowlisted role.
+    // Missing/invalid roles are rejected (route to role selection) instead of
+    // silently provisioning MURID.
+    if (body.role !== undefined && body.role !== "GURU" && body.role !== "MURID") {
+      return err("Peran tidak valid", "VALIDATION", 400);
+    }
+
     const user = await findOrCreateUser({
       supabaseId: body.supabaseId,
       email: body.email,
       fullName: body.fullName || body.email.split("@")[0],
-      role: body.role || "MURID",
+      role: body.role ?? "",
     });
+    if (!user) {
+      return err("Peran belum dipilih", "ROLE_REQUIRED", 400);
+    }
 
     return NextResponse.json({ success: true, user, data: { user } });
   } catch (e: any) {

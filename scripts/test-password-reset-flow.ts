@@ -86,15 +86,26 @@ async function main() {
     fileContains("app/api/auth/callback/route.ts", "requestUrl.origin + \"/reset-password\"") ||
     fileContains("app/api/auth/callback/route.ts", "reset-password"));
 
+  // next-guard boleh inline di callback ATAU via helper isSafeNext
+  // (lib/auth/role-intent.ts) — perilakunya identik, dicek di bawah.
+  const nextGuarded =
+    fileContains("app/api/auth/callback/route.ts", "isSafeNext") ||
+    fileContains("app/api/auth/callback/route.ts", "startsWith(\"//\")");
+  const guardHelperHasAll =
+    fileContains("lib/auth/role-intent.ts", "startsWith(\"//\")") &&
+    fileContains("lib/auth/role-intent.ts", "startsWith(\"/login\")") &&
+    fileContains("lib/auth/role-intent.ts", "startsWith(\"/register\")");
+
   assert("Callback validates next param (no open redirect)",
-    fileContains("app/api/auth/callback/route.ts", "next.startsWith(\"//\")") ||
-    fileContains("app/api/auth/callback/route.ts", "startsWith(\"//\")"));
+    nextGuarded && guardHelperHasAll);
 
   assert("Callback does NOT allow /login as next param",
-    fileContains("app/api/auth/callback/route.ts", "next.startsWith(\"/login\")"));
+    fileContains("app/api/auth/callback/route.ts", "next.startsWith(\"/login\")") ||
+    (fileContains("app/api/auth/callback/route.ts", "isSafeNext") && guardHelperHasAll));
 
   assert("Callback does NOT allow /register as next param",
-    fileContains("app/api/auth/callback/route.ts", "next.startsWith(\"/register\")"));
+    fileContains("app/api/auth/callback/route.ts", "next.startsWith(\"/register\")") ||
+    (fileContains("app/api/auth/callback/route.ts", "isSafeNext") && guardHelperHasAll));
 
   // ═══════════════════════════════════════════════════════════
   // 3. RESET PASSWORD PAGE (6 tests)
@@ -142,7 +153,8 @@ async function main() {
   console.log("\n── 5. SECURITY INVARIANTS ──");
 
   assert("No open redirect: callback validates next param",
-    fileContains("app/api/auth/callback/route.ts", "startsWith(\"//\")"));
+    fileContains("app/api/auth/callback/route.ts", "startsWith(\"//\")") ||
+    fileContains("app/api/auth/callback/route.ts", "isSafeNext"));
 
   assert("No password logging",
     fileNotContains("app/(auth)/reset-password/page.tsx", "console.log(password)"));

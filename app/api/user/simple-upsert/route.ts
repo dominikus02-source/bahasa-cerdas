@@ -7,20 +7,20 @@ export async function POST(request: NextRequest) {
     let supabaseId = "";
     let email = "";
     let fullName = "";
-    let role = "MURID";
+    let role: string | undefined;
 
     try {
       const body = await request.json();
       supabaseId = body.supabaseId || "";
       email = (body.email || "").toLowerCase();
       fullName = body.fullName || email.split("@")[0] || "User";
-      role = body.role || "MURID";
+      role = body.role;
     } catch {
       const { searchParams } = new URL(request.url);
       supabaseId = searchParams.get("supabaseId") || "";
       email = (searchParams.get("email") || "").toLowerCase();
       fullName = searchParams.get("fullName") || email.split("@")[0] || "User";
-      role = searchParams.get("role") || "MURID";
+      role = searchParams.get("role") || undefined;
     }
 
     if (!supabaseId || !email) {
@@ -50,6 +50,17 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    // GOOGLE ROLE SELECTION: creation requires an explicit allowlisted role.
+    // Missing/invalid roles are rejected (route to role selection) instead of
+    // silently provisioning MURID. Existing users are unaffected (returned
+    // above with their role preserved).
+    if (role !== "GURU" && role !== "MURID") {
+      return NextResponse.json(
+        { error: "Peran belum dipilih", code: "ROLE_REQUIRED" },
+        { status: 400 }
+      );
+    }
+
     // Create new user — founder flag is set via DB, not email
     const newUser = await db.user.create({
       data: {
@@ -57,7 +68,7 @@ export async function POST(request: NextRequest) {
         email,
         fullName,
         avatar: getGravatarUrl(email),
-        role: role === "GURU" ? "GURU" : "MURID",
+        role,
       },
     });
 

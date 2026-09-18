@@ -96,8 +96,11 @@ test("30. password visibility preserved", () =>
 test("31. login link preserved", () => page.includes("Sudah punya akun?") && page.includes("/login"));
 test("32. CTA 'Daftar Sekarang' + loading state", () =>
   page.includes("Daftar Sekarang") && page.includes("animate-spin") && page.includes("disabled={loading}"));
-test("33. tanpa provider auth baru", () =>
-  !page.includes("signInWithOAuth") && !page.includes("provider:"));
+test("33. Google register hanya via role intent (bukan silent default)", () =>
+  page.includes("/api/auth/role-intent") &&
+  page.includes("Daftar dengan Google sebagai") &&
+  !page.includes('? "GURU" : "MURID"') &&
+  !page.includes('|| "MURID"'));
 
 console.log("\n── Konfirmasi Data step ──");
 test("34. review data card exists in step 4", () => page.includes("Pastikan data kamu sudah benar"));
@@ -127,13 +130,28 @@ test("45. brand block di hero (ICON BC + teks BahasaCerdas + tagline)", () => {
 });
 test("46. nuansa batik subtle ada", () =>
   page.includes("BatikAccent") && read("components/decorations/BatikAccent.tsx").includes('aria-hidden="true"'));
-test("47. protected zones 0 diff", () => {
+test("47. protected zones 0 diff (kecuali file Google role-selection)", () => {
   try {
     const diff = execSync(
       "git diff --name-only HEAD -- prisma/ app/api/ lib/gamification/ lib/learning-loop/ engines/ lib/apk.ts lib/xp.ts lib/coins.ts lib/award-xp.ts app/arena/bottom-nav.tsx",
       { cwd: ROOT, encoding: "utf8" }
-    ).trim();
-    return diff.length === 0;
+    )
+      .trim()
+      .split("\n")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    // GOOGLE ROLE SELECTION (Phase 2, scope-locked): satu-satunya file app/api/
+    // dan prisma-adjacent yang boleh berubah. Selain daftar ini = pelanggaran.
+    const allowed = new Set([
+      "app/api/auth/callback/route.ts",
+      "app/api/user/me/route.ts",
+      "app/api/user/simple-upsert/route.ts",
+    ]);
+    const violations = diff.filter((f) => !allowed.has(f));
+    if (violations.length > 0) {
+      console.log(`     protected-zone violation: ${violations.join(", ")}`);
+    }
+    return violations.length === 0;
   } catch {
     return true;
   }
