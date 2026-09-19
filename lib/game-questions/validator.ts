@@ -59,7 +59,7 @@ export function validateQuestion(q: GameQuestion): ValidationResult {
   else if (question.length < MIN_QUESTION_LEN) warn("QUESTION_TOO_SHORT", `Pertanyaan terlalu pendek (${question.length} char)`);
   if (!Array.isArray(q.options)) err("INVALID_OPTIONS", "options bukan array");
   else {
-    if (options.length < 2) err("INVALID_OPTIONS", `Opsi kurang dari 2 (${options.length})`);
+    if (!q.freeText && options.length < 2) err("INVALID_OPTIONS", `Opsi kurang dari 2 (${options.length})`);
     else if (!q.freeText && options.length < 4) warn("OPTIONS_LT4", `MCQ hanya ${options.length} opsi (disarankan 4)`);
     // Duplikat deteksi case-SENSITIVE: perbedaan kapitalisasi adalah pembeda
     // sah pada soal ejaan (mis. "Bandung" vs "bandung").

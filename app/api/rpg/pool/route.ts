@@ -11,6 +11,11 @@
  * evaluates locally today (single-player client runtime). The adapter still
  * strips answers for DISPLAY via toClientChallenge; server-side evaluation
  * arrives with multiplayer (same boundary as the rest of RPG state).
+ *
+ * P2.8.5: DB→GameQuestion mapping normalizes the canonical contract:
+ * - MCQ correctAnswer is resolved from numeric index to option text.
+ * - non-MCQ types set freeText=true per the canonical type contract.
+ * This mirrors adaptSoalToChallenge() behavior for the eligibility gate.
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -19,6 +24,61 @@ import { db } from "@/lib/db";
 import { isEligibleForGameplay } from "@/lib/game-questions/quality";
 import type { GameQuestion } from "@/lib/game-questions/types";
 import { difficultyFor } from "@/src/game/rpg/learning/rpg-challenge";
+
+/**
+ * Resolve a Soal row to the canonical GameQuestion shape.
+ *
+ * MCQ: correctAnswer may be a numeric index ("0","1","2","3") stored in the
+ * DB. The canonical contract requires TEKS (option text). This function
+ * resolves the index against the options array.
+ *
+ * non-MCQ (BENAR_SALAH, ISIAN, ESSAY, ISIAN_SINGKAT): the canonical contract
+ * requires freeText=true so the validator uses the free-text path instead of
+ * the MCQ answer-in-options check.
+ *
+ * This mirrors adaptSoalToChallenge() in rpg-challenge.ts:137.
+ */
+function soalRowToGameQuestion(r: {
+  id: string;
+  kodeSoal?: string | null;
+  text: string;
+  type: string;
+  options: string[];
+  correctAnswer: string;
+  explanation?: string | null;
+  difficulty?: string | null;
+  topik?: string | null;
+}): GameQuestion {
+  const options = [...(r.options ?? [])];
+  let correctAnswer = (r.correctAnswer ?? "").trim();
+
+  // P2.8.5 Phase 2: MCQ index→text resolution.
+  // canonical normalizeBankQuestion() does: clean((q.opsi || [])[q.jawaban])
+  // DB stores correctAnswer as string index "0","1","2","3".
+  // Resolve numeric index against the options array.
+  if (r.type === "PILIHAN_GANDA" && options.length > 0) {
+    const idx = Number(correctAnswer);
+    if (Number.isInteger(idx) && idx >= 0 && idx < options.length) {
+      correctAnswer = options[idx].trim();
+    }
+  }
+
+  // P2.8.5 Phase 3: freeText from question type.
+  // Mirrors adaptSoalToChallenge(): soal.type !== "PILIHAN_GANDA"
+  const freeText = r.type !== "PILIHAN_GANDA";
+
+  return {
+    id: r.kodeSoal || r.id,
+    question: (r.text ?? "").trim(),
+    options,
+    correctAnswer,
+    explanation: r.explanation ?? undefined,
+    difficulty: difficultyFor(r.difficulty),
+    topic: r.topik ?? undefined,
+    source: "soal",
+    ...(freeText ? { freeText: true as const } : {}),
+  };
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -50,35 +110,26 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    const eligible = rows.filter((r) => {
-      const q: GameQuestion = {
-        id: r.kodeSoal || r.id,
-        question: (r.text ?? "").trim(),
-        options: [...(r.options ?? [])],
-        correctAnswer: (r.correctAnswer ?? "").trim(),
-        explanation: r.explanation ?? undefined,
-        difficulty: difficultyFor(r.difficulty),
-        topic: r.topik ?? undefined,
-        source: "soal",
-      };
-      return isEligibleForGameplay(q);
-    });
+    // P2.8.5: Normalize each row for eligibility AND carry the normalized
+    // correctAnswer + freeText into the response (the client evaluates locally).
+    const normalized = rows.map((r) => ({ raw: r, q: soalRowToGameQuestion(r) }));
+    const eligible = normalized.filter(({ q }) => isEligibleForGameplay(q));
     const picked = eligible.slice(0, count);
 
     return NextResponse.json({
-      questions: picked.map((r) => ({
-        id: r.id,
-        kodeSoal: r.kodeSoal,
-        text: r.text,
-        type: r.type,
-        options: r.options,
-        correctAnswer: r.correctAnswer,
-        explanation: r.explanation,
-        difficulty: r.difficulty,
-        kelas: r.kelas,
-        topik: r.topik,
-        kompetensi: r.kompetensi,
-        KD: r.KD,
+      questions: picked.map(({ raw, q }) => ({
+        id: raw.id,
+        kodeSoal: raw.kodeSoal,
+        text: raw.text,
+        type: raw.type,
+        options: raw.options,
+        correctAnswer: q.correctAnswer,
+        explanation: raw.explanation,
+        difficulty: raw.difficulty,
+        kelas: raw.kelas,
+        topik: raw.topik,
+        kompetensi: raw.kompetensi,
+        KD: raw.KD,
       })),
       count: picked.length,
     });
