@@ -200,7 +200,7 @@ console.log("\n💾 F. Persistence");
 console.log("\n🛡️ G. Regression guards");
 {
   const reg = src("lib/arena/game-registry.ts");
-  check("37-41a. unpublished intact", reg.includes("unpublished: true"));
+  check("37-41a. unpublished mechanism intact", reg.includes("unpublished?: boolean"));
   const kuis = src("components/game/KuisTempurSolo.tsx");
   check("37-41b. Kuis decoupled", !kuis.includes("interaction/") && !kuis.includes("game/rpg"));
   const zelby = src("components/game/ZelbyDash.tsx");

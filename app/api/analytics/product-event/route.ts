@@ -43,6 +43,12 @@ const ALLOWED_EVENTS = new Set([
   // Q1.1 — classroom activation deep-link telemetry
   "class_invite_shared",
   "class_invite_opened",
+  // P2.8 — Pendekar Suryakerta launch funnel (Premium Early Access)
+  "rpg_launch_clicked",
+  "rpg_premium_blocked",
+  "rpg_launch_authorized",
+  "rpg_splash_started",
+  "rpg_runtime_started",
 ]);
 
 export async function POST(req: NextRequest) {

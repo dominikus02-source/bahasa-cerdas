@@ -46,12 +46,23 @@ export interface GameDefinition {
    *   selama belum diluncurkan.
    * - tidak diisi/`false` (PUBLISHED): discovery normal.
    *
-   * Status saat ini: Pendekar Suryakerta (`rpg`) = UNPUBLISHED.
-   * Rencana launch: PUBLISHED + KHUSUS PREMIUM (entitlement server-side,
-   * memakai arsitektur Premium/entitlement proyek yang sudah ada — BUKAN
-   * sistem langganan paralel). Jangan implement launch di sini.
-   */
+   * Status saat ini: Pendekar Suryakerta (`rpg`) = PUBLISHED + `premiumOnly`
+   * (lihat field di bawah). Publikasi = VISIBEL; playable-nya dijaga
+   * entitlement server-side, bukan flag ini.
+    */
   unpublished?: boolean;
+  /**
+   * P2.8 — game khusus Premium (Early Access).
+   *
+   * - `true`: kartu menampilkan lencana Premium; route + API dijaga
+   *   server-side via entitlement Premium (lib/premium-economy).
+   *   Non-Premium melihat halaman terkunci, bukan gameplay.
+   * - tidak diisi/`false`: terbuka untuk semua user arena.
+   *
+   * Ini BUKAN sistem langganan paralel — resolusi plan memakai
+   * `resolvePlan` kanonik (MURID_PREMIUM / PRO / FOUNDER = boleh main).
+   */
+  premiumOnly?: boolean;
   /** Aset artwork gambar yang sudah ada (public/...). Optional — fallback ke gradient+ikon. */
   artwork?: string;
 }
@@ -71,10 +82,10 @@ export const GAME_REGISTRY: GameDefinition[] = [
     time: "~10 menit",
     badge: { text: "Baru", type: "new" },
     featured: true,
-    // UNPUBLISHED — disembunyikan dari semua discovery + route diblokir.
-    // Lihat komentar `unpublished` di GameDefinition. Jangan tampilkan
-    // sampai launch resmi (PUBLISHED + KHUSUS PREMIUM).
-    unpublished: true,
+    // P2.8 LAUNCH — PUBLISHED + KHUSUS PREMIUM (Early Access).
+    // Terlihat di discovery; gameplay dijaga server-side via entitlement
+    // Premium (route + API). Non-Premium melihat halaman terkunci.
+    premiumOnly: true,
   },
   {
     id: "kuis-tempur",

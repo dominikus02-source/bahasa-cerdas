@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { requireRpgFounderPreviewApiAccess } from "@/lib/game/rpg/server-access";
+import { requireRpgPlayAccess } from "@/lib/game/rpg/server-access";
 import { parseSubmitBattleActionInput } from "@/lib/game/rpg/server-contracts";
 import {
   PendekarBattleActionError,
@@ -14,7 +14,7 @@ type BattleRouteContext = { params: Promise<{ battleId: string }> };
 
 /** Resolve one server-authoritative combat intent for an owned preview battle. */
 export async function POST(request: NextRequest, context: BattleRouteContext) {
-  const access = await requireRpgFounderPreviewApiAccess();
+  const access = await requireRpgPlayAccess();
   if (!access.ok) return NextResponse.json({ error: access.error }, { status: access.status });
   const { battleId } = await context.params;
 

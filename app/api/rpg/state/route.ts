@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { requireRpgFounderPreviewApiAccess } from "@/lib/game/rpg/server-access";
+import { requireRpgPlayAccess } from "@/lib/game/rpg/server-access";
 import { PendekarStateService } from "@/lib/game/rpg/server-state";
 
 export const dynamic = "force-dynamic";
 
 /** Authenticated founder-preview read of only the caller's safe RPG state. */
 export async function GET() {
-  const access = await requireRpgFounderPreviewApiAccess();
+  const access = await requireRpgPlayAccess();
   if (!access.ok) return NextResponse.json({ error: access.error }, { status: access.status });
 
   try {

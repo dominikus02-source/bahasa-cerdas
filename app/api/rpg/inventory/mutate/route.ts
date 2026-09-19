@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { requireRpgFounderPreviewApiAccess } from "@/lib/game/rpg/server-access";
+import { requireRpgPlayAccess } from "@/lib/game/rpg/server-access";
 import { parseInventoryMutationInput } from "@/lib/game/rpg/server-contracts";
 import {
   PendekarOwnershipError,
@@ -17,7 +17,7 @@ export const dynamic = "force-dynamic";
  * the server validates, persists to PendekarInventoryItem rows, and returns the authoritative inventory.
  */
 export async function POST(request: NextRequest) {
-  const access = await requireRpgFounderPreviewApiAccess();
+  const access = await requireRpgPlayAccess();
   if (!access.ok) return NextResponse.json({ error: access.error }, { status: access.status });
 
   let body: unknown;

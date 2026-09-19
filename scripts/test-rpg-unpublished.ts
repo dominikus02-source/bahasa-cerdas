@@ -1,9 +1,10 @@
 /**
- * EMERGENCY VISIBILITY FIX — Pendekar Suryakerta UNPUBLISHED.
+ * P2.8 — Pendekar Suryakerta Premium Early Access visibility guard.
  *
  * Membuktikan:
- * 1. RPG tidak muncul di katalog/unggulan/baru (batas registry kanonik).
- * 2. /arena/game/rpg diblokir server-side untuk semua user biasa.
+ * 1. RPG muncul di katalog sebagai game Premium (batas registry kanonik).
+ * 2. /arena/game/rpg dijaga server-side: Premium main, FREE melihat
+ *    halaman terkunci (bukan gameplay, bukan error generik).
  * 3. Tidak ada gim Arena lain yang terdampak.
  * 4. Source RPG tidak dihapus/diubah (hanya akses yang dijaga).
  * 5. Tidak ada penyembunyian CSS/client-only.
@@ -37,10 +38,10 @@ function src(path: string): string {
 console.log("\n🔒 Registry — batas kanonik");
 const rpg = gameById("rpg");
 check("entri rpg ada di registry", !!rpg);
-check("rpg.unpublished === true", rpg?.unpublished === true);
+check("rpg published sebagai premium-only", rpg?.premiumOnly === true && !rpg?.unpublished);
 check(
-  "featuredGame() bukan RPG",
-  featuredGame().id !== "rpg",
+  "featuredGame() adalah RPG (hero launch Premium)",
+  featuredGame().id === "rpg",
   `malah ${featuredGame().id}`
 );
 check("featuredGame() sudah published", !featuredGame().unpublished);
@@ -54,8 +55,8 @@ const kuis = gameById("kuis-tempur");
 check("kuis-tempur tetap terdaftar", !!kuis);
 check("kuis-tempur tetap published", !kuis?.unpublished);
 check(
-  "jumlah entri published tidak berkurang selain RPG",
-  GAME_REGISTRY.filter((g) => !g.unpublished).length === GAME_REGISTRY.length - 1
+  "semua entri published (RPG ikut katalog)",
+  GAME_REGISTRY.filter((g) => !g.unpublished).length === GAME_REGISTRY.length
 );
 
 console.log("\n🖥️ Discovery surfaces (filter sumber)");
@@ -70,11 +71,12 @@ const page = src("app/arena/game/rpg/page.tsx");
 check("page.tsx BUKAN client component", !page.includes('"use client"'));
 check("page.tsx memakai redirect()", page.includes('from "next/navigation"'));
 check("page.tsx cek sesi (getUser)", page.includes("getUser"));
-check("page.tsx blokir unpublished", page.includes("game.unpublished"));
+check("page.tsx memakai play gate Premium", page.includes("requireRpgPlayAccess()"));
+check("page.tsx render halaman terkunci untuk non-Premium", page.includes("<RpgLocked"));
 check(
-  "redirect terjadi SEBELUM render (bukan kondisional client)",
-  page.indexOf("redirect(") !== -1 &&
-    page.indexOf("redirect(") < page.indexOf("return <RpgClient")
+  "gate berjalan SEBELUM render gameplay (bukan kondisional client)",
+  page.indexOf("requireRpgPlayAccess()") !== -1 &&
+    page.indexOf("requireRpgPlayAccess()") < page.indexOf("return <RpgClient")
 );
 check("RpgClient.tsx ada (split client utuh)", existsSync(join(ROOT, "app/arena/game/rpg/RpgClient.tsx")));
 const client = src("app/arena/game/rpg/RpgClient.tsx");

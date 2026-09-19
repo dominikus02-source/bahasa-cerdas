@@ -186,7 +186,7 @@ console.log("\n🔒 SECURITY (33-35)");
 }
 
 console.log("\n🛡️ REGRESSION (36-45)");
-check("36-45a. unpublished intact", src("lib/arena/game-registry.ts").includes("unpublished: true"));
+check("36-45a. unpublished mechanism intact", src("lib/arena/game-registry.ts").includes("unpublished?: boolean"));
 {
   const kuis = src("components/game/KuisTempurSolo.tsx");
   check("36-45b. Kuis decoupled", !kuis.includes("learning/") && !kuis.includes("game/rpg"));

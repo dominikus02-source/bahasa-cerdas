@@ -180,7 +180,7 @@ console.log("\n🎛️ RUNTIME (38-40)");
 }
 
 console.log("\n🛡️ REGRESSION (41-47)");
-check("41-47a. unpublished intact", src("lib/arena/game-registry.ts").includes("unpublished: true"));
+check("41-47a. unpublished mechanism intact", src("lib/arena/game-registry.ts").includes("unpublished?: boolean"));
 {
   const kuis = src("components/game/KuisTempurSolo.tsx");
   check("41-47b. Kuis decoupled", !kuis.includes("quest-engine") && !kuis.includes("game/rpg"));

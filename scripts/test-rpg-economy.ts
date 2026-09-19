@@ -210,7 +210,7 @@ check("46. no duplicate economy state", (() => {
 })());
 
 console.log("\n🛡️ REGRESSION (47-52)");
-check("47. unpublished guard intact", src("lib/arena/game-registry.ts").includes("unpublished: true"));
+check("47. unpublished mechanism intact", src("lib/arena/game-registry.ts").includes("unpublished?: boolean"));
 {
   const kuis = src("components/game/KuisTempurSolo.tsx");
   check("Kuis decoupled", !kuis.includes("economy/") && !kuis.includes("game/rpg"));

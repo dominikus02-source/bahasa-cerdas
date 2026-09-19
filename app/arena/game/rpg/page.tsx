@@ -1,27 +1,34 @@
 /**
- * RPG Game Route — Pendekar Suryakerta: Legenda Nusantara.
- *
- * STATUS: UNPUBLISHED (lihat `unpublished` di lib/arena/game-registry.ts).
+ * RPG Game Route — Pendekar Suryakerta (P2.8 Premium Early Access).
  *
  * Guard server-side (BUKAN kondisional client/CSS):
  * - user belum login → /arena/login (pola sama seperti /arena/game)
- * - gim UNPUBLISHED → /arena/game untuk SEMUA user, tanpa pengecualian
+ * - founder-preview path (non-prod allowlist) → langsung main
+ * - game PUBLISHED + plan Premium (MURID_PREMIUM/PRO/FOUNDER) → main
+ * - game PUBLISHED + plan FREE → halaman terkunci (RpgLocked, bukan error)
+ * - game UNPUBLISHED (darurat) → /arena/game (fail closed)
  *
- * Launch mendatang: PUBLISHED + KHUSUS PREMIUM — ganti cabang kedua dengan
- * cek entitlement server-side memakai arsitektur Premium proyek yang ada.
+ * Direct URL dilindungi gate yang sama — tidak ada bypass query/localStorage.
  */
 
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/server";
-import { gameById } from "@/lib/arena/game-registry";
+import { requireRpgPlayAccess } from "@/lib/game/rpg/server-access";
 import RpgClient from "./RpgClient";
+import RpgLocked from "./RpgLocked";
 
 export default async function RpgPage() {
   const user = await getUser();
   if (!user) redirect("/arena/login");
 
-  const game = gameById("rpg");
-  if (!game || game.unpublished) redirect("/arena/game");
+  const access = await requireRpgPlayAccess();
+  if (!access.ok) {
+    if (access.status === 401) redirect("/arena/login");
+    if (access.error.code === "PREMIUM_REQUIRED") {
+      return <RpgLocked />;
+    }
+    redirect("/arena/game");
+  }
 
-  return <RpgClient playerId={user.id} playerName={user.fullName || "Pendekar"} />;
+  return <RpgClient playerId={access.userId} playerName={user.fullName || "Pendekar"} />;
 }

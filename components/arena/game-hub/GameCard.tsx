@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Clock, Flame, Play, Sparkles, Zap } from "lucide-react";
+import { Clock, Crown, Flame, Play, Sparkles, Zap } from "lucide-react";
 import { GAME_CARD_ARTWORK, type GameDefinition } from "@/lib/arena/game-registry";
 
 /**
@@ -91,15 +91,23 @@ export default function GameCard({ game, index = 0, onPlay }: GameCardProps) {
   // ── CONTENT AREA ──
   const content = (
     <>
-      <h3
-        className={`text-[15px] font-extrabold leading-tight ${
-          game.status === "SOON"
-            ? "text-slate-700 dark:text-slate-300"
-            : "text-slate-900 dark:text-white"
-        }`}
-      >
-        {game.title}
-      </h3>
+      <div className="flex items-center gap-1.5">
+        <h3
+          className={`min-w-0 flex-1 text-[15px] font-extrabold leading-tight ${
+            game.status === "SOON"
+              ? "text-slate-700 dark:text-slate-300"
+              : "text-slate-900 dark:text-white"
+          }`}
+        >
+          {game.title}
+        </h3>
+        {/* P2.8 — lencana Premium untuk game premiumOnly (mis. Pendekar Suryakerta) */}
+        {game.premiumOnly && (
+          <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-gradient-to-r from-amber-400 to-yellow-500 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-amber-950 shadow-sm">
+            <Crown size={10} /> Premium
+          </span>
+        )}
+      </div>
       <p
         className={`mt-0.5 line-clamp-2 text-[12px] leading-snug ${
           game.status === "SOON"

@@ -175,9 +175,9 @@ check("19. Kuis Tempur decoupled (no world imports)",
 const zelby = src("components/game/ZelbyDash.tsx");
 check("20. Petualangan Kata decoupled", !zelby.includes("world-step") && !zelby.includes("game/rpg"));
 const reg = src("lib/arena/game-registry.ts");
-check("21. unpublished guard intact", reg.includes("unpublished: true"));
+check("21. unpublished mechanism intact", reg.includes("unpublished?: boolean"));
 const rpgPage = src("app/arena/game/rpg/page.tsx");
-check("21b. route guard intact", rpgPage.includes("game.unpublished"));
+check("21b. route guard intact (premium play gate)", rpgPage.includes("requireRpgPlayAccess"));
 check("openChest still pure/idempotent (P1E.2 core)", (() => {
   const c = desa.chests[0];
   const a = openChest(c, new Set());

@@ -13,6 +13,7 @@ import UserAvatar from "@/components/arena/UserAvatar";
 import { RankChip } from "@/components/gamification/RankChip";
 import BannerSlideshow, { type BannerSlide } from "@/components/public/BannerSlideshow";
 import GameCard, { type GameView } from "@/components/arena/game-hub/GameCard";
+import { trackProductEvent } from "@/lib/analytics/product-track";
 
 /**
  * Game Hub Arena 2.0 — game launcher BahasaCerdas.
@@ -84,6 +85,8 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled }:
       saveRecent(next);
       return next;
     });
+    // P2.8 — funnel launch Pendekar Suryakerta (hanya RPG; perilaku lain utuh).
+    if (id === "rpg") trackProductEvent("rpg_launch_clicked", { game: "rpg" });
   }, []);
 
   // Terapkan status offline: gim multiplayer tanpa mode solo → "Segera Hadir"

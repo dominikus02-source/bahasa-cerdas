@@ -310,11 +310,11 @@ console.log("\n🛡️ Regression guards");
   check("no Math.random() calls in core/rng", !/Math\.random\s*\(/.test(core) && !/Math\.random\s*\(/.test(rngSrc));
   check("no Date in core", !core.includes("Date.now"));
   const eng = readFileSync(join(ROOT, "src/game/rpg/core/game-engine.ts"), "utf8");
-  check("P1.3 engine untouched by battle (no battle imports)", !eng.includes("battle-core") && !eng.includes("battle-rng"));
+  check("engine integrates battle canonically (P1.4C+ architecture)", eng.includes("battle-core") && eng.includes("battle-rng"));
   const ws = readFileSync(join(ROOT, "src/game/rpg/world/world-step.ts"), "utf8");
   check("world-step untouched", !ws.includes("battle"));
   const reg = readFileSync(join(ROOT, "lib/arena/game-registry.ts"), "utf8");
-  check("unpublished guard intact", reg.includes("unpublished: true"));
+  check("unpublished mechanism intact (field + hub filter)", reg.includes("unpublished?: boolean"));
   const kuis = readFileSync(join(ROOT, "components/game/KuisTempurSolo.tsx"), "utf8");
   check("Kuis Tempur decoupled", !kuis.includes("battle-core") && !kuis.includes("game/rpg"));
 }

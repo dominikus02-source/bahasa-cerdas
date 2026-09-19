@@ -109,7 +109,7 @@ console.log("\n🎮 P2.6C.1 playtest observability");
 const gameUi = source("src/game/rpg/ui/RPGGame.tsx");
 const questUi = source("src/game/rpg/ui/RPGQuestPanel.tsx");
 check("learning-pool readiness is surfaced to the founder", gameUi.includes("setLearningReady(pool.length > 0)") && questUi.includes("Tantangan Bahasa belum tersedia"));
-check("preview remains server-gated and unpublished", source("app/arena/game/rpg/preview/page.tsx").includes("canUseRpgFounderPreview") && source("lib/arena/game-registry.ts").includes("unpublished: true"));
+check("preview remains server-gated; slice published premium-only", source("app/arena/game/rpg/preview/page.tsx").includes("canUseRpgFounderPreview") && source("lib/arena/game-registry.ts").includes("premiumOnly: true"));
 
 console.log(`\n📊 Hasil: ${passed} lulus, ${failed} gagal\n`);
 process.exit(failed > 0 ? 1 : 0);

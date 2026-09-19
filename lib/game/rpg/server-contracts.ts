@@ -37,6 +37,7 @@ export type PendekarActionErrorCode =
   | "QUEST_MUTATION_INVALID_FLAG"
   | "UNAUTHENTICATED"
   | "PREVIEW_DENIED"
+  | "PREMIUM_REQUIRED"
   | "INTERNAL_ERROR";
 
 export type PendekarActionError = {

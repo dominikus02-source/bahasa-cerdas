@@ -66,8 +66,8 @@ const renderer = source("src/game/rpg/rendering/canvas-renderer.ts");
 check("renderer uses READY manifest locomotion and frame-zero idle fallback", renderer.includes('entry?.status === "READY"') && renderer.includes("frame 0") && renderer.includes("renderLiveEnemies"));
 const gameUi = source("src/game/rpg/ui/RPGGame.tsx");
 check("UI mounts dialogue, objective, and save checkpoints", gameUi.includes("<RPGDialogue") && gameUi.includes("<RPGQuestPanel") && gameUi.includes('engine.on("DIALOGUE_END", saveCheckpoint)'));
-check("a save from another map cannot expand the controlled Desa slice", gameUi.includes("saved.world.mapId === mapId") && gameUi.includes("const bootMapId = mapId"));
-check("slice stays unpublished", source("lib/arena/game-registry.ts").includes("unpublished: true"));
+check("a save from another map cannot expand the controlled Desa slice", gameUi.includes("legacySave.world.mapId === mapId") && gameUi.includes("const bootMapId = mapId"));
+check("slice published as premium-only (P2.8 launch)", source("lib/arena/game-registry.ts").includes("premiumOnly: true"));
 
 console.log(`\n📊 Hasil: ${pass} lulus, ${fail} gagal\n`);
 process.exit(fail > 0 ? 1 : 0);

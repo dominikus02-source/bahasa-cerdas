@@ -193,7 +193,7 @@ console.log("\n🔌 15b. renderer wiring (static proofs)");
 }
 
 console.log("\n🛡️ REGRESSION");
-check("unpublished intact", src("lib/arena/game-registry.ts").includes("unpublished: true"));
+check("unpublished mechanism intact", src("lib/arena/game-registry.ts").includes("unpublished?: boolean"));
 {
   const kuis = src("components/game/KuisTempurSolo.tsx");
   check("Kuis Tempur decoupled", !kuis.includes("game/rpg") && !kuis.includes("tile-visuals"));

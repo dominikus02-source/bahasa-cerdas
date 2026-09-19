@@ -14,33 +14,20 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { requireRpgPlayAccess } from "@/lib/game/rpg/server-access";
 import { db } from "@/lib/db";
-import { isTeacherOrStudent } from "@/lib/teacher/students";
 import { isEligibleForGameplay } from "@/lib/game-questions/quality";
 import type { GameQuestion } from "@/lib/game-questions/types";
 import { difficultyFor } from "@/src/game/rpg/learning/rpg-challenge";
 
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
+    // P2.8: pool carries answer-bearing rows → same premium play gate as
+    // all gameplay APIs (fail closed for FREE plans).
+    const access = await requireRpgPlayAccess();
+    if (!access.ok) return NextResponse.json({ error: access.error }, { status: access.status });
 
-    let dbUser: { id: string } | null = null;
-    try {
-      const supabase = await createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const found = await db.user.findUnique({ where: { supabaseId: user.id } });
-        if (found) dbUser = found;
-      }
-    } catch {
-      dbUser = null;
-    }
-    if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    const full = await db.user.findUnique({ where: { id: dbUser.id } });
-    if (!full || !isTeacherOrStudent(full as never)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const { searchParams } = new URL(req.url);
 
     const count = Math.min(Math.max(Number(searchParams.get("count") ?? 20), 1), 30);
     const kelas = searchParams.get("kelas");

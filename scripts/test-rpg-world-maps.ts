@@ -196,9 +196,9 @@ check("tracker unknown state → empty", renderTrackerText(99, 0, 0) === "");
 
 console.log("\n🛡️ 18-19. Regression guards");
 const regSrc = readFileSync(join(ROOT, "lib/arena/game-registry.ts"), "utf8");
-check("publication guard intact (rpg unpublished)", regSrc.includes("unpublished: true"));
+check("publication guard intact (rpg published premium-only)", regSrc.includes("premiumOnly: true"));
 const rpgPage = readFileSync(join(ROOT, "app/arena/game/rpg/page.tsx"), "utf8");
-check("route guard intact (redirect on unpublished)", rpgPage.includes("game.unpublished"));
+check("route guard intact (premium play gate)", rpgPage.includes("requireRpgPlayAccess"));
 const legacyPath = join(ROOT, "src/game/rpg/legacy/pendekar-suryakerta.prototype.html");
 check("legacy source present + untouched size", existsSync(legacyPath) &&
   readFileSync(legacyPath, "utf8").split("\n").length >= 1788);

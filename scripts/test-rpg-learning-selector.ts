@@ -180,7 +180,7 @@ check("42. boss context preserved", selectChallenge(POOL, CTX({ context: "BOSS",
 check("43. no separate boss engine", !/boss.*selector|selector.*boss/i.test(strip(src("src/game/rpg/learning/rpg-challenge-selector.ts"))));
 
 console.log("\n🛡️ REGRESSION (44-52)");
-check("44-52a. unpublished intact", src("lib/arena/game-registry.ts").includes("unpublished: true"));
+check("44-52a. unpublished mechanism intact", src("lib/arena/game-registry.ts").includes("unpublished?: boolean"));
 {
   const kuis = src("components/game/KuisTempurSolo.tsx");
   check("44-52b. Kuis decoupled", !kuis.includes("learning/") && !kuis.includes("game/rpg"));

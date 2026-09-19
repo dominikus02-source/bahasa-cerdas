@@ -153,7 +153,7 @@ check("28. learning attempts transient by design (no save fields)", !/attemptId|
 check("29. transient UI not persisted (no challenge in save)", !/challengeId/.test(strip(src("src/game/rpg/core/persistence.ts"))));
 
 console.log("\n🛡️ REGRESSION (30-37)");
-check("30-37a. unpublished intact", src("lib/arena/game-registry.ts").includes("unpublished: true"));
+check("30-37a. unpublished mechanism intact", src("lib/arena/game-registry.ts").includes("unpublished?: boolean"));
 {
   const kuis = src("components/game/KuisTempurSolo.tsx");
   check("30-37b. Kuis decoupled", !kuis.includes("learning/") && !kuis.includes("game/rpg"));

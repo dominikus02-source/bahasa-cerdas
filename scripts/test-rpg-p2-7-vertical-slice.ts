@@ -375,14 +375,14 @@ async function main() {
 
   // ══ F. Founder preview ═════════════════════════════════════════════
   console.log("\n🔒 F. Founder preview");
-  check("39. RPG stays unpublished in registry",
-    src("lib/arena/game-registry.ts").includes("unpublished: true"));
+  check("39. RPG published as premium-only (P2.8 launch)",
+    src("lib/arena/game-registry.ts").includes("premiumOnly: true"));
   const access = src("lib/game/rpg/server-access.ts");
-  check("40. quest/inventory/equipment routes require founder preview access",
-    access.includes("requireRpgFounderPreviewApiAccess") &&
-    src("app/api/rpg/quest/mutate/route.ts").includes("requireRpgFounderPreviewApiAccess") &&
-    src("app/api/rpg/inventory/mutate/route.ts").includes("requireRpgFounderPreviewApiAccess") &&
-    src("app/api/rpg/equipment/mutate/route.ts").includes("requireRpgFounderPreviewApiAccess"));
+  check("40. quest/inventory/equipment routes require play access (P2.8 gate)",
+    access.includes("requireRpgPlayAccess") &&
+    src("app/api/rpg/quest/mutate/route.ts").includes("requireRpgPlayAccess") &&
+    src("app/api/rpg/inventory/mutate/route.ts").includes("requireRpgPlayAccess") &&
+    src("app/api/rpg/equipment/mutate/route.ts").includes("requireRpgPlayAccess"));
 
   // ══ G. Action-kind agreement (contract/parser/DB) ═══════════════════
   console.log("\n⚖️ G. Action-kind agreement");

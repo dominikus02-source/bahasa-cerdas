@@ -197,7 +197,7 @@ check("K. no battle imports in visual modules", ["src/game/rpg/rendering/world-s
 check("L. no persistence in visual modules", ["src/game/rpg/rendering/asset-registry.ts", "src/game/rpg/rendering/animation.ts"].every((f) => !/localStorage|persistence/i.test(strip(src(f)))));
 
 console.log("\n🛡️ REGRESSION GUARDS");
-check("unpublished intact", src("lib/arena/game-registry.ts").includes("unpublished: true"));
+check("unpublished mechanism intact", src("lib/arena/game-registry.ts").includes("unpublished?: boolean"));
 {
   const kuis = src("components/game/KuisTempurSolo.tsx");
   check("Kuis Tempur decoupled", !kuis.includes("game/rpg") && !kuis.includes("rendering/"));

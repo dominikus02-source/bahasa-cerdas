@@ -73,7 +73,7 @@ console.log("\n🎮 RPGGame INTEGRATION (static proofs)");
 }
 
 console.log("\n🛡️ REGRESSION");
-check("unpublished intact", src("lib/arena/game-registry.ts").includes("unpublished: true"));
+check("unpublished mechanism intact", src("lib/arena/game-registry.ts").includes("unpublished?: boolean"));
 {
   const kuis = src("components/game/KuisTempurSolo.tsx");
   check("Kuis Tempur untouched", !kuis.includes("RPGBattleLearning") && !kuis.includes("learning/") && !kuis.includes("game/rpg"));

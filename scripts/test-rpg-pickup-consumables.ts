@@ -101,7 +101,7 @@ check("pickedGe + flowers round-trip shape", (() => {
 check("save shape carries slices", src("src/game/rpg/core/persistence.ts").includes("pickedGe"));
 
 console.log("\n🛡️ REGRESSION GUARDS");
-check("unpublished intact", src("lib/arena/game-registry.ts").includes("unpublished: true"));
+check("unpublished mechanism intact", src("lib/arena/game-registry.ts").includes("unpublished?: boolean"));
 {
   const kuis = src("components/game/KuisTempurSolo.tsx");
   check("Kuis decoupled", !kuis.includes("pickedGe") && !kuis.includes("game/rpg"));

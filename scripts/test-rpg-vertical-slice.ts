@@ -127,13 +127,13 @@ console.log("\n💾 PERSISTENCE — real round-trip via stub");
 }
 
 console.log("\n🔒 SECURITY (slice)");
-check("pool route requires auth", src("app/api/rpg/pool/route.ts").includes("Unauthorized"));
+check("pool route requires auth (P2.8 play gate)", src("app/api/rpg/pool/route.ts").includes("requireRpgPlayAccess"));
 check("pool excludes quarantined bank", src("app/api/rpg/pool/route.ts").includes("MASTER_BANK"));
 check("pool gates eligibility", src("app/api/rpg/pool/route.ts").includes("isEligibleForGameplay"));
 check("pool capped", src("app/api/rpg/pool/route.ts").includes("30"));
 
 console.log("\n🛡️ REGRESSION");
-check("unpublished intact", src("lib/arena/game-registry.ts").includes("unpublished: true"));
+check("unpublished mechanism intact", src("lib/arena/game-registry.ts").includes("unpublished?: boolean"));
 {
   const kuis = src("components/game/KuisTempurSolo.tsx");
   check("Kuis Tempur 0 diff surface (no RPG imports)", !kuis.includes("game/rpg") && !kuis.includes("learning/"));

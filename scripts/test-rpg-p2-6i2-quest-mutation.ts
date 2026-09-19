@@ -329,7 +329,7 @@ async function main() {
   assert(routeContent.includes("export async function POST"), "Route exports POST handler");
   assert(routeContent.includes("parseQuestMutationInput"), "Route uses parseQuestMutationInput");
   assert(routeContent.includes("mutateQuestState"), "Route calls mutateQuestState");
-  assert(routeContent.includes("requireRpgFounderPreviewApiAccess"), "Route uses auth guard");
+  assert(routeContent.includes("requireRpgPlayAccess"), "Route uses auth guard (P2.8 play gate)");
   assert(routeContent.includes("PendekarQuestMutationError"), "Route handles QuestMutationError");
 
   // ─── Section 8: Engine wiring ─────────────────────────────────────────────

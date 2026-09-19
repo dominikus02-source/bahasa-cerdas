@@ -164,7 +164,7 @@ check("H1. learning transient by design (no save fields)", !/learningChallenges|
 check("H2. battle save rule unchanged (world on load)", src("src/game/rpg/core/persistence.ts").includes("battle: null"));
 
 console.log("\n🛡️ I. Regression guards");
-check("I1. unpublished intact", src("lib/arena/game-registry.ts").includes("unpublished: true"));
+check("I1. unpublished mechanism intact", src("lib/arena/game-registry.ts").includes("unpublished?: boolean"));
 {
   const kuis = src("components/game/KuisTempurSolo.tsx");
   check("I2. Kuis Tempur untouched", !kuis.includes("learning/") && !kuis.includes("game/rpg"));

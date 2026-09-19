@@ -177,7 +177,7 @@ console.log("\n🎲 23. Same seed → same runtime result");
 console.log("\n🛡️ 24-26. Regression guards");
 {
   const reg = src("lib/arena/game-registry.ts");
-  check("24. unpublished guard intact", reg.includes("unpublished: true"));
+  check("24. unpublished mechanism intact", reg.includes("unpublished?: boolean"));
   const kuis = src("components/game/KuisTempurSolo.tsx");
   check("25. Kuis Tempur untouched by battle", !kuis.includes("battle-core") && !kuis.includes("game/rpg"));
   const zelby = src("components/game/ZelbyDash.tsx");
