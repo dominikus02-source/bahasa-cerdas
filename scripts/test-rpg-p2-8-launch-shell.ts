@@ -174,6 +174,21 @@ async function main() {
     (src("lib/game/rpg/server-contracts.ts").includes('"PREMIUM_REQUIRED"')) &&
     badParse.ok === false);
 
+  // ── H. Visual runtime (P2.8.4) ──────────────────────────────────────
+  console.log("\n🎨 Visual runtime");
+  const twConfig = src("tailwind.config.ts");
+  check("H1. tailwind scans RPG UI (src/** content glob)",
+    twConfig.includes('"./src/**/*.{js,ts,jsx,tsx,mdx}"'));
+  const rpgClientSrc = src("app/arena/game/rpg/RpgClient.tsx");
+  check("H2. playing phase has explicit viewport height (canvas gets pixels)",
+    rpgClientSrc.includes("h-[calc(100dvh-64px)]"));
+  const questPanel = src("src/game/rpg/ui/RPGQuestPanel.tsx");
+  check("H3. quest panel keeps dark card + readable hierarchy",
+    questPanel.includes("bg-stone-950/85") &&
+    questPanel.includes("text-white") &&
+    questPanel.includes("text-amber-300") &&
+    questPanel.includes("text-xs"));
+
   console.log(`\n📊 P2.8 Hasil: ${pass} lulus, ${fail} gagal\n`);
   process.exit(fail > 0 ? 1 : 0);
 }

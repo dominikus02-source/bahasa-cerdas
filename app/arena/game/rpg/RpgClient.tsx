@@ -99,8 +99,12 @@ export default function RpgClient({ playerId, playerName }: RpgClientProps) {
   }, []);
 
   if (phase === "playing") {
+    // P2.8.4 — explicit viewport height. Every RPGGame child is absolutely
+    // positioned, so without this the wrapper collapses to 0px and the
+    // canvas (absolute inset-0) renders 0×0 (blank world in production).
+    // 64px follows the chat workspace convention (header height).
     return (
-      <div className="game-env game-env-rpg game-fullscreen relative">
+      <div className="game-env game-env-rpg game-fullscreen relative h-[calc(100dvh-64px)] min-h-[480px]">
         <button
           onClick={handleBack}
           className="game-back-btn fixed top-3 left-3 z-[70]"

@@ -7,6 +7,10 @@ const config: Config = {
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    // P2.8.4 — RPG UI lives in src/game/rpg/ui. Without this glob, utilities
+    // used ONLY there (e.g. bg-stone-950/85) were never generated: the quest
+    // card rendered transparent with invisible white text in production.
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
