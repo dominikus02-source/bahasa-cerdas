@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Modal } from "@/components/ui/modal";
@@ -11,7 +11,10 @@ import {
   Loader2, Search, Send, Users, BookOpen, GraduationCap, X, Check, ChevronDown,
   FileText, Sparkles, Quote, PenLine, ScrollText, Newspaper, MessageSquare,
   BookMarked, Library, PenTool, Globe, Megaphone, Star, ListChecks, FilePlus2,
+  Compass, MonitorPlay, Sparkle, ArrowRight,
 } from "lucide-react";
+import { ThemeCard, type ThemeCardData } from "@/components/guru/bank-soal/ThemeCard";
+import { categoryVisual, themeVariant, ThemeCoverArt } from "@/components/guru/bank-soal/theme-cover";
 
 const CAT_COLORS: Record<string, { from: string; to: string; text: string; light: string; ring: string }> = {
   "Tata Bahasa":   { from: "from-emerald-500", to: "to-emerald-600",  text: "text-emerald-600", light: "bg-emerald-50",  ring: "ring-emerald-200" },
@@ -221,16 +224,44 @@ export default function BankSoalPage() {
 
   const totalQuestions = themes.reduce((s, t) => s + t.total, 0);
 
-  const getInitials = (name: string) => {
-    const parts = name.split(/[\s/]+/);
-    return parts.length > 1 ? parts[0][0] + parts[1][0] : name.slice(0, 2);
-  };
-
+  // Matcher statis konstanta module-level — tidak perlu memoization;
+  // plain function aman karena CATEGORIES tidak berubah antar render.
+  // DIDEKLARASI SEBELUM useMemo yang memakainya (hindari TDZ saat render).
   const getCategoryKey = (name: string) => {
     for (const c of CATEGORIES) {
       if (c.pattern.test(name)) return c.name;
     }
     return "Lainnya";
+  };
+
+  // ── Discovery shelves (§I) — editorial dari data existing, tanpa
+  // klaim popularitas palsu. Pilihan kategori = slice deterministik.
+  const shelf = useMemo(() => {
+    const byCat = new Map<string, ThemeData[]>();
+    for (const t of themes) {
+      const k = getCategoryKey(t.name);
+      if (!byCat.has(k)) byCat.set(k, []);
+      byCat.get(k)!.push(t);
+    }
+    for (const list of byCat.values()) {
+      list.sort((a, b) => b.total - a.total);
+    }
+    // "Jelajahi Tema": tema terbesar per kategori (data faktual).
+    const jelajahi: ThemeData[] = [];
+    for (const key of ["Tata Bahasa", "Sastra", "Jenis Teks", "Fungsional"]) {
+      const top = byCat.get(key)?.[0];
+      if (top) jelajahi.push(top);
+    }
+    // "Pilihan Berdasarkan Kategori": editorial per kategori utama.
+    const kategori: { key: string; item: ThemeData | null }[] = ["Tata Bahasa", "Sastra", "Jenis Teks", "Fungsional", "Lainnya"]
+      .map((key) => ({ key, item: byCat.get(key)?.[0] ?? null }));
+    return { jelajahi, kategori };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- getCategoryKey stabil (matcher konstanta)
+  }, [themes]);
+
+  const getInitials = (name: string) => {
+    const parts = name.split(/[\s/]+/);
+    return parts.length > 1 ? parts[0][0] + parts[1][0] : name.slice(0, 2);
   };
 
   return (
@@ -243,18 +274,41 @@ export default function BankSoalPage() {
         </div>
       )}
 
-      {/* Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Bank Soal</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            {loading ? "Memuat..." : `${totalQuestions} soal dari ${themes.length} tema — klik tema untuk kirim ke kelas`}
+      {/* ── HEADER DISCOVERY (§G) ──────────────────────────── */}
+      <div className="relative overflow-hidden rounded-2xl border border-slate-100 bg-gradient-to-br from-emerald-50/70 via-white to-violet-50/50 p-5 sm:p-6">
+        <div aria-hidden className="absolute -top-14 -right-8 w-48 h-48 rounded-full bg-emerald-200/20 blur-3xl" />
+        <div aria-hidden className="absolute -bottom-16 left-1/3 w-40 h-40 rounded-full bg-violet-200/15 blur-3xl" />
+        <div className="relative">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="w-2 h-2 rounded-full bg-emerald-500" aria-hidden />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700">Perpustakaan Konten</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Bank Soal</h1>
+          <p className="mt-1.5 text-sm text-gray-500">
+            Temukan bahan belajar yang pas untuk kelasmu.
           </p>
+          {!loading && (
+            <p className="mt-1 text-sm font-semibold text-gray-700 tabular-nums">
+              {totalQuestions.toLocaleString("id-ID")} soal • {themes.length} tema
+            </p>
+          )}
+
+          {/* Search lebih prominent (§G) */}
+          <div className="relative mt-4 max-w-md">
+            <Search size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Cari tema, soal, atau kompetensi..."
+              aria-label="Cari tema, soal, atau kompetensi"
+              className="w-full pl-10 pr-3 py-3 rounded-xl border border-slate-200 text-sm bg-white shadow-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100 transition-colors"
+            />
+          </div>
         </div>
       </div>
 
-      {/* Navigasi internal (bukan submenu sidebar) */}
-      <div className="flex gap-1.5 bg-white border border-slate-100 rounded-2xl p-1.5 w-fit overflow-x-auto max-w-full">
+      {/* Navigasi internal (bukan submenu sidebar) — refined (§G) */}
+      <div className="flex gap-1.5 bg-white border border-slate-200/80 rounded-2xl p-1.5 w-fit max-w-full shadow-sm">
         {[
           { label: "Bank Soal", href: "/guru/bank-soal", icon: Library },
           { label: "Latihan", href: "/guru/bank-soal", icon: ListChecks },
@@ -281,79 +335,128 @@ export default function BankSoalPage() {
         })}
       </div>
 
-      {/* Stats */}
+      {/* ── STATS — compact strip (§H) ─────────────────────── */}
       {!loading && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <Card className="p-3 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-emerald-100"><BookOpen size={18} className="text-emerald-600" /></div>
-            <div><p className="text-lg font-bold text-gray-900">{themes.length}</p><p className="text-xs text-gray-500">Tema</p></div>
-          </Card>
-          <Card className="p-3 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-blue-100"><GraduationCap size={18} className="text-blue-600" /></div>
-            <div><p className="text-lg font-bold text-gray-900">{totalQuestions}</p><p className="text-xs text-gray-500">Total Soal</p></div>
-          </Card>
-          <Card className="p-3 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-purple-100"><Users size={18} className="text-purple-600" /></div>
-            <div><p className="text-lg font-bold text-gray-900">{new Set(themes.flatMap(t => t.kelas)).size}</p><p className="text-xs text-gray-500">Jenjang</p></div>
-          </Card>
-          <Card className="p-3 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-amber-100"><Send size={18} className="text-amber-600" /></div>
-            <div><p className="text-lg font-bold text-gray-900">1 Klik</p><p className="text-xs text-gray-500">Kirim ke Kelas</p></div>
-          </Card>
-        </div>
-      )}
-
-      {/* Search */}
-      <div className="relative max-w-sm">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-        <input
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="Cari tema..."
-          className="w-full pl-9 pr-3 py-2 rounded-xl border border-gray-200 text-sm bg-white"
-        />
-      </div>
-
-      {/* Theme Grid */}
-      {loading ? (
-        <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-emerald-600" /></div>
-      ) : (
-        <div className="space-y-8">
-          {grouped.map(cat => (
-            <div key={cat.name}>
-              <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">{cat.name}</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                {cat.themes.map(t => {
-                  const cc = CAT_COLORS[getCategoryKey(t.name)] || CAT_COLORS["Lainnya"];
-                  const initials = getInitials(t.name);
-                  return (
-                    <button
-                      key={t.name}
-                      onClick={() => handleOpenSend(t)}
-                      className={`group text-left p-3 rounded-xl border bg-white hover:shadow-md hover:-translate-y-0.5 transition-all ${cc.ring} hover:border-current border-gray-100`}
-                    >
-                      <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${cc.from} ${cc.to} flex items-center justify-center mb-2 shadow-sm`}>
-                        <span className="text-white text-xs font-bold tracking-wider uppercase">{initials}</span>
-                      </div>
-                      <p className="text-sm font-semibold text-gray-900 leading-tight">{t.name}</p>
-                      <div className="flex items-center gap-2 mt-1.5">
-                        <Badge className={`text-[10px] px-1.5 py-0 ${cc.light} ${cc.text}`}>{t.total} soal</Badge>
-                        {t.kelas.length > 0 && (
-                          <span className="text-[10px] text-gray-400">Kls {t.kelas.sort((a,b) => Number(a)-Number(b)).join(",")}</span>
-                        )}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-2xl border border-slate-100 bg-white px-4 sm:px-5 py-3 shadow-sm">
+          {[
+            { icon: BookOpen, label: "Tema", value: String(themes.length), chip: "bg-emerald-50 text-emerald-600" },
+            { icon: GraduationCap, label: "Total soal", value: totalQuestions.toLocaleString("id-ID"), chip: "bg-blue-50 text-blue-600" },
+            { icon: Users, label: "Jenjang", value: String(new Set(themes.flatMap(t => t.kelas)).size), chip: "bg-violet-50 text-violet-600" },
+            { icon: Send, label: "Kirim ke kelas", value: "1 klik", chip: "bg-amber-50 text-amber-600" },
+          ].map(s => (
+            <div key={s.label} className="flex items-center gap-2.5 min-w-0">
+              <span className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${s.chip}`}>
+                <s.icon size={15} aria-hidden />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-sm font-bold text-gray-900 leading-tight tabular-nums">{s.value}</span>
+                <span className="block text-[11px] text-gray-400 leading-tight">{s.label}</span>
+              </span>
             </div>
           ))}
         </div>
       )}
 
-      {/* Latihan Saya */}
-      <div className="pt-2">
-        <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">Latihan Saya</h2>
+      {/* ── DISCOVERY SHELVES (§I) ─────────────────────────── */}
+      {!loading && !search && shelf.jelajahi.length > 0 && (
+        <section aria-labelledby="shelf-jelajahi">
+          <div className="flex items-center gap-2 mb-3">
+            <Compass size={16} className="text-emerald-600" aria-hidden />
+            <h2 id="shelf-jelajahi" className="text-base font-bold text-gray-900">Jelajahi Tema</h2>
+            <span className="text-xs text-gray-400">tema pilihan dari tiap kategori</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {shelf.jelajahi.map(t => {
+              const catKey = getCategoryKey(t.name);
+              const visual = categoryVisual(catKey);
+              const v = themeVariant(t.name);
+              return (
+                <button
+                  key={t.name}
+                  type="button"
+                  onClick={() => handleOpenSend(t)}
+                  className="group relative text-left rounded-2xl border border-slate-200/80 overflow-hidden bg-white shadow-sm hover:shadow-lg hover:-translate-y-1 motion-safe:transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
+                >
+                  <ThemeCoverArt visual={visual} variant={v} name={t.name} />
+                  <div className="p-3.5">
+                    <p className="text-[10px] font-bold uppercase tracking-wide text-gray-400">{catKey}</p>
+                    <p className="text-sm font-bold text-gray-900 mt-0.5">{t.name}</p>
+                    <p className="mt-1.5 text-xs text-gray-500">
+                      <span className="font-bold text-gray-700 tabular-nums">{t.total}</span> soal siap dipakai
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {!loading && !search && (
+        <section aria-labelledby="shelf-mb" className="relative overflow-hidden rounded-2xl border border-teal-100 bg-gradient-to-r from-teal-50 via-white to-emerald-50 p-5">
+          <div aria-hidden className="absolute -top-10 right-8 w-36 h-36 rounded-full bg-teal-200/25 blur-2xl" />
+          <div className="relative flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <span className="w-11 h-11 rounded-xl bg-gradient-to-br from-teal-600 to-emerald-600 flex items-center justify-center shrink-0 shadow-md shadow-emerald-600/20">
+                <MonitorPlay size={20} className="text-white" aria-hidden />
+              </span>
+              <div className="min-w-0">
+                <h2 id="shelf-mb" className="text-base font-bold text-gray-900">Coba di Main Bersama</h2>
+                <p className="text-xs sm:text-sm text-gray-500">Kuis kelas live dari paket soalmu — pilih tema, buka ruang, bagikan PIN.</p>
+              </div>
+            </div>
+            <Link
+              href="/guru/game/main-bersama"
+              className="shrink-0 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-teal-600 text-white text-sm font-semibold shadow-sm hover:bg-teal-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
+            >
+              <MonitorPlay size={15} aria-hidden /> Buka Main Bersama <ArrowRight size={13} aria-hidden />
+            </Link>
+          </div>
+        </section>
+      )}
+
+      {/* ── CATEGORY SECTIONS (§J) — ThemeCard + aksen kategori ── */}
+      {loading ? (
+        <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-emerald-600" /></div>
+      ) : (
+        <div className="space-y-10">
+          {grouped.map(cat => {
+            const visual = categoryVisual(cat.name);
+            return (
+              <section key={cat.name} aria-labelledby={`cat-${cat.name.replace(/\s+/g, "-")}`}>
+                <div className="flex items-center gap-2.5 mb-1">
+                  <span className={`w-1.5 h-6 rounded-full ${visual.accentBar}`} aria-hidden />
+                  <h2
+                    id={`cat-${cat.name.replace(/\s+/g, "-")}`}
+                    className="text-lg font-bold text-gray-900"
+                  >
+                    {cat.name}
+                  </h2>
+                  <span className="text-xs font-semibold text-gray-400 tabular-nums">{cat.themes.length} tema</span>
+                </div>
+                <p className="text-xs text-gray-400 mb-4 ml-4">{visual.subtitle}</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5">
+                  {cat.themes.map(t => (
+                    <ThemeCard key={t.name} theme={t} onOpen={handleOpenSend} />
+                  ))}
+                </div>
+              </section>
+            );
+          })}
+        </div>
+      )}
+
+      {/* ── LATIHAN SAYA (§O) — bagian dari discovery hub, bukan tail ── */}
+      <section aria-labelledby="latihan-saya" className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+        <div className="flex items-center gap-2 mb-4">
+          <span className={`w-8 h-8 rounded-lg flex items-center justify-center bg-emerald-100 text-emerald-600`}>
+            <ListChecks size={16} aria-hidden />
+          </span>
+          <h2 id="latihan-saya" className="text-base font-bold text-gray-900">Latihan Saya</h2>
+          <span className="ml-auto text-xs font-semibold text-gray-400 tabular-nums">
+            {latihanLoading ? "" : `${latihans.length} latihan`}
+          </span>
+        </div>
         {latihanLoading ? (
           <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-emerald-600" /></div>
         ) : latihans.length === 0 ? (
@@ -396,7 +499,7 @@ export default function BankSoalPage() {
             ))}
           </div>
         )}
-      </div>
+      </section>
 
       {/* Send Modal — SOAL → FILTER → PREVIEW → TUJUAN */}
       <Modal isOpen={!!selectedTheme} onClose={() => setSelectedTheme(null)} title="Siapkan Latihan" className="max-w-md">

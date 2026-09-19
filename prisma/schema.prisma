@@ -3973,3 +3973,242 @@ model AgentCommandDedupe {
 
   @@index([createdAt])
 }
+
+// ════════════════════════════════════════════════════════════
+// Main Bersama — game multiplayer kelas (Guru + Siswa + Proyektor)
+// Persistence untuk Session/Game Engine (src/main-bersama).
+// Prinsip:
+//  - Question snapshot disimpan MANDIRI (Bank Soal bisa berubah,
+//    history sesi tetap dapat dijelaskan).
+//  - Eligibility + team per-round DIKUNCI sebagai snapshot
+//    (MainRoundEligiblePlayer) — disconnect tidak mengubah denominator.
+//  - Business uniqueness jawaban: UNIQUE(roundId, playerId).
+//  - Request idempotency: MainAnswerSubmission (submissionId unik global).
+//  - Tanpa state visual (confetti/avatar/glow) di database.
+// ════════════════════════════════════════════════════════════
+
+/// Mode permainan Main Bersama. Mapper eksplisit ke domain
+/// 'jelajah-kata' | 'kota-cahaya' ada di infrastructure layer.
+enum MainGameMode {
+  JELAJAH_KATA
+  KOTA_CAHAYA
+}
+
+/// Fase siklus hidup sesi (domain: preparing/lobby/question/
+/// closed/discussion/paused/summary/ended).
+enum MainSessionPhase {
+  PREPARING
+  LOBBY
+  QUESTION
+  CLOSED
+  DISCUSSION
+  PAUSED
+  SUMMARY
+  ENDED
+}
+
+/// Status durabilitas state permainan (JSON snapshot + round results).
+enum MainGameStateStatus {
+  ACTIVE
+  FINAL
+}
+
+/// Fase round individual (domain: pending/open/review/closed).
+enum MainRoundStatus {
+  PENDING
+  OPEN
+  REVIEW
+  CLOSED
+}
+
+model MainSession {
+  id                String           @id @default(cuid())
+  /// PIN join manusia (6 digit) — bukan primary key, bukan credential.
+  /// Unique global untuk v1 (sederhana & benar); partial unique index
+  /// "unik hanya untuk sesi aktif" tidak diekspresikan Prisma — lihat
+  /// docs di README modul jika nanti dibutuhkan.
+  pin               String           @unique
+  /// Auth user id guru (Supabase user id). Plain string mengikuti
+  /// konvensi GameRoom.hostId — tanpa FK lintas modul.
+  teacherId         String
+  /// KelasKu (Group.id) bila sesi terikat kelas. Plain string, nullable.
+  classId           String?
+  className         String?
+  gameMode          MainGameMode
+  phase             MainSessionPhase @default(PREPARING)
+  currentRoundIndex Int?
+  totalRounds       Int
+
+  // Konfigurasi game eksplisit (bukan implicit scatter).
+  /// Kota Cahaya: target jawaban benar. Null untuk Jelajah Kata.
+  kotaTargetCorrect Int?
+
+  // Pause durability: fase asal + sisa waktu agar resume setelah
+  // restart tidak mengurangi waktu siswa.
+  pausedFromPhase   MainSessionPhase?
+  pausedRemainingMs Int?
+  pausedAt          DateTime?
+
+  createdAt         DateTime         @default(now())
+  startedAt         DateTime?
+  endedAt           DateTime?
+  updatedAt         DateTime         @updatedAt
+
+  players           MainPlayer[]
+  rounds            MainRound[]
+  questionSnapshots MainQuestionSnapshot[]
+  gameStates        MainGameState[]
+
+  @@index([teacherId])
+  @@index([phase])
+}
+
+model MainPlayer {
+  id                     String   @id @default(cuid())
+  sessionId              String
+  /// Supabase user id siswa terautentikasi; null = guest.
+  userId                 String?
+  displayName            String
+  /// Regu saat join (jelajah-kata). Snapshot per-round ada di
+  /// MainRoundEligiblePlayer.teamId — JANGAN pakai field ini untuk
+  /// menghitung ulang round historis.
+  teamId                 String?
+  eligibleFromRoundIndex Int      @default(0)
+  joinedAt               DateTime @default(now())
+  /// Persist sebagai data; realtime layer yang mengelola liveness.
+  connected              Boolean  @default(true)
+
+  session                MainSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, userId])
+  @@index([sessionId])
+}
+model MainQuestionSnapshot {
+  id              String        @id @default(cuid())
+  sessionId       String
+  position        Int
+  sourceQuestionId String
+  type            String        // 'single-choice' | 'true-false' | 'passage-single-choice'
+  prompt          String
+  /// Array of { id, text } — urutan opsi terjaga.
+  options         Json
+  correctOptionId String        // server-side only, tidak pernah ke client
+  explanation     String?
+  passageTitle    String?
+  passageContent  String?
+
+  session MainSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  rounds  MainRound[]
+
+  @@unique([sessionId, position])
+  @@index([sessionId])
+}
+
+model MainRound {
+  id                 String           @id @default(cuid())
+  sessionId          String
+  questionSnapshotId String
+  index              Int
+  status             MainRoundStatus  @default(PENDING)
+  openedAt           DateTime?
+  closesAt           DateTime?
+  closedAt           DateTime?
+
+  session     MainSession          @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  question    MainQuestionSnapshot @relation(fields: [questionSnapshotId], references: [id])
+  eligible    MainRoundEligiblePlayer[]
+  answers     MainAnswer[]
+
+  @@unique([sessionId, index])
+  @@index([sessionId])
+}
+
+/// Snapshot eligible + team yang berlaku SAAT round dibuka.
+/// Fairness Jelajah Kata bergantung pada tabel ini — perubahan
+/// MainPlayer.teamId setelah round dibuka tidak menyentuh baris di sini.
+model MainRoundEligiblePlayer {
+  id       String @id @default(cuid())
+  roundId  String
+  playerId String
+  teamId   String?
+
+  round MainRound @relation(fields: [roundId], references: [id], onDelete: Cascade)
+
+  @@unique([roundId, playerId])
+  @@index([roundId])
+}
+
+model MainAnswer {
+  id               String   @id @default(cuid())
+  sessionId        String
+  roundId          String
+  playerId         String
+  /// Idempotency attempt pertama yang diterima (denormalisasi untuk audit).
+  submissionId     String
+  selectedOptionId String
+  isCorrect        Boolean
+  submittedAt      DateTime
+  createdAt        DateTime @default(now())
+
+  round MainRound @relation(fields: [roundId], references: [id], onDelete: Cascade)
+
+  /// Business uniqueness: SATU jawaban final per (round, player).
+  @@unique([roundId, playerId])
+  @@index([sessionId])
+  @@index([playerId])
+}
+
+/// Ledger attempt submit untuk idempotency yang survive restart.
+/// submissionId unik GLOBAL: retry lintas round dengan ID sama
+/// dianggap konflik, bukan attempt baru.
+model MainAnswerSubmission {
+  id               String   @id @default(cuid())
+  submissionId     String   @unique
+  sessionId        String
+  roundId          String
+  playerId         String
+  selectedOptionId String
+  accepted         Boolean
+  createdAt        DateTime @default(now())
+
+  @@index([roundId, playerId])
+  @@index([sessionId])
+}
+
+/// Snapshot state permainan (recoverable). Per-round results disimpan
+/// di MainGameRoundResult; field snapshot di sini untuk fast recovery.
+model MainGameState {
+  id         String             @id @default(cuid())
+  sessionId  String             @unique
+  gameMode   MainGameMode
+  status     MainGameStateStatus @default(ACTIVE)
+  /// Domain state (JelajahKataState/KotaCahayaState subset non-visual),
+  /// dipetakan eksplisit oleh infrastructure mappers.
+  state      Json
+  updatedAt  DateTime           @updatedAt
+
+  session MainSession         @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  rounds  MainGameRoundResult[]
+
+  @@index([sessionId])
+}
+
+/// Bukti per-round yang sudah diaplikasikan Game Engine (auditable,
+/// idempotency durable): apply round sama lagi setelah reload tetap
+/// ditolak. sessionId + gameMode + roundId unik.
+model MainGameRoundResult {
+  id        String   @id @default(cuid())
+  sessionId String
+  gameStateId String
+  roundId   String
+  gameMode  MainGameMode
+  /// Hasil round (Jelajah: per-regu accuracy/delta/progressAfter;
+  /// Kota: contribution delta/after, milestones baru).
+  result    Json
+  createdAt DateTime @default(now())
+
+  gameState MainGameState @relation(fields: [gameStateId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, gameMode, roundId])
+  @@index([sessionId])
+}

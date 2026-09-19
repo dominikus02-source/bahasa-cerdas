@@ -467,6 +467,35 @@ export default function GuruGameHubPage() {
           )}
         </section>
 
+        {/* ── MAIN BERSAMA (entry — kuis kelas, DI ATAS gim solo) ── */}
+        <div className="mb-8">
+          <div className="bg-gradient-to-br from-teal-600 via-emerald-700 to-teal-900 rounded-2xl p-5 text-white relative overflow-hidden shadow-sm">
+            <div className="absolute top-0 right-0 w-44 h-44 bg-emerald-400/20 rounded-full blur-[70px]" />
+            <div className="absolute bottom-0 left-6 w-28 h-28 bg-teal-300/10 rounded-full blur-[50px]" />
+            <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-4">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <div className="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20 shrink-0">
+                  <Users className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[10px] text-emerald-200 uppercase tracking-wider font-semibold">Main Bersama</p>
+                  <h3 className="font-extrabold text-slate-50 leading-snug">Ajak seluruh kelas bermain langsung dengan soal BahasaCerdas.</h3>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/15 border border-white/20">Jelajah Kata</span>
+                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/15 border border-white/20">Kota Cahaya</span>
+                  </div>
+                </div>
+              </div>
+              <Link
+                href="/guru/game/main-bersama"
+                className="shrink-0 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white text-emerald-800 font-bold text-sm shadow-sm hover:bg-emerald-50 hover:shadow transition-colors"
+              >
+                <Play className="w-4 h-4" /> Mulai Bersama
+              </Link>
+            </div>
+          </div>
+        </div>
+
         {/* ── MAIN GAME ─────────────────────────────────────── */}
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-3">

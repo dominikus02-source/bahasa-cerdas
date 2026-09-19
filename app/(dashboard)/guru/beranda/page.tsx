@@ -59,17 +59,6 @@ function StatCardSkeleton() {
   );
 }
 
-function CreateMenu() {
-  return (
-    <Link
-      href="/murid/beranda"
-      className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl text-sm font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all shadow-lg shadow-emerald-500/20"
-    >
-      <GraduationCap size={16} /> Dasbor Murid
-    </Link>
-  );
-}
-
 export default function GuruBerandaPage() {  const user = useUserStore()
   const [stats, setStats] = useState<any>({
     totalKarya: 0, totalSiswa: 0, totalKuis: 0, totalTerjual: 0,
@@ -198,9 +187,7 @@ export default function GuruBerandaPage() {  const user = useUserStore()
             kelasAktif={nilaiStats.length}
             tugasMenunggu={nilaiStats.reduce((a: number, ns: any) => a + (ns.belumDinilai || 0), 0)}
             loading={loading}
-          >
-            <CreateMenu />
-          </TeacherCommandCenter>
+          />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6 mt-6">
             <GuruLeaderboardCard misiStatus={misiStatus} />
