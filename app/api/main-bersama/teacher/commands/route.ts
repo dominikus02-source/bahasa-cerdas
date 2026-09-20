@@ -23,6 +23,9 @@ import {
   PrismaBankSoalQuestionSource,
 } from '@/src/main-bersama/adapters/bank-soal/bank-soal-source';
 import {
+  PrismaBankThemeQuestionSource,
+} from '@/src/main-bersama/infrastructure/repositories/prisma-bank-theme-source';
+import {
   PrismaMainBersamaClassDirectory,
 } from '@/src/main-bersama/adapters/kelas/class-directory';
 import {
@@ -85,7 +88,9 @@ export async function POST(req: NextRequest) {
     const result = await createMainSession(
       {
         actor,
-        bankSoal: new PrismaBankSoalQuestionSource(),
+        // Composition root: sumber tema Bank Soal (util BC) diinjeksi
+        // dari luar adapter — lihat ports.ts BankThemeQuestionSource.
+        bankSoal: new PrismaBankSoalQuestionSource(new PrismaBankThemeQuestionSource()),
         classes: new PrismaMainBersamaClassDirectory(),
         store: new PrismaMainSessionCreationStore(),
         ids: new UuidIdGenerator(),

@@ -18,10 +18,12 @@ import { readFileSync } from 'fs';
 import path from 'path';
 import type {
   BankSoalPackageRef,
-  BankSoalQuestionSource,
   BankSoalQuestionInput,
+  BankSoalQuestionSource,
   BankSoalSourceResult,
+  BankThemeQuestionSource,
 } from '../../application/use-cases/ports';
+import { normalizePackageRef } from './package-ref';
 
 /** Baca satu tema dari bank master statis repo (read-only). */
 function loadMasterTheme(theme: string): BankSoalSourceResult {
@@ -61,9 +63,30 @@ function loadMasterTheme(theme: string): BankSoalSourceResult {
 }
 
 export class PrismaBankSoalQuestionSource implements BankSoalQuestionSource {
-  async loadQuestions(ref: BankSoalPackageRef): Promise<BankSoalSourceResult> {
+  /**
+   * `bankTheme` = port tema Bank Soal (implementasi infrastructure,
+   * diinjeksi route). Opsional supaya pemakai lama (SOAL_SET /
+   * MASTER_THEME) tetap bisa membuat instance tanpa dependensi ini.
+   */
+  constructor(private readonly bankTheme?: BankThemeQuestionSource) {}
+
+  async loadQuestions(rawRef: BankSoalPackageRef): Promise<BankSoalSourceResult> {
+    // Ref dari request selalu dinormalisasi di boundary yang sama
+    // dengan compatibility route — DUA pintu masuk tidak boleh berbeda.
+    const ref = normalizePackageRef(rawRef);
+    if (!ref) return { ok: false, code: 'PACKAGE_NOT_FOUND' };
+
     if (ref.kind === 'MASTER_THEME') {
       return loadMasterTheme(ref.theme);
+    }
+    if (ref.kind === 'BANK_THEME') {
+      if (!this.bankTheme) return { ok: false, code: 'PACKAGE_NOT_FOUND' };
+      return this.bankTheme.load({
+        topic: ref.topic,
+        ...(ref.count !== undefined ? { count: ref.count } : {}),
+        difficulty: ref.difficulty ?? null,
+        ...(ref.seed !== undefined ? { seed: ref.seed } : {}),
+      });
     }
 
     // SoalSet existing — soal milik paket, urutan stabil by createdAt+id.
