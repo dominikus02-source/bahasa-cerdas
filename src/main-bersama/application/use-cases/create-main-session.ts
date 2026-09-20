@@ -19,7 +19,7 @@ import type {
   GameMode,
 } from '../../domain/types/session';
 import type { GameEngineState } from '../../games/game-router';
-import type { MainSession } from '../../domain/entities/session';
+import { DEFAULT_CONTENT_TITLE, type MainSession } from '../../domain/entities/session';
 import type { MainQuestionSnapshot } from '../../domain/entities/question';
 import { createGameState } from '../../games/game-router';
 import type {
@@ -86,6 +86,8 @@ export type CreateMainSessionResult =
         | 'NO_SUPPORTED_QUESTIONS'
         | 'INVALID_GAME_CONFIG'
         | 'PIN_TAKEN'
+        /** Skema Main Bersama belum ada / DB tak terjangkau (bukan bug pemanggil). */
+        | 'SESSION_STORE_UNAVAILABLE'
         | 'SESSION_CREATION_FAILED';
       /** Detail kompatibilitas bila PACKAGE_INCOMPATIBLE. */
       detail?: { total: number; supported: number; unsupported: number };
@@ -119,10 +121,14 @@ export async function createMainSession(
     className = cls.name; // display snapshot — bukan identity
   }
 
-  // 3. Muat soal dari Bank Soal existing (read-only).
+  // 3. Muat soal dari Bank Soal existing (read-only). Label konten ikut
+  //    terbawa dari sumber (tema/SoalSet) — snapshot, bukan query ulang.
   const source = await deps.bankSoal.loadQuestions(input.packageRef);
   if (!source.ok) return { ok: false, code: 'PACKAGE_NOT_FOUND' };
   if (source.questions.length === 0) return { ok: false, code: 'PACKAGE_EMPTY' };
+  // Defensif: sumber yang lupa mengirim label tidak boleh membuat sesi
+  // gagal — jatuh ke label netral.
+  const contentTitle = (source.contentTitle ?? '').trim().slice(0, 120) || DEFAULT_CONTENT_TITLE;
 
   // 4-5. Kompatibilitas eksplisit + adaptasi (satu pass).
   //      Mode default = STRICT: paket campuran ditolak supaya caller
@@ -213,6 +219,9 @@ export async function createMainSession(
     teacherId,
     ...(input.classId !== undefined ? { classId: input.classId } : {}),
     ...(className !== undefined ? { className } : {}),
+    // SNAPSHOT identitas konten (§7): sesi tetap menampilkan nama tema
+    // meski sumber Bank Soal kemudian berubah atau hilang.
+    contentTitle,
     gameMode: input.gameMode,
     phase: 'preparing',
     currentRoundIndex: null,

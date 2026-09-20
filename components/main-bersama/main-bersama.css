@@ -503,6 +503,9 @@
   font-size: 1.1rem;
 }
 .mb-pj-class { color: var(--mb-text-secondary); font-weight: 600; }
+/* Identitas konten sesi (mis. "Antonim") — lebih menonjol daripada
+   kelas/mode karena ini yang menjawab "sedang main soal apa". */
+.mb-pj-pkg { color: var(--mb-text-primary); font-weight: 800; }
 .mb-pj-phase {
   flex: 1;
   display: flex;
@@ -590,6 +593,9 @@
   letter-spacing: 0.1em;
 }
 .mb-lobby-wait, .mb-lobby-hint { color: var(--mb-text-guru-secondary); margin: 0; }
+/* Chip identitas konten sesi ("Antonim") — menonjol dari chip lain
+   karena ini yang menjawab "soal apa yang dimainkan". */
+.mb-lobby-content { font-weight: 800; color: var(--mb-primary-strong); }
 .mb-tquestion-status {
   display: flex;
   align-items: center;

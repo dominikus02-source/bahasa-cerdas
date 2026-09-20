@@ -17,6 +17,11 @@ interface StudentViewBase {
   serverTime: string;
   revision: number;
   gameMode: GameMode;
+  /**
+   * Nama konten yang sedang dimainkan (mis. "Antonim") — snapshot
+   * public-safe saat sesi dibuat, tanpa isi soal.
+   */
+  contentTitle: string;
   /** Nama tampil milik peserta ini (bukan identitas user internal). */
   displayName: string;
   team?: TeamPublicInfo;
@@ -31,6 +36,8 @@ interface StudentPreRoundView extends StudentViewBase {
   phase: 'preparing' | 'lobby' | 'closed' | 'paused';
   /** Jumlah peserta yang sudah bergabung (tanpa identitas). */
   participantCount: number;
+  /** Total soal sesi — untuk konteks ringan di lobby ("Antonim · 10 soal"). */
+  totalRounds: number;
 }
 
 /** Soal aktif — tanpa correctOptionId, isCorrect, atau explanation. */

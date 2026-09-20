@@ -92,6 +92,9 @@ export function ProjectorClient() {
           <p className="mb-pj-sub">Kuis kelas <strong>langsung</strong> bersama BahasaCerdas</p>
         </div>
         <div className="mb-pj-head-meta">
+          {/* Nama konten lebih dulu: terlihat dari jauh dan tetap ada
+              sampai summary/ended (§11/§12). */}
+          <span className="mb-pj-pkg">{view.contentTitle}</span>
           <span className="mb-pj-mode">{MODE_LABEL[view.gameMode]}</span>
           {view.className ? <span className="mb-pj-class">Kelas {view.className}</span> : null}
         </div>

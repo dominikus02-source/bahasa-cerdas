@@ -246,7 +246,8 @@ class FakeBankSoal implements BankSoalQuestionSource {
     if (ref.kind !== 'SOAL_SET') return { ok: false, code: 'PACKAGE_NOT_FOUND' };
     const qs = this.bank.get(ref.soalSetId);
     if (!qs) return { ok: false, code: 'PACKAGE_NOT_FOUND' };
-    return { ok: true, questions: qs.map((q) => ({ ...q })) };
+    // Label konten (8A.4): nama tema/paket yang ikut disnapshot ke sesi.
+    return { ok: true, contentTitle: 'Antonim', questions: qs.map((q) => ({ ...q })) };
   }
 }
 
@@ -360,6 +361,17 @@ async function main(): Promise<void> {
   });
   check('1. teacher create room (paket + KelasKu)', jelajah.sessionId.length > 0);
   check('2. lobby terbuka (PIN ada)', /^\d{6}$/.test(jelajah.pin));
+  {
+    const labelRow = await db.mainSession.findUnique({
+      where: { id: jelajah.sessionId },
+      select: { contentTitle: true },
+    });
+    check(
+      '2b. contentTitle tersnapshot & tersimpan di DB',
+      labelRow?.contentTitle === 'Antonim',
+      String(labelRow?.contentTitle),
+    );
+  }
   check('3. 4 guest join', jelajah.credentials.size === 4);
   {
     const teams = await db.mainPlayer.groupBy({

@@ -10,6 +10,7 @@
 //    credential/token siapa pun.
 
 import type { SessionEngine } from '../application/services/session-engine';
+import { DEFAULT_CONTENT_TITLE } from '../domain/entities/session';
 import type { RuntimePlayer } from '../domain/entities/session-runtime-state';
 import type {
   MainQuestionSnapshot,
@@ -50,6 +51,14 @@ export function toPublicQuestionView(q: MainQuestionSnapshot): PublicQuestionVie
   };
   if (q.passage) view.passage = { ...q.passage };
   return view;
+}
+
+/**
+ * Label konten sesi versi aman: snapshot dari sesi, atau label netral
+ * untuk baris lama yang dibuat sebelum kolom `contentTitle` ada.
+ */
+function contentTitleOf(engine: SessionEngine): string {
+  return engine.state.session.contentTitle?.trim() || DEFAULT_CONTENT_TITLE;
 }
 
 function revisionOf(engine: SessionEngine): number {
@@ -131,6 +140,7 @@ export function buildStudentView(
     serverTime: now.toISOString(),
     revision: revisionOf(engine),
     gameMode: session.gameMode as GameMode,
+    contentTitle: contentTitleOf(engine),
     displayName: player.displayName,
     connectionStatus: (player.connected ? 'connected' : 'disconnected') as
       | 'connected'
@@ -149,6 +159,7 @@ export function buildStudentView(
         ...base,
         phase,
         participantCount: engine.state.players.size,
+        totalRounds: session.totalRounds,
       },
     };
   }
@@ -159,7 +170,12 @@ export function buildStudentView(
     if (!round) {
       return {
         ok: true,
-        view: { ...base, phase: 'lobby', participantCount: engine.state.players.size },
+        view: {
+          ...base,
+          phase: 'lobby',
+          participantCount: engine.state.players.size,
+          totalRounds: session.totalRounds,
+        },
       };
     }
     const own = engine.state.answersByRound.get(round.id)?.get(playerId);
@@ -188,7 +204,12 @@ export function buildStudentView(
     // Tanpa round sama sekali (korup/teoretis) — kembali ke pre-round aman.
     return {
       ok: true,
-      view: { ...base, phase: 'lobby', participantCount: engine.state.players.size },
+      view: {
+        ...base,
+        phase: 'lobby',
+        participantCount: engine.state.players.size,
+        totalRounds: session.totalRounds,
+      },
     };
   }
   const own = engine.state.answersByRound.get(round.id)?.get(playerId);
@@ -283,6 +304,7 @@ export function buildTeacherView(
     sessionId: session.id,
     serverTime: now.toISOString(),
     revision: revisionOf(engine),
+    contentTitle: contentTitleOf(engine),
     gameMode: session.gameMode as GameMode,
     phase,
     currentRoundIndex: session.currentRoundIndex,
@@ -356,6 +378,7 @@ export function buildProjectorView(
     sessionId: session.id,
     serverTime: now.toISOString(),
     revision: revisionOf(engine),
+    contentTitle: contentTitleOf(engine),
     gameMode: session.gameMode as GameMode,
     phase,
     joinInfo: lobby

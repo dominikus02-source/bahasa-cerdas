@@ -5,11 +5,19 @@
 // tidak pernah tercipta.
 //
 // PIN collision (P2002 di MainSession) dikonversi ke PIN_TAKEN —
-// caller bisa retry dengan PIN baru. Prisma error TIDAK bocor.
+// caller bisa retry dengan PIN baru. Prisma error TIDAK bocor ke
+// respons, tetapi SELALU dicatat di log server (sebelumnya error mentah
+// hilang tanpa jejak sehingga kegagalan ruang mustahil didiagnosis).
+//
+// Klasifikasi tambahan `SESSION_STORE_UNAVAILABLE`: skema Main Bersama
+// belum diterapkan di database yang dipakai (P2021/P2022) atau
+// database tidak terjangkau (P1001/P1002/P1017). Ini BUKAN kegagalan
+// sementara — retry tidak akan menolong, jadi tidak boleh disamarkan
+// sebagai error internal generik.
 
 import { Prisma } from '@prisma/client';
 import { db } from '@/lib/db';
-import type { MainSession } from '../../domain/entities/session';
+import { DEFAULT_CONTENT_TITLE, type MainSession } from '../../domain/entities/session';
 import type { GameMode } from '../../domain/types/session';
 import type { GameEngineState } from '../../games/game-router';
 import type {
@@ -22,6 +30,23 @@ import {
   kotaStateToJson,
 } from '../repositories/prisma-game-state-repository';
 
+/**
+ * Terjemahan error Prisma → kode aplikasi (murni, dapat diuji tanpa DB).
+ * `P2002` = unique (PIN) → retry PIN baru; tabel/kolom belum ada atau DB
+ * tak terjangkau → lingkungan belum siap; sisanya kegagalan tak terduga.
+ */
+export function classifyCreationFailure(
+  error: unknown,
+): 'PIN_TAKEN' | 'SESSION_STORE_UNAVAILABLE' | 'SESSION_CREATION_FAILED' {
+  const code = (error as { code?: unknown } | null)?.code;
+  if (typeof code === 'string') {
+    if (code === 'P2002') return 'PIN_TAKEN';
+    if (code === 'P2021' || code === 'P2022') return 'SESSION_STORE_UNAVAILABLE';
+    if (code === 'P1001' || code === 'P1002' || code === 'P1017') return 'SESSION_STORE_UNAVAILABLE';
+  }
+  return 'SESSION_CREATION_FAILED';
+}
+
 export class PrismaMainSessionCreationStore implements MainSessionCreationStore {
   async createMainSessionWithRuntime(input: {
     session: MainSession;
@@ -30,7 +55,10 @@ export class PrismaMainSessionCreationStore implements MainSessionCreationStore 
     /** Null = Kota Cahaya PENDING_ROSTER (target belum difinalisasi). */
     initialState: GameEngineState | null;
     gameMode: GameMode;
-  }): Promise<{ ok: true } | { ok: false; code: 'PIN_TAKEN' | 'SESSION_CREATION_FAILED' }> {
+  }): Promise<
+    | { ok: true }
+    | { ok: false; code: 'PIN_TAKEN' | 'SESSION_STORE_UNAVAILABLE' | 'SESSION_CREATION_FAILED' }
+  > {
     try {
       await db.$transaction(async (tx) => {
         // 1. Sesi — phase PREPARING (mapping eksplisit, bukan string).
@@ -41,6 +69,8 @@ export class PrismaMainSessionCreationStore implements MainSessionCreationStore 
             teacherId: input.session.teacherId,
             classId: input.session.classId ?? null,
             className: input.session.className ?? null,
+            // Kolom NOT NULL: sesi baru selalu membawa snapshot label.
+            contentTitle: input.session.contentTitle?.trim() || DEFAULT_CONTENT_TITLE,
             gameMode: gameModeToDb(input.gameMode),
             phase: phaseToDb(input.session.phase),
             currentRoundIndex: input.session.currentRoundIndex,
@@ -99,13 +129,16 @@ export class PrismaMainSessionCreationStore implements MainSessionCreationStore 
       });
       return { ok: true };
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-        // Unique violation pada PIN sesi (constraint terkecil yang
-        // relevan di jalur ini) → caller retry dengan PIN baru.
-        return { ok: false, code: 'PIN_TAKEN' };
-      }
+      const code = classifyCreationFailure(error);
+      // Jejak server-side: penyebab NYATA (mis. "The table `public.MainSession`
+      // does not exist") harus terlihat di log saat ruang gagal dibuka.
+      // Tidak pernah dikirim ke klien — respons tetap pesan Indonesia ramah.
+      console.error(
+        `[main-bersama] gagal membuat sesi (${code}):`,
+        error instanceof Error ? error.message : error,
+      );
       // Detail infrastruktur berhenti di sini — tidak bocor ke domain.
-      return { ok: false, code: 'SESSION_CREATION_FAILED' };
+      return { ok: false, code };
     }
   }
 }

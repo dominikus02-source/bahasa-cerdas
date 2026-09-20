@@ -131,7 +131,7 @@ export function StudentGameClient({ sessionId }: { sessionId: string }) {
   return (
     <main className="mb-sgame">
       <ConnectionBanner visible={connection === 'offline'} />
-      <SessionHeader mode={view.gameMode} />
+      <SessionHeader mode={view.gameMode} packageName={view.contentTitle} />
       {isPreRound(view) ? (
         <StudentLobby view={view} />
       ) : view.phase === 'question' ? (
@@ -160,6 +160,9 @@ function StudentLobby({
     <section className="mb-slobby mb-fade-in">
       <span className="mb-wait-orb" aria-hidden />
       <h1 className="mb-display mb-slobby-title">Halo, {view.displayName}!</h1>
+      <p className="mb-slobby-content">
+        <strong>{view.contentTitle}</strong> · {view.totalRounds} soal
+      </p>
       <p className="mb-slobby-mode">
         Kamu ikut <strong>{isJelajah ? 'Jelajah Kata' : 'Kota Cahaya'}</strong>
       </p>
@@ -197,6 +200,14 @@ function StudentLobby({
           text-align: center;
         }
         .mb-slobby-title { margin: 0; font-size: 1.8rem; }
+        /* Identitas konten (mis. "Antonim · 10 soal") — konteks ringan,
+           bukan pengaturan: siswa tahu sedang bermain apa. */
+        .mb-slobby-content {
+          margin: 0;
+          color: var(--mb-text-secondary);
+          font-size: 0.95rem;
+        }
+        .mb-slobby-content strong { color: var(--mb-text-primary); }
         .mb-slobby-mode { margin: 0; color: var(--mb-text-secondary); }
         .mb-slobby-mode strong { color: var(--mb-text-primary); }
         .mb-slobby-team { margin: 0; color: var(--mb-text-secondary); }

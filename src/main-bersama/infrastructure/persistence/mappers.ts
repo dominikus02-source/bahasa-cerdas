@@ -15,7 +15,7 @@ import type {
   MainQuestionOption,
   MainQuestionSnapshot,
 } from '../../domain/entities/question';
-import type { MainSession } from '../../domain/entities/session';
+import { DEFAULT_CONTENT_TITLE, type MainSession } from '../../domain/entities/session';
 import type { MainPlayer } from '../../domain/entities/player';
 import type { MainRound } from '../../domain/entities/round';
 import type { MainAnswer } from '../../domain/entities/answer';
@@ -87,6 +87,10 @@ export function sessionToDbCreate(session: MainSession): Prisma.MainSessionUnche
     teacherId: session.teacherId,
     classId: session.classId,
     className: session.className,
+    // Label konten WAJIB terisi (kolom NOT NULL): sesi baru selalu
+    // membawa snapshot dari create-session; data legacy memakai label
+    // netral sehingga tidak pernah menulis null.
+    contentTitle: session.contentTitle?.trim() || DEFAULT_CONTENT_TITLE,
     gameMode: gameModeToDb(session.gameMode),
     phase: phaseToDb(session.phase),
     currentRoundIndex: session.currentRoundIndex,
@@ -139,6 +143,7 @@ export function sessionToDomain(row: SessionRow): MainSession {
     teacherId: row.teacherId,
     classId: row.classId ?? undefined,
     className: row.className ?? undefined,
+    contentTitle: row.contentTitle || DEFAULT_CONTENT_TITLE,
     gameMode: gameModeToDomain(row.gameMode),
     phase: phaseToDomain(row.phase),
     currentRoundIndex: row.currentRoundIndex,
