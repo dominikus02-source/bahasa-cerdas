@@ -19,7 +19,7 @@
 import type { CanonicalMap, CanonicalMapId, CanonicalEnemySpawn } from "../data/world-maps";
 import { getCanonicalMap, RPG_TILES } from "../data/world-maps";
 import { tileToNorm } from "./grid-coords";
-import type { RPGWorldState, RPGInteractionPoint } from "./world-state";
+import type { RPGWorldState, RPGInteractionPoint, RPGWorldEntity } from "./world-state";
 
 /** Opaque but deterministic tile id for a canonical numeric tile. */
 export function canonicalTileId(tile: number): string {
@@ -79,7 +79,15 @@ export function loadCanonicalMap(
       height: map.height,
       tiles,
     },
-    entities: [],
+    entities: map.entities.map((e): RPGWorldEntity => ({
+      id: e.id,
+      type: e.type,
+      position: tileToNorm(map, e.x, e.y),
+      scale: e.scale,
+      layer: e.layer,
+      solid: e.solid,
+      asset: e.asset,
+    })),
     interactions,
   };
 }

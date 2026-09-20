@@ -454,19 +454,25 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     return pendingServerCalls.summary();
   }
 
+  // P2.8.6-B4: mutable encounter filter — unlocks boss after quest stage 2.
+  // If quest is already past the vertical slice (hydration), don't restrict.
+  const initialQuestMain = config.quest?.main ?? 0;
+  let activeEncounterFilter: string[] | null =
+    initialQuestMain >= 2 ? null : (config.allowedEncounterIds ? [...config.allowedEncounterIds] : null);
+
   function visibleEncounterTable(mapId: string): LiveEnemy[] {
     const canon = getCanonicalMap(mapId);
     if (!canon) return [];
     const table = buildEncounterTable(enemySpawnsOf(canon), deadBossIds).table;
-    if (!config.allowedEncounterIds) return table;
-    const allowed = new Set(config.allowedEncounterIds);
+    if (!activeEncounterFilter) return table;
+    const allowed = new Set(activeEncounterFilter);
     return table.filter((enemy) => allowed.has(enemy.instanceId));
   }
 
   if (canonicalStart) {
     const built = buildEncounterTable(enemySpawnsOf(canonicalStart), deadBossIds);
-    liveEnemies = config.allowedEncounterIds
-      ? built.table.filter((enemy) => config.allowedEncounterIds?.includes(enemy.instanceId))
+    liveEnemies = activeEncounterFilter
+      ? built.table.filter((enemy) => activeEncounterFilter?.includes(enemy.instanceId))
       : built.table;
     for (const id of built.skippedSpawnIds) {
       console.warn(`[rpg] spawn without canonical definition skipped: ${id}`);
@@ -757,6 +763,15 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
           );
         }
       }
+    }
+
+    // P2.8.6-B4: Unlock boss encounters after quest advances past vertical slice.
+    // When quest.main >= 2, the player has outgrown the slice filter — allow all
+    // encounters (including eboss). reloadLiveEnemies rebuilds the table.
+    if (quest.main >= 2 && activeEncounterFilter) {
+      activeEncounterFilter = null;
+      const currentMap = currentState.world.mapId;
+      if (currentMap) reloadLiveEnemies(currentMap);
     }
 
     eventBus.emit({ type: "BATTLE_END", battleId: battle.battleId, winnerId: player.id });
@@ -1857,6 +1872,12 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
         quest: quest.main,
         kills: quest.kills,
       });
+      // P2.8.6-B4: Unlock boss encounters when quest advances past slice.
+      if (quest.main >= 2 && activeEncounterFilter) {
+        activeEncounterFilter = null;
+        const currentMap = currentState.world.mapId;
+        if (currentMap) reloadLiveEnemies(currentMap);
+      }
     }
 
     // P2.6I.2: Sync dialogue quest/flag mutations to server-authoritative state.
