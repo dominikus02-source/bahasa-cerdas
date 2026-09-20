@@ -4034,6 +4034,7 @@ model MainSession {
   /// KelasKu (Group.id) bila sesi terikat kelas. Plain string, nullable.
   classId           String?
   className         String?
+  contentTitle      String           @default("Paket Soal")
   gameMode          MainGameMode
   phase             MainSessionPhase @default(PREPARING)
   currentRoundIndex Int?
