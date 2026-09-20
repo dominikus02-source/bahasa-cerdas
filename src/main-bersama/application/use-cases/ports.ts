@@ -13,7 +13,27 @@ import type { MainSession } from '../../domain/entities/session';
 /** Jenis sumber paket soal di Bank Soal BahasaCerdas (v1). */
 export type BankSoalPackageRef =
   | { kind: 'SOAL_SET'; soalSetId: string }
-  | { kind: 'MASTER_THEME'; theme: string };
+  | { kind: 'MASTER_THEME'; theme: string }
+  /**
+   * Tema Bank Soal (grup `Soal` source=MASTER_BANK per `topik`) — jalur
+   * yang dipakai tombol "Gunakan untuk Main Bersama" di halaman Bank
+   * Soal. Pilihan soal (jumlah/tingkat/seed) memakai aturan pemilihan
+   * yang SAMA dengan Latihan (`pickBankSoalSet`), sehingga set yang
+   * dipratinjau guru = set yang dimainkan.
+   *
+   * Ini referensi-sumber, BUKAN paket baru: tidak ada SoalSet/Soal
+   * duplikat yang dibuat, dan tidak ada isi soal yang dikirim client.
+   */
+  | {
+      kind: 'BANK_THEME';
+      topic: string;
+      /** Jumlah soal yang diminta guru (1..30). Default: semua yang lolos. */
+      count?: number;
+      /** MUDAH | SEDANG | SULIT — kosong = semua tingkat. */
+      difficulty?: string | null;
+      /** Seed pemilihan deterministik; kosong = urutan sumber apa adanya. */
+      seed?: string;
+    };
 
 /**
  * Bentuk netral soal dari Bank Soal — SATU bentuk input untuk
@@ -44,6 +64,27 @@ export type BankSoalSourceResult =
 /** Port sumber soal (dipakai use-case, diimplementasi adapter). */
 export interface BankSoalQuestionSource {
   loadQuestions(ref: BankSoalPackageRef): Promise<BankSoalSourceResult>;
+}
+
+/** Parameter pemilihan satu tema Bank Soal (varian BANK_THEME). */
+export interface BankThemeSelection {
+  topic: string;
+  count?: number;
+  difficulty?: string | null;
+  seed?: string;
+}
+
+/**
+ * Port khusus tema Bank Soal.
+ *
+ * Dipisah karena pemilihannya memakai aturan Bank Soal BahasaCerdas
+ * (gerbang pengiriman + seeded pick) yang tinggal di `lib/` — hanya
+ * boleh disentuh lapisan infrastructure. Adapter Bank Soal tetap
+ * bersih: ia menerima implementasi port ini lewat konstruktor
+ * (komposisi di route), bukan mengimpor util BC langsung.
+ */
+export interface BankThemeQuestionSource {
+  load(ref: BankThemeSelection): Promise<BankSoalSourceResult>;
 }
 
 // ─── KelasKu ────────────────────────────────────────────────

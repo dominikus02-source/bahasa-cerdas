@@ -99,7 +99,20 @@ export async function postTeacherCommand(payload: {
   action: TeacherAction;
   sessionId?: string;
   gameMode?: string;
-  packageRef?: { kind: 'SOAL_SET'; soalSetId: string };
+  /**
+   * Sumber soal untuk create-session. `BANK_THEME` = tema Bank Soal
+   * (referensi sumber, bukan paket baru) dengan parameter pilihan.
+   * Server menormalisasi ulang — bentuk tak dikenal ditolak.
+   */
+  packageRef?:
+    | { kind: 'SOAL_SET'; soalSetId: string }
+    | {
+        kind: 'BANK_THEME';
+        topic: string;
+        count?: number;
+        difficulty?: string | null;
+        seed?: string;
+      };
   classId?: string;
   useSupportedQuestions?: boolean;
 }): Promise<Record<string, unknown>> {

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -37,6 +37,14 @@ interface GroupItem {
   memberCount?: number;
 }
 
+/**
+ * Satu tema Bank Soal dapat dipakai untuk DUA aktivitas. Modal tidak
+ * lagi diasumsikan selalu "Latihan" — guru memilih di segmented control
+ * ("Gunakan Tema"). Mode default = Latihan agar alur lama tidak berubah;
+ * dibuka dari Main Bersama (?untuk=main-bersama) default = Main Bersama.
+ */
+type ThemeUseMode = "latihan" | "main-bersama";
+
 interface LatihanItem {
   id: string;
   title: string;
@@ -53,10 +61,20 @@ interface LatihanItem {
 
 export default function BankSoalPage() {
   const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  // Konteks masuk: halaman ini dibuka dari tombol "Pilih dari Bank Soal"
+  // di setup Main Bersama → modal langsung di mode Main Bersama.
+  const openedForMainBersama = searchParams.get("untuk") === "main-bersama";
   const [themes, setThemes] = useState<ThemeData[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedTheme, setSelectedTheme] = useState<ThemeData | null>(null);
+  const [modalMode, setModalMode] = useState<ThemeUseMode>("latihan");
+  // Seed pemilihan soal mode Main Bersama: dibuat SEKALI per pembukaan
+  // modal, dipakai untuk "Lihat Soal" dan diteruskan ke setup sehingga
+  // yang dipratinjau == yang dimainkan. Identifier internal, bukan isi soal.
+  const [mbSeed, setMbSeed] = useState("");
   const [groups, setGroups] = useState<GroupItem[]>([]);
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
   const [sendJumlah, setSendJumlah] = useState(10);
@@ -78,11 +96,16 @@ export default function BankSoalPage() {
   } | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
 
-  const handlePreview = async () => {
+  /**
+   * Preview soal. `fixedSeed` dipakai mode Main Bersama (set stabil yang
+   * sama dengan yang diteruskan ke sesi); tanpa itu perilaku Latihan
+   * lama dipertahankan (seed baru tiap klik + disimpan untuk kiriman).
+   */
+  const handlePreview = async (fixedSeed?: string) => {
     if (!selectedTheme) return;
     setPreviewLoading(true);
     try {
-      const seed = Math.random().toString(36).slice(2, 12);
+      const seed = fixedSeed ?? Math.random().toString(36).slice(2, 12);
       const params = new URLSearchParams({
         tema: selectedTheme.name,
         jumlah: String(sendJumlah),
@@ -93,7 +116,7 @@ export default function BankSoalPage() {
       const data = await res.json();
       if (data.success) {
         setPreview(data);
-        setQuestionSet({ seed: data.seed, questionIds: data.questionIds });
+        if (!fixedSeed) setQuestionSet({ seed: data.seed, questionIds: data.questionIds });
       } else {
         setSuccess(`❌ ${data.error || "Gagal memuat preview"}`);
         setTimeout(() => setSuccess(null), 4000);
@@ -137,12 +160,31 @@ export default function BankSoalPage() {
 
   const handleOpenSend = (theme: ThemeData) => {
     setSelectedTheme(theme);
+    setModalMode(openedForMainBersama ? "main-bersama" : "latihan");
+    setMbSeed(Math.random().toString(36).slice(2, 12));
     setSelectedGroups([]);
     setSendJumlah(10);
     setSendDifficulty("");
     setQuestionSet(null);
     setPreview(null);
     fetchGroups();
+  };
+
+  /**
+   * Handoff ke setup Main Bersama: hanya identitas + parameter pilihan
+   * yang dibawa lewat URL (tema, jumlah, tingkat, seed). Tidak ada isi
+   * soal/kunci jawaban di query string; verifikasi tetap server-side.
+   */
+  const handleUseForMainBersama = () => {
+    if (!selectedTheme) return;
+    const params = new URLSearchParams({
+      untuk: "main-bersama",
+      tema: selectedTheme.name,
+      jumlah: String(sendJumlah),
+    });
+    if (sendDifficulty) params.set("tingkat", sendDifficulty);
+    if (mbSeed) params.set("seed", mbSeed);
+    router.push(`/guru/game/main-bersama?${params.toString()}`);
   };
 
   const selectedEmptyGroups = selectedGroups.filter(id => {
@@ -501,11 +543,12 @@ export default function BankSoalPage() {
         )}
       </section>
 
-      {/* Send Modal — SOAL → FILTER → PREVIEW → TUJUAN */}
-      <Modal isOpen={!!selectedTheme} onClose={() => setSelectedTheme(null)} title="Siapkan Latihan" className="max-w-md">
+      {/* Gunakan Tema — SATU modal, dua aktivitas: Latihan | Main Bersama */}
+      <Modal isOpen={!!selectedTheme} onClose={() => setSelectedTheme(null)} title="Gunakan Tema" className="max-w-md">
         {selectedTheme && (() => {
           const catKey = getCategoryKey(selectedTheme.name);
           const cc = CAT_COLORS[catKey] || CAT_COLORS["Lainnya"];
+          const isMB = modalMode === "main-bersama";
           return (
           <div className="space-y-4">
             <div className={`p-3 bg-gradient-to-br ${cc.from} ${cc.to} rounded-xl text-white flex items-center gap-3`}>
@@ -516,6 +559,34 @@ export default function BankSoalPage() {
                 <p className="text-sm font-bold">{selectedTheme.name}</p>
                 <p className="text-[10px] opacity-80">{selectedTheme.total} soal tersedia</p>
               </div>
+            </div>
+
+            {/* Segmented control — aktivitas yang dituju */}
+            <div role="radiogroup" aria-label="Gunakan tema untuk" className="grid grid-cols-2 gap-1 rounded-xl bg-slate-100 p-1">
+              <button
+                type="button"
+                role="radio"
+                aria-checked={!isMB}
+                onClick={() => setModalMode("latihan")}
+                className={`flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition-all ${
+                  !isMB ? "bg-white text-emerald-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                }`}
+              >
+                <BookOpen size={15} aria-hidden />
+                Latihan
+              </button>
+              <button
+                type="button"
+                role="radio"
+                aria-checked={isMB}
+                onClick={() => setModalMode("main-bersama")}
+                className={`flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition-all ${
+                  isMB ? "bg-white text-violet-700 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                }`}
+              >
+                <MonitorPlay size={15} aria-hidden />
+                Main Bersama
+              </button>
             </div>            {/* Seksi 1 — SOAL */}
             <div>
               <label className="block text-sm font-medium mb-1">Jumlah soal</label>
@@ -545,7 +616,14 @@ export default function BankSoalPage() {
               </select>
             </div>
 
-            {/* Seksi 4 — TUJUAN */}
+            {isMB ? (
+              <p className="rounded-lg bg-violet-50 px-3 py-2 text-xs font-medium text-violet-700">
+                Kelas dapat dipilih setelah kembali ke Main Bersama.
+              </p>
+            ) : null}
+
+            {/* Seksi 4 — TUJUAN (hanya Latihan; kelas dipilih di setup Main Bersama) */}
+            {!isMB ? (
             <div>
               <label className="block text-sm font-semibold mb-2">Pilih Kelas</label>
               <div className="space-y-1.5 max-h-48 overflow-y-auto">
@@ -580,13 +658,14 @@ export default function BankSoalPage() {
                 )}
               </div>
             </div>
+            ) : null}
 
             <div className="pt-2 space-y-2">
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => setSelectedTheme(null)} className="flex-1">Batal</Button>
                 <Button
                   variant="outline"
-                  onClick={handlePreview}
+                  onClick={() => void handlePreview(isMB ? mbSeed : undefined)}
                   disabled={previewLoading}
                   className="flex-1"
                 >
@@ -594,16 +673,30 @@ export default function BankSoalPage() {
                   Lihat Soal
                 </Button>
               </div>
-              <Button
-                onClick={handleSend}
-                disabled={sending || selectedGroups.length === 0}
-                className="w-full bg-emerald-600"
-              >
-                {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send size={16} className="mr-1" />}
-                {sending ? "Mengirim..." : "Kirim Latihan"}
-              </Button>
+              {isMB ? (
+                <Button
+                  onClick={handleUseForMainBersama}
+                  className="w-full bg-violet-600"
+                >
+                  <MonitorPlay size={16} className="mr-1" />
+                  Gunakan untuk Main Bersama
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleSend}
+                  disabled={sending || selectedGroups.length === 0}
+                  className="w-full bg-emerald-600"
+                >
+                  {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send size={16} className="mr-1" />}
+                  {sending ? "Mengirim..." : "Kirim Latihan"}
+                </Button>
+              )}
               <p className="text-center text-xs text-gray-400">
-                {selectedGroups.length === 0 ? "Pilih minimal 1 kelas" : `${selectedGroups.length} kelas dipilih`}
+                {isMB
+                  ? "Jumlah soal & tingkat kesulitan bisa diubah lagi di Main Bersama."
+                  : selectedGroups.length === 0
+                    ? "Pilih minimal 1 kelas"
+                    : `${selectedGroups.length} kelas dipilih`}
               </p>
             </div>
           </div>);
