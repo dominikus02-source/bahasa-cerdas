@@ -40,6 +40,13 @@ export interface SessionStore {
     pausedAt: Date,
   ): Promise<void>;
   findByPin(pin: string): Promise<MainSession | null>;
+  /**
+   * Lookup DISPLAY read-only (proyektor) — termasuk sesi final
+   * SUMMARY/ENDED agar layar kelas tetap menampilkan hasil akhir.
+   * Terpisah dari findByPin (semantik sesi aktif) — jalur join &
+   * command tidak pernah memakai method ini.
+   */
+  findByPinForDisplay(pin: string): Promise<MainSession | null>;
   findOwnedBy(sessionId: SessionId, teacherId: string): Promise<MainSession | null>;
   findById(sessionId: SessionId): Promise<MainSession | null>;
 }

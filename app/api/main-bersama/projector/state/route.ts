@@ -26,9 +26,12 @@ export async function GET(req: NextRequest) {
   const pin = req.nextUrl.searchParams.get('pin');
   const sessionIdParam = req.nextUrl.searchParams.get('sessionId');
 
+  // Lookup DISPLAY (bukan sesi aktif): layar kelas harus tetap bisa
+  // resolve sesi saat sudah SUMMARY/ENDED. Jalur join & command tetap
+  // memakai semantik sesi aktif (findByPin).
   let sessionId = sessionIdParam ?? '';
   if (!sessionId && pin && /^\d{6}$/.test(pin)) {
-    const session = await deps.sessions.findByPin(pin);
+    const session = await deps.sessions.findByPinForDisplay(pin);
     if (!session) return errorResponse('SESSION_NOT_FOUND');
     sessionId = session.id;
   }

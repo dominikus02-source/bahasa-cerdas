@@ -30,6 +30,7 @@ import { CityProgress } from '@/components/main-bersama/shared/CityProgress';
 import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBanner';
 
 type Command =
+  | 'open-lobby'
   | 'start'
   | 'close-round'
   | 'discuss'
@@ -89,24 +90,8 @@ export function TeacherRoomClient({
   const isLastRound =
     (view.currentRoundIndex ?? -1) + 1 >= view.totalRounds;
   // ── CTA utama per fase (§18 — hanya aksi yang relevan) ──
-  let primary: { label: string; action: Command; disabled?: boolean } | null = null;
-  if (a.canStartSession) {
-    primary = {
-      label: 'Mulai Permainan',
-      action: 'start',
-      disabled: view.participants.length === 0,
-    };
-  } else if (a.canCloseRound) {
-    primary = { label: 'Tutup Jawaban', action: 'close-round' };
-  } else if (a.canStartDiscussion) {
-    primary = { label: 'Bahas Jawaban', action: 'discuss' };
-  } else if (a.canGoToNextRound) {
-    primary = isLastRound
-      ? { label: 'Lihat Hasil', action: 'next-round' }
-      : { label: 'Lanjut', action: 'next-round' };
-  } else if (view.phase === 'summary') {
-    primary = { label: 'Selesai', action: 'end' };
-  }
+  // Lobby section me-render CTA fase preparing/lobby (lihat di bawah);
+  // fase lain me-render CTA statis per section.
 
   const roundLabel =
     view.currentRoundIndex !== null
@@ -152,7 +137,8 @@ export function TeacherRoomClient({
             <span className="mb-eyebrow mb-lobby-eyebrow">PIN Ruang</span>
             <PinDisplay pin={pin} />
             <p className="mb-lobby-wait">
-              Siswa bergabung lewat <strong>ayo.bahasacerdas.com</strong> dengan PIN di atas.
+              Bagikan PIN ini kepada siswa untuk bergabung. Siswa membuka halaman
+              Gabung Main Bersama lalu memasukkan PIN.
             </p>
           </div>
           <div className="mb-lobby-meta">
@@ -177,14 +163,20 @@ export function TeacherRoomClient({
             </p>
           ) : null}
           <div className="mb-room-cta">
-            <PrimaryGameButton
-              onClick={() => run('start')}
-              disabled={busy || view.participants.length === 0}
-              loading={busy}
-              variant="light"
-            >
-              Mulai Permainan
-            </PrimaryGameButton>
+            {view.phase === 'preparing' ? (
+              <PrimaryGameButton onClick={() => run('open-lobby')} disabled={busy} loading={busy} variant="light">
+                Buka Ruang
+              </PrimaryGameButton>
+            ) : (
+              <PrimaryGameButton
+                onClick={() => run('start')}
+                disabled={busy || view.participants.length === 0}
+                loading={busy}
+                variant="light"
+              >
+                Mulai Permainan
+              </PrimaryGameButton>
+            )}
           </div>
         </section>
       ) : null}

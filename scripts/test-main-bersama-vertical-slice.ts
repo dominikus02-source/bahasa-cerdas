@@ -130,6 +130,9 @@ const realStores = {
     async findByPin(pin: string) {
       return prismaSessions.findActiveByPin(pin);
     },
+    async findByPinForDisplay(pin: string) {
+      return prismaSessions.findLatestByPin(pin);
+    },
     async findOwnedBy(sessionId: string, teacherId: string) {
       return prismaSessions.findSessionOwnedBy(sessionId, teacherId);
     },

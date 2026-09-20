@@ -10,6 +10,9 @@ const SUPABASE_SECRET_KEY =
 // Routes that NEVER need getUser() in middleware — public pages or SSG
 const publicPaths = [
   "/", "/login", "/auth/arena-login", "/auth/callback", "/register", "/confirm",
+  // Main Bersama: siswa (guest, PIN-gated) & proyektor (read-only) —
+  // auth student = credential per-sesi, bukan sesi Supabase.
+  "/main-bersama",
   "/verify-email", "/onboarding", "/tentang", "/fitur",
   "/marketplace", "/artikel", "/video-belajar", "/kamus", "/loker", "/komunitas", "/ai-bc", "/profile/",
   "/kebijakan-privasi", "/syarat-ketentuan",

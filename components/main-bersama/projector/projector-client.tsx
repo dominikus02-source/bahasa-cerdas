@@ -161,7 +161,7 @@ function ProjectorLobby({ view }: { view: ProjectorSessionView }) {
     <section className="mb-pj-phase mb-fade-in">
       <PinDisplay pin={pin} scale="projector" />
       <p className="mb-pj-wait" role="status">
-        Buka <strong>ayo.bahasacerdas.com</strong> dan masukkan PIN di atas
+        Buka halaman <strong>Gabung Main Bersama</strong> lalu masukkan PIN di atas
       </p>
       <ParticipantCount count={view.participation.playerCount} label="siswa bergabung" />
       {view.gameProgress.gameMode === 'jelajah-kata' ? (

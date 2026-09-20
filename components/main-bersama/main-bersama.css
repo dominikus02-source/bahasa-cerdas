@@ -7,7 +7,8 @@
    number). Custom font owner nanti cukup ganti nilai variabel —
    TANPA refactor komponen. */
 
-.mb-scope {
+.mb-scope,
+.mb-scope-guru {
   /* ── Surface & background ── */
   --mb-bg: #0d1b2a;            /* navy dark — proyektor/lobby */
   --mb-bg-soft: #13253a;
@@ -370,20 +371,49 @@
 .mb-reveal-correct strong { color: var(--mb-success); font-size: 1.1rem; }
 .mb-reveal-explain { margin: 0 0 var(--mb-space-3); line-height: 1.6; }
 .mb-reveal-dist, .mb-sreveal-dist { display: flex; flex-wrap: wrap; gap: var(--mb-space-2); }
+/* Chip distribusi jawaban (pembahasan) — dipakai guru & siswa.
+   Baseline = surface terang (guru/siswa). Chip pada surface gelap
+   proyektor tidak ada, tapi override di `.mb-scope` tetap disediakan. */
 .mb-dist-chip {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 4px 12px;
   border-radius: var(--mb-radius-pill);
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--mb-text-primary);
+  background: rgba(23, 38, 58, 0.06);
+  border: 1px solid rgba(23, 38, 58, 0.14);
+  color: var(--mb-text-light-primary);
   font-size: 0.85rem;
+}
+.mb-scope .mb-dist-chip {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: var(--mb-text-primary);
 }
 .mb-dist-correct {
   background: var(--mb-success-soft);
+  color: #067a5b;
+  border: 1px solid #067a5b;
+}
+.mb-scope .mb-dist-correct {
   color: var(--mb-success);
-  border: 1px solid var(--mb-success);
+  border-color: var(--mb-success);
+}
+/* Kartu reveal SELALU ber-surface terang (kartu putih) — termasuk saat
+   berada di dalam scope gelap siswa. Chip di sini harus terang-surface,
+   bukan varian dark, agar angka distribusi tetap terbaca. */
+.mb-reading .mb-dist-chip {
+  background: rgba(23, 38, 58, 0.06);
+  border-color: rgba(23, 38, 58, 0.14);
+  color: var(--mb-text-light-primary);
+}
+.mb-reading .mb-dist-correct {
+  color: #067a5b;
+  border-color: #067a5b;
+}
+.mb-reading .mb-reveal-correct strong,
+.mb-reading .mb-sreveal-correct strong {
+  color: #067a5b;
 }
 
 /* Chips regu proyektor (lobby) — grid seimbang 4 regu. */
