@@ -1,10 +1,11 @@
 "use client";
-// ─── Student Join Client (Tahap 7 §7/§8) ─────────────────────
+// ─── Student Join Client (Tahap 8A — visual polish) ──────────
 // Flow: PIN → Nama → Gabung → Lobby (semua di satu client dengan
 // step lokal). Reconnect: bila ada credential tersimpan, tawarkan
 // "Lanjutkan bermain" — credential TIDAK pernah ditampilkan/dicatat
-// di DOM/log (§8). Guest cukup nama; authenticated student dipakai
-// apa adanya oleh API (server membaca cookie Supabase).
+// di DOM/log. Guest cukup nama; authenticated student dipakai apa
+// adanya oleh API (server membaca cookie Supabase). Logic Tahap 7
+// TIDAK berubah — hanya presentation (§34).
 
 import { Suspense, useCallback, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -71,7 +72,7 @@ function JoinFlow() {
     setError(null);
     try {
       const result = await joinSession({ pin, displayName: name });
-      saveCredential(result.session.id, result.credential); // helper tunggal (§8)
+      saveCredential(result.session.id, result.credential); // helper tunggal
       saveLastSessionId(result.session.id);
       enterRoom(result.session.id);
     } catch (e) {
@@ -82,13 +83,18 @@ function JoinFlow() {
 
   return (
     <main className="mb-join mb-fade-in">
-      <ConnectionBanner visible={false} />
+      {/* Dekorasi latar — lingkaran lembut (placeholder §35, aria-hidden). */}
+      <span className="mb-join-blob mb-join-blob-a" aria-hidden />
+      <span className="mb-join-blob mb-join-blob-b" aria-hidden />
+
+      <span className="mb-eyebrow">Kuis kelas langsung</span>
       <h1 className="mb-display mb-join-title">Main Bersama</h1>
+      <p className="mb-join-tagline">Masuk ke ruang permainan kelasmu.</p>
 
       {canResume ? (
         <button type="button" className="mb-resume" onClick={tryResume} disabled={resuming}>
-          <strong>Lanjutkan bermain</strong>
-          <small>lanjut ke ruang yang sama sebelumnya</small>
+          <strong>{resuming ? 'Menyambungkan…' : 'Lanjutkan bermain'}</strong>
+          <small>kembali ke ruang yang sama sebelumnya</small>
         </button>
       ) : null}
 
@@ -100,7 +106,7 @@ function JoinFlow() {
           }}
           className="mb-join-form"
         >
-          <label htmlFor="mb-pin" className="mb-join-label">Masukkan PIN dari guru</label>
+          <label htmlFor="mb-pin" className="mb-join-label">Masukkan PIN dari gurumu</label>
           <input
             id="mb-pin"
             className="mb-pin-input mb-number"
@@ -109,7 +115,7 @@ function JoinFlow() {
             maxLength={6}
             value={pin}
             onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
-            placeholder="••••••"
+            placeholder="······"
             aria-describedby={error ? 'mb-join-err' : undefined}
           />
           {error ? <p id="mb-join-err" role="alert" className="mb-join-err">{error}</p> : null}
@@ -126,7 +132,7 @@ function JoinFlow() {
           className="mb-join-form"
         >
           <p className="mb-join-label">
-            PIN <strong className="mb-number">{pin}</strong> ✓
+            PIN <strong className="mb-number mb-join-pinchip">{pin}</strong>
           </p>
           <label htmlFor="mb-name" className="mb-join-label">Siapa namamu?</label>
           <input
@@ -150,17 +156,108 @@ function JoinFlow() {
       ) : null}
 
       <style jsx global>{`
-        .mb-join { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--mb-space-5); padding: var(--mb-space-5); }
-        .mb-join-title { font-size: 2.2rem; margin: 0; }
-        .mb-join-form { display: flex; flex-direction: column; align-items: center; gap: var(--mb-space-4); width: min(100%, 360px); }
-        .mb-join-label { color: var(--mb-text-secondary); font-weight: 600; }
-        .mb-pin-input { width: 100%; text-align: center; font-size: 2.4rem; letter-spacing: 0.35em; padding: var(--mb-space-3); border-radius: var(--mb-radius-md); border: 2px solid transparent; background: var(--mb-surface); color: var(--mb-text-primary); }
-        .mb-pin-input:focus { border-color: var(--mb-primary); outline: none; }
-        .mb-name-input { width: 100%; font-size: 1.2rem; padding: var(--mb-space-3) var(--mb-space-4); border-radius: var(--mb-radius-md); border: 2px solid transparent; background: var(--mb-surface); color: var(--mb-text-primary); }
+        .mb-join {
+          position: relative;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: var(--mb-space-4);
+          padding: var(--mb-space-6) var(--mb-space-5);
+          overflow: hidden;
+        }
+        /* Blob dekoratif — sangat lembut, bukan partikel. */
+        .mb-join-blob {
+          position: absolute;
+          border-radius: 50%;
+          filter: blur(60px);
+          pointer-events: none;
+        }
+        .mb-join-blob-a {
+          width: 320px;
+          height: 320px;
+          top: -120px;
+          right: -100px;
+          background: rgba(20, 184, 166, 0.22);
+        }
+        .mb-join-blob-b {
+          width: 280px;
+          height: 280px;
+          bottom: -120px;
+          left: -90px;
+          background: rgba(139, 124, 246, 0.16);
+        }
+        .mb-join-title { font-size: 2.4rem; margin: 0; text-align: center; }
+        .mb-join-tagline { margin: 0; color: var(--mb-text-secondary); text-align: center; }
+        .mb-join-form {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: var(--mb-space-4);
+          width: min(100%, 360px);
+        }
+        .mb-join-label { color: var(--mb-text-secondary); font-weight: 700; }
+        .mb-join-pinchip {
+          display: inline-block;
+          padding: 2px 12px;
+          margin-left: 6px;
+          border-radius: var(--mb-radius-pill);
+          background: rgba(255, 255, 255, 0.1);
+          letter-spacing: 0.18em;
+          color: var(--mb-text-primary);
+        }
+        .mb-pin-input {
+          width: 100%;
+          text-align: center;
+          font-size: 2.6rem;
+          letter-spacing: 0.3em;
+          padding: var(--mb-space-3);
+          border-radius: var(--mb-radius-md);
+          border: 2px solid rgba(255, 255, 255, 0.18);
+          background: var(--mb-surface);
+          color: var(--mb-text-primary);
+          transition: border-color var(--mb-motion-fast), box-shadow var(--mb-motion-fast);
+        }
+        .mb-pin-input:focus {
+          border-color: var(--mb-primary);
+          outline: none;
+          box-shadow: var(--mb-shadow-glow);
+        }
+        .mb-name-input {
+          width: 100%;
+          font-size: 1.25rem;
+          padding: var(--mb-space-3) var(--mb-space-4);
+          border-radius: var(--mb-radius-md);
+          border: 2px solid rgba(255, 255, 255, 0.18);
+          background: var(--mb-surface);
+          color: var(--mb-text-primary);
+          transition: border-color var(--mb-motion-fast);
+        }
         .mb-name-input:focus { border-color: var(--mb-primary); outline: none; }
         .mb-join-err { color: var(--mb-danger); font-weight: 600; margin: 0; }
-        .mb-linklike { background: none; border: none; color: var(--mb-text-secondary); text-decoration: underline; cursor: pointer; font-size: 0.9rem; }
-        .mb-resume { display: flex; flex-direction: column; gap: 2px; align-items: center; padding: var(--mb-space-3) var(--mb-space-5); border-radius: var(--mb-radius-lg); background: var(--mb-accent-soft); border: 2px solid var(--mb-accent); color: var(--mb-text-primary); cursor: pointer; }
+        .mb-linklike {
+          background: none;
+          border: none;
+          color: var(--mb-text-secondary);
+          text-decoration: underline;
+          cursor: pointer;
+          font-size: 0.9rem;
+          padding: 6px;
+        }
+        .mb-resume {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+          align-items: center;
+          padding: var(--mb-space-3) var(--mb-space-5);
+          border-radius: var(--mb-radius-lg);
+          background: var(--mb-accent-soft);
+          border: 2px solid var(--mb-accent);
+          color: var(--mb-text-primary);
+          cursor: pointer;
+        }
+        .mb-resume:disabled { opacity: 0.6; cursor: wait; }
         .mb-resume small { color: var(--mb-text-secondary); }
       `}</style>
     </main>

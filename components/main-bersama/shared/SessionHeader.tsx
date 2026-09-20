@@ -7,7 +7,7 @@ interface SessionHeaderProps {
   className?: string;
   /** Progres putaran "2 dari 8" bila sesi sudah mulai. */
   roundLabel?: string | null;
-  /** Slot kontrol sekunder (Pause/Akhiri). */
+  /** Slot kontrol sekunder (Jeda/Akhiri). */
   actions?: React.ReactNode;
 }
 
@@ -16,7 +16,7 @@ const MODE_LABEL: Record<GameMode, string> = {
   'kota-cahaya': 'Kota Cahaya',
 };
 
-/** Header sesi ringan — identitas + progres, tanpa kompleksitas (§2). */
+/** Header sesi ringan — identitas + progres, tanpa kompleksitas (§18). */
 export function SessionHeader({
   mode,
   packageName,
@@ -27,7 +27,10 @@ export function SessionHeader({
   return (
     <header className="mb-session-header">
       <div className="mb-session-meta">
-        <span className="mb-session-mode">{MODE_LABEL[mode]}</span>
+        <span className="mb-session-mode">
+          <i className="mb-session-dot" aria-hidden />
+          {MODE_LABEL[mode]}
+        </span>
         {packageName ? <span className="mb-session-pkg">{packageName}</span> : null}
         {className ? <span className="mb-session-pkg">{className}</span> : null}
         {roundLabel ? (
@@ -51,12 +54,23 @@ export function SessionHeader({
           min-width: 0;
         }
         .mb-session-mode {
-          padding: 4px 12px;
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          padding: 5px 14px;
           border-radius: var(--mb-radius-pill);
           background: var(--mb-primary-soft);
           color: var(--mb-primary);
-          font-weight: 700;
+          font-weight: 800;
           font-size: 0.85rem;
+        }
+        /* Kontras aman di surface guru (teal gelap di atas terang). */
+        .mb-scope-guru .mb-session-mode { color: var(--mb-primary-strong); }
+        .mb-session-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: currentColor;
         }
         .mb-session-pkg,
         .mb-session-round {
@@ -64,6 +78,8 @@ export function SessionHeader({
           font-size: 0.85rem;
           font-weight: 600;
         }
+        .mb-scope-guru .mb-session-pkg,
+        .mb-scope-guru .mb-session-round { color: var(--mb-text-guru-secondary); }
         .mb-session-actions {
           display: flex;
           gap: var(--mb-space-2);

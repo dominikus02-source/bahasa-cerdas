@@ -1,11 +1,10 @@
 "use client";
-// ─── Student Game Client (Tahap 7 §9/§11/§15/§16/§20/§22) ────
+// ─── Student Game Client (Tahap 8A — visual polish) ──────────
 // Flow siswa sangat fokus: lobby tunggu → soal → jawab tersimpan →
 // closed → pembahasan → hasil. TANPA skor/leaderboard/answer key
 // sebelum reveal (view server tidak membawanya — bukan disensor UI).
 // State SELALU dari GET authoritative (useSessionView); payload
-// realtime hanya sinyal (§21). Credential dari credential-store —
-// tidak pernah tampil di DOM/URL/log (§8).
+// realtime hanya sinyal. Logic submit/view Tahap 7 TIDAK berubah.
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -22,12 +21,19 @@ import { clearCredential } from '@/lib/main-bersama/credential-store';
 import { SessionHeader } from '@/components/main-bersama/shared/SessionHeader';
 import { QuestionCard } from '@/components/main-bersama/shared/QuestionCard';
 import { AnswerOption } from '@/components/main-bersama/shared/AnswerOption';
-import { CityProgress } from '@/components/main-bersama/shared/CityProgress';
 import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBanner';
 import { ParticipantCount } from '@/components/main-bersama/shared/ParticipantCount';
 import { PrimaryGameButton } from '@/components/main-bersama/shared/PrimaryGameButton';
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E'];
+
+/** Warna chip regu (token §14). */
+const TEAM_COLOR_VAR: Record<string, string> = {
+  elang: 'var(--mb-team-elang)',
+  harimau: 'var(--mb-team-harimau)',
+  rusa: 'var(--mb-team-rusa)',
+  badak: 'var(--mb-team-badak)',
+};
 
 // ── Type predicates: fase union PreRound tidak bisa di-narrow
 // langsung (phase-nya union 4 nilai) — predicate eksplisit aman &
@@ -132,7 +138,7 @@ export function StudentGameClient({ sessionId }: { sessionId: string }) {
         <StudentQuestion key={view.roundId} view={view} sessionId={sessionId} />
       ) : view.phase === 'closed' || view.phase === 'paused' ? (
         <StudentWaiting
-          title={view.phase === 'closed' ? 'Jawaban ditutup.' : 'Permainan dijeda.'}
+          title={view.phase === 'closed' ? 'Jawaban ditutup' : 'Permainan dijeda'}
           sub="Tunggu Pak/Bu Guru melanjutkan…"
         />
       ) : isReveal(view) ? (
@@ -142,24 +148,39 @@ export function StudentGameClient({ sessionId }: { sessionId: string }) {
   );
 }
 
-// ─── Lobby (§9) ─────────────────────────────────────────────
+// ─── Lobby (§20) — nama + regu + tujuan + anticipation ──────
 
 function StudentLobby({
   view,
 }: {
   view: StudentPreRoundView;
 }) {
+  const isJelajah = view.gameMode === 'jelajah-kata';
   return (
     <section className="mb-slobby mb-fade-in">
+      <span className="mb-wait-orb" aria-hidden />
       <h1 className="mb-display mb-slobby-title">Halo, {view.displayName}!</h1>
       <p className="mb-slobby-mode">
-        Mode: <strong>{view.gameMode === 'jelajah-kata' ? 'Jelajah Kata' : 'Kota Cahaya'}</strong>
+        Kamu ikut <strong>{isJelajah ? 'Jelajah Kata' : 'Kota Cahaya'}</strong>
       </p>
       {view.team ? (
         <p className="mb-slobby-team">
-          Kamu di <strong>Regu {view.team.name}</strong> {view.team.symbol}
+          Kamu berada di{' '}
+          <span
+            className="mb-team-chip mb-slobby-teamchip"
+            style={{ '--mb-tc': TEAM_COLOR_VAR[view.team.id] ?? 'var(--mb-primary)' } as React.CSSProperties}
+          >
+            Regu {view.team.name}
+          </span>
         </p>
       ) : null}
+      <p className="mb-slobby-objective">
+        {isJelajah
+          ? view.team
+            ? `Jawab dengan tepat untuk membantu Regu ${view.team.name} maju.`
+            : 'Jawab dengan tepat untuk membantu regumu maju.'
+          : 'Bekerja sama untuk menyalakan Kota Cahaya.'}
+      </p>
       <ParticipantCount count={view.participantCount} />
       <p className="mb-slobby-wait" role="status">
         Menunggu Pak/Bu Guru memulai permainan…
@@ -171,44 +192,40 @@ function StudentLobby({
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          gap: var(--mb-space-4);
-          padding: var(--mb-space-5);
+          gap: var(--mb-space-3);
+          padding: var(--mb-space-6) var(--mb-space-5);
           text-align: center;
         }
-        .mb-slobby-title { margin: 0; font-size: 1.7rem; }
-        .mb-slobby-mode, .mb-slobby-team { margin: 0; color: var(--mb-text-secondary); }
-        .mb-slobby-team strong { color: var(--mb-accent); }
-        .mb-slobby-wait { color: var(--mb-text-secondary); font-style: italic; }
+        .mb-slobby-title { margin: 0; font-size: 1.8rem; }
+        .mb-slobby-mode { margin: 0; color: var(--mb-text-secondary); }
+        .mb-slobby-mode strong { color: var(--mb-text-primary); }
+        .mb-slobby-team { margin: 0; color: var(--mb-text-secondary); }
+        .mb-slobby-teamchip { transform: scale(1.15); }
+        .mb-slobby-objective {
+          margin: 0;
+          max-width: 34ch;
+          color: var(--mb-text-secondary);
+          line-height: 1.55;
+        }
+        .mb-slobby-wait { margin: var(--mb-space-2) 0 0; color: var(--mb-text-secondary); font-style: italic; }
       `}</style>
     </section>
   );
 }
 
-// ─── Waiting card (closed/paused §15) ───────────────────────
+// ─── Waiting card (closed/paused — wait hero) ───────────────
 
 function StudentWaiting({ title, sub }: { title: string; sub: string }) {
   return (
-    <section className="mb-swait mb-fade-in" role="status">
+    <section className="mb-wait mb-fade-in" role="status">
+      <span className="mb-wait-orb" aria-hidden />
       <h2 className="mb-display">{title}</h2>
       <p>{sub}</p>
-      <style jsx>{`
-        .mb-swait {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: var(--mb-space-2);
-          padding: var(--mb-space-5);
-          text-align: center;
-        }
-        .mb-swait p { color: var(--mb-text-secondary); }
-      `}</style>
     </section>
   );
 }
 
-// ─── Question (§11/§12/§28) ─────────────────────────────────
+// ─── Question (§21) — keterbacaan prioritas absolut ─────────
 
 function StudentQuestion({
   view,
@@ -282,8 +299,8 @@ function StudentQuestion({
       <QuestionCard question={view.question} />
 
       {saved ? (
-        <div className="mb-sq-saved mb-entrance" role="status">
-          <strong>Jawaban tersimpan.</strong>
+        <div className="mb-saved mb-entrance" role="status">
+          <strong>Jawaban tersimpan</strong>
           <span>Tunggu putaran selesai.</span>
         </div>
       ) : (
@@ -333,7 +350,7 @@ function StudentQuestion({
         }
         .mb-sq-bar-fill {
           height: 100%;
-          background: var(--mb-primary);
+          background: linear-gradient(90deg, var(--mb-primary-strong), var(--mb-primary));
           border-radius: var(--mb-radius-pill);
         }
         .mb-sq-answers {
@@ -342,19 +359,6 @@ function StudentQuestion({
           gap: var(--mb-space-3);
           width: 100%;
         }
-        .mb-sq-saved {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 4px;
-          padding: var(--mb-space-5);
-          border-radius: var(--mb-radius-lg);
-          background: var(--mb-success-soft);
-          border: 2px solid var(--mb-success);
-          color: var(--mb-text-primary);
-          text-align: center;
-        }
-        .mb-sq-saved span { color: var(--mb-text-secondary); }
         .mb-sq-error {
           color: var(--mb-danger);
           font-weight: 600;
@@ -366,7 +370,7 @@ function StudentQuestion({
   );
 }
 
-// ─── Reveal / discussion / summary (§16/§19/§20) ────────────
+// ─── Reveal / discussion / summary (§27/§28) ────────────────
 
 function StudentReveal({
   view,
@@ -383,7 +387,7 @@ function StudentReveal({
           Soal {view.roundIndex + 1} dari {view.totalRounds}
         </span>
         <span className={`mb-sreveal-verdict ${myCorrect ? 'mb-v-ok' : 'mb-v-no'}`}>
-          {myCorrect ? '✓ Jawabanmu benar!' : '✗ Belum tepat'}
+          {myCorrect ? 'Jawabanmu Benar' : 'Belum Tepat'}
         </span>
       </header>
 
@@ -412,10 +416,16 @@ function StudentReveal({
         </p>
       ) : (
         <div className="mb-sreveal-endbox mb-entrance">
-          <h3 className="mb-display">Permainan selesai 🎉</h3>
+          <span className="mb-endflag" aria-hidden>
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 22V4" />
+              <path d="M4 4c3-2 6 2 9 0s5-1 7 0v9c-2-1-4-2-7 0s-6 2-9 0" />
+            </svg>
+          </span>
+          <h3 className="mb-display">Permainan selesai</h3>
           {view.team && view.gameProgress.teamProgress[view.team.id] !== undefined ? (
             <p>
-              Regu <strong>{view.team.name}</strong> {view.team.symbol} mencapai{' '}
+              Regu <strong>{view.team.name}</strong> mencapai{' '}
               <strong className="mb-number">
                 {Math.round(Math.max(0, Math.min(100, view.gameProgress.teamProgress[view.team.id])))}%
               </strong>{' '}
@@ -446,9 +456,9 @@ function StudentReveal({
           color: var(--mb-text-secondary);
           font-weight: 700;
         }
-        .mb-sreveal-verdict { padding: 4px 12px; border-radius: var(--mb-radius-pill); }
-        .mb-v-ok { background: var(--mb-success-soft); color: var(--mb-success); }
-        .mb-v-no { background: var(--mb-danger-soft); color: var(--mb-danger); }
+        .mb-sreveal-verdict { padding: 5px 14px; border-radius: var(--mb-radius-pill); font-weight: 800; }
+        .mb-v-ok { background: var(--mb-success-soft); color: var(--mb-success); border: 1.5px solid var(--mb-success); }
+        .mb-v-no { background: var(--mb-danger-soft); color: var(--mb-danger); border: 1.5px solid var(--mb-danger); }
         .mb-sreveal-card { padding: var(--mb-space-4) var(--mb-space-5); }
         .mb-sreveal-correct { margin: 0 0 var(--mb-space-2); color: var(--mb-text-light-secondary); }
         .mb-sreveal-correct strong { color: var(--mb-success); font-size: 1.1rem; }
@@ -465,13 +475,14 @@ function StudentReveal({
           flex-direction: column;
           align-items: center;
           gap: var(--mb-space-2);
-          padding: var(--mb-space-5);
+          padding: var(--mb-space-6) var(--mb-space-5);
           border-radius: var(--mb-radius-lg);
           background: var(--mb-accent-soft);
           border: 2px solid var(--mb-accent);
           text-align: center;
         }
-        .mb-sreveal-endbox h3 { margin: 0; font-size: 1.3rem; }
+        .mb-endflag { color: var(--mb-accent); }
+        .mb-sreveal-endbox h3 { margin: 0; font-size: 1.35rem; }
         .mb-sreveal-endbox p { margin: 0; }
         .mb-sreveal-feel { color: var(--mb-text-secondary); font-style: italic; }
       `}</style>

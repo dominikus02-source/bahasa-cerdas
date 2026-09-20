@@ -1,4 +1,5 @@
-// ─── PinDisplay (§6/§10) — PIN sangat besar, mudah dibaca kelas ──
+// ─── PinDisplay (§17/§24) — PIN sangat besar, mudah dibaca kelas ──
+// Digit ditampilkan berkelompok 3+3 agar mudah dibaca/diktikkan.
 
 interface PinDisplayProps {
   pin: string;
@@ -7,19 +8,31 @@ interface PinDisplayProps {
 }
 
 export function PinDisplay({ pin, scale = 'teacher' }: PinDisplayProps) {
+  const digits = pin.split('');
+  const groups: string[][] = [
+    digits.slice(0, 3),
+    digits.slice(3, 6),
+  ];
   return (
     <div
       className={`mb-pin mb-pin-${scale}`}
-      role="text"
-      aria-label={`PIN ruang: ${pin.split('').join(' ')}`}
+      aria-label={`PIN ruang: ${digits.join(' ')}`}
     >
-      {pin.split('').map((d, i) => (
-        <span key={i} className="mb-pin-digit mb-number">
-          {d}
+      {groups.map((g, gi) => (
+        <span key={gi} className="mb-pin-group">
+          {g.map((d, i) => (
+            <span key={i} className="mb-pin-digit mb-number" aria-hidden>
+              {d}
+            </span>
+          ))}
         </span>
       ))}
       <style jsx>{`
         .mb-pin {
+          display: inline-flex;
+          gap: var(--mb-space-4);
+        }
+        .mb-pin-group {
           display: inline-flex;
           gap: var(--mb-space-2);
         }
@@ -42,6 +55,8 @@ export function PinDisplay({ pin, scale = 'teacher' }: PinDisplayProps) {
           height: 140px;
           font-size: 5rem;
           border-radius: var(--mb-radius-lg);
+          background: linear-gradient(160deg, var(--mb-surface-elevated), var(--mb-surface));
+          border: 1px solid rgba(255, 255, 255, 0.12);
         }
       `}</style>
     </div>
