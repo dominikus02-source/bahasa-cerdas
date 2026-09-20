@@ -1,50 +1,59 @@
-/* ─── Design Tokens Main Bersama (Tahap 7 §24-§26) ─────────── */
+/* ─── Design Tokens Main Bersama (Tahap 8A — Game Feel) ────── */
 /* CSS variables lokal modul — komponen memakai token, BUKAN warna
-   hardcode. Palette final dipoles pada tahap Game Feel & Identity;
-   nilai di sini baseline arah: navy dark (lobby/projector), teal
-   (primary), warm yellow (highlight), neutral light (reading). */
-/* Typography (§25): custom font owner dipasang tahap berikutnya
-   TANPA refactor komponen — cukup ganti nilai variabel. Sekarang
-   fallback = font existing repo (system + Newscrash untuk display). */
+   hardcode. Palette: teal (primary/progress), navy (depth &
+   proyektor), warm yellow (reward), mint/warm neutral (surface
+   guru), violet (aksen sekunder terbatas).
+   Typography (§15): role-based (--mb-font-display/ui/reading/
+   number). Custom font owner nanti cukup ganti nilai variabel —
+   TANPA refactor komponen. */
 
-.mb-scope {
+.mb-scope,
+.mb-scope-guru {
   /* ── Surface & background ── */
-  --mb-bg: #0d1b2a;            /* navy dark — lobby/projector backdrop */
+  --mb-bg: #0d1b2a;            /* navy dark — proyektor/lobby */
   --mb-bg-soft: #13253a;
-  --mb-surface: #1b2f47;       /* surface di dark backdrop */
+  --mb-surface: #1b2f47;
   --mb-surface-elevated: #243d5b;
-  --mb-surface-light: #fdfcf9; /* neutral light — reading/question */
+  --mb-surface-guru: #f7f8f6;  /* light mint/warm neutral — guru */
+  --mb-surface-guru-elevated: #ffffff;
+  --mb-surface-light: #fdfcf9; /* reading/question siswa */
   --mb-surface-light-elevated: #ffffff;
 
   /* ── Text ── */
   --mb-text-primary: #f4f7fb;
   --mb-text-secondary: #9fb3c8;
-  --mb-text-light-primary: #17263a;  /* di light surface */
+  --mb-text-guru: #1c2b3a;     /* di surface guru */
+  --mb-text-guru-secondary: #5d6b7a;
+  --mb-text-light-primary: #17263a;  /* di reading surface */
   --mb-text-light-secondary: #5b6b80;
 
   /* ── Brand action / progress ── */
-  --mb-primary: #17b8a6;       /* teal/turquoise */
-  --mb-primary-strong: #0f9184;
-  --mb-primary-soft: rgba(23, 184, 166, 0.16);
-  --mb-primary-contrast: #06231f;
+  --mb-primary: #14b8a6;       /* teal */
+  --mb-primary-strong: #0d9488;
+  --mb-primary-soft: rgba(20, 184, 166, 0.16);
+  --mb-primary-contrast: #052e2b;
 
   /* ── Highlight / reward ── */
   --mb-accent: #ffc94d;        /* warm yellow */
   --mb-accent-soft: rgba(255, 201, 77, 0.18);
   --mb-accent-contrast: #402d05;
 
+  /* ── Secondary accent (terbatas) ── */
+  --mb-violet: #8b7cf6;
+  --mb-violet-soft: rgba(139, 124, 246, 0.16);
+
   /* ── Status ── */
-  --mb-success: #3ecf8e;
-  --mb-success-soft: rgba(62, 207, 142, 0.15);
+  --mb-success: #34d399;
+  --mb-success-soft: rgba(52, 211, 153, 0.15);
   --mb-warning: #ffb020;
   --mb-danger: #ff6b6b;
   --mb-danger-soft: rgba(255, 107, 107, 0.14);
 
   /* ── Team colors (Jelajah Kata — 4 regu) ── */
-  --mb-team-elang: #f5a524;
-  --mb-team-harimau: #ef5350;
-  --mb-team-rusa: #7bd88f;
-  --mb-team-badak: #4da3ff;
+  --mb-team-elang: #f5a524;    /* amber */
+  --mb-team-harimau: #ef5350;  /* merah */
+  --mb-team-rusa: #34d399;     /* hijau */
+  --mb-team-badak: #38bdf8;    /* biru langit */
 
   /* ── Radius & shadow ── */
   --mb-radius-sm: 10px;
@@ -53,6 +62,7 @@
   --mb-radius-pill: 999px;
   --mb-shadow-card: 0 10px 30px rgba(4, 14, 26, 0.35);
   --mb-shadow-light: 0 6px 24px rgba(23, 38, 58, 0.1);
+  --mb-shadow-glow: 0 0 24px rgba(20, 184, 166, 0.35);
 
   /* ── Spacing scale ── */
   --mb-space-1: 4px;
@@ -63,13 +73,13 @@
   --mb-space-6: 32px;
   --mb-space-7: 48px;
 
-  /* ── Typography (swap-ready §25) ── */
+  /* ── Typography (role-based, swap-ready §15) ── */
   --mb-font-display: "Newscrash", system-ui, sans-serif;
   --mb-font-ui: system-ui, -apple-system, "Segoe UI", sans-serif;
   --mb-font-reading: system-ui, -apple-system, "Segoe UI", sans-serif;
   --mb-font-number: system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  /* ── Motion (§31 — minimal; hormati reduced motion) ── */
+  /* ── Motion (§29 — minimal; hormati reduced motion) ── */
   --mb-motion-fast: 140ms ease-out;
   --mb-motion-med: 260ms ease-out;
 }
@@ -85,10 +95,20 @@
   flex-direction: column;
 }
 
+/* Surface guru — light, calm (§13: teacher lebih tenang). */
+.mb-scope-guru {
+  background:
+    radial-gradient(720px 280px at 88% -40px, rgba(20, 184, 166, 0.14), transparent 70%),
+    radial-gradient(520px 240px at 4% 110%, rgba(139, 124, 246, 0.08), transparent 70%),
+    var(--mb-surface-guru);
+  color: var(--mb-text-guru);
+}
+.mb-scope-guru .mb-display { color: var(--mb-text-guru); }
+
 .mb-display { font-family: var(--mb-font-display); letter-spacing: 0.02em; }
 .mb-number { font-family: var(--mb-font-number); font-variant-numeric: tabular-nums; }
 
-/* Reading surface (soal/passage) — light, nyaman di HP (§12). */
+/* Reading surface (soal/passage) — light, nyaman di HP (§22). */
 .mb-reading {
   background: var(--mb-surface-light);
   color: var(--mb-text-light-primary);
@@ -96,49 +116,227 @@
   border-radius: var(--mb-radius-lg);
 }
 
-/* ── Motion baseline (§31) ── */
-@media (prefers-reduced-motion: no-preference) {
-  .mb-fade-in { animation: mb-fade-in var(--mb-motion-med) both; }
-  .mb-entrance { animation: mb-entrance var(--mb-motion-med) both; }
-  @keyframes mb-fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  @keyframes mb-entrance {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: none; }
-  }
-  .mb-progress-transition { transition: width var(--mb-motion-med) ease-out; }
+/* ── Utilitas lintas-surface ───────────────────────────────── */
+
+/* Eyebrow kecil di atas judul. */
+.mb-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mb-space-2);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mb-primary);
 }
-@media (prefers-reduced-motion: reduce) {
-  .mb-fade-in, .mb-entrance { animation: none; }
-  .mb-progress-transition { transition: none; }
+.mb-eyebrow::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
 }
 
-/* Fokus terlihat jelas (§30). */
-.mb-scope :focus-visible {
-  outline: 3px solid var(--mb-accent);
-  outline-offset: 2px;
+/* Badge nomor langkah. */
+.mb-step-badge {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
   border-radius: var(--mb-radius-sm);
+  background: linear-gradient(135deg, var(--mb-primary-strong), var(--mb-primary));
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 1rem;
+  font-family: var(--mb-font-number);
+  box-shadow: 0 4px 10px rgba(20, 184, 166, 0.3);
 }
 
-/* ══ Kelas utilitas lintas-surface (dipakai >1 komponen) ══ */
+/* Heading section guru (nomor + judul + helper). */
+.mb-guru-h {
+  display: flex;
+  align-items: center;
+  gap: var(--mb-space-3);
+  margin: 0 0 var(--mb-space-2);
+}
+.mb-guru-h .mb-guru-h-text { font-size: 1.15rem; font-weight: 800; }
+.mb-guru-h small { color: var(--mb-text-guru-secondary); font-weight: 600; }
+.mb-guru-hsub { margin: 0 0 var(--mb-space-4) var(--mb-space-7); color: var(--mb-text-guru-secondary); font-size: 0.92rem; }
 
-/* Tombol sekunder guru (Jeda/Akhiri — §2 secondary control). */
+/* Tombol sekunder guru (Jeda/Akhiri — §18 secondary control). */
 .mb-secondary-btn {
   min-height: 40px;
   padding: var(--mb-space-2) var(--mb-space-4);
   border-radius: var(--mb-radius-pill);
-  background: var(--mb-surface);
-  border: 2px solid rgba(255, 255, 255, 0.18);
-  color: var(--mb-text-primary);
+  background: var(--mb-surface-guru-elevated);
+  border: 2px solid rgba(28, 43, 58, 0.14);
+  color: var(--mb-text-guru);
   font-weight: 700;
   font-size: 0.88rem;
   cursor: pointer;
+  transition: border-color var(--mb-motion-fast), color var(--mb-motion-fast);
 }
-.mb-secondary-btn:hover:not(:disabled) { border-color: var(--mb-primary); }
+.mb-secondary-btn:hover:not(:disabled) { border-color: var(--mb-primary-strong); color: var(--mb-primary-strong); }
 .mb-secondary-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .mb-danger-btn:hover:not(:disabled) { border-color: var(--mb-danger); color: var(--mb-danger); }
+
+/* Tombol ghost di surface gelap (student/waiting). */
+.mb-btn-ghost-light {
+  min-height: 44px;
+  padding: var(--mb-space-2) var(--mb-space-5);
+  border-radius: var(--mb-radius-pill);
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  color: var(--mb-text-primary);
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color var(--mb-motion-fast);
+}
+.mb-btn-ghost-light:hover { border-color: var(--mb-primary); }
+
+/* Chip generik surface gelap. */
+.mb-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  border-radius: var(--mb-radius-pill);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: var(--mb-text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* Chip regu (ModeCard/lobby) — token warna via --mb-tc. */
+.mb-team-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--mb-radius-pill);
+  font-size: 0.8rem;
+  font-weight: 800;
+  background: color-mix(in srgb, var(--mb-tc, var(--mb-primary)) 18%, transparent);
+  border: 1.5px solid var(--mb-tc, var(--mb-primary));
+  color: var(--mb-tc, var(--mb-primary));
+}
+.mb-team-chip::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--mb-tc, var(--mb-primary));
+}
+
+/* Opsi jawaban (dipakai AnswerOption). */
+.mb-answer {
+  display: flex;
+  align-items: center;
+  gap: var(--mb-space-3);
+  width: 100%;
+  min-height: 64px;
+  padding: var(--mb-space-3) var(--mb-space-4);
+  text-align: left;
+  background: var(--mb-surface-light-elevated);
+  color: var(--mb-text-light-primary);
+  border: 2px solid rgba(23, 38, 58, 0.12);
+  border-radius: var(--mb-radius-md);
+  cursor: pointer;
+  transition: border-color var(--mb-motion-fast), transform var(--mb-motion-fast), background var(--mb-motion-fast);
+}
+.mb-answer:hover:not(:disabled) { transform: translateY(-1px); border-color: var(--mb-primary); }
+.mb-answer:disabled { cursor: default; opacity: 0.85; }
+.mb-answer-selected {
+  border-color: var(--mb-primary-strong);
+  background: var(--mb-primary-soft);
+}
+.mb-answer-letter {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--mb-radius-sm);
+  background: var(--mb-primary-soft);
+  color: var(--mb-primary-strong);
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+.mb-answer-selected .mb-answer-letter {
+  background: var(--mb-primary-strong);
+  color: #ffffff;
+}
+.mb-answer-text {
+  font-family: var(--mb-font-reading);
+  font-size: 1.05rem;
+  line-height: 1.45;
+}
+.mb-answer-check {
+  margin-left: auto;
+  color: var(--mb-primary-strong);
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+
+/* Kartu "jawaban tersimpan" siswa. */
+.mb-saved {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--mb-space-5);
+  border-radius: var(--mb-radius-lg);
+  background: var(--mb-success-soft);
+  border: 2px solid var(--mb-success);
+  color: var(--mb-text-primary);
+  text-align: center;
+}
+.mb-saved strong { color: var(--mb-success); }
+.mb-saved span { color: var(--mb-text-secondary); }
+
+/* Hero status menunggu (lobby siswa & tutup putaran) — anticipation
+   sederhana: lingkaran denyut di atas teks (§20). */
+.mb-wait {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--mb-space-3);
+  padding: var(--mb-space-6);
+  text-align: center;
+}
+.mb-wait-orb {
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.12);
+  border-top-color: var(--mb-primary);
+  background: radial-gradient(circle at 35% 30%, rgba(20, 184, 166, 0.35), transparent 65%);
+}
+.mb-wait h2 { margin: 0; font-size: 1.5rem; }
+.mb-wait p { margin: 0; color: var(--mb-text-secondary); }
+
+/* Counter besar X/Y menjawab (guru/proyektor). */
+.mb-count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  font-weight: 800;
+}
+.mb-count strong { font-size: 2rem; color: var(--mb-primary); }
+.mb-count small { color: var(--mb-text-secondary); font-weight: 700; }
+.mb-count-guru strong { color: var(--mb-primary-strong); }
+.mb-count-guru small { color: var(--mb-text-guru-secondary); }
+
+/* Catatan peringatan lembut (di surface gelap). */
+.mb-warn {
+  color: var(--mb-accent);
+  font-weight: 600;
+  margin: 0;
+}
 
 /* Daftar peserta (guru). */
 .mb-plist {
@@ -157,7 +355,8 @@
   gap: var(--mb-space-2);
   padding: 6px 14px;
   border-radius: var(--mb-radius-pill);
-  background: var(--mb-surface);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   font-size: 0.88rem;
 }
 .mb-plist-team { color: var(--mb-accent); font-weight: 700; font-size: 0.8rem; }
@@ -172,37 +371,85 @@
 .mb-reveal-correct strong { color: var(--mb-success); font-size: 1.1rem; }
 .mb-reveal-explain { margin: 0 0 var(--mb-space-3); line-height: 1.6; }
 .mb-reveal-dist, .mb-sreveal-dist { display: flex; flex-wrap: wrap; gap: var(--mb-space-2); }
+/* Chip distribusi jawaban (pembahasan) — dipakai guru & siswa.
+   Baseline = surface terang (guru/siswa). Chip pada surface gelap
+   proyektor tidak ada, tapi override di `.mb-scope` tetap disediakan. */
 .mb-dist-chip {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 4px 12px;
   border-radius: var(--mb-radius-pill);
-  background: var(--mb-surface-elevated);
-  color: var(--mb-text-primary);
+  background: rgba(23, 38, 58, 0.06);
+  border: 1px solid rgba(23, 38, 58, 0.14);
+  color: var(--mb-text-light-primary);
   font-size: 0.85rem;
+}
+.mb-scope .mb-dist-chip {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: var(--mb-text-primary);
 }
 .mb-dist-correct {
   background: var(--mb-success-soft);
+  color: #067a5b;
+  border: 1px solid #067a5b;
+}
+.mb-scope .mb-dist-correct {
   color: var(--mb-success);
-  border: 1px solid var(--mb-success);
+  border-color: var(--mb-success);
+}
+/* Kartu reveal SELALU ber-surface terang (kartu putih) — termasuk saat
+   berada di dalam scope gelap siswa. Chip di sini harus terang-surface,
+   bukan varian dark, agar angka distribusi tetap terbaca. */
+.mb-reading .mb-dist-chip {
+  background: rgba(23, 38, 58, 0.06);
+  border-color: rgba(23, 38, 58, 0.14);
+  color: var(--mb-text-light-primary);
+}
+.mb-reading .mb-dist-correct {
+  color: #067a5b;
+  border-color: #067a5b;
+}
+.mb-reading .mb-reveal-correct strong,
+.mb-reading .mb-sreveal-correct strong {
+  color: #067a5b;
 }
 
-/* Chips meta proyektor. */
+/* Chips regu proyektor (lobby) — grid seimbang 4 regu. */
+.mb-pj-teams {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(150px, 200px));
+  gap: var(--mb-space-3);
+  justify-content: center;
+}
 .mb-pj-team {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 18px;
-  border-radius: var(--mb-radius-pill);
-  background: var(--mb-surface);
-  border: 2px solid var(--mb-primary);
-  font-weight: 700;
-  font-size: 1.05rem;
+  justify-content: center;
+  gap: var(--mb-space-2);
+  padding: var(--mb-space-3) var(--mb-space-4);
+  border-radius: var(--mb-radius-md);
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid var(--mb-tc, var(--mb-primary));
+  font-weight: 800;
+  font-size: 1.15rem;
 }
-.mb-pj-teams { display: flex; flex-wrap: wrap; gap: var(--mb-space-3); justify-content: center; }
+.mb-pj-team::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--mb-tc, var(--mb-primary));
+}
 
-/* Ranking summary Jelajah (§19) — tie tampil apa adanya. */
+/* Branding proyektor (judul layar). */
+.mb-pj-brand { display: flex; flex-direction: column; align-items: center; gap: var(--mb-space-2); }
+.mb-pj-title { font-size: 2.4rem; margin: 0; color: #ffffff; }
+.mb-pj-sub { margin: 0; color: var(--mb-text-secondary); font-weight: 600; }
+.mb-pj-sub strong { color: var(--mb-accent); }
+
+/* Ranking summary Jelajah (§28) — tie tampil apa adanya. */
 .mb-pj-ranking {
   list-style: none;
   margin: 0;
@@ -219,7 +466,7 @@
   gap: var(--mb-space-3);
   padding: var(--mb-space-3) var(--mb-space-4);
   border-radius: var(--mb-radius-md);
-  background: var(--mb-surface);
+  background: rgba(255, 255, 255, 0.06);
   border-left: 6px solid var(--rank-color, var(--mb-primary));
 }
 .mb-pj-winner {
@@ -238,16 +485,15 @@
   letter-spacing: 0.06em;
 }
 
-/* Layout umum fase proyektor (§29 — 16:9-first). */
+/* ── Layout fase proyektor (§30 — 16:9-first) ── */
 .mb-pj { flex: 1; display: flex; flex-direction: column; }
 .mb-pj-head {
   display: flex;
-  align-items: baseline;
-  justify-content: center;
-  gap: var(--mb-space-4);
-  padding: var(--mb-space-4) var(--mb-space-6) 0;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mb-space-2);
+  padding: var(--mb-space-5) var(--mb-space-6) 0;
 }
-.mb-pj-title { font-size: 2.4rem; margin: 0; color: var(--mb-text-primary); }
 .mb-pj-mode {
   padding: 6px 18px;
   border-radius: var(--mb-radius-pill);
@@ -279,20 +525,14 @@
 .mb-pj-idle-msg { color: var(--mb-text-secondary); font-size: 1.1rem; }
 .mb-pj-closed { font-size: 2.4rem; margin: 0; }
 .mb-pj-q { width: min(100%, 720px); }
-.mb-pj-participation {
-  display: flex;
-  align-items: center;
-  gap: var(--mb-space-4);
-}
-.mb-pj-part-count { font-size: 2.2rem; font-weight: 800; }
-.mb-pj-part-count small { font-size: 1rem; color: var(--mb-text-secondary); font-weight: 600; }
+.mb-pj-participation { display: flex; align-items: center; gap: var(--mb-space-4); }
 .mb-pj-progress { width: min(100%, 640px); }
 .mb-pj-reveal { text-align: center; }
 .mb-pj-reveal-label { margin: 0; color: var(--mb-text-secondary); font-size: 1.05rem; }
 .mb-pj-reveal-answer { margin: 0; font-size: 2.6rem; color: var(--mb-success); }
-.mb-pj-reveal-explain { margin: var(--mb-space-2) 0 0; color: var(--mb-text-secondary); max-width: 60ch; }
+.mb-pj-reveal-explain { margin: var(--mb-space-2) auto 0; color: var(--mb-text-secondary); max-width: 60ch; }
 .mb-pj-final-title { font-size: 2.6rem; margin: 0; }
-.mb-pj-kota-preview { width: min(100%, 560px); opacity: 0.85; }
+.mb-pj-kota-preview { width: min(100%, 560px); }
 .mb-pj-mission { color: var(--mb-accent); font-size: 1.2rem; font-weight: 600; margin: 0; }
 .mb-pj-retry {
   padding: var(--mb-space-3) var(--mb-space-6);
@@ -304,13 +544,13 @@
   cursor: pointer;
 }
 
-/* Layout umum room guru (§29 — desktop/tablet-first). */
+/* ── Layout room guru (§30 — desktop/tablet-first) ── */
 .mb-room { flex: 1; display: flex; flex-direction: column; }
 .mb-room-loading {
   flex: 1;
   display: grid;
   place-items: center;
-  color: var(--mb-text-secondary);
+  color: var(--mb-text-guru-secondary);
 }
 .mb-room-error {
   color: var(--mb-danger);
@@ -327,12 +567,15 @@
   gap: var(--mb-space-4);
   padding: var(--mb-space-5);
 }
+.mb-lobby-head { display: flex; flex-direction: column; align-items: center; gap: var(--mb-space-2); margin-top: var(--mb-space-4); }
+.mb-lobby-eyebrow { margin: 0; }
+.mb-lobby-pin { margin: 0; font-size: 2.2rem; }
 .mb-lobby-qr {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  color: var(--mb-text-secondary);
+  color: var(--mb-text-guru-secondary);
 }
 .mb-lobby-qr-box {
   display: grid;
@@ -340,31 +583,61 @@
   width: 96px;
   height: 96px;
   border-radius: var(--mb-radius-md);
-  background: var(--mb-surface-elevated);
-  color: var(--mb-text-secondary);
+  background: rgba(28, 43, 58, 0.06);
+  border: 2px dashed rgba(28, 43, 58, 0.2);
+  color: var(--mb-text-guru-secondary);
   font-size: 0.8rem;
   letter-spacing: 0.1em;
 }
-.mb-lobby-wait, .mb-lobby-hint { color: var(--mb-text-secondary); margin: 0; }
+.mb-lobby-wait, .mb-lobby-hint { color: var(--mb-text-guru-secondary); margin: 0; }
 .mb-tquestion-status {
   display: flex;
   align-items: center;
   gap: var(--mb-space-4);
-  color: var(--mb-text-secondary);
+  color: var(--mb-text-guru-secondary);
   font-weight: 700;
 }
-.mb-tquestion-count strong { color: var(--mb-text-primary); font-size: 1.2rem; }
 .mb-progress-inline { width: min(100%, 560px); }
-.mb-closed-sub { color: var(--mb-text-secondary); margin: 0; }
+.mb-closed-sub { color: var(--mb-text-guru-secondary); margin: 0; }
 
-/* Responsive student (§29 — mobile-first 360px). */
-@media (max-width: 420px) {
-  .mb-sq, .mb-sreveal { padding: var(--mb-space-3); }
-  .mb-pj-title { font-size: 1.8rem; }
-  .mb-pin-projector .mb-pin-digit { width: 72px; height: 92px; font-size: 3.2rem; }
+/* ── Motion baseline (§29) ── */
+@media (prefers-reduced-motion: no-preference) {
+  .mb-fade-in { animation: mb-fade-in var(--mb-motion-med) both; }
+  .mb-entrance { animation: mb-entrance var(--mb-motion-med) both; }
+  @keyframes mb-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes mb-entrance {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+  .mb-progress-transition { transition: width var(--mb-motion-med) ease-out; }
+  .mb-wait-orb { animation: mb-orb-spin 1.6s linear infinite; }
+  @keyframes mb-orb-spin {
+    to { transform: rotate(360deg); }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mb-fade-in, .mb-entrance { animation: none; }
+  .mb-progress-transition { transition: none; }
 }
 
-/* Projector 16:9-first: teks naik di viewport lebar (§29). */
+/* Fokus terlihat jelas (§31). */
+.mb-scope :focus-visible {
+  outline: 3px solid var(--mb-accent);
+  outline-offset: 2px;
+  border-radius: var(--mb-radius-sm);
+}
+
+/* ── Responsive ── */
+@media (max-width: 420px) {
+  .mb-pj-title { font-size: 1.8rem; }
+  .mb-pin-projector .mb-pin-digit { width: 72px; height: 92px; font-size: 3.2rem; }
+  .mb-pj-teams { grid-template-columns: repeat(2, minmax(120px, 1fr)); }
+}
+
+/* Projector 16:9-first: teks naik di viewport lebar (§30). */
 @media (min-width: 1600px) {
   .mb-pj-title { font-size: 3rem; }
   .mb-pj-reveal-answer { font-size: 3.2rem; }

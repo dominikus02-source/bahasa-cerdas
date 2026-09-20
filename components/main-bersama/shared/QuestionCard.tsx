@@ -7,8 +7,9 @@ interface QuestionCardProps {
 }
 
 /**
- * Kartu soal (§11/§12) — light reading surface: passage readable,
- * max-width terjaga, pertanyaan menonjol, tanpa tumpukan card.
+ * Kartu soal (§21/§22) — light reading surface: passage readable
+ * (tinggi + line-height + max-width), pertanyaan menonjol, tanpa
+ * card bertumpuk.
  */
 export function QuestionCard({ question, roundLabel }: QuestionCardProps) {
   return (
@@ -37,33 +38,38 @@ export function QuestionCard({ question, roundLabel }: QuestionCardProps) {
         .mb-qcard-round {
           display: inline-block;
           margin-bottom: var(--mb-space-3);
-          padding: 2px 12px;
+          padding: 4px 14px;
           border-radius: var(--mb-radius-pill);
           background: var(--mb-primary-soft);
           color: var(--mb-primary-strong);
-          font-weight: 700;
+          font-weight: 800;
           font-size: 0.85rem;
         }
         .mb-qcard-passage {
-          max-height: 38dvh;
+          max-height: 44dvh;
           overflow-y: auto;
           padding: var(--mb-space-4);
           margin-bottom: var(--mb-space-4);
           background: #f3f1ec;
           border-radius: var(--mb-radius-md);
-          font-size: 1.05rem;   /* jangan mengecilkan teks (§12) */
-          line-height: 1.75;
+          font-size: 1.05rem;   /* jangan mengecilkan teks (§22) */
+          line-height: 1.8;
         }
         .mb-qcard-passage-title {
           display: block;
           margin-bottom: var(--mb-space-2);
+          font-size: 1.1rem;
         }
         .mb-qcard-prompt {
           margin: 0;
           font-family: var(--mb-font-reading);
-          font-size: 1.25rem;
-          font-weight: 700;
+          font-size: 1.3rem;
+          font-weight: 800;
           line-height: 1.5;
+        }
+        @media (max-width: 420px) {
+          .mb-qcard { padding: var(--mb-space-4); }
+          .mb-qcard-prompt { font-size: 1.2rem; }
         }
       `}</style>
     </div>

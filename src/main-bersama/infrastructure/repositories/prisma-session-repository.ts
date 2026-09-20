@@ -34,6 +34,20 @@ export class PrismaSessionRepository implements SessionRepository {
     return row ? sessionToDomain(row) : null;
   }
 
+  /**
+   * Lookup display (proyektor) — semua fase termasuk SUMMARY/ENDED.
+   * Terbaru menang: PIN hanya boleh dipakai satu sesi aktif, jadi bila
+   * ada sesi aktif dengan PIN itu ia selalu yang paling baru.
+   * Read-only; jalur join/command TIDAK memakai method ini.
+   */
+  async findLatestByPin(pin: string): Promise<MainSession | null> {
+    const row = await db.mainSession.findFirst({
+      where: { pin },
+      orderBy: { createdAt: 'desc' },
+    });
+    return row ? sessionToDomain(row) : null;
+  }
+
   /** Ownership: guru hanya melihat/mengelola sesinya sendiri. */
   async findSessionOwnedBy(
     sessionId: string,

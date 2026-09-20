@@ -137,6 +137,9 @@ const sessionsStore = {
   async findByPin(pin: string) {
     return sessionRepo.findActiveByPin(pin);
   },
+  async findByPinForDisplay(pin: string) {
+    return sessionRepo.findLatestByPin(pin);
+  },
   async findOwnedBy(sessionId: string, teacherId: string) {
     return sessionRepo.findSessionOwnedBy(sessionId, teacherId);
   },

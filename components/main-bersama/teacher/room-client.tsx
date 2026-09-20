@@ -1,6 +1,6 @@
 "use client";
-// ─── Teacher Room Client (Tahap 7 §2/§6/§13/§15/§16/§19) ────
-// SATU CTA dominan per fase (§2):
+// ─── Teacher Room Client (Tahap 8A — visual polish) ──────────
+// SATU CTA dominan per fase (§18):
 //   lobby → "Mulai Permainan"
 //   question → "Tutup Jawaban"
 //   closed → "Bahas Jawaban"
@@ -8,6 +8,7 @@
 //   summary → "Selesai"
 // Pause/Akhiri = kontrol sekunder di header. State selalu dari
 // GET authoritative (useSessionView); command POST lalu refresh.
+// Logic/Tahap 6 TIDAK berubah — hanya presentation.
 
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -29,6 +30,7 @@ import { CityProgress } from '@/components/main-bersama/shared/CityProgress';
 import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBanner';
 
 type Command =
+  | 'open-lobby'
   | 'start'
   | 'close-round'
   | 'discuss'
@@ -40,9 +42,12 @@ type Command =
 export function TeacherRoomClient({
   sessionId,
   pin,
+  className,
 }: {
   sessionId: string;
   pin: string;
+  /** Nama kelas dibaca server dari DB (view tidak membawanya). */
+  className?: string | null;
 }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
@@ -84,25 +89,9 @@ export function TeacherRoomClient({
   const eligible = view.answerSummary.eligibleCount;
   const isLastRound =
     (view.currentRoundIndex ?? -1) + 1 >= view.totalRounds;
-  // ── CTA utama per fase (§2 — hanya aksi yang relevan) ──
-  let primary: { label: string; action: Command; disabled?: boolean } | null = null;
-  if (a.canStartSession) {
-    primary = {
-      label: 'Mulai Permainan',
-      action: 'start',
-      disabled: view.participants.length === 0,
-    };
-  } else if (a.canCloseRound) {
-    primary = { label: 'Tutup Jawaban', action: 'close-round' };
-  } else if (a.canStartDiscussion) {
-    primary = { label: 'Bahas Jawaban', action: 'discuss' };
-  } else if (a.canGoToNextRound) {
-    primary = isLastRound
-      ? { label: 'Lihat Hasil', action: 'next-round' }
-      : { label: 'Lanjut', action: 'next-round' };
-  } else if (view.phase === 'summary') {
-    primary = { label: 'Selesai', action: 'end' };
-  }
+  // ── CTA utama per fase (§18 — hanya aksi yang relevan) ──
+  // Lobby section me-render CTA fase preparing/lobby (lihat di bawah);
+  // fase lain me-render CTA statis per section.
 
   const roundLabel =
     view.currentRoundIndex !== null
@@ -114,6 +103,7 @@ export function TeacherRoomClient({
       <ConnectionBanner visible={connection === 'offline'} />
       <SessionHeader
         mode={view.gameMode}
+        className={className ?? undefined}
         roundLabel={roundLabel}
         actions={
           <>
@@ -140,39 +130,64 @@ export function TeacherRoomClient({
         <p role="alert" className="mb-room-error">{error}</p>
       ) : null}
 
-      {/* ── LOBBY (§6) ── */}
+      {/* ── LOBBY (§17) — PIN sebagai anchor utama ── */}
       {view.phase === 'lobby' || view.phase === 'preparing' ? (
         <section className="mb-lobby mb-fade-in">
-          <h1 className="mb-display">PIN Ruang</h1>
-          <PinDisplay pin={pin} />
+          <div className="mb-lobby-head">
+            <span className="mb-eyebrow mb-lobby-eyebrow">PIN Ruang</span>
+            <PinDisplay pin={pin} />
+            <p className="mb-lobby-wait">
+              Bagikan PIN ini kepada siswa untuk bergabung. Siswa membuka halaman
+              Gabung Main Bersama lalu memasukkan PIN.
+            </p>
+          </div>
+          <div className="mb-lobby-meta">
+            <span className="mb-chip mb-lobby-chip">
+              <UsersMini />
+              <strong className="mb-number">{view.participants.length}</strong> peserta
+            </span>
+            {className ? <span className="mb-chip mb-lobby-chip">Kelas {className}</span> : null}
+            <span className="mb-chip mb-lobby-chip">
+              {view.gameMode === 'jelajah-kata' ? 'Jelajah Kata' : 'Kota Cahaya'}
+            </span>
+            <span className="mb-chip mb-lobby-chip mb-number">{view.totalRounds} soal</span>
+          </div>
           <div className="mb-lobby-qr" aria-hidden>
             <span className="mb-lobby-qr-box">QR</span>
-            <small>QR (segera hadir) — siswa buka ayo.bahasacerdas.com</small>
+            <small>Kode QR (segera hadir)</small>
           </div>
-          <p className="mb-lobby-wait" role="status">
-            Bagikan PIN kepada siswa. Ruang siap saat semua sudah bergabung.
-          </p>
-          <ParticipantCount count={view.participants.length} />
           <ParticipantList participants={view.participants} />
-          <PrimaryGameButton
-            onClick={() => run('start')}
-            disabled={busy || view.participants.length === 0}
-            loading={busy}
-          >
-            Mulai Permainan
-          </PrimaryGameButton>
           {view.participants.length === 0 ? (
-            <p className="mb-lobby-hint">Menunggu siswa bergabung…</p>
+            <p className="mb-lobby-hint" role="status">
+              Belum ada siswa yang bergabung. Bagikan PIN di atas kepada kelas.
+            </p>
           ) : null}
+          <div className="mb-room-cta">
+            {view.phase === 'preparing' ? (
+              <PrimaryGameButton onClick={() => run('open-lobby')} disabled={busy} loading={busy} variant="light">
+                Buka Ruang
+              </PrimaryGameButton>
+            ) : (
+              <PrimaryGameButton
+                onClick={() => run('start')}
+                disabled={busy || view.participants.length === 0}
+                loading={busy}
+                variant="light"
+              >
+                Mulai Permainan
+              </PrimaryGameButton>
+            )}
+          </div>
         </section>
       ) : null}
 
-      {/* ── QUESTION (§13) ── */}
+      {/* ── QUESTION (§18) — soal → jumlah menjawab + waktu → progres → CTA ── */}
       {view.phase === 'question' && view.currentQuestion ? (
         <section className="mb-tquestion mb-fade-in">
           <div className="mb-tquestion-status">
-            <span className="mb-tquestion-count mb-number">
-              Terjawab <strong>{answered}</strong> / {eligible}
+            <span className="mb-count mb-count-guru">
+              <strong className="mb-number">{answered}</strong>
+              <small>/ {eligible} menjawab</small>
             </span>
             <RoundTimer closesAt={view.currentRoundClosesAt} serverTime={view.serverTime} />
           </div>
@@ -191,7 +206,7 @@ export function TeacherRoomClient({
             ) : null}
           </div>
           <div className="mb-room-cta">
-            <PrimaryGameButton onClick={() => run('close-round')} disabled={busy} loading={busy}>
+            <PrimaryGameButton onClick={() => run('close-round')} disabled={busy} loading={busy} variant="light">
               Tutup Jawaban
             </PrimaryGameButton>
           </div>
@@ -199,34 +214,34 @@ export function TeacherRoomClient({
         </section>
       ) : null}
 
-      {/* ── CLOSED (§15) — jangan reveal sebelum Bahas ── */}
+      {/* ── CLOSED (§18) — jangan reveal sebelum Bahas ── */}
       {view.phase === 'closed' ? (
         <section className="mb-closed mb-fade-in">
-          <h2 className="mb-display">Jawaban ditutup</h2>
+          <h2 className="mb-display mb-guru-phase-title">Jawaban ditutup</h2>
           <p className="mb-closed-sub">
             {answered} dari {eligible} siswa sudah menjawab.
           </p>
           <div className="mb-room-cta">
-            <PrimaryGameButton onClick={() => run('discuss')} disabled={busy} loading={busy}>
+            <PrimaryGameButton onClick={() => run('discuss')} disabled={busy} loading={busy} variant="light">
               Bahas Jawaban
             </PrimaryGameButton>
           </div>
         </section>
       ) : null}
 
-      {/* ── PAUSED (§42 secondary) ── */}
+      {/* ── PAUSED (secondary) ── */}
       {view.phase === 'paused' ? (
         <section className="mb-closed mb-fade-in">
-          <h2 className="mb-display">Permainan dijeda</h2>
+          <h2 className="mb-display mb-guru-phase-title">Permainan dijeda</h2>
           <div className="mb-room-cta">
-            <PrimaryGameButton onClick={() => run('resume')} disabled={busy} loading={busy}>
+            <PrimaryGameButton onClick={() => run('resume')} disabled={busy} loading={busy} variant="light">
               Lanjutkan Permainan
             </PrimaryGameButton>
           </div>
         </section>
       ) : null}
 
-      {/* ── DISCUSSION (§16) — teacher melihat kunci + agregat ── */}
+      {/* ── DISCUSSION (§18) — guru melihat kunci + agregat ── */}
       {view.phase === 'discussion' && view.currentQuestion ? (
         <section className="mb-discuss mb-fade-in">
           <QuestionCard
@@ -265,6 +280,7 @@ export function TeacherRoomClient({
               onClick={() => run('next-round')}
               disabled={busy}
               loading={busy}
+              variant="light"
             >
               {isLastRound ? 'Lihat Hasil' : 'Lanjut'}
             </PrimaryGameButton>
@@ -272,10 +288,10 @@ export function TeacherRoomClient({
         </section>
       ) : null}
 
-      {/* ── SUMMARY (§19 teacher) ── */}
+      {/* ── SUMMARY (§28 teacher) ── */}
       {view.phase === 'summary' || view.phase === 'ended' ? (
         <section className="mb-tsummary mb-fade-in">
-          <h2 className="mb-display">Hasil Permainan</h2>
+          <h2 className="mb-display mb-guru-phase-title">Hasil Permainan</h2>
           {view.gameState?.gameMode === 'jelajah-kata' ? (
             <TeamProgress teams={view.teams} progress={view.gameState.jelajahKata.teamProgress} />
           ) : view.gameState?.gameMode === 'kota-cahaya' ? (
@@ -286,7 +302,7 @@ export function TeacherRoomClient({
           ) : null}
           <ParticipantList participants={view.participants} />
           <div className="mb-room-cta">
-            <PrimaryGameButton onClick={() => router.push('/guru/game/main-bersama')} disabled={busy}>
+            <PrimaryGameButton onClick={() => router.push('/guru/game/main-bersama')} disabled={busy} variant="light">
               Selesai
             </PrimaryGameButton>
           </div>
@@ -313,7 +329,7 @@ function ParticipantList({
           {p.teamId ? <span className="mb-plist-team">{p.teamId}</span> : null}
           {showAnswered ? (
             <span className={`mb-plist-state ${p.hasAnsweredCurrentRound ? 'mb-ok' : 'mb-wait'}`}>
-              {p.hasAnsweredCurrentRound ? '✓ menjawab' : '… memikirkan'}
+              {p.hasAnsweredCurrentRound ? 'sudah menjawab' : 'sedang mengerjakan'}
             </span>
           ) : (
             <span
@@ -364,15 +380,27 @@ function _RoundTimer({ closesAt, serverTime }: { closesAt: string; serverTime: s
         .mb-timer {
           padding: 6px 16px;
           border-radius: var(--mb-radius-pill);
-          background: var(--mb-surface-elevated);
+          background: rgba(28, 43, 58, 0.08);
           font-weight: 800;
           font-size: 1.05rem;
+          color: var(--mb-text-guru);
         }
         .mb-timer-urgent {
           background: var(--mb-danger);
-          color: #fff;
+          color: #ffffff;
         }
       `}</style>
     </span>
+  );
+}
+
+function UsersMini() {
+  return (
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
   );
 }

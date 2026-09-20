@@ -176,7 +176,7 @@ export default function TeacherCommandCenter({
                     <span className="absolute inline-flex w-full h-full rounded-full bg-amber-300 opacity-75 motion-safe:animate-ping" />
                     <span className="relative inline-flex w-1.5 h-1.5 rounded-full bg-amber-300" />
                   </span>
-                  Live
+                  LANGSUNG
                 </span>
               </span>
               <ArrowRight size={14} className="shrink-0 opacity-70 group-hover:translate-x-0.5 motion-safe:transition-transform" aria-hidden />

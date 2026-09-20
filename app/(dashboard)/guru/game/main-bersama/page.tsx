@@ -45,15 +45,17 @@ export default async function MainBersamaSetupPage() {
   ]);
 
   return (
-    <SetupClient
-      teacherName={user.fullName ?? "Guru"}
-      packages={packages.map((p) => ({
-        id: p.id,
-        title: p.title,
-        kelas: p.kelas,
-        questionCount: p._count.questions,
-      }))}
-      classes={classes.map((c) => ({ id: c.id, name: c.name }))}
-    />
+    <div className="mb-scope-guru">
+      <SetupClient
+        teacherName={user.fullName ?? "Guru"}
+        packages={packages.map((p) => ({
+          id: p.id,
+          title: p.title,
+          kelas: p.kelas,
+          questionCount: p._count.questions,
+        }))}
+        classes={classes.map((c) => ({ id: c.id, name: c.name }))}
+      />
+    </div>
   );
 }

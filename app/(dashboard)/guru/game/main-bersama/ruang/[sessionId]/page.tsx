@@ -32,11 +32,19 @@ export default async function TeacherRoomPage({
 
   const session = await db.mainSession.findUnique({
     where: { id: sessionId },
-    select: { id: true, teacherId: true, pin: true },
+    select: { id: true, teacherId: true, pin: true, className: true },
   });
   if (!session || session.teacherId !== user.id) {
     redirect("/guru/game/main-bersama");
   }
 
-  return <TeacherRoomClient sessionId={session.id} pin={session.pin} />;
+  return (
+    <div className="mb-scope-guru">
+      <TeacherRoomClient
+        sessionId={session.id}
+        pin={session.pin}
+        className={session.className}
+      />
+    </div>
+  );
 }

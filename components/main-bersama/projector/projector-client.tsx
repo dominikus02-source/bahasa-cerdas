@@ -1,9 +1,10 @@
 "use client";
-// ─── Projector Client (Tahap 7 §10/§14/§19/§20) ──────────────
+// ─── Projector Client (Tahap 8A — hero surface) ─────────────
 // Layar kelas: teatrikal, read-only, TANPA data privat. State
 // SELALU dari GET projector authoritative (useSessionView); sinyal
-// Broadcast hanya pemicu refetch (§21). Identitas sesi via query
-// ?pin= atau ?sessionId= (tidak ada secret — PIN memang publik).
+// Broadcast hanya pemicu refetch. Identitas sesi via query ?pin=
+// atau ?sessionId= (tidak ada secret — PIN memang publik).
+// Logic Tahap 6/7 TIDAK berubah — hanya presentation.
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -67,17 +68,6 @@ export function ProjectorClient() {
         <button type="button" className="mb-pj-retry" onClick={() => router.refresh()}>
           Coba lagi
         </button>
-        <style jsx global>{`
-          .mb-pj-retry {
-            padding: var(--mb-space-3) var(--mb-space-6);
-            border-radius: var(--mb-radius-pill);
-            background: var(--mb-surface-elevated);
-            color: var(--mb-text-primary);
-            border: 2px solid transparent;
-            font-weight: 700;
-            cursor: pointer;
-          }
-        `}</style>
       </main>
     );
   }
@@ -97,9 +87,14 @@ export function ProjectorClient() {
     <main className="mb-pj">
       <ConnectionBanner visible={connection === 'offline'} />
       <header className="mb-pj-head">
-        <h1 className="mb-display mb-pj-title">MAIN BERSAMA</h1>
-        <span className="mb-pj-mode">{MODE_LABEL[view.gameMode]}</span>
-        {view.className ? <span className="mb-pj-class">{view.className}</span> : null}
+        <div className="mb-pj-brand">
+          <h1 className="mb-display mb-pj-title">MAIN BERSAMA</h1>
+          <p className="mb-pj-sub">Kuis kelas <strong>langsung</strong> bersama BahasaCerdas</p>
+        </div>
+        <div className="mb-pj-head-meta">
+          <span className="mb-pj-mode">{MODE_LABEL[view.gameMode]}</span>
+          {view.className ? <span className="mb-pj-class">Kelas {view.className}</span> : null}
+        </div>
       </header>
 
       {view.phase === 'lobby' || view.phase === 'preparing' ? (
@@ -158,7 +153,7 @@ function useResolvedSessionId(
   return resolved;
 }
 
-// ─── Lobby (§10) — PIN sangat besar + status menunggu ───────
+// ─── Lobby (§24) — brand + PIN sangat besar + regu/kota ─────
 
 function ProjectorLobby({ view }: { view: ProjectorSessionView }) {
   const pin = view.joinInfo?.pin ?? '------';
@@ -166,7 +161,7 @@ function ProjectorLobby({ view }: { view: ProjectorSessionView }) {
     <section className="mb-pj-phase mb-fade-in">
       <PinDisplay pin={pin} scale="projector" />
       <p className="mb-pj-wait" role="status">
-        Buka <strong>ayo.bahasacerdas.com</strong> dan masukkan PIN di atas
+        Buka halaman <strong>Gabung Main Bersama</strong> lalu masukkan PIN di atas
       </p>
       <ParticipantCount count={view.participation.playerCount} label="siswa bergabung" />
       {view.gameProgress.gameMode === 'jelajah-kata' ? (
@@ -175,9 +170,9 @@ function ProjectorLobby({ view }: { view: ProjectorSessionView }) {
             <span
               key={t.id}
               className="mb-pj-team"
-              style={{ borderColor: TEAM_COLOR_VAR[t.id] ?? 'var(--mb-primary)' }}
+              style={{ '--mb-tc': TEAM_COLOR_VAR[t.id] ?? 'var(--mb-primary)' } as React.CSSProperties}
             >
-              {t.symbol} {t.name}
+              {TEAM_LABEL[t.id] ?? t.name}
             </span>
           ))}
         </div>
@@ -193,7 +188,7 @@ function ProjectorLobby({ view }: { view: ProjectorSessionView }) {
   );
 }
 
-// ─── Question (§14) — agregat, TANPA answer/individu/key ────
+// ─── Question (§24) — agregat, TANPA answer/individu/key ────
 
 function ProjectorQuestion({ view }: { view: ProjectorSessionView }) {
   const q = view.currentQuestion;
@@ -205,7 +200,7 @@ function ProjectorQuestion({ view }: { view: ProjectorSessionView }) {
         </div>
       ) : null}
       <div className="mb-pj-participation">
-        <span className="mb-pj-part-count mb-number">
+        <span className="mb-count mb-number">
           {view.participation.submittedCount}
           <small> / {view.participation.eligibleCount} menjawab</small>
         </span>
@@ -225,7 +220,7 @@ function ProjectorQuestion({ view }: { view: ProjectorSessionView }) {
   );
 }
 
-// ─── Discussion (§16) — kunci + ringkasan + progres hasil ───
+// ─── Discussion (§27) — kunci + ringkasan + progres hasil ───
 
 function ProjectorDiscussion({ view }: { view: ProjectorSessionView }) {
   const r = view.revealedRound!;
@@ -255,14 +250,14 @@ function ProjectorDiscussion({ view }: { view: ProjectorSessionView }) {
   );
 }
 
-// ─── Summary (§19/§20) — ranking tie-safe / misi kota ───────
+// ─── Summary (§28) — ranking tie-safe / misi kota positif ───
 
 function ProjectorSummary({ view }: { view: ProjectorSessionView }) {
   const final = view.finalResult;
   if (!final) return null;
 
   if (final.gameMode === 'jelajah-kata') {
-    // Ranking domain: 1,1,3,4 — tie ditampilkan apa adanya (§19);
+    // Ranking domain: 1,1,3,4 — tie ditampilkan apa adanya (§28);
     // beberapa pemenang didukung (semua rank 1 = juara bersama).
     const winners = final.teamRanking.filter((t) => t.progress === final.teamRanking[0].progress);
     return (
@@ -271,7 +266,7 @@ function ProjectorSummary({ view }: { view: ProjectorSessionView }) {
           {winners.length > 1 ? 'Juara Bersama!' : 'Papan Peringkat'}
         </h2>
         <ol className="mb-pj-ranking">
-          {final.teamRanking.map((t, i) => {
+          {final.teamRanking.map((t) => {
             const rank = final.teamRanking.findIndex(
               (o) => o.progress === t.progress,
             ) + 1;
@@ -287,8 +282,8 @@ function ProjectorSummary({ view }: { view: ProjectorSessionView }) {
                   {TEAM_LABEL[t.teamId] ?? t.teamId}
                 </span>
                 <span className="mb-pj-rank-pct mb-number">{Math.round(t.progress)}%</span>
-                {i === 0 && winners.length > 1 ? (
-                  <span className="mb-pj-tie-note">tie</span>
+                {isWinner && winners.length > 1 ? (
+                  <span className="mb-pj-tie-note">seri</span>
                 ) : null}
               </li>
             );
@@ -298,13 +293,15 @@ function ProjectorSummary({ view }: { view: ProjectorSessionView }) {
     );
   }
 
-  // Kota (§20): missionAchieved = rayakan; belum = positif, tanpa menyalahkan.
+  // Kota (§28): misi tercapai = rayakan; belum = copy positif progress
+  // kelas — tanpa kata "gagal", tanpa menyalahkan siswa.
+  const pct = Math.round(final.progressPercent);
   return (
     <section className="mb-pj-phase mb-fade-in">
       <h2 className="mb-display mb-pj-final-title">
         {final.missionAchieved
-          ? 'Kota Cahaya berhasil dinyalakan! ✨'
-          : 'Kota Cahaya sudah setengah menyala!'}
+          ? 'Kota Cahaya berhasil dinyalakan!'
+          : `Kota Cahaya menyala ${pct}%!`}
       </h2>
       <CityProgress
         progressPercent={final.progressPercent}
