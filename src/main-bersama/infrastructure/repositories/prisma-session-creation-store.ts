@@ -41,6 +41,7 @@ export class PrismaMainSessionCreationStore implements MainSessionCreationStore 
             teacherId: input.session.teacherId,
             classId: input.session.classId ?? null,
             className: input.session.className ?? null,
+            contentTitle: input.session.contentTitle ?? 'Paket Soal',
             gameMode: gameModeToDb(input.gameMode),
             phase: phaseToDb(input.session.phase),
             currentRoundIndex: input.session.currentRoundIndex,

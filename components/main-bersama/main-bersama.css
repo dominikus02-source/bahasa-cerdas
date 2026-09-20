@@ -550,14 +550,21 @@
 .mb-lobby-qr-box {
   display: grid;
   place-items: center;
-  width: 96px;
-  height: 96px;
+  width: 180px;
+  height: 180px;
   border-radius: var(--mb-radius-md);
   background: rgba(28, 43, 58, 0.06);
   border: 2px dashed rgba(28, 43, 58, 0.2);
   color: var(--mb-text-guru-secondary);
   font-size: 0.8rem;
   letter-spacing: 0.1em;
+}
+.mb-lobby-qr-img {
+  width: 180px;
+  height: 180px;
+  border-radius: var(--mb-radius-md);
+  border: 3px solid #fff;
+  box-shadow: 0 2px 12px rgba(0,0,0,.12);
 }
 .mb-lobby-wait, .mb-lobby-hint { color: var(--mb-text-guru-secondary); margin: 0; }
 .mb-tquestion-status {
@@ -612,4 +619,23 @@
   .mb-pj-title { font-size: 3rem; }
   .mb-pj-reveal-answer { font-size: 3.2rem; }
   .mb-pj-final-title { font-size: 3.4rem; }
+}
+
+/* ── Fullscreen mode: hide sidebar + bottom nav ── */
+.mb-room.game-fullscreen ~ .shell-sidebar,
+.mb-room.game-fullscreen ~ nav,
+:has(.mb-room.game-fullscreen) .shell-sidebar,
+:has(.mb-room.game-fullscreen) .owns-bottom-bar,
+:has(.mb-room.game-fullscreen) .shell-topbar {
+  display: none !important;
+}
+:has(.mb-room.game-fullscreen) .shell-main {
+  margin-left: 0 !important;
+  padding-top: 0 !important;
+  max-width: 100% !important;
+}
+:has(.mb-room.game-fullscreen) main.mb-room {
+  max-width: 100% !important;
+  padding: 0 !important;
+  min-height: 100dvh;
 }

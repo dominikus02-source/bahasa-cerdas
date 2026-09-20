@@ -38,7 +38,12 @@ export interface BankSoalQuestionInput {
 }
 
 export type BankSoalSourceResult =
-  | { ok: true; questions: BankSoalQuestionInput[] }
+  | {
+      ok: true;
+      questions: BankSoalQuestionInput[];
+      /** Label public-safe dari sumber soal (mis. nama tema/SoalSet). */
+      contentTitle: string;
+    }
   | { ok: false; code: 'PACKAGE_NOT_FOUND' };
 
 /** Port sumber soal (dipakai use-case, diimplementasi adapter). */

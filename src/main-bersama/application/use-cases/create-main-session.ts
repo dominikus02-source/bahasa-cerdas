@@ -19,7 +19,7 @@ import type {
   GameMode,
 } from '../../domain/types/session';
 import type { GameEngineState } from '../../games/game-router';
-import type { MainSession } from '../../domain/entities/session';
+import { DEFAULT_CONTENT_TITLE, type MainSession } from '../../domain/entities/session';
 import type { MainQuestionSnapshot } from '../../domain/entities/question';
 import { createGameState } from '../../games/game-router';
 import type {
@@ -124,6 +124,9 @@ export async function createMainSession(
   if (!source.ok) return { ok: false, code: 'PACKAGE_NOT_FOUND' };
   if (source.questions.length === 0) return { ok: false, code: 'PACKAGE_EMPTY' };
 
+  // Snapshot label public-safe dari sumber soal (mis. nama tema/SoalSet).
+  const contentTitle = (source.contentTitle ?? '').trim().slice(0, 120) || DEFAULT_CONTENT_TITLE;
+
   // 4-5. Kompatibilitas eksplisit + adaptasi (satu pass).
   //      Mode default = STRICT: paket campuran ditolak supaya caller
   //      SADAR ada soal yang tidak didukung. Mode useSupportedQuestions
@@ -213,6 +216,7 @@ export async function createMainSession(
     teacherId,
     ...(input.classId !== undefined ? { classId: input.classId } : {}),
     ...(className !== undefined ? { className } : {}),
+    contentTitle,
     gameMode: input.gameMode,
     phase: 'preparing',
     currentRoundIndex: null,
