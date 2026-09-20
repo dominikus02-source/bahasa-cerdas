@@ -1,13 +1,14 @@
 /**
- * P2.8 — Pendekar Suryakerta Premium Early Access visibility guard.
+ * P2.8 / P2.10-FREEZE — Pendekar Suryakerta visibility guard.
  *
  * Membuktikan:
- * 1. RPG muncul di katalog sebagai game Premium (batas registry kanonik).
- * 2. /arena/game/rpg dijaga server-side: Premium main, FREE melihat
- *    halaman terkunci (bukan gameplay, bukan error generik).
- * 3. Tidak ada gim Arena lain yang terdampak.
- * 4. Source RPG tidak dihapus/diubah (hanya akses yang dijaga).
- * 5. Tidak ada penyembunyian CSS/client-only.
+ * 1. RPG terdaftar di registry dengan premiumOnly + unpublished (P2.10-FREEZE).
+ * 2. RPG TIDAK muncul di discovery (unpublished = true).
+ * 3. featuredGame() memilih game published (bukan RPG).
+ * 4. Tidak ada gim Arena lain yang terdampak.
+ * 5. Source RPG tidak dihapus/diubah (hanya akses yang dijaga).
+ * 6. Discovery surfaces memfilter unpublished dengan benar.
+ * 7. Founder/admin bypass tersedia di RPG page.
  *
  * Usage: npx tsx scripts/test-rpg-unpublished.ts
  * Exit 0 = SEMUA LULUS, 1 = ada yang gagal.
@@ -35,19 +36,21 @@ function src(path: string): string {
   return readFileSync(join(ROOT, path), "utf8");
 }
 
-console.log("\n🔒 Registry — batas kanonik");
+console.log("\n🔒 Registry — P2.10-FREEZE state");
 const rpg = gameById("rpg");
 check("entri rpg ada di registry", !!rpg);
-check("rpg published sebagai premium-only", rpg?.premiumOnly === true && !rpg?.unpublished);
+check("rpg premiumOnly tetap aktif", rpg?.premiumOnly === true);
+check("rpg unpublished (P2.10-FREEZE)", rpg?.unpublished === true);
 check(
-  "featuredGame() adalah RPG (hero launch Premium)",
-  featuredGame().id === "rpg",
+  "featuredGame() BUKAN RPG (unpublished di-skip)",
+  featuredGame().id !== "rpg",
   `malah ${featuredGame().id}`
 );
-check("featuredGame() sudah published", !featuredGame().unpublished);
+check("featuredGame() published", !featuredGame().unpublished);
 check(
-  "tidak ada gim lain yang unpublished",
-  GAME_REGISTRY.filter((g) => g.id !== "rpg" && g.unpublished).length === 0
+  "hanya RPG yang unpublished",
+  GAME_REGISTRY.filter((g) => g.unpublished).length === 1 &&
+    GAME_REGISTRY.filter((g) => g.unpublished)[0]?.id === "rpg"
 );
 
 console.log("\n🎮 Regresi gim lain");
@@ -55,8 +58,8 @@ const kuis = gameById("kuis-tempur");
 check("kuis-tempur tetap terdaftar", !!kuis);
 check("kuis-tempur tetap published", !kuis?.unpublished);
 check(
-  "semua entri published (RPG ikut katalog)",
-  GAME_REGISTRY.filter((g) => !g.unpublished).length === GAME_REGISTRY.length
+  "gim lain semua published (hanya RPG unpublished)",
+  GAME_REGISTRY.filter((g) => g.id !== "rpg" && g.unpublished).length === 0
 );
 
 console.log("\n🖥️ Discovery surfaces (filter sumber)");
@@ -85,6 +88,11 @@ check(
   "tidak ada penyembunyian CSS (hidden/display:none untuk rpg)",
   !/rpg.*(hidden|display:\s*none)/i.test(page)
 );
+
+console.log("\n🔑 Founder/admin bypass (P2.10-FREEZE)");
+check("page.tsx cek isFounder/ADMIN bypass", page.includes("isFounder") && page.includes('role === "ADMIN"'));
+check("page.tsx bypass unpublished untuk founder/admin", page.includes("PREVIEW_DENIED"));
+check("page.tsx render RpgClient saat bypass", page.includes("RpgClient playerId={user.id}"));
 
 console.log("\n📦 Preservasi source RPG (tidak dihapus)");
 check("engine UI ada", existsSync(join(ROOT, "src/game/rpg/ui/RPGGame.tsx")));

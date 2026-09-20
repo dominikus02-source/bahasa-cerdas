@@ -42,7 +42,7 @@ async function main() {
   // ── 1-5. Registry ────────────────────────────────────────────────
   console.log("\n📋 Registry");
   check("1. game registered", !!rpg);
-  check("2. game published (not unpublished)", !!rpg && !rpg.unpublished);
+  check("2. game unpublished (P2.10-FREEZE)", !!rpg && rpg.unpublished === true);
   check("3. correct title", rpg?.title === "Pendekar Suryakerta");
   check("4. correct RPG route", rpg?.href === "/arena/game/rpg");
   check("5. premium required flag", rpg?.premiumOnly === true);

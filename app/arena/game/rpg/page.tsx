@@ -21,9 +21,16 @@ export default async function RpgPage() {
   const user = await getUser();
   if (!user) redirect("/arena/login");
 
+  // P2.10-FREEZE: Founder/admin bypass — always allow access even when unpublished.
+  const isPrivileged = user.isFounder || user.role === "ADMIN";
+
   const access = await requireRpgPlayAccess();
   if (!access.ok) {
     if (access.status === 401) redirect("/arena/login");
+    if (isPrivileged && access.error.code === "PREVIEW_DENIED") {
+      // Founder/admin: bypass unpublished gate (game is paused, not deleted).
+      return <RpgClient playerId={user.id} playerName={user.fullName || "Pendekar"} />;
+    }
     if (access.error.code === "PREMIUM_REQUIRED") {
       return <RpgLocked />;
     }
