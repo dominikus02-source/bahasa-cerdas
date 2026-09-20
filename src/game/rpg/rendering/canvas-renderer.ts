@@ -26,6 +26,7 @@ import { spriteDrawRect, spriteFrameRect } from "./sprite-math";
 import type { RPGWorldEntity } from "../world/world-state";
 import { findNearestInteraction } from "../world/interaction";
 import type { LiveEnemy } from "../combat/encounter";
+import { resolveEntityAsset, isEntityAssetReady } from "./entity-asset-resolver";
 
 /** Depth layer order (z sequence, then y-sort within a layer). */
 const LAYER_ORDER = [
@@ -248,7 +249,13 @@ export function createCanvasRenderer(
           );
           continue;
         }
-        const color = tileId === "ground.path" ? COLORS.path : COLORS.grass;
+        // P2.9: Fix dead fallback — tileId is "tile.N", not "ground.path".
+        // Use numeric tile for color selection when no sprite binding exists.
+        const tileNum = Number(tileId.split(".")[1]);
+        const color = tileNum === 1 ? COLORS.path
+          : tileNum === 3 ? COLORS.water
+          : tileNum === 13 ? "#a0845c"  // dry ground
+          : COLORS.grass;
         drawRect(sx.x - tilePx / 2, sx.y - tilePx / 2, tilePx + 1, tilePx + 1, color);
 
         // Grid lines (subtle)
@@ -272,6 +279,18 @@ export function createCanvasRenderer(
   );
   const requestedTilePaths = new Set<string>();
 
+  // P2.9C.1: Preload READY entity assets on first render to avoid procedural→sprite pop.
+  let entityAssetsPreloaded = false;
+  function preloadEntityAssets(entities: readonly RPGWorldEntity[]): void {
+    for (const entity of entities) {
+      const resolution = resolveEntityAsset(entity.asset);
+      if (isEntityAssetReady(resolution) && !requestedTilePaths.has(resolution.path)) {
+        requestedTilePaths.add(resolution.path);
+        void tileLoader.load(resolution.path);
+      }
+    }
+  }
+
   /** Cached READY tile image for a bound tile, or null (color fallback). */
   function boundTileImage(
     mapId: string, tileId: string, x: number, y: number,
@@ -293,6 +312,12 @@ export function createCanvasRenderer(
 
   /** Render world entities (trees, houses, bushes, etc.). */
   function renderEntities(state: RPGGameState, camera: RPGCameraState) {
+    // P2.9C.1: Preload entity assets once to avoid first-frame procedural pop.
+    if (!entityAssetsPreloaded) {
+      entityAssetsPreloaded = true;
+      preloadEntityAssets(state.world.entities);
+    }
+
     const zoom = clampZoom(camera.zoom ?? 1);
     const sorted = sortEntitiesForDepth(state.world.entities);
 
@@ -303,57 +328,80 @@ export function createCanvasRenderer(
       );
       const size = 24 * entity.scale * zoom;
 
-      switch (entity.type) {
-        case "tree":
-          // Trunk
-          drawRect(screen.x - 4, screen.y - 4, 8, 16, COLORS.treeTrunk);
-          // Canopy
-          drawCircle(screen.x, screen.y - 12, size / 2, COLORS.tree);
-          break;
-        case "house":
-          // Body
-          drawRect(
-            screen.x - size / 2,
-            screen.y - size / 3,
-            size,
-            size * 0.6,
-            COLORS.house,
+      // P2.9B: Check entity asset pipeline before procedural fallback.
+      const resolution = resolveEntityAsset(entity.asset);
+      let spriteRendered = false;
+
+      if (isEntityAssetReady(resolution)) {
+        // Try to load and render the sprite.
+        const cached = tileLoader.cached(resolution.path);
+        if (cached) {
+          // Draw sprite centered at entity position, scaled to entity size.
+          const w = (cached as { width: number }).width;
+          const h = (cached as { height: number }).height;
+          const scale = size / Math.max(w, h);
+          const dw = w * scale;
+          const dh = h * scale;
+          ctx.drawImage(
+            cached as unknown as CanvasImageSource,
+            screen.x - dw / 2, screen.y - dh, dw, dh,
           );
-          // Roof
-          drawTriangle(
-            screen.x,
-            screen.y - size / 3 - 8,
-            size / 2 + 4,
-            "up",
-            COLORS.houseRoof,
-          );
-          break;
-        case "bush":
-          drawCircle(screen.x, screen.y, size / 3, COLORS.bush);
-          break;
-        case "rock":
-          drawCircle(screen.x, screen.y, size / 4, COLORS.rock);
-          break;
-        case "flowers":
-          drawCircle(screen.x - 4, screen.y, 3, COLORS.flowers);
-          drawCircle(screen.x + 4, screen.y - 2, 3, COLORS.flowers);
-          drawCircle(screen.x, screen.y + 3, 3, COLORS.flowers);
-          break;
-        case "fence":
-          drawRect(
-            screen.x - size / 2,
-            screen.y - 4,
-            size,
-            8,
-            COLORS.fence,
-          );
-          // Posts
-          drawRect(screen.x - size / 2, screen.y - 8, 4, 16, COLORS.fence);
-          drawRect(screen.x + size / 2 - 4, screen.y - 8, 4, 16, COLORS.fence);
-          break;
-        default:
-          // Generic entity placeholder
-          drawCircle(screen.x, screen.y, size / 3, "#9ca3af");
+          spriteRendered = true;
+        } else if (!requestedTilePaths.has(resolution.path)) {
+          // Enqueue async load (will render next frame).
+          requestedTilePaths.add(resolution.path);
+          void tileLoader.load(resolution.path);
+        }
+      }
+
+      // Procedural fallback (always drawn if sprite not rendered).
+      if (!spriteRendered) {
+        switch (entity.type) {
+          case "tree":
+            drawRect(screen.x - 4, screen.y - 4, 8, 16, COLORS.treeTrunk);
+            drawCircle(screen.x, screen.y - 12, size / 2, COLORS.tree);
+            break;
+          case "house":
+            drawRect(
+              screen.x - size / 2,
+              screen.y - size / 3,
+              size,
+              size * 0.6,
+              COLORS.house,
+            );
+            drawTriangle(
+              screen.x,
+              screen.y - size / 3 - 8,
+              size / 2 + 4,
+              "up",
+              COLORS.houseRoof,
+            );
+            break;
+          case "bush":
+            drawCircle(screen.x, screen.y, size / 3, COLORS.bush);
+            break;
+          case "rock":
+            drawCircle(screen.x, screen.y, size / 4, COLORS.rock);
+            break;
+          case "flowers":
+            drawCircle(screen.x - 4, screen.y, 3, COLORS.flowers);
+            drawCircle(screen.x + 4, screen.y - 2, 3, COLORS.flowers);
+            drawCircle(screen.x, screen.y + 3, 3, COLORS.flowers);
+            break;
+          case "fence":
+            drawRect(
+              screen.x - size / 2,
+              screen.y - 4,
+              size,
+              8,
+              COLORS.fence,
+            );
+            drawRect(screen.x - size / 2, screen.y - 8, 4, 16, COLORS.fence);
+            drawRect(screen.x + size / 2 - 4, screen.y - 8, 4, 16, COLORS.fence);
+            break;
+          default:
+            drawCircle(screen.x, screen.y, size / 3, "#9ca3af");
+        }
       }
     }
   }
@@ -386,14 +434,23 @@ export function createCanvasRenderer(
           drawRect(screen.x - 2, screen.y - 2, 4, 4, "#92400e");
           break;
         case "NPC":
-          // Intentional procedural NPC marker: no NPC sprite is approved.
+          // Procedural NPC marker — no approved sprite exists.
           drawCircle(screen.x, screen.y - 12, 11 * zoom, "#78350f");
           drawCircle(screen.x, screen.y - 18, 6 * zoom, "#fbbf24");
-          if (interaction.ref === "npc.ki") {
-            ctx.fillStyle = "#fff7ed";
-            ctx.font = "bold 11px sans-serif";
-            ctx.textAlign = "center";
-            ctx.fillText("Ki Jaka", screen.x, screen.y - 32 * zoom);
+          // P2.9: Show NPC name labels for all known NPCs (not just Ki Jaka).
+          {
+            const npcNames: Record<string, string> = {
+              "npc.ki": "Ki Jaka", "npc.ratmi": "Bu Ratmi", "npc.sari": "Bu Sari",
+              "npc.eyang": "Eyang", "npc.bagas": "Bagas", "npc.tani": "Pak Warsa",
+              "npc.empu": "Pak Empu", "npc.pendaki": "Pendaki",
+            };
+            const name = npcNames[interaction.ref];
+            if (name) {
+              ctx.fillStyle = "#fff7ed";
+              ctx.font = `bold ${Math.round(11 * zoom)}px sans-serif`;
+              ctx.textAlign = "center";
+              ctx.fillText(name, screen.x, screen.y - 32 * zoom);
+            }
           }
           break;
       }

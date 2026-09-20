@@ -52,7 +52,7 @@ const strip = (s: string) =>
 console.log("\n📦 1. manifest integrity");
 {
   const ready = manifestByStatus("READY");
-  check("106 READY entries", ready.length === 106, `got ${ready.length}`);
+  check("107 READY entries", ready.length === 107, `got ${ready.length}`);
   let bad = 0;
   for (const e of ready) {
     const disk = join(PUB, e.path.replace(/^\//, ""));
@@ -73,7 +73,7 @@ check("8. boss scale documented (contract, not art)", manifestLookup("ref:boss-r
 
 console.log("\n🗺️ 9. map visual binding");
 check("desa grass binds 3 variants", resolveTileAsset("map.desa", RPG_TILES.GR, 0, 0) !== null);
-check("unbound tile → null (color fallback)", resolveTileAsset("map.desa", RPG_TILES.TR, 0, 0) === null);
+check("unbound tile → null (color fallback)", resolveTileAsset("map.desa", RPG_TILES.CV, 0, 0) === null);
 check("unknown map → null", resolveTileAsset("map.void", RPG_TILES.GR, 0, 0) === null);
 check("binding deterministic (same twice)", resolveTileAsset("map.desa", RPG_TILES.GR, 5, 7) === resolveTileAsset("map.desa", RPG_TILES.GR, 5, 7));
 check("variants spread (hash, no RNG)", (() => {
@@ -123,6 +123,13 @@ console.log("\n🗂️ P2.2 conformance gate");
   const onDisk = new Set<string>();
   for (const dir of ["terrain", "items", "characters"]) {
     for (const f of readdirSync(join(PUB, "game", "rpg", dir))) {
+      if (f.endsWith(".png")) onDisk.add(f.replace(/\.png$/, ""));
+    }
+  }
+  // P2.9C: Also scan characters/npcs subdirectory for NPC runtime sprites.
+  const npcsDir = join(PUB, "game", "rpg", "characters", "npcs");
+  if (existsSync(npcsDir)) {
+    for (const f of readdirSync(npcsDir)) {
       if (f.endsWith(".png")) onDisk.add(f.replace(/\.png$/, ""));
     }
   }
