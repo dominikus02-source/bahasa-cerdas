@@ -40,6 +40,7 @@ export class PrismaBankThemeQuestionSource implements BankThemeQuestionSource {
 
     return {
       ok: true,
+      contentTitle: ref.topic,
       questions: selected.map((s) => ({
         sourceQuestionId: s.id,
         type: s.type,
