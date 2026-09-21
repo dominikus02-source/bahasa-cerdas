@@ -96,8 +96,27 @@ export const getUser = cache(async () => {
   // Cadangan: kalau verifikasi klaim gagal (mis. JWKS belum sempat diambil),
   // pakai jalur lama supaya sesi yang sah tidak ikut tertolak.
   if (!supabaseId) {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) supabaseId = user.id;
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (user) supabaseId = user.id;
+      if (error && !user) {
+        // ── Transient refresh-race detection ──
+        // "Refresh Token Already Used" / "Not Found" terjadi ketika
+        // concurrent request sudah me-refresh token. Bukan berarti
+        // session invalid. Jangan amplifikasi — biarkan page-level
+        // guard (layout.tsx) yang memutuskan.
+        const msg = (error.message || "").toLowerCase();
+        const isTransient = msg.includes("refresh token") && (
+          msg.includes("already used") || msg.includes("not found")
+        );
+        if (isTransient) {
+          console.warn("AUTH_REFRESH_RACE_IN_GETUSER", { error: error.message });
+          return null; // Page guard will handle — no destructive action here
+        }
+      }
+    } catch {
+      // Network/Auth service unreachable — treat as no session
+    }
   }
 
   if (!supabaseId) return null;

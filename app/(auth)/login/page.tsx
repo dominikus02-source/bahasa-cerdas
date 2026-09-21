@@ -29,16 +29,19 @@ export default function LoginPage() {
   const [next, setNext] = useState("");
 
   useEffect(() => {
-    // Clear any stale Supabase cookies + sign out to ensure fresh auth state
+    // Don't blindly clear all Supabase cookies on mount.
+    // User might arrive at /login due to a transient middleware/auth failure
+    // (e.g. concurrent refresh-token race). Blind cookie deletion would
+    // destroy a valid session that was already refreshed by another request.
+    //
+    // Instead: only sign out if there's actually an active session.
+    // This preserves the "fresh login" intent without being destructive.
     const supabase = createClient();
-    supabase.auth.signOut().catch(() => {});
-    document.cookie.split(";").forEach((c) => {
-      const name = c.trim().split("=")[0];
-      if (name.startsWith("sb-") || name.startsWith("supabase-")) {
-        document.cookie = `${name}=; max-age=0; path=/; domain=.bahasacerdas.com`;
-        document.cookie = `${name}=; max-age=0; path=/`;
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        supabase.auth.signOut().catch(() => {});
       }
-    });
+    }).catch(() => {});
 
     const params = new URLSearchParams(window.location.search);
     const nextParam = params.get("next") || "";
