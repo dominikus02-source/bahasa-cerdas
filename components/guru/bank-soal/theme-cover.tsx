@@ -16,6 +16,7 @@ import {
   PenTool, Globe, Sparkles, GraduationCap, Compass,
 } from "lucide-react";
 import type { IconKey } from "./theme-config";
+import { resolveIllustration, type IllustrationKey } from "./illustrations";
 
 export type CategoryKey =
   | "Tata Bahasa"
@@ -170,73 +171,43 @@ const SHADE_OVERLAY: Record<0 | 1 | 2, string> = {
 
 /**
  * Cover area visual untuk ThemeCard.
- * Solid category color + subtle pattern + icon.
- * Proporsi konsisten (h-20).
+ * Solid category color + illustration (when available) + icon fallback.
+ * NO pattern. NO gradient. Clean editorial.
  */
 export function ThemeCoverArt({
   visual,
   variant,
   name,
   iconKey,
+  illustrationKey,
   className = "",
 }: {
   visual: CategoryVisual;
   variant: ThemeVariant;
   name: string;
   iconKey?: string;
+  illustrationKey?: string;
   className?: string;
 }) {
-  // Resolve icon: theme-specific > category default
   const Icon = iconKey ? resolveIcon(iconKey as IconKey) : visual.icon;
-  const initials = name
-    .split(/[\s/]+/)
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase() ?? "")
-    .join("");
+  const Illustration = illustrationKey
+    ? resolveIllustration(illustrationKey as IllustrationKey)
+    : null;
 
   return (
     <div
       aria-hidden
       className={`relative h-20 w-full overflow-hidden ${visual.coverBg} ${SHADE_OVERLAY[variant.shade]} ${className}`}
     >
-      {/* Subtle pattern overlay */}
-      {variant.pattern === 0 ? (
-        <div
-          className="absolute inset-0 opacity-100"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle, rgba(255,255,255,0.7) 1px, transparent 1px)",
-            backgroundSize: "14px 14px",
-          }}
-        />
-      ) : variant.pattern === 1 ? (
-        <div
-          className="absolute inset-0 opacity-100"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(120deg, rgba(255,255,255,0.5) 0 1px, transparent 1px 20px)",
-          }}
-        />
+      {Illustration ? (
+        // Illustration mode: centered, white, semi-transparent
+        <Illustration className="absolute inset-0 w-full h-full text-white/25 p-3" />
       ) : (
-        <div
-          className="absolute inset-0 opacity-100"
-          style={{
-            backgroundImage:
-              "linear-gradient(45deg, rgba(255,255,255,0.04) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.04) 75%)",
-            backgroundSize: "20px 20px",
-          }}
-        />
+        // Fallback: clean Lucide icon, bottom-right, subtle
+        <span className="absolute bottom-2 right-2.5 w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+          <Icon size={16} className="text-white/50" />
+        </span>
       )}
-
-      {/* Icon — centered, clean */}
-      <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center">
-        <Icon size={20} className="text-white/80" />
-      </span>
-
-      {/* Subtle initials watermark */}
-      <span className="absolute bottom-1.5 right-2.5 text-white/15 text-xl font-extrabold tracking-wider select-none">
-        {initials}
-      </span>
     </div>
   );
 }

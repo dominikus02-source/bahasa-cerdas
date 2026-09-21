@@ -7,6 +7,7 @@
 // NO emoji. NO gradient. Solid category colors only.
 
 import type { CategoryKey } from "./theme-cover";
+import type { IllustrationKey } from "./illustrations";
 
 /** Lucide icon name keys used in theme-config. Resolved at render. */
 export type IconKey =
@@ -21,6 +22,8 @@ export type IconKey =
 export interface ThemeVisualOverride {
   /** Lucide icon key for this theme. */
   icon?: IconKey;
+  /** Illustration key for cover art. */
+  illustration?: IllustrationKey;
   /** Whether to feature this theme prominently. */
   featured?: boolean;
   /** Short editorial tagline. */
@@ -51,60 +54,73 @@ export interface ThemeCollection {
 // Unlisted themes use default procedural rendering from theme-cover.
 
 export const THEME_VISUALS: Record<string, ThemeVisualOverride> = {
-  // Literary figures (GB4 Tokoh Sastra)
-  "Chairil Anwar":        { icon: "pen-line", featured: true, tagline: "Penyair Angkatan '45" },
-  "Pramoedya":            { icon: "book-open", featured: true, tagline: "Sastrawan besar Indonesia" },
-  "Hamka":                { icon: "book-text", featured: true, tagline: "Ulama dan sastrawan" },
-  "Sapardi Djoko Damono": { icon: "feather", featured: true, tagline: "Hujan Bulan Juni" },
-  "W.S. Rendra":          { icon: "theater", featured: true, tagline: "Penyair rakyat" },
-  "Amir Hamzah":          { icon: "scroll-text", featured: true, tagline: "Pujangga Baru" },
-  "Armijn Pane":          { icon: "library", featured: true, tagline: "Angkatan Pujangga Baru" },
-  "Taufiq Ismail":        { icon: "pen-line", featured: true, tagline: "Angkatan '66" },
-  "Tauchid Abdulrahman":  { icon: "feather", featured: true, tagline: "Sastra modern" },
-  "Asrul Sani":           { icon: "pen-line", featured: true, tagline: "Penyair dan sutradara" },
+  // Literary figures (GB4 Tokoh Sastra) — literary illustration
+  "Chairil Anwar":        { icon: "pen-line", illustration: "literary", featured: true, tagline: "Penyair Angkatan '45" },
+  "Pramoedya":            { icon: "book-open", illustration: "literary", featured: true, tagline: "Sastrawan besar Indonesia" },
+  "Hamka":                { icon: "book-text", illustration: "literary", featured: true, tagline: "Ulama dan sastrawan" },
+  "Sapardi Djoko Damono": { icon: "feather", illustration: "literary", featured: true, tagline: "Hujan Bulan Juni" },
+  "W.S. Rendra":          { icon: "theater", illustration: "literary", featured: true, tagline: "Penyair rakyat" },
+  "Amir Hamzah":          { icon: "scroll-text", illustration: "literary", featured: true, tagline: "Pujangga Baru" },
+  "Armijn Pane":          { icon: "library", illustration: "literary", featured: true, tagline: "Angkatan Pujangga Baru" },
+  "Taufiq Ismail":        { icon: "pen-line", illustration: "literary", featured: true, tagline: "Angkatan '66" },
+  "Tauchid Abdulrahman":  { icon: "feather", illustration: "literary", featured: true, tagline: "Sastra modern" },
+  "Asrul Sani":           { icon: "pen-line", illustration: "literary", featured: true, tagline: "Penyair dan sutradara" },
 
-  // Tata Bahasa
-  "SPOK":             { icon: "spell-check", tagline: "Struktur kalimat dasar" },
-  "Kalimat Efektif":  { icon: "pen-line", tagline: "Kalimat yang tepat dan jelas" },
-  "Paragraf":         { icon: "file-text", tagline: "Satuan ide dalam tulisan" },
-  "Sinonim":          { icon: "shapes", tagline: "Kata sepadan" },
-  "Antonim":          { icon: "shapes", tagline: "Kata berlawanan" },
-  "Ejaan":            { icon: "languages", tagline: "Ejaan yang benar" },
-  "Tanda Baca":       { icon: "pen-line", tagline: "Tanda baca tepat" },
-  "PUEBI":            { icon: "book-text", tagline: "Pedoman umum ejaan" },
+  // Tata Bahasa — writing / structure / language / contrast
+  "SPOK":             { icon: "spell-check", illustration: "structure", tagline: "Struktur kalimat dasar" },
+  "Kalimat Efektif":  { icon: "pen-line", illustration: "structure", tagline: "Kalimat yang tepat dan jelas" },
+  "Paragraf":         { icon: "file-text", illustration: "document", tagline: "Satuan ide dalam tulisan" },
+  "Sinonim":          { icon: "shapes", illustration: "contrast", tagline: "Kata sepadan" },
+  "Antonim":          { icon: "shapes", illustration: "contrast", tagline: "Kata berlawanan" },
+  "Ejaan":            { icon: "languages", illustration: "writing", tagline: "Ejaan yang benar" },
+  "Tanda Baca":       { icon: "pen-line", illustration: "writing", tagline: "Tanda baca tepat" },
+  "PUEBI":            { icon: "book-text", illustration: "language", tagline: "Pedoman umum ejaan" },
+  "Kata Baku":        { icon: "book-text", illustration: "language", tagline: "Kata baku Indonesia" },
+  "Kata Tidak Baku":  { icon: "book-text", illustration: "language", tagline: "Kata tidak baku" },
+  "Makna Kata":       { icon: "book-open", illustration: "language", tagline: "Arti kata" },
+  "Imbuhan":          { icon: "spell-check", illustration: "writing", tagline: "Awalan, akhiran, sisipan" },
+  "Ide Pokok":        { icon: "file-text", illustration: "document", tagline: "Gagasan utama" },
+  "Gagasan Utama":    { icon: "file-text", illustration: "document", tagline: "Ide pokok paragraf" },
+  "Simpulan":         { icon: "file-text", illustration: "document", tagline: "Kesimpulan teks" },
 
-  // Sastra
-  "Puisi":    { icon: "feather", tagline: "Ekspresi perasaan dalam bait" },
-  "Cerpen":   { icon: "book-open", tagline: "Cerita pendek penuh makna" },
-  "Pantun":   { icon: "quote", tagline: "Puisi Melayu klasik" },
-  "Drama":    { icon: "theater", tagline: "Pentas kata dan peran" },
-  "Novel":    { icon: "book-open", tagline: "Cerita bersambung" },
-  "Majas":    { icon: "sparkles", tagline: "Bahasa kiasan" },
-  "Fabel":    { icon: "book-open", tagline: "Cerita bergambar" },
-  "Legenda":  { icon: "scroll-text", tagline: "Cerita rakyat" },
-  "Hikayat":  { icon: "library", tagline: "Sastra klasik Melayu" },
+  // Sastra — book / poetry / theater / story / quote
+  "Puisi":            { icon: "feather", illustration: "poetry", tagline: "Ekspresi perasaan dalam bait" },
+  "Cerpen":           { icon: "book-open", illustration: "book", tagline: "Cerita pendek penuh makna" },
+  "Pantun":           { icon: "quote", illustration: "quote-deco", tagline: "Puisi Melayu klasik" },
+  "Drama":            { icon: "theater", illustration: "theater", tagline: "Pentas kata dan peran" },
+  "Novel":            { icon: "book-open", illustration: "book", tagline: "Cerita bersambung" },
+  "Majas":            { icon: "sparkles", illustration: "quote-deco", tagline: "Bahasa kiasan" },
+  "Fabel":            { icon: "book-open", illustration: "book", tagline: "Cerita bergambar" },
+  "Legenda":          { icon: "scroll-text", illustration: "story", tagline: "Cerita rakyat" },
+  "Hikayat":          { icon: "library", illustration: "story", tagline: "Sastra klasik Melayu" },
+  "Syair":            { icon: "feather", illustration: "poetry", tagline: "Puisi empat seuntai" },
+  "Gurindam":         { icon: "quote", illustration: "poetry", tagline: "Puisi dua baris" },
+  "Mitos":            { icon: "scroll-text", illustration: "story", tagline: "Cerita kepercayaan" },
+  "Cerita Inspiratif": { icon: "book-open", illustration: "story", tagline: "Kisah inspiratif" },
+  "Anekdot":          { icon: "quote", illustration: "story", tagline: "Cerita lucu bermakna" },
 
-  // Jenis Teks
-  "Teks Eksposisi":   { icon: "file-text", tagline: "Paparan ide dan argumen" },
-  "Teks Narasi":      { icon: "book-open", tagline: "Cerita berurutan" },
-  "Teks Prosedur":    { icon: "clipboard-list", tagline: "Langkah-langkah" },
-  "Teks Berita":      { icon: "newspaper", tagline: "Fakta dan peristiwa" },
-  "Artikel":          { icon: "newspaper", tagline: "Tulisan informatif" },
-  "Resensi":          { icon: "book-open", tagline: "Ulasan buku/film" },
-  "Teks Eksplanasi":  { icon: "file-text", tagline: "Penjelasan proses" },
-  "Teks Deskripsi":   { icon: "file-text", tagline: "Menggambarkan objek" },
-  "Teks Persuasi":    { icon: "megaphone", tagline: "Meyakinkan pembaca" },
-  "Teks Argumentasi": { icon: "file-text", tagline: "Pendapat dan bukti" },
-  "Editorial":        { icon: "newspaper", tagline: "Opini redaksi" },
+  // Jenis Teks — document / newspaper / process / writing
+  "Teks Eksposisi":   { icon: "file-text", illustration: "document", tagline: "Paparan ide dan argumen" },
+  "Teks Narasi":      { icon: "book-open", illustration: "book", tagline: "Cerita berurutan" },
+  "Teks Prosedur":    { icon: "clipboard-list", illustration: "process", tagline: "Langkah-langkah" },
+  "Teks Berita":      { icon: "newspaper", illustration: "newspaper", tagline: "Fakta dan peristiwa" },
+  "Artikel":          { icon: "newspaper", illustration: "newspaper", tagline: "Tulisan informatif" },
+  "Resensi":          { icon: "book-open", illustration: "book", tagline: "Ulasan buku/film" },
+  "Teks Eksplanasi":  { icon: "file-text", illustration: "process", tagline: "Penjelasan proses" },
+  "Teks Deskripsi":   { icon: "file-text", illustration: "document", tagline: "Menggambarkan objek" },
+  "Teks Persuasi":    { icon: "megaphone", illustration: "newspaper", tagline: "Meyakinkan pembaca" },
+  "Teks Argumentasi": { icon: "file-text", illustration: "document", tagline: "Pendapat dan bukti" },
+  "Teks Ulasan":      { icon: "book-open", illustration: "book", tagline: "Ulasan karya" },
+  "Editorial":        { icon: "newspaper", illustration: "newspaper", tagline: "Opini redaksi" },
 
-  // Fungsional
-  "Pidato":       { icon: "mic", tagline: "Berbicara di depan umum" },
-  "Surat Dinas":  { icon: "mail", tagline: "Surat resmi instansi" },
-  "Proposal":     { icon: "bar-chart-3", tagline: "Rencana terstruktur" },
-  "Surat Pribadi": { icon: "mail", tagline: "Surat pribadi" },
-  "Poster":       { icon: "frame", tagline: "Desain visual informatif" },
-  "Iklan":        { icon: "megaphone", tagline: "Pesan promosi" },
-  "Slogan":       { icon: "quote", tagline: "Tagline bermakna" },
+  // Fungsional — speech / letter / process / frame
+  "Pidato":       { icon: "mic", illustration: "speech", tagline: "Berbicara di depan umum" },
+  "Surat Dinas":  { icon: "mail", illustration: "letter", tagline: "Surat resmi instansi" },
+  "Proposal":     { icon: "bar-chart-3", illustration: "process", tagline: "Rencana terstruktur" },
+  "Surat Pribadi": { icon: "mail", illustration: "letter", tagline: "Surat pribadi" },
+  "Poster":       { icon: "frame", illustration: "document", tagline: "Desain visual informatif" },
+  "Iklan":        { icon: "megaphone", illustration: "newspaper", tagline: "Pesan promosi" },
+  "Slogan":       { icon: "quote", illustration: "quote-deco", tagline: "Tagline bermakna" },
 };
 
 export function getThemeVisual(name: string): ThemeVisualOverride {

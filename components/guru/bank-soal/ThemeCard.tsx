@@ -46,6 +46,7 @@ export function ThemeCard<T extends ThemeCardData>({
         variant={variant}
         name={theme.name}
         iconKey={themeVis.icon}
+        illustrationKey={themeVis.illustration}
       />
 
       <div className="p-3">
