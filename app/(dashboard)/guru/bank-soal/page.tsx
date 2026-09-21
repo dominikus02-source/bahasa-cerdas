@@ -17,7 +17,7 @@ import { ThemeShelf } from "@/components/guru/bank-soal/ThemeShelf";
 import { FeaturedCollection } from "@/components/guru/bank-soal/FeaturedCollection";
 import { BankSoalCategoryNav } from "@/components/guru/bank-soal/BankSoalCategoryNav";
 import {
-  COLLECTIONS, getThemeVisual,
+  COLLECTIONS,
 } from "@/components/guru/bank-soal/theme-config";
 
 // ─── Category Patterns (canonical source) ────────────────────
@@ -299,11 +299,16 @@ export default function BankSoalPage() {
       {/* ════════════════════════════════════════════════════════
           1. HERO — Editorial discovery header
          ════════════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 p-6 sm:p-8 text-white">
-        {/* Glow orbs */}
-        <div aria-hidden className="absolute -top-16 -right-10 w-56 h-56 rounded-full bg-teal-400/20 blur-3xl" />
-        <div aria-hidden className="absolute -bottom-20 left-1/4 w-48 h-48 rounded-full bg-emerald-300/10 blur-3xl" />
-        <div aria-hidden className="absolute top-1/2 right-1/3 w-24 h-24 rounded-full bg-white/5 blur-2xl" />
+      <section className="relative overflow-hidden rounded-2xl bg-emerald-700 p-6 sm:p-8 text-white">
+        {/* Subtle geometric pattern */}
+        <div
+          aria-hidden
+          className="absolute inset-0"
+          style={{
+            backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)",
+            backgroundSize: "18px 18px",
+          }}
+        />
 
         <div className="relative">
           {/* Eyebrow */}
@@ -431,12 +436,11 @@ export default function BankSoalPage() {
       {!loading && !search && !selectedCategory && (
         <section
           aria-labelledby="shelf-mb"
-          className="relative overflow-hidden rounded-2xl border border-teal-100 bg-gradient-to-r from-teal-50 via-white to-emerald-50 p-5"
+          className="relative overflow-hidden rounded-2xl border border-teal-200/60 bg-white p-5"
         >
-          <div aria-hidden className="absolute -top-10 right-8 w-36 h-36 rounded-full bg-teal-200/25 blur-2xl" />
           <div className="relative flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="flex items-center gap-3 flex-1 min-w-0">
-              <span className="w-11 h-11 rounded-xl bg-gradient-to-br from-teal-600 to-emerald-600 flex items-center justify-center shrink-0 shadow-md shadow-emerald-600/20">
+              <span className="w-11 h-11 rounded-xl bg-teal-600 flex items-center justify-center shrink-0">
                 <MonitorPlay size={20} className="text-white" aria-hidden />
               </span>
               <div className="min-w-0">
@@ -596,7 +600,7 @@ export default function BankSoalPage() {
             return (
               <div className="space-y-4">
                 <div
-                  className={`p-3 bg-gradient-to-br ${vis.coverGradient} rounded-xl text-white flex items-center gap-3`}
+                  className={`p-3 ${vis.coverBg} rounded-xl text-white flex items-center gap-3`}
                 >
                   <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center backdrop-blur">
                     <span className="text-white text-sm font-bold tracking-wider uppercase">

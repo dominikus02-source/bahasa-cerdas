@@ -1,9 +1,7 @@
 // ─── ThemeCard (Bank Soal Discovery Hub) ─────────────────────
 // Card tema yang terasa "clickable" — bukan record database:
-// cover prosedural (ThemeCoverArt) + metadata + hover halus.
-// Primary click = behavior existing (modal Siapkan Latihan).
-// Keyboard accessible (elemen <button>), motion menghormati
-// prefers-reduced-motion via motion-safe:.
+// cover prosedural solid color + metadata + hover halus.
+// NO emoji. Lucide icon via config. Motion-safe transitions.
 
 import { ChevronRight } from "lucide-react";
 import {
@@ -20,11 +18,6 @@ export interface ThemeCardData {
   kelas: string[];
 }
 
-/**
- * Card menerima tipe tema apa pun yang MEMILIKI field minimal —
- * caller menyediakan onOpen bertipe sama sehingga ThemeData penuh
- * (dengan difficulties, dsb.) tetap utuh sampai handler existing.
- */
 export function ThemeCard<T extends ThemeCardData>({
   theme,
   onOpen,
@@ -46,19 +39,19 @@ export function ThemeCard<T extends ThemeCardData>({
       type="button"
       onClick={() => onOpen(theme)}
       aria-label={`${theme.name} — ${theme.total} soal${kelasLabel ? `, ${kelasLabel}` : ""}. Klik untuk membuat latihan.`}
-      className="group relative text-left rounded-2xl border border-slate-200/80 bg-white overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 motion-safe:transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
+      className="group relative text-left rounded-2xl border border-slate-200/80 bg-white overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 motion-safe:transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
     >
-      <ThemeCoverArt visual={visual} variant={variant} name={theme.name} />
+      <ThemeCoverArt
+        visual={visual}
+        variant={variant}
+        name={theme.name}
+        iconKey={themeVis.icon}
+      />
 
       <div className="p-3">
-        <div className="flex items-start gap-1.5">
-          {themeVis.emoji && (
-            <span className="text-sm shrink-0 mt-0.5" aria-hidden>{themeVis.emoji}</span>
-          )}
-          <p className="text-sm font-bold text-gray-900 leading-snug line-clamp-2 min-h-[2.5rem]">
-            {theme.name}
-          </p>
-        </div>
+        <p className="text-sm font-bold text-gray-900 leading-snug line-clamp-2 min-h-[2.5rem]">
+          {theme.name}
+        </p>
         {themeVis.tagline && (
           <p className="text-[11px] text-gray-400 mt-0.5 line-clamp-1">{themeVis.tagline}</p>
         )}
@@ -80,7 +73,6 @@ export function ThemeCard<T extends ThemeCardData>({
   );
 }
 
-/** Duplikasi ringan matcher kategori (sumber: page Bank Soal). */
 function getCategoryKeyOf(name: string): string {
   const patterns: [string, RegExp][] = [
     ["Tata Bahasa", /^(SPOK|Kalimat|Kalimat Efektif|Paragraf|Ide Pokok|Gagasan Utama|Simpulan|Sinonim|Antonim|Makna Kata|Imbuhan|Kata Baku|Kata Tidak Baku|PUEBI|Ejaan|Tanda Baca)$/],

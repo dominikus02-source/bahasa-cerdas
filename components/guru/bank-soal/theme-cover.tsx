@@ -1,17 +1,21 @@
-// ─── Theme Cover System (Bank Soal Discovery Hub) ────────────
-// Visual cover PROSEDURAL: kombinasi token kategori (warna, icon,
-// pattern) + variasi deterministik per tema (hash nama → varian
-// pattern & shade). Tanpa asset gambar, tanpa canvas — CSS/SVG saja
-// (§T: hemat JS per card). Warna TIDAK satu-satunya identitas
-// kategori: icon + label kategori selalu ikut (§Q).
+// ─── Theme Cover System (Bank Soal Discovery) ───────────────
+// Visual cover PROSEDURAL: solid category color + subtle pattern
+// + Lucide icon. NO emoji. NO gradient. NO external images.
 //
 // Pemakaian:
-//   const visual = categoryVisual(categoryKey);   // token kategori
-//   const variant = themeVariant(themeName);      // variasi hash
-//   <ThemeCover visual={visual} variant={variant} name={...} />
+//   const visual = categoryVisual(categoryKey);
+//   const variant = themeVariant(themeName);
+//   <ThemeCoverArt visual={visual} variant={variant} name={...} />
 
 import type { LucideIcon } from "lucide-react";
-import { SpellCheck, Feather, Newspaper, Megaphone, Shapes } from "lucide-react";
+import {
+  SpellCheck, Feather, Newspaper, Megaphone, Shapes,
+  Languages, BookOpen, BookText, PenLine, ScrollText,
+  FileText, Mic, Mail, BarChart3, Library, ClipboardList,
+  CircleHelp, Quote, Bookmark, Theater, Music, Frame,
+  PenTool, Globe, Sparkles, GraduationCap, Compass,
+} from "lucide-react";
+import type { IconKey } from "./theme-config";
 
 export type CategoryKey =
   | "Tata Bahasa"
@@ -20,83 +24,113 @@ export type CategoryKey =
   | "Fungsional"
   | "Lainnya";
 
-/** Token visual terpusat per kategori (§L) — jangan hardcode di card. */
+/** Resolve IconKey string to Lucide component. */
+const ICON_MAP: Record<IconKey, LucideIcon> = {
+  "feather": Feather,
+  "book-open": BookOpen,
+  "book-text": BookText,
+  "pen-line": PenLine,
+  "scroll-text": ScrollText,
+  "newspaper": Newspaper,
+  "megaphone": Megaphone,
+  "shapes": Shapes,
+  "spell-check": SpellCheck,
+  "languages": Languages,
+  "file-text": FileText,
+  "mic": Mic,
+  "mail": Mail,
+  "bar-chart-3": BarChart3,
+  "library": Library,
+  "clipboard-list": ClipboardList,
+  "circle-help": CircleHelp,
+  "quote": Quote,
+  "bookmark": Bookmark,
+  "theater": Theater,
+  "music": Music,
+  "frame": Frame,
+  "pen-tool": PenTool,
+  "globe": Globe,
+  "sparkles": Sparkles,
+  "graduation-cap": GraduationCap,
+  "compass": Compass,
+};
+
+export function resolveIcon(key?: IconKey): LucideIcon {
+  return key ? (ICON_MAP[key] ?? Feather) : Feather;
+}
+
+/** Token visual terpusat per kategori — jangan hardcode di card. */
 export interface CategoryVisual {
   key: CategoryKey;
-  /** Gradient cover utama (Tailwind classes). */
-  coverGradient: string;
+  /** Solid background color for cover area (Tailwind class). */
+  coverBg: string;
   /** Aksen kecil (chip, garis heading). */
   accentText: string;
-  accentBg: string;
   accentBar: string;
   /** Chip metadata di card. */
   softBg: string;
   softText: string;
-  /** Warna shape overlay (hex — untuk SVG inline). */
-  shapeColor: string;
+  /** Warna pattern overlay (hex — untuk SVG inline). */
+  patternColor: string;
+  /** Default category icon (used when theme has no specific icon). */
   icon: LucideIcon;
-  /** Subtitle editorial singkat per kategori (§J). */
+  /** Subtitle editorial singkat per kategori. */
   subtitle: string;
 }
 
 export const CATEGORY_VISUALS: Record<CategoryKey, CategoryVisual> = {
   "Tata Bahasa": {
     key: "Tata Bahasa",
-    coverGradient: "from-emerald-500 via-emerald-600 to-teal-700",
+    coverBg: "bg-emerald-600",
     accentText: "text-emerald-700",
-    accentBg: "bg-emerald-100",
     accentBar: "bg-emerald-500",
     softBg: "bg-emerald-50",
     softText: "text-emerald-700",
-    shapeColor: "#ffffff",
+    patternColor: "rgba(255,255,255,0.08)",
     icon: SpellCheck,
     subtitle: "Struktur, ejaan, dan makna kata.",
   },
   Sastra: {
     key: "Sastra",
-    coverGradient: "from-violet-500 via-purple-600 to-fuchsia-600",
+    coverBg: "bg-violet-600",
     accentText: "text-violet-700",
-    accentBg: "bg-violet-100",
     accentBar: "bg-violet-500",
     softBg: "bg-violet-50",
     softText: "text-violet-700",
-    shapeColor: "#ffffff",
+    patternColor: "rgba(255,255,255,0.08)",
     icon: Feather,
     subtitle: "Puisi, prosa, dan bentuk sastra Indonesia.",
   },
   "Jenis Teks": {
     key: "Jenis Teks",
-    coverGradient: "from-blue-500 via-blue-600 to-cyan-600",
+    coverBg: "bg-blue-600",
     accentText: "text-blue-700",
-    accentBg: "bg-blue-100",
     accentBar: "bg-blue-500",
     softBg: "bg-blue-50",
     softText: "text-blue-700",
-    shapeColor: "#ffffff",
+    patternColor: "rgba(255,255,255,0.08)",
     icon: Newspaper,
     subtitle: "Dari teks deskripsi hingga artikel dan resensi.",
   },
   Fungsional: {
     key: "Fungsional",
-    coverGradient: "from-amber-500 via-orange-500 to-orange-600",
-    accentText: "text-amber-700",
-    accentBg: "bg-amber-100",
-    accentBar: "bg-amber-500",
-    softBg: "bg-amber-50",
-    softText: "text-amber-700",
-    shapeColor: "#ffffff",
+    coverBg: "bg-orange-500",
+    accentText: "text-orange-700",
+    accentBar: "bg-orange-500",
+    softBg: "bg-orange-50",
+    softText: "text-orange-700",
+    patternColor: "rgba(255,255,255,0.08)",
     icon: Megaphone,
     subtitle: "Surat, poster, pidato — bahasa untuk dipakai.",
   },
   Lainnya: {
     key: "Lainnya",
-    coverGradient: "from-indigo-500 via-indigo-600 to-slate-700",
+    coverBg: "bg-indigo-600",
     accentText: "text-indigo-700",
-    accentBg: "bg-indigo-100",
     accentBar: "bg-indigo-500",
     softBg: "bg-indigo-50",
     softText: "text-indigo-700",
-    shapeColor: "#ffffff",
+    patternColor: "rgba(255,255,255,0.08)",
     icon: Shapes,
     subtitle: "Tema di luar kategori utama.",
   },
@@ -106,12 +140,12 @@ export function categoryVisual(key: string): CategoryVisual {
   return CATEGORY_VISUALS[key as CategoryKey] ?? CATEGORY_VISUALS["Lainnya"];
 }
 
-// ─── Variasi deterministik per tema (§M — variasi tanpa chaos) ──
+// ─── Variasi deterministik per tema ──────────────────────────
 
 export interface ThemeVariant {
-  /** Indeks pola overlay (dots/diagonal/arc). */
+  /** Indeks pola overlay (0=dots, 1=diagonal, 2=geometric). */
   pattern: 0 | 1 | 2;
-  /** Offset shade gradient (0/1/2 → tetap dalam keluarga kategori). */
+  /** Offset shade (0=none, 1=subtle dark, 2=subtle light). */
   shade: 0 | 1 | 2;
 }
 
@@ -127,73 +161,80 @@ export function themeVariant(themeName: string): ThemeVariant {
   };
 }
 
-/** Nuansa shade dalam keluarga kategori — kontras teks tetap sama. */
+/** Nuansa shade — sangat halus, solid color tetap dominan. */
 const SHADE_OVERLAY: Record<0 | 1 | 2, string> = {
   0: "",
   1: "bg-black/[0.04]",
-  2: "bg-white/10",
+  2: "bg-white/[0.06]",
 };
 
 /**
  * Cover area visual untuk ThemeCard.
- * Proporsi konsisten (h-20), kontras teks konsisten (putih di atas
- * warna), variasi hanya di pattern/shade (§M).
+ * Solid category color + subtle pattern + icon.
+ * Proporsi konsisten (h-20).
  */
 export function ThemeCoverArt({
   visual,
   variant,
   name,
+  iconKey,
   className = "",
 }: {
   visual: CategoryVisual;
   variant: ThemeVariant;
   name: string;
+  iconKey?: string;
   className?: string;
 }) {
-  const Icon = visual.icon;
+  // Resolve icon: theme-specific > category default
+  const Icon = iconKey ? resolveIcon(iconKey as IconKey) : visual.icon;
   const initials = name
     .split(/[\s/]+/)
     .slice(0, 2)
     .map((w) => w[0]?.toUpperCase() ?? "")
     .join("");
+
   return (
     <div
       aria-hidden
-      className={`relative h-20 w-full overflow-hidden bg-gradient-to-br ${visual.coverGradient} ${SHADE_OVERLAY[variant.shade]} ${className}`}
+      className={`relative h-20 w-full overflow-hidden ${visual.coverBg} ${SHADE_OVERLAY[variant.shade]} ${className}`}
     >
+      {/* Subtle pattern overlay */}
       {variant.pattern === 0 ? (
-        // Titik grid halus
         <div
-          className="absolute inset-0 opacity-20"
+          className="absolute inset-0 opacity-100"
           style={{
             backgroundImage:
-              "radial-gradient(circle, rgba(255,255,255,0.9) 1.2px, transparent 1.2px)",
-            backgroundSize: "12px 12px",
+              "radial-gradient(circle, rgba(255,255,255,0.7) 1px, transparent 1px)",
+            backgroundSize: "14px 14px",
           }}
         />
       ) : variant.pattern === 1 ? (
-        // Pita diagonal lembut
         <div
-          className="absolute inset-0 opacity-15"
+          className="absolute inset-0 opacity-100"
           style={{
             backgroundImage:
-              "repeating-linear-gradient(115deg, rgba(255,255,255,0.9) 0 10px, transparent 10px 26px)",
+              "repeating-linear-gradient(120deg, rgba(255,255,255,0.5) 0 1px, transparent 1px 20px)",
           }}
         />
       ) : (
-        // Busur halus (dua lingkaran besar terpangkas)
-        <>
-          <span className="absolute -top-8 -right-6 w-24 h-24 rounded-full border-[10px] border-white/20" />
-          <span className="absolute -bottom-10 -left-8 w-28 h-28 rounded-full border-[12px] border-white/15" />
-        </>
+        <div
+          className="absolute inset-0 opacity-100"
+          style={{
+            backgroundImage:
+              "linear-gradient(45deg, rgba(255,255,255,0.04) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.04) 75%)",
+            backgroundSize: "20px 20px",
+          }}
+        />
       )}
 
-      {/* Icon kategori — identitas bukan hanya warna (§Q) */}
-      <span className="absolute top-2 left-2.5 w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center backdrop-blur-[2px]">
-        <Icon size={14} className="text-white" />
+      {/* Icon — centered, clean */}
+      <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center">
+        <Icon size={20} className="text-white/80" />
       </span>
-      {/* Inisial besar sebagai tipografi cover */}
-      <span className="absolute bottom-1 right-2.5 text-white/30 text-2xl font-extrabold tracking-wider select-none">
+
+      {/* Subtle initials watermark */}
+      <span className="absolute bottom-1.5 right-2.5 text-white/15 text-xl font-extrabold tracking-wider select-none">
         {initials}
       </span>
     </div>
