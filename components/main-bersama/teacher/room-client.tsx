@@ -182,6 +182,23 @@ export function TeacherRoomClient({
               </PrimaryGameButton>
             )}
           </div>
+          {/* ── Layar Kelas (8B.1): satu layar default, dua layar advanced ── */}
+          <div className="mb-room-classroom">
+            <PrimaryGameButton
+              onClick={() => router.push(`/guru/game/main-bersama/kelas/${sessionId}`)}
+              disabled={busy}
+              variant="light"
+            >
+              Tampilkan ke Kelas
+            </PrimaryGameButton>
+            <button
+              type="button"
+              className="mb-linklike-dark"
+              onClick={() => window.open(`/main-bersama/layar?sessionId=${sessionId}`, '_blank', 'noopener')}
+            >
+              Buka di Layar Kedua
+            </button>
+          </div>
         </section>
       ) : null}
 

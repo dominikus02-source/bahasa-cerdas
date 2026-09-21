@@ -55,6 +55,17 @@
   --mb-team-rusa: #34d399;     /* hijau */
   --mb-team-badak: #38bdf8;    /* biru langit */
 
+  /* ── World tokens 8B — Jelajah (cerah, siang) & Kota (malam, lampu).
+     Hidup di scope token bersama agar guru/siswa/proyektor konsisten. */
+  --mb-jelajah-sky: #bae6fd;
+  --mb-jelajah-land: #6ee7b7;
+  --mb-jelajah-trail: #f5a524;
+  --mb-jelajah-highlight: #fef3c7;
+  --mb-kota-night: #0b1e3a;
+  --mb-kota-light: #67e8f9;
+  --mb-kota-building: #1e3a5f;
+  --mb-kota-glow: #ffc94d;
+
   /* ── Radius & shadow ── */
   --mb-radius-sm: 10px;
   --mb-radius-md: 16px;
@@ -648,4 +659,58 @@
   .mb-pj-title { font-size: 3rem; }
   .mb-pj-reveal-answer { font-size: 3.2rem; }
   .mb-pj-final-title { font-size: 3.4rem; }
+}
+
+/* ── World scenes 8B — hero projector, strip sekunder di fase soal ── */
+.mb-pj-world {
+  width: min(100%, 880px);
+  margin: var(--mb-space-4) auto 0;
+}
+.mb-pj-world-strip {
+  max-width: 640px;
+  opacity: 0.96;
+}
+.mb-pj-teams .mb-team-badge { margin-right: 6px; vertical-align: -6px; }
+.mb-pj-rank-team .mb-team-badge { margin-right: 8px; vertical-align: -7px; }
+/* Mini world di surface siswa — ringan, tak ganggu bacaan. */
+.mb-sworld {
+  width: min(100%, 420px);
+  margin: 0 auto;
+}
+
+/* ── Layar Kelas entry 8B.1 — primary + advanced secondary ── */
+.mb-room-classroom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mb-space-2);
+  padding: 0 0 var(--mb-space-5);
+}
+.mb-linklike-dark {
+  background: none;
+  border: none;
+  color: var(--mb-text-guru-secondary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px 12px;
+  min-height: 44px;
+}
+.mb-linklike-dark:hover { color: var(--mb-text-guru); }
+.mb-linklike-dark:focus-visible { outline: 2px solid var(--mb-primary-strong); outline-offset: 2px; }
+
+/* ── Mascot presence 8B.3 — hero group lobby, lobby badge ── */
+.mb-pj-heroes {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--mb-space-5);
+  margin-top: var(--mb-space-4);
+}
+.mb-slobby-mascot {
+  display: flex;
+  justify-content: center;
+  margin: var(--mb-space-1) 0 calc(var(--mb-space-2) * -1);
 }

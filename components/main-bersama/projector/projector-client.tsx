@@ -17,6 +17,11 @@ import { TeamProgress } from '@/components/main-bersama/shared/TeamProgress';
 import { CityProgress } from '@/components/main-bersama/shared/CityProgress';
 import { QuestionCard } from '@/components/main-bersama/shared/QuestionCard';
 import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBanner';
+import { JelajahTrail } from '@/components/main-bersama/art/jelajah/JelajahTrail';
+import { KotaScene } from '@/components/main-bersama/art/kota/KotaScene';
+import { TeamBadge } from '@/components/main-bersama/art/shared/TeamBadge';
+import { TeamMascot } from '@/components/main-bersama/art/registry';
+import { Podium } from '@/components/main-bersama/art/jelajah/Podium';
 
 const MODE_LABEL = {
   'jelajah-kata': 'Jelajah Kata',
@@ -168,6 +173,21 @@ function ProjectorLobby({ view }: { view: ProjectorSessionView }) {
       </p>
       <ParticipantCount count={view.participation.playerCount} label="siswa bergabung" />
       {view.gameProgress.gameMode === 'jelajah-kata' ? (
+        <div className="mb-pj-world" aria-hidden>
+          <JelajahTrail
+            teams={view.teams.map((t) => ({ id: t.id, name: t.name }))}
+            progress={{}}
+          />
+        </div>
+      ) : null}
+      {view.gameProgress.gameMode === 'jelajah-kata' ? (
+        <div className="mb-pj-heroes" aria-hidden>
+          {view.teams.map((t) => (
+            <TeamMascot key={t.id} teamId={t.id} pose="ready" size={64} eager />
+          ))}
+        </div>
+      ) : null}
+      {view.gameProgress.gameMode === 'jelajah-kata' ? (
         <div className="mb-pj-teams">
           {view.teams.map((t) => (
             <span
@@ -175,11 +195,17 @@ function ProjectorLobby({ view }: { view: ProjectorSessionView }) {
               className="mb-pj-team"
               style={{ '--mb-tc': TEAM_COLOR_VAR[t.id] ?? 'var(--mb-primary)' } as React.CSSProperties}
             >
+              <TeamBadge teamId={t.id} size={22} />
               {TEAM_LABEL[t.id] ?? t.name}
             </span>
           ))}
         </div>
       ) : (
+        <div className="mb-pj-world" aria-hidden>
+          <KotaScene unlocked={view.gameProgress.unlockedMilestones} />
+        </div>
+      )}
+      {view.gameProgress.gameMode === 'jelajah-kata' ? null : (
         <div className="mb-pj-kota-preview" aria-hidden>
           <CityProgress
             progressPercent={view.gameProgress.progressPercent}
@@ -211,12 +237,26 @@ function ProjectorQuestion({ view }: { view: ProjectorSessionView }) {
       </div>
       <div className="mb-pj-progress">
         {view.gameProgress.gameMode === 'jelajah-kata' ? (
-          <TeamProgress teams={view.teams} progress={view.gameProgress.teamProgress} />
+          <>
+            <div className="mb-pj-world mb-pj-world-strip" aria-hidden>
+              <JelajahTrail
+                teams={view.teams.map((t) => ({ id: t.id, name: t.name }))}
+                progress={view.gameProgress.teamProgress}
+                compact
+              />
+            </div>
+            <TeamProgress teams={view.teams} progress={view.gameProgress.teamProgress} />
+          </>
         ) : (
-          <CityProgress
-            progressPercent={view.gameProgress.progressPercent}
-            unlockedMilestones={view.gameProgress.unlockedMilestones}
-          />
+          <>
+            <div className="mb-pj-world mb-pj-world-strip" aria-hidden>
+              <KotaScene unlocked={view.gameProgress.unlockedMilestones} mini />
+            </div>
+            <CityProgress
+              progressPercent={view.gameProgress.progressPercent}
+              unlockedMilestones={view.gameProgress.unlockedMilestones}
+            />
+          </>
         )}
       </div>
     </section>
@@ -239,22 +279,75 @@ function ProjectorDiscussion({ view }: { view: ProjectorSessionView }) {
         </p>
         {r.explanation ? <p className="mb-pj-reveal-explain">{r.explanation}</p> : null}
       </div>
+      {view.gameProgress.gameMode === 'jelajah-kata' ? (
+        <DiscussionLeader
+          teams={view.teams.map((t) => ({ id: t.id, name: t.name }))}
+          progress={view.gameProgress.teamProgress}
+        />
+      ) : null}
       <div className="mb-pj-progress">
         {view.gameProgress.gameMode === 'jelajah-kata' ? (
-          <TeamProgress teams={view.teams} progress={view.gameProgress.teamProgress} />
+          <>
+            <div className="mb-pj-world mb-pj-world-strip" aria-hidden>
+              <JelajahTrail
+                teams={view.teams.map((t) => ({ id: t.id, name: t.name }))}
+                progress={view.gameProgress.teamProgress}
+                compact
+              />
+            </div>
+            <TeamProgress teams={view.teams} progress={view.gameProgress.teamProgress} />
+          </>
         ) : (
-          <CityProgress
-            progressPercent={view.gameProgress.progressPercent}
-            unlockedMilestones={view.gameProgress.unlockedMilestones}
-          />
+          <>
+            <div className="mb-pj-world mb-pj-world-strip" aria-hidden>
+              <KotaScene unlocked={view.gameProgress.unlockedMilestones} mini />
+            </div>
+            <CityProgress
+              progressPercent={view.gameProgress.progressPercent}
+              unlockedMilestones={view.gameProgress.unlockedMilestones}
+            />
+          </>
         )}
       </div>
     </section>
   );
 }
 
-// ─── Summary (§28) — ranking tie-safe / misi kota positif ───
+/** Leading-team celebrate mini (discussion payoff, restrained). */
+function DiscussionLeader({
+  teams,
+  progress,
+}: {
+  teams: Array<{ id: string; name: string }>;
+  progress: Record<string, number>;
+}) {
+  if (teams.length === 0) return null;
+  let leader = teams[0];
+  for (const t of teams) {
+    if ((progress[t.id] ?? 0) > (progress[leader.id] ?? 0)) leader = t;
+  }
+  return (
+    <div className="mb-pj-leader" aria-hidden>
+      <TeamMascot teamId={leader.id} pose="celebrate" size={52} />
+      <span>
+        Regu <strong>{leader.name}</strong> memimpin!
+      </span>
+      <style jsx>{`
+        .mb-pj-leader {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: var(--mb-space-3);
+          margin-top: var(--mb-space-3);
+          font-weight: 700;
+          color: var(--mb-text-primary);
+        }
+      `}</style>
+    </div>
+  );
+}
 
+// ─── Summary (§28) — ranking tie-safe / misi kota positif ───
 function ProjectorSummary({ view }: { view: ProjectorSessionView }) {
   const final = view.finalResult;
   if (!final) return null;
@@ -263,11 +356,28 @@ function ProjectorSummary({ view }: { view: ProjectorSessionView }) {
     // Ranking domain: 1,1,3,4 — tie ditampilkan apa adanya (§28);
     // beberapa pemenang didukung (semua rank 1 = juara bersama).
     const winners = final.teamRanking.filter((t) => t.progress === final.teamRanking[0].progress);
+    const finalProgress: Record<string, number> = {};
+    for (const t of final.teamRanking) finalProgress[t.teamId] = t.progress;
+    // teamIds untuk trail final: pakai view.teams bila ada, fallback ranking.
+    const trailTeams = (view.teams.length > 0 ? view.teams : final.teamRanking.map((t) => ({ id: t.teamId, name: TEAM_LABEL[t.teamId] ?? t.teamId }))).map(
+      (t) => ({ id: t.id, name: t.name }),
+    );
     return (
       <section className="mb-pj-phase mb-fade-in">
         <h2 className="mb-display mb-pj-final-title">
           {winners.length > 1 ? 'Juara Bersama!' : 'Papan Peringkat'}
         </h2>
+        <div className="mb-pj-world" aria-hidden>
+          <JelajahTrail teams={trailTeams} progress={finalProgress} />
+        </div>
+        <Podium
+          ranking={final.teamRanking.map((t) => ({
+            teamId: t.teamId,
+            name: TEAM_LABEL[t.teamId] ?? t.teamId,
+            progress: t.progress,
+            rank: final.teamRanking.findIndex((o) => o.progress === t.progress) + 1,
+          }))}
+        />
         <ol className="mb-pj-ranking">
           {final.teamRanking.map((t) => {
             const rank = final.teamRanking.findIndex(
@@ -282,6 +392,7 @@ function ProjectorSummary({ view }: { view: ProjectorSessionView }) {
               >
                 <span className="mb-pj-rank mb-number">{rank}</span>
                 <span className="mb-pj-rank-team">
+                  {isWinner ? <TeamBadge teamId={t.teamId} size={26} /> : null}
                   {TEAM_LABEL[t.teamId] ?? t.teamId}
                 </span>
                 <span className="mb-pj-rank-pct mb-number">{Math.round(t.progress)}%</span>
@@ -298,7 +409,10 @@ function ProjectorSummary({ view }: { view: ProjectorSessionView }) {
 
   // Kota (§28): misi tercapai = rayakan; belum = copy positif progress
   // kelas — tanpa kata "gagal", tanpa menyalahkan siswa.
+  // Final tidak membawa unlockedMilestones: turunkan dari threshold
+  // 25/50/75/100 yang sama dengan track (display-only).
   const pct = Math.round(final.progressPercent);
+  const finalUnlocked = ['garden', 'library', 'homes', 'town-center'].filter((_, i) => pct >= [25, 50, 75, 100][i]);
   return (
     <section className="mb-pj-phase mb-fade-in">
       <h2 className="mb-display mb-pj-final-title">
@@ -306,9 +420,12 @@ function ProjectorSummary({ view }: { view: ProjectorSessionView }) {
           ? 'Kota Cahaya berhasil dinyalakan!'
           : `Kota Cahaya menyala ${pct}%!`}
       </h2>
+      <div className="mb-pj-world" aria-hidden>
+        <KotaScene unlocked={finalUnlocked} />
+      </div>
       <CityProgress
         progressPercent={final.progressPercent}
-        unlockedMilestones={[]}
+        unlockedMilestones={finalUnlocked}
       />
       <p className="mb-pj-mission" role="status">
         {final.missionAchieved
