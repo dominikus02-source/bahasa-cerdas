@@ -11,6 +11,7 @@ import {
   themeVariant,
   ThemeCoverArt,
 } from "./theme-cover";
+import { getThemeVisual } from "./theme-config";
 
 /** Data minimal card — ThemeData (superset) cocok secara structural. */
 export interface ThemeCardData {
@@ -34,6 +35,7 @@ export function ThemeCard<T extends ThemeCardData>({
   const catKey = getCategoryKeyOf(theme.name);
   const visual = categoryVisual(catKey);
   const variant = themeVariant(theme.name);
+  const themeVis = getThemeVisual(theme.name);
   const kelasLabel =
     theme.kelas.length > 0
       ? `Kls ${[...theme.kelas].sort((a, b) => Number(a) - Number(b)).join(", ")}`
@@ -49,9 +51,17 @@ export function ThemeCard<T extends ThemeCardData>({
       <ThemeCoverArt visual={visual} variant={variant} name={theme.name} />
 
       <div className="p-3">
-        <p className="text-sm font-bold text-gray-900 leading-snug line-clamp-2 min-h-[2.5rem]">
-          {theme.name}
-        </p>
+        <div className="flex items-start gap-1.5">
+          {themeVis.emoji && (
+            <span className="text-sm shrink-0 mt-0.5" aria-hidden>{themeVis.emoji}</span>
+          )}
+          <p className="text-sm font-bold text-gray-900 leading-snug line-clamp-2 min-h-[2.5rem]">
+            {theme.name}
+          </p>
+        </div>
+        {themeVis.tagline && (
+          <p className="text-[11px] text-gray-400 mt-0.5 line-clamp-1">{themeVis.tagline}</p>
+        )}
         <div className="flex items-center gap-1.5 mt-2 flex-wrap">
           <span
             className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${visual.softBg} ${visual.softText}`}
