@@ -152,7 +152,13 @@ export function buildStudentView(
   const kota = kotaOf(gameState);
 
   // Pre-round: preparing/lobby/closed/paused.
+  // Team assignment ikut serta agar lobby Jelajah menampilkan regu
+  // pemain (8A.5 team-lobby fix) — display-only, algoritma assignment
+  // tidak berubah.
   if (phase === 'preparing' || phase === 'lobby' || phase === 'closed' || phase === 'paused') {
+    const preTeam = player.teamId
+      ? JELAJAH_DEFAULT_TEAMS[player.teamId as keyof typeof JELAJAH_DEFAULT_TEAMS]
+      : undefined;
     return {
       ok: true,
       view: {
@@ -160,6 +166,7 @@ export function buildStudentView(
         phase,
         participantCount: engine.state.players.size,
         totalRounds: session.totalRounds,
+        ...(preTeam ? { team: { id: preTeam.id, name: preTeam.name, symbol: preTeam.symbol } } : {}),
       },
     };
   }

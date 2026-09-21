@@ -19,6 +19,7 @@ import {
 import { useSessionView } from '@/lib/main-bersama/use-session-view';
 import { clearCredential } from '@/lib/main-bersama/credential-store';
 import { SessionHeader } from '@/components/main-bersama/shared/SessionHeader';
+import { StudentBackButton } from '@/components/main-bersama/shared/StudentBackButton';
 import { QuestionCard } from '@/components/main-bersama/shared/QuestionCard';
 import { AnswerOption } from '@/components/main-bersama/shared/AnswerOption';
 import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBanner';
@@ -131,7 +132,27 @@ export function StudentGameClient({ sessionId }: { sessionId: string }) {
   return (
     <main className="mb-sgame">
       <ConnectionBanner visible={connection === 'offline'} />
-      <SessionHeader mode={view.gameMode} packageName={view.contentTitle} />
+      <div className="mb-sgame-head">
+        <StudentBackButton
+          phase={
+            view.phase === 'question' ||
+            view.phase === 'closed' ||
+            view.phase === 'paused' ||
+            view.phase === 'discussion'
+              ? 'active'
+              : 'idle'
+          }
+        />
+        <SessionHeader
+          mode={view.gameMode}
+          packageName={view.contentTitle}
+          roundLabel={
+            view.phase === 'question' || isReveal(view)
+              ? `${view.roundIndex + 1} dari ${view.totalRounds}`
+              : null
+          }
+        />
+      </div>
       {isPreRound(view) ? (
         <StudentLobby view={view} />
       ) : view.phase === 'question' ? (
@@ -144,6 +165,18 @@ export function StudentGameClient({ sessionId }: { sessionId: string }) {
       ) : isReveal(view) ? (
         <StudentReveal view={view} />
       ) : null}
+      <style jsx>{`
+        .mb-sgame-head {
+          display: flex;
+          align-items: center;
+          gap: var(--mb-space-3);
+          width: 100%;
+          max-width: 640px;
+          margin: 0 auto;
+          padding: var(--mb-space-3) var(--mb-space-4) 0;
+        }
+        .mb-sgame-head :global(.mb-session-header) { flex: 1; min-width: 0; }
+      `}</style>
     </main>
   );
 }
@@ -182,7 +215,7 @@ function StudentLobby({
           ? view.team
             ? `Jawab dengan tepat untuk membantu Regu ${view.team.name} maju.`
             : 'Jawab dengan tepat untuk membantu regumu maju.'
-          : 'Bekerja sama untuk menyalakan Kota Cahaya.'}
+          : 'Kita akan menyalakan Kota Cahaya bersama.'}
       </p>
       <ParticipantCount count={view.participantCount} />
       <p className="mb-slobby-wait" role="status">
@@ -398,7 +431,7 @@ function StudentReveal({
           Soal {view.roundIndex + 1} dari {view.totalRounds}
         </span>
         <span className={`mb-sreveal-verdict ${myCorrect ? 'mb-v-ok' : 'mb-v-no'}`}>
-          {myCorrect ? 'Jawabanmu Benar' : 'Belum Tepat'}
+          {myCorrect ? 'Jawabanmu benar' : 'Belum tepat'}
         </span>
       </header>
 
@@ -446,6 +479,7 @@ function StudentReveal({
             <p>Kerja bagus, kelas sudah berjuang bersama!</p>
           )}
           <p className="mb-sreveal-feel">Terima kasih sudah bermain bersama!</p>
+          <StudentBackButton phase="idle" />
         </div>
       )}
 
