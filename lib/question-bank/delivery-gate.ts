@@ -66,8 +66,8 @@ export interface DeliverySoalLike {
  */
 export const DELIVERABLE_MASTER_KODE_SOALS: ReadonlySet<string> = new Set<string>([]);
 
-/** Prefix kodeSoal untuk butir bank hasil migrasi konten Founder (BC-GB2-*, BC-GB3-*). */
-export const FOUNDER_BANK_KODE_PREFIXES = ["BC-GB2-", "BC-GB3-"] as const;
+/** Prefix kodeSoal untuk butir bank hasil migrasi konten Founder (BC-GB2-*, BC-GB3-*, BC-GB4-*). */
+export const FOUNDER_BANK_KODE_PREFIXES = ["BC-GB2-", "BC-GB3-", "BC-GB4-"] as const;
 
 /** Legacy single-prefix constant (backward compat). */
 export const FOUNDER_BANK_KODE_PREFIX = FOUNDER_BANK_KODE_PREFIXES[0];
@@ -105,7 +105,7 @@ export function masterBankBlockReason(
   approved: ReadonlySet<string> = DELIVERABLE_MASTER_KODE_SOALS
 ): DeliveryBlockReason | null {
   if (soal.source !== MASTER_BANK_SOURCE) return null;
-  // Founder content (BC-GB2-*, BC-GB3-*) bypasses the per-code allowlist but
+  // Founder content (BC-GB2-*, BC-GB3-*, BC-GB4-*) bypasses the per-code allowlist but
   // must still pass the deterministic content gate below.
   const allowlisted =
     (soal.kodeSoal !== null && FOUNDER_BANK_KODE_PREFIXES.some((p) => soal.kodeSoal!.startsWith(p))) ||

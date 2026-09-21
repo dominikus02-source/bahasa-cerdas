@@ -29,6 +29,16 @@ const BINDINGS: Record<VisualMapId, Record<number, string[]>> = {
     [RPG_TILES.GD]: ["desa_dirt_01", "desa_dirt_02"],
     [RPG_TILES.WA]: ["desa_water_01"],
     [RPG_TILES.FL]: ["desa_grass_flowers"],
+    // P2.9: Bind previously-unbound tiles to existing desa terrain sprites.
+    // These give visual distinction to structures/forests/farms instead of
+    // the green fallback wash. Entity shapes still draw on top for houses/trees.
+    [RPG_TILES.TR]: ["desa_stone_01", "desa_stone_02"],    // tree border → darker stone ground
+    [RPG_TILES.WL]: ["desa_dirt_01", "desa_dirt_02"],      // walls → earth/dirt tone
+    [RPG_TILES.RF]: ["desa_stone_01", "desa_stone_02"],    // roof → stone tile appearance
+    [RPG_TILES.DR]: ["desa_stone_path"],                    // door → stone path
+    [RPG_TILES.WE]: ["desa_sand"],                          // well → sandy area
+    [RPG_TILES.FA]: ["desa_dirt_01", "desa_dirt_02"],      // farm → earth/dirt
+    [RPG_TILES.RO]: ["desa_stone_01", "desa_stone_02"],    // rock → stone
   },
   "map.gunung": {
     [RPG_TILES.GD]: ["gunung_rock_terrain_01", "gunung_rock_terrain_02"],

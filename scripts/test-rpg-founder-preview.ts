@@ -77,7 +77,7 @@ check("server session is required", previewRoute.includes("await getUser()"));
 check("server environment and authorization gate are required", previewRoute.includes("canUseRpgFounderPreview") && previewRoute.includes("currentRpgPreviewEnvironment"));
 check("preview fails closed if RPG becomes published", previewRoute.includes("!game || !game.unpublished"));
 check("public route enforces premium play gate", publicRoute.includes("requireRpgPlayAccess()"));
-check("7. registry published as premium-only (P2.8 launch)", gameById("rpg")?.premiumOnly === true && !gameById("rpg")?.unpublished);
+check("7. registry premium-only + unpublished (P2.10-FREEZE)", gameById("rpg")?.premiumOnly === true && gameById("rpg")?.unpublished === true);
 check("8. preview does not inspect or bypass Premium", !previewRoute.includes("isPremium") && !previewRoute.includes("entitlement"));
 check("existing runtime is reused with server-derived identity", client.includes("<RPGGame playerId={playerId} playerName={playerName} />") && !client.includes("player.local"));
 

@@ -55,6 +55,8 @@ const READY_TABLE: Array<[string, string, string, number, number]> = [
     ["item_ramuan", "items", "/game/rpg/items/item_ramuan.png", 52, 60],
     ["item_surat", "items", "/game/rpg/items/item_surat.png", 48, 58],
     ["item_teh", "items", "/game/rpg/items/item_teh.png", 52, 60],
+    // P2.9C: Ki Jaka runtime idle sprite (extracted from reference sheet).
+    ["npc_ki_jaka_idle", "npcs", "/game/rpg/characters/npcs/npc_ki_jaka_idle.png", 125, 118],
     ["desa_bridge_water", "terrain", "/game/rpg/terrain/desa_bridge_water.png", 72, 83],
     ["desa_cliff_corner", "terrain", "/game/rpg/terrain/desa_cliff_corner.png", 70, 85],
     ["desa_cliff_dirt", "terrain", "/game/rpg/terrain/desa_cliff_dirt.png", 70, 85],

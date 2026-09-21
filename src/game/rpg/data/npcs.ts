@@ -27,6 +27,14 @@ export const NPCS: RPGNPCDefinition[] = [
     mapId: "map.village-square",
   },
   {
+    id: "ki",
+    name: "Ki Jaka",
+    asset: "npc.elder",
+    dialogueId: "dlg.ki.intro",
+    position: { x: 0.40, y: 0.54 },
+    mapId: "map.village-square",
+  },
+  {
     id: "npc.maya",
     name: "Maya",
     asset: "npc.girl",

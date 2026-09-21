@@ -24,10 +24,10 @@ async function main() {
     select: { id: true, topik: true, kelas: true, kodeSoal: true },
   });
   const retired = await db.soal.count({ where: { source: "MASTER_BANK_RETIRED" } });
-  check("active bank == 2449 Founder questions", active.length === 2449, `got ${active.length}`);
-  check("active themes == 45", new Set(active.map(s => s.topik)).size === 45, `got ${new Set(active.map(s => s.topik)).size}`);
+  check("active bank == 3539 Founder questions (GB2 2449 + GB3 840 + GB4 250)", active.length === 3539, `got ${active.length}`);
+  check("active themes == 77 (45 + 22 + 10)", new Set(active.map(s => s.topik)).size === 77, `got ${new Set(active.map(s => s.topik)).size}`);
   check("all kelas == SEMUA (reusable, no grade lock)", active.every(s => s.kelas === "SEMUA"));
-  check("all active rows are Founder codes (BC-GB2-*)", active.every(s => (s.kodeSoal ?? "").startsWith("BC-GB2-")));
+  check("all active rows are Founder codes (BC-GB2/3/4-*)", active.every(s => /^(BC-GB2-|BC-GB3-|BC-GB4-)/.test(s.kodeSoal ?? "")));
   check("retired rows preserved for audit (1500)", retired === 1500, `got ${retired}`);
 
   console.log("\n═══ 2. Admin query == Guru query (ID + theme set parity) ═══");

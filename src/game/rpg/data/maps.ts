@@ -66,6 +66,7 @@ export const MAP_VILLAGE_SQUARE: RPGMapDefinition = {
   interactions: [
     { id: "int.portal.south", kind: "PORTAL", position: { x: 0.5, y: 0.94 }, ref: "map.forest-path" },
     { id: "int.chest.1", kind: "CHEST", position: { x: 0.3, y: 0.55 }, ref: "loot.starter-chest" },
+    { id: "int.npc.ki", kind: "NPC", position: { x: 0.40, y: 0.54 }, ref: "npc.ki" },
   ],
   spawn: { x: 0.5, y: 0.62 },
 };

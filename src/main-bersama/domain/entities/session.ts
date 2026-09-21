@@ -5,6 +5,8 @@
 import type { SessionId } from '../types/ids';
 import type { GameMode, SessionPhase } from '../types/session';
 
+export const DEFAULT_CONTENT_TITLE = 'Paket Soal';
+
 export interface MainSession {
   id: SessionId;
   /** PIN join 6 digit unik per sesi aktif (nilai, bukan secret). */
@@ -16,6 +18,9 @@ export interface MainSession {
   classId?: string;
   /** Nama kelas untuk ditampilkan (denormalisasi aman untuk proyektor). */
   className?: string;
+
+  /** Snapshot label public-safe dari sumber soal saat sesi dibuat (mis. "Antonim"). */
+  contentTitle: string;
 
   gameMode: GameMode;
   phase: SessionPhase;

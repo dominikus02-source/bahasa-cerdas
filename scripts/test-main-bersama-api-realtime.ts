@@ -318,7 +318,7 @@ class FakeBankSoal implements BankSoalQuestionSource {
     if (ref.kind !== 'SOAL_SET') return { ok: false, code: 'PACKAGE_NOT_FOUND' };
     const qs = this.bank.get(ref.soalSetId);
     if (!qs) return { ok: false, code: 'PACKAGE_NOT_FOUND' };
-    return { ok: true, questions: qs.map((q) => ({ ...q })) };
+    return { ok: true, questions: qs.map((q) => ({ ...q })), contentTitle: 'Test Paket' };
   }
 }
 

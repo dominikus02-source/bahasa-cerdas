@@ -89,11 +89,21 @@ function buildDesaGrid(): ProtoGrid {
   const m = newGrid(46, 36);
   grect(m, 0, 0, 46, 36, T.GR);
   grect(m, 27, 2, 2, 32, T.WA);
-  grect(m, 27, 17, 2, 1, T.DK);
+  grect(m, 27, 17, 2, 1, T.PA); // P2.8.6-B2: dock crossing → walkable path tiles
   const house = (x0: number, y0: number, dx: number) => {
     grect(m, x0, y0, 5, 2, T.RF); grect(m, x0, y0 + 2, 5, 1, T.WL); gset(m, dx, y0 + 2, T.DR);
   };
   house(4, 12, 6); house(11, 12, 13); house(5, 22, 7);
+  // P2.8.6-B1: Ki Jaka's house — compact village pocket VISIBLE in camera viewport.
+  // Camera centers on player at (12,19), viewport y≈0.430-0.653 → visible tiles y≈14-24.
+  // House below main road: RF(16-20,18-19), WL(16-20,20), DR(18,20).
+  house(16, 18, 18);
+  // Trees on main road flanking house entrance.
+  gset(m, 16, 17, T.TR); gset(m, 20, 17, T.TR);
+  // Path from Ki Jaka area down.
+  gset(m, 18, 21, T.PA); gset(m, 18, 22, T.PA);
+  // Decorative rocks near house.
+  gset(m, 15, 20, T.RO); gset(m, 20, 20, T.RO);
   gset(m, 11, 18, T.WE);
   grect(m, 5, 17, 22, 1, T.PA);
   grect(m, 12, 18, 1, 10, T.PA);
@@ -115,7 +125,8 @@ function buildDesaGrid(): ProtoGrid {
   gset(m, 34, 22, T.GE);
   gset(m, 4, 26, T.GE);
   const PROTECT = [[6,15],[13,15],[7,25],[11,18],[9,19],[17,20],[14,27],[12,18],[12,19],[31,26],
-    [16,20],[18,20],[17,19],[17,21],[10,18],[12,20],[13,27],[15,27],[16,16],[4,26],[34,22],[41,8],[41,9]];
+    [16,20],[18,20],[17,19],[17,21],[10,18],[12,20],[13,27],[15,27],[16,16],[4,26],[34,22],[41,8],[41,9],
+    [16,17],[20,17],[18,21],[15,20],[20,20],[18,19]]; // P2.8.6-B1: Ki Jaka village pocket (viewport-visible)
   const prot = (x: number, y: number) => PROTECT.some((p) => Math.abs(p[0] - x) <= 1 && Math.abs(p[1] - y) <= 1);
   for (let y = 2; y < 34; y++) for (let x = 2; x < 27; x++) {
     if (gget(m, x, y) !== T.GR || prot(x, y)) continue;
@@ -211,6 +222,17 @@ export interface CanonicalEnemySpawn {
   r: number;
 }
 
+export interface CanonicalEntity {
+  id: string;
+  type: string;
+  /** Tile position (converted to normalized by map-loader). */
+  x: number; y: number;
+  scale: number;
+  layer: "BEHIND_ENTITIES" | "ENTITIES" | "GROUND_DECOR";
+  solid: boolean;
+  asset: string;
+}
+
 export interface CanonicalMap {
   id: CanonicalMapId;
   name: string;
@@ -224,6 +246,7 @@ export interface CanonicalMap {
   chests: CanonicalChest[];
   npcSpawns: CanonicalNpcSpawn[];
   enemySpawns: CanonicalEnemySpawn[];
+  entities: CanonicalEntity[];
 }
 
 function toMap(
@@ -231,8 +254,9 @@ function toMap(
   spawn: { x: number; y: number },
   portals: CanonicalPortal[], chests: CanonicalChest[],
   npcSpawns: CanonicalNpcSpawn[], enemySpawns: CanonicalEnemySpawn[],
+  entities: CanonicalEntity[] = [],
 ): CanonicalMap {
-  return { id, name, width: grid.w, height: grid.h, tiles: Array.from(grid.t), spawn, portals, chests, npcSpawns, enemySpawns };
+  return { id, name, width: grid.w, height: grid.h, tiles: Array.from(grid.t), spawn, portals, chests, npcSpawns, enemySpawns, entities };
 }
 
 const desaGrid = buildDesaGrid();
@@ -267,7 +291,7 @@ export const WORLD_MAPS: Record<CanonicalMapId, CanonicalMap> = {
     portalsOf("map.desa"),
     chestsOf("map.desa"),
     [
-      { id: "ki", name: "Ki Jaka", x: 6, y: 15, dir: "down" },
+      { id: "ki", name: "Ki Jaka", x: 18, y: 19, dir: "down" },
       { id: "ratmi", name: "Bu Ratmi", x: 13, y: 15, dir: "down" },
       { id: "sari", name: "Bu Sari", x: 7, y: 25, dir: "down" },
       { id: "eyang", name: "Eyang Kartala", x: 17, y: 20, dir: "down" },
@@ -280,6 +304,15 @@ export const WORLD_MAPS: Record<CanonicalMapId, CanonicalMap> = {
       { id: "e3", type: "g", x: 31, y: 21, r: 2 }, { id: "e4", type: "g", x: 32, y: 24, r: 2 },
       { id: "e5", type: "w", x: 34, y: 9, r: 2 }, { id: "e6", type: "w", x: 39, y: 10, r: 1 },
       { id: "eboss", type: "b", x: 41, y: 10, r: 0 },
+    ],
+    [
+      // P2.8.6-B1: Ki Jaka village pocket — visual entities over tile structures.
+      // House: RF(16-20,18-19), WL(16-20,20), DR(18,20). Entity at house center.
+      { id: "ent.ki-house", type: "house", x: 18, y: 18, scale: 1, layer: "BEHIND_ENTITIES", solid: true, asset: "house.village" },
+      { id: "ent.ki-tree.1", type: "tree", x: 16, y: 17, scale: 1, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
+      { id: "ent.ki-tree.2", type: "tree", x: 20, y: 17, scale: 1.1, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
+      { id: "ent.ki-rock.1", type: "rock", x: 15, y: 20, scale: 0.8, layer: "GROUND_DECOR", solid: false, asset: "rock.gray" },
+      { id: "ent.ki-rock.2", type: "rock", x: 20, y: 20, scale: 0.7, layer: "GROUND_DECOR", solid: false, asset: "rock.gray" },
     ],
   ),
   "map.gunung": toMap(

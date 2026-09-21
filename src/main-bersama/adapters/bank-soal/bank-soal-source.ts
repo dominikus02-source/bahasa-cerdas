@@ -59,7 +59,7 @@ function loadMasterTheme(theme: string): BankSoalSourceResult {
       passageTitle: null,
     });
   }
-  return { ok: true, questions };
+  return { ok: true, questions, contentTitle: theme.charAt(0).toUpperCase() + theme.slice(1).replace(/-/g, ' ') };
 }
 
 export class PrismaBankSoalQuestionSource implements BankSoalQuestionSource {
@@ -92,7 +92,7 @@ export class PrismaBankSoalQuestionSource implements BankSoalQuestionSource {
     // SoalSet existing — soal milik paket, urutan stabil by createdAt+id.
     const soalSet = await db.soalSet.findUnique({
       where: { id: ref.soalSetId },
-      select: { id: true, questions: { orderBy: [{ createdAt: 'asc' }, { id: 'asc' }] } },
+      select: { id: true, title: true, questions: { orderBy: [{ createdAt: 'asc' }, { id: 'asc' }] } },
     });
     if (!soalSet) return { ok: false, code: 'PACKAGE_NOT_FOUND' };
 
@@ -103,9 +103,9 @@ export class PrismaBankSoalQuestionSource implements BankSoalQuestionSource {
       options: s.options,
       correctAnswer: s.correctAnswer,
       explanation: s.explanation,
-      passage: null, // model Soal tidak punya kolom stimulus
+      passage: null,
       passageTitle: null,
     }));
-    return { ok: true, questions };
+    return { ok: true, questions, contentTitle: soalSet.title || 'Paket Soal' };
   }
 }

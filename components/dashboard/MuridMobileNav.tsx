@@ -9,7 +9,7 @@ import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { VerifiedBadge } from "@/components/arena/UserName";
 import {
   Home, Menu as MenuIcon, X, Bell,
-  GraduationCap, User, PenLine, MessageCircle, Settings, Shield, Zap, Gem,
+  GraduationCap, User, PenLine, MessageCircle, Settings, Shield, Zap, Gem, Gamepad2,
 } from "lucide-react";
 import {
   NAV_ICON_CLASS,
@@ -22,6 +22,7 @@ import { getRoleNavItems, type RoleNavItem } from "@/components/shell/navigation
 const PRIMARY = [
   { href: "/murid/beranda", label: "Beranda", icon: Home },
   { href: "/arena", label: "Arena", icon: Zap },
+  { href: "/main-bersama/join", label: "Main Bersama", icon: Gamepad2 },
   { href: "/murid/karya", label: "Karya", icon: PenLine },
   { href: "/murid/profile", label: "Profil", icon: User },
 ];
@@ -30,6 +31,7 @@ const DRAWER_ITEMS: { href: string; label: string; icon: any }[] = [
   { href: "/murid/beranda", label: "Beranda", icon: Home },
   { href: "/murid/profile", label: "Profil", icon: User },
   { href: "/arena", label: "Arena", icon: Zap },
+  { href: "/main-bersama/join", label: "Main Bersama", icon: Gamepad2 },
   { href: "/murid/karya", label: "Karya", icon: PenLine },
   { href: "/arena/chat", label: "Obrolan", icon: MessageCircle },
   { href: "/murid/premium", label: "Premium", icon: Gem },

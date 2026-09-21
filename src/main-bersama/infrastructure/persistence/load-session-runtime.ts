@@ -104,6 +104,7 @@ export async function loadSessionRuntime(
     teacherId: sessionRow.teacherId,
     classId: sessionRow.classId ?? undefined,
     className: sessionRow.className ?? undefined,
+    contentTitle: sessionRow.contentTitle ?? 'Paket Soal',
     gameMode: gameModeToDomain(sessionRow.gameMode),
     phase: phaseToDomain(sessionRow.phase),
     currentRoundIndex: sessionRow.currentRoundIndex,

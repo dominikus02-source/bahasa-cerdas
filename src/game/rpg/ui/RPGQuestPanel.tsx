@@ -23,20 +23,25 @@ export function RPGQuestPanel({
 }: RPGQuestPanelProps) {
   const objective = renderTrackerText(quest.main, quest.kills, 0);
   const isKorogQuest = quest.main === 1;
+  const questActive = quest.main >= 1;
 
   return (
     <aside className="absolute top-3 right-3 z-10 w-[min(23rem,calc(100%-1.5rem))]" aria-label="Tujuan petualangan">
       <div className="rounded-2xl border-2 border-amber-200/80 bg-stone-950/85 p-3.5 text-amber-50 shadow-xl backdrop-blur-sm">
         <div className="flex items-center justify-between gap-3">
-          <p className="text-[11px] font-black uppercase tracking-[0.16em] text-amber-300">Jejak Korog</p>
+          <p className="text-[11px] font-black uppercase tracking-[0.16em] text-amber-300">
+            {questActive ? "Jejak Korog" : "Desa Suryakerta"}
+          </p>
           <span className="rounded-full bg-amber-400/15 px-2 py-0.5 text-xs font-black text-amber-200">{gold} G</span>
         </div>
         <p className="mt-1.5 text-sm font-bold leading-snug text-white">{objective}</p>
-        <p className={`mt-1 text-xs font-semibold ${learningReady ? "text-emerald-200" : "text-amber-200"}`}>
-          {learningReady
-            ? "Tantangan Bahasa siap: jawaban benar memperkuat serangan."
-            : "Tantangan Bahasa belum tersedia; periksa sesi dan pool soal sebelum playtest."}
-        </p>
+        {questActive ? (
+          <p className={`mt-1 text-xs font-semibold ${learningReady ? "text-emerald-200" : "text-amber-200"}`}>
+            {learningReady
+              ? "Tantangan Bahasa siap: jawaban benar memperkuat serangan."
+              : "Tantangan Bahasa belum tersedia; periksa sesi dan pool soal sebelum playtest."}
+          </p>
+        ) : null}
         {isKorogQuest ? (
           <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-stone-700" aria-label={`Korog dikalahkan ${Math.min(quest.kills, 3)} dari 3`}>
             <div className="h-full rounded-full bg-amber-400 transition-all" style={{ width: `${Math.min(100, (quest.kills / 3) * 100)}%` }} />

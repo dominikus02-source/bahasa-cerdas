@@ -28,6 +28,7 @@ import { QuestionCard } from '@/components/main-bersama/shared/QuestionCard';
 import { TeamProgress } from '@/components/main-bersama/shared/TeamProgress';
 import { CityProgress } from '@/components/main-bersama/shared/CityProgress';
 import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBanner';
+import { RoomQRCode } from '@/components/main-bersama/shared/RoomQRCode';
 
 type Command =
   | 'open-lobby'
@@ -99,7 +100,7 @@ export function TeacherRoomClient({
       : null;
 
   return (
-    <main className="mb-room">
+    <main className="mb-room game-fullscreen">
       <ConnectionBanner visible={connection === 'offline'} />
       <SessionHeader
         mode={view.gameMode}
@@ -152,9 +153,9 @@ export function TeacherRoomClient({
             </span>
             <span className="mb-chip mb-lobby-chip mb-number">{view.totalRounds} soal</span>
           </div>
-          <div className="mb-lobby-qr" aria-hidden>
-            <span className="mb-lobby-qr-box">QR</span>
-            <small>Kode QR (segera hadir)</small>
+          <div className="mb-lobby-qr">
+            <RoomQRCode pin={pin} />
+            <small>Scan untuk gabung</small>
           </div>
           <ParticipantList participants={view.participants} />
           {view.participants.length === 0 ? (

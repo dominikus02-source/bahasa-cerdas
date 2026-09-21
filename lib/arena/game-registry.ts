@@ -86,6 +86,9 @@ export const GAME_REGISTRY: GameDefinition[] = [
     // Terlihat di discovery; gameplay dijaga server-side via entitlement
     // Premium (route + API). Non-Premium melihat halaman terkunci.
     premiumOnly: true,
+    // P2.10-FREEZE: Pendekar Suryakerta paused until next week.
+    // Hidden from all discovery. Founder/admin bypass in RPG page.
+    unpublished: true,
   },
   {
     id: "kuis-tempur",
