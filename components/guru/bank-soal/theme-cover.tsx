@@ -1,11 +1,10 @@
-// ─── Theme Cover System (Bank Soal Discovery) ───────────────
-// Visual cover PROSEDURAL: solid category color + subtle pattern
-// + Lucide icon. NO emoji. NO gradient. NO external images.
+// ─── Theme Cover System (Bank Soal — Canonical) ─────────────
+// Single rendering path: solid category color + illustration OR icon.
+// NO patterns. NO gradients. NO variants. NO watermarks.
 //
 // Pemakaian:
 //   const visual = categoryVisual(categoryKey);
-//   const variant = themeVariant(themeName);
-//   <ThemeCoverArt visual={visual} variant={variant} name={...} />
+//   <ThemeCoverArt visual={visual} name={...} iconKey={...} illustrationKey={...} />
 
 import type { LucideIcon } from "lucide-react";
 import {
@@ -14,6 +13,7 @@ import {
   FileText, Mic, Mail, BarChart3, Library, ClipboardList,
   CircleHelp, Quote, Bookmark, Theater, Music, Frame,
   PenTool, Globe, Sparkles, GraduationCap, Compass,
+  Zap, Lightbulb, Target, Puzzle, Brain, MessageCircle,
 } from "lucide-react";
 import type { IconKey } from "./theme-config";
 import { resolveIllustration, type IllustrationKey } from "./illustrations";
@@ -26,7 +26,7 @@ export type CategoryKey =
   | "Lainnya";
 
 /** Resolve IconKey string to Lucide component. */
-const ICON_MAP: Record<IconKey, LucideIcon> = {
+const ICON_MAP: Record<string, LucideIcon> = {
   "feather": Feather,
   "book-open": BookOpen,
   "book-text": BookText,
@@ -54,28 +54,27 @@ const ICON_MAP: Record<IconKey, LucideIcon> = {
   "sparkles": Sparkles,
   "graduation-cap": GraduationCap,
   "compass": Compass,
+  "zap": Zap,
+  "lightbulb": Lightbulb,
+  "target": Target,
+  "puzzle": Puzzle,
+  "brain": Brain,
+  "message-circle": MessageCircle,
 };
 
-export function resolveIcon(key?: IconKey): LucideIcon {
+export function resolveIcon(key?: string): LucideIcon {
   return key ? (ICON_MAP[key] ?? Feather) : Feather;
 }
 
-/** Token visual terpusat per kategori — jangan hardcode di card. */
+/** Token visual per kategori — single source of truth. */
 export interface CategoryVisual {
   key: CategoryKey;
-  /** Solid background color for cover area (Tailwind class). */
   coverBg: string;
-  /** Aksen kecil (chip, garis heading). */
   accentText: string;
   accentBar: string;
-  /** Chip metadata di card. */
   softBg: string;
   softText: string;
-  /** Warna pattern overlay (hex — untuk SVG inline). */
-  patternColor: string;
-  /** Default category icon (used when theme has no specific icon). */
   icon: LucideIcon;
-  /** Subtitle editorial singkat per kategori. */
   subtitle: string;
 }
 
@@ -87,7 +86,6 @@ export const CATEGORY_VISUALS: Record<CategoryKey, CategoryVisual> = {
     accentBar: "bg-emerald-500",
     softBg: "bg-emerald-50",
     softText: "text-emerald-700",
-    patternColor: "rgba(255,255,255,0.08)",
     icon: SpellCheck,
     subtitle: "Struktur, ejaan, dan makna kata.",
   },
@@ -98,7 +96,6 @@ export const CATEGORY_VISUALS: Record<CategoryKey, CategoryVisual> = {
     accentBar: "bg-violet-500",
     softBg: "bg-violet-50",
     softText: "text-violet-700",
-    patternColor: "rgba(255,255,255,0.08)",
     icon: Feather,
     subtitle: "Puisi, prosa, dan bentuk sastra Indonesia.",
   },
@@ -109,7 +106,6 @@ export const CATEGORY_VISUALS: Record<CategoryKey, CategoryVisual> = {
     accentBar: "bg-blue-500",
     softBg: "bg-blue-50",
     softText: "text-blue-700",
-    patternColor: "rgba(255,255,255,0.08)",
     icon: Newspaper,
     subtitle: "Dari teks deskripsi hingga artikel dan resensi.",
   },
@@ -120,7 +116,6 @@ export const CATEGORY_VISUALS: Record<CategoryKey, CategoryVisual> = {
     accentBar: "bg-orange-500",
     softBg: "bg-orange-50",
     softText: "text-orange-700",
-    patternColor: "rgba(255,255,255,0.08)",
     icon: Megaphone,
     subtitle: "Surat, poster, pidato — bahasa untuk dipakai.",
   },
@@ -131,7 +126,6 @@ export const CATEGORY_VISUALS: Record<CategoryKey, CategoryVisual> = {
     accentBar: "bg-indigo-500",
     softBg: "bg-indigo-50",
     softText: "text-indigo-700",
-    patternColor: "rgba(255,255,255,0.08)",
     icon: Shapes,
     subtitle: "Tema di luar kategori utama.",
   },
@@ -141,55 +135,25 @@ export function categoryVisual(key: string): CategoryVisual {
   return CATEGORY_VISUALS[key as CategoryKey] ?? CATEGORY_VISUALS["Lainnya"];
 }
 
-// ─── Variasi deterministik per tema ──────────────────────────
-
-export interface ThemeVariant {
-  /** Indeks pola overlay (0=dots, 1=diagonal, 2=geometric). */
-  pattern: 0 | 1 | 2;
-  /** Offset shade (0=none, 1=subtle dark, 2=subtle light). */
-  shade: 0 | 1 | 2;
-}
-
-/** Hash sederhana nama tema → varian. Deterministik antar render. */
-export function themeVariant(themeName: string): ThemeVariant {
-  let h = 0;
-  for (let i = 0; i < themeName.length; i++) {
-    h = (h * 31 + themeName.charCodeAt(i)) >>> 0;
-  }
-  return {
-    pattern: (h % 3) as 0 | 1 | 2,
-    shade: (Math.floor(h / 3) % 3) as 0 | 1 | 2,
-  };
-}
-
-/** Nuansa shade — sangat halus, solid color tetap dominan. */
-const SHADE_OVERLAY: Record<0 | 1 | 2, string> = {
-  0: "",
-  1: "bg-black/[0.04]",
-  2: "bg-white/[0.06]",
-};
-
 /**
- * Cover area visual untuk ThemeCard.
- * Solid category color + illustration (when available) + icon fallback.
- * NO pattern. NO gradient. Clean editorial.
+ * ThemeCoverArt — canonical rendering path.
+ * ALWAYS renders: solid category bg + illustration OR icon.
+ * NEVER: white, empty, pattern, gradient, watermark.
  */
 export function ThemeCoverArt({
   visual,
-  variant,
   name,
   iconKey,
   illustrationKey,
   className = "",
 }: {
   visual: CategoryVisual;
-  variant: ThemeVariant;
   name: string;
   iconKey?: string;
   illustrationKey?: string;
   className?: string;
 }) {
-  const Icon = iconKey ? resolveIcon(iconKey as IconKey) : visual.icon;
+  const Icon = resolveIcon(iconKey ?? undefined);
   const Illustration = illustrationKey
     ? resolveIllustration(illustrationKey as IllustrationKey)
     : null;
@@ -197,13 +161,11 @@ export function ThemeCoverArt({
   return (
     <div
       aria-hidden
-      className={`relative h-20 w-full overflow-hidden ${visual.coverBg} ${SHADE_OVERLAY[variant.shade]} ${className}`}
+      className={`relative w-full overflow-hidden ${visual.coverBg} ${className}`}
     >
       {Illustration ? (
-        // Illustration mode: centered, white, semi-transparent
-        <Illustration className="absolute inset-0 w-full h-full text-white/25 p-3" />
+        <Illustration className="absolute inset-0 w-full h-full text-white/20 p-3" />
       ) : (
-        // Fallback: clean Lucide icon, bottom-right, subtle
         <span className="absolute bottom-2 right-2.5 w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
           <Icon size={16} className="text-white/50" />
         </span>
