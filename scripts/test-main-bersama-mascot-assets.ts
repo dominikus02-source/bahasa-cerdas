@@ -1,5 +1,5 @@
 /**
- * Test aset maskot Main Bersama — READY batch (2026-09-21).
+ * Test aset maskot Main Bersama — 4 pose per regu (2026-09-22).
  * Pola QA repo (tsx standalone, tanpa framework test).
  *
  * Jalankan: npx tsx scripts/test-main-bersama-mascot-assets.ts
@@ -8,14 +8,13 @@
  *   MB_MASCOT_HTTP_BASE=http://localhost:3000 npx tsx scripts/test-main-bersama-mascot-assets.ts
  *
  * Yang dikunci tes ini:
- *  - READY (locked) 4/4 + MOVE (locked) 4/4 + CELEBRATE (candidate) 4/4;
- *    podium tetap null
+ *  - READY/MOVE/CELEBRATE locked 4/4 + PODIUM candidate 4/4
  *  - path URL == path fisik (invariant case — Linux/Vercel case-sensitive)
  *  - runtime = WebP valid, PUNYA kanal alpha, dimensi 1024, ukuran hemat
- *  - master PNG lossless (READY+MOVE+CELEBRATE) tetap utuh di docs/
- *  - READY & MOVE LOCKED tidak tersentuh sejak commit terakhir (bukti git)
+ *  - master PNG lossless empat pose tetap utuh di docs/
+ *  - READY, MOVE, dan CELEBRATE locked tidak tersentuh sejak commit terakhir
  *  - tidak ada ZIP/drop lama di source dir (satu sistem penamaan)
- *  - TeamMascot jatuh ke TeamBadge saat src null / team tidak dikenal
+ *  - TeamMascot merender setiap pose; TeamBadge tetap fallback untuk team tak dikenal
  */
 import fs from "fs"
 import path from "path"
@@ -53,6 +52,7 @@ const PUBLIC_DIR = path.join(REPO, "public")
 const MASTER_DIR = path.join(REPO, "docs", "main-bersama", "art-source", "mascots", "ready")
 const MOVE_DIR = path.join(REPO, "docs", "main-bersama", "art-source", "mascots", "move")
 const CELEBRATE_DIR = path.join(REPO, "docs", "main-bersama", "art-source", "mascots", "celebrate")
+const PODIUM_DIR = path.join(REPO, "docs", "main-bersama", "art-source", "mascots", "podium")
 const ART_SOURCE_DIR = path.join(REPO, "docs", "main-bersama", "art-source", "mascots")
 const REF_SHEET = path.join(ART_SOURCE_DIR, "maskot-main-bersama-master.png")
 
@@ -176,22 +176,28 @@ function pathCaseMatches(urlPath: string): { ok: boolean; bad?: string } {
   return { ok: true }
 }
 
-function expected(team: string, pose: "ready" | "move" | "celebrate" = "ready") {
+function expected(team: string, pose: (typeof POSES)[number] = "ready") {
   return `/main-bersama/jelajah/mascots/jelajah-${team}-${pose}.webp`
 }
 
 /** Arsip master lossless PNG per pose. */
-function masterPath(team: string, pose: "ready" | "move" | "celebrate") {
+function masterPath(team: string, pose: (typeof POSES)[number]) {
   const dir =
-    pose === "ready" ? MASTER_DIR : pose === "move" ? MOVE_DIR : CELEBRATE_DIR
+    pose === "ready"
+      ? MASTER_DIR
+      : pose === "move"
+        ? MOVE_DIR
+        : pose === "celebrate"
+          ? CELEBRATE_DIR
+          : PODIUM_DIR
   return path.join(dir, `jelajah-${team}-${pose}.png`)
 }
 
-/** Pose yang SUDAH punya aset (READY locked, MOVE locked, CELEBRATE candidate). */
-const FILLED_POSES = ["ready", "move", "celebrate"] as const
+/** Semua pose punya runtime art; TeamBadge tetap defensive fallback. */
+const FILLED_POSES = POSES
 
 async function main() {
-  console.log("\n── A. Registry: READY (locked) + MOVE (locked) + CELEBRATE (candidate) ──")
+  console.log("\n── A. Registry: READY/MOVE/CELEBRATE locked + PODIUM candidate ──")
   for (const team of TEAM_IDS) {
     test(`${team}: ready terisi`, () => TEAM_MASCOTS[team].ready.src === expected(team, "ready"))
   }
@@ -202,15 +208,16 @@ async function main() {
     test(`${team}: celebrate terisi`, () =>
       TEAM_MASCOTS[team].celebrate.src === expected(team, "celebrate"))
   }
-  test("pose podium SEMUA masih null (fallback aktif)", () =>
-    TEAM_IDS.every((t) => TEAM_MASCOTS[t].podium.src === null))
-  test("total slot kosong = 4 (4 tim × 1 pose: podium)", () =>
+  for (const team of TEAM_IDS) {
+    test(`${team}: podium terisi`, () => TEAM_MASCOTS[team].podium.src === expected(team, "podium"))
+  }
+  test("total slot kosong = 0", () =>
     TEAM_IDS.reduce(
       (n, t) => n + POSES.filter((p) => TEAM_MASCOTS[t][p].src === null).length,
       0
-    ) === 4)
-  test("tepat 12 slot src terisi (4 READY + 4 MOVE + 4 CELEBRATE)", () =>
-    TEAM_IDS.reduce((n, t) => n + POSES.filter((p) => TEAM_MASCOTS[t][p].src !== null).length, 0) === 12)
+    ) === 0)
+  test("tepat 16 slot src terisi (4 pose × 4 regu)", () =>
+    TEAM_IDS.reduce((n, t) => n + POSES.filter((p) => TEAM_MASCOTS[t][p].src !== null).length, 0) === 16)
   test("semua src lowercase (aman di Linux)", () =>
     TEAM_IDS.every((t) =>
       FILLED_POSES.every((p) => {
@@ -253,7 +260,7 @@ async function main() {
     fs.readdirSync(path.join(PUBLIC_DIR, "main-bersama")).includes("jelajah") &&
     fs.readdirSync(path.join(PUBLIC_DIR, "main-bersama", "jelajah")).includes("mascots"))
 
-  console.log("\n── C. Runtime WebP (READY + MOVE): container valid, alpha hadir, hemat ──")
+  console.log("\n── C. Runtime WebP (semua pose): container valid, alpha hadir, hemat ──")
   for (const team of TEAM_IDS) {
     for (const pose of FILLED_POSES) {
       const url = TEAM_MASCOTS[team][pose].src as string
@@ -272,16 +279,16 @@ async function main() {
       })
     }
   }
-  test("12 runtime WebP ukurannya berbeda (12 artwork distinct)", () =>
+  test("16 runtime WebP ukurannya berbeda (16 artwork distinct)", () =>
     new Set(
       TEAM_IDS.flatMap((t) =>
         FILLED_POSES.map((p) =>
           fs.statSync(path.join(PUBLIC_DIR, (TEAM_MASCOTS[t][p].src as string).slice(1))).size
         )
       )
-    ).size === 12)
+    ).size === 16)
 
-  console.log("\n── D. Master lossless PNG tetap utuh di docs/ (bukan runtime) ──")
+  console.log("\n── D. Master lossless PNG semua pose tetap utuh di docs/ (bukan runtime) ──")
   for (const team of TEAM_IDS) {
     for (const pose of FILLED_POSES) {
       const master = masterPath(team, pose)
@@ -297,7 +304,7 @@ async function main() {
     }
   }
 
-  console.log("\n── D2. READY & MOVE LOCKED tidak berubah (bukti vs commit terakhir) ──")
+  console.log("\n── D2. READY/MOVE/CELEBRATE LOCKED tidak berubah (bukti vs commit terakhir) ──")
   try {
     const { execSync } = require("child_process")
     const changedIn = (args: string) =>
@@ -322,6 +329,16 @@ async function main() {
 
     test("master MOVE di docs/ tidak tersentuh", () =>
       changedIn("docs/main-bersama/art-source/mascots/move") === "")
+
+    const celebrateRuntime = TEAM_IDS.map(
+      (t) => `public/main-bersama/jelajah/mascots/jelajah-${t}-celebrate.webp`
+    )
+    const changedCelebrate = changedIn(celebrateRuntime.join(" "))
+    test("4 runtime CELEBRATE tidak tersentuh sejak commit terakhir", () => changedCelebrate === "")
+    if (changedCelebrate) console.log(`        ↳ berubah: ${changedCelebrate}`)
+
+    test("master CELEBRATE di docs/ tidak tersentuh", () =>
+      changedIn("docs/main-bersama/art-source/mascots/celebrate") === "")
   } catch {
     console.log("  ⏭  dilewati (git tidak tersedia / bukan repo git)")
   }
@@ -336,8 +353,8 @@ async function main() {
   test("reference sheet master ada di docs/", () => fs.existsSync(REF_SHEET))
   test("reference sheet TIDAK ada lagi di public/", () =>
     !fs.existsSync(path.join(PUBLIC_DIR, "maskot main bersama.png")))
-  test("tidak ada ZIP pengiriman di source dir (READY/MOVE/CELEBRATE)", () =>
-    [MASTER_DIR, MOVE_DIR, CELEBRATE_DIR].every((d) =>
+  test("tidak ada ZIP pengiriman di source dir (semua pose)", () =>
+    [MASTER_DIR, MOVE_DIR, CELEBRATE_DIR, PODIUM_DIR].every((d) =>
       fs.readdirSync(d).every((f) => !f.toLowerCase().endsWith(".zip"))))
 
   console.log("\n── F. Fallback TeamBadge + render per pose ──")
@@ -348,8 +365,10 @@ async function main() {
   const podiumPose = renderToStaticMarkup(
     React.createElement(TeamMascot, { teamId: "rusa", pose: "podium" as const })
   )
-  test("pose 'podium' (src null) → TeamBadge, BUKAN <img>", () =>
-    podiumPose.includes('class="mb-team-badge"') && !podiumPose.includes("<img"))
+  test("pose 'podium' (src ada) → <img> dengan src PODIUM yang benar", () =>
+    podiumPose.includes("<img") &&
+    podiumPose.includes(expected("rusa", "podium")) &&
+    !podiumPose.includes('class="mb-team-badge"'))
 
   for (const pose of FILLED_POSES) {
     const html = renderToStaticMarkup(
@@ -379,6 +398,14 @@ async function main() {
     )
     test(`${team}: render READY memuat src + tidak ada badge fallback`, () =>
       html.includes(expected(team)) && !html.includes('class="mb-team-badge"'))
+  }
+
+  for (const team of TEAM_IDS) {
+    const html = renderToStaticMarkup(
+      React.createElement(TeamMascot, { teamId: team, pose: "podium" as const, size: 64 })
+    )
+    test(`${team}: render PODIUM memuat src + tidak ada badge fallback`, () =>
+      html.includes(expected(team, "podium")) && !html.includes('class="mb-team-badge"'))
   }
 
   console.log("\n── G. TeamBadge masih diekspor dari registry (kontrak 8B) ──")
