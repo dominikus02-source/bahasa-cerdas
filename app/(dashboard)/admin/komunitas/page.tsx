@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { Users, CheckCircle, XCircle, Clock, Archive, Eye, Loader2, MessageSquare, AlertCircle } from "lucide-react";
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout";
 
 type CommunityStatus = "PENDING" | "APPROVED" | "REJECTED";
 
@@ -27,7 +28,7 @@ export default function AdminKomunitasPage() {
     try {
       const url = `/api/admin/komunitas${filter !== "ALL" ? `?status=${filter}` : ""}`;
       console.log("Fetching:", url);
-      const res = await fetch(url);
+      const res = await fetchWithTimeout(url);
       const data = await res.json();
       console.log("Response:", data);
 
@@ -41,8 +42,9 @@ export default function AdminKomunitasPage() {
     } catch (e: any) {
       setError(e.message || "Gagal fetch data");
       console.error(e);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [filter]);
 
   useEffect(() => { fetchData(); }, [fetchData]);

@@ -6,6 +6,7 @@ import {
   Crown, Users, Clock, XCircle, AlertTriangle, Sparkles,
   Shield, GraduationCap, Filter, DollarSign, TrendingUp, Repeat, AlertCircle,
 } from "lucide-react";
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout";
 
 interface PremiumUser {
   userId: string;
@@ -82,6 +83,7 @@ export default function AdminPremiumReportPage() {
     filters: Record<string, string | null>;
   } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   // Filters
   const [audience, setAudience] = useState<string>("ALL");
@@ -93,6 +95,7 @@ export default function AdminPremiumReportPage() {
 
   const fetchData = useCallback(async () => {
     setLoading(true);
+    setLoadError(false);
     const params = new URLSearchParams();
     params.set("page", String(page));
     params.set("pageSize", "25");
@@ -101,12 +104,18 @@ export default function AdminPremiumReportPage() {
     if (planFilter !== "ALL") params.set("plan", planFilter);
     if (search) params.set("search", search);
 
-    const res = await fetch(`/api/admin/premium/report?${params}`);
-    if (res.ok) setData(await res.json());
-    setLoading(false);
+    try {
+      const res = await fetchWithTimeout(`/api/admin/premium/report?${params}`);
+      if (!res.ok) throw new Error("Unable to load premium report");
+      setData(await res.json());
+    } catch {
+      setLoadError(true);
+    } finally {
+      setLoading(false);
+    }
   }, [page, audience, statusFilter, planFilter, search]);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => { void fetchData(); }, [fetchData]);
 
   const formatRupiah = (v: number) => `Rp ${v.toLocaleString("id-ID")}`;
   const formatDate = (d: string) => new Date(d).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
@@ -139,6 +148,8 @@ export default function AdminPremiumReportPage() {
           <RefreshCw size={14} className={loading ? "animate-spin" : ""} /> Refresh
         </button>
       </div>
+
+      {loadError && <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">Laporan premium belum bisa dimuat. <button onClick={() => void fetchData()} className="font-semibold underline">Coba lagi</button></div>}
 
       {/* Summary Cards */}
       {data?.summary && (

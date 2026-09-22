@@ -27,6 +27,7 @@ import SocialConnections from "@/components/profile/SocialConnections";
 import BadgeShowcasePanel from "@/components/profile/BadgeShowcasePanel";
 import ActivityChart, { type ChartDay } from "@/components/profile/ActivityChart";
 import SkillRadar from "@/components/arena/player/SkillRadar";
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout";
 
 interface UserData {
   id: string; fullName: string; nickname?: string | null; xp: number; level: number; streak: number;
@@ -149,9 +150,9 @@ export default function MuridProfilePage() {
     async function load() {
       try {
         const [meRes, karyaRes, metaRes] = await Promise.all([
-          fetch("/api/user/me"),
-          fetch("/api/siswa/user/karya"),
-          fetch("/api/murid/profile-meta"),
+          fetchWithTimeout("/api/user/me"),
+          fetchWithTimeout("/api/siswa/user/karya"),
+          fetchWithTimeout("/api/murid/profile-meta"),
         ]);
         if (meRes.ok) {
           const meData = await meRes.json();
@@ -162,7 +163,7 @@ export default function MuridProfilePage() {
           // disamarkan sebagai data valid: di-log agar "0" yang tampil jelas
           // berasal dari request gagal, bukan nol asli dari database.
           try {
-            const socRes = await fetch(`/api/user/profile/${me.id}/social`);
+            const socRes = await fetchWithTimeout(`/api/user/profile/${me.id}/social`);
             if (socRes.ok) {
               setSocial(await socRes.json());
             } else {
@@ -194,11 +195,11 @@ export default function MuridProfilePage() {
   // Data pemain + aktivitas + lencana showcase + perjalanan belajar + skill — best-effort.
   useEffect(() => {
     Promise.all([
-      fetch("/api/player/profile").then(r => r.ok ? r.json() : null),
-      fetch("/api/player/xp/history?limit=5").then(r => r.ok ? r.json() : null),
-      fetch("/api/player/badges").then(r => r.ok ? r.json() : null),
-      fetch("/api/player/journey?limit=100").then(r => r.ok ? r.json() : null),
-      fetch("/api/player/skills").then(r => r.ok ? r.json() : null),
+      fetchWithTimeout("/api/player/profile").then(r => r.ok ? r.json() : null),
+      fetchWithTimeout("/api/player/xp/history?limit=5").then(r => r.ok ? r.json() : null),
+      fetchWithTimeout("/api/player/badges").then(r => r.ok ? r.json() : null),
+      fetchWithTimeout("/api/player/journey?limit=100").then(r => r.ok ? r.json() : null),
+      fetchWithTimeout("/api/player/skills").then(r => r.ok ? r.json() : null),
     ]).then(([pp, xh, bd, jr, sk]) => {
       if (pp?.profile) setPlayerProfile(pp.profile);
       if (xh?.entries) setXpHistory(xh.entries);

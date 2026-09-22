@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { BookOpen, Check, GraduationCap, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout";
 import { BRAND_ICON, BRAND_ICON_DARK, BRAND_TAGLINE } from "@/lib/brand";
 import BatikAccent from "@/components/decorations/BatikAccent";
 
@@ -53,7 +54,7 @@ export default function PilihPeranPage() {
           window.location.href = "/login";
           return;
         }
-        const res = await fetch("/api/auth/complete-role", { cache: "no-store" });
+        const res = await fetchWithTimeout("/api/auth/complete-role", { cache: "no-store" });
         const status = await res.json().catch(() => ({}));
         if (!status.session) {
           window.location.href = "/login";
@@ -66,7 +67,9 @@ export default function PilihPeranPage() {
       } catch {
         // Stay on the page; submission will surface any session problem.
       }
-      setChecking(false);
+      finally {
+        setChecking(false);
+      }
     })();
   }, []);
 

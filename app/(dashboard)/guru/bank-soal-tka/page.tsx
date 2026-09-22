@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Search, Plus, BookOpen, Trash2, Filter, Zap, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout";
 
 const KOMPETENSI = ["PEDAGOGIK", "PROFESIONAL", "SOSIAL", "KEPRIBADIAN"];
 const DIFFICULTIES = ["EASY", "MEDIUM", "HARD"];
@@ -12,6 +13,7 @@ const DIFFICULTIES = ["EASY", "MEDIUM", "HARD"];
 export default function BankSoalTKAPage() {
   const [soal, setSoal] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [filterKompetensi, setFilterKompetensi] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ kompetensi: "PEDAGOGIK", text: "", options: ["", "", "", ""], correctAnswer: "0", explanation: "", difficulty: "MEDIUM" });
@@ -21,16 +23,24 @@ export default function BankSoalTKAPage() {
   const [aiDifficulty, setAiDifficulty] = useState("MEDIUM");
   const [aiLoading, setAiLoading] = useState(false);
 
-  useEffect(() => { fetchSoal(); }, [filterKompetensi]);
-
-  async function fetchSoal() {
+  const fetchSoal = useCallback(async () => {
+    setLoading(true);
+    setLoadError(false);
     const params = new URLSearchParams();
     if (filterKompetensi) params.set("kompetensi", filterKompetensi);
-    const res = await fetch(`/api/bank-soal/tka?${params}`);
-    const data = await res.json();
-    setSoal(data.soal || []);
-    setLoading(false);
-  }
+    try {
+      const res = await fetchWithTimeout(`/api/bank-soal/tka?${params}`);
+      if (!res.ok) throw new Error("Unable to load questions");
+      const data = await res.json();
+      setSoal(data.soal || []);
+    } catch {
+      setLoadError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, [filterKompetensi]);
+
+  useEffect(() => { void fetchSoal(); }, [fetchSoal]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -190,7 +200,9 @@ export default function BankSoalTKAPage() {
         </Card>
       )}
 
-      {loading ? <div className="text-center py-12 text-gray-400">Memuat...</div> : soal.length === 0 ? (
+      {loading ? <div className="text-center py-12 text-gray-400">Memuat...</div> : loadError ? (
+        <div className="text-center py-16"><p className="text-gray-500">Bank soal belum bisa dimuat.</p><Button className="mt-4" onClick={() => void fetchSoal()}>Coba lagi</Button></div>
+      ) : soal.length === 0 ? (
         <div className="text-center py-16"><BookOpen size={48} className="mx-auto text-gray-200 mb-3" /><p className="text-gray-500">Belum ada soal</p></div>
       ) : (
         <div className="space-y-3">

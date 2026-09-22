@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Check, ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
 import Link from "next/link";
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout";
 
 interface QuizSubmission {
   id: string;
@@ -32,33 +33,45 @@ export default function KuisGradingPage() {
   const [groupId, setGroupId] = useState("");
   const [submissions, setSubmissions] = useState<QuizSubmission[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const [selectedSub, setSelectedSub] = useState<QuizSubmission | null>(null);
   const [grades, setGrades] = useState<Record<string, { isCorrect: boolean; points: number; comment: string }>>({});
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  useEffect(() => {
-    fetch("/api/group").then(r => r.ok ? r.json() : null).then(d => {
-      if (d?.groups) setGroups(d.groups);
-    });
+  const loadGroups = useCallback(async () => {
+    try {
+      const response = await fetchWithTimeout("/api/group");
+      if (!response.ok) throw new Error("Unable to load groups");
+      const data = await response.json();
+      setGroups(data.groups || []);
+    } catch {
+      setLoadError(true);
+    }
   }, []);
 
-  const loadSubmissions = async (gid: string) => {
+  useEffect(() => {
+    void loadGroups();
+  }, [loadGroups]);
+
+  const loadSubmissions = useCallback(async (gid: string) => {
     setLoading(true);
-    setGroupId(gid);
-    // Fetch quiz submissions for this group that are SUBMITTED (need grading)
-    const res = await fetch(`/api/guru/nilai/kuis-grade?groupId=${gid}`);
-    if (res.ok) {
-      const d = await res.json();
-      setSubmissions(d.submissions || []);
+    setLoadError(false);
+    try {
+      const res = await fetchWithTimeout(`/api/guru/nilai/kuis-grade?groupId=${gid}`);
+      if (!res.ok) throw new Error("Unable to load quiz submissions");
+      const data = await res.json();
+      setSubmissions(data.submissions || []);
+    } catch {
+      setLoadError(true);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
-    if (!groupId) return;
-    loadSubmissions(groupId);
-  }, [groupId]);
+    if (groupId) void loadSubmissions(groupId);
+  }, [groupId, loadSubmissions]);
 
   const openGrading = (sub: QuizSubmission) => {
     setSelectedSub(sub);
@@ -113,7 +126,7 @@ export default function KuisGradingPage() {
         </div>
       </div>
 
-      <select value={groupId} onChange={e => loadSubmissions(e.target.value)}
+      <select value={groupId} onChange={e => setGroupId(e.target.value)}
         className="w-full max-w-md px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm mb-5 focus:outline-none focus:ring-2 focus:ring-emerald-200">
         <option value="">Pilih Kelas</option>
         {groups.map(g => <option key={g.id} value={g.id}>{g.name} ({g.grade})</option>)}
@@ -125,7 +138,14 @@ export default function KuisGradingPage() {
         </div>
       )}
 
-      {!loading && groupId && !selectedSub && (
+      {loadError && !loading && (
+        <div className="flex flex-col items-center gap-3 py-12 text-center">
+          <p className="text-sm text-gray-500">Data penilaian kuis belum bisa dimuat.</p>
+          <button onClick={() => groupId ? void loadSubmissions(groupId) : void loadGroups()} className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white">Coba lagi</button>
+        </div>
+      )}
+
+      {!loading && !loadError && groupId && !selectedSub && (
         <>
           <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
             <div className="px-5 py-4 border-b border-gray-100 bg-gradient-to-r from-amber-50 to-orange-50">

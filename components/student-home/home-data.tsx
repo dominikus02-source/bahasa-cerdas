@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { PlayerProfileResponse } from "@/lib/gamification/client-types";
 import type { LearnerSkillState } from "@/lib/learner-state/types";
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout";
 
 export interface MeUser {
   displayName?: string;
@@ -118,9 +119,9 @@ export function HomeDataProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let alive = true;
     Promise.allSettled([
-      fetch("/api/player/profile").then((r) => (r.ok ? r.json() : Promise.reject())),
-      fetch("/api/user/me").then((r) => (r.ok ? r.json() : Promise.reject())),
-      fetch("/api/murid/dashboard/summary").then((r) => (r.ok ? r.json() : Promise.reject())),
+      fetchWithTimeout("/api/player/profile").then((r) => (r.ok ? r.json() : Promise.reject())),
+      fetchWithTimeout("/api/user/me").then((r) => (r.ok ? r.json() : Promise.reject())),
+      fetchWithTimeout("/api/murid/dashboard/summary").then((r) => (r.ok ? r.json() : Promise.reject())),
     ]).then(([p, m, s]) => {
       if (!alive) return;
       if (p.status === "fulfilled") {
@@ -151,9 +152,9 @@ export function HomeDataProvider({ children }: { children: React.ReactNode }) {
     setPremiumLoading(true);
     setPremiumFailed(false);
     Promise.allSettled([
-      fetch("/api/player/adaptive-practice?mode=preview").then((r) => (r.ok ? r.json() : Promise.reject())),
-      fetch("/api/player/diagnostic?mode=preview").then((r) => (r.ok ? r.json() : Promise.reject())),
-      fetch("/api/player/premium/status").then((r) => (r.ok ? r.json() : Promise.reject())),
+      fetchWithTimeout("/api/player/adaptive-practice?mode=preview").then((r) => (r.ok ? r.json() : Promise.reject())),
+      fetchWithTimeout("/api/player/diagnostic?mode=preview").then((r) => (r.ok ? r.json() : Promise.reject())),
+      fetchWithTimeout("/api/player/premium/status").then((r) => (r.ok ? r.json() : Promise.reject())),
     ]).then(([myDayResult, diagnosticResult, premiumResult]) => {
       if (!alive) return;
       const adaptiveValue = myDayResult.status === "fulfilled" ? (myDayResult.value as MyDayResponse | null) : null;

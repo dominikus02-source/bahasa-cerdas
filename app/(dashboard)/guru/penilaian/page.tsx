@@ -8,6 +8,7 @@ import {
   Check, BookOpen, Users as UsersIcon, Filter, ShieldCheck, BookOpenCheck,
   ListChecks, FileBarChart2,
 } from "lucide-react";
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout";
 
 type Group = { id: string; name: string; grade: string; _count?: { members: number } };
 type Kategori = { id: string; groupId: string; nama: string; bobot: number; createdAt: string };
@@ -45,6 +46,7 @@ export default function PenilaianPage() {
   const [siswas, setSiswas] = useState<Siswa[]>([]);
   const [nilais, setNilais] = useState<NilaiEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [populating, setPopulating] = useState(false);
 
   // Category modal
@@ -75,32 +77,51 @@ export default function PenilaianPage() {
   // Download dropdown
   const [showDownload, setShowDownload] = useState(false);
 
-  useEffect(() => {
-    fetch("/api/group").then(r => r.ok ? r.json() : null).then(d => {
-      if (d?.groups) setGroups(d.groups);
-    }).finally(() => setLoading(false));
+  const loadGroups = useCallback(async () => {
+    setLoading(true);
+    setLoadError(false);
+    try {
+      const response = await fetchWithTimeout("/api/group");
+      if (!response.ok) throw new Error("Unable to load groups");
+      const data = await response.json();
+      setGroups(data.groups || []);
+    } catch {
+      setLoadError(true);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    void loadGroups();
+  }, [loadGroups]);
 
   const loadGroupData = useCallback(async (gid: string) => {
     setLoading(true);
-    const [kRes, nRes] = await Promise.all([
-      fetch(`/api/guru/nilai-kategori?groupId=${gid}`),
-      fetch(`/api/guru/nilai?groupId=${gid}`),
-    ]);
-    const kData = await kRes.json();
-    const nData = await nRes.json();
-    setKategoris(kData.kategori || []);
-    setNilais(nData.nilais || []);
+    setLoadError(false);
+    try {
+      const [kRes, nRes] = await Promise.all([
+        fetchWithTimeout(`/api/guru/nilai-kategori?groupId=${gid}`),
+        fetchWithTimeout(`/api/guru/nilai?groupId=${gid}`),
+      ]);
+      if (!kRes.ok || !nRes.ok) throw new Error("Unable to load scores");
+      const [kData, nData] = await Promise.all([kRes.json(), nRes.json()]);
+      setKategoris(kData.kategori || []);
+      setNilais(nData.nilais || []);
 
-    const g = groups.find(gr => gr.id === gid);
-    if (g && (g as any).members) {
-      setSiswas((g as any).members.map((m: any) => m.user));
+      const g = groups.find(gr => gr.id === gid);
+      if (g && (g as any).members) {
+        setSiswas((g as any).members.map((m: any) => m.user));
+      }
+    } catch {
+      setLoadError(true);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [groups]);
 
   useEffect(() => {
-    if (selectedGroupId) loadGroupData(selectedGroupId);
+    if (selectedGroupId) void loadGroupData(selectedGroupId);
   }, [selectedGroupId, loadGroupData]);
 
   // ── Category CRUD ──
@@ -282,7 +303,7 @@ export default function PenilaianPage() {
         </select>
       </div>
 
-      {selectedGroupId && !loading && (
+      {selectedGroupId && !loading && !loadError && (
         <>
           {/* Action Bar */}
           <div className="flex items-center gap-2 mb-4 flex-wrap">
@@ -401,6 +422,15 @@ export default function PenilaianPage() {
       {selectedGroupId && loading && (
         <div className="flex justify-center py-20">
           <div className="animate-spin w-7 h-7 border-[3px] border-emerald-500 border-t-transparent rounded-full" />
+        </div>
+      )}
+
+      {loadError && (
+        <div className="flex flex-col items-center gap-3 py-12 text-center">
+          <p className="text-sm text-slate-500">Data penilaian belum bisa dimuat.</p>
+          <button onClick={() => selectedGroupId ? void loadGroupData(selectedGroupId) : void loadGroups()} className="rounded-lg bg-emerald-600 px-3.5 py-2 text-xs font-semibold text-white hover:bg-emerald-700">
+            Coba lagi
+          </button>
         </div>
       )}
 

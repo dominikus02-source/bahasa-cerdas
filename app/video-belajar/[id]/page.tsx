@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Play, Clock, Eye, User, ArrowLeft, Lock, Film, Share2, Calendar, Tag } from "lucide-react";
@@ -8,6 +8,7 @@ import PageNavbar from "@/components/public/PageNavbar";
 import PageFooter from "@/components/public/PageFooter";
 import ShareButton from "@/components/shared/ShareButton";
 import SafeMediaImage from "@/components/shared/safe-media-image";
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout";
 
 const CATEGORIES: Record<string, string> = {
   PEMBELAJARAN: "Pembelajaran", GRAMMATIKA: "Grammatika", SASTRA: "Sastra",
@@ -30,17 +31,37 @@ export default function VideoDetailPage() {
   const { id } = useParams();
   const [video, setVideo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  useEffect(() => {
-    fetch("/api/user/me").then(r => r.ok ? r.json() : null).then(d => setCurrentUser(d?.user || null));
-    fetch(`/api/video/public/${id}`)
-      .then(r => r.json())
-      .then(d => { setVideo(d.video); setLoading(false); })
-      .catch(() => setLoading(false));
+  const loadVideo = useCallback(async () => {
+    setLoading(true);
+    setLoadError(false);
+    try {
+      const [videoResult, userResult] = await Promise.allSettled([
+        fetchWithTimeout(`/api/video/public/${id}`).then(async response => {
+          if (response.status === 404) return null;
+          if (!response.ok) throw new Error("Unable to load video");
+          return response.json();
+        }),
+        fetchWithTimeout("/api/user/me").then(response => response.ok ? response.json() : null),
+      ]);
+
+      if (videoResult.status === "rejected") throw videoResult.reason;
+      setVideo(videoResult.value?.video ?? null);
+      if (userResult.status === "fulfilled") setCurrentUser(userResult.value?.user || null);
+    } catch {
+      setLoadError(true);
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
+
+  useEffect(() => {
+    void loadVideo();
+  }, [loadVideo]);
 
   const isUpload = video?.source === "UPLOAD";
   const canAccess = !video?.isPremium || currentUser?.isPremium || currentUser?.isFounder;
@@ -50,6 +71,16 @@ export default function VideoDetailPage() {
       <PageNavbar />
       <div className="flex items-center justify-center pt-32">
         <div className="w-10 h-10 border-[3px] border-red-500/30 border-t-red-500 rounded-full animate-spin" />
+      </div>
+    </div>
+  );
+
+  if (loadError) return (
+    <div className="min-h-screen bg-white">
+      <PageNavbar />
+      <div className="flex flex-col items-center justify-center gap-4 pt-32 text-center text-gray-600">
+        <p>Video belum bisa dimuat.</p>
+        <button onClick={() => void loadVideo()} className="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white">Coba lagi</button>
       </div>
     </div>
   );

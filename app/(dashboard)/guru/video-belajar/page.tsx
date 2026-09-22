@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { Play, Clock, Search, Upload, Video, AlertCircle, CheckCircle2, Camera, Mic, Sun, X, Loader2, Trash2, Eye, EyeOff } from "lucide-react";
 import SafeMediaImage from "@/components/shared/safe-media-image";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout";
 
 const CATEGORIES = [
   { value: "", label: "Semua" },
@@ -46,6 +47,7 @@ function formatDuration(seconds: number) {
 export default function VideoBelajarPage() {
   const [videos, setVideos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [grade, setGrade] = useState("");
@@ -55,19 +57,24 @@ export default function VideoBelajarPage() {
   const [uploadForm, setUploadForm] = useState({ title: "", description: "", category: "PEMBELAJARAN", grade: "", videoUrl: "" });
   const [uploadResult, setUploadResult] = useState("");
 
-  useEffect(() => { fetchVideos(); }, [category]);
-
-  async function fetchVideos() {
+  const fetchVideos = useCallback(async () => {
     setLoading(true);
+    setLoadError(false);
     try {
       const params = new URLSearchParams();
       if (category) params.set("category", category);
-      const res = await fetch(`/api/video?${params}`);
+      const res = await fetchWithTimeout(`/api/video?${params}`);
+      if (!res.ok) throw new Error("Unable to load videos");
       const data = await res.json();
       setVideos(data.videos || []);
-    } catch {}
-    setLoading(false);
-  }
+    } catch {
+      setLoadError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, [category]);
+
+  useEffect(() => { void fetchVideos(); }, [fetchVideos]);
 
   const filtered = videos.filter((v) => {
     if (search && !v.title.toLowerCase().includes(search.toLowerCase())) return false;
@@ -232,6 +239,8 @@ export default function VideoBelajarPage() {
 
       {loading ? (
         <div className="text-center py-16 text-gray-400">Memuat...</div>
+      ) : loadError ? (
+        <div className="text-center py-16"><p className="text-gray-500">Video belum bisa dimuat.</p><Button className="mt-4" onClick={() => void fetchVideos()}>Coba lagi</Button></div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-16">
           <Play className="mx-auto h-12 w-12 text-gray-300" />

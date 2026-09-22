@@ -1,25 +1,33 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { Briefcase, MapPin, Building, Clock, Search, ExternalLink, ChevronRight } from "lucide-react";
 import PageNavbar from "@/components/public/PageNavbar";
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout";
 
 export default function LokerPage() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [search, setSearch] = useState("");
 
-  useEffect(() => { fetchLoker(); }, []);
-
-  async function fetchLoker() {
+  const fetchLoker = useCallback(async () => {
+    setLoading(true);
+    setLoadError(false);
     try {
-      const res = await fetch("/api/loker");
+      const res = await fetchWithTimeout("/api/loker");
+      if (!res.ok) throw new Error("Unable to load vacancies");
       const d = await res.json();
       setData(d.data || []);
-    } catch {}
-    setLoading(false);
-  }
+    } catch {
+      setLoadError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { void fetchLoker(); }, [fetchLoker]);
 
   const filtered = data.filter((l) => !search || l.title.toLowerCase().includes(search.toLowerCase()) || l.sekolah.toLowerCase().includes(search.toLowerCase()));
 
@@ -40,7 +48,12 @@ export default function LokerPage() {
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cari lowongan atau sekolah..." className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-blue-500 focus:outline-none" />
         </div>
 
-        {loading ? <div className="text-center py-12 text-slate-400">Memuat...</div> : filtered.length === 0 ? (
+        {loading ? <div className="text-center py-12 text-slate-400">Memuat...</div> : loadError ? (
+          <div className="text-center py-16">
+            <p className="text-slate-500">Lowongan belum bisa dimuat.</p>
+            <button onClick={() => void fetchLoker()} className="mt-4 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">Coba lagi</button>
+          </div>
+        ) : filtered.length === 0 ? (
           <div className="text-center py-16">
             <Briefcase size={48} className="mx-auto text-slate-200 mb-3" />
             <p className="text-slate-500">Belum ada lowongan tersedia</p>

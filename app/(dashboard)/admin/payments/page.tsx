@@ -6,6 +6,7 @@ import {
   CheckCircle2, Clock, XCircle, AlertTriangle, Shield,
   DollarSign, ShoppingBag, Eye, Sparkles,
 } from "lucide-react";
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout";
 
 interface PaymentTransaction {
   id: string;
@@ -56,6 +57,7 @@ const STATUS_BADGE: Record<string, string> = {
 export default function AdminPaymentsPage() {
   const [data, setData] = useState<{ transactions: PaymentTransaction[]; stats: Stats; pagination: any } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -71,6 +73,7 @@ export default function AdminPaymentsPage() {
 
   const fetchData = useCallback(async () => {
     setLoading(true);
+    setLoadError(false);
     const params = new URLSearchParams();
     params.set("page", String(page));
     params.set("limit", "20");
@@ -80,12 +83,18 @@ export default function AdminPaymentsPage() {
     if (statusFilter) params.set("status", statusFilter);
     if (planFilter) params.set("planId", planFilter);
 
-    const res = await fetch(`/api/admin/payments?${params}`);
-    if (res.ok) setData(await res.json());
-    setLoading(false);
+    try {
+      const res = await fetchWithTimeout(`/api/admin/payments?${params}`);
+      if (!res.ok) throw new Error("Unable to load payments");
+      setData(await res.json());
+    } catch {
+      setLoadError(true);
+    } finally {
+      setLoading(false);
+    }
   }, [page, search, statusFilter, planFilter, sortBy, sortDir]);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => { void fetchData(); }, [fetchData]);
 
   useEffect(() => {
     fetch("/api/admin/payments/health")
@@ -128,6 +137,8 @@ export default function AdminPaymentsPage() {
           <RefreshCw size={14} className={loading ? "animate-spin" : ""} /> Refresh
         </button>
       </div>
+
+      {loadError && <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">Data pembayaran belum bisa dimuat. <button onClick={() => void fetchData()} className="font-semibold underline">Coba lagi</button></div>}
 
       {/* Stats */}
       {data?.stats && (

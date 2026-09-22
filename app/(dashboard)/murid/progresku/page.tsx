@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { BarChart3, TrendingUp, Target, Flame, Star, BookOpen } from "lucide-react";
 import type { LearnerSkillState } from "@/lib/learner-state/types";
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout";
 
 const SKILL_LABELS: Record<string, string> = {
   READING: "Membaca",
@@ -44,21 +45,24 @@ export default function ProgresPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchSkills() {
-      try {
-        const res = await fetch("/api/player/learner-state");
-        if (!res.ok) throw new Error("Gagal memuat data");
-        const data = await res.json();
-        setSkills(data.skills || []);
-      } catch {
-        setError("Gagal memuat data kemampuan");
-      } finally {
-        setLoading(false);
-      }
+  const fetchSkills = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetchWithTimeout("/api/player/learner-state");
+      if (!res.ok) throw new Error("Gagal memuat data");
+      const data = await res.json();
+      setSkills(data.skills || []);
+    } catch {
+      setError("Gagal memuat data kemampuan");
+    } finally {
+      setLoading(false);
     }
-    fetchSkills();
   }, []);
+
+  useEffect(() => {
+    void fetchSkills();
+  }, [fetchSkills]);
 
   // Filter skills with evidence
   const skillsWithEvidence = skills.filter((s) => s.attemptCount >= 3 && s.accuracy !== null);
@@ -110,6 +114,7 @@ export default function ProgresPage() {
         <Card className="p-6 text-center">
           <p className="text-sm text-gray-500">{error}</p>
           <p className="mt-2 text-xs text-gray-400">Coba beberapa saat lagi.</p>
+          <button onClick={() => void fetchSkills()} className="mt-4 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white">Coba lagi</button>
         </Card>
       </div>
     );

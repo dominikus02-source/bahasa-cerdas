@@ -1,10 +1,11 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, useCallback } from "react"
 import Link from "next/link"
 import { ShoppingBag, Zap, Shield, Sparkles, Moon, Sticker, ArrowLeft, Coins, Loader2, Check, Palette, BookOpen, PenLine, Ticket, Timer, Heart, Trophy, Target, Rocket } from "lucide-react"
 import CosmeticPreview from "@/components/arena/CosmeticPreview"
 import { isCosmeticType, isEquippableIcon } from "@/lib/cosmetics"
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout"
 
 interface StoreItem {
   id: string; name: string; description: string; type: string;
@@ -160,22 +161,47 @@ export default function ArenaTokoKoinPage() {
   const [activeTab, setActiveTab] = useState<Category>("all")
   const [showOwned, setShowOwned] = useState(false)
   const [lastPurchased, setLastPurchased] = useState<StoreItem | null>(null)
+  const [loadError, setLoadError] = useState<string | null>(null)
 
-  useEffect(() => {
-    Promise.all([
-      fetch("/api/user/me").then(r => r.json()),
-      fetch("/api/siswa/store").then(r => r.json()),
-      fetch("/api/siswa/store/equip").then(r => r.ok ? r.json() : null).catch(() => null),
-    ]).then(([u, d, inv]) => {
+  const loadStore = useCallback(async () => {
+    setLoading(true)
+    setLoadError(null)
+    try {
+      const [userResult, storeResult, inventoryResult] = await Promise.allSettled([
+        fetchWithTimeout("/api/user/me").then(async (response) => {
+          if (!response.ok) throw new Error("Gagal memuat akun")
+          return response.json()
+        }),
+        fetchWithTimeout("/api/siswa/store").then(async (response) => {
+          if (!response.ok) throw new Error("Gagal memuat katalog")
+          return response.json()
+        }),
+        fetchWithTimeout("/api/siswa/store/equip").then((response) => response.ok ? response.json() : null),
+      ])
+
+      if (userResult.status !== "fulfilled" || storeResult.status !== "fulfilled") {
+        throw new Error("Gagal memuat toko")
+      }
+
+      const u = userResult.value
+      const d = storeResult.value
+      const inv = inventoryResult.status === "fulfilled" ? inventoryResult.value : null
       setUser(u.user)
       setItems(d.items || [])
       if (inv) {
         setOwned(new Set<string>(inv.ownedItemIds || []))
         setEquipped(inv.equipped || {})
       }
+    } catch {
+      setLoadError("Toko Koin belum bisa dimuat. Periksa koneksi lalu coba lagi.")
+    } finally {
       setLoading(false)
-    })
+    }
   }, [])
+
+  useEffect(() => {
+    void loadStore()
+  }, [loadStore])
 
   const isWearable = (item: StoreItem) => isCosmeticType(item.type) && isEquippableIcon(item.type, item.icon)
 
@@ -241,6 +267,13 @@ export default function ArenaTokoKoinPage() {
   if (loading) return (
     <div className="flex justify-center py-20">
       <Loader2 className="animate-spin w-8 h-8 text-violet-500 dark:text-violet-400" />
+    </div>
+  )
+
+  if (loadError) return (
+    <div className="px-4 py-20 text-center">
+      <p className="text-sm text-gray-600 dark:text-slate-300">{loadError}</p>
+      <button onClick={() => void loadStore()} className="mt-4 rounded-xl bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-700">Coba lagi</button>
     </div>
   )
 

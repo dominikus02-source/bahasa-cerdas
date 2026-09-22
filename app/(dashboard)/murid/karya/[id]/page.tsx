@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Heart, Clock, Eye, PenLine, BookOpen, Newspaper, MessageCircle, Lightbulb, Music } from "lucide-react";
@@ -10,6 +10,7 @@ import CommentSection from "@/components/arena/CommentSection";
 import UserAvatar from "@/components/arena/UserAvatar";
 import UserName from "@/components/arena/UserName";
 import { RankChip } from "@/components/gamification/RankChip";
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout";
 
 interface CosmeticFields {
   equippedFrame?: string | null;
@@ -41,20 +42,38 @@ export default function DetailKaryaPage() {
   const router = useRouter();
   const [karya, setKarya] = useState<KaryaDetail | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [liked, setLiked] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
-    Promise.all([
-      fetch(`/api/siswa/karya/${id}`).then(r => r.ok ? r.json() : null),
-      fetch("/api/user/me").then(r => r.ok ? r.json() : null),
-    ]).then(([kData, uData]) => {
-      setKarya(kData?.karya || null);
-      setCurrentUserId(uData?.user?.id || uData?.user?.userId || null);
+  const loadKarya = useCallback(async () => {
+    setLoading(true);
+    setLoadError(false);
+    try {
+      const [karyaResult, userResult] = await Promise.allSettled([
+        fetchWithTimeout(`/api/siswa/karya/${id}`).then(async response => {
+          if (response.status === 404) return null;
+          if (!response.ok) throw new Error("Unable to load work");
+          return response.json();
+        }),
+        fetchWithTimeout("/api/user/me").then(response => response.ok ? response.json() : null),
+      ]);
+
+      if (karyaResult.status === "rejected") throw karyaResult.reason;
+      setKarya(karyaResult.value?.karya || null);
+      const user = userResult.status === "fulfilled" ? userResult.value : null;
+      setCurrentUserId(user?.user?.id || user?.user?.userId || null);
+    } catch {
+      setLoadError(true);
+    } finally {
       setLoading(false);
-    }).catch(() => setLoading(false));
+    }
   }, [id]);
+
+  useEffect(() => {
+    void loadKarya();
+  }, [loadKarya]);
 
   const isOwner = currentUserId && karya?.user.id === currentUserId;
 
@@ -80,6 +99,7 @@ export default function DetailKaryaPage() {
   };
 
   if (loading) return <div className="flex justify-center py-20"><div className="animate-spin w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full" /></div>;
+  if (loadError) return <div className="text-center py-20 text-gray-500 dark:text-slate-400"><p>Karya belum bisa dimuat.</p><button onClick={() => void loadKarya()} className="mt-4 rounded-xl bg-violet-600 px-4 py-2 text-sm font-semibold text-white">Coba lagi</button></div>;
   if (!karya) return <div className="text-center py-20 text-gray-500 dark:text-slate-400">Karya tidak ditemukan</div>;
 
   return (

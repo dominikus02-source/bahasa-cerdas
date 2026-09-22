@@ -9,6 +9,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "typecheck:scripts": "tsc --noEmit -p tsconfig.scripts.json",
+    "test:spinner-hardening": "npx tsx scripts/test-spinner-deadlock-hardening.ts",
     "test:rpg-battle-action-damage": "npx tsx scripts/test-rpg-battle-action-damage.ts",
     "test:rpg-reward-receipt": "npx tsx scripts/test-rpg-reward-receipt.ts",
     "test:rpg-reward-settlement": "npx tsx scripts/test-rpg-reward-settlement.ts",

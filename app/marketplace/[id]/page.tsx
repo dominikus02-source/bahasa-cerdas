@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ShoppingBag, Download, Star, User, ChevronLeft, ShoppingCart, Plus, Minus, BookOpen, FileText, Video, File, Presentation, ClipboardList } from "lucide-react";
 import Link from "next/link";
@@ -9,27 +9,45 @@ import PageFooter from "@/components/public/PageFooter";
 import ShareButton from "@/components/shared/ShareButton";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout";
 
 export default function MarketplaceDetailPage() {
   const { id } = useParams();
   const router = useRouter();
   const [karya, setKarya] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [cartQty, setCartQty] = useState(0);
   const [currentImg, setCurrentImg] = useState(0);
   const karyaImages = karya ? (() => { try { return JSON.parse(karya.images || "[]"); } catch { return []; } })() : [];
 
+  const loadKarya = useCallback(async () => {
+    setLoading(true);
+    setLoadError(false);
+    try {
+      const response = await fetchWithTimeout(`/api/marketplace/${id}`);
+      if (response.status === 404) {
+        setKarya(null);
+        return;
+      }
+      if (!response.ok) throw new Error("Unable to load marketplace item");
+      const data = await response.json();
+      setKarya(data.karya ?? null);
+    } catch {
+      setLoadError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
+
   useEffect(() => {
-    fetch(`/api/marketplace/${id}`)
-      .then(r => r.json())
-      .then(d => { setKarya(d.karya); setLoading(false); })
-      .catch(() => setLoading(false));
-    
+    void loadKarya();
+
     // Load cart from localStorage
     const cart = JSON.parse(localStorage.getItem("bc-cart") || "[]");
     const item = cart.find((i: any) => i.id === id);
     if (item) setCartQty(item.qty || 1);
-  }, [id]);
+  }, [id, loadKarya]);
 
   const addToCart = () => {
     const cart = JSON.parse(localStorage.getItem("bc-cart") || "[]");
@@ -50,6 +68,13 @@ export default function MarketplaceDetailPage() {
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full" /></div>;
+
+  if (loadError) return (
+    <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-slate-500">
+      <p>Produk belum bisa dimuat.</p>
+      <button onClick={() => void loadKarya()} className="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">Coba lagi</button>
+    </div>
+  );
 
   if (!karya) return <div className="min-h-screen flex items-center justify-center text-slate-500">Karya tidak ditemukan</div>;
 

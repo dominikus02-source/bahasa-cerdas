@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, BookOpen, CheckCircle2, Crown, FileText, GraduationCap, Megaphone, Pin, RotateCw, Users } from "lucide-react";
 import "@/components/kelas/classroom.css";
 import { humanDeadline } from "@/lib/classroom/deadline";
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout";
 
 interface StudentClassData {
   group: {
@@ -47,11 +48,12 @@ export default function MuridKelaskuDetailPage({ params }: { params: Promise<{ i
   const [copied, setCopied] = useState(false);
 
   const fetchData = useCallback(async () => {
+    setLoading(true);
     setError(false);
     try {
       const [kelasRes, memberRes] = await Promise.all([
-        fetch(`/api/murid/kelasku/${id}`),
-        fetch(`/api/group/${id}/student`),
+        fetchWithTimeout(`/api/murid/kelasku/${id}`),
+        fetchWithTimeout(`/api/group/${id}/student`),
       ]);
       if (!kelasRes.ok) throw new Error();
       const kelasData = await kelasRes.json();
@@ -68,7 +70,7 @@ export default function MuridKelaskuDetailPage({ params }: { params: Promise<{ i
     }
   }, [id]);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => { void fetchData(); }, [fetchData]);
 
   const stream = useMemo(() => {
     if (!data) return [];
@@ -97,7 +99,7 @@ export default function MuridKelaskuDetailPage({ params }: { params: Promise<{ i
         <div className="max-w-3xl mx-auto bc-card bc-empty">
           <p className="text-sm font-bold text-[var(--clr-text)]">Belum dapat memuat kelas.</p>
           <p className="text-xs text-[var(--clr-text-2)] mt-1">Coba lagi.</p>
-          <button type="button" onClick={() => { setLoading(true); fetchData().finally(() => setLoading(false)); }} className="bc-btn-primary text-sm mx-auto mt-4">
+          <button type="button" onClick={() => void fetchData()} className="bc-btn-primary text-sm mx-auto mt-4">
             <RotateCw size={15} /> Coba Lagi
           </button>
         </div>

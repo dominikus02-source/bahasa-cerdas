@@ -1,25 +1,35 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Plus, Briefcase, Trash2, Edit2, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout";
 
 export default function AdminLokerPage() {
   const [loker, setLoker] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ title: "", sekolah: "", lokasi: "", description: "", requirements: "", salary: "", type: "FULL_TIME", contact: "", applicationUrl: "" });
 
-  useEffect(() => { fetchLoker(); }, []);
+  const fetchLoker = useCallback(async () => {
+    setLoading(true);
+    setLoadError(false);
+    try {
+      const res = await fetchWithTimeout("/api/admin/loker");
+      if (!res.ok) throw new Error("Unable to load vacancies");
+      const data = await res.json();
+      setLoker(data.data || []);
+    } catch {
+      setLoadError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  async function fetchLoker() {
-    const res = await fetch("/api/admin/loker");
-    const d = await res.json();
-    setLoker(d.data || []);
-    setLoading(false);
-  }
+  useEffect(() => { void fetchLoker(); }, [fetchLoker]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -99,7 +109,9 @@ export default function AdminLokerPage() {
         </Card>
       )}
 
-      {loading ? <div className="text-center py-12">Memuat...</div> : loker.length === 0 ? (
+      {loading ? <div className="text-center py-12">Memuat...</div> : loadError ? (
+        <div className="text-center py-16"><p className="text-gray-500">Lowongan belum bisa dimuat.</p><Button className="mt-4" onClick={() => void fetchLoker()}>Coba lagi</Button></div>
+      ) : loker.length === 0 ? (
         <div className="text-center py-16"><Briefcase size={48} className="mx-auto text-gray-200 mb-3" /><p className="text-gray-500 dark:text-slate-400">Belum ada lowongan</p></div>
       ) : (
         <div className="space-y-3">

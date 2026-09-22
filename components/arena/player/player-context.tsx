@@ -12,6 +12,7 @@ import {
   type RewardPopup,
 } from "./reward-queue";
 import { isQuiet } from "@/lib/notif-quiet";
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout";
 
 export type { RewardPopup };
 
@@ -102,7 +103,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       if (fetchingRef.current) return; // anti race polling/focus
       fetchingRef.current = true;
       try {
-        const res = await fetch("/api/player/profile", { cache: "no-store" });
+        const res = await fetchWithTimeout("/api/player/profile", { cache: "no-store" });
         if (!res.ok) throw new Error("Gagal memuat profil");
         const data = (await res.json()) as PlayerProfileResponse;
         const prev = prevProfileRef.current;
@@ -176,9 +177,9 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   );
 
   useEffect(() => {
-    fetchProfile();
-    const id = setInterval(() => fetchProfile(), POLL_INTERVAL);
-    const onFocus = () => fetchProfile();
+    void fetchProfile();
+    const id = setInterval(() => void fetchProfile(), POLL_INTERVAL);
+    const onFocus = () => void fetchProfile();
     window.addEventListener("focus", onFocus);
     return () => {
       clearInterval(id);

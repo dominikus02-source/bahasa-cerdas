@@ -19,6 +19,7 @@ import { BankSoalCategoryNav } from "@/components/guru/bank-soal/BankSoalCategor
 import {
   COLLECTIONS,
 } from "@/components/guru/bank-soal/theme-config";
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout";
 
 // ─── Category Patterns (canonical source) ────────────────────
 
@@ -59,6 +60,7 @@ export default function BankSoalPage() {
   // ── Data state ──
   const [themes, setThemes] = useState<ThemeData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [groups, setGroups] = useState<GroupItem[]>([]);
 
   // ── UI state ──
@@ -87,12 +89,17 @@ export default function BankSoalPage() {
   // ── Data fetching ──
   const fetchThemes = useCallback(async () => {
     setLoading(true);
+    setLoadError(false);
     try {
-      const res = await fetch("/api/guru/bank-soal");
+      const res = await fetchWithTimeout("/api/guru/bank-soal");
+      if (!res.ok) throw new Error("Unable to load question bank");
       const data = await res.json();
       if (data.success) setThemes(data.themes || []);
-    } catch {}
-    setLoading(false);
+    } catch {
+      setLoadError(true);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   const fetchGroups = useCallback(async () => {
@@ -103,7 +110,7 @@ export default function BankSoalPage() {
     } catch {}
   }, []);
 
-  useEffect(() => { fetchThemes(); }, [fetchThemes]);
+  useEffect(() => { void fetchThemes(); }, [fetchThemes]);
 
   // ── Derived data ──
   const totalQuestions = useMemo(
@@ -470,6 +477,8 @@ export default function BankSoalPage() {
         <div className="flex justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
         </div>
+      ) : loadError ? (
+        <div className="py-12 text-center"><p className="text-sm text-slate-500">Bank soal belum bisa dimuat.</p><Button className="mt-4" onClick={() => void fetchThemes()}>Coba lagi</Button></div>
       ) : search || selectedCategory ? (
         /* ── Filtered: flat grid (search or category filter active) ── */
         <section aria-labelledby="filtered-results">

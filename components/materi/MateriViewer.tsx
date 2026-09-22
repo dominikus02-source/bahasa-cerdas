@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { X, ExternalLink, Download, AlertTriangle, Loader2, Maximize2 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
+import { fetchWithTimeout, settleWithTimeout } from "@/lib/client/fetch-with-timeout"
 
 interface Materi {
   id: string
@@ -57,7 +58,7 @@ export function MateriViewer({ materi, onClose }: Props) {
     if (materi.fileKey) {
       try {
         const supabase = createClient()
-        const { data, error } = await supabase.storage.from("documents").download(materi.fileKey)
+        const { data, error } = await settleWithTimeout(supabase.storage.from("documents").download(materi.fileKey))
         if (data && !error) {
           const url = URL.createObjectURL(data)
           blobUrlRef.current = url
@@ -69,7 +70,7 @@ export function MateriViewer({ materi, onClose }: Props) {
     }
 
     try {
-      const res = await fetch(materi.fileUrl)
+      const res = await fetchWithTimeout(materi.fileUrl)
       if (res.ok) {
         const url = URL.createObjectURL(await res.blob())
         blobUrlRef.current = url

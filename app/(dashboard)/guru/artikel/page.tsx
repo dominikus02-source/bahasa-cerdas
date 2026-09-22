@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Plus, Edit2, Trash2, Eye, EyeOff, FileText, Feather, Image as ImageIcon, X, Bold, Italic, List, Link as LinkIcon, Heading } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -10,10 +10,12 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 import SafeMediaImage from "@/components/shared/safe-media-image";
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout";
 
 export default function GuruArtikelPage() {
   const [artikel, setArtikel] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
@@ -29,7 +31,22 @@ export default function GuruArtikelPage() {
     articleType: "ARTIKEL",
   });
 
-  useEffect(() => { fetchArtikel(); }, []);
+  const fetchArtikel = useCallback(async () => {
+    setLoading(true);
+    setLoadError(false);
+    try {
+      const res = await fetchWithTimeout("/api/guru/artikel");
+      if (!res.ok) throw new Error("Unable to load articles");
+      const data = await res.json();
+      setArtikel(data.data || []);
+    } catch {
+      setLoadError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { void fetchArtikel(); }, [fetchArtikel]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -37,13 +54,6 @@ export default function GuruArtikelPage() {
       setForm((f) => ({ ...f, articleType: "PUISI" }));
     }
   }, []);
-
-  async function fetchArtikel() {
-    const res = await fetch("/api/guru/artikel");
-    const data = await res.json();
-    setArtikel(data.data || []);
-    setLoading(false);
-  }
 
   async function uploadImage(file: File) {
     setUploading(true);
@@ -284,7 +294,9 @@ export default function GuruArtikelPage() {
         </Card>
       )}
 
-      {loading ? <div className="text-center py-12 text-gray-400">Memuat...</div> : (
+      {loading ? <div className="text-center py-12 text-gray-400">Memuat...</div> : loadError ? (
+        <div className="text-center py-16"><p className="text-gray-500">Karya belum bisa dimuat.</p><Button className="mt-4" onClick={() => void fetchArtikel()}>Coba lagi</Button></div>
+      ) : (
         artikel.length === 0 ? (
           <div className="text-center py-16">
             <Feather size={48} className="mx-auto text-gray-200 mb-3" />

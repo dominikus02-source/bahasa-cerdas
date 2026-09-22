@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Target } from "lucide-react";
 import { IconCoin, IconFlame, IconCheck, IconPen, IconChat, IconHeart, IconBolt, IconTarget } from "@/lib/icons";
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout";
 
 interface Quest {
   id: string; questType: string; target: number; progress: number;
@@ -33,22 +34,48 @@ export default function KuestHarianPage() {
   const [quests, setQuests] = useState<Quest[]>([]);
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    Promise.all([
-      fetch("/api/user/me").then(r => r.json()),
-      fetch("/api/siswa/quest").then(r => r.json()),
-    ]).then(([u, d]) => {
+  const loadQuests = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [u, d] = await Promise.all([
+        fetchWithTimeout("/api/user/me").then(async (response) => {
+          if (!response.ok) throw new Error("Gagal memuat akun");
+          return response.json();
+        }),
+        fetchWithTimeout("/api/siswa/quest").then(async (response) => {
+          if (!response.ok) throw new Error("Gagal memuat quest");
+          return response.json();
+        }),
+      ]);
       setUser(u.user);
       setQuests(d.quests || []);
+    } catch {
+      setError("Quest harian belum bisa dimuat. Periksa koneksi lalu coba lagi.");
+    } finally {
       setLoading(false);
-    });
+    }
   }, []);
+
+  useEffect(() => {
+    void loadQuests();
+  }, [loadQuests]);
 
   const allCompleted = quests.length > 0 && quests.every(q => q.completed);
   const completedCount = quests.filter(q => q.completed).length;
 
   if (loading) return <div className="flex justify-center py-20"><div className="animate-spin w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full" /></div>;
+
+  if (error) return (
+    <div className="text-center py-20 bg-white dark:bg-slate-800/90 rounded-2xl border border-gray-100 dark:border-slate-800">
+      <p className="text-gray-600 dark:text-slate-300">{error}</p>
+      <button onClick={() => void loadQuests()} className="mt-4 rounded-xl bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-700">
+        Coba lagi
+      </button>
+    </div>
+  );
 
   return (
     <div className="max-w-2xl mx-auto">

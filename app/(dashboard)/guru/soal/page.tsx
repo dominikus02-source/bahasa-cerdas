@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Modal } from "@/components/ui/modal"
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout"
 
 const KELAS = ["1","2","3","4","5","6","7","8","9","10","11","12"]
 const KD_OPTIONS = [
@@ -55,6 +56,7 @@ export default function GuruSoalPage() {
   const [soals, setSoals] = useState<Soal[]>([])
   const [sets, setSets] = useState<SoalSet[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
   const [search, setSearch] = useState("")
   const [filterKelas, setFilterKelas] = useState("")
   const [filterSource, setFilterSource] = useState<"all"|"AI"|"MANUAL">("all")
@@ -79,20 +81,25 @@ export default function GuruSoalPage() {
 
   const fetchSoals = useCallback(async () => {
     setLoading(true)
+    setLoadError(false)
     try {
       const params = new URLSearchParams()
       const stored = localStorage.getItem("bc-user")
       let supabaseId = ""
       if (stored) try { supabaseId = JSON.parse(stored).state?.supabaseId || "" } catch {}
       if (supabaseId) params.set("supabaseId", supabaseId)
-      const res = await fetch(`/api/guru/soal?${params}`)
+      const res = await fetchWithTimeout(`/api/guru/soal?${params}`)
+      if (!res.ok) throw new Error("Unable to load questions")
       const data = await res.json()
       if (data.data) {
         setSoals(data.data)
         setKelasList(data.kelasList || [])
       }
-    } catch {}
-    setLoading(false)
+    } catch {
+      setLoadError(true)
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   const fetchSets = useCallback(async () => {
@@ -106,7 +113,7 @@ export default function GuruSoalPage() {
     } catch {}
   }, [])
 
-  useEffect(() => { fetchSoals(); fetchSets() }, [fetchSoals, fetchSets])
+  useEffect(() => { void fetchSoals(); void fetchSets() }, [fetchSoals, fetchSets])
 
   const filtered = soals.filter(s => {
     if (search && !s.text.toLowerCase().includes(search.toLowerCase())) return false
@@ -340,6 +347,8 @@ export default function GuruSoalPage() {
       {/* Soal List */}
       {loading ? (
         <div className="flex justify-center py-16"><Loader2 size={32} className="animate-spin text-emerald-500" /></div>
+      ) : loadError ? (
+        <div className="py-16 text-center"><p className="text-sm text-gray-500">Soal belum bisa dimuat.</p><Button className="mt-4" onClick={() => void fetchSoals()}>Coba lagi</Button></div>
       ) : filtered.length === 0 ? (
         <Card className="py-16 text-center">
           <BookOpen size={48} className="mx-auto text-gray-300 mb-4" />

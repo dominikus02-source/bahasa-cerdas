@@ -1,24 +1,34 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { ShoppingBag, Download, Clock, CheckCircle, XCircle, ArrowLeft, Store } from "lucide-react";
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  useEffect(() => {
-    fetch("/api/user/me")
-      .then(r => r.ok ? setIsLoggedIn(true) : setIsLoggedIn(false))
-      .catch(() => {});
-    
-    fetch("/api/marketplace/order")
-      .then(r => r.json())
-      .then(d => { setOrders(d.orders || []); setLoading(false); })
-      .catch(() => setLoading(false));
+  const loadOrders = useCallback(async () => {
+    setLoading(true);
+    setLoadError(false);
+    const [userResult, ordersResult] = await Promise.allSettled([
+      fetchWithTimeout("/api/user/me"),
+      fetchWithTimeout("/api/marketplace/order"),
+    ]);
+    setIsLoggedIn(userResult.status === "fulfilled" && userResult.value.ok);
+    if (ordersResult.status === "fulfilled" && ordersResult.value.ok) {
+      const data = await ordersResult.value.json();
+      setOrders(data.orders || []);
+    } else {
+      setLoadError(true);
+    }
+    setLoading(false);
   }, []);
+
+  useEffect(() => { void loadOrders(); }, [loadOrders]);
 
   if (!isLoggedIn) {
     return (
@@ -57,6 +67,8 @@ export default function OrdersPage() {
 
         {loading ? (
           <div className="text-center py-20 text-slate-400">Memuat...</div>
+        ) : loadError ? (
+          <div className="text-center py-20"><p className="text-slate-500">Pesanan belum bisa dimuat.</p><button onClick={() => void loadOrders()} className="mt-4 text-red-600 font-semibold hover:underline">Coba lagi</button></div>
         ) : orders.length === 0 ? (
           <div className="text-center py-20">
             <ShoppingBag size={48} className="mx-auto text-slate-200 mb-3" />

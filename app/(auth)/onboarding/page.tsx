@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { fetchWithTimeout } from "@/lib/client/fetch-with-timeout";
 import { BookOpen, Sparkles, Users, Gamepad2, GraduationCap, ArrowRight, Loader2, Check } from "lucide-react";
 
 const steps = [
@@ -35,24 +36,33 @@ const steps = [
 export default function OnboardingPage() {
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [saving, setSaving] = useState(false);
   const router = useRouter();
   const supabase = createClient();
 
-  useEffect(() => {
-    const checkOnboarded = async () => {
-      try {
-        const res = await fetch("/api/user/me");
-        const data = await res.json();
-        if (data.user?.onboarded) {
-          router.replace(data.user.role === "GURU" ? "/guru/beranda" : "/arena");
-          return;
-        }
-      } catch {}
+  const checkOnboarded = useCallback(async () => {
+    setLoading(true);
+    setLoadError(false);
+    try {
+      const res = await fetchWithTimeout("/api/user/me");
+      if (!res.ok) throw new Error("Unable to load account");
+
+      const data = await res.json();
+      if (data.user?.onboarded) {
+        router.replace(data.user.role === "GURU" ? "/guru/beranda" : "/arena");
+        return;
+      }
+    } catch {
+      setLoadError(true);
+    } finally {
       setLoading(false);
-    };
-    checkOnboarded();
+    }
   }, [router]);
+
+  useEffect(() => {
+    void checkOnboarded();
+  }, [checkOnboarded]);
 
   const handleFinish = async () => {
     setSaving(true);
@@ -78,6 +88,17 @@ export default function OnboardingPage() {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center gap-4 p-6 text-center">
+        <p className="text-slate-600">Data akun belum bisa dimuat. Periksa koneksi lalu coba lagi.</p>
+        <button onClick={() => void checkOnboarded()} className="rounded-xl bg-emerald-600 px-4 py-2 font-semibold text-white hover:bg-emerald-700">
+          Coba lagi
+        </button>
       </div>
     );
   }
