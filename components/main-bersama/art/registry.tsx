@@ -25,34 +25,35 @@ export type MascotPose = 'ready' | 'move' | 'celebrate' | 'podium';
  * Full-mascot art slots. `src: null` = not yet produced → callers MUST
  * render <TeamBadge> fallback. Do NOT invent raster paths here.
  *
- * 2026-09-21 — owner-provided READY batch wired (4/4, transparent).
- * Runtime memakai WebP 1024px (alpha utuh, ~87% lebih kecil) hasil turunan
- * dari PNG master 1254px yang tetap lossless di docs/. `move` /
+ * 2026-09-21 — READY batch LOCKED (4/4, commit 6d73c3c).
+ * 2026-09-22 — MOVE batch LOCKED (4/4, koreksi scarf Harimau/Rusa sudah masuk).
+ * Semua runtime memakai WebP 1024px (alpha utuh, ~88% lebih kecil) hasil
+ * turunan dari PNG master 1254px yang tetap lossless di docs/.
  * `celebrate` / `podium` tetap `null`, jadi fallback TeamBadge hidup
  * untuk setiap pose yang belum diproduksi.
  */
 export const TEAM_MASCOTS: Record<TeamId, Record<MascotPose, { src: string | null; brief: string }>> = {
   elang: {
     ready: { src: '/main-bersama/jelajah/mascots/jelajah-elang-ready.webp', brief: 'jelajah-elang-ready: frontal stance, wings half-open upward, keen friendly eye' },
-    move: { src: null, brief: 'jelajah-elang-move: swooping glide, motion lines, forward lean' },
+    move: { src: '/main-bersama/jelajah/mascots/jelajah-elang-move.webp', brief: 'jelajah-elang-move: swooping glide, motion lines, forward lean' },
     celebrate: { src: null, brief: 'jelajah-elang-celebrate: wings up, chest out, confetti-free joy' },
     podium: { src: null, brief: 'jelajah-elang-podium: perched calm, gold-accent ring' },
   },
   harimau: {
     ready: { src: '/main-bersama/jelajah/mascots/jelajah-harimau-ready.webp', brief: 'jelajah-harimau-ready: upright confident stance, tail curl' },
-    move: { src: null, brief: 'jelajah-harimau-move: mid-pounce, dust puffs geometric' },
+    move: { src: '/main-bersama/jelajah/mascots/jelajah-harimau-move.webp', brief: 'jelajah-harimau-move: mid-pounce, dust puffs geometric' },
     celebrate: { src: null, brief: 'jelajah-harimau-celebrate: roaring smile, paws up' },
     podium: { src: null, brief: 'jelajah-harimau-podium: seated proud, gold-accent ring' },
   },
   rusa: {
     ready: { src: '/main-bersama/jelajah/mascots/jelajah-rusa-ready.webp', brief: 'jelajah-rusa-ready: alert graceful stance, antlers symmetric' },
-    move: { src: null, brief: 'jelajah-rusa-move: leaping stride, light trail dashes' },
+    move: { src: '/main-bersama/jelajah/mascots/jelajah-rusa-move.webp', brief: 'jelajah-rusa-move: leaping stride, light trail dashes' },
     celebrate: { src: null, brief: 'jelajah-rusa-celebrate: joyful rear-up, spark accents' },
     podium: { src: null, brief: 'jelajah-rusa-podium: poised calm, gold-accent ring' },
   },
   badak: {
     ready: { src: '/main-bersama/jelajah/mascots/jelajah-badak-ready.webp', brief: 'jelajah-badak-ready: solid stance, horn forward' },
-    move: { src: null, brief: 'jelajah-badak-move: steady charge, ground lines' },
+    move: { src: '/main-bersama/jelajah/mascots/jelajah-badak-move.webp', brief: 'jelajah-badak-move: steady charge, ground lines' },
     celebrate: { src: null, brief: 'jelajah-badak-celebrate: head raised, warm smile' },
     podium: { src: null, brief: 'jelajah-badak-podium: grounded calm, gold-accent ring' },
   },
@@ -137,6 +138,7 @@ export const ART_PROVENANCE = [
   'READY mascot poses (elang/harimau/rusa/badak): owner-provided art batch, 2026-09-21 — a dedicated BahasaCerdas mascot redesign (not stock, not prior quarantined art). Master lossless PNG 1254×1254 diarsipkan utuh di docs/main-bersama/art-source/mascots/ready/jelajah-<team>-ready.png. Runtime = turunan WebP 1024×1024 (q90, alpha_q100, -exact) di public/main-bersama/jelajah/mascots/ — semua kanal alpha & tepi dipertahankan (PSNR komposit 37–41 dB, tanpa halo). Satu sistem penamaan: drop lama bernama bc_*_mascot.png sudah di-quarantine di luar repo.',
   'Brand mark pada bandana/badge tiap maskot: monogram dua huruf berhimpit, kiri biru→ungu dan kanan ungu→pink — sama dengan monogram di public/brand/bc2026-logo-light.png. Audit 2026-09-21 (perbandingan tak-berlabel pada skala setara) menyimpulkan huruf kirinya IDENTIK dengan monogram resmi, jadi tidak ada paint-over yang dilakukan. Catatan jujur: monogram resmi itu sendiri terbaca ambigu (mirip "E") bila dilihat terpisah dari wordmark, dan pada ukuran render aplikasi (56–76px) tanda ini hanya ~4–6px sehingga memang tidak terbaca sebagai huruf — jadi ini properti brand asset, bukan cacat art maskot. Pemilik sudah meninjau dan mengunci batch ini (2026-09-21).',
   'Reference sheet "BahasaCerdas MAIN BERSAMA" disimpan sebagai docs/main-bersama/art-source/mascots/maskot-main-bersama-master.png (bukan runtime asset; tidak lagi di public/).',
-  'MOVE / CELEBRATE / PODIUM poses: NOT PRODUCED — slots remain `src: null` in TEAM_MASCOTS and render the TeamBadge fallback. No claim of completion.',
+  'MOVE mascot poses (elang/harimau/rusa/badak): MOVE batch reviewed and locked by owner (2026-09-22). Sumber: owner-provided PNG batch, arsip lossless di docs/main-bersama/art-source/mascots/move/jelajah-<team>-move.png (1254×1254, RGBA, latar transparan penuh). Runtime = turunan WebP 1024×1024 (q90, alpha_q100, -exact, ±88% lebih kecil, ≤220 KB) di public/main-bersama/jelajah/mascots/. Koreksi scarf 2026-09-22: Harimau merah & Rusa hijau (sebelumnya keduanya biru) — kini konsisten dengan READY. Elang & Badak tidak berubah (SHA sama). ZIP pengiriman awal (berisi Harimau/Rusa versi pra-koreksi) sudah di-quarantine di luar repo.',
+  'CELEBRATE / PODIUM poses: NOT PRODUCED — slots remain `src: null` in TEAM_MASCOTS and render the TeamBadge fallback. No claim of completion.',
   'Fonts: existing repo setup only (Newscrash interim) — VERIFY license/provenance before public production release.',
 ] as const;
