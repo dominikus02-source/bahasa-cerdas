@@ -753,4 +753,26 @@
   .mb-pj-teams {
     grid-template-columns: repeat(4, minmax(130px, 190px));
   }
+
+  /* ── Fase QUESTION/DISCUSSION: rangkaian soal → bahasan → leader →
+     progress 4 regu dipadatkan supaya muat tanpa scroll di 1366×768.
+     Lobby TIDAK terpengaruh: lobby memakai `.mb-pj-world` tanpa `-strip`
+     (tetap 680px) dan tidak merender `.mb-pj-leader`/`.mb-pj-progress`. ── */
+
+  /* Jalur sekunder (strip) di fase soal/bahasan — tetap terbaca, bukan
+     lagi memakan ~208px tinggi. */
+  .mb-pj-world-strip { max-width: 420px; }
+
+  /* Leader/celebrate: gap section sudah memisahkan, margin tambahan dibuang.
+     (Prefix 2 kelas untuk mengalahkan styled-jsx milik komponen.) */
+  .mb-pj-phase .mb-pj-leader { margin-top: 0; }
+
+  /* TeamProgress: 4 baris regu + jarak dipadatkan.
+     Prefix `.mb-pj-phase .mb-pj-progress` dipakai agar (a) menang atas
+     styled-jsx internal komponen (spesifisitas 2 kelas) dan (b) surface
+     guru (room-client/classroom-client) yang juga memakai TeamProgress
+     TIDAK ikut berubah. */
+  .mb-pj-phase .mb-pj-progress .mb-teams { gap: var(--mb-space-1); }
+  .mb-pj-phase .mb-pj-progress .mb-team-row { padding: 1px 0; }
+  .mb-pj-phase .mb-pj-progress .mb-teams-ends { font-size: 0.66rem; }
 }
