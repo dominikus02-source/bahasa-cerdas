@@ -670,6 +670,86 @@
   .mb-pj-final-title { font-size: 3.4rem; }
 }
 
+/* ── SUMMARY pada projector lebar (≥1280px, >800px tinggi) — HORIZONTAL ──
+   Sebelumnya summary menumpuk vertikal (judul → trail 286 → podium 252 →
+   ranking 286) sehingga docH 1220 > 1080 dan baris terakhir terpotong,
+   padahal lebar 1920 baru terpakai ~880px.
+
+   Di sini podium & ranking diletakkan BERDAMPINGAN memakai grid-areas pada
+   anak yang sudah ada (tanpa wrapper baru, tanpa ubah DOM/semantik):
+     title        title
+     world        world
+     podium       ranking
+   Trail final tetap di atas sebagai hero strip, jadi tidak ada yang hilang.
+
+   Di-scope di atas 800px supaya TIDAK bertabrakan dengan mode compact
+   (`max-height: 800px`) dan tidak menyentuh surface siswa/guru. ── */
+@media (min-width: 1280px) and (min-height: 801px) {
+  .mb-pj-phase-final {
+    display: grid;
+    /* Kolom ranking diberi lebar EKSPLISIT: kalau dibiarkan `auto`, lebar
+       `.mb-pj-ranking` (`min(100%, 520px)`) jadi sirkular dan kolaps ke
+       min-content (~299px), ikut mengecilkan baris trail di atasnya. */
+    grid-template-columns: auto 620px;
+    grid-template-areas:
+      "title  title"
+      "world  world"
+      "podium ranking";
+    justify-content: center;
+    align-content: center;
+    justify-items: center;
+    /* align-items: end → podium & ranking rata bawah, jadi podium terbaca
+       sebagai hero yang "berdiri" di samping papan peringkat. */
+    align-items: end;
+    column-gap: var(--mb-space-7);
+    row-gap: var(--mb-space-5);
+  }
+  .mb-pj-phase-final .mb-pj-final-title { grid-area: title; }
+  /* Trail final tetap hero (lebar penuh kolom grid), bukan dikecilkan
+     seperti mode compact 1366. */
+  .mb-pj-phase-final .mb-pj-world-final {
+    grid-area: world;
+    margin-top: 0;
+    width: min(100%, 1040px);
+  }
+  .mb-pj-phase-final .mb-podium { grid-area: podium; }
+  .mb-pj-phase-final .mb-pj-ranking { grid-area: ranking; }
+}
+
+/* ── SUMMARY di viewport LEBAR + TINGGI SEDANG (801–972px) ──
+   Celah antara mode compact 1366×768 (`max-height: 800px`) dan 1080p.
+   Komposisi horizontal di atas sudah BENAR untuk band ini, tapi tingginya
+   ~973px (980px saat SEMUA regu seri dan podium jadi 4 kolom → trail ikut
+   melebar) — jadi di 900–972 baris terakhir terpotong.
+
+   Yang dipadatkan di sini HANYA jarak & tinggi pendukung:
+     • padding vertikal fase final + row-gap grid
+     • lebar (→ tinggi) trail final — perannya pendukung di band ini
+     • gap + padding vertikal baris peringkat
+   TIDAK dikecilkan: ukuran tipografi judul, slot maskot podium (72/56),
+   tinggi step podium (120/88/64 dipertahankan), lebar kolom peringkat,
+   dan semantik tie. Podium memang bukan penentu tinggi baris di band ini
+   (baris peringkat selalu lebih tinggi), jadi padding podium dibiarkan
+   apa adanya — tidak ada yang perlu dipadatkan di sana.
+
+   Band dibatasi `max-height: 972px` sehingga komposisi 1080p (yang sudah
+   disetujui, headroom ~80px) TIDAK tersentuh sama sekali. ── */
+@media (min-width: 1280px) and (min-height: 801px) and (max-height: 972px) {
+  .mb-pj-phase-final {
+    padding: 15px var(--mb-space-6);
+    row-gap: 14px;
+  }
+  /* Trail: hero di 1080p, pendukung di sini — 1040px → 950px. */
+  .mb-pj-phase-final .mb-pj-world-final {
+    width: min(100%, 950px);
+  }
+  /* Baris peringkat: 4 regu tetap tampil, hanya ritme vertikalnya dirapatkan. */
+  .mb-pj-phase-final .mb-pj-ranking { gap: 8px; }
+  .mb-pj-phase-final .mb-pj-ranking .mb-pj-rank-row {
+    padding: 9px var(--mb-space-4);
+  }
+}
+
 /* ── World scenes 8B — hero projector, strip sekunder di fase soal ── */
 .mb-pj-world {
   width: min(100%, 880px);
