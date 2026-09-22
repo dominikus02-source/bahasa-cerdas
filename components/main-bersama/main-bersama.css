@@ -482,14 +482,23 @@
 }
 .mb-pj-winner {
   background: var(--mb-accent-soft);
-  border: 2px solid var(--mb-accent);
-  border-left-width: 6px;
+  /* Penanda juara memakai INSET RING (box-shadow), bukan border.
+     Border menambah tinggi baris (46px → 50px); pada kasus tie SEMUA regu
+     juara, jadi totalnya ikut membengkak dan layar meluber.
+     Inset ring tidak memengaruhi layout sama sekali. */
+  box-shadow: inset 0 0 0 2px var(--mb-accent);
+  border-left-color: var(--mb-accent);
 }
 .mb-pj-rank { font-size: 1.6rem; font-weight: 800; }
 .mb-pj-rank-team { font-weight: 700; font-size: 1.15rem; }
 .mb-pj-rank-pct { text-align: right; color: var(--mb-text-secondary); font-weight: 700; }
+/* Catatan "seri" — sekarang inline DI DALAM sel nama regu (bukan grid-item
+   terpisah). Sebelumnya `grid-column: 2` bertabrakan dengan nama regu dan
+   memaksa grid membuat baris implisit kedua (tinggi baris 46px → 80px),
+   sehingga semua kasus tie meluber di 1366×768 maupun 1080p. */
 .mb-pj-tie-note {
-  grid-column: 2;
+  display: inline-block;
+  margin-left: 8px;
   color: var(--mb-accent);
   font-size: 0.75rem;
   font-weight: 700;
@@ -775,4 +784,39 @@
   .mb-pj-phase .mb-pj-progress .mb-teams { gap: var(--mb-space-1); }
   .mb-pj-phase .mb-pj-progress .mb-team-row { padding: 1px 0; }
   .mb-pj-phase .mb-pj-progress .mb-teams-ends { font-size: 0.66rem; }
+
+  /* ── Fase SUMMARY: judul → trail final → podium → ranking 4 regu
+     dipadatkan supaya muat tanpa scroll di 1366×768.
+     Lobby TIDAK terpengaruh: lobby memakai `.mb-pj-world` tanpa
+     `-final` (tetap 680px) dan tidak merender podium/ranking. ── */
+
+  /* Jarak antar-section & padding bawah khusus summary dirapatkan. */
+  .mb-pj-phase-final {
+    gap: var(--mb-space-2);
+    padding-bottom: var(--mb-space-2);
+  }
+
+  /* Trail final: perannya pendukung (hero-nya podium + ranking), jadi
+     dipadatkan hanya di viewport pendek. 1080p tetap lebar penuh. */
+  .mb-pj-world-final { width: min(100%, 360px); }
+
+  /* Podium: prefix 3 kelas dipakai supaya menang atas styled-jsx komponen
+     (`.mb-podium`, spesifisitas 2 kelas). */
+  .mb-pj .mb-pj-phase .mb-podium { padding-top: var(--mb-space-2); }
+  .mb-pj .mb-pj-phase .mb-podium-col { gap: 4px; }
+  /* Tinggi step tetap bertingkat 1 > 2 > 3 (semantik podium utuh),
+     hanya skalanya yang turun. Slot maskot podium (72/56) TIDAK dikecilkan
+     supaya art final nanti tidak mengubah layout.
+     CATATAN: chain harus menyertakan `.mb-podium` — styled-jsx komponen
+     menghasilkan `.mb-podium-col.hash[data-rank] .mb-podium-step.hash`
+     (0,5,0); tanpa tambahan ini spesifisitasnya SERI dan styled-jsx menang. */
+  .mb-pj .mb-pj-phase .mb-podium .mb-podium-col[data-rank="1"] .mb-podium-step { height: 88px; }
+  .mb-pj .mb-pj-phase .mb-podium .mb-podium-col[data-rank="2"] .mb-podium-step { height: 64px; }
+  .mb-pj .mb-pj-phase .mb-podium .mb-podium-col[data-rank="3"] .mb-podium-step { height: 48px; }
+
+  /* Ranking: baris + jarak antar baris dipadatkan (4 regu tetap tampil). */
+  .mb-pj-phase .mb-pj-ranking { gap: var(--mb-space-1); }
+  .mb-pj-phase .mb-pj-ranking .mb-pj-rank-row {
+    padding: var(--mb-space-1) var(--mb-space-4);
+  }
 }

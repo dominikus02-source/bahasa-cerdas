@@ -363,11 +363,11 @@ function ProjectorSummary({ view }: { view: ProjectorSessionView }) {
       (t) => ({ id: t.id, name: t.name }),
     );
     return (
-      <section className="mb-pj-phase mb-fade-in">
+      <section className="mb-pj-phase mb-pj-phase-final mb-fade-in">
         <h2 className="mb-display mb-pj-final-title">
           {winners.length > 1 ? 'Juara Bersama!' : 'Papan Peringkat'}
         </h2>
-        <div className="mb-pj-world" aria-hidden>
+        <div className="mb-pj-world mb-pj-world-final" aria-hidden>
           <JelajahTrail teams={trailTeams} progress={finalProgress} />
         </div>
         <Podium
@@ -394,11 +394,16 @@ function ProjectorSummary({ view }: { view: ProjectorSessionView }) {
                 <span className="mb-pj-rank-team">
                   {isWinner ? <TeamBadge teamId={t.teamId} size={26} /> : null}
                   {TEAM_LABEL[t.teamId] ?? t.teamId}
+                  {/* Catatan "seri" diletakkan DI DALAM sel nama regu.
+                      Sebelumnya ia grid-item sendiri di `grid-column: 2`
+                      yang tabrakan dengan nama regu, sehingga grid membuat
+                      BARIS IMPLISIT kedua dan tinggi baris melonjak
+                      (46px → 80px) — bikin kasus tie meluber. */}
+                  {isWinner && winners.length > 1 ? (
+                    <span className="mb-pj-tie-note">seri</span>
+                  ) : null}
                 </span>
                 <span className="mb-pj-rank-pct mb-number">{Math.round(t.progress)}%</span>
-                {isWinner && winners.length > 1 ? (
-                  <span className="mb-pj-tie-note">seri</span>
-                ) : null}
               </li>
             );
           })}

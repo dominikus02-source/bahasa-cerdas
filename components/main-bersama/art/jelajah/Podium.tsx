@@ -1,6 +1,11 @@
 "use client";
 // ─── Podium 8B.2 — lightweight top-3 (ties share height, no forced winner).
-// TeamBadge celebrate slot; full mascot art docks here once produced.
+// TeamBadge = fallback slot; full mascot art (`pose="podium"`) docks here
+// once produced — ukuran slot-nya SAMA (size-driven), jadi tidak mengubah layout.
+//
+// Tinggi step sengaja diletakkan di CSS (di-key lewat `data-rank`, bukan
+// inline style) supaya projector pendek bisa memadatkannya tanpa `!important`.
+// Semantik peringkat & perilaku tie TIDAK berubah.
 
 import { TeamMascot } from '../registry';
 
@@ -18,8 +23,6 @@ const TEAM_COLOR_VAR: Record<string, string> = {
   badak: 'var(--mb-team-badak)',
 };
 
-const STEP_H = { 1: 120, 2: 88, 3: 64 } as const;
-
 export function Podium({ ranking }: { ranking: PodiumEntry[] }) {
   const top = ranking.filter((t) => t.rank <= 3);
   // Visual order: 2nd, 1st(s), 3rd — ties share the top step.
@@ -36,10 +39,7 @@ export function Podium({ ranking }: { ranking: PodiumEntry[] }) {
           <span className="mb-podium-name">{t.name}</span>
           <div
             className="mb-podium-step"
-            style={{
-              height: STEP_H[t.rank as 1 | 2 | 3] ?? 56,
-              background: TEAM_COLOR_VAR[t.teamId] ?? 'var(--mb-primary)',
-            }}
+            style={{ background: TEAM_COLOR_VAR[t.teamId] ?? 'var(--mb-primary)' }}
           >
             <span className="mb-number">{t.rank}</span>
           </div>
@@ -69,6 +69,10 @@ export function Podium({ ranking }: { ranking: PodiumEntry[] }) {
           border-radius: 12px 12px 0 0;
           opacity: 0.92;
         }
+        /* Tinggi step default (1080p) — key dari data-rank, bukan inline. */
+        .mb-podium-col[data-rank="1"] .mb-podium-step { height: 120px; }
+        .mb-podium-col[data-rank="2"] .mb-podium-step { height: 88px; }
+        .mb-podium-col[data-rank="3"] .mb-podium-step { height: 64px; }
         .mb-podium-step .mb-number {
           font-size: 1.6rem;
           font-weight: 900;
