@@ -714,3 +714,43 @@
   justify-content: center;
   margin: var(--mb-space-1) 0 calc(var(--mb-space-2) * -1);
 }
+
+/* ── Layar Kelas pendek (mis. 1366×768) — compact vertical rhythm 8B.4 ──
+   Target: SELURUH lobby proyektor (judul+konteks konten, PIN, jumlah
+   peserta, world/trail, 4 maskot READY, identitas regu) terlihat TANPA
+   scroll di layar kelas 16:9 pendek.
+
+   Hanya jarak/tinggi yang ditipiskan — struktur, urutan, dan hierarki
+   tetap sama. Yang SENGAJA tidak dikecilkan: ukuran maskot (tetap 64px,
+   masih di atas batas baca), jumlah peserta, dan trail (masih ~700px
+   lebar, bukan dipangkas jadi strip).
+
+   Di-scope ke viewport LEBAR + PENDEK saja, sehingga 1920×1080 dan
+   surface siswa 390×844 (tinggi 844 > 800) tidak terpengaruh. */
+@media (min-width: 900px) and (max-height: 800px) {
+  .mb-pj-head {
+    padding: var(--mb-space-3) var(--mb-space-6) 0;
+    gap: var(--mb-space-1);
+  }
+  .mb-pj-title { font-size: 2rem; }
+  .mb-pj-phase {
+    padding: var(--mb-space-3) var(--mb-space-6);
+    gap: var(--mb-space-3);
+  }
+  /* CATATAN: PIN proyektor SENGAJA tidak dikecilkan di sini. Digit-nya
+     di-render PinDisplay dengan styled-jsx (110×140/5rem) yang
+     spesifisitasnya mengalahkan rule global — dan memang tidak perlu:
+     dengan jarak di bawah ini PIN ukuran penuh sudah ikut muat. */
+  .mb-pj-world {
+    width: min(100%, 680px);
+    margin-top: var(--mb-space-2);
+  }
+  .mb-pj-heroes {
+    margin-top: var(--mb-space-2);
+    gap: var(--mb-space-4);
+  }
+  /* 4 regu dalam SATU baris — identitas regu tidak lagi memakan dua baris. */
+  .mb-pj-teams {
+    grid-template-columns: repeat(4, minmax(130px, 190px));
+  }
+}
