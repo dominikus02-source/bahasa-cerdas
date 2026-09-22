@@ -900,3 +900,49 @@
     padding: var(--mb-space-1) var(--mb-space-4);
   }
 }
+
+/* ── Projector rhythm menengah (1280px+ × tinggi 801–899px) ──
+   Band ini berada tepat di antara compact 1366×768 dan projector 1080p.
+   Selector :has() sengaja membatasi perubahan hanya pada LOBBY dan
+   DISCUSSION: summary memakai grid-nya sendiri, sedangkan question/closed
+   tidak ikut berubah. Semua konten tetap tampil; yang dirapatkan hanya
+   ritme vertikal dan ukuran scene pendukung. */
+@media (min-width: 1280px) and (min-height: 801px) and (max-height: 899px) {
+  .mb-pj-head {
+    padding: var(--mb-space-3) var(--mb-space-6) 0;
+    gap: var(--mb-space-1);
+  }
+
+  /* LOBBY: PIN dan maskot tetap ukuran penuh; world dan identitas regu
+     menjadi lebih efisien agar enam blok utama terbaca sekaligus. */
+  .mb-pj-phase:has(.mb-pin-projector) {
+    padding: var(--mb-space-4) var(--mb-space-6);
+    gap: var(--mb-space-4);
+  }
+  .mb-pj-phase:has(.mb-pin-projector) .mb-pj-world {
+    width: min(100%, 760px);
+    margin-top: var(--mb-space-3);
+  }
+  .mb-pj-phase:has(.mb-pin-projector) .mb-pj-heroes {
+    margin-top: var(--mb-space-2);
+    gap: var(--mb-space-4);
+  }
+  .mb-pj-phase:has(.mb-pin-projector) .mb-pj-teams {
+    grid-template-columns: repeat(4, minmax(130px, 190px));
+  }
+
+  /* DISCUSSION: soal, jawaban, dan maskot celebrate dipertahankan;
+     strip serta baris progres dibuat medium, bukan seketat mode 768px. */
+  .mb-pj-phase:has(.mb-pj-reveal) {
+    padding: var(--mb-space-4) var(--mb-space-6);
+    gap: var(--mb-space-3);
+  }
+  .mb-pj-phase:has(.mb-pj-reveal) .mb-pj-leader { margin-top: 0; }
+  .mb-pj-phase:has(.mb-pj-reveal) .mb-pj-world-strip {
+    max-width: 520px;
+    margin-top: var(--mb-space-2);
+  }
+  .mb-pj-phase:has(.mb-pj-reveal) .mb-pj-progress .mb-teams { gap: 6px; }
+  .mb-pj-phase:has(.mb-pj-reveal) .mb-pj-progress .mb-team-row { padding: 3px 0; }
+  .mb-pj-phase:has(.mb-pj-reveal) .mb-pj-progress .mb-teams-ends { font-size: 0.68rem; }
+}
