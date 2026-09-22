@@ -8,12 +8,13 @@
  *   MB_MASCOT_HTTP_BASE=http://localhost:3000 npx tsx scripts/test-main-bersama-mascot-assets.ts
  *
  * Yang dikunci tes ini:
- *  - READY (locked) 4/4 + MOVE (candidate) 4/4; celebrate/podium tetap null
+ *  - READY (locked) 4/4 + MOVE (locked) 4/4 + CELEBRATE (candidate) 4/4;
+ *    podium tetap null
  *  - path URL == path fisik (invariant case — Linux/Vercel case-sensitive)
  *  - runtime = WebP valid, PUNYA kanal alpha, dimensi 1024, ukuran hemat
- *  - master PNG lossless (READY + MOVE) tetap utuh di docs/, bukan runtime
- *  - READY LOCKED tidak tersentuh sejak commit terakhir (bukti via git)
- *  - tidak ada sisa drop lama (bc_*_mascot) / dua sistem penamaan
+ *  - master PNG lossless (READY+MOVE+CELEBRATE) tetap utuh di docs/
+ *  - READY & MOVE LOCKED tidak tersentuh sejak commit terakhir (bukti git)
+ *  - tidak ada ZIP/drop lama di source dir (satu sistem penamaan)
  *  - TeamMascot jatuh ke TeamBadge saat src null / team tidak dikenal
  */
 import fs from "fs"
@@ -51,6 +52,7 @@ const REPO = path.resolve(__dirname, "..")
 const PUBLIC_DIR = path.join(REPO, "public")
 const MASTER_DIR = path.join(REPO, "docs", "main-bersama", "art-source", "mascots", "ready")
 const MOVE_DIR = path.join(REPO, "docs", "main-bersama", "art-source", "mascots", "move")
+const CELEBRATE_DIR = path.join(REPO, "docs", "main-bersama", "art-source", "mascots", "celebrate")
 const ART_SOURCE_DIR = path.join(REPO, "docs", "main-bersama", "art-source", "mascots")
 const REF_SHEET = path.join(ART_SOURCE_DIR, "maskot-main-bersama-master.png")
 
@@ -174,54 +176,64 @@ function pathCaseMatches(urlPath: string): { ok: boolean; bad?: string } {
   return { ok: true }
 }
 
-function expected(team: string, pose: "ready" | "move" = "ready") {
+function expected(team: string, pose: "ready" | "move" | "celebrate" = "ready") {
   return `/main-bersama/jelajah/mascots/jelajah-${team}-${pose}.webp`
 }
 
 /** Arsip master lossless PNG per pose. */
-function masterPath(team: string, pose: "ready" | "move") {
-  return path.join(pose === "ready" ? MASTER_DIR : MOVE_DIR, `jelajah-${team}-${pose}.png`)
+function masterPath(team: string, pose: "ready" | "move" | "celebrate") {
+  const dir =
+    pose === "ready" ? MASTER_DIR : pose === "move" ? MOVE_DIR : CELEBRATE_DIR
+  return path.join(dir, `jelajah-${team}-${pose}.png`)
 }
 
+/** Pose yang SUDAH punya aset (READY locked, MOVE locked, CELEBRATE candidate). */
+const FILLED_POSES = ["ready", "move", "celebrate"] as const
+
 async function main() {
-  console.log("\n── A. Registry: slot READY (locked) + MOVE (candidate) ──")
+  console.log("\n── A. Registry: READY (locked) + MOVE (locked) + CELEBRATE (candidate) ──")
   for (const team of TEAM_IDS) {
     test(`${team}: ready terisi`, () => TEAM_MASCOTS[team].ready.src === expected(team, "ready"))
   }
   for (const team of TEAM_IDS) {
     test(`${team}: move terisi`, () => TEAM_MASCOTS[team].move.src === expected(team, "move"))
   }
-  test("pose celebrate + podium SEMUA masih null (fallback aktif)", () =>
-    TEAM_IDS.every((t) => ["celebrate", "podium"].every((p) => TEAM_MASCOTS[t][p as "celebrate"].src === null)))
-  test(`total slot kosong = 8 (4 tim × 2 pose: celebrate + podium)`, () =>
+  for (const team of TEAM_IDS) {
+    test(`${team}: celebrate terisi`, () =>
+      TEAM_MASCOTS[team].celebrate.src === expected(team, "celebrate"))
+  }
+  test("pose podium SEMUA masih null (fallback aktif)", () =>
+    TEAM_IDS.every((t) => TEAM_MASCOTS[t].podium.src === null))
+  test("total slot kosong = 4 (4 tim × 1 pose: podium)", () =>
     TEAM_IDS.reduce(
       (n, t) => n + POSES.filter((p) => TEAM_MASCOTS[t][p].src === null).length,
       0
-    ) === 8)
-  test("tepat 8 slot src terisi (4 READY + 4 MOVE, tidak ada slot liar)", () =>
-    TEAM_IDS.reduce((n, t) => n + POSES.filter((p) => TEAM_MASCOTS[t][p].src !== null).length, 0) === 8)
+    ) === 4)
+  test("tepat 12 slot src terisi (4 READY + 4 MOVE + 4 CELEBRATE)", () =>
+    TEAM_IDS.reduce((n, t) => n + POSES.filter((p) => TEAM_MASCOTS[t][p].src !== null).length, 0) === 12)
   test("semua src lowercase (aman di Linux)", () =>
     TEAM_IDS.every((t) =>
-      (["ready", "move"] as const).every((p) => {
+      FILLED_POSES.every((p) => {
         const s = TEAM_MASCOTS[t][p].src as string
         return s === s.toLowerCase()
       })))
   test("semua src di bawah /main-bersama/jelajah/mascots/", () =>
     TEAM_IDS.every((t) =>
-      (["ready", "move"] as const).every((p) =>
+      FILLED_POSES.every((p) =>
         (TEAM_MASCOTS[t][p].src as string).startsWith("/main-bersama/jelajah/mascots/"))))
   test("semua src berekstensi .webp", () =>
     TEAM_IDS.every((t) =>
-      (["ready", "move"] as const).every((p) => (TEAM_MASCOTS[t][p].src as string).endsWith(".webp"))))
+      FILLED_POSES.every((p) => (TEAM_MASCOTS[t][p].src as string).endsWith(".webp"))))
   test("TIDAK ada src yang masih .png", () =>
     TEAM_IDS.every((t) =>
-      (["ready", "move"] as const).every((p) => !(TEAM_MASCOTS[t][p].src as string).endsWith(".png"))))
-  test("src MOVE memakai suffix -move.webp (bukan menimpa READY)", () =>
-    TEAM_IDS.every((t) => (TEAM_MASCOTS[t].move.src as string).includes("-move.webp")))
+      FILLED_POSES.every((p) => !(TEAM_MASCOTS[t][p].src as string).endsWith(".png"))))
+  test("src tiap pose memakai suffix pose-nya sendiri (tidak saling menimpa)", () =>
+    TEAM_IDS.every((t) =>
+      FILLED_POSES.every((p) => (TEAM_MASCOTS[t][p].src as string).endsWith(`-${p}.webp`))))
 
   console.log("\n── B. URL ↔ path fisik (invariant case, Linux/Vercel) ──")
   for (const team of TEAM_IDS) {
-    for (const pose of ["ready", "move"] as const) {
+    for (const pose of FILLED_POSES) {
       const url = TEAM_MASCOTS[team][pose].src as string
       const r = pathCaseMatches(url)
       test(`${team}/${pose}: path URL exact-case ada di disk`, () => r.ok)
@@ -243,7 +255,7 @@ async function main() {
 
   console.log("\n── C. Runtime WebP (READY + MOVE): container valid, alpha hadir, hemat ──")
   for (const team of TEAM_IDS) {
-    for (const pose of ["ready", "move"] as const) {
+    for (const pose of FILLED_POSES) {
       const url = TEAM_MASCOTS[team][pose].src as string
       const buf = fs.readFileSync(path.join(PUBLIC_DIR, url.slice(1)))
       const w = parseWebp(buf)
@@ -260,18 +272,18 @@ async function main() {
       })
     }
   }
-  test("8 runtime WebP ukurannya berbeda (8 artwork distinct)", () =>
+  test("12 runtime WebP ukurannya berbeda (12 artwork distinct)", () =>
     new Set(
       TEAM_IDS.flatMap((t) =>
-        (["ready", "move"] as const).map((p) =>
+        FILLED_POSES.map((p) =>
           fs.statSync(path.join(PUBLIC_DIR, (TEAM_MASCOTS[t][p].src as string).slice(1))).size
         )
       )
-    ).size === 8)
+    ).size === 12)
 
   console.log("\n── D. Master lossless PNG tetap utuh di docs/ (bukan runtime) ──")
   for (const team of TEAM_IDS) {
-    for (const pose of ["ready", "move"] as const) {
+    for (const pose of FILLED_POSES) {
       const master = masterPath(team, pose)
       test(`${team}/${pose}: master PNG ada di docs/`, () => fs.existsSync(master))
       if (!fs.existsSync(master)) continue
@@ -285,22 +297,31 @@ async function main() {
     }
   }
 
-  console.log("\n── D2. READY LOCKED tidak berubah (bukti vs commit terakhir) ──")
+  console.log("\n── D2. READY & MOVE LOCKED tidak berubah (bukti vs commit terakhir) ──")
   try {
     const { execSync } = require("child_process")
-    const readyPaths = TEAM_IDS.map((t) => `public/main-bersama/jelajah/mascots/jelajah-${t}-ready.webp`)
-    const changed = execSync(`git diff --name-only HEAD -- ${readyPaths.join(" ")}`, {
-      cwd: REPO,
-      encoding: "utf8",
-    }).trim()
-    test("4 runtime READY tidak tersentuh sejak commit terakhir", () => changed === "")
-    if (changed) console.log(`        ↳ berubah: ${changed}`)
+    const changedIn = (args: string) =>
+      execSync(`git diff --name-only HEAD -- ${args}`, { cwd: REPO, encoding: "utf8" }).trim()
 
-    const changedMaster = execSync(
-      `git diff --name-only HEAD -- docs/main-bersama/art-source/mascots/ready`,
-      { cwd: REPO, encoding: "utf8" }
-    ).trim()
-    test("master READY di docs/ tidak tersentuh", () => changedMaster === "")
+    const readyRuntime = TEAM_IDS.map(
+      (t) => `public/main-bersama/jelajah/mascots/jelajah-${t}-ready.webp`
+    )
+    const changedReady = changedIn(readyRuntime.join(" "))
+    test("4 runtime READY tidak tersentuh sejak commit terakhir", () => changedReady === "")
+    if (changedReady) console.log(`        ↳ berubah: ${changedReady}`)
+
+    test("master READY di docs/ tidak tersentuh", () =>
+      changedIn("docs/main-bersama/art-source/mascots/ready") === "")
+
+    const moveRuntime = TEAM_IDS.map(
+      (t) => `public/main-bersama/jelajah/mascots/jelajah-${t}-move.webp`
+    )
+    const changedMove = changedIn(moveRuntime.join(" "))
+    test("4 runtime MOVE tidak tersentuh sejak commit terakhir", () => changedMove === "")
+    if (changedMove) console.log(`        ↳ berubah: ${changedMove}`)
+
+    test("master MOVE di docs/ tidak tersentuh", () =>
+      changedIn("docs/main-bersama/art-source/mascots/move") === "")
   } catch {
     console.log("  ⏭  dilewati (git tidak tersedia / bukan repo git)")
   }
@@ -315,17 +336,14 @@ async function main() {
   test("reference sheet master ada di docs/", () => fs.existsSync(REF_SHEET))
   test("reference sheet TIDAK ada lagi di public/", () =>
     !fs.existsSync(path.join(PUBLIC_DIR, "maskot main bersama.png")))
+  test("tidak ada ZIP pengiriman di source dir (READY/MOVE/CELEBRATE)", () =>
+    [MASTER_DIR, MOVE_DIR, CELEBRATE_DIR].every((d) =>
+      fs.readdirSync(d).every((f) => !f.toLowerCase().endsWith(".zip"))))
 
-  console.log("\n── F. Fallback TeamBadge tetap jalan ──")
+  console.log("\n── F. Fallback TeamBadge + render per pose ──")
   const fallback = renderToStaticMarkup(React.createElement(TeamBadge, { teamId: "elang" }))
   test("TeamBadge merender markup badge (svg + mb-team-badge)", () =>
     fallback.includes("mb-team-badge") && fallback.includes("<svg"))
-
-  const movePose = renderToStaticMarkup(
-    React.createElement(TeamMascot, { teamId: "elang", pose: "celebrate" as const })
-  )
-  test("pose 'celebrate' (src null) → TeamBadge, BUKAN <img>", () =>
-    movePose.includes('class="mb-team-badge"') && !movePose.includes("<img"))
 
   const podiumPose = renderToStaticMarkup(
     React.createElement(TeamMascot, { teamId: "rusa", pose: "podium" as const })
@@ -333,13 +351,15 @@ async function main() {
   test("pose 'podium' (src null) → TeamBadge, BUKAN <img>", () =>
     podiumPose.includes('class="mb-team-badge"') && !podiumPose.includes("<img"))
 
-  const moveRendered = renderToStaticMarkup(
-    React.createElement(TeamMascot, { teamId: "elang", pose: "move" as const, size: 64 })
-  )
-  test("pose 'move' (src ada) → <img> dengan src MOVE yang benar", () =>
-    moveRendered.includes("<img") &&
-    moveRendered.includes(expected("elang", "move")) &&
-    !moveRendered.includes('class="mb-team-badge"'))
+  for (const pose of FILLED_POSES) {
+    const html = renderToStaticMarkup(
+      React.createElement(TeamMascot, { teamId: "elang", pose, size: 64 })
+    )
+    test(`pose '${pose}' (src ada) → <img> dengan src ${pose.toUpperCase()} yang benar`, () =>
+      html.includes("<img") &&
+      html.includes(expected("elang", pose)) &&
+      !html.includes('class="mb-team-badge"'))
+  }
 
   const unknownTeam = renderToStaticMarkup(
     React.createElement(TeamMascot, { teamId: "naga-tidak-ada", pose: "ready" as const })
@@ -368,7 +388,7 @@ async function main() {
   if (httpBase) {
     console.log(`\n── H. HTTP 200 (opsional, base=${httpBase}) ──`)
     for (const team of TEAM_IDS) {
-      for (const pose of ["ready", "move"] as const) {
+      for (const pose of FILLED_POSES) {
         const url = `${httpBase}${expected(team, pose)}`
         try {
           const res = await fetch(url)
