@@ -47,6 +47,15 @@ const TEAM_COLOR_VAR: Record<string, string> = {
   badak: "var(--mb-team-badak)",
 };
 
+/**
+ * Stable empty team-progress fallback for non-Jelajah modes (8C.2 blockerfix).
+ * An inline `{}` literal here would create a new identity on EVERY render,
+ * retriggering useTrailMotion's [progress, phase] effect → setPoses cascade
+ * (observed ~3674 renders / ~4s on Kota projector). Module constant keeps
+ * one reference; no useMemo needed. Read-only downstream (never mutated).
+ */
+const EMPTY_TEAM_PROGRESS: Record<string, number> = {};
+
 export function ProjectorClient() {
   const search = useSearchParams();
   const router = useRouter();
@@ -92,7 +101,7 @@ export function ProjectorClient() {
             };
           }
         ).gameProgress.teamProgress
-      : {};
+      : EMPTY_TEAM_PROGRESS;
   const phase = view?.phase ?? "";
   const { getPose } = useTrailMotion(teamProgress, phase);
 
