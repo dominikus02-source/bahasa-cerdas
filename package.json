@@ -250,6 +250,7 @@
     "test:main-bersama-jelajah-motion": "npx tsx scripts/test-main-bersama-jelajah-motion.ts",
     "test:main-bersama-kota-motion": "npx tsx scripts/test-main-bersama-kota-motion.ts",
     "test:main-bersama-handoff-phase2": "npx tsx scripts/test-main-bersama-handoff-phase2.ts",
+    "test:main-bersama-scoring-integrity": "npx tsx scripts/test-main-bersama-scoring-integrity.ts",
     "test:v14": "npx tsx lib/question-factory/__tests__/v14-publish-readiness.ts",
     "test:task-share-link": "npx tsx scripts/test-task-share-link.ts",
     "test:student-consolidation": "npx tsx scripts/test-student-consolidation.ts",

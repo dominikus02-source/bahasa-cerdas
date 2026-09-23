@@ -149,6 +149,15 @@ export interface EngineResolver {
   resolve(sessionId: SessionId): Promise<
     { ok: true; engine: SessionEngine } | { ok: false; code: 'SESSION_NOT_FOUND' }
   >;
+  /**
+   * Buang engine dari cache in-process (opsional).
+   *
+   * Dipakai saat operasi ditolak SETELAH persisten menolak: mutasi tidak
+   * pernah diterapkan, dan cache yang mungkin basi terhadap DB (instance
+   * lain / restart) tidak boleh dipakai lagi — resolve berikutnya membaca
+   * ulang dari DB sebagai sumber kebenaran. Tidak mengubah game state.
+   */
+  discard?(sessionId: SessionId): void;
 }
 
 /** Clock. */

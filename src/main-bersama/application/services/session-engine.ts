@@ -36,7 +36,10 @@ import {
   lockEligiblePlayerIds,
   markPlayerConnection,
 } from '../../domain/rules/eligibility-rules';
-import { evaluateAnswerSubmission } from '../../domain/rules/answer-rules';
+import {
+  computeCorrectness,
+  evaluateAnswerSubmission,
+} from '../../domain/rules/answer-rules';
 
 export interface SessionEngineOptions {
   /** Sesi ber-phase 'preparing' (dibuat caller, mis. dari use-case). */
@@ -75,6 +78,20 @@ export interface SubmitAnswerInput {
 export interface SubmitAnswerOutcome {
   status: 'saved' | 'already-saved';
   submissionId: SubmissionId;
+}
+
+/**
+ * Hasil EVALUASI submission (fase 1, tanpa mutasi).
+ * Dibawa ke persistence; `applySubmission` menulis state HANYA bila
+ * persistence menerima jawaban.
+ */
+export interface SubmissionEvaluation {
+  status: 'saved' | 'already-saved';
+  submissionId: SubmissionId;
+  /** true = jawaban baru (apply menulis state); false = retry identik. */
+  isNewAnswer: boolean;
+  isCorrect: boolean;
+  submittedAt: Date;
 }
 
 export interface OpenRoundOutcome {
@@ -398,31 +415,44 @@ export class SessionEngine {
   // ─── Answers ──────────────────────────────────────────────
 
   /**
-   * Terima jawaban dengan aturan (terurut):
-   * 0. idempotency attempt (retry identik → already-saved tanpa mutasi;
-   *    ID sama payload beda → SUBMISSION_ID_CONFLICT);
-   * 1. fase sesi harus question (ended → SESSION_ENDED);
-   * 2. round = active round milik sesi INI (isolation);
-   * 3. player terdaftar;
-   * 4. aturan bisnis via evaluateAnswerSubmission (option, duplicate,
-   *    eligibility snapshot, deadline inclusive).
-   * Correctness dihitung server-side dan TIDAK masuk ACK.
+   * Fase 1 submission — EVALUASI (tanpa mutasi state).
+   *
+   * Urutan aturan (deterministik, sama seperti sebelumnya):
+   *   round aktif milik sesi INI → player terdaftar → idempotency
+   *   attempt (retry identik → already-saved; ID sama payload beda →
+   *   SUBMISSION_ID_CONFLICT) → fase sesi → aturan bisnis via
+   *   evaluateAnswerSubmission (opsi, duplicate, eligibility snapshot,
+   *   deadline inclusive). Correctness dihitung server-side dan TIDAK
+   *   masuk ACK.
+   *
+   * PENTING (integritas skor): fungsi ini MURNI — jangan panggil
+   * answersFor()/attemptsFor() karena keduanya membuat Map kosong
+   * (mutasi container). Pemanggil application WAJIB berurutan:
+   *   evaluateSubmission → PERSIST → applySubmission
+   * supaya submission yang DITOLAK tidak pernah meninggalkan jejak
+   * di state engine (dan cache in-process-nya).
    */
-  submitAnswer(input: SubmitAnswerInput): SessionEngineResult<SubmitAnswerOutcome> {
-    // 2. Round harus milik sesi ini dan round yang aktif.
+  evaluateSubmission(
+    input: SubmitAnswerInput,
+  ): SessionEngineResult<SubmissionEvaluation> {
+    // Round harus milik sesi ini dan round yang aktif.
     const round = this.state.rounds.find((r) => r.id === input.roundId);
     if (!round || round.index !== this.state.activeRoundIndex) {
       return { ok: false, code: 'ROUND_MISMATCH' };
     }
 
-    // 3. Player harus terdaftar pada sesi ini.
+    // Player harus terdaftar pada sesi ini.
     const player = this.state.players.get(input.playerId);
     if (!player) return { ok: false, code: 'PLAYER_NOT_FOUND' };
 
-    // 0. Idempotency attempt — sebelum fase, karena retry identik
-    //    tidak melakukan mutasi dan harus tetap dapat di-ACK.
-    const attempts = this.attemptsFor(round.id);
-    const existingAttempt = attempts.get(input.submissionId) ?? null;
+    // Baca saja — TIDAK membuat Map baru (lihat catatan di atas).
+    const existingAttempt =
+      this.state.attemptsByRound.get(round.id)?.get(input.submissionId) ?? null;
+    const existingAnswer =
+      this.state.answersByRound.get(round.id)?.get(input.playerId) ?? null;
+
+    // Idempotency attempt — sebelum fase, karena retry identik tidak
+    // melakukan mutasi dan harus tetap dapat di-ACK.
     if (existingAttempt) {
       if (
         existingAttempt.playerId !== input.playerId ||
@@ -431,16 +461,26 @@ export class SessionEngine {
         return { ok: false, code: 'SUBMISSION_ID_CONFLICT' };
       }
       if (existingAttempt.accepted) {
-        return { ok: true, value: { status: 'already-saved', submissionId: input.submissionId } };
+        return {
+          ok: true,
+          value: {
+            status: 'already-saved',
+            submissionId: input.submissionId,
+            isNewAnswer: false,
+            isCorrect:
+              existingAnswer?.isCorrect ??
+              computeCorrectness(round.question, existingAttempt.selectedOptionId),
+            submittedAt: existingAnswer?.submittedAt ?? this.clock.now(),
+          },
+        };
       }
     }
 
-    // 1. Fase sesi.
+    // Fase sesi.
     const phase = this.state.session.phase;
     if (phase === 'ended') return { ok: false, code: 'SESSION_ENDED' };
     if (phase !== 'question') return { ok: false, code: 'ROUND_NOT_OPEN' };
 
-    const answers = this.answersFor(round.id);
     const now = this.clock.now();
     const evaluation = evaluateAnswerSubmission({
       round: {
@@ -453,36 +493,78 @@ export class SessionEngine {
       playerId: input.playerId,
       submissionId: input.submissionId,
       selectedOptionId: input.selectedOptionId,
-      existingAnswer: answers.get(input.playerId) ?? null,
+      existingAnswer,
       existingAttempt,
       isEligible: round.eligiblePlayerIds.includes(input.playerId),
     });
     if (!evaluation.ok) return { ok: false, code: evaluation.code };
 
-    if (evaluation.isNewAnswer) {
-      const stored: StoredAnswer = {
-        sessionId: this.state.session.id,
-        roundId: round.id,
-        playerId: input.playerId,
+    return {
+      ok: true,
+      value: {
+        status: evaluation.isNewAnswer ? 'saved' : 'already-saved',
         submissionId: input.submissionId,
-        selectedOptionId: input.selectedOptionId,
-        submittedAt: now,
-        source: 'individual',
-        isCorrect: evaluation.isCorrect,
-        provenance: 'first-accepted',
-      };
-      answers.set(input.playerId, stored); // business uniqueness 1:1
-      attempts.set(input.submissionId, {
-        submissionId: input.submissionId,
-        roundId: round.id,
-        playerId: input.playerId,
-        selectedOptionId: input.selectedOptionId,
-        accepted: true,
-      });
-      return { ok: true, value: { status: 'saved', submissionId: input.submissionId } };
-    }
+        isNewAnswer: evaluation.isNewAnswer,
+        isCorrect: existingAnswer?.isCorrect ?? evaluation.isCorrect,
+        submittedAt: existingAnswer?.submittedAt ?? now,
+      },
+    };
+  }
 
-    return { ok: true, value: { status: 'already-saved', submissionId: input.submissionId } };
+  /**
+   * Fase 2 submission — TERAPKAN hasil evaluasi ke state engine.
+   *
+   * Murni in-memory (tanpa I/O) sehingga tidak bisa gagal: dipanggil
+   * HANYA setelah persistence menerima jawaban. Retry identik
+   * (isNewAnswer=false) = no-op, jadi tidak mungkin double-contribute.
+   */
+  applySubmission(
+    input: SubmitAnswerInput,
+    evaluation: SubmissionEvaluation,
+  ): void {
+    if (!evaluation.isNewAnswer) return;
+    // Guard concurrency: jawaban final = 1:1 per player per round.
+    if (this.state.answersByRound.get(input.roundId)?.has(input.playerId)) return;
+    const answers = this.answersFor(input.roundId);
+    const attempts = this.attemptsFor(input.roundId);
+    const stored: StoredAnswer = {
+      sessionId: this.state.session.id,
+      roundId: input.roundId,
+      playerId: input.playerId,
+      submissionId: input.submissionId,
+      selectedOptionId: input.selectedOptionId,
+      submittedAt: evaluation.submittedAt,
+      source: 'individual',
+      isCorrect: evaluation.isCorrect,
+      provenance: 'first-accepted',
+    };
+    answers.set(input.playerId, stored); // business uniqueness 1:1
+    attempts.set(input.submissionId, {
+      submissionId: input.submissionId,
+      roundId: input.roundId,
+      playerId: input.playerId,
+      selectedOptionId: input.selectedOptionId,
+      accepted: true,
+    });
+  }
+
+  /**
+   * Terima jawaban = evaluate + apply (komposisi dua fase).
+   * Dipakai test/engine-only; jalur application produksi memanggil
+   * evaluateSubmission + applySubmission terpisah agar persistence
+   * berada DI ANTARA keduanya.
+   */
+  submitAnswer(input: SubmitAnswerInput): SessionEngineResult<SubmitAnswerOutcome> {
+    const evaluated = this.evaluateSubmission(input);
+    if (!evaluated.ok) return { ok: false, code: evaluated.code };
+    this.applySubmission(input, evaluated.value);
+    return {
+      ok: true,
+      value: {
+        status: evaluated.value.status,
+        submissionId: evaluated.value.submissionId,
+      },
+    };
   }
 
   // ─── Factual queries (tanpa game scoring) ────────────────
