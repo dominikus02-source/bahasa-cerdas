@@ -36,6 +36,7 @@ import {
   SixDigitPinGenerator,
 } from '@/src/main-bersama/application/use-cases/id-generator';
 import { mapHttpError } from '@/src/main-bersama/presentation/http-errors';
+import { mainBersamaMutationBlocked } from '@/lib/main-bersama/mutation-guard';
 
 const ACTIONS = [
   'create-session',
@@ -63,7 +64,14 @@ function errorResponse(code: string, reason?: string) {
 }
 
 export async function POST(req: NextRequest) {
-  // 1. Auth — actor dari server context, bukan body (§4).
+  // 1. Safety mutasi (Tahap 8A.4 §1): SEMUA aksi endpoint ini mengubah
+  //    state. Diblokir SEBELUM auth/body/DB disentuh bila lingkungan
+  //    bukan production Vercel dan flag eksplisit tidak diberikan —
+  //    jadi tidak ada session Supabase/Prisma call sama sekali.
+  const blocked = mainBersamaMutationBlocked('teacher/commands');
+  if (blocked) return blocked;
+
+  // 2. Auth — actor dari server context, bukan body (§4).
   const actor = await resolveVerifiedTeacherActor();
   if (!actor) return errorResponse('UNAUTHORIZED');
 

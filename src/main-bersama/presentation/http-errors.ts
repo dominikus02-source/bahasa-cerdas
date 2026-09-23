@@ -45,6 +45,12 @@ const STATUS_BY_CODE: Record<string, number> = {
   PIN_TAKEN: 500,
   SESSION_CREATION_FAILED: 500,
   INTERNAL: 500,
+  // 503 — lingkungan belum siap (skema Main Bersama belum diterapkan /
+  // DB tak terjangkau). Retry tidak menolong; guru perlu lapor admin.
+  SESSION_STORE_UNAVAILABLE: 503,
+  // 503 — mutasi Main Bersama belum diaktifkan pada lingkungan ini
+  // (dev lokal / Preview tanpa flag eksplisit — Tahap 8A.4 §1/§3).
+  MUTATIONS_DISABLED: 503,
 };
 
 const MESSAGE_BY_CODE: Record<string, string> = {
@@ -77,6 +83,8 @@ const MESSAGE_BY_CODE: Record<string, string> = {
   NO_ELIGIBLE_PLAYERS: 'Belum ada peserta yang bisa ikut bermain.',
   PIN_TAKEN: 'PIN sudah dipakai sesi aktif lain.',
   SESSION_CREATION_FAILED: 'Gagal membuat sesi. Coba lagi.',
+  SESSION_STORE_UNAVAILABLE: 'Main Bersama belum tersedia saat ini. Coba lagi sebentar.',
+  MUTATIONS_DISABLED: 'Main Bersama belum diaktifkan pada lingkungan ini.',
   INTERNAL: 'Terjadi kesalahan internal.',
 };
 

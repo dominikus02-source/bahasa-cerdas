@@ -81,7 +81,11 @@ function callerCannotClaimUnsupported(
       subset.unused.count === mixed.unsupported,
   );
 }
-import { PrismaMainSessionCreationStore } from '../src/main-bersama/infrastructure/repositories/prisma-session-creation-store';
+import {
+  PrismaMainSessionCreationStore,
+  classifyCreationFailure,
+} from '../src/main-bersama/infrastructure/repositories/prisma-session-creation-store';
+import { mapHttpError } from '../src/main-bersama/presentation/http-errors';
 import type { MainSession as MainSessionLike } from '../src/main-bersama/domain/entities/session';
 import { db } from '../lib/db';
 
@@ -370,6 +374,8 @@ function makeFakeDeps(
     classSummary?: MainBersamaClassSummary | null;
     failStore?: 'PIN_TAKEN' | 'SESSION_CREATION_FAILED';
     actor?: VerifiedTeacherActor;
+    /** Label konten dari sumber (8A.4) — kosong = sumber tidak mengirim. */
+    contentTitle?: string;
   } = {},
 ): FakeDepsBundle {
   const storeCalls: FakeDepsBundle['storeCalls'] = [];
@@ -379,6 +385,7 @@ function makeFakeDeps(
       if (overrides.questions === 'NOT_FOUND') return { ok: false as const, code: 'PACKAGE_NOT_FOUND' as const };
       return {
         ok: true as const,
+        contentTitle: overrides.contentTitle ?? 'Antonim',
         questions: overrides.questions ?? [singleChoiceInput(), singleChoiceInput({ sourceQuestionId: 'Q2' })],
       };
     },
@@ -539,6 +546,23 @@ check('54. PIN_TAKEN dari store dipropagasi', !pinTaken.ok && pinTaken.code === 
 const failBundle = makeFakeDeps({ failStore: 'SESSION_CREATION_FAILED' });
 const failedStore = await createMainSession(failBundle.deps, input);
 check('55. failure store → SESSION_CREATION_FAILED (tanpa hasil parsial)', !failedStore.ok && failedStore.code === 'SESSION_CREATION_FAILED');
+
+// ── Identitas konten sesi (8A.4 §6-§10) ──
+const labelBundle = makeFakeDeps({ contentTitle: 'Antonim' });
+const labelSession = await createMainSession(labelBundle.deps, input);
+check(
+  '55b. label sumber disnapshot ke sesi + diteruskan ke store',
+  labelSession.ok &&
+    labelSession.session.contentTitle === 'Antonim' &&
+    labelBundle.storeCalls[0]?.session.contentTitle === 'Antonim',
+);
+
+const noLabelBundle = makeFakeDeps({ contentTitle: '   ' });
+const noLabelSession = await createMainSession(noLabelBundle.deps, input);
+check(
+  '55c. sumber tanpa label → fallback netral "Paket Soal" (tidak pernah kosong)',
+  noLabelSession.ok && noLabelSession.session.contentTitle === 'Paket Soal',
+);
 
 const nonMutationBundle = makeFakeDeps();
 {
@@ -728,6 +752,50 @@ if (dbAvailable) {
 } else {
   console.log('  ℹ️  Test DB di-skip — 72 asersi murni sudah dijalankan di atas.');
 }
+
+// ─── Klasifikasi kegagalan store (murni, selalu jalan) ──────
+// Blocker produksi 8A.3: `create-session` gagal 500 generik karena tabel
+// MainSession belum ada di database yang dipakai — guru tidak tahu apa
+// yang salah dan terus retry. Kode harus dibedakan + dicatat, bukan
+// disamarkan sebagai error internal.
+
+section('Klasifikasi kegagalan pembuatan sesi');
+
+check(
+  '73. P2002 (PIN unik) → PIN_TAKEN',
+  classifyCreationFailure({ code: 'P2002' }) === 'PIN_TAKEN',
+);
+check(
+  '74. P2021 (tabel belum ada) → SESSION_STORE_UNAVAILABLE',
+  classifyCreationFailure({ code: 'P2021' }) === 'SESSION_STORE_UNAVAILABLE',
+);
+check(
+  '75. P2022 (kolom belum ada) → SESSION_STORE_UNAVAILABLE',
+  classifyCreationFailure({ code: 'P2022' }) === 'SESSION_STORE_UNAVAILABLE',
+);
+check(
+  '76. P1001 (DB tak terjangkau) → SESSION_STORE_UNAVAILABLE',
+  classifyCreationFailure({ code: 'P1001' }) === 'SESSION_STORE_UNAVAILABLE',
+);
+check(
+  '77. error lain → SESSION_CREATION_FAILED',
+  classifyCreationFailure(new Error('boom')) === 'SESSION_CREATION_FAILED',
+);
+check(
+  '78. SESSION_STORE_UNAVAILABLE → HTTP 503 (bukan 500 generik)',
+  mapHttpError('SESSION_STORE_UNAVAILABLE').status === 503,
+);
+check(
+  '79. pesan 503 Bahasa Indonesia tanpa detail internal',
+  (() => {
+    const mapped = mapHttpError('SESSION_STORE_UNAVAILABLE');
+    const serialized = JSON.stringify(mapped.body);
+    return (
+      /Main Bersama belum tersedia/.test(mapped.body.message) &&
+      !/P2021|P2022|prisma|table|MainSession/i.test(serialized)
+    );
+  })(),
+);
 
 // ─── Hasil ──────────────────────────────────────────────────
 

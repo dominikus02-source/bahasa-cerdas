@@ -10,11 +10,11 @@
 .mb-scope,
 .mb-scope-guru {
   /* ── Surface & background ── */
-  --mb-bg: #0d1b2a;            /* navy dark — proyektor/lobby */
+  --mb-bg: #0d1b2a; /* navy dark — proyektor/lobby */
   --mb-bg-soft: #13253a;
   --mb-surface: #1b2f47;
   --mb-surface-elevated: #243d5b;
-  --mb-surface-guru: #f7f8f6;  /* light mint/warm neutral — guru */
+  --mb-surface-guru: #f7f8f6; /* light mint/warm neutral — guru */
   --mb-surface-guru-elevated: #ffffff;
   --mb-surface-light: #fdfcf9; /* reading/question siswa */
   --mb-surface-light-elevated: #ffffff;
@@ -22,19 +22,19 @@
   /* ── Text ── */
   --mb-text-primary: #f4f7fb;
   --mb-text-secondary: #9fb3c8;
-  --mb-text-guru: #1c2b3a;     /* di surface guru */
+  --mb-text-guru: #1c2b3a; /* di surface guru */
   --mb-text-guru-secondary: #5d6b7a;
-  --mb-text-light-primary: #17263a;  /* di reading surface */
+  --mb-text-light-primary: #17263a; /* di reading surface */
   --mb-text-light-secondary: #5b6b80;
 
   /* ── Brand action / progress ── */
-  --mb-primary: #14b8a6;       /* teal */
+  --mb-primary: #14b8a6; /* teal */
   --mb-primary-strong: #0d9488;
   --mb-primary-soft: rgba(20, 184, 166, 0.16);
   --mb-primary-contrast: #052e2b;
 
   /* ── Highlight / reward ── */
-  --mb-accent: #ffc94d;        /* warm yellow */
+  --mb-accent: #ffc94d; /* warm yellow */
   --mb-accent-soft: rgba(255, 201, 77, 0.18);
   --mb-accent-contrast: #402d05;
 
@@ -50,10 +50,21 @@
   --mb-danger-soft: rgba(255, 107, 107, 0.14);
 
   /* ── Team colors (Jelajah Kata — 4 regu) ── */
-  --mb-team-elang: #f5a524;    /* amber */
-  --mb-team-harimau: #ef5350;  /* merah */
-  --mb-team-rusa: #34d399;     /* hijau */
-  --mb-team-badak: #38bdf8;    /* biru langit */
+  --mb-team-elang: #f5a524; /* amber */
+  --mb-team-harimau: #ef5350; /* merah */
+  --mb-team-rusa: #34d399; /* hijau */
+  --mb-team-badak: #38bdf8; /* biru langit */
+
+  /* ── World tokens 8B — Jelajah (cerah, siang) & Kota (malam, lampu).
+     Hidup di scope token bersama agar guru/siswa/proyektor konsisten. */
+  --mb-jelajah-sky: #bae6fd;
+  --mb-jelajah-land: #6ee7b7;
+  --mb-jelajah-trail: #f5a524;
+  --mb-jelajah-highlight: #fef3c7;
+  --mb-kota-night: #0b1e3a;
+  --mb-kota-light: #67e8f9;
+  --mb-kota-building: #1e3a5f;
+  --mb-kota-glow: #ffc94d;
 
   /* ── Radius & shadow ── */
   --mb-radius-sm: 10px;
@@ -98,15 +109,31 @@
 /* Surface guru — light, calm (§13: teacher lebih tenang). */
 .mb-scope-guru {
   background:
-    radial-gradient(720px 280px at 88% -40px, rgba(20, 184, 166, 0.14), transparent 70%),
-    radial-gradient(520px 240px at 4% 110%, rgba(139, 124, 246, 0.08), transparent 70%),
+    radial-gradient(
+      720px 280px at 88% -40px,
+      rgba(20, 184, 166, 0.14),
+      transparent 70%
+    ),
+    radial-gradient(
+      520px 240px at 4% 110%,
+      rgba(139, 124, 246, 0.08),
+      transparent 70%
+    ),
     var(--mb-surface-guru);
   color: var(--mb-text-guru);
 }
-.mb-scope-guru .mb-display { color: var(--mb-text-guru); }
+.mb-scope-guru .mb-display {
+  color: var(--mb-text-guru);
+}
 
-.mb-display { font-family: var(--mb-font-display); letter-spacing: 0.02em; }
-.mb-number { font-family: var(--mb-font-number); font-variant-numeric: tabular-nums; }
+.mb-display {
+  font-family: var(--mb-font-display);
+  letter-spacing: 0.02em;
+}
+.mb-number {
+  font-family: var(--mb-font-number);
+  font-variant-numeric: tabular-nums;
+}
 
 /* Reading surface (soal/passage) — light, nyaman di HP (§22). */
 .mb-reading {
@@ -145,7 +172,11 @@
   height: 34px;
   flex: none;
   border-radius: var(--mb-radius-sm);
-  background: linear-gradient(135deg, var(--mb-primary-strong), var(--mb-primary));
+  background: linear-gradient(
+    135deg,
+    var(--mb-primary-strong),
+    var(--mb-primary)
+  );
   color: #ffffff;
   font-weight: 800;
   font-size: 1rem;
@@ -160,9 +191,19 @@
   gap: var(--mb-space-3);
   margin: 0 0 var(--mb-space-2);
 }
-.mb-guru-h .mb-guru-h-text { font-size: 1.15rem; font-weight: 800; }
-.mb-guru-h small { color: var(--mb-text-guru-secondary); font-weight: 600; }
-.mb-guru-hsub { margin: 0 0 var(--mb-space-4) var(--mb-space-7); color: var(--mb-text-guru-secondary); font-size: 0.92rem; }
+.mb-guru-h .mb-guru-h-text {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+.mb-guru-h small {
+  color: var(--mb-text-guru-secondary);
+  font-weight: 600;
+}
+.mb-guru-hsub {
+  margin: 0 0 var(--mb-space-4) var(--mb-space-7);
+  color: var(--mb-text-guru-secondary);
+  font-size: 0.92rem;
+}
 
 /* Tombol sekunder guru (Jeda/Akhiri — §18 secondary control). */
 .mb-secondary-btn {
@@ -175,11 +216,22 @@
   font-weight: 700;
   font-size: 0.88rem;
   cursor: pointer;
-  transition: border-color var(--mb-motion-fast), color var(--mb-motion-fast);
+  transition:
+    border-color var(--mb-motion-fast),
+    color var(--mb-motion-fast);
 }
-.mb-secondary-btn:hover:not(:disabled) { border-color: var(--mb-primary-strong); color: var(--mb-primary-strong); }
-.mb-secondary-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-.mb-danger-btn:hover:not(:disabled) { border-color: var(--mb-danger); color: var(--mb-danger); }
+.mb-secondary-btn:hover:not(:disabled) {
+  border-color: var(--mb-primary-strong);
+  color: var(--mb-primary-strong);
+}
+.mb-secondary-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.mb-danger-btn:hover:not(:disabled) {
+  border-color: var(--mb-danger);
+  color: var(--mb-danger);
+}
 
 /* Tombol ghost di surface gelap (student/waiting). */
 .mb-btn-ghost-light {
@@ -193,7 +245,9 @@
   cursor: pointer;
   transition: border-color var(--mb-motion-fast);
 }
-.mb-btn-ghost-light:hover { border-color: var(--mb-primary); }
+.mb-btn-ghost-light:hover {
+  border-color: var(--mb-primary);
+}
 
 /* Chip generik surface gelap. */
 .mb-chip {
@@ -218,7 +272,11 @@
   border-radius: var(--mb-radius-pill);
   font-size: 0.8rem;
   font-weight: 800;
-  background: color-mix(in srgb, var(--mb-tc, var(--mb-primary)) 18%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--mb-tc, var(--mb-primary)) 18%,
+    transparent
+  );
   border: 1.5px solid var(--mb-tc, var(--mb-primary));
   color: var(--mb-tc, var(--mb-primary));
 }
@@ -244,10 +302,19 @@
   border: 2px solid rgba(23, 38, 58, 0.12);
   border-radius: var(--mb-radius-md);
   cursor: pointer;
-  transition: border-color var(--mb-motion-fast), transform var(--mb-motion-fast), background var(--mb-motion-fast);
+  transition:
+    border-color var(--mb-motion-fast),
+    transform var(--mb-motion-fast),
+    background var(--mb-motion-fast);
 }
-.mb-answer:hover:not(:disabled) { transform: translateY(-1px); border-color: var(--mb-primary); }
-.mb-answer:disabled { cursor: default; opacity: 0.85; }
+.mb-answer:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: var(--mb-primary);
+}
+.mb-answer:disabled {
+  cursor: default;
+  opacity: 0.85;
+}
 .mb-answer-selected {
   border-color: var(--mb-primary-strong);
   background: var(--mb-primary-soft);
@@ -293,8 +360,12 @@
   color: var(--mb-text-primary);
   text-align: center;
 }
-.mb-saved strong { color: var(--mb-success); }
-.mb-saved span { color: var(--mb-text-secondary); }
+.mb-saved strong {
+  color: var(--mb-success);
+}
+.mb-saved span {
+  color: var(--mb-text-secondary);
+}
 
 /* Hero status menunggu (lobby siswa & tutup putaran) — anticipation
    sederhana: lingkaran denyut di atas teks (§20). */
@@ -314,10 +385,20 @@
   border-radius: 50%;
   border: 4px solid rgba(255, 255, 255, 0.12);
   border-top-color: var(--mb-primary);
-  background: radial-gradient(circle at 35% 30%, rgba(20, 184, 166, 0.35), transparent 65%);
+  background: radial-gradient(
+    circle at 35% 30%,
+    rgba(20, 184, 166, 0.35),
+    transparent 65%
+  );
 }
-.mb-wait h2 { margin: 0; font-size: 1.5rem; }
-.mb-wait p { margin: 0; color: var(--mb-text-secondary); }
+.mb-wait h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+.mb-wait p {
+  margin: 0;
+  color: var(--mb-text-secondary);
+}
 
 /* Counter besar X/Y menjawab (guru/proyektor). */
 .mb-count {
@@ -326,10 +407,20 @@
   gap: 6px;
   font-weight: 800;
 }
-.mb-count strong { font-size: 2rem; color: var(--mb-primary); }
-.mb-count small { color: var(--mb-text-secondary); font-weight: 700; }
-.mb-count-guru strong { color: var(--mb-primary-strong); }
-.mb-count-guru small { color: var(--mb-text-guru-secondary); }
+.mb-count strong {
+  font-size: 2rem;
+  color: var(--mb-primary);
+}
+.mb-count small {
+  color: var(--mb-text-secondary);
+  font-weight: 700;
+}
+.mb-count-guru strong {
+  color: var(--mb-primary-strong);
+}
+.mb-count-guru small {
+  color: var(--mb-text-guru-secondary);
+}
 
 /* Catatan peringatan lembut (di surface gelap). */
 .mb-warn {
@@ -359,18 +450,47 @@
   border: 1px solid rgba(255, 255, 255, 0.14);
   font-size: 0.88rem;
 }
-.mb-plist-team { color: var(--mb-accent); font-weight: 700; font-size: 0.8rem; }
-.mb-plist-state { font-size: 0.78rem; font-weight: 600; }
-.mb-plist-state.mb-ok { color: var(--mb-success); }
-.mb-plist-state.mb-wait { color: var(--mb-text-secondary); }
-.mb-plist-state.mb-off { color: var(--mb-danger); }
+.mb-plist-team {
+  color: var(--mb-accent);
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+.mb-plist-state {
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.mb-plist-state.mb-ok {
+  color: var(--mb-success);
+}
+.mb-plist-state.mb-wait {
+  color: var(--mb-text-secondary);
+}
+.mb-plist-state.mb-off {
+  color: var(--mb-danger);
+}
 
 /* Kartu reveal (pembahasan) — surface reading ringan. */
-.mb-reveal-card { padding: var(--mb-space-4) var(--mb-space-5); }
-.mb-reveal-correct { margin: 0 0 var(--mb-space-2); color: var(--mb-text-light-secondary); }
-.mb-reveal-correct strong { color: var(--mb-success); font-size: 1.1rem; }
-.mb-reveal-explain { margin: 0 0 var(--mb-space-3); line-height: 1.6; }
-.mb-reveal-dist, .mb-sreveal-dist { display: flex; flex-wrap: wrap; gap: var(--mb-space-2); }
+.mb-reveal-card {
+  padding: var(--mb-space-4) var(--mb-space-5);
+}
+.mb-reveal-correct {
+  margin: 0 0 var(--mb-space-2);
+  color: var(--mb-text-light-secondary);
+}
+.mb-reveal-correct strong {
+  color: var(--mb-success);
+  font-size: 1.1rem;
+}
+.mb-reveal-explain {
+  margin: 0 0 var(--mb-space-3);
+  line-height: 1.6;
+}
+.mb-reveal-dist,
+.mb-sreveal-dist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mb-space-2);
+}
 /* Chip distribusi jawaban (pembahasan) — dipakai guru & siswa.
    Baseline = surface terang (guru/siswa). Chip pada surface gelap
    proyektor tidak ada, tapi override di `.mb-scope` tetap disediakan. */
@@ -444,10 +564,25 @@
 }
 
 /* Branding proyektor (judul layar). */
-.mb-pj-brand { display: flex; flex-direction: column; align-items: center; gap: var(--mb-space-2); }
-.mb-pj-title { font-size: 2.4rem; margin: 0; color: #ffffff; }
-.mb-pj-sub { margin: 0; color: var(--mb-text-secondary); font-weight: 600; }
-.mb-pj-sub strong { color: var(--mb-accent); }
+.mb-pj-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mb-space-2);
+}
+.mb-pj-title {
+  font-size: 2.4rem;
+  margin: 0;
+  color: #ffffff;
+}
+.mb-pj-sub {
+  margin: 0;
+  color: var(--mb-text-secondary);
+  font-weight: 600;
+}
+.mb-pj-sub strong {
+  color: var(--mb-accent);
+}
 
 /* Ranking summary Jelajah (§28) — tie tampil apa adanya. */
 .mb-pj-ranking {
@@ -471,14 +606,33 @@
 }
 .mb-pj-winner {
   background: var(--mb-accent-soft);
-  border: 2px solid var(--mb-accent);
-  border-left-width: 6px;
+  /* Penanda juara memakai INSET RING (box-shadow), bukan border.
+     Border menambah tinggi baris (46px → 50px); pada kasus tie SEMUA regu
+     juara, jadi totalnya ikut membengkak dan layar meluber.
+     Inset ring tidak memengaruhi layout sama sekali. */
+  box-shadow: inset 0 0 0 2px var(--mb-accent);
+  border-left-color: var(--mb-accent);
 }
-.mb-pj-rank { font-size: 1.6rem; font-weight: 800; }
-.mb-pj-rank-team { font-weight: 700; font-size: 1.15rem; }
-.mb-pj-rank-pct { text-align: right; color: var(--mb-text-secondary); font-weight: 700; }
+.mb-pj-rank {
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+.mb-pj-rank-team {
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+.mb-pj-rank-pct {
+  text-align: right;
+  color: var(--mb-text-secondary);
+  font-weight: 700;
+}
+/* Catatan "seri" — sekarang inline DI DALAM sel nama regu (bukan grid-item
+   terpisah). Sebelumnya `grid-column: 2` bertabrakan dengan nama regu dan
+   memaksa grid membuat baris implisit kedua (tinggi baris 46px → 80px),
+   sehingga semua kasus tie meluber di 1366×768 maupun 1080p. */
 .mb-pj-tie-note {
-  grid-column: 2;
+  display: inline-block;
+  margin-left: 8px;
   color: var(--mb-accent);
   font-size: 0.75rem;
   font-weight: 700;
@@ -486,7 +640,11 @@
 }
 
 /* ── Layout fase proyektor (§30 — 16:9-first) ── */
-.mb-pj { flex: 1; display: flex; flex-direction: column; }
+.mb-pj {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
 .mb-pj-head {
   display: flex;
   flex-direction: column;
@@ -502,7 +660,16 @@
   font-weight: 800;
   font-size: 1.1rem;
 }
-.mb-pj-class { color: var(--mb-text-secondary); font-weight: 600; }
+.mb-pj-class {
+  color: var(--mb-text-secondary);
+  font-weight: 600;
+}
+/* Identitas konten sesi (mis. "Antonim") — lebih menonjol daripada
+   kelas/mode karena ini yang menjawab "sedang main soal apa". */
+.mb-pj-pkg {
+  color: var(--mb-text-primary);
+  font-weight: 800;
+}
 .mb-pj-phase {
   flex: 1;
   display: flex;
@@ -512,8 +679,14 @@
   gap: var(--mb-space-5);
   padding: var(--mb-space-6);
 }
-.mb-pj-wait { color: var(--mb-text-secondary); font-size: 1.1rem; margin: 0; }
-.mb-pj-wait strong { color: var(--mb-accent); }
+.mb-pj-wait {
+  color: var(--mb-text-secondary);
+  font-size: 1.1rem;
+  margin: 0;
+}
+.mb-pj-wait strong {
+  color: var(--mb-accent);
+}
 .mb-pj-idle {
   flex: 1;
   display: flex;
@@ -522,18 +695,56 @@
   justify-content: center;
   gap: var(--mb-space-4);
 }
-.mb-pj-idle-msg { color: var(--mb-text-secondary); font-size: 1.1rem; }
-.mb-pj-closed { font-size: 2.4rem; margin: 0; }
-.mb-pj-q { width: min(100%, 720px); }
-.mb-pj-participation { display: flex; align-items: center; gap: var(--mb-space-4); }
-.mb-pj-progress { width: min(100%, 640px); }
-.mb-pj-reveal { text-align: center; }
-.mb-pj-reveal-label { margin: 0; color: var(--mb-text-secondary); font-size: 1.05rem; }
-.mb-pj-reveal-answer { margin: 0; font-size: 2.6rem; color: var(--mb-success); }
-.mb-pj-reveal-explain { margin: var(--mb-space-2) auto 0; color: var(--mb-text-secondary); max-width: 60ch; }
-.mb-pj-final-title { font-size: 2.6rem; margin: 0; }
-.mb-pj-kota-preview { width: min(100%, 560px); }
-.mb-pj-mission { color: var(--mb-accent); font-size: 1.2rem; font-weight: 600; margin: 0; }
+.mb-pj-idle-msg {
+  color: var(--mb-text-secondary);
+  font-size: 1.1rem;
+}
+.mb-pj-closed {
+  font-size: 2.4rem;
+  margin: 0;
+}
+.mb-pj-q {
+  width: min(100%, 720px);
+}
+.mb-pj-participation {
+  display: flex;
+  align-items: center;
+  gap: var(--mb-space-4);
+}
+.mb-pj-progress {
+  width: min(100%, 640px);
+}
+.mb-pj-reveal {
+  text-align: center;
+}
+.mb-pj-reveal-label {
+  margin: 0;
+  color: var(--mb-text-secondary);
+  font-size: 1.05rem;
+}
+.mb-pj-reveal-answer {
+  margin: 0;
+  font-size: 2.6rem;
+  color: var(--mb-success);
+}
+.mb-pj-reveal-explain {
+  margin: var(--mb-space-2) auto 0;
+  color: var(--mb-text-secondary);
+  max-width: 60ch;
+}
+.mb-pj-final-title {
+  font-size: 2.6rem;
+  margin: 0;
+}
+.mb-pj-kota-preview {
+  width: min(100%, 560px);
+}
+.mb-pj-mission {
+  color: var(--mb-accent);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+}
 .mb-pj-retry {
   padding: var(--mb-space-3) var(--mb-space-6);
   border-radius: var(--mb-radius-pill);
@@ -545,7 +756,11 @@
 }
 
 /* ── Layout room guru (§30 — desktop/tablet-first) ── */
-.mb-room { flex: 1; display: flex; flex-direction: column; }
+.mb-room {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
 .mb-room-loading {
   flex: 1;
   display: grid;
@@ -558,8 +773,16 @@
   text-align: center;
   margin: var(--mb-space-2) 0 0;
 }
-.mb-room-cta { display: flex; justify-content: center; padding: var(--mb-space-4) 0; }
-.mb-lobby, .mb-tquestion, .mb-closed, .mb-discuss, .mb-tsummary {
+.mb-room-cta {
+  display: flex;
+  justify-content: center;
+  padding: var(--mb-space-4) 0;
+}
+.mb-lobby,
+.mb-tquestion,
+.mb-closed,
+.mb-discuss,
+.mb-tsummary {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -567,9 +790,20 @@
   gap: var(--mb-space-4);
   padding: var(--mb-space-5);
 }
-.mb-lobby-head { display: flex; flex-direction: column; align-items: center; gap: var(--mb-space-2); margin-top: var(--mb-space-4); }
-.mb-lobby-eyebrow { margin: 0; }
-.mb-lobby-pin { margin: 0; font-size: 2.2rem; }
+.mb-lobby-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mb-space-2);
+  margin-top: var(--mb-space-4);
+}
+.mb-lobby-eyebrow {
+  margin: 0;
+}
+.mb-lobby-pin {
+  margin: 0;
+  font-size: 2.2rem;
+}
 .mb-lobby-qr {
   display: flex;
   flex-direction: column;
@@ -589,6 +823,7 @@
   font-size: 0.8rem;
   letter-spacing: 0.1em;
 }
+/* QR ruang (jalur main) — dipakai komponen RoomQRCode. */
 .mb-lobby-qr-img {
   width: 180px;
   height: 180px;
@@ -596,7 +831,17 @@
   border: 3px solid #fff;
   box-shadow: 0 2px 12px rgba(0,0,0,.12);
 }
-.mb-lobby-wait, .mb-lobby-hint { color: var(--mb-text-guru-secondary); margin: 0; }
+.mb-lobby-wait,
+.mb-lobby-hint {
+  color: var(--mb-text-guru-secondary);
+  margin: 0;
+}
+/* Chip identitas konten sesi ("Antonim") — menonjol dari chip lain
+   karena ini yang menjawab "soal apa yang dimainkan". */
+.mb-lobby-content {
+  font-weight: 800;
+  color: var(--mb-primary-strong);
+}
 .mb-tquestion-status {
   display: flex;
   align-items: center;
@@ -604,30 +849,60 @@
   color: var(--mb-text-guru-secondary);
   font-weight: 700;
 }
-.mb-progress-inline { width: min(100%, 560px); }
-.mb-closed-sub { color: var(--mb-text-guru-secondary); margin: 0; }
+.mb-progress-inline {
+  width: min(100%, 560px);
+}
+.mb-closed-sub {
+  color: var(--mb-text-guru-secondary);
+  margin: 0;
+}
 
 /* ── Motion baseline (§29) ── */
 @media (prefers-reduced-motion: no-preference) {
-  .mb-fade-in { animation: mb-fade-in var(--mb-motion-med) both; }
-  .mb-entrance { animation: mb-entrance var(--mb-motion-med) both; }
+  .mb-fade-in {
+    animation: mb-fade-in var(--mb-motion-med) both;
+  }
+  .mb-entrance {
+    animation: mb-entrance var(--mb-motion-med) both;
+  }
   @keyframes mb-fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
   @keyframes mb-entrance {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: none; }
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
-  .mb-progress-transition { transition: width var(--mb-motion-med) ease-out; }
-  .mb-wait-orb { animation: mb-orb-spin 1.6s linear infinite; }
+  .mb-progress-transition {
+    transition: width var(--mb-motion-med) ease-out;
+  }
+  .mb-wait-orb {
+    animation: mb-orb-spin 1.6s linear infinite;
+  }
   @keyframes mb-orb-spin {
-    to { transform: rotate(360deg); }
+    to {
+      transform: rotate(360deg);
+    }
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .mb-fade-in, .mb-entrance { animation: none; }
-  .mb-progress-transition { transition: none; }
+  .mb-fade-in,
+  .mb-entrance {
+    animation: none;
+  }
+  .mb-progress-transition {
+    transition: none;
+  }
 }
 
 /* Fokus terlihat jelas (§31). */
@@ -639,16 +914,404 @@
 
 /* ── Responsive ── */
 @media (max-width: 420px) {
-  .mb-pj-title { font-size: 1.8rem; }
-  .mb-pin-projector .mb-pin-digit { width: 72px; height: 92px; font-size: 3.2rem; }
-  .mb-pj-teams { grid-template-columns: repeat(2, minmax(120px, 1fr)); }
+  .mb-pj-title {
+    font-size: 1.8rem;
+  }
+  .mb-pin-projector .mb-pin-digit {
+    width: 72px;
+    height: 92px;
+    font-size: 3.2rem;
+  }
+  .mb-pj-teams {
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+  }
 }
 
 /* Projector 16:9-first: teks naik di viewport lebar (§30). */
 @media (min-width: 1600px) {
-  .mb-pj-title { font-size: 3rem; }
-  .mb-pj-reveal-answer { font-size: 3.2rem; }
-  .mb-pj-final-title { font-size: 3.4rem; }
+  .mb-pj-title {
+    font-size: 3rem;
+  }
+  .mb-pj-reveal-answer {
+    font-size: 3.2rem;
+  }
+  .mb-pj-final-title {
+    font-size: 3.4rem;
+  }
+}
+
+/* ── SUMMARY pada projector lebar (≥1280px, >800px tinggi) — HORIZONTAL ──
+   Sebelumnya summary menumpuk vertikal (judul → trail 286 → podium 252 →
+   ranking 286) sehingga docH 1220 > 1080 dan baris terakhir terpotong,
+   padahal lebar 1920 baru terpakai ~880px.
+
+   Di sini podium & ranking diletakkan BERDAMPINGAN memakai grid-areas pada
+   anak yang sudah ada (tanpa wrapper baru, tanpa ubah DOM/semantik):
+     title        title
+     world        world
+     podium       ranking
+   Trail final tetap di atas sebagai hero strip, jadi tidak ada yang hilang.
+
+   Di-scope di atas 800px supaya TIDAK bertabrakan dengan mode compact
+   (`max-height: 800px`) dan tidak menyentuh surface siswa/guru. ── */
+@media (min-width: 1280px) and (min-height: 801px) {
+  .mb-pj-phase-final {
+    display: grid;
+    /* Kolom ranking diberi lebar EKSPLISIT: kalau dibiarkan `auto`, lebar
+       `.mb-pj-ranking` (`min(100%, 520px)`) jadi sirkular dan kolaps ke
+       min-content (~299px), ikut mengecilkan baris trail di atasnya. */
+    grid-template-columns: auto 620px;
+    grid-template-areas:
+      "title  title"
+      "world  world"
+      "podium ranking";
+    justify-content: center;
+    align-content: center;
+    justify-items: center;
+    /* align-items: end → podium & ranking rata bawah, jadi podium terbaca
+       sebagai hero yang "berdiri" di samping papan peringkat. */
+    align-items: end;
+    column-gap: var(--mb-space-7);
+    row-gap: var(--mb-space-5);
+  }
+  .mb-pj-phase-final .mb-pj-final-title {
+    grid-area: title;
+  }
+  /* Trail final tetap hero (lebar penuh kolom grid), bukan dikecilkan
+     seperti mode compact 1366. */
+  .mb-pj-phase-final .mb-pj-world-final {
+    grid-area: world;
+    margin-top: 0;
+    width: min(100%, 1040px);
+  }
+  .mb-pj-phase-final .mb-podium {
+    grid-area: podium;
+  }
+  .mb-pj-phase-final .mb-pj-ranking {
+    grid-area: ranking;
+  }
+}
+
+/* ── SUMMARY di viewport LEBAR + TINGGI SEDANG (801–972px) ──
+   Celah antara mode compact 1366×768 (`max-height: 800px`) dan 1080p.
+   Komposisi horizontal di atas sudah BENAR untuk band ini, tapi tingginya
+   ~973px (980px saat SEMUA regu seri dan podium jadi 4 kolom → trail ikut
+   melebar) — jadi di 900–972 baris terakhir terpotong.
+
+   Yang dipadatkan di sini HANYA jarak & tinggi pendukung:
+     • padding vertikal fase final + row-gap grid
+     • lebar (→ tinggi) trail final — perannya pendukung di band ini
+     • gap + padding vertikal baris peringkat
+   TIDAK dikecilkan: ukuran tipografi judul, slot maskot podium (72/56),
+   tinggi step podium (120/88/64 dipertahankan), lebar kolom peringkat,
+   dan semantik tie. Podium memang bukan penentu tinggi baris di band ini
+   (baris peringkat selalu lebih tinggi), jadi padding podium dibiarkan
+   apa adanya — tidak ada yang perlu dipadatkan di sana.
+
+   Band dibatasi `max-height: 972px` sehingga komposisi 1080p (yang sudah
+   disetujui, headroom ~80px) TIDAK tersentuh sama sekali. ── */
+@media (min-width: 1280px) and (min-height: 801px) and (max-height: 972px) {
+  .mb-pj-phase-final {
+    padding: 15px var(--mb-space-6);
+    row-gap: 14px;
+  }
+  /* Trail: hero di 1080p, pendukung di sini — 1040px → 950px. */
+  .mb-pj-phase-final .mb-pj-world-final {
+    width: min(100%, 950px);
+  }
+  /* Baris peringkat: 4 regu tetap tampil, hanya ritme vertikalnya dirapatkan. */
+  .mb-pj-phase-final .mb-pj-ranking {
+    gap: 8px;
+  }
+  .mb-pj-phase-final .mb-pj-ranking .mb-pj-rank-row {
+    padding: 9px var(--mb-space-4);
+  }
+}
+
+/* ── World scenes 8B — hero projector, strip sekunder di fase soal ── */
+.mb-pj-world {
+  width: min(100%, 880px);
+  margin: var(--mb-space-4) auto 0;
+}
+.mb-pj-world-strip {
+  max-width: 640px;
+  opacity: 0.96;
+}
+.mb-pj-teams .mb-team-badge {
+  margin-right: 6px;
+  vertical-align: -6px;
+}
+.mb-pj-rank-team .mb-team-badge {
+  margin-right: 8px;
+  vertical-align: -7px;
+}
+/* Mini world di surface siswa — ringan, tak ganggu bacaan. */
+.mb-sworld {
+  width: min(100%, 420px);
+  margin: 0 auto;
+}
+
+/* ── Layar Kelas entry 8B.1 — primary + advanced secondary ── */
+.mb-room-classroom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mb-space-2);
+  padding: 0 0 var(--mb-space-5);
+}
+.mb-linklike-dark {
+  background: none;
+  border: none;
+  color: var(--mb-text-guru-secondary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px 12px;
+  min-height: 44px;
+}
+.mb-linklike-dark:hover {
+  color: var(--mb-text-guru);
+}
+.mb-linklike-dark:focus-visible {
+  outline: 2px solid var(--mb-primary-strong);
+  outline-offset: 2px;
+}
+
+/* ── Mascot presence 8B.3 — hero group lobby, lobby badge ── */
+.mb-pj-heroes {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--mb-space-5);
+  margin-top: var(--mb-space-4);
+}
+.mb-slobby-mascot {
+  display: flex;
+  justify-content: center;
+  margin: var(--mb-space-1) 0 calc(var(--mb-space-2) * -1);
+}
+
+/* ── Layar Kelas pendek (mis. 1366×768) — compact vertical rhythm 8B.4 ──
+   Target: SELURUH lobby proyektor (judul+konteks konten, PIN, jumlah
+   peserta, world/trail, 4 maskot READY, identitas regu) terlihat TANPA
+   scroll di layar kelas 16:9 pendek.
+
+   Hanya jarak/tinggi yang ditipiskan — struktur, urutan, dan hierarki
+   tetap sama. Yang SENGAJA tidak dikecilkan: ukuran maskot (tetap 64px,
+   masih di atas batas baca), jumlah peserta, dan trail (masih ~700px
+   lebar, bukan dipangkas jadi strip).
+
+   Di-scope ke viewport LEBAR + PENDEK saja, sehingga 1920×1080 dan
+   surface siswa 390×844 (tinggi 844 > 800) tidak terpengaruh. */
+@media (min-width: 900px) and (max-height: 800px) {
+  .mb-pj-head {
+    padding: var(--mb-space-3) var(--mb-space-6) 0;
+    gap: var(--mb-space-1);
+  }
+  .mb-pj-title {
+    font-size: 2rem;
+  }
+  .mb-pj-phase {
+    padding: var(--mb-space-3) var(--mb-space-6);
+    gap: var(--mb-space-3);
+  }
+  /* CATATAN: PIN proyektor SENGAJA tidak dikecilkan di sini. Digit-nya
+     di-render PinDisplay dengan styled-jsx (110×140/5rem) yang
+     spesifisitasnya mengalahkan rule global — dan memang tidak perlu:
+     dengan jarak di bawah ini PIN ukuran penuh sudah ikut muat. */
+  .mb-pj-world {
+    width: min(100%, 680px);
+    margin-top: var(--mb-space-2);
+  }
+  .mb-pj-heroes {
+    margin-top: var(--mb-space-2);
+    gap: var(--mb-space-4);
+  }
+  /* 4 regu dalam SATU baris — identitas regu tidak lagi memakan dua baris. */
+  .mb-pj-teams {
+    grid-template-columns: repeat(4, minmax(130px, 190px));
+  }
+
+  /* ── Fase QUESTION/DISCUSSION: rangkaian soal → bahasan → leader →
+     progress 4 regu dipadatkan supaya muat tanpa scroll di 1366×768.
+     Lobby TIDAK terpengaruh: lobby memakai `.mb-pj-world` tanpa `-strip`
+     (tetap 680px) dan tidak merender `.mb-pj-leader`/`.mb-pj-progress`. ── */
+
+  /* Jalur sekunder (strip) di fase soal/bahasan — tetap terbaca, bukan
+     lagi memakan ~208px tinggi. */
+  .mb-pj-world-strip {
+    max-width: 420px;
+  }
+
+  /* Leader/celebrate: gap section sudah memisahkan, margin tambahan dibuang.
+     (Prefix 2 kelas untuk mengalahkan styled-jsx milik komponen.) */
+  .mb-pj-phase .mb-pj-leader {
+    margin-top: 0;
+  }
+
+  /* TeamProgress: 4 baris regu + jarak dipadatkan.
+     Prefix `.mb-pj-phase .mb-pj-progress` dipakai agar (a) menang atas
+     styled-jsx internal komponen (spesifisitas 2 kelas) dan (b) surface
+     guru (room-client/classroom-client) yang juga memakai TeamProgress
+     TIDAK ikut berubah. */
+  .mb-pj-phase .mb-pj-progress .mb-teams {
+    gap: var(--mb-space-1);
+  }
+  .mb-pj-phase .mb-pj-progress .mb-team-row {
+    padding: 1px 0;
+  }
+  .mb-pj-phase .mb-pj-progress .mb-teams-ends {
+    font-size: 0.66rem;
+  }
+
+  /* ── Fase SUMMARY: judul → trail final → podium → ranking 4 regu
+     dipadatkan supaya muat tanpa scroll di 1366×768.
+     Lobby TIDAK terpengaruh: lobby memakai `.mb-pj-world` tanpa
+     `-final` (tetap 680px) dan tidak merender podium/ranking. ── */
+
+  /* Jarak antar-section & padding bawah khusus summary dirapatkan. */
+  .mb-pj-phase-final {
+    gap: var(--mb-space-2);
+    padding-bottom: var(--mb-space-2);
+  }
+
+  /* Trail final: perannya pendukung (hero-nya podium + ranking), jadi
+     dipadatkan hanya di viewport pendek. 1080p tetap lebar penuh. */
+  .mb-pj-world-final {
+    width: min(100%, 360px);
+  }
+
+  /* Podium: prefix 3 kelas dipakai supaya menang atas styled-jsx komponen
+     (`.mb-podium`, spesifisitas 2 kelas). */
+  .mb-pj .mb-pj-phase .mb-podium {
+    padding-top: var(--mb-space-2);
+  }
+  .mb-pj .mb-pj-phase .mb-podium-col {
+    gap: 4px;
+  }
+  /* Tinggi step tetap bertingkat 1 > 2 > 3 (semantik podium utuh),
+     hanya skalanya yang turun. Slot maskot podium (72/56) TIDAK dikecilkan
+     supaya art final nanti tidak mengubah layout.
+     CATATAN: chain harus menyertakan `.mb-podium` — styled-jsx komponen
+     menghasilkan `.mb-podium-col.hash[data-rank] .mb-podium-step.hash`
+     (0,5,0); tanpa tambahan ini spesifisitasnya SERI dan styled-jsx menang. */
+  .mb-pj .mb-pj-phase .mb-podium .mb-podium-col[data-rank="1"] .mb-podium-step {
+    height: 88px;
+  }
+  .mb-pj .mb-pj-phase .mb-podium .mb-podium-col[data-rank="2"] .mb-podium-step {
+    height: 64px;
+  }
+  .mb-pj .mb-pj-phase .mb-podium .mb-podium-col[data-rank="3"] .mb-podium-step {
+    height: 48px;
+  }
+
+  /* Ranking: baris + jarak antar baris dipadatkan (4 regu tetap tampil). */
+  .mb-pj-phase .mb-pj-ranking {
+    gap: var(--mb-space-1);
+  }
+  .mb-pj-phase .mb-pj-ranking .mb-pj-rank-row {
+    padding: var(--mb-space-1) var(--mb-space-4);
+  }
+}
+
+/* ── Projector rhythm menengah (1280px+ × tinggi 801–899px) ──
+   Band ini berada tepat di antara compact 1366×768 dan projector 1080p.
+   Selector :has() sengaja membatasi perubahan hanya pada LOBBY dan
+   DISCUSSION: summary memakai grid-nya sendiri, sedangkan question/closed
+   tidak ikut berubah. Semua konten tetap tampil; yang dirapatkan hanya
+   ritme vertikal dan ukuran scene pendukung. */
+@media (min-width: 1280px) and (min-height: 801px) and (max-height: 899px) {
+  .mb-pj-head {
+    padding: var(--mb-space-3) var(--mb-space-6) 0;
+    gap: var(--mb-space-1);
+  }
+
+  /* LOBBY: PIN dan maskot tetap ukuran penuh; world dan identitas regu
+     menjadi lebih efisien agar enam blok utama terbaca sekaligus. */
+  .mb-pj-phase:has(.mb-pin-projector) {
+    padding: var(--mb-space-4) var(--mb-space-6);
+    gap: var(--mb-space-4);
+  }
+  .mb-pj-phase:has(.mb-pin-projector) .mb-pj-world {
+    width: min(100%, 760px);
+    margin-top: var(--mb-space-3);
+  }
+  .mb-pj-phase:has(.mb-pin-projector) .mb-pj-heroes {
+    margin-top: var(--mb-space-2);
+    gap: var(--mb-space-4);
+  }
+  .mb-pj-phase:has(.mb-pin-projector) .mb-pj-teams {
+    grid-template-columns: repeat(4, minmax(130px, 190px));
+  }
+
+  /* DISCUSSION: soal, jawaban, dan maskot celebrate dipertahankan;
+     strip serta baris progres dibuat medium, bukan seketat mode 768px. */
+  .mb-pj-phase:has(.mb-pj-reveal) {
+    padding: var(--mb-space-4) var(--mb-space-6);
+    gap: var(--mb-space-3);
+  }
+  .mb-pj-phase:has(.mb-pj-reveal) .mb-pj-leader {
+    margin-top: 0;
+  }
+  .mb-pj-phase:has(.mb-pj-reveal) .mb-pj-world-strip {
+    max-width: 520px;
+    margin-top: var(--mb-space-2);
+  }
+  .mb-pj-phase:has(.mb-pj-reveal) .mb-pj-progress .mb-teams {
+    gap: 6px;
+  }
+  .mb-pj-phase:has(.mb-pj-reveal) .mb-pj-progress .mb-team-row {
+    padding: 3px 0;
+  }
+  .mb-pj-phase:has(.mb-pj-reveal) .mb-pj-progress .mb-teams-ends {
+    font-size: 0.68rem;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   8C.1 — Jelajah motion (presentation-only)
+   Marker travel (600ms = TRAVEL_MS in useTrailMotion.ts) + pose animation.
+   Hormati prefers-reduced-motion: reduce.
+   ───────────────────────────────────────────────────────────── */
+.mb-trail-marker {
+  /* Fallback; inline style on each marker sets the authoritative travel. */
+  transition: transform 600ms ease-out;
+  will-change: transform;
+}
+.mb-trail-marker.mb-trail-moving {
+  filter: brightness(1.15) saturate(1.1);
+}
+@keyframes mb-celebrate-pulse {
+  0% {
+    transform: scale(1);
+  }
+  20% {
+    transform: scale(1.08);
+  }
+  60% {
+    transform: scale(0.98);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.mb-trail-marker [data-pose="move"],
+.mb-trail-marker [data-pose="celebrate"] img {
+  animation: mb-celebrate-pulse var(--mb-motion-med) ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mb-trail-marker {
+    transition: none;
+  }
+  .mb-trail-marker.mb-trail-moving {
+    filter: none;
+  }
+  .mb-trail-marker [data-pose="move"] img,
+  .mb-trail-marker [data-pose="celebrate"] img {
+    animation: none;
+  }
 }
 
 /* ── Fullscreen mode: hide sidebar + bottom nav ── */

@@ -41,11 +41,17 @@ function loadMasterTheme(theme: string): BankSoalSourceResult {
   if (!Array.isArray(raw)) return { ok: false, code: 'PACKAGE_NOT_FOUND' };
 
   const questions: BankSoalQuestionInput[] = [];
+  // Label tampilan tema master: diambil dari field `tema` soal pertama
+  // (data master selalu membawanya); fallback = slug yang dirapikan.
+  let themeLabel: string | null = null;
   for (const item of raw) {
     if (typeof item !== 'object' || item === null) continue;
     const q = item as Record<string, unknown>;
     if (typeof q.kodeSoal !== 'string' || typeof q.type !== 'string' || typeof q.text !== 'string') {
       continue; // baris rusak diabaikan sebagai "tidak ada" — bukan soal valid
+    }
+    if (!themeLabel && typeof q.tema === 'string' && q.tema.trim() !== '') {
+      themeLabel = q.tema.trim();
     }
     const options = Array.isArray(q.options) ? q.options.filter((o): o is string => typeof o === 'string') : [];
     questions.push({
@@ -59,7 +65,16 @@ function loadMasterTheme(theme: string): BankSoalSourceResult {
       passageTitle: null,
     });
   }
-  return { ok: true, questions, contentTitle: theme.charAt(0).toUpperCase() + theme.slice(1).replace(/-/g, ' ') };
+  return { ok: true, questions, contentTitle: themeLabel ?? titleFromSlug(theme) };
+}
+
+/** Slug tema master → label tampilan (mis. `gaya-bahasa` → `Gaya Bahasa`). */
+function titleFromSlug(slug: string): string {
+  return slug
+    .split('-')
+    .filter((part) => part !== '')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
 }
 
 export class PrismaBankSoalQuestionSource implements BankSoalQuestionSource {
@@ -92,7 +107,12 @@ export class PrismaBankSoalQuestionSource implements BankSoalQuestionSource {
     // SoalSet existing — soal milik paket, urutan stabil by createdAt+id.
     const soalSet = await db.soalSet.findUnique({
       where: { id: ref.soalSetId },
-      select: { id: true, title: true, questions: { orderBy: [{ createdAt: 'asc' }, { id: 'asc' }] } },
+      select: {
+        id: true,
+        // `title` = identitas tampilan paket; ikut jadi snapshot sesi.
+        title: true,
+        questions: { orderBy: [{ createdAt: 'asc' }, { id: 'asc' }] },
+      },
     });
     if (!soalSet) return { ok: false, code: 'PACKAGE_NOT_FOUND' };
 
@@ -106,6 +126,6 @@ export class PrismaBankSoalQuestionSource implements BankSoalQuestionSource {
       passage: null,
       passageTitle: null,
     }));
-    return { ok: true, questions, contentTitle: soalSet.title || 'Paket Soal' };
+    return { ok: true, questions, contentTitle: soalSet.title };
   }
 }

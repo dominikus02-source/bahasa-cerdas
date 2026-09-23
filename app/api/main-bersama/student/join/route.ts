@@ -12,6 +12,7 @@ import { buildStudentView } from '@/src/main-bersama/presentation/view-mappers';
 import { mapHttpError } from '@/src/main-bersama/presentation/http-errors';
 import type { StudentErrorCode } from '@/src/main-bersama/application/services/student-flows';
 import type { StudentSessionView } from '@/src/main-bersama/contracts/views/student';
+import { mainBersamaMutationBlocked } from '@/lib/main-bersama/mutation-guard';
 
 
 /** Bungkus mapped error → NextResponse (mapper-nya framework-agnostic). */
@@ -21,6 +22,11 @@ function errorResponse(code: string, reason?: string) {
 }
 
 export async function POST(req: NextRequest) {
+  // Safety mutasi (Tahap 8A.4 §1): join MEMBUAT player baru. Tamu tidak
+  // punya auth, jadi guard jalan paling awal — sebelum body/DB disentuh.
+  const blocked = mainBersamaMutationBlocked('student/join');
+  if (blocked) return blocked;
+
   let body: { pin?: unknown; displayName?: unknown };
   try {
     body = await req.json();

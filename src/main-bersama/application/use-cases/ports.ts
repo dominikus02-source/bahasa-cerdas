@@ -61,7 +61,11 @@ export type BankSoalSourceResult =
   | {
       ok: true;
       questions: BankSoalQuestionInput[];
-      /** Label public-safe dari sumber soal (mis. nama tema/SoalSet). */
+      /**
+       * Label tampilan sumber (public-safe, tanpa isi soal): nama tema
+       * Bank Soal, judul SoalSet, atau nama tema master. Dipakai
+       * create-session sebagai SNAPSHOT `MainSession.contentTitle`.
+       */
       contentTitle: string;
     }
   | { ok: false; code: 'PACKAGE_NOT_FOUND' };
@@ -130,7 +134,16 @@ export interface MainSessionCreationStore {
     gameMode: GameMode;
   }): Promise<
     | { ok: true }
-    | { ok: false; code: 'PIN_TAKEN' | 'SESSION_CREATION_FAILED' }
+    | {
+        ok: false;
+        /**
+         * `PIN_TAKEN` = unique PIN (retry PIN baru) ·
+         * `SESSION_STORE_UNAVAILABLE` = skema belum diterapkan / DB tak
+         * terjangkau (retry tidak menolong — lapor ke admin) ·
+         * `SESSION_CREATION_FAILED` = sisanya.
+         */
+        code: 'PIN_TAKEN' | 'SESSION_STORE_UNAVAILABLE' | 'SESSION_CREATION_FAILED';
+      }
   >;
 }
 
