@@ -5,10 +5,29 @@
  * dari backend — frontend TIDAK menghitung ulang progress.
  * Visual = CSS/SVG sederhana, mudah diganti city artwork final.
  */
+import type { CSSProperties } from 'react';
 
 interface CityProgressProps {
   progressPercent: number; // 0..100 dari backend
   unlockedMilestones: string[];
+  /**
+   * 8C.2 — true while the bar should travel via CSS (650ms ease-out).
+   * False (mount/reconnect/correction/gated/reduced) snaps instantly.
+   * Defaults true to preserve pre-8C.2 behavior for non-projector callers.
+   */
+  animate?: boolean;
+  /** 8C.2 — transient REVEAL subset of unlockedMilestones. */
+  revealMilestones?: string[];
+  /**
+   * 8C.2 — nilai AWAL travel (progres sebelumnya) dari useKotaMotion.
+   *
+   * Diisi HANYA saat animasi kenaikan berjalan. Wajib untuk surface yang
+   * BARU di-mount (CLOSED/DISCUSSION punya subtree berbeda dari QUESTION):
+   * elemen baru tidak punya "lebar sebelumnya", sehingga `transition`
+   * tidak bergerak sama sekali. Dengan nilai awal eksplisit, travel
+   * dianimasikan lewat keyframes dari nilai lama → nilai baru.
+   */
+  growFrom?: number | null;
 }
 
 const MILESTONES = [
@@ -18,23 +37,48 @@ const MILESTONES = [
   { key: 'town-center', label: 'Pusat Kota', at: 100 },
 ] as const;
 
-export function CityProgress({ progressPercent, unlockedMilestones }: CityProgressProps) {
+export function CityProgress({
+  progressPercent,
+  unlockedMilestones,
+  animate = true,
+  revealMilestones = [],
+  growFrom = null,
+}: CityProgressProps) {
   const unlocked = new Set(unlockedMilestones);
+  const revealing = new Set(revealMilestones);
   const litCount = MILESTONES.filter((m) => unlocked.has(m.key)).length;
   const value = Math.max(0, Math.min(100, progressPercent));
+  const from = growFrom === null ? null : Math.max(0, Math.min(100, growFrom));
+  // Travel via keyframes bila ada titik awal eksplisit (surface baru maupun
+  // elemen yang sudah ter-mount). Kalau tidak, perilaku lama dipertahankan:
+  // transition untuk `animate`, snap untuk sisanya.
+  const grow = animate && from !== null && from < value;
+  const fillClass = grow
+    ? 'mb-city-fill-grow'
+    : animate
+      ? 'mb-city-fill-anim'
+      : 'mb-city-fill-snap';
+  const fillStyle: CSSProperties = grow
+    ? ({
+        width: `${value}%`,
+        '--mb-city-from': `${from}%`,
+        '--mb-city-to': `${value}%`,
+      } as CSSProperties)
+    : { width: `${value}%` };
   return (
     <div className="mb-city" aria-label={`Progres kota ${Math.round(value)} persen`}>
       <Skyline litCount={litCount} />
       <div className="mb-city-trackwrap">
         <div className="mb-city-track" aria-hidden>
-          <div className="mb-city-fill mb-progress-transition" style={{ width: `${value}%` }} />
+          <div className={`mb-city-fill ${fillClass}`} style={fillStyle} />
         </div>
         {MILESTONES.map((m) => {
           const on = unlocked.has(m.key);
+          const rev = on && revealing.has(m.key);
           return (
             <span
               key={m.key}
-              className={`mb-city-node ${on ? 'mb-city-node-on' : ''}`}
+              className={`mb-city-node ${on ? 'mb-city-node-on' : ''}${rev ? ' mb-city-node-reveal' : ''}`}
               style={{ left: `${m.at}%` }}
               aria-hidden
             >

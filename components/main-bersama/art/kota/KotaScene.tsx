@@ -35,10 +35,13 @@ function Windows({ x, y, w, n, lit, litColor }: { x: number; y: number; w: numbe
 interface KotaSceneProps {
   unlocked: string[];
   mini?: boolean;
+  /** 8C.2 — transient REVEAL subset of `unlocked` (glow/arrive, then settle). */
+  reveal?: string[];
 }
 
-export function KotaScene({ unlocked, mini = false }: KotaSceneProps) {
+export function KotaScene({ unlocked, mini = false, reveal = [] }: KotaSceneProps) {
   const on = new Set(unlocked);
+  const revealing = new Set(reveal);
   const lit = (k: string) => on.has(k);
   const glow = 'var(--mb-kota-glow)';
   const winLit = 'var(--mb-kota-glow)';
@@ -66,7 +69,7 @@ export function KotaScene({ unlocked, mini = false }: KotaSceneProps) {
       {/* ground */}
       <rect x="0" y="238" width="800" height="62" fill="#13253a" />
       {/* ── garden (trees) ── */}
-      <g data-milestone="garden" data-lit={lit('garden')}>
+      <g data-milestone="garden" data-lit={lit('garden')} data-reveal={revealing.has('garden')} className={revealing.has('garden') ? 'mb-kota-reveal' : undefined}>
         {[120, 175, 230].map((x, i) => (
           <g key={x}>
             <rect x={x - 3} y={208} width={6} height={32} rx={3} fill={B} />
@@ -77,7 +80,7 @@ export function KotaScene({ unlocked, mini = false }: KotaSceneProps) {
         ))}
       </g>
       {/* ── library (columned hall) ── */}
-      <g data-milestone="library" data-lit={lit('library')}>
+      <g data-milestone="library" data-lit={lit('library')} data-reveal={revealing.has('library')} className={revealing.has('library') ? 'mb-kota-reveal' : undefined}>
         <rect x="300" y="170" width="120" height="70" rx="6" fill={B} />
         <rect x="292" y="158" width="136" height="14" rx="4" fill={B} />
         {[312, 336, 360, 384].map((x) => (
@@ -86,7 +89,7 @@ export function KotaScene({ unlocked, mini = false }: KotaSceneProps) {
         {lit('library') ? <circle cx={360} cy={200} r={52} fill={glow} opacity="0.12" /> : null}
       </g>
       {/* ── homes (two houses) ── */}
-      <g data-milestone="homes" data-lit={lit('homes')}>
+      <g data-milestone="homes" data-lit={lit('homes')} data-reveal={revealing.has('homes')} className={revealing.has('homes') ? 'mb-kota-reveal' : undefined}>
         <g>
           <rect x="460" y="196" width="56" height="44" rx="4" fill={B} />
           <path d="M454 198 L488 172 L522 198 Z" fill={B} />
@@ -100,7 +103,7 @@ export function KotaScene({ unlocked, mini = false }: KotaSceneProps) {
         {lit('homes') ? <circle cx={518} cy={208} r={44} fill={glow} opacity="0.1" /> : null}
       </g>
       {/* ── town-center (beacon tower) ── */}
-      <g data-milestone="town-center" data-lit={lit('town-center')}>
+      <g data-milestone="town-center" data-lit={lit('town-center')} data-reveal={revealing.has('town-center')} className={revealing.has('town-center') ? 'mb-kota-reveal' : undefined}>
         {lit('town-center') ? <circle cx={660} cy={120} r={64} fill={glow} opacity="0.16" /> : null}
         <rect x="636" y="120" width="48" height="120" rx="6" fill={B} />
         <path d="M628 122 L660 92 L692 122 Z" fill={B} />

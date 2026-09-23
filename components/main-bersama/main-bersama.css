@@ -905,6 +905,82 @@
   }
 }
 
+/* ── Kota Cahaya motion 8C.2 (§4–§7, §13, §15) ──
+   AUTHORITATIVE PROGRESS: bar travels via width transition (650ms
+   ease-out, no bounce); milestone reveal = opacity rise + subtle
+   0.97→1 settle (500ms), staggered ~100ms on multi-cross. transform +
+   opacity only — no animated blur/shadow layers, no infinite pulse.
+   100% reads stronger via town-center halo already in KotaScene art,
+   not via a separate celebration system. */
+@media (prefers-reduced-motion: no-preference) {
+  .mb-city-fill-anim {
+    transition: width 650ms ease-out;
+  }
+  .mb-city-fill-snap {
+    transition: none;
+  }
+  .mb-city-node-reveal {
+    animation: mb-kota-reveal 500ms ease-out both;
+  }
+  /* Travel dari nilai awal eksplisit. Surface yang BARU di-mount (CLOSED/
+     DISCUSSION berbeda subtree dari QUESTION) tidak punya lebar
+     sebelumnya → `transition` tidak bergerak sama sekali; keyframes
+     memberi titik awal sehingga payoff progres tetap terlihat. */
+  .mb-city-fill-grow {
+    transition: none;
+    animation: mb-city-fill-grow 650ms ease-out both;
+  }
+  @keyframes mb-city-fill-grow {
+    from {
+      width: var(--mb-city-from, 0%);
+    }
+    to {
+      width: var(--mb-city-to, 100%);
+    }
+  }
+  .mb-kota-reveal {
+    animation: mb-kota-reveal 500ms ease-out both;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  @keyframes mb-kota-reveal {
+    from {
+      opacity: 0.3;
+      transform: scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mb-city-fill-anim,
+  .mb-city-fill-snap {
+    transition: none;
+  }
+  .mb-city-node-reveal,
+  .mb-kota-reveal,
+  .mb-city-fill-grow {
+    animation: none;
+  }
+}
+
+/* ── Payoff Kota di layar CLOSED (§8C.2) ──
+   Progres Kota di-commit saat guru menekan "Tutup Jawaban" (phase closed),
+   jadi bar + langit kota harus tampil DI SINI. Tanpa ini, snapshot naik
+   hanya dikonsumsi saat tak ada kota surface ter-mount → DISCUSSION masuk
+   dengan nilai yang sama (noop) dan reveal tak pernah terlihat. */
+.mb-pj-closed-kota {
+  width: min(100%, 560px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--mb-space-3);
+}
+.mb-pj-closed-kota .mb-pj-world {
+  margin-top: 0;
+}
+
 /* Fokus terlihat jelas (§31). */
 .mb-scope :focus-visible {
   outline: 3px solid var(--mb-accent);

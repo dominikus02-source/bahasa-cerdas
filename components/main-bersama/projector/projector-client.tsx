@@ -23,6 +23,10 @@ import { TeamBadge } from "@/components/main-bersama/art/shared/TeamBadge";
 import { TeamMascot } from "@/components/main-bersama/art/registry";
 import { Podium } from "@/components/main-bersama/art/jelajah/Podium";
 import { useTrailMotion } from "@/components/main-bersama/art/jelajah-motion/useTrailMotion";
+import {
+  useKotaMotion,
+  type KotaMotion,
+} from "@/components/main-bersama/art/kota-motion/useKotaMotion";
 
 const MODE_LABEL = {
   "jelajah-kata": "Jelajah Kata",
@@ -92,6 +96,35 @@ export function ProjectorClient() {
   const phase = view?.phase ?? "";
   const { getPose } = useTrailMotion(teamProgress, phase);
 
+  // 8C.2 — kota motion derives transient reveal from authoritative
+  // progress + unlockedMilestones. Unconditional (hooks rules); snaps
+  // to authoritative whenever mode/phase/motion forbids animation.
+  const kotaProgressPercent =
+    gameMode === "kota-cahaya"
+      ? (
+          view as ProjectorSessionView & {
+            gameProgress: {
+              gameMode: "kota-cahaya";
+              progressPercent: number;
+              unlockedMilestones: string[];
+            };
+          }
+        ).gameProgress.progressPercent
+      : 0;
+  const kotaUnlocked =
+    gameMode === "kota-cahaya"
+      ? (
+          view as ProjectorSessionView & {
+            gameProgress: {
+              gameMode: "kota-cahaya";
+              progressPercent: number;
+              unlockedMilestones: string[];
+            };
+          }
+        ).gameProgress.unlockedMilestones
+      : [];
+  const kotaMotion = useKotaMotion(kotaProgressPercent, kotaUnlocked, phase);
+
   if (lookupError && !view) {
     return (
       <main className="mb-pj-idle mb-fade-in">
@@ -141,9 +174,9 @@ export function ProjectorClient() {
       </header>
 
       {view.phase === "lobby" || view.phase === "preparing" ? (
-        <ProjectorLobby view={view} getPose={getPose} />
+        <ProjectorLobby view={view} getPose={getPose} kotaMotion={kotaMotion} />
       ) : view.phase === "question" ? (
-        <ProjectorQuestion view={view} />
+        <ProjectorQuestion view={view} kotaMotion={kotaMotion} />
       ) : view.phase === "closed" || view.phase === "paused" ? (
         <section className="mb-pj-phase mb-fade-in" role="status">
           <h2 className="mb-display mb-pj-closed">
@@ -152,9 +185,37 @@ export function ProjectorClient() {
               : "Permainan dijeda"}
           </h2>
           <ParticipantCount count={view.participation.playerCount} />
+          {/* 8C.2 — payoff Kota Cahaya tepat setelah "Tutup Jawaban":
+              engine meng-commit progres Kota pada close-round, jadi bar
+              dan langit kota HARUS ter-mount di sini. Memakai state motion
+              yang SAMA dari parent (satu state machine per sesi) — bukan
+              hook kedua. Hanya Kota; Jelajah tetap seperti sebelumnya. */}
+          {view.phase === "closed" &&
+          view.gameProgress.gameMode === "kota-cahaya" ? (
+            <div className="mb-pj-closed-kota" aria-hidden>
+              <div className="mb-pj-world mb-pj-world-strip">
+                <KotaScene
+                  unlocked={kotaMotion.litMilestones}
+                  reveal={kotaMotion.revealMilestones}
+                  mini
+                />
+              </div>
+              <CityProgress
+                progressPercent={kotaMotion.displayedProgress}
+                unlockedMilestones={kotaMotion.litMilestones}
+                animate={kotaMotion.animateProgress}
+                growFrom={kotaMotion.growFrom}
+                revealMilestones={kotaMotion.revealMilestones}
+              />
+            </div>
+          ) : null}
         </section>
       ) : view.phase === "discussion" && view.revealedRound ? (
-        <ProjectorDiscussion view={view} getPose={getPose} />
+        <ProjectorDiscussion
+          view={view}
+          getPose={getPose}
+          kotaMotion={kotaMotion}
+        />
       ) : (
         <ProjectorSummary view={view} />
       )}
@@ -205,9 +266,11 @@ function useResolvedSessionId(
 function ProjectorLobby({
   view,
   getPose,
+  kotaMotion,
 }: {
   view: ProjectorSessionView;
   getPose: (id: string) => "ready" | "move" | "celebrate";
+  kotaMotion: KotaMotion;
 }) {
   const pin = view.joinInfo?.pin ?? "------";
   return (
@@ -264,14 +327,20 @@ function ProjectorLobby({
         </div>
       ) : (
         <div className="mb-pj-world" aria-hidden>
-          <KotaScene unlocked={view.gameProgress.unlockedMilestones} />
+          <KotaScene
+            unlocked={kotaMotion.litMilestones}
+            reveal={kotaMotion.revealMilestones}
+          />
         </div>
       )}
       {view.gameProgress.gameMode === "jelajah-kata" ? null : (
         <div className="mb-pj-kota-preview" aria-hidden>
           <CityProgress
-            progressPercent={view.gameProgress.progressPercent}
-            unlockedMilestones={view.gameProgress.unlockedMilestones}
+            progressPercent={kotaMotion.displayedProgress}
+            unlockedMilestones={kotaMotion.litMilestones}
+            animate={kotaMotion.animateProgress}
+            growFrom={kotaMotion.growFrom}
+            revealMilestones={kotaMotion.revealMilestones}
           />
         </div>
       )}
@@ -281,7 +350,13 @@ function ProjectorLobby({
 
 // ─── Question (§24) — agregat, TANPA answer/individu/key ────
 
-function ProjectorQuestion({ view }: { view: ProjectorSessionView }) {
+function ProjectorQuestion({
+  view,
+  kotaMotion,
+}: {
+  view: ProjectorSessionView;
+  kotaMotion: KotaMotion;
+}) {
   const q = view.currentQuestion;
   return (
     <section className="mb-pj-phase mb-fade-in">
@@ -318,11 +393,18 @@ function ProjectorQuestion({ view }: { view: ProjectorSessionView }) {
         ) : (
           <>
             <div className="mb-pj-world mb-pj-world-strip" aria-hidden>
-              <KotaScene unlocked={view.gameProgress.unlockedMilestones} mini />
+              <KotaScene
+                unlocked={kotaMotion.litMilestones}
+                reveal={kotaMotion.revealMilestones}
+                mini
+              />
             </div>
             <CityProgress
-              progressPercent={view.gameProgress.progressPercent}
-              unlockedMilestones={view.gameProgress.unlockedMilestones}
+              progressPercent={kotaMotion.displayedProgress}
+              unlockedMilestones={kotaMotion.litMilestones}
+              animate={kotaMotion.animateProgress}
+              growFrom={kotaMotion.growFrom}
+              revealMilestones={kotaMotion.revealMilestones}
             />
           </>
         )}
@@ -336,9 +418,11 @@ function ProjectorQuestion({ view }: { view: ProjectorSessionView }) {
 function ProjectorDiscussion({
   view,
   getPose,
+  kotaMotion,
 }: {
   view: ProjectorSessionView;
   getPose: (id: string) => "ready" | "move" | "celebrate";
+  kotaMotion: KotaMotion;
 }) {
   const r = view.revealedRound!;
   return (
@@ -391,11 +475,18 @@ function ProjectorDiscussion({
         ) : (
           <>
             <div className="mb-pj-world mb-pj-world-strip" aria-hidden>
-              <KotaScene unlocked={view.gameProgress.unlockedMilestones} mini />
+              <KotaScene
+                unlocked={kotaMotion.litMilestones}
+                reveal={kotaMotion.revealMilestones}
+                mini
+              />
             </div>
             <CityProgress
-              progressPercent={view.gameProgress.progressPercent}
-              unlockedMilestones={view.gameProgress.unlockedMilestones}
+              progressPercent={kotaMotion.displayedProgress}
+              unlockedMilestones={kotaMotion.litMilestones}
+              animate={kotaMotion.animateProgress}
+              growFrom={kotaMotion.growFrom}
+              revealMilestones={kotaMotion.revealMilestones}
             />
           </>
         )}
