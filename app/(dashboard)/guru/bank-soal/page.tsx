@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -55,6 +55,14 @@ interface GroupItem {
 
 export default function BankSoalPage() {
   const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // ── Mode Main Bersama picker (§Phase 2) ──
+  // Tidak ada `?untuk=main-bersama` → perilaku produksi normal, 100% tak berubah.
+  // Saat picker aktif: layout & kartu modern TETAP SAMA; hanya tambahan
+  // banner kontekstual + aksi "Gunakan untuk Main Bersama" pada modal tema.
+  const pickerMode = searchParams.get("untuk") === "main-bersama";
 
   // ── Data state ──
   const [themes, setThemes] = useState<ThemeData[]>([]);
@@ -83,6 +91,29 @@ export default function BankSoalPage() {
   } | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [showAllThemes, setShowAllThemes] = useState(false);
+
+  // ── Handoff Main Bersama: seed baru per pembukaan modal (perilaku lama §8A.3) ──
+  const [mbSeed, setMbSeed] = useState<string | null>(null);
+  const [mbReturning, setMbReturning] = useState(false);
+
+  /**
+   * Handoff ke setup Main Bersama: hanya identitas + parameter pilihan
+   * yang dibawa lewat URL (tema, jumlah, tingkat, seed) — kontrak yang
+   * SAMA dengan 8A.3. Tidak ada isi soal/kunci jawaban di query string;
+   * verifikasi tetap server-side lewat normalizer create-session.
+   */
+  const handleUseForMainBersama = useCallback(() => {
+    if (!selectedTheme) return;
+    const params = new URLSearchParams({
+      untuk: "main-bersama",
+      tema: selectedTheme.name,
+      jumlah: String(sendJumlah),
+    });
+    if (sendDifficulty) params.set("tingkat", sendDifficulty);
+    if (mbSeed) params.set("seed", mbSeed);
+    setMbReturning(true);
+    router.push(`/guru/game/main-bersama?${params.toString()}`);
+  }, [selectedTheme, sendJumlah, sendDifficulty, mbSeed, router]);
 
   // ── Data fetching ──
   const fetchThemes = useCallback(async () => {
@@ -186,7 +217,9 @@ export default function BankSoalPage() {
     setSendDifficulty("");
     setQuestionSet(null);
     setPreview(null);
-    fetchGroups();
+    // Picker mode: seed baru per pembukaan + latihan state tidak dipakai.
+    if (pickerMode) setMbSeed(Math.random().toString(36).slice(2, 12));
+    if (!pickerMode) fetchGroups();
   };
 
   const handleOpenByName = (themeName: string) => {
@@ -294,6 +327,32 @@ export default function BankSoalPage() {
         >
           {success}
         </div>
+      )}
+
+      {/* Main Bersama picker banner — hanya saat ?untuk=main-bersama.
+          Halaman normal TIDAK PERNAH merender blok ini (zero regression). */}
+      {pickerMode && (
+        <section
+          aria-label="Memilih tema untuk Main Bersama"
+          className="flex flex-wrap items-center gap-3 rounded-2xl border border-teal-300/70 bg-teal-50 px-4 py-3"
+        >
+          <span className="w-9 h-9 rounded-xl bg-teal-600 flex items-center justify-center shrink-0">
+            <MonitorPlay size={17} className="text-white" aria-hidden />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-bold text-gray-900">Pilih tema untuk Main Bersama</p>
+            <p className="text-xs text-gray-500">
+              Buka sebuah tema, atur jumlah soal, lalu tekan{" "}
+              <strong className="font-semibold">Gunakan untuk Main Bersama</strong>.
+            </p>
+          </div>
+          <Link
+            href="/guru/game/main-bersama"
+            className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-teal-600/30 text-teal-700 text-sm font-semibold hover:bg-teal-100 transition-colors"
+          >
+            ← Kembali ke Main Bersama
+          </Link>
+        </section>
       )}
 
       {/* ════════════════════════════════════════════════════════
@@ -590,7 +649,7 @@ export default function BankSoalPage() {
       <Modal
         isOpen={!!selectedTheme}
         onClose={() => setSelectedTheme(null)}
-        title="Siapkan Latihan"
+        title={pickerMode ? "Gunakan Tema" : "Siapkan Latihan"}
         className="max-w-md"
       >
         {selectedTheme &&
@@ -660,7 +719,9 @@ export default function BankSoalPage() {
                   </select>
                 </div>
 
-                {/* Pilih Kelas */}
+                {/* Pilih Kelas — hanya mode latihan; di Main Bersama kelas
+                    dipilih kemudian di Step 3 setup. */}
+                {!pickerMode && (
                 <div>
                   <label className="block text-sm font-semibold mb-2">
                     Pilih Kelas
@@ -713,48 +774,89 @@ export default function BankSoalPage() {
                     )}
                   </div>
                 </div>
+                )}
 
                 {/* Actions */}
                 <div className="pt-2 space-y-2">
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => setSelectedTheme(null)}
-                      className="flex-1"
-                    >
-                      Batal
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={handlePreview}
-                      disabled={previewLoading}
-                      className="flex-1"
-                    >
-                      {previewLoading ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <BookOpen size={16} className="mr-1" />
-                      )}
-                      Lihat Soal
-                    </Button>
-                  </div>
-                  <Button
-                    onClick={handleSend}
-                    disabled={sending || selectedGroups.length === 0}
-                    className="w-full bg-emerald-600"
-                  >
-                    {sending ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Send size={16} className="mr-1" />
-                    )}
-                    {sending ? "Mengirim..." : "Kirim Latihan"}
-                  </Button>
-                  <p className="text-center text-xs text-gray-400">
-                    {selectedGroups.length === 0
-                      ? "Pilih minimal 1 kelas"
-                      : `${selectedGroups.length} kelas dipilih`}
-                  </p>
+                  {pickerMode ? (
+                    <>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => setSelectedTheme(null)}
+                          className="flex-1"
+                        >
+                          Batal
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={handlePreview}
+                          disabled={previewLoading}
+                          className="flex-1"
+                        >
+                          {previewLoading ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <BookOpen size={16} className="mr-1" />
+                          )}
+                          Lihat Soal
+                        </Button>
+                      </div>
+                      <Button
+                        onClick={handleUseForMainBersama}
+                        disabled={mbReturning || selectedTheme.total === 0}
+                        className="w-full bg-teal-600"
+                      >
+                        <MonitorPlay size={16} className="mr-1" />
+                        Gunakan untuk Main Bersama
+                      </Button>
+                      <p className="text-center text-xs text-gray-400">
+                        Jumlah soal &amp; tingkat kesulitan bisa diubah lagi di Main Bersama. Kelas dapat dipilih setelah kembali ke Main Bersama.
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => setSelectedTheme(null)}
+                          className="flex-1"
+                        >
+                          Batal
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={handlePreview}
+                          disabled={previewLoading}
+                          className="flex-1"
+                        >
+                          {previewLoading ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <BookOpen size={16} className="mr-1" />
+                          )}
+                          Lihat Soal
+                        </Button>
+                      </div>
+                      <Button
+                        onClick={handleSend}
+                        disabled={sending || selectedGroups.length === 0}
+                        className="w-full bg-emerald-600"
+                      >
+                        {sending ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Send size={16} className="mr-1" />
+                        )}
+                        {sending ? "Mengirim..." : "Kirim Latihan"}
+                      </Button>
+                      <p className="text-center text-xs text-gray-400">
+                        {selectedGroups.length === 0
+                          ? "Pilih minimal 1 kelas"
+                          : `${selectedGroups.length} kelas dipilih`}
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
             );
