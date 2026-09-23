@@ -28,7 +28,7 @@ export type MascotPose = 'ready' | 'move' | 'celebrate' | 'podium';
  * 2026-09-21 — READY batch LOCKED (4/4, commit 6d73c3c).
  * 2026-09-22 — MOVE batch LOCKED (4/4, commit da739ee).
  * 2026-09-22 — CELEBRATE batch LOCKED (4/4).
- * 2026-09-22 — PODIUM candidate batch integrated for owner review (4/4).
+ * 2026-09-22 — PODIUM batch reviewed and locked by owner (4/4).
  * Semua runtime memakai WebP 1024px (alpha utuh, ~88% lebih kecil) hasil
  * turunan dari PNG master 1254px yang tetap lossless di docs/.
  * TeamBadge tetap menjadi fallback defensif bila source pose gagal dimuat.
