@@ -2,7 +2,7 @@
 // ─── Realtime + Polling State Hook (Tahap 7 §21) ─────────────
 // Pola: Broadcast sinyal → debounce → role GET authoritative →
 // replace view. Sinyal TIDAK dipercaya sebagai state (payload
-// diabaikan). Safety poll 15s berjalan di dalam helper.
+// diabaikan). Safety poll fallback berjalan di dalam helper dan bisa dituning per surface.
 // Cleanup otomatis saat unmount; satu channel per mount.
 
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -31,6 +31,8 @@ export function useSessionView<T>(
   fetchRef.current = fetchView;
   const errorRef = useRef(options.onError);
   errorRef.current = options.onError;
+  const pollIntervalMs = options.pollIntervalMs;
+  const debounceMs = options.debounceMs;
   // Guard Strict-Mode double-effect: refresh dijamin idempotent —
   // cukup flag untuk menghindari subscribe ganda pada mount lama.
   const sessionRef = useRef(sessionId);
@@ -62,18 +64,14 @@ export function useSessionView<T>(
     const sub = subscribeSessionUpdates({
       sessionId,
       refetch: refresh,
-      ...(options.pollIntervalMs !== undefined
-        ? { pollIntervalMs: options.pollIntervalMs }
-        : {}),
-      ...(options.debounceMs !== undefined
-        ? { debounceMs: options.debounceMs }
-        : {}),
+      ...(pollIntervalMs !== undefined ? { pollIntervalMs } : {}),
+      ...(debounceMs !== undefined ? { debounceMs } : {}),
     });
 
     return () => {
       sub.stop(); // cleanup unmount/navigation (§21) — tidak ada channel duplikat.
     };
-  }, [sessionId, refresh]);
+  }, [sessionId, refresh, pollIntervalMs, debounceMs]);
 
   return { view, connection, refresh };
 }
