@@ -395,10 +395,18 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
         onAttack={() => engineRef.current?.attackBasic()}
       />
 
-      {/* Mobile touch hint */}
-      <div className="absolute bottom-4 left-1/2 z-[5] -translate-x-1/2 md:hidden">
-        <div className="bg-black/50 text-white text-xs px-3 py-1.5 rounded-full">
-          Gunakan WASD/panah untuk bergerak · E untuk interaksi
+      {/* Mobile touch controls */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[30] flex items-end justify-between px-5 pb-5 md:hidden" aria-label="Kontrol sentuh RPG">
+        <div ref={touchJoystickRef} className="pointer-events-auto relative h-28 w-28 touch-none rounded-full border border-white/15 bg-black/25 shadow-2xl backdrop-blur-sm" aria-label="Joystick gerak">
+          <div className="pointer-events-none absolute left-1/2 top-1/2 h-14 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-white/15 shadow-lg" />
+        </div>
+        <button ref={touchActionRef} type="button" className="pointer-events-auto flex h-20 w-20 touch-none items-center justify-center rounded-full border border-amber-200/30 bg-amber-400/85 text-2xl font-black text-amber-950 shadow-2xl active:scale-95" aria-label="Interaksi">
+          E
+        </button>
+      </div>
+      <div className="pointer-events-none absolute bottom-36 left-1/2 z-[5] -translate-x-1/2 md:hidden">
+        <div className="rounded-full bg-black/45 px-3 py-1.5 text-[10px] font-semibold text-white/80 backdrop-blur-sm">
+          Gerakkan joystick · E untuk interaksi
         </div>
       </div>
     </div>
