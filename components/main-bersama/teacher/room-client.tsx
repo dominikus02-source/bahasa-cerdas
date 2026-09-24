@@ -10,7 +10,7 @@
 // GET authoritative (useSessionView); command POST lalu refresh.
 // Logic/Tahap 6 TIDAK berubah — hanya presentation.
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { TeacherSessionView } from '@/src/main-bersama/contracts/views/teacher';
 import type { TeacherParticipantInfo } from '@/src/main-bersama/contracts/views/teacher';
@@ -29,6 +29,7 @@ import { TeamProgress } from '@/components/main-bersama/shared/TeamProgress';
 import { CityProgress } from '@/components/main-bersama/shared/CityProgress';
 import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBanner';
 import { RoomQRCode } from '@/components/main-bersama/shared/RoomQRCode';
+import { RoundCountdown } from '@/components/main-bersama/shared/RoundCountdown';
 
 type Command =
   | 'open-lobby'
@@ -217,7 +218,7 @@ export function TeacherRoomClient({
               <strong className="mb-number">{answered}</strong>
               <small>/ {eligible} menjawab</small>
             </span>
-            <RoundTimer closesAt={view.currentRoundClosesAt} serverTime={view.serverTime} />
+            <RoundCountdown closesAt={view.currentRoundClosesAt} serverTime={view.serverTime} />
           </div>
           <QuestionCard
             question={view.currentQuestion}
@@ -369,67 +370,6 @@ function ParticipantList({
         </li>
       ))}
     </ul>
-  );
-}
-
-/** Timer sisa waktu round — drift ke server time, bukan jam client. */
-function RoundTimer({ closesAt, serverTime }: { closesAt: string | null; serverTime: string }) {
-  if (!closesAt) return null;
-  return <_RoundTimer closesAt={closesAt} serverTime={serverTime} />;
-}
-
-function _RoundTimer({ closesAt, serverTime }: { closesAt: string; serverTime: string }) {
-  // Jangan memasukkan network latency sebagai "clock skew". Pada perangkat
-  // dengan jam normal, gunakan deadline absolut langsung. Hanya bila jam
-  // client benar-benar melenceng jauh (>10 detik), pakai offset server.
-  const [clockOffsetMs, setClockOffsetMs] = useState(0);
-  const [remaining, setRemaining] = useState(() =>
-    Math.max(0, Date.parse(closesAt) - Date.now()),
-  );
-
-  useEffect(() => {
-    const observedOffset = Date.parse(serverTime) - Date.now();
-    setClockOffsetMs(Math.abs(observedOffset) > 10_000 ? observedOffset : 0);
-  }, [serverTime]);
-
-  useEffect(() => {
-    const tick = () => {
-      setRemaining(
-        Math.max(0, Date.parse(closesAt) - (Date.now() + clockOffsetMs)),
-      );
-    };
-    tick();
-    // 250 ms menjaga perubahan detik terasa tepat tanpa membuat render loop berat.
-    const id = setInterval(tick, 250);
-    return () => clearInterval(id);
-  }, [closesAt, clockOffsetMs]);
-
-  const totalSec = Math.ceil(remaining / 1000);
-  const mm = String(Math.floor(totalSec / 60)).padStart(2, '0');
-  const ss = String(totalSec % 60).padStart(2, '0');
-  const urgent = totalSec <= 30;
-  return (
-    <span
-      className={`mb-timer mb-number ${urgent ? 'mb-timer-urgent' : ''}`}
-      role="timer"
-      aria-label={`Sisa waktu ${mm}:${ss}`}
-    >
-      {mm}:{ss}
-      <style jsx>{`
-        .mb-timer {
-          padding: 6px 16px;
-          border-radius: var(--mb-radius-pill);
-          background: rgba(28, 43, 58, 0.08);
-          font-weight: 800;
-          font-size: 1.05rem;
-          color: var(--mb-text-guru);
-        }
-        .mb-timer-urgent {
-          background: var(--mb-danger);
-          color: #ffffff;
-        }
-      `}</style>
-    </span>
   );
 }
 
