@@ -191,7 +191,8 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
       </header>
 
       {(phase === 'lobby' || phase === 'preparing') && (
-        <section className="mb-pj-phase mb-fade-in">
+        <section className="mb-pj-phase mb-pj-lobby-stage mb-fade-in">
+          <span className="mb-eyebrow mb-pj-lobby-eyebrow">PIN RUANG</span>
           <PinDisplay pin={view.joinInfo?.pin ?? '------'} scale="projector" />
           <p className="mb-pj-wait" role="status">
             Buka halaman <strong>Gabung Main Bersama</strong> lalu masukkan PIN di atas
