@@ -63,11 +63,20 @@ export async function GET() {
   try {
     const { createClient } = await import("@/lib/supabase/server");
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ success: true, user: null, data: { user: null } });
 
-    const email = user.email?.toLowerCase() || "";
-    const cacheKey = `user:me:${email}`;
+    // The authenticated Supabase ID is the stable account identity.
+    // Never use email as the primary lookup key: Auth email can legitimately
+    // change (e.g. teacher changes from an old school address to a new one).
+    // Looking up by the new email first can make an existing account appear
+    // "missing" even though the Supabase session is perfectly valid.
+    const { data, error } = await supabase.auth.getClaims();
+    if (error || !data?.claims?.sub) {
+      return NextResponse.json({ success: true, user: null, data: { user: null } });
+    }
+
+    const supabaseId = String(data.claims.sub);
+    const email = String(data.claims.email || "").toLowerCase();
+    const cacheKey = `user:me:id:${supabaseId}`;
     const cached = await cache.get<Record<string, unknown>>(cacheKey);
     if (cached) {
       return NextResponse.json(
@@ -76,29 +85,62 @@ export async function GET() {
       );
     }
 
-    const existing = await db.user.findFirst({ where: { email }, select: userSessionFields });
-    // GOOGLE ROLE SELECTION: GET never provisions. A session without an
-    // application User means provisioning is incomplete (new Google user) —
-    // return null so clients route to /auth/pilih-peran instead of receiving
-    // a silently defaulted MURID account.
-    const found: any = existing;
+    // PRIMARY: stable Supabase identity.
+    let found: any = await db.user.findUnique({
+      where: { supabaseId },
+      select: userSessionFields,
+    });
+
+    // Legacy repair path: if the account predates supabaseId linkage, recover it
+    // by email ONCE, then attach the stable Supabase ID. This path never changes
+    // the stored application role.
+    if (!found && email) {
+      found = await db.user.findFirst({
+        where: { email },
+        select: userSessionFields,
+      });
+    }
+
+    // GET never provisions a new application User and never changes role.
     if (!found) return err(ERR.NOT_FOUND.error, ERR.NOT_FOUND.code, ERR.NOT_FOUND.status);
 
     const updates: Record<string, unknown> = {};
-    if (found.supabaseId !== user.id) updates.supabaseId = user.id;
+    if (found.supabaseId !== supabaseId) updates.supabaseId = supabaseId;
+
+    // Keep the application email synchronized with Supabase Auth when the
+    // authenticated owner changed email. Do not overwrite another account's
+    // email: an email collision must remain an explicit account-management
+    // problem rather than becoming an implicit account merge.
+    if (email && found.email !== email) {
+      const emailOwner = await db.user.findFirst({
+        where: { email, NOT: { id: found.id } },
+        select: { id: true },
+      });
+      if (!emailOwner) {
+        updates.email = email;
+      } else {
+        console.error("AUTH_EMAIL_SYNC_CONFLICT", {
+          supabaseId,
+          userId: found.id,
+        });
+      }
+    }
+
+    let synced = found;
     if (Object.keys(updates).length > 0) {
       await db.user.update({ where: { id: found.id }, data: updates });
+      synced = { ...found, ...updates };
     }
 
     const profile = await db.profile.findUnique({ where: { userId: found.id } });
     const result = {
-      ...found,
+      ...synced,
       ...profile,
-      ...updates,
-      avatar: found.avatar || "",
+      avatar: synced.avatar || "",
     };
 
-    // Cache for 30s — short enough to stay fresh, long enough to absorb bursts
+    // Cache by immutable Supabase ID, not email. Email changes therefore do
+    // not strand the session behind a stale cache key.
     cache.set(cacheKey, result, 30);
 
     return NextResponse.json(
