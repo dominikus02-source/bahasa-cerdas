@@ -56,9 +56,13 @@ export function TeacherRoomClient({
 
   const fetchView = useCallback(
     () => fetchTeacherState(sessionId).then((r) => r.view),
-    [sessionId],
+    [sessionId, refresh],
   );
-  const { view, connection } = useSessionView<TeacherSessionView>(sessionId, fetchView);
+  const { view, connection, refresh } = useSessionView<TeacherSessionView>(
+    sessionId,
+    fetchView,
+    { pollIntervalMs: 1_200, debounceMs: 120 },
+  );
 
   const run = useCallback(
     async (action: Command) => {
@@ -66,7 +70,9 @@ export function TeacherRoomClient({
       setError(null);
       try {
         await postTeacherCommand({ action, sessionId });
-        // POST sukses → GET authoritative (bukan memutasi state lokal).
+        // Command sukses harus langsung terlihat di layar pengendali.
+        // Jangan menunggu Broadcast/poll untuk mengubah CTA/fase.
+        await refresh();
       } catch (e) {
         setError(e instanceof MbApiError ? e.message : 'Aksi gagal. Coba lagi.');
       } finally {
