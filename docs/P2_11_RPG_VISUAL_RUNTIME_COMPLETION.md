@@ -4,8 +4,8 @@ Status: **CODE COMPLETE / ASSET FILE PENDING**
 
 ## What changed
 
-- Registered a production visual atlas in `rpg-asset-manifest.ts`.
-- Promoted NPCs, enemies, bosses, village house, tree, and well from reference-only/procedural paths to READY runtime keys.
+- Registered candidate runtime IDs in `rpg-asset-manifest.ts`; the binary atlas is still pending.
+- Wired NPC/enemy/boss/prop asset keys to the renderer, but kept them gated until the binary art is verified.
 - Renderer now supports shared-atlas source rectangles.
 - NPC interactions render the corresponding production character art.
 - Live enemies and bosses render production art with size-aware scaling.
