@@ -16,6 +16,8 @@
 import type { RPGFacing } from "./constants";
 import type { RPGCommand, RPGInputSource } from "./input";
 
+export type RPGTouchInputSource = RPGInputSource & { attach(): void; detach(): void };
+
 interface TouchInputElements {
   joystick: HTMLElement;
   action: HTMLElement;
@@ -24,7 +26,7 @@ interface TouchInputElements {
 export function createTouchInputSource(
   playerId: string,
   elements: TouchInputElements,
-): RPGInputSource & { attach(): void; detach(): void } {
+): RPGTouchInputSource {
   let active = false;
   let pointerId: number | null = null;
   let direction: RPGFacing | null = null;
