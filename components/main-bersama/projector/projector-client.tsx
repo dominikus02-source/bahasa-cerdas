@@ -201,8 +201,9 @@ export function ProjectorClient() {
       <div className="mb-pj-utility-controls">
         <SoundToggle
           enabled={gameSound.enabled}
+          unlocked={gameSound.unlocked}
           onToggle={() => void gameSound.toggle()}
-          compact
+          compact={gameSound.unlocked}
         />
         <button
           type="button"
