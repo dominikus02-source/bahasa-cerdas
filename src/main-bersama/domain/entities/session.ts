@@ -5,6 +5,11 @@
 import type { SessionId } from '../types/ids';
 import type { GameMode, SessionPhase } from '../types/session';
 
+/**
+ * Label konten netral untuk sesi yang dibuat sebelum `contentTitle`
+ * ada (data legacy / sesi review). Dipakai sebagai fallback tunggal
+ * supaya view tidak pernah kehilangan identitas konten.
+ */
 export const DEFAULT_CONTENT_TITLE = 'Paket Soal';
 
 export interface MainSession {
@@ -19,8 +24,14 @@ export interface MainSession {
   /** Nama kelas untuk ditampilkan (denormalisasi aman untuk proyektor). */
   className?: string;
 
-  /** Snapshot label public-safe dari sumber soal saat sesi dibuat (mis. "Antonim"). */
-  contentTitle: string;
+  /**
+   * SNAPSHOT label konten sesi saat dibuat (mis. "Antonim", judul
+   * SoalSet, nama tema master). Public-safe: label tampilan saja —
+   * bukan packageRef, tanpa isi soal. Opsional di tipe domain agar
+   * data/konstruktor lama tetap valid; penyimpanan & view selalu
+   * memakai `DEFAULT_CONTENT_TITLE` (lihat mappers/view-mappers).
+   */
+  contentTitle?: string;
 
   gameMode: GameMode;
   phase: SessionPhase;

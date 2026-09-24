@@ -40,7 +40,8 @@ export class PrismaBankThemeQuestionSource implements BankThemeQuestionSource {
 
     return {
       ok: true,
-      contentTitle: ref.topic,
+      // Nama tema Bank Soal = `topik` yang dipilih guru → label konten sesi.
+      contentTitle: ref.topic.trim(),
       questions: selected.map((s) => ({
         sourceQuestionId: s.id,
         type: s.type,

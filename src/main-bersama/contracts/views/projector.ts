@@ -26,6 +26,12 @@ export interface ProjectorSessionView {
   gameMode: GameMode;
   phase: SessionPhase;
 
+  /**
+   * Nama konten yang sedang dimainkan (mis. "Antonim") — snapshot
+   * public-safe saat sesi dibuat; tetap ada sampai summary/ended.
+   */
+  contentTitle: string;
+
   /** PIN + data QR hanya diekspos saat lobby (sebelum soal mulai). */
   joinInfo: ProjectorJoinInfo | null;
 

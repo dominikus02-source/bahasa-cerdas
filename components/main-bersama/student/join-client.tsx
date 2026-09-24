@@ -17,6 +17,8 @@ import {
 import { loadLastCredential, saveCredential, saveLastSessionId } from '@/lib/main-bersama/credential-store';
 import { PrimaryGameButton } from '@/components/main-bersama/shared/PrimaryGameButton';
 import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBanner';
+import { StudentBackButton } from '@/components/main-bersama/shared/StudentBackButton';
+import { createClient } from '@/lib/supabase/client';
 
 type Step = 'pin' | 'name' | 'joining';
 
@@ -29,11 +31,26 @@ function JoinFlow() {
   const [error, setError] = useState<string | null>(null);
   const [resuming, setResuming] = useState(false);
   const [canResume, setCanResume] = useState<{ sessionId: string } | null>(null);
+  const [isAuthed, setIsAuthed] = useState(false);
 
   // Kandidat reconnect dari credential-store (sekali saat mount).
   useEffect(() => {
     const last = loadLastCredential();
     if (last) setCanResume({ sessionId: last.sessionId });
+    // Header kembali hanya untuk murid login (guest: join adalah entry).
+    let cancelled = false;
+    (async () => {
+      try {
+        const supabase = createClient();
+        const { data } = await supabase.auth.getSession();
+        if (!cancelled) setIsAuthed(Boolean(data.session));
+      } catch {
+        /* guest */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const enterRoom = useCallback(
@@ -87,6 +104,11 @@ function JoinFlow() {
       <span className="mb-join-blob mb-join-blob-a" aria-hidden />
       <span className="mb-join-blob mb-join-blob-b" aria-hidden />
 
+      {isAuthed ? (
+        <div className="mb-join-back">
+          <StudentBackButton phase="idle" />
+        </div>
+      ) : null}
       <span className="mb-eyebrow">Kuis kelas langsung</span>
       <h1 className="mb-display mb-join-title">Main Bersama</h1>
       <p className="mb-join-tagline">Masuk ke ruang permainan kelasmu.</p>
@@ -166,6 +188,12 @@ function JoinFlow() {
           gap: var(--mb-space-4);
           padding: var(--mb-space-6) var(--mb-space-5);
           overflow: hidden;
+        }
+        .mb-join-back {
+          position: absolute;
+          top: var(--mb-space-4);
+          left: var(--mb-space-4);
+          z-index: 2;
         }
         /* Blob dekoratif — sangat lembut, bukan partikel. */
         .mb-join-blob {

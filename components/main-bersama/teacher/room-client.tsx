@@ -104,6 +104,7 @@ export function TeacherRoomClient({
       <ConnectionBanner visible={connection === 'offline'} />
       <SessionHeader
         mode={view.gameMode}
+        packageName={view.contentTitle}
         className={className ?? undefined}
         roundLabel={roundLabel}
         actions={
@@ -142,16 +143,19 @@ export function TeacherRoomClient({
               Gabung Main Bersama lalu memasukkan PIN.
             </p>
           </div>
+          {/* Metadata dengan prioritas konten: guru harus tahu SOAL APA
+              yang dimainkan sebelum detail mode/kelas (§11). */}
           <div className="mb-lobby-meta">
             <span className="mb-chip mb-lobby-chip">
               <UsersMini />
               <strong className="mb-number">{view.participants.length}</strong> peserta
             </span>
-            {className ? <span className="mb-chip mb-lobby-chip">Kelas {className}</span> : null}
+            <span className="mb-chip mb-lobby-chip mb-lobby-content">{view.contentTitle}</span>
+            <span className="mb-chip mb-lobby-chip mb-number">{view.totalRounds} soal</span>
             <span className="mb-chip mb-lobby-chip">
               {view.gameMode === 'jelajah-kata' ? 'Jelajah Kata' : 'Kota Cahaya'}
             </span>
-            <span className="mb-chip mb-lobby-chip mb-number">{view.totalRounds} soal</span>
+            {className ? <span className="mb-chip mb-lobby-chip">Kelas {className}</span> : null}
           </div>
           <div className="mb-lobby-qr">
             <RoomQRCode pin={pin} />
@@ -178,6 +182,23 @@ export function TeacherRoomClient({
                 Mulai Permainan
               </PrimaryGameButton>
             )}
+          </div>
+          {/* ── Layar Kelas (8B.1): satu layar default, dua layar advanced ── */}
+          <div className="mb-room-classroom">
+            <PrimaryGameButton
+              onClick={() => router.push(`/guru/game/main-bersama/kelas/${sessionId}`)}
+              disabled={busy}
+              variant="light"
+            >
+              Tampilkan ke Kelas
+            </PrimaryGameButton>
+            <button
+              type="button"
+              className="mb-linklike-dark"
+              onClick={() => window.open(`/main-bersama/layar?sessionId=${sessionId}`, '_blank', 'noopener')}
+            >
+              Buka di Layar Kedua
+            </button>
           </div>
         </section>
       ) : null}

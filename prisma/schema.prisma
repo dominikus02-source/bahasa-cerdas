@@ -4034,6 +4034,13 @@ model MainSession {
   /// KelasKu (Group.id) bila sesi terikat kelas. Plain string, nullable.
   classId           String?
   className         String?
+  /// Identitas konten sesi (SNAPSHOT label tampilan saat dibuat):
+  /// nama tema Bank Soal, judul SoalSet, atau nama tema master.
+  /// Public-safe — BUKAN packageRef, tanpa isi soal. Sesi tetap dapat
+  /// menampilkan nama konten meski sumbernya kemudian berubah/hilang.
+  /// `@default` dipertahankan (jalur main) agar insert yang tidak
+  /// mengirim label eksplisit tetap sah pada kolom NOT NULL — termasuk
+  /// jalur uji rollback. Kode produksi selalu mengirim snapshot label.
   contentTitle      String           @default("Paket Soal")
   gameMode          MainGameMode
   phase             MainSessionPhase @default(PREPARING)

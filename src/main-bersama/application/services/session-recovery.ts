@@ -56,6 +56,15 @@ export class SessionEngineResolver {
     this.cache.delete(sessionId);
   }
 
+  /**
+   * Port `EngineResolver.discard` — buang cache yang mungkin tidak lagi
+   * setia pada DB (dipakai saat persistence menolak sebuah submission).
+   * Cache hanya optimasi; resolve berikutnya merekonstruksi dari DB.
+   */
+  discard(sessionId: SessionId): void {
+    this.cache.delete(sessionId);
+  }
+
   async resolve(sessionId: SessionId): Promise<SessionRecoveryResult> {
     const cached = this.cache.get(sessionId);
     if (cached) return { ok: true, engine: cached, fromCache: true };

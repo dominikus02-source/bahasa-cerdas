@@ -898,6 +898,33 @@ async function main(): Promise<void> {
     // identity-only keys untuk fase ini.
     const identityHits = pHits.filter((h) => !h.includes('correctOptionId') && !h.includes('explanation'));
     check('projector payload tanpa identity/credential key', identityHits.length === 0, identityHits.join(','));
+
+    // §48 IDENTITAS KONTEN SESI (8A.4): ketiga role view membawa nama
+    // konten public-safe hasil SNAPSHOT sesi — guru tahu "soal apa yang
+    // dimainkan", proyektor tetap menampilkannya sampai summary.
+    check(
+      '48. teacher & projector view membawa contentTitle non-kosong',
+      [tv.contentTitle, pv.contentTitle].every(
+        (t) => typeof t === 'string' && t.trim().length > 0,
+      ),
+      `teacher=${tv.contentTitle},projector=${pv.contentTitle}`,
+    );
+    const svContent = buildStudentView(
+      loaded.engine,
+      players[0]!.id,
+      deps.clock.now(),
+      loaded.gameState,
+    );
+    check(
+      '48b. student view membawa contentTitle non-kosong',
+      svContent.ok && svContent.view.contentTitle.trim().length > 0,
+    );
+    check(
+      '48c. contentTitle bukan packageRef/isi soal (public-safe)',
+      !JSON.stringify({ t: tv.contentTitle, p: pv.contentTitle }).match(
+        /soalSetId|topic|BANK_THEME|SOAL_SET|correct/i,
+      ),
+    );
   }
 
   section('§47 KOTA TARGET POLICY');

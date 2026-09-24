@@ -211,11 +211,17 @@ export interface SubmitAnswerCommand {
 }
 
 /**
- * Submit jawaban siswa:
- * credential → player → engine validate → persist transaksional →
- * ACK tanpa correctness. Semua aturan (fase, eligibility, deadline
- * server inclusive, opsi valid, idempotency) dievaluasi Session Engine;
- * persistence menegakkan uniqueness/idempotency di level DB.
+ * Submit jawaban siswa — urutan dikunci (invariant integritas skor:
+ * "hanya jawaban DITERIMA yang mengubah game state"):
+ *
+ *   credential → player → EVALUASI (murni, tanpa mutasi)
+ *   → PERSIST transaksional (idempotency/uniqueness di DB)
+ *   → APPLY efek engine TEPAT sekali → ACK tanpa correctness.
+ *
+ * Penolakan (4xx/SUBMISSION_ID_CONFLICT/…) keluar SEBELUM apply,
+ * sehingga tidak ada contribution/progress/milestone yang berubah.
+ * Semua aturan (fase, eligibility, deadline server inclusive, opsi
+ * valid, idempotency, correctness) tetap dihitung Session Engine.
  */
 export async function submitAnswer(
   deps: SessionOrchestratorDeps,
@@ -234,33 +240,47 @@ export async function submitAnswer(
   const round = engine.state.rounds.find((r) => r.id === input.roundId);
   if (!round) return { ok: false, code: 'ROUND_NOT_OPEN' };
 
-  const engineResult = engine.submitAnswer({
+  // 1. EVALUASI murni — tanpa mutasi state engine (keputusan + correctness).
+  const evaluated = engine.evaluateSubmission({
     roundId: input.roundId,
     playerId: resolved.playerId,
     submissionId: input.submissionId,
     selectedOptionId: input.selectedOptionId,
   });
-  if (!engineResult.ok) {
-    return { ok: false, code: engineResult.code as StudentErrorCode };
+  if (!evaluated.ok) {
+    return { ok: false, code: evaluated.code as StudentErrorCode };
   }
 
-  // Persist durable (idempotency survive restart, constraint DB).
-  const answer = engine.state.answersByRound
-    .get(input.roundId)
-    ?.get(resolved.playerId);
-  if (!answer) return { ok: false, code: 'INTERNAL' };
+  // 2. PERSIST durable (idempotency survive restart, constraint DB).
+  // Ditolak di sini = tidak ada game-state side effect sama sekali.
   const persisted = await deps.answers.submitAnswer({
     sessionId: resolved.sessionId,
     roundId: input.roundId,
     playerId: resolved.playerId,
     submissionId: input.submissionId,
     selectedOptionId: input.selectedOptionId,
-    isCorrect: answer.isCorrect,
-    submittedAt: answer.submittedAt,
+    isCorrect: evaluated.value.isCorrect,
+    submittedAt: evaluated.value.submittedAt,
   });
   if (!persisted.ok) {
+    // Cache engine in-process bisa BASI terhadap ledger DB (instance lain
+    // / restart): buang supaya resolve berikutnya membaca set accepted
+    // yang authoritative dari DB (bayangan "hantu" tidak pernah ada).
+    deps.resolver.discard?.(resolved.sessionId);
     return { ok: false, code: persisted.code };
   }
+
+  // 3. APPLY efek engine TEPAT sekali (murni in-memory, tidak bisa gagal).
+  engine.applySubmission(
+    {
+      roundId: input.roundId,
+      playerId: resolved.playerId,
+      submissionId: input.submissionId,
+      selectedOptionId: input.selectedOptionId,
+    },
+    evaluated.value,
+  );
+
   return {
     ok: true,
     value: { status: persisted.status, submissionId: input.submissionId },

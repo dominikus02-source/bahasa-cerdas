@@ -13,6 +13,7 @@ import type {
   SessionRuntimeState,
 } from '../../domain/entities/session-runtime-state';
 import type { MainQuestionSnapshot } from '../../domain/entities/question';
+import { DEFAULT_CONTENT_TITLE } from '../../domain/entities/session';
 import { SessionEngine } from '../../application/services/session-engine';
 import {
   gameModeToDomain,
@@ -98,13 +99,16 @@ export async function loadSessionRuntime(
   };
 
   // Bangun engine dengan session hasil map DB (bukan object baru).
+  // `contentTitle` WAJIB ikut: view role (guru/siswa/proyektor) membaca
+  // identitas konten dari SESI INI, bukan query ulang Bank Soal —
+  // kalau tidak dimuat, room kehilangan nama tema/paketnya (8A.4).
   const session = {
     id: sessionRow.id,
     pin: sessionRow.pin,
     teacherId: sessionRow.teacherId,
     classId: sessionRow.classId ?? undefined,
     className: sessionRow.className ?? undefined,
-    contentTitle: sessionRow.contentTitle ?? 'Paket Soal',
+    contentTitle: sessionRow.contentTitle || DEFAULT_CONTENT_TITLE,
     gameMode: gameModeToDomain(sessionRow.gameMode),
     phase: phaseToDomain(sessionRow.phase),
     currentRoundIndex: sessionRow.currentRoundIndex,

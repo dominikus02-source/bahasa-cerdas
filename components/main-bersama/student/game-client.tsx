@@ -19,6 +19,10 @@ import {
 import { useSessionView } from '@/lib/main-bersama/use-session-view';
 import { clearCredential } from '@/lib/main-bersama/credential-store';
 import { SessionHeader } from '@/components/main-bersama/shared/SessionHeader';
+import { StudentBackButton } from '@/components/main-bersama/shared/StudentBackButton';
+import { TeamBadge } from '@/components/main-bersama/art/shared/TeamBadge';
+import { TeamMascot } from '@/components/main-bersama/art/registry';
+import { KotaScene } from '@/components/main-bersama/art/kota/KotaScene';
 import { QuestionCard } from '@/components/main-bersama/shared/QuestionCard';
 import { AnswerOption } from '@/components/main-bersama/shared/AnswerOption';
 import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBanner';
@@ -131,7 +135,27 @@ export function StudentGameClient({ sessionId }: { sessionId: string }) {
   return (
     <main className="mb-sgame">
       <ConnectionBanner visible={connection === 'offline'} />
-      <SessionHeader mode={view.gameMode} />
+      <div className="mb-sgame-head">
+        <StudentBackButton
+          phase={
+            view.phase === 'question' ||
+            view.phase === 'closed' ||
+            view.phase === 'paused' ||
+            view.phase === 'discussion'
+              ? 'active'
+              : 'idle'
+          }
+        />
+        <SessionHeader
+          mode={view.gameMode}
+          packageName={view.contentTitle}
+          roundLabel={
+            view.phase === 'question' || isReveal(view)
+              ? `${view.roundIndex + 1} dari ${view.totalRounds}`
+              : null
+          }
+        />
+      </div>
       {isPreRound(view) ? (
         <StudentLobby view={view} />
       ) : view.phase === 'question' ? (
@@ -144,6 +168,18 @@ export function StudentGameClient({ sessionId }: { sessionId: string }) {
       ) : isReveal(view) ? (
         <StudentReveal view={view} />
       ) : null}
+      <style jsx>{`
+        .mb-sgame-head {
+          display: flex;
+          align-items: center;
+          gap: var(--mb-space-3);
+          width: 100%;
+          max-width: 640px;
+          margin: 0 auto;
+          padding: var(--mb-space-3) var(--mb-space-4) 0;
+        }
+        .mb-sgame-head :global(.mb-session-header) { flex: 1; min-width: 0; }
+      `}</style>
     </main>
   );
 }
@@ -160,9 +196,22 @@ function StudentLobby({
     <section className="mb-slobby mb-fade-in">
       <span className="mb-wait-orb" aria-hidden />
       <h1 className="mb-display mb-slobby-title">Halo, {view.displayName}!</h1>
+      <p className="mb-slobby-content">
+        <strong>{view.contentTitle}</strong> · {view.totalRounds} soal
+      </p>
       <p className="mb-slobby-mode">
         Kamu ikut <strong>{isJelajah ? 'Jelajah Kata' : 'Kota Cahaya'}</strong>
       </p>
+      {!isJelajah ? (
+        <div className="mb-sworld" aria-hidden>
+          <KotaScene unlocked={[]} mini />
+        </div>
+      ) : null}
+      {view.team && isJelajah ? (
+        <div className="mb-slobby-mascot" aria-hidden>
+          <TeamMascot teamId={view.team.id} pose="ready" size={76} eager />
+        </div>
+      ) : null}
       {view.team ? (
         <p className="mb-slobby-team">
           Kamu berada di{' '}
@@ -170,6 +219,7 @@ function StudentLobby({
             className="mb-team-chip mb-slobby-teamchip"
             style={{ '--mb-tc': TEAM_COLOR_VAR[view.team.id] ?? 'var(--mb-primary)' } as React.CSSProperties}
           >
+            <TeamBadge teamId={view.team.id} size={20} />
             Regu {view.team.name}
           </span>
         </p>
@@ -179,7 +229,7 @@ function StudentLobby({
           ? view.team
             ? `Jawab dengan tepat untuk membantu Regu ${view.team.name} maju.`
             : 'Jawab dengan tepat untuk membantu regumu maju.'
-          : 'Bekerja sama untuk menyalakan Kota Cahaya.'}
+          : 'Kita akan menyalakan Kota Cahaya bersama.'}
       </p>
       <ParticipantCount count={view.participantCount} />
       <p className="mb-slobby-wait" role="status">
@@ -197,6 +247,14 @@ function StudentLobby({
           text-align: center;
         }
         .mb-slobby-title { margin: 0; font-size: 1.8rem; }
+        /* Identitas konten (mis. "Antonim · 10 soal") — konteks ringan,
+           bukan pengaturan: siswa tahu sedang bermain apa. */
+        .mb-slobby-content {
+          margin: 0;
+          color: var(--mb-text-secondary);
+          font-size: 0.95rem;
+        }
+        .mb-slobby-content strong { color: var(--mb-text-primary); }
         .mb-slobby-mode { margin: 0; color: var(--mb-text-secondary); }
         .mb-slobby-mode strong { color: var(--mb-text-primary); }
         .mb-slobby-team { margin: 0; color: var(--mb-text-secondary); }
@@ -251,13 +309,13 @@ function StudentQuestion({
     submittedRef.current = true;
     setBusy(true);
     setError(null);
+    setSelected(optionId);
     try {
       await submitAnswer(sessionId, {
         roundId: view.roundId,
         selectedOptionId: optionId,
         submissionId: newSubmissionId(),
       });
-      setSelected(optionId);
       setSaved(true);
     } catch (e) {
       submittedRef.current = false;
@@ -279,6 +337,11 @@ function StudentQuestion({
   return (
     <section className="mb-sq mb-fade-in">
       <div className="mb-sq-progress">
+        {view.team ? (
+          <span className="mb-sq-team" title={`Regu ${view.team.name}`}>
+            <TeamBadge teamId={view.team.id} size={24} />
+          </span>
+        ) : null}
         <span className="mb-number">
           Soal {view.roundIndex + 1} dari {view.totalRounds}
         </span>
@@ -387,7 +450,7 @@ function StudentReveal({
           Soal {view.roundIndex + 1} dari {view.totalRounds}
         </span>
         <span className={`mb-sreveal-verdict ${myCorrect ? 'mb-v-ok' : 'mb-v-no'}`}>
-          {myCorrect ? 'Jawabanmu Benar' : 'Belum Tepat'}
+          {myCorrect ? 'Jawabanmu benar' : 'Belum tepat'}
         </span>
       </header>
 
@@ -425,7 +488,7 @@ function StudentReveal({
           <h3 className="mb-display">Permainan selesai</h3>
           {view.team && view.gameProgress.teamProgress[view.team.id] !== undefined ? (
             <p>
-              Regu <strong>{view.team.name}</strong> mencapai{' '}
+              <TeamMascot teamId={view.team.id} pose="celebrate" size={56} /> Regu <strong>{view.team.name}</strong> mencapai{' '}
               <strong className="mb-number">
                 {Math.round(Math.max(0, Math.min(100, view.gameProgress.teamProgress[view.team.id])))}%
               </strong>{' '}
@@ -435,6 +498,7 @@ function StudentReveal({
             <p>Kerja bagus, kelas sudah berjuang bersama!</p>
           )}
           <p className="mb-sreveal-feel">Terima kasih sudah bermain bersama!</p>
+          <StudentBackButton phase="idle" />
         </div>
       )}
 

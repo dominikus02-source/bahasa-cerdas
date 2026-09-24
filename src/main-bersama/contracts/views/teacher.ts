@@ -51,6 +51,12 @@ export interface TeacherSessionView {
   serverTime: string;
   revision: number;
 
+  /**
+   * Nama konten/sesi yang sedang dimainkan (mis. "Antonim") —
+   * SNAPSHOT label public-safe saat sesi dibuat, bukan packageRef.
+   */
+  contentTitle: string;
+
   gameMode: GameMode;
   phase: SessionPhase;
 

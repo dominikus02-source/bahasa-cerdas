@@ -43,7 +43,12 @@ const ERROR_MESSAGES: Record<string, string> = {
   PACKAGE_INCOMPATIBLE: 'Paket soal berisi tipe soal yang belum didukung.',
   NO_SUPPORTED_QUESTIONS: 'Tidak ada soal yang bisa dimainkan dari paket ini.',
   INVALID_GAME_CONFIG: 'Konfigurasi permainan tidak valid.',
+  CLASS_NOT_FOUND: 'Kelas tidak ditemukan. Pilih kelas lain atau tanpa kelas.',
+  CLASS_FORBIDDEN: 'Kelas ini bukan milikmu.',
   PIN_TAKEN: 'PIN bentrok. Coba buka ruang lagi.',
+  SESSION_CREATION_FAILED: 'Ruang gagal dibuat. Coba lagi sebentar.',
+  SESSION_STORE_UNAVAILABLE: 'Main Bersama belum tersedia saat ini. Coba lagi sebentar.',
+  MUTATIONS_DISABLED: 'Main Bersama belum diaktifkan pada lingkungan ini.',
   INTERNAL: 'Terjadi kesalahan. Coba lagi sebentar.',
 };
 

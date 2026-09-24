@@ -12,7 +12,7 @@
 // Idempotency survive restart karena attempt ledger ada di DB,
 // bukan hanya Map in-memory Session Engine.
 
-import { Prisma } from '@prisma/client';
+import { MainRoundStatus, Prisma } from '@prisma/client';
 import { db } from '@/lib/db';
 import type { MainAnswer } from '../../domain/entities/answer';
 import type {
@@ -39,6 +39,7 @@ export type SubmitAnswerDbResult =
       code:
         | 'ANSWER_ALREADY_EXISTS'
         | 'SUBMISSION_ID_CONFLICT'
+        | 'ROUND_NOT_OPEN'
         | 'ROUND_NOT_FOUND';
     };
 
@@ -116,10 +117,28 @@ export class PrismaAnswerRepository implements AnswerRepository {
    *      - beda payload/player → SUBMISSION_ID_CONFLICT
    *   2. Cek existing answer (business uniqueness):
    *      sudah ada → ANSWER_ALREADY_EXISTS (jawaban pertama tetap)
-   *   3. INSERT answer (UNIQUE roundId+playerId menangkap race)
+   *   3. COMPARE-AND-SET status round (lihat catatan LINEARIZATION).
+   *   4. INSERT answer (UNIQUE roundId+playerId menangkap race)
    *      + INSERT ledger accepted=true.
    *
    * Prisma P2002 dikonversi ke domain result yang tepat.
+   *
+   * LINEARIZATION (submit-vs-close):
+   *   Langkah 3 adalah titik serialisasi durable. Ia menjalankan
+   *   UPDATE kondisional "status = OPEN" pada baris MainRound yang
+   *   SAMA yang ditulis closeRound. Baris itu memberi row-lock, jadi
+   *   Postgres men-serialisasi submit-tx melawan close-tx:
+   *     - bila CLOSE commit lebih dulu, predicate status='OPEN' gagal
+   *       (READ COMMITTED re-evaluasi setelah lock) → 0 baris →
+   *       ROUND_NOT_OPEN, TIDAK ada MainAnswer yang ditulis;
+   *     - bila SUBMIT mengunci lebih dulu, closeRound menunggu sampai
+   *       submit commit — sehingga reload facts pada close PASTI
+   *       melihat jawaban ini dan men-skor TEPAT sekali.
+   *   Karena itu cache engine in-process TIDAK PERNAH menjadi otoritas
+   *   final open/closed; DB (MainRound.status) yang kanonik.
+   *   Cek ini sengaja diletakkan SETELAH idempotency/uniqueness agar
+   *   kontrak retry identik → already-saved tetap terjaga walau round
+   *   sudah CLOSED.
    */
   async submitAnswer(input: SubmitAnswerDbInput): Promise<SubmitAnswerDbResult> {
     try {
@@ -167,7 +186,25 @@ export class PrismaAnswerRepository implements AnswerRepository {
           throw new AlreadyExistsError();
         }
 
-        // 3. INSERT — UNIQUE(roundId, playerId) menangkap race.
+        // 3. COMPARE-AND-SET: round WAJIB masih OPEN (durable, bukan cache).
+        //    updateMany tanpa match mengembalikan count 0 (tanpa throw);
+        //    UPDATE kondisional ini mengambil row-lock yang sama dengan
+        //    yang dipakai closeRound sehingga submit & close terserialisasi
+        //    oleh database. Round yang sudah CLOSED tidak pernah bisa
+        //    menerima jawaban baru.
+        const answerable = await tx.mainRound.updateMany({
+          where: {
+            id: input.roundId,
+            sessionId: input.sessionId,
+            status: MainRoundStatus.OPEN,
+          },
+          data: { status: MainRoundStatus.OPEN },
+        });
+        if (answerable.count === 0) {
+          throw new RoundNotOpenError();
+        }
+
+        // 4. INSERT — UNIQUE(roundId, playerId) menangkap race.
         const created = await tx.mainAnswer.create({
           data: answerToDb({
             sessionId: input.sessionId,
@@ -204,6 +241,9 @@ export class PrismaAnswerRepository implements AnswerRepository {
       }
       if (error instanceof AlreadyExistsError) {
         return { ok: false, code: 'ANSWER_ALREADY_EXISTS' };
+      }
+      if (error instanceof RoundNotOpenError) {
+        return { ok: false, code: 'ROUND_NOT_OPEN' };
       }
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
@@ -273,3 +313,5 @@ export class PrismaAnswerRepository implements AnswerRepository {
 
 class ConflictError extends Error {}
 class AlreadyExistsError extends Error {}
+/** Round sudah tidak OPEN (close menang) — tidak ada baris yang ditulis. */
+class RoundNotOpenError extends Error {}

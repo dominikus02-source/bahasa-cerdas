@@ -87,7 +87,15 @@ export interface AnswerStore {
     submittedAt: Date;
   }): Promise<
     | { ok: true; status: 'saved' | 'already-saved' }
-    | { ok: false; code: 'ANSWER_ALREADY_EXISTS' | 'SUBMISSION_ID_CONFLICT' }
+    | {
+        ok: false;
+        /**
+         * ROUND_NOT_OPEN = round sudah CLOSED secara durable saat submit
+         * mencoba menulis (close menang race). Tidak ada baris ditulis;
+         * pemanggil belum melakukan mutasi engine apa pun.
+         */
+        code: 'ANSWER_ALREADY_EXISTS' | 'SUBMISSION_ID_CONFLICT' | 'ROUND_NOT_OPEN';
+      }
   >;
 }
 
@@ -149,6 +157,15 @@ export interface EngineResolver {
   resolve(sessionId: SessionId): Promise<
     { ok: true; engine: SessionEngine } | { ok: false; code: 'SESSION_NOT_FOUND' }
   >;
+  /**
+   * Buang engine dari cache in-process (opsional).
+   *
+   * Dipakai saat operasi ditolak SETELAH persisten menolak: mutasi tidak
+   * pernah diterapkan, dan cache yang mungkin basi terhadap DB (instance
+   * lain / restart) tidak boleh dipakai lagi — resolve berikutnya membaca
+   * ulang dari DB sebagai sumber kebenaran. Tidak mengubah game state.
+   */
+  discard?(sessionId: SessionId): void;
 }
 
 /** Clock. */

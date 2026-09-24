@@ -9,6 +9,7 @@ import { submitAnswer } from '@/src/main-bersama/application/services/student-fl
 import { readCredentialFromRequest } from '@/src/main-bersama/infrastructure/repositories/player-credential';
 import { mapHttpError } from '@/src/main-bersama/presentation/http-errors';
 import type { StudentErrorCode } from '@/src/main-bersama/application/services/student-flows';
+import { mainBersamaMutationBlocked } from '@/lib/main-bersama/mutation-guard';
 
 const SUBMISSION_ID_PATTERN = /^[A-Za-z0-9_-]{8,128}$/;
 
@@ -20,6 +21,10 @@ function errorResponse(code: string, reason?: string) {
 }
 
 export async function POST(req: NextRequest) {
+  // Safety mutasi (Tahap 8A.4 §1): mengirim jawaban MENULIS state.
+  const blocked = mainBersamaMutationBlocked('student/answers');
+  if (blocked) return blocked;
+
   let body: {
     roundId?: unknown;
     submissionId?: unknown;

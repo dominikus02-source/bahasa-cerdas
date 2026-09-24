@@ -311,8 +311,17 @@ export async function closeRound(
   // Game engine apply — HANYA sekali per round (idempotent durable):
   // per-round result insert unik; ROUND_ALREADY_APPLIED = retry aman,
   // tidak double score, aman setelah restart (§17/§40).
+  //
+  // Cache-coherence: status durable round/sesi sudah 'closed' di atas,
+  // tetapi cache engine in-process bisa BASI terhadap MainAnswer yang
+  // dipersist instance lain. Buang cache lalu hydrate ulang dari DB
+  // (source of truth accepted answers) SEBELUM buildRoundFacts, supaya
+  // setiap jawaban yang benar-benar accepted berkontribusi TEPAT sekali.
+  deps.resolver.discard?.(sessionId);
+  const reloaded = await deps.resolver.resolve(sessionId);
+  const engineForFacts = reloaded.ok ? reloaded.engine : engine;
   if (gameState) {
-    const facts = buildRoundFacts(engine, roundId);
+    const facts = buildRoundFacts(engineForFacts, roundId);
     if (facts) {
       const applied = applyGameRound(gameState, facts);
       if (!applied.ok) {
