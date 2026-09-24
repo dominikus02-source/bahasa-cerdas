@@ -182,18 +182,25 @@ export default function RegisterPage() {
         return;
       }
 
-      const supabase = createClient();
-      const { error: loginError } = await supabase.auth.signInWithPassword({
-        email: normalizedEmail,
-        password,
+      // Complete the new account through the same server-side login rail used
+      // by the normal login page. This keeps cookie handling and Auth rate
+      // limiting in one place and avoids a second browser Auth flow here.
+      const loginRes = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: normalizedEmail,
+          password,
+        }),
       });
-      if (loginError) {
-        if (loginError.message?.includes("rate limit") || loginError.status === 429) {
+      const loginData = await loginRes.json().catch(() => ({}));
+
+      if (!loginRes.ok) {
+        if (loginRes.status === 429) {
           setError("Server sedang sibuk. Silakan coba login manual.");
-          setLoading(false);
-          return;
+        } else {
+          setError(loginData.error || "Akun berhasil dibuat. Silakan masuk.");
         }
-        setRegistered(true);
         setLoading(false);
         return;
       }
