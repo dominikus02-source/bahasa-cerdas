@@ -10,7 +10,7 @@
  * The camera is CLIENT-OWNED (never broadcast in multiplayer).
  */
 
-import type { RPGVec2 } from "../core/constants";
+import type { RPGFacing, RPGVec2 } from "../core/constants";
 import { DEFAULT_ZOOM, pxPerUnit, clampZoom } from "./world-scale";
 
 /** Camera state — follows player with smooth interpolation. */
@@ -58,6 +58,34 @@ export function followTarget(
       y: camera.position.y + dy * camera.smoothing,
     },
   };
+}
+
+/**
+ * Camera follow with a restrained look-ahead.
+ *
+ * The look-ahead is presentation-only: gameplay position remains unchanged.
+ * It gives exploration/combat more spatial awareness without the aggressive
+ * camera swing common to action games.
+ */
+export function followTargetWithFeel(
+  camera: RPGCameraState,
+  target: RPGVec2,
+  facing: RPGFacing,
+  mapWidthTiles: number,
+  mapHeightTiles: number,
+): RPGCameraState {
+  const leadTiles = 0.75;
+  const leadX = leadTiles / Math.max(1, mapWidthTiles);
+  const leadY = leadTiles / Math.max(1, mapHeightTiles);
+  const lead = {
+    x: facing === "left" ? -leadX : facing === "right" ? leadX : 0,
+    y: facing === "up" ? -leadY : facing === "down" ? leadY : 0,
+  };
+  const framed = {
+    x: Math.min(1, Math.max(0, target.x + lead.x)),
+    y: Math.min(1, Math.max(0, target.y + lead.y)),
+  };
+  return followTarget(camera, framed);
 }
 
 /**
