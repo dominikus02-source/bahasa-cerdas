@@ -84,49 +84,36 @@ export async function createClient() {
 export const getUser = cache(async () => {
   const supabase = await createClient();
 
+  // IMPORTANT: getClaims() is the server-side identity check. Do not fall
+  // back to getUser() here: getUser() always performs a network request and
+  // can become a second refresh owner when many Server Components/API routes
+  // resolve the same request at once.
   let supabaseId: string | null = null;
 
   try {
-    const { data } = await supabase.auth.getClaims();
-    if (data?.claims?.sub) supabaseId = data.claims.sub;
-  } catch {
-    // Jatuh ke cara lama di bawah.
-  }
-
-  // Cadangan: kalau verifikasi klaim gagal (mis. JWKS belum sempat diambil),
-  // pakai jalur lama supaya sesi yang sah tidak ikut tertolak.
-  if (!supabaseId) {
-    try {
-      const { data: { user }, error } = await supabase.auth.getUser();
-      if (user) supabaseId = user.id;
-      if (error && !user) {
-        // ── Transient refresh-race detection ──
-        // "Refresh Token Already Used" / "Not Found" terjadi ketika
-        // concurrent request sudah me-refresh token. Bukan berarti
-        // session invalid. Jangan amplifikasi — biarkan page-level
-        // guard (layout.tsx) yang memutuskan.
-        const msg = (error.message || "").toLowerCase();
-        const isTransient = msg.includes("refresh token") && (
-          msg.includes("already used") || msg.includes("not found")
-        );
-        if (isTransient) {
-          console.warn("AUTH_REFRESH_RACE_IN_GETUSER", { error: error.message });
-          return null; // Page guard will handle — no destructive action here
-        }
-      }
-    } catch {
-      // Network/Auth service unreachable — treat as no session
+    const { data, error } = await supabase.auth.getClaims();
+    if (error) {
+      console.warn("AUTH_CLAIMS_VERIFY_FAILED", { error: error.message });
+      return null;
     }
+    supabaseId = data?.claims?.sub ?? null;
+  } catch (error: any) {
+    console.warn("AUTH_CLAIMS_VERIFY_EXCEPTION", {
+      error: error?.message || String(error),
+    });
+    return null;
   }
 
   if (!supabaseId) return null;
 
   try {
-    const dbUser = await db.user.findUnique({
+    return await db.user.findUnique({
       where: { supabaseId },
     });
-    return dbUser;
-  } catch {
+  } catch (error: any) {
+    console.error("AUTH_DB_USER_LOOKUP_FAILED", {
+      error: error?.message || String(error),
+    });
     return null;
   }
 });

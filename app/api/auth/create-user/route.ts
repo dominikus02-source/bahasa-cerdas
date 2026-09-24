@@ -36,7 +36,43 @@ export async function POST(req: Request) {
     });
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      const message = error.message || "";
+      const normalized = message.toLowerCase();
+
+      if (
+        normalized.includes("already registered") ||
+        normalized.includes("already been registered") ||
+        normalized.includes("already exists")
+      ) {
+        return NextResponse.json(
+          {
+            error: "Email ini sudah terdaftar. Silakan masuk atau gunakan Lupa Kata Sandi.",
+            code: "EMAIL_EXISTS",
+          },
+          { status: 409 }
+        );
+      }
+
+      if (
+        normalized.includes("password") &&
+        (normalized.includes("weak") ||
+          normalized.includes("least") ||
+          normalized.includes("characters") ||
+          normalized.includes("requirements"))
+      ) {
+        return NextResponse.json(
+          {
+            error: "Kata sandi belum memenuhi persyaratan keamanan.",
+            code: "PASSWORD_INVALID",
+          },
+          { status: 400 }
+        );
+      }
+
+      return NextResponse.json(
+        { error: "Pendaftaran gagal. Silakan periksa data dan coba lagi." },
+        { status: error.status && error.status >= 400 ? error.status : 400 }
+      );
     }
 
     return NextResponse.json({ userId: data.user.id });

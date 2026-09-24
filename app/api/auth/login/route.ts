@@ -152,6 +152,32 @@ export async function POST(req: NextRequest) {
         where: { supabaseId: data.user.id },
       });
 
+      if (dbUser) {
+        // Supabase user ID is the stable identity. If a teacher changes their
+        // Auth email, keep the existing application account/role and synchronize
+        // only the email field. Never recreate the account and never infer or
+        // mutate GURU ↔ MURID from the new email/domain.
+        const authEmail = (data.user.email || normalizedEmail).toLowerCase();
+        if (dbUser.email !== authEmail) {
+          const emailOwner = await db.user.findFirst({
+            where: { email: authEmail, NOT: { id: dbUser.id } },
+            select: { id: true },
+          });
+
+          if (!emailOwner) {
+            dbUser = await db.user.update({
+              where: { id: dbUser.id },
+              data: { email: authEmail },
+            });
+          } else {
+            console.error("AUTH_EMAIL_SYNC_CONFLICT", {
+              supabaseId: data.user.id,
+              userId: dbUser.id,
+            });
+          }
+        }
+      }
+
       if (!dbUser) {
         dbUser = await db.user.create({
           data: {
@@ -168,20 +194,26 @@ export async function POST(req: NextRequest) {
       // DB error — still return session, let /api/user/me handle DB sync
     }
 
-    // ── Reset per-email rate limit on SUCCESSFUL login ──
+    // ── Reset failed-attempt counters on SUCCESSFUL login ──
+    // A legitimate login proves the credentials are valid. Do not leave a
+    // previous typo/credential-stuffing counter in place after success.
     if (cache) {
       try {
         await cache.set(`login-attempts:${normalizedEmail}`, 0, 600);
+        if (clientIp !== "unknown") {
+          await cache.set(`login-fail-ip:${clientIp}`, 0, 600);
+        }
       } catch {
         // Ignore
       }
     }
 
     // ── Response ──
-    // Supabase SSR library already set cookies via cookieStore.set() in
-    // createLoginClient(). Next.js includes Set-Cookie headers automatically.
-    return NextResponse.json({
-      session: data.session,
+    // Supabase SSR library already set the auth cookies through the cookie
+    // adapter in createLoginClient(). The browser does NOT need the raw
+    // access/refresh tokens in JSON; returning them would unnecessarily expose
+    // long-lived session credentials to page JavaScript.
+    const response = NextResponse.json({
       user: dbUser
         ? {
             id: dbUser.id,
@@ -192,6 +224,8 @@ export async function POST(req: NextRequest) {
           }
         : null,
     });
+    response.headers.set("Cache-Control", "private, no-store");
+    return response;
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(
