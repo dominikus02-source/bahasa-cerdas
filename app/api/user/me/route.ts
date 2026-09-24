@@ -155,33 +155,35 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    let body: { supabaseId?: string; email?: string; fullName?: string; role?: string } = {};
+    let body: { fullName?: string; role?: string } = {};
     try { body = await request.json(); } catch {}
 
-    if (!body.supabaseId || !body.email) {
-      // Try reading query params as last resort
-      const { searchParams } = new URL(request.url);
-      body.supabaseId = body.supabaseId || searchParams.get("supabaseId") || undefined;
-      body.email = body.email || searchParams.get("email") || undefined;
-      body.fullName = body.fullName || searchParams.get("fullName") || undefined;
-      body.role = body.role || searchParams.get("role") || undefined;
+    // Never trust supabaseId/email supplied by the browser. This endpoint is
+    // reachable from /api/* without a middleware auth gate, so accepting those
+    // fields from the client could let an attacker impersonate/link another
+    // application account. The Supabase JWT is the source of identity.
+    const { createClient } = await import("@/lib/supabase/server");
+    const supabase = await createClient();
+    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims();
+    if (claimsError || !claimsData?.claims?.sub) {
+      return err("Sesi tidak valid", "UNAUTHORIZED", 401);
     }
 
-    if (!body.supabaseId || !body.email) {
-      return err("Data tidak lengkap", "VALIDATION", 400);
-    }
+    const supabaseId = String(claimsData.claims.sub);
+    const email = String(claimsData.claims.email || "").toLowerCase();
+    if (!email) return err("Email akun tidak tersedia", "UNAUTHORIZED", 401);
 
     // GOOGLE ROLE SELECTION: creation requires an explicit allowlisted role.
-    // Missing/invalid roles are rejected (route to role selection) instead of
-    // silently provisioning MURID.
+    // Existing accounts are always returned with their stored role; the client
+    // cannot mutate GURU ↔ MURID through this sync endpoint.
     if (body.role !== undefined && body.role !== "GURU" && body.role !== "MURID") {
       return err("Peran tidak valid", "VALIDATION", 400);
     }
 
     const user = await findOrCreateUser({
-      supabaseId: body.supabaseId,
-      email: body.email,
-      fullName: body.fullName || body.email.split("@")[0],
+      supabaseId,
+      email,
+      fullName: body.fullName || email.split("@")[0],
       role: body.role ?? "",
     });
     if (!user) {
