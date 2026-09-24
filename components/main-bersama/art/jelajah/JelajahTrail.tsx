@@ -191,7 +191,7 @@ function FinishGate({ active }: { active: boolean }) {
       <path d="M-54 74V-64H-39V74M54 74V-64H39V74M-47-58H47" fill="none" stroke="#d9e7ed" strokeWidth="8" strokeLinecap="round" />
       <rect x="-45" y="-84" width="90" height="34" rx="10" />
       <text x="0" y="-62" textAnchor="middle">GARIS AKHIR</text>
-      <path d="M48-44H100V-10H48Z" />
+      <path d="M48-44H100V-10H48Z" fill="#f2b93a" />
       <path d="M48-44H74V-27H48ZM74-27H100V-10H74Z" fill="#f0b93a" />
       <path d="M74-44H100V-27H74ZM48-27H74V-10H48Z" fill="#edf4f8" />
       {active ? <circle className="mb-jelajah-v4-finish-pulse" cx="0" cy="-68" r="62" /> : null}
