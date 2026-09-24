@@ -39,6 +39,8 @@ export interface ProjectorSessionView {
 
   currentRoundIndex: number | null;
   totalRounds: number;
+  /** Deadline putaran aktif; public-safe untuk timer Layar Kelas. */
+  currentRoundClosesAt: string | null;
   /** Soal aktif versi publik — tanpa answer key. */
   currentQuestion: PublicQuestionView | null;
 
