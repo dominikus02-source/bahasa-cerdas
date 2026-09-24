@@ -298,7 +298,12 @@ export async function submitAnswer(
   // supaya layar guru/proyektor menarik state authoritative tanpa menunggu
   // safety poll. Payload tetap hanya invalidation signal; tidak membawa
   // pilihan/kebenaran jawaban.
-  await deps.realtimeSignal.sendSessionUpdate(resolved.sessionId);
+  try {
+    await deps.realtimeSignal.sendSessionUpdate(resolved.sessionId);
+  } catch {
+    // Realtime hanya freshness hint. ACK jawaban yang sudah durable tidak
+    // boleh berubah menjadi gagal bila transport broadcast sedang bermasalah.
+  }
 
   return {
     ok: true,
