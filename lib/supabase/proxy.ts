@@ -103,6 +103,20 @@ export async function updateSession(request: NextRequest, nonce?: string) {
     return response;
   }
 
+  // Guru onboarding is a client-owned auth boundary. It must be renderable
+  // even when Supabase Auth/JWKS is temporarily slow: the page itself reads
+  // /api/user/me, which has a bounded verification timeout and a terminal
+  // retry state. Do NOT make the onboarding document depend on a second
+  // getClaims() round-trip in Proxy + GuruLayout before the client can render.
+  // This is safe because the onboarding page contains no protected data and
+  // every mutation/data endpoint remains independently authenticated.
+  if (pathname === "/guru/onboarding") {
+    const response = nextWithNonce();
+    response.headers.set("X-RateLimit-Remaining", String(limit.remaining));
+    response.headers.set("Cache-Control", "private, no-store");
+    return response;
+  }
+
   const isSelfAuth = selfAuthPaths.some((p) => pathname.startsWith(p));
   const punyaCookieSesi = request.cookies
     .getAll()
