@@ -21,7 +21,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createEngine, type RPGEngine } from "../core/game-engine";
 import { createKeyboardInputSource } from "../core/keyboard-input";
-import { createTouchInputSource } from "../core/touch-input";
+import { createTouchInputSource, type RPGTouchInputSource } from "../core/touch-input";
 import { createCompositeInputSource, type RPGInputSource } from "../core/input";
 import {
   createLocalStoragePersistence,
@@ -228,7 +228,7 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
       // Create and attach keyboard input
       const keyboard = createKeyboardInputSource(playerId);
       keyboard.attach();
-      let touchSource: any = null;
+      let touchSource: RPGTouchInputSource | null = null;
       if (touchJoystickRef.current && touchActionRef.current) {
         touchSource = createTouchInputSource(playerId, {
           joystick: touchJoystickRef.current,
