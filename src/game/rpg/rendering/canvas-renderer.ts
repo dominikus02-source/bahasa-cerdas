@@ -27,6 +27,7 @@ import type { RPGWorldEntity } from "../world/world-state";
 import { findNearestInteraction } from "../world/interaction";
 import type { LiveEnemy } from "../combat/encounter";
 import { resolveEntityAsset, isEntityAssetReady } from "./entity-asset-resolver";
+import { createVisualFeedbackState, triggerImpact, triggerVictory, shakeOffset, flashAlpha, floatingDamageOpacity, floatingDamageOffset, type VisualFeedbackState, type FloatingDamage } from "./visual-feedback";
 
 /** Depth layer order (z sequence, then y-sort within a layer). */
 const LAYER_ORDER = [
@@ -143,6 +144,13 @@ export function createCanvasRenderer(
   const requestedArgaPaths = new Set<string>();
   let lastPlayerPosition: { x: number; y: number } | null = null;
   let lastPlayerMoveAt = 0;
+
+  // Presentation-only combat feel. Authoritative battle state remains untouched.
+  let visualFeedback: VisualFeedbackState = createVisualFeedbackState();
+  let previousBattlePlayerHp: number | null = null;
+  const previousBattleEnemyHp = new Map<string, number>();
+  let floatingDamageSeq = 0;
+  let floatingDamages: FloatingDamage[] = [];
 
   function argaEntryForFacing(facing: string) {
     const direction = facing === "up" ? "up" : facing === "down" ? "down" : "side";
