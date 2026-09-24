@@ -27,7 +27,7 @@ import type { RPGWorldEntity } from "../world/world-state";
 import { findNearestInteraction } from "../world/interaction";
 import type { LiveEnemy } from "../combat/encounter";
 import { resolveEntityAsset, isEntityAssetReady } from "./entity-asset-resolver";
-import { createVisualFeedbackState, triggerImpact, triggerVictory, shakeOffset, flashAlpha, floatingDamageOpacity, floatingDamageOffset, type VisualFeedbackState, type FloatingDamage } from "./visual-feedback";
+import { createVisualFeedbackState, triggerImpact, triggerVictory, shakeOffset, flashAlpha, floatingDamageOpacity, floatingDamageOffset, impactBurstOpacity, impactBurstParticle, createImpactBurst, type VisualFeedbackState, type FloatingDamage, type ImpactBurst } from "./visual-feedback";
 
 /** Depth layer order (z sequence, then y-sort within a layer). */
 const LAYER_ORDER = [
@@ -741,7 +741,7 @@ export function createCanvasRenderer(
     }
   }
 
-  /** Main render function — called by game loop. */
+  function renderImpactBursts(\n    camera: RPGCameraState,\n    state: RPGGameState,\n    nowMs: number,\n  ): void {\n    impactBursts = impactBursts.filter((burst) => impactBurstOpacity(burst, nowMs) > 0);\n    for (const burst of impactBursts) {\n      const opacity = impactBurstOpacity(burst, nowMs);\n      if (opacity <= 0) continue;\n      const center = worldToScreenScaled(\n        { x: burst.x, y: burst.y }, camera,\n        state.world.tiles.width, state.world.tiles.height,\n      );\n      const count = burst.victory ? 12 : 8;\n      for (let i = 0; i < count; i += 1) {\n        const particle = impactBurstParticle(burst, i, nowMs);\n        const point = worldToScreenScaled(\n          {\n            x: particle.x,\n            y: particle.y,\n          },\n          camera,\n          state.world.tiles.width,\n          state.world.tiles.height,\n        );\n        ctx.save();\n        ctx.globalAlpha = particle.opacity * 0.92;\n        ctx.strokeStyle = burst.victory ? "#fbbf24" : "#fff7ed";\n        ctx.lineWidth = Math.max(1, particle.size);\n        const dx = point.x - center.x;\n        const dy = point.y - center.y;\n        const length = Math.max(3, particle.size * 2.5);\n        const magnitude = Math.hypot(dx, dy) || 1;\n        const nx = dx / magnitude;\n        const ny = dy / magnitude;\n        ctx.beginPath();\n        ctx.moveTo(point.x - nx * length, point.y - ny * length);\n        ctx.lineTo(point.x, point.y);\n        ctx.stroke();\n        ctx.restore();\n      }\n    }\n  }\n\n  /** Main render function — called by game loop. */
   function render(
     state: RPGGameState,
     camera: RPGCameraState,
@@ -749,7 +749,7 @@ export function createCanvasRenderer(
     allowedNpcIds?: readonly string[],
   ) {
     const nowMs = performance.now();
-    updateCombatFeedback(state, camera, liveEnemies, nowMs);
+    updateCombatFeedback(state, liveEnemies, nowMs);
 
     if (nowMs < visualFeedback.freezeUntilMs) return;
 
