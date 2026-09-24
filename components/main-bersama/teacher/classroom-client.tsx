@@ -234,7 +234,9 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
           font-weight: 800;
           font-size: 1.05rem;
           cursor: pointer;
+          transition: transform var(--mb-motion-fast), background var(--mb-motion-fast);
         }
+        .mb-dock-primary:active:not(:disabled) { transform: scale(0.98); }
         .mb-dock-primary:disabled { opacity: 0.55; cursor: wait; }
         .mb-dock-primary:focus-visible { outline: 2px solid var(--mb-accent); outline-offset: 2px; }
         .mb-dock-more { position: relative; }
@@ -275,7 +277,9 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
           font-weight: 700;
           text-align: left;
           cursor: pointer;
+          transition: transform var(--mb-motion-fast), background var(--mb-motion-fast);
         }
+        .mb-dock-menu button:active:not(:disabled) { transform: scale(0.98); }
         .mb-dock-menu button:hover { background: rgba(255, 255, 255, 0.08); }
         .mb-dock-menu button:disabled { opacity: 0.5; }
         .mb-pj-dock-error {
