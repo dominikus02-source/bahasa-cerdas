@@ -3007,9 +3007,6 @@
   filter: blur(4px);
 }
 
-.mb-jelajah-progress-line {
-  filter: drop-shadow(0 0 5px currentColor);
-}
 
 .mb-jelajah-checkpoint {
   transition: opacity 280ms ease;
