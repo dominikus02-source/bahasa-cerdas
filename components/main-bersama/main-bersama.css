@@ -1226,11 +1226,11 @@
   .mb-pj-q .mb-qcard {
     max-height: 300px;
   }
-  .mb-pj-q .mb-qcard .mb-qcard-prompt {
+  .mb-pj .mb-pj-q .mb-qcard .mb-qcard-prompt {
     font-size: 1.05rem;
     line-height: 1.35;
   }
-  .mb-pj-q .mb-qcard .mb-qcard-passage {
+  .mb-pj .mb-pj-q .mb-qcard .mb-qcard-passage {
     max-height: 150px;
     font-size: 0.95rem;
     line-height: 1.5;
@@ -1586,7 +1586,7 @@
   .mb-pj-q {
     width: min(92vw, 980px);
   }
-  .mb-pj-q .mb-qcard {
+  .mb-pj .mb-pj-q .mb-qcard {
     width: 100%;
     max-width: none;
     max-height: min(43dvh, 350px);
@@ -1640,11 +1640,11 @@
   .mb-pj:has(.mb-dock) .mb-pj-phase {
     padding-bottom: 72px;
   }
-  .mb-pj-q .mb-qcard {
+  .mb-pj .mb-pj-q .mb-qcard {
     max-height: min(39dvh, 270px);
     padding: 16px 20px;
   }
-  .mb-pj-q .mb-qcard .mb-qcard-passage {
+  .mb-pj .mb-pj-q .mb-qcard .mb-qcard-passage {
     max-height: 110px;
   }
   .mb-pj-participation {
