@@ -230,6 +230,20 @@ export function createCanvasRenderer(
     ctx.fill();
   }
 
+  function drawWaterShimmer(x: number, y: number, tilePx: number): void {
+    const phase = performance.now() / 900 + (x + y) * 0.008;
+    const wave = (Math.sin(phase) + 1) / 2;
+    ctx.save();
+    ctx.globalAlpha = 0.08 + wave * 0.08;
+    ctx.strokeStyle = "#dbeafe";
+    ctx.lineWidth = Math.max(1, tilePx * 0.018);
+    ctx.beginPath();
+    ctx.moveTo(x - tilePx * 0.28, y - tilePx * 0.12 + wave * 2);
+    ctx.quadraticCurveTo(x, y - tilePx * 0.2 - wave * 2, x + tilePx * 0.28, y - tilePx * 0.12 + wave * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+
   /** Render tile grid (world-authoritative scale + viewport culling). */
   function renderTiles(state: RPGGameState, camera: RPGCameraState) {
     const { tiles } = state.world;
@@ -257,6 +271,8 @@ export function createCanvasRenderer(
             bound as unknown as CanvasImageSource,
             sx.x - tilePx / 2, sx.y - tilePx / 2, tilePx, tilePx,
           );
+          const tileNum = Number(tileId.split(".")[1]);
+          if (tileNum === 3) drawWaterShimmer(sx.x, sx.y, tilePx);
           continue;
         }
         // P2.9: Fix dead fallback — tileId is "tile.N", not "ground.path".
