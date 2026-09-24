@@ -11,7 +11,7 @@
  * React only manages:
  * - Engine creation/destruction
  * - HUD display (read-only from game state)
- * - Touch controls (future)
+ * - Touch controls (same command pipeline as keyboard)
  *
  * The game loop runs independently of React renders.
  */
