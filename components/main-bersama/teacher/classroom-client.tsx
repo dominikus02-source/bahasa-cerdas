@@ -376,7 +376,7 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
             type="button"
             className="mb-dock-primary"
             onClick={() => {
-              if (primary.action === 'start') void gameSound.activate();
+              if (primary.action === 'start') void gameSound.activate({ preview: false });
               void run(primary.action);
             }}
             disabled={busy}

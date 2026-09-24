@@ -405,7 +405,7 @@ export function useMainBersamaSound(snapshot: SoundSnapshot) {
     return () => context.removeEventListener("statechange", onState);
   }, [syncUnlocked]);
 
-  const activate = useCallback(async () => {
+  const activate = useCallback(async (options?: { preview?: boolean }) => {
     setEnabled(true);
     try {
       window.localStorage.setItem(STORAGE_KEY, "0");
@@ -419,7 +419,7 @@ export function useMainBersamaSound(snapshot: SoundSnapshot) {
 
     if (context && ready) {
       warmSamples(context);
-      scheduleCue(context, "ready");
+      if (options?.preview !== false) scheduleCue(context, "ready");
     }
     return ready;
   }, []);
