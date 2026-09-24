@@ -1666,3 +1666,35 @@
     box-shadow: none;
   }
 }
+
+
+.mb-pj-fullscreen {
+  position: fixed;
+  right: 16px;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 35;
+  min-height: 42px;
+  padding: 8px 16px;
+  border-radius: var(--mb-radius-pill);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(8, 24, 38, 0.78);
+  backdrop-filter: blur(12px);
+  color: var(--mb-text-primary);
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+}
+.mb-pj-fullscreen:hover {
+  background: rgba(8, 24, 38, 0.94);
+}
+.mb-pj-fullscreen:focus-visible {
+  outline: 2px solid var(--mb-accent);
+  outline-offset: 2px;
+}
+:fullscreen .mb-pj-fullscreen {
+  opacity: 0.45;
+}
+:fullscreen .mb-pj-fullscreen:hover,
+:fullscreen .mb-pj-fullscreen:focus-visible {
+  opacity: 1;
+}
