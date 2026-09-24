@@ -87,7 +87,15 @@ export interface AnswerStore {
     submittedAt: Date;
   }): Promise<
     | { ok: true; status: 'saved' | 'already-saved' }
-    | { ok: false; code: 'ANSWER_ALREADY_EXISTS' | 'SUBMISSION_ID_CONFLICT' }
+    | {
+        ok: false;
+        /**
+         * ROUND_NOT_OPEN = round sudah CLOSED secara durable saat submit
+         * mencoba menulis (close menang race). Tidak ada baris ditulis;
+         * pemanggil belum melakukan mutasi engine apa pun.
+         */
+        code: 'ANSWER_ALREADY_EXISTS' | 'SUBMISSION_ID_CONFLICT' | 'ROUND_NOT_OPEN';
+      }
   >;
 }
 
