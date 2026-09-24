@@ -263,27 +263,12 @@ export async function updateSession(request: NextRequest, nonce?: string) {
     return response;
   }
 
-  // Email confirmation is authoritative in our application DB, not in the JWT
-  // payload. The claim only establishes identity; the DB row supplies the
-  // current application state.
-  try {
-    const { db } = await import("@/lib/db");
-    const dbUser = await db.user.findUnique({
-      where: { supabaseId: claims.sub as string },
-      select: { emailConfirmedAt: true },
-    });
+  // Email confirmation is handled by the login/auth flows and page-level
+  // guards. The JWT claims establish identity here; they do not carry the
+  // complete Supabase Auth user record, so Proxy must not manufacture an
+  // email-confirmation check from incomplete claims.
 
-    if (dbUser?.emailConfirmedAt == null && pathname !== "/verify-email") {
-      return NextResponse.redirect(new URL("/verify-email", request.url));
-    }
-  } catch (error: any) {
-    // Do not turn a transient DB problem into an auth logout. Page/API guards
-    // remain the authoritative application-level access control.
-    console.warn("AUTH_EMAIL_CONFIRMATION_LOOKUP_FAILED", {
-      route: pathname,
-      error: error?.message || String(error),
-    });
-  }
+
 
   supabaseResponse.headers.set("X-RateLimit-Remaining", String(limit.remaining));
   return supabaseResponse;
