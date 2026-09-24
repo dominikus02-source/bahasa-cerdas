@@ -186,14 +186,21 @@ export async function reconnectPlayer(
   const resolved = await deps.credentials.resolve(input.credential);
   if (!resolved.ok) return { ok: false, code: 'CREDENTIAL_INVALID' };
 
+  // Reconnect/state GET adalah read-authoritative boundary. Cache proses ini
+  // bisa tertinggal dari command guru yang diproses instance Vercel lain.
+  deps.resolver.discard?.(resolved.sessionId);
   const loaded = await deps.resolver.resolve(resolved.sessionId);
   if (!loaded.ok) return { ok: false, code: 'SESSION_NOT_FOUND' };
   const engine = loaded.engine;
   const player = engine.state.players.get(resolved.playerId);
   if (!player) return { ok: false, code: 'PLAYER_NOT_FOUND' };
 
-  engine.markConnected(resolved.playerId);
-  await deps.players.setConnected(resolved.sessionId, resolved.playerId, true);
+  // Jangan menulis connected=true pada setiap poll/refetch; itu menghasilkan
+  // write storm tanpa perubahan state. Hanya transisikan bila memang perlu.
+  if (!player.connected) {
+    engine.markConnected(resolved.playerId);
+    await deps.players.setConnected(resolved.sessionId, resolved.playerId, true);
+  }
 
   const persisted = await deps.gameStates.loadGameState(resolved.sessionId);
   return {
