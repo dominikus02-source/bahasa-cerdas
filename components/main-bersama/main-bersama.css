@@ -873,11 +873,22 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-width: 54px;
+  padding: 5px 9px;
+  border-radius: var(--mb-radius-pill);
+  background: rgba(255,255,255,0.09);
+  border: 1px solid rgba(255,255,255,0.14);
+  font-size: 0.9rem;
   font-weight: 900;
   color: #ffffff;
   font-variant-numeric: tabular-nums;
 }
 .mb-round-countdown-large {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   justify-content: flex-start;
   font-size: clamp(2rem, 3.1vw, 3.25rem);
   line-height: 1;
