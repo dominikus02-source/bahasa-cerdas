@@ -103,7 +103,7 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
             : null;
 
   return (
-    <main className="mb-pj">
+    <main className="mb-pj mb-classroom">
       <ConnectionBanner visible={connection === 'offline'} />
       <header className="mb-pj-head">
         <div className="mb-pj-brand">
