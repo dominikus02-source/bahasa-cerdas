@@ -18,12 +18,29 @@ import { isValidSupabaseUrl } from "@/lib/supabase/url-guard";
 const FALLBACK_URL = "http://localhost:3000";
 const FALLBACK_ANON_KEY = "local-dev-anon-key";
 
-export function createClient() {
+type BrowserSupabaseClient = ReturnType<typeof createBrowserClient>;
+
+let browserClient: BrowserSupabaseClient | null = null;
+
+/**
+ * Browser Supabase client is a singleton.
+ *
+ * A browser client owns the Auth auto-refresh loop and the cross-tab
+ * BroadcastChannel. Creating multiple clients for the same session can make
+ * refresh work race each other, especially during cold starts and tab
+ * restoration. Keep exactly one auth owner per browser context.
+ */
+export function createClient(): BrowserSupabaseClient {
+  if (browserClient) return browserClient;
+
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   const usable = isValidSupabaseUrl(url) && !!key;
-  return createBrowserClient(
+
+  browserClient = createBrowserClient(
     usable ? url! : FALLBACK_URL,
     usable ? key! : FALLBACK_ANON_KEY
   );
+
+  return browserClient;
 }

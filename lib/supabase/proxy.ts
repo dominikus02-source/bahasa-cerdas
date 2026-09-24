@@ -110,13 +110,20 @@ export async function updateSession(request: NextRequest, nonce?: string) {
     return response;
   }
 
-  // Skip middleware getUser() for:
-  //  - Public pages
-  //  - Auth API routes
-  //  - Routes that handle their own auth (API, Arena, Guru dashboard)
-  // This avoids redundant Supabase auth calls and reduces rate limit pressure
   const isSelfAuth = selfAuthPaths.some((p) => pathname.startsWith(p));
-  if (isPublic || isAuthPath || isSelfAuth) {
+  const punyaCookieSesi = request.cookies
+    .getAll()
+    .some((c) => c.name.startsWith("sb-") || c.name.startsWith("supabase-"));
+
+  // Public/anonymous requests do not need an auth check. Authenticated
+  // self-auth routes still pass through this Proxy so that Proxy remains the
+  // single server-side owner responsible for refreshing an expiring cookie
+  // session before the route handler/page reads it.
+  //
+  // This is intentionally different from the old "selfAuth bypass": that
+  // bypass let many concurrent API/dashboard requests call getClaims()
+  // independently near token expiry and could recreate the refresh race.
+  if (isPublic || isAuthPath || (isSelfAuth && !punyaCookieSesi)) {
     const response = nextWithNonce();
     response.headers.set("X-RateLimit-Remaining", String(limit.remaining));
     return response;
@@ -166,17 +173,9 @@ export async function updateSession(request: NextRequest, nonce?: string) {
     }
   );
 
-  // Sengaja TETAP memakai getUser() di sini, bukan getClaims().
-  //
-  // Blok ini hanya berjalan untuk rute yang tidak masuk publicPaths maupun
-  // selfAuthPaths — jadi /api/, /arena/, /guru/, /murid/ (yaitu hampir seluruh
-  // trafik) sudah melewatinya. Middleware bukan sumber lonjakan panggilan auth;
-  // yang menjadi sumber adalah getUser() di lib/supabase/server.ts.
-  //
-  // Lagipula pemeriksaan email_confirmed_at di bawah butuh objek User utuh:
-  // JwtPayload tidak memuat field itu, sehingga memakai klaim di sini akan
-  // membuat SETIAP pengguna dianggap belum memverifikasi email dan dilempar ke
-  // /verify-email. Risikonya jauh lebih besar daripada hematnya.
+  // Proxy is the single server-side auth refresh owner.
+  // Use getClaims() here so downstream Server Components and route handlers
+  // consume the refreshed cookie instead of racing to refresh it themselves.
   // Arena is also shipped as an Android APK whose scope is /arena. Sending an
   // unauthenticated visitor there to the shared /login would drop them out of the
   // app into a browser tab on the very first launch, so arena traffic gets the
@@ -210,48 +209,49 @@ export async function updateSession(request: NextRequest, nonce?: string) {
   // "tidak ada sesi" — dan kode ini akan salah membacanya sebagai "Auth tak
   // terjangkau", lalu membiarkan siapa pun lewat tanpa login. Terpergok di
   // preview: /arena membalas 200 untuk permintaan tanpa cookie, bukan 307.
-  const punyaCookieSesi = request.cookies
-    .getAll()
-    .some((c) => c.name.startsWith("sb-") || c.name.startsWith("supabase-"));
   const gerbangDiLayout = pathname === "/arena" && punyaCookieSesi;
 
-  let user: any = null;
+  let claims: Record<string, any> | null = null;
   let authErrorMessage: string | null = null;
+
   try {
-    const result = await supabase.auth.getUser();
-    user = result.data?.user ?? null;
+    // Proxy is the single server-side auth refresh/verification owner.
+    // getClaims() verifies the JWT without forcing a user-info network call.
+    const result = await supabase.auth.getClaims();
+    claims = (result.data?.claims as Record<string, any> | undefined) ?? null;
+
     if (result.error) {
       authErrorMessage = result.error.message || String(result.error);
     }
-    // supabase-js membalas { user: null, error } tanpa melempar untuk 429 dan
-    // gangguan jaringan — bentuk kegagalan yang sama, hanya jalurnya berbeda.
-    if (!user && result.error && gerbangDiLayout) {
-      console.warn("Auth tak terjangkau di /arena, sesi dipertahankan:", result.error.message);
-      return supabaseResponse;
+
+    if (!claims?.sub) {
+      if (isTransientRefreshError(authErrorMessage) && punyaCookieSesi) {
+        console.warn("AUTH_REFRESH_RACE_DETECTED", {
+          route: pathname,
+          method: request.method,
+          error: authErrorMessage,
+        });
+        return supabaseResponse;
+      }
+
+      const response = NextResponse.redirect(new URL(loginPath, request.url));
+      request.cookies.getAll()
+        .filter((c) => c.name.startsWith("sb-") || c.name.startsWith("supabase-"))
+        .forEach((c) => response.cookies.set(c.name, "", { maxAge: 0, path: "/" }));
+      return response;
     }
   } catch (e: any) {
     authErrorMessage = e?.message || String(e);
-    if (gerbangDiLayout) {
-      console.warn("Auth tak terjangkau di /arena, sesi dipertahankan:", e);
-      return supabaseResponse;
-    }
-    // ── Transient refresh-race detection ──
-    // "Refresh Token Already Used" / "Refresh Token Not Found" biasanya
-    // terjadi ketika beberapa request concurrent mencoba refresh token yang
-    // sama. Satu request berhasil dan Supabase melakukan rotation; request
-    // lain gagal karena token lama sudah dikonsumsi.
-    // JANGAN hapus cookie dalam kasus ini — session mungkin masih valid
-    // (sudah di-refresh oleh request lain). Biarkan request ini gagal
-    // secara non-destructive; page-level guard akan handle redirect.
-    if (isTransientRefreshError(authErrorMessage) && punyaCookieSesi) {
-      console.warn("AUTH_REFRESH_RACE_DETECTED", {
+
+    if (gerbangDiLayout || (isTransientRefreshError(authErrorMessage) && punyaCookieSesi)) {
+      console.warn("AUTH_AUTHORITY_UNAVAILABLE_SESSION_PRESERVED", {
         route: pathname,
         method: request.method,
         error: authErrorMessage,
       });
       return supabaseResponse;
     }
-    console.warn("Auth getUser failed, redirecting to login:", authErrorMessage);
+
     const response = NextResponse.redirect(new URL(loginPath, request.url));
     request.cookies.getAll()
       .filter((c) => c.name.startsWith("sb-") || c.name.startsWith("supabase-"))
@@ -259,33 +259,15 @@ export async function updateSession(request: NextRequest, nonce?: string) {
     return response;
   }
 
-  if (!user) {
-    // ── Transient refresh-race detection (non-throw path) ──
-    // Supabase-js kadang mengembalikan { user: null, error } tanpa melempar
-    // untuk kasus refresh-token race. Jika error mengindikasikan race DAN
-    // browser mengirim cookie session, jangan hancurkan session.
-    if (isTransientRefreshError(authErrorMessage) && punyaCookieSesi) {
-      console.warn("AUTH_REFRESH_RACE_DETECTED", {
-        route: pathname,
-        method: request.method,
-        error: authErrorMessage,
-      });
-      return supabaseResponse;
-    }
+  // Email confirmation is handled by the login/auth flows and page-level
+  // guards. The JWT claims establish identity here; they do not carry the
+  // complete Supabase Auth user record, so Proxy must not manufacture an
+  // email-confirmation check from incomplete claims.
 
-    // Definitive unauthenticated: tidak ada session valid.
-    // Clear stale auth cookies to prevent refresh loop.
-    const response = NextResponse.redirect(new URL(loginPath, request.url));
-    request.cookies.getAll().filter((c) =>
-      c.name.startsWith("sb-") || c.name.startsWith("supabase-")
-    ).forEach((c) => response.cookies.set(c.name, "", { maxAge: 0, path: "/" }));
-    return response;
-  }
 
-  if (!user.email_confirmed_at && pathname !== "/verify-email") {
-    return NextResponse.redirect(new URL("/verify-email", request.url));
-  }
 
   supabaseResponse.headers.set("X-RateLimit-Remaining", String(limit.remaining));
+  // Never let a response that may carry refreshed auth cookies be cached.
+  supabaseResponse.headers.set("Cache-Control", "private, no-store");
   return supabaseResponse;
 }
