@@ -215,43 +215,47 @@ export async function updateSession(request: NextRequest, nonce?: string) {
     .some((c) => c.name.startsWith("sb-") || c.name.startsWith("supabase-"));
   const gerbangDiLayout = pathname === "/arena" && punyaCookieSesi;
 
-  let user: any = null;
+  let claims: Record<string, any> | null = null;
   let authErrorMessage: string | null = null;
+
   try {
-    const result = await supabase.auth.getUser();
-    user = result.data?.user ?? null;
+    // Proxy is the single server-side auth refresh/verification owner.
+    // getClaims() verifies the JWT without forcing a user-info network call.
+    const result = await supabase.auth.getClaims();
+    claims = (result.data?.claims as Record<string, any> | undefined) ?? null;
+
     if (result.error) {
       authErrorMessage = result.error.message || String(result.error);
     }
-    // supabase-js membalas { user: null, error } tanpa melempar untuk 429 dan
-    // gangguan jaringan — bentuk kegagalan yang sama, hanya jalurnya berbeda.
-    if (!user && result.error && gerbangDiLayout) {
-      console.warn("Auth tak terjangkau di /arena, sesi dipertahankan:", result.error.message);
-      return supabaseResponse;
+
+    if (!claims?.sub) {
+      if (isTransientRefreshError(authErrorMessage) && punyaCookieSesi) {
+        console.warn("AUTH_REFRESH_RACE_DETECTED", {
+          route: pathname,
+          method: request.method,
+          error: authErrorMessage,
+        });
+        return supabaseResponse;
+      }
+
+      const response = NextResponse.redirect(new URL(loginPath, request.url));
+      request.cookies.getAll()
+        .filter((c) => c.name.startsWith("sb-") || c.name.startsWith("supabase-"))
+        .forEach((c) => response.cookies.set(c.name, "", { maxAge: 0, path: "/" }));
+      return response;
     }
   } catch (e: any) {
     authErrorMessage = e?.message || String(e);
-    if (gerbangDiLayout) {
-      console.warn("Auth tak terjangkau di /arena, sesi dipertahankan:", e);
-      return supabaseResponse;
-    }
-    // ── Transient refresh-race detection ──
-    // "Refresh Token Already Used" / "Refresh Token Not Found" biasanya
-    // terjadi ketika beberapa request concurrent mencoba refresh token yang
-    // sama. Satu request berhasil dan Supabase melakukan rotation; request
-    // lain gagal karena token lama sudah dikonsumsi.
-    // JANGAN hapus cookie dalam kasus ini — session mungkin masih valid
-    // (sudah di-refresh oleh request lain). Biarkan request ini gagal
-    // secara non-destructive; page-level guard akan handle redirect.
-    if (isTransientRefreshError(authErrorMessage) && punyaCookieSesi) {
-      console.warn("AUTH_REFRESH_RACE_DETECTED", {
+
+    if (gerbangDiLayout || (isTransientRefreshError(authErrorMessage) && punyaCookieSesi)) {
+      console.warn("AUTH_AUTHORITY_UNAVAILABLE_SESSION_PRESERVED", {
         route: pathname,
         method: request.method,
         error: authErrorMessage,
       });
       return supabaseResponse;
     }
-    console.warn("Auth getUser failed, redirecting to login:", authErrorMessage);
+
     const response = NextResponse.redirect(new URL(loginPath, request.url));
     request.cookies.getAll()
       .filter((c) => c.name.startsWith("sb-") || c.name.startsWith("supabase-"))
@@ -259,31 +263,26 @@ export async function updateSession(request: NextRequest, nonce?: string) {
     return response;
   }
 
-  if (!user) {
-    // ── Transient refresh-race detection (non-throw path) ──
-    // Supabase-js kadang mengembalikan { user: null, error } tanpa melempar
-    // untuk kasus refresh-token race. Jika error mengindikasikan race DAN
-    // browser mengirim cookie session, jangan hancurkan session.
-    if (isTransientRefreshError(authErrorMessage) && punyaCookieSesi) {
-      console.warn("AUTH_REFRESH_RACE_DETECTED", {
-        route: pathname,
-        method: request.method,
-        error: authErrorMessage,
-      });
-      return supabaseResponse;
+  // Email confirmation is authoritative in our application DB, not in the JWT
+  // payload. The claim only establishes identity; the DB row supplies the
+  // current application state.
+  try {
+    const { db } = await import("@/lib/db");
+    const dbUser = await db.user.findUnique({
+      where: { supabaseId: claims.sub as string },
+      select: { emailConfirmedAt: true },
+    });
+
+    if (dbUser?.emailConfirmedAt == null && pathname !== "/verify-email") {
+      return NextResponse.redirect(new URL("/verify-email", request.url));
     }
-
-    // Definitive unauthenticated: tidak ada session valid.
-    // Clear stale auth cookies to prevent refresh loop.
-    const response = NextResponse.redirect(new URL(loginPath, request.url));
-    request.cookies.getAll().filter((c) =>
-      c.name.startsWith("sb-") || c.name.startsWith("supabase-")
-    ).forEach((c) => response.cookies.set(c.name, "", { maxAge: 0, path: "/" }));
-    return response;
-  }
-
-  if (!user.email_confirmed_at && pathname !== "/verify-email") {
-    return NextResponse.redirect(new URL("/verify-email", request.url));
+  } catch (error: any) {
+    // Do not turn a transient DB problem into an auth logout. Page/API guards
+    // remain the authoritative application-level access control.
+    console.warn("AUTH_EMAIL_CONFIRMATION_LOOKUP_FAILED", {
+      route: pathname,
+      error: error?.message || String(error),
+    });
   }
 
   supabaseResponse.headers.set("X-RateLimit-Remaining", String(limit.remaining));
