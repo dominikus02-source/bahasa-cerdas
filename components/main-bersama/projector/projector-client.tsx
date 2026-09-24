@@ -17,6 +17,7 @@ import { TeamProgress } from "@/components/main-bersama/shared/TeamProgress";
 import { CityProgress } from "@/components/main-bersama/shared/CityProgress";
 import { QuestionCard } from "@/components/main-bersama/shared/QuestionCard";
 import { ConnectionBanner } from "@/components/main-bersama/shared/ConnectionBanner";
+import { RoundCountdown } from "@/components/main-bersama/shared/RoundCountdown";
 import { JelajahTrail } from "@/components/main-bersama/art/jelajah/JelajahTrail";
 import { KotaScene } from "@/components/main-bersama/art/kota/KotaScene";
 import { TeamBadge } from "@/components/main-bersama/art/shared/TeamBadge";
@@ -86,8 +87,8 @@ export function ProjectorClient() {
     {
       onError: () =>
         setLookupError("Ruang tidak ditemukan. Periksa PIN di URL layar."),
-      pollIntervalMs: 1_200,
-      debounceMs: 120,
+      pollIntervalMs: 700,
+      debounceMs: 40,
     },
   );
 
@@ -370,7 +371,7 @@ function ProjectorQuestion({
 }) {
   const q = view.currentQuestion;
   return (
-    <section className="mb-pj-phase mb-fade-in">
+    <section className="mb-pj-phase mb-pj-phase-question mb-fade-in">
       {q ? (
         <div className="mb-pj-q">
           <QuestionCard
@@ -380,6 +381,12 @@ function ProjectorQuestion({
         </div>
       ) : null}
       <div className="mb-pj-participation">
+        <RoundCountdown
+          closesAt={view.currentRoundClosesAt}
+          serverTime={view.serverTime}
+          compact
+          light
+        />
         <span className="mb-count mb-number">
           {view.participation.submittedCount}
           <small> / {view.participation.eligibleCount} menjawab</small>
