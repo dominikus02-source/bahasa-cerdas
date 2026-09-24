@@ -33,26 +33,54 @@ export function useSessionView<T>(
   errorRef.current = options.onError;
   const pollIntervalMs = options.pollIntervalMs;
   const debounceMs = options.debounceMs;
-  // Guard Strict-Mode double-effect: refresh dijamin idempotent —
-  // cukup flag untuk menghindari subscribe ganda pada mount lama.
+  // Satu surface hanya boleh punya SATU GET state in-flight. Poll + Broadcast
+  // dapat tiba bersamaan; tanpa gate, response lama bisa menang belakangan dan
+  // membuat UI tampak "mundur"/lag. Sinyal yang datang saat fetch berjalan
+  // cukup menandai satu follow-up fetch.
   const sessionRef = useRef(sessionId);
+  const inFlightRef = useRef<Promise<void> | null>(null);
+  const refreshQueuedRef = useRef(false);
 
   const refresh = useCallback(async () => {
     if (sessionRef.current === null) return;
+    if (inFlightRef.current) {
+      refreshQueuedRef.current = true;
+      await inFlightRef.current;
+      return;
+    }
+
+    const task = (async () => {
+      do {
+        refreshQueuedRef.current = false;
+        const targetSession = sessionRef.current;
+        if (targetSession === null) return;
+        try {
+          const next = await fetchRef.current();
+          // Navigasi/unmount ketika request masih berjalan: jangan pasang
+          // response milik sesi lama ke surface baru.
+          if (sessionRef.current !== targetSession) continue;
+          setView(next);
+          setConnection('live');
+        } catch (error: unknown) {
+          if (sessionRef.current !== targetSession) continue;
+          // Jaringan bermasalah → offline banner; error domain → onError.
+          if (
+            error instanceof TypeError ||
+            (error instanceof Error && error.message === 'Failed to fetch')
+          ) {
+            setConnection('offline');
+          } else {
+            errorRef.current?.(error);
+          }
+        }
+      } while (refreshQueuedRef.current && sessionRef.current !== null);
+    })();
+
+    inFlightRef.current = task;
     try {
-      const next = await fetchRef.current();
-      setView(next);
-      setConnection('live');
-    } catch (error: unknown) {
-      // Jaringan bermasalah → offline banner; error domain → onError.
-      if (
-        error instanceof TypeError ||
-        (error instanceof Error && error.message === 'Failed to fetch')
-      ) {
-        setConnection('offline');
-      } else {
-        errorRef.current?.(error);
-      }
+      await task;
+    } finally {
+      if (inFlightRef.current === task) inFlightRef.current = null;
     }
   }, []);
 
@@ -70,6 +98,8 @@ export function useSessionView<T>(
 
     return () => {
       sub.stop(); // cleanup unmount/navigation (§21) — tidak ada channel duplikat.
+      if (sessionRef.current === sessionId) sessionRef.current = null;
+      refreshQueuedRef.current = false;
     };
   }, [sessionId, refresh, pollIntervalMs, debounceMs]);
 
