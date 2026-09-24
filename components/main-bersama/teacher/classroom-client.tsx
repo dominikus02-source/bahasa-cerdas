@@ -26,6 +26,9 @@ import { JelajahTrail } from '@/components/main-bersama/art/jelajah/JelajahTrail
 import { KotaScene } from '@/components/main-bersama/art/kota/KotaScene';
 import { TeamBadge } from '@/components/main-bersama/art/shared/TeamBadge';
 import { Podium } from '@/components/main-bersama/art/jelajah/Podium';
+import { FullscreenButton } from '@/components/main-bersama/shared/FullscreenButton';
+import { RoundCountdown } from '@/components/main-bersama/shared/RoundCountdown';
+import { QuestionOptionsGrid } from '@/components/main-bersama/shared/QuestionOptionsGrid';
 
 const MODE_LABEL = {
   'jelajah-kata': 'Jelajah Kata',
@@ -80,7 +83,7 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
 
   if (!view) {
     return (
-      <main className="mb-pj">
+      <main className="mb-pj mb-classroom">
         <ConnectionBanner visible={connection === 'offline'} />
         <p role="status" className="mb-pj-idle-msg">Menyiapkan Layar Kelas…</p>
       </main>
@@ -137,28 +140,59 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
       )}
 
       {phase === 'question' && (
-        <section className="mb-pj-phase mb-fade-in">
-          {view.currentQuestion ? (
-            <div className="mb-pj-q">
-              <QuestionCard question={view.currentQuestion} roundLabel={`Soal ${(view.currentRoundIndex ?? 0) + 1} / ${view.totalRounds}`} />
+        <section className="mb-pj-phase mb-pj-question-phase mb-fade-in">
+          <div className="mb-pj-question-stage">
+            <div className="mb-pj-question-main">
+              {view.currentQuestion ? (
+                <>
+                  <div className="mb-pj-q">
+                    <QuestionCard
+                      question={view.currentQuestion}
+                      roundLabel={`Soal ${(view.currentRoundIndex ?? 0) + 1} / ${view.totalRounds}`}
+                    />
+                  </div>
+                  <QuestionOptionsGrid question={view.currentQuestion} />
+                </>
+              ) : null}
             </div>
-          ) : null}
-          <div className="mb-pj-participation">
-            <span className="mb-count mb-number">
-              {view.participation.submittedCount}
-              <small> / {view.participation.eligibleCount} menjawab</small>
-            </span>
-            <ParticipantCount count={view.participation.playerCount} />
-          </div>
-          <div className="mb-pj-progress">
-            {view.gameProgress.gameMode === 'jelajah-kata' ? (
-              <TeamProgress teams={view.teams} progress={view.gameProgress.teamProgress} />
-            ) : (
-              <CityProgress
-                progressPercent={view.gameProgress.progressPercent}
-                unlockedMilestones={view.gameProgress.unlockedMilestones}
-              />
-            )}
+            <aside className="mb-pj-question-side" aria-label="Status putaran">
+              <div className="mb-stage-status-card mb-stage-timer-card">
+                <span className="mb-stage-label">Sisa waktu</span>
+                <RoundCountdown
+                  closesAt={view.currentRoundClosesAt}
+                  serverTime={view.serverTime}
+                  large
+                />
+              </div>
+              <div className="mb-stage-status-card mb-stage-answer-card">
+                <span className="mb-stage-label">Jawaban masuk</span>
+                <strong className="mb-stage-answer-count mb-number">
+                  {view.participation.submittedCount}
+                  <small> / {view.participation.eligibleCount}</small>
+                </strong>
+                <span className="mb-stage-answer-help">siswa sudah menjawab</span>
+              </div>
+              <div className="mb-stage-world-card">
+                {view.gameProgress.gameMode === 'jelajah-kata' ? (
+                  <>
+                    <JelajahTrail
+                      teams={view.teams.map((t) => ({ id: t.id, name: t.name }))}
+                      progress={view.gameProgress.teamProgress}
+                      compact
+                    />
+                    <TeamProgress teams={view.teams} progress={view.gameProgress.teamProgress} />
+                  </>
+                ) : (
+                  <>
+                    <KotaScene unlocked={view.gameProgress.unlockedMilestones} mini />
+                    <CityProgress
+                      progressPercent={view.gameProgress.progressPercent}
+                      unlockedMilestones={view.gameProgress.unlockedMilestones}
+                    />
+                  </>
+                )}
+              </div>
+            </aside>
           </div>
         </section>
       )}
@@ -197,6 +231,7 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
 
       {/* ── Teacher control dock (8B.1): kecil, di bawah, public-safe ── */}
       <nav className="mb-dock" aria-label="Kontrol Layar Kelas">
+        <FullscreenButton compact />
         {primary ? (
           <button type="button" className="mb-dock-primary" onClick={() => void run(primary.action)} disabled={busy}>
             {busy ? 'Memproses…' : primary.label}
