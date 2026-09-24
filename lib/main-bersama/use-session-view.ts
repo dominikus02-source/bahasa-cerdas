@@ -19,8 +19,12 @@ export type ConnectionState = 'connecting' | 'live' | 'offline';
 export function useSessionView<T>(
   sessionId: string | null,
   fetchView: () => Promise<T>,
-  options: { onError?: (error: unknown) => void } = {},
-): { view: T | null; connection: ConnectionState; refresh: () => void } {
+  options: {
+    onError?: (error: unknown) => void;
+    pollIntervalMs?: number;
+    debounceMs?: number;
+  } = {},
+): { view: T | null; connection: ConnectionState; refresh: () => Promise<void> } {
   const [view, setView] = useState<T | null>(null);
   const [connection, setConnection] = useState<ConnectionState>('connecting');
   const fetchRef = useRef(fetchView);
@@ -55,7 +59,16 @@ export function useSessionView<T>(
     if (!sessionId) return;
 
     refresh(); // initial sync — GET authoritative langsung.
-    const sub = subscribeSessionUpdates({ sessionId, refetch: refresh });
+    const sub = subscribeSessionUpdates({
+      sessionId,
+      refetch: refresh,
+      ...(options.pollIntervalMs !== undefined
+        ? { pollIntervalMs: options.pollIntervalMs }
+        : {}),
+      ...(options.debounceMs !== undefined
+        ? { debounceMs: options.debounceMs }
+        : {}),
+    });
 
     return () => {
       sub.stop(); // cleanup unmount/navigation (§21) — tidak ada channel duplikat.
