@@ -28,6 +28,7 @@ import { AnswerOption } from '@/components/main-bersama/shared/AnswerOption';
 import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBanner';
 import { ParticipantCount } from '@/components/main-bersama/shared/ParticipantCount';
 import { PrimaryGameButton } from '@/components/main-bersama/shared/PrimaryGameButton';
+import { RoundCountdown } from '@/components/main-bersama/shared/RoundCountdown';
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E'];
 
@@ -345,6 +346,7 @@ function StudentQuestion({
         <span className="mb-number">
           Soal {view.roundIndex + 1} dari {view.totalRounds}
         </span>
+        <RoundCountdown closesAt={view.closesAt} serverTime={view.serverTime} />
         <div
           className="mb-sq-bar"
           role="progressbar"
