@@ -8,7 +8,6 @@ interface ModeCardProps {
   onSelect: () => void;
 }
 
-/** Warna chip regu (Jelajah) — dari token tim. */
 const TEAM_CHIPS = [
   { name: 'Elang', varName: 'var(--mb-team-elang)' },
   { name: 'Harimau', varName: 'var(--mb-team-harimau)' },
@@ -19,13 +18,12 @@ const TEAM_CHIPS = [
 const MILESTONE_PREVIEW = ['Taman', 'Perpustakaan', 'Rumah', 'Pusat Kota'] as const;
 
 /**
- * Kartu mode (§8/§9/§10) — radio group semantik; icon SVG + preview
- * visual (lane jalur / skyline milestone), bukan emoji. Selected
- * state = border + background + check indicator + elevation (bukan
- * warna saja — §31).
+ * Kartu pemilihan mode dengan art produksi sebagai panggung.
+ * Teks/chip tetap HTML agar tajam, responsif, dan aksesibel.
  */
 export function ModeCard({ mode, selected, onSelect }: ModeCardProps) {
   const isJelajah = mode === 'jelajah-kata';
+
   return (
     <button
       type="button"
@@ -34,15 +32,18 @@ export function ModeCard({ mode, selected, onSelect }: ModeCardProps) {
       onClick={onSelect}
       className={`mb-mode-card ${isJelajah ? 'mb-mode-jelajah' : 'mb-mode-kota'} ${selected ? 'mb-mode-selected' : ''}`}
     >
-      <span className="mb-mode-deco" aria-hidden>
-        {isJelajah ? <JelajahGlyph /> : <KotaGlyph />}
-      </span>
+      <span className="mb-mode-art" aria-hidden />
+      <span className="mb-mode-shade" aria-hidden />
       <span className="mb-mode-check" aria-hidden>
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M20 6 9 17l-5-5" />
         </svg>
       </span>
+
       <span className="mb-mode-body">
+        <span className="mb-mode-kicker">
+          {isJelajah ? '4 REGU · BERLOMBA' : 'SATU KELAS · KOOPERATIF'}
+        </span>
         <span className="mb-mode-name mb-display">
           {isJelajah ? 'Jelajah Kata' : 'Kota Cahaya'}
         </span>
@@ -51,10 +52,15 @@ export function ModeCard({ mode, selected, onSelect }: ModeCardProps) {
             ? 'Empat regu berlomba maju berdasarkan ketepatan jawaban.'
             : 'Seluruh kelas bekerja sama menyalakan kota dengan jawaban benar.'}
         </span>
+
         {isJelajah ? (
           <span className="mb-mode-chips" aria-hidden>
             {TEAM_CHIPS.map((t) => (
-              <span key={t.name} className="mb-team-chip" style={{ '--mb-tc': t.varName } as React.CSSProperties}>
+              <span
+                key={t.name}
+                className="mb-team-chip"
+                style={{ '--mb-tc': t.varName } as React.CSSProperties}
+              >
                 {t.name}
               </span>
             ))}
@@ -70,129 +76,195 @@ export function ModeCard({ mode, selected, onSelect }: ModeCardProps) {
           </span>
         )}
       </span>
+
       <style jsx>{`
         .mb-mode-card {
+          --mb-mode-accent: var(--mb-primary);
           position: relative;
+          min-height: 232px;
           display: flex;
           align-items: center;
-          gap: var(--mb-space-4);
+          justify-content: flex-end;
           width: 100%;
-          padding: var(--mb-space-5);
+          padding: 22px;
           text-align: left;
-          background: var(--mb-surface-guru-elevated);
-          border: 2px solid rgba(28, 43, 58, 0.12);
-          border-radius: var(--mb-radius-lg);
-          box-shadow: var(--mb-shadow-light);
+          color: #ffffff;
+          border: 2px solid rgba(23, 38, 58, .12);
+          border-radius: 24px;
+          background: #102c39;
+          box-shadow: 0 13px 30px rgba(26, 46, 65, .12);
           cursor: pointer;
           overflow: hidden;
-          transition: border-color var(--mb-motion-fast), transform var(--mb-motion-fast), box-shadow var(--mb-motion-fast);
+          isolation: isolate;
+          transition:
+            border-color var(--mb-motion-fast),
+            transform var(--mb-motion-fast),
+            box-shadow var(--mb-motion-fast);
         }
-        .mb-mode-card:hover { transform: translateY(-2px); }
-        /* Warna identitas mode pada deco + selected (§8/§9 arah visual). */
-        .mb-mode-jelajah .mb-mode-deco { color: var(--mb-primary); }
-        .mb-mode-kota .mb-mode-deco { color: var(--mb-violet); }
+        .mb-mode-jelajah { --mb-mode-accent: #35d399; }
+        .mb-mode-kota { --mb-mode-accent: #a78bfa; }
+
+        .mb-mode-art,
+        .mb-mode-shade {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+        }
+        .mb-mode-art {
+          z-index: -3;
+          background-size: cover;
+          background-repeat: no-repeat;
+          transition: transform 360ms ease-out, filter 360ms ease-out;
+        }
+        .mb-mode-jelajah .mb-mode-art {
+          background-image: url('/images/main-bersama/mode-jelajah-kata.webp');
+          background-position: center;
+        }
+        .mb-mode-kota .mb-mode-art {
+          background-image: url('/images/main-bersama/mode-kota-cahaya.webp');
+          background-position: 42% center;
+        }
+        .mb-mode-shade {
+          z-index: -2;
+          background:
+            linear-gradient(90deg, rgba(4, 20, 28, .04) 0%, rgba(4, 25, 31, .14) 34%, rgba(4, 23, 31, .8) 59%, rgba(4, 20, 28, .94) 100%),
+            linear-gradient(0deg, rgba(1, 12, 22, .18), transparent 42%);
+        }
+        .mb-mode-kota .mb-mode-shade {
+          background:
+            linear-gradient(90deg, rgba(20, 15, 65, .05) 0%, rgba(22, 18, 70, .18) 35%, rgba(21, 18, 66, .8) 60%, rgba(15, 14, 52, .95) 100%),
+            linear-gradient(0deg, rgba(10, 8, 38, .2), transparent 45%);
+        }
+
+        .mb-mode-card:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 18px 38px rgba(26, 46, 65, .18);
+        }
+        .mb-mode-card:hover .mb-mode-art {
+          transform: scale(1.035);
+          filter: saturate(1.06);
+        }
         .mb-mode-selected {
-          border-color: var(--mb-primary-strong);
-          box-shadow: 0 10px 30px rgba(20, 184, 166, 0.22);
-          transform: translateY(-2px);
+          border-color: var(--mb-mode-accent);
+          box-shadow:
+            0 17px 38px rgba(20, 40, 60, .18),
+            0 0 0 4px color-mix(in srgb, var(--mb-mode-accent) 16%, transparent);
+          transform: translateY(-3px);
         }
-        .mb-mode-selected .mb-mode-check { display: grid; }
-        .mb-mode-deco {
+        .mb-mode-selected .mb-mode-check {
           display: grid;
-          place-items: center;
-          width: 72px;
-          height: 72px;
-          flex: none;
-          border-radius: var(--mb-radius-md);
-          background: var(--mb-primary-soft);
         }
-        .mb-mode-kota .mb-mode-deco { background: var(--mb-violet-soft); }
-        /* Check indicator (bukan hanya warna). */
+
         .mb-mode-check {
           display: none;
           place-items: center;
           position: absolute;
-          top: 10px;
-          right: 10px;
-          width: 28px;
-          height: 28px;
+          top: 13px;
+          right: 13px;
+          z-index: 3;
+          width: 31px;
+          height: 31px;
           border-radius: 50%;
-          background: var(--mb-primary-strong);
-          color: #ffffff;
+          background: var(--mb-mode-accent);
+          color: #072326;
+          box-shadow: 0 8px 20px rgba(0, 0, 0, .24);
         }
-        .mb-mode-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-        .mb-mode-name { font-size: 1.3rem; color: var(--mb-text-guru); }
+        .mb-mode-kota .mb-mode-check {
+          color: #21144a;
+        }
+
+        .mb-mode-body {
+          position: relative;
+          z-index: 2;
+          width: min(61%, 300px);
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 7px;
+          min-width: 0;
+        }
+        .mb-mode-kicker {
+          color: color-mix(in srgb, var(--mb-mode-accent) 78%, white);
+          font-size: .66rem;
+          line-height: 1;
+          letter-spacing: .12em;
+          font-weight: 900;
+        }
+        .mb-mode-name {
+          color: #ffffff !important;
+          font-size: clamp(1.42rem, 2.35vw, 1.85rem);
+          line-height: 1.02;
+          letter-spacing: .025em;
+          text-shadow: 0 5px 18px rgba(0, 0, 0, .42);
+        }
         .mb-mode-desc {
-          color: var(--mb-text-guru-secondary);
-          font-size: 0.95rem;
-          line-height: 1.45;
+          color: rgba(244, 249, 253, .88);
+          font-size: .88rem;
+          line-height: 1.42;
+          text-shadow: 0 2px 12px rgba(0, 0, 0, .42);
         }
-        .mb-mode-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-        /* Milestone preview kecil dengan titik cahaya bergantian. */
-        .mb-mode-milestones { display: flex; flex-wrap: wrap; gap: 6px; }
+        .mb-mode-chips,
+        .mb-mode-milestones {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          margin-top: 2px;
+        }
+        .mb-mode-card .mb-team-chip {
+          padding: 3px 9px;
+          background: color-mix(in srgb, var(--mb-tc) 22%, rgba(5, 18, 25, .8));
+          border-color: color-mix(in srgb, var(--mb-tc) 88%, white);
+          color: color-mix(in srgb, var(--mb-tc) 76%, white);
+          box-shadow: 0 3px 10px rgba(0, 0, 0, .12);
+          font-size: .72rem;
+        }
         .mb-mode-milestone {
           display: inline-flex;
           align-items: center;
           gap: 6px;
-          padding: 4px 10px;
-          border-radius: var(--mb-radius-pill);
-          background: var(--mb-violet-soft);
-          color: var(--mb-violet);
-          font-size: 0.78rem;
-          font-weight: 700;
+          padding: 4px 9px;
+          border-radius: 999px;
+          background: rgba(139, 124, 246, .23);
+          border: 1px solid rgba(202, 193, 255, .24);
+          color: #e8e2ff;
+          font-size: .7rem;
+          font-weight: 760;
+          box-shadow: 0 3px 10px rgba(0, 0, 0, .12);
         }
         .mb-mode-milestone i {
-          width: 7px;
-          height: 7px;
+          width: 6px;
+          height: 6px;
           border-radius: 50%;
-          background: currentColor;
-          opacity: 0.55;
+          background: #c9bfff;
+          opacity: .65;
+          box-shadow: 0 0 10px rgba(201, 191, 255, .7);
         }
+
         @media (prefers-reduced-motion: no-preference) {
-          .mb-mode-milestone i { animation: mb-dot-breathe 2.8s ease-in-out infinite; }
-          @keyframes mb-dot-breathe { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+          .mb-mode-milestone i {
+            animation: mb-dot-breathe 2.8s ease-in-out infinite;
+          }
+          @keyframes mb-dot-breathe {
+            0%, 100% { opacity: .45; }
+            50% { opacity: 1; }
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .mb-mode-art { transition: none; }
+        }
+
+        @media (max-width: 520px) {
+          .mb-mode-card {
+            min-height: 250px;
+            padding: 18px;
+          }
+          .mb-mode-body {
+            width: 66%;
+          }
+          .mb-mode-kicker { font-size: .6rem; }
+          .mb-mode-desc { font-size: .82rem; }
         }
       `}</style>
     </button>
-  );
-}
-
-/** Glyph dekoratif Jelajah: jalur dengan titik-titik checkpoint. */
-function JelajahGlyph() {
-  return (
-    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden>
-      <path
-        d="M8 34c8 0 4-12 12-12s4 12 12 12"
-        stroke="currentColor"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeDasharray="0.5 7.5"
-      />
-      <path
-        d="M8 22c8 0 4-12 12-12s4 12 12 12"
-        stroke="currentColor"
-        strokeWidth="3"
-        strokeLinecap="round"
-        opacity="0.45"
-      />
-      <circle cx="8" cy="34" r="3.5" fill="currentColor" />
-      <circle cx="36" cy="34" r="3.5" fill="var(--mb-accent)" />
-      <path d="M31 34h10" stroke="var(--mb-accent)" strokeWidth="2" strokeLinecap="round" opacity="0" />
-    </svg>
-  );
-}
-
-/** Glyph dekoratif Kota: skyline sederhana + jendela menyala. */
-function KotaGlyph() {
-  return (
-    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden>
-      <rect x="6" y="20" width="9" height="20" rx="1.5" fill="currentColor" opacity="0.45" />
-      <rect x="17" y="12" width="11" height="28" rx="1.5" fill="currentColor" />
-      <rect x="30" y="24" width="8" height="16" rx="1.5" fill="currentColor" opacity="0.45" />
-      <rect x="20" y="17" width="2.6" height="2.6" rx="0.6" fill="var(--mb-accent)" />
-      <rect x="20" y="23" width="2.6" height="2.6" rx="0.6" fill="var(--mb-accent)" opacity="0.7" />
-      <rect x="9" y="25" width="2.4" height="2.4" rx="0.6" fill="var(--mb-accent)" opacity="0.5" />
-      <rect x="32.5" y="28" width="2.4" height="2.4" rx="0.6" fill="var(--mb-accent)" opacity="0.5" />
-    </svg>
   );
 }
