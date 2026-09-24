@@ -49,7 +49,7 @@ const damage = {
 };
 check("9. floating damage visible during lifetime", floatingDamageOpacity(damage, 3300) > 0);
 check("10. floating damage hidden after lifetime", floatingDamageOpacity(damage, 3700) === 0);
-check("11. floating damage rises over time", floatingDamageOffset(damage, 3500) < floatingDamageOffset(damage, 3100));
+check("11. floating damage rises over time", floatingDamageOffset(damage, 3500) < floatingDamageOffset(damage, 3100));\n\nconst burst = createImpactBurst(1, 0.5, 0.5, 4000, 0.8);\ncheck("12. impact burst starts visible", impactBurstOpacity(burst, 4100) > 0);\ncheck("13. impact burst expires cleanly", impactBurstOpacity(burst, 4401) === 0);\nconst particle = impactBurstParticle(burst, 0, 4200);\ncheck("14. burst particle is deterministic and finite", Number.isFinite(particle.x) && Number.isFinite(particle.y) && particle.size > 0);\n\nconst victoryBurst = createImpactBurst(2, 0.5, 0.5, 5000, 1, true);\ncheck("15. victory burst has longer lifetime", impactBurstOpacity(victoryBurst, 5400) > 0);\ncheck("16. victory burst remains finite", Number.isFinite(impactBurstParticle(victoryBurst, 11, 5250).x));
 
 console.log(`\nVisual feedback gate: ${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);
