@@ -7,9 +7,11 @@
 //
 //   credential = playerId "." sessionId "." HMAC-SHA256(secret, "player:" + playerId)
 //
-//  - secret: env MAIN_BERSAMA_CREDENTIAL_SECRET (≥32 byte entropi);
-//    PRODUCTION: WAJIB tersedia — tanpa itu module HARD FAIL saat
-//    dipakai (config error, bukan silent random fallback);
+//  - secret utama: env MAIN_BERSAMA_CREDENTIAL_SECRET (≥32 byte entropi);
+//  - production fallback: bila secret dedicated belum tersedia, derive
+//    key terpisah (SHA-256 + domain separation) dari server-only secret
+//    stabil yang sudah wajib untuk runtime DB/Auth. Ini mencegah join
+//    gagal total karena satu env khusus terlewat saat rollout;
 //  - dev/test: fallback random per proses BOLEH (§10);
 //  - TIDAK ADA yang disimpan (kebocoran DB tidak membocorkan
 //    apa pun — credential bukan data DB);
@@ -18,7 +20,7 @@
 //    ke student pada join; transport = header x-mb-credential
 //    (TIDAK pernah URL query/SSE/Broadcast/log — §11).
 
-import { createHmac, randomBytes, timingSafeEqual } from 'crypto';
+import { createHash, createHmac, randomBytes, timingSafeEqual } from 'crypto';
 
 /** Produksi Vercel: NODE_ENV=production ATAU env Vercel eksplisit. */
 export function isProductionRuntime(): boolean {
@@ -33,15 +35,41 @@ export function isProductionRuntime(): boolean {
  * memakai secret yang sama dalam satu proses).
  */
 let cachedDevSecret: string | null = null;
+let cachedProductionFallbackSecret: string | null = null;
+
+function deriveProductionFallbackSecret(seed: string): string {
+  return createHash('sha256')
+    .update('bahasacerdas:main-bersama:credential:v1\0')
+    .update(seed)
+    .digest('base64url');
+}
+
 function getSecret(): string {
   const secret = process.env.MAIN_BERSAMA_CREDENTIAL_SECRET;
   if (secret && secret.length >= 32) return secret;
+
   if (isProductionRuntime()) {
+    // Dedicated secret tetap prioritas. Fallback hanya memakai material
+    // server-only yang stabil dan sudah dibutuhkan runtime production.
+    // Jangan pernah pakai NEXT_PUBLIC_* sebagai signing secret.
+    const stableServerSecret =
+      process.env.SUPABASE_SECRET_KEY ||
+      process.env.DATABASE_URL_POOLED ||
+      process.env.DATABASE_URL;
+
+    if (stableServerSecret && stableServerSecret.length >= 32) {
+      if (!cachedProductionFallbackSecret) {
+        cachedProductionFallbackSecret =
+          deriveProductionFallbackSecret(stableServerSecret);
+      }
+      return cachedProductionFallbackSecret;
+    }
+
     throw new Error(
-      'MAIN_BERSAMA_CREDENTIAL_SECRET wajib diset di production ' +
-        '(minimum 32 karakter entropi) — reconnect credential tidak aman tanpa itu.',
+      'Konfigurasi credential Main Bersama belum memiliki secret server yang stabil.',
     );
   }
+
   // Dev/test: random per proses boleh (memoize — bukan per panggilan);
   // reconnect lintas restart dev tidak dijamin (dokumentasi trade-off).
   if (!cachedDevSecret) {

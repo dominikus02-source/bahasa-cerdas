@@ -82,6 +82,11 @@ async function requireOwnedEngine(
     const exists = await deps.sessions.findById(sessionId);
     return exists ? { ok: false, code: 'UNAUTHORIZED' } : { ok: false, code: 'SESSION_NOT_FOUND' };
   }
+  // Command guru harus membaca roster/phase authoritative. Pada Vercel,
+  // instance guru bisa memegang cache sebelum siswa join di instance lain.
+  // Buang cache sebelum command agar Start/Tutup/Bahas tidak memakai roster
+  // atau phase yang basi.
+  deps.resolver.discard?.(sessionId);
   const loaded = await loadEngineWithGameState(deps, sessionId);
   if (!loaded) return { ok: false, code: 'SESSION_NOT_FOUND' };
   return { ok: true, ...loaded };
