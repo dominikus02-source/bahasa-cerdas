@@ -93,6 +93,11 @@ export async function joinSession(
   const session = await deps.sessions.findByPin(pin);
   if (!session) return { ok: false, code: 'SESSION_NOT_FOUND' };
 
+  // Join boleh terjadi lintas instance/serverless. Cache resolver lokal bisa
+  // tertinggal di PREPARING/LOBBY padahal sesi sudah QUESTION di DB, sehingga
+  // join sah bisa salah ditolak INVALID_PHASE. Paksa rehydrate authoritative
+  // sebelum memutuskan eligibility/fase join.
+  deps.resolver.discard?.(session.id);
   const loaded = await deps.resolver.resolve(session.id);
   if (!loaded.ok) return { ok: false, code: 'SESSION_NOT_FOUND' };
   const engine = loaded.engine;
@@ -137,10 +142,11 @@ export async function joinSession(
   const joinedPlayer = engine.state.players.get(join.value.playerId);
   if (!joinedPlayer) return { ok: false, code: 'INTERNAL' };
 
-  // Persist player; credential opaque stateless-signed (tidak ada
-  // yang disimpan — hanya diberikan SEKALI ke student, §7/§20).
-  await deps.players.saveRuntime(joinedPlayer, session.id);
+  // Mint credential SEBELUM persist. Bila konfigurasi signing bermasalah,
+  // join gagal tanpa meninggalkan "phantom participant" di DB/proyektor.
+  // Credential tetap opaque/stateless dan hanya diberikan SEKALI.
   const credential = deps.credentials.issue(join.value.playerId, session.id);
+  await deps.players.saveRuntime(joinedPlayer, session.id);
   // Sinyal lobby: peserta baru (participant count berubah) —
   // teacher/projector menarik ulang state (pull-on-notify, §5).
   await deps.realtimeSignal.sendSessionUpdate(session.id);
