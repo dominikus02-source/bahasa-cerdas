@@ -767,6 +767,16 @@ export function createCanvasRenderer(
     renderLiveEnemies(state, camera, liveEnemies);
     renderPlayer(state, camera);
     renderInteractionPrompt(state, camera, allowedNpcIds);
+    renderFloatingDamage(camera, state, nowMs);
+    ctx.restore();
+
+    const alpha = flashAlpha(visualFeedback, nowMs);
+    if (alpha > 0) {
+      ctx.save();
+      ctx.fillStyle = "rgba(255, 244, 230, " + (alpha * 0.55) + ")";
+      ctx.fillRect(0, 0, width, height);
+      ctx.restore();
+    }
   }
 
   /** Resize handler. */
