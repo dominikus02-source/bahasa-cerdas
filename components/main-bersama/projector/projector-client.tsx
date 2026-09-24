@@ -64,6 +64,7 @@ export function ProjectorClient() {
   const sessionIdParam = search.get("sessionId");
 
   const [lookupError, setLookupError] = useState<string | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const resolvedSessionId = useResolvedSessionId(
     pin,
     sessionIdParam,
@@ -137,6 +138,25 @@ export function ProjectorClient() {
       : [];
   const kotaMotion = useKotaMotion(kotaProgressPercent, kotaUnlocked, phase);
 
+  useEffect(() => {
+    const sync = () => setIsFullscreen(Boolean(document.fullscreenElement));
+    sync();
+    document.addEventListener("fullscreenchange", sync);
+    return () => document.removeEventListener("fullscreenchange", sync);
+  }, []);
+
+  const toggleFullscreen = useCallback(async () => {
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else {
+        await document.documentElement.requestFullscreen();
+      }
+    } catch {
+      // Browser/embedding bisa menolak fullscreen; layar tetap dapat dipakai.
+    }
+  }, []);
+
   if (lookupError && !view) {
     return (
       <main className="mb-pj-idle mb-fade-in">
@@ -167,6 +187,14 @@ export function ProjectorClient() {
   return (
     <main className="mb-pj">
       <ConnectionBanner visible={connection === "offline"} />
+      <button
+        type="button"
+        className="mb-pj-fullscreen"
+        onClick={() => void toggleFullscreen()}
+        aria-pressed={isFullscreen}
+      >
+        {isFullscreen ? "Keluar Fullscreen" : "Layar Penuh"}
+      </button>
       <header className="mb-pj-head">
         <div className="mb-pj-brand">
           <h1 className="mb-display mb-pj-title">MAIN BERSAMA</h1>
