@@ -28,8 +28,22 @@ export interface RPGLoopHandle {
 export function startRPGLoop(
   onUpdate: RPGLoopUpdate,
   onRender: RPGLoopRender | null,
-  /** Injectable clock for tests; defaults to browser/Node timers. */
+  /** Injectable scheduler for tests; browser defaults to requestAnimationFrame. */
   schedule: (cb: () => void, delayMs: number) => () => void = (cb, d) => {
+    if (typeof window !== "undefined" && typeof window.requestAnimationFrame === "function") {
+      let frameId = 0;
+      let active = true;
+      const loop = () => {
+        if (!active) return;
+        cb();
+        frameId = window.requestAnimationFrame(loop);
+      };
+      frameId = window.requestAnimationFrame(loop);
+      return () => {
+        active = false;
+        window.cancelAnimationFrame(frameId);
+      };
+    }
     const t = setInterval(cb, d);
     return () => clearInterval(t);
   },
