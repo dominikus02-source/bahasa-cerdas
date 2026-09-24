@@ -52,6 +52,13 @@ function progressTotal(progress?: Record<string, number>): number {
  * pointer interaction, or explicitly through the sound toggle.
  */
 export function useMainBersamaSound(snapshot: SoundSnapshot) {
+  const {
+    participantCount,
+    phase,
+    gameMode,
+    kotaUnlockedCount = 0,
+    teamProgress,
+  } = snapshot;
   const [enabled, setEnabled] = useState(true);
   const contextRef = useRef<AudioContext | null>(null);
   const prevRef = useRef<SoundSnapshot | null>(null);
@@ -184,47 +191,47 @@ export function useMainBersamaSound(snapshot: SoundSnapshot) {
   useEffect(() => {
     const prev = prevRef.current;
     prevRef.current = {
-      ...snapshot,
-      teamProgress: snapshot.teamProgress
-        ? { ...snapshot.teamProgress }
-        : undefined,
+      participantCount,
+      phase,
+      gameMode,
+      kotaUnlockedCount,
+      teamProgress: teamProgress ? { ...teamProgress } : undefined,
     };
     if (!prev) return;
 
     if (
-      (snapshot.phase === "lobby" || snapshot.phase === "preparing") &&
-      snapshot.participantCount > prev.participantCount
+      (phase === "lobby" || phase === "preparing") &&
+      participantCount > prev.participantCount
     ) {
       play("join");
     }
 
-    if (snapshot.phase !== prev.phase) {
-      if (snapshot.phase === "question") play("start");
-      else if (snapshot.phase === "closed") play("close");
-      else if (snapshot.phase === "discussion") play("reveal");
-      else if (snapshot.phase === "summary" || snapshot.phase === "ended")
-        play("summary");
+    if (phase !== prev.phase) {
+      if (phase === "question") play("start");
+      else if (phase === "closed") play("close");
+      else if (phase === "discussion") play("reveal");
+      else if (phase === "summary" || phase === "ended") play("summary");
     }
 
     if (
-      snapshot.gameMode === "kota-cahaya" &&
-      (snapshot.kotaUnlockedCount ?? 0) > (prev.kotaUnlockedCount ?? 0)
+      gameMode === "kota-cahaya" &&
+      kotaUnlockedCount > (prev.kotaUnlockedCount ?? 0)
     ) {
       play("milestone");
     }
 
     if (
-      snapshot.gameMode === "jelajah-kata" &&
-      progressTotal(snapshot.teamProgress) > progressTotal(prev.teamProgress) + 0.01
+      gameMode === "jelajah-kata" &&
+      progressTotal(teamProgress) > progressTotal(prev.teamProgress) + 0.01
     ) {
       play("move");
     }
   }, [
-    snapshot.participantCount,
-    snapshot.phase,
-    snapshot.gameMode,
-    snapshot.kotaUnlockedCount,
-    snapshot.teamProgress,
+    participantCount,
+    phase,
+    gameMode,
+    kotaUnlockedCount,
+    teamProgress,
     play,
   ]);
 
