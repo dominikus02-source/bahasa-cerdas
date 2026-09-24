@@ -281,13 +281,17 @@ export function createCanvasRenderer(
 
   // P2.9C.1: Preload READY entity assets on first render to avoid procedural→sprite pop.
   let entityAssetsPreloaded = false;
+  function preloadRuntimeAsset(assetKey: string | undefined): void {
+    const resolution = resolveEntityAsset(assetKey);
+    if (!isEntityAssetReady(resolution)) return;
+    if (requestedTilePaths.has(resolution.path)) return;
+    requestedTilePaths.add(resolution.path);
+    void tileLoader.load(resolution.path);
+  }
+
   function preloadEntityAssets(entities: readonly RPGWorldEntity[]): void {
     for (const entity of entities) {
-      const resolution = resolveEntityAsset(entity.asset);
-      if (isEntityAssetReady(resolution) && !requestedTilePaths.has(resolution.path)) {
-        requestedTilePaths.add(resolution.path);
-        void tileLoader.load(resolution.path);
-      }
+      preloadRuntimeAsset(entity.asset);
     }
   }
 
@@ -631,7 +635,7 @@ export function createCanvasRenderer(
     liveEnemies: readonly LiveEnemy[] = [],
     allowedNpcIds?: readonly string[],
   ) {
-    // P2.11: preload visible interaction/enemy art to avoid procedural pop.
+    // P2.11: preload visible runtime art to avoid procedural→sprite pop once approved assets exist.
     for (const interaction of state.world.interactions) {
       if (interaction.kind === "NPC") {
         const npcAssetKeys: Record<string, string> = {
