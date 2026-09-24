@@ -17,6 +17,7 @@ import { TeamProgress } from "@/components/main-bersama/shared/TeamProgress";
 import { CityProgress } from "@/components/main-bersama/shared/CityProgress";
 import { QuestionCard } from "@/components/main-bersama/shared/QuestionCard";
 import { ConnectionBanner } from "@/components/main-bersama/shared/ConnectionBanner";
+import { RoundCountdown } from "@/components/main-bersama/shared/RoundCountdown";
 import { JelajahTrail } from "@/components/main-bersama/art/jelajah/JelajahTrail";
 import { KotaScene } from "@/components/main-bersama/art/kota/KotaScene";
 import { TeamBadge } from "@/components/main-bersama/art/shared/TeamBadge";
@@ -63,6 +64,7 @@ export function ProjectorClient() {
   const sessionIdParam = search.get("sessionId");
 
   const [lookupError, setLookupError] = useState<string | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const resolvedSessionId = useResolvedSessionId(
     pin,
     sessionIdParam,
@@ -86,8 +88,8 @@ export function ProjectorClient() {
     {
       onError: () =>
         setLookupError("Ruang tidak ditemukan. Periksa PIN di URL layar."),
-      pollIntervalMs: 1_200,
-      debounceMs: 120,
+      pollIntervalMs: 700,
+      debounceMs: 40,
     },
   );
 
@@ -136,6 +138,25 @@ export function ProjectorClient() {
       : [];
   const kotaMotion = useKotaMotion(kotaProgressPercent, kotaUnlocked, phase);
 
+  useEffect(() => {
+    const sync = () => setIsFullscreen(Boolean(document.fullscreenElement));
+    sync();
+    document.addEventListener("fullscreenchange", sync);
+    return () => document.removeEventListener("fullscreenchange", sync);
+  }, []);
+
+  const toggleFullscreen = useCallback(async () => {
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else {
+        await document.documentElement.requestFullscreen();
+      }
+    } catch {
+      // Browser/embedding bisa menolak fullscreen; layar tetap dapat dipakai.
+    }
+  }, []);
+
   if (lookupError && !view) {
     return (
       <main className="mb-pj-idle mb-fade-in">
@@ -166,6 +187,14 @@ export function ProjectorClient() {
   return (
     <main className="mb-pj">
       <ConnectionBanner visible={connection === "offline"} />
+      <button
+        type="button"
+        className="mb-pj-fullscreen"
+        onClick={() => void toggleFullscreen()}
+        aria-pressed={isFullscreen}
+      >
+        {isFullscreen ? "Keluar Fullscreen" : "Layar Penuh"}
+      </button>
       <header className="mb-pj-head">
         <div className="mb-pj-brand">
           <h1 className="mb-display mb-pj-title">MAIN BERSAMA</h1>
@@ -370,7 +399,7 @@ function ProjectorQuestion({
 }) {
   const q = view.currentQuestion;
   return (
-    <section className="mb-pj-phase mb-fade-in">
+    <section className="mb-pj-phase mb-pj-phase-question mb-fade-in">
       {q ? (
         <div className="mb-pj-q">
           <QuestionCard
@@ -380,6 +409,12 @@ function ProjectorQuestion({
         </div>
       ) : null}
       <div className="mb-pj-participation">
+        <RoundCountdown
+          closesAt={view.currentRoundClosesAt}
+          serverTime={view.serverTime}
+          compact
+          light
+        />
         <span className="mb-count mb-number">
           {view.participation.submittedCount}
           <small> / {view.participation.eligibleCount} menjawab</small>

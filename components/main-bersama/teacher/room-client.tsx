@@ -28,6 +28,7 @@ import { QuestionCard } from '@/components/main-bersama/shared/QuestionCard';
 import { TeamProgress } from '@/components/main-bersama/shared/TeamProgress';
 import { CityProgress } from '@/components/main-bersama/shared/CityProgress';
 import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBanner';
+import { RoundCountdown } from '@/components/main-bersama/shared/RoundCountdown';
 import { RoomQRCode } from '@/components/main-bersama/shared/RoomQRCode';
 
 type Command =
@@ -61,7 +62,7 @@ export function TeacherRoomClient({
   const { view, connection, refresh } = useSessionView<TeacherSessionView>(
     sessionId,
     fetchView,
-    { pollIntervalMs: 1_200, debounceMs: 120 },
+    { pollIntervalMs: 700, debounceMs: 40 },
   );
 
   const run = useCallback(
@@ -81,6 +82,17 @@ export function TeacherRoomClient({
     },
     [sessionId, refresh],
   );
+
+  const enterClassroom = useCallback(async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+      }
+    } catch {
+      // Fullscreen API bisa ditolak browser; navigasi tetap jalan.
+    }
+    router.push(`/guru/game/main-bersama/kelas/${sessionId}`);
+  }, [router, sessionId]);
 
   if (!view) {
     return (
@@ -192,7 +204,7 @@ export function TeacherRoomClient({
           {/* ── Layar Kelas (8B.1): satu layar default, dua layar advanced ── */}
           <div className="mb-room-classroom">
             <PrimaryGameButton
-              onClick={() => router.push(`/guru/game/main-bersama/kelas/${sessionId}`)}
+              onClick={() => void enterClassroom()}
               disabled={busy}
               variant="light"
             >
@@ -217,7 +229,7 @@ export function TeacherRoomClient({
               <strong className="mb-number">{answered}</strong>
               <small>/ {eligible} menjawab</small>
             </span>
-            <RoundTimer closesAt={view.currentRoundClosesAt} serverTime={view.serverTime} />
+            <RoundCountdown closesAt={view.currentRoundClosesAt} serverTime={view.serverTime} />
           </div>
           <QuestionCard
             question={view.currentQuestion}
@@ -369,67 +381,6 @@ function ParticipantList({
         </li>
       ))}
     </ul>
-  );
-}
-
-/** Timer sisa waktu round — drift ke server time, bukan jam client. */
-function RoundTimer({ closesAt, serverTime }: { closesAt: string | null; serverTime: string }) {
-  if (!closesAt) return null;
-  return <_RoundTimer closesAt={closesAt} serverTime={serverTime} />;
-}
-
-function _RoundTimer({ closesAt, serverTime }: { closesAt: string; serverTime: string }) {
-  // Jangan memasukkan network latency sebagai "clock skew". Pada perangkat
-  // dengan jam normal, gunakan deadline absolut langsung. Hanya bila jam
-  // client benar-benar melenceng jauh (>10 detik), pakai offset server.
-  const [clockOffsetMs, setClockOffsetMs] = useState(0);
-  const [remaining, setRemaining] = useState(() =>
-    Math.max(0, Date.parse(closesAt) - Date.now()),
-  );
-
-  useEffect(() => {
-    const observedOffset = Date.parse(serverTime) - Date.now();
-    setClockOffsetMs(Math.abs(observedOffset) > 10_000 ? observedOffset : 0);
-  }, [serverTime]);
-
-  useEffect(() => {
-    const tick = () => {
-      setRemaining(
-        Math.max(0, Date.parse(closesAt) - (Date.now() + clockOffsetMs)),
-      );
-    };
-    tick();
-    // 250 ms menjaga perubahan detik terasa tepat tanpa membuat render loop berat.
-    const id = setInterval(tick, 250);
-    return () => clearInterval(id);
-  }, [closesAt, clockOffsetMs]);
-
-  const totalSec = Math.ceil(remaining / 1000);
-  const mm = String(Math.floor(totalSec / 60)).padStart(2, '0');
-  const ss = String(totalSec % 60).padStart(2, '0');
-  const urgent = totalSec <= 30;
-  return (
-    <span
-      className={`mb-timer mb-number ${urgent ? 'mb-timer-urgent' : ''}`}
-      role="timer"
-      aria-label={`Sisa waktu ${mm}:${ss}`}
-    >
-      {mm}:{ss}
-      <style jsx>{`
-        .mb-timer {
-          padding: 6px 16px;
-          border-radius: var(--mb-radius-pill);
-          background: rgba(28, 43, 58, 0.08);
-          font-weight: 800;
-          font-size: 1.05rem;
-          color: var(--mb-text-guru);
-        }
-        .mb-timer-urgent {
-          background: var(--mb-danger);
-          color: #ffffff;
-        }
-      `}</style>
-    </span>
   );
 }
 

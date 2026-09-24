@@ -96,8 +96,21 @@ export function useSessionView<T>(
       ...(debounceMs !== undefined ? { debounceMs } : {}),
     });
 
+    // Guru sering pindah tab saat menyiapkan kelas. Jangan menunggu safety
+    // poll ketika tab kembali aktif / koneksi pulih.
+    const syncVisible = () => {
+      if (document.visibilityState === 'visible') void refresh();
+    };
+    const syncFocus = () => { void refresh(); };
+    document.addEventListener('visibilitychange', syncVisible);
+    window.addEventListener('focus', syncFocus);
+    window.addEventListener('online', syncFocus);
+
     return () => {
       sub.stop(); // cleanup unmount/navigation (§21) — tidak ada channel duplikat.
+      document.removeEventListener('visibilitychange', syncVisible);
+      window.removeEventListener('focus', syncFocus);
+      window.removeEventListener('online', syncFocus);
       if (sessionRef.current === sessionId) sessionRef.current = null;
       refreshQueuedRef.current = false;
     };
