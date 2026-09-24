@@ -267,5 +267,7 @@ export async function updateSession(request: NextRequest, nonce?: string) {
 
 
   supabaseResponse.headers.set("X-RateLimit-Remaining", String(limit.remaining));
+  // Never let a response that may carry refreshed auth cookies be cached.
+  supabaseResponse.headers.set("Cache-Control", "private, no-store");
   return supabaseResponse;
 }
