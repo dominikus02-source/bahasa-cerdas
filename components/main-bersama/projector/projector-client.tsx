@@ -17,6 +17,9 @@ import { CityProgress } from "@/components/main-bersama/shared/CityProgress";
 import { QuestionCard } from "@/components/main-bersama/shared/QuestionCard";
 import { ConnectionBanner } from "@/components/main-bersama/shared/ConnectionBanner";
 import { RoundCountdown } from "@/components/main-bersama/shared/RoundCountdown";
+import { LobbyRoster } from "@/components/main-bersama/shared/LobbyRoster";
+import { useMainBersamaSound } from "@/components/main-bersama/sound/useMainBersamaSound";
+import { SoundToggle } from "@/components/main-bersama/sound/SoundToggle";
 import { JelajahTrail } from "@/components/main-bersama/art/jelajah/JelajahTrail";
 import { KotaScene } from "@/components/main-bersama/art/kota/KotaScene";
 import { TeamBadge } from "@/components/main-bersama/art/shared/TeamBadge";
@@ -137,6 +140,15 @@ export function ProjectorClient() {
       : [];
   const kotaMotion = useKotaMotion(kotaProgressPercent, kotaUnlocked, phase);
 
+  const gameSound = useMainBersamaSound({
+    participantCount: view?.participation.playerCount ?? 0,
+    phase: view?.phase ?? "preparing",
+    gameMode: view?.gameMode ?? "jelajah-kata",
+    kotaUnlockedCount: kotaUnlocked.length,
+    teamProgress:
+      gameMode === "jelajah-kata" ? teamProgress : undefined,
+  });
+
   useEffect(() => {
     const sync = () => setIsFullscreen(Boolean(document.fullscreenElement));
     sync();
@@ -186,14 +198,21 @@ export function ProjectorClient() {
   return (
     <main className="mb-pj">
       <ConnectionBanner visible={connection === "offline"} />
-      <button
-        type="button"
-        className="mb-pj-fullscreen"
-        onClick={() => void toggleFullscreen()}
-        aria-pressed={isFullscreen}
-      >
-        {isFullscreen ? "Keluar Fullscreen" : "Layar Penuh"}
-      </button>
+      <div className="mb-pj-utility-controls">
+        <SoundToggle
+          enabled={gameSound.enabled}
+          onToggle={() => void gameSound.toggle()}
+          compact
+        />
+        <button
+          type="button"
+          className="mb-pj-fullscreen"
+          onClick={() => void toggleFullscreen()}
+          aria-pressed={isFullscreen}
+        >
+          {isFullscreen ? "Keluar Fullscreen" : "Layar Penuh"}
+        </button>
+      </div>
       <header className="mb-pj-head">
         <div className="mb-pj-brand">
           <h1 className="mb-display mb-pj-title">MAIN BERSAMA</h1>
@@ -333,18 +352,32 @@ function ProjectorLobby({
   const pin = view.joinInfo?.pin ?? "------";
   return (
     <section className="mb-pj-phase mb-pj-lobby-stage mb-fade-in">
-      <span className="mb-eyebrow mb-pj-lobby-eyebrow">PIN RUANG</span>
-      <PinDisplay pin={pin} scale="projector" />
-      <p className="mb-pj-wait" role="status">
-        Buka halaman <strong>Gabung Main Bersama</strong> lalu masukkan PIN di
-        atas
-      </p>
-      <span key={view.participation.playerCount} className="mb-entrance">
-        <ParticipantCount
-          count={view.participation.playerCount}
-          label="siswa bergabung"
-        />
-      </span>
+      <div className="mb-pj-lobby-grid">
+        <div className="mb-pj-lobby-join">
+          <span className="mb-eyebrow mb-pj-lobby-eyebrow">PIN RUANG</span>
+          <PinDisplay pin={pin} scale="projector" />
+          <p className="mb-pj-wait" role="status">
+            Buka halaman <strong>Gabung Main Bersama</strong> lalu masukkan PIN di atas
+          </p>
+          <span key={view.participation.playerCount} className="mb-entrance">
+            <ParticipantCount
+              count={view.participation.playerCount}
+              label="siswa bergabung"
+            />
+          </span>
+        </div>
+        <div className="mb-pj-lobby-roster-panel">
+          <div className="mb-pj-lobby-roster-head">
+            <span>Siapa yang sudah masuk?</span>
+            <strong className="mb-number">{view.participation.playerCount}</strong>
+          </div>
+          <LobbyRoster
+            participants={view.lobbyParticipants}
+            maxVisible={12}
+            tone="dark"
+          />
+        </div>
+      </div>
       {view.gameProgress.gameMode === "jelajah-kata" ? (
         <div className="mb-pj-world mb-pj-world-strip" aria-hidden>
           <JelajahTrail

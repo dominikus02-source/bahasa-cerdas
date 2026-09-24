@@ -400,6 +400,13 @@ export function buildProjectorView(
     totalRounds: session.totalRounds,
     currentRoundClosesAt: activeRound?.closesAt?.toISOString() ?? null,
     currentQuestion: activeRound ? toPublicQuestionView(activeRound.question) : null,
+    lobbyParticipants:
+      phase === 'lobby' || phase === 'preparing'
+        ? [...engine.state.players.values()].map((player) => ({
+            displayName: player.displayName,
+            ...(player.teamId ? { teamId: player.teamId as TeamId } : {}),
+          }))
+        : [],
     participation: {
       playerCount: engine.state.players.size,
       eligibleCount: activeRound ? activeRound.eligiblePlayerIds.length : 0,

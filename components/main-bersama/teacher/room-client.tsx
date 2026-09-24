@@ -10,7 +10,7 @@
 // GET authoritative (useSessionView); command POST lalu refresh.
 // Logic/Tahap 6 TIDAK berubah — hanya presentation.
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { TeacherSessionView } from '@/src/main-bersama/contracts/views/teacher';
 import type { TeacherParticipantInfo } from '@/src/main-bersama/contracts/views/teacher';
@@ -30,6 +30,9 @@ import { CityProgress } from '@/components/main-bersama/shared/CityProgress';
 import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBanner';
 import { RoundCountdown } from '@/components/main-bersama/shared/RoundCountdown';
 import { RoomQRCode } from '@/components/main-bersama/shared/RoomQRCode';
+import { LobbyRoster } from '@/components/main-bersama/shared/LobbyRoster';
+import { useMainBersamaSound } from '@/components/main-bersama/sound/useMainBersamaSound';
+import { SoundToggle } from '@/components/main-bersama/sound/SoundToggle';
 
 type Command =
   | 'open-lobby'
@@ -54,6 +57,7 @@ export function TeacherRoomClient({
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const autoLobbyRef = useRef(false);
 
   const fetchView = useCallback(
     () => fetchTeacherState(sessionId).then((r) => r.view),
@@ -64,6 +68,20 @@ export function TeacherRoomClient({
     fetchView,
     { pollIntervalMs: 700, debounceMs: 40 },
   );
+
+  const teacherSound = useMainBersamaSound({
+    participantCount: view?.participants.length ?? 0,
+    phase: view?.phase ?? 'preparing',
+    gameMode: view?.gameMode ?? 'jelajah-kata',
+    kotaUnlockedCount:
+      view?.gameState?.gameMode === 'kota-cahaya'
+        ? view.gameState.kotaCahaya.unlockedMilestones.length
+        : 0,
+    teamProgress:
+      view?.gameState?.gameMode === 'jelajah-kata'
+        ? view.gameState.jelajahKata.teamProgress
+        : undefined,
+  });
 
   const run = useCallback(
     async (action: Command) => {
@@ -82,6 +100,14 @@ export function TeacherRoomClient({
     },
     [sessionId, refresh],
   );
+
+  // Prepared adalah fase internal. Secara produk guru tidak perlu melihat
+  // atau mengkliknya; sesi yang masuk ke halaman ruang langsung menjadi lobby.
+  useEffect(() => {
+    if (!view || view.phase !== 'preparing' || autoLobbyRef.current || busy) return;
+    autoLobbyRef.current = true;
+    void run('open-lobby');
+  }, [view, busy, run]);
 
   const enterClassroom = useCallback(async () => {
     try {
@@ -127,6 +153,11 @@ export function TeacherRoomClient({
         roundLabel={roundLabel}
         actions={
           <>
+            <SoundToggle
+              enabled={teacherSound.enabled}
+              onToggle={() => void teacherSound.toggle()}
+              compact
+            />
             {a.canPause ? (
               <button type="button" className="mb-secondary-btn" onClick={() => run('pause')} disabled={busy}>
                 Jeda
@@ -179,7 +210,14 @@ export function TeacherRoomClient({
             <RoomQRCode pin={pin} />
             <small>Scan untuk gabung</small>
           </div>
-          <ParticipantList participants={view.participants} />
+          <LobbyRoster
+            participants={view.participants.map((p) => ({
+              displayName: p.displayName,
+              ...(p.teamId ? { teamId: p.teamId } : {}),
+            }))}
+            maxVisible={18}
+            tone="light"
+          />
           {view.participants.length === 0 ? (
             <p className="mb-lobby-hint" role="status">
               Belum ada siswa yang bergabung. Bagikan PIN di atas kepada kelas.
@@ -187,12 +225,15 @@ export function TeacherRoomClient({
           ) : null}
           <div className="mb-room-cta">
             {view.phase === 'preparing' ? (
-              <PrimaryGameButton onClick={() => run('open-lobby')} disabled={busy} loading={busy} variant="light">
-                Buka Ruang
+              <PrimaryGameButton disabled loading variant="light">
+                Menyiapkan Lobby…
               </PrimaryGameButton>
             ) : (
               <PrimaryGameButton
-                onClick={() => run('start')}
+                onClick={() => {
+                  void teacherSound.unlock();
+                  void run('start');
+                }}
                 disabled={busy || view.participants.length === 0}
                 loading={busy}
                 variant="light"
