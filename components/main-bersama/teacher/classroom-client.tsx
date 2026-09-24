@@ -7,7 +7,7 @@
 // KONTROL hanya command dock (start/close/discuss/next + overflow
 // pause/resume/end) via postTeacherCommand yang sama dengan ruang guru.
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { ProjectorSessionView } from '@/src/main-bersama/contracts/views/projector';
 import {
@@ -22,6 +22,7 @@ import { TeamProgress } from '@/components/main-bersama/shared/TeamProgress';
 import { CityProgress } from '@/components/main-bersama/shared/CityProgress';
 import { QuestionCard } from '@/components/main-bersama/shared/QuestionCard';
 import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBanner';
+import { RoundCountdown } from '@/components/main-bersama/shared/RoundCountdown';
 import { JelajahTrail } from '@/components/main-bersama/art/jelajah/JelajahTrail';
 import { KotaScene } from '@/components/main-bersama/art/kota/KotaScene';
 import { TeamBadge } from '@/components/main-bersama/art/shared/TeamBadge';
@@ -52,12 +53,13 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const fetchView = useCallback(() => fetchProjectorState({ sessionId }), [sessionId]);
   const { view, connection, refresh } = useSessionView<ProjectorSessionView>(
     sessionId,
     fetchView,
-    { pollIntervalMs: 1_200, debounceMs: 120 },
+    { pollIntervalMs: 700, debounceMs: 40 },
   );
 
   const run = useCallback(
@@ -77,6 +79,37 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
     },
     [sessionId, refresh],
   );
+
+  const toggleFullscreen = useCallback(async () => {
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else {
+        await document.documentElement.requestFullscreen();
+      }
+    } catch {
+      setError('Mode layar penuh tidak didukung browser ini.');
+    }
+  }, []);
+
+  useEffect(() => {
+    const sync = () => setIsFullscreen(Boolean(document.fullscreenElement));
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() === 'f' && !event.metaKey && !event.ctrlKey && !event.altKey) {
+        const target = event.target as HTMLElement | null;
+        if (target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA' || target?.isContentEditable) return;
+        event.preventDefault();
+        void toggleFullscreen();
+      }
+    };
+    sync();
+    document.addEventListener('fullscreenchange', sync);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('fullscreenchange', sync);
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [toggleFullscreen]);
 
   if (!view) {
     return (
@@ -137,13 +170,19 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
       )}
 
       {phase === 'question' && (
-        <section className="mb-pj-phase mb-fade-in">
+        <section className="mb-pj-phase mb-pj-phase-question mb-fade-in">
           {view.currentQuestion ? (
             <div className="mb-pj-q">
               <QuestionCard question={view.currentQuestion} roundLabel={`Soal ${(view.currentRoundIndex ?? 0) + 1} / ${view.totalRounds}`} />
             </div>
           ) : null}
           <div className="mb-pj-participation">
+            <RoundCountdown
+              closesAt={view.currentRoundClosesAt}
+              serverTime={view.serverTime}
+              compact
+              light
+            />
             <span className="mb-count mb-number">
               {view.participation.submittedCount}
               <small> / {view.participation.eligibleCount} menjawab</small>
@@ -206,6 +245,15 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
             Selesai
           </button>
         )}
+        <button
+          type="button"
+          className="mb-dock-fullscreen"
+          onClick={() => void toggleFullscreen()}
+          aria-pressed={isFullscreen}
+          title={isFullscreen ? 'Keluar layar penuh (F)' : 'Layar penuh (F)'}
+        >
+          {isFullscreen ? 'Keluar Fullscreen' : 'Layar Penuh'}
+        </button>
         <details className="mb-dock-more">
           <summary aria-label="Kontrol lain">•••</summary>
           <div className="mb-dock-menu" role="menu">
@@ -246,6 +294,20 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
         .mb-dock-primary:active:not(:disabled) { transform: scale(0.98); }
         .mb-dock-primary:disabled { opacity: 0.55; cursor: wait; }
         .mb-dock-primary:focus-visible { outline: 2px solid var(--mb-accent); outline-offset: 2px; }
+        .mb-dock-fullscreen {
+          min-height: 46px;
+          padding: 9px 18px;
+          border-radius: var(--mb-radius-pill);
+          border: 1.5px solid rgba(255, 255, 255, 0.25);
+          background: rgba(255, 255, 255, 0.08);
+          color: var(--mb-text-primary);
+          font-weight: 800;
+          cursor: pointer;
+          transition: transform var(--mb-motion-fast), background var(--mb-motion-fast);
+        }
+        .mb-dock-fullscreen:hover { background: rgba(255, 255, 255, 0.14); }
+        .mb-dock-fullscreen:active { transform: scale(0.98); }
+        .mb-dock-fullscreen:focus-visible { outline: 2px solid var(--mb-accent); outline-offset: 2px; }
         .mb-dock-more { position: relative; }
         .mb-dock-more summary {
           list-style: none;
