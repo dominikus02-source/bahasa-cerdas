@@ -176,6 +176,18 @@ export function SetupClient({
       const created = result.session as { id?: unknown } | undefined;
       const sessionId = created && typeof created.id === 'string' ? created.id : '';
       if (!sessionId) throw new MbApiError('INTERNAL', 'Sesi gagal dibuat.', 500);
+
+      // UX lobby satu langkah: setelah sesi durable dibuat, langsung buka
+      // lobby sebelum guru tiba di halaman ruang. Tidak ada lagi klik
+      // "Buka Ruang" kedua. TeacherRoomClient tetap punya auto-recovery
+      // bila command ini gagal karena gangguan jaringan sesaat.
+      try {
+        await postTeacherCommand({ action: 'open-lobby', sessionId });
+      } catch {
+        // Session sudah berhasil dibuat; lanjut ke ruang. Halaman ruang akan
+        // mengubah PREPARING → LOBBY secara otomatis sebagai recovery.
+      }
+
       router.push(`/guru/game/main-bersama/ruang/${sessionId}`);
     } catch (e) {
       setError(e instanceof MbApiError ? e.message : 'Gagal membuka ruang. Coba lagi.');
