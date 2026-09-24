@@ -106,11 +106,7 @@ export function TeacherRoomClient({
   useEffect(() => {
     if (!view || view.phase !== 'preparing' || autoLobbyRef.current || busy) return;
     autoLobbyRef.current = true;
-    void run('open-lobby').finally(() => {
-      // Jika command gagal karena jaringan, beri kesempatan retry saat
-      // authoritative view berikutnya masih PREPARING.
-      if (view.phase === 'preparing') autoLobbyRef.current = false;
-    });
+    void run('open-lobby');
   }, [view, busy, run]);
 
   const enterClassroom = useCallback(async () => {
