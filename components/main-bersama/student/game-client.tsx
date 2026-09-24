@@ -309,13 +309,13 @@ function StudentQuestion({
     submittedRef.current = true;
     setBusy(true);
     setError(null);
+    setSelected(optionId);
     try {
       await submitAnswer(sessionId, {
         roundId: view.roundId,
         selectedOptionId: optionId,
         submissionId: newSubmissionId(),
       });
-      setSelected(optionId);
       setSaved(true);
     } catch (e) {
       submittedRef.current = false;
