@@ -14,7 +14,7 @@
  * - MISSING: expected by contract but absent (e.g. Arga engine sheets).
  *
  * Source packs live untouched at public/game/Pendekar Suryakerta-BC/*.zip.
- * Runtime PNGs live at public/game/rpg/ (web-served for canvas loading).
+ * Runtime PNGs live at public/game/rpg/ (web-served for canvas loading).\n * P2.11 shared atlas remains NEEDS_REVIEW until the binary file is present and verified.
  */
 
 export type RpgAssetStatus = "READY" | "REFERENCE_ONLY" | "NEEDS_REVIEW" | "MISSING";
