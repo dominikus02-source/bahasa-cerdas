@@ -7,6 +7,8 @@ interface RoundCountdownProps {
   serverTime: string;
   compact?: boolean;
   light?: boolean;
+  /** Freeze timer immediately when the answering condition is complete. */
+  complete?: boolean;
 }
 
 /**
@@ -20,6 +22,7 @@ export function RoundCountdown({
   serverTime,
   compact = false,
   light = false,
+  complete = false,
 }: RoundCountdownProps) {
   if (!closesAt) return null;
   return (
@@ -28,6 +31,7 @@ export function RoundCountdown({
       serverTime={serverTime}
       compact={compact}
       light={light}
+      complete={complete}
     />
   );
 }
@@ -37,6 +41,7 @@ function RoundCountdownInner({
   serverTime,
   compact,
   light,
+  complete,
 }: Required<Omit<RoundCountdownProps, "closesAt">> & { closesAt: string }) {
   const [clockOffsetMs, setClockOffsetMs] = useState(0);
   const [remaining, setRemaining] = useState(() =>
@@ -49,6 +54,11 @@ function RoundCountdownInner({
   }, [serverTime]);
 
   useEffect(() => {
+    // Saat semua peserta eligible sudah menjawab, sisa waktu dibekukan pada
+    // angka terakhir yang terlihat. Fase tetap QUESTION sampai guru menutup,
+    // jadi tidak ada perubahan aturan permainan — hanya timer tak terus jalan.
+    if (complete) return;
+
     const tick = () => {
       setRemaining(
         Math.max(0, Date.parse(closesAt) - (Date.now() + clockOffsetMs)),
@@ -57,12 +67,12 @@ function RoundCountdownInner({
     tick();
     const id = window.setInterval(tick, 200);
     return () => window.clearInterval(id);
-  }, [closesAt, clockOffsetMs]);
+  }, [closesAt, clockOffsetMs, complete]);
 
   const totalSec = Math.ceil(remaining / 1000);
   const mm = String(Math.floor(totalSec / 60)).padStart(2, "0");
   const ss = String(totalSec % 60).padStart(2, "0");
-  const urgent = totalSec <= 10;
+  const urgent = !complete && totalSec <= 10;
 
   return (
     <span
@@ -71,13 +81,19 @@ function RoundCountdownInner({
         compact ? "mb-round-countdown-compact" : "",
         light ? "mb-round-countdown-light" : "",
         urgent ? "mb-round-countdown-urgent" : "",
+        complete ? "mb-round-countdown-complete" : "",
       ]
         .filter(Boolean)
         .join(" ")}
       role="timer"
-      aria-label={`Sisa waktu ${mm}:${ss}`}
+      aria-label={
+        complete
+          ? `Semua siswa sudah menjawab. Sisa waktu dibekukan ${mm}:${ss}`
+          : `Sisa waktu ${mm}:${ss}`
+      }
     >
       <span aria-hidden className="mb-round-countdown-dot" />
+      {complete ? <span aria-hidden>✓</span> : null}
       {mm}:{ss}
     </span>
   );
