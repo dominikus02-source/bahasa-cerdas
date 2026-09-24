@@ -22,6 +22,9 @@ import { CityProgress } from '@/components/main-bersama/shared/CityProgress';
 import { QuestionCard } from '@/components/main-bersama/shared/QuestionCard';
 import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBanner';
 import { RoundCountdown } from '@/components/main-bersama/shared/RoundCountdown';
+import { LobbyRoster } from '@/components/main-bersama/shared/LobbyRoster';
+import { useMainBersamaSound } from '@/components/main-bersama/sound/useMainBersamaSound';
+import { SoundToggle } from '@/components/main-bersama/sound/SoundToggle';
 import { JelajahTrail } from '@/components/main-bersama/art/jelajah/JelajahTrail';
 import { KotaScene } from '@/components/main-bersama/art/kota/KotaScene';
 import { TeamBadge } from '@/components/main-bersama/art/shared/TeamBadge';
@@ -106,6 +109,14 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
       : [];
   const kotaMotion = useKotaMotion(kotaProgressPercent, kotaUnlocked, phase);
 
+  const gameSound = useMainBersamaSound({
+    participantCount: view?.participation.playerCount ?? 0,
+    phase: view?.phase ?? 'preparing',
+    gameMode: view?.gameMode ?? 'jelajah-kata',
+    kotaUnlockedCount: kotaUnlocked.length,
+    teamProgress: gameMode === 'jelajah-kata' ? teamProgress : undefined,
+  });
+
   const run = useCallback(
     async (action: DockCommand) => {
       setBusy(true);
@@ -165,7 +176,7 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
   }
 
   const primary: { label: string; action: DockCommand } | null =
-    phase === 'lobby' || phase === 'preparing'
+    phase === 'lobby'
       ? { label: 'Mulai', action: 'start' }
       : phase === 'question'
         ? { label: 'Tutup Jawaban', action: 'close-round' }
@@ -192,14 +203,29 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
 
       {(phase === 'lobby' || phase === 'preparing') && (
         <section className="mb-pj-phase mb-pj-lobby-stage mb-fade-in">
-          <span className="mb-eyebrow mb-pj-lobby-eyebrow">PIN RUANG</span>
-          <PinDisplay pin={view.joinInfo?.pin ?? '------'} scale="projector" />
-          <p className="mb-pj-wait" role="status">
-            Buka halaman <strong>Gabung Main Bersama</strong> lalu masukkan PIN di atas
-          </p>
-          <span key={view.participation.playerCount} className="mb-entrance">
-            <ParticipantCount count={view.participation.playerCount} label="siswa bergabung" />
-          </span>
+          <div className="mb-pj-lobby-grid">
+            <div className="mb-pj-lobby-join">
+              <span className="mb-eyebrow mb-pj-lobby-eyebrow">PIN RUANG</span>
+              <PinDisplay pin={view.joinInfo?.pin ?? '------'} scale="projector" />
+              <p className="mb-pj-wait" role="status">
+                Buka halaman <strong>Gabung Main Bersama</strong> lalu masukkan PIN di atas
+              </p>
+              <span key={view.participation.playerCount} className="mb-entrance">
+                <ParticipantCount count={view.participation.playerCount} label="siswa bergabung" />
+              </span>
+            </div>
+            <div className="mb-pj-lobby-roster-panel">
+              <div className="mb-pj-lobby-roster-head">
+                <span>Siapa yang sudah masuk?</span>
+                <strong className="mb-number">{view.participation.playerCount}</strong>
+              </div>
+              <LobbyRoster
+                participants={view.lobbyParticipants}
+                maxVisible={12}
+                tone="dark"
+              />
+            </div>
+          </div>
           {view.gameProgress.gameMode === 'jelajah-kata' ? (
             <div className="mb-pj-world" aria-hidden>
               <JelajahTrail
@@ -354,7 +380,15 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
       {/* ── Teacher control dock (8B.1): kecil, di bawah, public-safe ── */}
       <nav className="mb-dock" aria-label="Kontrol Layar Kelas">
         {primary ? (
-          <button type="button" className="mb-dock-primary" onClick={() => void run(primary.action)} disabled={busy}>
+          <button
+            type="button"
+            className="mb-dock-primary"
+            onClick={() => {
+              if (primary.action === 'start') void gameSound.unlock();
+              void run(primary.action);
+            }}
+            disabled={busy}
+          >
             {busy ? 'Memproses…' : primary.label}
           </button>
         ) : (
@@ -362,6 +396,11 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
             Selesai
           </button>
         )}
+        <SoundToggle
+          enabled={gameSound.enabled}
+          onToggle={() => void gameSound.toggle()}
+          compact
+        />
         <button
           type="button"
           className="mb-dock-fullscreen"
