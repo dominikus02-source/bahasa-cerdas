@@ -1698,3 +1698,172 @@
 :fullscreen .mb-pj-fullscreen:focus-visible {
   opacity: 1;
 }
+
+
+/* ─────────────────────────────────────────────────────────────
+   Live stage v2 — adapted from the supplied Galeri Panggung prototype.
+   Ambient motion never carries game truth; milestones/progress remain
+   authoritative props from the server.
+   ───────────────────────────────────────────────────────────── */
+
+.mb-round-countdown-complete {
+  background: rgba(44, 185, 130, 0.16);
+  color: #b9f5d8;
+  border-color: rgba(79, 214, 155, 0.34);
+}
+.mb-round-countdown-complete .mb-round-countdown-dot {
+  background: #4fd69b;
+  box-shadow: 0 0 0 4px rgba(79, 214, 155, 0.14);
+}
+
+/* Kota Cahaya: night ambience + warm milestone reveal. */
+.mb-kota-scene {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.22));
+}
+.mb-kota-star {
+  opacity: 0.42;
+  animation: mb-kota-twinkle 4.8s ease-in-out infinite;
+}
+.mb-kota-star:nth-child(3n) { animation-duration: 6.2s; }
+.mb-kota-star:nth-child(4n) { animation-duration: 7.3s; }
+.mb-kota-aurora {
+  opacity: 0.42;
+  transform-origin: center;
+  animation: mb-kota-aurora 10.5s ease-in-out infinite;
+}
+.mb-kota-firefly {
+  opacity: 0.2;
+  animation: mb-kota-firefly 7s ease-in-out infinite;
+}
+.mb-kota-zone {
+  transition: filter 700ms ease, opacity 500ms ease;
+}
+.mb-kota-zone[data-lit="true"] {
+  filter: saturate(1.08) brightness(1.08);
+}
+.mb-kota-window {
+  transition: fill 520ms ease, filter 520ms ease, opacity 520ms ease;
+}
+.mb-kota-window[data-lit="true"] {
+  filter: drop-shadow(0 0 6px rgba(255, 213, 122, 0.72));
+}
+.mb-kota-lamp {
+  transition: fill 520ms ease, r 520ms ease;
+}
+.mb-kota-zone[data-lit="true"] .mb-kota-lamp {
+  filter: drop-shadow(0 0 8px rgba(255, 213, 122, 0.82));
+  animation: mb-kota-lantern 3.8s ease-in-out infinite;
+}
+.mb-kota-reveal-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mb-kota-reveal-ring 850ms ease-out both;
+}
+.mb-kota-zone[data-reveal="true"] {
+  animation: mb-kota-zone-arrive 620ms cubic-bezier(.2,1.08,.32,1) both;
+}
+
+@keyframes mb-kota-twinkle {
+  0%, 100% { opacity: .28; }
+  50% { opacity: .92; }
+}
+@keyframes mb-kota-aurora {
+  0%, 100% { opacity: .3; transform: translateX(-5px) scaleX(.99); }
+  50% { opacity: .58; transform: translateX(7px) scaleX(1.015); }
+}
+@keyframes mb-kota-firefly {
+  0%, 100% { opacity: .12; transform: translate(0, 0); }
+  28% { opacity: .85; }
+  58% { opacity: .3; transform: translate(18px, -11px); }
+  82% { opacity: .7; transform: translate(8px, -17px); }
+}
+@keyframes mb-kota-lantern {
+  0%, 100% { opacity: .72; }
+  50% { opacity: 1; }
+}
+@keyframes mb-kota-reveal-ring {
+  from { opacity: .95; transform: scale(.35); }
+  to { opacity: 0; transform: scale(2.5); }
+}
+@keyframes mb-kota-zone-arrive {
+  from { opacity: .7; transform: translateY(8px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Jelajah Kata: four readable lanes, lamps, flag and movement dust. */
+.mb-jelajah-stage {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 16px 28px rgba(0,0,0,.18));
+}
+.mb-jelajah-clouds {
+  animation: mb-jelajah-cloud-drift 12s ease-in-out infinite alternate;
+}
+.mb-jelajah-lamp-glow {
+  animation: mb-jelajah-lamp 4.8s ease-in-out infinite;
+}
+.mb-jelajah-finish-flag {
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: mb-jelajah-flag 2.9s ease-in-out infinite;
+}
+.mb-jelajah-dust {
+  fill: #6e8aa3;
+}
+.mb-jelajah-dust circle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mb-jelajah-dust 720ms ease-out both;
+}
+.mb-jelajah-dust circle:nth-child(2) { animation-delay: 80ms; }
+.mb-jelajah-dust circle:nth-child(3) { animation-delay: 150ms; }
+
+@keyframes mb-jelajah-cloud-drift {
+  from { transform: translateX(-5px); opacity: .72; }
+  to { transform: translateX(10px); opacity: .9; }
+}
+@keyframes mb-jelajah-lamp {
+  0%, 100% { opacity: .42; }
+  50% { opacity: .9; }
+}
+@keyframes mb-jelajah-flag {
+  0%, 100% { transform: skewY(0deg); }
+  50% { transform: skewY(-5deg); }
+}
+@keyframes mb-jelajah-dust {
+  from { opacity: .62; transform: scale(.55) translate(0, 0); }
+  to { opacity: 0; transform: scale(1.45) translate(-12px, -4px); }
+}
+
+/* The stage itself now carries the team percentages, so the duplicate
+   secondary bar can stay compact when it is present elsewhere. */
+.mb-pj-progress .mb-jelajah-stage {
+  width: min(100%, 760px);
+  margin: 0 auto;
+}
+
+@media (min-width: 900px) and (max-height: 800px) {
+  .mb-pj-world-strip {
+    max-width: 560px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mb-kota-star,
+  .mb-kota-aurora,
+  .mb-kota-firefly,
+  .mb-kota-zone,
+  .mb-kota-lamp,
+  .mb-kota-reveal-ring,
+  .mb-jelajah-clouds,
+  .mb-jelajah-lamp-glow,
+  .mb-jelajah-finish-flag,
+  .mb-jelajah-dust circle {
+    animation: none !important;
+    transition: none !important;
+  }
+}
