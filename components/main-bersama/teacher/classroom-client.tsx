@@ -18,7 +18,6 @@ import {
 import { useSessionView } from '@/lib/main-bersama/use-session-view';
 import { PinDisplay } from '@/components/main-bersama/shared/PinDisplay';
 import { ParticipantCount } from '@/components/main-bersama/shared/ParticipantCount';
-import { TeamProgress } from '@/components/main-bersama/shared/TeamProgress';
 import { CityProgress } from '@/components/main-bersama/shared/CityProgress';
 import { QuestionCard } from '@/components/main-bersama/shared/QuestionCard';
 import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBanner';
@@ -27,6 +26,8 @@ import { JelajahTrail } from '@/components/main-bersama/art/jelajah/JelajahTrail
 import { KotaScene } from '@/components/main-bersama/art/kota/KotaScene';
 import { TeamBadge } from '@/components/main-bersama/art/shared/TeamBadge';
 import { Podium } from '@/components/main-bersama/art/jelajah/Podium';
+import { useTrailMotion } from '@/components/main-bersama/art/jelajah-motion/useTrailMotion';
+import { useKotaMotion } from '@/components/main-bersama/art/kota-motion/useKotaMotion';
 
 const MODE_LABEL = {
   'jelajah-kata': 'Jelajah Kata',
@@ -49,6 +50,8 @@ const TEAM_COLOR_VAR: Record<string, string> = {
 
 type DockCommand = 'start' | 'close-round' | 'discuss' | 'next-round' | 'pause' | 'resume' | 'end';
 
+const EMPTY_TEAM_PROGRESS: Record<string, number> = {};
+
 export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; roomHref: string }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
@@ -61,6 +64,47 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
     fetchView,
     { pollIntervalMs: 700, debounceMs: 40 },
   );
+
+  const gameMode = view?.gameProgress.gameMode ?? null;
+  const phase = view?.phase ?? "";
+  const teamProgress =
+    gameMode === 'jelajah-kata'
+      ? (
+          view as ProjectorSessionView & {
+            gameProgress: {
+              gameMode: 'jelajah-kata';
+              teamProgress: Record<string, number>;
+            };
+          }
+        ).gameProgress.teamProgress
+      : EMPTY_TEAM_PROGRESS;
+  const { getPose } = useTrailMotion(teamProgress, phase);
+
+  const kotaProgressPercent =
+    gameMode === 'kota-cahaya'
+      ? (
+          view as ProjectorSessionView & {
+            gameProgress: {
+              gameMode: 'kota-cahaya';
+              progressPercent: number;
+              unlockedMilestones: string[];
+            };
+          }
+        ).gameProgress.progressPercent
+      : 0;
+  const kotaUnlocked =
+    gameMode === 'kota-cahaya'
+      ? (
+          view as ProjectorSessionView & {
+            gameProgress: {
+              gameMode: 'kota-cahaya';
+              progressPercent: number;
+              unlockedMilestones: string[];
+            };
+          }
+        ).gameProgress.unlockedMilestones
+      : [];
+  const kotaMotion = useKotaMotion(kotaProgressPercent, kotaUnlocked, phase);
 
   const run = useCallback(
     async (action: DockCommand) => {
@@ -120,7 +164,6 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
     );
   }
 
-  const phase = view.phase;
   const primary: { label: string; action: DockCommand } | null =
     phase === 'lobby' || phase === 'preparing'
       ? { label: 'Mulai', action: 'start' }
@@ -153,17 +196,28 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
           <p className="mb-pj-wait" role="status">
             Buka halaman <strong>Gabung Main Bersama</strong> lalu masukkan PIN di atas
           </p>
-          <ParticipantCount count={view.participation.playerCount} label="siswa bergabung" />
+          <span key={view.participation.playerCount} className="mb-entrance">
+            <ParticipantCount count={view.participation.playerCount} label="siswa bergabung" />
+          </span>
           {view.gameProgress.gameMode === 'jelajah-kata' ? (
             <div className="mb-pj-world" aria-hidden>
               <JelajahTrail
                 teams={view.teams.map((t) => ({ id: t.id, name: t.name }))}
-                progress={{}}
+                progress={view.gameProgress.teamProgress}
+                poses={(
+                  view.teams.map((t) => t.id) as Array<'elang' | 'harimau' | 'rusa' | 'badak'>
+                ).reduce<Record<string, 'ready' | 'move' | 'celebrate'>>(
+                  (acc, id) => ({ ...acc, [id]: getPose(id) }),
+                  {},
+                )}
               />
             </div>
           ) : (
             <div className="mb-pj-world" aria-hidden>
-              <KotaScene unlocked={view.gameProgress.unlockedMilestones} />
+              <KotaScene
+                unlocked={kotaMotion.litMilestones}
+                reveal={kotaMotion.revealMilestones}
+              />
             </div>
           )}
         </section>
@@ -195,12 +249,36 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
           </div>
           <div className="mb-pj-progress">
             {view.gameProgress.gameMode === 'jelajah-kata' ? (
-              <TeamProgress teams={view.teams} progress={view.gameProgress.teamProgress} />
+              <div className="mb-pj-world mb-pj-world-strip" aria-hidden>
+                <JelajahTrail
+                  teams={view.teams.map((t) => ({ id: t.id, name: t.name }))}
+                  progress={view.gameProgress.teamProgress}
+                  compact
+                  poses={(
+                    view.teams.map((t) => t.id) as Array<'elang' | 'harimau' | 'rusa' | 'badak'>
+                  ).reduce<Record<string, 'ready' | 'move' | 'celebrate'>>(
+                    (acc, id) => ({ ...acc, [id]: getPose(id) }),
+                    {},
+                  )}
+                />
+              </div>
             ) : (
-              <CityProgress
-                progressPercent={view.gameProgress.progressPercent}
-                unlockedMilestones={view.gameProgress.unlockedMilestones}
-              />
+              <>
+                <div className="mb-pj-world mb-pj-world-strip" aria-hidden>
+                  <KotaScene
+                    unlocked={kotaMotion.litMilestones}
+                    reveal={kotaMotion.revealMilestones}
+                    mini
+                  />
+                </div>
+                <CityProgress
+                  progressPercent={kotaMotion.displayedProgress}
+                  unlockedMilestones={kotaMotion.litMilestones}
+                  animate={kotaMotion.animateProgress}
+                  growFrom={kotaMotion.growFrom}
+                  revealMilestones={kotaMotion.revealMilestones}
+                />
+              </>
             )}
           </div>
         </section>
@@ -212,6 +290,40 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
             {view.phase === 'closed' ? 'Waktu menjawab selesai!' : 'Permainan dijeda'}
           </h2>
           <ParticipantCount count={view.participation.playerCount} />
+          {view.phase === 'closed' && view.gameProgress.gameMode === 'kota-cahaya' ? (
+            <div className="mb-pj-closed-kota" aria-hidden>
+              <div className="mb-pj-world mb-pj-world-strip">
+                <KotaScene
+                  unlocked={kotaMotion.litMilestones}
+                  reveal={kotaMotion.revealMilestones}
+                  mini
+                />
+              </div>
+              <CityProgress
+                progressPercent={kotaMotion.displayedProgress}
+                unlockedMilestones={kotaMotion.litMilestones}
+                animate={kotaMotion.animateProgress}
+                growFrom={kotaMotion.growFrom}
+                revealMilestones={kotaMotion.revealMilestones}
+              />
+            </div>
+          ) : view.phase === 'closed' && view.gameProgress.gameMode === 'jelajah-kata' ? (
+            <div className="mb-pj-closed-jelajah" aria-hidden>
+              <div className="mb-pj-world">
+                <JelajahTrail
+                  teams={view.teams.map((t) => ({ id: t.id, name: t.name }))}
+                  progress={view.gameProgress.teamProgress}
+                  compact
+                  poses={(
+                    view.teams.map((t) => t.id) as Array<'elang' | 'harimau' | 'rusa' | 'badak'>
+                  ).reduce<Record<string, 'ready' | 'move' | 'celebrate'>>(
+                    (acc, id) => ({ ...acc, [id]: getPose(id) }),
+                    {},
+                  )}
+                />
+              </div>
+            </div>
+          ) : null}
         </section>
       )}
 
