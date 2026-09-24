@@ -332,7 +332,8 @@ function ProjectorLobby({
 }) {
   const pin = view.joinInfo?.pin ?? "------";
   return (
-    <section className="mb-pj-phase mb-fade-in">
+    <section className="mb-pj-phase mb-pj-lobby-stage mb-fade-in">
+      <span className="mb-eyebrow mb-pj-lobby-eyebrow">PIN RUANG</span>
       <PinDisplay pin={pin} scale="projector" />
       <p className="mb-pj-wait" role="status">
         Buka halaman <strong>Gabung Main Bersama</strong> lalu masukkan PIN di
