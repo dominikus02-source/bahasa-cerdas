@@ -152,6 +152,32 @@ export async function POST(req: NextRequest) {
         where: { supabaseId: data.user.id },
       });
 
+      if (dbUser) {
+        // Supabase user ID is the stable identity. If a teacher changes their
+        // Auth email, keep the existing application account/role and synchronize
+        // only the email field. Never recreate the account and never infer or
+        // mutate GURU ↔ MURID from the new email/domain.
+        const authEmail = (data.user.email || normalizedEmail).toLowerCase();
+        if (dbUser.email !== authEmail) {
+          const emailOwner = await db.user.findFirst({
+            where: { email: authEmail, NOT: { id: dbUser.id } },
+            select: { id: true },
+          });
+
+          if (!emailOwner) {
+            dbUser = await db.user.update({
+              where: { id: dbUser.id },
+              data: { email: authEmail },
+            });
+          } else {
+            console.error("AUTH_EMAIL_SYNC_CONFLICT", {
+              supabaseId: data.user.id,
+              userId: dbUser.id,
+            });
+          }
+        }
+      }
+
       if (!dbUser) {
         dbUser = await db.user.create({
           data: {
