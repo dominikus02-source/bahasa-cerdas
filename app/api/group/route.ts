@@ -34,12 +34,9 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || !isTeacherOrHigher(dbUser)) {
+    const dbUser = await getUser();
+    if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!isTeacherOrHigher(dbUser)) {
       return NextResponse.json({ error: "Hanya guru yang bisa membuat kelas" }, { status: 403 });
     }
 
