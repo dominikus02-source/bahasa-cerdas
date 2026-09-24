@@ -17,12 +17,12 @@ interface TrailPose {
  * Travel happens in CSS (transform transition 600ms). JS only advances the
  * pose state at the correct moment, so CELEBRATE never overlaps travel.
  *
- * Phase-gated: motion ONLY during "discussion".
+ * Phase-gated: motion during "closed" (primary payoff) or "discussion" fallback.
  * Reduced-motion: skips timers, poses immediately return to READY (deterministic).
  */
 const TRAVEL_MS = 600;
 const CELEBRATE_MS = 800;
-const MOTION_PHASES = new Set(["discussion"]);
+const MOTION_PHASES = new Set(["closed", "discussion"]);
 
 export { TRAVEL_MS, CELEBRATE_MS };
 

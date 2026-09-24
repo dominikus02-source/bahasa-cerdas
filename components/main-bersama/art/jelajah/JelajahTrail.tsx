@@ -1,10 +1,5 @@
 "use client";
-// ─── Jelajah Trail 8B — "peta perjalanan bahasa" (bukan arena PvP).
-// Winding trail + 4 lane-offset markers (tie-safe) + START/FINISH.
-// 8C.1: markers animate READY → MOVE → CELEBRATE via CSS transform;
-// marker now renders TeamMascot face (not letter) so pose tells the story.
 
-import { useMemo } from "react";
 import { TeamMascot } from "../registry";
 
 interface TrailTeam {
@@ -19,44 +14,25 @@ const TEAM_COLOR_VAR: Record<string, string> = {
   badak: "var(--mb-team-badak)",
 };
 
-function clamp01(v: number): number {
-  if (!Number.isFinite(v)) return 0;
-  return Math.max(0, Math.min(100, v));
-}
+const LANE_Y = [62, 116, 170, 224];
 
-// Trail centerline waypoints (matches the drawn path below).
-const TRAIL_PTS: Array<[number, number]> = [
-  [70, 205],
-  [200, 190],
-  [300, 140],
-  [420, 135],
-  [520, 180],
-  [640, 150],
-  [740, 95],
-];
-
-function trailY(x: number): number {
-  const pts = TRAIL_PTS;
-  if (x <= pts[0][0]) return pts[0][1];
-  for (let i = 0; i < pts.length - 1; i++) {
-    const [x0, y0] = pts[i];
-    const [x1, y1] = pts[i + 1];
-    if (x <= x1) {
-      const k = (x - x0) / (x1 - x0);
-      return y0 + k * (y1 - y0);
-    }
-  }
-  return pts[pts.length - 1][1];
+function clampPercent(value: number): number {
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, Math.min(100, value));
 }
 
 interface JelajahTrailProps {
   teams: TrailTeam[];
   progress: Record<string, number>;
   compact?: boolean;
-  /** 8C.1: per-team transient pose (MOVING/CELEBRATE/READY). */
   poses?: Record<string, "ready" | "move" | "celebrate">;
 }
 
+/**
+ * Panggung Jelajah: empat regu punya lajur sendiri, jadi seri tetap terbaca
+ * tanpa saling menutupi. Backend tetap memberi 0..100; komponen hanya
+ * memetakan persentase ke posisi visual.
+ */
 export function JelajahTrail({
   teams,
   progress,
@@ -64,198 +40,210 @@ export function JelajahTrail({
   poses,
 }: JelajahTrailProps) {
   const shown = teams.slice(0, 4);
-  const t = (id: string) => clamp01(progress[id] ?? 0) / 100;
-  // Tie nudge: teams within 3pp share x-shift alternation.
-  const tiedAt = (id: string) =>
-    shown.filter((o) => o.id !== id && Math.abs(t(o.id) - t(id)) < 0.03)
-      .length > 0;
-
-  const markerNodes = useMemo(
-    () =>
-      shown.map((team, i) => {
-        const raw = t(team.id);
-        const x =
-          70 + raw * 660 + (tiedAt(team.id) ? (i % 2 === 0 ? -13 : 13) : 0);
-        const y = trailY(x) - 22 + (i - 1.5) * 9;
-        const color = TEAM_COLOR_VAR[team.id] ?? "var(--mb-primary)";
-        const pose = poses?.[team.id] ?? "ready";
-        const isMoving = pose === "move" || pose === "celebrate";
-        return { team, i, raw, x, y, color, pose, isMoving };
-      }),
-    [shown, t, poses, tiedAt],
-  );
 
   return (
     <svg
       viewBox="0 0 800 260"
-      className="mb-trail"
+      className="mb-trail mb-jelajah-stage"
       role="img"
-      aria-label="Peta perjalanan regu"
-      style={{ width: "100%", height: "auto", display: "block" }}
+      aria-label="Perjalanan empat regu Jelajah Kata"
+      preserveAspectRatio="xMidYMid meet"
     >
-      {/* sky + sun + clouds */}
-      <rect
-        x="0"
-        y="0"
-        width="800"
-        height="260"
-        rx="18"
-        fill="var(--mb-jelajah-sky)"
+      <defs>
+        <linearGradient id="mb-jelajah-sky-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#102a44" />
+          <stop offset="1" stopColor="#173a55" />
+        </linearGradient>
+        <radialGradient id="mb-jelajah-lamp-glow">
+          <stop offset="0" stopColor="#ffd57a" stopOpacity="0.7" />
+          <stop offset="1" stopColor="#ffd57a" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+
+      <rect width="800" height="260" rx="18" fill="url(#mb-jelajah-sky-grad)" />
+      <circle cx="720" cy="40" r="25" fill="#ffd57a" opacity="0.92" />
+      <circle cx="720" cy="40" r="47" fill="#ffd57a" opacity="0.09" />
+
+      {!compact ? (
+        <g className="mb-jelajah-clouds" fill="#e9f2f8" opacity="0.82">
+          <ellipse cx="112" cy="33" rx="37" ry="9" />
+          <ellipse cx="141" cy="29" rx="23" ry="8" />
+          <ellipse cx="420" cy="42" rx="31" ry="8" />
+          <ellipse cx="447" cy="38" rx="18" ry="6" />
+        </g>
+      ) : null}
+
+      <path
+        d="M0 226 C150 195 290 221 420 198 C552 178 680 211 800 190 L800 260 L0 260 Z"
+        fill="#28536f"
         opacity="0.35"
       />
-      <circle cx="690" cy="52" r="26" fill="var(--mb-jelajah-highlight)" />
-      <g fill="#ffffff" opacity="0.85">
-        <ellipse cx="150" cy="48" rx="46" ry="14" />
-        <ellipse cx="185" cy="40" rx="30" ry="12" />
-        <ellipse cx="470" cy="70" rx="38" ry="11" />
-      </g>
-      {/* hills */}
       <path
-        d="M0 210 Q 200 150 400 195 T 800 185 L800 260 L0 260 Z"
-        fill="var(--mb-jelajah-land)"
+        d="M0 239 C160 217 300 244 460 220 C600 198 708 226 800 211 L800 260 L0 260 Z"
+        fill="#2c6b68"
         opacity="0.55"
       />
-      <path
-        d="M0 235 Q 260 195 520 225 T 800 220 L800 260 L0 260 Z"
-        fill="var(--mb-jelajah-land)"
-        opacity="0.8"
-      />
-      {/* winding trail (matches TRAIL_PTS centerline) */}
-      <path
-        d="M70 205 L200 190 L300 140 L420 135 L520 180 L640 150 L740 95"
-        fill="none"
-        stroke="var(--mb-jelajah-trail)"
-        strokeWidth={compact ? 7 : 9}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeDasharray="2 14"
-      />
-      {/* literacy motifs — small scenery resting on the hills */}
-      <g opacity="0.9" aria-hidden>
-        {/* open book */}
-        <g transform="translate(140 214)">
-          <path d="M0 0 Q9 -6 18 0 L18 13 Q9 7 0 13 Z" fill="#fff" />
-          <path d="M18 0 Q27 -6 36 0 L36 13 Q27 7 18 13 Z" fill="#fef3c7" />
-          <path d="M18 0 L18 13" stroke="#13253a" strokeWidth="1.4" />
-        </g>
-        {/* Aa */}
-        <text
-          x="592"
-          y="232"
-          fontSize="22"
-          fontWeight="900"
-          fill="#fff"
-          opacity="0.95"
-          fontFamily="inherit"
-        >
-          Aa
-        </text>
-        {/* speech mark */}
-        <text
-          x="352"
-          y="234"
-          fontSize="26"
-          fontWeight="900"
-          fill="#fff"
-          opacity="0.9"
-          fontFamily="inherit"
-        >
-          ?
-        </text>
-      </g>
-      {/* START */}
-      <g>
-        <rect x="34" y="188" width="64" height="26" rx="13" fill="#13253a" />
-        <text
-          x="66"
-          y="206"
-          textAnchor="middle"
-          fontSize="13"
-          fontWeight="800"
-          fill="#fff"
-          letterSpacing="2"
-        >
-          START
-        </text>
-      </g>
-      {/* FINISH — glowing book monument (language monument, not racing flag) */}
-      <g>
-        <circle
-          cx="740"
-          cy="62"
-          r="30"
-          fill="var(--mb-jelajah-highlight)"
-          opacity="0.55"
-        />
-        <rect x="724" y="96" width="32" height="10" rx="3" fill="#13253a" />
-        <g transform="translate(718 62)">
-          <path d="M0 0 Q11 -8 22 0 L22 18 Q11 10 0 18 Z" fill="#fff" />
-          <path
-            d="M22 0 Q33 -8 44 0 L44 18 Q33 10 22 18 Z"
-            fill="var(--mb-jelajah-highlight)"
-          />
-          <path d="M22 0 L22 18" stroke="#13253a" strokeWidth="2" />
-        </g>
-      </g>
-      {/* checkpoint dots ride the trail */}
-      {[0.25, 0.5, 0.75].map((k) => {
-        const x = 70 + k * 660;
+
+      {shown.map((team, index) => {
+        const y = LANE_Y[index] ?? 224;
+        const pct = clampPercent(progress[team.id] ?? 0);
+        const color = TEAM_COLOR_VAR[team.id] ?? "var(--mb-primary)";
+        const markerX = 168 + (pct / 100) * 522;
+        const pose = poses?.[team.id] ?? "ready";
+        const moving = pose === "move" || pose === "celebrate";
+
         return (
-          <circle
-            key={k}
-            cx={x}
-            cy={trailY(x)}
-            r="5"
-            fill="#fff"
-            opacity="0.9"
-          />
+          <g key={team.id} data-team={team.id}>
+            <rect
+              x="126"
+              y={y - 15}
+              width="588"
+              height="30"
+              rx="15"
+              fill="#102a43"
+              opacity="0.96"
+            />
+            <line
+              x1="145"
+              y1={y}
+              x2="690"
+              y2={y}
+              stroke="rgba(255,255,255,.13)"
+              strokeWidth="4"
+              strokeLinecap="round"
+            />
+
+            {[0.25, 0.5, 0.75].map((checkpoint) => {
+              const x = 168 + checkpoint * 522;
+              return (
+                <g key={checkpoint}>
+                  <circle
+                    className="mb-jelajah-lamp-glow"
+                    cx={x}
+                    cy={y - 19}
+                    r="17"
+                    fill="url(#mb-jelajah-lamp-glow)"
+                  />
+                  <line
+                    x1={x}
+                    y1={y + 9}
+                    x2={x}
+                    y2={y - 16}
+                    stroke="#28536f"
+                    strokeWidth="2"
+                  />
+                  <circle cx={x} cy={y - 19} r="4" fill="#ffd57a" />
+                </g>
+              );
+            })}
+
+            <g transform={`translate(8 ${y - 17})`}>
+              <rect
+                width="110"
+                height="34"
+                rx="17"
+                fill="#0d2438"
+                stroke="rgba(255,255,255,.12)"
+              />
+              <rect width="6" height="34" rx="3" fill={color} />
+              <circle cx="24" cy="17" r="11" fill={color} opacity="0.95" />
+              <text
+                x="43"
+                y="21"
+                fontSize="12"
+                fontWeight="800"
+                fill="#eaf2f9"
+              >
+                {team.name}
+              </text>
+            </g>
+
+            <g transform={`translate(727 ${y})`}>
+              <line
+                x1="0"
+                y1="13"
+                x2="0"
+                y2="-28"
+                stroke="#eaf2f9"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+              <g className="mb-jelajah-finish-flag">
+                <rect
+                  x="0"
+                  y="-28"
+                  width="24"
+                  height="16"
+                  rx="2"
+                  fill="#f2b93b"
+                />
+                <path d="M0 -28h12v8H0zM12 -20h12v8H12z" fill="#fff" opacity="0.9" />
+              </g>
+            </g>
+
+            {moving ? (
+              <g
+                className="mb-jelajah-dust"
+                style={{ transform: `translate(${markerX - 26}px, ${y + 2}px)` }}
+              >
+                <circle cx="0" cy="0" r="4" />
+                <circle cx="-10" cy="3" r="3" />
+                <circle cx="-18" cy="-1" r="2.5" />
+              </g>
+            ) : null}
+
+            <g
+              className={moving ? "mb-trail-marker mb-trail-moving" : "mb-trail-marker"}
+              data-progress={Math.round(pct)}
+              style={{
+                transform: `translate(${markerX}px, ${y}px)`,
+                transition: moving
+                  ? "transform 600ms cubic-bezier(.25,.9,.3,1)"
+                  : "transform 0s",
+              }}
+            >
+              <ellipse cx="0" cy="18" rx="16" ry="4" fill="#06121f" opacity="0.42" />
+              <circle cx="0" cy="0" r="23" fill={color} opacity="0.18" />
+              <g style={{ transform: "translate(-22px, -23px)" }}>
+                <TeamMascot
+                  teamId={team.id as "elang" | "harimau" | "rusa" | "badak"}
+                  pose={pose}
+                  size={44}
+                />
+              </g>
+              <g transform="translate(29 -12)">
+                <rect
+                  x="0"
+                  y="0"
+                  width="43"
+                  height="24"
+                  rx="12"
+                  fill="#081726"
+                  stroke={color}
+                  strokeWidth="1.5"
+                />
+                <text
+                  x="21.5"
+                  y="16"
+                  textAnchor="middle"
+                  fontSize="11"
+                  fontWeight="900"
+                  fill="#eaf2f9"
+                >
+                  {Math.round(pct)}%
+                </text>
+              </g>
+            </g>
+          </g>
         );
       })}
-      {/* team markers ride the trail; lanes prevent total overlap */}
-      {markerNodes.map(({ team, i, x, y, color, pose, isMoving }) => (
-        <g
-          key={team.id}
-          data-team={team.id}
-          data-progress={Math.round(t(team.id) * 100)}
-          className={
-            isMoving ? "mb-trail-marker mb-trail-moving" : "mb-trail-marker"
-          }
-          style={{
-            transform: `translate(${x}px, ${y}px)`,
-            transition: isMoving ? "transform 600ms ease-out" : "transform 0s",
-          }}
-        >
-          {/* marker shadow */}
-          <ellipse
-            cx={0}
-            cy={20}
-            rx="16"
-            ry="4.5"
-            fill="#13253a"
-            opacity="0.18"
-          />
-          {/* TeamMascot face instead of letter circle — pose tells the story */}
-          <g style={{ transform: "translate(-22px, -22px)" }}>
-            <TeamMascot
-              teamId={team.id as "elang" | "harimau" | "rusa" | "badak"}
-              pose={pose}
-              size={44}
-            />
-          </g>
-          {/* progress label beneath marker */}
-          <text
-            x={0}
-            y={34}
-            textAnchor="middle"
-            fontSize="11"
-            fontWeight="800"
-            fill={color}
-            opacity="0.95"
-          >
-            {Math.round(t(team.id) * 100)}%
-          </text>
-        </g>
-      ))}
+
+      <text x="145" y="253" fontSize="9" fontWeight="900" fill="#9fb6ca" letterSpacing="1.7">
+        MULAI
+      </text>
+      <text x="690" y="253" textAnchor="end" fontSize="9" fontWeight="900" fill="#ffd57a" letterSpacing="1.7">
+        FINIS
+      </text>
     </svg>
   );
 }

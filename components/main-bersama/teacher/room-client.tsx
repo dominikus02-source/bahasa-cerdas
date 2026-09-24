@@ -229,7 +229,11 @@ export function TeacherRoomClient({
               <strong className="mb-number">{answered}</strong>
               <small>/ {eligible} menjawab</small>
             </span>
-            <RoundCountdown closesAt={view.currentRoundClosesAt} serverTime={view.serverTime} />
+            <RoundCountdown
+              closesAt={view.currentRoundClosesAt}
+              serverTime={view.serverTime}
+              complete={eligible > 0 && answered >= eligible}
+            />
           </div>
           <QuestionCard
             question={view.currentQuestion}

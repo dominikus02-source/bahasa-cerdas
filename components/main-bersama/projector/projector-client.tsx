@@ -13,7 +13,6 @@ import { fetchProjectorState } from "@/lib/main-bersama/api-client";
 import { useSessionView } from "@/lib/main-bersama/use-session-view";
 import { PinDisplay } from "@/components/main-bersama/shared/PinDisplay";
 import { ParticipantCount } from "@/components/main-bersama/shared/ParticipantCount";
-import { TeamProgress } from "@/components/main-bersama/shared/TeamProgress";
 import { CityProgress } from "@/components/main-bersama/shared/CityProgress";
 import { QuestionCard } from "@/components/main-bersama/shared/QuestionCard";
 import { ConnectionBanner } from "@/components/main-bersama/shared/ConnectionBanner";
@@ -248,6 +247,25 @@ export function ProjectorClient() {
                 revealMilestones={kotaMotion.revealMilestones}
               />
             </div>
+          ) : view.phase === "closed" &&
+            view.gameProgress.gameMode === "jelajah-kata" ? (
+            <div className="mb-pj-closed-jelajah" aria-hidden>
+              <div className="mb-pj-world">
+                <JelajahTrail
+                  teams={view.teams.map((t) => ({ id: t.id, name: t.name }))}
+                  progress={view.gameProgress.teamProgress}
+                  compact
+                  poses={(
+                    view.teams.map((t) => t.id) as Array<
+                      "elang" | "harimau" | "rusa" | "badak"
+                    >
+                  ).reduce<Record<string, "ready" | "move" | "celebrate">>(
+                    (acc, id) => ({ ...acc, [id]: getPose(id) }),
+                    {},
+                  )}
+                />
+              </div>
+            </div>
           ) : null}
         </section>
       ) : view.phase === "discussion" && view.revealedRound ? (
@@ -314,16 +332,19 @@ function ProjectorLobby({
 }) {
   const pin = view.joinInfo?.pin ?? "------";
   return (
-    <section className="mb-pj-phase mb-fade-in">
+    <section className="mb-pj-phase mb-pj-lobby-stage mb-fade-in">
+      <span className="mb-eyebrow mb-pj-lobby-eyebrow">PIN RUANG</span>
       <PinDisplay pin={pin} scale="projector" />
       <p className="mb-pj-wait" role="status">
         Buka halaman <strong>Gabung Main Bersama</strong> lalu masukkan PIN di
         atas
       </p>
-      <ParticipantCount
-        count={view.participation.playerCount}
-        label="siswa bergabung"
-      />
+      <span key={view.participation.playerCount} className="mb-entrance">
+        <ParticipantCount
+          count={view.participation.playerCount}
+          label="siswa bergabung"
+        />
+      </span>
       {view.gameProgress.gameMode === "jelajah-kata" ? (
         <div className="mb-pj-world mb-pj-world-strip" aria-hidden>
           <JelajahTrail
@@ -414,6 +435,10 @@ function ProjectorQuestion({
           serverTime={view.serverTime}
           compact
           light
+          complete={
+            view.participation.eligibleCount > 0 &&
+            view.participation.submittedCount >= view.participation.eligibleCount
+          }
         />
         <span className="mb-count mb-number">
           {view.participation.submittedCount}
@@ -431,10 +456,6 @@ function ProjectorQuestion({
                 compact
               />
             </div>
-            <TeamProgress
-              teams={view.teams}
-              progress={view.gameProgress.teamProgress}
-            />
           </>
         ) : (
           <>
@@ -513,10 +534,6 @@ function ProjectorDiscussion({
                 )}
               />
             </div>
-            <TeamProgress
-              teams={view.teams}
-              progress={view.gameProgress.teamProgress}
-            />
           </>
         ) : (
           <>

@@ -350,6 +350,7 @@ function StudentQuestion({
           closesAt={view.closesAt}
           serverTime={view.serverTime}
           compact
+          complete={saved || view.ownAnswerStatus === 'saved'}
         />
         <div
           className="mb-sq-bar"
