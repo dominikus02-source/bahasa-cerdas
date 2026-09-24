@@ -326,32 +326,22 @@ export function createCanvasRenderer(
         entity.position, camera,
         state.world.tiles.width, state.world.tiles.height,
       );
-      const size = 24 * entity.scale * zoom;
+      const baseSize =
+        entity.type === "house" ? 96 :
+        entity.type === "tree" ? 64 :
+        entity.type === "well" ? 48 :
+        entity.type === "fence" ? 48 :
+        entity.type === "rock" ? 32 :
+        entity.type === "bush" ? 34 :
+        entity.type === "flowers" ? 28 : 36;
+      const size = baseSize * entity.scale * zoom;
 
-      // P2.9B: Check entity asset pipeline before procedural fallback.
+      // P2.11: READY visual atlas first; procedural fallback remains only for
+      // asset types that are genuinely not yet promoted.
       const resolution = resolveEntityAsset(entity.asset);
       let spriteRendered = false;
-
       if (isEntityAssetReady(resolution)) {
-        // Try to load and render the sprite.
-        const cached = tileLoader.cached(resolution.path);
-        if (cached) {
-          // Draw sprite centered at entity position, scaled to entity size.
-          const w = (cached as { width: number }).width;
-          const h = (cached as { height: number }).height;
-          const scale = size / Math.max(w, h);
-          const dw = w * scale;
-          const dh = h * scale;
-          ctx.drawImage(
-            cached as unknown as CanvasImageSource,
-            screen.x - dw / 2, screen.y - dh, dw, dh,
-          );
-          spriteRendered = true;
-        } else if (!requestedTilePaths.has(resolution.path)) {
-          // Enqueue async load (will render next frame).
-          requestedTilePaths.add(resolution.path);
-          void tileLoader.load(resolution.path);
-        }
+        spriteRendered = drawReadyEntitySprite(resolution.entry, screen.x, screen.y, size);
       }
 
       // Procedural fallback (always drawn if sprite not rendered).
@@ -433,26 +423,40 @@ export function createCanvasRenderer(
           drawRect(screen.x - 8, screen.y - 6, 16, 12, COLORS.chest);
           drawRect(screen.x - 2, screen.y - 2, 4, 4, "#92400e");
           break;
-        case "NPC":
-          // Procedural NPC marker — no approved sprite exists.
-          drawCircle(screen.x, screen.y - 12, 11 * zoom, "#78350f");
-          drawCircle(screen.x, screen.y - 18, 6 * zoom, "#fbbf24");
-          // P2.9: Show NPC name labels for all known NPCs (not just Ki Jaka).
-          {
-            const npcNames: Record<string, string> = {
-              "npc.ki": "Ki Jaka", "npc.ratmi": "Bu Ratmi", "npc.sari": "Bu Sari",
-              "npc.eyang": "Eyang", "npc.bagas": "Bagas", "npc.tani": "Pak Warsa",
-              "npc.empu": "Pak Empu", "npc.pendaki": "Pendaki",
-            };
-            const name = npcNames[interaction.ref];
-            if (name) {
-              ctx.fillStyle = "#fff7ed";
-              ctx.font = `bold ${Math.round(11 * zoom)}px sans-serif`;
-              ctx.textAlign = "center";
-              ctx.fillText(name, screen.x, screen.y - 32 * zoom);
-            }
+        case "NPC": {
+          const npcAssetKeys: Record<string, string> = {
+            "npc.ki": "npc.ki-jaka",
+            "npc.ratmi": "npc.bu-ratmi",
+            "npc.sari": "npc.bu-sari",
+            "npc.eyang": "npc.eyang-kartala",
+            "npc.empu": "npc.pak-empu",
+            "npc.bagas": "npc.bu-sari",
+            "npc.tani": "npc.bu-ratmi",
+            "npc.pendaki": "npc.eyang-kartala",
+          };
+          const resolution = resolveEntityAsset(npcAssetKeys[interaction.ref]);
+          const rendered = isEntityAssetReady(resolution)
+            ? drawReadyEntitySprite(resolution.entry, screen.x, screen.y, 52 * zoom)
+            : false;
+          if (!rendered) {
+            // Explicit technical fallback only when an asset is unavailable.
+            drawCircle(screen.x, screen.y - 12, 11 * zoom, "#78350f");
+            drawCircle(screen.x, screen.y - 18, 6 * zoom, "#fbbf24");
+          }
+          const npcNames: Record<string, string> = {
+            "npc.ki": "Ki Jaka", "npc.ratmi": "Bu Ratmi", "npc.sari": "Bu Sari",
+            "npc.eyang": "Eyang Kartala", "npc.bagas": "Bagas", "npc.tani": "Pak Warsa",
+            "npc.empu": "Pak Empu", "npc.pendaki": "Pendaki",
+          };
+          const name = npcNames[interaction.ref];
+          if (name) {
+            ctx.fillStyle = "#fff7ed";
+            ctx.font = `bold ${Math.round(11 * zoom)}px sans-serif`;
+            ctx.textAlign = "center";
+            ctx.fillText(name, screen.x, screen.y - 38 * zoom);
           }
           break;
+        }
       }
     }
   }
@@ -470,13 +474,21 @@ export function createCanvasRenderer(
         { x: (enemy.tile.x + 0.5) / state.world.tiles.width, y: (enemy.tile.y + 0.5) / state.world.tiles.height },
         camera, state.world.tiles.width, state.world.tiles.height,
       );
-      drawCircle(screen.x, screen.y - 13 * zoom, 12 * zoom, "#7f1d1d");
-      drawCircle(screen.x - 4 * zoom, screen.y - 16 * zoom, 2 * zoom, "#fef3c7");
-      drawCircle(screen.x + 4 * zoom, screen.y - 16 * zoom, 2 * zoom, "#fef3c7");
-      ctx.fillStyle = "#fee2e2";
-      ctx.font = "bold 10px sans-serif";
+      const resolution = resolveEntityAsset(enemy.def.asset);
+      const maxSize = enemy.boss ? 92 * zoom : 58 * zoom;
+      const rendered = isEntityAssetReady(resolution)
+        ? drawReadyEntitySprite(resolution.entry, screen.x, screen.y, maxSize)
+        : false;
+      if (!rendered) {
+        // Explicit technical fallback only when an enemy asset is unavailable.
+        drawCircle(screen.x, screen.y - 13 * zoom, 12 * zoom, "#7f1d1d");
+        drawCircle(screen.x - 4 * zoom, screen.y - 16 * zoom, 2 * zoom, "#fef3c7");
+        drawCircle(screen.x + 4 * zoom, screen.y - 16 * zoom, 2 * zoom, "#fef3c7");
+      }
+      ctx.fillStyle = enemy.boss ? "#fff7ed" : "#fee2e2";
+      ctx.font = `bold ${Math.round((enemy.boss ? 11 : 10) * zoom)}px sans-serif`;
       ctx.textAlign = "center";
-      ctx.fillText(enemy.def.name, screen.x, screen.y - 30 * zoom);
+      ctx.fillText(enemy.def.name, screen.x, screen.y - (maxSize + 8 * zoom));
     }
   }
 
@@ -592,6 +604,19 @@ export function createCanvasRenderer(
     liveEnemies: readonly LiveEnemy[] = [],
     allowedNpcIds?: readonly string[],
   ) {
+    // P2.11: preload visible interaction/enemy art to avoid procedural pop.
+    for (const interaction of state.world.interactions) {
+      if (interaction.kind === "NPC") {
+        const npcAssetKeys: Record<string, string> = {
+          "npc.ki": "npc.ki-jaka", "npc.ratmi": "npc.bu-ratmi", "npc.sari": "npc.bu-sari",
+          "npc.eyang": "npc.eyang-kartala", "npc.empu": "npc.pak-empu",
+          "npc.bagas": "npc.bu-sari", "npc.tani": "npc.bu-ratmi", "npc.pendaki": "npc.eyang-kartala",
+        };
+        preloadRuntimeAsset(npcAssetKeys[interaction.ref]);
+      }
+    }
+    for (const enemy of liveEnemies) preloadRuntimeAsset(enemy.def.asset);
+
     // Clear canvas
     ctx.clearRect(0, 0, width, height);
 
