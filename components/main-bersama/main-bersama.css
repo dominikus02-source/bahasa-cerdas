@@ -1461,3 +1461,208 @@
   padding: 0 !important;
   min-height: 100dvh;
 }
+
+
+/* ─────────────────────────────────────────────────────────────
+   Production live-play pass — realtime readability + true fullscreen
+   ───────────────────────────────────────────────────────────── */
+
+.mb-round-countdown {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 92px;
+  padding: 7px 14px;
+  border-radius: var(--mb-radius-pill);
+  background: rgba(28, 43, 58, 0.08);
+  color: var(--mb-text-guru);
+  font-family: var(--mb-font-number);
+  font-variant-numeric: tabular-nums;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+}
+.mb-round-countdown-compact {
+  min-width: 78px;
+  padding: 5px 11px;
+  font-size: 0.9rem;
+}
+.mb-round-countdown-light {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--mb-text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.mb-round-countdown-dot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--mb-primary);
+  box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.12);
+}
+.mb-round-countdown-urgent {
+  background: var(--mb-danger);
+  color: #fff;
+  border-color: transparent;
+}
+.mb-round-countdown-urgent .mb-round-countdown-dot {
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.18);
+}
+
+/* True fullscreen keeps the game surface pinned to the viewport. */
+:fullscreen .mb-pj,
+:fullscreen .mb-room {
+  width: 100vw;
+  height: 100dvh;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+:fullscreen body {
+  overflow: hidden;
+}
+
+@media (min-width: 900px) {
+  /* Use horizontal space instead of burning vertical projector height. */
+  .mb-pj-head {
+    flex: none;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--mb-space-5);
+    padding: 12px 28px;
+    min-height: 72px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(180deg, rgba(7, 22, 35, 0.72), rgba(7, 22, 35, 0));
+  }
+  .mb-pj-brand {
+    align-items: flex-start;
+    gap: 1px;
+    min-width: 0;
+  }
+  .mb-pj-title {
+    font-size: clamp(1.35rem, 1.7vw, 1.8rem);
+    line-height: 1.05;
+  }
+  .mb-pj-sub {
+    font-size: 0.78rem;
+    opacity: 0.78;
+  }
+  .mb-pj-head-meta {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-width: 0;
+  }
+  .mb-pj-pkg,
+  .mb-pj-class {
+    padding: 5px 12px;
+    border-radius: var(--mb-radius-pill);
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .mb-pj-mode {
+    padding: 6px 14px;
+    font-size: 0.92rem;
+  }
+
+  .mb-pj-phase {
+    min-height: 0;
+    overflow: hidden;
+    gap: 14px;
+    padding: 18px 28px;
+  }
+  .mb-pj:has(.mb-dock) .mb-pj-phase {
+    padding-bottom: 86px;
+  }
+  .mb-pj-phase-question {
+    justify-content: flex-start;
+  }
+
+  /* Question surface: wider and bounded. Long production questions scroll
+     INSIDE the card, never over the card or into progress/dock controls. */
+  .mb-pj-q {
+    width: min(92vw, 980px);
+  }
+  .mb-pj-q .mb-qcard {
+    width: 100%;
+    max-width: none;
+    max-height: min(43dvh, 350px);
+    overflow: auto;
+    padding: clamp(18px, 2vw, 28px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 18px 50px rgba(1, 12, 22, 0.25);
+    contain: layout paint;
+  }
+  .mb-pj-q .mb-qcard .mb-qcard-prompt {
+    max-width: 100%;
+    font-size: clamp(1rem, 1.18vw, 1.28rem);
+    line-height: 1.42;
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+  .mb-pj-q .mb-qcard .mb-qcard-passage {
+    max-height: min(18dvh, 155px);
+    overflow: auto;
+    font-size: clamp(0.9rem, 0.98vw, 1rem);
+    line-height: 1.5;
+  }
+
+  .mb-pj-participation {
+    min-height: 42px;
+    padding: 6px 12px;
+    border-radius: var(--mb-radius-pill);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(8px);
+  }
+  .mb-pj-progress {
+    width: min(88vw, 760px);
+    min-height: 0;
+  }
+}
+
+/* Short projector/laptop screens need an even stricter card budget. */
+@media (min-width: 900px) and (max-height: 800px) {
+  .mb-pj-head {
+    min-height: 58px;
+    padding: 8px 22px;
+  }
+  .mb-pj-sub {
+    display: none;
+  }
+  .mb-pj-phase {
+    padding-top: 10px;
+    gap: 9px;
+  }
+  .mb-pj:has(.mb-dock) .mb-pj-phase {
+    padding-bottom: 72px;
+  }
+  .mb-pj-q .mb-qcard {
+    max-height: min(39dvh, 270px);
+    padding: 16px 20px;
+  }
+  .mb-pj-q .mb-qcard .mb-qcard-passage {
+    max-height: 110px;
+  }
+  .mb-pj-participation {
+    min-height: 36px;
+    padding: 4px 10px;
+  }
+}
+
+/* Student timer remains compact inside the progress row. */
+.mb-sq-progress .mb-round-countdown {
+  margin-left: auto;
+}
+.mb-sq-progress .mb-sq-bar {
+  min-width: 72px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mb-round-countdown-dot {
+    box-shadow: none;
+  }
+}
