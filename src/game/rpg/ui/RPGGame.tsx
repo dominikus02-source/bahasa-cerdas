@@ -228,7 +228,16 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
       // Create and attach keyboard input
       const keyboard = createKeyboardInputSource(playerId);
       keyboard.attach();
-      engine._setInputSource(keyboard);
+      let touchSource: any = null;
+      if (touchJoystickRef.current && touchActionRef.current) {
+        touchSource = createTouchInputSource(playerId, {
+          joystick: touchJoystickRef.current,
+          action: touchActionRef.current,
+        });
+        touchSource.attach();
+      }
+
+      engine._setInputSource(createCompositeInputSource(keyboard, ...(touchSource ? [touchSource] : [])));
 
       engineRef.current = engine;
       keyboardRef.current = keyboard;
@@ -303,6 +312,7 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
         offBattleEnd();
         offDialogueEnd();
         keyboard.detach();
+        if (touchSource) touchSource.detach();
         engine.destroy();
         engineRef.current = null;
         keyboardRef.current = null;
