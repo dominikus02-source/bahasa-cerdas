@@ -897,6 +897,19 @@
 .mb-round-countdown-urgent {
   color: #ff8c84;
 }
+/* Ruang guru memakai surface terang; timer shared perlu kontras gelap. */
+.mb-tquestion-status .mb-round-countdown {
+  background: rgba(28, 43, 58, 0.08);
+  border-color: rgba(28, 43, 58, 0.12);
+  color: var(--mb-text-guru);
+  font-size: 1.05rem;
+  padding: 6px 16px;
+}
+.mb-tquestion-status .mb-round-countdown-urgent {
+  background: var(--mb-danger);
+  border-color: var(--mb-danger);
+  color: #ffffff;
+}
 .mb-stage-answer-count {
   color: #ffffff;
   font-size: clamp(1.9rem, 2.7vw, 2.8rem);
