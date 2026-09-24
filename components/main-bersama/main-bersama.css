@@ -1933,3 +1933,324 @@
   width: 100%;
   margin-top: 0;
 }
+
+
+/* ─────────────────────────────────────────────────────────────
+   Lobby v2 + sound controls
+   ───────────────────────────────────────────────────────────── */
+
+.mb-sound-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 8px 13px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: var(--mb-radius-pill);
+  background: rgba(8,24,38,.78);
+  color: var(--mb-text-primary);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  transition: transform var(--mb-motion-fast), background var(--mb-motion-fast), opacity var(--mb-motion-fast);
+}
+.mb-sound-toggle:hover { background: rgba(8,24,38,.94); }
+.mb-sound-toggle:active { transform: scale(.97); }
+.mb-sound-toggle:focus-visible {
+  outline: 2px solid var(--mb-accent);
+  outline-offset: 2px;
+}
+.mb-sound-toggle-compact {
+  width: 42px;
+  height: 42px;
+  min-height: 42px;
+  padding: 0;
+  flex: none;
+}
+
+.mb-pj-utility-controls {
+  position: fixed;
+  right: 16px;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 45;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mb-pj-utility-controls .mb-pj-fullscreen {
+  position: static;
+  right: auto;
+  bottom: auto;
+}
+
+/* The classroom dock already supplies the dark glass surface. */
+.mb-dock .mb-sound-toggle {
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.25);
+  backdrop-filter: none;
+}
+.mb-dock .mb-sound-toggle:hover { background: rgba(255,255,255,.14); }
+
+/* Kahoot-like roster, but with BahasaCerdas editorial face avatars. */
+.mb-lobby-roster {
+  width: 100%;
+  min-width: 0;
+}
+.mb-lobby-roster-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 9px;
+}
+.mb-lobby-player {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 11px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.12);
+}
+.mb-lobby-roster-dark .mb-lobby-player {
+  background: rgba(255,255,255,.07);
+  color: #eaf2f9;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035);
+}
+.mb-lobby-roster-light .mb-lobby-player {
+  background: #fff;
+  color: var(--mb-text-guru);
+  border-color: rgba(28,43,58,.1);
+  box-shadow: 0 8px 20px rgba(32,52,70,.07);
+}
+.mb-lobby-player-avatar-wrap {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex: none;
+}
+.mb-lobby-avatar {
+  display: block;
+  width: 44px;
+  height: 44px;
+}
+.mb-lobby-avatar svg { display: block; width: 100%; height: 100%; }
+.mb-lobby-online-dot {
+  position: absolute;
+  right: -1px;
+  bottom: 1px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #45d18b;
+  border: 2px solid #0b1d31;
+  box-shadow: 0 0 0 2px rgba(69,209,139,.12);
+}
+.mb-lobby-roster-light .mb-lobby-online-dot {
+  border-color: #fff;
+}
+.mb-lobby-player-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.mb-lobby-player-copy strong {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: .92rem;
+  line-height: 1.2;
+}
+.mb-lobby-player-copy small {
+  color: var(--mb-text-secondary);
+  font-size: .72rem;
+  font-weight: 700;
+}
+.mb-lobby-roster-light .mb-lobby-player-copy small {
+  color: var(--mb-text-guru-secondary);
+}
+.mb-lobby-player-team {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.mb-lobby-player-team i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--mb-team-c);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--mb-team-c) 60%, transparent);
+}
+.mb-lobby-player-enter {
+  animation: mb-lobby-player-in 360ms cubic-bezier(.2,1.08,.3,1) both;
+}
+.mb-lobby-more {
+  margin-top: 9px;
+  text-align: center;
+  font-size: .78rem;
+  font-weight: 800;
+  color: var(--mb-text-secondary);
+}
+.mb-lobby-roster-light .mb-lobby-more {
+  color: var(--mb-text-guru-secondary);
+}
+.mb-lobby-roster-empty {
+  min-height: 102px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 9px;
+  border: 1px dashed rgba(255,255,255,.15);
+  border-radius: 16px;
+  color: var(--mb-text-secondary);
+  text-align: center;
+}
+.mb-lobby-roster-light.mb-lobby-roster-empty {
+  border-color: rgba(28,43,58,.14);
+  color: var(--mb-text-guru-secondary);
+}
+.mb-lobby-roster-empty p {
+  margin: 0;
+  font-size: .85rem;
+  font-weight: 750;
+}
+.mb-lobby-empty-orbit {
+  position: relative;
+  display: block;
+  width: 58px;
+  height: 28px;
+}
+.mb-lobby-empty-orbit i {
+  position: absolute;
+  top: 8px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--mb-primary);
+  opacity: .35;
+  animation: mb-lobby-wait-bob 1.7s ease-in-out infinite;
+}
+.mb-lobby-empty-orbit i:nth-child(1) { left: 2px; animation-delay: -.25s; }
+.mb-lobby-empty-orbit i:nth-child(2) { left: 22px; }
+.mb-lobby-empty-orbit i:nth-child(3) { left: 42px; animation-delay: .25s; }
+
+@keyframes mb-lobby-player-in {
+  from { opacity: 0; transform: translateY(8px) scale(.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes mb-lobby-wait-bob {
+  0%,100% { transform: translateY(3px); opacity: .28; }
+  50% { transform: translateY(-3px); opacity: .75; }
+}
+
+/* Projector/Classroom: PIN + roster share the first visual plane. */
+.mb-pj-lobby-grid {
+  width: min(94vw, 1120px);
+  display: grid;
+  grid-template-columns: minmax(360px,.82fr) minmax(420px,1.18fr);
+  gap: 22px;
+  align-items: stretch;
+}
+.mb-pj-lobby-join,
+.mb-pj-lobby-roster-panel {
+  min-width: 0;
+  border-radius: 20px;
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(255,255,255,.09);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035);
+}
+.mb-pj-lobby-join {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 18px 20px;
+}
+.mb-pj-lobby-join .mb-pj-wait {
+  margin: 0;
+}
+.mb-pj-lobby-roster-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  padding: 15px;
+}
+.mb-pj-lobby-roster-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--mb-text-secondary);
+  font-size: .82rem;
+  font-weight: 800;
+}
+.mb-pj-lobby-roster-head strong {
+  display: grid;
+  place-items: center;
+  min-width: 32px;
+  height: 28px;
+  padding: 0 9px;
+  border-radius: var(--mb-radius-pill);
+  background: rgba(15,168,160,.18);
+  color: #8ce4de;
+}
+.mb-pj-lobby-stage > .mb-pj-world,
+.mb-pj-lobby-stage > .mb-pj-world-strip {
+  width: min(74vw, 700px);
+  margin-top: 6px;
+}
+.mb-pj-lobby-stage > .mb-pj-kota-preview {
+  width: min(66vw, 560px);
+}
+
+@media (min-width: 900px) and (max-height: 800px) {
+  .mb-pj-lobby-grid {
+    grid-template-columns: minmax(330px,.78fr) minmax(420px,1.22fr);
+    gap: 14px;
+  }
+  .mb-pj-lobby-join,
+  .mb-pj-lobby-roster-panel {
+    padding: 10px 12px;
+  }
+  .mb-pj-lobby-join .mb-pin-projector .mb-pin-digit {
+    width: 68px;
+    height: 82px;
+    font-size: 3rem;
+  }
+  .mb-pj-lobby-roster-grid {
+    gap: 6px;
+  }
+  .mb-lobby-player {
+    padding: 6px 8px;
+  }
+  .mb-lobby-player-avatar-wrap,
+  .mb-lobby-avatar {
+    width: 36px;
+    height: 36px;
+  }
+  .mb-pj-lobby-stage > .mb-pj-world,
+  .mb-pj-lobby-stage > .mb-pj-world-strip {
+    width: min(58vw, 560px);
+  }
+}
+
+@media (max-width: 880px) {
+  .mb-pj-lobby-grid {
+    grid-template-columns: 1fr;
+    width: min(94vw, 680px);
+  }
+  .mb-pj-lobby-roster-grid {
+    grid-template-columns: repeat(2, minmax(0,1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mb-lobby-player-enter,
+  .mb-lobby-empty-orbit i {
+    animation: none !important;
+  }
+}
