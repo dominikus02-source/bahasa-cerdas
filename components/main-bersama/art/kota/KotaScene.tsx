@@ -311,11 +311,11 @@ export function KotaScene({
         {lit("garden") ? <ellipse cx="180" cy="448" rx="178" ry="128" fill={`url(#${id("warm")})`} /> : null}
         <ellipse cx="178" cy="504" rx="118" ry="24" fill="#0b2539" />
         <Tree x={84} y={427} on={lit("garden")} scale={1.08} />
-        <Tree x={132} y={446} on={lit("garden")} scale=".88" />
-        <Tree x={264} y={438} on={lit("garden")} scale=".96" />
-        <Tree x={320} y={455} on={lit("garden")} scale=".78" />
-        <Lamp x={175} y={449} on={lit("garden")} glowId={id("local-glow")} scale="1.05" />
-        <Lamp x={278} y={462} on={lit("garden")} glowId={id("local-glow")} scale=".9" />
+        <Tree x={132} y={446} on={lit("garden")} scale={0.88} />
+        <Tree x={264} y={438} on={lit("garden")} scale={0.96} />
+        <Tree x={320} y={455} on={lit("garden")} scale={0.78} />
+        <Lamp x={175} y={449} on={lit("garden")} glowId={id("local-glow")} scale={1.05} />
+        <Lamp x={278} y={462} on={lit("garden")} glowId={id("local-glow")} scale={0.9} />
         <rect x="210" y="493" width="62" height="8" rx="4" fill="#28516b" />
         <rect x="216" y="501" width="6" height="12" rx="2" fill="#24465f" />
         <rect x="260" y="501" width="6" height="12" rx="2" fill="#24465f" />
@@ -348,9 +348,9 @@ export function KotaScene({
       {/* Rumah — milestone 75. */}
       <g className="mb-kota-zone" data-lit={lit("homes")} data-reveal={revealing("homes")}>
         {lit("homes") ? <ellipse cx="735" cy="448" rx="204" ry="126" fill={`url(#${id("warm")})`} /> : null}
-        <House x={646} y={514} on={lit("homes")} scale="1.02" />
-        <House x={752} y={514} on={lit("homes")} scale="1.08" variant={1} />
-        <House x={855} y={514} on={lit("homes")} scale=".92" variant={2} />
+        <House x={646} y={514} on={lit("homes")} scale={1.02} />
+        <House x={752} y={514} on={lit("homes")} scale={1.08} variant={1} />
+        <House x={855} y={514} on={lit("homes")} scale={0.92} variant={2} />
         {!mini ? <text x="750" y="548" textAnchor="middle" fill={lit("homes") ? "#ffe09a" : "#7894aa"} fontSize="13" fontWeight="800" letterSpacing="3">RUMAH</text> : null}
         <RevealRings x={754} y={433} active={revealing("homes")} />
       </g>
@@ -384,10 +384,10 @@ export function KotaScene({
           )),
         )}
         {[0, 1, 2].map((row) => (
-          <LitWindow key={`l-${row}`} x="936" y={410 + row * 30} w="14" h="14" on={lit("town-center")} delay={130 + row * 70} />
+          <LitWindow key={`l-${row}`} x={936} y={410 + row * 30} w={14} h={14} on={lit("town-center")} delay={130 + row * 70} />
         ))}
         {[0, 1, 2].map((row) => (
-          <LitWindow key={`r-${row}`} x="1120" y={426 + row * 27} w="14" h="13" on={lit("town-center")} delay={170 + row * 70} />
+          <LitWindow key={`r-${row}`} x={1120} y={426 + row * 27} w={14} h={13} on={lit("town-center")} delay={170 + row * 70} />
         ))}
         <rect x="1022" y="472" width="36" height="42" rx="3" fill="#091f31" />
         {!mini ? <text x="1042" y="548" textAnchor="middle" fill={lit("town-center") ? "#ffe3a0" : "#7894aa"} fontSize="13" fontWeight="800" letterSpacing="3">PUSAT KOTA</text> : null}
