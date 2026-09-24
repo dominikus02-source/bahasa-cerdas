@@ -29,20 +29,10 @@ export default function LoginPage() {
   const [next, setNext] = useState("");
 
   useEffect(() => {
-    // Don't blindly clear all Supabase cookies on mount.
-    // User might arrive at /login due to a transient middleware/auth failure
-    // (e.g. concurrent refresh-token race). Blind cookie deletion would
-    // destroy a valid session that was already refreshed by another request.
-    //
-    // Instead: only sign out if there's actually an active session.
-    // This preserves the "fresh login" intent without being destructive.
-    const supabase = createClient();
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        supabase.auth.signOut().catch(() => {});
-      }
-    }).catch(() => {});
-
+    // /login can be the destination of a transient auth failure. Never call
+    // signOut() here: a parallel request may already have refreshed a valid
+    // session, and signing it out would turn a recoverable race into a real
+    // logout.
     const params = new URLSearchParams(window.location.search);
     const nextParam = params.get("next") || "";
     if (nextParam) {
