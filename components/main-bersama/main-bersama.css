@@ -1867,3 +1867,54 @@
     transition: none !important;
   }
 }
+
+
+/* Lobby PIN is the first classroom moment: treat it as a stage, not a form. */
+.mb-pj-lobby-stage {
+  position: relative;
+  justify-content: flex-start;
+  gap: 12px;
+  padding-top: 22px;
+  background:
+    radial-gradient(70% 62% at 50% 22%, rgba(15, 168, 160, 0.11), transparent 70%),
+    radial-gradient(58% 40% at 50% 92%, rgba(242, 185, 59, 0.07), transparent 70%);
+}
+.mb-pj-lobby-eyebrow {
+  color: #8ce4de;
+  letter-spacing: .18em;
+}
+.mb-pj-lobby-stage .mb-pin-projector {
+  margin-top: 2px;
+}
+.mb-pj-lobby-stage .mb-pj-wait {
+  max-width: 62ch;
+  text-align: center;
+}
+.mb-pj-lobby-stage .mb-pj-world {
+  width: min(82vw, 820px);
+  margin-top: 8px;
+}
+.mb-pj-lobby-stage .mb-pj-world-strip {
+  max-width: 760px;
+}
+.mb-pj-lobby-stage .mb-pj-kota-preview {
+  width: min(72vw, 620px);
+}
+
+@media (min-width: 900px) and (max-height: 800px) {
+  .mb-pj-lobby-stage {
+    gap: 8px;
+    padding-top: 10px;
+  }
+  .mb-pj-lobby-stage .mb-pin-projector .mb-pin-digit {
+    width: 82px;
+    height: 96px;
+    font-size: 3.45rem;
+  }
+  .mb-pj-lobby-stage .mb-pin-projector .mb-pin-separator {
+    font-size: 1.55rem;
+  }
+  .mb-pj-lobby-stage .mb-pj-world {
+    width: min(74vw, 650px);
+  }
+}
