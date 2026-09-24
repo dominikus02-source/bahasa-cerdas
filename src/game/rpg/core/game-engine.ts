@@ -116,7 +116,7 @@ import { canonicalItemById } from "../data/items";
 import { checkCollision } from "../world/collision";
 import { findNearestInteraction, processInteraction, type RPGInteractionResult } from "../world/interaction";
 import type { RPGCameraState } from "../rendering/camera";
-import { createCamera, followTarget, resizeCamera } from "../rendering/camera";
+import { createCamera, followTargetWithFeel, resizeCamera } from "../rendering/camera";
 import type { CanvasRenderer } from "../rendering/canvas-renderer";
 import { createCanvasRenderer } from "../rendering/canvas-renderer";
 import { startRPGLoop, type RPGLoopHandle } from "./game-loop";
@@ -1731,8 +1731,14 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
         }
       }
 
-      // Update camera to follow player
-      camera = followTarget(camera, state.player.position);
+      // Presentation-only camera lead: frame slightly ahead of the player while moving.
+      camera = followTargetWithFeel(
+        camera,
+        state.player.position,
+        state.player.facing,
+        state.world.tiles.width,
+        state.world.tiles.height,
+      );
     },
     // Render (every frame)
     () => {
