@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
@@ -8,7 +8,7 @@ import { BackHome } from "@/components/shared/BackHome";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { VerifiedBadge } from "@/components/arena/UserName";
 import {
-  Home, Menu as MenuIcon, X, Bell,
+  Home, Menu as MenuIcon, X,
   GraduationCap, User, PenLine, MessageCircle, Settings, Shield, Zap, Gem, Gamepad2,
 } from "lucide-react";
 import {
@@ -40,19 +40,6 @@ const DRAWER_ITEMS: { href: string; label: string; icon: any }[] = [
 export default function MuridMobileNav({ fullName, role, isFounder, isPremium }: { fullName: string; role: string; isFounder: boolean; isPremium?: boolean }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
-
-  useEffect(() => {
-    const fetchUnread = () => {
-      fetch("/api/notifikasi?unread=true")
-        .then(r => r.ok ? r.json() : null)
-        .then(d => { if (d?.unreadCount) setUnreadCount(d.unreadCount); })
-        .catch(() => {});
-    };
-    fetchUnread();
-    const interval = setInterval(fetchUnread, 60000);
-    return () => clearInterval(interval);
-  }, []);
 
   const isActive = (href: string) => pathname === href || pathname?.startsWith(href + "/");
   const close = () => setMenuOpen(false);
@@ -66,10 +53,11 @@ export default function MuridMobileNav({ fullName, role, isFounder, isPremium }:
 
   return (
     <>
-      {/* Bottom Nav — semua destinasi memakai treatment visual yang sama.
-          Label panjang tetap boleh dua baris tanpa mengubah ukuran tombol/icon. */}
+      {/* Bottom Nav — 5 destinasi inti saja. Notifikasi sengaja berada di
+          header, berdampingan dengan ThemeToggle, supaya bar bawah tidak padat
+          dan tidak melakukan fetch unread kedua. */}
       <nav className="bc-mobile-nav md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-gray-100/80 bg-white/94 backdrop-blur-xl safe-area-bottom dark:bg-slate-900/94 dark:border-slate-800">
-        <div className="grid grid-cols-6 items-end px-1.5 pt-1.5 pb-2">
+        <div className="grid grid-cols-5 items-end px-1.5 pt-1.5 pb-2">
           {PRIMARY.map(({ href, label, icon: Icon }) => {
             const active = isActive(href);
             return (
@@ -91,22 +79,6 @@ export default function MuridMobileNav({ fullName, role, isFounder, isPremium }:
               </Link>
             );
           })}
-
-          <Link
-            href="/arena/notifikasi"
-            aria-label="Notifikasi"
-            className={`relative min-w-0 min-h-[52px] flex flex-col items-center justify-center gap-1 rounded-xl transition-colors ${isActive("/arena/notifikasi") ? "text-violet-600 dark:text-violet-300" : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"}`}
-          >
-            <div className="relative grid place-items-center w-7 h-7">
-              <Bell size={20} />
-              {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-4 h-4 px-0.5 bg-red-500 text-white text-[8.5px] leading-none font-bold rounded-full flex items-center justify-center shadow ring-2 ring-white dark:ring-slate-900">
-                  {unreadCount > 9 ? "9+" : unreadCount}
-                </span>
-              )}
-            </div>
-            <span className="h-5 flex items-center justify-center text-[9.5px] leading-[1.05] font-semibold text-center">Notif</span>
-          </Link>
 
           <button
             type="button"
