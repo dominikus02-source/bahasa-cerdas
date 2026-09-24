@@ -16,6 +16,11 @@ export interface ProjectorJoinInfo {
   className?: string;
 }
 
+export interface ProjectorLobbyParticipant {
+  displayName: string;
+  teamId?: TeamId;
+}
+
 export interface ProjectorSessionView {
   role: 'projector';
   sessionId: SessionId;
@@ -44,7 +49,14 @@ export interface ProjectorSessionView {
   /** Soal aktif versi publik — tanpa answer key. */
   currentQuestion: PublicQuestionView | null;
 
-  /** Partisipasi agregat — tanpa identitas siswa. */
+  /**
+   * Nama tampilan peserta hanya tersedia sebelum permainan dimulai,
+   * untuk lobby kelas ala game show. Tidak pernah membawa userId,
+   * credential, playerId, atau jawaban individual.
+   */
+  lobbyParticipants: ProjectorLobbyParticipant[];
+
+  /** Partisipasi agregat. */
   participation: {
     playerCount: number;
     eligibleCount: number;
