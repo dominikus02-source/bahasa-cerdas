@@ -37,6 +37,9 @@ export async function GET(req: NextRequest) {
   }
   if (!sessionId) return errorResponse('SESSION_NOT_FOUND');
 
+  // Layar kelas harus selalu melihat state durable terbaru lintas instance.
+  // Buang cache process-local sebelum membangun view publik.
+  deps.resolver.discard?.(sessionId as never);
   const loaded = await loadEngineWithGameState(deps, sessionId as never);
   if (!loaded) return errorResponse('SESSION_NOT_FOUND');
 
