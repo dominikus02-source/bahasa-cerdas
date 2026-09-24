@@ -267,21 +267,27 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
 
       <style jsx>{`
         .mb-dock {
-          position: sticky;
-          bottom: 0;
+          position: fixed;
+          left: 50%;
+          bottom: max(12px, env(safe-area-inset-bottom));
+          transform: translateX(-50%);
           z-index: 40;
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: var(--mb-space-3);
-          padding: var(--mb-space-3) var(--mb-space-4);
-          background: rgba(13, 27, 42, 0.82);
-          backdrop-filter: blur(8px);
-          border-top: 1px solid rgba(255, 255, 255, 0.12);
+          gap: var(--mb-space-2);
+          width: max-content;
+          max-width: calc(100vw - 24px);
+          padding: 8px 10px;
+          background: rgba(8, 24, 38, 0.88);
+          backdrop-filter: blur(14px);
+          border: 1px solid rgba(255, 255, 255, 0.14);
+          border-radius: var(--mb-radius-pill);
+          box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
         }
         .mb-dock-primary {
-          min-height: 52px;
-          padding: 10px 36px;
+          min-height: 46px;
+          padding: 9px 28px;
           border-radius: var(--mb-radius-pill);
           border: none;
           background: var(--mb-primary-strong);
@@ -313,8 +319,8 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
           list-style: none;
           display: grid;
           place-items: center;
-          width: 52px;
-          height: 52px;
+          width: 46px;
+          height: 46px;
           border-radius: 50%;
           border: 1.5px solid rgba(255, 255, 255, 0.25);
           color: var(--mb-text-primary);
@@ -326,7 +332,7 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
         .mb-dock-more summary:focus-visible { outline: 2px solid var(--mb-accent); outline-offset: 2px; }
         .mb-dock-menu {
           position: absolute;
-          bottom: 60px;
+          bottom: 54px;
           right: 0;
           display: flex;
           flex-direction: column;
