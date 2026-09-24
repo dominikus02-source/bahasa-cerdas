@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, Bell, Trash2, CheckCheck } from "lucide-react";
+import { Bell, CheckCheck, ChevronLeft, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationCard } from "@/components/notifikasi/NotificationCard";
 
@@ -36,7 +36,7 @@ export default function NotifikasiPage() {
   };
 
   useEffect(() => {
-    fetchNotifications();
+    void fetchNotifications();
   }, [filter]);
 
   const handleMarkAllRead = async () => {
@@ -45,7 +45,7 @@ export default function NotifikasiPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ markAllRead: true }),
     });
-    fetchNotifications();
+    await fetchNotifications();
   };
 
   const handleDeleteAll = async () => {
@@ -59,58 +59,92 @@ export default function NotifikasiPage() {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <div className="flex items-center gap-3 mb-6">
-        <Link href="/guru/beranda" className="p-2 hover:bg-slate-100 rounded-lg">
-          <ChevronLeft className="w-5 h-5 text-slate-600" />
-        </Link>
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-            <Bell className="w-7 h-7 text-emerald-600" />
-            Notifikasi
-          </h1>
-          <p className="text-sm text-slate-500">Pemberitahuan dan update dari BahasaCerdas</p>
-        </div>
-        {notifications.length > 0 && (
-          <div className="flex gap-2">
-            <Button size="sm" variant="outline" onClick={handleMarkAllRead}>
-              <CheckCheck className="w-4 h-4 mr-1" /> Tandai Dibaca
-            </Button>
-            <Button size="sm" variant="outline" onClick={handleDeleteAll} className="text-red-600 hover:text-red-700 hover:bg-red-50">
-              <Trash2 className="w-4 h-4 mr-1" /> Hapus Semua
-            </Button>
-          </div>
-        )}
-      </div>
+    <div className="mx-auto w-full min-w-0 max-w-4xl">
+      <section className="mb-5 rounded-3xl border border-slate-200/80 bg-white/85 p-4 shadow-sm backdrop-blur-sm sm:p-5 dark:border-slate-800 dark:bg-slate-900/72">
+        <div className="flex min-w-0 flex-wrap items-start gap-3">
+          <Link
+            href="/guru/beranda"
+            aria-label="Kembali ke beranda guru"
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-slate-200 bg-white text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </Link>
 
-      <div className="flex gap-2 mb-6">
+          <div className="min-w-0 flex-1">
+            <h1 className="flex items-center gap-2 text-xl font-extrabold text-slate-900 sm:text-2xl dark:text-slate-100">
+              <Bell className="h-6 w-6 shrink-0 text-emerald-600 dark:text-emerald-400" />
+              Notifikasi
+            </h1>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+              Pemberitahuan dan update dari BahasaCerdas.
+            </p>
+          </div>
+
+          {notifications.length > 0 && (
+            <div className="flex w-full flex-wrap gap-2 sm:w-auto sm:justify-end">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleMarkAllRead}
+                className="min-h-9 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+              >
+                <CheckCheck className="mr-1 h-4 w-4" /> Tandai Dibaca
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleDeleteAll}
+                className="min-h-9 text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-slate-700 dark:bg-slate-900 dark:text-red-400 dark:hover:bg-red-950/40 dark:hover:text-red-300"
+              >
+                <Trash2 className="mr-1 h-4 w-4" /> Hapus Semua
+              </Button>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <div className="mb-5 flex gap-2 overflow-x-auto pb-1">
         <button
+          type="button"
           onClick={() => setFilter("all")}
-          className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${filter === "all" ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
+          className={`shrink-0 rounded-xl px-4 py-2 text-sm font-semibold transition-colors ${
+            filter === "all"
+              ? "bg-emerald-600 text-white shadow-sm"
+              : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+          }`}
         >
           Semua
         </button>
         <button
+          type="button"
           onClick={() => setFilter("unread")}
-          className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${filter === "unread" ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
+          className={`shrink-0 rounded-xl px-4 py-2 text-sm font-semibold transition-colors ${
+            filter === "unread"
+              ? "bg-emerald-600 text-white shadow-sm"
+              : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+          }`}
         >
           Belum Dibaca
         </button>
       </div>
 
       {loading ? (
-        <div className="text-center py-20">
-          <div className="w-12 h-12 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-slate-500">Memuat notifikasi...</p>
+        <div className="rounded-3xl border border-slate-200/70 bg-white/70 py-20 text-center dark:border-slate-800 dark:bg-slate-900/60">
+          <div className="mx-auto mb-4 h-11 w-11 animate-spin rounded-full border-4 border-emerald-500/25 border-t-emerald-500" />
+          <p className="text-sm text-slate-500 dark:text-slate-400">Memuat notifikasi...</p>
         </div>
       ) : notifications.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-2xl border border-slate-100">
-          <Bell className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-          <h3 className="font-bold text-slate-600 mb-2">Tidak ada notifikasi</h3>
-          <p className="text-sm text-slate-400">Anda akan mendapat notifikasi saat ada update penting</p>
+        <div className="rounded-3xl border border-slate-200/70 bg-white/80 px-5 py-20 text-center dark:border-slate-800 dark:bg-slate-900/70">
+          <span className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-2xl bg-slate-100 dark:bg-slate-800">
+            <Bell className="h-8 w-8 text-slate-300 dark:text-slate-600" />
+          </span>
+          <h3 className="mb-2 font-bold text-slate-700 dark:text-slate-200">Tidak ada notifikasi</h3>
+          <p className="text-sm text-slate-400 dark:text-slate-500">
+            Anda akan mendapat notifikasi saat ada update penting.
+          </p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="min-w-0 space-y-3">
           {notifications.map((n) => (
             <NotificationCard key={n.id} n={n} onDelete={handleDelete} />
           ))}

@@ -29,6 +29,7 @@ import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBan
 import { ParticipantCount } from '@/components/main-bersama/shared/ParticipantCount';
 import { PrimaryGameButton } from '@/components/main-bersama/shared/PrimaryGameButton';
 import { RoundCountdown } from '@/components/main-bersama/shared/RoundCountdown';
+import { StudentLandscapeControl } from '@/components/main-bersama/student/StudentLandscapeControl';
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E'];
 
@@ -160,6 +161,7 @@ export function StudentGameClient({ sessionId }: { sessionId: string }) {
                 : null
             }
           />
+          <StudentLandscapeControl />
         </div>
       ) : null}
       {isPreRound(view) ? (
@@ -207,7 +209,7 @@ export function StudentGameClient({ sessionId }: { sessionId: string }) {
           display: flex;
           align-items: center;
           gap: 10px;
-          width: min(100%, 720px);
+          width: min(100%, 820px);
           margin: 0 auto;
           padding: 12px 14px 0;
         }
@@ -221,6 +223,12 @@ export function StudentGameClient({ sessionId }: { sessionId: string }) {
         }
         @media (min-width: 700px) {
           .mb-sgame-head { padding-top: 18px; }
+        }
+        @media (orientation: landscape) and (max-height: 760px) and (min-width: 640px) {
+          .mb-sgame-head {
+            width: min(100%, 1120px);
+            padding: 8px 18px 0;
+          }
         }
       `}</style>
     </main>
@@ -774,6 +782,48 @@ function StudentQuestion({
           font-weight: 650;
           text-align: center;
           margin: 0;
+        }
+        @media (orientation: landscape) and (max-height: 760px) and (min-width: 640px) {
+          .mb-sq {
+            width: min(100%, 1120px);
+            display: grid;
+            grid-template-columns: minmax(0, 1.08fr) minmax(320px, .92fr);
+            grid-template-rows: auto minmax(0, 1fr);
+            gap: 10px 16px;
+            padding: 10px 18px 18px;
+          }
+          .mb-sq-progress {
+            grid-column: 1 / -1;
+          }
+          .mb-sq-cardwrap {
+            grid-column: 1;
+            grid-row: 2;
+            align-self: start;
+            max-height: calc(100dvh - 116px);
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            scrollbar-gutter: stable;
+          }
+          .mb-sq-answers {
+            grid-column: 2;
+            grid-row: 2;
+            align-self: start;
+            max-height: calc(100dvh - 116px);
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            padding-right: 2px;
+          }
+          .mb-saved-student {
+            grid-column: 2;
+            grid-row: 2;
+            align-self: start;
+          }
+          .mb-sq-error {
+            grid-column: 2;
+          }
+          .mb-sq-answers :global(.mb-answer) {
+            min-height: 58px;
+          }
         }
         @media (min-width: 700px) {
           .mb-sq { padding-top: 18px; }

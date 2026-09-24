@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { Bell, CheckCheck, ExternalLink } from "lucide-react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { createPortal } from "react-dom";
+import { Bell, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { subscribeNotifications } from "@/lib/supabase/realtime";
 import { NotificationCard, type NotifikasiItem } from "@/components/notifikasi/NotificationCard";
@@ -10,16 +11,31 @@ interface Notification extends NotifikasiItem {
   data: any;
 }
 
-export function NotificationBell() {
+interface PanelPosition {
+  top: number;
+  right: number;
+  width: number;
+  maxHeight: number;
+}
+
+export function NotificationBell({
+  allHref = "/arena/notifikasi",
+}: {
+  allHref?: string;
+}) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const [panelPosition, setPanelPosition] = useState<PanelPosition | null>(null);
 
+  const triggerWrapRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const userIdRef = useRef<string | null>(null);
 
   const fetchNotifications = useCallback(async () => {
+    setLoading(true);
     try {
       const res = await fetch("/api/notifikasi?unread=true");
       const data = await res.json();
@@ -27,25 +43,18 @@ export function NotificationBell() {
         setNotifications(data.notifications);
         setUnreadCount(data.unreadCount || 0);
       }
-      // Store userId from session for realtime sub
       if (data.userId) userIdRef.current = data.userId;
     } catch (e) {
       console.error(e);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
   useEffect(() => {
     fetchNotifications();
 
-    // Cadangan saja — notifikasi sungguhan datang lewat langganan realtime di
-    // bawah. Dulu 30 detik: komponen ini terpasang di layout murid dan mobile
-    // nav, jadi SETIAP murid memanggil /api/notifikasi 120x/jam, dan tiap
-    // panggilan itu memvalidasi sesi ke server Auth Supabase. Dengan ~200 murid
-    // aktif itu saja sudah ~24.000 panggilan auth per jam — penyebab utama
-    // limit auth kena dan murid tidak bisa login.
     const interval = setInterval(() => {
-      // Tab di latar belakang tidak perlu disegarkan; saat murid kembali,
-      // listener visibilitas di bawah yang menyegarkan sekali.
       if (document.visibilityState !== "visible") return;
       fetchNotifications();
     }, 180000);
@@ -65,16 +74,13 @@ export function NotificationBell() {
     let unsub: (() => void) | undefined;
     let cancelled = false;
 
-    // userId diambil dari respons /api/notifikasi yang memang sudah dipanggil di
-    // atas — sebelumnya ada fetch("/api/user/me") terpisah hanya untuk ini,
-    // yaitu satu panggilan API (dan satu validasi auth) ekstra per murid.
     const tunggu = setInterval(() => {
       const uid = userIdRef.current;
       if (!uid || cancelled) return;
       clearInterval(tunggu);
       unsub = subscribeNotifications(uid, (notif) => {
-        setNotifications(prev => [notif as Notification, ...prev]);
-        setUnreadCount(c => c + 1);
+        setNotifications((prev) => [notif as Notification, ...prev]);
+        setUnreadCount((count) => count + 1);
       });
     }, 500);
 
@@ -85,20 +91,62 @@ export function NotificationBell() {
     };
   }, []);
 
+  const positionPanel = useCallback(() => {
+    const button = triggerRef.current;
+    if (!button || typeof window === "undefined") return;
+
+    const rect = button.getBoundingClientRect();
+    const gutter = 12;
+    const width = Math.min(384, Math.max(280, window.innerWidth - gutter * 2));
+    const top = Math.min(rect.bottom + 8, window.innerHeight - 260);
+    const right = Math.max(gutter, window.innerWidth - rect.right);
+    const maxHeight = Math.max(220, window.innerHeight - top - gutter);
+
+    setPanelPosition({ top, right, width, maxHeight });
+  }, []);
+
   useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
+    if (!open) return;
+    positionPanel();
+
+    const sync = () => positionPanel();
+    window.addEventListener("resize", sync);
+    window.addEventListener("orientationchange", sync);
+    window.addEventListener("scroll", sync, true);
+
+    return () => {
+      window.removeEventListener("resize", sync);
+      window.removeEventListener("orientationchange", sync);
+      window.removeEventListener("scroll", sync, true);
     };
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
+  }, [open, positionPanel]);
+
+  useEffect(() => {
+    const handlePointer = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node;
+      if (triggerWrapRef.current?.contains(target)) return;
+      if (panelRef.current?.contains(target)) return;
+      setOpen(false);
+    };
+
+    document.addEventListener("mousedown", handlePointer);
+    document.addEventListener("touchstart", handlePointer, { passive: true });
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointer);
+      document.removeEventListener("touchstart", handlePointer);
+    };
   }, []);
 
   const handleOpen = () => {
-    setOpen(!open);
+    setOpen((current) => {
+      const next = !current;
+      if (next) requestAnimationFrame(positionPanel);
+      return next;
+    });
+
     if (!open && unreadCount > 0) {
-      fetch("/api/notifikasi", {
+      void fetch("/api/notifikasi", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ markAllRead: true }),
@@ -107,79 +155,108 @@ export function NotificationBell() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = useCallback(async (id: string) => {
     await fetch(`/api/notifikasi?id=${id}`, { method: "DELETE" });
     setNotifications((prev) => prev.filter((n) => n.id !== id));
-  };
+  }, []);
 
-  const handleDeleteAll = async () => {
+  const handleDeleteAll = useCallback(async () => {
     await fetch("/api/notifikasi?all=true", { method: "DELETE" });
     setNotifications([]);
     setUnreadCount(0);
-  };
+  }, []);
 
-  return (
-    <div className="relative" ref={ref}>
-      <button
-        onClick={handleOpen}
-        className="relative p-2 hover:bg-slate-100 rounded-lg transition-colors dark:hover:bg-slate-800"
-        title="Notifikasi"
+  const panel = useMemo(() => {
+    if (!open || !panelPosition || typeof document === "undefined") return null;
+
+    return createPortal(
+      <div
+        ref={panelRef}
+        className="fixed z-[120] flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white/98 shadow-[0_24px_70px_rgba(15,23,42,.22)] backdrop-blur-xl dark:border-slate-700/90 dark:bg-slate-900/98 dark:shadow-[0_24px_70px_rgba(0,0,0,.5)]"
+        style={{
+          top: panelPosition.top,
+          right: panelPosition.right,
+          width: panelPosition.width,
+          maxHeight: panelPosition.maxHeight,
+        }}
+        role="dialog"
+        aria-label="Notifikasi terbaru"
       >
-        <Bell className="w-5 h-5 text-slate-600 dark:text-slate-400" />
-        {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-            {unreadCount > 9 ? "9+" : unreadCount}
-          </span>
-        )}
-      </button>
-
-      {/* The panel is 320px wide but the desktop sidebars holding this bell are
-          only 256px, so anchoring it right-0 pushed 80px of it off the left of
-          the screen and the list was unreadable. On md+ it therefore opens
-          rightward into the content area; on mobile the bell sits at the right
-          of the top bar, where opening leftward is correct. max-w keeps it
-          inside the viewport at any width. */}
-      {open && (
-        <div className="absolute right-0 md:right-auto md:left-0 top-full mt-2 w-80 max-w-[calc(100vw-1.5rem)] bg-white rounded-xl shadow-xl border border-slate-200 z-50 dark:bg-slate-900 dark:border-slate-800">
-          <div className="p-3 border-b border-slate-100 flex items-center justify-between dark:border-slate-800">
-            <h3 className="font-semibold text-sm text-slate-900 dark:text-slate-100">Notifikasi</h3>
-            {notifications.length > 0 && (
-              <button
-                onClick={handleDeleteAll}
-                className="text-xs text-red-500 hover:text-red-700 font-medium dark:text-red-400 dark:hover:text-red-300"
-              >
-                Hapus Semua
-              </button>
-            )}
+        <div className="shrink-0 flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-3.5 dark:border-slate-800">
+          <div className="min-w-0">
+            <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100">Notifikasi</h3>
+            <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
+              Update terbaru dari BahasaCerdas
+            </p>
           </div>
-          {loading ? (
+          {notifications.length > 0 && (
+            <button
+              type="button"
+              onClick={handleDeleteAll}
+              className="shrink-0 rounded-lg px-2.5 py-1.5 text-[11px] font-semibold text-red-600 transition-colors hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-950/40 dark:hover:text-red-300"
+            >
+              Hapus Semua
+            </button>
+          )}
+        </div>
+
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+          {loading && notifications.length === 0 ? (
             <div className="p-8 text-center text-sm text-slate-400 dark:text-slate-500">Memuat...</div>
           ) : notifications.length === 0 ? (
-            <div className="p-8 text-center">
-              <Bell className="w-8 h-8 text-slate-300 mx-auto mb-2 dark:text-slate-600" />
-              <p className="text-sm text-slate-400 dark:text-slate-500">Tidak ada notifikasi</p>
+            <div className="p-9 text-center">
+              <span className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-2xl bg-slate-100 dark:bg-slate-800">
+                <Bell className="h-6 w-6 text-slate-400 dark:text-slate-500" />
+              </span>
+              <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">Tidak ada notifikasi</p>
+              <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">Kalau ada kabar baru, akan muncul di sini.</p>
             </div>
           ) : (
-            <div className="max-h-80 overflow-y-auto p-2 space-y-1.5">
+            <div className="space-y-2 p-2.5">
               {notifications.map((n) => (
                 <NotificationCard key={n.id} n={n} dense onDelete={handleDelete} />
               ))}
             </div>
           )}
-          {notifications.length > 0 && (
-            <div className="p-2 border-t border-slate-100 dark:border-slate-800">
-              <Link
-                href="/arena/notifikasi"
-                className="flex items-center justify-center gap-1.5 text-xs font-medium py-1"
-                style={{ color: '#059669' }}
-                onClick={() => setOpen(false)}
-              >
-                Lihat Semua <ExternalLink className="w-3 h-3" />
-              </Link>
-            </div>
-          )}
         </div>
-      )}
-    </div>
+
+        {notifications.length > 0 && (
+          <div className="shrink-0 border-t border-slate-100 bg-slate-50/80 p-2.5 dark:border-slate-800 dark:bg-slate-900">
+            <Link
+              href={allHref}
+              className="flex min-h-10 items-center justify-center gap-1.5 rounded-xl text-xs font-bold text-emerald-700 transition-colors hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-950/30"
+              onClick={() => setOpen(false)}
+            >
+              Lihat Semua <ExternalLink className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+        )}
+      </div>,
+      document.body,
+    );
+  }, [allHref, handleDelete, handleDeleteAll, loading, notifications, open, panelPosition]);
+
+  return (
+    <>
+      <div className="relative" ref={triggerWrapRef}>
+        <button
+          ref={triggerRef}
+          type="button"
+          onClick={handleOpen}
+          className="relative grid h-10 w-10 place-items-center rounded-xl text-slate-600 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 dark:text-slate-300 dark:hover:bg-slate-800"
+          title="Notifikasi"
+          aria-label={unreadCount > 0 ? `Notifikasi, ${unreadCount} belum dibaca` : "Notifikasi"}
+          aria-expanded={open}
+        >
+          <Bell className="h-5 w-5" />
+          {unreadCount > 0 && (
+            <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-0.5 text-[9px] font-bold leading-none text-white ring-2 ring-white dark:ring-slate-900">
+              {unreadCount > 9 ? "9+" : unreadCount}
+            </span>
+          )}
+        </button>
+      </div>
+      {panel}
+    </>
   );
 }
