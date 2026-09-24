@@ -610,12 +610,12 @@ export function SetupClient({
 
         /* Empty state: illustration + copy, bukan kotak kosong. */
         .mb-setup-empty {
-          min-height: 168px;
+          min-height: 138px;
           display: grid;
           grid-template-columns: minmax(180px, 32%) 1fr;
           align-items: center;
           gap: clamp(12px, 3vw, 32px);
-          padding: 12px clamp(20px, 4vw, 40px);
+          padding: 9px clamp(20px, 3.5vw, 34px);
           border-radius: 24px;
           border: 2px dashed rgba(28, 43, 58, .13);
           background:
@@ -625,7 +625,7 @@ export function SetupClient({
         }
         .mb-setup-empty-art {
           width: 100%;
-          height: 145px;
+          height: 112px;
           background: url('/images/main-bersama/empty-bank-soal.webp') center / contain no-repeat;
           filter: drop-shadow(0 10px 14px rgba(75, 68, 160, .12));
         }
@@ -637,7 +637,7 @@ export function SetupClient({
         .mb-setup-empty-title {
           margin: 0;
           font-weight: 850;
-          font-size: 1.12rem;
+          font-size: 1.06rem;
           color: var(--mb-text-guru);
         }
         .mb-setup-empty-sub {
@@ -816,7 +816,7 @@ export function SetupClient({
             text-align: center;
             padding: 14px 20px 22px;
           }
-          .mb-setup-empty-art { height: 130px; }
+          .mb-setup-empty-art { height: 104px; }
           .mb-setup-pick-row { align-items: flex-start; }
           .mb-setup-cta-box {
             min-height: 250px;
