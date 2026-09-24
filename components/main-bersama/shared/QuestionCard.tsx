@@ -30,7 +30,9 @@ export function QuestionCard({ question, roundLabel }: QuestionCardProps) {
         .mb-qcard {
           position: relative;
           width: 100%;
+          min-width: 0;
           max-width: 640px;
+          box-sizing: border-box;
           margin: 0 auto;
           padding: var(--mb-space-5);
           box-shadow: var(--mb-shadow-light);
@@ -46,7 +48,9 @@ export function QuestionCard({ question, roundLabel }: QuestionCardProps) {
           font-size: 0.85rem;
         }
         .mb-qcard-passage {
+          max-width: 100%;
           max-height: 44dvh;
+          overflow-wrap: anywhere;
           overflow-y: auto;
           padding: var(--mb-space-4);
           margin-bottom: var(--mb-space-4);
@@ -62,6 +66,9 @@ export function QuestionCard({ question, roundLabel }: QuestionCardProps) {
         }
         .mb-qcard-prompt {
           margin: 0;
+          max-width: 100%;
+          overflow-wrap: anywhere;
+          word-break: normal;
           font-family: var(--mb-font-reading);
           font-size: 1.3rem;
           font-weight: 800;
