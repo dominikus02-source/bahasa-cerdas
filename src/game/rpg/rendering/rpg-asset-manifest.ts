@@ -38,6 +38,8 @@ export interface RpgAssetEntry {
   status: RpgAssetStatus;
   confidence: "verified" | "reviewed" | "unverified";
   note?: string;
+  /** Optional sub-rectangle inside a shared runtime atlas. */
+  sourceRect?: { x: number; y: number; width: number; height: number };
 }
 
 /** [id, category, path, w, h] — generated from disk, verified by tests. */
@@ -889,7 +891,37 @@ const REFERENCE_ENTRIES: RpgAssetEntry[] = [
   },
 ];
 
+
+/** P2.11 visual completion atlas — extracted from the canonical RPG asset reference sheet. */
+const VISUAL_RUNTIME_ATLAS = "/game/rpg/visual/rpg_runtime_atlas.png";
+const VISUAL_ATLAS_ENTRIES: RpgAssetEntry[] = [
+  ["npc_ki_jaka_full","npcs",39,5,81,150],
+  ["npc_bu_ratmi","npcs",203,5,74,150],
+  ["npc_bu_sari","npcs",371,5,57,150],
+  ["npc_eyang_kartala","npcs",508,5,104,150],
+  ["npc_pak_empu","npcs",35,165,89,150],
+  ["enemy_korog","monsters",190,165,99,150],
+  ["enemy_korog_perang","monsters",350,165,100,150],
+  ["enemy_golem_batu","monsters",507,165,106,150],
+  ["enemy_korog_bayangan","monsters",36,325,87,150],
+  ["boss_raja_korog","bosses",174,325,132,150],
+  ["boss_golem_agung","bosses",336,325,128,150],
+  ["boss_naga_abu","bosses",485,329,150,142],
+  ["boss_penguasa_menara","bosses",14,485,132,150],
+  ["prop_house_village","props",190,523,99,73],
+  ["prop_tree_round","props",379,530,42,60],
+  ["prop_well","props",537,537,45,45],
+].map(([id,category,x,y,width,height]) => ({
+  id, category, source: "asset-sheet-reference-extraction", path: VISUAL_RUNTIME_ATLAS,
+  width: 640, height: 640, frames: 1, animationState: null, direction: null,
+  origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
+  status: "READY" as const, confidence: "reviewed" as const,
+  sourceRect: { x, y, width, height },
+  note: "P2.11: standalone runtime crop extracted from the canonical RPG visual asset sheet; atlas cell visually reviewed.",
+})) as RpgAssetEntry[];
+
 export const RPG_ASSET_MANIFEST: RpgAssetEntry[] = [
+  ...VISUAL_ATLAS_ENTRIES,
   ...READY_TABLE.map(readyEntry),
   ...ARGA_RUNTIME_ENTRIES,
   ...REFERENCE_ENTRIES,
