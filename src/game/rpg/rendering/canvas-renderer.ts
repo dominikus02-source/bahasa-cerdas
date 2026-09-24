@@ -640,8 +640,8 @@ export function createCanvasRenderer(
       if (interaction.kind === "NPC") {
         const npcAssetKeys: Record<string, string> = {
           "npc.ki": "npc.ki-jaka", "npc.ratmi": "npc.bu-ratmi", "npc.sari": "npc.bu-sari",
-          "npc.eyang": "npc.eyang-kartala", "npc.empu": "npc.pak-empu",
-          "npc.bagas": "npc.bu-sari", "npc.tani": "npc.bu-ratmi", "npc.pendaki": "npc.eyang-kartala",
+          "npc.eyang": "npc.eyang-kartala",
+          "npc.empu": "npc.pak-empu",
         };
         preloadRuntimeAsset(npcAssetKeys[interaction.ref]);
       }
