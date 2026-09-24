@@ -44,10 +44,18 @@ export async function POST(req: NextRequest) {
 
 
   const deps = getOrchestratorDeps();
+  const authenticatedDisplayName = user
+    ? ((user.nickname?.trim() || user.fullName?.trim() || '').slice(0, 24).trim())
+    : undefined;
   const result = await joinSession(deps, {
     pin,
     ...(body.displayName !== undefined ? { displayName: body.displayName as string } : {}),
-    ...(user ? { userId: user.id } : {}),
+    ...(user
+      ? {
+          userId: user.id,
+          authenticatedDisplayName,
+        }
+      : {}),
   });
   if (!result.ok) {
     return errorResponse(result.code as StudentErrorCode, result.reason);
