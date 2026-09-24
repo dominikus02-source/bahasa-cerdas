@@ -2,9 +2,8 @@
  * Presentation-only combat feedback — Pendekar Suryakerta.
  *
  * This layer never changes authoritative game state. It turns state deltas
- * into short-lived visual feedback: hit-stop, camera shake, flash and damage
- * numbers. The intent mirrors production RPG "game feel" patterns while
- * keeping all timing deterministic and cheap for a Canvas renderer.
+ * into short-lived visual feedback: hit-stop, camera shake, flash, impact
+ * bursts and damage numbers. Timing is deterministic and renderer-friendly.
  */
 
 export interface VisualFeedbackState {
@@ -23,6 +22,16 @@ export interface FloatingDamage {
   startedAtMs: number;
   durationMs: number;
   critical: boolean;
+}
+
+export interface ImpactBurst {
+  id: number;
+  x: number;
+  y: number;
+  startedAtMs: number;
+  durationMs: number;
+  intensity: number;
+  victory: boolean;
 }
 
 export function createVisualFeedbackState(): VisualFeedbackState {
@@ -61,6 +70,58 @@ export function triggerVictory(
     shakeIntensity: Math.max(state.shakeIntensity, 3),
     flashUntilMs: Math.max(state.flashUntilMs, nowMs + 180),
     flashAlpha: Math.max(state.flashAlpha, 0.12),
+  };
+}
+
+/** Create a deterministic radial impact burst; no random source is needed. */
+export function createImpactBurst(
+  id: number,
+  x: number,
+  y: number,
+  nowMs: number,
+  intensity: number,
+  victory = false,
+): ImpactBurst {
+  return {
+    id,
+    x,
+    y,
+    startedAtMs: nowMs,
+    durationMs: victory ? 520 : 360,
+    intensity: Math.max(0.2, Math.min(1, intensity)),
+    victory,
+  };
+}
+
+export function impactBurstOpacity(
+  burst: ImpactBurst,
+  nowMs: number,
+): number {
+  const elapsed = nowMs - burst.startedAtMs;
+  if (elapsed <= 0 || elapsed >= burst.durationMs) return 0;
+  const p = elapsed / burst.durationMs;
+  return p < 0.18 ? p / 0.18 : 1 - (p - 0.18) / 0.82;
+}
+
+export function impactBurstParticle(
+  burst: ImpactBurst,
+  particleIndex: number,
+  nowMs: number,
+): { x: number; y: number; size: number; opacity: number } {
+  const elapsed = Math.max(0, nowMs - burst.startedAtMs);
+  const p = Math.max(0, Math.min(1, elapsed / burst.durationMs));
+  const count = burst.victory ? 12 : 8;
+  const angle = (Math.PI * 2 * particleIndex) / count + Math.sin(particleIndex * 17.13) * 0.12;
+  const distance = (10 + p * (burst.victory ? 44 : 30)) * burst.intensity;
+  const wobble = 1 + Math.sin(particleIndex * 4.7 + p * 5.5) * 0.08;
+  const x = burst.x + Math.cos(angle) * distance * wobble;
+  const y = burst.y + Math.sin(angle) * distance * wobble - p * (burst.victory ? 10 : 5);
+  const size = (burst.victory ? 2.2 : 1.8) * burst.intensity * (1 - p * 0.35);
+  return {
+    x,
+    y,
+    size,
+    opacity: impactBurstOpacity(burst, nowMs) * (1 - p * 0.35),
   };
 }
 
