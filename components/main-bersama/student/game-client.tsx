@@ -28,6 +28,7 @@ import { AnswerOption } from '@/components/main-bersama/shared/AnswerOption';
 import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBanner';
 import { ParticipantCount } from '@/components/main-bersama/shared/ParticipantCount';
 import { PrimaryGameButton } from '@/components/main-bersama/shared/PrimaryGameButton';
+import { RoundCountdown } from '@/components/main-bersama/shared/RoundCountdown';
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E'];
 
@@ -86,7 +87,7 @@ export function StudentGameClient({ sessionId }: { sessionId: string }) {
   const { view, connection } = useSessionView<StudentSessionView>(
     sessionId,
     fetchView,
-    { onError, pollIntervalMs: 5_000, debounceMs: 120 },
+    { onError, pollIntervalMs: 1_500, debounceMs: 40 },
   );
 
   if (exitError) {
@@ -345,6 +346,11 @@ function StudentQuestion({
         <span className="mb-number">
           Soal {view.roundIndex + 1} dari {view.totalRounds}
         </span>
+        <RoundCountdown
+          closesAt={view.closesAt}
+          serverTime={view.serverTime}
+          compact
+        />
         <div
           className="mb-sq-bar"
           role="progressbar"
