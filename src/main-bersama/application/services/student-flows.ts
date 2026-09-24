@@ -128,10 +128,10 @@ export async function joinSession(
     ? players.find((p) => p.userId === input.userId)
     : players.find((p) => p.userId === undefined && p.displayName === guestName);
 
-  const displayName = existing
-    ? existing.displayName
-    : input.userId
-      ? authenticatedName!
+  const displayName = input.userId
+    ? authenticatedName!
+    : existing
+      ? existing.displayName
       : guestName!;
 
   // Team balance: hanya join BARU yang mengubah komposisi; rejoin
@@ -155,6 +155,12 @@ export async function joinSession(
   }
   const joinedPlayer = engine.state.players.get(join.value.playerId);
   if (!joinedPlayer) return { ok: false, code: 'INTERNAL' };
+
+  // Migrasi lunak untuk sesi lama yang terlanjur menyimpan "Siswa N":
+  // rejoin user login langsung menulis nama profil kanonik ke player row.
+  if (input.userId && authenticatedName && joinedPlayer.displayName !== authenticatedName) {
+    joinedPlayer.displayName = authenticatedName;
+  }
 
   // Mint credential SEBELUM persist. Bila konfigurasi signing bermasalah,
   // join gagal tanpa meninggalkan "phantom participant" di DB/proyektor.
