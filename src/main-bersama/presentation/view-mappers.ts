@@ -398,6 +398,7 @@ export function buildProjectorView(
     ...(session.className ? { className: session.className } : {}),
     currentRoundIndex: session.currentRoundIndex,
     totalRounds: session.totalRounds,
+    currentRoundClosesAt: activeRound?.closesAt?.toISOString() ?? null,
     currentQuestion: activeRound ? toPublicQuestionView(activeRound.question) : null,
     participation: {
       playerCount: engine.state.players.size,
