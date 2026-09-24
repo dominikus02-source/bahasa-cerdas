@@ -53,3 +53,20 @@ export function createMemoryInputSource(): RPGInputSource & { push(cmd: RPGComma
     },
   };
 }
+
+
+/**
+ * Compose multiple device adapters into one command stream.
+ * Device adapters remain independent; ordering is deterministic by source order.
+ */
+export function createCompositeInputSource(
+  ...sources: RPGInputSource[]
+): RPGInputSource {
+  return {
+    drain(): RPGCommand[] {
+      const commands: RPGCommand[] = [];
+      for (const source of sources) commands.push(...source.drain());
+      return commands;
+    },
+  };
+}
