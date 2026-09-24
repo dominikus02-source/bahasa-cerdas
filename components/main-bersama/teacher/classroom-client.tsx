@@ -7,7 +7,7 @@
 // KONTROL hanya command dock (start/close/discuss/next + overflow
 // pause/resume/end) via postTeacherCommand yang sama dengan ruang guru.
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { ProjectorSessionView } from '@/src/main-bersama/contracts/views/projector';
 import {
@@ -31,6 +31,8 @@ import { TeamBadge } from '@/components/main-bersama/art/shared/TeamBadge';
 import { Podium } from '@/components/main-bersama/art/jelajah/Podium';
 import { useTrailMotion } from '@/components/main-bersama/art/jelajah-motion/useTrailMotion';
 import { useKotaMotion } from '@/components/main-bersama/art/kota-motion/useKotaMotion';
+import { useFullscreenControl } from '@/components/main-bersama/shared/useFullscreenControl';
+import { FullscreenExitControl } from '@/components/main-bersama/shared/FullscreenExitControl';
 
 const MODE_LABEL = {
   'jelajah-kata': 'Jelajah Kata',
@@ -59,7 +61,10 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const fullscreen = useFullscreenControl({
+    onError: (message) => setError(message),
+    keyboard: true,
+  });
 
   const fetchView = useCallback(() => fetchProjectorState({ sessionId }), [sessionId]);
   const { view, connection, refresh } = useSessionView<ProjectorSessionView>(
@@ -135,36 +140,15 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
     [sessionId, refresh],
   );
 
-  const toggleFullscreen = useCallback(async () => {
-    try {
-      if (document.fullscreenElement) {
-        await document.exitFullscreen();
-      } else {
-        await document.documentElement.requestFullscreen();
-      }
-    } catch {
-      setError('Mode layar penuh tidak didukung browser ini.');
+  const returnToRoom = useCallback(async () => {
+    // Next.js client navigation can keep the document in fullscreen.
+    // Exit explicitly before leaving the classroom surface so the teacher
+    // never lands back in the dashboard without browser chrome.
+    if (fullscreen.isFullscreen) {
+      await fullscreen.exit();
     }
-  }, []);
-
-  useEffect(() => {
-    const sync = () => setIsFullscreen(Boolean(document.fullscreenElement));
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key.toLowerCase() === 'f' && !event.metaKey && !event.ctrlKey && !event.altKey) {
-        const target = event.target as HTMLElement | null;
-        if (target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA' || target?.isContentEditable) return;
-        event.preventDefault();
-        void toggleFullscreen();
-      }
-    };
-    sync();
-    document.addEventListener('fullscreenchange', sync);
-    window.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('fullscreenchange', sync);
-      window.removeEventListener('keydown', onKey);
-    };
-  }, [toggleFullscreen]);
+    router.push(roomHref);
+  }, [fullscreen, roomHref, router]);
 
   if (!view) {
     return (
@@ -189,6 +173,10 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
   return (
     <main className="mb-pj">
       <ConnectionBanner visible={connection === 'offline'} />
+      <FullscreenExitControl
+        active={fullscreen.isFullscreen}
+        onExit={fullscreen.exit}
+      />
       <header className="mb-pj-head">
         <div className="mb-pj-brand">
           <h1 className="mb-display mb-pj-title">MAIN BERSAMA</h1>
@@ -396,8 +384,8 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
             {busy ? 'Memproses…' : primary.label}
           </button>
         ) : (
-          <button type="button" className="mb-dock-primary" onClick={() => router.push(roomHref)} disabled={busy}>
-            Selesai
+          <button type="button" className="mb-dock-primary" onClick={() => void returnToRoom()} disabled={busy}>
+            {phase === 'summary' || phase === 'ended' ? 'Kembali ke Ruang Guru' : 'Selesai'}
           </button>
         )}
         <SoundToggle
@@ -409,11 +397,11 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
         <button
           type="button"
           className="mb-dock-fullscreen"
-          onClick={() => void toggleFullscreen()}
-          aria-pressed={isFullscreen}
-          title={isFullscreen ? 'Keluar layar penuh (F)' : 'Layar penuh (F)'}
+          onClick={() => void fullscreen.toggle()}
+          aria-pressed={fullscreen.isFullscreen}
+          title={fullscreen.isFullscreen ? 'Keluar layar penuh (F)' : 'Layar penuh (F)'}
         >
-          {isFullscreen ? 'Keluar Fullscreen' : 'Layar Penuh'}
+          {fullscreen.isFullscreen ? 'Keluar Layar Penuh' : 'Layar Penuh'}
         </button>
         <details className="mb-dock-more">
           <summary aria-label="Kontrol lain">•••</summary>
@@ -421,7 +409,7 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
             <button type="button" role="menuitem" onClick={() => void run('pause')} disabled={busy}>Jeda</button>
             <button type="button" role="menuitem" onClick={() => void run('resume')} disabled={busy}>Lanjutkan</button>
             <button type="button" role="menuitem" onClick={() => void run('end')} disabled={busy}>Akhiri</button>
-            <button type="button" role="menuitem" onClick={() => router.push(roomHref)}>Keluar dari Layar Kelas</button>
+            <button type="button" role="menuitem" onClick={() => void returnToRoom()}>Keluar dari Layar Kelas</button>
           </div>
         </details>
       </nav>
