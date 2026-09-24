@@ -64,8 +64,17 @@ export function subscribeSessionUpdates(
     }, debounceMs);
   };
 
-  // ── Safety poll (fallback, selalu jalan) ───────────────────
-  const pollTimer = setInterval(requestRefetch, pollMs);
+  // ── Safety poll adaptif ─────────────────────────────────────
+  // Saat websocket belum sehat, gunakan interval surface (700ms guru/proyektor,
+  // 1500ms siswa). Begitu SUBSCRIBED, turunkan polling menjadi heartbeat 5s.
+  // Ini menghapus request storm yang sebelumnya membuat GET authoritative
+  // saling antre dan justru terasa lag di kelas.
+  let pollTimer: ReturnType<typeof setInterval> | null = null;
+  const armPoll = (intervalMs: number) => {
+    if (pollTimer) clearInterval(pollTimer);
+    pollTimer = setInterval(requestRefetch, intervalMs);
+  };
+  armPoll(pollMs);
 
   // ── Supabase Broadcast subscription (best-effort) ──────────
   let channel: { unsubscribe: () => void } | null = null;
@@ -80,17 +89,31 @@ export function subscribeSessionUpdates(
         config: { broadcast: { self: false } },
       });
       ch.on('broadcast', { event: SESSION_UPDATE_EVENT }, () => requestRefetch());
-      ch.subscribe();
+      ch.subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          // Satu immediate sync menutup celah perubahan yang terjadi selama
+          // handshake; sesudah itu realtime menjadi jalur utama.
+          requestRefetch();
+          armPoll(Math.max(5_000, pollMs));
+        } else if (
+          status === 'CHANNEL_ERROR' ||
+          status === 'TIMED_OUT' ||
+          status === 'CLOSED'
+        ) {
+          armPoll(pollMs);
+        }
+      });
       channel = { unsubscribe: () => { void supabase.removeChannel(ch); } };
     } catch {
       // Env Supabase tidak tersedia (dev masked) — safety poll saja.
+      armPoll(pollMs);
     }
   })();
 
   return {
     stop() {
       if (debounceTimer) clearTimeout(debounceTimer);
-      clearInterval(pollTimer);
+      if (pollTimer) clearInterval(pollTimer);
       channel?.unsubscribe();
     },
   };
