@@ -110,13 +110,20 @@ export async function updateSession(request: NextRequest, nonce?: string) {
     return response;
   }
 
-  // Skip middleware getUser() for:
-  //  - Public pages
-  //  - Auth API routes
-  //  - Routes that handle their own auth (API, Arena, Guru dashboard)
-  // This avoids redundant Supabase auth calls and reduces rate limit pressure
   const isSelfAuth = selfAuthPaths.some((p) => pathname.startsWith(p));
-  if (isPublic || isAuthPath || isSelfAuth) {
+  const punyaCookieSesi = request.cookies
+    .getAll()
+    .some((c) => c.name.startsWith("sb-") || c.name.startsWith("supabase-"));
+
+  // Public/anonymous requests do not need an auth check. Authenticated
+  // self-auth routes still pass through this Proxy so that Proxy remains the
+  // single server-side owner responsible for refreshing an expiring cookie
+  // session before the route handler/page reads it.
+  //
+  // This is intentionally different from the old "selfAuth bypass": that
+  // bypass let many concurrent API/dashboard requests call getClaims()
+  // independently near token expiry and could recreate the refresh race.
+  if (isPublic || isAuthPath || (isSelfAuth && !punyaCookieSesi)) {
     const response = nextWithNonce();
     response.headers.set("X-RateLimit-Remaining", String(limit.remaining));
     return response;
@@ -166,17 +173,9 @@ export async function updateSession(request: NextRequest, nonce?: string) {
     }
   );
 
-  // Sengaja TETAP memakai getUser() di sini, bukan getClaims().
-  //
-  // Blok ini hanya berjalan untuk rute yang tidak masuk publicPaths maupun
-  // selfAuthPaths — jadi /api/, /arena/, /guru/, /murid/ (yaitu hampir seluruh
-  // trafik) sudah melewatinya. Middleware bukan sumber lonjakan panggilan auth;
-  // yang menjadi sumber adalah getUser() di lib/supabase/server.ts.
-  //
-  // Lagipula pemeriksaan email_confirmed_at di bawah butuh objek User utuh:
-  // JwtPayload tidak memuat field itu, sehingga memakai klaim di sini akan
-  // membuat SETIAP pengguna dianggap belum memverifikasi email dan dilempar ke
-  // /verify-email. Risikonya jauh lebih besar daripada hematnya.
+  // Proxy is the single server-side auth refresh owner.
+  // Use getClaims() here so downstream Server Components and route handlers
+  // consume the refreshed cookie instead of racing to refresh it themselves.
   // Arena is also shipped as an Android APK whose scope is /arena. Sending an
   // unauthenticated visitor there to the shared /login would drop them out of the
   // app into a browser tab on the very first launch, so arena traffic gets the
@@ -210,9 +209,6 @@ export async function updateSession(request: NextRequest, nonce?: string) {
   // "tidak ada sesi" — dan kode ini akan salah membacanya sebagai "Auth tak
   // terjangkau", lalu membiarkan siapa pun lewat tanpa login. Terpergok di
   // preview: /arena membalas 200 untuk permintaan tanpa cookie, bukan 307.
-  const punyaCookieSesi = request.cookies
-    .getAll()
-    .some((c) => c.name.startsWith("sb-") || c.name.startsWith("supabase-"));
   const gerbangDiLayout = pathname === "/arena" && punyaCookieSesi;
 
   let claims: Record<string, any> | null = null;
