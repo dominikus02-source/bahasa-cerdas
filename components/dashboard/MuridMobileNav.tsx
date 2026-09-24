@@ -66,33 +66,26 @@ export default function MuridMobileNav({ fullName, role, isFounder, isPremium }:
 
   return (
     <>
-      {/* Bottom Nav — 6 kolom presisi. Main Bersama mendapat slot pusat
-          yang tetap, bukan terdorong item lain atau label panjang. */}
+      {/* Bottom Nav — semua destinasi memakai treatment visual yang sama.
+          Label panjang tetap boleh dua baris tanpa mengubah ukuran tombol/icon. */}
       <nav className="bc-mobile-nav md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-gray-100/80 bg-white/94 backdrop-blur-xl safe-area-bottom dark:bg-slate-900/94 dark:border-slate-800">
         <div className="grid grid-cols-6 items-end px-1.5 pt-1.5 pb-2">
           {PRIMARY.map(({ href, label, icon: Icon }) => {
             const active = isActive(href);
-            const mainTogether = label === "Main Bersama";
             return (
               <Link
                 key={href}
                 href={href}
                 aria-label={label}
-                className={`relative min-w-0 min-h-[52px] flex flex-col items-center justify-center gap-1 rounded-xl transition-all duration-150 ${mainTogether ? "-mt-3" : ""} ${active ? "text-violet-600 dark:text-violet-300" : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"}`}
+                className={`relative min-w-0 min-h-[52px] flex flex-col items-center justify-center gap-1 rounded-xl transition-colors duration-150 ${active ? "text-violet-600 dark:text-violet-300" : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"}`}
               >
-                <span
-                  className={`grid place-items-center shrink-0 transition-all duration-150 ${mainTogether ? "w-10 h-10 rounded-2xl border shadow-lg " + (active ? "bg-gradient-to-br from-violet-600 to-fuchsia-500 text-white border-white/70 shadow-violet-500/25 dark:border-slate-800" : "bg-white text-violet-600 border-violet-100 shadow-slate-300/45 dark:bg-slate-800 dark:text-violet-300 dark:border-slate-700") : "w-7 h-7"}`}
-                >
-                  <Icon size={mainTogether ? 21 : 20} strokeWidth={mainTogether ? 2.35 : 2} />
+                <span className="grid place-items-center shrink-0 w-7 h-7">
+                  <Icon size={20} strokeWidth={2} />
                 </span>
-                {mainTogether ? (
-                  <span className="text-[9px] leading-[0.95] font-extrabold text-center tracking-[-0.01em]">
-                    Main<br />Bersama
-                  </span>
-                ) : (
-                  <span className="text-[9.5px] leading-none font-semibold whitespace-nowrap">{label}</span>
-                )}
-                {active && !mainTogether ? (
+                <span className="h-5 max-w-full px-0.5 flex items-center justify-center text-[9.5px] leading-[1.05] font-semibold text-center">
+                  {label}
+                </span>
+                {active ? (
                   <span className="absolute bottom-0 w-1 h-1 rounded-full bg-current" aria-hidden />
                 ) : null}
               </Link>
@@ -112,7 +105,7 @@ export default function MuridMobileNav({ fullName, role, isFounder, isPremium }:
                 </span>
               )}
             </div>
-            <span className="text-[9.5px] leading-none font-semibold whitespace-nowrap">Notif</span>
+            <span className="h-5 flex items-center justify-center text-[9.5px] leading-[1.05] font-semibold text-center">Notif</span>
           </Link>
 
           <button
@@ -124,7 +117,7 @@ export default function MuridMobileNav({ fullName, role, isFounder, isPremium }:
             <span className="grid place-items-center w-7 h-7">
               <MenuIcon size={20} />
             </span>
-            <span className="text-[9.5px] leading-none font-semibold whitespace-nowrap">Menu</span>
+            <span className="h-5 flex items-center justify-center text-[9.5px] leading-[1.05] font-semibold text-center">Menu</span>
           </button>
         </div>
       </nav>
