@@ -252,7 +252,7 @@ export function TeacherRoomClient({
             ) : (
               <PrimaryGameButton
                 onClick={() => {
-                  void teacherSound.unlock();
+                  void teacherSound.activate();
                   void run('start');
                 }}
                 disabled={busy || view.participants.length === 0}
