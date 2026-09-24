@@ -29,32 +29,28 @@ export type EntityAssetResolution =
  */
 const ENTITY_ASSET_MAP: Record<string, string> = {
   // NPCs
-  "npc.ki-jaka":          "npc_ki_jaka_idle",  // P2.9C: READY runtime sprite
-  "npc.bu-ratmi":         "ref:npc-bu-ratmi",
-  "npc.bu-sari":          "ref:npc-bu-sari",
-  "npc.eyang-kartala":    "ref:npc-eyang-kartala",
-  "npc.pak-empu":         "ref:npc-pak-empu",
+  "npc.ki-jaka":          "npc_ki_jaka_full",  // P2.11 full runtime sprite
+  "npc.bu-ratmi":         "npc_bu_ratmi",
+  "npc.bu-sari":          "npc_bu_sari",
+  "npc.eyang-kartala":    "npc_eyang_kartala",
+  "npc.pak-empu":         "npc_pak_empu",
 
   // Enemies
-  "enemy.korog":          "ref:monster-korog",
-  "enemy.korog-perang":   "ref:monster-korog-perang",
-  "enemy.korog-bayangan": "ref:monster-korog-bayangan",
-  "enemy.golem-batu":     "ref:monster-golem-batu",
+  "enemy.korog":          "enemy_korog",
+  "enemy.korog-perang":   "enemy_korog_perang",
+  "enemy.korog-bayangan": "enemy_korog_bayangan",
+  "enemy.golem-batu":     "enemy_golem_batu",
 
   // Bosses
-  "enemy.raja-korog":     "ref:boss-raja-korog",
-  "enemy.golem-agung":    "ref:boss-golem-agung",
-  "enemy.naga-abu":       "ref:boss-naga-abu",
-  "enemy.penguasa-menara": "ref:boss-penguasa-menara",
+  "enemy.raja-korog":     "boss_raja_korog",
+  "enemy.golem-agung":    "boss_golem_agung",
+  "enemy.naga-abu":       "boss_naga_abu",
+  "enemy.penguasa-menara": "boss_penguasa_menara",
 
-  // Props — NO individual prop sprites exist on disk. These keys are registered
-  // for future use when prop art is produced. Until then, NOT_REGISTERED → procedural fallback.
-  // "house.village":     "ref:prop-house-village",   // no manifest entry
-  // "tree.round":        "ref:prop-tree-round",       // no manifest entry
-  // "rock.gray":         "ref:prop-rock-gray",        // no manifest entry
-  // "fence.wood":        "ref:prop-fence-wood",       // no manifest entry
-  // "bush.round":        "ref:prop-bush-round",       // no manifest entry
-  // "flowers.wild":      "ref:prop-flowers-wild",     // no manifest entry
+  // P2.11: production prop crops from the canonical visual reference sheet.
+  "house.village": "prop_house_village",
+  "tree.round": "prop_tree_round",
+  "well.stone": "prop_well",
 };
 
 /**
