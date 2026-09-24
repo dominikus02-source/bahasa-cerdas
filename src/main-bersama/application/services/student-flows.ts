@@ -68,9 +68,15 @@ export interface JoinOutcome {
 
 export interface JoinSessionInput {
   pin: string;
+  /** Nama yang diketik guest. Untuk user login bukan sumber identitas. */
   displayName?: string;
   /** User BC id bila siswa login; undefined = guest (§6). */
   userId?: string;
+  /**
+   * Nama profil kanonik dari server auth boundary (nickname → fullName).
+   * Hanya dipakai untuk user login; tidak pernah dipercaya dari body client.
+   */
+  authenticatedDisplayName?: string;
 }
 
 /**
@@ -102,12 +108,18 @@ export async function joinSession(
   if (!loaded.ok) return { ok: false, code: 'SESSION_NOT_FOUND' };
   const engine = loaded.engine;
 
-  // Nama: guest wajib valid sejak awal; authenticated boleh default.
+  // Nama: guest wajib valid dari input; user login WAJIB memakai
+  // nama profil yang sudah diselesaikan server (bukan nama bebas dari body).
   let guestName: string | undefined;
+  let authenticatedName: string | undefined;
   if (input.userId === undefined) {
     const check = validateDisplayName(input.displayName);
     if (!check.ok) return { ok: false, code: check.code };
     guestName = check.value;
+  } else {
+    const check = validateDisplayName(input.authenticatedDisplayName);
+    if (!check.ok) return { ok: false, code: check.code };
+    authenticatedName = check.value;
   }
 
   // Re-join: authenticated by userId; guest by nama tersimpan.
@@ -118,7 +130,9 @@ export async function joinSession(
 
   const displayName = existing
     ? existing.displayName
-    : (guestName ?? `Siswa ${players.length + 1}`);
+    : input.userId
+      ? authenticatedName!
+      : guestName!;
 
   // Team balance: hanya join BARU yang mengubah komposisi; rejoin
   // mempertahankan regu (round historis tidak boleh terdistorsi).
