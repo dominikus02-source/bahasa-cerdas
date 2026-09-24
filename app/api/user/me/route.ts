@@ -6,6 +6,48 @@ import cache from "@/lib/redis";
 import { err } from "@/lib/api/response";
 import { ERR } from "@/lib/api/errors";
 
+const AUTH_VERIFY_TIMEOUT_MS = 8000;
+
+async function getClaimsBounded(supabase: any, context: string) {
+  const startedAt = Date.now();
+  let timer: ReturnType<typeof setTimeout> | undefined;
+
+  try {
+    const result = await Promise.race([
+      supabase.auth.getClaims(),
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => {
+          const error = new Error("AUTH_VERIFY_TIMEOUT");
+          error.name = "AUTH_VERIFY_TIMEOUT";
+          reject(error);
+        }, AUTH_VERIFY_TIMEOUT_MS);
+      }),
+    ]);
+
+    console.info("AUTH_VERIFY_COMPLETED", {
+      context,
+      durationMs: Date.now() - startedAt,
+    });
+
+    return result;
+  } catch (error: any) {
+    const durationMs = Date.now() - startedAt;
+    const message = error?.message || String(error);
+
+    if (error?.name === "AUTH_VERIFY_TIMEOUT" || message === "AUTH_VERIFY_TIMEOUT") {
+      console.warn("AUTH_VERIFY_TIMEOUT", {
+        context,
+        durationMs,
+        timeoutMs: AUTH_VERIFY_TIMEOUT_MS,
+      });
+    }
+
+    throw error;
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
 const userSessionFields = {
   id: true, supabaseId: true, email: true, fullName: true, nickname: true, nicknameUpdatedAt: true,
   avatar: true, role: true, isFounder: true, isPremium: true, premiumPlan: true, premiumUntil: true,
@@ -69,7 +111,28 @@ export async function GET() {
     // change (e.g. teacher changes from an old school address to a new one).
     // Looking up by the new email first can make an existing account appear
     // "missing" even though the Supabase session is perfectly valid.
-    const { data, error } = await supabase.auth.getClaims();
+    let claimsResult: any;
+    try {
+      claimsResult = await getClaimsBounded(supabase, "GET /api/user/me");
+    } catch (error: any) {
+      if (error?.name === "AUTH_VERIFY_TIMEOUT" || error?.message === "AUTH_VERIFY_TIMEOUT") {
+        return NextResponse.json(
+          {
+            success: false,
+            user: null,
+            error: "Layanan autentikasi sedang lambat. Silakan coba lagi.",
+            code: "AUTH_TEMPORARILY_UNAVAILABLE",
+          },
+          {
+            status: 503,
+            headers: { "Cache-Control": "private, no-store", "Retry-After": "3" },
+          }
+        );
+      }
+      throw error;
+    }
+
+    const { data, error } = claimsResult;
     if (error || !data?.claims?.sub) {
       return NextResponse.json({ success: true, user: null, data: { user: null } });
     }
@@ -164,7 +227,21 @@ export async function POST(request: NextRequest) {
     // application account. The Supabase JWT is the source of identity.
     const { createClient } = await import("@/lib/supabase/server");
     const supabase = await createClient();
-    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims();
+    let claimsResult: any;
+    try {
+      claimsResult = await getClaimsBounded(supabase, "POST /api/user/me");
+    } catch (error: any) {
+      if (error?.name === "AUTH_VERIFY_TIMEOUT" || error?.message === "AUTH_VERIFY_TIMEOUT") {
+        return err(
+          "Layanan autentikasi sedang lambat. Silakan coba lagi.",
+          "AUTH_TEMPORARILY_UNAVAILABLE",
+          503
+        );
+      }
+      throw error;
+    }
+
+    const { data: claimsData, error: claimsError } = claimsResult;
     if (claimsError || !claimsData?.claims?.sub) {
       return err("Sesi tidak valid", "UNAUTHORIZED", 401);
     }

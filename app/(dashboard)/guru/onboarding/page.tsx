@@ -30,6 +30,8 @@ export default function GuruOnboardingPage() {
   const router = useRouter()
   const [step, setStep] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState<"timeout" | "unauthorized" | "unavailable" | "unknown" | null>(null)
+  const [loadAttempt, setLoadAttempt] = useState(0)
   const [fullName, setFullName] = useState("")
   const [trialDays, setTrialDays] = useState(30)
 
@@ -51,23 +53,71 @@ export default function GuruOnboardingPage() {
   const [firstStudentName, setFirstStudentName] = useState("")
 
   useEffect(() => {
-    fetch("/api/user/me")
-      .then(r => r.json())
-      .then(data => {
-        const u = data.user
-        if (u?.onboarded) {
+    const controller = new AbortController()
+    const timeout = window.setTimeout(() => controller.abort(), 10000)
+
+    const loadUser = async () => {
+      setLoading(true)
+      setLoadError(null)
+
+      try {
+        const response = await fetch("/api/user/me", {
+          credentials: "include",
+          cache: "no-store",
+          signal: controller.signal,
+        })
+
+        let data: any = null
+        try {
+          data = await response.json()
+        } catch {}
+
+        if (!response.ok) {
+          if (response.status === 401 || !data?.user && response.status === 401) {
+            setLoadError("unauthorized")
+          } else if (response.status === 503 || data?.code === "AUTH_TEMPORARILY_UNAVAILABLE") {
+            setLoadError("unavailable")
+          } else {
+            setLoadError("unknown")
+          }
+          return
+        }
+
+        const u = data?.user
+        if (!u) {
+          setLoadError("unauthorized")
+          return
+        }
+
+        if (u.onboarded) {
           router.replace("/guru/beranda")
           return
         }
-        setFullName(u?.fullName || "Guru")
-        if (u?.trialEndsAt) {
+
+        setFullName(u.fullName || "Guru")
+        if (u.trialEndsAt) {
           const days = Math.ceil((new Date(u.trialEndsAt).getTime() - Date.now()) / 86400000)
           setTrialDays(Math.max(0, days))
         }
+      } catch (error: any) {
+        if (error?.name === "AbortError") {
+          setLoadError("timeout")
+        } else {
+          setLoadError("unknown")
+        }
+      } finally {
+        window.clearTimeout(timeout)
         setLoading(false)
-      })
-      .catch(() => setLoading(false))
-  }, [router])
+      }
+    }
+
+    void loadUser()
+
+    return () => {
+      window.clearTimeout(timeout)
+      controller.abort()
+    }
+  }, [router, loadAttempt])
 
   const handleCreateClass = async () => {
     if (!className.trim()) { setCreateError("Nama kelas wajib diisi"); return }
@@ -160,8 +210,65 @@ export default function GuruOnboardingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
+      <div className="min-h-screen bg-white flex items-center justify-center p-6">
+        <div className="w-full max-w-md text-center">
+          <div className="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center mx-auto mb-5">
+            <Loader2 className="w-7 h-7 text-emerald-500 animate-spin" />
+          </div>
+          <h1 className="text-xl font-bold text-slate-900">Menyiapkan akun guru...</h1>
+          <p className="text-sm text-slate-500 mt-2">Kami sedang memuat profil Anda.</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (loadError) {
+    const isUnauthorized = loadError === "unauthorized"
+    const isUnavailable = loadError === "timeout" || loadError === "unavailable"
+
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center p-6">
+        <div className="w-full max-w-md text-center">
+          <div className="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center mx-auto mb-5">
+            <GraduationCap className="w-8 h-8 text-amber-500" />
+          </div>
+
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">
+            {isUnauthorized ? "Sesi guru belum siap" : "Koneksi autentikasi sedang lambat"}
+          </h1>
+
+          <p className="text-sm leading-relaxed text-slate-500 mb-6">
+            {isUnauthorized
+              ? "Sesi login tidak ditemukan. Silakan masuk kembali untuk melanjutkan."
+              : isUnavailable
+                ? "Layanan autentikasi sedang merespons lebih lambat dari biasanya. Data akun Anda tetap aman."
+                : "Profil guru belum dapat dimuat. Silakan coba lagi."}
+          </p>
+
+          <div className="flex flex-col gap-3">
+            {isUnauthorized ? (
+              <button
+                onClick={() => { window.location.href = "/login?next=/guru/onboarding" }}
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-200"
+              >
+                Masuk Kembali
+              </button>
+            ) : (
+              <button
+                onClick={() => setLoadAttempt(v => v + 1)}
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-200"
+              >
+                Coba Lagi
+              </button>
+            )}
+            <Link
+              href="/login"
+              className="text-sm text-slate-400 hover:text-slate-600 transition-colors"
+            >
+              Kembali ke halaman masuk
+            </Link>
+          </div>
+        </div>
       </div>
     )
   }

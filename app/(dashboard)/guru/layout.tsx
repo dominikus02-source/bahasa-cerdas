@@ -1,5 +1,6 @@
 import { getUser } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import Link from "next/link";
 import { GraduationCap } from "lucide-react";
 import AIFloatingButton from "@/components/shared/AIFloatingButton";
@@ -23,6 +24,15 @@ import { getRemainingCredits } from "@/lib/ai-gateway/quota-checker";
 import "@/components/kelas/classroom.css";
 
 export default async function GuruLayout({ children }: { children: React.ReactNode }) {
+  // /guru/onboarding intentionally owns its auth/data bootstrap on the client.
+  // Do not force the shared Guru shell to call getUser() before the page can
+  // render: that would make onboarding depend on Supabase Auth/JWKS latency
+  // twice (Proxy + layout) and can leave a fresh teacher on an endless spinner.
+  const requestHeaders = await headers();
+  if (requestHeaders.get("x-pathname") === "/guru/onboarding") {
+    return children;
+  }
+
   const user = await getUser();
 
   if (!user) {
