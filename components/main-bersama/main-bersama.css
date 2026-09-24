@@ -2933,289 +2933,328 @@
   }
 }
 
-
 /* ─────────────────────────────────────────────────────────────
-   Jelajah Kata v3 — expedition world
-   Adaptasi Galeri Panggung: layered night landscape, route, checkpoint,
-   lantern-like glow, dust payoff. Progress tetap authoritative 0..100;
-   seluruh depth, landmark, dan motion di bawah murni presentation.
+   Jelajah Kata v4 — winding expedition map
+   Satu dunia, empat lane offset. Route/domain tetap progress 0..100.
    ───────────────────────────────────────────────────────────── */
 
-.mb-jelajah-stage {
+.mb-jelajah-stage-v4 {
   width: 100%;
   height: auto;
   display: block;
   overflow: visible;
-  border-radius: 24px;
+  border-radius: 28px;
   filter:
-    drop-shadow(0 22px 38px rgba(0, 0, 0, .28))
-    saturate(1.04);
+    drop-shadow(0 24px 42px rgba(0, 0, 0, .3))
+    saturate(1.05);
   isolation: isolate;
 }
 
-.mb-jelajah-stage[data-compact="true"] {
-  border-radius: 20px;
+.mb-jelajah-stage-v4[data-compact="true"] {
+  border-radius: 21px;
   filter:
-    drop-shadow(0 14px 24px rgba(0, 0, 0, .22))
-    saturate(1.02);
+    drop-shadow(0 14px 25px rgba(0, 0, 0, .23))
+    saturate(1.025);
 }
 
 .mb-jelajah-star {
-  opacity: .36;
+  opacity: .34;
   transform-box: fill-box;
   transform-origin: center;
-  animation: mb-jelajah-star-twinkle 5.6s ease-in-out infinite;
+  animation: mb-jelajah-star-twinkle 5.8s ease-in-out infinite;
 }
 
 .mb-jelajah-aurora {
   transform-box: fill-box;
   transform-origin: center;
-  animation: mb-jelajah-aurora-drift 12s ease-in-out infinite;
+  animation: mb-jelajah-aurora-drift 13s ease-in-out infinite;
 }
 
 .mb-jelajah-water-shine {
-  stroke-dasharray: 11 19;
-  animation: mb-jelajah-water-flow 7s linear infinite;
+  stroke-dasharray: 12 18;
+  animation: mb-jelajah-water-flow 7.5s linear infinite;
 }
 
-.mb-jelajah-location-label rect {
-  fill: rgba(7, 25, 40, .78);
-  stroke: rgba(157, 197, 210, .16);
+.mb-jelajah-v4-forest,
+.mb-jelajah-v4-lookout {
+  opacity: .72;
+  transition:
+    opacity 420ms ease,
+    filter 420ms ease;
+}
+
+.mb-jelajah-v4-forest[data-active="true"],
+.mb-jelajah-v4-lookout[data-active="true"] {
+  opacity: 1;
+  filter:
+    saturate(1.12)
+    drop-shadow(0 0 16px rgba(73, 214, 193, .06));
+}
+
+.mb-jelajah-v4-zone rect {
+  fill: rgba(7, 24, 39, .88);
+  stroke: rgba(164, 201, 212, .18);
   stroke-width: 1;
 }
 
-.mb-jelajah-location-label text {
-  fill: #9fb6c8;
+.mb-jelajah-v4-zone circle {
+  fill: #617b8d;
+  transition:
+    fill 360ms ease,
+    filter 360ms ease;
+}
+
+.mb-jelajah-v4-zone text {
+  fill: #9fb5c6;
   font-family: var(--mb-font-body);
   font-size: 9.5px;
   font-weight: 900;
-  letter-spacing: 1.35px;
+  letter-spacing: 1.15px;
 }
 
-.mb-jelajah-lane {
-  transition: filter 260ms ease;
+.mb-jelajah-v4-zone[data-active="true"] circle {
+  fill: #ffd56a;
+  filter: drop-shadow(0 0 7px rgba(255, 213, 106, .62));
 }
 
-.mb-jelajah-progress-glow,
-.mb-jelajah-progress-line {
-  transition:
-    stroke-dasharray 600ms cubic-bezier(.22,.9,.3,1),
-    opacity 260ms ease;
+.mb-jelajah-v4-zone[data-active="true"] text {
+  fill: #e8f4f4;
 }
 
-.mb-jelajah-progress-glow {
-  filter: blur(4px);
-}
-
-
-.mb-jelajah-checkpoint {
-  transition: opacity 280ms ease;
-}
-
-.mb-jelajah-checkpoint circle {
-  transition:
-    fill 360ms ease,
-    stroke 360ms ease,
-    opacity 360ms ease,
-    r 360ms ease;
-}
-
-.mb-jelajah-checkpoint[data-reached="true"] .mb-jelajah-checkpoint-glow {
+.mb-jelajah-v4-lantern-glow {
   transform-box: fill-box;
   transform-origin: center;
-  animation: mb-jelajah-checkpoint-breathe 3.4s ease-in-out infinite;
+  animation: mb-jelajah-v4-lantern 3.4s ease-in-out infinite;
 }
 
-.mb-jelajah-checkpoint[data-reached="true"] text {
-  filter: drop-shadow(0 1px 1px rgba(255,255,255,.2));
+.mb-jelajah-v4-bridge-glow {
+  filter: drop-shadow(0 0 8px rgba(255, 215, 106, .45));
+  animation: mb-jelajah-v4-bridge 3.6s ease-in-out infinite;
 }
 
-.mb-jelajah-bridge-shine {
-  filter: drop-shadow(0 0 6px currentColor);
-  animation: mb-jelajah-bridge-shimmer 3.8s ease-in-out infinite;
+.mb-jelajah-v4-finish > circle:first-child {
+  fill: rgba(255, 211, 92, .035);
+  transition:
+    fill 420ms ease,
+    opacity 420ms ease;
 }
 
-.mb-jelajah-finish-landmark {
-  filter: drop-shadow(0 10px 16px rgba(0,0,0,.22));
+.mb-jelajah-v4-finish > rect {
+  fill: #0a2235;
+  stroke: #78919f;
+  stroke-width: 2;
 }
 
-.mb-jelajah-finish-landmark > circle {
+.mb-jelajah-v4-finish > text {
+  fill: #ffd66f;
+  font-family: var(--mb-font-body);
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 1.25px;
+}
+
+.mb-jelajah-v4-finish[data-active="true"] > circle:first-child {
+  fill: rgba(255, 211, 92, .11);
+}
+
+.mb-jelajah-v4-finish-pulse {
+  fill: rgba(255, 217, 112, .13);
   transform-box: fill-box;
   transform-origin: center;
-  animation: mb-jelajah-finish-breathe 4.6s ease-in-out infinite;
+  animation: mb-jelajah-v4-finish-pulse 2.4s ease-out infinite;
 }
 
-.mb-jelajah-motion-trail {
+.mb-jelajah-v4-progress {
+  opacity: .95;
+  transition:
+    stroke-dasharray 620ms cubic-bezier(.22,.9,.3,1),
+    stroke 240ms ease;
+  filter: drop-shadow(0 0 3px rgba(255,255,255,.08));
+}
+
+.mb-jelajah-v4-checkpoint-on {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mb-jelajah-v4-checkpoint 3.2s ease-in-out infinite;
+}
+
+.mb-jelajah-v4-marker {
+  filter: drop-shadow(0 9px 14px rgba(0, 0, 0, .2));
+}
+
+.mb-jelajah-v4-marker-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.mb-trail-marker.mb-trail-moving .mb-jelajah-v4-marker-ring {
+  animation: mb-jelajah-v4-marker-pulse 760ms ease-out both;
+}
+
+.mb-jelajah-v4-motion {
   pointer-events: none;
   transform-box: fill-box;
-  color: #8bded5;
 }
 
-.mb-jelajah-motion-trail > path {
+.mb-jelajah-v4-motion > path {
   transform-box: fill-box;
   transform-origin: right center;
-  animation: mb-jelajah-speed-streak 620ms ease-out both;
+  animation: mb-jelajah-v4-speed 650ms ease-out both;
 }
 
-.mb-jelajah-motion-trail > path:nth-child(2) {
-  animation-delay: 55ms;
+.mb-jelajah-v4-motion > path:nth-child(2) { animation-delay: 60ms; }
+.mb-jelajah-v4-motion > path:nth-child(3) { animation-delay: 110ms; }
+
+.mb-jelajah-v4-dust {
+  fill: #7d93a1;
 }
 
-.mb-jelajah-motion-trail > path:nth-child(3) {
-  animation-delay: 105ms;
-}
-
-.mb-jelajah-dust {
-  fill: #7893a7;
-}
-
-.mb-jelajah-dust circle {
+.mb-jelajah-v4-dust circle {
   transform-box: fill-box;
   transform-origin: center;
-  animation: mb-jelajah-dust-v3 760ms ease-out both;
+  animation: mb-jelajah-v4-dust 760ms ease-out both;
 }
 
-.mb-jelajah-dust circle:nth-child(2) { animation-delay: 80ms; }
-.mb-jelajah-dust circle:nth-child(3) { animation-delay: 150ms; }
-
-.mb-jelajah-marker-ring {
-  transform-box: fill-box;
-  transform-origin: center;
-}
-
-.mb-trail-marker.mb-trail-moving .mb-jelajah-marker-ring {
-  animation: mb-jelajah-marker-pulse 780ms ease-out both;
-}
-
-.mb-trail-marker.mb-trail-moving {
-  filter:
-    brightness(1.1)
-    saturate(1.08)
-    drop-shadow(0 8px 13px rgba(0,0,0,.16));
-}
+.mb-jelajah-v4-dust circle:nth-child(2) { animation-delay: 80ms; }
+.mb-jelajah-v4-dust circle:nth-child(3) { animation-delay: 150ms; }
 
 .mb-trail-marker [data-pose="move"] img {
-  animation: mb-jelajah-mascot-travel 600ms cubic-bezier(.22,.9,.3,1) both;
+  animation: mb-jelajah-v4-mascot-move 620ms cubic-bezier(.22,.9,.3,1) both;
 }
 
 .mb-trail-marker [data-pose="celebrate"] img {
-  animation: mb-jelajah-mascot-celebrate 800ms cubic-bezier(.2,1.08,.32,1) both;
+  animation: mb-jelajah-v4-mascot-celebrate 820ms cubic-bezier(.2,1.08,.32,1) both;
+}
+
+.mb-jelajah-v4-start text {
+  fill: #a9bbc7;
+  font-family: var(--mb-font-body);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1.6px;
 }
 
 .mb-jelajah-firefly {
-  opacity: .18;
-  animation: mb-jelajah-firefly 7s ease-in-out infinite;
+  opacity: .16;
+  animation: mb-jelajah-firefly 7.4s ease-in-out infinite;
 }
 
-/* Compact strip tetap cinematic tetapi tidak merebut tinggi soal. */
-.mb-pj-progress .mb-jelajah-stage[data-compact="true"] {
-  width: min(100%, 820px);
+/* Full world gets presence; compact world stays secondary to the question. */
+.mb-pj-lobby-stage .mb-jelajah-stage-v4:not([data-compact="true"]),
+.mb-pj-world:not(.mb-pj-world-strip) .mb-jelajah-stage-v4:not([data-compact="true"]) {
+  width: min(100%, 1080px);
   margin-inline: auto;
 }
 
-.mb-pj-closed-jelajah .mb-jelajah-stage {
-  width: min(100%, 960px);
+.mb-pj-progress .mb-jelajah-stage-v4[data-compact="true"] {
+  width: min(100%, 860px);
   margin-inline: auto;
 }
 
-.mb-pj-lobby-stage .mb-jelajah-stage:not([data-compact="true"]) {
-  width: min(100%, 1040px);
+.mb-pj-closed-jelajah .mb-jelajah-stage-v4 {
+  width: min(100%, 920px);
   margin-inline: auto;
 }
 
 @keyframes mb-jelajah-star-twinkle {
-  0%, 100% { opacity: .2; transform: scale(.92); }
-  46% { opacity: .84; transform: scale(1.1); }
+  0%, 100% { opacity: .18; transform: scale(.92); }
+  48% { opacity: .82; transform: scale(1.1); }
 }
 
 @keyframes mb-jelajah-aurora-drift {
-  0%, 100% { opacity: .42; transform: translateX(-7px) scaleX(.99); }
-  50% { opacity: .72; transform: translateX(10px) scaleX(1.015); }
+  0%, 100% { opacity: .38; transform: translateX(-8px) scaleX(.99); }
+  50% { opacity: .68; transform: translateX(12px) scaleX(1.02); }
 }
 
 @keyframes mb-jelajah-water-flow {
   from { stroke-dashoffset: 0; opacity: .18; }
-  45% { opacity: .38; }
-  to { stroke-dashoffset: -90; opacity: .18; }
+  45% { opacity: .42; }
+  to { stroke-dashoffset: -96; opacity: .18; }
 }
 
-@keyframes mb-jelajah-checkpoint-breathe {
-  0%, 100% { opacity: .12; transform: scale(.84); }
-  50% { opacity: .34; transform: scale(1.18); }
+@keyframes mb-jelajah-v4-lantern {
+  0%, 100% { opacity: .45; transform: scale(.82); }
+  50% { opacity: .92; transform: scale(1.14); }
 }
 
-@keyframes mb-jelajah-bridge-shimmer {
-  0%, 100% { opacity: .44; }
-  50% { opacity: .92; }
+@keyframes mb-jelajah-v4-bridge {
+  0%, 100% { opacity: .18; }
+  50% { opacity: .5; }
 }
 
-@keyframes mb-jelajah-finish-breathe {
-  0%, 100% { opacity: .04; transform: scale(.86); }
-  50% { opacity: .11; transform: scale(1.08); }
+@keyframes mb-jelajah-v4-finish-pulse {
+  0% { opacity: .5; transform: scale(.62); }
+  72% { opacity: .1; transform: scale(1.35); }
+  100% { opacity: 0; transform: scale(1.5); }
 }
 
-@keyframes mb-jelajah-speed-streak {
-  from { opacity: .52; transform: scaleX(.55); }
-  to { opacity: 0; transform: translateX(-18px) scaleX(1.08); }
+@keyframes mb-jelajah-v4-checkpoint {
+  0%, 100% { opacity: .24; transform: scale(.86); }
+  50% { opacity: .58; transform: scale(1.18); }
 }
 
-@keyframes mb-jelajah-dust-v3 {
-  from { opacity: .66; transform: scale(.52) translate(0, 0); }
-  to { opacity: 0; transform: scale(1.55) translate(-15px, -6px); }
-}
-
-@keyframes mb-jelajah-marker-pulse {
-  0% { opacity: .35; transform: scale(.72); }
-  55% { opacity: .5; transform: scale(1.16); }
+@keyframes mb-jelajah-v4-marker-pulse {
+  0% { opacity: .24; transform: scale(.74); }
+  55% { opacity: .48; transform: scale(1.18); }
   100% { opacity: .18; transform: scale(1); }
 }
 
-@keyframes mb-jelajah-mascot-travel {
-  0% { transform: translateX(-3px) rotate(-1deg) scale(.98); }
-  50% { transform: translateX(2px) translateY(-2px) rotate(1deg) scale(1.035); }
-  100% { transform: translateX(0) rotate(0) scale(1); }
+@keyframes mb-jelajah-v4-speed {
+  from { opacity: .52; transform: scaleX(.62); }
+  to { opacity: 0; transform: translateX(-20px) scaleX(1.12); }
 }
 
-@keyframes mb-jelajah-mascot-celebrate {
+@keyframes mb-jelajah-v4-dust {
+  from { opacity: .65; transform: scale(.5) translate(0, 0); }
+  to { opacity: 0; transform: scale(1.6) translate(-16px, -7px); }
+}
+
+@keyframes mb-jelajah-v4-mascot-move {
+  0% { transform: translateX(-3px) translateY(1px) rotate(-1deg) scale(.98); }
+  48% { transform: translateX(3px) translateY(-4px) rotate(1deg) scale(1.055); }
+  100% { transform: translateX(0) translateY(0) rotate(0) scale(1); }
+}
+
+@keyframes mb-jelajah-v4-mascot-celebrate {
   0% { transform: translateY(0) scale(1); }
-  35% { transform: translateY(-5px) scale(1.07); }
-  70% { transform: translateY(1px) scale(.99); }
+  34% { transform: translateY(-6px) scale(1.08); }
+  68% { transform: translateY(1px) scale(.99); }
   100% { transform: translateY(0) scale(1); }
 }
 
 @keyframes mb-jelajah-firefly {
-  0%, 100% { opacity: .12; transform: translate(0, 0); }
-  26% { opacity: .86; }
-  58% { opacity: .28; transform: translate(18px, -12px); }
-  82% { opacity: .68; transform: translate(7px, -19px); }
+  0%, 100% { opacity: .1; transform: translate(0, 0); }
+  27% { opacity: .82; }
+  58% { opacity: .24; transform: translate(18px, -12px); }
+  82% { opacity: .64; transform: translate(7px, -20px); }
 }
 
 @media (min-width: 1280px) and (min-height: 820px) {
-  .mb-pj-world:not(.mb-pj-world-strip) .mb-jelajah-stage:not([data-compact="true"]) {
-    width: min(100%, 1100px);
+  .mb-pj-world:not(.mb-pj-world-strip) .mb-jelajah-stage-v4:not([data-compact="true"]) {
+    width: min(100%, 1140px);
   }
 }
 
 @media (min-width: 900px) and (max-height: 800px) {
-  .mb-pj-progress .mb-jelajah-stage[data-compact="true"] {
-    width: min(100%, 690px);
+  .mb-pj-progress .mb-jelajah-stage-v4[data-compact="true"] {
+    width: min(100%, 720px);
   }
-  .mb-pj-closed-jelajah .mb-jelajah-stage {
-    width: min(100%, 760px);
+  .mb-pj-closed-jelajah .mb-jelajah-stage-v4 {
+    width: min(100%, 780px);
   }
 }
 
-/* Accessibility: dunia boleh tetap terbaca tanpa ambient motion. */
 @media (prefers-reduced-motion: reduce) {
   .mb-jelajah-star,
   .mb-jelajah-aurora,
   .mb-jelajah-water-shine,
-  .mb-jelajah-checkpoint-glow,
-  .mb-jelajah-bridge-shine,
-  .mb-jelajah-finish-landmark > circle,
-  .mb-jelajah-motion-trail > path,
-  .mb-jelajah-dust circle,
-  .mb-jelajah-marker-ring,
+  .mb-jelajah-v4-lantern-glow,
+  .mb-jelajah-v4-bridge-glow,
+  .mb-jelajah-v4-finish-pulse,
+  .mb-jelajah-v4-checkpoint-on,
+  .mb-jelajah-v4-motion > path,
+  .mb-jelajah-v4-dust circle,
+  .mb-jelajah-v4-marker-ring,
   .mb-jelajah-firefly,
   .mb-trail-marker [data-pose="move"] img,
   .mb-trail-marker [data-pose="celebrate"] img {
