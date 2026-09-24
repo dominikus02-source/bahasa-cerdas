@@ -64,6 +64,7 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
   const keyboardRef = useRef<ReturnType<typeof createKeyboardInputSource> | null>(null);
   const cleanupRef = useRef<(() => void) | null>(null);
   const touchJoystickRef = useRef<HTMLDivElement>(null);
+  const touchJoystickThumbRef = useRef<HTMLDivElement>(null);
   const touchActionRef = useRef<HTMLButtonElement>(null);
 
   // HUD state — updated periodically, NOT every frame
@@ -233,6 +234,7 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
         touchSource = createTouchInputSource(playerId, {
           joystick: touchJoystickRef.current,
           action: touchActionRef.current,
+          thumb: touchJoystickThumbRef.current ?? undefined,
         });
         touchSource.attach();
       }
@@ -398,7 +400,12 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
       {/* Mobile touch controls */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[30] flex items-end justify-between px-5 pb-5 md:hidden" aria-label="Kontrol sentuh RPG">
         <div ref={touchJoystickRef} className="pointer-events-auto relative h-28 w-28 touch-none rounded-full border border-white/15 bg-black/25 shadow-2xl backdrop-blur-sm" aria-label="Joystick gerak">
-          <div className="pointer-events-none absolute left-1/2 top-1/2 h-14 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-white/15 shadow-lg" />
+          <div className="pointer-events-none absolute inset-2 rounded-full border border-white/10" />
+          <div
+            ref={touchJoystickThumbRef}
+            className="pointer-events-none absolute left-1/2 top-1/2 h-14 w-14 rounded-full border border-white/25 bg-white/20 shadow-lg backdrop-blur-sm"
+            style={{ transform: "translate(-50%, -50%)", opacity: 0.78 }}
+          />
         </div>
         <button ref={touchActionRef} type="button" className="pointer-events-auto flex h-20 w-20 touch-none items-center justify-center rounded-full border border-amber-200/30 bg-amber-400/85 text-2xl font-black text-amber-950 shadow-2xl active:scale-95" aria-label="Interaksi">
           E
