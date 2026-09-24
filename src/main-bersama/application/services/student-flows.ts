@@ -294,6 +294,12 @@ export async function submitAnswer(
     evaluated.value,
   );
 
+  // Jawaban sukses mengubah aggregate "sudah menjawab". Broadcast segera
+  // supaya layar guru/proyektor menarik state authoritative tanpa menunggu
+  // safety poll. Payload tetap hanya invalidation signal; tidak membawa
+  // pilihan/kebenaran jawaban.
+  await deps.realtimeSignal.sendSessionUpdate(resolved.sessionId);
+
   return {
     ok: true,
     value: { status: persisted.status, submissionId: input.submissionId },
