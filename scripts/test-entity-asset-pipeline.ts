@@ -10,7 +10,7 @@
  * 6. NPC asset contract works
  * 7. Enemy asset contract works
  * 8. Boss asset contract works
- * 9. Prop asset contract works (NOT_REGISTERED — no prop sprites exist)
+ * 9. Prop asset contract is registered but remains gated until the atlas binary is verified
  * 10. Manifest integration (lookup returns correct status)
  * 11. Renderer integration (entity asset field consumed)
  * 12. Existing asset system unchanged
@@ -51,8 +51,8 @@ check("3. NPC keys registered", npcKeys.length >= 5);
 check("4. npc.ki-jaka mapped", npcKeys.includes("npc.ki-jaka"));
 
 const kiRes = resolveEntityAsset("npc.ki-jaka");
-check("5. Ki Jaka resolution status = READY (runtime sprite)", kiRes.status === "READY");
-check("6. Ki Jaka rendered as production sprite", isEntityAssetReady(kiRes));
+check("5. Ki Jaka resolution is gated while atlas binary is pending", kiRes.status === "NEEDS_REVIEW");
+check("6. Ki Jaka is NOT rendered as production sprite before binary verification", !isEntityAssetReady(kiRes));
 
 const kiManifestId = getManifestIdForEntity("npc.ki-jaka");
 check("7. Ki Jaka manifest ID = 'npc_ki_jaka_full'", kiManifestId === "npc_ki_jaka_full");
@@ -72,12 +72,12 @@ const enemyKeys = registered.filter((k) => k.startsWith("enemy."));
 check("11. Enemy keys registered", enemyKeys.length >= 4);
 
 const korogRes = resolveEntityAsset("enemy.korog");
-check("12. Korog resolution status = READY", korogRes.status === "READY");
-check("13. Korog rendered as production sprite", isEntityAssetReady(korogRes));
+check("12. Korog resolution is gated while atlas binary is pending", korogRes.status === "NEEDS_REVIEW");
+check("13. Korog is NOT rendered as production sprite before binary verification", !isEntityAssetReady(korogRes));
 
 const rajaRes = resolveEntityAsset("enemy.raja-korog");
-check("14. Raja Korog resolution status = READY", rajaRes.status === "READY");
-check("15. Raja Korog rendered as production sprite", isEntityAssetReady(rajaRes));
+check("14. Raja Korog resolution is gated while atlas binary is pending", rajaRes.status === "NEEDS_REVIEW");
+check("15. Raja Korog is NOT rendered as production sprite before binary verification", !isEntityAssetReady(rajaRes));
 
 // ══ D. Boss Assets ═════════════════════════════════════════════════
 console.log("\n💀 D. Boss Assets");
@@ -94,8 +94,8 @@ console.log("\n🏠 E. Prop Assets");
 const propKeys = ["house.village", "tree.round", "well.stone"];
 for (const propKey of propKeys) {
   const res = resolveEntityAsset(propKey);
-  check("18. " + propKey + " = READY", res.status === "READY");
-  check("19. " + propKey + " rendered as production sprite", isEntityAssetReady(res));
+  check("18. " + propKey + " remains gated pending atlas binary", res.status === "NEEDS_REVIEW");
+  check("19. " + propKey + " is NOT rendered as production sprite before binary verification", !isEntityAssetReady(res));
 }
 
 // // ══ F. Missing / Empty Asset ══════════════════════════════════════
@@ -122,6 +122,7 @@ check("28. Renderer imports entity-asset-resolver", rendererSrc.includes("from \
 check("29. Renderer calls resolveEntityAsset", rendererSrc.includes("resolveEntityAsset(entity.asset)"));
 check("30. Renderer checks isEntityAssetReady", rendererSrc.includes("isEntityAssetReady(resolution)"));
 check("31. Renderer has sprite rendering path", rendererSrc.includes("spriteRendered"));
+check("31b. Renderer has runtime preload helper", rendererSrc.includes("function preloadRuntimeAsset"));
 check("32. Renderer has procedural fallback", rendererSrc.includes("if (!spriteRendered)"));
 check("33. Renderer does NOT remove procedural fallback", rendererSrc.includes("case \"tree\":") && rendererSrc.includes("case \"house\":"));
 
@@ -133,9 +134,9 @@ const reviewCount = allResolved.filter((r) => r.resolution.status === "NEEDS_REV
 const notRegCount = allResolved.filter((r) => r.resolution.status === "NOT_REGISTERED").length;
 const missingCount = allResolved.filter((r) => r.resolution.status === "MISSING_MANIFEST").length;
 
-check("34. Production visual assets resolve READY", readyCount >= 15);
-check("35. Legacy reference entries remain gated", reviewCount >= 8);
-check("36. Promoted props resolve READY", propKeys.every((k) => isEntityAssetReady(resolveEntityAsset(k))));
+check("34. Existing verified runtime assets still resolve READY", readyCount >= 13);
+check("35. Legacy/reference assets remain gated", reviewCount >= 8);
+check("36. P2.11 promoted visuals remain gated until atlas binary exists", propKeys.every((k) => !isEntityAssetReady(resolveEntityAsset(k))));
 check("37. No MISSING_MANIFEST (all mapped keys exist in manifest)", missingCount === 0);
 
 // ══ J. Architecture Integrity ═════════════════════════════════════
@@ -155,6 +156,17 @@ check("44. Tile visuals still has resolveTileAsset", tileVisSrc.includes("resolv
 const assetRegSrc = src("src/game/rpg/rendering/asset-registry.ts");
 check("45. Asset registry still has createSpriteLoader", assetRegSrc.includes("createSpriteLoader"));
 check("46. Asset registry still has lookupAsset", assetRegSrc.includes("lookupAsset"));
+
+// ══ L. Binary Atlas Gate ═══════════════════════════════════════════
+console.log("\n📦 L. Binary Atlas Gate");
+const atlasPath = join(ROOT, "public/game/rpg/visual/rpg_runtime_atlas.png");
+const atlasEntry = manifestLookup("npc_ki_jaka_full");
+const atlasExists = (() => {
+  try { readFileSync(atlasPath); return true; } catch { return false; }
+})();
+check("47. P2.11 atlas entry is not falsely READY while binary is absent", !atlasExists ? atlasEntry?.status === "NEEDS_REVIEW" : true);
+check("48. P2.11 atlas binary gate is observable", atlasEntry?.source === "asset-sheet-reference-extraction");
+check("49. No false production claim is made for the pending atlas", !atlasExists ? !isEntityAssetReady(resolveEntityAsset("npc.ki-jaka")) : true);
 
 // ══ Summary ════════════════════════════════════════════════════════
 console.log(`\n📊 P2.11 Entity Visual Runtime: ${pass} lulus, ${fail} gagal\n`);
