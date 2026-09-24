@@ -75,20 +75,14 @@ function JoinFlow() {
     }
   }, [canResume, enterRoom]);
 
-  const submitPin = useCallback(() => {
-    if (!/^\d{6}$/.test(pin)) {
-      setError('PIN harus 6 angka. Periksa lagi, ya.');
-      return;
-    }
-    setError(null);
-    setStep('name');
-  }, [pin]);
-
-  const submitName = useCallback(async () => {
+  const joinNow = useCallback(async (displayName?: string) => {
     setStep('joining');
     setError(null);
     try {
-      const result = await joinSession({ pin, displayName: name });
+      const result = await joinSession({
+        pin,
+        ...(displayName ? { displayName } : {}),
+      });
       saveCredential(result.session.id, result.credential); // helper tunggal
       saveLastSessionId(result.session.id);
       enterRoom(result.session.id);
@@ -96,7 +90,25 @@ function JoinFlow() {
       setError(e instanceof MbApiError ? e.message : 'Gagal gabung. Coba lagi.');
       setStep('pin');
     }
-  }, [pin, name, enterRoom]);
+  }, [pin, enterRoom]);
+
+  const submitPin = useCallback(() => {
+    if (!/^\d{6}$/.test(pin)) {
+      setError('PIN harus 6 angka. Periksa lagi, ya.');
+      return;
+    }
+    setError(null);
+    if (isAuthed) {
+      // Nama user login ditentukan server dari profil BC, bukan input bebas.
+      void joinNow();
+      return;
+    }
+    setStep('name');
+  }, [pin, isAuthed, joinNow]);
+
+  const submitName = useCallback(async () => {
+    await joinNow(name);
+  }, [joinNow, name]);
 
   return (
     <main className="mb-join mb-fade-in">
@@ -141,7 +153,9 @@ function JoinFlow() {
             aria-describedby={error ? 'mb-join-err' : undefined}
           />
           {error ? <p id="mb-join-err" role="alert" className="mb-join-err">{error}</p> : null}
-          <PrimaryGameButton type="submit">Lanjut</PrimaryGameButton>
+          <PrimaryGameButton type="submit">
+            {isAuthed ? 'Gabung sebagai akun saya' : 'Lanjut'}
+          </PrimaryGameButton>
         </form>
       ) : null}
 

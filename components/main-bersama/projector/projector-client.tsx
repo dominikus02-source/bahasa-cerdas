@@ -201,8 +201,9 @@ export function ProjectorClient() {
       <div className="mb-pj-utility-controls">
         <SoundToggle
           enabled={gameSound.enabled}
+          unlocked={gameSound.unlocked}
           onToggle={() => void gameSound.toggle()}
-          compact
+          compact={gameSound.unlocked}
         />
         <button
           type="button"
@@ -352,6 +353,11 @@ function ProjectorLobby({
   const pin = view.joinInfo?.pin ?? "------";
   return (
     <section className="mb-pj-phase mb-pj-lobby-stage mb-fade-in">
+      <div className="mb-pj-lobby-title-block">
+        <span className="mb-pj-lobby-kicker">LIVE CLASSROOM GAME</span>
+        <h2 className="mb-display">SIAP MAIN?</h2>
+        <p>Masuk ke lobby, lihat namamu muncul, lalu tunggu guru memulai.</p>
+      </div>
       <div className="mb-pj-lobby-grid">
         <div className="mb-pj-lobby-join">
           <span className="mb-eyebrow mb-pj-lobby-eyebrow">PIN RUANG</span>

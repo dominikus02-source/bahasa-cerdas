@@ -110,6 +110,9 @@ export function TeacherRoomClient({
   }, [view, busy, run]);
 
   const enterClassroom = useCallback(async () => {
+    // Panggil audio activation dalam gesture klik yang sama; context shared
+    // bertahan saat client navigation ke Layar Kelas.
+    void teacherSound.activate();
     try {
       if (!document.fullscreenElement) {
         await document.documentElement.requestFullscreen();
@@ -118,7 +121,15 @@ export function TeacherRoomClient({
       // Fullscreen API bisa ditolak browser; navigasi tetap jalan.
     }
     router.push(`/guru/game/main-bersama/kelas/${sessionId}`);
-  }, [router, sessionId]);
+  }, [router, sessionId, teacherSound.activate]);
+
+  const openProjector = useCallback(() => {
+    window.open(
+      `/main-bersama/layar?sessionId=${sessionId}`,
+      '_blank',
+      'noopener',
+    );
+  }, [sessionId]);
 
   if (!view) {
     return (
@@ -155,9 +166,19 @@ export function TeacherRoomClient({
           <>
             <SoundToggle
               enabled={teacherSound.enabled}
+              unlocked={teacherSound.unlocked}
               onToggle={() => void teacherSound.toggle()}
-              compact
+              compact={teacherSound.unlocked}
             />
+            <button
+              type="button"
+              className="mb-secondary-btn"
+              onClick={openProjector}
+              disabled={busy}
+              title="Buka tampilan proyektor di tab/jendela kedua"
+            >
+              Layar Kedua
+            </button>
             {a.canPause ? (
               <button type="button" className="mb-secondary-btn" onClick={() => run('pause')} disabled={busy}>
                 Jeda
@@ -181,83 +202,124 @@ export function TeacherRoomClient({
         <p role="alert" className="mb-room-error">{error}</p>
       ) : null}
 
-      {/* ── LOBBY (§17) — PIN sebagai anchor utama ── */}
+      {/* ── LOBBY — game-show command center ── */}
       {view.phase === 'lobby' || view.phase === 'preparing' ? (
-        <section className="mb-lobby mb-fade-in">
-          <div className="mb-lobby-head">
-            <span className="mb-eyebrow mb-lobby-eyebrow">PIN Ruang</span>
-            <PinDisplay pin={pin} />
-            <p className="mb-lobby-wait">
-              Bagikan PIN ini kepada siswa untuk bergabung. Siswa membuka halaman
-              Gabung Main Bersama lalu memasukkan PIN.
-            </p>
-          </div>
-          {/* Metadata dengan prioritas konten: guru harus tahu SOAL APA
-              yang dimainkan sebelum detail mode/kelas (§11). */}
-          <div className="mb-lobby-meta">
-            <span className="mb-chip mb-lobby-chip">
-              <UsersMini />
-              <strong className="mb-number">{view.participants.length}</strong> peserta
-            </span>
-            <span className="mb-chip mb-lobby-chip mb-lobby-content">{view.contentTitle}</span>
-            <span className="mb-chip mb-lobby-chip mb-number">{view.totalRounds} soal</span>
-            <span className="mb-chip mb-lobby-chip">
-              {view.gameMode === 'jelajah-kata' ? 'Jelajah Kata' : 'Kota Cahaya'}
-            </span>
-            {className ? <span className="mb-chip mb-lobby-chip">Kelas {className}</span> : null}
-          </div>
-          <div className="mb-lobby-qr">
-            <RoomQRCode pin={pin} />
-            <small>Scan untuk gabung</small>
-          </div>
-          <LobbyRoster
-            participants={view.participants.map((p) => ({
-              displayName: p.displayName,
-              ...(p.teamId ? { teamId: p.teamId } : {}),
-            }))}
-            maxVisible={18}
-            tone="light"
-          />
-          {view.participants.length === 0 ? (
-            <p className="mb-lobby-hint" role="status">
-              Belum ada siswa yang bergabung. Bagikan PIN di atas kepada kelas.
-            </p>
-          ) : null}
-          <div className="mb-room-cta">
-            {view.phase === 'preparing' ? (
-              <PrimaryGameButton disabled loading variant="light">
-                Menyiapkan Lobby…
-              </PrimaryGameButton>
-            ) : (
-              <PrimaryGameButton
-                onClick={() => {
-                  void teacherSound.unlock();
-                  void run('start');
-                }}
-                disabled={busy || view.participants.length === 0}
-                loading={busy}
-                variant="light"
-              >
-                Mulai Permainan
-              </PrimaryGameButton>
-            )}
-          </div>
-          {/* ── Layar Kelas (8B.1): satu layar default, dua layar advanced ── */}
-          <div className="mb-room-classroom">
-            <PrimaryGameButton
-              onClick={() => void enterClassroom()}
-              disabled={busy}
-              variant="light"
-            >
-              Tampilkan ke Kelas
-            </PrimaryGameButton>
-            <button
-              type="button"
-              className="mb-linklike-dark"
-              onClick={() => window.open(`/main-bersama/layar?sessionId=${sessionId}`, '_blank', 'noopener')}
-            >
-              Buka di Layar Kedua
-            </button>
+        <section className="mb-lobby mb-lobby-command-center mb-fade-in">
+          <div className="mb-lobby-stage-card">
+            <div className="mb-lobby-stage-top">
+              <div className="mb-lobby-stage-copy">
+                <span className="mb-eyebrow mb-lobby-stage-eyebrow">Lobby Kelas</span>
+                <h2 className="mb-display mb-lobby-stage-title">SIAP MASUK ARENA?</h2>
+                <p>
+                  Bagikan PIN, tunggu nama siswa muncul, lalu mulai saat kelas sudah lengkap.
+                </p>
+              </div>
+              <div className="mb-lobby-live-pill" aria-label="Lobby aktif">
+                <i aria-hidden />
+                LIVE LOBBY
+              </div>
+            </div>
+
+            <div className="mb-lobby-main-grid">
+              <div className="mb-lobby-pin-panel">
+                <div className="mb-lobby-panel-kicker">PIN MASUK</div>
+                <PinDisplay pin={pin} />
+                <div className="mb-lobby-meta mb-lobby-meta-strong">
+                  <span className="mb-chip mb-lobby-chip">
+                    <UsersMini />
+                    <strong className="mb-number">{view.participants.length}</strong> pemain
+                  </span>
+                  <span className="mb-chip mb-lobby-chip mb-lobby-content">{view.contentTitle}</span>
+                  <span className="mb-chip mb-lobby-chip mb-number">{view.totalRounds} soal</span>
+                  <span className="mb-chip mb-lobby-chip">
+                    {view.gameMode === 'jelajah-kata' ? 'Jelajah Kata' : 'Kota Cahaya'}
+                  </span>
+                  {className ? <span className="mb-chip mb-lobby-chip">Kelas {className}</span> : null}
+                </div>
+                <div className="mb-lobby-join-tools">
+                  <div className="mb-lobby-qr mb-lobby-qr-card">
+                    <RoomQRCode pin={pin} />
+                    <small>Scan untuk gabung</small>
+                  </div>
+                  <div className="mb-lobby-join-copy">
+                    <strong>Gabung Main Bersama</strong>
+                    <span>Masukkan PIN di atas atau scan QR.</span>
+                    <button
+                      type="button"
+                      className="mb-lobby-projector-link"
+                      onClick={openProjector}
+                    >
+                      Buka Layar Kedua ↗
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mb-lobby-roster-card">
+                <div className="mb-lobby-roster-title-row">
+                  <div>
+                    <span className="mb-lobby-panel-kicker">PEMAIN SIAP</span>
+                    <h3>Siapa yang sudah masuk?</h3>
+                  </div>
+                  <strong className="mb-lobby-count-orb mb-number">
+                    {view.participants.length}
+                  </strong>
+                </div>
+                <LobbyRoster
+                  participants={view.participants.map((p) => ({
+                    displayName: p.displayName,
+                    ...(p.teamId ? { teamId: p.teamId } : {}),
+                  }))}
+                  maxVisible={18}
+                  tone="dark"
+                />
+                {view.participants.length === 0 ? (
+                  <p className="mb-lobby-hint mb-lobby-hint-dark" role="status">
+                    Avatar dan nama siswa akan muncul di sini begitu mereka bergabung.
+                  </p>
+                ) : (
+                  <p className="mb-lobby-ready-note" role="status">
+                    <span aria-hidden>✓</span>
+                    {view.participants.length} pemain sudah siap di lobby.
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="mb-lobby-action-deck">
+              <div className="mb-lobby-action-note">
+                <strong>{view.phase === 'preparing' ? 'Menyiapkan lobby…' : 'Kelas siap?'}</strong>
+                <span>Guru tetap menentukan kapan permainan dimulai.</span>
+              </div>
+              <div className="mb-lobby-action-buttons">
+                <button
+                  type="button"
+                  className="mb-lobby-display-btn"
+                  onClick={() => void enterClassroom()}
+                  disabled={busy}
+                >
+                  <span aria-hidden>▣</span>
+                  Tampilkan ke Kelas
+                </button>
+                {view.phase === 'preparing' ? (
+                  <PrimaryGameButton disabled loading variant="light">
+                    Menyiapkan Lobby…
+                  </PrimaryGameButton>
+                ) : (
+                  <PrimaryGameButton
+                    onClick={() => {
+                      void teacherSound.activate();
+                      void run('start');
+                    }}
+                    disabled={busy || view.participants.length === 0}
+                    loading={busy}
+                    variant="light"
+                  >
+                    Mulai Permainan
+                  </PrimaryGameButton>
+                )}
+              </div>
+            </div>
           </div>
         </section>
       ) : null}

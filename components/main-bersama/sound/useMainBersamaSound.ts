@@ -37,6 +37,8 @@ type AudioWindow = Window & {
 
 const STORAGE_KEY = "mb-sound-muted";
 
+let sharedAudioContext: AudioContext | null = null;
+
 function progressTotal(progress?: Record<string, number>): number {
   if (!progress) return 0;
   return Object.values(progress).reduce(
@@ -45,12 +47,92 @@ function progressTotal(progress?: Record<string, number>): number {
   );
 }
 
-/**
- * Lightweight WebAudio cue system.
- * No external/copyrighted audio files, no scoring/game-state writes.
- * Browser autoplay policy is respected: audio is unlocked on the first
- * pointer interaction, or explicitly through the sound toggle.
- */
+function audioCtor(): typeof AudioContext | null {
+  if (typeof window === "undefined") return null;
+  return window.AudioContext ?? (window as AudioWindow).webkitAudioContext ?? null;
+}
+
+async function ensureSharedContext(): Promise<AudioContext | null> {
+  const AudioCtor = audioCtor();
+  if (!AudioCtor) return null;
+  if (!sharedAudioContext || sharedAudioContext.state === "closed") {
+    sharedAudioContext = new AudioCtor();
+  }
+  if (sharedAudioContext.state === "suspended") {
+    try {
+      await sharedAudioContext.resume();
+    } catch {
+      return null;
+    }
+  }
+  return sharedAudioContext;
+}
+
+function scheduleTone(
+  context: AudioContext,
+  frequency: number,
+  duration: number,
+  delay = 0,
+  type: OscillatorType = "sine",
+  volume = 0.075,
+) {
+  const start = context.currentTime + delay;
+  const oscillator = context.createOscillator();
+  const gain = context.createGain();
+  oscillator.type = type;
+  oscillator.frequency.setValueAtTime(frequency, start);
+  gain.gain.setValueAtTime(0.0001, start);
+  gain.gain.exponentialRampToValueAtTime(volume, start + 0.012);
+  gain.gain.exponentialRampToValueAtTime(
+    0.0001,
+    start + Math.max(0.05, duration),
+  );
+  oscillator.connect(gain).connect(context.destination);
+  oscillator.start(start);
+  oscillator.stop(start + duration + 0.06);
+}
+
+function scheduleCue(context: AudioContext, cue: Cue) {
+  switch (cue) {
+    case "ready":
+      scheduleTone(context, 660, 0.1, 0, "triangle", 0.075);
+      scheduleTone(context, 880, 0.14, 0.08, "sine", 0.07);
+      break;
+    case "join":
+      scheduleTone(context, 520, 0.09, 0, "triangle", 0.08);
+      scheduleTone(context, 740, 0.13, 0.075, "sine", 0.07);
+      break;
+    case "start":
+      scheduleTone(context, 440, 0.1, 0, "triangle", 0.075);
+      scheduleTone(context, 660, 0.11, 0.11, "triangle", 0.085);
+      scheduleTone(context, 880, 0.2, 0.22, "sine", 0.09);
+      break;
+    case "close":
+      scheduleTone(context, 620, 0.12, 0, "triangle", 0.085);
+      scheduleTone(context, 440, 0.2, 0.11, "triangle", 0.075);
+      break;
+    case "reveal":
+      scheduleTone(context, 523, 0.1, 0, "sine", 0.07);
+      scheduleTone(context, 659, 0.12, 0.1, "sine", 0.08);
+      break;
+    case "milestone":
+      scheduleTone(context, 523, 0.11, 0, "sine", 0.075);
+      scheduleTone(context, 659, 0.11, 0.1, "sine", 0.085);
+      scheduleTone(context, 784, 0.24, 0.2, "sine", 0.095);
+      break;
+    case "move":
+      scheduleTone(context, 480, 0.08, 0, "triangle", 0.065);
+      scheduleTone(context, 610, 0.1, 0.08, "triangle", 0.07);
+      break;
+    case "summary":
+      scheduleTone(context, 523, 0.14, 0, "sine", 0.08);
+      scheduleTone(context, 659, 0.14, 0.13, "sine", 0.085);
+      scheduleTone(context, 784, 0.14, 0.26, "sine", 0.09);
+      scheduleTone(context, 1047, 0.5, 0.4, "sine", 0.1);
+      break;
+  }
+}
+
 export function useMainBersamaSound(snapshot: SoundSnapshot) {
   const {
     participantCount,
@@ -60,8 +142,12 @@ export function useMainBersamaSound(snapshot: SoundSnapshot) {
     teamProgress,
   } = snapshot;
   const [enabled, setEnabled] = useState(true);
-  const contextRef = useRef<AudioContext | null>(null);
+  const [unlocked, setUnlocked] = useState(false);
   const prevRef = useRef<SoundSnapshot | null>(null);
+
+  const syncUnlocked = useCallback(() => {
+    setUnlocked(sharedAudioContext?.state === "running");
+  }, []);
 
   useEffect(() => {
     try {
@@ -69,124 +155,62 @@ export function useMainBersamaSound(snapshot: SoundSnapshot) {
     } catch {
       setEnabled(true);
     }
-  }, []);
+    syncUnlocked();
 
-  const ensureContext = useCallback(async () => {
-    if (typeof window === "undefined") return null;
-    const AudioCtor =
-      window.AudioContext ?? (window as AudioWindow).webkitAudioContext;
-    if (!AudioCtor) return null;
-    if (!contextRef.current) contextRef.current = new AudioCtor();
-    if (contextRef.current.state === "suspended") {
-      try {
-        await contextRef.current.resume();
-      } catch {
-        return null;
-      }
+    const context = sharedAudioContext;
+    if (!context) return;
+    const onState = () => syncUnlocked();
+    context.addEventListener("statechange", onState);
+    return () => context.removeEventListener("statechange", onState);
+  }, [syncUnlocked]);
+
+  const activate = useCallback(async () => {
+    setEnabled(true);
+    try {
+      window.localStorage.setItem(STORAGE_KEY, "0");
+    } catch {
+      // Preference persistence is optional.
     }
-    return contextRef.current;
+    const context = await ensureSharedContext();
+    const ready = context?.state === "running";
+    setUnlocked(ready);
+    if (context && ready) scheduleCue(context, "ready");
+    return ready;
   }, []);
-
-  const playTone = useCallback(
-    async (
-      frequency: number,
-      duration: number,
-      delay = 0,
-      type: OscillatorType = "sine",
-      volume = 0.04,
-    ) => {
-      if (!enabled) return;
-      const context = await ensureContext();
-      if (!context) return;
-      const start = context.currentTime + delay;
-      const oscillator = context.createOscillator();
-      const gain = context.createGain();
-      oscillator.type = type;
-      oscillator.frequency.setValueAtTime(frequency, start);
-      gain.gain.setValueAtTime(0.0001, start);
-      gain.gain.exponentialRampToValueAtTime(volume, start + 0.015);
-      gain.gain.exponentialRampToValueAtTime(
-        0.0001,
-        start + Math.max(0.04, duration),
-      );
-      oscillator.connect(gain).connect(context.destination);
-      oscillator.start(start);
-      oscillator.stop(start + duration + 0.05);
-    },
-    [enabled, ensureContext],
-  );
 
   const play = useCallback(
-    (cue: Cue) => {
+    async (cue: Cue) => {
       if (!enabled) return;
-      switch (cue) {
-        case "ready":
-          void playTone(620, 0.08, 0, "triangle", 0.03);
-          break;
-        case "join":
-          void playTone(520, 0.09, 0, "triangle", 0.045);
-          void playTone(740, 0.12, 0.075, "sine", 0.035);
-          break;
-        case "start":
-          void playTone(440, 0.1, 0, "triangle", 0.04);
-          void playTone(660, 0.11, 0.11, "triangle", 0.045);
-          void playTone(880, 0.16, 0.22, "sine", 0.05);
-          break;
-        case "close":
-          void playTone(620, 0.12, 0, "triangle", 0.05);
-          void playTone(440, 0.18, 0.11, "triangle", 0.045);
-          break;
-        case "reveal":
-          void playTone(523, 0.1, 0, "sine", 0.04);
-          void playTone(659, 0.1, 0.1, "sine", 0.045);
-          break;
-        case "milestone":
-          void playTone(523, 0.11, 0, "sine", 0.045);
-          void playTone(659, 0.11, 0.1, "sine", 0.05);
-          void playTone(784, 0.2, 0.2, "sine", 0.055);
-          break;
-        case "move":
-          void playTone(480, 0.08, 0, "triangle", 0.035);
-          void playTone(610, 0.09, 0.08, "triangle", 0.035);
-          break;
-        case "summary":
-          void playTone(523, 0.14, 0, "sine", 0.05);
-          void playTone(659, 0.14, 0.13, "sine", 0.055);
-          void playTone(784, 0.14, 0.26, "sine", 0.06);
-          void playTone(1047, 0.48, 0.4, "sine", 0.065);
-          break;
-      }
+      const context = await ensureSharedContext();
+      const ready = context?.state === "running";
+      setUnlocked(ready);
+      if (!context || !ready) return;
+      scheduleCue(context, cue);
     },
-    [enabled, playTone],
+    [enabled],
   );
 
-  const unlock = useCallback(async () => {
-    if (!enabled) return;
-    await ensureContext();
-  }, [enabled, ensureContext]);
-
   const toggle = useCallback(async () => {
-    const next = !enabled;
-    setEnabled(next);
+    if (!enabled || !unlocked) {
+      await activate();
+      return;
+    }
+    setEnabled(false);
     try {
-      window.localStorage.setItem(STORAGE_KEY, next ? "0" : "1");
+      window.localStorage.setItem(STORAGE_KEY, "1");
     } catch {
-      // Local preference is optional.
+      // Preference persistence is optional.
     }
-    if (next) {
-      await ensureContext();
-      setTimeout(() => play("ready"), 0);
-    }
-  }, [enabled, ensureContext, play]);
+  }, [activate, enabled, unlocked]);
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled || unlocked) return;
     const onPointer = () => {
-      void ensureContext();
+      void ensureSharedContext().then(() => syncUnlocked());
     };
     document.addEventListener("pointerdown", onPointer, { once: true });
     return () => document.removeEventListener("pointerdown", onPointer);
-  }, [enabled, ensureContext]);
+  }, [enabled, unlocked, syncUnlocked]);
 
   useEffect(() => {
     const prev = prevRef.current;
@@ -203,28 +227,28 @@ export function useMainBersamaSound(snapshot: SoundSnapshot) {
       (phase === "lobby" || phase === "preparing") &&
       participantCount > prev.participantCount
     ) {
-      play("join");
+      void play("join");
     }
 
     if (phase !== prev.phase) {
-      if (phase === "question") play("start");
-      else if (phase === "closed") play("close");
-      else if (phase === "discussion") play("reveal");
-      else if (phase === "summary" || phase === "ended") play("summary");
+      if (phase === "question") void play("start");
+      else if (phase === "closed") void play("close");
+      else if (phase === "discussion") void play("reveal");
+      else if (phase === "summary" || phase === "ended") void play("summary");
     }
 
     if (
       gameMode === "kota-cahaya" &&
       kotaUnlockedCount > (prev.kotaUnlockedCount ?? 0)
     ) {
-      play("milestone");
+      void play("milestone");
     }
 
     if (
       gameMode === "jelajah-kata" &&
       progressTotal(teamProgress) > progressTotal(prev.teamProgress) + 0.01
     ) {
-      play("move");
+      void play("move");
     }
   }, [
     participantCount,
@@ -235,5 +259,5 @@ export function useMainBersamaSound(snapshot: SoundSnapshot) {
     play,
   ]);
 
-  return { enabled, toggle, unlock, play };
+  return { enabled, unlocked, toggle, activate, play };
 }

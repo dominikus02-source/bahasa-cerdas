@@ -84,8 +84,10 @@ export async function sendSessionUpdateSignal(
             },
           ],
         }),
-        // Jangan biarkan sinyal menggantung command guru lama.
-        signal: AbortSignal.timeout(3_000),
+        // Broadcast hanya freshness hint. Jangan pernah membuat submit/join/
+        // command guru terasa macet bila transport realtime sedang lambat.
+        // Safety poll client tetap menjamin state akhirnya tersinkron.
+        signal: AbortSignal.timeout(800),
       },
     );
     if (!res.ok) {

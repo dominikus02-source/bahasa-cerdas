@@ -388,7 +388,7 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
             type="button"
             className="mb-dock-primary"
             onClick={() => {
-              if (primary.action === 'start') void gameSound.unlock();
+              if (primary.action === 'start') void gameSound.activate();
               void run(primary.action);
             }}
             disabled={busy}
@@ -402,8 +402,9 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
         )}
         <SoundToggle
           enabled={gameSound.enabled}
+          unlocked={gameSound.unlocked}
           onToggle={() => void gameSound.toggle()}
-          compact
+          compact={gameSound.unlocked}
         />
         <button
           type="button"
