@@ -2932,3 +2932,297 @@
     animation: none !important;
   }
 }
+
+
+/* ─────────────────────────────────────────────────────────────
+   Jelajah Kata v3 — expedition world
+   Adaptasi Galeri Panggung: layered night landscape, route, checkpoint,
+   lantern-like glow, dust payoff. Progress tetap authoritative 0..100;
+   seluruh depth, landmark, dan motion di bawah murni presentation.
+   ───────────────────────────────────────────────────────────── */
+
+.mb-jelajah-stage {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+  border-radius: 24px;
+  filter:
+    drop-shadow(0 22px 38px rgba(0, 0, 0, .28))
+    saturate(1.04);
+  isolation: isolate;
+}
+
+.mb-jelajah-stage[data-compact="true"] {
+  border-radius: 20px;
+  filter:
+    drop-shadow(0 14px 24px rgba(0, 0, 0, .22))
+    saturate(1.02);
+}
+
+.mb-jelajah-star {
+  opacity: .36;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mb-jelajah-star-twinkle 5.6s ease-in-out infinite;
+}
+
+.mb-jelajah-aurora {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mb-jelajah-aurora-drift 12s ease-in-out infinite;
+}
+
+.mb-jelajah-water-shine {
+  stroke-dasharray: 11 19;
+  animation: mb-jelajah-water-flow 7s linear infinite;
+}
+
+.mb-jelajah-location-label rect {
+  fill: rgba(7, 25, 40, .78);
+  stroke: rgba(157, 197, 210, .16);
+  stroke-width: 1;
+}
+
+.mb-jelajah-location-label text {
+  fill: #9fb6c8;
+  font-family: var(--mb-font-body);
+  font-size: 9.5px;
+  font-weight: 900;
+  letter-spacing: 1.35px;
+}
+
+.mb-jelajah-lane {
+  transition: filter 260ms ease;
+}
+
+.mb-jelajah-progress-glow,
+.mb-jelajah-progress-line {
+  transition:
+    stroke-dasharray 600ms cubic-bezier(.22,.9,.3,1),
+    opacity 260ms ease;
+}
+
+.mb-jelajah-progress-glow {
+  filter: blur(4px);
+}
+
+.mb-jelajah-progress-line {
+  filter: drop-shadow(0 0 5px currentColor);
+}
+
+.mb-jelajah-checkpoint {
+  transition: opacity 280ms ease;
+}
+
+.mb-jelajah-checkpoint circle {
+  transition:
+    fill 360ms ease,
+    stroke 360ms ease,
+    opacity 360ms ease,
+    r 360ms ease;
+}
+
+.mb-jelajah-checkpoint[data-reached="true"] .mb-jelajah-checkpoint-glow {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mb-jelajah-checkpoint-breathe 3.4s ease-in-out infinite;
+}
+
+.mb-jelajah-checkpoint[data-reached="true"] text {
+  filter: drop-shadow(0 1px 1px rgba(255,255,255,.2));
+}
+
+.mb-jelajah-bridge-shine {
+  filter: drop-shadow(0 0 6px currentColor);
+  animation: mb-jelajah-bridge-shimmer 3.8s ease-in-out infinite;
+}
+
+.mb-jelajah-finish-landmark {
+  filter: drop-shadow(0 10px 16px rgba(0,0,0,.22));
+}
+
+.mb-jelajah-finish-landmark > circle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mb-jelajah-finish-breathe 4.6s ease-in-out infinite;
+}
+
+.mb-jelajah-motion-trail {
+  pointer-events: none;
+  transform-box: fill-box;
+  color: #8bded5;
+}
+
+.mb-jelajah-motion-trail > path {
+  transform-box: fill-box;
+  transform-origin: right center;
+  animation: mb-jelajah-speed-streak 620ms ease-out both;
+}
+
+.mb-jelajah-motion-trail > path:nth-child(2) {
+  animation-delay: 55ms;
+}
+
+.mb-jelajah-motion-trail > path:nth-child(3) {
+  animation-delay: 105ms;
+}
+
+.mb-jelajah-dust {
+  fill: #7893a7;
+}
+
+.mb-jelajah-dust circle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mb-jelajah-dust-v3 760ms ease-out both;
+}
+
+.mb-jelajah-dust circle:nth-child(2) { animation-delay: 80ms; }
+.mb-jelajah-dust circle:nth-child(3) { animation-delay: 150ms; }
+
+.mb-jelajah-marker-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.mb-trail-marker.mb-trail-moving .mb-jelajah-marker-ring {
+  animation: mb-jelajah-marker-pulse 780ms ease-out both;
+}
+
+.mb-trail-marker.mb-trail-moving {
+  filter:
+    brightness(1.1)
+    saturate(1.08)
+    drop-shadow(0 8px 13px rgba(0,0,0,.16));
+}
+
+.mb-trail-marker [data-pose="move"] img {
+  animation: mb-jelajah-mascot-travel 600ms cubic-bezier(.22,.9,.3,1) both;
+}
+
+.mb-trail-marker [data-pose="celebrate"] img {
+  animation: mb-jelajah-mascot-celebrate 800ms cubic-bezier(.2,1.08,.32,1) both;
+}
+
+.mb-jelajah-firefly {
+  opacity: .18;
+  animation: mb-jelajah-firefly 7s ease-in-out infinite;
+}
+
+/* Compact strip tetap cinematic tetapi tidak merebut tinggi soal. */
+.mb-pj-progress .mb-jelajah-stage[data-compact="true"] {
+  width: min(100%, 820px);
+  margin-inline: auto;
+}
+
+.mb-pj-closed-jelajah .mb-jelajah-stage {
+  width: min(100%, 960px);
+  margin-inline: auto;
+}
+
+.mb-pj-lobby-stage .mb-jelajah-stage:not([data-compact="true"]) {
+  width: min(100%, 1040px);
+  margin-inline: auto;
+}
+
+@keyframes mb-jelajah-star-twinkle {
+  0%, 100% { opacity: .2; transform: scale(.92); }
+  46% { opacity: .84; transform: scale(1.1); }
+}
+
+@keyframes mb-jelajah-aurora-drift {
+  0%, 100% { opacity: .42; transform: translateX(-7px) scaleX(.99); }
+  50% { opacity: .72; transform: translateX(10px) scaleX(1.015); }
+}
+
+@keyframes mb-jelajah-water-flow {
+  from { stroke-dashoffset: 0; opacity: .18; }
+  45% { opacity: .38; }
+  to { stroke-dashoffset: -90; opacity: .18; }
+}
+
+@keyframes mb-jelajah-checkpoint-breathe {
+  0%, 100% { opacity: .12; transform: scale(.84); }
+  50% { opacity: .34; transform: scale(1.18); }
+}
+
+@keyframes mb-jelajah-bridge-shimmer {
+  0%, 100% { opacity: .44; }
+  50% { opacity: .92; }
+}
+
+@keyframes mb-jelajah-finish-breathe {
+  0%, 100% { opacity: .04; transform: scale(.86); }
+  50% { opacity: .11; transform: scale(1.08); }
+}
+
+@keyframes mb-jelajah-speed-streak {
+  from { opacity: .52; transform: scaleX(.55); }
+  to { opacity: 0; transform: translateX(-18px) scaleX(1.08); }
+}
+
+@keyframes mb-jelajah-dust-v3 {
+  from { opacity: .66; transform: scale(.52) translate(0, 0); }
+  to { opacity: 0; transform: scale(1.55) translate(-15px, -6px); }
+}
+
+@keyframes mb-jelajah-marker-pulse {
+  0% { opacity: .35; transform: scale(.72); }
+  55% { opacity: .5; transform: scale(1.16); }
+  100% { opacity: .18; transform: scale(1); }
+}
+
+@keyframes mb-jelajah-mascot-travel {
+  0% { transform: translateX(-3px) rotate(-1deg) scale(.98); }
+  50% { transform: translateX(2px) translateY(-2px) rotate(1deg) scale(1.035); }
+  100% { transform: translateX(0) rotate(0) scale(1); }
+}
+
+@keyframes mb-jelajah-mascot-celebrate {
+  0% { transform: translateY(0) scale(1); }
+  35% { transform: translateY(-5px) scale(1.07); }
+  70% { transform: translateY(1px) scale(.99); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes mb-jelajah-firefly {
+  0%, 100% { opacity: .12; transform: translate(0, 0); }
+  26% { opacity: .86; }
+  58% { opacity: .28; transform: translate(18px, -12px); }
+  82% { opacity: .68; transform: translate(7px, -19px); }
+}
+
+@media (min-width: 1280px) and (min-height: 820px) {
+  .mb-pj-world:not(.mb-pj-world-strip) .mb-jelajah-stage:not([data-compact="true"]) {
+    width: min(100%, 1100px);
+  }
+}
+
+@media (min-width: 900px) and (max-height: 800px) {
+  .mb-pj-progress .mb-jelajah-stage[data-compact="true"] {
+    width: min(100%, 690px);
+  }
+  .mb-pj-closed-jelajah .mb-jelajah-stage {
+    width: min(100%, 760px);
+  }
+}
+
+/* Accessibility: dunia boleh tetap terbaca tanpa ambient motion. */
+@media (prefers-reduced-motion: reduce) {
+  .mb-jelajah-star,
+  .mb-jelajah-aurora,
+  .mb-jelajah-water-shine,
+  .mb-jelajah-checkpoint-glow,
+  .mb-jelajah-bridge-shine,
+  .mb-jelajah-finish-landmark > circle,
+  .mb-jelajah-motion-trail > path,
+  .mb-jelajah-dust circle,
+  .mb-jelajah-marker-ring,
+  .mb-jelajah-firefly,
+  .mb-trail-marker [data-pose="move"] img,
+  .mb-trail-marker [data-pose="celebrate"] img {
+    animation: none !important;
+    transition: none !important;
+  }
+}
