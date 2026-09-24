@@ -135,9 +135,14 @@ export function screenToWorld(
   screen: { x: number; y: number },
   camera: RPGCameraState,
 ): RPGVec2 {
+  // Inverse of worldToScreenScaled around the camera. Keep zoom in this
+  // conversion so future click/tap interactions remain spatially correct.
+  const zoom = camera.zoom ?? DEFAULT_ZOOM;
+  const sx = Math.max(1, camera.viewportWidth * zoom);
+  const sy = Math.max(1, camera.viewportHeight * zoom);
   return {
-    x: (screen.x - camera.viewportWidth / 2) / camera.viewportWidth + camera.position.x,
-    y: (screen.y - camera.viewportHeight / 2) / camera.viewportHeight + camera.position.y,
+    x: (screen.x - camera.viewportWidth / 2) / sx + camera.position.x,
+    y: (screen.y - camera.viewportHeight / 2) / sy + camera.position.y,
   };
 }
 
