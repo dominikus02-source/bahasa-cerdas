@@ -185,7 +185,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
               textClassName="text-sm"
               className="hidden md:flex shadow-md"
             />
-            <NotificationBell />
+            <NotificationBell allHref="/guru/notifikasi" />
             <ThemeToggle />
             <ArenaLogoutButton variant="icon" to="/login" />
           </div>
