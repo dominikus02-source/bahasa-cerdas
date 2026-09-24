@@ -94,11 +94,11 @@ export function SetupClient({
 
   /** Alasan CTA mati — disabled harus menjelaskan (§12). */
   const disabledReason = useMemo(() => {
-    if (!selectedKey) return 'Pilih paket soal terlebih dahulu.';
+    if (!selectedKey) return 'Pilih soal dulu.';
     // Sumber tanpa soal yang bisa dimainkan disebut LEBIH DULU daripada
     // "pilih cara bermain": mengganti mode tidak akan menolongnya.
     if (zero) return 'Belum ada soal yang bisa dimainkan dari paket ini. Pilih tema atau paket lain.';
-    if (!mode) return 'Pilih cara bermain terlebih dahulu.';
+    if (!mode) return 'Pilih cara bermain.';
     return null;
   }, [selectedKey, mode, zero]);
 
@@ -221,7 +221,7 @@ export function SetupClient({
         <div className="mb-guru-h">
           <span className="mb-step-badge mb-number" aria-hidden>1</span>
           <span className="mb-guru-h-text" id="mb-pkg-h">Pilih Paket Soal</span>
-          <small>Paket soal milikmu atau tema langsung dari Bank Soal.</small>
+          <small>Pilih soal yang akan dimainkan.</small>
         </div>
 
         {/* Tema Bank Soal hasil "Gunakan untuk Main Bersama" — sudah terpilih,
@@ -261,9 +261,6 @@ export function SetupClient({
           >
             {themeSel ? 'Ganti dari Bank Soal' : 'Pilih dari Bank Soal'}
           </button>
-          <span className="mb-setup-pick-hint">
-            Pilih tema, lalu tekan <strong>Gunakan untuk Main Bersama</strong>.
-          </span>
         </div>
 
         {packages.length === 0 ? (
@@ -272,9 +269,7 @@ export function SetupClient({
               <div className="mb-setup-empty-art" aria-hidden />
               <div className="mb-setup-empty-copy">
                 <p className="mb-setup-empty-title">Belum ada paket soal</p>
-                <p className="mb-setup-empty-sub">
-                  Pakai tema Bank Soal untuk langsung bermain bersama kelas.
-                </p>
+                <p className="mb-setup-empty-sub">Pilih tema untuk mulai bermain.</p>
               </div>
             </div>
           )
