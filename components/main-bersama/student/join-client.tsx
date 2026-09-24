@@ -75,20 +75,6 @@ function JoinFlow() {
     }
   }, [canResume, enterRoom]);
 
-  const submitPin = useCallback(() => {
-    if (!/^\d{6}$/.test(pin)) {
-      setError('PIN harus 6 angka. Periksa lagi, ya.');
-      return;
-    }
-    setError(null);
-    if (isAuthed) {
-      // Nama user login ditentukan server dari profil BC, bukan input bebas.
-      void joinNow();
-      return;
-    }
-    setStep('name');
-  }, [pin, isAuthed, joinNow]);
-
   const joinNow = useCallback(async (displayName?: string) => {
     setStep('joining');
     setError(null);
@@ -105,6 +91,20 @@ function JoinFlow() {
       setStep('pin');
     }
   }, [pin, enterRoom]);
+
+  const submitPin = useCallback(() => {
+    if (!/^\d{6}$/.test(pin)) {
+      setError('PIN harus 6 angka. Periksa lagi, ya.');
+      return;
+    }
+    setError(null);
+    if (isAuthed) {
+      // Nama user login ditentukan server dari profil BC, bukan input bebas.
+      void joinNow();
+      return;
+    }
+    setStep('name');
+  }, [pin, isAuthed, joinNow]);
 
   const submitName = useCallback(async () => {
     await joinNow(name);
