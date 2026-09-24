@@ -21,6 +21,8 @@
 import { useEffect, useRef, useState } from "react";
 import { createEngine, type RPGEngine } from "../core/game-engine";
 import { createKeyboardInputSource } from "../core/keyboard-input";
+import { createTouchInputSource } from "../core/touch-input";
+import { createCompositeInputSource, type RPGInputSource } from "../core/input";
 import {
   createLocalStoragePersistence,
   readServerSnapshotCache,
@@ -53,7 +55,7 @@ interface RPGGameProps {
 
 /** Extended engine type with input source setter. */
 interface RPGEngineWithInput extends RPGEngine {
-  _setInputSource: (source: ReturnType<typeof createKeyboardInputSource>) => void;
+  _setInputSource: (source: RPGInputSource) => void;
 }
 
 export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapId }: RPGGameProps) {
@@ -61,6 +63,8 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
   const engineRef = useRef<RPGEngineWithInput | null>(null);
   const keyboardRef = useRef<ReturnType<typeof createKeyboardInputSource> | null>(null);
   const cleanupRef = useRef<(() => void) | null>(null);
+  const touchJoystickRef = useRef<HTMLDivElement>(null);
+  const touchActionRef = useRef<HTMLButtonElement>(null);
 
   // HUD state — updated periodically, NOT every frame
   const [hudState, setHudState] = useState<{
