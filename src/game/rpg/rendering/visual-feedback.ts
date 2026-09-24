@@ -112,10 +112,12 @@ export function impactBurstParticle(
   const p = Math.max(0, Math.min(1, elapsed / burst.durationMs));
   const count = burst.victory ? 12 : 8;
   const angle = (Math.PI * 2 * particleIndex) / count + Math.sin(particleIndex * 17.13) * 0.12;
-  const distance = (10 + p * (burst.victory ? 44 : 30)) * burst.intensity;
+  // Positions are normalized world coordinates. Keep the burst local to the
+  // entity instead of accidentally treating pixels as world units.
+  const distance = (0.006 + p * (burst.victory ? 0.030 : 0.020)) * burst.intensity;
   const wobble = 1 + Math.sin(particleIndex * 4.7 + p * 5.5) * 0.08;
   const x = burst.x + Math.cos(angle) * distance * wobble;
-  const y = burst.y + Math.sin(angle) * distance * wobble - p * (burst.victory ? 10 : 5);
+  const y = burst.y + Math.sin(angle) * distance * wobble - p * (burst.victory ? 0.008 : 0.004);
   const size = (burst.victory ? 2.2 : 1.8) * burst.intensity * (1 - p * 0.35);
   return {
     x,
