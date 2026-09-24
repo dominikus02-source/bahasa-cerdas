@@ -24,7 +24,6 @@ const PRIMARY = [
   { href: "/arena", label: "Arena", icon: Zap },
   { href: "/main-bersama/join", label: "Main Bersama", icon: Gamepad2 },
   { href: "/murid/karya", label: "Karya", icon: PenLine },
-  { href: "/murid/profile", label: "Profil", icon: User },
 ];
 
 const DRAWER_ITEMS: { href: string; label: string; icon: any }[] = [
@@ -67,32 +66,65 @@ export default function MuridMobileNav({ fullName, role, isFounder, isPremium }:
 
   return (
     <>
-      {/* Bottom Nav */}
-      <nav className="bc-mobile-nav md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/90 backdrop-blur-xl border-t border-gray-100/80 safe-area-bottom dark:bg-slate-900/90 dark:border-slate-800">
-        <div className="flex items-center justify-around py-2">
+      {/* Bottom Nav — 6 kolom presisi. Main Bersama mendapat slot pusat
+          yang tetap, bukan terdorong item lain atau label panjang. */}
+      <nav className="bc-mobile-nav md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-gray-100/80 bg-white/94 backdrop-blur-xl safe-area-bottom dark:bg-slate-900/94 dark:border-slate-800">
+        <div className="grid grid-cols-6 items-end px-1.5 pt-1.5 pb-2">
           {PRIMARY.map(({ href, label, icon: Icon }) => {
             const active = isActive(href);
+            const mainTogether = label === "Main Bersama";
             return (
-              <Link key={href} href={href} className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-colors ${active ? "text-violet-600 dark:text-violet-300" : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"}`}>
-                <Icon size={20} />
-                <span className="text-[10px] font-semibold">{label}</span>
+              <Link
+                key={href}
+                href={href}
+                aria-label={label}
+                className={`relative min-w-0 min-h-[52px] flex flex-col items-center justify-center gap-1 rounded-xl transition-all duration-150 ${mainTogether ? "-mt-3" : ""} ${active ? "text-violet-600 dark:text-violet-300" : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"}`}
+              >
+                <span
+                  className={`grid place-items-center shrink-0 transition-all duration-150 ${mainTogether ? "w-10 h-10 rounded-2xl border shadow-lg " + (active ? "bg-gradient-to-br from-violet-600 to-fuchsia-500 text-white border-white/70 shadow-violet-500/25 dark:border-slate-800" : "bg-white text-violet-600 border-violet-100 shadow-slate-300/45 dark:bg-slate-800 dark:text-violet-300 dark:border-slate-700") : "w-7 h-7"}`}
+                >
+                  <Icon size={mainTogether ? 21 : 20} strokeWidth={mainTogether ? 2.35 : 2} />
+                </span>
+                {mainTogether ? (
+                  <span className="text-[9px] leading-[0.95] font-extrabold text-center tracking-[-0.01em]">
+                    Main<br />Bersama
+                  </span>
+                ) : (
+                  <span className="text-[9.5px] leading-none font-semibold whitespace-nowrap">{label}</span>
+                )}
+                {active && !mainTogether ? (
+                  <span className="absolute bottom-0 w-1 h-1 rounded-full bg-current" aria-hidden />
+                ) : null}
               </Link>
             );
           })}
-          <Link href="/arena/notifikasi" className="relative flex flex-col items-center gap-0.5 py-1 px-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
-            <div className="relative">
+
+          <Link
+            href="/arena/notifikasi"
+            aria-label="Notifikasi"
+            className={`relative min-w-0 min-h-[52px] flex flex-col items-center justify-center gap-1 rounded-xl transition-colors ${isActive("/arena/notifikasi") ? "text-violet-600 dark:text-violet-300" : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"}`}
+          >
+            <div className="relative grid place-items-center w-7 h-7">
               <Bell size={20} />
               {unreadCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow">
+                <span className="absolute -top-1 -right-1 min-w-4 h-4 px-0.5 bg-red-500 text-white text-[8.5px] leading-none font-bold rounded-full flex items-center justify-center shadow ring-2 ring-white dark:ring-slate-900">
                   {unreadCount > 9 ? "9+" : unreadCount}
                 </span>
               )}
             </div>
-            <span className="text-[10px] font-semibold">Notif</span>
+            <span className="text-[9.5px] leading-none font-semibold whitespace-nowrap">Notif</span>
           </Link>
-          <button onClick={() => setMenuOpen(true)} className="flex flex-col items-center gap-0.5 py-1 px-3 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
-            <MenuIcon size={20} />
-            <span className="text-[10px] font-semibold">Menu</span>
+
+          <button
+            type="button"
+            onClick={() => setMenuOpen(true)}
+            aria-label="Buka menu"
+            className="min-w-0 min-h-[52px] flex flex-col items-center justify-center gap-1 rounded-xl text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+          >
+            <span className="grid place-items-center w-7 h-7">
+              <MenuIcon size={20} />
+            </span>
+            <span className="text-[9.5px] leading-none font-semibold whitespace-nowrap">Menu</span>
           </button>
         </div>
       </nav>

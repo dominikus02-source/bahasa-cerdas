@@ -2782,3 +2782,153 @@
     padding-block: 6px;
   }
 }
+
+
+/* ─────────────────────────────────────────────────────────────
+   Kota Cahaya v3 — living city stage.
+   Visual depth is decorative only. Authoritative progress/unlock truth
+   remains in projector/student contracts and useKotaMotion.
+   ───────────────────────────────────────────────────────────── */
+
+.mb-kota-scene {
+  border-radius: 24px;
+  overflow: visible;
+  filter:
+    drop-shadow(0 22px 34px rgba(0, 0, 0, 0.28))
+    saturate(1.04);
+}
+
+.mb-kota-scene[data-mini="true"] {
+  filter:
+    drop-shadow(0 12px 22px rgba(0, 0, 0, 0.22))
+    saturate(1.02);
+}
+
+.mb-kota-cloud {
+  transform-origin: center;
+  animation: mb-kota-cloud-drift 15s ease-in-out infinite alternate;
+}
+
+.mb-kota-reflection {
+  transform-origin: center;
+  animation: mb-kota-reflection 5.8s ease-in-out infinite;
+}
+
+.mb-kota-lamp-glow {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mb-kota-warm-breathe 3.6s ease-in-out infinite;
+}
+
+.mb-kota-reveal-ring-late {
+  animation-delay: 110ms;
+}
+
+.mb-kota-smoke {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mb-kota-smoke-rise 4.8s ease-in-out infinite;
+}
+
+.mb-kota-beacon {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: mb-kota-beacon-sweep 5.2s ease-in-out infinite;
+}
+
+.mb-kota-beacon-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mb-kota-beacon-pulse 2.8s ease-in-out infinite;
+}
+
+.mb-kota-zone[data-lit="true"] .mb-kota-window[data-lit="true"] {
+  filter:
+    drop-shadow(0 0 5px rgba(255, 216, 107, 0.74))
+    drop-shadow(0 0 12px rgba(255, 201, 77, 0.18));
+}
+
+.mb-kota-zone[data-reveal="true"] .mb-kota-window[data-lit="true"] {
+  filter:
+    drop-shadow(0 0 8px rgba(255, 235, 167, 0.92))
+    drop-shadow(0 0 18px rgba(255, 201, 77, 0.42));
+}
+
+.mb-pj-world:not(.mb-pj-world-strip) .mb-kota-scene {
+  width: min(100%, 980px);
+  margin-inline: auto;
+}
+
+.mb-pj-world-strip .mb-kota-scene {
+  width: min(100%, 680px);
+  margin-inline: auto;
+}
+
+@keyframes mb-kota-cloud-drift {
+  from { transform: translateX(-9px); opacity: .58; }
+  to { transform: translateX(16px); opacity: .88; }
+}
+
+@keyframes mb-kota-reflection {
+  0%, 100% { opacity: .11; transform: scaleX(.9); }
+  50% { opacity: .28; transform: scaleX(1.12); }
+}
+
+@keyframes mb-kota-warm-breathe {
+  0%, 100% { opacity: .58; transform: scale(.86); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
+@keyframes mb-kota-smoke-rise {
+  0%, 100% { opacity: .18; transform: translate(0, 5px) scale(.82); }
+  48% { opacity: .36; transform: translate(7px, -7px) scale(1); }
+  80% { opacity: .12; transform: translate(13px, -15px) scale(1.12); }
+}
+
+@keyframes mb-kota-beacon-sweep {
+  0%, 100% { opacity: .06; transform: skewX(-4deg) scaleX(.88); }
+  45% { opacity: .2; transform: skewX(4deg) scaleX(1.08); }
+  60% { opacity: .14; transform: skewX(1deg) scaleX(1); }
+}
+
+@keyframes mb-kota-beacon-pulse {
+  0%, 100% { opacity: .28; transform: scale(.72); }
+  50% { opacity: .78; transform: scale(1.2); }
+}
+
+/* The old fullscreen button used to become faint while fullscreen was
+   active. Keep it fully legible; the persistent top-right exit control
+   provides a second explicit escape path on every phase, including result. */
+:fullscreen .mb-pj-fullscreen,
+:fullscreen .mb-dock-fullscreen {
+  opacity: 1 !important;
+  border-color: rgba(255, 213, 112, .42);
+  box-shadow: 0 0 0 3px rgba(255, 201, 77, .06);
+}
+
+:fullscreen .mb-dock {
+  bottom: max(18px, env(safe-area-inset-bottom));
+}
+
+@media (min-width: 1360px) and (min-height: 760px) {
+  .mb-pj-world:not(.mb-pj-world-strip) .mb-kota-scene {
+    width: min(100%, 1040px);
+  }
+}
+
+@media (max-height: 800px) and (min-width: 900px) {
+  .mb-pj-world:not(.mb-pj-world-strip) .mb-kota-scene {
+    width: min(100%, 760px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mb-kota-cloud,
+  .mb-kota-reflection,
+  .mb-kota-lamp-glow,
+  .mb-kota-smoke,
+  .mb-kota-beacon,
+  .mb-kota-beacon-pulse {
+    animation: none !important;
+  }
+}

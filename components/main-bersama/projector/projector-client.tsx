@@ -30,6 +30,8 @@ import {
   useKotaMotion,
   type KotaMotion,
 } from "@/components/main-bersama/art/kota-motion/useKotaMotion";
+import { useFullscreenControl } from "@/components/main-bersama/shared/useFullscreenControl";
+import { FullscreenExitControl } from "@/components/main-bersama/shared/FullscreenExitControl";
 
 const MODE_LABEL = {
   "jelajah-kata": "Jelajah Kata",
@@ -66,7 +68,7 @@ export function ProjectorClient() {
   const sessionIdParam = search.get("sessionId");
 
   const [lookupError, setLookupError] = useState<string | null>(null);
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const fullscreen = useFullscreenControl({ keyboard: true });
   const resolvedSessionId = useResolvedSessionId(
     pin,
     sessionIdParam,
@@ -149,25 +151,6 @@ export function ProjectorClient() {
       gameMode === "jelajah-kata" ? teamProgress : undefined,
   });
 
-  useEffect(() => {
-    const sync = () => setIsFullscreen(Boolean(document.fullscreenElement));
-    sync();
-    document.addEventListener("fullscreenchange", sync);
-    return () => document.removeEventListener("fullscreenchange", sync);
-  }, []);
-
-  const toggleFullscreen = useCallback(async () => {
-    try {
-      if (document.fullscreenElement) {
-        await document.exitFullscreen();
-      } else {
-        await document.documentElement.requestFullscreen();
-      }
-    } catch {
-      // Browser/embedding bisa menolak fullscreen; layar tetap dapat dipakai.
-    }
-  }, []);
-
   if (lookupError && !view) {
     return (
       <main className="mb-pj-idle mb-fade-in">
@@ -198,6 +181,10 @@ export function ProjectorClient() {
   return (
     <main className="mb-pj">
       <ConnectionBanner visible={connection === "offline"} />
+      <FullscreenExitControl
+        active={fullscreen.isFullscreen}
+        onExit={fullscreen.exit}
+      />
       <div className="mb-pj-utility-controls">
         <SoundToggle
           enabled={gameSound.enabled}
@@ -208,10 +195,10 @@ export function ProjectorClient() {
         <button
           type="button"
           className="mb-pj-fullscreen"
-          onClick={() => void toggleFullscreen()}
-          aria-pressed={isFullscreen}
+          onClick={() => void fullscreen.toggle()}
+          aria-pressed={fullscreen.isFullscreen}
         >
-          {isFullscreen ? "Keluar Fullscreen" : "Layar Penuh"}
+          {fullscreen.isFullscreen ? "Keluar Layar Penuh" : "Layar Penuh"}
         </button>
       </div>
       <header className="mb-pj-head">
