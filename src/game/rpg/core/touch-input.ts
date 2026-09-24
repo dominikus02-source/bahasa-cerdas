@@ -81,6 +81,7 @@ export function createTouchInputSource(
     active = false;
     pointerId = null;
     direction = null;
+    pending.push({ type: "STOP_MOVE", playerId });
     try { elements.joystick.releasePointerCapture?.(e.pointerId); } catch {}
   }
 
