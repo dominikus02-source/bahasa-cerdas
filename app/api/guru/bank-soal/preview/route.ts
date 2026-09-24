@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { isTeacherOrStudent } from "@/lib/teacher/students";
 import { normalizeDifficulty, seededShuffle } from "@/lib/question-bank/seeded-pick";
@@ -11,12 +11,9 @@ import { isMasterBankDeliverable, toDeliverySoal } from "@/lib/question-bank/del
 // /send, sehingga preview == kiriman (randomize sekali, saat preview).
 export async function GET(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || !isTeacherOrStudent(dbUser)) {
+    const dbUser = await getUser();
+    if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!isTeacherOrStudent(dbUser)) {
       return NextResponse.json({ error: "Guru only" }, { status: 403 });
     }
 
