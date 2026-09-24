@@ -147,7 +147,9 @@ export function createCanvasRenderer(
 
   // Presentation-only combat feel. Authoritative battle state remains untouched.
   let visualFeedback: VisualFeedbackState = createVisualFeedbackState();
+  let previousBattleId: string | null = null;
   let previousBattlePlayerHp: number | null = null;
+  let previousBattleResult: string | undefined;
   const previousBattleEnemyHp = new Map<string, number>();
   let floatingDamageSeq = 0;
   let floatingDamages: FloatingDamage[] = [];
@@ -631,6 +633,96 @@ export function createCanvasRenderer(
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText("E", screen.x, promptY);
+  }
+
+  function updateCombatFeedback(
+    state: RPGGameState,
+    camera: RPGCameraState,
+    liveEnemies: readonly LiveEnemy[],
+    nowMs: number,
+  ): void {
+    const battle = state.battle;
+    if (!battle) {
+      previousBattleId = null;
+      previousBattlePlayerHp = null;
+      previousBattleResult = undefined;
+      previousBattleEnemyHp.clear();
+      floatingDamages = floatingDamages.filter((d) => floatingDamageOpacity(d, nowMs) > 0);
+      return;
+    }
+
+    if (previousBattleId !== battle.battleId) {
+      previousBattleId = battle.battleId;
+      previousBattlePlayerHp = battle.player.hp;
+      previousBattleResult = battle.result;
+      previousBattleEnemyHp.clear();
+      for (const enemy of battle.enemies) previousBattleEnemyHp.set(enemy.id, enemy.hp);
+      return;
+    }
+
+    if (previousBattlePlayerHp !== null && battle.player.hp < previousBattlePlayerHp) {
+      const damage = previousBattlePlayerHp - battle.player.hp;
+      const intensity = Math.min(1, damage / Math.max(1, battle.player.maxHp) * 3);
+      visualFeedback = triggerImpact(visualFeedback, nowMs, intensity);
+      floatingDamages.push({
+        id: floatingDamageSeq++, value: damage,
+        x: state.player.position.x, y: state.player.position.y,
+        startedAtMs: nowMs, durationMs: 620, critical: false,
+      });
+    }
+
+    for (const enemy of battle.enemies) {
+      const previousHp = previousBattleEnemyHp.get(enemy.id);
+      if (previousHp !== undefined && enemy.hp < previousHp) {
+        const damage = previousHp - enemy.hp;
+        const intensity = Math.min(1, damage / Math.max(1, enemy.maxHp) * 3);
+        visualFeedback = triggerImpact(visualFeedback, nowMs, intensity);
+        const live = liveEnemies.find((e) => e.instanceId === enemy.id);
+        const pos = live
+          ? { x: (live.tile.x + 0.5) / state.world.tiles.width, y: (live.tile.y + 0.5) / state.world.tiles.height }
+          : state.player.position;
+        floatingDamages.push({
+          id: floatingDamageSeq++, value: damage,
+          x: pos.x, y: pos.y,
+          startedAtMs: nowMs, durationMs: 620, critical: damage >= enemy.maxHp * 0.25,
+        });
+      }
+      previousBattleEnemyHp.set(enemy.id, enemy.hp);
+    }
+
+    if (battle.result === "WIN" && previousBattleResult !== "WIN") {
+      visualFeedback = triggerVictory(visualFeedback, nowMs);
+    }
+
+    previousBattlePlayerHp = battle.player.hp;
+    previousBattleResult = battle.result;
+    floatingDamages = floatingDamages.filter((d) => floatingDamageOpacity(d, nowMs) > 0);
+  }
+
+  function renderFloatingDamage(
+    camera: RPGCameraState,
+    state: RPGGameState,
+    nowMs: number,
+  ): void {
+    for (const damage of floatingDamages) {
+      const opacity = floatingDamageOpacity(damage, nowMs);
+      if (opacity <= 0) continue;
+      const screen = worldToScreenScaled(
+        { x: damage.x, y: damage.y }, camera,
+        state.world.tiles.width, state.world.tiles.height,
+      );
+      const y = screen.y + floatingDamageOffset(damage, nowMs);
+      ctx.save();
+      ctx.globalAlpha = opacity;
+      ctx.textAlign = "center";
+      ctx.font = damage.critical ? "900 18px sans-serif" : "800 15px sans-serif";
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "rgba(15, 23, 42, 0.9)";
+      ctx.strokeText(`-${damage.value}`, screen.x, y);
+      ctx.fillStyle = damage.critical ? "#fbbf24" : "#fff7ed";
+      ctx.fillText(`-${damage.value}`, screen.x, y);
+      ctx.restore();
+    }
   }
 
   /** Main render function — called by game loop. */
