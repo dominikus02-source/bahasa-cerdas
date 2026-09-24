@@ -56,7 +56,7 @@ export function TeacherRoomClient({
 
   const fetchView = useCallback(
     () => fetchTeacherState(sessionId).then((r) => r.view),
-    [sessionId, refresh],
+    [sessionId],
   );
   const { view, connection, refresh } = useSessionView<TeacherSessionView>(
     sessionId,
@@ -79,7 +79,7 @@ export function TeacherRoomClient({
         setBusy(false);
       }
     },
-    [sessionId],
+    [sessionId, refresh],
   );
 
   if (!view) {
