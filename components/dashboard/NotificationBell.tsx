@@ -155,16 +155,16 @@ export function NotificationBell({
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = useCallback(async (id: string) => {
     await fetch(`/api/notifikasi?id=${id}`, { method: "DELETE" });
     setNotifications((prev) => prev.filter((n) => n.id !== id));
-  };
+  }, []);
 
-  const handleDeleteAll = async () => {
+  const handleDeleteAll = useCallback(async () => {
     await fetch("/api/notifikasi?all=true", { method: "DELETE" });
     setNotifications([]);
     setUnreadCount(0);
-  };
+  }, []);
 
   const panel = useMemo(() => {
     if (!open || !panelPosition || typeof document === "undefined") return null;
@@ -234,7 +234,7 @@ export function NotificationBell({
       </div>,
       document.body,
     );
-  }, [allHref, loading, notifications, open, panelPosition]);
+  }, [allHref, handleDelete, handleDeleteAll, loading, notifications, open, panelPosition]);
 
   return (
     <>
