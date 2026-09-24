@@ -110,6 +110,9 @@ export function TeacherRoomClient({
   }, [view, busy, run]);
 
   const enterClassroom = useCallback(async () => {
+    // Panggil audio activation dalam gesture klik yang sama; context shared
+    // bertahan saat client navigation ke Layar Kelas.
+    void teacherSound.activate();
     try {
       if (!document.fullscreenElement) {
         await document.documentElement.requestFullscreen();
@@ -118,7 +121,15 @@ export function TeacherRoomClient({
       // Fullscreen API bisa ditolak browser; navigasi tetap jalan.
     }
     router.push(`/guru/game/main-bersama/kelas/${sessionId}`);
-  }, [router, sessionId]);
+  }, [router, sessionId, teacherSound.activate]);
+
+  const openProjector = useCallback(() => {
+    window.open(
+      `/main-bersama/layar?sessionId=${sessionId}`,
+      '_blank',
+      'noopener',
+    );
+  }, [sessionId]);
 
   if (!view) {
     return (
@@ -155,9 +166,19 @@ export function TeacherRoomClient({
           <>
             <SoundToggle
               enabled={teacherSound.enabled}
+              unlocked={teacherSound.unlocked}
               onToggle={() => void teacherSound.toggle()}
-              compact
+              compact={teacherSound.unlocked}
             />
+            <button
+              type="button"
+              className="mb-secondary-btn"
+              onClick={openProjector}
+              disabled={busy}
+              title="Buka tampilan proyektor di tab/jendela kedua"
+            >
+              Layar Kedua
+            </button>
             {a.canPause ? (
               <button type="button" className="mb-secondary-btn" onClick={() => run('pause')} disabled={busy}>
                 Jeda
@@ -254,7 +275,7 @@ export function TeacherRoomClient({
             <button
               type="button"
               className="mb-linklike-dark"
-              onClick={() => window.open(`/main-bersama/layar?sessionId=${sessionId}`, '_blank', 'noopener')}
+              onClick={openProjector}
             >
               Buka di Layar Kedua
             </button>
