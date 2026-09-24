@@ -345,9 +345,12 @@
   color: #ffffff;
 }
 .mb-answer-text {
+  min-width: 0;
   font-family: var(--mb-font-reading);
   font-size: 1.05rem;
   line-height: 1.45;
+  overflow-wrap: anywhere;
+  word-break: normal;
 }
 .mb-answer-check {
   margin-left: auto;
@@ -714,6 +717,27 @@
 }
 .mb-pj-q {
   width: min(100%, 720px);
+  min-width: 0;
+  min-height: 0;
+}
+/* Soal produksi bisa panjang (300+ karakter). Tetap tampil utuh tanpa
+   menabrak progress/dock: teks mengecil terbatas dan kartu menjadi
+   scroll-container hanya bila benar-benar melebihi ruang layar. */
+.mb-pj-q .mb-qcard {
+  max-height: min(44dvh, 360px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+.mb-pj-q .mb-qcard .mb-qcard-prompt {
+  font-size: clamp(1rem, 1.45vw, 1.3rem);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.mb-pj-q .mb-qcard .mb-qcard-passage {
+  max-height: 20dvh;
+  font-size: clamp(0.95rem, 1.1vw, 1.05rem);
+  line-height: 1.6;
 }
 .mb-pj-participation {
   display: flex;
@@ -1199,6 +1223,18 @@
    Di-scope ke viewport LEBAR + PENDEK saja, sehingga 1920×1080 dan
    surface siswa 390×844 (tinggi 844 > 800) tidak terpengaruh. */
 @media (min-width: 900px) and (max-height: 800px) {
+  .mb-pj-q .mb-qcard {
+    max-height: 300px;
+  }
+  .mb-pj-q .mb-qcard .mb-qcard-prompt {
+    font-size: 1.05rem;
+    line-height: 1.35;
+  }
+  .mb-pj-q .mb-qcard .mb-qcard-passage {
+    max-height: 150px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
   .mb-pj-head {
     padding: var(--mb-space-3) var(--mb-space-6) 0;
     gap: var(--mb-space-1);

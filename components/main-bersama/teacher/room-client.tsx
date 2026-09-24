@@ -58,7 +58,11 @@ export function TeacherRoomClient({
     () => fetchTeacherState(sessionId).then((r) => r.view),
     [sessionId],
   );
-  const { view, connection } = useSessionView<TeacherSessionView>(sessionId, fetchView);
+  const { view, connection, refresh } = useSessionView<TeacherSessionView>(
+    sessionId,
+    fetchView,
+    { pollIntervalMs: 1_200, debounceMs: 120 },
+  );
 
   const run = useCallback(
     async (action: Command) => {
@@ -66,14 +70,16 @@ export function TeacherRoomClient({
       setError(null);
       try {
         await postTeacherCommand({ action, sessionId });
-        // POST sukses → GET authoritative (bukan memutasi state lokal).
+        // Command sukses harus langsung terlihat di layar pengendali.
+        // Jangan menunggu Broadcast/poll untuk mengubah CTA/fase.
+        await refresh();
       } catch (e) {
         setError(e instanceof MbApiError ? e.message : 'Aksi gagal. Coba lagi.');
       } finally {
         setBusy(false);
       }
     },
-    [sessionId],
+    [sessionId, refresh],
   );
 
   if (!view) {
@@ -373,21 +379,32 @@ function RoundTimer({ closesAt, serverTime }: { closesAt: string | null; serverT
 }
 
 function _RoundTimer({ closesAt, serverTime }: { closesAt: string; serverTime: string }) {
-  // Offset = serverTime − clientNow saat mount; sisa waktu dihitung
-  // dari deadline + offset (jam client TIDAK jadi sumber kebenaran).
-  const [offsetMs] = useState(() => Date.parse(serverTime) - Date.now());
+  // Jangan memasukkan network latency sebagai "clock skew". Pada perangkat
+  // dengan jam normal, gunakan deadline absolut langsung. Hanya bila jam
+  // client benar-benar melenceng jauh (>10 detik), pakai offset server.
+  const [clockOffsetMs, setClockOffsetMs] = useState(0);
   const [remaining, setRemaining] = useState(() =>
-    Math.max(0, Date.parse(closesAt) - (Date.now() + offsetMs)),
+    Math.max(0, Date.parse(closesAt) - Date.now()),
   );
 
   useEffect(() => {
-    const id = setInterval(() => {
-      setRemaining(Math.max(0, Date.parse(closesAt) - (Date.now() + offsetMs)));
-    }, 1000);
-    return () => clearInterval(id);
-  }, [closesAt, offsetMs]);
+    const observedOffset = Date.parse(serverTime) - Date.now();
+    setClockOffsetMs(Math.abs(observedOffset) > 10_000 ? observedOffset : 0);
+  }, [serverTime]);
 
-  const totalSec = Math.floor(remaining / 1000);
+  useEffect(() => {
+    const tick = () => {
+      setRemaining(
+        Math.max(0, Date.parse(closesAt) - (Date.now() + clockOffsetMs)),
+      );
+    };
+    tick();
+    // 250 ms menjaga perubahan detik terasa tepat tanpa membuat render loop berat.
+    const id = setInterval(tick, 250);
+    return () => clearInterval(id);
+  }, [closesAt, clockOffsetMs]);
+
+  const totalSec = Math.ceil(remaining / 1000);
   const mm = String(Math.floor(totalSec / 60)).padStart(2, '0');
   const ss = String(totalSec % 60).padStart(2, '0');
   const urgent = totalSec <= 30;

@@ -40,6 +40,9 @@ export async function GET(req: NextRequest) {
   );
   if (!owned) return errorResponse('SESSION_NOT_FOUND');
 
+  // GET state adalah boundary authoritative untuk UI realtime.
+  // Resolver process-local bisa basi terhadap join/jawaban dari instance lain.
+  deps.resolver.discard?.(sessionId as never);
   const loaded = await loadEngineWithGameState(deps, sessionId as never);
   if (!loaded) return errorResponse('SESSION_NOT_FOUND');
 

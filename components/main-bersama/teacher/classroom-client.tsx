@@ -54,7 +54,11 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
   const [error, setError] = useState<string | null>(null);
 
   const fetchView = useCallback(() => fetchProjectorState({ sessionId }), [sessionId]);
-  const { view, connection } = useSessionView<ProjectorSessionView>(sessionId, fetchView);
+  const { view, connection, refresh } = useSessionView<ProjectorSessionView>(
+    sessionId,
+    fetchView,
+    { pollIntervalMs: 1_200, debounceMs: 120 },
+  );
 
   const run = useCallback(
     async (action: DockCommand) => {
@@ -62,13 +66,16 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
       setError(null);
       try {
         await postTeacherCommand({ action, sessionId });
+        // Satu layar adalah surface kontrol utama; setelah command sukses,
+        // tarik state authoritative segera agar dock tidak terasa tertinggal.
+        await refresh();
       } catch (e) {
         setError(e instanceof MbApiError ? e.message : 'Aksi gagal. Coba lagi.');
       } finally {
         setBusy(false);
       }
     },
-    [sessionId],
+    [sessionId, refresh],
   );
 
   if (!view) {

@@ -86,6 +86,8 @@ export function ProjectorClient() {
     {
       onError: () =>
         setLookupError("Ruang tidak ditemukan. Periksa PIN di URL layar."),
+      pollIntervalMs: 1_200,
+      debounceMs: 120,
     },
   );
 

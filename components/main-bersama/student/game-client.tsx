@@ -86,7 +86,7 @@ export function StudentGameClient({ sessionId }: { sessionId: string }) {
   const { view, connection } = useSessionView<StudentSessionView>(
     sessionId,
     fetchView,
-    { onError },
+    { onError, pollIntervalMs: 5_000, debounceMs: 120 },
   );
 
   if (exitError) {
