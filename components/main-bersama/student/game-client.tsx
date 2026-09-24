@@ -150,7 +150,7 @@ export function StudentGameClient({ sessionId }: { sessionId: string }) {
           mode={view.gameMode}
           packageName={view.contentTitle}
           roundLabel={
-            view.phase === 'question' || isReveal(view)
+            isReveal(view)
               ? `${view.roundIndex + 1} dari ${view.totalRounds}`
               : null
           }
