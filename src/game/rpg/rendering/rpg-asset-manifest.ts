@@ -915,9 +915,9 @@ const VISUAL_ATLAS_ENTRIES: RpgAssetEntry[] = [
   id, category, source: "asset-sheet-reference-extraction", path: VISUAL_RUNTIME_ATLAS,
   width: 640, height: 640, frames: 1, animationState: null, direction: null,
   origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
-  status: "READY" as const, confidence: "reviewed" as const,
+  status: "NEEDS_REVIEW" as const, confidence: "reviewed" as const,
   sourceRect: { x, y, width, height },
-  note: "P2.11: standalone runtime crop extracted from the canonical RPG visual asset sheet; atlas cell visually reviewed.",
+  note: "P2.11: crop coordinates reviewed against the visual reference; binary runtime atlas is pending and must be verified before promotion to READY.",
 })) as RpgAssetEntry[];
 
 export const RPG_ASSET_MANIFEST: RpgAssetEntry[] = [
