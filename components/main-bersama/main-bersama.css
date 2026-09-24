@@ -218,7 +218,11 @@
   cursor: pointer;
   transition:
     border-color var(--mb-motion-fast),
-    color var(--mb-motion-fast);
+    color var(--mb-motion-fast),
+    transform var(--mb-motion-fast);
+}
+.mb-secondary-btn:active:not(:disabled) {
+  transform: scale(0.98);
 }
 .mb-secondary-btn:hover:not(:disabled) {
   border-color: var(--mb-primary-strong);
@@ -243,7 +247,12 @@
   color: var(--mb-text-primary);
   font-weight: 700;
   cursor: pointer;
-  transition: border-color var(--mb-motion-fast);
+  transition:
+    border-color var(--mb-motion-fast),
+    transform var(--mb-motion-fast);
+}
+.mb-btn-ghost-light:active {
+  transform: scale(0.98);
 }
 .mb-btn-ghost-light:hover {
   border-color: var(--mb-primary);
@@ -865,6 +874,13 @@
   .mb-entrance {
     animation: mb-entrance var(--mb-motion-med) both;
   }
+  .mb-pj-ranking .mb-pj-rank-row {
+    animation: mb-entrance var(--mb-motion-med) both;
+  }
+  .mb-pj-ranking .mb-pj-rank-row:nth-child(1) { animation-delay: 0ms; }
+  .mb-pj-ranking .mb-pj-rank-row:nth-child(2) { animation-delay: 70ms; }
+  .mb-pj-ranking .mb-pj-rank-row:nth-child(3) { animation-delay: 140ms; }
+  .mb-pj-ranking .mb-pj-rank-row:nth-child(4) { animation-delay: 210ms; }
   @keyframes mb-fade-in {
     from {
       opacity: 0;
@@ -897,7 +913,8 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .mb-fade-in,
-  .mb-entrance {
+  .mb-entrance,
+  .mb-pj-ranking .mb-pj-rank-row {
     animation: none;
   }
   .mb-progress-transition {
