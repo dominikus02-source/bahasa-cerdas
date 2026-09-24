@@ -40,5 +40,10 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: RPG visual regression gates
+        run: |
+          npm run test:rpg-visual-feedback
+          npm run test:rpg-entity-asset-pipeline
+
       - name: Build
         run: npm run build
