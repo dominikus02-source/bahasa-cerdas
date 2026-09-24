@@ -399,7 +399,9 @@
     "test:rpg-learning-evaluation": "npx tsx scripts/test-rpg-learning-evaluation.ts",
     "test:bc-agent-p7-worker": "npx tsx scripts/test-bc-agent-p7-worker.ts",
     "test:live-pulse": "npx tsx scripts/test-live-pulse.ts",
-    "test:rpg-p2-6h5-network-resilience": "npx tsx scripts/test-rpg-p2-6h5-network-resilience.ts"
+    "test:rpg-p2-6h5-network-resilience": "npx tsx scripts/test-rpg-p2-6h5-network-resilience.ts",
+    "test:rpg-visual-feedback": "npx tsx scripts/test-visual-feedback.ts",
+    "test:rpg-entity-asset-pipeline": "npx tsx scripts/test-entity-asset-pipeline.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
