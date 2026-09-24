@@ -379,7 +379,11 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
 
       {/* ── Teacher control dock (8B.1): kecil, di bawah, public-safe ── */}
       <nav className="mb-dock" aria-label="Kontrol Layar Kelas">
-        {primary ? (
+        {phase === 'preparing' ? (
+          <button type="button" className="mb-dock-primary" disabled>
+            Menyiapkan lobby…
+          </button>
+        ) : primary ? (
           <button
             type="button"
             className="mb-dock-primary"
