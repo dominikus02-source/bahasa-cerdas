@@ -750,8 +750,11 @@ export function createCanvasRenderer(
     }
     for (const enemy of liveEnemies) preloadRuntimeAsset(enemy.def.asset);
 
-    // Clear canvas
+    // Clear canvas before applying presentation shake.
     ctx.clearRect(0, 0, width, height);
+    const shake = shakeOffset(visualFeedback, nowMs);
+    ctx.save();
+    ctx.translate(shake.x, shake.y);
 
     // Background
     ctx.fillStyle = COLORS.grassDark;
