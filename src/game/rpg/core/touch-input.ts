@@ -21,6 +21,8 @@ export type RPGTouchInputSource = RPGInputSource & { attach(): void; detach(): v
 interface TouchInputElements {
   joystick: HTMLElement;
   action: HTMLElement;
+  /** Optional presentation hook for a native-feeling virtual stick thumb. */
+  thumb?: HTMLElement;
 }
 
 export function createTouchInputSource(
@@ -32,11 +34,37 @@ export function createTouchInputSource(
   let direction: RPGFacing | null = null;
   let centerX = 0;
   let centerY = 0;
+  let visualX = 0;
+  let visualY = 0;
 
   const radius = 42;
   const deadZone = 12;
 
+  function updateThumb(x: number, y: number): void {
+    const dx = x - centerX;
+    const dy = y - centerY;
+    const distance = Math.hypot(dx, dy);
+    const limited = Math.min(radius, distance);
+    const scale = distance > 0 ? limited / distance : 0;
+    visualX = dx * scale;
+    visualY = dy * scale;
+    if (elements.thumb) {
+      elements.thumb.style.transform = `translate(calc(-50% + ${visualX}px), calc(-50% + ${visualY}px))`;
+      elements.thumb.style.opacity = active ? "1" : "0.78";
+    }
+  }
+
+  function resetThumb(): void {
+    visualX = 0;
+    visualY = 0;
+    if (elements.thumb) {
+      elements.thumb.style.transform = "translate(-50%, -50%)";
+      elements.thumb.style.opacity = "0.78";
+    }
+  }
+
   function emitDirection(x: number, y: number): void {
+    updateThumb(x, y);
     const dx = x - centerX;
     const dy = y - centerY;
     if (Math.hypot(dx, dy) < deadZone) {
@@ -83,6 +111,7 @@ export function createTouchInputSource(
     active = false;
     pointerId = null;
     direction = null;
+    resetThumb();
     pending.push({ type: "STOP_MOVE", playerId });
     try { elements.joystick.releasePointerCapture?.(e.pointerId); } catch {}
   }
@@ -112,6 +141,7 @@ export function createTouchInputSource(
     active = false;
     pointerId = null;
     direction = null;
+    resetThumb();
     pending.length = 0;
   }
 
