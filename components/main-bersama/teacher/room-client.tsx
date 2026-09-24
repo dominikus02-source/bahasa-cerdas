@@ -189,7 +189,7 @@ export function TeacherRoomClient({
                 Lanjutkan
               </button>
             ) : null}
-            {a.canEndSession ? (
+            {a.canEndSession && view.phase !== 'summary' ? (
               <button type="button" className="mb-secondary-btn mb-danger-btn" onClick={() => run('end')} disabled={busy}>
                 Akhiri
               </button>
@@ -435,10 +435,20 @@ export function TeacherRoomClient({
         </section>
       ) : null}
 
-      {/* ── SUMMARY (§28 teacher) ── */}
+      {/* ── SUMMARY / CLOSED SESSION (§28 teacher) ── */}
       {view.phase === 'summary' || view.phase === 'ended' ? (
         <section className="mb-tsummary mb-fade-in">
-          <h2 className="mb-display mb-guru-phase-title">Hasil Permainan</h2>
+          <span className="mb-eyebrow">
+            {view.phase === 'ended' ? 'Sesi sudah ditutup' : 'Permainan selesai'}
+          </span>
+          <h2 className="mb-display mb-guru-phase-title">
+            {view.phase === 'ended' ? 'Sesi ditutup' : 'Hasil Permainan'}
+          </h2>
+          <p className="mb-closed-sub">
+            {view.phase === 'ended'
+              ? 'Semua perangkat siswa sudah menerima status penutup.'
+              : 'Tinjau hasil akhir, lalu tutup sesi agar perangkat siswa mendapat penutup yang jelas.'}
+          </p>
           {view.gameState?.gameMode === 'jelajah-kata' ? (
             <TeamProgress teams={view.teams} progress={view.gameState.jelajahKata.teamProgress} />
           ) : view.gameState?.gameMode === 'kota-cahaya' ? (
@@ -449,9 +459,15 @@ export function TeacherRoomClient({
           ) : null}
           <ParticipantList participants={view.participants} />
           <div className="mb-room-cta">
-            <PrimaryGameButton onClick={() => router.push('/guru/game/main-bersama')} disabled={busy} variant="light">
-              Selesai
-            </PrimaryGameButton>
+            {view.phase === 'summary' ? (
+              <PrimaryGameButton onClick={() => run('end')} disabled={busy} loading={busy} variant="light">
+                Tutup Sesi
+              </PrimaryGameButton>
+            ) : (
+              <PrimaryGameButton onClick={() => router.push('/guru/game/main-bersama')} disabled={busy} variant="light">
+                Kembali ke Main Bersama
+              </PrimaryGameButton>
+            )}
           </div>
         </section>
       ) : null}

@@ -14,7 +14,12 @@ import {
   fetchStudentState,
   joinSession,
 } from '@/lib/main-bersama/api-client';
-import { loadLastCredential, saveCredential, saveLastSessionId } from '@/lib/main-bersama/credential-store';
+import {
+  clearCredential,
+  loadLastCredential,
+  saveCredential,
+  saveLastSessionId,
+} from '@/lib/main-bersama/credential-store';
 import { PrimaryGameButton } from '@/components/main-bersama/shared/PrimaryGameButton';
 import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBanner';
 import { StudentBackButton } from '@/components/main-bersama/shared/StudentBackButton';
@@ -66,7 +71,13 @@ function JoinFlow() {
     setError(null);
     try {
       // GET authoritative dengan credential tersimpan (header).
-      await fetchStudentState(canResume.sessionId);
+      const resumed = await fetchStudentState(canResume.sessionId);
+      if (resumed.phase === 'ended') {
+        clearCredential(canResume.sessionId);
+        setCanResume(null);
+        setResuming(false);
+        return;
+      }
       enterRoom(canResume.sessionId);
     } catch {
       // Credential kedaluwarsa/salah → lanjut join normal.
@@ -121,9 +132,11 @@ function JoinFlow() {
           <StudentBackButton phase="idle" />
         </div>
       ) : null}
-      <span className="mb-eyebrow">Kuis kelas langsung</span>
+      <span className="mb-eyebrow mb-join-eyebrow">Masuk arena kelas</span>
       <h1 className="mb-display mb-join-title">Main Bersama</h1>
-      <p className="mb-join-tagline">Masuk ke ruang permainan kelasmu.</p>
+      <p className="mb-join-tagline">
+        Masukkan PIN dari Pak/Bu Guru dan siap bermain bareng sekelas.
+      </p>
 
       {canResume ? (
         <button type="button" className="mb-resume" onClick={tryResume} disabled={resuming}>
@@ -195,112 +208,205 @@ function JoinFlow() {
         .mb-join {
           position: relative;
           flex: 1;
+          min-height: 100dvh;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          gap: var(--mb-space-4);
-          padding: var(--mb-space-6) var(--mb-space-5);
+          gap: 14px;
+          padding: 34px 18px;
           overflow: hidden;
+          background:
+            radial-gradient(500px 320px at 90% 4%, rgba(20,184,166,.2), transparent 70%),
+            radial-gradient(440px 320px at 5% 94%, rgba(139,124,246,.17), transparent 72%),
+            linear-gradient(160deg, #071a2d, #071522 58%, #091929);
+        }
+        .mb-join::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          opacity: .16;
+          background-image:
+            linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+          background-size: 34px 34px;
+          mask-image: linear-gradient(to bottom, #000, transparent 85%);
         }
         .mb-join-back {
           position: absolute;
-          top: var(--mb-space-4);
-          left: var(--mb-space-4);
-          z-index: 2;
+          top: 16px;
+          left: 16px;
+          z-index: 4;
         }
-        /* Blob dekoratif — sangat lembut, bukan partikel. */
         .mb-join-blob {
           position: absolute;
           border-radius: 50%;
-          filter: blur(60px);
+          filter: blur(70px);
           pointer-events: none;
         }
         .mb-join-blob-a {
           width: 320px;
           height: 320px;
-          top: -120px;
+          top: -150px;
           right: -100px;
-          background: rgba(20, 184, 166, 0.22);
+          background: rgba(20,184,166,.2);
         }
         .mb-join-blob-b {
-          width: 280px;
-          height: 280px;
-          bottom: -120px;
-          left: -90px;
-          background: rgba(139, 124, 246, 0.16);
+          width: 300px;
+          height: 300px;
+          bottom: -150px;
+          left: -110px;
+          background: rgba(139,124,246,.14);
         }
-        .mb-join-title { font-size: 2.4rem; margin: 0; text-align: center; }
-        .mb-join-tagline { margin: 0; color: var(--mb-text-secondary); text-align: center; }
+        .mb-join-eyebrow {
+          position: relative;
+          z-index: 1;
+          color: #72e3d8;
+        }
+        .mb-join-title {
+          position: relative;
+          z-index: 1;
+          margin: 0;
+          color: #fff !important;
+          font-size: clamp(2.65rem, 11vw, 4.3rem);
+          line-height: .94;
+          letter-spacing: .03em;
+          text-align: center;
+          text-transform: uppercase;
+          text-shadow: 0 12px 30px rgba(0,0,0,.28);
+        }
+        .mb-join-tagline {
+          position: relative;
+          z-index: 1;
+          max-width: 34ch;
+          margin: 0 0 4px;
+          color: #9eb4c5;
+          line-height: 1.5;
+          text-align: center;
+        }
         .mb-join-form {
+          position: relative;
+          z-index: 2;
           display: flex;
           flex-direction: column;
-          align-items: center;
-          gap: var(--mb-space-4);
-          width: min(100%, 360px);
+          align-items: stretch;
+          gap: 14px;
+          width: min(100%, 390px);
+          padding: 22px;
+          border-radius: 26px;
+          border: 1px solid rgba(255,255,255,.1);
+          background:
+            linear-gradient(160deg, rgba(18,44,64,.9), rgba(9,28,43,.94));
+          box-shadow: 0 26px 60px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.04);
+          backdrop-filter: blur(12px);
         }
-        .mb-join-label { color: var(--mb-text-secondary); font-weight: 700; }
+        .mb-join-label {
+          margin: 0;
+          color: #b4c6d4;
+          font-weight: 760;
+          text-align: center;
+        }
         .mb-join-pinchip {
           display: inline-block;
-          padding: 2px 12px;
+          padding: 3px 12px;
           margin-left: 6px;
-          border-radius: var(--mb-radius-pill);
-          background: rgba(255, 255, 255, 0.1);
-          letter-spacing: 0.18em;
-          color: var(--mb-text-primary);
+          border-radius: 999px;
+          background: rgba(255,255,255,.08);
+          border: 1px solid rgba(255,255,255,.1);
+          letter-spacing: .18em;
+          color: #fff;
         }
         .mb-pin-input {
           width: 100%;
+          min-height: 76px;
           text-align: center;
-          font-size: 2.6rem;
-          letter-spacing: 0.3em;
-          padding: var(--mb-space-3);
-          border-radius: var(--mb-radius-md);
-          border: 2px solid rgba(255, 255, 255, 0.18);
-          background: var(--mb-surface);
-          color: var(--mb-text-primary);
-          transition: border-color var(--mb-motion-fast), box-shadow var(--mb-motion-fast);
+          font-size: clamp(2rem, 10vw, 2.7rem);
+          letter-spacing: .28em;
+          padding: 10px 8px 10px 20px;
+          border-radius: 19px;
+          border: 2px solid rgba(255,255,255,.13);
+          background: rgba(4,18,31,.7);
+          color: #fff;
+          box-shadow: inset 0 1px 0 rgba(255,255,255,.035);
+          transition: border-color var(--mb-motion-fast), box-shadow var(--mb-motion-fast), transform var(--mb-motion-fast);
         }
         .mb-pin-input:focus {
-          border-color: var(--mb-primary);
+          border-color: #55dbcf;
           outline: none;
-          box-shadow: var(--mb-shadow-glow);
+          box-shadow: 0 0 0 4px rgba(85,219,207,.1), 0 12px 28px rgba(0,0,0,.14);
+          transform: translateY(-1px);
         }
         .mb-name-input {
           width: 100%;
-          font-size: 1.25rem;
-          padding: var(--mb-space-3) var(--mb-space-4);
-          border-radius: var(--mb-radius-md);
-          border: 2px solid rgba(255, 255, 255, 0.18);
-          background: var(--mb-surface);
-          color: var(--mb-text-primary);
-          transition: border-color var(--mb-motion-fast);
+          min-height: 58px;
+          font-size: 1.1rem;
+          padding: 12px 15px;
+          border-radius: 17px;
+          border: 2px solid rgba(255,255,255,.13);
+          background: rgba(4,18,31,.7);
+          color: #fff;
+          transition: border-color var(--mb-motion-fast), box-shadow var(--mb-motion-fast);
         }
-        .mb-name-input:focus { border-color: var(--mb-primary); outline: none; }
-        .mb-join-err { color: var(--mb-danger); font-weight: 600; margin: 0; }
+        .mb-name-input::placeholder,
+        .mb-pin-input::placeholder { color: rgba(205,220,231,.34); }
+        .mb-name-input:focus {
+          border-color: #55dbcf;
+          outline: none;
+          box-shadow: 0 0 0 4px rgba(85,219,207,.09);
+        }
+        .mb-join-form :global(.mb-primary-game-btn) {
+          width: 100%;
+          min-height: 54px;
+          margin-top: 2px;
+          box-shadow: 0 12px 26px rgba(20,184,166,.18);
+        }
+        .mb-join-err {
+          margin: -2px 0 0;
+          color: #ffb8b8;
+          font-weight: 650;
+          text-align: center;
+        }
         .mb-linklike {
+          align-self: center;
           background: none;
           border: none;
-          color: var(--mb-text-secondary);
+          color: #91a9bb;
           text-decoration: underline;
+          text-underline-offset: 3px;
           cursor: pointer;
-          font-size: 0.9rem;
-          padding: 6px;
+          font-size: .86rem;
+          padding: 5px;
         }
         .mb-resume {
+          position: relative;
+          z-index: 2;
+          width: min(100%, 390px);
           display: flex;
           flex-direction: column;
-          gap: 2px;
+          gap: 3px;
           align-items: center;
-          padding: var(--mb-space-3) var(--mb-space-5);
-          border-radius: var(--mb-radius-lg);
-          background: var(--mb-accent-soft);
-          border: 2px solid var(--mb-accent);
-          color: var(--mb-text-primary);
+          padding: 12px 18px;
+          border-radius: 18px;
+          background: rgba(112, 88, 31, .18);
+          border: 1px solid rgba(255, 207, 84, .28);
+          color: #ffe7a2;
+          box-shadow: 0 10px 24px rgba(0,0,0,.12);
           cursor: pointer;
         }
-        .mb-resume:disabled { opacity: 0.6; cursor: wait; }
-        .mb-resume small { color: var(--mb-text-secondary); }
+        .mb-resume:hover:not(:disabled) {
+          background: rgba(112,88,31,.26);
+          border-color: rgba(255,207,84,.42);
+        }
+        .mb-resume:disabled { opacity: .6; cursor: wait; }
+        .mb-resume small { color: #aebdca; }
+        @media (max-width: 430px) {
+          .mb-join {
+            justify-content: flex-start;
+            padding-top: 82px;
+          }
+          .mb-join-form { padding: 20px 16px; border-radius: 23px; }
+        }
       `}</style>
     </main>
   );

@@ -221,11 +221,17 @@ export function buildStudentView(
   }
   const own = engine.state.answersByRound.get(round.id)?.get(playerId);
   const teamProgress = session.gameMode === 'jelajah-kata' ? jelajahTeamProgress(jelajah) : undefined;
+  const revealTeam = player.teamId
+    ? JELAJAH_DEFAULT_TEAMS[player.teamId as keyof typeof JELAJAH_DEFAULT_TEAMS]
+    : undefined;
   return {
     ok: true,
     view: {
       ...base,
       phase: phase as 'discussion' | 'summary' | 'ended',
+      ...(revealTeam
+        ? { team: { id: revealTeam.id, name: revealTeam.name, symbol: revealTeam.symbol } }
+        : {}),
       roundIndex: round.index,
       totalRounds: session.totalRounds,
       revealedRound: {
@@ -238,6 +244,12 @@ export function buildStudentView(
       ownAnswerIsCorrect: own?.isCorrect ?? false,
       gameProgress: {
         teamProgress: teamProgress ?? {},
+        ...(session.gameMode === 'kota-cahaya' && kota
+          ? {
+              kotaProgressPercent: kota.progressPercent,
+              kotaUnlockedMilestones: [...kota.unlockedMilestones],
+            }
+          : {}),
       },
     },
   };

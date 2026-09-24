@@ -44,14 +44,16 @@ const TEAM_COLOR_VAR: Record<string, string> = {
 // langsung (phase-nya union 4 nilai) — predicate eksplisit aman &
 // tanpa mengubah kontrak.
 type StudentPreRoundView = StudentSessionView & { phase: 'preparing' | 'lobby' };
-type StudentRevealViewT = StudentSessionView & {
-  phase: 'discussion' | 'summary' | 'ended';
-};
+type StudentDiscussionViewT = StudentSessionView & { phase: 'discussion' };
+type StudentFinishViewT = StudentSessionView & { phase: 'summary' | 'ended' };
 function isPreRound(v: StudentSessionView): v is StudentPreRoundView {
   return v.phase === 'preparing' || v.phase === 'lobby';
 }
-function isReveal(v: StudentSessionView): v is StudentRevealViewT {
-  return v.phase === 'discussion' || v.phase === 'summary' || v.phase === 'ended';
+function isDiscussion(v: StudentSessionView): v is StudentDiscussionViewT {
+  return v.phase === 'discussion';
+}
+function isFinish(v: StudentSessionView): v is StudentFinishViewT {
+  return v.phase === 'summary' || v.phase === 'ended';
 }
 
 /** Submission id client-generated — pattern server: [A-Za-z0-9_-]{8,128}. */
@@ -136,27 +138,30 @@ export function StudentGameClient({ sessionId }: { sessionId: string }) {
   return (
     <main className="mb-sgame">
       <ConnectionBanner visible={connection === 'offline'} />
-      <div className="mb-sgame-head">
-        <StudentBackButton
-          phase={
-            view.phase === 'question' ||
-            view.phase === 'closed' ||
-            view.phase === 'paused' ||
-            view.phase === 'discussion'
-              ? 'active'
-              : 'idle'
-          }
-        />
-        <SessionHeader
-          mode={view.gameMode}
-          packageName={view.contentTitle}
-          roundLabel={
-            view.phase === 'question' || isReveal(view)
-              ? `${view.roundIndex + 1} dari ${view.totalRounds}`
-              : null
-          }
-        />
-      </div>
+      {!isFinish(view) ? (
+        <div className="mb-sgame-head">
+          <StudentBackButton
+            compact
+            phase={
+              view.phase === 'question' ||
+              view.phase === 'closed' ||
+              view.phase === 'paused' ||
+              view.phase === 'discussion'
+                ? 'active'
+                : 'idle'
+            }
+          />
+          <SessionHeader
+            mode={view.gameMode}
+            packageName={view.contentTitle}
+            roundLabel={
+              view.phase === 'question' || isDiscussion(view)
+                ? `${view.roundIndex + 1} dari ${view.totalRounds}`
+                : null
+            }
+          />
+        </div>
+      ) : null}
       {isPreRound(view) ? (
         <StudentLobby view={view} />
       ) : view.phase === 'question' ? (
@@ -166,20 +171,57 @@ export function StudentGameClient({ sessionId }: { sessionId: string }) {
           title={view.phase === 'closed' ? 'Jawaban ditutup' : 'Permainan dijeda'}
           sub="Tunggu Pak/Bu Guru melanjutkan…"
         />
-      ) : isReveal(view) ? (
+      ) : isDiscussion(view) ? (
         <StudentReveal view={view} />
+      ) : isFinish(view) ? (
+        <StudentFinish view={view} />
       ) : null}
       <style jsx>{`
+        .mb-sgame {
+          position: relative;
+          flex: 1;
+          min-height: 100dvh;
+          display: flex;
+          flex-direction: column;
+          overflow-x: hidden;
+          background:
+            radial-gradient(520px 260px at 92% -40px, rgba(20, 184, 166, .18), transparent 72%),
+            radial-gradient(420px 300px at -80px 92%, rgba(139, 124, 246, .15), transparent 72%),
+            linear-gradient(180deg, #071829 0%, #081421 100%);
+        }
+        .mb-sgame::before {
+          content: "";
+          position: fixed;
+          inset: 0;
+          pointer-events: none;
+          opacity: .14;
+          background-image:
+            linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+          background-size: 32px 32px;
+          mask-image: linear-gradient(to bottom, #000, transparent 82%);
+        }
         .mb-sgame-head {
+          position: relative;
+          z-index: 5;
           display: flex;
           align-items: center;
-          gap: var(--mb-space-3);
-          width: 100%;
-          max-width: 640px;
+          gap: 10px;
+          width: min(100%, 720px);
           margin: 0 auto;
-          padding: var(--mb-space-3) var(--mb-space-4) 0;
+          padding: 12px 14px 0;
         }
-        .mb-sgame-head :global(.mb-session-header) { flex: 1; min-width: 0; }
+        .mb-sgame-head :global(.mb-session-header) {
+          flex: 1;
+          min-width: 0;
+          border: 1px solid rgba(255,255,255,.1);
+          background: rgba(11, 32, 49, .72);
+          box-shadow: 0 12px 28px rgba(0,0,0,.14);
+          backdrop-filter: blur(12px);
+        }
+        @media (min-width: 700px) {
+          .mb-sgame-head { padding-top: 18px; }
+        }
       `}</style>
     </main>
   );
@@ -193,80 +235,228 @@ function StudentLobby({
   view: StudentPreRoundView;
 }) {
   const isJelajah = view.gameMode === 'jelajah-kata';
+
   return (
     <section className="mb-slobby mb-fade-in">
-      <span className="mb-wait-orb" aria-hidden />
-      <h1 className="mb-display mb-slobby-title">Halo, {view.displayName}!</h1>
-      <p className="mb-slobby-content">
-        <strong>{view.contentTitle}</strong> · {view.totalRounds} soal
-      </p>
-      <p className="mb-slobby-mode">
-        Kamu ikut <strong>{isJelajah ? 'Jelajah Kata' : 'Kota Cahaya'}</strong>
-      </p>
-      {!isJelajah ? (
-        <div className="mb-sworld" aria-hidden>
-          <KotaScene unlocked={[]} mini />
+      <div className="mb-slobby-card">
+        <div className="mb-slobby-live" role="status">
+          <i aria-hidden />
+          KAMU SUDAH MASUK
         </div>
-      ) : null}
-      {view.team && isJelajah ? (
-        <div className="mb-slobby-mascot" aria-hidden>
-          <TeamMascot teamId={view.team.id} pose="ready" size={76} eager />
+
+        <div className="mb-slobby-art" aria-hidden>
+          {isJelajah && view.team ? (
+            <TeamMascot teamId={view.team.id} pose="ready" size={112} eager />
+          ) : (
+            <KotaScene unlocked={[]} mini />
+          )}
         </div>
-      ) : null}
-      {view.team ? (
-        <p className="mb-slobby-team">
-          Kamu berada di{' '}
-          <span
-            className="mb-team-chip mb-slobby-teamchip"
-            style={{ '--mb-tc': TEAM_COLOR_VAR[view.team.id] ?? 'var(--mb-primary)' } as React.CSSProperties}
-          >
-            <TeamBadge teamId={view.team.id} size={20} />
-            Regu {view.team.name}
-          </span>
+
+        <p className="mb-slobby-hello">Halo,</p>
+        <h1 className="mb-display mb-slobby-title">{view.displayName}!</h1>
+        <p className="mb-slobby-content">
+          <strong>{view.contentTitle}</strong>
+          <span aria-hidden> · </span>
+          <span>{view.totalRounds} soal</span>
         </p>
-      ) : null}
-      <p className="mb-slobby-objective">
-        {isJelajah
-          ? view.team
-            ? `Jawab dengan tepat untuk membantu Regu ${view.team.name} maju.`
-            : 'Jawab dengan tepat untuk membantu regumu maju.'
-          : 'Kita akan menyalakan Kota Cahaya bersama.'}
-      </p>
-      <ParticipantCount count={view.participantCount} />
-      <p className="mb-slobby-wait" role="status">
-        Menunggu Pak/Bu Guru memulai permainan…
-      </p>
+
+        <div className="mb-slobby-modecard">
+          <span className="mb-slobby-mode-label">MODE PERMAINAN</span>
+          <strong>{isJelajah ? 'Jelajah Kata' : 'Kota Cahaya'}</strong>
+          {view.team ? (
+            <span
+              className="mb-team-chip mb-slobby-teamchip"
+              style={{ '--mb-tc': TEAM_COLOR_VAR[view.team.id] ?? 'var(--mb-primary)' } as React.CSSProperties}
+            >
+              <TeamBadge teamId={view.team.id} size={20} />
+              Regu {view.team.name}
+            </span>
+          ) : null}
+        </div>
+
+        <p className="mb-slobby-objective">
+          {isJelajah
+            ? view.team
+              ? `Jawab tepat dan bantu Regu ${view.team.name} melaju sampai garis akhir.`
+              : 'Jawab tepat dan bantu regumu melaju sampai garis akhir.'
+            : 'Jawab bersama teman sekelas untuk menyalakan Kota Cahaya.'}
+        </p>
+
+        <div className="mb-slobby-bottom">
+          <ParticipantCount count={view.participantCount} />
+          <div className="mb-slobby-wait" role="status">
+            <span className="mb-slobby-dots" aria-hidden><i /><i /><i /></span>
+            Menunggu Pak/Bu Guru memulai permainan
+          </div>
+        </div>
+      </div>
+
       <style jsx>{`
         .mb-slobby {
+          position: relative;
+          z-index: 1;
           flex: 1;
+          width: min(100%, 720px);
+          margin: 0 auto;
+          display: grid;
+          place-items: center;
+          padding: 18px 14px 28px;
+        }
+        .mb-slobby-card {
+          position: relative;
+          width: 100%;
+          min-height: min(640px, calc(100dvh - 112px));
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          gap: var(--mb-space-3);
-          padding: var(--mb-space-6) var(--mb-space-5);
+          gap: 10px;
+          overflow: hidden;
+          padding: 32px 20px 26px;
+          border-radius: 28px;
+          border: 1px solid rgba(255,255,255,.11);
+          background:
+            radial-gradient(300px 180px at 50% 10%, rgba(45, 212, 191, .16), transparent 72%),
+            linear-gradient(160deg, rgba(17, 45, 65, .92), rgba(8, 24, 38, .94));
+          box-shadow: 0 28px 64px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.05);
           text-align: center;
         }
-        .mb-slobby-title { margin: 0; font-size: 1.8rem; }
-        /* Identitas konten (mis. "Antonim · 10 soal") — konteks ringan,
-           bukan pengaturan: siswa tahu sedang bermain apa. */
+        .mb-slobby-card::after {
+          content: "";
+          position: absolute;
+          width: 280px;
+          height: 280px;
+          right: -160px;
+          bottom: -170px;
+          border-radius: 50%;
+          border: 44px solid rgba(255,201,77,.055);
+          pointer-events: none;
+        }
+        .mb-slobby-live {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          min-height: 32px;
+          padding: 6px 12px;
+          border-radius: 999px;
+          background: rgba(18, 78, 78, .38);
+          border: 1px solid rgba(102, 229, 215, .2);
+          color: #aef4eb;
+          font-size: .7rem;
+          font-weight: 900;
+          letter-spacing: .12em;
+        }
+        .mb-slobby-live i {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #4adea8;
+          box-shadow: 0 0 0 5px rgba(74,222,168,.09), 0 0 14px rgba(74,222,168,.55);
+        }
+        .mb-slobby-art {
+          width: min(100%, 310px);
+          height: 150px;
+          display: grid;
+          place-items: center;
+          margin: 2px 0 0;
+        }
+        .mb-slobby-art :global(.mb-kota-scene) {
+          width: 100%;
+          max-height: 145px;
+          filter: drop-shadow(0 14px 24px rgba(0,0,0,.25));
+        }
+        .mb-slobby-hello {
+          margin: 2px 0 -5px;
+          color: #9fb5c8;
+          font-weight: 750;
+        }
+        .mb-slobby-title {
+          margin: 0;
+          color: #fff;
+          font-size: clamp(2rem, 8vw, 3rem);
+          line-height: 1;
+          text-shadow: 0 8px 24px rgba(0,0,0,.28);
+        }
         .mb-slobby-content {
           margin: 0;
-          color: var(--mb-text-secondary);
-          font-size: 0.95rem;
+          color: #9fb5c8;
+          font-size: .92rem;
         }
-        .mb-slobby-content strong { color: var(--mb-text-primary); }
-        .mb-slobby-mode { margin: 0; color: var(--mb-text-secondary); }
-        .mb-slobby-mode strong { color: var(--mb-text-primary); }
-        .mb-slobby-team { margin: 0; color: var(--mb-text-secondary); }
-        .mb-slobby-teamchip { transform: scale(1.15); }
+        .mb-slobby-content strong { color: #eef8ff; }
+        .mb-slobby-modecard {
+          width: min(100%, 390px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-wrap: wrap;
+          gap: 8px 10px;
+          margin-top: 6px;
+          padding: 12px 14px;
+          border-radius: 18px;
+          background: rgba(255,255,255,.06);
+          border: 1px solid rgba(255,255,255,.09);
+        }
+        .mb-slobby-modecard strong {
+          color: #fff;
+          font-size: 1.03rem;
+        }
+        .mb-slobby-mode-label {
+          width: 100%;
+          color: #6fe1d6;
+          font-size: .63rem;
+          font-weight: 900;
+          letter-spacing: .14em;
+        }
+        .mb-slobby-teamchip { transform: none; }
         .mb-slobby-objective {
-          margin: 0;
-          max-width: 34ch;
-          color: var(--mb-text-secondary);
+          margin: 2px 0 0;
+          max-width: 36ch;
+          color: #b4c5d3;
           line-height: 1.55;
+          font-size: .92rem;
         }
-        .mb-slobby-wait { margin: var(--mb-space-2) 0 0; color: var(--mb-text-secondary); font-style: italic; }
+        .mb-slobby-bottom {
+          width: min(100%, 430px);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 11px;
+          margin-top: 8px;
+          padding-top: 16px;
+          border-top: 1px solid rgba(255,255,255,.075);
+        }
+        .mb-slobby-wait {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: #91a7b9;
+          font-size: .84rem;
+          font-weight: 650;
+        }
+        .mb-slobby-dots {
+          display: inline-flex;
+          gap: 3px;
+        }
+        .mb-slobby-dots i {
+          width: 5px;
+          height: 5px;
+          border-radius: 50%;
+          background: #62d8ce;
+        }
+        @media (prefers-reduced-motion: no-preference) {
+          .mb-slobby-dots i { animation: mb-student-dot 1.2s ease-in-out infinite; }
+          .mb-slobby-dots i:nth-child(2) { animation-delay: .16s; }
+          .mb-slobby-dots i:nth-child(3) { animation-delay: .32s; }
+          @keyframes mb-student-dot {
+            0%, 100% { opacity: .35; transform: translateY(0); }
+            50% { opacity: 1; transform: translateY(-3px); }
+          }
+        }
+        @media (max-height: 720px) {
+          .mb-slobby-card { min-height: 0; padding-block: 22px; }
+          .mb-slobby-art { height: 116px; }
+          .mb-slobby-art :global(.mb-kota-scene) { max-height: 112px; }
+        }
       `}</style>
     </section>
   );
@@ -276,10 +466,93 @@ function StudentLobby({
 
 function StudentWaiting({ title, sub }: { title: string; sub: string }) {
   return (
-    <section className="mb-wait mb-fade-in" role="status">
-      <span className="mb-wait-orb" aria-hidden />
-      <h2 className="mb-display">{title}</h2>
-      <p>{sub}</p>
+    <section className="mb-swait mb-fade-in" role="status">
+      <div className="mb-swait-card">
+        <div className="mb-swait-ring" aria-hidden><span /></div>
+        <span className="mb-swait-kicker">PUTARAN DIKUNCI</span>
+        <h2 className="mb-display">{title}</h2>
+        <p>{sub}</p>
+        <div className="mb-swait-line" aria-hidden><i /></div>
+      </div>
+      <style jsx>{`
+        .mb-swait {
+          position: relative;
+          z-index: 1;
+          flex: 1;
+          width: min(100%, 720px);
+          margin: 0 auto;
+          display: grid;
+          place-items: center;
+          padding: 20px 14px 32px;
+        }
+        .mb-swait-card {
+          width: min(100%, 470px);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 10px;
+          padding: 34px 24px;
+          border-radius: 28px;
+          border: 1px solid rgba(255,255,255,.1);
+          background: linear-gradient(160deg, rgba(18, 45, 64, .92), rgba(9, 27, 41, .94));
+          box-shadow: 0 24px 54px rgba(0,0,0,.22);
+          text-align: center;
+        }
+        .mb-swait-ring {
+          width: 86px;
+          height: 86px;
+          display: grid;
+          place-items: center;
+          border-radius: 50%;
+          border: 1px solid rgba(98, 216, 206, .24);
+          background: radial-gradient(circle, rgba(20,184,166,.22), rgba(20,184,166,.04) 62%, transparent 64%);
+          box-shadow: 0 0 38px rgba(20,184,166,.12);
+        }
+        .mb-swait-ring span {
+          width: 42px;
+          height: 42px;
+          border-radius: 50%;
+          border: 4px solid rgba(255,255,255,.12);
+          border-top-color: #61ddd2;
+        }
+        .mb-swait-kicker {
+          color: #6fe1d6;
+          font-size: .67rem;
+          font-weight: 900;
+          letter-spacing: .16em;
+        }
+        .mb-swait h2 {
+          margin: 0;
+          color: #fff;
+          font-size: 1.85rem;
+        }
+        .mb-swait p {
+          margin: 0;
+          color: #9eb2c3;
+          line-height: 1.5;
+        }
+        .mb-swait-line {
+          width: 120px;
+          height: 4px;
+          overflow: hidden;
+          margin-top: 8px;
+          border-radius: 999px;
+          background: rgba(255,255,255,.08);
+        }
+        .mb-swait-line i {
+          display: block;
+          width: 44px;
+          height: 100%;
+          border-radius: inherit;
+          background: linear-gradient(90deg, #33c7b9, #77e8dd);
+        }
+        @media (prefers-reduced-motion: no-preference) {
+          .mb-swait-ring span { animation: mb-student-spin 1s linear infinite; }
+          .mb-swait-line i { animation: mb-student-wait 1.5s ease-in-out infinite alternate; }
+          @keyframes mb-student-spin { to { transform: rotate(360deg); } }
+          @keyframes mb-student-wait { from { transform: translateX(0); } to { transform: translateX(76px); } }
+        }
+      `}</style>
     </section>
   );
 }
@@ -366,12 +639,15 @@ function StudentQuestion({
         </div>
       </div>
 
-      <QuestionCard question={view.question} />
+      <div className="mb-sq-cardwrap">
+        <QuestionCard question={view.question} />
+      </div>
 
       {saved ? (
-        <div className="mb-saved mb-entrance" role="status">
-          <strong>Jawaban tersimpan</strong>
-          <span>Tunggu putaran selesai.</span>
+        <div className="mb-saved mb-saved-student mb-entrance" role="status">
+          <span className="mb-saved-check" aria-hidden>✓</span>
+          <strong>Jawaban terkunci!</strong>
+          <span>Jawabanmu sudah tersimpan. Tunggu putaran selesai.</span>
         </div>
       ) : (
         <div className="mb-sq-answers">
@@ -394,46 +670,114 @@ function StudentQuestion({
 
       <style jsx>{`
         .mb-sq {
+          position: relative;
+          z-index: 1;
           flex: 1;
           display: flex;
           flex-direction: column;
-          gap: var(--mb-space-4);
-          padding: var(--mb-space-4);
-          width: 100%;
-          max-width: 640px;
+          gap: 14px;
+          padding: 14px 14px 30px;
+          width: min(100%, 720px);
           margin: 0 auto;
         }
         .mb-sq-progress {
-          display: flex;
+          display: grid;
+          grid-template-columns: auto auto 1fr;
           align-items: center;
-          gap: var(--mb-space-3);
-          color: var(--mb-text-secondary);
-          font-weight: 700;
-          font-size: 0.9rem;
+          gap: 9px 10px;
+          padding: 12px 14px;
+          border-radius: 18px;
+          border: 1px solid rgba(255,255,255,.09);
+          background: rgba(12, 33, 49, .72);
+          box-shadow: 0 10px 26px rgba(0,0,0,.12);
+          color: #abc0cf;
+          font-weight: 760;
+          font-size: .82rem;
+          backdrop-filter: blur(9px);
+        }
+        .mb-sq-progress :global(.mb-round-countdown) {
+          justify-self: end;
+        }
+        .mb-sq-team {
+          display: grid;
+          place-items: center;
+          width: 34px;
+          height: 34px;
+          border-radius: 11px;
+          background: rgba(255,255,255,.07);
+          border: 1px solid rgba(255,255,255,.08);
         }
         .mb-sq-bar {
-          flex: 1;
-          height: 8px;
-          background: rgba(255, 255, 255, 0.12);
-          border-radius: var(--mb-radius-pill);
+          grid-column: 1 / -1;
+          height: 7px;
+          background: rgba(255,255,255,.09);
+          border-radius: 999px;
           overflow: hidden;
         }
         .mb-sq-bar-fill {
           height: 100%;
-          background: linear-gradient(90deg, var(--mb-primary-strong), var(--mb-primary));
-          border-radius: var(--mb-radius-pill);
+          background: linear-gradient(90deg, #1fb9a8, #69e0d4);
+          border-radius: 999px;
+          box-shadow: 0 0 16px rgba(54, 211, 194, .34);
+        }
+        .mb-sq-cardwrap {
+          border-radius: 25px;
+          box-shadow: 0 18px 42px rgba(0,0,0,.16);
+        }
+        .mb-sq-cardwrap :global(.mb-qcard) {
+          border-radius: 25px;
         }
         .mb-sq-answers {
           display: flex;
           flex-direction: column;
-          gap: var(--mb-space-3);
+          gap: 10px;
           width: 100%;
         }
+        .mb-sq-answers :global(.mb-answer) {
+          min-height: 66px;
+          border-radius: 18px;
+          box-shadow: 0 8px 18px rgba(0,0,0,.09);
+        }
+        .mb-saved-student {
+          min-height: 142px;
+          justify-content: center;
+          border-radius: 24px;
+          border-color: rgba(58, 220, 160, .7);
+          background:
+            radial-gradient(circle at 50% 0%, rgba(72, 225, 171, .18), transparent 62%),
+            rgba(10, 47, 43, .76);
+          box-shadow: 0 16px 38px rgba(0,0,0,.15);
+        }
+        .mb-saved-student strong {
+          color: #8ff0c7;
+          font-size: 1.1rem;
+        }
+        .mb-saved-student span:last-child {
+          color: #a8c6bc;
+          font-size: .88rem;
+        }
+        .mb-saved-check {
+          display: grid;
+          place-items: center;
+          width: 42px;
+          height: 42px;
+          margin-bottom: 2px;
+          border-radius: 50%;
+          background: #44d49b;
+          color: #06261d !important;
+          font-weight: 950;
+          font-size: 1.3rem !important;
+          box-shadow: 0 10px 24px rgba(68,212,155,.22);
+        }
         .mb-sq-error {
-          color: var(--mb-danger);
-          font-weight: 600;
+          color: #ffb9b9;
+          font-weight: 650;
           text-align: center;
           margin: 0;
+        }
+        @media (min-width: 700px) {
+          .mb-sq { padding-top: 18px; }
+          .mb-sq-answers { gap: 12px; }
         }
       `}</style>
     </section>
@@ -445,27 +789,32 @@ function StudentQuestion({
 function StudentReveal({
   view,
 }: {
-  view: StudentRevealViewT;
+  view: StudentDiscussionViewT;
 }) {
-  const isSummary = view.phase !== 'discussion';
   const r = view.revealedRound;
   const myCorrect = view.ownAnswerIsCorrect;
+  const isLastRound = view.roundIndex + 1 >= view.totalRounds;
+
   return (
     <section className="mb-sreveal mb-fade-in">
-      <header className="mb-sreveal-head">
-        <span className="mb-number">
-          Soal {view.roundIndex + 1} dari {view.totalRounds}
+      <div className={`mb-sreveal-verdict-card ${myCorrect ? 'mb-v-ok' : 'mb-v-no'}`}>
+        <span className="mb-sreveal-verdict-icon" aria-hidden>
+          {myCorrect ? '✓' : '•'}
         </span>
-        <span className={`mb-sreveal-verdict ${myCorrect ? 'mb-v-ok' : 'mb-v-no'}`}>
-          {myCorrect ? 'Jawabanmu benar' : 'Belum tepat'}
+        <div>
+          <span className="mb-sreveal-kicker">HASIL JAWABANMU</span>
+          <h2 className="mb-display">{myCorrect ? 'Mantap, benar!' : 'Belum tepat'}</h2>
+        </div>
+        <span className="mb-number mb-sreveal-round">
+          {view.roundIndex + 1}/{view.totalRounds}
         </span>
-      </header>
+      </div>
 
       <QuestionCard question={r.question} />
 
       <div className="mb-sreveal-card mb-reading mb-entrance">
+        <span className="mb-sreveal-answer-label">JAWABAN BENAR</span>
         <p className="mb-sreveal-correct">
-          Jawaban benar:{' '}
           <strong>
             {r.question.options.find((o) => o.id === r.correctOptionId)?.text ?? '—'}
           </strong>
@@ -480,82 +829,362 @@ function StudentReveal({
         </div>
       </div>
 
-      {!isSummary ? (
-        <p className="mb-sreveal-next" role="status">
-          Tunggu Pak/Bu Guru melanjutkan ke soal berikutnya…
-        </p>
-      ) : (
-        <div className="mb-sreveal-endbox mb-entrance">
-          <span className="mb-endflag" aria-hidden>
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 22V4" />
-              <path d="M4 4c3-2 6 2 9 0s5-1 7 0v9c-2-1-4-2-7 0s-6 2-9 0" />
-            </svg>
-          </span>
-          <h3 className="mb-display">Permainan selesai</h3>
-          {view.team && view.gameProgress.teamProgress[view.team.id] !== undefined ? (
-            <p>
-              <TeamMascot teamId={view.team.id} pose="celebrate" size={56} /> Regu <strong>{view.team.name}</strong> mencapai{' '}
-              <strong className="mb-number">
-                {Math.round(Math.max(0, Math.min(100, view.gameProgress.teamProgress[view.team.id])))}%
-              </strong>{' '}
-              perjalanan!
-            </p>
-          ) : (
-            <p>Kerja bagus, kelas sudah berjuang bersama!</p>
-          )}
-          <p className="mb-sreveal-feel">Terima kasih sudah bermain bersama!</p>
-          <StudentBackButton phase="idle" />
-        </div>
-      )}
+      <div className="mb-sreveal-next" role="status">
+        <span className="mb-sreveal-next-dot" aria-hidden />
+        {isLastRound
+          ? 'Soal terakhir selesai. Tunggu hasil akhir dari Pak/Bu Guru…'
+          : 'Tunggu Pak/Bu Guru melanjutkan ke soal berikutnya…'}
+      </div>
 
       <style jsx>{`
         .mb-sreveal {
+          position: relative;
+          z-index: 1;
           flex: 1;
           display: flex;
           flex-direction: column;
-          gap: var(--mb-space-4);
-          padding: var(--mb-space-4);
-          width: 100%;
-          max-width: 640px;
+          gap: 14px;
+          padding: 14px 14px 30px;
+          width: min(100%, 720px);
           margin: 0 auto;
         }
-        .mb-sreveal-head {
+        .mb-sreveal-verdict-card {
+          display: grid;
+          grid-template-columns: auto 1fr auto;
+          align-items: center;
+          gap: 12px;
+          padding: 14px 16px;
+          border-radius: 20px;
+          border: 1px solid rgba(255,255,255,.1);
+          box-shadow: 0 12px 28px rgba(0,0,0,.12);
+        }
+        .mb-v-ok {
+          background: linear-gradient(135deg, rgba(21, 92, 69, .72), rgba(12, 45, 43, .72));
+        }
+        .mb-v-no {
+          background: linear-gradient(135deg, rgba(98, 54, 61, .67), rgba(53, 34, 44, .72));
+        }
+        .mb-sreveal-verdict-icon {
+          display: grid;
+          place-items: center;
+          width: 44px;
+          height: 44px;
+          border-radius: 14px;
+          background: rgba(255,255,255,.1);
+          color: #fff;
+          font-size: 1.3rem;
+          font-weight: 950;
+        }
+        .mb-sreveal-kicker {
+          display: block;
+          margin-bottom: 3px;
+          color: rgba(255,255,255,.62);
+          font-size: .62rem;
+          font-weight: 900;
+          letter-spacing: .14em;
+        }
+        .mb-sreveal-verdict-card h2 {
+          margin: 0;
+          color: #fff;
+          font-size: 1.32rem;
+        }
+        .mb-sreveal-round {
+          color: rgba(255,255,255,.68);
+          font-weight: 800;
+        }
+        .mb-sreveal-card {
+          padding: 18px;
+          border-radius: 24px;
+          box-shadow: 0 16px 36px rgba(0,0,0,.12);
+        }
+        .mb-sreveal-answer-label {
+          display: block;
+          margin-bottom: 5px;
+          color: #26866e;
+          font-size: .66rem;
+          font-weight: 900;
+          letter-spacing: .12em;
+        }
+        .mb-sreveal-correct {
+          margin: 0 0 10px;
+        }
+        .mb-sreveal-correct strong {
+          color: #067a5b;
+          font-size: 1.15rem;
+        }
+        .mb-sreveal-explain {
+          margin: 0 0 12px;
+          line-height: 1.58;
+          color: var(--mb-text-light-secondary);
+        }
+        .mb-sreveal-dist {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 7px;
+        }
+        .mb-sreveal-next {
           display: flex;
           align-items: center;
-          justify-content: space-between;
-          color: var(--mb-text-secondary);
-          font-weight: 700;
-        }
-        .mb-sreveal-verdict { padding: 5px 14px; border-radius: var(--mb-radius-pill); font-weight: 800; }
-        .mb-v-ok { background: var(--mb-success-soft); color: var(--mb-success); border: 1.5px solid var(--mb-success); }
-        .mb-v-no { background: var(--mb-danger-soft); color: var(--mb-danger); border: 1.5px solid var(--mb-danger); }
-        .mb-sreveal-card { padding: var(--mb-space-4) var(--mb-space-5); }
-        .mb-sreveal-correct { margin: 0 0 var(--mb-space-2); color: var(--mb-text-light-secondary); }
-        .mb-sreveal-correct strong { color: var(--mb-success); font-size: 1.1rem; }
-        .mb-sreveal-explain { margin: 0 0 var(--mb-space-3); line-height: 1.6; }
-        .mb-sreveal-dist { display: flex; flex-wrap: wrap; gap: var(--mb-space-2); }
-        .mb-sreveal-next {
+          justify-content: center;
+          gap: 8px;
+          min-height: 48px;
+          padding: 10px 14px;
+          border-radius: 16px;
+          background: rgba(255,255,255,.055);
+          border: 1px solid rgba(255,255,255,.07);
+          color: #9fb4c5;
+          font-size: .84rem;
+          font-weight: 650;
           text-align: center;
-          color: var(--mb-text-secondary);
-          font-style: italic;
-          margin: 0;
         }
-        .mb-sreveal-endbox {
+        .mb-sreveal-next-dot {
+          width: 7px;
+          height: 7px;
+          flex: none;
+          border-radius: 50%;
+          background: #5ed9cd;
+          box-shadow: 0 0 12px rgba(94,217,205,.55);
+        }
+      `}</style>
+    </section>
+  );
+}
+
+function StudentFinish({ view }: { view: StudentFinishViewT }) {
+  const isEnded = view.phase === 'ended';
+  const isJelajah = view.gameMode === 'jelajah-kata';
+  const teamProgress =
+    view.team && view.gameProgress.teamProgress[view.team.id] !== undefined
+      ? Math.round(Math.max(0, Math.min(100, view.gameProgress.teamProgress[view.team.id])))
+      : null;
+  const kotaProgress = Math.round(
+    Math.max(0, Math.min(100, view.gameProgress.kotaProgressPercent ?? 0)),
+  );
+  const kotaUnlocked = view.gameProgress.kotaUnlockedMilestones ?? [];
+
+  return (
+    <section className="mb-sfinish mb-fade-in">
+      <div className={`mb-sfinish-stage ${isJelajah ? 'mb-sfinish-jelajah' : 'mb-sfinish-kota'}`}>
+        <div className="mb-sfinish-confetti" aria-hidden>
+          <i /><i /><i /><i /><i /><i /><i />
+        </div>
+
+        <span className={`mb-sfinish-status ${isEnded ? 'mb-sfinish-status-closed' : ''}`} role="status">
+          <i aria-hidden />
+          {isEnded ? 'SESI DITUTUP' : 'PERMAINAN SELESAI'}
+        </span>
+
+        <div className="mb-sfinish-art" aria-hidden>
+          {isJelajah && view.team ? (
+            <TeamMascot teamId={view.team.id} pose="celebrate" size={138} eager />
+          ) : (
+            <KotaScene unlocked={kotaUnlocked} mini />
+          )}
+        </div>
+
+        <p className="mb-sfinish-overline">
+          {isEnded ? 'Sampai jumpa di permainan berikutnya' : 'Keren! Kamu sudah sampai di akhir'}
+        </p>
+        <h1 className="mb-display">
+          {isEnded ? 'Sesi selesai!' : 'Hebat, selesai!'}
+        </h1>
+        <p className="mb-sfinish-name">{view.displayName}</p>
+
+        <div className="mb-sfinish-result">
+          {isJelajah ? (
+            <>
+              <span>PERJALANAN REGUMU</span>
+              <strong className="mb-number">{teamProgress ?? 0}%</strong>
+              <small>
+                {view.team ? `Regu ${view.team.name}` : 'Regumu'} sudah berjuang sampai akhir.
+              </small>
+            </>
+          ) : (
+            <>
+              <span>KOTA CAHAYA</span>
+              <strong className="mb-number">{kotaProgress}%</strong>
+              <small>
+                Kelasmu menyalakan {kotaUnlocked.length} dari 4 bagian kota bersama-sama.
+              </small>
+            </>
+          )}
+        </div>
+
+        <p className="mb-sfinish-copy">
+          {isEnded
+            ? 'Ruang ini sudah ditutup oleh Pak/Bu Guru. Kamu boleh kembali ke beranda.'
+            : 'Hasil akhir sudah tampil. Pak/Bu Guru sedang menutup ruang permainan.'}
+        </p>
+
+        <div className="mb-sfinish-actions">
+          <StudentBackButton phase="idle" />
+        </div>
+      </div>
+
+      <style jsx>{`
+        .mb-sfinish {
+          position: relative;
+          z-index: 1;
+          flex: 1;
+          width: min(100%, 720px);
+          margin: 0 auto;
+          display: grid;
+          place-items: center;
+          padding: 18px 14px 30px;
+        }
+        .mb-sfinish-stage {
+          position: relative;
+          width: 100%;
+          min-height: min(650px, calc(100dvh - 112px));
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: var(--mb-space-2);
-          padding: var(--mb-space-6) var(--mb-space-5);
-          border-radius: var(--mb-radius-lg);
-          background: var(--mb-accent-soft);
-          border: 2px solid var(--mb-accent);
+          justify-content: center;
+          gap: 9px;
+          overflow: hidden;
+          padding: 30px 20px 28px;
+          border-radius: 30px;
+          border: 1px solid rgba(255,255,255,.12);
+          box-shadow: 0 30px 72px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.06);
           text-align: center;
+          isolation: isolate;
         }
-        .mb-endflag { color: var(--mb-accent); }
-        .mb-sreveal-endbox h3 { margin: 0; font-size: 1.35rem; }
-        .mb-sreveal-endbox p { margin: 0; }
-        .mb-sreveal-feel { color: var(--mb-text-secondary); font-style: italic; }
+        .mb-sfinish-jelajah {
+          background:
+            radial-gradient(360px 210px at 50% 13%, rgba(52, 211, 153, .22), transparent 70%),
+            radial-gradient(260px 180px at 5% 92%, rgba(255, 201, 77, .12), transparent 70%),
+            linear-gradient(155deg, #0e332f, #081e27 58%, #091725);
+        }
+        .mb-sfinish-kota {
+          background:
+            radial-gradient(360px 220px at 50% 12%, rgba(139, 124, 246, .24), transparent 70%),
+            radial-gradient(280px 190px at 95% 86%, rgba(255, 201, 77, .12), transparent 70%),
+            linear-gradient(155deg, #171a45, #0c1733 58%, #081522);
+        }
+        .mb-sfinish-status {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          min-height: 33px;
+          padding: 6px 12px;
+          border-radius: 999px;
+          background: rgba(255,255,255,.07);
+          border: 1px solid rgba(255,255,255,.12);
+          color: #d7f8f3;
+          font-size: .68rem;
+          font-weight: 900;
+          letter-spacing: .14em;
+        }
+        .mb-sfinish-status i {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #55e2ae;
+          box-shadow: 0 0 12px rgba(85,226,174,.58);
+        }
+        .mb-sfinish-status-closed {
+          color: #ffe7a3;
+          border-color: rgba(255,207,83,.2);
+          background: rgba(102,75,20,.18);
+        }
+        .mb-sfinish-status-closed i {
+          background: #ffd25f;
+          box-shadow: 0 0 12px rgba(255,210,95,.5);
+        }
+        .mb-sfinish-art {
+          width: min(100%, 350px);
+          height: 165px;
+          display: grid;
+          place-items: center;
+          margin: 2px 0 0;
+        }
+        .mb-sfinish-art :global(.mb-kota-scene) {
+          width: 100%;
+          max-height: 160px;
+          filter: drop-shadow(0 14px 24px rgba(0,0,0,.25));
+        }
+        .mb-sfinish-overline {
+          margin: 0;
+          color: #9db4c8;
+          font-size: .82rem;
+          font-weight: 650;
+        }
+        .mb-sfinish h1 {
+          margin: 0;
+          color: #fff;
+          font-size: clamp(2.3rem, 10vw, 3.7rem);
+          line-height: .96;
+          text-shadow: 0 10px 26px rgba(0,0,0,.26);
+        }
+        .mb-sfinish-name {
+          margin: 0;
+          color: #f8d86f;
+          font-weight: 850;
+          font-size: 1.05rem;
+        }
+        .mb-sfinish-result {
+          width: min(100%, 360px);
+          display: grid;
+          justify-items: center;
+          gap: 3px;
+          margin-top: 6px;
+          padding: 14px 18px;
+          border-radius: 20px;
+          background: rgba(255,255,255,.07);
+          border: 1px solid rgba(255,255,255,.1);
+        }
+        .mb-sfinish-result > span {
+          color: #85e5dc;
+          font-size: .64rem;
+          font-weight: 900;
+          letter-spacing: .14em;
+        }
+        .mb-sfinish-result strong {
+          color: #fff;
+          font-size: 2rem;
+          line-height: 1.1;
+        }
+        .mb-sfinish-result small {
+          color: #a8bbca;
+          line-height: 1.45;
+        }
+        .mb-sfinish-copy {
+          max-width: 38ch;
+          margin: 5px 0 0;
+          color: #9db1c1;
+          font-size: .88rem;
+          line-height: 1.5;
+        }
+        .mb-sfinish-actions {
+          margin-top: 8px;
+        }
+        .mb-sfinish-confetti {
+          position: absolute;
+          inset: 0;
+          z-index: -1;
+          pointer-events: none;
+        }
+        .mb-sfinish-confetti i {
+          position: absolute;
+          width: 8px;
+          height: 18px;
+          border-radius: 3px;
+          background: #ffd35c;
+          opacity: .45;
+          transform: rotate(24deg);
+        }
+        .mb-sfinish-confetti i:nth-child(1) { top: 10%; left: 12%; transform: rotate(-28deg); }
+        .mb-sfinish-confetti i:nth-child(2) { top: 20%; right: 13%; background: #5ee0d3; transform: rotate(35deg); }
+        .mb-sfinish-confetti i:nth-child(3) { top: 38%; left: 7%; background: #a996ff; transform: rotate(62deg); }
+        .mb-sfinish-confetti i:nth-child(4) { top: 53%; right: 8%; transform: rotate(-52deg); }
+        .mb-sfinish-confetti i:nth-child(5) { bottom: 20%; left: 15%; background: #55d9a7; }
+        .mb-sfinish-confetti i:nth-child(6) { bottom: 12%; right: 18%; background: #a996ff; transform: rotate(68deg); }
+        .mb-sfinish-confetti i:nth-child(7) { top: 9%; left: 53%; width: 6px; height: 6px; border-radius: 50%; background: #fff; }
+        @media (max-height: 720px) {
+          .mb-sfinish-stage { min-height: 0; padding-block: 22px; }
+          .mb-sfinish-art { height: 128px; }
+          .mb-sfinish-art :global(.mb-kota-scene) { max-height: 124px; }
+        }
       `}</style>
     </section>
   );

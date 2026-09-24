@@ -77,6 +77,10 @@ interface StudentRevealView extends StudentViewBase {
   /** Progres game yang aman untuk siswa. */
   gameProgress: {
     teamProgress: Record<TeamId, number>;
+    /** Progress Kota Cahaya untuk layar akhir siswa. */
+    kotaProgressPercent?: number;
+    /** Milestone Kota yang benar-benar sudah menyala. */
+    kotaUnlockedMilestones?: string[];
   };
 }
 
