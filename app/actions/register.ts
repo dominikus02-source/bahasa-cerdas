@@ -26,10 +26,11 @@ export async function registerUser(formData: FormData) {
     const existingUser = await db.user.findFirst({ where: { email: email.toLowerCase() } });
     if (existingUser) {
       if (existingUser.supabaseId === supabaseId) {
-        if (existingUser.role !== role) {
-          await db.user.update({ where: { id: existingUser.id }, data: { role } });
-        }
-        return { ok: true, role: role.toLowerCase() };
+        // Existing accounts own their application role. Registration must
+        // never mutate GURU ↔ MURID based on a new form submission or email
+        // domain. Role changes are an account-management operation, not a
+        // side effect of re-registration.
+        return { ok: true, role: existingUser.role.toLowerCase() };
       }
       return { error: "Email sudah terdaftar dengan akun lain" };
     }
