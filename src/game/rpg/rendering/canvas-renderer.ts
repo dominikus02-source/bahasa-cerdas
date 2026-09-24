@@ -461,9 +461,6 @@ export function createCanvasRenderer(
             "npc.sari": "npc.bu-sari",
             "npc.eyang": "npc.eyang-kartala",
             "npc.empu": "npc.pak-empu",
-            "npc.bagas": "npc.bu-sari",
-            "npc.tani": "npc.bu-ratmi",
-            "npc.pendaki": "npc.eyang-kartala",
           };
           const resolution = resolveEntityAsset(npcAssetKeys[interaction.ref]);
           const rendered = isEntityAssetReady(resolution)
