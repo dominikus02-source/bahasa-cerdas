@@ -182,6 +182,10 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
               serverTime={view.serverTime}
               compact
               light
+              complete={
+                view.participation.eligibleCount > 0 &&
+                view.participation.submittedCount >= view.participation.eligibleCount
+              }
             />
             <span className="mb-count mb-number">
               {view.participation.submittedCount}
