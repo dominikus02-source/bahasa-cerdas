@@ -17,7 +17,7 @@ const TEAM_COLOR_VAR: Record<string, string> = {
 
 const LANE_Y = [150, 245, 340, 435];
 const LANE_PHASE = [0.1, 1.25, 2.35, 3.4];
-const START_X = 190;
+const START_X = 210;
 const END_X = 1000;
 const TRAIL_SPAN = END_X - START_X;
 
@@ -159,7 +159,7 @@ function Checkpoint({
         x={x}
         y={y + 3.2}
         textAnchor="middle"
-        fontSize="6.5"
+        fontSize="7.5"
         fontWeight="900"
         fill={reached ? "#071726" : "#a4b4c1"}
       >
