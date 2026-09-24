@@ -45,7 +45,12 @@ export async function POST(req: NextRequest) {
 
   const deps = getOrchestratorDeps();
   const authenticatedDisplayName = user
-    ? ((user.nickname?.trim() || user.fullName?.trim() || '').slice(0, 24).trim())
+    ? (() => {
+        const nickname = user.nickname?.trim() ?? '';
+        const fullName = user.fullName?.trim() ?? '';
+        const preferred = nickname.length >= 2 ? nickname : fullName;
+        return preferred.slice(0, 24).trim();
+      })()
     : undefined;
   const result = await joinSession(deps, {
     pin,
