@@ -1,5 +1,5 @@
 /**
- * P2.9B — Entity Asset Pipeline focused test.
+ * P2.11 — Entity Visual Runtime focused test.
  *
  * Verifies:
  * 1. Entity asset resolver works for all categories
@@ -55,10 +55,10 @@ check("5. Ki Jaka resolution status = READY (runtime sprite)", kiRes.status === 
 check("6. Ki Jaka rendered as production sprite", isEntityAssetReady(kiRes));
 
 const kiManifestId = getManifestIdForEntity("npc.ki-jaka");
-check("7. Ki Jaka manifest ID = 'npc_ki_jaka_idle'", kiManifestId === "npc_ki_jaka_idle");
+check("7. Ki Jaka manifest ID = 'npc_ki_jaka_full'", kiManifestId === "npc_ki_jaka_full");
 const kiEntry = manifestLookup("ref:npc-ki-jaka");
-check("8. Ki Jaka manifest entry exists", kiEntry !== undefined);
-check("9. Ki Jaka manifest status = NEEDS_REVIEW", kiEntry?.status === "NEEDS_REVIEW");
+check("8. Ki Jaka legacy reference entry still exists", kiEntry !== undefined);
+check("9. Ki Jaka legacy reference remains NEEDS_REVIEW", kiEntry?.status === "NEEDS_REVIEW");
 
 // All NPCs should be NEEDS_REVIEW (no approved runtime sprites)
 for (const npcKey of npcKeys) {
@@ -72,12 +72,12 @@ const enemyKeys = registered.filter((k) => k.startsWith("enemy."));
 check("11. Enemy keys registered", enemyKeys.length >= 4);
 
 const korogRes = resolveEntityAsset("enemy.korog");
-check("12. Korog resolution status = NEEDS_REVIEW", korogRes.status === "NEEDS_REVIEW");
-check("13. Korog NOT rendered as production sprite", !isEntityAssetReady(korogRes));
+check("12. Korog resolution status = READY", korogRes.status === "READY");
+check("13. Korog rendered as production sprite", isEntityAssetReady(korogRes));
 
 const rajaRes = resolveEntityAsset("enemy.raja-korog");
-check("14. Raja Korog resolution status = NEEDS_REVIEW", rajaRes.status === "NEEDS_REVIEW");
-check("15. Raja Korog NOT rendered as production sprite", !isEntityAssetReady(rajaRes));
+check("14. Raja Korog resolution status = READY", rajaRes.status === "READY");
+check("15. Raja Korog rendered as production sprite", isEntityAssetReady(rajaRes));
 
 // ══ D. Boss Assets ═════════════════════════════════════════════════
 console.log("\n💀 D. Boss Assets");
@@ -91,15 +91,14 @@ for (const bossKey of bossKeys) {
 
 // ══ E. Prop Assets ════════════════════════════════════════════════
 console.log("\n🏠 E. Prop Assets");
-// Props are NOT_REGISTERED (no manifest entries exist)
-const propKeys = ["house.village", "tree.round", "rock.gray", "fence.wood", "bush.round", "flowers.wild"];
+const propKeys = ["house.village", "tree.round", "well.stone"];
 for (const propKey of propKeys) {
   const res = resolveEntityAsset(propKey);
-  check(`18. ${propKey} = NOT_REGISTERED (no prop sprites)`, res.status === "NOT_REGISTERED");
-  check(`19. ${propKey} NOT rendered as production sprite`, !isEntityAssetReady(res));
+  check("18. " + propKey + " = READY", res.status === "READY");
+  check("19. " + propKey + " rendered as production sprite", isEntityAssetReady(res));
 }
 
-// ══ F. Missing / Empty Asset ══════════════════════════════════════
+// // ══ F. Missing / Empty Asset ══════════════════════════════════════
 console.log("\n❓ F. Missing / Empty Asset");
 const emptyRes = resolveEntityAsset(undefined);
 check("20. undefined asset → MISSING_MANIFEST", emptyRes.status === "MISSING_MANIFEST");
@@ -134,9 +133,9 @@ const reviewCount = allResolved.filter((r) => r.resolution.status === "NEEDS_REV
 const notRegCount = allResolved.filter((r) => r.resolution.status === "NOT_REGISTERED").length;
 const missingCount = allResolved.filter((r) => r.resolution.status === "MISSING_MANIFEST").length;
 
-check("34. One READY entity asset (Ki Jaka)", readyCount === 1);
-check("35. All other NPC/enemy/boss = NEEDS_REVIEW", reviewCount >= 8);
-check("36. All props = NOT_REGISTERED (verified in section E)", true); // verified per-key in section E
+check("34. Production visual assets resolve READY", readyCount >= 15);
+check("35. Legacy reference entries remain gated", reviewCount >= 8);
+check("36. Promoted props resolve READY", propKeys.every((k) => isEntityAssetReady(resolveEntityAsset(k))));
 check("37. No MISSING_MANIFEST (all mapped keys exist in manifest)", missingCount === 0);
 
 // ══ J. Architecture Integrity ═════════════════════════════════════
@@ -158,6 +157,6 @@ check("45. Asset registry still has createSpriteLoader", assetRegSrc.includes("c
 check("46. Asset registry still has lookupAsset", assetRegSrc.includes("lookupAsset"));
 
 // ══ Summary ════════════════════════════════════════════════════════
-console.log(`\n📊 P2.9B Entity Asset Pipeline: ${pass} lulus, ${fail} gagal\n`);
+console.log(`\n📊 P2.11 Entity Visual Runtime: ${pass} lulus, ${fail} gagal\n`);
 if (fail > 0) process.exit(1);
 process.exit(0);
