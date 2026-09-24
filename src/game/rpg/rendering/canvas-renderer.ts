@@ -291,6 +291,33 @@ export function createCanvasRenderer(
     }
   }
 
+  function drawReadyEntitySprite(
+    entry: { path: string; sourceRect?: { x: number; y: number; width: number; height: number } },
+    screenX: number,
+    feetY: number,
+    maxSize: number,
+  ): boolean {
+    const cached = tileLoader.cached(entry.path);
+    if (!cached) {
+      if (!requestedTilePaths.has(entry.path)) {
+        requestedTilePaths.add(entry.path);
+        void tileLoader.load(entry.path);
+      }
+      return false;
+    }
+    const rect = entry.sourceRect ?? { x: 0, y: 0, width: cached.width, height: cached.height };
+    const scale = maxSize / Math.max(rect.width, rect.height);
+    const dw = rect.width * scale;
+    const dh = rect.height * scale;
+    ctx.drawImage(
+      cached as unknown as CanvasImageSource,
+      rect.x, rect.y, rect.width, rect.height,
+      screenX - dw / 2, feetY - dh, dw, dh,
+    );
+    return true;
+  }
+
+
   /** Cached READY tile image for a bound tile, or null (color fallback). */
   function boundTileImage(
     mapId: string, tileId: string, x: number, y: number,
