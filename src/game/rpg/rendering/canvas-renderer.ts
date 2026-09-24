@@ -732,6 +732,11 @@ export function createCanvasRenderer(
     liveEnemies: readonly LiveEnemy[] = [],
     allowedNpcIds?: readonly string[],
   ) {
+    const nowMs = performance.now();
+    updateCombatFeedback(state, camera, liveEnemies, nowMs);
+
+    if (nowMs < visualFeedback.freezeUntilMs) return;
+
     // P2.11: preload visible runtime art to avoid procedural→sprite pop once approved assets exist.
     for (const interaction of state.world.interactions) {
       if (interaction.kind === "NPC") {
