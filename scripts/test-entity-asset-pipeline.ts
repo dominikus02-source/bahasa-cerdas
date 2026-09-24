@@ -164,7 +164,7 @@ const atlasEntry = manifestLookup("npc_ki_jaka_full");
 const atlasExists = (() => {
   try { readFileSync(atlasPath); return true; } catch { return false; }
 })();
-check("47. P2.11 atlas entry is not falsely READY while binary is absent", !atlasExists ? atlasEntry?.status === "NEEDS_REVIEW" : true);
+check("47. P2.11 atlas entry is explicitly MISSING while binary is absent", !atlasExists ? atlasEntry?.status === "MISSING" : true);
 check("48. P2.11 atlas binary gate is observable", atlasEntry?.source === "asset-sheet-reference-extraction");
 check("49. No false production claim is made for the pending atlas", !atlasExists ? !isEntityAssetReady(resolveEntityAsset("npc.ki-jaka")) : true);
 
