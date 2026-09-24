@@ -90,23 +90,16 @@ export async function updateSession(request: NextRequest, nonce?: string) {
 
   const isPublic = publicPaths.some((p) => pathname === p || pathname.startsWith(p + "/"));
 
-  // On login page, clear any stale Supabase cookies unconditionally
-  // This ensures users with expired sessions from old VPS can log in fresh
-  // /arena/login sengaja TIDAK ikut di sini.
-  //
-  // Dua rute lama di bawah adalah halaman login yang berdiri sendiri: pengguna
-  // sampai ke sana lalu masuk, jadi membuang cookie basi di situ aman.
-  // /arena/login berbeda — ia juga tujuan pantulan setiap kali pemeriksaan auth
-  // di /arena meleset. Membuang cookie di sana berarti sesi yang BARU SAJA
-  // didapat dari login ikut terhapus: murid berhasil masuk, didorong ke /arena,
-  // terpantul balik, dan sesinya dibatalkan oleh halaman pendaratannya sendiri.
-  // Tidak membuang di sini aman: login yang berhasil menimpa cookie lama.
+  // Login pages are public. IMPORTANT: do not clear Supabase cookies here.
+  // A browser may already be completing a refresh or a login request in
+  // parallel. Clearing cookies at the page boundary can destroy a session that
+  // another request has just established, turning a recoverable race into a
+  // real logout. Stale cookies are harmless because the successful login route
+  // overwrites them through the SSR cookie adapter.
   if (pathname === "/login" || pathname === "/auth/arena-login") {
     const response = nextWithNonce();
-    request.cookies.getAll()
-      .filter((c) => c.name.startsWith("sb-") || c.name.startsWith("supabase-"))
-      .forEach((c) => response.cookies.set(c.name, "", { maxAge: 0, path: "/" }));
     response.headers.set("X-RateLimit-Remaining", String(limit.remaining));
+    response.headers.set("Cache-Control", "private, no-store");
     return response;
   }
 
