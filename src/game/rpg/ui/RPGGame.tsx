@@ -279,7 +279,7 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
           }),
         );
         setMenuInventory(state.player.inventory.items.map((item) => ({ itemId: item.itemId, quantity: item.quantity })));
-        setMenuEquipment(state.world.equipment ?? { weaponId: null, armorId: null, accessoryId: null });
+        setMenuEquipment(state.player.equipment ?? { weaponId: null, armorId: null, accessoryId: null });
         const nextQuest = engine.getQuest();
         const nextGold = engine.getGold();
         const nextBattle = battle !== null;
