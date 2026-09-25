@@ -307,11 +307,11 @@ export const WORLD_MAPS: Record<CanonicalMapId, CanonicalMap> = {
     [
       // Authored town composition: buildings define small residential pockets,
       // trees frame the settlement, and the river/bridge create a readable edge.
-      { id: "ent.desa-house.1", type: "house", x: 6, y: 9, scale: 1, layer: "BEHIND_ENTITIES", solid: true, asset: "house.village" },
-      { id: "ent.desa-house.2", type: "house", x: 23, y: 9, scale: 1, layer: "BEHIND_ENTITIES", solid: true, asset: "house.village" },
-      { id: "ent.desa-house.3", type: "house", x: 6, y: 22, scale: 0.95, layer: "BEHIND_ENTITIES", solid: true, asset: "house.village" },
-      { id: "ent.desa-house.4", type: "house", x: 23, y: 22, scale: 0.95, layer: "BEHIND_ENTITIES", solid: true, asset: "house.village" },
-      { id: "ent.desa-house.5", type: "house", x: 13, y: 27, scale: 0.9, layer: "BEHIND_ENTITIES", solid: true, asset: "house.village" },
+      { id: "ent.desa-house.1", type: "house", x: 11, y: 10, scale: 1, layer: "BEHIND_ENTITIES", solid: true, asset: "house.village" },
+      { id: "ent.desa-house.2", type: "house", x: 25, y: 10, scale: 1, layer: "BEHIND_ENTITIES", solid: true, asset: "house.village" },
+      { id: "ent.desa-house.3", type: "house", x: 11, y: 24, scale: 0.95, layer: "BEHIND_ENTITIES", solid: true, asset: "house.village" },
+      { id: "ent.desa-house.4", type: "house", x: 25, y: 24, scale: 0.95, layer: "BEHIND_ENTITIES", solid: true, asset: "house.village" },
+      { id: "ent.desa-house.5", type: "house", x: 18, y: 28, scale: 0.9, layer: "BEHIND_ENTITIES", solid: true, asset: "house.village" },
       { id: "ent.desa-tree.1", type: "tree", x: 4, y: 5, scale: 1, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
       { id: "ent.desa-tree.2", type: "tree", x: 8, y: 5, scale: 1.1, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
       { id: "ent.desa-tree.3", type: "tree", x: 13, y: 5, scale: 1, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
