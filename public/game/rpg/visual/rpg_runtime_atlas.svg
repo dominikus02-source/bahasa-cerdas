@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640">
+<defs>
+  <linearGradient id="cloth" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff1d6"/><stop offset="1" stop-color="#d9b98c"/></linearGradient>
+  <linearGradient id="red" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ef5b35"/><stop offset="1" stop-color="#8e241c"/></linearGradient>
+  <linearGradient id="leaf" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#8bbf4b"/><stop offset="1" stop-color="#2e693b"/></linearGradient>
+  <linearGradient id="stone" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#9c9585"/><stop offset="1" stop-color="#4e514d"/></linearGradient>
+  <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#9a603a"/><stop offset="1" stop-color="#4b2c21"/></linearGradient>
+  <filter id="shadow"><feGaussianBlur stdDeviation="5"/></filter>
+</defs>
+<!-- NPC Ki Jaka -->
+<g transform="translate(0 0)">
+ <ellipse cx="120" cy="145" rx="42" ry="8" fill="#000" opacity=".22" filter="url(#shadow)"/>
+ <path d="M78 91 Q120 61 162 91 L153 137 Q120 151 87 137Z" fill="#3d4b59"/>
+ <path d="M88 93 Q120 71 152 93 L145 112 Q120 123 95 112Z" fill="#f1ead8"/>
+ <circle cx="120" cy="64" r="25" fill="#c9875d"/><path d="M96 62 Q120 31 145 61 Q139 48 121 46 Q103 48 96 62" fill="#f0f0e7"/>
+ <path d="M99 70 Q120 88 141 70" fill="none" stroke="#8b553e" stroke-width="4" stroke-linecap="round"/>
+ <path d="M101 39 Q120 25 139 39" fill="none" stroke="#e7ddc9" stroke-width="9" stroke-linecap="round"/>
+ <circle cx="111" cy="63" r="2.5" fill="#2d2724"/><circle cx="129" cy="63" r="2.5" fill="#2d2724"/>
+ <path d="M98 96 L75 121 M142 96 L165 121" stroke="#c9875d" stroke-width="10" stroke-linecap="round"/>
+</g>
+<!-- Bu Ratmi -->
+<g transform="translate(240 0)">
+ <ellipse cx="120" cy="145" rx="38" ry="8" fill="#000" opacity=".22" filter="url(#shadow)"/>
+ <path d="M80 87 Q120 72 160 87 L151 140 Q120 151 89 140Z" fill="#7b5a7a"/>
+ <path d="M92 91 L120 112 148 91" fill="#f5dfc0"/>
+ <circle cx="120" cy="62" r="23" fill="#c9875d"/><path d="M96 61 Q103 31 124 37 Q145 35 148 61 Q136 49 120 51 Q104 49 96 61" fill="#3a2925"/>
+ <circle cx="111" cy="62" r="2.5" fill="#2d2724"/><circle cx="129" cy="62" r="2.5" fill="#2d2724"/>
+ <path d="M108 74 Q120 81 132 74" fill="none" stroke="#8b553e" stroke-width="3"/>
+ <path d="M95 95 L73 122 M145 95 L167 122" stroke="#c9875d" stroke-width="9" stroke-linecap="round"/>
+</g>
+<!-- Bu Sari -->
+<g transform="translate(480 0)">
+ <ellipse cx="120" cy="145" rx="38" ry="8" fill="#000" opacity=".22" filter="url(#shadow)"/>
+ <path d="M76 90 Q120 69 164 90 L151 140 Q120 151 89 140Z" fill="#4e7990"/>
+ <path d="M91 92 Q120 113 149 92" fill="#e7d7bd"/>
+ <circle cx="120" cy="62" r="23" fill="#b97852"/><path d="M97 64 Q100 31 123 35 Q145 32 148 63 Q136 49 120 52 Q105 49 97 64" fill="#1f2428"/>
+ <circle cx="111" cy="62" r="2.5" fill="#2d2724"/><circle cx="129" cy="62" r="2.5" fill="#2d2724"/>
+ <path d="M108 75 Q120 81 132 75" fill="none" stroke="#7a4a39" stroke-width="3"/>
+ <path d="M95 96 L72 123 M145 96 L168 123" stroke="#b97852" stroke-width="9" stroke-linecap="round"/>
+</g>
+<!-- Eyang Kartala -->
+<g transform="translate(720 0)">
+ <ellipse cx="120" cy="145" rx="42" ry="8" fill="#000" opacity=".22" filter="url(#shadow)"/>
+ <path d="M77 91 Q120 68 163 91 L152 139 Q120 151 88 139Z" fill="#5b5149"/>
+ <circle cx="120" cy="62" r="24" fill="#c9875d"/><path d="M95 62 Q103 29 121 36 Q143 29 149 62 Q136 49 120 52 Q104 48 95 62" fill="#e6e0d5"/>
+ <path d="M102 70 Q120 88 138 70" fill="none" stroke="#e6e0d5" stroke-width="8" stroke-linecap="round"/>
+ <circle cx="111" cy="62" r="2.5" fill="#2d2724"/><circle cx="129" cy="62" r="2.5" fill="#2d2724"/>
+ <path d="M95 96 L73 123 M145 96 L167 123" stroke="#c9875d" stroke-width="9" stroke-linecap="round"/>
+</g>
+
+<!-- Korog -->
+<g transform="translate(0 160)">
+ <ellipse cx="120" cy="146" rx="48" ry="9" fill="#000" opacity=".25" filter="url(#shadow)"/>
+ <path d="M78 135 Q65 102 87 79 L78 57 105 66 Q120 45 135 66 L162 57 153 80 Q176 104 161 135Z" fill="url(#leaf)"/>
+ <path d="M91 90 Q120 72 149 90 L143 126 Q120 141 97 126Z" fill="#6d8f42"/>
+ <path d="M93 70 L80 39 103 58 M147 70 L160 39 137 58" fill="#6d8f42"/>
+ <circle cx="107" cy="92" r="6" fill="#ffbf39"/><circle cx="133" cy="92" r="6" fill="#ffbf39"/>
+ <circle cx="107" cy="92" r="2" fill="#6d130d"/><circle cx="133" cy="92" r="2" fill="#6d130d"/>
+ <path d="M103 112 Q120 123 137 112" fill="none" stroke="#421c17" stroke-width="5" stroke-linecap="round"/>
+ <path d="M95 121 L74 142 M145 121 L166 142" stroke="#496d34" stroke-width="12" stroke-linecap="round"/>
+</g>
+<!-- Korog perang -->
+<g transform="translate(240 160)">
+ <ellipse cx="120" cy="146" rx="50" ry="9" fill="#000" opacity=".25" filter="url(#shadow)"/>
+ <path d="M77 133 Q62 97 86 74 L74 49 105 61 Q120 38 136 61 L167 49 154 75 Q178 99 162 133Z" fill="#a65a35"/>
+ <path d="M91 87 Q120 67 149 87 L143 126 Q120 141 97 126Z" fill="#8d4b31"/>
+ <circle cx="107" cy="90" r="6" fill="#ffcf45"/><circle cx="133" cy="90" r="6" fill="#ffcf45"/>
+ <path d="M100 112 L140 112" stroke="#3b1715" stroke-width="5"/>
+ <path d="M92 119 L68 144 M148 119 L172 144" stroke="#6d3827" stroke-width="13" stroke-linecap="round"/>
+ <path d="M80 104 L59 88 M160 104 L181 88" stroke="#d8a45b" stroke-width="7" stroke-linecap="round"/>
+</g>
+<!-- Stone Golem -->
+<g transform="translate(480 160)">
+ <ellipse cx="120" cy="148" rx="55" ry="10" fill="#000" opacity=".25" filter="url(#shadow)"/>
+ <path d="M80 132 L74 83 91 57 120 47 149 57 166 83 160 132 143 144 97 144Z" fill="url(#stone)"/>
+ <path d="M88 73 L74 49 100 58 M152 73 L166 49 140 58" fill="#66645d"/>
+ <circle cx="106" cy="89" r="5" fill="#f4c542"/><circle cx="134" cy="89" r="5" fill="#f4c542"/>
+ <path d="M100 111 Q120 121 140 111" fill="none" stroke="#30312f" stroke-width="6"/>
+ <path d="M91 118 L64 139 M149 118 L176 139" stroke="#77766d" stroke-width="17" stroke-linecap="round"/>
+</g>
+<!-- Shadow Korog -->
+<g transform="translate(720 160)">
+ <ellipse cx="120" cy="147" rx="48" ry="9" fill="#000" opacity=".28" filter="url(#shadow)"/>
+ <path d="M82 135 Q68 100 91 77 L82 53 107 63 Q120 43 134 63 L159 53 150 78 Q173 101 158 135Z" fill="#30364c"/>
+ <path d="M95 88 Q120 72 145 88 L140 128 Q120 140 100 128Z" fill="#252a3b"/>
+ <circle cx="108" cy="91" r="6" fill="#a9e7ff"/><circle cx="132" cy="91" r="6" fill="#a9e7ff"/>
+ <path d="M101 111 Q120 120 139 111" stroke="#a9e7ff" stroke-width="4" fill="none"/>
+ <path d="M93 121 L70 144 M147 121 L170 144" stroke="#343b57" stroke-width="12" stroke-linecap="round"/>
+</g>
+
+<!-- Raja Korog -->
+<g transform="translate(0 320)">
+ <ellipse cx="120" cy="148" rx="62" ry="10" fill="#000" opacity=".28" filter="url(#shadow)"/>
+ <path d="M69 137 Q54 89 82 63 L67 30 104 47 Q120 18 136 47 L173 30 158 64 Q186 90 171 137Z" fill="#6e913c"/>
+ <path d="M83 86 Q120 62 157 86 L150 130 Q120 148 90 130Z" fill="#597a38"/>
+ <path d="M91 52 L103 16 120 44 137 16 149 52" fill="#f4bd35"/>
+ <circle cx="103" cy="88" r="7" fill="#ffce43"/><circle cx="137" cy="88" r="7" fill="#ffce43"/>
+ <path d="M96 111 Q120 126 144 111" stroke="#321815" stroke-width="7" fill="none"/>
+ <path d="M91 120 L58 147 M149 120 L182 147" stroke="#486a2f" stroke-width="17" stroke-linecap="round"/>
+</g>
+<!-- Great Golem -->
+<g transform="translate(240 320)">
+ <ellipse cx="120" cy="149" rx="65" ry="10" fill="#000" opacity=".28" filter="url(#shadow)"/>
+ <path d="M73 137 L65 75 84 43 120 26 156 43 175 75 167 137 145 149 95 149Z" fill="#77756b"/>
+ <path d="M85 58 L68 31 101 42 M155 58 L172 31 139 42" fill="#66655e"/>
+ <circle cx="103" cy="83" r="7" fill="#f6c64c"/><circle cx="137" cy="83" r="7" fill="#f6c64c"/>
+ <path d="M94 110 Q120 127 146 110" stroke="#343531" stroke-width="8" fill="none"/>
+ <path d="M90 122 L52 149 M150 122 L188 149" stroke="#66645d" stroke-width="20" stroke-linecap="round"/>
+</g>
+<!-- Ash Naga -->
+<g transform="translate(480 320)">
+ <ellipse cx="120" cy="150" rx="64" ry="9" fill="#000" opacity=".25" filter="url(#shadow)"/>
+ <path d="M78 139 Q67 100 83 74 Q98 51 120 45 Q142 51 157 74 Q173 100 162 139Z" fill="#6c6d73"/>
+ <path d="M92 74 Q120 24 148 74 L135 60 120 31 105 60Z" fill="#55565d"/>
+ <circle cx="103" cy="87" r="6" fill="#ffbe42"/><circle cx="137" cy="87" r="6" fill="#ffbe42"/>
+ <path d="M96 109 Q120 122 144 109" stroke="#34343a" stroke-width="6" fill="none"/>
+ <path d="M87 122 L53 147 M153 122 L187 147" stroke="#575860" stroke-width="16" stroke-linecap="round"/>
+ <path d="M93 58 Q65 74 75 102 M147 58 Q175 74 165 102" fill="none" stroke="#86878b" stroke-width="9"/>
+</g>
+<!-- Tower Overlord -->
+<g transform="translate(720 320)">
+ <ellipse cx="120" cy="149" rx="65" ry="10" fill="#000" opacity=".28" filter="url(#shadow)"/>
+ <path d="M76 137 L69 74 87 45 120 28 153 45 171 74 164 137 144 149 96 149Z" fill="#3d4d66"/>
+ <path d="M82 67 L65 36 99 46 M158 67 L175 36 141 46" fill="#26344c"/>
+ <circle cx="103" cy="84" r="7" fill="#75e0ff"/><circle cx="137" cy="84" r="7" fill="#75e0ff"/>
+ <path d="M94 110 Q120 126 146 110" stroke="#182335" stroke-width="8" fill="none"/>
+ <path d="M88 121 L53 148 M152 121 L187 148" stroke="#31415a" stroke-width="19" stroke-linecap="round"/>
+</g>
+
+<!-- House -->
+<g transform="translate(0 480)">
+ <ellipse cx="120" cy="151" rx="78" ry="8" fill="#000" opacity=".18" filter="url(#shadow)"/>
+ <path d="M46 87 L120 32 194 87 V145 H46Z" fill="#d4b06f"/>
+ <path d="M37 88 L120 20 203 88 192 99 120 42 48 99Z" fill="#8b3e28"/>
+ <path d="M105 101 H135 V145 H105Z" fill="#573627"/>
+ <rect x="61" y="101" width="26" height="22" rx="3" fill="#a7d2d0"/><rect x="153" y="101" width="26" height="22" rx="3" fill="#a7d2d0"/>
+ <path d="M46 145 H194" stroke="#6a442f" stroke-width="7"/>
+</g>
+<!-- Tree -->
+<g transform="translate(240 480)">
+ <ellipse cx="120" cy="150" rx="48" ry="8" fill="#000" opacity=".18" filter="url(#shadow)"/>
+ <path d="M109 145 V87" stroke="#68412b" stroke-width="18" stroke-linecap="round"/>
+ <circle cx="89" cy="82" r="35" fill="url(#leaf)"/><circle cx="133" cy="72" r="40" fill="url(#leaf)"/><circle cx="155" cy="98" r="31" fill="url(#leaf)"/><circle cx="76" cy="110" r="27" fill="#4e8b3c"/>
+</g>
+<!-- Well -->
+<g transform="translate(480 480)">
+ <ellipse cx="120" cy="149" rx="56" ry="8" fill="#000" opacity=".18" filter="url(#shadow)"/>
+ <ellipse cx="120" cy="112" rx="48" ry="24" fill="#5e625f"/><ellipse cx="120" cy="109" rx="36" ry="16" fill="#243b45"/>
+ <path d="M76 109 V145 M164 109 V145" stroke="#6f513b" stroke-width="10"/>
+ <path d="M70 105 Q120 77 170 105" fill="none" stroke="#6f513b" stroke-width="10"/>
+ <path d="M91 143 Q120 155 149 143" fill="none" stroke="#777a76" stroke-width="12"/>
+</g>
+<!-- spare prop / banner -->
+<g transform="translate(720 480)">
+ <ellipse cx="120" cy="150" rx="50" ry="7" fill="#000" opacity=".15" filter="url(#shadow)"/>
+ <path d="M80 146 V45 M160 146 V45" stroke="#60412d" stroke-width="8"/>
+ <path d="M76 52 Q120 34 164 52 L164 112 Q120 95 76 112Z" fill="#b94b32"/>
+ <path d="M91 62 Q120 50 149 62" fill="none" stroke="#f5d78d" stroke-width="5"/>
+</g>
+</svg>
