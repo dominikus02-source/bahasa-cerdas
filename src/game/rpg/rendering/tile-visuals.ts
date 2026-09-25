@@ -25,6 +25,9 @@ const BINDINGS: Record<VisualMapId, Record<number, string[]>> = {
   "map.desa": {
     [RPG_TILES.GR]: ["desa_grass_01", "desa_grass_02", "desa_grass_flowers"],
     [RPG_TILES.PA]: ["desa_stone_path"],
+    // Central village plaza uses the same collision-safe walkable tile but
+    // receives a quieter stone-floor treatment in the renderer.
+
     [RPG_TILES.TR]: ["desa_grass_01", "desa_grass_02", "desa_grass_flowers"],
     [RPG_TILES.WA]: ["desa_water_01", "desa_water_02", "desa_water_03", "desa_water_deep"],
     [RPG_TILES.RO]: ["desa_stone_01", "desa_stone_02", "desa_cliff_stone"],
