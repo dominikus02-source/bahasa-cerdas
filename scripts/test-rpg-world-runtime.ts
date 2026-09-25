@@ -108,9 +108,9 @@ check("10b. authored props survive canonical → runtime", (() => {
   const desaWorld = loadCanonicalMap("map.desa")!;
   const gunungWorld = loadCanonicalMap("map.gunung")!;
   const menaraWorld = loadCanonicalMap("map.menara")!;
-  const expected = ["bamboo.grove", "shrine.gate", "lantern.stone", "bridge.wood"];
+  const expected = ["bamboo.grove", "shrine.gate", "lantern.stone", "bridge.wood", "well.stone", "banner.village"];
   return expected.every((asset) => desaWorld.entities.some((e) => e.asset === asset)) &&
-    expected.every((asset) => gunungWorld.entities.some((e) => e.asset === asset)) &&
+    ["bamboo.grove", "shrine.gate", "lantern.stone", "bridge.wood"].every((asset) => gunungWorld.entities.some((e) => e.asset === asset)) &&
     menaraWorld.entities.some((e) => e.asset === "shrine.gate") &&
     menaraWorld.entities.filter((e) => e.asset === "lantern.stone").length === 2;
 })());
