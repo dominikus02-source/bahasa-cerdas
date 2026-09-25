@@ -944,6 +944,20 @@ const SURYAKERTA_V2_ENVIRONMENT_ENTRIES: RpgAssetEntry[] = SURYAKERTA_V2_ENVIRON
   note: "Suryakerta V2 canonical environment family.",
 }));
 
+const SURYAKERTA_V2_CHARACTER_ATLAS = "/game/rpg/visual/rpg_suryakerta_v2_characters.svg";
+const SURYAKERTA_V2_CHARACTER_LAYOUT: Array<[string,string,number,number]> = [
+  ["npc_ki_jaka_v2","npcs",0,0],["npc_bu_ratmi_v2","npcs",240,0],["npc_bu_sari_v2","npcs",480,0],["npc_eyang_kartala_v2","npcs",720,0],
+  ["npc_bagas_v2","npcs",0,160],["npc_tani_v2","npcs",240,160],["npc_pendaki_v2","npcs",480,160],["npc_pak_empu_v2","npcs",720,160],
+  ["enemy_korog_v2","monsters",0,320],["enemy_korog_perang_v2","monsters",240,320],["enemy_golem_batu_v2","monsters",480,320],["enemy_korog_bayangan_v2","monsters",720,320],
+  ["boss_raja_korog_v2","bosses",0,480],["boss_golem_agung_v2","bosses",240,480],["boss_naga_abu_v2","bosses",480,480],["boss_penguasa_menara_v2","bosses",720,480],
+];
+const SURYAKERTA_V2_CHARACTER_ENTRIES: RpgAssetEntry[] = SURYAKERTA_V2_CHARACTER_LAYOUT.map(([id,category,x,y]) => ({
+  id, category, source:"generated-suryakerta-v2", path:SURYAKERTA_V2_CHARACTER_ATLAS, width:960, height:800, frames:1,
+  animationState:null, direction:null, origin:{x:0.5,y:1}, logicalScale:1, alpha:true,
+  status:"READY" as const, confidence:"reviewed" as const, sourceRect:{x:Number(x),y:Number(y),width:240,height:160},
+  note:"Suryakerta V2 canonical character family.",
+}));
+
 const SURYAKERTA_V2_DETAIL_ATLAS = "/game/rpg/visual/rpg_suryakerta_v2_village_detail.svg";
 const SURYAKERTA_V2_DETAIL_LAYOUT: Array<[string,string,number,number]> = [
   ["prop_bush_01","props",0,0],["prop_bush_02","props",120,0],["prop_rock_01","props",240,0],["prop_rock_02","props",360,0],
@@ -960,6 +974,7 @@ const SURYAKERTA_V2_DETAIL_ENTRIES: RpgAssetEntry[] = SURYAKERTA_V2_DETAIL_LAYOU
 export const RPG_ASSET_MANIFEST: RpgAssetEntry[] = [
   ...SURYAKERTA_V2_ENVIRONMENT_ENTRIES,
   ...SURYAKERTA_V2_DETAIL_ENTRIES,
+  ...SURYAKERTA_V2_CHARACTER_ENTRIES,
   ...VISUAL_ATLAS_ENTRIES,
   ...NPC_RUNTIME_ENTRIES,
   ...READY_TABLE.map(readyEntry),
