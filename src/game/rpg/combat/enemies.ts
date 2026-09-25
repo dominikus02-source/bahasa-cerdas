@@ -15,6 +15,7 @@ export function toBattleActor(def: RPGEnemyDefinition, id: RPGId): RPGBattleActo
   return {
     id,
     name: def.name,
+    asset: def.asset,
     hp: def.base.hp,
     maxHp: def.base.hp,
     attack: def.base.attack,
