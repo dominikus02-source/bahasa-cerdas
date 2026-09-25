@@ -17,9 +17,10 @@ interface RPGMenuPanelProps {
   inventory: Array<{ itemId: string; quantity: number }>;
   equipment: { weaponId: string | null; armorId: string | null; accessoryId: string | null };
   onClose: () => void;
+  onEquip: (itemId: string) => void;
 }
 
-export function RPGMenuPanel({ tab, mapId, quest, gold, inventory, equipment, onClose }: RPGMenuPanelProps) {
+export function RPGMenuPanel({ tab, mapId, quest, gold, inventory, equipment, onClose, onEquip }: RPGMenuPanelProps) {
   const map = getCanonicalMap(mapId);
   const totalItems = inventory.reduce((n, i) => n + i.quantity, 0);
   const progress = quest.main >= 1 ? Math.min(100, (quest.kills / 3) * 100) : 0;
@@ -68,7 +69,7 @@ export function RPGMenuPanel({ tab, mapId, quest, gold, inventory, equipment, on
                 const def = canonicalItemById(item.itemId);
                 const iconId = itemIconFor(item.itemId);
                 const icon = iconId ? manifestLookup(iconId) : undefined;
-                return <div key={item.itemId} className="rounded-2xl border border-white/10 bg-white/5 p-3"><div className="flex items-center gap-3"><div className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-xl bg-black/20">{icon?.status === "READY" ? <img src={icon.path} alt="" aria-hidden width={40} height={40} className="object-contain" /> : <span aria-hidden className="text-lg">✦</span>}</div><div><div className="text-sm font-black">{def?.name ?? item.itemId}</div><div className="mt-1 text-xs text-amber-300">×{item.quantity}</div></div></div><div className="mt-2 text-[10px] uppercase tracking-wider text-stone-500">{def?.kind ?? "item"}</div></div>;
+                return <div key={item.itemId} className="rounded-2xl border border-white/10 bg-white/5 p-3"><div className="flex items-center gap-3"><div className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-xl bg-black/20">{icon?.status === "READY" ? <img src={icon.path} alt="" aria-hidden width={40} height={40} className="object-contain" /> : <span aria-hidden className="text-lg">✦</span>}</div><div><div className="text-sm font-black">{def?.name ?? item.itemId}</div><div className="mt-1 text-xs text-amber-300">×{item.quantity}</div></div></div><div className="mt-2 flex items-center justify-between gap-2"><div className="text-[10px] uppercase tracking-wider text-stone-500">{def?.kind ?? "item"}</div>{def && EQUIPMENT.some((e) => e.id === item.itemId) ? <button type="button" onClick={() => onEquip(item.itemId)} className="rounded-lg border border-amber-300/30 bg-amber-400/15 px-2 py-1 text-[10px] font-black text-amber-200 hover:bg-amber-400/25">{equipment.weaponId === item.itemId || equipment.armorId === item.itemId || equipment.accessoryId === item.itemId ? "Lepas" : "Pakai"}</button> : null}</div></div>;
               }) : <p className="col-span-full rounded-2xl bg-white/5 p-5 text-sm text-stone-400">Tas masih kosong.</p>}
             </div>
           </div>
