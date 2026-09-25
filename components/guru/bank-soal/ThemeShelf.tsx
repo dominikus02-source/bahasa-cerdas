@@ -63,7 +63,7 @@ export function ThemeShelf<T extends ThemeCardData>({
           type="button"
           onClick={() => scroll("left")}
           aria-label="Geser ke kiri"
-          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 z-10 w-9 h-9 items-center justify-center rounded-full bg-white/90 border border-slate-200 shadow-md backdrop-blur-sm text-slate-600 hover:bg-white hover:text-slate-900 opacity-0 group-hover/shelf:opacity-100 transition-opacity focus-visible:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
+          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 z-10 w-9 h-9 items-center justify-center rounded-full bg-white/90 border border-slate-200 shadow-md backdrop-blur-sm text-slate-600 hover:bg-white hover:text-slate-900 opacity-0 group-hover/shelf:opacity-100 transition-opacity focus-visible:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
         >
           <ChevronLeft size={18} />
         </button>
@@ -73,7 +73,7 @@ export function ThemeShelf<T extends ThemeCardData>({
           type="button"
           onClick={() => scroll("right")}
           aria-label="Geser ke kanan"
-          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 z-10 w-9 h-9 items-center justify-center rounded-full bg-white/90 border border-slate-200 shadow-md backdrop-blur-sm text-slate-600 hover:bg-white hover:text-slate-900 opacity-0 group-hover/shelf:opacity-100 transition-opacity focus-visible:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
+          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 z-10 w-9 h-9 items-center justify-center rounded-full bg-white/90 border border-slate-200 shadow-md backdrop-blur-sm text-slate-600 hover:bg-white hover:text-slate-900 opacity-0 group-hover/shelf:opacity-100 transition-opacity focus-visible:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
         >
           <ChevronRight size={18} />
         </button>
