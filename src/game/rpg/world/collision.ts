@@ -40,6 +40,10 @@ function getEntityRadius(entity: RPGWorldEntity): number {
     fence: 0.015,
     bush: 0.015,
     flowers: 0.01,
+    bamboo: 0.04,
+    shrine: 0.055,
+    lantern: 0.012,
+    bridge: 0.045,
   };
   return (baseRadius[entity.type] ?? 0.02) * entity.scale;
 }
