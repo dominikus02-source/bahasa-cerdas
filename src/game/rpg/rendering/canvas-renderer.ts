@@ -251,15 +251,12 @@ export function createCanvasRenderer(
   function renderTiles(state: RPGGameState, camera: RPGCameraState) {
     const { tiles } = state.world;
 
-    // Desa Suryakerta has an authored scene-level composition. It owns the
-    // presentation surface while the canonical tile grid remains authoritative
-    // for collision, portals, chests and gameplay. This avoids exposing the
-    // underlying 64px tile seams as the visual language of the village.
-    if (state.world.mapId === "map.desa" && renderSceneBackdrop(state, camera)) {
-      return;
-    }
-
     const zoom = clampZoom(camera.zoom ?? 1);
+
+    // Pixel-art world pass: keep terrain crisp. UI/text rendering is outside
+    // this scope and retains the browser's normal smoothing behavior.
+    ctx.save();
+    ctx.imageSmoothingEnabled = false;
     const tilePx = LOGICAL_TILE_PX * zoom;
 
     for (let y = 0; y < tiles.height; y++) {
@@ -318,6 +315,7 @@ export function createCanvasRenderer(
         ctx.strokeRect(sx.x - tilePx / 2, sx.y - tilePx / 2, tilePx, tilePx);
       }
     }
+    ctx.restore();
   }
 
   // ── Tile art cache (P2.1) ─────────────────────────────────────────
@@ -395,46 +393,21 @@ export function createCanvasRenderer(
     return null;
   }
 
-  function renderSceneBackdrop(
-    state: RPGGameState,
-    camera: RPGCameraState,
-  ): boolean {
-    const entry = manifestLookup("scene_desa_suryakerta");
-    if (!entry || entry.status !== "READY") return false;
-
-    const cached = tileLoader.cached(entry.path);
-    if (!cached) {
-      if (!requestedTilePaths.has(entry.path)) {
-        requestedTilePaths.add(entry.path);
-        void tileLoader.load(entry.path);
-      }
-      return false;
-    }
-
-    const topLeft = worldToScreenScaled(
-      { x: 0, y: 0 },
-      camera,
-      state.world.tiles.width,
-      state.world.tiles.height,
-    );
-    const bottomRight = worldToScreenScaled(
-      { x: 1, y: 1 },
-      camera,
-      state.world.tiles.width,
-      state.world.tiles.height,
-    );
-
+  /** Grounding shadow for authored world props. Presentation-only. */
+  function drawContactShadow(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    alpha = 0.14,
+  ): void {
     ctx.save();
-    ctx.imageSmoothingEnabled = true;
-    ctx.drawImage(
-      cached as unknown as CanvasImageSource,
-      topLeft.x,
-      topLeft.y,
-      bottomRight.x - topLeft.x,
-      bottomRight.y - topLeft.y,
-    );
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = "#111827";
+    ctx.beginPath();
+    ctx.ellipse(x, y + 2, width, height, 0, 0, Math.PI * 2);
+    ctx.fill();
     ctx.restore();
-    return true;
   }
 
   /** Render world entities (trees, houses, bushes, etc.). */
@@ -467,6 +440,18 @@ export function createCanvasRenderer(
         entity.type === "bridge" ? 104 :
         entity.type === "banner" ? 68 : 44;
       const size = baseSize * entity.scale * zoom;
+
+      // Grounding pass keeps tall props attached to the terrain instead of
+      // looking pasted on top of it.
+      if (entity.type !== "bridge" && entity.type !== "banner") {
+        drawContactShadow(
+          screen.x,
+          screen.y,
+          Math.max(7, size * 0.24),
+          Math.max(2, size * 0.055),
+          entity.type === "house" ? 0.16 : 0.12,
+        );
+      }
 
       // P2.11: READY visual atlas first; procedural fallback remains only for
       // asset types that are genuinely not yet promoted.
@@ -623,6 +608,7 @@ export function createCanvasRenderer(
           drawRect(screen.x - 2, screen.y - 2, 4, 4, "#92400e");
           break;
         case "NPC": {
+          drawContactShadow(screen.x, screen.y, 12 * zoom, 3.5 * zoom, 0.13);
           const npcAssetKeys: Record<string, string> = {
             "npc.ki": "npc.ki-jaka",
             "npc.ratmi": "npc.bu-ratmi",
@@ -635,7 +621,7 @@ export function createCanvasRenderer(
           };
           const resolution = resolveEntityAsset(npcAssetKeys[interaction.ref]);
           const rendered = isEntityAssetReady(resolution)
-            ? drawReadyEntitySprite(resolution.entry, screen.x, screen.y, 68 * zoom)
+            ? drawReadyEntitySprite(resolution.entry, screen.x, screen.y, 74 * zoom)
             : false;
           if (!rendered) {
             // Explicit technical fallback only when an asset is unavailable.
@@ -675,6 +661,7 @@ export function createCanvasRenderer(
       );
       const resolution = resolveEntityAsset(enemy.def.asset);
       const maxSize = enemy.boss ? 92 * zoom : 58 * zoom;
+      drawContactShadow(screen.x, screen.y, maxSize * 0.22, maxSize * 0.05, 0.14);
       const rendered = isEntityAssetReady(resolution)
         ? drawReadyEntitySprite(resolution.entry, screen.x, screen.y, maxSize)
         : false;
