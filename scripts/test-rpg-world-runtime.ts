@@ -181,6 +181,7 @@ const engine = src("src/game/rpg/core/game-engine.ts");
 check("engine calls stepTile", engine.includes("stepTile("));
 check("engine emits MAP_TRANSITION", engine.includes('"MAP_TRANSITION"'));
 check("engine emits PORTAL_BLOCKED", engine.includes('"PORTAL_BLOCKED"'));
+check("Naga gate derives from persisted deadBossIds", engine.includes('deadBossIds.has("na")') && engine.includes("nagaDead"));
 check("engine honors config.mapId (canonical loader)", engine.includes("loadCanonicalMap(canonicalStart.id)") || engine.includes("loadCanonicalMap("));
 check("engine spawns canonical maps at spawn", engine.includes("spawnPosition("));
 check("engine exposes setFlag/getFlags/saveGame", engine.includes("setFlag") && engine.includes("getOpenedChests") && engine.includes("saveGame("));
