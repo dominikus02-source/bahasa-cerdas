@@ -893,13 +893,12 @@ const REFERENCE_ENTRIES: RpgAssetEntry[] = [
 
 
 /** Founder Lab runtime atlas — vector production fallback for the full vertical slice. */
-const VISUAL_RUNTIME_ATLAS = "/game/rpg/visual/rpg_suryakerta_v2_environment.svg";
+const VISUAL_RUNTIME_ATLAS = "/game/rpg/visual/rpg_runtime_atlas.svg";
+const SURYAKERTA_V2_ENVIRONMENT_ATLAS = "/game/rpg/visual/rpg_suryakerta_v2_environment.svg";
 const VISUAL_ATLAS_LAYOUT: Array<[string, string, number, number]> = [
   ["npc_ki_jaka_full","npcs",0,0], ["npc_bu_ratmi","npcs",240,0], ["npc_bu_sari","npcs",480,0], ["npc_eyang_kartala","npcs",720,0],
   ["enemy_korog","monsters",0,160], ["enemy_korog_perang","monsters",240,160], ["enemy_golem_batu","monsters",480,160], ["enemy_korog_bayangan","monsters",720,160],
   ["boss_raja_korog","bosses",0,320], ["boss_golem_agung","bosses",240,320], ["boss_naga_abu","bosses",480,320], ["boss_penguasa_menara","bosses",720,320],
-  ["prop_house_village","props",0,480], ["prop_tree_round","props",240,480], ["prop_well","props",480,480], ["prop_banner","props",720,480],
-  ["prop_bamboo_grove","props",0,640], ["prop_shrine_gate","props",240,640], ["prop_lantern","props",480,640], ["prop_wooden_bridge","props",720,640],
 ];
 const NPC_RUNTIME_ATLAS = "/game/rpg/visual/rpg_npc_atlas.svg";
 const NPC_RUNTIME_ENTRIES: RpgAssetEntry[] = [
@@ -922,7 +921,21 @@ const VISUAL_ATLAS_ENTRIES: RpgAssetEntry[] = VISUAL_ATLAS_LAYOUT.map(([id, cate
   note: "Suryakerta V2 environment atlas: cohesive stepped/pixel village props; canonical environment family.",
 }));
 
+const SURYAKERTA_V2_ENVIRONMENT_LAYOUT: Array<[string, string, number, number]> = [
+  ["prop_house_village","props",0,480], ["prop_tree_round","props",240,480], ["prop_well","props",480,480], ["prop_banner","props",720,480],
+  ["prop_bamboo_grove","props",0,640], ["prop_shrine_gate","props",240,640], ["prop_lantern","props",480,640], ["prop_wooden_bridge","props",720,640],
+];
+const SURYAKERTA_V2_ENVIRONMENT_ENTRIES: RpgAssetEntry[] = SURYAKERTA_V2_ENVIRONMENT_LAYOUT.map(([id, category, x, y]) => ({
+  id, category, source: "generated-suryakerta-v2", path: SURYAKERTA_V2_ENVIRONMENT_ATLAS,
+  width: 960, height: 800, frames: 1, animationState: null, direction: null,
+  origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
+  status: "READY" as const, confidence: "reviewed" as const,
+  sourceRect: { x, y, width: 240, height: 160 },
+  note: "Suryakerta V2 canonical environment family.",
+}));
+
 export const RPG_ASSET_MANIFEST: RpgAssetEntry[] = [
+  ...SURYAKERTA_V2_ENVIRONMENT_ENTRIES,
   ...VISUAL_ATLAS_ENTRIES,
   ...NPC_RUNTIME_ENTRIES,
   ...READY_TABLE.map(readyEntry),
