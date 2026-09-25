@@ -225,6 +225,8 @@ export interface RPGEngine {
   fleeBattle(): boolean;
   /** Live encounter table snapshot (debug/tests). */
   getLiveEnemies(): LiveEnemy[];
+  /** Current Menara tower floor; zero outside Menara. */
+  getTowerFloor(): number;
   /** Unclaimed gold intents for the future economy phase. */
   getGoldIntents(): Array<{ battleId: string; amount: number }>;
   /** Defeated boss instance ids (persisted, never respawn). */
@@ -2216,6 +2218,10 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     return activeBattle?.state.battleId !== id || activeBattle?.state.result === "FLED";
   }
 
+  function getTowerFloor(): number {
+    return state.world.mapId === "map.menara" ? towerFloor : 0;
+  }
+
   function getLiveEnemies(): LiveEnemy[] {
     return liveEnemies.map((e) => ({ ...e, tile: { ...e.tile }, spawnTile: { ...e.spawnTile } }));
   }
@@ -2302,6 +2308,7 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     useItem,
     fleeBattle,
     getLiveEnemies,
+    getTowerFloor,
     getGoldIntents,
     getDeadBossIds,
     getQuest,
