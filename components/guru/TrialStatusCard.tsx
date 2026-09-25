@@ -38,9 +38,9 @@ export function TrialStatusCard() {
   // Active trial
   if (status.isTrial && status.plan === "GURU_PRO_TRIAL") {
     return (
-      <div className="bg-gradient-to-br from-violet-50 to-indigo-50 rounded-2xl border border-violet-200 p-5 hover:shadow-lg transition-all">
+      <div className="bg-[#f5f9ff] rounded-2xl border border-blue-200 dark:bg-[#0b1d34] dark:border-blue-950/70 p-5 hover:shadow-lg transition-all">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-400 to-indigo-600 flex items-center justify-center shadow-md shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-500 flex items-center justify-center shadow-md shrink-0">
             <Sparkles size={22} className="text-white" />
           </div>
           <div className="flex-1">
@@ -60,7 +60,7 @@ export function TrialStatusCard() {
             <div className="flex items-center gap-2 mt-3">
               <Link
                 href="/guru/ai-tools"
-                className="inline-flex items-center gap-1.5 text-xs px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-all font-medium"
+                className="inline-flex items-center gap-1.5 text-xs px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-medium"
               >
                 <Sparkles size={12} /> Lihat Alat AI
               </Link>
@@ -74,7 +74,7 @@ export function TrialStatusCard() {
   // Active premium
   if (status.plan === "GURU_PRO") {
     return (
-      <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-2xl border border-amber-200 p-5 hover:shadow-lg transition-all">
+      <div className="bg-amber-50 rounded-2xl border border-amber-200 dark:bg-amber-950/20 dark:border-amber-900/50 p-5 hover:shadow-lg transition-all">
         <div className="flex items-start gap-4">
           <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center shadow-md shrink-0">
             <Crown size={22} className="text-white" />
@@ -106,7 +106,7 @@ export function TrialStatusCard() {
   // Free guru (no trial, not premium) — subtle expired/ended message
   if (status.plan === "GURU_FREE") {
     return (
-      <div className="bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl border border-gray-200 p-5">
+      <div className="bg-slate-50 rounded-2xl border border-slate-200 dark:bg-slate-900 dark:border-slate-800 p-5">
         <div className="flex items-start gap-4">
           <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center shadow-md shrink-0">
             <AlertCircle size={22} className="text-white" />
