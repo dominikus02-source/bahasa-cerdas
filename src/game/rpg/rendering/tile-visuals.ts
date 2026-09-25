@@ -26,7 +26,7 @@ const BINDINGS: Record<VisualMapId, Record<number, string[]>> = {
     [RPG_TILES.GR]: ["desa_grass_01", "desa_grass_02", "desa_grass_flowers"],
     [RPG_TILES.PA]: ["desa_stone_path"],
     [RPG_TILES.TR]: ["desa_grass_01", "desa_grass_02", "desa_grass_flowers"],
-    [RPG_TILES.WA]: ["desa_water_01", "desa_water_02", "desa_water_03", "desa_water_deep", "desa_water_edge", "desa_water_corner", "desa_bridge_water", "desa_waterfall"],
+    [RPG_TILES.WA]: ["desa_water_01", "desa_water_02", "desa_water_03", "desa_water_deep"],
     [RPG_TILES.RO]: ["desa_stone_01", "desa_stone_02", "desa_cliff_stone"],
     [RPG_TILES.WL]: ["desa_cliff_stone", "desa_stone_01", "desa_stone_02"],
     [RPG_TILES.RF]: ["desa_grass_01", "desa_grass_02"],
