@@ -78,6 +78,7 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
     xpToNext: number;
     mapName: string;
     mapId: string;
+    towerFloor: number;
   } | null>(null);
 
   // P1.9A learning slice — read-only snapshots from the engine (same poll).
@@ -284,6 +285,7 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
           xpToNext: state.player.progression.xpToNextLevel,
           mapName: getCanonicalMap(state.world.mapId)?.name ?? state.world.mapId,
           mapId: state.world.mapId,
+          towerFloor: engine.getTowerFloor(),
         });
         const battle = engine.getBattle();
         setLearning({
@@ -376,6 +378,7 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
           xp={hudState.xp}
           xpToNext={hudState.xpToNext}
           mapName={hudState.mapName}
+          towerFloor={hudState.towerFloor}
         />
       )}
 
