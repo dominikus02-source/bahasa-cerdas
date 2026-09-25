@@ -8,7 +8,7 @@ import {
   ChevronRight, BarChart3, Briefcase, MessageCircle, Presentation,
   Bell, BellRing, X, Coins, DollarSign, Database, Activity, Wallet,
   TrendingUp, Trophy, LineChart, ShieldAlert, ShieldCheck,
-  Crown, Target, ChevronDown,
+  Crown, Target, ChevronDown, Beaker,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -58,6 +58,7 @@ function isItem(e: NavEntry): e is NavItem {
 const NAV: NavEntry[] = [
   // ── 1. Founder intelligence ──
   { label: "Control Tower", href: "/admin/executive", icon: Target },
+  { label: "Founder Lab", href: "/admin/lab", icon: Beaker },
 
   // ── 2. User management ──
   { label: "Pengguna", href: "/admin/users", icon: Users },
