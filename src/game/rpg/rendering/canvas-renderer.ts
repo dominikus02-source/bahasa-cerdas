@@ -17,7 +17,7 @@
 import type { RPGGameState } from "../core/game-state";
 import type { RPGCameraState } from "./camera";
 import { worldToScreenScaled } from "./camera";
-import { HERO_CANVAS_PX, LOGICAL_TILE_PX, clampZoom } from "./world-scale";
+import { ART_TILE_PX, HERO_CANVAS_PX, LOGICAL_TILE_PX, clampZoom } from "./world-scale";
 import { createSpriteLoader } from "./asset-registry";
 import { manifestLookup } from "./rpg-asset-manifest";
 import { resolveTileAsset } from "./tile-visuals";
@@ -277,11 +277,30 @@ export function createCanvasRenderer(
         const bound = boundTileImage(state.world.mapId, tileId, x, y);
         if (bound) {
           // Production terrain owns the surface. Avoid debug-style grid seams.
+          const isVillagePlaza =
+            state.world.mapId === "map.desa" &&
+            tileNum === 1 &&
+            x >= 14 && x <= 22 &&
+            y >= 15 && y <= 21;
+          const targetPx = Math.min(
+            ART_TILE_PX * zoom * 0.72,
+            tilePx * 1.18,
+          );
+          const sourceW = bound.width || 1;
+          const sourceH = bound.height || 1;
+          const aspect = sourceW / sourceH;
+          const drawW = isVillagePlaza ? targetPx * 0.98 : (aspect >= 1 ? targetPx : targetPx * aspect);
+          const drawH = isVillagePlaza ? targetPx * 0.92 : (aspect >= 1 ? targetPx / aspect : targetPx);
+          const pathPadX = drawW / 2;
+          const pathPadY = drawH / 2;
           ctx.drawImage(
             bound as unknown as CanvasImageSource,
-            sx.x - tilePx / 2 - 0.5, sx.y - tilePx / 2 - 0.5, tilePx + 1, tilePx + 1,
+            sx.x - pathPadX, sx.y - pathPadY, drawW, drawH,
           );
           const tileNum = Number(tileId.split(".")[1]);
+          // Terrain is rendered as an authored layer, not a 1:1 debug grid.
+          // The larger art footprint preserves the intended hand-painted tile
+          // language while the gameplay grid remains 48 logical pixels.
           // Tree is a canonical SOLID tile, not a terrain family. Keep the
           // authored ground underneath it and draw the production tree prop
           // on top so the tile remains visually readable as a tree without
@@ -427,18 +446,18 @@ export function createCanvasRenderer(
         state.world.tiles.width, state.world.tiles.height,
       );
       const baseSize =
-        entity.type === "house" ? 108 :
-        entity.type === "tree" ? 58 :
-        entity.type === "well" ? 44 :
-        entity.type === "fence" ? 32 :
-        entity.type === "rock" ? 22 :
-        entity.type === "bush" ? 22 :
-        entity.type === "flowers" ? 18 :
-        entity.type === "bamboo" ? 58 :
-        entity.type === "shrine" ? 70 :
-        entity.type === "lantern" ? 30 :
-        entity.type === "bridge" ? 70 :
-        entity.type === "banner" ? 44 : 30;
+        entity.type === "house" ? 126 :
+        entity.type === "tree" ? 72 :
+        entity.type === "well" ? 52 :
+        entity.type === "fence" ? 36 :
+        entity.type === "rock" ? 26 :
+        entity.type === "bush" ? 26 :
+        entity.type === "flowers" ? 20 :
+        entity.type === "bamboo" ? 70 :
+        entity.type === "shrine" ? 84 :
+        entity.type === "lantern" ? 34 :
+        entity.type === "bridge" ? 84 :
+        entity.type === "banner" ? 50 : 34;
       const size = baseSize * entity.scale * zoom;
 
       // Grounding pass keeps tall props attached to the terrain instead of
@@ -621,7 +640,7 @@ export function createCanvasRenderer(
           };
           const resolution = resolveEntityAsset(npcAssetKeys[interaction.ref]);
           const rendered = isEntityAssetReady(resolution)
-            ? drawReadyEntitySprite(resolution.entry, screen.x, screen.y, 46 * zoom)
+            ? drawReadyEntitySprite(resolution.entry, screen.x, screen.y, 54 * zoom)
             : false;
           if (!rendered) {
             // Explicit technical fallback only when an asset is unavailable.
@@ -689,7 +708,7 @@ export function createCanvasRenderer(
     const player = state.player;
     const zoom = clampZoom(camera.zoom ?? 1);
     // Feet origin: gameplay position == bottom-center contact point.
-    const r = 12 * zoom;
+    const r = 14 * zoom;
     const now = performance.now();
     if (
       !lastPlayerPosition ||
@@ -750,7 +769,7 @@ export function createCanvasRenderer(
         feetY: feet.y,
         canvasWidthPx: HERO_CANVAS_PX,
         canvasHeightPx: HERO_CANVAS_PX,
-        scale: 0.5 * zoom,
+        scale: 0.55 * zoom,
         mirror: mirrorForDirection(player.facing),
       });
       if (dest.mirror) {
