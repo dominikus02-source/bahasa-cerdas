@@ -24,7 +24,7 @@ export const FOUNDER_LAB_FEATURES: readonly FounderLabFeature[] = [
     name: "Pendekar Suryakerta",
     description: "Founder preview RPG petualangan BahasaCerdas sebelum dipublikasikan.",
     status: "FOUNDER_TEST",
-    version: "P2.12",
+    version: "P2.13",
     previewPath: "/arena/game/rpg",
     owner: "Founder",
     lastUpdated: "2026-09-25",
