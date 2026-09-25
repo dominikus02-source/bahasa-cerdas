@@ -422,7 +422,7 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
         onInteract={() => engineRef.current?.interact()}
       />
 
-      <div className="absolute right-2 top-[6.1rem] z-20 flex gap-1.5 sm:right-3 sm:top-[7.1rem]" aria-label="Menu RPG">
+      <div className="absolute right-2 top-[8.1rem] z-20 flex gap-1.5 sm:right-3 sm:top-[7.1rem]" aria-label="Menu RPG">
         {([["map","Peta"],["bag","Tas"],["quest","Quest"]] as const).map(([tab, label]) => (
           <button key={tab} type="button" onClick={() => setMenuTab(tab)} className="rounded-xl border border-white/15 bg-stone-950/75 px-2.5 py-1.5 text-[10px] font-black text-white shadow-lg backdrop-blur hover:bg-stone-900 sm:px-3 sm:py-2 sm:text-xs">{label}</button>
         ))}
