@@ -913,26 +913,6 @@ const NPC_RUNTIME_ENTRIES: RpgAssetEntry[] = [
   note: "Founder Lab runtime NPC atlas.",
 })) as RpgAssetEntry[];
 
-const SCENE_BACKDROP_ENTRIES: RpgAssetEntry[] = [
-  {
-    id: "scene_desa_suryakerta",
-    category: "environments",
-    source: "generated-runtime-scene",
-    path: "/game/rpg/visual/scenes/desa-suryakerta.svg",
-    width: 2944,
-    height: 2304,
-    frames: 1,
-    animationState: null,
-    direction: null,
-    origin: { x: 0, y: 0 },
-    logicalScale: 1,
-    alpha: true,
-    status: "READY" as const,
-    confidence: "reviewed" as const,
-    note: "Cohesive Desa Suryakerta scene backdrop; presentation-only, aligned to canonical 46x36 map.",
-  },
-];
-
 const VISUAL_ATLAS_ENTRIES: RpgAssetEntry[] = VISUAL_ATLAS_LAYOUT.map(([id, category, x, y]) => ({
   id, category, source: "generated-runtime-atlas",
   path: VISUAL_RUNTIME_ATLAS, width: 960, height: 800, frames: 1,
@@ -943,7 +923,6 @@ const VISUAL_ATLAS_ENTRIES: RpgAssetEntry[] = VISUAL_ATLAS_LAYOUT.map(([id, cate
 }));
 
 export const RPG_ASSET_MANIFEST: RpgAssetEntry[] = [
-  ...SCENE_BACKDROP_ENTRIES,
   ...VISUAL_ATLAS_ENTRIES,
   ...NPC_RUNTIME_ENTRIES,
   ...READY_TABLE.map(readyEntry),
