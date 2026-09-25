@@ -1,97 +1,40 @@
 /**
- * RPG Game HUD — minimal heads-up display.
- *
- * Displays:
- * - Character name
- * - Level
- * - HP bar
- * - XP bar
- * - Map/location name
- *
- * This is a PURE presentation component — it receives data via props
- * and never mutates game state.
- *
- * Styling uses game-env CSS variables for consistency with other Arena games.
+ * RPG Game HUD — compact prototype-inspired overlay.
+ * Presentation only; never mutates RPG state.
  */
-
 interface RPGGameHUDProps {
-  name: string;
-  level: number;
-  hp: number;
-  maxHp: number;
-  xp: number;
-  xpToNext: number;
-  mapName: string;
-  towerFloor?: number;
+  name: string; level: number; hp: number; maxHp: number;
+  xp: number; xpToNext: number; mapName: string; towerFloor?: number;
 }
 
-export function RPGGameHUD({
-  name,
-  level,
-  hp,
-  maxHp,
-  xp,
-  xpToNext,
-  mapName,
-  towerFloor = 0,
-}: RPGGameHUDProps) {
-  const hpPercent = Math.max(0, Math.min(100, (hp / maxHp) * 100));
+export function RPGGameHUD({ name, level, hp, maxHp, xp, xpToNext, mapName, towerFloor = 0 }: RPGGameHUDProps) {
+  const hpPercent = Math.max(0, Math.min(100, (hp / Math.max(1, maxHp)) * 100));
   const xpPercent = xpToNext > 0 ? Math.max(0, Math.min(100, (xp / xpToNext) * 100)) : 0;
-
   return (
-    <div className="absolute top-3 left-3 right-3 pointer-events-none z-10">
-      {/* Player info card */}
-      <div className="game-env-card bg-[var(--game-surface)] border-2 border-[var(--game-border-light)] rounded-xl p-3 shadow-lg max-w-xs pointer-events-auto">
-        {/* Name + Level */}
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-sm font-bold text-[var(--game-text)]">
-            {name}
-          </span>
-          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-[var(--game-primary)] text-white">
-            Lv.{level}
-          </span>
-        </div>
-
-        {/* HP Bar */}
-        <div className="mb-2">
-          <div className="flex items-center justify-between text-xs mb-0.5">
-            <span className="text-[var(--game-text-secondary)]">HP</span>
-            <span className="text-[var(--game-text-muted)]">
-              {hp}/{maxHp}
-            </span>
+    <div className="pointer-events-none absolute left-2 right-2 top-2 z-10 sm:left-3 sm:right-auto sm:top-3">
+      <div className="pointer-events-auto w-full rounded-2xl border border-stone-700/70 bg-stone-950/78 px-3 py-2 text-stone-100 shadow-lg backdrop-blur-md sm:w-[22rem]">
+        <div className="flex items-center gap-2">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 leading-none">
+              <span className="truncate text-xs font-black">{name}</span>
+              <span className="rounded-full bg-amber-400 px-2 py-0.5 text-[9px] font-black text-stone-950">Lv.{level}</span>
+            </div>
+            <div className="mt-1.5 flex items-center gap-2">
+              <span className="w-5 text-[8px] font-black uppercase tracking-wider text-stone-400">HP</span>
+              <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-stone-800"><div className="h-full rounded-full bg-emerald-400 transition-all duration-300" style={{ width: hpPercent + "%" }} /></div>
+              <span className="w-12 text-right text-[8px] font-bold text-stone-400">{hp}/{maxHp}</span>
+            </div>
+            <div className="mt-1 flex items-center gap-2">
+              <span className="w-5 text-[8px] font-black uppercase tracking-wider text-stone-400">XP</span>
+              <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-stone-800"><div className="h-full rounded-full bg-sky-400 transition-all duration-300" style={{ width: xpPercent + "%" }} /></div>
+              <span className="w-12 text-right text-[8px] font-bold text-stone-400">{xp}/{xpToNext}</span>
+            </div>
           </div>
-          <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-[var(--game-success)] rounded-full transition-all duration-300"
-              style={{ width: `${hpPercent}%` }}
-            />
+          <div className="hidden shrink-0 border-l border-white/10 pl-2 text-right sm:block">
+            <div className="text-[9px] font-bold text-stone-400">Lokasi</div>
+            <div className="max-w-24 truncate text-[10px] font-black text-amber-100">{mapName}</div>
+            {towerFloor > 0 ? <div className="mt-0.5 text-[9px] font-black text-amber-300">Lantai {towerFloor}</div> : null}
           </div>
-        </div>
-
-        {/* XP Bar */}
-        <div className="mb-2">
-          <div className="flex items-center justify-between text-xs mb-0.5">
-            <span className="text-[var(--game-text-secondary)]">XP</span>
-            <span className="text-[var(--game-text-muted)]">
-              {xp}/{xpToNext}
-            </span>
-          </div>
-          <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-[var(--game-primary)] rounded-full transition-all duration-300"
-              style={{ width: `${xpPercent}%` }}
-            />
-          </div>
-        </div>
-
-        {/* Map name */}
-        <div className="flex items-center justify-between gap-2 text-xs text-[var(--game-text-muted)]">
-          <span>📍 {mapName}</span>
-          {towerFloor > 0 ? (
-            <span className="rounded-full bg-[var(--game-primary)]/15 px-2 py-0.5 font-black text-[var(--game-primary)]">
-              Menara · Lantai {towerFloor}
-            </span>
-          ) : null}
         </div>
       </div>
     </div>
