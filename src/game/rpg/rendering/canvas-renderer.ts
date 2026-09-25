@@ -442,6 +442,30 @@ export function createCanvasRenderer(
             drawCircle(screen.x + 4, screen.y - 2, 3, COLORS.flowers);
             drawCircle(screen.x, screen.y + 3, 3, COLORS.flowers);
             break;
+          case "bamboo":
+            drawRect(screen.x - size * 0.28, screen.y - size * 0.72, size * 0.1, size * 0.72, "#166534");
+            drawRect(screen.x - size * 0.04, screen.y - size * 0.82, size * 0.1, size * 0.82, "#15803d");
+            drawRect(screen.x + size * 0.2, screen.y - size * 0.68, size * 0.1, size * 0.68, "#166534");
+            drawCircle(screen.x - size * 0.18, screen.y - size * 0.82, size * 0.2, "#22c55e");
+            drawCircle(screen.x + size * 0.08, screen.y - size * 0.86, size * 0.22, "#16a34a");
+            break;
+          case "shrine":
+            drawRect(screen.x - size * 0.38, screen.y - size * 0.18, size * 0.09, size * 0.48, "#78350f");
+            drawRect(screen.x + size * 0.29, screen.y - size * 0.18, size * 0.09, size * 0.48, "#78350f");
+            drawRect(screen.x - size * 0.48, screen.y - size * 0.48, size * 0.96, size * 0.1, "#b45309");
+            drawRect(screen.x - size * 0.42, screen.y - size * 0.58, size * 0.84, size * 0.06, "#92400e");
+            break;
+          case "lantern":
+            drawCircle(screen.x, screen.y - size * 0.42, size * 0.18, "#f59e0b");
+            drawRect(screen.x - size * 0.06, screen.y - size * 0.3, size * 0.12, size * 0.3, "#57534e");
+            drawRect(screen.x - size * 0.18, screen.y - size * 0.02, size * 0.36, size * 0.07, "#44403c");
+            break;
+          case "bridge":
+            drawRect(screen.x - size * 0.48, screen.y - size * 0.22, size * 0.96, size * 0.22, "#92400e");
+            for (let i = -3; i <= 3; i++) {
+              drawRect(screen.x + i * size * 0.13 - 1, screen.y - size * 0.3, 2, size * 0.42, "#b45309");
+            }
+            break;
           case "fence":
             drawRect(
               screen.x - size / 2,
@@ -953,6 +977,7 @@ export function createCanvasRenderer(
     renderInteractionPrompt(state, camera, allowedNpcIds);
     renderFloatingDamage(camera, state, nowMs);
     renderImpactBursts(camera, state, nowMs);
+    renderAtmosphere(state);
     ctx.restore();
 
     const alpha = flashAlpha(visualFeedback, nowMs);
