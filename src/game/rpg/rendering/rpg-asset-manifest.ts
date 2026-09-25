@@ -151,6 +151,16 @@ const READY_TABLE: Array<[string, string, string, number, number]> = [
     ["menara_wind_vortex", "terrain", "/game/rpg/terrain/menara_wind_vortex.png", 78, 77],
 ];
 
+const SURYAKERTA_V2_TERRAIN_ATLAS = "/game/rpg/visual/rpg_suryakerta_v2_terrain.svg";
+const SURYAKERTA_V2_TERRAIN_SLOTS: Record<string, { x: number; y: number }> = {
+  desa_grass_01: { x: 0, y: 0 }, desa_grass_02: { x: 240, y: 0 }, desa_grass_flowers: { x: 480, y: 0 },
+  desa_dirt_01: { x: 720, y: 0 }, desa_dirt_02: { x: 0, y: 128 }, desa_mud: { x: 240, y: 128 },
+  desa_water_01: { x: 480, y: 128 }, desa_water_02: { x: 720, y: 128 },
+  desa_water_03: { x: 0, y: 256 }, desa_water_edge: { x: 240, y: 256 }, desa_bridge_water: { x: 480, y: 256 },
+  desa_cliff_dirt: { x: 720, y: 256 }, desa_cliff_stone: { x: 0, y: 384 }, desa_cliff_grass: { x: 240, y: 384 },
+  desa_stone_01: { x: 480, y: 384 }, desa_stone_02: { x: 720, y: 384 }, desa_stone_path: { x: 0, y: 512 },
+};
+
 function readyEntry(row: [string, string, string, number, number]): RpgAssetEntry {
   const [id, category, path, width, height] = row;
   return {
