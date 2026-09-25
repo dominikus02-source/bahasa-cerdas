@@ -60,7 +60,6 @@ const ENTITY_ASSET_MAP: Record<string, string> = {
   "lantern.stone": "prop_lantern",
   "bridge.wood": "prop_wooden_bridge",
   "banner.village": "prop_banner",
-  "well.stone": "prop_well",
 };
 
 /**
