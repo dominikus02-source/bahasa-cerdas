@@ -13,7 +13,7 @@ export function BigtInfoPage({ role }: Props) {
     <div className="max-w-4xl mx-auto">
       {/* Hero */}
       <div className={`rounded-2xl p-8 mb-8 text-white ${
-        isGuru ? "bg-gradient-to-r from-emerald-600 to-teal-600" : "bg-gradient-to-r from-violet-600 to-purple-600"
+        isGuru ? "guru-role-hero" : "bg-gradient-to-r from-violet-600 to-purple-600"
       }`}>
         <div className="flex items-center gap-3 mb-3">
           <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
@@ -67,7 +67,7 @@ export function BigtInfoPage({ role }: Props) {
           { icon: <BookOpen size={24} />, title: "Sertifikat Kesiapan", desc: "Verifikasi QR — mencatat capaian belajar, bukan sertifikat UKBI" },
         ].map(f => (
           <div key={f.title} className="bg-card dark:bg-slate-900 rounded-xl border border-border p-5 hover:shadow-md transition-shadow">
-            <div className={`w-10 h-10 rounded-lg ${isGuru ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400" : "bg-violet-100 text-violet-600 dark:bg-violet-500/15 dark:text-violet-400"} flex items-center justify-center mb-3`}>
+            <div className={`w-10 h-10 rounded-lg ${isGuru ? "bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300" : "bg-violet-100 text-violet-600 dark:bg-violet-500/15 dark:text-violet-400"} flex items-center justify-center mb-3`}>
               {f.icon}
             </div>
             <h3 className="font-bold text-foreground text-sm mb-1">{f.title}</h3>
@@ -85,7 +85,7 @@ export function BigtInfoPage({ role }: Props) {
           target="_blank"
           rel="noopener noreferrer"
           className={`inline-flex items-center gap-2 px-6 py-3 text-white font-bold rounded-xl transition-colors ${
-            isGuru ? "bg-emerald-600 hover:bg-emerald-700" : "bg-violet-600 hover:bg-violet-700"
+            isGuru ? "bg-blue-600 hover:bg-blue-700" : "bg-violet-600 hover:bg-violet-700"
           }`}
         >
           <ExternalLink size={18} />
