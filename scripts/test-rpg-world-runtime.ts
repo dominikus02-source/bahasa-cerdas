@@ -18,6 +18,7 @@ import { tileToNorm } from "../src/game/rpg/world/grid-coords";
 import { isWalkable } from "../src/game/rpg/world/tiles";
 import { loadCanonicalMap, spawnPosition } from "../src/game/rpg/world/map-loader";
 import { openChest } from "../src/game/rpg/world/chest";
+import { buildTowerWave } from "../src/game/rpg/combat/encounter";
 
 const ROOT = process.cwd();
 let pass = 0;
@@ -122,6 +123,26 @@ check("10b. entity coordinates normalized + deterministic", (() => {
     JSON.stringify(a.entities) === JSON.stringify(b.entities);
 })());
 
+console.log("\n🗼 10c. Menara wave runtime");
+check("10c. floor 1 creates canonical wave", (() => {
+  const wave = buildTowerWave(1, new Set());
+  return wave.length === 3 && wave.every((e) => e.instanceId.startsWith("twr1_"));
+})());
+check("10c. floor 5 creates Golem Agung boss", (() => {
+  const wave = buildTowerWave(5, new Set());
+  return wave.length === 1 && wave[0].def.prototypeKey === "ga" && wave[0].boss;
+})());
+check("10c. floor 10 creates Penguasa Menara boss + add", (() => {
+  const wave = buildTowerWave(10, new Set());
+  return wave.length === 2 &&
+    wave.some((e) => e.def.prototypeKey === "tw" && e.boss) &&
+    wave.some((e) => e.def.prototypeKey === "sh" && !e.boss);
+})());
+check("10c. tower boss can be suppressed by persisted dead id", (() => {
+  const wave = buildTowerWave(10, new Set(["twr10_0"]));
+  return wave.length === 1 && wave[0].def.prototypeKey === "sh";
+})());
+
 console.log("\n📦 11-12. Chest runtime");
 check("11. adjacent interact grants once", (() => {
   // cv1 at (31,26); stand (31,27) facing up — tile walkable (GD)
@@ -182,6 +203,7 @@ check("engine calls stepTile", engine.includes("stepTile("));
 check("engine emits MAP_TRANSITION", engine.includes('"MAP_TRANSITION"'));
 check("engine emits PORTAL_BLOCKED", engine.includes('"PORTAL_BLOCKED"'));
 check("Naga gate derives from persisted deadBossIds", engine.includes('deadBossIds.has("na")') && engine.includes("nagaDead"));
+check("Menara runtime wires tower waves + ascent", engine.includes("buildTowerWave") && engine.includes('state.world.mapId === "map.menara"') && engine.includes("towerFloor += 1"));
 check("engine honors config.mapId (canonical loader)", engine.includes("loadCanonicalMap(canonicalStart.id)") || engine.includes("loadCanonicalMap("));
 const gameUi = src("src/game/rpg/ui/RPGGame.tsx");
 check("reload resumes persisted canonical map", gameUi.includes("serverMapId") && gameUi.includes("const bootMapId") && gameUi.includes("mapId: serverMapId"));
