@@ -61,7 +61,7 @@ export default function GuruBadgeGrid({ compact = false }: { compact?: boolean }
   const unlockedCount = badges.filter(b => b.unlocked).length
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+    <div className="bg-white rounded-[24px] border border-blue-100 p-5 sm:p-6 shadow-[0_10px_28px_rgba(25,72,140,.07)] dark:border-blue-950/80">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold text-gray-900 flex items-center gap-2">
           <Award size={16} className="text-amber-500" /> Lencana Guru
@@ -76,7 +76,7 @@ export default function GuruBadgeGrid({ compact = false }: { compact?: boolean }
           Lencana guru belum tersedia — jalankan seed badge guru.
         </p>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+        <div className={compact ? "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3" : "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"}>
           {(compact ? badges.slice(0, 5) : badges).map(b => {
             const st = RARITY_STYLE[b.rarity] || RARITY_STYLE.BRONZE
             const target = b.condition?.target || 0
