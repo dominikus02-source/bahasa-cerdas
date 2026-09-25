@@ -18,6 +18,7 @@ import { useState } from "react";
 import type { BattleViewModel } from "./battle-view";
 import { itemIconFor } from "../rendering/tile-visuals";
 import { manifestLookup } from "../rendering/rpg-asset-manifest";
+import { resolveEntityAsset, isEntityAssetReady } from "../rendering/entity-asset-resolver";
 
 /** READY icon URL for a canonical item id, or null (text-only button). */
 function itemIconUrl(itemId: string): string | null {
@@ -55,7 +56,18 @@ export function RPGBattle({ battle, onAttack, onUseItem, onFlee }: RPGBattleProp
     >
       <div className="pointer-events-auto mx-auto w-full max-w-md rounded-2xl border-2 border-[var(--game-border-light)] bg-[var(--game-surface)] shadow-xl p-4">
         {/* Enemy presence */}
-        <div className="flex items-center justify-between gap-2">
+        <div className="relative mb-3 overflow-hidden rounded-2xl border border-amber-200/10 bg-gradient-to-br from-[#22352b] via-[#18221d] to-[#0f1512] px-4 pb-2 pt-3">
+          <div className="absolute inset-0 opacity-25" style={{backgroundImage:"radial-gradient(circle at 20% 30%,#f2c14e 1px,transparent 2px),radial-gradient(circle at 80% 70%,#7da36a 1px,transparent 2px)",backgroundSize:"32px 32px,44px 44px"}} />
+          {(() => {
+            const resolved = resolveEntityAsset(battle.enemyAsset ?? undefined);
+            const icon = isEntityAssetReady(resolved) ? resolved.entry : null;
+            return icon ? (
+              <div className="relative flex h-32 items-end justify-center">
+                <img src={icon.path} alt={battle.enemyName} className="h-32 w-32 object-contain drop-shadow-2xl" />
+              </div>
+            ) : null;
+          })()}
+          <div className="relative flex items-center justify-between gap-2">
           <p className="text-base font-black text-[var(--game-text)]">
             {battle.enemyName}
             {battle.isBoss ? (
