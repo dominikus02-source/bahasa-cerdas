@@ -129,7 +129,7 @@ export default function MateriAjarPage() {
           </div>
           <div className="flex items-center gap-3">
             <button onClick={() => setShowUpload(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors">
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors">
               <Upload size={16} /> Unggah Rencana Pembelajaran
             </button>
             {quota && (
@@ -171,14 +171,14 @@ export default function MateriAjarPage() {
               placeholder="Cari Rencana Pembelajaran berdasarkan tema, judul, atau kata kunci..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+              className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
             />
           </div>
 
           <select
             value={sort}
             onChange={e => { setSort(e.target.value as "recent" | "popular"); setPage(1) }}
-            className="px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+            className="px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
           >
             <option value="recent">Terbaru</option>
             <option value="popular">Terpopuler</option>
@@ -205,7 +205,7 @@ export default function MateriAjarPage() {
           <span className="text-xs font-medium text-gray-400 mr-1">Kelas:</span>
           <button
             onClick={() => { setKelasFilter(""); setPage(1) }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${kelasFilter === "" ? "bg-emerald-600 text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${kelasFilter === "" ? "bg-blue-600 text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
           >
             Semua
           </button>
@@ -213,7 +213,7 @@ export default function MateriAjarPage() {
             <button
               key={g}
               onClick={() => { setKelasFilter(g); setPage(1) }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${kelasFilter === g ? "bg-emerald-600 text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${kelasFilter === g ? "bg-blue-600 text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
             >
               {g.replace(/^(SD|SMP|SMA)\s*/, "")}
             </button>
@@ -233,7 +233,7 @@ export default function MateriAjarPage() {
             <button
               key={f.value}
               onClick={() => { setFolder(f.value); setPage(1) }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${folder === f.value ? "bg-emerald-600 text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${folder === f.value ? "bg-blue-600 text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
               title={f.hint}
             >
               <Folder size={13} /> {f.label}
@@ -357,24 +357,24 @@ export default function MateriAjarPage() {
               <div>
                 <label className="block text-sm font-semibold text-gray-600 mb-1">Tema *</label>
                 <input value={uploadForm.tema} onChange={e => setUploadForm({ ...uploadForm, tema: e.target.value })}
-                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none"
+                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none"
                   placeholder="mis. Teks Deskripsi, Puisi, Teks Prosedur" />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-600 mb-1">Judul <span className="font-normal text-gray-400">(opsional — jika banyak file, otomatis dari nama file)</span></label>
                 <input value={uploadForm.title} onChange={e => setUploadForm({ ...uploadForm, title: e.target.value })}
-                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none"
+                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none"
                   placeholder="Kosongkan untuk memakai nama file" />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-600 mb-1">Deskripsi</label>
                 <textarea value={uploadForm.description} onChange={e => setUploadForm({ ...uploadForm, description: e.target.value })}
-                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none" rows={2} />
+                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none" rows={2} />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-600 mb-1">Jenjang / Kelas *</label>
                 <select value={uploadForm.grade} onChange={e => setUploadForm({ ...uploadForm, grade: e.target.value })}
-                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none">
+                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none">
                   {Object.entries(GRADES_BY_LEVEL).flatMap(([level, grades]) => grades.map(g => ({ level, grade: g }))).map(({ level, grade }) => (
                     <option key={grade} value={grade}>{grade}</option>
                   ))}
@@ -392,7 +392,7 @@ export default function MateriAjarPage() {
                   }}
                   className="hidden" id="materi-file-input" />
                 <label htmlFor="materi-file-input"
-                  className="flex items-center gap-2 justify-center border-2 border-dashed border-gray-300 rounded-xl p-4 cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition-colors">
+                  className="flex items-center gap-2 justify-center border-2 border-dashed border-gray-300 rounded-xl p-4 cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-colors">
                   <Upload size={20} className="text-gray-400" />
                   <span className="text-sm text-gray-500 font-medium">{uploadFiles.length > 0 ? `${uploadFiles.length} file dipilih — klik untuk ganti` : "Klik untuk pilih file (bisa banyak)"}</span>
                 </label>
@@ -413,7 +413,7 @@ export default function MateriAjarPage() {
                 <p className="text-[10px] text-gray-400 mt-1">PPTX atau PDF — Maks 50MB per file</p>
               </div>
               {uploadProgress && (
-                <div className="text-xs text-emerald-700 bg-emerald-50 rounded-lg px-3 py-2">
+                <div className="text-xs text-blue-700 bg-blue-50 rounded-lg px-3 py-2">
                   Mengunggah {uploadProgress.done}/{uploadProgress.total} file...
                 </div>
               )}
@@ -471,7 +471,7 @@ export default function MateriAjarPage() {
                     setSort("recent"); setPage(1); fetchMateris()
                   }
                 }} disabled={uploading || uploadFiles.length === 0 || !uploadForm.tema.trim()}
-                  className="flex-1 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
+                  className="flex-1 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
                   {uploading ? <><Loader2 size={16} className="animate-spin" /> Mengunggah...</> : <><Upload size={16} /> Unggah {uploadFiles.length > 0 ? `(${uploadFiles.length})` : ""}</>}
                 </button>
               </div>
@@ -512,7 +512,7 @@ function MateriCard({ materi, onView, onKirim }: { materi: Materi; onView: () =>
         {materi.fileUrl && (
           <div className="flex gap-2">
             <button onClick={onView}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-semibold text-emerald-700 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors">
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-semibold text-blue-700 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
               <Eye size={14} /> Detail
             </button>
             <button onClick={onKirim}
@@ -610,7 +610,7 @@ function MateriDetailModal({ materi, quota, getSid, onClose, onQuota, onPresent,
                   <Eye size={16} /> Pratinjau
                 </button>
                 <button onClick={download} disabled={downloading}
-                  className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold text-white bg-emerald-600 rounded-xl hover:bg-emerald-700 disabled:opacity-50 transition-colors">
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold text-white bg-emerald-600 rounded-xl hover:bg-blue-700 disabled:opacity-50 transition-colors">
                   {downloading ? <><Loader2 size={16} className="animate-spin" /> Mengunduh...</> : done ? <><Check size={16} /> Terunduh</> : <><Download size={16} /> Unduh</>}
                 </button>
               </div>
