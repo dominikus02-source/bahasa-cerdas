@@ -277,12 +277,11 @@ export function createCanvasRenderer(
         const bound = boundTileImage(state.world.mapId, tileId, x, y);
         if (bound) {
           // Production terrain owns the surface. Avoid debug-style grid seams.
+          // Desa plaza is intentionally broken into a smaller stone core with
+          // grass/dirt shoulders. This is presentation-only: the authoritative
+          // collision/terrain grid remains unchanged, but the village no longer
+          // reads as one oversized stone slab.
           const tileNum = Number(tileId.split(".")[1]);
-          const isVillagePlaza =
-            state.world.mapId === "map.desa" &&
-            tileNum === 1 &&
-            x >= 14 && x <= 22 &&
-            y >= 15 && y <= 21;
           const targetPx = Math.min(
             ART_TILE_PX * zoom * 0.72,
             tilePx * 1.18,
@@ -290,8 +289,8 @@ export function createCanvasRenderer(
           const sourceW = bound.width || 1;
           const sourceH = bound.height || 1;
           const aspect = sourceW / sourceH;
-          const drawW = isVillagePlaza ? targetPx * 0.98 : (aspect >= 1 ? targetPx : targetPx * aspect);
-          const drawH = isVillagePlaza ? targetPx * 0.92 : (aspect >= 1 ? targetPx / aspect : targetPx);
+          const drawW = aspect >= 1 ? targetPx : targetPx * aspect;
+          const drawH = aspect >= 1 ? targetPx / aspect : targetPx;
           const pathPadX = drawW / 2;
           const pathPadY = drawH / 2;
           ctx.drawImage(
@@ -299,8 +298,8 @@ export function createCanvasRenderer(
             sx.x - pathPadX, sx.y - pathPadY, drawW, drawH,
           );
           // Terrain is rendered as an authored layer, not a 1:1 debug grid.
-          // The larger art footprint preserves the intended hand-painted tile
-          // language while the gameplay grid remains 48 logical pixels.
+          // The art footprint preserves the intended hand-painted tile language
+          // while the gameplay grid remains 48 logical pixels.
           // Tree is a canonical SOLID tile, not a terrain family. Keep the
           // authored ground underneath it and draw the production tree prop
           // on top so the tile remains visually readable as a tree without
@@ -393,13 +392,44 @@ export function createCanvasRenderer(
   }
 
 
+  /** Presentation-only tile override for the Desa plaza.
+   *
+   * The gameplay map remains canonical. We only change which READY texture is
+   * painted for the plaza's visual shell:
+   * - compact stone core = village civic center
+   * - broken grass/dirt shoulder = softer transition into homes and gardens
+   *
+   * This deliberately avoids another map-geometry rewrite just to fix art
+   * composition.
+   */
+  function desaPlazaPresentationAsset(
+    mapId: string,
+    tileNum: number,
+    x: number,
+    y: number,
+  ): string | null {
+    if (mapId !== "map.desa" || tileNum !== 1) return null;
+
+    const inPlaza = x >= 14 && x <= 30 && y >= 13 && y <= 21;
+    if (!inPlaza) return null;
+
+    const core = x >= 17 && x <= 27 && y >= 15 && y <= 19;
+    if (core) {
+      const variants = ["desa_stone_01", "desa_stone_02", "desa_stone_path"];
+      return variants[(x * 31 + y * 17) % variants.length];
+    }
+
+    const edgeVariants = ["desa_grass_01", "desa_grass_02", "desa_dirt_01", "desa_dirt_02"];
+    return edgeVariants[(x * 13 + y * 29) % edgeVariants.length];
+  }
+
   /** Cached READY tile image for a bound tile, or null (color fallback). */
   function boundTileImage(
     mapId: string, tileId: string, x: number, y: number,
   ): { width: number; height: number } | null {
     const num = Number(tileId.split(".")[1]);
     if (!Number.isInteger(num)) return null;
-    const assetId = resolveTileAsset(mapId, num, x, y);
+    const assetId = desaPlazaPresentationAsset(mapId, num, x, y) ?? resolveTileAsset(mapId, num, x, y);
     if (!assetId) return null;
     const entry = manifestLookup(assetId);
     if (!entry || entry.status !== "READY") return null;
