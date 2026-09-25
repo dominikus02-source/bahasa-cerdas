@@ -23,7 +23,7 @@ export function SidebarPremiumBadge({
   // Founder — show founder badge
   if (plan === "FOUNDER") {
     return (
-      <div className="mt-3 pt-3 border-t border-emerald-100/50">
+      <div className="mt-3 pt-3 border-t border-blue-100/70 dark:border-blue-950/70">
         <Link href="/guru/ai-tools" className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200/60 hover:bg-amber-100 transition-all">
           <Crown size={14} className="text-amber-600 shrink-0" />
           <div className="min-w-0">
@@ -43,7 +43,7 @@ export function SidebarPremiumBadge({
   // Active trial
   if (isTrialActive && plan === "GURU_PRO_TRIAL") {
     return (
-      <div className="mt-3 pt-3 border-t border-emerald-100/50">
+      <div className="mt-3 pt-3 border-t border-blue-100/70 dark:border-blue-950/70">
         <Link href="/guru/ai-tools" className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-violet-50 to-indigo-50 border border-violet-200/60 hover:from-violet-100 hover:to-indigo-100 transition-all">
           <Sparkles size={14} className="text-violet-600 shrink-0" />
           <div className="min-w-0">
@@ -67,7 +67,7 @@ export function SidebarPremiumBadge({
   // Active premium
   if (plan === "GURU_PRO") {
     return (
-      <div className="mt-3 pt-3 border-t border-emerald-100/50">
+      <div className="mt-3 pt-3 border-t border-blue-100/70 dark:border-blue-950/70">
         <Link href="/guru/pengaturan/premium" className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200/60 hover:from-amber-100 hover:to-yellow-100 transition-all">
           <Crown size={14} className="text-amber-600 shrink-0" />
           <div className="min-w-0">
@@ -85,7 +85,7 @@ export function SidebarPremiumBadge({
 
   // Free guru (no trial, not premium)
   return (
-    <div className="mt-3 pt-3 border-t border-emerald-100/50">
+    <div className="mt-3 pt-3 border-t border-blue-100/70 dark:border-blue-950/70">
       <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200/60">
         <Zap size={14} className="text-gray-400 shrink-0" />
         <div className="min-w-0">
