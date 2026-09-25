@@ -400,7 +400,7 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
       {/* Mobile touch controls — only during free exploration. Dialogue and battle
           have their own focused controls, so the world joystick never competes
           with the active interaction mode. */}
-      {!battleView && !dialogue ? (
+      {!battleView && !dialogue && (
         <div className="absolute inset-0">
           <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[30] flex items-end justify-between px-5 pb-5 md:hidden" aria-label="Kontrol sentuh RPG">
             <div ref={touchJoystickRef} className="pointer-events-auto relative h-28 w-28 touch-none rounded-full border border-white/15 bg-black/25 shadow-2xl backdrop-blur-sm" aria-label="Joystick gerak">
@@ -421,7 +421,7 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
             </div>
           </div>
         </div>
-      ) : null
+      )}
     </div>
   );
 }
