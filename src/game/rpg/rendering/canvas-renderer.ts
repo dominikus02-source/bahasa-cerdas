@@ -430,6 +430,30 @@ export function createCanvasRenderer(
   }
 
   /** Render world entities (trees, houses, bushes, etc.). */
+  function renderWorldAccents(state: RPGGameState, camera: RPGCameraState): void {
+    if (state.world.mapId !== "map.desa") return;
+    const zoom = clampZoom(camera.zoom ?? 1);
+    const accents = [
+      { x: 14.5, y: 14.5, r: 0.34, a: 0.055 },
+      { x: 28.5, y: 19.5, r: 0.28, a: 0.045 },
+      { x: 10.5, y: 22.5, r: 0.30, a: 0.04 },
+    ];
+    ctx.save();
+    for (const accent of accents) {
+      const p = worldToScreenScaled(
+        { x: accent.x / state.world.tiles.width, y: accent.y / state.world.tiles.height },
+        camera, state.world.tiles.width, state.world.tiles.height,
+      );
+      const radius = 54 * zoom * accent.r / 0.3;
+      const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, radius);
+      g.addColorStop(0, "rgba(255, 233, 174, " + accent.a + ")");
+      g.addColorStop(1, "rgba(255, 233, 174, 0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(p.x - radius, p.y - radius, radius * 2, radius * 2);
+    }
+    ctx.restore();
+  }
+
   function renderEntities(state: RPGGameState, camera: RPGCameraState) {
     // P2.9C.1: Preload entity assets once to avoid first-frame procedural pop.
     if (!entityAssetsPreloaded) {
@@ -1013,6 +1037,7 @@ export function createCanvasRenderer(
 
     // Render layers in order
     renderTiles(state, camera);
+    renderWorldAccents(state, camera);
     renderEntities(state, camera);
     renderInteractions(state, camera, allowedNpcIds);
     renderLiveEnemies(state, camera, liveEnemies);
