@@ -53,6 +53,7 @@ import {
 import { loadCanonicalMap, spawnPosition, enemySpawnsOf, canonicalTileId } from "../world/map-loader";
 import {
   buildEncounterTable,
+  buildTowerWave,
   findEncounterAt,
   markDead,
   tickRespawns,
@@ -305,6 +306,7 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
   // gold intents, applied-result dedup, and the active battle session.
   // The BATTLE CORE stays pure — this closure owns all mutation.
   const deadBossIds = new Set<string>(config.deadBossIds ?? []);
+  let towerFloor = canonicalStart?.id === "map.menara" ? 1 : 0;
   let liveEnemies: LiveEnemy[] = [];
   let goldIntents: Array<{ battleId: string; amount: number }> = [
     ...(config.goldIntents ?? []),
@@ -470,12 +472,16 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
   }
 
   if (canonicalStart) {
-    const built = buildEncounterTable(enemySpawnsOf(canonicalStart), deadBossIds);
-    liveEnemies = activeEncounterFilter
-      ? built.table.filter((enemy) => activeEncounterFilter?.includes(enemy.instanceId))
-      : built.table;
-    for (const id of built.skippedSpawnIds) {
-      console.warn(`[rpg] spawn without canonical definition skipped: ${id}`);
+    if (canonicalStart.id === "map.menara") {
+      liveEnemies = buildTowerWave(towerFloor, deadBossIds);
+    } else {
+      const built = buildEncounterTable(enemySpawnsOf(canonicalStart), deadBossIds);
+      liveEnemies = activeEncounterFilter
+        ? built.table.filter((enemy) => activeEncounterFilter?.includes(enemy.instanceId))
+        : built.table;
+      for (const id of built.skippedSpawnIds) {
+        console.warn(`[rpg] spawn without canonical definition skipped: ${id}`);
+      }
     }
   }
   // Interaction session (P1.5): exactly one of DIALOGUE/SHOP/FORGE, else
@@ -538,6 +544,10 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
 
   /** Rebuild the live table for a map (portal transitions + defeat respawn). */
   function reloadLiveEnemies(mapId: string): void {
+    if (mapId === "map.menara") {
+      liveEnemies = buildTowerWave(towerFloor, deadBossIds);
+      return;
+    }
     liveEnemies = visibleEncounterTable(mapId);
   }
 
@@ -940,6 +950,13 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
                 spawn: { x: outcome.tx, y: outcome.ty },
               });
               lastPortalBlocked = null;
+              if (dest.id === "map.menara") {
+                towerFloor = 1;
+                liveEnemies = buildTowerWave(towerFloor, deadBossIds);
+              } else {
+                towerFloor = 0;
+                liveEnemies = visibleEncounterTable(dest.id);
+              }
               player = {
                 ...player,
                 position: spawnPosition(dest, outcome.tx, outcome.ty),
