@@ -902,8 +902,17 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
         if (canon) {
           const fromTile = normToTile(canon, player.position);
           const toTile = normToTile(canon, stepped.position);
+          // Boss defeat is persisted by instance id. Derive the Naga gate from
+          // that authoritative runtime state instead of relying on a fragile
+          // client-only flag that was historically never emitted by battle-core.
+          // This keeps save/load deterministic and avoids inventing a second
+          // persistence source for the same progression fact.
+          const effectiveFlags: Record<string, boolean> = {
+            ...flags,
+            ...(deadBossIds.has("na") ? { nagaDead: true } : {}),
+          };
           if (!fromTile || !toTile) return currentState; // non-finite guard
-          const outcome = stepTile({ mapId: canon.id, from: fromTile, to: toTile, flags });
+          const outcome = stepTile({ mapId: canon.id, from: fromTile, to: toTile, flags: effectiveFlags });
           switch (outcome.kind) {
             case "TRANSITION": {
               const dest = getCanonicalMap(outcome.to);
