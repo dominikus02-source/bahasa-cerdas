@@ -180,12 +180,11 @@ console.log("\n🗂️ DEPTH SORTING (foundation)");
     return arr[0] === a && out[0] === b;
   })());
   check("renderer uses shared comparator", strip(src("src/game/rpg/rendering/canvas-renderer.ts")).includes("sortEntitiesForDepth("));
-  check("Desa plaza uses a compact visual stone core", (() => {
+  check("Desa uses authored terrain sprite bindings", (() => {
     const r = strip(src("src/game/rpg/rendering/canvas-renderer.ts"));
-    return r.includes("desaPlazaPresentationAsset") &&
-      r.includes("x >= 17 && x <= 27 && y >= 15 && y <= 19") &&
-      r.includes("desa_grass_01") &&
-      r.includes("desa_dirt_01");
+    return r.includes("boundTileImage(state.world.mapId, tileId, x, y)") &&
+      r.includes("const targetPx = tilePx * 1.04") &&
+      !r.includes("renderDesaPrototypeGround");
   })());
 check("scene atmosphere is applied after world render", (() => {
   const r = strip(src("src/game/rpg/rendering/canvas-renderer.ts"));
