@@ -277,6 +277,7 @@ export function createCanvasRenderer(
         const bound = boundTileImage(state.world.mapId, tileId, x, y);
         if (bound) {
           // Production terrain owns the surface. Avoid debug-style grid seams.
+          const tileNum = Number(tileId.split(".")[1]);
           const isVillagePlaza =
             state.world.mapId === "map.desa" &&
             tileNum === 1 &&
@@ -297,7 +298,6 @@ export function createCanvasRenderer(
             bound as unknown as CanvasImageSource,
             sx.x - pathPadX, sx.y - pathPadY, drawW, drawH,
           );
-          const tileNum = Number(tileId.split(".")[1]);
           // Terrain is rendered as an authored layer, not a 1:1 debug grid.
           // The larger art footprint preserves the intended hand-painted tile
           // language while the gameplay grid remains 48 logical pixels.
