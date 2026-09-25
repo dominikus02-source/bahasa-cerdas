@@ -90,6 +90,13 @@ export function RPGMenuPanel({ tab, mapId, quest, gold, inventory, equipment, on
   );
 }
 
-function equipmentIconFor(itemId: string): string {\n  switch (itemId) {\n    case "equip.keris-singa": return "/game/rpg/visual/equipment/keris-singa.svg";\n    case "equip.baju-tenun": return "/game/rpg/visual/equipment/baju-tenun.svg";\n    case "equip.cincin-pasir": return "/game/rpg/visual/equipment/cincin-pasir.svg";\n    default: return "/game/rpg/visual/equipment/keris-singa.svg";\n  }\n}\n\nfunction Info({title,value}:{title:string;value:string}) {
+function equipmentIconFor(itemId: string): string {
+  if (itemId === "equip.keris-singa") return "/game/rpg/visual/equipment/keris-singa.svg";
+  if (itemId === "equip.baju-tenun") return "/game/rpg/visual/equipment/baju-tenun.svg";
+  if (itemId === "equip.cincin-pasir") return "/game/rpg/visual/equipment/cincin-pasir.svg";
+  return "/game/rpg/visual/equipment/keris-singa.svg";
+}
+
+function Info({title,value}:{title:string;value:string}) {
   return <div className="rounded-2xl border border-white/10 bg-white/5 p-4"><p className="text-[10px] font-black uppercase tracking-widest text-stone-500">{title}</p><p className="mt-1 text-sm font-black text-stone-100">{value}</p></div>;
 }
