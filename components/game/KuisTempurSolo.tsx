@@ -1002,7 +1002,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
 
   if (fase === "selesai") {
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150A0A] dark:to-[#200E0E] text-[#161B3A] dark:text-[#F1EDFF]">
+      <div className="game-env game-env-kuis fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150A0A] dark:to-[#200E0E] text-[#161B3A] dark:text-[#F1EDFF]">
         <style>{KT_STYLE}</style>
         <div className="relative mx-auto flex min-h-full max-w-xl flex-col items-center justify-center px-4 py-5">
           {Hdr}
@@ -1077,7 +1077,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   }
 
   return (
-    <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150A0A] dark:to-[#200E0E] text-[#161B3A] dark:text-[#F1EDFF]">
+    <div className="game-env game-env-kuis fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150A0A] dark:to-[#200E0E] text-[#161B3A] dark:text-[#F1EDFF]">
       <style>{KT_STYLE}</style>
       <div className="relative mx-auto flex min-h-full w-full max-w-[1280px] flex-col items-center px-4 py-3">
         {Hdr}

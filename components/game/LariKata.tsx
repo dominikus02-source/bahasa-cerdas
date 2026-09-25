@@ -216,7 +216,7 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
   /* ---------- PLAYING ---------- */
   if (screen === "playing" && q) {
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150C06] dark:to-[#201008] text-[#161B3A] dark:text-[#F1EDFF]">
+      <div className="game-env game-env-lari fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150C06] dark:to-[#201008] text-[#161B3A] dark:text-[#F1EDFF]">
         <div className="relative max-w-lg mx-auto px-5 pt-4 pb-8 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-3">
             {!hideBackButton && (
@@ -284,7 +284,7 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
 
   /* ---------- RESULT ---------- */
   return (
-    <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150C06] dark:to-[#201008] text-[#161B3A] dark:text-[#F1EDFF]">
+    <div className="game-env game-env-lari fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150C06] dark:to-[#201008] text-[#161B3A] dark:text-[#F1EDFF]">
       <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col items-center justify-center text-center">
         <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 180 }}
           className="w-24 h-24 rounded-[28px] bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center shadow-2xl mb-5 border-4 border-[#161B3A] dark:border-white/25">

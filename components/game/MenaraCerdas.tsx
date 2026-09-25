@@ -207,7 +207,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
   if (phase === "gameover") {
     const cleared = floor >= total && total > 0;
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#16120A] dark:via-[#1A1510] dark:to-[#201A0C] dark:text-[#F5EDD6]">
+      <div className="game-env game-env-menara fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#16120A] dark:via-[#1A1510] dark:to-[#201A0C] dark:text-[#F5EDD6]">
         <Burst trigger={burst} x={50} y={38} count={28} />
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col items-center justify-center text-center">
           <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 180 }}
@@ -253,7 +253,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
 
   /* ---------- PLAYING ---------- */
   return (
-    <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#16120A] dark:via-[#1A1510] dark:to-[#201A0C] dark:text-[#F5EDD6]">
+    <div className="game-env game-env-menara fixed inset-0 z-[60] flex flex-col overflow-hidden bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#16120A] dark:via-[#1A1510] dark:to-[#201A0C] dark:text-[#F5EDD6]">
       <Burst trigger={burst} x={16} y={48} />
       {confettiAktif && <ConfettiBurst trigger={confetti} />}
       <ComboFlash combo={combo} />

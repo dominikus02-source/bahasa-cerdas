@@ -559,7 +559,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
   /* ---------- LEVELS ---------- */
   if (screen === "levels") {
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#071214] dark:to-[#0D1F24] text-[#161B3A] dark:text-[#F1EDFF]">
+      <div className="game-env game-env-tebak fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#071214] dark:to-[#0D1F24] text-[#161B3A] dark:text-[#F1EDFF]">
         <style>{`.tk-screen{animation:tk-fade .35s ease}@keyframes tk-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}`}</style>
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
@@ -614,7 +614,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
   /* ---------- PLAYING ---------- */
   if (screen === "playing" && currentWord) {
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#071214] dark:to-[#0D1F24] text-[#161B3A] dark:text-[#F1EDFF]">
+      <div className="game-env game-env-tebak fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#071214] dark:to-[#0D1F24] text-[#161B3A] dark:text-[#F1EDFF]">
         <style>{`@keyframes tk-shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}`}</style>
         <div className="relative max-w-lg mx-auto px-5 pt-4 pb-8 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
@@ -708,7 +708,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
   /* ---------- RESULT ---------- */
   if (screen === "result" && result) {
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#071214] dark:to-[#0D1F24] text-[#161B3A] dark:text-[#F1EDFF]">
+      <div className="game-env game-env-tebak fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#071214] dark:to-[#0D1F24] text-[#161B3A] dark:text-[#F1EDFF]">
         <style>{`@keyframes tk-pop{0%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.3) rotate(8deg)}100%{transform:scale(1) rotate(0)}}.tk-star{animation:tk-pop .5s ease}`}</style>
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col items-center justify-center text-center">
           <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 180 }} className={`w-24 h-24 rounded-[28px] bg-gradient-to-br ${result.gameOver ? "from-rose-400 to-red-600" : result.stars >= 2 ? "from-violet-400 to-purple-600" : "from-amber-400 to-orange-600"} flex items-center justify-center shadow-2xl mb-5`}>
@@ -764,7 +764,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
   }
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#071214] dark:to-[#0D1F24] text-[#161B3A] dark:text-[#F1EDFF]">
+    <div className="game-env game-env-tebak fixed inset-0 z-[60] flex items-center justify-center bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#071214] dark:to-[#0D1F24] text-[#161B3A] dark:text-[#F1EDFF]">
       <Loader2 className="w-10 h-10 animate-spin" />
     </div>
   );
