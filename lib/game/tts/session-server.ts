@@ -60,7 +60,7 @@ export async function startTtsSession(input: {
       seed: Math.floor(input.seed) || 0,
       cellsTotal: actualCells.size,
       cellsCorrect: 0,
-      puzzle: puzzle.words,
+      puzzle: JSON.parse(JSON.stringify(puzzle.words)),
     },
     select: { id: true, hintsRevealed: true },
   });
