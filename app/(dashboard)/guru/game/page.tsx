@@ -316,9 +316,9 @@ export default function GuruGameHubPage() {
   const kelasPct = totalMurid > 0 ? Math.round((aktifHariIni / totalMurid) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-emerald-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+    <div className="min-h-screen bg-gradient-to-b from-[#f7faff] via-white to-[#eef5ff] dark:from-slate-950 dark:via-[#07182b] dark:to-[#061225]">
       {/* ── HERO: dashboard ringkas ─────────────────────────── */}
-      <div className="bg-gradient-to-br from-emerald-600 via-green-700 to-teal-900 text-white relative overflow-hidden">
+      <div className="guru-role-hero text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/20 rounded-full blur-[80px]" />
         <div className="absolute bottom-0 left-8 w-48 h-48 bg-teal-300/10 rounded-full blur-[60px]" />
         <div className="relative z-10 max-w-6xl mx-auto px-4 py-5">
@@ -469,7 +469,7 @@ export default function GuruGameHubPage() {
 
         {/* ── MAIN BERSAMA (entry — kuis kelas, DI ATAS gim solo) ── */}
         <div className="mb-8">
-          <div className="bg-gradient-to-br from-teal-600 via-emerald-700 to-teal-900 rounded-2xl p-5 text-white relative overflow-hidden shadow-sm">
+          <div className="guru-role-hero rounded-2xl p-5 text-white relative overflow-hidden shadow-sm">
             <div className="absolute top-0 right-0 w-44 h-44 bg-emerald-400/20 rounded-full blur-[70px]" />
             <div className="absolute bottom-0 left-6 w-28 h-28 bg-teal-300/10 rounded-full blur-[50px]" />
             <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-4">
@@ -488,7 +488,7 @@ export default function GuruGameHubPage() {
               </div>
               <Link
                 href="/guru/game/main-bersama"
-                className="shrink-0 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white text-emerald-800 font-bold text-sm shadow-sm hover:bg-emerald-50 hover:shadow transition-colors"
+                className="shrink-0 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white text-blue-700 font-bold text-sm shadow-sm hover:bg-blue-50 hover:shadow transition-colors"
               >
                 <Play className="w-4 h-4" /> Mulai Bersama
               </Link>
@@ -575,7 +575,7 @@ export default function GuruGameHubPage() {
               <span className="text-xs text-slate-400 mb-1 dark:text-slate-500">/ {TARGET_MINGGUAN_XP.toLocaleString("id-ID")} target</span>
             </div>
             <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden mt-2 dark:bg-slate-800">
-              <div className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full transition-all duration-1000" style={{ width: `${xpTargetPct}%` }} />
+              <div className="h-full bg-gradient-to-r from-blue-500 to-sky-500 rounded-full transition-all duration-1000" style={{ width: `${xpTargetPct}%` }} />
             </div>
             <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400 dark:text-slate-500">
               <span>{xpTargetPct}% tercapai</span>
@@ -641,7 +641,7 @@ export default function GuruGameHubPage() {
                 <Users className="w-8 h-8 text-slate-300 mx-auto mb-2 dark:text-slate-600" />
                 <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Belum ada murid di kelas</p>
                 <p className="text-xs text-slate-400 mt-1 dark:text-slate-500">Tambahkan murid ke kelas agar aktivitas gim mereka tampil di sini.</p>
-                <Link href="/guru/data-siswa" className="inline-flex items-center gap-1.5 mt-4 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-xl hover:bg-emerald-700 transition-colors">
+                <Link href="/guru/data-siswa" className="inline-flex items-center gap-1.5 mt-4 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-xl hover:bg-blue-700 transition-colors">
                   Kelola Murid
                 </Link>
               </div>
@@ -661,7 +661,7 @@ export default function GuruGameHubPage() {
                     <span className="font-bold text-emerald-600 dark:text-emerald-400">{kelasPct}%</span>
                   </div>
                   <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden dark:bg-slate-800">
-                    <div className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full transition-all duration-1000" style={{ width: `${kelasPct}%` }} />
+                    <div className="h-full bg-gradient-to-r from-blue-500 to-sky-500 rounded-full transition-all duration-1000" style={{ width: `${kelasPct}%` }} />
                   </div>
                   <p className="mt-1.5 text-[11px] text-slate-400 dark:text-slate-500">
                     {aktifHariIni} dari {totalMurid} murid sudah bermain hari ini{belumBermain > 0 ? ` — ${belumBermain} belum bermain` : ""}.
@@ -821,7 +821,7 @@ export default function GuruGameHubPage() {
             <h2 className="text-base font-bold text-slate-800 dark:text-slate-100">Analisis AI</h2>
             <span className="text-[10px] px-2 py-0.5 bg-rose-100 text-rose-600 rounded-full font-semibold dark:bg-rose-900/40 dark:text-rose-300">Pratinjau · Segera Hadir</span>
           </div>
-          <div className="bg-gradient-to-r from-rose-50 via-white to-emerald-50 rounded-xl border border-rose-100 p-5 shadow-sm dark:from-slate-900 dark:via-slate-900 dark:to-slate-900 dark:border-slate-800">
+          <div className="bg-[#f5f8ff] rounded-xl border border-rose-100 p-5 shadow-sm dark:from-slate-900 dark:via-slate-900 dark:to-slate-900 dark:border-slate-800">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-red-600 flex items-center justify-center shrink-0">
                 <Sparkles className="w-4 h-4 text-white" />
