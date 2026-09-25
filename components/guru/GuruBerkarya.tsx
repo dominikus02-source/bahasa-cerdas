@@ -120,7 +120,8 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
   useEffect(() => {
     let aktif = true;
     setError(false);
-    fetch(`/api/guru/berkarya?limit=${compact ? 3 : 6}`, { cache: "no-store" })
+    const feedUrl = compact ? "/api/guru/berkarya?limit=3" : "/api/guru/berkarya?limit=6";
+    fetch(feedUrl, { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then((res) => {
         if (!aktif) return;
