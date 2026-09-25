@@ -24,7 +24,7 @@ export type VisualMapId = "map.desa" | "map.gunung" | "map.menara";
 const BINDINGS: Record<VisualMapId, Record<number, string[]>> = {
   "map.desa": {
     [RPG_TILES.GR]: ["desa_grass_01", "desa_grass_02", "desa_grass_flowers"],
-    [RPG_TILES.PA]: ["desa_stone_path"],
+    [RPG_TILES.PA]: ["desa_stone_01", "desa_stone_02"],
     // Central village plaza uses the same collision-safe walkable tile but
     // receives a quieter stone-floor treatment in the renderer.
 
@@ -38,7 +38,7 @@ const BINDINGS: Record<VisualMapId, Record<number, string[]>> = {
     [RPG_TILES.WE]: ["desa_grass_01"],
     [RPG_TILES.DK]: ["desa_bridge_water", "desa_water_edge"],
     [RPG_TILES.FA]: ["desa_dirt_01", "desa_dirt_02", "desa_mud"],
-    [RPG_TILES.GD]: ["desa_dirt_01", "desa_dirt_02", "desa_sand", "desa_mud", "desa_ramp"],
+    [RPG_TILES.GD]: ["desa_dirt_01", "desa_dirt_02", "desa_mud"],
     [RPG_TILES.RL]: ["desa_cliff_dirt", "desa_stone_02"],
     [RPG_TILES.CV]: ["desa_cliff_corner", "desa_cliff_stone"],
     [RPG_TILES.GE]: ["desa_grass_flowers", "desa_grass_01"],
@@ -85,17 +85,6 @@ export function resolveTileAsset(
   x: number,
   y: number,
 ): string | null {
-  // The village plaza shares the PA collision semantics but gets a dedicated
-  // stone-floor treatment. Visual topology may specialize without touching
-  // gameplay collision truth.
-  if (
-    mapId === "map.desa" &&
-    tile === RPG_TILES.PA &&
-    x >= 14 && x <= 22 &&
-    y >= 15 && y <= 21
-  ) {
-    return ["desa_stone_01", "desa_stone_02"][variantFor(x, y, 2)];
-  }
   const table = (BINDINGS as Record<string, Record<number, string[]>>)[mapId];
   if (!table) return null;
   const options = table[tile];
