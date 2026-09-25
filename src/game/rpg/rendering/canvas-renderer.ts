@@ -389,7 +389,7 @@ export function createCanvasRenderer(
       const baseSize =
         entity.type === "house" ? 96 :
         entity.type === "tree" ? 64 :
-        entity.type === "well" ? 48 :
+        entity.type === "well" ? 54 :
         entity.type === "fence" ? 48 :
         entity.type === "rock" ? 32 :
         entity.type === "bush" ? 34 :
@@ -397,7 +397,8 @@ export function createCanvasRenderer(
         entity.type === "bamboo" ? 82 :
         entity.type === "shrine" ? 88 :
         entity.type === "lantern" ? 42 :
-        entity.type === "bridge" ? 92 : 36;
+        entity.type === "bridge" ? 92 :
+        entity.type === "banner" ? 60 : 36;
       const size = baseSize * entity.scale * zoom;
 
       // P2.11: READY visual atlas first; procedural fallback remains only for
@@ -459,6 +460,10 @@ export function createCanvasRenderer(
             drawCircle(screen.x, screen.y - size * 0.42, size * 0.18, "#f59e0b");
             drawRect(screen.x - size * 0.06, screen.y - size * 0.3, size * 0.12, size * 0.3, "#57534e");
             drawRect(screen.x - size * 0.18, screen.y - size * 0.02, size * 0.36, size * 0.07, "#44403c");
+            break;
+          case "banner":
+            drawRect(screen.x - size * 0.06, screen.y - size * 0.82, size * 0.12, size * 0.82, "#78350f");
+            drawRect(screen.x - size * 0.34, screen.y - size * 0.78, size * 0.28, size * 0.34, "#f59e0b");
             break;
           case "bridge":
             drawRect(screen.x - size * 0.48, screen.y - size * 0.22, size * 0.96, size * 0.22, "#92400e");
