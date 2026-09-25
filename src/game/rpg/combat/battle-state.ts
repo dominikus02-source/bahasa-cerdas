@@ -23,6 +23,8 @@ export interface RPGBattleActor {
   mp?: number;
   maxMp?: number;
   level?: number;
+  /** Asset key resolved by the renderer for battle presentation. */
+  asset?: string;
   /** Boss flag drives escape restriction + special attacks. */
   boss?: boolean;
   /** Victory accounting (stamped at startBattle from enemy defs). */
