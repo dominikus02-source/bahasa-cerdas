@@ -109,23 +109,32 @@ const berkaryaUi = read("components/guru/GuruBerkarya.tsx");
 ok("GuruBerkarya memakai waktu relatif (waktuRelatif)", /waktuRelatif/.test(berkaryaUi));
 ok("GuruBerkarya memakai publishedAt || createdAt", /waktuRelatif\(a\.publishedAt \|\| a\.createdAt\)/.test(berkaryaUi));
 
-// ── 5. Hierarki beranda 5 detik ─────────────────────────────────────────────
+// ── 5. Hierarki Beranda Guru V3: sederhana + aksi utama ─────────────────────
 const beranda = read("app/(dashboard)/guru/beranda/page.tsx");
-ok("Beranda memasang NextActionGuru", /NextActionGuru/.test(beranda));
-ok("Beranda memasang GuruLeaderboardCard", /GuruLeaderboardCard/.test(beranda));
-ok("Beranda memasang GuruMissionCard", /GuruMissionCard/.test(beranda));
-ok("Beranda memasang GuruBerkarya", /GuruBerkarya/.test(beranda));
+const homeV3 = read("components/guru/TeacherHomeV3.tsx");
 
-const posRank = beranda.indexOf("<GuruLeaderboardCard");
-const posNext = beranda.indexOf("<NextActionGuru");
-const posMisi = beranda.indexOf("<GuruMissionCard");
-const posBerkarya = beranda.indexOf("<GuruBerkarya");
-ok("Urutan DOM: XP/Rank sebelum Next Action", posRank > -1 && posNext > -1 && posRank < posNext);
-ok("Urutan DOM: Next Action sebelum Misi", posNext < posMisi);
-ok("Urutan DOM: Misi sebelum Guru Berkarya", posMisi < posBerkarya);
-ok("GuruMissionCard memakai status eksternal (satu fetch)", /<GuruMissionCard compact external status=\{misiStatus\} \/>/.test(beranda));
-ok("Beranda fetch /api/guru/misi satu kali (tanpa duplikat)", (beranda.match(/fetch\("\/api\/guru\/misi"\)/g) || []).length === 1);
-ok("Precedence kredit AI diperbaiki", /\(stats\.aiUsage\?\.rpp \|\| 0\) \+ \(stats\.aiUsage\?\.soal \|\| 0\)/.test(beranda));
+ok("Beranda memakai TeacherHomeV3 sebagai satu komposisi utama", /<TeacherHomeV3/.test(beranda));
+ok("Beranda tidak lagi memuat statistik nilai/data murid", !/nilai\/stats|dashboard\/social|AktivitasAnalytics|totalSiswa|Rata-rata Kelas/.test(beranda));
+ok("Beranda fetch /api/guru/misi satu kali", (beranda.match(/fetch\("\/api\/guru\/misi"/g) || []).length === 1);
+
+ok("Home V3 punya hero fokus", /<TeacherHero/.test(homeV3));
+ok("Home V3 punya Misi Hari Ini ringkas", /<DailyMissionCard/.test(homeV3) && /Misi Hari Ini/.test(homeV3));
+ok("Home V3 punya empat quick action utama", /Main Bersama/.test(homeV3) && /Buat Karya/.test(homeV3) && /AI BC/.test(homeV3) && /Dasbor Murid/.test(homeV3));
+ok("Home V3 punya pengumuman Main Bersama", /<MainBersamaAnnouncement/.test(homeV3) && /Kenalkan Main Bersama/.test(homeV3));
+ok("Home V3 punya Kompetisi Guru ringkas", /<CompetitionCard/.test(homeV3) && /Kompetisi Guru/.test(homeV3));
+ok("Home V3 memasang Guru Berkarya compact", /<GuruBerkarya misiStatus=\{misiStatus\} compact \/>/.test(homeV3));
+ok("Home V3 memasang Lencana Guru compact", /<GuruBadgeGrid compact \/>/.test(homeV3));
+ok("Home V3 punya quote mingguan + tips harian", /Quote Minggu Ini/.test(homeV3) && /Tips Mengajar/.test(homeV3));
+
+const posHero = homeV3.indexOf("<TeacherHero");
+const posQuick = homeV3.indexOf("<QuickActions");
+const posAnnouncement = homeV3.indexOf("<MainBersamaAnnouncement");
+const posBerkarya = homeV3.indexOf("<GuruBerkarya");
+const posBadge = homeV3.indexOf("<GuruBadgeGrid");
+ok("Urutan DOM: Hero sebelum quick action", posHero > -1 && posQuick > posHero);
+ok("Urutan DOM: Quick action sebelum pengumuman", posAnnouncement > posQuick);
+ok("Urutan DOM: Pengumuman sebelum Guru Berkarya", posBerkarya > posAnnouncement);
+ok("Urutan DOM: Guru Berkarya sebelum Lencana", posBadge > posBerkarya);
 
 // ── 6. Additive-only: tanpa route/API/model baru ────────────────────────────
 ok("Next Action murni tanpa referensi API baru (next-action.ts)", !/\/api\//.test(na));

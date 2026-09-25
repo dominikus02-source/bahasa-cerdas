@@ -24,7 +24,7 @@ const RARITY_STYLE: Record<string, { chip: string; border: string; glow: string 
 }
 
 /** Lencana guru: tampilkan yang khusus guru (kode guru-*) + status unlock. */
-export default function GuruBadgeGrid() {
+export default function GuruBadgeGrid({ compact = false }: { compact?: boolean }) {
   const [badges, setBadges] = useState<BadgeItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -45,9 +45,9 @@ export default function GuruBadgeGrid() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+      <div className="bg-white rounded-[24px] border border-blue-100 p-5 sm:p-6 shadow-[0_10px_28px_rgba(25,72,140,.07)] dark:border-blue-950/80">
         <div className="h-5 bg-gray-100 rounded w-40 mb-4 animate-pulse" />
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+        <div className={compact ? "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3" : "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"}>
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="h-24 bg-gray-50 rounded-xl animate-pulse" />
           ))}
@@ -61,12 +61,12 @@ export default function GuruBadgeGrid() {
   const unlockedCount = badges.filter(b => b.unlocked).length
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+    <div className="bg-white rounded-[24px] border border-blue-100 p-5 sm:p-6 shadow-[0_10px_28px_rgba(25,72,140,.07)] dark:border-blue-950/80">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold text-gray-900 flex items-center gap-2">
           <Award size={16} className="text-amber-500" /> Lencana Guru
         </h3>
-        <Link href="/arena/player/badges" className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
+        <Link href="/arena/player/badges" className="text-xs font-semibold text-blue-700 hover:text-blue-800 dark:text-blue-300 flex items-center gap-1">
           {unlockedCount}/{badges.length} terbuka
         </Link>
       </div>
@@ -76,8 +76,8 @@ export default function GuruBadgeGrid() {
           Lencana guru belum tersedia — jalankan seed badge guru.
         </p>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-          {badges.map(b => {
+        <div className={compact ? "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3" : "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"}>
+          {(compact ? badges.slice(0, 5) : badges).map(b => {
             const st = RARITY_STYLE[b.rarity] || RARITY_STYLE.BRONZE
             const target = b.condition?.target || 0
             // Saat terkunci, progress = nilai aktual menuju target; saat
