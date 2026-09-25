@@ -107,7 +107,7 @@ export function buildTowerWave(
       base: {
         hp: Math.round(def.base.hp * multiplier),
         attack: Math.max(1, Math.round(def.base.attack * (0.85 + 0.16 * (fl - 1)))),
-        defense: def.base.def + Math.floor(fl * 0.6),
+        defense: def.base.defense + Math.floor(fl * 0.6),
       },
       xp: Math.round((def.xp ?? 0) * (0.8 + 0.14 * (fl - 1))),
       gold: Math.round((def.gold ?? 0) * (0.8 + 0.12 * (fl - 1))),
