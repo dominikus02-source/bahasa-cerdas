@@ -59,8 +59,16 @@ export function applyChestRewards(
     // Prototype chests never carry gold; the type allows it, so fail closed.
     throw new Error(`chest ${sourceId}: gold rewards have no canonical path`);
   }
-  if (give.wpn) equipmentIntents.push({ source: sourceId, kind: "wpn", key: give.wpn, equipmentKey: resolveEquipmentKey(give.wpn) });
-  if (give.arm) equipmentIntents.push({ source: sourceId, kind: "arm", key: give.arm, equipmentKey: resolveEquipmentKey(give.arm) });
+  if (give.wpn) {
+    const equipmentKey = resolveEquipmentKey(give.wpn);
+    equipmentIntents.push({ source: sourceId, kind: "wpn", key: give.wpn, equipmentKey });
+    grant(equipmentKey, 1);
+  }
+  if (give.arm) {
+    const equipmentKey = resolveEquipmentKey(give.arm);
+    equipmentIntents.push({ source: sourceId, kind: "arm", key: give.arm, equipmentKey });
+    grant(equipmentKey, 1);
+  }
   return { inventory: inv, equipmentIntents, applied };
 }
 
