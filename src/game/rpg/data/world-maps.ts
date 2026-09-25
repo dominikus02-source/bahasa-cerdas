@@ -95,8 +95,8 @@ function buildDesaGrid(): ProtoGrid {
 
   // River on the eastern edge of the village. It is deliberately continuous;
   // the bridge crossing below is the only walkable cut through it.
-  grect(m, 31, 2, 3, 32, T.WA);
-  grect(m, 31, 18, 3, 1, T.PA);
+  grect(m, 34, 2, 3, 32, T.WA);
+  grect(m, 34, 18, 3, 1, T.PA);
 
   // Main village road: vertical spine + central plaza + short branches.
   grect(m, 17, 4, 3, 27, T.PA);
@@ -286,7 +286,7 @@ const chestsOf = (map: CanonicalMapId): CanonicalChest[] =>
 export const WORLD_MAPS: Record<CanonicalMapId, CanonicalMap> = {
   "map.desa": toMap(
     "map.desa", "Desa Suryakerta", desaGrid,
-    { x: 12, y: 19 }, // prototype newGame spawn (line 511)
+    { x: 18, y: 19 }, // authored village spawn near central plaza
     portalsOf("map.desa"),
     chestsOf("map.desa"),
     [
@@ -299,9 +299,9 @@ export const WORLD_MAPS: Record<CanonicalMapId, CanonicalMap> = {
       { id: "empu", name: "Pak Empu", x: 16, y: 16, dir: "down" },
     ],
     [
-      { id: "e1", type: "g", x: 33, y: 11, r: 2 }, { id: "e2", type: "g", x: 34, y: 14, r: 2 },
-      { id: "e3", type: "g", x: 31, y: 21, r: 2 }, { id: "e4", type: "g", x: 32, y: 24, r: 2 },
-      { id: "e5", type: "w", x: 34, y: 9, r: 2 }, { id: "e6", type: "w", x: 39, y: 10, r: 1 },
+      { id: "e1", type: "g", x: 33, y: 11, r: 2 }, { id: "e2", type: "g", x: 38, y: 14, r: 2 },
+      { id: "e3", type: "g", x: 32, y: 21, r: 2 }, { id: "e4", type: "g", x: 38, y: 24, r: 2 },
+      { id: "e5", type: "w", x: 38, y: 9, r: 2 }, { id: "e6", type: "w", x: 40, y: 12, r: 1 },
       { id: "eboss", type: "b", x: 41, y: 10, r: 0 },
     ],
     [
@@ -334,7 +334,7 @@ export const WORLD_MAPS: Record<CanonicalMapId, CanonicalMap> = {
       { id: "ent.desa-shrine", type: "shrine", x: 11, y: 15, scale: 0.75, layer: "BEHIND_ENTITIES", solid: true, asset: "shrine.gate" },
       { id: "ent.desa-shrine-lantern.1", type: "lantern", x: 10, y: 16, scale: 0.75, layer: "FRONT_OF_ENTITIES", solid: false, asset: "lantern.stone" },
       { id: "ent.desa-shrine-lantern.2", type: "lantern", x: 12, y: 16, scale: 0.75, layer: "FRONT_OF_ENTITIES", solid: false, asset: "lantern.stone" },
-      { id: "ent.desa-bridge", type: "bridge", x: 32, y: 18, scale: 0.95, layer: "BEHIND_ENTITIES", solid: true, asset: "bridge.wood" },
+      { id: "ent.desa-bridge", type: "bridge", x: 35, y: 18, scale: 0.95, layer: "BEHIND_ENTITIES", solid: true, asset: "bridge.wood" },
       { id: "ent.desa-bamboo", type: "bamboo", x: 29, y: 13, scale: 0.9, layer: "BEHIND_ENTITIES", solid: true, asset: "bamboo.grove" },
       { id: "ent.desa-banner", type: "banner", x: 18, y: 14, scale: 0.75, layer: "FRONT_OF_ENTITIES", solid: false, asset: "banner.village" },
     ],
