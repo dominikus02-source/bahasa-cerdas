@@ -943,18 +943,33 @@ export function createCanvasRenderer(
       ? "rgba(64, 74, 120, 0.12)"
       : mapId === "map.gunung"
         ? "rgba(112, 78, 48, 0.08)"
-        : "rgba(244, 190, 92, 0.055)";
+        : "rgba(244, 190, 92, 0.045)";
 
     ctx.save();
     ctx.fillStyle = tint;
     ctx.fillRect(0, 0, width, height);
 
+    // Subtle warm directional light for Desa; keeps the world readable without
+    // turning the pixel-art terrain into a glossy/vector scene.
+    if (mapId === "map.desa") {
+      const light = ctx.createRadialGradient(
+        width * 0.34, height * 0.24, 0,
+        width * 0.34, height * 0.24, Math.max(width, height) * 0.72,
+      );
+      light.addColorStop(0, "rgba(255, 226, 155, 0.09)");
+      light.addColorStop(0.55, "rgba(255, 214, 125, 0.025)");
+      light.addColorStop(1, "rgba(255, 214, 125, 0)");
+      ctx.fillStyle = light;
+      ctx.fillRect(0, 0, width, height);
+    }
+
     const vignette = ctx.createRadialGradient(
-      width / 2, height * 0.46, Math.min(width, height) * 0.18,
-      width / 2, height * 0.46, Math.max(width, height) * 0.72,
+      width / 2, height * 0.46, Math.min(width, height) * 0.20,
+      width / 2, height * 0.46, Math.max(width, height) * 0.74,
     );
     vignette.addColorStop(0, "rgba(0,0,0,0)");
-    vignette.addColorStop(1, "rgba(12, 18, 24, 0.22)");
+    vignette.addColorStop(0.72, "rgba(12, 18, 24, 0.045)");
+    vignette.addColorStop(1, "rgba(12, 18, 24, 0.18)");
     ctx.fillStyle = vignette;
     ctx.fillRect(0, 0, width, height);
     ctx.restore();
