@@ -225,8 +225,9 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
         playerName,
         mapId: bootMapId,
         ...engineConfig,
-        allowedEncounterIds: isDesaSlice ? DESA_VERTICAL_SLICE.encounterIds : undefined,
-        allowedNpcIds: isDesaSlice ? [DESA_VERTICAL_SLICE.questGiverId] : undefined,
+        // Founder Lab runs the full authored map; quest/combat rules remain authoritative in the engine.
+        allowedEncounterIds: undefined,
+        allowedNpcIds: undefined,
         learning: pool.length > 0 ? { pool } : undefined,
       }) as RPGEngineWithInput;
 
