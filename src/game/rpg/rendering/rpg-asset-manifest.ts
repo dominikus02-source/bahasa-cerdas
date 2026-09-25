@@ -903,10 +903,10 @@ const VISUAL_ATLAS_LAYOUT: Array<[string, string, number, number]> = [
 ];
 const NPC_RUNTIME_ATLAS = "/game/rpg/visual/rpg_npc_atlas.svg";
 const NPC_RUNTIME_ENTRIES: RpgAssetEntry[] = [
-  ["npc_bagas","npcs",0], ["npc_tani","npcs",240], ["npc_pendaki","npcs",480],
+  ["npc_bagas","npcs",0], ["npc_tani","npcs",240], ["npc_pendaki","npcs",480], ["npc_pak_empu","npcs",720],
 ].map(([id, category, x]) => ({
   id, category, source: "generated-runtime-atlas", path: NPC_RUNTIME_ATLAS,
-  width: 720, height: 240, frames: 1, animationState: null, direction: null,
+  width: 960, height: 240, frames: 1, animationState: null, direction: null,
   origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
   status: "READY" as const, confidence: "reviewed" as const,
   sourceRect: { x, y: 0, width: 240, height: 240 },
