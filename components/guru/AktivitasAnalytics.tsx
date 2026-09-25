@@ -42,7 +42,7 @@ export default function AktivitasAnalytics() {
             <button
               key={n}
               onClick={() => setRange(n)}
-              className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${range === n ? "bg-emerald-600 text-white shadow" : "text-gray-500 hover:text-emerald-700"}`}
+              className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${range === n ? "guru-role-tab-active" : "text-gray-500 hover:text-blue-700"}`}
             >
               {n} mgg
             </button>
@@ -52,7 +52,7 @@ export default function AktivitasAnalytics() {
 
       {loading ? (
         <div className="h-56 flex items-center justify-center">
-          <div className="animate-spin w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full" />
+          <div className="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full" />
         </div>
       ) : error ? (
         <p className="text-sm text-red-500 py-8 text-center">{error}</p>
@@ -93,8 +93,8 @@ export default function AktivitasAnalytics() {
           </div>
           <div className="mt-3 flex items-center gap-2 text-[11px] text-gray-400">
             <span className="relative flex h-1.5 w-1.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-500" />
             </span>
             Puncak minggu ini: {weeks[weeks.length - 1]?.karya ?? 0} karya · {weeks[weeks.length - 1]?.muridBerkarya ?? 0} murid berkarya
           </div>
