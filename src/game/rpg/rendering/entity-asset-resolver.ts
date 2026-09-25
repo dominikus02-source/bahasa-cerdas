@@ -36,6 +36,7 @@ const ENTITY_ASSET_MAP: Record<string, string> = {
   "npc.pak-empu":         "npc_pak_empu",
   "npc.bagas":            "npc_bagas",
   "npc.pak-warsa":        "npc_tani",
+  "npc.tani":            "npc_tani",
   "npc.pendaki":          "npc_pendaki",
 
   // Enemies
