@@ -19,13 +19,13 @@ export function AgentCard({ id, name, description, useCase, icon, active, onClic
       className={cn(
         "flex items-start gap-3 p-3 rounded-xl text-left transition-all duration-200 w-full border",
         active
-          ? "bg-emerald-50 border-emerald-200 shadow-sm"
-          : "bg-white border-gray-100 hover:border-emerald-100 hover:bg-emerald-50/30"
+          ? "bg-blue-50 border-blue-200 shadow-sm dark:bg-blue-950/35 dark:border-blue-900/70"
+          : "bg-white border-blue-100 hover:border-blue-200 hover:bg-blue-50/50 dark:bg-[#0b1d34] dark:border-blue-950/70 dark:hover:bg-blue-950/30"
       )}
     >
       <div className={cn(
         "p-2 rounded-lg flex-shrink-0 mt-0.5",
-        active ? "bg-emerald-100 text-emerald-700" : "bg-gray-50 text-gray-400"
+        active ? "bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300" : "bg-gray-50 text-gray-400"
       )}>
         {icon}
       </div>
