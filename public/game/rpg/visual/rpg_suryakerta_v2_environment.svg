@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="800" viewBox="0 0 960 800" shape-rendering="crispEdges">
+<defs>
+ <linearGradient id="roof" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#a94b32"/><stop offset="1" stop-color="#733226"/></linearGradient>
+ <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#9a6338"/><stop offset="1" stop-color="#604027"/></linearGradient>
+</defs>
+<!-- SURYAKERTA V2 ENVIRONMENT ATLAS. 8 slots, each 240x160. -->
+<!-- NPC slots intentionally omitted here; environment only. -->
+<!-- HOUSE -->
+<g transform="translate(0 480)">
+ <rect x="32" y="116" width="176" height="10" fill="#3d2b25"/>
+ <rect x="50" y="72" width="140" height="48" fill="#c98b55"/>
+ <rect x="62" y="82" width="30" height="24" fill="#6f8c8e"/><rect x="148" y="82" width="30" height="24" fill="#6f8c8e"/>
+ <rect x="104" y="94" width="32" height="26" fill="#54372b"/>
+ <path d="M34 72h172l-18-42H52z" fill="url(#roof)"/>
+ <path d="M50 30h140l-8 12H58z" fill="#c2633f"/>
+ <path d="M58 44h124v8H58zM50 56h140v8H50z" fill="#8c3d2d"/>
+ <rect x="100" y="68" width="40" height="5" fill="#e2b16e"/>
+ <rect x="82" y="112" width="76" height="8" fill="#b47745"/>
+</g>
+<!-- TREE -->
+<g transform="translate(240 480)">
+ <ellipse cx="120" cy="136" rx="48" ry="10" fill="#392d24" opacity=".35"/>
+ <rect x="110" y="82" width="20" height="55" fill="#68432c"/>
+ <rect x="104" y="104" width="10" height="28" fill="#805438"/>
+ <path d="M52 88h10V58h12V42h18V28h28v10h20V24h26v14h18v14h12v28h-12v18H66V88z" fill="#315b35"/>
+ <path d="M70 76h12V50h20V38h18v12h22V38h20v18h18v20z" fill="#427b3f"/>
+ <rect x="86" y="92" width="16" height="7" fill="#5b9146"/>
+ <rect x="150" y="64" width="12" height="8" fill="#6c9b4c"/>
+</g>
+<!-- WELL -->
+<g transform="translate(480 480)">
+ <ellipse cx="120" cy="128" rx="46" ry="9" fill="#392d24" opacity=".3"/>
+ <rect x="72" y="82" width="96" height="46" fill="#8b8173"/>
+ <rect x="80" y="72" width="80" height="16" fill="#b1a795"/>
+ <rect x="88" y="88" width="16" height="34" fill="#70685e"/><rect x="136" y="88" width="16" height="34" fill="#70685e"/>
+ <rect x="82" y="58" width="12" height="26" fill="#68432c"/><rect x="146" y="58" width="12" height="26" fill="#68432c"/>
+ <rect x="86" y="54" width="72" height="8" fill="#68432c"/>
+ <rect x="112" y="62" width="16" height="8" fill="#6d4930"/>
+ <rect x="96" y="94" width="48" height="8" fill="#3c5560"/>
+</g>
+<!-- BANNER -->
+<g transform="translate(720 480)">
+ <ellipse cx="120" cy="137" rx="25" ry="6" fill="#392d24" opacity=".25"/>
+ <rect x="114" y="34" width="10" height="103" fill="#65432c"/>
+ <path d="M124 44h54v42l-27 18-27-18z" fill="#9d3f36"/>
+ <path d="M132 52h38v25l-19 12-19-12z" fill="#d18a48"/>
+ <rect x="114" y="28" width="10" height="8" fill="#d0a253"/>
+</g>
+<!-- BAMBOO -->
+<g transform="translate(0 640)">
+ <ellipse cx="120" cy="132" rx="56" ry="8" fill="#392d24" opacity=".25"/>
+ <g fill="#5d8d43"><rect x="68" y="46" width="12" height="86"/><rect x="92" y="26" width="12" height="106"/><rect x="116" y="54" width="12" height="78"/><rect x="140" y="36" width="12" height="96"/></g>
+ <g fill="#416f39"><path d="M74 54L48 38l4-8 30 12z"/><path d="M98 40l26-22 7 7-28 24z"/><path d="M122 68l30-20 6 8-31 22z"/><path d="M146 48l28-15 5 9-30 16z"/></g>
+ <g fill="#88ad50"><rect x="68" y="68" width="12" height="6"/><rect x="92" y="62" width="12" height="6"/><rect x="116" y="82" width="12" height="6"/><rect x="140" y="64" width="12" height="6"/></g>
+</g>
+<!-- SHRINE GATE -->
+<g transform="translate(240 640)">
+ <ellipse cx="120" cy="136" rx="64" ry="8" fill="#392d24" opacity=".25"/>
+ <rect x="58" y="48" width="18" height="88" fill="#6b422d"/><rect x="164" y="48" width="18" height="88" fill="#6b422d"/>
+ <rect x="46" y="38" width="148" height="14" fill="#8e3d2e"/>
+ <rect x="66" y="26" width="108" height="12" fill="#a84a32"/>
+ <rect x="88" y="18" width="64" height="8" fill="#c86a3e"/>
+ <rect x="72" y="54" width="96" height="8" fill="#b45a36"/>
+</g>
+<!-- LANTERN -->
+<g transform="translate(480 640)">
+ <ellipse cx="120" cy="136" rx="20" ry="6" fill="#392d24" opacity=".25"/>
+ <rect x="116" y="70" width="8" height="66" fill="#59402e"/>
+ <rect x="98" y="48" width="44" height="28" fill="#5a4937"/>
+ <rect x="104" y="54" width="32" height="16" fill="#e4b45c"/>
+ <rect x="94" y="42" width="52" height="7" fill="#60432d"/>
+ <rect x="106" y="32" width="28" height="10" fill="#60432d"/>
+</g>
+<!-- WOOD BRIDGE -->
+<g transform="translate(720 640)">
+ <rect x="28" y="52" width="184" height="70" fill="#69452f"/>
+ <g fill="#9a6338">
+  <rect x="36" y="58" width="32" height="58"/><rect x="72" y="58" width="32" height="58"/>
+  <rect x="108" y="58" width="32" height="58"/><rect x="144" y="58" width="32" height="58"/><rect x="180" y="58" width="24" height="58"/>
+ </g>
+ <g fill="#d08b4d"><rect x="36" y="64" width="32" height="7"/><rect x="72" y="64" width="32" height="7"/><rect x="108" y="64" width="32" height="7"/><rect x="144" y="64" width="32" height="7"/><rect x="180" y="64" width="24" height="7"/></g>
+ <rect x="24" y="48" width="192" height="10" fill="#4f3528"/>
+ <rect x="24" y="116" width="192" height="8" fill="#4f3528"/>
+</g>
+</svg>
