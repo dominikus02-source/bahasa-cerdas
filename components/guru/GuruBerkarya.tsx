@@ -69,17 +69,17 @@ function inisial(nama: string | null | undefined): string {
 
 function Skeleton() {
   return (
-    <div className="rounded-3xl bg-white border border-violet-100 p-5 sm:p-6 shadow-lg shadow-violet-100/50 animate-pulse">
+    <div className="rounded-3xl bg-white border border-blue-100 p-5 sm:p-6 shadow-lg shadow-blue-100/40 animate-pulse">
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-12 h-12 rounded-2xl bg-violet-100" />
+        <div className="w-12 h-12 rounded-2xl bg-blue-100" />
         <div className="space-y-2">
-          <div className="h-5 bg-violet-100 rounded w-44" />
-          <div className="h-3.5 bg-violet-50 rounded w-64" />
+          <div className="h-5 bg-blue-100 rounded w-44" />
+          <div className="h-3.5 bg-blue-50 rounded w-64" />
         </div>
       </div>
       <div className="space-y-3">
         {[0, 1].map((i) => (
-          <div key={i} className="h-36 rounded-2xl bg-violet-50" />
+          <div key={i} className="h-36 rounded-2xl bg-blue-50" />
         ))}
       </div>
     </div>
@@ -90,7 +90,7 @@ function TombolKarya({ href, icon, label, xp }: { href: string; icon: React.Reac
   return (
     <Link
       href={href}
-      className="inline-flex items-center gap-1.5 rounded-xl bg-white border border-violet-200 hover:border-violet-300 hover:bg-violet-50 px-3.5 py-2.5 text-xs font-semibold text-violet-800 shadow-sm transition-colors"
+      className="inline-flex items-center gap-1.5 rounded-xl bg-white border border-violet-200 hover:border-blue-300 hover:bg-blue-50 px-3.5 py-2.5 text-xs font-semibold text-blue-800 shadow-sm transition-colors"
     >
       {icon}
       {label}
@@ -172,7 +172,7 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
     return (
       <div className="rounded-[26px] bg-white border border-blue-100 p-5 sm:p-6 shadow-[0_14px_34px_rgba(25,72,140,.08)] dark:border-blue-950/80">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shadow-md shadow-violet-200">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center shadow-md shadow-blue-200/70">
             <Flame size={24} className="text-white" />
           </div>
           <div>
@@ -206,32 +206,32 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
   const xpPuisi = meta.xpPuisi > 0 ? meta.xpPuisi : undefined;
 
   return (
-    <div className="rounded-3xl bg-white border border-violet-100 p-5 sm:p-6 shadow-lg shadow-violet-100/50">
+    <div className="rounded-[26px] bg-white border border-blue-100 p-5 sm:p-6 shadow-[0_14px_34px_rgba(25,72,140,.08)] dark:border-blue-950/80">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shadow-md shadow-violet-200">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center shadow-md shadow-blue-200/70">
             <Flame size={24} className="text-white" />
           </div>
           <div>
-            <h2 className="text-lg sm:text-xl font-bold text-violet-900">🔥 Guru Berkarya</h2>
+            <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100">Guru Berkarya</h2>
             <p className="text-gray-500 text-xs sm:text-sm">Karya terbaru dari para guru. Ikut menginspirasi?</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <Link
             href="/guru/artikel"
-            className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-500 to-purple-600 text-white px-3 py-2 text-xs font-semibold shadow-sm transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-blue-700 to-blue-500 text-white px-3 py-2 text-xs font-semibold shadow-sm shadow-blue-500/20 transition-colors hover:from-blue-800 hover:to-blue-600"
           >
             <PenLine size={13} /> Tulis Karya
           </Link>
-          <Link href="/guru/karya" className="hidden sm:flex items-center gap-1 text-xs font-semibold text-violet-700 hover:text-violet-800 bg-violet-50 hover:bg-violet-100 border border-violet-100 rounded-xl px-3 py-2 transition-colors">
+          <Link href="/guru/karya" className="hidden sm:flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 border border-blue-100 rounded-xl px-3 py-2 transition-colors">
             Lihat Semua Karya <ChevronRight size={12} />
           </Link>
         </div>
       </div>
 
       {items.length === 0 ? (
-        <div className="rounded-2xl border-2 border-dashed border-violet-200 bg-violet-50/50 px-5 py-8 text-center">
+        <div className="rounded-2xl border-2 border-dashed border-violet-200 bg-blue-50/50 px-5 py-8 text-center">
           <div className="w-12 h-12 mx-auto rounded-2xl bg-white flex items-center justify-center shadow-sm">
             <PenLine size={22} className="text-violet-400" />
           </div>
@@ -267,7 +267,7 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
                     </div>
                   ) : (
                     <div className="h-10 flex items-center justify-center bg-gradient-to-br from-violet-50 to-purple-50">
-                      {isPuisi ? <Feather size={16} className="text-violet-300" /> : <BookOpen size={16} className="text-violet-300" />}
+                      {isPuisi ? <Feather size={16} className="text-blue-300" /> : <BookOpen size={16} className="text-blue-300" />}
                     </div>
                   )}
                   <div className="p-4">
@@ -276,10 +276,10 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
                         <img
                           src={a.author.avatar}
                           alt={penulis}
-                          className="h-10 w-10 rounded-full object-cover ring-2 ring-violet-100"
+                          className="h-10 w-10 rounded-full object-cover ring-2 ring-blue-100"
                         />
                       ) : (
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-violet-400 to-purple-600 text-sm font-bold text-white ring-2 ring-violet-100">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-sky-500 text-sm font-bold text-white ring-2 ring-blue-100">
                           {inisial(penulis)}
                         </div>
                       )}
@@ -355,7 +355,7 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
             })}
           </div>
 
-          {!compact && <div className="mt-4 rounded-2xl bg-gradient-to-r from-violet-50 via-purple-50 to-fuchsia-50 border border-violet-100 p-4">
+          {!compact && <div className="mt-4 rounded-2xl bg-gradient-to-r from-violet-50 via-purple-50 to-fuchsia-50 border border-blue-100 p-4">
             <div className="flex items-start gap-2">
               <Flame size={16} className="text-orange-400 mt-0.5 shrink-0" />
               <div className="min-w-0">
