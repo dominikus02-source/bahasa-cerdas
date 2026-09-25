@@ -446,7 +446,10 @@ export function createCanvasRenderer(
         state.world.tiles.width, state.world.tiles.height,
       );
       const baseSize =
-        entity.type === "house" ? 126 :
+        // Houses are production art from the shared runtime atlas, not the legacy
+        // procedural rectangle/triangle renderer. Keep a generous footprint so
+        // the authored roof/body silhouette reads as a real village building.
+        entity.type === "house" ? 156 :
         entity.type === "tree" ? 72 :
         entity.type === "well" ? 52 :
         entity.type === "fence" ? 36 :
@@ -488,19 +491,15 @@ export function createCanvasRenderer(
             drawCircle(screen.x, screen.y - 12, size / 2, COLORS.tree);
             break;
           case "house":
-            drawRect(
-              screen.x - size / 2,
-              screen.y - size / 3,
-              size,
-              size * 0.6,
-              COLORS.house,
-            );
-            drawTriangle(
+            // Production house asset is mandatory. If it is unavailable, do not
+            // resurrect the legacy flat/vector house; render a quiet placeholder
+            // so the art pipeline failure is visible instead of mixing art styles.
+            drawContactShadow(
               screen.x,
-              screen.y - size / 3 - 8,
-              size / 2 + 4,
-              "up",
-              COLORS.houseRoof,
+              screen.y,
+              Math.max(8, size * 0.22),
+              Math.max(2, size * 0.045),
+              0.08,
             );
             break;
           case "bush":
