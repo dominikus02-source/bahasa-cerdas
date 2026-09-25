@@ -316,6 +316,8 @@ export const WORLD_MAPS: Record<CanonicalMapId, CanonicalMap> = {
       { id: "ent.desa-bamboo", type: "bamboo", x: 23, y: 17, scale: 1, layer: "BEHIND_ENTITIES", solid: true, asset: "bamboo.grove" },
       { id: "ent.desa-shrine", type: "shrine", x: 8, y: 27, scale: 0.9, layer: "BEHIND_ENTITIES", solid: true, asset: "shrine.gate" },
       { id: "ent.desa-lantern", type: "lantern", x: 15, y: 18, scale: 0.85, layer: "FRONT_OF_ENTITIES", solid: false, asset: "lantern.stone" },
+      { id: "ent.desa-well", type: "well", x: 11, y: 18, scale: 0.95, layer: "BEHIND_ENTITIES", solid: true, asset: "well.stone" },
+      { id: "ent.desa-banner", type: "banner", x: 9, y: 27, scale: 0.8, layer: "FRONT_OF_ENTITIES", solid: false, asset: "banner.village" },
       { id: "ent.desa-bridge", type: "bridge", x: 28, y: 17, scale: 1, layer: "BEHIND_ENTITIES", solid: true, asset: "bridge.wood" },
     ],
   ),
