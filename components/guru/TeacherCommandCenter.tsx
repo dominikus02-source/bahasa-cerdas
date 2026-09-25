@@ -46,7 +46,7 @@ function MetricCell({ m }: { m: Metric }) {
     <Link
       key={m.key}
       href={m.href}
-      className="flex items-center gap-3 sm:gap-4 px-0 sm:px-6 first:sm:pl-0 last:sm:pr-0 py-3.5 sm:py-5 rounded-xl sm:rounded-none hover:bg-white/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-500 transition-colors group"
+      className="flex items-center gap-3 sm:gap-4 px-0 sm:px-6 first:sm:pl-0 last:sm:pr-0 py-3.5 sm:py-5 rounded-xl sm:rounded-none hover:bg-white/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 transition-colors group"
     >
       <span className={`w-11 h-11 shrink-0 rounded-xl flex items-center justify-center shadow-sm ${m.chip}`}>
         <Icon size={20} aria-hidden />
@@ -108,17 +108,17 @@ export default function TeacherCommandCenter({
   return (
     <section
       aria-label="Ringkasan mengajar"
-      className="relative overflow-hidden rounded-2xl border border-emerald-100/80 shadow-sm p-5 sm:p-7 bg-white"
+      className="relative overflow-hidden rounded-2xl border border-blue-100/80 dark:border-blue-950/70 shadow-sm p-5 sm:p-7 bg-white"
     >
       {/* Permukaan berlapis: gradient mint sangat halus + glow lembut.
           Tipografi tetap kontras penuh (§E — bukan game screen). */}
       <div
         aria-hidden
-        className="absolute inset-0 bg-gradient-to-br from-emerald-50/80 via-white to-teal-50/50"
+        className="absolute inset-0 bg-[#f5f9ff] dark:bg-[#0b1d34]"
       />
       <div
         aria-hidden
-        className="absolute -top-16 -right-10 w-56 h-56 rounded-full bg-emerald-200/20 blur-3xl"
+        className="absolute -top-16 -right-10 w-56 h-56 rounded-full bg-blue-200/20 blur-3xl"
       />
       <div
         aria-hidden
@@ -140,7 +140,7 @@ export default function TeacherCommandCenter({
           </h1>
           <div className="flex items-center gap-3 mt-1.5 flex-wrap">
             <p className="text-sm text-gray-500 flex items-center gap-2">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" aria-hidden />
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" aria-hidden />
               Hari ini kamu memiliki
             </p>
             <AiCreditBalance />
@@ -155,12 +155,12 @@ export default function TeacherCommandCenter({
         </div>
 
         {/* ── BOTTOM: action bar 4 aksi (desktop 1 row, mobile 2×2) ── */}
-        <div className="mt-4 sm:mt-6 pt-4 sm:pt-5 border-t border-emerald-100/70">
+        <div className="mt-4 sm:mt-6 pt-4 sm:pt-5 border-t border-blue-100/70 dark:border-blue-950/70">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
             {/* Featured — Main Bersama: accent surface + label Live */}
             <Link
               href="/guru/game/main-bersama"
-              className="group relative inline-flex items-center gap-2.5 px-4 py-3 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 text-white text-sm font-semibold shadow-md shadow-emerald-600/25 hover:from-teal-700 hover:to-emerald-700 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 overflow-hidden"
+              className="group relative inline-flex items-center gap-2.5 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-700 to-blue-500 text-white text-sm font-semibold shadow-md shadow-blue-600/20 hover:from-blue-800 hover:to-blue-600 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 overflow-hidden"
             >
               <span
                 aria-hidden
@@ -185,9 +185,9 @@ export default function TeacherCommandCenter({
             {/* Sekunder — aksi rutin, surface netral dengan identitas warna */}
             <Link
               href="/guru/materi-ajar"
-              className="inline-flex items-center gap-2.5 px-4 py-3 rounded-xl bg-white border border-emerald-200 text-gray-800 text-sm font-semibold hover:bg-emerald-50/70 hover:border-emerald-300 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
+              className="inline-flex items-center gap-2.5 px-4 py-3 rounded-xl bg-white border border-blue-200 text-gray-800 text-sm font-semibold hover:bg-blue-50/70 hover:border-blue-300 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
             >
-              <span className="w-8 h-8 shrink-0 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+              <span className="w-8 h-8 shrink-0 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center">
                 <FilePlus2 size={16} aria-hidden />
               </span>
               <span className="min-w-0 flex-1 leading-tight">Buat Materi</span>
