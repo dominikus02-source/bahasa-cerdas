@@ -456,7 +456,7 @@ export function createCanvasRenderer(
     }
   }
 
-  function isInteractionAllowed(interaction: { kind: string; ref: string }): boolean {
+  function isInteractionAllowed(interaction: { kind: string; ref: string }, allowedNpcIds?: readonly string[]): boolean {
     if (
       interaction.kind === "NPC" &&
       allowedNpcIds &&
@@ -484,13 +484,13 @@ export function createCanvasRenderer(
     const zoom = clampZoom(camera.zoom ?? 1);
     const nearest = findNearestInteraction(state.world, state.player.position);
     for (const interaction of state.world.interactions) {
-      if (!isInteractionAllowed(interaction)) continue;
+      if (!isInteractionAllowed(interaction, allowedNpcIds)) continue;
       const screen = worldToScreenScaled(
         interaction.position, camera,
         state.world.tiles.width, state.world.tiles.height,
       );
 
-      if (nearest?.id === interaction.id && isInteractionAllowed(interaction)) {
+      if (nearest?.id === interaction.id && isInteractionAllowed(interaction, allowedNpcIds)) {
         const pulse = 0.5 + Math.sin(performance.now() / 260) * 0.15;
         ctx.save();
         ctx.globalAlpha = 0.28 + pulse * 0.18;
@@ -688,7 +688,7 @@ export function createCanvasRenderer(
   /** Render contextual interaction prompt when near an interactable. */
   function renderInteractionPrompt(state: RPGGameState, camera: RPGCameraState, allowedNpcIds?: readonly string[]) {
     const nearest = findNearestInteraction(state.world, state.player.position);
-    if (!nearest || !isInteractionAllowed(nearest)) return;
+    if (!nearest || !isInteractionAllowed(nearest, allowedNpcIds)) return;
 
     const screen = worldToScreenScaled(
       nearest.position, camera,
