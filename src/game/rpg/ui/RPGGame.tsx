@@ -216,8 +216,6 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
         return {};
       })();
       const bootMapId = mapId;
-      const isDesaSlice = bootMapId === DESA_VERTICAL_SLICE.mapId;
-
       // Create engine
       const engine = createEngine({
         container: host,
