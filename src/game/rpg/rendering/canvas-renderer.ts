@@ -483,85 +483,16 @@ export function createCanvasRenderer(
         spriteRendered = drawReadyEntitySprite(resolution.entry, screen.x, screen.y, size);
       }
 
-      // Procedural fallback (always drawn if sprite not rendered).
+      // V2 art rule: if authored art is unavailable, keep only the grounding
+      // shadow. Never resurrect legacy vector props into the production village.
       if (!spriteRendered) {
-        switch (entity.type) {
-          case "tree":
-            // Production tree asset is mandatory. Do not mix the authored
-            // village tree with the legacy procedural circle/tree fallback.
-            drawContactShadow(
-              screen.x,
-              screen.y,
-              Math.max(8, size * 0.22),
-              Math.max(2, size * 0.045),
-              0.08,
-            );
-            break;
-          case "house":
-            // Production house asset is mandatory. If it is unavailable, do not
-            // resurrect the legacy flat/vector house; render a quiet placeholder
-            // so the art pipeline failure is visible instead of mixing art styles.
-            drawContactShadow(
-              screen.x,
-              screen.y,
-              Math.max(8, size * 0.22),
-              Math.max(2, size * 0.045),
-              0.08,
-            );
-            break;
-          case "bush":
-            drawCircle(screen.x, screen.y, size / 3, COLORS.bush);
-            break;
-          case "rock":
-            drawCircle(screen.x, screen.y, size / 4, COLORS.rock);
-            break;
-          case "flowers":
-            drawCircle(screen.x - 4, screen.y, 3, COLORS.flowers);
-            drawCircle(screen.x + 4, screen.y - 2, 3, COLORS.flowers);
-            drawCircle(screen.x, screen.y + 3, 3, COLORS.flowers);
-            break;
-          case "bamboo":
-            drawRect(screen.x - size * 0.28, screen.y - size * 0.72, size * 0.1, size * 0.72, "#166534");
-            drawRect(screen.x - size * 0.04, screen.y - size * 0.82, size * 0.1, size * 0.82, "#15803d");
-            drawRect(screen.x + size * 0.2, screen.y - size * 0.68, size * 0.1, size * 0.68, "#166534");
-            drawCircle(screen.x - size * 0.18, screen.y - size * 0.82, size * 0.2, "#22c55e");
-            drawCircle(screen.x + size * 0.08, screen.y - size * 0.86, size * 0.22, "#16a34a");
-            break;
-          case "shrine":
-            drawRect(screen.x - size * 0.38, screen.y - size * 0.18, size * 0.09, size * 0.48, "#78350f");
-            drawRect(screen.x + size * 0.29, screen.y - size * 0.18, size * 0.09, size * 0.48, "#78350f");
-            drawRect(screen.x - size * 0.48, screen.y - size * 0.48, size * 0.96, size * 0.1, "#b45309");
-            drawRect(screen.x - size * 0.42, screen.y - size * 0.58, size * 0.84, size * 0.06, "#92400e");
-            break;
-          case "lantern":
-            drawCircle(screen.x, screen.y - size * 0.42, size * 0.18, "#f59e0b");
-            drawRect(screen.x - size * 0.06, screen.y - size * 0.3, size * 0.12, size * 0.3, "#57534e");
-            drawRect(screen.x - size * 0.18, screen.y - size * 0.02, size * 0.36, size * 0.07, "#44403c");
-            break;
-          case "banner":
-            drawRect(screen.x - size * 0.06, screen.y - size * 0.82, size * 0.12, size * 0.82, "#78350f");
-            drawRect(screen.x - size * 0.34, screen.y - size * 0.78, size * 0.28, size * 0.34, "#f59e0b");
-            break;
-          case "bridge":
-            drawRect(screen.x - size * 0.48, screen.y - size * 0.22, size * 0.96, size * 0.22, "#92400e");
-            for (let i = -3; i <= 3; i++) {
-              drawRect(screen.x + i * size * 0.13 - 1, screen.y - size * 0.3, 2, size * 0.42, "#b45309");
-            }
-            break;
-          case "fence":
-            drawRect(
-              screen.x - size / 2,
-              screen.y - 4,
-              size,
-              8,
-              COLORS.fence,
-            );
-            drawRect(screen.x - size / 2, screen.y - 8, 4, 16, COLORS.fence);
-            drawRect(screen.x + size / 2 - 4, screen.y - 8, 4, 16, COLORS.fence);
-            break;
-          default:
-            drawCircle(screen.x, screen.y, size / 3, "#9ca3af");
-        }
+        drawContactShadow(
+          screen.x,
+          screen.y,
+          Math.max(6, size * 0.20),
+          Math.max(2, size * 0.045),
+          0.07,
+        );
       }
     }
   }
