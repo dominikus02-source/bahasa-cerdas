@@ -98,6 +98,8 @@ const ITEM_ICONS: Record<string, string> = {
   teh: "item_teh",
   elix: "item_elixir",
   bijih: "item_bijih",
+  f1: "item_ikan_biru",
+  f2: "item_ikan_merah",
   f3: "item_ikan_emas",
 };
 
