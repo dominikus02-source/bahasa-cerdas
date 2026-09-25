@@ -86,7 +86,7 @@ check("8. boss scale documented (contract, not art)", manifestLookup("ref:boss-r
 
 console.log("\n🗺️ 9. map visual binding");
 check("desa grass binds 3 variants", resolveTileAsset("map.desa", RPG_TILES.GR, 0, 0) !== null);
-check("unbound tile → null (color fallback)", resolveTileAsset("map.desa", RPG_TILES.CV, 0, 0) === null);
+check("cave tile now uses authored terrain art", resolveTileAsset("map.desa", RPG_TILES.CV, 0, 0) !== null);
 check("unknown map → null", resolveTileAsset("map.void", RPG_TILES.GR, 0, 0) === null);
 check("binding deterministic (same twice)", resolveTileAsset("map.desa", RPG_TILES.GR, 5, 7) === resolveTileAsset("map.desa", RPG_TILES.GR, 5, 7));
 check("variants spread (hash, no RNG)", (() => {
@@ -95,8 +95,7 @@ check("variants spread (hash, no RNG)", (() => {
 })());
 
 console.log("\n🎒 11. item visual binding (exact matches only)");
-check("ram/teh/elix/bijih/f3 mapped", itemIconFor("ram") === "item_ramuan" && itemIconFor("f3") === "item_ikan_emas");
-check("f1/f2 unmapped (honest, never guessed)", itemIconFor("f1") === null && itemIconFor("f2") === null);
+check("all canonical battle/fish items mapped", itemIconFor("ram") === "item_ramuan" && itemIconFor("teh") === "item_teh" && itemIconFor("elix") === "item_elixir" && itemIconFor("bijih") === "item_bijih" && itemIconFor("f1") === "item_ikan_biru" && itemIconFor("f2") === "item_ikan_merah" && itemIconFor("f3") === "item_ikan_emas");
 check("unknown → null", itemIconFor("nope") === null);
 
 console.log("\n✨ 12/13. VFX + UI (reference only, components untouched)");
