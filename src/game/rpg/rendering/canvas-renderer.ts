@@ -643,7 +643,7 @@ export function createCanvasRenderer(
     const player = state.player;
     const zoom = clampZoom(camera.zoom ?? 1);
     // Feet origin: gameplay position == bottom-center contact point.
-    const r = 14 * zoom;
+    const r = 17 * zoom;
     const now = performance.now();
     if (
       !lastPlayerPosition ||
@@ -680,12 +680,13 @@ export function createCanvasRenderer(
     );
 
     // Shadow (engine-baked ellipse at the feet origin, never in sprite art)
-    ctx.globalAlpha = 0.2;
+    ctx.save();
+    ctx.globalAlpha = 0.18;
     ctx.beginPath();
-    ctx.ellipse(feet.x, feet.y + 2 * zoom, r * 0.85, r * 0.28, 0, 0, Math.PI * 2);
-    ctx.fillStyle = "#000";
+    ctx.ellipse(feet.x, feet.y + 2 * zoom, r * 1.05, r * 0.30, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "#241b16";
     ctx.fill();
-    ctx.globalAlpha = 1;
+    ctx.restore();
 
     const entry = argaEntryForFacing(player.facing);
     if (entry) requestArga(entry);
@@ -704,7 +705,7 @@ export function createCanvasRenderer(
         feetY: feet.y,
         canvasWidthPx: HERO_CANVAS_PX,
         canvasHeightPx: HERO_CANVAS_PX,
-        scale: 0.55 * zoom,
+        scale: 0.64 * zoom,
         mirror: mirrorForDirection(player.facing),
       });
       if (dest.mirror) {
@@ -719,14 +720,15 @@ export function createCanvasRenderer(
       return;
     }
 
-    // Technical load/error fallback, visibly distinct from approved artwork.
-    drawCircle(feet.x, feet.y - r, r, COLORS.player);
-    ctx.strokeStyle = COLORS.playerOutline;
-    ctx.lineWidth = 2;
+    // Art-pipeline fallback: never render a vector avatar in the V2 world.
+    // Keep only a subtle contact marker while the authored Arga sheet loads.
+    ctx.save();
+    ctx.globalAlpha = 0.08;
+    ctx.fillStyle = "#241b16";
     ctx.beginPath();
-    ctx.arc(feet.x, feet.y - r, r, 0, Math.PI * 2);
-    ctx.stroke();
-    drawTriangle(feet.x, feet.y - r, 6 * zoom, player.facing, "#fff");
+    ctx.ellipse(feet.x, feet.y, r * 0.65, r * 0.16, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
   }
 
   /** Render contextual interaction prompt when near an interactable. */
