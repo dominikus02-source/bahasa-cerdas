@@ -19,7 +19,7 @@ export function RPGQuestPanel({ quest, gold, nearInteractable, notice, learningR
   const progress = isKorogQuest ? Math.min(3, quest.kills) : 0;
   const learningClass = learningReady ? "text-emerald-300" : "text-amber-300";
   return (
-    <aside className="pointer-events-none absolute top-2 right-2 z-20 w-[calc(100%-1rem)] sm:top-3 sm:right-3 sm:w-[min(23rem,calc(100%-1.5rem))]" aria-label="Tujuan petualangan">
+    <aside className="pointer-events-none absolute top-[4.6rem] right-2 z-20 w-[calc(100%-1rem)] sm:top-3 sm:right-3 sm:w-[min(23rem,calc(100%-1.5rem))]" aria-label="Tujuan petualangan">
       <div className="pointer-events-auto sm:hidden">
         <div className="mx-auto max-w-[21rem] rounded-2xl border border-amber-200/45 bg-stone-950/82 px-3 py-2 shadow-xl backdrop-blur-md">
           <div className="flex items-center gap-2">
