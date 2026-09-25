@@ -427,18 +427,18 @@ export function createCanvasRenderer(
         state.world.tiles.width, state.world.tiles.height,
       );
       const baseSize =
-        entity.type === "house" ? 170 :
-        entity.type === "tree" ? 88 :
-        entity.type === "well" ? 68 :
-        entity.type === "fence" ? 48 :
-        entity.type === "rock" ? 32 :
-        entity.type === "bush" ? 34 :
-        entity.type === "flowers" ? 28 :
-        entity.type === "bamboo" ? 88 :
-        entity.type === "shrine" ? 108 :
-        entity.type === "lantern" ? 46 :
-        entity.type === "bridge" ? 104 :
-        entity.type === "banner" ? 68 : 44;
+        entity.type === "house" ? 108 :
+        entity.type === "tree" ? 58 :
+        entity.type === "well" ? 44 :
+        entity.type === "fence" ? 32 :
+        entity.type === "rock" ? 22 :
+        entity.type === "bush" ? 22 :
+        entity.type === "flowers" ? 18 :
+        entity.type === "bamboo" ? 58 :
+        entity.type === "shrine" ? 70 :
+        entity.type === "lantern" ? 30 :
+        entity.type === "bridge" ? 70 :
+        entity.type === "banner" ? 44 : 30;
       const size = baseSize * entity.scale * zoom;
 
       // Grounding pass keeps tall props attached to the terrain instead of
@@ -621,7 +621,7 @@ export function createCanvasRenderer(
           };
           const resolution = resolveEntityAsset(npcAssetKeys[interaction.ref]);
           const rendered = isEntityAssetReady(resolution)
-            ? drawReadyEntitySprite(resolution.entry, screen.x, screen.y, 74 * zoom)
+            ? drawReadyEntitySprite(resolution.entry, screen.x, screen.y, 46 * zoom)
             : false;
           if (!rendered) {
             // Explicit technical fallback only when an asset is unavailable.
@@ -660,7 +660,7 @@ export function createCanvasRenderer(
         camera, state.world.tiles.width, state.world.tiles.height,
       );
       const resolution = resolveEntityAsset(enemy.def.asset);
-      const maxSize = enemy.boss ? 92 * zoom : 58 * zoom;
+      const maxSize = enemy.boss ? 72 * zoom : 44 * zoom;
       drawContactShadow(screen.x, screen.y, maxSize * 0.22, maxSize * 0.05, 0.14);
       const rendered = isEntityAssetReady(resolution)
         ? drawReadyEntitySprite(resolution.entry, screen.x, screen.y, maxSize)
