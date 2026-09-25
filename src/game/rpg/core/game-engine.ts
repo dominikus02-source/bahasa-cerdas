@@ -484,6 +484,12 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
   let session: DialogueSession | ShopSession | ForgeSession | null = null;
   // Pendaki campfire cooldown (wall-clock, runtime-only like prototype restT).
   let restCooldownUntilMs = 0;
+
+  // Presentation/input guard: repeated E/touch taps within a short window
+  // must not double-open dialogue, chest rewards, or battle encounters.
+  // This is runtime-only and does not alter authoritative state semantics.
+  const INTERACTION_COOLDOWN_MS = 220;
+  let lastInteractAtMs = 0;
   // Authoritative main-line quest state (P1.7): {main 0..7, kills}.
   // Dead state 5 is never admitted (validator rejects both directions).
   let quest: QuestLineState = { ...createQuestLineState(), ...(config.quest ?? {}) };
@@ -963,6 +969,10 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
       case "INTERACT": {
         // No world interaction while a battle OR session is active.
         if (currentState.battle !== null || session !== null) return currentState;
+
+        const nowMs = Date.now();
+        if (nowMs - lastInteractAtMs < INTERACTION_COOLDOWN_MS) return currentState;
+        lastInteractAtMs = nowMs;
         // Canonical maps: facing-adjacent tile (prototype interact order —
         // chest, then NPC). Reward keys stay canonical-verbatim here; the
         // inventory mapping is owned by a later phase (documented).
