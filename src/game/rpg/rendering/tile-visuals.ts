@@ -24,9 +24,8 @@ export type VisualMapId = "map.desa" | "map.gunung" | "map.menara";
 const BINDINGS: Record<VisualMapId, Record<number, string[]>> = {
   "map.desa": {
     [RPG_TILES.GR]: ["desa_grass_01", "desa_grass_02", "desa_grass_flowers"],
+    // PA is intentionally reserved for the civic plaza / bridge crossing.
     [RPG_TILES.PA]: ["desa_stone_01", "desa_stone_02"],
-    // Central village plaza uses the same collision-safe walkable tile but
-    // receives a quieter stone-floor treatment in the renderer.
 
     [RPG_TILES.TR]: ["desa_grass_01", "desa_grass_02", "desa_grass_flowers"],
     [RPG_TILES.WA]: ["desa_water_01", "desa_water_02", "desa_water_03", "desa_water_deep"],
