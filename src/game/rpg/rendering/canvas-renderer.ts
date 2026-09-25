@@ -649,9 +649,9 @@ export function createCanvasRenderer(
             ? drawReadyEntitySprite(resolution.entry, screen.x, screen.y, 54 * zoom)
             : false;
           if (!rendered) {
-            // Explicit technical fallback only when an asset is unavailable.
-            drawCircle(screen.x, screen.y - 12, 11 * zoom, "#78350f");
-            drawCircle(screen.x, screen.y - 18, 6 * zoom, "#fbbf24");
+            // Art-pipeline fallback: keep the world clean rather than mixing
+            // procedural vector characters with the authored V2 sprite family.
+            drawContactShadow(screen.x, screen.y, 11 * zoom, 3 * zoom, 0.08);
           }
           const npcNames: Record<string, string> = {
             "npc.ki": "Ki Jaka", "npc.ratmi": "Bu Ratmi", "npc.sari": "Bu Sari",
@@ -691,10 +691,8 @@ export function createCanvasRenderer(
         ? drawReadyEntitySprite(resolution.entry, screen.x, screen.y, maxSize)
         : false;
       if (!rendered) {
-        // Explicit technical fallback only when an enemy asset is unavailable.
-        drawCircle(screen.x, screen.y - 13 * zoom, 12 * zoom, "#7f1d1d");
-        drawCircle(screen.x - 4 * zoom, screen.y - 16 * zoom, 2 * zoom, "#fef3c7");
-        drawCircle(screen.x + 4 * zoom, screen.y - 16 * zoom, 2 * zoom, "#fef3c7");
+        // Art-pipeline fallback: no procedural enemy blobs in the V2 world.
+        drawContactShadow(screen.x, screen.y, maxSize * 0.20, maxSize * 0.045, 0.08);
       }
       ctx.fillStyle = enemy.boss ? "#fff7ed" : "#fee2e2";
       ctx.font = `bold ${Math.round((enemy.boss ? 11 : 10) * zoom)}px sans-serif`;
