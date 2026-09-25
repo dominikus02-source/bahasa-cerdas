@@ -992,7 +992,7 @@ export default function ZelbyDash() {
   const btn = `inline-flex items-center justify-center gap-2 font-extrabold rounded-2xl ${chunky} transition-transform active:translate-x-1.5 active:translate-y-1.5 active:shadow-none hover:-translate-x-0.5 hover:-translate-y-0.5`;
 
   return (
-    <div className="fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#061214] dark:to-[#0A1C20] text-[#161B3A] dark:text-[#F1EDFF]">
+    <div className="game-env game-env-zelby fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#061214] dark:to-[#0A1C20] text-[#161B3A] dark:text-[#F1EDFF]">
       <style>{`
         @keyframes pk-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
         @keyframes pk-pop{0%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.3) rotate(8deg)}100%{transform:scale(1) rotate(0)}}

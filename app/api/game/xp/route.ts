@@ -5,8 +5,9 @@ import { getUser } from "@/lib/supabase/server"
 import { rateLimitRoute } from "@/lib/rate-limit"
 import { awardXp } from "@/lib/award-xp"
 import { awardGuruXp } from "@/lib/gamification/teacher-xp"
-import { awardCoins, COIN_MAIN_GAME } from "@/lib/coins"
+
 import { trackAchievement } from "@/lib/gamification/achievement-engine"
+import { calculateGameReward } from "@/lib/game/tts/economy"
 
 // Skor wajar maksimum per jenis game — di atas ini klien berbohong.
 // KataPlay: 10 ronde × (50 + streak×10) = maks 1050. Jaring pengaman kedua
@@ -14,14 +15,19 @@ import { trackAchievement } from "@/lib/gamification/achievement-engine"
 // konsisten dengan hasil permainan jujur.
 const MAX_SCORE_PER_GAME: Record<string, number> = {
   KATAPLAY: 1100,
-  // Kuis Tempur solo: 143 soal di bank, satu ronde realistis puluhan jawaban.
-  // 10 poin per jawaban benar + 40 bonus menang; 600 memberi ruang lega untuk
-  // permainan panjang yang jujur, tetapi menutup kiriman skor mengada-ada.
+  // Kuis Tempur/Rimba: skor sesi normal berada jauh di bawah 600.
   RIMBA_KATA: 600,
-  // Teka-Teki Silang: sel benar × 10 + bonus tuntas (200) + bonus beruntun.
-  // Level terbesar ~90 sel → 900–1200; 1500 menutup skor mengada-ada.
+  // TTS: sel benar + bonus tuntas + rentetan. Cap menutup kiriman skor liar.
   TEKA_TEKI_SILANG: 1500,
+  // Game kata dengan 9 level. Cap mengikuti level tertinggi + bonus streak.
+  TEBAK_KATA: 3200,
+  SUSUN_KATA: 4200,
+  BENAR_SALAH: 3000,
+  IRAMA_KATA: 6500,
 }
+
+const ALLOWED_GAME_TYPES = new Set(Object.keys(MAX_SCORE_PER_GAME))
+const MAX_ANSWERED_PER_GAME = 50
 
 export async function POST(req: NextRequest) {
   try {
@@ -41,6 +47,21 @@ export async function POST(req: NextRequest) {
 
     const { score, correct, wrong, maxStreak, gameType, roomCode } = await req.json()
 
+    const normalizedGameType = String(gameType || "").trim().toUpperCase()
+    if (!ALLOWED_GAME_TYPES.has(normalizedGameType)) {
+      return NextResponse.json({ error: "Unsupported game type" }, { status: 400 })
+    }
+    const rawCorrect = Number(correct)
+    const rawWrong = Number(wrong)
+    const rawMaxStreak = Number(maxStreak)
+    const safeCorrect = Number.isFinite(rawCorrect) ? Math.max(0, Math.floor(rawCorrect)) : 0
+    const safeWrong = Number.isFinite(rawWrong) ? Math.max(0, Math.floor(rawWrong)) : 0
+    const safeMaxStreak = Number.isFinite(rawMaxStreak) ? Math.max(0, Math.floor(rawMaxStreak)) : 0
+    const answered = safeCorrect + safeWrong
+    if (answered > MAX_ANSWERED_PER_GAME || safeMaxStreak > MAX_ANSWERED_PER_GAME) {
+      return NextResponse.json({ error: "Invalid game result" }, { status: 400 })
+    }
+
     // XP dihitung server dari skor, bukan diambil dari badan permintaan.
     //
     // Dulu di sini ada `xpEarned ?? ...` yang memakai angka kiriman klien apa
@@ -49,14 +70,14 @@ export async function POST(req: NextRequest) {
     let skor = Number.isFinite(score) && score > 0 ? Math.floor(score) : 0
     // Pangkas skor ke nilai wajar untuk jenis game ini (KATAPLAY maks 1100).
     // XP maksimum legal KataPlay = 1050 → 105 XP, di bawah batas 120/submit.
-    const batasSkor = MAX_SCORE_PER_GAME[gameType as string]
+    const batasSkor = MAX_SCORE_PER_GAME[normalizedGameType]
     if (batasSkor && skor > batasSkor) skor = batasSkor
     // Reference UNIK per permainan (bukan gameType yang konstan) — idempotensi
     // (userId, source, reference) di XPTransaction tidak boleh menelan XP semua
     // permainan berikutnya. Dulu reference = gameType: XP cair sekali seumur
     // hidup per jenis game. UUID per submit menjaga retry tak menggandakan XP
     // (dilindungi juga rate limit 20/menit + batas 120/submit + kuota harian).
-    const reference = `${gameType || "game"}-${crypto.randomUUID()}`
+    const reference = `${normalizedGameType}-${crypto.randomUUID()}`
 
     // Teacher Gamification Separation (ADDENDUM 2):
     // Reward engine dipisahkan per role. Gameplay tidak berubah — hanya sistem
@@ -65,12 +86,41 @@ export async function POST(req: NextRequest) {
     // Murid tetap memakai Player XP Engine (tidak disentuh).
     const isGuru = dbUser.role === "GURU" || dbUser.isFounder
 
+    // Game Reward Economy v1: seluruh gim yang memakai endpoint ini sekarang
+    // memakai bahasa reward yang sama. Akurasi mengatur payout, sedangkan
+    // difficulty multiplier menjaga game yang memang lebih berat tetap bernilai.
+    const gameDifficulty: Record<string, number> = {
+      KATAPLAY: 1.0,
+      BENAR_SALAH: 1.0,
+      TEBAK_KATA: 1.0,
+      SUSUN_KATA: 1.0,
+      IRAMA_KATA: 1.1,
+      RIMBA_KATA: 1.1,
+      TEKA_TEKI_SILANG: 1.2,
+    }
+    const totalAnswered = Math.max(
+      0,
+      safeCorrect + safeWrong
+    )
+    // Beberapa game lama belum mengirim correct/wrong. Jangan anggap payload
+    // kosong sebagai 100% benar — itu menciptakan reward penuh untuk sesi palsu.
+    // Untuk game tersebut, gunakan proporsi skor terhadap cap sebagai fallback.
+    const accuracyPct = totalAnswered > 0
+      ? (Math.min(safeCorrect, totalAnswered) / totalAnswered) * 100
+      : (batasSkor ? (skor / batasSkor) * 100 : 0)
+    const reward = calculateGameReward({
+      baseXp: Math.floor(skor / 10),
+      baseCoins: 5,
+      accuracyPct,
+      difficultyMultiplier: gameDifficulty[normalizedGameType] ?? 1,
+    })
+
     const hasil = isGuru
       ? await awardGuruXp({
           guruId: dbUser.id,
           sumber: "GURU_GAME",
           reference,
-          metadata: { gameType, skor },
+          metadata: { gameType: normalizedGameType, skor },
         }).then((t) => ({
           xpDiberikan: t.xpDiberikan,
           boosted: false,
@@ -80,19 +130,24 @@ export async function POST(req: NextRequest) {
           levelBaru: 0,
           naikLevel: false,
         }))
-      : await awardXp(dbUser.id, "GAME", Math.floor(skor / 10), reference)
+      : await awardXp(dbUser.id, "GAME", reward.xp, reference)
 
-    // Koin per permainan selesai — murid hanya. Dulu game TIDAK memberi koin
-    // sama sekali (koin hanya muncul saat naik level), jadi anak yang belum
-    // menyentuh ambang level main terus-menerus tanpa melihat saldonya
-    // bertambah. Satu permainan selesai = satu submit = 5 koin. Pemicu XP
-    // dibatasi oleh rate limit 20/menit yang sama, jadi jangan bikin koin
-    // lewat jalur lain (game sudah 1 submit per ronde).
+    // Koin per permainan selesai — murid hanya. Payout sekarang mengikuti
+    // standar ekonomi yang sama: sekitar 3–5 koin berdasarkan akurasi,
+    // sehingga permainan memberi progres tanpa menjadi mesin farming koin.
     let koinDidapat = 0
-    if (!isGuru) {
+    if (!isGuru && reward.coins > 0) {
       try {
-        const koin = await awardCoins(dbUser.id, "MAIN_GAME", `game-${reference}`)
-        koinDidapat = koin.coins
+        const [coinTx] = await db.$transaction([
+          db.coinTransaction.create({
+            data: { userId: dbUser.id, amount: reward.coins, reason: "MAIN_GAME", reference: `game-${reference}` },
+          }),
+          db.user.update({
+            where: { id: dbUser.id },
+            data: { coins: { increment: reward.coins } },
+          }),
+        ])
+        koinDidapat = coinTx.amount
       } catch (e) {
         // Koin gagal tidak boleh menggagalkan pemberian XP / penyimpanan hasil.
         console.error("Game coin error:", e)
@@ -111,9 +166,9 @@ export async function POST(req: NextRequest) {
         userId: dbUser.id,
         sessionId: `solo-${Date.now()}`,
         finalScore: skor,
-        correct: (correct as number) || 0,
-        wrong: (wrong as number) || 0,
-        maxStreak: (maxStreak as number) || 0,
+        correct: safeCorrect,
+        wrong: safeWrong,
+        maxStreak: safeMaxStreak,
         xpEarned: hasil.xpDiberikan,
         rank: 1,
       },

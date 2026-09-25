@@ -1358,6 +1358,7 @@ model TtsSession {
   hintsRevealed   Int       @default(0) // 0..3 — diklaim atomik via updateMany
   cellsTotal      Int
   cellsCorrect    Int
+  puzzle          Json?
   xpAwarded       Int?
   // P8J — telemetry gameplay (tanpa data pribadi/finansial):
   wrongAttempts   Int       @default(0) // dilaporkan klien saat finish (telemetry saja)

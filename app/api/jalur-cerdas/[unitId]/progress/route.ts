@@ -9,6 +9,7 @@ import { generateRecommendations } from "@/lib/learning-loop/recommend"
 import { refreshNextAction } from "@/lib/learning-loop/next-action"
 import { isJalurAnswerCorrect, scoreJalurAnswers } from "@/lib/jalur-cerdas/scoring"
 import { trackAchievement } from "@/lib/gamification/achievement-engine"
+import { calculateGameReward } from "@/lib/game/tts/economy"
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ unitId: string }> }) {
   try {
@@ -122,21 +123,28 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ un
       return NextResponse.json({ progress, isComplete: false, earnedXp: 0 })
     }
 
+    // Base reward unit tetap menjadi kalibrasi kesulitan resmi Jalur Cerdas.
+    // Game Reward Economy v1 hanya menerapkan faktor performa sesi agar
+    // penyelesaian 70% tidak dibayar sama dengan mastery 100%.
     const BASE_XP_REWARD = unit.xpReward ?? 50
-    const COIN_REWARD = unit.coinReward ?? 10
-    // XP Boost dari toko koin. Angka akhir juga yang dicatat di UserUnitProgress,
-    // supaya rekap XP belajar tetap sama dengan XP yang masuk ke User.xp.
-    // Lewat pintu tunggal: batas per submit, kuota harian, boost, jejak ledger,
-    // dan pembaruan xp/level/liga sekaligus. Unit ini dijaga "Already completed"
-    // di atas, jadi XP-nya memang hanya bisa cair sekali per unit.
-    const hasilXp = await awardXp(user.id, "JALUR_CERDAS", BASE_XP_REWARD, unitId)
+    const BASE_COIN_REWARD = unit.coinReward ?? 10
+    const reward = calculateGameReward({
+      baseXp: BASE_XP_REWARD,
+      baseCoins: BASE_COIN_REWARD,
+      accuracyPct: score,
+    })
+    const TARGET_XP_REWARD = reward.xp
+    const COIN_REWARD = reward.coins
+
+    // XP Boost dari toko koin tetap melewati pintu tunggal awardXp.
+    const hasilXp = await awardXp(user.id, "JALUR_CERDAS", TARGET_XP_REWARD, unitId)
     const XP_REWARD = hasilXp.xpDiberikan
     const boosted = hasilXp.boosted
 
     // awardXp() returns zero without `kuotaHabis` when the same reference was
     // already processed. Do not let a concurrent/replayed request continue to
     // the User.coins increment and overwrite the first payout.
-    if (BASE_XP_REWARD > 0 && XP_REWARD === 0 && !hasilXp.kuotaHabis) {
+    if (TARGET_XP_REWARD > 0 && XP_REWARD === 0 && !hasilXp.kuotaHabis) {
       const current = await db.userUnitProgress.findUnique({
         where: { userId_unitId: { userId: user.id, unitId } },
       })

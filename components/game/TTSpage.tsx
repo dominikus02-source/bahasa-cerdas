@@ -53,7 +53,7 @@ import { buildPuzzle } from "@/lib/game/tts/generator";
 import { TTS_LEVELS } from "@/lib/game/tts/levels";
 import { dailySeed, randomSeed } from "@/lib/game/tts/seed";
 import { classifyClueType, hintNudgeFor } from "@/lib/game/tts/difficulty";
-import type { Dir, Mascot, TtsWordDef as WordDef } from "@/lib/game/tts/types";
+import type { Dir, Mascot, TtsWord, TtsWordDef as WordDef } from "@/lib/game/tts/types";
 import { sfx, isSoundOn, toggleSound, haptic } from "@/lib/game/sound";
 import {
   HEARTS_MAX, HEART_REGEN_MS, type HeartsState, freshHearts, regenHearts, spendHeart, nextHeartInMs,
@@ -227,16 +227,54 @@ export default function TekaTekiSilang() {
 
   // Mode soal: "Hari Ini" (seed harian, sama utk semua, ganti tiap hari) vs
   // "Acak" (seed acak tiap main). Ganti seed → puzzle baru.
-  const [seed, setSeed] = useState(() => dailySeed(1));
-  const [seedMode, setSeedMode] = useState<"daily" | "acak">("daily");
+  const [seed, setSeed] = useState(() => randomSeed());
+  const [seedMode, setSeedMode] = useState<"daily" | "acak">("acak");
+  const [bankWords, setBankWords] = useState<TtsWord[]>([]);
+  const [bankStatus, setBankStatus] = useState<"loading" | "ready" | "fallback">("loading");
   const [seen, setSeen] = useState<string[]>([]);
   const [combo, setCombo] = useState(0);
   const [bestCombo, setBestCombo] = useState(0);
   const [soundOn, setSoundOn] = useState(true);
 
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/game/tts-bank", { cache: "no-store" })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("bank unavailable");
+        return res.json();
+      })
+      .then((data) => {
+        if (cancelled) return;
+        const words: TtsWord[] = Array.isArray(data.words)
+          ? data.words
+              .map((w: { answer?: unknown; clue?: unknown; tier?: unknown }) => ({
+                answer: String(w.answer ?? ""),
+                clue: String(w.clue ?? ""),
+                tier: w.tier === 1 || w.tier === 2 || w.tier === 3 ? w.tier : 2,
+              }))
+              .filter((w: TtsWord) => w.answer.length >= 3 && w.answer.length <= 14 && w.clue.length >= 8)
+          : [];
+        if (words.length >= 20) {
+          setBankWords(words);
+          setBankStatus("ready");
+        } else {
+          setBankStatus("fallback");
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setBankStatus("fallback");
+      });
+    return () => { cancelled = true; };
+  }, []);
+
   const puzzle = useMemo(
-    () => buildPuzzle({ level: puzzleId, seed, avoidAnswers: seen }),
-    [puzzleId, seed, seen]
+    () => buildPuzzle({
+      level: puzzleId,
+      seed,
+      avoidAnswers: seen,
+      wordPool: bankWords.length >= 20 ? bankWords : undefined,
+    }),
+    [puzzleId, seed, seen, bankWords]
   );
   const cells = useMemo(() => buildCells(puzzle), [puzzle]);
   const color = THEME[(puzzle.id - 1) % THEME.length];
@@ -511,7 +549,7 @@ export default function TekaTekiSilang() {
         fetch("/api/game/tts/finish", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sessionId, cellsCorrect, cellsTotal: totalCells }),
+          body: JSON.stringify({ sessionId, grid }),
         })
           .then((r) => (r.ok ? r.json() : null))
           .then((d) => {
@@ -658,8 +696,8 @@ export default function TekaTekiSilang() {
 
   const openSetup = (id: number) => {
     setPuzzleId(id);
-    setSeedMode("daily");
-    setSeed(dailySeed(id));
+    setSeedMode("acak");
+    setSeed(randomSeed());
     setScreen("setup");
   };
 
@@ -741,7 +779,7 @@ export default function TekaTekiSilang() {
   const nextHeartLabel = liveHearts.hearts >= HEARTS_MAX ? "Penuh" : fmtCountdown(heartCountdown);
 
   return (
-    <div className="fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#0B0A1A] dark:to-[#151030] text-[#161B3A] dark:text-[#F1EDFF]">
+    <div className="game-env game-env-tts fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#0B0A1A] dark:to-[#151030] text-[#161B3A] dark:text-[#F1EDFF]">
       <style>{`
         @keyframes tts-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
         @keyframes tts-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}
@@ -1025,6 +1063,9 @@ export default function TekaTekiSilang() {
             <p className="text-[11px] font-bold opacity-60 -mt-1 mb-4">
               {seedMode === "daily" ? "Puzzle sama untuk semua pemain, ganti tiap hari." : "Kombinasi kata beda tiap main — tanpa pengulangan."}
             </p>
+            <p className="text-[10px] font-extrabold uppercase tracking-wider opacity-50 mb-4">
+              {bankStatus === "ready" ? "Soal berputar dari Bank Soal" : bankStatus === "loading" ? "Menyiapkan Bank Soal…" : "Mode cadangan: bank TTS kurasi"}
+            </p>
 
             <p className="font-extrabold text-sm mb-3">Pilih durasi mengerjakan</p>
             <div className="flex flex-wrap justify-center gap-2 mb-6">
@@ -1096,7 +1137,7 @@ export default function TekaTekiSilang() {
 
         {/* ---------- MAIN ---------- */}
         {screen === "game" && (
-          <div className="tts-screen flex flex-col items-center gap-3 w-full max-w-[1100px] mx-auto">
+          <div className="tts-screen tts-monochrome flex flex-col items-center gap-3 w-full max-w-[1100px] mx-auto">
             {/* HUD 5 tile — DNA Kuis Tempur: Nyawa / Level / Rentetan / Terisi / Waktu */}
             <div className="w-full grid grid-cols-5 gap-2">
               <div className={`rounded-xl border-[3px] border-[#161B3A] dark:border-white/25 bg-[#161B3A] text-white px-2 py-2 shadow-[3px_3px_0_#4338CA] ${liveHearts.hearts === 0 ? "opacity-60" : ""}`}>
@@ -1203,7 +1244,7 @@ export default function TekaTekiSilang() {
                     else if (isSel) bg = isDark ? "#4A3B12" : "#FDE68A";
                     else if (inActiveWord) bg = isDark ? "#37301A" : "#FEF3C7";
                     return (
-                      <div key={key} className={`relative rounded-[3px] ${state === "wrong" ? "tts-wrong" : ""}`} style={{ background: bg }}>
+                      <div key={key} className={`tts-cell-wrap relative rounded-[3px] ${state === "wrong" ? "tts-wrong" : ""}`} style={{ background: bg }}>
                         {cell.number != null && (
                           <span className={`absolute top-[1px] left-[2px] text-[8px] font-extrabold leading-none select-none pointer-events-none ${isDark ? "text-[#F1EDFF]/70" : "text-[#161B3A]/70"}`}>
                             {cell.number}

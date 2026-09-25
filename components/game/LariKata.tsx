@@ -155,7 +155,7 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
   /* ---------- START ---------- */
   if (screen === "start") {
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150C06] dark:to-[#201008] text-[#161B3A] dark:text-[#F1EDFF]">
+      <div className="game-env game-env-lari fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150C06] dark:to-[#201008] text-[#161B3A] dark:text-[#F1EDFF]">
         <style>{`@keyframes lk-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
         @keyframes lk-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}
         @keyframes lk-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}

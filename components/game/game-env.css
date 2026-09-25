@@ -447,3 +447,177 @@
     transition: none !important;
   }
 }
+
+
+/* ── TTS GAMEPLAY: MONOCHROME WORLD ─────────────────────
+ * The Teka-Teki Silang playfield is intentionally independent from the
+ * application's light/dark preference. During actual play it is always
+ * black + white so the crossword grid remains visually stable and focused.
+ * Lobby/setup/result screens keep their existing BC visual identity.
+ */
+.game-env-tts .tts-monochrome {
+  background: #ffffff !important;
+  color: #111111 !important;
+}
+.game-env-tts .tts-monochrome .tts-screen,
+.game-env-tts .tts-monochrome .game-env-card,
+.game-env-tts .tts-monochrome .game-env-card-elevated {
+  background: #ffffff !important;
+  color: #111111 !important;
+}
+.game-env-tts .tts-monochrome [class*="dark:bg-"] {
+  background: #ffffff !important;
+}
+.game-env-tts .tts-monochrome [class*="dark:text-"] {
+  color: #111111 !important;
+}
+.game-env-tts .tts-monochrome [class*="dark:border-"] {
+  border-color: #111111 !important;
+}
+.game-env-tts .tts-monochrome .tts-cell-wrap {
+  background: #ffffff !important;
+  color: #111111 !important;
+}
+.game-env-tts .tts-monochrome .tts-cell-wrap .tts-cell {
+  color: #111111 !important;
+}
+.game-env-tts .tts-monochrome .bg-violet-500,
+.game-env-tts .tts-monochrome .bg-rose-500,
+.game-env-tts .tts-monochrome .bg-orange-300,
+.game-env-tts .tts-monochrome .bg-orange-500,
+.game-env-tts .tts-monochrome .bg-emerald-500,
+.game-env-tts .tts-monochrome .bg-\[\#10B981\],
+.game-env-tts .tts-monochrome .bg-\[\#161B3A\] {
+  background: #111111 !important;
+  color: #ffffff !important;
+}
+.game-env-tts .tts-monochrome [style*="background"] {
+  background: #111111 !important;
+  color: #ffffff !important;
+}
+.game-env-tts .tts-monochrome .tts-cell-wrap[style*="background"] {
+  background: #ffffff !important;
+  color: #111111 !important;
+}
+.game-env-tts .tts-monochrome .tts-cell-wrap .tts-cell {
+  background: transparent !important;
+}
+.game-env-tts .tts-monochrome .tts-bubble {
+  background: #111111 !important;
+  color: #ffffff !important;
+}
+.game-env-tts .tts-monochrome button {
+  border-color: #111111 !important;
+}
+
+
+/* ============================================================
+   ARENA DARK MODE 2.0 — SEMANTIC ELEVATION CONTRACT
+   ============================================================
+   Dark Mode is not "black mode". It is a separate surface hierarchy:
+   background → surface → elevated → raised → overlay.
+   Accent color is reserved for identity, interaction and status.
+   ============================================================ */
+.dark .game-env {
+  --game-surface-sunken: #0E1226;
+  --game-surface-overlay: #32385B;
+  --game-divider: rgba(245, 243, 255, 0.11);
+  --game-focus-ring: 0 0 0 3px rgba(165, 180, 252, 0.30);
+  color-scheme: dark;
+}
+
+.game-env .game-surface-sunken { background: var(--game-surface-sunken) !important; }
+.game-env .game-surface { background: var(--game-surface) !important; }
+.game-env .game-surface-elevated { background: var(--game-surface-elevated) !important; }
+.game-env .game-surface-raised { background: var(--game-surface-raised) !important; }
+.game-env .game-surface-overlay { background: var(--game-surface-overlay) !important; }
+.game-env .game-divider { border-color: var(--game-divider) !important; }
+
+.game-env button:focus-visible,
+.game-env a:focus-visible,
+.game-env input:focus-visible,
+.game-env select:focus-visible,
+.game-env textarea:focus-visible {
+  outline: none !important;
+  box-shadow: var(--game-focus-ring) !important;
+}
+
+/* Neutral dark utilities map to elevation surfaces.
+   Semantic status utilities (emerald/rose/amber/etc.) stay colorful. */
+.dark .game-env [class~="dark:bg-slate-900"],
+.dark .game-env [class~="dark:bg-gray-900"],
+.dark .game-env [class~="dark:bg-zinc-900"],
+.dark .game-env [class~="dark:bg-neutral-900"] {
+  background: var(--game-surface) !important;
+}
+.dark .game-env [class~="dark:bg-slate-800"],
+.dark .game-env [class~="dark:bg-gray-800"],
+.dark .game-env [class~="dark:bg-zinc-800"],
+.dark .game-env [class~="dark:bg-neutral-800"] {
+  background: var(--game-surface-elevated) !important;
+}
+.dark .game-env [class~="dark:bg-slate-700"],
+.dark .game-env [class~="dark:bg-gray-700"],
+.dark .game-env [class~="dark:bg-zinc-700"],
+.dark .game-env [class~="dark:bg-neutral-700"] {
+  background: var(--game-surface-raised) !important;
+}
+.dark .game-env [class~="dark:bg-white/5"] { background: rgba(255,255,255,0.045) !important; }
+.dark .game-env [class~="dark:bg-white/10"] { background: rgba(255,255,255,0.075) !important; }
+.dark .game-env [class~="dark:bg-white/15"] { background: rgba(255,255,255,0.10) !important; }
+
+/* Dark-mode elevation should be visible even when shadows disappear. */
+.dark .game-env .game-env-card,
+.dark .game-env .game-env-card-elevated {
+  box-shadow: 0 10px 28px -16px rgba(0,0,0,0.68), 0 0 0 1px rgba(255,255,255,0.045) !important;
+}
+
+/* ============================================================
+   KATAPLAY / JALUR KATA — dark reinterpretation
+   ============================================================ */
+.game-env-kataplay {
+  --game-primary: #7C8CFF;
+  --game-primary-light: #A8B1FF;
+  --game-primary-glow: rgba(124, 140, 255, 0.28);
+}
+.dark .game-env-kataplay {
+  --game-bg-from: #0E1226;
+  --game-bg-via: #13182F;
+  --game-bg-to: #1A2040;
+  --game-surface-sunken: #10142A;
+  --game-surface: #1A203A;
+  --game-surface-elevated: #232A48;
+  --game-surface-raised: #2D3557;
+  --game-surface-overlay: #363E62;
+  --game-text: #F5F3FF;
+  --game-text-secondary: #C8C8DD;
+  --game-text-muted: #969AB3;
+  --game-text-faint: #71758E;
+  --game-border: rgba(245,243,255,0.30);
+  --game-border-light: rgba(245,243,255,0.15);
+}
+
+/* Structural light-mode colors become semantic surfaces in dark mode. */
+.dark .game-env-kataplay .bg-white { background: var(--game-surface) !important; }
+.dark .game-env-kataplay .bg-\[\#FFF8E8\] { background: var(--game-surface-elevated) !important; }
+.dark .game-env-kataplay .bg-\[\#FFFDF7\] { background: var(--game-bg-from) !important; }
+.dark .game-env-kataplay .border-black { border-color: var(--game-border) !important; }
+.dark .game-env-kataplay .text-black { color: var(--game-text) !important; }
+.dark .game-env-kataplay .text-black\/45,
+.dark .game-env-kataplay .text-black\/55,
+.dark .game-env-kataplay .text-black\/60 {
+  color: var(--game-text-secondary) !important;
+}
+.dark .game-env-kataplay .bg-black\/5 { background: rgba(255,255,255,0.045) !important; }
+.dark .game-env-kataplay .bg-black\/10 { background: rgba(255,255,255,0.08) !important; }
+
+/* Black in KataPlay was primarily an accent/chip; reinterpret it as primary. */
+.dark .game-env-kataplay .bg-black {
+  background: var(--game-primary) !important;
+  color: #10152A !important;
+}
+.dark .game-env-kataplay .text-white { color: #F7F5FF !important; }
+.dark .game-env-kataplay [class*="shadow-[5px_5px_0_#111]"] {
+  box-shadow: 0 8px 24px -14px rgba(0,0,0,0.72), 0 0 0 1px rgba(255,255,255,0.05) !important;
+}
+.dark .game-env-kataplay .border-white { border-color: var(--game-border-light) !important; }

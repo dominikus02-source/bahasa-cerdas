@@ -549,7 +549,7 @@ export default function IramaKata() {
     // Simpan progres + buka level berikutnya
     setSaved((prev) => {
       const next = { unlocked: [...prev.unlocked], best: { ...prev.best } };
-      if (!gameOver) {
+      if (!gameOver && stars >= 1) {
         if (!next.best[g.level.id] || g.score > next.best[g.level.id]) next.best[g.level.id] = g.score;
         const nid = g.level.id + 1;
         if (nid <= LEVELS.length && !next.unlocked.includes(nid)) next.unlocked.push(nid);
@@ -631,7 +631,7 @@ export default function IramaKata() {
   const btn = `inline-flex items-center justify-center gap-2 font-extrabold rounded-2xl ${chunky} transition-transform active:translate-x-1.5 active:translate-y-1.5 active:shadow-none hover:-translate-x-0.5 hover:-translate-y-0.5`;
 
   return (
-    <div className="fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#140A12] dark:to-[#1E0E1A] text-[#161B3A] dark:text-[#F1EDFF]">
+    <div className="game-env game-env-irama fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#140A12] dark:to-[#1E0E1A] text-[#161B3A] dark:text-[#F1EDFF]">
       <style>{`
         @keyframes ik-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
         @keyframes ik-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}

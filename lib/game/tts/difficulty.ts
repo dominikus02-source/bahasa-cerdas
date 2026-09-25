@@ -108,8 +108,20 @@ export function wordDifficulty(w: TtsWord, themeKey: string): WordDifficulty {
  * yang DITEGAKKAN di sini hanya: kata langka (RARE) tidak boleh muncul
  * sebelum level 7 (LANJUT). Tier tetap menjadi metadata hadiah/analitik.
  */
-export function canAppearInLevel(answer: string, _tier: 1 | 2 | 3, level: number): boolean {
-  return !(level < 7 && isRareAnswer(answer));
+/**
+ * Content gate — level harus terasa sebagai kenaikan kemampuan, bukan hanya
+ * grid yang makin besar. Tier 1 = fondasi, Tier 2 = menengah, Tier 3 = lanjut.
+ * Rentang sengaja overlap agar pemain tetap mendapat pengulangan terarah.
+ */
+export function canAppearInLevel(answer: string, tier: 1 | 2 | 3, level: number): boolean {
+  if (isRareAnswer(answer) && level < 9) return false;
+  if (level === 1) return tier === 1;
+  if (level === 2) return tier <= 2;
+  if (level <= 4) return tier <= 2;
+  if (level <= 6) return tier >= 1 && tier <= 2;
+  if (level <= 8) return tier >= 2;
+  if (level <= 10) return tier >= 2;
+  return tier >= 2;
 }
 
 /** Tingkat permainan dari level produk. */
