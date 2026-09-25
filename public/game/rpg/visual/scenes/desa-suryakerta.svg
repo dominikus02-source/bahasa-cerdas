@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2944" height="2304" viewBox="0 0 2944 2304">
+<defs>
+  <linearGradient id="grass" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#9acb72"/><stop offset="1" stop-color="#78b65d"/>
+  </linearGradient>
+  <linearGradient id="field" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#d7b76b"/><stop offset="1" stop-color="#b99452"/>
+  </linearGradient>
+  <linearGradient id="water" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#6fb8c7"/><stop offset=".5" stop-color="#8acbd3"/><stop offset="1" stop-color="#5fa9bb"/>
+  </linearGradient>
+  <pattern id="grassTexture" width="96" height="96" patternUnits="userSpaceOnUse">
+    <path d="M12 70l5-13m9 22l4-11m42 5l5-14m-17 8l4-9" stroke="#4f934f" stroke-width="3" stroke-linecap="round" opacity=".16"/>
+    <circle cx="70" cy="28" r="3" fill="#e5d77b" opacity=".18"/>
+  </pattern>
+  <pattern id="pathTexture" width="96" height="96" patternUnits="userSpaceOnUse">
+    <path d="M14 26h24m16 40h28M22 72h17m31-48h12" stroke="#8e7350" stroke-width="4" stroke-linecap="round" opacity=".18"/>
+  </pattern>
+  <pattern id="fieldTexture" width="64" height="64" patternUnits="userSpaceOnUse">
+    <path d="M8 8v48m16-48v48m16-48v48m16-48v48" stroke="#8c713e" stroke-width="2" opacity=".22"/>
+  </pattern>
+  <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="8"/><feOffset dy="8"/>
+    <feComponentTransfer><feFuncA type="linear" slope=".22"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+
+<!-- cohesive village ground -->
+<rect width="2944" height="2304" fill="url(#grass)"/>
+<rect width="2944" height="2304" fill="url(#grassTexture)"/>
+
+<!-- quiet outer village border / forest belt -->
+<path d="M0 0H2944V128H0ZM0 2176H2944V2304H0ZM0 0V2304H128V0ZM2816 0V2304H2944V0Z" fill="#4e7f50" opacity=".22"/>
+
+<!-- river -->
+<path d="M1728 -20
+ C1690 260 1765 420 1738 650
+ C1702 920 1768 1130 1732 1410
+ C1694 1695 1775 1950 1728 2324
+ L1888 2324
+ C1930 2020 1848 1730 1886 1430
+ C1925 1130 1848 900 1890 640
+ C1925 400 1855 210 1915 -20Z" fill="url(#water)" opacity=".98"/>
+<path d="M1782 -10 C1748 300 1818 520 1780 780 C1748 1010 1818 1270 1775 1510 C1745 1740 1815 1990 1780 2310" fill="none" stroke="#d7f1ed" stroke-width="18" opacity=".3"/>
+<path d="M1840 20 C1800 280 1870 500 1835 760 C1800 1010 1875 1260 1830 1520 C1795 1780 1870 2020 1835 2290" fill="none" stroke="#397f92" stroke-width="12" opacity=".2"/>
+
+<!-- main village road, organically shaped rather than tiled -->
+<path d="M250 1088
+ C560 1060 820 1088 1080 1080
+ C1340 1070 1530 1050 1715 1090
+ C1840 1118 1970 1098 2140 1092
+ L2140 1215
+ C1940 1220 1810 1235 1688 1202
+ C1490 1150 1290 1185 1080 1200
+ C790 1220 540 1180 250 1210Z" fill="#c6a46c"/>
+<path d="M250 1088
+ C560 1060 820 1088 1080 1080
+ C1340 1070 1530 1050 1715 1090
+ C1840 1118 1970 1098 2140 1092" fill="none" stroke="#e2c78d" stroke-width="12" opacity=".55"/>
+<path d="M250 1088
+ C560 1060 820 1088 1080 1080
+ C1340 1070 1530 1050 1715 1090
+ C1840 1118 1970 1098 2140 1092
+ L2140 1215
+ C1940 1220 1810 1235 1688 1202
+ C1490 1150 1290 1185 1080 1200
+ C790 1220 540 1180 250 1210Z" fill="url(#pathTexture)" opacity=".7"/>
+
+<!-- vertical village lane -->
+<path d="M700 1120 C720 1290 715 1490 708 1730 C704 1900 710 2040 700 2180 L820 2180 C825 2010 820 1850 826 1690 C832 1470 836 1290 825 1110Z" fill="#c6a46c"/>
+<path d="M700 1120 C720 1290 715 1490 708 1730 C704 1900 710 2040 700 2180 L820 2180 C825 2010 820 1850 826 1690 C832 1470 836 1290 825 1110Z" fill="url(#pathTexture)" opacity=".7"/>
+
+<!-- bridge crossing -->
+<rect x="1680" y="1070" width="210" height="150" rx="26" fill="#7d5434" filter="url(#softShadow)"/>
+<path d="M1700 1100h170m-170 38h170m-170 38h170m-170 38h170" stroke="#bd8451" stroke-width="18" opacity=".8"/>
+<path d="M1730 1070v150m55-150v150m55-150v150m55-150v150" stroke="#5d3c2b" stroke-width="10" opacity=".75"/>
+
+<!-- eastern dry/farm quarter -->
+<path d="M1856 112 L2790 112 L2790 2170 L1885 2170
+ C1930 1890 1865 1630 1900 1400 C1930 1200 1880 800 1856 112Z" fill="url(#field)" opacity=".96"/>
+<path d="M1856 112 L2790 112 L2790 2170 L1885 2170
+ C1930 1890 1865 1630 1900 1400 C1930 1200 1880 800 1856 112Z" fill="url(#fieldTexture)" opacity=".55"/>
+
+<!-- cultivated plots -->
+<g fill="none" stroke="#876c3f" stroke-width="12" opacity=".34">
+  <path d="M2030 260h610M2010 520h660M2020 800h610M2000 1110h680M2010 1430h620M2000 1750h660"/>
+</g>
+
+<!-- small village garden -->
+<path d="M420 1500 Q900 1460 1230 1510 L1210 1840 Q820 1880 430 1825Z" fill="#83b85e" opacity=".7"/>
+<path d="M470 1560h680M460 1650h720M480 1740h680" stroke="#5f934e" stroke-width="10" opacity=".28"/>
+
+<!-- forest/decor clusters, presentation only -->
+<g opacity=".9">
+  <g transform="translate(260 360)"><circle cx="0" cy="30" r="54" fill="#3f7748"/><circle cx="55" cy="10" r="70" fill="#4f8c50"/><circle cx="112" cy="38" r="52" fill="#3d7546"/><rect x="48" y="70" width="16" height="58" rx="8" fill="#725039"/></g>
+  <g transform="translate(1080 330)"><circle cx="0" cy="30" r="50" fill="#3d7546"/><circle cx="55" cy="5" r="66" fill="#4f8c50"/><circle cx="110" cy="35" r="48" fill="#3f7748"/><rect x="48" y="66" width="16" height="58" rx="8" fill="#725039"/></g>
+  <g transform="translate(1260 1730)"><circle cx="0" cy="30" r="48" fill="#3d7546"/><circle cx="52" cy="0" r="64" fill="#4f8c50"/><circle cx="104" cy="35" r="48" fill="#3f7748"/><rect x="46" y="65" width="16" height="55" rx="8" fill="#725039"/></g>
+  <g transform="translate(2530 330)"><circle cx="0" cy="30" r="52" fill="#3d7546"/><circle cx="58" cy="0" r="68" fill="#4f8c50"/><circle cx="118" cy="35" r="50" fill="#3f7748"/><rect x="52" y="66" width="16" height="56" rx="8" fill="#725039"/></g>
+</g>
+
+<!-- stepping stones and village accents -->
+<g fill="#a08b67" opacity=".45">
+  <ellipse cx="480" cy="1080" rx="22" ry="14"/><ellipse cx="560" cy="1085" rx="18" ry="12"/>
+  <ellipse cx="930" cy="1100" rx="22" ry="14"/><ellipse cx="1030" cy="1090" rx="18" ry="12"/>
+  <ellipse cx="920" cy="1510" rx="20" ry="13"/><ellipse cx="920" cy="1600" rx="18" ry="12"/>
+</g>
+
+<!-- subtle atmospheric vignette baked into scene -->
+<rect width="2944" height="2304" fill="none" stroke="#35543d" stroke-width="120" opacity=".12"/>
+</svg>
