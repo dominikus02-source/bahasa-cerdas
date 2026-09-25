@@ -139,6 +139,7 @@ export function startBattle(args: StartBattleArgs): {
   const enemies: RPGBattleActor[] = args.enemies.map((e) => ({
     id: e.instanceId,
     name: e.def.name,
+    asset: e.def.asset,
     hp: e.def.base.hp,
     maxHp: e.def.base.hp,
     attack: e.def.base.attack,
