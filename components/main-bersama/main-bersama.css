@@ -3922,3 +3922,423 @@
     max-height: none;
   }
 }
+
+
+/* ─────────────────────────────────────────────────────────────
+   Projector Kota summary v2 — bounded 16:9 hero composition
+   Screenshot acceptance target:
+   - title never reaches/overlaps utility controls
+   - city remains the hero visual
+   - progress + result cards stay inside one right rail
+   - no vertical scroll at 1366x768 / 1536x864 / 1920x1080
+   ───────────────────────────────────────────────────────────── */
+
+.mb-pj-phase-final-kota {
+  justify-content: center;
+  align-items: center;
+  padding: 14px clamp(18px, 2.2vw, 34px) 18px;
+  gap: 0;
+}
+
+.mb-pj-kota-summary-shell {
+  width: min(100%, 1380px);
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 14px;
+  overflow: hidden;
+}
+
+.mb-pj-kota-summary-head {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 22px;
+  padding: 0 4px;
+}
+
+.mb-pj-kota-summary-heading {
+  min-width: 0;
+  max-width: 960px;
+}
+
+.mb-pj-kota-summary-kicker {
+  display: inline-flex;
+  align-items: center;
+  min-height: 27px;
+  padding: 5px 10px;
+  margin-bottom: 7px;
+  border-radius: var(--mb-radius-pill);
+  background: rgba(20, 184, 166, .1);
+  border: 1px solid rgba(82, 224, 208, .16);
+  color: #83e9df;
+  font-size: .66rem;
+  font-weight: 900;
+  letter-spacing: .17em;
+  text-transform: uppercase;
+}
+
+.mb-pj-kota-summary-title {
+  max-width: 100%;
+  margin: 0;
+  color: #f7fbff;
+  font-size: clamp(2rem, 3.35vw, 3.55rem);
+  line-height: .94;
+  letter-spacing: .015em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+  text-shadow: 0 14px 36px rgba(0, 0, 0, .3);
+}
+
+.mb-pj-kota-summary-subtitle {
+  max-width: 72ch;
+  margin: 8px 0 0;
+  color: #91a8bc;
+  font-size: clamp(.76rem, .92vw, .95rem);
+  line-height: 1.45;
+  font-weight: 650;
+}
+
+.mb-pj-kota-summary-badge {
+  flex: none;
+  min-width: 142px;
+  padding: 10px 14px 11px;
+  border-radius: 18px;
+  text-align: right;
+  background:
+    radial-gradient(150px 70px at 100% 0, rgba(255, 211, 91, .12), transparent 72%),
+    rgba(255, 255, 255, .045);
+  border: 1px solid rgba(255, 214, 103, .16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04);
+}
+
+.mb-pj-kota-summary-badge-label {
+  display: block;
+  color: #839caf;
+  font-size: .62rem;
+  font-weight: 850;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.mb-pj-kota-summary-badge strong {
+  display: block;
+  margin-top: 2px;
+  color: #ffe08d;
+  font-size: clamp(1.45rem, 2vw, 2rem);
+  line-height: 1;
+  text-shadow: 0 0 22px rgba(255, 211, 93, .22);
+}
+
+.mb-pj-kota-summary-grid {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.72fr) minmax(320px, .58fr);
+  align-items: stretch;
+  gap: 18px;
+  overflow: hidden;
+}
+
+.mb-pj-kota-summary-world {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 9px;
+  border-radius: 24px;
+  background:
+    radial-gradient(760px 320px at 50% 12%, rgba(28, 154, 148, .09), transparent 76%),
+    linear-gradient(180deg, rgba(7, 25, 41, .66), rgba(5, 19, 32, .52));
+  border: 1px solid rgba(255, 255, 255, .075);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .03),
+    0 20px 46px rgba(0, 0, 0, .12);
+}
+
+.mb-pj-kota-summary-world > .mb-kota-scene {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+.mb-pj-kota-summary-side {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  align-content: center;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.mb-pj-kota-summary-progress-card,
+.mb-pj-kota-summary-message {
+  min-width: 0;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, .085);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.032));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+.mb-pj-kota-summary-progress-card {
+  padding: 8px;
+}
+
+.mb-pj-kota-summary-progress-card .mb-city {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 10px 14px 16px;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.mb-pj-kota-summary-message {
+  position: relative;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 18px;
+  overflow: hidden;
+}
+
+.mb-pj-kota-summary-message::after {
+  content: "";
+  position: absolute;
+  width: 170px;
+  height: 170px;
+  right: -74px;
+  bottom: -92px;
+  border-radius: 50%;
+  border: 34px solid rgba(255, 205, 79, .045);
+  pointer-events: none;
+}
+
+.mb-pj-kota-summary-message-complete {
+  background:
+    radial-gradient(210px 130px at 100% 100%, rgba(255, 203, 77, .11), transparent 76%),
+    linear-gradient(180deg, rgba(255, 197, 61, .065), rgba(255,255,255,.028));
+  border-color: rgba(255, 207, 87, .17);
+}
+
+.mb-pj-kota-summary-message-label {
+  position: relative;
+  z-index: 1;
+  color: #f0c958;
+  font-size: .67rem;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.mb-pj-kota-summary-area-count {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.mb-pj-kota-summary-area-count strong {
+  color: #fff1bd;
+  font-size: clamp(2rem, 3vw, 3.15rem);
+  line-height: .92;
+  text-shadow: 0 8px 22px rgba(0, 0, 0, .24);
+}
+
+.mb-pj-kota-summary-area-count span {
+  color: #a9bdcb;
+  font-size: .84rem;
+  font-weight: 750;
+}
+
+.mb-pj-kota-summary-message p {
+  position: relative;
+  z-index: 1;
+  margin: 11px 0 0;
+  color: #f1d985;
+  font-size: clamp(.86rem, 1vw, 1rem);
+  line-height: 1.46;
+  font-weight: 760;
+}
+
+/* Short classroom projectors: keep the entire summary inside one screen. */
+@media (min-width: 900px) and (max-height: 800px) {
+  .mb-pj-phase-final-kota {
+    padding: 8px 18px 10px;
+  }
+
+  .mb-pj-kota-summary-shell {
+    gap: 8px;
+  }
+
+  .mb-pj-kota-summary-head {
+    gap: 12px;
+  }
+
+  .mb-pj-kota-summary-kicker {
+    min-height: 22px;
+    margin-bottom: 4px;
+    padding: 3px 8px;
+    font-size: .58rem;
+  }
+
+  .mb-pj-kota-summary-title {
+    font-size: clamp(1.65rem, 2.65vw, 2.25rem);
+  }
+
+  .mb-pj-kota-summary-subtitle {
+    margin-top: 4px;
+    font-size: .72rem;
+    line-height: 1.35;
+  }
+
+  .mb-pj-kota-summary-badge {
+    min-width: 112px;
+    padding: 8px 10px;
+    border-radius: 14px;
+  }
+
+  .mb-pj-kota-summary-badge strong {
+    font-size: 1.45rem;
+  }
+
+  .mb-pj-kota-summary-grid {
+    grid-template-columns: minmax(0, 1.78fr) minmax(286px, .52fr);
+    gap: 10px;
+  }
+
+  .mb-pj-kota-summary-world {
+    padding: 6px;
+    border-radius: 18px;
+  }
+
+  .mb-pj-kota-summary-side {
+    gap: 8px;
+  }
+
+  .mb-pj-kota-summary-progress-card {
+    padding: 5px;
+    border-radius: 16px;
+  }
+
+  .mb-pj-kota-summary-progress-card .mb-city {
+    padding: 7px 10px 12px;
+  }
+
+  .mb-pj-kota-summary-progress-card .mb-city-head {
+    margin-bottom: 7px;
+  }
+
+  .mb-pj-kota-summary-progress-card .mb-city-rail {
+    height: 54px;
+  }
+
+  .mb-pj-kota-summary-progress-card .mb-city-stop {
+    width: 62px;
+  }
+
+  .mb-pj-kota-summary-progress-card .mb-city-stop-ring {
+    width: 32px;
+    height: 32px;
+  }
+
+  .mb-pj-kota-summary-progress-card .mb-city-stop-label {
+    font-size: .56rem;
+  }
+
+  .mb-pj-kota-summary-message {
+    padding: 12px 14px;
+    border-radius: 16px;
+  }
+
+  .mb-pj-kota-summary-area-count {
+    margin-top: 6px;
+  }
+
+  .mb-pj-kota-summary-area-count strong {
+    font-size: 2rem;
+  }
+
+  .mb-pj-kota-summary-message p {
+    margin-top: 7px;
+    font-size: .8rem;
+    line-height: 1.35;
+  }
+}
+
+/* Medium-height projector / common laptop fullscreen. */
+@media (min-width: 900px) and (min-height: 801px) and (max-height: 920px) {
+  .mb-pj-kota-summary-shell {
+    gap: 10px;
+  }
+
+  .mb-pj-kota-summary-title {
+    font-size: clamp(2rem, 3vw, 2.7rem);
+  }
+
+  .mb-pj-kota-summary-grid {
+    grid-template-columns: minmax(0, 1.68fr) minmax(310px, .58fr);
+    gap: 14px;
+  }
+
+  .mb-pj-kota-summary-message {
+    padding: 15px;
+  }
+}
+
+/* Narrow/tablet fallback may scroll rather than overlap. */
+@media (max-width: 899px) {
+  .mb-pj-phase-final-kota {
+    padding: 16px;
+  }
+
+  .mb-pj-kota-summary-shell {
+    height: auto;
+    overflow: visible;
+  }
+
+  .mb-pj-kota-summary-head {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .mb-pj-kota-summary-badge {
+    width: fit-content;
+    text-align: left;
+  }
+
+  .mb-pj-kota-summary-grid {
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  .mb-pj-kota-summary-world {
+    min-height: 300px;
+  }
+
+  .mb-pj-kota-summary-side {
+    overflow: visible;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mb-pj-kota-summary-world,
+  .mb-pj-kota-summary-message {
+    scroll-behavior: auto;
+  }
+}
