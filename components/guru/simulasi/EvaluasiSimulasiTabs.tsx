@@ -36,7 +36,7 @@ export function EvaluasiSimulasiTabs({ guruName }: { guruName: string }) {
       {/* Header hub */}
       <div className="mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md shadow-emerald-500/20">
+          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center shadow-md shadow-blue-500/20">
             <BarChart3 size={22} className="text-white" />
           </div>
           <div>
@@ -49,7 +49,7 @@ export function EvaluasiSimulasiTabs({ guruName }: { guruName: string }) {
       </div>
 
       {/* Tab navigation */}
-      <div className="bg-white rounded-2xl border border-slate-100 p-1.5 mb-6 shadow-sm flex gap-1 overflow-x-auto">
+      <div className="guru-role-card bg-white rounded-2xl border border-blue-100 dark:bg-[#0b1d34] dark:border-blue-950/70 p-1.5 mb-6 shadow-sm flex gap-1 overflow-x-auto">
         {TABS.map((tab) => {
           const activeTab = active === tab.id
           return (
@@ -58,7 +58,7 @@ export function EvaluasiSimulasiTabs({ guruName }: { guruName: string }) {
               href={`?tab=${tab.id}`}
               className={`flex flex-1 items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all ${
                 activeTab
-                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-sm"
+                  ? "guru-role-tab-active"
                   : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
               }`}
             >
