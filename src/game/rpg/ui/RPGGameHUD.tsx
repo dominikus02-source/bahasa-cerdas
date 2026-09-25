@@ -22,6 +22,7 @@ interface RPGGameHUDProps {
   xp: number;
   xpToNext: number;
   mapName: string;
+  towerFloor?: number;
 }
 
 export function RPGGameHUD({
@@ -32,6 +33,7 @@ export function RPGGameHUD({
   xp,
   xpToNext,
   mapName,
+  towerFloor = 0,
 }: RPGGameHUDProps) {
   const hpPercent = Math.max(0, Math.min(100, (hp / maxHp) * 100));
   const xpPercent = xpToNext > 0 ? Math.max(0, Math.min(100, (xp / xpToNext) * 100)) : 0;
@@ -83,8 +85,13 @@ export function RPGGameHUD({
         </div>
 
         {/* Map name */}
-        <div className="text-xs text-[var(--game-text-muted)]">
-          📍 {mapName}
+        <div className="flex items-center justify-between gap-2 text-xs text-[var(--game-text-muted)]">
+          <span>📍 {mapName}</span>
+          {towerFloor > 0 ? (
+            <span className="rounded-full bg-[var(--game-primary)]/15 px-2 py-0.5 font-black text-[var(--game-primary)]">
+              Menara · Lantai {towerFloor}
+            </span>
+          ) : null}
         </div>
       </div>
     </div>
