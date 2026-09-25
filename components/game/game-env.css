@@ -621,3 +621,291 @@
   box-shadow: 0 8px 24px -14px rgba(0,0,0,0.72), 0 0 0 1px rgba(255,255,255,0.05) !important;
 }
 .dark .game-env-kataplay .border-white { border-color: var(--game-border-light) !important; }
+
+
+/* ============================================================
+   ARENA DARK MODE 3.0 — TONAL DEPTH / MODERN DARK UI
+   ============================================================
+   Design contract:
+   - Dark ≠ black.
+   - Background, surface, elevated, raised and overlay are distinct.
+   - Accent colors communicate identity/status; they do not become the
+     entire canvas.
+   - Light-mode structural colors are remapped semantically in dark mode.
+   - Text hierarchy remains legible without turning every element white.
+   Based on current Apple HIG dark-mode guidance and Material 3 surface
+   container roles.
+   ============================================================ */
+
+.dark .game-env {
+  /* Tonal canvas: deep, but deliberately above pure black. */
+  --game-bg-from: #0E1428;
+  --game-bg-via: #121A32;
+  --game-bg-to: #192341;
+
+  /* Surface ladder — visual hierarchy replaces "black everywhere". */
+  --game-surface-sunken: #10162B;
+  --game-surface: #171F38;
+  --game-surface-elevated: #202A47;
+  --game-surface-raised: #293454;
+  --game-surface-overlay: #344064;
+
+  /* Semantic foreground hierarchy. */
+  --game-text: #F6F4FF;
+  --game-text-secondary: #C9C9D9;
+  --game-text-muted: #9298AD;
+  --game-text-faint: #6E758D;
+
+  /* Separation is visible, but never a heavy white outline. */
+  --game-border: rgba(246, 244, 255, 0.28);
+  --game-border-light: rgba(246, 244, 255, 0.14);
+  --game-border-subtle: rgba(246, 244, 255, 0.08);
+  --game-divider: rgba(246, 244, 255, 0.11);
+
+  --game-card-shadow:
+    0 14px 36px -18px rgba(0, 0, 0, 0.72),
+    0 0 0 1px rgba(255, 255, 255, 0.045);
+
+  --game-focus-ring: 0 0 0 3px rgba(165, 180, 252, 0.32);
+}
+
+/* Per-game dark canvases: each game keeps an identity tint while sharing
+   the same surface ladder. */
+.dark .game-env-tts {
+  --game-bg-from: #11152D;
+  --game-bg-via: #171B38;
+  --game-bg-to: #20264A;
+}
+.dark .game-env-tebak {
+  --game-bg-from: #0B1D23;
+  --game-bg-via: #102A31;
+  --game-bg-to: #173A40;
+}
+.dark .game-env-susun {
+  --game-bg-from: #1A150C;
+  --game-bg-via: #241D12;
+  --game-bg-to: #302719;
+}
+.dark .game-env-benar {
+  --game-bg-from: #0A1D17;
+  --game-bg-via: #102A21;
+  --game-bg-to: #17382B;
+}
+.dark .game-env-lari {
+  --game-bg-from: #1A120C;
+  --game-bg-via: #271A10;
+  --game-bg-to: #352419;
+}
+.dark .game-env-irama {
+  --game-bg-from: #1A0F1A;
+  --game-bg-via: #29152A;
+  --game-bg-to: #391D3A;
+}
+.dark .game-env-menara {
+  --game-bg-from: #1A150C;
+  --game-bg-via: #292010;
+  --game-bg-to: #382B18;
+}
+.dark .game-env-kuis {
+  --game-bg-from: #1A1013;
+  --game-bg-via: #29171D;
+  --game-bg-to: #391F28;
+}
+.dark .game-env-zelby {
+  --game-bg-from: #0A1C22;
+  --game-bg-via: #102B34;
+  --game-bg-to: #173B45;
+}
+.dark .game-env-kataplay {
+  --game-bg-from: #10162B;
+  --game-bg-via: #171F38;
+  --game-bg-to: #202A47;
+}
+.dark .game-env-rpg {
+  --game-bg-from: #1A130A;
+  --game-bg-via: #2A1E10;
+  --game-bg-to: #3A2A18;
+}
+
+/* Root / fullscreen canvases inside the game shell must use the semantic
+   canvas instead of a hard-coded near-black Tailwind gradient. */
+.dark .game-env.game-fullscreen,
+.dark .game-env > .fixed.inset-0,
+.dark .game-env > div.fixed.inset-0,
+.dark .game-env > .min-h-screen {
+  background: linear-gradient(
+    to bottom,
+    var(--game-bg-from),
+    var(--game-bg-via),
+    var(--game-bg-to)
+  ) !important;
+  color: var(--game-text) !important;
+}
+
+/* Structural light-mode colors -> semantic dark surfaces. */
+.dark .game-env .bg-white { background: var(--game-surface) !important; }
+.dark .game-env .bg-slate-50,
+.dark .game-env .bg-gray-50,
+.dark .game-env .bg-gray-100,
+.dark .game-env .bg-\[\#F2F2F7\] {
+  background: var(--game-surface-sunken) !important;
+}
+.dark .game-env .bg-gray-200,
+.dark .game-env .bg-slate-200 {
+  background: var(--game-surface-elevated) !important;
+}
+.dark .game-env .bg-slate-700,
+.dark .game-env .bg-gray-700 {
+  background: var(--game-surface-raised) !important;
+}
+
+/* Common hard-coded light/dark game surfaces. */
+.dark .game-env .dark\:bg-slate-800,
+.dark .game-env .dark\:bg-slate-900,
+.dark .game-env .dark\:bg-gray-800,
+.dark .game-env .dark\:bg-gray-900,
+.dark .game-env .dark\:bg-zinc-800,
+.dark .game-env .dark\:bg-zinc-900 {
+  background: var(--game-surface-elevated) !important;
+}
+.dark .game-env .dark\:bg-slate-700\/60,
+.dark .game-env .dark\:bg-white\/10,
+.dark .game-env .dark\:bg-white\/15 {
+  background: var(--game-surface-raised) !important;
+}
+.dark .game-env .dark\:bg-white\/5,
+.dark .game-env .dark\:bg-white\/\[0\.07\] {
+  background: rgba(255, 255, 255, 0.055) !important;
+}
+
+/* Known per-game dark surface literals are normalized so each game gets
+   the same depth language rather than unrelated black-ish panels. */
+.dark .game-env .dark\:bg-\[\#0E2028\],
+.dark .game-env .dark\:bg-\[\#0E2820\],
+.dark .game-env .dark\:bg-\[\#1E1A14\],
+.dark .game-env .dark\:bg-\[\#2E2618\],
+.dark .game-env .dark\:bg-\[\#221420\],
+.dark .game-env .dark\:bg-\[\#241218\],
+.dark .game-env .dark\:bg-\[\#0C2228\] {
+  background: var(--game-surface) !important;
+}
+
+/* Structural foregrounds. */
+.dark .game-env .text-black,
+.dark .game-env .text-\[\#161B3A\],
+.dark .game-env .text-gray-900,
+.dark .game-env .text-slate-900 {
+  color: var(--game-text) !important;
+}
+.dark .game-env .text-gray-800,
+.dark .game-env .text-slate-800 {
+  color: var(--game-text-secondary) !important;
+}
+.dark .game-env .text-gray-500,
+.dark .game-env .text-gray-400,
+.dark .game-env .text-slate-500,
+.dark .game-env .text-slate-400 {
+  color: var(--game-text-muted) !important;
+}
+
+/* Fixed light-mode borders become quiet, visible separators. */
+.dark .game-env .border-black,
+.dark .game-env .border-\[\#161B3A\],
+.dark .game-env .border-gray-100,
+.dark .game-env .border-gray-200,
+.dark .game-env .border-slate-200,
+.dark .game-env .dark\:border-slate-700,
+.dark .game-env .dark\:border-slate-800 {
+  border-color: var(--game-border-light) !important;
+}
+.dark .game-env .dark\:border-white\/25 {
+  border-color: var(--game-border) !important;
+}
+
+/* Keep primary/status colors colorful. We only soften neutral white overlays;
+   success/danger/warning colors remain meaningful state indicators. */
+.dark .game-env .bg-white\/35,
+.dark .game-env .bg-white\/60,
+.dark .game-env .bg-white\/80 {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Dark-mode cards should read as surfaces, not cut-outs from the canvas. */
+.dark .game-env .game-env-card,
+.dark .game-env .game-env-card-elevated {
+  box-shadow: var(--game-card-shadow) !important;
+}
+
+/* Back / close controls are elevated controls, not white pills. */
+.dark .game-env .game-back-btn,
+.dark .game-env .game-sound-btn {
+  background: var(--game-surface-elevated) !important;
+  color: var(--game-text) !important;
+  border-color: var(--game-border-light) !important;
+  box-shadow: 0 8px 24px -16px rgba(0,0,0,0.72) !important;
+}
+
+/* ============================================================
+   TTS — adaptive playfield
+   ============================================================
+   Light: clean white/black puzzle.
+   Dark: charcoal-indigo puzzle surface with warm-white cells.
+   The gameplay remains focused, but no longer becomes a white rectangle
+   floating in a dark screen or a black-on-black grid.
+   ============================================================ */
+.dark .game-env-tts .tts-monochrome {
+  background: #171B2E !important;
+  color: #F6F4FF !important;
+}
+.dark .game-env-tts .tts-monochrome .tts-screen,
+.dark .game-env-tts .tts-monochrome .game-env-card,
+.dark .game-env-tts .tts-monochrome .game-env-card-elevated {
+  background: #171B2E !important;
+  color: #F6F4FF !important;
+}
+.dark .game-env-tts .tts-monochrome [class*="dark:bg-"] {
+  background: #202746 !important;
+}
+.dark .game-env-tts .tts-monochrome [class*="dark:text-"] {
+  color: #F6F4FF !important;
+}
+.dark .game-env-tts .tts-monochrome [class*="dark:border-"] {
+  border-color: rgba(246,244,255,0.20) !important;
+}
+.dark .game-env-tts .tts-monochrome .tts-cell-wrap {
+  background: #252D4A !important;
+  color: #F6F4FF !important;
+  border-color: #687394 !important;
+}
+.dark .game-env-tts .tts-monochrome .tts-cell-wrap .tts-cell {
+  color: #111522 !important;
+}
+.dark .game-env-tts .tts-monochrome .tts-cell-wrap[style*="background"] {
+  background: #252D4A !important;
+  color: #F6F4FF !important;
+}
+.dark .game-env-tts .tts-monochrome .tts-cell-wrap .tts-cell {
+  background: transparent !important;
+}
+.dark .game-env-tts .tts-monochrome .tts-bubble {
+  background: #2A3352 !important;
+  color: #F6F4FF !important;
+}
+.dark .game-env-tts .tts-monochrome button {
+  border-color: rgba(246,244,255,0.20) !important;
+}
+
+/* Focus/selection states remain colorful enough to communicate interaction,
+   but never become full-screen color fields. */
+.dark .game-env .ring-2,
+.dark .game-env .focus\:ring-2 {
+  --tw-ring-color: var(--game-primary) !important;
+}
+
+/* Reduced motion: preserve visual hierarchy without animation dependency. */
+@media (prefers-reduced-motion: reduce) {
+  .game-env,
+  .game-env * {
+    scroll-behavior: auto !important;
+  }
+}
