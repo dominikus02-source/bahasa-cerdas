@@ -7,7 +7,7 @@ import {
   FileText, Users, DollarSign, Menu as MenuIcon, X, LogOut,
   Target, Presentation, ShoppingBag, Film, Briefcase, MessageCircle,
   BarChart3, LineChart, TrendingUp, Trophy, Activity, Coins,
-  Crown, Wallet, ShieldAlert, ShieldCheck, Database, Settings,
+  Crown, Wallet, ShieldAlert, ShieldCheck, Database, Settings, Beaker,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -35,6 +35,7 @@ interface FlatItem { label: string; href: string; icon: LucideIcon; group?: stri
 const ALL_ITEMS: FlatItem[] = [
   // Standalone
   { label: "Control Tower", href: "/admin/executive", icon: Target },
+  { label: "Founder Lab", href: "/admin/lab", icon: Beaker },
   { label: "Pengguna", href: "/admin/users", icon: Users },
   // Premium & Revenue
   { label: "Premium Report", href: "/admin/premium", icon: Crown, group: "Premium & Revenue" },
