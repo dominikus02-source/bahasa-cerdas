@@ -179,28 +179,12 @@ export function ProjectorClient() {
   }
 
   return (
-    <main className="mb-pj">
+    <main className={`mb-pj mb-pj-mode-${view.gameMode}`}>
       <ConnectionBanner visible={connection === "offline"} />
       <FullscreenExitControl
         active={fullscreen.isFullscreen}
         onExit={fullscreen.exit}
       />
-      <div className="mb-pj-utility-controls">
-        <SoundToggle
-          enabled={gameSound.enabled}
-          unlocked={gameSound.unlocked}
-          onToggle={() => void gameSound.toggle()}
-          compact={gameSound.unlocked}
-        />
-        <button
-          type="button"
-          className="mb-pj-fullscreen"
-          onClick={() => void fullscreen.toggle()}
-          aria-pressed={fullscreen.isFullscreen}
-        >
-          {fullscreen.isFullscreen ? "Keluar Layar Penuh" : "Layar Penuh"}
-        </button>
-      </div>
       <header className="mb-pj-head">
         <div className="mb-pj-brand">
           <h1 className="mb-display mb-pj-title">MAIN BERSAMA</h1>
@@ -208,14 +192,32 @@ export function ProjectorClient() {
             Kuis kelas <strong>langsung</strong> bersama BahasaCerdas
           </p>
         </div>
-        <div className="mb-pj-head-meta">
-          {/* Nama konten lebih dulu: terlihat dari jauh dan tetap ada
-              sampai summary/ended (§11/§12). */}
-          <span className="mb-pj-pkg">{view.contentTitle}</span>
-          <span className="mb-pj-mode">{MODE_LABEL[view.gameMode]}</span>
-          {view.className ? (
-            <span className="mb-pj-class">Kelas {view.className}</span>
-          ) : null}
+        <div className="mb-pj-head-right">
+          <div className="mb-pj-head-meta">
+            {/* Nama konten lebih dulu: terlihat dari jauh dan tetap ada
+                sampai summary/ended (§11/§12). */}
+            <span className="mb-pj-pkg">{view.contentTitle}</span>
+            <span className="mb-pj-mode">{MODE_LABEL[view.gameMode]}</span>
+            {view.className ? (
+              <span className="mb-pj-class">Kelas {view.className}</span>
+            ) : null}
+          </div>
+          <div className="mb-pj-utility-controls">
+            <SoundToggle
+              enabled={gameSound.enabled}
+              unlocked={gameSound.unlocked}
+              onToggle={() => void gameSound.toggle()}
+              compact={gameSound.unlocked}
+            />
+            <button
+              type="button"
+              className="mb-pj-fullscreen"
+              onClick={() => void fullscreen.toggle()}
+              aria-pressed={fullscreen.isFullscreen}
+            >
+              {fullscreen.isFullscreen ? "Keluar Layar Penuh" : "Layar Penuh"}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -224,13 +226,15 @@ export function ProjectorClient() {
       ) : view.phase === "question" ? (
         <ProjectorQuestion view={view} kotaMotion={kotaMotion} />
       ) : view.phase === "closed" || view.phase === "paused" ? (
-        <section className="mb-pj-phase mb-fade-in" role="status">
-          <h2 className="mb-display mb-pj-closed">
-            {view.phase === "closed"
-              ? "Waktu menjawab selesai!"
-              : "Permainan dijeda"}
-          </h2>
-          <ParticipantCount count={view.participation.playerCount} />
+        <section className="mb-pj-phase mb-pj-phase-closed mb-fade-in" role="status">
+          <div className="mb-pj-closed-head">
+            <h2 className="mb-display mb-pj-closed">
+              {view.phase === "closed"
+                ? "Waktu menjawab selesai!"
+                : "Permainan dijeda"}
+            </h2>
+            <ParticipantCount count={view.participation.playerCount} />
+          </div>
           {/* 8C.2 — payoff Kota Cahaya tepat setelah "Tutup Jawaban":
               engine meng-commit progres Kota pada close-round, jadi bar
               dan langit kota HARUS ter-mount di sini. Memakai state motion
@@ -238,26 +242,28 @@ export function ProjectorClient() {
               hook kedua. Hanya Kota; Jelajah tetap seperti sebelumnya. */}
           {view.phase === "closed" &&
           view.gameProgress.gameMode === "kota-cahaya" ? (
-            <div className="mb-pj-closed-kota" aria-hidden>
-              <div className="mb-pj-world mb-pj-world-strip">
+            <div className="mb-pj-stage-shell mb-pj-stage-shell-kota mb-pj-stage-shell-closed" aria-hidden>
+              <div className="mb-pj-stage-visual">
                 <KotaScene
                   unlocked={kotaMotion.litMilestones}
                   reveal={kotaMotion.revealMilestones}
                   mini
                 />
               </div>
-              <CityProgress
-                progressPercent={kotaMotion.displayedProgress}
-                unlockedMilestones={kotaMotion.litMilestones}
-                animate={kotaMotion.animateProgress}
-                growFrom={kotaMotion.growFrom}
-                revealMilestones={kotaMotion.revealMilestones}
-              />
+              <div className="mb-pj-stage-meter">
+                <CityProgress
+                  progressPercent={kotaMotion.displayedProgress}
+                  unlockedMilestones={kotaMotion.litMilestones}
+                  animate={kotaMotion.animateProgress}
+                  growFrom={kotaMotion.growFrom}
+                  revealMilestones={kotaMotion.revealMilestones}
+                />
+              </div>
             </div>
           ) : view.phase === "closed" &&
             view.gameProgress.gameMode === "jelajah-kata" ? (
-            <div className="mb-pj-closed-jelajah" aria-hidden>
-              <div className="mb-pj-world">
+            <div className="mb-pj-stage-shell mb-pj-stage-shell-jelajah mb-pj-stage-shell-closed" aria-hidden>
+              <div className="mb-pj-stage-visual">
                 <JelajahTrail
                   teams={view.teams.map((t) => ({ id: t.id, name: t.name }))}
                   progress={view.gameProgress.teamProgress}
@@ -372,63 +378,40 @@ function ProjectorLobby({
         </div>
       </div>
       {view.gameProgress.gameMode === "jelajah-kata" ? (
-        <div className="mb-pj-world mb-pj-world-strip" aria-hidden>
-          <JelajahTrail
-            teams={view.teams.map((t) => ({ id: t.id, name: t.name }))}
-            progress={view.gameProgress.teamProgress}
-            compact
-            poses={(
-              view.teams.map((t) => t.id) as Array<
-                "elang" | "harimau" | "rusa" | "badak"
-              >
-            ).reduce<Record<string, "ready" | "move" | "celebrate">>(
-              (acc, id) => ({ ...acc, [id]: getPose(id) }),
-              {},
-            )}
-          />
-        </div>
-      ) : null}
-      {view.gameProgress.gameMode === "jelajah-kata" ? (
-        <div className="mb-pj-heroes" aria-hidden>
-          {view.teams.map((t) => (
-            <TeamMascot key={t.id} teamId={t.id} pose="ready" size={64} eager />
-          ))}
-        </div>
-      ) : null}
-      {view.gameProgress.gameMode === "jelajah-kata" ? (
-        <div className="mb-pj-teams">
-          {view.teams.map((t) => (
-            <span
-              key={t.id}
-              className="mb-pj-team"
-              style={
-                {
-                  "--mb-tc": TEAM_COLOR_VAR[t.id] ?? "var(--mb-primary)",
-                } as React.CSSProperties
-              }
-            >
-              <TeamBadge teamId={t.id} size={22} />
-              {TEAM_LABEL[t.id] ?? t.name}
-            </span>
-          ))}
+        <div className="mb-pj-stage-shell mb-pj-stage-shell-jelajah mb-pj-stage-shell-lobby" aria-hidden>
+          <div className="mb-pj-stage-visual">
+            <JelajahTrail
+              teams={view.teams.map((t) => ({ id: t.id, name: t.name }))}
+              progress={view.gameProgress.teamProgress}
+              compact
+              poses={(
+                view.teams.map((t) => t.id) as Array<
+                  "elang" | "harimau" | "rusa" | "badak"
+                >
+              ).reduce<Record<string, "ready" | "move" | "celebrate">>(
+                (acc, id) => ({ ...acc, [id]: getPose(id) }),
+                {},
+              )}
+            />
+          </div>
         </div>
       ) : (
-        <div className="mb-pj-world" aria-hidden>
-          <KotaScene
-            unlocked={kotaMotion.litMilestones}
-            reveal={kotaMotion.revealMilestones}
-          />
-        </div>
-      )}
-      {view.gameProgress.gameMode === "jelajah-kata" ? null : (
-        <div className="mb-pj-kota-preview" aria-hidden>
-          <CityProgress
-            progressPercent={kotaMotion.displayedProgress}
-            unlockedMilestones={kotaMotion.litMilestones}
-            animate={kotaMotion.animateProgress}
-            growFrom={kotaMotion.growFrom}
-            revealMilestones={kotaMotion.revealMilestones}
-          />
+        <div className="mb-pj-stage-shell mb-pj-stage-shell-kota mb-pj-stage-shell-lobby" aria-hidden>
+          <div className="mb-pj-stage-visual">
+            <KotaScene
+              unlocked={kotaMotion.litMilestones}
+              reveal={kotaMotion.revealMilestones}
+            />
+          </div>
+          <div className="mb-pj-stage-meter">
+            <CityProgress
+              progressPercent={kotaMotion.displayedProgress}
+              unlockedMilestones={kotaMotion.litMilestones}
+              animate={kotaMotion.animateProgress}
+              growFrom={kotaMotion.growFrom}
+              revealMilestones={kotaMotion.revealMilestones}
+            />
+          </div>
         </div>
       )}
     </section>
@@ -446,62 +429,68 @@ function ProjectorQuestion({
 }) {
   const q = view.currentQuestion;
   return (
-    <section className="mb-pj-phase mb-pj-phase-question mb-fade-in">
-      {q ? (
-        <div className="mb-pj-q">
-          <QuestionCard
-            question={q}
-            roundLabel={`Soal ${(view.currentRoundIndex ?? 0) + 1} / ${view.totalRounds}`}
-          />
-        </div>
-      ) : null}
-      <div className="mb-pj-participation">
-        <RoundCountdown
-          closesAt={view.currentRoundClosesAt}
-          serverTime={view.serverTime}
-          compact
-          light
-          complete={
-            view.participation.eligibleCount > 0 &&
-            view.participation.submittedCount >= view.participation.eligibleCount
-          }
-        />
-        <span className="mb-count mb-number">
-          {view.participation.submittedCount}
-          <small> / {view.participation.eligibleCount} menjawab</small>
-        </span>
-        <ParticipantCount count={view.participation.playerCount} />
+    <section
+      className={`mb-pj-phase mb-pj-phase-question mb-pj-phase-play mb-pj-phase-play-${view.gameMode} mb-fade-in`}
+    >
+      <div className="mb-pj-play-main">
+        {q ? (
+          <div className="mb-pj-q">
+            <QuestionCard
+              question={q}
+              roundLabel={`Soal ${(view.currentRoundIndex ?? 0) + 1} / ${view.totalRounds}`}
+            />
+          </div>
+        ) : null}
       </div>
-      <div className="mb-pj-progress">
-        {view.gameProgress.gameMode === "jelajah-kata" ? (
-          <>
-            <div className="mb-pj-world mb-pj-world-strip" aria-hidden>
+
+      <aside className="mb-pj-play-side">
+        <div className="mb-pj-participation">
+          <RoundCountdown
+            closesAt={view.currentRoundClosesAt}
+            serverTime={view.serverTime}
+            compact
+            light
+            complete={
+              view.participation.eligibleCount > 0 &&
+              view.participation.submittedCount >= view.participation.eligibleCount
+            }
+          />
+          <span className="mb-count mb-number">
+            {view.participation.submittedCount}
+            <small> / {view.participation.eligibleCount} menjawab</small>
+          </span>
+          <ParticipantCount count={view.participation.playerCount} />
+        </div>
+
+        <div className={`mb-pj-stage-shell mb-pj-stage-shell-${view.gameProgress.gameMode}`} aria-hidden>
+          <div className="mb-pj-stage-visual">
+            {view.gameProgress.gameMode === "jelajah-kata" ? (
               <JelajahTrail
                 teams={view.teams.map((t) => ({ id: t.id, name: t.name }))}
                 progress={view.gameProgress.teamProgress}
                 compact
               />
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="mb-pj-world mb-pj-world-strip" aria-hidden>
+            ) : (
               <KotaScene
                 unlocked={kotaMotion.litMilestones}
                 reveal={kotaMotion.revealMilestones}
                 mini
               />
+            )}
+          </div>
+          {view.gameProgress.gameMode === "kota-cahaya" ? (
+            <div className="mb-pj-stage-meter">
+              <CityProgress
+                progressPercent={kotaMotion.displayedProgress}
+                unlockedMilestones={kotaMotion.litMilestones}
+                animate={kotaMotion.animateProgress}
+                growFrom={kotaMotion.growFrom}
+                revealMilestones={kotaMotion.revealMilestones}
+              />
             </div>
-            <CityProgress
-              progressPercent={kotaMotion.displayedProgress}
-              unlockedMilestones={kotaMotion.litMilestones}
-              animate={kotaMotion.animateProgress}
-              growFrom={kotaMotion.growFrom}
-              revealMilestones={kotaMotion.revealMilestones}
-            />
-          </>
-        )}
-      </div>
+          ) : null}
+        </div>
+      </aside>
     </section>
   );
 }
@@ -519,33 +508,39 @@ function ProjectorDiscussion({
 }) {
   const r = view.revealedRound!;
   return (
-    <section className="mb-pj-phase mb-fade-in">
-      <div className="mb-pj-q">
-        <QuestionCard
-          question={r.question}
-          roundLabel={`Soal ${(view.currentRoundIndex ?? 0) + 1} / ${view.totalRounds}`}
-        />
+    <section
+      className={`mb-pj-phase mb-pj-phase-discussion mb-pj-phase-play mb-pj-phase-play-${view.gameMode} mb-fade-in`}
+    >
+      <div className="mb-pj-play-main">
+        <div className="mb-pj-q">
+          <QuestionCard
+            question={r.question}
+            roundLabel={`Soal ${(view.currentRoundIndex ?? 0) + 1} / ${view.totalRounds}`}
+          />
+        </div>
+        <div className="mb-pj-reveal mb-entrance">
+          <p className="mb-pj-reveal-label">Jawaban benar:</p>
+          <p className="mb-pj-reveal-answer mb-display">
+            {r.question.options.find((o) => o.id === r.correctOptionId)?.text ??
+              "—"}
+          </p>
+          {r.explanation ? (
+            <p className="mb-pj-reveal-explain">{r.explanation}</p>
+          ) : null}
+        </div>
       </div>
-      <div className="mb-pj-reveal mb-entrance">
-        <p className="mb-pj-reveal-label">Jawaban benar:</p>
-        <p className="mb-pj-reveal-answer mb-display">
-          {r.question.options.find((o) => o.id === r.correctOptionId)?.text ??
-            "—"}
-        </p>
-        {r.explanation ? (
-          <p className="mb-pj-reveal-explain">{r.explanation}</p>
-        ) : null}
-      </div>
-      {view.gameProgress.gameMode === "jelajah-kata" ? (
-        <DiscussionLeader
-          teams={view.teams.map((t) => ({ id: t.id, name: t.name }))}
-          progress={view.gameProgress.teamProgress}
-        />
-      ) : null}
-      <div className="mb-pj-progress">
+
+      <aside className="mb-pj-play-side">
         {view.gameProgress.gameMode === "jelajah-kata" ? (
-          <>
-            <div className="mb-pj-world mb-pj-world-strip" aria-hidden>
+          <DiscussionLeader
+            teams={view.teams.map((t) => ({ id: t.id, name: t.name }))}
+            progress={view.gameProgress.teamProgress}
+          />
+        ) : null}
+
+        <div className={`mb-pj-stage-shell mb-pj-stage-shell-${view.gameProgress.gameMode}`} aria-hidden>
+          <div className="mb-pj-stage-visual">
+            {view.gameProgress.gameMode === "jelajah-kata" ? (
               <JelajahTrail
                 teams={view.teams.map((t) => ({ id: t.id, name: t.name }))}
                 progress={view.gameProgress.teamProgress}
@@ -559,27 +554,27 @@ function ProjectorDiscussion({
                   {},
                 )}
               />
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="mb-pj-world mb-pj-world-strip" aria-hidden>
+            ) : (
               <KotaScene
                 unlocked={kotaMotion.litMilestones}
                 reveal={kotaMotion.revealMilestones}
                 mini
               />
+            )}
+          </div>
+          {view.gameProgress.gameMode === "kota-cahaya" ? (
+            <div className="mb-pj-stage-meter">
+              <CityProgress
+                progressPercent={kotaMotion.displayedProgress}
+                unlockedMilestones={kotaMotion.litMilestones}
+                animate={kotaMotion.animateProgress}
+                growFrom={kotaMotion.growFrom}
+                revealMilestones={kotaMotion.revealMilestones}
+              />
             </div>
-            <CityProgress
-              progressPercent={kotaMotion.displayedProgress}
-              unlockedMilestones={kotaMotion.litMilestones}
-              animate={kotaMotion.animateProgress}
-              growFrom={kotaMotion.growFrom}
-              revealMilestones={kotaMotion.revealMilestones}
-            />
-          </>
-        )}
-      </div>
+          ) : null}
+        </div>
+      </aside>
     </section>
   );
 }
@@ -641,23 +636,25 @@ function ProjectorSummary({ view }: { view: ProjectorSessionView }) {
           }))
     ).map((t) => ({ id: t.id, name: t.name }));
     return (
-      <section className="mb-pj-phase mb-pj-phase-final mb-fade-in">
+      <section className="mb-pj-phase mb-pj-phase-final mb-pj-phase-final-jelajah mb-fade-in">
         <h2 className="mb-display mb-pj-final-title">
           {winners.length > 1 ? "Juara Bersama!" : "Papan Peringkat"}
         </h2>
-        <div className="mb-pj-world mb-pj-world-final" aria-hidden>
-          <JelajahTrail teams={trailTeams} progress={finalProgress} />
-        </div>
-        <Podium
-          ranking={final.teamRanking.map((t) => ({
-            teamId: t.teamId,
-            name: TEAM_LABEL[t.teamId] ?? t.teamId,
-            progress: t.progress,
-            rank:
-              final.teamRanking.findIndex((o) => o.progress === t.progress) + 1,
-          }))}
-        />
-        <ol className="mb-pj-ranking">
+        <div className="mb-pj-final-layout mb-pj-final-layout-jelajah">
+          <div className="mb-pj-final-world" aria-hidden>
+            <JelajahTrail teams={trailTeams} progress={finalProgress} />
+          </div>
+          <div className="mb-pj-final-score">
+            <Podium
+              ranking={final.teamRanking.map((t) => ({
+                teamId: t.teamId,
+                name: TEAM_LABEL[t.teamId] ?? t.teamId,
+                progress: t.progress,
+                rank:
+                  final.teamRanking.findIndex((o) => o.progress === t.progress) + 1,
+              }))}
+            />
+            <ol className="mb-pj-ranking">
           {final.teamRanking.map((t) => {
             const rank =
               final.teamRanking.findIndex((o) => o.progress === t.progress) + 1;
@@ -692,7 +689,9 @@ function ProjectorSummary({ view }: { view: ProjectorSessionView }) {
               </li>
             );
           })}
-        </ol>
+            </ol>
+          </div>
+        </div>
       </section>
     );
   }
@@ -706,24 +705,28 @@ function ProjectorSummary({ view }: { view: ProjectorSessionView }) {
     (_, i) => pct >= [25, 50, 75, 100][i],
   );
   return (
-    <section className="mb-pj-phase mb-fade-in">
+    <section className="mb-pj-phase mb-pj-phase-final mb-pj-phase-final-kota mb-fade-in">
       <h2 className="mb-display mb-pj-final-title">
         {final.missionAchieved
           ? "Kota Cahaya berhasil dinyalakan!"
           : `Kota Cahaya menyala ${pct}%!`}
       </h2>
-      <div className="mb-pj-world" aria-hidden>
-        <KotaScene unlocked={finalUnlocked} />
+      <div className="mb-pj-final-layout mb-pj-final-layout-kota">
+        <div className="mb-pj-final-world" aria-hidden>
+          <KotaScene unlocked={finalUnlocked} />
+        </div>
+        <div className="mb-pj-final-score mb-pj-final-score-kota">
+          <CityProgress
+            progressPercent={final.progressPercent}
+            unlockedMilestones={finalUnlocked}
+          />
+          <p className="mb-pj-mission" role="status">
+            {final.missionAchieved
+              ? "Seluruh kelas berhasil mencapai misi — hebat!"
+              : "Kerja bagus, kelas sudah berjuang keras bersama-sama!"}
+          </p>
+        </div>
       </div>
-      <CityProgress
-        progressPercent={final.progressPercent}
-        unlockedMilestones={finalUnlocked}
-      />
-      <p className="mb-pj-mission" role="status">
-        {final.missionAchieved
-          ? "Seluruh kelas berhasil mencapai misi — hebat!"
-          : "Kerja bagus, kelas sudah berjuang keras bersama-sama!"}
-      </p>
     </section>
   );
 }
