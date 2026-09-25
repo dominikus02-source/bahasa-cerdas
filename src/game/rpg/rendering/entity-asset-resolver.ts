@@ -60,6 +60,16 @@ const ENTITY_ASSET_MAP: Record<string, string> = {
   "lantern.stone": "prop_lantern",
   "bridge.wood": "prop_wooden_bridge",
   "banner.village": "prop_banner",
+  "bush": "prop_bush_01",
+  "rock": "prop_rock_01",
+  "flowers": "prop_flower_patch",
+  "fence": "prop_fence_01",
+  "grass.clump": "prop_grass_clump",
+  "grass.tall": "prop_grass_tall",
+  "stump": "prop_stump",
+  "village.sign": "prop_village_sign",
+  "bench": "prop_bench",
+  "lantern.small": "prop_lantern_small",
 };
 
 /**
