@@ -24,15 +24,26 @@ import { spriteDrawRect } from "../src/game/rpg/rendering/sprite-math";
 const ROOT = process.cwd();
 const PUB = join(ROOT, "public");
 
-/** PNG dimensions from IHDR (no dependencies; signature + width/height BE). */
-function pngDims(path: string): { w: number; h: number } | null {
+/** Runtime asset dimensions without image libraries: PNG IHDR or SVG root attributes. */
+function assetDims(path: string): { w: number; h: number } | null {
   try {
-    const b = readFileSync(path);
-    if (b.length < 24 || b.readUInt32BE(0) !== 0x89504e47) return null;
-    return { w: b.readUInt32BE(16), h: b.readUInt32BE(20) };
+    if (path.endsWith(".png")) {
+      const b = readFileSync(path);
+      if (b.length < 24 || b.readUInt32BE(0) !== 0x89504e47) return null;
+      return { w: b.readUInt32BE(16), h: b.readUInt32BE(20) };
+    }
+    if (path.endsWith(".svg")) {
+      const s = readFileSync(path, "utf8").slice(0, 2000);
+      const width = Number(s.match(/\bwidth=["']([\d.]+)/i)?.[1]);
+      const height = Number(s.match(/\bheight=["']([\d.]+)/i)?.[1]);
+      const viewBox = s.match(/\bviewBox=["']\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)/i);
+      if (Number.isFinite(width) && Number.isFinite(height)) return { w: width, h: height };
+      if (viewBox) return { w: Number(viewBox[3]), h: Number(viewBox[4]) };
+    }
   } catch {
     return null;
   }
+  return null;
 }
 let pass = 0;
 let fail = 0;
@@ -52,12 +63,12 @@ const strip = (s: string) =>
 console.log("\n📦 1. manifest integrity");
 {
   const ready = manifestByStatus("READY");
-  check("107 READY entries", ready.length === 107, `got ${ready.length}`);
+  check("130 READY entries", ready.length === 130, `got ${ready.length}`);
   let bad = 0;
   for (const e of ready) {
     const disk = join(PUB, e.path.replace(/^\//, ""));
     if (!existsSync(disk)) { bad++; continue; }
-    const dim = pngDims(disk);
+    const dim = assetDims(disk);
     if (!dim || dim.w !== e.width || dim.h !== e.height) bad++;
   }
   check("all READY paths exist with matching dims", bad === 0, `${bad} bad`);
@@ -69,6 +80,8 @@ check("item lookup hit (item_ramuan)", manifestLookup("item_ramuan")?.status ===
 check("NPC lookup → NEEDS_REVIEW (not silently ready)", manifestLookup("ref:npc-ki-jaka")?.status === "NEEDS_REVIEW");
 check("monster lookup → NEEDS_REVIEW", manifestLookup("ref:monster-korog")?.status === "NEEDS_REVIEW");
 check("boss lookup → NEEDS_REVIEW", manifestLookup("ref:boss-raja-korog")?.status === "NEEDS_REVIEW");
+check("runtime NPC atlas is READY", manifestLookup("npc_bagas")?.status === "READY" && manifestLookup("npc_tani")?.status === "READY" && manifestLookup("npc_pendaki")?.status === "READY");
+check("runtime world prop atlas is READY", ["prop_bamboo_grove", "prop_shrine_gate", "prop_lantern", "prop_wooden_bridge"].every((id) => manifestLookup(id)?.status === "READY"));
 check("8. boss scale documented (contract, not art)", manifestLookup("ref:boss-raja-korog") !== undefined);
 
 console.log("\n🗺️ 9. map visual binding");
