@@ -40,17 +40,14 @@ function allowlistedUserIds(value: string | undefined): ReadonlySet<string> {
 }
 
 /**
- * Only an explicit opt-in can enable the preview. Vercel preview deployments
- * are allowed; local development is allowed only when VERCEL_ENV is absent.
- * Any other deployment signal fails closed.
+ * Vercel Preview is the explicit non-production boundary for the Founder Lab.
+ * Production is always denied. Local development is allowed only when
+ * VERCEL_ENV is absent and NODE_ENV is development. Optional user allowlisting
+ * remains available for non-founder/admin internal testers.
  */
 export function isAllowedRpgPreviewEnvironment(env: RpgPreviewEnvironment):
   | { allowed: true }
   | { allowed: false; reason: "PREVIEW_DISABLED" | "PRODUCTION" | "UNKNOWN_ENVIRONMENT" } {
-  if (env.RPG_FOUNDER_PREVIEW_ENABLED !== "true") {
-    return { allowed: false, reason: "PREVIEW_DISABLED" };
-  }
-
   if (env.VERCEL_ENV === "production") {
     return { allowed: false, reason: "PRODUCTION" };
   }
