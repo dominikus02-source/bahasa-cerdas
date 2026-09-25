@@ -104,7 +104,7 @@ export default function CouponInput({ planId, price, value, onChange }: CouponIn
             value={kode}
             onChange={(e) => setKode(e.target.value.toUpperCase())}
             onKeyDown={(e) => e.key === "Enter" && apply()}
-            placeholder="Kode kupon (mis. BCGURUCERDAS1000)"
+            placeholder="Kode kupon (mis. bcgurucerdas1000)"
             className="w-full rounded-xl border border-gray-200 bg-white pl-9 pr-3 py-2.5 text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 placeholder:text-gray-400"
             disabled={loading}
           />

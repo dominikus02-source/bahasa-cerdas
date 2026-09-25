@@ -31,6 +31,8 @@ const PHOTO = {
   hero: "https://images.unsplash.com/photo-1654356709115-3f68998bead4?auto=format&fit=crop&w=1800&q=82",
   classroom: "https://images.unsplash.com/photo-1778489769184-45868633c527?auto=format&fit=crop&w=1600&q=82",
   writing: "https://images.unsplash.com/photo-1743385779312-73ea241025d8?auto=format&fit=crop&w=1200&q=80",
+  aiWorkspace: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1400&q=82",
+  studentLearning: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1400&q=82",
 } as const;
 
 type QuickAction = {
@@ -64,19 +66,19 @@ const QUICK_ACTIONS: QuickAction[] = [
     label: "AI BC",
     desc: "Asisten untuk ide dan persiapan mengajar.",
     href: "/guru/ai-bc",
-    image: PHOTO.hero,
+    image: PHOTO.aiWorkspace,
     icon: Bot,
-    overlay: "linear-gradient(135deg, rgba(18,55,120,.97), rgba(37,86,170,.90) 54%, rgba(78,126,211,.74))",
-    imagePosition: "center 38%",
+    overlay: "linear-gradient(135deg, rgba(18,55,120,.97), rgba(37,86,170,.88) 54%, rgba(78,126,211,.70))",
+    imagePosition: "center 52%",
   },
   {
     label: "Dasbor Murid",
     desc: "Lihat pengalaman BahasaCerdas dari sisi murid.",
     href: "/murid/beranda",
-    image: PHOTO.classroom,
+    image: PHOTO.studentLearning,
     icon: GraduationCap,
-    overlay: "linear-gradient(135deg, rgba(5,89,133,.97), rgba(8,111,164,.90) 52%, rgba(36,160,199,.74))",
-    imagePosition: "center 60%",
+    overlay: "linear-gradient(135deg, rgba(5,74,112,.97), rgba(8,116,158,.88) 52%, rgba(34,180,188,.66))",
+    imagePosition: "center 42%",
   },
 ];
 

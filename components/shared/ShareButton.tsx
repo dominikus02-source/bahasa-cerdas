@@ -7,9 +7,10 @@ interface ShareButtonProps {
   url: string;
   title: string;
   text?: string;
+  compact?: boolean;
 }
 
-export default function ShareButton({ url, title, text }: ShareButtonProps) {
+export default function ShareButton({ url, title, text, compact = false }: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
 
@@ -46,9 +47,16 @@ export default function ShareButton({ url, title, text }: ShareButtonProps) {
 
   return (
     <div className="relative">
-      <button onClick={handleShare}
-        className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:text-blue-400 transition-colors">
-        <Share2 size={16} /> Bagikan
+      <button
+        onClick={handleShare}
+        aria-label="Bagikan karya"
+        title="Bagikan"
+        className={compact
+          ? "inline-flex items-center justify-center rounded-full px-2 py-1 text-slate-400 transition-colors hover:bg-slate-50 hover:text-blue-600 dark:hover:bg-slate-800/70 dark:hover:text-blue-300"
+          : "flex items-center gap-1.5 text-sm text-slate-500 transition-colors hover:text-blue-600 dark:text-blue-400"}
+      >
+        <Share2 size={compact ? 13 : 16} />
+        {compact ? null : "Bagikan"}
       </button>
 
       {showMenu && (

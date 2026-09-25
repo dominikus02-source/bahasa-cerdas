@@ -70,6 +70,10 @@ export default function BerlanggananPage() {
     if (params.get("status") === "success") {
       setStatus("success");
     }
+    if (params.get("plan") === "monthly") {
+      setSelectedPlan("GURU_PRO_MONTHLY");
+      setCoupon(null);
+    }
   }, []);
 
   useEffect(() => {
@@ -387,7 +391,7 @@ export default function BerlanggananPage() {
                 Guru terverifikasi bisa menjadi <strong>Guru Pro</strong> hanya dengan <strong>Rp 1.000/bulan</strong>.
               </p>
               <p className="text-xs text-emerald-100 mt-1.5">
-                Masukkan kode <span className="font-mono font-semibold bg-white/20 px-1.5 py-0.5 rounded">bcgurucerdas1000</span> saat memilih paket <strong>Bulanan</strong> untuk mendapat harga khusus.
+                Masukkan kode <span className="font-mono font-semibold bg-white/20 px-1.5 py-0.5 rounded">bcgurucerdas1000</span> saat memilih paket <strong>Bulanan</strong>. Promo ini <strong>tidak berlaku untuk paket Tahunan</strong>.
               </p>
             </div>
           </div>
