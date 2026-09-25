@@ -4,6 +4,8 @@ import { canonicalItemById } from "../data/items";
 import { EQUIPMENT } from "../data/equipment";
 import { getCanonicalMap } from "../data/world-maps";
 import type { QuestLineState } from "../quests/quest-engine";
+import { itemIconFor } from "../rendering/tile-visuals";
+import { manifestLookup } from "../rendering/rpg-asset-manifest";
 
 export type RPGMenuTab = "map" | "bag" | "quest";
 
@@ -64,7 +66,9 @@ export function RPGMenuPanel({ tab, mapId, quest, gold, inventory, equipment, on
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               {inventory.length ? inventory.map((item) => {
                 const def = canonicalItemById(item.itemId);
-                return <div key={item.itemId} className="rounded-2xl border border-white/10 bg-white/5 p-3"><div className="text-sm font-black">{def?.name ?? item.itemId}</div><div className="mt-1 text-xs text-amber-300">×{item.quantity}</div><div className="mt-2 text-[10px] uppercase tracking-wider text-stone-500">{def?.kind ?? "item"}</div></div>;
+                const iconId = itemIconFor(item.itemId);
+                const icon = iconId ? manifestLookup(iconId) : undefined;
+                return <div key={item.itemId} className="rounded-2xl border border-white/10 bg-white/5 p-3"><div className="flex items-center gap-3"><div className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-xl bg-black/20">{icon?.status === "READY" ? <img src={icon.path} alt="" aria-hidden width={40} height={40} className="object-contain" /> : <span aria-hidden className="text-lg">✦</span>}</div><div><div className="text-sm font-black">{def?.name ?? item.itemId}</div><div className="mt-1 text-xs text-amber-300">×{item.quantity}</div></div></div><div className="mt-2 text-[10px] uppercase tracking-wider text-stone-500">{def?.kind ?? "item"}</div></div>;
               }) : <p className="col-span-full rounded-2xl bg-white/5 p-5 text-sm text-stone-400">Tas masih kosong.</p>}
             </div>
           </div>
