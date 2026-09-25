@@ -90,7 +90,7 @@ function TombolKarya({ href, icon, label, xp }: { href: string; icon: React.Reac
   return (
     <Link
       href={href}
-      className="inline-flex items-center gap-1.5 rounded-xl bg-white border border-violet-200 hover:border-blue-300 hover:bg-blue-50 px-3.5 py-2.5 text-xs font-semibold text-blue-800 shadow-sm transition-colors"
+      className="inline-flex items-center gap-1.5 rounded-xl border border-blue-200 bg-white px-3.5 py-2.5 text-xs font-semibold text-blue-800 shadow-sm transition-colors hover:border-blue-300 hover:bg-blue-50 dark:border-blue-900/70 dark:bg-blue-950/30 dark:text-blue-200 dark:hover:bg-blue-950/50"
     >
       {icon}
       {label}
@@ -177,7 +177,7 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
           </div>
           <div>
             <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100">Guru Berkarya</h2>
-            <p className="text-gray-500 text-xs sm:text-sm">Karya terbaru dari para guru. Ikut menginspirasi?</p>
+            <p className="text-xs text-slate-500 sm:text-sm dark:text-slate-400">Karya terbaru dari para guru. Ikut menginspirasi?</p>
           </div>
         </div>
         <div className="rounded-2xl border-2 border-dashed border-rose-200 bg-rose-50/50 px-5 py-8 text-center">
@@ -206,7 +206,7 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
   const xpPuisi = meta.xpPuisi > 0 ? meta.xpPuisi : undefined;
 
   return (
-    <div className="rounded-[26px] bg-white border border-blue-100 p-5 sm:p-6 shadow-[0_14px_34px_rgba(25,72,140,.08)] dark:border-blue-950/80">
+    <div className="rounded-[26px] border border-blue-100 bg-white p-5 shadow-[0_14px_34px_rgba(25,72,140,.08)] sm:p-6 dark:border-blue-950/80 dark:bg-[#09192c]">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center shadow-md shadow-blue-200/70">
@@ -224,16 +224,16 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
           >
             <PenLine size={13} /> Tulis Karya
           </Link>
-          <Link href="/guru/karya" className="hidden sm:flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 border border-blue-100 rounded-xl px-3 py-2 transition-colors">
+          <Link href="/guru/karya" className="hidden items-center gap-1 rounded-xl border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 transition-colors hover:bg-blue-100 hover:text-blue-800 sm:flex dark:border-blue-900/70 dark:bg-blue-950/35 dark:text-blue-300 dark:hover:bg-blue-950/55">
             Lihat Semua Karya <ChevronRight size={12} />
           </Link>
         </div>
       </div>
 
       {items.length === 0 ? (
-        <div className="rounded-2xl border-2 border-dashed border-violet-200 bg-blue-50/50 px-5 py-8 text-center">
+        <div className="rounded-2xl border-2 border-dashed border-blue-200 bg-blue-50/50 px-5 py-8 text-center dark:border-blue-900/70 dark:bg-blue-950/20">
           <div className="w-12 h-12 mx-auto rounded-2xl bg-white flex items-center justify-center shadow-sm">
-            <PenLine size={22} className="text-violet-400" />
+            <PenLine size={22} className="text-blue-500" />
           </div>
           <p className="mt-3 text-sm font-semibold text-gray-800">Belum ada karya terbaru.</p>
           <p className="mt-1 text-xs text-gray-500">Jadilah guru pertama yang berkarya hari ini.</p>
@@ -244,7 +244,7 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
         </div>
       ) : (
         <>
-          <div className={compact ? "grid grid-cols-1 gap-3 lg:grid-cols-3" : "space-y-3"}>
+          <div className={compact ? "grid grid-cols-1 items-stretch gap-3 lg:grid-cols-3" : "space-y-3"}>
             {items.map((a) => {
               const isPuisi = (a.articleType || "").toUpperCase() === "PUISI";
               const isBaru = adalahBaru(a.publishedAt || a.createdAt);
@@ -254,24 +254,26 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
               return (
                 <article
                   key={a.id}
-                  className={`group overflow-hidden rounded-2xl border border-gray-100 bg-white transition-all hover:border-blue-200 hover:shadow-md ${compact ? "h-full" : ""}`}
+                  className={`group flex overflow-hidden rounded-2xl border border-blue-100/90 bg-white transition-all hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md dark:border-blue-950/70 dark:bg-[#0b1d34] dark:hover:border-blue-800/80 ${compact ? "h-full min-h-[326px] flex-col" : ""}`}
                 >
-                  {a.coverImage ? (
-                    <div className={compact ? "h-24 overflow-hidden" : "h-28 overflow-hidden"}>
+                  <div className={compact ? "relative aspect-[16/7] w-full shrink-0 overflow-hidden bg-blue-50 dark:bg-blue-950/35" : "relative h-28 w-full shrink-0 overflow-hidden bg-blue-50 dark:bg-blue-950/35"}>
+                    {a.coverImage ? (
                       <SafeMediaImage
                         src={a.coverImage}
                         alt={a.title}
                         fallbackType="article"
-                        containerClassName={compact ? "w-full h-24" : "w-full h-28"}
+                        containerClassName="h-full w-full"
                       />
-                    </div>
-                  ) : (
-                    <div className="h-10 flex items-center justify-center bg-gradient-to-br from-violet-50 to-purple-50">
-                      {isPuisi ? <Feather size={16} className="text-blue-300" /> : <BookOpen size={16} className="text-blue-300" />}
-                    </div>
-                  )}
-                  <div className="p-4">
-                    <div className="flex items-center gap-3">
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-blue-50 via-sky-50 to-slate-100 dark:from-blue-950/60 dark:via-[#0d2747] dark:to-[#102238]">
+                        <span className="grid h-12 w-12 place-items-center rounded-2xl border border-blue-100 bg-white/80 text-blue-500 shadow-sm dark:border-blue-800/60 dark:bg-blue-950/65 dark:text-blue-300">
+                          {isPuisi ? <Feather size={21} /> : <BookOpen size={21} />}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-1 flex-col p-4">
+                    <div className="flex min-h-[44px] items-center gap-3">
                       {a.author?.avatar ? (
                         <img
                           src={a.author.avatar}
@@ -285,14 +287,14 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
                       )}
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5">
-                          <p className="truncate text-sm font-bold text-gray-900">{penulis}</p>
+                          <p className="truncate text-sm font-bold text-slate-900 dark:text-slate-100">{penulis}</p>
                           {karyaAnda && (
                             <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-emerald-700">
                               ✨ Karya Anda
                             </span>
                           )}
                         </div>
-                        <p className="truncate text-[11px] text-gray-500">
+                        <p className="truncate text-[11px] text-slate-500 dark:text-slate-400">
                           {a.author?.profile?.school ? `${a.author.profile.school} · ` : ""}
                           {waktuRelatif(a.publishedAt || a.createdAt)}
                         </p>
@@ -309,16 +311,16 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
                       </div>
                     </div>
 
-                    <Link href={`/artikel/${a.slug}`} target="_blank" className="mt-3 block">
-                      <h3 className="text-sm font-semibold leading-snug text-gray-900 transition-colors line-clamp-2 group-hover:text-blue-700">
+                    <Link href={`/artikel/${a.slug}`} target="_blank" className={compact ? "mt-3 block min-h-[42px]" : "mt-3 block"}>
+                      <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-slate-900 transition-colors group-hover:text-blue-700 dark:text-slate-100 dark:group-hover:text-blue-300">
                         {a.title}
                       </h3>
-                      <p className={`${compact ? "hidden" : "mt-1.5"} text-xs leading-relaxed text-gray-500 ${isPuisi ? "whitespace-pre-line italic font-serif text-purple-700/80 line-clamp-4" : "line-clamp-2"}`}>
+                      <p className={`${compact ? "hidden" : "mt-1.5"} text-xs leading-relaxed text-slate-500 dark:text-slate-400 ${isPuisi ? "whitespace-pre-line italic font-serif text-purple-700/80 dark:text-purple-300/85 line-clamp-4" : "line-clamp-2"}`}>
                         {a.excerpt || ""}
                       </p>
                     </Link>
 
-                    <div className="mt-3 flex items-center justify-between border-t border-gray-50 pt-3 text-[11px] text-gray-400">
+                    <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-3 text-[11px] text-slate-400 dark:border-blue-950/70 dark:text-slate-500">
                       <span className="flex items-center gap-1">
                         <Eye size={12} /> {a.readCount} dibaca
                       </span>
@@ -331,7 +333,7 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
                           className={`inline-flex items-center gap-1 rounded-full px-2 py-1 font-semibold transition-colors ${
                             like.liked
                               ? "bg-rose-50 text-rose-600"
-                              : "text-gray-400 hover:bg-gray-50 hover:text-rose-500"
+                              : "text-slate-400 hover:bg-slate-50 hover:text-rose-500 dark:hover:bg-slate-800/70"
                           }`}
                         >
                           <Heart size={13} fill={like.liked ? "currentColor" : "none"} />
@@ -341,7 +343,7 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
                           type="button"
                           onClick={() => setActiveCommentsId(a.id)}
                           aria-label={`Lihat komentar (${a.commentCount})`}
-                          className="inline-flex items-center gap-1 rounded-full px-2 py-1 font-semibold text-gray-400 transition-colors hover:bg-gray-50 hover:text-blue-600"
+                          className="inline-flex items-center gap-1 rounded-full px-2 py-1 font-semibold text-slate-400 transition-colors hover:bg-slate-50 hover:text-blue-600 dark:hover:bg-slate-800/70 dark:hover:text-blue-300"
                         >
                           <MessageCircle size={13} />
                           {a.commentCount}
