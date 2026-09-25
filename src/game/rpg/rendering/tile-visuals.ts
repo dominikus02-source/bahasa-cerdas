@@ -85,6 +85,17 @@ export function resolveTileAsset(
   x: number,
   y: number,
 ): string | null {
+  // The village plaza shares the PA collision semantics but gets a dedicated
+  // stone-floor treatment. Visual topology may specialize without touching
+  // gameplay collision truth.
+  if (
+    mapId === "map.desa" &&
+    tile === RPG_TILES.PA &&
+    x >= 14 && x <= 22 &&
+    y >= 15 && y <= 21
+  ) {
+    return ["desa_stone_01", "desa_stone_02"][variantFor(x, y, 2)];
+  }
   const table = (BINDINGS as Record<string, Record<number, string[]>>)[mapId];
   if (!table) return null;
   const options = table[tile];
