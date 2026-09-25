@@ -180,6 +180,10 @@ console.log("\n🗂️ DEPTH SORTING (foundation)");
     return arr[0] === a && out[0] === b;
   })());
   check("renderer uses shared comparator", strip(src("src/game/rpg/rendering/canvas-renderer.ts")).includes("sortEntitiesForDepth("));
+check("scene atmosphere is applied after world render", (() => {
+  const r = strip(src("src/game/rpg/rendering/canvas-renderer.ts"));
+  return r.includes("function renderAtmosphere(") && r.includes("renderAtmosphere(state);");
+})());
 }
 
 console.log("\n🔌 RENDERER WIRING (static proofs)");
