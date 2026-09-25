@@ -183,6 +183,8 @@ check("engine emits MAP_TRANSITION", engine.includes('"MAP_TRANSITION"'));
 check("engine emits PORTAL_BLOCKED", engine.includes('"PORTAL_BLOCKED"'));
 check("Naga gate derives from persisted deadBossIds", engine.includes('deadBossIds.has("na")') && engine.includes("nagaDead"));
 check("engine honors config.mapId (canonical loader)", engine.includes("loadCanonicalMap(canonicalStart.id)") || engine.includes("loadCanonicalMap("));
+const gameUi = src("src/game/rpg/ui/RPGGame.tsx");
+check("reload resumes persisted canonical map", gameUi.includes("serverMapId") && gameUi.includes("const bootMapId") && gameUi.includes("mapId: serverMapId"));
 check("engine spawns canonical maps at spawn", engine.includes("spawnPosition("));
 check("engine exposes setFlag/getFlags/saveGame", engine.includes("setFlag") && engine.includes("getOpenedChests") && engine.includes("saveGame("));
 check("engine holds openedChests set", engine.includes("openedChests"));
