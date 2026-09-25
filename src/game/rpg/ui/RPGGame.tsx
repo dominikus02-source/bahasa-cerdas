@@ -180,10 +180,25 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
 
       // Determine engine config from the best available source.
       // Server snapshot > legacy save > fresh defaults.
+      //
+      // IMPORTANT: the persisted map is authoritative. The route's default
+      // mapId is only the first-boot fallback; after a player reaches Gunung
+      // or Menara, a reload must resume on that canonical map instead of
+      // silently resetting to Desa.
+      const serverMapId =
+        serverSnapshot?.player.mapKey && getCanonicalMap(serverSnapshot.player.mapKey)
+          ? serverSnapshot.player.mapKey
+          : null;
+      const legacyMapId =
+        legacySave?.world.mapId && getCanonicalMap(legacySave.world.mapId)
+          ? legacySave.world.mapId
+          : null;
+
       const engineConfig = (() => {
-        // Server snapshot with matching mapId — canonical source
-        if (serverSnapshot && serverSnapshot.player.mapKey === mapId && getCanonicalMap(mapId)) {
+        // Server snapshot — canonical source, regardless of current route default.
+        if (serverSnapshot && serverMapId) {
           return {
+            mapId: serverMapId,
             initialPlayer: {
               stats: serverSnapshot.player.stats,
               progression: { ...serverSnapshot.player.progression, xpToNextLevel: xpForLevel(serverSnapshot.player.progression.level) },
@@ -201,8 +216,9 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
           };
         }
         // Legacy save migration path
-        if (legacySave && legacySave.world.mapId === mapId && getCanonicalMap(mapId)) {
+        if (legacySave && legacyMapId) {
           return {
+            mapId: legacyMapId,
             initialPlayer: legacySave.player,
             flags: legacySave.flags,
             openedChests: legacySave.openedChests,
@@ -216,7 +232,10 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
         }
         return {};
       })();
-      const bootMapId = mapId;
+      const bootMapId =
+        typeof engineConfig.mapId === "string" && getCanonicalMap(engineConfig.mapId)
+          ? engineConfig.mapId
+          : mapId;
       // Create engine
       const engine = createEngine({
         container: host,
