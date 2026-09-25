@@ -900,6 +900,18 @@ const VISUAL_ATLAS_LAYOUT: Array<[string, string, number, number]> = [
   ["boss_raja_korog","bosses",0,320], ["boss_golem_agung","bosses",240,320], ["boss_naga_abu","bosses",480,320], ["boss_penguasa_menara","bosses",720,320],
   ["prop_house_village","props",0,480], ["prop_tree_round","props",240,480], ["prop_well","props",480,480], ["prop_banner","props",720,480],
 ];
+const NPC_RUNTIME_ATLAS = "/game/rpg/visual/rpg_npc_atlas.svg";
+const NPC_RUNTIME_ENTRIES: RpgAssetEntry[] = [
+  ["npc_bagas","npcs",0], ["npc_tani","npcs",240], ["npc_pendaki","npcs",480],
+].map(([id, category, x]) => ({
+  id, category, source: "generated-runtime-atlas", path: NPC_RUNTIME_ATLAS,
+  width: 720, height: 240, frames: 1, animationState: null, direction: null,
+  origin: { x: 0.5, y: 1.0 }, logicalScale: 1, alpha: true,
+  status: "READY" as const, confidence: "reviewed" as const,
+  sourceRect: { x, y: 0, width: 240, height: 240 },
+  note: "Founder Lab runtime NPC atlas.",
+})) as RpgAssetEntry[];
+
 const VISUAL_ATLAS_ENTRIES: RpgAssetEntry[] = VISUAL_ATLAS_LAYOUT.map(([id, category, x, y]) => ({
   id, category, source: "generated-runtime-atlas",
   path: VISUAL_RUNTIME_ATLAS, width: 960, height: 640, frames: 1,
@@ -911,6 +923,7 @@ const VISUAL_ATLAS_ENTRIES: RpgAssetEntry[] = VISUAL_ATLAS_LAYOUT.map(([id, cate
 
 export const RPG_ASSET_MANIFEST: RpgAssetEntry[] = [
   ...VISUAL_ATLAS_ENTRIES,
+  ...NPC_RUNTIME_ENTRIES,
   ...READY_TABLE.map(readyEntry),
   ...ARGA_RUNTIME_ENTRIES,
   ...REFERENCE_ENTRIES,
