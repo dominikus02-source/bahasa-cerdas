@@ -944,8 +944,22 @@ const SURYAKERTA_V2_ENVIRONMENT_ENTRIES: RpgAssetEntry[] = SURYAKERTA_V2_ENVIRON
   note: "Suryakerta V2 canonical environment family.",
 }));
 
+const SURYAKERTA_V2_DETAIL_ATLAS = "/game/rpg/visual/rpg_suryakerta_v2_village_detail.svg";
+const SURYAKERTA_V2_DETAIL_LAYOUT: Array<[string,string,number,number]> = [
+  ["prop_bush_01","props",0,0],["prop_bush_02","props",120,0],["prop_rock_01","props",240,0],["prop_rock_02","props",360,0],
+  ["prop_grass_clump","props",480,0],["prop_grass_tall","props",600,0],["prop_flower_patch","props",720,0],["prop_stump","props",840,0],
+  ["prop_fence_01","props",0,80],["prop_village_sign","props",120,80],["prop_bench","props",240,80],["prop_lantern_small","props",360,80],
+];
+const SURYAKERTA_V2_DETAIL_ENTRIES: RpgAssetEntry[] = SURYAKERTA_V2_DETAIL_LAYOUT.map(([id,category,x,y]) => ({
+  id, category, source:"generated-suryakerta-v2", path:SURYAKERTA_V2_DETAIL_ATLAS, width:960, height:320, frames:1,
+  animationState:null, direction:null, origin:{x:0.5,y:1}, logicalScale:1, alpha:true,
+  status:"READY" as const, confidence:"reviewed" as const, sourceRect:{x:Number(x),y:Number(y),width:120,height:80},
+  note:"Suryakerta V2 canonical village detail family.",
+}));
+
 export const RPG_ASSET_MANIFEST: RpgAssetEntry[] = [
   ...SURYAKERTA_V2_ENVIRONMENT_ENTRIES,
+  ...SURYAKERTA_V2_DETAIL_ENTRIES,
   ...VISUAL_ATLAS_ENTRIES,
   ...NPC_RUNTIME_ENTRIES,
   ...READY_TABLE.map(readyEntry),
