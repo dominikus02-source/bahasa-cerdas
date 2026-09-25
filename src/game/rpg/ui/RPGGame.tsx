@@ -306,6 +306,8 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
         const nextQuest = engine.getQuest();
         const nextGold = engine.getGold();
         const nextBattle = battle !== null;
+        const nextTowerFloor = engine.getTowerFloor();
+        const nextDeadBossIds = engine.getDeadBossIds();
         const nextSession = engine.getSession();
         setQuest(nextQuest);
         setGold(nextGold);
@@ -327,12 +329,29 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
         if (previous && previous.quest.main === 1 && nextQuest.main === 2) {
           setNotice("Ki Jaka menerima laporanmu. Hadiah 60 G telah dicatat.");
         }
+        if (previous && previous.towerFloor > 0 && nextTowerFloor > previous.towerFloor) {
+          setNotice(`Lantai ${nextTowerFloor}! HP & MP pulih 30%. Bersiap untuk gelombang berikutnya.`);
+        }
+        if (previous) {
+          const newBosses = nextDeadBossIds.filter((id) => !previous.deadBossIds.includes(id));
+          if (newBosses.includes("tw")) {
+            setNotice("PENGUASA MENARA dikalahkan! Menara Angin telah menuntaskan ujianmu.");
+          } else if (newBosses.includes("na")) {
+            setNotice("NAGA ABU dikalahkan! Jalan menuju Menara Angin terbuka.");
+          } else if (newBosses.includes("b")) {
+            setNotice("RAJA KOROG dikalahkan! Desa kini lebih aman.");
+          } else if (newBosses.includes("ga")) {
+            setNotice("GOLEM AGUNG dikalahkan! Lanjutkan pendakian Menara.");
+          }
+        }
         previousSliceRef.current = {
           gold: nextGold,
           xp: state.player.progression.xp,
           level: state.player.progression.level,
           quest: nextQuest,
           battle: nextBattle,
+          towerFloor: nextTowerFloor,
+          deadBossIds: nextDeadBossIds,
         };
       }, 100); // 10 Hz HUD update
 
