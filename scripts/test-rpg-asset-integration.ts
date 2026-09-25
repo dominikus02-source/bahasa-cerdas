@@ -81,7 +81,7 @@ check("NPC lookup → NEEDS_REVIEW (not silently ready)", manifestLookup("ref:np
 check("monster lookup → NEEDS_REVIEW", manifestLookup("ref:monster-korog")?.status === "NEEDS_REVIEW");
 check("boss lookup → NEEDS_REVIEW", manifestLookup("ref:boss-raja-korog")?.status === "NEEDS_REVIEW");
 check("runtime NPC atlas is READY", manifestLookup("npc_bagas")?.status === "READY" && manifestLookup("npc_tani")?.status === "READY" && manifestLookup("npc_pendaki")?.status === "READY");
-check("runtime world prop atlas is READY", ["prop_bamboo_grove", "prop_shrine_gate", "prop_lantern", "prop_wooden_bridge"].every((id) => manifestLookup(id)?.status === "READY"));
+check("runtime world prop atlas is READY", ["prop_house_village", "prop_tree_round", "prop_well", "prop_banner", "prop_bamboo_grove", "prop_shrine_gate", "prop_lantern", "prop_wooden_bridge"].every((id) => manifestLookup(id)?.status === "READY"));
 check("8. boss scale documented (contract, not art)", manifestLookup("ref:boss-raja-korog") !== undefined);
 
 console.log("\n🗺️ 9. map visual binding");
@@ -96,6 +96,7 @@ check("variants spread (hash, no RNG)", (() => {
 
 console.log("\n🎒 11. item visual binding (exact matches only)");
 check("all canonical battle/fish items mapped", itemIconFor("ram") === "item_ramuan" && itemIconFor("teh") === "item_teh" && itemIconFor("elix") === "item_elixir" && itemIconFor("bijih") === "item_bijih" && itemIconFor("f1") === "item_ikan_biru" && itemIconFor("f2") === "item_ikan_merah" && itemIconFor("f3") === "item_ikan_emas");
+check("expanded prop keys resolve to READY", ["house.village","tree.round","well.stone","banner.village","bamboo.grove","shrine.gate","lantern.stone","bridge.wood"].every((key) => { const m = key === "house.village" ? "prop_house_village" : key === "tree.round" ? "prop_tree_round" : key === "well.stone" ? "prop_well" : key === "banner.village" ? "prop_banner" : key === "bamboo.grove" ? "prop_bamboo_grove" : key === "shrine.gate" ? "prop_shrine_gate" : key === "lantern.stone" ? "prop_lantern" : "prop_wooden_bridge"; return manifestLookup(m)?.status === "READY"; }));
 check("unknown → null", itemIconFor("nope") === null);
 
 console.log("\n✨ 12/13. VFX + UI (reference only, components untouched)");
