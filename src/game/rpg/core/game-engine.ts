@@ -221,6 +221,8 @@ export interface RPGEngine {
   attackWithSkill(skillId: string): boolean;
   /** P1.9C slice: use a consumable (world or battle, validated in core). */
   useItem(itemId: string): boolean;
+  /** Equip/unequip owned equipment through the authoritative command path. */
+  equipItem(itemId: string): boolean;
   /** P1.9C slice: attempt escape through the canonical path. */
   fleeBattle(): boolean;
   /** Live encounter table snapshot (debug/tests). */
@@ -2189,6 +2191,15 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
   }
 
   /** Escape through the canonical BATTLE_ESCAPE path. */
+  /** Equip/unequip owned equipment through the canonical command path. */
+  function equipItem(itemId: string): boolean {
+    if (activeBattle || session !== null) return false;
+    const before = state.player.equipment;
+    state = processCommand(state, { type: "EQUIP", playerId, itemId });
+    const after = state.player.equipment;
+    return before.weaponId !== after.weaponId || before.armorId !== after.armorId || before.accessoryId !== after.accessoryId || before.weaponPlus !== after.weaponPlus;
+  }
+
   function fleeBattle(): boolean {
     if (!activeBattle || state.battle === null) return false;
     const id = activeBattle.state.battleId;
@@ -2307,6 +2318,7 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     attackWithSkill,
     useItem,
     fleeBattle,
+    equipItem,
     getLiveEnemies,
     getTowerFloor,
     getGoldIntents,
