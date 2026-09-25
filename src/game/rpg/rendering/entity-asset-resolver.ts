@@ -29,27 +29,27 @@ export type EntityAssetResolution =
  */
 const ENTITY_ASSET_MAP: Record<string, string> = {
   // NPCs
-  "npc.ki-jaka":          "npc_ki_jaka_idle",  // verified READY runtime idle sprite
-  "npc.bu-ratmi":         "npc_bu_ratmi",
-  "npc.bu-sari":          "npc_bu_sari",
-  "npc.eyang-kartala":    "npc_eyang_kartala",
-  "npc.pak-empu":         "npc_pak_empu",
-  "npc.bagas":            "npc_bagas",
-  "npc.pak-warsa":        "npc_tani",
+  "npc.ki-jaka":          "npc_ki_jaka_v2",  // verified READY runtime idle sprite
+  "npc.bu-ratmi":         "npc_bu_ratmi_v2",
+  "npc.bu-sari":          "npc_bu_sari_v2",
+  "npc.eyang-kartala":    "npc_eyang_kartala_v2",
+  "npc.pak-empu":         "npc_pak_empu_v2",
+  "npc.bagas":            "npc_bagas_v2",
+  "npc.pak-warsa":        "npc_tani_v2",
   "npc.tani":            "npc_tani",
-  "npc.pendaki":          "npc_pendaki",
+  "npc.pendaki":          "npc_pendaki_v2",
 
   // Enemies
-  "enemy.korog":          "enemy_korog",
-  "enemy.korog-perang":   "enemy_korog_perang",
-  "enemy.korog-bayangan": "enemy_korog_bayangan",
-  "enemy.golem-batu":     "enemy_golem_batu",
+  "enemy.korog":          "enemy_korog_v2",
+  "enemy.korog-perang":   "enemy_korog_perang_v2",
+  "enemy.korog-bayangan": "enemy_korog_bayangan_v2",
+  "enemy.golem-batu":     "enemy_golem_batu_v2",
 
   // Bosses
-  "enemy.raja-korog":     "boss_raja_korog",
-  "enemy.golem-agung":    "boss_golem_agung",
-  "enemy.naga-abu":       "boss_naga_abu",
-  "enemy.penguasa-menara": "boss_penguasa_menara",
+  "enemy.raja-korog":     "boss_raja_korog_v2",
+  "enemy.golem-agung":    "boss_golem_agung_v2",
+  "enemy.naga-abu":       "boss_naga_abu_v2",
+  "enemy.penguasa-menara": "boss_penguasa_menara_v2",
 
   // P2.11: production prop crops from the canonical visual reference sheet.
   "house.village": "prop_house_village",
