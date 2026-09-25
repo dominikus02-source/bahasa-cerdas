@@ -105,9 +105,10 @@ function TombolKarya({ href, icon, label, xp }: { href: string; icon: React.Reac
 
 interface GuruBerkaryaProps {
   misiStatus?: MisiGuruStatus | null;
+  compact?: boolean;
 }
 
-export function GuruBerkarya({ misiStatus }: GuruBerkaryaProps) {
+export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps) {
   const [items, setItems] = useState<GuruKaryaItem[] | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [meta, setMeta] = useState<GuruBerkaryaMeta>({ xpArtikel: 0, xpPuisi: 0 });
@@ -119,7 +120,7 @@ export function GuruBerkarya({ misiStatus }: GuruBerkaryaProps) {
   useEffect(() => {
     let aktif = true;
     setError(false);
-    fetch("/api/guru/berkarya?limit=6", { cache: "no-store" })
+    fetch(`/api/guru/berkarya?limit=${compact ? 3 : 6}`, { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then((res) => {
         if (!aktif) return;
@@ -142,7 +143,7 @@ export function GuruBerkarya({ misiStatus }: GuruBerkaryaProps) {
     return () => {
       aktif = false;
     };
-  }, [reloadKey]);
+  }, [reloadKey, compact]);
 
   /** Like/unlike instan (optimistic) tanpa reload halaman. Tidak ada XP. */
   async function toggleLike(a: GuruKaryaItem) {
@@ -168,13 +169,13 @@ export function GuruBerkarya({ misiStatus }: GuruBerkaryaProps) {
 
   if (error) {
     return (
-      <div className="rounded-3xl bg-white border border-violet-100 p-5 sm:p-6 shadow-lg shadow-violet-100/50">
+      <div className="rounded-[26px] bg-white border border-blue-100 p-5 sm:p-6 shadow-[0_14px_34px_rgba(25,72,140,.08)] dark:border-blue-950/80">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shadow-md shadow-violet-200">
             <Flame size={24} className="text-white" />
           </div>
           <div>
-            <h2 className="text-lg sm:text-xl font-bold text-violet-900">🔥 Guru Berkarya</h2>
+            <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100">Guru Berkarya</h2>
             <p className="text-gray-500 text-xs sm:text-sm">Karya terbaru dari para guru. Ikut menginspirasi?</p>
           </div>
         </div>
@@ -242,7 +243,7 @@ export function GuruBerkarya({ misiStatus }: GuruBerkaryaProps) {
         </div>
       ) : (
         <>
-          <div className="space-y-3">
+          <div className={compact ? "grid grid-cols-1 gap-3 lg:grid-cols-3" : "space-y-3"}>
             {items.map((a) => {
               const isPuisi = (a.articleType || "").toUpperCase() === "PUISI";
               const isBaru = adalahBaru(a.publishedAt || a.createdAt);
@@ -252,15 +253,15 @@ export function GuruBerkarya({ misiStatus }: GuruBerkaryaProps) {
               return (
                 <article
                   key={a.id}
-                  className="group overflow-hidden rounded-2xl border border-gray-100 bg-white transition-all hover:border-violet-200 hover:shadow-md"
+                  className={`group overflow-hidden rounded-2xl border border-gray-100 bg-white transition-all hover:border-blue-200 hover:shadow-md ${compact ? "h-full" : ""}`}
                 >
                   {a.coverImage ? (
-                    <div className="h-28 overflow-hidden">
+                    <div className={compact ? "h-24 overflow-hidden" : "h-28 overflow-hidden"}>
                       <SafeMediaImage
                         src={a.coverImage}
                         alt={a.title}
                         fallbackType="article"
-                        containerClassName="w-full h-28"
+                        containerClassName={compact ? "w-full h-24" : "w-full h-28"}
                       />
                     </div>
                   ) : (
@@ -308,10 +309,10 @@ export function GuruBerkarya({ misiStatus }: GuruBerkaryaProps) {
                     </div>
 
                     <Link href={`/artikel/${a.slug}`} target="_blank" className="mt-3 block">
-                      <h3 className="text-sm font-semibold leading-snug text-gray-900 transition-colors line-clamp-2 group-hover:text-violet-700">
+                      <h3 className="text-sm font-semibold leading-snug text-gray-900 transition-colors line-clamp-2 group-hover:text-blue-700">
                         {a.title}
                       </h3>
-                      <p className={`mt-1.5 text-xs leading-relaxed text-gray-500 ${isPuisi ? "whitespace-pre-line italic font-serif text-purple-700/80 line-clamp-4" : "line-clamp-2"}`}>
+                      <p className={`${compact ? "hidden" : "mt-1.5"} text-xs leading-relaxed text-gray-500 ${isPuisi ? "whitespace-pre-line italic font-serif text-purple-700/80 line-clamp-4" : "line-clamp-2"}`}>
                         {a.excerpt || ""}
                       </p>
                     </Link>
@@ -339,7 +340,7 @@ export function GuruBerkarya({ misiStatus }: GuruBerkaryaProps) {
                           type="button"
                           onClick={() => setActiveCommentsId(a.id)}
                           aria-label={`Lihat komentar (${a.commentCount})`}
-                          className="inline-flex items-center gap-1 rounded-full px-2 py-1 font-semibold text-gray-400 transition-colors hover:bg-gray-50 hover:text-violet-600"
+                          className="inline-flex items-center gap-1 rounded-full px-2 py-1 font-semibold text-gray-400 transition-colors hover:bg-gray-50 hover:text-blue-600"
                         >
                           <MessageCircle size={13} />
                           {a.commentCount}
@@ -353,7 +354,7 @@ export function GuruBerkarya({ misiStatus }: GuruBerkaryaProps) {
             })}
           </div>
 
-          <div className="mt-4 rounded-2xl bg-gradient-to-r from-violet-50 via-purple-50 to-fuchsia-50 border border-violet-100 p-4">
+          {!compact && <div className="mt-4 rounded-2xl bg-gradient-to-r from-violet-50 via-purple-50 to-fuchsia-50 border border-violet-100 p-4">
             <div className="flex items-start gap-2">
               <Flame size={16} className="text-orange-400 mt-0.5 shrink-0" />
               <div className="min-w-0">
@@ -369,16 +370,16 @@ export function GuruBerkarya({ misiStatus }: GuruBerkaryaProps) {
               <TombolKarya href="/guru/artikel" icon={<BookOpen size={13} />} label="Buat Artikel" xp={xpArtikel} />
               <TombolKarya href="/guru/artikel?type=puisi" icon={<Feather size={13} />} label="Buat Puisi" xp={xpPuisi} />
             </div>
-          </div>
+          </div>}
 
           <div className="mt-4 flex items-center justify-center gap-2 sm:hidden">
             <Link
               href="/guru/artikel"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-500 to-purple-600 text-white px-3 py-2.5 text-xs font-semibold shadow-sm transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 text-white px-3 py-2.5 text-xs font-semibold shadow-sm transition-colors"
             >
               <PenLine size={13} /> Tulis Karya
             </Link>
-            <Link href="/guru/karya" className="flex items-center justify-center gap-1 text-xs font-semibold text-violet-700 hover:text-violet-800 bg-violet-50 hover:bg-violet-100 border border-violet-100 rounded-xl px-3 py-2.5 transition-colors">
+            <Link href="/guru/karya" className="flex items-center justify-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 border border-blue-100 rounded-xl px-3 py-2.5 transition-colors">
               Lihat Semua Karya <ChevronRight size={12} />
             </Link>
           </div>

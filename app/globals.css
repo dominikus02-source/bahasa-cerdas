@@ -1112,3 +1112,96 @@
 .dark .bc-admin :is(.bg-amber-500, .bg-amber-600).text-white { background-color: color-mix(in srgb, var(--clr-warning) 55%, var(--clr-bg)); }
 .dark .bc-admin :is(.bg-violet-500, .bg-violet-600, .bg-purple-500, .bg-purple-600).text-white { background-color: color-mix(in srgb, var(--clr-violet) 55%, var(--clr-bg)); }
 .dark .bc-admin :is(.bg-blue-500, .bg-blue-600).text-white { background-color: color-mix(in srgb, var(--clr-info) 55%, var(--clr-bg)); }
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GURU EXPERIENCE V3 — BLUE ROLE IDENTITY
+   Guru uses a dedicated solid-blue identity. Student remains violet.
+   Scope is .bc-guru-shell so Murid/Admin/Arena are untouched.
+   Success stays green semantically; blue is the interaction/brand accent.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.bc-guru-shell {
+  --clr-accent: #2563eb;
+  --clr-accent-strong: #1d4ed8;
+  --clr-accent-soft: #eff6ff;
+  --clr-info: #0284c7;
+  --clr-info-soft: #f0f9ff;
+}
+
+.dark .bc-guru-shell {
+  --clr-accent: #60a5fa;
+  --clr-accent-strong: #93c5fd;
+  --clr-accent-soft: #10264a;
+  --clr-info: #7dd3fc;
+  --clr-info-soft: #0c2940;
+}
+
+/* Kelasku memakai token lokal .bc-classroom; override dengan specificity
+   lebih tinggi agar seluruh pengalaman GURU tetap biru, tetapi bc-student
+   (pratinjau/ruang murid) tetap violet. */
+.bc-guru-shell .bc-classroom:not(.bc-student) {
+  --clr-accent: #2563eb;
+  --clr-accent-strong: #1d4ed8;
+  --clr-accent-soft: #eff6ff;
+  --clr-info: #0284c7;
+  --clr-info-soft: #f0f9ff;
+}
+.dark .bc-guru-shell .bc-classroom:not(.bc-student) {
+  --clr-accent: #60a5fa;
+  --clr-accent-strong: #93c5fd;
+  --clr-accent-soft: #10264a;
+  --clr-info: #7dd3fc;
+  --clr-info-soft: #0c2940;
+}
+
+/* Gradient compatibility: legacy guru surfaces that were emerald/green/teal
+   now inherit the teacher blue family without touching semantic success UI. */
+.bc-guru-shell .bc-guru .from-emerald-400,
+.bc-guru-shell .bc-guru .from-emerald-500,
+.bc-guru-shell .bc-guru .from-emerald-600,
+.bc-guru-shell .bc-guru .from-green-500,
+.bc-guru-shell .bc-guru .from-green-600,
+.bc-guru-shell .bc-guru .from-teal-500,
+.bc-guru-shell .bc-guru .from-teal-600 {
+  --tw-gradient-from: #2563eb var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(37 99 235 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+.bc-guru-shell .bc-guru .to-emerald-500,
+.bc-guru-shell .bc-guru .to-emerald-600,
+.bc-guru-shell .bc-guru .to-emerald-700,
+.bc-guru-shell .bc-guru .to-green-500,
+.bc-guru-shell .bc-guru .to-green-600,
+.bc-guru-shell .bc-guru .to-teal-500,
+.bc-guru-shell .bc-guru .to-teal-600 {
+  --tw-gradient-to: #0ea5e9 var(--tw-gradient-to-position);
+}
+.bc-guru-shell .bc-guru .via-emerald-50,
+.bc-guru-shell .bc-guru .via-emerald-100,
+.bc-guru-shell .bc-guru .via-teal-50,
+.bc-guru-shell .bc-guru .via-teal-100 {
+  --tw-gradient-to: rgb(239 246 255 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), #eff6ff var(--tw-gradient-via-position), var(--tw-gradient-to);
+}
+
+/* Teacher-only soft backgrounds and borders. This closes the green residue
+   in old dashboard cards while preserving red/amber success/warning meaning. */
+.bc-guru-shell .bc-guru .bg-teal-50,
+.bc-guru-shell .bc-guru .bg-teal-100,
+.bc-guru-shell .bc-guru .bg-green-100 {
+  background-color: var(--clr-accent-soft);
+}
+.bc-guru-shell .bc-guru .text-teal-500,
+.bc-guru-shell .bc-guru .text-teal-600,
+.bc-guru-shell .bc-guru .text-teal-700 {
+  color: var(--clr-accent-strong);
+}
+.bc-guru-shell .bc-guru .border-teal-100,
+.bc-guru-shell .bc-guru .border-teal-200,
+.bc-guru-shell .bc-guru .border-green-100,
+.bc-guru-shell .bc-guru .border-green-200 {
+  border-color: color-mix(in srgb, var(--clr-accent) 32%, var(--clr-border));
+}
+.bc-guru-shell .bc-guru :focus-visible {
+  outline-color: var(--clr-accent-strong);
+}

@@ -11,10 +11,8 @@ import type { LucideIcon } from "lucide-react";
 import {
   NAV_ICON_CLASS,
   NAV_ICON_STROKE,
-  NAV_ICON_ACTIVE,
   NAV_ICON_INACTIVE,
   NAV_LINK_BASE,
-  NAV_LINK_ACTIVE,
   NAV_LINK_INACTIVE,
   DISCLOSURE_ICON_CLASS,
 } from "@/components/shell/icon-tokens";
@@ -58,6 +56,9 @@ interface NavGroup {
  * Semua route lama yang dihapus dari sidebar TETAP hidup dan bisa diakses
  * langsung (no route deletion).
  */
+const GURU_ICON_ACTIVE = "text-blue-600 dark:text-blue-300";
+const GURU_LINK_ACTIVE = "bg-blue-50 text-blue-700 font-semibold dark:bg-blue-500/15 dark:text-blue-300";
+
 export const GURU_NAV: NavGroup[] = [
   {
     id: "beranda",
@@ -193,10 +194,10 @@ function NavLinks({
           onClick={onNavigate}
           aria-label={group.label}
           title={group.label}
-          className={`${NAV_LINK_BASE} ${active ? NAV_LINK_ACTIVE : NAV_LINK_INACTIVE}`}
+          className={`${NAV_LINK_BASE} ${active ? GURU_LINK_ACTIVE : NAV_LINK_INACTIVE}`}
         >
           <group.icon
-            className={`${NAV_ICON_CLASS} ${active ? NAV_ICON_ACTIVE : NAV_ICON_INACTIVE}`}
+            className={`${NAV_ICON_CLASS} ${active ? GURU_ICON_ACTIVE : NAV_ICON_INACTIVE}`}
             strokeWidth={NAV_ICON_STROKE}
           />
           <span className="shell-label font-medium flex-1 text-left">{group.label}</span>
@@ -214,15 +215,15 @@ function NavLinks({
         onClick={() => setOpen((o) => !o)}
         aria-label={group.label}
         title={group.label}
-        className={`${NAV_LINK_BASE} ${NAV_LINK_INACTIVE} ${active && open ? "text-violet-700 dark:text-violet-300" : ""}`}
+        className={`${NAV_LINK_BASE} ${NAV_LINK_INACTIVE} ${active && open ? "text-blue-700 dark:text-blue-300" : ""}`}
       >
-        <group.icon className={`${NAV_ICON_CLASS} ${active ? NAV_ICON_ACTIVE : NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
+        <group.icon className={`${NAV_ICON_CLASS} ${active ? GURU_ICON_ACTIVE : NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
         <span className="shell-label font-medium flex-1 text-left">{group.label}</span>
         <ChevronDown className={`shell-label ${DISCLOSURE_ICON_CLASS} text-slate-400 dark:text-slate-500 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
       </button>
 
       {open && (
-        <div className="shell-accordion ml-7 mb-1 flex flex-col gap-1 border-l border-violet-100/70 dark:border-slate-700 pl-3">
+        <div className="shell-accordion ml-7 mb-1 flex flex-col gap-1 border-l border-blue-100/80 dark:border-blue-950/70 pl-3">
           {group.links?.map((link) => {
             const linkActive = isActive(pathname, link.href, link.activeOn);
             return (
@@ -232,8 +233,8 @@ function NavLinks({
                 onClick={onNavigate}
                 className={`block rounded-lg py-1.5 px-3 text-xs transition-all ${
                   linkActive
- ? "bg-violet-50 text-violet-700 font-semibold dark:bg-violet-500/15 dark:text-violet-300"
- : "text-slate-500 hover:text-violet-600 hover:bg-violet-50/60 dark:text-slate-400 :bg-slate-800 dark:hover:text-slate-200"
+ ? "bg-blue-50 text-blue-700 font-semibold dark:bg-blue-500/15 dark:text-blue-300"
+ : "text-slate-500 hover:text-blue-700 hover:bg-blue-50/70 dark:text-slate-400 :bg-slate-800 dark:hover:text-slate-200"
                 }`}
               >
                 {link.label}
@@ -287,7 +288,7 @@ export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
                 key={tab.href}
                 href={tab.href}
                 className={`flex flex-col items-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors ${
-                  active ? "text-violet-600 dark:text-violet-400" : "text-slate-500 dark:text-slate-400"
+                  active ? "text-blue-600 dark:text-blue-300" : "text-slate-500 dark:text-slate-400"
                 }`}
               >
                 <tab.icon className="w-5 h-5" />
@@ -310,10 +311,10 @@ export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setDrawer(false)} />
           <div className="absolute inset-y-0 left-0 w-[85%] max-w-sm bg-white dark:bg-slate-800/90 shadow-2xl flex flex-col">
-            <div className="p-5 border-b border-gray-100 dark:border-slate-800 bg-gradient-to-r from-emerald-600 to-green-600 flex items-center justify-between">
+            <div className="p-5 border-b border-gray-100 dark:border-slate-800 bg-gradient-to-r from-blue-700 to-blue-600 flex items-center justify-between">
               <div>
                 <p className="font-bold text-white text-sm">Menu Guru</p>
-                <p className="text-[10px] text-emerald-200">BahasaCerdas</p>
+                <p className="text-[10px] text-blue-100">BahasaCerdas</p>
               </div>
               <button
                 type="button"
@@ -333,7 +334,7 @@ export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
               </Link>
               <Link
                 href="/guru/ai-tools"
-                className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold"
+                className="text-[10px] text-blue-600 dark:text-blue-300 font-semibold"
               >
                 Buka Alat AI
               </Link>
