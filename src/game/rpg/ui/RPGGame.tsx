@@ -417,7 +417,7 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
       </div>
 
       {menuTab ? (
-        <RPGMenuPanel tab={menuTab} mapId={hudState?.mapId ?? mapId} quest={quest} gold={gold} inventory={menuInventory} equipment={menuEquipment} onClose={() => setMenuTab(null)} />
+        <RPGMenuPanel tab={menuTab} mapId={hudState?.mapId ?? mapId} quest={quest} gold={gold} inventory={menuInventory} equipment={menuEquipment} onClose={() => setMenuTab(null)} onEquip={(itemId) => { if (engineRef.current?.equipItem(itemId)) setNotice("Perlengkapan diperbarui."); }} />
       ) : null}
 
       <RPGDialogue
