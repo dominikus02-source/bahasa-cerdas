@@ -7,11 +7,10 @@
  * tiles fall back to the legacy color wash (existing renderer behavior —
  * zero visual regression by construction).
  *
- * Only unambiguous core ground tiles are bound. Edge/transition art
- * (cliffs, waterfalls, bridges), interactives (chest/well/portal/lever) and
- * decor (trees/rocks/houses) have no edge-system or prop pipeline yet —
- * binding them now would invent semantics. They stay documented in the
- * manifest as READY-but-unbound until their systems land.
+ * Core ground, transition, and terrain-family art is bound where the
+ * semantics are unambiguous. Solid tree tiles are rendered as authored
+ * ground plus the production tree prop in canvas-renderer.ts; interactives
+ * and other decor remain entity-owned so their hitboxes never come from art.
  *
  * Variants cycle deterministically by tile hash (no RNG, stable across
  * frames and sessions).
