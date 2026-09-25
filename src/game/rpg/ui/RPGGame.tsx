@@ -43,6 +43,7 @@ import { DESA_VERTICAL_SLICE } from "../data/vertical-slice";
 import { xpForLevel } from "../player/progression";
 import { RPGQuestPanel } from "./RPGQuestPanel";
 import { RPGDialogue } from "./RPGDialogue";
+import { RPGMenuPanel, type RPGMenuTab } from "./RPGMenuPanel";
 
 interface RPGGameProps {
   /** Player ID from session. */
@@ -95,6 +96,9 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
   const [dialogue, setDialogue] = useState<DialogueSession | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [learningReady, setLearningReady] = useState(false);
+  const [menuTab, setMenuTab] = useState<RPGMenuTab | null>(null);
+  const [menuInventory, setMenuInventory] = useState<Array<{ itemId: string; quantity: number }>>([]);
+  const [menuEquipment, setMenuEquipment] = useState<{ weaponId: string | null; armorId: string | null; accessoryId: string | null }>({ weaponId: null, armorId: null, accessoryId: null });
   const previousSliceRef = useRef<{ gold: number; xp: number; level: number; quest: QuestLineState; battle: boolean } | null>(null);
 
   // Initialize engine on mount
@@ -275,6 +279,8 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
             inventory: state.player.inventory.items,
           }),
         );
+        setMenuInventory(state.player.inventory.items.map((item) => ({ itemId: item.itemId, quantity: item.quantity })));
+        setMenuEquipment(state.world.equipment ?? { weaponId: null, armorId: null, accessoryId: null });
         const nextQuest = engine.getQuest();
         const nextGold = engine.getGold();
         const nextBattle = battle !== null;
@@ -361,6 +367,16 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
         learningReady={learningReady}
         onInteract={() => engineRef.current?.interact()}
       />
+
+      <div className="absolute right-3 top-[7.2rem] z-20 flex gap-2 md:top-[7.8rem]" aria-label="Menu RPG">
+        {([["map","Peta"],["bag","Tas"],["quest","Quest"]] as const).map(([tab, label]) => (
+          <button key={tab} type="button" onClick={() => setMenuTab(tab)} className="rounded-xl border border-white/15 bg-stone-950/75 px-3 py-2 text-xs font-black text-white shadow-lg backdrop-blur hover:bg-stone-900">{label}</button>
+        ))}
+      </div>
+
+      {menuTab ? (
+        <RPGMenuPanel tab={menuTab} mapId={hudState?.mapName ?? mapId} quest={quest} gold={gold} inventory={menuInventory} equipment={menuEquipment} onClose={() => setMenuTab(null)} />
+      ) : null}
 
       <RPGDialogue
         session={dialogue}
