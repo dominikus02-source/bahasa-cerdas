@@ -270,9 +270,10 @@ export function createCanvasRenderer(
         // a missing image falls back to color (never throws in the loop).
         const bound = boundTileImage(state.world.mapId, tileId, x, y);
         if (bound) {
+          // Production terrain owns the surface. Avoid debug-style grid seams.
           ctx.drawImage(
             bound as unknown as CanvasImageSource,
-            sx.x - tilePx / 2, sx.y - tilePx / 2, tilePx, tilePx,
+            sx.x - tilePx / 2 - 0.5, sx.y - tilePx / 2 - 0.5, tilePx + 1, tilePx + 1,
           );
           const tileNum = Number(tileId.split(".")[1]);
           // Tree is a canonical SOLID tile, not a terrain family. Keep the
@@ -402,18 +403,18 @@ export function createCanvasRenderer(
         state.world.tiles.width, state.world.tiles.height,
       );
       const baseSize =
-        entity.type === "house" ? 96 :
-        entity.type === "tree" ? 64 :
-        entity.type === "well" ? 54 :
+        entity.type === "house" ? 170 :
+        entity.type === "tree" ? 88 :
+        entity.type === "well" ? 68 :
         entity.type === "fence" ? 48 :
         entity.type === "rock" ? 32 :
         entity.type === "bush" ? 34 :
         entity.type === "flowers" ? 28 :
-        entity.type === "bamboo" ? 82 :
-        entity.type === "shrine" ? 88 :
-        entity.type === "lantern" ? 42 :
-        entity.type === "bridge" ? 92 :
-        entity.type === "banner" ? 60 : 36;
+        entity.type === "bamboo" ? 88 :
+        entity.type === "shrine" ? 108 :
+        entity.type === "lantern" ? 46 :
+        entity.type === "bridge" ? 104 :
+        entity.type === "banner" ? 68 : 44;
       const size = baseSize * entity.scale * zoom;
 
       // P2.11: READY visual atlas first; procedural fallback remains only for
@@ -583,7 +584,7 @@ export function createCanvasRenderer(
           };
           const resolution = resolveEntityAsset(npcAssetKeys[interaction.ref]);
           const rendered = isEntityAssetReady(resolution)
-            ? drawReadyEntitySprite(resolution.entry, screen.x, screen.y, 52 * zoom)
+            ? drawReadyEntitySprite(resolution.entry, screen.x, screen.y, 68 * zoom)
             : false;
           if (!rendered) {
             // Explicit technical fallback only when an asset is unavailable.
