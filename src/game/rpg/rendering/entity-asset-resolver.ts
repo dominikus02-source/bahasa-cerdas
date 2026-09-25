@@ -29,7 +29,7 @@ export type EntityAssetResolution =
  */
 const ENTITY_ASSET_MAP: Record<string, string> = {
   // NPCs
-  "npc.ki-jaka":          "npc_ki_jaka_full",  // P2.11 candidate runtime key; binary pending
+  "npc.ki-jaka":          "npc_ki_jaka_idle",  // verified READY runtime idle sprite
   "npc.bu-ratmi":         "npc_bu_ratmi",
   "npc.bu-sari":          "npc_bu_sari",
   "npc.eyang-kartala":    "npc_eyang_kartala",
