@@ -1205,3 +1205,136 @@
 .bc-guru-shell .bc-guru :focus-visible {
   outline-color: var(--clr-accent-strong);
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GURU VISUAL SYSTEM V5 — STRONG BLUE IDENTITY
+   Scope: seluruh dashboard Guru. Tujuan: menghilangkan kartu gradient yang
+   memudar ke putih, menyatukan legacy emerald/teal chrome, dan memberi setiap
+   surface hirarki yang jelas tanpa mengganggu warna semantik success/warning.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.bc-guru-shell .bc-guru {
+  --guru-blue-950: #061a36;
+  --guru-blue-900: #082957;
+  --guru-blue-800: #0b3f86;
+  --guru-blue-700: #1158bd;
+  --guru-blue-600: #1d6fe8;
+  --guru-blue-500: #2f83f3;
+  --guru-sky-500: #0ea5e9;
+  --guru-surface: #ffffff;
+  --guru-surface-soft: #f5f9ff;
+  --guru-border: #cfe0f7;
+  --guru-shadow: 0 12px 30px rgba(20, 67, 135, .08);
+}
+
+/* Hero utama di setiap destination Guru: kuat, konsisten, tidak fade ke putih. */
+.bc-guru-shell .bc-guru .guru-role-hero {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  background:
+    radial-gradient(560px 220px at 88% 0%, rgba(96,165,250,.28), transparent 66%),
+    linear-gradient(135deg, var(--guru-blue-950) 0%, var(--guru-blue-800) 48%, var(--guru-blue-600) 100%) !important;
+  border: 1px solid rgba(147,197,253,.22);
+  box-shadow: 0 18px 42px rgba(8,41,87,.18);
+}
+.bc-guru-shell .bc-guru .guru-role-hero :is(h1,h2,h3,strong) { color: #fff; }
+.bc-guru-shell .bc-guru .guru-role-hero :is(p,span):not([class*="bg-"]) { color: rgba(219,234,254,.92); }
+
+/* Card standar Guru: crisp white + blue structure di light; deep navy di dark. */
+html:not(.dark) .bc-guru-shell .bc-guru .guru-role-card,
+html:not(.dark) .bc-guru-shell .bc-guru :is(div,section,article,a,button)[class*="bg-white"][class*="rounded-"][class*="border"] {
+  border-color: var(--guru-border);
+  box-shadow: var(--guru-shadow);
+}
+.dark .bc-guru-shell .bc-guru .guru-role-card,
+.dark .bc-guru-shell .bc-guru :is(div,section,article,a,button)[class*="bg-white"][class*="rounded-"][class*="border"] {
+  border-color: rgba(59,130,246,.24);
+}
+
+/* Akar masalah screenshot: gradient biru/warna → putih membuat card washed-out.
+   Semua legacy rounded card semacam itu menjadi surface modular, bukan gradient. */
+html:not(.dark) .bc-guru-shell .bc-guru [class*="rounded-"][class*="bg-gradient-to-"][class*="to-white"],
+html:not(.dark) .bc-guru-shell .bc-guru [class*="rounded-"][class*="bg-gradient-to-"][class*="via-white"] {
+  background-image: none !important;
+  background-color: #f3f7ff !important;
+  border-color: #c8dbf4 !important;
+  box-shadow:
+    inset 4px 0 0 #2563eb,
+    0 12px 28px rgba(20,67,135,.08) !important;
+}
+.dark .bc-guru-shell .bc-guru [class*="rounded-"][class*="bg-gradient-to-"][class*="to-white"],
+.dark .bc-guru-shell .bc-guru [class*="rounded-"][class*="bg-gradient-to-"][class*="via-white"] {
+  background-image: none !important;
+  background-color: #0b1d34 !important;
+  border-color: rgba(59,130,246,.24) !important;
+  box-shadow: inset 4px 0 0 #3b82f6 !important;
+}
+
+/* Legacy hero hijau/teal pada destination Guru sekarang masuk keluarga biru.
+   Dibatasi ke container text-white + rounded agar status success tetap hijau. */
+.bc-guru-shell .bc-guru [class*="rounded-"][class*="bg-gradient-to-"][class*="from-emerald-"][class*="text-white"],
+.bc-guru-shell .bc-guru [class*="rounded-"][class*="bg-gradient-to-"][class*="from-green-"][class*="text-white"],
+.bc-guru-shell .bc-guru [class*="rounded-"][class*="bg-gradient-to-"][class*="from-teal-"][class*="text-white"] {
+  background-image:
+    radial-gradient(480px 200px at 86% 0%, rgba(96,165,250,.24), transparent 66%),
+    linear-gradient(135deg, #082957 0%, #0b4ca4 54%, #1477dc 100%) !important;
+}
+
+/* Primary controls yang masih memakai legacy green/emerald menjadi teacher-blue.
+   Selector hanya a/button agar badge/status success tidak kehilangan maknanya. */
+.bc-guru-shell .bc-guru :is(a,button).bg-emerald-600,
+.bc-guru-shell .bc-guru :is(a,button).bg-green-600,
+.bc-guru-shell .bc-guru :is(a,button).bg-teal-600 {
+  background-color: #1d6fe8 !important;
+  color: #fff !important;
+}
+.bc-guru-shell .bc-guru :is(a,button).bg-emerald-600:hover,
+.bc-guru-shell .bc-guru :is(a,button).bg-green-600:hover,
+.bc-guru-shell .bc-guru :is(a,button).bg-teal-600:hover {
+  background-color: #1558bd !important;
+}
+
+/* Interactive focus state Guru selalu biru. */
+.bc-guru-shell .bc-guru :is(input,textarea,select,button,a):focus-visible {
+  outline-color: #2563eb;
+}
+.bc-guru-shell .bc-guru :is(input,textarea,select).focus\:ring-emerald-500:focus,
+.bc-guru-shell .bc-guru :is(input,textarea,select).focus\:ring-emerald-200:focus,
+.bc-guru-shell .bc-guru :is(input,textarea,select).focus\:ring-violet-300:focus {
+  --tw-ring-color: rgba(37,99,235,.28);
+}
+.bc-guru-shell .bc-guru :is(input,textarea,select).focus\:border-emerald-400:focus,
+.bc-guru-shell .bc-guru :is(input,textarea,select).focus\:border-emerald-500:focus,
+.bc-guru-shell .bc-guru :is(input,textarea,select).focus\:border-violet-400:focus {
+  border-color: #2563eb;
+}
+
+/* Reusable accents for pages migrated in V5. */
+.bc-guru-shell .bc-guru .guru-role-icon {
+  color: #1d6fe8;
+  background: #eaf3ff;
+  border: 1px solid #d5e6fb;
+}
+.dark .bc-guru-shell .bc-guru .guru-role-icon {
+  color: #93c5fd;
+  background: rgba(30,64,175,.24);
+  border-color: rgba(59,130,246,.28);
+}
+.bc-guru-shell .bc-guru .guru-role-tab-active {
+  color: #fff !important;
+  background: linear-gradient(135deg, #1558bd, #2563eb) !important;
+  box-shadow: 0 8px 18px rgba(37,99,235,.18);
+}
+.bc-guru-shell .bc-guru .guru-role-link {
+  color: #1d4ed8;
+}
+.dark .bc-guru-shell .bc-guru .guru-role-link {
+  color: #93c5fd;
+}
+
+/* Jangan biarkan page backgrounds Guru membawa tint hijau lama. */
+html:not(.dark) .bc-guru-shell .bc-guru.min-h-screen[class*="from-slate-50"][class*="to-emerald-"] {
+  background-image: linear-gradient(180deg, #f7faff 0%, #ffffff 46%, #eef5ff 100%) !important;
+}
