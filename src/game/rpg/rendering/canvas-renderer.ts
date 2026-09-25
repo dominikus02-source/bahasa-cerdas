@@ -604,15 +604,15 @@ export function createCanvasRenderer(
         // Houses are production art from the shared runtime atlas, not the legacy
         // procedural rectangle/triangle renderer. Keep a generous footprint so
         // the authored roof/body silhouette reads as a real village building.
-        entity.type === "house" ? 156 :
-        entity.type === "tree" ? 72 :
+        entity.type === "house" ? 96 :
+        entity.type === "tree" ? 68 :
         entity.type === "well" ? 52 :
         entity.type === "fence" ? 36 :
         entity.type === "rock" ? 26 :
         entity.type === "bush" ? 26 :
         entity.type === "flowers" ? 20 :
         entity.type === "bamboo" ? 70 :
-        entity.type === "shrine" ? 84 :
+        entity.type === "shrine" ? 76 :
         entity.type === "lantern" ? 34 :
         entity.type === "bridge" ? 84 :
         entity.type === "banner" ? 50 : 34;
@@ -732,7 +732,7 @@ export function createCanvasRenderer(
           };
           const resolution = resolveEntityAsset(npcAssetKeys[interaction.ref]);
           const rendered = isEntityAssetReady(resolution)
-            ? drawReadyEntitySprite(resolution.entry, screen.x, screen.y, 54 * zoom)
+            ? drawReadyEntitySprite(resolution.entry, screen.x, screen.y, 44 * zoom)
             : false;
           if (!rendered) {
             // Art-pipeline fallback: keep the world clean rather than mixing
@@ -784,7 +784,7 @@ export function createCanvasRenderer(
         camera, state.world.tiles.width, state.world.tiles.height,
       );
       const resolution = resolveEntityAsset(enemy.def.asset);
-      const maxSize = enemy.boss ? 72 * zoom : 44 * zoom;
+      const maxSize = enemy.boss ? 64 * zoom : 42 * zoom;
       drawContactShadow(screen.x, screen.y, maxSize * 0.22, maxSize * 0.05, 0.14);
       const rendered = isEntityAssetReady(resolution)
         ? drawReadyEntitySprite(resolution.entry, screen.x, screen.y, maxSize)
@@ -873,7 +873,7 @@ export function createCanvasRenderer(
         feetY: feet.y,
         canvasWidthPx: HERO_CANVAS_PX,
         canvasHeightPx: HERO_CANVAS_PX,
-        scale: 0.64 * zoom,
+        scale: 0.40 * zoom,
         mirror: mirrorForDirection(player.facing),
       });
       if (dest.mirror) {
