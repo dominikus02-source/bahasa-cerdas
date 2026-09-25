@@ -31,14 +31,14 @@ const KARYA_TYPES = [
 
 const STATUS_BADGE: Record<string, { label: string; cls: string }> = {
   DRAFT: { label: "Draft", cls: "bg-slate-100 text-slate-600" },
-  PUBLISHED: { label: "Terbit", cls: "bg-emerald-50 text-emerald-700" },
+  PUBLISHED: { label: "Terbit", cls: "bg-blue-50 text-blue-700" },
   ARCHIVED: { label: "Diarsipkan", cls: "bg-gray-100 text-gray-500" },
 };
 
 const PENARIKAN_STATUS: Record<string, { label: string; cls: string; Icon: typeof Clock }> = {
   PENDING: { label: "Menunggu", cls: "bg-amber-50 text-amber-700 border-amber-100", Icon: Clock },
   APPROVED: { label: "Disetujui", cls: "bg-blue-50 text-blue-700 border-blue-100", Icon: CheckCircle2 },
-  TRANSFERRED: { label: "Ditransfer", cls: "bg-emerald-50 text-emerald-700 border-emerald-100", Icon: CheckCircle2 },
+  TRANSFERRED: { label: "Ditransfer", cls: "bg-blue-50 text-blue-700 border-blue-100", Icon: CheckCircle2 },
   REJECTED: { label: "Ditolak", cls: "bg-red-50 text-red-700 border-red-100", Icon: X },
 };
 
@@ -321,7 +321,7 @@ export default function TokoKaryaPage() {
       {/* ── Hero ──────────────────────────────────────────────────── */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center">
             <Store className="h-5 w-5 text-white" />
           </div>
           <div>
@@ -387,7 +387,7 @@ export default function TokoKaryaPage() {
         <TabsContent value="karya">
           {/* Toolbar */}
           <div className="flex flex-wrap items-center gap-3 mb-4">
-            <Button onClick={openTambah} className="bg-gradient-to-r from-emerald-500 to-emerald-600">
+            <Button onClick={openTambah} className="bg-gradient-to-r from-blue-600 to-blue-500">
               <Plus size={16} /> Upload Karya
             </Button>
             <div className="flex items-center gap-2 ml-auto">
@@ -395,7 +395,7 @@ export default function TokoKaryaPage() {
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
-                className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="ALL">Semua Tipe</option>
                 {KARYA_TYPES.map((t) => (
@@ -406,7 +406,7 @@ export default function TokoKaryaPage() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="ALL">Semua</option>
                 <option value="PUBLISHED">Terbit</option>
@@ -417,9 +417,9 @@ export default function TokoKaryaPage() {
 
           {/* ── Upload/Edit Wizard ──────────────────────────────────── */}
           {showForm && (
-            <Card className="mb-6 border-2 border-emerald-100 overflow-hidden">
+            <Card className="mb-6 border-2 border-blue-100 overflow-hidden">
               {/* Wizard header */}
-              <div className="bg-gradient-to-r from-emerald-50 to-teal-50 px-6 py-4 border-b border-emerald-100">
+              <div className="bg-gradient-to-r from-blue-50 to-sky-50 px-6 py-4 border-b border-blue-100">
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="font-bold text-lg text-gray-900">{editId ? "Ubah Karya" : "Unggah Karya Baru"}</h2>
                   <button onClick={() => { setShowForm(false); setEditId(null); setSelectedFile(null); setWizardStep(0); }} className="p-1.5 rounded-lg hover:bg-white/60 text-gray-400">
@@ -453,7 +453,7 @@ export default function TokoKaryaPage() {
                       <input
                         value={formData.title}
                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                        className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none"
+                        className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none"
                         placeholder="Rencana Pembelajaran Bahasa Indonesia Kelas X"
                         autoFocus
                       />
@@ -463,7 +463,7 @@ export default function TokoKaryaPage() {
                       <textarea
                         value={formData.description}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                        className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none"
+                        className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none"
                         rows={3}
                         placeholder="Jelaskan isi karya Anda secara singkat..."
                       />
@@ -553,7 +553,7 @@ export default function TokoKaryaPage() {
                         />
                         <label
                           htmlFor="karya-file-input"
-                          className="flex items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-6 cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition-colors"
+                          className="flex items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-6 cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-colors"
                         >
                           {selectedFile ? (
                             <div className="flex items-center gap-2">
@@ -611,7 +611,7 @@ export default function TokoKaryaPage() {
                               <input
                                 value={formData.images[i]}
                                 onChange={(e) => { const imgs = [...formData.images]; imgs[i] = e.target.value; setFormData({ ...formData, images: imgs }); }}
-                                className="mt-1 w-full text-[10px] px-2 py-1 rounded border border-gray-200 focus:border-emerald-500 focus:outline-none"
+                                className="mt-1 w-full text-[10px] px-2 py-1 rounded border border-gray-200 focus:border-blue-500 focus:outline-none"
                                 placeholder="URL gambar..."
                               />
                               {imgLoading === i ? (
@@ -642,7 +642,7 @@ export default function TokoKaryaPage() {
                                     };
                                     input.click();
                                   }}
-                                  className="mt-1 w-full text-[10px] px-2 py-1 bg-emerald-50 text-emerald-700 rounded border border-emerald-200 hover:bg-emerald-100 transition-colors"
+                                  className="mt-1 w-full text-[10px] px-2 py-1 bg-blue-50 text-blue-700 rounded border border-emerald-200 hover:bg-blue-100 transition-colors"
                                 >
                                   Unggah Gambar
                                 </button>
@@ -668,7 +668,7 @@ export default function TokoKaryaPage() {
                     <p className="text-sm text-gray-500">Pratinjau karya Anda sebelum dipublikasikan:</p>
                     {/* Preview card */}
                     <div className="max-w-sm rounded-xl border border-gray-200 overflow-hidden">
-                      <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-4">
+                      <div className="bg-gradient-to-br from-blue-50 to-sky-50 p-4">
                         <div className="flex items-center justify-between mb-2">
                           <Badge className="text-[10px] bg-amber-50 text-amber-700">{formData.price > 0 ? "Berbayar" : "Gratis"}</Badge>
                           <Badge variant="secondary" className="text-[10px]">{typeLabel(formData.type)}</Badge>
@@ -711,7 +711,7 @@ export default function TokoKaryaPage() {
                         <Button
                           onClick={() => handleSubmit(true)}
                           disabled={uploading || !formData.title}
-                          className="bg-gradient-to-r from-emerald-500 to-emerald-600"
+                          className="bg-gradient-to-r from-blue-600 to-blue-500"
                         >
                           {uploading ? <Loader2 size={14} className="animate-spin" /> : <><Check size={14} className="mr-1" /> {editId ? "Simpan & Terbitkan" : "Publikasikan"}</>}
                         </Button>
@@ -738,7 +738,7 @@ export default function TokoKaryaPage() {
                 {filterType === "ALL" ? "Upload karya pertama Anda untuk mulai dijual" : "Coba filter tipe lain atau unggah karya baru"}
               </p>
               {filterType === "ALL" && (
-                <Button onClick={openTambah} className="mt-4 bg-gradient-to-r from-emerald-500 to-emerald-600">
+                <Button onClick={openTambah} className="mt-4 bg-gradient-to-r from-blue-600 to-blue-500">
                   <Plus size={16} /> Upload Karya
                 </Button>
               )}
@@ -749,7 +749,7 @@ export default function TokoKaryaPage() {
                 const status = karya.isPublished ? STATUS_BADGE.PUBLISHED : STATUS_BADGE.DRAFT;
                 return (
                   <Card key={karya.id} className="overflow-hidden hover:shadow-lg transition-shadow group">
-                    <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-4">
+                    <div className="bg-gradient-to-br from-blue-50 to-sky-50 p-4">
                       <div className="flex items-start justify-between mb-2">
                         <Badge className={`text-[10px] ${status.cls}`}>{status.label}</Badge>
                         <Badge variant="secondary" className="text-[10px]">{typeLabel(karya.type)}</Badge>
@@ -797,7 +797,7 @@ export default function TokoKaryaPage() {
           ) : (
             <div className="space-y-6">
               {/* Balance card */}
-              <Card className="p-6 bg-gradient-to-r from-emerald-500 to-teal-600 text-white">
+              <Card className="p-6 bg-gradient-to-r from-blue-600 to-sky-500 text-white">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
                     <p className="text-sm opacity-80">Saldo Tersedia</p>
@@ -940,7 +940,7 @@ export default function TokoKaryaPage() {
               placeholder="Masukkan jumlah penarikan"
               value={withdrawAmount}
               onChange={(e) => { setWithdrawAmount(e.target.value); setWithdrawError(""); }}
-              className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {withdrawAmount && !nominalValid && (
               <p className="text-xs text-amber-600 mt-2">

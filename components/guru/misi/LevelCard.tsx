@@ -12,7 +12,7 @@ export function LevelCard({ level, xpLevel, xpPerLevel, streak }: LevelCardProps
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      <div className="rounded-2xl bg-white border border-emerald-100 p-3.5">
+      <div className="rounded-2xl bg-white border border-blue-100 dark:border-blue-950/70 p-3.5">
         <div className="flex items-center justify-between mb-2">
           <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400">
             Level
@@ -20,9 +20,9 @@ export function LevelCard({ level, xpLevel, xpPerLevel, streak }: LevelCardProps
           <span className="text-xl font-black text-emerald-600">{level}</span>
         </div>
         <p className="text-xs text-gray-500 mb-1.5">Guru Cerdas</p>
-        <div className="h-2 rounded-full bg-emerald-100 overflow-hidden">
+        <div className="h-2 rounded-full bg-blue-100 dark:bg-blue-950/50 overflow-hidden">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-500 transition-all duration-700"
+            className="h-full rounded-full bg-gradient-to-r from-blue-600 to-sky-500 transition-all duration-700"
             style={{ width: `${persen}%` }}
           />
         </div>
@@ -31,7 +31,7 @@ export function LevelCard({ level, xpLevel, xpPerLevel, streak }: LevelCardProps
         </p>
       </div>
 
-      <div className="rounded-2xl bg-white border border-emerald-100 p-3.5 flex flex-col justify-between">
+      <div className="rounded-2xl bg-white border border-blue-100 dark:border-blue-950/70 p-3.5 flex flex-col justify-between">
         <div className="flex items-center gap-2">
           <Flame size={18} className="text-orange-400" />
           <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400">

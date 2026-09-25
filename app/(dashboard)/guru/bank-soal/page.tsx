@@ -334,9 +334,9 @@ export default function BankSoalPage() {
       {pickerMode && (
         <section
           aria-label="Memilih tema untuk Main Bersama"
-          className="flex flex-wrap items-center gap-3 rounded-2xl border border-teal-300/70 bg-teal-50 px-4 py-3"
+          className="flex flex-wrap items-center gap-3 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3"
         >
-          <span className="w-9 h-9 rounded-xl bg-teal-600 flex items-center justify-center shrink-0">
+          <span className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center shrink-0">
             <MonitorPlay size={17} className="text-white" aria-hidden />
           </span>
           <div className="min-w-0 flex-1">
@@ -348,7 +348,7 @@ export default function BankSoalPage() {
           </div>
           <Link
             href="/guru/game/main-bersama"
-            className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-teal-600/30 text-teal-700 text-sm font-semibold hover:bg-teal-100 transition-colors"
+            className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-blue-300 text-blue-700 text-sm font-semibold hover:bg-blue-100 transition-colors"
           >
             ← Kembali ke Main Bersama
           </Link>
@@ -358,7 +358,7 @@ export default function BankSoalPage() {
       {/* ════════════════════════════════════════════════════════
           1. HERO — Editorial discovery header
          ════════════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden rounded-2xl bg-emerald-700 p-6 sm:p-8 text-white">
+      <section className="guru-role-hero relative overflow-hidden rounded-[26px] p-6 sm:p-8 text-white">
         {/* Subtle geometric pattern */}
         <div
           aria-hidden
@@ -495,11 +495,11 @@ export default function BankSoalPage() {
       {!loading && !search && !selectedCategory && (
         <section
           aria-labelledby="shelf-mb"
-          className="relative overflow-hidden rounded-2xl border border-teal-200/60 bg-white p-5"
+          className="relative overflow-hidden rounded-2xl border border-blue-100 bg-white p-5"
         >
           <div className="relative flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="flex items-center gap-3 flex-1 min-w-0">
-              <span className="w-11 h-11 rounded-xl bg-teal-600 flex items-center justify-center shrink-0">
+              <span className="w-11 h-11 rounded-xl bg-blue-600 flex items-center justify-center shrink-0">
                 <MonitorPlay size={20} className="text-white" aria-hidden />
               </span>
               <div className="min-w-0">
@@ -513,7 +513,7 @@ export default function BankSoalPage() {
             </div>
             <Link
               href="/guru/game/main-bersama"
-              className="shrink-0 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-teal-600 text-white text-sm font-semibold shadow-sm hover:bg-teal-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
+              className="shrink-0 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold shadow-sm hover:bg-blue-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
             >
               <MonitorPlay size={15} aria-hidden /> Buka Main Bersama{" "}
               <ArrowRight size={13} aria-hidden />

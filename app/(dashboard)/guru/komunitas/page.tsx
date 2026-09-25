@@ -196,7 +196,7 @@ export default function KomunitasPage() {
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case "MGMP": return "bg-emerald-100 text-emerald-700 border-emerald-200";
+      case "MGMP": return "bg-blue-100 text-blue-700 border-blue-200";
       case "KKG": return "bg-blue-100 text-blue-700 border-blue-200";
       case "PUBLIKASI": return "bg-amber-100 text-amber-700 border-amber-200";
       case "STUDY_GROUP": return "bg-purple-100 text-purple-700 border-purple-200";
@@ -227,19 +227,19 @@ export default function KomunitasPage() {
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && fetchCommunities()}
             placeholder="Cari komunitas..."
-            className="w-full h-11 pl-10 pr-4 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full h-11 pl-10 pr-4 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <select
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
-          className="h-11 px-4 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="h-11 px-4 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           {COMMUNITY_TYPES.map((t) => (
             <option key={t.value} value={t.value}>{t.label}</option>
           ))}
         </select>
-        <Button onClick={() => setShowCreate(true)} className="h-11 bg-emerald-600 hover:bg-emerald-700 text-white px-5 rounded-xl font-semibold">
+        <Button onClick={() => setShowCreate(true)} className="h-11 bg-blue-600 hover:bg-blue-700 text-white px-5 rounded-xl font-semibold">
           <Plus className="w-4 h-4 mr-2" />
           Buat Komunitas
         </Button>
@@ -247,10 +247,10 @@ export default function KomunitasPage() {
 
       {/* Tabs */}
       <div className="flex gap-2 mb-6">
-        <button onClick={() => setMyTab("public")} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${myTab === "public" ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+        <button onClick={() => setMyTab("public")} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${myTab === "public" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
           Semua Komunitas ({communities.length})
         </button>
-        <button onClick={() => setMyTab("mine")} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${myTab === "mine" ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+        <button onClick={() => setMyTab("mine")} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${myTab === "mine" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
           Komunitas Saya ({myCommunities.length})
         </button>
       </div>
@@ -259,7 +259,7 @@ export default function KomunitasPage() {
       {myTab === "public" && (
         loading ? (
           <div className="text-center py-20">
-            <div className="w-12 h-12 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin mx-auto mb-4" />
+            <div className="w-12 h-12 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mx-auto mb-4" />
             <p className="text-slate-500">Memuat komunitas...</p>
           </div>
         ) : communities.length === 0 ? (
@@ -267,7 +267,7 @@ export default function KomunitasPage() {
             <Users className="w-16 h-16 text-slate-300 mx-auto mb-4" />
             <h3 className="font-bold text-slate-600 mb-2">Belum ada komunitas</h3>
             <p className="text-sm text-slate-400 mb-4">Jadilah yang pertama membuat komunitas!</p>
-            <Button onClick={() => setShowCreate(true)} className="bg-emerald-600 hover:bg-emerald-700">
+            <Button onClick={() => setShowCreate(true)} className="bg-blue-600 hover:bg-blue-700">
               Buat Komunitas
             </Button>
           </div>
@@ -275,9 +275,9 @@ export default function KomunitasPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {communities.map((c) => (
               <Link key={c.id} href={`/guru/komunitas/${c.id}`}>
-                <Card className="p-5 h-full hover:shadow-lg transition-all border border-slate-100 hover:border-emerald-200">
+                <Card className="p-5 h-full hover:shadow-lg transition-all border border-slate-100 hover:border-blue-200">
                   <div className="flex items-start gap-3 mb-3">
-                    <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-lg shrink-0 overflow-hidden">
+                    <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-sky-500 flex items-center justify-center text-white font-bold text-lg shrink-0 overflow-hidden">
                       <span className="relative z-0">{c.name.charAt(0)}</span>
                       {c.avatarUrl && (
                         <img src={c.avatarUrl} alt={c.name} className="absolute inset-0 z-10 w-full h-full rounded-xl object-cover" onError={e => (e.currentTarget.style.display = "none")} loading="lazy" />
@@ -303,7 +303,7 @@ export default function KomunitasPage() {
                         </span>
                       )}
                       {c.isVerified && (
-                        <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-emerald-100 text-emerald-700 border-emerald-200">
+                        <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-blue-100 text-blue-700 border-blue-200">
                           Terverifikasi
                         </span>
                       )}
@@ -346,7 +346,7 @@ export default function KomunitasPage() {
               <Card key={c.id} className="p-5 border border-slate-100">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-3 flex-1">
-                    <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-lg shrink-0 overflow-hidden">
+                    <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-sky-500 flex items-center justify-center text-white font-bold text-lg shrink-0 overflow-hidden">
                       <span className="relative z-0">{c.name.charAt(0)}</span>
                       {c.avatarUrl && (
                         <img src={c.avatarUrl} alt={c.name} className="absolute inset-0 z-10 w-full h-full rounded-xl object-cover" onError={e => (e.currentTarget.style.display = "none")} loading="lazy" />
@@ -357,7 +357,7 @@ export default function KomunitasPage() {
                         <h3 className="font-bold text-slate-900">{c.name}</h3>
                         <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border ${getTypeColor(c.type)}`}>{c.type}</span>
                         {c.status === "PENDING" && <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-amber-50 text-amber-700 border-amber-200">⏳ Menunggu Peninjauan</span>}
-                        {c.status === "APPROVED" && <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200">✅ Disetujui</span>}
+                        {c.status === "APPROVED" && <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-700 border-blue-200">✅ Disetujui</span>}
                         {c.status === "REJECTED" && <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-red-50 text-red-700 border-red-200">❌ Ditolak</span>}
                       </div>
                       {c.description && <p className="text-sm text-slate-500 line-clamp-1">{c.description}</p>}
@@ -404,7 +404,7 @@ export default function KomunitasPage() {
             </h2>
             <form onSubmit={handleCreate} className="space-y-4">
               {createMsg && (
-                <div className={`p-3 rounded-lg text-sm ${createMsg.includes("berhasil") ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
+                <div className={`p-3 rounded-lg text-sm ${createMsg.includes("berhasil") ? "bg-emerald-50 text-emerald-700 border border-blue-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
                   {createMsg}
                 </div>
               )}
@@ -413,7 +413,7 @@ export default function KomunitasPage() {
                 <input
                   value={createForm.name}
                   onChange={(e) => setCreateForm({ ...createForm, name: e.target.value })}
-                  className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Contoh: MGMP Bahasa Indonesia Jakarta"
                   required
                 />
@@ -424,7 +424,7 @@ export default function KomunitasPage() {
                   value={createForm.description}
                   onChange={(e) => setCreateForm({ ...createForm, description: e.target.value })}
                   rows={3}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                   placeholder="Deskripsi komunitas..."
                 />
               </div>
@@ -434,7 +434,7 @@ export default function KomunitasPage() {
                   <select
                     value={createForm.type}
                     onChange={(e) => setCreateForm({ ...createForm, type: e.target.value })}
-                    className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500"
+                    className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="MGMP">MGMP</option>
                     <option value="KKG">KKG</option>
@@ -448,7 +448,7 @@ export default function KomunitasPage() {
                   <input
                     value={createForm.province}
                     onChange={(e) => setCreateForm({ ...createForm, province: e.target.value })}
-                    className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Contoh: DKI Jakarta"
                   />
                 </div>
@@ -459,7 +459,7 @@ export default function KomunitasPage() {
                   <input
                     value={createForm.city}
                     onChange={(e) => setCreateForm({ ...createForm, city: e.target.value })}
-                    className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Contoh: Jakarta Selatan"
                   />
                 </div>
@@ -468,7 +468,7 @@ export default function KomunitasPage() {
                   <input
                     value={createForm.region}
                     onChange={(e) => setCreateForm({ ...createForm, region: e.target.value })}
-                    className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Contoh: Jabodetabek"
                   />
                 </div>
@@ -500,7 +500,7 @@ export default function KomunitasPage() {
             </div>
             <form onSubmit={handleEdit} className="space-y-4">
               {editMsg && (
-                <div className={`p-3 rounded-lg text-sm ${editMsg.includes("berhasil") ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
+                <div className={`p-3 rounded-lg text-sm ${editMsg.includes("berhasil") ? "bg-emerald-50 text-emerald-700 border border-blue-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
                   {editMsg}
                 </div>
               )}
@@ -509,7 +509,7 @@ export default function KomunitasPage() {
                 <input
                   value={editForm.name}
                   onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                  className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
               </div>
@@ -519,7 +519,7 @@ export default function KomunitasPage() {
                   value={editForm.description}
                   onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
                   rows={3}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -528,7 +528,7 @@ export default function KomunitasPage() {
                   <input
                     value={editForm.province}
                     onChange={(e) => setEditForm({ ...editForm, province: e.target.value })}
-                    className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
@@ -536,7 +536,7 @@ export default function KomunitasPage() {
                   <input
                     value={editForm.city}
                     onChange={(e) => setEditForm({ ...editForm, city: e.target.value })}
-                    className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -545,7 +545,7 @@ export default function KomunitasPage() {
                 <input
                   value={editForm.region}
                   onChange={(e) => setEditForm({ ...editForm, region: e.target.value })}
-                  className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>

@@ -30,7 +30,7 @@ const PERIOD_XP_LABEL: Record<TeacherLeaderboardPeriod, string> = {
 
 function Skeleton() {
   return (
-    <div className="rounded-3xl bg-white border border-amber-100 p-5 sm:p-6 shadow-lg shadow-amber-100/50 animate-pulse">
+    <div className="rounded-3xl bg-white border border-blue-100 dark:bg-[#0b1d34] dark:border-blue-950/70 p-5 sm:p-6 shadow-lg shadow-blue-100/35 animate-pulse">
       <div className="flex items-center gap-3 mb-5">
         <div className="w-12 h-12 rounded-2xl bg-amber-100" />
         <div className="space-y-2">
@@ -102,7 +102,7 @@ export function GuruLeaderboardCard({
       : 0;
 
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-50 via-white to-orange-50 p-5 sm:p-6 shadow-lg shadow-amber-100/50 ring-1 ring-amber-100">
+    <div className="relative overflow-hidden rounded-3xl bg-white p-5 sm:p-6 shadow-lg shadow-blue-100/35 ring-1 ring-blue-100 border-l-4 border-l-amber-400 dark:bg-[#0b1d34] dark:ring-blue-950/70">
       <div className="pointer-events-none absolute -top-20 -right-20 w-56 h-56 rounded-full bg-amber-100/40" />
       <div className="relative">
         <div className="flex items-center gap-3 mb-4">
@@ -138,7 +138,7 @@ export function GuruLeaderboardCard({
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white border border-amber-100 p-4 flex items-center justify-between">
+        <div className="rounded-2xl bg-white border border-blue-100 dark:bg-[#102238] dark:border-blue-950/70 p-4 flex items-center justify-between">
           <div>
             <p className="text-[11px] text-gray-400 font-semibold uppercase tracking-wide">Posisi Anda</p>
             <p className="text-3xl font-extrabold text-gray-900">
@@ -173,7 +173,7 @@ export function GuruLeaderboardCard({
         ) : null}
 
         {misiStatus && (
-          <div className="mt-3 rounded-2xl bg-white border border-emerald-100 p-3 flex items-center gap-3">
+          <div className="mt-3 rounded-2xl bg-white border border-blue-100 dark:bg-[#102238] dark:border-blue-950/70 p-3 flex items-center gap-3">
             <div className="flex items-center gap-1.5 shrink-0">
               <Flame size={14} className="text-orange-400" />
               <span className="text-xs font-bold text-orange-500">{misiStatus.streak}</span>
@@ -185,7 +185,7 @@ export function GuruLeaderboardCard({
               </div>
               <div className="h-1.5 rounded-full bg-emerald-100 overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-500"
+                  className="h-full rounded-full bg-gradient-to-r from-blue-600 to-sky-500"
                   style={{ width: `${levelPersen}%` }}
                 />
               </div>

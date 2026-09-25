@@ -36,7 +36,7 @@ export function ThemeCard<T extends ThemeCardData>({
       type="button"
       onClick={() => onOpen(theme)}
       aria-label={`${theme.name} — ${theme.total} soal${kelasLabel ? `, ${kelasLabel}` : ""}. Klik untuk membuat latihan.`}
-      className="group relative text-left rounded-2xl border border-slate-200/80 bg-white overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 motion-safe:transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 flex flex-col h-[220px]"
+      className="group relative text-left rounded-2xl border border-blue-100 bg-white dark:border-blue-950/70 dark:bg-[#0b1d34] overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 motion-safe:transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 flex flex-col h-[220px]"
     >
       {/* Visual header — FIXED h-24, always rendered */}
       <ThemeCoverArt
