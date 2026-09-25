@@ -228,7 +228,7 @@ export interface CanonicalEntity {
   /** Tile position (converted to normalized by map-loader). */
   x: number; y: number;
   scale: number;
-  layer: "BEHIND_ENTITIES" | "ENTITIES" | "GROUND_DECOR";
+  layer: "BEHIND_ENTITIES" | "ENTITIES" | "FRONT_OF_ENTITIES" | "GROUND_DECOR";
   solid: boolean;
   asset: string;
 }
