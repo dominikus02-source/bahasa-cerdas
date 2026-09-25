@@ -591,10 +591,23 @@ export function createCanvasRenderer(
           };
           const name = npcNames[interaction.ref];
           if (name) {
-            ctx.fillStyle = "#fff7ed";
-            ctx.font = `bold ${Math.round(11 * zoom)}px sans-serif`;
+            const label = name;
+            ctx.save();
             ctx.textAlign = "center";
-            ctx.fillText(name, screen.x, screen.y - 38 * zoom);
+            ctx.textBaseline = "middle";
+            ctx.font = `700 ${Math.round(10 * zoom)}px sans-serif`;
+            const w = ctx.measureText(label).width + 16 * zoom;
+            const h = 18 * zoom;
+            const y = screen.y - 40 * zoom;
+            ctx.globalAlpha = 0.88;
+            ctx.fillStyle = "rgba(38, 30, 24, 0.82)";
+            ctx.beginPath();
+            ctx.roundRect(screen.x - w / 2, y - h / 2, w, h, 6 * zoom);
+            ctx.fill();
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = "#fff3d6";
+            ctx.fillText(label, screen.x, y + 0.5 * zoom);
+            ctx.restore();
           }
           break;
         }
