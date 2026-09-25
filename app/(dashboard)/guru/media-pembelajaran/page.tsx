@@ -39,7 +39,7 @@ export default function MediaPembelajaranPage() {
           onClick={() => setTab("video")}
           className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
             tab === "video"
-              ? "bg-emerald-600 text-white shadow-sm"
+              ? "guru-role-tab-active"
               : "text-slate-500 hover:bg-slate-50"
           }`}
         >
@@ -51,7 +51,7 @@ export default function MediaPembelajaranPage() {
           onClick={() => setTab("artikel")}
           className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
             tab === "artikel"
-              ? "bg-emerald-600 text-white shadow-sm"
+              ? "guru-role-tab-active"
               : "text-slate-500 hover:bg-slate-50"
           }`}
         >
