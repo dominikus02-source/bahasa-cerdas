@@ -878,6 +878,33 @@ export function createCanvasRenderer(
     }
   }
 
+  /**
+   * Lightweight scene atmosphere: authored tint + vignette by canonical map.
+   * This is presentation-only and keeps gameplay coordinates untouched.
+   */
+  function renderAtmosphere(state: RPGGameState): void {
+    const mapId = state.world.mapId;
+    const tint = mapId === "map.menara"
+      ? "rgba(64, 74, 120, 0.12)"
+      : mapId === "map.gunung"
+        ? "rgba(112, 78, 48, 0.08)"
+        : "rgba(244, 190, 92, 0.055)";
+
+    ctx.save();
+    ctx.fillStyle = tint;
+    ctx.fillRect(0, 0, width, height);
+
+    const vignette = ctx.createRadialGradient(
+      width / 2, height * 0.46, Math.min(width, height) * 0.18,
+      width / 2, height * 0.46, Math.max(width, height) * 0.72,
+    );
+    vignette.addColorStop(0, "rgba(0,0,0,0)");
+    vignette.addColorStop(1, "rgba(12, 18, 24, 0.22)");
+    ctx.fillStyle = vignette;
+    ctx.fillRect(0, 0, width, height);
+    ctx.restore();
+  }
+
   /** Main render function — called by game loop. */
   function render(
     state: RPGGameState,
