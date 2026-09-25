@@ -153,6 +153,8 @@ export function createCanvasRenderer(
   const previousBattleEnemyHp = new Map<string, number>();
   let floatingDamageSeq = 0;
   let floatingDamages: FloatingDamage[] = [];
+  let impactBurstSeq = 0;
+  let impactBursts: ImpactBurst[] = [];
 
   function argaEntryForFacing(facing: string) {
     const direction = facing === "up" ? "up" : facing === "down" ? "down" : "side";
@@ -653,7 +655,6 @@ export function createCanvasRenderer(
 
   function updateCombatFeedback(
     state: RPGGameState,
-    camera: RPGCameraState,
     liveEnemies: readonly LiveEnemy[],
     nowMs: number,
   ): void {
@@ -664,6 +665,7 @@ export function createCanvasRenderer(
       previousBattleResult = undefined;
       previousBattleEnemyHp.clear();
       floatingDamages = floatingDamages.filter((d) => floatingDamageOpacity(d, nowMs) > 0);
+      impactBursts = impactBursts.filter((b) => impactBurstOpacity(b, nowMs) > 0);
       return;
     }
 
@@ -680,6 +682,9 @@ export function createCanvasRenderer(
       const damage = previousBattlePlayerHp - battle.player.hp;
       const intensity = Math.min(1, damage / Math.max(1, battle.player.maxHp) * 3);
       visualFeedback = triggerImpact(visualFeedback, nowMs, intensity);
+      impactBursts.push(createImpactBurst(
+        impactBurstSeq++, state.player.position.x, state.player.position.y, nowMs, intensity,
+      ));
       floatingDamages.push({
         id: floatingDamageSeq++, value: damage,
         x: state.player.position.x, y: state.player.position.y,
@@ -697,6 +702,9 @@ export function createCanvasRenderer(
         const pos = live
           ? { x: (live.tile.x + 0.5) / state.world.tiles.width, y: (live.tile.y + 0.5) / state.world.tiles.height }
           : state.player.position;
+        impactBursts.push(createImpactBurst(
+          impactBurstSeq++, pos.x, pos.y, nowMs, intensity,
+        ));
         floatingDamages.push({
           id: floatingDamageSeq++, value: damage,
           x: pos.x, y: pos.y,
@@ -708,11 +716,15 @@ export function createCanvasRenderer(
 
     if (battle.result === "WIN" && previousBattleResult !== "WIN") {
       visualFeedback = triggerVictory(visualFeedback, nowMs);
+      impactBursts.push(createImpactBurst(
+        impactBurstSeq++, state.player.position.x, state.player.position.y, nowMs, 1, true,
+      ));
     }
 
     previousBattlePlayerHp = battle.player.hp;
     previousBattleResult = battle.result;
     floatingDamages = floatingDamages.filter((d) => floatingDamageOpacity(d, nowMs) > 0);
+    impactBursts = impactBursts.filter((b) => impactBurstOpacity(b, nowMs) > 0);
   }
 
   function renderFloatingDamage(
@@ -788,6 +800,7 @@ export function createCanvasRenderer(
     renderPlayer(state, camera);
     renderInteractionPrompt(state, camera, allowedNpcIds);
     renderFloatingDamage(camera, state, nowMs);
+    renderImpactBursts(camera, state, nowMs);
     ctx.restore();
 
     const alpha = flashAlpha(visualFeedback, nowMs);
