@@ -101,7 +101,8 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
   const [menuTab, setMenuTab] = useState<RPGMenuTab | null>(null);
   const [menuInventory, setMenuInventory] = useState<Array<{ itemId: string; quantity: number }>>([]);
   const [menuEquipment, setMenuEquipment] = useState<{ weaponId: string | null; armorId: string | null; accessoryId: string | null }>({ weaponId: null, armorId: null, accessoryId: null });
-  const previousSliceRef = useRef<{ gold: number; xp: number; level: number; quest: QuestLineState; battle: boolean } | null>(null);
+  const [rewardModal, setRewardModal] = useState<{ title: string; subtitle: string; xp: number; gold: number; items: string[] } | null>(null);
+  const previousSliceRef = useRef<{ gold: number; xp: number; level: number; quest: QuestLineState; battle: boolean; inventory: Array<{ itemId: string; quantity: number }>; towerFloor: number; deadBossIds: string[] } | null>(null);
 
   // Initialize engine on mount
   useEffect(() => {
@@ -334,14 +335,24 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
         }
         if (previous) {
           const newBosses = nextDeadBossIds.filter((id) => !previous.deadBossIds.includes(id));
-          if (newBosses.includes("tw")) {
-            setNotice("PENGUASA MENARA dikalahkan! Menara Angin telah menuntaskan ujianmu.");
-          } else if (newBosses.includes("na")) {
-            setNotice("NAGA ABU dikalahkan! Jalan menuju Menara Angin terbuka.");
-          } else if (newBosses.includes("b")) {
-            setNotice("RAJA KOROG dikalahkan! Desa kini lebih aman.");
-          } else if (newBosses.includes("ga")) {
-            setNotice("GOLEM AGUNG dikalahkan! Lanjutkan pendakian Menara.");
+          if (newBosses.length > 0) {
+            const names: Record<string, string> = { tw: "PENGUASA MENARA", na: "NAGA ABU", b: "RAJA KOROG", ga: "GOLEM AGUNG" };
+            const bossId = newBosses.find((id) => names[id]) ?? newBosses[0];
+            const xpEarned = Math.max(0, state.player.progression.xp - previous.xp);
+            const goldEarned = Math.max(0, nextGold - previous.gold);
+            const previousCounts = new Map(previous.inventory.map((item) => [item.itemId, item.quantity]));
+            const rewardItems = state.player.inventory.items
+              .map((item) => ({ ...item, delta: item.quantity - (previousCounts.get(item.itemId) ?? 0) }))
+              .filter((item) => item.delta > 0)
+              .map((item) => `${item.itemId} ×${item.delta}`);
+            setRewardModal({
+              title: `${names[bossId] ?? "Bos"} Dikalahkan!`,
+              subtitle: bossId === "tw" ? "Menara Angin telah menuntaskan ujianmu." : bossId === "na" ? "Jalan menuju Menara Angin kini terbuka." : "Satu ancaman besar telah tumbang.",
+              xp: xpEarned,
+              gold: goldEarned,
+              items: rewardItems,
+            });
+            setNotice(`${names[bossId] ?? "Bos"} dikalahkan!`);
           }
         }
         previousSliceRef.current = {
@@ -352,6 +363,7 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
           battle: nextBattle,
           towerFloor: nextTowerFloor,
           deadBossIds: nextDeadBossIds,
+          inventory: state.player.inventory.items.map((item) => ({ ...item })),
         };
       }, 100); // 10 Hz HUD update
 
@@ -420,6 +432,25 @@ export function RPGGame({ playerId, playerName, mapId = DESA_VERTICAL_SLICE.mapI
         <RPGMenuPanel tab={menuTab} mapId={hudState?.mapId ?? mapId} quest={quest} gold={gold} inventory={menuInventory} equipment={menuEquipment} onClose={() => setMenuTab(null)} onEquip={(itemId) => { if (engineRef.current?.equipItem(itemId)) setNotice("Perlengkapan diperbarui."); }} />
       ) : null}
 
+
+      {rewardModal ? (
+        <div className="absolute inset-0 z-[80] flex items-center justify-center bg-black/65 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md overflow-hidden rounded-[28px] border border-amber-200/30 bg-[#171612] text-stone-100 shadow-2xl">
+            <div className="bg-gradient-to-br from-amber-500/25 via-transparent to-emerald-500/10 px-6 pb-5 pt-6 text-center">
+              <div className="mx-auto grid h-16 w-16 place-items-center rounded-full border border-amber-200/30 bg-amber-400/15 text-3xl">⚔</div>
+              <p className="mt-3 text-[10px] font-black uppercase tracking-[0.25em] text-amber-300">Kemenangan</p>
+              <h2 className="mt-1 text-2xl font-black">{rewardModal.title}</h2>
+              <p className="mt-1 text-sm text-stone-300">{rewardModal.subtitle}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-3 px-6 py-5">
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center"><div className="text-2xl font-black text-sky-300">+{rewardModal.xp}</div><div className="mt-1 text-[10px] font-black uppercase tracking-widest text-stone-500">XP</div></div>
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center"><div className="text-2xl font-black text-amber-300">+{rewardModal.gold}</div><div className="mt-1 text-[10px] font-black uppercase tracking-widest text-stone-500">Emas</div></div>
+            </div>
+            {rewardModal.items.length ? <div className="px-6 pb-5"><p className="mb-2 text-[10px] font-black uppercase tracking-widest text-stone-500">Barang diperoleh</p><div className="flex flex-wrap gap-2">{rewardModal.items.map((item) => <span key={item} className="rounded-xl border border-amber-200/15 bg-amber-400/10 px-3 py-2 text-xs font-bold text-amber-100">{item}</span>)}</div></div> : null}
+            <div className="border-t border-white/10 p-4"><button type="button" onClick={() => setRewardModal(null)} className="min-h-12 w-full rounded-xl bg-amber-400 px-4 font-black text-stone-950 hover:bg-amber-300">Lanjutkan Petualangan</button></div>
+          </div>
+        </div>
+      ) : null}
       <RPGDialogue
         session={dialogue}
         quest={quest}
