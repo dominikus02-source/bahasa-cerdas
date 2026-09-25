@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, CalendarDays, Sparkles, Ticket } from "lucide-react";
 
-const COUPON_CODE = "BCGURUKUPON1000";
+const COUPON_CODE = "bcgurucerdas1000";
 
 /**
  * Promo Guru Cerdas — khusus paket BULANAN.
