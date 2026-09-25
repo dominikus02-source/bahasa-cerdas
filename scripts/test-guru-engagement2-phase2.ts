@@ -18,6 +18,7 @@ const read = (p: string) => readFileSync(join(process.cwd(), p), "utf8");
 const api = read("app/api/guru/berkarya/route.ts");
 const berkaryaUi = read("components/guru/GuruBerkarya.tsx");
 const beranda = read("app/(dashboard)/guru/beranda/page.tsx");
+const homeV3 = read("components/guru/TeacherHomeV3.tsx");
 const artikelEditor = read("app/(dashboard)/guru/artikel/page.tsx");
 const teacherXp = read("lib/gamification/teacher-xp.ts");
 const leaderboardApi = read("app/api/guru/leaderboard/route.ts");
@@ -75,7 +76,7 @@ ok("LeaderboardCard tetap periode WEEKLY default", /useState<TeacherLeaderboardP
 ok("GuruBerkarya tanpa polling/interval berulang", !/setInterval|setTimeout|refetch|polling/.test(berkaryaUi));
 
 // ── Bonus: wiring & microcopy motivasional ──────────────────────────────────
-ok("Beranda memasang GuruBerkarya dengan misiStatus", /<GuruBerkarya misiStatus=\{misiStatus\} \/>/.test(beranda));
+ok("Beranda V3 memasang GuruBerkarya compact dengan misiStatus", /<GuruBerkarya misiStatus=\{misiStatus\} compact \/>/.test(homeV3) && /<TeacherHomeV3/.test(beranda));
 ok("GuruBerkarya menerima prop misiStatus", /misiStatus\?: MisiGuruStatus \| null/.test(berkaryaUi));
 ok("Microcopy CTA membaca misi artikel (sudah/sedang berkarya)", /m\.id === "artikel"/.test(berkaryaUi));
 ok("CTA menampilkan XP riil dari GURU_XP_NILAI (via API meta, tanpa hardcode)", /\+{xp} XP/.test(berkaryaUi) && /meta\.xpArtikel/.test(berkaryaUi));
