@@ -899,6 +899,7 @@ const VISUAL_ATLAS_LAYOUT: Array<[string, string, number, number]> = [
   ["enemy_korog","monsters",0,160], ["enemy_korog_perang","monsters",240,160], ["enemy_golem_batu","monsters",480,160], ["enemy_korog_bayangan","monsters",720,160],
   ["boss_raja_korog","bosses",0,320], ["boss_golem_agung","bosses",240,320], ["boss_naga_abu","bosses",480,320], ["boss_penguasa_menara","bosses",720,320],
   ["prop_house_village","props",0,480], ["prop_tree_round","props",240,480], ["prop_well","props",480,480], ["prop_banner","props",720,480],
+  ["prop_bamboo_grove","props",0,640], ["prop_shrine_gate","props",240,640], ["prop_lantern","props",480,640], ["prop_wooden_bridge","props",720,640],
 ];
 const NPC_RUNTIME_ATLAS = "/game/rpg/visual/rpg_npc_atlas.svg";
 const NPC_RUNTIME_ENTRIES: RpgAssetEntry[] = [
@@ -914,7 +915,7 @@ const NPC_RUNTIME_ENTRIES: RpgAssetEntry[] = [
 
 const VISUAL_ATLAS_ENTRIES: RpgAssetEntry[] = VISUAL_ATLAS_LAYOUT.map(([id, category, x, y]) => ({
   id, category, source: "generated-runtime-atlas",
-  path: VISUAL_RUNTIME_ATLAS, width: 960, height: 640, frames: 1,
+  path: VISUAL_RUNTIME_ATLAS, width: 960, height: 800, frames: 1,
   animationState: null, direction: null, origin: { x: 0.5, y: 1.0 },
   logicalScale: 1, alpha: true, status: "READY" as const, confidence: "reviewed" as const,
   sourceRect: { x, y, width: 240, height: 160 },
