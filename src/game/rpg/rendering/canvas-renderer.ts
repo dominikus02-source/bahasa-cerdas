@@ -143,6 +143,7 @@ export function createCanvasRenderer(
   const argaImages = new Map<string, HTMLImageElement>();
   const requestedArgaPaths = new Set<string>();
   let lastPlayerPosition: { x: number; y: number } | null = null;
+  let visualPlayerPosition: { x: number; y: number } | null = null;
   let lastPlayerMoveAt = 0;
 
   // Presentation-only combat feel. Authoritative battle state remains untouched.
@@ -455,19 +456,58 @@ export function createCanvasRenderer(
     }
   }
 
+  function isInteractionAllowed(interaction: { kind: string; ref: string }): boolean {
+    if (
+      interaction.kind === "NPC" &&
+      allowedNpcIds &&
+      !allowedNpcIds.includes(interaction.ref.replace(/^npc\./, ""))
+    ) return false;
+    return true;
+  }
+
+  function interactionLabel(interaction: { kind: string; ref: string }): string {
+    if (interaction.kind === "NPC") {
+      const names: Record<string, string> = {
+        "npc.ki": "Ki Jaka", "npc.ratmi": "Bu Ratmi", "npc.sari": "Bu Sari",
+        "npc.eyang": "Eyang Kartala", "npc.empu": "Pak Empu", "npc.bagas": "Bagas",
+        "npc.tani": "Pak Warsa", "npc.pendaki": "Pendaki",
+      };
+      return names[interaction.ref] ?? "Karakter";
+    }
+    if (interaction.kind === "CHEST") return "Peti";
+    if (interaction.kind === "PORTAL") return "Gerbang";
+    return "Interaksi";
+  }
+
   /** Render interaction points (portals, chests). */
   function renderInteractions(state: RPGGameState, camera: RPGCameraState, allowedNpcIds?: readonly string[]) {
     const zoom = clampZoom(camera.zoom ?? 1);
+    const nearest = findNearestInteraction(state.world, state.player.position);
     for (const interaction of state.world.interactions) {
-      if (
-        interaction.kind === "NPC" &&
-        allowedNpcIds &&
-        !allowedNpcIds.includes(interaction.ref.replace(/^npc\./, ""))
-      ) continue;
+      if (!isInteractionAllowed(interaction)) continue;
       const screen = worldToScreenScaled(
         interaction.position, camera,
         state.world.tiles.width, state.world.tiles.height,
       );
+
+      if (nearest?.id === interaction.id && isInteractionAllowed(interaction)) {
+        const pulse = 0.5 + Math.sin(performance.now() / 260) * 0.15;
+        ctx.save();
+        ctx.globalAlpha = 0.28 + pulse * 0.18;
+        ctx.strokeStyle = "#fde68a";
+        ctx.lineWidth = Math.max(1.5, 2 * zoom);
+        ctx.beginPath();
+        ctx.arc(screen.x, screen.y - 2 * zoom, 22 * zoom + pulse * 3 * zoom, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.fillStyle = "#fde68a";
+        ctx.beginPath();
+        ctx.moveTo(screen.x, screen.y - 30 * zoom);
+        ctx.lineTo(screen.x - 5 * zoom, screen.y - 38 * zoom);
+        ctx.lineTo(screen.x + 5 * zoom, screen.y - 38 * zoom);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
 
       switch (interaction.kind) {
         case "PORTAL":
@@ -559,10 +599,6 @@ export function createCanvasRenderer(
     const player = state.player;
     const zoom = clampZoom(camera.zoom ?? 1);
     // Feet origin: gameplay position == bottom-center contact point.
-    const feet = worldToScreenScaled(
-      player.position, camera,
-      state.world.tiles.width, state.world.tiles.height,
-    );
     const r = 12 * zoom;
     const now = performance.now();
     if (
@@ -573,6 +609,31 @@ export function createCanvasRenderer(
       lastPlayerPosition = { ...player.position };
       lastPlayerMoveAt = now;
     }
+
+    // Presentation-only locomotion smoothing. Authoritative position stays
+    // untouched; the sprite eases toward it so fixed-tick movement reads as
+    // continuous motion instead of a sequence of micro-snaps.
+    if (!visualPlayerPosition) {
+      visualPlayerPosition = { ...player.position };
+    } else {
+      const dx = player.position.x - visualPlayerPosition.x;
+      const dy = player.position.y - visualPlayerPosition.y;
+      const distance = Math.hypot(dx, dy);
+      if (distance > 0.14) {
+        visualPlayerPosition = { ...player.position };
+      } else {
+        const smoothing = 0.24;
+        visualPlayerPosition = {
+          x: visualPlayerPosition.x + dx * smoothing,
+          y: visualPlayerPosition.y + dy * smoothing,
+        };
+      }
+    }
+
+    const feet = worldToScreenScaled(
+      visualPlayerPosition, camera,
+      state.world.tiles.width, state.world.tiles.height,
+    );
 
     // Shadow (engine-baked ellipse at the feet origin, never in sprite art)
     ctx.globalAlpha = 0.2;
@@ -624,33 +685,49 @@ export function createCanvasRenderer(
     drawTriangle(feet.x, feet.y - r, 6 * zoom, player.facing, "#fff");
   }
 
-  /** Render interaction prompt when near an interactable. */
+  /** Render contextual interaction prompt when near an interactable. */
   function renderInteractionPrompt(state: RPGGameState, camera: RPGCameraState, allowedNpcIds?: readonly string[]) {
     const nearest = findNearestInteraction(state.world, state.player.position);
-    if (!nearest) return;
-    if (
-      nearest.kind === "NPC" &&
-      allowedNpcIds &&
-      !allowedNpcIds.includes(nearest.ref.replace(/^npc\./, ""))
-    ) return;
+    if (!nearest || !isInteractionAllowed(nearest)) return;
 
     const screen = worldToScreenScaled(
       nearest.position, camera,
       state.world.tiles.width, state.world.tiles.height,
     );
-    const promptY = screen.y - 30;
+    const zoom = clampZoom(camera.zoom ?? 1);
+    const pulse = 0.5 + Math.sin(performance.now() / 320) * 0.12;
+    const action = nearest.kind === "NPC" ? "Bicara" : nearest.kind === "CHEST" ? "Buka" : "Masuk";
+    const label = `${action} · ${interactionLabel(nearest)}`;
 
-    // Draw "E" prompt
-    ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
-    ctx.beginPath();
-    ctx.roundRect(screen.x - 12, promptY - 10, 24, 20, 4);
-    ctx.fill();
-
-    ctx.fillStyle = "#fff";
-    ctx.font = "bold 12px sans-serif";
+    ctx.save();
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("E", screen.x, promptY);
+    ctx.font = `700 ${Math.round(11 * zoom)}px sans-serif`;
+    const textWidth = ctx.measureText(label).width;
+    const boxW = textWidth + 54 * zoom;
+    const boxH = 28 * zoom;
+    const promptY = screen.y - 46 * zoom;
+
+    ctx.globalAlpha = 0.82 + pulse * 0.12;
+    ctx.fillStyle = "rgba(15, 23, 42, 0.86)";
+    ctx.beginPath();
+    ctx.roundRect(screen.x - boxW / 2, promptY - boxH / 2, boxW, boxH, 9 * zoom);
+    ctx.fill();
+
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = "#fbbf24";
+    ctx.beginPath();
+    ctx.roundRect(screen.x - boxW / 2 + 7 * zoom, promptY - 9 * zoom, 22 * zoom, 18 * zoom, 5 * zoom);
+    ctx.fill();
+
+    ctx.fillStyle = "#451a03";
+    ctx.font = `900 ${Math.round(10 * zoom)}px sans-serif`;
+    ctx.fillText("E", screen.x - boxW / 2 + 18 * zoom, promptY);
+
+    ctx.fillStyle = "#fff7ed";
+    ctx.font = `700 ${Math.round(11 * zoom)}px sans-serif`;
+    ctx.fillText(label, screen.x + 12 * zoom, promptY);
+    ctx.restore();
   }
 
   function updateCombatFeedback(
