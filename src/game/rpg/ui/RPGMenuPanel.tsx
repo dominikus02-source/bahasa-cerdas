@@ -79,7 +79,7 @@ export function RPGMenuPanel({ tab, mapId, quest, gold, inventory, equipment, on
               {(["weaponId","armorId","accessoryId"] as const).map((slot) => {
                 const id = equipment[slot];
                 const def = id ? EQUIPMENT.find((e) => e.id === id) : null;
-                return <div key={slot} className="rounded-2xl border border-white/10 bg-white/5 p-3"><div className="text-[10px] font-black uppercase tracking-widest text-stone-500">{slot.replace("Id","")}</div><div className="mt-1 text-sm font-bold">{def?.name ?? "Kosong"}</div></div>;
+                return <div key={slot} className="rounded-2xl border border-white/10 bg-white/5 p-3"><div className="text-[10px] font-black uppercase tracking-widest text-stone-500">{slot.replace("Id","")}</div><div className="mt-2 flex items-center gap-3"><div className="grid h-12 w-12 place-items-center rounded-xl border border-amber-200/10 bg-black/20">{def ? <img src={equipmentIconFor(def.id)} alt="" aria-hidden width={42} height={42} className="object-contain" /> : <span className="text-lg text-stone-600">—</span>}</div><div><div className="text-sm font-bold">{def?.name ?? "Kosong"}</div>{def ? <div className="mt-1 text-[10px] text-amber-300">{Object.entries(def.modifiers).map(([k,v]) => `+${v} ${k.toUpperCase()}`).join(" · ")}</div> : null}</div></div></div>;
               })}
             </div>
             <p className="mt-4 text-xs text-stone-400">State inventaris dan perlengkapan mengikuti penyimpanan RPG.</p>
