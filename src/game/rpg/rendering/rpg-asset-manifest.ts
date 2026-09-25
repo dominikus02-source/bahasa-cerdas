@@ -892,44 +892,22 @@ const REFERENCE_ENTRIES: RpgAssetEntry[] = [
 ];
 
 
-/** P2.11 visual completion atlas — extracted from the canonical RPG asset reference sheet. */
-const VISUAL_RUNTIME_ATLAS = "/game/rpg/visual/rpg_runtime_atlas.png";
-const VISUAL_ATLAS_ENTRIES: RpgAssetEntry[] = [
-  // P2.11 candidate runtime IDs. Exact source rectangles are intentionally
-  // omitted until the real binary atlas is available and visually verified.
-  ["npc_ki_jaka_full","npcs"],
-  ["npc_bu_ratmi","npcs"],
-  ["npc_bu_sari","npcs"],
-  ["npc_eyang_kartala","npcs"],
-  ["npc_pak_empu","npcs"],
-  ["enemy_korog","monsters"],
-  ["enemy_korog_perang","monsters"],
-  ["enemy_golem_batu","monsters"],
-  ["enemy_korog_bayangan","monsters"],
-  ["boss_raja_korog","bosses"],
-  ["boss_golem_agung","bosses"],
-  ["boss_naga_abu","bosses"],
-  ["boss_penguasa_menara","bosses"],
-  ["prop_house_village","props"],
-  ["prop_tree_round","props"],
-  ["prop_well","props"],
-].map(([id, category]) => ({
-  id,
-  category,
-  source: "asset-sheet-reference-extraction",
-  path: VISUAL_RUNTIME_ATLAS,
-  width: 0,
-  height: 0,
-  frames: 0,
-  animationState: null,
-  direction: null,
-  origin: { x: 0.5, y: 1.0 },
-  logicalScale: 1,
-  alpha: true,
-  status: "MISSING" as const,
-  confidence: "unverified" as const,
-  note: "P2.11 candidate: runtime binary atlas and exact crop geometry are pending. Never render until the actual binary is added and verified.",
-})) as RpgAssetEntry[];
+/** Founder Lab runtime atlas — vector production fallback for the full vertical slice. */
+const VISUAL_RUNTIME_ATLAS = "/game/rpg/visual/rpg_runtime_atlas.svg";
+const VISUAL_ATLAS_LAYOUT: Array<[string, string, number, number]> = [
+  ["npc_ki_jaka_full","npcs",0,0], ["npc_bu_ratmi","npcs",240,0], ["npc_bu_sari","npcs",480,0], ["npc_eyang_kartala","npcs",720,0],
+  ["enemy_korog","monsters",0,160], ["enemy_korog_perang","monsters",240,160], ["enemy_golem_batu","monsters",480,160], ["enemy_korog_bayangan","monsters",720,160],
+  ["boss_raja_korog","bosses",0,320], ["boss_golem_agung","bosses",240,320], ["boss_naga_abu","bosses",480,320], ["boss_penguasa_menara","bosses",720,320],
+  ["prop_house_village","props",0,480], ["prop_tree_round","props",240,480], ["prop_well","props",480,480], ["prop_banner","props",720,480],
+];
+const VISUAL_ATLAS_ENTRIES: RpgAssetEntry[] = VISUAL_ATLAS_LAYOUT.map(([id, category, x, y]) => ({
+  id, category, source: "generated-runtime-atlas",
+  path: VISUAL_RUNTIME_ATLAS, width: 960, height: 640, frames: 1,
+  animationState: null, direction: null, origin: { x: 0.5, y: 1.0 },
+  logicalScale: 1, alpha: true, status: "READY" as const, confidence: "reviewed" as const,
+  sourceRect: { x, y, width: 240, height: 160 },
+  note: "Founder Lab vector atlas: cohesive Nusantara storybook silhouettes; replace with final painted source art without changing entity keys.",
+}));
 
 export const RPG_ASSET_MANIFEST: RpgAssetEntry[] = [
   ...VISUAL_ATLAS_ENTRIES,
