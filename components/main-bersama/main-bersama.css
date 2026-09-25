@@ -3262,3 +3262,663 @@
     transition: none !important;
   }
 }
+
+
+/* ─────────────────────────────────────────────────────────────
+   Projector layout guard v4 — Kota + Jelajah
+   Wide-screen composition replaces long vertical stacks. All important
+   content stays inside explicit visual/meter regions so SVG glow, badges,
+   podium, ranking, and controls cannot overlap each other.
+   ───────────────────────────────────────────────────────────── */
+
+.mb-pj {
+  height: 100dvh;
+  min-height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
+.mb-pj-head {
+  flex: none;
+}
+
+.mb-pj-head-right {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.mb-pj-head-right .mb-pj-head-meta {
+  min-width: 0;
+}
+
+.mb-pj-head-right .mb-pj-pkg {
+  display: block;
+  max-width: min(30vw, 360px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mb-pj-utility-controls {
+  position: static;
+  right: auto;
+  bottom: auto;
+  z-index: auto;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.mb-pj-utility-controls .mb-pj-fullscreen {
+  position: static;
+  right: auto;
+  bottom: auto;
+  min-height: 40px;
+  padding: 7px 13px;
+  box-shadow: none;
+}
+
+.mb-pj-phase {
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.mb-pj-stage-shell {
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+  padding: 10px;
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,.08);
+  background:
+    radial-gradient(420px 220px at 50% 18%, rgba(38,157,151,.07), transparent 75%),
+    rgba(5, 20, 33, .32);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+.mb-pj-stage-visual {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 17px;
+}
+
+.mb-pj-stage-visual > .mb-kota-scene,
+.mb-pj-stage-visual > .mb-jelajah-stage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+.mb-pj-stage-meter {
+  flex: none;
+  min-width: 0;
+}
+
+.mb-pj-stage-meter .mb-city {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 9px 13px 14px;
+  border-radius: 16px;
+}
+
+.mb-pj-stage-meter .mb-city-head {
+  margin-bottom: 8px;
+}
+
+.mb-pj-stage-meter .mb-city-rail {
+  height: 52px;
+  margin-inline: 16px;
+}
+
+.mb-pj-stage-meter .mb-city-track {
+  top: 15px;
+}
+
+.mb-pj-stage-meter .mb-city-stop-ring {
+  width: 33px;
+  height: 33px;
+}
+
+.mb-pj-stage-meter .mb-city-stop-label {
+  font-size: .58rem;
+}
+
+@media (min-width: 900px) {
+  .mb-pj-phase-play {
+    display: grid;
+    grid-template-columns: minmax(0, 1.16fr) minmax(360px, .84fr);
+    grid-template-rows: minmax(0, 1fr);
+    align-items: stretch;
+    justify-content: stretch;
+    gap: 18px;
+    padding: 16px 28px 18px;
+  }
+
+  .mb-pj-play-main,
+  .mb-pj-play-side {
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .mb-pj-play-main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .mb-pj-play-main .mb-pj-q {
+    width: 100%;
+    max-width: none;
+    min-height: 0;
+  }
+
+  .mb-pj-play-main .mb-qcard {
+    max-height: min(66dvh, 560px);
+  }
+
+  .mb-pj-play-side {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .mb-pj-play-side .mb-pj-participation {
+    flex: none;
+    width: 100%;
+    min-width: 0;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+  }
+
+  .mb-pj-play-side .mb-pj-stage-shell {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 100%;
+  }
+
+  .mb-pj-phase-play-jelajah-kata .mb-pj-stage-shell {
+    max-height: min(57dvh, 470px);
+  }
+
+  .mb-pj-phase-play-kota-cahaya .mb-pj-stage-shell {
+    max-height: min(61dvh, 500px);
+  }
+
+  .mb-pj-phase-discussion .mb-pj-play-main {
+    justify-content: flex-start;
+  }
+
+  .mb-pj-phase-discussion .mb-pj-play-main .mb-qcard {
+    max-height: min(43dvh, 360px);
+  }
+
+  .mb-pj-phase-discussion .mb-pj-reveal {
+    flex: 0 1 auto;
+    min-height: 0;
+    max-height: min(24dvh, 180px);
+    overflow: auto;
+    padding: 10px 14px;
+    border-radius: 16px;
+    background: rgba(255,255,255,.045);
+    border: 1px solid rgba(255,255,255,.07);
+  }
+
+  .mb-pj-phase-discussion .mb-pj-reveal-answer {
+    font-size: clamp(1.7rem, 2.4vw, 2.45rem);
+    line-height: 1.05;
+    overflow-wrap: anywhere;
+  }
+
+  .mb-pj-phase-discussion .mb-pj-reveal-explain {
+    margin-top: 6px;
+    font-size: .9rem;
+    line-height: 1.45;
+  }
+
+  .mb-pj-phase-discussion .mb-pj-leader {
+    flex: none;
+    margin: 0 !important;
+    padding: 4px 10px;
+    min-height: 48px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.045);
+  }
+}
+
+.mb-pj-phase-closed {
+  justify-content: flex-start;
+  gap: 14px;
+  padding-top: 18px;
+}
+
+.mb-pj-closed-head {
+  flex: none;
+  width: min(94vw, 1050px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.mb-pj-closed-head .mb-pj-closed {
+  min-width: 0;
+}
+
+.mb-pj-stage-shell-closed {
+  flex: 1 1 auto;
+  width: min(94vw, 1060px);
+  min-height: 0;
+  max-height: min(68dvh, 560px);
+  margin: 0 auto;
+}
+
+.mb-pj-stage-shell-closed.mb-pj-stage-shell-kota {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(300px, .5fr);
+  align-items: stretch;
+  gap: 12px;
+}
+
+.mb-pj-stage-shell-closed.mb-pj-stage-shell-kota .mb-pj-stage-meter {
+  align-self: center;
+}
+
+.mb-pj-lobby-stage > .mb-pj-stage-shell-lobby {
+  position: relative;
+  z-index: 1;
+  width: min(90vw, 980px);
+  max-width: 980px;
+  min-height: 0;
+  max-height: 300px;
+  margin: 6px auto 0;
+}
+
+.mb-pj-stage-shell-lobby.mb-pj-stage-shell-kota {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(300px, .65fr);
+  align-items: stretch;
+}
+
+.mb-pj-stage-shell-lobby.mb-pj-stage-shell-kota .mb-pj-stage-meter {
+  align-self: center;
+}
+
+.mb-pj-phase-final {
+  justify-content: flex-start;
+  gap: 12px;
+  padding: 16px 28px 20px;
+}
+
+.mb-pj-phase-final .mb-pj-final-title {
+  flex: none;
+  font-size: clamp(2rem, 3vw, 2.85rem);
+  line-height: 1;
+  text-align: center;
+}
+
+.mb-pj-final-layout {
+  flex: 1 1 auto;
+  width: min(96vw, 1320px);
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  align-items: stretch;
+  gap: 20px;
+  overflow: hidden;
+}
+
+.mb-pj-final-layout-jelajah {
+  grid-template-columns: minmax(0, 1.48fr) minmax(350px, .72fr);
+}
+
+.mb-pj-final-layout-kota {
+  grid-template-columns: minmax(0, 1.55fr) minmax(330px, .65fr);
+}
+
+.mb-pj-final-world,
+.mb-pj-final-score {
+  min-width: 0;
+  min-height: 0;
+}
+
+.mb-pj-final-world {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 22px;
+  padding: 10px;
+  background:
+    radial-gradient(520px 240px at 50% 12%, rgba(36, 166, 157, .07), transparent 76%),
+    rgba(4, 18, 31, .3);
+  border: 1px solid rgba(255,255,255,.07);
+}
+
+.mb-pj-final-world > .mb-jelajah-stage,
+.mb-pj-final-world > .mb-kota-scene {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+.mb-pj-final-score {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.mb-pj-final-score .mb-podium {
+  flex: none;
+  padding-top: 0;
+}
+
+.mb-pj-final-score .mb-pj-ranking {
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  gap: 7px;
+  overflow: hidden;
+}
+
+.mb-pj-final-score .mb-pj-rank-row {
+  min-height: 46px;
+  padding: 7px 12px;
+}
+
+.mb-pj-final-score .mb-pj-rank {
+  font-size: 1.25rem;
+}
+
+.mb-pj-final-score .mb-pj-rank-team {
+  min-width: 0;
+  font-size: 1rem;
+}
+
+.mb-pj-final-score-kota {
+  align-items: stretch;
+  justify-content: center;
+  gap: 18px;
+}
+
+.mb-pj-final-score-kota .mb-city {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.mb-pj-final-score-kota .mb-pj-mission {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(255,201,77,.08);
+  border: 1px solid rgba(255,201,77,.16);
+  text-align: center;
+  font-size: clamp(1rem, 1.35vw, 1.18rem);
+  line-height: 1.45;
+}
+
+@media (min-width: 900px) and (max-height: 800px) {
+  .mb-pj-head {
+    min-height: 56px;
+    padding: 7px 18px;
+    gap: 12px;
+  }
+
+  .mb-pj-title {
+    font-size: 1.5rem;
+  }
+
+  .mb-pj-head-right {
+    gap: 7px;
+  }
+
+  .mb-pj-head-right .mb-pj-pkg {
+    max-width: 240px;
+  }
+
+  .mb-pj-head-right .mb-pj-mode,
+  .mb-pj-head-right .mb-pj-pkg,
+  .mb-pj-head-right .mb-pj-class {
+    padding: 4px 9px;
+    font-size: .78rem;
+  }
+
+  .mb-pj-utility-controls .mb-sound-toggle,
+  .mb-pj-utility-controls .mb-pj-fullscreen {
+    min-height: 36px;
+    height: 36px;
+  }
+
+  .mb-pj-utility-controls .mb-pj-fullscreen {
+    padding-inline: 11px;
+    font-size: .78rem;
+  }
+
+  .mb-pj-phase-play {
+    grid-template-columns: minmax(0, 1.2fr) minmax(330px, .8fr);
+    gap: 12px;
+    padding: 10px 18px 12px;
+  }
+
+  .mb-pj-play-main .mb-qcard {
+    max-height: calc(100dvh - 90px);
+  }
+
+  .mb-pj-phase-question .mb-pj-play-side {
+    gap: 8px;
+  }
+
+  .mb-pj-play-side .mb-pj-participation {
+    min-height: 34px;
+    padding: 3px 8px;
+  }
+
+  .mb-pj-phase-play-jelajah-kata .mb-pj-stage-shell,
+  .mb-pj-phase-play-kota-cahaya .mb-pj-stage-shell {
+    max-height: calc(100dvh - 132px);
+    padding: 7px;
+    gap: 7px;
+  }
+
+  .mb-pj-stage-meter .mb-city {
+    padding: 7px 10px 10px;
+  }
+
+  .mb-pj-stage-meter .mb-city-head {
+    margin-bottom: 5px;
+  }
+
+  .mb-pj-stage-meter .mb-city-rail {
+    height: 42px;
+    margin-inline: 12px;
+  }
+
+  .mb-pj-stage-meter .mb-city-stop-ring {
+    width: 28px;
+    height: 28px;
+  }
+
+  .mb-pj-stage-meter .mb-city-stop-label {
+    font-size: .52rem;
+  }
+
+  .mb-pj-phase-discussion {
+    padding-top: 8px;
+  }
+
+  .mb-pj-phase-discussion .mb-pj-play-main .mb-qcard {
+    max-height: min(42dvh, 290px);
+  }
+
+  .mb-pj-phase-discussion .mb-pj-reveal {
+    max-height: 150px;
+  }
+
+  .mb-pj-phase-closed {
+    padding: 12px 18px 14px;
+    gap: 10px;
+  }
+
+  .mb-pj-closed {
+    font-size: 1.9rem;
+  }
+
+  .mb-pj-stage-shell-closed {
+    max-height: calc(100dvh - 138px);
+    padding: 8px;
+  }
+
+  .mb-pj-stage-shell-closed.mb-pj-stage-shell-kota {
+    grid-template-columns: minmax(0, 1.55fr) minmax(270px, .45fr);
+  }
+
+  .mb-pj-lobby-stage > .mb-pj-stage-shell-lobby {
+    max-height: 210px;
+    padding: 7px;
+  }
+
+  .mb-pj-stage-shell-lobby.mb-pj-stage-shell-kota {
+    grid-template-columns: minmax(0, 1.45fr) minmax(255px, .55fr);
+  }
+
+  .mb-pj-phase-final {
+    gap: 8px;
+    padding: 10px 18px 12px;
+  }
+
+  .mb-pj-phase-final .mb-pj-final-title {
+    font-size: 2rem;
+  }
+
+  .mb-pj-final-layout {
+    width: min(97vw, 1240px);
+    gap: 12px;
+  }
+
+  .mb-pj-final-layout-jelajah {
+    grid-template-columns: minmax(0, 1.55fr) minmax(330px, .65fr);
+  }
+
+  .mb-pj-final-layout-kota {
+    grid-template-columns: minmax(0, 1.62fr) minmax(300px, .58fr);
+  }
+
+  .mb-pj-final-world {
+    padding: 7px;
+  }
+
+  .mb-pj-final-score {
+    gap: 7px;
+  }
+
+  .mb-pj .mb-pj-phase-final .mb-podium {
+    padding-top: 0;
+  }
+
+  .mb-pj .mb-pj-phase-final .mb-podium-col {
+    gap: 3px;
+  }
+
+  .mb-pj .mb-pj-phase-final .mb-podium .mb-podium-col[data-rank="1"] .mb-podium-step {
+    height: 76px;
+  }
+
+  .mb-pj .mb-pj-phase-final .mb-podium .mb-podium-col[data-rank="2"] .mb-podium-step {
+    height: 55px;
+  }
+
+  .mb-pj .mb-pj-phase-final .mb-podium .mb-podium-col[data-rank="3"] .mb-podium-step {
+    height: 42px;
+  }
+
+  .mb-pj-final-score .mb-pj-ranking {
+    gap: 5px;
+  }
+
+  .mb-pj-final-score .mb-pj-rank-row {
+    min-height: 40px;
+    padding: 5px 10px;
+  }
+
+  .mb-pj-final-score .mb-pj-rank {
+    font-size: 1.08rem;
+  }
+
+  .mb-pj-final-score .mb-pj-rank-team,
+  .mb-pj-final-score .mb-pj-rank-pct {
+    font-size: .9rem;
+  }
+
+  .mb-pj-final-score-kota {
+    gap: 12px;
+  }
+
+  .mb-pj-final-score-kota .mb-pj-mission {
+    padding: 10px 12px;
+    font-size: .94rem;
+  }
+}
+
+/* Tablet/narrow projector fallback: vertical flow is allowed to scroll rather
+   than overlap. Classroom desktop/projector remains strictly one-screen. */
+@media (max-width: 899px) {
+  .mb-pj {
+    height: auto;
+    max-height: none;
+    min-height: 100dvh;
+    overflow-y: auto;
+  }
+
+  .mb-pj-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .mb-pj-head-right {
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .mb-pj-phase {
+    overflow: visible;
+  }
+
+  .mb-pj-phase-play,
+  .mb-pj-final-layout,
+  .mb-pj-stage-shell-closed.mb-pj-stage-shell-kota,
+  .mb-pj-stage-shell-lobby.mb-pj-stage-shell-kota {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mb-pj-stage-shell {
+    max-height: none;
+  }
+}

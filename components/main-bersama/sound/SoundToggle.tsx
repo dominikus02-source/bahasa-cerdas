@@ -1,5 +1,7 @@
 "use client";
 
+import { Volume1, Volume2, VolumeX } from "lucide-react";
+
 export function SoundToggle({
   enabled,
   unlocked,
@@ -17,6 +19,7 @@ export function SoundToggle({
     : unlocked
       ? "Suara aktif"
       : "Aktifkan suara";
+  const Icon = !enabled ? VolumeX : unlocked ? Volume2 : Volume1;
 
   return (
     <button
@@ -31,9 +34,10 @@ export function SoundToggle({
         .join(" ")}
       onClick={onToggle}
       aria-pressed={active}
+      aria-label={label}
       title={label}
     >
-      <span aria-hidden>{!enabled ? "🔇" : unlocked ? "🔊" : "🔈"}</span>
+      <Icon aria-hidden size={18} strokeWidth={2.25} />
       {compact ? null : <span>{label}</span>}
     </button>
   );
