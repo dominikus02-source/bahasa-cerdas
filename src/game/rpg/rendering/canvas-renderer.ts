@@ -757,7 +757,47 @@ export function createCanvasRenderer(
     camera: RPGCameraState,
     state: RPGGameState,
     nowMs: number,
-  ): void {\n    impactBursts = impactBursts.filter((burst) => impactBurstOpacity(burst, nowMs) > 0);\n    for (const burst of impactBursts) {\n      const opacity = impactBurstOpacity(burst, nowMs);\n      if (opacity <= 0) continue;\n      const center = worldToScreenScaled(\n        { x: burst.x, y: burst.y }, camera,\n        state.world.tiles.width, state.world.tiles.height,\n      );\n      const count = burst.victory ? 12 : 8;\n      for (let i = 0; i < count; i += 1) {\n        const particle = impactBurstParticle(burst, i, nowMs);\n        const point = worldToScreenScaled(\n          {\n            x: particle.x,\n            y: particle.y,\n          },\n          camera,\n          state.world.tiles.width,\n          state.world.tiles.height,\n        );\n        ctx.save();\n        ctx.globalAlpha = particle.opacity * 0.92;\n        ctx.strokeStyle = burst.victory ? "#fbbf24" : "#fff7ed";\n        ctx.lineWidth = Math.max(1, particle.size);\n        const dx = point.x - center.x;\n        const dy = point.y - center.y;\n        const length = Math.max(3, particle.size * 2.5);\n        const magnitude = Math.hypot(dx, dy) || 1;\n        const nx = dx / magnitude;\n        const ny = dy / magnitude;\n        ctx.beginPath();\n        ctx.moveTo(point.x - nx * length, point.y - ny * length);\n        ctx.lineTo(point.x, point.y);\n        ctx.stroke();\n        ctx.restore();\n      }\n    }\n  }\n\n  /** Main render function — called by game loop. */
+  ): void {
+    impactBursts = impactBursts.filter((burst) => impactBurstOpacity(burst, nowMs) > 0);
+    for (const burst of impactBursts) {
+      const opacity = impactBurstOpacity(burst, nowMs);
+      if (opacity <= 0) continue;
+      const center = worldToScreenScaled(
+        { x: burst.x, y: burst.y }, camera,
+        state.world.tiles.width, state.world.tiles.height,
+      );
+      const count = burst.victory ? 12 : 8;
+      for (let i = 0; i < count; i += 1) {
+        const particle = impactBurstParticle(burst, i, nowMs);
+        const point = worldToScreenScaled(
+          {
+            x: particle.x,
+            y: particle.y,
+          },
+          camera,
+          state.world.tiles.width,
+          state.world.tiles.height,
+        );
+        ctx.save();
+        ctx.globalAlpha = particle.opacity * 0.92;
+        ctx.strokeStyle = burst.victory ? "#fbbf24" : "#fff7ed";
+        ctx.lineWidth = Math.max(1, particle.size);
+        const dx = point.x - center.x;
+        const dy = point.y - center.y;
+        const length = Math.max(3, particle.size * 2.5);
+        const magnitude = Math.hypot(dx, dy) || 1;
+        const nx = dx / magnitude;
+        const ny = dy / magnitude;
+        ctx.beginPath();
+        ctx.moveTo(point.x - nx * length, point.y - ny * length);
+        ctx.lineTo(point.x, point.y);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+  }
+
+  /** Main render function — called by game loop. */
   function render(
     state: RPGGameState,
     camera: RPGCameraState,
