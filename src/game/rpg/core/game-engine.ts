@@ -653,12 +653,26 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
     for (const id of applied.deadBossIds) deadBossIds.add(id);
     for (const id of res.deadEnemyIds) liveEnemies = markDead(liveEnemies, id);
 
+    // Naga Abu is a persisted boss instance, so its gate flag is derived at
+    // the engine boundary from the same authoritative boss-kill fact. The
+    // battle core intentionally does not invent this flag; the engine owns
+    // progression projection and persistence.
+    if (applied.deadBossIds.includes("na")) {
+      flags.nagaDead = true;
+    }
+
     // P2.6I.3: Sync battle-origin world state to server-authoritative columns.
     for (const id of applied.deadBossIds) {
       fireServerCall(
         mutateQuestState("BOSS_KILL", `qk-boss-${battle.battleId}-${id}`, { bossId: id }),
         { key: `q-boss-${battle.battleId}-${id}`, idempotent: true },
       );
+      if (id === "na") {
+        fireServerCall(
+          mutateQuestState("FLAG", `qk-bflag-${battle.battleId}-nagaDead`, { flagName: "nagaDead" }),
+          { key: `q-bflag-${battle.battleId}-nagaDead`, idempotent: true },
+        );
+      }
     }
     for (const [k, v] of Object.entries(applied.flagsAdded)) {
       if (v) {
