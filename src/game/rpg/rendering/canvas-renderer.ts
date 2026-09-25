@@ -250,6 +250,15 @@ export function createCanvasRenderer(
   /** Render tile grid (world-authoritative scale + viewport culling). */
   function renderTiles(state: RPGGameState, camera: RPGCameraState) {
     const { tiles } = state.world;
+
+    // Desa Suryakerta has an authored scene-level composition. It owns the
+    // presentation surface while the canonical tile grid remains authoritative
+    // for collision, portals, chests and gameplay. This avoids exposing the
+    // underlying 64px tile seams as the visual language of the village.
+    if (state.world.mapId === "map.desa" && renderSceneBackdrop(state, camera)) {
+      return;
+    }
+
     const zoom = clampZoom(camera.zoom ?? 1);
     const tilePx = LOGICAL_TILE_PX * zoom;
 
@@ -384,6 +393,48 @@ export function createCanvasRenderer(
       void tileLoader.load(entry.path);
     }
     return null;
+  }
+
+  function renderSceneBackdrop(
+    state: RPGGameState,
+    camera: RPGCameraState,
+  ): boolean {
+    const entry = manifestLookup("scene_desa_suryakerta");
+    if (!entry || entry.status !== "READY") return false;
+
+    const cached = tileLoader.cached(entry.path);
+    if (!cached) {
+      if (!requestedTilePaths.has(entry.path)) {
+        requestedTilePaths.add(entry.path);
+        void tileLoader.load(entry.path);
+      }
+      return false;
+    }
+
+    const topLeft = worldToScreenScaled(
+      { x: 0, y: 0 },
+      camera,
+      state.world.tiles.width,
+      state.world.tiles.height,
+    );
+    const bottomRight = worldToScreenScaled(
+      { x: 1, y: 1 },
+      camera,
+      state.world.tiles.width,
+      state.world.tiles.height,
+    );
+
+    ctx.save();
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(
+      cached as unknown as CanvasImageSource,
+      topLeft.x,
+      topLeft.y,
+      bottomRight.x - topLeft.x,
+      bottomRight.y - topLeft.y,
+    );
+    ctx.restore();
+    return true;
   }
 
   /** Render world entities (trees, houses, bushes, etc.). */
