@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" shape-rendering="crispEdges">
+<defs><linearGradient id="g" x2="0" y2="1"><stop stop-color="#76a85a"/><stop offset="1" stop-color="#5c9149"/></linearGradient><linearGradient id="d" x2="0" y2="1"><stop stop-color="#c48b55"/><stop offset="1" stop-color="#9b693f"/></linearGradient><linearGradient id="w" x2="0" y2="1"><stop stop-color="#4b8ea0"/><stop offset="1" stop-color="#326d82"/></linearGradient></defs>
+<!-- 12 terrain slots, 240x128 -->
+<g transform="translate(0 0)"><rect width="240" height="128" fill="url(#g)"/><path d="M18 34h8M80 88h7M158 26h9M204 103h8M112 52h5" stroke="#8bb968" stroke-width="4"/></g>
+<g transform="translate(240 0)"><rect width="240" height="128" fill="url(#g)"/><path d="M28 76h10M65 25h8M138 102h8M190 48h10M218 88h6" stroke="#6f9f50" stroke-width="4"/><path d="M48 104h4M176 20h4" stroke="#b0c873" stroke-width="3"/></g>
+<g transform="translate(480 0)"><rect width="240" height="128" fill="url(#g)"/><path d="M20 20h16M92 70h10M168 35h12M210 104h12" stroke="#d4cf75" stroke-width="4"/><path d="M60 42l4 4M144 96l4 4M198 60l4 4" stroke="#f0d28a" stroke-width="3"/></g>
+<g transform="translate(720 0)"><rect width="240" height="128" fill="url(#d)"/><path d="M18 36h42M92 76h52M166 28h36M48 108h72M174 100h42" stroke="#d39a61" stroke-width="5"/></g>
+<g transform="translate(0 128)"><rect width="240" height="128" fill="url(#d)"/><path d="M22 30h34M80 104h60M156 48h48M176 90h30" stroke="#815638" stroke-width="5"/></g>
+<g transform="translate(240 128)"><rect width="240" height="128" fill="#a97547"/><path d="M10 72h55M92 24h42M158 92h66M42 110h52" stroke="#c58b56" stroke-width="6"/></g>
+<g transform="translate(480 128)"><rect width="240" height="128" fill="url(#w)"/><path d="M18 32q24-10 48 0t48 0M136 74q24-10 48 0t48 0M52 108q22-8 44 0" fill="none" stroke="#79b7bd" stroke-width="4"/></g>
+<g transform="translate(720 128)"><rect width="240" height="128" fill="url(#w)"/><path d="M0 18q30 12 60 0t60 0t60 0t60 0M20 92q26-10 52 0t52 0t52 0" fill="none" stroke="#9bcac6" stroke-width="4"/></g>
+<g transform="translate(0 256)"><rect width="240" height="128" fill="url(#g)"/><path d="M0 0h240v18H0z" fill="#d1a16a"/><path d="M0 18h240v8H0z" fill="#b87e4d"/></g>
+<g transform="translate(240 256)"><rect width="240" height="128" fill="url(#g)"/><path d="M0 0h240v18H0z" fill="#9a6a43"/><path d="M0 18h240v8H0z" fill="#d1a16a"/></g>
+<g transform="translate(480 256)"><rect width="240" height="128" fill="url(#g)"/><path d="M0 0h18v128H0z" fill="#d1a16a"/><path d="M18 0h8v128H18z" fill="#b87e4d"/></g>
+<g transform="translate(720 256)"><rect width="240" height="128" fill="url(#g)"/><path d="M222 0h18v128h-18z" fill="#d1a16a"/><path d="M214 0h8v128h-8z" fill="#b87e4d"/></g>
+<g transform="translate(0 384)"><rect width="240" height="128" fill="url(#g)"/><path d="M0 0h240v18H0zM0 110h240v18H0z" fill="#6d9b4e"/></g>
+<g transform="translate(240 384)"><rect width="240" height="128" fill="url(#d)"/><path d="M0 0h240v16H0zM0 112h240v16H0z" fill="#6f4c34"/></g>
+<g transform="translate(480 384)"><rect width="240" height="128" fill="url(#g)"/><path d="M0 0h18v128H0zM222 0h18v128H222z" fill="#6d9b4e"/></g>
+<g transform="translate(720 384)"><rect width="240" height="128" fill="url(#w)"/><path d="M0 0h240v14H0z" fill="#a7cfca"/><path d="M0 114h240v14H0z" fill="#2c6576"/></g>
+<g transform="translate(0 512)"><rect width="240" height="128" fill="#6b9650"/><path d="M0 0h240v128H0z" fill="none" stroke="#8ab266" stroke-width="8"/></g>
+<g transform="translate(240 512)"><rect width="240" height="128" fill="#8b775f"/><path d="M0 0h240v128H0z" fill="none" stroke="#b59d7c" stroke-width="8"/></g>
+</svg>
