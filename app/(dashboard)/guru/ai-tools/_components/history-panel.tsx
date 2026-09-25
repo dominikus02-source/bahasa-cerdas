@@ -123,7 +123,7 @@ export function HistoryPanel({ items, loading, activeFilter, onFilterChange, onO
               value={searchQuery ?? ""}
               onChange={(e) => onSearchChange(e.target.value)}
               placeholder="Cari riwayat AI..."
-              className="w-full pl-8 pr-3 py-1.5 text-xs border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none"
+              className="w-full pl-8 pr-3 py-1.5 text-xs border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-500 outline-none"
             />
           </div>
         )}
@@ -136,8 +136,8 @@ export function HistoryPanel({ items, loading, activeFilter, onFilterChange, onO
               onClick={() => onFilterChange(opt.value)}
               className={`text-[11px] px-2.5 py-1 rounded-full border transition-all ${
                 activeFilter === opt.value
-                  ? "bg-emerald-100 border-emerald-200 text-emerald-700 font-medium"
-                  : "bg-white border-gray-200 text-gray-500 hover:border-emerald-200"
+                  ? "bg-blue-100 border-blue-200 text-blue-700 dark:bg-blue-950/50 dark:border-blue-900/70 dark:text-blue-300 font-medium"
+                  : "bg-white border-gray-200 text-gray-500 hover:border-blue-200"
               }`}
             >
               {opt.label}
@@ -162,7 +162,7 @@ export function HistoryPanel({ items, loading, activeFilter, onFilterChange, onO
             {displayItems.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center gap-3 p-2.5 rounded-xl border border-gray-100 hover:border-emerald-100 hover:bg-emerald-50/30 transition-all group"
+                className="flex items-center gap-3 p-2.5 rounded-xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50/50 transition-all group"
               >
                 <div className="p-1.5 rounded-lg bg-gray-50 text-gray-400 flex-shrink-0">
                   {AGENT_ICONS[item.agentId] ?? <FileText className="w-3.5 h-3.5" />}
@@ -176,7 +176,7 @@ export function HistoryPanel({ items, loading, activeFilter, onFilterChange, onO
                         onChange={(e) => setEditValue(e.target.value)}
                         onKeyDown={(e) => { if (e.key === "Enter") handleSaveEdit(item.id); if (e.key === "Escape") handleCancelEdit(); }}
                         maxLength={200}
-                        className="flex-1 text-xs px-1.5 py-0.5 border border-emerald-300 rounded focus:ring-2 focus:ring-emerald-400 outline-none"
+                        className="flex-1 text-xs px-1.5 py-0.5 border border-blue-300 rounded focus:ring-2 focus:ring-blue-300 outline-none"
                         autoFocus
                       />
                       <button onClick={() => handleSaveEdit(item.id)} className="p-0.5 text-emerald-600 hover:text-emerald-700"><Check className="w-3 h-3" /></button>
@@ -209,7 +209,7 @@ export function HistoryPanel({ items, loading, activeFilter, onFilterChange, onO
                   )}
                   <button
                     onClick={() => onOpen(item)}
-                    className="p-1.5 rounded-lg text-gray-400 hover:text-emerald-600 hover:bg-emerald-50"
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50"
                     title="Buka"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
