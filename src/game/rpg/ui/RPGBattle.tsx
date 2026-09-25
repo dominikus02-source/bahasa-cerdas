@@ -90,6 +90,7 @@ export function RPGBattle({ battle, onAttack, onUseItem, onFlee }: RPGBattleProp
         >
           <div className="h-full bg-red-500 rounded-full transition-all duration-300" style={{ width: `${enemyPercent}%` }} />
         </div>
+        </div>
 
         {/* Player vitals (snapshot display only) */}
         <div className="mt-2 flex items-center justify-between gap-2 text-xs font-bold text-[var(--game-text-secondary)]">
