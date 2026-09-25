@@ -214,7 +214,7 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
           </div>
           <div>
             <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100">Guru Berkarya</h2>
-            <p className="text-gray-500 text-xs sm:text-sm">Karya terbaru dari para guru. Ikut menginspirasi?</p>
+            <p className="text-xs text-slate-500 sm:text-sm dark:text-slate-400">Karya terbaru dari para guru. Ikut menginspirasi?</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -278,10 +278,10 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
                         <img
                           src={a.author.avatar}
                           alt={penulis}
-                          className="h-10 w-10 rounded-full object-cover ring-2 ring-blue-100"
+                          className="h-10 w-10 rounded-full object-cover ring-2 ring-blue-100 dark:ring-blue-900/70"
                         />
                       ) : (
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-sky-500 text-sm font-bold text-white ring-2 ring-blue-100">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-sky-500 text-sm font-bold text-white ring-2 ring-blue-100 dark:ring-blue-900/70">
                           {inisial(penulis)}
                         </div>
                       )}
@@ -348,7 +348,7 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
                           <MessageCircle size={13} />
                           {a.commentCount}
                         </button>
-                        <ShareButton url={`/artikel/${a.slug}`} title={a.title} />
+                        <ShareButton url={`/artikel/${a.slug}`} title={a.title} compact={compact} />
                       </div>
                     </div>
                   </div>
