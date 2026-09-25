@@ -46,9 +46,10 @@ export interface GameDefinition {
    *   selama belum diluncurkan.
    * - tidak diisi/`false` (PUBLISHED): discovery normal.
    *
-   * Status saat ini: Pendekar Suryakerta (`rpg`) = PUBLISHED + `premiumOnly`
-   * (lihat field di bawah). Publikasi = VISIBEL; playable-nya dijaga
-   * entitlement server-side, bukan flag ini.
+   * Status saat ini: Pendekar Suryakerta (`rpg`) = UNPUBLISHED + `premiumOnly`.
+   * Selama development, game tidak boleh muncul di discovery maupun route
+   * publik. Saat launch nanti, Founder dapat mengubah flag ini tanpa
+   * mengubah entitlement Premium.
     */
   unpublished?: boolean;
   /**
