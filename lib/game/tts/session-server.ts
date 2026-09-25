@@ -221,7 +221,7 @@ export async function finishTtsSession(input: {
     });
     if (claimed.count === 0) return false;
 
-    if (coins > 0) {
+    if (coins > 0 && finalXp > 0) {
       await tx.coinTransaction.create({
         data: { userId: input.userId, amount: coins, reason: "MAIN_GAME", reference: `tts-${session.id}` },
       });

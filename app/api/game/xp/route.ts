@@ -136,7 +136,7 @@ export async function POST(req: NextRequest) {
     // standar ekonomi yang sama: sekitar 3–5 koin berdasarkan akurasi,
     // sehingga permainan memberi progres tanpa menjadi mesin farming koin.
     let koinDidapat = 0
-    if (!isGuru && reward.coins > 0) {
+    if (!isGuru && reward.coins > 0 && hasil.xpDiberikan > 0) {
       try {
         const [coinTx] = await db.$transaction([
           db.coinTransaction.create({
