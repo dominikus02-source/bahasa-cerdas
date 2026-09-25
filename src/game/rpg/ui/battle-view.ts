@@ -29,6 +29,7 @@ export interface BattleViewModel {
   phase: string;
   turn: number;
   enemyName: string;
+  enemyAsset: string | null;
   enemyHp: number;
   enemyMaxHp: number;
   isBoss: boolean;
@@ -71,6 +72,7 @@ export function resolveBattleView(args: {
     phase: battle.phase,
     turn: battle.turn,
     enemyName: foe?.name ?? "-",
+    enemyAsset: foe?.asset ?? null,
     enemyHp: foe?.hp ?? 0,
     enemyMaxHp: foe?.maxHp ?? 0,
     isBoss: foe?.boss === true,
