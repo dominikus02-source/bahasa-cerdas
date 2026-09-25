@@ -137,7 +137,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
       header={
         <header className="shrink-0 sticky top-0 z-30 flex h-14 items-center justify-between gap-3 border-b border-blue-100/80 bg-white/88 px-4 backdrop-blur-xl md:px-6 dark:border-blue-950/70 dark:bg-[#08182b]/92">
           <div className="flex min-w-0 items-center gap-2">
-            <BackHome href="/guru/beranda" />
+            <BackHome href="/guru/beranda" className="hover:text-blue-700 hover:bg-blue-50 dark:hover:text-blue-300 dark:hover:bg-blue-950/50" />
             <div className="hidden shrink-0 items-center gap-2 sm:flex">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white shadow-sm shadow-blue-500/20">
                 <GraduationCap className="h-4 w-4" strokeWidth={2} />
