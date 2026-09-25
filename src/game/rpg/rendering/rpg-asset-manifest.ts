@@ -893,7 +893,7 @@ const REFERENCE_ENTRIES: RpgAssetEntry[] = [
 
 
 /** Founder Lab runtime atlas — vector production fallback for the full vertical slice. */
-const VISUAL_RUNTIME_ATLAS = "/game/rpg/visual/rpg_runtime_atlas.svg";
+const VISUAL_RUNTIME_ATLAS = "/game/rpg/visual/rpg_suryakerta_v2_environment.svg";
 const VISUAL_ATLAS_LAYOUT: Array<[string, string, number, number]> = [
   ["npc_ki_jaka_full","npcs",0,0], ["npc_bu_ratmi","npcs",240,0], ["npc_bu_sari","npcs",480,0], ["npc_eyang_kartala","npcs",720,0],
   ["enemy_korog","monsters",0,160], ["enemy_korog_perang","monsters",240,160], ["enemy_golem_batu","monsters",480,160], ["enemy_korog_bayangan","monsters",720,160],
@@ -919,7 +919,7 @@ const VISUAL_ATLAS_ENTRIES: RpgAssetEntry[] = VISUAL_ATLAS_LAYOUT.map(([id, cate
   animationState: null, direction: null, origin: { x: 0.5, y: 1.0 },
   logicalScale: 1, alpha: true, status: "READY" as const, confidence: "reviewed" as const,
   sourceRect: { x, y, width: 240, height: 160 },
-  note: "Founder Lab vector atlas: cohesive Nusantara storybook silhouettes; replace with final painted source art without changing entity keys.",
+  note: "Suryakerta V2 environment atlas: cohesive stepped/pixel village props; canonical environment family.",
 }));
 
 export const RPG_ASSET_MANIFEST: RpgAssetEntry[] = [
