@@ -87,56 +87,55 @@ function grect(m: ProtoGrid, x: number, y: number, w: number, h: number, t: numb
 function buildDesaGrid(): ProtoGrid {
   const T = RPG_TILES;
   const m = newGrid(46, 36);
+
+  // Authored village layout: a readable central settlement, clear road
+  // hierarchy, a river with one meaningful crossing, and quiet residential
+  // pockets. Gameplay coordinates remain tile-authoritative.
   grect(m, 0, 0, 46, 36, T.GR);
-  grect(m, 27, 2, 2, 32, T.WA);
-  grect(m, 27, 17, 2, 1, T.PA); // P2.8.6-B2: dock crossing → walkable path tiles
-  const house = (x0: number, y0: number, dx: number) => {
-    grect(m, x0, y0, 5, 2, T.RF); grect(m, x0, y0 + 2, 5, 1, T.WL); gset(m, dx, y0 + 2, T.DR);
-  };
-  house(4, 12, 6); house(11, 12, 13); house(5, 22, 7);
-  // P2.8.6-B1: Ki Jaka's house — compact village pocket VISIBLE in camera viewport.
-  // Camera centers on player at (12,19), viewport y≈0.430-0.653 → visible tiles y≈14-24.
-  // House below main road: RF(16-20,18-19), WL(16-20,20), DR(18,20).
-  house(16, 18, 18);
-  // Trees on main road flanking house entrance.
-  gset(m, 16, 17, T.TR); gset(m, 20, 17, T.TR);
-  // Path from Ki Jaka area down.
-  gset(m, 18, 21, T.PA); gset(m, 18, 22, T.PA);
-  // Decorative rocks near house.
-  gset(m, 15, 20, T.RO); gset(m, 20, 20, T.RO);
-  gset(m, 11, 18, T.WE);
-  grect(m, 5, 17, 22, 1, T.PA);
-  grect(m, 12, 18, 1, 10, T.PA);
-  grect(m, 7, 28, 10, 4, T.FA);
-  grect(m, 29, 2, 15, 32, T.GD);
-  const rnd = mulberry32(20240613);
-  for (let y = 2; y < 34; y++) for (let x = 29; x < 44; x++)
-    if (gget(m, x, y) === T.GD && rnd() < 0.52) gset(m, x, y, T.TR);
-  grect(m, 29, 17, 5, 1, T.PA);
-  grect(m, 33, 8, 2, 10, T.GD);
-  grect(m, 34, 8, 5, 1, T.GD);
-  grect(m, 31, 18, 2, 9, T.GD);
-  grect(m, 29, 25, 5, 3, T.GD);
-  grect(m, 39, 3, 5, 6, T.RO);
-  grect(m, 39, 8, 5, 3, T.RL);
-  gset(m, 41, 8, T.CV);
-  gset(m, 31, 26, T.CH);
-  grect(m, 32, 22, 3, 1, T.GD); grect(m, 33, 21, 3, 3, T.GD);
-  gset(m, 34, 22, T.GE);
-  gset(m, 4, 26, T.GE);
-  const PROTECT = [[6,15],[13,15],[7,25],[11,18],[9,19],[17,20],[14,27],[12,18],[12,19],[31,26],
-    [16,20],[18,20],[17,19],[17,21],[10,18],[12,20],[13,27],[15,27],[16,16],[4,26],[34,22],[41,8],[41,9],
-    [16,17],[20,17],[18,21],[15,20],[20,20],[18,19]]; // P2.8.6-B1: Ki Jaka village pocket (viewport-visible)
-  const prot = (x: number, y: number) => PROTECT.some((p) => Math.abs(p[0] - x) <= 1 && Math.abs(p[1] - y) <= 1);
-  for (let y = 2; y < 34; y++) for (let x = 2; x < 27; x++) {
-    if (gget(m, x, y) !== T.GR || prot(x, y)) continue;
-    const r = rnd();
-    if (r < 0.07) gset(m, x, y, T.FL);
-    else if (r < 0.09) gset(m, x, y, T.TR);
-    else if (r < 0.105) gset(m, x, y, T.RO);
+
+  // River on the eastern edge of the village. It is deliberately continuous;
+  // the bridge crossing below is the only walkable cut through it.
+  grect(m, 31, 2, 3, 32, T.WA);
+  grect(m, 31, 18, 3, 1, T.PA);
+
+  // Main village road: vertical spine + central plaza + short branches.
+  grect(m, 17, 4, 3, 27, T.PA);
+  grect(m, 6, 17, 27, 3, T.PA);
+  grect(m, 9, 10, 11, 2, T.PA);
+  grect(m, 20, 10, 9, 2, T.PA);
+  grect(m, 8, 25, 10, 2, T.PA);
+  grect(m, 20, 25, 10, 2, T.PA);
+
+  // Central plaza.
+  grect(m, 14, 15, 9, 7, T.PA);
+
+  // Two cultivated pockets provide visual identity without becoming noise.
+  grect(m, 5, 27, 7, 4, T.FA);
+  grect(m, 23, 27, 6, 4, T.FA);
+
+  // Small dirt transition areas around the homes.
+  grect(m, 4, 8, 5, 3, T.GD);
+  grect(m, 23, 8, 6, 3, T.GD);
+  grect(m, 4, 21, 6, 3, T.GD);
+  grect(m, 23, 21, 6, 3, T.GD);
+
+  // A few authored rocks/flowers are gameplay-neutral decorative tiles.
+  gset(m, 5, 6, T.FL); gset(m, 8, 7, T.FL);
+  gset(m, 27, 6, T.FL); gset(m, 29, 7, T.FL);
+  gset(m, 5, 24, T.RO); gset(m, 29, 24, T.RO);
+  gset(m, 6, 32, T.FL); gset(m, 27, 32, T.FL);
+
+  // Village edge. Collision still treats out-of-bounds as solid, but the
+  // authored border keeps the camera visually framed.
+  for (let x = 0; x < 46; x++) {
+    gset(m, x, 0, T.TR); gset(m, x, 1, T.TR);
+    gset(m, x, 34, T.TR); gset(m, x, 35, T.TR);
   }
-  for (let x = 0; x < 46; x++) { gset(m, x, 0, T.TR); gset(m, x, 1, T.TR); gset(m, x, 34, T.TR); gset(m, x, 35, T.TR); }
-  for (let y = 0; y < 36; y++) { gset(m, 0, y, T.TR); gset(m, 1, y, T.TR); gset(m, 44, y, T.TR); gset(m, 45, y, T.TR); }
+  for (let y = 0; y < 36; y++) {
+    gset(m, 0, y, T.TR); gset(m, 1, y, T.TR);
+    gset(m, 44, y, T.TR); gset(m, 45, y, T.TR);
+  }
+
   return m;
 }
 
