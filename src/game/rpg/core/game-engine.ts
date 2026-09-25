@@ -1771,6 +1771,39 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
         state = processCommand(state, moveCmd);
       }
 
+      // Menara Angin floor progression: the SR tile is the canonical
+      // ascent trigger. A floor only advances after every active enemy is
+      // defeated, matching the prototype's ascend() rule.
+      if (state.world.mapId === "map.menara" && state.battle === null && towerFloor > 0) {
+        const cm = getCanonicalMap("map.menara");
+        const pt = cm ? normToTile(cm, state.player.position) : null;
+        const onStairs = pt?.x === 12 && pt.y === 2;
+        if (onStairs && liveEnemies.every((enemy) => !enemy.alive)) {
+          towerFloor += 1;
+          const healedHp = Math.min(
+            state.player.stats.maxHp,
+            state.player.stats.hp + Math.round(state.player.stats.maxHp * 0.3),
+          );
+          const healedMp = Math.min(
+            state.player.stats.maxMp,
+            state.player.stats.mp + Math.round(state.player.stats.maxMp * 0.3),
+          );
+          state = {
+            ...state,
+            player: {
+              ...state.player,
+              stats: { ...state.player.stats, hp: healedHp, mp: healedMp },
+            },
+          };
+          liveEnemies = buildTowerWave(towerFloor, deadBossIds);
+          eventBus.emit({
+            type: "TOAST",
+            playerId: state.session.playerId,
+            message: `MENARA ANGIN — LANTAI ${towerFloor}`,
+          });
+        }
+      }
+
       // Respawn timers for defeated non-boss enemies (canonical maps,
       // no active battle). Wall-clock dt from the fixed-timestep loop.
       {
