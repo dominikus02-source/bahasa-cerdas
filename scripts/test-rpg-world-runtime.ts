@@ -103,6 +103,25 @@ check("10. world swap complete + source untouched", (() => {
     world.interactions.length === gunung.portals.length + gunung.chests.length + gunung.npcSpawns.length;
 })());
 
+console.log("\n🎨 10b. Authored visual entities");
+check("10b. authored props survive canonical → runtime", (() => {
+  const desaWorld = loadCanonicalMap("map.desa")!;
+  const gunungWorld = loadCanonicalMap("map.gunung")!;
+  const menaraWorld = loadCanonicalMap("map.menara")!;
+  const expected = ["bamboo.grove", "shrine.gate", "lantern.stone", "bridge.wood"];
+  return expected.every((asset) => desaWorld.entities.some((e) => e.asset === asset)) &&
+    expected.every((asset) => gunungWorld.entities.some((e) => e.asset === asset)) &&
+    menaraWorld.entities.some((e) => e.asset === "shrine.gate") &&
+    menaraWorld.entities.filter((e) => e.asset === "lantern.stone").length === 2;
+})());
+check("10b. entity coordinates normalized + deterministic", (() => {
+  const a = loadCanonicalMap("map.desa")!;
+  const b = loadCanonicalMap("map.desa")!;
+  return a.entities.length > 0 &&
+    a.entities.every((e) => e.position.x >= 0 && e.position.x <= 1 && e.position.y >= 0 && e.position.y <= 1) &&
+    JSON.stringify(a.entities) === JSON.stringify(b.entities);
+})());
+
 console.log("\n📦 11-12. Chest runtime");
 check("11. adjacent interact grants once", (() => {
   // cv1 at (31,26); stand (31,27) facing up — tile walkable (GD)
