@@ -17,7 +17,7 @@
  * world/grid-coords.ts. Tile art NEVER defines collision (see world/tiles.ts).
  */
 
-/** Prototype tile ids — numeric values VERBATIM (TS=16 in prototype). */
+/** Canonical tile ids retained from the prototype vocabulary. */
 export const RPG_TILES = {
   GR: 0, // grass
   PA: 1, // path
@@ -88,45 +88,47 @@ function buildDesaGrid(): ProtoGrid {
   const T = RPG_TILES;
   const m = newGrid(46, 36);
 
-  // Authored village layout: a readable central settlement, clear road
-  // hierarchy, a river with one meaningful crossing, and quiet residential
-  // pockets. Gameplay coordinates remain tile-authoritative.
+  // DESA SURYAKERTA — canonical Bab I composition.
+  // Derived from the supplied Bab I prototype blueprint: compact civic plaza,
+  // readable dirt-road hierarchy, residential pockets, northern shrine,
+  // southern river/farm belt, and one meaningful bridge.
+  // Collision remains tile-authoritative; this function defines topology only.
   grect(m, 0, 0, 46, 36, T.GR);
 
-  // River on the eastern edge of the village. It is deliberately continuous;
-  // the bridge crossing below is the only walkable cut through it.
-  grect(m, 34, 2, 3, 32, T.WA);
-  grect(m, 34, 18, 3, 1, T.PA);
+  // Southern river: a natural village boundary with one meaningful crossing.
+  grect(m, 2, 27, 42, 3, T.WA);
+  grect(m, 21, 27, 4, 3, T.PA);
 
-  // Main village road: vertical spine + central plaza + short branches.
-  grect(m, 17, 4, 3, 27, T.PA);
-  grect(m, 6, 17, 27, 3, T.PA);
-  grect(m, 9, 10, 11, 2, T.PA);
-  grect(m, 20, 10, 9, 2, T.PA);
-  grect(m, 8, 25, 10, 2, T.PA);
-  grect(m, 20, 25, 10, 2, T.PA);
+  // Main circulation is earth/dirt. Stone is reserved for the civic plaza.
+  grect(m, 21, 5, 3, 22, T.GD);
+  grect(m, 5, 17, 31, 3, T.GD);
+  grect(m, 8, 10, 8, 2, T.GD);
+  grect(m, 26, 10, 8, 2, T.GD);
+  grect(m, 8, 22, 9, 2, T.GD);
+  grect(m, 27, 22, 8, 2, T.GD);
+  grect(m, 21, 29, 3, 5, T.GD);
 
-  // Central plaza.
-  grect(m, 14, 15, 9, 7, T.PA);
+  // Compact central plaza: visually distinct, but never allowed to dominate.
+  grect(m, 14, 13, 17, 9, T.PA);
 
-  // Two cultivated pockets provide visual identity without becoming noise.
-  grect(m, 5, 27, 7, 4, T.FA);
-  grect(m, 23, 27, 6, 4, T.FA);
+  // Residential courtyards / dirt transitions.
+  grect(m, 5, 7, 7, 4, T.GD);
+  grect(m, 27, 7, 7, 4, T.GD);
+  grect(m, 5, 21, 8, 4, T.GD);
+  grect(m, 27, 21, 8, 4, T.GD);
 
-  // Small dirt transition areas around the homes.
-  grect(m, 4, 8, 5, 3, T.GD);
-  grect(m, 23, 8, 6, 3, T.GD);
-  grect(m, 4, 21, 6, 3, T.GD);
-  grect(m, 23, 21, 6, 3, T.GD);
+  // Rice fields and gardens south of the river.
+  grect(m, 5, 31, 8, 3, T.FA);
+  grect(m, 29, 31, 9, 3, T.FA);
 
-  // A few authored rocks/flowers are gameplay-neutral decorative tiles.
-  gset(m, 5, 6, T.FL); gset(m, 8, 7, T.FL);
-  gset(m, 27, 6, T.FL); gset(m, 29, 7, T.FL);
-  gset(m, 5, 24, T.RO); gset(m, 29, 24, T.RO);
-  gset(m, 6, 32, T.FL); gset(m, 27, 32, T.FL);
+  // Northern shrine approach / quiet sacred clearing.
+  grect(m, 31, 4, 5, 2, T.GD);
+  grect(m, 32, 6, 3, 5, T.GD);
 
-  // Village edge. Collision still treats out-of-bounds as solid, but the
-  // authored border keeps the camera visually framed.
+  for (const [x, y] of [[5, 6], [13, 8], [30, 6], [36, 11], [4, 24], [37, 23], [15, 31], [27, 32]]) gset(m, x, y, T.FL);
+  for (const [x, y] of [[4, 12], [38, 12], [4, 25], [39, 25]]) gset(m, x, y, T.RO);
+
+  // Framed forest edge; avoid carpeting the playable village with trees.
   for (let x = 0; x < 46; x++) {
     gset(m, x, 0, T.TR); gset(m, x, 1, T.TR);
     gset(m, x, 34, T.TR); gset(m, x, 35, T.TR);
@@ -135,6 +137,9 @@ function buildDesaGrid(): ProtoGrid {
     gset(m, 0, y, T.TR); gset(m, 1, y, T.TR);
     gset(m, 44, y, T.TR); gset(m, 45, y, T.TR);
   }
+
+  // Preserve the existing boss-gated east-side progression corridor.
+  for (let y = 4; y < 27; y++) if (y !== 8 && y !== 9) gset(m, 41, y, T.TR);
 
   return m;
 }
@@ -286,57 +291,52 @@ const chestsOf = (map: CanonicalMapId): CanonicalChest[] =>
 export const WORLD_MAPS: Record<CanonicalMapId, CanonicalMap> = {
   "map.desa": toMap(
     "map.desa", "Desa Suryakerta", desaGrid,
-    { x: 18, y: 19 }, // authored village spawn near central plaza
+    { x: 20, y: 20 },
     portalsOf("map.desa"),
     chestsOf("map.desa"),
     [
-      { id: "ki", name: "Ki Jaka", x: 18, y: 19, dir: "down" },
-      { id: "ratmi", name: "Bu Ratmi", x: 13, y: 15, dir: "down" },
-      { id: "sari", name: "Bu Sari", x: 7, y: 25, dir: "down" },
-      { id: "eyang", name: "Eyang Kartala", x: 17, y: 20, dir: "down" },
-      { id: "bagas", name: "Bagas", x: 9, y: 19, dir: "down" },
-      { id: "tani", name: "Pak Warsa", x: 14, y: 27, dir: "down" },
-      { id: "empu", name: "Pak Empu", x: 16, y: 16, dir: "down" },
+      { id: "ki", name: "Ki Jaka", x: 20, y: 18, dir: "down" },
+      { id: "ratmi", name: "Bu Ratmi", x: 10, y: 12, dir: "down" },
+      { id: "sari", name: "Bu Sari", x: 10, y: 23, dir: "down" },
+      { id: "eyang", name: "Eyang Kartala", x: 17, y: 18, dir: "right" },
+      { id: "bagas", name: "Bagas", x: 12, y: 18, dir: "right" },
+      { id: "tani", name: "Pak Warsa", x: 8, y: 32, dir: "down" },
+      { id: "empu", name: "Pak Empu", x: 29, y: 18, dir: "left" },
     ],
     [
-      { id: "e1", type: "g", x: 33, y: 11, r: 2 }, { id: "e2", type: "g", x: 38, y: 14, r: 2 },
-      { id: "e3", type: "g", x: 32, y: 21, r: 2 }, { id: "e4", type: "g", x: 38, y: 24, r: 2 },
-      { id: "e5", type: "w", x: 38, y: 9, r: 2 }, { id: "e6", type: "w", x: 40, y: 12, r: 1 },
-      { id: "eboss", type: "b", x: 41, y: 10, r: 0 },
+      { id: "e1", type: "g", x: 38, y: 11, r: 2 },
+      { id: "e2", type: "g", x: 39, y: 16, r: 2 },
+      { id: "e3", type: "g", x: 38, y: 21, r: 2 },
+      { id: "e4", type: "g", x: 40, y: 24, r: 2 },
+      { id: "e5", type: "w", x: 40, y: 9, r: 2 },
+      { id: "e6", type: "w", x: 39, y: 14, r: 1 },
+      { id: "eboss", type: "b", x: 41, y: 8, r: 0 },
     ],
     [
-      // Authored town composition: buildings define small residential pockets,
-      // trees frame the settlement, and the river/bridge create a readable edge.
-      { id: "ent.desa-house.1", type: "house", x: 11, y: 10, scale: 1, layer: "BEHIND_ENTITIES", solid: true, asset: "house.village" },
-      { id: "ent.desa-house.2", type: "house", x: 25, y: 10, scale: 1, layer: "BEHIND_ENTITIES", solid: true, asset: "house.village" },
-      { id: "ent.desa-house.3", type: "house", x: 11, y: 24, scale: 0.95, layer: "BEHIND_ENTITIES", solid: true, asset: "house.village" },
-      { id: "ent.desa-house.4", type: "house", x: 25, y: 24, scale: 0.95, layer: "BEHIND_ENTITIES", solid: true, asset: "house.village" },
-      { id: "ent.desa-house.5", type: "house", x: 18, y: 28, scale: 0.9, layer: "BEHIND_ENTITIES", solid: true, asset: "house.village" },
-      { id: "ent.desa-tree.1", type: "tree", x: 4, y: 5, scale: 1, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
-      { id: "ent.desa-tree.2", type: "tree", x: 8, y: 5, scale: 1.1, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
-      { id: "ent.desa-tree.3", type: "tree", x: 13, y: 5, scale: 1, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
-      { id: "ent.desa-tree.4", type: "tree", x: 25, y: 5, scale: 1.1, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
-      { id: "ent.desa-tree.5", type: "tree", x: 28, y: 5, scale: 1, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
-      { id: "ent.desa-tree.6", type: "tree", x: 4, y: 13, scale: 1.05, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
-      { id: "ent.desa-tree.7", type: "tree", x: 7, y: 14, scale: 0.9, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
-      { id: "ent.desa-tree.8", type: "tree", x: 28, y: 14, scale: 1.1, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
-      { id: "ent.desa-tree.9", type: "tree", x: 4, y: 20, scale: 1, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
-      { id: "ent.desa-tree.10", type: "tree", x: 7, y: 21, scale: 1.1, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
-      { id: "ent.desa-tree.11", type: "tree", x: 11, y: 22, scale: 0.9, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
-      { id: "ent.desa-tree.12", type: "tree", x: 24, y: 20, scale: 1, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
-      { id: "ent.desa-tree.13", type: "tree", x: 28, y: 21, scale: 1.05, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
-      { id: "ent.desa-tree.14", type: "tree", x: 25, y: 23, scale: 0.9, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
-      { id: "ent.desa-tree.15", type: "tree", x: 4, y: 32, scale: 1.1, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
-      { id: "ent.desa-tree.16", type: "tree", x: 12, y: 33, scale: 1, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
-      { id: "ent.desa-tree.17", type: "tree", x: 21, y: 32, scale: 1.1, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
-      { id: "ent.desa-tree.18", type: "tree", x: 29, y: 33, scale: 1.05, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
-      { id: "ent.desa-well", type: "well", x: 18, y: 18, scale: 0.95, layer: "BEHIND_ENTITIES", solid: true, asset: "well.stone" },
-      { id: "ent.desa-shrine", type: "shrine", x: 11, y: 15, scale: 0.75, layer: "BEHIND_ENTITIES", solid: true, asset: "shrine.gate" },
-      { id: "ent.desa-shrine-lantern.1", type: "lantern", x: 10, y: 16, scale: 0.75, layer: "FRONT_OF_ENTITIES", solid: false, asset: "lantern.stone" },
-      { id: "ent.desa-shrine-lantern.2", type: "lantern", x: 12, y: 16, scale: 0.75, layer: "FRONT_OF_ENTITIES", solid: false, asset: "lantern.stone" },
-      { id: "ent.desa-bridge", type: "bridge", x: 35, y: 18, scale: 0.95, layer: "BEHIND_ENTITIES", solid: true, asset: "bridge.wood" },
-      { id: "ent.desa-bamboo", type: "bamboo", x: 29, y: 13, scale: 0.9, layer: "BEHIND_ENTITIES", solid: true, asset: "bamboo.grove" },
-      { id: "ent.desa-banner", type: "banner", x: 18, y: 14, scale: 0.75, layer: "FRONT_OF_ENTITIES", solid: false, asset: "banner.village" },
+      { id: "ent.desa-house.1", type: "house", x: 7, y: 7, scale: 0.95, layer: "BEHIND_ENTITIES", solid: true, asset: "house.village" },
+      { id: "ent.desa-house.2", type: "house", x: 27, y: 7, scale: 0.95, layer: "BEHIND_ENTITIES", solid: true, asset: "house.village" },
+      { id: "ent.desa-house.3", type: "house", x: 6, y: 21, scale: 0.9, layer: "BEHIND_ENTITIES", solid: true, asset: "house.village" },
+      { id: "ent.desa-house.4", type: "house", x: 28, y: 21, scale: 0.9, layer: "BEHIND_ENTITIES", solid: true, asset: "house.village" },
+      { id: "ent.desa-house.5", type: "house", x: 12, y: 24, scale: 0.82, layer: "BEHIND_ENTITIES", solid: true, asset: "house.village" },
+      { id: "ent.desa-tree.1", type: "tree", x: 4, y: 5, scale: 1.05, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
+      { id: "ent.desa-tree.2", type: "tree", x: 12, y: 4, scale: 0.95, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
+      { id: "ent.desa-tree.3", type: "tree", x: 25, y: 4, scale: 0.95, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
+      { id: "ent.desa-tree.4", type: "tree", x: 37, y: 5, scale: 1.05, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
+      { id: "ent.desa-tree.5", type: "tree", x: 4, y: 15, scale: 1, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
+      { id: "ent.desa-tree.6", type: "tree", x: 38, y: 15, scale: 1.05, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
+      { id: "ent.desa-tree.7", type: "tree", x: 4, y: 23, scale: 1.05, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
+      { id: "ent.desa-tree.8", type: "tree", x: 38, y: 23, scale: 1.1, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
+      { id: "ent.desa-tree.9", type: "tree", x: 4, y: 32, scale: 1.05, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
+      { id: "ent.desa-tree.10", type: "tree", x: 15, y: 33, scale: 0.95, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
+      { id: "ent.desa-tree.11", type: "tree", x: 27, y: 33, scale: 1, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
+      { id: "ent.desa-tree.12", type: "tree", x: 40, y: 32, scale: 1.05, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
+      { id: "ent.desa-well", type: "well", x: 23, y: 17, scale: 0.85, layer: "BEHIND_ENTITIES", solid: true, asset: "well.stone" },
+      { id: "ent.desa-shrine", type: "shrine", x: 32, y: 5, scale: 0.72, layer: "BEHIND_ENTITIES", solid: true, asset: "shrine.gate" },
+      { id: "ent.desa-shrine-lantern.1", type: "lantern", x: 31, y: 9, scale: 0.72, layer: "FRONT_OF_ENTITIES", solid: false, asset: "lantern.stone" },
+      { id: "ent.desa-shrine-lantern.2", type: "lantern", x: 34, y: 9, scale: 0.72, layer: "FRONT_OF_ENTITIES", solid: false, asset: "lantern.stone" },
+      { id: "ent.desa-bridge", type: "bridge", x: 23, y: 28, scale: 0.9, layer: "BEHIND_ENTITIES", solid: true, asset: "bridge.wood" },
+      { id: "ent.desa-bamboo", type: "bamboo", x: 34, y: 14, scale: 0.82, layer: "BEHIND_ENTITIES", solid: true, asset: "bamboo.grove" },
+      { id: "ent.desa-banner", type: "banner", x: 22, y: 14, scale: 0.72, layer: "FRONT_OF_ENTITIES", solid: false, asset: "banner.village" },
     ],
   ),
   "map.gunung": toMap(
