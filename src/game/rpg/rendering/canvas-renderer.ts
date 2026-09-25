@@ -255,150 +255,9 @@ export function createCanvasRenderer(
    * we reproduce that density inside the current 48px logical gameplay tile
    * so the art reads as a continuous scene instead of oversized texture cards.
    */
-  function renderDesaPrototypeGround(state: RPGGameState, camera: RPGCameraState): void {
-    const { tiles } = state.world;
-    const zoom = clampZoom(camera.zoom ?? 1);
-    const tilePx = LOGICAL_TILE_PX * zoom;
-    const tileIdAt = (x: number, y: number): number => {
-      if (x < 0 || y < 0 || x >= tiles.width || y >= tiles.height) return 2;
-      return Number(tiles.tiles[y * tiles.width + x].split(".")[1]);
-    };
-    const hash = (x: number, y: number, salt = 0): number => {
-      let h = (x * 374761393 + y * 668265263 + salt * 1442695041) | 0;
-      h = Math.imul(h ^ (h >>> 13), 1274126177);
-      h ^= h >>> 16;
-      return (h >>> 0) / 4294967296;
-    };
-    const grass = "#7aa25a";
-    const grass2 = "#6f9852";
-    const path = "#b08d5e";
-    const pathDark = "#94764f";
-    const stone = "#b3ab96";
-    const stoneDark = "#9d957f";
-    const water = "#3f7d8c";
-    const waterLight = "#74b6b1";
-    const farm = "#4e8d84";
-    const shore = "#d6c08c";
-    const bridge = "#9a6a40";
-
-    const drawTile = (x: number, y: number, id: number) => {
-      const screen = worldToScreenScaled(
-        { x: (x + 0.5) / tiles.width, y: (y + 0.5) / tiles.height },
-        camera, tiles.width, tiles.height,
-      );
-      if (screen.x < -tilePx || screen.y < -tilePx || screen.x > width + tilePx || screen.y > height + tilePx) return;
-      const X = Math.round(screen.x - tilePx / 2);
-      const Y = Math.round(screen.y - tilePx / 2);
-      const d = Math.max(1, Math.round(tilePx * 0.055));
-
-      // Prototype vocabulary: trees/props are entity-owned; their grid tile
-      // remains a quiet grass bed underneath them.
-      const baseId = id === 2 || id === 8 || id === 16 || id === 9 || id === 15 ? 0 : id;
-      const fill = baseId === 1 ? path
-        : baseId === 3 ? water
-        : baseId === 4 || baseId === 5 || baseId === 10 ? stoneDark
-        : baseId === 11 ? bridge
-        : baseId === 12 ? farm
-        : baseId === 13 ? path
-        : baseId === 17 ? stone
-        : baseId === 7 ? path
-        : baseId === 6 ? grass2
-        : baseId === 0 ? grass : grass;
-      drawRect(X, Y, Math.ceil(tilePx) + 1, Math.ceil(tilePx) + 1, fill);
-
-      const n = hash(x, y);
-      if (baseId === 0) {
-        // Sparse micro-detail from the prototype: never enough to become a
-        // repeating texture. This is what keeps the village feeling organic.
-        if (n < 0.34) {
-          ctx.fillStyle = n < 0.16 ? "#84ad64" : "#6a9350";
-          ctx.fillRect(X + Math.round(tilePx * 0.18), Y + Math.round(tilePx * 0.30), d, d);
-          ctx.fillRect(X + Math.round(tilePx * 0.62), Y + Math.round(tilePx * 0.70), d, d);
-        }
-        if (id === 8 || id === 16 || n > 0.91) {
-          const fx = X + Math.round(tilePx * (0.25 + hash(x, y, 2) * 0.5));
-          const fy = Y + Math.round(tilePx * (0.22 + hash(x, y, 3) * 0.5));
-          ctx.fillStyle = hash(x, y, 4) > 0.5 ? "#e0c25a" : "#d98f4a";
-          ctx.fillRect(fx, fy, d, d);
-          ctx.fillRect(fx + d, fy + d, d, d);
-        }
-      }
-
-      if (baseId === 1 || baseId === 7) {
-        // Soft path shoulders; no tile outline/grid.
-        const neighbors = [tileIdAt(x, y - 1), tileIdAt(x, y + 1), tileIdAt(x - 1, y), tileIdAt(x + 1, y)];
-        ctx.fillStyle = pathDark;
-        const edge = Math.max(1, Math.round(tilePx * 0.045));
-        if (neighbors[0] === 0 || neighbors[0] === 2 || neighbors[0] === 8 || neighbors[0] === 16) ctx.fillRect(X, Y, tilePx, edge);
-        if (neighbors[1] === 0 || neighbors[1] === 2 || neighbors[1] === 8 || neighbors[1] === 16) ctx.fillRect(X, Y + tilePx - edge, tilePx, edge);
-        if (neighbors[2] === 0 || neighbors[2] === 2 || neighbors[2] === 8 || neighbors[2] === 16) ctx.fillRect(X, Y, edge, tilePx);
-        if (neighbors[3] === 0 || neighbors[3] === 2 || neighbors[3] === 8 || neighbors[3] === 16) ctx.fillRect(X + tilePx - edge, Y, edge, tilePx);
-      }
-
-      if (baseId === 3) {
-        const wave = Math.sin(performance.now() / 850 + x * 0.8 + y * 0.35);
-        ctx.fillStyle = waterLight;
-        ctx.globalAlpha = 0.48;
-        const wy = Y + Math.round(tilePx * (0.28 + ((y + x) % 3) * 0.17));
-        ctx.fillRect(X + Math.round(tilePx * 0.12), wy, Math.round(tilePx * 0.25), Math.max(1, Math.round(tilePx * 0.025)));
-        if (wave > 0) ctx.fillRect(X + Math.round(tilePx * 0.56), wy + Math.round(tilePx * 0.12), Math.round(tilePx * 0.24), Math.max(1, Math.round(tilePx * 0.025)));
-        ctx.globalAlpha = 1;
-      }
-
-      if (baseId === 12) {
-        ctx.fillStyle = "#2e6b4f";
-        ctx.globalAlpha = 0.72;
-        const rows = [0.25, 0.55, 0.82];
-        for (const ry of rows) ctx.fillRect(X + Math.round(tilePx * 0.10), Y + Math.round(tilePx * ry), Math.round(tilePx * 0.80), Math.max(1, Math.round(tilePx * 0.025)));
-        ctx.globalAlpha = 1;
-      }
-
-      if (baseId === 17) {
-        ctx.fillStyle = stoneDark;
-        ctx.globalAlpha = 0.55;
-        ctx.fillRect(X + Math.round(tilePx * 0.18), Y + Math.round(tilePx * 0.72), Math.round(tilePx * 0.64), Math.max(1, Math.round(tilePx * 0.03)));
-        ctx.globalAlpha = 1;
-      }
-
-      if (baseId === 11) {
-        ctx.fillStyle = "#6f492d";
-        for (let r = 0; r < 4; r += 1) {
-          const yy = Y + Math.round(tilePx * (0.12 + r * 0.24));
-          ctx.fillRect(X, yy, tilePx, Math.max(1, Math.round(tilePx * 0.035)));
-        }
-      }
-
-      // Shoreline transition: water meets grass/path with a thin authored edge.
-      if (baseId === 3) {
-        const shoreEdge = Math.max(1, Math.round(tilePx * 0.045));
-        const land = (id2: number) => id2 !== 3 && id2 !== 11;
-        ctx.fillStyle = shore;
-        if (land(tileIdAt(x, y - 1))) ctx.fillRect(X, Y, tilePx, shoreEdge);
-        if (land(tileIdAt(x, y + 1))) ctx.fillRect(X, Y + tilePx - shoreEdge, tilePx, shoreEdge);
-        if (land(tileIdAt(x - 1, y))) ctx.fillRect(X, Y, shoreEdge, tilePx);
-        if (land(tileIdAt(x + 1, y))) ctx.fillRect(X + tilePx - shoreEdge, Y, shoreEdge, tilePx);
-      }
-    };
-
-    ctx.save();
-    ctx.imageSmoothingEnabled = false;
-    for (let y = 0; y < tiles.height; y += 1) {
-      for (let x = 0; x < tiles.width; x += 1) {
-        drawTile(x, y, tileIdAt(x, y));
-      }
-    }
-    ctx.restore();
-  }
-
-  /** Render tile grid. Desa uses the original prototype presentation; other
-   * maps retain their production atlas renderer until their own visual slice
-   * is promoted. */
+  /** Render canonical tile art. Gameplay tile semantics remain in the world model;
+   * this layer only selects the authored READY terrain sprite for each tile. */
   function renderTiles(state: RPGGameState, camera: RPGCameraState) {
-    if (state.world.mapId === "map.desa") {
-      renderDesaPrototypeGround(state, camera);
-      return;
-    }
-
     const { tiles } = state.world;
     const zoom = clampZoom(camera.zoom ?? 1);
     ctx.save();
@@ -414,7 +273,7 @@ export function createCanvasRenderer(
         const tileId = tiles.tiles[y * tiles.width + x];
         const bound = boundTileImage(state.world.mapId, tileId, x, y);
         if (bound) {
-          const targetPx = Math.min(ART_TILE_PX * zoom * 0.72, tilePx * 1.18);
+          const targetPx = tilePx * 1.04;
           const sourceW = bound.width || 1;
           const sourceH = bound.height || 1;
           const aspect = sourceW / sourceH;
@@ -424,7 +283,7 @@ export function createCanvasRenderer(
           const tileNum = Number(tileId.split(".")[1]);
           if (tileNum === 2) {
             const tree = manifestLookup("prop_tree_round");
-            if (tree?.status === "READY") drawReadyEntitySprite(tree, sx.x, sx.y + tilePx * 0.48, tilePx * 1.65);
+            if (tree?.status === "READY") drawReadyEntitySprite(tree, sx.x, sx.y + tilePx * 0.48, tilePx * 1.35);
           }
           if (tileNum === 3) drawWaterShimmer(sx.x, sx.y, tilePx);
           continue;
