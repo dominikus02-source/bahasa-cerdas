@@ -313,6 +313,10 @@ export const WORLD_MAPS: Record<CanonicalMapId, CanonicalMap> = {
       { id: "ent.ki-tree.2", type: "tree", x: 20, y: 17, scale: 1.1, layer: "BEHIND_ENTITIES", solid: true, asset: "tree.round" },
       { id: "ent.ki-rock.1", type: "rock", x: 15, y: 20, scale: 0.8, layer: "GROUND_DECOR", solid: false, asset: "rock.gray" },
       { id: "ent.ki-rock.2", type: "rock", x: 20, y: 20, scale: 0.7, layer: "GROUND_DECOR", solid: false, asset: "rock.gray" },
+      { id: "ent.desa-bamboo", type: "bamboo", x: 23, y: 17, scale: 1, layer: "BEHIND_ENTITIES", solid: true, asset: "bamboo.grove" },
+      { id: "ent.desa-shrine", type: "shrine", x: 8, y: 27, scale: 0.9, layer: "BEHIND_ENTITIES", solid: true, asset: "shrine.gate" },
+      { id: "ent.desa-lantern", type: "lantern", x: 15, y: 18, scale: 0.85, layer: "FRONT_OF_ENTITIES", solid: false, asset: "lantern.stone" },
+      { id: "ent.desa-bridge", type: "bridge", x: 28, y: 17, scale: 1, layer: "BEHIND_ENTITIES", solid: true, asset: "bridge.wood" },
     ],
   ),
   "map.gunung": toMap(
@@ -327,6 +331,13 @@ export const WORLD_MAPS: Record<CanonicalMapId, CanonicalMap> = {
       { id: "ga", type: "ga", x: 20, y: 8, r: 0 },
       { id: "na", type: "na", x: 20, y: 4, r: 0 },
     ],
+    [
+      { id: "ent.gunung-bamboo", type: "bamboo", x: 7, y: 12, scale: 1.05, layer: "BEHIND_ENTITIES", solid: true, asset: "bamboo.grove" },
+      { id: "ent.gunung-shrine", type: "shrine", x: 17, y: 6, scale: 0.8, layer: "BEHIND_ENTITIES", solid: true, asset: "shrine.gate" },
+      { id: "ent.gunung-lantern.1", type: "lantern", x: 13, y: 22, scale: 0.8, layer: "FRONT_OF_ENTITIES", solid: false, asset: "lantern.stone" },
+      { id: "ent.gunung-lantern.2", type: "lantern", x: 26, y: 15, scale: 0.8, layer: "FRONT_OF_ENTITIES", solid: false, asset: "lantern.stone" },
+      { id: "ent.gunung-bridge", type: "bridge", x: 20, y: 28, scale: 0.9, layer: "BEHIND_ENTITIES", solid: true, asset: "bridge.wood" },
+    ],
   ),
   "map.menara": toMap(
     "map.menara", "Menara Angin", menaraGrid,
@@ -335,6 +346,11 @@ export const WORLD_MAPS: Record<CanonicalMapId, CanonicalMap> = {
     chestsOf("map.menara"),
     [],
     [], // menara waves are combat-phase content (spawnWave), not map spawns
+    [
+      { id: "ent.menara-shrine", type: "shrine", x: 12, y: 6, scale: 0.85, layer: "BEHIND_ENTITIES", solid: true, asset: "shrine.gate" },
+      { id: "ent.menara-lantern.1", type: "lantern", x: 6, y: 5, scale: 0.8, layer: "FRONT_OF_ENTITIES", solid: false, asset: "lantern.stone" },
+      { id: "ent.menara-lantern.2", type: "lantern", x: 18, y: 5, scale: 0.8, layer: "FRONT_OF_ENTITIES", solid: false, asset: "lantern.stone" },
+    ],
   ),
 };
 
