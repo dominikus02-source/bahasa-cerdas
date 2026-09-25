@@ -401,7 +401,8 @@
     "test:live-pulse": "npx tsx scripts/test-live-pulse.ts",
     "test:rpg-p2-6h5-network-resilience": "npx tsx scripts/test-rpg-p2-6h5-network-resilience.ts",
     "test:rpg-visual-feedback": "npx tsx scripts/test-visual-feedback.ts",
-    "test:rpg-entity-asset-pipeline": "npx tsx scripts/test-entity-asset-pipeline.ts"
+    "test:rpg-entity-asset-pipeline": "npx tsx scripts/test-entity-asset-pipeline.ts",
+    "test:rpg-camera": "npx tsx scripts/test-rpg-camera.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
