@@ -139,7 +139,11 @@ function buildDesaGrid(): ProtoGrid {
   }
 
   // Preserve the existing boss-gated east-side progression corridor.
+  // The portal/chest tile markers remain explicit gameplay signals even though
+  // their artwork is supplied by the entity/portal layer.
   for (let y = 4; y < 27; y++) if (y !== 8 && y !== 9) gset(m, 41, y, T.TR);
+  gset(m, 41, 8, T.CV);
+  gset(m, 31, 26, T.CH);
 
   return m;
 }
@@ -291,7 +295,7 @@ const chestsOf = (map: CanonicalMapId): CanonicalChest[] =>
 export const WORLD_MAPS: Record<CanonicalMapId, CanonicalMap> = {
   "map.desa": toMap(
     "map.desa", "Desa Suryakerta", desaGrid,
-    { x: 20, y: 20 },
+    { x: 12, y: 19 },
     portalsOf("map.desa"),
     chestsOf("map.desa"),
     [
