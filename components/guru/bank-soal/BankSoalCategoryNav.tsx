@@ -45,7 +45,7 @@ export function BankSoalCategoryNav({
           onClick={() => onSelect(null)}
           className={`shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 ${
             selected === null
-              ? "bg-emerald-600 text-white shadow-sm"
+              ? "guru-role-tab-active"
               : "bg-white text-slate-600 border border-slate-200 hover:border-slate-300 hover:bg-slate-50"
           }`}
         >
