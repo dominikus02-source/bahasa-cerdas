@@ -275,6 +275,21 @@ export function createCanvasRenderer(
             sx.x - tilePx / 2, sx.y - tilePx / 2, tilePx, tilePx,
           );
           const tileNum = Number(tileId.split(".")[1]);
+          // Tree is a canonical SOLID tile, not a terrain family. Keep the
+          // authored ground underneath it and draw the production tree prop
+          // on top so the tile remains visually readable as a tree without
+          // pretending a cliff sprite is the tree itself.
+          if (tileNum === 2) {
+            const tree = manifestLookup("prop_tree_round");
+            if (tree?.status === "READY") {
+              drawReadyEntitySprite(
+                tree,
+                sx.x,
+                sx.y + tilePx * 0.48,
+                tilePx * 1.65,
+              );
+            }
+          }
           if (tileNum === 3) drawWaterShimmer(sx.x, sx.y, tilePx);
           continue;
         }
