@@ -487,8 +487,15 @@ export function createCanvasRenderer(
       if (!spriteRendered) {
         switch (entity.type) {
           case "tree":
-            drawRect(screen.x - 4, screen.y - 4, 8, 16, COLORS.treeTrunk);
-            drawCircle(screen.x, screen.y - 12, size / 2, COLORS.tree);
+            // Production tree asset is mandatory. Do not mix the authored
+            // village tree with the legacy procedural circle/tree fallback.
+            drawContactShadow(
+              screen.x,
+              screen.y,
+              Math.max(8, size * 0.22),
+              Math.max(2, size * 0.045),
+              0.08,
+            );
             break;
           case "house":
             // Production house asset is mandatory. If it is unavailable, do not
