@@ -393,7 +393,11 @@ export function createCanvasRenderer(
         entity.type === "fence" ? 48 :
         entity.type === "rock" ? 32 :
         entity.type === "bush" ? 34 :
-        entity.type === "flowers" ? 28 : 36;
+        entity.type === "flowers" ? 28 :
+        entity.type === "bamboo" ? 82 :
+        entity.type === "shrine" ? 88 :
+        entity.type === "lantern" ? 42 :
+        entity.type === "bridge" ? 92 : 36;
       const size = baseSize * entity.scale * zoom;
 
       // P2.11: READY visual atlas first; procedural fallback remains only for
