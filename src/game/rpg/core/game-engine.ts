@@ -1796,11 +1796,6 @@ export function createEngine(config: RPGEngineConfig): RPGEngine {
             },
           };
           liveEnemies = buildTowerWave(towerFloor, deadBossIds);
-          eventBus.emit({
-            type: "TOAST",
-            playerId: state.session.playerId,
-            message: `MENARA ANGIN — LANTAI ${towerFloor}`,
-          });
         }
       }
 
