@@ -533,6 +533,9 @@ export function createCanvasRenderer(
             "npc.sari": "npc.bu-sari",
             "npc.eyang": "npc.eyang-kartala",
             "npc.empu": "npc.pak-empu",
+            "npc.bagas": "npc.bagas",
+            "npc.tani": "npc.pak-warsa",
+            "npc.pendaki": "npc.pendaki",
           };
           const resolution = resolveEntityAsset(npcAssetKeys[interaction.ref]);
           const rendered = isEntityAssetReady(resolution)
@@ -546,7 +549,7 @@ export function createCanvasRenderer(
           const npcNames: Record<string, string> = {
             "npc.ki": "Ki Jaka", "npc.ratmi": "Bu Ratmi", "npc.sari": "Bu Sari",
             "npc.eyang": "Eyang Kartala", "npc.bagas": "Bagas", "npc.tani": "Pak Warsa",
-            "npc.empu": "Pak Empu", "npc.pendaki": "Pendaki",
+            "npc.empu": "Pak Empu", "npc.pendaki": "Pak Pendaki",
           };
           const name = npcNames[interaction.ref];
           if (name) {
@@ -923,7 +926,8 @@ export function createCanvasRenderer(
         const npcAssetKeys: Record<string, string> = {
           "npc.ki": "npc.ki-jaka", "npc.ratmi": "npc.bu-ratmi", "npc.sari": "npc.bu-sari",
           "npc.eyang": "npc.eyang-kartala",
-          "npc.empu": "npc.pak-empu",
+          "npc.empu": "npc.pak-empu", "npc.bagas": "npc.bagas",
+          "npc.tani": "npc.pak-warsa", "npc.pendaki": "npc.pendaki",
         };
         preloadRuntimeAsset(npcAssetKeys[interaction.ref]);
       }
