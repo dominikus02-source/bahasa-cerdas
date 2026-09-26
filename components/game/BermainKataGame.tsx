@@ -20,9 +20,33 @@ const WORDS: Word[] = [
   ["API","Panas dan menyala","Alam"],["AIR","Untuk minum dan mandi","Alam"],["AYAM","Hewan yang bertelur","Hewan"],["BOLA","Benda untuk bermain","Benda"],["BUKU","Tempat membaca cerita","Sekolah"],["BURUNG","Hewan yang bisa terbang","Hewan"],["DAUN","Bagian tumbuhan yang hijau","Alam"],["GULA","Rasanya manis","Makanan"],["HUJAN","Air yang turun dari langit","Alam"],["IKAN","Hidup di air","Hewan"],["JAM","Menunjukkan waktu","Benda"],["KAKI","Untuk berjalan","Tubuh"],["KAPAL","Kendaraan di air","Kendaraan"],["KUCING","Hewan yang suka mengeong","Hewan"],["LAPAR","Ingin makan","Perasaan"],["LILIN","Bisa menyala saat gelap","Benda"],["MATA","Untuk melihat","Tubuh"],["MEJA","Tempat meletakkan barang","Benda"],["NASI","Makanan pokok","Makanan"],["OBAT","Dipakai saat sakit","Kesehatan"],["PAGI","Waktu setelah malam","Waktu"],["PENA","Untuk menulis","Sekolah"],["PISANG","Buah berwarna kuning","Makanan"],["ROTI","Makanan dari tepung","Makanan"],["SAPU","Untuk membersihkan lantai","Benda"],["SEPATU","Dipakai di kaki","Pakaian"],["SENANG","Perasaan gembira","Perasaan"],["SIANG","Saat matahari terang","Waktu"],["SUSU","Minuman putih","Makanan"],["TAS","Tempat membawa buku","Sekolah"],["TELUR","Bisa dimasak atau direbus","Makanan"],["TOPI","Dipakai di kepala","Pakaian"],["ULAT","Hewan kecil yang bisa jadi kupu-kupu","Hewan"],["WAKTU","Terus berjalan setiap hari","Waktu"],["BESAR","Lawan kata kecil","Sifat"],["CEPAT","Lawan kata lambat","Sifat"],["CERDAS","Pandai memahami sesuatu","Sifat"],["GELAP","Lawan kata terang","Sifat"],["HALUS","Tidak kasar","Sifat"],["KECIL","Tidak besar","Sifat"],["KOTOR","Lawan kata bersih","Sifat"],["KUAT","Tidak mudah menyerah","Sifat"],["LAMBAT","Bergerak tidak cepat","Sifat"],["MANIS","Rasa seperti gula","Sifat"],["RAJIN","Suka belajar dan bekerja","Sifat"],["RAMAI","Banyak orang atau suara","Sifat"],["SEDIH","Perasaan saat ingin menangis","Perasaan"],["TINGGI","Lawan kata rendah","Sifat"],["TERANG","Banyak cahaya","Sifat"],["TENANG","Tidak gaduh","Sifat"],["BERSIH","Tidak kotor","Sifat"],["BERANI","Tidak takut menghadapi tantangan","Sifat"],["BUNGA","Bagian tumbuhan yang indah","Alam"],["CERI","Buah kecil berwarna merah","Makanan"],["DURIAN","Buah berduri dengan aroma kuat","Makanan"],["GAJAH","Hewan besar dengan belalai","Hewan"],["HUTAN","Tempat banyak pohon","Alam"],["JERUK","Buah yang kaya vitamin C","Makanan"],["KELINCI","Hewan yang suka melompat","Hewan"],["MELATI","Bunga kecil yang harum","Alam"],["MOBIL","Kendaraan beroda empat","Kendaraan"],["MOTOR","Kendaraan roda dua","Kendaraan"],["PAYUNG","Dipakai saat hujan","Benda"],["PELANGI","Muncul dengan banyak warna setelah hujan","Alam"],["PERAHU","Kendaraan kecil di air","Kendaraan"],["SEKOLAH","Tempat belajar","Sekolah"],["SEPEDA","Kendaraan yang dikayuh","Kendaraan"],["TEMAN","Orang yang kita sukai untuk bermain","Sosial"],["TAMAN","Tempat dengan banyak tanaman","Tempat"],["BINTANG","Terlihat di langit malam","Alam"],["BULAN","Terlihat di langit pada malam hari","Alam"],["MATAHARI","Terbit pada pagi hari","Alam"],["KUPU-KUPU","Serangga bersayap indah","Hewan"],["LAPANGAN","Tempat luas untuk bermain","Tempat"],["PERPUSTAKAAN","Tempat meminjam buku","Sekolah"],["PETUALANG","Orang yang suka menjelajah","Orang"],["PELANGGAN","Orang yang membeli barang","Orang"],["PERMAINAN","Kegiatan yang dilakukan untuk bersenang-senang","Kegiatan"],
 ].map(([word,hint,category]) => ({word,hint,category}))
 
-const PAIRS = [
-  ["BESAR","KECIL"],["CEPAT","LAMBAT"],["TERANG","GELAP"],["BERSIH","KOTOR"],["TINGGI","RENDAH"],["SENANG","GEMBIRA"],["CERDAS","PINTAR"],["RAJIN","TEKUN"],["BERANI","PANTANG MENYERAH"],["TENANG","DAMAI"]
+type MeaningKind = "sinonim" | "lawan"
+
+type MeaningPair = {
+  source: string
+  answer: string
+  kind: MeaningKind
+}
+
+const MEANING_PAIRS: MeaningPair[] = [
+  { source:"BESAR", answer:"KECIL", kind:"lawan" },
+  { source:"CEPAT", answer:"LAMBAT", kind:"lawan" },
+  { source:"TERANG", answer:"GELAP", kind:"lawan" },
+  { source:"BERSIH", answer:"KOTOR", kind:"lawan" },
+  { source:"TINGGI", answer:"RENDAH", kind:"lawan" },
+  { source:"SENANG", answer:"GEMBIRA", kind:"sinonim" },
+  { source:"CERDAS", answer:"PINTAR", kind:"sinonim" },
+  { source:"RAJIN", answer:"TEKUN", kind:"sinonim" },
+  { source:"TENANG", answer:"DAMAI", kind:"sinonim" },
+  { source:"SEDIH", answer:"GEMBIRA", kind:"lawan" },
+  { source:"KUAT", answer:"LEMAH", kind:"lawan" },
+  { source:"RAMAI", answer:"SEPI", kind:"lawan" },
+  { source:"MANIS", answer:"PAHIT", kind:"lawan" },
+  { source:"HALUS", answer:"KASAR", kind:"lawan" },
+  { source:"BERANI", answer:"PENAKUT", kind:"lawan" },
 ]
+
+const PAIRS = MEANING_PAIRS.filter((p) => p.kind === "lawan").map((p) => [p.source, p.answer] as const)
 
 const LEVELS: Record<Level, { label:string; desc:string; max:number }> = {
   mudah: { label:"Mudah", desc:"Kata pendek dan dekat dengan keseharian", max:5 },
@@ -79,6 +103,8 @@ export default function BermainKataGame() {
   const [best,setBest]=useState(0)
   const [stickers,setStickers]=useState<string[]>([])
   const [showTheme,setShowTheme]=useState(false)
+  const [usedWords,setUsedWords]=useState<string[]>([])
+  const [usedPairs,setUsedPairs]=useState<string[]>([])
 
   const pool=useMemo(()=>levelWords(level),[level])
   const maxRounds=8
@@ -101,33 +127,60 @@ export default function BermainKataGame() {
   },[theme,stickers,best])
 
   const nextQuestion=(nextRound:number, nextMode:Mode=mode!)=>{
-    const w=shuffle(pool)[0] || WORDS[0]
+    const available=pool.filter((item)=>!usedWords.includes(item.word))
+    const w=shuffle(available.length ? available : pool)[0] || WORDS[0]
+    setUsedWords((prev)=>prev.includes(w.word) ? prev : [...prev,w.word])
     setCurrent(w); setRound(nextRound); setSelected(null); setFeedback(null); setMessage("")
-    if(nextMode==="susun"){setLetters(shuffle(w.word.split("")));setAnswer([])}
+
+    if(nextMode==="susun"){
+      setLetters(shuffle(w.word.split("")))
+      setAnswer([])
+      return
+    }
+
     if(nextMode==="rumpang"){
       const chars=w.word.split("")
       const idx=Math.min(chars.length-1,Math.max(0,Math.floor(chars.length/2)))
+      const correct=w.word[idx]
       chars[idx]="_"
+      const distractorPool=(/[AEIOU]/.test(correct) ? ["A","E","I","O","U"] : ["B","C","D","F","G","H","J","K","L","M","N","P","R","S","T"])
+        .filter((letter)=>letter!==correct)
+      const distractors=shuffle(distractorPool).slice(0,3)
       setLetters(chars)
-      setOptions(shuffle([w.word[idx],"A","E","I","O","U","N","R"].filter((x,i,a)=>a.indexOf(x)===i)).slice(0,4))
+      setOptions(shuffle([correct,...distractors]))
+      return
     }
+
     if(nextMode==="pasangan"){
-      const p=shuffle(PAIRS).slice(0,4).flat()
-      const target=shuffle(PAIRS)[0][0]
+      const availablePairs=PAIRS.filter(([source])=>!usedPairs.includes(source))
+      const pair=shuffle(availablePairs.length ? availablePairs : PAIRS)[0]
+      const target=pair[0]
+      const answer=pair[1]
+      setUsedPairs((prev)=>prev.includes(target) ? prev : [...prev,target])
+      const distractors=shuffle(PAIRS.filter(([source])=>source!==target).map(([,value])=>value))
+        .filter((value)=>value!==answer)
+        .slice(0,3)
       setCurrent(WORDS.find(x=>x.word===target)||w)
-      setOptions(shuffle(PAIRS.find(x=>x[0]===target)||PAIRS[0]).filter(Boolean))
+      setOptions(shuffle([answer,...distractors]))
+      return
     }
-    if(nextMode==="makna"){
-      const pair=shuffle(PAIRS)[0]
-      const source=WORDS.find(x=>x.word===pair[0]) || w
-      const target=pair[1]
-      setCurrent({...source, synonym:target, antonym:target})
-      setOptions(shuffle([target,"KUCING","BUKU","BOLA"]))
-    }
+
+    const availableMeaning=MEANING_PAIRS.filter((pair)=>!usedPairs.includes(pair.source))
+    const pair=shuffle(availableMeaning.length ? availableMeaning : MEANING_PAIRS)[0]
+    setUsedPairs((prev)=>prev.includes(pair.source) ? prev : [...prev,pair.source])
+    const distractors=shuffle(
+      MEANING_PAIRS.filter((item)=>item.source!==pair.source && item.kind===pair.kind)
+        .map((item)=>item.answer)
+    ).filter((value)=>value!==pair.answer)
+    const fallback=["BUKU","KUCING","BOLA","MEJA"].filter((value)=>value!==pair.answer)
+    const options=shuffle([pair.answer,...[...distractors,...fallback].slice(0,3)])
+    const source=WORDS.find((item)=>item.word===pair.source) || w
+    setCurrent({...source, synonym:pair.kind==="sinonim" ? pair.answer : undefined, antonym:pair.kind==="lawan" ? pair.answer : undefined})
+    setOptions(options)
   }
 
   const start=(m:Mode)=>{
-    setMode(m);setScore(0);setStreak(0);setHearts(3);setRound(0);setAnswer([]);setFeedback(null);nextQuestion(1,m)
+    setMode(m);setScore(0);setStreak(0);setHearts(3);setRound(0);setAnswer([]);setFeedback(null);setUsedWords([]);setUsedPairs([]);nextQuestion(1,m)
   }
 
   const finish=(finalScore:number)=>{
@@ -227,7 +280,7 @@ export default function BermainKataGame() {
 
         {mode==="pasangan" && current && <div className="mt-7 text-center"><p className="text-sm font-bold text-slate-500">Cari pasangan yang tepat untuk kata ini</p><div className="mt-4 text-3xl font-black">{current.word}</div><div className="mt-6 grid gap-2 sm:grid-cols-2">{shuffle([...(PAIRS.find(p=>p[0]===current.word)?.slice(1) || []), "BUKU", "KUCING", "BOLA"].filter((x,i,a)=>a.indexOf(x)===i).slice(0,4)).map((x,i)=><button key={i} disabled={!!feedback} onClick={()=>choose(x)} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-left font-black hover:border-sky-300 hover:bg-sky-50">{x}</button>)}</div></div>}
 
-        {mode==="makna" && current && <div className="mt-7 text-center"><p className="text-sm font-bold text-slate-500">Pilih kata yang berhubungan dengan <b>{current.word}</b></p><div className="mt-6 grid gap-2 sm:grid-cols-2">{options.map((x,i)=><button key={i} disabled={!!feedback} onClick={()=>choose(x)} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 font-black hover:border-sky-300 hover:bg-sky-50">{x}</button>)}</div></div>}
+        {mode==="makna" && current && <div className="mt-7 text-center"><p className="text-sm font-bold text-slate-500">Pilih <b>{current.synonym ? "sinonim" : "lawan kata"}</b> dari <b>{current.word}</b></p><div className="mt-6 grid gap-2 sm:grid-cols-2">{options.map((x,i)=><button key={i} disabled={!!feedback} onClick={()=>choose(x)} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 font-black hover:border-sky-300 hover:bg-sky-50">{x}</button>)}</div></div>}
 
         {feedback && <div className={`mt-6 rounded-2xl p-4 text-center font-black ${feedback==="correct"?"bg-emerald-50 text-emerald-700":"bg-rose-50 text-rose-700"}`}>{message}</div>}
       </section>
