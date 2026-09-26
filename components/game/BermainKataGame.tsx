@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { ArrowLeft, Check, ChevronRight, CircleHelp, Heart, Palette, RotateCcw, Sparkles, Star, Trophy, Volume2, X } from "lucide-react"
+import { ArrowLeft, BookOpen, Brain, Check, ChevronRight, Cloud, Heart, Lightbulb, Palette, Pencil, Puzzle, Sparkles, Sprout, Star, Trophy, Waves, X } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 type Mode = "susun" | "rumpang" | "pasangan" | "makna"
@@ -10,7 +10,6 @@ type Theme = "langit" | "taman" | "laut"
 
 type Word = {
   word: string
-  emoji: string
   hint: string
   category: string
   synonym?: string
@@ -18,8 +17,8 @@ type Word = {
 }
 
 const WORDS: Word[] = [
-  ["API","🔥","Panas dan menyala","Alam"],["AIR","💧","Untuk minum dan mandi","Alam"],["AYAM","🐔","Hewan yang bertelur","Hewan"],["BOLA","⚽","Benda untuk bermain","Benda"],["BUKU","📚","Tempat membaca cerita","Sekolah"],["BURUNG","🐦","Hewan yang bisa terbang","Hewan"],["DAUN","🍃","Bagian tumbuhan yang hijau","Alam"],["GULA","🍬","Rasanya manis","Makanan"],["HUJAN","🌧️","Air yang turun dari langit","Alam"],["IKAN","🐟","Hidup di air","Hewan"],["JAM","⏰","Menunjukkan waktu","Benda"],["KAKI","🦶","Untuk berjalan","Tubuh"],["KAPAL","🚢","Kendaraan di air","Kendaraan"],["KUCING","🐱","Hewan yang suka mengeong","Hewan"],["LAPAR","🍽️","Ingin makan","Perasaan"],["LILIN","🕯️","Bisa menyala saat gelap","Benda"],["MATA","👀","Untuk melihat","Tubuh"],["MEJA","🪑","Tempat meletakkan barang","Benda"],["NASI","🍚","Makanan pokok","Makanan"],["OBAT","💊","Dipakai saat sakit","Kesehatan"],["PAGI","🌅","Waktu setelah malam","Waktu"],["PENA","🖊️","Untuk menulis","Sekolah"],["PISANG","🍌","Buah berwarna kuning","Makanan"],["ROTI","🍞","Makanan dari tepung","Makanan"],["SAPU","🧹","Untuk membersihkan lantai","Benda"],["SEPATU","👟","Dipakai di kaki","Pakaian"],["SENANG","😊","Perasaan gembira","Perasaan"],["SIANG","☀️","Saat matahari terang","Waktu"],["SUSU","🥛","Minuman putih","Makanan"],["TAS","🎒","Tempat membawa buku","Sekolah"],["TELUR","🥚","Bisa dimasak atau direbus","Makanan"],["TOPI","🧢","Dipakai di kepala","Pakaian"],["ULAT","🐛","Hewan kecil yang bisa jadi kupu-kupu","Hewan"],["WAKTU","⌚","Terus berjalan setiap hari","Waktu"],["BESAR","🐘","Lawan kata kecil","Sifat"],["CEPAT","⚡","Lawan kata lambat","Sifat"],["CERDAS","🧠","Pandai memahami sesuatu","Sifat"],["GELAP","🌙","Lawan kata terang","Sifat"],["HALUS","🪶","Tidak kasar","Sifat"],["KECIL","🐭","Tidak besar","Sifat"],["KOTOR","🧼","Lawan kata bersih","Sifat"],["KUAT","💪","Tidak mudah menyerah","Sifat"],["LAMBAT","🐢","Bergerak tidak cepat","Sifat"],["MANIS","🍯","Rasa seperti gula","Sifat"],["RAJIN","📖","Suka belajar dan bekerja","Sifat"],["RAMAI","🎉","Banyak orang atau suara","Sifat"],["SEDIH","😢","Perasaan saat ingin menangis","Perasaan"],["TINGGI","🗼","Lawan kata rendah","Sifat"],["TERANG","💡","Banyak cahaya","Sifat"],["TENANG","🧘","Tidak gaduh","Sifat"],["BERSIH","✨","Tidak kotor","Sifat"],["BERANI","🦁","Tidak takut menghadapi tantangan","Sifat"],["BUNGA","🌸","Bagian tumbuhan yang indah","Alam"],["CERI","🍒","Buah kecil berwarna merah","Makanan"],["DURIAN","🥭","Buah berduri dengan aroma kuat","Makanan"],["GAJAH","🐘","Hewan besar dengan belalai","Hewan"],["HUTAN","🌳","Tempat banyak pohon","Alam"],["JERUK","🍊","Buah yang kaya vitamin C","Makanan"],["KELINCI","🐰","Hewan yang suka melompat","Hewan"],["MELATI","🌼","Bunga kecil yang harum","Alam"],["MOBIL","🚗","Kendaraan beroda empat","Kendaraan"],["MOTOR","🏍️","Kendaraan roda dua","Kendaraan"],["PAYUNG","☂️","Dipakai saat hujan","Benda"],["PELANGI","🌈","Muncul dengan banyak warna setelah hujan","Alam"],["PERAHU","🛶","Kendaraan kecil di air","Kendaraan"],["SEKOLAH","🏫","Tempat belajar","Sekolah"],["SEPEDA","🚲","Kendaraan yang dikayuh","Kendaraan"],["TEMAN","🧑‍🤝‍🧑","Orang yang kita sukai untuk bermain","Sosial"],["TAMAN","🌳","Tempat dengan banyak tanaman","Tempat"],["BINTANG","⭐","Terlihat di langit malam","Alam"],["BULAN","🌙","Terlihat di langit pada malam hari","Alam"],["MATAHARI","☀️","Terbit pada pagi hari","Alam"],["KUPU-KUPU","🦋","Serangga bersayap indah","Hewan"],["LAPANGAN","🏟️","Tempat luas untuk bermain","Tempat"],["PERPUSTAKAAN","📚","Tempat meminjam buku","Sekolah"],["PETUALANG","🧭","Orang yang suka menjelajah","Orang"],["PELANGGAN","🛍️","Orang yang membeli barang","Orang"],["PERMAINAN","🎮","Kegiatan yang dilakukan untuk bersenang-senang","Kegiatan"],
-].map(([word,emoji,hint,category]) => ({word,emoji,hint,category}))
+  ["API","Panas dan menyala","Alam"],["AIR","Untuk minum dan mandi","Alam"],["AYAM","Hewan yang bertelur","Hewan"],["BOLA","Benda untuk bermain","Benda"],["BUKU","Tempat membaca cerita","Sekolah"],["BURUNG","Hewan yang bisa terbang","Hewan"],["DAUN","Bagian tumbuhan yang hijau","Alam"],["GULA","Rasanya manis","Makanan"],["HUJAN","Air yang turun dari langit","Alam"],["IKAN","Hidup di air","Hewan"],["JAM","Menunjukkan waktu","Benda"],["KAKI","Untuk berjalan","Tubuh"],["KAPAL","Kendaraan di air","Kendaraan"],["KUCING","Hewan yang suka mengeong","Hewan"],["LAPAR","Ingin makan","Perasaan"],["LILIN","Bisa menyala saat gelap","Benda"],["MATA","Untuk melihat","Tubuh"],["MEJA","Tempat meletakkan barang","Benda"],["NASI","Makanan pokok","Makanan"],["OBAT","Dipakai saat sakit","Kesehatan"],["PAGI","Waktu setelah malam","Waktu"],["PENA","Untuk menulis","Sekolah"],["PISANG","Buah berwarna kuning","Makanan"],["ROTI","Makanan dari tepung","Makanan"],["SAPU","Untuk membersihkan lantai","Benda"],["SEPATU","Dipakai di kaki","Pakaian"],["SENANG","Perasaan gembira","Perasaan"],["SIANG","Saat matahari terang","Waktu"],["SUSU","Minuman putih","Makanan"],["TAS","Tempat membawa buku","Sekolah"],["TELUR","Bisa dimasak atau direbus","Makanan"],["TOPI","Dipakai di kepala","Pakaian"],["ULAT","Hewan kecil yang bisa jadi kupu-kupu","Hewan"],["WAKTU","Terus berjalan setiap hari","Waktu"],["BESAR","Lawan kata kecil","Sifat"],["CEPAT","Lawan kata lambat","Sifat"],["CERDAS","Pandai memahami sesuatu","Sifat"],["GELAP","Lawan kata terang","Sifat"],["HALUS","Tidak kasar","Sifat"],["KECIL","Tidak besar","Sifat"],["KOTOR","Lawan kata bersih","Sifat"],["KUAT","Tidak mudah menyerah","Sifat"],["LAMBAT","Bergerak tidak cepat","Sifat"],["MANIS","Rasa seperti gula","Sifat"],["RAJIN","Suka belajar dan bekerja","Sifat"],["RAMAI","Banyak orang atau suara","Sifat"],["SEDIH","Perasaan saat ingin menangis","Perasaan"],["TINGGI","Lawan kata rendah","Sifat"],["TERANG","Banyak cahaya","Sifat"],["TENANG","Tidak gaduh","Sifat"],["BERSIH","Tidak kotor","Sifat"],["BERANI","Tidak takut menghadapi tantangan","Sifat"],["BUNGA","Bagian tumbuhan yang indah","Alam"],["CERI","Buah kecil berwarna merah","Makanan"],["DURIAN","Buah berduri dengan aroma kuat","Makanan"],["GAJAH","Hewan besar dengan belalai","Hewan"],["HUTAN","Tempat banyak pohon","Alam"],["JERUK","Buah yang kaya vitamin C","Makanan"],["KELINCI","Hewan yang suka melompat","Hewan"],["MELATI","Bunga kecil yang harum","Alam"],["MOBIL","Kendaraan beroda empat","Kendaraan"],["MOTOR","Kendaraan roda dua","Kendaraan"],["PAYUNG","Dipakai saat hujan","Benda"],["PELANGI","Muncul dengan banyak warna setelah hujan","Alam"],["PERAHU","Kendaraan kecil di air","Kendaraan"],["SEKOLAH","Tempat belajar","Sekolah"],["SEPEDA","Kendaraan yang dikayuh","Kendaraan"],["TEMAN","Orang yang kita sukai untuk bermain","Sosial"],["TAMAN","Tempat dengan banyak tanaman","Tempat"],["BINTANG","Terlihat di langit malam","Alam"],["BULAN","Terlihat di langit pada malam hari","Alam"],["MATAHARI","Terbit pada pagi hari","Alam"],["KUPU-KUPU","Serangga bersayap indah","Hewan"],["LAPANGAN","Tempat luas untuk bermain","Tempat"],["PERPUSTAKAAN","Tempat meminjam buku","Sekolah"],["PETUALANG","Orang yang suka menjelajah","Orang"],["PELANGGAN","Orang yang membeli barang","Orang"],["PERMAINAN","Kegiatan yang dilakukan untuk bersenang-senang","Kegiatan"],
+].map(([word,hint,category]) => ({word,hint,category}))
 
 const PAIRS = [
   ["BESAR","KECIL"],["CEPAT","LAMBAT"],["TERANG","GELAP"],["BERSIH","KOTOR"],["TINGGI","RENDAH"],["SENANG","GEMBIRA"],["CERDAS","PINTAR"],["RAJIN","TEKUN"],["BERANI","PANTANG MENYERAH"],["TENANG","DAMAI"]
@@ -31,10 +30,23 @@ const LEVELS: Record<Level, { label:string; desc:string; max:number }> = {
   tantangan: { label:"Tantangan", desc:"Kata lebih panjang untuk anak SD", max:12 },
 }
 
-const THEMES: Record<Theme, { bg:string; accent:string; soft:string; icon:string }> = {
-  langit: { bg:"from-sky-50 via-white to-cyan-50", accent:"bg-sky-500", soft:"bg-sky-100 text-sky-700", icon:"☁️" },
-  taman: { bg:"from-emerald-50 via-white to-lime-50", accent:"bg-emerald-500", soft:"bg-emerald-100 text-emerald-700", icon:"🌿" },
-  laut: { bg:"from-cyan-50 via-white to-blue-50", accent:"bg-cyan-500", soft:"bg-cyan-100 text-cyan-700", icon:"🌊" },
+const THEMES: Record<Theme, { bg:string; accent:string; soft:string }> = {
+  langit: { bg:"from-sky-50 via-white to-cyan-50", accent:"bg-sky-500", soft:"bg-sky-100 text-sky-700" },
+  taman: { bg:"from-emerald-50 via-white to-lime-50", accent:"bg-emerald-500", soft:"bg-emerald-100 text-emerald-700" },
+  laut: { bg:"from-cyan-50 via-white to-blue-50", accent:"bg-cyan-500", soft:"bg-cyan-100 text-cyan-700" },
+}
+
+const MODE_META: Record<Mode, { title:string; desc:string; icon: typeof Puzzle }> = {
+  susun: { title:"Susun Kata", desc:"Susun huruf menjadi kata yang benar", icon:Puzzle },
+  rumpang: { title:"Kata Rumpang", desc:"Lengkapi huruf yang hilang", icon:Pencil },
+  pasangan: { title:"Cari Pasangan", desc:"Temukan kata yang punya hubungan", icon:Brain },
+  makna: { title:"Makna Kata", desc:"Kenali sinonim dan lawan kata sederhana", icon:Lightbulb },
+}
+
+const THEME_META: Record<Theme, { label:string; icon: typeof Cloud }> = {
+  langit: { label:"Langit", icon:Cloud },
+  taman: { label:"Taman", icon:Sprout },
+  laut: { label:"Laut", icon:Waves },
 }
 
 const shuffle = <T,>(items:T[]) => {
@@ -162,13 +174,15 @@ export default function BermainKataGame() {
           <button onClick={()=>setShowTheme(v=>!v)} className="rounded-2xl border border-slate-200 bg-white/90 p-3 shadow-sm" aria-label="Ganti tema"><Palette size={18}/></button>
         </header>
 
-        {showTheme && <div className="mt-3 flex justify-end"><div className="flex gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-lg">{(Object.keys(THEMES) as Theme[]).map(k=><button key={k} onClick={()=>{setTheme(k);setShowTheme(false)}} className={`rounded-xl px-3 py-2 text-sm font-bold ${theme===k?t.soft:"hover:bg-slate-50"}`}>{THEMES[k].icon} {k}</button>)}</div></div>}
+        {showTheme && <div className="mt-3 flex justify-end"><div className="flex gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-lg">{(Object.keys(THEMES) as Theme[]).map(k=><button key={k} onClick={()=>{setTheme(k);setShowTheme(false)}} className={`rounded-xl px-3 py-2 text-sm font-bold ${theme===k?t.soft:"hover:bg-slate-50"}`}>{(() => { const Icon = THEME_META[k].icon; return <Icon size={15}/> })()} {THEME_META[k].label}</button>)}</div></div>}
 
         <section className="mx-auto mt-6 max-w-3xl text-center">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-[28px] bg-white text-5xl shadow-[0_12px_30px_rgba(15,23,42,.10)]">🦉</div>
+          <div className="mx-auto flex h-20 w-20 items-center justify-center overflow-hidden rounded-[28px] bg-white shadow-[0_12px_30px_rgba(15,23,42,.10)]">
+  <img src="/junior/karakter/zelby_happy.webp" alt="Zelby" className="h-full w-full object-contain p-2" />
+</div>
           <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-1.5 text-xs font-black tracking-wide text-white"><Sparkles size={14}/> EKOSISTEM PEMBELAJARAN BAHASA INDONESIA</div>
           <h1 className="mt-3 text-4xl font-black tracking-tight sm:text-6xl">BERMAIN <span className="text-sky-600">KATA</span></h1>
-          <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-600 sm:text-base">Main, belajar, dan kumpulkan kata baru bersama Olin. Dibuat ringan untuk TK–SD, tetapi tetap seru dimainkan berulang.</p>
+          <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-600 sm:text-base">Main, belajar, dan kumpulkan kata baru bersama Zelby. Dibuat ringan untuk TK–SD, tetapi tetap seru dimainkan berulang.</p>
         </section>
 
         <section className="mx-auto mt-7 max-w-3xl rounded-[28px] border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
@@ -179,12 +193,11 @@ export default function BermainKataGame() {
         </section>
 
         <section className="mx-auto mt-5 grid max-w-3xl gap-3 sm:grid-cols-2">
-          {([
-            ["susun","Susun Kata","Susun huruf menjadi kata yang benar","🧩"],
-            ["rumpang","Kata Rumpang","Lengkapi huruf yang hilang","✏️"],
-            ["pasangan","Cari Pasangan","Temukan kata yang punya hubungan","🧠"],
-            ["makna","Makna Kata","Kenali sinonim dan lawan kata sederhana","💡"],
-          ] as [Mode,string,string,string][]).map(([m,title,desc,emoji])=><button key={m} onClick={()=>start(m)} className="group rounded-[26px] border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-xl active:translate-y-0"><div className="flex items-center gap-4"><div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-sky-50 text-3xl">{emoji}</div><div className="min-w-0 flex-1"><h2 className="font-black text-slate-900">{title}</h2><p className="mt-1 text-xs leading-5 text-slate-500">{desc}</p></div><ChevronRight className="text-slate-300 transition group-hover:text-sky-500"/></div></button>)}
+          {(Object.keys(MODE_META) as Mode[]).map((m)=>{
+            const meta=MODE_META[m]
+            const Icon=meta.icon
+            return <button key={m} onClick={()=>start(m)} className="group rounded-[26px] border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-xl active:translate-y-0"><div className="flex items-center gap-4"><div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-sky-50 text-sky-600"><Icon size={28}/></div><div className="min-w-0 flex-1"><h2 className="font-black text-slate-900">{meta.title}</h2><p className="mt-1 text-xs leading-5 text-slate-500">{meta.desc}</p></div><ChevronRight className="text-slate-300 transition group-hover:text-sky-500"/></div></button>
+          })}
         </section>
 
         <section className="mx-auto mt-5 grid max-w-3xl gap-3 sm:grid-cols-2">
@@ -206,7 +219,7 @@ export default function BermainKataGame() {
       </div>
 
       <section className="mt-6 rounded-[30px] border border-slate-200 bg-white p-5 shadow-[0_15px_45px_rgba(15,23,42,.08)] sm:p-7">
-        <div className="flex items-center gap-3"><span className="text-4xl">{current?.emoji||"🦉"}</span><div><p className="text-xs font-black uppercase tracking-wider text-slate-400">BERMAIN KATA</p><p className="font-black">{mode==="susun"?"Susun Kata":mode==="rumpang"?"Kata Rumpang":mode==="pasangan"?"Cari Pasangan":"Makna Kata"}</p></div></div>
+        <div className="flex items-center gap-3"><div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-50 text-sky-600"><BookOpen size={25}/></div><div><p className="text-xs font-black uppercase tracking-wider text-slate-400">BERMAIN KATA</p><p className="font-black">{mode==="susun"?"Susun Kata":mode==="rumpang"?"Kata Rumpang":mode==="pasangan"?"Cari Pasangan":"Makna Kata"}</p></div></div>
 
         {mode==="susun" && current && <div className="mt-7"><p className="text-center text-sm font-bold text-slate-500">{current.hint}</p><div className="mt-5 flex min-h-14 flex-wrap justify-center gap-2">{answer.map((x,i)=><button key={i} onClick={()=>setAnswer(a=>a.filter((_,idx)=>idx!==i))} className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-500 text-xl font-black text-white shadow-sm">{x}</button>)}</div><div className="mt-4 flex flex-wrap justify-center gap-2">{letters.map((x,i)=><button key={i} disabled={answer.length>=current.word.length} onClick={()=>{setAnswer(a=>[...a,x]);setLetters(a=>a.filter((_,idx)=>idx!==i))}} className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-xl font-black hover:bg-sky-50">{x}</button>)}</div><button disabled={answer.length!==current.word.length||!!feedback} onClick={checkSusun} className={`mx-auto mt-6 flex items-center gap-2 rounded-2xl px-6 py-3 font-black text-white disabled:cursor-not-allowed disabled:opacity-40 ${t.accent}`}>Periksa <Check size={17}/></button></div>}
 
@@ -216,10 +229,10 @@ export default function BermainKataGame() {
 
         {mode==="makna" && current && <div className="mt-7 text-center"><p className="text-sm font-bold text-slate-500">Pilih kata yang berhubungan dengan <b>{current.word}</b></p><div className="mt-6 grid gap-2 sm:grid-cols-2">{options.map((x,i)=><button key={i} disabled={!!feedback} onClick={()=>choose(x)} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 font-black hover:border-sky-300 hover:bg-sky-50">{x}</button>)}</div></div>}
 
-        {feedback && <div className={`mt-6 rounded-2xl p-4 text-center font-black ${feedback==="correct"?"bg-emerald-50 text-emerald-700":"bg-rose-50 text-rose-700"}`}>{feedback==="correct"?"✨ "+message:"💪 "+message}</div>}
+        {feedback && <div className={`mt-6 rounded-2xl p-4 text-center font-black ${feedback==="correct"?"bg-emerald-50 text-emerald-700":"bg-rose-50 text-rose-700"}`}>{message}</div>}
       </section>
 
-      <div className="mt-4 flex items-center justify-between text-xs font-bold text-slate-400"><span>Skor {score}</span><span>Streak {streak} 🔥</span><span>Target bermain: {maxRounds} soal</span></div>
+      <div className="mt-4 flex items-center justify-between text-xs font-bold text-slate-400"><span>Skor {score}</span><span>Streak {streak}</span><span>Target bermain: {maxRounds} soal</span></div>
     </div>
   </main>
 }
