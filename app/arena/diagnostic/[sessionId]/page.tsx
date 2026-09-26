@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, CheckCircle2, Flag, GraduationCap, Loader2, Sparkles, XCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, Clock3, Flag, GraduationCap, Loader2, Sparkles, Target, Trophy, XCircle } from "lucide-react";
 
 interface DiagnosticQuestion {
   id: string;
@@ -79,6 +79,8 @@ interface AbilityProfileSummary {
 
 interface DiagnosticSession {
   sessionId: string;
+  source?: string;
+  sourceLabel?: string;
   status: "IN_PROGRESS" | "COMPLETED";
   actionTitle?: string;
   reasonText: string;
@@ -115,7 +117,7 @@ function ResultPanel({ result, abilityProfile, fallbackReason }: { result: Diagn
     ability?.skills.find((s) => s.skill === skill)?.label ?? skill;
   const confident = ability?.overallConfidence === "HIGH" || ability?.overallConfidence === "MEDIUM";
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {fallbackReason ? (
         <div className="rounded-2xl bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
           {fallbackReason}
@@ -251,13 +253,13 @@ function ResultPanel({ result, abilityProfile, fallbackReason }: { result: Diagn
             Profilmu sudah cukup yakin dari latihan berulang — tetap diukur ulang secara berkala.
           </p>
         ) : null}
-        <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-          <button type="button" onClick={() => window.location.assign("/arena/jalur-cerdas")} className="inline-flex items-center justify-center gap-2 rounded-2xl bg-violet-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-violet-700">
-            Mulai Belajar di Jalur Cerdas
+        <div className="mt-5 grid gap-2 sm:grid-cols-2">
+          <button type="button" onClick={() => window.location.assign("/murid/profile")} className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-5 py-3 text-sm font-extrabold text-white shadow-lg shadow-violet-500/20 transition hover:-translate-y-0.5 hover:shadow-xl">
+            Lihat Perkembanganmu
             <ArrowRight size={16} />
           </button>
-          <button type="button" onClick={() => window.location.assign("/arena")} className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">
-            Jelajahi Arena
+          <button type="button" onClick={() => window.location.assign("/arena/jalur-cerdas")} className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white/70 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-white/[0.03] dark:text-slate-200 dark:hover:bg-slate-800">
+            Mulai Belajar
           </button>
         </div>
       </div>
@@ -465,69 +467,130 @@ if (data.status === "COMPLETED" && data.result) {
     );
   }
 
+  const percent = Math.round((Math.max(progressCount, 1) / Math.max(progressTotal, 1)) * 100);
+  const currentSkill = question.skill ? ({
+    READING: "Membaca",
+    WRITING: "Menulis",
+    LISTENING: "Mendengarkan",
+    SPEAKING: "Berbicara",
+    GRAMMAR: "Tata Bahasa",
+    VOCABULARY: "Kosakata",
+    LITERATURE: "Sastra",
+  } as Record<string, string>)[question.skill] ?? question.skill : null;
+
   return (
-    <main className="mx-auto max-w-2xl px-5 py-6 md:py-10">
-      <div className="flex items-center justify-between gap-3 mb-8">
-        <button type="button" onClick={() => router.push("/murid/beranda")} className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white" aria-label="Kembali ke Beranda">
-          <ArrowLeft size={20} />
-        </button>
-        <div className="text-center min-w-0">
-          <p className="text-[10px] uppercase tracking-[0.18em] text-violet-600 dark:text-violet-300">Tes Awal</p>
-          <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">{session.actionTitle || "Kenali Kemampuanmu"}</p>
+    <main className="relative min-h-[calc(100vh-80px)] overflow-hidden px-4 py-5 sm:px-6 md:py-8">
+      <div className="pointer-events-none absolute -left-24 top-16 h-72 w-72 rounded-full bg-violet-400/15 blur-3xl" />
+      <div className="pointer-events-none absolute -right-20 bottom-10 h-80 w-80 rounded-full bg-cyan-300/15 blur-3xl" />
+
+      <div className="relative mx-auto max-w-3xl">
+        <div className="mb-5 flex items-center justify-between gap-3">
+          <button type="button" onClick={() => router.push("/murid/beranda")} className="inline-flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/80 px-3 py-2 text-xs font-bold text-slate-600 shadow-sm transition hover:bg-white hover:text-slate-900 dark:border-white/10 dark:bg-slate-900/70 dark:text-slate-300 dark:hover:text-white" aria-label="Kembali ke Beranda">
+            <ArrowLeft size={15} /> Beranda
+          </button>
+          <div className="flex items-center gap-2">
+            {session.sourceLabel && (
+              <span className="hidden rounded-full bg-cyan-500/10 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-cyan-700 dark:text-cyan-300 sm:inline-flex">
+                {session.sourceLabel}
+              </span>
+            )}
+            <span className="rounded-full bg-violet-500/10 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.16em] text-violet-600 dark:text-violet-300">
+              Tes Awal
+            </span>
+          </div>
         </div>
-        <span className="text-xs text-slate-500">{Math.max(progressCount, 1)}/{progressTotal}</span>
-      </div>
 
-      <div className="h-1.5 rounded-full bg-slate-200 dark:bg-slate-800 mb-8 overflow-hidden">
-        <div className="h-full rounded-full bg-violet-600 transition-all" style={{ width: `${(Math.max(progressCount, 1) / Math.max(progressTotal, 1)) * 100}%` }} />
-      </div>
-
-      <section className="rounded-3xl border border-slate-200/70 bg-white/80 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900/70 md:p-8">
-        <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">{session.reasonText}</p>
-        <h1 className="text-xl md:text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">{question.text}</h1>
-
-        {question.options.length > 0 ? (
-          <div className="mt-7 space-y-3">
-            {question.options.map((option, optionIndex) => (
-              <button
-                key={`${question.id}-${optionIndex}`}
-                type="button"
-                disabled={submitting || result !== null}
-                onClick={() => submitAnswer(optionIndex)}
-                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-left text-sm text-slate-700 transition hover:border-violet-400 hover:bg-violet-50 disabled:cursor-default dark:border-slate-700 dark:text-slate-200 dark:hover:bg-violet-950/30"
-              >
-                <span className="mr-3 inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold dark:bg-slate-800">{String.fromCharCode(65 + optionIndex)}</span>
-                {option}
-              </button>
-            ))}
-          </div>
-        ) : (
-          <div className="mt-7 flex gap-2">
-            <input value={answer} onChange={(event) => setAnswer(event.target.value)} disabled={result !== null || submitting} className="min-w-0 flex-1 rounded-2xl border border-slate-200 px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-900" placeholder="Tulis jawabanmu" />
-            <button type="button" onClick={() => submitAnswer(answer)} disabled={!answer.trim() || submitting || result !== null} className="rounded-2xl bg-violet-600 px-4 py-3 text-sm font-semibold text-white disabled:opacity-50">Kirim</button>
-          </div>
-        )}
-
-        {submitting && result === null && (
-          <p role="status" className="mt-7 flex items-center justify-center gap-2 rounded-2xl border border-violet-100 bg-violet-50/70 px-4 py-3 text-sm text-violet-700 dark:border-violet-900/50 dark:bg-violet-950/20 dark:text-violet-300">
-            <Loader2 size={16} className="animate-spin text-violet-600 dark:text-violet-300" aria-hidden />
-            Menyimpan jawaban dan menyiapkan soal berikutnya…
-          </p>
-        )}
-
-        {result !== null && (
-          <div className={`mt-7 rounded-2xl px-4 py-3 text-sm ${result ? "bg-emerald-50 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-200" : "bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-200"}`}>
-            <div className="flex items-center gap-2 font-semibold">
-              {result ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
-              {result ? "Jawabanmu benar." : "Belum tepat. Jangan khawatir — hasil ini hanya untuk mengenali kemampuanmu."}
+        <section className="overflow-hidden rounded-[32px] border border-slate-200/70 bg-white/90 shadow-[0_24px_80px_-36px_rgba(76,29,149,0.35)] backdrop-blur-xl dark:border-white/10 dark:bg-[#111a32]/90">
+          <div className="border-b border-slate-200/70 px-5 py-4 dark:border-white/10 sm:px-7">
+            <div className="flex items-center justify-between gap-4">
+              <div className="min-w-0">
+                <p className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.18em] text-violet-600 dark:text-violet-300">
+                  <Target size={13} /> {session.actionTitle || "Kenali Kemampuanmu"}
+                </p>
+                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Jawab sebisamu — ini bukan ujian nilai.</p>
+              </div>
+              <div className="shrink-0 text-right">
+                <p className="text-sm font-black text-slate-900 dark:text-white">{Math.min(progressCount, progressTotal)}/{progressTotal}</p>
+                <p className="mt-0.5 flex items-center justify-end gap-1 text-[10px] text-slate-400"><Clock3 size={11} /> ±5–8 menit</p>
+              </div>
             </div>
-            <button type="button" onClick={nextQuestion} className="mt-3 inline-flex items-center gap-2 font-semibold underline underline-offset-4">
-              {!session.adaptive ? (index + 1 >= session.questions.length ? "Lihat Hasil" : "Soal Berikutnya") : (session.remaining === 0 || !session.questions[0] ? "Lihat Hasil" : "Soal Berikutnya")}
-              <ArrowRight size={15} />
-            </button>
+            <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-white/10">
+              <div className="h-full rounded-full bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 shadow-[0_0_12px_rgba(139,92,246,0.35)] transition-all duration-500" style={{ width: `${percent}%` }} />
+            </div>
           </div>
-        )}
-      </section>
+
+          <div className="p-5 sm:p-7 md:p-9">
+            <div className="mb-5 flex flex-wrap items-center gap-2">
+              {currentSkill && (
+                <span className="rounded-full bg-violet-500/10 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.1em] text-violet-700 dark:text-violet-300">
+                  {currentSkill}
+                </span>
+              )}
+              {question.difficulty && (
+                <span className="rounded-full bg-amber-400/10 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.1em] text-amber-700 dark:text-amber-300">
+                  {question.difficulty === "EASY" ? "Pemanasan" : question.difficulty === "HARD" ? "Tantangan" : "Sedang"}
+                </span>
+              )}
+              <span className="ml-auto hidden items-center gap-1 text-[10px] font-semibold text-slate-400 sm:inline-flex">
+                <Sparkles size={12} /> Setiap jawaban membantu BC mengenalimu
+              </span>
+            </div>
+
+            <p className="mb-3 text-xs leading-5 text-slate-500 dark:text-slate-400">{session.reasonText}</p>
+            <h1 className="max-w-2xl text-2xl font-black leading-tight tracking-tight text-slate-950 dark:text-white sm:text-[28px]">
+              {question.text}
+            </h1>
+
+            {question.options.length > 0 ? (
+              <div className="mt-7 grid gap-3">
+                {question.options.map((option, optionIndex) => (
+                  <button
+                    key={`${question.id}-${optionIndex}`}
+                    type="button"
+                    disabled={submitting || result !== null}
+                    onClick={() => submitAnswer(optionIndex)}
+                    className="group flex w-full items-start gap-3 rounded-2xl border border-slate-200/90 bg-white px-4 py-4 text-left text-sm font-medium text-slate-700 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-violet-300 hover:bg-violet-50/70 hover:shadow-md disabled:cursor-default disabled:hover:translate-y-0 dark:border-white/10 dark:bg-white/[0.03] dark:text-slate-200 dark:hover:border-violet-400/50 dark:hover:bg-violet-500/[0.08]"
+                  >
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-xs font-black text-slate-500 transition-colors group-hover:bg-violet-600 group-hover:text-white dark:bg-white/10 dark:text-slate-300">
+                      {String.fromCharCode(65 + optionIndex)}
+                    </span>
+                    <span className="pt-1 leading-5">{option}</span>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="mt-7 flex flex-col gap-2 sm:flex-row">
+                <input value={answer} onChange={(event) => setAnswer(event.target.value)} disabled={result !== null || submitting} className="min-h-12 min-w-0 flex-1 rounded-2xl border border-slate-200 bg-white px-4 text-sm outline-none transition focus:border-violet-400 focus:ring-4 focus:ring-violet-500/10 dark:border-white/10 dark:bg-white/[0.03]" placeholder="Tulis jawabanmu" />
+                <button type="button" onClick={() => submitAnswer(answer)} disabled={!answer.trim() || submitting || result !== null} className="min-h-12 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-5 text-sm font-extrabold text-white shadow-lg disabled:opacity-50">Kirim Jawaban</button>
+              </div>
+            )}
+
+            {submitting && result === null && (
+              <p role="status" className="mt-6 flex items-center justify-center gap-2 rounded-2xl border border-violet-100 bg-violet-50/70 px-4 py-3 text-xs font-semibold text-violet-700 dark:border-violet-900/50 dark:bg-violet-950/20 dark:text-violet-300">
+                <Loader2 size={15} className="animate-spin" aria-hidden />
+                Menyimpan jawaban dan menyiapkan langkah berikutnya…
+              </p>
+            )}
+
+            {result !== null && (
+              <div className={`mt-6 rounded-2xl border px-4 py-4 text-sm ${result ? "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900/50 dark:bg-emerald-950/30 dark:text-emerald-200" : "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-200"}`}>
+                <div className="flex items-center gap-2 font-extrabold">
+                  {result ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
+                  {result ? "Mantap! Jawabanmu tepat." : "Belum tepat — tidak apa-apa, ini membantu BC mengenalimu."}
+                </div>
+                <button type="button" onClick={nextQuestion} className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/70 px-3.5 py-2 text-xs font-extrabold shadow-sm underline-offset-4 hover:underline dark:bg-black/10">
+                  {!session.adaptive ? (index + 1 >= session.questions.length ? "Lihat Hasil" : "Soal Berikutnya") : (session.remaining === 0 || !session.questions[0] ? "Lihat Hasil" : "Soal Berikutnya")}
+                  <ArrowRight size={14} />
+                </button>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <div className="mt-4 flex items-center justify-center gap-2 text-[10px] font-semibold text-slate-400 dark:text-slate-500">
+          <Trophy size={12} /> Setelah selesai, hasilmu masuk ke Perkembanganmu di Profil.
+        </div>
+      </div>
     </main>
   );
 }
