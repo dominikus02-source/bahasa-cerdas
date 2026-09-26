@@ -1205,3 +1205,194 @@
 .bc-guru-shell .bc-guru :focus-visible {
   outline-color: var(--clr-accent-strong);
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GURU VISUAL SYSTEM V4 — STRONG BLUE SURFACES
+   Audit Sep 2026: beberapa halaman Guru masih membawa gradient legacy
+   hijau/teal/violet. Compatibility mapping membuat sebagian hero/card terlihat
+   biru-pucat → putih di light mode. Layer ini mengunci identitas Guru:
+   navy/royal-blue untuk hero, solid white/navy untuk card, tanpa washed fade.
+   Scope hanya .bc-guru-shell/.bc-guru; Murid/Admin tidak terpengaruh.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.bc-guru-shell {
+  --guru-blue-950: #061a38;
+  --guru-blue-900: #082653;
+  --guru-blue-800: #0b3f86;
+  --guru-blue-700: #1559c6;
+  --guru-blue-600: #2563eb;
+  --guru-blue-500: #3b82f6;
+  --guru-cyan-500: #0ea5e9;
+  --guru-surface-border: #d9e7fb;
+  --guru-surface-shadow: 0 10px 28px rgba(15, 58, 130, .08);
+  --guru-surface-shadow-hover: 0 16px 38px rgba(15, 58, 130, .13);
+}
+
+.dark .bc-guru-shell {
+  --guru-blue-950: #051426;
+  --guru-blue-900: #071c34;
+  --guru-blue-800: #0a2e56;
+  --guru-blue-700: #1d4ed8;
+  --guru-blue-600: #3b82f6;
+  --guru-blue-500: #60a5fa;
+  --guru-cyan-500: #38bdf8;
+  --guru-surface-border: #17365f;
+  --guru-surface-shadow: 0 12px 30px rgba(0, 0, 0, .18);
+  --guru-surface-shadow-hover: 0 18px 42px rgba(0, 0, 0, .26);
+}
+
+/* Canonical teacher hero. New code may use this class directly. */
+.bc-guru-hero {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  background:
+    radial-gradient(440px 220px at 88% 14%, rgba(56, 189, 248, .22), transparent 68%),
+    linear-gradient(135deg, var(--guru-blue-950) 0%, var(--guru-blue-800) 48%, var(--guru-blue-600) 78%, #1489d8 100%);
+  border: 1px solid rgba(96, 165, 250, .24);
+  box-shadow: 0 18px 42px rgba(10, 55, 128, .18);
+}
+.bc-guru-hero::after {
+  content: "";
+  position: absolute;
+  inset: auto -7% -55% 40%;
+  height: 80%;
+  border-radius: 999px;
+  background: rgba(255,255,255,.055);
+  transform: rotate(-8deg);
+  pointer-events: none;
+}
+
+/* Legacy hero gradients: replace the old green/teal identity with strong blue.
+   These selectors are intentionally exact so semantic success cards remain green. */
+.bc-guru-shell .bc-guru .bg-gradient-to-br.from-emerald-600.via-green-700.to-teal-900,
+.bc-guru-shell .bc-guru .bg-gradient-to-br.from-emerald-600.via-green-600.to-teal-700,
+.bc-guru-shell .bc-guru .bg-gradient-to-br.from-teal-600.via-emerald-700.to-teal-900,
+.bc-guru-shell .bc-guru .bg-gradient-to-r.from-emerald-600.via-teal-600.to-cyan-600,
+.bc-guru-shell .bc-guru .bg-gradient-to-r.from-emerald-600.to-teal-600,
+.bc-guru-shell .bc-guru .bg-gradient-to-r.from-emerald-500.to-teal-600,
+.bc-guru-shell .bc-guru .bg-gradient-to-r.from-emerald-600.via-emerald-500.to-green-500 {
+  background-image:
+    radial-gradient(430px 210px at 90% 8%, rgba(56,189,248,.20), transparent 70%),
+    linear-gradient(135deg, #071d42 0%, #0b438f 52%, #176dd2 78%, #0ea5e9 100%) !important;
+  color: #fff;
+  border-color: rgba(96,165,250,.24);
+  box-shadow: 0 16px 36px rgba(15,62,132,.16);
+}
+
+/* TKA/other teacher hero banners with module-specific gradients still receive
+   the Guru identity. Semantic small badges/icons are not targeted. */
+.bc-guru-shell .bc-guru .bg-gradient-to-r.from-rose-600.via-pink-600.to-fuchsia-600.rounded-2xl.text-white {
+  background-image:
+    radial-gradient(420px 210px at 90% 10%, rgba(125,211,252,.20), transparent 70%),
+    linear-gradient(135deg, #071d42 0%, #124da4 55%, #2575db 100%) !important;
+  border: 1px solid rgba(96,165,250,.22);
+  box-shadow: 0 16px 36px rgba(15,62,132,.15);
+}
+
+/* Remove the washed white-tail patterns that looked unfinished in light mode. */
+.bc-guru-shell .bc-guru .bg-gradient-to-r.from-slate-50.to-white {
+  background-image: none !important;
+  background-color: #f8fbff !important;
+}
+.dark .bc-guru-shell .bc-guru .bg-gradient-to-r.from-slate-50.to-white {
+  background-color: #0b1d34 !important;
+}
+.bc-guru-shell .bc-guru .bg-gradient-to-b.from-slate-50.via-white.to-emerald-50,
+.bc-guru-shell .bc-guru .bg-gradient-to-b.from-slate-50.via-white.to-emerald-50\/40,
+.bc-guru-shell .bc-guru .bg-gradient-to-br.from-slate-50.via-white.to-emerald-50 {
+  background-image: none !important;
+  background-color: #f5f8fc !important;
+}
+.dark .bc-guru-shell .bc-guru .bg-gradient-to-b.from-slate-50.via-white.to-emerald-50,
+.dark .bc-guru-shell .bc-guru .bg-gradient-to-b.from-slate-50.via-white.to-emerald-50\/40,
+.dark .bc-guru-shell .bc-guru .bg-gradient-to-br.from-slate-50.via-white.to-emerald-50 {
+  background-color: #061426 !important;
+}
+
+/* Global teacher card elevation. Only actual card-like white surfaces are
+   targeted; form controls and plain white text areas are untouched. */
+.bc-guru-shell .bc-guru :where(
+  .bg-white.rounded-xl.border,
+  .bg-white.rounded-2xl.border,
+  .bg-white.rounded-3xl.border,
+  .bg-white.rounded-xl.shadow-sm,
+  .bg-white.rounded-2xl.shadow-sm
+) {
+  background-color: rgba(255,255,255,.98);
+  border-color: var(--guru-surface-border);
+  box-shadow: var(--guru-surface-shadow);
+}
+.bc-guru-shell .bc-guru :where(
+  .bg-white.rounded-xl.border,
+  .bg-white.rounded-2xl.border,
+  .bg-white.rounded-3xl.border
+):hover {
+  border-color: #b8d4fa;
+}
+.dark .bc-guru-shell .bc-guru :where(
+  .bg-white.rounded-xl.border,
+  .bg-white.rounded-2xl.border,
+  .bg-white.rounded-3xl.border,
+  .bg-white.rounded-xl.shadow-sm,
+  .bg-white.rounded-2xl.shadow-sm
+) {
+  background-color: #0b1d34;
+  border-color: var(--guru-surface-border);
+  box-shadow: var(--guru-surface-shadow);
+}
+
+/* Stronger metric/stat cards: no near-white gradient, clearer blue framing. */
+.bc-guru-stat-card {
+  background: #fff;
+  border: 1px solid #d7e6fb;
+  box-shadow: 0 8px 24px rgba(25,72,140,.07);
+}
+.dark .bc-guru-stat-card {
+  background: #0b1d34;
+  border-color: #17365f;
+  box-shadow: 0 10px 26px rgba(0,0,0,.16);
+}
+
+/* Teacher primary interaction identity: blue. Existing semantic danger,
+   warning, success colors remain available for status/feedback. */
+.bc-guru-shell .bc-guru .guru-primary,
+.bc-guru-shell .bc-guru .guru-active {
+  background-color: var(--guru-blue-600);
+  color: #fff;
+  border-color: var(--guru-blue-600);
+}
+.bc-guru-shell .bc-guru .guru-primary:hover,
+.bc-guru-shell .bc-guru .guru-active:hover {
+  background-color: var(--guru-blue-700);
+}
+
+/* Pastel blue→indigo file/header strips become a deliberate cool surface,
+   not a washed gradient. */
+.bc-guru-shell .bc-guru .bg-gradient-to-br.from-blue-50.to-indigo-50 {
+  background-image: none !important;
+  background-color: #eef5ff !important;
+}
+.dark .bc-guru-shell .bc-guru .bg-gradient-to-br.from-blue-50.to-indigo-50 {
+  background-color: #0c2748 !important;
+}
+
+/* Preserve white text inside strong teacher hero even though compatibility
+   mappings re-color legacy emerald text utilities. */
+.bc-guru-shell .bc-guru .bc-guru-hero :is(.text-emerald-100, .text-emerald-200, .text-green-100, .text-teal-100),
+.bc-guru-shell .bc-guru :is(
+  .bg-gradient-to-br.from-emerald-600.via-green-700.to-teal-900,
+  .bg-gradient-to-br.from-emerald-600.via-green-600.to-teal-700,
+  .bg-gradient-to-br.from-teal-600.via-emerald-700.to-teal-900,
+  .bg-gradient-to-r.from-emerald-600.via-teal-600.to-cyan-600,
+  .bg-gradient-to-r.from-emerald-600.to-teal-600
+) :is(.text-emerald-100, .text-emerald-200, .text-green-100, .text-teal-100) {
+  color: #dbeafe !important;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bc-guru-shell .bc-guru :where(.rounded-xl.border, .rounded-2xl.border) {
+    transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+  }
+}
