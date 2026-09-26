@@ -1425,9 +1425,7 @@ export default function TekaTekiSilang() {
                   <RotateCcw className="w-4 h-4" /> Main Lagi
                 </button>
               )}
-              <button className={`${btn} px-5 py-3 bg-[#FBBF24] hover:brightness-110`} onClick={() => router.push("/arena/game")}>
-                Kembali ke Arena
-              </button>
+              <GameBackButton href="/arena/game" label="Kembali ke Arena" title="Kembali ke Arena" />
             </div>
           </div>
         )}

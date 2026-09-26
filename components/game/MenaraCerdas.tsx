@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { setQuiet } from "@/lib/notif-quiet"
-import Link from "next/link";
 import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
 import { Heart, Flame, Trophy, RotateCcw, Mountain, Check, X, Loader2, Sparkles, Zap, Volume2, VolumeX, Play, Lightbulb } from "lucide-react";
 import Burst from "@/components/game/Burst";
@@ -244,9 +243,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
             <button onClick={start} className={`${btnBase} w-full py-3.5 bg-gradient-to-r from-violet-500 to-purple-600 dark:from-amber-500 dark:to-amber-600 text-white dark:shadow-[0_0_16px_rgba(245,197,66,0.25)]`}>
               <RotateCcw className="w-4 h-4" /> Main Lagi
             </button>
-            <Link href={backHref} className={`${btnBase} w-full py-3.5 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700 text-center`}>
-              Kembali ke Arena
-            </Link>
+            <GameBackButton href={backHref} label="Kembali ke Arena" title="Kembali ke Arena" />
           </div>
         </div>
       </div>

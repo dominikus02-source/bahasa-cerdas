@@ -752,11 +752,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
             <button onClick={() => setScreen("levels")} className={`${btnBase} w-full py-3.5 bg-[#FBBF24]`}>
               Pilih Tingkat
             </button>
-            {!hideBackButton && (
-              <a href={backHref} className={`${btnBase} w-full py-3.5 bg-teal-500/20 border-2 border-teal-400/40 text-center`}>
-                Kembali ke Arena
-              </a>
-            )}
+            {!hideBackButton && <GameBackButton href={backHref} label="Kembali ke Arena" title="Kembali ke Arena" />}
           </div>
         </div>
       </div>
