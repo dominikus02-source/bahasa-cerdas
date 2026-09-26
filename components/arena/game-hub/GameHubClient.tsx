@@ -377,12 +377,12 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled }:
                 fallbackDesc: "Jawab benar untuk menyerang, solo vs bot tersedia.",
               },
               {
-                src: "/banners/banners-TTS-gim.png",
-                alt: "Teka-Teki Silang — isi kotak, asah kosakata!",
-                href: "/arena/game/teka-teki-silang",
-                shadow: "0 8px 28px rgba(56,189,248,0.25)",
-                fallbackTitle: "Teka-Teki Silang",
-                fallbackDesc: "12 level, soal baru tiap main — isi kotaknya dan kumpulkan XP!",
+                src: "/banners/bermain-kata-banner.svg",
+                alt: "BERMAIN KATA — game literasi baru bersama Zelby!",
+                href: "/arena/game/bermain-kata",
+                shadow: "0 8px 28px rgba(14,165,233,0.25)",
+                fallbackTitle: "BERMAIN KATA",
+                fallbackDesc: "Susun kata, lengkapi huruf, cari pasangan, dan pahami makna bersama Zelby.",
               },
             ] satisfies BannerSlide[]}
           />

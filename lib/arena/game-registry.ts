@@ -177,7 +177,7 @@ export const GAME_REGISTRY: GameDefinition[] = [
     time: "~3 menit",
     badge: { text: "Baru", type: "new" },
     featured: true,
-    artwork: "/images/GIM%20Card/bermain-kata-card.webp",
+    artwork: "/images/GIM%20Card/bermain-kata-card.svg",
   },
   {
     id: "tebak-kata",
