@@ -246,7 +246,7 @@ export default function LatihanDetailPage() {
                     className="w-full flex items-center justify-between p-3 hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center text-white font-bold text-xs">
+                      <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center text-white font-bold text-xs">
                         {cs.groupName.charAt(0)}
                       </div>
                       <div className="text-left">
