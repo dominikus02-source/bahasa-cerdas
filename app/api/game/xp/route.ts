@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
     })
     if (limited) return limited
 
-    const { score, correct, wrong, maxStreak, gameType, roomCode } = await req.json()
+    const { score, correct, wrong, maxStreak, gameType, roomCode, gameSessionId } = await req.json()
 
     const normalizedGameType = String(gameType || "").trim().toUpperCase()
     if (!ALLOWED_GAME_TYPES.has(normalizedGameType)) {
@@ -77,7 +77,17 @@ export async function POST(req: NextRequest) {
     // permainan berikutnya. Dulu reference = gameType: XP cair sekali seumur
     // hidup per jenis game. UUID per submit menjaga retry tak menggandakan XP
     // (dilindungi juga rate limit 20/menit + batas 120/submit + kuota harian).
-    const reference = `${normalizedGameType}-${crypto.randomUUID()}`
+    const rawGameSessionId = String(gameSessionId ?? "").trim()
+    if (rawGameSessionId.length > 128) {
+      return NextResponse.json({ error: "Invalid game session" }, { status: 400 })
+    }
+    // Game UI mengirim satu ID stabil per sesi. Retry sesi yang sama kemudian
+    // ditelan oleh unique(userId, source, reference) di awardXp. Legacy client
+    // yang belum mengirim ID tetap mendapat UUID agar permainan baru tidak
+    // saling menelan reward.
+    const reference = rawGameSessionId
+      ? `${normalizedGameType}-${rawGameSessionId}`
+      : `${normalizedGameType}-${crypto.randomUUID()}`
 
     // Teacher Gamification Separation (ADDENDUM 2):
     // Reward engine dipisahkan per role. Gameplay tidak berubah — hanya sistem
@@ -160,19 +170,40 @@ export async function POST(req: NextRequest) {
       if (existing) roomId = existing.id
     }
 
-    await db.gameResult.create({
-      data: {
-        roomId: roomId || "solo",
-        userId: dbUser.id,
-        sessionId: `solo-${Date.now()}`,
-        finalScore: skor,
-        correct: safeCorrect,
-        wrong: safeWrong,
-        maxStreak: safeMaxStreak,
-        xpEarned: hasil.xpDiberikan,
-        rank: 1,
-      },
-    } as any)
+    // GameResult juga idempoten untuk client yang memakai gameSessionId.
+    // Retry tidak membuat baris hasil kedua.
+    if (rawGameSessionId) {
+      const existingResult = await db.gameResult.findUnique({ where: { sessionId: reference } })
+      if (!existingResult) {
+        await db.gameResult.create({
+          data: {
+            roomId: roomId || "solo",
+            userId: dbUser.id,
+            sessionId: reference,
+            finalScore: skor,
+            correct: safeCorrect,
+            wrong: safeWrong,
+            maxStreak: safeMaxStreak,
+            xpEarned: hasil.xpDiberikan,
+            rank: 1,
+          },
+        } as any)
+      }
+    } else {
+      await db.gameResult.create({
+        data: {
+          roomId: roomId || "solo",
+          userId: dbUser.id,
+          sessionId: `solo-${Date.now()}`,
+          finalScore: skor,
+          correct: safeCorrect,
+          wrong: safeWrong,
+          maxStreak: safeMaxStreak,
+          xpEarned: hasil.xpDiberikan,
+          rank: 1,
+        },
+      } as any)
+    }
 
     await invalidateLeagueCache(dbUser.id)
 
