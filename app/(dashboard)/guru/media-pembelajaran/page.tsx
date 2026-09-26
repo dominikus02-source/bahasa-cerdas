@@ -25,7 +25,7 @@ export default function MediaPembelajaranPage() {
         </Link>
         <div className="flex-1">
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Clapperboard className="w-7 h-7 text-emerald-600" />
+            <Clapperboard className="w-7 h-7 text-blue-600" />
             Media Pembelajaran
           </h1>
           <p className="text-sm text-slate-500">Video belajar dan artikel dalam satu tempat</p>
@@ -33,14 +33,14 @@ export default function MediaPembelajaranPage() {
       </div>
 
       {/* Navigasi internal — bukan submenu sidebar */}
-      <div className="flex gap-1.5 mb-5 bg-white border border-slate-100 rounded-2xl p-1.5 w-fit">
+      <div className="bc-guru-surface mb-5 flex w-fit gap-1.5 rounded-2xl p-1.5">
         <button
           type="button"
           onClick={() => setTab("video")}
           className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
             tab === "video"
-              ? "bg-emerald-600 text-white shadow-sm"
-              : "text-slate-500 hover:bg-slate-50"
+              ? "bc-guru-tab-active"
+              : "bc-guru-tab-idle"
           }`}
         >
           <Video className="w-4 h-4" />
@@ -51,8 +51,8 @@ export default function MediaPembelajaranPage() {
           onClick={() => setTab("artikel")}
           className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
             tab === "artikel"
-              ? "bg-emerald-600 text-white shadow-sm"
-              : "text-slate-500 hover:bg-slate-50"
+              ? "bc-guru-tab-active"
+              : "bc-guru-tab-idle"
           }`}
         >
           <Newspaper className="w-4 h-4" />
