@@ -108,17 +108,17 @@ export default function TeacherCommandCenter({
   return (
     <section
       aria-label="Ringkasan mengajar"
-      className="relative overflow-hidden rounded-2xl border border-emerald-100/80 shadow-sm p-5 sm:p-7 bg-white"
+      className="bc-guru-card relative overflow-hidden rounded-2xl p-5 sm:p-7"
     >
       {/* Permukaan berlapis: gradient mint sangat halus + glow lembut.
           Tipografi tetap kontras penuh (§E — bukan game screen). */}
       <div
         aria-hidden
-        className="absolute inset-0 bg-gradient-to-br from-emerald-50/80 via-white to-teal-50/50"
+        className="absolute inset-0 bg-blue-50/35 dark:bg-blue-950/10"
       />
       <div
         aria-hidden
-        className="absolute -top-16 -right-10 w-56 h-56 rounded-full bg-emerald-200/20 blur-3xl"
+        className="absolute -top-16 -right-10 w-56 h-56 rounded-full bg-blue-200/20 blur-3xl"
       />
       <div
         aria-hidden
@@ -155,12 +155,12 @@ export default function TeacherCommandCenter({
         </div>
 
         {/* ── BOTTOM: action bar 4 aksi (desktop 1 row, mobile 2×2) ── */}
-        <div className="mt-4 sm:mt-6 pt-4 sm:pt-5 border-t border-emerald-100/70">
+        <div className="mt-4 sm:mt-6 pt-4 sm:pt-5 border-t border-blue-100/80 dark:border-blue-950/70">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
             {/* Featured — Main Bersama: accent surface + label Live */}
             <Link
               href="/guru/game/main-bersama"
-              className="group relative inline-flex items-center gap-2.5 px-4 py-3 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 text-white text-sm font-semibold shadow-md shadow-emerald-600/25 hover:from-teal-700 hover:to-emerald-700 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 overflow-hidden"
+              className="group relative inline-flex items-center gap-2.5 px-4 py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold shadow-md shadow-blue-600/20 hover:bg-blue-700 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 overflow-hidden"
             >
               <span
                 aria-hidden
@@ -171,7 +171,7 @@ export default function TeacherCommandCenter({
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block leading-tight">Main Bersama</span>
-                <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-emerald-100">
+                <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-blue-100">
                   <span className="relative flex w-1.5 h-1.5 shrink-0" aria-hidden>
                     <span className="absolute inline-flex w-full h-full rounded-full bg-amber-300 opacity-75 motion-safe:animate-ping" />
                     <span className="relative inline-flex w-1.5 h-1.5 rounded-full bg-amber-300" />
@@ -185,9 +185,9 @@ export default function TeacherCommandCenter({
             {/* Sekunder — aksi rutin, surface netral dengan identitas warna */}
             <Link
               href="/guru/materi-ajar"
-              className="inline-flex items-center gap-2.5 px-4 py-3 rounded-xl bg-white border border-emerald-200 text-gray-800 text-sm font-semibold hover:bg-emerald-50/70 hover:border-emerald-300 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
+              className="inline-flex items-center gap-2.5 px-4 py-3 rounded-xl bg-white border border-blue-200 text-gray-800 text-sm font-semibold hover:bg-blue-50/70 hover:border-blue-300 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
             >
-              <span className="w-8 h-8 shrink-0 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+              <span className="w-8 h-8 shrink-0 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
                 <FilePlus2 size={16} aria-hidden />
               </span>
               <span className="min-w-0 flex-1 leading-tight">Buat Materi</span>
