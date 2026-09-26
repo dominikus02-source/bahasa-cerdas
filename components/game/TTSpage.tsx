@@ -26,7 +26,7 @@
  *
  * v3.1 (KUIS TTS 1.0 — gameplay audit): keluar saat bermain diberi
  * KONFIRMASI bila progress akan hilang (§23); result screen punya CTA jelas
- * [Main Lagi] + [Kembali ke Gim] (§15); tiap sel grid punya aria-label
+ * [Main Lagi] + [Kembali ke Arena] (§15); tiap sel grid punya aria-label
  * (aksesibilitas §35); animasi hormati prefers-reduced-motion (§28). XP tetap
  * dikirim SEKALI per sesi (xpSentRef) dan skor dicap server
  * (MAX_SCORE_PER_GAME) — anti-cheat tidak diubah.
@@ -974,7 +974,7 @@ export default function TekaTekiSilang() {
         {screen === "levels" && (
           <div className={`tts-screen bg-white dark:bg-gradient-to-br dark:from-[#1A1535] dark:to-[#221C48] rounded-3xl ${chunky} p-5`}>
             <div className="flex items-center justify-between mb-4">
-              <GameBackButton onClick={() => setScreen("start")} label="Kembali" title="Kembali ke menu Teka-Teki Silang" />
+              <GameBackButton onClick={() => setScreen("start")} label="Kembali ke Teka-Teki Silang" title="Kembali ke menu Teka-Teki Silang" />
               <h2 className="font-extrabold text-2xl">Pilih Level</h2>
               <div className="w-11 sm:w-[110px]" />
             </div>
@@ -1022,7 +1022,7 @@ export default function TekaTekiSilang() {
         {/* ---------- ATUR WAKTU ---------- */}
         {screen === "setup" && (
           <div className={`tts-screen mx-auto w-full max-w-2xl bg-white dark:bg-gradient-to-br dark:from-[#1A1535] dark:to-[#221C48] rounded-3xl ${chunky} p-6 text-center`}>
-            <GameBackButton onClick={() => setScreen("levels")} label="Kembali" title="Kembali ke pilihan level" />
+            <GameBackButton onClick={() => setScreen("levels")} label="Kembali ke Pilih Level" title="Kembali ke pilihan level" />
             <div className="flex justify-center mb-3">
               <MascotFace mascot={mascot} celebrating={false} />
             </div>            <h2 className="font-extrabold text-2xl mb-1">{puzzle.title}</h2>
@@ -1424,7 +1424,7 @@ export default function TekaTekiSilang() {
                 </button>
               )}
               <button className={`${btn} px-5 py-3 bg-[#FBBF24] hover:brightness-110`} onClick={() => router.push("/arena/game")}>
-                Kembali ke Gim
+                Kembali ke Arena
               </button>
             </div>
           </div>
