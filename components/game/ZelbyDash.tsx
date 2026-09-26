@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { setQuiet } from "@/lib/notif-quiet";
+import GameBackButton from "@/components/game/GameBackButton";
 import {
   Play,
   Pause,
