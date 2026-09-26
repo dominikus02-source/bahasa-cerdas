@@ -18,7 +18,7 @@ function formatDate(iso: string | null | undefined): string {
 
 export function StudentsSection({ students }: { students: KomisiStudent[] }) {
   return (
-    <section aria-label="Murid Premium Saya" className="rounded-2xl bg-card border border-border p-4 lg:p-6">
+    <section aria-label="Murid Premium Saya" className="bc-guru-surface rounded-2xl p-4 lg:p-6">
       <div className="flex items-center gap-2">
         <GraduationCap className="h-5 w-5 text-muted-foreground" />
         <h2 className="text-base font-semibold text-foreground">Murid Premium Saya</h2>
@@ -42,7 +42,7 @@ export function StudentsSection({ students }: { students: KomisiStudent[] }) {
         <ul className="mt-4 divide-y divide-border">
           {students.map((s) => (
             <li key={s.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 py-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-100 dark:bg-violet-500/15 text-sm font-bold text-violet-700 dark:text-violet-300">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-950/60 text-sm font-bold text-blue-700 dark:text-blue-300">
                 {s.name?.trim().charAt(0).toUpperCase() ?? "?"}
               </div>
               <div className="min-w-0 flex-1">
