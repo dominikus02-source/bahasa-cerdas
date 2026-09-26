@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { setQuiet } from "@/lib/notif-quiet"
-import Link from "next/link";
 import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
 import {
   Check, X, Zap, Flame, Trophy, Timer, RotateCcw, Loader2,
@@ -594,9 +593,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
             <button onClick={() => setScreen("levels")} className={`${btnBase} w-full py-3.5 bg-[#FBBF24] font-bold`}>
               Pilih Tingkat
             </button>
-            <Link href={backHref} className={`${btnBase} w-full py-3.5 bg-emerald-500/20 border-2 border-emerald-400/40 text-[#161B3A] dark:text-[#F1EDFF]/80 font-semibold text-center`}>
-              Kembali ke Arena
-            </Link>
+            <GameBackButton href={backHref} label="Kembali ke Arena" title="Kembali ke Arena" />
           </div>
         </div>
       </div>
