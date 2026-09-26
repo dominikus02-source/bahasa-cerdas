@@ -21,7 +21,7 @@ export function BigtInfoPage({ role }: Props) {
           </div>
           <div>
             <h1 className="text-2xl font-bold">BIGT — Tes Global Bahasa Indonesia</h1>
-            <p className={`text-sm ${isGuru ? "text-emerald-200" : "text-violet-200"}`}>
+            <p className={`text-sm ${isGuru ? "guru-hero-muted" : "text-violet-200"}`}>
               Sistem pembelajaran bahasa Indonesia bertahap level A1–C2, dengan umpan balik AI dan peta kesiapan menuju UKBI.
             </p>
           </div>
@@ -67,7 +67,7 @@ export function BigtInfoPage({ role }: Props) {
           { icon: <BookOpen size={24} />, title: "Sertifikat Kesiapan", desc: "Verifikasi QR — mencatat capaian belajar, bukan sertifikat UKBI" },
         ].map(f => (
           <div key={f.title} className="bg-card dark:bg-slate-900 rounded-xl border border-border p-5 hover:shadow-md transition-shadow">
-            <div className={`w-10 h-10 rounded-lg ${isGuru ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400" : "bg-violet-100 text-violet-600 dark:bg-violet-500/15 dark:text-violet-400"} flex items-center justify-center mb-3`}>
+            <div className={`w-10 h-10 rounded-lg ${isGuru ? "bg-blue-50 text-blue-600 dark:bg-blue-950/45 dark:text-blue-300" : "bg-violet-100 text-violet-600 dark:bg-violet-500/15 dark:text-violet-400"} flex items-center justify-center mb-3`}>
               {f.icon}
             </div>
             <h3 className="font-bold text-foreground text-sm mb-1">{f.title}</h3>
