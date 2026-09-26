@@ -398,7 +398,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
         )}
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <GameBackButton onClick={() => setScreen("start")} label="Kembali" title="Kembali ke menu Benar/Salah" />
+            <GameBackButton onClick={() => setScreen("start")} label="Kembali ke Benar/Salah" title="Kembali ke menu Benar/Salah" />
             <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
             <div className="w-11 sm:w-[110px]" />
           </div>
@@ -520,7 +520,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
           </div>
 
           <div className="flex items-center justify-between">
-            <GameBackButton onClick={() => { stopBGM(); setScreen("levels"); }} label="Kembali" title="Kembali ke pilihan level" />
+            <GameBackButton onClick={() => { stopBGM(); setScreen("levels"); }} label="Kembali ke Pilih Level" title="Kembali ke pilihan level" />
             <div className="hidden md:block text-xs font-semibold opacity-60">Tombol keyboard: ← Benar • → Salah</div>
             <div className="w-11" />
           </div>
