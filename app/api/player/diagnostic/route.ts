@@ -92,10 +92,10 @@ function diagnosticUnavailable(reasonCode = "INSUFFICIENT_PRODUCTION_DATA", lear
   );
 }
 
-async function buildDiagnosticCandidates() {
+async function buildBankDiagnosticCandidates() {
   const metadataRows = await db.questionMetadata.findMany({
     where: {
-      source: DIAGNOSTIC_SUPPORTED_SOURCES[0],
+      source,
       status: "APPROVED",
       skill: { not: null },
     },
@@ -171,9 +171,101 @@ async function buildDiagnosticCandidates() {
   return candidates;
 }
 
-async function alreadySeen(userId: string, questionIds: string[]): Promise<Map<string, Date>> {
+
+type DiagnosticSource = "BANK_SOAL" | "UKBI" | "TKA";
+
+const DIAGNOSTIC_SOURCE_LABELS: Record<DiagnosticSource, string> = {
+  BANK_SOAL: "Bank Soal",
+  UKBI: "UKBI",
+  TKA: "TKA",
+};
+
+function normalizeQuestionOptions(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.map((item) => {
+    if (typeof item === "string") return item;
+    if (isRecord(item) && typeof item.text === "string") return item.text;
+    return "";
+  }).filter((item): item is string => item.trim().length > 0);
+}
+
+function skillFromUkbiSection(section: string): LearningSkillType | null {
+  const map: Record<string, LearningSkillType> = {
+    MENDENGARKAN: "LISTENING",
+    MERESPONS_KAIDAH: "GRAMMAR",
+    MEMBACA: "READING",
+    MENULIS: "WRITING",
+    BERBICARA: "SPEAKING",
+  };
+  return map[section] ?? null;
+}
+
+function skillFromTkaCompetency(competency: string): LearningSkillType | null {
+  const map: Record<string, LearningSkillType> = {
+    LITERASI_MEMBACA: "READING",
+    TATA_BAHASA: "GRAMMAR",
+    SASTRA: "LITERATURE",
+    MENULIS: "WRITING",
+  };
+  return map[competency] ?? null;
+}
+
+async function buildCertifiedDiagnosticCandidates(source: Exclude<DiagnosticSource, "BANK_SOAL">) {
+  if (source === "UKBI") {
+    const rows = await db.uKBIQuestion.findMany({
+      where: { isActive: true, isVerified: true, type: "PILIHAN_GANDA" },
+      orderBy: { id: "asc" },
+      select: { id: true, seksi: true, text: true, options: true, difficulty: true, passageType: true },
+    });
+    return rows.flatMap((row) => {
+      const skill = skillFromUkbiSection(row.seksi);
+      const options = normalizeQuestionOptions(row.options);
+      if (!skill || !row.text.trim() || options.length < 2) return [];
+      return [{
+        id: row.id,
+        text: row.text,
+        options,
+        questionType: "PILIHAN_GANDA" as const,
+        skill,
+        subskill: row.passageType ?? null,
+        difficulty: row.difficulty as DifficultyId,
+        topic: row.seksi,
+        seenAt: null,
+      }];
+    });
+  }
+
+  const rows = await db.tKAQuestion.findMany({
+    where: { isActive: true, isVerified: true, type: "PILIHAN_GANDA" },
+    orderBy: { id: "asc" },
+    select: { id: true, kompetensi: true, subKompetensi: true, text: true, options: true, difficulty: true },
+  });
+  return rows.flatMap((row) => {
+    const skill = skillFromTkaCompetency(row.kompetensi);
+    const options = normalizeQuestionOptions(row.options);
+    if (!skill || !row.text.trim() || options.length < 2) return [];
+    return [{
+      id: row.id,
+      text: row.text,
+      options,
+      questionType: "PILIHAN_GANDA" as const,
+      skill,
+      subskill: row.subKompetensi ?? null,
+      difficulty: row.difficulty as DifficultyId,
+      topic: row.kompetensi,
+      seenAt: null,
+    }];
+  });
+}
+
+async function buildDiagnosticCandidates(source: DiagnosticSource = "BANK_SOAL") {
+  if (source === "BANK_SOAL") return buildBankDiagnosticCandidates();
+  return buildCertifiedDiagnosticCandidates(source);
+}
+
+async function alreadySeen(userId: string, source: DiagnosticSource, questionIds: string[]): Promise<Map<string, Date>> {
   const evidenceRows = await db.learningEvidence.findMany({
-    where: { userId, source: DIAGNOSTIC_SUPPORTED_SOURCES[0], questionId: { in: questionIds } },
+    where: { userId, source, questionId: { in: questionIds } },
     orderBy: { answeredAt: "desc" },
     select: { questionId: true, answeredAt: true },
   });
@@ -498,12 +590,12 @@ async function getAiDiagnosticPayload(
   });
 }
 
-async function startDiagnostic(userId: string, size: number) {
+async function startDiagnostic(userId: string, size: number, source: DiagnosticSource = "BANK_SOAL") {
   const states = await getLearnerState(userId);
-  const candidates = await buildDiagnosticCandidates();
+  const candidates = await buildDiagnosticCandidates(source);
   if (candidates.length === 0) return diagnosticUnavailable("INSUFFICIENT_PRODUCTION_DATA", states);
 
-  const seen = await alreadySeen(userId, candidates.map((candidate) => candidate.id));
+  const seen = await alreadySeen(userId, source, candidates.map((candidate) => candidate.id));
   const pool = candidates.map((candidate) => ({ ...candidate, seenAt: seen.get(candidate.id) ?? null }));
 
   const selection = selectDiagnosticQuestions(pool, size);
@@ -521,7 +613,7 @@ async function startDiagnostic(userId: string, size: number) {
       targetDifficulty: null,
       reasonCode: DIAGNOSTIC_REASON_CODE,
       reasonText:
-        "Tes awal untuk mengenali kemampuanmu. Jawab sebisamu — tidak ada jawaban salah yang merugikan; hasilnya dipakai untuk menyesuaikan latihan.",
+`Tes awal dari ${DIAGNOSTIC_SOURCE_LABELS[source]} untuk mengenali kemampuanmu. Jawab sebisamu — hasilnya dipakai untuk menyesuaikan latihan berikutnya.`,
       questionIds: selection.questions.map((question) => question.id),
       status: "IN_PROGRESS",
       expiresAt: new Date(Date.now() + DIAGNOSTIC_SESSION_MINUTES * 60 * 1000),
@@ -533,6 +625,8 @@ async function startDiagnostic(userId: string, size: number) {
     actionType: "DIAGNOSTIC",
     actionTitle: "Kenali Kemampuanmu",
     ctaLabel: "Mulai Tes Awal",
+    source,
+    sourceLabel: DIAGNOSTIC_SOURCE_LABELS[source],
     sessionId: session.id,
     selectionVersion: DIAGNOSTIC_SELECTION_VERSION,
     sessionSize: selection.questions.length,
@@ -644,6 +738,12 @@ async function previewDiagnostic(userId: string) {
         learnerState: states,
         mentor: null,
         comingSoon: aiComingSoon || undefined,
+        inProgressSessionId,
+        diagnosticSources: [
+          { id: "BANK_SOAL", label: "Bank Soal", description: "Latihan Bahasa Indonesia dari bank soal BC." },
+          { id: "UKBI", label: "UKBI", description: "Butir terverifikasi untuk memetakan kemampuan berbahasa." },
+          { id: "TKA", label: "TKA", description: "Butir TKA Bahasa Indonesia untuk memetakan literasi dan kebahasaan." },
+        ],
       });
     }
 
@@ -756,6 +856,73 @@ try {
   }
 }
 
+
+async function loadStandardDiagnosticQuestions(source: DiagnosticSource, questionIds: string[]) {
+  if (source === "BANK_SOAL") {
+    const metadataRows = await db.questionMetadata.findMany({
+      where: { source: "BANK_SOAL", status: "APPROVED", questionId: { in: questionIds } },
+      select: { questionId: true, skill: true, subskill: true, difficulty: true, topic: true, questionType: true },
+    });
+    const questions = await db.soal.findMany({
+      where: { kodeSoal: { in: questionIds } },
+      select: { kodeSoal: true, text: true, options: true, type: true },
+    });
+    const questionMap = new Map(questions.map((question) => [question.kodeSoal, question]));
+    const metadataMap = new Map(metadataRows.map((metadata) => [metadata.questionId, metadata]));
+    return questionIds.flatMap((id) => {
+      const question = questionMap.get(id);
+      const metadata = metadataMap.get(id);
+      const options = normalizeQuestionOptions(question?.options);
+      return question && metadata && normalizeDiagnosticType(question.type) === metadata.questionType && options.length > 0
+        ? [{ id, text: question.text, options, questionType: metadata.questionType, topic: metadata.topic, skill: metadata.skill, subskill: metadata.subskill, difficulty: metadata.difficulty }]
+        : [];
+    });
+  }
+
+  if (source === "UKBI") {
+    const rows = await db.uKBIQuestion.findMany({
+      where: { id: { in: questionIds }, isActive: true, isVerified: true },
+      select: { id: true, seksi: true, text: true, options: true, difficulty: true, passageType: true, type: true },
+    });
+    const byId = new Map(rows.map((row) => [row.id, row]));
+    return questionIds.flatMap((id) => {
+      const row = byId.get(id);
+      const skill = row ? skillFromUkbiSection(row.seksi) : null;
+      const options = normalizeQuestionOptions(row?.options);
+      return row && skill && row.type === "PILIHAN_GANDA" && options.length > 0
+        ? [{ id, text: row.text, options, questionType: "PILIHAN_GANDA" as const, topic: row.seksi, skill, subskill: row.passageType ?? null, difficulty: row.difficulty as DifficultyId }]
+        : [];
+    });
+  }
+
+  const rows = await db.tKAQuestion.findMany({
+    where: { id: { in: questionIds }, isActive: true, isVerified: true },
+    select: { id: true, kompetensi: true, subKompetensi: true, text: true, options: true, difficulty: true, type: true },
+  });
+  const byId = new Map(rows.map((row) => [row.id, row]));
+  return questionIds.flatMap((id) => {
+    const row = byId.get(id);
+    const skill = row ? skillFromTkaCompetency(row.kompetensi) : null;
+    const options = normalizeQuestionOptions(row?.options);
+    return row && skill && row.type === "PILIHAN_GANDA" && options.length > 0
+      ? [{ id, text: row.text, options, questionType: "PILIHAN_GANDA" as const, topic: row.kompetensi, skill, subskill: row.subKompetensi ?? null, difficulty: row.difficulty as DifficultyId }]
+      : [];
+  });
+}
+
+function answerMatchesOption(answer: string | number, correctAnswer: string, options: string[]): boolean {
+  const raw = String(answer).trim().toUpperCase();
+  const correct = String(correctAnswer).trim().toUpperCase();
+  if (raw === correct) return true;
+  if (typeof answer === "number" && answer >= 0 && answer < options.length) {
+    return String.fromCharCode(65 + answer) === correct;
+  }
+  if (/^[A-D]$/.test(raw) && /^[0-9]+$/.test(correct)) {
+    return Number(raw.charCodeAt(0) - 65) === Number(correct);
+  }
+  return false;
+}
+
 async function getDiagnosticPayload(userId: string, sessionId: string) {
   const session = await db.adaptivePracticeSession.findFirst({ where: { id: sessionId, userId } });
   if (!session) return NextResponse.json({ error: "Sesi tidak ditemukan" }, { status: 404 });
@@ -771,34 +938,11 @@ async function getDiagnosticPayload(userId: string, sessionId: string) {
   const questionIds = Array.isArray(session.questionIds)
     ? session.questionIds.filter((id): id is string => typeof id === "string")
     : [];
-  const metadataRows = await db.questionMetadata.findMany({
-    where: { source: session.source, status: "APPROVED", questionId: { in: questionIds } },
-    select: { questionId: true, skill: true, subskill: true, difficulty: true, topic: true, questionType: true },
-  });
-  const questions = await db.soal.findMany({
-    where: { kodeSoal: { in: questionIds } },
-    select: { kodeSoal: true, text: true, options: true, type: true },
-  });
-  const questionMap = new Map(questions.map((question) => [question.kodeSoal, question]));
-  const metadataMap = new Map(metadataRows.map((metadata) => [metadata.questionId, metadata]));
-  const payloadQuestions = questionIds.flatMap((id) => {
-    const question = questionMap.get(id);
-    const metadata = metadataMap.get(id);
-    return question && metadata && normalizeDiagnosticType(question.type) === metadata.questionType
-      ? [
-          {
-            id,
-            text: question.text,
-            options: question.options,
-            questionType: metadata.questionType,
-            topic: metadata.topic,
-            skill: metadata.skill,
-            subskill: metadata.subskill,
-            difficulty: metadata.difficulty,
-          },
-        ]
-      : [];
-  });
+  const source = session.source as DiagnosticSource;
+  if (source !== "BANK_SOAL" && source !== "UKBI" && source !== "TKA") {
+    return NextResponse.json({ error: "Sumber tes tidak didukung" }, { status: 409 });
+  }
+  const payloadQuestions = await loadStandardDiagnosticQuestions(source, questionIds);
 
   if (session.status === "COMPLETED") {
     const { profile, abilityProfile } = await buildSessionProfile(userId, session.source, session.id);
@@ -866,15 +1010,52 @@ async function answerDiagnostic(req: NextRequest, userId: string, body: JsonReco
     : [];
   if (!questionIds.includes(questionId)) return NextResponse.json({ error: "Soal bukan bagian dari sesi" }, { status: 403 });
 
-  const [metadata, question] = await Promise.all([
-    db.questionMetadata.findUnique({ where: { source_questionId: { source: session.source, questionId } } }),
-    db.soal.findUnique({ where: { kodeSoal: questionId }, select: { correctAnswer: true } }),
-  ]);
-  if (!metadata || metadata.status !== "APPROVED" || !metadata.skill || !question) {
-    return NextResponse.json({ error: "Metadata atau soal tidak lagi eligible" }, { status: 409 });
+  const source = session.source as DiagnosticSource;
+  let correct = false;
+  let skill: LearningSkillType | null = null;
+  let difficulty: DifficultyId | null = null;
+  let options: string[] = [];
+
+  if (source === "BANK_SOAL") {
+    const [metadata, question] = await Promise.all([
+      db.questionMetadata.findUnique({ where: { source_questionId: { source: "BANK_SOAL", questionId } } }),
+      db.soal.findUnique({ where: { kodeSoal: questionId }, select: { correctAnswer: true, options: true } }),
+    ]);
+    if (!metadata || metadata.status !== "APPROVED" || !metadata.skill || !question) {
+      return NextResponse.json({ error: "Metadata atau soal tidak lagi eligible" }, { status: 409 });
+    }
+    skill = metadata.skill as LearningSkillType;
+    difficulty = metadata.difficulty as DifficultyId | null;
+    options = normalizeQuestionOptions(question.options);
+    correct = answerMatchesOption(answer, String(question.correctAnswer ?? ""), options);
+  } else if (source === "UKBI") {
+    const question = await db.uKBIQuestion.findUnique({
+      where: { id: questionId },
+      select: { correctAnswer: true, options: true, seksi: true, difficulty: true, isActive: true, isVerified: true, type: true },
+    });
+    if (!question || !question.isActive || !question.isVerified || question.type !== "PILIHAN_GANDA") {
+      return NextResponse.json({ error: "Soal UKBI tidak lagi eligible" }, { status: 409 });
+    }
+    skill = skillFromUkbiSection(question.seksi);
+    difficulty = question.difficulty as DifficultyId;
+    options = normalizeQuestionOptions(question.options);
+    correct = Boolean(skill) && answerMatchesOption(answer, question.correctAnswer, options);
+  } else {
+    const question = await db.tKAQuestion.findUnique({
+      where: { id: questionId },
+      select: { correctAnswer: true, options: true, kompetensi: true, difficulty: true, isActive: true, isVerified: true, type: true },
+    });
+    if (!question || !question.isActive || !question.isVerified || question.type !== "PILIHAN_GANDA") {
+      return NextResponse.json({ error: "Soal TKA tidak lagi eligible" }, { status: 409 });
+    }
+    skill = skillFromTkaCompetency(question.kompetensi);
+    difficulty = question.difficulty as DifficultyId;
+    options = normalizeQuestionOptions(question.options);
+    correct = Boolean(skill) && answerMatchesOption(answer, question.correctAnswer, options);
   }
 
-  const correct = String(answer) === String(question.correctAnswer);
+  if (!skill) return NextResponse.json({ error: "Kemampuan soal tidak terpetakan" }, { status: 409 });
+
   await upsertLearningEvidence({
     userId,
     source: session.source,
@@ -883,14 +1064,13 @@ async function answerDiagnostic(req: NextRequest, userId: string, body: JsonReco
     selectedAnswer: String(answer),
     isCorrect: correct,
     score: correct ? 1 : 0,
-    skill: metadata.skill as LearningSkillType,
-    difficulty: metadata.difficulty as DifficultyId | null,
+    skill,
+    difficulty,
     metadata: {
       version: LEARNING_EVIDENCE_VERSION,
       selectionVersion: session.selectionVersion,
       diagnostic: true,
-      // BC Assessment Engine 2.1 — subskill untuk coverage subskill per skill.
-      subskill: metadata.subskill ?? null,
+      source: session.source,
     },
   });
 
@@ -962,19 +1142,25 @@ export async function POST(req: NextRequest) {
       const limited = await rateLimitRoute(req, DIAGNOSTIC_RATE_LIMIT);
       if (limited) return limited;
 
+      const requestedSource = typeof body.source === "string" ? body.source.toUpperCase() : "";
+      const source: DiagnosticSource =
+        requestedSource === "UKBI" || requestedSource === "TKA" || requestedSource === "BANK_SOAL"
+          ? requestedSource
+          : "BANK_SOAL";
+      const explicitSource = requestedSource.length > 0;
       const aiMode = aiDiagnosticEnabled();
-      const allowedSizes: readonly number[] = aiMode ? AI_DIAGNOSTIC_ALLOWED_SIZES : DIAGNOSTIC_ALLOWED_SIZES;
-      const defaultSize = aiMode ? AI_DIAGNOSTIC_DEFAULT_SIZE : DIAGNOSTIC_DEFAULT_SIZE;
+      const allowedSizes: readonly number[] = aiMode && !explicitSource ? AI_DIAGNOSTIC_ALLOWED_SIZES : DIAGNOSTIC_ALLOWED_SIZES;
+      const defaultSize = aiMode && !explicitSource ? AI_DIAGNOSTIC_DEFAULT_SIZE : DIAGNOSTIC_DEFAULT_SIZE;
       const size = body.size === undefined ? defaultSize : Number(body.size);
       if (!Number.isInteger(size) || !allowedSizes.includes(size)) {
         const list = Array.from(allowedSizes).join(", ");
         return NextResponse.json({ error: `Ukuran sesi harus ${list}` }, { status: 400 });
       }
-      if (aiMode) {
+      if (aiMode && !explicitSource) {
         const aiResponse = await startAiDiagnostic(user.id, size);
         if (aiResponse) return aiResponse;
       }
-      return await startDiagnostic(user.id, size);
+      return await startDiagnostic(user.id, size, source);
     }
     if (body.action === "answer") return await answerDiagnostic(req, user.id, body);
     if (body.action === "complete") return await completeDiagnostic(user.id, body);
