@@ -79,14 +79,16 @@ export default async function MuridLayout({ children }: { children: React.ReactN
  <header className="shrink-0 sticky top-0 z-30 flex items-center justify-between gap-2 px-4 md:px-6 h-14 bg-white/80 backdrop-blur-xl border-b border-gray-100/50 dark:bg-slate-900/80 dark:border-slate-800">
           <BackHome />
           <div className="flex items-center gap-1 md:gap-2">
-            <UserAvatar
-              size={36}
-              avatar={user.avatar}
-              initials={user.fullName?.charAt(0).toUpperCase() || "M"}
-              gradient="from-violet-500 to-purple-600"
-              textClassName="text-sm"
-              className="hidden md:flex shadow-md"
-            />
+            <Link href="/murid/profile" aria-label="Buka profil" title="Profil" className="hidden md:flex rounded-full ring-2 ring-transparent hover:ring-violet-300 transition-all">
+              <UserAvatar
+                size={36}
+                avatar={user.avatar}
+                initials={user.fullName?.charAt(0).toUpperCase() || "M"}
+                gradient="from-violet-500 to-purple-600"
+                textClassName="text-sm"
+                className="shadow-md"
+              />
+            </Link>
             <NotificationBell />
             <ThemeToggle />
           </div>

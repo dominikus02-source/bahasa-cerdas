@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, BookOpen, Zap, PenLine } from "lucide-react";
+import { Home, BookOpen, Zap, PenLine, UserRound } from "lucide-react";
 
 const PRIMARY = [
   { href: "/murid/beranda", label: "Beranda", icon: Home },
   { href: "/murid/belajar", label: "Belajar", icon: BookOpen },
   { href: "/arena", label: "Arena", icon: Zap },
   { href: "/murid/karya", label: "Karya", icon: PenLine },
+  { href: "/murid/profile", label: "Profil", icon: UserRound },
 ];
 
 type LegacyProps = {
@@ -24,7 +25,7 @@ export default function MuridMobileNav(_props: LegacyProps) {
 
   return (
     <nav className="bc-mobile-nav md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-gray-100/80 bg-white/94 backdrop-blur-xl safe-area-bottom dark:bg-slate-900/94 dark:border-slate-800" aria-label="Navigasi utama murid">
-      <div className="grid grid-cols-4 items-end px-1.5 pt-1.5 pb-2">
+      <div className="grid grid-cols-5 items-end px-1 pt-1.5 pb-2">
         {PRIMARY.map(({ href, label, icon: Icon }) => {
           const active = isActive(href);
           return (

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   Settings, X, Camera, Save, CheckCircle2, AlertCircle, LogOut, Loader2,
-  Award, History, Pencil, BookOpen, ChevronRight, TrendingUp,
+  Award, History, Pencil, BookOpen, ChevronRight, TrendingUp, Crown, SlidersHorizontal,
 } from "lucide-react";
 import "@/app/arena/player-theme.css";
 import { IconFlame, IconPen } from "@/lib/icons";
@@ -414,6 +414,32 @@ export default function MuridProfilePage() {
           </button>
         </div>
         {user.bio && <p className="mt-4 max-w-3xl text-sm leading-relaxed text-slate-600 dark:text-white/60">{user.bio}</p>}
+      </section>
+
+      {/* PUSAT AKUN — pengaturan dan Premium sengaja berada di Profile, bukan navbar utama. */}
+      <section aria-label="Akun dan Premium" className="grid gap-4 sm:grid-cols-2 mb-6">
+        <button type="button" onClick={openSettings} className="group text-left rounded-2xl bg-white/90 dark:bg-slate-900/80 p-5 ring-1 ring-slate-900/10 dark:ring-white/10 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all">
+          <div className="flex items-start gap-4">
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200"><SlidersHorizontal size={20} /></span>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Akun</p>
+              <h2 className="mt-1 text-base font-extrabold text-slate-900 dark:text-white">Pengaturan</h2>
+              <p className="mt-1 text-xs leading-relaxed text-slate-500 dark:text-white/50">Foto, nama panggilan, sekolah, kelas, dan data profil.</p>
+            </div>
+            <ChevronRight size={18} className="mt-1 shrink-0 text-slate-400 group-hover:text-violet-500 transition-colors" />
+          </div>
+        </button>
+        <Link href="/murid/premium" className="group text-left rounded-2xl bg-gradient-to-br from-violet-600 via-purple-600 to-fuchsia-600 p-5 text-white shadow-lg shadow-violet-200/40 dark:shadow-none hover:-translate-y-0.5 hover:shadow-xl transition-all">
+          <div className="flex items-start gap-4">
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-white/15 border border-white/15"><Crown size={20} className="text-amber-300" /></span>
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-violet-200">BahasaCerdas Premium</p>
+              <h2 className="mt-1 text-base font-extrabold">{user.isPremium ? "Kelola Premium" : "Jelajahi Premium"}</h2>
+              <p className="mt-1 text-xs leading-relaxed text-violet-100/85">{user.isPremium ? "Perpanjang akses Mentor AI dan fitur personal." : "Buka Mentor AI, latihan personal, dan insight belajarmu."}</p>
+            </div>
+            <ChevronRight size={18} className="mt-1 shrink-0 text-white/70 group-hover:text-white transition-colors" />
+          </div>
+        </Link>
       </section>
 
       {/* PERKEMBANGANMU — skill bahasa + perjalanan belajar (data nyata) */}

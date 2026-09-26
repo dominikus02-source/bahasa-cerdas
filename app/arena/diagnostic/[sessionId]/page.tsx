@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, CheckCircle2, Flag, GraduationCap, Loader2, Sparkles, XCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, Flag, GraduationCap, Loader2, Sparkles, XCircle, Brain } from "lucide-react";
 
 interface DiagnosticQuestion {
   id: string;
@@ -107,6 +107,65 @@ const CATEGORY_META: Record<DiagnosticSkillResult["category"], { label: string; 
   WEAK: { label: "Perlu Banyak Latihan", className: "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300" },
   INSUFFICIENT_EVIDENCE: { label: "Belum Cukup Bukti", className: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300" },
 };
+
+function MentorResultCard() {
+  const [isPremium, setIsPremium] = useState(false);
+  const [checking, setChecking] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<{ headline: string; diagnosis: string; reason: string; action: string; encouragement: string } | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    fetch("/api/player/premium/status").then((r) => r.ok ? r.json() : Promise.reject()).then((d) => {
+      if (!alive) return;
+      const plan = d.plan || d.data?.plan;
+      const founder = d.isFounder || d.data?.isFounder;
+      setIsPremium(plan === "MURID_PREMIUM" || plan === "PRO" || plan === "FOUNDER" || founder === true);
+    }).catch(() => setIsPremium(false)).finally(() => alive && setChecking(false));
+    return () => { alive = false; };
+  }, []);
+
+  async function askMentor() {
+    setLoading(true); setError(null);
+    try {
+      const res = await fetch("/api/player/mentor", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "explain" }) });
+      const d = await res.json();
+      if (!res.ok) { setError(d.message || "Mentor belum bisa menjawab. Coba lagi sebentar."); return; }
+      setResult(d.data);
+    } catch { setError("Mentor belum bisa dihubungi. Coba lagi sebentar."); }
+    finally { setLoading(false); }
+  }
+
+  return (
+    <div className="rounded-3xl border border-violet-200/80 bg-gradient-to-br from-violet-50 via-white to-fuchsia-50 p-6 shadow-sm dark:border-violet-900/60 dark:from-violet-950/30 dark:via-slate-900/70 dark:to-fuchsia-950/20">
+      <div className="flex items-start gap-3">
+        <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white shadow-lg shadow-violet-200 dark:shadow-none"><Brain size={23} /></div>
+        <div className="min-w-0 flex-1">
+          <p className="text-[10px] font-black uppercase tracking-[0.16em] text-violet-600 dark:text-violet-300">Mentor AI Premium</p>
+          <h3 className="mt-1 text-lg font-extrabold text-slate-900 dark:text-white">Mau tahu kenapa hasilmu seperti ini?</h3>
+          <p className="mt-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300">Mentor membaca pola belajarmu dari tes awal dan latihanmu, lalu membantu menjelaskan apa yang perlu kamu kuatkan.</p>
+        </div>
+      </div>
+      {checking ? (
+        <div className="mt-5 flex items-center gap-2 text-xs text-slate-500"><Loader2 size={14} className="animate-spin" /> Mengecek akses Premium…</div>
+      ) : isPremium ? (
+        <>
+          {!result && !loading && <button type="button" onClick={askMentor} className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-500 px-5 py-3.5 text-sm font-bold text-white shadow-lg shadow-violet-200 transition hover:-translate-y-0.5 hover:shadow-xl dark:shadow-none"><Sparkles size={17} /> Minta Analisis Mentor</button>}
+          {loading && <div className="mt-5 flex items-center justify-center gap-2 rounded-2xl bg-violet-100/70 px-5 py-3.5 text-sm font-semibold text-violet-700 dark:bg-violet-950/40 dark:text-violet-200"><Loader2 size={17} className="animate-spin" /> Mentor sedang membaca progresmu…</div>}
+          {error && <p className="mt-3 text-xs text-red-500">{error}</p>}
+          {result && <div className="mt-5 rounded-2xl bg-white/80 p-4 ring-1 ring-violet-200/70 dark:bg-slate-900/60 dark:ring-violet-800/60"><p className="text-sm font-extrabold text-violet-700 dark:text-violet-300">{result.headline}</p><p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{result.diagnosis}</p><div className="mt-3 space-y-2 text-xs text-slate-600 dark:text-slate-300"><p><span className="font-bold text-violet-600">Kenapa:</span> {result.reason}</p><p><span className="font-bold text-emerald-600">Coba ini:</span> {result.action}</p><p className="italic text-slate-500">{result.encouragement}</p></div><button type="button" onClick={askMentor} className="mt-4 text-xs font-bold text-violet-600 hover:text-violet-700">Tanyakan lagi →</button></div>}
+        </>
+      ) : (
+        <div className="mt-5 rounded-2xl bg-white/80 p-4 ring-1 ring-violet-200/60 dark:bg-slate-900/60 dark:ring-violet-800/60">
+          <p className="text-sm font-bold text-slate-900 dark:text-white">Mentor AI adalah fitur Premium.</p>
+          <p className="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-300">Dapatkan penjelasan yang lebih personal setelah tes awal, termasuk alasan, fokus latihan, dan langkah berikutnya.</p>
+          <button type="button" onClick={() => window.location.assign("/murid/premium")} className="mt-3 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-xs font-bold text-white hover:bg-violet-700">Lihat Premium <ArrowRight size={14} /></button>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function ResultPanel({ result, abilityProfile, fallbackReason }: { result: DiagnosticResult; abilityProfile?: AbilityProfileSummary | null; fallbackReason?: string | null }) {
   const band = result.placement;
@@ -237,6 +296,8 @@ function ResultPanel({ result, abilityProfile, fallbackReason }: { result: Diagn
           <p className="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{result.insightText}</p>
         </div>
       ) : null}
+
+      <MentorResultCard />
 
       <div className="rounded-3xl border border-slate-200/70 bg-white/80 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900/70">
         <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
