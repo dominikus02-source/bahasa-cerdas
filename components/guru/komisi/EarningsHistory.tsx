@@ -26,7 +26,7 @@ export function EarningsHistory({
   const months = [...series].reverse();
 
   return (
-    <section aria-label="Riwayat penghasilan" className="rounded-2xl bg-card border border-border p-4 lg:p-6">
+    <section aria-label="Riwayat penghasilan" className="bc-guru-surface rounded-2xl p-4 lg:p-6">
       <div className="flex items-center gap-2">
         <History className="h-5 w-5 text-muted-foreground" />
         <h2 className="text-base font-semibold text-foreground">Riwayat Penghasilan</h2>
