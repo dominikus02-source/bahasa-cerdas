@@ -61,7 +61,7 @@ export function TrustSection({ classes }: { classes: KelasInfo[] }) {
   return (
     <div className="space-y-4">
       {/* Transparansi — accordion compact */}
-      <section aria-label="Transparansi penghasilan" className="rounded-2xl bg-card border border-border p-4 lg:p-6">
+      <section aria-label="Transparansi penghasilan" className="bc-guru-surface rounded-2xl p-4 lg:p-6">
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-5 w-5 text-muted-foreground" />
           <h2 className="text-base font-semibold text-foreground">Transparansi Penghasilan</h2>
@@ -74,12 +74,12 @@ export function TrustSection({ classes }: { classes: KelasInfo[] }) {
       </section>
 
       {/* Benefits */}
-      <section aria-label="Mengapa Guru Cerdas Sejahtera" className="rounded-2xl bg-card border border-border p-4 lg:p-6">
+      <section aria-label="Mengapa Guru Cerdas Sejahtera" className="bc-guru-surface rounded-2xl p-4 lg:p-6">
         <h2 className="text-base font-semibold text-foreground">Mengapa Guru Cerdas Sejahtera?</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-3">
           {BENEFITS.map((b) => (
             <div key={b.title} className="rounded-xl bg-muted/40 p-4">
-              <b.icon className="h-5 w-5 text-violet-600 dark:text-violet-400" />
+              <b.icon className="h-5 w-5 text-blue-600 dark:text-blue-300" />
               <p className="mt-2 text-sm font-semibold text-foreground">{b.title}</p>
               <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{b.desc}</p>
             </div>
@@ -88,7 +88,7 @@ export function TrustSection({ classes }: { classes: KelasInfo[] }) {
       </section>
 
       {/* Bagikan akses — kode kelas (mekanisme attribution asli) */}
-      <section aria-label="Bagikan akses belajar" className="rounded-2xl bg-card border border-border p-4 lg:p-6">
+      <section aria-label="Bagikan akses belajar" className="bc-guru-surface rounded-2xl p-4 lg:p-6">
         <div className="flex items-center gap-2">
           <Users className="h-5 w-5 text-muted-foreground" />
           <h2 className="text-base font-semibold text-foreground">Bagikan Akses Belajar</h2>
