@@ -735,7 +735,7 @@ export default function IramaKata() {
             <div className="flex items-center justify-between mb-4">
             <GameBackButton onClick={() => setScreen("start")} label="Kembali" title="Kembali ke menu Irama Kata" />
               <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
-              <div className="w-11" />
+              <div className="w-11 sm:w-[110px]" />
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {LEVELS.map((lv) => {
