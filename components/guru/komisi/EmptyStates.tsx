@@ -9,7 +9,7 @@ import { Sprout } from "lucide-react";
 
 export function EmptyStates({ hasStudents }: { hasStudents: boolean }) {
   return (
-    <section aria-label="Mulai membangun penghasilan" className="rounded-2xl bg-card border border-border p-6 lg:p-8 text-center">
+    <section aria-label="Mulai membangun penghasilan" className="bc-guru-surface rounded-2xl p-6 text-center lg:p-8">
       <Sprout className="mx-auto h-10 w-10 text-emerald-500" />
       <h2 className="mt-3 text-lg font-bold text-foreground">Bangun penghasilan pertamamu</h2>
       <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
