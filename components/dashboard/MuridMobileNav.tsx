@@ -41,7 +41,7 @@ const DRAWER_GROUPS = [
       { href: "/murid/simulasi/ukbi", label: "Simulasi UKBI", icon: BookOpenCheck },
       { href: "/murid/simulasi/tka", label: "Simulasi TKA", icon: BookOpenCheck },
       { href: "/murid/bigt", label: "BIGT", icon: BookOpenCheck },
-      { href: "/murid/sertifikat", label: "Sertifikat", icon: Award },
+      { href: "/murid/dokumen-latihan", label: "Hasil", icon: Award },
     ],
   },
   {
