@@ -733,7 +733,7 @@ export default function IramaKata() {
         {screen === "levels" && (
           <div className={`ik-screen bg-white dark:bg-gradient-to-br dark:from-[#221420] dark:to-[#2C1E2A] rounded-3xl ${chunky} p-5`}>
             <div className="flex items-center justify-between mb-4">
-            <GameBackButton onClick={() => setScreen("start")} label="Kembali" title="Kembali ke menu Irama Kata" />
+            <GameBackButton onClick={() => setScreen("start")} label="Kembali ke Irama Kata" title="Kembali ke menu Irama Kata" />
               <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
               <div className="w-11 sm:w-[110px]" />
             </div>
@@ -825,7 +825,7 @@ export default function IramaKata() {
             </div>
 
             <div className="w-full max-w-[480px] flex items-center justify-between mt-3">
-              <GameBackButton onClick={quit} label="Kembali" title="Kembali ke pilihan level" />
+              <GameBackButton onClick={quit} label="Kembali ke Pilih Level" title="Kembali ke pilihan level" />
               <div className="hidden md:block text-xs font-semibold opacity-60">
                 Tombol <span className="font-mono font-extrabold">D F J K</span> · Spasi = jeda
               </div>
