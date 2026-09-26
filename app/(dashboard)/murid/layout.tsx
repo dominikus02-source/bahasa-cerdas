@@ -5,6 +5,7 @@ import { RankChip } from "@/components/gamification/RankChip"
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import AIFloatingButton from "@/components/shared/AIFloatingButton";
+import { MuridBackBottom } from "@/components/dashboard/MuridBackBottom";
 import { BackHome } from "@/components/shared/BackHome";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
 import { NotificationBell } from "@/components/dashboard/NotificationBell";
@@ -92,6 +93,7 @@ export default async function MuridLayout({ children }: { children: React.ReactN
         </header>
         <main className="flex-1 p-4 md:p-8 pb-24 md:pb-8 bg-transparent">
           {children}
+          <MuridBackBottom />
         </main>
       </div>
 
