@@ -554,7 +554,7 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
         <style>{`.sk-screen{animation:sk-fade .35s ease}@keyframes sk-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}`}</style>
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <GameBackButton onClick={() => setScreen("start")} label="Kembali" title="Kembali ke menu Susun Kata" />
+            <GameBackButton onClick={() => setScreen("start")} label="Kembali ke Susun Kata" title="Kembali ke menu Susun Kata" />
             <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
             <div className="w-11 sm:w-[110px]" />
           </div>
@@ -606,7 +606,7 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
       <div className="game-env game-env-susun fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#12100A] dark:to-[#1C1810] text-[#161B3A] dark:text-[#F1EDFF]">
         <div className="relative max-w-lg mx-auto px-5 pt-4 pb-8 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <GameBackButton onClick={() => { stopBGM(); setScreen("levels"); }} label="Kembali" title="Kembali ke pilihan level" />
+            <GameBackButton onClick={() => { stopBGM(); setScreen("levels"); }} label="Kembali ke Pilih Level" title="Kembali ke pilihan level" />
             <div className="flex items-center gap-2">
               {streak > 0 && (
                 <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-orange-100 dark:bg-orange-500/15 border border-orange-300 dark:border-orange-500/30">
