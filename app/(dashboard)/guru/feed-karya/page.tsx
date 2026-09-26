@@ -574,7 +574,7 @@ export default function GuruFeedKaryaPage() {
           <div className="animate-spin w-7 h-7 border-[3px] border-emerald-500 border-t-transparent rounded-full" />
         </div>
       ) : karyaList.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-2xl border border-gray-100">
+        <div className="bc-guru-surface rounded-2xl py-20 text-center">
           <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
             <IconPen size={24} className="text-emerald-500" />
           </div>
@@ -691,7 +691,7 @@ export default function GuruFeedKaryaPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {stats.pilihanAI.map((k: any) => (
               <button key={k.id} onClick={() => { const mapped = karyaList.find(x => x.id === k.id); if (mapped) openModal(mapped); }}
-                className="text-left bg-white rounded-2xl border border-gray-100 hover:border-violet-200 hover:shadow-md transition-all p-4 group">
+                className="bc-guru-surface-interactive group rounded-2xl p-4 text-left">
                 <div className="flex items-center gap-2 mb-2">
                   <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${(TYPE_META[k.type] || TYPE_META.OPINI).badge}`}>{TYPE_META[k.type]?.label || k.type}</span>
                   {k.isFeatured && <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 flex items-center gap-0.5"><Star size={9} /> Pilihan Kelas</span>}
@@ -714,7 +714,7 @@ export default function GuruFeedKaryaPage() {
           <div className="space-y-2">
             {stats.palingPopuler.map((k: any, i: number) => (
               <button key={k.id} onClick={() => { const mapped = karyaList.find(x => x.id === k.id); if (mapped) openModal(mapped); }}
-                className="w-full text-left flex items-center gap-3 p-3 bg-white rounded-xl border border-gray-100 hover:border-rose-200 hover:shadow-md transition-all">
+                className="bc-guru-surface-interactive flex w-full items-center gap-3 rounded-xl p-3 text-left">
                 <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${i === 0 ? "bg-amber-400 text-white" : i === 1 ? "bg-slate-300 text-white" : i === 2 ? "bg-orange-300 text-white" : "bg-gray-100 text-gray-500"}`}>{i + 1}</span>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-gray-900 truncate">{k.title}</p>
@@ -796,7 +796,7 @@ export default function GuruFeedKaryaPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-            <div className="md:col-span-2 bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+            <div className="bc-guru-surface md:col-span-2 rounded-2xl p-5">
               <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                 <p className="font-bold text-sm text-gray-900 flex items-center gap-2"><Trophy size={15} className="text-amber-500" /> Peringkat Penulis</p>
                 <div className="flex gap-1 overflow-x-auto">
