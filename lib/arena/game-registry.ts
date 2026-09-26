@@ -177,7 +177,8 @@ export const GAME_REGISTRY: GameDefinition[] = [
     time: "~3 menit",
     badge: { text: "Baru", type: "new" },
     featured: true,
-    artwork: "/banners/bermain-kata.jpg",
+    // Kanonik: artwork ORIGINAL "Bermain Kata.png" (1536x1024) — SINGLE SOURCE.
+    artwork: "/images/bermain-kata/bermain-kata.png",
   },
   {
     id: "tebak-kata",
@@ -283,9 +284,12 @@ export function featuredGame(): GameDefinition {
  * ke artwork yang paling menggambarkan gameplay-nya (game identity first).
  *
  * Semua 11 game aktif punya artwork (11/11). Catatan rasio: 8 aset lama
- * 1448x1086 (4:3), 3 aset baru (menara/susun-kata/tantang) 1536x1024 (3:2) —
- * area kartu memakai aspect-[4/3] + object-cover, jadi aset 3:2 dipotong
- * ~11% vertikal (terpusat) agar konsisten dengan kartu lain.
+ * 1448x1086 (4:3), 3 aset baru (bermain-kata/menara/susun-kata/tantang)
+ * 1536x1024 (3:2) — area kartu memakai aspect-[4/3] + object-cover, jadi aset
+ * 3:2 dipotong ~11% vertikal (terpusat) agar konsisten dengan kartu lain.
+ *
+ * BERMAIN KATA memakai artwork ORIGINAL "Bermain Kata.png" (canonical PNG
+ * 1536x1024) sebagai satu-satunya sumber visual — tidak ada turunan JPG/WEBP.
  */
 export const GAME_CARD_ARTWORK: Record<string, string> = {
   "rpg": "/images/GIM%20Card/RPG-card.png",
@@ -296,7 +300,7 @@ export const GAME_CARD_ARTWORK: Record<string, string> = {
   "irama-kata": "/images/GIM%20Card/Irama%20Kata-card.png",
   "benar-salah": "/images/GIM%20Card/benar-salah-card.png",
   "petualangan-kata": "/images/GIM%20Card/petualangan%20kata-card.png",
-  "bermain-kata": "/banners/bermain-kata.jpg",
+  "bermain-kata": "/images/bermain-kata/bermain-kata.png",
   "menara": "/images/GIM%20Card/menara%20kata-card.png",
   "susun-kata": "/images/GIM%20Card/Susun%20kata-card.png",
   "tantang": "/images/GIM%20Card/Tantang%20teman%20card.png",

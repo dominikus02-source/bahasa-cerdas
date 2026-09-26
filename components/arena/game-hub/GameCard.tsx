@@ -46,8 +46,8 @@ export default function GameCard({ game, index = 0, onPlay }: GameCardProps) {
         <img
           src={artwork}
           alt={`${game.title} — ilustrasi gim`}
-          width={1448}
-          height={1086}
+          width={1536}
+          height={1024}
           loading="lazy"
           decoding="async"
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
