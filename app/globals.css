@@ -1205,3 +1205,205 @@
 .bc-guru-shell .bc-guru :focus-visible {
   outline-color: var(--clr-accent-strong);
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GURU VISUAL IDENTITY V5
+   Strong teacher identity across every visible Guru destination.
+   - hero = deep royal/navy blue, never fading into white
+   - regular cards = clean modular surface with blue border/shadow
+   - green remains semantic success only, not role identity
+   - student violet identity is untouched
+   ═══════════════════════════════════════════════════════════════════════════ */
+.bc-guru-shell {
+  --guru-950: #061a3a;
+  --guru-900: #082b61;
+  --guru-800: #0b3f8f;
+  --guru-700: #0d56c7;
+  --guru-600: #1769df;
+  --guru-500: #2d7df0;
+  --guru-300: #8db9ff;
+  --guru-100: #dbeafe;
+  --guru-50: #f4f8ff;
+  --guru-surface: #ffffff;
+  --guru-surface-2: #f8fbff;
+  --guru-border: #d9e7fb;
+  --guru-border-strong: #b8d3f7;
+  --guru-shadow: 0 12px 30px rgba(21, 73, 145, .08);
+  --guru-shadow-hover: 0 18px 42px rgba(21, 73, 145, .13);
+}
+
+.dark .bc-guru-shell {
+  --guru-950: #041022;
+  --guru-900: #071b36;
+  --guru-800: #0a2a55;
+  --guru-700: #15498e;
+  --guru-600: #2f6fd0;
+  --guru-500: #60a5fa;
+  --guru-300: #93c5fd;
+  --guru-100: #17345d;
+  --guru-50: #0a192c;
+  --guru-surface: #0b1d34;
+  --guru-surface-2: #0d223d;
+  --guru-border: #17365f;
+  --guru-border-strong: #245187;
+  --guru-shadow: 0 14px 34px rgba(0, 0, 0, .22);
+  --guru-shadow-hover: 0 20px 46px rgba(0, 0, 0, .30);
+}
+
+.bc-guru-shell .bc-guru-hero {
+  color: #fff;
+  background:
+    radial-gradient(520px 260px at 86% 8%, rgba(96, 165, 250, .30), transparent 70%),
+    radial-gradient(340px 220px at 12% 100%, rgba(14, 165, 233, .18), transparent 72%),
+    linear-gradient(135deg, var(--guru-950) 0%, var(--guru-700) 54%, var(--guru-900) 100%);
+  border: 1px solid rgba(147, 197, 253, .22);
+  box-shadow: 0 20px 48px rgba(8, 43, 97, .18);
+}
+
+.dark .bc-guru-shell .bc-guru-hero {
+  background:
+    radial-gradient(520px 260px at 86% 8%, rgba(59, 130, 246, .22), transparent 70%),
+    radial-gradient(340px 220px at 12% 100%, rgba(14, 165, 233, .10), transparent 72%),
+    linear-gradient(135deg, #041127 0%, #0a3471 55%, #061d40 100%);
+  border-color: rgba(96, 165, 250, .20);
+  box-shadow: 0 20px 52px rgba(0, 0, 0, .28);
+}
+
+.bc-guru-shell .bc-guru-hero :is(h1, h2, h3, strong) {
+  color: #fff;
+}
+.bc-guru-shell .bc-guru-hero :is(p, small) {
+  color: rgba(219, 234, 254, .90);
+}
+.bc-guru-shell .bc-guru-hero .bc-guru-hero-muted {
+  color: rgba(191, 219, 254, .82);
+}
+
+.bc-guru-shell .bc-guru-surface,
+.bc-guru-shell .bc-guru-stat-card {
+  background: var(--guru-surface);
+  border: 1px solid var(--guru-border);
+  box-shadow: var(--guru-shadow);
+}
+
+.bc-guru-shell .bc-guru-surface {
+  border-radius: 1rem;
+}
+
+.bc-guru-shell .bc-guru-stat-card {
+  border-radius: 1rem;
+}
+
+.bc-guru-shell .bc-guru-surface-interactive {
+  background: var(--guru-surface);
+  border: 1px solid var(--guru-border);
+  box-shadow: var(--guru-shadow);
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
+.bc-guru-shell .bc-guru-surface-interactive:hover {
+  transform: translateY(-2px);
+  border-color: var(--guru-border-strong);
+  box-shadow: var(--guru-shadow-hover);
+}
+
+.bc-guru-shell .bc-guru-icon {
+  background: linear-gradient(145deg, var(--guru-600), var(--guru-800));
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(23, 105, 223, .20);
+}
+
+.bc-guru-shell .bc-guru-primary {
+  background: linear-gradient(135deg, var(--guru-700), var(--guru-600));
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 8px 18px rgba(23, 105, 223, .16);
+}
+.bc-guru-shell .bc-guru-primary:hover {
+  background: linear-gradient(135deg, #0b49ad, #145fcf);
+}
+
+.bc-guru-shell .bc-guru-tab-active {
+  background: linear-gradient(135deg, var(--guru-700), var(--guru-600));
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 8px 18px rgba(23, 105, 223, .14);
+}
+.bc-guru-shell .bc-guru-tab-idle {
+  background: var(--guru-surface-2);
+  color: var(--clr-text-2);
+  border: 1px solid var(--guru-border);
+}
+.bc-guru-shell .bc-guru-tab-idle:hover {
+  border-color: var(--guru-border-strong);
+  color: var(--clr-accent-strong);
+  background: var(--guru-surface);
+}
+
+/* Legacy role gradients: force decorative teacher heroes to the strong blue
+   family. This intentionally applies only to white-text gradients, so
+   semantic success/warning cards and status chips keep their own colors. */
+.bc-guru-shell .bc-guru :is(.bg-gradient-to-r, .bg-gradient-to-br, .bg-gradient-to-b)
+  :is(.from-emerald-400, .from-emerald-500, .from-emerald-600, .from-emerald-700,
+      .from-green-500, .from-green-600, .from-green-700,
+      .from-teal-500, .from-teal-600, .from-teal-700).text-white,
+.bc-guru-shell .bc-guru :is(.bg-gradient-to-r, .bg-gradient-to-br, .bg-gradient-to-b)
+  :is(.from-blue-400, .from-blue-500, .from-blue-600, .from-blue-700).to-white.text-white,
+.bc-guru-shell .bc-guru :is(.bg-gradient-to-r, .bg-gradient-to-br, .bg-gradient-to-b)
+  :is(.from-violet-400, .from-violet-500, .from-violet-600, .from-indigo-500, .from-indigo-600).to-white.text-white {
+  background-image:
+    radial-gradient(420px 210px at 86% 8%, rgba(96,165,250,.26), transparent 72%),
+    linear-gradient(135deg, #071f4a 0%, #0d56c7 56%, #082b61 100%);
+}
+
+/* Tailwind stop repair for old emerald/green/teal teacher headers. The old
+   compatibility layer did not cover via-green-600 / to-teal-700/900, which
+   produced weak or inconsistent gradients in light mode. */
+.bc-guru-shell .bc-guru :is(.from-emerald-400, .from-emerald-500, .from-emerald-600, .from-emerald-700,
+                             .from-green-500, .from-green-600, .from-green-700,
+                             .from-teal-500, .from-teal-600, .from-teal-700) {
+  --tw-gradient-from: #0d56c7 var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(13 86 199 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+.bc-guru-shell .bc-guru :is(.via-emerald-500, .via-emerald-600, .via-emerald-700,
+                             .via-green-500, .via-green-600, .via-green-700,
+                             .via-teal-500, .via-teal-600, .via-teal-700,
+                             .via-cyan-500, .via-cyan-600) {
+  --tw-gradient-via: #1769df var(--tw-gradient-via-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to);
+}
+.bc-guru-shell .bc-guru :is(.to-emerald-500, .to-emerald-600, .to-emerald-700, .to-emerald-800, .to-emerald-900,
+                             .to-green-500, .to-green-600, .to-green-700, .to-green-800, .to-green-900,
+                             .to-teal-500, .to-teal-600, .to-teal-700, .to-teal-800, .to-teal-900,
+                             .to-cyan-500, .to-cyan-600, .to-cyan-700, .to-cyan-800) {
+  --tw-gradient-to: #082b61 var(--tw-gradient-to-position);
+}
+
+/* White fade is not allowed for prominent teacher cards. If a legacy
+   white-text gradient ends in white, keep the endpoint inside the blue role
+   family instead of washing out the card in light mode. */
+.bc-guru-shell .bc-guru :is(.bg-gradient-to-r, .bg-gradient-to-br, .bg-gradient-to-b).to-white.text-white {
+  --tw-gradient-to: #0a3471 var(--tw-gradient-to-position);
+}
+
+/* Generic white cards across legacy Guru pages get a cleaner teacher surface
+   without changing modals/forms that intentionally use opaque white. */
+.bc-guru-shell .bc-guru :is(section, article)[class*="bg-white"][class*="rounded-"],
+.bc-guru-shell .bc-guru :is(section, article)[class*="bg-card"][class*="rounded-"] {
+  border-color: var(--guru-border);
+  box-shadow: var(--guru-shadow);
+}
+.dark .bc-guru-shell .bc-guru :is(section, article)[class*="bg-white"][class*="rounded-"] {
+  background-color: var(--guru-surface);
+  border-color: var(--guru-border);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bc-guru-shell .bc-guru-surface-interactive {
+    transition: none;
+  }
+  .bc-guru-shell .bc-guru-surface-interactive:hover {
+    transform: none;
+  }
+}
