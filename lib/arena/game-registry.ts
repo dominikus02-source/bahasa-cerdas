@@ -177,7 +177,7 @@ export const GAME_REGISTRY: GameDefinition[] = [
     time: "~3 menit",
     badge: { text: "Baru", type: "new" },
     featured: true,
-    artwork: "/banners/bermain-kata-banner.svg",
+    artwork: "/images/bermain-kata/bermain-kata-master.jpg",
   },
   {
     id: "tebak-kata",
@@ -295,7 +295,7 @@ export const GAME_CARD_ARTWORK: Record<string, string> = {
   "irama-kata": "/images/GIM%20Card/Irama%20Kata-card.png",
   "benar-salah": "/images/GIM%20Card/benar-salah-card.png",
   "petualangan-kata": "/images/GIM%20Card/petualangan%20kata-card.png",
-  "bermain-kata": "/images/GIM%20Card/bermain-kata-card.svg",
+  "bermain-kata": "/images/bermain-kata/bermain-kata-master.jpg",
   "menara": "/images/GIM%20Card/menara%20kata-card.png",
   "susun-kata": "/images/GIM%20Card/Susun%20kata-card.png",
   "tantang": "/images/GIM%20Card/Tantang%20teman%20card.png",
