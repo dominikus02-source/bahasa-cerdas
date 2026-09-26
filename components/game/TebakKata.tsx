@@ -349,6 +349,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
   const [result, setResult] = useState<null | { score: number; stars: number; bestStreak: number; xpEarned: number; gameOver: boolean }>(null);
   const xpSentRef = useRef(false);
   const supabaseIdRef = useRef("");
+  const gameSessionIdRef = useRef("");
 
   // NOTIFICATION 1.0 — game quiet mode: reward global tidak menutupi gameplay;
   // reset otomatis saat keluar game/unmount (tidak ada quiet tersisa).
@@ -373,6 +374,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
   }, []);
 
   const startLevel = (id: number) => {
+    gameSessionIdRef.current = crypto.randomUUID();
     sfx.start(); setSoundOn(isSoundOn()); startBGM();
     const lv = LEVELS.find((l) => l.id === id) || LEVELS[0];
     let candidates = WORDS_DB.filter((w) => w.word.length >= lv.min && w.word.length <= lv.max);
@@ -424,7 +426,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
       fetch("/api/game/xp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ score: finalScore, correct: 0, wrong: 0, maxStreak: finalBestStreak, xpEarned, gameType: "TEBAK_KATA", supabaseId: supabaseIdRef.current }),
+        body: JSON.stringify({ score: finalScore, correct: 0, wrong: 0, maxStreak: finalBestStreak, xpEarned, gameType: "TEBAK_KATA", supabaseId: supabaseIdRef.current, gameSessionId: gameSessionIdRef.current }),
       }).catch(() => { /* abaikan */ });
     }
   }, [level.rounds, levelId]);
