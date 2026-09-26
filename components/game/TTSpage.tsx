@@ -861,9 +861,7 @@ export default function TekaTekiSilang() {
           </div>
           <div className="flex items-center gap-2">
             {(screen === "start" || screen === "hearts") && (
-              <button className={`${btn} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => router.push("/arena/game")} aria-label="Keluar dari gim">
-                <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
-              </button>
+              <GameBackButton href="/arena/game" label="Kembali ke Arena" title="Kembali ke Arena" />
             )}
             <button className={`${btn} game-sound-btn w-11 h-11 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
