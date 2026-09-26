@@ -8,6 +8,7 @@ import {
   Volume2, VolumeX, Loader2, Play, Check,
 } from "lucide-react";
 import { sfx, haptic, isSoundOn, toggleSound, startBGM, stopBGM } from "@/lib/game/sound";
+import GameBackButton from "@/components/game/GameBackButton";
 
 interface Question {
   text: string;
