@@ -1154,34 +1154,80 @@
   --clr-info-soft: #0c2940;
 }
 
-/* Gradient compatibility: legacy guru surfaces that were emerald/green/teal
-   now inherit the teacher blue family without touching semantic success UI. */
-.bc-guru-shell .bc-guru .from-emerald-400,
-.bc-guru-shell .bc-guru .from-emerald-500,
-.bc-guru-shell .bc-guru .from-emerald-600,
-.bc-guru-shell .bc-guru .from-green-500,
-.bc-guru-shell .bc-guru .from-green-600,
-.bc-guru-shell .bc-guru .from-teal-500,
-.bc-guru-shell .bc-guru .from-teal-600 {
-  --tw-gradient-from: #2563eb var(--tw-gradient-from-position);
-  --tw-gradient-to: rgb(37 99 235 / 0) var(--tw-gradient-to-position);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+/* Teacher identity surfaces — V5
+   Jangan lagi menulis ulang seluruh Tailwind gradient token. Override lama
+   membuat beberapa hero legacy jatuh menjadi biru-pucat ke putih di light
+   mode. Mulai V5, identitas guru memakai kelas eksplisit di bawah dan hanya
+   legacy CARD besar tertentu yang di-hardening sebagai fallback. */
+.bc-guru-hero {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  background:
+    radial-gradient(520px 220px at 88% 12%, rgba(125, 211, 252, .22), transparent 70%),
+    radial-gradient(340px 180px at 12% 92%, rgba(59, 130, 246, .22), transparent 72%),
+    linear-gradient(135deg, #082b63 0%, #0d47a8 50%, #0b79c9 100%);
+  border: 1px solid rgba(96, 165, 250, .28);
+  box-shadow: 0 18px 40px rgba(15, 62, 132, .16);
 }
-.bc-guru-shell .bc-guru .to-emerald-500,
-.bc-guru-shell .bc-guru .to-emerald-600,
-.bc-guru-shell .bc-guru .to-emerald-700,
-.bc-guru-shell .bc-guru .to-green-500,
-.bc-guru-shell .bc-guru .to-green-600,
-.bc-guru-shell .bc-guru .to-teal-500,
-.bc-guru-shell .bc-guru .to-teal-600 {
-  --tw-gradient-to: #0ea5e9 var(--tw-gradient-to-position);
+.dark .bc-guru-hero {
+  background:
+    radial-gradient(520px 220px at 88% 12%, rgba(56, 189, 248, .16), transparent 70%),
+    radial-gradient(340px 180px at 12% 92%, rgba(37, 99, 235, .18), transparent 72%),
+    linear-gradient(135deg, #061c42 0%, #0a3475 52%, #075f9f 100%);
+  border-color: rgba(59, 130, 246, .22);
+  box-shadow: 0 20px 46px rgba(0, 0, 0, .26);
 }
-.bc-guru-shell .bc-guru .via-emerald-50,
-.bc-guru-shell .bc-guru .via-emerald-100,
-.bc-guru-shell .bc-guru .via-teal-50,
-.bc-guru-shell .bc-guru .via-teal-100 {
-  --tw-gradient-to: rgb(239 246 255 / 0) var(--tw-gradient-to-position);
-  --tw-gradient-stops: var(--tw-gradient-from), #eff6ff var(--tw-gradient-via-position), var(--tw-gradient-to);
+
+.bc-guru-card {
+  background: #fff;
+  border: 1px solid #dbeafe;
+  box-shadow: 0 10px 26px rgba(30, 64, 175, .06);
+}
+.bc-guru-card:hover {
+  border-color: #bfdbfe;
+}
+.dark .bc-guru-card {
+  background: #0b1d34;
+  border-color: rgba(30, 64, 175, .38);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .18);
+}
+.dark .bc-guru-card:hover {
+  border-color: rgba(59, 130, 246, .5);
+}
+
+.bc-guru-card-muted {
+  background: #f8fbff;
+  border: 1px solid #dbeafe;
+}
+.dark .bc-guru-card-muted {
+  background: #0a1930;
+  border-color: rgba(30, 64, 175, .34);
+}
+
+.bc-guru-icon {
+  color: #fff;
+  background: linear-gradient(135deg, #2563eb 0%, #0284c7 100%);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, .18);
+}
+.dark .bc-guru-icon {
+  background: linear-gradient(135deg, #1d4ed8 0%, #0369a1 100%);
+  box-shadow: none;
+}
+
+/* Fallback untuk hero/card legacy utama yang belum memakai bc-guru-hero.
+   Scope: hanya rounded-2xl/3xl + text-white agar icon kecil, badge, success
+   state, dan progress semantic tidak ikut dipaksa biru. */
+.bc-guru-shell .bc-guru :is(.rounded-2xl,.rounded-3xl).text-white:is(
+  .from-emerald-400,.from-emerald-500,.from-emerald-600,
+  .from-green-500,.from-green-600,.from-green-700,
+  .from-teal-500,.from-teal-600,.from-teal-700
+) {
+  background-image:
+    radial-gradient(420px 180px at 88% 12%, rgba(125, 211, 252, .18), transparent 72%),
+    linear-gradient(135deg, #082b63 0%, #0d47a8 52%, #0b79c9 100%) !important;
+  border-color: rgba(96, 165, 250, .24) !important;
+  box-shadow: 0 16px 36px rgba(15, 62, 132, .14);
 }
 
 /* Teacher-only soft backgrounds and borders. This closes the green residue
