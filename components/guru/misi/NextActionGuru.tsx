@@ -30,9 +30,9 @@ const ICONS: Record<string, LucideIcon> = {
 
 function Skeleton() {
   return (
-    <div className="rounded-3xl bg-white border border-emerald-100 p-5 sm:p-6 shadow-lg shadow-emerald-100/50 animate-pulse">
-      <div className="h-4 bg-emerald-100 rounded w-40 mb-3" />
-      <div className="h-16 rounded-2xl bg-emerald-50" />
+    <div className="rounded-3xl bg-white border border-blue-100 p-5 sm:p-6 shadow-lg shadow-blue-100/40 animate-pulse">
+      <div className="h-4 bg-blue-100 rounded w-40 mb-3" />
+      <div className="h-16 rounded-2xl bg-blue-50" />
     </div>
   );
 }
@@ -48,10 +48,10 @@ export function NextActionGuru({ status }: { status: MisiGuruStatus | null }) {
       className={`relative overflow-hidden rounded-3xl p-5 sm:p-6 shadow-lg ring-1 ${
         aksi.semuaSelesai
           ? "bg-gradient-to-br from-amber-50 via-white to-yellow-50 ring-amber-100 shadow-amber-100/50"
-          : "bg-gradient-to-br from-emerald-50 via-white to-teal-50 ring-emerald-100 shadow-emerald-100/50"
+          : "bg-gradient-to-br from-emerald-50 via-white to-teal-50 ring-emerald-100 shadow-blue-100/40"
       }`}
     >
-      <div className="pointer-events-none absolute -top-16 -right-16 w-48 h-48 rounded-full bg-emerald-100/40" />
+      <div className="pointer-events-none absolute -top-16 -right-16 w-48 h-48 rounded-full bg-blue-100/40" />
       <div className="relative flex flex-col">
         <div className="flex items-center gap-2 mb-3">
           <span
@@ -85,7 +85,7 @@ export function NextActionGuru({ status }: { status: MisiGuruStatus | null }) {
           className={`mt-4 w-full inline-flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl text-sm font-bold text-white shadow-lg transition-all ${
             aksi.semuaSelesai
               ? "bg-gradient-to-r from-amber-500 to-yellow-600 shadow-amber-500/20 hover:from-amber-600 hover:to-yellow-700"
-              : "bg-gradient-to-r from-emerald-500 to-emerald-600 shadow-emerald-500/20 hover:from-emerald-600 hover:to-emerald-700"
+              : "bg-blue-600 shadow-blue-500/20 hover:bg-blue-700"
           }`}
         >
           {aksi.semuaSelesai ? "Lanjut Berkarya" : "Kerjakan Sekarang"}
