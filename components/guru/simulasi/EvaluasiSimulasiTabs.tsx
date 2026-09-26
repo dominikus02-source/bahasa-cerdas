@@ -36,7 +36,7 @@ export function EvaluasiSimulasiTabs({ guruName }: { guruName: string }) {
       {/* Header hub */}
       <div className="mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md shadow-emerald-500/20">
+          <div className="bc-guru-icon w-11 h-11 rounded-xl flex items-center justify-center">
             <BarChart3 size={22} className="text-white" />
           </div>
           <div>
@@ -58,7 +58,7 @@ export function EvaluasiSimulasiTabs({ guruName }: { guruName: string }) {
               href={`?tab=${tab.id}`}
               className={`flex flex-1 items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all ${
                 activeTab
-                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-sm"
+                  ? "bg-blue-600 text-white shadow-sm shadow-blue-500/20"
                   : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
               }`}
             >
