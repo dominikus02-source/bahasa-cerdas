@@ -1291,18 +1291,15 @@ export default function TekaTekiSilang() {
               <button className={`${btn} px-5 py-2.5 bg-[#10B981] text-white text-sm`} onClick={checkAnswers} disabled={timeUp}>
                 <CheckCircle2 className="w-4 h-4" /> Cek Jawaban
               </button>
-              <button
-                className={`${btn} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`}
+              <GameBackButton
                 onClick={() => {
-                  // KUIS TTS 1.0 (§23): keluar saat ada progress → konfirmasi.
                   const adaProgress = filledCells > 0 || combo > 0 || timeBudgetRef.current - remainingSec > 0;
                   if (adaProgress) setConfirmExit(true);
                   else setScreen("levels");
                 }}
-                aria-label="Keluar dari permainan"
-              >
-                <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
-              </button>
+                label="Kembali"
+                title="Kembali ke pilihan level"
+              />
             </div>
 
             {/* Daftar petunjuk */}
