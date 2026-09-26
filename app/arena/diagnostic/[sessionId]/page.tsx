@@ -7,6 +7,8 @@ import { ArrowLeft, ArrowRight, CheckCircle2, Clock3, Flag, GraduationCap, Loade
 interface DiagnosticQuestion {
   id: string;
   text: string;
+  passage?: string | null;
+  audioUrl?: string | null;
   options: string[];
   questionType: string;
   topic: string | null;
@@ -537,6 +539,26 @@ if (data.status === "COMPLETED" && data.result) {
             </div>
 
             <p className="mb-3 text-xs leading-5 text-slate-500 dark:text-slate-400">{session.reasonText}</p>
+
+            {question.audioUrl && (
+              <div className="mb-5 rounded-2xl border border-cyan-200/70 bg-cyan-50/70 p-3 dark:border-cyan-900/50 dark:bg-cyan-950/20">
+                <p className="mb-2 flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-cyan-700 dark:text-cyan-300">
+                  Dengarkan audio soal
+                </p>
+                <audio controls preload="none" className="h-10 w-full">
+                  <source src={question.audioUrl} />
+                  Browser kamu belum mendukung pemutar audio.
+                </audio>
+              </div>
+            )}
+
+            {question.passage && (
+              <div className="mb-5 rounded-2xl border border-slate-200/80 bg-slate-50/80 p-4 dark:border-white/10 dark:bg-white/[0.03]">
+                <p className="mb-2 text-[10px] font-extrabold uppercase tracking-[0.12em] text-slate-400">Bacaan</p>
+                <p className="whitespace-pre-line text-sm leading-6 text-slate-700 dark:text-slate-300">{question.passage}</p>
+              </div>
+            )}
+
             <h1 className="max-w-2xl text-2xl font-black leading-tight tracking-tight text-slate-950 dark:text-white sm:text-[28px]">
               {question.text}
             </h1>
