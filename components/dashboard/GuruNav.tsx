@@ -234,7 +234,7 @@ function NavLinks({
                 className={`block rounded-lg py-1.5 px-3 text-xs transition-all ${
                   linkActive
  ? "bg-blue-50 text-blue-700 font-semibold dark:bg-blue-500/15 dark:text-blue-300"
- : "text-slate-500 hover:text-blue-700 hover:bg-blue-50/70 dark:text-slate-400 :bg-slate-800 dark:hover:text-slate-200"
+ : "text-slate-500 hover:text-blue-700 hover:bg-blue-50/70 dark:text-slate-400 dark:hover:bg-blue-950/35 dark:hover:text-blue-200"
                 }`}
               >
                 {link.label}
@@ -325,7 +325,7 @@ export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
               </button>
             </div>
             <GuruNavList isFounder={isFounder} onNavigate={() => setDrawer(false)} />
- <div className="p-3 border-t border-gray-100 dark:border-slate-800 bg-gray-50 bg-gray-50/50 dark:bg-slate-800/50 flex items-center justify-between gap-2">
+ <div className="p-3 border-t border-blue-100 bg-blue-50/60 dark:border-blue-950/70 dark:bg-[#0a1930] flex items-center justify-between gap-2">
               <Link
                 href="/guru/beranda"
                 className="text-[10px] text-gray-400 font-medium"
