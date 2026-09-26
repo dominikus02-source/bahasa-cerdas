@@ -45,10 +45,10 @@ export function NextActionGuru({ status }: { status: MisiGuruStatus | null }) {
 
   return (
     <div
-      className={`relative overflow-hidden rounded-3xl p-5 sm:p-6 shadow-lg ring-1 ${
+      className={`relative overflow-hidden rounded-3xl p-5 sm:p-6 ${
         aksi.semuaSelesai
-          ? "bg-gradient-to-br from-amber-50 via-white to-yellow-50 ring-amber-100 shadow-amber-100/50"
-          : "bg-gradient-to-br from-emerald-50 via-white to-teal-50 ring-emerald-100 shadow-blue-100/40"
+          ? "border border-amber-200 bg-amber-50 shadow-[0_12px_28px_rgba(217,119,6,.08)] dark:border-amber-900/50 dark:bg-amber-950/20"
+          : "bc-guru-card"
       }`}
     >
       <div className="pointer-events-none absolute -top-16 -right-16 w-48 h-48 rounded-full bg-blue-100/40" />
