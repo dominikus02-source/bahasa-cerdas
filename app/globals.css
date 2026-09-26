@@ -1273,7 +1273,7 @@
 .bc-guru-shell .bc-guru-hero :is(h1, h2, h3, strong) {
   color: #fff;
 }
-.bc-guru-shell .bc-guru-hero :is(p, small) {
+.bc-guru-shell .bc-guru-hero :is(p, small):not([class*="text-"]) {
   color: rgba(219, 234, 254, .90);
 }
 .bc-guru-shell .bc-guru-hero .bc-guru-hero-muted {
