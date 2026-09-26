@@ -161,7 +161,7 @@ export default function PanduanGuruPage() {
     <div className="p-6 max-w-6xl mx-auto">
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center text-white">
           <BookOpen className="w-5 h-5" />
         </div>
         <div className="flex-1">
@@ -199,9 +199,9 @@ export default function PanduanGuruPage() {
               <Card key={grade} className="border border-slate-100 overflow-hidden">
                 <button
                   onClick={() => toggleGrade(grade)}
-                  className="w-full flex items-center gap-4 p-4 hover:bg-slate-50 transition-colors text-left"
+                  className="w-full flex items-center gap-4 p-4 text-left transition-colors hover:bg-blue-50/50 dark:hover:bg-blue-950/20"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center text-white font-bold text-sm shrink-0">
                     {grade}
                   </div>
                     <div className="flex-1">
@@ -245,7 +245,7 @@ export default function PanduanGuruPage() {
                                       href={`/guru/panduan-guru/${unit.id}`}
                                       className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 group"
                                     >
-                                      <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center text-emerald-700 font-bold text-xs shrink-0">
+                                      <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center text-blue-700 font-bold text-xs shrink-0">
                                         {unit.order}
                                       </div>
                                       <div className="flex-1 min-w-0">
@@ -257,7 +257,7 @@ export default function PanduanGuruPage() {
                                         <Button
                                           size="sm"
                                           variant="outline"
-                                          className="text-emerald-600 border-emerald-200 hover:bg-emerald-50"
+                                          className="text-blue-600 border-blue-200 hover:bg-blue-50"
                                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); setAssignUnit({ ...unit, levelTitle: lvl?.title || "" }); setJenis("MATERI"); setAssignError(""); setSelectedGroups([]); setTenggat("") }}
                                         >
                                           <Send className="w-3.5 h-3.5 mr-1" />
@@ -297,8 +297,8 @@ export default function PanduanGuruPage() {
             </p>
 
             {assignSuccess ? (
-              <div className="flex flex-col items-center gap-3 py-8 text-emerald-600">
-                <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center">
+              <div className="flex flex-col items-center gap-3 py-8 text-blue-600">
+                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
                   <Check className="w-6 h-6" />
                 </div>
                 <p className="font-medium">Berhasil dikirim!</p>
@@ -313,10 +313,10 @@ export default function PanduanGuruPage() {
                       type="button"
                       onClick={() => setJenis(opt.value)}
                       className={`text-left px-3 py-2.5 rounded-lg border transition-colors ${
-                        jenis === opt.value ? "border-emerald-300 bg-emerald-50" : "border-slate-100 hover:border-slate-200"
+                        jenis === opt.value ? "border-blue-300 bg-blue-50" : "border-slate-100 hover:border-slate-200"
                       }`}
                     >
-                      <div className={`flex items-center gap-1.5 text-sm font-medium ${jenis === opt.value ? "text-emerald-700" : "text-slate-800"}`}>
+                      <div className={`flex items-center gap-1.5 text-sm font-medium ${jenis === opt.value ? "text-blue-700" : "text-slate-800"}`}>
                         {opt.icon}
                         {opt.label}
                       </div>
@@ -335,7 +335,7 @@ export default function PanduanGuruPage() {
                         key={g.id}
                         className={`flex items-center gap-3 px-3 py-2 rounded-lg border cursor-pointer transition-colors ${
                           selectedGroups.includes(g.id)
-                            ? "border-emerald-300 bg-emerald-50"
+                            ? "border-blue-300 bg-blue-50"
                             : "border-slate-100 hover:border-slate-200"
                         }`}
                       >
@@ -345,7 +345,7 @@ export default function PanduanGuruPage() {
                           onChange={() => setSelectedGroups(prev =>
                             prev.includes(g.id) ? prev.filter(id => id !== g.id) : [...prev, g.id]
                           )}
-                          className="rounded text-emerald-600 focus:ring-emerald-500"
+                          className="rounded text-blue-600 focus:ring-emerald-500"
                         />
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-slate-800 truncate">{g.name}</p>
