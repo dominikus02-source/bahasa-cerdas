@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -8,6 +8,7 @@ import {
   Bot, User, CalendarDays, ChevronDown, Menu, X, LogOut, Wallet,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { RoleSections } from "@/components/shell/RoleSections";
 import {
   NAV_ICON_CLASS,
   NAV_ICON_STROKE,
@@ -234,7 +235,7 @@ function NavLinks({
                 className={`block rounded-lg py-1.5 px-3 text-xs transition-all ${
                   linkActive
  ? "bg-blue-50 text-blue-700 font-semibold dark:bg-blue-500/15 dark:text-blue-300"
- : "text-slate-500 hover:text-blue-700 hover:bg-blue-50/70 dark:text-slate-400 :bg-slate-800 dark:hover:text-slate-200"
+ : "text-slate-500 hover:text-blue-700 hover:bg-blue-50/70 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                 }`}
               >
                 {link.label}
@@ -265,10 +266,23 @@ export function GuruNavList({
   );
 }
 
-/** Bottom nav mobile guru (lg:hidden) + tombol menu drawer. */
-export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
+/** Bottom nav mobile guru (< md) + tombol menu drawer. */
+export function GuruMobileNav({ role, isFounder }: { role: string; isFounder: boolean }) {
   const pathname = usePathname();
   const [drawer, setDrawer] = useState(false);
+
+  useEffect(() => {
+    setDrawer(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!drawer) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [drawer]);
 
   const tabs = [
     { label: "Beranda", href: "/guru/beranda", icon: Home },
@@ -279,7 +293,7 @@ export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
 
   return (
     <>
- <div className="bc-mobile-nav fixed bottom-0 inset-x-0 z-40 lg:hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-gray-100 dark:border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] pb-[env(safe-area-inset-bottom)]">
+ <div className="bc-mobile-nav fixed bottom-0 inset-x-0 z-40 md:hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-gray-100 dark:border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] pb-[env(safe-area-inset-bottom)]">
         <div className="grid grid-cols-5">
           {tabs.map((tab) => {
             const active = pathname.startsWith(tab.href);
@@ -287,7 +301,8 @@ export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
               <Link
                 key={tab.href}
                 href={tab.href}
-                className={`flex flex-col items-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors ${
+                aria-current={active ? "page" : undefined}
+                className={`flex min-h-14 touch-manipulation flex-col items-center justify-center gap-0.5 px-1 py-2 text-[10px] font-semibold transition-colors ${
                   active ? "text-blue-600 dark:text-blue-300" : "text-slate-500 dark:text-slate-400"
                 }`}
               >
@@ -299,7 +314,9 @@ export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
           <button
             type="button"
             onClick={() => setDrawer(true)}
-            className="flex flex-col items-center gap-0.5 py-2.5 text-[10px] font-medium text-slate-500 dark:text-slate-400"
+            aria-expanded={drawer}
+            aria-controls="guru-mobile-menu"
+            className="flex min-h-14 touch-manipulation flex-col items-center justify-center gap-0.5 px-1 py-2 text-[10px] font-semibold text-slate-500 dark:text-slate-400"
           >
             <Menu className="w-5 h-5" />
             Menu
@@ -308,9 +325,9 @@ export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
       </div>
 
       {drawer && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setDrawer(false)} />
-          <div className="absolute inset-y-0 left-0 w-[85%] max-w-sm bg-white dark:bg-slate-800/90 shadow-2xl flex flex-col">
+        <div className="fixed inset-0 z-50 md:hidden">
+          <button type="button" aria-label="Tutup menu guru" className="absolute inset-0 bg-black/45" onClick={() => setDrawer(false)} />
+          <div id="guru-mobile-menu" role="dialog" aria-modal="true" aria-label="Menu Guru" className="absolute inset-y-0 left-0 flex w-[88%] max-w-sm flex-col bg-white shadow-2xl dark:bg-slate-900">
             <div className="p-5 border-b border-gray-100 dark:border-slate-800 bg-gradient-to-r from-blue-700 to-blue-600 flex items-center justify-between">
               <div>
                 <p className="font-bold text-white text-sm">Menu Guru</p>
@@ -324,8 +341,11 @@ export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <GuruNavList isFounder={isFounder} onNavigate={() => setDrawer(false)} />
- <div className="p-3 border-t border-gray-100 dark:border-slate-800 bg-gray-50 bg-gray-50/50 dark:bg-slate-800/50 flex items-center justify-between gap-2">
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-[env(safe-area-inset-bottom)]">
+              <GuruNavList isFounder={isFounder} onNavigate={() => setDrawer(false)} />
+              <RoleSections role={role} isFounder={isFounder} />
+            </div>
+            <div className="p-3 border-t border-gray-100 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50 flex items-center justify-between gap-2">
               <Link
                 href="/guru/beranda"
                 className="text-[10px] text-gray-400 font-medium"

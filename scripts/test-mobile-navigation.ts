@@ -71,8 +71,8 @@ function main() {
   console.log("\n── 4. Mobile breakpoint ──");
   test("MuridMobileNav hanya tampil < md (md:hidden)",
     () => muridMobileNav.includes("md:hidden fixed bottom-0"));
-  test("GuruMobileNav hanya tampil < lg (lg:hidden)",
-    () => guruNav.includes("lg:hidden") && guruNav.includes("fixed bottom-0"));
+  test("GuruMobileNav hanya tampil < md (md:hidden)",
+    () => guruNav.includes("md:hidden") && guruNav.includes("fixed bottom-0"));
   test("AdminMobileNav hanya tampil < md (md:hidden)",
     () => adminMobileNav.includes("md:hidden") && adminMobileNav.includes("fixed bottom-0"));
   test("BottomNav APK hanya < md", () => arenaBottomNav.includes("md:hidden"));
@@ -96,7 +96,7 @@ function main() {
   // 7. Content bottom spacing (nav tidak menutup konten)
   console.log("\n── 7. Content bottom spacing ──");
   test("murid main pb-24 mobile", () => muridLayout.includes("pb-24 md:pb-8"));
-  test("guru main pb-24 mobile", () => guruLayout.includes("pb-24 lg:pb-8"));
+  test("guru main pb-24 mobile, selesai di md saat sidebar aktif", () => guruLayout.includes("pb-24 md:pb-8"));
   test("arena root pb-20 mobile", () => arenaLayout.includes("pb-20 md:pb-0"));
   test("admin main pb-24 mobile", () => adminLayout.includes("pb-24 md:pb-8"));
 
@@ -104,8 +104,8 @@ function main() {
   console.log("\n── 8. Primary nav <= 5 ──");
   test("MuridMobileNav PRIMARY = 4 destination (Beranda/Arena/Karya/Profil) + utility Notif/Menu",
     () => (muridMobileNav.match(/label: "/g) || []).filter((s, i, arr) => i < 4).length >= 4 && muridMobileNav.includes('label: "Beranda"') && muridMobileNav.includes('label: "Arena"') && muridMobileNav.includes('label: "Karya"') && muridMobileNav.includes('label: "Profil"'));
-  test("GuruMobileNav tabs = 4 (Beranda/Literasi/Gim/Akun) + Menu",
-    () => ["Beranda", "Literasi", "Gim", "Akun"].every((l) => guruNav.includes(`label: "${l}"`)));
+  test("GuruMobileNav tabs = 4 (Beranda/Literasi/Gim/Profil) + Menu",
+    () => ["Beranda", "Literasi", "Gim", "Profil"].every((l) => guruNav.includes(`label: "${l}"`)));
   test("AdminMobileNav tabs = 4 (Tower/Konten/Pengguna/Bayaran) + Menu",
     () => ["Tower", "Konten", "Pengguna", "Bayaran"].every((l) => adminMobileNav.includes(`label: "${l}"`)));
   test("BottomNav APK = 5 items", () => (arenaBottomNav.match(/href: "\//g) || []).length === 5);
@@ -148,8 +148,10 @@ function main() {
 
   // 14. Teacher navigation
   console.log("\n── 14. Teacher navigation ──");
-  test("guru drawer memakai GuruNavList (menu lengkap) + logout",
-    () => guruNav.includes("GuruNavList") && guruNav.includes("LogOut"));
+  test("guru drawer memakai GuruNavList + RoleSections untuk akses founder",
+    () => guruNav.includes("GuruNavList") && guruNav.includes("<RoleSections role={role} isFounder={isFounder} />"));
+  test("guru mobile target sentuh minimal 56px dan drawer mengunci body scroll",
+    () => guruNav.includes("min-h-14 touch-manipulation") && guruNav.includes('document.body.style.overflow = "hidden"'));
 
   // 15. Arena navigation
   console.log("\n── 15. Arena navigation ──");

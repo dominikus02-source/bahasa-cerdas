@@ -97,7 +97,7 @@ function TeacherHero({
 }) {
   return (
     <section
-      className="relative min-h-[286px] overflow-hidden rounded-[28px] border border-blue-300/25 shadow-[0_22px_55px_rgba(15,62,132,.18)]"
+      className="relative min-h-[238px] overflow-hidden rounded-[24px] border border-blue-300/25 shadow-[0_18px_42px_rgba(15,62,132,.16)] sm:min-h-[286px] sm:rounded-[28px]"
       style={{ backgroundColor: "#071d3d" }}
     >
       <Image
@@ -116,18 +116,18 @@ function TeacherHero({
         }}
       />
 
-      <div className="relative z-10 flex min-h-[286px] max-w-[680px] flex-col justify-center px-6 py-8 sm:px-9">
+      <div className="relative z-10 flex min-h-[238px] max-w-[680px] flex-col justify-center px-5 py-6 sm:min-h-[286px] sm:px-9 sm:py-8">
         <span className="mb-3 inline-flex w-fit items-center gap-2 rounded-full border border-blue-200/20 bg-white/10 px-3 py-1.5 text-[11px] font-bold tracking-[.12em] text-blue-100 backdrop-blur-md">
           <Sparkles className="h-3.5 w-3.5" />
           RUANG KERJA GURU
         </span>
-        <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-[2.55rem] sm:leading-[1.06]">
+        <h1 className="text-[1.75rem] font-extrabold leading-[1.08] tracking-tight text-white sm:text-[2.55rem] sm:leading-[1.06]">
           {greeting}, {fullName}
         </h1>
         <p className="mt-3 max-w-[510px] text-sm leading-relaxed text-blue-100 sm:text-base">
           Mulai dari hal yang paling penting hari ini. BahasaCerdas membantu pekerjaan mengajar tetap ringkas dan terarah.
         </p>
-        <div className="mt-6 max-w-[500px] rounded-2xl border border-white/15 bg-black/25 px-4 py-3 backdrop-blur-md">
+        <div className="mt-4 hidden max-w-[500px] rounded-2xl border border-white/15 bg-black/25 px-4 py-3 backdrop-blur-md sm:block sm:mt-6">
           <p className="text-sm font-medium leading-relaxed text-white/90">
             “Satu keputusan mengajar yang baik dapat mengubah cara siswa melihat dirinya sendiri.”
           </p>
@@ -150,7 +150,7 @@ function DailyMissionCard({ status }: { status: MisiGuruStatus | null }) {
   }, [status]);
 
   return (
-    <section className="rounded-[28px] border border-blue-100 bg-white p-5 shadow-[0_14px_35px_rgba(31,78,145,.08)] dark:border-blue-950/80 dark:bg-[#0b1d34]">
+    <section className="rounded-[24px] border border-blue-100 bg-white p-4 shadow-[0_12px_30px_rgba(31,78,145,.07)] sm:rounded-[28px] sm:p-5 dark:border-blue-950/80 dark:bg-[#0b1d34]">
       <div className="mb-4 flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           <span className="grid h-11 w-11 place-items-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/70 dark:text-blue-300">
@@ -226,14 +226,14 @@ function QuickActions() {
           Empat pintasan utama untuk pekerjaan guru.
         </p>
       </div>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-3 xl:grid-cols-4">
         {QUICK_ACTIONS.map((action) => {
           const Icon = action.icon;
           return (
             <Link
               key={action.label}
               href={action.href}
-              className="group relative min-h-[168px] overflow-hidden rounded-[22px] border border-blue-200/25 shadow-[0_12px_30px_rgba(20,67,135,.12)] transition-transform duration-200 hover:-translate-y-0.5"
+              className="group relative min-h-[142px] overflow-hidden rounded-[18px] border border-blue-200/25 shadow-[0_10px_24px_rgba(20,67,135,.10)] transition-transform duration-200 hover:-translate-y-0.5 sm:min-h-[168px] sm:rounded-[22px]"
               style={{ backgroundColor: "#0b3b77" }}
             >
               <Image
@@ -245,19 +245,19 @@ function QuickActions() {
                 style={{ objectPosition: action.imagePosition ?? "center" }}
               />
               <div className="absolute inset-0" style={{ background: action.overlay }} />
-              <div className="relative z-10 flex h-full min-h-[168px] flex-col p-4">
-                <span className="grid h-10 w-10 place-items-center rounded-xl border border-white/15 bg-white/10 text-white backdrop-blur-md">
+              <div className="relative z-10 flex h-full min-h-[142px] flex-col p-3 sm:min-h-[168px] sm:p-4">
+                <span className="grid h-9 w-9 place-items-center rounded-xl border border-white/15 bg-white/10 text-white backdrop-blur-md sm:h-10 sm:w-10">
                   <Icon className="h-5 w-5" />
                 </span>
-                <div className="mt-auto pt-5">
+                <div className="mt-auto pt-3 sm:pt-5">
                   <div className="flex items-end justify-between gap-3">
                     <div>
-                      <h3 className="text-base font-extrabold text-white">{action.label}</h3>
-                      <p className="mt-1 max-w-[220px] text-xs leading-relaxed text-white/80">
+                      <h3 className="text-sm font-extrabold leading-tight text-white sm:text-base">{action.label}</h3>
+                      <p className="mt-1 hidden max-w-[220px] text-xs leading-relaxed text-white/80 sm:block">
                         {action.desc}
                       </p>
                     </div>
-                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white text-blue-700 transition-transform group-hover:translate-x-0.5">
+                    <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-white text-blue-700 transition-transform group-hover:translate-x-0.5 sm:h-8 sm:w-8">
                       <ArrowRight className="h-4 w-4" />
                     </span>
                   </div>
@@ -447,8 +447,8 @@ export default function TeacherHomeV3({
   misiStatus: MisiGuruStatus | null;
 }) {
   return (
-    <div className="mx-auto w-full max-w-[1320px] space-y-5">
-      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1.58fr)_minmax(320px,.72fr)]">
+    <div className="mx-auto w-full max-w-[1320px] space-y-4 sm:space-y-5">
+      <div className="grid grid-cols-1 gap-4 sm:gap-5 xl:grid-cols-[minmax(0,1.58fr)_minmax(320px,.72fr)]">
         <TeacherHero greeting={greeting} fullName={fullName} />
         <DailyMissionCard status={misiStatus} />
       </div>
@@ -457,22 +457,22 @@ export default function TeacherHomeV3({
 
       <BannerProgramGuruCerdas />
 
-      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1.52fr)_minmax(310px,.58fr)]">
+      <div className="grid grid-cols-1 gap-4 sm:gap-5 xl:grid-cols-[minmax(0,1.52fr)_minmax(310px,.58fr)]">
         <MainBersamaAnnouncement />
         <CompetitionCard />
       </div>
 
       <GuruBerkarya misiStatus={misiStatus} compact />
 
-      <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,1.38fr)_minmax(300px,.62fr)]">
+      <div className="grid grid-cols-1 items-start gap-4 sm:gap-5 xl:grid-cols-[minmax(0,1.38fr)_minmax(300px,.62fr)]">
         <GuruBadgeGrid compact />
-        <div className="space-y-5">
-          <QuoteCard />
+        <div className="space-y-4 sm:space-y-5">
+          <div className="hidden sm:block"><QuoteCard /></div>
           <TipCard />
         </div>
       </div>
 
-      <div className="flex items-center justify-center gap-2 pb-2 text-[11px] text-slate-400 dark:text-slate-500">
+      <div className="hidden items-center justify-center gap-2 pb-2 text-[11px] text-slate-400 sm:flex dark:text-slate-500">
         <Zap className="h-3.5 w-3.5 text-blue-400" />
         <span>Beranda Guru dirancang untuk aksi cepat. Nilai dan data murid tetap terpusat di Kelasku.</span>
       </div>

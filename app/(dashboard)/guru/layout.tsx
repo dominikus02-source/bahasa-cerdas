@@ -182,8 +182,8 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
           </div>
         </header>
       }
-      mainClassName="bc-guru flex-1 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 pb-24 lg:pb-8 mx-auto max-w-[1440px] w-full"
-      bottomNav={<GuruMobileNav isFounder={user.isFounder} />}
+      mainClassName="bc-guru flex-1 px-3.5 sm:px-6 lg:px-8 py-3.5 sm:py-6 lg:py-8 pb-24 md:pb-8 mx-auto max-w-[1440px] w-full"
+      bottomNav={<GuruMobileNav role={user.role} isFounder={user.isFounder} />}
     >
       {children}
       <AIFloatingButton />

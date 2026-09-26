@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { loginSchema } from "@/lib/validations";
+import { dashboardForUser } from "@/lib/auth/redirect";
 
 export async function loginUser(formData: FormData) {
   try {
@@ -40,7 +41,7 @@ export async function loginUser(formData: FormData) {
       return { error: "Akun belum terdaftar. Silakan daftar terlebih dahulu." };
     }
 
-    redirect(`/${dbUser.role.toLowerCase()}/beranda`);
+    redirect(dashboardForUser(dbUser.role, Boolean(dbUser.isFounder)));
   } catch (err: any) {
     if (err?.message?.includes("NEXT_REDIRECT")) throw err;
     return { error: "Terjadi kesalahan. Silakan coba lagi." };

@@ -6,7 +6,8 @@ import {
   intentClearCookie,
   isSafeNext,
   resolveGoogleProvisioning,
-  resolvePostAuthDestination,
+  resolvePostAuthDestinationForUser,
+  dashboardForUser,
   verifyRoleIntent,
 } from "@/lib/auth/role-intent";
 import { findApplicationUser, provisionGoogleUser } from "@/lib/auth/google-provision";
@@ -91,7 +92,7 @@ export async function GET(request: Request) {
           if (decision.action === "preserve" && existing) {
             return clearOn(
               NextResponse.redirect(
-                `${requestUrl.origin}${resolvePostAuthDestination(existing.role, next)}`
+                `${requestUrl.origin}${resolvePostAuthDestinationForUser(existing.role, Boolean(existing.isFounder), next)}`
               )
             );
           }
@@ -117,7 +118,7 @@ export async function GET(request: Request) {
           });
           if (dbUser) {
             return clearOn(
-              NextResponse.redirect(`${requestUrl.origin}${dashboardForRole(dbUser.role)}`)
+              NextResponse.redirect(`${requestUrl.origin}${dashboardForUser(dbUser.role, Boolean(dbUser.isFounder))}`)
             );
           }
           // Authenticated but no application User → role selection, not "/".
@@ -153,7 +154,7 @@ export async function GET(request: Request) {
           email: user.email ?? "",
         });
         if (dbUser) {
-          return NextResponse.redirect(`${requestUrl.origin}${dashboardForRole(dbUser.role)}`);
+          return NextResponse.redirect(`${requestUrl.origin}${dashboardForUser(dbUser.role, Boolean(dbUser.isFounder))}`);
         }
         // Authenticated but no application User → role selection, not "/".
         return NextResponse.redirect(`${requestUrl.origin}/auth/pilih-peran`);
