@@ -11,6 +11,7 @@ import ConfettiBurst from "@/components/game/ConfettiBurst";
 import { usePowerUps } from "@/hooks/usePowerUps";
 import { pilihOpsiSalah } from "@/lib/power-up-hint";
 import { sfx, haptic, isSoundOn, toggleSound, startBGM, stopBGM } from "@/lib/game/sound";
+import GameBackButton from "@/components/game/GameBackButton";
 
 interface Q {
   id: string;
@@ -145,7 +146,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
   /* ---------- START ---------- */
   if (phase === "start" || phase === "loading") {
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#16120A] dark:via-[#1A1510] dark:to-[#201A0C] dark:text-[#F5EDD6]">
+      <div className="game-env game-env-menara fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#16120A] dark:via-[#1A1510] dark:to-[#201A0C] dark:text-[#F5EDD6]">
         <style>{`@keyframes mc-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
         @keyframes mc-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}
         @keyframes mc-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -160,6 +161,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2.5">
+              <GameBackButton href="/arena/game" label="Kembali ke Arena" title="Kembali ke Arena" />
               <div className={`mc-logo w-11 h-11 bg-[#8B5CF6] rounded-2xl ${chunky} !shadow-[4px_4px_0_#CA8A04] flex items-center justify-center`}>
                 <Mountain className="w-6 h-6 text-white" />
               </div>
@@ -207,7 +209,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
   if (phase === "gameover") {
     const cleared = floor >= total && total > 0;
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#16120A] dark:via-[#1A1510] dark:to-[#201A0C] dark:text-[#F5EDD6]">
+      <div className="game-env game-env-menara fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#16120A] dark:via-[#1A1510] dark:to-[#201A0C] dark:text-[#F5EDD6]">
         <Burst trigger={burst} x={50} y={38} count={28} />
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col items-center justify-center text-center">
           <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 180 }}
@@ -253,13 +255,14 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
 
   /* ---------- PLAYING ---------- */
   return (
-    <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#16120A] dark:via-[#1A1510] dark:to-[#201A0C] dark:text-[#F5EDD6]">
+    <div className="game-env game-env-menara fixed inset-0 z-[60] flex flex-col overflow-hidden bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#16120A] dark:via-[#1A1510] dark:to-[#201A0C] dark:text-[#F5EDD6]">
       <Burst trigger={burst} x={16} y={48} />
       {confettiAktif && <ConfettiBurst trigger={confetti} />}
       <ComboFlash combo={combo} />
       <motion.div animate={controls} className="relative z-10 flex-1 flex flex-col max-w-md w-full mx-auto px-4 pt-4 pb-5 min-h-0">
         {/* HUD */}
         <div className="flex items-center justify-between mb-3">
+           <GameBackButton href="/arena/game" label="Kembali ke Arena" title="Kembali ke Arena" />
           <div className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white dark:bg-gradient-to-r dark:from-[#201C14] dark:to-[#262018] dark:border-amber-700/30 dark:shadow-[0_0_10px_rgba(202,138,4,0.15)] border-2 border-[#161B3A] dark:border-white/25">
             {Array.from({ length: MAX_HEARTS }).map((_, i) => (
               <Heart key={i} className={`w-4 h-4 ${i < hearts ? "text-rose-500 fill-rose-500" : "text-gray-300 dark:text-amber-800/40"}`} />

@@ -15,16 +15,16 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json().catch(() => ({}));
     const sessionId = typeof body.sessionId === "string" ? body.sessionId : "";
-    const cellsCorrect = Math.floor(Number(body.cellsCorrect));
+    const grid = body.grid && typeof body.grid === "object" && !Array.isArray(body.grid) ? body.grid as Record<string, string> : null;
 
-    if (!sessionId || !Number.isFinite(cellsCorrect) || cellsCorrect < 0) {
+    if (!sessionId || !grid) {
       return NextResponse.json({ error: "Payload tidak valid" }, { status: 400 });
     }
 
     const result = await finishTtsSession({
       userId: user.id,
       sessionId,
-      cellsCorrect,
+      grid,
     });
 
     // Sesi sudah FINISHED (double submit) → jawab sukses tanpa hadiah baru.

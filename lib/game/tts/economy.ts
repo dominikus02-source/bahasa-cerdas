@@ -114,3 +114,48 @@ export function streakXpBonus(streak: number): number {
   if (streak < 2) return 0;
   return Math.min(streak, 10) * 3;
 }
+
+
+/**
+ * Standar ekonomi gim v1.
+ *
+ * Prinsip:
+ * - XP = progres belajar: dipengaruhi akurasi dan tingkat kesulitan.
+ * - Koin = aktivitas: ada hadiah dasar yang stabil, dengan bonus kecil dari
+ *   performa; tidak boleh menjadi sumber farming besar.
+ * - Untuk jalur belajar, base reward dari unit tetap menjadi sumber kebenaran
+ *   kalibrasi kesulitan; faktor performa hanya mengatur payout sesi.
+ */
+export interface GameRewardInput {
+  baseXp: number;
+  baseCoins: number;
+  accuracyPct: number;
+  difficultyMultiplier?: number;
+  xpPenalty?: number;
+}
+
+export interface GameRewardResult {
+  xp: number;
+  coins: number;
+  accuracyFactor: number;
+}
+
+export function calculateGameReward(input: GameRewardInput): GameRewardResult {
+  const accuracyPct = Math.max(0, Math.min(100, Number(input.accuracyPct) || 0));
+  const accuracyFactor = 0.5 + accuracyPct / 200; // 50% at 0%, 100% at 100%.
+  const difficultyMultiplier = Math.max(0.75, Number(input.difficultyMultiplier ?? 1) || 1);
+  const baseXp = Math.max(0, Math.floor(Number(input.baseXp) || 0));
+  const baseCoins = Math.max(0, Math.floor(Number(input.baseCoins) || 0));
+  const xpPenalty = Math.max(0, Math.floor(Number(input.xpPenalty ?? 0) || 0));
+
+  const xp = Math.max(
+    0,
+    Math.round(baseXp * accuracyFactor * difficultyMultiplier - xpPenalty)
+  );
+  const coins = Math.max(
+    0,
+    Math.min(10, Math.round(baseCoins * accuracyFactor))
+  );
+
+  return { xp, coins, accuracyFactor };
+}

@@ -13,6 +13,7 @@ import { db } from "@/lib/db";
 import { harvestJalurQuestions, pickRampedQuestions } from "@/lib/game/harvest";
 import { shuffleOptions } from "@/lib/game/shuffle-options";
 import { awardXp } from "@/lib/award-xp";
+import { calculateGameReward } from "@/lib/game/tts/economy";
 import { rateLimitRoute } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
@@ -51,11 +52,31 @@ export async function POST(req: NextRequest) {
   const correct = Math.min(Math.max(Number(body.correct) || 0, 0), total);
 
   // Server-capped reward — prevents inflated client claims / XP farming.
-  const baseXp = correct * 5; // max 100 XP per run
+  const accuracyPct = total > 0 ? (correct / total) * 100 : 0;
+  const reward = calculateGameReward({
+    baseXp: correct * 5,
+    baseCoins: 5,
+    accuracyPct,
+    difficultyMultiplier: 1,
+  });
 
   // Lewat pintu tunggal: batas per submit, kuota harian, boost, jejak ledger,
   // dan pembaruan xp/level/liga sekaligus.
-  const hasil = await awardXp(user.id, "MENARA", baseXp);
+  const reference = `menara-${crypto.randomUUID()}`;
+  const hasil = await awardXp(user.id, "MENARA", reward.xp, reference);
+
+  if (reward.coins > 0 && hasil.xpDiberikan > 0) {
+    try {
+      await db.$transaction([
+        db.coinTransaction.create({
+          data: { userId: user.id, amount: reward.coins, reason: "MAIN_GAME", reference: `game-${reference}` },
+        }),
+        db.user.update({ where: { id: user.id }, data: { coins: { increment: reward.coins } } }),
+      ]);
+    } catch (error) {
+      console.error("Menara coin reward error:", error);
+    }
+  }
   const xpEarned = hasil.xpDiberikan;
   const boosted = hasil.boosted;
   const newXp = hasil.totalXp;
@@ -63,11 +84,12 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({
     xpEarned,
-    baseXp,
+    baseXp: reward.xp,
     boosted,
     newXp,
     newLevel,
     kuotaHarianHabis: hasil.kuotaHabis,
+    coinsEarned: reward.coins,
     leveledUp: hasil.naikLevel,
   });
 }
