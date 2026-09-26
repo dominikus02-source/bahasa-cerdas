@@ -23,23 +23,23 @@ export default async function GuruUKBISimulasiPage() {
   return (
     <div>
       {/* Hero */}
-      <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 rounded-2xl p-6 mb-6 text-white">
+      <div className="bc-guru-hero rounded-2xl p-6 mb-6 text-white">
         <div className="flex items-center gap-3 mb-2">
           <BookOpen size={24} />
           <h1 className="text-xl font-bold">Simulasi UKBI — Guru</h1>
         </div>
-        <p className="text-sm text-emerald-200 max-w-2xl">
+        <p className="text-sm text-blue-100 max-w-2xl">
           Pantau paket simulasi UKBI yang tersedia untuk murid. Lihat hasil dan kelola bank soal.
         </p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="bg-white rounded-xl border border-gray-100 p-4">
+        <div className="bc-guru-stat-card rounded-xl p-4">
           <p className="text-xs text-gray-500">Paket Tersedia</p>
           <p className="text-2xl font-bold text-gray-900">{totalPakets}</p>
         </div>
-        <div className="bg-white rounded-xl border border-gray-100 p-4">
+        <div className="bc-guru-stat-card rounded-xl p-4">
           <p className="text-xs text-gray-500">Total Soal</p>
           <p className="text-2xl font-bold text-gray-900">{totalSoal}</p>
         </div>
@@ -48,7 +48,7 @@ export default async function GuruUKBISimulasiPage() {
       {/* Track Cards */}
       <div className="grid gap-4 md:grid-cols-2 mb-6">
         {tracks.map(track => (
-          <div key={track.id} className={`bg-white rounded-xl border border-gray-100 p-5 ${track.available ? "" : "opacity-60"}`}>
+          <div key={track.id} className={`bg-white rounded-xl border border-blue-100 p-5 shadow-[0_8px_22px_rgba(25,72,140,.06)] dark:bg-[#0b1d34] dark:border-blue-950/70 ${track.available ? "" : "opacity-60"}`}>
             <div className="flex items-center gap-3 mb-3">
               <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${track.bgGradient} flex items-center justify-center`}>
                 <TrackIcon name={track.icon} className="w-5 h-5 text-white" />
@@ -65,7 +65,7 @@ export default async function GuruUKBISimulasiPage() {
               {track.available && track.paketId && (
                 <Link
                   href={`/kompetisi/${track.paketId}/device-check`}
-                  className="text-xs text-emerald-600 font-bold bg-emerald-50 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition-colors inline-flex items-center gap-1"
+                  className="text-xs text-blue-700 font-bold bg-blue-50 dark:text-blue-300 dark:bg-blue-950/40 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition-colors inline-flex items-center gap-1"
                 >
                   <BookOpen size={12} /> Coba Simulasi
                 </Link>
@@ -87,7 +87,7 @@ export default async function GuruUKBISimulasiPage() {
       <div className="flex gap-3">
         <Link
           href="/guru/hasil-simulasi"
-          className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-colors"
+          className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors shadow-sm shadow-blue-500/20"
         >
           <TrendingUp size={16} /> Lihat Hasil Murid
         </Link>
