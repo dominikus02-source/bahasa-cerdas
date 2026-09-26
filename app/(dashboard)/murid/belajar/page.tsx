@@ -78,7 +78,7 @@ const QUESTS = [
 
 export default function BelajarPage() {
   return (
-    <div className="mx-auto w-full max-w-6xl pb-20">
+    <div className="relative mx-auto w-full max-w-6xl pb-20">
       {/* WORLD HERO */}
       <section className="relative overflow-hidden rounded-[2rem] bg-[#07152f] text-white shadow-[0_30px_90px_-42px_rgba(79,70,229,0.8)]">
         <div className="pointer-events-none absolute inset-0">
@@ -237,22 +237,22 @@ export default function BelajarPage() {
               <Link
                 key={href}
                 href={href}
-                className="group relative overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-[0_18px_45px_-34px_rgba(15,23,42,0.55)] transition-all hover:-translate-y-1 hover:border-violet-200 hover:shadow-xl"
+                className="group relative overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-[0_18px_45px_-34px_rgba(15,23,42,0.55)] transition-all hover:-translate-y-1 hover:border-violet-200 hover:shadow-xl dark:border-white/10 dark:bg-white/[0.055] dark:shadow-[0_20px_55px_-34px_rgba(0,0,0,0.8)] dark:hover:border-violet-400/30 dark:hover:bg-white/[0.075]"
               >
                 <div className={`absolute -right-12 -top-12 h-32 w-32 rounded-full bg-gradient-to-br ${tone} opacity-[0.09] blur-2xl transition-opacity group-hover:opacity-20`} />
                 <div className="relative flex items-start justify-between gap-3">
                   <div className={`flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br ${tone} shadow-lg`}>
                     <Icon className="h-5 w-5 text-white" />
                   </div>
-                  <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[8px] font-black tracking-[0.15em] text-slate-500">
+                  <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[8px] font-black tracking-[0.15em] text-slate-500 dark:bg-white/[0.07] dark:text-slate-300/70">
                     {eyebrow}
                   </span>
                 </div>
-                <h3 className="mt-5 text-lg font-black text-slate-950">{label}</h3>
-                <p className="mt-1.5 min-h-[42px] text-xs leading-5 text-slate-500">{description}</p>
+                <h3 className="mt-5 text-lg font-black text-slate-950 dark:text-white">{label}</h3>
+                <p className="mt-1.5 min-h-[42px] text-xs leading-5 text-slate-500 dark:text-slate-300/65">{description}</p>
                 <div className="mt-5 flex items-center justify-between gap-3">
-                  <span className="text-[10px] font-black text-violet-600">{reward}</span>
-                  <ArrowRight className="h-4 w-4 text-slate-300 transition-transform group-hover:translate-x-1 group-hover:text-violet-600" />
+                  <span className="text-[10px] font-black text-violet-600 dark:text-violet-300">{reward}</span>
+                  <ArrowRight className="h-4 w-4 text-slate-300 transition-transform group-hover:translate-x-1 group-hover:text-violet-600 dark:text-white/25 dark:group-hover:text-violet-300" />
                 </div>
               </Link>
             )
@@ -264,7 +264,7 @@ export default function BelajarPage() {
       <section className="mt-9 grid gap-4 lg:grid-cols-2">
         <Link
           href="/arena/chat"
-          className="group relative overflow-hidden rounded-[1.5rem] border border-cyan-100 bg-gradient-to-br from-cyan-50 via-white to-blue-50 p-6 transition-all hover:-translate-y-1 hover:shadow-xl"
+          className="group relative overflow-hidden rounded-[1.5rem] border border-cyan-100 bg-gradient-to-br from-cyan-50 via-white to-blue-50 p-6 transition-all hover:-translate-y-1 hover:shadow-xl dark:border-cyan-300/15 dark:from-cyan-400/[0.08] dark:via-white/[0.035] dark:to-blue-500/[0.08] dark:hover:border-cyan-300/25 dark:hover:bg-white/[0.055]"
         >
           <div className="absolute -right-12 -top-12 h-36 w-36 rounded-full bg-cyan-300/20 blur-3xl" />
           <div className="relative">
@@ -273,7 +273,7 @@ export default function BelajarPage() {
             </div>
             <p className="mt-4 text-[9px] font-black uppercase tracking-[0.18em] text-cyan-700">Party / Sosial</p>
             <h3 className="mt-1 text-lg font-black text-slate-950">Ngobrol & belajar bersama</h3>
-            <p className="mt-1.5 text-xs leading-5 text-slate-500">Diskusi dengan guru dan teman dalam ruang yang sama.</p>
+            <p className="mt-1.5 text-xs leading-5 text-slate-500 dark:text-slate-300/65">Diskusi dengan guru dan teman dalam ruang yang sama.</p>
             <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-black text-cyan-700">
               Buka obrolan <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
             </span>
@@ -282,7 +282,7 @@ export default function BelajarPage() {
 
         <Link
           href="/murid/dokumen-latihan"
-          className="group relative overflow-hidden rounded-[1.5rem] border border-amber-100 bg-gradient-to-br from-amber-50 via-white to-orange-50 p-6 transition-all hover:-translate-y-1 hover:shadow-xl"
+          className="group relative overflow-hidden rounded-[1.5rem] border border-amber-100 bg-gradient-to-br from-amber-50 via-white to-orange-50 p-6 transition-all hover:-translate-y-1 hover:shadow-xl dark:border-amber-300/15 dark:from-amber-400/[0.08] dark:via-white/[0.035] dark:to-orange-500/[0.08] dark:hover:border-amber-300/25 dark:hover:bg-white/[0.055]"
         >
           <div className="absolute -right-12 -top-12 h-36 w-36 rounded-full bg-amber-300/20 blur-3xl" />
           <div className="relative">
