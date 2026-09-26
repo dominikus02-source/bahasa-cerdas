@@ -161,14 +161,14 @@ export default function BelajarPage() {
       <section className="mt-8">
         <div className="mb-4 flex items-end justify-between gap-3">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-600">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-600 dark:text-violet-300">
               Perjalanan utama
             </p>
-            <h2 className="mt-1 text-2xl font-black tracking-tight text-slate-950">
+            <h2 className="mt-1 text-2xl font-black tracking-tight text-slate-950 dark:text-white">
               Main Quest
             </h2>
           </div>
-          <span className="hidden rounded-full bg-violet-50 px-3 py-1.5 text-[10px] font-black text-violet-700 sm:inline-flex">
+          <span className="hidden rounded-full bg-violet-50 px-3 py-1.5 text-[10px] font-black text-violet-700 dark:bg-violet-400/10 dark:text-violet-200 sm:inline-flex">
             Jalur Cerdas
           </span>
         </div>
@@ -223,10 +223,10 @@ export default function BelajarPage() {
       {/* SIDE QUESTS */}
       <section className="mt-9">
         <div className="mb-4">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
             Pilihan aktivitas
           </p>
-          <h2 className="mt-1 text-2xl font-black tracking-tight text-slate-950">
+          <h2 className="mt-1 text-2xl font-black tracking-tight text-slate-950 dark:text-white">
             Side Quests
           </h2>
         </div>
@@ -274,7 +274,7 @@ export default function BelajarPage() {
             <p className="mt-4 text-[9px] font-black uppercase tracking-[0.18em] text-cyan-700 dark:text-cyan-300">Party / Sosial</p>
             <h3 className="mt-1 text-lg font-black text-slate-950 dark:text-white">Ngobrol & belajar bersama</h3>
             <p className="mt-1.5 text-xs leading-5 text-slate-500 dark:text-slate-300/65">Diskusi dengan guru dan teman dalam ruang yang sama.</p>
-            <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-black text-cyan-700">
+            <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-black text-cyan-700 dark:text-cyan-300">
               Buka obrolan <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
             </span>
           </div>
@@ -292,7 +292,7 @@ export default function BelajarPage() {
             <p className="mt-4 text-[9px] font-black uppercase tracking-[0.18em] text-amber-700 dark:text-amber-300">Inventory</p>
             <h3 className="mt-1 text-lg font-black text-slate-950 dark:text-white">Hasil & pencapaian</h3>
             <p className="mt-1.5 text-xs leading-5 text-slate-500 dark:text-slate-300/65">Kembali melihat hasil latihan, ujian, dan pencapaian belajarmu.</p>
-            <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-black text-amber-700">
+            <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-black text-amber-700 dark:text-amber-300">
               Lihat hasil <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
             </span>
           </div>
