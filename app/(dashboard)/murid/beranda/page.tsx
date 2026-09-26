@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import "@/app/arena/player-theme.css";
 import { HomeDataProvider } from "@/components/student-home/home-data";
 import { StudentHomeHero } from "@/components/student-home/StudentHomeHero";
+import { MentorHomeCard } from "@/components/student-home/MentorHomeCard";
 import { DailyMissionCard } from "@/components/student-home/DailyMissionCard";
 import { DailyActionCard } from "@/components/student-home/DailyActionCard";
 import { JalurCerdasHomeCard } from "@/components/student-home/JalurCerdasHomeCard";
@@ -46,6 +47,7 @@ function HomeContent() {
   return (
     <>
       <StudentHomeHero />
+      <MentorHomeCard />
       <JalurCerdasHomeCard />
       <DailyActionCard />
 
