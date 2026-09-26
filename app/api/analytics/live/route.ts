@@ -4,6 +4,7 @@
  * Returns:
  *  - Online users (from Redis presence, near-real-time)
  *  - Breakdown by role (guru/murid/admin)
+ *  - Current menu/location distribution (coarse buckets, no identities)
  *  - Total Karya count (from PostgreSQL, canonical)
  *  - Presence window (TTL seconds)
  *
@@ -34,6 +35,7 @@ export async function GET() {
       onlineGuru: online.guru,
       onlineMurid: online.murid,
       onlineAdmin: online.admin,
+      onlineLocations: online.locations,
       totalKarya,
       generatedAt: new Date().toISOString(),
       presenceWindowSeconds: PRESENCE_TTL_SECONDS,
