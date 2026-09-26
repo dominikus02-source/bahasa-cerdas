@@ -14,16 +14,25 @@
  *  - Shows degraded state (no fake zeros)
  *  - Gray indicator instead of pulsing green
  *
- * Privacy: Numbers only. No names, no emails, no pages.
+ * Privacy: aggregate counts + coarse menu buckets only. No names, emails,
+ * dynamic IDs, query strings, or full URLs.
  */
 import { useEffect, useState, useCallback } from "react"
-import { Users, BookOpen, Wifi, WifiOff } from "lucide-react"
+import { Users, BookOpen, Wifi, WifiOff, MapPin } from "lucide-react"
 
 interface LivePulseData {
   onlineUsers: number
   onlineGuru: number
   onlineMurid: number
   onlineAdmin: number
+  onlineLocations: Array<{
+    key: string
+    label: string
+    total: number
+    guru: number
+    murid: number
+    admin: number
+  }>
   totalKarya: number
   generatedAt: string
   presenceWindowSeconds: number
@@ -148,6 +157,31 @@ export function LivePulseCard() {
               </p>
               <p className="text-[10px] text-blue-600 dark:text-blue-400">Admin</p>
             </div>
+          </div>
+
+          <div className="border-t border-slate-100 dark:border-slate-700/50" />
+
+          <div>
+            <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300">
+              <MapPin size={13} className="text-emerald-500" />
+              Menu aktif
+            </div>
+            {data.onlineLocations.length === 0 ? (
+              <p className="text-xs text-slate-400">Belum ada lokasi aktif.</p>
+            ) : (
+              <div className="space-y-1.5">
+                {data.onlineLocations.slice(0, 5).map((location) => (
+                  <div key={location.key} className="flex items-center justify-between gap-3 rounded-lg bg-slate-50 px-2.5 py-2 dark:bg-slate-900/45">
+                    <span className="min-w-0 truncate text-xs text-slate-600 dark:text-slate-300">
+                      {location.label}
+                    </span>
+                    <span className="shrink-0 text-xs font-bold text-slate-900 dark:text-slate-100">
+                      {location.total}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Divider */}

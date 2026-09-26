@@ -1,8 +1,8 @@
 /**
  * GET /api/admin/monitoring/live — real-time load snapshot for the admin panel.
  *
- * Read-only aggregation over existing tables (no schema changes):
- *  - activeUsers: distinct users with lastActiveAt within a window (5/15/60 min)
+ * Read-only aggregation over Redis + existing tables (no schema changes):
+ *  - presence:    users online now + role breakdown + current menu buckets
  *  - aiRequests:  AIUsage rows in the last minute + error rate + avg latency
  *  - aiQueue:     AIJob rows currently PENDING / PROCESSING (backlog signal)
  *  - throughput:  AI requests per minute over the last 15 min (sparkline)
@@ -13,6 +13,7 @@
 import { NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db as prisma } from "@/lib/db";
+import { getOnlineUsers, PRESENCE_TTL_SECONDS } from "@/lib/presence";
 
 export const dynamic = "force-dynamic";
 
@@ -27,9 +28,7 @@ export async function GET() {
 
   try {
     const [
-      active5m,
-      active15m,
-      active60m,
+      online,
       aiLastMin,
       aiErrLastMin,
       latencyAgg,
@@ -37,9 +36,7 @@ export async function GET() {
       queueProcessing,
       perMinuteRaw,
     ] = await Promise.all([
-      prisma.user.count({ where: { lastActiveAt: { gte: min(5) } } }),
-      prisma.user.count({ where: { lastActiveAt: { gte: min(15) } } }),
-      prisma.user.count({ where: { lastActiveAt: { gte: min(60) } } }),
+      getOnlineUsers(),
       prisma.aIUsage.count({ where: { createdAt: { gte: min(1) } } }),
       prisma.aIUsage.count({
         where: { createdAt: { gte: min(1) }, status: { in: ["error", "failed", "ERROR", "FAILED"] } },
@@ -69,7 +66,15 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       generatedAt: new Date(now).toISOString(),
-      activeUsers: { last5m: active5m, last15m: active15m, last60m: active60m },
+      presence: {
+        onlineUsers: online.total,
+        onlineGuru: online.guru,
+        onlineMurid: online.murid,
+        onlineAdmin: online.admin,
+        locations: online.locations,
+        available: online.available,
+        ttlSeconds: PRESENCE_TTL_SECONDS,
+      },
       ai: {
         requestsPerMinute: aiLastMin,
         errorsLastMinute: aiErrLastMin,

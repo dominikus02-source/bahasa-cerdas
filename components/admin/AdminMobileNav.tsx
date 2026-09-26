@@ -56,7 +56,7 @@ const ALL_ITEMS: FlatItem[] = [
   { label: "Pemakaian Fitur", href: "/admin/feature-usage", icon: TrendingUp, group: "AI & Platform" },
   { label: "Kuota AI", href: "/admin/ai-quota", icon: Coins, group: "AI & Platform" },
   // System & Operations
-  { label: "Monitoring", href: "/admin/monitoring", icon: Activity, group: "System & Operations" },
+  { label: "Live Pulse", href: "/admin/monitoring", icon: Activity, group: "System & Operations" },
   { label: "Komunitas", href: "/admin/komunitas", icon: MessageCircle, group: "System & Operations" },
   { label: "Lowongan", href: "/admin/loker", icon: Briefcase, group: "System & Operations" },
   { label: "Pusat Data", href: "/admin/data-center", icon: Database, group: "System & Operations" },
