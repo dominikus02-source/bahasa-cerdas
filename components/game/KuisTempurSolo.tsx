@@ -165,6 +165,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   const rafRef = useRef(0)
   const jalanRef = useRef(false)
   const benarRef = useRef(0)
+  const gameSessionIdRef = useRef("")
   const salahRef = useRef(0)
   const comboRef = useRef(0)
   const maxComboRef = useRef(0)
@@ -260,6 +261,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
         body: JSON.stringify({
           score: skor, correct: benarRef.current, wrong: salahRef.current,
           maxStreak: maxComboRef.current, gameType: GAME_TYPE,
+          gameSessionId: gameSessionIdRef.current,
         }),
       })
       const d = await res.json().catch(() => ({}))
@@ -341,6 +343,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   }, [tulisFeed])
 
   const mulai = useCallback(() => {
+    gameSessionIdRef.current = crypto.randomUUID();
     const cv = cvRef.current
     const W = cv?.clientWidth || window.innerWidth
     const H = cv?.clientHeight || window.innerHeight
@@ -943,7 +946,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   if (fase === "pilih") {
     const pilihan = KARAKTER.map((k) => ({ id: k, nama: PROFIL[k].nama, src: gambarKarakter(k, "happy") }))
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150A0A] dark:to-[#200E0E] text-[#161B3A] dark:text-[#F1EDFF]">
+      <div className="game-env game-env-kuis fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150A0A] dark:to-[#200E0E] text-[#161B3A] dark:text-[#F1EDFF]">
         <style>{KT_STYLE}</style>
         <div className="relative mx-auto flex min-h-full max-w-xl flex-col items-center px-4 py-5">
           {Hdr}
@@ -1002,7 +1005,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
 
   if (fase === "selesai") {
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150A0A] dark:to-[#200E0E] text-[#161B3A] dark:text-[#F1EDFF]">
+      <div className="game-env game-env-kuis fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150A0A] dark:to-[#200E0E] text-[#161B3A] dark:text-[#F1EDFF]">
         <style>{KT_STYLE}</style>
         <div className="relative mx-auto flex min-h-full max-w-xl flex-col items-center justify-center px-4 py-5">
           {Hdr}
@@ -1077,7 +1080,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   }
 
   return (
-    <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150A0A] dark:to-[#200E0E] text-[#161B3A] dark:text-[#F1EDFF]">
+    <div className="game-env game-env-kuis fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150A0A] dark:to-[#200E0E] text-[#161B3A] dark:text-[#F1EDFF]">
       <style>{KT_STYLE}</style>
       <div className="relative mx-auto flex min-h-full w-full max-w-[1280px] flex-col items-center px-4 py-3">
         {Hdr}

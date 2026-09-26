@@ -40,6 +40,8 @@ export interface BuildPuzzleOptions {
   avoidAnswers?: string[];
   /** P8I: batasi tipe petunjuk agar ragam (maks 2 kata per tipe dalam satu puzzle). */
   balanceClueTypes?: boolean;
+  /** Kandidat kata dari sumber server/canonical bank; fallback ke bank level lokal bila tidak diberikan. */
+  wordPool?: TtsWord[];
 }
 
 interface PlacedWord {
@@ -185,15 +187,19 @@ function placeWord(board: Board, w: TtsWord, dir: Dir, row: number, col: number)
 export function buildPuzzle(options: BuildPuzzleOptions): TtsPuzzle {
   const cfg = levelConfig(options.level);
   const rng = mulberry32(options.seed);
-  const poolAll = bankForLevel(options.level);
+  const poolAll = options.wordPool?.length ? options.wordPool : bankForLevel(options.level);
 
   // ── P8I: metadata kesulitan + gerbang level ──
   // Kata langka (RARE) tidak boleh muncul sebelum L7; tier lain mengikuti
   // tema (1:1 dengan level) sehingga pool tidak pernah kosong.
-  const enriched = poolAll.map((w) => ({
-    word: w,
-    ...wordDifficulty(w, themeKeyForAnswer(w.answer) ?? ""),
-  }));
+  const enriched = poolAll.map((w) => {
+    const derived = wordDifficulty(w, themeKeyForAnswer(w.answer) ?? "");
+    return {
+      word: w,
+      clueType: w.clueType ?? derived.clueType,
+      tier: w.tier ?? derived.tier,
+    };
+  });
   const pool: TtsWord[] = enriched
     .filter((e) => canAppearInLevel(e.word.answer, e.tier, options.level))
     .map((e) => ({ ...e.word, clueType: e.clueType, tier: e.tier }));
@@ -214,6 +220,32 @@ export function buildPuzzle(options: BuildPuzzleOptions): TtsPuzzle {
   for (let attempt = 0; attempt < maxTries; attempt++) {
     const board: Board = { letters: new Map(), hCells: new Set(), vCells: new Set(), placed: [] };
     const shuffled = shuffle(candidates, rng);
+
+    // L2 sengaja menjadi jembatan: mayoritas soal mudah, sebagian kecil menengah.
+    // Kita tidak menurunkan standar konten; kita mengatur paparan agar anak tidak
+    // langsung dihujani istilah sulit. Seed membuat komposisi tetap deterministik.
+    if (options.level === 2) {
+      const easy = shuffled.filter((w) => w.tier === 1);
+      const medium = shuffled.filter((w) => w.tier === 2);
+      const mixed: TtsWord[] = [];
+      let ei = 0;
+      let mi = 0;
+      const easyTarget = Math.max(1, Math.round(cfg.targetWords * 0.8));
+      while (mixed.length < cfg.targetWords && (ei < easy.length || mi < medium.length)) {
+        if (ei < easy.length && (mixed.filter((w) => w.tier === 1).length < easyTarget || mi >= medium.length)) {
+          mixed.push(easy[ei++]);
+        } else if (mi < medium.length) {
+          mixed.push(medium[mi++]);
+        } else {
+          break;
+        }
+      }
+      for (const w of shuffled) {
+        if (mixed.length >= cfg.targetWords) break;
+        if (!mixed.some((x) => x.answer === w.answer)) mixed.push(w);
+      }
+      shuffled.splice(0, shuffled.length, ...mixed);
+    }
 
     // ── P8I: pilih kata dengan menghindari pasangan yang saling membocorkan
     // petunjuk (konflik petunjuk↔jawaban). Bila hasil seleksi kurang dari
