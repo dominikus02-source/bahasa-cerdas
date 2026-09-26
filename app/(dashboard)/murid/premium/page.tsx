@@ -132,173 +132,232 @@ export default function MuridPremiumPage() {
 
   // ── Active Premium View ──
   if (isPremium && (status === "success" || status === "pending")) {
+    const expiryLabel = premiumUntil
+      ? new Date(premiumUntil).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })
+      : "—";
+
     return (
-      <div className="max-w-4xl mx-auto space-y-8 pb-16">
-        {/* Hero — Premium Membership Identity */}
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#2d1b69] via-[#4c1d95] to-[#1e1b4b] p-8 sm:p-12 text-white shadow-2xl shadow-violet-900/30">
-          {/* Decorative elements */}
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-violet-500/10 blur-3xl" />
-            <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-indigo-500/10 blur-3xl" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-purple-400/5 blur-3xl" />
-            {/* Subtle grid pattern */}
-            <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+      <div className="mx-auto max-w-5xl space-y-8 pb-20">
+        {/* Premium stage — playful, visual, membership-first */}
+        <section className="relative overflow-hidden rounded-[2rem] bg-[#07152f] text-white shadow-[0_30px_90px_-42px_rgba(79,70,229,0.85)]">
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute -left-28 -top-32 h-80 w-80 rounded-full bg-fuchsia-500/25 blur-3xl" />
+            <div className="absolute -bottom-40 right-0 h-[28rem] w-[28rem] rounded-full bg-cyan-400/20 blur-3xl" />
+            <div className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-500/15 blur-3xl" />
+            <div className="absolute inset-0 opacity-[0.045]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "24px 24px" }} />
           </div>
 
-          <div className="relative z-10">
-            {/* Membership Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-6">
-              <span className="text-amber-400 text-sm">✦</span>
-              <span className="text-[11px] font-semibold tracking-widest uppercase text-white/90">Premium Member</span>
-            </div>
-
-            {/* Main Heading */}
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3">
-              Belajar dengan arahan yang dipersonalisasi
-            </h1>
-            <p className="text-violet-200 text-base sm:text-lg max-w-xl">
-              BahasaCerdas memahami bagaimana cara belajarmu dan membantu menentukan langkah terbaik berikutnya.
-            </p>
-
-            {/* Status Card */}
-            <div className="mt-8 inline-flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 px-6 py-4 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center">
-                  <Gem className="w-5 h-5 text-amber-400" />
-                </div>
-                <div>
-                  <p className="text-xs text-violet-300 uppercase tracking-wider">Berlaku hingga</p>
-                  <p className="text-white font-semibold">
-                    {new Date(premiumUntil!).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
-                  </p>
-                </div>
+          <div className="relative grid gap-8 px-6 py-7 sm:px-9 sm:py-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:px-12 lg:py-12">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100 backdrop-blur">
+                <Crown className="h-3.5 w-3.5 fill-[#ffd24a] text-[#ffd24a]" />
+                Premium Aktif
               </div>
-              {daysLeft > 0 && (
-                <>
-                  <div className="hidden sm:block w-px h-10 bg-white/20" />
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-violet-300" />
-                    <span className="text-sm text-violet-200">
-                      <span className="font-bold text-white">{daysLeft}</span> hari tersisa
+
+              <h1 className="mt-5 max-w-2xl text-3xl font-black leading-[1.05] tracking-tight sm:text-4xl lg:text-[3.4rem]">
+                Kamu sudah masuk
+                <span className="block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-200 bg-clip-text text-transparent">
+                  mode Premium.
+                </span>
+              </h1>
+
+              <p className="mt-4 max-w-xl text-sm leading-6 text-blue-100/75 sm:text-base">
+                Sekarang kamu punya lebih banyak ruang untuk berlatih, memahami kesalahan,
+                dan melihat perkembangan belajarmu dengan lebih jelas.
+              </p>
+
+              <div className="mt-7 flex flex-wrap gap-2.5">
+                {[
+                  ["Latihan Personal", Target],
+                  ["AI Mentor", Brain],
+                  ["Insight", BarChart3],
+                ].map(([label, Icon]) => {
+                  const I = Icon as typeof Target;
+                  return (
+                    <span key={label as string} className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.08] px-3.5 py-2 text-[11px] font-bold text-white/90 backdrop-blur">
+                      <I className="h-3.5 w-3.5 text-cyan-200" />
+                      {label as string}
                     </span>
-                  </div>
-                </>
-              )}
+                  );
+                })}
+              </div>
+
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <a
+                  href="/murid/belajar"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3.5 text-sm font-black text-[#18255b] shadow-[0_14px_30px_-14px_rgba(255,255,255,0.9)] transition-all hover:-translate-y-0.5 hover:shadow-xl"
+                >
+                  Mulai belajar
+                  <ArrowRight className="h-4 w-4" />
+                </a>
+                <a
+                  href="/arena"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/[0.08] px-5 py-3.5 text-sm font-bold text-white backdrop-blur transition-all hover:bg-white/[0.13]"
+                >
+                  Masuk Arena
+                  <Sparkles className="h-4 w-4 text-cyan-200" />
+                </a>
+              </div>
+            </div>
+
+            {/* CSS-built premium crystal — no external artwork required */}
+            <div className="relative mx-auto w-full max-w-[330px]">
+              <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10" />
+              <div className="absolute left-1/2 top-1/2 h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-200/10" />
+              <div className="relative aspect-square overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-violet-500/30 via-blue-500/15 to-cyan-300/10 shadow-2xl">
+                <div className="absolute inset-6 rounded-[2rem] border border-white/10 bg-white/[0.035]" />
+                <div className="absolute left-1/2 top-1/2 flex h-36 w-36 -translate-x-1/2 -translate-y-1/2 rotate-6 items-center justify-center rounded-[2.5rem] bg-gradient-to-br from-[#ffe58a] via-[#ffb52e] to-fuchsia-500 shadow-[0_30px_70px_-18px_rgba(255,181,46,0.85)]">
+                  <div className="absolute inset-2 rounded-[2rem] border border-white/25" />
+                  <Gem className="relative h-16 w-16 text-white drop-shadow-[0_8px_12px_rgba(120,50,200,0.45)]" strokeWidth={1.8} />
+                </div>
+
+                <div className="absolute left-6 top-7 rounded-2xl border border-white/10 bg-white/10 px-3 py-2 backdrop-blur">
+                  <p className="text-[9px] font-black uppercase tracking-wider text-cyan-100/70">Status</p>
+                  <p className="mt-0.5 text-xs font-extrabold text-white">Aktif</p>
+                </div>
+
+                <div className="absolute bottom-7 right-6 rounded-2xl border border-white/10 bg-white/10 px-3 py-2 text-right backdrop-blur">
+                  <p className="text-[9px] font-black uppercase tracking-wider text-fuchsia-100/70">Akses Premium</p>
+                  <p className="mt-0.5 text-xs font-extrabold text-white">{daysLeft > 0 ? `${daysLeft} hari lagi` : "Aktif"}</p>
+                </div>
+
+                <Sparkles className="absolute right-8 top-14 h-6 w-6 text-cyan-200" />
+                <Sparkles className="absolute bottom-14 left-8 h-5 w-5 text-fuchsia-200" />
+                <span className="absolute left-1/2 top-8 h-2 w-2 -translate-x-1/2 rounded-full bg-white shadow-[0_0_18px_rgba(255,255,255,0.9)]" />
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Expiry Warning — Premium Status Card */}
+          {/* Membership status rail */}
+          <div className="relative grid gap-px border-t border-white/10 bg-white/[0.04] sm:grid-cols-3">
+            <div className="px-6 py-4 sm:px-9">
+              <p className="text-[9px] font-black uppercase tracking-[0.18em] text-blue-200/55">Paket</p>
+              <p className="mt-1 text-sm font-extrabold text-white">BahasaCerdas Premium</p>
+            </div>
+            <div className="border-white/10 px-6 py-4 sm:border-l sm:px-9">
+              <p className="text-[9px] font-black uppercase tracking-[0.18em] text-blue-200/55">Berlaku hingga</p>
+              <p className="mt-1 text-sm font-extrabold text-white">{expiryLabel}</p>
+            </div>
+            <div className="border-white/10 px-6 py-4 sm:border-l sm:px-9">
+              <p className="text-[9px] font-black uppercase tracking-[0.18em] text-blue-200/55">Sisa akses</p>
+              <p className="mt-1 text-sm font-extrabold text-white">{daysLeft > 0 ? `${daysLeft} hari` : "Aktif"}</p>
+            </div>
+          </div>
+        </section>
+
         {isExpiring && (
-          <div className="rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/60 p-5 sm:p-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
-                <Clock className="w-6 h-6 text-amber-600" />
+          <div className="relative overflow-hidden rounded-[1.5rem] border border-amber-200 bg-gradient-to-r from-amber-50 via-orange-50 to-yellow-50 p-5 shadow-sm sm:p-6">
+            <div className="absolute -right-8 -top-12 h-32 w-32 rounded-full bg-amber-300/20 blur-2xl" />
+            <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-100">
+                <Clock className="h-6 w-6 text-amber-600" />
               </div>
               <div className="flex-1">
-                <p className="font-semibold text-amber-900 text-sm">Premium Anda akan berakhir</p>
-                <p className="text-xs text-amber-700 mt-1">Perpanjang sekarang untuk menjaga akses fitur Premium tetap berlanjut.</p>
+                <p className="text-sm font-black text-amber-950">Premium kamu akan berakhir sebentar lagi</p>
+                <p className="mt-1 text-xs leading-5 text-amber-800/80">Perpanjang sebelum masa aktif berakhir agar pengalaman belajarmu tetap utuh.</p>
               </div>
               <button
                 onClick={() => setStatus("default")}
-                className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 text-white text-sm font-semibold hover:bg-amber-600 transition-all shadow-sm shadow-amber-200"
+                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-black text-white shadow-sm transition hover:bg-amber-600"
               >
                 Perpanjang
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className="h-4 w-4" />
               </button>
             </div>
           </div>
         )}
 
-        {/* Benefit Section — Premium Capability Cards */}
-        <div>
-          <h2 className="text-lg font-bold text-slate-900 mb-5">Yang kamu dapatkan</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="group relative rounded-2xl bg-gradient-to-br from-violet-50 to-purple-50/50 border border-violet-100 p-5 transition-all duration-300 hover:shadow-lg hover:shadow-violet-100 hover:-translate-y-0.5">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mb-4 shadow-lg shadow-violet-200">
-                <Target className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-base font-bold text-slate-900 mb-1">Latihan Personal</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">Soal disesuaikan dengan kemampuanmu. Fokus pada bagian yang perlu diperkuat.</p>
+        {/* Premium capabilities */}
+        <section>
+          <div className="mb-5 flex items-end justify-between gap-4">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-600">Yang terbuka untukmu</p>
+              <h2 className="mt-1 text-2xl font-black tracking-tight text-slate-900">Gunakan Premium untuk progres nyata</h2>
             </div>
-
-            <div className="group relative rounded-2xl bg-gradient-to-br from-violet-50 to-purple-50/50 border border-violet-100 p-5 transition-all duration-300 hover:shadow-lg hover:shadow-violet-100 hover:-translate-y-0.5">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mb-4 shadow-lg shadow-violet-200">
-                <Brain className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-base font-bold text-slate-900 mb-1">AI Mentor</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">Pahami bukan hanya jawabanmu, tetapi mengapa kamu salah.</p>
-            </div>
-
-            <div className="group relative rounded-2xl bg-gradient-to-br from-violet-50 to-purple-50/50 border border-violet-100 p-5 transition-all duration-300 hover:shadow-lg hover:shadow-violet-100 hover:-translate-y-0.5">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mb-4 shadow-lg shadow-violet-200">
-                <BarChart3 className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-base font-bold text-slate-900 mb-1">Insight Perkembangan</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">Ringkasan mingguan pertumbuhan dan perbandingan skill.</p>
-            </div>
-
-            <div className="group relative rounded-2xl bg-gradient-to-br from-violet-50 to-purple-50/50 border border-violet-100 p-5 transition-all duration-300 hover:shadow-lg hover:shadow-violet-100 hover:-translate-y-0.5">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mb-4 shadow-lg shadow-violet-200">
-                <Sparkles className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-base font-bold text-slate-900 mb-1">Simulasi 10x</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">UKBI/TKA 10 kali per bulan untuk latihan lebih intensif.</p>
-            </div>
+            <span className="hidden rounded-full bg-violet-50 px-3 py-1.5 text-[10px] font-black text-violet-700 sm:inline-flex">3 kemampuan utama</span>
           </div>
-        </div>
 
-        {/* Feature comparison */}
-        <div>
-          <h2 className="text-lg font-bold text-slate-900 mb-5">Perbandingan Gratis vs Premium</h2>
-          <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-slate-100">
-                  <th className="text-left py-4 px-5 font-semibold text-slate-600 text-xs uppercase tracking-wider">Fitur</th>
-                  <th className="text-center py-4 px-5 font-semibold text-slate-500 text-xs uppercase tracking-wider">Gratis</th>
-                  <th className="text-center py-4 px-5 font-semibold text-violet-600 text-xs uppercase tracking-wider bg-violet-50/50">Premium ✦</th>
-                </tr>
-              </thead>
-              <tbody>
-                {PREMIUM_FEATURES.map((f, i) => (
-                  <tr key={f.label} className={`border-b border-slate-50 last:border-0 ${i % 2 === 0 ? "bg-slate-50/30" : ""}`}>
-                    <td className="py-3.5 px-5 font-medium text-slate-700">{f.label}</td>
-                    <td className="py-3.5 px-5 text-center">
-                      {f.freeOk ? (
-                        <span className="inline-flex items-center gap-1 text-slate-500"><Check className="w-4 h-4" /> {f.free}</span>
-                      ) : (
-                        <span className="text-slate-300">—</span>
-                      )}
-                    </td>
-                    <td className="py-3.5 px-5 text-center bg-violet-50/30">
-                      <span className="inline-flex items-center gap-1 text-violet-600 font-medium"><Check className="w-4 h-4" /> {f.premium}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="grid gap-4 lg:grid-cols-3">
+            {[
+              {
+                icon: Target,
+                eyebrow: "01 · Fokus",
+                title: "Latihan Personal",
+                text: "Latihan diarahkan ke bagian yang perlu kamu perkuat, bukan sekadar menambah jumlah soal.",
+                tone: "from-violet-600 to-indigo-600",
+                href: "/murid/belajar",
+                action: "Mulai latihan",
+              },
+              {
+                icon: Brain,
+                eyebrow: "02 · Pahami",
+                title: "AI Mentor",
+                text: "Jangan berhenti di benar atau salah. Gunakan penjelasan untuk memahami alasan di balik jawaban.",
+                tone: "from-blue-600 to-cyan-500",
+                href: "/murid/belajar",
+                action: "Belajar dengan mentor",
+              },
+              {
+                icon: BarChart3,
+                eyebrow: "03 · Tumbuh",
+                title: "Insight Perkembangan",
+                text: "Lihat pola kemampuanmu dan gunakan insight sebagai petunjuk untuk langkah belajar berikutnya.",
+                tone: "from-fuchsia-600 to-violet-600",
+                href: "/murid/profile",
+                action: "Lihat progres",
+              },
+            ].map(({ icon: Icon, eyebrow, title, text, tone, href, action }) => (
+              <a
+                key={title}
+                href={href}
+                className="group relative overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white p-5 shadow-[0_18px_45px_-34px_rgba(15,23,42,0.55)] transition-all hover:-translate-y-1 hover:shadow-xl"
+              >
+                <div className={`absolute -right-12 -top-12 h-32 w-32 rounded-full bg-gradient-to-br ${tone} opacity-[0.08] blur-2xl transition-opacity group-hover:opacity-20`} />
+                <div className={`relative mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${tone} shadow-lg`}>
+                  <Icon className="h-5.5 w-5.5 text-white" />
+                </div>
+                <p className="text-[9px] font-black uppercase tracking-[0.18em] text-slate-400">{eyebrow}</p>
+                <h3 className="mt-1.5 text-lg font-black text-slate-900">{title}</h3>
+                <p className="mt-2 text-xs leading-5 text-slate-500">{text}</p>
+                <div className="mt-5 inline-flex items-center gap-1.5 text-xs font-black text-violet-600">
+                  {action}
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                </div>
+              </a>
+            ))}
           </div>
-        </div>
+        </section>
 
-        {/* CTA Section */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-          <a
-            href="/arena/jalur-cerdas"
-            className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 px-6 py-3 rounded-xl font-semibold transition-all"
-          >
-            <BookOpen className="w-4 h-4" />
-            Mulai Belajar
-            <ArrowRight className="w-4 h-4" />
+        {/* Premium promise */}
+        <section className="relative overflow-hidden rounded-[1.7rem] border border-violet-200/70 bg-gradient-to-br from-violet-50 via-white to-cyan-50 p-6 sm:p-8">
+          <div className="absolute -right-16 -top-20 h-48 w-48 rounded-full bg-violet-300/20 blur-3xl" />
+          <div className="relative grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-[10px] font-black text-violet-700 shadow-sm">
+                <Gem className="h-3.5 w-3.5" />
+                Pengalaman Premium
+              </div>
+              <h2 className="mt-4 text-2xl font-black tracking-tight text-slate-900">Bukan lebih banyak. Lebih tepat.</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
+                Premium dirancang agar waktu belajarmu lebih bernilai: fokus pada kelemahan,
+                pahami kesalahan, lalu lihat perkembanganmu dari waktu ke waktu.
+              </p>
+            </div>
+            <a
+              href="/murid/belajar"
+              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-900 px-5 py-3.5 text-sm font-black text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-slate-800"
+            >
+              Lanjut belajar
+              <ArrowRight className="h-4 w-4" />
+            </a>
+          </div>
+        </section>
+
+        <div className="flex justify-center pt-1">
+          <a href="/murid/profile" className="inline-flex items-center gap-2 text-xs font-bold text-slate-400 transition hover:text-slate-700">
+            Kelola status Premium di Profil
+            <ChevronRight className="h-3.5 w-3.5" />
           </a>
-          <button
-            onClick={() => setStatus("default")}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-violet-600 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold shadow-lg shadow-violet-200 hover:shadow-xl hover:shadow-violet-300 hover:-translate-y-0.5 transition-all"
-          >
-            <Gem className="w-4 h-4" />
-            {isExpiring ? "Perpanjang Sekarang" : "Beli Lagi / Perpanjang"}
-            <ChevronRight className="w-4 h-4" />
-          </button>
         </div>
       </div>
     );
