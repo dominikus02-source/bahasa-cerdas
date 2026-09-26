@@ -82,7 +82,7 @@ export default function LoginPage() {
       // to the role dashboard so an authenticated user never lands on the
       // public landing page after login.
       const target = resolvePostAuthDestination(
-        dbUser.isFounder ? "ADMIN" : dbUser.role,
+        dbUser.isFounder ? "GURU" : dbUser.role,
         next
       );
       window.location.href = target;
