@@ -658,6 +658,7 @@ export default function IramaKata() {
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2.5">
+            <GameBackButton href="/arena/game" label="Kembali ke Arena" title="Kembali ke Arena" />
             <div className={`ik-logo w-11 h-11 bg-[#FF6B6B] rounded-2xl ${chunky} !shadow-[4px_4px_0_#DB2777] flex items-center justify-center`}>
               <Music4 className="w-6 h-6 text-white" />
             </div>
