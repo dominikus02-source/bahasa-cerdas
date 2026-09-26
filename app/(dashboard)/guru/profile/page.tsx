@@ -468,14 +468,14 @@ export default function GuruProfilePage() {
             variant === "hero"
               ? "ring-[3px] ring-white dark:ring-slate-900 shadow-xl"
               : "border-4 border-white dark:border-slate-700 shadow-lg"
-          } focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2`}
+          } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
           aria-label="Ganti foto profil"
         >
           {displayAvatar ? (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img src={displayAvatar} alt="" className="w-full h-full object-cover" />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center">
+            <div className="w-full h-full bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center">
               <span className={`${textSize} font-bold text-white`}>{initial}</span>
             </div>
           )}
@@ -529,14 +529,14 @@ export default function GuruProfilePage() {
       {/* ═══════════════════════════════════════════════════════════════ */}
       {/*  SECTION 1 — HERO CARD                                         */}
       {/* ═══════════════════════════════════════════════════════════════ */}
-      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden">
+      <div className="bc-guru-surface overflow-hidden rounded-2xl">
         {editingSection === "header" ? (
           /* ── EDIT MODE HERO ── */
           <div>
             <div className="relative h-44 sm:h-52 md:h-60 overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/batik-header-profile-bc.png" alt="" className="absolute inset-0 w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-b from-amber-500/20 via-amber-500/10 to-white dark:from-slate-900/60 dark:via-slate-900/50 dark:to-slate-900" />
+              <div className="absolute inset-0 bg-gradient-to-b from-blue-950/5 via-blue-950/20 to-blue-950/75 dark:from-slate-950/30 dark:via-slate-950/55 dark:to-slate-950/90" />
               <div className="absolute top-4 left-4 z-10">
                 <span className="inline-flex items-center gap-1.5 bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 rounded-full text-xs font-semibold px-3 py-1 border border-amber-200 dark:border-amber-800/50">
                   <Pencil size={12} /> Sedang Mengedit
@@ -554,21 +554,21 @@ export default function GuruProfilePage() {
                   <div className="text-center sm:text-left">
                     <p className="text-sm font-semibold text-gray-900 dark:text-slate-100">Foto Profil</p>
                     <p className="text-xs text-gray-400 dark:text-slate-500 mt-0.5">JPG, PNG, atau WebP. Maks 5MB.</p>
-                    <button type="button" onClick={handleAvatarClick} className="mt-2 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">
+                    <button type="button" onClick={handleAvatarClick} className="mt-2 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-200 font-semibold">
                       {displayAvatar ? "Ganti Foto" : "Upload Foto"}
                     </button>
                   </div>
                 </div>
                 <div>
                   <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Nama Lengkap <span className="text-red-400">*</span></label>
-                  <input id="fullName" type="text" value={form.fullName} onChange={(e) => setForm((p) => ({ ...p, fullName: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" required />
+                  <input id="fullName" type="text" value={form.fullName} onChange={(e) => setForm((p) => ({ ...p, fullName: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
                 </div>
                 <div>
                   <label htmlFor="nickname" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Nama Panggilan</label>
-                  <input id="nickname" type="text" value={form.nickname} onChange={(e) => setForm((p) => ({ ...p, nickname: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="Opsional" />
+                  <input id="nickname" type="text" value={form.nickname} onChange={(e) => setForm((p) => ({ ...p, nickname: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Opsional" />
                 </div>
                 <div className="flex items-center gap-3 pt-2">
-                  <button type="button" onClick={handleSaveHeader} disabled={saving} className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+                  <button type="button" onClick={handleSaveHeader} disabled={saving} className="inline-flex items-center gap-2 px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                     {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                     {saving ? "Menyimpan..." : "Simpan"}
                   </button>
@@ -585,7 +585,7 @@ export default function GuruProfilePage() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/batik-header-profile-bc.png" alt="" className="absolute inset-0 w-full h-full object-cover" />
               {/* Light mode: fades to white at bottom; Dark: fades to dark */}
-              <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-white/10 to-white dark:from-slate-900/40 dark:via-slate-900/50 dark:to-slate-900" />
+              <div className="absolute inset-0 bg-gradient-to-b from-blue-950/5 via-blue-950/20 to-blue-950/75 dark:from-slate-950/25 dark:via-slate-950/50 dark:to-slate-950/90" />
               {/* BC Logo Mark — single icon, dual-mode variants */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/brand/bc2026-icon.png" alt="" className="absolute top-4 right-4 h-10 sm:h-12 md:h-14 object-contain opacity-80 [filter:drop-shadow(0_2px_8px_rgba(0,0,0,0.25))] dark:hidden" />
@@ -620,8 +620,8 @@ export default function GuruProfilePage() {
 
                   {/* Role as pill badge */}
                   <div className="flex items-center justify-center sm:justify-start gap-2 mt-2">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-sm font-semibold rounded-full">
-                      <BookOpen size={14} className="text-emerald-600 dark:text-emerald-400" />
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 dark:bg-blue-950/55 text-blue-700 dark:text-blue-300 text-sm font-semibold rounded-full">
+                      <BookOpen size={14} className="text-blue-600 dark:text-blue-300" />
                       Guru {profile.subject || "Bahasa Indonesia"}
                     </span>
                   </div>
@@ -666,7 +666,7 @@ export default function GuruProfilePage() {
                 <button
                   type="button"
                   onClick={() => openSection("header")}
-                  className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700 text-sm font-semibold rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+                  className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700 text-sm font-semibold rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   <Edit3 size={16} /> Edit Profil
                 </button>
@@ -681,16 +681,16 @@ export default function GuruProfilePage() {
       {/* ═══════════════════════════════════════════════════════════════ */}
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* ── Tentang Saya (left) ── */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
+        <div className="bc-guru-surface rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2"><Heart size={16} className="text-rose-400" /> Tentang Saya</h2>
-            {editingSection !== "bio" && <button type="button" onClick={() => openSection("bio")} className="text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">{profile.bio ? "Edit" : "Tambah"}</button>}
+            {editingSection !== "bio" && <button type="button" onClick={() => openSection("bio")} className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-200 font-semibold">{profile.bio ? "Edit" : "Tambah"}</button>}
           </div>
           {editingSection === "bio" ? (
             <div className="space-y-4">
-              <textarea id="bio" rows={4} value={form.bio} onChange={(e) => setForm((p) => ({ ...p, bio: e.target.value }))} className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none" placeholder="Ceritakan tentang diri Anda sebagai guru..." />
+              <textarea id="bio" rows={4} value={form.bio} onChange={(e) => setForm((p) => ({ ...p, bio: e.target.value }))} className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none" placeholder="Ceritakan tentang diri Anda sebagai guru..." />
               <div className="flex items-center gap-3">
-                <button type="button" onClick={handleSaveBio} disabled={saving} className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+                <button type="button" onClick={handleSaveBio} disabled={saving} className="inline-flex items-center gap-2 px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                   {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} {saving ? "Menyimpan..." : "Simpan"}
                 </button>
                 <button type="button" onClick={cancelEdit} disabled={saving} className="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-slate-400 hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50">Batal</button>
@@ -702,58 +702,58 @@ export default function GuruProfilePage() {
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <Heart size={28} className="text-gray-300 dark:text-slate-600 mb-3" />
               <p className="text-sm text-gray-400 dark:text-slate-500 italic max-w-xs">Ceritakan tentang dirimu sebagai guru untuk membantu murid mengenalmu lebih baik.</p>
-              <button type="button" onClick={() => openSection("bio")} className="mt-3 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">Tulis Sekarang</button>
+              <button type="button" onClick={() => openSection("bio")} className="mt-3 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-200 font-semibold">Tulis Sekarang</button>
             </div>
           )}
         </div>
 
         {/* ── Profil Profesional (right) ── */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
+        <div className="bc-guru-surface rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2"><Briefcase size={16} className="text-blue-500" /> Profil Profesional</h2>
-            {editingSection !== "professional" && <button type="button" onClick={() => openSection("professional")} className="text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">{profFields.length > 0 ? "Edit" : "Lengkapi"}</button>}
+            {editingSection !== "professional" && <button type="button" onClick={() => openSection("professional")} className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-200 font-semibold">{profFields.length > 0 ? "Edit" : "Lengkapi"}</button>}
           </div>
           {editingSection === "professional" ? (
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="school" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Sekolah</label>
-                  <input id="school" type="text" value={form.school} onChange={(e) => setForm((p) => ({ ...p, school: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="Nama sekolah" />
+                  <input id="school" type="text" value={form.school} onChange={(e) => setForm((p) => ({ ...p, school: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nama sekolah" />
                 </div>
                 <div>
                   <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Mata Pelajaran</label>
-                  <input id="subject" type="text" value={form.subject} onChange={(e) => setForm((p) => ({ ...p, subject: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="Contoh: Bahasa Indonesia" />
+                  <input id="subject" type="text" value={form.subject} onChange={(e) => setForm((p) => ({ ...p, subject: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Contoh: Bahasa Indonesia" />
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="grade" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Jenjang / Kelas</label>
-                  <input id="grade" type="text" value={form.grade} onChange={(e) => setForm((p) => ({ ...p, grade: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="Contoh: SMP Kelas 7" />
+                  <input id="grade" type="text" value={form.grade} onChange={(e) => setForm((p) => ({ ...p, grade: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Contoh: SMP Kelas 7" />
                 </div>
                 <div />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="nip" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">NIP (opsional)</label>
-                  <input id="nip" type="text" value={form.nip} onChange={(e) => setForm((p) => ({ ...p, nip: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="Nomor Induk Pegawai" />
+                  <input id="nip" type="text" value={form.nip} onChange={(e) => setForm((p) => ({ ...p, nip: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nomor Induk Pegawai" />
                 </div>
                 <div>
                   <label htmlFor="nuptk" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">NUPTK (opsional)</label>
-                  <input id="nuptk" type="text" value={form.nuptk} onChange={(e) => setForm((p) => ({ ...p, nuptk: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="Nomor UKG" />
+                  <input id="nuptk" type="text" value={form.nuptk} onChange={(e) => setForm((p) => ({ ...p, nuptk: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Nomor UKG" />
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="city" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Kota / Kabupaten</label>
-                  <input id="city" type="text" value={form.city} onChange={(e) => setForm((p) => ({ ...p, city: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="Jakarta" />
+                  <input id="city" type="text" value={form.city} onChange={(e) => setForm((p) => ({ ...p, city: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Jakarta" />
                 </div>
                 <div>
                   <label htmlFor="province" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Provinsi</label>
-                  <input id="province" type="text" value={form.province} onChange={(e) => setForm((p) => ({ ...p, province: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="DKI Jakarta" />
+                  <input id="province" type="text" value={form.province} onChange={(e) => setForm((p) => ({ ...p, province: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="DKI Jakarta" />
                 </div>
               </div>
               <div className="flex items-center gap-3 pt-2">
-                <button type="button" onClick={handleSaveProfessional} disabled={saving} className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+                <button type="button" onClick={handleSaveProfessional} disabled={saving} className="inline-flex items-center gap-2 px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                   {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} {saving ? "Menyimpan..." : "Simpan"}
                 </button>
                 <button type="button" onClick={cancelEdit} disabled={saving} className="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-slate-400 hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50">Batal</button>
@@ -772,7 +772,7 @@ export default function GuruProfilePage() {
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <Briefcase size={28} className="text-gray-300 dark:text-slate-600 mb-3" />
               <p className="text-sm text-gray-400 dark:text-slate-500 italic max-w-xs">Lengkapi informasi profesional untuk memudahkan kolaborasi dengan guru lain.</p>
-              <button type="button" onClick={() => openSection("professional")} className="mt-3 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">Lengkapi Sekarang</button>
+              <button type="button" onClick={() => openSection("professional")} className="mt-3 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-200 font-semibold">Lengkapi Sekarang</button>
             </div>
           )}
         </div>
@@ -781,10 +781,10 @@ export default function GuruProfilePage() {
       {/* ═══════════════════════════════════════════════════════════════ */}
       {/*  SECTION 3 — PEMBAYARAN & PENARIKAN                            */}
       {/* ═══════════════════════════════════════════════════════════════ */}
-      <div className="mt-6 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
+      <div className="mt-6 bc-guru-surface rounded-2xl p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2"><Wallet size={16} className="text-emerald-500" /> Pembayaran &amp; Penarikan</h2>
-          {editingSection !== "rekening" && <button type="button" onClick={() => openSection("rekening")} className="text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">{profile.bank ? "Ubah Rekening" : "Atur Rekening"}</button>}
+          {editingSection !== "rekening" && <button type="button" onClick={() => openSection("rekening")} className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-200 font-semibold">{profile.bank ? "Ubah Rekening" : "Atur Rekening"}</button>}
         </div>
         {editingSection === "rekening" ? (
           <div className="space-y-4">
@@ -794,7 +794,7 @@ export default function GuruProfilePage() {
             </div>
             <div>
               <label htmlFor="bank" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Nama Bank</label>
-              <select id="bank" value={rekening.bank} onChange={(e) => setRekening((p) => ({ ...p, bank: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" required>
+              <select id="bank" value={rekening.bank} onChange={(e) => setRekening((p) => ({ ...p, bank: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
                 <option value="">Pilih bank...</option>
                 {BANK_OPTIONS.map((b) => <option key={b.value} value={b.value}>{b.label}</option>)}
               </select>
@@ -802,15 +802,15 @@ export default function GuruProfilePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="bankHolder" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Nama Pemilik Rekening</label>
-                <input id="bankHolder" type="text" value={rekening.holder} onChange={(e) => setRekening((p) => ({ ...p, holder: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="Sesuai buku tabungan" required />
+                <input id="bankHolder" type="text" value={rekening.holder} onChange={(e) => setRekening((p) => ({ ...p, holder: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Sesuai buku tabungan" required />
               </div>
               <div>
                 <label htmlFor="bankNumber" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Nomor Rekening</label>
-                <input id="bankNumber" type="text" value={rekening.number} onChange={(e) => setRekening((p) => ({ ...p, number: e.target.value.replace(/\D/g, "") }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="Contoh: 1234567890" maxLength={20} required />
+                <input id="bankNumber" type="text" value={rekening.number} onChange={(e) => setRekening((p) => ({ ...p, number: e.target.value.replace(/\D/g, "") }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Contoh: 1234567890" maxLength={20} required />
               </div>
             </div>
             <div className="flex items-center gap-3 pt-2">
-              <button type="button" onClick={handleRekeningSave} disabled={savingRekening} className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+              <button type="button" onClick={handleRekeningSave} disabled={savingRekening} className="inline-flex items-center gap-2 px-5 py-2 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                 {savingRekening ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} {savingRekening ? "Menyimpan..." : "Simpan Rekening"}
               </button>
               <button type="button" onClick={cancelEdit} disabled={savingRekening} className="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-slate-400 hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50">Batal</button>
@@ -842,7 +842,7 @@ export default function GuruProfilePage() {
             <Wallet size={32} className="text-gray-300 dark:text-slate-600 mb-3" />
             <p className="text-sm font-medium text-gray-500 dark:text-slate-400">Rekening belum disiapkan</p>
             <p className="text-sm text-gray-400 dark:text-slate-500 italic mt-1 max-w-xs">Tambahkan rekening bank untuk menerima pembayaran dari penjualan karya.</p>
-            <button type="button" onClick={() => openSection("rekening")} className="mt-3 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">Atur Rekening</button>
+            <button type="button" onClick={() => openSection("rekening")} className="mt-3 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-200 font-semibold">Atur Rekening</button>
           </div>
         )}
       </div>
@@ -850,7 +850,7 @@ export default function GuruProfilePage() {
       {/* ═══════════════════════════════════════════════════════════════ */}
       {/*  SECTION 4 — AKUN                                               */}
       {/* ═══════════════════════════════════════════════════════════════ */}
-      <div className="mt-6 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
+      <div className="mt-6 bc-guru-surface rounded-2xl p-6">
         <h2 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2 mb-4"><Shield size={16} className="text-gray-400 dark:text-slate-500" /> Akun</h2>
         <div className="space-y-3">
           <div className="flex items-center gap-3 py-2">
