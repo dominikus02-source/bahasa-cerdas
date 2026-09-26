@@ -30,7 +30,7 @@ const PERIOD_XP_LABEL: Record<TeacherLeaderboardPeriod, string> = {
 
 function Skeleton() {
   return (
-    <div className="rounded-3xl bg-white border border-amber-100 p-5 sm:p-6 shadow-lg shadow-amber-100/50 animate-pulse">
+    <div className="rounded-3xl bg-white border border-amber-100 p-5 sm:p-6 shadow-lg  animate-pulse">
       <div className="flex items-center gap-3 mb-5">
         <div className="w-12 h-12 rounded-2xl bg-amber-100" />
         <div className="space-y-2">
@@ -102,7 +102,7 @@ export function GuruLeaderboardCard({
       : 0;
 
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-50 via-white to-orange-50 p-5 sm:p-6 shadow-lg shadow-amber-100/50 ring-1 ring-amber-100">
+    <div className="bc-guru-card relative overflow-hidden rounded-3xl p-5 sm:p-6">
       <div className="pointer-events-none absolute -top-20 -right-20 w-56 h-56 rounded-full bg-amber-100/40" />
       <div className="relative">
         <div className="flex items-center gap-3 mb-4">
@@ -185,7 +185,7 @@ export function GuruLeaderboardCard({
               </div>
               <div className="h-1.5 rounded-full bg-emerald-100 overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-500"
+                  className="h-full rounded-full bg-gradient-to-r from-blue-600 to-sky-500"
                   style={{ width: `${levelPersen}%` }}
                 />
               </div>
