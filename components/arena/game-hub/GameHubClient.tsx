@@ -377,7 +377,7 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled }:
                 fallbackDesc: "Jawab benar untuk menyerang, solo vs bot tersedia.",
               },
               {
-                src: "/banners/bermain-kata.webp",
+                src: "/banners/bermain-kata-final.jpg",
                 alt: "BERMAIN KATA — game literasi baru bersama Zelby!",
                 href: "/arena/game/bermain-kata",
                 shadow: "0 8px 28px rgba(14,165,233,0.25)",

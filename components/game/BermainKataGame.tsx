@@ -231,7 +231,7 @@ export default function BermainKataGame() {
 
         <section className="mx-auto mt-6 max-w-3xl text-center">
           <div className="mx-auto overflow-hidden rounded-[28px] border border-white/60 bg-white shadow-[0_18px_50px_rgba(15,23,42,.14)]">
-  <img src="/banners/bermain-kata.webp" alt="BERMAIN KATA bersama Zelby" className="block h-auto w-full object-cover" />
+  <img src="/banners/bermain-kata-final.jpg" alt="BERMAIN KATA bersama Zelby" className="block h-auto w-full object-cover" />
 </div>
           <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-1.5 text-xs font-black tracking-wide text-white"><Sparkles size={14}/> EKOSISTEM PEMBELAJARAN BAHASA INDONESIA</div>
           <h1 className="mt-3 text-4xl font-black tracking-tight sm:text-6xl">BERMAIN <span className="text-sky-600">KATA</span></h1>
