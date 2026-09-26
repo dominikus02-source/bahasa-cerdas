@@ -181,7 +181,7 @@ export default function KataPlayGame({ hideBackButton = false }: { hideBackButto
     return (
       <div className="game-env game-env-kataplay game-env-bg min-h-screen px-4 py-6">
         <div className="max-w-2xl mx-auto">
-          {!hideBackButton && <button onClick={() => router.push("/arena/game")} className="mb-4 p-2 rounded-xl bg-white border-2 border-black"><ArrowLeft size={20} /></button>}
+          {!hideBackButton && <GameBackButton href="/arena/game" label="Kembali ke Arena" title="Kembali ke Arena" className="mb-4" />}
           <div className="text-center mb-6">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black text-white font-black text-sm"><Sparkles size={16} /> KATAPLAY · JALUR CERDAS</div>
             <h1 className="text-3xl font-black mt-3">Jalur Kata</h1>
@@ -234,7 +234,7 @@ export default function KataPlayGame({ hideBackButton = false }: { hideBackButto
       <div className="game-env game-env-kataplay game-env-bg min-h-screen px-4 py-5">
         <div className="max-w-xl mx-auto">
           <div className="flex items-center gap-2 mb-4">
-            <button onClick={exitGame} className="w-10 h-10 rounded-xl bg-white border-2 border-black flex items-center justify-center"><ArrowLeft size={18} /></button>
+            <GameBackButton onClick={exitGame} label="Kembali" title="Kembali ke Jalur Kata" />
             <div className="flex-1">
               <div className="flex justify-between text-xs font-black"><span>LEVEL {level.level} · {unit.title}</span><span>{current + 1}/{questions.length}</span></div>
               <div className="h-2 bg-black/10 rounded-full mt-1 overflow-hidden"><div className="h-full bg-black rounded-full" style={{ width: ((current + 1) / questions.length) * 100 + "%" }} /></div>
