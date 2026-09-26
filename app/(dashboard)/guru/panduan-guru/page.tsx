@@ -245,7 +245,7 @@ export default function PanduanGuruPage() {
                                       href={`/guru/panduan-guru/${unit.id}`}
                                       className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 group"
                                     >
-                                      <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-50 to-sky-50 flex items-center justify-center text-blue-700 font-bold text-xs shrink-0">
+                                      <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center text-blue-700 font-bold text-xs shrink-0">
                                         {unit.order}
                                       </div>
                                       <div className="flex-1 min-w-0">
