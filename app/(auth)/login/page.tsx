@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { LogIn, Eye, EyeOff, ShieldCheck, GraduationCap, BookOpen } from "lucide-react";
@@ -19,6 +20,8 @@ import BatikAccent from "@/components/decorations/BatikAccent";
  */
 
 export default function LoginPage() {
+  const pathname = usePathname();
+  const isArenaLogin = pathname.startsWith("/arena/login") || pathname.startsWith("/auth/arena-login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -34,7 +37,7 @@ export default function LoginPage() {
     // session, and signing it out would turn a recoverable race into a real
     // logout.
     const params = new URLSearchParams(window.location.search);
-    const nextParam = params.get("next") || "";
+    const nextParam = params.get("next") || (isArenaLogin ? "/arena" : "");
     if (nextParam) {
       setNext(nextParam);
     }
@@ -42,7 +45,7 @@ export default function LoginPage() {
       setError(params.get("error") || "");
       window.history.replaceState({}, "", "/login" + (nextParam ? `?next=${nextParam}` : ""));
     }
-  }, []);
+  }, [isArenaLogin]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,6 +74,11 @@ export default function LoginPage() {
       }
 
       const dbUser = loginData.user;
+      if (isArenaLogin && dbUser.role !== "MURID" && !dbUser.isFounder) {
+        setError("Akun ini bukan akun murid. Silakan login di dasbor guru.");
+        setLoading(false);
+        return;
+      }
       if (!dbUser) {
         setError("Gagal memuat data user");
         setLoading(false);
