@@ -44,8 +44,9 @@ check(
   callback.includes("resolvePostAuthDestinationForUser(existing.role, Boolean(existing.isFounder), next)"),
 );
 check(
-  "Google OAuth fallback memakai founder-aware dashboard",
-  callback.includes("dashboardForUser(dbUser.role, Boolean(dbUser.isFounder))"),
+  "semua Google OAuth fallback memakai founder-aware dashboard",
+  (callback.match(/dashboardForUser\(dbUser\.role, Boolean\(dbUser\.isFounder\)\)/g) || []).length === 2 &&
+    !callback.includes("dashboardForRole(dbUser.role)"),
 );
 check(
   "legacy login action memakai founder-aware dashboard",
