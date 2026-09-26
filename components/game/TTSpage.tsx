@@ -976,9 +976,7 @@ export default function TekaTekiSilang() {
         {screen === "levels" && (
           <div className={`tts-screen bg-white dark:bg-gradient-to-br dark:from-[#1A1535] dark:to-[#221C48] rounded-3xl ${chunky} p-5`}>
             <div className="flex items-center justify-between mb-4">
-              <button className={`${btn} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => setScreen("start")} aria-label="Kembali">
-                <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
-              </button>
+              <GameBackButton onClick={() => setScreen("start")} label="Kembali" title="Kembali ke menu Teka-Teki Silang" />
               <h2 className="font-extrabold text-2xl">Pilih Level</h2>
               <div className="w-11" />
             </div>
@@ -1026,9 +1024,7 @@ export default function TekaTekiSilang() {
         {/* ---------- ATUR WAKTU ---------- */}
         {screen === "setup" && (
           <div className={`tts-screen mx-auto w-full max-w-2xl bg-white dark:bg-gradient-to-br dark:from-[#1A1535] dark:to-[#221C48] rounded-3xl ${chunky} p-6 text-center`}>
-            <button className={`${btn} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700 mb-4`} onClick={() => setScreen("levels")} aria-label="Kembali">
-              <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
-            </button>
+            <GameBackButton onClick={() => setScreen("levels")} label="Kembali" title="Kembali ke pilihan level" />
             <div className="flex justify-center mb-3">
               <MascotFace mascot={mascot} celebrating={false} />
             </div>            <h2 className="font-extrabold text-2xl mb-1">{puzzle.title}</h2>
