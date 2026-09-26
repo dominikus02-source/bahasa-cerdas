@@ -55,6 +55,7 @@ import { dailySeed, randomSeed } from "@/lib/game/tts/seed";
 import { classifyClueType, hintNudgeFor } from "@/lib/game/tts/difficulty";
 import type { Dir, Mascot, TtsWord, TtsWordDef as WordDef } from "@/lib/game/tts/types";
 import { sfx, isSoundOn, toggleSound, haptic } from "@/lib/game/sound";
+import GameBackButton from "@/components/game/GameBackButton";
 import {
   HEARTS_MAX, HEART_REGEN_MS, type HeartsState, freshHearts, regenHearts, spendHeart, nextHeartInMs,
   type StreakState, STREAK_KEY, tierFor, bumpStreak, streakXpBonus,
