@@ -45,7 +45,6 @@ import {
   DIAGNOSTIC_SESSION_MINUTES,
   DIAGNOSTIC_SKILL_LABELS,
   DIAGNOSTIC_SKILL_PRIORITY,
-  DIAGNOSTIC_SUPPORTED_SOURCES,
 } from "@/lib/diagnostic/config";
 import type { DiagnosticCandidate, DiagnosticQuestionType } from "@/lib/diagnostic/types";
 import type { DifficultyId, QuestionTypeId } from "@/lib/question-metadata/taxonomy";
