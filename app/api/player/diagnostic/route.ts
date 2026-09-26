@@ -606,7 +606,7 @@ async function startDiagnostic(userId: string, size: number, source: DiagnosticS
   const session = await db.adaptivePracticeSession.create({
     data: {
       userId,
-      source: DIAGNOSTIC_SUPPORTED_SOURCES[0],
+      source,
       selectionVersion: DIAGNOSTIC_SELECTION_VERSION,
       targetSkill: null,
       targetSubskill: null,
