@@ -354,6 +354,31 @@
   transform: scale(0.95);
 }
 
+.game-back-btn {
+  gap: 0.5rem;
+  padding: 0 0.8rem;
+  min-height: 2.75rem;
+  font-weight: 800;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.game-back-label {
+  display: inline;
+}
+
+@media (max-width: 640px) {
+  .game-back-btn {
+    width: 2.75rem;
+    min-width: 2.75rem;
+    padding: 0;
+  }
+
+  .game-back-label {
+    display: none;
+  }
+}
+
 /* ── Game Sound Toggle — Consistent ──────────────────── */
 .game-env .game-sound-btn {
   background: var(--game-surface);
