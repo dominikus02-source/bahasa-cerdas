@@ -919,7 +919,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   const Hdr = (
     <div className="mb-3 flex w-full items-center justify-between">
       <div className="flex items-center gap-2">
-        <GameBackButton href={backHref} label="Kembali" title="Kembali ke daftar gim" />
+        <GameBackButton href={backHref} label="Kembali ke Arena" title="Kembali ke Arena" />
         <div className="kt-pop h-11 w-11 shrink-0 overflow-hidden rounded-2xl border-4 border-[#161B3A] dark:border-white/25 bg-white dark:bg-[#241218] shadow-[4px_4px_0_#DC2626]">
           <img src={avatarHdr} alt="" className="h-full w-full object-cover" />
         </div>
