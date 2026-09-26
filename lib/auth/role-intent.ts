@@ -2,8 +2,10 @@ import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 
 export {
   dashboardForRole,
+  dashboardForUser,
   isSafeNext,
   resolvePostAuthDestination,
+  resolvePostAuthDestinationForUser,
 } from "@/lib/auth/redirect";
 
 /**
