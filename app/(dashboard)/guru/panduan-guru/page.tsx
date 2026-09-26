@@ -161,7 +161,7 @@ export default function PanduanGuruPage() {
     <div className="p-6 max-w-6xl mx-auto">
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center text-white">
           <BookOpen className="w-5 h-5" />
         </div>
         <div className="flex-1">
@@ -201,7 +201,7 @@ export default function PanduanGuruPage() {
                   onClick={() => toggleGrade(grade)}
                   className="w-full flex items-center gap-4 p-4 hover:bg-slate-50 transition-colors text-left"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center text-white font-bold text-sm shrink-0">
                     {grade}
                   </div>
                     <div className="flex-1">
@@ -245,7 +245,7 @@ export default function PanduanGuruPage() {
                                       href={`/guru/panduan-guru/${unit.id}`}
                                       className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 group"
                                     >
-                                      <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center text-emerald-700 font-bold text-xs shrink-0">
+                                      <div className="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center text-blue-700 dark:text-blue-300 font-bold text-xs shrink-0">
                                         {unit.order}
                                       </div>
                                       <div className="flex-1 min-w-0">
@@ -316,7 +316,7 @@ export default function PanduanGuruPage() {
                         jenis === opt.value ? "border-emerald-300 bg-emerald-50" : "border-slate-100 hover:border-slate-200"
                       }`}
                     >
-                      <div className={`flex items-center gap-1.5 text-sm font-medium ${jenis === opt.value ? "text-emerald-700" : "text-slate-800"}`}>
+                      <div className={`flex items-center gap-1.5 text-sm font-medium ${jenis === opt.value ? "text-blue-700 dark:text-blue-300" : "text-slate-800"}`}>
                         {opt.icon}
                         {opt.label}
                       </div>
