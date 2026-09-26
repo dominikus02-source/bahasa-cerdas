@@ -50,7 +50,7 @@ export function Overview({
     <section aria-label="Ringkasan penghasilan">
       {/* Hero */}
       <div className="bc-guru-hero rounded-2xl p-5 lg:p-7">
-        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+        <p className="text-xs font-semibold uppercase tracking-widest text-blue-200">
           Guru Cerdas Sejahtera
         </p>
         <h1 className="mt-1 text-2xl lg:text-3xl font-bold text-white">Penghasilan Saya</h1>
@@ -62,7 +62,7 @@ export function Overview({
               {formatRupiah(available)}
             </p>
             {available === 0 && (
-              <p className="mt-1 text-sm text-muted-foreground">
+              <p className="mt-1 text-sm text-blue-100/80">
                 Belum ada penghasilan yang tersedia
               </p>
             )}
@@ -80,12 +80,12 @@ export function Overview({
           <button
             onClick={onWithdraw}
             disabled={available < 50000}
-            className="rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded-xl bg-white px-5 py-3 text-sm font-semibold text-blue-700 shadow-sm transition-colors hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-40"
           >
             Cairkan Penghasilan
           </button>
           {available < 50000 && (
-            <span className="self-center text-sm text-muted-foreground">
+            <span className="self-center text-sm text-blue-100/80">
               {available > 0
                 ? `${formatRupiah(50000 - available)} lagi untuk dapat dicairkan.`
                 : "Minimum pencairan Rp50.000."}
