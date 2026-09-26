@@ -250,7 +250,7 @@ export default function BerlanggananPage() {
           </Card>
         )}
 
-        <Card className="p-6 border-2 border-amber-300 bg-gradient-to-b from-amber-50/40 to-white">
+        <Card className="p-6 border-2 border-amber-300 bg-gradient-to-b from-amber-50/80 to-amber-100/70">
           <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
             <h3 className="font-bold text-gray-900">Perpanjang PRO</h3>
             <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-amber-400 to-yellow-500 text-white text-xs font-bold shadow">
@@ -308,7 +308,7 @@ export default function BerlanggananPage() {
   if ((status === "success" || status === "pending") && !isPremium) {
     return (
       <div className="max-w-lg mx-auto text-center py-16">
-        <div className="h-20 w-20 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center mx-auto mb-4 shadow-lg">
+        <div className="h-20 w-20 rounded-full bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center mx-auto mb-4 shadow-lg">
           {status === "pending" ? (
             <div className="h-10 w-10 animate-spin border-[3px] border-white border-t-transparent rounded-full" />
           ) : (
@@ -336,7 +336,7 @@ export default function BerlanggananPage() {
         </Card>
         <div className="mt-8">
           <a href="/guru/ai-tools"
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-green-600 text-white px-6 py-3 rounded-xl font-semibold">
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-700 to-sky-600 text-white px-6 py-3 rounded-xl font-semibold">
             <Zap className="w-4 h-4" /> Mulai menggunakan Alat AI
           </a>
         </div>
@@ -375,7 +375,7 @@ export default function BerlanggananPage() {
       </div>
 
       <div className="max-w-2xl mx-auto">
-        <div className="rounded-2xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-green-500 p-5 text-white shadow-lg relative overflow-hidden">
+        <div className="rounded-2xl bg-gradient-to-r from-blue-800 via-blue-700 to-sky-600 p-5 text-white shadow-lg relative overflow-hidden">
           <div className="absolute -right-6 -top-6 h-28 w-28 rounded-full bg-white/10" />
           <div className="absolute right-10 -bottom-10 h-20 w-20 rounded-full bg-white/10" />
           <div className="flex items-start gap-4 relative">
