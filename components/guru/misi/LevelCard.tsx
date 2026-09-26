@@ -22,7 +22,7 @@ export function LevelCard({ level, xpLevel, xpPerLevel, streak }: LevelCardProps
         <p className="text-xs text-gray-500 mb-1.5">Guru Cerdas</p>
         <div className="h-2 rounded-full bg-emerald-100 overflow-hidden">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-500 transition-all duration-700"
+            className="h-full rounded-full bg-gradient-to-r from-blue-600 to-sky-500 transition-all duration-700"
             style={{ width: `${persen}%` }}
           />
         </div>
