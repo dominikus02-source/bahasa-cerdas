@@ -5,14 +5,14 @@ import { Calendar, Users, Trophy, ArrowRight, Video, GraduationCap } from "lucid
 export default function GuruOlimpiadePage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Kalender Kegiatan</h1>
-        <p className="mt-1 text-sm text-gray-600">Info dan kalender event, lomba, serta webinar bahasa Indonesia</p>
+      <div className="bc-guru-hero mb-8 rounded-2xl p-5 sm:p-6">
+        <h1 className="text-2xl font-bold text-white">Kalender Kegiatan</h1>
+        <p className="mt-1 text-sm text-blue-100/90">Info dan kalender event, lomba, serta webinar bahasa Indonesia</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <a href="/guru/olimpiade/info">
-          <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer h-full">
+          <Card className="bc-guru-surface-interactive h-full cursor-pointer p-6">
             <div className="flex items-start gap-4">
               <div className="h-14 w-14 rounded-xl bg-orange-100 flex items-center justify-center shrink-0">
                 <Trophy className="h-7 w-7 text-orange-600" />
@@ -26,7 +26,7 @@ export default function GuruOlimpiadePage() {
         </a>
 
         <a href="/guru/olimpiade/kalender">
-          <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer h-full">
+          <Card className="bc-guru-surface-interactive h-full cursor-pointer p-6">
             <div className="flex items-start gap-4">
               <div className="h-14 w-14 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
                 <Calendar className="h-7 w-7 text-blue-600" />
@@ -40,10 +40,10 @@ export default function GuruOlimpiadePage() {
         </a>
 
         <a href="/guru/olimpiade/webinar">
-          <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer h-full">
+          <Card className="bc-guru-surface-interactive h-full cursor-pointer p-6">
             <div className="flex items-start gap-4">
-              <div className="h-14 w-14 rounded-xl bg-purple-100 flex items-center justify-center shrink-0">
-                <Video className="h-7 w-7 text-purple-600" />
+              <div className="h-14 w-14 rounded-xl bg-blue-100 flex items-center justify-center shrink-0 dark:bg-blue-950/55">
+                <Video className="h-7 w-7 text-blue-600 dark:text-blue-300" />
               </div>
               <div>
                 <h3 className="font-bold">Webinar & Seminar</h3>
