@@ -438,7 +438,7 @@ export default function GuruProfilePage() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full" />
+        <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full" />
       </div>
     );
   }
@@ -475,7 +475,7 @@ export default function GuruProfilePage() {
             /* eslint-disable-next-line @next/next/no-img-element */
             <img src={displayAvatar} alt="" className="w-full h-full object-cover" />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center">
+            <div className="w-full h-full bg-gradient-to-br from-blue-700 to-sky-600 flex items-center justify-center">
               <span className={`${textSize} font-bold text-white`}>{initial}</span>
             </div>
           )}
@@ -508,7 +508,7 @@ export default function GuruProfilePage() {
     <div
       className={`mb-6 flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium ${
         message.type === "success"
-          ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
+          ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800"
           : "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800"
       }`}
       role="alert"
@@ -554,7 +554,7 @@ export default function GuruProfilePage() {
                   <div className="text-center sm:text-left">
                     <p className="text-sm font-semibold text-gray-900 dark:text-slate-100">Foto Profil</p>
                     <p className="text-xs text-gray-400 dark:text-slate-500 mt-0.5">JPG, PNG, atau WebP. Maks 5MB.</p>
-                    <button type="button" onClick={handleAvatarClick} className="mt-2 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">
+                    <button type="button" onClick={handleAvatarClick} className="mt-2 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-semibold">
                       {displayAvatar ? "Ganti Foto" : "Upload Foto"}
                     </button>
                   </div>
@@ -568,7 +568,7 @@ export default function GuruProfilePage() {
                   <input id="nickname" type="text" value={form.nickname} onChange={(e) => setForm((p) => ({ ...p, nickname: e.target.value }))} className="w-full h-11 px-4 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="Opsional" />
                 </div>
                 <div className="flex items-center gap-3 pt-2">
-                  <button type="button" onClick={handleSaveHeader} disabled={saving} className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+                  <button type="button" onClick={handleSaveHeader} disabled={saving} className="inline-flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
                     {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                     {saving ? "Menyimpan..." : "Simpan"}
                   </button>
@@ -620,8 +620,8 @@ export default function GuruProfilePage() {
 
                   {/* Role as pill badge */}
                   <div className="flex items-center justify-center sm:justify-start gap-2 mt-2">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-sm font-semibold rounded-full">
-                      <BookOpen size={14} className="text-emerald-600 dark:text-emerald-400" />
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-sm font-semibold rounded-full">
+                      <BookOpen size={14} className="text-blue-600 dark:text-blue-400" />
                       Guru {profile.subject || "Bahasa Indonesia"}
                     </span>
                   </div>
@@ -684,13 +684,13 @@ export default function GuruProfilePage() {
         <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2"><Heart size={16} className="text-rose-400" /> Tentang Saya</h2>
-            {editingSection !== "bio" && <button type="button" onClick={() => openSection("bio")} className="text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">{profile.bio ? "Edit" : "Tambah"}</button>}
+            {editingSection !== "bio" && <button type="button" onClick={() => openSection("bio")} className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-semibold">{profile.bio ? "Edit" : "Tambah"}</button>}
           </div>
           {editingSection === "bio" ? (
             <div className="space-y-4">
               <textarea id="bio" rows={4} value={form.bio} onChange={(e) => setForm((p) => ({ ...p, bio: e.target.value }))} className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none" placeholder="Ceritakan tentang diri Anda sebagai guru..." />
               <div className="flex items-center gap-3">
-                <button type="button" onClick={handleSaveBio} disabled={saving} className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+                <button type="button" onClick={handleSaveBio} disabled={saving} className="inline-flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
                   {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} {saving ? "Menyimpan..." : "Simpan"}
                 </button>
                 <button type="button" onClick={cancelEdit} disabled={saving} className="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-slate-400 hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50">Batal</button>
@@ -702,7 +702,7 @@ export default function GuruProfilePage() {
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <Heart size={28} className="text-gray-300 dark:text-slate-600 mb-3" />
               <p className="text-sm text-gray-400 dark:text-slate-500 italic max-w-xs">Ceritakan tentang dirimu sebagai guru untuk membantu murid mengenalmu lebih baik.</p>
-              <button type="button" onClick={() => openSection("bio")} className="mt-3 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">Tulis Sekarang</button>
+              <button type="button" onClick={() => openSection("bio")} className="mt-3 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-semibold">Tulis Sekarang</button>
             </div>
           )}
         </div>
@@ -711,7 +711,7 @@ export default function GuruProfilePage() {
         <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2"><Briefcase size={16} className="text-blue-500" /> Profil Profesional</h2>
-            {editingSection !== "professional" && <button type="button" onClick={() => openSection("professional")} className="text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">{profFields.length > 0 ? "Edit" : "Lengkapi"}</button>}
+            {editingSection !== "professional" && <button type="button" onClick={() => openSection("professional")} className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-semibold">{profFields.length > 0 ? "Edit" : "Lengkapi"}</button>}
           </div>
           {editingSection === "professional" ? (
             <div className="space-y-4">
@@ -753,7 +753,7 @@ export default function GuruProfilePage() {
                 </div>
               </div>
               <div className="flex items-center gap-3 pt-2">
-                <button type="button" onClick={handleSaveProfessional} disabled={saving} className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+                <button type="button" onClick={handleSaveProfessional} disabled={saving} className="inline-flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
                   {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} {saving ? "Menyimpan..." : "Simpan"}
                 </button>
                 <button type="button" onClick={cancelEdit} disabled={saving} className="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-slate-400 hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50">Batal</button>
@@ -772,7 +772,7 @@ export default function GuruProfilePage() {
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <Briefcase size={28} className="text-gray-300 dark:text-slate-600 mb-3" />
               <p className="text-sm text-gray-400 dark:text-slate-500 italic max-w-xs">Lengkapi informasi profesional untuk memudahkan kolaborasi dengan guru lain.</p>
-              <button type="button" onClick={() => openSection("professional")} className="mt-3 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">Lengkapi Sekarang</button>
+              <button type="button" onClick={() => openSection("professional")} className="mt-3 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-semibold">Lengkapi Sekarang</button>
             </div>
           )}
         </div>
@@ -783,12 +783,12 @@ export default function GuruProfilePage() {
       {/* ═══════════════════════════════════════════════════════════════ */}
       <div className="mt-6 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2"><Wallet size={16} className="text-emerald-500" /> Pembayaran &amp; Penarikan</h2>
-          {editingSection !== "rekening" && <button type="button" onClick={() => openSection("rekening")} className="text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">{profile.bank ? "Ubah Rekening" : "Atur Rekening"}</button>}
+          <h2 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2"><Wallet size={16} className="text-blue-500" /> Pembayaran &amp; Penarikan</h2>
+          {editingSection !== "rekening" && <button type="button" onClick={() => openSection("rekening")} className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-semibold">{profile.bank ? "Ubah Rekening" : "Atur Rekening"}</button>}
         </div>
         {editingSection === "rekening" ? (
           <div className="space-y-4">
-            <div className="bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800 rounded-xl p-4 text-sm text-emerald-800 dark:text-emerald-300 flex items-start gap-3">
+            <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 rounded-xl p-4 text-sm text-blue-800 dark:text-blue-300 flex items-start gap-3">
               <Banknote size={16} className="shrink-0 mt-0.5" />
               <p>Data rekening digunakan untuk pencairan royalti penjualan karya Anda.</p>
             </div>
@@ -810,7 +810,7 @@ export default function GuruProfilePage() {
               </div>
             </div>
             <div className="flex items-center gap-3 pt-2">
-              <button type="button" onClick={handleRekeningSave} disabled={savingRekening} className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+              <button type="button" onClick={handleRekeningSave} disabled={savingRekening} className="inline-flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
                 {savingRekening ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} {savingRekening ? "Menyimpan..." : "Simpan Rekening"}
               </button>
               <button type="button" onClick={cancelEdit} disabled={savingRekening} className="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-slate-400 hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50">Batal</button>
@@ -818,7 +818,7 @@ export default function GuruProfilePage() {
           </div>
         ) : profile.bank && profile.bankHolder && profile.bankNumber ? (
           <div className="space-y-3">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-full text-xs font-semibold border border-emerald-200 dark:border-emerald-800">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs font-semibold border border-blue-200 dark:border-blue-800">
               <CheckCircle2 size={13} /> Rekening penarikan aktif
             </span>
             <div className="grid sm:grid-cols-2 gap-x-8 gap-y-2 mt-2">
@@ -842,7 +842,7 @@ export default function GuruProfilePage() {
             <Wallet size={32} className="text-gray-300 dark:text-slate-600 mb-3" />
             <p className="text-sm font-medium text-gray-500 dark:text-slate-400">Rekening belum disiapkan</p>
             <p className="text-sm text-gray-400 dark:text-slate-500 italic mt-1 max-w-xs">Tambahkan rekening bank untuk menerima pembayaran dari penjualan karya.</p>
-            <button type="button" onClick={() => openSection("rekening")} className="mt-3 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">Atur Rekening</button>
+            <button type="button" onClick={() => openSection("rekening")} className="mt-3 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-semibold">Atur Rekening</button>
           </div>
         )}
       </div>
@@ -868,7 +868,7 @@ export default function GuruProfilePage() {
                 {profile.isFounder ? (
                   <span className="px-2 py-0.5 bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded text-xs font-semibold border border-amber-200 dark:border-amber-800">Founder</span>
                 ) : profile.isPremium ? (
-                  <span className="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded text-xs font-semibold border border-emerald-200 dark:border-emerald-800">Guru Pro</span>
+                  <span className="px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-xs font-semibold border border-blue-200 dark:border-blue-800">Guru Pro</span>
                 ) : (
                   <span className="text-gray-500 dark:text-slate-400">Guru Free</span>
                 )}
