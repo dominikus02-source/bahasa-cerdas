@@ -173,6 +173,7 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2.5">
+              {!hideBackButton && <GameBackButton href="/arena/game" label="Kembali ke Arena" title="Kembali ke Arena" />}
               <div className={`lk-logo w-11 h-11 bg-[#F59E0B] rounded-2xl ${chunky} !shadow-[4px_4px_0_#EA580C] flex items-center justify-center`}>
                 <Zap className="w-6 h-6 text-white" />
               </div>
