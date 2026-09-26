@@ -1205,3 +1205,165 @@
 .bc-guru-shell .bc-guru :focus-visible {
   outline-color: var(--clr-accent-strong);
 }
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GURU VISUAL SYSTEM V4 — STRONG BLUE
+   Audit 26 Sep 2026: sejumlah halaman guru masih memakai legacy gradient
+   hijau/teal yang setelah compatibility mapping berubah menjadi biru pucat
+   menuju putih. Hasilnya kehilangan identitas di light mode.
+
+   Prinsip:
+   - Hero / primary role surface = navy → royal blue → electric blue (kuat).
+   - Content card = solid surface, bukan gradient putih-biru.
+   - Warna merah/oranye/violet tetap dipakai sebagai aksen SEMANTIK, bukan
+     identitas role utama.
+   - Scope hanya .bc-guru-shell .bc-guru. Murid/Admin tidak terpengaruh.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.bc-guru-shell {
+  --guru-navy: #071d3d;
+  --guru-navy-2: #0a2f68;
+  --guru-blue: #0f56d9;
+  --guru-blue-2: #1677ee;
+  --guru-cyan: #0ea5e9;
+  --guru-card-border: #dbeafe;
+  --guru-card-shadow: 0 10px 28px rgba(15, 61, 130, .08);
+  --guru-card-shadow-hover: 0 16px 38px rgba(15, 61, 130, .13);
+  --guru-hero-gradient:
+    radial-gradient(circle at 88% 14%, rgba(125, 211, 252, .22), transparent 26%),
+    radial-gradient(circle at 70% 115%, rgba(59, 130, 246, .25), transparent 38%),
+    linear-gradient(135deg, #071d3d 0%, #0a3475 35%, #0f56d9 70%, #1677ee 100%);
+}
+
+.dark .bc-guru-shell {
+  --guru-card-border: #15325c;
+  --guru-card-shadow: 0 12px 30px rgba(0, 0, 0, .20);
+  --guru-card-shadow-hover: 0 18px 42px rgba(0, 0, 0, .28);
+  --guru-hero-gradient:
+    radial-gradient(circle at 88% 14%, rgba(56, 189, 248, .13), transparent 27%),
+    radial-gradient(circle at 68% 118%, rgba(37, 99, 235, .18), transparent 40%),
+    linear-gradient(135deg, #05152d 0%, #082858 38%, #0b3f91 72%, #0b5fc2 100%);
+}
+
+.guru-hero-strong {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  background: var(--guru-hero-gradient);
+  border: 1px solid rgba(147, 197, 253, .22);
+  box-shadow: 0 18px 44px rgba(15, 67, 153, .16);
+}
+
+.guru-hero-strong .guru-hero-eyebrow,
+.guru-hero-strong .guru-hero-muted {
+  color: #bfdbfe;
+}
+
+.guru-hero-strong .guru-hero-chip {
+  background: rgba(255,255,255,.11);
+  border: 1px solid rgba(255,255,255,.13);
+  color: #eff6ff;
+  backdrop-filter: blur(10px);
+}
+
+.guru-surface-card {
+  background: var(--clr-surface);
+  border: 1px solid var(--guru-card-border);
+  box-shadow: var(--guru-card-shadow);
+}
+
+.guru-surface-card:hover {
+  box-shadow: var(--guru-card-shadow-hover);
+}
+
+.guru-section-heading-icon {
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #dbeafe;
+}
+
+.dark .guru-section-heading-icon {
+  background: #10264a;
+  color: #93c5fd;
+  border-color: #1e3a67;
+}
+
+/* Legacy role gradients: semua hero/CTA lama berbasis emerald-green-teal-blue
+   yang memakai teks putih dipaksa menjadi identity gradient guru yang kuat.
+   background-image langsung di-set agar via/to lama tidak dapat menghasilkan
+   fade putih/pucat lagi. */
+.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-emerald-"].text-white,
+.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-green-"].text-white,
+.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-teal-"].text-white,
+.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-blue-"].text-white,
+.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-sky-"].text-white,
+.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-cyan-"].text-white {
+  background-image: var(--guru-hero-gradient) !important;
+  color: #fff;
+}
+
+/* Gradient pucat putih-biru pada content cards dihapus. Card informasi harus
+   solid dan clean; warna role muncul melalui icon, border, active state, CTA. */
+.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-blue-50"][class*="to-white"],
+.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-sky-50"][class*="to-white"],
+.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-cyan-50"][class*="to-white"],
+.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-emerald-50"][class*="to-white"],
+.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-teal-50"][class*="to-white"],
+.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-blue-50"][class*="to-blue-50"],
+.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-sky-50"][class*="to-blue-50"],
+.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-slate-50"][class*="to-blue-50"] {
+  background-image: none !important;
+  background-color: var(--clr-surface) !important;
+  border-color: var(--guru-card-border);
+  box-shadow: var(--guru-card-shadow);
+}
+
+/* Legacy teacher buttons/icons that were green are now role-blue.
+   Semantic success states use solid success classes and are intentionally
+   excluded from this role-identity conversion. */
+.bc-guru-shell .bc-guru :is(
+  .bg-emerald-500,
+  .bg-emerald-600,
+  .bg-emerald-700,
+  .bg-green-500,
+  .bg-green-600,
+  .bg-teal-500,
+  .bg-teal-600
+):not(.bc-badge-success) {
+  background-color: #2563eb;
+}
+
+.bc-guru-shell .bc-guru :is(
+  .text-emerald-600,
+  .text-emerald-700,
+  .text-green-600,
+  .text-green-700,
+  .text-teal-600,
+  .text-teal-700
+) {
+  color: #2563eb;
+}
+
+.dark .bc-guru-shell .bc-guru :is(
+  .text-emerald-600,
+  .text-emerald-700,
+  .text-green-600,
+  .text-green-700,
+  .text-teal-600,
+  .text-teal-700
+) {
+  color: #93c5fd;
+}
+
+/* Primary white cards across guru pages receive a consistent blue-neutral
+   edge/shadow without changing layout or form behavior. */
+.bc-guru-shell .bc-guru .bg-white.rounded-2xl,
+.bc-guru-shell .bc-guru .bg-white.rounded-xl {
+  border-color: color-mix(in srgb, #93c5fd 38%, var(--clr-border));
+}
+
+.dark .bc-guru-shell .bc-guru .bg-white.rounded-2xl,
+.dark .bc-guru-shell .bc-guru .bg-white.rounded-xl {
+  border-color: color-mix(in srgb, #2563eb 30%, var(--clr-border));
+}
