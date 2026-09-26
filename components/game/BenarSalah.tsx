@@ -157,7 +157,10 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
     return () => window.removeEventListener("keydown", onKey);
   }, [screen, idx, questions, candidateIdx, score, combo, correctCount, wrongCount, lives, bestCombo]);
 
+  const gameSessionIdRef = useRef("");
+
   const startLevel = useCallback(async (id: number) => {
+    gameSessionIdRef.current = crypto.randomUUID();
     sfx.start();
     setSoundOn(isSoundOn());
     startBGM();
@@ -246,6 +249,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
           xpEarned,
           gameType: "BENAR_SALAH",
           supabaseId,
+          gameSessionId: gameSessionIdRef.current,
         }),
       }).catch(() => { /* abaikan */ });
     }
