@@ -8,9 +8,7 @@ export function RuangBelajarSection() {
     <section aria-label="Ruang Belajar">
       <div className="flex items-end justify-between mb-4">
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--px-royal-2)]">
-            Ruang Belajar
-          </p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--px-royal-2)]">Ruang Belajar</p>
           <h2 className="text-xl font-semibold tracking-tight text-[var(--px-text)]">Ruang Belajar</h2>
           <p className="text-xs text-[var(--px-text-faint)]">Kelas, materi, dan tugasmu dalam satu tempat</p>
         </div>
@@ -24,19 +22,12 @@ export function RuangBelajarSection() {
             </span>
             <div className="min-w-0">
               <h3 className="text-base font-medium text-[var(--px-text)]">Kelas</h3>
-              <p className="text-xs text-[var(--px-text-faint)] mt-0.5">
-                Gabung dan lanjutkan pembelajaran bersama kelasmu.
-              </p>
+              <p className="text-xs text-[var(--px-text-faint)] mt-0.5">Gabung dan lanjutkan pembelajaran bersama kelasmu.</p>
             </div>
           </div>
           <div className="mt-auto pt-1">
-            <Link
-              href="/murid/gabung-kelas"
-              className="px-btn-ghost inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2"
-              aria-label="Gabung kelas"
-            >
-              <School size={14} />
-              Buka Kelas
+            <Link href="/murid/gabung-kelas" className="px-btn-ghost inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2" aria-label="Buka kelas">
+              <School size={14} /> Buka Kelas
             </Link>
           </div>
         </div>
@@ -48,27 +39,15 @@ export function RuangBelajarSection() {
             </span>
             <div className="min-w-0">
               <h3 className="text-base font-medium text-[var(--px-text)]">Materi &amp; Tugas</h3>
-              <p className="text-xs text-[var(--px-text-faint)] mt-0.5">
-                Lihat materi, tugas, dan aktivitas belajarmu.
-              </p>
+              <p className="text-xs text-[var(--px-text-faint)] mt-0.5">Lihat materi, tugas, dan aktivitas belajarmu.</p>
             </div>
           </div>
           <div className="mt-auto pt-1 flex flex-wrap items-center gap-3">
-            <Link
-              href="/murid/tugasku"
-              className="px-btn-ghost inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2"
-              aria-label="Buka tugas"
-            >
-              <ClipboardList size={14} />
-              Buka Tugas
+            <Link href="/arena/tugas" className="px-btn-ghost inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2" aria-label="Buka tugas">
+              <ClipboardList size={14} /> Buka Tugas
             </Link>
-            <Link
-              href="/arena/materi"
-              className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--px-text-dim)] hover:text-[var(--px-text)] transition-colors"
-              aria-label="Lihat materi"
-            >
-              Materi
-              <span aria-hidden="true">→</span>
+            <Link href="/arena/materi" className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--px-text-dim)] hover:text-[var(--px-text)] transition-colors" aria-label="Lihat materi">
+              Materi <span aria-hidden="true">→</span>
             </Link>
           </div>
         </div>

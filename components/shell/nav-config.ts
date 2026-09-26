@@ -39,7 +39,12 @@ export const STUDENT_NAV: ShellNavItem[] = [
     label: "Arena",
     href: "/arena",
     icon: Zap,
-    match: (p) => p.startsWith("/arena") && !p.startsWith("/arena/chat"),
+    // Tugas adalah area belajar sekunder; jangan membuat Arena dan Tugas
+    // aktif bersamaan saat murid sedang mengerjakan tugas.
+    match: (p) =>
+      p.startsWith("/arena") &&
+      !p.startsWith("/arena/chat") &&
+      !p.startsWith("/arena/tugas"),
   },
   {
     label: "Main Bersama",
@@ -67,9 +72,9 @@ export const STUDENT_NAV_GROUPS: ShellNavGroup[] = [
       },
       {
         label: "Tugas",
-        href: "/murid/tugasku",
+        href: "/arena/tugas",
         icon: ClipboardList,
-        match: (p) => p.startsWith("/murid/tugasku"),
+        match: (p) => p.startsWith("/arena/tugas") || p.startsWith("/murid/tugasku"),
       },
       {
         label: "Progres",
