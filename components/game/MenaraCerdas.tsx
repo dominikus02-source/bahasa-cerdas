@@ -161,6 +161,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2.5">
+              <GameBackButton href="/arena/game" label="Kembali ke Arena" title="Kembali ke Arena" />
               <div className={`mc-logo w-11 h-11 bg-[#8B5CF6] rounded-2xl ${chunky} !shadow-[4px_4px_0_#CA8A04] flex items-center justify-center`}>
                 <Mountain className="w-6 h-6 text-white" />
               </div>
