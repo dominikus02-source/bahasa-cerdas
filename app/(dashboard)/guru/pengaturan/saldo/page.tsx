@@ -123,7 +123,7 @@ export default function SaldoPage() {
         </div>
       )}
 
-      <Card className="p-6 mb-6 bg-gradient-to-r from-emerald-500 to-teal-600 text-white">
+      <Card className="p-6 mb-6 bc-guru-hero text-white">
         <p className="text-sm opacity-80">Saldo Tersedia</p>
         <p className="text-4xl font-bold mt-1">{memuat ? "…" : rupiah(saldo)}</p>
         <p className="text-sm opacity-80 mt-2">Total pendapatan: {memuat ? "…" : rupiah(totalEarned)}</p>
