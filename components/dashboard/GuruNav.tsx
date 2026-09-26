@@ -8,6 +8,7 @@ import {
   Bot, User, CalendarDays, ChevronDown, Menu, X, LogOut, Wallet,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { RoleSections } from "@/components/shell/RoleSections";
 import {
   NAV_ICON_CLASS,
   NAV_ICON_STROKE,
@@ -265,7 +266,7 @@ export function GuruNavList({
   );
 }
 
-/** Bottom nav mobile guru (lg:hidden) + tombol menu drawer. */
+/** Bottom nav mobile guru (< md) + tombol menu drawer. */
 export function GuruMobileNav({ role, isFounder }: { role: string; isFounder: boolean }) {
   const pathname = usePathname();
   const [drawer, setDrawer] = useState(false);
