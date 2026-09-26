@@ -51,7 +51,10 @@ const schemaSrc = read("prisma/schema.prisma");
 assert(schemaSrc.includes("model TtsSession"), "A1 model TtsSession ada");
 assert(schemaSrc.includes("hintsRevealed  Int"), "A2 kolom hintsRevealed");
 assert(schemaSrc.includes('status         String    @default("ACTIVE")'), "A3 status ACTIVE/FINISHED");
-assert(has("prisma/migrations/manual/2026-08-26_p8i_tts_session.sql"), "A4 migration SQL ada");
+assert(
+  has("prisma/migrations/2026-09-26_tts_session_puzzle/migration.sql"),
+  "A4 migration snapshot puzzle server-side ada"
+);
 const sessionServer = read("lib/game/tts/session-server.ts");
 assert(sessionServer.includes("TTS_HINT_LIMIT = 3"), "A5 anggaran = 3 per puzzle");
 assert(sessionServer.includes('hintsRevealed: { lt: TTS_HINT_LIMIT }'), "A6 klaim atomik WHERE lt limit (race-safe)");
@@ -116,6 +119,8 @@ assert(sessionServer.includes("if (level <= 3) return 1.0;") && sessionServer.in
 assert(sessionServer.includes("- hints * 5"), "D3 penalti petunjuk dari hitungan DB");
 assert(sessionServer.includes("Math.round(session.level * 20 * mult)"), "D4 cap XP ikut multiplier");
 assert(sessionServer.includes("awardXp(input.userId, \"GAME\", finalXp, `tts-${session.id}`)"), "D5 XP lewat awardXp existing (guard kuota)");
+assert(sessionServer.includes("const xpDiberikan = hasilXp?.xpDiberikan ?? 0"), "D5.1 coin payout memakai XP yang benar-benar diterima");
+assert(sessionServer.includes("if (coins > 0 && xpDiberikan > 0)"), "D5.2 coin payout berhenti saat kuota XP habis");
 assert(sessionServer.includes("claim.count === 0") && sessionServer.includes("return null"), "D6 double submit → tanpa hadiah kedua");
 assert(!sessionServer.includes("streakBonus"), "D7 bonus streak TIDAK masuk perhitungan server (spoofable)");
 
