@@ -230,8 +230,8 @@ export default function BermainKataGame() {
         {showTheme && <div className="mt-3 flex justify-end"><div className="flex gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-lg">{(Object.keys(THEMES) as Theme[]).map(k=><button key={k} onClick={()=>{setTheme(k);setShowTheme(false)}} className={`rounded-xl px-3 py-2 text-sm font-bold ${theme===k?t.soft:"hover:bg-slate-50"}`}>{(() => { const Icon = THEME_META[k].icon; return <Icon size={15}/> })()} {THEME_META[k].label}</button>)}</div></div>}
 
         <section className="mx-auto mt-6 max-w-3xl text-center">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center overflow-hidden rounded-[28px] bg-white shadow-[0_12px_30px_rgba(15,23,42,.10)]">
-  <img src="/banners/bermain-kata-live.jpg" alt="Zelby" className="h-full w-full object-contain p-2" />
+          <div className="mx-auto overflow-hidden rounded-[28px] border border-white/60 bg-white shadow-[0_18px_50px_rgba(15,23,42,.14)]">
+  <img src="/banners/bermain-kata-live.jpg" alt="BERMAIN KATA bersama Zelby" className="block h-auto w-full" />
 </div>
           <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-1.5 text-xs font-black tracking-wide text-white"><Sparkles size={14}/> EKOSISTEM PEMBELAJARAN BAHASA INDONESIA</div>
           <h1 className="mt-3 text-4xl font-black tracking-tight sm:text-6xl">BERMAIN <span className="text-sky-600">KATA</span></h1>
