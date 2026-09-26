@@ -1312,7 +1312,15 @@
 .bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-teal-50"][class*="to-white"],
 .bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-blue-50"][class*="to-blue-50"],
 .bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-sky-50"][class*="to-blue-50"],
-.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-slate-50"][class*="to-blue-50"] {
+.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-slate-50"][class*="to-blue-50"],
+.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-emerald-50"][class*="to-teal-50"],
+.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-teal-50"][class*="to-emerald-50"],
+.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-green-50"][class*="to-teal-50"],
+.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-blue-50"][class*="via-white"],
+.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-sky-50"][class*="via-white"],
+.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-cyan-50"][class*="via-white"],
+.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-emerald-50"][class*="via-white"],
+.bc-guru-shell .bc-guru [class*="bg-gradient-to-"][class*="from-teal-50"][class*="via-white"] {
   background-image: none !important;
   background-color: var(--clr-surface) !important;
   border-color: var(--guru-card-border);
