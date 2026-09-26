@@ -600,7 +600,7 @@ export default function KelasKuPage() {
                   const r = (detail.ringkasanQuiz ?? []).find((x) => x.id === t.id);
                   return (
                   <div key={t.id} className="bc-card p-4 flex items-center gap-3">
-                    <span className="w-10 h-10 rounded-xl bg-[var(--clr-violet-soft)] text-[var(--clr-violet)] flex items-center justify-center shrink-0"><FileText size={18} /></span>
+                    <span className="w-10 h-10 rounded-xl bg-[var(--clr-accent-soft)] text-[var(--clr-accent-strong)] flex items-center justify-center shrink-0"><FileText size={18} /></span>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold text-[var(--clr-text)] truncate">{t.quiz.title}</p>
                       <p className="text-xs text-[var(--clr-text-3)]">
@@ -626,7 +626,7 @@ export default function KelasKuPage() {
                   const r = (detail.ringkasanPenugasan ?? []).find((x) => x.id === p.id);
                   return (
                   <div key={p.id} className="bc-card p-4 flex items-center gap-3">
-                    <span className="w-10 h-10 rounded-xl bg-[var(--clr-violet-soft)] text-[var(--clr-violet)] flex items-center justify-center shrink-0"><BookOpen size={18} /></span>
+                    <span className="w-10 h-10 rounded-xl bg-[var(--clr-accent-soft)] text-[var(--clr-accent-strong)] flex items-center justify-center shrink-0"><BookOpen size={18} /></span>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold text-[var(--clr-text)] truncate">{p.judul}</p>
                       <p className="text-xs text-[var(--clr-text-3)]">
@@ -728,7 +728,7 @@ export default function KelasKuPage() {
               <div className="grid gap-2">
                 {(detail.members ?? []).map((m) => (
                   <div key={m.id} className="bc-card p-3.5 flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
                       {(m.fullName || "??").slice(0, 2).toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -883,7 +883,7 @@ function TodayView({ detail, lastClassIds, groupId, onKirimLagi, onReview }: {
           <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--clr-text-3)]">Sedang berjalan</p>
           {active.slice(0, 3).map((a) => (
             <div key={a.id} className="flex items-center gap-3">
-              <span className="w-8 h-8 rounded-lg bg-[var(--clr-violet-soft)] text-[var(--clr-violet)] flex items-center justify-center shrink-0">
+              <span className="w-8 h-8 rounded-lg bg-[var(--clr-accent-soft)] text-[var(--clr-accent-strong)] flex items-center justify-center shrink-0">
                 {a.jenis === "tugas" ? <FileText size={15} /> : <GraduationCap size={15} />}
               </span>
               <div className="flex-1 min-w-0">
@@ -1036,7 +1036,7 @@ function StreamCard({ item, progress, groupId, onReview, onDeleteTask, onEditPen
     const isPenugasan = !("quiz" in t);
     return (
       <div className="bc-card p-4 flex items-start gap-3">
-        <span className="w-10 h-10 rounded-xl bg-[var(--clr-violet-soft)] text-[var(--clr-violet)] flex items-center justify-center shrink-0"><FileText size={18} /></span>
+        <span className="w-10 h-10 rounded-xl bg-[var(--clr-accent-soft)] text-[var(--clr-accent-strong)] flex items-center justify-center shrink-0"><FileText size={18} /></span>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-bold text-[var(--clr-text)] truncate">{title}</p>
           <p className="text-xs text-[var(--clr-text-3)] mt-0.5">{date} · tugas{tenggat ? ` · deadline ${dl.label}` : ""}</p>
