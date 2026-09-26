@@ -192,23 +192,22 @@ export function buildPuzzle(options: BuildPuzzleOptions): TtsPuzzle {
 
   // TTS quality gate: bank canonical boleh berisi soal untuk banyak game,
   // tetapi generator hanya menerima clue/jawaban yang memang cocok untuk TTS.
-  const contentEligible = poolAll
-    .map((w) => {
-      const eligibility = evaluateTtsCandidate({
-        answer: w.answer,
-        clue: w.clue,
-        themeKey: themeKeyForAnswer(w.answer) ?? "",
-      });
-      if (eligibility.status !== "APPROVED") return null;
-      return {
-        ...w,
-        answer: eligibility.answer,
-        clue: eligibility.clue,
-        clueType: w.clueType ?? eligibility.clueType,
-        tier: w.tier ?? eligibility.tier,
-      };
-    })
-    .filter((w): w is TtsWord => w !== null);
+  const contentEligible: TtsWord[] = [];
+  for (const w of poolAll) {
+    const eligibility = evaluateTtsCandidate({
+      answer: w.answer,
+      clue: w.clue,
+      themeKey: themeKeyForAnswer(w.answer) ?? "",
+    });
+    if (eligibility.status !== "APPROVED") continue;
+    contentEligible.push({
+      ...w,
+      answer: eligibility.answer,
+      clue: eligibility.clue,
+      clueType: w.clueType ?? eligibility.clueType,
+      tier: w.tier ?? eligibility.tier,
+    });
+  }
 
   // Jangan pernah menurunkan standar konten hanya demi mengisi grid.
   // Jika pool curated terlalu kecil, generator gagal secara eksplisit sehingga

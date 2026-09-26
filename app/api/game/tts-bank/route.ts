@@ -40,6 +40,13 @@ function cleanClue(text: string): string {
     .trim()
 }
 
+function tierForDifficulty(value: string): 1 | 2 | 3 {
+  const d = value.toUpperCase()
+  if (d === "EASY" || d === "MUDAH") return 1
+  if (d === "HARD" || d === "SULIT") return 3
+  return 2
+}
+
 export async function GET() {
   try {
     const user = await getUser()
