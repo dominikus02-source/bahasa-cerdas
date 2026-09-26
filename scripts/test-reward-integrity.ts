@@ -52,6 +52,27 @@ ok(
   "belajar tetap dijaga dari klaim ulang",
   /if\s*\(existing\?\.completed\)[\s\S]{0,200}earnedXp:\s*0/.test(jalur)
 );
+ok(
+  "Jalur Cerdas tidak membayar koin jika awardXp tidak memberi XP",
+  /COIN_PAID\s*=\s*XP_REWARD\s*>\s*0\s*\?\s*COIN_REWARD\s*:\s*0/.test(jalur)
+);
+ok(
+  "Jalur Cerdas ledger memakai koin yang benar-benar dibayar",
+  /amount:\s*COIN_PAID[\s\S]{0,120}reason:\s*"SELESAI_BELAJAR"/.test(jalur)
+);
+
+const ttsSession = readFileSync(
+  join(process.cwd(), "lib/game/tts/session-server.ts"),
+  "utf8"
+);
+ok(
+  "TTS koin hanya dibayar setelah XP benar-benar masuk",
+  /const xpDiberikan = hasilXp\?\.xpDiberikan \?\? 0[\s\S]{0,500}xpDiberikan\s*>\s*0/.test(ttsSession)
+);
+ok(
+  "TTS tidak lagi membayar koin langsung dari finalXp",
+  !/if\s*\(coins\s*>\s*0\s*&&\s*finalXp\s*>\s*0\)/.test(ttsSession)
+);
 
 // Spending must never look like earning on a leaderboard.
 for (const [name, path] of [
