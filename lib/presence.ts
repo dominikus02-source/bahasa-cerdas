@@ -3,15 +3,15 @@
  *
  * Architecture:
  *  - Key: `bc:presence:{userId}` (user-level, not tab-level — multiple tabs share one key)
- *  - Value: `{ r: "GURU"|"MURID"|"ADMIN" }` (minimal — no IP, no email, no page URL)
+ *  - Value: `{ r: "GURU"|"MURID"|"ADMIN", p?: "coarse:menu-key" }`
  *  - TTL: 60 seconds (auto-expires if heartbeat stops)
  *  - Heartbeat interval (client): 20 seconds
  *
  * Privacy:
  *  - No IP address stored
  *  - No email stored
- *  - No page URL stored
- *  - Only aggregate counts exposed to founder dashboard
+ *  - No full URL, query string, or dynamic entity ID stored
+ *  - Only aggregate role + coarse menu counts exposed to founder dashboard
  *
  * Scale:
  *  - Upstash REST (stateless HTTP, no connection pooling)
