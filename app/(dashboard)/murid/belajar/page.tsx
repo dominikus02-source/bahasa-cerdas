@@ -271,8 +271,8 @@ export default function BelajarPage() {
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 shadow-lg">
               <MessageCircle className="h-5 w-5 text-white" />
             </div>
-            <p className="mt-4 text-[9px] font-black uppercase tracking-[0.18em] text-cyan-700">Party / Sosial</p>
-            <h3 className="mt-1 text-lg font-black text-slate-950">Ngobrol & belajar bersama</h3>
+            <p className="mt-4 text-[9px] font-black uppercase tracking-[0.18em] text-cyan-700 dark:text-cyan-300">Party / Sosial</p>
+            <h3 className="mt-1 text-lg font-black text-slate-950 dark:text-white">Ngobrol & belajar bersama</h3>
             <p className="mt-1.5 text-xs leading-5 text-slate-500 dark:text-slate-300/65">Diskusi dengan guru dan teman dalam ruang yang sama.</p>
             <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-black text-cyan-700">
               Buka obrolan <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
@@ -289,9 +289,9 @@ export default function BelajarPage() {
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg">
               <Award className="h-5 w-5 text-white" />
             </div>
-            <p className="mt-4 text-[9px] font-black uppercase tracking-[0.18em] text-amber-700">Inventory</p>
-            <h3 className="mt-1 text-lg font-black text-slate-950">Hasil & pencapaian</h3>
-            <p className="mt-1.5 text-xs leading-5 text-slate-500">Kembali melihat hasil latihan, ujian, dan pencapaian belajarmu.</p>
+            <p className="mt-4 text-[9px] font-black uppercase tracking-[0.18em] text-amber-700 dark:text-amber-300">Inventory</p>
+            <h3 className="mt-1 text-lg font-black text-slate-950 dark:text-white">Hasil & pencapaian</h3>
+            <p className="mt-1.5 text-xs leading-5 text-slate-500 dark:text-slate-300/65">Kembali melihat hasil latihan, ujian, dan pencapaian belajarmu.</p>
             <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-black text-amber-700">
               Lihat hasil <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
             </span>
