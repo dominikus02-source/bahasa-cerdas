@@ -181,6 +181,7 @@ export default function BerlanggananPage() {
       if (result.bypass) {
         setStatus("success");
         setLoading(false);
+        await refreshUserInfo();
         return;
       }
 
