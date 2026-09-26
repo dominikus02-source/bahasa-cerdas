@@ -93,8 +93,11 @@ export default function BermainKataGame() {
     setCurrent(w); setRound(nextRound); setSelected(null); setFeedback(null); setMessage("")
     if(nextMode==="susun"){setLetters(shuffle(w.word.split("")));setAnswer([])}
     if(nextMode==="rumpang"){
-      const chars=w.word.split(""); const idx=Math.min(chars.length-1,Math.max(0,Math.floor(chars.length/2)))
-      chars[idx]="_"; setLetters(chars)
+      const chars=w.word.split("")
+      const idx=Math.min(chars.length-1,Math.max(0,Math.floor(chars.length/2)))
+      chars[idx]="_"
+      setLetters(chars)
+      setOptions(shuffle([w.word[idx],"A","E","I","O","U","N","R"].filter((x,i,a)=>a.indexOf(x)===i)).slice(0,4))
     }
     if(nextMode==="pasangan"){
       const p=shuffle(PAIRS).slice(0,4).flat()
@@ -103,12 +106,11 @@ export default function BermainKataGame() {
       setOptions(shuffle(PAIRS.find(x=>x[0]===target)||PAIRS[0]).filter(Boolean))
     }
     if(nextMode==="makna"){
-      const source=shuffle(WORDS.filter(x=>x.synonym||x.antonym))[0] || w
-      const isSyn=Math.random()>0.45
-      const pairs=PAIRS.find(p=>p[0]===source.word)
-      const target=isSyn ? (source.synonym||pairs?.[1]||"GEMBIRA") : (source.antonym||pairs?.[1]||"KECIL")
-      setCurrent({...source, synonym:isSyn?target:source.synonym, antonym:isSyn?source.antonym:target})
-      setOptions(shuffle([target,isSyn?(pairs?.[0]||"SEDIH"):"BESAR","KUCING","BUKU"]))
+      const pair=shuffle(PAIRS)[0]
+      const source=WORDS.find(x=>x.word===pair[0]) || w
+      const target=pair[1]
+      setCurrent({...source, synonym:target, antonym:target})
+      setOptions(shuffle([target,"KUCING","BUKU","BOLA"]))
     }
   }
 
@@ -142,7 +144,8 @@ export default function BermainKataGame() {
 
   const chooseRumpang=(letter:string)=>{
     if(!current || feedback) return
-    resolve(letter===current.word[Math.floor(current.word.length/2)])
+    const idx=Math.min(current.word.length-1,Math.max(0,Math.floor(current.word.length/2)))
+    resolve(letter===current.word[idx])
   }
 
   const choose=(value:string)=>{
@@ -207,7 +210,7 @@ export default function BermainKataGame() {
 
         {mode==="susun" && current && <div className="mt-7"><p className="text-center text-sm font-bold text-slate-500">{current.hint}</p><div className="mt-5 flex min-h-14 flex-wrap justify-center gap-2">{answer.map((x,i)=><button key={i} onClick={()=>setAnswer(a=>a.filter((_,idx)=>idx!==i))} className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-500 text-xl font-black text-white shadow-sm">{x}</button>)}</div><div className="mt-4 flex flex-wrap justify-center gap-2">{letters.map((x,i)=><button key={i} disabled={answer.length>=current.word.length} onClick={()=>{setAnswer(a=>[...a,x]);setLetters(a=>a.filter((_,idx)=>idx!==i))}} className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-xl font-black hover:bg-sky-50">{x}</button>)}</div><button disabled={answer.length!==current.word.length||!!feedback} onClick={checkSusun} className={`mx-auto mt-6 flex items-center gap-2 rounded-2xl px-6 py-3 font-black text-white disabled:cursor-not-allowed disabled:opacity-40 ${t.accent}`}>Periksa <Check size={17}/></button></div>}
 
-        {mode==="rumpang" && current && <div className="mt-7 text-center"><p className="text-sm font-bold text-slate-500">{current.hint}</p><div className="mt-6 text-4xl font-black tracking-[.35em]">{letters.join("")}</div><div className="mx-auto mt-7 max-w-xs grid grid-cols-3 gap-2">{shuffle(current.word.split("")).slice(0,Math.min(6,current.word.length)).map((x,i)=><button key={i} disabled={!!feedback} onClick={()=>chooseRumpang(x)} className="rounded-2xl border border-slate-200 bg-slate-50 py-3 text-lg font-black hover:bg-sky-50">{x}</button>)}</div></div>}
+        {mode==="rumpang" && current && <div className="mt-7 text-center"><p className="text-sm font-bold text-slate-500">{current.hint}</p><div className="mt-6 text-4xl font-black tracking-[.35em]">{letters.join("")}</div><div className="mx-auto mt-7 max-w-xs grid grid-cols-3 gap-2">{options.map((x,i)=><button key={i} disabled={!!feedback} onClick={()=>chooseRumpang(x)} className="rounded-2xl border border-slate-200 bg-slate-50 py-3 text-lg font-black hover:bg-sky-50">{x}</button>)}</div></div>}
 
         {mode==="pasangan" && current && <div className="mt-7 text-center"><p className="text-sm font-bold text-slate-500">Cari pasangan yang tepat untuk kata ini</p><div className="mt-4 text-3xl font-black">{current.word}</div><div className="mt-6 grid gap-2 sm:grid-cols-2">{shuffle([...(PAIRS.find(p=>p[0]===current.word)?.slice(1) || []), "BUKU", "KUCING", "BOLA"].filter((x,i,a)=>a.indexOf(x)===i).slice(0,4)).map((x,i)=><button key={i} disabled={!!feedback} onClick={()=>choose(x)} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-left font-black hover:border-sky-300 hover:bg-sky-50">{x}</button>)}</div></div>}
 
