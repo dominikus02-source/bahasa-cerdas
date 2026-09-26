@@ -134,7 +134,7 @@ export default function VideoBelajarPage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {VIDEO_RULES.map((rule, i) => (
-                <div key={i} className="flex items-start gap-3 bg-white rounded-xl p-3 border border-gray-100">
+                <div key={i} className="bc-guru-surface flex items-start gap-3 rounded-xl p-3">
                   <div className={`w-10 h-10 rounded-lg ${rule.bg} flex items-center justify-center shrink-0`}>
                     <rule.icon size={18} className={rule.color} />
                   </div>
