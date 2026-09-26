@@ -1394,6 +1394,25 @@
   border-color: var(--guru-border);
 }
 
+/* Shared Card primitive + common legacy card signatures. These selectors are
+   intentionally scoped to Guru only so Student/Admin keep their own identity. */
+.bc-guru-shell .bc-guru .bg-card:is(.rounded-xl, .rounded-2xl),
+.bc-guru-shell .bc-guru :is(.bg-white, .dark\:bg-slate-800, .dark\:bg-slate-900):is(.rounded-xl, .rounded-2xl).border.shadow-sm {
+  background: var(--guru-surface);
+  border-color: var(--guru-border);
+  box-shadow: var(--guru-shadow);
+}
+.bc-guru-shell .bc-guru .bg-card:is(.rounded-xl, .rounded-2xl):hover {
+  border-color: var(--guru-border-strong);
+}
+
+/* Teacher controls use blue interaction rings; semantic success/danger
+   backgrounds remain untouched. */
+.bc-guru-shell .bc-guru :is(input, select, textarea):focus {
+  border-color: var(--guru-500);
+  --tw-ring-color: color-mix(in srgb, var(--guru-500) 28%, transparent);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .bc-guru-shell .bc-guru-surface-interactive {
     transition: none;
