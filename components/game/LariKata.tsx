@@ -224,7 +224,7 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
         <div className="relative max-w-lg mx-auto px-5 pt-4 pb-8 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-3">
             {!hideBackButton && (
-              <GameBackButton onClick={() => { stopBGM(); setScreen("start"); }} label="Kembali" title="Kembali ke menu Lari Kata" />
+              <GameBackButton onClick={() => { stopBGM(); setScreen("start"); }} label="Kembali ke Lari Kata" title="Kembali ke menu Lari Kata" />
             )}
             <div className={`flex items-center gap-2 ${hideBackButton ? "ml-auto" : ""}`}>
               {streak > 0 && (
