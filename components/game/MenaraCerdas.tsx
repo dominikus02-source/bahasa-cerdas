@@ -11,6 +11,7 @@ import ConfettiBurst from "@/components/game/ConfettiBurst";
 import { usePowerUps } from "@/hooks/usePowerUps";
 import { pilihOpsiSalah } from "@/lib/power-up-hint";
 import { sfx, haptic, isSoundOn, toggleSound, startBGM, stopBGM } from "@/lib/game/sound";
+import GameBackButton from "@/components/game/GameBackButton";
 
 interface Q {
   id: string;
