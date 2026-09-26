@@ -460,7 +460,7 @@ export { formatRupiah, withdrawalStatusLabel };
  * ──────────────────────────────────────────────────────────────────────────── */
 function FounderCommissionDisclaimer() {
   return (
-    <div className="rounded-2xl border border-border bg-card px-6 py-8 text-center space-y-4 max-w-lg mx-auto mt-8">
+    <div className="bc-guru-surface mx-auto mt-8 max-w-lg space-y-4 rounded-2xl px-6 py-8 text-center">
       <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto text-3xl">
         🏛️
       </div>
