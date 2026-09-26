@@ -147,7 +147,7 @@ export default function BermainKataGame() {
 
   const choose=(value:string)=>{
     if(!current || feedback) return
-    if(mode==="pasangan") resolve(value===current.word.word)
+    if(mode==="pasangan") resolve(value===(PAIRS.find(p=>p[0]===current.word)?.[1] || ""))
     else resolve(value===current.synonym || value===current.antonym)
   }
 
@@ -209,7 +209,7 @@ export default function BermainKataGame() {
 
         {mode==="rumpang" && current && <div className="mt-7 text-center"><p className="text-sm font-bold text-slate-500">{current.hint}</p><div className="mt-6 text-4xl font-black tracking-[.35em]">{letters.join("")}</div><div className="mx-auto mt-7 max-w-xs grid grid-cols-3 gap-2">{shuffle(current.word.split("")).slice(0,Math.min(6,current.word.length)).map((x,i)=><button key={i} disabled={!!feedback} onClick={()=>chooseRumpang(x)} className="rounded-2xl border border-slate-200 bg-slate-50 py-3 text-lg font-black hover:bg-sky-50">{x}</button>)}</div></div>}
 
-        {mode==="pasangan" && current && <div className="mt-7 text-center"><p className="text-sm font-bold text-slate-500">Cari pasangan yang tepat untuk kata ini</p><div className="mt-4 text-3xl font-black">{current.word}</div><div className="mt-6 grid gap-2 sm:grid-cols-2">{shuffle(PAIRS.find(p=>p[0]===current.word)||PAIRS[0]).map((x,i)=><button key={i} disabled={!!feedback} onClick={()=>choose(x)} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-left font-black hover:border-sky-300 hover:bg-sky-50">{x}</button>)}</div></div>}
+        {mode==="pasangan" && current && <div className="mt-7 text-center"><p className="text-sm font-bold text-slate-500">Cari pasangan yang tepat untuk kata ini</p><div className="mt-4 text-3xl font-black">{current.word}</div><div className="mt-6 grid gap-2 sm:grid-cols-2">{shuffle([...(PAIRS.find(p=>p[0]===current.word)?.slice(1) || []), "BUKU", "KUCING", "BOLA"].filter((x,i,a)=>a.indexOf(x)===i).slice(0,4)).map((x,i)=><button key={i} disabled={!!feedback} onClick={()=>choose(x)} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-left font-black hover:border-sky-300 hover:bg-sky-50">{x}</button>)}</div></div>}
 
         {mode==="makna" && current && <div className="mt-7 text-center"><p className="text-sm font-bold text-slate-500">Pilih kata yang berhubungan dengan <b>{current.word}</b></p><div className="mt-6 grid gap-2 sm:grid-cols-2">{options.map((x,i)=><button key={i} disabled={!!feedback} onClick={()=>choose(x)} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 font-black hover:border-sky-300 hover:bg-sky-50">{x}</button>)}</div></div>}
 
