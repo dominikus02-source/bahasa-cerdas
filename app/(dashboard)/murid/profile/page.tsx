@@ -24,6 +24,20 @@ import BadgeShowcasePanel from "@/components/profile/BadgeShowcasePanel";
 import ActivityChart, { type ChartDay } from "@/components/profile/ActivityChart";
 import SkillRadar from "@/components/arena/player/SkillRadar";
 
+interface HeroSocialPerson {
+  id: string;
+  displayName: string;
+  avatar: string | null;
+}
+
+interface HeroSocial {
+  followerCount: number;
+  followingCount: number;
+  profileLikeCount: number;
+  followers?: HeroSocialPerson[];
+  following?: HeroSocialPerson[];
+}
+
 interface UserData {
   id: string; fullName: string; nickname?: string | null; xp: number; level: number; streak: number;
   league: string; avatar?: string; coins: number; totalLikes: number; totalViews: number;

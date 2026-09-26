@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
-export default function MuridKuisGamePage() {
-  redirect("/murid/game/lobby");
+/** Legacy Kuis Tempur route: gunakan entry point canonical Arena. */
+export default function LegacyRedirect() {
+  redirect("/arena/game/kuis-tempur");
 }

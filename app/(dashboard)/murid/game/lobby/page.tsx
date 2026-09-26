@@ -1,5 +1,6 @@
-import GameLobby from '@/components/game/GameLobby';
+import { redirect } from "next/navigation";
 
-export default function MuridGameLobbyPage() {
-  return <GameLobby isHost={false} role="MURID" />;
+/** Legacy game lobby: Kuis Tempur sekarang punya satu entry point canonical di Arena. */
+export default function LegacyRedirect() {
+  redirect("/arena/game/kuis-tempur");
 }
