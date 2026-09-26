@@ -277,7 +277,7 @@ export default function KomunitasPage() {
               <Link key={c.id} href={`/guru/komunitas/${c.id}`}>
                 <Card className="p-5 h-full hover:shadow-lg transition-all border border-slate-100 hover:border-emerald-200">
                   <div className="flex items-start gap-3 mb-3">
-                    <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-lg shrink-0 overflow-hidden">
+                    <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center text-white font-bold text-lg shrink-0 overflow-hidden">
                       <span className="relative z-0">{c.name.charAt(0)}</span>
                       {c.avatarUrl && (
                         <img src={c.avatarUrl} alt={c.name} className="absolute inset-0 z-10 w-full h-full rounded-xl object-cover" onError={e => (e.currentTarget.style.display = "none")} loading="lazy" />
@@ -346,7 +346,7 @@ export default function KomunitasPage() {
               <Card key={c.id} className="p-5 border border-slate-100">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-3 flex-1">
-                    <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-lg shrink-0 overflow-hidden">
+                    <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center text-white font-bold text-lg shrink-0 overflow-hidden">
                       <span className="relative z-0">{c.name.charAt(0)}</span>
                       {c.avatarUrl && (
                         <img src={c.avatarUrl} alt={c.name} className="absolute inset-0 z-10 w-full h-full rounded-xl object-cover" onError={e => (e.currentTarget.style.display = "none")} loading="lazy" />
