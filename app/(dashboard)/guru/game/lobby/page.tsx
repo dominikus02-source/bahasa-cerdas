@@ -46,7 +46,7 @@ export default function GuruGameLobbyPage() {
   }, [roomCode]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50 p-8">
+    <div className="min-h-screen p-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <Link href="/guru/game" className="text-emerald-600 hover:underline text-sm flex items-center gap-1 mb-4">
@@ -93,7 +93,7 @@ export default function GuruGameLobbyPage() {
               <button
                 onClick={handleCreateRoom}
                 type="button"
-                className="w-full py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
+                className="w-full py-3 bg-gradient-to-r from-blue-700 to-sky-600 text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
               >
                 Buat Ruangan
               </button>
@@ -124,7 +124,7 @@ export default function GuruGameLobbyPage() {
                 <div className="flex gap-3">
                   <Link
                     href={`/guru/game/lobby?code=${roomCode}&mode=${selectedMode}`}
-                    className="flex-1 py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-xl font-medium text-center hover:opacity-90 transition-opacity"
+                    className="flex-1 py-3 bg-gradient-to-r from-blue-700 to-sky-600 text-white rounded-xl font-medium text-center hover:opacity-90 transition-opacity"
                   >
                     Buka Ruangan
                   </Link>
