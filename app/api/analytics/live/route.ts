@@ -14,7 +14,7 @@
  */
 import { NextResponse } from "next/server"
 import { getUser } from "@/lib/supabase/server"
-import { getOnlineUsers, getTotalKaryaCount, isPresenceAvailable, PRESENCE_TTL_SECONDS } from "@/lib/presence"
+import { getOnlineUsers, getTotalKaryaCount, PRESENCE_TTL_SECONDS } from "@/lib/presence"
 
 export const dynamic = "force-dynamic"
 
@@ -39,7 +39,7 @@ export async function GET() {
       totalKarya,
       generatedAt: new Date().toISOString(),
       presenceWindowSeconds: PRESENCE_TTL_SECONDS,
-      presenceAvailable: isPresenceAvailable(),
+      presenceAvailable: online.available,
     })
   } catch (error) {
     console.error("GET /api/analytics/live error:", error)
