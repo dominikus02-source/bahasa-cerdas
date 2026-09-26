@@ -379,7 +379,34 @@ export function buildPuzzle(options: BuildPuzzleOptions): TtsPuzzle {
   const cols = Math.max(cfg.minCols, maxC + 1);
 
   if (words.length === 0) {
-    return buildPuzzle({ level: 1, seed: options.seed });
+    // Jangan pernah jatuh ke Level 1. Sebelumnya fallback ini membuat preview
+    // level tertentu berubah menjadi "Keluarga Inti" sehingga kartu 1 muncul
+    // berulang di level 6/11 dan progression terlihat rusak.
+    const fallback = (poolAll.length ? poolAll : options.wordPool ?? [])[0];
+    if (!fallback) {
+      throw new Error(`TTS bank kosong untuk level ${options.level}`);
+    }
+    const safeAnswer = String(fallback.answer).toUpperCase().replace(/[^A-Z]/g, "");
+    if (safeAnswer.length < 3) {
+      throw new Error(`TTS fallback tidak valid untuk level ${options.level}`);
+    }
+    const fallbackWord: TtsWordDef = {
+      number: 1,
+      dir: "A",
+      answer: safeAnswer,
+      clue: fallback.clue,
+      row: 0,
+      col: 0,
+    };
+    return {
+      id: cfg.level,
+      title: cfg.title,
+      subtitle: cfg.subtitle,
+      mascot: cfg.mascot,
+      rows: Math.max(cfg.minRows, 1),
+      cols: Math.max(cfg.minCols, safeAnswer.length),
+      words: [fallbackWord],
+    };
   }
 
   return {
