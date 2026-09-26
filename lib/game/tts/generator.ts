@@ -200,9 +200,15 @@ export function buildPuzzle(options: BuildPuzzleOptions): TtsPuzzle {
       tier: w.tier ?? derived.tier,
     };
   });
-  const pool: TtsWord[] = enriched
+  const eligiblePool: TtsWord[] = enriched
     .filter((e) => canAppearInLevel(e.word.answer, e.tier, options.level))
     .map((e) => ({ ...e.word, clueType: e.clueType, tier: e.tier }));
+  // Jika gate difficulty terlalu ketat untuk tema tertentu, tetap gunakan
+  // bank tema level tersebut. Identitas level tidak boleh berubah hanya karena
+  // metadata tier belum lengkap/terkalibrasi.
+  const pool: TtsWord[] = eligiblePool.length >= cfg.minWords
+    ? eligiblePool
+    : poolAll;
 
   // ── P8I: peta konflik petunjuk↔jawaban (anti-bocor perpotongan) ──
   const conflictMap = new Map<string, Set<string>>();
