@@ -273,7 +273,7 @@ export default function GuruArtikelPage() {
             </div>
 
             <div className="flex gap-3 pt-2">
-              <Button type="submit" className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-8 py-2.5 rounded-xl font-semibold">
+              <Button type="submit" className="bg-gradient-to-r from-blue-700 to-blue-500 hover:from-blue-800 hover:to-blue-600 text-white px-8 py-2.5 rounded-xl font-semibold">
                 {editId ? "Update Artikel" : "Simpan Artikel"}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm} className="rounded-xl">
