@@ -104,7 +104,7 @@ export function DailyActionCard() {
     READING: { href: "/arena/jalur-cerdas", label: "Latih kemampuan membaca" },
     GRAMMAR: { href: "/arena/jalur-cerdas", label: "Perkuat tata bahasa" },
     VOCABULARY: { href: "/arena/jalur-cerdas", label: "Perluas kosakata" },
-    WRITING: { href: "/murid/karya/new", label: "Asah kemampuan menulis" },
+    WRITING: { href: "/murid/karya/tulis", label: "Asah kemampuan menulis" },
     LITERATURE: { href: "/arena/jalur-cerdas", label: "Jelajahi sastra" },
     LISTENING: { href: "/arena/jalur-cerdas", label: "Latih kemampuan mendengarkan" },
     SPEAKING: { href: "/arena/jalur-cerdas", label: "Asah kemampuan berbicara" },
