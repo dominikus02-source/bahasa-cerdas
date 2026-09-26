@@ -453,11 +453,11 @@ export default function GuruFeedKaryaPage() {
     <div className="space-y-6 max-w-4xl">
       {/* ── Header ── */}
       {user && (
-        <div className="bg-gradient-to-br from-emerald-600 via-green-600 to-teal-700 rounded-2xl p-5 text-white">
+        <div className="bc-guru-hero rounded-2xl p-5 text-white">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
               <p className="font-bold text-lg">Pusat Literasi</p>
-              <p className="text-sm text-emerald-200 mt-0.5">Pantau, apresiasi, dan banggakan karya literasi murid-muridmu</p>
+              <p className="bc-guru-hero-muted mt-0.5 text-sm">Pantau, apresiasi, dan banggakan karya literasi murid-muridmu</p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
               <IconPen size={18} />
@@ -479,12 +479,12 @@ export default function GuruFeedKaryaPage() {
       {/* ── Statistik ── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: "Total Karya", value: stats?.total?.karya ?? "–", icon: <IconPen size={16} />, tint: "bg-emerald-100 text-emerald-600" },
+          { label: "Total Karya", value: stats?.total?.karya ?? "–", icon: <IconPen size={16} />, tint: "bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300" },
           { label: "Penulis", value: stats?.total?.penulis ?? "–", icon: <Users size={16} />, tint: "bg-violet-100 text-violet-600" },
           { label: "Apresiasi", value: stats?.total?.likes ?? "–", icon: <IconHeart size={16} />, tint: "bg-rose-100 text-rose-500" },
           { label: "Dibaca", value: stats?.total?.views ?? "–", icon: <IconEye size={16} />, tint: "bg-sky-100 text-sky-600" },
         ].map((s, i) => (
-          <div key={i} className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
+          <div key={i} className="bc-guru-stat-card p-4">
             <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${s.tint} mb-2`}>{s.icon}</div>
             <p className="text-xl font-bold text-gray-900 leading-none">{typeof s.value === "number" ? s.value.toLocaleString("id-ID") : s.value}</p>
             <p className="text-[11px] text-gray-400 mt-1">{s.label}</p>
@@ -495,14 +495,14 @@ export default function GuruFeedKaryaPage() {
       {/* ── Karya Terbaru ── */}
       <section>
         <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-          <h2 className="font-bold text-gray-900 flex items-center gap-2"><Sparkles size={16} className="text-emerald-600" /> Karya Terbaru</h2>
+          <h2 className="font-bold text-gray-900 flex items-center gap-2"><Sparkles size={16} className="text-blue-600 dark:text-blue-300" /> Karya Terbaru</h2>
           <div className="relative">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Cari judul, isi, atau penulis..."
-              className="w-56 pl-9 pr-3 py-2 bg-white border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400 placeholder:text-gray-400"
+              className="w-56 pl-9 pr-3 py-2 bg-white border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 dark:focus:ring-blue-900/60 placeholder:text-gray-400"
             />
           </div>
         </div>
@@ -513,7 +513,7 @@ export default function GuruFeedKaryaPage() {
             onClick={() => setFeedScope("students")}
             className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
               feedScope === "students"
-                ? "bg-emerald-600 text-white shadow-lg shadow-emerald-200"
+                ? "bg-blue-700 text-white shadow-lg shadow-blue-200/70 dark:bg-blue-600 dark:shadow-none"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
           >
@@ -523,7 +523,7 @@ export default function GuruFeedKaryaPage() {
             onClick={() => setFeedScope("global")}
             className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
               feedScope === "global"
-                ? "bg-emerald-600 text-white shadow-lg shadow-emerald-200"
+                ? "bg-blue-700 text-white shadow-lg shadow-blue-200/70 dark:bg-blue-600 dark:shadow-none"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
           >
@@ -537,7 +537,7 @@ export default function GuruFeedKaryaPage() {
           <select
             value={selectedGroupId}
             onChange={e => setSelectedGroupId(e.target.value)}
-            className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400 appearance-none cursor-pointer"
+            className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 dark:focus:ring-blue-900/60 appearance-none cursor-pointer"
             style={{
               backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
               backgroundRepeat: 'no-repeat',
@@ -559,7 +559,7 @@ export default function GuruFeedKaryaPage() {
           <button key={type} onClick={() => setActiveType(type)}
             className={`whitespace-nowrap px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               activeType === type
-                ? "bg-emerald-600 text-white shadow-lg shadow-emerald-200"
+                ? "bg-blue-700 text-white shadow-lg shadow-blue-200/70 dark:bg-blue-600 dark:shadow-none"
                 : "bg-gray-100 text-gray-500 hover:bg-gray-200"
             }`}
           >
@@ -610,7 +610,7 @@ export default function GuruFeedKaryaPage() {
             const m = TYPE_META[karya.type] || TYPE_META.OPINI;
             const isLiked = likedMap[karya.id];
             return (
-            <div key={karya.id} onClick={() => openModal(karya)} className="block bg-white rounded-xl border border-gray-100 hover:shadow-lg hover:border-emerald-200 transition-all overflow-hidden group cursor-pointer">
+            <div key={karya.id} onClick={() => openModal(karya)} className="bc-guru-surface-interactive block overflow-hidden rounded-xl group cursor-pointer">
               <div className="p-5">
                 <div className="flex items-center gap-2 mb-3 flex-wrap">
                   <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${m.badge}`}>{m.label}</span>
@@ -625,7 +625,7 @@ export default function GuruFeedKaryaPage() {
                   {karya.excerpt || karya.content.replace(/<[^>]*>/g, "").slice(0, 200)}
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="relative w-7 h-7 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+                  <div className="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-sky-500 text-[10px] font-bold text-white">
                     <span className="relative z-0">{karya.user.fullName.charAt(0)}</span>
                     {karya.user.avatar && (
                       <img src={karya.user.avatar} alt="" className="absolute inset-0 z-10 w-full h-full rounded-full object-cover" onError={e => (e.currentTarget.style.display = "none")} />
@@ -686,7 +686,7 @@ export default function GuruFeedKaryaPage() {
         {statsLoading ? (
           <div className="flex justify-center py-10"><div className="animate-spin w-6 h-6 border-[3px] border-violet-500 border-t-transparent rounded-full" /></div>
         ) : !stats?.pilihanAI?.length ? (
-          <p className="text-sm text-gray-400 py-6 text-center bg-white rounded-2xl border border-gray-100">Belum ada rekomendasi. Ajak muridmu berkarya dulu.</p>
+          <p className="bc-guru-surface rounded-2xl py-6 text-center text-sm text-gray-400">Belum ada rekomendasi. Ajak muridmu berkarya dulu.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {stats.pilihanAI.map((k: any) => (
@@ -709,7 +709,7 @@ export default function GuruFeedKaryaPage() {
       <section>
         <h2 className="font-bold text-gray-900 flex items-center gap-2 mb-3"><IconHeart size={16} className="text-rose-500" /> Paling Banyak Diapresiasi</h2>
         {!stats?.palingPopuler?.length ? (
-          <p className="text-sm text-gray-400 py-6 text-center bg-white rounded-2xl border border-gray-100">Belum ada karya yang diapresiasi.</p>
+          <p className="bc-guru-surface rounded-2xl py-6 text-center text-sm text-gray-400">Belum ada karya yang diapresiasi.</p>
         ) : (
           <div className="space-y-2">
             {stats.palingPopuler.map((k: any, i: number) => (
@@ -775,7 +775,7 @@ export default function GuruFeedKaryaPage() {
               )}
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+            <div className="bc-guru-surface rounded-2xl p-5">
               <p className="font-bold text-sm text-gray-900 flex items-center gap-2 mb-3"><SchoolIcon size={15} className="text-emerald-600" /> Sekolah Paling Aktif</p>
               {leaderboard.topSchools.length === 0 ? (
                 <p className="text-xs text-gray-400">Belum ada data minggu ini.</p>
@@ -833,7 +833,7 @@ export default function GuruFeedKaryaPage() {
               )}
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+            <div className="bc-guru-surface rounded-2xl p-5">
               <p className="font-bold text-sm text-gray-900 flex items-center gap-2 mb-3"><Medal size={15} className="text-violet-500" /> Guru Penggerak Literasi</p>
               {leaderboard.topTeachers.length === 0 ? (
                 <p className="text-xs text-gray-400">Belum ada karya dari kelasmu minggu ini.</p>
@@ -859,11 +859,11 @@ export default function GuruFeedKaryaPage() {
       <section>
         <h2 className="font-bold text-gray-900 flex items-center gap-2 mb-3"><Users size={16} className="text-emerald-600" /> Penulis Teraktif</h2>
         {!stats?.penulisTeraktif?.length ? (
-          <p className="text-sm text-gray-400 py-6 text-center bg-white rounded-2xl border border-gray-100">Belum ada penulis di kelasmu.</p>
+          <p className="bc-guru-surface rounded-2xl py-6 text-center text-sm text-gray-400">Belum ada penulis di kelasmu.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {stats.penulisTeraktif.map((p: any) => (
-              <div key={p.user.id} className="flex items-center gap-3 p-2.5 bg-white rounded-xl border border-gray-100 hover:border-emerald-200 transition-all">
+              <div key={p.user.id} className="bc-guru-surface-interactive flex items-center gap-3 rounded-xl p-2.5">
                 <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${p.rank === 1 ? "bg-emerald-500 text-white" : p.rank === 2 ? "bg-slate-400 text-white" : p.rank === 3 ? "bg-orange-300 text-white" : "bg-gray-100 text-gray-500"}`}>{p.rank}</span>
                 <div className="relative w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center text-violet-700 text-[10px] font-bold shrink-0">
                   <span className="relative z-0">{p.user.fullName.charAt(0)}</span>
@@ -886,7 +886,7 @@ export default function GuruFeedKaryaPage() {
       {/* ── Tantangan Literasi ── */}
       {stats?.challenge && (
         <section>
-          <div className="bg-gradient-to-br from-violet-600 via-purple-600 to-fuchsia-600 rounded-2xl p-5 text-white relative overflow-hidden">
+          <div className="bc-guru-hero relative overflow-hidden rounded-2xl p-5 text-white">
             <div className="absolute -right-4 -top-4 opacity-20"><Trophy size={100} /></div>
             <p className="text-[11px] font-bold uppercase tracking-wider text-violet-200 flex items-center gap-1.5"><Trophy size={13} /> Tantangan Literasi · {stats.challenge.weekLabel}</p>
             <h2 className="font-bold text-lg mt-1.5">{stats.challenge.theme}</h2>
@@ -903,7 +903,7 @@ export default function GuruFeedKaryaPage() {
       {stats?.insight?.length > 0 && (
         <section>
           <h2 className="font-bold text-gray-900 flex items-center gap-2 mb-3"><Lightbulb size={16} className="text-amber-500" /> Wawasan AI</h2>
-          <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm space-y-2.5">
+          <div className="bc-guru-surface rounded-2xl p-5 space-y-2.5">
             {stats.insight.map((t: string, i: number) => (
               <p key={i} className="text-sm text-gray-700 flex items-start gap-2"><Sparkles size={14} className="text-amber-400 mt-0.5 shrink-0" />{t}</p>
             ))}
@@ -917,7 +917,7 @@ export default function GuruFeedKaryaPage() {
           <h2 className="font-bold text-gray-900 flex items-center gap-2 mb-3"><Wand2 size={16} className="text-emerald-600" /> Rekomendasi untuk Guru</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {stats.rekomendasi.map((r: any, i: number) => (
-              <div key={i} className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm flex flex-col">
+              <div key={i} className="bc-guru-surface rounded-2xl p-4 flex flex-col">
                 <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-2">
                   {r.icon === "trophy" ? <Trophy size={16} /> : r.icon === "users" ? <Users size={16} /> : r.icon === "star" ? <Star size={16} /> : <IconPen size={16} />}
                 </div>
@@ -943,7 +943,7 @@ export default function GuruFeedKaryaPage() {
             <div className="p-6 max-h-[80vh] overflow-y-auto">
               {/* Author row */}
               <div className="flex items-center gap-3 mb-4">
-                <div className="relative w-9 h-9 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-sky-500 text-xs font-bold text-white">
                   <span className="relative z-0">{modalKarya.user.fullName.charAt(0)}</span>
                   {modalKarya.user.avatar && (
                     <img src={modalKarya.user.avatar} alt="" className="absolute inset-0 z-10 w-full h-full rounded-full object-cover" onError={e => (e.currentTarget.style.display = "none")} />
@@ -1072,7 +1072,7 @@ export default function GuruFeedKaryaPage() {
                   onChange={e => setCommentText(e.target.value)}
                   placeholder="Tulis komentar..."
                   rows={1}
-                  className="flex-1 px-4 py-2.5 bg-emerald-50 rounded-xl border border-emerald-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400 resize-none"
+                  className="flex-1 px-4 py-2.5 bg-emerald-50 rounded-xl border border-emerald-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500 dark:focus:ring-blue-900/60 resize-none"
                   onKeyDown={e => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
@@ -1096,14 +1096,14 @@ export default function GuruFeedKaryaPage() {
                   {comments.map(c => (
                     <div key={c.id} className="flex gap-3">
                       {c.user.id && !c.id.startsWith("temp-") ? (
-                        <Link href={`/profile/${c.user.id}`} className="relative w-7 h-7 rounded-full bg-gradient-to-br from-emerald-300 to-green-400 flex items-center justify-center text-white text-[10px] font-bold shrink-0 hover:ring-2 hover:ring-emerald-300 transition-all">
+                        <Link href={`/profile/${c.user.id}`} className="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-sky-400 text-[10px] font-bold text-white transition-all hover:ring-2 hover:ring-blue-300">
                           <span className="relative z-0">{c.user.fullName.charAt(0)}</span>
                           {c.user.avatar && (
                             <img src={c.user.avatar} alt="" className="absolute inset-0 z-10 w-full h-full rounded-full object-cover" onError={e => (e.currentTarget.style.display = "none")} />
                           )}
                         </Link>
                       ) : (
-                        <div className="relative w-7 h-7 rounded-full bg-gradient-to-br from-emerald-300 to-green-400 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+                        <div className="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-sky-400 text-[10px] font-bold text-white">
                           <span className="relative z-0">{c.user.fullName.charAt(0)}</span>
                           {c.user.avatar && (
                             <img src={c.user.avatar} alt="" className="absolute inset-0 z-10 w-full h-full rounded-full object-cover" onError={e => (e.currentTarget.style.display = "none")} />
