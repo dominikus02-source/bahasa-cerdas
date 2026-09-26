@@ -275,6 +275,7 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
   const [result, setResult] = useState<null | { score: number; stars: number; bestStreak: number; xpEarned: number; gameOver: boolean }>(null);
   const xpSentRef = useRef(false);
   const supabaseIdRef = useRef("");
+  const gameSessionIdRef = useRef("");
 
   const level = LEVELS.find((l) => l.id === levelId) || LEVELS[0];
 
@@ -331,7 +332,7 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
       fetch("/api/game/xp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ score: finalScore, correct: 0, wrong: 0, maxStreak: finalBestStreak, xpEarned, gameType: "SUSUN_KATA", supabaseId: supabaseIdRef.current }),
+        body: JSON.stringify({ score: finalScore, correct: 0, wrong: 0, maxStreak: finalBestStreak, xpEarned, gameType: "SUSUN_KATA", supabaseId: supabaseIdRef.current, gameSessionId: gameSessionIdRef.current }),
       }).catch(() => { /* abaikan */ });
     }
   }, [level.rounds, levelId]);
@@ -377,6 +378,7 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
   };
 
   const startLevel = (id: number) => {
+    gameSessionIdRef.current = crypto.randomUUID();
     sfx.start(); setSoundOn(isSoundOn()); startBGM();
     const lv = LEVELS.find((l) => l.id === id) || LEVELS[0];
     let candidates = SCRAMBLE_WORDS.filter((w) => w.word.length >= lv.min && w.word.length <= lv.max);
