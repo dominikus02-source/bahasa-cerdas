@@ -11,6 +11,7 @@ import {
 import Burst from "@/components/game/Burst";
 import ComboFlash from "@/components/game/ComboFlash";
 import { sfx, haptic, isSoundOn, toggleSound, startBGM, stopBGM } from "@/lib/game/sound";
+import GameBackButton from "@/components/game/GameBackButton";
 
 interface Q {
   id: string;
