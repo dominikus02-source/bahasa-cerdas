@@ -21,6 +21,7 @@
  */
 
 import { Redis } from "@upstash/redis"
+import { labelForPresenceLocation } from "@/lib/presence-location"
 
 const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL
 const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN
@@ -39,6 +40,16 @@ export type PresenceRole = "GURU" | "MURID" | "ADMIN"
 
 interface PresenceValue {
   r: PresenceRole
+  p?: string
+}
+
+export interface PresenceLocationBreakdown {
+  key: string
+  label: string
+  total: number
+  guru: number
+  murid: number
+  admin: number
 }
 
 export interface OnlineBreakdown {
@@ -46,17 +57,19 @@ export interface OnlineBreakdown {
   guru: number
   murid: number
   admin: number
+  locations: PresenceLocationBreakdown[]
 }
 
 // ─── Write: Set/refresh presence key ─────────────────────────
 export async function setPresence(
   userId: string,
-  role: PresenceRole
+  role: PresenceRole,
+  locationKey?: string,
 ): Promise<boolean> {
   if (!redis) return false
   try {
     const key = `${PRESENCE_KEY_PREFIX}${userId}`
-    const value: PresenceValue = { r: role }
+    const value: PresenceValue = locationKey ? { r: role, p: locationKey } : { r: role }
     await redis.set(key, value, { ex: PRESENCE_TTL_SECONDS })
     return true
   } catch {
@@ -66,7 +79,7 @@ export async function setPresence(
 
 // ─── Read: Aggregate online users from Redis ─────────────────
 export async function getOnlineUsers(): Promise<OnlineBreakdown> {
-  const empty: OnlineBreakdown = { total: 0, guru: 0, murid: 0, admin: 0 }
+  const empty: OnlineBreakdown = { total: 0, guru: 0, murid: 0, admin: 0, locations: [] }
   if (!redis) return empty
 
   try {
@@ -82,13 +95,31 @@ export async function getOnlineUsers(): Promise<OnlineBreakdown> {
     let guru = 0
     let murid = 0
     let admin = 0
+    const locations = new Map<string, PresenceLocationBreakdown>()
 
     for (const val of values) {
       if (!val || typeof val !== "object") continue
-      const role = (val as PresenceValue).r
+      const presence = val as PresenceValue
+      const role = presence.r
       if (role === "GURU") guru++
       else if (role === "MURID") murid++
       else if (role === "ADMIN") admin++
+      else continue
+
+      const key = presence.p || "unknown"
+      const current = locations.get(key) ?? {
+        key,
+        label: labelForPresenceLocation(presence.p),
+        total: 0,
+        guru: 0,
+        murid: 0,
+        admin: 0,
+      }
+      current.total++
+      if (role === "GURU") current.guru++
+      else if (role === "MURID") current.murid++
+      else current.admin++
+      locations.set(key, current)
     }
 
     return {
@@ -96,6 +127,7 @@ export async function getOnlineUsers(): Promise<OnlineBreakdown> {
       guru,
       murid,
       admin,
+      locations: Array.from(locations.values()).sort((a, b) => b.total - a.total || a.label.localeCompare(b.label)),
     }
   } catch {
     return empty
