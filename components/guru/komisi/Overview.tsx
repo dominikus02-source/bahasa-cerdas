@@ -49,16 +49,16 @@ export function Overview({
   return (
     <section aria-label="Ringkasan penghasilan">
       {/* Hero */}
-      <div className="rounded-2xl bg-card border border-border p-5 lg:p-7">
+      <div className="bc-guru-hero rounded-2xl p-5 lg:p-7">
         <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
           Guru Cerdas Sejahtera
         </p>
-        <h1 className="mt-1 text-2xl lg:text-3xl font-bold text-foreground">Penghasilan Saya</h1>
+        <h1 className="mt-1 text-2xl lg:text-3xl font-bold text-white">Penghasilan Saya</h1>
 
         <div className="mt-4 flex flex-wrap items-end gap-x-8 gap-y-4">
           <div>
-            <p className="text-sm text-muted-foreground">Saldo tersedia untuk dicairkan</p>
-            <p className="mt-1 text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground">
+            <p className="text-sm text-blue-100/85">Saldo tersedia untuk dicairkan</p>
+            <p className="mt-1 text-4xl lg:text-5xl font-extrabold tracking-tight text-white">
               {formatRupiah(available)}
             </p>
             {available === 0 && (
@@ -140,7 +140,7 @@ export function Overview({
                   tickFormatter={(v: number) => (v >= 1000 ? `${Math.round(v / 1000)}rb` : String(v))}
                 />
                 <Tooltip
-                  cursor={{ fill: "var(--clr-violet-soft, rgba(139,92,246,0.12))" }}
+                  cursor={{ fill: "rgba(37,99,235,0.10)" }}
                   formatter={(value) => [formatRupiah(Number(value)), "Penghasilan"]}
                   labelFormatter={(label) => `Bulan: ${label}`}
                   contentStyle={{
@@ -151,7 +151,7 @@ export function Overview({
                     fontSize: 12,
                   }}
                 />
-                <Bar dataKey="Penghasilan" fill="#8b5cf6" radius={[6, 6, 0, 0]} maxBarSize={44} />
+                <Bar dataKey="Penghasilan" fill="#2563eb" radius={[6, 6, 0, 0]} maxBarSize={44} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -172,7 +172,7 @@ export function Overview({
 
 function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="rounded-2xl bg-card border border-border p-4">
+    <div className="bc-guru-stat-card rounded-2xl p-4">
       <div className="flex items-center gap-2 text-muted-foreground">
         {icon}
         <span className="text-xs font-medium">{label}</span>
