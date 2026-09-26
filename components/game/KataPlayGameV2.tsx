@@ -234,7 +234,7 @@ export default function KataPlayGame({ hideBackButton = false }: { hideBackButto
       <div className="game-env game-env-kataplay game-env-bg min-h-screen px-4 py-5">
         <div className="max-w-xl mx-auto">
           <div className="flex items-center gap-2 mb-4">
-            <GameBackButton onClick={exitGame} label="Kembali" title="Kembali ke Jalur Kata" />
+            <GameBackButton onClick={exitGame} label="Kembali ke Jalur Kata" title="Kembali ke Jalur Kata" />
             <div className="flex-1">
               <div className="flex justify-between text-xs font-black"><span>LEVEL {level.level} · {unit.title}</span><span>{current + 1}/{questions.length}</span></div>
               <div className="h-2 bg-black/10 rounded-full mt-1 overflow-hidden"><div className="h-full bg-black rounded-full" style={{ width: ((current + 1) / questions.length) * 100 + "%" }} /></div>
