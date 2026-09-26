@@ -1,7 +1,8 @@
 "use client"
 
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { ArrowLeft, Check, ChevronRight, Heart, Lock, Sparkles, Star, Trophy } from "lucide-react"
+import { Check, ChevronRight, Heart, Lock, Sparkles, Star, Trophy } from "lucide-react"
+import GameBackButton from "@/components/game/GameBackButton"
 import { useRouter } from "next/navigation"
 import { setQuiet } from "@/lib/notif-quiet"
 import { haptic, isSoundOn, sfx, startBGM, stopBGM } from "@/lib/game/sound"
