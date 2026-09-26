@@ -341,6 +341,26 @@ export default function MuridProfilePage() {
     .sort((a, b) => b.progress / b.target - a.progress / a.target)[0];
 
   const unlockedBadges = (showcaseBadges ?? []).filter(b => b.unlocked);
+  const premiumCard = (
+    <Link
+      href="/murid/premium"
+      className={`group relative mb-6 block overflow-hidden rounded-2xl p-5 text-white shadow-lg transition-transform hover:-translate-y-0.5 ${user.isPremium ? "bg-gradient-to-br from-[#172554] via-[#4338ca] to-[#7c3aed]" : "bg-gradient-to-br from-[#111827] via-[#312e81] to-[#6d28d9]"}`}
+    >
+      <div className="pointer-events-none absolute -right-10 -top-12 h-32 w-32 rounded-full bg-cyan-300/15 blur-2xl" />
+      <div className="relative flex items-center justify-between gap-4">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15"><span className="text-lg">✦</span></div>
+          <div className="min-w-0">
+            <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-cyan-200">{user.isPremium ? "Premium aktif" : "Naik ke Premium"}</p>
+            <h2 className="mt-0.5 text-base font-extrabold">{user.isPremium ? "Kelola Premium kamu" : "Buka pengalaman belajar Premium"}</h2>
+            <p className="mt-1 text-xs text-blue-100/75">{user.isPremium ? "Lihat status dan masa aktif Premium." : "Latihan personal, AI Mentor, dan insight perkembangan."}</p>
+          </div>
+        </div>
+        <ChevronRight className="h-5 w-5 shrink-0 text-white/70 transition-transform group-hover:translate-x-1" />
+      </div>
+    </Link>
+  );
+
 
   const events: FeedEvent[] = [
     ...xpHistory.map(h => ({
@@ -379,6 +399,7 @@ export default function MuridProfilePage() {
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 md:px-6 lg:px-8">
+      {premiumCard}
       <style>{`
         @keyframes profile-flame{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.12) rotate(2deg)}}
         @keyframes profile-badge-pop{0%{transform:scale(0)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
