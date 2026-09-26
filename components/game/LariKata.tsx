@@ -8,6 +8,7 @@ import {
   Volume2, VolumeX, Loader2, Play, Check,
 } from "lucide-react";
 import { sfx, haptic, isSoundOn, toggleSound, startBGM, stopBGM } from "@/lib/game/sound";
+import GameBackButton from "@/components/game/GameBackButton";
 
 interface Question {
   text: string;
@@ -42,6 +43,7 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const supabaseIdRef = useRef("");
+  const gameSessionIdRef = useRef("");
   const scoreRef = useRef(0);
   const correctRef = useRef(0);
   const wrongRef = useRef(0);
@@ -66,6 +68,7 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
   useEffect(() => () => stopBGM(), []);
 
   const startGame = useCallback(async () => {
+    gameSessionIdRef.current = crypto.randomUUID();
     sfx.start(); setSoundOn(isSoundOn()); startBGM();
     setLoading(true);
     try {
@@ -98,7 +101,7 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
       const res = await fetch("/api/katastra/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ score: scoreRef.current, correct: correctRef.current, wrong: wrongRef.current, maxStreak: maxStreakRef.current, mode: "dash", supabaseId: supabaseIdRef.current }),
+        body: JSON.stringify({ score: scoreRef.current, correct: correctRef.current, wrong: wrongRef.current, maxStreak: maxStreakRef.current, mode: "dash", supabaseId: supabaseIdRef.current, gameSessionId: gameSessionIdRef.current }),
       });
       const data = await res.json();
       setResult(data);
@@ -155,7 +158,7 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
   /* ---------- START ---------- */
   if (screen === "start") {
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150C06] dark:to-[#201008] text-[#161B3A] dark:text-[#F1EDFF]">
+      <div className="game-env game-env-lari fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150C06] dark:to-[#201008] text-[#161B3A] dark:text-[#F1EDFF]">
         <style>{`@keyframes lk-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
         @keyframes lk-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}
         @keyframes lk-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -170,6 +173,7 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2.5">
+              {!hideBackButton && <GameBackButton href="/arena/game" label="Kembali ke Arena" title="Kembali ke Arena" />}
               <div className={`lk-logo w-11 h-11 bg-[#F59E0B] rounded-2xl ${chunky} !shadow-[4px_4px_0_#EA580C] flex items-center justify-center`}>
                 <Zap className="w-6 h-6 text-white" />
               </div>
@@ -216,13 +220,11 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
   /* ---------- PLAYING ---------- */
   if (screen === "playing" && q) {
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150C06] dark:to-[#201008] text-[#161B3A] dark:text-[#F1EDFF]">
+      <div className="game-env game-env-lari fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150C06] dark:to-[#201008] text-[#161B3A] dark:text-[#F1EDFF]">
         <div className="relative max-w-lg mx-auto px-5 pt-4 pb-8 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-3">
             {!hideBackButton && (
-              <button className={`${btnBase} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => { stopBGM(); setScreen("start"); }} aria-label="Keluar">
-                <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
-              </button>
+              <GameBackButton onClick={() => { stopBGM(); setScreen("start"); }} label="Kembali" title="Kembali ke menu Lari Kata" />
             )}
             <div className={`flex items-center gap-2 ${hideBackButton ? "ml-auto" : ""}`}>
               {streak > 0 && (
@@ -284,7 +286,7 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
 
   /* ---------- RESULT ---------- */
   return (
-    <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150C06] dark:to-[#201008] text-[#161B3A] dark:text-[#F1EDFF]">
+    <div className="game-env game-env-lari fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150C06] dark:to-[#201008] text-[#161B3A] dark:text-[#F1EDFF]">
       <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col items-center justify-center text-center">
         <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 180 }}
           className="w-24 h-24 rounded-[28px] bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center shadow-2xl mb-5 border-4 border-[#161B3A] dark:border-white/25">

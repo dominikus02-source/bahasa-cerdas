@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { setQuiet } from "@/lib/notif-quiet";
+import GameBackButton from "@/components/game/GameBackButton";
 import {
   Play,
   Pause,
@@ -992,7 +993,7 @@ export default function ZelbyDash() {
   const btn = `inline-flex items-center justify-center gap-2 font-extrabold rounded-2xl ${chunky} transition-transform active:translate-x-1.5 active:translate-y-1.5 active:shadow-none hover:-translate-x-0.5 hover:-translate-y-0.5`;
 
   return (
-    <div className="fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#061214] dark:to-[#0A1C20] text-[#161B3A] dark:text-[#F1EDFF]">
+    <div className="game-env game-env-zelby fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#061214] dark:to-[#0A1C20] text-[#161B3A] dark:text-[#F1EDFF]">
       <style>{`
         @keyframes pk-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
         @keyframes pk-pop{0%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.3) rotate(8deg)}100%{transform:scale(1) rotate(0)}}
@@ -1018,6 +1019,7 @@ export default function ZelbyDash() {
         {/* Header */}
         <div className="w-full flex items-center justify-between mb-4">
           <div className="flex items-center gap-2.5">
+            <GameBackButton href="/arena/game" label="Kembali ke Arena" title="Kembali ke Arena" />
             <div className="w-11 h-11 rounded-2xl overflow-hidden border-4 border-[#161B3A] dark:border-white/25 shadow-[4px_4px_0_#0891B2] shrink-0 bg-white dark:bg-[#0C2228] pk-pop">
               <img
                 src="/junior/karakter/zelby_happy.webp"
@@ -1154,13 +1156,7 @@ export default function ZelbyDash() {
 
             {/* Controls */}
             <div className="w-full max-w-[480px] flex justify-between mt-4">
-              <button
-                onClick={quit}
-                className={`${btn} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`}
-                aria-label="Keluar"
-              >
-                <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
-              </button>
+              <GameBackButton onClick={quit} label="Kembali" title="Kembali ke menu Petualangan Hutan Kata" />
               <p className="text-xs font-bold opacity-60 self-center flex items-center gap-1">
                 <svg
                   className="w-4 h-4"
@@ -1178,7 +1174,7 @@ export default function ZelbyDash() {
               </p>
               <button
                 onClick={togglePause}
-                className={`${btn} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white`}
+                className={`${btn} game-sound-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white`}
                 aria-label={paused ? "Lanjutkan" : "Jeda"}
               >
                 {paused ? (

@@ -53,8 +53,9 @@ import { buildPuzzle } from "@/lib/game/tts/generator";
 import { TTS_LEVELS } from "@/lib/game/tts/levels";
 import { dailySeed, randomSeed } from "@/lib/game/tts/seed";
 import { classifyClueType, hintNudgeFor } from "@/lib/game/tts/difficulty";
-import type { Dir, Mascot, TtsWordDef as WordDef } from "@/lib/game/tts/types";
+import type { Dir, Mascot, TtsWord, TtsWordDef as WordDef } from "@/lib/game/tts/types";
 import { sfx, isSoundOn, toggleSound, haptic } from "@/lib/game/sound";
+import GameBackButton from "@/components/game/GameBackButton";
 import {
   HEARTS_MAX, HEART_REGEN_MS, type HeartsState, freshHearts, regenHearts, spendHeart, nextHeartInMs,
   type StreakState, STREAK_KEY, tierFor, bumpStreak, streakXpBonus,
@@ -227,16 +228,54 @@ export default function TekaTekiSilang() {
 
   // Mode soal: "Hari Ini" (seed harian, sama utk semua, ganti tiap hari) vs
   // "Acak" (seed acak tiap main). Ganti seed → puzzle baru.
-  const [seed, setSeed] = useState(() => dailySeed(1));
-  const [seedMode, setSeedMode] = useState<"daily" | "acak">("daily");
+  const [seed, setSeed] = useState(() => randomSeed());
+  const [seedMode, setSeedMode] = useState<"daily" | "acak">("acak");
+  const [bankWords, setBankWords] = useState<TtsWord[]>([]);
+  const [bankStatus, setBankStatus] = useState<"loading" | "ready" | "fallback">("loading");
   const [seen, setSeen] = useState<string[]>([]);
   const [combo, setCombo] = useState(0);
   const [bestCombo, setBestCombo] = useState(0);
   const [soundOn, setSoundOn] = useState(true);
 
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/game/tts-bank", { cache: "no-store" })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("bank unavailable");
+        return res.json();
+      })
+      .then((data) => {
+        if (cancelled) return;
+        const words: TtsWord[] = Array.isArray(data.words)
+          ? data.words
+              .map((w: { answer?: unknown; clue?: unknown; tier?: unknown }) => ({
+                answer: String(w.answer ?? ""),
+                clue: String(w.clue ?? ""),
+                tier: w.tier === 1 || w.tier === 2 || w.tier === 3 ? w.tier : 2,
+              }))
+              .filter((w: TtsWord) => w.answer.length >= 3 && w.answer.length <= 14 && w.clue.length >= 8)
+          : [];
+        if (words.length >= 20) {
+          setBankWords(words);
+          setBankStatus("ready");
+        } else {
+          setBankStatus("fallback");
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setBankStatus("fallback");
+      });
+    return () => { cancelled = true; };
+  }, []);
+
   const puzzle = useMemo(
-    () => buildPuzzle({ level: puzzleId, seed, avoidAnswers: seen }),
-    [puzzleId, seed, seen]
+    () => buildPuzzle({
+      level: puzzleId,
+      seed,
+      avoidAnswers: seen,
+      wordPool: bankWords.length >= 20 ? bankWords : undefined,
+    }),
+    [puzzleId, seed, seen, bankWords]
   );
   const cells = useMemo(() => buildCells(puzzle), [puzzle]);
   const color = THEME[(puzzle.id - 1) % THEME.length];
@@ -511,7 +550,7 @@ export default function TekaTekiSilang() {
         fetch("/api/game/tts/finish", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sessionId, cellsCorrect, cellsTotal: totalCells }),
+          body: JSON.stringify({ sessionId, grid }),
         })
           .then((r) => (r.ok ? r.json() : null))
           .then((d) => {
@@ -658,8 +697,8 @@ export default function TekaTekiSilang() {
 
   const openSetup = (id: number) => {
     setPuzzleId(id);
-    setSeedMode("daily");
-    setSeed(dailySeed(id));
+    setSeedMode("acak");
+    setSeed(randomSeed());
     setScreen("setup");
   };
 
@@ -741,7 +780,7 @@ export default function TekaTekiSilang() {
   const nextHeartLabel = liveHearts.hearts >= HEARTS_MAX ? "Penuh" : fmtCountdown(heartCountdown);
 
   return (
-    <div className="fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#0B0A1A] dark:to-[#151030] text-[#161B3A] dark:text-[#F1EDFF]">
+    <div className="game-env game-env-tts fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#0B0A1A] dark:to-[#151030] text-[#161B3A] dark:text-[#F1EDFF]">
       <style>{`
         @keyframes tts-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
         @keyframes tts-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}
@@ -822,9 +861,7 @@ export default function TekaTekiSilang() {
           </div>
           <div className="flex items-center gap-2">
             {(screen === "start" || screen === "hearts") && (
-              <button className={`${btn} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => router.push("/arena/game")} aria-label="Keluar dari gim">
-                <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
-              </button>
+              <GameBackButton href="/arena/game" label="Kembali ke Arena" title="Kembali ke Arena" />
             )}
             <button className={`${btn} game-sound-btn w-11 h-11 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
@@ -937,11 +974,9 @@ export default function TekaTekiSilang() {
         {screen === "levels" && (
           <div className={`tts-screen bg-white dark:bg-gradient-to-br dark:from-[#1A1535] dark:to-[#221C48] rounded-3xl ${chunky} p-5`}>
             <div className="flex items-center justify-between mb-4">
-              <button className={`${btn} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => setScreen("start")} aria-label="Kembali">
-                <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
-              </button>
+              <GameBackButton onClick={() => setScreen("start")} label="Kembali" title="Kembali ke menu Teka-Teki Silang" />
               <h2 className="font-extrabold text-2xl">Pilih Level</h2>
-              <div className="w-11" />
+              <div className="w-11 sm:w-[110px]" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {previews.map((p) => {
@@ -987,9 +1022,7 @@ export default function TekaTekiSilang() {
         {/* ---------- ATUR WAKTU ---------- */}
         {screen === "setup" && (
           <div className={`tts-screen mx-auto w-full max-w-2xl bg-white dark:bg-gradient-to-br dark:from-[#1A1535] dark:to-[#221C48] rounded-3xl ${chunky} p-6 text-center`}>
-            <button className={`${btn} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700 mb-4`} onClick={() => setScreen("levels")} aria-label="Kembali">
-              <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
-            </button>
+            <GameBackButton onClick={() => setScreen("levels")} label="Kembali" title="Kembali ke pilihan level" />
             <div className="flex justify-center mb-3">
               <MascotFace mascot={mascot} celebrating={false} />
             </div>            <h2 className="font-extrabold text-2xl mb-1">{puzzle.title}</h2>
@@ -1024,6 +1057,9 @@ export default function TekaTekiSilang() {
             </div>
             <p className="text-[11px] font-bold opacity-60 -mt-1 mb-4">
               {seedMode === "daily" ? "Puzzle sama untuk semua pemain, ganti tiap hari." : "Kombinasi kata beda tiap main — tanpa pengulangan."}
+            </p>
+            <p className="text-[10px] font-extrabold uppercase tracking-wider opacity-50 mb-4">
+              {bankStatus === "ready" ? "Soal berputar dari Bank Soal" : bankStatus === "loading" ? "Menyiapkan Bank Soal…" : "Mode cadangan: bank TTS kurasi"}
             </p>
 
             <p className="font-extrabold text-sm mb-3">Pilih durasi mengerjakan</p>
@@ -1096,7 +1132,7 @@ export default function TekaTekiSilang() {
 
         {/* ---------- MAIN ---------- */}
         {screen === "game" && (
-          <div className="tts-screen flex flex-col items-center gap-3 w-full max-w-[1100px] mx-auto">
+          <div className="tts-screen tts-monochrome flex flex-col items-center gap-3 w-full max-w-[1100px] mx-auto">
             {/* HUD 5 tile — DNA Kuis Tempur: Nyawa / Level / Rentetan / Terisi / Waktu */}
             <div className="w-full grid grid-cols-5 gap-2">
               <div className={`rounded-xl border-[3px] border-[#161B3A] dark:border-white/25 bg-[#161B3A] text-white px-2 py-2 shadow-[3px_3px_0_#4338CA] ${liveHearts.hearts === 0 ? "opacity-60" : ""}`}>
@@ -1203,7 +1239,7 @@ export default function TekaTekiSilang() {
                     else if (isSel) bg = isDark ? "#4A3B12" : "#FDE68A";
                     else if (inActiveWord) bg = isDark ? "#37301A" : "#FEF3C7";
                     return (
-                      <div key={key} className={`relative rounded-[3px] ${state === "wrong" ? "tts-wrong" : ""}`} style={{ background: bg }}>
+                      <div key={key} className={`tts-cell-wrap relative rounded-[3px] ${state === "wrong" ? "tts-wrong" : ""}`} style={{ background: bg }}>
                         {cell.number != null && (
                           <span className={`absolute top-[1px] left-[2px] text-[8px] font-extrabold leading-none select-none pointer-events-none ${isDark ? "text-[#F1EDFF]/70" : "text-[#161B3A]/70"}`}>
                             {cell.number}
@@ -1255,18 +1291,15 @@ export default function TekaTekiSilang() {
               <button className={`${btn} px-5 py-2.5 bg-[#10B981] text-white text-sm`} onClick={checkAnswers} disabled={timeUp}>
                 <CheckCircle2 className="w-4 h-4" /> Cek Jawaban
               </button>
-              <button
-                className={`${btn} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`}
+              <GameBackButton
                 onClick={() => {
-                  // KUIS TTS 1.0 (§23): keluar saat ada progress → konfirmasi.
                   const adaProgress = filledCells > 0 || combo > 0 || timeBudgetRef.current - remainingSec > 0;
                   if (adaProgress) setConfirmExit(true);
                   else setScreen("levels");
                 }}
-                aria-label="Keluar dari permainan"
-              >
-                <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
-              </button>
+                label="Kembali"
+                title="Kembali ke pilihan level"
+              />
             </div>
 
             {/* Daftar petunjuk */}

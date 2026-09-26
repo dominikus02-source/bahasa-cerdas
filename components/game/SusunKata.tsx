@@ -8,6 +8,7 @@ import {
   ChevronRight, Play, Volume2, VolumeX, Loader2, Sparkles, Timer,
 } from "lucide-react";
 import { sfx, haptic, isSoundOn, toggleSound, startBGM, stopBGM } from "@/lib/game/sound";
+import GameBackButton from "@/components/game/GameBackButton";
 
 const SCRAMBLE_WORDS = [
   { word: "BAHASA", meaning: "Sistem lambang bunyi yang arbitrer" },
@@ -275,6 +276,7 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
   const [result, setResult] = useState<null | { score: number; stars: number; bestStreak: number; xpEarned: number; gameOver: boolean }>(null);
   const xpSentRef = useRef(false);
   const supabaseIdRef = useRef("");
+  const gameSessionIdRef = useRef("");
 
   const level = LEVELS.find((l) => l.id === levelId) || LEVELS[0];
 
@@ -316,7 +318,7 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
 
     setSaved((prev) => {
       const next: Saved = { unlocked: [...prev.unlocked], best: { ...prev.best }, stars: { ...prev.stars } };
-      if (!gameOver) {
+      if (!gameOver && stars >= 1) {
         if (!next.best[levelId] || finalScore > next.best[levelId]) next.best[levelId] = finalScore;
         if (!next.stars[levelId] || stars > next.stars[levelId]) next.stars[levelId] = stars;
         const nid = levelId + 1;
@@ -331,7 +333,7 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
       fetch("/api/game/xp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ score: finalScore, correct: 0, wrong: 0, maxStreak: finalBestStreak, xpEarned, gameType: "SUSUN_KATA", supabaseId: supabaseIdRef.current }),
+        body: JSON.stringify({ score: finalScore, correct: 0, wrong: 0, maxStreak: finalBestStreak, xpEarned, gameType: "SUSUN_KATA", supabaseId: supabaseIdRef.current, gameSessionId: gameSessionIdRef.current }),
       }).catch(() => { /* abaikan */ });
     }
   }, [level.rounds, levelId]);
@@ -377,6 +379,7 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
   };
 
   const startLevel = (id: number) => {
+    gameSessionIdRef.current = crypto.randomUUID();
     sfx.start(); setSoundOn(isSoundOn()); startBGM();
     const lv = LEVELS.find((l) => l.id === id) || LEVELS[0];
     let candidates = SCRAMBLE_WORDS.filter((w) => w.word.length >= lv.min && w.word.length <= lv.max);
@@ -479,7 +482,7 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
   /* ---------- START ---------- */
   if (screen === "start") {
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#12100A] dark:to-[#1C1810] text-[#161B3A] dark:text-[#F1EDFF]">
+      <div className="game-env game-env-susun fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#12100A] dark:to-[#1C1810] text-[#161B3A] dark:text-[#F1EDFF]">
         <style>{`@keyframes sk-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
         @keyframes sk-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}
         @keyframes sk-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -494,6 +497,7 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2.5">
+              <GameBackButton href="/arena/game" label="Kembali ke Arena" title="Kembali ke Arena" />
               <div className={`sk-logo w-11 h-11 bg-[#10B981] rounded-2xl ${chunky} !shadow-[4px_4px_0_#D97706] flex items-center justify-center`}>
                 <Shuffle className="w-6 h-6 text-white" />
               </div>
@@ -546,15 +550,13 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
   /* ---------- LEVELS ---------- */
   if (screen === "levels") {
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#12100A] dark:to-[#1C1810] text-[#161B3A] dark:text-[#F1EDFF]">
+      <div className="game-env game-env-susun fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#12100A] dark:to-[#1C1810] text-[#161B3A] dark:text-[#F1EDFF]">
         <style>{`.sk-screen{animation:sk-fade .35s ease}@keyframes sk-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}`}</style>
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <button className={`${btnBase} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => setScreen("start")} aria-label="Kembali">
-              <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
-            </button>
+            <GameBackButton onClick={() => setScreen("start")} label="Kembali" title="Kembali ke menu Susun Kata" />
             <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
-            <div className="w-11" />
+            <div className="w-11 sm:w-[110px]" />
           </div>
           <div className="sk-screen bg-white dark:bg-gradient-to-br dark:from-[#1E1A14] dark:to-[#28241E] rounded-3xl p-5 shadow-[6px_6px_0_#D97706] border-4 border-[#161B3A] dark:border-white/25">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -601,12 +603,10 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
   /* ---------- PLAYING ---------- */
   if (screen === "playing" && currentWord) {
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#12100A] dark:to-[#1C1810] text-[#161B3A] dark:text-[#F1EDFF]">
+      <div className="game-env game-env-susun fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#12100A] dark:to-[#1C1810] text-[#161B3A] dark:text-[#F1EDFF]">
         <div className="relative max-w-lg mx-auto px-5 pt-4 pb-8 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <button className={`${btnBase} game-back-btn w-12 h-12 hover:bg-white dark:hover:bg-white/35`} onClick={() => { stopBGM(); setScreen("levels"); }} aria-label="Keluar">
-              <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
-            </button>
+            <GameBackButton onClick={() => { stopBGM(); setScreen("levels"); }} label="Kembali" title="Kembali ke pilihan level" />
             <div className="flex items-center gap-2">
               {streak > 0 && (
                 <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-orange-100 dark:bg-orange-500/15 border border-orange-300 dark:border-orange-500/30">
@@ -694,7 +694,7 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
   /* ---------- RESULT ---------- */
   if (screen === "result" && result) {
     return (
-      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#12100A] dark:to-[#1C1810] text-[#161B3A] dark:text-[#F1EDFF]">
+      <div className="game-env game-env-susun fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#12100A] dark:to-[#1C1810] text-[#161B3A] dark:text-[#F1EDFF]">
         <style>{`@keyframes sk-pop{0%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.3) rotate(8deg)}100%{transform:scale(1) rotate(0)}}.sk-star{animation:sk-pop .5s ease}`}</style>
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col items-center justify-center text-center">
           <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 180 }} className={`w-24 h-24 rounded-[28px] bg-gradient-to-br ${result.gameOver ? "from-rose-400 to-red-600" : result.stars >= 2 ? "from-emerald-400 to-teal-600" : "from-amber-400 to-orange-600"} flex items-center justify-center shadow-2xl mb-5`}>
@@ -750,7 +750,7 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
   }
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#12100A] dark:to-[#1C1810] text-[#161B3A] dark:text-[#F1EDFF]">
+    <div className="game-env game-env-susun fixed inset-0 z-[60] flex items-center justify-center bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#12100A] dark:to-[#1C1810] text-[#161B3A] dark:text-[#F1EDFF]">
       <Loader2 className="w-10 h-10 animate-spin" />
     </div>
   );
