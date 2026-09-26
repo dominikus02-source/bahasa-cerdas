@@ -105,7 +105,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
 
   return (
     <ShellLayout
-      rootClassName="bc-guru-shell bg-gradient-to-br from-blue-50 via-white to-slate-50 dark:from-[#061225] dark:via-[#08182b] dark:to-[#0b1f38]"
+      rootClassName="bc-guru-shell bg-[#f4f8ff] dark:bg-[#061225]"
       sidebar={
         <>
           <div className="p-5 border-b border-blue-500/20 bg-gradient-to-r from-[#0b4fc7] to-[#1671e8] dark:border-blue-950/70">
