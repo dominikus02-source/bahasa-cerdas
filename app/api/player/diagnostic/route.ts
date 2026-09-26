@@ -214,7 +214,7 @@ async function buildCertifiedDiagnosticCandidates(source: Exclude<DiagnosticSour
     const rows = await db.uKBIQuestion.findMany({
       where: { isActive: true, isVerified: true, type: "PILIHAN_GANDA" },
       orderBy: { id: "asc" },
-      select: { id: true, seksi: true, text: true, options: true, difficulty: true, passageType: true },
+      select: { id: true, seksi: true, text: true, passage: true, audioUrl: true, options: true, difficulty: true, passageType: true },
     });
     return rows.flatMap((row) => {
       const skill = skillFromUkbiSection(row.seksi);
@@ -223,6 +223,8 @@ async function buildCertifiedDiagnosticCandidates(source: Exclude<DiagnosticSour
       return [{
         id: row.id,
         text: row.text,
+        passage: row.passage ?? null,
+        audioUrl: row.audioUrl ?? null,
         options,
         questionType: "PILIHAN_GANDA" as const,
         skill,
@@ -237,7 +239,7 @@ async function buildCertifiedDiagnosticCandidates(source: Exclude<DiagnosticSour
   const rows = await db.tKAQuestion.findMany({
     where: { isActive: true, isVerified: true, type: "PILIHAN_GANDA" },
     orderBy: { id: "asc" },
-    select: { id: true, kompetensi: true, subKompetensi: true, text: true, options: true, difficulty: true },
+    select: { id: true, kompetensi: true, subKompetensi: true, text: true, passage: true, options: true, difficulty: true },
   });
   return rows.flatMap((row) => {
     const skill = skillFromTkaCompetency(row.kompetensi);
@@ -881,7 +883,7 @@ async function loadStandardDiagnosticQuestions(source: DiagnosticSource, questio
   if (source === "UKBI") {
     const rows = await db.uKBIQuestion.findMany({
       where: { id: { in: questionIds }, isActive: true, isVerified: true },
-      select: { id: true, seksi: true, text: true, options: true, difficulty: true, passageType: true, type: true },
+      select: { id: true, seksi: true, text: true, passage: true, audioUrl: true, options: true, difficulty: true, passageType: true, type: true },
     });
     const byId = new Map(rows.map((row) => [row.id, row]));
     return questionIds.flatMap((id) => {
@@ -889,14 +891,14 @@ async function loadStandardDiagnosticQuestions(source: DiagnosticSource, questio
       const skill = row ? skillFromUkbiSection(row.seksi) : null;
       const options = normalizeQuestionOptions(row?.options);
       return row && skill && row.type === "PILIHAN_GANDA" && options.length > 0
-        ? [{ id, text: row.text, options, questionType: "PILIHAN_GANDA" as const, topic: row.seksi, skill, subskill: row.passageType ?? null, difficulty: row.difficulty as DifficultyId }]
+        ? [{ id, text: row.text, passage: row.passage ?? null, audioUrl: row.audioUrl ?? null, options, questionType: "PILIHAN_GANDA" as const, topic: row.seksi, skill, subskill: row.passageType ?? null, difficulty: row.difficulty as DifficultyId }]
         : [];
     });
   }
 
   const rows = await db.tKAQuestion.findMany({
     where: { id: { in: questionIds }, isActive: true, isVerified: true },
-    select: { id: true, kompetensi: true, subKompetensi: true, text: true, options: true, difficulty: true, type: true },
+    select: { id: true, kompetensi: true, subKompetensi: true, text: true, passage: true, options: true, difficulty: true, type: true },
   });
   const byId = new Map(rows.map((row) => [row.id, row]));
   return questionIds.flatMap((id) => {
@@ -904,7 +906,7 @@ async function loadStandardDiagnosticQuestions(source: DiagnosticSource, questio
     const skill = row ? skillFromTkaCompetency(row.kompetensi) : null;
     const options = normalizeQuestionOptions(row?.options);
     return row && skill && row.type === "PILIHAN_GANDA" && options.length > 0
-      ? [{ id, text: row.text, options, questionType: "PILIHAN_GANDA" as const, topic: row.kompetensi, skill, subskill: row.subKompetensi ?? null, difficulty: row.difficulty as DifficultyId }]
+      ? [{ id, text: row.text, passage: row.passage ?? null, options, questionType: "PILIHAN_GANDA" as const, topic: row.kompetensi, skill, subskill: row.subKompetensi ?? null, difficulty: row.difficulty as DifficultyId }]
       : [];
   });
 }
