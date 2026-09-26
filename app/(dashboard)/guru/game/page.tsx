@@ -316,11 +316,11 @@ export default function GuruGameHubPage() {
   const kelasPct = totalMurid > 0 ? Math.round((aktifHariIni / totalMurid) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-emerald-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+    <div className="min-h-screen bg-slate-50/70 dark:bg-[#061225]">
       {/* ── HERO: dashboard ringkas ─────────────────────────── */}
-      <div className="bg-gradient-to-br from-emerald-600 via-green-700 to-teal-900 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/20 rounded-full blur-[80px]" />
-        <div className="absolute bottom-0 left-8 w-48 h-48 bg-teal-300/10 rounded-full blur-[60px]" />
+      <div className="bc-guru-hero text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-sky-300/20 rounded-full blur-[80px]" />
+        <div className="absolute bottom-0 left-8 w-48 h-48 bg-blue-300/10 rounded-full blur-[60px]" />
         <div className="relative z-10 max-w-6xl mx-auto px-4 py-5">
           <div className="flex flex-col lg:flex-row lg:items-center gap-4">
             <div className="flex-1 min-w-0">
@@ -329,13 +329,13 @@ export default function GuruGameHubPage() {
                   <Gamepad2 className="w-4 h-4" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] text-emerald-200 uppercase tracking-wider font-semibold">Dasbor Aktivitas Guru</p>
+                  <p className="text-[10px] text-blue-100 uppercase tracking-wider font-semibold">Dasbor Aktivitas Guru</p>
                   <h1 className="text-lg lg:text-xl font-extrabold truncate">
                     Halo, {loading ? "Guru" : (user?.nickname || user?.fullName || "Guru")}
                   </h1>
                 </div>
               </div>
-              <p className="mt-1.5 text-emerald-100/90 text-xs leading-relaxed">
+              <p className="mt-1.5 text-blue-100/90 text-xs leading-relaxed">
                 Ringkasan aktivitas gim kamu dan kelas — buka setiap hari untuk melihat perkembangan.
               </p>
             </div>
@@ -353,13 +353,13 @@ export default function GuruGameHubPage() {
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                   <span className="text-base font-extrabold leading-none">{xpTargetPct}%</span>
-                  <span className="text-[7px] text-emerald-100 mt-0.5">Target</span>
+                  <span className="text-[7px] text-blue-100 mt-0.5">Target</span>
                 </div>
               </div>
               <div className="shrink-0">
-                <p className="text-[9px] text-emerald-200 font-semibold uppercase tracking-wide">XP Minggu Ini</p>
+                <p className="text-[9px] text-blue-100 font-semibold uppercase tracking-wide">XP Minggu Ini</p>
                 <p className="text-xl font-extrabold tabular-nums leading-tight">+{weeklyXp.toLocaleString("id-ID")}</p>
-                <p className="text-[9px] text-emerald-200 mt-0.5">Target {TARGET_MINGGUAN_XP.toLocaleString("id-ID")} XP Guru</p>
+                <p className="text-[9px] text-blue-100 mt-0.5">Target {TARGET_MINGGUAN_XP.toLocaleString("id-ID")} XP Guru</p>
               </div>
             </div>
           </div>
@@ -377,9 +377,9 @@ export default function GuruGameHubPage() {
       <div className="max-w-6xl mx-auto px-4 py-6">
         {/* ── QUICK ACTION ──────────────────────────────────── */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
-          <Link href={lastGame.href} className="group flex flex-col bg-white rounded-xl border border-slate-100 p-3.5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all dark:bg-slate-900 dark:border-slate-800">
+          <Link href={lastGame.href} className="bc-guru-card group flex flex-col rounded-xl p-3.5 hover:shadow-lg hover:-translate-y-0.5 transition-all">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shrink-0"><Play className="w-4 h-4 text-white" /></div>
+              <div className="bc-guru-icon w-9 h-9 rounded-xl flex items-center justify-center shrink-0"><Play className="w-4 h-4 text-white" /></div>
               <div className="min-w-0">
                 <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide dark:text-slate-500">Main Sekarang</p>
                 <p className="font-bold text-slate-900 text-sm truncate dark:text-slate-100">{lastGame.title}</p>
@@ -388,7 +388,7 @@ export default function GuruGameHubPage() {
             <p className="text-xs text-slate-500 mt-auto dark:text-slate-400">
               <span className="font-semibold text-slate-700 dark:text-slate-300">Skor Terbaik</span> {bestScore.toLocaleString("id-ID")}
             </p>
-            <span className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 group-hover:gap-2 transition-all">
+            <span className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 dark:text-blue-300 group-hover:gap-2 transition-all">
               Main Lagi <ArrowRight size={12} />
             </span>
           </Link>
@@ -396,7 +396,7 @@ export default function GuruGameHubPage() {
           {/* Tantangan / Misi */}
           <a
             href="#misi-hari-ini"
-            className="group bg-white rounded-xl border border-slate-100 p-3.5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col dark:bg-slate-900 dark:border-slate-800"
+            className="bc-guru-card group rounded-xl p-3.5 hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col"
           >
             <div className="flex items-center gap-2 mb-2">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center shrink-0"><Flame className="w-4 h-4 text-white" /></div>
@@ -412,7 +412,7 @@ export default function GuruGameHubPage() {
           </a>
 
           {/* Lencana Saya */}
-          <Link href="/guru/game/achievement" className="group bg-white rounded-xl border border-slate-100 p-3.5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col dark:bg-slate-900 dark:border-slate-800">
+          <Link href="/guru/game/achievement" className="bc-guru-card group rounded-xl p-3.5 hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shrink-0"><Medal className="w-4 h-4 text-white" /></div>
               <div>
@@ -469,16 +469,16 @@ export default function GuruGameHubPage() {
 
         {/* ── MAIN BERSAMA (entry — kuis kelas, DI ATAS gim solo) ── */}
         <div className="mb-8">
-          <div className="bg-gradient-to-br from-teal-600 via-emerald-700 to-teal-900 rounded-2xl p-5 text-white relative overflow-hidden shadow-sm">
-            <div className="absolute top-0 right-0 w-44 h-44 bg-emerald-400/20 rounded-full blur-[70px]" />
-            <div className="absolute bottom-0 left-6 w-28 h-28 bg-teal-300/10 rounded-full blur-[50px]" />
+          <div className="bc-guru-hero rounded-2xl p-5 text-white relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-44 h-44 bg-sky-300/20 rounded-full blur-[70px]" />
+            <div className="absolute bottom-0 left-6 w-28 h-28 bg-blue-300/10 rounded-full blur-[50px]" />
             <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-4">
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <div className="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20 shrink-0">
                   <Users className="w-5 h-5" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] text-emerald-200 uppercase tracking-wider font-semibold">Main Bersama</p>
+                  <p className="text-[10px] text-blue-100 uppercase tracking-wider font-semibold">Main Bersama</p>
                   <h3 className="font-extrabold text-slate-50 leading-snug">Ajak seluruh kelas bermain langsung dengan soal BahasaCerdas.</h3>
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/15 border border-white/20">Jelajah Kata</span>
@@ -488,7 +488,7 @@ export default function GuruGameHubPage() {
               </div>
               <Link
                 href="/guru/game/main-bersama"
-                className="shrink-0 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white text-emerald-800 font-bold text-sm shadow-sm hover:bg-emerald-50 hover:shadow transition-colors"
+                className="shrink-0 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white text-blue-800 font-bold text-sm shadow-sm hover:bg-blue-50 hover:shadow transition-colors"
               >
                 <Play className="w-4 h-4" /> Mulai Bersama
               </Link>
@@ -502,7 +502,7 @@ export default function GuruGameHubPage() {
             <div className="w-2 h-2 rounded-full bg-violet-500 animate-pulse" />
             <h2 className="text-base font-bold text-slate-800 dark:text-slate-100" id="mainkan">Mainkan Gim</h2>
             <span className="text-[10px] px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-semibold dark:bg-violet-900/40 dark:text-violet-300">SOLO</span>
-            <Link href="/guru/game/lobby" className="ml-auto inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 hover:text-emerald-700">
+            <Link href="/guru/game/lobby" className="ml-auto inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 hover:text-blue-800 dark:text-blue-300 dark:hover:text-blue-200">
               Ruang Gim &amp; Tanding <ChevronRight size={12} />
             </Link>
           </div>
@@ -821,7 +821,7 @@ export default function GuruGameHubPage() {
             <h2 className="text-base font-bold text-slate-800 dark:text-slate-100">Analisis AI</h2>
             <span className="text-[10px] px-2 py-0.5 bg-rose-100 text-rose-600 rounded-full font-semibold dark:bg-rose-900/40 dark:text-rose-300">Pratinjau · Segera Hadir</span>
           </div>
-          <div className="bg-gradient-to-r from-rose-50 via-white to-emerald-50 rounded-xl border border-rose-100 p-5 shadow-sm dark:from-slate-900 dark:via-slate-900 dark:to-slate-900 dark:border-slate-800">
+          <div className="bc-guru-card rounded-xl p-5">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-red-600 flex items-center justify-center shrink-0">
                 <Sparkles className="w-4 h-4 text-white" />
@@ -877,7 +877,7 @@ function HeroChip({ icon, label, value }: { icon: ReactNode; label: string; valu
     <div className="flex items-center gap-2 rounded-xl bg-white/10 backdrop-blur-md px-3.5 py-2.5 border border-white/10">
       {icon}
       <div className="text-xs min-w-0">
-        <p className="text-emerald-100/80 truncate">{label}</p>
+        <p className="text-blue-100/80 truncate">{label}</p>
         <p className="font-bold text-sm">{value}</p>
       </div>
     </div>
