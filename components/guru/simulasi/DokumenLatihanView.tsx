@@ -140,7 +140,7 @@ export function DokumenLatihanView({
                 key={f}
                 onClick={() => setFilter(f)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  filter === f ? "bg-emerald-600 text-white shadow-sm" : "bg-gray-50 text-gray-600 hover:bg-gray-100"
+                  filter === f ? "bg-blue-600 text-white shadow-sm" : "bg-gray-50 text-gray-600 hover:bg-gray-100"
                 }`}
               >
                 {f === "semua" ? "Semua" : f}
@@ -167,8 +167,8 @@ export function DokumenLatihanView({
         <div className="text-center py-16 text-gray-400">Memuat...</div>
       ) : items.length === 0 ? (
         <div className="text-center py-16">
-          <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center">
-            <Award size={40} className="text-emerald-300" />
+          <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center dark:bg-blue-950/30 dark:border-blue-900/60">
+            <Award size={40} className="text-blue-300" />
           </div>
           <p className="text-gray-500 font-medium">Belum ada dokumen latihan murid</p>
           <p className="text-sm text-gray-400 mt-1">Hasil simulasi murid akan muncul di sini setelah mereka menyelesaikan tes.</p>
@@ -192,10 +192,10 @@ export function DokumenLatihanView({
                 </thead>
                 <tbody>
                   {items.map((item) => (
-                    <tr key={item.id} className="border-t border-gray-50 hover:bg-emerald-50/30 transition-colors">
+                    <tr key={item.id} className="border-t border-gray-50 hover:bg-blue-50/45 dark:hover:bg-blue-950/20 transition-colors">
                       <td className="px-4 py-3.5">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shrink-0">
+                          <div className="bc-guru-icon w-9 h-9 rounded-lg flex items-center justify-center shrink-0">
                             <GraduationCap size={16} className="text-white" />
                           </div>
                           <div className="min-w-0">
@@ -217,7 +217,7 @@ export function DokumenLatihanView({
                       </td>
                       <td className="px-4 py-3.5 text-xs text-gray-400 flex items-center gap-1"><Calendar size={12} />{formatDate(item.tanggal)}</td>
                       <td className="px-4 py-3.5 text-right">
-                        <button onClick={() => setSelectedCert({ id: item.id, paket: { title: item.paketTitle ?? "", type: item.jenis ?? "UKBI" }, user: { fullName: item.nama }, score: item.score, percentage: item.percentage, predikat: item.predikat ?? undefined, issuedAt: item.tanggal ?? undefined })} className="inline-flex items-center gap-1 text-xs text-emerald-600 font-semibold hover:text-emerald-700">
+                        <button onClick={() => setSelectedCert({ id: item.id, paket: { title: item.paketTitle ?? "", type: item.jenis ?? "UKBI" }, user: { fullName: item.nama }, score: item.score, percentage: item.percentage, predikat: item.predikat ?? undefined, issuedAt: item.tanggal ?? undefined })} className="inline-flex items-center gap-1 text-xs text-blue-700 font-semibold hover:text-blue-800 dark:text-blue-300">
                           <Eye size={14} /> Lihat
                         </button>
                       </td>
@@ -232,15 +232,15 @@ export function DokumenLatihanView({
 
       {/* Link ke AI Review Center & Pusat Evaluasi (tab lain di dalam hub) */}
       <div className="grid sm:grid-cols-2 gap-3 mt-6">
-        <Link href={tinjauHref} className="rounded-2xl border border-violet-100 bg-violet-50/50 p-4 flex items-center gap-3 hover:border-violet-300 transition-colors">
-          <div className="w-10 h-10 rounded-xl bg-violet-600 text-white flex items-center justify-center"><span className="text-lg">🧠</span></div>
+        <Link href={tinjauHref} className="bc-guru-card rounded-2xl p-4 flex items-center gap-3 transition-colors">
+          <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center"><span className="text-lg">🧠</span></div>
           <div>
             <p className="font-bold text-gray-900 text-sm">AI Review Center</p>
             <p className="text-xs text-gray-500">Tinjau hasil uraian Menulis/Berbicara dari penilaian AI.</p>
           </div>
         </Link>
-        <Link href={hasilHref} className="rounded-2xl border border-emerald-100 bg-emerald-50/50 p-4 flex items-center gap-3 hover:border-emerald-300 transition-colors">
-          <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center"><span className="text-lg">📊</span></div>
+        <Link href={hasilHref} className="bc-guru-card rounded-2xl p-4 flex items-center gap-3 transition-colors">
+          <div className="bc-guru-icon w-10 h-10 rounded-xl flex items-center justify-center"><span className="text-lg">📊</span></div>
           <div>
             <p className="font-bold text-gray-900 text-sm">Pusat Evaluasi</p>
             <p className="text-xs text-gray-500">Rekap, insight AI, dan ringkasan kelas.</p>
