@@ -122,14 +122,14 @@ export default function MateriAjarPage() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <Presentation className="text-emerald-500" size={28} />
+              <Presentation className="text-blue-600" size={28} />
               Bank Rencana Pembelajaran
             </h1>
             <p className="text-gray-500 mt-1">Cari Rencana Pembelajaran sesuai tema, unduh, atau buat sendiri dengan AI</p>
           </div>
           <div className="flex items-center gap-3">
             <button onClick={() => setShowUpload(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors">
+              className="flex items-center gap-2 px-4 py-2 bg-blue-700 text-white rounded-xl text-sm font-semibold hover:bg-blue-800 transition-colors">
               <Upload size={16} /> Unggah Rencana Pembelajaran
             </button>
             {quota && (
@@ -138,7 +138,7 @@ export default function MateriAjarPage() {
                   <Download size={16} /> Unduhan tak terbatas
                 </div>
               ) : (
-                <div className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium ${quota.used >= (quota.limit ?? 10) ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-700"}`}>
+                <div className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium ${quota.used >= (quota.limit ?? 10) ? "bg-red-50 text-red-600" : "bg-blue-50 text-blue-700"}`}>
                   <Download size={16} /> Sisa unduhan: {Math.max(0, (quota.limit ?? 10) - quota.used)}/{quota.limit ?? 10}
                 </div>
               )
@@ -146,7 +146,7 @@ export default function MateriAjarPage() {
           </div>
         </div>
 
-      <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-6">
+      <div className="bc-guru-surface mb-6 rounded-2xl p-4">
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex bg-gray-50 rounded-xl p-1">
             {(["SD", "SMP", "SMA"] as LevelTab[]).map(tab => (
@@ -155,7 +155,7 @@ export default function MateriAjarPage() {
                 onClick={() => { setActiveTab(tab); setKelasFilter(""); setFolder(""); setPage(1) }}
                 className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${
                   activeTab === tab
-                    ? "bg-white text-emerald-700 shadow-sm"
+                    ? "bg-white text-blue-700 shadow-sm"
                     : "text-gray-500 hover:text-gray-700"
                 }`}
               >
@@ -171,14 +171,14 @@ export default function MateriAjarPage() {
               placeholder="Cari Rencana Pembelajaran berdasarkan tema, judul, atau kata kunci..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+              className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
             />
           </div>
 
           <select
             value={sort}
             onChange={e => { setSort(e.target.value as "recent" | "popular"); setPage(1) }}
-            className="px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+            className="px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
           >
             <option value="recent">Terbaru</option>
             <option value="popular">Terpopuler</option>
@@ -187,13 +187,13 @@ export default function MateriAjarPage() {
           <div className="flex border border-gray-200 rounded-xl overflow-hidden">
             <button
               onClick={() => setViewMode("grid")}
-              className={`p-2.5 ${viewMode === "grid" ? "bg-emerald-50 text-emerald-600" : "text-gray-400 hover:text-gray-600"}`}
+              className={`p-2.5 ${viewMode === "grid" ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:text-gray-600"}`}
             >
               <Grid3x3 size={18} />
             </button>
             <button
               onClick={() => setViewMode("list")}
-              className={`p-2.5 ${viewMode === "list" ? "bg-emerald-50 text-emerald-600" : "text-gray-400 hover:text-gray-600"}`}
+              className={`p-2.5 ${viewMode === "list" ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:text-gray-600"}`}
             >
               <List size={18} />
             </button>
@@ -205,7 +205,7 @@ export default function MateriAjarPage() {
           <span className="text-xs font-medium text-gray-400 mr-1">Kelas:</span>
           <button
             onClick={() => { setKelasFilter(""); setPage(1) }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${kelasFilter === "" ? "bg-emerald-600 text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${kelasFilter === "" ? "bg-blue-700 text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
           >
             Semua
           </button>
@@ -213,7 +213,7 @@ export default function MateriAjarPage() {
             <button
               key={g}
               onClick={() => { setKelasFilter(g); setPage(1) }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${kelasFilter === g ? "bg-emerald-600 text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${kelasFilter === g ? "bg-blue-700 text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
             >
               {g.replace(/^(SD|SMP|SMA)\s*/, "")}
             </button>
@@ -233,7 +233,7 @@ export default function MateriAjarPage() {
             <button
               key={f.value}
               onClick={() => { setFolder(f.value); setPage(1) }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${folder === f.value ? "bg-emerald-600 text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${folder === f.value ? "bg-blue-700 text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
               title={f.hint}
             >
               <Folder size={13} /> {f.label}
@@ -248,7 +248,7 @@ export default function MateriAjarPage() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="bg-white rounded-2xl border border-gray-100 p-5 animate-pulse">
+            <div key={i} className="bc-guru-surface rounded-2xl p-5 animate-pulse">
               <div className="h-28 bg-gray-100 rounded-xl mb-4" />
               <div className="h-4 bg-gray-100 rounded w-3/4 mb-2" />
               <div className="h-3 bg-gray-100 rounded w-1/2" />
@@ -256,7 +256,7 @@ export default function MateriAjarPage() {
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+        <div className="bc-guru-surface rounded-2xl p-12 text-center">
           <BookOpen size={48} className="mx-auto text-gray-300 mb-4" />
           <h3 className="text-lg font-semibold text-gray-700 mb-1">
             {debouncedSearch ? `Tidak ada Rencana Pembelajaran untuk "${debouncedSearch}"` : `Belum ada Rencana Pembelajaran ${activeTab}`}
@@ -276,7 +276,7 @@ export default function MateriAjarPage() {
           ))}
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-50">
+        <div className="bc-guru-surface divide-y divide-gray-50 rounded-2xl">
           {filtered.map(m => (
             <div key={m.id} className="w-full flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors">
               <button onClick={() => setDetailMateri(m)} className="flex-1 flex items-center gap-4 text-left min-w-0">
@@ -287,7 +287,7 @@ export default function MateriAjarPage() {
                   <p className="font-semibold text-gray-900 truncate">{m.title}</p>
                   <p className="text-xs text-gray-500 truncate">{m.grade || "—"}{m.tema ? ` • ${m.tema}` : ""}</p>
                 </div>
-                <span className="shrink-0 flex items-center gap-1.5 text-xs font-semibold text-emerald-700"><Eye size={15} /> Lihat</span>
+                <span className="shrink-0 flex items-center gap-1.5 text-xs font-semibold text-blue-700"><Eye size={15} /> Lihat</span>
               </button>
               {m.fileUrl && (
                 <button onClick={() => setKirimMateri(m)} className="shrink-0 flex items-center gap-1.5 text-xs font-semibold text-violet-700 bg-violet-50 rounded-lg px-3 py-2 hover:bg-violet-100 transition-colors">
@@ -357,24 +357,24 @@ export default function MateriAjarPage() {
               <div>
                 <label className="block text-sm font-semibold text-gray-600 mb-1">Tema *</label>
                 <input value={uploadForm.tema} onChange={e => setUploadForm({ ...uploadForm, tema: e.target.value })}
-                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none"
+                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none"
                   placeholder="mis. Teks Deskripsi, Puisi, Teks Prosedur" />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-600 mb-1">Judul <span className="font-normal text-gray-400">(opsional — jika banyak file, otomatis dari nama file)</span></label>
                 <input value={uploadForm.title} onChange={e => setUploadForm({ ...uploadForm, title: e.target.value })}
-                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none"
+                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none"
                   placeholder="Kosongkan untuk memakai nama file" />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-600 mb-1">Deskripsi</label>
                 <textarea value={uploadForm.description} onChange={e => setUploadForm({ ...uploadForm, description: e.target.value })}
-                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none" rows={2} />
+                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none" rows={2} />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-600 mb-1">Jenjang / Kelas *</label>
                 <select value={uploadForm.grade} onChange={e => setUploadForm({ ...uploadForm, grade: e.target.value })}
-                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none">
+                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none">
                   {Object.entries(GRADES_BY_LEVEL).flatMap(([level, grades]) => grades.map(g => ({ level, grade: g }))).map(({ level, grade }) => (
                     <option key={grade} value={grade}>{grade}</option>
                   ))}
@@ -392,7 +392,7 @@ export default function MateriAjarPage() {
                   }}
                   className="hidden" id="materi-file-input" />
                 <label htmlFor="materi-file-input"
-                  className="flex items-center gap-2 justify-center border-2 border-dashed border-gray-300 rounded-xl p-4 cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition-colors">
+                  className="flex items-center gap-2 justify-center border-2 border-dashed border-gray-300 rounded-xl p-4 cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-colors">
                   <Upload size={20} className="text-gray-400" />
                   <span className="text-sm text-gray-500 font-medium">{uploadFiles.length > 0 ? `${uploadFiles.length} file dipilih — klik untuk ganti` : "Klik untuk pilih file (bisa banyak)"}</span>
                 </label>
@@ -400,7 +400,7 @@ export default function MateriAjarPage() {
                   <div className="mt-2 max-h-32 overflow-y-auto space-y-1">
                     {uploadFiles.map((f, i) => (
                       <div key={i} className="flex items-center gap-2 text-xs bg-gray-50 rounded-lg px-2 py-1.5">
-                        <FileText size={14} className="text-emerald-600 shrink-0" />
+                        <FileText size={14} className="text-blue-600 shrink-0" />
                         <span className="truncate flex-1 text-gray-700">{f.name}</span>
                         <span className="text-gray-400 shrink-0">{(f.size / 1024 / 1024).toFixed(1)} MB</span>
                         <button onClick={() => setUploadFiles(files => files.filter((_, idx) => idx !== i))} className="p-0.5 rounded hover:bg-red-100 shrink-0">
@@ -413,7 +413,7 @@ export default function MateriAjarPage() {
                 <p className="text-[10px] text-gray-400 mt-1">PPTX atau PDF — Maks 50MB per file</p>
               </div>
               {uploadProgress && (
-                <div className="text-xs text-emerald-700 bg-emerald-50 rounded-lg px-3 py-2">
+                <div className="text-xs text-blue-700 bg-blue-50 rounded-lg px-3 py-2">
                   Mengunggah {uploadProgress.done}/{uploadProgress.total} file...
                 </div>
               )}
@@ -471,7 +471,7 @@ export default function MateriAjarPage() {
                     setSort("recent"); setPage(1); fetchMateris()
                   }
                 }} disabled={uploading || uploadFiles.length === 0 || !uploadForm.tema.trim()}
-                  className="flex-1 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
+                  className="flex-1 py-2.5 bg-blue-700 text-white rounded-xl text-sm font-semibold hover:bg-blue-800 disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
                   {uploading ? <><Loader2 size={16} className="animate-spin" /> Mengunggah...</> : <><Upload size={16} /> Unggah {uploadFiles.length > 0 ? `(${uploadFiles.length})` : ""}</>}
                 </button>
               </div>
@@ -488,9 +488,9 @@ function MateriCard({ materi, onView, onKirim }: { materi: Materi; onView: () =>
   const isPDF = materi.fileType === "PDF"
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:shadow-gray-100 transition-all group">
-      <div className={`h-28 flex items-center justify-center ${isPPT ? "bg-gradient-to-br from-orange-100 to-amber-50" : isPDF ? "bg-gradient-to-br from-red-50 to-rose-50" : "bg-gradient-to-br from-blue-50 to-indigo-50"}`}>
-        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-xs shadow-lg ${isPPT ? "bg-gradient-to-br from-orange-500 to-amber-500" : isPDF ? "bg-gradient-to-br from-red-500 to-rose-500" : "bg-gradient-to-br from-blue-500 to-indigo-500"}`}>
+    <div className="bc-guru-surface-interactive group overflow-hidden rounded-2xl">
+      <div className={`h-28 flex items-center justify-center ${isPPT ? "bg-gradient-to-br from-orange-100 to-amber-50" : isPDF ? "bg-gradient-to-br from-red-50 to-rose-50" : "bg-blue-50"}`}>
+        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-xs shadow-lg ${isPPT ? "bg-gradient-to-br from-orange-500 to-amber-500" : isPDF ? "bg-gradient-to-br from-red-500 to-rose-500" : "bg-gradient-to-br from-blue-600 to-sky-500"}`}>
           {materi.fileType || "FILE"}
         </div>
       </div>
@@ -498,7 +498,7 @@ function MateriCard({ materi, onView, onKirim }: { materi: Materi; onView: () =>
         <div className="flex items-start justify-between gap-2 mb-1.5">
           <h3 className="font-semibold text-gray-900 text-sm line-clamp-2">{materi.title}</h3>
           {materi.isPublished && (
-            <span className="shrink-0 text-[10px] px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-medium">Resmi</span>
+            <span className="shrink-0 text-[10px] px-1.5 py-0.5 bg-emerald-100 text-blue-700 rounded-full font-medium">Resmi</span>
           )}
         </div>
         {materi.tema && (
@@ -512,7 +512,7 @@ function MateriCard({ materi, onView, onKirim }: { materi: Materi; onView: () =>
         {materi.fileUrl && (
           <div className="flex gap-2">
             <button onClick={onView}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-semibold text-emerald-700 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors">
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-semibold text-blue-700 bg-blue-50 rounded-lg hover:bg-emerald-100 transition-colors">
               <Eye size={14} /> Detail
             </button>
             <button onClick={onKirim}
@@ -578,8 +578,8 @@ function MateriDetailModal({ materi, quota, getSid, onClose, onQuota, onPresent,
         <button onClick={onClose} className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/80 hover:bg-gray-100 flex items-center justify-center">
           <X size={16} className="text-gray-500" />
         </button>
-        <div className={`h-24 flex items-center justify-center ${isPPT ? "bg-gradient-to-br from-orange-100 to-amber-50" : isPDF ? "bg-gradient-to-br from-red-50 to-rose-50" : "bg-gradient-to-br from-blue-50 to-indigo-50"}`}>
-          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-xs shadow-lg ${isPPT ? "bg-gradient-to-br from-orange-500 to-amber-500" : isPDF ? "bg-gradient-to-br from-red-500 to-rose-500" : "bg-gradient-to-br from-blue-500 to-indigo-500"}`}>
+        <div className={`h-24 flex items-center justify-center ${isPPT ? "bg-gradient-to-br from-orange-100 to-amber-50" : isPDF ? "bg-gradient-to-br from-red-50 to-rose-50" : "bg-blue-50"}`}>
+          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-xs shadow-lg ${isPPT ? "bg-gradient-to-br from-orange-500 to-amber-500" : isPDF ? "bg-gradient-to-br from-red-500 to-rose-500" : "bg-gradient-to-br from-blue-600 to-sky-500"}`}>
             {materi.fileType || "FILE"}
           </div>
         </div>
@@ -587,7 +587,7 @@ function MateriDetailModal({ materi, quota, getSid, onClose, onQuota, onPresent,
           <h2 className="font-bold text-gray-900 mb-2">{materi.title}</h2>
           <div className="flex flex-wrap gap-1.5 mb-3">
             {materi.tema && <span className="text-[11px] px-2 py-0.5 bg-violet-50 text-violet-700 rounded-full font-medium">{materi.tema}</span>}
-            {materi.grade && <span className="text-[11px] px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full font-medium">{materi.grade}</span>}
+            {materi.grade && <span className="text-[11px] px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full font-medium">{materi.grade}</span>}
             <span className="text-[11px] px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full font-medium flex items-center gap-1"><Download size={11} /> {materi.downloads ?? 0}x diunduh</span>
           </div>
           {materi.description && <p className="text-sm text-gray-600 mb-4">{materi.description}</p>}
@@ -610,7 +610,7 @@ function MateriDetailModal({ materi, quota, getSid, onClose, onQuota, onPresent,
                   <Eye size={16} /> Pratinjau
                 </button>
                 <button onClick={download} disabled={downloading}
-                  className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold text-white bg-emerald-600 rounded-xl hover:bg-emerald-700 disabled:opacity-50 transition-colors">
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold text-white bg-blue-700 rounded-xl hover:bg-blue-800 disabled:opacity-50 transition-colors">
                   {downloading ? <><Loader2 size={16} className="animate-spin" /> Mengunduh...</> : done ? <><Check size={16} /> Terunduh</> : <><Download size={16} /> Unduh</>}
                 </button>
               </div>
@@ -719,7 +719,7 @@ function MateriKirimModal({ materi, onClose }: { materi: Materi; onClose: () => 
                       <p className="text-sm font-medium text-gray-800 truncate">{g.name}</p>
                       <p className="text-xs text-gray-400">Kelas {g.grade}</p>
                     </div>
-                    {alreadySent && <span className="shrink-0 text-[10px] px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-medium">Sudah dikirim</span>}
+                    {alreadySent && <span className="shrink-0 text-[10px] px-1.5 py-0.5 bg-emerald-100 text-blue-700 rounded-full font-medium">Sudah dikirim</span>}
                   </label>
                 )
               })}
