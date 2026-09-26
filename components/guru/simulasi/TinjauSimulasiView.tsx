@@ -165,7 +165,7 @@ export function TinjauSimulasiView({ hub = false }: { hub?: boolean }) {
     <div className={hub ? "mx-auto max-w-5xl" : "mx-auto max-w-5xl p-4 sm:p-6"}>
       {/* Hero (khusus standalone) */}
       {!hub && (
-        <div className="bg-gradient-to-r from-violet-600 to-purple-600 rounded-2xl p-5 mb-6 text-white shadow-lg shadow-violet-600/20">
+        <div className="bc-guru-hero rounded-2xl p-5 mb-6 text-white">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center"><Brain size={22} /></div>
             <div>

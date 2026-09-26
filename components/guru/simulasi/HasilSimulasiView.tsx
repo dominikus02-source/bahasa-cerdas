@@ -159,7 +159,7 @@ export function HasilSimulasiView({ guruName, hub = false }: { guruName: string;
     <div className={hub ? "mx-auto max-w-6xl" : "mx-auto max-w-6xl p-4 sm:p-6"}>
       {/* Hero (khusus standalone) */}
       {!hub && (
-        <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 rounded-2xl p-5 sm:p-6 mb-6 text-white shadow-lg shadow-emerald-600/20">
+        <div className="bc-guru-hero rounded-2xl p-5 sm:p-6 mb-6 text-white">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-xl bg-white/15 flex items-center justify-center">
               <Brain size={24} />
@@ -174,7 +174,7 @@ export function HasilSimulasiView({ guruName, hub = false }: { guruName: string;
 
       {/* Insight AI */}
       {insight && (
-        <div className="bg-gradient-to-br from-violet-600 to-purple-600 rounded-2xl p-4 sm:p-5 mb-6 text-white shadow-lg shadow-violet-600/20">
+        <div className="rounded-2xl border border-indigo-200 bg-indigo-600 p-4 sm:p-5 mb-6 text-white shadow-[0_12px_28px_rgba(79,70,229,.14)] dark:border-indigo-900/60 dark:bg-indigo-950/70">
           <div className="flex items-center gap-2 mb-3">
             <Sparkles size={16} className="text-amber-300" />
             <h2 className="font-bold text-sm">Insight AI Minggu Ini</h2>
@@ -224,7 +224,7 @@ export function HasilSimulasiView({ guruName, hub = false }: { guruName: string;
 
       {/* AI Ringkasan Kelas */}
       {classSummary && (
-        <div className="bg-gradient-to-br from-sky-500 to-blue-600 rounded-2xl p-4 mb-6 text-white shadow-lg shadow-sky-500/20">
+        <div className="rounded-2xl border border-sky-200 bg-sky-600 p-4 mb-6 text-white shadow-[0_12px_28px_rgba(2,132,199,.14)] dark:border-sky-900/60 dark:bg-sky-950/70">
           <div className="flex items-center gap-2 mb-1">
             <Brain size={15} className="text-sky-200" />
             <h3 className="font-bold text-sm flex items-center gap-2">Ringkasan Kelas oleh AI

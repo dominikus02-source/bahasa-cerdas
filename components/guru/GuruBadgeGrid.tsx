@@ -89,11 +89,11 @@ export default function GuruBadgeGrid({ compact = false }: { compact?: boolean }
                 title={`${b.description}${b.unlocked ? "" : ` (progres ${b.progress.toLocaleString()})`}`}
                 className={`rounded-xl border p-3 text-center transition-all ${
                   b.unlocked
-                    ? `bg-gradient-to-b from-white to-amber-50/40 ${st.border} shadow-sm ${st.glow}`
+                    ? `bg-white ${st.border} shadow-sm ${st.glow} dark:bg-[#0b1d34]`
                     : "border-gray-100 bg-gray-50/60 opacity-70"
                 }`}
               >
-                <div className={`relative w-11 h-11 mx-auto mb-1.5 rounded-full flex items-center justify-center ${b.unlocked ? "bg-gradient-to-br from-amber-100 to-orange-100" : "bg-gray-200"}`}>
+                <div className={`relative w-11 h-11 mx-auto mb-1.5 rounded-full flex items-center justify-center ${b.unlocked ? "bg-amber-100 dark:bg-amber-950/35" : "bg-gray-200"}`}>
                   {b.unlocked ? (
                     <BadgeIcon icon={b.icon} alt={b.name} size={36} className="w-9 h-9" />
                   ) : (

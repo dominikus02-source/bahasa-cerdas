@@ -728,7 +728,7 @@ export default function KelasKuPage() {
               <div className="grid gap-2">
                 {(detail.members ?? []).map((m) => (
                   <div key={m.id} className="bc-card p-3.5 flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
                       {(m.fullName || "??").slice(0, 2).toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
