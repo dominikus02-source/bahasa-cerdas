@@ -58,6 +58,7 @@ export interface OnlineBreakdown {
   murid: number
   admin: number
   locations: PresenceLocationBreakdown[]
+  available: boolean
 }
 
 // ─── Write: Set/refresh presence key ─────────────────────────
@@ -79,7 +80,7 @@ export async function setPresence(
 
 // ─── Read: Aggregate online users from Redis ─────────────────
 export async function getOnlineUsers(): Promise<OnlineBreakdown> {
-  const empty: OnlineBreakdown = { total: 0, guru: 0, murid: 0, admin: 0, locations: [] }
+  const empty: OnlineBreakdown = { total: 0, guru: 0, murid: 0, admin: 0, locations: [], available: false }
   if (!redis) return empty
 
   try {
@@ -87,7 +88,7 @@ export async function getOnlineUsers(): Promise<OnlineBreakdown> {
     // KEYS is acceptable. Upstash REST supports KEYS.
     const keys: string[] = await redis.keys(PRESENCE_KEY_PATTERN)
 
-    if (keys.length === 0) return empty
+    if (keys.length === 0) return { ...empty, available: true }
 
     // Pipeline MGET to fetch all values in one round trip
     const values = await redis.pipeline().mget(...keys).exec<PresenceValue[]>()
@@ -128,6 +129,7 @@ export async function getOnlineUsers(): Promise<OnlineBreakdown> {
       murid,
       admin,
       locations: Array.from(locations.values()).sort((a, b) => b.total - a.total || a.label.localeCompare(b.label)),
+      available: true,
     }
   } catch {
     return empty
