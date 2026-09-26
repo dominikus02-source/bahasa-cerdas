@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
-import { Crown, Gem, Check, X, Loader2, ArrowRight, BookOpen, Target, Sparkles, BarChart3, Brain, Shield, Clock, ChevronRight } from "lucide-react";
+import { Crown, Gem, Check, X, Loader2, ArrowRight, BookOpen, Target, Sparkles, BarChart3, Brain, Shield, Clock, ChevronRight, WandSparkles, Gamepad2, Rocket, Heart } from "lucide-react";
 import { loadMidtransSnap } from "@/lib/midtrans-client";
 
 interface UserInfo {
@@ -135,7 +135,7 @@ export default function MuridPremiumPage() {
     return (
       <div className="max-w-4xl mx-auto space-y-8 pb-16">
         {/* Hero — Premium Membership Identity */}
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#2d1b69] via-[#4c1d95] to-[#1e1b4b] p-8 sm:p-12 text-white shadow-2xl shadow-violet-900/30">
+        <div className="relative rounded-[2rem] overflow-hidden bg-gradient-to-br from-violet-600 via-purple-600 to-fuchsia-500 p-7 sm:p-10 text-white shadow-2xl shadow-violet-900/25">
           {/* Decorative elements */}
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-violet-500/10 blur-3xl" />
@@ -338,11 +338,16 @@ export default function MuridPremiumPage() {
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
-            Belajar dengan arahan yang dipersonalisasi
+          <div className="flex justify-center gap-2 mb-4">
+            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-white/15 border border-white/20"><WandSparkles size={19} /></span>
+            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-white/15 border border-white/20"><Rocket size={19} /></span>
+            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-white/15 border border-white/20"><Heart size={19} /></span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-4">
+            Naik level belajarmu 🚀
           </h1>
-          <p className="text-violet-200 text-base sm:text-lg max-w-xl mx-auto leading-relaxed">
-            Latihan personal, AI Mentor, dan insight perkembangan — semuanya disesuaikan untukmu.
+          <p className="text-violet-100 text-base sm:text-lg max-w-xl mx-auto leading-relaxed">
+            Mentor AI membantu menjelaskan kesalahanmu, latihan personal menyesuaikan kemampuanmu, dan kamu bisa melihat progres dengan lebih jelas.
           </p>
         </div>
       </div>
@@ -353,6 +358,22 @@ export default function MuridPremiumPage() {
           {errorMsg}
         </div>
       )}
+
+      {/* Nilai utama untuk anak — manfaat dijelaskan sebelum harga. */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto">
+        {[
+          { icon: Brain, title: "Mentor AI", text: "Tanya kenapa kamu salah." },
+          { icon: Target, title: "Latihan Personal", text: "Soal mengikuti kemampuanmu." },
+          { icon: Gamepad2, title: "Lebih Seru", text: "Streak, XP, badge, dan tantangan." },
+          { icon: Sparkles, title: "Insight", text: "Tahu langkah belajarmu berikutnya." },
+        ].map(({ icon: Icon, title, text }) => (
+          <div key={title} className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-900/5">
+            <div className="grid h-10 w-10 place-items-center rounded-xl bg-violet-100 text-violet-600 mb-3"><Icon size={19} /></div>
+            <p className="text-sm font-extrabold text-slate-900">{title}</p>
+            <p className="mt-1 text-[11px] leading-relaxed text-slate-500">{text}</p>
+          </div>
+        ))}
+      </div>
 
       {/* Plan Toggle */}
       <div className="flex items-center justify-center gap-2 bg-slate-100 rounded-2xl p-1.5 w-fit mx-auto">

@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { Home, BookOpen, Zap, PenLine } from "lucide-react";
+import { Home, BookOpen, Zap, PenLine, UserRound } from "lucide-react";
 
 export interface ShellNavItem { label: string; href: string; icon: LucideIcon; match?: (pathname: string) => boolean; }
 export interface ShellNavGroup { title: string; items: ShellNavItem[]; }
@@ -13,6 +13,7 @@ export const STUDENT_NAV: ShellNavItem[] = [
       p.startsWith("/murid/sertifikat") || p.startsWith("/arena/tugas") || p.startsWith("/murid/tugasku") },
   { label: "Arena", href: "/arena", icon: Zap, match: (p) => p.startsWith("/arena") && !p.startsWith("/arena/tugas") && !p.startsWith("/arena/chat") },
   { label: "Karya", href: "/murid/karya", icon: PenLine, match: (p) => p.startsWith("/murid/karya") },
+  { label: "Profil", href: "/murid/profile", icon: UserRound, match: (p) => p.startsWith("/murid/profile") || p.startsWith("/murid/pengaturan") || p.startsWith("/murid/premium") },
 ];
 
 /** Detail menu tidak lagi menjadi navigasi utama. Hub Belajar dan Arena menjadi pintunya. */
