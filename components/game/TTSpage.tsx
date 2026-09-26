@@ -281,9 +281,15 @@ export default function TekaTekiSilang() {
   const color = THEME[(puzzle.id - 1) % THEME.length];
   const mascot = puzzle.mascot;
 
-  // Pratinjau tiap level untuk layar pemilihan (seed harian, stabil).
+  // Identitas kartu level HARUS berasal dari konfigurasi level, bukan dari
+  // hasil generator. Generator hanya memasok metadata puzzle (ukuran/jumlah kata).
+  // Ini mencegah fallback/ketidaksempurnaan bank mengubah Level 6/11 menjadi
+  // kartu "#1 Keluarga Inti" di layar pemilihan.
   const previews = useMemo(
-    () => TTS_LEVELS.map((l) => buildPuzzle({ level: l.level, seed: dailySeed(l.level) })),
+    () => TTS_LEVELS.map((level) => ({
+      level,
+      puzzle: buildPuzzle({ level: level.level, seed: dailySeed(level.level) }),
+    })),
     []
   );
 
@@ -979,29 +985,30 @@ export default function TekaTekiSilang() {
               <div className="w-11 sm:w-[110px]" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {previews.map((p) => {
-                const unlocked = saved.unlocked.includes(p.id);
-                const best = saved.best[p.id] || 0;
+              {previews.map(({ level, puzzle: p }) => {
+                const levelId = level.level;
+                const unlocked = saved.unlocked.includes(levelId);
+                const best = saved.best[levelId] || 0;
                 const st = starsFor(best, 0);
-                const c = THEME[(p.id - 1) % THEME.length];
+                const c = THEME[(levelId - 1) % THEME.length];
                 return (
                   <button
-                    key={p.id}
+                    key={levelId}
                     disabled={!unlocked}
-                    onClick={() => unlocked && openSetup(p.id)}
+                    onClick={() => unlocked && openSetup(levelId)}
                     className={`text-left rounded-2xl border-4 border-[#161B3A] dark:border-white/25 p-4 transition-transform ${
                       unlocked ? "shadow-[5px_5px_0_#4338CA] hover:-translate-x-0.5 hover:-translate-y-0.5 cursor-pointer" : "shadow-[5px_5px_0_#9CA3AF] bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-[#1E1840]/60 dark:text-[#4A4570]"
                     }`}
                     style={unlocked ? { background: c, color: "#fff" } : undefined}
                   >
                     <div className="flex items-start justify-between mb-1.5">
-                      <span className="font-extrabold text-2xl leading-none">#{p.id}</span>
+                      <span className="font-extrabold text-2xl leading-none">#{levelId}</span>
                       {unlocked
                         ? <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-black/15">{p.rows}×{p.cols} · {p.words.length} kata</span>
                         : <Lock className="w-4 h-4" />}
                     </div>
-                    <div className="font-extrabold text-base leading-tight mb-0.5">{p.title}</div>
-                    <div className="text-[11px] font-semibold opacity-85 mb-2">{p.subtitle}</div>
+                    <div className="font-extrabold text-base leading-tight mb-0.5">{level.title}</div>
+                    <div className="text-[11px] font-semibold opacity-85 mb-2">{level.subtitle}</div>
                     {unlocked ? (
                       <div className="flex items-center gap-0.5">
                         {[1, 2, 3].map((i) => (
