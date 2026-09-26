@@ -43,7 +43,7 @@ export function PayoutSection({
   return (
     <div className="space-y-4">
       {/* Rekening pencairan */}
-      <section aria-label="Rekening pencairan" className="rounded-2xl bg-card border border-border p-4 lg:p-6">
+      <section aria-label="Rekening pencairan" className="bc-guru-surface rounded-2xl p-4 lg:p-6">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <Landmark className="h-5 w-5 text-muted-foreground" />
@@ -84,7 +84,7 @@ export function PayoutSection({
       </section>
 
       {/* Riwayat pencairan */}
-      <section aria-label="Riwayat pencairan" className="rounded-2xl bg-card border border-border p-4 lg:p-6">
+      <section aria-label="Riwayat pencairan" className="bc-guru-surface rounded-2xl p-4 lg:p-6">
         <div className="flex items-center gap-2">
           <ReceiptText className="h-5 w-5 text-muted-foreground" />
           <h2 className="text-base font-semibold text-foreground">Riwayat Pencairan</h2>
