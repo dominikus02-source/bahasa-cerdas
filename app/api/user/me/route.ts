@@ -101,8 +101,9 @@ async function findOrCreateUser(opts: {
   return newUser;
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const fresh = new URL(request.url).searchParams.get("fresh") === "1";
     const { createClient } = await import("@/lib/supabase/server");
     const supabase = await createClient();
 
@@ -140,12 +141,14 @@ export async function GET() {
     const supabaseId = String(data.claims.sub);
     const email = String(data.claims.email || "").toLowerCase();
     const cacheKey = `user:me:id:${supabaseId}`;
-    const cached = await cache.get<Record<string, unknown>>(cacheKey);
-    if (cached) {
-      return NextResponse.json(
-        { success: true, user: cached, data: { user: cached } },
-        { headers: { "X-Cache": "HIT", "Cache-Control": "private, max-age=30" } }
-      );
+    if (!fresh) {
+      const cached = await cache.get<Record<string, unknown>>(cacheKey);
+      if (cached) {
+        return NextResponse.json(
+          { success: true, user: cached, data: { user: cached } },
+          { headers: { "X-Cache": "HIT", "Cache-Control": "private, max-age=30" } }
+        );
+      }
     }
 
     // PRIMARY: stable Supabase identity.
@@ -208,7 +211,7 @@ export async function GET() {
 
     return NextResponse.json(
       { success: true, user: result, data: { user: result } },
-      { headers: { "X-Cache": "MISS", "Cache-Control": "private, max-age=30" } }
+      { headers: { "X-Cache": fresh ? "BYPASS" : "MISS", "Cache-Control": "private, no-store" } }
     );
   } catch (e: any) {
     console.error("GET /api/user/me error:", e?.message || e);
