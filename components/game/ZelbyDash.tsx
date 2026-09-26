@@ -1019,6 +1019,7 @@ export default function ZelbyDash() {
         {/* Header */}
         <div className="w-full flex items-center justify-between mb-4">
           <div className="flex items-center gap-2.5">
+            <GameBackButton href="/arena/game" label="Kembali ke Arena" title="Kembali ke Arena" />
             <div className="w-11 h-11 rounded-2xl overflow-hidden border-4 border-[#161B3A] dark:border-white/25 shadow-[4px_4px_0_#0891B2] shrink-0 bg-white dark:bg-[#0C2228] pk-pop">
               <img
                 src="/junior/karakter/zelby_happy.webp"
