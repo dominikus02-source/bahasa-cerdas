@@ -265,7 +265,7 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
                         containerClassName="h-full w-full"
                       />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-blue-50 via-sky-50 to-slate-100 dark:from-blue-950/60 dark:via-[#0d2747] dark:to-[#102238]">
+                      <div className="flex h-full w-full items-center justify-center bg-blue-50 dark:bg-blue-950/35">
                         <span className="grid h-12 w-12 place-items-center rounded-2xl border border-blue-100 bg-white/80 text-blue-500 shadow-sm dark:border-blue-800/60 dark:bg-blue-950/65 dark:text-blue-300">
                           {isPuisi ? <Feather size={21} /> : <BookOpen size={21} />}
                         </span>
@@ -357,7 +357,7 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
             })}
           </div>
 
-          {!compact && <div className="mt-4 rounded-2xl bg-gradient-to-r from-violet-50 via-purple-50 to-fuchsia-50 border border-blue-100 p-4">
+          {!compact && <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50/60 p-4 dark:border-blue-950/70 dark:bg-blue-950/20">
             <div className="flex items-start gap-2">
               <Flame size={16} className="text-orange-400 mt-0.5 shrink-0" />
               <div className="min-w-0">
