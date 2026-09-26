@@ -19,7 +19,7 @@ interface PlanFeature {
 
 const PLAN_FEATURES: PlanFeature[] = [
   { label: "Kredit AI per bulan", free: "30", freeOk: true, pro: "500", proOk: true },
-  { label: "Buat RPP, Soal & PPT dengan AI", free: "Ya", freeOk: true, pro: "Ya", proOk: true },
+  { label: "Buat RPP & Soal dengan AI", free: "Ya", freeOk: true, pro: "Ya", proOk: true },
   { label: "Unduh dokumen per hari (PDF/DOCX/PPTX)", free: "1×/hari", freeOk: true, pro: "10×/hari", proOk: true },
   { label: "Simpan hasil AI (riwayat)", free: "50 hasil", freeOk: true, pro: "Tak terbatas", proOk: true },
   { label: "Kecepatan pakai AI per hari", free: "20×", freeOk: true, pro: "200×", proOk: true },
@@ -206,346 +206,406 @@ export default function BerlanggananPage() {
   const daysLeft = premiumUntil
     ? Math.max(0, Math.ceil((new Date(premiumUntil).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
     : 0;
-  const isExpiring = daysLeft > 0 && daysLeft <= 7;
-  const isExpired = isPremium && daysLeft === 0;
-  const premiumSince = premiumUntil && daysLeft > 0 ? new Date(premiumUntil).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }) : null;
+  const hasActivePremium = isPremium && (!premiumUntil || daysLeft > 0);
+  const isExpiring = !!premiumUntil && daysLeft > 0 && daysLeft <= 7;
+  const isExpired = !!premiumUntil && daysLeft === 0;
+  const premiumUntilLabel = premiumUntil
+    ? new Date(premiumUntil).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })
+    : "Akses aktif";
 
-  if (status === "success" && isPremium) {
+  const currentPrice = selectedPlan === "GURU_PRO_YEARLY" ? 399000 : 49000;
+  const selectedPriceLabel = coupon
+    ? formatCurrency(coupon.hargaDiskon)
+    : formatCurrency(currentPrice);
+
+  const handlePlanChange = (plan: "GURU_PRO_MONTHLY" | "GURU_PRO_YEARLY") => {
+    setSelectedPlan(plan);
+    setCoupon(null);
+    if (errorMsg) setErrorMsg("");
+    if (diagnosticCode) setDiagnosticCode("");
+  };
+
+  if ((status === "success" || status === "pending") && !hasActivePremium) {
     return (
-      <div className="max-w-2xl mx-auto space-y-6">
-        <div className="rounded-2xl bg-gradient-to-br from-amber-500 via-amber-500 to-yellow-500 p-8 text-white text-center shadow-xl">
-          <div className="h-16 w-16 rounded-full bg-white/20 backdrop-blur flex items-center justify-center mx-auto mb-4">
-            <Crown className="h-8 w-8 text-white" />
+      <div className="mx-auto max-w-3xl py-6 sm:py-10">
+        <div className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_24px_70px_-35px_rgba(15,23,42,0.35)]">
+          <div className="relative overflow-hidden bg-[#101a3a] px-6 py-12 text-center text-white sm:px-12">
+            <div className="absolute -right-20 -top-24 h-64 w-64 rounded-full bg-violet-500/20 blur-3xl" />
+            <div className="absolute -bottom-24 -left-20 h-64 w-64 rounded-full bg-cyan-400/10 blur-3xl" />
+            <div className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/15 backdrop-blur">
+              {status === "pending" ? (
+                <Loader2 className="h-8 w-8 animate-spin text-white" />
+              ) : (
+                <Crown className="h-8 w-8 text-amber-300" />
+              )}
+            </div>
+            <p className="relative mt-5 text-[11px] font-black uppercase tracking-[0.2em] text-cyan-300">Guru Pro</p>
+            <h1 className="relative mt-2 text-3xl font-black tracking-tight sm:text-4xl">
+              {status === "pending" ? "Menunggu pembayaran" : "Pembayaran berhasil diproses"}
+            </h1>
+            <p className="relative mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-300">
+              {status === "pending"
+                ? "Selesaikan pembayaran melalui metode yang kamu pilih. Status akan diperbarui setelah pembayaran dikonfirmasi."
+                : "Pembayaran sedang dikonfirmasi. Akses Guru Pro akan aktif dalam beberapa saat."}
+            </p>
           </div>
-          <h1 className="text-2xl font-bold">Kamu PRO Aktif!</h1>
-          <p className="mt-2 text-amber-100">Berlaku hingga {premiumSince}</p>
-        </div>
-
-        {isExpiring && (
-          <Card className="p-4 border-amber-200 bg-amber-50">
-            <div className="flex items-start gap-3">
-              <Clock className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
-              <div>
-                <p className="font-semibold text-amber-900 text-sm">PRO akan berakhir dalam {daysLeft} hari</p>
-                <p className="text-xs text-amber-700 mt-1">
-                  Perpanjang sekarang agar akses AI Tools tetap 500 kredit/bulan tanpa terputus.
-                </p>
-                <p className="text-xs text-amber-600 mt-2 bg-amber-100 rounded-lg p-2">
-                  Jika anda masih aktif PRO, pembelian baru akan <strong>memperpanjang</strong> masa aktif anda.
-                </p>
+          <div className="p-6 sm:p-8">
+            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+              <div className="flex items-start gap-3">
+                <Info className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
+                <div>
+                  <p className="text-sm font-black text-amber-950">Konfirmasi pembayaran</p>
+                  <p className="mt-1 text-xs leading-5 text-amber-800">
+                    Jika status belum berubah dalam 5 menit, refresh halaman atau hubungi admin dengan email akun dan nomor transaksi.
+                  </p>
+                </div>
               </div>
             </div>
-          </Card>
-        )}
-
-        {isExpired && (
-          <Card className="p-4 border-red-200 bg-red-50">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 shrink-0" />
-              <div>
-                <p className="font-semibold text-red-700 text-sm">Masa PRO telah berakhir</p>
-                <p className="text-xs text-red-600 mt-1">Anda tetap bisa menggunakan Guru Free dengan 30 kredit/bulan.</p>
-              </div>
-            </div>
-          </Card>
-        )}
-
-        <Card className="p-6 border-2 border-amber-300 bg-gradient-to-b from-amber-50/40 to-white">
-          <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
-            <h3 className="font-bold text-gray-900">Perpanjang PRO</h3>
-            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-amber-400 to-yellow-500 text-white text-xs font-bold shadow">
-              <Crown className="w-3.5 h-3.5" /> Guru Pro Aktif
-            </span>
+            <a
+              href="/guru/ai-tools"
+              className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#18255b] px-5 py-3.5 text-sm font-black text-white transition hover:bg-[#223273]"
+            >
+              <Zap className="h-4 w-4" />
+              Mulai menggunakan Alat AI
+            </a>
           </div>
-          <div className="flex items-center justify-center gap-2 bg-gray-100 rounded-xl p-1 w-fit mx-auto mb-6">
-            <button onClick={() => { setSelectedPlan("GURU_PRO_MONTHLY"); setCoupon(null); }}
-              className={`px-5 py-2 rounded-lg text-sm font-medium ${selectedPlan === "GURU_PRO_MONTHLY" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500"}`}>
-              Bulanan — {coupon && selectedPlan === "GURU_PRO_MONTHLY" ? formatCurrency(coupon.hargaDiskon) : "Rp 49.000"}
-            </button>
-            <button onClick={() => { setSelectedPlan("GURU_PRO_YEARLY"); setCoupon(null); }}
-              className={`px-5 py-2 rounded-lg text-sm font-medium ${selectedPlan === "GURU_PRO_YEARLY" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500"}`}>
-              Tahunan — {coupon && selectedPlan === "GURU_PRO_YEARLY" ? formatCurrency(coupon.hargaDiskon) : "Rp 399.000"}
-              <Badge variant="warning" className="ml-1.5 text-[10px] py-0">HEMAT</Badge>
-            </button>
-          </div>
-          <div className="max-w-md mx-auto mb-6">
-            <CouponInput
-              planId={selectedPlan}
-              price={selectedPlan === "GURU_PRO_YEARLY" ? 399000 : 49000}
-              value={coupon}
-              onChange={setCoupon}
-            />
-          </div>
-          <Button onClick={handleUpgrade} disabled={loading}
-            className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 text-white">
-            {loading ? <Loader2 className="w-4 h-4 animate-spin mr-1.5" /> : <Zap className="w-4 h-4 mr-1.5" />}
-            {loading ? "Memproses..." : coupon ? `Perpanjang PRO — ${formatCurrency(coupon.hargaDiskon)}` : "Perpanjang PRO"}
-          </Button>
-        </Card>
-
-        <Card className="p-4 bg-blue-50 border-blue-200">
-          <div className="flex items-start gap-3">
-            <Info className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
-            <div>
-              <p className="text-sm font-semibold text-blue-900">Butuh bantuan?</p>
-              <p className="text-xs text-blue-700 mt-1">
-                Jika pembayaran berhasil tetapi akun PRO belum aktif dalam 5 menit,
-                hubungi admin dengan menyertakan email akun dan nomor transaksi.
-              </p>
-            </div>
-          </div>
-        </Card>
-
-        <div className="text-center">
-          <a href="/guru/ai-tools" className="text-sm text-emerald-600 hover:text-emerald-700 font-medium">
-            Mulai menggunakan Alat AI →
-          </a>
-        </div>
-      </div>
-    );
-  }
-
-  if ((status === "success" || status === "pending") && !isPremium) {
-    return (
-      <div className="max-w-lg mx-auto text-center py-16">
-        <div className="h-20 w-20 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center mx-auto mb-4 shadow-lg">
-          {status === "pending" ? (
-            <div className="h-10 w-10 animate-spin border-[3px] border-white border-t-transparent rounded-full" />
-          ) : (
-            <Crown className="h-10 w-10 text-white" />
-          )}
-        </div>
-        <h1 className="text-2xl font-bold text-gray-900">
-          {status === "pending" ? "Menunggu Pembayaran" : "Pembayaran Berhasil Diproses!"}
-        </h1>
-        <p className="mt-2 text-gray-500">
-          {status === "pending"
-            ? "Selesaikan pembayaran melalui metode yang kamu pilih. Status akan diperbarui otomatis setelah pembayaran dikonfirmasi."
-            : "Pembayaran sedang dikonfirmasi. Akun PRO akan aktif dalam beberapa saat."}
-        </p>
-        <Card className="mt-6 p-4 bg-amber-50 border-amber-200 text-left">
-          <div className="flex items-start gap-3">
-            <Info className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
-            <div>
-              <p className="text-sm font-semibold text-amber-900">Menunggu konfirmasi</p>
-              <p className="text-xs text-amber-700 mt-1">
-                Jika status belum berubah dalam 5 menit, refresh halaman atau hubungi admin dengan menyertakan email akun dan nomor transaksi.
-              </p>
-            </div>
-          </div>
-        </Card>
-        <div className="mt-8">
-          <a href="/guru/ai-tools"
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-green-600 text-white px-6 py-3 rounded-xl font-semibold">
-            <Zap className="w-4 h-4" /> Mulai menggunakan Alat AI
-          </a>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-10">
-      <div className="text-center py-6">
-        <div className="h-16 w-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center mx-auto mb-4 shadow-lg">
-          <Crown className="h-8 w-8 text-white" />
-        </div>
-        <h1 className="text-3xl font-bold text-gray-900">Pilih Paketmu</h1>
-        <p className="mt-3 text-gray-500 max-w-md mx-auto">
-          Coba gratis 30 hari, lalu lanjutkan dengan Pro: 500 kredit AI, unduh 10 dokumen/hari, dan jual karya di Marketplace.
-        </p>
-      </div>
-
-      <div className="max-w-lg mx-auto">
-        {planInfo?.isTrial ? (
-          <div className="flex items-center justify-center gap-2 rounded-xl border border-violet-200 bg-violet-50 py-2.5 px-4 text-sm text-violet-700">
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-violet-100 text-violet-700 text-xs font-semibold">
-              <Sparkles className="w-3 h-3" /> Guru Pro Trial
-            </span>
-            Kamu sedang di masa trial ({planInfo.daysRemaining} hari lagi) — setelah habis, lanjutkan dengan Pro.
-          </div>
-        ) : (
-          <div className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white py-2.5 px-4 text-sm text-gray-600">
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold">
-              <Zap className="w-3 h-3" /> Guru Free
-            </span>
-            Kamu sedang memakai paket Gratis (30 kredit AI/bulan, 1 unduhan/hari).
-          </div>
-        )}
-      </div>
-
-      <div className="max-w-2xl mx-auto">
-        <div className="rounded-2xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-green-500 p-5 text-white shadow-lg relative overflow-hidden">
-          <div className="absolute -right-6 -top-6 h-28 w-28 rounded-full bg-white/10" />
-          <div className="absolute right-10 -bottom-10 h-20 w-20 rounded-full bg-white/10" />
-          <div className="flex items-start gap-4 relative">
-            <div className="h-12 w-12 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center shrink-0">
-              <Gift className="w-6 h-6 text-white" />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-lg font-bold">Program Guru Cerdas</h2>
-                <Badge className="bg-white/20 text-white text-[10px] py-0 border-white/30">PROMO</Badge>
-              </div>
-              <p className="text-sm text-emerald-50 mt-1">
-                Guru terverifikasi bisa menjadi <strong>Guru Pro</strong> hanya dengan <strong>Rp 1.000/bulan</strong>.
-              </p>
-              <p className="text-xs text-emerald-100 mt-1.5">
-                Masukkan kode <span className="font-mono font-semibold bg-white/20 px-1.5 py-0.5 rounded">bcgurucerdas1000</span> saat memilih paket <strong>Bulanan</strong>. Promo ini <strong>tidak berlaku untuk paket Tahunan</strong>.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {errorMsg && (
-        <div className="max-w-lg mx-auto rounded-xl bg-red-50 border border-red-200 p-4 text-sm text-red-700">
-          <div className="flex items-center gap-2 mb-1">
-            <AlertCircle size={16} className="shrink-0" /> {errorMsg}
-          </div>
-          {diagnosticCode && (
-            <p className="text-xs text-red-400 mt-1 font-mono">Kode: {diagnosticCode}</p>
-          )}
-          <a href="/guru/bantuan/pembayaran" className="text-xs text-red-600 hover:text-red-800 underline mt-2 inline-block">
-            Lihat bantuan pembayaran →
-          </a>
-        </div>
-      )}
-
-      <div className="flex items-center justify-center gap-2 bg-gray-100 rounded-xl p-1 w-fit mx-auto">
-        <button onClick={() => { setSelectedPlan("GURU_PRO_MONTHLY"); setCoupon(null); }}
-          className={`px-5 py-2 rounded-lg text-sm font-medium transition-all ${selectedPlan === "GURU_PRO_MONTHLY" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
-          Bulanan
-        </button>
-        <button onClick={() => { setSelectedPlan("GURU_PRO_YEARLY"); setCoupon(null); }}
-          className={`px-5 py-2 rounded-lg text-sm font-medium transition-all ${selectedPlan === "GURU_PRO_YEARLY" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
-          Tahunan
-          <Badge variant="warning" className="ml-2 text-[10px] py-0">HEMAT Rp 189K</Badge>
-        </button>
-      </div>
-
-      <div className="max-w-lg mx-auto">
-        <CouponInput
-          planId={selectedPlan}
-          price={selectedPlan === "GURU_PRO_YEARLY" ? 399000 : 49000}
-          value={coupon}
-          onChange={setCoupon}
-        />
-        {selectedPlan === "GURU_PRO_YEARLY" ? (
-          <p className="text-[11px] text-amber-600 mt-1.5 text-center font-medium">
-            Kupon Program Guru Cerdas (Rp 1.000) hanya berlaku untuk paket Bulanan.
-          </p>
-        ) : (
-          <p className="text-[11px] text-gray-400 mt-1.5 text-center">
-            Kupon berlaku otomatis saat checkout — Anda tetap membayar lewat Midtrans.
-          </p>
-        )}
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-6">
-        <Card className="p-6 border-2 border-gray-100">
-          <div className="mb-6"><h2 className="text-xl font-bold text-gray-900">Gratis</h2><p className="text-sm text-gray-500 mt-1">Untuk memulai</p></div>
-          <p className="text-3xl font-bold text-gray-900 mb-6">Rp 0</p>
-          <ul className="space-y-3 mb-8">
-            {PLAN_FEATURES.map((f) => (
-              <li key={f.label} className="flex items-start gap-2 text-sm">
-                {f.freeOk ? <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /> : <X className="w-4 h-4 text-gray-300 mt-0.5 shrink-0" />}
-                <span className={f.freeOk ? "text-gray-700" : "text-gray-400"}>
-                  <span className="font-medium">{f.label}:</span> {f.free}
-                </span>
-              </li>
-            ))}
-          </ul>
-          <Button variant="outline" className="w-full" disabled>Paket Saat Ini</Button>
-        </Card>
-
-        <Card className="p-6 border-2 border-amber-200 bg-gradient-to-br from-amber-50/50 to-orange-50/50 relative overflow-hidden">
-          <div className="absolute top-0 right-0"><div className="bg-gradient-to-l from-amber-400 to-orange-400 text-white text-[10px] font-bold px-4 py-1 rounded-bl-lg shadow">POPULER</div></div>
-          <div className="mb-6">
-            <div className="flex items-center gap-2 mb-1"><h2 className="text-xl font-bold text-gray-900">PRO</h2><Crown className="w-5 h-5 text-amber-500" /></div>
-            <p className="text-sm text-gray-500 mt-1">Untuk guru profesional</p>
-          </div>
-          {coupon ? (
-            <div className="mb-6">
-              <div className="flex items-center gap-2 flex-wrap">
-                <p className="text-3xl font-bold text-emerald-600">{formatCurrency(coupon.hargaDiskon)}</p>
-                <p className="text-lg text-gray-400 line-through">{formatCurrency(coupon.hargaAsli)}</p>
-              </div>
-              <p className="text-sm text-gray-500">
-                {selectedPlan === "GURU_PRO_YEARLY" ? "per tahun" : "per bulan"} · harga khusus kupon
-              </p>
-              <p className="text-xs text-emerald-600 font-medium mt-1">
-                {coupon.kode} — hemat {formatCurrency(coupon.hemat)}
-              </p>
-            </div>
-          ) : selectedPlan === "GURU_PRO_YEARLY" ? (
-            <div className="mb-6">
-              <p className="text-3xl font-bold text-gray-900">Rp 399.000</p>
-              <p className="text-sm text-gray-500">per tahun (Rp 33.250/bln)</p>
-              <p className="text-xs text-emerald-600 font-medium mt-1">Hemat Rp 189.000 dari bulanan</p>
-            </div>
-          ) : (
-            <div className="mb-6">
-              <p className="text-3xl font-bold text-gray-900">Rp 49.000</p>
-              <p className="text-sm text-gray-500">per bulan</p>
-            </div>
-          )}
-          <ul className="space-y-3 mb-8">
-            {PLAN_FEATURES.map((f) => (
-              <li key={f.label} className="flex items-start gap-2 text-sm">
-                <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-                <span className="text-gray-700">
-                  <span className="font-medium">{f.label}:</span> {f.pro}
-                </span>
-              </li>
-            ))}
-          </ul>
-          <Button onClick={handleUpgrade} disabled={loading}
-            className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 text-white shadow-lg shadow-amber-200/50">
-            {loading ? <Loader2 className="w-4 h-4 animate-spin mr-1.5" /> : <Zap className="w-4 h-4 mr-1.5" />}
-            {loading ? "Memproses..." : "Langganan Sekarang"}
-          </Button>
-        </Card>
-      </div>
-
-      <div className="text-center space-y-2">
-        <div className="flex items-center justify-center gap-2 text-sm text-gray-400"><Shield className="w-4 h-4" /> Pembayaran aman via Midtrans</div>
-        <div className="flex items-center justify-center gap-4 text-xs text-gray-400">
-          <span className="flex items-center gap-1"><CreditCard className="w-3.5 h-3.5" /> Kartu</span>
-          <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> QRIS</span>
-          <span className="flex items-center gap-1"><Landmark className="w-3.5 h-3.5" /> VA</span>
-          <span className="flex items-center gap-1"><Smartphone className="w-3.5 h-3.5" /> e-Wallet</span>
-        </div>
-      </div>
-
-      <Card className="p-6 bg-blue-50 border-blue-200">
-        <div className="flex items-start gap-3">
-          <Info className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
+    <div className="mx-auto max-w-6xl space-y-7 pb-10 sm:space-y-9">
+      {/* Hero */}
+      <section className="relative overflow-hidden rounded-[2rem] bg-[#101a3a] px-6 py-8 text-white shadow-[0_26px_70px_-36px_rgba(15,23,42,0.65)] sm:px-10 sm:py-10">
+        <div className="absolute -right-28 -top-32 h-80 w-80 rounded-full bg-violet-500/20 blur-3xl" />
+        <div className="absolute -bottom-28 left-1/3 h-72 w-72 rounded-full bg-cyan-400/10 blur-3xl" />
+        <div className="relative grid gap-8 lg:grid-cols-[1.35fr_0.65fr] lg:items-center">
           <div>
-            <p className="text-sm font-semibold text-blue-900">Butuh bantuan?</p>
-            <p className="text-xs text-blue-700 mt-1">
-              Jika pembayaran berhasil tetapi akun PRO belum aktif dalam 5 menit,
-              hubungi admin dengan menyertakan email akun dan nomor transaksi.
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300/25 bg-amber-300/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-amber-200">
+                <Crown className="h-3.5 w-3.5" />
+                Guru Pro
+              </span>
+              {hasActivePremium && (
+                <span className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-200">
+                  Aktif
+                </span>
+              )}
+            </div>
+            <h1 className="mt-4 max-w-2xl text-3xl font-black leading-tight tracking-tight sm:text-5xl">
+              Mengajar lebih cepat.
+              <span className="block text-cyan-300">Buat lebih banyak.</span>
+            </h1>
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300 sm:text-base">
+              Naikkan kapasitas mengajar dengan kredit AI lebih besar, unduhan lebih banyak, dan akses untuk menjual karya pembelajaranmu.
             </p>
+            <div className="mt-6 flex flex-wrap gap-2.5">
+              {[
+                ["500", "kredit AI/bulan"],
+                ["10×", "unduhan/hari"],
+                ["85%", "komisi karya"],
+              ].map(([value, label]) => (
+                <div key={label} className="rounded-2xl border border-white/10 bg-white/[0.07] px-4 py-3 backdrop-blur">
+                  <p className="text-lg font-black">{value}</p>
+                  <p className="text-[10px] font-semibold text-slate-300">{label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="relative hidden lg:block">
+            <div className="mx-auto max-w-xs rounded-[1.75rem] border border-white/10 bg-white/[0.07] p-5 shadow-2xl backdrop-blur">
+              <div className="flex items-center justify-between">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-300 to-orange-500 shadow-lg">
+                  <Crown className="h-5 w-5 text-white" />
+                </div>
+                <span className="rounded-full bg-emerald-400/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wider text-emerald-200">
+                  Untuk Guru
+                </span>
+              </div>
+              <p className="mt-5 text-2xl font-black">Guru Pro</p>
+              <p className="mt-1 text-xs text-slate-300">Semua yang kamu butuhkan untuk mengajar lebih efisien.</p>
+              <div className="mt-5 space-y-2.5">
+                {["AI lebih leluasa", "Dokumen lebih banyak", "Marketplace karya"].map((item) => (
+                  <div key={item} className="flex items-center gap-2 text-xs text-slate-200">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-400/15 text-emerald-300">✓</span>
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
-      </Card>
+      </section>
 
-      <Card className="p-6">
-        <h3 className="font-bold text-gray-900 mb-4">Ketentuan Pembayaran</h3>
-        <div className="space-y-3 text-sm text-gray-600">
-          <p>• Pembayaran diproses melalui <strong>Midtrans</strong> yang aman.</p>
-          <p>• Paket <strong>Bulanan</strong> berlaku <strong>30 hari</strong> sejak pembayaran berhasil.</p>
-          <p>• Paket <strong>Tahunan</strong> berlaku <strong>365 hari</strong> sejak pembayaran berhasil.</p>
-          <p>• Pembayaran bersifat <strong>sekali bayar</strong> dan tidak diperpanjang otomatis.</p>
-          <p>• Jika PRO masih aktif, pembelian baru akan <strong>memperpanjang</strong> masa aktif Anda.</p>
-          <p>• Guru baru otomatis mendapat <strong>Guru Pro Trial 30 hari</strong> (200 kredit). Trial <strong>tidak diperpanjang otomatis</strong> — setelah habis, lanjutkan dengan berlangganan Pro.</p>
-          <p>• Kupon Program Guru Cerdas (Rp 1.000/bulan) <strong>hanya berlaku untuk paket Bulanan</strong>.</p>
-          <p>• Setelah masa PRO habis, akun kembali ke <strong>Guru Free</strong> (30 kredit AI/bulan, 1 unduhan/hari).</p>
-          <p>• Kredit AI mengikuti paket yang aktif — PRO: 500/bulan, Free: 30/bulan.</p>
-          <p>• Jika pembayaran berhasil tetapi PRO belum aktif dalam 5 menit, <a href="/guru/bantuan/pembayaran" className="text-blue-600 hover:underline">hubungi bantuan</a>.</p>
+      {/* Current state */}
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3">
+            <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${hasActivePremium ? "bg-emerald-50 text-emerald-600" : isExpired ? "bg-red-50 text-red-600" : "bg-slate-100 text-slate-600"}`}>
+              {hasActivePremium ? <Check className="h-5 w-5" /> : isExpired ? <AlertCircle className="h-5 w-5" /> : <Zap className="h-5 w-5" />}
+            </div>
+            <div>
+              <p className="text-sm font-black text-slate-900">
+                {hasActivePremium ? "Guru Pro sedang aktif" : isExpired ? "Masa Guru Pro telah berakhir" : planInfo?.isTrial ? "Kamu sedang mencoba Guru Pro" : "Kamu sedang menggunakan Guru Free"}
+              </p>
+              <p className="mt-1 text-xs leading-5 text-slate-500">
+                {hasActivePremium
+                  ? premiumUntil
+                    ? `Berlaku hingga ${premiumUntilLabel}${isExpiring ? ` · tersisa ${daysLeft} hari` : ""}`
+                    : "Akses aktif tanpa tanggal berakhir."
+                  : isExpired
+                    ? "Perpanjang sekarang agar akses dan kredit Pro kembali aktif."
+                    : planInfo?.isTrial
+                      ? `Trial tersisa ${planInfo.daysRemaining} hari.`
+                      : "30 kredit AI/bulan dan 1 unduhan/hari."}
+              </p>
+            </div>
+          </div>
+          <span className={`inline-flex w-fit items-center rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-wider ${hasActivePremium ? "bg-emerald-50 text-emerald-700" : isExpired ? "bg-red-50 text-red-700" : "bg-slate-100 text-slate-600"}`}>
+            {hasActivePremium ? "PRO AKTIF" : isExpired ? "EXPIRED" : planInfo?.isTrial ? "TRIAL" : "FREE"}
+          </span>
         </div>
-      </Card>
+      </section>
+
+      {/* Pricing */}
+      <section className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
+        <Card className="overflow-hidden border-slate-200 bg-white shadow-[0_20px_60px_-38px_rgba(15,23,42,0.35)]">
+          <div className="border-b border-slate-100 p-6 sm:p-7">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-violet-600">Pilih paket</p>
+                <h2 className="mt-1 text-2xl font-black tracking-tight text-slate-900">
+                  {hasActivePremium ? "Perpanjang Guru Pro" : "Aktifkan Guru Pro"}
+                </h2>
+                <p className="mt-1.5 text-sm text-slate-500">Sekali bayar. Tidak ada perpanjangan otomatis.</p>
+              </div>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1.5 text-[10px] font-black text-amber-700">
+                <Shield className="h-3.5 w-3.5" />
+                Aman via Midtrans
+              </span>
+            </div>
+
+            <div className="mt-6 grid grid-cols-2 rounded-2xl bg-slate-100 p-1.5">
+              <button
+                type="button"
+                onClick={() => handlePlanChange("GURU_PRO_MONTHLY")}
+                className={`rounded-xl px-4 py-3 text-left transition ${selectedPlan === "GURU_PRO_MONTHLY" ? "bg-white shadow-sm ring-1 ring-slate-200" : "text-slate-500 hover:text-slate-800"}`}
+              >
+                <span className="block text-xs font-black">Bulanan</span>
+                <span className="mt-0.5 block text-lg font-black text-slate-900">Rp 49.000</span>
+                <span className="block text-[10px] text-slate-500">30 hari</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handlePlanChange("GURU_PRO_YEARLY")}
+                className={`relative rounded-xl px-4 py-3 text-left transition ${selectedPlan === "GURU_PRO_YEARLY" ? "bg-white shadow-sm ring-1 ring-slate-200" : "text-slate-500 hover:text-slate-800"}`}
+              >
+                <span className="absolute right-3 top-3 rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-emerald-700">Hemat Rp 189K</span>
+                <span className="block text-xs font-black">Tahunan</span>
+                <span className="mt-0.5 block text-lg font-black text-slate-900">Rp 399.000</span>
+                <span className="block text-[10px] text-slate-500">365 hari · setara Rp 33.250/bln</span>
+              </button>
+            </div>
+
+            <div className="mt-5 rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 p-4">
+              <div className="flex items-start gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-amber-600 shadow-sm">
+                  <Gift className="h-4 w-4" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-black text-amber-950">Program Guru Cerdas</p>
+                  <p className="mt-0.5 text-xs leading-5 text-amber-800">
+                    Guru terverifikasi bisa mendapat paket bulanan <strong>Rp 1.000</strong> dengan kode promo.
+                  </p>
+                  <p className="mt-2 inline-flex max-w-full rounded-lg bg-white/70 px-2 py-1 font-mono text-[10px] font-bold text-amber-900 ring-1 ring-amber-200">
+                    bcgurucerdas1000
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-5">
+              <CouponInput
+                planId={selectedPlan}
+                price={currentPrice}
+                value={coupon}
+                onChange={setCoupon}
+              />
+              <p className="mt-1.5 text-center text-[10px] text-slate-400">
+                Promo Rp 1.000 hanya berlaku untuk paket Bulanan.
+              </p>
+            </div>
+          </div>
+
+          <div className="p-6 sm:p-7">
+            {errorMsg && (
+              <div className="mb-5 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                <div className="flex items-start gap-2">
+                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                  <div className="min-w-0">
+                    <p className="font-bold">{errorMsg}</p>
+                    {diagnosticCode && <p className="mt-1 font-mono text-[10px] text-red-500">Kode: {diagnosticCode}</p>}
+                    <a href="/guru/bantuan/pembayaran" className="mt-2 inline-block text-xs font-semibold underline underline-offset-2">Bantuan pembayaran →</a>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold text-slate-500">{selectedPlan === "GURU_PRO_YEARLY" ? "Guru Pro Tahunan" : "Guru Pro Bulanan"}</p>
+                <div className="mt-1 flex items-end gap-2">
+                  <p className="text-4xl font-black tracking-tight text-slate-950">{selectedPriceLabel}</p>
+                  {!coupon && <span className="pb-1 text-xs font-semibold text-slate-400">{selectedPlan === "GURU_PRO_YEARLY" ? "/ 365 hari" : "/ 30 hari"}</span>}
+                </div>
+                {coupon && (
+                  <p className="mt-1 text-xs font-bold text-emerald-600">
+                    Hemat {formatCurrency(coupon.hemat)} · {coupon.kode}
+                  </p>
+                )}
+              </div>
+              <div className="hidden text-right sm:block">
+                <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">Akses</p>
+                <p className="mt-1 text-xs font-bold text-slate-700">AI + Marketplace</p>
+              </div>
+            </div>
+
+            <Button
+              onClick={handleUpgrade}
+              disabled={loading}
+              className="mt-5 h-12 w-full rounded-2xl bg-[#18255b] text-sm font-black text-white shadow-lg shadow-slate-900/10 transition hover:bg-[#223273]"
+            >
+              {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Zap className="mr-2 h-4 w-4" />}
+              {loading ? "Memproses pembayaran..." : hasActivePremium ? "Perpanjang Guru Pro" : "Aktifkan Guru Pro"}
+            </Button>
+
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[10px] font-semibold text-slate-400">
+              <span className="flex items-center gap-1"><CreditCard className="h-3.5 w-3.5" /> Kartu</span>
+              <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> QRIS</span>
+              <span className="flex items-center gap-1"><Landmark className="h-3.5 w-3.5" /> VA</span>
+              <span className="flex items-center gap-1"><Smartphone className="h-3.5 w-3.5" /> e-Wallet</span>
+            </div>
+          </div>
+        </Card>
+
+        <div className="space-y-4">
+          <div className="rounded-[1.5rem] border border-violet-100 bg-gradient-to-br from-violet-50 to-cyan-50 p-5">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-violet-600 shadow-sm">
+                <Sparkles className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-sm font-black text-slate-900">Yang kamu dapat</p>
+                <p className="text-[11px] text-slate-500">Upgrade yang terasa setiap hari.</p>
+              </div>
+            </div>
+            <div className="mt-5 space-y-3">
+              {[
+                ["500", "kredit AI setiap bulan"],
+                ["200×", "akses AI per hari"],
+                ["10×", "unduhan dokumen per hari"],
+                ["85%", "komisi penjualan karya"],
+              ].map(([value, label]) => (
+                <div key={label} className="flex items-center justify-between gap-3 rounded-xl bg-white/80 px-3.5 py-3 ring-1 ring-black/[0.04]">
+                  <span className="text-xs font-semibold text-slate-600">{label}</span>
+                  <span className="text-sm font-black text-violet-700">{value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-[1.5rem] border border-slate-200 bg-white p-5">
+            <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Free → Pro</p>
+            <div className="mt-4 space-y-2.5">
+              {PLAN_FEATURES.slice(0, 5).map((feature) => (
+                <div key={feature.label} className="flex items-start gap-2.5">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-slate-700">{feature.label}</p>
+                    <p className="text-[10px] text-slate-400">{feature.free} → <span className="font-bold text-slate-600">{feature.pro}</span></p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Feature comparison */}
+      <section className="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm">
+        <div className="border-b border-slate-100 px-6 py-5 sm:px-7">
+          <p className="text-[10px] font-black uppercase tracking-[0.16em] text-violet-600">Perbandingan</p>
+          <h2 className="mt-1 text-xl font-black text-slate-900">Free vs Guru Pro</h2>
+        </div>
+        <div className="divide-y divide-slate-100">
+          {PLAN_FEATURES.map((feature) => (
+            <div key={feature.label} className="grid gap-3 px-6 py-4 sm:grid-cols-[1.4fr_0.8fr_0.8fr] sm:items-center sm:px-7">
+              <p className="text-xs font-bold text-slate-700">{feature.label}</p>
+              <div className="text-left sm:text-center">
+                <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 sm:hidden">Free · </span>
+                <span className={feature.freeOk ? "text-xs font-semibold text-slate-500" : "text-xs font-semibold text-slate-300"}>{feature.free}</span>
+              </div>
+              <div className="text-left sm:text-center">
+                <span className="text-[10px] font-black uppercase tracking-wider text-violet-500 sm:hidden">Pro · </span>
+                <span className="text-xs font-black text-violet-700">{feature.pro}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Trust + help */}
+      <section className="grid gap-4 md:grid-cols-2">
+        <div className="rounded-[1.5rem] border border-emerald-100 bg-emerald-50/70 p-5">
+          <div className="flex items-start gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-emerald-600 shadow-sm">
+              <Shield className="h-4 w-4" />
+            </div>
+            <div>
+              <p className="text-sm font-black text-emerald-950">Pembayaran aman</p>
+              <p className="mt-1 text-xs leading-5 text-emerald-800">
+                Pembayaran diproses melalui Midtrans. Paket dibeli sekali dan tidak diperpanjang otomatis.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="rounded-[1.5rem] border border-sky-100 bg-sky-50/70 p-5">
+          <div className="flex items-start gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-sky-600 shadow-sm">
+              <Info className="h-4 w-4" />
+            </div>
+            <div>
+              <p className="text-sm font-black text-sky-950">Butuh bantuan?</p>
+              <p className="mt-1 text-xs leading-5 text-sky-800">
+                Jika pembayaran berhasil tetapi Pro belum aktif dalam 5 menit, sertakan email akun dan nomor transaksi saat menghubungi bantuan.
+              </p>
+              <a href="/guru/bantuan/pembayaran" className="mt-2 inline-block text-xs font-black text-sky-700 underline underline-offset-2">
+                Buka bantuan pembayaran →
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Terms */}
+      <details className="group rounded-[1.5rem] border border-slate-200 bg-white">
+        <summary className="cursor-pointer list-none px-6 py-5 text-sm font-black text-slate-800 sm:px-7">
+          Ketentuan pembayaran
+          <span className="float-right text-slate-400 transition group-open:rotate-180">⌄</span>
+        </summary>
+        <div className="border-t border-slate-100 px-6 py-5 text-xs leading-6 text-slate-500 sm:px-7">
+          <ul className="list-disc space-y-1.5 pl-5">
+            <li>Paket Bulanan berlaku 30 hari dan paket Tahunan berlaku 365 hari sejak pembayaran berhasil.</li>
+            <li>Pembayaran bersifat sekali bayar dan tidak diperpanjang otomatis.</li>
+            <li>Jika Guru Pro masih aktif, pembelian baru akan memperpanjang masa aktif.</li>
+            <li>Guru baru dapat memperoleh Guru Pro Trial 30 hari sesuai program yang berlaku.</li>
+            <li>Kupon Program Guru Cerdas Rp 1.000 hanya berlaku untuk paket Bulanan.</li>
+            <li>Setelah Pro berakhir, akun kembali ke Guru Free dengan 30 kredit AI/bulan dan 1 unduhan/hari.</li>
+            <li>Kredit AI mengikuti paket aktif: Pro 500/bulan, Free 30/bulan.</li>
+          </ul>
+        </div>
+      </details>
     </div>
   );
 }
