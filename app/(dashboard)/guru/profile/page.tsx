@@ -475,7 +475,7 @@ export default function GuruProfilePage() {
             /* eslint-disable-next-line @next/next/no-img-element */
             <img src={displayAvatar} alt="" className="w-full h-full object-cover" />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center">
+            <div className="w-full h-full bg-gradient-to-br from-blue-700 to-sky-500 flex items-center justify-center">
               <span className={`${textSize} font-bold text-white`}>{initial}</span>
             </div>
           )}
