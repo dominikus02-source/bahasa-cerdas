@@ -1,5 +1,19 @@
 import type { LucideIcon } from "lucide-react";
-import { Home, User, Zap, PenLine, MessageCircle, Settings, Gem, Gamepad2 } from "lucide-react";
+import {
+  Home,
+  User,
+  Zap,
+  PenLine,
+  MessageCircle,
+  Settings,
+  Gem,
+  Gamepad2,
+  ClipboardList,
+  School,
+  BookOpenCheck,
+  Award,
+  TrendingUp,
+} from "lucide-react";
 
 export interface ShellNavItem {
   label: string;
@@ -8,19 +22,18 @@ export interface ShellNavItem {
   match?: (pathname: string) => boolean;
 }
 
-/** Canonical nav Murid/Arena/Obrolan — SATU sidebar untuk SEMUA produk student (Phase 3 & 4 UNIFIED SHELL). */
+export interface ShellNavGroup {
+  title: string;
+  items: ShellNavItem[];
+}
+
+/** IA Murid canonical: 4 tujuan utama + menu sekunder yang dikelompokkan. */
 export const STUDENT_NAV: ShellNavItem[] = [
   {
     label: "Beranda",
     href: "/murid/beranda",
     icon: Home,
     match: (p) => p === "/murid/beranda",
-  },
-  {
-    label: "Profil",
-    href: "/murid/profile",
-    icon: User,
-    match: (p) => p === "/murid/profile" || p.startsWith("/murid/profile/"),
   },
   {
     label: "Arena",
@@ -40,23 +53,89 @@ export const STUDENT_NAV: ShellNavItem[] = [
     icon: PenLine,
     match: (p) => p.startsWith("/murid/karya"),
   },
+];
+
+export const STUDENT_NAV_GROUPS: ShellNavGroup[] = [
   {
-    label: "Obrolan",
-    href: "/arena/chat",
-    icon: MessageCircle,
-    match: (p) => p.startsWith("/arena/chat"),
+    title: "Belajar",
+    items: [
+      {
+        label: "Kelas",
+        href: "/murid/gabung-kelas",
+        icon: School,
+        match: (p) => p.startsWith("/murid/gabung-kelas") || p.startsWith("/murid/kelasku"),
+      },
+      {
+        label: "Tugas",
+        href: "/murid/tugasku",
+        icon: ClipboardList,
+        match: (p) => p.startsWith("/murid/tugasku"),
+      },
+      {
+        label: "Progres",
+        href: "/murid/progresku",
+        icon: TrendingUp,
+        match: (p) => p.startsWith("/murid/progresku"),
+      },
+    ],
   },
   {
-    label: "Premium",
-    href: "/murid/premium",
-    icon: Gem,
-    match: (p) => p === "/murid/premium",
+    title: "Ujian & Hasil",
+    items: [
+      {
+        label: "Simulasi UKBI",
+        href: "/murid/simulasi/ukbi",
+        icon: BookOpenCheck,
+        match: (p) => p.startsWith("/murid/simulasi/ukbi"),
+      },
+      {
+        label: "Simulasi TKA",
+        href: "/murid/simulasi/tka",
+        icon: BookOpenCheck,
+        match: (p) => p.startsWith("/murid/simulasi/tka"),
+      },
+      {
+        label: "BIGT",
+        href: "/murid/bigt",
+        icon: BookOpenCheck,
+        match: (p) => p.startsWith("/murid/bigt"),
+      },
+      {
+        label: "Sertifikat",
+        href: "/murid/sertifikat",
+        icon: Award,
+        match: (p) => p.startsWith("/murid/sertifikat"),
+      },
+    ],
   },
   {
-    label: "Pengaturan",
-    href: "/murid/pengaturan",
-    icon: Settings,
-    match: (p) => p === "/murid/pengaturan",
+    title: "Akun",
+    items: [
+      {
+        label: "Profil",
+        href: "/murid/profile",
+        icon: User,
+        match: (p) => p === "/murid/profile" || p.startsWith("/murid/profile/"),
+      },
+      {
+        label: "Obrolan",
+        href: "/arena/chat",
+        icon: MessageCircle,
+        match: (p) => p.startsWith("/arena/chat"),
+      },
+      {
+        label: "Premium",
+        href: "/murid/premium",
+        icon: Gem,
+        match: (p) => p === "/murid/premium" || p.startsWith("/murid/premium/"),
+      },
+      {
+        label: "Pengaturan",
+        href: "/murid/pengaturan",
+        icon: Settings,
+        match: (p) => p === "/murid/pengaturan" || p.startsWith("/murid/pengaturan/"),
+      },
+    ],
   },
 ];
 

@@ -9,7 +9,7 @@ import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { VerifiedBadge } from "@/components/arena/UserName";
 import {
   Home, Menu as MenuIcon, X,
-  GraduationCap, User, PenLine, MessageCircle, Settings, Shield, Zap, Gem, Gamepad2,
+  GraduationCap, User, PenLine, MessageCircle, Settings, Shield, Zap, Gem, Gamepad2, ClipboardList, School, BookOpenCheck, Award, TrendingUp,
 } from "lucide-react";
 import {
   NAV_ICON_CLASS,
@@ -26,15 +26,33 @@ const PRIMARY = [
   { href: "/murid/karya", label: "Karya", icon: PenLine },
 ];
 
-const DRAWER_ITEMS: { href: string; label: string; icon: any }[] = [
-  { href: "/murid/beranda", label: "Beranda", icon: Home },
-  { href: "/murid/profile", label: "Profil", icon: User },
-  { href: "/arena", label: "Arena", icon: Zap },
-  { href: "/main-bersama/join", label: "Main Bersama", icon: Gamepad2 },
-  { href: "/murid/karya", label: "Karya", icon: PenLine },
-  { href: "/arena/chat", label: "Obrolan", icon: MessageCircle },
-  { href: "/murid/premium", label: "Premium", icon: Gem },
-  { href: "/murid/pengaturan", label: "Pengaturan", icon: Settings },
+const DRAWER_GROUPS = [
+  {
+    title: "Belajar",
+    items: [
+      { href: "/murid/gabung-kelas", label: "Kelas", icon: School },
+      { href: "/murid/tugasku", label: "Tugas", icon: ClipboardList },
+      { href: "/murid/progresku", label: "Progres", icon: TrendingUp },
+    ],
+  },
+  {
+    title: "Ujian & Hasil",
+    items: [
+      { href: "/murid/simulasi/ukbi", label: "Simulasi UKBI", icon: BookOpenCheck },
+      { href: "/murid/simulasi/tka", label: "Simulasi TKA", icon: BookOpenCheck },
+      { href: "/murid/bigt", label: "BIGT", icon: BookOpenCheck },
+      { href: "/murid/sertifikat", label: "Sertifikat", icon: Award },
+    ],
+  },
+  {
+    title: "Akun",
+    items: [
+      { href: "/murid/profile", label: "Profil", icon: User },
+      { href: "/arena/chat", label: "Obrolan", icon: MessageCircle },
+      { href: "/murid/premium", label: "Premium", icon: Gem },
+      { href: "/murid/pengaturan", label: "Pengaturan", icon: Settings },
+    ],
+  },
 ];
 
 export default function MuridMobileNav({ fullName, role, isFounder, isPremium }: { fullName: string; role: string; isFounder: boolean; isPremium?: boolean }) {
@@ -113,21 +131,28 @@ export default function MuridMobileNav({ fullName, role, isFounder, isPremium }:
               </button>
             </div>
 
-            <div className="px-4 py-3 space-y-1">
-              {DRAWER_ITEMS.map(({ href, label, icon: Icon }) => {
-                const active = isActive(href);
-                return (
-                  <Link key={href} href={href} onClick={close}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                      active ? "bg-violet-50 text-violet-700 dark:bg-violet-500/20 dark:text-violet-200" : "text-gray-600 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800"
-                    }`}
-                  >
-                    <Icon className={`${NAV_ICON_CLASS} ${active ? NAV_ICON_ACTIVE : NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
-                    {label}
-                  </Link>
-                );
-              })}
-            </div>
+            {DRAWER_GROUPS.map((group) => (
+              <div key={group.title} className="px-4 py-3 border-b border-gray-100 dark:border-slate-800">
+                <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">
+                  {group.title}
+                </p>
+                <div className="space-y-1">
+                  {group.items.map(({ href, label, icon: Icon }) => {
+                    const active = isActive(href);
+                    return (
+                      <Link key={href} href={href} onClick={close}
+                        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                          active ? "bg-violet-50 text-violet-700 dark:bg-violet-500/20 dark:text-violet-200" : "text-gray-600 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800"
+                        }`}
+                      >
+                        <Icon className={`${NAV_ICON_CLASS} ${active ? NAV_ICON_ACTIVE : NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
+                        {label}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
 
             {roleGroups.map(({ section, items }) => (
               <div key={section} className="px-4 pt-2 mt-2 border-t border-gray-100 dark:border-slate-800">

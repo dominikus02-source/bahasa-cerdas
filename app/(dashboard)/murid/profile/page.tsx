@@ -13,12 +13,8 @@ import { Input } from "@/components/ui/input";
 import { AvatarPicker } from "@/components/murid/AvatarPicker";
 import { createClient } from "@/lib/supabase/client";
 import { defaultNicknameFromFullName, NICKNAME_MAX_LENGTH } from "@/lib/nickname";
-import { getLevelProgress, levelFromXp } from "@/lib/gamification/levels";
-import { rankFromLevel } from "@/lib/gamification/ranks";
 import type { PlayerProfileView, XpHistoryEntryView, BadgeView } from "@/lib/gamification/client-types";
 import type { LearnerSkillState } from "@/lib/learner-state/types";
-import ProfileHero, { type HeroSocial } from "@/components/profile/ProfileHero";
-import PlayerStatusBar from "@/components/profile/PlayerStatusBar";
 import PlayerStatsGrid from "@/components/profile/PlayerStatsGrid";
 import ActivityFeed, { type FeedEvent } from "@/components/profile/ActivityFeed";
 import AchievementShowcase from "@/components/profile/AchievementShowcase";
@@ -323,10 +319,7 @@ export default function MuridProfilePage() {
     return <div className="text-center py-20 text-gray-500 dark:text-slate-400">Gagal memuat profil. Silakan refresh.</div>;
   }
 
-  const playerLevel = levelFromXp(user.xp || 0);
-  const playerRank = rankFromLevel(playerLevel);
   const displayNickname = user.nickname || user.fullName;
-  const levelProgress = getLevelProgress(user.xp || 0);
   const streakLive = isStreakLive(meta?.kebunKata);
 
   const nextBadge = meta?.lencana
@@ -379,51 +372,35 @@ export default function MuridProfilePage() {
         .profile-badge-unlocked{animation:profile-badge-pop .4s ease}
       `}</style>
 
-      {/* PLAYER CARD — hero premium: identitas + rank crest + XP + aksi.
-          Kartu Total Like menyatu bila data tersedia. */}
-      <ProfileHero
-        persona={{
-          id: user.id,
-          displayName: displayNickname,
-          fullName: user.fullName,
-          nickname: user.nickname,
-          avatar: user.avatar,
-          equippedFrame: user.equippedFrame,
-          equippedNameColor: user.equippedNameColor,
-          equippedBadge: user.equippedBadge,
-          equippedNameplate: user.equippedNameplate,
-          equippedBackground: user.equippedBackground,
-          bio: user.bio ?? null,
-          level: playerLevel,
-          xp: user.xp || 0,
-          levelProgress,
-          streak: user.streak ?? 0,
-          gelar: meta?.gelar ?? null,
-          memberNumber: meta?.memberNumber ?? null,
-          joinedAt: user.createdAt ?? null,
-          isFounder: user.isFounder,
-          isPremium: user.isPremium,
-        }}
-        rank={playerRank}
-        // Statistik sosial (pengikut/mengikuti) dan Total Like tampil di
-        // PlayerStatsGrid — satu sumber angka, hero tetap ringkas.
-        social={null}
-        isOwn
-        onEditProfile={openSettings}
-        likeSummary={null}
-      />
-
-      {/* HUD status pemain — Level/XP/Koin/Streak/Rank + strip lencana */}
-      <PlayerStatusBar
-        level={playerLevel}
-        xp={user.xp || 0}
-        coins={user.coins || 0}
-        streak={user.streak ?? 0}
-        rank={playerRank}
-        badges={unlockedBadges}
-        totalUnlocked={unlockedBadges.length}
-        badgesHref="/arena/player/badges"
-      />
+      {/* Profil = identitas. Statistik permainan, XP, rank, dan streak hidup di Arena. */}
+      <section aria-label="Identitas murid" className="bc-card-premium mb-6 rounded-2xl p-5 md:p-6 ring-1 ring-slate-900/10 dark:ring-white/10">
+        <div className="flex items-center gap-4 md:gap-5">
+          <div className="relative shrink-0">
+            {user.avatar ? (
+              <img src={user.avatar} alt="" className="h-20 w-20 md:h-24 md:w-24 rounded-full object-cover ring-4 ring-violet-500/15" />
+            ) : (
+              <div className="h-20 w-20 md:h-24 md:w-24 rounded-full bg-violet-500/10 ring-4 ring-violet-500/15 flex items-center justify-center text-2xl md:text-3xl font-black text-violet-700 dark:text-violet-300">
+                {displayNickname.slice(0, 1).toUpperCase()}
+              </div>
+            )}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500 dark:text-white/40 mb-1">Profil</p>
+            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white truncate">{displayNickname}</h1>
+            {user.nickname && user.fullName && user.nickname !== user.fullName && <p className="text-sm text-slate-500 dark:text-white/50 truncate">{user.fullName}</p>}
+            <div className="flex flex-wrap items-center gap-2 mt-2.5">
+              {user.school && <span className="rounded-full bg-slate-900/5 dark:bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-slate-600 dark:text-white/55">{user.school}</span>}
+              {user.grade && <span className="rounded-full bg-slate-900/5 dark:bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-slate-600 dark:text-white/55">{user.grade}</span>}
+              {user.isPremium && <span className="rounded-full bg-amber-400/15 px-2.5 py-1 text-[11px] font-bold text-amber-700 dark:text-amber-300">Premium</span>}
+              {user.isFounder && <span className="rounded-full bg-violet-400/15 px-2.5 py-1 text-[11px] font-bold text-violet-700 dark:text-violet-300">Founder</span>}
+            </div>
+          </div>
+          <button onClick={openSettings} className="shrink-0 inline-flex items-center gap-1.5 rounded-xl border border-slate-900/10 dark:border-white/10 px-3 py-2 text-xs font-bold text-slate-700 dark:text-white/70 hover:bg-slate-900/5 dark:hover:bg-white/5 transition-colors">
+            <Settings size={15} /><span className="hidden sm:inline">Edit Profil</span>
+          </button>
+        </div>
+        {user.bio && <p className="mt-4 max-w-3xl text-sm leading-relaxed text-slate-600 dark:text-white/60">{user.bio}</p>}
+      </section>
 
       {/* PERKEMBANGANMU — skill bahasa + perjalanan belajar (data nyata) */}
       <section aria-label="Perkembanganmu" className="mb-6">
