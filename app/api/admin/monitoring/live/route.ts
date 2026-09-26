@@ -13,7 +13,7 @@
 import { NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db as prisma } from "@/lib/db";
-import { getOnlineUsers, isPresenceAvailable, PRESENCE_TTL_SECONDS } from "@/lib/presence";
+import { getOnlineUsers, PRESENCE_TTL_SECONDS } from "@/lib/presence";
 
 export const dynamic = "force-dynamic";
 
@@ -72,7 +72,7 @@ export async function GET() {
         onlineMurid: online.murid,
         onlineAdmin: online.admin,
         locations: online.locations,
-        available: isPresenceAvailable(),
+        available: online.available,
         ttlSeconds: PRESENCE_TTL_SECONDS,
       },
       ai: {
