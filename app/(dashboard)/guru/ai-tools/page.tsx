@@ -28,19 +28,19 @@ export default async function AIToolsPage({
   return (
     <div className="min-h-screen">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="p-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-green-500">
+        <div className="bc-guru-hero mb-8 rounded-2xl p-5 sm:p-6">
+          <div className="mb-2 flex items-center gap-2">
+            <div className="grid h-9 w-9 place-items-center rounded-xl border border-white/15 bg-white/10">
               <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">Alat AI BahasaCerdas</h1>
+            <h1 className="text-2xl font-bold text-white">Alat AI BahasaCerdas</h1>
           </div>
-          <p className="text-sm text-gray-500 max-w-2xl">
+          <p className="max-w-2xl text-sm text-blue-100/90">
             Apa yang ingin Anda buat? Pilih dari kelompok Buat Materi, Evaluasi &amp; Review, atau Bahasa &amp; Asisten — agent AI siap membantu.
           </p>
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="mt-1 text-xs text-blue-200/80">
             Kelompok: Buat Materi • Evaluasi & Review • Bahasa & Asisten
           </p>
         </div>
@@ -48,7 +48,7 @@ export default async function AIToolsPage({
         <AlatAiClient agentParam={agentParam} />
 
         {/* Legacy tool links — all migrated to new workspace */}
-        <div className="mt-10 pt-6 border-t border-gray-100">
+        <div className="bc-guru-surface mt-10 rounded-2xl border-t-0 p-5">
           <p className="text-xs font-medium text-gray-400 mb-3">
             Akses cepat
           </p>
