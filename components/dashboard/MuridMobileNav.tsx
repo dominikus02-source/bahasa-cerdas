@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, BookOpen, Zap, PenLine } from "lucide-react";
+import { Home, BookOpen, Zap, PenLine, Crown, UserCircle } from "lucide-react";
 
 const PRIMARY = [
   { href: "/murid/beranda", label: "Beranda", icon: Home },
   { href: "/murid/belajar", label: "Belajar", icon: BookOpen },
   { href: "/arena", label: "Arena", icon: Zap },
   { href: "/murid/karya", label: "Karya", icon: PenLine },
+  { href: "/murid/premium", label: "Premium", icon: Crown },
+  { href: "/murid/profile", label: "Profil", icon: UserCircle },
 ];
 
 type LegacyProps = {
