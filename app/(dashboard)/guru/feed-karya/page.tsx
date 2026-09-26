@@ -453,11 +453,11 @@ export default function GuruFeedKaryaPage() {
     <div className="space-y-6 max-w-4xl">
       {/* ── Header ── */}
       {user && (
-        <div className="bg-gradient-to-br from-emerald-600 via-green-600 to-teal-700 rounded-2xl p-5 text-white">
+        <div className="guru-hero-strong rounded-2xl p-5">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
               <p className="font-bold text-lg">Pusat Literasi</p>
-              <p className="text-sm text-emerald-200 mt-0.5">Pantau, apresiasi, dan banggakan karya literasi murid-muridmu</p>
+              <p className="guru-hero-muted mt-0.5 text-sm">Pantau, apresiasi, dan banggakan karya literasi murid-muridmu</p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
               <IconPen size={18} />
@@ -495,7 +495,7 @@ export default function GuruFeedKaryaPage() {
       {/* ── Karya Terbaru ── */}
       <section>
         <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-          <h2 className="font-bold text-gray-900 flex items-center gap-2"><Sparkles size={16} className="text-emerald-600" /> Karya Terbaru</h2>
+          <h2 className="font-bold text-gray-900 flex items-center gap-2"><Sparkles size={16} className="text-blue-600 dark:text-blue-300" /> Karya Terbaru</h2>
           <div className="relative">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input

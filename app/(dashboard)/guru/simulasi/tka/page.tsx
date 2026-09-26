@@ -23,12 +23,12 @@ export default async function GuruTKASimulasiPage() {
   return (
     <div>
       {/* Hero */}
-      <div className="bg-gradient-to-r from-rose-600 via-pink-600 to-fuchsia-600 rounded-2xl p-6 mb-6 text-white">
+      <div className="guru-hero-strong mb-6 rounded-2xl p-6">
         <div className="flex items-center gap-3 mb-2">
           <BookOpen size={24} />
           <h1 className="text-xl font-bold">Simulasi TKA — Guru</h1>
         </div>
-        <p className="text-sm text-rose-200 max-w-2xl">
+        <p className="guru-hero-muted max-w-2xl text-sm">
           Pantau paket simulasi TKA yang tersedia untuk murid. Lihat hasil dan kelola bank soal.
         </p>
       </div>
@@ -87,7 +87,7 @@ export default async function GuruTKASimulasiPage() {
       <div className="flex gap-3">
         <Link
           href="/guru/hasil-simulasi"
-          className="flex items-center gap-2 px-5 py-2.5 bg-rose-600 text-white rounded-xl font-medium hover:bg-rose-700 transition-colors"
+          className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 font-medium text-white transition-colors hover:bg-blue-700"
         >
           <TrendingUp size={16} /> Lihat Hasil Murid
         </Link>
