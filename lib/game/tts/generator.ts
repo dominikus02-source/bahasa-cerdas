@@ -28,6 +28,7 @@ import type { Dir, TtsPuzzle, TtsWord, TtsWordDef } from "./types";
 import { levelConfig } from "./levels";
 import { bankForLevel, themeKeyForAnswer } from "./word-bank";
 import { mulberry32, type Rng } from "./seed";
+import { evaluateTtsCandidate } from "./eligibility";
 import {
   canAppearInLevel,
   conflictAnswersFor,
@@ -189,26 +190,37 @@ export function buildPuzzle(options: BuildPuzzleOptions): TtsPuzzle {
   const rng = mulberry32(options.seed);
   const poolAll = options.wordPool?.length ? options.wordPool : bankForLevel(options.level);
 
-  // ── P8I: metadata kesulitan + gerbang level ──
-  // Kata langka (RARE) tidak boleh muncul sebelum L7; tier lain mengikuti
-  // tema (1:1 dengan level) sehingga pool tidak pernah kosong.
-  const enriched = poolAll.map((w) => {
-    const derived = wordDifficulty(w, themeKeyForAnswer(w.answer) ?? "");
-    return {
-      word: w,
-      clueType: w.clueType ?? derived.clueType,
-      tier: w.tier ?? derived.tier,
-    };
-  });
-  const eligiblePool: TtsWord[] = enriched
-    .filter((e) => canAppearInLevel(e.word.answer, e.tier, options.level))
-    .map((e) => ({ ...e.word, clueType: e.clueType, tier: e.tier }));
-  // Jika gate difficulty terlalu ketat untuk tema tertentu, tetap gunakan
-  // bank tema level tersebut. Identitas level tidak boleh berubah hanya karena
-  // metadata tier belum lengkap/terkalibrasi.
-  const pool: TtsWord[] = eligiblePool.length >= cfg.minWords
-    ? eligiblePool
-    : poolAll;
+  // TTS quality gate: bank canonical boleh berisi soal untuk banyak game,
+  // tetapi generator hanya menerima clue/jawaban yang memang cocok untuk TTS.
+  const contentEligible = poolAll
+    .map((w) => {
+      const eligibility = evaluateTtsCandidate({
+        answer: w.answer,
+        clue: w.clue,
+        themeKey: themeKeyForAnswer(w.answer) ?? "",
+      });
+      if (eligibility.status !== "APPROVED") return null;
+      return {
+        ...w,
+        answer: eligibility.answer,
+        clue: eligibility.clue,
+        clueType: w.clueType ?? eligibility.clueType,
+        tier: w.tier ?? eligibility.tier,
+      };
+    })
+    .filter((w): w is TtsWord => w !== null);
+
+  // Jangan pernah menurunkan standar konten hanya demi mengisi grid.
+  // Jika pool curated terlalu kecil, generator gagal secara eksplisit sehingga
+  // bank dapat diperbaiki; bukan diam-diam memasukkan soal buruk.
+  const eligiblePool: TtsWord[] = contentEligible
+    .filter((w) => canAppearInLevel(
+      w.answer,
+      w.tier ?? wordDifficulty(w, themeKeyForAnswer(w.answer) ?? "").tier,
+      options.level
+    ));
+
+  const pool: TtsWord[] = eligiblePool.length >= cfg.minWords ? eligiblePool : contentEligible;
 
   // ── P8I: peta konflik petunjuk↔jawaban (anti-bocor perpotongan) ──
   const conflictMap = new Map<string, Set<string>>();
@@ -388,9 +400,9 @@ export function buildPuzzle(options: BuildPuzzleOptions): TtsPuzzle {
     // Jangan pernah jatuh ke Level 1. Sebelumnya fallback ini membuat preview
     // level tertentu berubah menjadi "Keluarga Inti" sehingga kartu 1 muncul
     // berulang di level 6/11 dan progression terlihat rusak.
-    const fallback = (poolAll.length ? poolAll : options.wordPool ?? [])[0];
+    const fallback = pool[0];
     if (!fallback) {
-      throw new Error(`TTS bank kosong untuk level ${options.level}`);
+      throw new Error(`TTS curated pool kosong untuk level ${options.level}`);
     }
     const safeAnswer = String(fallback.answer).toUpperCase().replace(/[^A-Z]/g, "");
     if (safeAnswer.length < 3) {

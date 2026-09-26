@@ -37,6 +37,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: TTS eligibility gate
+        run: npm run test:tts-eligibility
+
       - name: Lint
         run: npm run lint
 

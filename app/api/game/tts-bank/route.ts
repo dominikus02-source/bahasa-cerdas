@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { getUser } from "@/lib/supabase/server"
 import { db } from "@/lib/db"
+import { evaluateTtsCandidate } from "@/lib/game/tts/eligibility"
 
 export const dynamic = "force-dynamic"
 
@@ -77,24 +78,26 @@ export async function GET() {
       const answer = normalizeAnswer(answerFromQuestion(soal))
       const clue = cleanClue(soal.text)
 
-      if (
-        answer.length < MIN_ANSWER ||
-        answer.length > MAX_ANSWER ||
-        clue.length < 8 ||
-        answer === normalizeAnswer(clue)
-      ) continue
+      if (answer.length < MIN_ANSWER || answer.length > MAX_ANSWER || clue.length < 8) continue
 
-      // Jangan kirim soal yang membocorkan jawabannya di batang petunjuk.
-      const clueUpper = normalizeAnswer(clue)
-      if (clueUpper.includes(answer)) continue
-      if (seen.has(answer)) continue
-
-      seen.add(answer)
-      words.push({
-        id: soal.id,
+      const eligibility = evaluateTtsCandidate({
         answer,
         clue,
-        tier: tierForDifficulty(soal.difficulty),
+        type: soal.type,
+        difficulty: soal.difficulty,
+        themeKey: soal.topik ?? "",
+      })
+      if (eligibility.status !== "APPROVED") continue
+      if (seen.has(eligibility.answer)) continue
+
+      seen.add(eligibility.answer)
+      words.push({
+        id: soal.id,
+        answer: eligibility.answer,
+        clue: eligibility.clue,
+        tier: eligibility.tier,
+        clueType: eligibility.clueType,
+        qualityScore: eligibility.score,
         source: "MASTER_BANK",
         topik: soal.topik,
         kelas: soal.kelas,

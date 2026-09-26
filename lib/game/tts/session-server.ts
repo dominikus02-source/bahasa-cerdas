@@ -15,6 +15,7 @@ import { db } from "@/lib/db";
 import { awardXp } from "@/lib/award-xp";
 import { calculateGameReward } from "@/lib/game/tts/economy";
 import { buildPuzzle } from "@/lib/game/tts/generator";
+import { evaluateTtsCandidate } from "@/lib/game/tts/eligibility";
 
 export const TTS_HINT_LIMIT = 3;
 
@@ -30,21 +31,68 @@ export async function startTtsSession(input: {
   seed: number;
   cellsTotal: number;
 }): Promise<TtsStartResult> {
-  const soals = await db.soal.findMany({ where: { source: "MASTER_BANK", type: { in: ["PILIHAN_GANDA", "ISIAN_SINGKAT"] } }, select: { id: true, text: true, difficulty: true, correctAnswer: true, options: true, topik: true, kelas: true }, orderBy: { updatedAt: "desc" }, take: 1200 });
-  const normalize = (value: unknown) => String(value ?? "").normalize("NFKD").replace(/[^A-Za-z]/g, "").toUpperCase();
-  const cleanClue = (value: string) => value.replace(/\s+/g, " ").replace(/^\s*(soal|pertanyaan)\s*:\s*/i, "").trim();
-  const words: Array<{ id: string; answer: string; clue: string; tier: 1 | 2 | 3; source: "MASTER_BANK"; topik: string | null; kelas: string | null }> = [];
+  const soals = await db.soal.findMany({
+    where: { source: "MASTER_BANK", type: { in: ["PILIHAN_GANDA", "ISIAN_SINGKAT"] } },
+    select: {
+      id: true,
+      text: true,
+      type: true,
+      difficulty: true,
+      correctAnswer: true,
+      options: true,
+      topik: true,
+      kelas: true,
+    },
+    orderBy: { updatedAt: "desc" },
+    take: 1200,
+  });
+
+  const words: Array<{
+    id: string;
+    answer: string;
+    clue: string;
+    tier: 1 | 2 | 3;
+    clueType: string;
+    source: "MASTER_BANK";
+    topik: string | null;
+    kelas: string | null;
+  }> = [];
   const seen = new Set<string>();
+
   for (const soal of soals) {
-    const raw = soal.correctAnswer?.trim() ?? ""; let answer = raw;
-    if (/^[A-D]$/i.test(raw)) answer = soal.options?.[raw.toUpperCase().charCodeAt(0) - 65] ?? "";
-    else if (/^\d+$/.test(raw)) answer = soal.options?.[Number(raw)] ?? raw;
-    answer = normalize(answer); const clue = cleanClue(soal.text);
-    if (answer.length < 3 || answer.length > 14 || clue.length < 8 || normalize(clue).includes(answer) || seen.has(answer)) continue;
-    const d = (soal.difficulty ?? "").toUpperCase(); const tier = d === "EASY" || d === "MUDAH" ? 1 : d === "HARD" || d === "SULIT" ? 3 : 2;
-    seen.add(answer); words.push({ id: soal.id, answer, clue, tier, source: "MASTER_BANK", topik: soal.topik, kelas: soal.kelas });
+    const raw = soal.correctAnswer?.trim() ?? "";
+    let answer = raw;
+    if (/^[A-D]$/i.test(raw)) {
+      answer = soal.options?.[raw.toUpperCase().charCodeAt(0) - 65] ?? "";
+    } else if (/^\d+$/.test(raw)) {
+      answer = soal.options?.[Number(raw)] ?? raw;
+    }
+
+    const clue = soal.text.replace(/\s+/g, " ").replace(/^\s*(soal|pertanyaan)\s*:\s*/i, "").trim();
+    const eligibility = evaluateTtsCandidate({
+      answer,
+      clue,
+      type: soal.type,
+      difficulty: soal.difficulty,
+      themeKey: soal.topik ?? "",
+    });
+
+    if (eligibility.status !== "APPROVED") continue;
+    if (seen.has(eligibility.answer)) continue;
+
+    seen.add(eligibility.answer);
+    words.push({
+      id: soal.id,
+      answer: eligibility.answer,
+      clue: eligibility.clue,
+      tier: eligibility.tier,
+      clueType: eligibility.clueType,
+      source: "MASTER_BANK",
+      topik: soal.topik,
+      kelas: soal.kelas,
+    });
   }
-  const puzzle = buildPuzzle({ level: input.level, seed: input.seed, wordPool: words });
+
   const actualCells = new Set<string>();
   for (const word of puzzle.words) for (let i = 0; i < word.answer.length; i++) actualCells.add(word.dir === "A" ? String(word.row) + "," + String(word.col + i) : String(word.row + i) + "," + String(word.col));
 
