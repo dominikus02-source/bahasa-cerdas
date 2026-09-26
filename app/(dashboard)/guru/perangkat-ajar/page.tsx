@@ -35,7 +35,7 @@ type LevelTab = "SD" | "SMP" | "SMA";
 
 const LEVEL_ICONS: Record<string, React.ReactNode> = {
   SD: <BookMarked size={20} className="text-emerald-700" />,
-  SMP: <BookOpen size={20} className="text-violet-700" />,
+  SMP: <BookOpen size={20} className="text-blue-700" />,
   SMA: <GraduationCap size={20} className="text-blue-700" />,
 };
 
@@ -116,7 +116,7 @@ export default function PerangkatAjarPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-violet-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
       </div>
     );
   }
@@ -124,10 +124,10 @@ export default function PerangkatAjarPage() {
   if (error) {
     return (
       <div className="max-w-4xl mx-auto py-12 px-4">
-        <div className="bg-violet-50 border border-violet-200 rounded-xl p-8 text-center">
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-8 text-center">
           <Folder className="w-12 h-12 text-violet-300 mx-auto mb-3" />
-          <h2 className="text-lg font-semibold text-violet-800">Belum ada data</h2>
-          <p className="text-sm text-violet-600 mt-1">{error}</p>
+          <h2 className="text-lg font-semibold text-blue-800">Belum ada data</h2>
+          <p className="text-sm text-blue-700 mt-1">{error}</p>
         </div>
       </div>
     );
@@ -138,14 +138,14 @@ export default function PerangkatAjarPage() {
       <div className="max-w-5xl mx-auto py-6 px-4">
         <button
           onClick={() => { setSelectedGrade(null); setSearch(""); }}
-          className="flex items-center gap-2 text-sm text-slate-500 hover:text-violet-600 mb-4 transition-colors"
+          className="flex items-center gap-2 text-sm text-slate-500 hover:text-blue-700 mb-4 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Kembali ke {selectedGrade.educationLevel}
         </button>
 
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center text-xl">
+        <div className="bc-guru-card rounded-2xl p-5 flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-xl">
             {LEVEL_ICONS[selectedGrade.educationLevel]}
           </div>
           <div>
@@ -163,7 +163,7 @@ export default function PerangkatAjarPage() {
             placeholder="Cari nama file..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-400 transition"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
           />
         </div>
 
@@ -177,7 +177,7 @@ export default function PerangkatAjarPage() {
             return (
               <div
                 key={f.sourceDriveFileId}
-                className="flex items-center gap-3 px-4 py-3 bg-white border border-slate-100 rounded-xl hover:border-violet-200 hover:shadow-sm transition group"
+                className="bc-guru-card flex items-center gap-3 px-4 py-3 rounded-xl hover:shadow-sm transition group"
               >
                 <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${colorCls}`}>
                   <Icon className="w-4.5 h-4.5" />
@@ -195,7 +195,7 @@ export default function PerangkatAjarPage() {
                     href={f.sourceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 rounded-lg hover:bg-violet-50 text-slate-400 hover:text-violet-600 transition"
+                    className="p-2 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-700 transition"
                     title="Buka di Drive"
                   >
                     <ExternalLink className="w-4 h-4" />
@@ -204,7 +204,7 @@ export default function PerangkatAjarPage() {
                     href={previewUrl(f.sourceUrl)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 rounded-lg hover:bg-violet-50 text-slate-400 hover:text-violet-600 transition"
+                    className="p-2 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-700 transition"
                     title="Pratinjau"
                   >
                     <Eye className="w-4 h-4" />
@@ -225,8 +225,8 @@ export default function PerangkatAjarPage() {
   return (
     <div className="max-w-5xl mx-auto py-6 px-4">
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center">
-          <BookOpen className="w-5 h-5 text-violet-700" />
+        <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
+          <BookOpen className="w-5 h-5 text-blue-700" />
         </div>
         <div>
           <h1 className="text-xl font-bold text-slate-900">Perangkat Ajar</h1>
@@ -247,7 +247,7 @@ export default function PerangkatAjarPage() {
               onClick={() => setLevelTab(lv)}
               className={`px-4 py-2 rounded-xl text-sm font-medium transition ${
                 levelTab === lv
-                  ? "bg-violet-600 text-white shadow-sm"
+                  ? "bg-blue-600 text-white shadow-sm"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200"
               }`}
             >
@@ -263,10 +263,10 @@ export default function PerangkatAjarPage() {
           <button
             key={`${g.educationLevel}-${g.grade}`}
             onClick={() => setSelectedGrade(g)}
-            className="text-left bg-white border border-slate-100 rounded-xl p-4 hover:border-violet-200 hover:shadow-md transition group"
+            className="bc-guru-card text-left rounded-xl p-4 hover:shadow-md transition group"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
                 {LEVEL_ICONS[g.educationLevel]}
               </div>
               <div className="flex-1 min-w-0">
@@ -277,7 +277,7 @@ export default function PerangkatAjarPage() {
                   {g.fileCount} file · {formatSize(g.totalSize)}
                 </p>
               </div>
-              <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-violet-500 transition shrink-0" />
+              <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-blue-600 transition shrink-0" />
             </div>
           </button>
         ))}
