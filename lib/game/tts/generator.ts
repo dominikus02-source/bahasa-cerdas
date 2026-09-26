@@ -40,6 +40,8 @@ export interface BuildPuzzleOptions {
   avoidAnswers?: string[];
   /** P8I: batasi tipe petunjuk agar ragam (maks 2 kata per tipe dalam satu puzzle). */
   balanceClueTypes?: boolean;
+  /** Kandidat kata dari sumber server/canonical bank; fallback ke bank level lokal bila tidak diberikan. */
+  wordPool?: TtsWord[];
 }
 
 interface PlacedWord {
@@ -185,18 +187,28 @@ function placeWord(board: Board, w: TtsWord, dir: Dir, row: number, col: number)
 export function buildPuzzle(options: BuildPuzzleOptions): TtsPuzzle {
   const cfg = levelConfig(options.level);
   const rng = mulberry32(options.seed);
-  const poolAll = bankForLevel(options.level);
+  const poolAll = options.wordPool?.length ? options.wordPool : bankForLevel(options.level);
 
   // ── P8I: metadata kesulitan + gerbang level ──
   // Kata langka (RARE) tidak boleh muncul sebelum L7; tier lain mengikuti
   // tema (1:1 dengan level) sehingga pool tidak pernah kosong.
-  const enriched = poolAll.map((w) => ({
-    word: w,
-    ...wordDifficulty(w, themeKeyForAnswer(w.answer) ?? ""),
-  }));
-  const pool: TtsWord[] = enriched
+  const enriched = poolAll.map((w) => {
+    const derived = wordDifficulty(w, themeKeyForAnswer(w.answer) ?? "");
+    return {
+      word: w,
+      clueType: w.clueType ?? derived.clueType,
+      tier: w.tier ?? derived.tier,
+    };
+  });
+  const eligiblePool: TtsWord[] = enriched
     .filter((e) => canAppearInLevel(e.word.answer, e.tier, options.level))
     .map((e) => ({ ...e.word, clueType: e.clueType, tier: e.tier }));
+  // Jika gate difficulty terlalu ketat untuk tema tertentu, tetap gunakan
+  // bank tema level tersebut. Identitas level tidak boleh berubah hanya karena
+  // metadata tier belum lengkap/terkalibrasi.
+  const pool: TtsWord[] = eligiblePool.length >= cfg.minWords
+    ? eligiblePool
+    : poolAll;
 
   // ── P8I: peta konflik petunjuk↔jawaban (anti-bocor perpotongan) ──
   const conflictMap = new Map<string, Set<string>>();
@@ -214,6 +226,32 @@ export function buildPuzzle(options: BuildPuzzleOptions): TtsPuzzle {
   for (let attempt = 0; attempt < maxTries; attempt++) {
     const board: Board = { letters: new Map(), hCells: new Set(), vCells: new Set(), placed: [] };
     const shuffled = shuffle(candidates, rng);
+
+    // L2 sengaja menjadi jembatan: mayoritas soal mudah, sebagian kecil menengah.
+    // Kita tidak menurunkan standar konten; kita mengatur paparan agar anak tidak
+    // langsung dihujani istilah sulit. Seed membuat komposisi tetap deterministik.
+    if (options.level === 2) {
+      const easy = shuffled.filter((w) => w.tier === 1);
+      const medium = shuffled.filter((w) => w.tier === 2);
+      const mixed: TtsWord[] = [];
+      let ei = 0;
+      let mi = 0;
+      const easyTarget = Math.max(1, Math.round(cfg.targetWords * 0.8));
+      while (mixed.length < cfg.targetWords && (ei < easy.length || mi < medium.length)) {
+        if (ei < easy.length && (mixed.filter((w) => w.tier === 1).length < easyTarget || mi >= medium.length)) {
+          mixed.push(easy[ei++]);
+        } else if (mi < medium.length) {
+          mixed.push(medium[mi++]);
+        } else {
+          break;
+        }
+      }
+      for (const w of shuffled) {
+        if (mixed.length >= cfg.targetWords) break;
+        if (!mixed.some((x) => x.answer === w.answer)) mixed.push(w);
+      }
+      shuffled.splice(0, shuffled.length, ...mixed);
+    }
 
     // ── P8I: pilih kata dengan menghindari pasangan yang saling membocorkan
     // petunjuk (konflik petunjuk↔jawaban). Bila hasil seleksi kurang dari
@@ -347,7 +385,34 @@ export function buildPuzzle(options: BuildPuzzleOptions): TtsPuzzle {
   const cols = Math.max(cfg.minCols, maxC + 1);
 
   if (words.length === 0) {
-    return buildPuzzle({ level: 1, seed: options.seed });
+    // Jangan pernah jatuh ke Level 1. Sebelumnya fallback ini membuat preview
+    // level tertentu berubah menjadi "Keluarga Inti" sehingga kartu 1 muncul
+    // berulang di level 6/11 dan progression terlihat rusak.
+    const fallback = (poolAll.length ? poolAll : options.wordPool ?? [])[0];
+    if (!fallback) {
+      throw new Error(`TTS bank kosong untuk level ${options.level}`);
+    }
+    const safeAnswer = String(fallback.answer).toUpperCase().replace(/[^A-Z]/g, "");
+    if (safeAnswer.length < 3) {
+      throw new Error(`TTS fallback tidak valid untuk level ${options.level}`);
+    }
+    const fallbackWord: TtsWordDef = {
+      number: 1,
+      dir: "A",
+      answer: safeAnswer,
+      clue: fallback.clue,
+      row: 0,
+      col: 0,
+    };
+    return {
+      id: cfg.level,
+      title: cfg.title,
+      subtitle: cfg.subtitle,
+      mascot: cfg.mascot,
+      rows: Math.max(cfg.minRows, 1),
+      cols: Math.max(cfg.minCols, safeAnswer.length),
+      words: [fallbackWord],
+    };
   }
 
   return {
