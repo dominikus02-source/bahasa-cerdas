@@ -13,7 +13,7 @@ export function BigtInfoPage({ role }: Props) {
     <div className="max-w-4xl mx-auto">
       {/* Hero */}
       <div className={`rounded-2xl p-8 mb-8 text-white ${
-        isGuru ? "bg-gradient-to-r from-emerald-600 to-teal-600" : "bg-gradient-to-r from-violet-600 to-purple-600"
+        isGuru ? "guru-hero-strong" : "bg-gradient-to-r from-violet-600 to-purple-600"
       }`}>
         <div className="flex items-center gap-3 mb-3">
           <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
