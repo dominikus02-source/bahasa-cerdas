@@ -11,6 +11,7 @@ import { rankFromLevel, RANK_META } from "@/lib/gamification/ranks"
 import { RankIcon } from "@/components/gamification/RankIcon"
 import { levelFromXp } from "@/lib/gamification/xp-engine"
 import { setQuiet } from "@/lib/notif-quiet"
+import GameBackButton from "@/components/game/GameBackButton"
 import {
   kurvaPemain,
   lawanBot,
