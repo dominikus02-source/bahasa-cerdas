@@ -114,7 +114,7 @@ const NAV: NavEntry[] = [
     label: "System & Operations",
     icon: Database,
     items: [
-      { label: "Monitoring", href: "/admin/monitoring", icon: Activity },
+      { label: "Live Pulse", href: "/admin/monitoring", icon: Activity },
       { label: "Komunitas", href: "/admin/komunitas", icon: MessageCircle },
       { label: "Lowongan", href: "/admin/loker", icon: Briefcase },
       { label: "Pusat Data", href: "/admin/data-center", icon: Database },
