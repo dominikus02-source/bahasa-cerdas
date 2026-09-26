@@ -826,9 +826,7 @@ export default function IramaKata() {
             </div>
 
             <div className="w-full max-w-[480px] flex items-center justify-between mt-3">
-              <button className={`${btn} game-back-btn w-12 h-12 hover:bg-white dark:hover:bg-white/35`} onClick={quit} aria-label="Keluar">
-                <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
-              </button>
+              <GameBackButton onClick={quit} label="Kembali" title="Kembali ke pilihan level" />
               <div className="hidden md:block text-xs font-semibold opacity-60">
                 Tombol <span className="font-mono font-extrabold">D F J K</span> · Spasi = jeda
               </div>
