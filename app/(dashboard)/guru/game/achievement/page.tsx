@@ -41,11 +41,11 @@ export default function GuruGameAchievementPage() {
   const unlocked = badges?.filter((b) => b.unlocked).length ?? 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-emerald-50">
-      <div className="bg-gradient-to-br from-emerald-600 via-green-700 to-teal-900 text-white relative overflow-hidden">
+    <div className="min-h-screen">
+      <div className="bc-guru-hero relative overflow-hidden text-white">
         <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-400/20 rounded-full blur-[100px]" />
         <div className="relative z-10 max-w-4xl mx-auto px-4 py-10">
-          <Link href="/guru/game" className="inline-flex items-center gap-1.5 text-emerald-200 text-sm hover:text-white transition-colors mb-4">
+          <Link href="/guru/game" className="inline-flex items-center gap-1.5 text-blue-200 text-sm hover:text-white transition-colors mb-4">
             <ArrowLeft size={16} /> Kembali ke Gim
           </Link>
           <div className="flex items-center gap-3">
@@ -54,7 +54,7 @@ export default function GuruGameAchievementPage() {
             </div>
             <div>
               <h1 className="text-2xl lg:text-3xl font-extrabold">Lencana Guru</h1>
-              <p className="text-emerald-200 text-sm">Lencana guru dari aktivitas mengajar dan bermain — bukan lencana murid</p>
+              <p className="text-blue-200 text-sm">Lencana guru dari aktivitas mengajar dan bermain — bukan lencana murid</p>
             </div>
           </div>
         </div>
