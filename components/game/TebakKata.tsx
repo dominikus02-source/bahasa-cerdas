@@ -9,6 +9,7 @@ import {
   ChevronRight, Play, Volume2, VolumeX, Loader2, Sparkles,
 } from "lucide-react";
 import { sfx, haptic, isSoundOn, toggleSound, startBGM, stopBGM } from "@/lib/game/sound";
+import GameBackButton from "@/components/game/GameBackButton";
 
 const WORDS_DB = [
   { word: "BUDAYA", clues: ["Kebiasaan turun-temurun", "Warisan leluhur", "Identitas bangsa"], category: "Sosial" },
