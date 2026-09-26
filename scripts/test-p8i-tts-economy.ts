@@ -123,6 +123,9 @@ assert(sessionServer.includes("const xpDiberikan = hasilXp?.xpDiberikan ?? 0"), 
 assert(sessionServer.includes("if (coins > 0 && xpDiberikan > 0)"), "D5.2 coin payout berhenti saat kuota XP habis");
 assert(sessionServer.includes("claim.count === 0") && sessionServer.includes("return null"), "D6 double submit → tanpa hadiah kedua");
 assert(!sessionServer.includes("streakBonus"), "D7 bonus streak TIDAK masuk perhitungan server (spoofable)");
+assert(sessionServer.includes("const expected = new Map<string, string>()"), "D8 grid puzzle disimpan & dibandingkan server-side");
+assert(sessionServer.includes("expected.get(key) === String(letter).toUpperCase()"), "D9 cellsCorrect dihitung dari snapshot puzzle, bukan angka klien");
+
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // E. UI WIRING
