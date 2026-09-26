@@ -22,6 +22,11 @@ export async function POST(req: NextRequest) {
     const { score, correct, wrong, maxStreak, gameSessionId } = await req.json();
     if (score == null) return NextResponse.json({ error: "Score required" }, { status: 400 });
 
+    const rawGameSessionId = String(gameSessionId ?? "").trim();
+    if (rawGameSessionId.length > 128) {
+      return NextResponse.json({ error: "Invalid game session" }, { status: 400 });
+    }
+
     // `correct`, `wrong`, dan `maxStreak` semuanya berasal dari klien, jadi
     // rumus di bawah bisa menghasilkan angka apa pun kalau nilainya dikarang
     // (mis. correct: 100000 -> 1,5 juta XP). Dinormalkan dulu ke rentang yang
@@ -55,7 +60,7 @@ export async function POST(req: NextRequest) {
       dbUser.id,
       "KATASTRA",
       rawXp,
-      `katastra-${String(gameSessionId ?? "").trim() || crypto.randomUUID()}`
+      `katastra-${rawGameSessionId || crypto.randomUUID()}`
     );
     const totalXp = hasil.xpDiberikan;
     const boosted = hasil.boosted;
