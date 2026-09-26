@@ -66,7 +66,7 @@ export default function HasilTKAPage() {
           {results.map((r: any) => (
             <Card key={r.id} className="p-4 flex items-center justify-between">
               <div className="flex items-center gap-3 min-w-0 flex-1">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-100 to-purple-100 flex items-center justify-center text-sm font-bold text-violet-700">
+                <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-950/50 flex items-center justify-center text-sm font-bold text-blue-700">
                   {(r.user?.fullName || "?").slice(0, 2).toUpperCase()}
                 </div>
                 <div className="min-w-0 flex-1">
