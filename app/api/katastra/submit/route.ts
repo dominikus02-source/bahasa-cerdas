@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     });
     if (limited) return limited;
 
-    const { score, correct, wrong, maxStreak } = await req.json();
+    const { score, correct, wrong, maxStreak, gameSessionId } = await req.json();
     if (score == null) return NextResponse.json({ error: "Score required" }, { status: 400 });
 
     // `correct`, `wrong`, dan `maxStreak` semuanya berasal dari klien, jadi
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
       dbUser.id,
       "KATASTRA",
       rawXp,
-      `katastra-${crypto.randomUUID()}`
+      `katastra-${String(gameSessionId ?? "").trim() || crypto.randomUUID()}`
     );
     const totalXp = hasil.xpDiberikan;
     const boosted = hasil.boosted;
