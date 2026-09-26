@@ -9,6 +9,7 @@ import { generateRecommendations } from "@/lib/learning-loop/recommend"
 import { refreshNextAction } from "@/lib/learning-loop/next-action"
 import { isJalurAnswerCorrect, scoreJalurAnswers } from "@/lib/jalur-cerdas/scoring"
 import { trackAchievement } from "@/lib/gamification/achievement-engine"
+import { calculateGameReward } from "@/lib/game/tts/economy"
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ unitId: string }> }) {
   try {
@@ -122,47 +123,66 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ un
       return NextResponse.json({ progress, isComplete: false, earnedXp: 0 })
     }
 
+    // Base reward unit tetap menjadi kalibrasi kesulitan resmi Jalur Cerdas.
+    // Game Reward Economy v1 hanya menerapkan faktor performa sesi agar
+    // penyelesaian 70% tidak dibayar sama dengan mastery 100%.
     const BASE_XP_REWARD = unit.xpReward ?? 50
-    const COIN_REWARD = unit.coinReward ?? 10
-    // XP Boost dari toko koin. Angka akhir juga yang dicatat di UserUnitProgress,
-    // supaya rekap XP belajar tetap sama dengan XP yang masuk ke User.xp.
-    // Lewat pintu tunggal: batas per submit, kuota harian, boost, jejak ledger,
-    // dan pembaruan xp/level/liga sekaligus. Unit ini dijaga "Already completed"
-    // di atas, jadi XP-nya memang hanya bisa cair sekali per unit.
-    const hasilXp = await awardXp(user.id, "JALUR_CERDAS", BASE_XP_REWARD, unitId)
+    const BASE_COIN_REWARD = unit.coinReward ?? 10
+    const reward = calculateGameReward({
+      baseXp: BASE_XP_REWARD,
+      baseCoins: BASE_COIN_REWARD,
+      accuracyPct: score,
+    })
+    const TARGET_XP_REWARD = reward.xp
+    const COIN_REWARD = reward.coins
+
+    // XP Boost dari toko koin tetap melewati pintu tunggal awardXp.
+    const hasilXp = await awardXp(user.id, "JALUR_CERDAS", TARGET_XP_REWARD, unitId)
     const XP_REWARD = hasilXp.xpDiberikan
     const boosted = hasilXp.boosted
 
     // awardXp() returns zero without `kuotaHabis` when the same reference was
     // already processed. Do not let a concurrent/replayed request continue to
     // the User.coins increment and overwrite the first payout.
-    if (BASE_XP_REWARD > 0 && XP_REWARD === 0 && !hasilXp.kuotaHabis) {
+    if (TARGET_XP_REWARD > 0 && XP_REWARD === 0 && !hasilXp.kuotaHabis) {
       const current = await db.userUnitProgress.findUnique({
         where: { userId_unitId: { userId: user.id, unitId } },
       })
       return NextResponse.json({ progress: current, isComplete: true, earnedXp: 0, message: "Already completed" })
     }
 
+    // Koin hanya cair bila XP benar-benar masuk. awardXp() mengembalikan
+    // xpDiberikan=0 saat kuota harian habis, sehingga penyelesaian unit tidak
+    // boleh menjadi jalan memanen koin setelah batas XP tercapai.
+    const COIN_PAID = XP_REWARD > 0 ? COIN_REWARD : 0
+
     const progress = await db.userUnitProgress.upsert({
       where: { userId_unitId: { userId: user.id, unitId } },
       create: {
         userId: user.id, unitId,
         completed: true, score,
-        xpEarned: XP_REWARD, coinEarned: COIN_REWARD,
+        xpEarned: XP_REWARD, coinEarned: COIN_PAID,
         completedAt: new Date(),
       },
       update: {
         completed: true, score,
         completedAt: existing?.completedAt ?? new Date(),
-        xpEarned: XP_REWARD, coinEarned: COIN_REWARD,
+        xpEarned: XP_REWARD, coinEarned: COIN_PAID,
       },
     })
 
-    // xp/level/liga sudah disimpan awardXp(); di sini tinggal koinnya.
-    await db.user.update({
-      where: { id: user.id },
-      data: { coins: { increment: COIN_REWARD }, lastActiveAt: new Date() },
-    })
+    // xp/level/liga sudah disimpan awardXp(); koin mengikuti payout aktual.
+    if (COIN_PAID > 0) {
+      await db.user.update({
+        where: { id: user.id },
+        data: { coins: { increment: COIN_PAID }, lastActiveAt: new Date() },
+      })
+    } else {
+      await db.user.update({
+        where: { id: user.id },
+        data: { lastActiveAt: new Date() },
+      })
+    }
 
     // Daily quest: finishing a unit advances the learning mission. Runs after
     // the response — quest bookkeeping must never slow down or fail the lesson.
@@ -180,11 +200,13 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ un
     // celebrate effort could not see the one activity that is actual learning.
     // Guarded by the existing "already completed" check above, so this cannot
     // pay out twice. Best-effort: a ledger write must never fail the lesson.
-    try {
-      await db.coinTransaction.create({
-        data: { userId: user.id, amount: COIN_REWARD, reason: "SELESAI_BELAJAR", reference: unitId },
-      })
-    } catch { /* progress and coins already saved */ }
+    if (COIN_PAID > 0) {
+      try {
+        await db.coinTransaction.create({
+          data: { userId: user.id, amount: COIN_PAID, reason: "SELESAI_BELAJAR", reference: unitId },
+        })
+      } catch { /* progress dan XP sudah tersimpan */ }
+    }
     // Level & rank TIDAK dihitung ulang di sini. awardXp() sudah menuliskannya
     // dari kurva resmi di transaksi yang sama; blok lama di sini menghitung
     // ulang dengan rumus usang (xp/500) dan menimpa hasil yang benar.
@@ -202,7 +224,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ un
         skill,
         skillDelta: 8,
         xp: XP_REWARD,
-        coin: COIN_REWARD,
+        coin: COIN_PAID,
         meta: { unitId },
         reference: `jalur-unit-${unitId}-complete`,
         journey: {

@@ -18,6 +18,7 @@ import {
   Heart, Play, Pause, X, Volume2, VolumeX, Lock, Star, Trophy, Zap,
   RotateCcw, ChevronRight, Music4,
 } from "lucide-react";
+import GameBackButton from "@/components/game/GameBackButton";
 
 /* ---------- Bank kata ---------- */
 const BAKU = ["apotek", "izin", "zaman", "sistem", "nomor", "hafal", "imbau", "cabai", "jadwal", "foto", "teknik", "risiko", "nasihat", "ijazah", "praktik", "napas", "objek", "silakan", "atlet", "asas", "kualitas", "analisis", "hakikat", "kaidah", "kuitansi", "respons", "modern", "karier", "saraf", "cedera"];
@@ -173,6 +174,7 @@ export default function IramaKata() {
   const engineRef = useRef<Engine | null>(null);
   const mutedRef = useRef(false);
   const xpSentRef = useRef(false);
+  const gameSessionIdRef = useRef("");
 
   // NOTIFICATION 1.0 — game quiet mode: reward global tidak menutupi gameplay;
   // reset otomatis saat keluar game/unmount (tidak ada quiet tersisa).
@@ -549,7 +551,7 @@ export default function IramaKata() {
     // Simpan progres + buka level berikutnya
     setSaved((prev) => {
       const next = { unlocked: [...prev.unlocked], best: { ...prev.best } };
-      if (!gameOver) {
+      if (!gameOver && stars >= 1) {
         if (!next.best[g.level.id] || g.score > next.best[g.level.id]) next.best[g.level.id] = g.score;
         const nid = g.level.id + 1;
         if (nid <= LEVELS.length && !next.unlocked.includes(nid)) next.unlocked.push(nid);
@@ -574,6 +576,7 @@ export default function IramaKata() {
           xpEarned: Math.min(Math.floor(g.score / 40), 60),
           gameType: "IRAMA_KATA",
           supabaseId,
+          gameSessionId: gameSessionIdRef.current,
         }),
       }).catch(() => { /* abaikan */ });
     }
@@ -581,6 +584,7 @@ export default function IramaKata() {
   }, []);
 
   const startLevel = useCallback((id: number) => {
+    gameSessionIdRef.current = crypto.randomUUID();
     ensureAudio();
     const lv = LEVELS.find((l) => l.id === id);
     if (!lv) return;
@@ -631,7 +635,7 @@ export default function IramaKata() {
   const btn = `inline-flex items-center justify-center gap-2 font-extrabold rounded-2xl ${chunky} transition-transform active:translate-x-1.5 active:translate-y-1.5 active:shadow-none hover:-translate-x-0.5 hover:-translate-y-0.5`;
 
   return (
-    <div className="fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#140A12] dark:to-[#1E0E1A] text-[#161B3A] dark:text-[#F1EDFF]">
+    <div className="game-env game-env-irama fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#140A12] dark:to-[#1E0E1A] text-[#161B3A] dark:text-[#F1EDFF]">
       <style>{`
         @keyframes ik-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
         @keyframes ik-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}
@@ -654,6 +658,7 @@ export default function IramaKata() {
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2.5">
+            <GameBackButton href="/arena/game" label="Kembali ke Arena" title="Kembali ke Arena" />
             <div className={`ik-logo w-11 h-11 bg-[#FF6B6B] rounded-2xl ${chunky} !shadow-[4px_4px_0_#DB2777] flex items-center justify-center`}>
               <Music4 className="w-6 h-6 text-white" />
             </div>
@@ -728,11 +733,9 @@ export default function IramaKata() {
         {screen === "levels" && (
           <div className={`ik-screen bg-white dark:bg-gradient-to-br dark:from-[#221420] dark:to-[#2C1E2A] rounded-3xl ${chunky} p-5`}>
             <div className="flex items-center justify-between mb-4">
-            <button className={`${btn} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => setScreen("start")} aria-label="Kembali">
-              <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
-            </button>
+            <GameBackButton onClick={() => setScreen("start")} label="Kembali ke Irama Kata" title="Kembali ke menu Irama Kata" />
               <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
-              <div className="w-11" />
+              <div className="w-11 sm:w-[110px]" />
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {LEVELS.map((lv) => {
@@ -822,9 +825,7 @@ export default function IramaKata() {
             </div>
 
             <div className="w-full max-w-[480px] flex items-center justify-between mt-3">
-              <button className={`${btn} game-back-btn w-12 h-12 hover:bg-white dark:hover:bg-white/35`} onClick={quit} aria-label="Keluar">
-                <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
-              </button>
+              <GameBackButton onClick={quit} label="Kembali ke Pilih Level" title="Kembali ke pilihan level" />
               <div className="hidden md:block text-xs font-semibold opacity-60">
                 Tombol <span className="font-mono font-extrabold">D F J K</span> · Spasi = jeda
               </div>

@@ -146,7 +146,7 @@ export default function TantangTemanPage() {
   if (view === "main" && soal.length > 0) {
     const s = soal[idx];
     return (
-      <div className="game-env px-4 py-5 md:px-6 arena-page">
+      <div className="game-env game-env-bg px-4 py-5 md:px-6 arena-page">
         <div className="flex items-center justify-between mb-4">
           <button onClick={() => setView("list")} className="flex items-center gap-1 text-sm text-gray-500 dark:text-slate-400">
             <ArrowLeft className="w-4 h-4" /> Keluar
@@ -177,7 +177,7 @@ export default function TantangTemanPage() {
   // ---------- VIEW: HASIL ----------
   if (view === "hasil" && hasil) {
     return (
-      <div className="px-4 py-5 md:px-6 arena-page">
+      <div className="game-env game-env-bg px-4 py-5 md:px-6 arena-page">
         <div className={`rounded-3xl p-6 text-center text-white mb-5 shadow-lg ${
           hasil.hasil === "MENANG" ? "bg-gradient-to-br from-emerald-500 to-teal-600"
           : hasil.hasil === "KALAH" ? "bg-gradient-to-br from-rose-500 to-red-600"
