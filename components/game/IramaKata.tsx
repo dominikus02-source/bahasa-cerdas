@@ -173,6 +173,7 @@ export default function IramaKata() {
   const engineRef = useRef<Engine | null>(null);
   const mutedRef = useRef(false);
   const xpSentRef = useRef(false);
+  const gameSessionIdRef = useRef("");
 
   // NOTIFICATION 1.0 — game quiet mode: reward global tidak menutupi gameplay;
   // reset otomatis saat keluar game/unmount (tidak ada quiet tersisa).
@@ -574,6 +575,7 @@ export default function IramaKata() {
           xpEarned: Math.min(Math.floor(g.score / 40), 60),
           gameType: "IRAMA_KATA",
           supabaseId,
+          gameSessionId: gameSessionIdRef.current,
         }),
       }).catch(() => { /* abaikan */ });
     }
@@ -581,6 +583,7 @@ export default function IramaKata() {
   }, []);
 
   const startLevel = useCallback((id: number) => {
+    gameSessionIdRef.current = crypto.randomUUID();
     ensureAudio();
     const lv = LEVELS.find((l) => l.id === id);
     if (!lv) return;
