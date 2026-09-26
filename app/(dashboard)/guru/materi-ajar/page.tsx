@@ -489,8 +489,8 @@ function MateriCard({ materi, onView, onKirim }: { materi: Materi; onView: () =>
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:shadow-gray-100 transition-all group">
-      <div className={`h-28 flex items-center justify-center ${isPPT ? "bg-gradient-to-br from-orange-100 to-amber-50" : isPDF ? "bg-gradient-to-br from-red-50 to-rose-50" : "bg-gradient-to-br from-blue-50 to-indigo-50"}`}>
-        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-xs shadow-lg ${isPPT ? "bg-gradient-to-br from-orange-500 to-amber-500" : isPDF ? "bg-gradient-to-br from-red-500 to-rose-500" : "bg-gradient-to-br from-blue-500 to-indigo-500"}`}>
+      <div className={`h-28 flex items-center justify-center ${isPPT ? "bg-orange-50" : isPDF ? "bg-rose-50" : "bg-blue-50"}`}>
+        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-xs shadow-lg ${isPPT ? "bg-orange-500" : isPDF ? "bg-rose-500" : "bg-blue-600"}`}>
           {materi.fileType || "FILE"}
         </div>
       </div>
@@ -578,8 +578,8 @@ function MateriDetailModal({ materi, quota, getSid, onClose, onQuota, onPresent,
         <button onClick={onClose} className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/80 hover:bg-gray-100 flex items-center justify-center">
           <X size={16} className="text-gray-500" />
         </button>
-        <div className={`h-24 flex items-center justify-center ${isPPT ? "bg-gradient-to-br from-orange-100 to-amber-50" : isPDF ? "bg-gradient-to-br from-red-50 to-rose-50" : "bg-gradient-to-br from-blue-50 to-indigo-50"}`}>
-          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-xs shadow-lg ${isPPT ? "bg-gradient-to-br from-orange-500 to-amber-500" : isPDF ? "bg-gradient-to-br from-red-500 to-rose-500" : "bg-gradient-to-br from-blue-500 to-indigo-500"}`}>
+        <div className={`h-24 flex items-center justify-center ${isPPT ? "bg-orange-50" : isPDF ? "bg-rose-50" : "bg-blue-50"}`}>
+          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-xs shadow-lg ${isPPT ? "bg-orange-500" : isPDF ? "bg-rose-500" : "bg-blue-600"}`}>
             {materi.fileType || "FILE"}
           </div>
         </div>
