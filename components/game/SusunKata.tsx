@@ -8,6 +8,7 @@ import {
   ChevronRight, Play, Volume2, VolumeX, Loader2, Sparkles, Timer,
 } from "lucide-react";
 import { sfx, haptic, isSoundOn, toggleSound, startBGM, stopBGM } from "@/lib/game/sound";
+import GameBackButton from "@/components/game/GameBackButton";
 
 const SCRAMBLE_WORDS = [
   { word: "BAHASA", meaning: "Sistem lambang bunyi yang arbitrer" },
