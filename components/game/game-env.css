@@ -369,13 +369,17 @@
 
 @media (max-width: 640px) {
   .game-back-btn {
-    width: 2.75rem;
     min-width: 2.75rem;
-    padding: 0;
+    max-width: min(12rem, 72vw);
+    padding: 0 0.7rem;
+    overflow: hidden;
   }
 
   .game-back-label {
-    display: none;
+    display: inline;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
