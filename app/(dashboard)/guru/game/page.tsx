@@ -379,7 +379,7 @@ export default function GuruGameHubPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
           <Link href={lastGame.href} className="bc-guru-surface-interactive group flex flex-col rounded-xl p-3.5">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shrink-0"><Play className="w-4 h-4 text-white" /></div>
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center shrink-0"><Play className="w-4 h-4 text-white" /></div>
               <div className="min-w-0">
                 <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide dark:text-slate-500">Main Sekarang</p>
                 <p className="font-bold text-slate-900 text-sm truncate dark:text-slate-100">{lastGame.title}</p>
@@ -414,7 +414,7 @@ export default function GuruGameHubPage() {
           {/* Lencana Saya */}
           <Link href="/guru/game/achievement" className="bc-guru-surface-interactive group flex flex-col rounded-xl p-3.5">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shrink-0"><Medal className="w-4 h-4 text-white" /></div>
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-700 to-indigo-500 flex items-center justify-center shrink-0"><Medal className="w-4 h-4 text-white" /></div>
               <div>
                 <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide dark:text-slate-500">Lencana Saya</p>
                 <p className="font-bold text-slate-900 text-sm dark:text-slate-100">{unlocked} dari {totalGuruBadges} Lencana</p>
@@ -575,7 +575,7 @@ export default function GuruGameHubPage() {
               <span className="text-xs text-slate-400 mb-1 dark:text-slate-500">/ {TARGET_MINGGUAN_XP.toLocaleString("id-ID")} target</span>
             </div>
             <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden mt-2 dark:bg-slate-800">
-              <div className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full transition-all duration-1000" style={{ width: `${xpTargetPct}%` }} />
+              <div className="h-full bg-gradient-to-r from-blue-600 to-sky-500 rounded-full transition-all duration-1000" style={{ width: `${xpTargetPct}%` }} />
             </div>
             <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400 dark:text-slate-500">
               <span>{xpTargetPct}% tercapai</span>
@@ -661,7 +661,7 @@ export default function GuruGameHubPage() {
                     <span className="font-bold text-emerald-600 dark:text-emerald-400">{kelasPct}%</span>
                   </div>
                   <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden dark:bg-slate-800">
-                    <div className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full transition-all duration-1000" style={{ width: `${kelasPct}%` }} />
+                    <div className="h-full bg-gradient-to-r from-blue-600 to-sky-500 rounded-full transition-all duration-1000" style={{ width: `${kelasPct}%` }} />
                   </div>
                   <p className="mt-1.5 text-[11px] text-slate-400 dark:text-slate-500">
                     {aktifHariIni} dari {totalMurid} murid sudah bermain hari ini{belumBermain > 0 ? ` — ${belumBermain} belum bermain` : ""}.
@@ -799,7 +799,7 @@ export default function GuruGameHubPage() {
               </div>
             </div>
           ) : (
-            <div className="bg-white rounded-xl border border-slate-100 p-8 text-center shadow-sm dark:bg-slate-900 dark:border-slate-800">
+            <div className="bc-guru-surface rounded-xl p-8 text-center">
               <div className="w-12 h-12 rounded-2xl bg-sky-50 flex items-center justify-center mx-auto mb-3 dark:bg-slate-800">
                 <Users className="w-6 h-6 text-sky-400" />
               </div>
