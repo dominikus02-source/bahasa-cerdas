@@ -1155,13 +1155,7 @@ export default function ZelbyDash() {
 
             {/* Controls */}
             <div className="w-full max-w-[480px] flex justify-between mt-4">
-              <button
-                onClick={quit}
-                className={`${btn} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`}
-                aria-label="Keluar"
-              >
-                <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
-              </button>
+              <GameBackButton onClick={quit} label="Kembali" title="Kembali ke menu Petualangan Hutan Kata" />
               <p className="text-xs font-bold opacity-60 self-center flex items-center gap-1">
                 <svg
                   className="w-4 h-4"
@@ -1179,7 +1173,7 @@ export default function ZelbyDash() {
               </p>
               <button
                 onClick={togglePause}
-                className={`${btn} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white`}
+                className={`${btn} game-sound-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white`}
                 aria-label={paused ? "Lanjutkan" : "Jeda"}
               >
                 {paused ? (
