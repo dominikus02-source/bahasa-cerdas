@@ -204,9 +204,9 @@ export async function finishTtsSession(input: {
       }))
     : undefined;
 
-  // Klaim sesi + payout koin harus satu transaksi. Sebelumnya sesi bisa
-  // berhasil FINISHED lalu penulisan koin gagal, sehingga hadiah hilang
-  // permanen karena retry berikutnya ditolak oleh status FINISHED.
+  // Klaim sesi terlebih dahulu agar finish idempotent. Payout koin dilakukan
+  // SETELAH awardXp dan hanya berdasarkan XP yang benar-benar diterima.
+  // Ini penting: awardXp dapat mengembalikan 0 saat kuota harian habis.
   const claim = await db.$transaction(async (tx) => {
     const claimed = await tx.ttsSession.updateMany({
       where: { id: session.id, userId: input.userId, status: "ACTIVE" },
@@ -219,27 +219,37 @@ export async function finishTtsSession(input: {
         ...(unresolvedClues ? { unresolvedClues } : {}),
       },
     });
-    if (claimed.count === 0) return false;
-
-    if (coins > 0 && finalXp > 0) {
-      await tx.coinTransaction.create({
-        data: { userId: input.userId, amount: coins, reason: "MAIN_GAME", reference: `tts-${session.id}` },
-      });
-      await tx.user.update({
-        where: { id: input.userId },
-        data: { coins: { increment: coins } },
-      });
-    }
-    return true;
+    return claimed.count > 0;
   });
   if (!claim) return null; // sudah dinilai oleh permintaan lain
 
-  if (finalXp > 0) {
-    // Guard kuota/batas existing tetap berlaku (awardXp).
-    await awardXp(input.userId, "GAME", finalXp, `tts-${session.id}`).catch(() => {});
+  const hasilXp = finalXp > 0
+    ? await awardXp(input.userId, "GAME", finalXp, `tts-${session.id}`)
+    : null;
+  const xpDiberikan = hasilXp?.xpDiberikan ?? 0;
+  let coinsPaid = 0;
+
+  // Konsisten dengan game economy v1: bila kuota XP sudah habis dan awardXp
+  // memberi 0, sesi tidak boleh menjadi jalur farming koin.
+  if (coins > 0 && xpDiberikan > 0) {
+    try {
+      await db.$transaction([
+        db.coinTransaction.create({
+          data: { userId: input.userId, amount: coins, reason: "MAIN_GAME", reference: `tts-${session.id}` },
+        }),
+        db.user.update({
+          where: { id: input.userId },
+          data: { coins: { increment: coins } },
+        }),
+      ]);
+      coinsPaid = coins;
+    } catch (error) {
+      // XP sudah tercatat; kegagalan coin ledger tidak boleh menggagalkan finish.
+      console.error("TTS coin reward error:", error);
+    }
   }
 
-  return { pct, stars, hints, xp: finalXp, coins };
+  return { pct, stars, hints, xp: xpDiberikan, coins: coinsPaid };
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
