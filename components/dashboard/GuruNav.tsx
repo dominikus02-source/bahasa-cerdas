@@ -234,7 +234,7 @@ function NavLinks({
                 className={`block rounded-lg py-1.5 px-3 text-xs transition-all ${
                   linkActive
  ? "bg-blue-50 text-blue-700 font-semibold dark:bg-blue-500/15 dark:text-blue-300"
- : "text-slate-500 hover:text-blue-700 hover:bg-blue-50/70 dark:text-slate-400 :bg-slate-800 dark:hover:text-slate-200"
+ : "text-slate-500 hover:text-blue-700 hover:bg-blue-50/70 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                 }`}
               >
                 {link.label}
