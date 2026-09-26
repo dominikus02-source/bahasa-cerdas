@@ -1343,14 +1343,9 @@
 /* Legacy role gradients: force decorative teacher heroes to the strong blue
    family. This intentionally applies only to white-text gradients, so
    semantic success/warning cards and status chips keep their own colors. */
-.bc-guru-shell .bc-guru :is(.bg-gradient-to-r, .bg-gradient-to-br, .bg-gradient-to-b)
-  :is(.from-emerald-400, .from-emerald-500, .from-emerald-600, .from-emerald-700,
-      .from-green-500, .from-green-600, .from-green-700,
-      .from-teal-500, .from-teal-600, .from-teal-700).text-white,
-.bc-guru-shell .bc-guru :is(.bg-gradient-to-r, .bg-gradient-to-br, .bg-gradient-to-b)
-  :is(.from-blue-400, .from-blue-500, .from-blue-600, .from-blue-700).to-white.text-white,
-.bc-guru-shell .bc-guru :is(.bg-gradient-to-r, .bg-gradient-to-br, .bg-gradient-to-b)
-  :is(.from-violet-400, .from-violet-500, .from-violet-600, .from-indigo-500, .from-indigo-600).to-white.text-white {
+.bc-guru-shell .bc-guru :is(.bg-gradient-to-r, .bg-gradient-to-br, .bg-gradient-to-b):is(.from-emerald-400, .from-emerald-500, .from-emerald-600, .from-emerald-700, .from-green-500, .from-green-600, .from-green-700, .from-teal-500, .from-teal-600, .from-teal-700).text-white,
+.bc-guru-shell .bc-guru :is(.bg-gradient-to-r, .bg-gradient-to-br, .bg-gradient-to-b):is(.from-blue-400, .from-blue-500, .from-blue-600, .from-blue-700).to-white.text-white,
+.bc-guru-shell .bc-guru :is(.bg-gradient-to-r, .bg-gradient-to-br, .bg-gradient-to-b):is(.from-violet-400, .from-violet-500, .from-violet-600, .from-indigo-500, .from-indigo-600).to-white.text-white {
   background-image:
     radial-gradient(420px 210px at 86% 8%, rgba(96,165,250,.26), transparent 72%),
     linear-gradient(135deg, #071f4a 0%, #0d56c7 56%, #082b61 100%);
