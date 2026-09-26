@@ -294,8 +294,8 @@ export default function MuridPremiumPage() {
                 title: "AI Mentor",
                 text: "Jangan berhenti di benar atau salah. Gunakan penjelasan untuk memahami alasan di balik jawaban.",
                 tone: "from-blue-600 to-cyan-500",
-                href: "/murid/belajar",
-                action: "Belajar dengan mentor",
+                href: "/murid/mentor",
+                action: "Buka Mentor",
               },
               {
                 icon: BarChart3,
