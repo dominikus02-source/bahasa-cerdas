@@ -567,7 +567,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
         <style>{`.tk-screen{animation:tk-fade .35s ease}@keyframes tk-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}`}</style>
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <GameBackButton onClick={() => setScreen("start")} label="Kembali" title="Kembali ke menu Tebak Kata" />
+            <GameBackButton onClick={() => setScreen("start")} label="Kembali ke Tebak Kata" title="Kembali ke menu Tebak Kata" />
             <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
             <div className="w-11 sm:w-[110px]" />
           </div>
@@ -620,7 +620,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
         <style>{`@keyframes tk-shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}`}</style>
         <div className="relative max-w-lg mx-auto px-5 pt-4 pb-8 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <GameBackButton onClick={() => { stopBGM(); setScreen("levels"); }} label="Kembali" title="Kembali ke pilihan level" />
+            <GameBackButton onClick={() => { stopBGM(); setScreen("levels"); }} label="Kembali ke Pilih Level" title="Kembali ke pilihan level" />
             <div className="flex items-center gap-2">
               <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white dark:bg-[#0E2028] border-2 border-[#161B3A] dark:border-white/25">
                 <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
