@@ -9,13 +9,6 @@ const MAX_ITEMS = 1200
 const MIN_ANSWER = 3
 const MAX_ANSWER = 14
 
-function normalizeAnswer(value: unknown): string {
-  return String(value ?? "")
-    .normalize("NFKD")
-    .replace(/[^A-Za-z]/g, "")
-    .toUpperCase()
-}
-
 function answerFromQuestion(question: {
   type: string
   correctAnswer: string
@@ -38,13 +31,6 @@ function cleanClue(text: string): string {
     .replace(/\s+/g, " ")
     .replace(/^\s*(soal|pertanyaan)\s*:\s*/i, "")
     .trim()
-}
-
-function tierForDifficulty(value: string): 1 | 2 | 3 {
-  const d = value.toUpperCase()
-  if (d === "EASY" || d === "MUDAH") return 1
-  if (d === "HARD" || d === "SULIT") return 3
-  return 2
 }
 
 export async function GET() {
@@ -72,10 +58,20 @@ export async function GET() {
     })
 
     const seen = new Set<string>()
-    const words = []
+    const words: Array<{
+      id: string
+      answer: string
+      clue: string
+      tier: 1 | 2 | 3
+      clueType: string
+      qualityScore: number
+      source: "MASTER_BANK"
+      topik: string | null
+      kelas: string | null
+    }> = []
 
     for (const soal of soals) {
-      const answer = normalizeAnswer(answerFromQuestion(soal))
+      const answer = answerFromQuestion(soal)
       const clue = cleanClue(soal.text)
 
       if (answer.length < MIN_ANSWER || answer.length > MAX_ANSWER || clue.length < 8) continue
