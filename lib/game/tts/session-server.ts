@@ -93,6 +93,12 @@ export async function startTtsSession(input: {
     });
   }
 
+  const puzzle = buildPuzzle({
+    level: input.level,
+    seed: input.seed,
+    wordPool: words,
+  });
+
   const actualCells = new Set<string>();
   for (const word of puzzle.words) for (let i = 0; i < word.answer.length; i++) actualCells.add(word.dir === "A" ? String(word.row) + "," + String(word.col + i) : String(word.row + i) + "," + String(word.col));
 
