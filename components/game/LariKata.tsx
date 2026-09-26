@@ -42,6 +42,7 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const supabaseIdRef = useRef("");
+  const gameSessionIdRef = useRef("");
   const scoreRef = useRef(0);
   const correctRef = useRef(0);
   const wrongRef = useRef(0);
@@ -66,6 +67,7 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
   useEffect(() => () => stopBGM(), []);
 
   const startGame = useCallback(async () => {
+    gameSessionIdRef.current = crypto.randomUUID();
     sfx.start(); setSoundOn(isSoundOn()); startBGM();
     setLoading(true);
     try {
@@ -98,7 +100,7 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
       const res = await fetch("/api/katastra/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ score: scoreRef.current, correct: correctRef.current, wrong: wrongRef.current, maxStreak: maxStreakRef.current, mode: "dash", supabaseId: supabaseIdRef.current }),
+        body: JSON.stringify({ score: scoreRef.current, correct: correctRef.current, wrong: wrongRef.current, maxStreak: maxStreakRef.current, mode: "dash", supabaseId: supabaseIdRef.current, gameSessionId: gameSessionIdRef.current }),
       });
       const data = await res.json();
       setResult(data);
