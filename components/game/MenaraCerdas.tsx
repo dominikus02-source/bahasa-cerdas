@@ -261,6 +261,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
       <motion.div animate={controls} className="relative z-10 flex-1 flex flex-col max-w-md w-full mx-auto px-4 pt-4 pb-5 min-h-0">
         {/* HUD */}
         <div className="flex items-center justify-between mb-3">
+           <GameBackButton href="/arena/game" label="Kembali ke Arena" title="Kembali ke Arena" />
           <div className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white dark:bg-gradient-to-r dark:from-[#201C14] dark:to-[#262018] dark:border-amber-700/30 dark:shadow-[0_0_10px_rgba(202,138,4,0.15)] border-2 border-[#161B3A] dark:border-white/25">
             {Array.from({ length: MAX_HEARTS }).map((_, i) => (
               <Heart key={i} className={`w-4 h-4 ${i < hearts ? "text-rose-500 fill-rose-500" : "text-gray-300 dark:text-amber-800/40"}`} />
