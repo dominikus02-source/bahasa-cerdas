@@ -4342,3 +4342,151 @@
     scroll-behavior: auto;
   }
 }
+
+
+/* ─────────────────────────────────────────────────────────────
+   Projector Kota summary v3 — isolate from generic Jelajah summary grid
+   ─────────────────────────────────────────────────────────────
+   mb-pj-phase-final punya grid-areas khusus podium/ranking Jelajah pada
+   viewport lebar. Kota tidak punya anak dengan grid-area tersebut, sehingga
+   ia bisa masuk implicit grid cell dan tampak bergeser/overlap. Kota harus
+   punya layout final sendiri, selalu satu shell bounded di bawah header.
+   ───────────────────────────────────────────────────────────── */
+.mb-pj-phase-final.mb-pj-phase-final-kota {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  align-content: stretch;
+  justify-items: stretch;
+  grid-template-columns: none;
+  grid-template-areas: none;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  min-height: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.mb-pj-phase-final-kota > .mb-pj-kota-summary-shell {
+  flex: 1 1 auto;
+  width: min(100%, 1380px);
+  max-width: 1380px;
+  min-width: 0;
+  min-height: 0;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Jangan biarkan heading mendorong badge/rail kanan keluar safe area. */
+.mb-pj-kota-summary-head {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.mb-pj-kota-summary-heading {
+  width: 100%;
+  min-width: 0;
+}
+
+.mb-pj-kota-summary-title,
+.mb-pj-kota-summary-subtitle {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.mb-pj-kota-summary-title {
+  hyphens: none;
+  word-break: normal;
+}
+
+/* 1366–1536 adalah projector/laptop classroom paling umum. */
+@media (min-width: 1100px) and (max-width: 1536px) {
+  .mb-pj-phase-final-kota {
+    padding-inline: 18px;
+  }
+
+  .mb-pj-kota-summary-shell {
+    max-width: 1280px;
+  }
+
+  .mb-pj-kota-summary-head {
+    grid-template-columns: minmax(0, 1fr) 122px;
+    gap: 14px;
+  }
+
+  .mb-pj-kota-summary-heading {
+    max-width: 790px;
+  }
+
+  .mb-pj-kota-summary-title {
+    font-size: clamp(1.85rem, 3vw, 2.8rem);
+  }
+
+  .mb-pj-kota-summary-grid {
+    grid-template-columns: minmax(0, 1.62fr) minmax(286px, .62fr);
+    gap: 12px;
+  }
+
+  .mb-pj-kota-summary-side {
+    gap: 10px;
+  }
+}
+
+/* Layar pendek: judul/subtitle harus tetap berada di dalam satu frame. */
+@media (min-width: 1100px) and (max-height: 780px) {
+  .mb-pj-phase-final-kota {
+    justify-content: flex-start;
+    padding-top: 7px;
+    padding-bottom: 8px;
+  }
+
+  .mb-pj-kota-summary-shell {
+    gap: 7px;
+  }
+
+  .mb-pj-kota-summary-kicker {
+    display: none;
+  }
+
+  .mb-pj-kota-summary-title {
+    font-size: clamp(1.55rem, 2.3vw, 2rem);
+    line-height: 1;
+  }
+
+  .mb-pj-kota-summary-subtitle {
+    margin-top: 3px;
+    font-size: .68rem;
+  }
+
+  .mb-pj-kota-summary-badge {
+    min-width: 102px;
+    padding: 7px 9px;
+  }
+
+  .mb-pj-kota-summary-badge-label {
+    font-size: .54rem;
+  }
+
+  .mb-pj-kota-summary-badge strong {
+    font-size: 1.3rem;
+  }
+
+  .mb-pj-kota-summary-grid {
+    min-height: 0;
+    grid-template-columns: minmax(0, 1.72fr) minmax(270px, .56fr);
+    gap: 9px;
+  }
+
+  .mb-pj-kota-summary-message {
+    padding: 10px 12px;
+  }
+
+  .mb-pj-kota-summary-message p {
+    margin-top: 5px;
+    font-size: .75rem;
+    line-height: 1.3;
+  }
+}
