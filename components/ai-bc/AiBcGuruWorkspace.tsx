@@ -49,7 +49,7 @@ const COMPOSER_MAX_HEIGHT_PX = 128;
 
 function MarkdownContent({ content }: { content: string }) {
   return (
- <div className="prose prose-sm max-w-none prose-headings:text-slate-800 prose-a:text-emerald-600 prose-strong:text-slate-800 prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-pre:bg-slate-900 prose-code:text-slate-800 dark:prose-headings:text-slate-100 dark:prose-a:text-emerald-400 dark:prose-strong:text-slate-100 dark:prose-p:text-slate-300 dark:prose-li:text-slate-300 dark:prose-code:text-slate-100">
+ <div className="prose prose-sm max-w-none prose-headings:text-slate-800 prose-a:text-blue-600 prose-strong:text-slate-800 prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-pre:bg-slate-900 prose-code:text-slate-800 dark:prose-headings:text-slate-100 dark:prose-a:text-blue-300 dark:prose-strong:text-slate-100 dark:prose-p:text-slate-300 dark:prose-li:text-slate-300 dark:prose-code:text-slate-100">
       <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
     </div>
   );
@@ -208,7 +208,7 @@ export default function AiBcGuruWorkspace({ userName, personaTitle, greeting, hi
             <AICompanionCharacter state="idle" size="sm" />
             <div className="min-w-0">
               <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{AI_LABEL}</p>
-              <p className="truncate text-[11px] text-emerald-600 dark:text-emerald-400">{personaTitle}</p>
+              <p className="truncate text-[11px] text-blue-600 dark:text-blue-300">{personaTitle}</p>
             </div>
           </div>
           {hasConversation && (
@@ -232,7 +232,7 @@ export default function AiBcGuruWorkspace({ userName, personaTitle, greeting, hi
             <div className="space-y-1.5">
               <div className="flex items-center justify-center gap-2">
                 <span className="text-lg font-extrabold text-slate-800 dark:text-slate-100">{AI_LABEL}</span>
- <span className="rounded-full border border-emerald-100 bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/60 dark:text-emerald-300">
+ <span className="rounded-full border border-blue-100 bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-700 dark:border-blue-900 dark:bg-blue-950/60 dark:text-blue-300">
                   {personaTitle}
                 </span>
               </div>
@@ -246,7 +246,7 @@ export default function AiBcGuruWorkspace({ userName, personaTitle, greeting, hi
                   key={prompt}
                   type="button"
                   onClick={() => handleSuggested(prompt)}
- className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-left text-xs text-slate-600 shadow-sm transition-all hover:border-emerald-300 hover:bg-emerald-50 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300 :border-emerald-800 dark:hover:bg-emerald-950/40"
+ className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-left text-xs text-slate-600 shadow-sm transition-all hover:border-blue-300 hover:bg-blue-50 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300 dark:hover:border-blue-800 dark:hover:bg-blue-950/40"
                 >
                   {prompt}
                 </button>
@@ -264,7 +264,7 @@ export default function AiBcGuruWorkspace({ userName, personaTitle, greeting, hi
                       key={hint.label}
                       type="button"
                       onClick={() => handleSuggested(hint.prompt)}
- className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-600 transition-colors hover:border-emerald-300 hover:bg-emerald-50 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300 dark:hover:bg-emerald-950/50"
+ className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-600 transition-colors hover:border-blue-300 hover:bg-blue-50 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300 dark:hover:bg-blue-950/50"
                     >
                       {hint.label}
                     </button>
@@ -280,7 +280,7 @@ export default function AiBcGuruWorkspace({ userName, personaTitle, greeting, hi
             {messages.map((msg, i) =>
               msg.role === "user" ? (
                 <div key={i} className="flex justify-end gap-3">
-                  <div className="max-w-[85%] rounded-2xl rounded-br-md bg-gradient-to-r from-emerald-600 to-green-600 p-3.5 text-sm leading-relaxed text-white shadow-md sm:max-w-[75%]">
+                  <div className="max-w-[85%] rounded-2xl rounded-br-md bg-gradient-to-r from-blue-700 to-sky-600 p-3.5 text-sm leading-relaxed text-white shadow-md sm:max-w-[75%]">
                     <p className="whitespace-pre-wrap">{msg.content}</p>
                   </div>
                 </div>
@@ -312,7 +312,7 @@ export default function AiBcGuruWorkspace({ userName, personaTitle, greeting, hi
                             type="button"
                             onClick={() => handleCopy(msg.content, i)}
                             className={`flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] transition-colors ${
-                              copiedId === i ? "text-emerald-500" : "text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
+                              copiedId === i ? "text-blue-500" : "text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
                             }`}
                           >
                             {copiedId === i ? <Check size={12} /> : <Copy size={12} />}
@@ -347,9 +347,9 @@ export default function AiBcGuruWorkspace({ userName, personaTitle, greeting, hi
                     <div className="flex items-center gap-2 py-1.5">
                       <span className="text-xs text-slate-400">{THINKING_LABEL}</span>
                       <span className="flex items-center gap-1" aria-hidden="true">
-                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400 motion-reduce:animate-none" />
-                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400 motion-reduce:animate-none [animation-delay:150ms]" />
-                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400 motion-reduce:animate-none [animation-delay:300ms]" />
+                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-blue-400 motion-reduce:animate-none" />
+                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-blue-400 motion-reduce:animate-none [animation-delay:150ms]" />
+                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-blue-400 motion-reduce:animate-none [animation-delay:300ms]" />
                       </span>
                     </div>
                   )}
@@ -363,7 +363,7 @@ export default function AiBcGuruWorkspace({ userName, personaTitle, greeting, hi
       {/* Komposer — SELALU tampil (tanpa gerbang), melekat di dasar workspace */}
  <div className="ai-bc-guru-composer shrink-0 border-t border-slate-200/70 bg-white/80 px-3 pb-2 pt-3 backdrop-blur dark:border-slate-800 dark:bg-slate-900/70 safe-area-bottom">
         <div className="mx-auto w-full max-w-[900px]">
- <div className="flex items-end gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm transition-all focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-100 dark:border-slate-700 dark:bg-slate-900 dark:focus-within:ring-emerald-500/20">
+ <div className="flex items-end gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm transition-all focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-100 dark:border-slate-700 dark:bg-slate-900 dark:focus-within:ring-blue-500/20">
             <textarea
               ref={inputRef}
               value={input}
@@ -380,7 +380,7 @@ export default function AiBcGuruWorkspace({ userName, personaTitle, greeting, hi
               disabled={!input.trim() || streaming}
               aria-label="Kirim pertanyaan"
               title="Kirim pertanyaan"
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 text-white shadow-md transition-all hover:brightness-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-r from-blue-700 to-sky-600 text-white shadow-md transition-all hover:brightness-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
             >
               {streaming ? (
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" aria-hidden="true" />
