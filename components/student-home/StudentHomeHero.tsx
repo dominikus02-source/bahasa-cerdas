@@ -231,7 +231,7 @@ export function StudentHomeHero() {
   return (
     <section
       aria-label="Beranda pribadi — sapaan dan aksi belajarmu"
-      className="relative overflow-hidden rounded-3xl bg-white shadow-xl shadow-slate-900/10 ring-1 ring-slate-900/5"
+      className="relative overflow-hidden rounded-3xl bg-white dark:bg-[#111a32] shadow-xl shadow-slate-900/10 ring-1 ring-slate-900/5 dark:ring-white/10"
     >
       {/* ── Artwork: banner herocard Arena.png ──────────────────────────────── */}
       {/* Mobile: pita artwork di atas, konten di bawah (karakter tetap utuh). */}
@@ -278,7 +278,7 @@ export function StudentHomeHero() {
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 flex-wrap">
               <p
-                className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 truncate"
+                className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white truncate"
                 style={nameColorStyle(me?.equippedNameColor, false)}
               >
                 {name}
@@ -292,12 +292,12 @@ export function StudentHomeHero() {
               )}
               <RankChip rank={profile.rank as never} size={18} showTitle={false} compact />
             </div>
-            <p className="text-xs text-slate-600 truncate mt-0.5">{sub}</p>
-            <p className="text-xs text-slate-500 mt-0.5">Halo! Siap belajar hari ini?</p>
+            <p className="text-xs text-slate-600 dark:text-slate-300/75 truncate mt-0.5">{sub}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Halo! Siap belajar hari ini?</p>
           </div>
           <Link
             href="/murid/profile"
-            className="hidden sm:inline-flex items-center gap-1 shrink-0 text-xs font-semibold text-violet-600 hover:text-violet-800 transition-colors"
+            className="hidden sm:inline-flex items-center gap-1 shrink-0 text-xs font-semibold text-violet-600 dark:text-violet-300 hover:text-violet-800 dark:hover:text-violet-200 transition-colors"
             aria-label="Lihat profil lengkap"
           >
             <Sparkles size={12} />
@@ -316,13 +316,13 @@ export function StudentHomeHero() {
             </div>
           ) : (
             <>
-              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-violet-600 mb-2">
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-violet-600 dark:text-violet-300 mb-2">
                 {hero.eyebrow}
               </p>
               <h1 className="text-[26px] sm:text-3xl md:text-[32px] leading-tight font-semibold tracking-tight text-slate-900">
                 {hero.headline}
               </h1>
-              <p className="mt-2 text-sm text-slate-600 leading-relaxed max-w-md">
+              <p className="mt-2 text-sm text-slate-600 dark:text-slate-300/80 leading-relaxed max-w-md">
                 {hero.supporting}
               </p>
 
@@ -346,12 +346,12 @@ export function StudentHomeHero() {
                   </button>
                 )}
               </div>
-              {startError && <p className="mt-3 text-xs font-semibold text-red-600">{startError}</p>}
+              {startError && <p className="mt-3 text-xs font-semibold text-red-600 dark:text-red-300">{startError}</p>}
 
               {/* Mobile: Lihat Profil sebagai aksi sekunder kecil */}
               <Link
                 href="/murid/profile"
-                className="sm:hidden inline-flex items-center gap-1 mt-3 text-xs font-semibold text-violet-600 hover:text-violet-800 transition-colors"
+                className="sm:hidden inline-flex items-center gap-1 mt-3 text-xs font-semibold text-violet-600 dark:text-violet-300 hover:text-violet-800 dark:hover:text-violet-200 transition-colors"
                 aria-label="Lihat profil lengkap"
               >
                 <Sparkles size={12} />
@@ -364,29 +364,29 @@ export function StudentHomeHero() {
         {/* Stats — compact pill row, bukan dashboard */}
         <div className="flex flex-wrap items-center gap-2 pt-1">
           <span
-            className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/80 px-3 py-1.5 shadow-sm backdrop-blur-sm"
+            className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/80 dark:border-white/10 dark:bg-white/[0.06] px-3 py-1.5 shadow-sm backdrop-blur-sm"
             title="Rentetan harian"
           >
             <Flame size={14} className="text-amber-500" />
             <span className="text-sm font-bold text-slate-900">{profile.streak}</span>
-            <span className="text-xs text-slate-500">hari</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400">hari</span>
           </span>
           <Link
             href="/murid/toko-koin"
-            className="group inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/80 px-3 py-1.5 shadow-sm backdrop-blur-sm transition-colors hover:border-amber-300"
+            className="group inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/80 dark:border-white/10 dark:bg-white/[0.06] px-3 py-1.5 shadow-sm backdrop-blur-sm transition-colors hover:border-amber-300"
             title="Toko Koin"
           >
             <Coins size={14} className="text-amber-500" />
             <span className="text-sm font-bold text-slate-900">{profile.coin.toLocaleString("id-ID")}</span>
-            <ShoppingBag size={12} className="text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <ShoppingBag size={12} className="text-slate-400 dark:text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity" />
           </Link>
           <span
-            className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/80 px-3 py-1.5 shadow-sm backdrop-blur-sm"
+            className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/80 dark:border-white/10 dark:bg-white/[0.06] px-3 py-1.5 shadow-sm backdrop-blur-sm"
             title="Total XP"
           >
             <Zap size={14} className="text-violet-500" />
             <span className="text-sm font-bold text-slate-900">{profile.weeklyXp.toLocaleString("id-ID")}</span>
-            <span className="text-xs text-slate-500">XP</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400">XP</span>
           </span>
         </div>
       </div>
