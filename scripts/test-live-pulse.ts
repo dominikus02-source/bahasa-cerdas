@@ -41,6 +41,7 @@ function readFile(path: string): string {
 console.log("SECTION 1: File existence")
 
 assert(fileExists("lib/presence.ts"), "lib/presence.ts must exist")
+assert(fileExists("lib/presence-location.ts"), "Presence location mapper must exist")
 assert(fileExists("app/api/presence/heartbeat/route.ts"), "Heartbeat API must exist")
 assert(fileExists("app/api/analytics/live/route.ts"), "Live analytics API must exist")
 assert(fileExists("components/providers/HeartbeatProvider.tsx"), "HeartbeatProvider must exist")
@@ -119,7 +120,7 @@ assert(analytics.includes("generatedAt"), "Response must include generatedAt")
 assert(analytics.includes("presenceWindowSeconds"), "Response must include presenceWindowSeconds")
 assert(analytics.includes("presenceAvailable"), "Response must include presenceAvailable")
 assert(analytics.includes("onlineLocations"), "Response must include current menu distribution")
-assert(analytics.includes("isPresenceAvailable"), "Must call isPresenceAvailable()")
+assert(analytics.includes("presenceAvailable: online.available"), "Must report actual Redis read health, not config-only availability")
 assert(analytics.includes("force-dynamic"), "Must be force-dynamic")
 
 // Must not expose user identities in analytics response
