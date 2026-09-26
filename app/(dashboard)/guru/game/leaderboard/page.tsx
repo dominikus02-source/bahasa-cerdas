@@ -43,11 +43,11 @@ export default function GuruGameLeaderboardPage() {
   }, [load, period]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-emerald-50">
-      <div className="bg-gradient-to-br from-emerald-600 via-green-700 to-teal-900 text-white relative overflow-hidden">
+    <div className="min-h-screen bg-[#f5f8fc] dark:bg-[#061426]">
+      <div className="bc-guru-hero text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-400/20 rounded-full blur-[100px]" />
         <div className="relative z-10 max-w-4xl mx-auto px-4 py-10">
-          <Link href="/guru/game" className="inline-flex items-center gap-1.5 text-emerald-200 text-sm hover:text-white transition-colors mb-4">
+          <Link href="/guru/game" className="inline-flex items-center gap-1.5 text-blue-100 text-sm hover:text-white transition-colors mb-4">
             <ArrowLeft size={16} /> Kembali ke Gim
           </Link>
           <div className="flex items-center gap-3">
@@ -56,7 +56,7 @@ export default function GuruGameLeaderboardPage() {
             </div>
             <div>
               <h1 className="text-2xl lg:text-3xl font-extrabold">Peringkat Guru</h1>
-              <p className="text-emerald-200 text-sm">Papan peringkat guru — dihitung dari XP Guru (bukan XP murid)</p>
+              <p className="text-blue-100 text-sm">Papan peringkat guru — dihitung dari XP Guru (bukan XP murid)</p>
             </div>
           </div>
         </div>
@@ -121,7 +121,7 @@ export default function GuruGameLeaderboardPage() {
                           </td>
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-2">
-                              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center text-white text-[10px] font-bold">
+                              <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-[10px] font-bold">
                                 {e.fullName?.charAt(0) || "G"}
                               </div>
                               <span className="font-medium text-slate-700 text-xs">{e.fullName || "Guru"}</span>
