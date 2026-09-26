@@ -86,7 +86,7 @@ export default function PilihPeranPage() {
         setSaving(false);
         return;
       }
-      window.location.href = data.redirect || (role === "MURID" ? "/arena" : "/guru/beranda");
+      window.location.href = data.redirect || (role === "MURID" ? "/murid/beranda" : "/guru/beranda");
     } catch {
       setError("Koneksi terputus. Periksa koneksi internet kamu.");
       setSaving(false);

@@ -45,7 +45,7 @@ export default function OnboardingPage() {
         const res = await fetch("/api/user/me");
         const data = await res.json();
         if (data.user?.onboarded) {
-          router.replace(data.user.role === "GURU" ? "/guru/beranda" : "/arena");
+          router.replace(data.user.role === "GURU" ? "/guru/beranda" : "/murid/beranda");
           return;
         }
       } catch {}
@@ -62,7 +62,7 @@ export default function OnboardingPage() {
       // get fresh user data from DB for correct role
       const me = await fetch("/api/user/me").then(r => r.json());
       const role = me.user?.role || "murid";
-      const dest = role === "GURU" ? "/guru/beranda" : role === "ADMIN" ? "/admin" : "/arena";
+      const dest = role === "GURU" ? "/guru/beranda" : role === "ADMIN" ? "/admin" : "/murid/beranda";
 
       // also try to update supabase metadata (non-blocking)
       supabase.auth.updateUser({ data: { onboarded: true } }).catch(() => {});

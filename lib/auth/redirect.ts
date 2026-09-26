@@ -16,7 +16,7 @@
 
 /** Role-based dashboard destination (canonical, do not invent new paths). */
 export function dashboardForRole(role: string): string {
-  if (role === "MURID") return "/arena";
+  if (role === "MURID") return "/murid/beranda";
   if (role === "ADMIN") return "/admin";
   return "/guru/beranda";
 }
