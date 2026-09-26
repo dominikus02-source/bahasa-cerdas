@@ -621,9 +621,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
         <style>{`@keyframes tk-shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}`}</style>
         <div className="relative max-w-lg mx-auto px-5 pt-4 pb-8 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <button className={`${btnBase} game-back-btn w-12 h-12 hover:bg-white dark:hover:bg-white/35`} onClick={() => { stopBGM(); setScreen("levels"); }} aria-label="Keluar">
-              <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
-            </button>
+            <GameBackButton onClick={() => { stopBGM(); setScreen("levels"); }} label="Kembali" title="Kembali ke pilihan level" />
             <div className="flex items-center gap-2">
               <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white dark:bg-[#0E2028] border-2 border-[#161B3A] dark:border-white/25">
                 <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
