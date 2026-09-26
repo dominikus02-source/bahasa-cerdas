@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react"
 import Link from "next/link"
-import { Heart, Volume2, VolumeX, Loader2, RotateCcw, ArrowLeft } from "lucide-react"
+import { Heart, Volume2, VolumeX, Loader2, RotateCcw } from "lucide-react"
 import { QUESTION_BANK_EXPANDED, type BankQuestion } from "@/lib/game/question-bank"
 import { gambarKarakter, KARAKTER, PROFIL, type Karakter } from "@/lib/arena-junior/karakter"
 import { bacaKarakter, simpanKarakter } from "@/lib/arena-junior/karakter-simpan"
