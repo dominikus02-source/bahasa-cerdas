@@ -74,7 +74,7 @@ export function GuruMissionCard({
   });
 
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-5 sm:p-6 shadow-lg shadow-blue-100/40 ring-1 ring-emerald-100">
+    <div className="bc-guru-card relative overflow-hidden rounded-3xl p-5 sm:p-6">
       <div className="pointer-events-none absolute -top-20 -right-20 w-56 h-56 rounded-full bg-blue-100/40" />
       <div className="pointer-events-none absolute -bottom-24 -left-10 w-64 h-64 rounded-full bg-sky-100/30" />
 
@@ -86,7 +86,7 @@ export function GuruMissionCard({
           <div>
             <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
               Misi Guru Cerdas
-              <span className="hidden sm:inline-flex items-center gap-1 text-[10px] px-2 py-0.5 bg-blue-100 text-emerald-700 rounded-full font-semibold uppercase tracking-wide">
+              <span className="hidden sm:inline-flex items-center gap-1 text-[10px] px-2 py-0.5 bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300 rounded-full font-semibold uppercase tracking-wide">
                 Mingguan
               </span>
             </h2>
