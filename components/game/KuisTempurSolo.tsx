@@ -165,6 +165,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   const rafRef = useRef(0)
   const jalanRef = useRef(false)
   const benarRef = useRef(0)
+  const gameSessionIdRef = useRef("")
   const salahRef = useRef(0)
   const comboRef = useRef(0)
   const maxComboRef = useRef(0)
@@ -260,6 +261,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
         body: JSON.stringify({
           score: skor, correct: benarRef.current, wrong: salahRef.current,
           maxStreak: maxComboRef.current, gameType: GAME_TYPE,
+          gameSessionId: gameSessionIdRef.current,
         }),
       })
       const d = await res.json().catch(() => ({}))
@@ -341,6 +343,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   }, [tulisFeed])
 
   const mulai = useCallback(() => {
+    gameSessionIdRef.current = crypto.randomUUID();
     const cv = cvRef.current
     const W = cv?.clientWidth || window.innerWidth
     const H = cv?.clientHeight || window.innerHeight
