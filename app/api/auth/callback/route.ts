@@ -154,7 +154,7 @@ export async function GET(request: Request) {
           email: user.email ?? "",
         });
         if (dbUser) {
-          return NextResponse.redirect(`${requestUrl.origin}${dashboardForRole(dbUser.role)}`);
+          return NextResponse.redirect(`${requestUrl.origin}${dashboardForUser(dbUser.role, Boolean(dbUser.isFounder))}`);
         }
         // Authenticated but no application User → role selection, not "/".
         return NextResponse.redirect(`${requestUrl.origin}/auth/pilih-peran`);
