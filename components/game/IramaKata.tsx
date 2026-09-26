@@ -18,6 +18,7 @@ import {
   Heart, Play, Pause, X, Volume2, VolumeX, Lock, Star, Trophy, Zap,
   RotateCcw, ChevronRight, Music4,
 } from "lucide-react";
+import GameBackButton from "@/components/game/GameBackButton";
 
 /* ---------- Bank kata ---------- */
 const BAKU = ["apotek", "izin", "zaman", "sistem", "nomor", "hafal", "imbau", "cabai", "jadwal", "foto", "teknik", "risiko", "nasihat", "ijazah", "praktik", "napas", "objek", "silakan", "atlet", "asas", "kualitas", "analisis", "hakikat", "kaidah", "kuitansi", "respons", "modern", "karier", "saraf", "cedera"];
