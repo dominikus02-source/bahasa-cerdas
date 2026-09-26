@@ -3,7 +3,7 @@
 import { useCallback } from "react"
 import GameLobby from "@/components/game/GameLobby"
 import { gameSocket } from "@/lib/game/socket"
-import { ArrowLeft } from "lucide-react"
+import GameBackButton from "@/components/game/GameBackButton"
 import { MULTIPLAYER_ENABLED } from "@/lib/features"
 import KuisTempurSolo from "@/components/game/KuisTempurSolo"
 
@@ -22,12 +22,12 @@ export default function KuisTempurPage() {
 
   return (
     <div className="game-env game-env-kuis game-fullscreen relative">
-      <button
+      <GameBackButton
         onClick={handleBack}
-        className="fixed top-3 left-3 z-[70] w-9 h-9 rounded-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-gray-200 dark:border-slate-700 shadow-md flex items-center justify-center text-gray-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800/90 active:scale-95 transition-all arena-btn"
-      >
-        <ArrowLeft className="w-5 h-5" />
-      </button>
+        label="Kembali ke Arena"
+        title="Kembali ke Arena"
+        className="fixed top-3 left-3 z-[70]"
+      />
       <GameLobby isHost={false} role="MURID" />
     </div>
   )
