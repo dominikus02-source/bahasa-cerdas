@@ -23,12 +23,12 @@ export default async function GuruUKBISimulasiPage() {
   return (
     <div>
       {/* Hero */}
-      <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 rounded-2xl p-6 mb-6 text-white">
+      <div className="guru-hero-strong mb-6 rounded-2xl p-6">
         <div className="flex items-center gap-3 mb-2">
           <BookOpen size={24} />
           <h1 className="text-xl font-bold">Simulasi UKBI — Guru</h1>
         </div>
-        <p className="text-sm text-emerald-200 max-w-2xl">
+        <p className="guru-hero-muted max-w-2xl text-sm">
           Pantau paket simulasi UKBI yang tersedia untuk murid. Lihat hasil dan kelola bank soal.
         </p>
       </div>
