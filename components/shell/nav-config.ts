@@ -106,10 +106,10 @@ export const STUDENT_NAV_GROUPS: ShellNavGroup[] = [
         match: (p) => p.startsWith("/murid/bigt"),
       },
       {
-        label: "Sertifikat",
-        href: "/murid/sertifikat",
+        label: "Hasil",
+        href: "/murid/dokumen-latihan",
         icon: Award,
-        match: (p) => p.startsWith("/murid/sertifikat"),
+        match: (p) => p.startsWith("/murid/dokumen-latihan") || p.startsWith("/murid/sertifikat"),
       },
     ],
   },
