@@ -13,7 +13,7 @@ const COUPON_CODE = "bcgurucerdas1000";
 export default function BannerProgramGuruCerdas() {
   return (
     <section
-      className="relative min-h-[132px] overflow-hidden rounded-[24px] border border-blue-200/50 shadow-[0_12px_30px_rgba(37,99,235,.10)] dark:border-blue-950/80"
+      className="relative min-h-[124px] overflow-hidden rounded-[20px] border border-blue-200/50 shadow-[0_10px_24px_rgba(37,99,235,.09)] sm:min-h-[132px] sm:rounded-[24px] dark:border-blue-950/80"
       style={{ backgroundColor: "#0b3674" }}
       aria-labelledby="guru-coupon-title"
     >
@@ -32,7 +32,7 @@ export default function BannerProgramGuruCerdas() {
         }}
       />
 
-      <div className="relative z-10 flex min-h-[132px] flex-col justify-between gap-4 px-5 py-4 sm:flex-row sm:items-center sm:px-6">
+      <div className="relative z-10 flex min-h-[124px] flex-col justify-between gap-3 px-4 py-4 sm:min-h-[132px] sm:flex-row sm:items-center sm:gap-4 sm:px-6">
         <div className="min-w-0">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200/20 bg-white/10 px-2.5 py-1 text-[10px] font-extrabold tracking-[.11em] text-blue-100">
             <Sparkles className="h-3.5 w-3.5" />
@@ -53,7 +53,7 @@ export default function BannerProgramGuruCerdas() {
             Promo khusus guru untuk langganan bulanan. Tidak berlaku untuk paket tahunan.
           </p>
 
-          <div className="mt-2.5 inline-flex items-center gap-2 rounded-xl border border-white/15 bg-slate-950/25 px-3 py-2 text-xs text-white backdrop-blur-sm">
+          <div className="mt-2.5 hidden items-center gap-2 rounded-xl border border-white/15 bg-slate-950/25 px-3 py-2 text-xs text-white backdrop-blur-sm sm:inline-flex">
             <Ticket className="h-4 w-4 shrink-0 text-blue-200" />
             <span className="text-blue-100">Kode kupon</span>
             <code className="font-mono font-extrabold tracking-[.04em] text-white">{COUPON_CODE}</code>
@@ -62,7 +62,7 @@ export default function BannerProgramGuruCerdas() {
 
         <Link
           href="/guru/berlangganan?plan=monthly"
-          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-xs font-extrabold text-blue-700 shadow-lg shadow-blue-950/20 transition-all hover:bg-blue-50 sm:self-center"
+          className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-xs font-extrabold text-blue-700 shadow-lg shadow-blue-950/20 transition-all hover:bg-blue-50 sm:self-center"
         >
           Lihat Promo <ArrowRight className="h-4 w-4" />
         </Link>
