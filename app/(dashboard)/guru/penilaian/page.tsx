@@ -225,7 +225,7 @@ export default function PenilaianPage() {
   return (
     <div className="max-w-6xl mx-auto">
       {/* Header */}
-      <div className="bg-gradient-to-br from-emerald-600 via-green-600 to-teal-700 rounded-2xl p-5 text-white mb-5">
+      <div className="bc-guru-hero rounded-2xl p-5 text-white mb-5">
         <div className="flex items-center justify-between">
           <div>
             <p className="font-bold text-lg">Penilaian Siswa</p>
@@ -360,7 +360,7 @@ export default function PenilaianPage() {
                       <tr key={siswa.id} className="border-b border-gray-50 hover:bg-emerald-50/30 transition-colors">
                         <td className="py-2.5 px-4 sticky left-0 bg-white hover:bg-emerald-50/30">
                           <div className="flex items-center gap-2">
-                            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+                            <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
                               {siswa.avatar ? <img src={siswa.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : siswa.fullName.charAt(0)}
                             </div>
                             <span className="text-sm font-medium text-gray-800 truncate">{siswa.fullName}</span>
@@ -529,7 +529,7 @@ export default function PenilaianPage() {
               <X size={16} className="text-gray-500" />
             </button>
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center text-white font-bold shrink-0">
+              <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold shrink-0">
                 {editSiswa.avatar ? <img src={editSiswa.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : editSiswa.fullName.charAt(0)}
               </div>
               <div>
