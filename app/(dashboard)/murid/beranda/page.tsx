@@ -33,7 +33,7 @@ export default function HomeFeedPage() {
   }, []);
 
   return (
-    <div className="px-theme min-h-screen relative overflow-hidden">
+    <div className="px-theme-app min-h-screen relative overflow-hidden">
       <main className="mx-auto max-w-[1180px] px-4 sm:px-6 py-5 sm:py-7 space-y-6 sm:space-y-8">
         <HomeDataProvider>
           <HomeContent />
