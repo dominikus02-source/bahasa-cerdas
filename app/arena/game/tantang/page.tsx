@@ -247,7 +247,7 @@ export default function TantangTemanPage() {
             </div>
             <p className="font-semibold text-gray-700 dark:text-slate-300">Belum ada teman sekelas</p>
             <p className="text-sm text-gray-400 mt-1 px-8">Gabung kelas dulu untuk bisa menantang temanmu.</p>
-            <Link href="/arena/kelasku" className="inline-block mt-4 px-5 py-2.5 rounded-xl bg-violet-600 text-white text-sm font-bold">
+            <Link href="/murid/gabung-kelas" className="inline-block mt-4 px-5 py-2.5 rounded-xl bg-violet-600 text-white text-sm font-bold">
               Gabung Kelas
             </Link>
           </div>

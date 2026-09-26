@@ -83,6 +83,7 @@ function tierFromDifficulty(value: string | null | undefined): 1 | 2 | 3 {
  * - 25 poin pedagogical clarity
  *
  * APPROVED >= 80, REVIEW 65–79, REJECTED < 65.
+ * Pelanggaran kontrak gameplay yang deterministik selalu REJECTED,\n * meskipun skor numeriknya masih berada di REVIEW/APPROVED.
  * REJECTED tidak pernah dikirim ke gameplay.
  */
 export function evaluateTtsCandidate(input: TtsCandidateInput): TtsEligibility {
@@ -94,6 +95,7 @@ export function evaluateTtsCandidate(input: TtsCandidateInput): TtsEligibility {
   const clueType = classifyClueType(clue, themeKey);
   const reasons: string[] = [];
   let score = 100;
+  let hardReject = false;
 
   if (!ANSWER_RE.test(answer) || rawAnswer !== answer) {
     score -= 40;
@@ -109,12 +111,14 @@ export function evaluateTtsCandidate(input: TtsCandidateInput): TtsEligibility {
   } else if (clue.length > 180) {
     score -= 15;
     reasons.push("petunjuk terlalu panjang");
+    hardReject = true;
   }
 
   for (const [pattern, reason] of GENERIC_STEM_PATTERNS) {
     if (pattern.test(clue)) {
       score -= 30;
       reasons.push(reason);
+      hardReject = true;
       break;
     }
   }
@@ -122,17 +126,20 @@ export function evaluateTtsCandidate(input: TtsCandidateInput): TtsEligibility {
   if (PLACEHOLDER_PATTERNS.some((p) => p.test(clue))) {
     score -= 40;
     reasons.push("petunjuk mengandung placeholder/debug");
+    hardReject = true;
   }
 
   if (/^[A-D][.)]\s/i.test(clue)) {
     score -= 30;
     reasons.push("petunjuk terlihat seperti opsi jawaban");
+    hardReject = true;
   }
 
   const clueComparable = normalizeComparable(clue);
   if (answer && clueComparable.includes(answer)) {
     score -= 35;
     reasons.push("petunjuk membocorkan jawaban");
+    hardReject = true;
   }
 
   if (clue.includes("?") && clue.length > 90) {
@@ -145,7 +152,7 @@ export function evaluateTtsCandidate(input: TtsCandidateInput): TtsEligibility {
 
   score = Math.max(0, Math.min(100, score));
   const status: TtsEligibilityStatus =
-    score >= 80 ? "APPROVED" : score >= 65 ? "REVIEW" : "REJECTED";
+    hardReject ? "REJECTED" : score >= 80 ? "APPROVED" : score >= 65 ? "REVIEW" : "REJECTED";
 
   return { status, score, answer, clue, clueType, tier, reasons };
 }

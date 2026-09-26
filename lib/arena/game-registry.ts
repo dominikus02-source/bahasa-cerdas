@@ -267,9 +267,10 @@ export function gameById(id: string): GameDefinition | undefined {
 }
 
 export function featuredGame(): GameDefinition {
+  const published = GAME_REGISTRY.filter((g) => !g.unpublished);
   return (
-    GAME_REGISTRY.find((g) => g.featured && !g.unpublished) ??
-    GAME_REGISTRY.find((g) => !g.unpublished) ??
+    published.find((g) => g.featured) ??
+    published[0] ??
     GAME_REGISTRY[0]
   );
 }
