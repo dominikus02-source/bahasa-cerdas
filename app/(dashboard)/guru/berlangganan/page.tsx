@@ -64,6 +64,7 @@ export default function BerlanggananPage() {
   const [planInfo, setPlanInfo] = useState<PlanInfo | null>(null);
   const [userLoading, setUserLoading] = useState(true);
   const snapLoaded = useRef(false);
+  const paymentConfirmTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -76,22 +77,58 @@ export default function BerlanggananPage() {
     }
   }, []);
 
-  useEffect(() => {
-    fetch("/api/user/me")
-      .then((r) => r.json())
-      .then((d) => {
-        setUserInfo({
-          isPremium: d.isPremium || d.user?.isPremium || false,
-          premiumPlan: d.premiumPlan || d.user?.premiumPlan || "FREE",
-          premiumUntil: d.premiumUntil || d.user?.premiumUntil || null,
-        });
-        if (d.isPremium || d.user?.isPremium) {
-          setStatus("success");
-        }
-      })
-      .catch(() => {})
-      .finally(() => setUserLoading(false));
+  const refreshUserInfo = useCallback(async () => {
+    try {
+      const res = await fetch("/api/user/me?fresh=1", {
+        cache: "no-store",
+        headers: { "Cache-Control": "no-cache" },
+      });
+      const d = await res.json();
+      const nextUser = {
+        isPremium: d.isPremium || d.user?.isPremium || false,
+        premiumPlan: d.premiumPlan || d.user?.premiumPlan || "FREE",
+        premiumUntil: d.premiumUntil || d.user?.premiumUntil || null,
+      };
+      setUserInfo(nextUser);
+      return nextUser;
+    } catch {
+      return null;
+    }
   }, []);
+
+  useEffect(() => {
+    refreshUserInfo().finally(() => setUserLoading(false));
+  }, [refreshUserInfo]);
+
+  useEffect(() => {
+    return () => {
+      if (paymentConfirmTimer.current) clearInterval(paymentConfirmTimer.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (status !== "success" || userLoading || userInfo?.isPremium) return;
+
+    let attempts = 0;
+    const maxAttempts = 12;
+
+    const confirm = async () => {
+      attempts += 1;
+      const latest = await refreshUserInfo();
+      if (latest?.isPremium || attempts >= maxAttempts) {
+        if (paymentConfirmTimer.current) clearInterval(paymentConfirmTimer.current);
+        paymentConfirmTimer.current = null;
+      }
+    };
+
+    confirm();
+    paymentConfirmTimer.current = setInterval(confirm, 2500);
+
+    return () => {
+      if (paymentConfirmTimer.current) clearInterval(paymentConfirmTimer.current);
+      paymentConfirmTimer.current = null;
+    };
+  }, [status, userLoading, userInfo?.isPremium, refreshUserInfo]);
 
   useEffect(() => {
     fetch("/api/ai/quota/status")
@@ -156,9 +193,10 @@ export default function BerlanggananPage() {
 
         if (typeof window !== "undefined" && window.snap) {
           window.snap.pay(result.token, {
-            onSuccess: () => {
+            onSuccess: async () => {
               setStatus("success");
               setLoading(false);
+              await refreshUserInfo();
             },
             onPending: () => {
               setStatus("pending");
@@ -241,12 +279,12 @@ export default function BerlanggananPage() {
             </div>
             <p className="relative mt-5 text-[11px] font-black uppercase tracking-[0.2em] text-cyan-300">Guru Pro</p>
             <h1 className="relative mt-2 text-3xl font-black tracking-tight sm:text-4xl">
-              {status === "pending" ? "Menunggu pembayaran" : "Pembayaran berhasil diproses"}
+              {status === "pending" ? "Menunggu pembayaran" : "Pembayaran diterima"}
             </h1>
             <p className="relative mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-300">
               {status === "pending"
                 ? "Selesaikan pembayaran melalui metode yang kamu pilih. Status akan diperbarui setelah pembayaran dikonfirmasi."
-                : "Pembayaran sedang dikonfirmasi. Akses Guru Pro akan aktif dalam beberapa saat."}
+                : "Pembayaran sudah diterima. Kami sedang mengaktifkan akses Guru Pro secara otomatis."}
             </p>
           </div>
           <div className="p-6 sm:p-8">
@@ -265,8 +303,8 @@ export default function BerlanggananPage() {
               href="/guru/ai-tools"
               className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#18255b] px-5 py-3.5 text-sm font-black text-white transition hover:bg-[#223273]"
             >
-              <Zap className="h-4 w-4" />
-              Mulai menggunakan Alat AI
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Memverifikasi akses Guru Pro
             </a>
           </div>
         </div>
