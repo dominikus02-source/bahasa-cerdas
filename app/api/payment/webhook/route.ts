@@ -4,6 +4,7 @@ import crypto from "crypto";
 import { getMidtransConfig } from "@/lib/payments/midtrans-server";
 import { createCommissionFromTransaction, reverseCommissionForTransaction } from "@/lib/commission/engine";
 import { evaluateRapidPremiumSignal, evaluateRefundPatternSignal } from "@/lib/guru/risk/events";
+import cache from "@/lib/redis";
 
 function verifyMidtransNotification(
   orderId: string,
@@ -402,6 +403,10 @@ export async function POST(req: NextRequest) {
         // Tipe lain — klaim status saja
         return true;
       });
+
+      // Entitlement sudah committed. Invalidate /api/user/me agar UI tidak
+      // membaca profil FREE yang masih tersimpan di Redis.
+      await cache.del(`user:me:id:${(await db.user.findUnique({ where: { id: transaksi.userId }, select: { supabaseId: true } }))?.supabaseId || ""}`).catch(() => {});
 
       // Ledger kredit AI (di luar transaksi klaim — best-effort, aman dobel
       // karena syncPremiumCreditLedger idempotent: hanya menaikkan ke target).
