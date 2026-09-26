@@ -14,7 +14,7 @@ import {
   Target,
   TrendingUp,
 } from "lucide-react";
-import { useHomeData } from "@/components/student-home/home-data";
+import { HomeDataProvider, useHomeData } from "@/components/student-home/home-data";
 
 type MentorResult = {
   headline: string;
@@ -24,7 +24,7 @@ type MentorResult = {
   encouragement: string;
 };
 
-export default function MentorPage() {
+function MentorRoom() {
   const { premium, premiumLoading } = useHomeData();
   const [result, setResult] = useState<MentorResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -292,5 +292,14 @@ export default function MentorPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+
+export default function MentorPage() {
+  return (
+    <HomeDataProvider>
+      <MentorRoom />
+    </HomeDataProvider>
   );
 }
