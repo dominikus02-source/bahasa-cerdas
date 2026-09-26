@@ -166,7 +166,7 @@ export const GAME_REGISTRY: GameDefinition[] = [
   {
     id: "bermain-kata",
     title: "BERMAIN KATA",
-    description: "Main kata, belajar bahasa, dan kumpulkan stiker bersama Olin. Cocok untuk TK–SD.",
+    description: "Main kata, belajar bahasa, dan kumpulkan stiker bersama Zelby. Cocok untuk TK–SD.",
     categories: ["Kata", "Literasi"],
     icon: BookOpen,
     gradient: "from-sky-500 via-cyan-500 to-blue-600",
@@ -176,6 +176,8 @@ export const GAME_REGISTRY: GameDefinition[] = [
     players: "Solo",
     time: "~3 menit",
     badge: { text: "Baru", type: "new" },
+    featured: true,
+    artwork: "/banners/bermain-kata-banner.webp",
   },
   {
     id: "tebak-kata",
@@ -203,8 +205,6 @@ export const GAME_REGISTRY: GameDefinition[] = [
     players: "Solo",
     time: "~5 menit",
     badge: { text: "Baru", type: "new" },
-    featured: true,
-    artwork: "/banners/banners-TTS-gim.png",
   },
   {
     id: "susun-kata",
@@ -295,7 +295,7 @@ export const GAME_CARD_ARTWORK: Record<string, string> = {
   "irama-kata": "/images/GIM%20Card/Irama%20Kata-card.png",
   "benar-salah": "/images/GIM%20Card/benar-salah-card.png",
   "petualangan-kata": "/images/GIM%20Card/petualangan%20kata-card.png",
-  "bermain-kata": "/images/GIM%20Card/kataplay-card.png",
+  "bermain-kata": "/banners/bermain-kata-banner.webp",
   "menara": "/images/GIM%20Card/menara%20kata-card.png",
   "susun-kata": "/images/GIM%20Card/Susun%20kata-card.png",
   "tantang": "/images/GIM%20Card/Tantang%20teman%20card.png",
