@@ -400,7 +400,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
           <div className="flex items-center justify-between mb-4">
             <GameBackButton onClick={() => setScreen("start")} label="Kembali" title="Kembali ke menu Benar/Salah" />
             <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
-            <div className="w-11" />
+            <div className="w-11 sm:w-[110px]" />
           </div>
           <div className="bs-screen bg-white dark:bg-gradient-to-br dark:from-[#0E2820] dark:to-[#16342C] rounded-3xl p-5 shadow-[6px_6px_0_#059669] border-4 border-[#161B3A] dark:border-white/25">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
