@@ -419,7 +419,7 @@ export default function TokoKaryaPage() {
           {showForm && (
             <Card className="mb-6 border-2 border-blue-100 overflow-hidden">
               {/* Wizard header */}
-              <div className="bg-gradient-to-r from-blue-50 to-sky-50 px-6 py-4 border-b border-blue-100">
+              <div className="bg-blue-50 px-6 py-4 border-b border-blue-100">
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="font-bold text-lg text-gray-900">{editId ? "Ubah Karya" : "Unggah Karya Baru"}</h2>
                   <button onClick={() => { setShowForm(false); setEditId(null); setSelectedFile(null); setWizardStep(0); }} className="p-1.5 rounded-lg hover:bg-white/60 text-gray-400">
@@ -668,7 +668,7 @@ export default function TokoKaryaPage() {
                     <p className="text-sm text-gray-500">Pratinjau karya Anda sebelum dipublikasikan:</p>
                     {/* Preview card */}
                     <div className="max-w-sm rounded-xl border border-gray-200 overflow-hidden">
-                      <div className="bg-gradient-to-br from-blue-50 to-sky-50 p-4">
+                      <div className="bg-blue-50 p-4">
                         <div className="flex items-center justify-between mb-2">
                           <Badge className="text-[10px] bg-amber-50 text-amber-700">{formData.price > 0 ? "Berbayar" : "Gratis"}</Badge>
                           <Badge variant="secondary" className="text-[10px]">{typeLabel(formData.type)}</Badge>
@@ -749,7 +749,7 @@ export default function TokoKaryaPage() {
                 const status = karya.isPublished ? STATUS_BADGE.PUBLISHED : STATUS_BADGE.DRAFT;
                 return (
                   <Card key={karya.id} className="overflow-hidden hover:shadow-lg transition-shadow group">
-                    <div className="bg-gradient-to-br from-blue-50 to-sky-50 p-4">
+                    <div className="bg-blue-50 p-4">
                       <div className="flex items-start justify-between mb-2">
                         <Badge className={`text-[10px] ${status.cls}`}>{status.label}</Badge>
                         <Badge variant="secondary" className="text-[10px]">{typeLabel(karya.type)}</Badge>
