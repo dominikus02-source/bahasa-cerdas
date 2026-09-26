@@ -732,9 +732,7 @@ export default function IramaKata() {
         {screen === "levels" && (
           <div className={`ik-screen bg-white dark:bg-gradient-to-br dark:from-[#221420] dark:to-[#2C1E2A] rounded-3xl ${chunky} p-5`}>
             <div className="flex items-center justify-between mb-4">
-            <button className={`${btn} game-back-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => setScreen("start")} aria-label="Kembali">
-              <X className="w-5 h-5 text-[#161B3A] dark:text-[#F1EDFF]" />
-            </button>
+            <GameBackButton onClick={() => setScreen("start")} label="Kembali" title="Kembali ke menu Irama Kata" />
               <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
               <div className="w-11" />
             </div>
