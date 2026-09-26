@@ -575,7 +575,7 @@ export default function GuruGameHubPage() {
               <span className="text-xs text-slate-400 mb-1 dark:text-slate-500">/ {TARGET_MINGGUAN_XP.toLocaleString("id-ID")} target</span>
             </div>
             <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden mt-2 dark:bg-slate-800">
-              <div className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full transition-all duration-1000" style={{ width: `${xpTargetPct}%` }} />
+              <div className="h-full bg-gradient-to-r from-blue-600 to-sky-500 rounded-full transition-all duration-1000" style={{ width: `${xpTargetPct}%` }} />
             </div>
             <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400 dark:text-slate-500">
               <span>{xpTargetPct}% tercapai</span>
@@ -661,7 +661,7 @@ export default function GuruGameHubPage() {
                     <span className="font-bold text-emerald-600 dark:text-emerald-400">{kelasPct}%</span>
                   </div>
                   <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden dark:bg-slate-800">
-                    <div className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full transition-all duration-1000" style={{ width: `${kelasPct}%` }} />
+                    <div className="h-full bg-gradient-to-r from-blue-600 to-sky-500 rounded-full transition-all duration-1000" style={{ width: `${kelasPct}%` }} />
                   </div>
                   <p className="mt-1.5 text-[11px] text-slate-400 dark:text-slate-500">
                     {aktifHariIni} dari {totalMurid} murid sudah bermain hari ini{belumBermain > 0 ? ` — ${belumBermain} belum bermain` : ""}.
