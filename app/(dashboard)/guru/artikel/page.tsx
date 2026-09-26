@@ -189,7 +189,7 @@ export default function GuruArtikelPage() {
                   />
                   <div className="flex items-center gap-3">
                     <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading}
-                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-dashed border-gray-300 text-sm text-gray-500 hover:border-emerald-500 hover:text-emerald-600 transition-colors">
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-dashed border-gray-300 text-sm text-gray-500 hover:border-blue-500 hover:text-blue-600 transition-colors">
                       <ImageIcon size={18} /> {uploading ? "Mengunggah..." : "Unggah Cover"}
                     </button>
                     <input
@@ -229,7 +229,7 @@ export default function GuruArtikelPage() {
                 <label className="text-sm font-semibold text-gray-700">Konten (Markdown)</label>
                 <div className="flex items-center gap-1">
                   <button type="button" onClick={() => setShowPreview(!showPreview)}
-                    className={`px-3 py-1.5 text-xs rounded-lg transition-colors ${showPreview ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-500"}`}>
+                    className={`px-3 py-1.5 text-xs rounded-lg transition-colors ${showPreview ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-500"}`}>
                     {showPreview ? "Ubah" : "Pratinjau"}
                   </button>
                 </div>
@@ -262,7 +262,7 @@ export default function GuruArtikelPage() {
                   />
                 </div>
               ) : (
-                <div className="border-2 border-gray-200 rounded-xl p-6 min-h-[400px] prose prose-sm max-w-none bg-white">
+                <div className="bc-guru-surface min-h-[400px] max-w-none rounded-xl border-2 p-6 prose prose-sm">
                   {form.content ? (
                     <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{form.content}</ReactMarkdown>
                   ) : (
@@ -273,7 +273,7 @@ export default function GuruArtikelPage() {
             </div>
 
             <div className="flex gap-3 pt-2">
-              <Button type="submit" className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-8 py-2.5 rounded-xl font-semibold">
+              <Button type="submit" className="bc-guru-primary rounded-xl px-8 py-2.5 font-semibold">
                 {editId ? "Update Artikel" : "Simpan Artikel"}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm} className="rounded-xl">
