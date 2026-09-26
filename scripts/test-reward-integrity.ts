@@ -87,5 +87,29 @@ for (const [name, path] of [
   }
 }
 
+
+// Game session idempotency — retry satu sesi tidak boleh membuat reward kedua.
+const gameXp = readFileSync(
+  join(process.cwd(), "app/api/game/xp/route.ts"),
+  "utf8"
+);
+ok(
+  "endpoint game XP menerima ID sesi stabil",
+  /gameSessionId/.test(gameXp) && /rawGameSessionId/.test(gameXp)
+);
+ok(
+  "GameResult retry tidak membuat baris kedua",
+  /if\s*\(rawGameSessionId\)[\s\S]{0,500}findUnique\(\{ where: \{ sessionId: reference \}/.test(gameXp)
+);
+
+const katastra = readFileSync(
+  join(process.cwd(), "app/api/katastra/submit/route.ts"),
+  "utf8"
+);
+ok(
+  "KataStra memakai ID sesi stabil bila tersedia",
+  /gameSessionId/.test(katastra) && /katastra-\$\{rawGameSessionId \|\| crypto\.randomUUID\(\)\}/.test(katastra)
+);
+
 console.log(fail === 0 ? "\nSEMUA LULUS" : `\n${fail} GAGAL`);
 process.exit(fail === 0 ? 0 : 1);
