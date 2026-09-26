@@ -6,6 +6,7 @@ import { HomeDataProvider } from "@/components/student-home/home-data";
 import { StudentHomeHero } from "@/components/student-home/StudentHomeHero";
 import { DailyMissionCard } from "@/components/student-home/DailyMissionCard";
 import { DailyActionCard } from "@/components/student-home/DailyActionCard";
+import { JalurCerdasHomeCard } from "@/components/student-home/JalurCerdasHomeCard";
 import { AIBCHomeCard } from "@/components/student-home/AIBCHomeCard";
 import { RuangBelajarSection } from "@/components/student-home/RuangBelajarSection";
 import { SimulasiUjianSection } from "@/components/student-home/SimulasiUjianSection";
@@ -32,7 +33,7 @@ export default function HomeFeedPage() {
 
   return (
     <div className="px-theme px-theme-app min-h-screen">
-      <main className="mx-auto max-w-[1200px] px-4 sm:px-6 py-8 space-y-8">
+      <main className="mx-auto max-w-[1180px] px-4 sm:px-6 py-5 sm:py-7 space-y-6 sm:space-y-8">
         <HomeDataProvider>
           <HomeContent />
         </HomeDataProvider>
@@ -45,6 +46,7 @@ function HomeContent() {
   return (
     <>
       <StudentHomeHero />
+      <JalurCerdasHomeCard />
       <DailyActionCard />
 
       <AIBCHomeCard />
