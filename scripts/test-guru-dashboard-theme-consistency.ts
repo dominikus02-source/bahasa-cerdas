@@ -464,6 +464,48 @@ else if (rgbaFiles.every((f) => f.includes("game/page.tsx")))
   ok(`Literal rgba hanya glass game (1 file): ${rgbaFiles.length}`, "dokumentasi exception");
 else fail("rgba di luar glass game", rgbaFiles.join(" | "));
 
+/* ═══════════ K. Guru Visual System V4 — strong identity ═══════════ */
+section("K. Guru Visual System V4 — strong blue, no washed hero");
+
+const feedKarya = read(join(ROOT, "app", "(dashboard)", "guru", "feed-karya", "page.tsx"));
+const gameGuru = read(join(ROOT, "app", "(dashboard)", "guru", "game", "page.tsx"));
+const perangkatGuru = read(join(ROOT, "app", "(dashboard)", "guru", "perangkat-ajar", "page.tsx"));
+const ukbiGuru = read(join(ROOT, "app", "(dashboard)", "guru", "simulasi", "ukbi", "page.tsx"));
+const tkaGuru = read(join(ROOT, "app", "(dashboard)", "guru", "simulasi", "tka", "page.tsx"));
+const bigtInfo = read(join(ROOT, "components", "bigt", "BigtInfoPage.tsx"));
+const tokoKarya = read(join(ROOT, "app", "(dashboard)", "guru", "toko-karya", "page.tsx"));
+const aiBcWorkspace = read(join(ROOT, "components", "ai-bc", "AiBcGuruWorkspace.tsx"));
+
+assert(globals.includes("GURU VISUAL SYSTEM V4 — STRONG BLUE"), "V4 visual system marker hadir");
+assert(globals.includes("--guru-hero-gradient"), "V4 punya canonical strong hero gradient");
+assert(globals.includes(".guru-hero-strong"), "V4 punya reusable strong hero primitive");
+assert(globals.includes(".guru-surface-card"), "V4 punya reusable solid content card primitive");
+assert(globals.includes('[class*="from-blue-50"][class*="to-white"]'), "washed blue→white guard hadir");
+assert(globals.includes('[class*="from-emerald-50"][class*="to-teal-50"]'), "legacy soft emerald→teal guard hadir");
+
+assert(feedKarya.includes('className="guru-hero-strong rounded-2xl p-5"'), "Pusat Literasi memakai strong teacher hero");
+assert(!feedKarya.includes("from-emerald-600 via-green-600 to-teal-700"), "Pusat Literasi legacy washed hero dihapus");
+
+assert(gameGuru.includes('className="guru-hero-strong relative overflow-hidden"'), "Gim memakai strong teacher hero");
+assert(!gameGuru.includes("from-emerald-600 via-green-700 to-teal-900"), "Gim legacy washed hero dihapus");
+
+assert(perangkatGuru.includes("guru-hero-strong"), "Perangkat Ajar memiliki teacher hero");
+assert(perangkatGuru.includes("guru-surface-card"), "Perangkat Ajar cards memakai solid teacher surface");
+assert(!perangkatGuru.includes("bg-violet-600 text-white shadow-sm"), "Perangkat Ajar active state bukan legacy violet");
+
+assert(ukbiGuru.includes("guru-hero-strong"), "Simulasi UKBI memakai strong teacher hero");
+assert(tkaGuru.includes("guru-hero-strong"), "Simulasi TKA memakai strong teacher hero");
+assert(bigtInfo.includes('isGuru ? "guru-hero-strong"'), "BIGT Guru memakai strong teacher hero");
+
+assert(!tokoKarya.includes("from-emerald-50 to-teal-50"), "Toko Karya tidak memakai washed emerald soft gradient");
+assert(!tokoKarya.includes("from-emerald-500 to-emerald-600"), "Toko Karya primary action bukan legacy green");
+assert(!aiBcWorkspace.includes("from-emerald-600 to-green-600"), "AI BC role action bukan legacy green gradient");
+
+assert(
+  existsSync(join(ROOT, "docs", "GURU_DASHBOARD_VISUAL_AUDIT_V4.md")),
+  "Dokumen audit menu guru V4 tersimpan"
+);
+
 /* ═══════════ Akhir: invariant + exit ═══════════ */
 console.log("\n═ HASIL AKHIR ═");
 console.log(`Discovered: ${discovered} · Executed: ${executed} · Passed: ${passed} · Failed: ${failed} · Skipped: ${skipped} · Advisories: ${warnings.length}`);
