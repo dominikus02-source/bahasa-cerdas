@@ -334,9 +334,9 @@ export default function BankSoalPage() {
       {pickerMode && (
         <section
           aria-label="Memilih tema untuk Main Bersama"
-          className="flex flex-wrap items-center gap-3 rounded-2xl border border-teal-300/70 bg-teal-50 px-4 py-3"
+          className="bc-guru-surface flex flex-wrap items-center gap-3 rounded-2xl px-4 py-3"
         >
-          <span className="w-9 h-9 rounded-xl bg-teal-600 flex items-center justify-center shrink-0">
+          <span className="bc-guru-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-xl">
             <MonitorPlay size={17} className="text-white" aria-hidden />
           </span>
           <div className="min-w-0 flex-1">
@@ -348,7 +348,7 @@ export default function BankSoalPage() {
           </div>
           <Link
             href="/guru/game/main-bersama"
-            className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-teal-600/30 text-teal-700 text-sm font-semibold hover:bg-teal-100 transition-colors"
+            className="bc-guru-tab-idle inline-flex shrink-0 items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-semibold transition-colors"
           >
             ← Kembali ke Main Bersama
           </Link>
@@ -358,7 +358,7 @@ export default function BankSoalPage() {
       {/* ════════════════════════════════════════════════════════
           1. HERO — Editorial discovery header
          ════════════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden rounded-2xl bg-emerald-700 p-6 sm:p-8 text-white">
+      <section className="bc-guru-hero relative overflow-hidden rounded-2xl p-6 text-white sm:p-8">
         {/* Subtle geometric pattern */}
         <div
           aria-hidden
@@ -372,8 +372,8 @@ export default function BankSoalPage() {
         <div className="relative">
           {/* Eyebrow */}
           <div className="flex items-center gap-2 mb-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-300 animate-pulse" aria-hidden />
-            <span className="text-[11px] font-bold uppercase tracking-widest text-emerald-200">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-blue-300" aria-hidden />
+            <span className="text-[11px] font-bold uppercase tracking-widest text-blue-200">
               Perpustakaan Konten
             </span>
           </div>
@@ -381,7 +381,7 @@ export default function BankSoalPage() {
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight">
             Bank Soal
           </h1>
-          <p className="mt-2 text-sm sm:text-base text-emerald-100/80 max-w-lg">
+          <p className="mt-2 max-w-lg text-sm text-blue-100/90 sm:text-base">
             Temukan latihan yang tepat untuk kelasmu. Jelajahi {themes.length} tema dari {totalQuestions.toLocaleString("id-ID")} soal.
           </p>
 
@@ -409,7 +409,7 @@ export default function BankSoalPage() {
           <div className="relative mt-5 max-w-lg">
             <Search
               size={17}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-300/60"
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-blue-200/70"
               aria-hidden
             />
             <input
@@ -417,7 +417,7 @@ export default function BankSoalPage() {
               onChange={e => setSearch(e.target.value)}
               placeholder="Cari tema, materi, atau kata kunci..."
               aria-label="Cari tema, materi, atau kata kunci"
-              className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/15 backdrop-blur-sm border border-white/20 text-sm text-white placeholder:text-emerald-200/50 focus:bg-white/20 focus:border-white/30 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all"
+              className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/15 backdrop-blur-sm border border-white/20 text-sm text-white placeholder:text-blue-200/60 focus:bg-white/20 focus:border-white/30 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all"
             />
           </div>
         </div>
@@ -426,7 +426,7 @@ export default function BankSoalPage() {
       {/* ════════════════════════════════════════════════════════
           2. NAV TABS — Bank Soal / Latihan / Kuis / Soal
          ════════════════════════════════════════════════════════ */}
-      <div className="flex gap-1.5 bg-white border border-slate-200/80 rounded-2xl p-1.5 w-fit max-w-full shadow-sm">
+      <div className="bc-guru-surface flex w-fit max-w-full gap-1.5 rounded-2xl p-1.5">
         {[
           { label: "Bank Soal", href: "/guru/bank-soal", icon: Library },
           { label: "Kuis", href: "/guru/kuis", icon: FileText },
@@ -442,8 +442,8 @@ export default function BankSoalPage() {
               href={item.href}
               className={`flex items-center gap-1.5 whitespace-nowrap px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
                 active
-                  ? "bg-emerald-600 text-white shadow-sm"
-                  : "text-slate-500 hover:bg-slate-50"
+                  ? "bc-guru-tab-active"
+                  : "bc-guru-tab-idle"
               }`}
             >
               <item.icon className="w-4 h-4" />
@@ -495,11 +495,11 @@ export default function BankSoalPage() {
       {!loading && !search && !selectedCategory && (
         <section
           aria-labelledby="shelf-mb"
-          className="relative overflow-hidden rounded-2xl border border-teal-200/60 bg-white p-5"
+          className="bc-guru-surface relative overflow-hidden rounded-2xl p-5"
         >
           <div className="relative flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="flex items-center gap-3 flex-1 min-w-0">
-              <span className="w-11 h-11 rounded-xl bg-teal-600 flex items-center justify-center shrink-0">
+              <span className="bc-guru-icon flex h-11 w-11 shrink-0 items-center justify-center rounded-xl">
                 <MonitorPlay size={20} className="text-white" aria-hidden />
               </span>
               <div className="min-w-0">
@@ -513,7 +513,7 @@ export default function BankSoalPage() {
             </div>
             <Link
               href="/guru/game/main-bersama"
-              className="shrink-0 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-teal-600 text-white text-sm font-semibold shadow-sm hover:bg-teal-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
+              className="bc-guru-primary inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             >
               <MonitorPlay size={15} aria-hidden /> Buka Main Bersama{" "}
               <ArrowRight size={13} aria-hidden />
@@ -527,7 +527,7 @@ export default function BankSoalPage() {
          ════════════════════════════════════════════════════════ */}
       {loading ? (
         <div className="flex justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
         </div>
       ) : search || selectedCategory ? (
         /* ── Filtered: flat grid (search or category filter active) ── */
