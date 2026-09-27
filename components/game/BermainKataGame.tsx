@@ -105,10 +105,17 @@ export default function BermainKataGame() {
   const [showTheme,setShowTheme]=useState(false)
   const [usedWords,setUsedWords]=useState<string[]>([])
   const [usedPairs,setUsedPairs]=useState<string[]>([])
+  const [zelbyFrame,setZelbyFrame]=useState(0)
 
   const pool=useMemo(()=>levelWords(level),[level])
   const maxRounds=8
   const t=THEMES[theme]
+  const zelbyFrames=[
+    "/junior/karakter/zelby_wave.webp",
+    "/junior/karakter/zelby_happy.webp",
+    "/junior/karakter/zelby_thinking.webp",
+    "/junior/karakter/zelby_idle.webp",
+  ]
 
   useEffect(()=>{
     try {
@@ -117,6 +124,12 @@ export default function BermainKataGame() {
       setTheme((localStorage.getItem("bk_theme") as Theme)||"langit")
     } catch {}
   },[])
+
+  useEffect(()=>{
+    if(mode) return
+    const timer=window.setInterval(()=>setZelbyFrame((value)=>(value+1)%zelbyFrames.length),2200)
+    return ()=>window.clearInterval(timer)
+  },[mode])
 
   useEffect(()=>{
     try {
@@ -229,13 +242,42 @@ export default function BermainKataGame() {
 
         {showTheme && <div className="mt-3 flex justify-end"><div className="flex gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-lg">{(Object.keys(THEMES) as Theme[]).map(k=><button key={k} onClick={()=>{setTheme(k);setShowTheme(false)}} className={`rounded-xl px-3 py-2 text-sm font-bold ${theme===k?t.soft:"hover:bg-slate-50"}`}>{(() => { const Icon = THEME_META[k].icon; return <Icon size={15}/> })()} {THEME_META[k].label}</button>)}</div></div>}
 
-        <section className="mx-auto mt-6 max-w-3xl text-center">
-          <div className="mx-auto overflow-hidden rounded-[28px] border border-white/60 bg-white shadow-[0_18px_50px_rgba(15,23,42,.14)]">
-  <img src="/images/bermain-kata/bermain-kata.png" alt="BERMAIN KATA bersama Zelby" width={1536} height={1024} className="block h-auto w-full object-cover" />
-</div>
-          <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-1.5 text-xs font-black tracking-wide text-white"><Sparkles size={14}/> EKOSISTEM PEMBELAJARAN BAHASA INDONESIA</div>
-          <h1 className="mt-3 text-4xl font-black tracking-tight sm:text-6xl">BERMAIN <span className="text-sky-600">KATA</span></h1>
-          <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-600 sm:text-base">Main, belajar, dan kumpulkan kata baru bersama Zelby. Dibuat ringan untuk TK–SD, tetapi tetap seru dimainkan berulang.</p>
+        <section className="mx-auto mt-6 max-w-3xl">
+          <div className="relative overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-[0_18px_50px_rgba(15,23,42,.10)]">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(125,211,252,.28),transparent_30%),radial-gradient(circle_at_85%_18%,rgba(167,243,208,.35),transparent_28%),linear-gradient(135deg,#F0F9FF,#FFFFFF_48%,#F0FDFA)]" />
+            <div className="absolute -left-8 -bottom-10 h-32 w-32 rounded-full bg-sky-100/80" />
+            <div className="absolute -right-8 -top-10 h-36 w-36 rounded-full bg-emerald-100/80" />
+            <div className="absolute left-[12%] top-8 animate-bounce text-2xl" style={{animationDuration:"2.8s"}}>🔤</div>
+            <div className="absolute right-[14%] top-14 animate-bounce text-xl" style={{animationDuration:"3.2s",animationDelay:"400ms"}}>⭐</div>
+            <div className="absolute left-[20%] bottom-9 animate-bounce text-lg" style={{animationDuration:"3.5s",animationDelay:"700ms"}}>📖</div>
+            <div className="relative z-10 flex min-h-[250px] items-center justify-center px-6 pt-5 sm:min-h-[290px]">
+              <div className="relative flex h-[230px] w-full max-w-md items-end justify-center sm:h-[265px]">
+                <div className="absolute bottom-2 h-8 w-56 rounded-full bg-slate-900/10 blur-xl" />
+                <img
+                  key={zelbyFrame}
+                  src={zelbyFrames[zelbyFrame]}
+                  alt="Zelby menemani permainan"
+                  className="relative z-10 h-[225px] w-auto object-contain drop-shadow-[0_18px_14px_rgba(15,23,42,.14)] sm:h-[255px]"
+                  style={{animation:"bkZelbyEnter .65s cubic-bezier(.2,.8,.2,1) both"}}
+                />
+                <div className="absolute bottom-5 right-1/2 translate-x-[150px] rounded-2xl border border-slate-200 bg-white/95 px-3 py-2 text-xs font-black text-slate-700 shadow-md">
+                  Ayo bermain! ✨
+                </div>
+              </div>
+            </div>
+            <div className="relative z-20 border-t border-slate-100 bg-white/80 px-5 py-4 text-center backdrop-blur">
+              <div className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-1.5 text-xs font-black tracking-wide text-white"><Sparkles size={14}/> EKOSISTEM PEMBELAJARAN BAHASA INDONESIA</div>
+              <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-5xl">BERMAIN <span className="text-sky-600">KATA</span></h1>
+              <p className="mx-auto mt-1 max-w-xl text-sm leading-6 text-slate-600">Main, belajar, dan kumpulkan kata baru bersama Zelby.</p>
+            </div>
+          </div>
+          <style>{`
+            @keyframes bkZelbyEnter{
+              0%{opacity:0;transform:translateY(16px) scale(.94)}
+              65%{opacity:1;transform:translateY(-5px) scale(1.02)}
+              100%{opacity:1;transform:translateY(0) scale(1)}
+            }
+          `}</style>
         </section>
 
         <section className="mx-auto mt-7 max-w-3xl rounded-[28px] border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
