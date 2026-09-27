@@ -201,7 +201,7 @@ async function selectBaselineQuestions(seed: string): Promise<BaselineQuestion[]
   return selected;
 }
 
-function responseFor(sessionId: string, state: BaselineState, questions: BaselineQuestion[], writingResult?: ReturnType<typeof scoreBaselineWriting> | null) {
+function responseFor(sessionId: string, state: BaselineState, questions: BaselineQuestion[], writingResult?: ReturnType<typeof scoreBaselineWriting> | null, result?: Awaited<ReturnType<typeof buildResult>>) {
   const currentId = state.questionIds.find((id) => !state.answered.includes(id));
   const current = currentId ? questions.find((q) => q.id === currentId) : null;
   const objectiveDone = state.answered.length >= state.questionIds.length;
@@ -229,6 +229,7 @@ function responseFor(sessionId: string, state: BaselineState, questions: Baselin
           }
         : null,
     writingResult: phase === "DONE" ? writingResult ?? null : null,
+    result: phase === "DONE" ? result ?? null : undefined,
   };
 }
 
@@ -318,7 +319,8 @@ export async function GET() {
     }
   }
 
-  return NextResponse.json(responseFor(session.id, state, publicQuestions, writingResult));
+  const result = state.writingSubmitted ? await buildResult(user.id, session.id) : undefined;
+  return NextResponse.json(responseFor(session.id, state, publicQuestions, writingResult, result));
 }
 
 export async function POST(req: NextRequest) {
