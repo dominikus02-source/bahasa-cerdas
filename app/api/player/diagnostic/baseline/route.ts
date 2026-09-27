@@ -478,7 +478,7 @@ export async function POST(req: NextRequest) {
       score: signal.score,
       skill: "WRITING",
       difficulty: "MEDIUM",
-      metadata: { assessmentVersion: BASELINE_VERSION, writingSignal: signal, subskill: "WRITING_ORGANIZATION" },
+      metadata: {\n        assessmentVersion: BASELINE_VERSION,\n        writingSignal: {\n          score: signal.score,\n          level: signal.level,\n          wordCount: signal.wordCount,\n          dimensions: { ...signal.dimensions },\n        },\n        subskill: "WRITING_ORGANIZATION",\n      },
     });
 
     state.writingSubmitted = true;
