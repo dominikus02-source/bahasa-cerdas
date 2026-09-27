@@ -22,13 +22,6 @@ type MentorResult = {
   reason: string;
   action: string;
   encouragement: string;
-  mission: {
-    type: "LATIHAN" | "KARYA";
-    title: string;
-    instruction: string;
-    deliverable: string;
-    route: "/arena/jalur-cerdas" | "/murid/karya/tulis";
-  };
 };
 
 function MentorRoom() {
@@ -240,24 +233,6 @@ function MentorRoom() {
                   <p className="text-[10px] font-black uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-300">Langkah berikutnya</p>
                   <p className="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-200/80">{result.action}</p>
                 </div>
-              </div>
-
-              <div className="mt-5 overflow-hidden rounded-2xl border border-violet-200/70 bg-gradient-to-br from-violet-50 via-white to-cyan-50 p-5 dark:border-violet-400/20 dark:from-violet-500/[0.10] dark:via-white/[0.035] dark:to-cyan-400/[0.06]">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-violet-600 dark:text-violet-300">Misi berikutnya</p>
-                    <h3 className="mt-1 text-base font-black text-slate-950 dark:text-white">{result.mission.title}</h3>
-                  </div>
-                  <span className="rounded-full bg-violet-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.14em] text-violet-700 dark:text-violet-200">{result.mission.type === "KARYA" ? "Buat karya" : "Main quest"}</span>
-                </div>
-                <p className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300/75">{result.mission.instruction}</p>
-                <div className="mt-3 rounded-xl bg-white/70 px-3.5 py-3 dark:bg-black/10">
-                  <p className="text-[9px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Yang harus kamu buat</p>
-                  <p className="mt-1 text-xs font-semibold leading-5 text-slate-700 dark:text-slate-200/80">{result.mission.deliverable}</p>
-                </div>
-                <Link href={result.mission.route} className="mt-4 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 py-2.5 text-xs font-black text-white shadow-lg shadow-violet-500/20 transition hover:-translate-y-0.5">
-                  Mulai sekarang <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
               </div>
 
               <div className="mt-5 flex items-start gap-2 rounded-2xl bg-slate-50 px-4 py-3 dark:bg-white/[0.04]">
