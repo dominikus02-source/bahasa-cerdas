@@ -71,8 +71,10 @@ export default function ProgresPage() {
     () => skills.filter((item) => item.attemptCount > 0 && item.accuracy !== null),
     [skills],
   );
-  const totalAttempts = skills.reduce((sum, item) => sum + item.attemptCount, 0);
-  const totalCorrect = skills.reduce((sum, item) => sum + item.correctCount, 0);
+  const objectiveSkills = skills.filter((item) => item.skill !== "WRITING");
+  const writingSkill = skills.find((item) => item.skill === "WRITING");
+  const totalAttempts = objectiveSkills.reduce((sum, item) => sum + item.attemptCount, 0);
+  const totalCorrect = objectiveSkills.reduce((sum, item) => sum + item.correctCount, 0);
   const overallAccuracy = totalAttempts ? Math.round((totalCorrect / totalAttempts) * 100) : null;
   const improving = skills.filter((item) => item.trend === "IMPROVING").length;
 
@@ -137,7 +139,7 @@ export default function ProgresPage() {
           <div className="rounded-2xl bg-white/75 p-4 dark:bg-white/[.05]">
             <BookOpen className="h-4 w-4 text-violet-500" />
             <p className="mt-2 text-2xl font-black text-slate-950 dark:text-white">{totalAttempts}</p>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Jawaban tercatat</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Jawaban objektif</p>
           </div>
           <div className="rounded-2xl bg-white/75 p-4 dark:bg-white/[.05]">
             <Target className="h-4 w-4 text-cyan-500" />
@@ -152,7 +154,7 @@ export default function ProgresPage() {
           <div className="rounded-2xl bg-white/75 p-4 dark:bg-white/[.05]">
             <PenLine className="h-4 w-4 text-fuchsia-500" />
             <p className="mt-2 text-lg font-black text-slate-950 dark:text-white">{writingLabel(baseline?.result?.writing?.level)}</p>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Kemampuan menulis</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">{writingSkill?.attemptCount ?? 0} tugas menulis</p>
           </div>
         </div>
       </section>
@@ -182,8 +184,9 @@ export default function ProgresPage() {
             </div>
             <div className="space-y-5">
               {orderedSkills.map((skill) => {
+                const isWriting = skill.skill === "WRITING";
                 const has = skill.attemptCount > 0 && skill.accuracy !== null;
-                const value = has ? Math.round((skill.accuracy ?? 0) * 100) : 0;
+                const value = has && !isWriting ? Math.round((skill.accuracy ?? 0) * 100) : 0;
                 return (
                   <div key={skill.skill}>
                     <div className="mb-1.5 flex items-center justify-between gap-3">
