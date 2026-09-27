@@ -178,7 +178,7 @@ const LESSONS_BY_TITLE: LessonsMap = {
     examples: [
       { label: "Yang sudah dipelajari", text: "Huruf kapital, tanda titik, koma, tanya, seru, menulis tepat" },
     ],
-    tips: ["Ingat semua pelajaran dari level 2.", "Baca soal dengan teliti.", "Perhatikan tanda baca!"],
+    tips: ["Ingat semua pelajaran dari level 2.", "Perhatikan perbedaan setiap tanda baca.", "Perhatikan tanda baca!"],
     beforePracticePrompt: "Ayo kerjakan soal campuran level 2!",
   },
 
@@ -252,7 +252,7 @@ const LESSONS_BY_TITLE: LessonsMap = {
     examples: [
       { label: "Yang sudah dipelajari", text: "Kata baku/tidak baku, kata serapan, kesalahan umum, memilih kata tepat" },
     ],
-    tips: ["Ingat: baku untuk resmi, tidak baku untuk ngobrol.", "Cek kata ragu di KBBI.", "Kamu pasti bisa!"],
+    tips: ["Ingat: baku untuk resmi, tidak baku untuk ngobrol.", "Cek kata ragu di KBBI.", "Bandingkan pilihan kata sebelum menjawab."],
     beforePracticePrompt: "Ayo latihan campuran level 3!",
   },
 
@@ -613,7 +613,7 @@ const LESSONS_BY_TITLE: LessonsMap = {
     summary: "Ulang semua tentang paragraf!",
     explanation: "Level 8 membahas kalimat utama, gagasan utama, gagasan pendukung, urutan paragraf, dan menyusun paragraf pendek.",
     examples: [{ label: "Yang sudah dipelajari", text: "Kalimat utama, gagasan utama, pendukung, urutan, menyusun paragraf" }],
-    tips: ["Kalimat utama = inti paragraf.", "Gagasan utama = inti pesan.", "Pendukung = detail.", "Urutkan secara logis."],
+    tips: ["Kalimat utama = inti paragraf.", "Gagasan utama = inti pesan.", "Cari kalimat yang memberi contoh atau alasan.", "Urutkan secara logis."],
     beforePracticePrompt: "Ayo kerjakan soal campuran level 8!",
   },
 
@@ -854,7 +854,7 @@ const LESSONS_BY_TITLE: LessonsMap = {
       { label: "Sebelum disunting", text: "Dia membeli baju baru, sepatu, dan tas. Lalu dia sangat amat senang." },
       { label: "Sesudah disunting", text: "Dia membeli baju baru, sepatu, dan tas. Lalu dia sangat senang.", note: "'sangat amat' → 'sangat'." },
     ],
-    tips: ["Baca ulang tulisanmu.", "Cek ejaan dan tanda baca.", "Pastikan kata yang dipilih tepat.", "Minta orang lain baca untuk cari kesalahan."],
+    tips: ["Baca setiap kalimat dari awal sampai akhir.", "Cek ejaan dan tanda baca.", "Pastikan kata yang dipilih tepat.", "Minta orang lain baca untuk cari kesalahan."],
     beforePracticePrompt: "Sunting kalimat yang salah!",
   },
   "Menulis Pendapat": {
@@ -865,7 +865,7 @@ const LESSONS_BY_TITLE: LessonsMap = {
     examples: [
       { label: "Struktur pendapat", text: "Menurut saya, membaca itu penting (pendapat). Karena membaca menambah ilmu (alasan). Contohnya, aku jadi tahu banyak hal setelah rajin membaca (contoh). Jadi, bacalah setiap hari (simpulan)." },
     ],
-    tips: ["Mulai dengan 'Menurut saya...'", "Beri alasan yang logis.", "Dukung dengan contoh.", "Akhiri dengan simpulan."],
+    tips: ["Mulai dengan 'Menurut saya...'", "Beri alasan yang logis.", "Dukung dengan contoh.", "Hubungkan simpulan dengan pendapat awal."],
     beforePracticePrompt: "Tulis pendapatmu tentang topik ini!",
   },
   "Menyusun Argumen Ringan": {
@@ -885,7 +885,7 @@ const LESSONS_BY_TITLE: LessonsMap = {
     summary: "Latihan akhir menjelang ujian Jalur Cerdas. Soal campuran dari semua level.",
     explanation: "Ini adalah simulasi tantangan akhir. Soal-soal akan mencakup semua materi dari level 1 sampai 11. Mulai dari bunyi huruf hingga menyusun argumen. Kerjakan dengan teliti. Gunakan semua yang sudah kamu pelajari.",
     examples: [{ label: "Yang akan diujikan", text: "Bunyi huruf, ejaan, kata baku, makna kata, imbuhan, kalimat, konjungsi, paragraf, baca pemahaman, bernalar, menulis ringkas" }],
-    tips: ["Baca soal dengan teliti.", "Ingat semua pelajaran dari level 1-11.", "Jangan terburu-buru.", "Kamu sudah belajar banyak — percaya diri!"],
+    tips: ["Gunakan waktu dengan tenang dan teliti.", "Ingat semua pelajaran dari level 1-11.", "Jangan terburu-buru.", "Kamu sudah belajar banyak — percaya diri!"],
     beforePracticePrompt: "Ayo hadapi tantangan akhir!",
   },
   "Final Review Jalur Cerdas": {

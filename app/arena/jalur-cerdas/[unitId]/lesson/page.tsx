@@ -160,7 +160,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 to-purple-100 dark:from-[#151238] dark:via-[#0b1220] dark:to-[#1e1b4b]">
+      <div className="min-h-screen flex items-center justify-center bg-[#f5f7fc] dark:bg-[#071126]">
         <Loader2 className="w-8 h-8 text-violet-500 dark:text-violet-400 animate-spin" />
       </div>
     )
@@ -179,7 +179,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
 
   if (questions.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-violet-50 to-purple-100 dark:from-[#151238] dark:via-[#0b1220] dark:to-[#1e1b4b]">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[#f5f7fc] dark:bg-[#071126]">
         <BookOpen className="w-12 h-12 text-violet-300 dark:text-violet-500 mb-3" />
         <p className="text-gray-600 dark:text-slate-300 font-medium text-lg">Belum ada soal</p>
         <p className="text-gray-400 dark:text-slate-400 text-sm mt-1">Soal untuk unit ini sedang disiapkan</p>
@@ -196,7 +196,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
   // ===== INTRO PHASE =====
   if (phase === "intro") {
     return (
-      <div className="min-h-screen flex flex-col bg-gradient-to-br from-violet-500 to-purple-700 px-6">
+      <div className="min-h-screen flex flex-col bg-[#08142f] px-5 sm:px-6">
         <div className="flex-1 flex flex-col items-center justify-center text-center">
           <div className={`${isDasar ? "w-24 h-24" : "w-20 h-20"} bg-white/20 dark:bg-slate-900/20 rounded-3xl flex items-center justify-center mb-6`}>
             <UnitIcon emoji={unit.emoji} className={`${isDasar ? "w-12 h-12" : "w-10 h-10"} text-white`} />
@@ -216,7 +216,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
           </div>
           <button
             onClick={() => setPhase("lesson")}
- className={`bg-white dark:bg-slate-800/90 text-violet-700 dark:text-violet-300 font-bold ${isDasar ? "text-xl px-12 py-5" : "text-lg px-10 py-4"} rounded-2xl shadow-xl hover:scale-105 transition-transform active:scale-95`}
+ className={`bg-gradient-to-r from-cyan-300 to-violet-400 text-[#071126] font-black ${isDasar ? "text-xl px-10 py-5" : "text-lg px-9 py-4"} rounded-2xl shadow-[0_18px_40px_-18px_rgba(34,211,238,.65)] hover:brightness-105 transition-all active:scale-[0.98]`}
           >
             {lesson ? "Mulai Belajar" : "Mulai latihan"}
           </button>
@@ -228,17 +228,17 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
   // ===== LESSON PHASE =====
   if (phase === "lesson" && lesson) {
     return (
-      <div className="min-h-screen flex flex-col bg-gradient-to-br from-violet-50 to-purple-100 dark:from-[#151238] dark:via-[#0b1220] dark:to-[#1e1b4b]">
- <div className="sticky top-0 z-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm px-4 py-3 flex items-center gap-3">
+      <div className="min-h-screen flex flex-col bg-[#f5f7fc] dark:bg-[#071126]">
+ <div className="sticky top-0 z-10 bg-white/85 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200/70 dark:border-white/8 px-4 py-3 flex items-center gap-3">
           <button onClick={() => router.push(`/arena/jalur-cerdas/${unitId}`)} className="text-gray-500 hover:text-gray-700 dark:text-slate-300">
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <span className="text-sm font-semibold text-gray-500 dark:text-slate-400">Materi Belajar</span>
+          <span className="text-[11px] font-black uppercase tracking-[0.16em] text-violet-500">Jalur Cerdas · Materi</span>
         </div>
 
         <div className="flex-1 overflow-y-auto px-4 pb-8">
           {/* Summary Card */}
-          <div className={`bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-violet-100 p-6 mb-4 mt-4 ${isDasar ? "text-lg" : isMenengah ? "text-base" : "text-sm"}`}>
+          <div className={`bg-white dark:bg-slate-900 rounded-[1.5rem] shadow-[0_18px_50px_-32px_rgba(15,23,42,.35)] border border-slate-200 dark:border-white/8 p-6 mb-4 mt-4 ${isDasar ? "text-lg" : isMenengah ? "text-base" : "text-sm"}`}>
             <div className="flex items-center gap-2 mb-3">
               <Star className={`${isDasar ? "w-6 h-6" : "w-5 h-5"} text-violet-500 dark:text-violet-400`} />
               <h2 className={`font-bold text-violet-900 dark:text-violet-200 ${isDasar ? "text-xl" : "text-lg"}`}>Ringkasan</h2>
@@ -247,7 +247,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
           </div>
 
           {/* Explanation Card */}
-          <div className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-indigo-100 p-6 mb-4">
+          <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] shadow-[0_18px_50px_-32px_rgba(15,23,42,.35)] border border-slate-200 dark:border-white/8 p-6 mb-4">
             <div className="flex items-center gap-2 mb-3">
               <BookOpen className={`${isDasar ? "w-6 h-6" : "w-5 h-5"} text-indigo-500`} />
               <h2 className={`font-bold text-indigo-900 dark:text-indigo-200 ${isDasar ? "text-xl" : "text-lg"}`}>Penjelasan</h2>
@@ -263,7 +263,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
               <h3 className="font-bold text-amber-800 dark:text-amber-300 text-base mb-3 px-1">Contoh</h3>
               <div className="space-y-3">
                 {lesson.examples.map((ex, i) => (
-                  <div key={i} className={`bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-2xl p-4 ${isDasar ? "text-lg" : "text-sm"}`}>
+                  <div key={i} className={`bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/35 dark:to-orange-950/30 border border-amber-200/80 dark:border-amber-800/60 rounded-[1.25rem] p-4 shadow-sm ${isDasar ? "text-lg" : "text-sm"}`}>
                     <p className="font-semibold text-amber-900 dark:text-amber-200 mb-1">{ex.label}</p>
                     <p className={`text-amber-800 dark:text-amber-100 ${isDasar ? "text-lg" : ""}`}>{ex.text}</p>
                     {ex.note && (
@@ -277,7 +277,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
 
           {/* Tips */}
           {lesson.tips.length > 0 && (
-            <div className="bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-950/40 dark:to-blue-950/40 border border-cyan-200 dark:border-cyan-800/60 rounded-2xl p-5 mb-6">
+            <div className="bg-gradient-to-br from-cyan-50 to-indigo-50 dark:from-cyan-950/30 dark:to-indigo-950/30 border border-cyan-200/80 dark:border-cyan-800/60 rounded-[1.5rem] p-5 mb-6 shadow-sm">
               <div className="flex items-center gap-2 mb-3">
                 <Lightbulb className={`${isDasar ? "w-6 h-6" : "w-5 h-5"} text-cyan-600 dark:text-cyan-400`} />
                 <h3 className={`font-bold text-cyan-900 dark:text-cyan-200 ${isDasar ? "text-xl" : "text-lg"}`}>Tips</h3>
@@ -433,7 +433,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
           />
 
           {/* Question card */}
- <div className={`bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 p-6 mb-4 ${isDasar ? "text-lg" : "text-base"}`}>
+ <div className={`bg-white dark:bg-slate-900 rounded-[1.5rem] shadow-[0_20px_50px_-34px_rgba(15,23,42,.5)] border border-slate-200 dark:border-white/8 p-6 mb-4 ${isDasar ? "text-lg" : "text-base"}`}>
             <p className={`font-bold mb-2 ${isDasar ? "text-base" : "text-sm"}`} style={{ color: tema.garis }}>
               {q.tipe === "pilihan_ganda" ? "Pilih jawaban yang tepat" :
                q.tipe === "benar_salah" ? "Benar atau salah?" :
@@ -444,7 +444,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
 
           {/* Result feedback */}
           {isResult && result && (
-            <div className={`rounded-2xl p-5 mb-4 ${result.correct ? "bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800" : "bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800"}`}>
+            <div className={`rounded-2xl p-5 mb-4 ${result.correct ? "bg-emerald-50 dark:bg-emerald-950/35 border border-emerald-200 dark:border-emerald-800/60" : "bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800/60"}`}>
               <div className="flex items-center gap-2 mb-2">
                 {result.correct ? (
                   <CheckCircle2 className="w-6 h-6 text-emerald-500 dark:text-emerald-400" />
@@ -550,7 +550,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
           {isResult && currentIdx + 1 <= questions.length && (
             <button
               onClick={handleContinue}
-              className="mt-6 w-full bg-violet-600 text-white font-bold text-lg py-4 rounded-2xl hover:bg-violet-700 transition-colors active:scale-[0.98] shadow-lg shadow-violet-200"
+              className="mt-6 w-full bg-gradient-to-r from-[#0b1938] to-violet-700 text-white font-black text-lg py-4 rounded-2xl hover:brightness-110 transition-all active:scale-[0.98] shadow-[0_18px_40px_-18px_rgba(79,70,229,.75)]"
             >
               {currentIdx + 1 < questions.length ? (
                 <span className="flex items-center justify-center gap-2">

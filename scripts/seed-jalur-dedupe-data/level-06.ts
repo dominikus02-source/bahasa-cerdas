@@ -18,9 +18,9 @@ const level06: UnitSoal[] = [
     { id: "u32j", tipe: "isi_blank", soal: "Kalimat 'Mereka bermain di taman' memiliki keterangan ...", jawaban: "tempat", penjelasan: "'Di taman' menunjukkan keterangan tempat." },
   ]},
   { level: 6, title: "Kalimat Efektif", soal: [
-    { id: "u33f", tipe: "pilihan_ganda", soal: "Kalimat yang paling efektif adalah ...", opsi: ["Para tamu duduk.", "Para tamu-tamu duduk.", "Banyak para tamu datang.", "Tamu-tamu para duduk."], jawaban: 0, penjelasan: "'Para' sudah menyatakan banyak, jadi tidak perlu bentuk ganda atau kata 'banyak'." },
+    { id: "u33f", tipe: "pilihan_ganda", soal: "Perbaikan yang paling tepat untuk 'Ia masuk ke dalam ruangan' agar lebih hemat adalah ...", opsi: ["Ia masuk ruangan.", "Ia masuk ke dalam ruangan.", "Ia masuk masuk ruangan.", "Ia ke dalam masuk ruangan."], jawaban: 0, penjelasan: "Kata 'masuk' sudah menyatakan gerak ke bagian dalam, sehingga 'ke dalam' dapat dihilangkan dalam konteks ini." },
     { id: "u33g", tipe: "pilihan_ganda", soal: "Perbaikan kalimat 'Doni sangat pandai sekali' adalah ...", opsi: ["Doni pandai sekali.", "Doni sangat pandai sekali.", "Doni sangat sangat pandai.", "Doni pandai sekali sekali."], jawaban: 0, penjelasan: "'Sangat' dan 'sekali' searti, cukup memakai salah satu saja." },
-    { id: "u33h", tipe: "pilihan_ganda", soal: "Kalimat yang paling efektif adalah ...", opsi: ["Ani menulis surat.", "Ani adalah menulis surat.", "Menulis surat Ani.", "Ani menulis menulis surat."], jawaban: 0, penjelasan: "'Ani menulis surat' ringkas, logis, dan berpola S-P-O yang benar." },
+    { id: "u33h", tipe: "pilihan_ganda", soal: "Kalimat manakah yang paling hemat dan jelas?", opsi: ["Rina naik ke atas panggung.", "Rina naik panggung.", "Rina naik naik panggung.", "Rina ke atas naik panggung."], jawaban: 1, penjelasan: "Dalam konteks ini, 'naik' sudah menunjukkan gerak ke tempat yang lebih tinggi sehingga kalimat kedua lebih hemat." },
     { id: "u33i", tipe: "benar_salah", soal: "Kalimat 'Mereka saling tolong-menolong' boros kata.", opsi: BS, jawaban: "Benar", penjelasan: "'Tolong-menolong' sudah berarti saling, cukup ditulis 'mereka tolong-menolong'." },
     { id: "u33j", tipe: "isi_blank", soal: "Hematkan: 'turun ke bawah' cukup ditulis ...", jawaban: "turun", penjelasan: "'Turun' sudah berarti bergerak ke bawah, jadi 'ke bawah' tidak perlu ditambah." },
   ]},
@@ -40,7 +40,7 @@ const level06: UnitSoal[] = [
   ]},
   { level: 6, title: "Latihan Cepat Level 6", soal: [
     { id: "u36f", tipe: "pilihan_ganda", soal: "Subjek kalimat 'Di kelas, murid-murid membaca buku' adalah ...", opsi: ["Di kelas", "murid-murid", "membaca", "buku"], jawaban: 1, penjelasan: "Yang melakukan tindakan membaca adalah 'murid-murid'." },
-    { id: "u36g", tipe: "pilihan_ganda", soal: "Kalimat yang paling efektif adalah ...", opsi: ["Kami bermain di halaman.", "Kami saling bermain bersama di halaman.", "Kami bermain bermain di halaman.", "Di halaman kami saling bermain bersama-sama."], jawaban: 0, penjelasan: "'Kami bermain di halaman' hemat dan jelas; kata 'saling' tidak tepat untuk 'bermain'." },
+    { id: "u36g", tipe: "pilihan_ganda", soal: "Kalimat yang tepat untuk menyatakan dua kegiatan adalah ...", opsi: ["Sinta membaca dan Raka menulis.", "Sinta membaca dan Raka menulis-menulis.", "Sinta adalah membaca dan Raka adalah menulis.", "Sinta membaca membaca dan Raka menulis."], jawaban: 0, penjelasan: "Konjungsi 'dan' menghubungkan dua kegiatan dengan struktur yang jelas." },
     { id: "u36h", tipe: "pilihan_ganda", soal: "Objek kalimat 'Kakek minum teh di teras' adalah ...", opsi: ["Kakek", "minum", "teh", "di teras"], jawaban: 2, penjelasan: "Yang dikenai tindakan minum adalah 'teh'." },
     { id: "u36i", tipe: "benar_salah", soal: "Dalam kalimat 'Dia pergi ke pasar', 'ke pasar' adalah keterangan tempat.", opsi: BS, jawaban: "Benar", penjelasan: "'Ke pasar' menunjukkan tempat tujuan, jadi itulah keterangan tempat." },
     { id: "u36j", tipe: "isi_blank", soal: "Kalimat 'Guru menjelaskan materi' berpola S-P-...", jawaban: "O", penjelasan: "'Materi' adalah objek yang dijelaskan, jadi polanya S-P-O." },

@@ -6,21 +6,21 @@ const level03: UnitSoal[] = [
   // ═══════════════ LEVEL 3 — Kata Baku (SD kelas menengah) ═══════════════
   { level: 3, title: "Kata Baku dan Tidak Baku", soal: [
     { id: "u13f", tipe: "pilihan_ganda", soal: "Kata baku dari 'jadual' adalah ...", opsi: ["jadwal", "jadual", "jaduwal", "jadweil"], jawaban: 0, penjelasan: "KBBI mencatat bentuk baku 'jadwal', bukan 'jadual'." },
-    { id: "u13g", tipe: "pilihan_ganda", soal: "Manakah yang merupakan kata baku?", opsi: ["kwalitas", "kualitas", "kwalitet", "kwality"], jawaban: 1, penjelasan: "Bentuk baku menurut KBBI: kualitas." },
+    { id: "u13g", tipe: "pilihan_ganda", soal: "Bentuk baku dari kata 'apotik' adalah ...", opsi: ["apotik", "apotek", "apothec", "apoteek"], jawaban: 1, penjelasan: "Bentuk baku yang digunakan adalah 'apotek'." },
     { id: "u13h", tipe: "pilihan_ganda", soal: "Bentuk baku dari 'hutang' adalah ...", opsi: ["hutang", "utang", "huttang", "uttang"], jawaban: 1, penjelasan: "Bentuk baku adalah 'utang', bukan 'hutang'." },
     { id: "u13i", tipe: "benar_salah", soal: "Kata 'isteri' adalah bentuk baku, sedangkan 'istri' tidak baku.", opsi: BS, jawaban: "Salah", penjelasan: "Kebalikannya: yang baku adalah 'istri', sedangkan 'isteri' tidak baku." },
     { id: "u13j", tipe: "isi_blank", soal: "Bentuk baku dari 'nomer' adalah ...", jawaban: "nomor", penjelasan: "KBBI mencatat bentuk baku 'nomor', bukan 'nomer'." },
   ]},
   { level: 3, title: "Kata Serapan Umum", soal: [
     { id: "u14f", tipe: "pilihan_ganda", soal: "Bentuk baku dari 'karir' adalah ...", opsi: ["karier", "karir", "karierr", "karirr"], jawaban: 0, penjelasan: "KBBI mencatat bentuk baku 'karier' (dari career)." },
-    { id: "u14g", tipe: "pilihan_ganda", soal: "Kata serapan yang penulisannya benar adalah ...", opsi: ["raport", "rapor", "rapport", "raportt"], jawaban: 1, penjelasan: "Bentuk baku: rapor (diserap dari bahasa Belanda rapport)." },
+    { id: "u14g", tipe: "pilihan_ganda", soal: "Bentuk baku kata 'praktek' adalah ...", opsi: ["praktik", "praktek", "praktiek", "praktekkan"], jawaban: 0, penjelasan: "Bentuk baku yang digunakan dalam bahasa Indonesia adalah 'praktik'." },
     { id: "u14h", tipe: "pilihan_ganda", soal: "Kata serapan dari 'score' yang ditulis baku adalah ...", opsi: ["skor", "score", "skore", "sekor"], jawaban: 0, penjelasan: "'Score' diserap menjadi bentuk baku 'skor'." },
     { id: "u14i", tipe: "benar_salah", soal: "Kata 'kamera' adalah kata serapan yang sudah baku.", opsi: BS, jawaban: "Benar", penjelasan: "'Kamera' (dari camera) adalah bentuk serapan yang baku." },
     { id: "u14j", tipe: "isi_blank", soal: "Bentuk baku dari 'komplek' adalah ...", jawaban: "kompleks", penjelasan: "KBBI mencatat bentuk baku 'kompleks', bukan 'komplek'." },
   ]},
   { level: 3, title: "Kesalahan Kata Sehari-hari", soal: [
     { id: "u15f", tipe: "pilihan_ganda", soal: "Kata yang sering salah tulis, bentuk BENAR adalah ...", opsi: ["cabe", "cabai", "cabey", "cabbai"], jawaban: 1, penjelasan: "Bentuk baku: cabai, bukan 'cabe'." },
-    { id: "u15g", tipe: "pilihan_ganda", soal: "Pilih bentuk yang benar: ...", opsi: ["napas", "nafas", "naphas", "nefas"], jawaban: 0, penjelasan: "KBBI mencatat bentuk baku 'napas'." },
+    { id: "u15g", tipe: "pilihan_ganda", soal: "Kalimat yang menggunakan kata baku dengan tepat adalah ...", opsi: ["Ia menarik nafas panjang.", "Ia menarik napas panjang.", "Ia menarik naphas panjang.", "Ia menarik nefas panjang."], jawaban: 1, penjelasan: "Bentuk baku yang tepat adalah 'napas'." },
     { id: "u15h", tipe: "pilihan_ganda", soal: "Bentuk baku dari 'mesjid' adalah ...", opsi: ["masjid", "mesjid", "mesjied", "maesjid"], jawaban: 0, penjelasan: "Bentuk baku menurut KBBI: masjid." },
     { id: "u15i", tipe: "benar_salah", soal: "Kata 'kedaluwarsa' adalah bentuk baku.", opsi: BS, jawaban: "Benar", penjelasan: "KBBI mencatat 'kedaluwarsa' (bukan 'kadaluarsa')." },
     { id: "u15j", tipe: "isi_blank", soal: "Bentuk baku dari 'ijasah' adalah ...", jawaban: "ijazah", penjelasan: "KBBI mencatat bentuk baku 'ijazah'." },
@@ -40,8 +40,8 @@ const level03: UnitSoal[] = [
     { id: "u17j", tipe: "isi_blank", soal: "Dalam kalimat 'Para siswa ... tugas itu', kata kerja yang benar adalah me- + kerja + -kan = ...", jawaban: "mengerjakan", penjelasan: "me- + kerja + -kan → mengerjakan (k luluh)." },
   ]},
   { level: 3, title: "Latihan Cepat Level 3", soal: [
-    { id: "u18f", tipe: "pilihan_ganda", soal: "Deret kata yang SEMUANYA baku adalah ...", opsi: ["karier, rapor, utang", "karir, rapor, utang", "karier, raport, utang", "karir, raport, hutang"], jawaban: 0, penjelasan: "Karier, rapor, dan utang adalah bentuk-bentuk baku." },
-    { id: "u18g", tipe: "pilihan_ganda", soal: "Bentuk baku dari 'komplek' adalah ...", opsi: ["kompleks", "komplek", "complex", "komplex"], jawaban: 0, penjelasan: "KBBI mencatat bentuk baku 'kompleks'." },
+    { id: "u18f", tipe: "pilihan_ganda", soal: "Kata yang tepat untuk melengkapi kalimat 'Dokter memberikan ___ kepada pasien.' adalah ...", opsi: ["nasihat", "nasehat", "nashihat", "nasehatt"], jawaban: 0, penjelasan: "Bentuk baku yang tepat adalah 'nasihat'." },
+    { id: "u18g", tipe: "pilihan_ganda", soal: "Bentuk baku dari 'resiko' adalah ...", opsi: ["resiko", "risiko", "riziko", "risikko"], jawaban: 1, penjelasan: "Bentuk baku yang tepat adalah 'risiko'." },
     { id: "u18h", tipe: "pilihan_ganda", soal: "'Dokter ... obat kepada pasiennya.' Kata paling tepat: ...", opsi: ["memberi", "membeli", "menjual", "memakan"], jawaban: 0, penjelasan: "Dokter memberi obat kepada pasiennya." },
     { id: "u18i", tipe: "benar_salah", soal: "Kalimat 'Kami sudah meneliti kasus itu' memakai kata kerja yang baku.", opsi: BS, jawaban: "Benar", penjelasan: "'Meneliti' adalah bentuk baku (me- + teliti, t luluh)." },
     { id: "u18j", tipe: "isi_blank", soal: "Bentuk baku dari 'cabe' adalah ...", jawaban: "cabai", penjelasan: "KBBI mencatat bentuk baku 'cabai', bukan 'cabe'." },
