@@ -79,7 +79,12 @@ function stateFromSession(row: { questionIds: Prisma.JsonValue }): BaselineState
 }
 
 function stableHash(value: string): number {
-  let hash = 2166136261;\n  for (let i = 0; i < value.length; i += 1) {\n    hash ^= value.charCodeAt(i);\n    hash = Math.imul(hash, 16777619);\n  }\n  return hash >>> 0;
+  let hash = 2166136261;
+  for (let i = 0; i < value.length; i += 1) {
+    hash ^= value.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
 }
 
 async function selectBaselineQuestions(seed: string): Promise<BaselineQuestion[]> {
