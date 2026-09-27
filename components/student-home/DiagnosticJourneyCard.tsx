@@ -34,7 +34,7 @@ export function DiagnosticJourneyCard() {
 
   return (
     <section
-      aria-label="Quest kemampuan harian"
+      aria-label="Tantangan kemampuan harian"
       className="relative overflow-hidden rounded-[1.75rem] border border-violet-200/70 bg-gradient-to-br from-violet-50 via-white to-cyan-50 p-5 shadow-[0_20px_55px_-38px_rgba(79,70,229,0.75)] dark:border-white/10 dark:from-[#101a36] dark:via-[#10182d] dark:to-[#0b2438] sm:p-6"
     >
       <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-violet-400/15 blur-3xl" />
@@ -51,10 +51,10 @@ export function DiagnosticJourneyCard() {
 
           <div className="min-w-0">
             <span className="text-[10px] font-black uppercase tracking-[0.18em] text-violet-700 dark:text-violet-300">
-              {done ? "Perjalananmu" : "Quest Kemampuan"}
+              {done ? "Perjalananmu" : "Tantangan Kemampuan"}
             </span>
             <h2 className="mt-1 text-xl font-black tracking-tight text-slate-950 dark:text-white sm:text-2xl">
-              {done ? "Quest hari ini selesai." : active ? "Lanjutkan petualanganmu." : "Kenali kemampuanmu sedikit demi sedikit."}
+              {done ? "Tantangan hari ini selesai." : active ? "Lanjutkan petualanganmu." : "Kenali kemampuanmu sedikit demi sedikit."}
             </h2>
             <p className="mt-1.5 max-w-2xl text-xs leading-5 text-slate-600 dark:text-slate-300/75 sm:text-sm">
               {done
@@ -73,7 +73,7 @@ export function DiagnosticJourneyCard() {
           </Link>
         ) : (
           <Link href="/murid/tes-awal" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-[#18255b] px-5 py-3 text-xs font-black text-white shadow-lg transition hover:-translate-y-0.5 dark:bg-white dark:text-[#18255b]">
-            {active ? "Lanjutkan" : "Mulai quest"}
+            {active ? "Lanjutkan" : "Mulai tantangan"}
             <ArrowRight className="h-4 w-4" />
           </Link>
         )}
@@ -99,7 +99,7 @@ export function DiagnosticJourneyCard() {
       {done && (
         <div className="relative mt-5 flex items-center gap-2 rounded-2xl bg-emerald-50 px-4 py-3 text-xs font-semibold text-emerald-700 dark:bg-emerald-400/[0.07] dark:text-emerald-300">
           <CheckCircle2 className="h-4 w-4" />
-          Besok akan muncul quest kemampuan berikutnya.
+          Besok akan muncul tantangan kemampuan berikutnya.
         </div>
       )}
     </section>
