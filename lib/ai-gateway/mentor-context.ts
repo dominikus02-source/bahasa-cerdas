@@ -87,6 +87,16 @@ export async function buildMentorContext(userId: string): Promise<MentorContext>
   // Check if we have enough data
   const hasEnoughData = skillsWithEvidence.length >= 2 && totalAttempts >= 10;
 
+  const diagnosticEvidence = evidence.filter(
+    (e) => e.source === "DIAGNOSTIC_DAILY" || e.source === "DIAGNOSTIC_DAILY_WRITING" || e.source === "AI_DIAGNOSTIC"
+  );
+  const writingResponses = diagnosticEvidence.filter(
+    (e) => e.source === "DIAGNOSTIC_DAILY_WRITING" && Boolean(e.selectedAnswer)
+  ).length;
+  const latestWriting = diagnosticEvidence.find(
+    (e) => e.source === "DIAGNOSTIC_DAILY_WRITING" && Boolean(e.selectedAnswer)
+  )?.selectedAnswer ?? null;
+
   return {
     strongestSkill: strongest
       ? {
