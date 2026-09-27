@@ -117,6 +117,12 @@ export async function buildMentorContext(userId: string): Promise<MentorContext>
       : { title: null, description: null, skill: null, ctaLabel: null, ctaHref: null, reason: null },
     confidence,
     hasEnoughData,
+    diagnosticEvidence: {
+      total: diagnosticEvidence.length,
+      recent: diagnosticEvidence.filter((e) => e.answeredAt >= new Date(Date.now() - 7 * 24 * 3600 * 1000)).length,
+      writingResponses,
+      latestWriting: latestWriting ? latestWriting.slice(0, 500) : null,
+    },
   };
 }
 
