@@ -5,7 +5,7 @@ const BS: ["Benar", "Salah"] = ["Benar", "Salah"];
 const level07: UnitSoal[] = [
   // ═══════════════ LEVEL 7 — Kata Penghubung ═══════════════
   { level: 7, title: "Kata Depan di, ke, dari", soal: [
-    { id: "u37f", tipe: "pilihan_ganda", soal: "Penggunaan kata depan yang benar adalah ...", opsi: ["Paman bekerja di Jakarta.", "Paman bekerja ke Jakarta.", "Paman bekerja dari Jakarta.", "Paman bekerja pada dari Jakarta."], jawaban: 0, penjelasan: "Tempat berada memakai 'di' — ditulis terpisah." },
+    { id: "u37f", tipe: "pilihan_ganda", soal: "Penulisan yang benar untuk menyatakan tujuan adalah ...", opsi: ["Kami pergi ke sekolah.", "Kami pergi kesekolah.", "Kami pergi ke-sekolah.", "Kami pergi k sekolah."], jawaban: 0, penjelasan: "Kata depan 'ke' yang menunjukkan tujuan ditulis terpisah dari kata sesudahnya." },
     { id: "u37g", tipe: "pilihan_ganda", soal: "'Kami pergi ... pantai pada liburan lalu.' Kata depan yang tepat: ...", opsi: ["di", "ke", "dari", "di dekat"], jawaban: 1, penjelasan: "Arah tujuan memakai 'ke'." },
     { id: "u37h", tipe: "pilihan_ganda", soal: "Kata depan 'di' yang benar ditulis terpisah adalah ...", opsi: ["di sana", "di beli", "dirumah", "diatas"], jawaban: 0, penjelasan: "'Di sana' kata depan + keterangan tempat; 'di beli' seharusnya 'dibeli' (imbuhan), 'dirumah' dan 'diatas' seharusnya terpisah." },
     { id: "u37i", tipe: "benar_salah", soal: "Kalimat 'Kado ini dari ayah' menggunakan kata depan yang benar.", opsi: BS, jawaban: "Benar", penjelasan: "'Dari' menyatakan asal dan ditulis terpisah." },
