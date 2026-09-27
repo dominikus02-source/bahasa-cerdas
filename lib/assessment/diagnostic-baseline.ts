@@ -24,13 +24,16 @@ export const BASELINE_SKILL_LABELS: Record<string, string> = {
   WRITING: "Menulis",
 };
 
+// 15 butir objektif berasal dari 4 kompetensi yang memiliki bank aman terkurasi.
+// Menulis diukur lewat tugas menulis langsung, bukan dipaksakan memakai
+// butir bank "WRITING" yang belum memiliki cakupan aman.
 export const BASELINE_BLUEPRINT = [
   { skill: "READING", count: 3 },
   { skill: "GRAMMAR", count: 3 },
   { skill: "VOCABULARY", count: 3 },
   { skill: "LITERATURE", count: 3 },
-  { skill: "WRITING", count: 3 },
 ] as const;
+export const BASELINE_EXTRA_OBJECTIVE = 3 as const;
 
 export const BASELINE_DIFFICULTIES: DifficultyId[] = ["EASY", "MEDIUM", "HARD"];
 
