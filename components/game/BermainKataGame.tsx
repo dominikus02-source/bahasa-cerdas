@@ -249,20 +249,26 @@ export default function BermainKataGame() {
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(125,211,252,.28),transparent_30%),radial-gradient(circle_at_85%_18%,rgba(167,243,208,.35),transparent_28%),linear-gradient(135deg,#F0F9FF,#FFFFFF_48%,#F0FDFA)]" />
             <div className="absolute -left-8 -bottom-10 h-32 w-32 rounded-full bg-sky-100/80" />
             <div className="absolute -right-8 -top-10 h-36 w-36 rounded-full bg-emerald-100/80" />
-            <div className="absolute left-[12%] top-8 animate-bounce text-2xl" style={{animationDuration:"2.8s"}}>🔤</div>
-            <div className="absolute right-[14%] top-14 animate-bounce text-xl" style={{animationDuration:"3.2s",animationDelay:"400ms"}}>⭐</div>
-            <div className="absolute left-[20%] bottom-9 animate-bounce text-lg" style={{animationDuration:"3.5s",animationDelay:"700ms"}}>📖</div>
+            <div className="absolute right-[14%] top-12 h-3 w-3 rounded-full bg-amber-300/80 shadow-sm" />
+            <div className="absolute left-[17%] top-20 h-2 w-2 rounded-full bg-sky-300/80 shadow-sm" />
+            <div className="absolute left-[23%] bottom-12 h-2.5 w-2.5 rounded-full bg-emerald-300/80 shadow-sm" />
             <div className="relative z-10 flex min-h-[250px] items-center justify-center px-6 pt-5 sm:min-h-[290px]">
               <div className="relative flex h-[230px] w-full max-w-md items-end justify-center sm:h-[265px]">
                 <div className="absolute bottom-2 h-8 w-56 rounded-full bg-slate-900/10 blur-xl" />
-                <img
-                  key={zelbyFrame}
-                  src={ZELBY_FRAMES[zelbyFrame]}
-                  alt="Zelby menemani permainan"
-                  className="relative z-10 h-[225px] w-auto object-contain drop-shadow-[0_18px_14px_rgba(15,23,42,.14)] sm:h-[255px]"
-                  style={{animation:"bkZelbyEnter .65s cubic-bezier(.2,.8,.2,1) both"}}
-                />
-                <div className="absolute bottom-5 right-1/2 translate-x-[150px] rounded-2xl border border-slate-200 bg-white/95 px-3 py-2 text-xs font-black text-slate-700 shadow-md">
+                <div className="relative h-[225px] w-[225px] sm:h-[255px] sm:w-[255px]">
+                  {ZELBY_FRAMES.map((src,index)=>(
+                    <img
+                      key={src}
+                      src={src}
+                      alt={index===zelbyFrame ? "Zelby menemani permainan" : ""}
+                      aria-hidden={index!==zelbyFrame}
+                      className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_18px_14px_rgba(15,23,42,.14)] transition-opacity duration-700 ease-in-out"
+                      style={{opacity:index===zelbyFrame?1:0}}
+                    />
+                  ))}
+                  <div className="absolute inset-x-2 bottom-0 h-4 rounded-full bg-sky-200/20 blur-md" />
+                </div>
+                <div className="absolute bottom-4 left-1/2 ml-[92px] whitespace-nowrap rounded-2xl border border-slate-200 bg-white/95 px-3 py-2 text-xs font-black text-slate-700 shadow-md transition-transform duration-700 ease-out sm:ml-[118px]">
                   Ayo bermain! ✨
                 </div>
               </div>
@@ -274,10 +280,11 @@ export default function BermainKataGame() {
             </div>
           </div>
           <style>{`
-            @keyframes bkZelbyEnter{
-              0%{opacity:0;transform:translateY(16px) scale(.94)}
-              65%{opacity:1;transform:translateY(-5px) scale(1.02)}
-              100%{opacity:1;transform:translateY(0) scale(1)}
+            @media (prefers-reduced-motion: no-preference){
+              @keyframes bkZelbyFloat{
+                0%,100%{transform:translateY(0)}
+                50%{transform:translateY(-5px)}
+              }
             }
           `}</style>
         </section>
