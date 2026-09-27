@@ -37,6 +37,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Baseline diagnostic V2 gate
+        run: npm run test:diagnostic-baseline-v2
+
       - name: TTS eligibility gate
         run: npm run test:tts-eligibility
 

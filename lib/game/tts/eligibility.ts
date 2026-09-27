@@ -108,7 +108,7 @@ export function evaluateTtsCandidate(input: TtsCandidateInput): TtsEligibility {
   if (clue.length < 12) {
     score -= 20;
     reasons.push("petunjuk terlalu pendek");
-  } else if (clue.length > 180) {
+  } else if (clue.length > 150) {
     score -= 15;
     reasons.push("petunjuk terlalu panjang");
     hardReject = true;
