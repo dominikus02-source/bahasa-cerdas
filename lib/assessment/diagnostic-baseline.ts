@@ -24,15 +24,122 @@ export const BASELINE_SKILL_LABELS: Record<string, string> = {
   WRITING: "Menulis",
 };
 
-// 12 butir objektif dibangun dari cakupan bank aman yang benar-benar tersedia.
-// Reading/Literature saat ini punya 2 butir terkurasi aman; Grammar/Vocabulary
-// punya 3. Menulis diukur lewat tugas menulis langsung.
+// Sepuluh butir objektif terkontrol: Reading 3, Grammar 2, Vocabulary 3, Literature 2.
+// Menulis diukur lewat tugas menulis langsung.
 export const BASELINE_BLUEPRINT = [
   { skill: "READING", count: 2 },
   { skill: "GRAMMAR", count: 3 },
   { skill: "VOCABULARY", count: 3 },
   { skill: "LITERATURE", count: 2 },
 ] as const;
+
+export interface BaselineQuestionDefinition {
+  id: string;
+  text: string;
+  options: string[];
+  questionType: "PILIHAN_GANDA" | "BENAR_SALAH";
+  skill: Exclude<BaselineSkill, "WRITING">;
+  difficulty: DifficultyId;
+  correctAnswer: string;
+}
+
+/**
+ * Baseline uses a dedicated, versioned assessment set instead of the legacy
+ * master bank. The live master bank still contains quarantined/template items,
+ * so the baseline must not depend on its current availability.
+ */
+export const BASELINE_QUESTION_BANK: readonly BaselineQuestionDefinition[] = [
+  {
+    id: "BASELINE-V2-READING-01",
+    text: "Bacalah kalimat berikut: “Rani membawa botol minum sendiri ke sekolah agar tidak perlu membeli air kemasan setiap hari.” Apa alasan Rani membawa botol minum sendiri?",
+    options: ["Agar dapat membeli lebih banyak air", "Agar tidak perlu membeli air kemasan setiap hari", "Agar botolnya dipuji teman", "Agar datang terlambat ke sekolah"],
+    questionType: "PILIHAN_GANDA",
+    skill: "READING",
+    difficulty: "EASY",
+    correctAnswer: "1",
+  },
+  {
+    id: "BASELINE-V2-READING-02",
+    text: "Bacalah kalimat berikut: “Meskipun hujan turun sejak pagi, para siswa tetap datang untuk mengikuti kegiatan membaca di perpustakaan.” Simpulan yang paling tepat adalah ...",
+    options: ["Para siswa membatalkan kegiatan membaca.", "Perpustakaan ditutup karena hujan.", "Hujan tidak menghalangi para siswa mengikuti kegiatan membaca.", "Para siswa hanya datang ketika cuaca cerah."],
+    questionType: "PILIHAN_GANDA",
+    skill: "READING",
+    difficulty: "MEDIUM",
+    correctAnswer: "2",
+  },
+  {
+    id: "BASELINE-V2-READING-03",
+    text: "Bacalah kalimat berikut: “Dina menyiapkan jadwal belajar sebelum ujian. Ia membagi waktu untuk membaca materi, mengerjakan latihan, dan beristirahat.” Gagasan utama kalimat tersebut adalah ...",
+    options: ["Dina tidak suka belajar.", "Dina menyusun jadwal belajar untuk menghadapi ujian.", "Dina hanya mengerjakan latihan.", "Dina belajar tanpa waktu istirahat."],
+    questionType: "PILIHAN_GANDA",
+    skill: "READING",
+    difficulty: "HARD",
+    correctAnswer: "1",
+  },
+  {
+    id: "BASELINE-V2-GRAMMAR-01",
+    text: "Kalimat yang paling efektif adalah ...",
+    options: ["Para siswa-siswa sedang belajar di kelas.", "Para siswa sedang belajar di kelas.", "Para siswa sedang belajar-belajar di kelas.", "Para siswa adalah sedang belajar di kelas."],
+    questionType: "PILIHAN_GANDA",
+    skill: "GRAMMAR",
+    difficulty: "EASY",
+    correctAnswer: "1",
+  },
+  {
+    id: "BASELINE-V2-GRAMMAR-02",
+    text: "Manakah penulisan kata baku yang tepat?",
+    options: ["resiko", "ijin", "praktik", "aktifitas"],
+    questionType: "PILIHAN_GANDA",
+    skill: "GRAMMAR",
+    difficulty: "MEDIUM",
+    correctAnswer: "2",
+  },
+  {
+    id: "BASELINE-V2-VOCABULARY-01",
+    text: "Sinonim kata “cermat” yang paling tepat adalah ...",
+    options: ["teliti", "ceroboh", "lambat", "ragu"],
+    questionType: "PILIHAN_GANDA",
+    skill: "VOCABULARY",
+    difficulty: "EASY",
+    correctAnswer: "0",
+  },
+  {
+    id: "BASELINE-V2-VOCABULARY-02",
+    text: "Antonim kata “optimistis” adalah ...",
+    options: ["yakin", "percaya diri", "pesimistis", "semangat"],
+    questionType: "PILIHAN_GANDA",
+    skill: "VOCABULARY",
+    difficulty: "MEDIUM",
+    correctAnswer: "2",
+  },
+  {
+    id: "BASELINE-V2-VOCABULARY-03",
+    text: "Dalam kalimat “Ia tetap rendah hati meskipun memenangkan lomba”, makna “rendah hati” adalah ...",
+    options: ["suka merendahkan orang lain", "tidak sombong", "mudah menyerah", "selalu merasa takut"],
+    questionType: "PILIHAN_GANDA",
+    skill: "VOCABULARY",
+    difficulty: "HARD",
+    correctAnswer: "1",
+  },
+  {
+    id: "BASELINE-V2-LITERATURE-01",
+    text: "Dalam sebuah cerita, tokoh yang menjadi pusat rangkaian peristiwa disebut ...",
+    options: ["tokoh utama", "latar", "alur", "amanat"],
+    questionType: "PILIHAN_GANDA",
+    skill: "LITERATURE",
+    difficulty: "EASY",
+    correctAnswer: "0",
+  },
+  {
+    id: "BASELINE-V2-LITERATURE-02",
+    text: "Pesan atau nilai yang ingin disampaikan pengarang melalui sebuah cerita disebut ...",
+    options: ["tema", "amanat", "latar", "konflik"],
+    questionType: "PILIHAN_GANDA",
+    skill: "LITERATURE",
+    difficulty: "MEDIUM",
+    correctAnswer: "1",
+  },
+];
 
 export const BASELINE_DIFFICULTIES: DifficultyId[] = ["EASY", "MEDIUM", "HARD"];
 

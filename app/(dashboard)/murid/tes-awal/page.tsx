@@ -73,8 +73,8 @@ export default function TesAwalPage(){
   </main>;
 
   if(state.status==="QUIZ"&&state.question)return <main className="mx-auto max-w-3xl px-5 py-6 sm:py-10">
-    <div className="flex items-center justify-between"><Link href="/murid/beranda" className="p-2 text-slate-500"><ArrowLeft className="h-5 w-5"/></Link><span className="text-[10px] font-black uppercase tracking-[.18em] text-violet-600">Baseline Assessment</span><span className="text-xs font-bold text-slate-500">{state.answeredCount??0}/{state.totalQuestions??15}</span></div>
-    <div className="mt-5 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-white/[.08]"><div className="h-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-400" style={{width:`${Math.min(100,((state.answeredCount??0)/(state.totalQuestions??15))*100)}%`}}/></div>
+    <div className="flex items-center justify-between"><Link href="/murid/beranda" className="p-2 text-slate-500"><ArrowLeft className="h-5 w-5"/></Link><span className="text-[10px] font-black uppercase tracking-[.18em] text-violet-600">Baseline Assessment</span><span className="text-xs font-bold text-slate-500">{state.answeredCount??0}/{state.totalQuestions??10}</span></div>
+    <div className="mt-5 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-white/[.08]"><div className="h-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-400" style={{width:`${Math.min(100,((state.answeredCount??0)/(state.totalQuestions??10))*100)}%`}}/></div>
     <section className="mt-6 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-xl dark:border-white/10 dark:bg-[#10182d] sm:p-8">
       <p className="text-[10px] font-black uppercase tracking-[.18em] text-violet-600 dark:text-violet-300">{labels[state.question.skill]??state.question.skill} · {state.question.difficulty??"Tantangan"}</p>
       <h1 className="mt-4 text-2xl font-black leading-tight text-slate-950 dark:text-white sm:text-3xl">{state.question.text}</h1>
@@ -85,7 +85,7 @@ export default function TesAwalPage(){
   </main>;
 
   if(state.status==="WRITING"&&state.writing)return <main className="mx-auto max-w-3xl px-5 py-6 sm:py-10">
-    <div className="flex items-center justify-between"><Link href="/murid/beranda" className="p-2 text-slate-500"><ArrowLeft className="h-5 w-5"/></Link><span className="text-[10px] font-black uppercase tracking-[.18em] text-fuchsia-600">Bagian Menulis</span><span className="text-xs font-bold text-slate-500">16/16</span></div>
+    <div className="flex items-center justify-between"><Link href="/murid/beranda" className="p-2 text-slate-500"><ArrowLeft className="h-5 w-5"/></Link><span className="text-[10px] font-black uppercase tracking-[.18em] text-fuchsia-600">Bagian Menulis</span><span className="text-xs font-bold text-slate-500">11/11</span></div>
     <section className="mt-5 overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#17123b] via-[#251553] to-[#09263b] p-6 text-white shadow-xl sm:p-8">
       <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-fuchsia-500 to-cyan-400"><PenLine className="h-6 w-6"/></div>
       <h1 className="mt-5 text-3xl font-black">{state.writing.title}</h1><p className="mt-3 text-sm leading-6 text-blue-100/80">{state.writing.prompt}</p>
