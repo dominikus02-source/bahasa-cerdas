@@ -6,8 +6,8 @@ import { getLearnerState, isLearnerStateInfraUnavailable } from "@/lib/learner-s
 /**
  * GET /api/player/learner-state
  *
- * Read-only, own-user learner state. Only evidence joined to APPROVED
- * QuestionMetadata with a valid skill contributes to this projection.
+ * Read-only, own-user learner state. Baseline evidence uses its server-recorded
+ * skill directly; other evidence requires APPROVED QuestionMetadata with a valid skill.
  */
 export async function GET() {
   const user = await getUser();
