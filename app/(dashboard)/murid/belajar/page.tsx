@@ -22,26 +22,26 @@ const QUESTS = [
   {
     href: "/arena/jalur-cerdas",
     label: "Jalur Cerdas",
-    eyebrow: "MAIN QUEST",
+    eyebrow: "PERJALANAN UTAMA",
     description: "Lanjutkan perjalanan belajar Bahasa Indonesia selangkah demi selangkah.",
     icon: BookOpenCheck,
     tone: "from-violet-600 via-indigo-600 to-blue-600",
-    reward: "XP · Progres · Skill",
+    reward: "XP · Progres · Kemampuan",
     primary: true,
   },
   {
     href: "/arena/tugas",
     label: "Tugas",
-    eyebrow: "SIDE QUEST",
+    eyebrow: "AKTIVITAS TAMBAHAN",
     description: "Selesaikan tantangan dari gurumu sebelum tenggatnya tiba.",
     icon: ClipboardList,
     tone: "from-amber-500 to-orange-600",
-    reward: "Reward belajar",
+    reward: "Hadiah belajar",
   },
   {
     href: "/murid/gabung-kelas",
     label: "Kelas",
-    eyebrow: "PARTY",
+    eyebrow: "KELOMPOK",
     description: "Masuk ke ruang belajar bersama guru dan teman-temanmu.",
     icon: School,
     tone: "from-cyan-500 to-blue-600",
@@ -50,29 +50,29 @@ const QUESTS = [
   {
     href: "/murid/progresku",
     label: "Progres",
-    eyebrow: "STATUS",
+    eyebrow: "PERKEMBANGAN",
     description: "Lihat perkembangan kemampuan dan perjalanan belajarmu.",
     icon: TrendingUp,
     tone: "from-emerald-500 to-teal-600",
-    reward: "Insight",
+    reward: "Ringkasan kemampuan",
   },
   {
     href: "/murid/simulasi/ukbi",
     label: "Simulasi UKBI",
-    eyebrow: "CHALLENGE",
+    eyebrow: "TANTANGAN",
     description: "Uji kemampuan Bahasa Indonesia dalam simulasi yang terarah.",
     icon: Brain,
     tone: "from-fuchsia-500 to-violet-600",
-    reward: "Skill check",
+    reward: "Uji kemampuan",
   },
   {
     href: "/murid/simulasi/tka",
     label: "Simulasi TKA",
-    eyebrow: "CHALLENGE",
+    eyebrow: "TANTANGAN",
     description: "Persiapkan diri menghadapi TKA dengan latihan terukur.",
     icon: Target,
     tone: "from-rose-500 to-pink-600",
-    reward: "Skill check",
+    reward: "Uji kemampuan",
   },
 ];
 
@@ -111,7 +111,7 @@ export default function BelajarPage() {
 
             <p className="mt-4 max-w-xl text-sm leading-6 text-blue-100/75 sm:text-base">
               Setiap aktivitas di sini punya tujuan. Lanjutkan perjalanan utama,
-              selesaikan side quest, atau tantang kemampuanmu.
+              selesaikan tantangan tambahan, atau uji kemampuanmu.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-2.5">
@@ -150,14 +150,14 @@ export default function BelajarPage() {
               <span className="absolute bottom-[22%] left-[25%] h-2.5 w-2.5 rounded-full bg-[#ffd24a] shadow-[0_0_18px_rgba(255,210,74,0.8)]" />
               <span className="absolute bottom-[18%] right-[25%] h-2 w-2 rounded-full bg-white shadow-[0_0_16px_rgba(255,255,255,0.8)]" />
               <div className="absolute bottom-5 left-1/2 -translate-x-1/2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.18em] text-white/70 backdrop-blur">
-                Quest Hub
+                Pusat Tantangan
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* MAIN QUEST */}
+      {/* PERJALANAN UTAMA */}
       <section className="mt-8">
         <div className="mb-4 flex items-end justify-between gap-3">
           <div>
@@ -220,14 +220,14 @@ export default function BelajarPage() {
         </Link>
       </section>
 
-      {/* SIDE QUESTS */}
+      {/* AKTIVITAS TAMBAHAN */}
       <section className="mt-9">
         <div className="mb-4">
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
             Pilihan aktivitas
           </p>
           <h2 className="mt-1 text-2xl font-black tracking-tight text-slate-950 dark:text-white">
-            Side Quests
+            Aktivitas Tambahan
           </h2>
         </div>
 
@@ -260,7 +260,7 @@ export default function BelajarPage() {
         </div>
       </section>
 
-      {/* SOCIAL / MENTOR */}
+      {/* SOSIAL / MENTOR */}
       <section className="mt-9 grid gap-4 lg:grid-cols-2">
         <Link
           href="/arena/chat"
@@ -271,7 +271,7 @@ export default function BelajarPage() {
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 shadow-lg">
               <MessageCircle className="h-5 w-5 text-white" />
             </div>
-            <p className="mt-4 text-[9px] font-black uppercase tracking-[0.18em] text-cyan-700 dark:text-cyan-300">Party / Sosial</p>
+            <p className="mt-4 text-[9px] font-black uppercase tracking-[0.18em] text-cyan-700 dark:text-cyan-300">Kelompok & Sosial</p>
             <h3 className="mt-1 text-lg font-black text-slate-950 dark:text-white">Ngobrol & belajar bersama</h3>
             <p className="mt-1.5 text-xs leading-5 text-slate-500 dark:text-slate-300/65">Diskusi dengan guru dan teman dalam ruang yang sama.</p>
             <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-black text-cyan-700 dark:text-cyan-300">
@@ -289,7 +289,7 @@ export default function BelajarPage() {
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg">
               <Award className="h-5 w-5 text-white" />
             </div>
-            <p className="mt-4 text-[9px] font-black uppercase tracking-[0.18em] text-amber-700 dark:text-amber-300">Inventory</p>
+            <p className="mt-4 text-[9px] font-black uppercase tracking-[0.18em] text-amber-700 dark:text-amber-300">Koleksi</p>
             <h3 className="mt-1 text-lg font-black text-slate-950 dark:text-white">Hasil & pencapaian</h3>
             <p className="mt-1.5 text-xs leading-5 text-slate-500 dark:text-slate-300/65">Kembali melihat hasil latihan, ujian, dan pencapaian belajarmu.</p>
             <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-black text-amber-700 dark:text-amber-300">
