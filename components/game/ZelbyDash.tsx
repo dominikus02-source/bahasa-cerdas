@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { Heart, Volume2, VolumeX, Sparkles, Trophy, RotateCcw, ArrowLeft, Star } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Heart, Volume2, VolumeX, Sparkles, RotateCcw, Star } from "lucide-react";
 import GameBackButton from "@/components/game/GameBackButton";
 import { setQuiet } from "@/lib/notif-quiet";
 
@@ -194,7 +194,7 @@ export default function ZelbyDash() {
     setCombo(0);
     setMaxCombo(0);
     setLives(DIFFICULTY[difficulty].lives);
-    setAnswered(0);
+    setAnswered(1);
     setStars(0);
     setCollectedWords([]);
     setMessage("Zelby siap! Yuk mulai!");
@@ -277,10 +277,6 @@ export default function ZelbyDash() {
     makna: "Lawan Kata",
   };
 
-  const pairChoices = useMemo(() => {
-    if (mode !== "pasangan") return [];
-    return round.matchItems?.map((item) => item.word) ?? [];
-  }, [mode, round]);
 
   return (
     <div className="fixed inset-0 z-[60] overflow-y-auto bg-[#FFF8EA] text-[#241B36]">
