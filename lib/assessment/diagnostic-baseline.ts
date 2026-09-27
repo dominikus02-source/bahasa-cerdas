@@ -2,7 +2,7 @@ import type { LearningSkillType } from "@prisma/client";
 import { hasSkill, type DifficultyId, type QuestionTypeId, SUBSKILLS } from "@/lib/question-metadata/taxonomy";
 
 export const BASELINE_SOURCE = "DIAGNOSTIC_BASELINE_V2" as const;
-export const BASELINE_VERSION = "2.0" as const;
+export const BASELINE_VERSION = "2.1" as const;
 export const BASELINE_SIZE = 10 as const;
 export const BASELINE_MINUTES = 15 as const;
 
@@ -27,8 +27,8 @@ export const BASELINE_SKILL_LABELS: Record<string, string> = {
 // Sepuluh butir objektif terkontrol: Reading 3, Grammar 2, Vocabulary 3, Literature 2.
 // Menulis diukur lewat tugas menulis langsung.
 export const BASELINE_BLUEPRINT = [
-  { skill: "READING", count: 2 },
-  { skill: "GRAMMAR", count: 3 },
+  { skill: "READING", count: 3 },
+  { skill: "GRAMMAR", count: 2 },
   { skill: "VOCABULARY", count: 3 },
   { skill: "LITERATURE", count: 2 },
 ] as const;
