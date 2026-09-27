@@ -91,7 +91,7 @@ function diagnosticUnavailable(reasonCode = "INSUFFICIENT_PRODUCTION_DATA", lear
   );
 }
 
-async function buildBankDiagnosticCandidates() {
+async function buildBankDiagnosticCandidates(source: DiagnosticSource = "BANK_SOAL") {
   const metadataRows = await db.questionMetadata.findMany({
     where: {
       source,
