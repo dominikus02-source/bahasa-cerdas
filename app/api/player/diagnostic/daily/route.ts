@@ -105,7 +105,7 @@ async function buildQuestions(userId: string): Promise<StateQuestion[]> {
 
   const recent = await db.learningEvidence.findMany({
     where: {
-      userId: user.id,
+      userId,
       source: { in: ["BANK_SOAL", DAILY_DIAGNOSTIC_SOURCE] },
       answeredAt: { gte: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000) },
       questionId: { in: ids },
