@@ -17,7 +17,7 @@ import { resolvePlan } from "@/lib/premium-economy/plans";
 import { getFeatureLimit } from "@/lib/premium-economy/entitlement";
 import { consumeUsage, FeatureLimitError } from "@/lib/premium-economy/usage";
 import { checkAgentRateLimit } from "@/src/ai/core/rate-limit";
-import { buildMentorContext, buildMentorSystemPrompt, buildMentorUserPrompt, buildDeterministicFallback, type MentorContext } from "@/lib/ai-gateway/mentor-context";
+import { buildMentorContext, buildMentorSystemPrompt, buildMentorUserPrompt, buildDeterministicFallback } from "@/lib/ai-gateway/mentor-context";
 import { z } from "zod";
 
 // Output schema for validation
