@@ -93,12 +93,12 @@ export default function SkillRadar({
 
   // Find the weakest skill for recommendation (lowest accuracy with sufficient evidence)
   const weakestSkill = list.find(
-    (skill) => skill.attemptCount >= 3 && skill.accuracy !== null && skill.accuracy < 0.7
+    (skill) => skill.skill !== "WRITING" && skill.attemptCount >= 3 && skill.accuracy !== null && skill.accuracy < 0.7
   );
 
   // Find the strongest skill for recognition
   const strongestSkill = list.find(
-    (skill) => skill.attemptCount >= 3 && skill.accuracy !== null && skill.accuracy >= 0.7
+    (skill) => skill.skill !== "WRITING" && skill.attemptCount >= 3 && skill.accuracy !== null && skill.accuracy >= 0.7
   );
 
   return (
