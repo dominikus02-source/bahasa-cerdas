@@ -14,7 +14,9 @@ export const AI_DIAGNOSTIC_SELECTION_VERSION = "3.0" as const;
  *   npx tsx scripts/qa-ai-diagnostic-8-4-1.ts --sessions 10 (≥100 butir)
  *   npx tsx scripts/audit-qa-ai-diagnostic-8-4-1.ts (target 0 ❌ selain artefak R11)
  */
-export const AI_DIAGNOSTIC_COMING_SOON = false;
+export const AI_DIAGNOSTIC_COMING_SOON = true;
+/** Legacy kill switch: Diagnostic v3 generator is retired from new sessions. */
+export const AI_DIAGNOSTIC_LEGACY_DISABLED = true;
 
 /**
  * Gerbang produksi Latihan Personal (Adaptive Practice).
