@@ -57,6 +57,7 @@ export interface MyDayResponse {
   skillsLabel?: string;
   /** Gerbang "Segera Hadir" — entri Tes Awal AI ditandai server saat soal belum siap produksi. */
   comingSoon?: boolean;
+  inProgressSessionId?: string | null;
 }
 
 export interface PersonalizedLearningAction {
