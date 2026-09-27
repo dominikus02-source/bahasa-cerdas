@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card } from "@/components/ui/card";
-import { BarChart3, TrendingUp, Target, Flame, Star, BookOpen, PenLine, Sparkles } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { BarChart3, BookOpen, CheckCircle2, ChevronRight, Flame, PenLine, Sparkles, Target, TrendingUp } from "lucide-react";
 import type { LearnerSkillState } from "@/lib/learner-state/types";
 
-const SKILL_LABELS: Record<string, string> = {
+const LABEL: Record<string, string> = {
   READING: "Membaca",
   WRITING: "Menulis",
   LISTENING: "Mendengarkan",
@@ -15,103 +15,96 @@ const SKILL_LABELS: Record<string, string> = {
   LITERATURE: "Sastra",
 };
 
-const SKILL_ICONS: Record<string, typeof BookOpen> = {
-  READING: BookOpen,
-  WRITING: BookOpen,
-  LISTENING: BookOpen,
-  SPEAKING: BookOpen,
-  GRAMMAR: BookOpen,
-  VOCABULARY: BookOpen,
-  LITERATURE: BookOpen,
-};
-
-const TREND_LABELS: Record<string, string> = {
+const TREND: Record<string, string> = {
   IMPROVING: "Meningkat",
   STABLE: "Stabil",
   DECLINING: "Perlu perhatian",
-  INSUFFICIENT_DATA: "Belum cukup data",
+  INSUFFICIENT_DATA: "Belum cukup bukti",
 };
 
-const MASTERY_LABELS: Record<string, string> = {
-  NO_DATA: "Belum ada data",
-  NOT_ENOUGH_EVIDENCE: "Perlu lebih banyak latihan",
-  DEVELOPING: "Sedang berkembang",
-  PROFICIENT: "Menguasai",
+type BaselineData = {
+  status: string;
+  answeredCount?: number;
+  totalQuestions?: number;
+  result?: {
+    objectiveAccuracy: number | null;
+    writing?: { level?: "AWAL" | "BERKEMBANG" | "KUAT"; wordCount?: number } | null;
+  } | null;
 };
+
+function writingLabel(level?: string) {
+  if (level === "KUAT") return "Kuat";
+  if (level === "BERKEMBANG") return "Berkembang";
+  if (level === "AWAL") return "Awal";
+  return "Belum ada data";
+}
 
 export default function ProgresPage() {
-  const [kemampuans, setSkills] = useState<LearnerSkillState[]>([]);
-  const [diagnostic, setDiagnostic] = useState<{ evidenceCount:number; activeDays:number; writingCount:number; latestWritingPreview:string|null } | null>(null);
+  const [skills, setSkills] = useState<LearnerSkillState[]>([]);
+  const [baseline, setBaseline] = useState<BaselineData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
-    async function fetchSkills() {
-      try {
-        const res = await fetch("/api/player/learner-state");
-        if (!res.ok) throw new Error("Gagal memuat data");
-        const data = await res.json();
-        setSkills(data.kemampuans || []);
-      } catch {
-        setError("Gagal memuat data kemampuan");
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchSkills();
+    let active = true;
+    Promise.all([
+      fetch("/api/player/learner-state"),
+      fetch("/api/player/diagnostic/baseline"),
+    ])
+      .then(async ([skillsRes, baselineRes]) => {
+        if (!active) return;
+        if (!skillsRes.ok) throw new Error("gagal");
+        const skillsData = await skillsRes.json();
+        setSkills(skillsData.skills ?? []);
+        if (baselineRes.ok) setBaseline(await baselineRes.json());
+      })
+      .catch(() => {
+        if (active) setFailed(true);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => { active = false; };
   }, []);
 
-  // Filter kemampuans with evidence
-  const kemampuansWithEvidence = kemampuans.filter((s) => s.attemptCount >= 3 && s.accuracy !== null);
-  const hasEvidence = kemampuansWithEvidence.length > 0;
+  const withEvidence = useMemo(
+    () => skills.filter((item) => item.attemptCount > 0 && item.accuracy !== null),
+    [skills],
+  );
+  const totalAttempts = skills.reduce((sum, item) => sum + item.attemptCount, 0);
+  const totalCorrect = skills.reduce((sum, item) => sum + item.correctCount, 0);
+  const overallAccuracy = totalAttempts ? Math.round((totalCorrect / totalAttempts) * 100) : null;
+  const improving = skills.filter((item) => item.trend === "IMPROVING").length;
 
-  // Calculate stats from real data
-  const totalAttempts = kemampuans.reduce((sum, s) => sum + s.attemptCount, 0);
-  const totalCorrect = kemampuans.reduce((sum, s) => sum + s.correctCount, 0);
-  const overallAccuracy = totalAttempts > 0 ? Math.round((totalCorrect / totalAttempts) * 100) : 0;
-
-  // Find strongest and weakest
-  const strongestSkill = hasEvidence
-    ? kemampuansWithEvidence.sort((a, b) => (b.accuracy ?? 0) - (a.accuracy ?? 0))[0]
-    : null;
-  const weakestSkill = hasEvidence
-    ? kemampuansWithEvidence.sort((a, b) => (a.accuracy ?? 0) - (b.accuracy ?? 0))[0]
-    : null;
-
-  // Count kemampuans by trend
-  const improvingCount = kemampuans.filter((s) => s.trend === "IMPROVING").length;
-  const decliningCount = kemampuans.filter((s) => s.trend === "DECLINING").length;
+  const orderedSkills = useMemo(() => {
+    const order = ["READING", "GRAMMAR", "VOCABULARY", "LITERATURE", "WRITING", "LISTENING", "SPEAKING"];
+    return order.map((id) => skills.find((item) => item.skill === id)).filter(Boolean) as LearnerSkillState[];
+  }, [skills]);
 
   if (loading) {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">Perkembanganmu</h1>
-          <p className="mt-1 text-sm text-gray-600 dark:text-slate-300">Kemampuanmu berubah setiap kali kamu bermain, belajar, dan berkarya.</p>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Perkembanganmu</h1>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Pantau perjalanan belajarmu dari waktu ke waktu.</p>
         </div>
-        <div className="grid gap-4 md:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Card key={i} className="p-4 animate-pulse">
-              <div className="h-10 w-10 rounded-lg bg-slate-200" />
-              <div className="mt-2 h-4 w-20 rounded bg-slate-200" />
-            </Card>
-          ))}
-        </div>
+        <div className="h-52 animate-pulse rounded-2xl bg-slate-100 dark:bg-slate-800" />
       </div>
     );
   }
 
-  if (error) {
+  if (failed) {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">Progresku</h1>
-          <p className="mt-1 text-sm text-gray-600 dark:text-slate-300">Pantau perjalanan belajarmu</p>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Perkembanganmu</h1>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Pantau perjalanan belajarmu dari waktu ke waktu.</p>
         </div>
-        <Card className="p-6 text-center">
-          <p className="text-sm text-gray-500">{error}</p>
-          <p className="mt-2 text-xs text-gray-400">Coba beberapa saat lagi.</p>
-        </Card>
+        <div className="rounded-2xl border border-rose-200 bg-rose-50 p-8 text-center dark:border-rose-400/20 dark:bg-rose-400/[0.06]">
+          <p className="font-bold text-rose-800 dark:text-rose-200">Data kemampuan belum dapat dimuat.</p>
+          <p className="mt-2 text-sm text-rose-700/70 dark:text-rose-200/60">Coba muat ulang halaman. Data belajarmu tetap tersimpan.</p>
+          <button onClick={() => window.location.reload()} className="mt-4 rounded-xl bg-rose-600 px-4 py-2 text-sm font-bold text-white">Muat ulang</button>
+        </div>
       </div>
     );
   }
@@ -119,194 +112,127 @@ export default function ProgresPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">Progresku</h1>
-        <p className="mt-1 text-sm text-gray-600 dark:text-slate-300">Pantau perjalanan belajarmu</p>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Perkembanganmu</h1>
+        <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Pantau perjalanan belajarmu dari waktu ke waktu.</p>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg flex items-center justify-center text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-950/40">
-              <BookOpen className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-xl font-bold">{totalAttempts}</p>
-              <p className="text-xs text-gray-500 dark:text-slate-400">Soal Dijawab</p>
-            </div>
+      <section className="overflow-hidden rounded-3xl border border-violet-200/70 bg-gradient-to-br from-violet-50 via-white to-cyan-50 p-6 shadow-sm dark:border-white/10 dark:from-[#111a32] dark:via-[#10182d] dark:to-[#0d2138]">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="inline-flex items-center gap-2 text-violet-700 dark:text-violet-300">
+            <Sparkles size={17} />
+            <span className="text-[10px] font-black uppercase tracking-[.18em]">Gambaran kemampuan</span>
           </div>
-        </Card>
+          {baseline?.status === "DONE" && (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1 text-[11px] font-bold text-emerald-700 dark:text-emerald-300">
+              <CheckCircle2 size={13} /> Tes awal selesai
+            </span>
+          )}
+        </div>
+        <h2 className="mt-2 text-xl font-black text-slate-950 dark:text-white">Kemampuanmu mulai terbaca.</h2>
+        <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300/75">
+          Hasil tes awal menjadi titik awal. Setiap latihan berikutnya akan menambah bukti sehingga gambaran kemampuanmu makin akurat.
+        </p>
 
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg flex items-center justify-center text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40">
-              <TrendingUp className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-xl font-bold">{overallAccuracy}%</p>
-              <p className="text-xs text-gray-500 dark:text-slate-400">Akurasi</p>
-            </div>
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-2xl bg-white/75 p-4 dark:bg-white/[.05]">
+            <BookOpen className="h-4 w-4 text-violet-500" />
+            <p className="mt-2 text-2xl font-black text-slate-950 dark:text-white">{totalAttempts}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Jawaban tercatat</p>
           </div>
-        </Card>
+          <div className="rounded-2xl bg-white/75 p-4 dark:bg-white/[.05]">
+            <Target className="h-4 w-4 text-cyan-500" />
+            <p className="mt-2 text-2xl font-black text-slate-950 dark:text-white">{withEvidence.length}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Kemampuan terukur</p>
+          </div>
+          <div className="rounded-2xl bg-white/75 p-4 dark:bg-white/[.05]">
+            <TrendingUp className="h-4 w-4 text-emerald-500" />
+            <p className="mt-2 text-2xl font-black text-slate-950 dark:text-white">{overallAccuracy === null ? "—" : \`\${overallAccuracy}%\`}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Ketepatan keseluruhan</p>
+          </div>
+          <div className="rounded-2xl bg-white/75 p-4 dark:bg-white/[.05]">
+            <PenLine className="h-4 w-4 text-fuchsia-500" />
+            <p className="mt-2 text-lg font-black text-slate-950 dark:text-white">{writingLabel(baseline?.result?.writing?.level)}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Kemampuan menulis</p>
+          </div>
+        </div>
+      </section>
 
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg flex items-center justify-center text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40">
-              <Target className="h-5 w-5" />
-            </div>
+      {baseline?.status === "DONE" && (
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-slate-900/50">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="text-xl font-bold">{kemampuansWithEvidence.length}</p>
-              <p className="text-xs text-gray-500 dark:text-slate-400">Kemampuan Terukur</p>
+              <h2 className="font-bold text-slate-900 dark:text-white">Hasil tes awal</h2>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                {baseline.answeredCount ?? 0} dari {baseline.totalQuestions ?? 0} soal objektif selesai, ditambah satu tugas menulis.
+              </p>
             </div>
+            <Link href="/murid/tes-awal" className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 dark:border-white/10 dark:text-white/80 dark:hover:bg-white/5">
+              Lihat hasil <ChevronRight size={14} />
+            </Link>
           </div>
-        </Card>
-
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg flex items-center justify-center text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/40">
-              <Flame className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-xl font-bold">{improvingCount}</p>
-              <p className="text-xs text-gray-500 dark:text-slate-400">Meningkat</p>
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* Diagnostic Journey */}
-      {diagnostic && (
-        <Card className="relative overflow-hidden border-violet-200/70 bg-gradient-to-br from-violet-50 via-white to-cyan-50 p-6 dark:border-white/10 dark:from-[#111a32] dark:via-[#10182d] dark:to-[#0d2138]">
-          <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-violet-400/15 blur-3xl" />
-          <div className="relative">
-            <div className="flex items-center gap-2 text-violet-700 dark:text-violet-300"><Sparkles size={17}/><span className="text-[10px] font-black uppercase tracking-[.18em]">Gambaran Kemampuan</span></div>
-            <h2 className="mt-2 text-xl font-black text-slate-950 dark:text-white">Kemampuanmu mulai terbaca.</h2>
-            <p className="mt-1 text-sm text-slate-600 dark:text-slate-300/75">Hasil tes awal menjadi titik awal. Setiap latihan berikutnya akan menambah bukti sehingga gambaran kemampuanmu makin akurat.</p>
-            <div className="mt-5 grid gap-3 sm:grid-cols-3">
-              <div className="rounded-2xl bg-white/70 p-4 dark:bg-white/[.05]"><p className="text-2xl font-black text-slate-950 dark:text-white">{diagnostic.activeDays}</p><p className="text-xs text-slate-500 dark:text-slate-400">hari belajar</p></div>
-              <div className="rounded-2xl bg-white/70 p-4 dark:bg-white/[.05]"><p className="text-2xl font-black text-slate-950 dark:text-white">{diagnostic.evidenceCount}</p><p className="text-xs text-slate-500 dark:text-slate-400">bukti belajar</p></div>
-              <div className="rounded-2xl bg-white/70 p-4 dark:bg-white/[.05]"><p className="text-2xl font-black text-slate-950 dark:text-white">{diagnostic.writingCount}</p><p className="text-xs text-slate-500 dark:text-slate-400">latihan menulis</p></div>
-            </div>
-            {diagnostic.latestWritingPreview && <div className="mt-4 flex gap-3 rounded-2xl border border-fuchsia-200/70 bg-fuchsia-50/70 p-4 dark:border-fuchsia-300/10 dark:bg-fuchsia-400/[.06]"><PenLine className="mt-0.5 h-4 w-4 shrink-0 text-fuchsia-500"/><div><p className="text-xs font-black text-fuchsia-700 dark:text-fuchsia-300">Tulisan terakhirmu</p><p className="mt-1 text-sm leading-5 text-slate-600 dark:text-slate-300/75">{diagnostic.latestWritingPreview}</p></div></div>}
-          </div>
-        </Card>
+        </section>
       )}
 
-      {/* Skill Overview */}
-      {hasEvidence ? (
-        <div className="grid gap-6 md:grid-cols-2">
-          {/* Skill Progress */}
-          <Card className="p-6">
-            <div className="flex items-center gap-2 mb-4">
+      {withEvidence.length > 0 ? (
+        <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-slate-900/50">
+            <div className="mb-5 flex items-center gap-2">
               <BarChart3 size={18} className="text-violet-500" />
-              <h2 className="font-semibold">Kemampuan</h2>
+              <h2 className="font-bold text-slate-900 dark:text-white">Kemampuan bahasa</h2>
             </div>
-            <div className="space-y-4">
-              {kemampuansWithEvidence.slice(0, 5).map((kemampuan) => (
-                <div key={kemampuan.kemampuan}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium">{SKILL_LABELS[kemampuan.kemampuan] || kemampuan.kemampuan}</span>
-                    <span className="text-sm text-gray-500">{Math.round((kemampuan.accuracy ?? 0) * 100)}%</span>
+            <div className="space-y-5">
+              {orderedSkills.map((skill) => {
+                const has = skill.attemptCount > 0 && skill.accuracy !== null;
+                const value = has ? Math.round((skill.accuracy ?? 0) * 100) : 0;
+                return (
+                  <div key={skill.skill}>
+                    <div className="mb-1.5 flex items-center justify-between gap-3">
+                      <span className="text-sm font-semibold text-slate-800 dark:text-white/90">{LABEL[skill.skill]}</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">{has ? \`\${value}%\` : "Belum ada bukti"}</span>
+                    </div>
+                    <div className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                      <div className="h-full rounded-full bg-gradient-to-r from-violet-500 to-purple-500 transition-all duration-500" style={{ width: \`\${value}%\` }} />
+                    </div>
+                    <div className="mt-1.5 flex items-center justify-between text-[10px] text-slate-400">
+                      <span>{has ? TREND[skill.trend] : "Belum ada data"}</span>
+                      <span>{skill.attemptCount > 0 ? \`\${skill.attemptCount} jawaban\` : "Belum berlatih"}</span>
+                    </div>
                   </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-violet-500 to-purple-500 transition-all duration-500"
-                      style={{ width: `${(kemampuan.accuracy ?? 0) * 100}%` }}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between mt-1">
-                    <span className="text-[10px] text-gray-400">{TREND_LABELS[kemampuan.trend]}</span>
-                    <span className="text-[10px] text-gray-400">{kemampuan.attemptCount} soal</span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
-          </Card>
+          </div>
 
-          {/* Gambarans */}
-          <Card className="p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Star size={18} className="text-amber-500" />
-              <h2 className="font-semibold">Gambaran</h2>
+          <aside className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-slate-900/50">
+            <div className="mb-4 flex items-center gap-2">
+              <Flame size={18} className="text-amber-500" />
+              <h2 className="font-bold text-slate-900 dark:text-white">Yang perlu kamu tahu</h2>
             </div>
-            <div className="space-y-4">
-              {/* Strongest Skill */}
-              {strongestSkill && (
-                <div className="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/30">
-                  <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 mb-1">
-                    💪 Kemampuan yang menonjol
-                  </p>
-                  <p className="text-sm">
-                    <span className="font-semibold">{SKILL_LABELS[strongestSkill.kemampuan]}</span> adalah
-                    kemampuan terkuatmu ({Math.round((strongestSkill.accuracy ?? 0) * 100)}%)
-                  </p>
-                </div>
-              )}
-
-              {/* Weakest Skill */}
-              {weakestSkill && weakestSkill.kemampuan !== strongestSkill?.kemampuan && (
-                <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30">
-                  <p className="text-xs font-semibold text-amber-700 dark:text-amber-300 mb-1">
-                    🎯 Fokus Latihan
-                  </p>
-                  <p className="text-sm">
-                    <span className="font-semibold">{SKILL_LABELS[weakestSkill.kemampuan]}</span> masih bisa
-                    berkembang ({Math.round((weakestSkill.accuracy ?? 0) * 100)}%)
-                  </p>
-                </div>
-              )}
-
-              {/* Trend Summary */}
-              {improvingCount > 0 && (
-                <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-950/30">
-                  <p className="text-xs font-semibold text-blue-700 dark:text-blue-300 mb-1">📈 Perkembangan</p>
-                  <p className="text-sm">
-                    {improvingCount} kemampuan menunjukkan perkembangan positif
-                  </p>
-                </div>
-              )}
-
-              {/* Declining Warning */}
-              {decliningCount > 0 && (
-                <div className="p-3 rounded-lg bg-red-50 dark:bg-red-950/30">
-                  <p className="text-xs font-semibold text-red-700 dark:text-red-300 mb-1">⚠️ Perlu Perhatian</p>
-                  <p className="text-sm">
-                    {decliningCount} kemampuan perlu perhatian lebih
-                  </p>
-                </div>
-              )}
-
-              {/* Overall Status */}
-              <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
-                <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">📊 Gambaran Umum</p>
-                <p className="text-sm">
-                  {overallAccuracy >= 70
-                    ? "Terus bertumbuh! Kemampuanmu sudah cukup baik."
-                    : overallAccuracy >= 50
-                      ? "Mulai menguat. Terus berlatih!"
-                      : "Terus berlatih. Kami sedang mengenali pola belajarmu."}
+            <div className="space-y-3">
+              <div className="rounded-xl bg-violet-50 p-4 dark:bg-violet-400/[0.06]">
+                <p className="text-xs font-bold text-violet-700 dark:text-violet-300">Titik awal</p>
+                <p className="mt-1 text-sm leading-5 text-slate-600 dark:text-slate-300">Hasil tes awal adalah gambaran awal, bukan penilaian akhir kemampuanmu.</p>
+              </div>
+              <div className="rounded-xl bg-emerald-50 p-4 dark:bg-emerald-400/[0.06]">
+                <p className="text-xs font-bold text-emerald-700 dark:text-emerald-300">Perkembangan</p>
+                <p className="mt-1 text-sm leading-5 text-slate-600 dark:text-slate-300">
+                  {improving > 0 ? \`\${improving} kemampuan menunjukkan arah perkembangan.\` : "Arah perkembangan akan terlihat setelah bukti latihan terkumpul lebih banyak."}
                 </p>
               </div>
+              <div className="rounded-xl bg-amber-50 p-4 dark:bg-amber-400/[0.06]">
+                <p className="text-xs font-bold text-amber-700 dark:text-amber-300">Ketelitian data</p>
+                <p className="mt-1 text-sm leading-5 text-slate-600 dark:text-slate-300">Semakin sering kamu belajar, semakin kuat dasar pembacaan kemampuanmu.</p>
+              </div>
             </div>
-          </Card>
-        </div>
+          </aside>
+        </section>
       ) : (
-        /* No Evidence State */
-        <Card className="p-6 text-center">
-          <BarChart3 size={32} className="mx-auto text-gray-300 dark:text-gray-600" />
-          <h3 className="mt-3 font-semibold text-gray-700 dark:text-gray-300">Mulai Belajar</h3>
-          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 max-w-md mx-auto">
-            Mulai beberapa latihan dulu. Setelah kami mengenal pola belajarmu, perkembanganmu akan terlihat di
-            sini.
-          </p>
-          <a
-            href="/arena/jalur-cerdas"
-            className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-violet-500 text-white text-sm font-semibold hover:bg-violet-600 transition-colors"
-          >
-            Mulai Latihan
-            <span className="text-xs">→</span>
-          </a>
-        </Card>
+        <section className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm dark:border-white/10 dark:bg-slate-900/50">
+          <BarChart3 size={32} className="mx-auto text-violet-300" />
+          <h3 className="mt-3 font-bold text-slate-800 dark:text-white">Belum ada bukti belajar</h3>
+          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500 dark:text-slate-400">Mulai dari tes awal atau lanjutkan latihan. Setiap jawaban yang kamu kerjakan akan membantu membentuk gambaran perkembanganmu.</p>
+          <Link href="/murid/tes-awal" className="mt-5 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-violet-700">Buka Tes Awal <ChevronRight size={15} /></Link>
+        </section>
       )}
     </div>
   );
