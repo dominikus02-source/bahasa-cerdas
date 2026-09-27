@@ -73,6 +73,14 @@ const THEME_META: Record<Theme, { label:string; icon: typeof Cloud }> = {
   laut: { label:"Laut", icon:Waves },
 }
 
+
+const ZELBY_FRAMES=[
+  "/junior/karakter/zelby_wave.webp",
+  "/junior/karakter/zelby_happy.webp",
+  "/junior/karakter/zelby_thinking.webp",
+  "/junior/karakter/zelby_idle.webp",
+]
+
 const shuffle = <T,>(items:T[]) => {
   const a=[...items]
   for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
@@ -110,12 +118,6 @@ export default function BermainKataGame() {
   const pool=useMemo(()=>levelWords(level),[level])
   const maxRounds=8
   const t=THEMES[theme]
-  const zelbyFrames=[
-    "/junior/karakter/zelby_wave.webp",
-    "/junior/karakter/zelby_happy.webp",
-    "/junior/karakter/zelby_thinking.webp",
-    "/junior/karakter/zelby_idle.webp",
-  ]
 
   useEffect(()=>{
     try {
@@ -127,7 +129,7 @@ export default function BermainKataGame() {
 
   useEffect(()=>{
     if(mode) return
-    const timer=window.setInterval(()=>setZelbyFrame((value)=>(value+1)%zelbyFrames.length),2200)
+    const timer=window.setInterval(()=>setZelbyFrame((value)=>(value+1)%ZELBY_FRAMES.length),2200)
     return ()=>window.clearInterval(timer)
   },[mode])
 
@@ -255,7 +257,7 @@ export default function BermainKataGame() {
                 <div className="absolute bottom-2 h-8 w-56 rounded-full bg-slate-900/10 blur-xl" />
                 <img
                   key={zelbyFrame}
-                  src={zelbyFrames[zelbyFrame]}
+                  src={ZELBY_FRAMES[zelbyFrame]}
                   alt="Zelby menemani permainan"
                   className="relative z-10 h-[225px] w-auto object-contain drop-shadow-[0_18px_14px_rgba(15,23,42,.14)] sm:h-[255px]"
                   style={{animation:"bkZelbyEnter .65s cubic-bezier(.2,.8,.2,1) both"}}
