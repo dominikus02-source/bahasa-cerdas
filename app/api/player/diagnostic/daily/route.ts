@@ -105,7 +105,7 @@ async function buildQuestions(userId: string): Promise<StateQuestion[]> {
 
   const recent = await db.learningEvidence.findMany({
     where: {
-      user.id,
+      userId: user.id,
       source: { in: ["BANK_SOAL", DAILY_DIAGNOSTIC_SOURCE] },
       answeredAt: { gte: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000) },
       questionId: { in: ids },
@@ -251,7 +251,7 @@ export async function POST(req: NextRequest) {
 
     const session = await db.adaptivePracticeSession.create({
       data: {
-        user.id,
+        userId: user.id,
         source: DAILY_DIAGNOSTIC_SOURCE,
         selectionVersion: DAILY_DIAGNOSTIC_VERSION,
         targetSkill: null,
