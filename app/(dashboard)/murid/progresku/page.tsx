@@ -40,7 +40,7 @@ const MASTERY_LABELS: Record<string, string> = {
 };
 
 export default function ProgresPage() {
-  const [skills, setSkills] = useState<LearnerSkillState[]>([]);
+  const [kemampuans, setSkills] = useState<LearnerSkillState[]>([]);
   const [diagnostic, setDiagnostic] = useState<{ evidenceCount:number; activeDays:number; writingCount:number; latestWritingPreview:string|null } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -51,7 +51,7 @@ export default function ProgresPage() {
         const res = await fetch("/api/player/learner-state");
         if (!res.ok) throw new Error("Gagal memuat data");
         const data = await res.json();
-        setSkills(data.skills || []);
+        setSkills(data.kemampuans || []);
       } catch {
         setError("Gagal memuat data kemampuan");
       } finally {
@@ -61,26 +61,26 @@ export default function ProgresPage() {
     fetchSkills();
   }, []);
 
-  // Filter skills with evidence
-  const skillsWithEvidence = skills.filter((s) => s.attemptCount >= 3 && s.accuracy !== null);
-  const hasEvidence = skillsWithEvidence.length > 0;
+  // Filter kemampuans with evidence
+  const kemampuansWithEvidence = kemampuans.filter((s) => s.attemptCount >= 3 && s.accuracy !== null);
+  const hasEvidence = kemampuansWithEvidence.length > 0;
 
   // Calculate stats from real data
-  const totalAttempts = skills.reduce((sum, s) => sum + s.attemptCount, 0);
-  const totalCorrect = skills.reduce((sum, s) => sum + s.correctCount, 0);
+  const totalAttempts = kemampuans.reduce((sum, s) => sum + s.attemptCount, 0);
+  const totalCorrect = kemampuans.reduce((sum, s) => sum + s.correctCount, 0);
   const overallAccuracy = totalAttempts > 0 ? Math.round((totalCorrect / totalAttempts) * 100) : 0;
 
   // Find strongest and weakest
   const strongestSkill = hasEvidence
-    ? skillsWithEvidence.sort((a, b) => (b.accuracy ?? 0) - (a.accuracy ?? 0))[0]
+    ? kemampuansWithEvidence.sort((a, b) => (b.accuracy ?? 0) - (a.accuracy ?? 0))[0]
     : null;
   const weakestSkill = hasEvidence
-    ? skillsWithEvidence.sort((a, b) => (a.accuracy ?? 0) - (b.accuracy ?? 0))[0]
+    ? kemampuansWithEvidence.sort((a, b) => (a.accuracy ?? 0) - (b.accuracy ?? 0))[0]
     : null;
 
-  // Count skills by trend
-  const improvingCount = skills.filter((s) => s.trend === "IMPROVING").length;
-  const decliningCount = skills.filter((s) => s.trend === "DECLINING").length;
+  // Count kemampuans by trend
+  const improvingCount = kemampuans.filter((s) => s.trend === "IMPROVING").length;
+  const decliningCount = kemampuans.filter((s) => s.trend === "DECLINING").length;
 
   if (loading) {
     return (
@@ -155,8 +155,8 @@ export default function ProgresPage() {
               <Target className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-xl font-bold">{skillsWithEvidence.length}</p>
-              <p className="text-xs text-gray-500 dark:text-slate-400">Skill Terukur</p>
+              <p className="text-xl font-bold">{kemampuansWithEvidence.length}</p>
+              <p className="text-xs text-gray-500 dark:text-slate-400">Kemampuan Terukur</p>
             </div>
           </div>
         </Card>
@@ -179,13 +179,13 @@ export default function ProgresPage() {
         <Card className="relative overflow-hidden border-violet-200/70 bg-gradient-to-br from-violet-50 via-white to-cyan-50 p-6 dark:border-white/10 dark:from-[#111a32] dark:via-[#10182d] dark:to-[#0d2138]">
           <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-violet-400/15 blur-3xl" />
           <div className="relative">
-            <div className="flex items-center gap-2 text-violet-700 dark:text-violet-300"><Sparkles size={17}/><span className="text-[10px] font-black uppercase tracking-[.18em]">Jejak Diagnostik</span></div>
-            <h2 className="mt-2 text-xl font-black text-slate-950 dark:text-white">Kemampuanmu terus dikenali.</h2>
-            <p className="mt-1 text-sm text-slate-600 dark:text-slate-300/75">Bukan satu ujian. Setiap quest harian menambah bukti baru ke profilmu.</p>
+            <div className="flex items-center gap-2 text-violet-700 dark:text-violet-300"><Sparkles size={17}/><span className="text-[10px] font-black uppercase tracking-[.18em]">Gambaran Kemampuan</span></div>
+            <h2 className="mt-2 text-xl font-black text-slate-950 dark:text-white">Kemampuanmu mulai terbaca.</h2>
+            <p className="mt-1 text-sm text-slate-600 dark:text-slate-300/75">Hasil tes awal menjadi titik awal. Setiap latihan berikutnya akan menambah bukti sehingga gambaran kemampuanmu makin akurat.</p>
             <div className="mt-5 grid gap-3 sm:grid-cols-3">
-              <div className="rounded-2xl bg-white/70 p-4 dark:bg-white/[.05]"><p className="text-2xl font-black text-slate-950 dark:text-white">{diagnostic.activeDays}</p><p className="text-xs text-slate-500 dark:text-slate-400">hari terukur</p></div>
-              <div className="rounded-2xl bg-white/70 p-4 dark:bg-white/[.05]"><p className="text-2xl font-black text-slate-950 dark:text-white">{diagnostic.evidenceCount}</p><p className="text-xs text-slate-500 dark:text-slate-400">bukti kemampuan</p></div>
-              <div className="rounded-2xl bg-white/70 p-4 dark:bg-white/[.05]"><p className="text-2xl font-black text-slate-950 dark:text-white">{diagnostic.writingCount}</p><p className="text-xs text-slate-500 dark:text-slate-400">tantangan menulis</p></div>
+              <div className="rounded-2xl bg-white/70 p-4 dark:bg-white/[.05]"><p className="text-2xl font-black text-slate-950 dark:text-white">{diagnostic.activeDays}</p><p className="text-xs text-slate-500 dark:text-slate-400">hari belajar</p></div>
+              <div className="rounded-2xl bg-white/70 p-4 dark:bg-white/[.05]"><p className="text-2xl font-black text-slate-950 dark:text-white">{diagnostic.evidenceCount}</p><p className="text-xs text-slate-500 dark:text-slate-400">bukti belajar</p></div>
+              <div className="rounded-2xl bg-white/70 p-4 dark:bg-white/[.05]"><p className="text-2xl font-black text-slate-950 dark:text-white">{diagnostic.writingCount}</p><p className="text-xs text-slate-500 dark:text-slate-400">latihan menulis</p></div>
             </div>
             {diagnostic.latestWritingPreview && <div className="mt-4 flex gap-3 rounded-2xl border border-fuchsia-200/70 bg-fuchsia-50/70 p-4 dark:border-fuchsia-300/10 dark:bg-fuchsia-400/[.06]"><PenLine className="mt-0.5 h-4 w-4 shrink-0 text-fuchsia-500"/><div><p className="text-xs font-black text-fuchsia-700 dark:text-fuchsia-300">Tulisan terakhirmu</p><p className="mt-1 text-sm leading-5 text-slate-600 dark:text-slate-300/75">{diagnostic.latestWritingPreview}</p></div></div>}
           </div>
@@ -202,55 +202,55 @@ export default function ProgresPage() {
               <h2 className="font-semibold">Kemampuan</h2>
             </div>
             <div className="space-y-4">
-              {skillsWithEvidence.slice(0, 5).map((skill) => (
-                <div key={skill.skill}>
+              {kemampuansWithEvidence.slice(0, 5).map((kemampuan) => (
+                <div key={kemampuan.kemampuan}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium">{SKILL_LABELS[skill.skill] || skill.skill}</span>
-                    <span className="text-sm text-gray-500">{Math.round((skill.accuracy ?? 0) * 100)}%</span>
+                    <span className="text-sm font-medium">{SKILL_LABELS[kemampuan.kemampuan] || kemampuan.kemampuan}</span>
+                    <span className="text-sm text-gray-500">{Math.round((kemampuan.accuracy ?? 0) * 100)}%</span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
                     <div
                       className="h-full rounded-full bg-gradient-to-r from-violet-500 to-purple-500 transition-all duration-500"
-                      style={{ width: `${(skill.accuracy ?? 0) * 100}%` }}
+                      style={{ width: `${(kemampuan.accuracy ?? 0) * 100}%` }}
                     />
                   </div>
                   <div className="flex items-center justify-between mt-1">
-                    <span className="text-[10px] text-gray-400">{TREND_LABELS[skill.trend]}</span>
-                    <span className="text-[10px] text-gray-400">{skill.attemptCount} soal</span>
+                    <span className="text-[10px] text-gray-400">{TREND_LABELS[kemampuan.trend]}</span>
+                    <span className="text-[10px] text-gray-400">{kemampuan.attemptCount} soal</span>
                   </div>
                 </div>
               ))}
             </div>
           </Card>
 
-          {/* Insights */}
+          {/* Gambarans */}
           <Card className="p-6">
             <div className="flex items-center gap-2 mb-4">
               <Star size={18} className="text-amber-500" />
-              <h2 className="font-semibold">Insight</h2>
+              <h2 className="font-semibold">Gambaran</h2>
             </div>
             <div className="space-y-4">
               {/* Strongest Skill */}
               {strongestSkill && (
                 <div className="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/30">
                   <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 mb-1">
-                    💪 Kekuatan
+                    💪 Kemampuan yang menonjol
                   </p>
                   <p className="text-sm">
-                    <span className="font-semibold">{SKILL_LABELS[strongestSkill.skill]}</span> adalah
+                    <span className="font-semibold">{SKILL_LABELS[strongestSkill.kemampuan]}</span> adalah
                     kemampuan terkuatmu ({Math.round((strongestSkill.accuracy ?? 0) * 100)}%)
                   </p>
                 </div>
               )}
 
               {/* Weakest Skill */}
-              {weakestSkill && weakestSkill.skill !== strongestSkill?.skill && (
+              {weakestSkill && weakestSkill.kemampuan !== strongestSkill?.kemampuan && (
                 <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30">
                   <p className="text-xs font-semibold text-amber-700 dark:text-amber-300 mb-1">
                     🎯 Fokus Latihan
                   </p>
                   <p className="text-sm">
-                    <span className="font-semibold">{SKILL_LABELS[weakestSkill.skill]}</span> masih bisa
+                    <span className="font-semibold">{SKILL_LABELS[weakestSkill.kemampuan]}</span> masih bisa
                     berkembang ({Math.round((weakestSkill.accuracy ?? 0) * 100)}%)
                   </p>
                 </div>
@@ -261,7 +261,7 @@ export default function ProgresPage() {
                 <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-950/30">
                   <p className="text-xs font-semibold text-blue-700 dark:text-blue-300 mb-1">📈 Perkembangan</p>
                   <p className="text-sm">
-                    {improvingCount} skill menunjukkan perkembangan positif
+                    {improvingCount} kemampuan menunjukkan perkembangan positif
                   </p>
                 </div>
               )}
@@ -271,14 +271,14 @@ export default function ProgresPage() {
                 <div className="p-3 rounded-lg bg-red-50 dark:bg-red-950/30">
                   <p className="text-xs font-semibold text-red-700 dark:text-red-300 mb-1">⚠️ Perlu Perhatian</p>
                   <p className="text-sm">
-                    {decliningCount} skill perlu perhatian lebih
+                    {decliningCount} kemampuan perlu perhatian lebih
                   </p>
                 </div>
               )}
 
               {/* Overall Status */}
               <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
-                <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">📊 Status Umum</p>
+                <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">📊 Gambaran Umum</p>
                 <p className="text-sm">
                   {overallAccuracy >= 70
                     ? "Terus bertumbuh! Kemampuanmu sudah cukup baik."
