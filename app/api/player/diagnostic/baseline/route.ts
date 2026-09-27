@@ -199,6 +199,24 @@ async function selectBaselineQuestions(seed: string): Promise<BaselineQuestion[]
     }
   }
 
+  // Tambahkan butir objektif ekstra sampai total baseline tercapai.
+  // Hanya dari kompetensi dengan bank aman; Menulis tetap diukur langsung.
+  const objectiveSkills = BASELINE_BLUEPRINT.map((entry) => entry.skill);
+  while (selected.length < BASELINE_SIZE) {
+    const counts = new Map(objectiveSkills.map((skill) => [skill, selected.filter((q) => q.skill === skill).length]));
+    const nextCandidates = candidates
+      .filter((q) => objectiveSkills.includes(q.skill as (typeof objectiveSkills)[number]) && !used.has(q.id))
+      .sort((a, b) => {
+        const countDiff = (counts.get(a.skill) ?? 0) - (counts.get(b.skill) ?? 0);
+        if (countDiff !== 0) return countDiff;
+        return stableHash(seed + ":extra:" + a.id) - stableHash(seed + ":extra:" + b.id);
+      });
+    const next = nextCandidates[0];
+    if (!next) break;
+    selected.push(next);
+    used.add(next.id);
+  }
+
   return selected;
 }
 
