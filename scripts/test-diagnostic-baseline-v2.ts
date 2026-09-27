@@ -9,7 +9,6 @@ check("baseline has 10 objective items",()=>BASELINE_SIZE===10);
 check("five competencies represented",()=>BASELINE_BLUEPRINT.length===4 && ["READING","GRAMMAR","VOCABULARY","LITERATURE"].every(x=>BASELINE_BLUEPRINT.some(item=>item.skill===x)) && BASELINE_SKILLS.includes("WRITING"));
 check("objective blueprint matches live safe-bank distribution",()=>JSON.stringify(BASELINE_BLUEPRINT)===JSON.stringify([{skill:"READING",count:3},{skill:"GRAMMAR",count:2},{skill:"VOCABULARY",count:3},{skill:"LITERATURE",count:2}]));
 check("blueprint covers 10 core objective slots",()=>BASELINE_BLUEPRINT.reduce((n,x)=>n+x.count,0)===10);
-check("baseline uses only the dedicated objective pool",()=>BASELINE_SIZE===10 && BASELINE_BLUEPRINT.reduce((n,x)=>n+x.count,0)===10 && baselineRoute.includes("BASELINE_QUESTION_BANK"));
 check("writing task exists",()=>BASELINE_WRITING_TASK.minWords>=80&&BASELINE_WRITING_TASK.maxWords>=BASELINE_WRITING_TASK.minWords);
 check("writing rubric has multiple dimensions",()=>BASELINE_WRITING_TASK.rubric.length>=5);
 check("word counter handles whitespace",()=>baselineWordCount(" satu\n dua   tiga ")===3);
@@ -28,6 +27,7 @@ const route=fs.readFileSync("app/api/player/diagnostic/baseline/route.ts","utf8"
 const ui=fs.readFileSync("app/(dashboard)/murid/tes-awal/page.tsx","utf8");
 const mentor=fs.readFileSync("lib/ai-gateway/mentor-context.ts","utf8");
 const baselineRoute=route;
+check("baseline uses only the dedicated objective pool",()=>BASELINE_SIZE===10 && BASELINE_BLUEPRINT.reduce((n,x)=>n+x.count,0)===10 && baselineRoute.includes("BASELINE_QUESTION_BANK"));
 const adaptiveHome=fs.readFileSync("app/api/player/adaptive-practice/route.ts","utf8");
 const hero=fs.readFileSync("components/student-home/StudentHomeHero.tsx","utf8");
 check("baseline route does not depend on Jalur Cerdas",()=>!route.includes("/arena/jalur-cerdas")&&!route.includes("selectAdaptivePractice"));
