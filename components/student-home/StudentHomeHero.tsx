@@ -183,25 +183,13 @@ export function StudentHomeHero() {
   const actionLoading = myDayLoading;
   const ctaBusy = starting;
 
-  async function startDiagnosticSession() {
-    setStarting(true);
+  function startDiagnosticSession() {
     setStartError(null);
-    try {
-      const response = await fetch("/api/player/diagnostic", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "start", size: myDay?.sessionSize || undefined }),
-      });
-      const res = await response.json();
-      if (!response.ok || res.mode !== "DIAGNOSTIC" || typeof res.sessionId !== "string") {
-        throw new Error(res.error || "Tes awal belum tersedia");
-      }
-      router.push(`/arena/diagnostic/${res.sessionId}`);
-    } catch {
-      setStartError("Tes awal belum bisa dimulai. Coba lagi sebentar.");
-    } finally {
-      setStarting(false);
+    if (myDay?.assessmentState === "BASELINE_IN_PROGRESS" && myDay.inProgressSessionId) {
+      router.push(`/arena/diagnostic/${myDay.inProgressSessionId}`);
+      return;
     }
+    router.push("/arena/diagnostic/start");
   }
 
   async function startAdaptiveSession() {
