@@ -40,7 +40,8 @@ const MASTERY_LABELS: Record<string, string> = {
 };
 
 export default function ProgresPage() {
-  const [skills, setSkills] = useState<LearnerSkillState[]>([]);\n  const [diagnostic, setDiagnostic] = useState<{ evidenceCount:number; activeDays:number; writingCount:number; latestWritingPreview:string|null } | null>(null);
+  const [skills, setSkills] = useState<LearnerSkillState[]>([]);
+  const [diagnostic, setDiagnostic] = useState<{ evidenceCount:number; activeDays:number; writingCount:number; latestWritingPreview:string|null } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -173,7 +174,25 @@ export default function ProgresPage() {
         </Card>
       </div>
 
-      {/* Diagnostic Journey */}\n      {diagnostic && (\n        <Card className="relative overflow-hidden border-violet-200/70 bg-gradient-to-br from-violet-50 via-white to-cyan-50 p-6 dark:border-white/10 dark:from-[#111a32] dark:via-[#10182d] dark:to-[#0d2138]">\n          <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-violet-400/15 blur-3xl" />\n          <div className="relative">\n            <div className="flex items-center gap-2 text-violet-700 dark:text-violet-300"><Sparkles size={17}/><span className="text-[10px] font-black uppercase tracking-[.18em]">Jejak Diagnostik</span></div>\n            <h2 className="mt-2 text-xl font-black text-slate-950 dark:text-white">Kemampuanmu terus dikenali.</h2>\n            <p className="mt-1 text-sm text-slate-600 dark:text-slate-300/75">Bukan satu ujian. Setiap quest harian menambah bukti baru ke profilmu.</p>\n            <div className="mt-5 grid gap-3 sm:grid-cols-3">\n              <div className="rounded-2xl bg-white/70 p-4 dark:bg-white/[.05]"><p className="text-2xl font-black text-slate-950 dark:text-white">{diagnostic.activeDays}</p><p className="text-xs text-slate-500 dark:text-slate-400">hari terukur</p></div>\n              <div className="rounded-2xl bg-white/70 p-4 dark:bg-white/[.05]"><p className="text-2xl font-black text-slate-950 dark:text-white">{diagnostic.evidenceCount}</p><p className="text-xs text-slate-500 dark:text-slate-400">bukti kemampuan</p></div>\n              <div className="rounded-2xl bg-white/70 p-4 dark:bg-white/[.05]"><p className="text-2xl font-black text-slate-950 dark:text-white">{diagnostic.writingCount}</p><p className="text-xs text-slate-500 dark:text-slate-400">tantangan menulis</p></div>\n            </div>\n            {diagnostic.latestWritingPreview && <div className="mt-4 flex gap-3 rounded-2xl border border-fuchsia-200/70 bg-fuchsia-50/70 p-4 dark:border-fuchsia-300/10 dark:bg-fuchsia-400/[.06]"><PenLine className="mt-0.5 h-4 w-4 shrink-0 text-fuchsia-500"/><div><p className="text-xs font-black text-fuchsia-700 dark:text-fuchsia-300">Tulisan terakhirmu</p><p className="mt-1 text-sm leading-5 text-slate-600 dark:text-slate-300/75">{diagnostic.latestWritingPreview}</p></div></div>}\n          </div>\n        </Card>\n      )}\n\n      {/* Skill Overview */}
+      {/* Diagnostic Journey */}
+      {diagnostic && (
+        <Card className="relative overflow-hidden border-violet-200/70 bg-gradient-to-br from-violet-50 via-white to-cyan-50 p-6 dark:border-white/10 dark:from-[#111a32] dark:via-[#10182d] dark:to-[#0d2138]">
+          <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-violet-400/15 blur-3xl" />
+          <div className="relative">
+            <div className="flex items-center gap-2 text-violet-700 dark:text-violet-300"><Sparkles size={17}/><span className="text-[10px] font-black uppercase tracking-[.18em]">Jejak Diagnostik</span></div>
+            <h2 className="mt-2 text-xl font-black text-slate-950 dark:text-white">Kemampuanmu terus dikenali.</h2>
+            <p className="mt-1 text-sm text-slate-600 dark:text-slate-300/75">Bukan satu ujian. Setiap quest harian menambah bukti baru ke profilmu.</p>
+            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+              <div className="rounded-2xl bg-white/70 p-4 dark:bg-white/[.05]"><p className="text-2xl font-black text-slate-950 dark:text-white">{diagnostic.activeDays}</p><p className="text-xs text-slate-500 dark:text-slate-400">hari terukur</p></div>
+              <div className="rounded-2xl bg-white/70 p-4 dark:bg-white/[.05]"><p className="text-2xl font-black text-slate-950 dark:text-white">{diagnostic.evidenceCount}</p><p className="text-xs text-slate-500 dark:text-slate-400">bukti kemampuan</p></div>
+              <div className="rounded-2xl bg-white/70 p-4 dark:bg-white/[.05]"><p className="text-2xl font-black text-slate-950 dark:text-white">{diagnostic.writingCount}</p><p className="text-xs text-slate-500 dark:text-slate-400">tantangan menulis</p></div>
+            </div>
+            {diagnostic.latestWritingPreview && <div className="mt-4 flex gap-3 rounded-2xl border border-fuchsia-200/70 bg-fuchsia-50/70 p-4 dark:border-fuchsia-300/10 dark:bg-fuchsia-400/[.06]"><PenLine className="mt-0.5 h-4 w-4 shrink-0 text-fuchsia-500"/><div><p className="text-xs font-black text-fuchsia-700 dark:text-fuchsia-300">Tulisan terakhirmu</p><p className="mt-1 text-sm leading-5 text-slate-600 dark:text-slate-300/75">{diagnostic.latestWritingPreview}</p></div></div>}
+          </div>
+        </Card>
+      )}
+
+      {/* Skill Overview */}
       {hasEvidence ? (
         <div className="grid gap-6 md:grid-cols-2">
           {/* Skill Progress */}
