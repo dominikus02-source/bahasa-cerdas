@@ -16,7 +16,7 @@ export async function getLearnerState(userId: string): Promise<LearnerSkillState
       WITH ranked AS (
         SELECT
           e."id",
-          m."skill",
+          CASE WHEN e."source" = 'DIAGNOSTIC_BASELINE_V2' THEN e."skill" ELSE m."skill" END AS "skill",
           e."isCorrect",
           e."answeredAt",
           ROW_NUMBER() OVER (
@@ -24,13 +24,15 @@ export async function getLearnerState(userId: string): Promise<LearnerSkillState
             ORDER BY e."answeredAt" DESC, e."id" DESC
           ) AS "recentRank"
         FROM "LearningEvidence" e
-        INNER JOIN "QuestionMetadata" m
+        LEFT JOIN "QuestionMetadata" m
           ON m."questionId" = e."questionId"
-         AND (m."source" = e."source" OR e."source" IN ('DIAGNOSTIC_DAILY', 'DIAGNOSTIC_BASELINE_V2'))
+         AND m."source" = e."source"
         WHERE e."userId" = ${userId}
           AND e."isCorrect" IS NOT NULL
-          AND m."status" = 'APPROVED'
-          AND m."skill" IS NOT NULL
+          AND (
+            (e."source" = 'DIAGNOSTIC_BASELINE_V2' AND e."skill" IS NOT NULL)
+            OR (e."source" <> 'DIAGNOSTIC_BASELINE_V2' AND m."status" = 'APPROVED' AND m."skill" IS NOT NULL)
+          )
       )
       SELECT
         "skill",
