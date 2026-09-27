@@ -59,10 +59,10 @@ function isQuestionType(value: string): value is QuestionTypeId {
   return ["PILIHAN_GANDA", "BENAR_SALAH", "ISIAN_SINGKAT"].includes(value);
 }
 
-async function findTodaySession(user.id: string) {
+async function findTodaySession(userId: string) {
   const since = new Date(Date.now() - 36 * 60 * 60 * 1000);
   const rows = await db.adaptivePracticeSession.findMany({
-    where: { user.id, source: DAILY_DIAGNOSTIC_SOURCE, createdAt: { gte: since } },
+    where: { userId, source: DAILY_DIAGNOSTIC_SOURCE, createdAt: { gte: since } },
     orderBy: { createdAt: "desc" },
     take: 5,
   });
@@ -73,9 +73,9 @@ async function findTodaySession(user.id: string) {
   }) ?? null;
 }
 
-async function buildQuestions(user.id: string): Promise<StateQuestion[]> {
+async function buildQuestions(userId: string): Promise<StateQuestion[]> {
   const [states, metadataRows] = await Promise.all([
-    getLearnerState(user.id).catch(() => []),
+    getLearnerState(userId).catch(() => []),
     db.questionMetadata.findMany({
       where: {
         source: "BANK_SOAL",
