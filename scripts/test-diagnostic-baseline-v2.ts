@@ -5,11 +5,11 @@ function check(name:string, fn:()=>boolean){ try{ if(fn()){passed++;console.log(
 
 check("baseline version canonical",()=>BASELINE_VERSION==="2.0");
 check("baseline source isolated",()=>BASELINE_SOURCE==="DIAGNOSTIC_BASELINE_V2");
-check("baseline has 12 objective items",()=>BASELINE_SIZE===12);
+check("baseline has 10 objective items",()=>BASELINE_SIZE===10);
 check("five competencies represented",()=>BASELINE_BLUEPRINT.length===4 && ["READING","GRAMMAR","VOCABULARY","LITERATURE"].every(x=>BASELINE_BLUEPRINT.some(item=>item.skill===x)) && BASELINE_SKILLS.includes("WRITING"));
 check("objective blueprint matches live safe-bank distribution",()=>JSON.stringify(BASELINE_BLUEPRINT)===JSON.stringify([{skill:"READING",count:2},{skill:"GRAMMAR",count:3},{skill:"VOCABULARY",count:3},{skill:"LITERATURE",count:2}]));
 check("blueprint covers 10 core objective slots",()=>BASELINE_BLUEPRINT.reduce((n,x)=>n+x.count,0)===10);
-check("baseline fills two extra objective slots from safe bank",()=>BASELINE_SIZE===12 && BASELINE_BLUEPRINT.reduce((n,x)=>n+x.count,0)===10 && baselineRoute.includes("while (selected.length < BASELINE_SIZE)"));
+check("baseline uses only the live safe objective pool",()=>BASELINE_SIZE===10 && BASELINE_BLUEPRINT.reduce((n,x)=>n+x.count,0)===10 && !baselineRoute.includes("while (selected.length < BASELINE_SIZE)"));
 check("writing task exists",()=>BASELINE_WRITING_TASK.minWords>=80&&BASELINE_WRITING_TASK.maxWords>=BASELINE_WRITING_TASK.minWords);
 check("writing rubric has multiple dimensions",()=>BASELINE_WRITING_TASK.rubric.length>=5);
 check("word counter handles whitespace",()=>baselineWordCount(" satu\n dua   tiga ")===3);
