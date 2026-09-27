@@ -148,7 +148,7 @@ export default function ProgresPage() {
           </div>
           <div className="rounded-2xl bg-white/75 p-4 dark:bg-white/[.05]">
             <TrendingUp className="h-4 w-4 text-emerald-500" />
-            <p className="mt-2 text-2xl font-black text-slate-950 dark:text-white">{overallAccuracy === null ? "—" : \`${overallAccuracy}%\`}</p>
+            <p className="mt-2 text-2xl font-black text-slate-950 dark:text-white">{overallAccuracy === null ? "—" : `${overallAccuracy}%`}</p>
             <p className="text-xs text-slate-500 dark:text-slate-400">Ketepatan keseluruhan</p>
           </div>
           <div className="rounded-2xl bg-white/75 p-4 dark:bg-white/[.05]">
@@ -191,14 +191,14 @@ export default function ProgresPage() {
                   <div key={skill.skill}>
                     <div className="mb-1.5 flex items-center justify-between gap-3">
                       <span className="text-sm font-semibold text-slate-800 dark:text-white/90">{LABEL[skill.skill]}</span>
-                      <span className="text-xs text-slate-500 dark:text-slate-400">{has ? \`${value}%\` : "Belum ada bukti"}</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">{has ? `${value}%` : "Belum ada bukti"}</span>
                     </div>
                     <div className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-                      <div className="h-full rounded-full bg-gradient-to-r from-violet-500 to-purple-500 transition-all duration-500" style={{ width: \`${value}%\` }} />
+                      <div className="h-full rounded-full bg-gradient-to-r from-violet-500 to-purple-500 transition-all duration-500" style={{ width: `${value}%` }} />
                     </div>
                     <div className="mt-1.5 flex items-center justify-between text-[10px] text-slate-400">
                       <span>{has ? TREND[skill.trend] : "Belum ada data"}</span>
-                      <span>{skill.attemptCount > 0 ? \`${skill.attemptCount} jawaban\` : "Belum berlatih"}</span>
+                      <span>{skill.attemptCount > 0 ? `${skill.attemptCount} jawaban` : "Belum berlatih"}</span>
                     </div>
                   </div>
                 );
@@ -219,7 +219,7 @@ export default function ProgresPage() {
               <div className="rounded-xl bg-emerald-50 p-4 dark:bg-emerald-400/[0.06]">
                 <p className="text-xs font-bold text-emerald-700 dark:text-emerald-300">Perkembangan</p>
                 <p className="mt-1 text-sm leading-5 text-slate-600 dark:text-slate-300">
-                  {improving > 0 ? \`${improving} kemampuan menunjukkan arah perkembangan.\` : "Arah perkembangan akan terlihat setelah bukti latihan terkumpul lebih banyak."}
+                  {improving > 0 ? `${improving} kemampuan menunjukkan arah perkembangan.` : "Arah perkembangan akan terlihat setelah bukti latihan terkumpul lebih banyak."}
                 </p>
               </div>
               <div className="rounded-xl bg-amber-50 p-4 dark:bg-amber-400/[0.06]">
