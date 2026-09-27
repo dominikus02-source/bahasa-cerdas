@@ -272,7 +272,7 @@ export async function POST(req: NextRequest) {
   if (!sessionId) return NextResponse.json({ error: "sessionId wajib diisi" }, { status: 400 });
 
   const session = await db.adaptivePracticeSession.findFirst({
-    where: { id: sessionId, user.id, source: DAILY_DIAGNOSTIC_SOURCE },
+    where: { id: sessionId, userId: user.id, source: DAILY_DIAGNOSTIC_SOURCE },
   });
   if (!session) return NextResponse.json({ error: "Sesi tidak ditemukan" }, { status: 404 });
   if (session.expiresAt < new Date()) return NextResponse.json({ error: "Sesi sudah berakhir" }, { status: 409 });
@@ -289,7 +289,7 @@ export async function POST(req: NextRequest) {
 
     const correct = answer === question.correctAnswer;
     await upsertLearningEvidence({
-      user.id: user.id,
+      userId: user.id,
       source: DAILY_DIAGNOSTIC_SOURCE,
       activityId: session.id,
       questionId,
