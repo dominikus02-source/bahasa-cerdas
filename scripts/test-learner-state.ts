@@ -91,6 +91,8 @@ const service = read("lib/learner-state/service.ts");
 check("20. learner-state API requires authenticated session", api.includes("getUser()") && api.includes("401"));
 check("21. learner-state API does not accept client state/body", !api.includes("req.json") && !api.includes("body") && !api.includes("userId:"));
 check("22. learner-state keeps APPROVED metadata gate for non-baseline evidence", service.includes('m."status" = \'APPROVED\'') && service.includes('m."skill" IS NOT NULL'));
+check("23. baseline evidence uses LearningEvidence.skill", service.includes('e."source" = \'DIAGNOSTIC_BASELINE_V2\'') && service.includes('e."skill" IS NOT NULL'));
+check("24. baseline and metadata skill types are cast consistently", service.includes('e."skill"::text') && service.includes('m."skill"::text'));
 check("23. baseline evidence can contribute skill directly", service.includes("e.\"source\" = 'DIAGNOSTIC_BASELINE_V2'") && service.includes('e."skill" IS NOT NULL'));
 check("24. learner-state query is bounded to authenticated user", service.includes('e."userId" = ${userId}'));
 check("25. learner-state has no reward engine calls", !api.includes("awardXp") && !api.includes("addCoin") && !api.includes("trackDailyStreak"));
