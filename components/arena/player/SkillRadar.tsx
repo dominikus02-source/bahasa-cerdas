@@ -82,11 +82,19 @@ export default function SkillRadar({
   if (!hasEvidence) {
     return (
       <div className={`px-card bc-tint-violet p-5 text-center ${className}`}>
-        <BarChart3 size={28} className="mx-auto text-violet-300" />
-        <p className="mt-2 text-sm font-bold text-[var(--px-text)]">Kemampuan Bahasamu</p>
+        <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-600 dark:text-violet-300">
+          <BarChart3 size={22} />
+        </div>
+        <p className="mt-3 text-sm font-bold text-[var(--px-text)]">Kemampuan Bahasamu</p>
         <p className="mt-1 text-xs leading-relaxed text-[var(--px-text-dim)]">
-          Mulai beberapa latihan dulu. Setelah kami mengenal pola belajarmu, perkembanganmu akan terlihat di sini.
+          Mulai dari Tes Awal agar BC punya titik awal yang jelas untuk mengukur perkembangan bahasamu.
         </p>
+        <Link
+          href="/arena/diagnostic/start"
+          className="mt-4 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 py-2.5 text-xs font-extrabold text-white shadow-md transition hover:-translate-y-0.5"
+        >
+          <Sparkles size={14} /> Mulai Tes Awal
+        </Link>
       </div>
     );
   }
@@ -105,7 +113,10 @@ export default function SkillRadar({
     <div className={`skill-radar px-card bc-tint-violet p-5 md:p-6 ${className}`}>
       <div className="mb-4 flex items-center gap-2">
         <BarChart3 size={18} className="text-violet-600 dark:text-violet-300" strokeWidth={1.8} />
-        <h3 className="text-lg font-semibold tracking-tight text-[var(--px-text)]">Kemampuanmu</h3>
+        <div className="min-w-0">
+          <h3 className="text-lg font-semibold tracking-tight text-[var(--px-text)]">Kemampuanmu</h3>
+          <p className="mt-0.5 text-[11px] text-[var(--px-text-dim)]">Akurasi dan tren dari jawaban yang sudah kamu kerjakan.</p>
+        </div>
       </div>
 
       <div className="space-y-3">

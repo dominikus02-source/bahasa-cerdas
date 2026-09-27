@@ -6,6 +6,8 @@ export type DiagnosticQuestionType = Extract<QuestionTypeId, "PILIHAN_GANDA" | "
 export interface DiagnosticCandidate {
   id: string;
   text: string;
+  passage?: string | null;
+  audioUrl?: string | null;
   options: string[];
   questionType: DiagnosticQuestionType;
   skill: string;

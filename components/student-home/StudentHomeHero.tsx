@@ -183,25 +183,13 @@ export function StudentHomeHero() {
   const actionLoading = myDayLoading;
   const ctaBusy = starting;
 
-  async function startDiagnosticSession() {
-    setStarting(true);
+  function startDiagnosticSession() {
     setStartError(null);
-    try {
-      const response = await fetch("/api/player/diagnostic", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "start", size: myDay?.sessionSize || undefined }),
-      });
-      const res = await response.json();
-      if (!response.ok || res.mode !== "DIAGNOSTIC" || typeof res.sessionId !== "string") {
-        throw new Error(res.error || "Tes awal belum tersedia");
-      }
-      router.push(`/arena/diagnostic/${res.sessionId}`);
-    } catch {
-      setStartError("Tes awal belum bisa dimulai. Coba lagi sebentar.");
-    } finally {
-      setStarting(false);
+    if (myDay?.assessmentState === "BASELINE_IN_PROGRESS" && myDay.inProgressSessionId) {
+      router.push(`/arena/diagnostic/${myDay.inProgressSessionId}`);
+      return;
     }
+    router.push("/arena/diagnostic/start");
   }
 
   async function startAdaptiveSession() {
@@ -319,7 +307,7 @@ export function StudentHomeHero() {
               <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-violet-600 dark:text-violet-300 mb-2">
                 {hero.eyebrow}
               </p>
-              <h1 className="text-[26px] sm:text-3xl md:text-[32px] leading-tight font-semibold tracking-tight text-slate-900">
+              <h1 className="text-[26px] sm:text-3xl md:text-[32px] leading-tight font-semibold tracking-tight text-slate-900 dark:text-white">
                 {hero.headline}
               </h1>
               <p className="mt-2 text-sm text-slate-600 dark:text-slate-300/80 leading-relaxed max-w-md">

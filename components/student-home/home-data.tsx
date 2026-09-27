@@ -57,6 +57,8 @@ export interface MyDayResponse {
   skillsLabel?: string;
   /** Gerbang "Segera Hadir" — entri Tes Awal AI ditandai server saat soal belum siap produksi. */
   comingSoon?: boolean;
+  /** ID sesi Tes Awal aktif agar CTA benar-benar melanjutkan sesi yang sama. */
+  inProgressSessionId?: string | null;
 }
 
 export interface PersonalizedLearningAction {

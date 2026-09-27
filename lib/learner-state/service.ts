@@ -16,7 +16,7 @@ export async function getLearnerState(userId: string): Promise<LearnerSkillState
       WITH ranked AS (
         SELECT
           e."id",
-          m."skill",
+          COALESCE(e."skill"::text, m."skill") AS "skill",
           e."isCorrect",
           e."answeredAt",
           ROW_NUMBER() OVER (
@@ -24,13 +24,13 @@ export async function getLearnerState(userId: string): Promise<LearnerSkillState
             ORDER BY e."answeredAt" DESC, e."id" DESC
           ) AS "recentRank"
         FROM "LearningEvidence" e
-        INNER JOIN "QuestionMetadata" m
+        LEFT JOIN "QuestionMetadata" m
           ON m."source" = e."source"
          AND m."questionId" = e."questionId"
+         AND m."status" = 'APPROVED'
         WHERE e."userId" = ${userId}
           AND e."isCorrect" IS NOT NULL
-          AND m."status" = 'APPROVED'
-          AND m."skill" IS NOT NULL
+          AND COALESCE(e."skill"::text, m."skill") IS NOT NULL
       )
       SELECT
         "skill",
