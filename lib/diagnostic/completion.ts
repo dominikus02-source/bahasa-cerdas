@@ -8,6 +8,7 @@
  */
 import { db } from "@/lib/db";
 import { DIAGNOSTIC_REASON_CODE } from "./config";
+import { BASELINE_SOURCE, BASELINE_VERSION } from "@/lib/assessment/diagnostic-baseline";
 
 /**
  * Apakah user pernah MENYELESAIKAN sesi diagnostik (status COMPLETED)?
@@ -16,7 +17,14 @@ import { DIAGNOSTIC_REASON_CODE } from "./config";
 export async function hasCompletedDiagnostic(userId: string): Promise<boolean> {
   try {
     const session = await db.adaptivePracticeSession.findFirst({
-      where: { userId, reasonCode: DIAGNOSTIC_REASON_CODE, status: "COMPLETED" },
+      where: {
+        userId,
+        status: "COMPLETED",
+        OR: [
+          { source: BASELINE_SOURCE },
+          { reasonCode: DIAGNOSTIC_REASON_CODE },
+        ],
+      },
       select: { id: true },
     });
     return Boolean(session);
