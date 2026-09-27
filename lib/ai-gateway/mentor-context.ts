@@ -107,6 +107,9 @@ export async function buildMentorContext(userId: string): Promise<MentorContext>
           title: rec.title,
           description: rec.description,
           skill: rec.skill,
+          ctaLabel: rec.ctaLabel,
+          ctaHref: rec.ctaHref,
+          reason: rec.reason,
         }
       : { title: null, description: null, skill: null, ctaLabel: null, ctaHref: null, reason: null },
     confidence,
