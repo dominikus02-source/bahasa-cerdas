@@ -58,8 +58,8 @@ function resolveHeroContent(myDay: MyDayResponse | null): HeroContent {
       eyebrow: "PERJALANAN BELAJARMU",
       headline: "Lanjutkan langkahmu.",
       supporting: "Sedikit demi sedikit, kemampuanmu terus berkembang.",
-      ctaLabel: "Lanjutkan",
-      action: { kind: "link", href: "/arena/jalur-cerdas" },
+      ctaLabel: "Mulai Tes Awal",
+      action: { kind: "link", href: "/murid/tes-awal" },
     };
   }
 
@@ -187,16 +187,7 @@ export function StudentHomeHero() {
     setStarting(true);
     setStartError(null);
     try {
-      const response = await fetch("/api/player/diagnostic", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "start", size: myDay?.sessionSize || undefined }),
-      });
-      const res = await response.json();
-      if (!response.ok || res.mode !== "DIAGNOSTIC" || typeof res.sessionId !== "string") {
-        throw new Error(res.error || "Tes awal belum tersedia");
-      }
-      router.push(`/arena/diagnostic/${res.sessionId}`);
+      router.push("/murid/tes-awal");
     } catch {
       setStartError("Tes awal belum bisa dimulai. Coba lagi sebentar.");
     } finally {

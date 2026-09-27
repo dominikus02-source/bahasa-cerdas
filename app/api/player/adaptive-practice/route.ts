@@ -17,6 +17,7 @@ import { dayKeyWIB } from "@/lib/learning-loop/journey";
 import { getSessionSummary } from "@/lib/learning-loop/session";
 import { awardXp } from "@/lib/award-xp";
 import { rateLimitRoute } from "@/lib/rate-limit";
+import { BASELINE_SOURCE, BASELINE_VERSION, BASELINE_SIZE } from "@/lib/assessment/diagnostic-baseline";
 
 const ADAPTIVE_XP_SOURCE = "ADAPTIVE_PRACTICE";
 
@@ -90,8 +91,72 @@ function fallbackResponse(reasonCode = "INSUFFICIENT_METADATA", learnerState: un
   });
 }
 
+async function getBaselineHomeState(userId: string) {
+  const session = await db.adaptivePracticeSession.findFirst({
+    where: { userId, source: BASELINE_SOURCE },
+    orderBy: { createdAt: "desc" },
+    select: { id: true, status: true, questionIds: true },
+  });
+
+  if (!session) {
+    return {
+      mode: "PREVIEW" as const,
+      actionType: "DIAGNOSTIC" as const,
+      actionTitle: "Kenali Kemampuanmu",
+      ctaLabel: "Mulai Tes Awal",
+      targetSkill: null,
+      targetSubskill: null,
+      targetDifficulty: null,
+      sessionSize: BASELINE_SIZE,
+      estimatedMinutes: 15,
+      confidence: "NO_DATA",
+      premiumDepth: "STANDARD",
+      selectionVersion: BASELINE_VERSION,
+      reasonCode: "BASELINE_NOT_STARTED",
+      reasonText: "Selesaikan Tes Awal untuk membangun gambaran awal kemampuanmu.",
+      personalization: null,
+      diagnosticCompleted: false,
+      assessmentState: "BASELINE_AVAILABLE",
+      learnerState: await getLearnerState(userId),
+      mentor: null,
+    };
+  }
+
+  if (session.status === "IN_PROGRESS") {
+    return {
+      mode: "PREVIEW" as const,
+      actionType: "DIAGNOSTIC" as const,
+      actionTitle: "Lanjutkan Tes Awal",
+      ctaLabel: "Lanjutkan Tes",
+      targetSkill: null,
+      targetSubskill: null,
+      targetDifficulty: null,
+      sessionSize: BASELINE_SIZE,
+      estimatedMinutes: 15,
+      confidence: "LOW",
+      premiumDepth: "STANDARD",
+      selectionVersion: BASELINE_VERSION,
+      reasonCode: "BASELINE_IN_PROGRESS",
+      reasonText: "Tes Awalmu belum selesai. Lanjutkan dari bagian terakhir yang tersimpan.",
+      personalization: null,
+      diagnosticCompleted: false,
+      assessmentState: "BASELINE_IN_PROGRESS",
+      learnerState: await getLearnerState(userId),
+      mentor: null,
+    };
+  }
+
+  return null;
+}
+
 async function startSession(userId: string, size: number, mode: "start" | "preview" = "start", userName = "Murid") {
   const states = await getLearnerState(userId);
+
+  if (mode === "preview") {
+    const baseline = await getBaselineHomeState(userId);
+    if (baseline) return NextResponse.json(baseline);
+  }
+
   const metadataRows = await db.questionMetadata.findMany({
     where: {
       source: ADAPTIVE_SUPPORTED_SOURCES[0],
