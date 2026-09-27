@@ -90,9 +90,12 @@ const api = read("app/api/player/learner-state/route.ts");
 const service = read("lib/learner-state/service.ts");
 check("20. learner-state API requires authenticated session", api.includes("getUser()") && api.includes("401"));
 check("21. learner-state API does not accept client state/body", !api.includes("req.json") && !api.includes("body") && !api.includes("userId:"));
-check("22. learner-state only joins APPROVED metadata", service.includes('m."status" = \'APPROVED\'') && service.includes('m."skill" IS NOT NULL'));
-check("23. learner-state query is bounded to authenticated user", service.includes('e."userId" = ${userId}'));
-check("24. learner-state has no reward engine calls", !api.includes("awardXp") && !api.includes("addCoin") && !api.includes("trackDailyStreak"));
+check("22. learner-state keeps APPROVED metadata gate for non-baseline evidence", service.includes('m."status" = \'APPROVED\'') && service.includes('m."skill" IS NOT NULL'));
+check("23. baseline evidence can contribute skill directly", service.includes("e.\"source\" = 'DIAGNOSTIC_BASELINE_V2'") && service.includes('e."skill" IS NOT NULL'));
+check("24. learner-state query is bounded to authenticated user", service.includes('e."userId" = ${userId}'));
+check("25. learner-state has no reward engine calls", !api.includes("awardXp") && !api.includes("addCoin") && !api.includes("trackDailyStreak"));
+const skillsApi = read("app/api/player/skills/route.ts");
+check("26. profile skills API returns learner-state shape", skillsApi.includes("getLearnerState") && !skillsApi.includes("getSkillProfile"));
 
 console.log(`\nHasil: ${passed} lulus, ${failed} gagal`);
 if (failed > 0) process.exit(1);
