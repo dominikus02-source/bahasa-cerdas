@@ -25,12 +25,14 @@ check("writing dimensions are bounded",()=>Object.values(strong.dimensions).ever
 const fs=require("fs");
 const route=fs.readFileSync("app/api/player/diagnostic/baseline/route.ts","utf8");
 const ui=fs.readFileSync("app/(dashboard)/murid/tes-awal/page.tsx","utf8");
+const mentor=fs.readFileSync("lib/ai-gateway/mentor-context.ts","utf8");
 check("baseline route does not depend on Jalur Cerdas",()=>!route.includes("/arena/jalur-cerdas")&&!route.includes("selectAdaptivePractice"));
 check("Tes Awal UI uses baseline endpoint",()=>ui.includes("/api/player/diagnostic/baseline")&&!ui.includes("/api/player/diagnostic/daily"));
 check("baseline route has writing action",()=>route.includes('action === "writing"'));
 check("baseline route persists LearningEvidence",()=>route.includes("upsertLearningEvidence"));
 check("baseline route is server-authoritative",()=>route.includes("db.soal.findUnique")&&route.includes("correctAnswer"));
 check("baseline has no XP reward",()=>!route.includes("awardXp")&&!route.includes("addCoin"));
+check("Mentor consumes baseline evidence",()=>mentor.includes('e.source === "DIAGNOSTIC_BASELINE_V2"'));
 
 console.log("Hasil: "+passed+" lulus, "+failed+" gagal");
 if(failed>0)process.exit(1);
