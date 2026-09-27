@@ -26,6 +26,8 @@ const MentorOutputSchema = z.object({
   diagnosis: z.string(),
   reason: z.string(),
   action: z.string(),
+  doNow: z.string(),
+  makeThis: z.string(),
   encouragement: z.string(),
 });
 import { callWithFallback, ProviderChainFailedError } from "@/src/ai/core/provider";
@@ -127,6 +129,10 @@ export async function POST(req: NextRequest) {
       diagnosis: string;
       reason: string;
       action: string;
+      doNow: string;
+      makeThis: string;
+      ctaLabel: string | null;
+      ctaHref: string | null;
       encouragement: string;
     };
     let provider = "deterministic";
@@ -156,7 +162,12 @@ export async function POST(req: NextRequest) {
       // Parse and validate response
       try {
         const parsed = JSON.parse(providerResponse.content);
-        response = MentorOutputSchema.parse(parsed);
+        const parsedOutput = MentorOutputSchema.parse(parsed);
+        response = {
+          ...parsedOutput,
+          ctaLabel: context.recommendation.ctaLabel,
+          ctaHref: context.recommendation.ctaHref,
+        };
       } catch {
         // Malformed output — use deterministic fallback
         response = buildDeterministicFallback(context);

@@ -31,6 +31,9 @@ export interface MentorContext {
     title: string | null;
     description: string | null;
     skill: string | null;
+    ctaLabel: string | null;
+    ctaHref: string | null;
+    reason: string | null;
   };
   confidence: number | null;
   hasEnoughData: boolean;
@@ -104,8 +107,11 @@ export async function buildMentorContext(userId: string): Promise<MentorContext>
           title: rec.title,
           description: rec.description,
           skill: rec.skill,
+          ctaLabel: rec.ctaLabel,
+          ctaHref: rec.ctaHref,
+          reason: rec.reason,
         }
-      : { title: null, description: null, skill: null },
+      : { title: null, description: null, skill: null, ctaLabel: null, ctaHref: null, reason: null },
     confidence,
     hasEnoughData,
   };
@@ -134,9 +140,12 @@ ATURAN:
 2. Jika data kurang, akui dengan jujur
 3. Fokus pada SATU hal yang paling penting
 4. Berikan langkah yang bisa langsung dilakukan
-5. Jangan menggunakan markdown yang kompleks
-6. Jangan membuat diagnosis medis/psikologis
-7. Jangan memberikan statistik yang tidak ada di context
+5. Selalu jawab tiga hal: APA YANG HARUS DILAKUKAN SEKARANG, APA YANG HARUS DIBUAT/DIHASILKAN, dan KE MANA HARUS PERGI untuk memulai.
+6. Jika recommendation tersedia, arahkan murid ke aktivitas tersebut; jangan membuat route baru.
+7. Jika skill WRITING menjadi fokus, hasil yang dibuat harus berupa karya/tulisan konkret, bukan hanya latihan soal.
+8. Jangan menggunakan markdown yang kompleks
+9. Jangan membuat diagnosis medis/psikologis
+10. Jangan memberikan statistik yang tidak ada di context
 
 CONTEXT SISWA:
 ${contextJson}
@@ -147,6 +156,8 @@ OUTPUT FORMAT (JSON):
   "diagnosis": "string (1-2 kalimat)",
   "reason": "string (1-2 kalimat)",
   "action": "string (1-2 kalimat)",
+  "doNow": "string — satu aktivitas konkret yang harus dilakukan sekarang",
+  "makeThis": "string — satu hal konkret yang harus dibuat/dihasilkan murid",
   "encouragement": "string (1 kalimat)"
 }`;
 }
@@ -167,6 +178,10 @@ export function buildDeterministicFallback(context: MentorContext): {
   diagnosis: string;
   reason: string;
   action: string;
+  doNow: string;
+  makeThis: string;
+  ctaLabel: string | null;
+  ctaHref: string | null;
   encouragement: string;
 } {
   if (!context.hasEnoughData) {
@@ -174,7 +189,11 @@ export function buildDeterministicFallback(context: MentorContext): {
       headline: "Belum cukup data",
       diagnosis: "Aku masih mengenali pola belajarmu.",
       reason: "Data belajar belum cukup untuk memberikan analisis yang akurat.",
-      action: "Selesaikan beberapa latihan lagi, lalu coba tanyakan lagi.",
+      action: "Selesaikan beberapa latihan lagi, lalu tanyakan lagi.",
+      doNow: "Mainkan satu latihan singkat di Jalur Cerdas.",
+      makeThis: "Selesaikan satu tantangan sampai tuntas agar Mentor punya evidence baru.",
+      ctaLabel: "Mulai latihan",
+      ctaHref: "/arena/jalur-cerdas",
       encouragement: "Sedikit demi sedikit, kamu akan semakin kuat!",
     };
   }
@@ -188,7 +207,11 @@ export function buildDeterministicFallback(context: MentorContext): {
     headline: `Fokuskan dulu pada ${focusLabel}`,
     diagnosis: `Data belajarmu menunjukkan bahwa ${focusLabel} masih menjadi bagian yang perlu diperkuat (akurasi ${focusAccuracy}).`,
     reason: `Kamu sudah cukup kuat dalam skill lain, tetapi ${focusLabel} masih perlu latihan lebih.`,
-    action: `Mulai latihan yang berfokus pada ${focusLabel}. Coba selesaikan 1-2 unit hari ini.`,
+    action: `Mulai latihan yang berfokus pada ${focusLabel}. Coba selesaikan satu tantangan hari ini.`,
+    doNow: context.recommendation.description || `Latihan ${focusLabel} sekarang.`,
+    makeThis: context.recommendation.skill === "WRITING" ? "Satu karya pendek yang selesai dan bisa kamu lihat kembali di Karya." : `Satu tantangan ${focusLabel} yang selesai dengan usaha terbaikmu.`,
+    ctaLabel: context.recommendation.ctaLabel,
+    ctaHref: context.recommendation.ctaHref,
     encouragement: "Sedikit latihan terarah bisa membuatnya jauh lebih kuat!",
   };
 }
