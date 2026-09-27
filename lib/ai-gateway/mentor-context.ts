@@ -37,7 +37,8 @@ export interface MentorContext {
     reason: string | null;
   };
   confidence: number | null;
-  hasEnoughData: boolean;\n  diagnosticEvidence: { total: number; recent: number; writingResponses: number; latestWriting: string | null };
+  hasEnoughData: boolean;
+  diagnosticEvidence: { total: number; recent: number; writingResponses: number; latestWriting: string | null };
 }
 
 /**
@@ -48,7 +49,8 @@ export async function buildMentorContext(userId: string): Promise<MentorContext>
   const [learnerState, recommendations, recentActivity, evidence] = await Promise.all([
     getLearnerState(userId).catch(() => []),
     getActiveRecommendations(userId).catch(() => []),
-    getRecentActivity(userId, 7).catch(() => []),\n    db.learningEvidence.findMany({ where: { userId, answeredAt: { gte: new Date(Date.now() - 30 * 24 * 3600 * 1000) } }, orderBy: { answeredAt: "desc" }, take: 200, select: { source: true, skill: true, isCorrect: true, score: true, selectedAnswer: true, answeredAt: true, metadata: true } }).catch(() => []),
+    getRecentActivity(userId, 7).catch(() => []),
+    db.learningEvidence.findMany({ where: { userId, answeredAt: { gte: new Date(Date.now() - 30 * 24 * 3600 * 1000) } }, orderBy: { answeredAt: "desc" }, take: 200, select: { source: true, skill: true, isCorrect: true, score: true, selectedAnswer: true, answeredAt: true, metadata: true } }).catch(() => []),
   ]);
 
   // Filter skills with evidence (at least 3 attempts)
@@ -143,7 +145,8 @@ ATURAN:
 4. Berikan langkah yang bisa langsung dilakukan
 5. Selalu jawab tiga hal: APA YANG HARUS DILAKUKAN SEKARANG, APA YANG HARUS DIBUAT/DIHASILKAN, dan KE MANA HARUS PERGI untuk memulai.
 6. Jika recommendation tersedia, arahkan murid ke aktivitas tersebut; jangan membuat route baru.
-7. Jika skill WRITING menjadi fokus, hasil yang dibuat harus berupa karya/tulisan konkret, bukan hanya latihan soal.\n8. Diagnostic evidence adalah bukti asesmen terbaru; gunakan hanya sebagai konteks, jangan mengarang skor yang tidak tersedia.
+7. Jika skill WRITING menjadi fokus, hasil yang dibuat harus berupa karya/tulisan konkret, bukan hanya latihan soal.
+8. Diagnostic evidence adalah bukti asesmen terbaru; gunakan hanya sebagai konteks, jangan mengarang skor yang tidak tersedia.
 9. Jangan menggunakan markdown yang kompleks
 10. Jangan membuat diagnosis medis/psikologis
 11. Jangan memberikan statistik yang tidak ada di context
