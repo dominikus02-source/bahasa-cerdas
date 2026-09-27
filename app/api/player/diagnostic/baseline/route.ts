@@ -78,7 +78,7 @@ function stateFromSession(row: { questionIds: Prisma.JsonValue }): BaselineState
   return state;
 }
 
-async function selectBaselineQuestions(): Promise<BaselineQuestion[]> {
+function stableHash(value: string): number {\n  let hash = 2166136261;\n  for (let i = 0; i < value.length; i += 1) {\n    hash ^= value.charCodeAt(i);\n    hash = Math.imul(hash, 16777619);\n  }\n  return hash >>> 0;\n}\n\nasync function selectBaselineQuestions(seed: string): Promise<BaselineQuestion[]> {
   const metadataRows = await db.questionMetadata.findMany({
     where: {
       source: "BANK_SOAL",
@@ -160,7 +160,7 @@ async function selectBaselineQuestions(): Promise<BaselineQuestion[]> {
   const used = new Set<string>();
 
   for (const entry of BASELINE_BLUEPRINT) {
-    const pool = candidates.filter((q) => q.skill === entry.skill && !used.has(q.id));
+    const pool = candidates\n      .filter((q) => q.skill === entry.skill && !used.has(q.id))\n      .sort((a, b) => stableHash(`${seed}:${a.id}`) - stableHash(`${seed}:${b.id}`));
     const byDifficulty = new Map<string, BaselineQuestion[]>();
     for (const q of pool) {
       const key = q.difficulty ?? "UNKNOWN";
@@ -356,7 +356,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(responseFor(existing.id, state, qs));
     }
 
-    const questions = await selectBaselineQuestions();
+    const questions = await selectBaselineQuestions(user.id);
     if (questions.length < BASELINE_SIZE) {
       return NextResponse.json({
         status: "UNAVAILABLE",
