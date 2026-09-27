@@ -74,14 +74,12 @@ const THEME_META: Record<Theme, { label:string; icon: typeof Cloud }> = {
 }
 
 
-const ZELBY_FRAMES=[
-  "/junior/karakter/zelby_idle.webp",
-  "/junior/karakter/zelby_happy.webp",
-  "/junior/karakter/zelby_thinking.webp",
-  "/junior/karakter/zelby_celebrate.webp",
-  "/junior/karakter/zelby_reading.webp",
-  "/junior/karakter/zelby_wave.webp",
-]
+const ZELBY_STATE_ASSETS={
+  idle:"/junior/karakter/zelby_idle.webp",
+  thinking:"/junior/karakter/zelby_thinking.webp",
+  correct:"/junior/karakter/zelby_celebrate.webp",
+  wrong:"/junior/karakter/zelby_thinking.webp",
+} as const
 
 const shuffle = <T,>(items:T[]) => {
   const a=[...items]
@@ -114,7 +112,6 @@ export default function BermainKataGame() {
   const [showTheme,setShowTheme]=useState(false)
   const [usedWords,setUsedWords]=useState<string[]>([])
   const [usedPairs,setUsedPairs]=useState<string[]>([])
-  const [zelbyFrame,setZelbyFrame]=useState(0)
 
   const pool=useMemo(()=>levelWords(level),[level])
   const maxRounds=8
@@ -124,7 +121,6 @@ export default function BermainKataGame() {
   const categoryEmoji: Record<string,string> = { Alam:"🌿", Hewan:"🐾", Makanan:"🍎", Sekolah:"📚", Benda:"🧸", Tubuh:"👀", Waktu:"☀️", Perasaan:"💛", Sifat:"✨", Kendaraan:"🚲", Sosial:"🤝", Tempat:"🏡", Kegiatan:"🎮", Orang:"🧭", Pakaian:"🎒", Kesehatan:"🩹" }
   const categoryIcon = current ? (categoryEmoji[current.category] || "✨") : "✨"
   const progress = Math.min(100,(round/maxRounds)*100)
-  const zelbyFeedbackFrame = feedback==="correct" ? 3 : feedback==="wrong" ? 2 : zelbyFrame
 
   useEffect(()=>{
     try {
@@ -134,10 +130,6 @@ export default function BermainKataGame() {
     } catch {}
   },[])
 
-  useEffect(()=>{
-    const timer=window.setInterval(()=>setZelbyFrame((value)=>(value+1)%ZELBY_FRAMES.length),1500)
-    return ()=>window.clearInterval(timer)
-  },[])
 
   useEffect(()=>{
     try {
@@ -406,19 +398,14 @@ export default function BermainKataGame() {
             <div className="flex w-full items-center justify-between"><span className="rounded-full bg-white px-3 py-1.5 text-[10px] font-black dark:bg-[#17213b] tracking-widest text-slate-400 shadow-sm">TEMAN BERMAIN</span>{streak>0&&<span className="rounded-full bg-amber-50 px-3 py-1.5 text-xs font-black text-amber-700">🔥 {streak}</span>}</div>
             <div className="relative flex flex-1 items-center justify-center py-5 bk-zelby-stage">
               <div className="absolute h-52 w-52 rounded-full bg-white/80 blur-xl dark:bg-cyan-400/10"/>
-              <div className={`relative h-60 w-60 bk-zelby-game-motion ${feedback==="correct"?"bk-zelby-celebrate":feedback==="wrong"?"bk-zelby-wiggle":""}`}>
-                {ZELBY_FRAMES.map((src,index)=>(
-                  <img
-                    key={src}
-                    src={src}
-                    alt={index===zelbyFeedbackFrame ? "Zelby menemanimu bermain" : ""}
-                    aria-hidden={index!==zelbyFeedbackFrame}
-                    className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_20px_18px_rgba(15,23,42,.16)] transition-opacity duration-500 ease-in-out"
-                    style={{opacity:index===zelbyFeedbackFrame?1:0}}
-                  />
-                ))}
+              <div className={`relative h-60 w-60 bk-zelby-game-motion ${feedback==="correct"?"bk-zelby-celebrate":feedback==="wrong"?"bk-zelby-sad":"bk-zelby-thinking"}`}>
+                <img
+                  src={feedback==="correct" ? ZELBY_STATE_ASSETS.correct : feedback==="wrong" ? ZELBY_STATE_ASSETS.wrong : ZELBY_STATE_ASSETS.thinking}
+                  alt="Zelby menemanimu bermain"
+                  className="h-full w-full object-contain drop-shadow-[0_20px_18px_rgba(15,23,42,.16)]"
+                />
               </div>
-              <div className="absolute bottom-3 right-0 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-700 shadow-md dark:border-[#31415f] dark:bg-[#17213b] dark:text-slate-100">{feedback==="correct"?"Hebat! ⭐":feedback==="wrong"?"Coba lagi 💪":"Kita cari jawabannya!"}</div>
+              <div className="absolute bottom-3 right-0 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-700 shadow-md dark:border-[#31415f] dark:bg-[#17213b] dark:text-slate-100">{feedback==="correct"?"Hebat! ⭐":feedback==="wrong"?"Belum tepat. Coba lagi 💪":"Coba pikirkan dulu 🤔"}</div>
             </div>
             <div className="w-full rounded-[22px] bg-white/85 p-4 text-center shadow-sm dark:bg-[#17213b]/90"><div className="text-[10px] font-black uppercase tracking-widest text-slate-400">KEMAJUAN</div><div className="mt-1 text-2xl font-black">{round}<span className="text-slate-300 dark:text-slate-500">/{maxRounds}</span></div><div className="mt-2 flex justify-center gap-1.5">{Array.from({length:maxRounds}).map((_,i)=><span key={i} className={`h-2 w-5 rounded-full ${i<round?t.accent:"bg-slate-200 dark:bg-slate-700"}`}/>)}</div></div>
           </div>
@@ -429,10 +416,11 @@ export default function BermainKataGame() {
     <style>{`
       @media (prefers-reduced-motion: no-preference){
         .bk-zelby-game-motion{
-          animation:bkZelbyGame 2.8s ease-in-out infinite;
           transform-origin:50% 88%;
           will-change:transform;
         }
+        .bk-zelby-thinking{animation:bkZelbyThinking 2.8s ease-in-out infinite}
+        .bk-zelby-sad{animation:bkZelbySad 1.8s ease-in-out infinite}
         .bk-zelby-stage::before{
           content:"";
           position:absolute;
@@ -446,13 +434,14 @@ export default function BermainKataGame() {
         }
         .bk-zelby-celebrate{animation:bkZelbyCelebrate .7s cubic-bezier(.2,.8,.2,1) 2 !important}
         .bk-zelby-wiggle{animation:bkZelbyWiggle .45s ease-in-out 2 !important}
-        @keyframes bkZelbyGame{
-          0%,100%{transform:translate3d(0,3px,0) rotate(-1deg) scale(1)}
-          18%{transform:translate3d(-2px,-2px,0) rotate(-.3deg) scale(1.012)}
-          36%{transform:translate3d(-1px,-7px,0) rotate(.7deg) scale(1.022)}
-          54%{transform:translate3d(2px,-10px,0) rotate(1.2deg) scale(1.028)}
-          72%{transform:translate3d(2px,-5px,0) rotate(.2deg) scale(1.018)}
-          88%{transform:translate3d(-1px,-1px,0) rotate(-.5deg) scale(1.008)}
+        @keyframes bkZelbyThinking{
+          0%,100%{transform:translate3d(0,2px,0) rotate(-.5deg) scale(1)}
+          35%{transform:translate3d(-2px,-4px,0) rotate(.3deg) scale(1.012)}
+          65%{transform:translate3d(2px,-7px,0) rotate(.6deg) scale(1.018)}
+        }
+        @keyframes bkZelbySad{
+          0%,100%{transform:translate3d(0,4px,0) rotate(0) scale(.985)}
+          50%{transform:translate3d(0,8px,0) rotate(-1deg) scale(.97)}
         }
         @keyframes bkZelbyGlow{
           0%,100%{transform:translateX(-50%) scaleX(1);opacity:.34}
