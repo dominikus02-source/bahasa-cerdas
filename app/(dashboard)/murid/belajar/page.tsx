@@ -165,7 +165,7 @@ export default function BelajarPage() {
               Perjalanan utama
             </p>
             <h2 className="mt-1 text-2xl font-black tracking-tight text-slate-950 dark:text-white">
-              Main Quest
+              Perjalanan Utama
             </h2>
           </div>
           <span className="hidden rounded-full bg-violet-50 px-3 py-1.5 text-[10px] font-black text-violet-700 dark:bg-violet-400/10 dark:text-violet-200 sm:inline-flex">
@@ -183,7 +183,7 @@ export default function BelajarPage() {
             <div className="max-w-2xl">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="rounded-full bg-white/10 px-3 py-1 text-[9px] font-black uppercase tracking-[0.18em] text-cyan-100 ring-1 ring-white/10">
-                  Main Quest
+                  Perjalanan Utama
                 </span>
                 <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400/15 px-2.5 py-1 text-[9px] font-black text-emerald-200">
                   <Sparkles className="h-3 w-3" />
