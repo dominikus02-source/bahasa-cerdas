@@ -21,6 +21,10 @@ type MentorResult = {
   diagnosis: string;
   reason: string;
   action: string;
+  doNow: string;
+  makeThis: string;
+  ctaLabel?: string | null;
+  ctaHref?: string | null;
   encouragement: string;
 };
 
@@ -224,16 +228,26 @@ function MentorRoom() {
                 {result.diagnosis}
               </p>
 
-              <div className="mt-7 grid gap-3 sm:grid-cols-2">
+              <div className="mt-7 grid gap-3 sm:grid-cols-3">
+                <div className="rounded-2xl border border-cyan-100 bg-cyan-50/80 p-4 dark:border-cyan-300/10 dark:bg-cyan-400/[0.06]">
+                  <p className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-700 dark:text-cyan-300">1 · Lakukan</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-200/80">{result.doNow}</p>
+                </div>
+                <div className="rounded-2xl border border-violet-100 bg-violet-50/80 p-4 dark:border-violet-300/10 dark:bg-violet-400/[0.06]">
+                  <p className="text-[10px] font-black uppercase tracking-[0.16em] text-violet-700 dark:text-violet-300">2 · Buat</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-200/80">{result.makeThis}</p>
+                </div>
                 <div className="rounded-2xl border border-amber-100 bg-amber-50/80 p-4 dark:border-amber-300/10 dark:bg-amber-400/[0.06]">
-                  <p className="text-[10px] font-black uppercase tracking-[0.16em] text-amber-700 dark:text-amber-300">Mengapa?</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.16em] text-amber-700 dark:text-amber-300">Kenapa?</p>
                   <p className="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-200/80">{result.reason}</p>
                 </div>
-                <div className="rounded-2xl border border-emerald-100 bg-emerald-50/80 p-4 dark:border-emerald-300/10 dark:bg-emerald-400/[0.06]">
-                  <p className="text-[10px] font-black uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-300">Langkah berikutnya</p>
-                  <p className="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-200/80">{result.action}</p>
-                </div>
               </div>
+              {result.ctaHref && result.ctaLabel && (
+                <Link href={result.ctaHref} className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-500 px-5 py-3 text-sm font-black text-white shadow-lg shadow-violet-500/20 transition hover:-translate-y-0.5">
+                  {result.ctaLabel}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              )}
 
               <div className="mt-5 flex items-start gap-2 rounded-2xl bg-slate-50 px-4 py-3 dark:bg-white/[0.04]">
                 <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-violet-500" />
