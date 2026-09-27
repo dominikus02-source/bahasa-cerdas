@@ -152,6 +152,8 @@ export default function MuridProfilePage() {
   const [showcaseBadges, setShowcaseBadges] = useState<BadgeView[] | null>(null);
   const [journey, setJourney] = useState<JourneyEntry[]>([]);
   const [skills, setSkills] = useState<LearnerSkillState[] | null>(null);
+  const [skillsFailed, setSkillsFailed] = useState(false);
+  const [baselineSummary, setBaselineSummary] = useState<{ status: string; result?: { writing?: { level?: string } | null } } | null>(null);
   const [karyaFilter, setKaryaFilter] = useState("SEMUA");
   const supabase = createClient();
 
@@ -208,14 +210,17 @@ export default function MuridProfilePage() {
       fetch("/api/player/xp/history?limit=5").then(r => r.ok ? r.json() : null),
       fetch("/api/player/badges").then(r => r.ok ? r.json() : null),
       fetch("/api/player/journey?limit=100").then(r => r.ok ? r.json() : null),
-      fetch("/api/player/skills").then(r => r.ok ? r.json() : null),
-    ]).then(([pp, xh, bd, jr, sk]) => {
+      fetch("/api/player/skills").then(async r => r.ok ? r.json() : { __failed: true }),
+      fetch("/api/player/diagnostic/baseline").then(async r => r.ok ? r.json() : null),
+    ]).then(([pp, xh, bd, jr, sk, baseline]) => {
       if (pp?.profile) setPlayerProfile(pp.profile);
       if (xh?.entries) setXpHistory(xh.entries);
       if (bd?.badges) setShowcaseBadges(bd.badges);
       if (jr?.entries) setJourney(jr.entries);
-      if (sk?.skills) setSkills(sk.skills);
-    }).catch(() => {});
+      if (sk?.__failed) setSkillsFailed(true);
+      else if (sk?.skills) setSkills(sk.skills);
+      if (baseline?.status) setBaselineSummary(baseline);
+    }).catch(() => setSkillsFailed(true));
   }, []);
 
   const [settingsForm, setSettingsForm] = useState({ fullName: "", school: "", city: "", province: "", grade: "", noAbsen: "", bio: "" });
@@ -446,7 +451,24 @@ export default function MuridProfilePage() {
         <div className="grid gap-4 lg:grid-cols-2">
           {/* Kemampuan bahasa — dari /api/player/skills (reuse SkillRadar beranda) */}
           <div className="bc-card-premium overflow-hidden rounded-2xl ring-1 ring-slate-900/10 dark:ring-white/10">
-            <SkillRadar skills={skills} className="h-full" />
+            <div className="border-b border-slate-900/[0.06] px-5 py-4 dark:border-white/[0.06]">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900 dark:text-white">Kemampuan Bahasamu</h3>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-white/45">Gambaran dari bukti belajar yang sudah terkumpul.</p>
+                </div>
+                {baselineSummary?.status === "DONE" && (
+                  <span className="shrink-0 rounded-full bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-300">Tes awal selesai</span>
+                )}
+              </div>
+            </div>
+            <SkillRadar skills={skills} failed={skillsFailed} className="h-full !rounded-none !ring-0" />
+            {baselineSummary?.result?.writing?.level && (
+              <div className="mx-5 mb-5 rounded-xl bg-fuchsia-500/[0.06] px-4 py-3">
+                <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-fuchsia-700 dark:text-fuchsia-300">Menulis dari tes awal</p>
+                <p className="mt-1 text-sm font-semibold text-slate-800 dark:text-white">Tingkat awal: {baselineSummary.result.writing.level === "KUAT" ? "Kuat" : baselineSummary.result.writing.level === "BERKEMBANG" ? "Berkembang" : "Awal"}</p>
+              </div>
+            )}
           </div>
 
           {/* Jalur Cerdas — aktivitas belajar terbaru dari journey + CTA */}
