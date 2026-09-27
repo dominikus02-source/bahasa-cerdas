@@ -17,7 +17,7 @@ const weak=scoreBaselineWriting("Aku pergi. Selesai.");
 check("short writing produces a bounded signal",()=>weak.score>=0&&weak.score<=1);
 check("short writing is not falsely strong",()=>weak.level!=="KUAT");
 
-const strong=scoreBaselineWriting("Kemarin saya menemukan buku lama di perpustakaan sekolah. Saya membukanya karena sampulnya menarik. Kemudian saya membaca beberapa halaman dan menemukan cerita tentang seorang anak yang berani menolong temannya. Saya merasa cerita itu menarik karena tokohnya belajar dari kesalahan. Setelah membaca, saya memahami bahwa keberanian tidak selalu berarti tidak takut, tetapi tetap bertindak ketika sesuatu memang penting. Saya ingin membawa pelajaran itu ke kebiasaan saya sehari-hari agar tidak hanya berhenti sebagai cerita yang saya baca.");
+const strong=scoreBaselineWriting("Kemarin saya menemukan buku lama di perpustakaan sekolah. Saya membukanya karena sampulnya menarik. Kemudian saya membaca beberapa halaman dan menemukan cerita tentang seorang anak yang berani menolong temannya. Saya merasa cerita itu menarik karena tokohnya belajar dari kesalahan. Setelah membaca, saya memahami bahwa keberanian tidak selalu berarti tidak takut, tetapi tetap bertindak ketika sesuatu memang penting. Saya ingin membawa pelajaran itu ke kebiasaan saya sehari-hari agar tidak hanya berhenti sebagai cerita yang saya baca. Sejak itu saya mencoba lebih berani mengambil keputusan kecil yang bermanfaat bagi orang lain.");
 check("adequate writing produces a bounded signal",()=>strong.score>=0&&strong.score<=1);
 check("adequate writing has enough words",()=>strong.wordCount>=BASELINE_WRITING_TASK.minWords);
 check("writing dimensions are bounded",()=>Object.values(strong.dimensions).every(v=>v>=0&&v<=1));
