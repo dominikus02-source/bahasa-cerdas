@@ -255,20 +255,20 @@ export default function BermainKataGame() {
             <div className="relative z-10 flex min-h-[250px] items-center justify-center px-6 pt-5 sm:min-h-[290px]">
               <div className="relative flex h-[230px] w-full max-w-md items-end justify-center sm:h-[265px]">
                 <div className="absolute bottom-2 h-8 w-56 rounded-full bg-slate-900/10 blur-xl" />
-                <div className="relative h-[225px] w-[225px] sm:h-[255px] sm:w-[255px]">
+                <div className="relative h-[225px] w-[225px] sm:h-[255px] sm:w-[255px] bk-zelby-float">
+                  <div className="absolute inset-x-8 bottom-1 h-3 rounded-full bg-sky-200/35 blur-lg bk-zelby-shadow" />
                   {ZELBY_FRAMES.map((src,index)=>(
                     <img
                       key={src}
                       src={src}
                       alt={index===zelbyFrame ? "Zelby menemani permainan" : ""}
                       aria-hidden={index!==zelbyFrame}
-                      className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_18px_14px_rgba(15,23,42,.14)] transition-opacity duration-700 ease-in-out"
+                      className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_18px_14px_rgba(15,23,42,.14)] transition-opacity duration-1000 ease-in-out"
                       style={{opacity:index===zelbyFrame?1:0}}
                     />
                   ))}
-                  <div className="absolute inset-x-2 bottom-0 h-4 rounded-full bg-sky-200/20 blur-md" />
                 </div>
-                <div className="absolute bottom-4 left-1/2 ml-[92px] whitespace-nowrap rounded-2xl border border-slate-200 bg-white/95 px-3 py-2 text-xs font-black text-slate-700 shadow-md transition-transform duration-700 ease-out sm:ml-[118px]">
+                <div className="absolute bottom-4 left-1/2 ml-[92px] whitespace-nowrap rounded-2xl border border-slate-200 bg-white/95 px-3 py-2 text-xs font-black text-slate-700 shadow-md bk-zelby-bubble sm:ml-[118px]">
                   Ayo bermain! ✨
                 </div>
               </div>
@@ -281,9 +281,34 @@ export default function BermainKataGame() {
           </div>
           <style>{`
             @media (prefers-reduced-motion: no-preference){
+              .bk-zelby-float{
+                animation:bkZelbyFloat 3.8s ease-in-out infinite;
+                transform-origin:50% 92%;
+              }
+              .bk-zelby-shadow{
+                animation:bkZelbyShadow 3.8s ease-in-out infinite;
+              }
+              .bk-zelby-bubble{
+                animation:bkZelbyBubble 3.8s ease-in-out infinite;
+              }
               @keyframes bkZelbyFloat{
-                0%,100%{transform:translateY(0)}
-                50%{transform:translateY(-5px)}
+                0%,100%{transform:translate3d(0,0,0) rotate(0deg) scale(1)}
+                25%{transform:translate3d(0,-2px,0) rotate(-.35deg) scale(1.004)}
+                50%{transform:translate3d(0,-5px,0) rotate(0deg) scale(1.008)}
+                75%{transform:translate3d(0,-2px,0) rotate(.35deg) scale(1.004)}
+              }
+              @keyframes bkZelbyShadow{
+                0%,100%{transform:scaleX(1);opacity:.34}
+                50%{transform:scaleX(.82);opacity:.22}
+              }
+              @keyframes bkZelbyBubble{
+                0%,100%{transform:translate3d(0,0,0)}
+                50%{transform:translate3d(0,-3px,0)}
+              }
+            }
+            @media (prefers-reduced-motion: reduce){
+              .bk-zelby-float,.bk-zelby-shadow,.bk-zelby-bubble{
+                animation:none !important;
               }
             }
           `}</style>
