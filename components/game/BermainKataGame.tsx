@@ -118,6 +118,12 @@ export default function BermainKataGame() {
   const pool=useMemo(()=>levelWords(level),[level])
   const maxRounds=8
   const t=THEMES[theme]
+  const activeMode = mode ? MODE_META[mode] : MODE_META.susun
+  const ModeIcon = activeMode.icon
+  const categoryEmoji: Record<string,string> = { Alam:"🌿", Hewan:"🐾", Makanan:"🍎", Sekolah:"📚", Benda:"🧸", Tubuh:"👀", Waktu:"☀️", Perasaan:"💛", Sifat:"✨", Kendaraan:"🚲", Sosial:"🤝", Tempat:"🏡", Kegiatan:"🎮", Orang:"🧭", Pakaian:"🎒", Kesehatan:"🩹" }
+  const categoryIcon = current ? (categoryEmoji[current.category] || "✨") : "✨"
+  const progress = Math.min(100,(round/maxRounds)*100)
+  const zelbyGamePose = feedback==="correct" ? "/junior/karakter/zelby_celebrate.webp" : feedback==="wrong" ? "/junior/karakter/zelby_thinking.webp" : "/junior/karakter/zelby_happy.webp"
 
   useEffect(()=>{
     try {
@@ -340,35 +346,74 @@ export default function BermainKataGame() {
   }
 
   return <main className={`min-h-screen bg-gradient-to-br ${t.bg} text-slate-900`}>
-    <div className="mx-auto max-w-3xl px-4 py-5 sm:px-6 sm:py-8">
-      <div className="flex items-center gap-3">
-        <button onClick={()=>setMode(null)} className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm" aria-label="Keluar permainan"><X size={18}/></button>
-        <div className="min-w-0 flex-1"><div className="flex justify-between text-xs font-black text-slate-500"><span>{LEVELS[level].label} · {round}/{maxRounds}</span><span className="flex items-center gap-1"><Heart size={14} className="text-rose-500" fill="currentColor"/> {hearts}</span></div><div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-200"><div className={`h-full rounded-full ${t.accent} transition-all`} style={{width:`${(round/maxRounds)*100}%`}}/></div></div>
-        <div className="hidden items-center gap-1 rounded-xl bg-white px-3 py-2 text-sm font-black shadow-sm sm:flex"><Sparkles size={15} className="text-amber-500"/> {score}</div>
+    <div className="mx-auto max-w-5xl px-4 py-4 sm:px-6 sm:py-7">
+      <header className="flex items-center gap-3">
+        <button onClick={()=>setMode(null)} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white/90 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md" aria-label="Keluar permainan"><X size={19}/></button>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-2">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white"><ModeIcon size={17}/></span>
+              <div className="min-w-0"><p className="truncate text-sm font-black">{activeMode.title}</p><p className="text-[11px] font-bold text-slate-400">{LEVELS[level].label} · Petualangan kata</p></div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="rounded-xl bg-white px-3 py-2 text-xs font-black shadow-sm"><span className="text-slate-400">SKOR</span> <span className="ml-1 text-slate-900">{score}</span></div>
+              <div className="flex items-center gap-1 rounded-xl bg-white px-3 py-2 text-xs font-black shadow-sm"><Heart size={14} className="text-rose-500" fill="currentColor"/> {hearts}</div>
+            </div>
+          </div>
+          <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-white/80 shadow-inner"><div className={`h-full rounded-full ${t.accent} transition-[width] duration-700 ease-out`} style={{width:progress + "%"}}/></div>
+        </div>
+      </header>
+
+      <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1.45fr)_minmax(260px,.55fr)]">
+        <section className="relative overflow-hidden rounded-[34px] border border-slate-200 bg-white shadow-[0_22px_60px_rgba(15,23,42,.10)]">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_12%,rgba(125,211,252,.18),transparent_24%),radial-gradient(circle_at_88%_8%,rgba(167,243,208,.20),transparent_22%)]"/>
+          <div className="relative px-5 pb-6 pt-5 sm:px-7 sm:pb-8 sm:pt-6">
+            <div className="flex items-center justify-between gap-3">
+              <div><p className="text-[11px] font-black uppercase tracking-[.18em] text-slate-400">TANTANGAN {round}</p><h1 className="mt-1 text-xl font-black sm:text-2xl">{activeMode.desc}</h1></div>
+              <div className="hidden items-center gap-1 rounded-full bg-amber-50 px-3 py-1.5 text-xs font-black text-amber-700 sm:flex"><Sparkles size={14}/> {streak>1 ? `${streak} kombo` : "Mulai kombo"}</div>
+            </div>
+
+            {current && <div className="mt-6">
+              <div className="relative mx-auto max-w-xl overflow-hidden rounded-[30px] border border-slate-100 bg-gradient-to-br from-sky-50 via-white to-emerald-50 p-5 shadow-inner sm:p-6">
+                <div className="absolute -left-10 -top-10 h-28 w-28 rounded-full bg-sky-100/70"/>
+                <div className="absolute -bottom-12 -right-5 h-32 w-32 rounded-full bg-emerald-100/70"/>
+                <div className="relative z-10 flex items-center gap-4 sm:gap-6">
+                  <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[24px] bg-white text-5xl shadow-md sm:h-24 sm:w-24">{categoryIcon}</div>
+                  <div className="min-w-0"><div className="text-[10px] font-black uppercase tracking-widest text-slate-400">{current.category}</div><p className="mt-1 text-sm font-bold leading-6 text-slate-600">{current.hint}</p><div className="mt-3 inline-flex rounded-full bg-white px-3 py-1 text-[10px] font-black text-slate-400 shadow-sm">Zelby memberi petunjuk</div></div>
+                </div>
+              </div>
+
+              {mode==="susun" && <div className="mt-5">
+                <div className="min-h-[62px] rounded-[22px] border border-sky-100 bg-sky-50/70 p-2"><div className="flex min-h-12 flex-wrap justify-center gap-2">{answer.map((x,i)=><button key={i} onClick={()=>{setAnswer(a=>{const n=[...a];n.splice(i,1);return n});setLetters(l=>[...l,x])}} className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-500 text-xl font-black text-white shadow-[0_5px_0_rgba(14,165,233,.25)] transition hover:-translate-y-0.5">{x}</button>)}</div></div>
+                <div className="mt-3 flex min-h-14 flex-wrap justify-center gap-2">{letters.map((x,i)=><button key={i} disabled={answer.length>=current.word.length||!!feedback} onClick={()=>{setAnswer(a=>[...a,x]);setLetters(a=>a.filter((_,idx)=>idx!==i))}} className="flex h-12 w-12 items-center justify-center rounded-2xl border-2 border-slate-200 bg-white text-xl font-black shadow-sm transition hover:-translate-y-1 hover:border-sky-300 hover:bg-sky-50 disabled:opacity-40">{x}</button>)}</div>
+                <button disabled={answer.length!==current.word.length||!!feedback} onClick={checkSusun} className={`mx-auto mt-5 flex items-center gap-2 rounded-2xl px-7 py-3.5 font-black text-white shadow-lg transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-40 ${t.accent}`}>Periksa jawaban <Check size={17}/></button>
+              </div>}
+
+              {mode==="rumpang" && <div className="mt-5"><div className="flex justify-center"><div className="rounded-[24px] border-2 border-dashed border-sky-200 bg-sky-50/70 px-7 py-4 text-4xl font-black tracking-[.32em]">{letters.join("")}</div></div><div className="mx-auto mt-5 grid max-w-md grid-cols-3 gap-3">{options.map((x,i)=><button key={i} disabled={!!feedback} onClick={()=>chooseRumpang(x)} className="rounded-[20px] border-2 border-slate-200 bg-white py-4 text-xl font-black shadow-sm transition hover:-translate-y-1 hover:border-sky-300 hover:bg-sky-50 disabled:opacity-50">{x}</button>)}</div></div>}
+
+              {mode==="pasangan" && <div className="mt-5"><div className="mx-auto max-w-sm rounded-[26px] border-2 border-dashed border-violet-200 bg-violet-50/60 p-5 text-center"><div className="text-5xl">{categoryIcon}</div><div className="mt-2 text-3xl font-black">{current.word}</div><div className="mt-1 text-xs font-bold text-slate-400">Cari kata yang berpasangan</div></div><div className="mt-5 grid gap-3 sm:grid-cols-2">{shuffle([...(PAIRS.find(p=>p[0]===current.word)?.slice(1)||[]),"BUKU","KUCING","BOLA","MEJA"].filter((x,i,a)=>a.indexOf(x)===i).slice(0,4)).map((x,i)=><button key={i} disabled={!!feedback} onClick={()=>choose(x)} className="group rounded-[22px] border-2 border-slate-200 bg-white px-5 py-4 text-left font-black shadow-sm transition hover:-translate-y-1 hover:border-violet-300 hover:bg-violet-50"><span className="mr-2 inline-flex h-8 w-8 items-center justify-center rounded-xl bg-violet-50 text-violet-600">{i+1}</span>{x}<ChevronRight className="float-right mt-1 text-slate-300 group-hover:text-violet-500"/></button>)}</div></div>}
+
+              {mode==="makna" && <div className="mt-5"><div className="mx-auto max-w-sm rounded-[26px] border-2 border-dashed border-amber-200 bg-amber-50/60 p-5 text-center"><div className="text-5xl">{categoryIcon}</div><div className="mt-2 text-3xl font-black">{current.word}</div><div className="mt-2 inline-flex rounded-full bg-white px-3 py-1 text-xs font-black text-slate-500 shadow-sm">{current.synonym?"Cari sinonim":"Cari lawan kata"}</div></div><div className="mt-5 grid gap-3 sm:grid-cols-2">{options.map((x,i)=><button key={i} disabled={!!feedback} onClick={()=>choose(x)} className="group rounded-[22px] border-2 border-slate-200 bg-white px-5 py-4 text-left font-black shadow-sm transition hover:-translate-y-1 hover:border-amber-300 hover:bg-amber-50"><span className="mr-2 inline-flex h-8 w-8 items-center justify-center rounded-xl bg-amber-50 text-amber-600">{i+1}</span>{x}<ChevronRight className="float-right mt-1 text-slate-300 group-hover:text-amber-500"/></button>)}</div></div>}
+
+              {feedback && <div className={`mt-5 flex items-center justify-center gap-3 rounded-[22px] px-4 py-3.5 text-center font-black ${feedback==="correct"?"bg-emerald-50 text-emerald-700":"bg-rose-50 text-rose-700"}`}><span className="text-2xl">{feedback==="correct"?"🎉":"💪"}</span><span>{message}</span></div>}
+            </div>}
+          </div>
+        </section>
+
+        <aside className="relative overflow-hidden rounded-[34px] border border-slate-200 bg-white shadow-[0_22px_60px_rgba(15,23,42,.08)]">
+          <div className="absolute inset-0 bg-gradient-to-b from-sky-50 via-white to-emerald-50"/>
+          <div className="relative flex min-h-[390px] flex-col items-center justify-between p-5 sm:min-h-[500px] sm:p-6">
+            <div className="flex w-full items-center justify-between"><span className="rounded-full bg-white px-3 py-1.5 text-[10px] font-black tracking-widest text-slate-400 shadow-sm">TEMAN BERMAIN</span>{streak>0&&<span className="rounded-full bg-amber-50 px-3 py-1.5 text-xs font-black text-amber-700">🔥 {streak}</span>}</div>
+            <div className="relative flex flex-1 items-center justify-center py-5">
+              <div className="absolute h-52 w-52 rounded-full bg-white/80 blur-xl"/>
+              <img src={zelbyGamePose} alt="Zelby menemanimu bermain" className="relative h-60 w-auto object-contain drop-shadow-[0_20px_18px_rgba(15,23,42,.16)] transition-opacity duration-500"/>
+              <div className="absolute bottom-3 right-0 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-700 shadow-md">{feedback==="correct"?"Hebat! ⭐":feedback==="wrong"?"Coba lagi 💪":"Kita cari jawabannya!"}</div>
+            </div>
+            <div className="w-full rounded-[22px] bg-white/85 p-4 text-center shadow-sm"><div className="text-[10px] font-black uppercase tracking-widest text-slate-400">KEMAJUAN</div><div className="mt-1 text-2xl font-black">{round}<span className="text-slate-300">/{maxRounds}</span></div><div className="mt-2 flex justify-center gap-1.5">{Array.from({length:maxRounds}).map((_,i)=><span key={i} className={`h-2 w-5 rounded-full ${i<round?t.accent:"bg-slate-200"}`}/>)}</div></div>
+          </div>
+        </aside>
       </div>
 
-      <section className="mt-6 rounded-[30px] border border-slate-200 bg-white p-5 shadow-[0_15px_45px_rgba(15,23,42,.08)] sm:p-7">
-        <div className="flex items-center gap-3"><div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-50 text-sky-600"><BookOpen size={25}/></div><div><p className="text-xs font-black uppercase tracking-wider text-slate-400">BERMAIN KATA</p><p className="font-black">{mode==="susun"?"Susun Kata":mode==="rumpang"?"Kata Rumpang":mode==="pasangan"?"Cari Pasangan":"Makna Kata"}</p></div></div>
-
-        {mode==="susun" && current && <div className="mt-7"><p className="text-center text-sm font-bold text-slate-500">{current.hint}</p><div className="mt-5 flex min-h-14 flex-wrap justify-center gap-2">{answer.map((x,i)=><button key={i} onClick={()=>{
-  setAnswer((a)=>{
-    const next=[...a]
-    next.splice(i,1)
-    return next
-  })
-  setLetters((l)=>[...l,x])
-}} className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-500 text-xl font-black text-white shadow-sm">{x}</button>)}</div><div className="mt-4 flex flex-wrap justify-center gap-2">{letters.map((x,i)=><button key={i} disabled={answer.length>=current.word.length} onClick={()=>{setAnswer(a=>[...a,x]);setLetters(a=>a.filter((_,idx)=>idx!==i))}} className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-xl font-black hover:bg-sky-50">{x}</button>)}</div><button disabled={answer.length!==current.word.length||!!feedback} onClick={checkSusun} className={`mx-auto mt-6 flex items-center gap-2 rounded-2xl px-6 py-3 font-black text-white disabled:cursor-not-allowed disabled:opacity-40 ${t.accent}`}>Periksa <Check size={17}/></button></div>}
-
-        {mode==="rumpang" && current && <div className="mt-7 text-center"><p className="text-sm font-bold text-slate-500">{current.hint}</p><div className="mt-6 text-4xl font-black tracking-[.35em]">{letters.join("")}</div><div className="mx-auto mt-7 max-w-xs grid grid-cols-3 gap-2">{options.map((x,i)=><button key={i} disabled={!!feedback} onClick={()=>chooseRumpang(x)} className="rounded-2xl border border-slate-200 bg-slate-50 py-3 text-lg font-black hover:bg-sky-50">{x}</button>)}</div></div>}
-
-        {mode==="pasangan" && current && <div className="mt-7 text-center"><p className="text-sm font-bold text-slate-500">Cari pasangan yang tepat untuk kata ini</p><div className="mt-4 text-3xl font-black">{current.word}</div><div className="mt-6 grid gap-2 sm:grid-cols-2">{shuffle([...(PAIRS.find(p=>p[0]===current.word)?.slice(1) || []), "BUKU", "KUCING", "BOLA"].filter((x,i,a)=>a.indexOf(x)===i).slice(0,4)).map((x,i)=><button key={i} disabled={!!feedback} onClick={()=>choose(x)} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-left font-black hover:border-sky-300 hover:bg-sky-50">{x}</button>)}</div></div>}
-
-        {mode==="makna" && current && <div className="mt-7 text-center"><p className="text-sm font-bold text-slate-500">Pilih <b>{current.synonym ? "sinonim" : "lawan kata"}</b> dari <b>{current.word}</b></p><div className="mt-6 grid gap-2 sm:grid-cols-2">{options.map((x,i)=><button key={i} disabled={!!feedback} onClick={()=>choose(x)} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 font-black hover:border-sky-300 hover:bg-sky-50">{x}</button>)}</div></div>}
-
-        {feedback && <div className={`mt-6 rounded-2xl p-4 text-center font-black ${feedback==="correct"?"bg-emerald-50 text-emerald-700":"bg-rose-50 text-rose-700"}`}>{message}</div>}
-      </section>
-
-      <div className="mt-4 flex items-center justify-between text-xs font-bold text-slate-400"><span>Skor {score}</span><span>Streak {streak}</span><span>Target bermain: {maxRounds} soal</span></div>
+      <div className="mt-4 flex items-center justify-between px-1 text-xs font-bold text-slate-400"><span>Skor {score}</span><span>{streak>1?`🔥 ${streak} kombo`:"Terus bermain!"}</span><span>{round}/{maxRounds}</span></div>
     </div>
   </main>
-}
