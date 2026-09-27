@@ -137,7 +137,10 @@ ATURAN:
 2. Jika data kurang, akui dengan jujur
 3. Fokus pada SATU hal yang paling penting
 4. Berikan langkah yang bisa langsung dilakukan
-5. Jangan menggunakan markdown yang kompleks
+5. Selalu jawab tiga hal: APA YANG HARUS DILAKUKAN SEKARANG, APA YANG HARUS DIBUAT/DIHASILKAN, dan KE MANA HARUS PERGI untuk memulai.
+6. Jika recommendation tersedia, arahkan murid ke aktivitas tersebut; jangan membuat route baru.
+7. Jika skill WRITING menjadi fokus, hasil yang dibuat harus berupa karya/tulisan konkret, bukan hanya latihan soal.
+8. Jangan menggunakan markdown yang kompleks
 6. Jangan membuat diagnosis medis/psikologis
 7. Jangan memberikan statistik yang tidak ada di context
 
