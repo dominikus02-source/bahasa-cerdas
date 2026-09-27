@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { ArrowLeft, BookOpen, Brain, Check, ChevronRight, Cloud, Heart, Lightbulb, Palette, Pencil, Puzzle, Sparkles, Sprout, Star, Trophy, Waves, X } from "lucide-react"
+import { ArrowLeft, Brain, Check, ChevronRight, Cloud, Heart, Lightbulb, Palette, Pencil, Puzzle, Sparkles, Sprout, Star, Trophy, Waves, X } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 type Mode = "susun" | "rumpang" | "pasangan" | "makna"
@@ -102,7 +102,6 @@ export default function BermainKataGame() {
   const [letters,setLetters]=useState<string[]>([])
   const [answer,setAnswer]=useState<string[]>([])
   const [options,setOptions]=useState<string[]>([])
-  const [selected,setSelected]=useState<string|null>(null)
   const [feedback,setFeedback]=useState<"correct"|"wrong"|null>(null)
   const [message,setMessage]=useState("")
   const [best,setBest]=useState(0)
@@ -148,7 +147,7 @@ export default function BermainKataGame() {
     const available=pool.filter((item)=>!usedWords.includes(item.word))
     const w=shuffle(available.length ? available : pool)[0] || WORDS[0]
     setUsedWords((prev)=>prev.includes(w.word) ? prev : [...prev,w.word])
-    setCurrent(w); setRound(nextRound); setSelected(null); setFeedback(null); setMessage("")
+    setCurrent(w); setRound(nextRound); setFeedback(null); setMessage("")
 
     if(nextMode==="susun"){
       setLetters(shuffle(w.word.split("")))
@@ -414,3 +413,4 @@ export default function BermainKataGame() {
       <div className="mt-4 flex items-center justify-between px-1 text-xs font-bold text-slate-400"><span>Skor {score}</span><span>{streak>1?`🔥 ${streak} kombo`:"Terus bermain!"}</span><span>{round}/{maxRounds}</span></div>
     </div>
   </main>
+}
