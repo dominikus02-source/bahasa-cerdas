@@ -125,7 +125,6 @@ export default function BermainKataGame() {
   const categoryIcon = current ? (categoryEmoji[current.category] || "✨") : "✨"
   const progress = Math.min(100,(round/maxRounds)*100)
   const zelbyFeedbackFrame = feedback==="correct" ? 3 : feedback==="wrong" ? 2 : zelbyFrame
-  const zelbyGamePose = ZELBY_FRAMES[zelbyFeedbackFrame]
 
   useEffect(()=>{
     try {
@@ -253,9 +252,9 @@ export default function BermainKataGame() {
 
         <section className="mx-auto mt-6 max-w-3xl">
           <div className="relative overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-[0_18px_50px_rgba(15,23,42,.10)] dark:border-[#263452] dark:bg-[#10182d] dark:shadow-[0_18px_50px_rgba(0,0,0,.42)]">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(125,211,252,.28),transparent_30%),radial-gradient(circle_at_85%_18%,rgba(167,243,208,.35),transparent_28%),linear-gradient(135deg,#F0F9FF,#FFFFFF_48%,#F0FDFA)]" />
-            <div className="absolute -left-8 -bottom-10 h-32 w-32 rounded-full bg-sky-100/80" />
-            <div className="absolute -right-8 -top-10 h-36 w-36 rounded-full bg-emerald-100/80" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(125,211,252,.28),transparent_30%),radial-gradient(circle_at_85%_18%,rgba(167,243,208,.35),transparent_28%),linear-gradient(135deg,#F0F9FF,#FFFFFF_48%,#F0FDFA)] dark:bg-[radial-gradient(circle_at_15%_20%,rgba(56,189,248,.12),transparent_30%),radial-gradient(circle_at_85%_18%,rgba(52,211,153,.10),transparent_28%),linear-gradient(135deg,#111d34,#0d1527_48%,#10252a)]" />
+            <div className="absolute -left-8 -bottom-10 h-32 w-32 rounded-full bg-sky-100/80 dark:bg-sky-500/10" />
+            <div className="absolute -right-8 -top-10 h-36 w-36 rounded-full bg-emerald-100/80 dark:bg-emerald-500/10" />
             <div className="absolute right-[14%] top-12 h-3 w-3 rounded-full bg-amber-300/80 shadow-sm" />
             <div className="absolute left-[17%] top-20 h-2 w-2 rounded-full bg-sky-300/80 shadow-sm" />
             <div className="absolute left-[23%] bottom-12 h-2.5 w-2.5 rounded-full bg-emerald-300/80 shadow-sm" />
@@ -275,14 +274,14 @@ export default function BermainKataGame() {
                     />
                   ))}
                 </div>
-                <div className="absolute bottom-4 left-1/2 ml-[92px] whitespace-nowrap rounded-2xl border border-slate-200 bg-white/95 px-3 py-2 text-xs font-black text-slate-700 shadow-md bk-zelby-bubble sm:ml-[118px]">
+                <div className="absolute bottom-4 left-1/2 ml-[92px] whitespace-nowrap rounded-2xl border border-slate-200 bg-white/95 px-3 py-2 text-xs font-black text-slate-700 shadow-md bk-zelby-bubble dark:border-[#31415f] dark:bg-[#17213b]/95 dark:text-slate-100 sm:ml-[118px]">
                   Ayo bermain! ✨
                 </div>
               </div>
             </div>
             <div className="relative z-20 border-t border-slate-100 bg-white/80 px-5 py-4 dark:border-[#263452] dark:bg-[#0a1020]/90 text-center backdrop-blur">
               <div className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-1.5 text-xs font-black tracking-wide text-white dark:bg-white dark:text-slate-950"><Sparkles size={14}/> EKOSISTEM PEMBELAJARAN BAHASA INDONESIA</div>
-              <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-5xl">BERMAIN <span className="text-sky-600">KATA</span></h1>
+              <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-5xl">BERMAIN <span className="text-sky-600">KATA</span></h1>
               <p className="mx-auto mt-1 max-w-xl text-sm leading-6 text-slate-600 dark:text-slate-200">Main, belajar, dan kumpulkan kata baru bersama Zelby.</p>
             </div>
           </div>
@@ -379,7 +378,7 @@ export default function BermainKataGame() {
                 <div className="absolute -left-10 -top-10 h-28 w-28 rounded-full bg-sky-100/70"/>
                 <div className="absolute -bottom-12 -right-5 h-32 w-32 rounded-full bg-emerald-100/70"/>
                 <div className="relative z-10 flex items-center gap-4 sm:gap-6">
-                  <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[24px] bg-white text-5xl shadow-md sm:h-24 sm:w-24">{categoryIcon}</div>
+                  <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[24px] bg-white text-5xl shadow-md dark:bg-[#17213b] sm:h-24 sm:w-24">{categoryIcon}</div>
                   <div className="min-w-0"><div className="text-[10px] font-black uppercase tracking-widest text-slate-400">{current.category}</div><p className="mt-1 text-sm font-bold leading-6 text-slate-600 dark:text-slate-200">{current.hint}</p><div className="mt-3 inline-flex rounded-full bg-white px-3 py-1 text-[10px] font-black dark:bg-[#17213b] text-slate-400 shadow-sm">Zelby memberi petunjuk</div></div>
                 </div>
               </div>
@@ -419,7 +418,7 @@ export default function BermainKataGame() {
                   />
                 ))}
               </div>
-              <div className="absolute bottom-3 right-0 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-700 shadow-md">{feedback==="correct"?"Hebat! ⭐":feedback==="wrong"?"Coba lagi 💪":"Kita cari jawabannya!"}</div>
+              <div className="absolute bottom-3 right-0 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-700 shadow-md dark:border-[#31415f] dark:bg-[#17213b] dark:text-slate-100">{feedback==="correct"?"Hebat! ⭐":feedback==="wrong"?"Coba lagi 💪":"Kita cari jawabannya!"}</div>
             </div>
             <div className="w-full rounded-[22px] bg-white/85 p-4 text-center shadow-sm dark:bg-[#17213b]/90"><div className="text-[10px] font-black uppercase tracking-widest text-slate-400">KEMAJUAN</div><div className="mt-1 text-2xl font-black">{round}<span className="text-slate-300 dark:text-slate-500">/{maxRounds}</span></div><div className="mt-2 flex justify-center gap-1.5">{Array.from({length:maxRounds}).map((_,i)=><span key={i} className={`h-2 w-5 rounded-full ${i<round?t.accent:"bg-slate-200 dark:bg-slate-700"}`}/>)}</div></div>
           </div>
