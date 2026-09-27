@@ -68,6 +68,7 @@ export default function TesAwalPage(){
         <p className="mt-4 text-sm leading-6 text-blue-100/75 sm:text-base">10 tantangan terarah dan 1 tugas menulis untuk membangun gambaran awal kemampuanmu. Ini bukan tes Jalur Cerdas dan tidak mengunci kamu ke satu jalur belajar.</p>
         <div className="mt-6 flex flex-wrap gap-2"><span className="rounded-full border border-white/10 bg-white/[.08] px-3 py-2 text-[11px] font-bold">5 kompetensi</span><span className="rounded-full border border-white/10 bg-white/[.08] px-3 py-2 text-[11px] font-bold">3 tingkat kesulitan</span><span className="rounded-full border border-white/10 bg-white/[.08] px-3 py-2 text-[11px] font-bold">✍️ Menulis</span><span className="rounded-full border border-white/10 bg-white/[.08] px-3 py-2 text-[11px] font-bold">±15 menit</span></div>
         <button onClick={()=>post({action:"start"})} disabled={busy} className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-white px-6 py-3.5 text-sm font-black text-[#18255b] disabled:opacity-60">{busy?<Loader2 className="h-4 w-4 animate-spin"/>:<Brain className="h-4 w-4"/>}Mulai Tes Awal<ArrowRight className="h-4 w-4"/></button>
+        {feedback&&<p role="alert" className="mt-4 max-w-xl rounded-xl border border-rose-300/30 bg-rose-500/10 px-4 py-3 text-sm font-semibold text-rose-100">{feedback}</p>}
       </div>
     </section>
   </main>;
