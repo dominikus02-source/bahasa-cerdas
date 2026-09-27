@@ -16,11 +16,11 @@ export async function getLearnerState(userId: string): Promise<LearnerSkillState
       WITH ranked AS (
         SELECT
           e."id",
-          CASE WHEN e."source" = 'DIAGNOSTIC_BASELINE_V2' THEN e."skill" ELSE m."skill" END AS "skill",
+          CASE WHEN e."source" = 'DIAGNOSTIC_BASELINE_V2' THEN e."skill"::text ELSE m."skill"::text END AS "skill",
           e."isCorrect",
           e."answeredAt",
           ROW_NUMBER() OVER (
-            PARTITION BY m."skill"
+            PARTITION BY CASE WHEN e."source" = 'DIAGNOSTIC_BASELINE_V2' THEN e."skill"::text ELSE m."skill"::text END
             ORDER BY e."answeredAt" DESC, e."id" DESC
           ) AS "recentRank"
         FROM "LearningEvidence" e
