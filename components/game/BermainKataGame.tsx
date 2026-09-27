@@ -352,8 +352,8 @@ export default function BermainKataGame() {
               <div className="min-w-0"><p className="truncate text-sm font-black">{activeMode.title}</p><p className="text-[11px] font-bold text-slate-400">{LEVELS[level].label} · Petualangan kata</p></div>
             </div>
             <div className="flex items-center gap-2">
-              <div className="rounded-xl bg-white px-3 py-2 text-xs font-black shadow-sm dark:bg-slate-800"><span className="text-slate-400">SKOR</span> <span className="ml-1 text-slate-900">{score}</span></div>
-              <div className="flex items-center gap-1 rounded-xl bg-white px-3 py-2 text-xs font-black shadow-sm dark:bg-slate-800 dark:bg-slate-800"><Heart size={14} className="text-rose-500" fill="currentColor"/> {hearts}</div>
+              <div className="rounded-xl bg-white px-3 py-2 text-xs font-black shadow-sm dark:bg-slate-800"><span className="text-slate-400">SKOR</span> <span className="ml-1 text-slate-900 dark:text-white">{score}</span></div>
+              <div className="flex items-center gap-1 rounded-xl bg-white px-3 py-2 text-xs font-black shadow-sm dark:bg-slate-800"><Heart size={14} className="text-rose-500" fill="currentColor"/> {hearts}</div>
             </div>
           </div>
           <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-white/80 shadow-inner dark:bg-slate-800/80"><div className={`h-full rounded-full ${t.accent} transition-[width] duration-700 ease-out`} style={{width:progress + "%"}}/></div>
@@ -370,12 +370,12 @@ export default function BermainKataGame() {
             </div>
 
             {current && <div className="mt-6">
-              <div className="relative mx-auto max-w-xl overflow-hidden rounded-[30px] border border-slate-100 bg-gradient-to-br from-sky-50 via-white to-emerald-50 dark:from-slate-800 dark:via-slate-900 dark:to-emerald-950/30 dark:border-slate-700 dark:from-slate-800 dark:via-slate-850 dark:to-slate-800 p-5 shadow-inner sm:p-6">
+              <div className="relative mx-auto max-w-xl overflow-hidden rounded-[30px] border border-slate-100 bg-gradient-to-br from-sky-50 via-white to-emerald-50 dark:from-slate-800 dark:via-slate-900 dark:to-emerald-950/30 dark:border-slate-700 dark:from-slate-800 dark:via-slate-900 dark:to-slate-800 p-5 shadow-inner sm:p-6">
                 <div className="absolute -left-10 -top-10 h-28 w-28 rounded-full bg-sky-100/70"/>
                 <div className="absolute -bottom-12 -right-5 h-32 w-32 rounded-full bg-emerald-100/70"/>
                 <div className="relative z-10 flex items-center gap-4 sm:gap-6">
                   <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[24px] bg-white text-5xl shadow-md sm:h-24 sm:w-24">{categoryIcon}</div>
-                  <div className="min-w-0"><div className="text-[10px] font-black uppercase tracking-widest text-slate-400">{current.category}</div><p className="mt-1 text-sm font-bold leading-6 text-slate-600">{current.hint}</p><div className="mt-3 inline-flex rounded-full bg-white px-3 py-1 text-[10px] font-black dark:bg-slate-800 text-slate-400 shadow-sm">Zelby memberi petunjuk</div></div>
+                  <div className="min-w-0"><div className="text-[10px] font-black uppercase tracking-widest text-slate-400">{current.category}</div><p className="mt-1 text-sm font-bold leading-6 text-slate-600 dark:text-slate-300">{current.hint}</p><div className="mt-3 inline-flex rounded-full bg-white px-3 py-1 text-[10px] font-black dark:bg-slate-800 text-slate-400 shadow-sm">Zelby memberi petunjuk</div></div>
                 </div>
               </div>
 
@@ -401,7 +401,7 @@ export default function BermainKataGame() {
           <div className="relative flex min-h-[390px] flex-col items-center justify-between p-5 sm:min-h-[500px] sm:p-6">
             <div className="flex w-full items-center justify-between"><span className="rounded-full bg-white px-3 py-1.5 text-[10px] font-black dark:bg-slate-800 tracking-widest text-slate-400 shadow-sm">TEMAN BERMAIN</span>{streak>0&&<span className="rounded-full bg-amber-50 px-3 py-1.5 text-xs font-black text-amber-700">🔥 {streak}</span>}</div>
             <div className="relative flex flex-1 items-center justify-center py-5 bk-zelby-stage">
-              <div className="absolute h-52 w-52 rounded-full bg-white/80 blur-xl"/>
+              <div className="absolute h-52 w-52 rounded-full bg-white/80 blur-xl dark:bg-sky-500/10"/>
               <img src={zelbyGamePose} alt="Zelby menemanimu bermain" className={`relative h-60 w-auto object-contain drop-shadow-[0_20px_18px_rgba(15,23,42,.16)] bk-zelby-game-motion ${feedback==="correct"?"bk-zelby-celebrate":feedback==="wrong"?"bk-zelby-wiggle":""}`}/>
               <div className="absolute bottom-3 right-0 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-700 shadow-md">{feedback==="correct"?"Hebat! ⭐":feedback==="wrong"?"Coba lagi 💪":"Kita cari jawabannya!"}</div>
             </div>
@@ -411,7 +411,7 @@ export default function BermainKataGame() {
       </div>
 
       <div className="mt-4 flex items-center justify-between px-1 text-xs font-bold text-slate-400"><span>Skor {score}</span><span>{streak>1?`🔥 ${streak} kombo`:"Terus bermain!"}</span><span>{round}/{maxRounds}</span></div>
-    <style>{\`
+    <style>{`
       @media (prefers-reduced-motion: no-preference){
         .bk-zelby-game-motion{
           animation:bkZelbyGame 2.8s ease-in-out infinite;
@@ -456,7 +456,7 @@ export default function BermainKataGame() {
       @media (prefers-reduced-motion: reduce){
         .bk-zelby-game-motion,.bk-zelby-stage::before{animation:none !important}
       }
-    \`}</style>
+    `}</style>
     </div>
   </main>
 }
