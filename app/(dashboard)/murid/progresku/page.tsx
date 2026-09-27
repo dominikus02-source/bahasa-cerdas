@@ -191,8 +191,16 @@ export default function ProgresPage() {
                   <div key={skill.skill}>
                     <div className="mb-1.5 flex items-center justify-between gap-3">
                       <span className="text-sm font-semibold text-slate-800 dark:text-white/90">{LABEL[skill.skill]}</span>
-                      <span className="text-xs text-slate-500 dark:text-slate-400">{has ? `${value}%` : "Belum ada bukti"}</span>
-                    </div>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">{isWriting ? (has ? "Terukur" : "Belum ada bukti") : has ? `${value}%` : "Belum ada bukti"}</span>
+                    {isWriting ? (
+                      <div className="rounded-lg bg-fuchsia-50 px-3 py-2 text-[10px] font-semibold text-fuchsia-700 dark:bg-fuchsia-400/[0.06] dark:text-fuchsia-200">
+                        ${skill.attemptCount} tugas menulis tercatat
+                      </div>
+                    ) : (
+                      <div className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                        <div className="h-full rounded-full bg-gradient-to-r from-violet-500 to-purple-500 transition-all duration-500" style={{ width: `${value}%` }} />
+                      </div>
+                    )}
                     <div className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                       <div className="h-full rounded-full bg-gradient-to-r from-violet-500 to-purple-500 transition-all duration-500" style={{ width: `${value}%` }} />
                     </div>
