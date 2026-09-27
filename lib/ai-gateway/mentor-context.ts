@@ -34,13 +34,6 @@ export interface MentorContext {
   };
   confidence: number | null;
   hasEnoughData: boolean;
-  nextMission: {
-    type: "LATIHAN" | "KARYA";
-    title: string;
-    instruction: string;
-    deliverable: string;
-    route: "/arena/jalur-cerdas" | "/murid/karya/tulis";
-  };
 }
 
 /**
@@ -88,24 +81,6 @@ export async function buildMentorContext(userId: string): Promise<MentorContext>
   // Check if we have enough data
   const hasEnoughData = skillsWithEvidence.length >= 2 && totalAttempts >= 10;
 
-  const focusLabel = focus?.label || "kemampuan bahasa";
-  const nextMission =
-    focus?.skill === "WRITING"
-      ? {
-          type: "KARYA" as const,
-          title: "Tulis satu karya pendek",
-          instruction: `Buat tulisan 3–5 kalimat yang melatih ${focusLabel.toLowerCase()}.`,
-          deliverable: "Satu paragraf pendek dengan gagasan yang jelas dan runtut.",
-          route: "/murid/karya/tulis" as const,
-        }
-      : {
-          type: "LATIHAN" as const,
-          title: `Mainkan quest ${focusLabel}`,
-          instruction: `Selesaikan 1–2 latihan yang berfokus pada ${focusLabel.toLowerCase()}.`,
-          deliverable: "Satu sesi latihan terarah dan tinjau kembali kesalahanmu.",
-          route: "/arena/jalur-cerdas" as const,
-        };
-
   return {
     strongestSkill: strongest
       ? {
@@ -133,7 +108,6 @@ export async function buildMentorContext(userId: string): Promise<MentorContext>
       : { title: null, description: null, skill: null },
     confidence,
     hasEnoughData,
-    nextMission,
   };
 }
 
@@ -161,8 +135,6 @@ ATURAN:
 3. Fokus pada SATU hal yang paling penting
 4. Berikan langkah yang bisa langsung dilakukan
 5. Jangan menggunakan markdown yang kompleks
-8. Mentor HARUS mengarahkan satu misi konkret: apa yang harus dilakukan dan apa yang harus dibuat/dihasilkan.
-9. Pilih jenis misi hanya LATIHAN atau KARYA.
 6. Jangan membuat diagnosis medis/psikologis
 7. Jangan memberikan statistik yang tidak ada di context
 
@@ -202,7 +174,7 @@ export function buildDeterministicFallback(context: MentorContext): {
       headline: "Belum cukup data",
       diagnosis: "Aku masih mengenali pola belajarmu.",
       reason: "Data belajar belum cukup untuk memberikan analisis yang akurat.",
-      action: `${context.nextMission.instruction} Yang perlu kamu buat: ${context.nextMission.deliverable}`,
+      action: "Selesaikan beberapa latihan lagi, lalu coba tanyakan lagi.",
       encouragement: "Sedikit demi sedikit, kamu akan semakin kuat!",
     };
   }
@@ -216,7 +188,7 @@ export function buildDeterministicFallback(context: MentorContext): {
     headline: `Fokuskan dulu pada ${focusLabel}`,
     diagnosis: `Data belajarmu menunjukkan bahwa ${focusLabel} masih menjadi bagian yang perlu diperkuat (akurasi ${focusAccuracy}).`,
     reason: `Kamu sudah cukup kuat dalam skill lain, tetapi ${focusLabel} masih perlu latihan lebih.`,
-    action: `${context.nextMission.instruction} Yang perlu kamu buat: ${context.nextMission.deliverable}`,
+    action: `Mulai latihan yang berfokus pada ${focusLabel}. Coba selesaikan 1-2 unit hari ini.`,
     encouragement: "Sedikit latihan terarah bisa membuatnya jauh lebih kuat!",
   };
 }
