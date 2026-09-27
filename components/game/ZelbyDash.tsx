@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Heart, Volume2, VolumeX, Sparkles, RotateCcw, Star } from "lucide-react";
+import { Heart, Volume2, VolumeX, Sparkles, RotateCcw, Star, Trophy, BookOpen, Flame, Check, ArrowRight } from "lucide-react";
 import GameBackButton from "@/components/game/GameBackButton";
 import { setQuiet } from "@/lib/notif-quiet";
 
@@ -156,6 +156,9 @@ export default function ZelbyDash() {
   const [gamesPlayed, setGamesPlayed] = useState(0);
   const [message, setMessage] = useState("Ayo, bermain kata bersama Zelby!");
   const [zelbyPose, setZelbyPose] = useState(zelby.wave);
+  const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
+  const [locked, setLocked] = useState(false);
+  const [bestCombo, setBestCombo] = useState(0);
 
   useEffect(() => {
     setQuiet(screen === "game");
@@ -174,6 +177,7 @@ export default function ZelbyDash() {
     try {
       setBestScore(Number(localStorage.getItem("bermain-kata-best") || 0));
       setGamesPlayed(Number(localStorage.getItem("bermain-kata-played") || 0));
+      setBestCombo(Number(localStorage.getItem("bermain-kata-best-combo") || 0));
     } catch {
       // Local progress is optional.
     }
@@ -186,6 +190,8 @@ export default function ZelbyDash() {
     setSelectedMatch(null);
     setLetters(nextMode === "susun" ? shuffle(r.answer.split("")) : []);
     setAnswered((n) => n + 1);
+    setFeedback(null);
+    setLocked(false);
   };
 
   const start = (m: Mode) => {
@@ -199,6 +205,8 @@ export default function ZelbyDash() {
     setCollectedWords([]);
     setMessage("Zelby siap! Yuk mulai!");
     setZelbyPose(zelby.wave);
+    setFeedback(null);
+    setLocked(false);
     setScreen("game");
     const first = makeRound(m, difficulty);
     setRound(first);
@@ -211,14 +219,17 @@ export default function ZelbyDash() {
     const finalStars = Math.max(1, Math.min(3, Math.floor(finalScore / 70) + 1));
     const nextBest = Math.max(bestScore, finalScore);
     const nextPlayed = gamesPlayed + 1;
+    const nextBestCombo = Math.max(bestCombo, maxCombo);
     setStars(finalStars);
     setBestScore(nextBest);
     setGamesPlayed(nextPlayed);
+    setBestCombo(nextBestCombo);
     setZelbyPose(zelby.celebrate);
     playGameTone(muted, "finish");
     try {
       localStorage.setItem("bermain-kata-best", String(nextBest));
       localStorage.setItem("bermain-kata-played", String(nextPlayed));
+      localStorage.setItem("bermain-kata-best-combo", String(nextBestCombo));
     } catch {
       // Local progress is optional.
     }
@@ -226,6 +237,9 @@ export default function ZelbyDash() {
   };
 
   const correct = () => {
+    if (locked) return;
+    setLocked(true);
+    setFeedback("correct");
     const newCombo = combo + 1;
     const gained = 10 * Math.min(3, 1 + Math.floor(combo / 3));
     const newScore = score + gained;
@@ -247,6 +261,9 @@ export default function ZelbyDash() {
   };
 
   const wrong = () => {
+    if (locked) return;
+    setLocked(true);
+    setFeedback("wrong");
     const nextLives = lives - 1;
     setLives(nextLives);
     setCombo(0);
@@ -258,6 +275,7 @@ export default function ZelbyDash() {
   };
 
   const check = (answer: string) => {
+    if (locked) return;
     if (answer === round.answer) correct();
     else wrong();
   };
@@ -270,12 +288,21 @@ export default function ZelbyDash() {
     if (nextSelected.length === round.answer.length) check(nextSelected.join(""));
   };
 
+  const modeMeta: Record<Mode, { icon: string; tone: string; description: string }> = {
+    susun: { icon: "🔤", tone: "#FFE8A6", description: "Rangkai huruf sampai menjadi kata yang tepat." },
+    rumpang: { icon: "🧩", tone: "#DDF4E7", description: "Lengkapi bagian kata yang hilang." },
+    pasangan: { icon: "🖼️", tone: "#E5F0FF", description: "Temukan gambar dan kata yang cocok." },
+    makna: { icon: "💡", tone: "#F3E8FF", description: "Cari pasangan kata dengan makna berlawanan." },
+  };
+
   const modeLabel: Record<Mode, string> = {
     susun: "Susun Kata",
     rumpang: "Kata Rumpang",
     pasangan: "Cari Pasangan",
     makna: "Lawan Kata",
   };
+  const progress = Math.min(100, ((Math.max(1, answered) - 1) / DIFFICULTY[difficulty].rounds) * 100);
+  const comboProgress = Math.min(100, (combo / 5) * 100);
 
 
   return (
@@ -287,12 +314,16 @@ export default function ZelbyDash() {
         @keyframes bk-shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
         @keyframes bk-star{0%{transform:scale(0) rotate(-25deg)}70%{transform:scale(1.15) rotate(8deg)}100%{transform:scale(1)}}
         @keyframes bk-letter{0%{transform:translateY(16px) scale(.8);opacity:0}100%{transform:none;opacity:1}}
+        @keyframes bk-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+        @keyframes bk-glow{0%{box-shadow:0 0 0 0 rgba(95,191,131,.4)}100%{box-shadow:0 0 0 18px rgba(95,191,131,0)}}
         .bk-pop{animation:bk-pop .38s cubic-bezier(.2,.8,.2,1)}
         .bk-float{animation:bk-float 2.6s ease-in-out infinite}
         .bk-bounce{animation:bk-bounce 1.8s ease-in-out infinite}
         .bk-star{animation:bk-star .5s cubic-bezier(.2,.8,.2,1) both}
         .bk-letter{animation:bk-letter .25s cubic-bezier(.2,.8,.2,1) both}
-        @media (prefers-reduced-motion: reduce){.bk-pop,.bk-float,.bk-bounce,.bk-star,.bk-letter{animation:none!important;transition:none!important}}
+        .bk-shake{animation:bk-shake .32s ease-in-out}
+        .bk-glow{animation:bk-glow .7s ease-out}
+        @media (prefers-reduced-motion: reduce){.bk-pop,.bk-float,.bk-bounce,.bk-star,.bk-letter,.bk-shake,.bk-glow{animation:none!important;transition:none!important}}
       `}</style>
 
       <div className="min-h-screen relative overflow-hidden">
@@ -324,7 +355,12 @@ export default function ZelbyDash() {
                 <div className="relative z-10">
                   <span className="inline-flex items-center gap-2 rounded-full bg-[#E8F7EE] border-2 border-[#3C9C69] px-3 py-1 text-xs font-black text-[#28744B]"><Sparkles size={14}/> PETUALANGAN KATA</span>
                   <h1 className="mt-4 text-4xl md:text-6xl font-black tracking-tight leading-[.95]">Main kata.<br/><span className="text-[#F2A900]">Kumpulkan bintang.</span></h1>
-                  <p className="mt-4 max-w-xl text-base md:text-lg font-semibold text-[#675D70]">Empat permainan, tantangan yang berubah, kombo, bintang, dan Zelby yang ikut bereaksi setiap kali kamu bermain.</p>
+                  <p className="mt-4 max-w-xl text-base md:text-lg font-semibold text-[#675D70]">Bukan sekadar menjawab soal. Pilih tantangan, bangun kombo, temukan kata baru, dan lihat Zelby ikut bereaksi.</p>
+                  <div className="grid grid-cols-3 gap-2 mt-5 max-w-xl">
+                    <div className="rounded-2xl bg-[#FFF8E7] border-2 border-[#E8CC78] p-3"><Trophy size={17}/><div className="text-[10px] font-black text-[#89701A] mt-2">REKOR</div><div className="font-black text-lg">{bestScore}</div></div>
+                    <div className="rounded-2xl bg-[#EEF9F2] border-2 border-[#B9DCC6] p-3"><Flame size={17}/><div className="text-[10px] font-black text-[#4F8D68] mt-2">KOMBO</div><div className="font-black text-lg">{bestCombo}×</div></div>
+                    <div className="rounded-2xl bg-[#F3EEFF] border-2 border-[#D7C8F0] p-3"><BookOpen size={17}/><div className="text-[10px] font-black text-[#705B91] mt-2">MAIN</div><div className="font-black text-lg">{gamesPlayed}</div></div>
+                  </div>
                   <div className="mt-7 grid grid-cols-2 gap-3">
                     {([
                       ["susun","Susun Kata","🔤"],
@@ -394,21 +430,23 @@ export default function ZelbyDash() {
 
               <section className="relative overflow-hidden rounded-[32px] bg-white border-4 border-[#241B36] shadow-[8px_8px_0_#241B36]">
                 <div className="h-2 bg-[#F5B82E]">
-                  <div className="h-full bg-[#5FBF83] transition-all duration-500" style={{ width: `${Math.min(100, ((answered - 1) / DIFFICULTY[difficulty].rounds) * 100)}%` }} />
+                  <div className="h-full bg-[#5FBF83] transition-all duration-500" style={{ width: `${progress}%` }} />
                 </div>
                 <div className="p-5 md:p-8">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <div className="text-xs font-black uppercase tracking-widest text-[#8A7F90]">{modeLabel[mode]} · {DIFFICULTY[difficulty].label}</div>
                       <h2 className="text-2xl md:text-4xl font-black mt-1">Tantangan untukmu!</h2>
-                      <p className="font-bold text-[#716778] mt-1">{message}</p>
+                      <p className="font-bold text-[#716778] mt-1 pr-24">{message}</p>
+                      <div className="mt-3 flex items-center gap-2 max-w-xs"><div className="flex-1 h-2 rounded-full bg-[#EEE8EF] overflow-hidden"><div className="h-full bg-[#F5B82E] transition-all duration-300" style={{ width: `${comboProgress}%` }} /></div><span className="text-[10px] font-black text-[#8A7F90]">KOMBO</span></div>
                     </div>
                     <img src={zelbyPose} alt="Zelby" className={`w-20 md:w-28 shrink-0 ${reducedMotion ? "" : "bk-bounce"}`} />
                   </div>
 
                   <div className="mt-6 grid md:grid-cols-[.8fr_1.2fr] gap-5 items-center">
-                    <div className="rounded-[28px] bg-[#F2FAF5] border-3 border-[#B9DCC6] p-4 min-h-52 flex items-center justify-center">
-                      <img src={round.item.image} alt={round.item.word} className="max-h-44 max-w-full object-contain drop-shadow-[0_12px_10px_rgba(36,27,54,.13)] bk-float" />
+                    <div className={`rounded-[28px] bg-[#F2FAF5] border-3 p-4 min-h-52 flex items-center justify-center relative overflow-hidden ${feedback === "wrong" ? "border-[#E38A8A] bk-shake" : feedback === "correct" ? "border-[#5FBF83] bk-glow" : "border-[#B9DCC6]"}`}>
+                      <img src={round.item.image} alt={round.item.word} className={`max-h-44 max-w-full object-contain drop-shadow-[0_12px_10px_rgba(36,27,54,.13)] ${reducedMotion ? "" : "bk-float"}`} />
+                      {feedback && <div className={`absolute inset-0 flex items-center justify-center bg-white/55 ${reducedMotion ? "" : "bk-pop"}`}><div className={`rounded-full px-5 py-2.5 border-3 border-[#241B36] shadow-[4px_4px_0_#241B36] font-black text-lg ${feedback === "correct" ? "bg-[#8FE0A9]" : "bg-[#FFB3B3]"}`}>{feedback === "correct" ? "Benar! ✨" : "Coba lagi 💪"}</div></div>}
                     </div>
 
                     <div>
@@ -418,7 +456,7 @@ export default function ZelbyDash() {
                             {selected.length ? selected.join("") : "— — —"}
                           </div>
                           <div className="grid grid-cols-4 gap-2 mt-4">
-                            {letters.map((l,i) => <button key={`${l}-${i}`} onClick={() => chooseLetter(l,i)} className="bk-letter aspect-square rounded-2xl bg-white border-3 border-[#241B36] shadow-[3px_3px_0_#F5B82E] font-black text-2xl hover:-translate-y-1 transition-transform">{l}</button>)}
+                            {letters.map((l,i) => <button key={`${l}-${i}`} onClick={() => chooseLetter(l,i)} disabled={locked} className="bk-letter aspect-square rounded-2xl bg-white border-3 border-[#241B36] shadow-[3px_3px_0_#F5B82E] font-black text-2xl hover:-translate-y-1 transition-transform">{l}</button>)}
                           </div>
                         </>
                       )}
@@ -427,7 +465,7 @@ export default function ZelbyDash() {
                         <>
                           <div className="text-center rounded-2xl bg-[#FFF7D9] border-3 border-[#241B36] p-5 text-3xl md:text-5xl font-black tracking-[.16em]">{round.item.clue || round.item.word}</div>
                           <div className="grid grid-cols-2 gap-3 mt-4">
-                            {round.options.map((o,i) => <button key={`${o}-${i}`} onClick={() => check(o)} className="rounded-2xl bg-white border-3 border-[#241B36] shadow-[4px_4px_0_#F5B82E] py-4 px-3 font-black text-lg hover:-translate-y-1 transition-transform">{o}</button>)}
+                            {round.options.map((o,i) => <button key={`${o}-${i}`} onClick={() => check(o)} disabled={locked} className="rounded-2xl bg-white border-3 border-[#241B36] shadow-[4px_4px_0_#F5B82E] py-4 px-3 font-black text-lg hover:-translate-y-1 transition-transform">{o}</button>)}
                           </div>
                         </>
                       )}
@@ -436,10 +474,10 @@ export default function ZelbyDash() {
                         <>
                           <div className="font-black text-center text-lg mb-3">Pilih gambar, lalu pilih pasangannya.</div>
                           <div className="grid grid-cols-2 gap-3">
-                            {(round.matchItems ?? []).map((matchItem) => <button key={matchItem.word} onClick={() => setSelectedMatch(matchItem.word)} className={`rounded-2xl bg-white border-3 border-[#241B36] p-2 transition-transform ${selectedMatch === matchItem.word ? "ring-4 ring-[#5FBF83] -translate-y-1" : "hover:-translate-y-1"}`}><img src={matchItem.image} alt={matchItem.word} className="h-20 w-full object-contain"/><span className="block text-xs font-black mt-1">Gambar</span></button>)}
+                            {(round.matchItems ?? []).map((matchItem) => <button key={matchItem.word} onClick={() => setSelectedMatch(matchItem.word)} disabled={locked} className={`rounded-2xl bg-white border-3 border-[#241B36] p-2 transition-transform ${selectedMatch === matchItem.word ? "ring-4 ring-[#5FBF83] -translate-y-1" : "hover:-translate-y-1"}`}><img src={matchItem.image} alt={matchItem.word} className="h-20 w-full object-contain"/><span className="block text-xs font-black mt-1">Gambar</span></button>)}
                           </div>
                           <div className="grid grid-cols-2 gap-3 mt-3">
-                            {(round.matchItems ?? []).map((matchItem) => <button key={`word-${matchItem.word}`} disabled={!selectedMatch} onClick={() => { if (selectedMatch) { if (selectedMatch === round.answer && matchItem.word === round.answer) correct(); else wrong(); } }} className={`rounded-2xl border-3 border-[#241B36] py-3 font-black ${selectedMatch ? "bg-[#FFF7D9] shadow-[3px_3px_0_#F5B82E]" : "bg-[#F1EEF2] text-[#A69CAA]"}`}>{matchItem.word}</button>)}
+                            {(round.matchItems ?? []).map((matchItem) => <button key={`word-${matchItem.word}`} disabled={!selectedMatch} onClick={() => { if (selectedMatch && !locked) { if (selectedMatch === round.answer && matchItem.word === round.answer) correct(); else wrong(); } }} className={`rounded-2xl border-3 border-[#241B36] py-3 font-black ${selectedMatch ? "bg-[#FFF7D9] shadow-[3px_3px_0_#F5B82E]" : "bg-[#F1EEF2] text-[#A69CAA]"}`}>{matchItem.word}</button>)}
                           </div>
                         </>
                       )}
