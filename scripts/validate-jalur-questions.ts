@@ -79,6 +79,28 @@ async function main() {
     }
   }
 
+  // Global duplicate audit: a flagship learning path must never ask the same
+  // question text twice across different units. Normalize whitespace/case so
+  // harmless formatting differences do not hide repetitions.
+  const seenQuestionText = new Map<string, string[]>()
+  for (const unit of units) {
+    let konten: any = null
+    try { konten = JSON.parse(unit.content || "{}") } catch { continue }
+    for (const q of (konten?.questions || []) as Question[]) {
+      const normalized = String(q.soal || "").trim().replace(/\\s+/g, " ").toLowerCase()
+      if (!normalized) continue
+      const refs = seenQuestionText.get(normalized) || []
+      refs.push(`${unit.title} [${q.id}]`)
+      seenQuestionText.set(normalized, refs)
+    }
+  }
+
+  for (const [question, refs] of seenQuestionText.entries()) {
+    if (refs.length > 1) {
+      issues.push(`✗ [DUPLICATE QUESTION] "${question}" → ${refs.join(" | ")}`)
+    }
+  }
+
   // Report units with < 3 questions
   for (const { unit, count } of questionsPerUnit) {
     if (count < 3) {
@@ -87,6 +109,7 @@ async function main() {
   }
 
   console.log(`Total questions: ${totalQuestions}`)
+  console.log(`Unique question texts: ${seenQuestionText.size}`)
 
   const sortedTypes = Object.entries(typeCount).sort((a, b) => b[1] - a[1])
   console.log(`Question types:`)
