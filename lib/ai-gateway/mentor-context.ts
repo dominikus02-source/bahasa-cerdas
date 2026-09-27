@@ -31,6 +31,9 @@ export interface MentorContext {
     title: string | null;
     description: string | null;
     skill: string | null;
+    ctaLabel: string | null;
+    ctaHref: string | null;
+    reason: string | null;
   };
   confidence: number | null;
   hasEnoughData: boolean;
@@ -105,7 +108,7 @@ export async function buildMentorContext(userId: string): Promise<MentorContext>
           description: rec.description,
           skill: rec.skill,
         }
-      : { title: null, description: null, skill: null },
+      : { title: null, description: null, skill: null, ctaLabel: null, ctaHref: null, reason: null },
     confidence,
     hasEnoughData,
   };
@@ -147,6 +150,8 @@ OUTPUT FORMAT (JSON):
   "diagnosis": "string (1-2 kalimat)",
   "reason": "string (1-2 kalimat)",
   "action": "string (1-2 kalimat)",
+  "doNow": "string — satu aktivitas konkret yang harus dilakukan sekarang",
+  "makeThis": "string — satu hal konkret yang harus dibuat/dihasilkan murid",
   "encouragement": "string (1 kalimat)"
 }`;
 }
@@ -167,6 +172,10 @@ export function buildDeterministicFallback(context: MentorContext): {
   diagnosis: string;
   reason: string;
   action: string;
+  doNow: string;
+  makeThis: string;
+  ctaLabel: string | null;
+  ctaHref: string | null;
   encouragement: string;
 } {
   if (!context.hasEnoughData) {
@@ -174,7 +183,11 @@ export function buildDeterministicFallback(context: MentorContext): {
       headline: "Belum cukup data",
       diagnosis: "Aku masih mengenali pola belajarmu.",
       reason: "Data belajar belum cukup untuk memberikan analisis yang akurat.",
-      action: "Selesaikan beberapa latihan lagi, lalu coba tanyakan lagi.",
+      action: "Selesaikan beberapa latihan lagi, lalu tanyakan lagi.",
+      doNow: "Mainkan satu latihan singkat di Jalur Cerdas.",
+      makeThis: "Selesaikan satu tantangan sampai tuntas agar Mentor punya evidence baru.",
+      ctaLabel: "Mulai latihan",
+      ctaHref: "/arena/jalur-cerdas",
       encouragement: "Sedikit demi sedikit, kamu akan semakin kuat!",
     };
   }
@@ -188,7 +201,11 @@ export function buildDeterministicFallback(context: MentorContext): {
     headline: `Fokuskan dulu pada ${focusLabel}`,
     diagnosis: `Data belajarmu menunjukkan bahwa ${focusLabel} masih menjadi bagian yang perlu diperkuat (akurasi ${focusAccuracy}).`,
     reason: `Kamu sudah cukup kuat dalam skill lain, tetapi ${focusLabel} masih perlu latihan lebih.`,
-    action: `Mulai latihan yang berfokus pada ${focusLabel}. Coba selesaikan 1-2 unit hari ini.`,
+    action: `Mulai latihan yang berfokus pada ${focusLabel}. Coba selesaikan satu tantangan hari ini.`,
+    doNow: context.recommendation.description || `Latihan ${focusLabel} sekarang.`,
+    makeThis: context.recommendation.skill === "WRITING" ? "Satu karya pendek yang selesai dan bisa kamu lihat kembali di Karya." : `Satu tantangan ${focusLabel} yang selesai dengan usaha terbaikmu.`,
+    ctaLabel: context.recommendation.ctaLabel,
+    ctaHref: context.recommendation.ctaHref,
     encouragement: "Sedikit latihan terarah bisa membuatnya jauh lebih kuat!",
   };
 }
