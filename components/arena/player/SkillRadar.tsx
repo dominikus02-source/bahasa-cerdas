@@ -110,6 +110,7 @@ export default function SkillRadar({
 
       <div className="space-y-3">
         {list.map((skill) => {
+          const isWriting = skill.skill === "WRITING";
           const accuracy = skill.accuracy === null ? null : Math.round(skill.accuracy * 100);
           const label = SKILL_LABELS[skill.skill] ?? skill.label;
           const trend = TREND_LABELS[skill.trend];
@@ -122,18 +123,26 @@ export default function SkillRadar({
                   {isFocus && <span className="ml-1 text-[10px] text-[var(--px-gold)]">← Fokus</span>}
                 </span>
                 <span className="flex shrink-0 items-center gap-2 text-[var(--px-text-faint)]">
-                  <span>{trend}</span>
-                  <span className="font-semibold text-[var(--px-text-dim)]">{accuracy === null ? "—" : `${accuracy}%`}</span>
+                  <span>{isWriting && skill.attemptCount > 0 ? "Terukur" : trend}</span>
+                  <span className="font-semibold text-[var(--px-text-dim)]">
+                    {isWriting ? (skill.attemptCount > 0 ? "Ada bukti" : "—") : accuracy === null ? "—" : `${accuracy}%`}
+                  </span>
                 </span>
               </div>
-              <div className="skill-progress-bar h-1.5 overflow-hidden rounded-full">
-                <div
-                  className={`h-full rounded-full transition-all duration-500 ${
-                    isFocus ? "bg-gradient-to-r from-[var(--px-royal-2)] to-[var(--px-gold)]" : "bg-[var(--px-royal)]"
-                  }`}
-                  style={{ width: `${accuracy ?? 0}%` }}
-                />
-              </div>
+              {isWriting ? (
+                <div className="rounded-lg bg-[var(--px-border)]/40 px-3 py-2 text-[10px] text-[var(--px-text-dim)]">
+                  {skill.attemptCount > 0 ? `${skill.attemptCount} tugas menulis tercatat` : "Belum ada tugas menulis"}
+                </div>
+              ) : (
+                <div className="skill-progress-bar h-1.5 overflow-hidden rounded-full">
+                  <div
+                    className={`h-full rounded-full transition-all duration-500 ${
+                      isFocus ? "bg-gradient-to-r from-[var(--px-royal-2)] to-[var(--px-gold)]" : "bg-[var(--px-royal)]"
+                    }`}
+                    style={{ width: `${accuracy ?? 0}%` }}
+                  />
+                </div>
+              )
             </div>
           );
         })}
