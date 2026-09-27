@@ -288,13 +288,6 @@ export default function ZelbyDash() {
     if (nextSelected.length === round.answer.length) check(nextSelected.join(""));
   };
 
-  const modeMeta: Record<Mode, { icon: string; tone: string; description: string }> = {
-    susun: { icon: "🔤", tone: "#FFE8A6", description: "Rangkai huruf sampai menjadi kata yang tepat." },
-    rumpang: { icon: "🧩", tone: "#DDF4E7", description: "Lengkapi bagian kata yang hilang." },
-    pasangan: { icon: "🖼️", tone: "#E5F0FF", description: "Temukan gambar dan kata yang cocok." },
-    makna: { icon: "💡", tone: "#F3E8FF", description: "Cari pasangan kata dengan makna berlawanan." },
-  };
-
   const modeLabel: Record<Mode, string> = {
     susun: "Susun Kata",
     rumpang: "Kata Rumpang",
@@ -361,19 +354,31 @@ export default function ZelbyDash() {
                     <div className="rounded-2xl bg-[#EEF9F2] border-2 border-[#B9DCC6] p-3"><Flame size={17}/><div className="text-[10px] font-black text-[#4F8D68] mt-2">KOMBO</div><div className="font-black text-lg">{bestCombo}×</div></div>
                     <div className="rounded-2xl bg-[#F3EEFF] border-2 border-[#D7C8F0] p-3"><BookOpen size={17}/><div className="text-[10px] font-black text-[#705B91] mt-2">MAIN</div><div className="font-black text-lg">{gamesPlayed}</div></div>
                   </div>
-                  <div className="mt-7 grid grid-cols-2 gap-3">
-                    {([
-                      ["susun","Susun Kata","🔤"],
-                      ["rumpang","Kata Rumpang","🧩"],
-                      ["pasangan","Cari Pasangan","🖼️"],
-                      ["makna","Lawan Kata","💡"],
-                    ] as const).map(([m,label,icon]) => (
-                      <button key={m} onClick={() => setMode(m)} className={`group rounded-2xl border-3 border-[#241B36] p-4 text-left transition-transform hover:-translate-y-1 ${mode === m ? "bg-[#FFF1BA] shadow-[4px_4px_0_#F5B82E]" : "bg-[#FAFAF8] shadow-[3px_3px_0_#D9D2C6]"}`}>
-                        <div className="text-2xl mb-2">{icon}</div>
-                        <div className="font-black">{label}</div>
-                        <div className="text-xs font-bold text-[#7B7182] mt-1">Pilih petualangan →</div>
-                      </button>
-                    ))}
+                  <div className="mt-7">
+                    <div className="flex items-end justify-between gap-3 mb-3">
+                      <div>
+                        <div className="text-[11px] font-black tracking-[.18em] text-[#6B6078]">PILIH ARENA</div>
+                        <div className="font-black text-lg">Kamu mau bermain yang mana?</div>
+                      </div>
+                      <div className="hidden sm:block text-xs font-bold text-[#8A7F90]">4 permainan</div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      {([
+                        ["susun","Susun Kata","🔤","Rangkai huruf menjadi kata.","#FFF1BA","#F5B82E"],
+                        ["rumpang","Kata Rumpang","🧩","Lengkapi huruf yang hilang.","#E8F7EE","#5FBF83"],
+                        ["pasangan","Cari Pasangan","🖼️","Cocokkan gambar dan kata.","#EAF3FF","#75A9E8"],
+                        ["makna","Lawan Kata","💡","Temukan kata yang berlawanan.","#F3ECFF","#A77BD8"],
+                      ] as const).map(([m,label,icon,desc,bg,accent]) => (
+                        <button key={m} onClick={() => setMode(m)} className="relative text-left rounded-[22px] border-3 border-[#241B36] p-4 transition-all hover:-translate-y-1" style={{ background: mode === m ? bg : "#FAFAF8", boxShadow: mode === m ? `4px 4px 0 ${accent}` : "3px 3px 0 #D9D2C6" }}>
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="w-11 h-11 rounded-2xl bg-white border-2 border-[#241B36] flex items-center justify-center text-2xl">{icon}</div>
+                            {mode === m && <span className="w-7 h-7 rounded-full bg-[#5FBF83] border-2 border-[#241B36] text-white flex items-center justify-center"><Check size={15} strokeWidth={4}/></span>}
+                          </div>
+                          <div className="font-black mt-3">{label}</div>
+                          <div className="text-xs font-semibold text-[#706678] mt-1 leading-snug">{desc}</div>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                   <div className="mt-4 rounded-2xl bg-[#F6FBF7] border-2 border-[#B9DCC6] p-4">
                     <div className="text-xs font-black tracking-widest text-[#5E9F72]">PILIH TINGKAT PETUALANGAN</div>
@@ -391,14 +396,18 @@ export default function ZelbyDash() {
                 </div>
               </section>
 
-              <section className="relative rounded-[32px] bg-[#DFF4E8] border-4 border-[#241B36] shadow-[8px_8px_0_#241B36] overflow-hidden flex flex-col justify-end min-h-[360px]">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(255,255,255,.9),transparent_24%),linear-gradient(160deg,#BCEAD1,#EAF9D8)]" />
-                <div className="absolute left-5 top-5 text-4xl">🌿</div>
-                <div className="absolute right-8 top-12 text-3xl">🍃</div>
-                <img src={zelby.wave} alt="Zelby" className={`relative z-10 w-64 md:w-72 mx-auto ${reducedMotion ? "" : "bk-bounce"} drop-shadow-[0_18px_16px_rgba(36,27,54,.16)]`} />
-                <div className="relative z-20 m-5 rounded-2xl bg-white/95 border-3 border-[#241B36] p-4 text-center shadow-[4px_4px_0_#F5B82E]">
-                  <div className="font-black text-lg">“Ayo, kita main!”</div>
-                  <div className="text-xs font-bold text-[#756B7D] mt-1">Zelby siap menemanimu.</div>
+              <section className="relative rounded-[32px] bg-[#DFF4E8] border-4 border-[#241B36] shadow-[8px_8px_0_#241B36] overflow-hidden min-h-[360px]">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_24%,rgba(255,255,255,.95),transparent_20%),radial-gradient(circle_at_80%_16%,rgba(255,255,255,.7),transparent_18%),linear-gradient(160deg,#BCEAD1,#EAF9D8)]" />
+                <div className="absolute -left-8 bottom-8 w-28 h-28 rounded-full bg-[#A9DDBD]/70" />
+                <div className="absolute -right-8 bottom-0 w-40 h-40 rounded-full bg-[#C8E8A9]/80" />
+                <div className="absolute left-5 top-5 rounded-full bg-white/85 border-2 border-[#241B36] px-3 py-1 text-[10px] font-black tracking-widest">DUNIA ZELBY</div>
+                <div className="absolute right-5 top-5 flex gap-1"><span>⭐</span><span>🌱</span><span>🍃</span></div>
+                <img src={zelby.wave} alt="Zelby" className={`absolute z-10 left-1/2 -translate-x-1/2 bottom-12 w-64 md:w-72 ${reducedMotion ? "" : "bk-bounce"} drop-shadow-[0_18px_16px_rgba(36,27,54,.16)]`} />
+                <div className="absolute z-20 left-5 right-5 bottom-5 rounded-[22px] bg-white/95 border-3 border-[#241B36] p-4 shadow-[4px_4px_0_#F5B82E]">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-[#FFF1BA] border-2 border-[#241B36] flex items-center justify-center text-xl">💬</div>
+                    <div><div className="font-black">“Ayo, kita main!”</div><div className="text-xs font-bold text-[#756B7D] mt-0.5">Pilih permainanmu. Zelby sudah siap.</div></div>
+                  </div>
                 </div>
               </section>
             </main>
@@ -419,6 +428,13 @@ export default function ZelbyDash() {
 
           {screen === "game" && (
             <main className="max-w-3xl mx-auto bk-pop">
+              <div className="flex items-center justify-between gap-3 mb-3">
+                <div className="flex items-center gap-2">
+                  <span className="rounded-full bg-[#241B36] text-white px-3 py-1.5 text-[11px] font-black">{modeLabel[mode]}</span>
+                  <span className="text-xs font-bold text-[#756B7D]">{DIFFICULTY[difficulty].label} · {DIFFICULTY[difficulty].rounds} tantangan</span>
+                </div>
+                <div className="text-xs font-black text-[#8A7F90]">PETUALANGAN {Math.min(answered, DIFFICULTY[difficulty].rounds)}/{DIFFICULTY[difficulty].rounds}</div>
+              </div>
               <div className="grid grid-cols-4 gap-2 mb-4">
                 {[["Skor",score],["Kombo",combo],["Nyawa",lives],["Petualangan",`${Math.min(answered, DIFFICULTY[difficulty].rounds)}/${DIFFICULTY[difficulty].rounds}`]].map(([label,value]) => (
                   <div key={String(label)} className="rounded-2xl bg-white border-3 border-[#241B36] shadow-[3px_3px_0_#F5B82E] px-3 py-2">
@@ -436,7 +452,7 @@ export default function ZelbyDash() {
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <div className="text-xs font-black uppercase tracking-widest text-[#8A7F90]">{modeLabel[mode]} · {DIFFICULTY[difficulty].label}</div>
-                      <h2 className="text-2xl md:text-4xl font-black mt-1">Tantangan untukmu!</h2>
+                      <h2 className="text-2xl md:text-4xl font-black mt-1">Siap pecahkan kata ini?</h2>
                       <p className="font-bold text-[#716778] mt-1 pr-24">{message}</p>
                       <div className="mt-3 flex items-center gap-2 max-w-xs"><div className="flex-1 h-2 rounded-full bg-[#EEE8EF] overflow-hidden"><div className="h-full bg-[#F5B82E] transition-all duration-300" style={{ width: `${comboProgress}%` }} /></div><span className="text-[10px] font-black text-[#8A7F90]">KOMBO</span></div>
                     </div>
