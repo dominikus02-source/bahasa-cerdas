@@ -255,16 +255,11 @@ export default function BermainKataGame() {
                 <div className="absolute bottom-2 h-8 w-56 rounded-full bg-slate-900/10 blur-xl" />
                 <div className="relative h-[225px] w-[225px] sm:h-[255px] sm:w-[255px] bk-zelby-float">
                   <div className="absolute inset-x-8 bottom-1 h-3 rounded-full bg-sky-200/35 blur-lg bk-zelby-shadow" />
-                  {ZELBY_FRAMES.map((src,index)=>(
-                    <img
-                      key={src}
-                      src={src}
-                      alt={index===zelbyFrame ? "Zelby menemani permainan" : ""}
-                      aria-hidden={index!==zelbyFrame}
-                      className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_18px_14px_rgba(15,23,42,.14)] transition-opacity duration-1000 ease-in-out"
-                      style={{opacity:index===zelbyFrame?1:0}}
-                    />
-                  ))}
+                  <img
+                    src={ZELBY_STATE_ASSETS.idle}
+                    alt="Zelby menemani permainan"
+                    className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_18px_14px_rgba(15,23,42,.14)]"
+                  />
                 </div>
                 <div className="absolute bottom-4 left-1/2 ml-[92px] whitespace-nowrap rounded-2xl border border-slate-200 bg-white/95 px-3 py-2 text-xs font-black text-slate-700 shadow-md bk-zelby-bubble dark:border-[#31415f] dark:bg-[#17213b]/95 dark:text-slate-100 sm:ml-[118px]">
                   Ayo bermain! ✨
