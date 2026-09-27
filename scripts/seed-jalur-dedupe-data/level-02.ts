@@ -11,7 +11,7 @@ const level02: UnitSoal[] = [
     { id: "u07j", tipe: "isi_blank", soal: "Perbaiki: 'dia suka membaca.' → '... suka membaca.'", jawaban: "Dia", penjelasan: "Awal kalimat memakai huruf kapital: Dia." },
   ]},
   { level: 2, title: "Tanda Titik", soal: [
-    { id: "u08f", tipe: "pilihan_ganda", soal: "Kalimat yang memakai tanda titik dengan benar adalah ...", opsi: ["Budi makan", "Budi makan.", "Budi makan?", "Budi makan!"], jawaban: 1, penjelasan: "Kalimat berita diakhiri tanda titik: 'Budi makan.'" },
+    { id: "u08f", tipe: "pilihan_ganda", soal: "Manakah penulisan singkatan gelar yang tepat?", opsi: ["Dr Budi", "Dr. Budi", "Dr, Budi", "Dr; Budi"], jawaban: 1, penjelasan: "Singkatan gelar yang terdiri atas beberapa unsur menggunakan tanda titik, misalnya 'Dr.'." },
     { id: "u08g", tipe: "pilihan_ganda", soal: "Penulisan singkatan gelar yang benar adalah ...", opsi: ["S.Pd", "S.Pd.", "S, Pd", "SPd"], jawaban: 1, penjelasan: "Setiap huruf pada singkatan gelar diikuti titik: S.Pd." },
     { id: "u08h", tipe: "pilihan_ganda", soal: "Kalimat berita yang benar adalah ...", opsi: ["Kucing itu putih.", "Kucing itu putih", "kucing itu tidur", "Kucing itu putih!"], jawaban: 0, penjelasan: "Kalimat berita dimulai kapital dan diakhiri titik." },
     { id: "u08i", tipe: "benar_salah", soal: "Kalimat tanya diakhiri dengan tanda titik.", opsi: BS, jawaban: "Salah", penjelasan: "Kalimat tanya diakhiri tanda tanya, bukan titik." },
@@ -39,9 +39,9 @@ const level02: UnitSoal[] = [
     { id: "u11j", tipe: "isi_blank", soal: "Pilih penulisan yang benar: 'Nasi ... oleh adik.' (dimakan/di makan)", jawaban: "dimakan", penjelasan: "'di-' awalan ditulis serangkai: dimakan." },
   ]},
   { level: 2, title: "Latihan Cepat Level 2", soal: [
-    { id: "u12f", tipe: "pilihan_ganda", soal: "Penulisan nama orang yang benar adalah ...", opsi: ["dewi lestari", "Dewi lestari", "Dewi Lestari", "DEWI lestari"], jawaban: 2, penjelasan: "Setiap kata pada nama orang diawali huruf kapital." },
+    { id: "u12f", tipe: "pilihan_ganda", soal: "Kata tanya yang digunakan untuk menanyakan alasan adalah ...", opsi: ["siapa", "mengapa", "kapan", "di mana"], jawaban: 1, penjelasan: "'Mengapa' digunakan untuk menanyakan alasan atau sebab." },
     { id: "u12g", tipe: "pilihan_ganda", soal: "Kalimat yang benar adalah ...", opsi: ["Adik belajar di rumah.", "Adik belajar di rumah", "Adik belajar di rumah?", "adik tidur di rumah"], jawaban: 0, penjelasan: "Kapital di awal, 'di rumah' terpisah, dan diakhiri titik." },
-    { id: "u12h", tipe: "pilihan_ganda", soal: "Kalimat tanya yang benar adalah ...", opsi: ["Apa warna bajumu?", "Apa warna bajumu", "Apa warna bajumu.", "Apa warna bajumu!"], jawaban: 0, penjelasan: "Kalimat tanya diakhiri tanda tanya." },
+    { id: "u12h", tipe: "pilihan_ganda", soal: "Kata tanya yang tepat untuk melengkapi kalimat '___ kamu berangkat?' adalah ...", opsi: ["Kapan", "Siapa", "Mengapa", "Berapa"], jawaban: 0, penjelasan: "'Kapan' digunakan untuk menanyakan waktu." },
     { id: "u12i", tipe: "benar_salah", soal: "Penulisan 'Kami pergi ke pasar' sudah benar.", opsi: BS, jawaban: "Benar", penjelasan: "Kapital di awal kalimat dan 'ke pasar' ditulis terpisah." },
     { id: "u12j", tipe: "isi_blank", soal: "Perbaiki: 'Ibu membeli apel, jeruk dan anggur.' Sebelum kata 'dan' seharusnya ada tanda ...", jawaban: "koma", penjelasan: "Perincian tiga unsur dipisahkan koma, termasuk sebelum 'dan': apel, jeruk, dan anggur." },
   ]},
