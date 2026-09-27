@@ -19,7 +19,6 @@ type State = {
     writing:{score:number;level:string;wordCount:number;dimensions:Record<string,number>}|null;
   };
   estimatedMinutes?:number;
-  totalQuestions?:number;
   message?:string;
 };
 
