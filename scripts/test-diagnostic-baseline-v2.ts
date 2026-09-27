@@ -26,6 +26,8 @@ const fs=require("fs");
 const route=fs.readFileSync("app/api/player/diagnostic/baseline/route.ts","utf8");
 const ui=fs.readFileSync("app/(dashboard)/murid/tes-awal/page.tsx","utf8");
 const mentor=fs.readFileSync("lib/ai-gateway/mentor-context.ts","utf8");
+const adaptiveHome=fs.readFileSync("app/api/player/adaptive-practice/route.ts","utf8");
+const hero=fs.readFileSync("components/student-home/StudentHomeHero.tsx","utf8");
 check("baseline route does not depend on Jalur Cerdas",()=>!route.includes("/arena/jalur-cerdas")&&!route.includes("selectAdaptivePractice"));
 check("Tes Awal UI uses baseline endpoint",()=>ui.includes("/api/player/diagnostic/baseline")&&!ui.includes("/api/player/diagnostic/daily"));
 check("baseline route has writing action",()=>route.includes('action === "writing"'));
@@ -33,6 +35,8 @@ check("baseline route persists LearningEvidence",()=>route.includes("upsertLearn
 check("baseline route is server-authoritative",()=>route.includes("db.soal.findUnique")&&route.includes("correctAnswer"));
 check("baseline has no XP reward",()=>!route.includes("awardXp")&&!route.includes("addCoin"));
 check("Mentor consumes baseline evidence",()=>mentor.includes('e.source === "DIAGNOSTIC_BASELINE_V2"'));
+check("home preview recognizes baseline before adaptive practice",()=>adaptiveHome.includes("BASELINE_SOURCE")&&adaptiveHome.includes('actionType: "DIAGNOSTIC"')&&adaptiveHome.includes('assessmentState: "BASELINE_AVAILABLE"'));
+check("home hero no longer starts legacy diagnostic route",()=>!hero.includes('fetch("/api/player/diagnostic"')&&!hero.includes("/arena/diagnostic/")&&hero.includes('router.push("/murid/tes-awal")'));
 
 console.log("Hasil: "+passed+" lulus, "+failed+" gagal");
 if(failed>0)process.exit(1);
