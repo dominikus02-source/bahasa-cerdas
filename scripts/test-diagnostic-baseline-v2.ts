@@ -5,11 +5,11 @@ function check(name:string, fn:()=>boolean){ try{ if(fn()){passed++;console.log(
 
 check("baseline version canonical",()=>BASELINE_VERSION==="2.0");
 check("baseline source isolated",()=>BASELINE_SOURCE==="DIAGNOSTIC_BASELINE_V2");
-check("baseline has 15 objective items",()=>BASELINE_SIZE===15);
+check("baseline has 12 objective items",()=>BASELINE_SIZE===12);
 check("five competencies represented",()=>BASELINE_BLUEPRINT.length===4 && ["READING","GRAMMAR","VOCABULARY","LITERATURE"].every(x=>BASELINE_BLUEPRINT.some(item=>item.skill===x)) && BASELINE_SKILLS.includes("WRITING"));
 check("each objective skill gets three core slots",()=>BASELINE_BLUEPRINT.every(x=>x.count===3));
 check("blueprint covers 12 core objective slots",()=>BASELINE_BLUEPRINT.reduce((n,x)=>n+x.count,0)===12);
-check("baseline adds three objective slots to reach 15",()=>BASELINE_SIZE===15);
+check("baseline objective blueprint matches available safe bank",()=>BASELINE_SIZE===12 && BASELINE_BLUEPRINT.reduce((n,x)=>n+x.count,0)===12);
 check("writing task exists",()=>BASELINE_WRITING_TASK.minWords>=80&&BASELINE_WRITING_TASK.maxWords>=BASELINE_WRITING_TASK.minWords);
 check("writing rubric has multiple dimensions",()=>BASELINE_WRITING_TASK.rubric.length>=5);
 check("word counter handles whitespace",()=>baselineWordCount(" satu\n dua   tiga ")===3);
