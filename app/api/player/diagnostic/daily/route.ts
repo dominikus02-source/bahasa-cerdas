@@ -328,7 +328,7 @@ export async function POST(req: NextRequest) {
     }
 
     await upsertLearningEvidence({
-      user.id: user.id,
+      userId: user.id,
       source: DAILY_DIAGNOSTIC_WRITING_SOURCE,
       activityId: session.id,
       questionId: state.writing.id,
