@@ -173,24 +173,6 @@ export async function POST(req: NextRequest) {
       provider = "deterministic-fallback";
     }
 
-    const focusSkill = context.focusSkill.skill;
-    const mission =
-      focusSkill === "WRITING"
-        ? {
-            type: "KARYA" as const,
-            title: "Tulis satu karya pendek",
-            instruction: "Buat tulisan 3–5 kalimat untuk melatih kemampuan menulismu.",
-            deliverable: "Satu paragraf pendek dengan gagasan yang jelas dan runtut.",
-            route: "/murid/karya/tulis" as const,
-          }
-        : {
-            type: "LATIHAN" as const,
-            title: `Mainkan quest ${context.focusSkill.label || "kemampuan bahasa"}`,
-            instruction: `Selesaikan 1–2 latihan yang berfokus pada ${(context.focusSkill.label || "kemampuan bahasa").toLowerCase()}.`,
-            deliverable: "Satu sesi latihan terarah dan tinjau kembali kesalahanmu.",
-            route: "/arena/jalur-cerdas" as const,
-          };
-
     // ── Step 9: Log usage ──
     const durationMs = Date.now() - startTime;
     console.log(`[Mentor] requestId=${requestId} user=${user.id} provider=${provider} duration=${durationMs}ms`);
@@ -198,7 +180,7 @@ export async function POST(req: NextRequest) {
     // ── Step 10: Return response ──
     return NextResponse.json({
       success: true,
-      data: { ...response, mission },
+      data: response,
       metadata: {
         requestId,
         provider,
