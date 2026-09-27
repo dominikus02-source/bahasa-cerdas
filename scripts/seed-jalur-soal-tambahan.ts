@@ -305,7 +305,7 @@ export const TAMBAHAN_2: UnitSoal[] = [
   ]},
   { level: 6, title: "Latihan Cepat Level 6", soal: [
     { id: "u36a", tipe: "pilihan_ganda", soal: "Pola kalimat 'Ani membeli buku' adalah ...", opsi: ["S-P", "S-P-O", "S-P-K", "P-S-O"], jawaban: 1, penjelasan: "Ani (S) membeli (P) buku (O)." },
-    { id: "u36b", tipe: "pilihan_ganda", soal: "Kalimat efektif yang benar adalah ...", opsi: ["Mereka akan segera akan datang.", "Mereka akan segera datang.", "Mereka segera akan segera datang.", "Akan mereka datang segera akan."], jawaban: 1, penjelasan: "Satu 'akan' cukup." },
+    { id: "u36b", tipe: "pilihan_ganda", soal: "Kalimat manakah yang menggunakan konjungsi secara tepat?", opsi: ["Karena hujan, pertandingan ditunda.", "Karena hujan, maka pertandingan ditunda.", "Meskipun hujan, tetapi pertandingan ditunda.", "Walaupun hujan, namun tetapi pertandingan ditunda."], jawaban: 0, penjelasan: "'Karena' sudah membentuk hubungan sebab sehingga tidak perlu dipasangkan dengan 'maka'." },
     { id: "u36c", tipe: "pilihan_ganda", soal: "Unsur yang WAJIB ada dalam kalimat adalah ...", opsi: ["objek dan keterangan", "subjek dan predikat", "keterangan dan pelengkap", "objek dan pelengkap"], jawaban: 1, penjelasan: "Minimal S dan P." },
     { id: "u36d", tipe: "benar_salah", soal: "'Di taman bermain anak-anak' adalah kalimat lengkap.", opsi: BS, jawaban: "Salah", penjelasan: "Tidak jelas predikatnya — belum kalimat lengkap." },
     { id: "u36e", tipe: "isi_blank", soal: "'Petani menanam padi di sawah.' Objeknya adalah ...", jawaban: "padi", penjelasan: "Yang dikenai tindakan menanam: padi." },
