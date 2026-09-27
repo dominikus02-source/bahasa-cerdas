@@ -142,7 +142,7 @@ export default function SkillRadar({
                     style={{ width: `${accuracy ?? 0}%` }}
                   />
                 </div>
-              )
+              )}
             </div>
           );
         })}
