@@ -152,18 +152,11 @@ export function HomeDataProvider({ children }: { children: React.ReactNode }) {
     setPremiumFailed(false);
     Promise.allSettled([
       fetch("/api/player/adaptive-practice?mode=preview").then((r) => (r.ok ? r.json() : Promise.reject())),
-      fetch("/api/player/diagnostic?mode=preview").then((r) => (r.ok ? r.json() : Promise.reject())),
       fetch("/api/player/premium/status").then((r) => (r.ok ? r.json() : Promise.reject())),
-    ]).then(([myDayResult, diagnosticResult, premiumResult]) => {
+    ]).then(([myDayResult, premiumResult]) => {
       if (!alive) return;
       const adaptiveValue = myDayResult.status === "fulfilled" ? (myDayResult.value as MyDayResponse | null) : null;
-      const diagnosticValue = diagnosticResult.status === "fulfilled" ? (diagnosticResult.value as MyDayResponse | null) : null;
-      const chosen =
-        adaptiveValue && adaptiveValue.actionType === "ADAPTIVE_PRACTICE"
-          ? adaptiveValue
-          : diagnosticValue && diagnosticValue.actionType === "DIAGNOSTIC"
-            ? diagnosticValue
-            : adaptiveValue;
+      const chosen = adaptiveValue;
       if (chosen) {
         setMyDay(chosen);
         setMyDayFailed(false);
