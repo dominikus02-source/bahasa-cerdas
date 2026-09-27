@@ -7,6 +7,7 @@ import { StudentHomeHero } from "@/components/student-home/StudentHomeHero";
 import { MentorHomeCard } from "@/components/student-home/MentorHomeCard";
 import { DailyMissionCard } from "@/components/student-home/DailyMissionCard";
 import { DailyActionCard } from "@/components/student-home/DailyActionCard";
+import { DiagnosticJourneyCard } from "@/components/student-home/DiagnosticJourneyCard";
 import { JalurCerdasHomeCard } from "@/components/student-home/JalurCerdasHomeCard";
 import { AIBCHomeCard } from "@/components/student-home/AIBCHomeCard";
 import { RuangBelajarSection } from "@/components/student-home/RuangBelajarSection";
