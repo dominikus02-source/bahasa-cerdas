@@ -8,7 +8,7 @@
  */
 import { db } from "@/lib/db";
 import { DIAGNOSTIC_REASON_CODE } from "./config";
-import { BASELINE_SOURCE, BASELINE_VERSION } from "@/lib/assessment/diagnostic-baseline";
+import { BASELINE_SOURCE } from "@/lib/assessment/diagnostic-baseline";
 
 /**
  * Apakah user pernah MENYELESAIKAN sesi diagnostik (status COMPLETED)?
