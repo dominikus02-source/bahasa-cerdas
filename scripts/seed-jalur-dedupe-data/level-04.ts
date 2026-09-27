@@ -14,7 +14,7 @@ const level04: UnitSoal[] = [
   { level: 4, title: "Antonim", soal: [
     { id: "u20f", tipe: "pilihan_ganda", soal: "Antonim kata 'panjang' adalah ...", opsi: ["jauh", "pendek", "lebar", "besar"], jawaban: 1, penjelasan: "Lawan panjang adalah pendek." },
     { id: "u20g", tipe: "pilihan_ganda", soal: "Lawan kata 'naik' adalah ...", opsi: ["terbang", "turun", "jalan", "melompat"], jawaban: 1, penjelasan: "Naik >< turun." },
-    { id: "u20h", tipe: "pilihan_ganda", soal: "Pasangan antonim yang TEPAT adalah ...", opsi: ["menangis–tertawa", "menangis–sedih", "sedih–duka", "tertawa–gembira"], jawaban: 0, penjelasan: "Menangis >< tertawa; pasangan lain justru bersinonim." },
+    { id: "u20h", tipe: "pilihan_ganda", soal: "Lawan kata 'sempit' adalah ...", opsi: ["panjang", "luas", "rendah", "tipis"], jawaban: 1, penjelasan: "'Luas' merupakan lawan makna yang tepat dari 'sempit'." },
     { id: "u20i", tipe: "benar_salah", soal: "Antonim kata 'kotor' adalah 'bersih'.", opsi: BS, jawaban: "Benar", penjelasan: "Kotor >< bersih." },
     { id: "u20j", tipe: "isi_blank", soal: "Antonim kata 'hemat' adalah ...", jawaban: "boros", penjelasan: "Hemat >< boros." },
   ]},
