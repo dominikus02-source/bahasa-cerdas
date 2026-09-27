@@ -170,7 +170,8 @@ async function selectBaselineQuestions(seed: string): Promise<BaselineQuestion[]
 
   for (const entry of BASELINE_BLUEPRINT) {
     const pool = candidates
-      .filter((q) => q.skill === entry.skill && !used.has(q.id))\n      .sort((a, b) => stableHash(`${seed}:${a.id}`) - stableHash(`${seed}:${b.id}`));
+      .filter((q) => q.skill === entry.skill && !used.has(q.id))
+      .sort((a, b) => stableHash(`${seed}:${a.id}`) - stableHash(`${seed}:${b.id}`));
     const byDifficulty = new Map<string, BaselineQuestion[]>();
     for (const q of pool) {
       const key = q.difficulty ?? "UNKNOWN";
