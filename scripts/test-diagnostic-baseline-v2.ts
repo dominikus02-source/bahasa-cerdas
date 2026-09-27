@@ -1,13 +1,13 @@
-import { BASELINE_BLUEPRINT, BASELINE_SIZE, BASELINE_SOURCE, BASELINE_VERSION, BASELINE_WRITING_TASK, baselineWordCount, scoreBaselineWriting } from "@/lib/assessment/diagnostic-baseline";
+import { BASELINE_BLUEPRINT, BASELINE_SIZE, BASELINE_SOURCE, BASELINE_VERSION, BASELINE_WRITING_TASK, BASELINE_SKILLS, baselineWordCount, scoreBaselineWriting } from "@/lib/assessment/diagnostic-baseline";
 
 let passed=0; let failed=0;
 function check(name:string, fn:()=>boolean){ try{ if(fn()){passed++;console.log("✓",name);} else {failed++;console.log("✗",name);} } catch(error){failed++;console.log("✗",name,error instanceof Error?error.message:error);} }
 
-check("baseline version canonical",()=>BASELINE_VERSION==="2.0");
+check("baseline version canonical",()=>BASELINE_VERSION==="2.1");
 check("baseline source isolated",()=>BASELINE_SOURCE==="DIAGNOSTIC_BASELINE_V2");
 check("baseline has 10 objective items",()=>BASELINE_SIZE===10);
 check("five competencies represented",()=>BASELINE_BLUEPRINT.length===4 && ["READING","GRAMMAR","VOCABULARY","LITERATURE"].every(x=>BASELINE_BLUEPRINT.some(item=>item.skill===x)) && BASELINE_SKILLS.includes("WRITING"));
-check("objective blueprint matches live safe-bank distribution",()=>JSON.stringify(BASELINE_BLUEPRINT)===JSON.stringify([{skill:"READING",count:2},{skill:"GRAMMAR",count:3},{skill:"VOCABULARY",count:3},{skill:"LITERATURE",count:2}]));
+check("objective blueprint matches live safe-bank distribution",()=>JSON.stringify(BASELINE_BLUEPRINT)===JSON.stringify([{skill:"READING",count:3},{skill:"GRAMMAR",count:2},{skill:"VOCABULARY",count:3},{skill:"LITERATURE",count:2}]));
 check("blueprint covers 10 core objective slots",()=>BASELINE_BLUEPRINT.reduce((n,x)=>n+x.count,0)===10);
 check("baseline uses only the live safe objective pool",()=>BASELINE_SIZE===10 && BASELINE_BLUEPRINT.reduce((n,x)=>n+x.count,0)===10 && !baselineRoute.includes("while (selected.length < BASELINE_SIZE)"));
 check("writing task exists",()=>BASELINE_WRITING_TASK.minWords>=80&&BASELINE_WRITING_TASK.maxWords>=BASELINE_WRITING_TASK.minWords);
@@ -27,14 +27,14 @@ const fs=require("fs");
 const route=fs.readFileSync("app/api/player/diagnostic/baseline/route.ts","utf8");
 const ui=fs.readFileSync("app/(dashboard)/murid/tes-awal/page.tsx","utf8");
 const mentor=fs.readFileSync("lib/ai-gateway/mentor-context.ts","utf8");
-const baselineRoute=fs.readFileSync("app/api/player/diagnostic/baseline/route.ts","utf8");
+const baselineRoute=route;
 const adaptiveHome=fs.readFileSync("app/api/player/adaptive-practice/route.ts","utf8");
 const hero=fs.readFileSync("components/student-home/StudentHomeHero.tsx","utf8");
 check("baseline route does not depend on Jalur Cerdas",()=>!route.includes("/arena/jalur-cerdas")&&!route.includes("selectAdaptivePractice"));
 check("Tes Awal UI uses baseline endpoint",()=>ui.includes("/api/player/diagnostic/baseline")&&!ui.includes("/api/player/diagnostic/daily"));
 check("baseline route has writing action",()=>route.includes('action === "writing"'));
 check("baseline route persists LearningEvidence",()=>route.includes("upsertLearningEvidence"));
-check("baseline route is server-authoritative",()=>route.includes("db.soal.findUnique")&&route.includes("correctAnswer"));
+check("baseline route is server-authoritative",()=>route.includes("BASELINE_QUESTION_BANK")&&route.includes("correctAnswer")&&!route.includes("db.soal.findUnique"));
 check("baseline has no XP reward",()=>!route.includes("awardXp")&&!route.includes("addCoin"));
 check("Mentor consumes baseline evidence",()=>mentor.includes('e.source === "DIAGNOSTIC_BASELINE_V2"'));
 check("home preview recognizes baseline before adaptive practice",()=>adaptiveHome.includes("BASELINE_SOURCE")&&adaptiveHome.includes('actionType: "DIAGNOSTIC"')&&adaptiveHome.includes('assessmentState: "BASELINE_AVAILABLE"'));
