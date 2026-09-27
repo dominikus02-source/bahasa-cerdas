@@ -67,6 +67,7 @@ function makeRound(mode: Mode): Round {
 export default function ZelbyDash() {
   const [mode, setMode] = useState<Mode>("susun");
   const [screen, setScreen] = useState<"start" | "game" | "over">("start");
+  const [showGuide, setShowGuide] = useState(false);
   const [round, setRound] = useState<Round>(() => makeRound("susun"));
   const [letters, setLetters] = useState<string[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
@@ -227,7 +228,7 @@ export default function ZelbyDash() {
             </main>
           )}
 
-          {screen === "game" && (
+          {showGuide && (\n            <div className="fixed inset-0 z-[80] bg-[#241B36]/55 backdrop-blur-sm flex items-center justify-center p-4" role="dialog" aria-modal="true">\n              <section className="w-full max-w-xl rounded-[32px] bg-white border-4 border-[#241B36] shadow-[10px_10px_0_#F5B82E] p-6 md:p-8 bk-pop">\n                <div className="flex items-center gap-4"><img src={zelby.happy} alt="Zelby" className="w-20 h-20 object-contain bk-bounce"/><div><div className="text-xs font-black text-[#5E9F72] tracking-widest">PANDUAN BERMAIN</div><h2 className="text-3xl font-black">Main bersama Zelby</h2></div></div>\n                <div className="grid md:grid-cols-3 gap-3 mt-6">\n                  {[["1","Pilih permainan","Mulai dari mode yang kamu suka."],["2","Lihat gambar","Gunakan gambar dan petunjuk untuk menemukan jawaban."],["3","Kumpulkan bintang","Jawab dengan tepat dan bangun kombo."]].map(([n,t,d]) => <div key={n} className="rounded-2xl bg-[#F7FBF8] border-2 border-[#B9DCC6] p-4"><div className="w-9 h-9 rounded-xl bg-[#F5B82E] border-2 border-[#241B36] flex items-center justify-center font-black">{n}</div><div className="font-black mt-3">{t}</div><div className="text-sm font-semibold text-[#716778] mt-1">{d}</div></div>)}\n                </div>\n                <div className="mt-5 rounded-2xl bg-[#FFF7D9] border-2 border-[#E7C76B] p-4 text-sm font-semibold"><b>Ingat:</b> kalau belum tepat, tidak apa-apa. Coba lagi dan pelajari petunjuknya. Di sini kita bermain sambil belajar.</div>\n                <button onClick={() => setShowGuide(false)} className="w-full mt-5 rounded-2xl bg-[#5FBF83] border-3 border-[#241B36] shadow-[4px_4px_0_#241B36] py-3 font-black text-white">Aku siap bermain!</button>\n              </section>\n            </div>\n          )}\n\n          {screen === "game" && (
             <main className="max-w-3xl mx-auto bk-pop">
               <div className="grid grid-cols-4 gap-2 mb-4">
                 {[["Skor",score],["Kombo",combo],["Nyawa",lives],["Bintang",stars]].map(([label,value]) => (
