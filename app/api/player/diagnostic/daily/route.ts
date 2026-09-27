@@ -59,10 +59,10 @@ function isQuestionType(value: string): value is QuestionTypeId {
   return ["PILIHAN_GANDA", "BENAR_SALAH", "ISIAN_SINGKAT"].includes(value);
 }
 
-async function findTodaySession(userId: string) {
+async function findTodaySession(user.id: string) {
   const since = new Date(Date.now() - 36 * 60 * 60 * 1000);
   const rows = await db.adaptivePracticeSession.findMany({
-    where: { userId, source: DAILY_DIAGNOSTIC_SOURCE, createdAt: { gte: since } },
+    where: { user.id, source: DAILY_DIAGNOSTIC_SOURCE, createdAt: { gte: since } },
     orderBy: { createdAt: "desc" },
     take: 5,
   });
@@ -73,9 +73,9 @@ async function findTodaySession(userId: string) {
   }) ?? null;
 }
 
-async function buildQuestions(userId: string): Promise<StateQuestion[]> {
+async function buildQuestions(user.id: string): Promise<StateQuestion[]> {
   const [states, metadataRows] = await Promise.all([
-    getLearnerState(userId).catch(() => []),
+    getLearnerState(user.id).catch(() => []),
     db.questionMetadata.findMany({
       where: {
         source: "BANK_SOAL",
@@ -105,7 +105,7 @@ async function buildQuestions(userId: string): Promise<StateQuestion[]> {
 
   const recent = await db.learningEvidence.findMany({
     where: {
-      userId,
+      user.id,
       source: { in: ["BANK_SOAL", DAILY_DIAGNOSTIC_SOURCE] },
       answeredAt: { gte: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000) },
       questionId: { in: ids },
@@ -251,7 +251,7 @@ export async function POST(req: NextRequest) {
 
     const session = await db.adaptivePracticeSession.create({
       data: {
-        userId,
+        user.id,
         source: DAILY_DIAGNOSTIC_SOURCE,
         selectionVersion: DAILY_DIAGNOSTIC_VERSION,
         targetSkill: null,
@@ -272,7 +272,7 @@ export async function POST(req: NextRequest) {
   if (!sessionId) return NextResponse.json({ error: "sessionId wajib diisi" }, { status: 400 });
 
   const session = await db.adaptivePracticeSession.findFirst({
-    where: { id: sessionId, userId, source: DAILY_DIAGNOSTIC_SOURCE },
+    where: { id: sessionId, user.id, source: DAILY_DIAGNOSTIC_SOURCE },
   });
   if (!session) return NextResponse.json({ error: "Sesi tidak ditemukan" }, { status: 404 });
   if (session.expiresAt < new Date()) return NextResponse.json({ error: "Sesi sudah berakhir" }, { status: 409 });
@@ -289,7 +289,7 @@ export async function POST(req: NextRequest) {
 
     const correct = answer === question.correctAnswer;
     await upsertLearningEvidence({
-      userId: user.id,
+      user.id: user.id,
       source: DAILY_DIAGNOSTIC_SOURCE,
       activityId: session.id,
       questionId,
@@ -328,7 +328,7 @@ export async function POST(req: NextRequest) {
     }
 
     await upsertLearningEvidence({
-      userId: user.id,
+      user.id: user.id,
       source: DAILY_DIAGNOSTIC_WRITING_SOURCE,
       activityId: session.id,
       questionId: state.writing.id,
