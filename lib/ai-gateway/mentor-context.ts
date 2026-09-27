@@ -8,6 +8,7 @@
 import { getLearnerState } from "@/lib/learner-state/service";
 import { getActiveRecommendations } from "@/lib/learning-loop/recommend";
 import { getRecentActivity } from "@/lib/learning-loop/activity";
+import { db } from "@/lib/db";
 import type { LearnerSkillState } from "@/lib/learner-state/types";
 
 export interface MentorContext {
@@ -37,6 +38,7 @@ export interface MentorContext {
   };
   confidence: number | null;
   hasEnoughData: boolean;
+  diagnosticEvidence: { total: number; recent: number; writingResponses: number; latestWriting: string | null };
 }
 
 /**
@@ -44,10 +46,11 @@ export interface MentorContext {
  * All data comes from server — client cannot inject arbitrary context.
  */
 export async function buildMentorContext(userId: string): Promise<MentorContext> {
-  const [learnerState, recommendations, recentActivity] = await Promise.all([
+  const [learnerState, recommendations, recentActivity, evidence] = await Promise.all([
     getLearnerState(userId).catch(() => []),
     getActiveRecommendations(userId).catch(() => []),
     getRecentActivity(userId, 7).catch(() => []),
+    db.learningEvidence.findMany({ where: { userId, answeredAt: { gte: new Date(Date.now() - 30 * 24 * 3600 * 1000) } }, orderBy: { answeredAt: "desc" }, take: 200, select: { source: true, skill: true, isCorrect: true, score: true, selectedAnswer: true, answeredAt: true, metadata: true } }).catch(() => []),
   ]);
 
   // Filter skills with evidence (at least 3 attempts)
@@ -84,6 +87,16 @@ export async function buildMentorContext(userId: string): Promise<MentorContext>
   // Check if we have enough data
   const hasEnoughData = skillsWithEvidence.length >= 2 && totalAttempts >= 10;
 
+  const diagnosticEvidence = evidence.filter(
+    (e) => e.source === "DIAGNOSTIC_DAILY" || e.source === "DIAGNOSTIC_DAILY_WRITING" || e.source === "AI_DIAGNOSTIC"
+  );
+  const writingResponses = diagnosticEvidence.filter(
+    (e) => e.source === "DIAGNOSTIC_DAILY_WRITING" && Boolean(e.selectedAnswer)
+  ).length;
+  const latestWriting = diagnosticEvidence.find(
+    (e) => e.source === "DIAGNOSTIC_DAILY_WRITING" && Boolean(e.selectedAnswer)
+  )?.selectedAnswer ?? null;
+
   return {
     strongestSkill: strongest
       ? {
@@ -114,6 +127,12 @@ export async function buildMentorContext(userId: string): Promise<MentorContext>
       : { title: null, description: null, skill: null, ctaLabel: null, ctaHref: null, reason: null },
     confidence,
     hasEnoughData,
+    diagnosticEvidence: {
+      total: diagnosticEvidence.length,
+      recent: diagnosticEvidence.filter((e) => e.answeredAt >= new Date(Date.now() - 7 * 24 * 3600 * 1000)).length,
+      writingResponses,
+      latestWriting: latestWriting ? latestWriting.slice(0, 500) : null,
+    },
   };
 }
 
@@ -143,9 +162,10 @@ ATURAN:
 5. Selalu jawab tiga hal: APA YANG HARUS DILAKUKAN SEKARANG, APA YANG HARUS DIBUAT/DIHASILKAN, dan KE MANA HARUS PERGI untuk memulai.
 6. Jika recommendation tersedia, arahkan murid ke aktivitas tersebut; jangan membuat route baru.
 7. Jika skill WRITING menjadi fokus, hasil yang dibuat harus berupa karya/tulisan konkret, bukan hanya latihan soal.
-8. Jangan menggunakan markdown yang kompleks
-9. Jangan membuat diagnosis medis/psikologis
-10. Jangan memberikan statistik yang tidak ada di context
+8. Diagnostic evidence adalah bukti asesmen terbaru; gunakan hanya sebagai konteks, jangan mengarang skor yang tidak tersedia.
+9. Jangan menggunakan markdown yang kompleks
+10. Jangan membuat diagnosis medis/psikologis
+11. Jangan memberikan statistik yang tidak ada di context
 
 CONTEXT SISWA:
 ${contextJson}

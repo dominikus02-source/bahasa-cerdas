@@ -25,8 +25,8 @@ export async function getLearnerState(userId: string): Promise<LearnerSkillState
           ) AS "recentRank"
         FROM "LearningEvidence" e
         INNER JOIN "QuestionMetadata" m
-          ON m."source" = e."source"
-         AND m."questionId" = e."questionId"
+          ON m."questionId" = e."questionId"
+         AND (m."source" = e."source" OR e."source" = 'DIAGNOSTIC_DAILY')
         WHERE e."userId" = ${userId}
           AND e."isCorrect" IS NOT NULL
           AND m."status" = 'APPROVED'
