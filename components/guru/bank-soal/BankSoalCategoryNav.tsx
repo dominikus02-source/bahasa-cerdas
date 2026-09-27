@@ -36,14 +36,14 @@ export function BankSoalCategoryNav({
     <div className="relative">
       <div
         ref={scrollRef}
-        className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1"
+        className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 overscroll-x-contain snap-x snap-mandatory"
         style={{ scrollbarWidth: "none" }}
       >
         {/* "Semua" chip */}
         <button
           type="button"
           onClick={() => onSelect(null)}
-          className={`shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 ${
+          className={`min-h-11 shrink-0 snap-start inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-full text-sm font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 ${
             selected === null
               ? "bg-emerald-600 text-white shadow-sm"
               : "bg-white text-slate-600 border border-slate-200 hover:border-slate-300 hover:bg-slate-50"
@@ -60,7 +60,7 @@ export function BankSoalCategoryNav({
               key={cat.key}
               type="button"
               onClick={() => onSelect(isActive ? null : cat.key)}
-              className={`shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 ${
+              className={`min-h-11 shrink-0 snap-start inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full text-sm font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 ${
                 isActive
                   ? `${cat.visual.softBg} ${cat.visual.softText} border border-transparent shadow-sm`
                   : "bg-white text-slate-600 border border-slate-200 hover:border-slate-300 hover:bg-slate-50"

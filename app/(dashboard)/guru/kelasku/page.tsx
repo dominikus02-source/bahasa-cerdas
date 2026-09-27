@@ -294,22 +294,22 @@ export default function KelasKuPage() {
   // ── Daftar kelas (tanpa kelas aktif) ────────────────────────────────────
   if (!activeGroup) {
     return (
-      <div className="bc-classroom p-4 md:p-6 lg:p-8">
+      <div className="bc-classroom p-0 sm:p-4 md:p-6 lg:p-8">
         <div className="max-w-5xl mx-auto space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold text-[var(--clr-text)]">Kelasku</h1>
               <p className="text-sm text-[var(--clr-text-2)] mt-0.5">Bagikan materi, tugas, latihan, dan pengumuman ke kelasmu.</p>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="relative flex-1 sm:w-56">
+            <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center">
+              <div className="relative col-span-2 min-w-0 sm:w-56 sm:flex-none">
                 <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--clr-text-3)]" />
                 <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cari kelas..." className="bc-input pl-10 text-sm" aria-label="Cari kelas" />
               </div>
-              <button type="button" onClick={() => setShowCreate(true)} className="bc-btn-secondary text-sm shrink-0">
+              <button type="button" onClick={() => setShowCreate(true)} className="bc-btn-secondary min-h-11 text-sm shrink-0 justify-center">
                 <Plus size={18} /> Buat Kelas
               </button>
-              <button type="button" onClick={() => openComposer()} disabled={groups.length === 0} className="bc-btn-primary text-sm shrink-0">
+              <button type="button" onClick={() => openComposer()} disabled={groups.length === 0} className="bc-btn-primary min-h-11 w-full justify-center text-sm shrink-0 sm:w-auto">
                 <Plus size={18} /> Tambahkan
               </button>
             </div>
@@ -348,7 +348,7 @@ export default function KelasKuPage() {
               {filteredGroups.map((g) => (
                 <div key={g.id} className={`bc-card overflow-hidden transition-colors bc-class-tint-${stableClassTint(g.id)}`}>
                   {/* Header tinted — identitas visual kelas (deterministik) */}
-                  <div className="bc-class-header px-5 pt-4 pb-3 flex items-center justify-between gap-2">
+                  <div className="bc-class-header px-4 sm:px-5 pt-4 pb-3 flex items-center justify-between gap-2">
                     <span className="text-[11px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full" style={{ color: "var(--class-accent)", background: "var(--class-soft)" }}>
                       Kelas {g.grade}
                     </span>
@@ -356,7 +356,7 @@ export default function KelasKuPage() {
                       <ArrowLeft size={16} className="rotate-180" />
                     </span>
                   </div>
-                  <div className="px-5 py-4 space-y-3">
+                  <div className="px-4 sm:px-5 py-4 space-y-3">
                     <button type="button" onClick={() => openGroup(g)} className="w-full text-left group" aria-label={`Buka kelas ${g.name}`}>
                       <h3 className="text-lg font-bold text-[var(--clr-text)] truncate">{g.name}</h3>
                       <p className="flex items-center gap-1.5 text-sm text-[var(--clr-text-2)] mt-1">
@@ -367,13 +367,13 @@ export default function KelasKuPage() {
                     {/* STEP 6.9B — KODE KELAS prominent */}
                     <div className="flex items-center gap-3 rounded-xl border border-[var(--clr-border)] px-3 py-2.5" style={{ background: "var(--clr-surface-2)" }}>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--clr-text-3)]">Kode Kelas</p>
+                        <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--clr-text-3)]">Kode Kelas</p>
                         <p className="bc-class-code truncate">{g.accessCode}</p>
                       </div>
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); handleCopy(g.accessCode); }}
-                        className="bc-chip text-[11px] shrink-0"
+                        className="bc-chip min-h-10 px-3 text-xs shrink-0"
                         aria-label={`Salin kode kelas ${g.name}`}
                       >
                         {copied === g.accessCode ? <CheckCircle2 size={14} className="text-[var(--clr-success)]" /> : <ClipboardCopy size={14} />}
@@ -385,7 +385,7 @@ export default function KelasKuPage() {
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); setCodeGroup(g); }}
-                        className="bc-btn-secondary text-xs"
+                        className="bc-btn-secondary min-h-10 text-xs"
                         aria-label={`Lihat kode kelas ${g.name}`}
                       >
                         <QrCode size={15} /> Lihat Kode
@@ -393,7 +393,7 @@ export default function KelasKuPage() {
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); setConfirmDelete(g); }}
-                        className="text-[var(--clr-text-3)] hover:text-[var(--clr-danger)] p-2 ml-auto"
+                        className="grid min-h-11 min-w-11 place-items-center rounded-xl text-[var(--clr-text-3)] hover:bg-[var(--clr-surface-2)] hover:text-[var(--clr-danger)] ml-auto"
                         aria-label={`Hapus kelas ${g.name}`}
                       >
                         <Trash2 size={16} />
@@ -462,14 +462,14 @@ export default function KelasKuPage() {
 
   // ── Detail kelas ────────────────────────────────────────────────────────
   return (
-    <div className="bc-classroom p-4 md:p-6 lg:p-8">
+    <div className="bc-classroom p-0 sm:p-4 md:p-6 lg:p-8">
       <div className="max-w-4xl mx-auto space-y-5">
         <button type="button" onClick={closeGroup} className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--clr-text-2)] hover:text-[var(--clr-accent-strong)]">
           <ArrowLeft size={16} /> Kelasku
         </button>
 
         {/* STEP 6.11 — hero: satu primary action, identitas kelas via stableClassTint */}
-        <div className={`bc-card p-5 md:p-6 bc-class-tint-${stableClassTint(activeGroup.id)}`}>
+        <div className={`bc-card p-4 sm:p-5 md:p-6 bc-class-tint-${stableClassTint(activeGroup.id)}`}>
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
             <div className="min-w-0">
               <span className="text-[11px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full" style={{ color: "var(--class-accent)", background: "var(--class-soft)" }}>
@@ -485,32 +485,32 @@ export default function KelasKuPage() {
                 )}
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-3 shrink-0">
+            <div className="flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row sm:items-center sm:gap-3 shrink-0">
               {/* Kode kelas first-class: Salin · Lihat Kode (modal: WhatsApp) · Perbarui */}
-              <div className="flex items-center gap-2 bg-[var(--clr-surface-2)] border border-[var(--clr-border)] rounded-xl px-3 py-2">
+              <div className="flex w-full items-center gap-1 bg-[var(--clr-surface-2)] border border-[var(--clr-border)] rounded-xl px-3 py-2 sm:w-auto sm:gap-2">
                 <div className="min-w-0">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--clr-text-3)]">Kode Kelas</p>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--clr-text-3)]">Kode Kelas</p>
                   <code className="bc-class-code truncate">{activeGroup.accessCode}</code>
                 </div>
-                <button type="button" onClick={() => handleCopy(activeGroup.accessCode)} aria-label="Salin kode kelas" className="text-[var(--clr-text-3)] hover:text-[var(--clr-accent-strong)] p-1">
+                <button type="button" onClick={() => handleCopy(activeGroup.accessCode)} aria-label="Salin kode kelas" className="grid min-h-10 min-w-10 place-items-center rounded-lg text-[var(--clr-text-3)] hover:bg-[var(--clr-surface)] hover:text-[var(--clr-accent-strong)]">
                   {copied === activeGroup.accessCode ? <CheckCircle2 size={16} className="text-[var(--clr-success)]" /> : <ClipboardCopy size={16} />}
                 </button>
-                <button type="button" onClick={() => setCodeGroup(activeGroup)} aria-label="Lihat kode kelas" className="text-[var(--clr-text-3)] hover:text-[var(--clr-accent-strong)] p-1">
+                <button type="button" onClick={() => setCodeGroup(activeGroup)} aria-label="Lihat kode kelas" className="grid min-h-10 min-w-10 place-items-center rounded-lg text-[var(--clr-text-3)] hover:bg-[var(--clr-surface)] hover:text-[var(--clr-accent-strong)]">
                   <QrCode size={16} />
                 </button>
-                <button type="button" onClick={() => handleRefreshCode(activeGroup.id)} aria-label="Perbarui kode kelas" className="text-[var(--clr-text-3)] hover:text-[var(--clr-accent-strong)] p-1">
+                <button type="button" onClick={() => handleRefreshCode(activeGroup.id)} aria-label="Perbarui kode kelas" className="grid min-h-10 min-w-10 place-items-center rounded-lg text-[var(--clr-text-3)] hover:bg-[var(--clr-surface)] hover:text-[var(--clr-accent-strong)]">
                   <RotateCw size={15} />
                 </button>
               </div>
-              <button type="button" onClick={() => openComposer(activeGroup ? [activeGroup.id] : undefined)} className="bc-btn-primary text-sm shrink-0">
+              <button type="button" onClick={() => openComposer(activeGroup ? [activeGroup.id] : undefined)} className="bc-btn-primary min-h-11 w-full justify-center text-sm shrink-0 sm:w-auto">
                 <Plus size={18} /> Tambahkan
               </button>
             </div>
           </div>
 
-          <div className="flex gap-2 mt-5 overflow-x-auto pb-1">
+          <div className="-mx-1 flex gap-2 mt-5 overflow-x-auto px-1 pb-2 overscroll-x-contain snap-x snap-mandatory">
             {([["aktivitas", "Aktivitas", null], ["materi", "Materi", BookOpen], ["tugas", "Tugas", FileText], ["nilai", "Nilai", GraduationCap], ["orang", "Orang", Users]] as [TabId, string, typeof BookOpen | null][]).map(([id, label, Icon]) => (
-              <button key={id} type="button" onClick={() => setTab(id)} className={`bc-chip ${tab === id ? "bc-chip-active" : ""} flex items-center gap-1.5`} aria-pressed={tab === id}>
+              <button key={id} type="button" onClick={() => setTab(id)} className={`bc-chip ${tab === id ? "bc-chip-active" : ""} min-h-11 shrink-0 snap-start flex items-center gap-1.5 px-3`} aria-pressed={tab === id}>
                 {Icon && <Icon size={15} />}
                 {label}
               </button>
@@ -650,7 +650,7 @@ export default function KelasKuPage() {
                   );
                 })}
                 <div className="flex flex-wrap gap-2 pt-1">
-                  <a href="/guru/tugas-murid" className="bc-btn-secondary text-xs">Lihat & nilai pengumpulan</a>
+                  <a href="/guru/tugas-murid" className="bc-btn-secondary min-h-10 text-xs">Lihat & nilai pengumpulan</a>
                 </div>
               </>
             )}
@@ -675,7 +675,7 @@ export default function KelasKuPage() {
               <div className="bc-card p-5">
                 <div className="flex items-center justify-between mb-3">
                   <h4 className="text-sm font-bold text-[var(--clr-text)]">Ringkasan Penilaian</h4>
-                  <a href="/guru/penilaian" className="bc-btn-secondary text-[10px] py-1 px-2">Buka Penilaian →</a>
+                  <a href="/guru/penilaian" className="bc-btn-secondary min-h-10 text-xs py-2 px-3">Buka Penilaian →</a>
                 </div>
                 {penilaianStats.rataKategoris && Object.keys(penilaianStats.rataKategoris).length > 0 ? (
                   <div className="space-y-2">
@@ -688,7 +688,7 @@ export default function KelasKuPage() {
                       </div>
                     ))}
                     {penilaianStats.belumDinilai > 0 && (
-                      <p className="text-[10px] text-[var(--clr-danger)] font-medium pt-1">{penilaianStats.belumDinilai} nilai belum dinilai</p>
+                      <p className="text-[11px] text-[var(--clr-danger)] font-medium pt-1">{penilaianStats.belumDinilai} nilai belum dinilai</p>
                     )}
                   </div>
                 ) : (
@@ -699,20 +699,20 @@ export default function KelasKuPage() {
 
             <ClassInsight groupId={activeGroup.id} />
             <div className="flex flex-wrap gap-2">
-              <a href="/guru/penilaian" className="bc-btn-secondary text-xs">Buka Penilaian</a>
-              <a href="/guru/gradebook" className="bc-btn-secondary text-xs">Buka Buku Nilai</a>
+              <a href="/guru/penilaian" className="bc-btn-secondary min-h-10 text-xs">Buka Penilaian</a>
+              <a href="/guru/gradebook" className="bc-btn-secondary min-h-10 text-xs">Buka Buku Nilai</a>
             </div>
           </div>
         ) : tab === "orang" && detail ? (
           <div className="space-y-3">
-            <div className="bc-card p-4 flex items-center justify-between">
+            <div className="bc-card p-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm font-bold text-[var(--clr-text)]">Anggota Kelas</p>
                 <p className="text-xs text-[var(--clr-text-2)] mt-0.5">
                   {detail.members?.length ?? 0} siswa tergabung di kelas ini
                 </p>
               </div>
-              <a href="/guru/data-siswa" className="bc-btn-secondary text-xs shrink-0">Kelola Data Siswa</a>
+              <a href="/guru/data-siswa" className="bc-btn-secondary min-h-10 w-full justify-center text-xs shrink-0 sm:w-auto">Kelola Data Siswa</a>
             </div>
             {(!detail.members || detail.members.length === 0) ? (
               <div className="bc-card bc-empty">
@@ -735,7 +735,7 @@ export default function KelasKuPage() {
                       <div className="flex items-center gap-2">
                         <p className="text-sm font-semibold text-[var(--clr-text)] truncate">{m.fullName}</p>
                         {m.attendanceNumber && (
-                          <span className="text-[10px] font-medium text-[var(--clr-accent-strong)] bg-[var(--clr-accent-soft)] rounded-full px-1.5 py-0.5 shrink-0">
+                          <span className="text-[11px] font-medium text-[var(--clr-accent-strong)] bg-[var(--clr-accent-soft)] rounded-full px-1.5 py-0.5 shrink-0">
                             #{m.attendanceNumber}
                           </span>
                         )}
@@ -750,7 +750,7 @@ export default function KelasKuPage() {
                     </div>
                     <div className="text-right shrink-0">
                       <p className="text-sm font-bold text-[var(--clr-accent-strong)]">{(m.xp || 0).toLocaleString()}</p>
-                      <p className="text-[10px] text-[var(--clr-text-3)]">XP</p>
+                      <p className="text-[11px] text-[var(--clr-text-3)]">XP</p>
                     </div>
                   </div>
                 ))}
@@ -860,12 +860,12 @@ function TodayView({ detail, lastClassIds, groupId, onKirimLagi, onReview }: {
               </p>
               {a.jenis === "tugas" ? (
                 <div className="flex items-center gap-1">
-                  <button type="button" onClick={() => { const p = detail.tugasPenugasan.find((x) => x.id === a.id); if (p) onReview(p); }} className="bc-chip text-[11px] shrink-0">Lihat Pengumpulan</button>
+                  <button type="button" onClick={() => { const p = detail.tugasPenugasan.find((x) => x.id === a.id); if (p) onReview(p); }} className="bc-chip min-h-10 px-3 text-xs shrink-0">Lihat Pengumpulan</button>
                   {(() => { const p = detail.tugasPenugasan.find((x) => x.id === a.id); return p ? <ShareTaskButton taskType="PENUGASAN" penugasanId={p.id} groupId={groupId} /> : null; })()}
                 </div>
               ) : (
                 <div className="flex items-center gap-1">
-                  {(() => { const t = detail.tugasQuiz.find((x) => x.id === a.id); return t ? <a href={`/guru/kuis/${t.quiz.id}/results?from=kelasku&groupId=${groupId}`} className="bc-chip text-[11px] shrink-0">Lihat Hasil</a> : null; })()}
+                  {(() => { const t = detail.tugasQuiz.find((x) => x.id === a.id); return t ? <a href={`/guru/kuis/${t.quiz.id}/results?from=kelasku&groupId=${groupId}`} className="bc-chip min-h-10 px-3 text-xs shrink-0">Lihat Hasil</a> : null; })()}
                   {(() => { const t = detail.tugasQuiz.find((x) => x.id === a.id); return t ? <ShareTaskButton taskType="QUIZ" quizId={t.quiz.id} groupId={groupId} /> : null; })()}
                 </div>
               )}
@@ -904,7 +904,7 @@ function TodayView({ detail, lastClassIds, groupId, onKirimLagi, onReview }: {
           <p className="text-xs text-[var(--clr-text-2)] flex-1 min-w-0">
             Terakhir kamu mengirim ke <strong>{lastClassIds.length} kelas</strong>. Kirim lagi ke kelas yang sama?
           </p>
-          <button type="button" onClick={() => onKirimLagi(lastClassIds)} className="bc-chip text-[11px] shrink-0">Kirim Lagi</button>
+          <button type="button" onClick={() => onKirimLagi(lastClassIds)} className="bc-chip min-h-10 px-3 text-xs shrink-0">Kirim Lagi</button>
         </div>
       )}
     </div>
@@ -1194,7 +1194,7 @@ function ClassCodeModal({ group, onClose }: { group: Group; onClose: () => void 
 
         <div className="px-6 py-5 space-y-4">
           <div className="rounded-2xl border px-4 py-6 text-center" style={{ borderColor: "var(--class-border)", background: "var(--class-soft)" }}>
-            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--clr-text-3)] mb-2">Kode Kelas</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--clr-text-3)] mb-2">Kode Kelas</p>
             <p className="bc-class-code text-[30px] leading-tight" aria-label={`Kode kelas ${group.accessCode}`}>{group.accessCode}</p>
           </div>
 

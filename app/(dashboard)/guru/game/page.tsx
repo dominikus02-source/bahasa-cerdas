@@ -321,7 +321,7 @@ export default function GuruGameHubPage() {
       <div className="guru-hero-strong relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/20 rounded-full blur-[80px]" />
         <div className="absolute bottom-0 left-8 w-48 h-48 bg-teal-300/10 rounded-full blur-[60px]" />
-        <div className="relative z-10 max-w-6xl mx-auto px-4 py-5">
+        <div className="relative z-10 mx-auto max-w-6xl px-3.5 py-4 sm:px-4 sm:py-5">
           <div className="flex flex-col lg:flex-row lg:items-center gap-4">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2.5">
@@ -340,7 +340,7 @@ export default function GuruGameHubPage() {
               </p>
             </div>
 
-            <div className="flex items-center gap-3 shrink-0 rounded-xl bg-white/10 backdrop-blur-md border border-white/10 px-3.5 py-2">
+            <div className="flex w-full items-center justify-between gap-3 rounded-xl bg-white/10 sm:w-auto sm:shrink-0 backdrop-blur-md border border-white/10 px-3.5 py-2">
               <div className="relative w-16 h-16 shrink-0">
                 <svg viewBox="0 0 96 96" className="w-16 h-16 -rotate-90">
                   <circle cx="48" cy="48" r="40" fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="10" />
@@ -374,10 +374,10 @@ export default function GuruGameHubPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-6">
+      <div className="mx-auto max-w-6xl px-0 py-4 sm:px-4 sm:py-6">
         {/* ── QUICK ACTION ──────────────────────────────────── */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
-          <Link href={lastGame.href} className="group flex flex-col bg-white rounded-xl border border-slate-100 p-3.5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all dark:bg-slate-900 dark:border-slate-800">
+        <div className="-mx-1 mb-6 flex gap-3 overflow-x-auto px-1 pb-2 overscroll-x-contain snap-x snap-mandatory md:mx-0 md:mb-8 md:grid md:grid-cols-3 md:overflow-visible md:px-0 md:pb-0">
+          <Link href={lastGame.href} className="group flex min-w-[82%] snap-start flex-col rounded-xl border border-slate-100 bg-white p-3.5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg sm:min-w-[48%] md:min-w-0 dark:border-slate-800 dark:bg-slate-900">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shrink-0"><Play className="w-4 h-4 text-white" /></div>
               <div className="min-w-0">
@@ -433,6 +433,35 @@ export default function GuruGameHubPage() {
           </Link>
         </div>
 
+        {/* ── MAIN BERSAMA (entry — kuis kelas, DI ATAS gim solo) ── */}
+        <div className="mb-8">
+          <div className="bg-gradient-to-br from-teal-600 via-emerald-700 to-teal-900 rounded-2xl p-5 text-white relative overflow-hidden shadow-sm">
+            <div className="absolute top-0 right-0 w-44 h-44 bg-emerald-400/20 rounded-full blur-[70px]" />
+            <div className="absolute bottom-0 left-6 w-28 h-28 bg-teal-300/10 rounded-full blur-[50px]" />
+            <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-4">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <div className="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20 shrink-0">
+                  <Users className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[10px] text-emerald-200 uppercase tracking-wider font-semibold">Main Bersama</p>
+                  <h3 className="font-extrabold text-slate-50 leading-snug">Ajak seluruh kelas bermain langsung dengan soal BahasaCerdas.</h3>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/15 border border-white/20">Jelajah Kata</span>
+                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/15 border border-white/20">Kota Cahaya</span>
+                  </div>
+                </div>
+              </div>
+              <Link
+                href="/guru/game/main-bersama"
+                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-emerald-800 sm:w-auto sm:shrink-0 font-bold text-sm shadow-sm hover:bg-emerald-50 hover:shadow transition-colors"
+              >
+                <Play className="w-4 h-4" /> Mulai Bersama
+              </Link>
+            </div>
+          </div>
+        </div>
+
         {/* ── MISI HARIAN ───────────────────────────────────── */}
         <section id="misi-hari-ini" className="scroll-mt-24 mb-8">
           <div className="flex items-center gap-2 mb-3">
@@ -467,35 +496,6 @@ export default function GuruGameHubPage() {
           )}
         </section>
 
-        {/* ── MAIN BERSAMA (entry — kuis kelas, DI ATAS gim solo) ── */}
-        <div className="mb-8">
-          <div className="bg-gradient-to-br from-teal-600 via-emerald-700 to-teal-900 rounded-2xl p-5 text-white relative overflow-hidden shadow-sm">
-            <div className="absolute top-0 right-0 w-44 h-44 bg-emerald-400/20 rounded-full blur-[70px]" />
-            <div className="absolute bottom-0 left-6 w-28 h-28 bg-teal-300/10 rounded-full blur-[50px]" />
-            <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-4">
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                <div className="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20 shrink-0">
-                  <Users className="w-5 h-5" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[10px] text-emerald-200 uppercase tracking-wider font-semibold">Main Bersama</p>
-                  <h3 className="font-extrabold text-slate-50 leading-snug">Ajak seluruh kelas bermain langsung dengan soal BahasaCerdas.</h3>
-                  <div className="mt-2 flex flex-wrap gap-1.5">
-                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/15 border border-white/20">Jelajah Kata</span>
-                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/15 border border-white/20">Kota Cahaya</span>
-                  </div>
-                </div>
-              </div>
-              <Link
-                href="/guru/game/main-bersama"
-                className="shrink-0 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white text-emerald-800 font-bold text-sm shadow-sm hover:bg-emerald-50 hover:shadow transition-colors"
-              >
-                <Play className="w-4 h-4" /> Mulai Bersama
-              </Link>
-            </div>
-          </div>
-        </div>
-
         {/* ── MAIN GAME ─────────────────────────────────────── */}
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-3">
@@ -507,11 +507,11 @@ export default function GuruGameHubPage() {
             </Link>
           </div>
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
               {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-40" />)}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
               {SOLO_GAMES.map((game) => {
                 const Icon = game.icon;
                 const playCount = counts.get(game.title) ?? 0;
@@ -532,15 +532,15 @@ export default function GuruGameHubPage() {
                     <div className={`h-16 bg-gradient-to-br ${game.gradient} relative flex items-center justify-center shrink-0`}>
                       <Icon className="w-7 h-7 text-white/80" />
                       {badge && (
-                        <span className={`absolute top-1.5 left-1.5 ${badge.cls} text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full shadow-sm`}>{badge.label}</span>
+                        <span className={`absolute top-1.5 left-1.5 ${badge.cls} text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow-sm`}>{badge.label}</span>
                       )}
                     </div>
                     <div className="p-3 flex flex-col flex-1">
                       <div className="flex items-start justify-between gap-2 mb-1">
                         <h3 className="font-bold text-slate-900 text-sm dark:text-slate-100">{game.title}</h3>
-                        <span className="text-[9px] px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-semibold shrink-0 dark:bg-violet-900/40 dark:text-violet-300">MULAI</span>
+                        <span className="text-[10px] px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-semibold shrink-0 dark:bg-violet-900/40 dark:text-violet-300">MULAI</span>
                       </div>
-                      <p className="text-xs text-slate-500 line-clamp-2 dark:text-slate-400">{game.desc}</p>
+                      <p className="hidden text-xs text-slate-500 line-clamp-2 sm:block dark:text-slate-400">{game.desc}</p>
                       {playCount > 0 && (
                         <div className="mt-2">
                           <div className="h-1 bg-slate-100 rounded-full overflow-hidden dark:bg-slate-800">

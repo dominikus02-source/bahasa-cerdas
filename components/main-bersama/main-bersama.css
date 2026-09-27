@@ -4342,3 +4342,20 @@
     scroll-behavior: auto;
   }
 }
+
+
+/* Guru mobile UX hardening — teacher room only; projector/student surfaces unchanged. */
+@media (max-width: 640px) {
+  .mb-scope-guru .mb-room .mb-lobby,
+  .mb-scope-guru .mb-room .mb-tquestion,
+  .mb-scope-guru .mb-room .mb-closed,
+  .mb-scope-guru .mb-room .mb-discuss,
+  .mb-scope-guru .mb-room .mb-tsummary { align-items: stretch; gap: 12px; padding: 12px 0 18px; }
+  .mb-scope-guru .mb-room .mb-room-cta { width: 100%; padding: 10px 0; }
+  .mb-scope-guru .mb-room .mb-room-cta .mb-primary-game-btn { width: 100%; min-height: 48px; }
+  .mb-scope-guru .mb-room .mb-plist { width: 100%; max-width: 100%; flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; overscroll-behavior-x: contain; padding-bottom: 5px; }
+  .mb-scope-guru .mb-room .mb-plist-item { min-height: 40px; flex: none; }
+  .mb-scope-guru .mb-lobby-pin-panel,
+  .mb-scope-guru .mb-lobby-roster-card { padding: 14px; }
+  .mb-scope-guru .mb-lobby-join-tools { align-items: flex-start; }
+}

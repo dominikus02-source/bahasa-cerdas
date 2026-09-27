@@ -119,7 +119,7 @@ export default function MateriAjarPage() {
 
   return (
     <div>
-        <div className="flex items-center justify-between mb-6">
+        <div className="mb-5 flex flex-col gap-4 sm:mb-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
               <Presentation className="text-emerald-500" size={28} />
@@ -127,18 +127,18 @@ export default function MateriAjarPage() {
             </h1>
             <p className="text-gray-500 mt-1">Cari Rencana Pembelajaran sesuai tema, unduh, atau buat sendiri dengan AI</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="grid w-full gap-2 sm:flex sm:w-auto sm:items-center sm:gap-3">
             <button onClick={() => setShowUpload(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors">
+              className="flex min-h-11 w-full items-center justify-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-semibold sm:w-auto hover:bg-emerald-700 transition-colors">
               <Upload size={16} /> Unggah Rencana Pembelajaran
             </button>
             {quota && (
               quota.unlimited ? (
-                <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 text-amber-700 rounded-xl text-sm font-medium">
+                <div className="flex min-h-11 w-full items-center justify-center gap-2 px-4 py-2 bg-amber-50 text-amber-700 rounded-xl text-sm font-medium sm:w-auto">
                   <Download size={16} /> Unduhan tak terbatas
                 </div>
               ) : (
-                <div className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium ${quota.used >= (quota.limit ?? 10) ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-700"}`}>
+                <div className={`flex min-h-11 w-full items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-medium sm:w-auto ${quota.used >= (quota.limit ?? 10) ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-700"}`}>
                   <Download size={16} /> Sisa unduhan: {Math.max(0, (quota.limit ?? 10) - quota.used)}/{quota.limit ?? 10}
                 </div>
               )
@@ -146,14 +146,14 @@ export default function MateriAjarPage() {
           </div>
         </div>
 
-      <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-6">
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex bg-gray-50 rounded-xl p-1">
+      <div className="mb-6 rounded-2xl border border-gray-100 bg-white p-3 sm:p-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <div className="grid w-full grid-cols-3 rounded-xl bg-gray-50 p-1 sm:flex sm:w-auto">
             {(["SD", "SMP", "SMA"] as LevelTab[]).map(tab => (
               <button
                 key={tab}
                 onClick={() => { setActiveTab(tab); setKelasFilter(""); setFolder(""); setPage(1) }}
-                className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${
+                className={`min-h-11 px-4 sm:px-5 py-2 rounded-lg text-sm font-semibold transition-all ${
                   activeTab === tab
                     ? "bg-white text-emerald-700 shadow-sm"
                     : "text-gray-500 hover:text-gray-700"
@@ -164,7 +164,7 @@ export default function MateriAjarPage() {
             ))}
           </div>
 
-          <div className="flex-1 min-w-[200px] relative">
+          <div className="relative w-full min-w-0 flex-1">
             <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
@@ -178,22 +178,22 @@ export default function MateriAjarPage() {
           <select
             value={sort}
             onChange={e => { setSort(e.target.value as "recent" | "popular"); setPage(1) }}
-            className="px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+            className="min-h-11 w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 sm:w-auto focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
           >
             <option value="recent">Terbaru</option>
             <option value="popular">Terpopuler</option>
           </select>
 
-          <div className="flex border border-gray-200 rounded-xl overflow-hidden">
+          <div className="flex w-full overflow-hidden rounded-xl border border-gray-200 sm:w-auto">
             <button
               onClick={() => setViewMode("grid")}
-              className={`p-2.5 ${viewMode === "grid" ? "bg-emerald-50 text-emerald-600" : "text-gray-400 hover:text-gray-600"}`}
+              className={`min-h-11 flex-1 p-2.5 sm:flex-none ${viewMode === "grid" ? "bg-emerald-50 text-emerald-600" : "text-gray-400 hover:text-gray-600"}`}
             >
               <Grid3x3 size={18} />
             </button>
             <button
               onClick={() => setViewMode("list")}
-              className={`p-2.5 ${viewMode === "list" ? "bg-emerald-50 text-emerald-600" : "text-gray-400 hover:text-gray-600"}`}
+              className={`min-h-11 flex-1 p-2.5 sm:flex-none ${viewMode === "list" ? "bg-emerald-50 text-emerald-600" : "text-gray-400 hover:text-gray-600"}`}
             >
               <List size={18} />
             </button>
@@ -201,11 +201,11 @@ export default function MateriAjarPage() {
         </div>
 
         {/* Pilih kelas (per kelas, tidak dicampur) */}
-        <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-gray-100">
+        <div className="-mx-1 mt-3 flex items-center gap-2 overflow-x-auto border-t border-gray-100 px-1 pt-3 pb-1 overscroll-x-contain">
           <span className="text-xs font-medium text-gray-400 mr-1">Kelas:</span>
           <button
             onClick={() => { setKelasFilter(""); setPage(1) }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${kelasFilter === "" ? "bg-emerald-600 text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
+            className={`min-h-10 shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${kelasFilter === "" ? "bg-emerald-600 text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
           >
             Semua
           </button>
@@ -213,7 +213,7 @@ export default function MateriAjarPage() {
             <button
               key={g}
               onClick={() => { setKelasFilter(g); setPage(1) }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${kelasFilter === g ? "bg-emerald-600 text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
+              className={`min-h-10 shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${kelasFilter === g ? "bg-emerald-600 text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
             >
               {g.replace(/^(SD|SMP|SMA)\s*/, "")}
             </button>
@@ -221,11 +221,11 @@ export default function MateriAjarPage() {
         </div>
 
         {/* Folder: Modul Ajar / PPT / PDF */}
-        <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-gray-100">
+        <div className="-mx-1 mt-3 flex items-center gap-2 overflow-x-auto border-t border-gray-100 px-1 pt-3 pb-1 overscroll-x-contain">
           <span className="text-xs font-medium text-gray-400 mr-1">Folder:</span>
           <button
             onClick={() => { setFolder(""); setPage(1) }}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${folder === "" ? "bg-gray-800 text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
+            className={`flex min-h-10 shrink-0 items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${folder === "" ? "bg-gray-800 text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
           >
             Semua
           </button>
@@ -233,7 +233,7 @@ export default function MateriAjarPage() {
             <button
               key={f.value}
               onClick={() => { setFolder(f.value); setPage(1) }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${folder === f.value ? "bg-emerald-600 text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
+              className={`flex min-h-10 shrink-0 items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${folder === f.value ? "bg-emerald-600 text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
               title={f.hint}
             >
               <Folder size={13} /> {f.label}
@@ -256,7 +256,7 @@ export default function MateriAjarPage() {
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+        <div className="rounded-2xl border border-gray-100 bg-white p-8 text-center sm:p-12">
           <BookOpen size={48} className="mx-auto text-gray-300 mb-4" />
           <h3 className="text-lg font-semibold text-gray-700 mb-1">
             {debouncedSearch ? `Tidak ada Rencana Pembelajaran untuk "${debouncedSearch}"` : `Belum ada Rencana Pembelajaran ${activeTab}`}
@@ -344,10 +344,10 @@ export default function MateriAjarPage() {
 
       {/* ═══ Upload Modal ═══ */}
       {showUpload && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={() => { if (!uploading) setShowUpload(false) }}>
+        <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4" onClick={() => { if (!uploading) setShowUpload(false) }}>
           <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
-          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-6" onClick={e => e.stopPropagation()}>
-            <button onClick={() => { if (!uploading) setShowUpload(false) }} className="absolute top-3 right-3 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center">
+          <div className="relative max-h-[92dvh] w-full max-w-lg overflow-y-auto overscroll-contain rounded-t-3xl bg-white p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] shadow-2xl sm:mx-4 sm:rounded-2xl sm:p-6" onClick={e => e.stopPropagation()}>
+            <button onClick={() => { if (!uploading) setShowUpload(false) }} className="absolute top-3 right-3 grid h-11 w-11 place-items-center rounded-full bg-gray-100 hover:bg-gray-200">
               <X size={16} className="text-gray-500" />
             </button>
             <h2 className="font-bold text-lg text-gray-900 mb-1">Unggah Rencana Pembelajaran</h2>
@@ -512,11 +512,11 @@ function MateriCard({ materi, onView, onKirim }: { materi: Materi; onView: () =>
         {materi.fileUrl && (
           <div className="flex gap-2">
             <button onClick={onView}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-semibold text-emerald-700 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors">
+              className="flex min-h-11 flex-1 items-center justify-center gap-2 py-2.5 text-xs font-semibold text-emerald-700 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors">
               <Eye size={14} /> Detail
             </button>
             <button onClick={onKirim}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-semibold text-violet-700 bg-violet-50 rounded-lg hover:bg-violet-100 transition-colors">
+              className="flex min-h-11 flex-1 items-center justify-center gap-2 py-2.5 text-xs font-semibold text-violet-700 bg-violet-50 rounded-lg hover:bg-violet-100 transition-colors">
               <Send size={14} /> Kirim
             </button>
           </div>
@@ -572,10 +572,10 @@ function MateriDetailModal({ materi, quota, getSid, onClose, onQuota, onPresent,
   const remaining = quota && !quota.unlimited ? Math.max(0, (quota.limit ?? 10) - quota.used) : null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4" onClick={onClose}>
       <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden" onClick={e => e.stopPropagation()}>
-        <button onClick={onClose} className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/80 hover:bg-gray-100 flex items-center justify-center">
+      <div className="relative max-h-[92dvh] w-full max-w-lg overflow-y-auto overscroll-contain rounded-t-3xl bg-white pb-[env(safe-area-inset-bottom)] shadow-2xl sm:rounded-2xl" onClick={e => e.stopPropagation()}>
+        <button onClick={onClose} className="absolute top-3 right-3 z-10 grid h-11 w-11 place-items-center rounded-full bg-white/80 hover:bg-gray-100">
           <X size={16} className="text-gray-500" />
         </button>
         <div className={`h-24 flex items-center justify-center ${isPPT ? "bg-gradient-to-br from-orange-100 to-amber-50" : isPDF ? "bg-gradient-to-br from-red-50 to-rose-50" : "bg-gradient-to-br from-blue-50 to-indigo-50"}`}>
@@ -606,15 +606,15 @@ function MateriDetailModal({ materi, quota, getSid, onClose, onQuota, onPresent,
             <>
               <div className="flex gap-2">
                 <button onClick={preview}
-                  className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors">
+                  className="flex min-h-11 flex-1 items-center justify-center gap-2 py-2.5 text-sm font-semibold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors">
                   <Eye size={16} /> Pratinjau
                 </button>
                 <button onClick={download} disabled={downloading}
-                  className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold text-white bg-emerald-600 rounded-xl hover:bg-emerald-700 disabled:opacity-50 transition-colors">
+                  className="flex min-h-11 flex-1 items-center justify-center gap-2 py-2.5 text-sm font-semibold text-white bg-emerald-600 rounded-xl hover:bg-emerald-700 disabled:opacity-50 transition-colors">
                   {downloading ? <><Loader2 size={16} className="animate-spin" /> Mengunduh...</> : done ? <><Check size={16} /> Terunduh</> : <><Download size={16} /> Unduh</>}
                 </button>
               </div>
-              <button onClick={onKirim} className="w-full mt-2 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold text-white bg-violet-600 rounded-xl hover:bg-violet-700 transition-colors">
+              <button onClick={onKirim} className="mt-2 flex min-h-11 w-full items-center justify-center gap-2 py-2.5 text-sm font-semibold text-white bg-violet-600 rounded-xl hover:bg-violet-700 transition-colors">
                 <Send size={16} /> Kirim ke Kelas
               </button>
               {isPPT && (
@@ -674,12 +674,12 @@ function MateriKirimModal({ materi, onClose }: { materi: Materi; onClose: () => 
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => !sending && onClose()}>
+    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4" onClick={() => !sending && onClose()}>
       <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6" onClick={e => e.stopPropagation()}>
+      <div className="relative max-h-[92dvh] w-full max-w-md overflow-y-auto overscroll-contain rounded-t-3xl bg-white p-4 shadow-2xl sm:rounded-2xl sm:p-6" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-1">
           <h2 className="font-bold text-gray-900">Kirim ke Kelas</h2>
-          <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center">
+          <button onClick={onClose} className="grid h-11 w-11 place-items-center rounded-full hover:bg-gray-100">
             <X size={16} className="text-gray-500" />
           </button>
         </div>
@@ -735,7 +735,7 @@ function MateriKirimModal({ materi, onClose }: { materi: Materi; onClose: () => 
             <button
               onClick={send}
               disabled={selected.length === 0 || sending}
-              className="w-full py-2.5 bg-violet-600 text-white rounded-xl text-sm font-semibold hover:bg-violet-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+              className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-violet-600 py-2.5 text-sm font-semibold text-white hover:bg-violet-700 disabled:opacity-50 transition-colors"
             >
               {sending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
               Kirim ke {selected.length} Kelas

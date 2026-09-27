@@ -646,7 +646,7 @@ export function SetupClient({
           line-height: 1.5;
         }
         .mb-btn-ghost {
-          min-height: 42px;
+          min-height: 44px;
           padding: 9px 20px;
           border-radius: 999px;
           border: 2px solid var(--mb-primary-strong);
@@ -683,7 +683,7 @@ export function SetupClient({
         }
         .mb-cls-chip {
           position: relative;
-          min-height: 42px;
+          min-height: 44px;
           padding: 9px 20px;
           border-radius: 999px;
           background: rgba(255, 255, 255, .94);
@@ -793,15 +793,19 @@ export function SetupClient({
         }
 
         @media (max-width: 600px) {
-          .mb-setup { padding-inline: 12px; }
+          .mb-setup { padding: 12px 0 calc(44px + env(safe-area-inset-bottom)); }
           .mb-setup-head {
-            min-height: 320px;
-            border-radius: 24px;
-            padding: 26px 22px;
+            min-height: 248px;
+            border-radius: 22px;
+            padding: 22px 18px;
           }
           .mb-setup-hero-copy { width: 100%; }
-          .mb-setup-head h1 { font-size: clamp(2.35rem, 13vw, 3.4rem); }
+          .mb-setup-head h1 { font-size: clamp(2.1rem, 11.5vw, 2.9rem); }
           .mb-setup-hero-pills span:nth-child(3) { display: none; }
+          .mb-setup-section { margin-top: 24px; padding-inline: 0; }
+          .mb-setup-pick-row .mb-btn-ghost { width: 100%; justify-content: center; }
+          .mb-cls-row { flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; padding-bottom: 4px; }
+          .mb-cls-chip { flex: none; }
           .mb-guru-h {
             align-items: flex-start;
             flex-wrap: wrap;
@@ -819,14 +823,16 @@ export function SetupClient({
           .mb-setup-empty-art { height: 104px; }
           .mb-setup-pick-row { align-items: flex-start; }
           .mb-setup-cta-box {
-            min-height: 250px;
-            border-radius: 24px;
-            padding: 18px;
+            min-height: 210px;
+            border-radius: 22px;
+            padding: 14px;
             background-position: center;
           }
           .mb-setup-cta-content {
-            padding: 18px 18px 16px;
+            width: 100%;
+            padding: 16px 14px 14px;
           }
+          .mb-setup-cta-box .mb-primary-game-btn { width: 100%; min-width: 0; min-height: 48px; }
         }
       `}</style>
     </main>

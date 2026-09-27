@@ -315,11 +315,11 @@ export default function BankSoalPage() {
 
   // ── Render ──
   return (
-    <div className="space-y-8">
+    <div className="space-y-5 sm:space-y-8">
       {/* Toast */}
       {success && (
         <div
-          className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-xl shadow-lg text-sm font-medium ${
+          className={`fixed inset-x-3 top-3 z-50 px-4 py-3 rounded-xl shadow-lg text-sm font-medium sm:inset-x-auto sm:right-4 sm:top-4 ${
             success.includes("✅")
               ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
               : "bg-red-50 text-red-800 border border-red-200"
@@ -334,7 +334,7 @@ export default function BankSoalPage() {
       {pickerMode && (
         <section
           aria-label="Memilih tema untuk Main Bersama"
-          className="flex flex-wrap items-center gap-3 rounded-2xl border border-teal-300/70 bg-teal-50 px-4 py-3"
+          className="flex flex-col items-stretch gap-3 rounded-2xl border border-teal-300/70 bg-teal-50 px-4 py-3 sm:flex-row sm:items-center"
         >
           <span className="w-9 h-9 rounded-xl bg-teal-600 flex items-center justify-center shrink-0">
             <MonitorPlay size={17} className="text-white" aria-hidden />
@@ -348,7 +348,7 @@ export default function BankSoalPage() {
           </div>
           <Link
             href="/guru/game/main-bersama"
-            className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-teal-600/30 text-teal-700 text-sm font-semibold hover:bg-teal-100 transition-colors"
+            className="inline-flex min-h-11 w-full items-center justify-center gap-1.5 rounded-xl border border-teal-600/30 px-3.5 py-2 text-sm font-semibold text-teal-700 transition-colors hover:bg-teal-100 sm:w-auto sm:shrink-0"
           >
             ← Kembali ke Main Bersama
           </Link>
@@ -358,7 +358,7 @@ export default function BankSoalPage() {
       {/* ════════════════════════════════════════════════════════
           1. HERO — Editorial discovery header
          ════════════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden rounded-2xl bg-emerald-700 p-6 sm:p-8 text-white">
+      <section className="relative overflow-hidden rounded-2xl bg-emerald-700 p-5 sm:p-8 text-white">
         {/* Subtle geometric pattern */}
         <div
           aria-hidden
@@ -417,7 +417,7 @@ export default function BankSoalPage() {
               onChange={e => setSearch(e.target.value)}
               placeholder="Cari tema, materi, atau kata kunci..."
               aria-label="Cari tema, materi, atau kata kunci"
-              className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/15 backdrop-blur-sm border border-white/20 text-sm text-white placeholder:text-emerald-200/50 focus:bg-white/20 focus:border-white/30 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all"
+              className="min-h-12 w-full pl-10 pr-4 py-3 rounded-xl bg-white/15 backdrop-blur-sm border border-white/20 text-sm text-white placeholder:text-emerald-200/50 focus:bg-white/20 focus:border-white/30 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all"
             />
           </div>
         </div>
@@ -426,7 +426,7 @@ export default function BankSoalPage() {
       {/* ════════════════════════════════════════════════════════
           2. NAV TABS — Bank Soal / Latihan / Kuis / Soal
          ════════════════════════════════════════════════════════ */}
-      <div className="flex gap-1.5 bg-white border border-slate-200/80 rounded-2xl p-1.5 w-fit max-w-full shadow-sm">
+      <div className="grid w-full grid-cols-3 gap-1.5 rounded-2xl border border-slate-200/80 bg-white p-1.5 shadow-sm sm:flex sm:w-fit">
         {[
           { label: "Bank Soal", href: "/guru/bank-soal", icon: Library },
           { label: "Kuis", href: "/guru/kuis", icon: FileText },
@@ -440,7 +440,7 @@ export default function BankSoalPage() {
             <Link
               key={item.label}
               href={item.href}
-              className={`flex items-center gap-1.5 whitespace-nowrap px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+              className={`flex min-h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-2 py-2 text-sm font-semibold transition-all sm:px-4 ${
                 active
                   ? "bg-emerald-600 text-white shadow-sm"
                   : "text-slate-500 hover:bg-slate-50"
@@ -650,7 +650,7 @@ export default function BankSoalPage() {
         isOpen={!!selectedTheme}
         onClose={() => setSelectedTheme(null)}
         title={pickerMode ? "Gunakan Tema" : "Siapkan Latihan"}
-        className="max-w-md"
+        className="mx-3 max-h-[calc(100dvh-1rem)] max-w-md overflow-y-auto overscroll-contain rounded-2xl !p-4 sm:!p-6"
       >
         {selectedTheme &&
           (() => {
@@ -780,11 +780,11 @@ export default function BankSoalPage() {
                 <div className="pt-2 space-y-2">
                   {pickerMode ? (
                     <>
-                      <div className="flex gap-2">
+                      <div className="grid grid-cols-2 gap-2">
                         <Button
                           variant="outline"
                           onClick={() => setSelectedTheme(null)}
-                          className="flex-1"
+                          className="min-h-11 flex-1"
                         >
                           Batal
                         </Button>
@@ -792,7 +792,7 @@ export default function BankSoalPage() {
                           variant="outline"
                           onClick={handlePreview}
                           disabled={previewLoading}
-                          className="flex-1"
+                          className="min-h-11 flex-1"
                         >
                           {previewLoading ? (
                             <Loader2 className="h-4 w-4 animate-spin" />
@@ -805,7 +805,7 @@ export default function BankSoalPage() {
                       <Button
                         onClick={handleUseForMainBersama}
                         disabled={mbReturning || selectedTheme.total === 0}
-                        className="w-full bg-teal-600"
+                        className="min-h-11 w-full bg-teal-600"
                       >
                         <MonitorPlay size={16} className="mr-1" />
                         Gunakan untuk Main Bersama
@@ -816,11 +816,11 @@ export default function BankSoalPage() {
                     </>
                   ) : (
                     <>
-                      <div className="flex gap-2">
+                      <div className="grid grid-cols-2 gap-2">
                         <Button
                           variant="outline"
                           onClick={() => setSelectedTheme(null)}
-                          className="flex-1"
+                          className="min-h-11 flex-1"
                         >
                           Batal
                         </Button>
@@ -828,7 +828,7 @@ export default function BankSoalPage() {
                           variant="outline"
                           onClick={handlePreview}
                           disabled={previewLoading}
-                          className="flex-1"
+                          className="min-h-11 flex-1"
                         >
                           {previewLoading ? (
                             <Loader2 className="h-4 w-4 animate-spin" />
@@ -841,7 +841,7 @@ export default function BankSoalPage() {
                       <Button
                         onClick={handleSend}
                         disabled={sending || selectedGroups.length === 0}
-                        className="w-full bg-emerald-600"
+                        className="min-h-11 w-full bg-emerald-600"
                       >
                         {sending ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
@@ -870,11 +870,11 @@ export default function BankSoalPage() {
         isOpen={!!preview}
         onClose={() => setPreview(null)}
         title="Lihat Soal"
-        className="max-w-2xl"
+        className="mx-3 max-h-[calc(100dvh-1rem)] max-w-2xl overflow-y-auto overscroll-contain rounded-2xl !p-4 sm:!p-6"
       >
         {preview && (
           <div className="space-y-3">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm font-semibold text-gray-900">
                 {preview.tema} · {preview.soal.length} soal dipilih
               </p>
@@ -919,7 +919,7 @@ export default function BankSoalPage() {
                           ) : (
                             <span className="w-3 shrink-0" />
                           )}
-                          <span className="truncate">{opt}</span>
+                          <span className="min-w-0 break-words">{opt}</span>
                         </div>
                       );
                     })}
@@ -935,17 +935,17 @@ export default function BankSoalPage() {
                 </div>
               ))}
             </div>
-            <div className="flex gap-2 pt-1">
+            <div className="grid grid-cols-2 gap-2 pt-1">
               <Button
                 variant="outline"
                 onClick={() => setPreview(null)}
-                className="flex-1"
+                className="min-h-11 flex-1"
               >
                 Kembali
               </Button>
               <Button
                 onClick={() => setPreview(null)}
-                className="flex-1 bg-emerald-600"
+                className="min-h-11 flex-1 bg-emerald-600"
               >
                 <Check size={16} className="mr-1" /> Set ini yang dikirim
               </Button>

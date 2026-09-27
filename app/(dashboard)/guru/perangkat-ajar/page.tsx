@@ -135,7 +135,7 @@ export default function PerangkatAjarPage() {
 
   if (selectedGrade) {
     return (
-      <div className="max-w-5xl mx-auto py-6 px-4">
+      <div className="mx-auto max-w-5xl px-0 py-2 sm:px-4 sm:py-6">
         <button
           onClick={() => { setSelectedGrade(null); setSearch(""); }}
           className="mb-4 flex items-center gap-2 text-sm text-slate-500 transition-colors hover:text-blue-600 dark:hover:text-blue-300"
@@ -163,7 +163,7 @@ export default function PerangkatAjarPage() {
             placeholder="Cari nama file..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+            className="min-h-11 w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
           />
         </div>
 
@@ -177,7 +177,7 @@ export default function PerangkatAjarPage() {
             return (
               <div
                 key={f.sourceDriveFileId}
-                className="flex items-center gap-3 px-4 py-3 bg-white border border-slate-100 rounded-xl hover:border-blue-200 hover:shadow-sm transition group"
+                className="flex items-center gap-3 rounded-xl border border-slate-100 bg-white px-3 py-3 sm:px-4 hover:border-blue-200 hover:shadow-sm transition group"
               >
                 <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${colorCls}`}>
                   <Icon className="w-4.5 h-4.5" />
@@ -190,12 +190,12 @@ export default function PerangkatAjarPage() {
                     {formatSize(Number(f.fileSize))} · {formatDate(f.modifiedTime)}
                   </p>
                 </div>
-                <div className="flex items-center gap-1.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex shrink-0 items-center gap-1 opacity-100 transition-opacity xl:opacity-0 xl:group-hover:opacity-100">
                   <a
                     href={f.sourceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 dark:hover:bg-blue-950/40 dark:hover:text-blue-300 transition"
+                    className="grid min-h-11 min-w-11 place-items-center rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 dark:hover:bg-blue-950/40 dark:hover:text-blue-300 transition"
                     title="Buka di Drive"
                   >
                     <ExternalLink className="w-4 h-4" />
@@ -204,7 +204,7 @@ export default function PerangkatAjarPage() {
                     href={previewUrl(f.sourceUrl)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 dark:hover:bg-blue-950/40 dark:hover:text-blue-300 transition"
+                    className="grid min-h-11 min-w-11 place-items-center rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 dark:hover:bg-blue-950/40 dark:hover:text-blue-300 transition"
                     title="Pratinjau"
                   >
                     <Eye className="w-4 h-4" />
@@ -223,8 +223,8 @@ export default function PerangkatAjarPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto py-6 px-4">
-      <section className="guru-hero-strong mb-6 rounded-[24px] p-5 sm:p-6">
+    <div className="mx-auto max-w-5xl px-0 py-2 sm:px-4 sm:py-6">
+      <section className="guru-hero-strong mb-5 rounded-[22px] p-4 sm:mb-6 sm:rounded-[24px] sm:p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex min-w-0 items-center gap-3">
             <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-white/15 bg-white/10">
@@ -254,7 +254,7 @@ export default function PerangkatAjarPage() {
         </div>
       </section>
 
-      <div className="flex gap-2 mb-6">
+      <div className="-mx-1 mb-5 flex gap-2 overflow-x-auto px-1 pb-2 overscroll-x-contain sm:mb-6">
         {(["SD", "SMP", "SMA"] as LevelTab[]).map((lv) => {
           const count = grades
             .filter((g) => g.educationLevel === lv)
@@ -263,7 +263,7 @@ export default function PerangkatAjarPage() {
             <button
               key={lv}
               onClick={() => setLevelTab(lv)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition ${
+              className={`inline-flex min-h-11 shrink-0 items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition ${
                 levelTab === lv
                   ? "bg-blue-600 text-white shadow-sm shadow-blue-500/20"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200"
@@ -281,7 +281,7 @@ export default function PerangkatAjarPage() {
           <button
             key={`${g.educationLevel}-${g.grade}`}
             onClick={() => setSelectedGrade(g)}
-            className="guru-surface-card group rounded-xl p-4 text-left transition hover:-translate-y-0.5"
+            className="guru-surface-card group min-h-16 rounded-xl p-4 text-left transition hover:-translate-y-0.5"
           >
             <div className="flex items-center gap-3">
               <div className="guru-section-heading-icon flex h-10 w-10 items-center justify-center rounded-lg">

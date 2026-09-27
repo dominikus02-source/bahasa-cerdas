@@ -36,7 +36,7 @@ export function ThemeCard<T extends ThemeCardData>({
       type="button"
       onClick={() => onOpen(theme)}
       aria-label={`${theme.name} — ${theme.total} soal${kelasLabel ? `, ${kelasLabel}` : ""}. Klik untuk membuat latihan.`}
-      className="group relative text-left rounded-2xl border border-slate-200/80 bg-white overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 motion-safe:transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 flex flex-col h-[220px]"
+      className="group relative text-left rounded-2xl border border-slate-200/80 bg-white overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 motion-safe:transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 flex flex-col h-[216px] sm:h-[220px]"
     >
       {/* Visual header — FIXED h-24, always rendered */}
       <ThemeCoverArt
@@ -50,12 +50,12 @@ export function ThemeCard<T extends ThemeCardData>({
       {/* Content body — fixed height, flex-col */}
       <div className="p-3 flex flex-col flex-1 min-h-0">
         {/* Title — always 1 line */}
-        <p className="text-sm font-bold text-gray-900 leading-snug line-clamp-1">
+        <p className="text-sm font-bold text-gray-900 leading-snug line-clamp-2">
           {theme.name}
         </p>
 
         {/* Tagline — always 1 line, fixed space */}
-        <p className="text-[11px] text-gray-400 mt-0.5 line-clamp-1 min-h-[14px]">
+        <p className="hidden text-[11px] text-gray-400 mt-0.5 line-clamp-1 min-h-[14px] sm:block">
           {themeVis.tagline ?? "\u00A0"}
         </p>
 
@@ -65,12 +65,12 @@ export function ThemeCard<T extends ThemeCardData>({
         {/* Metadata — always at bottom */}
         <div className="flex items-center gap-1.5 flex-wrap">
           <span
-            className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${visual.softBg} ${visual.softText}`}
+            className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${visual.softBg} ${visual.softText}`}
           >
             {theme.total} soal
           </span>
           {kelasLabel ? (
-            <span className="text-[10px] font-medium text-gray-400 truncate">{kelasLabel}</span>
+            <span className="text-[11px] font-medium text-gray-400 truncate">{kelasLabel}</span>
           ) : null}
           <span className="ml-auto text-gray-300 group-hover:text-gray-500 group-hover:translate-x-0.5 motion-safe:transition-all shrink-0" aria-hidden>
             <ChevronRight size={14} />

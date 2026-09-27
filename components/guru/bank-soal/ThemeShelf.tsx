@@ -82,11 +82,11 @@ export function ThemeShelf<T extends ThemeCardData>({
       {/* Shelf track */}
       <div
         ref={scrollRef}
-        className="flex gap-3 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-1 -mx-1 px-1 scrollbar-thin"
+        className="flex gap-3 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2 -mx-1 px-1 overscroll-x-contain scrollbar-thin"
         style={{ scrollbarWidth: "thin" }}
       >
         {themes.map(t => (
-          <div key={t.name} className="snap-start shrink-0 w-[160px] sm:w-[180px] md:w-[200px]">
+          <div key={t.name} className="snap-start shrink-0 w-[172px] sm:w-[184px] md:w-[200px]">
             <ThemeCard theme={t} onOpen={onOpen} />
           </div>
         ))}

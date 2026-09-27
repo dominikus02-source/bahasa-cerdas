@@ -71,7 +71,7 @@ export function FeaturedCollection({
                 key={t.name}
                 type="button"
                 onClick={() => onExplore(t.name)}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${collection.accentBg} hover:bg-white/25 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-white`}
+                className={`inline-flex min-h-9 items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${collection.accentBg} hover:bg-white/25 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-white`}
               >
                 <span>{t.name}</span>
                 <span className="opacity-60">({t.total})</span>
@@ -90,7 +90,7 @@ export function FeaturedCollection({
           <button
             type="button"
             onClick={() => onExplore(preview[0].name)}
-            className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
+            className="mt-4 inline-flex min-h-11 items-center gap-2 px-4 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
           >
             Jelajahi Koleksi
             <ArrowRight size={14} />
