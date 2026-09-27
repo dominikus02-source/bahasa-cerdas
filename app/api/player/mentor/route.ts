@@ -26,6 +26,8 @@ const MentorOutputSchema = z.object({
   diagnosis: z.string(),
   reason: z.string(),
   action: z.string(),
+  doNow: z.string(),
+  makeThis: z.string(),
   encouragement: z.string(),
 });
 import { callWithFallback, ProviderChainFailedError } from "@/src/ai/core/provider";
