@@ -3,7 +3,7 @@ import { hasSkill, type DifficultyId, type QuestionTypeId, SUBSKILLS } from "@/l
 
 export const BASELINE_SOURCE = "DIAGNOSTIC_BASELINE_V2" as const;
 export const BASELINE_VERSION = "2.0" as const;
-export const BASELINE_SIZE = 15 as const;
+export const BASELINE_SIZE = 12 as const;
 export const BASELINE_MINUTES = 15 as const;
 
 export const BASELINE_SKILLS = [
@@ -33,7 +33,6 @@ export const BASELINE_BLUEPRINT = [
   { skill: "VOCABULARY", count: 3 },
   { skill: "LITERATURE", count: 3 },
 ] as const;
-export const BASELINE_EXTRA_OBJECTIVE = 3 as const;
 
 export const BASELINE_DIFFICULTIES: DifficultyId[] = ["EASY", "MEDIUM", "HARD"];
 
