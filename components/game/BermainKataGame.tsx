@@ -75,7 +75,7 @@ const THEME_META: Record<Theme, { label:string; icon: typeof Cloud }> = {
 
 
 const ZELBY_FRAMES=[
-  "/images/zelby/zelby-canonical.webp",
+  "/images/zelby/zelby-canonical.png",
 ]
 
 const shuffle = <T,>(items:T[]) => {
@@ -119,7 +119,7 @@ export default function BermainKataGame() {
   const categoryEmoji: Record<string,string> = { Alam:"🌿", Hewan:"🐾", Makanan:"🍎", Sekolah:"📚", Benda:"🧸", Tubuh:"👀", Waktu:"☀️", Perasaan:"💛", Sifat:"✨", Kendaraan:"🚲", Sosial:"🤝", Tempat:"🏡", Kegiatan:"🎮", Orang:"🧭", Pakaian:"🎒", Kesehatan:"🩹" }
   const categoryIcon = current ? (categoryEmoji[current.category] || "✨") : "✨"
   const progress = Math.min(100,(round/maxRounds)*100)
-  const zelbyGamePose = "/images/zelby/zelby-canonical.webp"
+  const zelbyGamePose = "/images/zelby/zelby-canonical.png"
 
   useEffect(()=>{
     try {
