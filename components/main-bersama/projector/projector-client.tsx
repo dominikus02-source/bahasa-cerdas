@@ -202,6 +202,15 @@ export function ProjectorClient() {
               <span className="mb-pj-class">Kelas {view.className}</span>
             ) : null}
           </div>
+          <div
+            className="mb-pj-rejoin-pin"
+            aria-label={`PIN untuk masuk kembali: ${view.joinInfo.pin}`}
+          >
+            <span className="mb-pj-rejoin-pin-label">PIN MASUK</span>
+            <strong className="mb-number">
+              {view.joinInfo.pin.slice(0, 3)} {view.joinInfo.pin.slice(3, 6)}
+            </strong>
+          </div>
           <div className="mb-pj-utility-controls">
             <SoundToggle
               enabled={gameSound.enabled}
