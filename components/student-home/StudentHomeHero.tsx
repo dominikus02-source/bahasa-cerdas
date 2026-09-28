@@ -310,7 +310,7 @@ export function StudentHomeHero() {
               <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-violet-600 dark:text-violet-300 mb-2">
                 {hero.eyebrow}
               </p>
-              <h1 className="text-[26px] sm:text-3xl md:text-[32px] leading-tight font-semibold tracking-tight text-slate-900">
+              <h1 className="text-[26px] sm:text-3xl md:text-[32px] leading-tight font-semibold tracking-tight text-slate-900 dark:text-white">
                 {hero.headline}
               </h1>
               <p className="mt-2 text-sm text-slate-600 dark:text-slate-300/80 leading-relaxed max-w-md">
