@@ -45,7 +45,7 @@ const CACHE_TTL = 60; // detik
 // Dinaikkan setiap kali bentuk LeaderboardEntry berubah. Tanpa ini, entri lama
 // di Redis (tanpa field baru) masih disajikan sampai TTL habis — mis. RankIcon
 // jatuh ke fallback BRONZE untuk semua orang selama semenit setelah deploy.
-const CACHE_VERSION = "v3";
+const CACHE_VERSION = "v4";
 
 // Kunci periode berjalan: kunci cache leaderboard WAJIB mengandung period key
 // (leaderboard:weekly:{weekKey}, leaderboard:season:{seasonKey}) supaya cache
@@ -139,14 +139,28 @@ export async function getLeaderboard(params: LeaderboardParams): Promise<Leaderb
 
   // Papan arena KHUSUS murid: guru punya jalur XP terpisah (lib/gamification/teacher-xp.ts)
   // dan tidak boleh tampil di peringkat murid.
+  // Filter periode HARUS terjadi di database sebelum ORDER BY + LIMIT.
+  // Sebelumnya kita mengambil 3x limit lalu baru membuang profil dengan
+  // weeklyXP/seasonXP dari periode lama. Setelah reset Senin, profil lama
+  // memiliki XP jauh lebih besar sehingga seluruh window LIMIT dapat habis
+  // oleh data periode lama — hasilnya papan terlihat kosong padahal ada skor
+  // minggu berjalan.
+  const periodWhere =
+    field === "weeklyXP"
+      ? { weeklyXPWeekKey: weekKey(), weeklyXP: { gt: 0 } }
+      : field === "seasonXP"
+        ? { seasonPeriodKey: seasonPeriodKey(), seasonXP: { gt: 0 } }
+        : {};
+
   const where = {
     user: { role: "MURID" as const },
     ...(scopeIds ? { userId: { in: scopeIds } } : {}),
+    ...periodWhere,
   };
   const profiles = await db.playerProfile.findMany({
     where,
     orderBy: [{ [field]: "desc" }, { totalXP: "desc" }],
-    take: limit * 3, // ambil lebih untuk filter isMe/name
+    take: limit,
     include: { user: { select: { id: true, fullName: true, nickname: true, avatar: true, isFounder: true, isPremium: true } } },
   });
 
@@ -245,7 +259,7 @@ export async function getLeaderboard(params: LeaderboardParams): Promise<Leaderb
   }
 
   // Cache hanya kalau scope global/kelas (bukan data pribadi per-user dinamis).
-  if (params.scope === "GLOBAL" || params.scope === "CLASS") {
+  if (entries.length > 0 && (params.scope === "GLOBAL" || params.scope === "CLASS")) {
     await cache.set(cacheKey, entries, CACHE_TTL);
   }
 
