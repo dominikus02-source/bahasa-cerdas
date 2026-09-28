@@ -37,8 +37,8 @@ export interface ProjectorSessionView {
    */
   contentTitle: string;
 
-  /** PIN + data QR hanya diekspos saat lobby (sebelum soal mulai). */
-  joinInfo: ProjectorJoinInfo | null;
+  /** PIN + URL gabung bersifat publik dan tetap tersedia sepanjang sesi agar siswa yang terputus dapat masuk kembali. */
+  joinInfo: ProjectorJoinInfo;
 
   className?: string;
 
