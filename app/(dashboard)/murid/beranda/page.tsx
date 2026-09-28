@@ -13,6 +13,7 @@ import { AIBCHomeCard } from "@/components/student-home/AIBCHomeCard";
 import { RuangBelajarSection } from "@/components/student-home/RuangBelajarSection";
 import { SimulasiUjianSection } from "@/components/student-home/SimulasiUjianSection";
 import { RecentWorksSection } from "@/components/student-home/RecentWorksSection";
+import { StudentDailyInspiration } from "@/components/student-home/StudentDailyInspiration";
 
 // Beranda ringkas: mulai belajar → Arena/AI → kelas dan tugas → ujian → karya.
 export default function HomeFeedPage() {
@@ -50,6 +51,7 @@ function HomeContent() {
       <StudentHomeHero />
       <MentorHomeCard />
       <JalurCerdasHomeCard />
+      <StudentDailyInspiration />
       <DailyActionCard />
 
       <AIBCHomeCard />
