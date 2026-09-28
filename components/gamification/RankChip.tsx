@@ -28,11 +28,11 @@ export function RankChip({
     <span
       className={`inline-flex items-center gap-1.5 ${compact ? "" : "rounded-full px-2 py-0.5"} ${className}`}
       style={compact ? {} : { background: `${color}1a`, border: `1px solid ${color}44` }}
-      title={`${meta?.label ?? rank} — ${meta?.title ?? ""}`}
+      title={`${meta?.material ?? meta?.label ?? rank} — ${meta?.title ?? ""}`}
     >
       <RankIcon rank={rank} size={size} />
       <span className="text-xs font-bold" style={{ color }}>
-        {meta?.label ?? rank}
+        {meta?.material ?? meta?.label ?? rank}
       </span>
       {showTitle && meta?.title && (
         <span className="text-[10px] font-semibold text-[var(--px-text-dim)]">{meta.title}</span>
