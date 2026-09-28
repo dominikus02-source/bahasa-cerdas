@@ -181,6 +181,15 @@ export function ProjectorClient() {
   return (
     <main className={`mb-pj mb-pj-mode-${view.gameMode}`}>
       <ConnectionBanner visible={connection === "offline"} />
+
+      <div className="mb-pj-persistent-pin" role="status" aria-label={`PIN masuk Main Bersama: ${view.joinInfo.pin}`}>
+        <span className="mb-pj-persistent-pin-label">PIN MASUK</span>
+        <strong className="mb-number">
+          {view.joinInfo.pin.slice(0, 3)} {view.joinInfo.pin.slice(3, 6)}
+        </strong>
+        <span className="mb-pj-persistent-pin-hint">Keluar? Masuk lagi dengan PIN ini</span>
+      </div>
+
       <FullscreenExitControl
         active={fullscreen.isFullscreen}
         onExit={fullscreen.exit}
