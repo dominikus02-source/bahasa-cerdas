@@ -3294,6 +3294,48 @@
   min-width: 0;
 }
 
+/* PIN selalu terlihat di semua fase layar kelas agar siswa yang keluar
+   dapat langsung bergabung kembali tanpa bertanya kepada guru. */
+.mb-pj-persistent-pin {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 80;
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 54px;
+  padding: 8px 15px 8px 17px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 211, 91, .48);
+  background: rgba(11, 28, 46, .94);
+  box-shadow:
+    0 12px 34px rgba(0,0,0,.24),
+    inset 0 1px 0 rgba(255,255,255,.08);
+  backdrop-filter: blur(12px);
+  white-space: nowrap;
+}
+.mb-pj-persistent-pin-label {
+  color: #f4c95d;
+  font-size: .68rem;
+  font-weight: 900;
+  letter-spacing: .15em;
+}
+.mb-pj-persistent-pin strong {
+  color: #fff8d7;
+  font-size: clamp(1.25rem, 1.8vw, 1.65rem);
+  line-height: 1;
+  letter-spacing: .14em;
+}
+.mb-pj-persistent-pin-hint {
+  padding-left: 10px;
+  border-left: 1px solid rgba(255,255,255,.16);
+  color: #b9c9d8;
+  font-size: .72rem;
+  font-weight: 700;
+}
+
 .mb-pj-rejoin-pin {
   flex: none;
   display: inline-flex;
