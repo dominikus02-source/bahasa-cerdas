@@ -75,7 +75,7 @@ export default async function JalurCerdasPage() {
               <div className="mb-3 flex flex-wrap items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-cyan-300/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-200 ring-1 ring-cyan-200/15">
                   <Sparkles size={12} />
-                  Flagship latihan
+                  Latihan unggulan
                 </span>
                 <span className="rounded-full bg-white/8 px-3 py-1.5 text-[10px] font-bold text-blue-100/70 ring-1 ring-white/10">
                   Bahasa Indonesia
