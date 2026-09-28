@@ -32,7 +32,7 @@ export const loginSchema = z.object({
 
 export const karyaSchema = z.object({
   judul: z.string().min(1, "Judul harus diisi").max(255).trim(),
-  jenis: z.enum(["PUISI", "CERPEN", "ARTIKEL", "ANEKDOT", "PANTUN", "OPINI"]),
+  jenis: z.enum(["PUISI", "CERPEN", "ARTIKEL", "ANEKDOT", "PANTUN", "OPINI", "SYAIR", "GURINDAM", "SLOGAN", "KARYA_BEBAS"]),
   konten: z.string().min(1, "Konten harus diisi").trim(),
   coverImage: z.string().url("URL cover tidak valid").nullable().optional(),
   photos: z.array(z.string().url("URL foto tidak valid")).max(6, "Maksimal 6 foto").optional(),
