@@ -73,7 +73,7 @@ export function SiaranBanner() {
 
   if (!siaran || siaran.length === 0) return null;
 
-  const tampil = siaran.filter((s) => s.pinned || s.kategori === "PENTING" || !ditutup.includes(s.id));
+  // Aturan XP mingguan dijelaskan di konteks Papan Juara, bukan sebagai banner\n  // besar di bagian atas Arena. Informasi tetap selalu tersedia tanpa mengganggu flow bermain.\n  const tampil = siaran.filter((s) => {\n    const isWeeklyXpRule = s.judul.toLowerCase().includes("xp mingguan direset tiap senin");\n    if (isWeeklyXpRule) return false;\n    return s.pinned || s.kategori === "PENTING" || !ditutup.includes(s.id);\n  });
   if (tampil.length === 0) return null;
 
   return (
