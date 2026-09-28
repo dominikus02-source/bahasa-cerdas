@@ -53,6 +53,7 @@ function TulisKaryaForm() {
   const [type, setType] = useState(() =>
     typeParam && TYPES.some((t) => t.value === typeParam) ? typeParam : "PUISI"
   );
+  const selected = TYPES.find((item) => item.value === type) ?? TYPES[0];
   const [content, setContent] = useState("");
   const [coverImage, setCoverImage] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
