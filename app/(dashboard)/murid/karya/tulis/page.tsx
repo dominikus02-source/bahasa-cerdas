@@ -3,16 +3,33 @@
 import { useRef, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Send, PenLine, BookOpen, Newspaper, MessageCircle, Music, Lightbulb, Upload, X, Loader2, Link2, ChevronDown, Sparkles, ScrollText, GitBranch, Megaphone, Palette, Theater } from "lucide-react";
+import { ArrowLeft, Send, PenLine, BookOpen, Newspaper, Music, Lightbulb, Upload, X, Loader2, Link2, ChevronDown, Sparkles, ScrollText, GitBranch, Megaphone, Palette, Theater } from "lucide-react";
 
 const TYPES = [
-  { value: "PUISI", label: "Puisi", icon: PenLine, desc: "Ekspresikan perasaanmu dalam bait-bait indah" },
-  { value: "CERPEN", label: "Cerpen", icon: BookOpen, desc: "Tulis cerita pendek imajinasimu" },
-  { value: "ARTIKEL", label: "Artikel", icon: Newspaper, desc: "Bagikan opini dan pengetahuanmu" },
-  { value: "ANEKDOT", label: "Anekdot", icon: MessageCircle, desc: "Cerita lucu dengan pesan tersirat" },
-  { value: "PANTUN", label: "Pantun", icon: Music, desc: "Sastra klasik dengan rima a-b-a-b" },
-  { value: "OPINI", label: "Opini", icon: Lightbulb, desc: "Pendapatmu tentang isu terkini" },
+  { value: "PUISI", label: "Puisi", icon: PenLine, desc: "Ungkapkan rasa dan gagasan dengan bahasa yang indah" },
+  { value: "PANTUN", label: "Pantun", icon: Music, desc: "Bermain kata dengan sampiran, isi, dan rima" },
+  { value: "SYAIR", label: "Syair", icon: ScrollText, desc: "Bercerita melalui bait-bait yang berima" },
+  { value: "GURINDAM", label: "Gurindam", icon: GitBranch, desc: "Dua baris berisi nasihat atau sebab-akibat" },
+  { value: "CERPEN", label: "Cerpen", icon: BookOpen, desc: "Ceritakan kisah singkat dengan konflik dan pesan" },
+  { value: "ANEKDOT", label: "Anekdot", icon: Theater, desc: "Cerita singkat yang lucu sekaligus bermakna" },
+  { value: "SLOGAN", label: "Slogan", icon: Megaphone, desc: "Kalimat singkat yang kuat dan mudah diingat" },
+  { value: "OPINI", label: "Opini", icon: Lightbulb, desc: "Sampaikan pendapat dengan alasan dan bukti" },
+  { value: "ARTIKEL", label: "Artikel", icon: Newspaper, desc: "Jelaskan gagasan atau informasi secara runtut" },
+  { value: "KARYA_BEBAS", label: "Karya Bebas", icon: Palette, desc: "Bebaskan ide dan buat karya dengan caramu sendiri" },
 ];
+
+const TYPE_GUIDES: Record<string, { intro: string; points: string[]; example: string; prompt: string }> = {
+  PUISI: { intro: "Karya sastra yang menyampaikan perasaan atau gagasan melalui pilihan kata, larik, dan bait.", points: ["Pilih kata yang kuat dan bermakna.", "Gunakan larik dan bait sesuai kebutuhan.", "Boleh memakai majas, imaji, atau permainan bunyi."], example: "Pagi datang membawa cahaya\nAku membuka jendela\nMenemukan harapan baru\nUntuk melangkah hari ini.", prompt: "Mulai dari satu perasaan atau pengalaman yang ingin kamu ceritakan." },
+  PANTUN: { intro: "Puisi rakyat yang umumnya terdiri dari empat baris: dua sampiran dan dua isi.", points: ["4 baris dalam satu bait.", "Baris 1–2 menjadi sampiran.", "Baris 3–4 menjadi isi.", "Rima yang umum: a-b-a-b."], example: "Pergi pagi membawa bekal\nSinggah sebentar membeli jamu\nKalau ingin menjadi andal\nRajin belajar setiap waktu.", prompt: "Tentukan pesanmu dulu, lalu buat dua baris sampiran yang berima." },
+  SYAIR: { intro: "Puisi rakyat yang umumnya terdiri dari empat baris dan seluruh barisnya berisi cerita atau pesan.", points: ["4 baris dalam satu bait.", "Semua baris menjadi isi.", "Rima yang umum: a-a-a-a.", "Isi dapat membentuk rangkaian cerita atau nasihat."], example: "Dengarkan nasihat wahai kawan\nJadikan ilmu sebagai pegangan\nTekun belajar sepanjang zaman\nAgar cita-cita menjadi kenyataan.", prompt: "Pilih cerita atau nasihat yang ingin kamu sampaikan dalam satu rangkaian." },
+  GURINDAM: { intro: "Puisi rakyat yang umumnya terdiri dari dua baris dengan hubungan makna seperti sebab dan akibat.", points: ["Biasanya terdiri dari 2 baris.", "Baris pertama berisi sebab atau kondisi.", "Baris kedua berisi akibat atau jawaban.", "Rima yang umum: a-a."], example: "Jika rajin menuntut ilmu,\nBertambah luas wawasanmu.", prompt: "Buat satu kondisi atau sebab, lalu tentukan akibat atau nasihatnya." },
+  CERPEN: { intro: "Cerita pendek yang berfokus pada satu rangkaian peristiwa dan dapat dibaca dalam waktu relatif singkat.", points: ["Tentukan tokoh dan karakternya.", "Tentukan latar tempat dan waktu.", "Bangun alur dengan masalah atau konflik.", "Akhiri dengan penyelesaian atau pesan yang jelas."], example: "Pagi itu, Raka menemukan sebuah dompet di halaman sekolah. Ia mencari pemiliknya dan mengembalikannya sebelum pelajaran dimulai.", prompt: "Siapa tokohmu, apa masalahnya, dan apa yang berubah pada akhir cerita?" },
+  ANEKDOT: { intro: "Cerita singkat yang dapat menghadirkan kelucuan atau kejadian tidak biasa untuk menyampaikan kritik atau pesan.", points: ["Ada kejadian yang menarik atau lucu.", "Tokoh dan situasi dibuat jelas.", "Ada kejutan atau kelucuan.", "Pesan atau kritik tetap dapat dipahami."], example: "Guru bertanya, “Mengapa tugasmu belum selesai?” Beni menjawab, “Sudah selesai, Bu. Hanya saja tugasnya masih dalam perjalanan dari rumah.”", prompt: "Cari kejadian sehari-hari yang lucu, lalu tentukan pesan yang ingin kamu sampaikan." },
+  SLOGAN: { intro: "Kalimat pendek yang dibuat menarik agar mudah diingat dan mendorong orang melakukan atau mengingat sesuatu.", points: ["Singkat dan mudah diingat.", "Pesannya jelas.", "Gunakan kata yang kuat dan menarik.", "Sesuaikan dengan tujuan atau sasaran."], example: "Baca Hari Ini, Hebat Esok Hari!", prompt: "Tentukan satu ajakan, lalu ringkas menjadi kalimat yang mudah diingat." },
+  OPINI: { intro: "Tulisan yang menyampaikan pandangan penulis terhadap suatu persoalan dengan alasan yang dapat dipertanggungjawabkan.", points: ["Nyatakan pendapat utama dengan jelas.", "Berikan alasan yang logis.", "Gunakan contoh atau bukti yang relevan.", "Tutup dengan simpulan atau penegasan."], example: "Menurut saya, membaca 15 menit sebelum pelajaran membantu siswa membangun kebiasaan membaca secara rutin.", prompt: "Apa pendapatmu? Mengapa? Contoh atau bukti apa yang mendukungnya?" },
+  ARTIKEL: { intro: "Tulisan yang membahas gagasan, informasi, atau topik secara terstruktur agar pembaca memperoleh pemahaman.", points: ["Tentukan topik dan tujuan.", "Susun pembuka, pembahasan, dan penutup.", "Gunakan informasi yang relevan.", "Pilih bahasa yang jelas dan terstruktur."], example: "Membawa botol minum sendiri merupakan kebiasaan sederhana yang dapat mengurangi penggunaan botol sekali pakai.", prompt: "Pilih satu topik yang kamu kuasai. Apa informasi utama yang ingin pembaca bawa pulang?" },
+  KARYA_BEBAS: { intro: "Ruang untuk membuat karya yang tidak harus mengikuti satu bentuk sastra atau tulisan tertentu.", points: ["Tentukan tujuan karyamu.", "Pilih bentuk yang paling nyaman.", "Gunakan bahasa yang jelas dan bertanggung jawab.", "Buat karya yang mencerminkan idemu sendiri."], example: "Kamu bisa membuat cerita, surat, refleksi, naskah pendek, atau bentuk tulisan kreatif lain.", prompt: "Kalau tidak ada aturan genre, apa yang paling ingin kamu ceritakan hari ini?" },
+};
 
 const TYPE_STYLES: Record<string, { border: string; bg: string; text: string; gradient: string }> = {
   PUISI: { border: "border-rose-500", bg: "bg-rose-50 dark:bg-rose-950/40", text: "text-rose-600 dark:text-rose-400", gradient: "from-rose-500 to-pink-600" },
@@ -31,6 +48,7 @@ function TulisKaryaForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const typeParam = searchParams.get("type");
+  const [openTypeMenu, setOpenTypeMenu] = useState(false);
   const [title, setTitle] = useState("");
   const [type, setType] = useState(() =>
     typeParam && TYPES.some((t) => t.value === typeParam) ? typeParam : "PUISI"
