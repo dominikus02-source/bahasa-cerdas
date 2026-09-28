@@ -13,10 +13,10 @@ type Quest = {
 
 export default function ArenaDailyTargets({
   quests,
-  streak,
+  hari berturut-turut,
 }: {
   quests: Quest[];
-  streak: number;
+  hari berturut-turut: number;
 }) {
   const completed = quests.filter((q) => q.completed).length;
   const total = quests.length;
@@ -25,7 +25,7 @@ export default function ArenaDailyTargets({
 
   return (
     <section className="arena-target-surface rounded-[26px] p-5 sm:p-6">
-      {/* Header — streak integrated into heading */}
+      {/* Header — hari berturut-turut integrated into heading */}
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-[11px] font-black uppercase tracking-[0.18em] text-emerald-700 dark:text-emerald-300">
@@ -35,9 +35,9 @@ export default function ArenaDailyTargets({
             Target hari ini
           </h2>
         </div>
-        {streak > 0 && (
+        {hari berturut-turut > 0 && (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-orange-100 px-2.5 py-1 text-xs font-black text-orange-700 dark:bg-orange-400/15 dark:text-orange-200">
-            <Flame size={14} className="text-orange-500" /> {streak} hari
+            <Flame size={14} className="text-orange-500" /> {hari berturut-turut} hari
           </span>
         )}
       </div>
