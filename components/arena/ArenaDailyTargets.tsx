@@ -13,7 +13,7 @@ type Quest = {
 
 export default function ArenaDailyTargets({
   quests,
-  hari berturut-turut,
+  streak,
 }: {
   quests: Quest[];
   streak: number;
