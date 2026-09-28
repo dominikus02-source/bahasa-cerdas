@@ -1051,6 +1051,10 @@ enum StudentKaryaType {
   ANEKDOT
   PANTUN
   OPINI
+  SYAIR
+  GURINDAM
+  SLOGAN
+  KARYA_BEBAS
 }
 
 // ── Sosial Profil (Player Identity — profil murid premium) ────────────────
