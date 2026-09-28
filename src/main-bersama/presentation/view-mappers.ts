@@ -400,13 +400,11 @@ export function buildProjectorView(
     contentTitle: contentTitleOf(engine),
     gameMode: session.gameMode as GameMode,
     phase,
-    joinInfo: lobby
-      ? {
-          pin: session.pin,
-          joinUrlTemplate: '/main-bersama/join?pin={pin}',
-          ...(session.className ? { className: session.className } : {}),
-        }
-      : null,
+    joinInfo: {
+      pin: session.pin,
+      joinUrlTemplate: '/main-bersama/join?pin={pin}',
+      ...(session.className ? { className: session.className } : {}),
+    },
     ...(session.className ? { className: session.className } : {}),
     currentRoundIndex: session.currentRoundIndex,
     totalRounds: session.totalRounds,
