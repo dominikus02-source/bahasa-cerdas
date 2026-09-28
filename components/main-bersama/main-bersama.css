@@ -3993,6 +3993,31 @@
 }
 
 
+
+@media (max-width: 720px) {
+  .mb-pj-persistent-pin {
+    top: 8px;
+    max-width: calc(100vw - 20px);
+    min-height: 48px;
+    padding: 7px 11px;
+    gap: 8px;
+    border-radius: 15px;
+  }
+
+  .mb-pj-persistent-pin-label {
+    font-size: .58rem;
+  }
+
+  .mb-pj-persistent-pin strong {
+    font-size: 1.18rem;
+    letter-spacing: .1em;
+  }
+
+  .mb-pj-persistent-pin-hint {
+    display: none;
+  }
+}
+
 /* ─────────────────────────────────────────────────────────────
    Projector Kota summary v2 — bounded 16:9 hero composition
    Screenshot acceptance target:
