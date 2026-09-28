@@ -12,7 +12,8 @@ const periods: { key: LeaderboardPeriod; label: string }[] = [{ key: "WEEKLY", l
 export default function ArenaLeaderboard() {
   const [period, setPeriod] = useState<LeaderboardPeriod>("WEEKLY");
   const [entries, setEntries] = useState<LeaderboardEntryView[]>([]);
-  const [loading, setLoading] = useState(true);\n  const [showWeeklyRule, setShowWeeklyRule] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [showWeeklyRule, setShowWeeklyRule] = useState(false);
   const load = useCallback(async (nextPeriod: LeaderboardPeriod) => { setLoading(true); try { const response = await fetch(`/api/player/leaderboard?scope=GLOBAL&period=${nextPeriod}&limit=10`, { cache: "no-store" }); if (!response.ok) return; const data: { entries?: LeaderboardEntryView[] } = await response.json(); setEntries(data.entries ?? []); } finally { setLoading(false); } }, []);
   useEffect(() => { void load(period); }, [load, period]);
   const podium = entries.filter((entry) => entry.rank <= 3);
