@@ -3,7 +3,7 @@
 import { useRef, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Send, PenLine, BookOpen, Newspaper, MessageCircle, Music, Lightbulb, Upload, X, Loader2, Link2 } from "lucide-react";
+import { ArrowLeft, Send, PenLine, BookOpen, Newspaper, MessageCircle, Music, Lightbulb, Upload, X, Loader2, Link2, ChevronDown, Sparkles, ScrollText, GitBranch, Megaphone, Palette, Theater } from "lucide-react";
 
 const TYPES = [
   { value: "PUISI", label: "Puisi", icon: PenLine, desc: "Ekspresikan perasaanmu dalam bait-bait indah" },
@@ -15,12 +15,16 @@ const TYPES = [
 ];
 
 const TYPE_STYLES: Record<string, { border: string; bg: string; text: string; gradient: string }> = {
-  PUISI: { border: "border-rose-500", bg: "bg-rose-50", text: "text-rose-600", gradient: "from-rose-500 to-pink-600" },
+  PUISI: { border: "border-rose-500", bg: "bg-rose-50 dark:bg-rose-950/40", text: "text-rose-600 dark:text-rose-400", gradient: "from-rose-500 to-pink-600" },
+  PANTUN: { border: "border-teal-500", bg: "bg-teal-50 dark:bg-teal-950/40", text: "text-teal-600 dark:text-teal-400", gradient: "from-teal-500 to-emerald-600" },
+  SYAIR: { border: "border-cyan-500", bg: "bg-cyan-50 dark:bg-cyan-950/40", text: "text-cyan-600 dark:text-cyan-400", gradient: "from-cyan-500 to-blue-600" },
+  GURINDAM: { border: "border-amber-500", bg: "bg-amber-50 dark:bg-amber-950/40", text: "text-amber-600 dark:text-amber-400", gradient: "from-amber-500 to-orange-600" },
   CERPEN: { border: "border-blue-500", bg: "bg-blue-50 dark:bg-blue-950/40", text: "text-blue-600 dark:text-blue-400", gradient: "from-blue-500 to-indigo-600" },
-  ARTIKEL: { border: "border-amber-500", bg: "bg-amber-50 dark:bg-amber-950/40", text: "text-amber-600 dark:text-amber-400", gradient: "from-amber-500 to-orange-600" },
   ANEKDOT: { border: "border-orange-500", bg: "bg-orange-50 dark:bg-orange-950/40", text: "text-orange-600 dark:text-orange-400", gradient: "from-orange-500 to-red-600" },
-  PANTUN: { border: "border-teal-500", bg: "bg-teal-50", text: "text-teal-600", gradient: "from-teal-500 to-emerald-600" },
+  SLOGAN: { border: "border-pink-500", bg: "bg-pink-50 dark:bg-pink-950/40", text: "text-pink-600 dark:text-pink-400", gradient: "from-pink-500 to-fuchsia-600" },
   OPINI: { border: "border-violet-500", bg: "bg-violet-50 dark:bg-violet-950/40", text: "text-violet-600 dark:text-violet-400", gradient: "from-violet-500 to-purple-600" },
+  ARTIKEL: { border: "border-sky-500", bg: "bg-sky-50 dark:bg-sky-950/40", text: "text-sky-600 dark:text-sky-400", gradient: "from-sky-500 to-blue-600" },
+  KARYA_BEBAS: { border: "border-fuchsia-500", bg: "bg-fuchsia-50 dark:bg-fuchsia-950/40", text: "text-fuchsia-600 dark:text-fuchsia-400", gradient: "from-fuchsia-500 to-purple-600" },
 };
 
 function TulisKaryaForm() {
@@ -135,24 +139,115 @@ function TulisKaryaForm() {
         </div>
       </div>
 
-      {/* Type Selector */}
-      <div className="grid grid-cols-3 md:grid-cols-6 gap-2 mb-6">
-        {TYPES.map(t => {
-          const s = TYPE_STYLES[t.value] || TYPE_STYLES.OPINI;
-          return (
-            <button key={t.value} onClick={() => setType(t.value)}
-              className={`p-3 rounded-xl text-center border-2 transition-all ${
-                type === t.value ? `${s.border} ${s.bg} shadow-sm` : "border-gray-100 dark:border-slate-800 hover:border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/90"
-              }`}
+      {/* Pilih jenis karya */}
+      <section className="mb-5 rounded-3xl border border-slate-200/80 bg-gradient-to-br from-sky-50 via-white to-violet-50 p-5 shadow-sm dark:border-slate-800 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/40 md:p-6">
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div className="max-w-2xl">
+            <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1.5 text-xs font-bold text-violet-700 shadow-sm dark:bg-slate-800 dark:text-violet-300">
+              <Sparkles size={14} /> Studio Berkarya
+            </div>
+            <h2 className="text-xl font-extrabold text-slate-900 dark:text-slate-100">Mau menulis apa hari ini?</h2>
+            <p className="mt-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300">Pilih jenis karya. Setelah dipilih, kamu langsung mendapat materi singkat dan contoh sebelum mulai menulis.</p>
+          </div>
+
+          <div className="relative w-full md:w-[380px]">
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">Jenis karya</p>
+            <button
+              type="button"
+              aria-haspopup="listbox"
+              aria-expanded={openTypeMenu}
+              onClick={() => setOpenTypeMenu((value) => !value)}
+              className={`flex w-full items-center gap-3 rounded-2xl border-2 bg-white px-4 py-3.5 text-left shadow-sm transition-all dark:bg-slate-800 ${openTypeMenu ? `${TYPE_STYLES[type]?.border || "border-violet-500"} ring-4 ring-violet-100 dark:ring-violet-950/40` : "border-slate-200 dark:border-slate-700"}`}
             >
-              <t.icon size={24} className="mx-auto mb-1" />
-              <span className={`text-xs font-semibold ${type === t.value ? s.text : "text-gray-600 dark:text-slate-300"}`}>
-                {t.label}
+              <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${TYPE_STYLES[type]?.bg || "bg-violet-50"} ${TYPE_STYLES[type]?.text || "text-violet-600"}`}>
+                <selected.icon size={20} />
               </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-extrabold text-slate-900 dark:text-slate-100">{TYPES.find((t) => t.value === type)?.label}</span>
+                <span className="block truncate text-xs text-slate-500 dark:text-slate-400">{TYPES.find((t) => t.value === type)?.desc}</span>
+              </span>
+              <ChevronDown size={18} className={`shrink-0 text-slate-400 transition-transform ${openTypeMenu ? "rotate-180" : ""}`} />
             </button>
-          );
-        })}
-      </div>
+
+            {openTypeMenu && (
+              <div className="absolute left-0 right-0 z-30 mt-2 max-h-[min(420px,65vh)] overflow-y-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-2xl dark:border-slate-700 dark:bg-slate-900">
+                {TYPES.map((item) => {
+                  const itemStyle = TYPE_STYLES[item.value];
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.value}
+                      type="button"
+                      role="option"
+                      aria-selected={item.value === type}
+                      onClick={() => { setType(item.value); setOpenTypeMenu(false); setError(""); }}
+                      className={`flex w-full items-center gap-3 rounded-xl p-3 text-left transition-colors ${item.value === type ? itemStyle.bg : "hover:bg-slate-50 dark:hover:bg-slate-800"}`}
+                    >
+                      <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${itemStyle.bg} ${itemStyle.text}`}>
+                        <Icon size={18} />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-sm font-bold text-slate-900 dark:text-slate-100">{item.label}</span>
+                        <span className="block text-xs text-slate-500 dark:text-slate-400">{item.desc}</span>
+                      </span>
+                      {item.value === type && <span className={`text-xs font-bold ${itemStyle.text}`}>Dipilih</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Materi singkat */}
+      {(() => {
+        const guide = TYPE_GUIDES[type];
+        const guideStyle = TYPE_STYLES[type] || TYPE_STYLES.PUISI;
+        return (
+          <section className={`mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900`}>
+            <div className={`border-b border-slate-200/70 p-5 dark:border-slate-800 md:p-6 ${guideStyle.bg}`}>
+              <div className="flex items-start gap-3">
+                <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${guideStyle.gradient} text-white shadow-lg`}>
+                  <selected.icon size={22} />
+                </div>
+                <div>
+                  <div className="mb-1 inline-flex items-center gap-2 rounded-full bg-white/80 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-600 dark:bg-slate-800/80 dark:text-slate-300">
+                    <Sparkles size={11} /> Belajar 60 detik
+                  </div>
+                  <h2 className="text-xl font-extrabold text-slate-900 dark:text-slate-100">{TYPES.find((t) => t.value === type)?.label}</h2>
+                  <p className="mt-1 max-w-3xl text-sm leading-relaxed text-slate-600 dark:text-slate-300">{guide.intro}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid gap-4 p-5 md:grid-cols-[1.1fr_.9fr] md:p-6">
+              <div>
+                <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.14em] text-slate-400">Yang perlu kamu ingat</p>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {guide.points.map((point) => (
+                    <div key={point} className="rounded-2xl border border-slate-100 bg-slate-50/80 p-3 dark:border-slate-800 dark:bg-slate-800/60">
+                      <div className="flex gap-2">
+                        <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${guideStyle.bg} ${guideStyle.text}`}><Sparkles size={10} /></span>
+                        <p className="text-xs font-medium leading-relaxed text-slate-700 dark:text-slate-300">{point}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-3 rounded-2xl bg-slate-900 p-4 text-sm text-white dark:bg-slate-800">
+                  <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-white/60">Pemantik</p>
+                  <p className="mt-1 leading-relaxed text-white/90">{guide.prompt}</p>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800/60">
+                <div className="mb-2 flex items-center gap-2"><Lightbulb size={16} className="text-amber-500" /><p className="text-sm font-extrabold text-slate-900 dark:text-slate-100">Contoh singkat</p></div>
+                <p className="whitespace-pre-line text-sm italic leading-7 text-slate-600 dark:text-slate-300">“{guide.example}”</p>
+              </div>
+            </div>
+          </section>
+        );
+      })()}
 
       {/* Title */}
       <div className="mb-4">
