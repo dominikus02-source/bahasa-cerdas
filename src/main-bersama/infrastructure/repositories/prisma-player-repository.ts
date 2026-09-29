@@ -66,6 +66,7 @@ export class PrismaPlayerRepository implements PlayerRepository {
       create: playerToDbCreate(player, sessionId),
       update: {
         displayName: player.displayName,
+        avatarUrl: player.avatarUrl,
         teamId: player.teamId,
         connected: player.connected,
       },

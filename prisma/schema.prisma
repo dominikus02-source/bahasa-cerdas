@@ -4082,6 +4082,7 @@ model MainPlayer {
   /// Supabase user id siswa terautentikasi; null = guest.
   userId                 String?
   displayName            String
+  avatarUrl              String?
   /// Regu saat join (jelajah-kata). Snapshot per-round ada di
   /// MainRoundEligiblePlayer.teamId — JANGAN pakai field ini untuk
   /// menghitung ulang round historis.

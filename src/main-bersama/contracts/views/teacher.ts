@@ -21,6 +21,7 @@ export interface OperatorConnectionInfo {
 export interface TeacherParticipantInfo {
   playerId: string;
   displayName: string;
+  avatarUrl: string;
   teamId?: TeamId;
   userId?: string;
   connectionStatus: ConnectionStatus;

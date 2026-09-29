@@ -24,6 +24,7 @@ interface StudentViewBase {
   contentTitle: string;
   /** Nama tampil milik peserta ini (bukan identitas user internal). */
   displayName: string;
+  avatarUrl: string;
   team?: TeamPublicInfo;
   connectionStatus: ConnectionStatus;
 }

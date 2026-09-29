@@ -18,6 +18,7 @@ export interface MainPlayer {
 
   /** Nama tampil di layar; ditentukan guru/host saat join. */
   displayName: string;
+  avatarUrl?: string;
   /** Regu saat join (mode Jelajah Kata wajib; Kota Cahaya boleh tanpa regu). */
   teamId?: TeamId;
 

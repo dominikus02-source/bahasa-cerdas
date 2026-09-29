@@ -24,6 +24,7 @@ import type { SessionOrchestratorDeps } from './orchestrator-ports';
 import { pickBalancedTeam } from './team-assignment';
 import { validateDisplayName } from './display-name';
 import { buildStudentView } from '../../presentation/view-mappers';
+import { findAvatar } from '@/lib/avatar/katalog';
 import type { GameEngineState } from '../../games/game-router';
 
 // ─── Typed results ──────────────────────────────────────────
@@ -38,6 +39,7 @@ export type StudentErrorCode =
   | 'NAME_TOO_SHORT'
   | 'NAME_TOO_LONG'
   | 'NAME_CONTROL_CHARS'
+  | 'AVATAR_INVALID'
   | 'ROUND_NOT_OPEN'
   | 'PLAYER_NOT_ELIGIBLE'
   | 'INVALID_OPTION'
@@ -70,6 +72,7 @@ export interface JoinSessionInput {
   pin: string;
   /** Nama yang diketik guest. Untuk user login bukan sumber identitas. */
   displayName?: string;
+  avatarId?: string;
   /** User BC id bila siswa login; undefined = guest (§6). */
   userId?: string;
   /**
@@ -95,6 +98,9 @@ export async function joinSession(
 ): Promise<StudentResult<JoinOutcome>> {
   const pin = typeof input.pin === 'string' ? input.pin.trim() : '';
   if (!/^\d{6}$/.test(pin)) return { ok: false, code: 'SESSION_NOT_FOUND' };
+
+  const avatar = findAvatar(input.avatarId);
+  if (!avatar) return { ok: false, code: 'AVATAR_INVALID' };
 
   const session = await deps.sessions.findByPin(pin);
   if (!session) return { ok: false, code: 'SESSION_NOT_FOUND' };
@@ -144,6 +150,7 @@ export async function joinSession(
   const join = engine.joinPlayer({
     playerId: (existing?.id ?? randomUUID()) as PlayerId,
     displayName,
+    avatarUrl: avatar.src,
     ...(input.userId !== undefined ? { userId: input.userId } : {}),
     ...(teamId !== undefined ? { teamId: teamId as TeamId } : {}),
   });

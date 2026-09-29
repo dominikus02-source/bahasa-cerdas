@@ -24,8 +24,9 @@ import { PrimaryGameButton } from '@/components/main-bersama/shared/PrimaryGameB
 import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBanner';
 import { StudentBackButton } from '@/components/main-bersama/shared/StudentBackButton';
 import { createClient } from '@/lib/supabase/client';
+import { AVATARS } from '@/lib/avatar/katalog';
 
-type Step = 'pin' | 'name' | 'joining';
+type Step = 'pin' | 'name' | 'avatar' | 'joining';
 
 function JoinFlow() {
   const router = useRouter();
@@ -37,6 +38,7 @@ function JoinFlow() {
   const [resuming, setResuming] = useState(false);
   const [canResume, setCanResume] = useState<{ sessionId: string } | null>(null);
   const [isAuthed, setIsAuthed] = useState(false);
+  const [avatarId, setAvatarId] = useState<string | null>(null);
 
   // Kandidat reconnect dari credential-store (sekali saat mount).
   useEffect(() => {
@@ -49,6 +51,7 @@ function JoinFlow() {
         const supabase = createClient();
         const { data } = await supabase.auth.getSession();
         if (!cancelled) setIsAuthed(Boolean(data.session));
+        if (data.session) { try { const res = await fetch('/api/user/me', { cache: 'no-store' }); if (res.ok) { const body = await res.json(); const profileAvatar = body?.user?.avatar ?? body?.avatar ?? null; const match = AVATARS.find((a) => a.src === profileAvatar); if (match) setAvatarId(match.id); } } catch {} }
       } catch {
         /* guest */
       }
@@ -87,12 +90,14 @@ function JoinFlow() {
   }, [canResume, enterRoom]);
 
   const joinNow = useCallback(async (displayName?: string) => {
+    if (!avatarId) { setError('Pilih avatar terlebih dahulu.'); setStep('avatar'); return; }
     setStep('joining');
     setError(null);
     try {
       const result = await joinSession({
         pin,
         ...(displayName ? { displayName } : {}),
+        avatarId,
       });
       saveCredential(result.session.id, result.credential); // helper tunggal
       saveLastSessionId(result.session.id);
@@ -101,7 +106,7 @@ function JoinFlow() {
       setError(e instanceof MbApiError ? e.message : 'Gagal gabung. Coba lagi.');
       setStep('pin');
     }
-  }, [pin, enterRoom]);
+  }, [pin, avatarId, enterRoom]);
 
   const submitPin = useCallback(() => {
     if (!/^\d{6}$/.test(pin)) {
@@ -111,15 +116,15 @@ function JoinFlow() {
     setError(null);
     if (isAuthed) {
       // Nama user login ditentukan server dari profil BC, bukan input bebas.
-      void joinNow();
+      setStep('avatar');
       return;
     }
     setStep('name');
   }, [pin, isAuthed, joinNow]);
 
-  const submitName = useCallback(async () => {
-    await joinNow(name);
-  }, [joinNow, name]);
+  const submitName = useCallback(() => { if (name.trim().length >= 2) { setError(null); setStep('avatar'); } }, [name]);
+
+  const submitAvatar = useCallback(() => { if (!avatarId) { setError('Pilih avatar terlebih dahulu.'); return; } void joinNow(isAuthed ? undefined : name); }, [avatarId, isAuthed, joinNow, name]);
 
   return (
     <main className="mb-join mb-fade-in">
@@ -172,7 +177,7 @@ function JoinFlow() {
         </form>
       ) : null}
 
-      {step === 'name' || step === 'joining' ? (
+      {step === 'name' ? (
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -195,12 +200,25 @@ function JoinFlow() {
             disabled={step === 'joining'}
           />
           {error ? <p role="alert" className="mb-join-err">{error}</p> : null}
-          <PrimaryGameButton type="submit" disabled={name.trim().length < 2} loading={step === 'joining'}>
-            Gabung
+          <PrimaryGameButton type="submit" disabled={name.trim().length < 2}>
+            Lanjut
           </PrimaryGameButton>
           <button type="button" className="mb-linklike" onClick={() => setStep('pin')}>
             Ganti PIN
           </button>
+        </form>
+      ) : null}
+
+      {step === 'avatar' || step === 'joining' ? (
+        <form onSubmit={(e) => { e.preventDefault(); if (step === 'avatar') submitAvatar(); }} className="mb-join-form">
+          <p className="mb-join-label">Pilih avatarmu</p>
+          <p className="mb-avatar-help">Avatar ini akan tampil selama permainan.</p>
+          <div className="mb-avatar-grid">
+            {AVATARS.map((a) => { const selected = avatarId === a.id; return <button key={a.id} type="button" className={`mb-avatar-option${selected ? ' is-selected' : ''}`} onClick={() => { setAvatarId(a.id); setError(null); }} disabled={step === 'joining'} aria-pressed={selected} aria-label={a.name}><img src={a.src} alt="" />{selected ? <span className="mb-avatar-check">✓</span> : null}</button>; })}
+          </div>
+          {error ? <p role="alert" className="mb-join-err">{error}</p> : null}
+          <PrimaryGameButton type="submit" disabled={!avatarId} loading={step === 'joining'}>Mulai</PrimaryGameButton>
+          <button type="button" className="mb-linklike" onClick={() => setStep(isAuthed ? 'pin' : 'name')} disabled={step === 'joining'}>Kembali</button>
         </form>
       ) : null}
 
@@ -350,6 +368,12 @@ function JoinFlow() {
         }
         .mb-name-input::placeholder,
         .mb-pin-input::placeholder { color: rgba(205,220,231,.34); }
+        .mb-avatar-help { margin:-7px 0 0; color:#8fa8ba; text-align:center; font-size:.82rem; }
+        .mb-avatar-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+        .mb-avatar-option { position:relative; aspect-ratio:1; overflow:hidden; border-radius:18px; border:2px solid rgba(255,255,255,.09); background:rgba(255,255,255,.045); cursor:pointer; }
+        .mb-avatar-option.is-selected { border-color:#55dbcf; box-shadow:0 0 0 3px rgba(85,219,207,.13); }
+        .mb-avatar-option img { width:100%; height:100%; object-fit:cover; display:block; }
+        .mb-avatar-check { position:absolute; top:6px; right:6px; width:24px; height:24px; display:grid; place-items:center; border-radius:50%; background:#19b9a8; color:#fff; font-weight:900; }
         .mb-name-input:focus {
           border-color: #55dbcf;
           outline: none;

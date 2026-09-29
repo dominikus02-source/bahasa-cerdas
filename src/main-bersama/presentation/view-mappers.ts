@@ -142,6 +142,7 @@ export function buildStudentView(
     gameMode: session.gameMode as GameMode,
     contentTitle: contentTitleOf(engine),
     displayName: player.displayName,
+    avatarUrl: player.avatarUrl ?? '/avatar/2.webp',
     connectionStatus: (player.connected ? 'connected' : 'disconnected') as
       | 'connected'
       | 'disconnected',
@@ -285,6 +286,7 @@ function teacherParticipants(engine: SessionEngine): TeacherParticipantInfo[] {
     out.push({
       playerId: player.id,
       displayName: player.displayName,
+      avatarUrl: player.avatarUrl ?? '/avatar/2.webp',
       ...(player.teamId ? { teamId: player.teamId } : {}),
       ...(player.userId ? { userId: player.userId } : {}),
       connectionStatus: player.connected ? 'connected' : 'disconnected',

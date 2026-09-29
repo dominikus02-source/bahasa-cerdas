@@ -28,6 +28,7 @@ export interface RuntimePlayer {
   id: PlayerId;
   userId?: AuthUserId;
   displayName: string;
+  avatarUrl?: string;
   teamId?: TeamId;
   joinedAt: Date;
   /** Round pertama tempat peserta boleh menjawab. */

@@ -23,6 +23,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   NAME_TOO_SHORT: 'Nama terlalu pendek (minimal 2 karakter).',
   NAME_TOO_LONG: 'Nama terlalu panjang (maksimal 24 karakter).',
   NAME_CONTROL_CHARS: 'Nama mengandung karakter yang tidak diizinkan.',
+  AVATAR_INVALID: 'Pilih avatar yang tersedia untuk melanjutkan.',
   INVALID_OPTION: 'Pilihan jawaban tidak valid.',
   MALFORMED_CREDENTIAL: 'Sesi tidak dikenali. Silakan gabung ulang dengan PIN.',
   CREDENTIAL_INVALID: 'Sesi tidak dikenali. Silakan gabung ulang dengan PIN.',
@@ -156,6 +157,7 @@ export interface JoinResponse {
 export async function joinSession(input: {
   pin: string;
   displayName?: string;
+  avatarId: string;
 }): Promise<JoinResponse> {
   const res = await fetch('/api/main-bersama/student/join', {
     method: 'POST',
