@@ -175,7 +175,7 @@ export function makeVercelReadTool(): ToolDefinition & {
       if (input.op === "deployments") {
         const raw = await fetchJsonBounded({
           url:
-            `https://api.vercel.com/v7/deployments?projectId=${encodeURIComponent(input.project)}&limit=${input.limit}` +
+            `https://api.vercel.com/v7/deployments?app=${encodeURIComponent(input.project)}&limit=${input.limit}` +
             (teamQ ? `&${teamQ}` : ""),
           headers,
           timeoutMs: VERCEL_READ_LIMITS.timeoutMs,
