@@ -151,6 +151,7 @@ export function buildStudentView(
   const phase = session.phase;
   const jelajah = jelajahOf(gameState);
   const kota = kotaOf(gameState);
+  const teamProgress = session.gameMode === 'jelajah-kata' ? jelajahTeamProgress(jelajah) : {};
 
   // Pre-round: preparing/lobby/closed/paused.
   // Team assignment ikut serta agar lobby Jelajah menampilkan regu
@@ -222,7 +223,6 @@ export function buildStudentView(
     };
   }
   const own = engine.state.answersByRound.get(round.id)?.get(playerId);
-  const teamProgress = session.gameMode === 'jelajah-kata' ? jelajahTeamProgress(jelajah) : undefined;
   const revealTeam = player.teamId
     ? JELAJAH_DEFAULT_TEAMS[player.teamId as keyof typeof JELAJAH_DEFAULT_TEAMS]
     : undefined;
