@@ -81,6 +81,13 @@ export interface TeacherStateResponse {
   view: import('@/src/main-bersama/contracts/views/teacher').TeacherSessionView;
 }
 
+export async function saveTeacherResultsToKelasku(sessionId: string): Promise<{ saved: number }> {
+  const res = await fetch('/api/main-bersama/teacher/commands', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId }) });
+  const body = await res.json().catch(() => null) as { ok?: boolean; saved?: number; code?: string } | null;
+  if (!res.ok || !body?.ok) throw new MbApiError(body?.code ?? 'INTERNAL', friendlyError(body?.code ?? 'INTERNAL'), res.status);
+  return { saved: body.saved ?? 0 };
+}
+
 export async function fetchTeacherState(sessionId: string): Promise<TeacherStateResponse> {
   const res = await fetch(
     `/api/main-bersama/teacher/state?sessionId=${encodeURIComponent(sessionId)}`,

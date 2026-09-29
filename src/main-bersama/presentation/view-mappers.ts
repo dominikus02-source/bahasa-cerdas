@@ -200,6 +200,7 @@ export function buildStudentView(
         totalRounds: session.totalRounds,
         question: toPublicQuestionView(round.question),
         ownAnswerStatus: own ? 'saved' : 'not-submitted',
+        gameProgress: { teamProgress: teamProgress ?? {} },
         closesAt: (round.closesAt ?? now).toISOString(),
         ...(team ? { team: { id: team.id, name: team.name, symbol: team.symbol } } : {}),
       },

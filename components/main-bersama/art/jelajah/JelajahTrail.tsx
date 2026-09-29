@@ -221,6 +221,7 @@ export function JelajahTrail({
   const idBase = useId().replace(/:/g, "");
   const id = (name: string) => `${idBase}-${name}`;
   const sceneProgress = Math.max(0, ...shown.map((team) => clampPercent(progress[team.id] ?? 0)));
+  const worldPhase = sceneProgress < 25 ? 'pagi' : sceneProgress < 55 ? 'siang' : sceneProgress < 80 ? 'sore' : 'senja';
   const roadPath = buildPath(centerPoint);
   const viewBox = compact ? "0 105 1200 390" : "0 0 1200 600";
 
@@ -266,6 +267,11 @@ export function JelajahTrail({
       </defs>
 
       <rect width="1200" height="600" rx="28" fill={`url(#${id("sky")})`} />
+      <g aria-hidden>
+        {worldPhase === 'pagi' ? <circle cx="170" cy="108" r="38" fill="#ffe9a3" opacity=".95" /> : null}
+        {worldPhase === 'siang' ? <circle cx="940" cy="88" r="48" fill="#fff1ad" opacity=".96" /> : null}
+        {worldPhase === 'sore' ? <circle cx="1005" cy="118" r="42" fill="#ffc36e" opacity=".92" /> : null}
+      </g>
       {!compact ? (
         <path
           className="mb-jelajah-aurora"
@@ -274,22 +280,24 @@ export function JelajahTrail({
         />
       ) : null}
 
-      <g aria-hidden>
-        {STARS.slice(0, compact ? 12 : STARS.length).map(([x, y, r, delay], i) => (
-          <circle
-            key={i}
-            className="mb-jelajah-star"
-            cx={x}
-            cy={y}
-            r={r}
-            fill="#dfeaf4"
-            style={{ animationDelay: `-${delay}s` }}
-          />
-        ))}
-      </g>
+      {worldPhase === 'senja' ? (
+        <g aria-hidden>
+          {STARS.slice(0, compact ? 12 : STARS.length).map(([x, y, r, delay], i) => (
+            <circle
+              key={i}
+              className="mb-jelajah-star"
+              cx={x}
+              cy={y}
+              r={r}
+              fill="#dfeaf4"
+              style={{ animationDelay: `-${delay}s` }}
+            />
+          ))}
+        </g>
+      ) : null}
 
       <circle cx="1090" cy="76" r="82" fill={`url(#${id("moon")})`} />
-      <circle cx="1090" cy="76" r="30" fill="#eee5c7" />
+      {worldPhase === 'senja' ? <circle cx="1090" cy="76" r="30" fill="#eee5c7" /> : null}
       <circle cx="1080" cy="67" r="5" fill="#d5c9a7" opacity=".65" />
 
       {/* layered background */}

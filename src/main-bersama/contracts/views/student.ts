@@ -52,6 +52,8 @@ interface StudentQuestionView extends StudentViewBase {
   question: PublicQuestionView;
   /** Status jawaban MILIK peserta ini — bukan kebenaran jawaban. */
   ownAnswerStatus: 'not-submitted' | 'saved' | 'stale-rejected';
+  /** Progres perjalanan yang aman untuk layar murid. */
+  gameProgress: { teamProgress: Record<TeamId, number> };
   /** Deadline submit ISO-8601 (server clock). */
   closesAt: string;
 }

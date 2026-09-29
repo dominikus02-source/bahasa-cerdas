@@ -75,6 +75,7 @@ export class PrismaMainSessionCreationStore implements MainSessionCreationStore 
             phase: phaseToDb(input.session.phase),
             currentRoundIndex: input.session.currentRoundIndex,
             totalRounds: input.session.totalRounds,
+            roundDurationMs: input.session.roundDurationMs ?? 60000,
             kotaTargetCorrect: input.kotaTargetCorrect,
             createdAt: input.session.createdAt,
           },

@@ -16,6 +16,7 @@ import {
   MbApiError,
   fetchTeacherState,
   postTeacherCommand,
+  saveTeacherResultsToKelasku,
 } from '@/lib/main-bersama/api-client';
 import { useSessionView } from '@/lib/main-bersama/use-session-view';
 import { SessionHeader } from '@/components/main-bersama/shared/SessionHeader';
@@ -58,6 +59,8 @@ export function TeacherRoomClient({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'layar' | 'kontrol' | 'analisis'>('layar');
+  const [savingResults, setSavingResults] = useState(false);
+  const [resultsSaved, setResultsSaved] = useState(false);
   const autoLobbyRef = useRef(false);
   const fullscreen = useFullscreenControl({
     onError: (message) => setError(message),
@@ -693,6 +696,11 @@ export function TeacherRoomClient({
             </div>
           </div>
 
+          <div className="mb-final-actions">
+            <button type="button" className="mb-final-share-btn" disabled={savingResults || resultsSaved || !className} onClick={async () => { setSavingResults(true); try { await saveTeacherResultsToKelasku(sessionId); setResultsSaved(true); } catch (e) { setError(e instanceof MbApiError ? e.message : 'Hasil gagal disimpan.'); } finally { setSavingResults(false); } }}>{resultsSaved ? '✓ Tersimpan di Kelasku' : savingResults ? 'Menyimpan…' : 'Masukkan Nilai ke Kelasku'}</button>
+            <button type="button" className="mb-final-share-btn mb-final-share-secondary" onClick={() => { const rows = [...view.participants].sort((a,b)=>a.displayName.localeCompare(b.displayName,'id')).map(p=>p.displayName + ': ' + p.progressPercent + '% (' + p.correctAnswers + '/' + p.eligibleRounds + ')').join('\n'); const subject=encodeURIComponent('Hasil Main Bersama — ' + view.contentTitle); const body=encodeURIComponent('Hasil Main Bersama\n\n' + rows); window.location.href='mailto:?subject=' + subject + '&body=' + body; }}>Kirim Hasil melalui Email</button>
+          </div>
+
           <div className="mb-final-bottom">
             <div>
               <span className="mb-eyebrow">Kemajuan Kelas</span>
@@ -1003,6 +1011,10 @@ export function TeacherRoomClient({
         .mb-final-city-card { display:flex; flex-direction:column; }
         .mb-final-city-card .mb-city-cahaya-stage { flex:1; margin-top:0; }
         .mb-final-city-card > p { margin:8px 2px 0; color:#71848f; font-size:.72rem; font-weight:650; text-align:center; }
+        .mb-final-actions { display:flex; flex-wrap:wrap; justify-content:center; gap:9px; margin:14px 0 4px; }
+        .mb-final-share-btn { min-height:42px; padding:0 16px; border:0; border-radius:12px; background:#0f766e; color:#fff; font-size:.75rem; font-weight:850; cursor:pointer; }
+        .mb-final-share-btn:disabled { opacity:.48; cursor:not-allowed; }
+        .mb-final-share-secondary { background:#eef4f3; color:#17354b; border:1px solid #dfe9e7; }
         .mb-final-bottom { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)) minmax(0,2fr); gap:10px; align-items:center; margin-top:12px; }
         .mb-final-bottom > div { padding:12px 14px; border-radius:14px; background:#f5f8f8; border:1px solid #e8eeee; }
         .mb-final-bottom > div span,

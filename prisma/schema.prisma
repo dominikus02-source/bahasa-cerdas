@@ -4051,6 +4051,8 @@ model MainSession {
   phase             MainSessionPhase @default(PREPARING)
   currentRoundIndex Int?
   totalRounds       Int
+  /// Durasi standar setiap soal dalam milidetik. Dipilih guru saat sesi dibuat.
+  roundDurationMs   Int              @default(60000)
 
   // Konfigurasi game eksplisit (bukan implicit scatter).
   /// Kota Cahaya: target jawaban benar. Null untuk Jelajah Kata.

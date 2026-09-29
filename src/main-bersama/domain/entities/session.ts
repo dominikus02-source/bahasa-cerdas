@@ -39,6 +39,8 @@ export interface MainSession {
   /** Round aktif; null sebelum round pertama dibuka. */
   currentRoundIndex: number | null;
   totalRounds: number;
+  /** Durasi setiap soal dalam milidetik; dikunci saat sesi dibuat. */
+  roundDurationMs?: number;
 
   createdAt: Date;
   startedAt?: Date;

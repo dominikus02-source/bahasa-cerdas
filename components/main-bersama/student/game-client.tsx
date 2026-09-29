@@ -22,6 +22,7 @@ import { SessionHeader } from '@/components/main-bersama/shared/SessionHeader';
 import { StudentBackButton } from '@/components/main-bersama/shared/StudentBackButton';
 import { TeamBadge } from '@/components/main-bersama/art/shared/TeamBadge';
 import { TeamMascot } from '@/components/main-bersama/art/registry';
+import { JelajahTrail } from '@/components/main-bersama/art/jelajah/JelajahTrail';
 import { KotaScene } from '@/components/main-bersama/art/kota/KotaScene';
 import { QuestionCard } from '@/components/main-bersama/shared/QuestionCard';
 import { AnswerOption } from '@/components/main-bersama/shared/AnswerOption';
@@ -647,6 +648,12 @@ function StudentQuestion({
         </div>
       </div>
 
+      {view.gameMode === 'jelajah-kata' ? (
+        <div className="mb-sq-jelajah-world">
+          <JelajahTrail teams={[{ id: 'elang', name: 'Regu Elang' }, { id: 'harimau', name: 'Regu Harimau' }, { id: 'rusa', name: 'Regu Rusa' }, { id: 'badak', name: 'Regu Badak' }]} progress={view.gameProgress.teamProgress} compact poses={view.team ? { [view.team.id]: 'move' } : undefined} />
+        </div>
+      ) : null}
+
       <div className="mb-sq-cardwrap">
         <QuestionCard question={view.question} />
       </div>
@@ -728,6 +735,8 @@ function StudentQuestion({
           border-radius: 999px;
           box-shadow: 0 0 16px rgba(54, 211, 194, .34);
         }
+        .mb-sq-jelajah-world { border-radius:24px; overflow:hidden; border:1px solid rgba(255,255,255,.1); box-shadow:0 18px 42px rgba(0,0,0,.16); background:#071829; }
+        .mb-sq-jelajah-world :global(.mb-jelajah-stage) { display:block; width:100%; height:auto; }
         .mb-sq-cardwrap {
           border-radius: 25px;
           box-shadow: 0 18px 42px rgba(0,0,0,.16);

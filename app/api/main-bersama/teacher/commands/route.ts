@@ -37,6 +37,7 @@ import {
 } from '@/src/main-bersama/application/use-cases/id-generator';
 import { mapHttpError } from '@/src/main-bersama/presentation/http-errors';
 import { mainBersamaMutationBlocked } from '@/lib/main-bersama/mutation-guard';
+import { db } from '@/lib/db';
 
 const ACTIONS = [
   'create-session',
@@ -56,7 +57,52 @@ function isAction(v: unknown): v is Action {
   return typeof v === 'string' && (ACTIONS as readonly string[]).includes(v);
 }
 
+export async function PUT(req: NextRequest) {
+  const blocked = mainBersamaMutationBlocked('teacher/results');
+  if (blocked) return blocked;
+  const actor = await resolveVerifiedTeacherActor();
+  if (!actor) return errorResponse('UNAUTHORIZED');
+  try {
+    const body = await req.json();
+    const sessionId = typeof body.sessionId === 'string' ? body.sessionId : '';
+    if (!sessionId) return errorResponse('SESSION_NOT_FOUND');
+    const result = await saveSessionResultsToKelasku(sessionId, actor.userId);
+    if (!result.ok) return NextResponse.json({ ok: false, code: result.code }, { status: result.code === 'CLASS_NOT_LINKED' ? 400 : 404 });
+    return NextResponse.json(result);
+  } catch (error) {
+    console.error('[main-bersama] gagal menyimpan hasil ke Kelasku:', error);
+    return errorResponse('INTERNAL');
+  }
+}
 
+
+async function saveSessionResultsToKelasku(sessionId: string, teacherId: string) {
+  const session = await db.mainSession.findFirst({ where: { id: sessionId, teacherId }, select: { id: true, classId: true, contentTitle: true } });
+  if (!session?.classId) return { ok: false as const, code: 'CLASS_NOT_LINKED' as const };
+  const group = await db.group.findFirst({ where: { id: session.classId, teacherId }, select: { id: true } });
+  if (!group) return { ok: false as const, code: 'CLASS_NOT_FOUND' as const };
+  const rounds = await db.mainRound.findMany({ where: { sessionId }, include: { eligible: true } });
+  const answers = await db.mainAnswer.findMany({ where: { sessionId }, select: { playerId: true, isCorrect: true } });
+  const players = await db.mainPlayer.findMany({ where: { sessionId, userId: { not: null } }, select: { id: true, userId: true, displayName: true } });
+  const eligibleByPlayer = new Map<string, number>();
+  for (const round of rounds) for (const entry of round.eligible) eligibleByPlayer.set(entry.playerId, (eligibleByPlayer.get(entry.playerId) ?? 0) + 1);
+  const correctByPlayer = new Map<string, number>();
+  for (const answer of answers) if (answer.isCorrect) correctByPlayer.set(answer.playerId, (correctByPlayer.get(answer.playerId) ?? 0) + 1);
+  const kategori = await db.nilaiKategori.upsert({ where: { groupId_nama: { groupId: group.id, nama: 'Main Bersama' } }, update: { bobot: 100 }, create: { groupId: group.id, nama: 'Main Bersama', bobot: 100 }, select: { id: true } });
+  let saved = 0;
+  for (const player of players) {
+    if (!player.userId) continue;
+    const eligible = eligibleByPlayer.get(player.id) ?? 0;
+    const correct = correctByPlayer.get(player.id) ?? 0;
+    const score = eligible > 0 ? Math.round((correct / eligible) * 100) : 0;
+    const keterangan = 'Main Bersama: ' + session.contentTitle + ' (' + correct + '/' + eligible + ' benar)';
+    const existing = await db.nilai.findFirst({ where: { userId: player.userId, groupId: group.id, kategoriId: kategori.id, sumberType: 'MAIN_BERSAMA', sumberId: session.id } });
+    if (existing) await db.nilai.update({ where: { id: existing.id }, data: { skor: score, keterangan } });
+    else await db.nilai.create({ data: { userId: player.userId, groupId: group.id, kategoriId: kategori.id, skor: score, sumberType: 'MAIN_BERSAMA', sumberId: session.id, keterangan } });
+    saved++;
+  }
+  return { ok: true as const, saved };
+}
 /** Bungkus mapped error → NextResponse (mapper-nya framework-agnostic). */
 function errorResponse(code: string, reason?: string) {
   const mapped = mapHttpError(code, reason);

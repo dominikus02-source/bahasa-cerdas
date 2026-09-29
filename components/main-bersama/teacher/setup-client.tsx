@@ -71,6 +71,7 @@ export function SetupClient({
     preselectedTheme ?? null,
   );
   const [mode, setMode] = useState<GameMode | null>(null);
+  const [secondsPerQuestion, setSecondsPerQuestion] = useState(60);
   const [classId, setClassId] = useState<string | null>(null);
   const [compat, setCompat] = useState<Record<string, CompatibilityInfo>>({});
   const [checking, setChecking] = useState(false);
@@ -171,6 +172,7 @@ export function SetupClient({
         gameMode: mode,
         packageRef,
         ...(classId ? { classId } : {}),
+        config: { roundDurationMs: (mode === 'jelajah-kata' ? secondsPerQuestion : 60) * 1000 },
         ...(partial ? { useSupportedQuestions: true } : {}),
       });
       const created = result.session as { id?: unknown } | undefined;
@@ -328,6 +330,20 @@ export function SetupClient({
           <ModeCard mode="kota-cahaya" selected={mode === 'kota-cahaya'} onSelect={() => setMode('kota-cahaya')} />
         </div>
       </section>
+
+      {mode === 'jelajah-kata' ? (
+        <section aria-labelledby="mb-time-h" className="mb-setup-section">
+          <div className="mb-guru-h"><span className="mb-step-badge mb-number" aria-hidden>3</span><span className="mb-guru-h-text" id="mb-time-h">Waktu per Soal</span><small>Jelajah Kata berjalan mandiri. Setiap soal mendapat waktu yang sama.</small></div>
+          <div className="mb-time-options" role="radiogroup" aria-label="Waktu per soal">
+            {[30,60,90,120].map((seconds) => (
+              <button key={seconds} type="button" role="radio" aria-checked={secondsPerQuestion===seconds} onClick={()=>setSecondsPerQuestion(seconds)} className={secondsPerQuestion===seconds?'mb-time-option mb-time-selected':'mb-time-option'}>
+                <strong>{seconds < 60 ? `${seconds} detik` : `${seconds/60} menit`}</strong>
+                <span>{selectedCompat?.total ? `${Math.ceil(selectedCompat.total*seconds/60)} menit total` : 'per soal'}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       {/* ── Langkah 3: kelas (§11) ── */}
       {classes.length > 0 ? (
@@ -674,6 +690,13 @@ export function SetupClient({
           grid-template-columns: repeat(2, minmax(0, 1fr));
           gap: 16px;
         }
+
+        .mb-time-options { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-top:12px; }
+        .mb-time-option { min-height:72px; padding:12px; border:1px solid #e5ecef; border-radius:16px; background:#fff; color:#294456; text-align:left; cursor:pointer; }
+        .mb-time-option strong,.mb-time-option span { display:block; }
+        .mb-time-option strong { font-size:.88rem; }
+        .mb-time-option span { margin-top:5px; color:#81919b; font-size:.68rem; font-weight:700; }
+        .mb-time-selected { border-color:#0f766e; background:#effaf7; box-shadow:0 5px 18px rgba(15,118,110,.08); }
 
         /* Class chips. */
         .mb-cls-row {

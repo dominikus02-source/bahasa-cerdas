@@ -129,7 +129,7 @@ export class SessionEngine {
     const { session, questions, clock } = options;
     this.clock = clock;
     this.questions = questions;
-    this.roundDurationMs = options.roundDurationMs ?? DEFAULT_ROUND_DURATION_MS;
+    this.roundDurationMs = session.roundDurationMs ?? options.roundDurationMs ?? DEFAULT_ROUND_DURATION_MS;
     if (questions.snapshots.length === 0) {
       // Sesi disiapkan tanpa soal = kesalahan pemanggil, bukan gameplay error.
       throw new Error('SessionEngine butuh minimal satu snapshot soal');

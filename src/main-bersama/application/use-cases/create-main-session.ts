@@ -226,6 +226,7 @@ export async function createMainSession(
     phase: 'preparing',
     currentRoundIndex: null,
     totalRounds,
+    roundDurationMs: resolved.config.roundDurationMs,
     createdAt: now,
   };
 

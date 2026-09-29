@@ -113,6 +113,7 @@ export async function loadSessionRuntime(
     phase: phaseToDomain(sessionRow.phase),
     currentRoundIndex: sessionRow.currentRoundIndex,
     totalRounds: sessionRow.totalRounds,
+    roundDurationMs: sessionRow.roundDurationMs,
     createdAt: sessionRow.createdAt,
     startedAt: sessionRow.startedAt ?? undefined,
     endedAt: sessionRow.endedAt ?? undefined,
@@ -122,7 +123,7 @@ export async function loadSessionRuntime(
     session,
     questions: questionSource,
     clock: options.clock,
-    roundDurationMs: options.roundDurationMs,
+    roundDurationMs: session.roundDurationMs ?? options.roundDurationMs,
   });
 
   // Players.
