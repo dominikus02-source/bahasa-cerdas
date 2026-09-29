@@ -31,7 +31,8 @@ import { RoomQRCode } from '@/components/main-bersama/shared/RoomQRCode';
 import { LobbyRoster } from '@/components/main-bersama/shared/LobbyRoster';
 import { useMainBersamaSound } from '@/components/main-bersama/sound/useMainBersamaSound';
 import { SoundToggle } from '@/components/main-bersama/sound/SoundToggle';
-import { Maximize2, Minimize2 } from 'lucide-react';
+import { useFullscreenControl } from '@/components/main-bersama/shared/useFullscreenControl';
+import { FullscreenExitControl } from '@/components/main-bersama/shared/FullscreenExitControl';
 
 type Command =
   | 'open-lobby'
@@ -58,63 +59,10 @@ export function TeacherRoomClient({
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'layar' | 'kontrol' | 'peserta'>('layar');
   const autoLobbyRef = useRef(false);
-  const roomRef = useRef<HTMLElement | null>(null);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-
-  const syncFullscreen = useCallback(() => {
-    setIsFullscreen(document.fullscreenElement === roomRef.current);
-  }, []);
-
-  const enterFullscreen = useCallback(async () => {
-    try {
-      if (!document.fullscreenEnabled) {
-        setError('Mode layar penuh tidak didukung browser ini.');
-        return;
-      }
-      if (!document.fullscreenElement && roomRef.current) {
-        await roomRef.current.requestFullscreen();
-      }
-      syncFullscreen();
-    } catch {
-      setError('Mode layar penuh tidak dapat diaktifkan browser ini.');
-    }
-  }, [syncFullscreen]);
-
-  const exitFullscreen = useCallback(async () => {
-    try {
-      if (document.fullscreenElement) await document.exitFullscreen();
-      syncFullscreen();
-    } catch {
-      setError('Layar penuh tidak dapat ditutup. Tekan Esc pada keyboard.');
-    }
-  }, [syncFullscreen]);
-
-  const toggleFullscreen = useCallback(() => {
-    if (document.fullscreenElement) {
-      void exitFullscreen();
-    } else {
-      void enterFullscreen();
-    }
-  }, [enterFullscreen, exitFullscreen]);
-
-  useEffect(() => {
-    syncFullscreen();
-    const onFullscreenChange = () => syncFullscreen();
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key.toLowerCase() !== 'f') return;
-      if (event.metaKey || event.ctrlKey || event.altKey) return;
-      const target = event.target as HTMLElement | null;
-      if (target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA' || target?.isContentEditable) return;
-      event.preventDefault();
-      toggleFullscreen();
-    };
-    document.addEventListener('fullscreenchange', onFullscreenChange);
-    window.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('fullscreenchange', onFullscreenChange);
-      window.removeEventListener('keydown', onKey);
-    };
-  }, [syncFullscreen, toggleFullscreen]);
+  const fullscreen = useFullscreenControl({
+    onError: (message) => setError(message),
+    keyboard: true,
+  });
 
   const fetchView = useCallback(
     () => fetchTeacherState(sessionId).then((r) => r.view),
@@ -189,7 +137,7 @@ export function TeacherRoomClient({
       : null;
 
   return (
-    <main ref={roomRef} className="mb-room game-fullscreen">
+    <main className={`mb-room game-fullscreen${fullscreen.isFullscreen ? " mb-room-fullscreen-active" : ""}`}>
       <ConnectionBanner visible={connection === 'offline'} />
       <SessionHeader
         mode={view.gameMode}
@@ -197,23 +145,28 @@ export function TeacherRoomClient({
         className={className ?? undefined}
         roundLabel={roundLabel}
         actions={
-          <button
-            type="button"
-            className="mb-room-fullscreen-control"
-            onClick={toggleFullscreen}
-            aria-label={isFullscreen ? 'Keluar dari layar penuh' : 'Masuk layar penuh'}
-            title={isFullscreen ? 'Keluar dari layar penuh (Esc)' : 'Tampilkan Main Bersama layar penuh'}
-          >
-            {isFullscreen ? <Minimize2 size={17} aria-hidden /> : <Maximize2 size={17} aria-hidden />}
-            <span>{isFullscreen ? 'Keluar' : 'Layar Penuh'}</span>
-            {isFullscreen ? <kbd>Esc</kbd> : <kbd>F</kbd>}
-          </button>
+          <>
+            {!fullscreen.isFullscreen ? (
+              <button
+                type="button"
+                className="mb-room-fullscreen-control"
+                onClick={() => void fullscreen.enter()}
+                aria-label="Masuk layar penuh"
+                title="Tampilkan Main Bersama layar penuh"
+              >
+                <span aria-hidden>⛶</span>
+                <span>Layar Penuh</span>
+                <kbd>F</kbd>
+              </button>
+            ) : null}
+            <FullscreenExitControl active={fullscreen.isFullscreen} onExit={fullscreen.exit} />
           <SoundToggle
             enabled={teacherSound.enabled}
             unlocked={teacherSound.unlocked}
             onToggle={() => void teacherSound.toggle()}
             compact={teacherSound.unlocked}
           />
+          </>
         }
       />
 
