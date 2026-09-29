@@ -277,17 +277,15 @@ export function JelajahTrail({
         </radialGradient>
       </defs>
 
+      <rect width="1200" height="600" rx="28" fill={`url(#${id("sky")})`} />
+
       <clipPath id={id("worldClip")}>
         <rect x="0" y="0" width="1200" height="600" rx="28" />
       </clipPath>
 
-      {/* Tujuh latar perjalanan digeser mengikuti kemajuan regu. */}
       <g clipPath={`url(#${id("worldClip")})`} aria-hidden="true">
         <g
-          style={{
-            transform: `translateX(-${(sceneProgress / 100) * (JELAJAH_BACKGROUNDS.length - 1) * JELAJAH_SCENE_WIDTH}px)`,
-            transition: "transform 900ms cubic-bezier(.22,.9,.3,1)",
-          }}
+          transform={`translate(-${(sceneProgress / 100) * (JELAJAH_BACKGROUNDS.length - 1) * JELAJAH_SCENE_WIDTH} 0)`}
         >
           {JELAJAH_BACKGROUNDS.map((src, index) => (
             <image
