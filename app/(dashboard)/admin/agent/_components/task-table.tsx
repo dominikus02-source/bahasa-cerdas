@@ -6,18 +6,11 @@ import type { AgentTaskListItem } from "@/src/agent/persistence/queries";
 import { StatusBadge } from "./ui";
 
 /**
- * BC Agent P6 — task table (client island).
- * Facts only: id, type, status, priority-equivalent (attemptCount as retry
- * signal), timestamps, worker ownership, last event/error. All values come
- * from persisted rows via the canonical read boundary.
+ * BC Agent task table. Facts come exclusively from the canonical read model.
  */
 export function AgentTaskTable({ tasks }: { tasks: readonly AgentTaskListItem[] }) {
   if (tasks.length === 0) {
-    return (
-      <div className="p-10 text-center text-sm text-slate-400">
-        Belum ada task pada filter ini.
-      </div>
-    );
+    return <div className="p-10 text-center text-sm text-slate-400">Belum ada task pada filter ini.</div>;
   }
 
   return (
@@ -26,7 +19,8 @@ export function AgentTaskTable({ tasks }: { tasks: readonly AgentTaskListItem[] 
         <thead>
           <tr className="border-b border-slate-100 text-left text-slate-400 dark:border-slate-800">
             <th className="px-4 py-2.5 font-medium">Task</th>
-            <th className="px-4 py-2.5 font-medium">Tipe</th>\n            <th className="px-4 py-2.5 font-medium">Kanal</th>
+            <th className="px-4 py-2.5 font-medium">Tipe</th>
+            <th className="px-4 py-2.5 font-medium">Kanal</th>
             <th className="px-4 py-2.5 font-medium">Status</th>
             <th className="px-4 py-2.5 font-medium">Attempt</th>
             <th className="px-4 py-2.5 font-medium">Worker</th>
@@ -49,6 +43,17 @@ export function AgentTaskTable({ tasks }: { tasks: readonly AgentTaskListItem[] 
                 </Link>
               </td>
               <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{t.intentType}</td>
+              <td className="px-4 py-3">
+                <span
+                  className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
+                    t.channel === "TELEGRAM"
+                      ? "border-sky-200 bg-sky-50 text-sky-700 dark:border-sky-800 dark:bg-sky-950/50 dark:text-sky-300"
+                      : "border-slate-200 bg-slate-50 text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
+                  }`}
+                >
+                  {t.channel}
+                </span>
+              </td>
               <td className="px-4 py-3"><StatusBadge status={t.status} /></td>
               <td className="px-4 py-3 text-slate-600 dark:text-slate-300">#{t.attemptCount}</td>
               <td className="px-4 py-3">
