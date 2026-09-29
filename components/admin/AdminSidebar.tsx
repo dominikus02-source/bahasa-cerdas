@@ -8,7 +8,7 @@ import {
   ChevronRight, BarChart3, Briefcase, MessageCircle, Presentation,
   Bell, BellRing, X, Coins, DollarSign, Database, Activity, Wallet,
   TrendingUp, Trophy, LineChart, ShieldAlert, ShieldCheck,
-  Crown, Target, ChevronDown,
+  Crown, Target, ChevronDown, Bot,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -42,27 +42,31 @@ function isItem(e: NavEntry): e is NavItem {
 }
 
 /**
- * PRIMARY NAVIGATION — 7 top-level areas.
+ * PRIMARY NAVIGATION — 8 top-level areas.
  *
- * Hierarchy communicates: Founder → Business → Product → Operations.
+ * Hierarchy communicates: Founder → Agent → Business → Product → Operations.
  * Every existing route is preserved; only the sidebar layout changes.
  *
- * 1. Control Tower      — standalone, founder intelligence
- * 2. Pengguna            — standalone, user management
- * 3. Premium & Revenue   — business/financial intelligence
- * 4. Content             — content management (group)
- * 5. Learning & Analytics — product learning analytics (group)
- * 6. AI & Platform       — AI usage diagnostics (group)
- * 7. System & Operations — low-frequency operational tools (group)
+ * 1. Control Tower       — standalone, founder intelligence
+ * 2. BC Agent            — standalone, founder operations agent
+ * 3. Pengguna            — standalone, user management
+ * 4. Premium & Revenue   — business/financial intelligence
+ * 5. Content             — content management (group)
+ * 6. Learning & Analytics — product learning analytics (group)
+ * 7. AI & Platform       — AI usage diagnostics (group)
+ * 8. System & Operations — low-frequency operational tools (group)
  */
 const NAV: NavEntry[] = [
   // ── 1. Founder intelligence ──
   { label: "Control Tower", href: "/admin/executive", icon: Target },
 
-  // ── 2. User management ──
+  // ── 2. Founder operations agent ──
+  { label: "BC Agent", href: "/admin/agent", icon: Bot },
+
+  // ── 3. User management ──
   { label: "Pengguna", href: "/admin/users", icon: Users },
 
-  // ── 3. Business / financial intelligence ──
+  // ── 4. Business / financial intelligence ──
   {
     label: "Premium & Revenue",
     icon: Crown,
@@ -75,7 +79,7 @@ const NAV: NavEntry[] = [
     ],
   },
 
-  // ── 4. Content management ──
+  // ── 5. Content management ──
   {
     label: "Content",
     icon: Presentation,
@@ -88,7 +92,7 @@ const NAV: NavEntry[] = [
     ],
   },
 
-  // ── 5. Product learning analytics ──
+  // ── 6. Product learning analytics ──
   {
     label: "Learning & Analytics",
     icon: LineChart,
@@ -98,7 +102,7 @@ const NAV: NavEntry[] = [
     ],
   },
 
-  // ── 6. AI usage diagnostics ──
+  // ── 7. AI usage diagnostics ──
   {
     label: "AI & Platform",
     icon: BarChart3,
@@ -109,7 +113,7 @@ const NAV: NavEntry[] = [
     ],
   },
 
-  // ── 7. Low-frequency operational tools ──
+  // ── 8. Low-frequency operational tools ──
   {
     label: "System & Operations",
     icon: Database,
@@ -295,7 +299,7 @@ export function AdminSidebar({ user }: Props) {
           // Standalone item (Control Tower, Pengguna, Guru/Murid links)
           if (isItem(entry)) {
             const Icon = entry.icon;
-            const isActive = pathname === entry.href;
+            const isActive = pathname === entry.href || pathname.startsWith(entry.href + "/");
             return (
               <Link key={entry.href} href={entry.href} aria-label={entry.label} title={entry.label}
                 className={`${NAV_LINK_BASE} ${isActive ? NAV_LINK_ACTIVE : NAV_LINK_INACTIVE}`}>
