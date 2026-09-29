@@ -33,6 +33,40 @@ function repoRoot(): string {
     : path.resolve(process.cwd());
 }
 
+function firstEnv(...names: string[]): string | undefined {
+  for (const name of names) {
+    const value = process.env[name]?.trim();
+    if (value) return value;
+  }
+  return undefined;
+}
+
+/**
+ * P9 credential provisioning: capability-scoped and read-only.
+ *
+ * The resolver never logs values and never hands one provider's credential
+ * to another tool. BC_AGENT_* names are preferred; conventional CLI/CI env
+ * names are accepted as compatibility fallbacks.
+ */
+function credentialsForTool(toolName: string): Readonly<Record<string, string>> | undefined {
+  if (toolName === "github.read") {
+    const githubToken = firstEnv("BC_AGENT_GITHUB_TOKEN", "GITHUB_TOKEN");
+    return githubToken ? { githubToken } : undefined;
+  }
+
+  if (toolName === "vercel.read") {
+    const vercelToken = firstEnv("BC_AGENT_VERCEL_TOKEN", "VERCEL_TOKEN");
+    const vercelTeamId = firstEnv("BC_AGENT_VERCEL_TEAM_ID", "VERCEL_ORG_ID");
+    if (!vercelToken) return undefined;
+    return {
+      vercelToken,
+      ...(vercelTeamId ? { vercelTeamId } : {}),
+    };
+  }
+
+  return undefined;
+}
+
 async function main(): Promise<void> {
   // 1. Configuration — fail fast before any claim (§27).
   const config = parseWorkerConfig({
@@ -53,15 +87,16 @@ async function main(): Promise<void> {
   );
   const logger = createWorkerLogger(`worker-${crypto.randomUUID()}`);
 
-  // Read-only tools only. Credentials are NOT provisioned in P5 (§16 of P4
-  // report): github.read/vercel.read run unauthenticated with bounded public
-  // access until the credential-provisioning phase.
+  // Read-only tools only. P9 provisions provider credentials through a
+  // capability-scoped resolver: github.read never sees Vercel credentials
+  // and vercel.read never sees GitHub credentials.
   const registry = makeP4Registry({ repoRoot: repoRoot(), prisma });
   const executor = new ToolExecutor({
     registry,
     taskService,
     recordExecution: (row) => recordExecution(prisma, row),
     recordEvidence: (e) => recordEvidence(prisma, e),
+    credentialsForTool,
     now: () => new Date().toISOString(),
     newId: () => crypto.randomUUID(),
   });
