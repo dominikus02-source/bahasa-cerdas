@@ -33,6 +33,7 @@ export function CityCahayaStage({
 
   return (
     <section
+      className="mb-city-cahaya-stage"
       aria-label={"Kota Cahaya " + value + " persen"}
       style={{
         width: "min(100%, 1100px)",
