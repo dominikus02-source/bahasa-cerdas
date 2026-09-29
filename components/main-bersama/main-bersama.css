@@ -4464,3 +4464,58 @@
 .mb-host-panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px}.mb-host-panel-head h2{margin:5px 0 4px}.mb-host-panel-head p{margin:0;color:var(--mb-text-guru-secondary);line-height:1.5}.mb-host-phase{display:block;flex:none;padding:12px 16px;border-radius:var(--mb-radius-md);background:var(--mb-primary-soft);color:var(--mb-primary-strong);font-size:.9rem}.mb-host-count{display:grid;place-items:center;min-width:64px;height:64px;border-radius:18px;background:var(--mb-primary-soft);color:var(--mb-primary-strong);font-size:1.6rem}
 .mb-host-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0}.mb-host-stats>div{padding:16px;border-radius:var(--mb-radius-md);background:rgba(28,43,58,.045);border:1px solid rgba(28,43,58,.07)}.mb-host-stats strong,.mb-host-stats span{display:block}.mb-host-stats strong{font-size:1.55rem}.mb-host-stats span{margin-top:3px;color:var(--mb-text-guru-secondary);font-size:.8rem;font-weight:700}.mb-host-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.mb-host-tip{margin:20px 0 0;color:var(--mb-text-guru-secondary);font-size:.84rem}
 @media(max-width:640px){.mb-host-tabs{width:calc(100% - 20px);overflow-x:auto}.mb-host-tab{min-width:110px;padding-inline:8px;font-size:.78rem}.mb-host-panel{width:calc(100% - 20px);padding:18px}.mb-host-panel-head{flex-direction:column}.mb-host-phase{width:100%}.mb-host-stats{grid-template-columns:repeat(2,1fr)}}
+
+
+/* ── Main Bersama Guru: layar penuh + sidebar collapse safety ── */
+.mb-room-fullscreen-control{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  min-height:38px;
+  padding:7px 12px;
+  border:1px solid rgba(28,43,58,.12);
+  border-radius:999px;
+  background:rgba(255,255,255,.78);
+  color:var(--mb-text-guru);
+  font:800 .78rem/1 var(--mb-font-ui);
+  cursor:pointer;
+  box-shadow:0 3px 12px rgba(23,38,58,.08);
+  backdrop-filter:blur(10px);
+  transition:transform .14s ease,background .14s ease,border-color .14s ease;
+}
+.mb-room-fullscreen-control:hover{transform:translateY(-1px);background:#fff;border-color:rgba(28,43,58,.2)}
+.mb-room-fullscreen-control:active{transform:scale(.98)}
+.mb-room-fullscreen-control:focus-visible{outline:2px solid var(--mb-primary);outline-offset:3px}
+.mb-room-fullscreen-control kbd{
+  min-width:20px;padding:3px 5px;border-radius:6px;
+  background:rgba(28,43,58,.07);color:var(--mb-text-guru-secondary);
+  font:800 .62rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;text-align:center;
+}
+.mb-room:fullscreen{
+  width:100vw;
+  height:100dvh;
+  min-height:100dvh;
+  max-height:100dvh;
+  margin:0;
+  padding:0;
+  overflow-y:auto;
+  background:var(--mb-bg-guru,#f6f8fb);
+}
+.mb-room:fullscreen .mb-host-tabs,
+.mb-room:fullscreen .mb-host-mode-note{position:relative}
+.mb-room:fullscreen .mb-host-mode-note{margin-top:14px}
+.mb-room:fullscreen .mb-host-tabs{margin-top:10px}
+.mb-room:fullscreen .mb-room-fullscreen-control{
+  background:rgba(5,19,32,.9);
+  border-color:rgba(255,255,255,.14);
+  color:#fff;
+}
+.mb-room:fullscreen .mb-room-fullscreen-control kbd{background:rgba(255,255,255,.1);color:#d8e4ee}
+@media(max-width:640px){
+  .mb-room-fullscreen-control{min-width:40px;padding:9px}
+  .mb-room-fullscreen-control span,
+  .mb-room-fullscreen-control kbd{display:none}
+}
+/* Collapsed Guru sidebar must never leak the premium badge into page content. */
+[data-shell-collapsed="1"] .shell-premium-badge{display:none!important}

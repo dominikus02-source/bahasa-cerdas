@@ -31,6 +31,8 @@ import { RoomQRCode } from '@/components/main-bersama/shared/RoomQRCode';
 import { LobbyRoster } from '@/components/main-bersama/shared/LobbyRoster';
 import { useMainBersamaSound } from '@/components/main-bersama/sound/useMainBersamaSound';
 import { SoundToggle } from '@/components/main-bersama/sound/SoundToggle';
+import { Maximize2, Minimize2 } from 'lucide-react';
+import { useFullscreenControl } from '@/components/main-bersama/shared/useFullscreenControl';
 
 type Command =
   | 'open-lobby'
@@ -57,6 +59,12 @@ export function TeacherRoomClient({
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'layar' | 'kontrol' | 'peserta'>('layar');
   const autoLobbyRef = useRef(false);
+  const roomRef = useRef<HTMLElement | null>(null);
+  const fullscreen = useFullscreenControl({
+    targetRef: roomRef,
+    onError: (message) => setError(message),
+    keyboard: true,
+  });
 
   const fetchView = useCallback(
     () => fetchTeacherState(sessionId).then((r) => r.view),
@@ -131,7 +139,7 @@ export function TeacherRoomClient({
       : null;
 
   return (
-    <main className="mb-room game-fullscreen">
+    <main ref={roomRef} className="mb-room game-fullscreen">
       <ConnectionBanner visible={connection === 'offline'} />
       <SessionHeader
         mode={view.gameMode}
@@ -139,6 +147,17 @@ export function TeacherRoomClient({
         className={className ?? undefined}
         roundLabel={roundLabel}
         actions={
+          <button
+            type="button"
+            className="mb-room-fullscreen-control"
+            onClick={() => void fullscreen.toggle()}
+            aria-label={fullscreen.isFullscreen ? 'Keluar dari layar penuh' : 'Masuk layar penuh'}
+            title={fullscreen.isFullscreen ? 'Keluar dari layar penuh (Esc)' : 'Tampilkan Main Bersama layar penuh'}
+          >
+            {fullscreen.isFullscreen ? <Minimize2 size={17} aria-hidden /> : <Maximize2 size={17} aria-hidden />}
+            <span>{fullscreen.isFullscreen ? 'Keluar' : 'Layar Penuh'}</span>
+            {fullscreen.isFullscreen ? <kbd>Esc</kbd> : <kbd>F</kbd>}
+          </button>
           <SoundToggle
             enabled={teacherSound.enabled}
             unlocked={teacherSound.unlocked}

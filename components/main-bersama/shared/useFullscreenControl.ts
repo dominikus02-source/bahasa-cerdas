@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type RefObject } from "react";
 
 interface FullscreenOptions {
   onError?: (message: string) => void;
   keyboard?: boolean;
+  targetRef?: RefObject<HTMLElement | null>;
 }
 
 /**
@@ -15,6 +16,7 @@ interface FullscreenOptions {
 export function useFullscreenControl({
   onError,
   keyboard = true,
+  targetRef,
 }: FullscreenOptions = {}) {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -29,7 +31,8 @@ export function useFullscreenControl({
         return false;
       }
       if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen();
+        const target = targetRef?.current ?? document.documentElement;
+        await target.requestFullscreen();
       }
       sync();
       return true;
@@ -37,7 +40,7 @@ export function useFullscreenControl({
       onError?.("Mode layar penuh tidak dapat diaktifkan browser ini.");
       return false;
     }
-  }, [onError, sync]);
+  }, [onError, sync, targetRef]);
 
   const exit = useCallback(async () => {
     try {
