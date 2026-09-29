@@ -126,6 +126,9 @@ export function TeacherRoomClient({
   // Lobby section me-render CTA fase preparing/lobby (lihat di bawah);
   // fase lain me-render CTA statis per section.
 
+  const isLastRound =
+    (view.currentRoundIndex ?? -1) + 1 >= view.totalRounds;
+
   const roundLabel =
     view.currentRoundIndex !== null
       ? `${view.currentRoundIndex + 1} / ${view.totalRounds}`
