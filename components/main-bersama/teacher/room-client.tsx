@@ -261,35 +261,62 @@ export function TeacherRoomClient({
             </div>
             <strong className="mb-host-count">{view.roundAnalytics.length}</strong>
           </div>
-          <div className="mb-leaderboard-card">
-            <div className="mb-leaderboard-head">
-              <div>
-                <span className="mb-eyebrow">Peringkat Kelas</span>
-                <h3 className="mb-display">Kemajuan Jelajah Kata</h3>
-                <p>Urutan berdasarkan persentase jawaban benar. Tidak ada bonus kecepatan.</p>
+          {view.gameMode === 'jelajah-kata' ? (
+            <div className="mb-leaderboard-card">
+              <div className="mb-leaderboard-head">
+                <div>
+                  <span className="mb-eyebrow">Peringkat Kelas</span>
+                  <h3 className="mb-display">Kemajuan Jelajah Kata</h3>
+                  <p>Urutan berdasarkan persentase jawaban benar. Tidak ada bonus kecepatan.</p>
+                </div>
+                <span className="mb-leaderboard-live">LIVE</span>
               </div>
-              <span className="mb-leaderboard-live">LIVE</span>
+              <div className="mb-leaderboard-list">
+                {[...view.participants]
+                  .sort((a, b) => a.progressRank - b.progressRank || b.correctAnswers - a.correctAnswers)
+                  .slice(0, 10)
+                  .map((p) => (
+                    <div className={`mb-leaderboard-row ${p.progressRank <= 3 ? 'is-top' : ''}`} key={p.playerId}>
+                      <span className="mb-leaderboard-rank">
+                        {p.progressRank <= 3 ? ['🥇', '🥈', '🥉'][p.progressRank - 1] : p.progressRank}
+                      </span>
+                      <span className="mb-leaderboard-avatar">
+                        <img src={p.avatarUrl ?? '/avatar/2.webp'} alt="" />
+                      </span>
+                      <span className="mb-leaderboard-name">{p.displayName}</span>
+                      <span className="mb-leaderboard-score">{p.correctAnswers}/{p.eligibleRounds}</span>
+                      <strong>{p.progressPercent}%</strong>
+                    </div>
+                  ))}
+                {view.participants.length === 0 ? <p className="mb-teacher-empty">Belum ada siswa.</p> : null}
+              </div>
             </div>
-            <div className="mb-leaderboard-list">
-              {[...view.participants]
-                .sort((a, b) => a.progressRank - b.progressRank || b.correctAnswers - a.correctAnswers)
-                .slice(0, 10)
-                .map((p) => (
-                  <div className={`mb-leaderboard-row ${p.progressRank <= 3 ? 'is-top' : ''}`} key={p.playerId}>
-                    <span className="mb-leaderboard-rank">
-                      {p.progressRank <= 3 ? ['🥇', '🥈', '🥉'][p.progressRank - 1] : p.progressRank}
-                    </span>
-                    <span className="mb-leaderboard-avatar">
-                      <img src={p.avatarUrl ?? '/avatar/2.webp'} alt="" />
-                    </span>
-                    <span className="mb-leaderboard-name">{p.displayName}</span>
-                    <span className="mb-leaderboard-score">{p.correctAnswers}/{p.eligibleRounds}</span>
-                    <strong>{p.progressPercent}%</strong>
-                  </div>
-                ))}
-              {view.participants.length === 0 ? <p className="mb-teacher-empty">Belum ada siswa.</p> : null}
+          ) : (
+            <div className="mb-leaderboard-card">
+              <div className="mb-leaderboard-head">
+                <div>
+                  <span className="mb-eyebrow">Perkembangan Kota</span>
+                  <h3 className="mb-display">Progres Kota Cahaya</h3>
+                  <p>Lihat perkembangan kota berdasarkan kemajuan permainan kelas.</p>
+                </div>
+                <span className="mb-leaderboard-live">LIVE</span>
+              </div>
+              <div className="mb-analysis-overview mb-kota-cahaya-overview">
+                <div>
+                  <strong>{Math.round(view.gameState?.kotaCahaya.progressPercent ?? 0)}%</strong>
+                  <span>Progres Kota</span>
+                </div>
+                <div>
+                  <strong>{view.gameState?.kotaCahaya.unlockedMilestones.length ?? 0}</strong>
+                  <span>Tahap terbuka</span>
+                </div>
+                <div>
+                  <strong>{view.roundAnalytics.filter((r) => r.submittedCount > 0).length}/{view.roundAnalytics.length}</strong>
+                  <span>Soal dimainkan</span>
+                </div>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="mb-analysis-overview">
             <div><strong>{answered}/{eligible}</strong><span>Respons soal aktif</span></div>
@@ -525,11 +552,16 @@ export function TeacherRoomClient({
         <section className="mb-tsummary mb-fade-in">
           <div className="mb-final-hero">
             <span className="mb-eyebrow">{view.phase === 'ended' ? 'Sesi selesai' : 'Permainan selesai'}</span>
-            <h2 className="mb-display mb-guru-phase-title">🎉 Hebat, kelas!</h2>
-            <p className="mb-final-subtitle">Inilah progres akhir Jelajah Kata hari ini.</p>
+            <h2 className="mb-display mb-guru-phase-title">🎉 {view.gameMode === 'jelajah-kata' ? 'Hebat, kelas!' : 'Kota Cahaya selesai!'}</h2>
+            <p className="mb-final-subtitle">
+              {view.gameMode === 'jelajah-kata'
+                ? 'Inilah progres akhir Jelajah Kata hari ini.'
+                : 'Inilah perkembangan akhir Kota Cahaya hari ini.'}
+            </p>
           </div>
 
           <div className="mb-final-grid">
+            {view.gameMode === 'jelajah-kata' ? <div className="mb-final-grid">
             <div className="mb-final-podium-card">
               <div className="mb-final-section-head">
                 <div>
@@ -558,12 +590,11 @@ export function TeacherRoomClient({
                   ))}
                 {view.participants.length === 0 ? <p className="mb-teacher-empty">Belum ada hasil peserta.</p> : null}
               </div>
-            </div>
-
+            </div> : null}
             <div className="mb-final-city-card">
               <div className="mb-final-section-head">
                 <div>
-                  <span className="mb-eyebrow">Hadiah Kelas</span>
+                  <span className="mb-eyebrow">{view.gameMode === 'jelajah-kata' ? 'Hadiah Kelas' : 'Perkembangan Kota'}</span>
                   <h3>🌆 Kota Cahaya</h3>
                 </div>
                 <span className="mb-final-city-progress">
