@@ -442,7 +442,14 @@ export class Worker {
         });
 
         if (result.status === "SUCCEEDED" && result.output) {
-          observations.push({ toolName: action.toolName, output: result.output });
+          observations.push({ toolName: action.toolName, status: "SUCCEEDED", output: result.output });
+        } else if (result.status === "FAILED") {
+          observations.push({
+            toolName: action.toolName,
+            status: "FAILED",
+            errorCode: result.errorCode ?? null,
+            error: result.error?.slice(0, 300) ?? null,
+          });
         }
 
         if (result.status === "FAILED" && result.errorCode === "APPROVAL_REQUIRED") {
