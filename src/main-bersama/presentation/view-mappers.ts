@@ -275,14 +275,47 @@ function allowedActionsFor(phase: SessionPhase, totalRounds: number, currentRoun
   };
 }
 
-/** Daftar peserta untuk guru — identitas tampil, tanpa credential. */
+/** Skor Cahaya Kata: benar selalu bernilai, tetapi jawaban lebih cepat
+ * memberi bonus lebih besar. Semua dihitung dari waktu server agar tidak
+ * bergantung pada jam perangkat siswa.
+ */
+function cahayaPointsForAnswer(answer: { isCorrect: boolean; submittedAt: Date }, round: { openedAt?: Date; closesAt?: Date }): number {
+  if (!answer.isCorrect) return 0;
+  const openedAt = round.openedAt?.getTime();
+  const closesAt = round.closesAt?.getTime();
+  if (openedAt === undefined || closesAt === undefined || closesAt <= openedAt) return 100;
+  const elapsed = Math.max(0, Math.min(answer.submittedAt.getTime() - openedAt, closesAt - openedAt));
+  const duration = closesAt - openedAt;
+  const speedBonus = Math.max(0, Math.round(100 * (1 - elapsed / duration)));
+  return 100 + speedBonus;
+}
+
+/** Daftar peserta + Cahaya Kata untuk guru — identitas tampil, tanpa credential. */
 function teacherParticipants(engine: SessionEngine): TeacherParticipantInfo[] {
   const activeRound = engine.activeRound();
-  const answers = activeRound
-    ? engine.state.answersByRound.get(activeRound.id)
-    : undefined;
+  const answers = activeRound ? engine.state.answersByRound.get(activeRound.id) : undefined;
+  const scores = new Map<string, number>();
+
+  for (const round of engine.state.rounds) {
+    const roundAnswers = engine.state.answersByRound.get(round.id);
+    if (!roundAnswers) continue;
+    for (const answer of roundAnswers.values()) {
+      scores.set(
+        answer.playerId,
+        (scores.get(answer.playerId) ?? 0) + cahayaPointsForAnswer(answer, round),
+      );
+    }
+  }
+
+  const ranked = [...engine.state.players.values()]
+    .map((player) => ({ player, score: scores.get(player.id) ?? 0 }))
+    .sort((a, b) => b.score - a.score || a.player.displayName.localeCompare(b.player.displayName, 'id'));
+
+  const rankByPlayerId = new Map(ranked.map((entry, index) => [entry.player.id, index + 1]));
   const out: TeacherParticipantInfo[] = [];
+
   for (const player of engine.state.players.values()) {
+    const own = activeRound ? answers?.get(player.id) : undefined;
     out.push({
       playerId: player.id,
       displayName: player.displayName,
@@ -293,6 +326,13 @@ function teacherParticipants(engine: SessionEngine): TeacherParticipantInfo[] {
       participationStatus: player.participationStatus,
       joinedRoundIndex: player.eligibleFromRoundIndex,
       hasAnsweredCurrentRound: answers?.has(player.id) ?? false,
+      cahayaPoints: scores.get(player.id) ?? 0,
+      currentRoundPoints: own && activeRound ? cahayaPointsForAnswer(own, activeRound) : 0,
+      ...(own && activeRound?.openedAt
+        ? { currentRoundResponseMs: Math.max(0, own.submittedAt.getTime() - activeRound.openedAt.getTime()) }
+        : {}),
+      cahayaRank: rankByPlayerId.get(player.id) ?? ranked.length + 1,
+      ...(own ? { lastAnswerIsCorrect: own.isCorrect } : {}),
     });
   }
   return out;
