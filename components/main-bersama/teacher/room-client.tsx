@@ -31,6 +31,7 @@ import { useMainBersamaSound } from '@/components/main-bersama/sound/useMainBers
 import { SoundToggle } from '@/components/main-bersama/sound/SoundToggle';
 import { useFullscreenControl } from '@/components/main-bersama/shared/useFullscreenControl';
 import { FullscreenExitControl } from '@/components/main-bersama/shared/FullscreenExitControl';
+import { CityCahayaStage } from '@/components/main-bersama/shared/CityCahayaStage';
 
 type Command =
   | 'open-lobby'
@@ -415,7 +416,7 @@ export function TeacherRoomClient({
             {view.gameState?.gameMode === 'jelajah-kata' ? (
               <TeamProgress teams={view.teams} progress={view.gameState.jelajahKata.teamProgress} />
             ) : view.gameState?.gameMode === 'kota-cahaya' ? (
-              <CityCahayaHero
+              <CityCahayaStage
                 progressPercent={view.gameState.kotaCahaya.progressPercent}
                 unlockedMilestones={view.gameState.kotaCahaya.unlockedMilestones}
               />
@@ -452,7 +453,7 @@ export function TeacherRoomClient({
             roundLabel={`Soal ${roundLabel ?? ''}`}
           />
           {view.gameState?.gameMode === 'kota-cahaya' ? (
-            <CityCahayaHero
+            <CityCahayaStage
                 progressPercent={view.gameState.kotaCahaya.progressPercent}
                 unlockedMilestones={view.gameState.kotaCahaya.unlockedMilestones}
               />
@@ -505,7 +506,7 @@ export function TeacherRoomClient({
           {view.gameState?.gameMode === 'jelajah-kata' ? (
             <TeamProgress teams={view.teams} progress={view.gameState.jelajahKata.teamProgress} />
           ) : view.gameState?.gameMode === 'kota-cahaya' ? (
-            <CityCahayaHero
+            <CityCahayaStage
                 progressPercent={view.gameState.kotaCahaya.progressPercent}
                 unlockedMilestones={view.gameState.kotaCahaya.unlockedMilestones}
               />
@@ -701,60 +702,6 @@ export function TeacherRoomClient({
 }
 
 
-function CityCahayaHero({ progressPercent, unlockedMilestones }: { progressPercent: number; unlockedMilestones: string[] }) {
-  const milestones = [
-    { key: 'garden', label: 'Taman', icon: '✦' },
-    { key: 'library', label: 'Perpustakaan', icon: '▥' },
-    { key: 'homes', label: 'Rumah', icon: '⌂' },
-    { key: 'town-center', label: 'Pusat Kota', icon: '▦' },
-  ];
-  const value = Math.max(0, Math.min(100, Math.round(progressPercent)));
-  const unlocked = new Set(unlockedMilestones);
-  return (
-    <div className="mb-city-hero" aria-label={`Kota Cahaya ${value} persen`}>
-      <div className="mb-city-hero-head">
-        <div><span className="mb-eyebrow">Kota Cahaya</span><h3>Bangun kota bersama kelas</h3></div>
-        <strong>{value}%</strong>
-      </div>
-      <div className="mb-city-sky">
-        <div className="mb-city-stars" aria-hidden="true">✦ · ✧ · ✦ · · ✧</div>
-        <div className="mb-city-ground">
-          {milestones.map((m, i) => {
-            const on = unlocked.has(m.key);
-            return (
-              <div className={`mb-city-landmark ${on ? 'is-on' : ''}`} key={m.key}>
-                <div className={`mb-city-building b-${i + 1}`}><span>{m.icon}</span></div>
-                <small>{m.label}</small>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-      <div className="mb-city-hero-progress"><i style={{ width: `${value}%` }} /></div>
-      <p>{unlocked.size} dari 4 bagian kota sudah menyala · setiap jawaban benar membantu membangun Kota Cahaya.</p>
-      <style jsx>{`
-        .mb-city-hero { width:min(100%, 900px); margin: 18px auto 0; padding:22px 24px 20px; border-radius:26px; color:#fff; background:radial-gradient(circle at 50% 15%,rgba(78,211,194,.18),transparent 34%),linear-gradient(145deg,#102b43 0%,#173b50 52%,#1b4654 100%); box-shadow:0 20px 48px rgba(14,43,64,.18); overflow:hidden; }
-        .mb-city-hero-head { display:flex; align-items:flex-end; justify-content:space-between; gap:18px; margin-bottom:14px; }
-        .mb-city-hero-head h3 { margin:4px 0 0; font-size:1.35rem; }
-        .mb-city-hero-head strong { font-size:2rem; color:#ffe08a; }
-        .mb-city-sky { position:relative; height:132px; border-radius:20px; overflow:hidden; background:linear-gradient(180deg,#17354b 0%,#21485a 68%,#285c60 100%); }
-        .mb-city-stars { position:absolute; inset:14px 24px auto; color:rgba(255,226,142,.5); letter-spacing:18px; font-size:15px; }
-        .mb-city-ground { position:absolute; inset:auto 22px 10px; display:grid; grid-template-columns:repeat(4,1fr); align-items:end; gap:12px; height:105px; }
-        .mb-city-landmark { display:flex; flex-direction:column; align-items:center; gap:7px; color:#7d9bab; }
-        .mb-city-landmark small { font-size:.68rem; font-weight:800; }
-        .mb-city-building { width:min(100%,100px); height:74px; border-radius:12px 12px 4px 4px; display:grid; place-items:center; border:1px solid rgba(255,255,255,.09); background:linear-gradient(180deg,#29495a,#183246); color:#7390a0; box-shadow:0 8px 16px rgba(0,0,0,.15); position:relative; }
-        .mb-city-building:after { content:""; position:absolute; inset:14px 14px 18px; background:repeating-linear-gradient(90deg,rgba(255,220,125,.0) 0 10px,rgba(255,220,125,.18) 10px 13px); border-radius:4px; opacity:.35; }
-        .mb-city-building span { position:relative; z-index:1; font-size:24px; }
-        .mb-city-landmark.is-on { color:#ffdc7d; }
-        .mb-city-landmark.is-on .mb-city-building { background:linear-gradient(180deg,#2f5863,#1c3c4b); border-color:rgba(255,214,103,.55); color:#ffe49b; box-shadow:0 0 24px rgba(255,206,93,.16),0 10px 20px rgba(0,0,0,.18); }
-        .mb-city-hero-progress { height:8px; margin-top:14px; border-radius:99px; background:rgba(255,255,255,.08); overflow:hidden; }
-        .mb-city-hero-progress i { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,#22c4b2,#7be0cb,#ffd05b); transition:width .5s ease; }
-        .mb-city-hero p { margin:10px 0 0; color:#b8cbd4; font-size:.78rem; }
-        @media(max-width:640px){ .mb-city-ground{inset-inline:10px;gap:6px}.mb-city-building{height:60px}.mb-city-hero{padding:16px}.mb-city-hero-head h3{font-size:1.1rem}.mb-city-hero-head strong{font-size:1.6rem} }
-      `}</style>
-    </div>
-  );
-}
 
 /** Status peserta — identitas tampil untuk guru (bukan secret). */
 function UsersMini() {
