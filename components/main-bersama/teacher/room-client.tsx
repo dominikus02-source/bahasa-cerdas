@@ -24,7 +24,6 @@ import { PrimaryGameButton } from '@/components/main-bersama/shared/PrimaryGameB
 import { PinDisplay } from '@/components/main-bersama/shared/PinDisplay';
 import { QuestionCard } from '@/components/main-bersama/shared/QuestionCard';
 import { TeamProgress } from '@/components/main-bersama/shared/TeamProgress';
-import { CityProgress } from '@/components/main-bersama/shared/CityProgress';
 import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBanner';
 import { RoundCountdown } from '@/components/main-bersama/shared/RoundCountdown';
 import { RoomQRCode } from '@/components/main-bersama/shared/RoomQRCode';
@@ -383,23 +382,7 @@ export function TeacherRoomClient({
                 <span>Guru mengendalikan seluruh permainan dari layar ini.</span>
               </div>
               <div className="mb-lobby-action-buttons">
-                {view.phase === 'preparing' ? (
-                  <PrimaryGameButton disabled loading variant="light">
-                    Menyiapkan Lobby…
-                  </PrimaryGameButton>
-                ) : (
-                  <PrimaryGameButton
-                    onClick={() => {
-                      void teacherSound.activate();
-                      void run('start');
-                    }}
-                    disabled={busy || view.participants.length === 0}
-                    loading={busy}
-                    variant="light"
-                  >
-                    Mulai Permainan
-                  </PrimaryGameButton>
-                )}
+                <span className="mb-lobby-control-note">Buka <strong>Kontrol Guru</strong> untuk memulai permainan.</span>
               </div>
             </div>
           </div>
@@ -435,11 +418,7 @@ export function TeacherRoomClient({
               />
             ) : null}
           </div>
-          <div className="mb-room-cta">
-            <PrimaryGameButton onClick={() => run('close-round')} disabled={busy} loading={busy} variant="light">
-              Tutup Jawaban
-            </PrimaryGameButton>
-          </div>
+          <p className="mb-classroom-control-hint">Buka <strong>Kontrol Guru</strong> untuk menutup jawaban dan mengatur langkah berikutnya.</p>
         </section>
       ) : null}
 
@@ -450,11 +429,7 @@ export function TeacherRoomClient({
           <p className="mb-closed-sub">
             {answered} dari {eligible} siswa sudah menjawab.
           </p>
-          <div className="mb-room-cta">
-            <PrimaryGameButton onClick={() => run('discuss')} disabled={busy} loading={busy} variant="light">
-              Bahas Jawaban
-            </PrimaryGameButton>
-          </div>
+          <p className="mb-classroom-control-hint">Jawaban sudah terkunci. Buka <strong>Kontrol Guru</strong> untuk memulai pembahasan.</p>
         </section>
       ) : null}
 
@@ -462,11 +437,7 @@ export function TeacherRoomClient({
       {view.phase === 'paused' ? (
         <section className="mb-closed mb-fade-in">
           <h2 className="mb-display mb-guru-phase-title">Permainan dijeda</h2>
-          <div className="mb-room-cta">
-            <PrimaryGameButton onClick={() => run('resume')} disabled={busy} loading={busy} variant="light">
-              Lanjutkan Permainan
-            </PrimaryGameButton>
-          </div>
+          <p className="mb-classroom-control-hint">Permainan dijeda. Buka <strong>Kontrol Guru</strong> untuk melanjutkan.</p>
         </section>
       ) : null}
 
@@ -510,16 +481,7 @@ export function TeacherRoomClient({
               })}
             </div>
           </div>
-          <div className="mb-room-cta">
-            <PrimaryGameButton
-              onClick={() => run('next-round')}
-              disabled={busy}
-              loading={busy}
-              variant="light"
-            >
-              {isLastRound ? 'Lihat Hasil' : 'Lanjut'}
-            </PrimaryGameButton>
-          </div>
+          <p className="mb-classroom-control-hint">Pembahasan tampil di layar kelas. Buka <strong>Kontrol Guru</strong> untuk lanjut ke soal berikutnya.</p>
         </section>
       ) : null}
 
@@ -545,20 +507,166 @@ export function TeacherRoomClient({
               unlockedMilestones={view.gameState.kotaCahaya.unlockedMilestones}
             />
           ) : null}
-          <div className="mb-room-cta">
-            {view.phase === 'summary' ? (
-              <PrimaryGameButton onClick={() => run('end')} disabled={busy} loading={busy} variant="light">
-                Tutup Sesi
-              </PrimaryGameButton>
-            ) : (
-              <PrimaryGameButton onClick={() => router.push('/guru/game/main-bersama')} disabled={busy} variant="light">
-                Kembali ke Main Bersama
-              </PrimaryGameButton>
-            )}
-          </div>
+          <p className="mb-classroom-control-hint">
+            {view.phase === 'summary'
+              ? <>Tinjau hasil di layar kelas. Buka <strong>Kontrol Guru</strong> untuk menutup sesi.</>
+              : <>Sesi sudah ditutup. Guru dapat kembali dari panel kontrol.</>}
+          </p>
         </section>
       ) : null}
       </> : null}
+      <style jsx>{`
+        .mb-classroom-hint,
+        .mb-classroom-control-hint {
+          text-align: center;
+          color: #6f8290;
+          font-size: .78rem;
+          font-weight: 650;
+          margin: 14px auto 0;
+        }
+        .mb-classroom-control-hint strong,
+        .mb-lobby-control-note strong { color: #0f766e; }
+        .mb-lobby-control-note {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 48px;
+          padding: 0 22px;
+          border-radius: 999px;
+          background: rgba(255,255,255,.72);
+          border: 1px solid rgba(15,118,110,.14);
+          color: #637886;
+          font-size: .8rem;
+          font-weight: 700;
+        }
+        .mb-teacher-monitor {
+          margin-top: 22px;
+          padding-top: 20px;
+          border-top: 1px solid #e9eef0;
+        }
+        .mb-teacher-monitor-head {
+          display:flex;
+          align-items:flex-end;
+          justify-content:space-between;
+          gap:16px;
+          margin-bottom:14px;
+        }
+        .mb-teacher-monitor-head h3 { margin:4px 0 0; font-size:1.08rem; color:#1e3346; }
+        .mb-teacher-monitor-total {
+          display:flex;
+          align-items:baseline;
+          gap:3px;
+          padding:9px 14px;
+          border-radius:14px;
+          background:#effaf7;
+          color:#0f766e;
+        }
+        .mb-teacher-monitor-total strong { font-size:1.25rem; }
+        .mb-teacher-status-card {
+          border:1px solid #e7ecef;
+          border-radius:18px;
+          overflow:hidden;
+          background:#fbfcfc;
+        }
+        .mb-teacher-monitor-grid {
+          display:grid;
+          grid-template-columns:1fr 1fr;
+          gap:14px;
+        }
+        .mb-teacher-status-title {
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          padding:13px 15px;
+          font-size:.8rem;
+          font-weight:800;
+          border-bottom:1px solid #edf0f2;
+        }
+        .mb-teacher-status-wait .mb-teacher-status-title { color:#9a6500; background:#fffaf0; }
+        .mb-teacher-status-done .mb-teacher-status-title { color:#087f70; background:#f1fbf8; }
+        .mb-teacher-student-list {
+          display:grid;
+          grid-template-columns:repeat(2,minmax(0,1fr));
+          gap:7px;
+          padding:11px;
+          max-height:210px;
+          overflow:auto;
+        }
+        .mb-teacher-student {
+          min-width:0;
+          display:flex;
+          align-items:center;
+          gap:8px;
+          padding:7px 8px;
+          border-radius:11px;
+          background:#fff;
+          border:1px solid #edf0f2;
+          font-size:.72rem;
+          color:#344b5c;
+        }
+        .mb-teacher-student > span:nth-child(2) { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .mb-teacher-student b { margin-left:auto; color:#0aa88f; }
+        .mb-teacher-student-avatar {
+          flex:0 0 25px;
+          width:25px;
+          height:25px;
+          border-radius:50%;
+          overflow:hidden;
+          background:#eef2f4;
+        }
+        .mb-teacher-student-avatar img { width:100%; height:100%; object-fit:cover; }
+        .mb-teacher-empty { grid-column:1/-1; margin:0; padding:18px 8px; text-align:center; color:#8a9aa4; font-size:.74rem; }
+        .mb-analysis-overview {
+          display:grid;
+          grid-template-columns:repeat(3,1fr);
+          gap:12px;
+          margin-top:18px;
+        }
+        .mb-analysis-overview > div {
+          padding:17px;
+          border:1px solid #e6ecef;
+          border-radius:16px;
+          background:#fafcfc;
+        }
+        .mb-analysis-overview strong { display:block; font-size:1.35rem; color:#17354b; }
+        .mb-analysis-overview span { display:block; margin-top:4px; color:#7b8d98; font-size:.72rem; font-weight:700; }
+        .mb-analysis-current {
+          margin-top:18px;
+          padding:18px;
+          border-radius:18px;
+          background:#f7faf9;
+          border:1px solid #e4eeeb;
+        }
+        .mb-analysis-current h3 { margin:6px 0 14px; color:#203747; font-size:1rem; line-height:1.45; }
+        .mb-analysis-options { display:grid; gap:9px; }
+        .mb-analysis-option > div:first-child { display:flex; justify-content:space-between; gap:12px; font-size:.75rem; color:#536976; }
+        .mb-analysis-option.is-correct > div:first-child { color:#087f70; font-weight:800; }
+        .mb-analysis-bar,.mb-analysis-mini-bar { height:7px; margin-top:5px; border-radius:99px; overflow:hidden; background:#e9eff0; }
+        .mb-analysis-bar i,.mb-analysis-mini-bar i { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,#22b8a7,#7adfcf); transition:width .45s ease; }
+        .mb-analysis-option.is-correct .mb-analysis-bar i { background:linear-gradient(90deg,#0ea88f,#f3c95b); }
+        .mb-analysis-rounds { display:grid; gap:8px; margin-top:18px; }
+        .mb-analysis-round {
+          display:grid;
+          grid-template-columns:70px 145px minmax(90px,1fr);
+          align-items:center;
+          gap:12px;
+          padding:11px 13px;
+          border:1px solid #edf0f2;
+          border-radius:14px;
+          background:#fff;
+        }
+        .mb-analysis-round-no { color:#71848f; font-size:.7rem; font-weight:800; }
+        .mb-analysis-round-copy strong { display:block; color:#1d3547; font-size:.78rem; }
+        .mb-analysis-round-copy span { display:block; color:#94a2aa; font-size:.65rem; margin-top:2px; }
+        @media(max-width:760px){
+          .mb-teacher-monitor-grid,.mb-analysis-overview{grid-template-columns:1fr}
+          .mb-analysis-round{grid-template-columns:60px 120px 1fr}
+        }
+        @media(max-width:520px){
+          .mb-teacher-student-list{grid-template-columns:1fr}
+          .mb-analysis-round{grid-template-columns:1fr}
+        }
+      `}</style>
     </main>
   );
 }
@@ -619,37 +727,6 @@ function CityCahayaHero({ progressPercent, unlockedMilestones }: { progressPerce
 }
 
 /** Status peserta — identitas tampil untuk guru (bukan secret). */
-function ParticipantList({
-  participants,
-  showAnswered = false,
-}: {
-  participants: TeacherParticipantInfo[];
-  showAnswered?: boolean;
-}) {
-  if (participants.length === 0) return null;
-  return (
-    <ul className="mb-plist" aria-label="Daftar peserta">
-      {participants.map((p) => (
-        <li key={p.playerId} className="mb-plist-item">
-          <span className="mb-plist-name">{p.displayName}</span>
-          {p.teamId ? <span className="mb-plist-team">{p.teamId}</span> : null}
-          {showAnswered ? (
-            <span className={`mb-plist-state ${p.hasAnsweredCurrentRound ? 'mb-ok' : 'mb-wait'}`}>
-              {p.hasAnsweredCurrentRound ? 'sudah menjawab' : 'sedang mengerjakan'}
-            </span>
-          ) : (
-            <span
-              className={`mb-plist-state ${p.connectionStatus === 'connected' ? 'mb-ok' : 'mb-off'}`}
-            >
-              {p.connectionStatus === 'connected' ? 'tersambung' : 'terputus'}
-            </span>
-          )}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 function UsersMini() {
   return (
     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
