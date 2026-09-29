@@ -905,7 +905,7 @@ export async function getAgentOperationsSnapshot(
     prisma.agentCommandDedupe.count({
       where: {
         createdAt: { gte: since },
-        resultCode: { notIn: ["OK", "CREATED", "STATUS", "HEALTH", "TASK", "APPROVED", "REJECTED", "RESUMED", "RETRIED", "CANCELLED"] },
+        resultCode: { notIn: ["OK", "CREATED", "ALREADY_EXISTS"] },
       },
     }),
     prisma.agentCommandDedupe.findFirst({
