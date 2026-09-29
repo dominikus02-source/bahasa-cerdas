@@ -23,7 +23,6 @@ import { useSessionView } from '@/lib/main-bersama/use-session-view';
 import { SessionHeader } from '@/components/main-bersama/shared/SessionHeader';
 import { PrimaryGameButton } from '@/components/main-bersama/shared/PrimaryGameButton';
 import { PinDisplay } from '@/components/main-bersama/shared/PinDisplay';
-import { ParticipantCount } from '@/components/main-bersama/shared/ParticipantCount';
 import { QuestionCard } from '@/components/main-bersama/shared/QuestionCard';
 import { TeamProgress } from '@/components/main-bersama/shared/TeamProgress';
 import { CityProgress } from '@/components/main-bersama/shared/CityProgress';
@@ -109,28 +108,6 @@ export function TeacherRoomClient({
     void run('open-lobby');
   }, [view, busy, run]);
 
-  const enterClassroom = useCallback(async () => {
-    // Panggil audio activation dalam gesture klik yang sama; context shared
-    // bertahan saat client navigation ke Layar Kelas.
-    void teacherSound.activate();
-    try {
-      if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen();
-      }
-    } catch {
-      // Fullscreen API bisa ditolak browser; navigasi tetap jalan.
-    }
-    router.push(`/guru/game/main-bersama/kelas/${sessionId}`);
-  }, [router, sessionId, teacherSound.activate]);
-
-  const openProjector = useCallback(() => {
-    window.open(
-      `/main-bersama/layar?sessionId=${sessionId}`,
-      '_blank',
-      'noopener',
-    );
-  }, [sessionId]);
-
   if (!view) {
     return (
       <main className="mb-room-loading">
@@ -170,15 +147,6 @@ export function TeacherRoomClient({
               onToggle={() => void teacherSound.toggle()}
               compact={teacherSound.unlocked}
             />
-            <button
-              type="button"
-              className="mb-secondary-btn"
-              onClick={openProjector}
-              disabled={busy}
-              title="Buka tampilan proyektor di tab/jendela kedua"
-            >
-              Layar Kedua
-            </button>
             {a.canPause ? (
               <button type="button" className="mb-secondary-btn" onClick={() => run('pause')} disabled={busy}>
                 Jeda
@@ -244,13 +212,9 @@ export function TeacherRoomClient({
                   <div className="mb-lobby-join-copy">
                     <strong>Gabung Main Bersama</strong>
                     <span>Masukkan PIN di atas atau scan QR.</span>
-                    <button
-                      type="button"
-                      className="mb-lobby-projector-link"
-                      onClick={openProjector}
-                    >
-                      Buka Layar Kedua ↗
-                    </button>
+                    <p className="mb-lobby-hint mb-lobby-hint-dark" role="note">
+                      <strong>2 layar saja:</strong> layar Guru untuk mengatur permainan, perangkat Murid untuk menjawab.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -289,18 +253,9 @@ export function TeacherRoomClient({
             <div className="mb-lobby-action-deck">
               <div className="mb-lobby-action-note">
                 <strong>{view.phase === 'preparing' ? 'Menyiapkan lobby…' : 'Kelas siap?'}</strong>
-                <span>Guru tetap menentukan kapan permainan dimulai.</span>
+                <span>Guru mengendalikan seluruh permainan dari layar ini.</span>
               </div>
               <div className="mb-lobby-action-buttons">
-                <button
-                  type="button"
-                  className="mb-lobby-display-btn"
-                  onClick={() => void enterClassroom()}
-                  disabled={busy}
-                >
-                  <span aria-hidden>▣</span>
-                  Tampilkan ke Kelas
-                </button>
                 {view.phase === 'preparing' ? (
                   <PrimaryGameButton disabled loading variant="light">
                     Menyiapkan Lobby…
