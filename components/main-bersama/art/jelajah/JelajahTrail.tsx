@@ -20,6 +20,18 @@ const START_X = 150;
 const END_X = 1050;
 const SPAN_X = END_X - START_X;
 
+const JELAJAH_BACKGROUNDS = [
+  "https://raw.githubusercontent.com/dominikus02-source/bahasa-cerdas/2fff163d2e776aadb8565c88e47b5ce60d86e559/public/main-bersama/jelajah/backgrounds/jk-1.png",
+  "https://raw.githubusercontent.com/dominikus02-source/bahasa-cerdas/2fff163d2e776aadb8565c88e47b5ce60d86e559/public/main-bersama/jelajah/backgrounds/jk-2.png",
+  "https://raw.githubusercontent.com/dominikus02-source/bahasa-cerdas/2fff163d2e776aadb8565c88e47b5ce60d86e559/public/main-bersama/jelajah/backgrounds/jk-3.png",
+  "https://raw.githubusercontent.com/dominikus02-source/bahasa-cerdas/2fff163d2e776aadb8565c88e47b5ce60d86e559/public/main-bersama/jelajah/backgrounds/jk-4.png",
+  "https://raw.githubusercontent.com/dominikus02-source/bahasa-cerdas/2fff163d2e776aadb8565c88e47b5ce60d86e559/public/main-bersama/jelajah/backgrounds/jk-5.png",
+  "https://raw.githubusercontent.com/dominikus02-source/bahasa-cerdas/2fff163d2e776aadb8565c88e47b5ce60d86e559/public/main-bersama/jelajah/backgrounds/jk-6.png",
+  "https://raw.githubusercontent.com/dominikus02-source/bahasa-cerdas/2fff163d2e776aadb8565c88e47b5ce60d86e559/public/main-bersama/jelajah/backgrounds/jk-7.png",
+] as const;
+
+const JELAJAH_SCENE_WIDTH = 1200;
+
 const STARS: Array<[number, number, number, number]> = [
   [58, 48, 1.4, .2], [105, 92, 1.1, 1.1], [168, 38, 1.7, 2.4],
   [235, 84, 1.2, 3.8], [302, 47, 1.4, 1.9], [366, 98, 1.1, 4.2],
@@ -266,6 +278,17 @@ export function JelajahTrail({
       </defs>
 
       <rect width="1200" height="600" rx="28" fill={`url(#${id("sky")})`} />
+
+      <clipPath id={id("worldClip")}>
+        <rect x="0" y="0" width="1200" height="600" rx="28" />
+      </clipPath>
+      <g clipPath={`url(#${id("worldClip")})`} aria-hidden="true">
+        <g transform={`translate(-${(sceneProgress / 100) * (JELAJAH_BACKGROUNDS.length - 1) * JELAJAH_SCENE_WIDTH} 0)`}>
+          {JELAJAH_BACKGROUNDS.map((src, index) => (
+            <image key={src} href={src} x={index * JELAJAH_SCENE_WIDTH} y="0" width={JELAJAH_SCENE_WIDTH} height="600" preserveAspectRatio="xMidYMid slice" />
+          ))}
+        </g>
+      </g>
       {!compact ? (
         <path
           className="mb-jelajah-aurora"
