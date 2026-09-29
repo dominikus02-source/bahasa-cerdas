@@ -13,6 +13,7 @@ import { getWeeklyChallenge } from "@/lib/weekly-challenge"
 import UserAvatar from "@/components/arena/UserAvatar"
 import UserName from "@/components/arena/UserName"
 import ShareKaryaButton from "@/components/arena/ShareKaryaButton"
+import SafeMediaImage from "@/components/shared/safe-media-image"
 
 export const typeColors: Record<string, { label: string; bg: string; text: string; border: string }> = {
   PUISI: { label: "Puisi", bg: "bg-fuchsia-100 dark:bg-fuchsia-500/15", text: "text-fuchsia-700 dark:text-fuchsia-300", border: "border-fuchsia-200 dark:border-fuchsia-500/20" },
@@ -37,6 +38,8 @@ interface KaryaItem {
   title: string
   content: string
   excerpt: string
+  coverImage?: string | null
+  photos?: string[] | null
   likesCount: number
   viewsCount: number
   createdAt: string
@@ -364,6 +367,7 @@ function FeedContent({
     const likeCount = likeCounts[k.id] ?? k._count?.likes ?? k.likesCount ?? 0
     const isLiked = likedSet.has(k.id)
     const isDeleting = deletingId === k.id
+    const primaryMedia = k.coverImage || k.photos?.find((url) => typeof url === "string" && url.trim().length > 0) || null
     if (stage) {
       return (
         <article key={k.id} className="group flex flex-col bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 overflow-hidden hover:border-violet-200 dark:hover:border-violet-500/30 hover:shadow-lg hover:shadow-violet-500/[0.06] hover:-translate-y-0.5 transition-all duration-200">
@@ -394,6 +398,19 @@ function FeedContent({
               <Clock size={11} /> {waktuLalu(k.createdAt)}
             </span>
           </div>
+
+          {primaryMedia && (
+            <Link href={`${detailBase}/${k.id}`} className="block px-4 pt-1">
+              <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-gray-100 dark:bg-slate-800">
+                <SafeMediaImage
+                  src={primaryMedia}
+                  alt={`Foto untuk ${k.title}`}
+                  fallbackType="default"
+                  containerClassName="h-full w-full"
+                />
+              </div>
+            </Link>
+          )}
 
           <Link href={`${detailBase}/${k.id}`} className="flex-1 block px-4 py-2">
             <div className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold tracking-[0.14em] uppercase ${tc.bg} ${tc.text} mb-2`}>
@@ -456,6 +473,19 @@ function FeedContent({
             <Clock size={12} /> {waktuLalu(k.createdAt)}
           </div>
         </div>
+
+        {primaryMedia && (
+          <Link href={`${detailBase}/${k.id}`} className="block px-5 pt-1">
+            <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-gray-100 dark:bg-slate-800">
+              <SafeMediaImage
+                src={primaryMedia}
+                alt={`Foto untuk ${k.title}`}
+                fallbackType="default"
+                containerClassName="h-full w-full"
+              />
+            </div>
+          </Link>
+        )}
 
         {/* Content */}
         <Link href={`${detailBase}/${k.id}`} className="block px-5 py-2">

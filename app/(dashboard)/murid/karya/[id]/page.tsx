@@ -19,7 +19,7 @@ interface CosmeticFields {
 
 interface KaryaDetail {
   id: string; title: string; content: string; excerpt?: string;
-  type: string; coverImage?: string; photos?: string[]; likesCount: number; viewsCount: number;
+  type: string; coverImage?: string | null; photos?: string[] | null; likesCount: number; viewsCount: number;
   createdAt: string;
   user: { id: string; fullName: string; displayName?: string; avatar?: string; profile?: { school?: string; city?: string }; rank?: string; isFounder?: boolean; isPremium?: boolean } & CosmeticFields;
   comments: { id: string; content: string; createdAt: string; parentId: string | null; user: { id: string; fullName: string; displayName?: string; avatar: string | null; rank?: string; isFounder?: boolean; isPremium?: boolean } & CosmeticFields }[];
@@ -132,30 +132,53 @@ export default function DetailKaryaPage() {
           <span>{TYPE_LABELS[karya.type]}</span>
       </div>
 
-      {karya.coverImage && (
-        <div className="relative w-full h-64 rounded-xl overflow-hidden bg-gradient-to-br from-violet-100 to-violet-200">
-          <SafeMediaImage
-            src={karya.coverImage}
-            alt=""
-            fallbackType="default"
-            containerClassName="w-full h-full"
-          />
-        </div>
-      )}
+      {(() => {
+        const media = Array.from(
+          new Set(
+            [karya.coverImage, ...(karya.photos || [])]
+              .filter((url): url is string => typeof url === "string" && url.trim().length > 0)
+          )
+        );
+        if (media.length === 0) return null;
+
+        const [primary, ...supporting] = media;
+        return (
+          <div className="mb-6 space-y-2">
+            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-gradient-to-br from-violet-100 to-violet-200 shadow-sm">
+              <SafeMediaImage
+                src={primary}
+                alt={`Foto utama untuk ${karya.title}`}
+                fallbackType="default"
+                containerClassName="h-full w-full"
+              />
+            </div>
+
+            {supporting.length > 0 && (
+              <div className={`grid gap-2 ${supporting.length === 1 ? "grid-cols-1" : "grid-cols-2 sm:grid-cols-3"}`}>
+                {supporting.map((url, index) => (
+                  <div
+                    key={url}
+                    className="relative aspect-[4/3] overflow-hidden rounded-xl border border-gray-100 bg-gray-50 dark:border-slate-800 dark:bg-slate-900"
+                  >
+                    <SafeMediaImage
+                      src={url}
+                      alt={`Foto pendukung ${index + 1} untuk ${karya.title}`}
+                      fallbackType="default"
+                      containerClassName="h-full w-full"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-slate-100 mb-6 leading-snug">{karya.title}</h1>
 
       <div className="prose prose-gray max-w-none mb-8 whitespace-pre-wrap leading-relaxed text-gray-700 dark:text-slate-300">
         {karya.content}
       </div>
-
-      {karya.photos && karya.photos.length > 0 && (
-        <div className="grid grid-cols-2 gap-2 mb-8">
-          {karya.photos.map((url) => (
-            <img key={url} src={url} alt={karya.title} className="w-full aspect-square rounded-xl border border-gray-100 dark:border-slate-800 object-cover" />
-          ))}
-        </div>
-      )}
 
       <div className="flex items-center gap-4 mb-8 pb-8 border-b border-gray-100 dark:border-slate-800">
         <button onClick={handleLike} className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${

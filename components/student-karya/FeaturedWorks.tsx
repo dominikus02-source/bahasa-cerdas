@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Heart, MessageCircle, Eye, Star } from "lucide-react";
 import { typeColors } from "@/components/student-karya/KaryaFeed";
+import SafeMediaImage from "@/components/shared/safe-media-image";
 
 interface FeaturedItem {
   id: string;
@@ -11,6 +12,8 @@ interface FeaturedItem {
   title: string;
   excerpt?: string | null;
   content?: string | null;
+  coverImage?: string | null;
+  photos?: string[] | null;
   likesCount: number;
   viewsCount: number;
   user: {
@@ -74,11 +77,27 @@ export default function FeaturedWorks() {
         <div className="grid gap-4 md:grid-cols-2">
           {items.map((k) => {
             const tc = typeColors[k.type] || typeColors.PUISI;
+            const primaryMedia =
+              k.coverImage ||
+              k.photos?.find((url) => typeof url === "string" && url.trim().length > 0) ||
+              null;
             return (
               <article
                 key={k.id}
                 className="group flex flex-col overflow-hidden rounded-2xl border border-violet-100 bg-gradient-to-br from-white to-violet-50/40 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-violet-500/[0.08] dark:border-violet-500/20 dark:from-slate-900 dark:to-violet-950/30"
               >
+                {primaryMedia && (
+                  <Link href={`/murid/karya/${k.id}`} className="block px-4 pt-4">
+                    <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-violet-50 dark:bg-slate-800">
+                      <SafeMediaImage
+                        src={primaryMedia}
+                        alt={`Foto untuk ${k.title}`}
+                        fallbackType="default"
+                        containerClassName="h-full w-full"
+                      />
+                    </div>
+                  </Link>
+                )}
                 <Link href={`/murid/karya/${k.id}`} className="flex-1 p-5 pb-3">
                   <div className="mb-2.5 flex items-center gap-2">
                     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold tracking-[0.14em] uppercase ${tc.bg} ${tc.text}`}>
