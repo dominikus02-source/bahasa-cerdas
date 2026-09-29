@@ -275,67 +275,77 @@ function allowedActionsFor(phase: SessionPhase, totalRounds: number, currentRoun
   };
 }
 
-/** Skor Cahaya Kata: benar selalu bernilai, tetapi jawaban lebih cepat
- * memberi bonus lebih besar. Semua dihitung dari waktu server agar tidak
- * bergantung pada jam perangkat siswa.
- */
-function cahayaPointsForAnswer(answer: { isCorrect: boolean; submittedAt: Date }, round: { openedAt?: Date; closesAt?: Date }): number {
-  if (!answer.isCorrect) return 0;
-  const openedAt = round.openedAt?.getTime();
-  const closesAt = round.closesAt?.getTime();
-  if (openedAt === undefined || closesAt === undefined || closesAt <= openedAt) return 100;
-  const elapsed = Math.max(0, Math.min(answer.submittedAt.getTime() - openedAt, closesAt - openedAt));
-  const duration = closesAt - openedAt;
-  const speedBonus = Math.max(0, Math.round(100 * (1 - elapsed / duration)));
-  return 100 + speedBonus;
-}
-
-/** Daftar peserta + Cahaya Kata untuk guru — identitas tampil, tanpa credential. */
+/** Daftar peserta untuk guru — identitas + kemajuan pribadi, tanpa credential. */
 function teacherParticipants(engine: SessionEngine): TeacherParticipantInfo[] {
   const activeRound = engine.activeRound();
   const answers = activeRound ? engine.state.answersByRound.get(activeRound.id) : undefined;
-  const scores = new Map<string, number>();
+
+  const stats = new Map<string, { correctAnswers: number; eligibleRounds: number }>();
+  for (const player of engine.state.players.values()) {
+    stats.set(player.id, { correctAnswers: 0, eligibleRounds: 0 });
+  }
 
   for (const round of engine.state.rounds) {
+    for (const playerId of round.eligiblePlayerIds) {
+      const entry = stats.get(playerId);
+      if (entry) entry.eligibleRounds += 1;
+    }
     const roundAnswers = engine.state.answersByRound.get(round.id);
     if (!roundAnswers) continue;
     for (const answer of roundAnswers.values()) {
-      scores.set(
-        answer.playerId,
-        (scores.get(answer.playerId) ?? 0) + cahayaPointsForAnswer(answer, round),
-      );
+      const entry = stats.get(answer.playerId);
+      if (entry && answer.isCorrect) entry.correctAnswers += 1;
     }
   }
 
   const ranked = [...engine.state.players.values()]
-    .map((player) => ({ player, score: scores.get(player.id) ?? 0 }))
-    .sort((a, b) => b.score - a.score || a.player.displayName.localeCompare(b.player.displayName, 'id'));
+    .map((player) => {
+      const stat = stats.get(player.id) ?? { correctAnswers: 0, eligibleRounds: 0 };
+      const progressPercent =
+        stat.eligibleRounds > 0
+          ? Math.round((stat.correctAnswers / stat.eligibleRounds) * 100)
+          : 0;
+      return { player, ...stat, progressPercent };
+    })
+    .sort(
+      (a, b) =>
+        b.progressPercent - a.progressPercent ||
+        b.correctAnswers - a.correctAnswers ||
+        a.player.displayName.localeCompare(b.player.displayName, 'id'),
+    );
 
-  const rankByPlayerId = new Map(ranked.map((entry, index) => [entry.player.id, index + 1]));
-  const out: TeacherParticipantInfo[] = [];
+  const rankByPlayerId = new Map<string, number>();
+  let previousPercent: number | null = null;
+  let previousRank = 0;
+  ranked.forEach((entry, index) => {
+    const rank =
+      previousPercent !== null && entry.progressPercent === previousPercent
+        ? previousRank
+        : index + 1;
+    rankByPlayerId.set(entry.player.id, rank);
+    previousPercent = entry.progressPercent;
+    previousRank = rank;
+  });
 
-  for (const player of engine.state.players.values()) {
-    const own = activeRound ? answers?.get(player.id) : undefined;
-    out.push({
-      playerId: player.id,
-      displayName: player.displayName,
-      avatarUrl: player.avatarUrl ?? '/avatar/2.webp',
-      ...(player.teamId ? { teamId: player.teamId } : {}),
-      ...(player.userId ? { userId: player.userId } : {}),
-      connectionStatus: player.connected ? 'connected' : 'disconnected',
-      participationStatus: player.participationStatus,
-      joinedRoundIndex: player.eligibleFromRoundIndex,
-      hasAnsweredCurrentRound: answers?.has(player.id) ?? false,
-      cahayaPoints: scores.get(player.id) ?? 0,
-      currentRoundPoints: own && activeRound ? cahayaPointsForAnswer(own, activeRound) : 0,
-      ...(own && activeRound?.openedAt
-        ? { currentRoundResponseMs: Math.max(0, own.submittedAt.getTime() - activeRound.openedAt.getTime()) }
-        : {}),
-      cahayaRank: rankByPlayerId.get(player.id) ?? ranked.length + 1,
+  return ranked.map((entry) => {
+    const own = activeRound ? answers?.get(entry.player.id) : undefined;
+    return {
+      playerId: entry.player.id,
+      displayName: entry.player.displayName,
+      avatarUrl: entry.player.avatarUrl ?? '/avatar/2.webp',
+      ...(entry.player.teamId ? { teamId: entry.player.teamId } : {}),
+      ...(entry.player.userId ? { userId: entry.player.userId } : {}),
+      connectionStatus: entry.player.connected ? 'connected' : 'disconnected',
+      participationStatus: entry.player.participationStatus,
+      joinedRoundIndex: entry.player.eligibleFromRoundIndex,
+      hasAnsweredCurrentRound: answers?.has(entry.player.id) ?? false,
+      correctAnswers: entry.correctAnswers,
+      eligibleRounds: entry.eligibleRounds,
+      progressPercent: entry.progressPercent,
+      progressRank: rankByPlayerId.get(entry.player.id) ?? ranked.length + 1,
       ...(own ? { lastAnswerIsCorrect: own.isCorrect } : {}),
-    });
-  }
-  return out;
+    };
+  });
 }
 
 export function buildTeacherView(
