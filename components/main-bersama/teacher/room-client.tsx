@@ -590,7 +590,8 @@ export function TeacherRoomClient({
                   ))}
                 {view.participants.length === 0 ? <p className="mb-teacher-empty">Belum ada hasil peserta.</p> : null}
               </div>
-            </div> : null}
+            </div>
+            ) : null}
             <div className="mb-final-city-card">
               <div className="mb-final-section-head">
                 <div>
