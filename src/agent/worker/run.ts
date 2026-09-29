@@ -25,6 +25,7 @@ import { makeP4Registry } from "../tools";
 import { parseWorkerConfig } from "./config";
 import { createWorkerLogger } from "./logger";
 import { Worker, recordExecution, recordEvidence } from "./loop";
+import { formatAgentWorkerVersion } from "../runtime-protocol";
 import path from "node:path";
 
 function repoRoot(): string {
@@ -76,7 +77,8 @@ async function main(): Promise<void> {
   // P7: build/version identifier for the registry row — informational,
   // never an identity. In the worker image this is a build arg; locally it
   // defaults to the git short SHA when available (best-effort, bounded).
-  const version = process.env.BC_AGENT_VERSION ?? `run-ts-${new Date().toISOString().slice(0, 10)}`;
+  const buildVersion = process.env.BC_AGENT_VERSION ?? `run-ts-${new Date().toISOString().slice(0, 10)}`;
+  const version = formatAgentWorkerVersion(buildVersion);
 
   // 2. Dependencies.
   const prisma = new PrismaClient({ log: ["error"] });
