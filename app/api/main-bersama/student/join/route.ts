@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
   const blocked = mainBersamaMutationBlocked('student/join');
   if (blocked) return blocked;
 
-  let body: { pin?: unknown; displayName?: unknown };
+  let body: { pin?: unknown; displayName?: unknown; avatarId?: unknown };
   try {
     body = await req.json();
   } catch {
@@ -35,6 +35,7 @@ export async function POST(req: NextRequest) {
   }
 
   const pin = typeof body.pin === 'string' ? body.pin : '';
+  const avatarId = typeof body.avatarId === 'string' ? body.avatarId : undefined;
   if (!/^\d{6}$/.test(pin)) {
     return errorResponse('SESSION_NOT_FOUND');
   }
@@ -54,6 +55,7 @@ export async function POST(req: NextRequest) {
     : undefined;
   const result = await joinSession(deps, {
     pin,
+    avatarId,
     ...(body.displayName !== undefined ? { displayName: body.displayName as string } : {}),
     ...(user
       ? {
