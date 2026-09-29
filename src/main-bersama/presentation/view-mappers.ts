@@ -320,6 +320,26 @@ export function buildTeacherView(
       }
     : { submittedCount: 0, eligibleCount: 0, optionCounts: null };
 
+  const roundAnalytics = engine.state.rounds.map((round) => {
+    const answers = engine.state.answersByRound.get(round.id);
+    const submittedCount = answers?.size ?? 0;
+    const eligibleCount = round.eligiblePlayerIds.length;
+    let correctCount = 0;
+    if (answers) {
+      for (const answer of answers.values()) {
+        if (answer.isCorrect) correctCount += 1;
+      }
+    }
+    return {
+      roundIndex: round.index,
+      prompt: round.question.prompt,
+      submittedCount,
+      eligibleCount,
+      correctCount,
+      accuracyPercent: submittedCount > 0 ? Math.round((correctCount / submittedCount) * 100) : 0,
+    };
+  });
+
   return {
     role: 'teacher',
     sessionId: session.id,
@@ -336,6 +356,7 @@ export function buildTeacherView(
     teams: teamsPublic(),
     participants: teacherParticipants(engine),
     answerSummary,
+    roundAnalytics,
     gameState:
       jelajah
         ? {
