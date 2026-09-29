@@ -159,6 +159,14 @@ export async function POST(req: Request) {
       }
     }
 
+    // Auth provisioning must complete before the application User row is written.
+    if (!authUserId) {
+      return NextResponse.json(
+        { error: "Akun Auth belum berhasil dibuat. Silakan coba lagi." },
+        { status: 500 }
+      );
+    }
+
     // Keep Supabase Auth and the application's User table in sync. If the
     // database write fails, remove the newly-created/recovered Auth user so
     // the next registration attempt is not blocked by an orphan account.
