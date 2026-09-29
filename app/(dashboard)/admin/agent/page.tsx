@@ -13,6 +13,7 @@ import {
 } from "@/src/agent/persistence/queries";
 import { loadTelegramDeliveryConfig } from "@/src/agent/telegram/config";
 import { getTelegramWebhookInfo } from "@/src/agent/telegram/transport";
+import { supportsAgentRuntimeProtocol } from "@/src/agent/runtime-protocol";
 
 import { AgentTaskTable } from "./_components/task-table";
 import { WorkerHealthCard } from "./_components/worker-health-card";
@@ -100,6 +101,7 @@ export default async function AgentControlCenterPage({
     webhook.status === "REGISTERED" &&
     webhook.routeMatches === true &&
     !webhook.lastErrorMessage;
+  const p9WorkerReady = supportsAgentRuntimeProtocol(health.registry?.version);
 
   return (
     <div className="space-y-6">
@@ -146,7 +148,11 @@ export default async function AgentControlCenterPage({
         </div>
       </div>
 
-      <AgentCommandBox action={createAgentTaskAction} />
+      <AgentCommandBox
+        action={createAgentTaskAction}
+        workerReady={p9WorkerReady}
+        workerVersion={health.registry?.version ?? null}
+      />
 
       <section aria-label="Ringkasan operasi 24 jam" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
         <StatCard label="Task dibuat · 24j" value={operations.created} detail={`${operations.byChannel.WEB ?? 0} web · ${operations.byChannel.TELEGRAM ?? 0} Telegram`} tone="sky" />
