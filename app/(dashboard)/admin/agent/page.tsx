@@ -16,6 +16,8 @@ import { getTelegramWebhookInfo } from "@/src/agent/telegram/transport";
 
 import { AgentTaskTable } from "./_components/task-table";
 import { WorkerHealthCard } from "./_components/worker-health-card";
+import { AgentCommandBox } from "./_components/command-box";
+import { createAgentTaskAction } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -143,6 +145,8 @@ export default async function AgentControlCenterPage({
           </Link>
         </div>
       </div>
+
+      <AgentCommandBox action={createAgentTaskAction} />
 
       <section aria-label="Ringkasan operasi 24 jam" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
         <StatCard label="Task dibuat · 24j" value={operations.created} detail={`${operations.byChannel.WEB ?? 0} web · ${operations.byChannel.TELEGRAM ?? 0} Telegram`} tone="sky" />
