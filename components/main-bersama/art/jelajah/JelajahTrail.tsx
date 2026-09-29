@@ -20,6 +20,18 @@ const START_X = 150;
 const END_X = 1050;
 const SPAN_X = END_X - START_X;
 
+const JELAJAH_BACKGROUNDS = [
+  "/main-bersama/jelajah/backgrounds/jk-1.png",
+  "/main-bersama/jelajah/backgrounds/jk-2.png",
+  "/main-bersama/jelajah/backgrounds/jk-3.png",
+  "/main-bersama/jelajah/backgrounds/jk-4.png",
+  "/main-bersama/jelajah/backgrounds/jk-5.png",
+  "/main-bersama/jelajah/backgrounds/jk-6.png",
+  "/main-bersama/jelajah/backgrounds/jk-7.png",
+] as const;
+
+const JELAJAH_SCENE_WIDTH = 1200;
+
 const STARS: Array<[number, number, number, number]> = [
   [58, 48, 1.4, .2], [105, 92, 1.1, 1.1], [168, 38, 1.7, 2.4],
   [235, 84, 1.2, 3.8], [302, 47, 1.4, 1.9], [366, 98, 1.1, 4.2],
@@ -265,69 +277,33 @@ export function JelajahTrail({
         </radialGradient>
       </defs>
 
-      <rect width="1200" height="600" rx="28" fill={`url(#${id("sky")})`} />
-      {!compact ? (
-        <path
-          className="mb-jelajah-aurora"
-          d="M-70 156C162 40 372 153 580 72 774-2 984 112 1270 24V-40H-70Z"
-          fill={`url(#${id("aurora")})`}
-        />
-      ) : null}
+      <clipPath id={id("worldClip")}>
+        <rect x="0" y="0" width="1200" height="600" rx="28" />
+      </clipPath>
 
-      <g aria-hidden>
-        {STARS.slice(0, compact ? 12 : STARS.length).map(([x, y, r, delay], i) => (
-          <circle
-            key={i}
-            className="mb-jelajah-star"
-            cx={x}
-            cy={y}
-            r={r}
-            fill="#dfeaf4"
-            style={{ animationDelay: `-${delay}s` }}
-          />
-        ))}
+      {/* Tujuh latar perjalanan digeser mengikuti kemajuan regu. */}
+      <g clipPath={`url(#${id("worldClip")})`} aria-hidden="true">
+        <g
+          style={{
+            transform: `translateX(-${(sceneProgress / 100) * (JELAJAH_BACKGROUNDS.length - 1) * JELAJAH_SCENE_WIDTH}px)`,
+            transition: "transform 900ms cubic-bezier(.22,.9,.3,1)",
+          }}
+        >
+          {JELAJAH_BACKGROUNDS.map((src, index) => (
+            <image
+              key={src}
+              href={src}
+              x={index * JELAJAH_SCENE_WIDTH}
+              y="0"
+              width={JELAJAH_SCENE_WIDTH}
+              height="600"
+              preserveAspectRatio="xMidYMid slice"
+            />
+          ))}
+        </g>
       </g>
 
-      <circle cx="1090" cy="76" r="82" fill={`url(#${id("moon")})`} />
-      <circle cx="1090" cy="76" r="30" fill="#eee5c7" />
-      <circle cx="1080" cy="67" r="5" fill="#d5c9a7" opacity=".65" />
-
-      {/* layered background */}
-      <path d="M-30 318 132 178 278 272 438 147 617 268 788 154 960 252 1230 132V600H-30Z" fill="#0c2034" />
-      <path d="M-30 368 142 280 330 350 524 250 710 338 900 258 1080 326 1230 282V600H-30Z" fill="#113148" />
-      <path d="M0 425C180 376 360 430 548 390 734 350 960 400 1200 346V600H0Z" fill="#123944" />
-
-      {/* progressive scenery */}
-      <g className="mb-jelajah-v4-forest" data-active={sceneProgress >= 25 ? "true" : "false"}>
-        {[190, 226, 266, 312, 356, 398].map((x, i) => (
-          <Pine key={x} x={x} y={355 - (i % 2) * 18} scale={.78 + (i % 3) * .1} />
-        ))}
-        <Lantern x={322} y={336} active={sceneProgress >= 25} />
-      </g>
-
-      <g aria-hidden>
-        <Boulder x={760} y={292} scale={.7} />
-        <Boulder x={815} y={258} scale={.5} />
-        <Boulder x={885} y={230} scale={.58} />
-      </g>
-
-      {/* river crosses the expedition road */}
-      <path
-        d="M550 134C575 220 535 302 584 374 621 428 603 500 638 610H772C726 510 758 444 714 369 671 296 704 217 665 132Z"
-        fill={`url(#${id("river")})`}
-        opacity=".88"
-      />
-      <path
-        className="mb-jelajah-water-shine"
-        d="M612 146C629 220 601 292 642 362 677 424 660 485 689 574"
-        fill="none"
-        stroke="#83bfd3"
-        strokeWidth="4"
-        strokeLinecap="round"
-        opacity=".28"
-      />
-
-      {/* one shared road = journey first, progress bars second */}
+      {/* Jalur permainan tetap berada di atas latar. */}
       <path d={roadPath} fill="none" stroke="#061724" strokeWidth="112" strokeLinecap="round" strokeLinejoin="round" opacity=".44" />
       <path d={roadPath} fill="none" stroke="#2b3d35" strokeWidth="94" strokeLinecap="round" strokeLinejoin="round" opacity=".68" />
       <path d={roadPath} fill="none" stroke={`url(#${id("road")})`} strokeWidth="78" strokeLinecap="round" strokeLinejoin="round" />
