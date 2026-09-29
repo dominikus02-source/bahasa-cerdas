@@ -197,7 +197,6 @@ function JoinFlow() {
             onChange={(e) => setName(e.target.value)}
             placeholder="Nama panggilan"
             autoFocus
-            disabled={step === 'joining'}
           />
           {error ? <p role="alert" className="mb-join-err">{error}</p> : null}
           <PrimaryGameButton type="submit" disabled={name.trim().length < 2}>
