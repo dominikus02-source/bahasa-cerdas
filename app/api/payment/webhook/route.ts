@@ -247,12 +247,26 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, idempotent: true, note: "already_success_ignored" });
     }
 
-    // ── CLAIM-FIRST IDEMPOTENCY ──
-    // Webhook Midtrans bisa tiba >1× / bersamaan. Klaim status SUCCESS secara
-    // ATOMIK di dalam transaksi: hanya request yang menang (count === 1) yang
-    // memproses efek finansial & entitlement. Duplikat/concurrent → count 0 →
-    // keluar idempotent. Bila proses gagal setelah klaim, seluruh transaksi
-    // rollback (termasuk klaim) sehingga retry Midtrans memproses ulang utuh.
+    // ── NON-SUCCESS STATUS ─────────────────────────────────────────
+    // IMPORTANT: pending/deny/expire/cancel must NEVER claim SUCCESS.
+    // A previous bug wrote SUCCESS for a pending notification, which caused
+    // the later settlement notification to be treated as duplicate and
+    // skipped entitlement activation.
+    if (!activatePremium) {
+      await db.transaksi.updateMany({
+        where: { id: transaksi.id, status: { not: "SUCCESS" } },
+        data: {
+          status: newStatus,
+          ...(body.transaction_id ? { midtransId: body.transaction_id } : {}),
+        },
+      });
+      return NextResponse.json({ ok: true, status: newStatus });
+    }
+
+    // ── CLAIM-FIRST IDEMPOTENCY FOR SUCCESS ONLY ──────────────────
+    // Only settlement/capture may atomically claim SUCCESS. The claim and
+    // entitlement update are in the SAME DB transaction so failure rolls
+    // both back and a Midtrans retry remains safe.
     try {
       const processed = await db.$transaction(async (tx) => {
         const claim = await tx.transaksi.updateMany({
@@ -262,12 +276,6 @@ export async function POST(req: NextRequest) {
         if (claim.count === 0) {
           console.log("[Webhook] duplicate — already processed", { order_id });
           return false;
-        }
-
-        if (!activatePremium) {
-          // Status non-sukses (deny/expire/cancel) — hanya klaim status final.
-          // (downgrade guard di atas menjaga SUCCESS tidak tertimpa)
-          return true;
         }
 
         // Handle both GURU PREMIUM_UPGRADE and MURID MURID_PREMIUM
