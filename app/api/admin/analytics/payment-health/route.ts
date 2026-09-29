@@ -27,50 +27,91 @@ export async function GET() {
 
     const now = new Date();
 
-    // ── Pattern 1: SUCCESS payment but user has no active premium ──
-    // Covers: isPremium=false, premiumUntil=null, premiumUntil<now
-    const mismatchedUsers = await db.user.findMany({
+    // ── Pattern 1: SUCCESS payment whose purchased entitlement window
+    // should still be active, but the user entitlement does not cover it.
+    //
+    // Do NOT flag historical payments that legitimately expired. This avoids
+    // false positives such as an August monthly payment being shown as a
+    // September entitlement incident.
+    const premiumTransactions = await db.transaksi.findMany({
       where: {
-        isFounder: false,
-        transaksi: {
-          some: {
-            type: { in: ["MURID_PREMIUM", "PREMIUM_UPGRADE"] },
-            status: "SUCCESS",
-          },
-        },
-        OR: [
-          { isPremium: false },
-          { premiumUntil: null },
-          { premiumUntil: { lt: now } },
-        ],
+        type: { in: ["MURID_PREMIUM", "PREMIUM_UPGRADE"] },
+        status: "SUCCESS",
+        user: { isFounder: false },
       },
       select: {
         id: true,
-        fullName: true,
-        email: true,
-        role: true,
-        isPremium: true,
-        premiumUntil: true,
+        type: true,
+        amount: true,
+        reference: true,
+        orderId: true,
+        midtransId: true,
+        metadata: true,
         createdAt: true,
-        transaksi: {
-          where: {
-            type: { in: ["MURID_PREMIUM", "PREMIUM_UPGRADE"] },
-            status: "SUCCESS",
-          },
-          orderBy: { createdAt: "desc" },
+        userId: true,
+        user: {
           select: {
             id: true,
-            type: true,
-            amount: true,
-            reference: true,
-            orderId: true,
-            midtransId: true,
+            fullName: true,
+            email: true,
+            role: true,
+            isPremium: true,
+            premiumUntil: true,
             createdAt: true,
           },
         },
       },
-      orderBy: { updatedAt: "desc" },
+      orderBy: { createdAt: "desc" },
     });
+
+    const expectedEnd = (t: (typeof premiumTransactions)[number]) => {
+      const meta = (t.metadata || {}) as Record<string, unknown>;
+      const durationDays =
+        typeof meta.durationDays === "number"
+          ? meta.durationDays
+          : t.reference?.includes("YEARLY")
+            ? 365
+            : 30;
+      return new Date(t.createdAt.getTime() + durationDays * 24 * 60 * 60 * 1000);
+    };
+
+    const affectedTransactions = premiumTransactions.filter((t) => {
+      const shouldBeActiveUntil = expectedEnd(t);
+      if (shouldBeActiveUntil <= now) return false;
+      if (!t.user.isPremium || !t.user.premiumUntil) return true;
+      return t.user.premiumUntil < shouldBeActiveUntil;
+    });
+
+    const affectedMap = new Map<string, {
+      id: string;
+      fullName: string;
+      email: string;
+      role: string;
+      isPremium: boolean;
+      premiumUntil: Date | null;
+      createdAt: Date;
+      transaksi: typeof affectedTransactions;
+    }>();
+
+    for (const tx of affectedTransactions) {
+      const existing = affectedMap.get(tx.userId);
+      if (existing) {
+        existing.transaksi.push(tx);
+      } else {
+        affectedMap.set(tx.userId, {
+          id: tx.user.id,
+          fullName: tx.user.fullName,
+          email: tx.user.email,
+          role: tx.user.role,
+          isPremium: tx.user.isPremium,
+          premiumUntil: tx.user.premiumUntil,
+          createdAt: tx.user.createdAt,
+          transaksi: [tx],
+        });
+      }
+    }
+
+    const mismatchedUsers = Array.from(affectedMap.values());
 
     // ── Pattern 2: Active premium but premiumUntil is suspiciously short ──
     // (e.g., <7 days from now when they just paid — possible partial activation)
