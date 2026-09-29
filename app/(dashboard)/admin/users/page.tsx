@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Mail, Shield, Crown, Search, Users, Filter, ChevronDown, Check, X, Loader2, ToggleLeft, ToggleRight } from "lucide-react";
+import { Crown, Search, Users, X, Loader2, ToggleRight } from "lucide-react";
+import { UserAnalytics, type UserAnalyticsData } from "./_components/user-analytics";
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<any[]>([]);
@@ -14,6 +15,8 @@ export default function AdminUsersPage() {
   const [pages, setPages] = useState(1);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [acting, setActing] = useState(false);
+  const [analytics, setAnalytics] = useState<UserAnalyticsData | null>(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(true);
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
@@ -34,7 +37,22 @@ export default function AdminUsersPage() {
     finally { setLoading(false); }
   }, [search, roleFilter, statusFilter, page]);
 
+  const fetchAnalytics = useCallback(async () => {
+    setAnalyticsLoading(true);
+    try {
+      const res = await fetch("/api/admin/users/analytics", { cache: "no-store" });
+      if (!res.ok) throw new Error("analytics_failed");
+      const data = await res.json();
+      setAnalytics(data);
+    } catch {
+      setAnalytics(null);
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  }, []);
+
   useEffect(() => { fetchUsers(); }, [fetchUsers]);
+  useEffect(() => { fetchAnalytics(); }, [fetchAnalytics]);
 
   const handleBulkAction = async (action: string) => {
     if (selected.size === 0) return;
@@ -46,7 +64,7 @@ export default function AdminUsersPage() {
         body: JSON.stringify({ userIds: Array.from(selected), action }),
       });
       setSelected(new Set());
-      await fetchUsers();
+      await Promise.all([fetchUsers(), fetchAnalytics()]);
     } catch {}
     finally { setActing(false); }
   };
@@ -75,9 +93,14 @@ export default function AdminUsersPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">Pengguna</h1>
-          <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">{total} total pengguna</p>
+          <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">
+            {(analytics?.summary.totalUsers ?? total).toLocaleString("id-ID")} total pengguna
+            {(search || roleFilter || statusFilter) ? ` · ${total.toLocaleString("id-ID")} hasil filter` : ""}
+          </p>
         </div>
       </div>
+
+      <UserAnalytics data={analytics} loading={analyticsLoading} />
 
       <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700">
         <div className="p-4 border-b border-slate-100 dark:border-slate-800">
