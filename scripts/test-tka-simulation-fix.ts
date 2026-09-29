@@ -97,6 +97,19 @@ ok("route: retry memakai updateMany predikat status (konsumsi sekali)", /reset\.
 const replayWindow = route.slice(route.indexOf("mode: \"replay\""), route.indexOf("mode: \"replay\"") + 200);
 ok("route: replay tidak mengandung consumeUsage", !replayWindow.includes("consumeUsageGuarded"));
 ok("route: FEATURE_LIMIT_REACHED 403 + upgradeAvailable", route.includes('code: "FEATURE_LIMIT_REACHED"') && route.includes("upgradeAvailable: true") && route.includes('feature: "SIMULATION"'));
+ok("route: FEATURE_LIMIT_REACHED punya error + message", route.includes('error: "Kuota simulasi bulanan telah habis"') && route.includes("Anda telah menggunakan"));
+
+// 1.4b Client harus membedakan kuota habis dari soal kosong.
+const runPage = read("app/(dashboard)/kompetisi/[paketId]/page.tsx");
+const quotaIdx = runPage.indexOf('result.code === "FEATURE_LIMIT_REACHED"');
+const hasQuestionsIdx = runPage.indexOf("const hasQuestions");
+ok("client: cek FEATURE_LIMIT_REACHED sebelum questions", quotaIdx > -1 && hasQuestionsIdx > quotaIdx);
+ok("client: non-2xx tidak dianggap sukses", runPage.includes("!res.ok || result.error"));
+ok("client: quota punya layar khusus", runPage.includes("Kuota simulasi bulan ini sudah digunakan"));
+const quotaUiStart = runPage.indexOf("if (limitError)");
+const genericErrorStart = runPage.indexOf("if (error)", quotaUiStart + 1);
+const quotaUi = runPage.slice(quotaUiStart, genericErrorStart);
+ok("client: quota tidak menawarkan Coba Lagi", quotaUi.includes("Kembali") && !quotaUi.includes("Coba Lagi"));
 
 // 1.5 Session / attempt / payload.
 ok("route: expiresAt di payload", route.includes("expiresAt"));
