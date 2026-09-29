@@ -70,13 +70,25 @@ export async function POST(req: Request) {
         normalized.includes("email_exists") ||
         normalized.includes("user_already_exists")
       ) {
-        const { data: listed, error: listError } =
-          await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 });
+        let authUser = null;
+        let page = 1;
 
-        if (!listError) {
-          const authUser = listed.users.find(
-            (user) => user.email?.toLowerCase() === normalizedEmail
-          );
+        while (!authUser) {
+          const { data: listed, error: listError } =
+            await supabase.auth.admin.listUsers({ page, perPage: 1000 });
+
+          if (listError) break;
+
+          authUser =
+            listed.users.find(
+              (user) => user.email?.toLowerCase() === normalizedEmail
+            ) ?? null;
+
+          if (listed.users.length < 1000) break;
+          page += 1;
+        }
+
+        if (authUser) {
 
           if (authUser) {
             const { data: updatedAuthUser, error: updateError } =
