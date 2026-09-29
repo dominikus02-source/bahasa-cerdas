@@ -651,6 +651,39 @@
   letter-spacing: 0.06em;
 }
 
+/* ── Host UX polish — satu layar, tiga mode kerja ───────────── */
+.mb-host-mode-note {
+  width: min(100% - 32px, 1120px);
+  margin: 10px auto 0;
+  text-align: center;
+  color: var(--mb-text-guru-secondary);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .01em;
+}
+.mb-host-tabs {
+  position: sticky;
+  top: 8px;
+  z-index: 20;
+  box-shadow: 0 8px 24px rgba(23, 38, 58, .06);
+}
+.mb-host-tab:focus-visible {
+  outline: 3px solid rgba(20, 184, 166, .28);
+  outline-offset: 2px;
+}
+.mb-host-control-panel,
+.mb-host-participants-panel {
+  animation: mb-host-panel-in 180ms ease-out;
+}
+@keyframes mb-host-panel-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.mb-host-screen-only {
+  width: min(100% - 32px, 1120px);
+  margin-inline: auto;
+}
+
 /* ── Host tabs — satu layar, tiga mode kerja ───────────────── */
 .mb-host-tabs {
   width: min(100% - 32px, 1120px);
@@ -4616,6 +4649,14 @@
 
 /* Guru mobile UX hardening — teacher room only; projector/student surfaces unchanged. */
 @media (max-width: 640px) {
+
+  .mb-host-mode-note { width: min(100% - 24px, 1120px); font-size: .66rem; }
+  .mb-host-tabs { width: calc(100% - 20px); top: 4px; overflow-x: auto; justify-content: stretch; }
+  .mb-host-tab { min-width: 120px; min-height: 42px; padding-inline: 10px; font-size: .82rem; }
+  .mb-host-control-panel,
+  .mb-host-participants-panel { width: calc(100% - 20px); margin: 14px auto; padding: 18px; }
+  .mb-host-control-head { flex-direction: column; }
+  .mb-host-phase { width: 100%; min-width: 0; }
   .mb-scope-guru .mb-room .mb-lobby,
   .mb-scope-guru .mb-room .mb-tquestion,
   .mb-scope-guru .mb-room .mb-closed,
