@@ -32,6 +32,8 @@ import { SoundToggle } from '@/components/main-bersama/sound/SoundToggle';
 import { useFullscreenControl } from '@/components/main-bersama/shared/useFullscreenControl';
 import { FullscreenExitControl } from '@/components/main-bersama/shared/FullscreenExitControl';
 import { CityCahayaStage } from '@/components/main-bersama/shared/CityCahayaStage';
+import { JelajahTrail } from '@/components/main-bersama/art/jelajah/JelajahTrail';
+import { useTrailMotion } from '@/components/main-bersama/art/jelajah-motion/useTrailMotion';
 
 type Command =
   | 'open-lobby'
@@ -120,6 +122,14 @@ export function TeacherRoomClient({
       </main>
     );
   }
+
+  const jelajahTeamProgress = view.gameState?.gameMode === 'jelajah-kata'
+    ? view.gameState.jelajahKata.teamProgress
+    : {};
+  const { getPose: getTrailPose } = useTrailMotion(
+    jelajahTeamProgress,
+    view.gameMode === 'jelajah-kata' ? view.phase : 'preparing',
+  );
 
   const answered = view.answerSummary.submittedCount;
   const eligible = view.answerSummary.eligibleCount;
@@ -451,8 +461,61 @@ export function TeacherRoomClient({
         </section>
       ) : null}
 
-      {/* ── QUESTION (§18) — soal → jumlah menjawab + waktu → progres → CTA ── */}
-      {view.phase === 'question' && view.currentQuestion ? (
+      {/* ── JELAJAH KATA — layar guru = panggung perjalanan, soal tetap di perangkat murid ── */}
+      {view.gameMode === 'jelajah-kata' && (
+        <>
+          {view.phase === 'question' || view.phase === 'closed' || view.phase === 'paused' || view.phase === 'discussion' ? (
+            <section className="mb-jelajah-host-stage mb-fade-in" aria-label="Perjalanan Jelajah Kata">
+              <div className="mb-jelajah-host-head">
+                <div>
+                  <span className="mb-eyebrow">Dunia Jelajah Kata</span>
+                  <h2 className="mb-display mb-jelajah-host-title">Perjalanan Regu</h2>
+                  <p>Jawaban siswa menggerakkan regunya maju. Layar ini khusus untuk menikmati perjalanan kelas.</p>
+                </div>
+                <div className="mb-jelajah-host-live">
+                  <span className="mb-jelajah-host-live-dot" aria-hidden />
+                  <strong>{answered}/{eligible}</strong>
+                  <span>sudah menjawab</span>
+                </div>
+              </div>
+
+              <div className="mb-jelajah-host-world">
+                <JelajahTrail
+                  teams={view.teams}
+                  progress={jelajahTeamProgress}
+                  poses={Object.fromEntries(view.teams.map((team) => [team.id, getTrailPose(team.id)]))}
+                />
+              </div>
+
+              <div className="mb-jelajah-host-footer">
+                <div className="mb-jelajah-host-team-status">
+                  {view.teams.slice(0, 4).map((team) => {
+                    const progress = Math.round(jelajahTeamProgress[team.id] ?? 0);
+                    return (
+                      <div className="mb-jelajah-host-team" key={team.id}>
+                        <span className="mb-jelajah-host-team-name">{team.name}</span>
+                        <span className="mb-jelajah-host-team-progress">{progress}%</span>
+                      </div>
+                    );
+                  })}
+                </div>
+                <span className="mb-classroom-control-hint">
+                  {view.phase === 'question'
+                    ? 'Murid menjawab dari perangkat masing-masing · perjalanan regu bergerak otomatis.'
+                    : view.phase === 'discussion'
+                      ? 'Guru sedang membahas jawaban · perjalanan tetap menjadi panggung kelas.'
+                      : view.phase === 'paused'
+                        ? 'Permainan dijeda · posisi setiap regu tetap tersimpan.'
+                        : 'Jawaban ditutup · bersiap melanjutkan perjalanan.'}
+                </span>
+              </div>
+            </section>
+          ) : null}
+        </>
+      )}
+
+      {/* ── KOTA CAHAYA — tampilan guru tetap memakai panggung kota ── */}
+      {view.gameMode === 'kota-cahaya' && view.phase === 'question' && view.currentQuestion ? (
         <section className="mb-tquestion mb-fade-in">
           <div className="mb-tquestion-status">
             <span className="mb-count mb-count-guru">
@@ -471,51 +534,43 @@ export function TeacherRoomClient({
           />
           <div className="mb-classroom-hint">Jawab di perangkatmu · Guru melihat progres kelas secara langsung</div>
           <div className="mb-progress-inline">
-            {view.gameState?.gameMode === 'jelajah-kata' ? (
-              <TeamProgress teams={view.teams} progress={view.gameState.jelajahKata.teamProgress} />
-            ) : view.gameState?.gameMode === 'kota-cahaya' ? (
-              <CityCahayaStage
-                progressPercent={view.gameState.kotaCahaya.progressPercent}
-                unlockedMilestones={view.gameState.kotaCahaya.unlockedMilestones}
-              />
-            ) : null}
+            <CityCahayaStage
+              progressPercent={view.gameState.kotaCahaya.progressPercent}
+              unlockedMilestones={view.gameState.kotaCahaya.unlockedMilestones}
+            />
           </div>
           <p className="mb-classroom-control-hint">Buka <strong>Kontrol Guru</strong> untuk menutup jawaban dan mengatur langkah berikutnya.</p>
         </section>
       ) : null}
 
-      {/* ── CLOSED (§18) — jangan reveal sebelum Bahas ── */}
-      {view.phase === 'closed' ? (
+      {/* ── KOTA CAHAYA CLOSED ── */}
+      {view.gameMode === 'kota-cahaya' && view.phase === 'closed' ? (
         <section className="mb-closed mb-fade-in">
           <h2 className="mb-display mb-guru-phase-title">Jawaban ditutup</h2>
-          <p className="mb-closed-sub">
-            {answered} dari {eligible} siswa sudah menjawab.
-          </p>
+          <p className="mb-closed-sub">{answered} dari {eligible} siswa sudah menjawab.</p>
           <p className="mb-classroom-control-hint">Jawaban sudah terkunci. Buka <strong>Kontrol Guru</strong> untuk memulai pembahasan.</p>
         </section>
       ) : null}
 
-      {/* ── PAUSED (secondary) ── */}
-      {view.phase === 'paused' ? (
+      {/* ── KOTA CAHAYA PAUSED ── */}
+      {view.gameMode === 'kota-cahaya' && view.phase === 'paused' ? (
         <section className="mb-closed mb-fade-in">
           <h2 className="mb-display mb-guru-phase-title">Permainan dijeda</h2>
           <p className="mb-classroom-control-hint">Permainan dijeda. Buka <strong>Kontrol Guru</strong> untuk melanjutkan.</p>
         </section>
       ) : null}
 
-      {/* ── DISCUSSION (§18) — guru melihat kunci + agregat ── */}
-      {view.phase === 'discussion' && view.currentQuestion ? (
+      {/* ── KOTA CAHAYA DISCUSSION ── */}
+      {view.gameMode === 'kota-cahaya' && view.phase === 'discussion' && view.currentQuestion ? (
         <section className="mb-discuss mb-fade-in">
           <QuestionCard
             question={view.currentQuestion}
             roundLabel={`Soal ${roundLabel ?? ''}`}
           />
-          {view.gameState?.gameMode === 'kota-cahaya' ? (
-            <CityCahayaStage
-                progressPercent={view.gameState.kotaCahaya.progressPercent}
-                unlockedMilestones={view.gameState.kotaCahaya.unlockedMilestones}
-              />
-          ) : null}
+          <CityCahayaStage
+            progressPercent={view.gameState.kotaCahaya.progressPercent}
+            unlockedMilestones={view.gameState.kotaCahaya.unlockedMilestones}
+          />
           <div className="mb-reveal-card mb-reading">
             <p className="mb-reveal-correct">
               Jawaban benar:{' '}
@@ -664,6 +719,95 @@ export function TeacherRoomClient({
       ) : null}
       </> : null}
       <style jsx>{`
+        .mb-jelajah-host-stage {
+          margin: 10px auto 0;
+          width: min(1240px, 100%);
+          padding: clamp(16px, 2vw, 24px);
+          border: 1px solid rgba(19, 37, 58, .09);
+          border-radius: 28px;
+          background: linear-gradient(180deg, #f8fcff 0%, #eef7f4 100%);
+          box-shadow: 0 18px 50px rgba(19, 37, 58, .08);
+        }
+        .mb-jelajah-host-head {
+          display:flex;
+          align-items:flex-end;
+          justify-content:space-between;
+          gap:20px;
+          margin-bottom:12px;
+        }
+        .mb-jelajah-host-title { margin:5px 0 4px; color:#17354b; }
+        .mb-jelajah-host-head p { margin:0; color:#70828d; font-size:.8rem; font-weight:650; }
+        .mb-jelajah-host-live {
+          display:flex;
+          align-items:center;
+          gap:7px;
+          flex:none;
+          padding:10px 14px;
+          border-radius:16px;
+          background:#fff;
+          border:1px solid #e1ebe8;
+          color:#617582;
+          font-size:.7rem;
+        }
+        .mb-jelajah-host-live strong { color:#0f766e; font-size:1rem; font-variant-numeric:tabular-nums; }
+        .mb-jelajah-host-live-dot {
+          width:8px; height:8px; border-radius:50%;
+          background:#14b89f;
+          box-shadow:0 0 0 5px rgba(20,184,159,.12);
+        }
+        .mb-jelajah-host-world {
+          min-height: min(61vh, 650px);
+          display:grid;
+          place-items:center;
+          overflow:hidden;
+          border-radius:22px;
+          background:#071325;
+        }
+        .mb-jelajah-host-world .mb-jelajah-stage {
+          display:block;
+          width:100%;
+          height:auto;
+          max-height: min(61vh, 650px);
+        }
+        .mb-jelajah-host-footer { margin-top:12px; }
+        .mb-jelajah-host-team-status {
+          display:grid;
+          grid-template-columns:repeat(4,minmax(0,1fr));
+          gap:8px;
+        }
+        .mb-jelajah-host-team {
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          gap:8px;
+          min-width:0;
+          padding:9px 11px;
+          border:1px solid #e4ecea;
+          border-radius:13px;
+          background:rgba(255,255,255,.82);
+        }
+        .mb-jelajah-host-team-name {
+          overflow:hidden;
+          text-overflow:ellipsis;
+          white-space:nowrap;
+          color:#365062;
+          font-size:.72rem;
+          font-weight:800;
+        }
+        .mb-jelajah-host-team-progress { color:#0f766e; font-size:.72rem; font-weight:900; font-variant-numeric:tabular-nums; }
+        .mb-jelajah-host-footer .mb-classroom-control-hint { margin-top:10px; }
+        @media(max-width:760px){
+          .mb-jelajah-host-head { align-items:flex-start; flex-direction:column; }
+          .mb-jelajah-host-live { align-self:stretch; justify-content:center; }
+          .mb-jelajah-host-team-status { grid-template-columns:1fr 1fr; }
+          .mb-jelajah-host-world { min-height:340px; }
+        }
+        @media(min-width:900px) and (max-height:820px){
+          .mb-jelajah-host-stage { padding:14px 18px 16px; }
+          .mb-jelajah-host-head { margin-bottom:7px; }
+          .mb-jelajah-host-world { min-height:430px; }
+          .mb-jelajah-host-world .mb-jelajah-stage { max-height:430px; }
+        }
         .mb-room-pin-live {
           display: inline-flex;
           align-items: center;
