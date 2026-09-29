@@ -81,6 +81,15 @@ export interface ToolExecutorDeps {
   ) => Promise<void>;
   /** Persist an evidence record; returns the stored record. */
   readonly recordEvidence: (evidence: EvidenceRecord) => Promise<EvidenceRecord>;
+  /**
+   * Capability-scoped credential resolver. It is called only after the tool
+   * has passed registry/input/policy checks; each tool receives only the
+   * credentials explicitly assigned to its own dotted name.
+   *
+   * Credential values are never persisted, logged, hashed into evidence, or
+   * copied into execution metadata.
+   */
+  readonly credentialsForTool?: (toolName: string) => Readonly<Record<string, string>> | undefined;
   readonly now: () => string;
   readonly newId: () => string;
 }
@@ -173,6 +182,9 @@ export class ToolExecutor {
         taskId: proposal.taskId,
         attemptId: proposal.attemptId,
         executionId,
+        ...(this.deps.credentialsForTool
+          ? { credentials: this.deps.credentialsForTool(tool.name) }
+          : {}),
       }),
       tool.timeoutMs,
       `tool:${tool.name}`
