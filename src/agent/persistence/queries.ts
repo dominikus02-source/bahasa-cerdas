@@ -813,3 +813,180 @@ export async function getAgentSummary(prisma: PrismaClient, recentWindowMs = 24 
 }
 
 export type { WorkerHealth };
+
+
+/**
+ * Founder Mission Control operational snapshot.
+ *
+ * Read-only and bounded. This intentionally lives in the canonical read
+ * boundary so the dashboard never reaches into Agent tables directly.
+ */
+export interface AgentOperationsSnapshot {
+  readonly windowHours: number;
+  readonly created: number;
+  readonly completed: number;
+  readonly failed: number;
+  readonly successRatePct: number | null;
+  readonly avgCompletedMs: number | null;
+  readonly byChannel: Readonly<Record<string, number>>;
+  readonly executions: {
+    readonly total: number;
+    readonly succeeded: number;
+    readonly failed: number;
+    readonly avgDurationMs: number | null;
+    readonly topTools: ReadonlyArray<{ toolName: string; total: number; failed: number }>;
+  };
+  readonly telegram: {
+    readonly activeBindings: number;
+    readonly revokedBindings: number;
+    readonly lastSeenAt: string | null;
+    readonly commands24h: number;
+    readonly failedCommands24h: number;
+    readonly lastCommandAt: string | null;
+  };
+}
+
+export async function getAgentOperationsSnapshot(
+  prisma: PrismaClient,
+  windowHours = 24
+): Promise<AgentOperationsSnapshot> {
+  const safeHours = Number.isFinite(windowHours)
+    ? Math.min(168, Math.max(1, Math.floor(windowHours)))
+    : 24;
+  const since = new Date(Date.now() - safeHours * 60 * 60 * 1000);
+
+  const [
+    created,
+    completed,
+    failed,
+    channelGroups,
+    completedAttempts,
+    executionGroups,
+    toolGroups,
+    bindings,
+    commandCount,
+    failedCommandCount,
+    lastCommand,
+  ] = await Promise.all([
+    prisma.agentTask.count({ where: { createdAt: { gte: since } } }),
+    prisma.agentTask.count({ where: { status: "COMPLETED", updatedAt: { gte: since } } }),
+    prisma.agentTask.count({ where: { status: "FAILED", updatedAt: { gte: since } } }),
+    prisma.agentTask.groupBy({
+      by: ["channel"],
+      where: { createdAt: { gte: since } },
+      _count: { _all: true },
+    }),
+    prisma.taskAttempt.findMany({
+      where: {
+        status: "COMPLETED",
+        finishedAt: { gte: since, not: null },
+      },
+      select: { startedAt: true, finishedAt: true },
+      take: 500,
+      orderBy: { finishedAt: "desc" },
+    }),
+    prisma.toolExecution.groupBy({
+      by: ["status"],
+      where: { startedAt: { gte: since } },
+      _count: { _all: true },
+      _avg: { durationMs: true },
+    }),
+    prisma.toolExecution.groupBy({
+      by: ["toolName", "status"],
+      where: { startedAt: { gte: since } },
+      _count: { _all: true },
+    }),
+    prisma.agentTelegramBinding.findMany({
+      select: { revokedAt: true, lastSeenAt: true },
+      take: 100,
+      orderBy: { updatedAt: "desc" },
+    }),
+    prisma.agentCommandDedupe.count({ where: { createdAt: { gte: since } } }),
+    prisma.agentCommandDedupe.count({
+      where: {
+        createdAt: { gte: since },
+        resultCode: { notIn: ["OK", "CREATED", "ALREADY_EXISTS"] },
+      },
+    }),
+    prisma.agentCommandDedupe.findFirst({
+      orderBy: { createdAt: "desc" },
+      select: { createdAt: true },
+    }),
+  ]);
+
+  const byChannel: Record<string, number> = {};
+  for (const row of channelGroups) byChannel[row.channel] = row._count._all;
+
+  const terminal = completed + failed;
+  const successRatePct = terminal > 0 ? Math.round((completed / terminal) * 1000) / 10 : null;
+
+  const durations = completedAttempts
+    .map((a) => (a.finishedAt ? a.finishedAt.getTime() - a.startedAt.getTime() : null))
+    .filter((v): v is number => typeof v === "number" && v >= 0);
+  const avgCompletedMs =
+    durations.length > 0
+      ? Math.round(durations.reduce((sum, value) => sum + value, 0) / durations.length)
+      : null;
+
+  let executionTotal = 0;
+  let executionSucceeded = 0;
+  let executionFailed = 0;
+  let weightedDurationTotal = 0;
+  let weightedDurationCount = 0;
+  for (const row of executionGroups) {
+    const count = row._count._all;
+    executionTotal += count;
+    if (row.status === "SUCCEEDED") executionSucceeded += count;
+    if (row.status === "FAILED") executionFailed += count;
+    if (row._avg.durationMs !== null) {
+      weightedDurationTotal += row._avg.durationMs * count;
+      weightedDurationCount += count;
+    }
+  }
+
+  const toolMap = new Map<string, { total: number; failed: number }>();
+  for (const row of toolGroups) {
+    const current = toolMap.get(row.toolName) ?? { total: 0, failed: 0 };
+    current.total += row._count._all;
+    if (row.status === "FAILED") current.failed += row._count._all;
+    toolMap.set(row.toolName, current);
+  }
+  const topTools = Array.from(toolMap.entries())
+    .map(([toolName, value]) => ({ toolName, ...value }))
+    .sort((a, b) => b.total - a.total || b.failed - a.failed || a.toolName.localeCompare(b.toolName))
+    .slice(0, 5);
+
+  const activeBindings = bindings.filter((b) => b.revokedAt === null);
+  const lastSeen = activeBindings
+    .map((b) => b.lastSeenAt)
+    .filter((v): v is Date => v instanceof Date)
+    .sort((a, b) => b.getTime() - a.getTime())[0] ?? null;
+
+  return {
+    windowHours: safeHours,
+    created,
+    completed,
+    failed,
+    successRatePct,
+    avgCompletedMs,
+    byChannel,
+    executions: {
+      total: executionTotal,
+      succeeded: executionSucceeded,
+      failed: executionFailed,
+      avgDurationMs:
+        weightedDurationCount > 0
+          ? Math.round(weightedDurationTotal / weightedDurationCount)
+          : null,
+      topTools,
+    },
+    telegram: {
+      activeBindings: activeBindings.length,
+      revokedBindings: bindings.length - activeBindings.length,
+      lastSeenAt: lastSeen ? lastSeen.toISOString() : null,
+      commands24h: commandCount,
+      failedCommands24h: failedCommandCount,
+      lastCommandAt: lastCommand ? lastCommand.createdAt.toISOString() : null,
+    },
+  };
+}
