@@ -237,31 +237,60 @@ export async function getExecutiveDashboardData(): Promise<ExecutiveDashboardDat
   ]);
 
   // ── Batch 2: payment health (needs `now` from batch 1 completion) ──
+  // Only flag payments whose purchased entitlement window should STILL be
+  // active now. Historical payments that legitimately expired are healthy.
   const paymentHealth = await db.transaksi.findMany({
     where: { status: "SUCCESS", type: { in: ["MURID_PREMIUM", "PREMIUM_UPGRADE"] } },
     select: {
       id: true, type: true, amount: true, createdAt: true, userId: true,
+      reference: true, orderId: true, metadata: true,
       user: { select: { id: true, fullName: true, email: true, isPremium: true, premiumUntil: true, role: true } },
     },
   }).then((txs) => {
+    const expectedEnd = (t: (typeof txs)[number]) => {
+      const meta = (t.metadata || {}) as Record<string, unknown>;
+      const durationDays =
+        typeof meta.durationDays === "number"
+          ? meta.durationDays
+          : t.reference?.includes("YEARLY")
+            ? 365
+            : 30;
+      return new Date(t.createdAt.getTime() + durationDays * 24 * 60 * 60 * 1000);
+    };
+
     const affected = txs.filter((t) => {
-      if (t.user.isPremium && t.user.premiumUntil && new Date(t.user.premiumUntil) > now) return false;
-      return true;
+      const shouldBeActiveUntil = expectedEnd(t);
+      if (shouldBeActiveUntil <= now) return false; // legitimately expired purchase
+      if (!t.user.isPremium || !t.user.premiumUntil) return true;
+      return t.user.premiumUntil < shouldBeActiveUntil;
     });
+
     const userMap = new Map<string, { userId: string; fullName: string; email: string; role: string; totalPaid: number; transactions: any[] }>();
     for (const t of affected) {
       const existing = userMap.get(t.userId);
+      const tx = {
+        id: t.id,
+        type: t.type,
+        amount: t.amount,
+        reference: t.reference,
+        orderId: t.orderId,
+        createdAt: t.createdAt.toISOString(),
+      };
       if (existing) {
         existing.totalPaid += t.amount;
-        existing.transactions.push({ id: t.id, type: t.type, amount: t.amount, reference: null, orderId: null, createdAt: t.createdAt.toISOString() });
+        existing.transactions.push(tx);
       } else {
         userMap.set(t.userId, {
-          userId: t.userId, fullName: t.user.fullName, email: t.user.email, role: t.user.role,
+          userId: t.userId,
+          fullName: t.user.fullName,
+          email: t.user.email,
+          role: t.user.role,
           totalPaid: t.amount,
-          transactions: [{ id: t.id, type: t.type, amount: t.amount, reference: null, orderId: null, createdAt: t.createdAt.toISOString() }],
+          transactions: [tx],
         });
       }
     }
+
     const affectedUsers = Array.from(userMap.values());
     const muridCount = affectedUsers.filter((u) => u.role === "MURID").length;
     return {
