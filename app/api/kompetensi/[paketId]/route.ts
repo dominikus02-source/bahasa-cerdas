@@ -340,7 +340,10 @@ export async function GET(
         console.log(`[kompetensi] FEATURE_LIMIT_REACHED user=${dbUser.id} paket=${paketId} plan=${g.plan} used=${g.used}/${g.limit}`);
         return NextResponse.json(
           {
+            success: false,
             code: "FEATURE_LIMIT_REACHED",
+            error: "Kuota simulasi bulanan telah habis",
+            message: `Anda telah menggunakan ${g.used} dari ${g.limit} kesempatan simulasi bulan ini.`,
             feature: "SIMULATION",
             plan: g.plan,
             used: g.used,
