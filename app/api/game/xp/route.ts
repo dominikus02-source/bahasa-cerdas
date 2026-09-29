@@ -170,39 +170,31 @@ export async function POST(req: NextRequest) {
       if (existing) roomId = existing.id
     }
 
-    // GameResult juga idempoten untuk client yang memakai gameSessionId.
-    // Retry tidak membuat baris hasil kedua.
+    // GameResult hanya disimpan bila ada GameSession yang benar-benar
+    // terdaftar. Endpoint ini juga dipakai gim solo yang tidak membuat
+    // GameSession; jangan sampai kegagalan pencatatan hasil mengubah reward
+    // yang sudah berhasil menjadi HTTP 500.
     if (rawGameSessionId) {
       const existingResult = await db.gameResult.findUnique({ where: { sessionId: reference } })
       if (!existingResult) {
-        await db.gameResult.create({
-          data: {
-            roomId: roomId || "solo",
-            userId: dbUser.id,
-            sessionId: reference,
-            finalScore: skor,
-            correct: safeCorrect,
-            wrong: safeWrong,
-            maxStreak: safeMaxStreak,
-            xpEarned: hasil.xpDiberikan,
-            rank: 1,
-          },
-        } as any)
+        const gameSession = await db.gameSession.findUnique({ where: { id: reference } })
+        if (gameSession) {
+          await db.gameResult.create({
+            data: {
+              roomId: gameSession.roomId,
+              userId: dbUser.id,
+              sessionId: gameSession.id,
+              finalScore: skor,
+              correct: safeCorrect,
+              wrong: safeWrong,
+              maxStreak: safeMaxStreak,
+              avgTime: 0,
+              xpEarned: hasil.xpDiberikan,
+              rank: 1,
+            },
+          })
+        }
       }
-    } else {
-      await db.gameResult.create({
-        data: {
-          roomId: roomId || "solo",
-          userId: dbUser.id,
-          sessionId: `solo-${Date.now()}`,
-          finalScore: skor,
-          correct: safeCorrect,
-          wrong: safeWrong,
-          maxStreak: safeMaxStreak,
-          xpEarned: hasil.xpDiberikan,
-          rank: 1,
-        },
-      } as any)
     }
 
     await invalidateLeagueCache(dbUser.id)
