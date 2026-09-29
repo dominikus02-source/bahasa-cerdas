@@ -11,8 +11,7 @@
 // Logic/Tahap 6 TIDAK berubah — hanya presentation.
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import type { TeacherParticipantInfo, TeacherSessionView } from '@/src/main-bersama/contracts/views/teacher';
+import type { TeacherSessionView } from '@/src/main-bersama/contracts/views/teacher';
 import {
   MbApiError,
   fetchTeacherState,
@@ -53,7 +52,6 @@ export function TeacherRoomClient({
   /** Nama kelas dibaca server dari DB (view tidak membawanya). */
   className?: string | null;
 }) {
-  const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'layar' | 'kontrol' | 'analisis'>('layar');
@@ -124,8 +122,6 @@ export function TeacherRoomClient({
 
   const answered = view.answerSummary.submittedCount;
   const eligible = view.answerSummary.eligibleCount;
-  const isLastRound =
-    (view.currentRoundIndex ?? -1) + 1 >= view.totalRounds;
   // ── CTA utama per fase (§18 — hanya aksi yang relevan) ──
   // Lobby section me-render CTA fase preparing/lobby (lihat di bawah);
   // fase lain me-render CTA statis per section.
