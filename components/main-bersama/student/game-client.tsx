@@ -652,8 +652,8 @@ function StudentQuestion({
       </div>
 
       {saved ? (
-        <div className="mb-saved mb-saved-student mb-entrance" role="status">
-          <span className="mb-saved-check" aria-hidden>✓</span>
+        <div className="mb-tersimpan mb-tersimpan-student mb-entrance" role="status">
+          <span className="mb-tersimpan-check" aria-hidden>✓</span>
           <strong>Jawaban terkunci!</strong>
           <span>Jawabanmu sudah tersimpan. Tunggu putaran selesai.</span>
         </div>
@@ -746,7 +746,7 @@ function StudentQuestion({
           border-radius: 18px;
           box-shadow: 0 8px 18px rgba(0,0,0,.09);
         }
-        .mb-saved-student {
+        .mb-tersimpan-student {
           min-height: 142px;
           justify-content: center;
           border-radius: 24px;
@@ -756,15 +756,15 @@ function StudentQuestion({
             rgba(10, 47, 43, .76);
           box-shadow: 0 16px 38px rgba(0,0,0,.15);
         }
-        .mb-saved-student strong {
+        .mb-tersimpan-student strong {
           color: #8ff0c7;
           font-size: 1.1rem;
         }
-        .mb-saved-student span:last-child {
+        .mb-tersimpan-student span:last-child {
           color: #a8c6bc;
           font-size: .88rem;
         }
-        .mb-saved-check {
+        .mb-tersimpan-check {
           display: grid;
           place-items: center;
           width: 42px;
@@ -813,7 +813,7 @@ function StudentQuestion({
             overscroll-behavior: contain;
             padding-right: 2px;
           }
-          .mb-saved-student {
+          .mb-tersimpan-student {
             grid-column: 2;
             grid-row: 2;
             align-self: start;

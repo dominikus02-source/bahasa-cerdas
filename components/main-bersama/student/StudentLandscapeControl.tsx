@@ -103,7 +103,7 @@ export function StudentLandscapeControl() {
         onClick={() => void requestLandscape()}
         disabled={busy}
         aria-pressed={isLandscape}
-        title={isLandscape ? "Landscape aktif" : "Gunakan mode landscape"}
+        title={isLandscape ? "Layar mendatar aktif" : "Gunakan layar mendatar"}
       >
         <RectangleHorizontal size={18} aria-hidden />
         <span>{isLandscape ? "Landscape aktif" : "Landscape"}</span>

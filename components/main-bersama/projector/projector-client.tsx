@@ -365,7 +365,7 @@ function ProjectorLobby({
   return (
     <section className="mb-pj-phase mb-pj-lobby-stage mb-fade-in">
       <div className="mb-pj-lobby-title-block">
-        <span className="mb-pj-lobby-kicker">LIVE CLASSROOM GAME</span>
+        <span className="mb-pj-lobby-kicker">PERMAINAN KELAS LANGSUNG</span>
         <h2 className="mb-display">SIAP MAIN?</h2>
         <p>Masuk ke lobby, lihat namamu muncul, lalu tunggu guru memulai.</p>
       </div>

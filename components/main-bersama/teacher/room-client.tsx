@@ -189,7 +189,7 @@ export function TeacherRoomClient({
               <h2 className="mb-display">Kontrol Permainan</h2>
               <p>Semua kendali permainan ada di sini. Tampilan Kelas tetap bersih untuk proyektor.</p>
             </div>
-            <strong className="mb-host-phase">{view.phase === 'lobby' ? 'Lobby' : view.phase === 'question' ? 'Soal berlangsung' : view.phase === 'closed' ? 'Jawaban ditutup' : view.phase === 'discussion' ? 'Pembahasan' : view.phase === 'paused' ? 'Dijeda' : view.phase === 'summary' ? 'Hasil' : 'Selesai'}</strong>
+            <strong className="mb-host-phase">{view.phase === 'lobby' ? 'Lobi' : view.phase === 'question' ? 'Soal berlangsung' : view.phase === 'closed' ? 'Jawaban ditutup' : view.phase === 'discussion' ? 'Pembahasan' : view.phase === 'paused' ? 'Dijeda' : view.phase === 'summary' ? 'Hasil' : 'Selesai'}</strong>
           </div>
           <div className="mb-host-stats">
             <div><strong>{view.participants.length}</strong><span>Peserta</span></div>
@@ -225,15 +225,15 @@ export function TeacherRoomClient({
           <div className="mb-lobby-stage-card">
             <div className="mb-lobby-stage-top">
               <div className="mb-lobby-stage-copy">
-                <span className="mb-eyebrow mb-lobby-stage-eyebrow">Lobby Kelas</span>
+                <span className="mb-eyebrow mb-lobby-stage-eyebrow">Lobi Kelas</span>
                 <h2 className="mb-display mb-lobby-stage-title">SIAP MASUK ARENA?</h2>
                 <p>
                   Bagikan PIN, tunggu nama siswa muncul, lalu mulai saat kelas sudah lengkap.
                 </p>
               </div>
-              <div className="mb-lobby-live-pill" aria-label="Lobby aktif">
+              <div className="mb-lobby-live-pill" aria-label="Lobi aktif">
                 <i aria-hidden />
-                LIVE LOBBY
+                LOBI AKTIF
               </div>
             </div>
 
@@ -301,7 +301,7 @@ export function TeacherRoomClient({
 
             <div className="mb-lobby-action-deck">
               <div className="mb-lobby-action-note">
-                <strong>{view.phase === 'preparing' ? 'Menyiapkan lobby…' : 'Kelas siap?'}</strong>
+                <strong>{view.phase === 'preparing' ? 'Menyiapkan lobi…' : 'Kelas siap?'}</strong>
                 <span>Guru mengendalikan seluruh permainan dari layar ini.</span>
               </div>
               <div className="mb-lobby-action-buttons">
