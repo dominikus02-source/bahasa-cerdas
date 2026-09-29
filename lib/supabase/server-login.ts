@@ -28,13 +28,15 @@ import { isValidSupabaseUrl } from "@/lib/supabase/url-guard";
  * - Untuk sekolah dengan >30 murid login serentak, beberapa mungkin tetap 429
  * - Solusi jangka panjang: hubungi Supabase support untuk custom rate limit
  */
-const SUPABASE_SECRET_KEY =
-  process.env.SUPABASE_SECRET_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+const SUPABASE_PUBLISHABLE_KEY =
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  "";
 
 export async function createLoginClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const usable = isValidSupabaseUrl(url) ? url! : "http://localhost:3000";
-  const usableKey = SUPABASE_SECRET_KEY || "local-dev-anon-key";
+  const usableKey = SUPABASE_PUBLISHABLE_KEY || "local-dev-anon-key";
 
   const cookieStore = await cookies();
 
