@@ -336,7 +336,7 @@ export function JelajahTrail({
         opacity=".28"
       />
 
-      {/* Latar dunia nyata — bergerak perlahan saat regu maju. Maskot dan jalur tetap sebagai lapisan kode. */}\n      <image\n        href="/main-bersama/jelajah/backgrounds/lembah-pagi.webp"\n        x={-backgroundShift}\n        y="0"\n        width="1600"\n        height="600"\n        preserveAspectRatio="xMidYMid slice"\n        aria-hidden="true"\n        style={{\n          transform: `translateX(${-backgroundShift}px)`,\n          transition: "transform 700ms cubic-bezier(.22,.9,.3,1)",\n        }}\n      />\n\n      {/* one shared road = journey first, progress bars second */}
+      {/* Latar dunia nyata — bergerak perlahan saat regu maju. Maskot dan jalur tetap sebagai lapisan kode. */}\n      <image\n        href="/main-bersama/jelajah/backgrounds/jk-1.png"\n        x={-backgroundShift}\n        y="0"\n        width="1600"\n        height="600"\n        preserveAspectRatio="xMidYMid slice"\n        aria-hidden="true"\n        style={{\n          transform: `translateX(${-backgroundShift}px)`,\n          transition: "transform 700ms cubic-bezier(.22,.9,.3,1)",\n        }}\n      />\n\n      {/* one shared road = journey first, progress bars second */}
       <path d={roadPath} fill="none" stroke="#061724" strokeWidth="112" strokeLinecap="round" strokeLinejoin="round" opacity=".44" />
       <path d={roadPath} fill="none" stroke="#2b3d35" strokeWidth="94" strokeLinecap="round" strokeLinejoin="round" opacity=".68" />
       <path d={roadPath} fill="none" stroke={`url(#${id("road")})`} strokeWidth="78" strokeLinecap="round" strokeLinejoin="round" />
