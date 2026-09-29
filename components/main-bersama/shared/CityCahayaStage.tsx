@@ -75,7 +75,7 @@ export function CityCahayaStage({ progressPercent, unlockedMilestones }: CityCah
       </div>
       <div className="mb-city-stage-progress" aria-hidden="true"><span style={{width:value+'%'}}/></div>
       <p className="mb-city-stage-caption">{unlocked.size} dari 4 bagian kota menyala · setiap jawaban benar membantu membangun Kota Cahaya.</p>
-      <style jsx>{`
+      <style>{`
         .mb-city-stage{width:min(100%,1100px);margin:18px auto 0;padding:18px 20px 16px;border-radius:26px;color:#EAF2F9;background:#081726;box-shadow:0 24px 56px rgba(8,23,38,.2);overflow:hidden}
         .mb-city-stage-top{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;padding:2px 6px 12px}
         .mb-city-stage-eyebrow{color:#0FA8A0;font-size:.68rem;font-weight:900;letter-spacing:.14em}
