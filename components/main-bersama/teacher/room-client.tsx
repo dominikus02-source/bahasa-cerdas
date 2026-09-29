@@ -32,7 +32,6 @@ import { LobbyRoster } from '@/components/main-bersama/shared/LobbyRoster';
 import { useMainBersamaSound } from '@/components/main-bersama/sound/useMainBersamaSound';
 import { SoundToggle } from '@/components/main-bersama/sound/SoundToggle';
 import { Maximize2, Minimize2 } from 'lucide-react';
-import { useFullscreenControl } from '@/components/main-bersama/shared/useFullscreenControl';
 
 type Command =
   | 'open-lobby'
@@ -60,11 +59,62 @@ export function TeacherRoomClient({
   const [activeTab, setActiveTab] = useState<'layar' | 'kontrol' | 'peserta'>('layar');
   const autoLobbyRef = useRef(false);
   const roomRef = useRef<HTMLElement | null>(null);
-  const fullscreen = useFullscreenControl({
-    targetRef: roomRef,
-    onError: (message) => setError(message),
-    keyboard: true,
-  });
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const syncFullscreen = useCallback(() => {
+    setIsFullscreen(document.fullscreenElement === roomRef.current);
+  }, []);
+
+  const enterFullscreen = useCallback(async () => {
+    try {
+      if (!document.fullscreenEnabled) {
+        setError('Mode layar penuh tidak didukung browser ini.');
+        return;
+      }
+      if (!document.fullscreenElement && roomRef.current) {
+        await roomRef.current.requestFullscreen();
+      }
+      syncFullscreen();
+    } catch {
+      setError('Mode layar penuh tidak dapat diaktifkan browser ini.');
+    }
+  }, [syncFullscreen]);
+
+  const exitFullscreen = useCallback(async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      syncFullscreen();
+    } catch {
+      setError('Layar penuh tidak dapat ditutup. Tekan Esc pada keyboard.');
+    }
+  }, [syncFullscreen]);
+
+  const toggleFullscreen = useCallback(() => {
+    if (document.fullscreenElement) {
+      void exitFullscreen();
+    } else {
+      void enterFullscreen();
+    }
+  }, [enterFullscreen, exitFullscreen]);
+
+  useEffect(() => {
+    syncFullscreen();
+    const onFullscreenChange = () => syncFullscreen();
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() !== 'f') return;
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+      const target = event.target as HTMLElement | null;
+      if (target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA' || target?.isContentEditable) return;
+      event.preventDefault();
+      toggleFullscreen();
+    };
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('fullscreenchange', onFullscreenChange);
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [syncFullscreen, toggleFullscreen]);
 
   const fetchView = useCallback(
     () => fetchTeacherState(sessionId).then((r) => r.view),
@@ -150,13 +200,13 @@ export function TeacherRoomClient({
           <button
             type="button"
             className="mb-room-fullscreen-control"
-            onClick={() => void fullscreen.toggle()}
-            aria-label={fullscreen.isFullscreen ? 'Keluar dari layar penuh' : 'Masuk layar penuh'}
-            title={fullscreen.isFullscreen ? 'Keluar dari layar penuh (Esc)' : 'Tampilkan Main Bersama layar penuh'}
+            onClick={toggleFullscreen}
+            aria-label={isFullscreen ? 'Keluar dari layar penuh' : 'Masuk layar penuh'}
+            title={isFullscreen ? 'Keluar dari layar penuh (Esc)' : 'Tampilkan Main Bersama layar penuh'}
           >
-            {fullscreen.isFullscreen ? <Minimize2 size={17} aria-hidden /> : <Maximize2 size={17} aria-hidden />}
-            <span>{fullscreen.isFullscreen ? 'Keluar' : 'Layar Penuh'}</span>
-            {fullscreen.isFullscreen ? <kbd>Esc</kbd> : <kbd>F</kbd>}
+            {isFullscreen ? <Minimize2 size={17} aria-hidden /> : <Maximize2 size={17} aria-hidden />}
+            <span>{isFullscreen ? 'Keluar' : 'Layar Penuh'}</span>
+            {isFullscreen ? <kbd>Esc</kbd> : <kbd>F</kbd>}
           </button>
           <SoundToggle
             enabled={teacherSound.enabled}
