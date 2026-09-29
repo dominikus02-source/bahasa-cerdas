@@ -17,6 +17,7 @@ import { authorizeFounder, getAgentTaskService } from "@/src/agent/control";
 import { approveTask, cancelTask, rejectTask, resumeTask, retryTask, type FounderCommandResult } from "@/src/agent/control/commands";
 import { revalidatePath } from "next/cache";
 import type { TaskIntentType } from "@/src/agent/core/types";
+import { BC_AGENT_RUNTIME_PROTOCOL } from "@/src/agent/runtime-protocol";
 
 async function run(command: (taskId: string) => Promise<FounderCommandResult>, taskId: string): Promise<FounderCommandResult> {
   const result = await command(taskId);
@@ -76,6 +77,24 @@ export async function createAgentTaskAction(formData: FormData): Promise<CreateA
   const access = await authorizeFounder();
   if (!access.ok) {
     return { ok: false, message: "Akses ditolak.", taskId: null, taskStatus: null };
+  }
+
+  const compatibleWorker = await db.agentWorker.findFirst({
+    where: {
+      status: { in: ["RUNNING", "DEGRADED"] },
+      lastHeartbeatAt: { gte: new Date(Date.now() - 5 * 60 * 1000) },
+      version: { startsWith: `${BC_AGENT_RUNTIME_PROTOCOL}@` },
+    },
+    select: { id: true },
+    orderBy: { lastHeartbeatAt: "desc" },
+  });
+  if (!compatibleWorker) {
+    return {
+      ok: false,
+      message: "Worker BC Agent perlu upgrade/restart ke runtime P9 sebelum menerima diagnosis baru.",
+      taskId: null,
+      taskStatus: null,
+    };
   }
 
   const raw = formData.get("instruction");
