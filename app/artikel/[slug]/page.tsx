@@ -8,7 +8,7 @@ import remarkBreaks from "remark-breaks";
 import PageNavbar from "@/components/public/PageNavbar";
 import PageFooter from "@/components/public/PageFooter";
 import ShareButton from "@/components/shared/ShareButton";
-import SafeMediaImage from "@/components/shared/safe-media-image";
+import ArticleCoverLightbox from "@/components/shared/ArticleCoverLightbox";
 
 export const revalidate = 600;
 
@@ -87,25 +87,10 @@ export default async function ArtikelDetailPage({ params }: Props) {
         </Link>
 
         <article>
-          {artikel.coverImage || artikel.coverImageUrl ? (
-            <div className="aspect-video rounded-2xl overflow-hidden mb-2 bg-slate-100 shadow-lg">
-              <SafeMediaImage
-                src={artikel.coverImageUrl || artikel.coverImage}
-                alt={artikel.title}
-                fallbackType="article"
-                containerClassName="w-full h-full"
-              />
-            </div>
-          ) : (
-            <div className="aspect-video rounded-2xl overflow-hidden mb-2 shadow-lg">
-              <SafeMediaImage
-                src={null}
-                alt={artikel.title}
-                fallbackType="article"
-                containerClassName="w-full h-full"
-              />
-            </div>
-          )}
+          <ArticleCoverLightbox
+            src={artikel.coverImage}
+            title={artikel.title}
+          />
           {artikel.coverImageCredit && (
             <p className="text-xs text-slate-400 mt-1 mb-8">Foto: {artikel.coverImageCredit}</p>
           )}
