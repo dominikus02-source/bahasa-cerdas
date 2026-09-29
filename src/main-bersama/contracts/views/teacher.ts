@@ -31,14 +31,14 @@ export interface TeacherParticipantInfo {
   hasAnsweredCurrentRound: boolean;
   /** Ada hanya saat fase discussion/review — bukan saat answering. */
   lastAnswerIsCorrect?: boolean;
-  /** Poin Cahaya Kata kumulatif dari jawaban benar + kecepatan. */
-  cahayaPoints?: number;
-  /** Poin yang baru didapat pada ronde aktif. */
-  currentRoundPoints?: number;
-  /** Waktu respons server pada ronde aktif, dalam milidetik. */
-  currentRoundResponseMs?: number;
-  /** Peringkat Cahaya Kata saat ini. */
-  cahayaRank?: number;
+  /** Jumlah jawaban benar selama ronde yang diikuti peserta ini. */
+  correctAnswers: number;
+  /** Jumlah ronde yang menjadi kesempatan peserta ini. */
+  eligibleRounds: number;
+  /** Kemajuan pribadi 0..100 berdasarkan akurasi jawaban. */
+  progressPercent: number;
+  /** Peringkat kemajuan pribadi; seri berbagi peringkat. */
+  progressRank: number;
 }
 
 /** Kontrol yang BOLEH dilakukan guru pada fase saat ini (server-enforced). */
