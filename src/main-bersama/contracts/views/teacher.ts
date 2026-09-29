@@ -81,6 +81,16 @@ export interface TeacherSessionView {
     optionCounts: Record<string, number> | null;
   };
 
+  /** Analitik ringkas seluruh soal untuk panel guru — tanpa credential/secret. */
+  roundAnalytics: Array<{
+    roundIndex: number;
+    prompt: string;
+    submittedCount: number;
+    eligibleCount: number;
+    correctCount: number;
+    accuracyPercent: number;
+  }>;
+
   gameState: MainGameState | null;
   allowedActions: TeacherAllowedActions;
 }
