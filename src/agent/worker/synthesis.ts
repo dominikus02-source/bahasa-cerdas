@@ -50,10 +50,18 @@ export const diagnosticSynthesisSchema = z
 
 export type DiagnosticSynthesis = z.infer<typeof diagnosticSynthesisSchema>;
 
-export interface DiagnosticObservation {
-  readonly toolName: string;
-  readonly output: AnyToolOutput;
-}
+export type DiagnosticObservation =
+  | {
+      readonly toolName: string;
+      readonly status: "SUCCEEDED";
+      readonly output: AnyToolOutput;
+    }
+  | {
+      readonly toolName: string;
+      readonly status: "FAILED";
+      readonly errorCode: string | null;
+      readonly error: string | null;
+    };
 
 function safeJson(value: unknown): string {
   try {
@@ -69,15 +77,27 @@ function externalBlocks(observations: readonly DiagnosticObservation[]) {
 
   for (const observation of observations) {
     if (remaining <= 0) break;
-    const serialized = safeJson({
-      toolName: observation.toolName,
-      source: observation.output.source,
-      truncated: observation.output.truncated,
-      data: observation.output.data,
-    });
+    const serialized =
+      observation.status === "SUCCEEDED"
+        ? safeJson({
+            toolName: observation.toolName,
+            status: observation.status,
+            source: observation.output.source,
+            truncated: observation.output.truncated,
+            data: observation.output.data,
+          })
+        : safeJson({
+            toolName: observation.toolName,
+            status: observation.status,
+            errorCode: observation.errorCode,
+            error: observation.error?.slice(0, 300) ?? null,
+          });
     const content = serialized.slice(0, Math.min(MAX_BLOCK_CHARS, remaining));
     blocks.push({
-      label: `${observation.toolName} · ${observation.output.source.slice(0, 140)}`,
+      label:
+        observation.status === "SUCCEEDED"
+          ? `${observation.toolName} · ${observation.output.source.slice(0, 140)}`
+          : `${observation.toolName} · FAILED`,
       content,
     });
     remaining -= content.length;
