@@ -303,11 +303,11 @@ export function TeacherRoomClient({
               </div>
               <div className="mb-analysis-overview mb-kota-cahaya-overview">
                 <div>
-                  <strong>{Math.round(view.gameState?.kotaCahaya.progressPercent ?? 0)}%</strong>
+                  <strong>{view.gameState?.gameMode === 'kota-cahaya' ? Math.round(view.gameState.kotaCahaya.progressPercent) : 0}%</strong>
                   <span>Progres Kota</span>
                 </div>
                 <div>
-                  <strong>{view.gameState?.kotaCahaya.unlockedMilestones.length ?? 0}</strong>
+                  <strong>{view.gameState?.gameMode === 'kota-cahaya' ? view.gameState.kotaCahaya.unlockedMilestones.length : 0}</strong>
                   <span>Tahap terbuka</span>
                 </div>
                 <div>
