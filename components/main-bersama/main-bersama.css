@@ -651,6 +651,182 @@
   letter-spacing: 0.06em;
 }
 
+/* ── Host tabs — satu layar, tiga mode kerja ───────────────── */
+.mb-host-tabs {
+  width: min(100% - 32px, 1120px);
+  margin: 12px auto 0;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(28, 43, 58, 0.07);
+  border: 1px solid rgba(28, 43, 58, 0.10);
+  border-radius: var(--mb-radius-pill);
+}
+.mb-host-tab {
+  flex: 1;
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 0;
+  border-radius: var(--mb-radius-pill);
+  background: transparent;
+  color: var(--mb-text-guru-secondary);
+  font-family: var(--mb-font-ui);
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background var(--mb-motion-fast), color var(--mb-motion-fast), box-shadow var(--mb-motion-fast);
+}
+.mb-host-tab:hover {
+  color: var(--mb-text-guru);
+  background: rgba(255, 255, 255, 0.72);
+}
+.mb-host-tab-active {
+  color: var(--mb-text-guru);
+  background: var(--mb-surface-guru-elevated);
+  box-shadow: 0 3px 12px rgba(23, 38, 58, 0.10);
+}
+.mb-host-tab-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  margin-left: 5px;
+  padding: 0 6px;
+  border-radius: var(--mb-radius-pill);
+  background: var(--mb-primary-soft);
+  color: var(--mb-primary-strong);
+  font-size: 0.76rem;
+}
+.mb-host-control-panel,
+.mb-host-participants-panel {
+  width: min(100% - 40px, 1080px);
+  margin: 20px auto;
+  padding: clamp(22px, 3vw, 36px);
+  border-radius: var(--mb-radius-lg);
+  background: var(--mb-surface-guru-elevated);
+  border: 1px solid rgba(28, 43, 58, 0.09);
+  box-shadow: var(--mb-shadow-light);
+}
+.mb-host-control-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--mb-space-5);
+}
+.mb-host-control-head h2 {
+  margin: 5px 0 4px;
+  font-size: clamp(1.5rem, 3vw, 2.15rem);
+}
+.mb-host-control-head p {
+  margin: 0;
+  color: var(--mb-text-guru-secondary);
+  max-width: 65ch;
+  line-height: 1.5;
+}
+.mb-host-phase {
+  flex: none;
+  min-width: 190px;
+  padding: 14px 18px;
+  border-radius: var(--mb-radius-md);
+  background: var(--mb-primary-soft);
+  color: var(--mb-primary-strong);
+}
+.mb-host-phase strong,
+.mb-host-phase span {
+  display: block;
+}
+.mb-host-phase strong {
+  font-size: 1rem;
+}
+.mb-host-phase span {
+  margin-top: 3px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.mb-host-control-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 24px 0;
+}
+.mb-host-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 18px;
+  border-radius: var(--mb-radius-md);
+  background: rgba(28, 43, 58, 0.045);
+  border: 1px solid rgba(28, 43, 58, 0.07);
+}
+.mb-host-stat strong {
+  font-size: 1.8rem;
+  color: var(--mb-text-guru);
+}
+.mb-host-stat span {
+  color: var(--mb-text-guru-secondary);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.mb-host-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.mb-host-control-tip {
+  margin: 20px 0 0;
+  color: var(--mb-text-guru-secondary);
+  font-size: 0.84rem;
+}
+.mb-host-big-count {
+  display: grid;
+  place-items: center;
+  min-width: 68px;
+  height: 68px;
+  padding: 0 14px;
+  border-radius: 20px;
+  background: var(--mb-primary-soft);
+  color: var(--mb-primary-strong);
+  font-size: 1.7rem;
+}
+.mb-host-participants-panel .mb-plist {
+  max-width: none;
+  justify-content: flex-start;
+  margin-top: 24px;
+}
+.mb-host-participants-panel .mb-plist-item {
+  background: rgba(28, 43, 58, 0.045);
+  border-color: rgba(28, 43, 58, 0.08);
+  color: var(--mb-text-guru);
+}
+.mb-host-participants-panel .mb-plist-state.mb-wait {
+  color: var(--mb-text-guru-secondary);
+}
+@media (max-width: 640px) {
+  .mb-host-tabs {
+    width: calc(100% - 20px);
+  }
+  .mb-host-tab {
+    padding-inline: 8px;
+    font-size: 0.78rem;
+  }
+  .mb-host-control-panel,
+  .mb-host-participants-panel {
+    width: calc(100% - 20px);
+    padding: 18px;
+  }
+  .mb-host-control-head {
+    flex-direction: column;
+  }
+  .mb-host-phase {
+    width: 100%;
+  }
+  .mb-host-control-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ── Layout fase proyektor (§30 — 16:9-first) ── */
 .mb-pj {
   flex: 1;
