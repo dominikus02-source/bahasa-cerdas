@@ -150,15 +150,9 @@ export function TeacherRoomClient({
 
       <div className="mb-host-mode-note" role="status">Mode Guru · layar ini dapat langsung diproyeksikan ke kelas</div>
       <nav className="mb-host-tabs" aria-label="Panel Main Bersama">
-        <button type="button" className={`mb-host-tab ${activeTab === 'layar' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('layar')}>
-          Tampilan Kelas
-        </button>
-        <button type="button" className={`mb-host-tab ${activeTab === 'kontrol' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('kontrol')}>
-          Kontrol Guru
-        </button>
-        <button type="button" className={`mb-host-tab ${activeTab === 'peserta' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('peserta')}>
-          Peserta <span className="mb-host-tab-count">{view.participants.length}</span>
-        </button>
+        <button type="button" className={`mb-host-tab ${activeTab === 'layar' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('layar')}>Tampilan Kelas</button>
+        <button type="button" className={`mb-host-tab ${activeTab === 'kontrol' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('kontrol')}>Kontrol Guru</button>
+        <button type="button" className={`mb-host-tab ${activeTab === 'peserta' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('peserta')}>Peserta <span className="mb-host-tab-count">{view.participants.length}</span></button>
       </nav>
 
       {error ? (
@@ -166,20 +160,43 @@ export function TeacherRoomClient({
       ) : null}
 
       {activeTab === 'kontrol' ? (
-        <TeacherControlPanel
-          view={view}
-          busy={busy}
-          run={run}
-          answered={answered}
-          eligible={eligible}
-          isLastRound={isLastRound}
-        />
+        <section className="mb-host-panel mb-fade-in">
+          <div className="mb-host-panel-head">
+            <div>
+              <span className="mb-eyebrow">Panel Guru</span>
+              <h2 className="mb-display">Kontrol Permainan</h2>
+              <p>Semua kendali permainan ada di sini. Tampilan Kelas tetap bersih untuk proyektor.</p>
+            </div>
+            <strong className="mb-host-phase">{view.phase === 'lobby' ? 'Lobby' : view.phase === 'question' ? 'Soal berlangsung' : view.phase === 'closed' ? 'Jawaban ditutup' : view.phase === 'discussion' ? 'Pembahasan' : view.phase === 'paused' ? 'Dijeda' : view.phase === 'summary' ? 'Hasil' : 'Selesai'}</strong>
+          </div>
+          <div className="mb-host-stats">
+            <div><strong>{view.participants.length}</strong><span>Peserta</span></div>
+            <div><strong>{view.totalRounds}</strong><span>Total soal</span></div>
+            <div><strong>{view.currentRoundIndex === null ? '—' : view.currentRoundIndex + 1}</strong><span>Soal aktif</span></div>
+            <div><strong>{answered}/{eligible}</strong><span>Sudah menjawab</span></div>
+          </div>
+          <div className="mb-host-actions">
+            {view.phase === 'lobby' ? <PrimaryGameButton onClick={() => { void teacherSound.activate(); void run('start'); }} disabled={busy || view.participants.length === 0} loading={busy} variant="light">Mulai Permainan</PrimaryGameButton> : null}
+            {view.phase === 'question' ? <PrimaryGameButton onClick={() => run('close-round')} disabled={busy} loading={busy} variant="light">Tutup Jawaban</PrimaryGameButton> : null}
+            {view.phase === 'closed' ? <PrimaryGameButton onClick={() => run('discuss')} disabled={busy} loading={busy} variant="light">Bahas Jawaban</PrimaryGameButton> : null}
+            {view.phase === 'discussion' ? <PrimaryGameButton onClick={() => run('next-round')} disabled={busy} loading={busy} variant="light">{isLastRound ? 'Lihat Hasil' : 'Lanjut'}</PrimaryGameButton> : null}
+            {view.phase === 'paused' ? <PrimaryGameButton onClick={() => run('resume')} disabled={busy} loading={busy} variant="light">Lanjutkan Permainan</PrimaryGameButton> : null}
+            {view.phase === 'summary' ? <PrimaryGameButton onClick={() => run('end')} disabled={busy} loading={busy} variant="light">Tutup Sesi</PrimaryGameButton> : null}
+            {view.allowedActions.canPause ? <button type="button" className="mb-secondary-btn" onClick={() => run('pause')} disabled={busy}>Jeda</button> : null}
+            {view.allowedActions.canEndSession && view.phase !== 'summary' ? <button type="button" className="mb-secondary-btn mb-danger-btn" onClick={() => run('end')} disabled={busy}>Akhiri</button> : null}
+          </div>
+          <p className="mb-host-tip">Gunakan <strong>Tampilan Kelas</strong> saat layar Guru disambungkan ke proyektor.</p>
+        </section>
       ) : activeTab === 'peserta' ? (
-        <TeacherParticipantsPanel participants={view.participants} answered={answered} eligible={eligible} />
+        <section className="mb-host-panel mb-fade-in">
+          <div className="mb-host-panel-head">
+            <div><span className="mb-eyebrow">Pemantauan</span><h2 className="mb-display">Peserta</h2><p>{answered} dari {eligible} peserta yang dapat menjawab sudah mengirim jawaban.</p></div>
+            <strong className="mb-host-count">{view.participants.length}</strong>
+          </div>
+        </section>
       ) : null}
 
-      {activeTab === 'layar' ? (
-        <>
+      {activeTab === 'layar' ? <>
       {/* ── LOBBY — game-show command center ── */}
       {view.phase === 'lobby' || view.phase === 'preparing' ? (
         <section className="mb-lobby mb-lobby-command-center mb-fade-in">
@@ -322,6 +339,7 @@ export function TeacherRoomClient({
               Tutup Jawaban
             </PrimaryGameButton>
           </div>
+          <ParticipantList participants={view.participants} showAnswered />
         </section>
       ) : null}
 
@@ -433,8 +451,8 @@ export function TeacherRoomClient({
             )}
           </div>
         </section>
-        </>
       ) : null}
+      </> : null}
     </main>
   );
 }
@@ -468,107 +486,6 @@ function ParticipantList({
         </li>
       ))}
     </ul>
-  );
-}
-
-
-function TeacherControlPanel({
-  view,
-  busy,
-  run,
-  answered,
-  eligible,
-  isLastRound,
-}: {
-  view: TeacherSessionView;
-  busy: boolean;
-  run: (action: Command) => Promise<void>;
-  answered: number;
-  eligible: number;
-  isLastRound: boolean;
-}) {
-  const a = view.allowedActions;
-  const primary = view.phase === 'lobby'
-    ? 'Mulai Permainan'
-    : view.phase === 'question'
-      ? 'Tutup Jawaban'
-      : view.phase === 'closed'
-        ? 'Bahas Jawaban'
-        : view.phase === 'discussion'
-          ? (isLastRound ? 'Lihat Hasil' : 'Lanjut')
-          : view.phase === 'paused'
-            ? 'Lanjutkan Permainan'
-            : view.phase === 'summary'
-              ? 'Tutup Sesi'
-              : null;
-  const action: Command | null = view.phase === 'lobby'
-    ? 'start'
-    : view.phase === 'question'
-      ? 'close-round'
-      : view.phase === 'closed'
-        ? 'discuss'
-        : view.phase === 'discussion'
-          ? 'next-round'
-          : view.phase === 'paused'
-            ? 'resume'
-            : view.phase === 'summary'
-              ? 'end'
-              : null;
-
-  return (
-    <section className="mb-host-control-panel mb-fade-in">
-      <div className="mb-host-control-head">
-        <div>
-          <span className="mb-eyebrow">Panel Guru</span>
-          <h2 className="mb-display">Kontrol Permainan</h2>
-          <p>Semua kendali sesi ada di sini. Tampilan Kelas tetap bersih untuk proyektor.</p>
-        </div>
-        <div className="mb-host-phase">
-          <strong>{view.phase === 'lobby' ? 'Lobby' : view.phase === 'question' ? 'Soal berlangsung' : view.phase === 'closed' ? 'Jawaban ditutup' : view.phase === 'discussion' ? 'Pembahasan' : view.phase === 'paused' ? 'Dijeda' : view.phase === 'summary' ? 'Hasil' : 'Selesai'}</strong>
-          <span>{answered} / {eligible} sudah menjawab</span>
-        </div>
-      </div>
-      <div className="mb-host-control-grid">
-        <div className="mb-host-stat"><strong className="mb-number">{view.participants.length}</strong><span>Peserta</span></div>
-        <div className="mb-host-stat"><strong className="mb-number">{view.totalRounds}</strong><span>Total soal</span></div>
-        <div className="mb-host-stat"><strong className="mb-number">{view.currentRoundIndex === null ? '—' : view.currentRoundIndex + 1}</strong><span>Soal aktif</span></div>
-      </div>
-      <div className="mb-host-action-row">
-        {primary && action ? (
-          <PrimaryGameButton onClick={() => run(action)} disabled={busy || (view.phase === 'lobby' && view.participants.length === 0)} loading={busy} variant="light">
-            {primary}
-          </PrimaryGameButton>
-        ) : null}
-        {a.canPause ? <button type="button" className="mb-secondary-btn" onClick={() => run('pause')} disabled={busy}>Jeda</button> : null}
-        {a.canResume && view.phase !== 'paused' ? <button type="button" className="mb-secondary-btn" onClick={() => run('resume')} disabled={busy}>Lanjutkan</button> : null}
-        {a.canEndSession && view.phase !== 'summary' ? <button type="button" className="mb-secondary-btn mb-danger-btn" onClick={() => run('end')} disabled={busy}>Akhiri</button> : null}
-      </div>
-      <p className="mb-host-control-tip">Tip: gunakan <strong>Tampilan Kelas</strong> saat layar Guru disambungkan ke proyektor.</p>
-    </section>
-  );
-}
-
-function TeacherParticipantsPanel({
-  participants,
-  answered,
-  eligible,
-}: {
-  participants: TeacherParticipantInfo[];
-  answered: number;
-  eligible: number;
-}) {
-  return (
-    <section className="mb-host-participants-panel mb-fade-in">
-      <div className="mb-host-control-head">
-        <div>
-          <span className="mb-eyebrow">Pemantauan</span>
-          <h2 className="mb-display">Peserta</h2>
-          <p>{answered} dari {eligible} peserta yang dapat menjawab sudah mengirim jawaban pada putaran ini.</p>
-        </div>
-        <strong className="mb-host-big-count mb-number">{participants.length}</strong>
-      </div>
-      <ParticipantList participants={participants} showAnswered />
-    </section>
   );
 }
 
