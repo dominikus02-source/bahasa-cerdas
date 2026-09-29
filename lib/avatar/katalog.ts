@@ -47,6 +47,10 @@ export function findAvatar(src: string | null | undefined): AvatarItem | undefin
   return AVATARS.find((a) => a.src === src);
 }
 
+export function findAvatarById(id: string | null | undefined): AvatarItem | undefined {
+  return AVATARS.find((a) => a.id === id);
+}
+
 /** The next avatar a student can work toward, for nudging them onward. */
 export function nextLockedAvatar(completedUnits: number): AvatarItem | undefined {
   return AVATARS.filter((a) => a.unlockUnits > completedUnits).sort(

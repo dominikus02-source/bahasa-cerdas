@@ -24,7 +24,7 @@ import type { SessionOrchestratorDeps } from './orchestrator-ports';
 import { pickBalancedTeam } from './team-assignment';
 import { validateDisplayName } from './display-name';
 import { buildStudentView } from '../../presentation/view-mappers';
-import { findAvatar } from '@/lib/avatar/katalog';
+import { findAvatarById } from '@/lib/avatar/katalog';
 import type { GameEngineState } from '../../games/game-router';
 
 // ─── Typed results ──────────────────────────────────────────
@@ -99,7 +99,7 @@ export async function joinSession(
   const pin = typeof input.pin === 'string' ? input.pin.trim() : '';
   if (!/^\d{6}$/.test(pin)) return { ok: false, code: 'SESSION_NOT_FOUND' };
 
-  const avatar = findAvatar(input.avatarId);
+  const avatar = findAvatarById(input.avatarId);
   if (!avatar) return { ok: false, code: 'AVATAR_INVALID' };
 
   const session = await deps.sessions.findByPin(pin);
