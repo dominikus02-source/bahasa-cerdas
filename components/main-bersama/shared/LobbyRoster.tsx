@@ -5,6 +5,7 @@ import type { TeamId } from "@/src/main-bersama/domain/types/ids";
 export interface LobbyRosterParticipant {
   displayName: string;
   teamId?: TeamId;
+  avatarUrl?: string;
 }
 
 interface LobbyRosterProps {
@@ -112,7 +113,15 @@ export function LobbyRoster({
             style={{ animationDelay: `${Math.min(index, 10) * 45}ms` }}
           >
             <span className="mb-lobby-player-avatar-wrap">
-              <AvatarFace name={participant.displayName} />
+              {participant.avatarUrl ? (
+                <img
+                  className="mb-lobby-avatar mb-lobby-avatar-image"
+                  src={participant.avatarUrl}
+                  alt=""
+                />
+              ) : (
+                <AvatarFace name={participant.displayName} />
+              )}
               <span className="mb-lobby-online-dot" aria-hidden />
             </span>
             <span className="mb-lobby-player-copy">
