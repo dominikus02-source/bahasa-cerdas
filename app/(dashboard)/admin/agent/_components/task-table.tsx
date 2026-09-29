@@ -26,7 +26,7 @@ export function AgentTaskTable({ tasks }: { tasks: readonly AgentTaskListItem[] 
         <thead>
           <tr className="border-b border-slate-100 text-left text-slate-400 dark:border-slate-800">
             <th className="px-4 py-2.5 font-medium">Task</th>
-            <th className="px-4 py-2.5 font-medium">Tipe</th>
+            <th className="px-4 py-2.5 font-medium">Tipe</th>\n            <th className="px-4 py-2.5 font-medium">Kanal</th>
             <th className="px-4 py-2.5 font-medium">Status</th>
             <th className="px-4 py-2.5 font-medium">Attempt</th>
             <th className="px-4 py-2.5 font-medium">Worker</th>
