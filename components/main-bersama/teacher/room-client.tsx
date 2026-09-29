@@ -561,7 +561,7 @@ export function TeacherRoomClient({
           </div>
 
           <div className="mb-final-grid">
-            {view.gameMode === 'jelajah-kata' ? <div className="mb-final-grid">
+            {view.gameMode === 'jelajah-kata' ? (
             <div className="mb-final-podium-card">
               <div className="mb-final-section-head">
                 <div>
