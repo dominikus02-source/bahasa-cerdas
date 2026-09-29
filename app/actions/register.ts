@@ -21,24 +21,49 @@ export async function registerUser(formData: FormData) {
     }
 
     const { email, supabaseId, fullName, role, school, city, province } = parsed.data;
+    const normalizedEmail = email.toLowerCase();
     const sanitizedName = sanitize(fullName);
 
-    const existingUser = await db.user.findFirst({ where: { email: email.toLowerCase() } });
+    const existingUser = await db.user.findFirst({
+      where: { email: normalizedEmail },
+    });
+
     if (existingUser) {
       if (existingUser.supabaseId === supabaseId) {
-        // Existing accounts own their application role. Registration must
-        // never mutate GURU ↔ MURID based on a new form submission or email
-        // domain. Role changes are an account-management operation, not a
-        // side effect of re-registration.
+        // The Auth + User rows were already provisioned by /api/auth/create-user.
+        // Registration now only enriches the optional profile fields, making
+        // the flow idempotent instead of failing after Auth succeeds.
+        try {
+          await db.profile.upsert({
+            where: { userId: existingUser.id },
+            update: {
+              ...(school ? { school: sanitize(school) } : {}),
+              ...(city ? { city: sanitize(city) } : {}),
+              ...(province ? { province: sanitize(province) } : {}),
+            },
+            create: {
+              userId: existingUser.id,
+              ...(school ? { school: sanitize(school) } : {}),
+              ...(city ? { city: sanitize(city) } : {}),
+              ...(province ? { province: sanitize(province) } : {}),
+            },
+          });
+        } catch {
+          // Profile fields are supplementary; don't block account creation.
+        }
+
         return { ok: true, role: existingUser.role.toLowerCase() };
       }
+
       return { error: "Email sudah terdaftar dengan akun lain" };
     }
 
+    // Legacy fallback for callers that still reach this action without the
+    // new create-user provisioning step.
     const newUser = await db.user.create({
       data: {
         supabaseId,
-        email: email.toLowerCase(),
+        email: normalizedEmail,
         fullName: sanitizedName,
         role,
       },
