@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef, use, Component } from "react";
 import { useRouter } from "next/navigation";
 import { useKompetisiHref } from "@/lib/arena-scope";
-import { ChevronLeft, ChevronRight, Flag, XCircle, MicOff, VolumeX } from "lucide-react";
+import { ChevronLeft, ChevronRight, Flag, XCircle, MicOff, VolumeX, CircleAlert } from "lucide-react";
 import { getCachedCompetition, clearCompetitionCache } from "@/lib/competition-cache";
 import TestShell from "@/components/kompetensi/TestShell";
 import TestHeader from "@/components/kompetensi/TestHeader";
@@ -43,6 +43,13 @@ interface PacketData {
   questions: SectionData[];
 }
 
+interface SimulationLimitError {
+  plan: string;
+  used: number;
+  limit: number;
+  message: string;
+}
+
 export default function KompetisiPage({ params, searchParams: sp }: { params: Promise<{ paketId: string }>; searchParams?: Promise<{ mic?: string; speaker?: string }> }) {
   const resolvedParams = use(params);
   const router = useRouter();
@@ -64,6 +71,7 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
   const [data, setData] = useState<PacketData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [limitError, setLimitError] = useState<SimulationLimitError | null>(null);
   // Separate from `error`: a submit failure must NOT route through the
   // full-page error view below, because its only recovery action is
   // "Coba Lagi" -> fetchTest(), which re-fetches the test and re-hydrates
@@ -106,6 +114,7 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
   const fetchTest = useCallback(async () => {
     setLoading(true);
     setError("");
+    setLimitError(null);
 
     // Coba pakai cache dari pre-load (device-check page)
     const cached = getCachedCompetition(resolvedParams.paketId);
@@ -125,12 +134,32 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
         const res = await fetch(url);
         const result = await res.json();
 
-        if (result.error) {
+        // Premium Economy mengembalikan 403 dengan code khusus. Jangan
+        // menafsirkannya sebagai payload sukses tanpa questions, karena itu
+        // menghasilkan pesan palsu "Tidak ada soal tersedia".
+        if (result.code === "FEATURE_LIMIT_REACHED") {
+          const used = Number(result.used ?? 0);
+          const limit = Number(result.limit ?? 0);
+          setLimitError({
+            plan: String(result.plan ?? "FREE"),
+            used,
+            limit,
+            message:
+              result.message ||
+              (limit > 0
+                ? `Anda telah menggunakan ${used} dari ${limit} kesempatan simulasi bulan ini.`
+                : "Kuota simulasi bulan ini telah digunakan."),
+          });
+          return;
+        }
+
+        if (!res.ok || result.error) {
+          const apiError = result.error || result.message || "Gagal memuat soal";
           const canRetry =
             result.session?.status === "COMPLETED" ||
-            /sudah selesai/i.test(result.error || "") ||
+            /sudah selesai/i.test(apiError) ||
             /sudah menyelesaikan/i.test(result.message || "") ||
-            /kadaluarsa/i.test(result.error || "");
+            /kadaluarsa/i.test(apiError);
           if (canRetry && !useRetry) {
             useRetry = true;
             retriedRef.current = true;
@@ -140,7 +169,7 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
             router.push(`${kompetisiHref}/${resolvedParams.paketId}/hasil`);
             return;
           }
-          setError(result.error || "Gagal memuat soal");
+          setError(apiError);
           return;
         }
 
@@ -165,7 +194,7 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
     } finally {
       setLoading(false);
     }
-  }, [resolvedParams.paketId, router]);
+  }, [resolvedParams.paketId, router, kompetisiHref, applyTestData]);
 
   // Fetch test data on mount
   useEffect(() => {
@@ -368,6 +397,29 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
           <div className="text-center">
             <div className="w-10 h-10 border-3 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin mx-auto mb-3" />
             <p className="text-sm text-slate-500">Memuat soal...</p>
+          </div>
+        </div>
+      </TestShell>
+    );
+  }
+
+  if (limitError) {
+    return (
+      <TestShell>
+        <div className="flex items-center justify-center min-h-[60vh] px-4">
+          <div className="text-center bg-white rounded-2xl p-8 shadow-sm max-w-md border border-amber-200">
+            <CircleAlert className="w-14 h-14 text-amber-500 mx-auto mb-4" />
+            <h2 className="font-bold text-lg mb-2 text-slate-800">Kuota simulasi bulan ini sudah digunakan</h2>
+            <p className="text-sm text-slate-600">{limitError.message}</p>
+            <p className="text-xs text-slate-400 mt-2 mb-5">
+              Kuota akan tersedia kembali pada awal bulan berikutnya.
+            </p>
+            <button
+              onClick={() => router.back()}
+              className="w-full px-6 py-2.5 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-colors"
+            >
+              Kembali
+            </button>
           </div>
         </div>
       </TestShell>
