@@ -145,6 +145,10 @@ export function TeacherRoomClient({
         roundLabel={roundLabel}
         actions={
           <>
+            <div className="mb-room-pin-live" role="status" aria-label={`PIN Main Bersama ${pin}`}>
+              <span>PIN</span>
+              <strong>{pin}</strong>
+            </div>
             {!fullscreen.isFullscreen ? (
               <button
                 type="button"
@@ -516,6 +520,32 @@ export function TeacherRoomClient({
       ) : null}
       </> : null}
       <style jsx>{`
+        .mb-room-pin-live {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          min-height: 38px;
+          padding: 0 13px;
+          border-radius: 12px;
+          border: 1px solid rgba(15,118,110,.16);
+          background: rgba(255,255,255,.92);
+          box-shadow: 0 5px 16px rgba(23,53,75,.07);
+          color: #617582;
+          white-space: nowrap;
+        }
+        .mb-room-pin-live span {
+          font-size: .62rem;
+          font-weight: 850;
+          letter-spacing: .1em;
+          color: #0f766e;
+        }
+        .mb-room-pin-live strong {
+          font-size: 1rem;
+          line-height: 1;
+          letter-spacing: .12em;
+          color: #17354b;
+          font-variant-numeric: tabular-nums;
+        }
         .mb-classroom-hint,
         .mb-classroom-control-hint {
           text-align: center;
