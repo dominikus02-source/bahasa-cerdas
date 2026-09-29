@@ -25,12 +25,47 @@ import { makeP4Registry } from "../tools";
 import { parseWorkerConfig } from "./config";
 import { createWorkerLogger } from "./logger";
 import { Worker, recordExecution, recordEvidence } from "./loop";
+import { formatAgentWorkerVersion } from "../runtime-protocol";
 import path from "node:path";
 
 function repoRoot(): string {
   return process.env.BC_AGENT_REPO_ROOT
     ? path.resolve(process.env.BC_AGENT_REPO_ROOT)
     : path.resolve(process.cwd());
+}
+
+function firstEnv(...names: string[]): string | undefined {
+  for (const name of names) {
+    const value = process.env[name]?.trim();
+    if (value) return value;
+  }
+  return undefined;
+}
+
+/**
+ * P9 credential provisioning: capability-scoped and read-only.
+ *
+ * The resolver never logs values and never hands one provider's credential
+ * to another tool. BC_AGENT_* names are preferred; conventional CLI/CI env
+ * names are accepted as compatibility fallbacks.
+ */
+function credentialsForTool(toolName: string): Readonly<Record<string, string>> | undefined {
+  if (toolName === "github.read") {
+    const githubToken = firstEnv("BC_AGENT_GITHUB_TOKEN", "GITHUB_TOKEN");
+    return githubToken ? { githubToken } : undefined;
+  }
+
+  if (toolName === "vercel.read") {
+    const vercelToken = firstEnv("BC_AGENT_VERCEL_TOKEN", "VERCEL_TOKEN");
+    const vercelTeamId = firstEnv("BC_AGENT_VERCEL_TEAM_ID", "VERCEL_ORG_ID");
+    if (!vercelToken) return undefined;
+    return {
+      vercelToken,
+      ...(vercelTeamId ? { vercelTeamId } : {}),
+    };
+  }
+
+  return undefined;
 }
 
 async function main(): Promise<void> {
@@ -42,7 +77,8 @@ async function main(): Promise<void> {
   // P7: build/version identifier for the registry row — informational,
   // never an identity. In the worker image this is a build arg; locally it
   // defaults to the git short SHA when available (best-effort, bounded).
-  const version = process.env.BC_AGENT_VERSION ?? `run-ts-${new Date().toISOString().slice(0, 10)}`;
+  const buildVersion = process.env.BC_AGENT_VERSION ?? `run-ts-${new Date().toISOString().slice(0, 10)}`;
+  const version = formatAgentWorkerVersion(buildVersion);
 
   // 2. Dependencies.
   const prisma = new PrismaClient({ log: ["error"] });
@@ -53,15 +89,16 @@ async function main(): Promise<void> {
   );
   const logger = createWorkerLogger(`worker-${crypto.randomUUID()}`);
 
-  // Read-only tools only. Credentials are NOT provisioned in P5 (§16 of P4
-  // report): github.read/vercel.read run unauthenticated with bounded public
-  // access until the credential-provisioning phase.
+  // Read-only tools only. P9 provisions provider credentials through a
+  // capability-scoped resolver: github.read never sees Vercel credentials
+  // and vercel.read never sees GitHub credentials.
   const registry = makeP4Registry({ repoRoot: repoRoot(), prisma });
   const executor = new ToolExecutor({
     registry,
     taskService,
     recordExecution: (row) => recordExecution(prisma, row),
     recordEvidence: (e) => recordEvidence(prisma, e),
+    credentialsForTool,
     now: () => new Date().toISOString(),
     newId: () => crypto.randomUUID(),
   });

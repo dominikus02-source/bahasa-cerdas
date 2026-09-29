@@ -1,24 +1,16 @@
 /**
- * BC Agent P4 — supabase.read: read-only database inspection (§15).
+ * BC Agent P9 — supabase.read: read-only database + BC operational health.
  *
- * Mechanism FACT: the repository has NO read-only database role (P0
- * finding, still true). This tool therefore does NOT fake the guarantee —
- * it achieves read-safety architecturally:
+ * Read-safety is architectural, not a model promise:
+ * - no arbitrary SQL input exists;
+ * - every operation is a fixed query selected by a discriminated union;
+ * - every query runs inside SET LOCAL TRANSACTION READ ONLY;
+ * - statement timeout and row/response limits are enforced;
+ * - raw user PII is never exposed by the BC health operations.
  *
- * 1. It runs ONLY a fixed allowlist of metadata queries (table row counts,
- *   column listings, migration list) and `SELECT *` on an explicit
- *   allowlist of agent-owned tables — arbitrary SQL is impossible because
- *   there is no SQL input field.
- * 2. Every query runs inside a READ ONLY transaction
- *   (`SET TRANSACTION READ ONLY`) — PostgreSQL rejects any mutation at the
- *   engine level even if code above it changed.
- * 3. `statement_timeout` bounds every query (§17).
- * 4. Row limits are applied in SQL (LIMIT) — never unbounded.
- * 5. The Prisma client instance is injected; the tool never reads env vars
- *   or connection strings, and NEVER returns credentials.
- *
- * What it intentionally does NOT expose: arbitrary table contents (only
- * the agent's own tables), user PII columns, or schema-privileged metadata.
+ * Supabase transaction-pooler note (2026): SET LOCAL / SET TRANSACTION is
+ * intentionally transaction-scoped so read-only state cannot contaminate a
+ * pooled backend connection after this transaction finishes.
  */
 
 import { z } from "zod";
@@ -33,9 +25,11 @@ export const SUPABASE_READ_NAME = "supabase.read";
 export const SUPABASE_READ_LIMITS = {
   maxRows: 50,
   timeoutMs: 10_000,
-  /** Tables whose contents the agent may inspect (its own domain only). */
+  maxWindowHours: 168,
   allowedTables: ["AgentTask", "TaskAttempt", "TaskEvent", "AgentApproval", "ToolExecution", "ToolEvidence"] as const,
 } as const;
+
+const windowHoursSchema = z.number().int().min(1).max(SUPABASE_READ_LIMITS.maxWindowHours).default(24);
 
 export const supabaseReadInputSchema = z.discriminatedUnion("op", [
   z.object({ op: z.literal("tables"), schema: z.string().max(63).default("public") }),
@@ -46,6 +40,8 @@ export const supabaseReadInputSchema = z.discriminatedUnion("op", [
     limit: z.number().int().min(1).max(SUPABASE_READ_LIMITS.maxRows).default(20),
   }),
   z.object({ op: z.literal("migrations") }),
+  z.object({ op: z.literal("bc_health"), windowHours: windowHoursSchema }),
+  z.object({ op: z.literal("agent_health"), windowHours: windowHoursSchema }),
 ]);
 
 export const supabaseReadOutputSchema = z.object({
@@ -65,12 +61,31 @@ export const supabaseReadOutputSchema = z.object({
 export type SupabaseReadInput = z.infer<typeof supabaseReadInputSchema>;
 export type SupabaseReadOutput = z.infer<typeof supabaseReadOutputSchema>["data"];
 
-/** Identifier guard — allows only plain SQL identifiers (no quoting tricks). */
 function safeIdentifier(name: string): string {
   if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(name)) {
     throw new Error(`supabase.read: unsafe identifier "${name.slice(0, 60)}"`);
   }
   return name;
+}
+
+function windowHoursOf(input: SupabaseReadInput): number {
+  return "windowHours" in input ? input.windowHours : 24;
+}
+
+function jsonSafeRows(rows: Array<Record<string, unknown>>): Array<Record<string, unknown>> {
+  return rows.map((row) => {
+    const out: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(row)) {
+      if (/(token|key|secret|password|authorization|credential)/i.test(key)) {
+        out[key] = "[redacted]";
+      } else if (typeof value === "bigint") {
+        out[key] = Number(value);
+      } else {
+        out[key] = value;
+      }
+    }
+    return out;
+  });
 }
 
 export function makeSupabaseReadTool(deps: { prisma: PrismaClient }): ToolDefinition & {
@@ -82,13 +97,13 @@ export function makeSupabaseReadTool(deps: { prisma: PrismaClient }): ToolDefini
     ...defineTool({
       name: SUPABASE_READ_NAME,
       description:
-        "Read-only database inspection: table/column metadata, row counts, agent-table samples, migration list. Runs in a READ ONLY transaction with statement timeout; no mutation path exists.",
+        "Read-only PostgreSQL/Supabase diagnostics. Ops: tables, columns, rows(agent tables only), migrations, bc_health {windowHours}, agent_health {windowHours}. bc_health returns aggregate BC users/schools/subscriptions/Main Bersama/TKA/AI activity without user PII.",
       risk: "READ",
       reversible: true,
       requiresApproval: false,
       autonomyLevel: "L0",
-      inputSchema: "bc.supabase.read.input@1",
-      outputSchema: "bc.supabase.read.output@1",
+      inputSchema: "bc.supabase.read.input@2",
+      outputSchema: "bc.supabase.read.output@2",
       timeoutMs: SUPABASE_READ_LIMITS.timeoutMs,
       productionImpact: "NONE",
       category: "OBSERVE",
@@ -96,9 +111,7 @@ export function makeSupabaseReadTool(deps: { prisma: PrismaClient }): ToolDefini
     }),
     input: supabaseReadInputSchema,
     output: supabaseReadOutputSchema,
-    async run(input, ctx): Promise<ToolOutputEnvelope<SupabaseReadOutput>> {
-      // Everything below runs in one READ ONLY transaction with a statement
-      // timeout — the engine rejects mutations regardless of caller intent.
+    async run(input, _ctx): Promise<ToolOutputEnvelope<SupabaseReadOutput>> {
       const rows = await deps.prisma.$transaction(
         async (tx) => {
           await tx.$executeRawUnsafe(`SET LOCAL statement_timeout = ${SUPABASE_READ_LIMITS.timeoutMs}`);
@@ -116,6 +129,7 @@ export function makeSupabaseReadTool(deps: { prisma: PrismaClient }): ToolDefini
                  ORDER BY pg_total_relation_size(c.oid) DESC LIMIT 100`
               );
             }
+
             case "columns": {
               const table = safeIdentifier(input.table);
               return tx.$queryRawUnsafe<Array<Record<string, unknown>>>(
@@ -125,46 +139,199 @@ export function makeSupabaseReadTool(deps: { prisma: PrismaClient }): ToolDefini
                  ORDER BY ordinal_position LIMIT 100`
               );
             }
+
             case "rows": {
               const table = safeIdentifier(input.table);
               return tx.$queryRawUnsafe<Array<Record<string, unknown>>>(
                 `SELECT * FROM "${table}" ORDER BY "createdAt" DESC LIMIT ${input.limit}`
               );
             }
-            case "migrations": {
+
+            case "migrations":
               return tx.$queryRawUnsafe<Array<Record<string, unknown>>>(
                 `SELECT migration_name AS "migration", finished_at AS "appliedAt"
                  FROM _prisma_migrations ORDER BY finished_at DESC LIMIT 50`
               );
+
+            case "bc_health": {
+              const hours = windowHoursOf(input);
+              return tx.$queryRawUnsafe<Array<Record<string, unknown>>>(`
+                WITH
+                user_stats AS (
+                  SELECT
+                    count(*)::bigint AS total,
+                    count(*) FILTER (WHERE role::text = 'GURU')::bigint AS teachers,
+                    count(*) FILTER (WHERE role::text = 'MURID')::bigint AS students,
+                    count(*) FILTER (WHERE "createdAt" >= now() - make_interval(hours => ${hours}))::bigint AS new_in_window,
+                    count(*) FILTER (WHERE "lastActiveAt" >= now() - make_interval(hours => ${hours}))::bigint AS active_in_window
+                  FROM "User"
+                ),
+                school_stats AS (
+                  SELECT
+                    count(*)::bigint AS total,
+                    count(*) FILTER (WHERE "isActive" = true)::bigint AS active,
+                    count(*) FILTER (WHERE "createdAt" >= now() - make_interval(hours => ${hours}))::bigint AS new_in_window
+                  FROM "School"
+                ),
+                subscription_status AS (
+                  SELECT status::text AS status, count(*)::bigint AS count
+                  FROM "Subscription"
+                  GROUP BY status
+                ),
+                main_phase AS (
+                  SELECT phase::text AS phase, count(*)::bigint AS count
+                  FROM "MainSession"
+                  WHERE "createdAt" >= now() - make_interval(hours => ${hours})
+                  GROUP BY phase
+                ),
+                test_status AS (
+                  SELECT status::text AS status, count(*)::bigint AS count
+                  FROM "TestSession"
+                  WHERE "createdAt" >= now() - make_interval(hours => ${hours})
+                  GROUP BY status
+                ),
+                ai_stats AS (
+                  SELECT
+                    count(*)::bigint AS total,
+                    count(*) FILTER (WHERE status = 'success')::bigint AS success,
+                    count(*) FILTER (WHERE status = 'error')::bigint AS errors,
+                    round(avg("latencyMs"))::bigint AS avg_latency_ms,
+                    round(coalesce(sum("costUSD"), 0)::numeric, 6) AS cost_usd
+                  FROM "AIUsage"
+                  WHERE "createdAt" >= now() - make_interval(hours => ${hours})
+                ),
+                product_stats AS (
+                  SELECT count(*)::bigint AS total
+                  FROM "ProductEvent"
+                  WHERE "createdAt" >= now() - make_interval(hours => ${hours})
+                )
+                SELECT 'window' AS metric, jsonb_build_object('hours', ${hours}) AS value
+                UNION ALL
+                SELECT 'users', jsonb_build_object(
+                  'total', total,
+                  'teachers', teachers,
+                  'students', students,
+                  'new', new_in_window,
+                  'active', active_in_window
+                ) FROM user_stats
+                UNION ALL
+                SELECT 'schools', jsonb_build_object(
+                  'total', total,
+                  'active', active,
+                  'new', new_in_window
+                ) FROM school_stats
+                UNION ALL
+                SELECT 'subscriptions', jsonb_build_object(
+                  'total', coalesce((SELECT sum(count) FROM subscription_status), 0),
+                  'byStatus', coalesce((SELECT jsonb_object_agg(status, count) FROM subscription_status), '{}'::jsonb)
+                )
+                UNION ALL
+                SELECT 'mainBersama', jsonb_build_object(
+                  'total', coalesce((SELECT sum(count) FROM main_phase), 0),
+                  'byPhase', coalesce((SELECT jsonb_object_agg(phase, count) FROM main_phase), '{}'::jsonb)
+                )
+                UNION ALL
+                SELECT 'testSessions', jsonb_build_object(
+                  'total', coalesce((SELECT sum(count) FROM test_status), 0),
+                  'byStatus', coalesce((SELECT jsonb_object_agg(status, count) FROM test_status), '{}'::jsonb)
+                )
+                UNION ALL
+                SELECT 'aiUsage', jsonb_build_object(
+                  'total', total,
+                  'success', success,
+                  'errors', errors,
+                  'avgLatencyMs', avg_latency_ms,
+                  'costUSD', cost_usd
+                ) FROM ai_stats
+                UNION ALL
+                SELECT 'productEvents', jsonb_build_object('total', total) FROM product_stats
+              `);
+            }
+
+            case "agent_health": {
+              const hours = windowHoursOf(input);
+              return tx.$queryRawUnsafe<Array<Record<string, unknown>>>(`
+                WITH
+                task_status AS (
+                  SELECT status, count(*)::bigint AS count
+                  FROM "AgentTask"
+                  GROUP BY status
+                ),
+                task_window AS (
+                  SELECT
+                    count(*)::bigint AS created,
+                    count(*) FILTER (WHERE status = 'COMPLETED')::bigint AS completed,
+                    count(*) FILTER (WHERE status = 'FAILED')::bigint AS failed
+                  FROM "AgentTask"
+                  WHERE "createdAt" >= now() - make_interval(hours => ${hours})
+                ),
+                execution_window AS (
+                  SELECT
+                    count(*)::bigint AS total,
+                    count(*) FILTER (WHERE status = 'SUCCEEDED')::bigint AS succeeded,
+                    count(*) FILTER (WHERE status = 'FAILED')::bigint AS failed
+                  FROM "ToolExecution"
+                  WHERE "startedAt" >= now() - make_interval(hours => ${hours})
+                ),
+                worker_stats AS (
+                  SELECT
+                    count(*)::bigint AS registered,
+                    count(*) FILTER (
+                      WHERE status IN ('RUNNING','DEGRADED')
+                        AND "lastHeartbeatAt" >= now() - interval '5 minutes'
+                    )::bigint AS online,
+                    count(*) FILTER (
+                      WHERE status IN ('RUNNING','DEGRADED')
+                        AND "lastHeartbeatAt" < now() - interval '5 minutes'
+                    )::bigint AS stale
+                  FROM "AgentWorker"
+                ),
+                telegram_stats AS (
+                  SELECT
+                    count(*)::bigint AS commands,
+                    count(*) FILTER (
+                      WHERE "resultCode" IS NOT NULL
+                        AND "resultCode" NOT IN ('OK','CREATED','ALREADY_EXISTS')
+                    )::bigint AS failed
+                  FROM "AgentCommandDedupe"
+                  WHERE "createdAt" >= now() - make_interval(hours => ${hours})
+                )
+                SELECT 'window' AS metric, jsonb_build_object('hours', ${hours}) AS value
+                UNION ALL
+                SELECT 'tasks', jsonb_build_object(
+                  'byStatus', coalesce((SELECT jsonb_object_agg(status, count) FROM task_status), '{}'::jsonb),
+                  'created', created,
+                  'completed', completed,
+                  'failed', failed
+                ) FROM task_window
+                UNION ALL
+                SELECT 'executions', jsonb_build_object(
+                  'total', total,
+                  'succeeded', succeeded,
+                  'failed', failed
+                ) FROM execution_window
+                UNION ALL
+                SELECT 'workers', jsonb_build_object(
+                  'registered', registered,
+                  'online', online,
+                  'stale', stale
+                ) FROM worker_stats
+                UNION ALL
+                SELECT 'telegram', jsonb_build_object(
+                  'commands', commands,
+                  'failed', failed
+                ) FROM telegram_stats
+              `);
             }
           }
         },
         { timeout: SUPABASE_READ_LIMITS.timeoutMs + 5_000 }
       );
 
-      const items = (rows ?? []) as Array<Record<string, unknown>>;
-      // JSON-safety + redaction pass: Prisma raw queries surface BigInt for
-      // Postgres bigint columns (counts/sizes) — convert before the output
-      // envelope serializes; secret-named values are redacted (defense in
-      // depth for sampled rows).
-      const safe = items.map((r) => {
-        const out: Record<string, unknown> = {};
-        for (const [k, v] of Object.entries(r)) {
-          if (/(token|key|secret|password|authorization)/i.test(k)) {
-            out[k] = "[redacted]";
-          } else if (typeof v === "bigint") {
-            out[k] = Number(v);
-          } else {
-            out[k] = v;
-          }
-        }
-        return out;
-      });
-
-      const source = `supabase:${input.op}`;
+      const safe = jsonSafeRows((rows ?? []) as Array<Record<string, unknown>>);
       return boundedOutput(
         { op: input.op, readOnlyTransaction: true as const, items: safe, count: safe.length },
-        { maxBytes: 256 * 1024, items: safe.length, source }
+        { maxBytes: 256 * 1024, items: safe.length, source: `supabase:${input.op}` }
       );
     },
   };
