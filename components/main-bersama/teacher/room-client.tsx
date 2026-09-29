@@ -12,8 +12,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import type { TeacherSessionView } from '@/src/main-bersama/contracts/views/teacher';
-import type { TeacherParticipantInfo } from '@/src/main-bersama/contracts/views/teacher';
+import type { TeacherParticipantInfo, TeacherSessionView } from '@/src/main-bersama/contracts/views/teacher';
 import {
   MbApiError,
   fetchTeacherState,
@@ -118,7 +117,6 @@ export function TeacherRoomClient({
     );
   }
 
-  const a = view.allowedActions;
   const answered = view.answerSummary.submittedCount;
   const eligible = view.answerSummary.eligibleCount;
   const isLastRound =
