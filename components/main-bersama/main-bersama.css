@@ -4493,3 +4493,97 @@
   .mb-room-fullscreen-control span:not(:first-child),
   .mb-room-fullscreen-control kbd{display:none}
 }
+
+
+/* ── Main Bersama: true fullscreen viewport fit ──
+   Fullscreen must use the whole viewport without clipping the lower game
+   surface. The document root is fullscreen, so the room itself becomes the
+   scroll container instead of hiding content below 100dvh.
+*/
+:fullscreen .mb-room-fullscreen-active{
+  width:100vw;
+  height:100dvh;
+  min-height:100dvh;
+  max-height:100dvh;
+  box-sizing:border-box;
+  overflow-x:hidden;
+  overflow-y:auto;
+  scrollbar-width:none;
+  overscroll-behavior:contain;
+}
+:fullscreen .mb-room-fullscreen-active::-webkit-scrollbar{
+  display:none;
+}
+.mb-room-fullscreen-active .mb-host-mode-note{
+  display:none;
+}
+.mb-room-fullscreen-active .mb-session-header{
+  position:sticky;
+  top:0;
+  z-index:100;
+  flex:none;
+  padding:8px 18px;
+  background:rgba(248,251,252,.96);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(28,43,58,.08);
+}
+.mb-room-fullscreen-active .mb-host-tabs{
+  position:sticky;
+  top:52px;
+  z-index:90;
+  margin-top:4px;
+  margin-bottom:0;
+  background:rgba(248,251,252,.94);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+.mb-room-fullscreen-active .mb-lobby-command-center,
+.mb-room-fullscreen-active .mb-tquestion,
+.mb-room-fullscreen-active .mb-closed,
+.mb-room-fullscreen-active .mb-discuss,
+.mb-room-fullscreen-active .mb-tsummary{
+  padding-top:12px;
+  padding-bottom:24px;
+}
+.mb-room-fullscreen-active .mb-tquestion,
+.mb-room-fullscreen-active .mb-discuss{
+  gap:12px;
+}
+.mb-room-fullscreen-active .mb-qcard{
+  padding:16px;
+}
+.mb-room-fullscreen-active .mb-qcard-passage{
+  max-height:28dvh;
+  margin-bottom:12px;
+}
+.mb-room-fullscreen-active .mb-qcard-prompt{
+  font-size:clamp(1.1rem,1.7vw,1.3rem);
+  line-height:1.4;
+}
+.mb-room-fullscreen-active .mb-progress-inline{
+  width:min(100%,560px);
+}
+@media(max-height:760px) and (min-width:700px){
+  .mb-room-fullscreen-active .mb-session-header{
+    padding-top:5px;
+    padding-bottom:5px;
+  }
+  .mb-room-fullscreen-active .mb-host-tabs{
+    top:44px;
+  }
+  .mb-room-fullscreen-active .mb-tquestion,
+  .mb-room-fullscreen-active .mb-discuss,
+  .mb-room-fullscreen-active .mb-tsummary,
+  .mb-room-fullscreen-active .mb-closed{
+    padding-top:8px;
+    padding-bottom:16px;
+    gap:8px;
+  }
+  .mb-room-fullscreen-active .mb-qcard{
+    padding:12px;
+  }
+  .mb-room-fullscreen-active .mb-qcard-passage{
+    max-height:22dvh;
+  }
+}
