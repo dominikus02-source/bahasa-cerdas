@@ -261,26 +261,30 @@ export function TeacherRoomClient({
             </div>
             <strong className="mb-host-count">{view.roundAnalytics.length}</strong>
           </div>
-          <div className="mb-cahaya-card">
-            <div className="mb-cahaya-head">
+          <div className="mb-leaderboard-card">
+            <div className="mb-leaderboard-head">
               <div>
-                <span className="mb-eyebrow">Papan Kontribusi</span>
-                <h3 className="mb-display">✨ Cahaya Kata</h3>
-                <p>Nama siswa naik berdasarkan jawaban benar dan kecepatan menjawab.</p>
+                <span className="mb-eyebrow">Peringkat Kelas</span>
+                <h3 className="mb-display">Kemajuan Jelajah Kata</h3>
+                <p>Urutan berdasarkan persentase jawaban benar. Tidak ada bonus kecepatan.</p>
               </div>
-              <span className="mb-cahaya-live">LIVE</span>
+              <span className="mb-leaderboard-live">LIVE</span>
             </div>
-            <div className="mb-cahaya-list">
+            <div className="mb-leaderboard-list">
               {[...view.participants]
-                 .sort((a, b) => (a.cahayaRank ?? 9999) - (b.cahayaRank ?? 9999))
+                .sort((a, b) => a.progressRank - b.progressRank || b.correctAnswers - a.correctAnswers)
                 .slice(0, 10)
                 .map((p) => (
-                  <div className={`mb-cahaya-row ${(p.cahayaRank ?? 9999) <= 3 ? 'is-top' : ''}`} key={p.playerId}>
-                    <span className={`mb-cahaya-rank rank-${Math.min(p.cahayaRank ?? 9999, 3)}`}>{(p.cahayaRank ?? 9999) <= 3 ? ['🥇','🥈','🥉'][(p.cahayaRank ?? 1) - 1] : p.cahayaRank ?? '—'}</span>
-                    <span className="mb-cahaya-avatar"><img src={p.avatarUrl ?? '/avatar/2.webp'} alt="" /></span>
-                    <span className="mb-cahaya-name">{p.displayName}</span>
-                    <span className="mb-cahaya-round">{(p.currentRoundPoints ?? 0) > 0 ? `+${p.currentRoundPoints}` : ''}</span>
-                    <strong className="mb-cahaya-score">{(p.cahayaPoints ?? 0).toLocaleString('id-ID')} <small>poin</small></strong>
+                  <div className={`mb-leaderboard-row ${p.progressRank <= 3 ? 'is-top' : ''}`} key={p.playerId}>
+                    <span className="mb-leaderboard-rank">
+                      {p.progressRank <= 3 ? ['🥇', '🥈', '🥉'][p.progressRank - 1] : p.progressRank}
+                    </span>
+                    <span className="mb-leaderboard-avatar">
+                      <img src={p.avatarUrl ?? '/avatar/2.webp'} alt="" />
+                    </span>
+                    <span className="mb-leaderboard-name">{p.displayName}</span>
+                    <span className="mb-leaderboard-score">{p.correctAnswers}/{p.eligibleRounds}</span>
+                    <strong>{p.progressPercent}%</strong>
                   </div>
                 ))}
               {view.participants.length === 0 ? <p className="mb-teacher-empty">Belum ada siswa.</p> : null}
@@ -388,6 +392,7 @@ export function TeacherRoomClient({
                 <LobbyRoster
                   participants={view.participants.map((p) => ({
                     displayName: p.displayName,
+                    avatarUrl: p.avatarUrl ?? '/avatar/2.webp',
                     ...(p.teamId ? { teamId: p.teamId } : {}),
                   }))}
                   maxVisible={18}
@@ -518,30 +523,111 @@ export function TeacherRoomClient({
       {/* ── SUMMARY / CLOSED SESSION (§28 teacher) ── */}
       {view.phase === 'summary' || view.phase === 'ended' ? (
         <section className="mb-tsummary mb-fade-in">
-          <span className="mb-eyebrow">
-            {view.phase === 'ended' ? 'Sesi sudah ditutup' : 'Permainan selesai'}
-          </span>
-          <h2 className="mb-display mb-guru-phase-title">
-            {view.phase === 'ended' ? 'Sesi ditutup' : 'Hasil Permainan'}
-          </h2>
-          <p className="mb-closed-sub">
-            {view.phase === 'ended'
-              ? 'Semua perangkat siswa sudah menerima status penutup.'
-              : 'Tinjau hasil akhir, lalu tutup sesi agar perangkat siswa mendapat penutup yang jelas.'}
-          </p>
-          {view.gameState?.gameMode === 'jelajah-kata' ? (
-            <TeamProgress teams={view.teams} progress={view.gameState.jelajahKata.teamProgress} />
-          ) : view.gameState?.gameMode === 'kota-cahaya' ? (
-            <CityCahayaStage
-                progressPercent={view.gameState.kotaCahaya.progressPercent}
-                unlockedMilestones={view.gameState.kotaCahaya.unlockedMilestones}
+          <div className="mb-final-hero">
+            <span className="mb-eyebrow">{view.phase === 'ended' ? 'Sesi selesai' : 'Permainan selesai'}</span>
+            <h2 className="mb-display mb-guru-phase-title">🎉 Hebat, kelas!</h2>
+            <p className="mb-final-subtitle">Inilah progres akhir Jelajah Kata hari ini.</p>
+          </div>
+
+          <div className="mb-final-grid">
+            <div className="mb-final-podium-card">
+              <div className="mb-final-section-head">
+                <div>
+                  <span className="mb-eyebrow">Peringkat Akhir</span>
+                  <h3>Podium Jelajah Kata</h3>
+                </div>
+                <span className="mb-final-total">{view.participants.length} siswa</span>
+              </div>
+              <div className="mb-final-podium">
+                {[...view.participants]
+                  .filter((p) => p.progressRank <= 3)
+                  .sort((a, b) => a.progressRank - b.progressRank)
+                  .slice(0, 3)
+                  .map((p) => (
+                    <div className={`mb-podium-item mb-podium-rank-${p.progressRank}`} key={p.playerId}>
+                      <div className="mb-podium-medal">
+                        {p.progressRank === 1 ? '🥇' : p.progressRank === 2 ? '🥈' : '🥉'}
+                      </div>
+                      <span className="mb-podium-avatar">
+                        <img src={p.avatarUrl ?? '/avatar/2.webp'} alt="" />
+                      </span>
+                      <strong>{p.displayName}</strong>
+                      <span>{p.correctAnswers}/{p.eligibleRounds} benar · {p.progressPercent}%</span>
+                      <div className="mb-podium-step"><b>{p.progressRank}</b></div>
+                    </div>
+                  ))}
+                {view.participants.length === 0 ? <p className="mb-teacher-empty">Belum ada hasil peserta.</p> : null}
+              </div>
+            </div>
+
+            <div className="mb-final-city-card">
+              <div className="mb-final-section-head">
+                <div>
+                  <span className="mb-eyebrow">Hadiah Kelas</span>
+                  <h3>🌆 Kota Cahaya</h3>
+                </div>
+                <span className="mb-final-city-progress">
+                  {view.gameState?.gameMode === 'kota-cahaya'
+                    ? Math.round(view.gameState.kotaCahaya.progressPercent)
+                    : Math.round(
+                        Object.values(view.gameState?.gameMode === 'jelajah-kata'
+                          ? view.gameState.jelajahKata.teamProgress
+                          : {}).reduce((sum, value) => sum + value, 0) /
+                          Math.max(
+                            Object.keys(view.gameState?.gameMode === 'jelajah-kata'
+                              ? view.gameState.jelajahKata.teamProgress
+                              : {}).length,
+                            1,
+                          ),
+                      )}%
+                </span>
+              </div>
+              <CityCahayaStage
+                progressPercent={
+                  view.gameState?.gameMode === 'kota-cahaya'
+                    ? view.gameState.kotaCahaya.progressPercent
+                    : Object.values(view.gameState?.gameMode === 'jelajah-kata'
+                        ? view.gameState.jelajahKata.teamProgress
+                        : {}).reduce((sum, value) => sum + value, 0) /
+                      Math.max(
+                        Object.keys(view.gameState?.gameMode === 'jelajah-kata'
+                          ? view.gameState.jelajahKata.teamProgress
+                          : {}).length,
+                        1,
+                      )
+                }
+                unlockedMilestones={
+                  view.gameState?.gameMode === 'kota-cahaya'
+                    ? view.gameState.kotaCahaya.unlockedMilestones
+                    : []
+                }
               />
-          ) : null}
-          <p className="mb-classroom-control-hint">
-            {view.phase === 'summary'
-              ? <>Tinjau hasil di layar kelas. Buka <strong>Kontrol Guru</strong> untuk menutup sesi.</>
-              : <>Sesi sudah ditutup. Guru dapat kembali dari panel kontrol.</>}
-          </p>
+              <p>Setiap jawaban benar ikut membantu kelas membuat Kota Cahaya semakin hidup.</p>
+            </div>
+          </div>
+
+          <div className="mb-final-bottom">
+            <div>
+              <span className="mb-eyebrow">Kemajuan Kelas</span>
+              <strong>{view.roundAnalytics.filter((r) => r.submittedCount > 0).length}/{view.roundAnalytics.length} soal dimainkan</strong>
+            </div>
+            <div>
+              <span className="mb-eyebrow">Akurasi Kelas</span>
+              <strong>
+                {view.roundAnalytics.length
+                  ? Math.round(
+                      view.roundAnalytics.reduce((sum, r) => sum + r.accuracyPercent, 0) /
+                        view.roundAnalytics.length,
+                    )
+                  : 0}%
+              </strong>
+            </div>
+            <p>
+              {view.phase === 'summary'
+                ? <>Tinjau hasil di <strong>Analisis</strong>, lalu buka <strong>Kontrol Guru</strong> untuk menutup sesi.</>
+                : <>Sesi selesai. Podium dan Kota Cahaya tetap menjadi penutup permainan.</>}
+            </p>
+          </div>
         </section>
       ) : null}
       </> : null}
@@ -672,23 +758,27 @@ export function TeacherRoomClient({
         }
         .mb-teacher-student-avatar img { width:100%; height:100%; object-fit:cover; }
         .mb-teacher-empty { grid-column:1/-1; margin:0; padding:18px 8px; text-align:center; color:#8a9aa4; font-size:.74rem; }
-        .mb-cahaya-card {
-          margin-top:18px;
-          padding:18px;
-          border:1px solid #e4ecea;
-          border-radius:20px;
-          background:linear-gradient(180deg,#fbfffe 0%,#f5faf9 100%);
+        .mb-leaderboard-card,
+        .mb-final-podium-card,
+        .mb-final-city-card {
+          margin-top: 18px;
+          padding: 18px;
+          border: 1px solid #e4ecea;
+          border-radius: 20px;
+          background: linear-gradient(180deg,#fbfffe 0%,#f5faf9 100%);
         }
-        .mb-cahaya-head {
+        .mb-leaderboard-head,
+        .mb-final-section-head {
           display:flex;
           align-items:flex-start;
           justify-content:space-between;
           gap:16px;
           margin-bottom:12px;
         }
-        .mb-cahaya-head h3 { margin:4px 0 3px; font-size:1.15rem; color:#17354b; }
-        .mb-cahaya-head p { margin:0; color:#748691; font-size:.72rem; font-weight:650; }
-        .mb-cahaya-live {
+        .mb-leaderboard-head h3,
+        .mb-final-section-head h3 { margin:4px 0 3px; font-size:1.15rem; color:#17354b; }
+        .mb-leaderboard-head p { margin:0; color:#748691; font-size:.72rem; font-weight:650; }
+        .mb-leaderboard-live {
           padding:5px 9px;
           border-radius:999px;
           background:#e8faf5;
@@ -697,10 +787,10 @@ export function TeacherRoomClient({
           font-weight:900;
           letter-spacing:.1em;
         }
-        .mb-cahaya-list { display:grid; gap:7px; }
-        .mb-cahaya-row {
+        .mb-leaderboard-list { display:grid; gap:7px; }
+        .mb-leaderboard-row {
           display:grid;
-          grid-template-columns:38px 30px minmax(0,1fr) 62px auto;
+          grid-template-columns:38px 34px minmax(0,1fr) 68px 54px;
           align-items:center;
           gap:9px;
           min-height:48px;
@@ -708,16 +798,48 @@ export function TeacherRoomClient({
           border:1px solid #edf1f1;
           border-radius:14px;
           background:#fff;
-          transition:transform .25s ease, box-shadow .25s ease;
         }
-        .mb-cahaya-row.is-top { box-shadow:0 5px 18px rgba(15,118,110,.07); }
-        .mb-cahaya-rank { text-align:center; color:#71848f; font-size:.76rem; font-weight:900; }
-        .mb-cahaya-avatar { width:30px; height:30px; border-radius:50%; overflow:hidden; background:#eef3f2; }
-        .mb-cahaya-avatar img { width:100%; height:100%; object-fit:cover; }
-        .mb-cahaya-name { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#294456; font-size:.78rem; font-weight:800; }
-        .mb-cahaya-round { color:#0f9d8b; font-size:.7rem; font-weight:900; text-align:right; }
-        .mb-cahaya-score { color:#17354b; font-size:.82rem; text-align:right; font-variant-numeric:tabular-nums; }
-        .mb-cahaya-score small { color:#84949d; font-size:.6rem; font-weight:700; }
+        .mb-leaderboard-row.is-top { box-shadow:0 5px 18px rgba(15,118,110,.07); }
+        .mb-leaderboard-rank { text-align:center; color:#71848f; font-size:.76rem; font-weight:900; }
+        .mb-leaderboard-avatar,
+        .mb-podium-avatar { overflow:hidden; background:#eef3f2; }
+        .mb-leaderboard-avatar { width:34px; height:34px; border-radius:50%; }
+        .mb-leaderboard-avatar img,
+        .mb-podium-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+        .mb-leaderboard-name { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#294456; font-size:.78rem; font-weight:800; }
+        .mb-leaderboard-score { color:#71848f; font-size:.7rem; font-weight:800; text-align:right; }
+        .mb-leaderboard-row > strong { color:#17354b; font-size:.82rem; text-align:right; font-variant-numeric:tabular-nums; }
+        .mb-final-hero { text-align:center; }
+        .mb-final-subtitle { margin:6px 0 0; color:#6f8290; font-size:.86rem; font-weight:650; }
+        .mb-final-grid { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:16px; margin-top:8px; }
+        .mb-final-total,
+        .mb-final-city-progress { color:#0f766e; font-size:.72rem; font-weight:900; }
+        .mb-final-podium { display:grid; grid-template-columns:1fr 1.12fr 1fr; align-items:end; gap:8px; min-height:250px; }
+        .mb-podium-item { display:flex; flex-direction:column; align-items:center; justify-content:flex-end; min-width:0; text-align:center; }
+        .mb-podium-medal { font-size:1.5rem; line-height:1; margin-bottom:5px; }
+        .mb-podium-avatar { width:64px; height:64px; border-radius:50%; border:4px solid #fff; box-shadow:0 8px 22px rgba(23,53,75,.12); }
+        .mb-podium-rank-1 .mb-podium-avatar { width:78px; height:78px; }
+        .mb-podium-item strong { max-width:100%; margin-top:7px; color:#17354b; font-size:.84rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .mb-podium-item > span:not(.mb-podium-avatar) { margin-top:3px; color:#71848f; font-size:.67rem; font-weight:750; }
+        .mb-podium-step { display:grid; place-items:center; width:100%; min-height:48px; margin-top:8px; border-radius:12px 12px 4px 4px; background:#eaf4f2; color:#0f766e; }
+        .mb-podium-rank-1 .mb-podium-step { min-height:72px; background:#dff4ee; }
+        .mb-podium-rank-2 .mb-podium-step { min-height:58px; }
+        .mb-final-city-card { display:flex; flex-direction:column; }
+        .mb-final-city-card .mb-city-cahaya-stage { flex:1; margin-top:0; }
+        .mb-final-city-card > p { margin:8px 2px 0; color:#71848f; font-size:.72rem; font-weight:650; text-align:center; }
+        .mb-final-bottom { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)) minmax(0,2fr); gap:10px; align-items:center; margin-top:12px; }
+        .mb-final-bottom > div { padding:12px 14px; border-radius:14px; background:#f5f8f8; border:1px solid #e8eeee; }
+        .mb-final-bottom > div span,
+        .mb-final-bottom > div strong { display:block; }
+        .mb-final-bottom > div strong { margin-top:3px; color:#17354b; font-size:.9rem; }
+        .mb-final-bottom p { margin:0; color:#71848f; font-size:.72rem; line-height:1.45; font-weight:650; }
+        @media(max-width:760px){
+          .mb-final-grid { grid-template-columns:1fr; }
+          .mb-final-podium { min-height:220px; }
+          .mb-final-bottom { grid-template-columns:1fr 1fr; }
+          .mb-final-bottom p { grid-column:1/-1; }
+          .mb-leaderboard-row { grid-template-columns:32px 32px minmax(0,1fr) 54px 48px; }
+        }
         .mb-analysis-overview {
           display:grid;
           grid-template-columns:repeat(3,1fr);
