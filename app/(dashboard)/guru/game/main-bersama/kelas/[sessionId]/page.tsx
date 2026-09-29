@@ -1,19 +1,15 @@
 import { redirect } from "next/navigation";
-import { getUser } from "@/lib/supabase/server";
-import { db } from "@/lib/db";
-import { ClassroomClient } from "@/components/main-bersama/teacher/classroom-client";
-import "@/components/main-bersama/main-bersama.css";
 
 /**
- * Layar Kelas Main Bersama (8B.1) — mode presentasi satu layar:
- * `/guru/game/main-bersama/kelas/[sessionId]`.
+ * Main Bersama sekarang memakai 2 layar saja:
+ * 1) layar Guru = pusat kendali + tampilan guru;
+ * 2) perangkat Murid = layar bermain.
  *
- * Visual = projector/public-safe contract (TIDAK ada teacher-private
- * state); kontrol = command dock minimum (start/close/discuss/next +
- * overflow pause/resume/end). Auth + ownership sama dengan ruang guru.
+ * Route lama Layar Kelas tetap diarahkan ke Ruang Guru agar bookmark lama
+ * tidak membuka surface ketiga dan guru tidak kembali ke alur 3 layar.
  */
 export const metadata = {
-  title: "Main Bersama — Layar Kelas",
+  title: "Main Bersama — Ruang Guru",
   robots: { index: false, follow: false },
 };
 
@@ -23,23 +19,5 @@ export default async function ClassroomPage({
   params: Promise<{ sessionId: string }>;
 }) {
   const { sessionId } = await params;
-  const user = await getUser();
-  if (!user) redirect(`/login?redirect=/guru/game/main-bersama/kelas/${sessionId}`);
-  if (user.role !== "GURU" && !user.isFounder) {
-    redirect("/murid/beranda");
-  }
-
-  const session = await db.mainSession.findUnique({
-    where: { id: sessionId },
-    select: { id: true, teacherId: true },
-  });
-  if (!session || session.teacherId !== user.id) {
-    redirect("/guru/game/main-bersama");
-  }
-
-  return (
-    <div className="mb-scope">
-      <ClassroomClient sessionId={session.id} roomHref={`/guru/game/main-bersama/ruang/${session.id}`} />
-    </div>
-  );
+  redirect(`/guru/game/main-bersama/ruang/${sessionId}`);
 }
