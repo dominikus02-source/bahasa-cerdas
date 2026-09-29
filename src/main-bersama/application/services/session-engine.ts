@@ -54,6 +54,7 @@ export interface SessionEngineOptions {
 export interface JoinPlayerInput {
   playerId: PlayerId;
   displayName: string;
+  avatarUrl?: string;
   userId?: string;
   teamId?: TeamId;
 }
@@ -356,6 +357,7 @@ export class SessionEngine {
     if (existing) {
       // Re-join = reconnect player yang sama, bukan player baru.
       existing.connected = true;
+      if (input.avatarUrl) existing.avatarUrl = input.avatarUrl;
       return {
         ok: true,
         value: {
@@ -382,6 +384,7 @@ export class SessionEngine {
     const player: RuntimePlayer = {
       id: input.playerId,
       displayName: input.displayName,
+      avatarUrl: input.avatarUrl,
       joinedAt: this.clock.now(),
       eligibleFromRoundIndex: computed.eligibleFromRoundIndex,
       connected: true,
