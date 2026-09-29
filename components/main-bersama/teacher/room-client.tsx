@@ -272,15 +272,15 @@ export function TeacherRoomClient({
             </div>
             <div className="mb-cahaya-list">
               {[...view.participants]
-                .sort((a, b) => a.cahayaRank - b.cahayaRank)
+                 .sort((a, b) => (a.cahayaRank ?? 9999) - (b.cahayaRank ?? 9999))
                 .slice(0, 10)
                 .map((p) => (
-                  <div className={`mb-cahaya-row ${p.cahayaRank <= 3 ? 'is-top' : ''}`} key={p.playerId}>
-                    <span className={`mb-cahaya-rank rank-${Math.min(p.cahayaRank, 3)}`}>{p.cahayaRank <= 3 ? ['🥇','🥈','🥉'][p.cahayaRank - 1] : p.cahayaRank}</span>
+                  <div className={`mb-cahaya-row ${(p.cahayaRank ?? 9999) <= 3 ? 'is-top' : ''}`} key={p.playerId}>
+                    <span className={`mb-cahaya-rank rank-${Math.min(p.cahayaRank ?? 9999, 3)}`}>{(p.cahayaRank ?? 9999) <= 3 ? ['🥇','🥈','🥉'][(p.cahayaRank ?? 1) - 1] : p.cahayaRank ?? '—'}</span>
                     <span className="mb-cahaya-avatar"><img src={p.avatarUrl ?? '/avatar/2.webp'} alt="" /></span>
                     <span className="mb-cahaya-name">{p.displayName}</span>
-                    <span className="mb-cahaya-round">{p.currentRoundPoints > 0 ? `+${p.currentRoundPoints}` : ''}</span>
-                    <strong className="mb-cahaya-score">{p.cahayaPoints.toLocaleString('id-ID')} <small>poin</small></strong>
+                    <span className="mb-cahaya-round">{(p.currentRoundPoints ?? 0) > 0 ? `+${p.currentRoundPoints}` : ''}</span>
+                    <strong className="mb-cahaya-score">{(p.cahayaPoints ?? 0).toLocaleString('id-ID')} <small>poin</small></strong>
                   </div>
                 ))}
               {view.participants.length === 0 ? <p className="mb-teacher-empty">Belum ada siswa.</p> : null}
