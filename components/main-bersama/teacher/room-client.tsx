@@ -57,7 +57,7 @@ export function TeacherRoomClient({
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'layar' | 'kontrol' | 'peserta'>('layar');
+  const [activeTab, setActiveTab] = useState<'layar' | 'kontrol' | 'analisis'>('layar');
   const autoLobbyRef = useRef(false);
   const fullscreen = useFullscreenControl({
     onError: (message) => setError(message),
@@ -174,7 +174,7 @@ export function TeacherRoomClient({
       <nav className="mb-host-tabs" aria-label="Panel Main Bersama">
         <button type="button" className={`mb-host-tab ${activeTab === 'layar' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('layar')}>Tampilan Kelas</button>
         <button type="button" className={`mb-host-tab ${activeTab === 'kontrol' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('kontrol')}>Kontrol Guru</button>
-        <button type="button" className={`mb-host-tab ${activeTab === 'peserta' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('peserta')}>Peserta <span className="mb-host-tab-count">{view.participants.length}</span></button>
+        <button type="button" className={`mb-host-tab ${activeTab === 'analisis' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('analisis')}>Analisis</button>
       </nav>
 
       {error ? (
@@ -207,13 +207,91 @@ export function TeacherRoomClient({
             {view.allowedActions.canPause ? <button type="button" className="mb-secondary-btn" onClick={() => run('pause')} disabled={busy}>Jeda</button> : null}
             {view.allowedActions.canEndSession && view.phase !== 'summary' ? <button type="button" className="mb-secondary-btn mb-danger-btn" onClick={() => run('end')} disabled={busy}>Akhiri</button> : null}
           </div>
-          <p className="mb-host-tip">Gunakan <strong>Tampilan Kelas</strong> saat layar Guru disambungkan ke proyektor.</p>
+          <p className="mb-host-tip">Gunakan <strong>Tampilan Kelas</strong> untuk proyektor. Semua kendali dan pemantauan siswa ada di panel ini.</p>
+
+          <div className="mb-teacher-monitor">
+            <div className="mb-teacher-monitor-head">
+              <div>
+                <span className="mb-eyebrow">Status Siswa</span>
+                <h3 className="mb-display">Siapa yang sudah dan belum menjawab?</h3>
+              </div>
+              <div className="mb-teacher-monitor-total">
+                <strong className="mb-number">{answered}</strong><span>/ {eligible}</span>
+              </div>
+            </div>
+            <div className="mb-teacher-monitor-grid">
+              <div className="mb-teacher-status-card mb-teacher-status-wait">
+                <div className="mb-teacher-status-title"><span>Belum menjawab</span><strong>{Math.max(eligible - answered, 0)}</strong></div>
+                <div className="mb-teacher-student-list">
+                  {view.participants.filter((p) => !p.hasAnsweredCurrentRound).map((p) => (
+                    <div className="mb-teacher-student" key={p.playerId}>
+                      <span className="mb-teacher-student-avatar"><img src={p.avatarUrl ?? '/avatar/2.webp'} alt="" /></span>
+                      <span>{p.displayName}</span>
+                    </div>
+                  ))}
+                  {view.participants.filter((p) => !p.hasAnsweredCurrentRound).length === 0 ? <p className="mb-teacher-empty">Semua peserta sudah menjawab.</p> : null}
+                </div>
+              </div>
+              <div className="mb-teacher-status-card mb-teacher-status-done">
+                <div className="mb-teacher-status-title"><span>Sudah menjawab</span><strong>{answered}</strong></div>
+                <div className="mb-teacher-student-list">
+                  {view.participants.filter((p) => p.hasAnsweredCurrentRound).map((p) => (
+                    <div className="mb-teacher-student" key={p.playerId}>
+                      <span className="mb-teacher-student-avatar"><img src={p.avatarUrl ?? '/avatar/2.webp'} alt="" /></span>
+                      <span>{p.displayName}</span>
+                      <b>✓</b>
+                    </div>
+                  ))}
+                  {view.participants.filter((p) => p.hasAnsweredCurrentRound).length === 0 ? <p className="mb-teacher-empty">Belum ada jawaban masuk.</p> : null}
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
-      ) : activeTab === 'peserta' ? (
+      ) : activeTab === 'analisis' ? (
         <section className="mb-host-panel mb-fade-in">
           <div className="mb-host-panel-head">
-            <div><span className="mb-eyebrow">Pemantauan</span><h2 className="mb-display">Peserta</h2><p>{answered} dari {eligible} peserta yang dapat menjawab sudah mengirim jawaban.</p></div>
-            <strong className="mb-host-count">{view.participants.length}</strong>
+            <div>
+              <span className="mb-eyebrow">Wawasan Guru</span>
+              <h2 className="mb-display">Analisis Permainan</h2>
+              <p>Lihat pemahaman kelas dari soal ke soal tanpa mengganggu tampilan yang diproyeksikan.</p>
+            </div>
+            <strong className="mb-host-count">{view.roundAnalytics.length}</strong>
+          </div>
+          <div className="mb-analysis-overview">
+            <div><strong>{answered}/{eligible}</strong><span>Respons soal aktif</span></div>
+            <div><strong>{view.gameState?.gameMode === 'kota-cahaya' ? Math.round(view.gameState.kotaCahaya.progressPercent) : '—'}{view.gameState?.gameMode === 'kota-cahaya' ? '%' : ''}</strong><span>Energi Kota</span></div>
+            <div><strong>{view.roundAnalytics.filter((r) => r.submittedCount > 0).length}/{view.roundAnalytics.length}</strong><span>Soal sudah dimainkan</span></div>
+          </div>
+
+          {view.currentQuestion && (view.phase === 'closed' || view.phase === 'discussion' || view.phase === 'summary' || view.phase === 'ended') ? (
+            <div className="mb-analysis-current">
+              <span className="mb-eyebrow">Soal terakhir</span>
+              <h3>{view.currentQuestion.prompt}</h3>
+              <div className="mb-analysis-options">
+                {view.currentQuestion.options.map((o) => {
+                  const count = view.answerSummary.optionCounts?.[o.id] ?? 0;
+                  const correct = o.id === view.currentQuestion?.correctOptionId;
+                  const total = Math.max(view.answerSummary.submittedCount, 1);
+                  return (
+                    <div className={`mb-analysis-option ${correct ? 'is-correct' : ''}`} key={o.id}>
+                      <div><span>{o.text}</span><strong>{count}</strong></div>
+                      <div className="mb-analysis-bar"><i style={{ width: `${Math.round((count / total) * 100)}%` }} /></div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : null}
+
+          <div className="mb-analysis-rounds">
+            {view.roundAnalytics.map((r) => (
+              <div className="mb-analysis-round" key={r.roundIndex}>
+                <span className="mb-analysis-round-no">Soal {r.roundIndex + 1}</span>
+                <div className="mb-analysis-round-copy"><strong>{r.accuracyPercent}% benar</strong><span>{r.submittedCount}/{r.eligibleCount} menjawab</span></div>
+                <div className="mb-analysis-mini-bar"><i style={{ width: `${r.accuracyPercent}%` }} /></div>
+              </div>
+            ))}
           </div>
         </section>
       ) : null}
@@ -346,11 +424,12 @@ export function TeacherRoomClient({
             question={view.currentQuestion}
             roundLabel={`Soal ${roundLabel ?? ''}`}
           />
+          <div className="mb-classroom-hint">Jawab di perangkatmu · Guru melihat progres kelas secara langsung</div>
           <div className="mb-progress-inline">
             {view.gameState?.gameMode === 'jelajah-kata' ? (
               <TeamProgress teams={view.teams} progress={view.gameState.jelajahKata.teamProgress} />
             ) : view.gameState?.gameMode === 'kota-cahaya' ? (
-              <CityProgress
+              <CityCahayaHero
                 progressPercent={view.gameState.kotaCahaya.progressPercent}
                 unlockedMilestones={view.gameState.kotaCahaya.unlockedMilestones}
               />
@@ -361,7 +440,6 @@ export function TeacherRoomClient({
               Tutup Jawaban
             </PrimaryGameButton>
           </div>
-          <ParticipantList participants={view.participants} showAnswered />
         </section>
       ) : null}
 
@@ -399,6 +477,12 @@ export function TeacherRoomClient({
             question={view.currentQuestion}
             roundLabel={`Soal ${roundLabel ?? ''}`}
           />
+          {view.gameState?.gameMode === 'kota-cahaya' ? (
+            <CityCahayaHero
+              progressPercent={view.gameState.kotaCahaya.progressPercent}
+              unlockedMilestones={view.gameState.kotaCahaya.unlockedMilestones}
+            />
+          ) : null}
           <div className="mb-reveal-card mb-reading">
             <p className="mb-reveal-correct">
               Jawaban benar:{' '}
@@ -456,7 +540,7 @@ export function TeacherRoomClient({
           {view.gameState?.gameMode === 'jelajah-kata' ? (
             <TeamProgress teams={view.teams} progress={view.gameState.jelajahKata.teamProgress} />
           ) : view.gameState?.gameMode === 'kota-cahaya' ? (
-            <CityProgress
+            <CityCahayaHero
               progressPercent={view.gameState.kotaCahaya.progressPercent}
               unlockedMilestones={view.gameState.kotaCahaya.unlockedMilestones}
             />
@@ -476,6 +560,61 @@ export function TeacherRoomClient({
       ) : null}
       </> : null}
     </main>
+  );
+}
+
+function CityCahayaHero({ progressPercent, unlockedMilestones }: { progressPercent: number; unlockedMilestones: string[] }) {
+  const milestones = [
+    { key: 'garden', label: 'Taman', icon: '✦' },
+    { key: 'library', label: 'Perpustakaan', icon: '▥' },
+    { key: 'homes', label: 'Rumah', icon: '⌂' },
+    { key: 'town-center', label: 'Pusat Kota', icon: '▦' },
+  ];
+  const value = Math.max(0, Math.min(100, Math.round(progressPercent)));
+  const unlocked = new Set(unlockedMilestones);
+  return (
+    <div className="mb-city-hero" aria-label={`Kota Cahaya ${value} persen`}>
+      <div className="mb-city-hero-head">
+        <div><span className="mb-eyebrow">Kota Cahaya</span><h3>Bangun kota bersama kelas</h3></div>
+        <strong>{value}%</strong>
+      </div>
+      <div className="mb-city-sky">
+        <div className="mb-city-stars" aria-hidden="true">✦ · ✧ · ✦ · · ✧</div>
+        <div className="mb-city-ground">
+          {milestones.map((m, i) => {
+            const on = unlocked.has(m.key);
+            return (
+              <div className={`mb-city-landmark ${on ? 'is-on' : ''}`} key={m.key}>
+                <div className={`mb-city-building b-${i + 1}`}><span>{m.icon}</span></div>
+                <small>{m.label}</small>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <div className="mb-city-hero-progress"><i style={{ width: `${value}%` }} /></div>
+      <p>{unlocked.size} dari 4 bagian kota sudah menyala · setiap jawaban benar membantu membangun Kota Cahaya.</p>
+      <style jsx>{`
+        .mb-city-hero { width:min(100%, 900px); margin: 18px auto 0; padding:22px 24px 20px; border-radius:26px; color:#fff; background:radial-gradient(circle at 50% 15%,rgba(78,211,194,.18),transparent 34%),linear-gradient(145deg,#102b43 0%,#173b50 52%,#1b4654 100%); box-shadow:0 20px 48px rgba(14,43,64,.18); overflow:hidden; }
+        .mb-city-hero-head { display:flex; align-items:flex-end; justify-content:space-between; gap:18px; margin-bottom:14px; }
+        .mb-city-hero-head h3 { margin:4px 0 0; font-size:1.35rem; }
+        .mb-city-hero-head strong { font-size:2rem; color:#ffe08a; }
+        .mb-city-sky { position:relative; height:132px; border-radius:20px; overflow:hidden; background:linear-gradient(180deg,#17354b 0%,#21485a 68%,#285c60 100%); }
+        .mb-city-stars { position:absolute; inset:14px 24px auto; color:rgba(255,226,142,.5); letter-spacing:18px; font-size:15px; }
+        .mb-city-ground { position:absolute; inset:auto 22px 10px; display:grid; grid-template-columns:repeat(4,1fr); align-items:end; gap:12px; height:105px; }
+        .mb-city-landmark { display:flex; flex-direction:column; align-items:center; gap:7px; color:#7d9bab; }
+        .mb-city-landmark small { font-size:.68rem; font-weight:800; }
+        .mb-city-building { width:min(100%,100px); height:74px; border-radius:12px 12px 4px 4px; display:grid; place-items:center; border:1px solid rgba(255,255,255,.09); background:linear-gradient(180deg,#29495a,#183246); color:#7390a0; box-shadow:0 8px 16px rgba(0,0,0,.15); position:relative; }
+        .mb-city-building:after { content:""; position:absolute; inset:14px 14px 18px; background:repeating-linear-gradient(90deg,rgba(255,220,125,.0) 0 10px,rgba(255,220,125,.18) 10px 13px); border-radius:4px; opacity:.35; }
+        .mb-city-building span { position:relative; z-index:1; font-size:24px; }
+        .mb-city-landmark.is-on { color:#ffdc7d; }
+        .mb-city-landmark.is-on .mb-city-building { background:linear-gradient(180deg,#2f5863,#1c3c4b); border-color:rgba(255,214,103,.55); color:#ffe49b; box-shadow:0 0 24px rgba(255,206,93,.16),0 10px 20px rgba(0,0,0,.18); }
+        .mb-city-hero-progress { height:8px; margin-top:14px; border-radius:99px; background:rgba(255,255,255,.08); overflow:hidden; }
+        .mb-city-hero-progress i { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,#22c4b2,#7be0cb,#ffd05b); transition:width .5s ease; }
+        .mb-city-hero p { margin:10px 0 0; color:#b8cbd4; font-size:.78rem; }
+        @media(max-width:640px){ .mb-city-ground{inset-inline:10px;gap:6px}.mb-city-building{height:60px}.mb-city-hero{padding:16px}.mb-city-hero-head h3{font-size:1.1rem}.mb-city-hero-head strong{font-size:1.6rem} }
+      `}</style>
+    </div>
   );
 }
 
