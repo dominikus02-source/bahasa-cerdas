@@ -373,3 +373,221 @@ export async function answerTelegramCallback(
   telemetry({ kind: "outcome", status, httpStatus: r.httpStatus, category: r.category, attempts: 1, latencyMs });
   return { status, httpStatus: r.httpStatus, category: r.category, attempts: 1, latencyMs, error: r.note };
 }
+
+
+/**
+ * Read-only Telegram webhook probe for Founder Mission Control.
+ *
+ * Keeps ALL Telegram Bot API URL construction inside this file (the P8C
+ * single-boundary security contract). It exposes only bounded, redacted,
+ * non-secret operational metadata — never the bot token or raw response.
+ */
+export type TelegramWebhookProbeStatus =
+  | "REGISTERED"
+  | "NOT_REGISTERED"
+  | "DORMANT"
+  | "UNAVAILABLE";
+
+export interface TelegramWebhookInfoResult {
+  readonly status: TelegramWebhookProbeStatus;
+  readonly httpStatus: number | null;
+  readonly routeMatches: boolean | null;
+  readonly urlHost: string | null;
+  readonly urlPath: string | null;
+  readonly pendingUpdateCount: number | null;
+  readonly lastErrorAt: string | null;
+  readonly lastErrorMessage: string | null;
+  readonly latencyMs: number;
+  readonly error: string | null;
+}
+
+export interface TelegramWebhookInfoOptions {
+  readonly tokenOverride?: string;
+  readonly fetchImpl?: typeof fetch;
+  readonly now?: () => number;
+}
+
+const WEBHOOK_INFO_TIMEOUT_MS = 3_000;
+const EXPECTED_WEBHOOK_PATH = "/api/agent/telegram/webhook";
+
+export async function getTelegramWebhookInfo(
+  options: TelegramWebhookInfoOptions = {}
+): Promise<TelegramWebhookInfoResult> {
+  const now = options.now ?? (() => Date.now());
+  const startedAt = now();
+  const fetchImpl = options.fetchImpl ?? fetch;
+  const token = options.tokenOverride ?? process.env.BC_AGENT_TELEGRAM_BOT_TOKEN ?? "";
+
+  if (!options.tokenOverride && !loadTelegramDeliveryConfig().enabled) {
+    return {
+      status: "DORMANT",
+      httpStatus: null,
+      routeMatches: null,
+      urlHost: null,
+      urlPath: null,
+      pendingUpdateCount: null,
+      lastErrorAt: null,
+      lastErrorMessage: null,
+      latencyMs: now() - startedAt,
+      error: "telegram_token_not_armed",
+    };
+  }
+  if (!token) {
+    return {
+      status: "DORMANT",
+      httpStatus: null,
+      routeMatches: null,
+      urlHost: null,
+      urlPath: null,
+      pendingUpdateCount: null,
+      lastErrorAt: null,
+      lastErrorMessage: null,
+      latencyMs: now() - startedAt,
+      error: "telegram_token_missing",
+    };
+  }
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), WEBHOOK_INFO_TIMEOUT_MS);
+  try {
+    const res = await fetchImpl(`${TELEGRAM_API_BASE}/bot${token}/getWebhookInfo`, {
+      method: "GET",
+      signal: controller.signal,
+      cache: "no-store",
+    });
+    const latencyMs = now() - startedAt;
+    if (!res.ok) {
+      return {
+        status: "UNAVAILABLE",
+        httpStatus: res.status,
+        routeMatches: null,
+        urlHost: null,
+        urlPath: null,
+        pendingUpdateCount: null,
+        lastErrorAt: null,
+        lastErrorMessage: null,
+        latencyMs,
+        error: `telegram_http_${res.status}`,
+      };
+    }
+
+    let payload: unknown;
+    try {
+      payload = await res.json();
+    } catch {
+      return {
+        status: "UNAVAILABLE",
+        httpStatus: res.status,
+        routeMatches: null,
+        urlHost: null,
+        urlPath: null,
+        pendingUpdateCount: null,
+        lastErrorAt: null,
+        lastErrorMessage: null,
+        latencyMs,
+        error: "telegram_malformed_response",
+      };
+    }
+
+    if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+      return {
+        status: "UNAVAILABLE",
+        httpStatus: res.status,
+        routeMatches: null,
+        urlHost: null,
+        urlPath: null,
+        pendingUpdateCount: null,
+        lastErrorAt: null,
+        lastErrorMessage: null,
+        latencyMs,
+        error: "telegram_invalid_payload",
+      };
+    }
+    const envelope = payload as Record<string, unknown>;
+    const result =
+      envelope.ok === true &&
+      envelope.result &&
+      typeof envelope.result === "object" &&
+      !Array.isArray(envelope.result)
+        ? (envelope.result as Record<string, unknown>)
+        : null;
+    if (!result) {
+      return {
+        status: "UNAVAILABLE",
+        httpStatus: res.status,
+        routeMatches: null,
+        urlHost: null,
+        urlPath: null,
+        pendingUpdateCount: null,
+        lastErrorAt: null,
+        lastErrorMessage: null,
+        latencyMs,
+        error: "telegram_result_missing",
+      };
+    }
+
+    const url = typeof result.url === "string" ? result.url : "";
+    let urlHost: string | null = null;
+    let urlPath: string | null = null;
+    let routeMatches: boolean | null = url ? false : null;
+    if (url) {
+      try {
+        const parsed = new URL(url);
+        urlHost = parsed.host.slice(0, 120);
+        urlPath = parsed.pathname.slice(0, 160);
+        routeMatches = parsed.protocol === "https:" && parsed.pathname === EXPECTED_WEBHOOK_PATH;
+      } catch {
+        routeMatches = false;
+      }
+    }
+
+    const pending =
+      typeof result.pending_update_count === "number" &&
+      Number.isFinite(result.pending_update_count)
+        ? Math.max(0, Math.floor(result.pending_update_count))
+        : null;
+    const lastErrorUnix =
+      typeof result.last_error_date === "number" &&
+      Number.isFinite(result.last_error_date)
+        ? result.last_error_date
+        : null;
+    const lastErrorAt =
+      lastErrorUnix !== null ? new Date(lastErrorUnix * 1000).toISOString() : null;
+    const lastErrorMessage =
+      typeof result.last_error_message === "string"
+        ? note(result.last_error_message)
+        : null;
+
+    return {
+      status: url ? "REGISTERED" : "NOT_REGISTERED",
+      httpStatus: res.status,
+      routeMatches,
+      urlHost,
+      urlPath,
+      pendingUpdateCount: pending,
+      lastErrorAt,
+      lastErrorMessage,
+      latencyMs,
+      error: null,
+    };
+  } catch (err) {
+    const isAbort =
+      typeof err === "object" &&
+      err !== null &&
+      (err as { name?: unknown }).name === "AbortError";
+    return {
+      status: "UNAVAILABLE",
+      httpStatus: null,
+      routeMatches: null,
+      urlHost: null,
+      urlPath: null,
+      pendingUpdateCount: null,
+      lastErrorAt: null,
+      lastErrorMessage: null,
+      latencyMs: now() - startedAt,
+      error: isAbort ? "telegram_probe_timeout" : "telegram_probe_network_error",
+    };
+  } finally {
+    clearTimeout(timer);
+  }
+}
