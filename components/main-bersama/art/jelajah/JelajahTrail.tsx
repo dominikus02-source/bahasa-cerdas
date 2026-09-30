@@ -83,7 +83,7 @@ export function JelajahTrail({
             }}
           >
             <image
-              href="/main-bersama/jelajah/backgrounds/jelajah-latar-utama.webp"
+              href="/main-bersama/jelajah/backgrounds/jelajah-latar-utama.png"
               x="0"
               y="0"
               width="1600"
@@ -91,7 +91,7 @@ export function JelajahTrail({
               preserveAspectRatio="none"
             />
             <image
-              href="/main-bersama/jelajah/backgrounds/jelajah-latar-utama.webp"
+              href="/main-bersama/jelajah/backgrounds/jelajah-latar-utama.png"
               x="1600"
               y="0"
               width="1600"
