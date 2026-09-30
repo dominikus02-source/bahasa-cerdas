@@ -121,7 +121,35 @@ export async function PATCH(
     if (!group || (group.teacherId !== dbUser.id && !isPrivileged)) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     const body = await req.json();
-    const { name, description, grade, tahunAjaran, isActive, regenerateCode } = body;
+    const { name, description, grade, tahunAjaran, isActive, regenerateCode, removeMemberUserId } = body;
+
+    // Keluarkan murid dari kelas: hanya menghapus keanggotaan GroupMember.
+    // Akun murid, karya, progres belajar, nilai historis, dan data pribadi tidak disentuh.
+    if (typeof removeMemberUserId === "string" && removeMemberUserId.trim()) {
+      const membership = await db.groupMember.findUnique({
+        where: {
+          groupId_userId: {
+            groupId: id,
+            userId: removeMemberUserId.trim(),
+          },
+        },
+        select: { id: true, userId: true },
+      });
+
+      if (!membership) {
+        return NextResponse.json(
+          { error: "Murid tidak ditemukan di kelas ini.", code: "MEMBER_NOT_FOUND" },
+          { status: 404 }
+        );
+      }
+
+      await db.groupMember.delete({ where: { id: membership.id } });
+
+      return NextResponse.json({
+        success: true,
+        data: { groupId: id, userId: membership.userId, removed: true },
+      });
+    }
 
     const updateData: any = {};
     if (name !== undefined) updateData.name = name;
