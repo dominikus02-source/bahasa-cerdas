@@ -136,14 +136,6 @@ export function TeacherRoomClient({
     );
   }
 
-  const jelajahTeamProgress = view.gameState?.gameMode === 'jelajah-kata'
-    ? view.gameState.jelajahKata.teamProgress
-    : {};
-  const { getPose: getTrailPose } = useTrailMotion(
-    jelajahTeamProgress,
-    view.gameMode === 'jelajah-kata' ? view.phase : 'preparing',
-  );
-
   const answered = view.answerSummary.submittedCount;
   const eligible = view.answerSummary.eligibleCount;
   // ── CTA utama per fase (§18 — hanya aksi yang relevan) ──
