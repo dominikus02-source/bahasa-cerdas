@@ -124,3 +124,54 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
+
+
+/**
+ * DELETE /api/guru/kelasku/[id] — keluarkan satu murid dari kelas.
+ * Hanya menghapus keanggotaan GroupMember; akun dan data belajar murid tetap utuh.
+ */
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const user = await getUser();
+    if (!user || !isTeacherOrStudent(user)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { id } = await params;
+    const group = await getTeacherGroupDetail(user.id, id);
+    if (!group) {
+      return NextResponse.json({ error: "Kelas tidak ditemukan" }, { status: 404 });
+    }
+
+    const body = await req.json().catch(() => ({}));
+    const userId = typeof body?.userId === "string" ? body.userId.trim() : "";
+    if (!userId) {
+      return NextResponse.json({ error: "ID murid wajib diisi" }, { status: 400 });
+    }
+
+    const membership = await db.groupMember.findFirst({
+      where: { groupId: id, userId },
+      select: { id: true, userId: true },
+    });
+
+    if (!membership) {
+      return NextResponse.json(
+        { error: "Murid tidak ditemukan di kelas ini", code: "MEMBER_NOT_FOUND" },
+        { status: 404 }
+      );
+    }
+
+    await db.groupMember.deleteMany({
+      where: { groupId: id, userId },
+    });
+
+    return NextResponse.json({
+      success: true,
+      removed: true,
+      data: { groupId: id, userId: membership.userId },
+    });
+  } catch (error) {
+    console.error("DELETE /api/guru/kelasku/[id] error:", error);
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+  }
+}
