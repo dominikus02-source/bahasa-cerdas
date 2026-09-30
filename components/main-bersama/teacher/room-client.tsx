@@ -539,10 +539,12 @@ export function TeacherRoomClient({
           />
           <div className="mb-classroom-hint">Jawab di perangkatmu · Guru melihat progres kelas secara langsung</div>
           <div className="mb-progress-inline">
-            <CityCahayaStage
-              progressPercent={view.gameState.kotaCahaya.progressPercent}
-              unlockedMilestones={view.gameState.kotaCahaya.unlockedMilestones}
-            />
+            {view.gameState?.gameMode === 'kota-cahaya' ? (
+              <CityCahayaStage
+                progressPercent={view.gameState.kotaCahaya.progressPercent}
+                unlockedMilestones={view.gameState.kotaCahaya.unlockedMilestones}
+              />
+            ) : null}
           </div>
           <p className="mb-classroom-control-hint">Buka <strong>Kontrol Guru</strong> untuk menutup jawaban dan mengatur langkah berikutnya.</p>
         </section>
@@ -572,10 +574,12 @@ export function TeacherRoomClient({
             question={view.currentQuestion}
             roundLabel={`Soal ${roundLabel ?? ''}`}
           />
-          <CityCahayaStage
-            progressPercent={view.gameState.kotaCahaya.progressPercent}
-            unlockedMilestones={view.gameState.kotaCahaya.unlockedMilestones}
-          />
+          {view.gameState?.gameMode === 'kota-cahaya' ? (
+            <CityCahayaStage
+              progressPercent={view.gameState.kotaCahaya.progressPercent}
+              unlockedMilestones={view.gameState.kotaCahaya.unlockedMilestones}
+            />
+          ) : null}
           <div className="mb-reveal-card mb-reading">
             <p className="mb-reveal-correct">
               Jawaban benar:{' '}
