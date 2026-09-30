@@ -624,84 +624,75 @@ export function TeacherRoomClient({
             </p>
           </div>
 
-          <div className="mb-final-grid">
-            {view.gameMode === 'jelajah-kata' ? (
-            <div className="mb-final-podium-card">
+          {view.gameMode === 'jelajah-kata' ? (
+            <section className="mb-final-podium-card mb-final-jelajah-card">
               <div className="mb-final-section-head">
                 <div>
-                  <span className="mb-eyebrow">Peringkat Akhir</span>
+                  <span className="mb-eyebrow">Hasil Akhir</span>
                   <h3>Podium Jelajah Kata</h3>
                 </div>
                 <span className="mb-final-total">{view.participants.length} siswa</span>
               </div>
+
               <div className="mb-final-podium">
-                {[...view.participants]
-                  .filter((p) => p.progressRank <= 3)
-                  .sort((a, b) => a.progressRank - b.progressRank)
-                  .slice(0, 3)
-                  .map((p) => (
-                    <div className={`mb-podium-item mb-podium-rank-${p.progressRank}`} key={p.playerId}>
-                      <div className="mb-podium-medal">
-                        {p.progressRank === 1 ? '🥇' : p.progressRank === 2 ? '🥈' : '🥉'}
+                {[2, 1, 3].flatMap((rank) =>
+                  [...view.participants]
+                    .filter((p) => p.progressRank === rank)
+                    .slice(0, 1)
+                    .map((p) => (
+                      <div className={`mb-podium-item mb-podium-rank-${p.progressRank}`} key={p.playerId}>
+                        <div className="mb-podium-medal" aria-hidden>
+                          {p.progressRank === 1 ? '🥇' : p.progressRank === 2 ? '🥈' : '🥉'}
+                        </div>
+                        <span className="mb-podium-avatar">
+                          <img src={p.avatarUrl ?? '/avatar/2.webp'} alt="" />
+                        </span>
+                        <strong title={p.displayName}>{p.displayName}</strong>
+                        <span>{p.correctAnswers}/{p.eligibleRounds} benar · {p.progressPercent}%</span>
+                        <div className="mb-podium-step">
+                          <b>{p.progressRank}</b>
+                          <small>{p.progressPercent}%</small>
+                        </div>
                       </div>
-                      <span className="mb-podium-avatar">
-                        <img src={p.avatarUrl ?? '/avatar/2.webp'} alt="" />
-                      </span>
-                      <strong>{p.displayName}</strong>
-                      <span>{p.correctAnswers}/{p.eligibleRounds} benar · {p.progressPercent}%</span>
-                      <div className="mb-podium-step"><b>{p.progressRank}</b></div>
-                    </div>
-                  ))}
+                    )),
+                )}
                 {view.participants.length === 0 ? <p className="mb-teacher-empty">Belum ada hasil peserta.</p> : null}
               </div>
-            </div>
-            ) : null}
-            <div className="mb-final-city-card">
-              <div className="mb-final-section-head">
-                <div>
-                  <span className="mb-eyebrow">{view.gameMode === 'jelajah-kata' ? 'Hadiah Kelas' : 'Perkembangan Kota'}</span>
-                  <h3>🌆 Kota Cahaya</h3>
-                </div>
-                <span className="mb-final-city-progress">
-                  {view.gameState?.gameMode === 'kota-cahaya'
-                    ? Math.round(view.gameState.kotaCahaya.progressPercent)
-                    : Math.round(
-                        Object.values(view.gameState?.gameMode === 'jelajah-kata'
-                          ? view.gameState.jelajahKata.teamProgress
-                          : {}).reduce((sum, value) => sum + value, 0) /
-                          Math.max(
-                            Object.keys(view.gameState?.gameMode === 'jelajah-kata'
-                              ? view.gameState.jelajahKata.teamProgress
-                              : {}).length,
-                            1,
-                          ),
-                      )}%
-                </span>
-              </div>
-              <CityCahayaStage
-                progressPercent={
-                  view.gameState?.gameMode === 'kota-cahaya'
-                    ? view.gameState.kotaCahaya.progressPercent
-                    : Object.values(view.gameState?.gameMode === 'jelajah-kata'
-                        ? view.gameState.jelajahKata.teamProgress
-                        : {}).reduce((sum, value) => sum + value, 0) /
-                      Math.max(
-                        Object.keys(view.gameState?.gameMode === 'jelajah-kata'
-                          ? view.gameState.jelajahKata.teamProgress
-                          : {}).length,
-                        1,
-                      )
-                }
-                unlockedMilestones={
-                  view.gameState?.gameMode === 'kota-cahaya'
-                    ? view.gameState.kotaCahaya.unlockedMilestones
-                    : []
-                }
-              />
-              <p>Setiap jawaban benar ikut membantu kelas membuat Kota Cahaya semakin hidup.</p>
-            </div>
-          </div>
 
+              <p className="mb-final-jelajah-note">
+                Setiap regu membawa progresnya sendiri. Podium menampilkan hasil akhir siswa setelah seluruh perjalanan selesai.
+              </p>
+            </section>
+          ) : (
+            <div className="mb-final-grid">
+              <div className="mb-final-city-card">
+                <div className="mb-final-section-head">
+                  <div>
+                    <span className="mb-eyebrow">Perkembangan Kota</span>
+                    <h3>🌆 Kota Cahaya</h3>
+                  </div>
+                  <span className="mb-final-city-progress">
+                    {view.gameState?.gameMode === 'kota-cahaya'
+                      ? Math.round(view.gameState.kotaCahaya.progressPercent)
+                      : 0}%
+                  </span>
+                </div>
+                <CityCahayaStage
+                  progressPercent={
+                    view.gameState?.gameMode === 'kota-cahaya'
+                      ? view.gameState.kotaCahaya.progressPercent
+                      : 0
+                  }
+                  unlockedMilestones={
+                    view.gameState?.gameMode === 'kota-cahaya'
+                      ? view.gameState.kotaCahaya.unlockedMilestones
+                      : []
+                  }
+                />
+                <p>Setiap jawaban benar ikut membantu kelas membuat Kota Cahaya semakin hidup.</p>
+              </div>
+            </div>
+          )}
           <div className="mb-final-actions">
             <button type="button" className="mb-final-share-btn" disabled={savingResults || resultsSaved || !className} onClick={async () => { setSavingResults(true); try { await saveTeacherResultsToKelasku(sessionId); setResultsSaved(true); } catch (e) { setError(e instanceof MbApiError ? e.message : 'Hasil gagal disimpan.'); } finally { setSavingResults(false); } }}>{resultsSaved ? '✓ Tersimpan di Kelasku' : savingResults ? 'Menyimpan…' : 'Masukkan Nilai ke Kelasku'}</button>
             <button type="button" className="mb-final-share-btn mb-final-share-secondary" onClick={() => { const rows = [...view.participants].sort((a,b)=>a.displayName.localeCompare(b.displayName,'id')).map(p=>p.displayName + ': ' + p.progressPercent + '% (' + p.correctAnswers + '/' + p.eligibleRounds + ')').join('\n'); const subject=encodeURIComponent('Hasil Main Bersama — ' + view.contentTitle); const body=encodeURIComponent('Hasil Main Bersama\n\n' + rows); window.location.href='mailto:?subject=' + subject + '&body=' + body; }}>Kirim Hasil melalui Email</button>
@@ -1004,16 +995,112 @@ export function TeacherRoomClient({
         .mb-final-grid { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:16px; margin-top:8px; }
         .mb-final-total,
         .mb-final-city-progress { color:#0f766e; font-size:.72rem; font-weight:900; }
-        .mb-final-podium { display:grid; grid-template-columns:1fr 1.12fr 1fr; align-items:end; gap:8px; min-height:250px; }
+        .mb-final-jelajah-card {
+          margin-top: 8px;
+          padding: 22px 24px 18px;
+          background:
+            radial-gradient(circle at 50% 0%, rgba(20,184,159,.09), transparent 34%),
+            linear-gradient(180deg,#ffffff 0%,#f4faf8 100%);
+          border-radius:24px;
+          box-shadow:0 16px 44px rgba(23,53,75,.07);
+        }
+        .mb-final-podium {
+          display:grid;
+          grid-template-columns:1fr 1.16fr 1fr;
+          align-items:end;
+          gap:18px;
+          min-height:340px;
+          max-width:980px;
+          margin:10px auto 0;
+        }
+        .mb-podium-item {
+          position:relative;
+          display:flex;
+          flex-direction:column;
+          align-items:center;
+          justify-content:flex-end;
+          min-width:0;
+          text-align:center;
+          padding:16px 14px 0;
+          border:1px solid #e3ece9;
+          border-radius:22px 22px 14px 14px;
+          background:rgba(255,255,255,.9);
+          box-shadow:0 10px 28px rgba(23,53,75,.06);
+          overflow:hidden;
+        }
+        .mb-podium-rank-1 {
+          padding-top:22px;
+          border-color:rgba(15,118,110,.22);
+          box-shadow:0 18px 40px rgba(15,118,110,.13);
+        }
+        .mb-podium-rank-2 { min-height:270px; }
+        .mb-podium-rank-1 { min-height:310px; }
+        .mb-podium-rank-3 { min-height:245px; }
         .mb-podium-item { display:flex; flex-direction:column; align-items:center; justify-content:flex-end; min-width:0; text-align:center; }
-        .mb-podium-medal { font-size:1.5rem; line-height:1; margin-bottom:5px; }
-        .mb-podium-avatar { width:64px; height:64px; border-radius:50%; border:4px solid #fff; box-shadow:0 8px 22px rgba(23,53,75,.12); }
-        .mb-podium-rank-1 .mb-podium-avatar { width:78px; height:78px; }
-        .mb-podium-item strong { max-width:100%; margin-top:7px; color:#17354b; font-size:.84rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-        .mb-podium-item > span:not(.mb-podium-avatar) { margin-top:3px; color:#71848f; font-size:.67rem; font-weight:750; }
-        .mb-podium-step { display:grid; place-items:center; width:100%; min-height:48px; margin-top:8px; border-radius:12px 12px 4px 4px; background:#eaf4f2; color:#0f766e; }
-        .mb-podium-rank-1 .mb-podium-step { min-height:72px; background:#dff4ee; }
-        .mb-podium-rank-2 .mb-podium-step { min-height:58px; }
+        .mb-podium-medal {
+          font-size:1.9rem;
+          line-height:1;
+          margin-bottom:7px;
+          filter:drop-shadow(0 5px 8px rgba(23,53,75,.09));
+        }
+        .mb-podium-avatar {
+          width:66px;
+          height:66px;
+          border-radius:50%;
+          border:4px solid #fff;
+          box-shadow:0 8px 22px rgba(23,53,75,.12);
+        }
+        .mb-podium-rank-1 .mb-podium-avatar {
+          width:88px;
+          height:88px;
+          box-shadow:0 12px 30px rgba(15,118,110,.14);
+        }
+        .mb-podium-item strong {
+          max-width:100%;
+          margin-top:9px;
+          color:#17354b;
+          font-size:.86rem;
+          font-weight:850;
+          overflow:hidden;
+          text-overflow:ellipsis;
+          white-space:nowrap;
+        }
+        .mb-podium-item > span:not(.mb-podium-avatar) {
+          margin-top:4px;
+          color:#71848f;
+          font-size:.68rem;
+          font-weight:750;
+        }
+        .mb-podium-step {
+          display:flex;
+          align-items:baseline;
+          justify-content:center;
+          gap:7px;
+          width:100%;
+          min-height:52px;
+          margin-top:10px;
+          padding:0 12px;
+          border-radius:16px 16px 8px 8px;
+          background:#eaf4f2;
+          color:#0f766e;
+        }
+        .mb-podium-step b { font-size:1.35rem; line-height:1; }
+        .mb-podium-step small { font-size:.68rem; font-weight:850; color:#6e858e; }
+        .mb-podium-rank-1 .mb-podium-step {
+          min-height:78px;
+          background:linear-gradient(180deg,#d9f5ed 0%,#c9eee4 100%);
+        }
+        .mb-podium-rank-2 .mb-podium-step { min-height:62px; }
+        .mb-podium-rank-3 .mb-podium-step { min-height:56px; }
+        .mb-final-jelajah-note {
+          max-width:760px;
+          margin:16px auto 0;
+          color:#71848f;
+          font-size:.72rem;
+          line-height:1.5;
+          font-weight:650;
+          text-align:center;
+        }
         .mb-final-city-card { display:flex; flex-direction:column; }
         .mb-final-city-card .mb-city-cahaya-stage { flex:1; margin-top:0; }
         .mb-final-city-card > p { margin:8px 2px 0; color:#71848f; font-size:.72rem; font-weight:650; text-align:center; }
@@ -1029,7 +1116,11 @@ export function TeacherRoomClient({
         .mb-final-bottom p { margin:0; color:#71848f; font-size:.72rem; line-height:1.45; font-weight:650; }
         @media(max-width:760px){
           .mb-final-grid { grid-template-columns:1fr; }
-          .mb-final-podium { min-height:220px; }
+          .mb-final-podium { grid-template-columns:1fr 1fr 1fr; min-height:250px; gap:8px; }
+          .mb-podium-item { padding-left:8px; padding-right:8px; }
+          .mb-podium-rank-2 { min-height:210px; }
+          .mb-podium-rank-1 { min-height:245px; }
+          .mb-podium-rank-3 { min-height:190px; }
           .mb-final-bottom { grid-template-columns:1fr 1fr; }
           .mb-final-bottom p { grid-column:1/-1; }
           .mb-leaderboard-row { grid-template-columns:32px 32px minmax(0,1fr) 54px 48px; }
