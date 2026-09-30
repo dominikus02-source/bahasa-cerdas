@@ -55,11 +55,6 @@ export function JelajahTrail({
     <div
       className="mb-jelajah-world"
       data-compact={compact ? "true" : "false"}
-      style={
-        {
-          "--mb-bg-shift": `${backgroundOffset}px`,
-        } as React.CSSProperties
-      }
     >
       <svg
         viewBox={viewBox}
