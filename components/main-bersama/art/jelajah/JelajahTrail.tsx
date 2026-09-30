@@ -86,7 +86,7 @@ export function JelajahTrail({
 
       <div className="mb-jelajah-world-caption">
         <span>🌿 Dunia Jelajah Kata</span>
-        <strong>Perjalanan dunia bergerak mengikuti kemajuan regu</strong>
+        {!compact ? <strong>Perjalanan dunia bergerak mengikuti kemajuan regu</strong> : null}
       </div>
 
       <style jsx>{`

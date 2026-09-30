@@ -27,7 +27,6 @@ import { KotaScene } from '@/components/main-bersama/art/kota/KotaScene';
 import { QuestionCard } from '@/components/main-bersama/shared/QuestionCard';
 import { AnswerOption } from '@/components/main-bersama/shared/AnswerOption';
 import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBanner';
-import { ParticipantCount } from '@/components/main-bersama/shared/ParticipantCount';
 import { PrimaryGameButton } from '@/components/main-bersama/shared/PrimaryGameButton';
 import { RoundCountdown } from '@/components/main-bersama/shared/RoundCountdown';
 import { StudentLandscapeControl } from '@/components/main-bersama/student/StudentLandscapeControl';
@@ -172,7 +171,7 @@ export function StudentGameClient({ sessionId }: { sessionId: string }) {
       ) : view.phase === 'closed' || view.phase === 'paused' ? (
         <StudentWaiting
           title={view.phase === 'closed' ? 'Jawaban ditutup' : 'Permainan dijeda'}
-          sub="Tunggu Pak/Bu Guru melanjutkan…"
+          sub={view.phase === 'closed' ? 'Menunggu soal berikutnya…' : 'Tunggu sebentar…'}
         />
       ) : isDiscussion(view) ? (
         <StudentReveal view={view} />
@@ -248,11 +247,6 @@ function StudentLobby({
   return (
     <section className="mb-slobby mb-fade-in">
       <div className="mb-slobby-card">
-        <div className="mb-slobby-live" role="status">
-          <i aria-hidden />
-          KAMU SUDAH MASUK
-        </div>
-
         <div className="mb-slobby-art" aria-hidden>
           {isJelajah && view.team ? (
             <TeamMascot teamId={view.team.id} pose="ready" size={112} eager />
@@ -261,42 +255,19 @@ function StudentLobby({
           )}
         </div>
 
-        <p className="mb-slobby-hello">Halo,</p>
         <h1 className="mb-display mb-slobby-title">{view.displayName}!</h1>
-        <p className="mb-slobby-content">
-          <strong>{view.contentTitle}</strong>
-          <span aria-hidden> · </span>
-          <span>{view.totalRounds} soal</span>
-        </p>
-
-        <div className="mb-slobby-modecard">
-          <span className="mb-slobby-mode-label">MODE PERMAINAN</span>
-          <strong>{isJelajah ? 'Jelajah Kata' : 'Kota Cahaya'}</strong>
-          {view.team ? (
-            <span
-              className="mb-team-chip mb-slobby-teamchip"
-              style={{ '--mb-tc': TEAM_COLOR_VAR[view.team.id] ?? 'var(--mb-primary)' } as React.CSSProperties}
-            >
-              <TeamBadge teamId={view.team.id} size={20} />
-              Regu {view.team.name}
-            </span>
-          ) : null}
-        </div>
-
-        <p className="mb-slobby-objective">
-          {isJelajah
-            ? view.team
-              ? `Jawab tepat dan bantu Regu ${view.team.name} melaju sampai garis akhir.`
-              : 'Jawab tepat dan bantu regumu melaju sampai garis akhir.'
-            : 'Jawab bersama teman sekelas untuk menyalakan Kota Cahaya.'}
-        </p>
-
-        <div className="mb-slobby-bottom">
-          <ParticipantCount count={view.participantCount} />
-          <div className="mb-slobby-wait" role="status">
-            <span className="mb-slobby-dots" aria-hidden><i /><i /><i /></span>
-            Menunggu Pak/Bu Guru memulai permainan
-          </div>
+        {view.team ? (
+          <span
+            className="mb-team-chip mb-slobby-teamchip"
+            style={{ '--mb-tc': TEAM_COLOR_VAR[view.team.id] ?? 'var(--mb-primary)' } as React.CSSProperties}
+          >
+            <TeamBadge teamId={view.team.id} size={20} />
+            Regu {view.team.name}
+          </span>
+        ) : null}
+        <div className="mb-slobby-wait" role="status">
+          <span className="mb-slobby-dots" aria-hidden><i /><i /><i /></span>
+          Menunggu guru memulai…
         </div>
       </div>
 
@@ -341,27 +312,6 @@ function StudentLobby({
           border: 44px solid rgba(255,201,77,.055);
           pointer-events: none;
         }
-        .mb-slobby-live {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          min-height: 32px;
-          padding: 6px 12px;
-          border-radius: 999px;
-          background: rgba(18, 78, 78, .38);
-          border: 1px solid rgba(102, 229, 215, .2);
-          color: #aef4eb;
-          font-size: .7rem;
-          font-weight: 900;
-          letter-spacing: .12em;
-        }
-        .mb-slobby-live i {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background: #4adea8;
-          box-shadow: 0 0 0 5px rgba(74,222,168,.09), 0 0 14px rgba(74,222,168,.55);
-        }
         .mb-slobby-art {
           width: min(100%, 310px);
           height: 150px;
@@ -374,11 +324,6 @@ function StudentLobby({
           max-height: 145px;
           filter: drop-shadow(0 14px 24px rgba(0,0,0,.25));
         }
-        .mb-slobby-hello {
-          margin: 2px 0 -5px;
-          color: #9fb5c8;
-          font-weight: 750;
-        }
         .mb-slobby-title {
           margin: 0;
           color: #fff;
@@ -386,58 +331,12 @@ function StudentLobby({
           line-height: 1;
           text-shadow: 0 8px 24px rgba(0,0,0,.28);
         }
-        .mb-slobby-content {
-          margin: 0;
-          color: #9fb5c8;
-          font-size: .92rem;
-        }
-        .mb-slobby-content strong { color: #eef8ff; }
-        .mb-slobby-modecard {
-          width: min(100%, 390px);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-wrap: wrap;
-          gap: 8px 10px;
-          margin-top: 6px;
-          padding: 12px 14px;
-          border-radius: 18px;
-          background: rgba(255,255,255,.06);
-          border: 1px solid rgba(255,255,255,.09);
-        }
-        .mb-slobby-modecard strong {
-          color: #fff;
-          font-size: 1.03rem;
-        }
-        .mb-slobby-mode-label {
-          width: 100%;
-          color: #6fe1d6;
-          font-size: .63rem;
-          font-weight: 900;
-          letter-spacing: .14em;
-        }
         .mb-slobby-teamchip { transform: none; }
-        .mb-slobby-objective {
-          margin: 2px 0 0;
-          max-width: 36ch;
-          color: #b4c5d3;
-          line-height: 1.55;
-          font-size: .92rem;
-        }
-        .mb-slobby-bottom {
-          width: min(100%, 430px);
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 11px;
-          margin-top: 8px;
-          padding-top: 16px;
-          border-top: 1px solid rgba(255,255,255,.075);
-        }
         .mb-slobby-wait {
           display: flex;
           align-items: center;
           gap: 8px;
+          margin-top: 8px;
           color: #91a7b9;
           font-size: .84rem;
           font-weight: 650;
@@ -478,7 +377,6 @@ function StudentWaiting({ title, sub }: { title: string; sub: string }) {
     <section className="mb-swait mb-fade-in" role="status">
       <div className="mb-swait-card">
         <div className="mb-swait-ring" aria-hidden><span /></div>
-        <span className="mb-swait-kicker">PUTARAN DIKUNCI</span>
         <h2 className="mb-display">{title}</h2>
         <p>{sub}</p>
         <div className="mb-swait-line" aria-hidden><i /></div>
@@ -523,12 +421,6 @@ function StudentWaiting({ title, sub }: { title: string; sub: string }) {
           border-radius: 50%;
           border: 4px solid rgba(255,255,255,.12);
           border-top-color: #61ddd2;
-        }
-        .mb-swait-kicker {
-          color: #6fe1d6;
-          font-size: .67rem;
-          font-weight: 900;
-          letter-spacing: .16em;
         }
         .mb-swait h2 {
           margin: 0;
@@ -626,7 +518,7 @@ function StudentQuestion({
           </span>
         ) : null}
         <span className="mb-number">
-          Soal {view.roundIndex + 1} dari {view.totalRounds}
+          Soal {view.roundIndex + 1}/{view.totalRounds}
         </span>
         <RoundCountdown
           closesAt={view.closesAt}
@@ -661,8 +553,7 @@ function StudentQuestion({
       {saved ? (
         <div className="mb-tersimpan mb-tersimpan-student mb-entrance" role="status">
           <span className="mb-tersimpan-check" aria-hidden>✓</span>
-          <strong>Jawaban terkunci!</strong>
-          <span>Jawabanmu sudah tersimpan. Tunggu putaran selesai.</span>
+          <strong>Jawaban tersimpan</strong>
         </div>
       ) : (
         <div className="mb-sq-answers">
@@ -756,7 +647,7 @@ function StudentQuestion({
           box-shadow: 0 8px 18px rgba(0,0,0,.09);
         }
         .mb-tersimpan-student {
-          min-height: 142px;
+          min-height: 84px;
           justify-content: center;
           border-radius: 24px;
           border-color: rgba(58, 220, 160, .7);
@@ -768,10 +659,6 @@ function StudentQuestion({
         .mb-tersimpan-student strong {
           color: #8ff0c7;
           font-size: 1.1rem;
-        }
-        .mb-tersimpan-student span:last-child {
-          color: #a8c6bc;
-          font-size: .88rem;
         }
         .mb-tersimpan-check {
           display: grid;
@@ -1028,11 +915,6 @@ function StudentFinish({ view }: { view: StudentFinishViewT }) {
           <i /><i /><i /><i /><i /><i /><i />
         </div>
 
-        <span className={`mb-sfinish-status ${isEnded ? 'mb-sfinish-status-closed' : ''}`} role="status">
-          <i aria-hidden />
-          {isEnded ? 'SESI DITUTUP' : 'PERMAINAN SELESAI'}
-        </span>
-
         <div className="mb-sfinish-art" aria-hidden>
           {isJelajah && view.team ? (
             <TeamMascot teamId={view.team.id} pose="celebrate" size={138} eager />
@@ -1041,39 +923,25 @@ function StudentFinish({ view }: { view: StudentFinishViewT }) {
           )}
         </div>
 
-        <p className="mb-sfinish-overline">
-          {isEnded ? 'Sampai jumpa di permainan berikutnya' : 'Keren! Kamu sudah sampai di akhir'}
-        </p>
         <h1 className="mb-display">
-          {isEnded ? 'Sesi selesai!' : 'Hebat, selesai!'}
+          {isEnded ? 'Sesi selesai!' : 'Hebat!'}
         </h1>
-        <p className="mb-sfinish-name">{view.displayName}</p>
 
         <div className="mb-sfinish-result">
           {isJelajah ? (
             <>
               <span>PERJALANAN REGUMU</span>
               <strong className="mb-number">{teamProgress ?? 0}%</strong>
-              <small>
-                {view.team ? `Regu ${view.team.name}` : 'Regumu'} sudah berjuang sampai akhir.
-              </small>
+              <small>{view.team ? `Regu ${view.team.name}` : 'Regumu'}</small>
             </>
           ) : (
             <>
               <span>KOTA CAHAYA</span>
               <strong className="mb-number">{kotaProgress}%</strong>
-              <small>
-                Kelasmu menyalakan {kotaUnlocked.length} dari 4 bagian kota bersama-sama.
-              </small>
+              <small>{kotaUnlocked.length}/4 area menyala</small>
             </>
           )}
         </div>
-
-        <p className="mb-sfinish-copy">
-          {isEnded
-            ? 'Ruang ini sudah ditutup oleh Pak/Bu Guru. Kamu boleh kembali ke beranda.'
-            : 'Hasil akhir sudah tampil. Pak/Bu Guru sedang menutup ruang permainan.'}
-        </p>
 
         <div className="mb-sfinish-actions">
           <StudentBackButton phase="idle" />
@@ -1120,36 +988,6 @@ function StudentFinish({ view }: { view: StudentFinishViewT }) {
             radial-gradient(280px 190px at 95% 86%, rgba(255, 201, 77, .12), transparent 70%),
             linear-gradient(155deg, #171a45, #0c1733 58%, #081522);
         }
-        .mb-sfinish-status {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          min-height: 33px;
-          padding: 6px 12px;
-          border-radius: 999px;
-          background: rgba(255,255,255,.07);
-          border: 1px solid rgba(255,255,255,.12);
-          color: #d7f8f3;
-          font-size: .68rem;
-          font-weight: 900;
-          letter-spacing: .14em;
-        }
-        .mb-sfinish-status i {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background: #55e2ae;
-          box-shadow: 0 0 12px rgba(85,226,174,.58);
-        }
-        .mb-sfinish-status-closed {
-          color: #ffe7a3;
-          border-color: rgba(255,207,83,.2);
-          background: rgba(102,75,20,.18);
-        }
-        .mb-sfinish-status-closed i {
-          background: #ffd25f;
-          box-shadow: 0 0 12px rgba(255,210,95,.5);
-        }
         .mb-sfinish-art {
           width: min(100%, 350px);
           height: 165px;
@@ -1162,24 +1000,12 @@ function StudentFinish({ view }: { view: StudentFinishViewT }) {
           max-height: 160px;
           filter: drop-shadow(0 14px 24px rgba(0,0,0,.25));
         }
-        .mb-sfinish-overline {
-          margin: 0;
-          color: #9db4c8;
-          font-size: .82rem;
-          font-weight: 650;
-        }
         .mb-sfinish h1 {
           margin: 0;
           color: #fff;
           font-size: clamp(2.3rem, 10vw, 3.7rem);
           line-height: .96;
           text-shadow: 0 10px 26px rgba(0,0,0,.26);
-        }
-        .mb-sfinish-name {
-          margin: 0;
-          color: #f8d86f;
-          font-weight: 850;
-          font-size: 1.05rem;
         }
         .mb-sfinish-result {
           width: min(100%, 360px);
@@ -1206,13 +1032,6 @@ function StudentFinish({ view }: { view: StudentFinishViewT }) {
         .mb-sfinish-result small {
           color: #a8bbca;
           line-height: 1.45;
-        }
-        .mb-sfinish-copy {
-          max-width: 38ch;
-          margin: 5px 0 0;
-          color: #9db1c1;
-          font-size: .88rem;
-          line-height: 1.5;
         }
         .mb-sfinish-actions {
           margin-top: 8px;

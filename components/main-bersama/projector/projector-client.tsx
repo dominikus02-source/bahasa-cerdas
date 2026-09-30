@@ -33,11 +33,6 @@ import {
 import { useFullscreenControl } from "@/components/main-bersama/shared/useFullscreenControl";
 import { FullscreenExitControl } from "@/components/main-bersama/shared/FullscreenExitControl";
 
-const MODE_LABEL = {
-  "jelajah-kata": "Jelajah Kata",
-  "kota-cahaya": "Kota Cahaya",
-} as const;
-
 /** Label regu dari teamId (domain Jelajah — 4 regu tetap). */
 const TEAM_LABEL: Record<string, string> = {
   elang: "Elang",
@@ -182,14 +177,6 @@ export function ProjectorClient() {
     <main className={`mb-pj mb-pj-mode-${view.gameMode}`}>
       <ConnectionBanner visible={connection === "offline"} />
 
-      <div className="mb-pj-persistent-pin" role="status" aria-label={`PIN masuk Main Bersama: ${view.joinInfo.pin}`}>
-        <span className="mb-pj-persistent-pin-label">PIN MASUK</span>
-        <strong className="mb-number">
-          {view.joinInfo.pin.slice(0, 3)} {view.joinInfo.pin.slice(3, 6)}
-        </strong>
-        <span className="mb-pj-persistent-pin-hint">Keluar? Masuk lagi dengan PIN ini</span>
-      </div>
-
       <FullscreenExitControl
         active={fullscreen.isFullscreen}
         onExit={fullscreen.exit}
@@ -197,19 +184,10 @@ export function ProjectorClient() {
       <header className="mb-pj-head">
         <div className="mb-pj-brand">
           <h1 className="mb-display mb-pj-title">MAIN BERSAMA</h1>
-          <p className="mb-pj-sub">
-            Kuis kelas <strong>langsung</strong> bersama BahasaCerdas
-          </p>
         </div>
         <div className="mb-pj-head-right">
           <div className="mb-pj-head-meta">
-            {/* Nama konten lebih dulu: terlihat dari jauh dan tetap ada
-                sampai summary/ended (§11/§12). */}
             <span className="mb-pj-pkg">{view.contentTitle}</span>
-            <span className="mb-pj-mode">{MODE_LABEL[view.gameMode]}</span>
-            {view.className ? (
-              <span className="mb-pj-class">Kelas {view.className}</span>
-            ) : null}
           </div>
           <div
             className="mb-pj-rejoin-pin"
@@ -365,17 +343,12 @@ function ProjectorLobby({
   return (
     <section className="mb-pj-phase mb-pj-lobby-stage mb-fade-in">
       <div className="mb-pj-lobby-title-block">
-        <span className="mb-pj-lobby-kicker">PERMAINAN KELAS LANGSUNG</span>
-        <h2 className="mb-display">SIAP MAIN?</h2>
-        <p>Masuk ke lobby, lihat namamu muncul, lalu tunggu guru memulai.</p>
+        <h2 className="mb-display">MASUK SEKARANG</h2>
       </div>
       <div className="mb-pj-lobby-grid">
         <div className="mb-pj-lobby-join">
           <span className="mb-eyebrow mb-pj-lobby-eyebrow">PIN RUANG</span>
           <PinDisplay pin={pin} scale="projector" />
-          <p className="mb-pj-wait" role="status">
-            Buka halaman <strong>Gabung Main Bersama</strong> lalu masukkan PIN di atas
-          </p>
           <span key={view.participation.playerCount} className="mb-entrance">
             <ParticipantCount
               count={view.participation.playerCount}
@@ -385,7 +358,7 @@ function ProjectorLobby({
         </div>
         <div className="mb-pj-lobby-roster-panel">
           <div className="mb-pj-lobby-roster-head">
-            <span>Siapa yang sudah masuk?</span>
+            <span>Sudah masuk</span>
             <strong className="mb-number">{view.participation.playerCount}</strong>
           </div>
           <LobbyRoster
@@ -477,7 +450,6 @@ function ProjectorQuestion({
             {view.participation.submittedCount}
             <small> / {view.participation.eligibleCount} menjawab</small>
           </span>
-          <ParticipantCount count={view.participation.playerCount} />
         </div>
 
         <div className={`mb-pj-stage-shell mb-pj-stage-shell-${view.gameProgress.gameMode}`} aria-hidden>

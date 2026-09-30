@@ -221,7 +221,6 @@ export function TeacherRoomClient({
         }
       />
 
-      <div className="mb-host-mode-note" role="status">Mode Guru · layar ini dapat langsung diproyeksikan ke kelas</div>
       <nav className="mb-host-tabs" aria-label="Panel Main Bersama">
         <button type="button" className={`mb-host-tab ${activeTab === 'layar' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('layar')}>Tampilan Kelas</button>
         <button type="button" className={`mb-host-tab ${activeTab === 'kontrol' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('kontrol')}>Kontrol Guru</button>
