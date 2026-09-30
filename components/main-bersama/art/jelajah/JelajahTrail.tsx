@@ -135,7 +135,6 @@ export function JelajahTrail({
                     height={compact ? 72 : 88}
                   >
                     <div
-                      xmlns="http://www.w3.org/1999/xhtml"
                       style={{
                         width: "100%",
                         height: "100%",
