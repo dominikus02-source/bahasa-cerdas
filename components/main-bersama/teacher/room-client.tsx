@@ -61,6 +61,7 @@ export function TeacherRoomClient({
   const [activeTab, setActiveTab] = useState<'layar' | 'kontrol' | 'analisis'>('layar');
   const [savingResults, setSavingResults] = useState(false);
   const [resultsSaved, setResultsSaved] = useState(false);
+  const [jelajahPodiumView, setJelajahPodiumView] = useState<'regu' | 'siswa'>('regu');
   const autoLobbyRef = useRef(false);
   const fullscreen = useFullscreenControl({
     onError: (message) => setError(message),
@@ -116,6 +117,10 @@ export function TeacherRoomClient({
     autoLobbyRef.current = true;
     void run('open-lobby');
   }, [view, busy, run]);
+
+  useEffect(() => {
+    if (view?.phase === 'summary') setJelajahPodiumView('regu');
+  }, [view?.phase]);
 
   // Hook harus selalu dipanggil pada setiap render, termasuk saat data ruang
   // belum tersedia. Jangan letakkan hook setelah early return.
@@ -628,39 +633,109 @@ export function TeacherRoomClient({
             <section className="mb-final-podium-card mb-final-jelajah-card">
               <div className="mb-final-section-head">
                 <div>
-                  <span className="mb-eyebrow">Hasil Akhir</span>
-                  <h3>Podium Jelajah Kata</h3>
+                  <span className="mb-eyebrow">{jelajahPodiumView === 'regu' ? 'Podium Regu' : 'Podium Siswa'}</span>
+                  <h3>{jelajahPodiumView === 'regu' ? 'Hasil Akhir Regu' : 'Hasil Akhir Siswa'}</h3>
+                  <p className="mb-final-podium-caption">
+                    {jelajahPodiumView === 'regu'
+                      ? 'Lihat hasil perjalanan empat regu sebelum melihat pencapaian siswa.'
+                      : 'Lihat tiga siswa dengan hasil akhir tertinggi pada permainan hari ini.'}
+                  </p>
                 </div>
-                <span className="mb-final-total">{view.participants.length} siswa</span>
+                <span className="mb-final-total">
+                  {jelajahPodiumView === 'regu' ? '4 regu' : `${view.participants.length} siswa`}
+                </span>
               </div>
 
-              <div className="mb-final-podium">
-                {[2, 1, 3].flatMap((rank) =>
-                  [...view.participants]
-                    .filter((p) => p.progressRank === rank)
-                    .slice(0, 1)
-                    .map((p) => (
-                      <div className={`mb-podium-item mb-podium-rank-${p.progressRank}`} key={p.playerId}>
-                        <div className="mb-podium-medal" aria-hidden>
-                          {p.progressRank === 1 ? '🥇' : p.progressRank === 2 ? '🥈' : '🥉'}
+              {jelajahPodiumView === 'regu' ? (
+                <div className="mb-final-team-podium">
+                  {[2, 1, 3].flatMap((rank) => {
+                    const rankedTeams = [...view.teams]
+                      .slice(0, 4)
+                      .sort((a, b) => {
+                        const ap = view.gameState?.gameMode === 'jelajah-kata'
+                          ? (view.gameState.jelajahKata.teamProgress[a.id] ?? 0)
+                          : 0;
+                        const bp = view.gameState?.gameMode === 'jelajah-kata'
+                          ? (view.gameState.jelajahKata.teamProgress[b.id] ?? 0)
+                          : 0;
+                        return bp - ap || a.name.localeCompare(b.name, 'id');
+                      });
+                    const team = rankedTeams[rank - 1];
+                    if (!team) return [];
+                    const progress = view.gameState?.gameMode === 'jelajah-kata'
+                      ? Math.round(view.gameState.jelajahKata.teamProgress[team.id] ?? 0)
+                      : 0;
+                    const members = view.participants.filter((p) => p.teamId === team.id);
+                    const memberCorrect = members.reduce((sum, p) => sum + p.correctAnswers, 0);
+                    const memberEligible = members.reduce((sum, p) => sum + p.eligibleRounds, 0);
+
+                    return [(
+                      <div className={`mb-team-podium-item mb-team-podium-rank-${rank}`} key={team.id}>
+                        <div className="mb-team-podium-medal" aria-hidden>
+                          {rank === 1 ? '🥇' : rank === 2 ? '🥈' : '🥉'}
                         </div>
-                        <span className="mb-podium-avatar">
-                          <img src={p.avatarUrl ?? '/avatar/2.webp'} alt="" />
-                        </span>
-                        <strong title={p.displayName}>{p.displayName}</strong>
-                        <span>{p.correctAnswers}/{p.eligibleRounds} benar · {p.progressPercent}%</span>
-                        <div className="mb-podium-step">
-                          <b>{p.progressRank}</b>
-                          <small>{p.progressPercent}%</small>
+                        <div className="mb-team-podium-emblem" aria-hidden>{team.symbol}</div>
+                        <strong>{team.name}</strong>
+                        <span>{members.length} siswa · {memberCorrect}/{memberEligible} benar</span>
+                        <div className="mb-team-podium-step">
+                          <b>{rank}</b>
+                          <small>{progress}%</small>
                         </div>
                       </div>
-                    )),
+                    )];
+                  })}
+                </div>
+              ) : (
+                <div className="mb-final-podium">
+                  {[2, 1, 3].flatMap((rank) =>
+                    [...view.participants]
+                      .filter((p) => p.progressRank === rank)
+                      .slice(0, 1)
+                      .map((p) => (
+                        <div className={`mb-podium-item mb-podium-rank-${p.progressRank}`} key={p.playerId}>
+                          <div className="mb-podium-medal" aria-hidden>
+                            {p.progressRank === 1 ? '🥇' : p.progressRank === 2 ? '🥈' : '🥉'}
+                          </div>
+                          <span className="mb-podium-avatar">
+                            <img src={p.avatarUrl ?? '/avatar/2.webp'} alt="" />
+                          </span>
+                          <strong title={p.displayName}>{p.displayName}</strong>
+                          <span>{p.correctAnswers}/{p.eligibleRounds} benar · {p.progressPercent}%</span>
+                          <div className="mb-podium-step">
+                            <b>{p.progressRank}</b>
+                            <small>{p.progressPercent}%</small>
+                          </div>
+                        </div>
+                      )),
+                  )}
+                  {view.participants.length === 0 ? <p className="mb-teacher-empty">Belum ada hasil peserta.</p> : null}
+                </div>
+              )}
+
+              <div className="mb-jelajah-podium-switch">
+                {jelajahPodiumView === 'regu' ? (
+                  <button
+                    type="button"
+                    className="mb-jelajah-next-btn"
+                    onClick={() => setJelajahPodiumView('siswa')}
+                  >
+                    Lihat Podium Siswa <span aria-hidden>→</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="mb-jelajah-next-btn mb-jelajah-back-btn"
+                    onClick={() => setJelajahPodiumView('regu')}
+                  >
+                    <span aria-hidden>←</span> Kembali ke Podium Regu
+                  </button>
                 )}
-                {view.participants.length === 0 ? <p className="mb-teacher-empty">Belum ada hasil peserta.</p> : null}
               </div>
 
               <p className="mb-final-jelajah-note">
-                Setiap regu membawa progresnya sendiri. Podium menampilkan hasil akhir siswa setelah seluruh perjalanan selesai.
+                {jelajahPodiumView === 'regu'
+                  ? 'Urutan regu ditentukan dari progres perjalanan akhir masing-masing regu.'
+                  : 'Podium siswa menampilkan hasil akhir berdasarkan persentase jawaban benar.'}
               </p>
             </section>
           ) : (
@@ -1092,6 +1167,122 @@ export function TeacherRoomClient({
         }
         .mb-podium-rank-2 .mb-podium-step { min-height:62px; }
         .mb-podium-rank-3 .mb-podium-step { min-height:56px; }
+        .mb-final-podium-caption {
+          margin:4px 0 0;
+          max-width:620px;
+          color:#7a8b95;
+          font-size:.72rem;
+          line-height:1.45;
+          font-weight:650;
+        }
+        .mb-final-team-podium {
+          display:grid;
+          grid-template-columns:1fr 1.16fr 1fr;
+          align-items:end;
+          gap:18px;
+          min-height:340px;
+          max-width:980px;
+          margin:10px auto 0;
+        }
+        .mb-team-podium-item {
+          display:flex;
+          flex-direction:column;
+          align-items:center;
+          justify-content:flex-end;
+          min-width:0;
+          text-align:center;
+          padding:16px 14px 0;
+          border:1px solid #e3ece9;
+          border-radius:22px 22px 14px 14px;
+          background:rgba(255,255,255,.9);
+          box-shadow:0 10px 28px rgba(23,53,75,.06);
+          overflow:hidden;
+        }
+        .mb-team-podium-rank-2 { min-height:250px; }
+        .mb-team-podium-rank-1 {
+          min-height:310px;
+          padding-top:22px;
+          border-color:rgba(15,118,110,.22);
+          box-shadow:0 18px 40px rgba(15,118,110,.13);
+        }
+        .mb-team-podium-rank-3 { min-height:225px; }
+        .mb-team-podium-medal {
+          font-size:1.9rem;
+          line-height:1;
+          margin-bottom:7px;
+          filter:drop-shadow(0 5px 8px rgba(23,53,75,.09));
+        }
+        .mb-team-podium-emblem {
+          width:82px;
+          height:82px;
+          display:grid;
+          place-items:center;
+          margin-bottom:8px;
+          border-radius:24px;
+          border:1px solid #e0eae7;
+          background:linear-gradient(180deg,#f9fffd 0%,#eaf6f2 100%);
+          font-size:2.8rem;
+          box-shadow:0 10px 24px rgba(23,53,75,.08);
+        }
+        .mb-team-podium-rank-1 .mb-team-podium-emblem {
+          width:96px;
+          height:96px;
+          font-size:3.25rem;
+          box-shadow:0 14px 30px rgba(15,118,110,.13);
+        }
+        .mb-team-podium-item strong {
+          max-width:100%;
+          margin-top:1px;
+          color:#17354b;
+          font-size:.92rem;
+          font-weight:900;
+        }
+        .mb-team-podium-item > span {
+          margin-top:4px;
+          color:#71848f;
+          font-size:.68rem;
+          font-weight:750;
+        }
+        .mb-team-podium-step {
+          display:flex;
+          align-items:baseline;
+          justify-content:center;
+          gap:7px;
+          width:100%;
+          min-height:58px;
+          margin-top:10px;
+          padding:0 12px;
+          border-radius:16px 16px 8px 8px;
+          background:#eaf4f2;
+          color:#0f766e;
+        }
+        .mb-team-podium-step b { font-size:1.38rem; line-height:1; }
+        .mb-team-podium-step small { font-size:.72rem; font-weight:900; color:#6e858e; }
+        .mb-team-podium-rank-1 .mb-team-podium-step {
+          min-height:78px;
+          background:linear-gradient(180deg,#d9f5ed 0%,#c9eee4 100%);
+        }
+        .mb-team-podium-rank-2 .mb-team-podium-step { min-height:66px; }
+        .mb-team-podium-rank-3 .mb-team-podium-step { min-height:58px; }
+        .mb-jelajah-podium-switch {
+          display:flex;
+          justify-content:center;
+          margin-top:16px;
+        }
+        .mb-jelajah-next-btn {
+          min-height:46px;
+          padding:0 18px;
+          border:0;
+          border-radius:999px;
+          background:#17354b;
+          color:#fff;
+          font-size:.76rem;
+          font-weight:850;
+          cursor:pointer;
+          box-shadow:0 9px 24px rgba(23,53,75,.14);
+        }
+        .mb-jelajah-next-btn span { margin-left:5px; }
+        .mb-jelajah-back-btn { background:#eef4f3; color:#17354b; border:1px solid #dfe9e7; box-shadow:none; }
         .mb-final-jelajah-note {
           max-width:760px;
           margin:16px auto 0;
@@ -1117,6 +1308,12 @@ export function TeacherRoomClient({
         @media(max-width:760px){
           .mb-final-grid { grid-template-columns:1fr; }
           .mb-final-podium { grid-template-columns:1fr 1fr 1fr; min-height:250px; gap:8px; }
+          .mb-final-team-podium { grid-template-columns:1fr 1fr 1fr; min-height:230px; gap:8px; }
+          .mb-team-podium-rank-2 { min-height:190px; }
+          .mb-team-podium-rank-1 { min-height:220px; }
+          .mb-team-podium-rank-3 { min-height:175px; }
+          .mb-team-podium-emblem { width:60px; height:60px; font-size:2.1rem; }
+          .mb-team-podium-rank-1 .mb-team-podium-emblem { width:70px; height:70px; font-size:2.5rem; }
           .mb-podium-item { padding-left:8px; padding-right:8px; }
           .mb-podium-rank-2 { min-height:210px; }
           .mb-podium-rank-1 { min-height:245px; }
