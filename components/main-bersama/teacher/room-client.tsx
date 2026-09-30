@@ -117,6 +117,16 @@ export function TeacherRoomClient({
     void run('open-lobby');
   }, [view, busy, run]);
 
+  // Hook harus selalu dipanggil pada setiap render, termasuk saat data ruang
+  // belum tersedia. Jangan letakkan hook setelah early return.
+  const jelajahTeamProgress = view?.gameState?.gameMode === 'jelajah-kata'
+    ? view.gameState.jelajahKata.teamProgress
+    : {};
+  const { getPose: getTrailPose } = useTrailMotion(
+    jelajahTeamProgress,
+    view?.gameMode === 'jelajah-kata' ? view.phase : 'preparing',
+  );
+
   if (!view) {
     return (
       <main className="mb-room-loading">
