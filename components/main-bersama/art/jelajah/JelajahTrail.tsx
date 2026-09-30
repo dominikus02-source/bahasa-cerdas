@@ -17,7 +17,7 @@ const TEAM_COLORS: Record<string, string> = {
 const LANE_OFFSETS = [-42, -14, 14, 42];
 const START_X = 255;
 const MASCOT_TRAVEL = 250;
-const BACKGROUND_TRAVEL = 320;
+const BACKGROUND_TRAVEL = 260;
 
 function clampPercent(value: number) {
   if (!Number.isFinite(value)) return 0;
@@ -86,17 +86,9 @@ export function JelajahTrail({
               href="/main-bersama/jelajah/backgrounds/jelajah-latar-utama.png"
               x="0"
               y="0"
-              width="1600"
+              width="1460"
               height="600"
-              preserveAspectRatio="none"
-            />
-            <image
-              href="/main-bersama/jelajah/backgrounds/jelajah-latar-utama.png"
-              x="1600"
-              y="0"
-              width="1600"
-              height="600"
-              preserveAspectRatio="none"
+              preserveAspectRatio="xMidYMid slice"
             />
           </g>
 
