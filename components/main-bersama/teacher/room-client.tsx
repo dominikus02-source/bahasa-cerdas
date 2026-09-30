@@ -117,6 +117,16 @@ export function TeacherRoomClient({
     void run('open-lobby');
   }, [view, busy, run]);
 
+  // Hook harus selalu dipanggil pada setiap render, termasuk saat data ruang
+  // belum tersedia. Jangan letakkan hook setelah early return.
+  const jelajahTeamProgress = view?.gameState?.gameMode === 'jelajah-kata'
+    ? view.gameState.jelajahKata.teamProgress
+    : {};
+  const { getPose: getTrailPose } = useTrailMotion(
+    jelajahTeamProgress,
+    view?.gameMode === 'jelajah-kata' ? view.phase : 'preparing',
+  );
+
   if (!view) {
     return (
       <main className="mb-room-loading">
@@ -125,14 +135,6 @@ export function TeacherRoomClient({
       </main>
     );
   }
-
-  const jelajahTeamProgress = view.gameState?.gameMode === 'jelajah-kata'
-    ? view.gameState.jelajahKata.teamProgress
-    : {};
-  const { getPose: getTrailPose } = useTrailMotion(
-    jelajahTeamProgress,
-    view.gameMode === 'jelajah-kata' ? view.phase : 'preparing',
-  );
 
   const answered = view.answerSummary.submittedCount;
   const eligible = view.answerSummary.eligibleCount;
@@ -537,10 +539,12 @@ export function TeacherRoomClient({
           />
           <div className="mb-classroom-hint">Jawab di perangkatmu · Guru melihat progres kelas secara langsung</div>
           <div className="mb-progress-inline">
-            <CityCahayaStage
-              progressPercent={view.gameState.kotaCahaya.progressPercent}
-              unlockedMilestones={view.gameState.kotaCahaya.unlockedMilestones}
-            />
+            {view.gameState?.gameMode === 'kota-cahaya' ? (
+              <CityCahayaStage
+                progressPercent={view.gameState.kotaCahaya.progressPercent}
+                unlockedMilestones={view.gameState.kotaCahaya.unlockedMilestones}
+              />
+            ) : null}
           </div>
           <p className="mb-classroom-control-hint">Buka <strong>Kontrol Guru</strong> untuk menutup jawaban dan mengatur langkah berikutnya.</p>
         </section>
@@ -570,10 +574,12 @@ export function TeacherRoomClient({
             question={view.currentQuestion}
             roundLabel={`Soal ${roundLabel ?? ''}`}
           />
-          <CityCahayaStage
-            progressPercent={view.gameState.kotaCahaya.progressPercent}
-            unlockedMilestones={view.gameState.kotaCahaya.unlockedMilestones}
-          />
+          {view.gameState?.gameMode === 'kota-cahaya' ? (
+            <CityCahayaStage
+              progressPercent={view.gameState.kotaCahaya.progressPercent}
+              unlockedMilestones={view.gameState.kotaCahaya.unlockedMilestones}
+            />
+          ) : null}
           <div className="mb-reveal-card mb-reading">
             <p className="mb-reveal-correct">
               Jawaban benar:{' '}

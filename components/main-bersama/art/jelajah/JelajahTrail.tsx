@@ -222,7 +222,17 @@ export function JelajahTrail({
   const id = (name: string) => `${idBase}-${name}`;
   const sceneProgress = Math.max(0, ...shown.map((team) => clampPercent(progress[team.id] ?? 0)));
   const worldPhase = sceneProgress < 25 ? 'pagi' : sceneProgress < 55 ? 'siang' : sceneProgress < 80 ? 'sore' : 'senja';
-  const backgroundShift = Math.round((sceneProgress / 100) * 400);
+  const JELAJAH_SCENE_WIDTH = 1200;
+  const JELAJAH_BACKGROUND_COUNT = 7;
+const JELAJAH_BACKGROUNDS = [
+  "https://raw.githubusercontent.com/dominikus02-source/bahasa-cerdas/2fff163d2e776aadb8565c88e47b5ce60d86e559/public/main-bersama/jelajah/backgrounds/jk-1.png",
+  "https://raw.githubusercontent.com/dominikus02-source/bahasa-cerdas/2fff163d2e776aadb8565c88e47b5ce60d86e559/public/main-bersama/jelajah/backgrounds/jk-2.png",
+  "https://raw.githubusercontent.com/dominikus02-source/bahasa-cerdas/2fff163d2e776aadb8565c88e47b5ce60d86e559/public/main-bersama/jelajah/backgrounds/jk-3.png",
+  "https://raw.githubusercontent.com/dominikus02-source/bahasa-cerdas/2fff163d2e776aadb8565c88e47b5ce60d86e559/public/main-bersama/jelajah/backgrounds/jk-4.png",
+  "https://raw.githubusercontent.com/dominikus02-source/bahasa-cerdas/2fff163d2e776aadb8565c88e47b5ce60d86e559/public/main-bersama/jelajah/backgrounds/jk-5.png",
+  "https://raw.githubusercontent.com/dominikus02-source/bahasa-cerdas/2fff163d2e776aadb8565c88e47b5ce60d86e559/public/main-bersama/jelajah/backgrounds/jk-6.png",
+  "https://raw.githubusercontent.com/dominikus02-source/bahasa-cerdas/2fff163d2e776aadb8565c88e47b5ce60d86e559/public/main-bersama/jelajah/backgrounds/jk-7.png",
+] as const;
   const roadPath = buildPath(centerPoint);
   const viewBox = compact ? "0 105 1200 390" : "0 0 1200 600";
 
@@ -268,6 +278,28 @@ export function JelajahTrail({
       </defs>
 
       <rect width="1200" height="600" rx="28" fill={`url(#${id("sky")})`} />
+      {/* Tujuh adegan Jelajah Kata — latar bergerak mengikuti kemajuan regu. */}
+      <clipPath id={id("worldBackgroundClip")}>
+        <rect x="0" y="0" width="1200" height="600" rx="28" />
+      </clipPath>
+      <g clipPath={`url(#${id("worldBackgroundClip")})`} aria-hidden="true">
+        <g
+          transform={`translate(-${(sceneProgress / 100) * (JELAJAH_BACKGROUND_COUNT - 1) * JELAJAH_SCENE_WIDTH} 0)`}
+          style={{ transition: "transform 700ms cubic-bezier(.22,.9,.3,1)" }}
+        >
+          {[1, 2, 3, 4, 5, 6, 7].map((scene) => (
+            <image
+              key={scene}
+              href={JELAJAH_BACKGROUNDS[scene - 1]}
+              x={(scene - 1) * JELAJAH_SCENE_WIDTH}
+              y="0"
+              width={JELAJAH_SCENE_WIDTH}
+              height="600"
+              preserveAspectRatio="xMidYMid slice"
+            />
+          ))}
+        </g>
+      </g>
       <g aria-hidden>
         {worldPhase === 'pagi' ? <circle cx="170" cy="108" r="38" fill="#ffe9a3" opacity=".95" /> : null}
         {worldPhase === 'siang' ? <circle cx="940" cy="88" r="48" fill="#fff1ad" opacity=".96" /> : null}
@@ -336,20 +368,6 @@ export function JelajahTrail({
         opacity=".28"
       />
 
-      {/* Latar dunia nyata — bergeser mengikuti kemajuan regu. Maskot dan jalur tetap sebagai lapisan kode. */}
-      <image
-        href="/main-bersama/jelajah/backgrounds/jk-1.png"
-        x="0"
-        y="0"
-        width="1600"
-        height="600"
-        preserveAspectRatio="xMidYMid slice"
-        aria-hidden="true"
-        style={{
-          transform: `translateX(${-backgroundShift}px)`,
-          transition: "transform 700ms cubic-bezier(.22,.9,.3,1)",
-        }}
-      />
 
       {/* one shared road = journey first, progress bars second */}
       <path d={roadPath} fill="none" stroke="#061724" strokeWidth="112" strokeLinecap="round" strokeLinejoin="round" opacity=".44" />
