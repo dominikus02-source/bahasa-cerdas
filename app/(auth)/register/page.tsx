@@ -142,6 +142,21 @@ export default function RegisterPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!role) return;
+
+    const passwordValid =
+      password.length >= 8 &&
+      password.length <= 128 &&
+      /[a-z]/.test(password) &&
+      /[A-Z]/.test(password) &&
+      /\d/.test(password) &&
+      /[^A-Za-z0-9\s]/.test(password);
+
+    if (!passwordValid) {
+      setError("Kata sandi minimal 8 karakter dan harus mengandung huruf kecil, huruf besar, angka, dan simbol.");
+      setStep(2);
+      return;
+    }
+
     setLoading(true);
     setError("");
 
@@ -467,9 +482,11 @@ export default function RegisterPage() {
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           className={`${inputCls} pr-11`}
-                          placeholder="Minimal 8 karakter"
+                          placeholder="Min. 8 karakter + huruf besar, kecil, angka, simbol"
                           minLength={8}
+                          maxLength={128}
                           autoComplete="new-password"
+                          aria-describedby="password-help"
                           required
                         />
                         <button
@@ -481,6 +498,9 @@ export default function RegisterPage() {
                           {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
                       </div>
+                      <p id="password-help" className="mt-1.5 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
+                        Gunakan minimal 8 karakter dengan huruf kecil, huruf besar, angka, dan simbol.
+                      </p>
                     </div>
 
                     <div className="h-px bg-slate-100 dark:bg-slate-800" />

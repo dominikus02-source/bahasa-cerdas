@@ -7,7 +7,18 @@ import { rateLimitRoute } from "@/lib/rate-limit";
 
 const createUserSchema = z.object({
   email: z.string().email("Email tidak valid").max(255),
-  password: z.string().min(8, "Password minimal 8 karakter").max(128),
+  password: z
+    .string()
+    .min(8, "Kata sandi minimal 8 karakter")
+    .max(128, "Kata sandi maksimal 128 karakter")
+    .refine(
+      (value) =>
+        /[a-z]/.test(value) &&
+        /[A-Z]/.test(value) &&
+        /\\d/.test(value) &&
+        /[^A-Za-z0-9\\s]/.test(value),
+      "Kata sandi harus mengandung huruf kecil, huruf besar, angka, dan simbol"
+    ),
   fullName: z.string().min(1, "Nama harus diisi").max(100).trim(),
   role: z.enum(["GURU", "MURID"]),
 });
@@ -15,7 +26,9 @@ const createUserSchema = z.object({
 export async function POST(req: Request) {
   try {
     const rl = await rateLimitRoute(req, {
-      maxRequests: 5,
+      // Pendaftaran siswa sering dilakukan serentak dari satu jaringan sekolah.
+      // Batas harus cukup tinggi untuk satu kelas, tetapi tetap membatasi penyalahgunaan.
+      maxRequests: 60,
       windowSeconds: 60,
       identifier: "register-create-user",
     });
