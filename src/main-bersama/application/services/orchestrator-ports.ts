@@ -59,6 +59,17 @@ export type MainPauseStatePort =
 /** Persist round + eligible snapshot (transaksional di infrastruktur). */
 export interface RoundStore {
   save(round: MainRoundPort): Promise<void>;
+  /**
+   * Klaim penutupan otomatis untuk Jelajah Kata. Implementasi produksi
+   * melakukan compare-and-set pada round OPEN sehingga tepat satu request
+   * jawaban terakhir yang boleh meneruskan sesi ke soal berikutnya.
+   */
+  claimAutoAdvance?(input: {
+    sessionId: SessionId;
+    roundId: string;
+    roundIndex: number;
+    closedAt: Date;
+  }): Promise<boolean>;
 }
 
 /** Bentuk round minimal yang dibutuhkan port. */

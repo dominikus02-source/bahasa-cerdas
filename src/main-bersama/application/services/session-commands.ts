@@ -414,6 +414,88 @@ export async function nextRound(
   };
 }
 
+/**
+ * Jelajah Kata tidak menunggu guru bila semua peserta pada snapshot round
+ * sudah menjawab: claim durable → hitung progres → buka soal berikutnya.
+ *
+ * Dipanggil setelah setiap jawaban yang berhasil tersimpan. Claim memakai
+ * compare-and-set pada MainRound OPEN, jadi walau jawaban terakhir masuk
+ * hampir bersamaan dari beberapa perangkat, tepat satu request yang boleh
+ * menjalankan transisi ini. Kota Cahaya tetap memakai kontrol guru biasa.
+ */
+export async function autoAdvanceJelajahIfRoundComplete(
+  deps: SessionOrchestratorDeps,
+  sessionId: SessionId,
+  roundId: RoundId,
+): Promise<void> {
+  if (!deps.rounds.claimAutoAdvance) return;
+
+  // Muat ulang setelah jawaban durable agar hitungan memakai semua respons
+  // yang benar-benar diterima lintas instance/serverless.
+  deps.resolver.discard?.(sessionId);
+  const initial = await loadEngineWithGameState(deps, sessionId);
+  if (!initial || initial.engine.state.session.gameMode !== 'jelajah-kata') return;
+  if (initial.engine.state.session.phase !== 'question') return;
+
+  const activeRound = initial.engine.activeRound();
+  if (!activeRound || activeRound.id !== roundId) return;
+  const facts = initial.engine.getRoundFacts(roundId);
+  if (!facts || facts.eligiblePlayerIds.length === 0 || facts.submittedCount < facts.eligiblePlayerIds.length) {
+    return;
+  }
+
+  const claimed = await deps.rounds.claimAutoAdvance({
+    sessionId,
+    roundId,
+    roundIndex: activeRound.index,
+    closedAt: deps.clock.now(),
+  });
+  if (!claimed) return;
+
+  // Claim sudah memindahkan sesi ke discussion dan menutup round secara
+  // atomik. Rehydrate sekali lagi sebelum skor agar fakta hasil selalu
+  // authoritative, kemudian langsung buka soal berikutnya tanpa layar
+  // pembahasan manual.
+  deps.resolver.discard?.(sessionId);
+  const claimedState = await loadEngineWithGameState(deps, sessionId);
+  if (!claimedState || claimedState.engine.state.session.gameMode !== 'jelajah-kata') return;
+
+  const claimedRound = claimedState.engine.activeRound();
+  const claimedFacts = claimedRound ? buildRoundFacts(claimedState.engine, claimedRound.id) : null;
+  if (
+    !claimedRound ||
+    !claimedFacts ||
+    !claimedState.gameState ||
+    claimedState.gameState.gameMode !== 'jelajah-kata'
+  ) {
+    return;
+  }
+
+  const applied = applyGameRound(claimedState.gameState, claimedFacts);
+  if (applied.ok) {
+    const saved = await deps.gameStates.saveGameRoundResult({
+      sessionId,
+      gameMode: claimedState.gameState.gameMode,
+      roundId: claimedRound.id,
+      result: applied.value,
+    });
+    if (saved.ok) {
+      await deps.gameStates.saveGameState({
+        sessionId,
+        gameMode: claimedState.gameState.gameMode,
+        state: claimedState.gameState,
+        final: false,
+      });
+    } else if (saved.code !== 'ROUND_ALREADY_APPLIED') {
+      return;
+    }
+  } else if (applied.code !== 'ROUND_ALREADY_APPLIED') {
+    return;
+  }
+
+  await openRoundPersisted(deps, claimedState.engine);
+}
+
 function mapMutationCode(code: string): TeacherCommandErrorCode {
   return code === 'SESSION_ENDED' ? 'SESSION_ENDED' : 'INVALID_PHASE';
 }
