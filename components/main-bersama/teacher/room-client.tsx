@@ -101,6 +101,11 @@ export function TeacherRoomClient({
         // Command sukses harus langsung terlihat di layar pengendali.
         // Jangan menunggu Broadcast/poll untuk mengubah CTA/fase.
         await refresh();
+        // Kendali dilakukan di panel guru, tetapi hasilnya harus langsung
+        // kembali menjadi pengalaman proyektor. Tidak perlu navigasi rute.
+        if (action === 'start' || action === 'close-round' || action === 'discuss' || action === 'next-round' || action === 'resume') {
+          setActiveTab('layar');
+        }
       } catch (e) {
         setError(e instanceof MbApiError ? e.message : 'Aksi gagal. Coba lagi.');
       } finally {
@@ -289,7 +294,7 @@ export function TeacherRoomClient({
                   <h3 className="mb-display">Kemajuan Jelajah Kata</h3>
                   <p>Urutan berdasarkan persentase jawaban benar. Tidak ada bonus kecepatan.</p>
                 </div>
-                <span className="mb-leaderboard-live">LIVE</span>
+                <span className="mb-leaderboard-live">LANGSUNG</span>
               </div>
               <div className="mb-leaderboard-list">
                 {[...view.participants]
@@ -319,7 +324,7 @@ export function TeacherRoomClient({
                   <h3 className="mb-display">Progres Kota Cahaya</h3>
                   <p>Lihat perkembangan kota berdasarkan kemajuan permainan kelas.</p>
                 </div>
-                <span className="mb-leaderboard-live">LIVE</span>
+                <span className="mb-leaderboard-live">LANGSUNG</span>
               </div>
               <div className="mb-analysis-overview mb-kota-cahaya-overview">
                 <div>
@@ -620,11 +625,11 @@ export function TeacherRoomClient({
       {view.phase === 'summary' || view.phase === 'ended' ? (
         <section className="mb-tsummary mb-fade-in">
           <div className="mb-final-hero">
-            <span className="mb-eyebrow">{view.phase === 'ended' ? 'Sesi selesai' : 'Permainan selesai'}</span>
+            <span className="mb-eyebrow">{view.phase === 'ended' ? 'Sesi selesai' : view.gameMode === 'jelajah-kata' ? 'Perjalanan selesai' : 'Permainan selesai'}</span>
             <h2 className="mb-display mb-guru-phase-title">🎉 {view.gameMode === 'jelajah-kata' ? 'Hebat, kelas!' : 'Kota Cahaya selesai!'}</h2>
             <p className="mb-final-subtitle">
               {view.gameMode === 'jelajah-kata'
-                ? 'Inilah progres akhir Jelajah Kata hari ini.'
+                ? 'Kalian berhasil menyelesaikan Jelajah Kata hari ini.'
                 : 'Inilah perkembangan akhir Kota Cahaya hari ini.'}
             </p>
           </div>
@@ -686,7 +691,7 @@ export function TeacherRoomClient({
                   })}
                 </div>
               ) : (
-                <div className="mb-final-podium">
+                <div className={`mb-final-podium mb-final-podium-${Math.min(3, view.participants.filter((participant) => participant.progressRank <= 3).length)}`}>
                   {[2, 1, 3].flatMap((rank) =>
                     [...view.participants]
                       .filter((p) => p.progressRank === rank)
@@ -719,7 +724,7 @@ export function TeacherRoomClient({
                     className="mb-jelajah-next-btn"
                     onClick={() => setJelajahPodiumView('siswa')}
                   >
-                    Lihat Podium Siswa <span aria-hidden>→</span>
+                    Berikutnya: Podium Siswa <span aria-hidden>→</span>
                   </button>
                 ) : (
                   <button
@@ -792,7 +797,9 @@ export function TeacherRoomClient({
             <p>
               {view.phase === 'summary'
                 ? <>Tinjau hasil di <strong>Analisis</strong>, lalu buka <strong>Kontrol Guru</strong> untuk menutup sesi.</>
-                : <>Sesi selesai. Podium dan Kota Cahaya tetap menjadi penutup permainan.</>}
+                : view.gameMode === 'jelajah-kata'
+                  ? <>Sesi selesai. Podium tetap menjadi penutup perjalanan.</>
+                  : <>Sesi selesai. Kota Cahaya tetap menjadi penutup permainan.</>}
             </p>
           </div>
         </section>
@@ -1065,7 +1072,8 @@ export function TeacherRoomClient({
         .mb-leaderboard-name { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#294456; font-size:.78rem; font-weight:800; }
         .mb-leaderboard-score { color:#71848f; font-size:.7rem; font-weight:800; text-align:right; }
         .mb-leaderboard-row > strong { color:#17354b; font-size:.82rem; text-align:right; font-variant-numeric:tabular-nums; }
-        .mb-final-hero { text-align:center; }
+        .mb-final-hero { position:relative; overflow:hidden; padding:10px 16px; text-align:center; }
+        .mb-final-hero::before { content:"✦  ·  ✦  ·  ✦"; display:block; margin-bottom:7px; color:#d49a20; font-size:.9rem; letter-spacing:.38em; animation:mb-podium-arrive .7s ease-out both; }
         .mb-final-subtitle { margin:6px 0 0; color:#6f8290; font-size:.86rem; font-weight:650; }
         .mb-final-grid { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:16px; margin-top:8px; }
         .mb-final-total,
@@ -1088,6 +1096,9 @@ export function TeacherRoomClient({
           max-width:980px;
           margin:10px auto 0;
         }
+        .mb-final-podium-1 { grid-template-columns:minmax(220px,360px); justify-content:center; min-height:310px; }
+        .mb-final-podium-1 .mb-podium-item { grid-column:1; min-height:300px; }
+        .mb-final-podium-2 { grid-template-columns:repeat(2,minmax(210px,300px)); justify-content:center; min-height:310px; }
         .mb-podium-item {
           position:relative;
           display:flex;
@@ -1102,7 +1113,10 @@ export function TeacherRoomClient({
           background:rgba(255,255,255,.9);
           box-shadow:0 10px 28px rgba(23,53,75,.06);
           overflow:hidden;
+          animation:mb-podium-arrive .55s cubic-bezier(.22,.9,.3,1) both;
         }
+        .mb-podium-item:nth-child(2) { animation-delay:.12s; }
+        .mb-podium-item:nth-child(3) { animation-delay:.2s; }
         .mb-podium-rank-1 {
           padding-top:22px;
           border-color:rgba(15,118,110,.22);
@@ -1197,7 +1211,10 @@ export function TeacherRoomClient({
           background:rgba(255,255,255,.9);
           box-shadow:0 10px 28px rgba(23,53,75,.06);
           overflow:hidden;
+          animation:mb-podium-arrive .55s cubic-bezier(.22,.9,.3,1) both;
         }
+        .mb-team-podium-item:nth-child(2) { animation-delay:.12s; }
+        .mb-team-podium-item:nth-child(3) { animation-delay:.2s; }
         .mb-team-podium-rank-2 { min-height:250px; }
         .mb-team-podium-rank-1 {
           min-height:310px;
@@ -1281,6 +1298,7 @@ export function TeacherRoomClient({
           cursor:pointer;
           box-shadow:0 9px 24px rgba(23,53,75,.14);
         }
+        .mb-jelajah-next-btn:focus-visible { outline:3px solid #69d2c6; outline-offset:3px; }
         .mb-jelajah-next-btn span { margin-left:5px; }
         .mb-jelajah-back-btn { background:#eef4f3; color:#17354b; border:1px solid #dfe9e7; box-shadow:none; }
         .mb-final-jelajah-note {
@@ -1305,9 +1323,13 @@ export function TeacherRoomClient({
         .mb-final-bottom > div strong { display:block; }
         .mb-final-bottom > div strong { margin-top:3px; color:#17354b; font-size:.9rem; }
         .mb-final-bottom p { margin:0; color:#71848f; font-size:.72rem; line-height:1.45; font-weight:650; }
+        @keyframes mb-podium-arrive { from { opacity:0; transform:translateY(16px) scale(.97); } to { opacity:1; transform:translateY(0) scale(1); } }
+        @media(prefers-reduced-motion:reduce) { .mb-final-hero::before,.mb-podium-item,.mb-team-podium-item { animation:none; } }
         @media(max-width:760px){
           .mb-final-grid { grid-template-columns:1fr; }
           .mb-final-podium { grid-template-columns:1fr 1fr 1fr; min-height:250px; gap:8px; }
+          .mb-final-podium-1 { grid-template-columns:minmax(200px,1fr); }
+          .mb-final-podium-2 { grid-template-columns:repeat(2,minmax(0,1fr)); }
           .mb-final-team-podium { grid-template-columns:1fr 1fr 1fr; min-height:230px; gap:8px; }
           .mb-team-podium-rank-2 { min-height:190px; }
           .mb-team-podium-rank-1 { min-height:220px; }
