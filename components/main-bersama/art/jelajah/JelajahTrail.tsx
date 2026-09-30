@@ -224,6 +224,15 @@ export function JelajahTrail({
   const worldPhase = sceneProgress < 25 ? 'pagi' : sceneProgress < 55 ? 'siang' : sceneProgress < 80 ? 'sore' : 'senja';
   const JELAJAH_SCENE_WIDTH = 1200;
   const JELAJAH_BACKGROUND_COUNT = 7;
+const JELAJAH_BACKGROUNDS = [
+  "https://raw.githubusercontent.com/dominikus02-source/bahasa-cerdas/2fff163d2e776aadb8565c88e47b5ce60d86e559/public/main-bersama/jelajah/backgrounds/jk-1.png",
+  "https://raw.githubusercontent.com/dominikus02-source/bahasa-cerdas/2fff163d2e776aadb8565c88e47b5ce60d86e559/public/main-bersama/jelajah/backgrounds/jk-2.png",
+  "https://raw.githubusercontent.com/dominikus02-source/bahasa-cerdas/2fff163d2e776aadb8565c88e47b5ce60d86e559/public/main-bersama/jelajah/backgrounds/jk-3.png",
+  "https://raw.githubusercontent.com/dominikus02-source/bahasa-cerdas/2fff163d2e776aadb8565c88e47b5ce60d86e559/public/main-bersama/jelajah/backgrounds/jk-4.png",
+  "https://raw.githubusercontent.com/dominikus02-source/bahasa-cerdas/2fff163d2e776aadb8565c88e47b5ce60d86e559/public/main-bersama/jelajah/backgrounds/jk-5.png",
+  "https://raw.githubusercontent.com/dominikus02-source/bahasa-cerdas/2fff163d2e776aadb8565c88e47b5ce60d86e559/public/main-bersama/jelajah/backgrounds/jk-6.png",
+  "https://raw.githubusercontent.com/dominikus02-source/bahasa-cerdas/2fff163d2e776aadb8565c88e47b5ce60d86e559/public/main-bersama/jelajah/backgrounds/jk-7.png",
+] as const;
   const roadPath = buildPath(centerPoint);
   const viewBox = compact ? "0 105 1200 390" : "0 0 1200 600";
 
@@ -281,7 +290,7 @@ export function JelajahTrail({
           {[1, 2, 3, 4, 5, 6, 7].map((scene) => (
             <image
               key={scene}
-              href={`/main-bersama/jelajah/backgrounds/jk-${scene}.png`}
+              href={JELAJAH_BACKGROUNDS[scene - 1]}
               x={(scene - 1) * JELAJAH_SCENE_WIDTH}
               y="0"
               width={JELAJAH_SCENE_WIDTH}
