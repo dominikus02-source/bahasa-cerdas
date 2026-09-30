@@ -781,11 +781,12 @@ export default function KelasKuPage() {
                     <button
                       type="button"
                       onClick={() => setRemoveMember({ id: m.id, name: m.fullName || "Murid ini" })}
-                      className="bc-btn-secondary min-h-10 min-w-10 px-2 text-[var(--clr-danger)] hover:border-[var(--clr-danger)]"
+                      className="bc-btn-secondary min-h-10 px-2.5 text-[var(--clr-danger)] hover:border-[var(--clr-danger)] gap-1.5"
                       aria-label={`Keluarkan ${m.fullName || "murid"} dari kelas`}
                       title="Keluarkan dari kelas"
                     >
                       <UserMinus size={16} />
+                      <span className="hidden sm:inline text-xs font-semibold">Keluarkan</span>
                     </button>
                   </div>
                 ))}
