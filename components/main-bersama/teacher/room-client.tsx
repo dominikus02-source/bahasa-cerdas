@@ -32,6 +32,8 @@ import { SoundToggle } from '@/components/main-bersama/sound/SoundToggle';
 import { useFullscreenControl } from '@/components/main-bersama/shared/useFullscreenControl';
 import { FullscreenExitControl } from '@/components/main-bersama/shared/FullscreenExitControl';
 import { CityCahayaStage } from '@/components/main-bersama/shared/CityCahayaStage';
+import { JelajahTrail } from '@/components/main-bersama/art/jelajah/JelajahTrail';
+import { useTrailMotion } from '@/components/main-bersama/art/jelajah-motion/useTrailMotion';
 
 type Command =
   | 'open-lobby'
@@ -111,6 +113,16 @@ export function TeacherRoomClient({
     autoLobbyRef.current = true;
     void run('open-lobby');
   }, [view, busy, run]);
+
+  // Hook harus selalu dipanggil pada setiap render, termasuk saat data ruang
+  // belum tersedia. Ini menjaga aturan Hook React dan mencegah build/deploy gagal.
+  const jelajahTeamProgress = view?.gameState?.gameMode === 'jelajah-kata'
+    ? view.gameState.jelajahKata.teamProgress
+    : {};
+  const { getPose: getTrailPose } = useTrailMotion(
+    jelajahTeamProgress,
+    view?.gameMode === 'jelajah-kata' ? view.phase : 'preparing',
+  );
 
   if (!view) {
     return (
