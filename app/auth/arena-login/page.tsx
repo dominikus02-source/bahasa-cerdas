@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
+import { loginWithBrowserPassword } from "@/lib/auth/browser-password-login"
 import { Chrome, ArrowRight, Smartphone, BookOpen, Eye, EyeOff } from "lucide-react"
 import { SwRegister } from "@/components/SwRegister"
 import { InstallGuide } from "@/components/InstallGuide"
@@ -18,6 +19,13 @@ export default function ArenaLoginPage() {
   const [resetMode, setResetMode] = useState(false)
   const [resetSent, setResetSent] = useState(false)
   const [lihatSandi, setLihatSandi] = useState(false)
+  const [cooldownSeconds, setCooldownSeconds] = useState(0)
+
+  useEffect(() => {
+    if (cooldownSeconds <= 0) return
+    const timer = window.setInterval(() => setCooldownSeconds((remaining) => Math.max(0, remaining - 1)), 1000)
+    return () => window.clearInterval(timer)
+  }, [cooldownSeconds])
 
   // Layar ini dipasang di dua rute: /auth/arena-login (lama) dan /arena/login
   // (dipakai APK). Path dibaca dari alamat sebenarnya, bukan ditulis tetap —
@@ -39,32 +47,20 @@ export default function ArenaLoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (cooldownSeconds > 0) return
     setLoading(true)
     setError("")
 
     try {
-      // ── Server-side login (NO direct Supabase Auth call) ──
-      // Routes through /api/auth/login which does NOT forward the school IP
-      // to Supabase Auth, preventing per-IP rate limit from blocking schools.
-      const loginRes = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: email.toLowerCase(),
-          password,
-        }),
-      })
-      const loginData = await loginRes.json().catch(() => ({}))
-
-      if (!loginRes.ok) {
-        setError(loginData.error || "Gagal masuk. Silakan coba lagi.")
+      const result = await loginWithBrowserPassword({ email, password })
+      if (!result.ok) {
+        setError(result.error)
+        if (result.retryAfterSeconds) setCooldownSeconds(result.retryAfterSeconds)
         setLoading(false)
         return
       }
 
-      const dbUser = loginData.user
-      if (!dbUser) { setError("Gagal memuat data user"); setLoading(false); return }
-      if (dbUser.role !== "MURID" && !dbUser.isFounder) {
+      if (result.user.role !== "MURID" && !result.user.isFounder) {
         setError("Akun ini bukan akun murid. Silakan login di dasbor guru.")
         setLoading(false)
         return
@@ -177,7 +173,7 @@ export default function ArenaLoginPage() {
             />
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || cooldownSeconds > 0}
               className="w-full py-3.5 rounded-xl bg-white text-violet-700 font-bold text-sm hover:bg-violet-50 disabled:opacity-60 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
             >
               {loading ? "Mengirim..." : "Kirim Link Reset"}
@@ -256,7 +252,7 @@ export default function ArenaLoginPage() {
               disabled={loading}
               className="w-full py-3.5 rounded-xl bg-white text-violet-700 font-bold text-sm hover:bg-violet-50 disabled:opacity-60 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
             >
-              {loading ? "Masuk..." : "Masuk"}
+              {loading ? "Masuk..." : cooldownSeconds > 0 ? `Coba lagi ${Math.ceil(cooldownSeconds / 60)} mnt` : "Masuk"}
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>

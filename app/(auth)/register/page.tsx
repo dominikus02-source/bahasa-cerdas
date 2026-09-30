@@ -6,6 +6,7 @@ import Image from "next/image";
 import { GraduationCap, BookOpen, ArrowRight, ArrowLeft, Check, Eye, EyeOff, ShieldCheck, AlertTriangle } from "lucide-react";
 import { registerUser } from "@/app/actions/register";
 import { createClient } from "@/lib/supabase/client";
+import { loginWithBrowserPassword } from "@/lib/auth/browser-password-login";
 import { BRAND_ICON, BRAND_ICON_DARK, BRAND_TAGLINE } from "@/lib/brand";
 import BatikAccent from "@/components/decorations/BatikAccent";
 
@@ -197,25 +198,12 @@ export default function RegisterPage() {
         return;
       }
 
-      // Complete the new account through the same server-side login rail used
-      // by the normal login page. This keeps cookie handling and Auth rate
-      // limiting in one place and avoids a second browser Auth flow here.
-      const loginRes = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: normalizedEmail,
-          password,
-        }),
+      const loginResult = await loginWithBrowserPassword({
+        email: normalizedEmail,
+        password,
       });
-      const loginData = await loginRes.json().catch(() => ({}));
-
-      if (!loginRes.ok) {
-        if (loginRes.status === 429) {
-          setError("Server sedang sibuk. Silakan coba login manual.");
-        } else {
-          setError(loginData.error || "Akun berhasil dibuat. Silakan masuk.");
-        }
+      if (!loginResult.ok) {
+        setError(loginResult.error || "Akun berhasil dibuat. Silakan masuk.");
         setLoading(false);
         return;
       }

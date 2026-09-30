@@ -75,14 +75,15 @@ test("15. OAuth Google preserved (provider existing)", () =>
 test("16. register route preserved", () => page.includes('href="/register"') && page.includes("Daftar sekarang"));
 
 console.log("\n── Preservasi logic auth ──");
-test("17. server-side login via /api/auth/login (bukan direct Supabase)", () =>
-  page.includes("/api/auth/login") && page.includes("fetch"));
+test("17. password login memakai Supabase browser client (IP pengguna, bukan egress Vercel)", () =>
+  page.includes("loginWithBrowserPassword") &&
+  read("lib/auth/browser-password-login.ts").includes("signInWithPassword"));
 test("18. role redirect existing dipertahankan", () =>
   page.includes("isFounder") &&
   (page.includes("resolvePostAuthDestination") ||
     (page.includes("MURID") && page.includes("/arena"))));
 test("19. DB user sync handled server-side", () =>
-  page.includes("/api/auth/login") || page.includes("/api/user/me"));
+  read("lib/auth/browser-password-login.ts").includes("/api/user/me?fresh=1"));
 test("20. error handling dipertahankan", () =>
   page.includes("Gagal masuk") || page.includes("Koneksi terputus"));
 

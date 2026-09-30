@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { LogIn, Eye, EyeOff, ShieldCheck, GraduationCap, BookOpen } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { loginWithBrowserPassword } from "@/lib/auth/browser-password-login";
 import { resolvePostAuthDestinationForUser } from "@/lib/auth/redirect";
 import { BRAND_ICON, BRAND_ICON_DARK, BRAND_TAGLINE } from "@/lib/brand";
 import BatikAccent from "@/components/decorations/BatikAccent";
@@ -27,6 +28,13 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(true);
   const [next, setNext] = useState("");
+  const [cooldownSeconds, setCooldownSeconds] = useState(0);
+
+  useEffect(() => {
+    if (cooldownSeconds <= 0) return;
+    const timer = window.setInterval(() => setCooldownSeconds((remaining) => Math.max(0, remaining - 1)), 1000);
+    return () => window.clearInterval(timer);
+  }, [cooldownSeconds]);
 
   useEffect(() => {
     // /login can be the destination of a transient auth failure. Never call
@@ -46,33 +54,15 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (cooldownSeconds > 0) return;
     setLoading(true);
     setError("");
 
     try {
-      // ── Server-side login (NO direct Supabase Auth call) ──
-      // Login routes through /api/auth/login which does NOT forward the
-      // school IP to Supabase Auth. This prevents the per-IP rate limit
-      // from blocking entire schools that share one NAT IP.
-      const loginRes = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: email.toLowerCase(),
-          password,
-        }),
-      });
-      const loginData = await loginRes.json().catch(() => ({}));
-
-      if (!loginRes.ok) {
-        setError(loginData.error || "Gagal masuk. Silakan coba lagi.");
-        setLoading(false);
-        return;
-      }
-
-      const dbUser = loginData.user;
-      if (!dbUser) {
-        setError("Gagal memuat data user");
+      const result = await loginWithBrowserPassword({ email, password });
+      if (!result.ok) {
+        setError(result.error);
+        if (result.retryAfterSeconds) setCooldownSeconds(result.retryAfterSeconds);
         setLoading(false);
         return;
       }
@@ -82,8 +72,8 @@ export default function LoginPage() {
       // to the role dashboard so an authenticated user never lands on the
       // public landing page after login.
       const target = resolvePostAuthDestinationForUser(
-        dbUser.role,
-        Boolean(dbUser.isFounder),
+        result.user.role,
+        result.user.isFounder,
         next
       );
       window.location.href = target;
@@ -314,7 +304,7 @@ export default function LoginPage() {
 
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || cooldownSeconds > 0}
                 className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-violet-700 text-base font-bold text-white shadow-lg shadow-violet-600/25 transition-all hover:from-violet-700 hover:to-violet-800 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 dark:from-violet-500 dark:to-violet-600 dark:hover:from-violet-600 dark:hover:to-violet-700"
               >
                 {loading ? (
@@ -322,7 +312,7 @@ export default function LoginPage() {
                 ) : (
                   <>
                     <LogIn className="h-5 w-5" />
-                    Masuk Sekarang
+                    {cooldownSeconds > 0 ? `Coba lagi dalam ${Math.ceil(cooldownSeconds / 60)} menit` : "Masuk Sekarang"}
                   </>
                 )}
               </button>

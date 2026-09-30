@@ -1,0 +1,15 @@
+# Local build output and dependency directories are rebuilt by Vercel.
+.next
+node_modules
+game-server/node_modules
+
+# Backups and local environment files must never be part of a deployment.
+backups
+.env.local
+.env.*.local
+*.bak
+
+# Local tooling metadata and version-control internals are not runtime inputs.
+.git
+.vercel
+*.log
