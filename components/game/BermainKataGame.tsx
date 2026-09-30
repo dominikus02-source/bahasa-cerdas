@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
-import { ArrowLeft, Brain, Check, ChevronRight, Cloud, Heart, Lightbulb, Palette, Pencil, Puzzle, Sparkles, Sprout, Star, Trophy, Waves, X } from "lucide-react"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { ArrowLeft, Brain, Check, CheckCircle2, ChevronRight, Cloud, Heart, Lightbulb, Palette, Pencil, Play, Puzzle, RotateCcw, Sparkles, Sprout, Star, Trophy, Waves, X } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 type Mode = "susun" | "rumpang" | "pasangan" | "makna"
@@ -14,6 +14,12 @@ type Word = {
   category: string
   synonym?: string
   antonym?: string
+}
+
+type GameSummary = {
+  score: number
+  earnedSticker?: string
+  mode: Mode
 }
 
 const WORDS: Word[] = [
@@ -48,16 +54,16 @@ const MEANING_PAIRS: MeaningPair[] = [
 
 const PAIRS = MEANING_PAIRS.filter((p) => p.kind === "lawan").map((p) => [p.source, p.answer] as const)
 
-const LEVELS: Record<Level, { label:string; desc:string; max:number }> = {
-  mudah: { label:"Mudah", desc:"Kata pendek dan dekat dengan keseharian", max:5 },
-  sedang: { label:"Sedang", desc:"Kata sehari-hari dengan tantangan ringan", max:7 },
-  tantangan: { label:"Tantangan", desc:"Kata lebih panjang untuk anak SD", max:12 },
+const LEVELS: Record<Level, { label:string; audience:string; desc:string; max:number }> = {
+  mudah: { label:"Pemula", audience:"TK", desc:"Kata pendek yang akrab setiap hari", max:5 },
+  sedang: { label:"Pintar", audience:"SD 1–3", desc:"Kata sehari-hari dengan tantangan ringan", max:7 },
+  tantangan: { label:"Jagoan", audience:"SD 4–6", desc:"Kata lebih panjang untuk penjelajah kata", max:12 },
 }
 
 const THEMES: Record<Theme, { bg:string; accent:string; soft:string }> = {
-  langit: { bg:"from-sky-50 via-white to-cyan-50", accent:"bg-sky-500", soft:"bg-sky-100 text-sky-700" },
-  taman: { bg:"from-emerald-50 via-white to-lime-50", accent:"bg-emerald-500", soft:"bg-emerald-100 text-emerald-700" },
-  laut: { bg:"from-cyan-50 via-white to-blue-50", accent:"bg-cyan-500", soft:"bg-cyan-100 text-cyan-700" },
+  langit: { bg:"from-sky-50 via-white to-cyan-50", accent:"bg-sky-500", soft:"bg-sky-100 text-sky-700 dark:bg-sky-400/15 dark:text-sky-200" },
+  taman: { bg:"from-emerald-50 via-white to-lime-50", accent:"bg-emerald-500", soft:"bg-emerald-100 text-emerald-700 dark:bg-emerald-400/15 dark:text-emerald-200" },
+  laut: { bg:"from-cyan-50 via-white to-blue-50", accent:"bg-cyan-500", soft:"bg-cyan-100 text-cyan-700 dark:bg-cyan-400/15 dark:text-cyan-200" },
 }
 
 const MODE_META: Record<Mode, { title:string; desc:string; icon: typeof Puzzle }> = {
@@ -112,6 +118,8 @@ export default function BermainKataGame() {
   const [showTheme,setShowTheme]=useState(false)
   const [usedWords,setUsedWords]=useState<string[]>([])
   const [usedPairs,setUsedPairs]=useState<string[]>([])
+  const [summary,setSummary]=useState<GameSummary|null>(null)
+  const roundTimer=useRef<number|null>(null)
 
   const pool=useMemo(()=>levelWords(level),[level])
   const maxRounds=8
@@ -138,6 +146,10 @@ export default function BermainKataGame() {
       localStorage.setItem("bk_best",String(best))
     } catch {}
   },[theme,stickers,best])
+
+  useEffect(()=>()=>{
+    if(roundTimer.current!==null) window.clearTimeout(roundTimer.current)
+  },[])
 
   const nextQuestion=(nextRound:number, nextMode:Mode=mode!)=>{
     const available=pool.filter((item)=>!usedWords.includes(item.word))
@@ -193,13 +205,24 @@ export default function BermainKataGame() {
   }
 
   const start=(m:Mode)=>{
-    setMode(m);setScore(0);setStreak(0);setHearts(3);setRound(0);setAnswer([]);setFeedback(null);setUsedWords([]);setUsedPairs([]);nextQuestion(1,m)
+    if(roundTimer.current!==null) window.clearTimeout(roundTimer.current)
+    setSummary(null);setMode(m);setScore(0);setStreak(0);setHearts(3);setRound(0);setAnswer([]);setFeedback(null);setUsedWords([]);setUsedPairs([]);nextQuestion(1,m)
+  }
+
+  const leaveGame=()=>{
+    if(roundTimer.current!==null) window.clearTimeout(roundTimer.current)
+    roundTimer.current=null
+    setFeedback(null)
+    setCurrent(null)
+    setMode(null)
   }
 
   const finish=(finalScore:number)=>{
     const final=Math.max(0,finalScore)
     setBest(v=>Math.max(v,final))
-    if(final>=60 && current && !stickers.includes(current.word)) setStickers(v=>[...v,current.word].slice(-30))
+    const earnedSticker = final>=60 && current && !stickers.includes(current.word) ? current.word : undefined
+    if(earnedSticker) setStickers(v=>[...v,earnedSticker].slice(-30))
+    setSummary({score:final,earnedSticker,mode:mode ?? "susun"})
     setMode(null);setCurrent(null);setMessage("")
   }
 
@@ -207,12 +230,14 @@ export default function BermainKataGame() {
     setFeedback(ok?"correct":"wrong")
     if(ok){setScore(v=>v+10+Math.min(streak,5)*2);setStreak(v=>v+1);setMessage("Hebat! Jawabanmu tepat.")}
     else {setHearts(v=>Math.max(0,v-1));setStreak(0);setMessage("Belum tepat. Coba lagi di soal berikutnya.")}
-    window.setTimeout(()=>{
+    if(roundTimer.current!==null) window.clearTimeout(roundTimer.current)
+    roundTimer.current=window.setTimeout(()=>{
+      roundTimer.current=null
       const nextScore=score+(ok?10+Math.min(streak,5)*2:0)
       const nextHearts=ok?hearts:hearts-1
       if(round>=maxRounds || nextHearts<=0) finish(nextScore)
       else nextQuestion(round+1)
-    },650)
+    },1000)
   }
 
   const checkSusun=()=>{
@@ -309,8 +334,8 @@ export default function BermainKataGame() {
 
         <section className="mx-auto mt-7 max-w-3xl rounded-[28px] border border-slate-200 bg-white p-4 shadow-sm sm:p-5 dark:border-[#263452] dark:bg-[#10182d]">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div><p className="text-xs font-black uppercase tracking-wider text-slate-400">Pilih tingkat</p><p className="mt-1 font-bold">{LEVELS[level].desc}</p></div>
-            <div className="flex gap-2">{(Object.keys(LEVELS) as Level[]).map(k=><button key={k} onClick={()=>setLevel(k)} className={`rounded-xl px-3 py-2 text-sm font-black transition ${level===k?"bg-slate-900 text-white dark:bg-white dark:text-slate-950":"bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-700 dark:bg-[#17213b] dark:text-slate-200 dark:hover:bg-[#253456]"}`}>{LEVELS[k].label}</button>)}</div>
+            <div><p className="text-xs font-black uppercase tracking-wider text-slate-400">Pilih levelmu</p><p className="mt-1 font-bold text-slate-800 dark:text-white">{LEVELS[level].desc}</p></div>
+            <div className="flex w-full gap-2 sm:w-auto">{(Object.keys(LEVELS) as Level[]).map(k=><button key={k} onClick={()=>setLevel(k)} className={`min-h-12 flex-1 rounded-2xl px-3 py-2 text-left text-xs font-black transition sm:min-w-24 ${level===k?"bg-slate-900 text-white shadow-lg shadow-slate-900/20 dark:bg-white dark:text-slate-950":"bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-[#17213b] dark:text-slate-200 dark:hover:bg-[#253456]"}`}><span className="block">{LEVELS[k].label}</span><span className={`mt-0.5 block text-[10px] ${level===k?"text-white/70 dark:text-slate-500":"text-slate-400"}`}>{LEVELS[k].audience}</span></button>)}</div>
           </div>
         </section>
 
@@ -318,16 +343,18 @@ export default function BermainKataGame() {
           {(Object.keys(MODE_META) as Mode[]).map((m)=>{
             const meta=MODE_META[m]
             const Icon=meta.icon
-            return <button key={m} onClick={()=>start(m)} className="group rounded-[26px] border border-slate-200 bg-white p-4 text-left shadow-sm dark:border-[#263452] dark:bg-[#10182d] transition hover:-translate-y-1 hover:shadow-xl active:translate-y-0"><div className="flex items-center gap-4"><div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-sky-50 text-sky-600"><Icon size={28}/></div><div className="min-w-0 flex-1"><h2 className="font-black text-slate-900 dark:text-white">{meta.title}</h2><p className="mt-1 text-xs leading-5 text-slate-500 dark:text-slate-300">{meta.desc}</p></div><ChevronRight className="text-slate-300 transition group-hover:text-sky-500"/></div></button>
+            return <button key={m} onClick={()=>start(m)} className="group min-h-28 rounded-[26px] border border-slate-200 bg-white p-4 text-left shadow-sm dark:border-[#263452] dark:bg-[#10182d] transition hover:-translate-y-1 hover:border-sky-300 hover:shadow-xl focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-sky-500 active:translate-y-0"><div className="flex items-center gap-4"><div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-sky-50 text-sky-600 dark:bg-sky-400/15 dark:text-sky-300"><Icon size={28}/></div><div className="min-w-0 flex-1"><h2 className="font-black text-slate-900 dark:text-white">{meta.title}</h2><p className="mt-1 text-xs leading-5 text-slate-500 dark:text-slate-300">{meta.desc}</p><span className="mt-2 inline-flex items-center gap-1 text-xs font-black text-sky-600 dark:text-sky-300">Main sekarang <Play size={12} fill="currentColor"/></span></div><ChevronRight className="text-slate-300 transition group-hover:translate-x-1 group-hover:text-sky-500 dark:text-slate-500"/></div></button>
           })}
         </section>
 
         <section className="mx-auto mt-5 grid max-w-3xl gap-3 sm:grid-cols-2">
           <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-[#263452] dark:bg-[#10182d]"><div className="flex items-center gap-3"><Trophy className="text-amber-500"/><div><p className="text-xs font-bold text-slate-400">Skor terbaik</p><p className="text-xl font-black dark:text-white">{best}</p></div></div></div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-[#263452] dark:bg-[#10182d]"><div className="flex items-center gap-3"><Star className="text-sky-500" fill="currentColor"/><div><p className="text-xs font-bold text-slate-400">Koleksi stiker</p><p className="text-xl font-black">{stickers.length}/30</p></div></div></div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-[#263452] dark:bg-[#10182d]"><div className="flex items-center gap-3"><Star className="text-sky-500" fill="currentColor"/><div><p className="text-xs font-bold text-slate-400">Koleksi stiker</p><p className="text-xl font-black text-slate-900 dark:text-white">{stickers.length}/30</p></div>{stickers.length>0&&<span className="ml-auto rounded-xl bg-sky-50 px-2 py-1 text-xs font-black text-sky-700 dark:bg-sky-400/15 dark:text-sky-200">{stickers[stickers.length - 1]}</span>}</div></div>
         </section>
 
         <p className="mt-6 text-center text-xs font-medium text-slate-400">BERMAIN KATA berdiri sendiri. Jalur Cerdas tetap menjadi jalur pembelajaran terstruktur.</p>
+
+        {summary && <div className="fixed inset-0 z-[70] flex items-end bg-slate-950/35 p-3 backdrop-blur-sm sm:items-center sm:justify-center" role="dialog" aria-modal="true" aria-label="Hasil bermain"><div className="w-full max-w-sm overflow-hidden rounded-[32px] border border-white/60 bg-white p-6 text-center shadow-2xl dark:border-[#31415f] dark:bg-[#17213b]"><div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[22px] bg-amber-100 text-4xl">🎉</div><h2 className="mt-4 text-2xl font-black text-slate-900 dark:text-white">Hebat, kamu selesai!</h2><p className="mt-1 text-sm font-semibold text-slate-500 dark:text-slate-300">Kamu mengumpulkan <span className="font-black text-sky-600 dark:text-sky-300">{summary.score} poin</span>.</p>{summary.earnedSticker&&<div className="mt-4 rounded-2xl bg-sky-50 px-4 py-3 text-sm font-black text-sky-700 dark:bg-sky-400/15 dark:text-sky-200">Stiker baru: ⭐ {summary.earnedSticker}</div>}<div className="mt-5 grid grid-cols-2 gap-3"><button onClick={()=>start(summary.mode)} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-sky-500 px-3 text-sm font-black text-white shadow-lg shadow-sky-500/25 transition hover:bg-sky-600"><RotateCcw size={16}/> Main lagi</button><button onClick={()=>setSummary(null)} className="min-h-12 rounded-2xl bg-slate-100 px-3 text-sm font-black text-slate-700 transition hover:bg-slate-200 dark:bg-[#263452] dark:text-slate-100 dark:hover:bg-[#31415f]">Pilih permainan</button></div></div></div>}
       </div>
     </main>
   }
@@ -335,7 +362,7 @@ export default function BermainKataGame() {
   return <main className={`min-h-screen bg-gradient-to-br ${t.bg} text-slate-900 dark:from-[#060b18] dark:via-[#0b1120] dark:to-[#10182d] dark:text-white`}>
     <div className="mx-auto max-w-5xl px-4 py-4 sm:px-6 sm:py-7">
       <header className="flex items-center gap-3">
-        <button onClick={()=>setMode(null)} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white/90 shadow-sm dark:border-[#31415f] dark:bg-[#10182d] transition hover:-translate-y-0.5 hover:shadow-md" aria-label="Keluar permainan"><X size={19}/></button>
+        <button onClick={leaveGame} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white/90 shadow-sm dark:border-[#31415f] dark:bg-[#10182d] transition hover:-translate-y-0.5 hover:shadow-md" aria-label="Keluar permainan"><X size={19}/></button>
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-2">
@@ -361,9 +388,9 @@ export default function BermainKataGame() {
             </div>
 
             {current && <div className="mt-6">
-              <div className="relative mx-auto max-w-xl overflow-hidden rounded-[30px] border border-slate-100 bg-gradient-to-br from-sky-50 via-white to-emerald-50 dark:from-[#172a46] dark:via-[#10182d] dark:to-[#12352f] dark:border-[#31415f] dark:from-slate-800 dark:via-slate-900 dark:to-slate-800 p-5 shadow-inner sm:p-6">
-                <div className="absolute -left-10 -top-10 h-28 w-28 rounded-full bg-sky-100/70"/>
-                <div className="absolute -bottom-12 -right-5 h-32 w-32 rounded-full bg-emerald-100/70"/>
+              <div className="relative mx-auto max-w-xl overflow-hidden rounded-[30px] border border-sky-100 bg-gradient-to-br from-sky-50 via-white to-emerald-50 p-5 shadow-inner dark:border-sky-300/15 dark:from-[#172a46] dark:via-[#10182d] dark:to-[#12352f] sm:p-6">
+                <div className="absolute -left-10 -top-10 h-28 w-28 rounded-full bg-sky-100/70 dark:bg-sky-400/10"/>
+                <div className="absolute -bottom-12 -right-5 h-32 w-32 rounded-full bg-emerald-100/70 dark:bg-emerald-400/10"/>
                 <div className="relative z-10 flex items-center gap-4 sm:gap-6">
                   <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[24px] bg-white text-5xl shadow-md dark:bg-[#17213b] sm:h-24 sm:w-24">{categoryIcon}</div>
                   <div className="min-w-0"><div className="text-[10px] font-black uppercase tracking-widest text-slate-400">{current.category}</div><p className="mt-1 text-sm font-bold leading-6 text-slate-600 dark:text-slate-200">{current.hint}</p><div className="mt-3 inline-flex rounded-full bg-white px-3 py-1 text-[10px] font-black dark:bg-[#17213b] text-slate-400 shadow-sm">Zelby memberi petunjuk</div></div>
@@ -371,18 +398,18 @@ export default function BermainKataGame() {
               </div>
 
               {mode==="susun" && <div className="mt-5">
-                <div className="min-h-[62px] rounded-[22px] border border-sky-100 bg-sky-50/70 dark:bg-[#0b2940] p-2"><div className="flex min-h-12 flex-wrap justify-center gap-2">{answer.map((x,i)=><button key={i} onClick={()=>{setAnswer(a=>{const n=[...a];n.splice(i,1);return n});setLetters(l=>[...l,x])}} className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-500 text-xl font-black text-white shadow-[0_5px_0_rgba(14,165,233,.25)] transition hover:-translate-y-0.5">{x}</button>)}</div></div>
-                <div className="mt-3 flex min-h-14 flex-wrap justify-center gap-2">{letters.map((x,i)=><button key={i} disabled={answer.length>=current.word.length||!!feedback} onClick={()=>{setAnswer(a=>[...a,x]);setLetters(a=>a.filter((_,idx)=>idx!==i))}} className="flex h-12 w-12 items-center justify-center rounded-2xl border-2 border-slate-200 bg-white dark:border-[#31415f] dark:bg-[#17213b] text-xl font-black shadow-sm transition hover:-translate-y-1 hover:border-sky-300 hover:bg-sky-50 disabled:opacity-40">{x}</button>)}</div>
-                <button disabled={answer.length!==current.word.length||!!feedback} onClick={checkSusun} className={`mx-auto mt-5 flex items-center gap-2 rounded-2xl px-7 py-3.5 font-black text-white shadow-lg transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-40 ${t.accent}`}>Periksa jawaban <Check size={17}/></button>
+                <div className="min-h-[62px] rounded-[22px] border border-sky-100 bg-sky-50/70 p-2 dark:border-sky-300/15 dark:bg-sky-400/10"><div className="flex min-h-12 flex-wrap justify-center gap-2">{answer.map((x,i)=><button key={i} onClick={()=>{setAnswer(a=>{const n=[...a];n.splice(i,1);return n});setLetters(l=>[...l,x])}} className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-500 text-xl font-black text-white shadow-[0_5px_0_rgba(14,165,233,.25)] transition hover:-translate-y-0.5">{x}</button>)}</div></div>
+                <div className="mt-3 flex min-h-14 flex-wrap justify-center gap-2">{letters.map((x,i)=><button key={i} disabled={answer.length>=current.word.length||!!feedback} onClick={()=>{setAnswer(a=>[...a,x]);setLetters(a=>a.filter((_,idx)=>idx!==i))}} className="flex h-12 w-12 items-center justify-center rounded-2xl border-2 border-slate-200 bg-white text-xl font-black shadow-sm transition hover:-translate-y-1 hover:border-sky-300 hover:bg-sky-50 disabled:opacity-40 dark:border-[#31415f] dark:bg-[#17213b] dark:hover:bg-sky-400/10">{x}</button>)}</div>
+                <button disabled={answer.length!==current.word.length||!!feedback} onClick={checkSusun} className={`mx-auto mt-5 flex min-h-12 items-center gap-2 rounded-2xl px-7 py-3.5 font-black text-white shadow-lg transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-40 ${t.accent}`}>Periksa jawaban <Check size={17}/></button>
               </div>}
 
-              {mode==="rumpang" && <div className="mt-5"><div className="flex justify-center"><div className="rounded-[24px] border-2 border-dashed border-sky-200 bg-sky-50/70 dark:bg-[#0b2940] px-7 py-4 text-4xl font-black tracking-[.32em]">{letters.join("")}</div></div><div className="mx-auto mt-5 grid max-w-md grid-cols-3 gap-3">{options.map((x,i)=><button key={i} disabled={!!feedback} onClick={()=>chooseRumpang(x)} className="rounded-[20px] border-2 border-slate-200 bg-white dark:border-[#31415f] dark:bg-[#17213b] py-4 text-xl font-black shadow-sm transition hover:-translate-y-1 hover:border-sky-300 hover:bg-sky-50 disabled:opacity-50">{x}</button>)}</div></div>}
+              {mode==="rumpang" && <div className="mt-5"><div className="flex justify-center"><div className="rounded-[24px] border-2 border-dashed border-sky-200 bg-sky-50/70 px-7 py-4 text-4xl font-black tracking-[.32em] dark:border-sky-300/25 dark:bg-sky-400/10">{letters.join("")}</div></div><div className="mx-auto mt-5 grid max-w-md grid-cols-3 gap-3">{options.map((x,i)=><button key={i} disabled={!!feedback} onClick={()=>chooseRumpang(x)} className="min-h-16 rounded-[20px] border-2 border-slate-200 bg-white py-4 text-xl font-black shadow-sm transition hover:-translate-y-1 hover:border-sky-300 hover:bg-sky-50 disabled:opacity-50 dark:border-[#31415f] dark:bg-[#17213b] dark:hover:bg-sky-400/10">{x}</button>)}</div></div>}
 
-              {mode==="pasangan" && <div className="mt-5"><div className="mx-auto max-w-sm rounded-[26px] border-2 border-dashed border-violet-200 bg-violet-50/60 dark:bg-violet-950/30 p-5 text-center"><div className="text-5xl">{categoryIcon}</div><div className="mt-2 text-3xl font-black">{current.word}</div><div className="mt-1 text-xs font-bold text-slate-400">Cari kata yang berpasangan</div></div><div className="mt-5 grid gap-3 sm:grid-cols-2">{shuffle([...(PAIRS.find(p=>p[0]===current.word)?.slice(1)||[]),"BUKU","KUCING","BOLA","MEJA"].filter((x,i,a)=>a.indexOf(x)===i).slice(0,4)).map((x,i)=><button key={i} disabled={!!feedback} onClick={()=>choose(x)} className="group rounded-[22px] border-2 border-slate-200 bg-white dark:border-[#31415f] dark:bg-[#17213b] px-5 py-4 text-left font-black shadow-sm transition hover:-translate-y-1 hover:border-violet-300 hover:bg-violet-50"><span className="mr-2 inline-flex h-8 w-8 items-center justify-center rounded-xl bg-violet-50 text-violet-600">{i+1}</span>{x}<ChevronRight className="float-right mt-1 text-slate-300 group-hover:text-violet-500"/></button>)}</div></div>}
+              {mode==="pasangan" && <div className="mt-5"><div className="mx-auto max-w-sm rounded-[26px] border-2 border-dashed border-violet-200 bg-violet-50/60 p-5 text-center dark:border-violet-300/25 dark:bg-violet-400/10"><div className="text-5xl">{categoryIcon}</div><div className="mt-2 text-3xl font-black">{current.word}</div><div className="mt-1 text-xs font-bold text-slate-400">Cari kata yang berpasangan</div></div><div className="mt-5 grid gap-3 sm:grid-cols-2">{options.map((x,i)=><button key={i} disabled={!!feedback} onClick={()=>choose(x)} className="group min-h-16 rounded-[22px] border-2 border-slate-200 bg-white px-5 py-4 text-left font-black shadow-sm transition hover:-translate-y-1 hover:border-violet-300 hover:bg-violet-50 disabled:opacity-50 dark:border-[#31415f] dark:bg-[#17213b] dark:hover:bg-violet-400/10"><span className="mr-2 inline-flex h-8 w-8 items-center justify-center rounded-xl bg-violet-50 text-violet-600 dark:bg-violet-400/15 dark:text-violet-200">{i+1}</span>{x}<ChevronRight className="float-right mt-1 text-slate-300 group-hover:text-violet-500 dark:text-slate-500"/></button>)}</div></div>}
 
-              {mode==="makna" && <div className="mt-5"><div className="mx-auto max-w-sm rounded-[26px] border-2 border-dashed border-amber-200 bg-amber-50/60 p-5 text-center"><div className="text-5xl">{categoryIcon}</div><div className="mt-2 text-3xl font-black">{current.word}</div><div className="mt-2 inline-flex rounded-full bg-white px-3 py-1 text-xs font-black text-slate-500 shadow-sm">{current.synonym?"Cari sinonim":"Cari lawan kata"}</div></div><div className="mt-5 grid gap-3 sm:grid-cols-2">{options.map((x,i)=><button key={i} disabled={!!feedback} onClick={()=>choose(x)} className="group rounded-[22px] border-2 border-slate-200 bg-white dark:border-[#31415f] dark:bg-[#17213b] px-5 py-4 text-left font-black shadow-sm transition hover:-translate-y-1 hover:border-amber-300 hover:bg-amber-50"><span className="mr-2 inline-flex h-8 w-8 items-center justify-center rounded-xl bg-amber-50 text-amber-600">{i+1}</span>{x}<ChevronRight className="float-right mt-1 text-slate-300 group-hover:text-amber-500"/></button>)}</div></div>}
+              {mode==="makna" && <div className="mt-5"><div className="mx-auto max-w-sm rounded-[26px] border-2 border-dashed border-amber-200 bg-amber-50/60 p-5 text-center dark:border-amber-300/25 dark:bg-amber-400/10"><div className="text-5xl">{categoryIcon}</div><div className="mt-2 text-3xl font-black">{current.word}</div><div className="mt-2 inline-flex rounded-full bg-white px-3 py-1 text-xs font-black text-slate-500 shadow-sm dark:bg-[#17213b] dark:text-slate-300">{current.synonym?"Cari sinonim":"Cari lawan kata"}</div></div><div className="mt-5 grid gap-3 sm:grid-cols-2">{options.map((x,i)=><button key={i} disabled={!!feedback} onClick={()=>choose(x)} className="group min-h-16 rounded-[22px] border-2 border-slate-200 bg-white px-5 py-4 text-left font-black shadow-sm transition hover:-translate-y-1 hover:border-amber-300 hover:bg-amber-50 disabled:opacity-50 dark:border-[#31415f] dark:bg-[#17213b] dark:hover:bg-amber-400/10"><span className="mr-2 inline-flex h-8 w-8 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-400/15 dark:text-amber-200">{i+1}</span>{x}<ChevronRight className="float-right mt-1 text-slate-300 group-hover:text-amber-500 dark:text-slate-500"/></button>)}</div></div>}
 
-              {feedback && <div className={`mt-5 flex items-center justify-center gap-3 rounded-[22px] px-4 py-3.5 text-center font-black ${feedback==="correct"?"bg-emerald-50 text-emerald-700":"bg-rose-50 text-rose-700"}`}><span className="text-2xl">{feedback==="correct"?"🎉":"💪"}</span><span>{message}</span></div>}
+              {feedback && <div aria-live="polite" className={`mt-5 flex items-center justify-center gap-3 rounded-[22px] px-4 py-3.5 text-center font-black ${feedback==="correct"?"bg-emerald-50 text-emerald-700 dark:bg-emerald-400/15 dark:text-emerald-200":"bg-rose-50 text-rose-700 dark:bg-rose-400/15 dark:text-rose-200"}`}>{feedback==="correct"?<CheckCircle2 className="shrink-0" size={22}/>:<span className="text-2xl">💪</span>}<span>{message}</span></div>}
             </div>}
           </div>
         </section>
