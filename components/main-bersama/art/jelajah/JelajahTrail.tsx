@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useMemo } from "react";
 import { TeamMascot } from "../registry";
 
@@ -70,14 +69,13 @@ export function JelajahTrail({
       aria-label={`Dunia perjalanan Jelajah Kata, progres tertinggi ${Math.round(sceneProgress)} persen`}
     >
       <div className="mb-jelajah-scene" aria-hidden="true">
-        <Image
+        <div
           key={sceneIndex}
-          src={sceneUrl(sceneIndex)}
-          alt=""
-          fill
-          sizes={compact ? "(max-width: 720px) 100vw, 480px" : "(max-width: 720px) 100vw, 1200px"}
           className="mb-jelajah-scene-image"
-          style={{ transform: `scale(1.06) translateX(${-sceneMotion}%)` }}
+          style={{
+            backgroundImage: `url(${sceneUrl(sceneIndex)})`,
+            transform: `scale(1.06) translateX(${-sceneMotion}%)`,
+          }}
         />
         <div className="mb-jelajah-scene-vignette" />
       </div>
@@ -118,7 +116,7 @@ export function JelajahTrail({
       <style jsx>{`
         .mb-jelajah-world { position:relative; isolation:isolate; overflow:hidden; border-radius:26px; min-height:${compact ? "230px" : "390px"}; background:#153a43; box-shadow:0 18px 50px rgba(23,53,75,.2); }
         .mb-jelajah-scene { position:absolute; inset:0 0 ${compact ? "34px" : "42px"}; overflow:hidden; background:#153a43; }
-        .mb-jelajah-scene :global(.mb-jelajah-scene-image) { object-fit:cover; object-position:center; animation:mb-jelajah-scene-arrive 800ms cubic-bezier(.22,.9,.3,1) both; transition:transform 1200ms cubic-bezier(.22,.9,.3,1); will-change:transform; }
+        .mb-jelajah-scene-image { position:absolute; inset:0; background-color:#153a43; background-position:center; background-size:cover; animation:mb-jelajah-scene-arrive 800ms cubic-bezier(.22,.9,.3,1) both; transition:transform 1200ms cubic-bezier(.22,.9,.3,1); will-change:transform; }
         .mb-jelajah-scene-vignette { position:absolute; inset:0; background:linear-gradient(180deg,rgba(7,24,32,.06),transparent 47%,rgba(7,24,32,.36)),linear-gradient(90deg,rgba(7,24,32,.14),transparent 28%,transparent 72%,rgba(7,24,32,.12)); pointer-events:none; }
         .mb-jelajah-overlay { position:absolute; inset:0 ${compact ? "0 34px" : "0 42px"}; width:100%; height:calc(100% - ${compact ? "34px" : "42px"}); overflow:visible; filter:drop-shadow(0 2px 3px rgba(7,24,32,.2)); }
         .mb-jelajah-markers { position:absolute; inset:0 ${compact ? "0 34px" : "0 42px"}; pointer-events:none; }
@@ -136,7 +134,7 @@ export function JelajahTrail({
         @keyframes mb-jelajah-scene-arrive { from { opacity:.3; transform:scale(1.03); } to { opacity:1; } }
         @keyframes mb-jelajah-marker-bob { from { margin-top:0; } to { margin-top:-5px; } }
         @keyframes mb-jelajah-spark { from { opacity:0; transform:scale(.5) rotate(-20deg); } to { opacity:1; transform:scale(1) rotate(0); } }
-        @media (prefers-reduced-motion:reduce) { .mb-jelajah-scene :global(.mb-jelajah-scene-image),.mb-jelajah-marker,.mb-jelajah-marker-move,.mb-jelajah-marker-celebrate::after { animation:none !important; transition:none !important; } }
+        @media (prefers-reduced-motion:reduce) { .mb-jelajah-scene-image,.mb-jelajah-marker,.mb-jelajah-marker-move,.mb-jelajah-marker-celebrate::after { animation:none !important; transition:none !important; } }
         @media (max-width:640px) { .mb-jelajah-world { min-height:${compact ? "206px" : "290px"}; border-radius:18px; } .mb-jelajah-world-caption strong { display:none; } }
       `}</style>
     </section>

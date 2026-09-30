@@ -35,6 +35,7 @@ import { FullscreenExitControl } from '@/components/main-bersama/shared/Fullscre
 import { CityCahayaStage } from '@/components/main-bersama/shared/CityCahayaStage';
 import { JelajahTrail } from '@/components/main-bersama/art/jelajah/JelajahTrail';
 import { useTrailMotion } from '@/components/main-bersama/art/jelajah-motion/useTrailMotion';
+import { TeamMascot } from '@/components/main-bersama/art/registry';
 
 type Command =
   | 'open-lobby'
@@ -159,6 +160,28 @@ export function TeacherRoomClient({
     view.currentRoundIndex !== null
       ? `${view.currentRoundIndex + 1} / ${view.totalRounds}`
       : null;
+
+  const classroomAction: { action: Command; label: string } | null =
+    view.phase === 'lobby'
+      ? { action: 'start', label: 'Mulai Permainan' }
+      : view.phase === 'question'
+        ? { action: 'close-round', label: 'Tutup Jawaban' }
+        : view.phase === 'closed'
+          ? { action: 'discuss', label: 'Buka Pembahasan' }
+          : view.phase === 'discussion'
+            ? { action: 'next-round', label: isLastRound ? 'Lihat Hasil' : 'Soal Berikutnya' }
+            : view.phase === 'paused'
+              ? { action: 'resume', label: 'Lanjutkan Permainan' }
+              : null;
+
+  const podiumStudents = [...view.participants]
+    .sort((a, b) =>
+      a.progressRank - b.progressRank ||
+      b.correctAnswers - a.correctAnswers ||
+      b.progressPercent - a.progressPercent ||
+      a.displayName.localeCompare(b.displayName, 'id'),
+    )
+    .slice(0, 3);
 
   return (
     <main className={`mb-room game-fullscreen${fullscreen.isFullscreen ? " mb-room-fullscreen-active" : ""}`}>
@@ -382,6 +405,22 @@ export function TeacherRoomClient({
       ) : null}
 
       {activeTab === 'layar' ? <>
+      {classroomAction ? (
+        <aside className="mb-classroom-quick-control" aria-label="Kontrol cepat guru">
+          <span>Kontrol cepat guru</span>
+          <PrimaryGameButton
+            onClick={() => {
+              if (classroomAction.action === 'start') void teacherSound.activate();
+              void run(classroomAction.action);
+            }}
+            disabled={busy || (classroomAction.action === 'start' && view.participants.length === 0)}
+            loading={busy}
+            variant="light"
+          >
+            {classroomAction.label}
+          </PrimaryGameButton>
+        </aside>
+      ) : null}
       {/* ── LOBBY — game-show command center ── */}
       {view.phase === 'lobby' || view.phase === 'preparing' ? (
         <section className="mb-lobby mb-lobby-command-center mb-fade-in">
@@ -469,7 +508,7 @@ export function TeacherRoomClient({
                 <span>Guru mengendalikan seluruh permainan dari layar ini.</span>
               </div>
               <div className="mb-lobby-action-buttons">
-                <span className="mb-lobby-control-note">Buka <strong>Kontrol Guru</strong> untuk memulai permainan.</span>
+                <span className="mb-lobby-control-note">Gunakan tombol <strong>Mulai Permainan</strong> di atas saat kelas sudah siap.</span>
               </div>
             </div>
           </div>
@@ -679,7 +718,9 @@ export function TeacherRoomClient({
                         <div className="mb-team-podium-medal" aria-hidden>
                           {rank === 1 ? '🥇' : rank === 2 ? '🥈' : '🥉'}
                         </div>
-                        <div className="mb-team-podium-emblem" aria-hidden>{team.symbol}</div>
+                        <div className="mb-team-podium-emblem">
+                          <TeamMascot teamId={team.id} pose="podium" size={rank === 1 ? 92 : 74} eager />
+                        </div>
                         <strong>{team.name}</strong>
                         <span>{members.length} siswa · {memberCorrect}/{memberEligible} benar</span>
                         <div className="mb-team-podium-step">
@@ -691,28 +732,28 @@ export function TeacherRoomClient({
                   })}
                 </div>
               ) : (
-                <div className={`mb-final-podium mb-final-podium-${Math.min(3, view.participants.filter((participant) => participant.progressRank <= 3).length)}`}>
-                  {[2, 1, 3].flatMap((rank) =>
-                    [...view.participants]
-                      .filter((p) => p.progressRank === rank)
-                      .slice(0, 1)
-                      .map((p) => (
-                        <div className={`mb-podium-item mb-podium-rank-${p.progressRank}`} key={p.playerId}>
-                          <div className="mb-podium-medal" aria-hidden>
-                            {p.progressRank === 1 ? '🥇' : p.progressRank === 2 ? '🥈' : '🥉'}
-                          </div>
-                          <span className="mb-podium-avatar">
-                            <img src={p.avatarUrl ?? '/avatar/2.webp'} alt="" />
-                          </span>
-                          <strong title={p.displayName}>{p.displayName}</strong>
-                          <span>{p.correctAnswers}/{p.eligibleRounds} benar · {p.progressPercent}%</span>
-                          <div className="mb-podium-step">
-                            <b>{p.progressRank}</b>
-                            <small>{p.progressPercent}%</small>
-                          </div>
+                <div className={`mb-final-podium mb-final-podium-${podiumStudents.length}`}>
+                  {[2, 1, 3].flatMap((slotRank) => {
+                    const studentIndex = slotRank === 1 ? 0 : slotRank === 2 ? 1 : 2;
+                    const participant = podiumStudents[studentIndex];
+                    if (!participant) return [];
+                    return [(
+                      <div className={`mb-podium-item mb-podium-rank-${slotRank}`} key={participant.playerId}>
+                        <div className="mb-podium-medal" aria-hidden>
+                          {slotRank === 1 ? '🥇' : slotRank === 2 ? '🥈' : '🥉'}
                         </div>
-                      )),
-                  )}
+                        <span className="mb-podium-avatar">
+                          <img src={participant.avatarUrl ?? '/avatar/2.webp'} alt="" />
+                        </span>
+                        <strong title={participant.displayName}>{participant.displayName}</strong>
+                        <span>{participant.correctAnswers}/{participant.eligibleRounds} benar · {participant.progressPercent}%</span>
+                        <div className="mb-podium-step">
+                          <b>#{participant.progressRank}</b>
+                          <small>{participant.progressPercent}%</small>
+                        </div>
+                      </div>
+                    )];
+                  })}
                   {view.participants.length === 0 ? <p className="mb-teacher-empty">Belum ada hasil peserta.</p> : null}
                 </div>
               )}
@@ -806,6 +847,27 @@ export function TeacherRoomClient({
       ) : null}
       </> : null}
       <style jsx>{`
+        .mb-classroom-quick-control {
+          position:sticky;
+          top:8px;
+          z-index:24;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          gap:12px;
+          width:fit-content;
+          max-width:calc(100% - 32px);
+          margin:10px auto 0;
+          padding:7px 9px 7px 14px;
+          border:1px solid rgba(15,118,110,.16);
+          border-radius:999px;
+          background:rgba(255,255,255,.94);
+          box-shadow:0 8px 24px rgba(23,53,75,.12);
+          backdrop-filter:blur(12px);
+        }
+        .mb-classroom-quick-control > span { color:#47636f; font-size:.72rem; font-weight:800; }
+        .mb-classroom-quick-control :global(.mb-primary-game-btn) { min-height:38px; padding:0 15px; font-size:.72rem; }
+        @media(max-width:640px) { .mb-classroom-quick-control { width:calc(100% - 24px); justify-content:space-between; border-radius:16px; } }
         .mb-jelajah-host-stage {
           margin: 10px auto 0;
           width: min(1240px, 100%);
