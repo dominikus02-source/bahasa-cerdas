@@ -114,7 +114,7 @@ export function JelajahTrail({
       </div>
 
       <style jsx>{`
-        .mb-jelajah-world { position:relative; isolation:isolate; overflow:hidden; border-radius:26px; min-height:${compact ? "230px" : "390px"}; background:#153a43; box-shadow:0 18px 50px rgba(23,53,75,.2); }
+        .mb-jelajah-world { position:relative; display:block; width:100%; isolation:isolate; overflow:hidden; border-radius:26px; min-height:${compact ? "230px" : "390px"}; background:#153a43; box-shadow:0 18px 50px rgba(23,53,75,.2); }
         .mb-jelajah-scene { position:absolute; inset:0 0 ${compact ? "34px" : "42px"}; overflow:hidden; background:#153a43; }
         .mb-jelajah-scene-image { position:absolute; inset:0; background-color:#153a43; background-position:center; background-size:cover; animation:mb-jelajah-scene-arrive 800ms cubic-bezier(.22,.9,.3,1) both; transition:transform 1200ms cubic-bezier(.22,.9,.3,1); will-change:transform; }
         .mb-jelajah-scene-vignette { position:absolute; inset:0; background:linear-gradient(180deg,rgba(7,24,32,.06),transparent 47%,rgba(7,24,32,.36)),linear-gradient(90deg,rgba(7,24,32,.14),transparent 28%,transparent 72%,rgba(7,24,32,.12)); pointer-events:none; }
