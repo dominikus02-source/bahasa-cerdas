@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, BookOpen, CheckCircle2, ClipboardCopy, FileText, GraduationCap, Megaphone, Plus, QrCode, Search, Trash2, Users, X, Pin, Pencil, RotateCw, Loader2, MessageCircle } from "lucide-react";
+import { ArrowLeft, BookOpen, CheckCircle2, ClipboardCopy, FileText, GraduationCap, Megaphone, Plus, QrCode, Search, Trash2, Users, UserMinus, X, Pin, Pencil, RotateCw, Loader2, MessageCircle } from "lucide-react";
 import "@/components/kelas/classroom.css";
 import { humanDeadline } from "@/lib/classroom/deadline";
 import { ClassPicker, type PickerClass } from "@/components/kelas/ClassPicker";
@@ -61,6 +61,32 @@ export default function KelasKuPage() {
   // Hapus tugas yang sudah dikirim (per kelas / latihan penuh).
   const [deleteTask, setDeleteTask] = useState<{ kind: "penugasan" | "latihan"; id: string; label: string } | null>(null);
   const [deletingTask, setDeletingTask] = useState(false);
+  const [removeMember, setRemoveMember] = useState<{ id: string; name: string } | null>(null);
+  const [removingMember, setRemovingMember] = useState(false);
+
+  const confirmRemoveMember = async () => {
+    if (!activeGroup || !removeMember || removingMember) return;
+    setRemovingMember(true);
+    try {
+      const res = await fetch(`/api/group/${activeGroup.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ removeMemberUserId: removeMember.id }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setToast(data?.error || "Murid belum berhasil dikeluarkan dari kelas. Coba lagi.");
+        return;
+      }
+      setRemoveMember(null);
+      setToast(`${removeMember.name} dikeluarkan dari kelas.`);
+      await Promise.all([loadDetail(activeGroup.id), fetchGroups()]);
+    } catch {
+      setToast("Murid belum berhasil dikeluarkan dari kelas. Periksa koneksi lalu coba lagi.");
+    } finally {
+      setRemovingMember(false);
+    }
+  };
 
   const confirmDeleteTask = async () => {
     if (!deleteTask || deletingTask) return;
@@ -752,6 +778,15 @@ export default function KelasKuPage() {
                       <p className="text-sm font-bold text-[var(--clr-accent-strong)]">{(m.xp || 0).toLocaleString()}</p>
                       <p className="text-[11px] text-[var(--clr-text-3)]">XP</p>
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => setRemoveMember({ id: m.id, name: m.fullName || "Murid ini" })}
+                      className="bc-btn-secondary min-h-10 min-w-10 px-2 text-[var(--clr-danger)] hover:border-[var(--clr-danger)]"
+                      aria-label={`Keluarkan ${m.fullName || "murid"} dari kelas`}
+                      title="Keluarkan dari kelas"
+                    >
+                      <UserMinus size={16} />
+                    </button>
                   </div>
                 ))}
               </div>
@@ -1352,6 +1387,38 @@ function NewClassCodeModal({ code, onClose }: { code: { code: string; name: stri
             {copied ? "Tersalin!" : "Salin Kode"}
           </button>
           <button type="button" onClick={onClose} className="bc-btn-secondary w-full text-sm">Selesai</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ConfirmRemoveMemberModal({ name, removing, onCancel, onConfirm }: {
+  name: string;
+  removing: boolean;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  return (
+    <div className="bc-sheet-overlay" role="dialog" aria-modal="true" aria-label={`Keluarkan ${name} dari kelas`}>
+      <div className="bc-sheet">
+        <div className="px-6 py-7 space-y-4">
+          <div className="w-11 h-11 rounded-2xl bg-[var(--clr-danger-soft)] text-[var(--clr-danger)] flex items-center justify-center">
+            <UserMinus size={20} />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-[var(--clr-text)]">Keluarkan "{name}" dari kelas?</h2>
+            <p className="text-sm text-[var(--clr-text-2)] mt-2">
+              Murid akan dikeluarkan dari keanggotaan kelas ini. Akun, karya, progres belajar, dan data pribadinya tetap aman.
+            </p>
+          </div>
+          <div className="flex gap-2 pt-1">
+            <button type="button" onClick={onCancel} disabled={removing} className="bc-btn-secondary flex-1 text-sm">Batal</button>
+            <button type="button" onClick={onConfirm} disabled={removing} className="bc-btn-primary flex-1 text-sm" style={{ background: "var(--clr-danger)" }}>
+              {removing ? <Loader2 size={16} className="animate-spin" /> : <UserMinus size={16} />}
+              {removing ? "Mengeluarkan..." : "Keluarkan"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
