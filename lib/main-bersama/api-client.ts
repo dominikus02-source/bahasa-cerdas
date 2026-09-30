@@ -127,6 +127,11 @@ export async function postTeacherCommand(payload: {
         seed?: string;
       };
   classId?: string;
+  /** Konfigurasi sesi yang dikunci saat sesi dibuat. */
+  config?: {
+    roundDurationMs?: number;
+    kotaTargetCorrect?: number;
+  };
   useSupportedQuestions?: boolean;
 }): Promise<Record<string, unknown>> {
   const res = await fetch('/api/main-bersama/teacher/commands', {
