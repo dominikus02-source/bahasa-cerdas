@@ -86,6 +86,11 @@ export function TeacherRoomClient({
         : undefined,
   });
 
+  const kotaCahayaState =
+    view?.gameState?.gameMode === 'kota-cahaya'
+      ? view.gameState.kotaCahaya
+      : null;
+
   const run = useCallback(
     async (action: Command) => {
       setBusy(true);
@@ -303,11 +308,11 @@ export function TeacherRoomClient({
               </div>
               <div className="mb-analysis-overview mb-kota-cahaya-overview">
                 <div>
-                  <strong>{Math.round(view.gameState?.kotaCahaya.progressPercent ?? 0)}%</strong>
+                  <strong>{Math.round(kotaCahayaState?.progressPercent ?? 0)}%</strong>
                   <span>Progres Kota</span>
                 </div>
                 <div>
-                  <strong>{view.gameState?.kotaCahaya.unlockedMilestones.length ?? 0}</strong>
+                  <strong>{kotaCahayaState?.unlockedMilestones.length ?? 0}</strong>
                   <span>Tahap terbuka</span>
                 </div>
                 <div>
