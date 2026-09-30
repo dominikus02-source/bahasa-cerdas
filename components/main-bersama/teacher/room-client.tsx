@@ -117,6 +117,15 @@ export function TeacherRoomClient({
     void run('open-lobby');
   }, [view, busy, run]);
 
+  // Selalu panggil hook, termasuk ketika data ruang belum tersedia.
+  const jelajahTeamProgress = view?.gameState?.gameMode === 'jelajah-kata'
+    ? view.gameState.jelajahKata.teamProgress
+    : {};
+  const { getPose: getTrailPose } = useTrailMotion(
+    jelajahTeamProgress,
+    view?.gameMode === 'jelajah-kata' ? view.phase : 'preparing',
+  );
+
   if (!view) {
     return (
       <main className="mb-room-loading">
@@ -125,14 +134,6 @@ export function TeacherRoomClient({
       </main>
     );
   }
-
-  const jelajahTeamProgress = view.gameState?.gameMode === 'jelajah-kata'
-    ? view.gameState.jelajahKata.teamProgress
-    : {};
-  const { getPose: getTrailPose } = useTrailMotion(
-    jelajahTeamProgress,
-    view.gameMode === 'jelajah-kata' ? view.phase : 'preparing',
-  );
 
   const answered = view.answerSummary.submittedCount;
   const eligible = view.answerSummary.eligibleCount;
