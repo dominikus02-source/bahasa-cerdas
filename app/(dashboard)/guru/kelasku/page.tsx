@@ -800,6 +800,15 @@ export default function KelasKuPage() {
 
         {toast && <Toast msg={toast} onClose={() => setToast(null)} />}
 
+        {removeMember && (
+          <ConfirmRemoveMemberModal
+            name={removeMember.name}
+            removing={removingMember}
+            onCancel={() => { if (!removingMember) setRemoveMember(null); }}
+            onConfirm={confirmRemoveMember}
+          />
+        )}
+
         {/* STEP 6.11 — modal edit pengumuman (sheet) + modal kode kelas (Lihat Kode di hero) */}
         {editPengumuman && (
           <EditPengumumanModal
