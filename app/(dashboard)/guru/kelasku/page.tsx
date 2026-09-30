@@ -68,10 +68,10 @@ export default function KelasKuPage() {
     if (!activeGroup || !removeMember || removingMember) return;
     setRemovingMember(true);
     try {
-      const res = await fetch(`/api/group/${activeGroup.id}`, {
-        method: "PATCH",
+      const res = await fetch(`/api/guru/kelasku/${activeGroup.id}`, {
+        method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ removeMemberUserId: removeMember.id }),
+        body: JSON.stringify({ userId: removeMember.id }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
