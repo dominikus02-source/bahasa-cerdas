@@ -19,7 +19,6 @@ interface CommentUser {
   isPremium?: boolean
   role?: string
   trialEndsAt?: string | null
-  role?: string
   rank?: string
 }
 
