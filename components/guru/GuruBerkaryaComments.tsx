@@ -2,12 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { Loader2, MessageCircle, Send, Trash2, X } from "lucide-react";
+import UserName from "@/components/arena/UserName";
 
 interface CommentAuthor {
   id: string;
   fullName: string | null;
   avatar: string | null;
   displayName: string;
+  isFounder?: boolean;
+  isPremium?: boolean;
+  trialEndsAt?: string | null;
 }
 
 interface GuruBerkaryaComment {
@@ -162,7 +166,14 @@ export function GuruBerkaryaComments({ artikelId, artikelTitle, onClose, onCount
                 )}
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="truncate text-xs font-bold text-gray-800">{c.author?.displayName || "Guru"}</p>
+                    <UserName
+                      name={c.author?.displayName || "Guru"}
+                      className="truncate text-xs font-bold text-gray-800"
+                      isFounder={c.author?.isFounder}
+                      isPremium={c.author?.isPremium}
+                      isTrial={!!c.author?.trialEndsAt && new Date(c.author.trialEndsAt).getTime() > Date.now()}
+                      verifiedSize={13}
+                    />
                     <span className="shrink-0 text-[10px] text-gray-400">{waktuRelatif(c.createdAt)}</span>
                   </div>
                   <p className="mt-0.5 whitespace-pre-line text-sm leading-relaxed text-gray-600">{c.content}</p>
