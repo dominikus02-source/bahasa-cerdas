@@ -252,6 +252,7 @@ export default function ProfileHero({
                     badgeSize={20}
                     isFounder={persona.isFounder}
                     isPremium={persona.isPremium}
+                    verifiedType={persona.isTrial ? "GURU_TRIAL" : persona.role === "GURU" ? "GURU_PRO" : persona.isFounder ? "FOUNDER" : "MURID_PREMIUM"}
                     isTrial={persona.isTrial}
                     verifiedSize={22}
                   />
