@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import UserName from "@/components/arena/UserName";
 import { Trophy, ChevronRight, Crown, Flame } from "lucide-react";
 import type { TeacherLeaderboardEntry, TeacherLeaderboardPeriod } from "@/lib/gamification/teacher-xp";
 import type { MisiGuruStatus } from "@/lib/guru/misi-guru-status";
@@ -200,7 +201,14 @@ export function GuruLeaderboardCard({
                 {i === 0 ? <Crown size={13} /> : i + 1}
               </span>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-800 truncate">{e.fullName || "Guru"}</p>
+                <UserName
+                  name={e.fullName || "Guru"}
+                  className="text-sm font-semibold text-gray-800 truncate"
+                  isFounder={e.isFounder}
+                  isPremium={e.isPremium}
+                  isTrial={!!e.trialEndsAt && new Date(e.trialEndsAt).getTime() > Date.now()}
+                  verifiedSize={14}
+                />
               </div>
               <span className="text-xs font-bold text-gray-500 shrink-0">{e.xp.toLocaleString("id-ID")} XP</span>
             </div>
