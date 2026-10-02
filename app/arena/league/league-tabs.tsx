@@ -20,6 +20,7 @@ export interface LeagueRow {
   todayXP?: number
   isFounder?: boolean
   isPremium?: boolean
+  trialEndsAt?: string | null
 }
 
 interface Board {
@@ -164,7 +165,7 @@ export default function LeagueTabs({ weekly, daily, hallOfFame, userId, userXP, 
                   {r.avatar ? <img src={r.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : initials(nameOf(r))}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="flex items-center gap-1.5 text-sm font-semibold text-gray-900 dark:text-slate-100 truncate">{isMe ? "Kamu" : nameOf(r)}{!isMe && <VerifiedBadge isFounder={r.isFounder} isPremium={r.isPremium} size={14} />}</p>
+                  <p className="flex items-center gap-1.5 text-sm font-semibold text-gray-900 dark:text-slate-100 truncate">{isMe ? "Kamu" : nameOf(r)}{!isMe && <VerifiedBadge isFounder={r.isFounder} isPremium={r.isPremium} isTrial={!!r.trialEndsAt && new Date(r.trialEndsAt).getTime() > Date.now()} size={14} />}</p>
                   <p className="flex items-center gap-1 text-xs text-gray-400">
                     <RankIcon rank={rowRank} size={14} />
                     Tingkat {rowLevel} • {RANK_META[rowRank].label}
