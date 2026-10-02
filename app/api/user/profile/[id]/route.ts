@@ -25,6 +25,7 @@ export async function GET(
         isFounder: true,
         isPremium: true,
         premiumPlan: true,
+        trialEndsAt: true,
         xp: true,
         level: true,
         streak: true,
