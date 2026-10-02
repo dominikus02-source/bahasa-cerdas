@@ -206,6 +206,7 @@ export function GuruLeaderboardCard({
                   className="text-sm font-semibold text-gray-800 truncate"
                   isFounder={e.isFounder}
                   isPremium={e.isPremium}
+                  verifiedType={e.trialEndsAt && new Date(e.trialEndsAt).getTime() > Date.now() ? "GURU_TRIAL" : "GURU_PRO"}
                   isTrial={!!e.trialEndsAt && new Date(e.trialEndsAt).getTime() > Date.now()}
                   verifiedSize={14}
                 />
