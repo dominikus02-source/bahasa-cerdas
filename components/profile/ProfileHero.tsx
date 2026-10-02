@@ -36,6 +36,7 @@ export interface HeroPersona {
   joinedAt?: string | null;
   isFounder?: boolean;
   isPremium?: boolean;
+  isTrial?: boolean;
 }
 
 export interface HeroSocial {
@@ -251,6 +252,7 @@ export default function ProfileHero({
                     badgeSize={20}
                     isFounder={persona.isFounder}
                     isPremium={persona.isPremium}
+                    isTrial={persona.isTrial}
                     verifiedSize={22}
                   />
               </h1>
