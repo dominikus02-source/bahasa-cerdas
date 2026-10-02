@@ -171,6 +171,7 @@ export function GuruBerkaryaComments({ artikelId, artikelTitle, onClose, onCount
                       className="truncate text-xs font-bold text-gray-800"
                       isFounder={c.author?.isFounder}
                       isPremium={c.author?.isPremium}
+                      verifiedType={c.author?.trialEndsAt && new Date(c.author.trialEndsAt).getTime() > Date.now() ? "GURU_TRIAL" : "GURU_PRO"}
                       isTrial={!!c.author?.trialEndsAt && new Date(c.author.trialEndsAt).getTime() > Date.now()}
                       verifiedSize={13}
                     />
