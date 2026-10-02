@@ -163,6 +163,9 @@ export default function CommentSection({ karyaId, initialComments, initialCount,
                 badgeSize={13}
                 isFounder={c.user.isFounder}
                 isPremium={c.user.isPremium}
+
+                verifiedType={c.user.role === "GURU" ? "GURU_PRO" : "MURID_PREMIUM"}
+
                 isTrial={!!c.user.trialEndsAt && new Date(c.user.trialEndsAt).getTime() > Date.now()}
               />
               {c.user.rank && <RankChip rank={c.user.rank} size={13} showTitle={false} compact />}
