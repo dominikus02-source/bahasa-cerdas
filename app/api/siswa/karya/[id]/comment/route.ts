@@ -60,6 +60,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
             id: true, fullName: true, nickname: true, avatar: true,
             equippedFrame: true, equippedNameColor: true, equippedBadge: true,
             isFounder: true, isPremium: true, trialEndsAt: true,
+            role: true,
           },
         },
       },
