@@ -28,48 +28,82 @@ export function CosmeticBadge({
 }
 
 /**
- * Badge centang verified (Founder / BC Pro).
- * Menampilkan `Badges_centang_premium.png` di samping nama.
+ * Badge status premium/terverifikasi.
+ * Dibedakan secara visual agar status Founder, Guru Pro, Guru Pro Trial,
+ * dan Murid Premium langsung terbaca tanpa teks tambahan.
  */
 export function VerifiedBadge({
   isFounder,
   isPremium,
   isTrial,
+  verifiedType,
   size = 16,
   className = "",
 }: {
   isFounder?: boolean;
   isPremium?: boolean;
-  /** True bila Guru sedang menjalani Guru Pro Trial yang masih aktif. */
   isTrial?: boolean;
+  verifiedType?: "FOUNDER" | "GURU_PRO" | "GURU_TRIAL" | "MURID_PREMIUM";
   size?: number;
   className?: string;
 }) {
-  if (!isFounder && !isPremium && !isTrial) return null;
-  const tooltip = isFounder
-    ? "Founder BahasaCerdas"
-    : isPremium
-      ? "BC Pro"
-      : "Guru Pro Trial";
+  if (!isFounder && !isPremium && !isTrial && !verifiedType) return null;
+
+  const type =
+    verifiedType ??
+    (isFounder
+      ? "FOUNDER"
+      : isTrial
+        ? "GURU_TRIAL"
+        : "MURID_PREMIUM");
+
+  const meta = {
+    FOUNDER: { label: "Founder BahasaCerdas", from: "#7C3AED", to: "#F59E0B" },
+    GURU_PRO: { label: "Guru Pro", from: "#2563EB", to: "#7C3AED" },
+    GURU_TRIAL: { label: "Guru Pro Trial", from: "#F97316", to: "#F59E0B" },
+    MURID_PREMIUM: { label: "Murid Premium", from: "#06B6D4", to: "#FACC15" },
+  }[type];
+
+  const id = \`verified-\${type.toLowerCase()}-\${size}\`;
+
   return (
-    <span
-      title={tooltip}
-      aria-label={tooltip}
-      className={`inline-flex items-center justify-center shrink-0 ${className}`}
-      style={{ width: size, height: size }}
-    >
-      <Image
-        src="/badges/Badges_centang_premium.png"
-        alt={tooltip}
-        width={size}
-        height={size}
-        className="block"
-        draggable={false}
-      />
+    <span title={meta.label} aria-label={meta.label} className={\`inline-flex items-center justify-center shrink-0 \${className}\`} style={{ width: size, height: size }}>
+      <svg width={size} height={size} viewBox="0 0 64 64" fill="none" aria-hidden="true" className="block">
+        <defs>
+          <linearGradient id={\`\${id}-bg\`} x1="8" y1="8" x2="56" y2="56">
+            <stop stopColor={meta.from} />
+            <stop offset="1" stopColor={meta.to} />
+          </linearGradient>
+          <linearGradient id={\`\${id}-rim\`} x1="12" y1="8" x2="52" y2="58">
+            <stop stopColor="#FFFFFF" stopOpacity=".95" />
+            <stop offset=".5" stopColor="#FFFFFF" stopOpacity=".35" />
+            <stop offset="1" stopColor="#FFFFFF" stopOpacity=".08" />
+          </linearGradient>
+          <filter id={\`\${id}-shadow\`} x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="2" stdDeviation="2" floodColor={meta.to} floodOpacity=".38" />
+          </filter>
+        </defs>
+        <g filter={\`url(#\${id}-shadow)\`}>
+          {type === "MURID_PREMIUM" ? (
+            <path d="M32 4 39.2 20.8 58 22.7 43.9 35 48.2 53.3 32 43.8 15.8 53.3 20.1 35 6 22.7 24.8 20.8Z" fill={\`url(#\${id}-bg)\`} stroke={\`url(#\${id}-rim)\`} strokeWidth="2" strokeLinejoin="round" />
+          ) : type === "FOUNDER" ? (
+            <path d="M10 24 16 16 24 21 32 10 40 21 48 16 54 24 51 48Q32 58 13 48Z" fill={\`url(#\${id}-bg)\`} stroke={\`url(#\${id}-rim)\`} strokeWidth="2" strokeLinejoin="round" />
+          ) : (
+            <path d="M8 20 32 8 56 20 32 32Z M14 23V38Q32 51 50 38V23L32 34Z" fill={\`url(#\${id}-bg)\`} stroke={\`url(#\${id}-rim)\`} strokeWidth="2" strokeLinejoin="round" />
+          )}
+          <circle cx="32" cy="32" r="15" fill={type === "GURU_TRIAL" ? "#EA580C" : "#111827"} fillOpacity=".42" stroke="#FFFFFF" strokeOpacity=".7" strokeWidth="2" />
+          <path d="m24 32 5 5 11-12" stroke="white" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+          {type === "GURU_TRIAL" && (
+            <>
+              <circle cx="48" cy="47" r="8" fill="#FFF7ED" stroke="#F59E0B" strokeWidth="2" />
+              <path d="M48 42v5l3 2" stroke="#EA580C" strokeWidth="2" strokeLinecap="round" />
+            </>
+          )}
+        </g>
+      </svg>
     </span>
   );
 }
-
 interface UserNameProps {
   name: string;
   /** `User.equippedNameColor` — null/undefined berarti warna bawaan. */
@@ -85,9 +119,11 @@ interface UserNameProps {
   /** Kelas untuk pembungkus (nama + badge). */
   wrapperClassName?: string;
   badgeSize?: number;
-  /** Badge verified (Founder/Pro) — tampil di samping nama. */
+  /** Status badge premium/terverifikasi untuk menentukan ikon dan warna. */
+  verifiedType?: "FOUNDER" | "GURU_PRO" | "GURU_TRIAL" | "MURID_PREMIUM";
   isFounder?: boolean;
   isPremium?: boolean;
+  isTrial?: boolean;
   verifiedSize?: number;
 }
 
@@ -109,6 +145,7 @@ export default function UserName({
   isFounder = false,
   isPremium = false,
   isTrial = false,
+  verifiedType,
   verifiedSize = 16,
 }: UserNameProps) {
   const style = nameColorStyle(color, onDark);
@@ -141,6 +178,7 @@ export default function UserName({
         isFounder={isFounder}
         isPremium={isPremium}
         isTrial={isTrial}
+        verifiedType={verifiedType}
         size={verifiedSize}
       />
     </span>
