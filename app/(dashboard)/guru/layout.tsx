@@ -165,7 +165,15 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
                   <span className="max-w-[190px] truncate text-xs font-bold text-slate-800 dark:text-slate-100">
                     {user.fullName}
                   </span>
-                  <VerifiedBadge isFounder={user.isFounder} isPremium={user.isPremium} size={13} />
+                  <VerifiedBadge
+                    isFounder={user.isFounder}
+                    isPremium={user.isPremium}
+                    isTrial={
+                      !!user.trialEndsAt &&
+                      new Date(user.trialEndsAt).getTime() > Date.now()
+                    }
+                    size={13}
+                  />
                 </span>
                 <span className="mt-0.5 flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400">
                   <span>Guru</span>
