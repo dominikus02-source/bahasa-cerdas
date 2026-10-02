@@ -53,6 +53,7 @@ export async function GET(req: NextRequest) {
           equippedFrame: true, equippedNameColor: true, equippedBadge: true,
           // Verified badge — isFounder / isPremium
           isFounder: true, isPremium: true, trialEndsAt: true,
+          role: true,
           playerProfile: { select: { currentRank: true } },
           profile: { select: { school: true, city: true } },
         },
