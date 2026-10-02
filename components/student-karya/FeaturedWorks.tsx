@@ -130,6 +130,9 @@ export default function FeaturedWorks() {
                       className="truncate text-xs font-semibold text-gray-700 dark:text-slate-200"
                       isFounder={k.user.isFounder}
                       isPremium={k.user.isPremium}
+
+                      verifiedType={k.user.role === "GURU" ? "GURU_PRO" : "MURID_PREMIUM"}
+
                       isTrial={!!k.user.trialEndsAt && new Date(k.user.trialEndsAt).getTime() > Date.now()}
                       verifiedSize={13}
                     />
