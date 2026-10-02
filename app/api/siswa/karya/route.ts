@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
           // Kosmetik toko koin — dipakai untuk bingkai avatar, warna nama, badge
           equippedFrame: true, equippedNameColor: true, equippedBadge: true,
           // Verified badge — isFounder / isPremium
-          isFounder: true, isPremium: true,
+          isFounder: true, isPremium: true, trialEndsAt: true,
           playerProfile: { select: { currentRank: true } },
           profile: { select: { school: true, city: true } },
         },
