@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { getBadgeStyle, nameColorStyle } from "@/lib/cosmetics";
 
 /** Badge kosmetik kecil yang tampil di samping nama murid. */
