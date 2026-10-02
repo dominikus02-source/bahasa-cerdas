@@ -48,6 +48,7 @@ interface ProfileData {
   streak: number;
   isPremium: boolean;
   isFounder: boolean;
+  trialEndsAt: string | null;
   bank: string | null;
   bankHolder: string | null;
   bankNumber: string | null;
@@ -161,6 +162,7 @@ export default function GuruProfilePage() {
         streak: u.streak || 0,
         isPremium: u.isPremium || false,
         isFounder: u.isFounder || false,
+        trialEndsAt: u.trialEndsAt ? String(u.trialEndsAt) : null,
         bank: u.bank || null,
         bankHolder: u.bankHolder || null,
         bankNumber: u.bankNumber || null,
@@ -416,6 +418,7 @@ export default function GuruProfilePage() {
 
   const initial = (profile?.fullName || "G").charAt(0).toUpperCase();
   const displayAvatar = avatarPreview || profile?.avatar;
+  const isActiveProTrial = !!profile?.trialEndsAt && new Date(profile.trialEndsAt).getTime() > Date.now();
 
   const profFields = useMemo(() => {
     if (!profile) return [];
@@ -608,6 +611,7 @@ export default function GuruProfilePage() {
                       onDark={false}
                       isFounder={profile.isFounder}
                       isPremium={profile.isPremium}
+                      isTrial={isActiveProTrial}
                     />
                   </h1>
 
@@ -646,7 +650,7 @@ export default function GuruProfilePage() {
                   )}
 
                   {/* Pro badges */}
-                  {(profile.isFounder || profile.isPremium) && (
+                  {(profile.isFounder || profile.isPremium || isActiveProTrial) && (
                     <div className="flex items-center gap-2 mt-3">
                       {profile.isFounder && (
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-full text-xs font-semibold border border-amber-200 dark:border-amber-800/50">
@@ -656,6 +660,11 @@ export default function GuruProfilePage() {
                       {profile.isPremium && !profile.isFounder && (
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-amber-100 to-yellow-100 dark:from-amber-900/30 dark:to-yellow-900/30 text-amber-700 dark:text-amber-300 rounded-full text-xs font-semibold border border-amber-200 dark:border-amber-800/50">
                           <Crown size={12} /> Guru Pro
+                        </span>
+                      )}
+                      {isActiveProTrial && !profile.isFounder && !profile.isPremium && (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-violet-100 to-indigo-100 dark:from-violet-900/30 dark:to-indigo-900/30 text-violet-700 dark:text-violet-300 rounded-full text-xs font-semibold border border-violet-200 dark:border-violet-800/50">
+                          <Crown size={12} /> Guru Pro Trial
                         </span>
                       )}
                     </div>
