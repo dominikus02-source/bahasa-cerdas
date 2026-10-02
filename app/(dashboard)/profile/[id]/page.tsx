@@ -200,6 +200,7 @@ export default function ProfilePage() {
           streak: user.streak ?? 0,
           isFounder: user.isFounder,
           isPremium: user.isPremium,
+           role: user.role,
           isTrial: isActiveProTrial,
         }}
         rank={rank}
