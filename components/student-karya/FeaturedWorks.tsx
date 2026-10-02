@@ -23,6 +23,7 @@ interface FeaturedItem {
     displayName?: string;
     isFounder?: boolean;
     isPremium?: boolean;
+    role?: string;
     trialEndsAt?: string | null;
   };
   _count?: { likes?: number; comments?: number };
