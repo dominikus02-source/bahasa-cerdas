@@ -25,6 +25,7 @@ interface FeaturedItem {
     isPremium?: boolean;
     role?: string;
     trialEndsAt?: string | null;
+    role?: string;
   };
   _count?: { likes?: number; comments?: number };
 }
