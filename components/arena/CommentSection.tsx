@@ -17,6 +17,7 @@ interface CommentUser {
   equippedBadge?: string | null
   isFounder?: boolean
   isPremium?: boolean
+  trialEndsAt?: string | null
   rank?: string
 }
 
@@ -160,6 +161,7 @@ export default function CommentSection({ karyaId, initialComments, initialCount,
                 badgeSize={13}
                 isFounder={c.user.isFounder}
                 isPremium={c.user.isPremium}
+                isTrial={!!c.user.trialEndsAt && new Date(c.user.trialEndsAt).getTime() > Date.now()}
               />
               {c.user.rank && <RankChip rank={c.user.rank} size={13} showTitle={false} compact />}
               <span className="text-[10px] text-gray-400">{waktuLalu(c.createdAt)}</span>
