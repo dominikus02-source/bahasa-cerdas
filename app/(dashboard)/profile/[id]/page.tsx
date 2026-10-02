@@ -32,6 +32,7 @@ interface ProfileUser {
   isFounder: boolean;
   isPremium: boolean;
   premiumPlan: string;
+  trialEndsAt?: string | null;
   xp: number;
   level: number;
   streak: number;
@@ -169,6 +170,7 @@ export default function ProfilePage() {
   const playerLevel = levelFromXp(user.xp || 0);
   const rank = rankFromLevel(playerLevel);
   const levelProgress = getLevelProgress(user.xp || 0);
+  const isActiveProTrial = isGuru && !!user.trialEndsAt && new Date(user.trialEndsAt).getTime() > Date.now();
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -198,6 +200,7 @@ export default function ProfilePage() {
           streak: user.streak ?? 0,
           isFounder: user.isFounder,
           isPremium: user.isPremium,
+          isTrial: isActiveProTrial,
         }}
         rank={rank}
         social={social}
@@ -217,7 +220,12 @@ export default function ProfilePage() {
                 <Star size={11} /> PRO
               </span>
             )}
-            {!user.isFounder && !user.isPremium && (
+            {isActiveProTrial && !user.isFounder && !user.isPremium && (
+              <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold bg-gradient-to-r from-violet-400 to-indigo-400 text-white">
+                <Star size={11} /> PRO TRIAL
+              </span>
+            )}
+            {!user.isFounder && !user.isPremium && !isActiveProTrial && (
               <span className="rounded-full px-2.5 py-1 text-[11px] font-bold bg-slate-100 border border-slate-200 text-slate-600 dark:bg-white/10 dark:border-white/15 dark:text-white/70">
                 Free
               </span>
