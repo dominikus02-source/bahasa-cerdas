@@ -13,6 +13,7 @@ const AUTHOR_SELECT = {
   isFounder: true,
   isPremium: true,
   trialEndsAt: true,
+  role: true,
 } as const;
 
 /** cari artikel terbit milik guru (GURU/ADMIN/founder) — seperti filter feed. */
