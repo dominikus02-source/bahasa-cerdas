@@ -10,6 +10,9 @@ const AUTHOR_SELECT = {
   fullName: true,
   nickname: true,
   avatar: true,
+  isFounder: true,
+  isPremium: true,
+  trialEndsAt: true,
 } as const;
 
 /** cari artikel terbit milik guru (GURU/ADMIN/founder) — seperti filter feed. */
@@ -60,6 +63,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
           id: c.user.id,
           fullName: c.user.fullName,
           avatar: c.user.avatar,
+          isFounder: c.user.isFounder,
+          isPremium: c.user.isPremium,
+          trialEndsAt: c.user.trialEndsAt,
           displayName: getDisplayName(c.user, "guru"),
         },
       })),
