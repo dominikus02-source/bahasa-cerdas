@@ -17,6 +17,7 @@ interface CommentUser {
   equippedBadge?: string | null
   isFounder?: boolean
   isPremium?: boolean
+  role?: string
   trialEndsAt?: string | null
   rank?: string
 }
