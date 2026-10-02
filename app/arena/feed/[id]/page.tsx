@@ -105,7 +105,8 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
                   badgeSize={16}
                   isFounder={karya.user.isFounder}
                   isPremium={karya.user.isPremium}
-                />
+isPremium={karya.user.isPremium}
+                  verifiedType={karya.user.role === "GURU" ? "GURU_PRO" : "MURID_PREMIUM"}                />
                 <p className="text-sm text-gray-500 dark:text-slate-400">
                   {typeLabel[karya.type] || karya.type}
                 </p>
