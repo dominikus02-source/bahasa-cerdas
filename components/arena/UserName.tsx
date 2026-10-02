@@ -34,16 +34,23 @@ export function CosmeticBadge({
 export function VerifiedBadge({
   isFounder,
   isPremium,
+  isTrial,
   size = 16,
   className = "",
 }: {
   isFounder?: boolean;
   isPremium?: boolean;
+  /** True bila Guru sedang menjalani Guru Pro Trial yang masih aktif. */
+  isTrial?: boolean;
   size?: number;
   className?: string;
 }) {
-  if (!isFounder && !isPremium) return null;
-  const tooltip = isFounder ? "Founder BahasaCerdas" : "BC Pro";
+  if (!isFounder && !isPremium && !isTrial) return null;
+  const tooltip = isFounder
+    ? "Founder BahasaCerdas"
+    : isPremium
+      ? "BC Pro"
+      : "Guru Pro Trial";
   return (
     <span
       title={tooltip}
@@ -101,11 +108,12 @@ export default function UserName({
   badgeSize = 14,
   isFounder = false,
   isPremium = false,
+  isTrial = false,
   verifiedSize = 16,
 }: UserNameProps) {
   const style = nameColorStyle(color, onDark);
   const badgeStyle = getBadgeStyle(badge);
-  const showVerified = isFounder || isPremium;
+  const showVerified = isFounder || isPremium || isTrial;
 
   const text = href ? (
     <Link href={href} className={className} style={style}>
@@ -129,7 +137,12 @@ export default function UserName({
   return (
     <span className={`inline-flex items-center gap-1 min-w-0 ${wrapperClassName}`}>
       {nameAndBadge}
-      <VerifiedBadge isFounder={isFounder} isPremium={isPremium} size={verifiedSize} />
+      <VerifiedBadge
+        isFounder={isFounder}
+        isPremium={isPremium}
+        isTrial={isTrial}
+        size={verifiedSize}
+      />
     </span>
   );
 }
