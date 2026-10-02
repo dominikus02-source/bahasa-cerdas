@@ -128,6 +128,9 @@ export interface TeacherLeaderboardEntry {
   userId: string;
   fullName: string | null;
   avatar: string | null;
+  isFounder: boolean;
+  isPremium: boolean;
+  trialEndsAt?: string | null;
   xp: number;
   streak: number;
   myRank?: number | null;
@@ -175,7 +178,7 @@ export async function getTeacherLeaderboard({
   const users = userIds.length
     ? await db.user.findMany({
         where: { id: { in: userIds } },
-        select: { id: true, fullName: true, avatar: true, streak: true },
+        select: { id: true, fullName: true, avatar: true, streak: true, isFounder: true, isPremium: true, trialEndsAt: true },
       })
     : [];
 
@@ -187,6 +190,9 @@ export async function getTeacherLeaderboard({
       userId: g.userId,
       fullName: u?.fullName ?? null,
       avatar: u?.avatar ?? null,
+      isFounder: u?.isFounder ?? false,
+      isPremium: u?.isPremium ?? false,
+      trialEndsAt: u?.trialEndsAt?.toISOString() ?? null,
       xp: g._sum.amount ?? 0,
       streak: u?.streak ?? 0,
     };
