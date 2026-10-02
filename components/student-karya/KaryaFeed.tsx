@@ -54,6 +54,7 @@ interface KaryaItem {
     isFounder?: boolean
     isPremium?: boolean
     trialEndsAt?: string | null
+    role?: string
     profile?: { school?: string; city?: string } | null
   }
   _count: {
@@ -392,6 +393,9 @@ function FeedContent({
                 badgeSize={14}
                 isFounder={k.user.isFounder}
                 isPremium={k.user.isPremium}
+
+                verifiedType={k.user.role === "GURU" ? "GURU_PRO" : "MURID_PREMIUM"}
+
                 isTrial={!!k.user.trialEndsAt && new Date(k.user.trialEndsAt).getTime() > Date.now()}
               />
               <p className="text-[11px] text-gray-400 dark:text-slate-500 truncate">{k.user.profile?.school || ""}</p>
