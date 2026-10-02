@@ -37,7 +37,7 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
         select: {
           id: true, fullName: true, nickname: true, avatar: true,
           equippedFrame: true, equippedNameColor: true, equippedBadge: true,
-          isFounder: true, isPremium: true,
+          isFounder: true, isPremium: true, trialEndsAt: true,
         },
       },
       _count: { select: { likes: true, comments: true } },
@@ -57,7 +57,7 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
         select: {
           id: true, fullName: true, nickname: true, avatar: true,
           equippedFrame: true, equippedNameColor: true, equippedBadge: true,
-          isFounder: true, isPremium: true,
+          isFounder: true, isPremium: true, trialEndsAt: true,
         },
       },
     },
