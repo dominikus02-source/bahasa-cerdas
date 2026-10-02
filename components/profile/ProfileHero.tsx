@@ -34,6 +34,7 @@ export interface HeroPersona {
   gelar?: string | null;
   memberNumber?: string | null;
   joinedAt?: string | null;
+  role?: string;
   isFounder?: boolean;
   isPremium?: boolean;
   isTrial?: boolean;
