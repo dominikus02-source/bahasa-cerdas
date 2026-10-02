@@ -168,6 +168,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
                   <VerifiedBadge
                     isFounder={user.isFounder}
                     isPremium={user.isPremium}
+                    verifiedType={trialStatus.isTrialActive ? "GURU_TRIAL" : "GURU_PRO"}
                     isTrial={
                       !!user.trialEndsAt &&
                       new Date(user.trialEndsAt).getTime() > Date.now()
