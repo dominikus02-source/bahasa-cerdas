@@ -611,6 +611,7 @@ export default function GuruProfilePage() {
                       onDark={false}
                       isFounder={profile.isFounder}
                       isPremium={profile.isPremium}
+                       verifiedType={isActiveProTrial ? "GURU_TRIAL" : "GURU_PRO"}
                       isTrial={isActiveProTrial}
                     />
                   </h1>
