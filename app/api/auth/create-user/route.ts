@@ -10,15 +10,7 @@ const createUserSchema = z.object({
   password: z
     .string()
     .min(8, "Kata sandi minimal 8 karakter")
-    .max(128, "Kata sandi maksimal 128 karakter")
-    .refine(
-      (value) =>
-        /[a-z]/.test(value) &&
-        /[A-Z]/.test(value) &&
-        /\\d/.test(value) &&
-        /[^A-Za-z0-9\\s]/.test(value),
-      "Kata sandi harus mengandung huruf kecil, huruf besar, angka, dan simbol"
-    ),
+    .max(128, "Kata sandi maksimal 128 karakter"),
   fullName: z.string().min(1, "Nama harus diisi").max(100).trim(),
   role: z.enum(["GURU", "MURID"]),
 });
