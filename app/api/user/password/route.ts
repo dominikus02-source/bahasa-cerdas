@@ -14,8 +14,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Semua field harus diisi" }, { status: 400 });
     }
 
-    if (newPassword.length < 6) {
-      return NextResponse.json({ error: "Password minimal 6 karakter" }, { status: 400 });
+    if (newPassword.length < 8 || newPassword.length > 128) {
+      return NextResponse.json({ error: "Kata sandi harus terdiri dari 8–128 karakter" }, { status: 400 });
     }
 
     const { error } = await supabase.auth.updateUser({
