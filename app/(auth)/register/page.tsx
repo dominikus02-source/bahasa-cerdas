@@ -481,7 +481,7 @@ export default function RegisterPage() {
                         </button>
                       </div>
                       <p id="password-help" className="mt-1.5 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
-                        Gunakan minimal 8 karakter dengan huruf kecil, huruf besar, angka, dan simbol.
+                        Gunakan minimal 8 karakter. Kamu boleh menggunakan kombinasi karakter apa pun.
                       </p>
                     </div>
 
