@@ -63,32 +63,32 @@ export function VerifiedBadge({
     MURID_PREMIUM: { label: "Murid Premium", from: "#06B6D4", to: "#FACC15" },
   }[type];
 
-  const id = \`verified-\${type.toLowerCase()}-\${size}\`;
+  const id = `verified-${type.toLowerCase()}-${size}`;
 
   return (
-    <span title={meta.label} aria-label={meta.label} className={\`inline-flex items-center justify-center shrink-0 \${className}\`} style={{ width: size, height: size }}>
+    <span title={meta.label} aria-label={meta.label} className={`inline-flex items-center justify-center shrink-0 ${className}`} style={{ width: size, height: size }}>
       <svg width={size} height={size} viewBox="0 0 64 64" fill="none" aria-hidden="true" className="block">
         <defs>
-          <linearGradient id={\`\${id}-bg\`} x1="8" y1="8" x2="56" y2="56">
+          <linearGradient id={`${id}-bg`} x1="8" y1="8" x2="56" y2="56">
             <stop stopColor={meta.from} />
             <stop offset="1" stopColor={meta.to} />
           </linearGradient>
-          <linearGradient id={\`\${id}-rim\`} x1="12" y1="8" x2="52" y2="58">
+          <linearGradient id={`${id}-rim`} x1="12" y1="8" x2="52" y2="58">
             <stop stopColor="#FFFFFF" stopOpacity=".95" />
             <stop offset=".5" stopColor="#FFFFFF" stopOpacity=".35" />
             <stop offset="1" stopColor="#FFFFFF" stopOpacity=".08" />
           </linearGradient>
-          <filter id={\`\${id}-shadow\`} x="-30%" y="-30%" width="160%" height="160%">
+          <filter id={`${id}-shadow`} x="-30%" y="-30%" width="160%" height="160%">
             <feDropShadow dx="0" dy="2" stdDeviation="2" floodColor={meta.to} floodOpacity=".38" />
           </filter>
         </defs>
-        <g filter={\`url(#\${id}-shadow)\`}>
+        <g filter={`url(#${id}-shadow)`}>
           {type === "MURID_PREMIUM" ? (
-            <path d="M32 4 39.2 20.8 58 22.7 43.9 35 48.2 53.3 32 43.8 15.8 53.3 20.1 35 6 22.7 24.8 20.8Z" fill={\`url(#\${id}-bg)\`} stroke={\`url(#\${id}-rim)\`} strokeWidth="2" strokeLinejoin="round" />
+            <path d="M32 4 39.2 20.8 58 22.7 43.9 35 48.2 53.3 32 43.8 15.8 53.3 20.1 35 6 22.7 24.8 20.8Z" fill={`url(#${id}-bg)`} stroke={`url(#${id}-rim)`} strokeWidth="2" strokeLinejoin="round" />
           ) : type === "FOUNDER" ? (
-            <path d="M10 24 16 16 24 21 32 10 40 21 48 16 54 24 51 48Q32 58 13 48Z" fill={\`url(#\${id}-bg)\`} stroke={\`url(#\${id}-rim)\`} strokeWidth="2" strokeLinejoin="round" />
+            <path d="M10 24 16 16 24 21 32 10 40 21 48 16 54 24 51 48Q32 58 13 48Z" fill={`url(#${id}-bg)`} stroke={`url(#${id}-rim)`} strokeWidth="2" strokeLinejoin="round" />
           ) : (
-            <path d="M8 20 32 8 56 20 32 32Z M14 23V38Q32 51 50 38V23L32 34Z" fill={\`url(#\${id}-bg)\`} stroke={\`url(#\${id}-rim)\`} strokeWidth="2" strokeLinejoin="round" />
+            <path d="M8 20 32 8 56 20 32 32Z M14 23V38Q32 51 50 38V23L32 34Z" fill={`url(#${id}-bg)`} stroke={`url(#${id}-rim)`} strokeWidth="2" strokeLinejoin="round" />
           )}
           <circle cx="32" cy="32" r="15" fill={type === "GURU_TRIAL" ? "#EA580C" : "#111827"} fillOpacity=".42" stroke="#FFFFFF" strokeOpacity=".7" strokeWidth="2" />
           <path d="m24 32 5 5 11-12" stroke="white" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
