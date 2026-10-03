@@ -1,8 +1,10 @@
+import { mainBersamaFont } from '@/components/main-bersama/typography';
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { TeacherRoomClient } from "@/components/main-bersama/teacher/room-client";
 import "@/components/main-bersama/main-bersama.css";
+import "@/components/main-bersama/premium-layout.css";
 
 /**
  * Ruang guru Main Bersama (Tahap 7 §6/§13) — route final
@@ -39,7 +41,7 @@ export default async function TeacherRoomPage({
   }
 
   return (
-    <div className="mb-scope-guru">
+    <div className={`mb-scope-guru mb-premium ${mainBersamaFont.variable}`}>
       <TeacherRoomClient
         sessionId={session.id}
         pin={session.pin}

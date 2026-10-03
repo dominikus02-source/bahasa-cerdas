@@ -27,6 +27,7 @@ import { useMainBersamaSound } from '@/components/main-bersama/sound/useMainBers
 import { SoundToggle } from '@/components/main-bersama/sound/SoundToggle';
 import { JelajahTrail } from '@/components/main-bersama/art/jelajah/JelajahTrail';
 import { KotaScene } from '@/components/main-bersama/art/kota/KotaScene';
+import KotaFinalDisplay from '@/components/main-bersama/shared/KotaFinalDisplay';
 import { TeamBadge } from '@/components/main-bersama/art/shared/TeamBadge';
 import { Podium } from '@/components/main-bersama/art/jelajah/Podium';
 import { useTrailMotion } from '@/components/main-bersama/art/jelajah-motion/useTrailMotion';
@@ -350,7 +351,7 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
           <div className="mb-pj-reveal mb-entrance">
             <p className="mb-pj-reveal-label">Jawaban benar:</p>
             <p className="mb-pj-reveal-answer mb-display">
-              {view.revealedRound.question.options.find((o) => o.id === view.revealedRound!.correctOptionId)?.text ?? '—'}
+              {view.revealedRound.question.type === 'short-answer' ? view.revealedRound.correctOptionId : view.revealedRound.question.options.find((o) => o.id === view.revealedRound!.correctOptionId)?.text ?? '—'}
             </p>
             {view.revealedRound.explanation ? <p className="mb-pj-reveal-explain">{view.revealedRound.explanation}</p> : null}
           </div>
@@ -562,21 +563,9 @@ function ClassroomSummary({ view }: { view: ProjectorSessionView }) {
       </section>
     );
   }
-  const pct = Math.round(final.progressPercent);
-  const finalUnlocked = ['garden', 'library', 'homes', 'town-center'].filter((_, i) => pct >= [25, 50, 75, 100][i]);
   return (
     <section className="mb-pj-phase mb-fade-in">
-      <h2 className="mb-display mb-pj-final-title">
-        {final.missionAchieved ? 'Kota Cahaya berhasil dinyalakan!' : `Kota Cahaya menyala ${pct}%!`}
-      </h2>
-      <div className="mb-pj-world" aria-hidden>
-        <KotaScene unlocked={finalUnlocked} />
-      </div>
-      <p className="mb-pj-mission" role="status">
-        {final.missionAchieved
-          ? 'Seluruh kelas berhasil mencapai misi — hebat!'
-          : 'Kerja bagus, kelas sudah berjuang keras bersama-sama!'}
-      </p>
+      <KotaFinalDisplay progressPercent={final.progressPercent} missionAchieved={final.missionAchieved} podium={final.podium ?? []} />
     </section>
   );
 }

@@ -13,6 +13,7 @@
  * Run: npx tsx scripts/test-murid-premium-activation.ts
  */
 
+import { resolveIdentity } from "../lib/account/identity";
 import { readFileSync, existsSync } from "fs";
 import { join } from "path";
 
@@ -162,7 +163,11 @@ async function main() {
   console.log(`\n${YELLOW}--- 10. Premium Economy Plan Resolution ---${RESET}`);
   const premiumPlansPath = "lib/premium-economy/plans.ts";
   assertContains(premiumPlansPath, 'role === "MURID" ? "MURID_PREMIUM" : "PRO"', "Plan resolver maps MURID to MURID_PREMIUM");
-  assertContains(premiumPlansPath, "isPremium && user.premiumUntil", "Plan resolver uses isPremium + premiumUntil");
+  assertContains(premiumPlansPath, "resolveIdentity(user)", "Plan resolver delegates to canonical identity");
+  const expiry = new Date(Date.now() + 86400000);
+  assert(resolveIdentity({ role: "MURID", isPremium: true, premiumPlan: "PRO", premiumUntil: expiry }).plan === "MURID_PREMIUM", "Valid student entitlement resolves to student tier");
+  assert(resolveIdentity({ role: "MURID", isPremium: true, premiumPlan: "PRO", premiumUntil: new Date(0) }).plan === "FREE", "Expired flag never grants a premium tier");
+  assert(resolveIdentity({ role: "MURID", isPremium: true, premiumUntil: expiry, subscriptions: [{ status: "CANCELLED", currentPeriodEnd: expiry }] }).plan === "FREE", "Cancelled subscription overrides stale flag");
 
   // ── Summary ──
   console.log(`\n${YELLOW}=== Results ===${RESET}`);

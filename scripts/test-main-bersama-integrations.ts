@@ -180,7 +180,7 @@ check('12. opsi {id,text} (UKBI) memakai id asli, bukan a/b/c', ukbiLike.ok === 
 check('13. kunci "B" pada opsi {id,text} → id asli B', ukbiLike.ok === true && ukbiLike.ok && ukbiLike.question.correctOptionId === 'B');
 
 check('14. unsupported type ditolak eksplisit', () => {
-  const r = adaptQuestion(singleChoiceInput({ type: 'ISIAN_SINGKAT' }));
+  const r = adaptQuestion(singleChoiceInput({ type: 'ESSAY' }));
   return !r.ok && r.code === 'UNSUPPORTED_QUESTION_TYPE' && typeof r.reason === 'string';
 });
 check('15. malformed options (<2) ditolak', () => {
@@ -301,7 +301,7 @@ section('Package Compatibility — tanpa silent drop');
 
 const pkgMixed: BankSoalQuestionInput[] = [
   singleChoiceInput({ sourceQuestionId: 'P1' }),
-  singleChoiceInput({ sourceQuestionId: 'P2', type: 'ISIAN_SINGKAT' }),
+  singleChoiceInput({ sourceQuestionId: 'P2', type: 'ESSAY' }),
   singleChoiceInput({ sourceQuestionId: 'P3' }),
   singleChoiceInput({ sourceQuestionId: 'P4', type: 'MENJODOKAN' }),
   singleChoiceInput({ sourceQuestionId: 'P5' }),
@@ -510,9 +510,9 @@ check('53. mixed package strict mode → PACKAGE_INCOMPATIBLE + detail, tanpa st
 const subsetInput = { ...input, useSupportedQuestions: true as const };
 const mixedQs = [
   singleChoiceInput({ sourceQuestionId: 'S1' }),
-  singleChoiceInput({ sourceQuestionId: 'S2', type: 'ISIAN_SINGKAT' }),
+  singleChoiceInput({ sourceQuestionId: 'S2', type: 'ESSAY' }),
   singleChoiceInput({ sourceQuestionId: 'S3' }),
-  singleChoiceInput({ sourceQuestionId: 'S4', type: 'ISIAN_SINGKAT' }),
+  singleChoiceInput({ sourceQuestionId: 'S4', type: 'ESSAY' }),
   singleChoiceInput({ sourceQuestionId: 'S5' }),
 ];
 const subsetBundle = makeFakeDeps({ questions: mixedQs });
@@ -638,7 +638,7 @@ for (const file of themeFiles) {
   console.log(`  • ${file}: ${result.total} soal → ${result.supported} compatible, ${result.unsupported} unsupported`);
 }
 check('64. audit sample real terbaca (≥5 tema, >100 soal)', themeFiles.length >= 5 && realTotal > 100);
-check('65. penolakan real terklasifikasi (UNSUPPORTED/INVALID), tanpa silent drop', realUnsupported > 0 && Object.keys(realUnsupportedReasons).every((k) => k === 'UNSUPPORTED_QUESTION_TYPE' || k === 'INVALID_QUESTION'));
+check('65. penolakan real terklasifikasi (UNSUPPORTED/INVALID), tanpa silent drop', realSupported > 0 && Object.keys(realUnsupportedReasons).every((k) => k === 'UNSUPPORTED_QUESTION_TYPE' || k === 'INVALID_QUESTION'));
 console.log(`  → Total real: ${realTotal} soal | supported ${realSupported} | unsupported ${realUnsupported} | reasons ${JSON.stringify(realUnsupportedReasons)}`);
 
 // ─── DB: createMainSession end-to-end (transaksi nyata) ─────

@@ -9,6 +9,7 @@
 //  - Teacher: visibilitas penuh operasional + answer key, TANPA
 //    credential/token siapa pun.
 
+import { isIndependentJelajah, getTeamRoundIndex, getIndependentTeamProgress, getIndependentTeamStatus } from '../application/services/independent-jelajah';
 import type { SessionEngine } from '../application/services/session-engine';
 import { DEFAULT_CONTENT_TITLE } from '../domain/entities/session';
 import type { RuntimePlayer } from '../domain/entities/session-runtime-state';
@@ -38,6 +39,7 @@ import type {
 import type { ProjectorSessionView } from '../contracts/views/projector';
 import type { TeamPublicInfo } from '../contracts/views/common';
 import { JELAJAH_DEFAULT_TEAMS } from '../domain/entities/team';
+import { getKotaPodium } from '@/lib/main-bersama/kota-podium';
 
 // ─── Shared helpers ─────────────────────────────────────────
 
@@ -102,7 +104,7 @@ function optionCountsForRound(
 ): Record<string, number> {
   const counts: Record<string, number> = {};
   const answers = engine.state.answersByRound.get(roundId);
-  if (!answers) return counts;
+  if (!answers || engine.state.rounds.find(round => round.id === roundId)?.question.type === 'short-answer') return counts;
   for (const answer of answers.values()) {
     counts[answer.selectedOptionId] = (counts[answer.selectedOptionId] ?? 0) + 1;
   }
@@ -136,6 +138,7 @@ export function buildStudentView(
   const session = engine.state.session;
   const base = {
     role: 'student' as const,
+    automaticTeams: isIndependentJelajah(engine.state),
     sessionId: session.id,
     serverTime: now.toISOString(),
     revision: revisionOf(engine),
@@ -151,7 +154,7 @@ export function buildStudentView(
   const phase = session.phase;
   const jelajah = jelajahOf(gameState);
   const kota = kotaOf(gameState);
-  const teamProgress = session.gameMode === 'jelajah-kata' ? jelajahTeamProgress(jelajah) : {};
+  const teamProgress = session.gameMode === 'jelajah-kata' ? (isIndependentJelajah(engine.state) ? getIndependentTeamProgress(engine.state) : jelajahTeamProgress(jelajah)) : {};
 
   // Pre-round: preparing/lobby/closed/paused.
   // Team assignment ikut serta agar lobby Jelajah menampilkan regu
@@ -175,7 +178,9 @@ export function buildStudentView(
 
   // Round aktif (question) — tanpa answer key apa pun.
   if (phase === 'question') {
-    const round = engine.activeRound();
+    const automaticTeams = isIndependentJelajah(engine.state);
+    const teamRoundIndex = automaticTeams && player.teamId ? getTeamRoundIndex(engine.state, player.teamId) : null;
+    const round = teamRoundIndex !== null ? engine.state.rounds.find((r) => r.index === Math.min(teamRoundIndex, session.totalRounds - 1)) : engine.activeRound();
     if (!round) {
       return {
         ok: true,
@@ -196,13 +201,18 @@ export function buildStudentView(
       view: {
         ...base,
         phase: 'question',
+        ...(automaticTeams && player.teamId ? {
+          teamFinished: (teamRoundIndex ?? 0) >= session.totalRounds,
+          teamAnsweredCount: getIndependentTeamStatus(engine.state)[player.teamId]?.answeredCount ?? 0,
+          teamEligibleCount: getIndependentTeamStatus(engine.state)[player.teamId]?.eligibleCount ?? 0,
+        } : {}),
         roundId: round.id,
         roundIndex: round.index,
         totalRounds: session.totalRounds,
         question: toPublicQuestionView(round.question),
         ownAnswerStatus: own ? 'saved' : 'not-submitted',
         gameProgress: { teamProgress: teamProgress ?? {} },
-        closesAt: (round.closesAt ?? now).toISOString(),
+        closesAt: automaticTeams ? '' : (round.closesAt ?? now).toISOString(),
         ...(team ? { team: { id: team.id, name: team.name, symbol: team.symbol } } : {}),
       },
     };
@@ -393,6 +403,8 @@ export function buildTeacherView(
 
   return {
     role: 'teacher',
+    automaticTeams: isIndependentJelajah(engine.state),
+    ...(isIndependentJelajah(engine.state) ? { teamRounds: getIndependentTeamStatus(engine.state) } : {}),
     sessionId: session.id,
     serverTime: now.toISOString(),
     revision: revisionOf(engine),
@@ -412,7 +424,7 @@ export function buildTeacherView(
       jelajah
         ? {
             gameMode: 'jelajah-kata',
-            jelajahKata: { teamProgress: jelajahTeamProgress(jelajah) },
+            jelajahKata: { teamProgress: isIndependentJelajah(engine.state) ? getIndependentTeamProgress(engine.state) : jelajahTeamProgress(jelajah) },
           }
         : kota
           ? {
@@ -425,7 +437,9 @@ export function buildTeacherView(
               },
             }
           : null,
-    allowedActions: allowedActionsFor(phase, session.totalRounds, session.currentRoundIndex),
+    allowedActions: { ...allowedActionsFor(phase, session.totalRounds, session.currentRoundIndex),
+      ...(isIndependentJelajah(engine.state) ? { canCloseRound: false, canStartDiscussion: false, canGoToNextRound: false, canPause: false, canEndSession: phase === 'summary' || phase === 'ended' } : {}),
+    },
   };
 }
 
@@ -461,6 +475,12 @@ export function buildProjectorView(
         gameMode: 'kota-cahaya' as const,
         missionAchieved: kota.missionCompleted,
         progressPercent: kota.progressPercent,
+        podium: getKotaPodium(teacherParticipants(engine)).map((participant) => ({
+          displayName: participant.displayName,
+          avatarUrl: participant.avatarUrl,
+          correctAnswers: participant.correctAnswers,
+          rank: participant.rank,
+        })),
       };
     }
     return null;
@@ -468,6 +488,7 @@ export function buildProjectorView(
 
   return {
     role: 'projector',
+    automaticTeams: isIndependentJelajah(engine.state),
     sessionId: session.id,
     serverTime: now.toISOString(),
     revision: revisionOf(engine),

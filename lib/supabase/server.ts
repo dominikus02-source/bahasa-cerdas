@@ -1,3 +1,4 @@
+import { identitySelect, normalizedIdentity } from "@/lib/account/identity";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies, headers } from "next/headers";
 import { db } from "@/lib/db";
@@ -107,9 +108,9 @@ export const getUser = cache(async () => {
   if (!supabaseId) return null;
 
   try {
-    return await db.user.findUnique({
-      where: { supabaseId },
-    });
+    const user = await db.user.findUnique({ where: { supabaseId }, include: { subscriptions: identitySelect.subscriptions } });
+    if (!user || user.email.endsWith("@account.invalid")) return null;
+    return normalizedIdentity(user);
   } catch (error: any) {
     console.error("AUTH_DB_USER_LOOKUP_FAILED", {
       error: error?.message || String(error),

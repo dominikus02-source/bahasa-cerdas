@@ -12,6 +12,7 @@ import type { TeamPublicInfo } from './common';
 
 interface StudentViewBase {
   role: 'student';
+  automaticTeams?: boolean;
   sessionId: SessionId;
   /** ISO-8601 UTC — kapan state ini dibangun server. */
   serverTime: string;
@@ -43,6 +44,9 @@ interface StudentPreRoundView extends StudentViewBase {
 
 /** Soal aktif — tanpa correctOptionId, isCorrect, atau explanation. */
 interface StudentQuestionView extends StudentViewBase {
+  teamFinished?: boolean;
+  teamAnsweredCount?: number;
+  teamEligibleCount?: number;
   phase: 'question';
   /** Id round aktif — dibalikkan saat submit (bukan secret). */
   roundId: RoundId;

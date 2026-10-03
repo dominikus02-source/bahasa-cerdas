@@ -6,6 +6,7 @@
 import type { QuestionId, SourceQuestionId } from '../types/ids';
 
 export type MainQuestionType =
+  | 'short-answer'
   | 'single-choice'
   | 'true-false'
   | 'passage-single-choice';
@@ -32,6 +33,7 @@ export interface MainQuestionSnapshot {
   type: MainQuestionType;
   prompt: string;
   options: MainQuestionOption[];
+  /** For short-answer, this server-only field stores the accepted text. */
   correctOptionId: string;
   explanation?: string;
   passage?: MainQuestionPassage;

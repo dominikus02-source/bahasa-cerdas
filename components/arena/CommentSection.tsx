@@ -17,6 +17,7 @@ interface CommentUser {
   equippedBadge?: string | null
   isFounder?: boolean
   isPremium?: boolean
+  badgeKind?: import("@/lib/account/identity").IdentityBadge | null
   rank?: string
 }
 
@@ -159,7 +160,7 @@ export default function CommentSection({ karyaId, initialComments, initialCount,
                 className="text-xs font-bold text-gray-900 dark:text-slate-100 hover:text-violet-600"
                 badgeSize={13}
                 isFounder={c.user.isFounder}
-                isPremium={c.user.isPremium}
+                isPremium={c.user.isPremium} badgeKind={c.user.badgeKind}
               />
               {c.user.rank && <RankChip rank={c.user.rank} size={13} showTitle={false} compact />}
               <span className="text-[10px] text-gray-400">{waktuLalu(c.createdAt)}</span>

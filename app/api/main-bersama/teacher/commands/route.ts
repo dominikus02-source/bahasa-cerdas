@@ -144,7 +144,7 @@ export async function POST(req: NextRequest) {
         actor,
         // Composition root: sumber tema Bank Soal (util BC) diinjeksi
         // dari luar adapter — lihat ports.ts BankThemeQuestionSource.
-        bankSoal: new PrismaBankSoalQuestionSource(new PrismaBankThemeQuestionSource()),
+        bankSoal: new PrismaBankSoalQuestionSource(new PrismaBankThemeQuestionSource(), actor.userId),
         classes: new PrismaMainBersamaClassDirectory(),
         store: new PrismaMainSessionCreationStore(),
         ids: new UuidIdGenerator(),

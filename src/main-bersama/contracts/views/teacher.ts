@@ -55,6 +55,8 @@ export interface TeacherAllowedActions {
 
 export interface TeacherSessionView {
   role: 'teacher';
+  automaticTeams?: boolean;
+  teamRounds?: Record<string, { roundIndex: number; finished: boolean; answeredCount: number; eligibleCount: number }>;
   sessionId: SessionId;
   /** ISO-8601 UTC. */
   serverTime: string;

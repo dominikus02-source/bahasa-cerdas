@@ -12,6 +12,9 @@
 // Idempotency survive restart karena attempt ledger ada di DB,
 // bukan hanya Map in-memory Session Engine.
 
+import { loadSessionRuntime } from '../persistence/load-session-runtime';
+import { getIndependentTeamProgress, getIndependentTeamStatus } from '../../application/services/independent-jelajah';
+import { jelajahStateFromJson } from './prisma-game-state-repository';
 import { MainRoundStatus, Prisma } from '@prisma/client';
 import { db } from '@/lib/db';
 import type { MainAnswer } from '../../domain/entities/answer';
@@ -143,6 +146,9 @@ export class PrismaAnswerRepository implements AnswerRepository {
   async submitAnswer(input: SubmitAnswerDbInput): Promise<SubmitAnswerDbResult> {
     try {
       const answer = await db.$transaction(async (tx) => {
+        const targetRound = await tx.mainRound.findUnique({ where: { id: input.roundId }, include: { session: true } });
+        const independent = targetRound?.session.gameMode === 'JELAJAH_KATA' && targetRound.closesAt === null;
+        if (independent) await tx.$queryRaw`SELECT id FROM "MainSession" WHERE id = ${input.sessionId} FOR UPDATE`;
         // 1. Request idempotency (ledger global).
         const attempt = await tx.mainAnswerSubmission.findUnique({
           where: { submissionId: input.submissionId },
@@ -186,6 +192,10 @@ export class PrismaAnswerRepository implements AnswerRepository {
           throw new AlreadyExistsError();
         }
 
+        const runtime = independent ? await loadSessionRuntime({ sessionId: input.sessionId, tx, clock: { now: () => input.submittedAt } }) : null;
+        const checked = runtime?.ok ? runtime.engine.evaluateSubmission(input) : null;
+        if (independent && (!checked?.ok || !runtime?.ok)) throw new RoundNotOpenError();
+
         // 3. COMPARE-AND-SET: round WAJIB masih OPEN (durable, bukan cache).
         //    updateMany tanpa match mengembalikan count 0 (tanpa throw);
         //    UPDATE kondisional ini mengambil row-lock yang sama dengan
@@ -214,7 +224,7 @@ export class PrismaAnswerRepository implements AnswerRepository {
             selectedOptionId: input.selectedOptionId,
             submittedAt: input.submittedAt,
             source: 'individual',
-            isCorrect: input.isCorrect,
+            isCorrect: checked?.ok ? checked.value.isCorrect : input.isCorrect,
           }),
         });
         await tx.mainAnswerSubmission.create({
@@ -227,8 +237,30 @@ export class PrismaAnswerRepository implements AnswerRepository {
             accepted: true,
           },
         });
+        if (runtime?.ok && checked?.ok) {
+          runtime.engine.applySubmission(input, checked.value);
+          const state = runtime.engine.state;
+          const statuses = Object.values(getIndependentTeamStatus(state));
+          const completed = statuses.length > 0 && statuses.every((team) => team.finished);
+          const currentRoundIndex = completed ? state.session.totalRounds - 1 : Math.min(...statuses.map((team) => team.roundIndex));
+          await tx.mainSession.update({ where: { id: input.sessionId }, data: {
+            phase: completed ? 'SUMMARY' : 'QUESTION', currentRoundIndex,
+            ...(completed ? { endedAt: input.submittedAt } : {}),
+          } });
+          const persisted = await tx.mainGameState.findUnique({ where: { sessionId: input.sessionId } });
+          if (persisted) {
+            const game = jelajahStateFromJson(persisted.state);
+            const progress = getIndependentTeamProgress(state);
+            for (const [id, team] of Object.entries(game.teams)) team.progress = progress[id] ?? 0;
+            game.nextRoundIndex = completed ? state.session.totalRounds : currentRoundIndex;
+            await tx.mainGameState.update({ where: { sessionId: input.sessionId }, data: {
+              state: game as unknown as Prisma.InputJsonValue, status: completed ? 'FINAL' : 'ACTIVE',
+            } });
+          }
+          if (completed) await tx.mainRound.updateMany({ where: { sessionId: input.sessionId }, data: { status: 'CLOSED', closedAt: input.submittedAt } });
+        }
         return { status: 'saved' as const, row: created };
-      });
+      }, { timeout: 20000 });
 
       return {
         ok: true,

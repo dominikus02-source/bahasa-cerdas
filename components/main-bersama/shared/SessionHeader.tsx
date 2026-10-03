@@ -31,8 +31,8 @@ export function SessionHeader({
           <i className="mb-session-dot" aria-hidden />
           {MODE_LABEL[mode]}
         </span>
-        {packageName ? <span className="mb-session-pkg">{packageName}</span> : null}
-        {className ? <span className="mb-session-pkg">{className}</span> : null}
+        {packageName ? <span className="mb-session-pkg" title={packageName}>{packageName}</span> : null}
+        {className ? <span className="mb-session-pkg" title={className}>{className}</span> : null}
         {roundLabel ? (
           <span className="mb-session-round mb-number">{roundLabel}</span>
         ) : null}
@@ -44,6 +44,7 @@ export function SessionHeader({
           align-items: center;
           justify-content: space-between;
           gap: var(--mb-space-3);
+          flex-wrap: wrap;
           padding: var(--mb-space-3) var(--mb-space-5);
         }
         .mb-session-meta {
@@ -52,6 +53,7 @@ export function SessionHeader({
           flex-wrap: wrap;
           gap: var(--mb-space-2);
           min-width: 0;
+          flex: 1 1 220px;
         }
         .mb-session-mode {
           display: inline-flex;
@@ -77,12 +79,16 @@ export function SessionHeader({
           color: var(--mb-text-secondary);
           font-size: 0.85rem;
           font-weight: 600;
+          overflow-wrap: anywhere;
         }
         .mb-scope-guru .mb-session-pkg,
         .mb-scope-guru .mb-session-round { color: var(--mb-text-guru-secondary); }
         .mb-session-actions {
           display: flex;
           gap: var(--mb-space-2);
+          flex-wrap: wrap;
+          align-items: center;
+          min-width: 0;
         }
       `}</style>
     </header>

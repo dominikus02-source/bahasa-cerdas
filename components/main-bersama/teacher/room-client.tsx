@@ -46,6 +46,14 @@ type Command =
   | 'pause'
   | 'resume';
 
+import { TeamMascot } from '@/components/main-bersama/art/registry';
+import { getStudentPodium } from '@/lib/main-bersama/student-podium';
+import { getKotaPodium } from '@/lib/main-bersama/kota-podium';
+import KotaFinalDisplay from '@/components/main-bersama/shared/KotaFinalDisplay';
+import { getTeacherPrimaryAction } from '@/lib/main-bersama/teacher-primary-action';
+
+const EMPTY_TEAM_PROGRESS: Record<string, number> = {};
+
 export function TeacherRoomClient({
   sessionId,
   pin,
@@ -92,6 +100,11 @@ export function TeacherRoomClient({
         : undefined,
   });
 
+  const kotaCahayaState =
+    view?.gameState?.gameMode === 'kota-cahaya'
+      ? view.gameState.kotaCahaya
+      : null;
+
   const run = useCallback(
     async (action: Command) => {
       setBusy(true);
@@ -126,10 +139,10 @@ export function TeacherRoomClient({
   // belum tersedia. Jangan letakkan hook setelah early return.
   const jelajahTeamProgress = view?.gameState?.gameMode === 'jelajah-kata'
     ? view.gameState.jelajahKata.teamProgress
-    : {};
+    : EMPTY_TEAM_PROGRESS;
   const { getPose: getTrailPose } = useTrailMotion(
     jelajahTeamProgress,
-    view?.gameMode === 'jelajah-kata' ? view.phase : 'preparing',
+    view?.gameMode === 'jelajah-kata' ? (view.automaticTeams && view.phase === 'question' ? 'discussion' : view.phase) : 'preparing',
   );
 
   if (!view) {
@@ -143,21 +156,31 @@ export function TeacherRoomClient({
 
   const answered = view.answerSummary.submittedCount;
   const eligible = view.answerSummary.eligibleCount;
-  // ── CTA utama per fase (§18 — hanya aksi yang relevan) ──
-  // Lobby section me-render CTA fase preparing/lobby (lihat di bawah);
-  // fase lain me-render CTA statis per section.
-
-  const isLastRound =
-    (view.currentRoundIndex ?? -1) + 1 >= view.totalRounds;
+  const primaryAction = getTeacherPrimaryAction(view);
+  const primaryControl = primaryAction ? (
+    <PrimaryGameButton
+      onClick={() => {
+        if (primaryAction.command === 'start') void teacherSound.activate();
+        void run(primaryAction.command);
+      }}
+      disabled={busy || primaryAction.disabled}
+      loading={busy}
+      variant="light"
+    >
+      {primaryAction.command === 'start' ? <span className="mb-start-play-icon" aria-hidden>▶</span> : null}
+      {primaryAction.label}
+    </PrimaryGameButton>
+  ) : null;
 
   const roundLabel =
-    view.currentRoundIndex !== null
+    view.automaticTeams && view.phase === 'question' ? 'Regu mandiri' : view.currentRoundIndex !== null
       ? `${view.currentRoundIndex + 1} / ${view.totalRounds}`
       : null;
 
   return (
     <main className={`mb-room game-fullscreen${fullscreen.isFullscreen ? " mb-room-fullscreen-active" : ""}`}>
       <ConnectionBanner visible={connection === 'offline'} />
+      <div className="mb-room-toolbar">
       <SessionHeader
         mode={view.gameMode}
         packageName={view.contentTitle}
@@ -193,12 +216,24 @@ export function TeacherRoomClient({
         }
       />
 
-      <div className="mb-host-mode-note" role="status">Mode Guru · layar ini dapat langsung diproyeksikan ke kelas</div>
       <nav className="mb-host-tabs" aria-label="Panel Main Bersama">
-        <button type="button" className={`mb-host-tab ${activeTab === 'layar' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('layar')}>Tampilan Kelas</button>
-        <button type="button" className={`mb-host-tab ${activeTab === 'kontrol' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('kontrol')}>Kontrol Guru</button>
-        <button type="button" className={`mb-host-tab ${activeTab === 'analisis' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('analisis')}>Analisis</button>
+        <button type="button" aria-pressed={activeTab === 'layar'} className={`mb-host-tab ${activeTab === 'layar' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('layar')}>Tampilan Kelas</button>
+        <button type="button" aria-pressed={activeTab === 'kontrol'} className={`mb-host-tab ${activeTab === 'kontrol' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('kontrol')}>Kontrol Guru</button>
+        <button type="button" aria-pressed={activeTab === 'analisis'} className={`mb-host-tab ${activeTab === 'analisis' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('analisis')}>Analisis</button>
       </nav>
+      {activeTab === 'layar' && primaryAction ? (
+        <div className="mb-classroom-actions" aria-label="Kendali permainan kelas">
+          <div className="mb-classroom-action-context">
+            <strong>{view.phase === 'lobby' ? 'Kelas siap bermain?' : view.phase === 'summary' ? 'Hasil permainan' : view.phase === 'paused' ? 'Permainan dijeda' : `Soal ${roundLabel ?? '—'}`}</strong>
+            <span>{view.phase === 'lobby' ? (view.participants.length === 0 ? 'Tunggu minimal satu siswa bergabung untuk mulai.' : `${view.participants.length} siswa sudah masuk · mulai saat kelas sudah siap.`) : view.phase === 'question' ? `${answered} dari ${eligible} siswa sudah menjawab` : view.phase === 'closed' ? 'Jawaban terkunci · lanjutkan ke pembahasan' : view.phase === 'discussion' ? 'Selesai membahas? Lanjutkan dari sini.' : 'Kendalikan permainan dari layar ini.'}</span>
+          </div>
+          <div className="mb-classroom-action-buttons">
+            {view.allowedActions.canPause && view.phase !== 'lobby' ? <button type="button" className="mb-secondary-btn" onClick={() => void run('pause')} disabled={busy}>Jeda</button> : null}
+            {primaryControl}
+          </div>
+        </div>
+      ) : null}
+      </div>
 
       {error ? (
         <p role="alert" className="mb-room-error">{error}</p>
@@ -210,7 +245,7 @@ export function TeacherRoomClient({
             <div>
               <span className="mb-eyebrow">Panel Guru</span>
               <h2 className="mb-display">Kontrol Permainan</h2>
-              <p>Semua kendali permainan ada di sini. Tampilan Kelas tetap bersih untuk proyektor.</p>
+              <p>Atur jalannya permainan dan pantau jawaban siswa.</p>
             </div>
             <strong className="mb-host-phase">{view.phase === 'lobby' ? 'Lobi' : view.phase === 'question' ? 'Soal berlangsung' : view.phase === 'closed' ? 'Jawaban ditutup' : view.phase === 'discussion' ? 'Pembahasan' : view.phase === 'paused' ? 'Dijeda' : view.phase === 'summary' ? 'Hasil' : 'Selesai'}</strong>
           </div>
@@ -221,16 +256,11 @@ export function TeacherRoomClient({
             <div><strong>{answered}/{eligible}</strong><span>Sudah menjawab</span></div>
           </div>
           <div className="mb-host-actions">
-            {view.phase === 'lobby' ? <PrimaryGameButton onClick={() => { void teacherSound.activate(); void run('start'); }} disabled={busy || view.participants.length === 0} loading={busy} variant="light">Mulai Permainan</PrimaryGameButton> : null}
-            {view.phase === 'question' ? <PrimaryGameButton onClick={() => run('close-round')} disabled={busy} loading={busy} variant="light">Tutup Jawaban</PrimaryGameButton> : null}
-            {view.phase === 'closed' ? <PrimaryGameButton onClick={() => run('discuss')} disabled={busy} loading={busy} variant="light">Bahas Jawaban</PrimaryGameButton> : null}
-            {view.phase === 'discussion' ? <PrimaryGameButton onClick={() => run('next-round')} disabled={busy} loading={busy} variant="light">{isLastRound ? 'Lihat Hasil' : 'Lanjut'}</PrimaryGameButton> : null}
-            {view.phase === 'paused' ? <PrimaryGameButton onClick={() => run('resume')} disabled={busy} loading={busy} variant="light">Lanjutkan Permainan</PrimaryGameButton> : null}
-            {view.phase === 'summary' ? <PrimaryGameButton onClick={() => run('end')} disabled={busy} loading={busy} variant="light">Tutup Sesi</PrimaryGameButton> : null}
+            {primaryControl}
             {view.allowedActions.canPause ? <button type="button" className="mb-secondary-btn" onClick={() => run('pause')} disabled={busy}>Jeda</button> : null}
             {view.allowedActions.canEndSession && view.phase !== 'summary' ? <button type="button" className="mb-secondary-btn mb-danger-btn" onClick={() => run('end')} disabled={busy}>Akhiri</button> : null}
           </div>
-          <p className="mb-host-tip">Gunakan <strong>Tampilan Kelas</strong> untuk proyektor. Semua kendali dan pemantauan siswa ada di panel ini.</p>
+          <p className="mb-host-tip">Gunakan <strong>Tampilan Kelas</strong> untuk proyektor. Kendali utama juga tersedia langsung di Tampilan Kelas.</p>
 
           <div className="mb-teacher-monitor">
             <div className="mb-teacher-monitor-head">
@@ -323,11 +353,11 @@ export function TeacherRoomClient({
               </div>
               <div className="mb-analysis-overview mb-kota-cahaya-overview">
                 <div>
-                  <strong>{view.gameState?.gameMode === 'kota-cahaya' ? Math.round(view.gameState.kotaCahaya.progressPercent) : 0}%</strong>
+                  <strong>{Math.round(kotaCahayaState?.progressPercent ?? 0)}%</strong>
                   <span>Progres Kota</span>
                 </div>
                 <div>
-                  <strong>{view.gameState?.gameMode === 'kota-cahaya' ? view.gameState.kotaCahaya.unlockedMilestones.length : 0}</strong>
+                  <strong>{kotaCahayaState?.unlockedMilestones.length ?? 0}</strong>
                   <span>Tahap terbuka</span>
                 </div>
                 <div>
@@ -384,7 +414,7 @@ export function TeacherRoomClient({
             <div className="mb-lobby-stage-top">
               <div className="mb-lobby-stage-copy">
                 <span className="mb-eyebrow mb-lobby-stage-eyebrow">Lobi Kelas</span>
-                <h2 className="mb-display mb-lobby-stage-title">SIAP MASUK ARENA?</h2>
+                <h2 className="mb-display mb-lobby-stage-title">Siap bermain bersama?</h2>
                 <p>
                   Bagikan PIN, tunggu nama siswa muncul, lalu mulai saat kelas sudah lengkap.
                 </p>
@@ -406,10 +436,6 @@ export function TeacherRoomClient({
                   </span>
                   <span className="mb-chip mb-lobby-chip mb-lobby-content">{view.contentTitle}</span>
                   <span className="mb-chip mb-lobby-chip mb-number">{view.totalRounds} soal</span>
-                  <span className="mb-chip mb-lobby-chip">
-                    {view.gameMode === 'jelajah-kata' ? 'Jelajah Kata' : 'Kota Cahaya'}
-                  </span>
-                  {className ? <span className="mb-chip mb-lobby-chip">Kelas {className}</span> : null}
                 </div>
                 <div className="mb-lobby-join-tools">
                   <div className="mb-lobby-qr mb-lobby-qr-card">
@@ -419,9 +445,6 @@ export function TeacherRoomClient({
                   <div className="mb-lobby-join-copy">
                     <strong>Gabung Main Bersama</strong>
                     <span>Masukkan PIN di atas atau scan QR.</span>
-                    <p className="mb-lobby-hint mb-lobby-hint-dark" role="note">
-                      <strong>2 layar saja:</strong> layar Guru untuk mengatur permainan, perangkat Murid untuk menjawab.
-                    </p>
                   </div>
                 </div>
               </div>
@@ -458,15 +481,6 @@ export function TeacherRoomClient({
               </div>
             </div>
 
-            <div className="mb-lobby-action-deck">
-              <div className="mb-lobby-action-note">
-                <strong>{view.phase === 'preparing' ? 'Menyiapkan lobi…' : 'Kelas siap?'}</strong>
-                <span>Guru mengendalikan seluruh permainan dari layar ini.</span>
-              </div>
-              <div className="mb-lobby-action-buttons">
-                <span className="mb-lobby-control-note">Buka <strong>Kontrol Guru</strong> untuk memulai permainan.</span>
-              </div>
-            </div>
           </div>
         </section>
       ) : null}
@@ -480,12 +494,12 @@ export function TeacherRoomClient({
                 <div>
                   <span className="mb-eyebrow">Dunia Jelajah Kata</span>
                   <h2 className="mb-display mb-jelajah-host-title">Perjalanan Regu</h2>
-                  <p>Jawaban siswa menggerakkan regunya maju. Layar ini khusus untuk menikmati perjalanan kelas.</p>
+                  <p>Setiap regu maju mandiri. Soal berganti otomatis setelah seluruh anggota regu menjawab.</p>
                 </div>
                 <div className="mb-jelajah-host-live">
                   <span className="mb-jelajah-host-live-dot" aria-hidden />
-                  <strong>{answered}/{eligible}</strong>
-                  <span>sudah menjawab</span>
+                  <strong>{view.automaticTeams ? Object.values(view.teamRounds ?? {}).filter((team) => team.finished).length : `${answered}/${eligible}`}</strong>
+                  <span>{view.automaticTeams ? 'regu selesai · otomatis' : 'sudah menjawab'}</span>
                 </div>
               </div>
 
@@ -503,7 +517,7 @@ export function TeacherRoomClient({
                     const progress = Math.round(jelajahTeamProgress[team.id] ?? 0);
                     return (
                       <div className="mb-jelajah-host-team" key={team.id}>
-                        <span className="mb-jelajah-host-team-name">{team.name}</span>
+                        <span className="mb-jelajah-host-team-name">{team.name}{view.teamRounds?.[team.id] ? <small>{view.teamRounds[team.id].finished ? 'Selesai' : `Soal ${view.teamRounds[team.id].roundIndex + 1}/${view.totalRounds} · ${view.teamRounds[team.id].answeredCount}/${view.teamRounds[team.id].eligibleCount} menjawab`}</small> : null}</span>
                         <span className="mb-jelajah-host-team-progress">{progress}%</span>
                       </div>
                     );
@@ -511,7 +525,7 @@ export function TeacherRoomClient({
                 </div>
                 <span className="mb-classroom-control-hint">
                   {view.phase === 'question'
-                    ? 'Murid menjawab dari perangkat masing-masing · perjalanan regu bergerak otomatis.'
+                    ? 'Soal berganti per regu · hasil akhir tampil otomatis ketika semua regu selesai.'
                     : view.phase === 'discussion'
                       ? 'Guru sedang membahas jawaban · perjalanan tetap menjadi panggung kelas.'
                       : view.phase === 'paused'
@@ -551,7 +565,7 @@ export function TeacherRoomClient({
               />
             ) : null}
           </div>
-          <p className="mb-classroom-control-hint">Buka <strong>Kontrol Guru</strong> untuk menutup jawaban dan mengatur langkah berikutnya.</p>
+          <p className="mb-classroom-control-hint">Gunakan tombol di atas untuk menutup jawaban dan melanjutkan permainan.</p>
         </section>
       ) : null}
 
@@ -560,7 +574,7 @@ export function TeacherRoomClient({
         <section className="mb-closed mb-fade-in">
           <h2 className="mb-display mb-guru-phase-title">Jawaban ditutup</h2>
           <p className="mb-closed-sub">{answered} dari {eligible} siswa sudah menjawab.</p>
-          <p className="mb-classroom-control-hint">Jawaban sudah terkunci. Buka <strong>Kontrol Guru</strong> untuk memulai pembahasan.</p>
+          <p className="mb-classroom-control-hint">Jawaban sudah terkunci. Pilih Bahas Jawaban di atas untuk memulai pembahasan.</p>
         </section>
       ) : null}
 
@@ -568,7 +582,7 @@ export function TeacherRoomClient({
       {view.gameMode === 'kota-cahaya' && view.phase === 'paused' ? (
         <section className="mb-closed mb-fade-in">
           <h2 className="mb-display mb-guru-phase-title">Permainan dijeda</h2>
-          <p className="mb-classroom-control-hint">Permainan dijeda. Buka <strong>Kontrol Guru</strong> untuk melanjutkan.</p>
+          <p className="mb-classroom-control-hint">Pilih Lanjutkan Permainan di atas saat kelas sudah siap.</p>
         </section>
       ) : null}
 
@@ -589,7 +603,7 @@ export function TeacherRoomClient({
             <p className="mb-reveal-correct">
               Jawaban benar:{' '}
               <strong>
-                {view.currentQuestion.options.find(
+                {view.currentQuestion.type === 'short-answer' ? view.currentQuestion.correctOptionId : view.currentQuestion.options.find(
                   (o) => o.id === view.currentQuestion?.correctOptionId,
                 )?.text ?? '—'}
               </strong>
@@ -612,22 +626,23 @@ export function TeacherRoomClient({
               })}
             </div>
           </div>
-          <p className="mb-classroom-control-hint">Pembahasan tampil di layar kelas. Buka <strong>Kontrol Guru</strong> untuk lanjut ke soal berikutnya.</p>
+          <p className="mb-classroom-control-hint">Pembahasan tampil di layar kelas. Pilih Soal Berikutnya di atas untuk melanjutkan.</p>
         </section>
       ) : null}
 
       {/* ── SUMMARY / CLOSED SESSION (§28 teacher) ── */}
       {view.phase === 'summary' || view.phase === 'ended' ? (
         <section className="mb-tsummary mb-fade-in">
-          <div className="mb-final-hero">
+          {view.gameMode === 'jelajah-kata' ? <div className="mb-final-hero">
             <span className="mb-eyebrow">{view.phase === 'ended' ? 'Sesi selesai' : 'Permainan selesai'}</span>
-            <h2 className="mb-display mb-guru-phase-title">🎉 {view.gameMode === 'jelajah-kata' ? 'Hebat, kelas!' : 'Kota Cahaya selesai!'}</h2>
+            <div className="mb-final-trophy" aria-hidden>✦</div>
+            <h2 className="mb-display mb-guru-phase-title">{view.gameMode === 'jelajah-kata' ? 'Perjalanan hebat, kelas!' : 'Kota Cahaya bersinar!'}</h2>
             <p className="mb-final-subtitle">
               {view.gameMode === 'jelajah-kata'
                 ? 'Inilah progres akhir Jelajah Kata hari ini.'
                 : 'Inilah perkembangan akhir Kota Cahaya hari ini.'}
             </p>
-          </div>
+          </div> : null}
 
           {view.gameMode === 'jelajah-kata' ? (
             <section className="mb-final-podium-card mb-final-jelajah-card">
@@ -638,7 +653,7 @@ export function TeacherRoomClient({
                   <p className="mb-final-podium-caption">
                     {jelajahPodiumView === 'regu'
                       ? 'Lihat hasil perjalanan empat regu sebelum melihat pencapaian siswa.'
-                      : 'Lihat tiga siswa dengan hasil akhir tertinggi pada permainan hari ini.'}
+                      : 'Pencapaian siswa pada tiga peringkat teratas. Nilai seri berbagi peringkat.'}
                   </p>
                 </div>
                 <span className="mb-final-total">
@@ -674,7 +689,7 @@ export function TeacherRoomClient({
                         <div className="mb-team-podium-medal" aria-hidden>
                           {rank === 1 ? '🥇' : rank === 2 ? '🥈' : '🥉'}
                         </div>
-                        <div className="mb-team-podium-emblem" aria-hidden>{team.symbol}</div>
+                        <div className="mb-team-podium-emblem"><TeamMascot teamId={team.id} pose="podium" size={rank === 1 ? 176 : 144} eager /></div>
                         <strong>{team.name}</strong>
                         <span>{members.length} siswa · {memberCorrect}/{memberEligible} benar</span>
                         <div className="mb-team-podium-step">
@@ -686,28 +701,23 @@ export function TeacherRoomClient({
                   })}
                 </div>
               ) : (
-                <div className="mb-final-podium">
-                  {[2, 1, 3].flatMap((rank) =>
-                    [...view.participants]
-                      .filter((p) => p.progressRank === rank)
-                      .slice(0, 1)
-                      .map((p) => (
-                        <div className={`mb-podium-item mb-podium-rank-${p.progressRank}`} key={p.playerId}>
-                          <div className="mb-podium-medal" aria-hidden>
-                            {p.progressRank === 1 ? '🥇' : p.progressRank === 2 ? '🥈' : '🥉'}
-                          </div>
-                          <span className="mb-podium-avatar">
-                            <img src={p.avatarUrl ?? '/avatar/2.webp'} alt="" />
-                          </span>
-                          <strong title={p.displayName}>{p.displayName}</strong>
-                          <span>{p.correctAnswers}/{p.eligibleRounds} benar · {p.progressPercent}%</span>
-                          <div className="mb-podium-step">
-                            <b>{p.progressRank}</b>
-                            <small>{p.progressPercent}%</small>
-                          </div>
-                        </div>
-                      )),
-                  )}
+                <div className="mb-final-podium" data-count={getStudentPodium(view.participants).length}>
+                  {getStudentPodium(view.participants).map((p) => (
+                    <div className={`mb-podium-item mb-podium-rank-${p.progressRank}`} key={p.playerId}>
+                      <div className="mb-podium-medal" aria-hidden>
+                        {p.progressRank === 1 ? '🥇' : p.progressRank === 2 ? '🥈' : '🥉'}
+                      </div>
+                      <span className="mb-podium-avatar">
+                        <img src={p.avatarUrl ?? '/avatar/2.webp'} alt="" />
+                      </span>
+                      <strong title={p.displayName}>{p.displayName}</strong>
+                      <span>{p.correctAnswers} benar dari {p.eligibleRounds} soal yang diikuti · {p.progressPercent}%</span>
+                      <div className="mb-podium-step">
+                        <b>{p.progressRank}</b>
+                        <small>{p.progressPercent}%</small>
+                      </div>
+                    </div>
+                      ))}
                   {view.participants.length === 0 ? <p className="mb-teacher-empty">Belum ada hasil peserta.</p> : null}
                 </div>
               )}
@@ -739,34 +749,15 @@ export function TeacherRoomClient({
               </p>
             </section>
           ) : (
-            <div className="mb-final-grid">
-              <div className="mb-final-city-card">
-                <div className="mb-final-section-head">
-                  <div>
-                    <span className="mb-eyebrow">Perkembangan Kota</span>
-                    <h3>🌆 Kota Cahaya</h3>
-                  </div>
-                  <span className="mb-final-city-progress">
-                    {view.gameState?.gameMode === 'kota-cahaya'
-                      ? Math.round(view.gameState.kotaCahaya.progressPercent)
-                      : 0}%
-                  </span>
-                </div>
-                <CityCahayaStage
-                  progressPercent={
-                    view.gameState?.gameMode === 'kota-cahaya'
-                      ? view.gameState.kotaCahaya.progressPercent
-                      : 0
-                  }
-                  unlockedMilestones={
-                    view.gameState?.gameMode === 'kota-cahaya'
-                      ? view.gameState.kotaCahaya.unlockedMilestones
-                      : []
-                  }
-                />
-                <p>Setiap jawaban benar ikut membantu kelas membuat Kota Cahaya semakin hidup.</p>
-              </div>
-            </div>
+            <KotaFinalDisplay
+              progressPercent={view.gameState?.gameMode === 'kota-cahaya' ? view.gameState.kotaCahaya.progressPercent : 0}
+              missionAchieved={view.gameState?.gameMode === 'kota-cahaya' && view.gameState.kotaCahaya.progressPercent >= 100}
+              podium={getKotaPodium(view.participants)}
+              city={<CityCahayaStage
+                progressPercent={view.gameState?.gameMode === 'kota-cahaya' ? view.gameState.kotaCahaya.progressPercent : 0}
+                unlockedMilestones={view.gameState?.gameMode === 'kota-cahaya' ? view.gameState.kotaCahaya.unlockedMilestones : []}
+              />}
+            />
           )}
           <div className="mb-final-actions">
             <button type="button" className="mb-final-share-btn" disabled={savingResults || resultsSaved || !className} onClick={async () => { setSavingResults(true); try { await saveTeacherResultsToKelasku(sessionId); setResultsSaved(true); } catch (e) { setError(e instanceof MbApiError ? e.message : 'Hasil gagal disimpan.'); } finally { setSavingResults(false); } }}>{resultsSaved ? '✓ Tersimpan di Kelasku' : savingResults ? 'Menyimpan…' : 'Masukkan Nilai ke Kelasku'}</button>
@@ -791,7 +782,7 @@ export function TeacherRoomClient({
             </div>
             <p>
               {view.phase === 'summary'
-                ? <>Tinjau hasil di <strong>Analisis</strong>, lalu buka <strong>Kontrol Guru</strong> untuk menutup sesi.</>
+                ? <>Tinjau hasil di <strong>Analisis</strong>, lalu pilih <strong>Tutup Sesi</strong> di atas.</>
                 : <>Sesi selesai. Podium dan Kota Cahaya tetap menjadi penutup permainan.</>}
             </p>
           </div>

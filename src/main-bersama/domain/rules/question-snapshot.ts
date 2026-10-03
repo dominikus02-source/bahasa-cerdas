@@ -54,7 +54,7 @@ export function validateQuestionSnapshot(
     issues.push({ field: 'prompt', message: 'Prompt wajib string tidak kosong' });
   }
 
-  const validTypes = ['single-choice', 'true-false', 'passage-single-choice'];
+  const validTypes = ['short-answer', 'single-choice', 'true-false', 'passage-single-choice'];
   if (!validTypes.includes(snapshot.type as string)) {
     issues.push({ field: 'type', message: 'Tipe soal tidak dikenal' });
   }
@@ -66,7 +66,11 @@ export function validateQuestionSnapshot(
     });
   }
 
-  if (!Array.isArray(snapshot.options) || snapshot.options.length < 2) {
+  const isShort = snapshot.type === 'short-answer';
+  if (isShort) {
+    if (!Array.isArray(snapshot.options) || snapshot.options.length !== 0)
+      issues.push({field:'options',message:'Isian singkat tidak memiliki opsi publik'});
+  } else if (!Array.isArray(snapshot.options) || snapshot.options.length < 2) {
     issues.push({ field: 'options', message: 'Minimal 2 opsi' });
   } else {
     if (!snapshot.options.every((option) => isValidQuestionOption(option))) {
@@ -85,9 +89,9 @@ export function validateQuestionSnapshot(
   if (
     !isString(snapshot.correctOptionId) ||
     !Array.isArray(snapshot.options) ||
-    !snapshot.options.some(
+    !(isShort ? snapshot.correctOptionId.trim().length > 0 && snapshot.correctOptionId.length <= 200 : snapshot.options.some(
       (option) => (option as MainQuestionOption).id === snapshot.correctOptionId,
-    )
+    ))
   ) {
     issues.push({
       field: 'correctOptionId',

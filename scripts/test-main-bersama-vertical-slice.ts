@@ -336,7 +336,7 @@ async function setupSession(
   await openLobby(deps, teacherA, sessionId as never);
   const credentials = new Map<string, string>();
   for (const name of opts.roster) {
-    const j = await joinSession(deps, { pin, displayName: name });
+    const j = await joinSession(deps, { pin, displayName: name, avatarId: '2' });
     if (!j.ok) throw new Error(`join ${name} gagal: ${JSON.stringify(j)}`);
     credentials.set(name, j.value.credential);
   }
@@ -579,6 +579,17 @@ async function main(): Promise<void> {
     pjK2.finalResult?.gameMode === 'kota-cahaya' && pjK2.finalResult.missionAchieved === true && pjK2.finalResult.progressPercent === 100,
     JSON.stringify(pjK2.finalResult),
   );
+  check('K8. podium Kota tampil: satu siswa, peringkat pertama, dua energi',
+    pjK2.finalResult?.gameMode === 'kota-cahaya' &&
+    pjK2.finalResult.podium?.length === 1 &&
+    pjK2.finalResult.podium[0].displayName === 'Zaki' &&
+    pjK2.finalResult.podium[0].rank === 1 &&
+    pjK2.finalResult.podium[0].correctAnswers === 2);
+  deps.resolver.discard?.(jelajahB.sessionId);
+  const recoveredK = await deps.resolver.resolve(jelajahB.sessionId);
+  const persistedK = (await deps.gameStates.loadGameState(jelajahB.sessionId))?.state ?? null;
+  check('K9. podium dan energi tetap sama setelah proses dimuat ulang dari PostgreSQL',
+    recoveredK.ok && JSON.stringify(buildProjectorView(recoveredK.engine, clock.now(), persistedK).finalResult) === JSON.stringify(pjK2.finalResult));
 
   // ─── Kesimpulan ─────────────────────────────────────────────
   console.log('\n══════════════════════════════════════');

@@ -1,11 +1,12 @@
 "use client";
+import AccountSecurityPanel from "@/components/account/AccountSecurityPanel";
 
 import { useState, useEffect, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
-import { Settings, Banknote, Shield, Save, CheckCircle2, AlertCircle, Loader2, Crown, Eye, EyeOff, Lock, Sparkles, Video, GraduationCap, Zap, User } from "lucide-react";
+import { Settings, Banknote, Shield, Save, CheckCircle2, AlertCircle, Loader2, Crown, Sparkles, Video, GraduationCap, Zap, User } from "lucide-react";
 import Link from "next/link";
 
 type TabType = "rekening" | "keamanan";
@@ -23,13 +24,6 @@ export default function GuruPengaturanPage() {
     holder: "",
     number: "",
   });
-
-  const [password, setPassword] = useState({
-    current: "",
-    new: "",
-    confirm: "",
-  });
-  const [showPass, setShowPass] = useState(false);
 
   const supabase = useMemo(() => createClient(), []);
 
@@ -81,36 +75,6 @@ export default function GuruPengaturanPage() {
     }
   };
 
-  const handlePasswordSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage(null);
-    if (password.new !== password.confirm) {
-      setMessage({ type: "error", text: "Password baru dan konfirmasi tidak cocok" });
-      setLoading(false);
-      return;
-    }
-    try {
-      const res = await fetch("/api/user/password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          currentPassword: password.current,
-          newPassword: password.new,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Gagal mengubah password");
-      setMessage({ type: "success", text: "✓ Password berhasil diubah!" });
-      setPassword({ current: "", new: "", confirm: "" });
-      setTimeout(() => setMessage(null), 3000);
-    } catch (error: any) {
-      setMessage({ type: "error", text: error.message });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const renderRekening = () => (
     <form onSubmit={handleRekeningSave} className="space-y-6">
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800 flex items-start gap-3">
@@ -148,40 +112,7 @@ export default function GuruPengaturanPage() {
     </form>
   );
 
-  const renderKeamanan = () => (
-    <form onSubmit={handlePasswordSave} className="space-y-6">
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1.5">Password Lama</label>
-          <div className="relative">
-            <Input value={password.current} onChange={(e) => setPassword((p) => ({ ...p, current: e.target.value }))} type={showPass ? "text" : "password"} className="h-11 rounded-lg pr-12" required />
-            <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-              {showPass ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-            </button>
-          </div>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1.5">Password Baru</label>
-          <Input value={password.new} onChange={(e) => setPassword((p) => ({ ...p, new: e.target.value }))} type={showPass ? "text" : "password"} className="h-11 rounded-lg" minLength={6} required />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1.5">Konfirmasi Password Baru</label>
-          <Input value={password.confirm} onChange={(e) => setPassword((p) => ({ ...p, confirm: e.target.value }))} type={showPass ? "text" : "password"} className="h-11 rounded-lg" required />
-        </div>
-      </div>
-      <div className="flex items-center gap-2 text-sm text-slate-500">
-        <Lock className="w-4 h-4" />
-        <span>Minimal 6 karakter. Gunakan kombinasi huruf & angka.</span>
-      </div>
-      <Button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-5 rounded-lg h-auto">
-        {loading ? (
-          <span className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" />Mengubah...</span>
-        ) : (
-          <span className="flex items-center gap-2"><Shield className="w-4 h-4" />Ubah Password</span>
-        )}
-      </Button>
-    </form>
-  );
+  const renderKeamanan = () => <AccountSecurityPanel />;
 
   return (
     <div className="max-w-5xl mx-auto space-y-6 pb-10">

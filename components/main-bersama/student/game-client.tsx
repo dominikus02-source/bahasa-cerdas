@@ -7,6 +7,7 @@
 // realtime hanya sinyal. Logic submit/view Tahap 7 TIDAK berubah.
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import AnswerSavedNotice from '@/components/main-bersama/shared/AnswerSavedNotice';
 import { useRouter } from 'next/navigation';
 import type {
   StudentSessionView,
@@ -22,8 +23,6 @@ import { SessionHeader } from '@/components/main-bersama/shared/SessionHeader';
 import { StudentBackButton } from '@/components/main-bersama/shared/StudentBackButton';
 import { TeamBadge } from '@/components/main-bersama/art/shared/TeamBadge';
 import { TeamMascot } from '@/components/main-bersama/art/registry';
-import { JelajahTrail } from '@/components/main-bersama/art/jelajah/JelajahTrail';
-import { KotaScene } from '@/components/main-bersama/art/kota/KotaScene';
 import { QuestionCard } from '@/components/main-bersama/shared/QuestionCard';
 import { AnswerOption } from '@/components/main-bersama/shared/AnswerOption';
 import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBanner';
@@ -157,7 +156,7 @@ export function StudentGameClient({ sessionId }: { sessionId: string }) {
             mode={view.gameMode}
             packageName={view.contentTitle}
             roundLabel={
-              view.phase === 'question' || isDiscussion(view)
+              isDiscussion(view)
                 ? `${view.roundIndex + 1} dari ${view.totalRounds}`
                 : null
             }
@@ -253,14 +252,7 @@ function StudentLobby({
           KAMU SUDAH MASUK
         </div>
 
-        <div className="mb-slobby-art" aria-hidden>
-          {isJelajah && view.team ? (
-            <TeamMascot teamId={view.team.id} pose="ready" size={112} eager />
-          ) : (
-            <KotaScene unlocked={[]} mini />
-          )}
-        </div>
-
+        {view.team ? <div className="mb-student-mascot" aria-label={`Avatar regu ${view.team.name}`}><TeamMascot teamId={view.team.id} pose="ready" size={144} eager /></div> : null}
         <p className="mb-slobby-hello">Halo,</p>
         <h1 className="mb-display mb-slobby-title">{view.displayName}!</h1>
         <p className="mb-slobby-content">
@@ -362,18 +354,6 @@ function StudentLobby({
           background: #4adea8;
           box-shadow: 0 0 0 5px rgba(74,222,168,.09), 0 0 14px rgba(74,222,168,.55);
         }
-        .mb-slobby-art {
-          width: min(100%, 310px);
-          height: 150px;
-          display: grid;
-          place-items: center;
-          margin: 2px 0 0;
-        }
-        .mb-slobby-art :global(.mb-kota-scene) {
-          width: 100%;
-          max-height: 145px;
-          filter: drop-shadow(0 14px 24px rgba(0,0,0,.25));
-        }
         .mb-slobby-hello {
           margin: 2px 0 -5px;
           color: #9fb5c8;
@@ -463,8 +443,6 @@ function StudentLobby({
         }
         @media (max-height: 720px) {
           .mb-slobby-card { min-height: 0; padding-block: 22px; }
-          .mb-slobby-art { height: 116px; }
-          .mb-slobby-art :global(.mb-kota-scene) { max-height: 112px; }
         }
       `}</style>
     </section>
@@ -576,6 +554,7 @@ function StudentQuestion({
   sessionId: string;
 }) {
   const [selected, setSelected] = useState<string | null>(null);
+  const [typedAnswer, setTypedAnswer] = useState("");
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -617,23 +596,32 @@ function StudentQuestion({
     [view.question.options],
   );
 
+  if (view.teamFinished) {
+    return <section className="mb-team-finished" role="status">
+      {view.team ? <TeamMascot teamId={view.team.id} pose="celebrate" size={176} eager /> : null}
+      <h2>Regumu sudah selesai!</h2>
+      <p>Semua soal sudah dijawab. Tunggu regu lain menyelesaikan perjalanan; hasil akhir akan tampil otomatis.</p>
+    </section>;
+  }
+
   return (
     <section className="mb-sq mb-fade-in">
       <div className="mb-sq-progress">
         {view.team ? (
           <span className="mb-sq-team" title={`Regu ${view.team.name}`}>
-            <TeamBadge teamId={view.team.id} size={24} />
+            <TeamMascot teamId={view.team.id} pose="ready" size={64} eager />
           </span>
         ) : null}
         <span className="mb-number">
           Soal {view.roundIndex + 1} dari {view.totalRounds}
         </span>
-        <RoundCountdown
+        {!view.automaticTeams ? <RoundCountdown
           closesAt={view.closesAt}
           serverTime={view.serverTime}
           compact
+          light
           complete={saved || view.ownAnswerStatus === 'saved'}
-        />
+        /> : <span className="mb-sq-auto-label">Regu mandiri</span>}
         <div
           className="mb-sq-bar"
           role="progressbar"
@@ -648,24 +636,22 @@ function StudentQuestion({
         </div>
       </div>
 
-      {view.gameMode === 'jelajah-kata' ? (
-        <div className="mb-sq-jelajah-world">
-          <JelajahTrail teams={[{ id: 'elang', name: 'Regu Elang' }, { id: 'harimau', name: 'Regu Harimau' }, { id: 'rusa', name: 'Regu Rusa' }, { id: 'badak', name: 'Regu Badak' }]} progress={view.gameProgress.teamProgress} compact poses={view.team ? { [view.team.id]: 'move' } : undefined} />
-        </div>
-      ) : null}
-
       <div className="mb-sq-cardwrap">
         <QuestionCard question={view.question} />
       </div>
 
       {saved ? (
-        <div className="mb-tersimpan mb-tersimpan-student mb-entrance" role="status">
-          <span className="mb-tersimpan-check" aria-hidden>✓</span>
-          <strong>Jawaban terkunci!</strong>
-          <span>Jawabanmu sudah tersimpan. Tunggu putaran selesai.</span>
+        <div className="mb-sq-saved">
+          <AnswerSavedNotice automaticTeams={view.automaticTeams} answeredCount={view.teamAnsweredCount} eligibleCount={view.teamEligibleCount} />
         </div>
       ) : (
-        <div className="mb-sq-answers">
+        <div className="mb-sq-answers" role="group" aria-label="Pilih jawabanmu">
+          {view.question.type === 'short-answer' ? <form className="mb-short-answer" onSubmit={e => {e.preventDefault();if(typedAnswer.trim()) void submit(typedAnswer.trim());}}>
+            <label htmlFor="mb-typed-answer">Ketik jawabanmu</label>
+            <input id="mb-typed-answer" maxLength={200} value={typedAnswer} onChange={e=>setTypedAnswer(e.target.value)} placeholder="Kata atau frasa singkat" disabled={busy} autoComplete="off" />
+            <small>Periksa ejaan sebelum mengirim.</small>
+            <button type="submit" disabled={busy || !typedAnswer.trim()}>{busy ? 'Mengirim…' : 'Kirim jawaban'}</button>
+          </form> : <p className="mb-sq-answer-label">Pilih jawabanmu</p>}
           {view.question.options.map((o, i) => (
             <AnswerOption
               key={o.id}
@@ -735,14 +721,18 @@ function StudentQuestion({
           border-radius: 999px;
           box-shadow: 0 0 16px rgba(54, 211, 194, .34);
         }
-        .mb-sq-jelajah-world { border-radius:24px; overflow:hidden; border:1px solid rgba(255,255,255,.1); box-shadow:0 18px 42px rgba(0,0,0,.16); background:#071829; }
-        .mb-sq-jelajah-world :global(.mb-jelajah-stage) { display:block; width:100%; height:auto; }
         .mb-sq-cardwrap {
           border-radius: 25px;
           box-shadow: 0 18px 42px rgba(0,0,0,.16);
         }
         .mb-sq-cardwrap :global(.mb-qcard) {
           border-radius: 25px;
+        }
+        .mb-sq-answer-label {
+          margin: 0 0 2px;
+          color: #aabecd;
+          font-size: .8rem;
+          font-weight: 600;
         }
         .mb-sq-answers {
           display: flex;
@@ -755,37 +745,13 @@ function StudentQuestion({
           border-radius: 18px;
           box-shadow: 0 8px 18px rgba(0,0,0,.09);
         }
-        .mb-tersimpan-student {
-          min-height: 142px;
-          justify-content: center;
-          border-radius: 24px;
-          border-color: rgba(58, 220, 160, .7);
-          background:
-            radial-gradient(circle at 50% 0%, rgba(72, 225, 171, .18), transparent 62%),
-            rgba(10, 47, 43, .76);
-          box-shadow: 0 16px 38px rgba(0,0,0,.15);
-        }
-        .mb-tersimpan-student strong {
-          color: #8ff0c7;
-          font-size: 1.1rem;
-        }
-        .mb-tersimpan-student span:last-child {
-          color: #a8c6bc;
-          font-size: .88rem;
-        }
-        .mb-tersimpan-check {
-          display: grid;
-          place-items: center;
-          width: 42px;
-          height: 42px;
-          margin-bottom: 2px;
-          border-radius: 50%;
-          background: #44d49b;
-          color: #06261d !important;
-          font-weight: 950;
-          font-size: 1.3rem !important;
-          box-shadow: 0 10px 24px rgba(68,212,155,.22);
-        }
+        .mb-short-answer {display:flex;flex-direction:column;gap:12px;padding:22px;background:#fff;border-radius:22px;color:#28354b;}
+        .mb-short-answer label {font-weight:800;}
+        .mb-short-answer input {font:inherit;min-width:0;width:100%;box-sizing:border-box;border:2px solid #ded6ee;border-radius:14px;padding:16px;color:#28354b;background:#faf8ff;}
+        .mb-short-answer input:focus {outline:3px solid #ddd0fd;border-color:#8653d9;}
+        .mb-short-answer small {color:#68768b;}
+        .mb-short-answer button {border:0;border-radius:14px;background:#7c3aed;color:#fff;font:inherit;font-weight:800;padding:16px;cursor:pointer;}
+        .mb-short-answer button:disabled {opacity:.5;cursor:default;}
         .mb-sq-error {
           color: #ffb9b9;
           font-weight: 650;
@@ -822,12 +788,19 @@ function StudentQuestion({
             overscroll-behavior: contain;
             padding-right: 2px;
           }
-          .mb-tersimpan-student {
+          .mb-sq-saved {
             grid-column: 2;
             grid-row: 2;
             align-self: start;
           }
-          .mb-sq-error {
+          .mb-short-answer {display:flex;flex-direction:column;gap:12px;padding:22px;background:#fff;border-radius:22px;color:#28354b;}
+        .mb-short-answer label {font-weight:800;}
+        .mb-short-answer input {font:inherit;min-width:0;width:100%;box-sizing:border-box;border:2px solid #ded6ee;border-radius:14px;padding:16px;color:#28354b;background:#faf8ff;}
+        .mb-short-answer input:focus {outline:3px solid #ddd0fd;border-color:#8653d9;}
+        .mb-short-answer small {color:#68768b;}
+        .mb-short-answer button {border:0;border-radius:14px;background:#7c3aed;color:#fff;font:inherit;font-weight:800;padding:16px;cursor:pointer;}
+        .mb-short-answer button:disabled {opacity:.5;cursor:default;}
+        .mb-sq-error {
             grid-column: 2;
           }
           .mb-sq-answers :global(.mb-answer) {
@@ -875,7 +848,7 @@ function StudentReveal({
         <span className="mb-sreveal-answer-label">JAWABAN BENAR</span>
         <p className="mb-sreveal-correct">
           <strong>
-            {r.question.options.find((o) => o.id === r.correctOptionId)?.text ?? '—'}
+            {r.question.type === 'short-answer' ? r.correctOptionId : r.question.options.find((o) => o.id === r.correctOptionId)?.text ?? '—'}
           </strong>
         </p>
         {r.explanation ? <p className="mb-sreveal-explain">{r.explanation}</p> : null}
@@ -909,7 +882,7 @@ function StudentReveal({
         }
         .mb-sreveal-verdict-card {
           display: grid;
-          grid-template-columns: auto 1fr auto;
+          grid-template-columns: 44px minmax(0, 1fr) auto;
           align-items: center;
           gap: 12px;
           padding: 14px 16px;
@@ -946,6 +919,15 @@ function StudentReveal({
           margin: 0;
           color: #fff;
           font-size: 1.32rem;
+          overflow-wrap: anywhere;
+          line-height: 1.35;
+        }
+        .mb-sreveal-verdict-card > div { min-width: 0; }
+        @media (max-width: 380px) {
+          .mb-sreveal-verdict-card { grid-template-columns: 36px minmax(0, 1fr); gap: 10px; padding: 14px; }
+          .mb-sreveal-verdict-icon { width: 36px; height: 36px; }
+          .mb-sreveal-round { grid-column: 2; justify-self: start; }
+          .mb-sreveal-verdict-card h2 { font-size: 1.16rem; }
         }
         .mb-sreveal-round {
           color: rgba(255,255,255,.68);
@@ -1024,23 +1006,12 @@ function StudentFinish({ view }: { view: StudentFinishViewT }) {
   return (
     <section className="mb-sfinish mb-fade-in">
       <div className={`mb-sfinish-stage ${isJelajah ? 'mb-sfinish-jelajah' : 'mb-sfinish-kota'}`}>
-        <div className="mb-sfinish-confetti" aria-hidden>
-          <i /><i /><i /><i /><i /><i /><i />
-        </div>
-
         <span className={`mb-sfinish-status ${isEnded ? 'mb-sfinish-status-closed' : ''}`} role="status">
           <i aria-hidden />
           {isEnded ? 'SESI DITUTUP' : 'PERMAINAN SELESAI'}
         </span>
 
-        <div className="mb-sfinish-art" aria-hidden>
-          {isJelajah && view.team ? (
-            <TeamMascot teamId={view.team.id} pose="celebrate" size={138} eager />
-          ) : (
-            <KotaScene unlocked={kotaUnlocked} mini />
-          )}
-        </div>
-
+        {view.team ? <div className="mb-student-mascot" aria-label={`Avatar regu ${view.team.name}`}><TeamMascot teamId={view.team.id} pose="celebrate" size={176} eager /></div> : null}
         <p className="mb-sfinish-overline">
           {isEnded ? 'Sampai jumpa di permainan berikutnya' : 'Keren! Kamu sudah sampai di akhir'}
         </p>
@@ -1069,6 +1040,9 @@ function StudentFinish({ view }: { view: StudentFinishViewT }) {
           )}
         </div>
 
+        <div className="mb-finish-progress" role="progressbar" aria-label={isJelajah ? 'Progres akhir regu' : 'Progres akhir kota'} aria-valuemin={0} aria-valuemax={100} aria-valuenow={isJelajah ? teamProgress ?? 0 : kotaProgress}>
+          <span style={{ width: `${isJelajah ? teamProgress ?? 0 : kotaProgress}%` }} />
+        </div>
         <p className="mb-sfinish-copy">
           {isEnded
             ? 'Ruang ini sudah ditutup oleh Pak/Bu Guru. Kamu boleh kembali ke beranda.'
@@ -1150,18 +1124,6 @@ function StudentFinish({ view }: { view: StudentFinishViewT }) {
           background: #ffd25f;
           box-shadow: 0 0 12px rgba(255,210,95,.5);
         }
-        .mb-sfinish-art {
-          width: min(100%, 350px);
-          height: 165px;
-          display: grid;
-          place-items: center;
-          margin: 2px 0 0;
-        }
-        .mb-sfinish-art :global(.mb-kota-scene) {
-          width: 100%;
-          max-height: 160px;
-          filter: drop-shadow(0 14px 24px rgba(0,0,0,.25));
-        }
         .mb-sfinish-overline {
           margin: 0;
           color: #9db4c8;
@@ -1217,32 +1179,8 @@ function StudentFinish({ view }: { view: StudentFinishViewT }) {
         .mb-sfinish-actions {
           margin-top: 8px;
         }
-        .mb-sfinish-confetti {
-          position: absolute;
-          inset: 0;
-          z-index: -1;
-          pointer-events: none;
-        }
-        .mb-sfinish-confetti i {
-          position: absolute;
-          width: 8px;
-          height: 18px;
-          border-radius: 3px;
-          background: #ffd35c;
-          opacity: .45;
-          transform: rotate(24deg);
-        }
-        .mb-sfinish-confetti i:nth-child(1) { top: 10%; left: 12%; transform: rotate(-28deg); }
-        .mb-sfinish-confetti i:nth-child(2) { top: 20%; right: 13%; background: #5ee0d3; transform: rotate(35deg); }
-        .mb-sfinish-confetti i:nth-child(3) { top: 38%; left: 7%; background: #a996ff; transform: rotate(62deg); }
-        .mb-sfinish-confetti i:nth-child(4) { top: 53%; right: 8%; transform: rotate(-52deg); }
-        .mb-sfinish-confetti i:nth-child(5) { bottom: 20%; left: 15%; background: #55d9a7; }
-        .mb-sfinish-confetti i:nth-child(6) { bottom: 12%; right: 18%; background: #a996ff; transform: rotate(68deg); }
-        .mb-sfinish-confetti i:nth-child(7) { top: 9%; left: 53%; width: 6px; height: 6px; border-radius: 50%; background: #fff; }
         @media (max-height: 720px) {
           .mb-sfinish-stage { min-height: 0; padding-block: 22px; }
-          .mb-sfinish-art { height: 128px; }
-          .mb-sfinish-art :global(.mb-kota-scene) { max-height: 124px; }
         }
       `}</style>
     </section>

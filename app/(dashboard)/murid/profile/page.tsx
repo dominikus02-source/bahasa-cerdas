@@ -1,4 +1,5 @@
 "use client";
+import { VerifiedBadge } from "@/components/arena/UserName";
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -45,7 +46,7 @@ interface UserData {
   equippedFrame?: string | null; equippedNameColor?: string | null; equippedBadge?: string | null;
   equippedBackground?: string | null; equippedNameplate?: string | null;
   createdAt?: string;
-  isFounder?: boolean; isPremium?: boolean;
+  isFounder?: boolean; isPremium?: boolean; badgeKind?: import("@/lib/account/identity").IdentityBadge | null;
 }
 
 interface KaryaItem {
@@ -431,8 +432,7 @@ export default function MuridProfilePage() {
             <div className="flex flex-wrap items-center gap-2 mt-2.5">
               {user.school && <span className="rounded-full bg-slate-900/5 dark:bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-slate-600 dark:text-white/55">{user.school}</span>}
               {user.grade && <span className="rounded-full bg-slate-900/5 dark:bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-slate-600 dark:text-white/55">{user.grade}</span>}
-              {user.isPremium && <span className="rounded-full bg-amber-400/15 px-2.5 py-1 text-[11px] font-bold text-amber-700 dark:text-amber-300">Premium</span>}
-              {user.isFounder && <span className="rounded-full bg-violet-400/15 px-2.5 py-1 text-[11px] font-bold text-violet-700 dark:text-violet-300">Founder</span>}
+              <VerifiedBadge badgeKind={user.badgeKind} isFounder={user.isFounder} size={24} />
             </div>
           </div>
           <button onClick={openSettings} className="shrink-0 inline-flex items-center gap-1.5 rounded-xl border border-slate-900/10 dark:border-white/10 px-3 py-2 text-xs font-bold text-slate-700 dark:text-white/70 hover:bg-slate-900/5 dark:hover:bg-white/5 transition-colors">

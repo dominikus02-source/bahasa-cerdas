@@ -79,6 +79,7 @@ interface Props {
     fullName: string
     avatar?: string | null
     isPremium: boolean
+    badgeKind?: import("@/lib/account/identity").IdentityBadge | null
     isFounder: boolean
     xp?: number
     level?: number
@@ -125,22 +126,8 @@ export function GuruSidebar({ user }: Props) {
             {user.fullName.slice(0, 2).toUpperCase()}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="flex items-center gap-1.5 text-sm font-semibold text-gray-900 dark:text-slate-100 truncate">{user.fullName}<VerifiedBadge isFounder={user.isFounder} isPremium={user.isPremium} size={14} /></p>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              {user.isFounder ? (
-                <span className="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-700 dark:text-amber-300 rounded-full font-medium flex items-center gap-1">
-                  <Crown size={10} /> Founder
-                </span>
-              ) : user.isPremium ? (
-                <span className="text-[10px] px-1.5 py-0.5 bg-blue-100 text-blue-700 dark:text-blue-300 rounded-full font-medium flex items-center gap-1">
-                  <Crown size={10} /> PRO
-                </span>
-              ) : (
-                <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 dark:bg-slate-800/80 text-gray-600 rounded-full font-medium">
-                  Free
-                </span>
-              )}
-            </div>
+            <p className="flex items-center gap-1.5 text-sm font-semibold text-gray-900 dark:text-slate-100 truncate">{user.fullName}<VerifiedBadge isFounder={user.isFounder} isPremium={user.isPremium} badgeKind={user.badgeKind} size={14} /></p>
+
           </div>
           <NotificationBell />
         </div>

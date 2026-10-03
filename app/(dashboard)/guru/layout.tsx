@@ -62,12 +62,18 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
     role: user.role,
     isFounder: user.isFounder,
     isPremium: user.isPremium,
+
     premiumUntil: user.premiumUntil,
     trialStartedAt: user.trialStartedAt,
     trialEndsAt: user.trialEndsAt,
   })) {
     const trialStart = await startGuruTrialIfEligible(user.id);
-    if (trialStart.started) {
+    if (trialStart.started && trialStart.trialEndsAt) {
+      user.trialStartedAt = new Date();
+      user.trialEndsAt = trialStart.trialEndsAt;
+      user.trialPlan = "GURU_PRO_TRIAL";
+      user.trialCreditsTotal = 200;
+      user.badgeKind = "trial";
       console.log(`[GuruLayout] Trial auto-started for ${user.id}`);
     }
   }
@@ -77,6 +83,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
     role: user.role,
     isFounder: user.isFounder,
     isPremium: user.isPremium,
+
     premiumUntil: user.premiumUntil,
     trialEndsAt: user.trialEndsAt,
     trialStartedAt: user.trialStartedAt,
@@ -87,6 +94,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
     role: user.role,
     isFounder: user.isFounder,
     isPremium: user.isPremium,
+
     premiumUntil: user.premiumUntil,
     trialEndsAt: user.trialEndsAt,
     trialStartedAt: user.trialStartedAt,
@@ -97,6 +105,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
     trialStartedAt: user.trialStartedAt,
     trialPlan: user.trialPlan,
     isPremium: user.isPremium,
+
     isFounder: user.isFounder,
   });
 
@@ -165,7 +174,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
                   <span className="max-w-[190px] truncate text-xs font-bold text-slate-800 dark:text-slate-100">
                     {user.fullName}
                   </span>
-                  <VerifiedBadge isFounder={user.isFounder} isPremium={user.isPremium} size={13} />
+                  <VerifiedBadge isFounder={user.isFounder} isPremium={user.isPremium} badgeKind={user.badgeKind} size={13} />
                 </span>
                 <span className="mt-0.5 flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400">
                   <span>Guru</span>

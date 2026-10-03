@@ -47,7 +47,7 @@ export async function getPlayerProfile(userId: string): Promise<PlayerProfileVie
     // Foto asli murid ada di User.avatar. PlayerProfile.avatar hanya penimpa
     // KOSMETIK (dari toko koin) dan tidak pernah diisi saat profil dibuat —
     // membacanya sendirian membuat semua orang kehilangan fotonya.
-    db.user.findUnique({ where: { id: userId }, select: { avatar: true, equippedNameColor: true, equippedBadge: true, equippedNameplate: true, equippedFrame: true, equippedBackground: true } }),
+    db.user.findUnique({ where: { id: userId }, select: { xp: true, avatar: true, equippedNameColor: true, equippedBadge: true, equippedNameplate: true, equippedFrame: true, equippedBackground: true } }),
   ]);
 
   const wk = weekKey();
@@ -75,18 +75,22 @@ export async function getPlayerProfile(userId: string): Promise<PlayerProfileVie
     });
   }
 
-  const levelProgress = getLevelProgress(final.totalXP);
-  const rankMeta = RANK_META[final.currentRank];
+  // User.xp is authoritative in awardXp; older/lazily-created snapshots can lag.
+  const totalXp = user?.xp ?? final.totalXP;
+  const level = levelFromXp(totalXp);
+  const rank = rankFromLevel(level);
+  const levelProgress = getLevelProgress(totalXp);
+  const rankMeta = RANK_META[rank];
 
   return {
     userId: final.userId,
-    level: final.level,
-    totalXp: final.totalXP,
-    rank: final.currentRank,
-    rankLabel: rankMeta?.label ?? final.currentRank,
+    level,
+    totalXp,
+    rank,
+    rankLabel: rankMeta?.label ?? rank,
     rankTitle: rankMeta?.title ?? final.currentRank,
     rankColor: rankMeta?.color ?? "#64748b",
-    rankAsset: getRankAsset(final.currentRank),
+    rankAsset: getRankAsset(rank),
     coin: final.coin,
     weeklyXp: final.weeklyXP,
     weeklyLabel: weekLabel(wk),

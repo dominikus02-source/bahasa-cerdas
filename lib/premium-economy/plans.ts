@@ -1,3 +1,4 @@
+import { resolveIdentity } from "@/lib/account/identity";
 /**
  * BC Premium Economy — definisi plan.
  *
@@ -37,19 +38,8 @@ export function resolvePlanForUser(user: UserLike): {
   plan: PlanCode;
   subscriptionStatus: SubscriptionStatusLabel;
 } {
-  if (user.role === "ADMIN" || user.isFounder) {
-    return { plan: "FOUNDER", subscriptionStatus: "FOUNDER" };
-  }
-  if (user.isPremium && user.premiumUntil && user.premiumUntil > new Date()) {
-    // MURID premium uses feature-tiered model (MURID_PREMIUM)
-    // GURU premium uses credit-based model (PRO)
-    const plan: PlanCode = user.role === "MURID" ? "MURID_PREMIUM" : "PRO";
-    return { plan, subscriptionStatus: "ACTIVE" };
-  }
-  if (user.trialEndsAt && user.trialEndsAt > new Date()) {
-    return { plan: "PRO", subscriptionStatus: "TRIALING" };
-  }
-  return { plan: "FREE", subscriptionStatus: null };
+  const { plan, subscriptionStatus } = resolveIdentity(user);
+  return { plan, subscriptionStatus };
 }
 
 export interface ResolvedPlan {
@@ -83,13 +73,12 @@ export function resolvePlan(userId: string): Promise<ResolvedPlan> {
         role: true,
         isFounder: true,
         isPremium: true,
+        premiumPlan: true,
         premiumUntil: true,
         trialEndsAt: true,
         subscriptions: {
-          where: { status: "ACTIVE" },
           orderBy: { currentPeriodEnd: "desc" },
-          take: 1,
-          select: { id: true, currentPeriodEnd: true },
+          select: { id: true, status: true, currentPeriodStart: true, currentPeriodEnd: true },
         },
       },
     });
@@ -108,17 +97,18 @@ export function resolvePlan(userId: string): Promise<ResolvedPlan> {
       };
     }
 
-    const activeSub = user.subscriptions?.[0];
+    const activeSub = user.subscriptions?.find(s => s.status === "ACTIVE" && s.currentPeriodStart <= new Date() && s.currentPeriodEnd > new Date());
     if (activeSub && activeSub.currentPeriodEnd && activeSub.currentPeriodEnd > new Date()) {
       return {
-        plan: "PRO",
+        plan: user.role === "MURID" ? "MURID_PREMIUM" : "PRO",
         subscriptionStatus: "ACTIVE",
         subscriptionId: activeSub.id,
         subscriptionEndsAt: activeSub.currentPeriodEnd,
       };
     }
 
-    const fallback = resolvePlanForUser(user);
+    const { plan, subscriptionStatus } = resolveIdentity(user);
+    const fallback = { plan, subscriptionStatus };
     return { ...fallback, subscriptionId: null, subscriptionEndsAt: null };
   })();
 

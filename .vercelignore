@@ -5,8 +5,7 @@ game-server/node_modules
 
 # Backups and local environment files must never be part of a deployment.
 backups
-.env.local
-.env.*.local
+.env*
 *.bak
 
 # Local tooling metadata and version-control internals are not runtime inputs.

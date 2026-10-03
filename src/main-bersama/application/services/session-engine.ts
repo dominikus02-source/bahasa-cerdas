@@ -8,6 +8,7 @@
 // - Expected gameplay error = typed result, BUKAN throw.
 // - TIDAK menghitung game score (tahap 3B) — hanya fakta round.
 
+import { isIndependentJelajah, getTeamRoundIndex } from './independent-jelajah';
 import type { Clock } from '../../domain/types/clock';
 import type {
   SessionEngineErrorCode,
@@ -440,7 +441,7 @@ export class SessionEngine {
   ): SessionEngineResult<SubmissionEvaluation> {
     // Round harus milik sesi ini dan round yang aktif.
     const round = this.state.rounds.find((r) => r.id === input.roundId);
-    if (!round || round.index !== this.state.activeRoundIndex) {
+    if (!round || (!isIndependentJelajah(this.state) && round.index !== this.state.activeRoundIndex)) {
       return { ok: false, code: 'ROUND_MISMATCH' };
     }
 
@@ -484,13 +485,17 @@ export class SessionEngine {
     if (phase === 'ended') return { ok: false, code: 'SESSION_ENDED' };
     if (phase !== 'question') return { ok: false, code: 'ROUND_NOT_OPEN' };
 
+    if (isIndependentJelajah(this.state) && (!player.teamId || getTeamRoundIndex(this.state, player.teamId) !== round.index)) {
+      return { ok: false, code: 'ROUND_MISMATCH' };
+    }
+
     const now = this.clock.now();
     const evaluation = evaluateAnswerSubmission({
       round: {
         id: round.id,
         index: round.index,
         question: round.question,
-        closesAt: round.closesAt as Date,
+        closesAt: round.closesAt ?? new Date(8640000000000000),
       },
       now,
       playerId: input.playerId,

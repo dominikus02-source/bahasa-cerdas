@@ -7,6 +7,7 @@
 // TIDAK berubah (§34).
 
 import { useEffect, useMemo, useState } from 'react';
+import QuestionPackageEditor from './QuestionPackageEditor';
 import { useRouter } from 'next/navigation';
 import type { GameMode } from '@/src/main-bersama/domain/types/session';
 import { ModeCard } from '@/components/main-bersama/shared/ModeCard';
@@ -55,7 +56,7 @@ function themeCacheKey(sel: SetupThemeSelection): string {
 }
 
 export function SetupClient({
-  packages,
+  packages: initialPackages,
   classes,
   preselectedTheme,
 }: {
@@ -65,13 +66,13 @@ export function SetupClient({
   preselectedTheme?: SetupThemeSelection | null;
 }) {
   const router = useRouter();
+  const [packages, setPackages] = useState(initialPackages);
   const [packageId, setPackageId] = useState<string | null>(null);
   // Tema Bank Soal hasil handoff "Gunakan untuk Main Bersama" (boleh null).
   const [themeSel, setThemeSel] = useState<SetupThemeSelection | null>(
     preselectedTheme ?? null,
   );
   const [mode, setMode] = useState<GameMode | null>(null);
-  const [secondsPerQuestion, setSecondsPerQuestion] = useState(60);
   const [classId, setClassId] = useState<string | null>(null);
   const [compat, setCompat] = useState<Record<string, CompatibilityInfo>>({});
   const [checking, setChecking] = useState(false);
@@ -172,7 +173,7 @@ export function SetupClient({
         gameMode: mode,
         packageRef,
         ...(classId ? { classId } : {}),
-        config: { roundDurationMs: (mode === 'jelajah-kata' ? secondsPerQuestion : 60) * 1000 },
+        config: { roundDurationMs: 60 * 1000 },
         ...(partial ? { useSupportedQuestions: true } : {}),
       });
       const created = result.session as { id?: unknown } | undefined;
@@ -197,6 +198,16 @@ export function SetupClient({
     }
   }
 
+  const bankSoalButton = (
+    <button
+      type="button"
+      className="mb-btn-ghost mb-package-bank-button"
+      onClick={() => router.push('/guru/bank-soal?untuk=main-bersama')}
+    >
+      {themeSel ? 'Ganti dari Bank Soal' : 'Pilih dari Bank Soal'}
+    </button>
+  );
+
   return (
     <main className="mb-setup mb-fade-in">
       {/* ── Header hero (§5) ── */}
@@ -207,14 +218,8 @@ export function SetupClient({
             <span>Main</span> <strong>Bersama</strong>
           </h1>
           <p className="mb-setup-sub">
-            Mainkan kuis langsung bersama seluruh kelas. Pilih soal, tentukan cara
-            bermain, lalu buka ruang.
+            Pilih soal dan cara bermain, lalu bagikan PIN ke kelasmu.
           </p>
-          <div className="mb-setup-hero-pills" aria-label="Keunggulan Main Bersama">
-            <span><i aria-hidden />Seru &amp; Interaktif</span>
-            <span><i aria-hidden />Seluruh Kelas</span>
-            <span><i aria-hidden />Meningkatkan Literasi</span>
-          </div>
         </div>
       </header>
 
@@ -247,6 +252,7 @@ export function SetupClient({
                 ) : null}
               </span>
             </span>
+            {bankSoalButton}
             <span className="mb-pkg-check" aria-hidden>
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 6 9 17l-5-5" />
@@ -255,15 +261,7 @@ export function SetupClient({
           </div>
         ) : null}
 
-        <div className="mb-setup-pick-row">
-          <button
-            type="button"
-            className="mb-btn-ghost"
-            onClick={() => router.push('/guru/bank-soal?untuk=main-bersama')}
-          >
-            {themeSel ? 'Ganti dari Bank Soal' : 'Pilih dari Bank Soal'}
-          </button>
-        </div>
+
 
         {packages.length === 0 ? (
           themeSel ? null : (
@@ -272,12 +270,16 @@ export function SetupClient({
               <div className="mb-setup-empty-copy">
                 <p className="mb-setup-empty-title">Belum ada paket soal</p>
                 <p className="mb-setup-empty-sub">Pilih tema untuk mulai bermain.</p>
+                {bankSoalButton}
               </div>
             </div>
           )
         ) : (
-          <ul className="mb-pkg-list">
-            <li className="mb-pkg-list-head">Paket soal milikmu</li>
+          <div className="mb-package-source-card">
+          {!themeSel ? bankSoalButton : null}
+          <details className="mb-package-picker" open={!themeSel}>
+            <summary>Paket soal milikmu <span>{packages.length} paket</span></summary>
+            <ul className="mb-pkg-list">
             {packages.map((p) => {
               const info = compat[p.id];
               const isSel = !themeSel && packageId === p.id;
@@ -315,7 +317,14 @@ export function SetupClient({
               );
             })}
           </ul>
+          </details>
+          </div>
         )}
+      <QuestionPackageEditor onSaved={(p) => {
+        setPackages(prev => [p, ...prev]);
+        setCompat(prev => ({ ...prev, [p.id]: { total: p.questionCount, supported: p.questionCount } }));
+        setThemeSel(null); setPackageId(p.id); setError(null);
+      }} />
       </section>
 
       {/* ── Langkah 2: cara bermain (§8-§10) ── */}
@@ -332,24 +341,14 @@ export function SetupClient({
       </section>
 
       {mode === 'jelajah-kata' ? (
-        <section aria-labelledby="mb-time-h" className="mb-setup-section">
-          <div className="mb-guru-h"><span className="mb-step-badge mb-number" aria-hidden>3</span><span className="mb-guru-h-text" id="mb-time-h">Waktu per Soal</span><small>Jelajah Kata berjalan mandiri. Setiap soal mendapat waktu yang sama.</small></div>
-          <div className="mb-time-options" role="radiogroup" aria-label="Waktu per soal">
-            {[30,60,90,120].map((seconds) => (
-              <button key={seconds} type="button" role="radio" aria-checked={secondsPerQuestion===seconds} onClick={()=>setSecondsPerQuestion(seconds)} className={secondsPerQuestion===seconds?'mb-time-option mb-time-selected':'mb-time-option'}>
-                <strong>{seconds < 60 ? `${seconds} detik` : `${seconds/60} menit`}</strong>
-                <span>{selectedCompat?.total ? `${Math.ceil(selectedCompat.total*seconds/60)} menit total` : 'per soal'}</span>
-              </button>
-            ))}
-          </div>
-        </section>
+        <p className="mb-auto-mode-note">Empat regu berjalan bersama, masing-masing maju sesuai progresnya. Soal berganti setelah semua anggota regu menjawab, dan hasil akhir tampil otomatis. Pastikan seluruh siswa sudah masuk sebelum memulai.</p>
       ) : null}
 
       {/* ── Langkah 3: kelas (§11) ── */}
       {classes.length > 0 ? (
         <section aria-labelledby="mb-cls-h" className="mb-setup-section">
           <div className="mb-guru-h">
-            <span className="mb-step-badge mb-number" aria-hidden>3</span>
+            <span className="mb-step-badge mb-number" aria-hidden>{3}</span>
             <span className="mb-guru-h-text" id="mb-cls-h">Pilih Kelas</span>
             <small>Opsional — untuk pencatatan kelas.</small>
           </div>
@@ -861,4 +860,3 @@ export function SetupClient({
     </main>
   );
 }
-

@@ -1,6 +1,7 @@
 "use client";
 
 import { TeamMascot } from "../registry";
+import { getJelajahLayout, getJelajahTeams, JELAJAH_MASCOT_SIZE, JELAJAH_COMPACT_MASCOT_SIZE } from "@/lib/main-bersama/jelajah-layout";
 
 interface TrailTeam {
   id: string;
@@ -14,21 +15,19 @@ const TEAM_COLORS: Record<string, string> = {
   badak: "#718a9a",
 };
 
-const LANE_OFFSETS = [-42, -14, 14, 42];
-const START_X = 255;
-const MASCOT_TRAVEL = 250;
-const BACKGROUND_TRAVEL = 260;
-
-function clampPercent(value: number) {
-  if (!Number.isFinite(value)) return 0;
-  return Math.max(0, Math.min(100, value));
-}
+// Optical ground anchors from the alpha bounds of the 1024px mascot assets.
+const MASCOT_GROUND: Record<string, Record<"ready" | "move" | "celebrate", number>> = {
+  elang: { ready: 986, move: 930, celebrate: 1008 },
+  harimau: { ready: 983, move: 982, celebrate: 980 },
+  rusa: { ready: 1000, move: 1011, celebrate: 993 },
+  badak: { ready: 983, move: 963, celebrate: 986 },
+};
 
 /**
- * Jelajah Kata — latar dunia menjadi elemen yang bergerak.
+ * Jelajah Kata — berjalan bersama di satu jalan dalam ilustrasi.
  *
  * Kemajuan regu tetap memakai nilai progress dari engine.
- * Maskot hanya maju sedikit; pergerakan utama terasa dari pergeseran latar.
+ * Posisi depan hanya ditentukan progres, bukan urutan regu dalam daftar.
  */
 export function JelajahTrail({
   teams,
@@ -41,15 +40,11 @@ export function JelajahTrail({
   compact?: boolean;
   poses?: Record<string, "ready" | "move" | "celebrate">;
 }) {
-  const shown = teams.slice(0, 4);
-  const sceneProgress = Math.max(
-    0,
-    ...shown.map((team) => clampPercent(progress[team.id] ?? 0)),
-  );
-
-  const backgroundOffset =
-    -(sceneProgress / 100) * BACKGROUND_TRAVEL;
-  const viewBox = compact ? "0 90 1200 440" : "0 0 1200 600";
+  const shown = getJelajahTeams(teams);
+  const { positions, backgroundOffset } = getJelajahLayout(shown, progress);
+  const mascotSize = compact ? JELAJAH_COMPACT_MASCOT_SIZE : JELAJAH_MASCOT_SIZE;
+  const frameWidth = mascotSize + 24;
+  const viewBox = compact ? "0 90 1200 440" : "0 70 1200 480";
 
   return (
     <div
@@ -60,7 +55,7 @@ export function JelajahTrail({
         viewBox={viewBox}
         className="mb-jelajah-world-svg"
         role="img"
-        aria-label="Dunia perjalanan Jelajah Kata"
+        aria-label="Empat regu sejajar dalam kedalaman jalan, berjalan ke depan sesuai progres"
         preserveAspectRatio="xMidYMid meet"
       >
         <defs>
@@ -83,7 +78,7 @@ export function JelajahTrail({
             }}
           >
             <image
-              href="/main-bersama/jelajah/backgrounds/jelajah-latar-utama.png"
+              href="/main-bersama/jelajah/backgrounds/jk-1.png"
               x="0"
               y="0"
               width="1460"
@@ -101,13 +96,12 @@ export function JelajahTrail({
             pointerEvents="none"
           />
 
-          {shown.map((team, index) => {
-            const pct = clampPercent(progress[team.id] ?? 0);
-            const x = START_X + (pct / 100) * MASCOT_TRAVEL;
-            const y = 470 + (LANE_OFFSETS[index] ?? 0);
+          {shown.map((team) => {
+            const { x, y } = positions.get(team.id) ?? { x: 168, y: 480 };
             const color = TEAM_COLORS[team.id] ?? "#0f766e";
             const pose = poses?.[team.id] ?? "ready";
             const moving = pose === "move";
+            const groundOffset = 14 + mascotSize * (1 - (MASCOT_GROUND[team.id]?.[pose] ?? 1024) / 1024);
 
             return (
               <g
@@ -121,7 +115,7 @@ export function JelajahTrail({
                 <ellipse
                   cx="0"
                   cy="30"
-                  rx={compact ? 27 : 34}
+                  rx={mascotSize * 0.38}
                   ry="9"
                   fill="#10283a"
                   opacity=".22"
@@ -129,10 +123,10 @@ export function JelajahTrail({
 
                 <g className="mb-jelajah-mascot-art">
                   <foreignObject
-                    x={compact ? -28 : -36}
-                    y={compact ? -54 : -66}
-                    width={compact ? 56 : 72}
-                    height={compact ? 72 : 88}
+                    x={-frameWidth / 2}
+                    y={-mascotSize}
+                    width={frameWidth}
+                    height={mascotSize + 32}
                   >
                     <div
                       style={{
@@ -140,44 +134,17 @@ export function JelajahTrail({
                         height: "100%",
                         display: "grid",
                         placeItems: "center",
+                        transform: `translateY(${groundOffset}px)`,
                       }}
                     >
                       <TeamMascot
                         teamId={team.id}
                         pose={pose}
-                        size={compact ? 48 : 62}
-                        name={team.name}
+                        size={mascotSize}
                         eager
                       />
                     </div>
                   </foreignObject>
-                </g>
-
-                <g className="mb-jelajah-team-tag">
-                  <rect
-                    x={compact ? -39 : -48}
-                    y={compact ? 38 : 46}
-                    width={compact ? 78 : 96}
-                    height="22"
-                    rx="11"
-                    fill="#ffffff"
-                    opacity=".92"
-                  />
-                  <circle
-                    cx={compact ? -28 : -35}
-                    cy={compact ? 49 : 57}
-                    r="4"
-                    fill={color}
-                  />
-                  <text
-                    x={compact ? -20 : -26}
-                    y={compact ? 53 : 61}
-                    fontSize={compact ? "9" : "10"}
-                    fontWeight="800"
-                    fill="#17354b"
-                  >
-                    {team.name}
-                  </text>
                 </g>
 
                 {moving ? (
@@ -204,7 +171,7 @@ export function JelajahTrail({
 
       <div className="mb-jelajah-world-caption">
         <span>🌿 Dunia Jelajah Kata</span>
-        <strong>Perjalanan terus bergerak bersama kemajuan regu</strong>
+        <strong>Berjalan bersama · maju sesuai progres regu</strong>
       </div>
 
       <style jsx>{`
@@ -235,7 +202,7 @@ export function JelajahTrail({
           transform-origin: center;
         }
 
-        .mb-jelajah-mascot.is-moving {
+        .mb-jelajah-mascot.is-moving .mb-jelajah-mascot-art {
           animation: jelajah-bob .6s ease-in-out infinite alternate;
         }
 
@@ -319,7 +286,7 @@ export function JelajahTrail({
             transition: none;
           }
 
-          .mb-jelajah-mascot.is-moving,
+          .mb-jelajah-mascot.is-moving .mb-jelajah-mascot-art,
           .mb-jelajah-dust circle,
           .mb-jelajah-celebrate circle,
           .mb-jelajah-celebrate path {

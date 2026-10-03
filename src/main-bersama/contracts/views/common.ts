@@ -20,3 +20,11 @@ export interface TeamPublicInfo {
   name: string;
   symbol: string;
 }
+
+/** Final-only award data. No auth/player identifiers or individual answers. */
+export interface KotaPodiumEntry {
+  displayName: string;
+  avatarUrl?: string;
+  correctAnswers: number;
+  rank: number;
+}

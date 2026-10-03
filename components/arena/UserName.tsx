@@ -1,5 +1,6 @@
 import Link from "next/link";
-import Image from "next/image";
+import IdentityIcon from "@/components/account/IdentityIcon";
+import type { IdentityBadge } from "@/lib/account/identity";
 import { getBadgeStyle, nameColorStyle } from "@/lib/cosmetics";
 
 /** Badge kosmetik kecil yang tampil di samping nama murid. */
@@ -27,40 +28,17 @@ export function CosmeticBadge({
   );
 }
 
-/**
- * Badge centang verified (Founder / BC Pro).
- * Menampilkan `Badges_centang_premium.png` di samping nama.
- */
-export function VerifiedBadge({
-  isFounder,
-  isPremium,
-  size = 16,
-  className = "",
-}: {
-  isFounder?: boolean;
-  isPremium?: boolean;
-  size?: number;
-  className?: string;
+/** Icon-only identity; premium flags alone are never proof of entitlement. */
+export function VerifiedBadge({ isFounder, badgeKind, size = 20, className = "" }: {
+  isFounder?: boolean; isPremium?: boolean; badgeKind?: IdentityBadge | null; size?: number; className?: string;
 }) {
-  if (!isFounder && !isPremium) return null;
-  const tooltip = isFounder ? "Founder BahasaCerdas" : "BC Pro";
-  return (
-    <span
-      title={tooltip}
-      aria-label={tooltip}
-      className={`inline-flex items-center justify-center shrink-0 ${className}`}
-      style={{ width: size, height: size }}
-    >
-      <Image
-        src="/badges/Badges_centang_premium.png"
-        alt={tooltip}
-        width={size}
-        height={size}
-        className="block"
-        draggable={false}
-      />
-    </span>
-  );
+  const kind = isFounder ? "founder" : badgeKind;
+  if (!kind) return null;
+  const iconSize = Math.max(20, size);
+  const label = { founder: "Pendiri BahasaCerdas", teacher: "Guru berlangganan", trial: "Guru dalam masa uji coba", student: "Murid berlangganan" }[kind];
+  return <span role="img" title={label} aria-label={label} tabIndex={0}
+    className={`inline-flex shrink-0 items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 ${className}`}
+    style={{ width: iconSize, height: iconSize }}><IdentityIcon kind={kind} size={iconSize} /></span>;
 }
 
 interface UserNameProps {
@@ -82,6 +60,7 @@ interface UserNameProps {
   isFounder?: boolean;
   isPremium?: boolean;
   verifiedSize?: number;
+  badgeKind?: IdentityBadge | null;
 }
 
 /**
@@ -101,11 +80,12 @@ export default function UserName({
   badgeSize = 14,
   isFounder = false,
   isPremium = false,
-  verifiedSize = 16,
+  verifiedSize = 20,
+  badgeKind,
 }: UserNameProps) {
   const style = nameColorStyle(color, onDark);
   const badgeStyle = getBadgeStyle(badge);
-  const showVerified = isFounder || isPremium;
+  const showVerified = isFounder || Boolean(badgeKind);
 
   const text = href ? (
     <Link href={href} className={className} style={style}>
@@ -129,7 +109,7 @@ export default function UserName({
   return (
     <span className={`inline-flex items-center gap-1 min-w-0 ${wrapperClassName}`}>
       {nameAndBadge}
-      <VerifiedBadge isFounder={isFounder} isPremium={isPremium} size={verifiedSize} />
+      <VerifiedBadge badgeKind={badgeKind} isFounder={isFounder} isPremium={isPremium} size={verifiedSize} />
     </span>
   );
 }

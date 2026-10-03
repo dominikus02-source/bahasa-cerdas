@@ -151,7 +151,7 @@ export interface MainSessionCreationStore {
 export type MainSessionCreationSnapshot = {
   id: string;
   sourceQuestionId: string;
-  type: 'single-choice' | 'true-false' | 'passage-single-choice';
+  type: 'short-answer' | 'single-choice' | 'true-false' | 'passage-single-choice';
   prompt: string;
   options: ReadonlyArray<{ id: string; text: string }>;
   correctOptionId: string;

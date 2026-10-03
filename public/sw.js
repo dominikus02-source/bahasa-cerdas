@@ -2,9 +2,9 @@
 // Strategy: never cache HTML or API (avoids stale app shell / stale auth).
 // Static assets → stale-while-revalidate. Navigations → network-first with an
 // offline fallback page. Cross-origin (Supabase/Midtrans/etc.) is never touched.
-const STATIC_CACHE = "bc-static-v3"
+const STATIC_CACHE = "bc-static-v4"
 const OFFLINE_URL = "/offline.html"
-const PRECACHE = ["/offline.html", "/manifest.json", "/icon-192.png"]
+const PRECACHE = ["/offline.html", "/offline-retry.js", "/manifest.json", "/icon-192.png"]
 
 // Terakhir kali halaman HTML gagal dimuat karena offline. Dipakai halaman
 // offline untuk mengembalikan pengguna ke tempat dia tadi, bukan ke beranda.
@@ -43,6 +43,9 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(req.url)
   // Only handle same-origin requests — leave Supabase/Midtrans/analytics alone.
   if (url.origin !== self.location.origin) return
+
+  // Connectivity probes must never succeed from a cached response.
+  if (req.cache === "no-store") return
 
   const isStatic = /\.(png|jpg|jpeg|gif|svg|ico|webp|woff2?|css|js|json)$/i.test(url.pathname)
 

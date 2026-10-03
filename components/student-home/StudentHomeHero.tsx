@@ -274,7 +274,7 @@ export function StudentHomeHero() {
               >
                 {name}
               </p>
-              <VerifiedBadge isFounder={me?.isFounder} isPremium={me?.isPremium} size={20} />
+              <VerifiedBadge isFounder={me?.isFounder} isPremium={me?.isPremium} badgeKind={me?.badgeKind} size={20} />
               {badge && (
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-white text-[11px] font-bold bg-gradient-to-br from-violet-500 to-purple-600 shadow-sm">
                   <badge.Icon size={12} />

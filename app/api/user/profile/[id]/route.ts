@@ -1,3 +1,4 @@
+import { identitySelect, resolveIdentity, type IdentitySource } from "@/lib/account/identity";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import cache from "@/lib/redis";
@@ -10,7 +11,7 @@ export async function GET(
   try {
     const { id } = await params;
 
-    const cacheKey = `profile:public:${id}`;
+    const cacheKey = `profile:public:v2:${id}`;
     const cached = await cache.get<Record<string, unknown>>(cacheKey);
     if (cached) return NextResponse.json(cached, { headers: { "X-Cache": "HIT" } });
 
@@ -21,9 +22,7 @@ export async function GET(
         fullName: true,
         nickname: true,
         avatar: true,
-        role: true,
-        isFounder: true,
-        isPremium: true,
+        ...identitySelect,
         premiumPlan: true,
         xp: true,
         level: true,
@@ -46,7 +45,7 @@ export async function GET(
       },
     });
 
-    if (!user) {
+    if (!user || user.fullName === "Akun dihapus") {
       return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 });
     }
 
@@ -65,6 +64,7 @@ export async function GET(
     const response = {
       user: {
         ...user,
+        ...resolveIdentity(user),
         displayName: getDisplayName(user, "peer"),
         bio: user.profile?.bio || null,
         school: user.profile?.school || null,

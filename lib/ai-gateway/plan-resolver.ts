@@ -1,3 +1,4 @@
+import { resolveIdentity } from "@/lib/account/identity";
 import type { PlanResolverResult, AiPlan } from "./gateway-types";
 import type { UserLike } from "@/lib/types/user";
 
@@ -6,7 +7,7 @@ function getPeriod(): string {
 }
 
 export function resolveUserAiPlan(user: UserLike): PlanResolverResult {
-  const now = new Date();
+  const identity = resolveIdentity(user);
   const period = getPeriod();
 
   // Founder / Admin — unlimited
@@ -40,7 +41,7 @@ export function resolveUserAiPlan(user: UserLike): PlanResolverResult {
   }
 
   // Guru with active premium subscription
-  if (user.isPremium && user.premiumUntil && user.premiumUntil > now) {
+  if (identity.subscriptionStatus === "ACTIVE") {
     return {
       plan: "GURU_PRO",
       unlimited: false,
@@ -53,7 +54,7 @@ export function resolveUserAiPlan(user: UserLike): PlanResolverResult {
   }
 
   // Guru with active trial
-  if (user.trialEndsAt && user.trialEndsAt > now) {
+  if (identity.subscriptionStatus === "TRIALING") {
     return {
       plan: "GURU_PRO_TRIAL",
       unlimited: false,

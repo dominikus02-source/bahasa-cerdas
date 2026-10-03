@@ -1,4 +1,5 @@
 "use client";
+import { VerifiedBadge } from "@/components/arena/UserName";
 
 import { motion } from "framer-motion";
 import { Flame, Coins, Sparkles } from "lucide-react";
@@ -10,10 +11,12 @@ import type { PlayerProfileView } from "@/lib/gamification/client-types";
 /** Header profil pemain — avatar, nama, rank, level, XP, koin, streak. */
 export function PlayerHeader({
   name,
+  badgeKind,
   profile,
   loading = false,
 }: {
   name: string;
+  badgeKind?: import("@/lib/account/identity").IdentityBadge | null;
   profile: PlayerProfileView | null;
   loading?: boolean;
 }) {
@@ -41,6 +44,7 @@ export function PlayerHeader({
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <h2 className="truncate text-lg font-extrabold text-[var(--px-text)]" style={nameColorStyle(profile.equippedNameColor, true)}>{name}</h2>
+            <VerifiedBadge badgeKind={badgeKind} size={24} />
             {profile.equippedBadge && (() => { const badge = getBadgeStyle(profile.equippedBadge); return badge ? (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-white text-[10px] font-bold bg-gradient-to-br from-violet-500 to-purple-600 shadow-sm">
                 <badge.Icon size={11} />

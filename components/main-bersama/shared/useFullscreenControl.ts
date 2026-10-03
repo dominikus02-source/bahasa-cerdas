@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface FullscreenOptions {
   onError?: (message: string) => void;
@@ -17,6 +17,8 @@ export function useFullscreenControl({
   keyboard = true,
 }: FullscreenOptions = {}) {
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const onErrorRef = useRef(onError);
+  onErrorRef.current = onError;
 
   const sync = useCallback(() => {
     setIsFullscreen(Boolean(document.fullscreenElement));
@@ -25,7 +27,7 @@ export function useFullscreenControl({
   const enter = useCallback(async () => {
     try {
       if (!document.fullscreenEnabled) {
-        onError?.("Mode layar penuh tidak didukung browser ini.");
+        onErrorRef.current?.("Mode layar penuh tidak didukung browser ini.");
         return false;
       }
       if (!document.fullscreenElement) {
@@ -34,10 +36,10 @@ export function useFullscreenControl({
       sync();
       return true;
     } catch {
-      onError?.("Mode layar penuh tidak dapat diaktifkan browser ini.");
+      onErrorRef.current?.("Mode layar penuh tidak dapat diaktifkan browser ini.");
       return false;
     }
-  }, [onError, sync]);
+  }, [sync]);
 
   const exit = useCallback(async () => {
     try {
@@ -47,10 +49,10 @@ export function useFullscreenControl({
       sync();
       return true;
     } catch {
-      onError?.("Layar penuh tidak dapat ditutup. Tekan Esc pada keyboard.");
+      onErrorRef.current?.("Layar penuh tidak dapat ditutup. Tekan Esc pada keyboard.");
       return false;
     }
-  }, [onError, sync]);
+  }, [sync]);
 
   const toggle = useCallback(async () => {
     if (document.fullscreenElement) return exit();
@@ -62,7 +64,7 @@ export function useFullscreenControl({
     const onChange = () => sync();
     const onErrorEvent = () => {
       sync();
-      onError?.("Perubahan mode layar penuh ditolak browser.");
+      onErrorRef.current?.("Perubahan mode layar penuh ditolak browser.");
     };
     const onKey = (event: KeyboardEvent) => {
       if (!keyboard || event.key.toLowerCase() !== "f") return;
@@ -88,7 +90,7 @@ export function useFullscreenControl({
       document.removeEventListener("fullscreenerror", onErrorEvent);
       if (keyboard) window.removeEventListener("keydown", onKey);
     };
-  }, [keyboard, onError, sync, toggle]);
+  }, [keyboard, sync, toggle]);
 
   return { isFullscreen, enter, exit, toggle };
 }

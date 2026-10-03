@@ -12,6 +12,7 @@ export interface MeUser {
   city?: string;
   isFounder?: boolean;
   isPremium?: boolean;
+  badgeKind?: import("@/lib/account/identity").IdentityBadge | null;
   equippedNameColor?: string | null;
   equippedBadge?: string | null;
   equippedFrame?: string | null;

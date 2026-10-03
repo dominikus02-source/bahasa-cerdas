@@ -3,6 +3,7 @@
 // snapshot soal + round + eligible players dibersamaan atomik —
 // snapshot eligibility WAJIB durable sebelum round bisa dijawab.
 
+import { randomUUID } from 'node:crypto';
 import { db } from '@/lib/db';
 import type { MainRound } from '../../domain/entities/round';
 import type {
@@ -20,6 +21,31 @@ import {
 type EligibleInput = { playerId: string; teamId?: string };
 
 export class PrismaRoundRepository implements RoundRepository {
+  async startIndependentJelajah(sessionId: string, now: Date): Promise<{ roundId: string }> {
+    return db.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM "MainSession" WHERE id = ${sessionId} FOR UPDATE`;
+      const session = await tx.mainSession.findUniqueOrThrow({ where: { id: sessionId } });
+      if (session.gameMode === 'JELAJAH_KATA' && session.phase === 'QUESTION') {
+        const existing = await tx.mainRound.findFirst({ where: { sessionId, index: 0, closesAt: null } });
+        if (existing) return { roundId: existing.id };
+      }
+      if (session.phase !== 'LOBBY' || session.gameMode !== 'JELAJAH_KATA') throw new Error('Sesi belum siap dimulai.');
+      const players = await tx.mainPlayer.findMany({ where: { sessionId, eligibleFromRoundIndex: 0 } });
+      const questions = await tx.mainQuestionSnapshot.findMany({ where: { sessionId }, orderBy: { position: 'asc' } });
+      if (players.length === 0 || questions.length !== session.totalRounds) throw new Error('Peserta atau soal belum siap.');
+      const rounds = questions.map((question) => ({
+        id: randomUUID(), sessionId, questionSnapshotId: question.id, index: question.position,
+        status: 'OPEN' as const, openedAt: now, closesAt: null,
+      }));
+      await tx.mainRound.createMany({ data: rounds });
+      await tx.mainRoundEligiblePlayer.createMany({ data: rounds.flatMap((round) => players.map((player) => ({
+        roundId: round.id, playerId: player.id, teamId: player.teamId,
+      }))) });
+      await tx.mainSession.update({ where: { id: sessionId }, data: { phase: 'QUESTION', currentRoundIndex: 0, startedAt: now } });
+      return { roundId: rounds[0].id };
+    }, { timeout: 20000 });
+  }
+
   async findById(id: string): Promise<MainRound | null> {
     const row = await db.mainRound.findUnique({
       where: { id },

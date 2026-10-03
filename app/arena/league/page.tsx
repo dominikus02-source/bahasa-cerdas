@@ -1,3 +1,4 @@
+import { identitySelect, resolveIdentity } from "@/lib/account/identity";
 import { getUser } from "@/lib/supabase/server"
 import { db } from "@/lib/db"
 import { redirect } from "next/navigation"
@@ -28,23 +29,23 @@ export default async function LeaguePage({
   // MURID + isMe sehingga papan ini khusus murid.
   const [weeklyEntries, dailyRows, competition] = await Promise.all([
     getLeaderboard({ scope: "GLOBAL", period: "WEEKLY", userId: user.id, limit: 50 }),
-    cache.getOrSet<LeagueRow[]>("league:harian:v2:top50", async () => {
+    cache.getOrSet<LeagueRow[]>("league:harian:v3:top50", async () => {
       const today = new Date()
       today.setHours(0, 0, 0, 0)
       const earned = await db.coinTransaction.groupBy({
         by: ["userId"],
-        where: { createdAt: { gte: today }, amount: { gt: 0 }, user: { role: "MURID" } },
+        where: { createdAt: { gte: today }, amount: { gt: 0 }, user: { role: "MURID", email: { not: { endsWith: "@account.invalid" } } } },
         _sum: { amount: true },
         orderBy: { _sum: { amount: "desc" } },
         take: 50,
       })
       const userIds = earned.map(e => e.userId)
       if (userIds.length === 0) return []
-      const users = await db.user.findMany({ where: { id: { in: userIds } }, select: { id: true, fullName: true, nickname: true, avatar: true, xp: true, level: true, coins: true, streak: true, isFounder: true, isPremium: true } })
+      const users = await db.user.findMany({ where: { id: { in: userIds } }, select: { id: true, fullName: true, nickname: true, avatar: true, xp: true, level: true, coins: true, streak: true, ...identitySelect } })
       return earned.map(e => {
         const u = users.find(us => us.id === e.userId)
         if (!u) return null
-        return { ...u, todayXP: e._sum.amount || 0 }
+        return { ...u, ...resolveIdentity(u), todayXP: e._sum.amount || 0 }
       }).filter(Boolean) as LeagueRow[]
     }, 120),
     getWeeklyCompetition(user.id).catch(() => null),
@@ -61,6 +62,7 @@ export default async function LeaguePage({
     streak: 0,
     isFounder: e.isFounder,
     isPremium: e.isPremium,
+    badgeKind: e.badgeKind,
   }))
 
   const hallOfFame: HallOfFameRow[] = (competition?.hallOfFame ?? []).map(h => ({

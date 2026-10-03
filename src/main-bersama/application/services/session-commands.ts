@@ -8,6 +8,7 @@
 //
 // Error gameplay = typed result; unexpected = throw (programming bug).
 
+import { isIndependentJelajah } from './independent-jelajah';
 import type { RoundId, SessionId } from '../../domain/types/ids';
 import type { SessionEngine } from './session-engine';
 import type { GameEngineState } from '../../games/game-router';
@@ -180,6 +181,13 @@ export async function startSession(
     return { ok: false, code: 'NO_ELIGIBLE_PLAYERS' };
   }
 
+  if (session.gameMode === 'jelajah-kata' && deps.rounds.startIndependentJelajah) {
+    const opened = await deps.rounds.startIndependentJelajah(sessionId, deps.clock.now());
+    deps.resolver.discard?.(sessionId);
+    try { await deps.realtimeSignal.sendSessionUpdate(sessionId); } catch { /* Durable start remains successful; clients also poll. */ }
+    return { ok: true, value: { phase: 'question', roundIndex: 0, roundId: opened.roundId, closesAt: '' } };
+  }
+
   // Kota PENDING_ROSTER: finalisasi target SEKARANG (§11/§12),
   // SEBELUM round pertama dibuka. Setelah ini target FIXED.
   let finalizedKotaTarget: number | undefined;
@@ -286,6 +294,7 @@ export async function closeRound(
 > {
   const guard = await requireOwnedEngine(deps, actor, sessionId);
   if (!guard.ok) return guard;
+  if (isIndependentJelajah(guard.engine.state)) return { ok: false, code: 'INVALID_PHASE', reason: 'Jelajah Kata berjalan otomatis per regu.' };
   const { engine, gameState } = guard;
 
   const result = engine.closeRound();
@@ -369,6 +378,7 @@ export async function startDiscussion(
 ): Promise<TeacherCommandResult<{ phase: 'discussion' }>> {
   const guard = await requireOwnedEngine(deps, actor, sessionId);
   if (!guard.ok) return guard;
+  if (isIndependentJelajah(guard.engine.state)) return { ok: false, code: 'INVALID_PHASE', reason: 'Jelajah Kata berjalan otomatis per regu.' };
   const result = guard.engine.startDiscussion();
   if (!result.ok) {
     return {
@@ -399,6 +409,7 @@ export async function nextRound(
 > {
   const guard = await requireOwnedEngine(deps, actor, sessionId);
   if (!guard.ok) return guard;
+  if (isIndependentJelajah(guard.engine.state)) return { ok: false, code: 'INVALID_PHASE', reason: 'Jelajah Kata berjalan otomatis per regu.' };
   const opened = await openRoundPersisted(deps, guard.engine);
   if (!opened.ok) return opened;
   return {
@@ -425,6 +436,7 @@ export async function pauseSession(
 ): Promise<TeacherCommandResult<{ phase: 'paused' }>> {
   const guard = await requireOwnedEngine(deps, actor, sessionId);
   if (!guard.ok) return guard;
+  if (isIndependentJelajah(guard.engine.state)) return { ok: false, code: 'INVALID_PHASE', reason: 'Jelajah Kata berjalan otomatis per regu.' };
   const result: EngineMutation = guard.engine.pause();
   if (!result.ok) return { ok: false, code: mapMutationCode(result.code) };
   await persistSession(deps, guard.engine);
@@ -438,6 +450,7 @@ export async function resumeSession(
 ): Promise<TeacherCommandResult<{ phase: string }>> {
   const guard = await requireOwnedEngine(deps, actor, sessionId);
   if (!guard.ok) return guard;
+  if (isIndependentJelajah(guard.engine.state)) return { ok: false, code: 'INVALID_PHASE', reason: 'Jelajah Kata berjalan otomatis per regu.' };
   const result: EngineMutation = guard.engine.resume();
   if (!result.ok) return { ok: false, code: mapMutationCode(result.code) };
   await persistSession(deps, guard.engine);
@@ -451,6 +464,7 @@ export async function endSession(
 ): Promise<TeacherCommandResult<{ phase: 'ended' }>> {
   const guard = await requireOwnedEngine(deps, actor, sessionId);
   if (!guard.ok) return guard;
+  if (isIndependentJelajah(guard.engine.state) && !['summary', 'ended'].includes(guard.engine.state.session.phase)) return { ok: false, code: 'INVALID_PHASE', reason: 'Tunggu semua regu menyelesaikan permainan.' };
   const { engine, gameState } = guard;
   const result = engine.endSession();
   if (!result.ok) {

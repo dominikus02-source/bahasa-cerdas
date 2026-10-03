@@ -52,56 +52,6 @@
     <p id="status" class="status" role="status"></p>
   </div>
 
-  <script>
-    var pendingUrl = null;
-    var checking = false;
-    var done = false;
-    var btn = document.getElementById("retry");
-    var statusEl = document.getElementById("status");
-
-    // Minta URL yang gagal dimuat tadi dari service worker, supaya ketika
-    // koneksi pulih kita kembali ke halaman itu — bukan ke beranda.
-    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
-      navigator.serviceWorker.controller.postMessage("GET_PENDING_NAV");
-      navigator.serviceWorker.addEventListener("message", function (e) {
-        if (e.data && e.data.type === "PENDING_NAV" && e.data.url) pendingUrl = e.data.url;
-      });
-    }
-
-    function checkNow() {
-      if (checking || done) return;
-      checking = true;
-      btn.disabled = true;
-      btn.textContent = "Memeriksa koneksi…";
-      statusEl.classList.remove("show");
-
-      var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
-      var timer = setTimeout(function () { if (controller) controller.abort(); }, 8000);
-
-      fetch("/api/health", { cache: "no-store", signal: controller ? controller.signal : undefined })
-        .then(function (res) {
-          clearTimeout(timer);
-          if (!res.ok) throw new Error("not-ready");
-          done = true;
-          window.location.assign(pendingUrl || window.location.href);
-        })
-        .catch(function () {
-          clearTimeout(timer);
-          checking = false;
-          btn.disabled = false;
-          btn.textContent = "Coba Lagi";
-          statusEl.textContent = "Masih offline. Pastikan Wi-Fi/data seluler menyala, lalu coba lagi.";
-          statusEl.classList.add("show");
-        });
-    }
-
-    btn.addEventListener("click", checkNow);
-    window.addEventListener("online", checkNow);
-    document.addEventListener("visibilitychange", function () {
-      if (document.visibilityState === "visible") checkNow();
-    });
-    // Cadangan otomatis: cek berkala saat masih offline, berhenti setelah tersambung.
-    setInterval(checkNow, 10000);
-  </script>
+  <script src="/offline-retry.js" defer></script>
 </body>
 </html>

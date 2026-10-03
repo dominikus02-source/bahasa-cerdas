@@ -1,3 +1,4 @@
+import { identitySelect, resolveIdentity, type IdentitySource } from "@/lib/account/identity";
 import { NextRequest, NextResponse, after } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
@@ -59,13 +60,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
           select: {
             id: true, fullName: true, nickname: true, avatar: true,
             equippedFrame: true, equippedNameColor: true, equippedBadge: true,
-            isFounder: true, isPremium: true,
+            ...identitySelect,
           },
         },
       },
     });
 
-    const commentWithDisplay = { ...comment, user: { ...comment.user, displayName: getDisplayName(comment.user, "peer") } };
+    const commentWithDisplay = { ...comment, user: { ...comment.user, ...resolveIdentity(comment.user), displayName: getDisplayName(comment.user, "peer") } };
 
     after(async () => {
       try {

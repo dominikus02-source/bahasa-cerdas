@@ -1,3 +1,4 @@
+import { identitySelect, resolveIdentity, type IdentitySource } from "@/lib/account/identity";
 import type { PlayerRank } from "@prisma/client";
 import { db } from "@/lib/db";
 import cache from "@/lib/redis";
@@ -38,6 +39,7 @@ export interface LeaderboardEntry {
   isMe: boolean;
   isFounder?: boolean;
   isPremium?: boolean;
+  badgeKind?: import("@/lib/account/identity").IdentityBadge | null;
 }
 
 const CACHE_TTL = 60; // detik
@@ -45,7 +47,7 @@ const CACHE_TTL = 60; // detik
 // Dinaikkan setiap kali bentuk LeaderboardEntry berubah. Tanpa ini, entri lama
 // di Redis (tanpa field baru) masih disajikan sampai TTL habis — mis. RankIcon
 // jatuh ke fallback BRONZE untuk semua orang selama semenit setelah deploy.
-const CACHE_VERSION = "v4";
+const CACHE_VERSION = "v5";
 
 // Kunci periode berjalan: kunci cache leaderboard WAJIB mengandung period key
 // (leaderboard:weekly:{weekKey}, leaderboard:season:{seasonKey}) supaya cache
@@ -153,7 +155,7 @@ export async function getLeaderboard(params: LeaderboardParams): Promise<Leaderb
         : {};
 
   const where = {
-    user: { role: "MURID" as const },
+    user: { role: "MURID" as const, email: { not: { endsWith: "@account.invalid" } } },
     ...(scopeIds ? { userId: { in: scopeIds } } : {}),
     ...periodWhere,
   };
@@ -161,7 +163,7 @@ export async function getLeaderboard(params: LeaderboardParams): Promise<Leaderb
     where,
     orderBy: [{ [field]: "desc" }, { totalXP: "desc" }],
     take: limit,
-    include: { user: { select: { id: true, fullName: true, nickname: true, avatar: true, isFounder: true, isPremium: true } } },
+    include: { user: { select: { id: true, fullName: true, nickname: true, avatar: true, ...identitySelect } } },
   });
 
   // Lazy reset: weeklyXP/seasonXP baru valid selama kunci periodenya masih
@@ -196,7 +198,7 @@ export async function getLeaderboard(params: LeaderboardParams): Promise<Leaderb
         weeklyXp: p.weeklyXP,
         isMe: p.userId === params.userId,
         isFounder: p.user.isFounder || undefined,
-        isPremium: p.user.isPremium || undefined,
+        ...resolveIdentity(p.user),
       };
     });
 
@@ -204,7 +206,7 @@ export async function getLeaderboard(params: LeaderboardParams): Promise<Leaderb
   if (params.userId && !entries.some((e) => e.isMe) && (!scopeIds || scopeIds.includes(params.userId))) {
     const me = await db.playerProfile.findUnique({
       where: { userId: params.userId },
-      include: { user: { select: { id: true, fullName: true, nickname: true, avatar: true, role: true, isFounder: true, isPremium: true } } },
+      include: { user: { select: { id: true, fullName: true, nickname: true, avatar: true, ...identitySelect } } },
     });
     if (me && me.user.role === "MURID" && inCurrentPeriod(me) && me[field] > 0) {
       // Jangan menghitung posisi dari `entries`: daftar itu sengaja dibatasi
@@ -253,7 +255,7 @@ export async function getLeaderboard(params: LeaderboardParams): Promise<Leaderb
         weeklyXp: me.weeklyXP,
         isMe: true,
         isFounder: me.user.isFounder || undefined,
-        isPremium: me.user.isPremium || undefined,
+        ...resolveIdentity(me.user),
       });
     }
   }

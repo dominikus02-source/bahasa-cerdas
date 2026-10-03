@@ -1,9 +1,11 @@
+import { mainBersamaFont } from '@/components/main-bersama/typography';
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { SetupClient } from "@/components/main-bersama/teacher/setup-client";
 import { normalizePackageRef } from "@/src/main-bersama/adapters/bank-soal/package-ref";
 import "@/components/main-bersama/main-bersama.css";
+import "@/components/main-bersama/premium-layout.css";
 
 /**
  * Setup Main Bersama (Tahap 7 §3) — route guru final:
@@ -79,7 +81,7 @@ export default async function MainBersamaSetupPage({
   ]);
 
   return (
-    <div className="mb-scope-guru">
+    <div className={`mb-scope-guru mb-premium ${mainBersamaFont.variable}`}>
       <SetupClient
         teacherName={user.fullName ?? "Guru"}
         preselectedTheme={preselectedTheme}

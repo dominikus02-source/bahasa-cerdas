@@ -51,6 +51,7 @@ export function isValidOption(
   question: MainQuestionSnapshot,
   selectedOptionId: string,
 ): boolean {
+  if (question.type === 'short-answer') return selectedOptionId.trim().length > 0 && selectedOptionId.length <= 200;
   return question.options.some((option) => option.id === selectedOptionId);
 }
 
@@ -59,6 +60,10 @@ export function computeCorrectness(
   question: MainQuestionSnapshot,
   selectedOptionId: string,
 ): boolean {
+  if (question.type === 'short-answer') {
+    const normalize = (value:string) => value.normalize('NFKC').trim().replace(/\s+/g, ' ').toLocaleLowerCase('id-ID');
+    return normalize(question.correctOptionId) === normalize(selectedOptionId);
+  }
   return question.correctOptionId === selectedOptionId;
 }
 

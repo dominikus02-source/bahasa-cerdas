@@ -25,6 +25,7 @@ export async function provisionGoogleUser(opts: {
   let user = await db.user.findUnique({ where: { supabaseId } });
   if (!user) user = await db.user.findFirst({ where: { email } });
 
+  if (user?.email.endsWith("@account.invalid")) throw new Error("ACCOUNT_DELETED");
   if (user) {
     if (user.supabaseId !== supabaseId) {
       await db.user.update({ where: { id: user.id }, data: { supabaseId } });
@@ -52,5 +53,5 @@ export async function findApplicationUser(opts: { supabaseId: string; email: str
   const email = opts.email.toLowerCase();
   let user = await db.user.findUnique({ where: { supabaseId: opts.supabaseId } });
   if (!user && email) user = await db.user.findFirst({ where: { email } });
-  return user;
+  return user?.email.endsWith("@account.invalid") ? null : user;
 }

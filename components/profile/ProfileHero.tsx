@@ -36,6 +36,7 @@ export interface HeroPersona {
   joinedAt?: string | null;
   isFounder?: boolean;
   isPremium?: boolean;
+  badgeKind?: import("@/lib/account/identity").IdentityBadge | null;
 }
 
 export interface HeroSocial {
@@ -250,7 +251,7 @@ export default function ProfileHero({
                     onDark={isDarkInk}
                     badgeSize={20}
                     isFounder={persona.isFounder}
-                    isPremium={persona.isPremium}
+                    isPremium={persona.isPremium} badgeKind={persona.badgeKind}
                     verifiedSize={22}
                   />
               </h1>

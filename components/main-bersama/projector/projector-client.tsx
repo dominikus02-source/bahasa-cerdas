@@ -25,6 +25,7 @@ import { KotaScene } from "@/components/main-bersama/art/kota/KotaScene";
 import { TeamBadge } from "@/components/main-bersama/art/shared/TeamBadge";
 import { TeamMascot } from "@/components/main-bersama/art/registry";
 import { Podium } from "@/components/main-bersama/art/jelajah/Podium";
+import KotaFinalDisplay from "@/components/main-bersama/shared/KotaFinalDisplay";
 import { useTrailMotion } from "@/components/main-bersama/art/jelajah-motion/useTrailMotion";
 import {
   useKotaMotion,
@@ -111,7 +112,7 @@ export function ProjectorClient() {
         ).gameProgress.teamProgress
       : EMPTY_TEAM_PROGRESS;
   const phase = view?.phase ?? "";
-  const { getPose } = useTrailMotion(teamProgress, phase);
+  const { getPose } = useTrailMotion(teamProgress, view?.automaticTeams && phase === 'question' ? 'discussion' : phase);
 
   // 8C.2 — kota motion derives transient reveal from authoritative
   // progress + unlockedMilestones. Unconditional (hooks rules); snaps
@@ -539,7 +540,7 @@ function ProjectorDiscussion({
         <div className="mb-pj-reveal mb-entrance">
           <p className="mb-pj-reveal-label">Jawaban benar:</p>
           <p className="mb-pj-reveal-answer mb-display">
-            {r.question.options.find((o) => o.id === r.correctOptionId)?.text ??
+            {r.question.type === 'short-answer' ? r.correctOptionId : r.question.options.find((o) => o.id === r.correctOptionId)?.text ??
               "—"}
           </p>
           {r.explanation ? (
@@ -714,73 +715,9 @@ function ProjectorSummary({ view }: { view: ProjectorSessionView }) {
     );
   }
 
-  // Kota (§28): misi tercapai = rayakan; belum = copy positif progress
-  // kelas — tanpa kata "gagal", tanpa menyalahkan siswa.
-  // Final tidak membawa unlockedMilestones: turunkan dari threshold
-  // 25/50/75/100 yang sama dengan track (display-only).
-  const pct = Math.round(final.progressPercent);
-  const finalUnlocked = ["garden", "library", "homes", "town-center"].filter(
-    (_, i) => pct >= [25, 50, 75, 100][i],
-  );
-  const litAreaCount = finalUnlocked.length;
-  const title = final.missionAchieved
-    ? "Kota Cahaya Menyala!"
-    : `Kota Cahaya ${pct}% Menyala`;
-
   return (
     <section className="mb-pj-phase mb-pj-phase-final mb-pj-phase-final-kota mb-fade-in">
-      <div className="mb-pj-kota-summary-shell">
-        <header className="mb-pj-kota-summary-head">
-          <div className="mb-pj-kota-summary-heading">
-            <span className="mb-pj-kota-summary-kicker">
-              {final.missionAchieved ? "MISI KELAS TERCAPAI" : "HASIL KOTA CAHAYA"}
-            </span>
-            <h2 className="mb-display mb-pj-kota-summary-title">{title}</h2>
-            <p className="mb-pj-kota-summary-subtitle">
-              {final.missionAchieved
-                ? "Empat area kota sudah menyala. Kelas berhasil menyelesaikan misi bersama."
-                : `${litAreaCount} dari 4 area kota sudah menyala. Teruskan kerja sama kelas!`}
-            </p>
-          </div>
-          <div className="mb-pj-kota-summary-badge" aria-label={`${pct} persen energi kota`}>
-            <span className="mb-pj-kota-summary-badge-label">Energi Kota</span>
-            <strong className="mb-number">{pct}%</strong>
-          </div>
-        </header>
-
-        <div className="mb-pj-kota-summary-grid">
-          <div className="mb-pj-kota-summary-world" aria-hidden>
-            <KotaScene unlocked={finalUnlocked} />
-          </div>
-
-          <aside className="mb-pj-kota-summary-side">
-            <div className="mb-pj-kota-summary-progress-card">
-              <CityProgress
-                progressPercent={final.progressPercent}
-                unlockedMilestones={finalUnlocked}
-              />
-            </div>
-
-            <div
-              className={`mb-pj-kota-summary-message ${final.missionAchieved ? "mb-pj-kota-summary-message-complete" : ""}`}
-              role="status"
-            >
-              <span className="mb-pj-kota-summary-message-label">
-                {final.missionAchieved ? "SEMUA AREA MENYALA" : "PROGRES KELAS"}
-              </span>
-              <div className="mb-pj-kota-summary-area-count">
-                <strong className="mb-number">{litAreaCount}/4</strong>
-                <span>area kota</span>
-              </div>
-              <p>
-                {final.missionAchieved
-                  ? "Seluruh kelas berhasil mencapai misi — hebat!"
-                  : "Kerja bagus. Kelas sudah berjuang keras bersama-sama!"}
-              </p>
-            </div>
-          </aside>
-        </div>
-      </div>
+      <KotaFinalDisplay progressPercent={final.progressPercent} missionAchieved={final.missionAchieved} podium={final.podium ?? []} />
     </section>
   );
 }

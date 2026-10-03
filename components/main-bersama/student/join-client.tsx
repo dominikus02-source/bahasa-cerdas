@@ -120,7 +120,7 @@ function JoinFlow() {
       return;
     }
     setStep('name');
-  }, [pin, isAuthed, joinNow]);
+  }, [pin, isAuthed]);
 
   const submitName = useCallback(() => { if (name.trim().length >= 2) { setError(null); setStep('avatar'); } }, [name]);
 
@@ -140,8 +140,14 @@ function JoinFlow() {
       <span className="mb-eyebrow mb-join-eyebrow">Masuk arena kelas</span>
       <h1 className="mb-display mb-join-title">Main Bersama</h1>
       <p className="mb-join-tagline">
-        Masukkan PIN dari Pak/Bu Guru dan siap bermain bareng sekelas.
+        Gabung dengan PIN dari gurumu.
       </p>
+      <ol className="mb-join-steps" aria-label="Langkah bergabung">
+        {(isAuthed ? ['PIN', 'Avatar'] : ['PIN', 'Nama', 'Avatar']).map((label, index) => {
+          const currentLabel = step === 'pin' ? 'PIN' : step === 'name' ? 'Nama' : 'Avatar';
+          return <li key={label} aria-current={label === currentLabel ? 'step' : undefined}><span aria-hidden="true">{index + 1}</span>{label}</li>;
+        })}
+      </ol>
 
       {canResume ? (
         <button type="button" className="mb-resume" onClick={tryResume} disabled={resuming}>
@@ -168,11 +174,12 @@ function JoinFlow() {
             value={pin}
             onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
             placeholder="······"
+            aria-invalid={Boolean(error)}
             aria-describedby={error ? 'mb-join-err' : undefined}
           />
           {error ? <p id="mb-join-err" role="alert" className="mb-join-err">{error}</p> : null}
           <PrimaryGameButton type="submit">
-            {isAuthed ? 'Gabung sebagai akun saya' : 'Lanjut'}
+            Lanjut
           </PrimaryGameButton>
         </form>
       ) : null}
@@ -216,7 +223,7 @@ function JoinFlow() {
             {AVATARS.map((a) => { const selected = avatarId === a.id; return <button key={a.id} type="button" className={`mb-avatar-option${selected ? ' is-selected' : ''}`} onClick={() => { setAvatarId(a.id); setError(null); }} disabled={step === 'joining'} aria-pressed={selected} aria-label={a.name}><img src={a.src} alt="" />{selected ? <span className="mb-avatar-check">✓</span> : null}</button>; })}
           </div>
           {error ? <p role="alert" className="mb-join-err">{error}</p> : null}
-          <PrimaryGameButton type="submit" disabled={!avatarId} loading={step === 'joining'}>Mulai</PrimaryGameButton>
+          <PrimaryGameButton type="submit" disabled={!avatarId} loading={step === 'joining'}>Gabung Permainan</PrimaryGameButton>
           <button type="button" className="mb-linklike" onClick={() => setStep(isAuthed ? 'pin' : 'name')} disabled={step === 'joining'}>Kembali</button>
         </form>
       ) : null}

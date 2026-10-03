@@ -86,11 +86,7 @@ export function Sidebar() {
             </div>
             <div>
               <span className="font-bold text-gray-900 dark:text-slate-100">BahasaCerdas</span>
-              {user.isFounder && (
-                <span className="ml-1 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-gold-400 to-gold-600 px-2 py-0.5 text-[10px] font-bold text-black dark:text-slate-100">
-                  FOUNDER
-                </span>
-              )}
+
             </div>
           </Link>
         </div>
@@ -102,7 +98,7 @@ export function Sidebar() {
                 <RankIcon rank={rank} size={40} glow />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="flex items-center gap-1.5 truncate text-sm font-semibold">{user.fullName || "Murid"}<VerifiedBadge isFounder={user.isFounder} isPremium={user.isPremium} size={14} /></p>
+                <p className="flex items-center gap-1.5 truncate text-sm font-semibold">{user.fullName || "Murid"}<VerifiedBadge isFounder={user.isFounder} isPremium={user.isPremium} badgeKind={user.badgeKind} size={14} /></p>
                 <div className="flex items-center gap-1 text-xs text-muted-foreground">
                   <span>{RANK_META[rank].label}</span>
                   <span>Lv.{level}</span>

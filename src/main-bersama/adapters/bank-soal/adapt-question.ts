@@ -32,6 +32,7 @@ export type QuestionAdaptResult =
 const SUPPORTED_SOURCE_TYPES = new Set([
   'PILIHAN_GANDA', // Soal DB + master JSON
   'pilihan_ganda', // UKBI/TKA JSON
+  'ISIAN_SINGKAT',
   'BENAR_SALAH', // master JSON (opsi Benar/Salah)
 ]);
 
@@ -116,6 +117,23 @@ export function adaptQuestion(input: BankSoalQuestionInput): QuestionAdaptResult
     };
   }
 
+  if (input.type === 'ISIAN_SINGKAT') {
+    const shaped = buildPromptAndPassage(input);
+    // Older Bank Soal isian stores a single answer option with an index key.
+    const rawKey = input.correctAnswer.trim();
+    const sourceAnswers: ReadonlyArray<string | { id: string; text: string }> = input.options;
+    const soleAnswer = sourceAnswers.length === 1 ? sourceAnswers[0] : undefined;
+    const answer = rawKey === '0' && soleAnswer !== undefined
+      ? (typeof soleAnswer === 'string' ? soleAnswer : soleAnswer.text).trim()
+      : rawKey;
+    if (sourceAnswers.length > 1)
+      return {ok:false,code:'INVALID_QUESTION',reason:'Isian singkat tidak boleh memakai pilihan ganda'};
+    if (!shaped.ok || !answer || answer.length > 200)
+      return {ok:false,code:'INVALID_QUESTION',reason:'Isian singkat membutuhkan pertanyaan dan kunci maksimal 200 karakter'};
+    return {ok:true,question:{id:'',sourceQuestionId:input.sourceQuestionId,type:'short-answer',prompt:shaped.prompt,options:[],correctOptionId:answer,
+      ...(shaped.passage ? {passage:shaped.passage}:{}),
+      ...(input.explanation ? {explanation:input.explanation}:{})}};
+  }
   // Normalisasi opsi — TIDAK memutasi array source.
   const sourceOptionsRaw = input.options;
   const sourceOptions: ReadonlyArray<string | { id?: unknown; text?: unknown }> =

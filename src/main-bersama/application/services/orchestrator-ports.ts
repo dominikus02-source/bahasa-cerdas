@@ -58,6 +58,7 @@ export type MainPauseStatePort =
 
 /** Persist round + eligible snapshot (transaksional di infrastruktur). */
 export interface RoundStore {
+  startIndependentJelajah?(sessionId: string, now: Date): Promise<{ roundId: string }>;
   save(round: MainRoundPort): Promise<void>;
 }
 

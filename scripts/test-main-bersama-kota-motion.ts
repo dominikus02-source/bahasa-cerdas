@@ -438,7 +438,7 @@ const citySrc = readFileSync(
 );
 check("CityProgress: animate prop", citySrc.includes("animate"));
 check("CityProgress: mb-city-fill-anim/snap", citySrc.includes("mb-city-fill-anim") && citySrc.includes("mb-city-fill-snap"));
-check("CityProgress: mb-city-node-reveal", citySrc.includes("mb-city-node-reveal"));
+check("CityProgress: milestone aktif mendapat animasi reveal", citySrc.includes("on && revealing.has(m.key)") && citySrc.includes("mb-city-stop-reveal") && citySrc.includes(".mb-city-stop-reveal .mb-city-stop-ring"));
 
 const pjSrc = readFileSync(
   join(ROOT, "components/main-bersama/projector/projector-client.tsx"),
@@ -475,6 +475,7 @@ const closedBranch = pjSrc.slice(
   pjSrc.indexOf('view.phase === "closed"'),
   pjSrc.indexOf('view.phase === "discussion"'),
 );
+const closedKotaBranch = closedBranch.split(') : view.phase === "closed"')[0];
 check(
   "closed: KotaScene dirender (langit kota)",
   closedBranch.includes("<KotaScene"),
@@ -498,7 +499,7 @@ check(
 );
 check(
   "closed: tanpa visual Jelajah (trail tidak ikut)",
-  !closedBranch.includes("JelajahTrail") && !closedBranch.includes("teamProgress"),
+  !closedKotaBranch.includes("JelajahTrail") && !closedKotaBranch.includes("teamProgress"),
 );
 check(
   "projector: growFrom diteruskan ke CityProgress",

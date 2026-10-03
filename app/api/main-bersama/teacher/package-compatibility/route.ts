@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
   // mengimpor util Bank Soal BC — implementasi tema diinjeksi di sini.
   const source = await new PrismaBankSoalQuestionSource(
     new PrismaBankThemeQuestionSource(),
+    actor.userId,
   ).loadQuestions(packageRef);
   if (!source.ok) return errorResponse('PACKAGE_NOT_FOUND');
 

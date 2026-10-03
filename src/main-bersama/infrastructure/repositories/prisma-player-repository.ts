@@ -3,6 +3,7 @@
 // eligibleFromRoundIndex. Liveness (connected) juga dipersist
 // sebagai data — realtime layer yang memutakhirkan.
 
+import { IndependentRosterClosedError } from '../../application/services/independent-jelajah';
 import { db } from '@/lib/db';
 import type { MainPlayer } from '../../domain/entities/player';
 import type {
@@ -61,15 +62,19 @@ export class PrismaPlayerRepository implements PlayerRepository {
 
   /** Join dengan guard race: unique(sessionId, userId) untuk authed. */
   async saveRuntime(player: RuntimePlayer, sessionId: string): Promise<void> {
-    await db.mainPlayer.upsert({
-      where: { id: player.id },
-      create: playerToDbCreate(player, sessionId),
-      update: {
-        displayName: player.displayName,
-        avatarUrl: player.avatarUrl,
-        teamId: player.teamId,
-        connected: player.connected,
-      },
+    await db.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM "MainSession" WHERE id = ${sessionId} FOR UPDATE`;
+      const session = await tx.mainSession.findUniqueOrThrow({ where: { id: sessionId } });
+      const existing = await tx.mainPlayer.findUnique({ where: { id: player.id } });
+      if (!existing && session.gameMode === 'JELAJAH_KATA' && session.phase !== 'LOBBY') {
+        const independent = await tx.mainRound.findFirst({ where: { sessionId, index: 0, closesAt: null } });
+        if (independent) throw new IndependentRosterClosedError();
+      }
+      await tx.mainPlayer.upsert({
+        where: { id: player.id },
+        create: playerToDbCreate(player, sessionId),
+        update: { displayName: player.displayName, avatarUrl: player.avatarUrl, teamId: player.teamId, connected: player.connected },
+      });
     });
   }
 

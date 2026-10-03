@@ -745,6 +745,25 @@
   --game-bg-via: #102B34;
   --game-bg-to: #173B45;
 }
+.dark .game-env-bermain-kata {
+  /* A moonlit sky instead of the generic indigo canvas: this keeps the
+     game's friendly sky/forest identity while preserving readable layers. */
+  --game-bg-from: #0D1E36;
+  --game-bg-via: #12314A;
+  --game-bg-to: #17434B;
+  --game-surface-sunken: #0E263D;
+  --game-surface: #142E48;
+  --game-surface-elevated: #1C3B58;
+  --game-surface-raised: #274B68;
+  --game-surface-overlay: #315B78;
+  --game-text: #F3FBFF;
+  --game-text-secondary: #CCE1EC;
+  --game-text-muted: #9AB7C8;
+  --game-text-faint: #6F91A5;
+  --game-border: rgba(214, 244, 255, 0.3);
+  --game-border-light: rgba(214, 244, 255, 0.14);
+  --game-divider: rgba(214, 244, 255, 0.1);
+}
 .dark .game-env-kataplay {
   --game-bg-from: #10162B;
   --game-bg-via: #171F38;

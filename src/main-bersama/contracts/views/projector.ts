@@ -5,7 +5,7 @@
 
 import type { GameMode, SessionPhase } from '../../domain/types/session';
 import type { PublicQuestionView } from '../../domain/entities/question';
-import type { TeamPublicInfo } from './common';
+import type { KotaPodiumEntry, TeamPublicInfo } from './common';
 import type { SessionId, TeamId } from '../../domain/types/ids';
 
 /** Data join untuk QR code di layar — tanpa secret. */
@@ -23,6 +23,7 @@ export interface ProjectorLobbyParticipant {
 
 export interface ProjectorSessionView {
   role: 'projector';
+  automaticTeams?: boolean;
   sessionId: SessionId;
   /** ISO-8601 UTC. */
   serverTime: string;
@@ -83,6 +84,6 @@ export interface ProjectorSessionView {
   /** Podium/hasil akhir — hanya saat summary/ended. */
   finalResult:
     | { gameMode: 'jelajah-kata'; teamRanking: { teamId: TeamId; progress: number }[] }
-    | { gameMode: 'kota-cahaya'; missionAchieved: boolean; progressPercent: number }
+    | { gameMode: 'kota-cahaya'; missionAchieved: boolean; progressPercent: number; podium?: KotaPodiumEntry[] }
     | null;
 }

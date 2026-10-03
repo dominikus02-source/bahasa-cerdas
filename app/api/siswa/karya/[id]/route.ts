@@ -1,3 +1,4 @@
+import { identitySelect, resolveIdentity, type IdentitySource } from "@/lib/account/identity";
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
@@ -8,11 +9,12 @@ import type { PlayerRank } from "@prisma/client";
 
 const USER_RANK_SELECT = { playerProfile: { select: { currentRank: true } } } as const;
 
-function withRank<T extends { playerProfile?: { currentRank?: string } | null }>(user: T) {
+function withRank<T extends IdentitySource & { playerProfile?: { currentRank?: string } | null }>(user: T) {
   const rank = user.playerProfile?.currentRank ?? "BRONZE";
   const meta = RANK_META[rank as PlayerRank];
   return {
     ...user,
+    ...resolveIdentity(user),
     rank,
     rankLabel: meta?.label ?? rank,
     rankTitle: meta?.title ?? rank,
@@ -31,7 +33,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
           select: {
             id: true, fullName: true, nickname: true, avatar: true,
             equippedFrame: true, equippedNameColor: true, equippedBadge: true,
-            isFounder: true, isPremium: true,
+            ...identitySelect,
             playerProfile: { select: { currentRank: true } },
             profile: { select: { school: true, city: true } },
           },
@@ -42,7 +44,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
               select: {
                 id: true, fullName: true, nickname: true, avatar: true,
                 equippedFrame: true, equippedNameColor: true, equippedBadge: true,
-                isFounder: true, isPremium: true,
+                ...identitySelect,
                 playerProfile: { select: { currentRank: true } },
               },
             },

@@ -11,7 +11,7 @@ export default async function PlayerPage() {
 
   return (
     <PlayerTheme>
-      <PlayerDashboard name={user.fullName || user.nickname || "Pemain"} />
+      <PlayerDashboard badgeKind={user.badgeKind} name={user.fullName || user.nickname || "Pemain"} />
     </PlayerTheme>
   );
 }

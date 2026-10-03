@@ -1,3 +1,4 @@
+import { identitySelect, resolveIdentity, normalizedIdentity, type IdentitySource } from "@/lib/account/identity";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getGravatarUrl } from "@/lib/avatar";
@@ -49,6 +50,7 @@ async function getClaimsBounded(supabase: any, context: string) {
 }
 
 const userSessionFields = {
+  ...identitySelect,
   id: true, supabaseId: true, email: true, fullName: true, nickname: true, nicknameUpdatedAt: true,
   avatar: true, role: true, isFounder: true, isPremium: true, premiumPlan: true, premiumUntil: true,
   xp: true, level: true, streak: true, league: true, coins: true, totalLikes: true, totalViews: true,
@@ -69,6 +71,7 @@ async function findOrCreateUser(opts: {
   let user = await db.user.findUnique({ where: { supabaseId }, select: userSessionFields });
   if (!user) user = await db.user.findFirst({ where: { email: lowerEmail }, select: userSessionFields });
 
+  if (user?.email.endsWith("@account.invalid")) return user;
   if (user) {
     const updates: Record<string, unknown> = {};
     if (user.supabaseId !== supabaseId) updates.supabaseId = supabaseId;
@@ -140,12 +143,13 @@ export async function GET(request: NextRequest) {
 
     const supabaseId = String(data.claims.sub);
     const email = String(data.claims.email || "").toLowerCase();
-    const cacheKey = `user:me:id:${supabaseId}`;
+    const cacheKey = `user:me:v2:id:${supabaseId}`;
     if (!fresh) {
       const cached = await cache.get<Record<string, unknown>>(cacheKey);
       if (cached) {
+        const cachedUser = { ...cached, ...resolveIdentity(cached as IdentitySource) };
         return NextResponse.json(
-          { success: true, user: cached, data: { user: cached } },
+          { success: true, user: cachedUser, data: { user: cachedUser } },
           { headers: { "X-Cache": "HIT", "Cache-Control": "private, max-age=30" } }
         );
       }
@@ -168,7 +172,7 @@ export async function GET(request: NextRequest) {
     }
 
     // GET never provisions a new application User and never changes role.
-    if (!found) return err(ERR.NOT_FOUND.error, ERR.NOT_FOUND.code, ERR.NOT_FOUND.status);
+    if (!found || found.email.endsWith("@account.invalid")) return err(ERR.NOT_FOUND.error, ERR.NOT_FOUND.code, ERR.NOT_FOUND.status);
 
     const updates: Record<string, unknown> = {};
     if (found.supabaseId !== supabaseId) updates.supabaseId = supabaseId;
@@ -202,6 +206,8 @@ export async function GET(request: NextRequest) {
     const result = {
       ...synced,
       ...profile,
+      ...normalizedIdentity(synced),
+      id: synced.id,
       avatar: synced.avatar || "",
     };
 
@@ -266,11 +272,13 @@ export async function POST(request: NextRequest) {
       fullName: body.fullName || email.split("@")[0],
       role: body.role ?? "",
     });
+    if (user?.email.endsWith("@account.invalid")) return err("Akun telah dihapus", "ACCOUNT_DELETED", 403);
     if (!user) {
       return err("Peran belum dipilih", "ROLE_REQUIRED", 400);
     }
 
-    return NextResponse.json({ success: true, user, data: { user } });
+    const resolvedUser = { ...user, ...resolveIdentity(user) };
+    return NextResponse.json({ success: true, user: resolvedUser, data: { user: resolvedUser } });
   } catch (e: any) {
     console.error("POST /api/user/me error:", e?.message || e, e?.stack || "");
     return err(ERR.INTERNAL.error, ERR.INTERNAL.code, ERR.INTERNAL.status);

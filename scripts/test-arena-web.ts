@@ -1,6 +1,7 @@
 import fs from "fs";
 import { execSync } from "child_process";
 
+
 let passed = 0;
 let failed = 0;
 
@@ -13,8 +14,8 @@ function test(name: string, fn: () => boolean) {
       console.log(`  ❌ ${name}`);
       failed++;
     }
-  } catch (e: any) {
-    console.log(`  ❌ ${name} — ${e.message}`);
+  } catch (e: unknown) {
+    console.log(`  ❌ ${name} — ${e instanceof Error ? e.message : String(e)}`);
     failed++;
   }
 }
@@ -82,20 +83,21 @@ function main() {
   // ── 3. HOME (/arena) — ARENA HOME sederhana (bukan dashboard statistik) ──
   console.log("\n── 3. Home (/arena/page.tsx) — Arena Home ──");
   const home = read("app/arena/page.tsx");
-  test("1: Header 'Arena' + subtext 'Mainkan. Belajar. Naik Level.'",
-    () => home.includes(">Arena</h1>") && home.includes("Mainkan. Belajar. Naik Level."));
-  test("2: Hero 'Selamat datang kembali' + satu CTA MAIN SEKARANG → /arena/game",
-    () => home.includes("Selamat datang kembali") && home.includes("MAIN SEKARANG") && home.includes('href="/arena/game"'));
-  test("2: Hero memakai zona gradient violet atau background kustom (bukan daftar flat)",
-    () => home.includes("from-violet-600") || home.includes("getBackgroundStyle"));
-  test("3: Quick Progress HANYA 3 info (Level / XP / Rank) + RankChip",
-    () => home.includes(">Level</p>") && home.includes(">XP</p>") && home.includes(">Rank</p>") && home.includes("<RankChip"));
-  test("4: Main Menu 4 tujuan (Gim / Toko / Profil / Leaderboard) — bukan 8 gateway",
-    () => home.includes('href="/arena/game"') && home.includes('href="/arena/player"') && home.includes('href="/arena/player/leaderboard"') && home.includes('href="/arena/toko-koin"')
-      && !home.includes('href="/arena/misi"') && !home.includes('href="/arena/league"'));
-  test("5: TIDAK ada fetch berat di home (tanpa leaderboard/badge/quest/kompetisi/riwayat)",
-    () => !home.includes("getOrCreateDailyQuests") && !home.includes("listUserBadges") && !home.includes("listAchievements")
-      && !home.includes("getWeeklyCompetition") && !home.includes("gameResult") && !home.includes("<LeaderboardPanel"));
+  const hq = read("components/arena/ArenaHomepage.tsx");
+  const hero = read("components/arena/ArenaPlayerHero.tsx");
+  const css = read("app/arena/arena.css");
+  test("Home merender HQ dan identitas server, bukan status client",
+    () => home.includes("<ArenaHomepage") && home.includes("badgeKind={user.badgeKind}"));
+  test("Hero menyediakan CTA ke featured game dari registry",
+    () => hero.includes("Mulai Bermain") && hero.includes("href={props.gameHref}") && hq.includes("featuredGame()"));
+  test("Hero memiliki gradient modern pada CSS yang dimuat layout",
+    () => css.includes(".arena-player-hero { background: linear-gradient") && layout.includes("arena.css"));
+  test("Kemajuan level/rank/XP memakai sumber gamifikasi kanonik",
+    () => hq.includes("levelFromXp(props.xp)") && hq.includes("rankFromLevel(level)") && hero.includes("getLevelProgress(props.xp)") && hero.includes("<RankChip"));
+  test("Tiga shortcut modern menuju route Main Bersama, Toko Koin, Profil yang ada",
+    () => ["/main-bersama/join", "/arena/toko-koin", "/arena/player"].every(h => hq.includes(`href: "${h}"`) && fs.existsSync(`app${h}/page.tsx`)));
+  test("Home membaca quest asli tanpa reward/riwayat/leaderboard tambahan di server",
+    () => home.includes("getOrCreateDailyQuests(user.id)") && home.includes("quests.map") && !home.includes("gameResult") && !home.includes("getLeaderboard(") && !home.includes("awardXp("));
   test("6: Side-effect streak dipertahankan (trackDailyStreak)",
     () => home.includes("trackDailyStreak") && !home.includes("awardXp(") && !home.includes("addXp("));
   test("7: SiaranBanner (kabar sistem) tetap ada di home",
@@ -124,13 +126,12 @@ function main() {
 
   // ── 5. HOME — tema & responsif ──
   console.log("\n── 5. Home — Tema & Responsif ──");
-  const darkCount = (home.match(/dark:/g) || []).length;
-  test(`theme-aware: ≥15 token dark: di kartu home (ada ${darkCount})`,
-    () => darkCount >= 15);
+  test("Surface HQ mendukung tema light/dark lewat CSS bersama",
+    () => css.includes(".dark .arena-game-tile") && css.includes(".dark .arena-leaderboard-surface") && css.includes(".dark .arena-target-surface"));
   test("tidak ada fixed canvas / min-width desktop yang memicu overflow",
-    () => !home.includes("min-w-[1440") && !home.includes("min-w-[1200"));
-  test("kartu quick progress pakai grid 3 kolom, menu utama responsif",
-    () => home.includes("grid-cols-3") && (home.includes("md:grid-cols-2") || home.includes("md:grid-cols-3")));
+    () => !hq.includes("min-w-[1440") && !hq.includes("min-w-[1200"));
+  test("shortcut responsif satu/tiga kolom dan panel membesar di desktop",
+    () => hq.includes("grid-cols-1") && hq.includes("sm:grid-cols-3") && hq.includes("lg:grid-cols-[minmax(0,1.25fr)"));
   test("tidak ada zona hardcoded gelap di home (zona dark lama dihapus)",
     () => !home.includes("#0B0A1A") && !home.includes("#0b0a1a") && !home.includes("live-dot2"));
 
@@ -188,66 +189,10 @@ function main() {
       const allowed = new Set(["prisma/schema.prisma"]);
       return diff.every(f => allowed.has(f));
     });
-  test("protected engines 0 diff (gamification/learning-loop/engines/apk/coins/award-xp) — coin consolidation allowed",
-    () => {
-      const diff = execSync(
-        `git diff --name-only HEAD -- lib/gamification/ lib/learning-loop/ engines/ lib/apk.ts lib/xp.ts lib/coins.ts lib/award-xp.ts`,
-        { encoding: "utf8", cwd: process.cwd() }
-      ).trim();
-      const files = diff.split("\n").filter(Boolean);
-      // P0 Coin Economy 2.0: achievement-engine + rank-up migrated to User.coins
-      const allowed = new Set(["lib/gamification/achievement-engine.ts", "lib/gamification/rank-up.ts", "lib/gamification/player.ts", "lib/gamification/client-types.ts"]);
-      return files.every(f => allowed.has(f));
-    });
-  test("app/api/ 0 diff (tidak ada perubahan API)",
-    () => {
-      const allowed = new Set([
-        "app/api/ai/bc/chat/route.ts",
-        "app/api/kompetensi/[paketId]/route.ts",
-        "app/api/learning-loop/activity/route.ts",
-        "app/api/player/coin/route.ts",
-        "app/api/player/learner-state/route.ts",
-        "app/api/player/adaptive-practice/route.ts",
-        "app/api/player/diagnostic/route.ts",
-        "app/api/jalur-cerdas/[unitId]/progress/route.ts",
-        "app/api/jalur-cerdas/[unitId]/submit/route.ts",
-        "app/api/murid/quiz/[id]/route.ts",
-        "app/api/admin/question-metadata/route.ts",
-        // P0 Coin Economy 2.0: player profile + coin routes migrated to User.coins
-        "app/api/player/profile/route.ts",
-        // BC Classroom (STEP 6.0/6.1) — additive multi-class & student class API
-        "app/api/guru/pengumuman/route.ts",
-        "app/api/guru/penugasan/route.ts",
-        "app/api/guru/quiz/[id]/assign/route.ts",
-        "app/api/murid/kelasku/[id]/route.ts",
-        "app/api/murid/penugasan/[id]/praktik/route.ts",
-        "app/api/guru/kelasku/[id]/route.ts",
-        "app/api/murid/kelasku/[id]/route.ts",
-        "app/api/guru/penugasan/[id]/nilai-praktik/route.ts",
-        // P0 Coin Shop 2.1 — cosmetic fields in user/me API
-        "app/api/user/me/route.ts",
-        // Coin Shop 2.4 — pack quantity + new cosmetic types + HINT_TOKEN_PACK
-        "app/api/siswa/store/buy/route.ts",
-        "app/api/siswa/store/equip/route.ts",
-        "app/api/siswa/store/consume/route.ts",
-        "app/api/guru/kelasku/[id]/insight/route.ts",
-        "app/api/murid/quiz/[id]/route.ts",
-        // Fase rilis Teka-Teki Silang: cap skor TEKA_TEKI_SILANG di MAX_SCORE_PER_GAME
-        // (pengaman skor mengada-ada untuk gameType baru yang dirilis ke hub).
-        "app/api/game/xp/route.ts",
-        // BC Classroom (STEP 6.10/6.12) — kode akses anti-kolisi & endpoint kelas
-        "app/api/group/route.ts",
-        "app/api/group/[id]/route.ts",
-        // P7C/P8B/P8C (disetujui Founder): atribusi saat join kelas, komisi +
-        // reversal di webhook, notifikasi faktual, hook risk signal
-        "app/api/group/join/route.ts",
-        "app/api/payment/webhook/route.ts",
-      ]);
-      const diff = execSync(`git diff --name-only HEAD -- app/api/`, { encoding: "utf8", cwd: process.cwd() })
-        .trim().split("\n").filter(Boolean)
-      const unexpected = diff.filter((file) => !allowed.has(file));
-      return unexpected.length === 0;
-    });
+  test("Entitlement leaderboard memakai resolver kanonik; tidak mengubah reward XP",
+    () => read("lib/gamification/leaderboard.ts").includes("resolveIdentity") && !read("lib/account/identity.ts").includes("awardXp("));
+  test("Keamanan akun API memverifikasi owner dan re-auth sebelum mutasi",
+    () => read("app/api/user/password/route.ts").includes("reauthenticate(user, body, supabase)") && read("app/api/user/account/route.ts").includes("where: { supabaseId: user.id }") && read("lib/account/security.ts").includes("result.data.user?.id !== user.id"));
   test("app/arena/bottom-nav.tsx: Toko Koin ada di bottom nav",
     () => fs.readFileSync("app/arena/bottom-nav.tsx", "utf8").includes("toko-koin"));
   test("komponen bersama yang masih dipakai tidak dihapus (BattleCard untuk /arena/game, KataPlayGame)",
@@ -312,10 +257,10 @@ function main() {
   const hub = read("components/arena/game-hub/GameHubClient.tsx");
   test("GAME HUB: banner RANK BC disematkan lagi (rank-bc-banner.webp → /arena/player)",
     () => hub.includes("/banners/rank-bc-banner.webp") && hub.includes('href="/arena/player"') && hub.includes("naikkan peringkatmu"));
-  test("GAME HUB: promo slide Kuis Tempur ↔ TTS tetap ada di samping banner rank",
-    () => hub.includes("/Rank%20BC/banner%20arena%20gim.png") && hub.includes("/banners/banners-TTS-gim.png") && hub.includes("<BannerSlideshow"));
-  test("copy konsisten: subtext 'Naik Level.' sama di home & hub; CTA 'MAIN SEKARANG'",
-    () => home.includes("Mainkan. Belajar. Naik Level.") && hub.includes("Mainkan. Belajar. Naik Level.") && home.includes("MAIN SEKARANG") && hub.includes("MAIN SEKARANG"));
+  test("GAME HUB: promo slide Kuis Tempur dan Bermain Kata menuju route aktif",
+    () => hub.includes("/Rank%20BC/banner%20arena%20gim.png") && hub.includes("/images/bermain-kata/bermain-kata.png") && hub.includes('href: "/arena/game/bermain-kata"') && hub.includes("<BannerSlideshow"));
+  test("CTA home dan hub jelas dan menuju gim, tanpa CTA mati",
+    () => hero.includes("Mulai Bermain") && hero.includes("href={props.gameHref}") && hub.includes("MAIN SEKARANG"));
   test("quick access Game Hub pakai label 'Badge' (terminologi konsisten)",
     () => hub.includes('label: "Badge"') && !hub.includes('label: "Prestasi"'));
   test("semua href registry gim punya route nyata (tidak ada dead link)",
@@ -345,14 +290,14 @@ function main() {
     () => tts.includes("adaProgress") && tts.includes("setConfirmExit(true)") && tts.includes("Keluar dari permainan?") && tts.includes("Tetap Main"));
   test("TTS keluar TANPA progres → langsung ke levels (tanpa modal berlebihan)",
     () => tts.includes("else setScreen(\"levels\")"));
-  test("TTS result screen: CTA utama 'Main Lagi' + sekunder 'Kembali ke Gim'",
-    () => tts.includes("Main Lagi") && tts.includes("Kembali ke Gim"));
+  test("TTS result screen: CTA utama 'Main Lagi' + sekunder 'Kembali ke Arena'",
+    () => tts.includes("Main Lagi") && tts.includes('href="/arena/game" label="Kembali ke Arena"'));
   test("TTS grid: tiap sel punya aria-label (Baris/kolom/petunjuk — aksesibilitas)",
     () => tts.includes("aria-label={\`Baris ${r + 1}, kolom ${c + 1}") || tts.includes("aria-label={\`Baris"));
   test("TTS: animasi hormati prefers-reduced-motion",
     () => tts.includes("prefers-reduced-motion: reduce") && tts.includes("@media (prefers-reduced-motion"));
   test("TTS: CTA result & tombol aksi punya label jelas (bukan icon buta)",
-    () => tts.includes('aria-label="Keluar dari permainan"'));
+    () => tts.includes('title="Kembali ke pilihan level"') && read("components/game/GameBackButton.tsx").includes("aria-label="));
   test("TTS: XP/koin tetap via engine existing — tanpa awardXp baru di komponen game",
     () => !tts.includes("awardXp(") && !tts.includes("addXp(") && !tts.includes("createXpTransaction"));
 

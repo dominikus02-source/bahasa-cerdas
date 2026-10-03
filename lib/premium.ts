@@ -26,7 +26,7 @@ const AI_QUOTA = {
 function getUserPlan(user: User): PremiumPlan {
   if (user.isFounder) return "PRO";
   if (user.isPremium && user.premiumUntil && new Date(user.premiumUntil) > new Date()) return "PRO";
-  return user.premiumPlan || "FREE";
+  return "FREE";
 }
 
 async function getAIUsageCount(

@@ -1,6 +1,6 @@
 import type { PlayerRank } from "@prisma/client";
 import Link from "next/link";
-import { Coins, Gamepad2, User } from "lucide-react";
+import { ArrowRight, Coins, Gamepad2, User } from "lucide-react";
 import { GAME_REGISTRY, featuredGame } from "@/lib/arena/game-registry";
 import { levelFromXp } from "@/lib/gamification/levels";
 import { rankFromLevel } from "@/lib/gamification/ranks";
@@ -10,6 +10,39 @@ import ArenaLeaderboard from "@/components/arena/ArenaLeaderboard";
 import ArenaRankProgress from "@/components/arena/ArenaRankProgress";
 import ArenaDailyTargets from "@/components/arena/ArenaDailyTargets";
 import ArenaComingSoon from "@/components/arena/ArenaComingSoon";
+
+const arenaShortcuts = [
+  {
+    href: "/main-bersama/join",
+    title: "Main Bersama",
+    description: "Gabung ruang dan seru-seruan bareng teman.",
+    action: "Gabung permainan",
+    icon: Gamepad2,
+    color: "from-violet-600 to-fuchsia-700 text-white border-violet-400/40 shadow-violet-500/20 focus-visible:ring-violet-500",
+    iconColor: "bg-white/20 text-white",
+    actionColor: "bg-white/15 text-white",
+  },
+  {
+    href: "/arena/toko-koin",
+    title: "Toko Koin",
+    description: "Tukar koinmu dengan item favorit.",
+    action: "Jelajahi toko",
+    icon: Coins,
+    color: "from-amber-300 to-orange-400 text-amber-950 border-amber-200/60 shadow-amber-500/20 focus-visible:ring-amber-500",
+    iconColor: "bg-white/40 text-amber-950",
+    actionColor: "bg-white/30 text-amber-950",
+  },
+  {
+    href: "/arena/player",
+    title: "Profil",
+    description: "Lihat pencapaian, level, dan peringkatmu.",
+    action: "Lihat profil",
+    icon: User,
+    color: "from-sky-600 to-indigo-700 text-white border-sky-400/40 shadow-sky-500/20 focus-visible:ring-sky-500",
+    iconColor: "bg-white/20 text-white",
+    actionColor: "bg-white/15 text-white",
+  },
+];
 
 type Quest = {
   id: string;
@@ -22,6 +55,7 @@ type Quest = {
 
 export interface ArenaHomepageProps {
   fullName: string;
+  badgeKind?: import("@/lib/account/identity").IdentityBadge | null;
   nickname: string | null;
   avatar: string | null;
   xp: number;
@@ -62,19 +96,29 @@ export default function ArenaHomepage(props: ArenaHomepageProps) {
         gameHref={featured.href}
         gameName={featured.title}
       />
-      <section aria-label="Akses Arena" className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <Link href="/main-bersama/join" className="flex items-center gap-3 rounded-2xl border border-violet-200 bg-violet-50 p-4 transition-colors hover:bg-violet-100 dark:border-violet-500/20 dark:bg-violet-500/10">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-violet-700 shadow-sm dark:bg-slate-800 dark:text-violet-300"><Gamepad2 size={19} /></span>
-          <span><span className="block text-sm font-extrabold text-slate-900 dark:text-white">Main Bersama</span><span className="mt-0.5 block text-[11px] text-slate-500 dark:text-slate-400">Bermain bersama teman.</span></span>
-        </Link>
-        <Link href="/arena/toko-koin" className="flex items-center gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 transition-colors hover:bg-amber-100 dark:border-amber-500/20 dark:bg-amber-500/10">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-amber-600 shadow-sm dark:bg-slate-800 dark:text-amber-300"><Coins size={19} /></span>
-          <span><span className="block text-sm font-extrabold text-slate-900 dark:text-white">Toko Koin</span><span className="mt-0.5 block text-[11px] text-slate-500 dark:text-slate-400">Tukarkan koinmu dengan item.</span></span>
-        </Link>
-        <Link href="/arena/player" className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 transition-colors hover:border-violet-200 hover:bg-violet-50/50 dark:border-slate-800 dark:bg-slate-900">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"><User size={19} /></span>
-          <span><span className="block text-sm font-extrabold text-slate-900 dark:text-white">Profil</span><span className="mt-0.5 block text-[11px] text-slate-500 dark:text-slate-400">Lihat profil pemain.</span></span>
-        </Link>
+      <section aria-label="Akses Arena" className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {arenaShortcuts.map(({ href, title, description, action, icon: Icon, color, iconColor, actionColor }) => (
+          <Link
+            key={href}
+            href={href}
+            className={`group relative flex h-full flex-col overflow-hidden rounded-3xl border bg-gradient-to-br p-5 shadow-lg transition-shadow hover:shadow-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-950 motion-safe:transition-[transform,box-shadow] motion-safe:hover:-translate-y-1 motion-safe:active:scale-[0.98] ${color}`}
+          >
+            <span aria-hidden="true" className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white/10" />
+            <span className="relative flex items-center gap-4 sm:flex-col sm:items-start sm:gap-3 lg:flex-row lg:items-center">
+              <span className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ring-1 ring-white/20 ${iconColor}`}>
+                <Icon size={28} strokeWidth={2.25} aria-hidden="true" />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-xl font-black tracking-tight">{title}</span>
+                <span className="mt-1 block text-sm font-medium leading-relaxed">{description}</span>
+              </span>
+            </span>
+            <span className={`relative mt-5 flex items-center justify-between gap-2 rounded-xl px-3.5 py-2.5 text-sm font-extrabold ${actionColor}`}>
+              {action}
+              <ArrowRight size={18} aria-hidden="true" className="shrink-0 motion-safe:transition-transform motion-safe:group-hover:translate-x-1" />
+            </span>
+          </Link>
+        ))}
       </section>
       <ArenaGameHub featured={featured} games={liveGames} />
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(340px,0.75fr)]">

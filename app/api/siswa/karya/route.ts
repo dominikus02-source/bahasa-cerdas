@@ -1,3 +1,4 @@
+import { identitySelect, resolveIdentity, type IdentitySource } from "@/lib/account/identity";
 import { NextRequest, NextResponse } from "next/server";
 import { getUser, createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
@@ -16,8 +17,8 @@ import { trackAchievement } from "@/lib/gamification/achievement-engine";
 import { resolveKaryaFeedScope, buildKaryaScopeWhere } from "@/lib/karya/feed-scope";
 import type { PlayerRank } from "@prisma/client";
 
-function withDisplayName<T extends { user: { fullName: string; nickname?: string | null } }>(item: T) {
-  return { ...item, user: { ...item.user, displayName: getDisplayName(item.user, "peer") } };
+function withDisplayName<T extends { user: IdentitySource & { fullName: string; nickname?: string | null } }>(item: T) {
+  return { ...item, user: { ...item.user, ...resolveIdentity(item.user), displayName: getDisplayName(item.user, "peer") } };
 }
 
 async function attachLikedStatus<T extends { id: string }>(
@@ -52,7 +53,7 @@ export async function GET(req: NextRequest) {
           // Kosmetik toko koin — dipakai untuk bingkai avatar, warna nama, badge
           equippedFrame: true, equippedNameColor: true, equippedBadge: true,
           // Verified badge — isFounder / isPremium
-          isFounder: true, isPremium: true,
+          ...identitySelect,
           playerProfile: { select: { currentRank: true } },
           profile: { select: { school: true, city: true } },
         },
@@ -170,8 +171,8 @@ export async function GET(req: NextRequest) {
       const cacheKey = cursor || q || groupId
         ? null
         : user && user.role === "GURU"
-          ? `feed:guru:${user.id}:${scope}:${type || "all"}:${limit}`
-          : `feed:${scope}:${type || "all"}:${limit}`;
+          ? `feed:v2:guru:${user.id}:${scope}:${type || "all"}:${limit}`
+          : `feed:v2:${scope}:${type || "all"}:${limit}`;
       let karya: any[];
       if (cacheKey) {
         const cached = await cache.get<any[]>(cacheKey);

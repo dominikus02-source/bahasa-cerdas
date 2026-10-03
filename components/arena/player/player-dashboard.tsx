@@ -16,7 +16,7 @@ import { GlassCard, Skeleton } from "./ui";
  * badge, riwayat — plus tautan tersier Prestasi/Notifikasi. Semua statistik
  * detail, misi, liga, dan pencapaian tetap hidup di route masing-masing.
  */
-export function PlayerDashboard({ name }: { name: string }) {
+export function PlayerDashboard({ name, badgeKind }: { name: string; badgeKind?: import("@/lib/account/identity").IdentityBadge | null }) {
   const profile = usePlayerProfile();
 
   if (!profile) {
@@ -58,7 +58,7 @@ export function PlayerDashboard({ name }: { name: string }) {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="space-y-4 px-4 py-5">
-      <PlayerHeader name={name} profile={profile} />
+      <PlayerHeader badgeKind={badgeKind} name={name} profile={profile} />
 
       <section aria-label="Navigasi profil" className="grid gap-3 md:grid-cols-3">
         {nav.map((n) => (

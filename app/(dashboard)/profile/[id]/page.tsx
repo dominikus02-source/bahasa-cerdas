@@ -30,7 +30,7 @@ interface ProfileUser {
   equippedBadge?: string | null;
   role: string;
   isFounder: boolean;
-  isPremium: boolean;
+  isPremium: boolean; badgeKind?: import("@/lib/account/identity").IdentityBadge | null;
   premiumPlan: string;
   xp: number;
   level: number;
@@ -198,6 +198,7 @@ export default function ProfilePage() {
           streak: user.streak ?? 0,
           isFounder: user.isFounder,
           isPremium: user.isPremium,
+          badgeKind: user.badgeKind,
         }}
         rank={rank}
         social={social}
@@ -207,21 +208,6 @@ export default function ProfilePage() {
             <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold ${isGuru ? "bg-emerald-100 text-emerald-700 border border-emerald-300/50 dark:bg-emerald-500/25 dark:text-emerald-200 dark:border-emerald-300/25" : "bg-violet-100 text-violet-700 border border-violet-300/50 dark:bg-violet-500/25 dark:text-violet-200 dark:border-violet-300/25"}`}>
               <GraduationCap size={11} /> {isGuru ? "Guru" : "Murid"}
             </span>
-            {user.isFounder && (
-              <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold bg-amber-400/90 text-amber-950">
-                <Crown size={11} /> Founder
-              </span>
-            )}
-            {!user.isFounder && user.isPremium && (
-              <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold bg-gradient-to-r from-blue-400 to-purple-400 text-white">
-                <Star size={11} /> PRO
-              </span>
-            )}
-            {!user.isFounder && !user.isPremium && (
-              <span className="rounded-full px-2.5 py-1 text-[11px] font-bold bg-slate-100 border border-slate-200 text-slate-600 dark:bg-white/10 dark:border-white/15 dark:text-white/70">
-                Free
-              </span>
-            )}
             {user.profile?.school && (
               <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold bg-slate-100 border border-slate-200 text-slate-600 dark:bg-white/5 dark:border-white/10 dark:text-white/60">
                 <School size={11} /> {user.profile.school}

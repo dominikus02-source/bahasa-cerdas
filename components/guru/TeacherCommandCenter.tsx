@@ -9,9 +9,10 @@
 // Visual: gradient mint BC sangat halus + soft glow; bukan game
 // screen, tetap elevated dashboard. Motion menghormati reduced-motion.
 
+import { VerifiedBadge } from "@/components/arena/UserName";
 import Link from "next/link"
 import {
-  Users, GraduationCap, ClipboardList, FilePlus2, Sparkles, Crown,
+  Users, GraduationCap, ClipboardList, FilePlus2, Sparkles,
   MonitorPlay, ArrowRight, Play,
 } from "lucide-react"
 import { AiCreditBalance } from "@/components/guru/AiCreditBalance"
@@ -132,11 +133,7 @@ export default function TeacherCommandCenter({
             <span className="truncate">
               {greeting}, {fullName}
             </span>
-            {isFounder && (
-              <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full font-medium shrink-0">
-                <Crown size={10} aria-hidden /> Founder
-              </span>
-            )}
+            <VerifiedBadge isFounder={isFounder} size={24} />
           </h1>
           <div className="flex items-center gap-3 mt-1.5 flex-wrap">
             <p className="text-sm text-gray-500 flex items-center gap-2">

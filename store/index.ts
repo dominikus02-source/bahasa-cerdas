@@ -9,6 +9,7 @@ interface UserState {
   role: string | null;
   avatar: string | null;
   isPremium: boolean;
+  badgeKind: import("@/lib/account/identity").IdentityBadge | null;
   isFounder: boolean;
   xp: number;
   level: number;
@@ -28,12 +29,16 @@ export const useUserStore = create<UserState>()(
       role: null,
       avatar: null,
       isPremium: false,
+      badgeKind: null,
       isFounder: false,
       xp: 0,
       level: 1,
       streak: 0,
       league: "BRONZE",
-      setUser: (user) => set((state) => ({ ...state, ...user })),
+      setUser: (user) => set((state) => ({ ...state,
+        ...(user.id && user.id !== state.id ? { isFounder: false, isPremium: false, badgeKind: null } : {}),
+        ...user,
+      })),
       clearUser: () =>
         set({
           id: null,
@@ -43,6 +48,7 @@ export const useUserStore = create<UserState>()(
           role: null,
           avatar: null,
           isPremium: false,
+      badgeKind: null,
           isFounder: false,
           xp: 0,
           level: 1,

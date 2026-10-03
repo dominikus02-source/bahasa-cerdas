@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "@/components/main-bersama/main-bersama.css";
+import "@/components/main-bersama/premium-layout.css";
 
 export const metadata: Metadata = {
   title: "Main Bersama — BahasaCerdas",
@@ -19,5 +20,5 @@ export default function MainBersamaLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="mb-scope">{children}</div>;
+  return <div className="mb-scope mb-premium">{children}</div>;
 }

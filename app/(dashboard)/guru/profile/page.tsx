@@ -1,4 +1,6 @@
 "use client";
+import Link from "next/link";
+import AccountSecurityPanel from "@/components/account/AccountSecurityPanel";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
@@ -47,6 +49,7 @@ interface ProfileData {
   level: number;
   streak: number;
   isPremium: boolean;
+  badgeKind?: import("@/lib/account/identity").IdentityBadge | null;
   isFounder: boolean;
   bank: string | null;
   bankHolder: string | null;
@@ -160,6 +163,7 @@ export default function GuruProfilePage() {
         level: u.level || 1,
         streak: u.streak || 0,
         isPremium: u.isPremium || false,
+        badgeKind: u.badgeKind,
         isFounder: u.isFounder || false,
         bank: u.bank || null,
         bankHolder: u.bankHolder || null,
@@ -526,6 +530,10 @@ export default function GuruProfilePage() {
     <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24">
       {messageToast}
 
+      <section className="mb-6 grid gap-4 rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-5 dark:border-blue-900 dark:from-blue-950/40 dark:to-slate-900 sm:grid-cols-[1fr_auto] sm:items-center">
+        <div><h2 className="font-bold text-slate-900 dark:text-white">Ruang profilmu</h2><p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Profil lengkap memudahkan guru lain mengenal dan berkolaborasi denganmu.</p><div className="mt-3 flex items-center gap-3"><progress aria-label="Kelengkapan profil" max={5} value={[profile.avatar, profile.bio, profile.school, profile.subject, profile.city].filter(Boolean).length} className="h-2 w-32 accent-blue-600" /><span className="text-xs font-semibold text-blue-700 dark:text-blue-300">{[profile.avatar, profile.bio, profile.school, profile.subject, profile.city].filter(Boolean).length * 20}% lengkap</span></div></div>
+        <nav aria-label="Aksi profil" className="flex flex-wrap gap-2"><Link href={`/profile/${profile.id}`} className="rounded-xl border border-blue-200 px-3 py-2 text-sm font-semibold text-blue-700 dark:border-blue-800 dark:text-blue-200">Lihat profil publik</Link><a href="#akun-keamanan" className="rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white">Akun & Keamanan</a></nav>
+      </section>
       {/* ═══════════════════════════════════════════════════════════════ */}
       {/*  SECTION 1 — HERO CARD                                         */}
       {/* ═══════════════════════════════════════════════════════════════ */}
@@ -607,7 +615,7 @@ export default function GuruProfilePage() {
                       name={profile.fullName || "Guru"}
                       onDark={false}
                       isFounder={profile.isFounder}
-                      isPremium={profile.isPremium}
+                      isPremium={profile.isPremium} badgeKind={profile.badgeKind}
                     />
                   </h1>
 
@@ -850,33 +858,7 @@ export default function GuruProfilePage() {
       {/* ═══════════════════════════════════════════════════════════════ */}
       {/*  SECTION 4 — AKUN                                               */}
       {/* ═══════════════════════════════════════════════════════════════ */}
-      <div className="mt-6 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm p-6">
-        <h2 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2 mb-4"><Shield size={16} className="text-gray-400 dark:text-slate-500" /> Akun</h2>
-        <div className="space-y-3">
-          <div className="flex items-center gap-3 py-2">
-            <Mail size={16} className="text-gray-400 dark:text-slate-500 shrink-0" />
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wide">Email</p>
-              <p className="text-sm text-gray-800 dark:text-slate-200 font-medium truncate">{profile.email}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 py-2">
-            <Shield size={16} className="text-gray-400 dark:text-slate-500 shrink-0" />
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wide">Status Akun</p>
-              <p className="text-sm text-gray-800 dark:text-slate-200 font-medium">
-                {profile.isFounder ? (
-                  <span className="px-2 py-0.5 bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded text-xs font-semibold border border-amber-200 dark:border-amber-800">Founder</span>
-                ) : profile.isPremium ? (
-                  <span className="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded text-xs font-semibold border border-emerald-200 dark:border-emerald-800">Guru Pro</span>
-                ) : (
-                  <span className="text-gray-500 dark:text-slate-400">Guru Free</span>
-                )}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div className="mt-6"><AccountSecurityPanel /></div>
     </div>
   );
 }

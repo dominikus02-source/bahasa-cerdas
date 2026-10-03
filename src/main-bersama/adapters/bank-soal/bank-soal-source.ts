@@ -83,7 +83,10 @@ export class PrismaBankSoalQuestionSource implements BankSoalQuestionSource {
    * diinjeksi route). Opsional supaya pemakai lama (SOAL_SET /
    * MASTER_THEME) tetap bisa membuat instance tanpa dependensi ini.
    */
-  constructor(private readonly bankTheme?: BankThemeQuestionSource) {}
+  constructor(
+    private readonly bankTheme?: BankThemeQuestionSource,
+    private readonly teacherId?: string,
+  ) {}
 
   async loadQuestions(rawRef: BankSoalPackageRef): Promise<BankSoalSourceResult> {
     // Ref dari request selalu dinormalisasi di boundary yang sama
@@ -105,8 +108,9 @@ export class PrismaBankSoalQuestionSource implements BankSoalQuestionSource {
     }
 
     // SoalSet existing — soal milik paket, urutan stabil by createdAt+id.
-    const soalSet = await db.soalSet.findUnique({
-      where: { id: ref.soalSetId },
+    if (!this.teacherId) return { ok: false, code: 'PACKAGE_NOT_FOUND' };
+    const soalSet = await db.soalSet.findFirst({
+      where: { id: ref.soalSetId, OR: [{ creatorId: this.teacherId }, { isPublic: true }] },
       select: {
         id: true,
         // `title` = identitas tampilan paket; ikut jadi snapshot sesi.

@@ -1,3 +1,4 @@
+import { identitySelect, resolveIdentity } from "@/lib/account/identity";
 import { db } from "@/lib/db"
 import { getUser } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
@@ -37,7 +38,7 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
         select: {
           id: true, fullName: true, nickname: true, avatar: true,
           equippedFrame: true, equippedNameColor: true, equippedBadge: true,
-          isFounder: true, isPremium: true,
+          ...identitySelect,
         },
       },
       _count: { select: { likes: true, comments: true } },
@@ -57,7 +58,7 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
         select: {
           id: true, fullName: true, nickname: true, avatar: true,
           equippedFrame: true, equippedNameColor: true, equippedBadge: true,
-          isFounder: true, isPremium: true,
+          ...identitySelect,
         },
       },
     },
@@ -67,7 +68,7 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
   const comments = rawComments.map(c => ({
     ...c,
     createdAt: c.createdAt.toISOString(),
-    user: { ...c.user, displayName: isGuruViewer ? c.user.fullName : getDisplayName(c.user, "peer") },
+    user: { ...c.user, ...resolveIdentity(c.user), displayName: isGuruViewer ? c.user.fullName : getDisplayName(c.user, "peer") },
   }))
 
   await db.studentKarya.update({ where: { id }, data: { viewsCount: { increment: 1 } } })
@@ -103,7 +104,7 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
                   className="font-bold text-gray-900 dark:text-slate-100 text-base"
                   badgeSize={16}
                   isFounder={karya.user.isFounder}
-                  isPremium={karya.user.isPremium}
+                  isPremium={karya.user.isPremium} badgeKind={resolveIdentity(karya.user).badgeKind}
                 />
                 <p className="text-sm text-gray-500 dark:text-slate-400">
                   {typeLabel[karya.type] || karya.type}

@@ -37,6 +37,7 @@ export default async function BerandaPage() {
       <SiaranBanner />
       <ArenaHomepage
         fullName={user.fullName}
+        badgeKind={user.badgeKind}
         nickname={user.nickname}
         avatar={user.avatar}
         xp={user.xp || 0}

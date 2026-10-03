@@ -22,6 +22,7 @@ import type { RuntimePlayer } from '../../domain/entities/session-runtime-state'
 import type { SessionEngine } from './session-engine';
 import type { SessionOrchestratorDeps } from './orchestrator-ports';
 import { pickBalancedTeam } from './team-assignment';
+import { isIndependentJelajah, IndependentRosterClosedError } from './independent-jelajah';
 import { validateDisplayName } from './display-name';
 import { buildStudentView } from '../../presentation/view-mappers';
 import { findAvatarById } from '@/lib/avatar/katalog';
@@ -134,6 +135,10 @@ export async function joinSession(
     ? players.find((p) => p.userId === input.userId)
     : players.find((p) => p.userId === undefined && p.displayName === guestName);
 
+  if (!existing && isIndependentJelajah(engine.state)) {
+    return { ok: false, code: 'INVALID_PHASE', reason: 'Sesi sudah dimulai. Peserta baru dapat bergabung pada sesi berikutnya.' };
+  }
+
   const displayName = input.userId
     ? authenticatedName!
     : existing
@@ -173,7 +178,13 @@ export async function joinSession(
   // join gagal tanpa meninggalkan "phantom participant" di DB/proyektor.
   // Credential tetap opaque/stateless dan hanya diberikan SEKALI.
   const credential = deps.credentials.issue(join.value.playerId, session.id);
-  await deps.players.saveRuntime(joinedPlayer, session.id);
+  try {
+    await deps.players.saveRuntime(joinedPlayer, session.id);
+  } catch (error) {
+    if (!(error instanceof IndependentRosterClosedError)) throw error;
+    deps.resolver.discard?.(session.id);
+    return { ok: false, code: 'INVALID_PHASE', reason: error.message };
+  }
   // Sinyal lobby: peserta baru (participant count berubah) —
   // teacher/projector menarik ulang state (pull-on-notify, §5).
   await deps.realtimeSignal.sendSessionUpdate(session.id);
@@ -270,6 +281,7 @@ export async function submitAnswer(
   const resolved = await deps.credentials.resolve(input.credential);
   if (!resolved.ok) return { ok: false, code: 'CREDENTIAL_INVALID' };
 
+  deps.resolver.discard?.(resolved.sessionId);
   const loaded = await deps.resolver.resolve(resolved.sessionId);
   if (!loaded.ok) return { ok: false, code: 'SESSION_NOT_FOUND' };
   const engine = loaded.engine;

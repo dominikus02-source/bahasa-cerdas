@@ -152,6 +152,10 @@ export async function POST(req: NextRequest) {
         where: { supabaseId: data.user.id },
       });
 
+      if (dbUser?.email.endsWith("@account.invalid")) {
+        await supabase.auth.signOut({ scope: "local" });
+        return NextResponse.json({ error: "Akun telah dinonaktifkan." }, { status: 403 });
+      }
       if (dbUser) {
         // Supabase user ID is the stable identity. If a teacher changes their
         // Auth email, keep the existing application account/role and synchronize
@@ -186,7 +190,7 @@ export async function POST(req: NextRequest) {
             fullName:
               data.user.user_metadata?.full_name ||
               normalizedEmail.split("@")[0],
-            role: (data.user.user_metadata?.role as any) || "MURID",
+            role: data.user.user_metadata?.role === "GURU" ? "GURU" : "MURID",
           },
         });
       }

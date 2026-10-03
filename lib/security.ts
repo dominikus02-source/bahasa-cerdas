@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import cache from "@/lib/redis";
 
-export type RateLimitScope = "auth" | "api" | "ai" | "ipBurst";
+export type RateLimitScope = "auth" | "api" | "ai" | "ipBurst" | "account";
 
 // Dedicated Redis key prefix — can be shared-nothing with other cache data
 const RATE_LIMIT_PREFIX = "rl:";
 
 const LIMITS: Record<RateLimitScope, { window: number; max: number }> = {
+  account: { window: 60_000, max: 5 },
   auth: { window: 60_000, max: 1000 },
   api: { window: 60_000, max: 300 },
   ai: { window: 60_000, max: 30 },
