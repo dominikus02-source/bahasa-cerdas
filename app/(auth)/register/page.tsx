@@ -144,16 +144,10 @@ export default function RegisterPage() {
     e.preventDefault();
     if (!role) return;
 
-    const passwordValid =
-      password.length >= 8 &&
-      password.length <= 128 &&
-      /[a-z]/.test(password) &&
-      /[A-Z]/.test(password) &&
-      /\d/.test(password) &&
-      /[^A-Za-z0-9\s]/.test(password);
+    const passwordValid = password.length >= 8 && password.length <= 128;
 
     if (!passwordValid) {
-      setError("Kata sandi minimal 8 karakter dan harus mengandung huruf kecil, huruf besar, angka, dan simbol.");
+      setError("Kata sandi harus terdiri dari 8–128 karakter.");
       setStep(2);
       return;
     }
