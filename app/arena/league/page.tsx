@@ -61,7 +61,6 @@ export default async function LeaguePage({
     streak: 0,
     isFounder: e.isFounder,
     isPremium: e.isPremium,
-    trialEndsAt: e.trialEndsAt,
   }))
 
   const hallOfFame: HallOfFameRow[] = (competition?.hallOfFame ?? []).map(h => ({
