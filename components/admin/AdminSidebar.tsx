@@ -8,7 +8,7 @@ import {
   ChevronRight, BarChart3, Briefcase, MessageCircle, Presentation,
   Bell, BellRing, X, Coins, DollarSign, Database, Activity, Wallet,
   TrendingUp, Trophy, LineChart, ShieldAlert, ShieldCheck,
-  Crown, Target, ChevronDown, Bot,
+  Crown, Target, ChevronDown, Bot, Gamepad2,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -99,6 +99,7 @@ const NAV: NavEntry[] = [
     items: [
       { label: "Learning Analytics", href: "/admin/analytics", icon: LineChart },
       { label: "Arena BC", href: "/admin/arena", icon: Trophy },
+      { label: "Lab Permainan", href: "/admin/lab-permainan", icon: Gamepad2 },
     ],
   },
 
