@@ -92,12 +92,6 @@ export function VerifiedBadge({
           )}
           <circle cx="32" cy="32" r="15" fill={type === "GURU_TRIAL" ? "#EA580C" : "#111827"} fillOpacity=".42" stroke="#FFFFFF" strokeOpacity=".7" strokeWidth="2" />
           <path d="m24 32 5 5 11-12" stroke="white" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
-          {type === "GURU_TRIAL" && (
-            <>
-              <circle cx="48" cy="47" r="8" fill="#FFF7ED" stroke="#F59E0B" strokeWidth="2" />
-              <path d="M48 42v5l3 2" stroke="#EA580C" strokeWidth="2" strokeLinecap="round" />
-            </>
-          )}
         </g>
       </svg>
     </span>
