@@ -207,10 +207,10 @@ export default function ProfileHero({
         }}
       />
 
-      <div className="relative z-10 p-5 md:p-6 lg:p-7">
+      <div className="relative z-10 p-4 sm:p-5 md:p-6 lg:p-7">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 lg:gap-5">
           {/* KIRI: avatar + identitas */}
-          <div className="flex min-w-0 flex-1 items-center gap-4 md:gap-5">
+          <div className="flex min-w-0 w-full flex-1 items-start gap-3 sm:gap-4 md:gap-5">
             <div className="relative shrink-0">
               {/* Ring gradien di sekitar avatar */}
               <div
@@ -223,7 +223,7 @@ export default function ProfileHero({
                 }}
               />
               <UserAvatar
-                size={104}
+                size={88}
                 avatar={persona.avatar}
                 frame={persona.equippedFrame}
                 initials={initials}
@@ -244,16 +244,27 @@ export default function ProfileHero({
                 <p className={t("text-[11px] font-bold uppercase tracking-[0.2em] text-slate-800", "text-[11px] font-bold uppercase tracking-[0.2em] text-white/40") + " mb-1"}>
                 Profil Pemain
               </p>
-              <h1 className="text-2xl md:text-[28px] font-extrabold leading-tight truncate">
+              <h1 className="min-w-0 max-w-full text-xl sm:text-2xl md:text-[28px] font-extrabold leading-tight overflow-hidden">
                   <UserName
                     name={persona.displayName}
                     color={persona.equippedNameColor}
                     badge={persona.equippedBadge}
                     onDark={isDarkInk}
-                    badgeSize={20}
+                    badgeSize={18}
+                    wrapperClassName="max-w-full"
                     isFounder={persona.isFounder}
                     isPremium={persona.isPremium}
-                    verifiedType={persona.isTrial ? "GURU_TRIAL" : persona.role === "GURU" ? "GURU_PRO" : persona.isFounder ? "FOUNDER" : "MURID_PREMIUM"}
+                    verifiedType={
+                      persona.isFounder
+                        ? "FOUNDER"
+                        : persona.isTrial
+                          ? "GURU_TRIAL"
+                          : persona.role === "GURU"
+                            ? "GURU_PRO"
+                            : persona.isPremium
+                              ? "MURID_PREMIUM"
+                              : undefined
+                    }
                     isTrial={persona.isTrial}
                     verifiedSize={22}
                   />
@@ -304,7 +315,7 @@ export default function ProfileHero({
 
           {/* KANAN: rank crest — objek visual, ukuran kompak agar hero padat */}
           <div className="shrink-0 flex flex-row lg:flex-col items-center gap-3 lg:gap-1 mx-auto lg:mx-0 lg:pr-4">
-            <div className="bc-crest-scale h-[112px] w-[112px] sm:h-[140px] sm:w-[140px] lg:h-[152px] lg:w-[152px]">
+            <div className="bc-crest-scale h-[96px] w-[96px] sm:h-[112px] sm:w-[112px] lg:h-[152px] lg:w-[152px]">
               <div
                 aria-label={`Rank ${meta?.label} — ${meta?.title}`}
                 role="img"
