@@ -1,3 +1,4 @@
+import { identitySelect, resolveIdentity } from "@/lib/account/identity";
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
@@ -80,6 +81,7 @@ export async function GET(req: NextRequest) {
             id: true,
             fullName: true,
             avatar: true,
+            ...identitySelect,
             profile: { select: { school: true } },
           },
         },
@@ -112,6 +114,7 @@ export async function GET(req: NextRequest) {
     // field sendiri supaya UI tidak tahu detail Prisma.
     const data = rows.map((r) => ({
       ...r,
+      author: r.author ? { ...r.author, ...resolveIdentity(r.author) } : null,
       likeCount: likeCountById.get(r.id) ?? 0,
       commentCount: commentCountById.get(r.id) ?? 0,
       likedByCurrentUser: likedByCurrentUserIds.has(r.id),

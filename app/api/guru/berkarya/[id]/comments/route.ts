@@ -1,3 +1,4 @@
+import { identitySelect, resolveIdentity } from "@/lib/account/identity";
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
@@ -10,6 +11,7 @@ const AUTHOR_SELECT = {
   fullName: true,
   nickname: true,
   avatar: true,
+  ...identitySelect,
 } as const;
 
 /** cari artikel terbit milik guru (GURU/ADMIN/founder) — seperti filter feed. */
@@ -60,6 +62,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
           id: c.user.id,
           fullName: c.user.fullName,
           avatar: c.user.avatar,
+          isFounder: c.user.isFounder,
+          ...resolveIdentity(c.user),
+          trialEndsAt: c.user.trialEndsAt,
           displayName: getDisplayName(c.user, "guru"),
         },
       })),
@@ -120,6 +125,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
             id: comment.user.id,
             fullName: comment.user.fullName,
             avatar: comment.user.avatar,
+            isFounder: comment.user.isFounder,
+            ...resolveIdentity(comment.user),
             displayName: getDisplayName(comment.user, "guru"),
           },
         },

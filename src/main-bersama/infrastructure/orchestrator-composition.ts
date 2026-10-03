@@ -170,6 +170,14 @@ const roundsStore = {
       closedAt: round.closedAt,
     });
   },
+  async claimAutoAdvance(input: {
+    sessionId: string;
+    roundId: string;
+    roundIndex: number;
+    closedAt: Date;
+  }): Promise<boolean> {
+    return roundRepo.claimAutoAdvance(input);
+  },
 };
 
 // ─── Answers ────────────────────────────────────────────────

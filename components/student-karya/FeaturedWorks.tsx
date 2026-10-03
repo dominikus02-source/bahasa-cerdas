@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Heart, MessageCircle, Eye, Star } from "lucide-react";
 import { typeColors } from "@/components/student-karya/KaryaFeed";
+import UserName from "@/components/arena/UserName";
 import SafeMediaImage from "@/components/shared/safe-media-image";
 
 interface FeaturedItem {
@@ -20,6 +21,11 @@ interface FeaturedItem {
     id: string;
     fullName: string;
     displayName?: string;
+    isFounder?: boolean;
+    isPremium?: boolean;
+    badgeKind?: import("@/lib/account/identity").IdentityBadge | null;
+    role?: string;
+    trialEndsAt?: string | null;
   };
   _count?: { likes?: number; comments?: number };
 }
@@ -119,9 +125,14 @@ export default function FeaturedWorks() {
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600 text-[10px] font-bold text-white">
                       {initials(k.user.displayName || k.user.fullName)}
                     </span>
-                    <span className="truncate text-xs font-semibold text-gray-700 dark:text-slate-200">
-                      {k.user.displayName || k.user.fullName}
-                    </span>
+                    <UserName
+                      name={k.user.displayName || k.user.fullName}
+                      className="truncate text-xs font-semibold text-gray-700 dark:text-slate-200"
+                      isFounder={k.user.isFounder}
+                      isPremium={k.user.isPremium}
+                      badgeKind={k.user.badgeKind}
+                      verifiedSize={13}
+                    />
                   </Link>
                   <span className="ml-auto flex items-center gap-2.5 text-[12px] text-gray-400 dark:text-slate-500">
                     <span className="flex items-center gap-1">

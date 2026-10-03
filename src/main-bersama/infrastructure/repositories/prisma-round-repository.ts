@@ -203,6 +203,45 @@ export class PrismaRoundRepository implements RoundRepository {
     return true;
   }
 
+  /**
+   * Satu-satunya request yang berhasil mengubah round OPEN menjadi CLOSED
+   * menjadi pemilik auto-advance Jelajah. Session dipindah ke DISCUSSION di
+   * transaksi yang sama agar engine yang direhidrasi bisa membuka soal baru
+   * tanpa pernah menerima jawaban tambahan untuk round lama.
+   */
+  async claimAutoAdvance(input: {
+    sessionId: string;
+    roundId: string;
+    roundIndex: number;
+    closedAt: Date;
+  }): Promise<boolean> {
+    return db.$transaction(async (tx) => {
+      const closed = await tx.mainRound.updateMany({
+        where: {
+          id: input.roundId,
+          sessionId: input.sessionId,
+          index: input.roundIndex,
+          status: 'OPEN',
+        },
+        data: { status: 'CLOSED', closedAt: input.closedAt },
+      });
+      if (closed.count !== 1) return false;
+
+      const transitioned = await tx.mainSession.updateMany({
+        where: {
+          id: input.sessionId,
+          phase: 'QUESTION',
+          currentRoundIndex: input.roundIndex,
+        },
+        data: { phase: 'DISCUSSION' },
+      });
+      if (transitioned.count !== 1) {
+        throw new Error('Auto-advance tidak dapat mengklaim fase sesi');
+      }
+      return true;
+    });
+  }
+
   private rowToDomain(row: {
     id: string;
     sessionId: string;

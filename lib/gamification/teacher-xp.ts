@@ -1,3 +1,4 @@
+import { identitySelect, resolveIdentity } from "@/lib/account/identity";
 /**
  * Teacher XP — pintu XP & notifikasi khusus guru (additive, tidak menyentuh
  * engine murid). Guru mendapat XP dari aktivitas muridnya (berkarya, karya
@@ -128,6 +129,10 @@ export interface TeacherLeaderboardEntry {
   userId: string;
   fullName: string | null;
   avatar: string | null;
+  isFounder: boolean;
+  isPremium: boolean;
+  badgeKind?: import("@/lib/account/identity").IdentityBadge | null;
+  trialEndsAt?: string | null;
   xp: number;
   streak: number;
   myRank?: number | null;
@@ -175,7 +180,7 @@ export async function getTeacherLeaderboard({
   const users = userIds.length
     ? await db.user.findMany({
         where: { id: { in: userIds } },
-        select: { id: true, fullName: true, avatar: true, streak: true },
+        select: { id: true, fullName: true, avatar: true, streak: true, ...identitySelect },
       })
     : [];
 
@@ -187,6 +192,9 @@ export async function getTeacherLeaderboard({
       userId: g.userId,
       fullName: u?.fullName ?? null,
       avatar: u?.avatar ?? null,
+      isFounder: u?.isFounder ?? false,
+      ...resolveIdentity(u ?? {}),
+      trialEndsAt: u?.trialEndsAt?.toISOString() ?? null,
       xp: g._sum.amount ?? 0,
       streak: u?.streak ?? 0,
     };

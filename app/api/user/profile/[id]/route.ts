@@ -24,6 +24,7 @@ export async function GET(
         avatar: true,
         ...identitySelect,
         premiumPlan: true,
+        trialEndsAt: true,
         xp: true,
         level: true,
         streak: true,

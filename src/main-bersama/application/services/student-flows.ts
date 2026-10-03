@@ -27,6 +27,7 @@ import { validateDisplayName } from './display-name';
 import { buildStudentView } from '../../presentation/view-mappers';
 import { findAvatarById } from '@/lib/avatar/katalog';
 import type { GameEngineState } from '../../games/game-router';
+import { autoAdvanceJelajahIfRoundComplete } from './session-commands';
 
 // ─── Typed results ──────────────────────────────────────────
 
@@ -342,6 +343,23 @@ export async function submitAnswer(
   } catch {
     // Realtime hanya freshness hint. ACK jawaban yang sudah durable tidak
     // boleh berubah menjadi gagal bila transport broadcast sedang bermasalah.
+  }
+
+  // Jelajah Kata bersifat ritmis: setelah seluruh peserta pada snapshot
+  // round menjawab, server menutup dan membuka soal berikutnya sendiri.
+  // Best-effort terhadap ACK siswa: jawaban yang sudah durable tetap sukses
+  // bila auto-advance mengalami gangguan sementara; retry idempotent akan
+  // mencoba lagi tanpa membocorkan correctness.
+  if (engine.state.session.gameMode === 'jelajah-kata') {
+    try {
+      await autoAdvanceJelajahIfRoundComplete(
+        deps,
+        resolved.sessionId,
+        input.roundId,
+      );
+    } catch (error) {
+      console.error('[main-bersama] auto-advance Jelajah Kata gagal:', error);
+    }
   }
 
   return {

@@ -6,6 +6,7 @@ import { BookOpen, ChevronRight, Eye, Feather, Flame, Heart, MessageCircle, PenL
 import SafeMediaImage from "@/components/shared/safe-media-image";
 import ShareButton from "@/components/shared/ShareButton";
 import { GuruBerkaryaComments } from "@/components/guru/GuruBerkaryaComments";
+import UserName from "@/components/arena/UserName";
 import type { MisiGuruStatus } from "@/lib/guru/misi-guru-status";
 
 interface GuruKaryaItem {
@@ -25,6 +26,11 @@ interface GuruKaryaItem {
     id: string;
     fullName: string | null;
     avatar: string | null;
+    role: string;
+    isFounder: boolean;
+    isPremium: boolean;
+    badgeKind?: import("@/lib/account/identity").IdentityBadge | null;
+    trialEndsAt: string | null;
     profile: { school: string | null } | null;
   } | null;
 }
@@ -287,7 +293,16 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
                       )}
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5">
-                          <p className="truncate text-sm font-bold text-slate-900 dark:text-slate-100">{penulis}</p>
+                          <UserName
+                            name={penulis}
+                            href={a.author ? `/arena/profile/${a.author.id}` : undefined}
+                            className="truncate text-sm font-bold text-slate-900 dark:text-slate-100"
+                            wrapperClassName="max-w-full"
+                            badgeKind={a.author?.badgeKind}
+                            isFounder={a.author?.isFounder}
+                            isPremium={a.author?.isPremium}
+                            verifiedSize={18}
+                          />
                           {karyaAnda && (
                             <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-emerald-700">
                               ✨ Karya Anda

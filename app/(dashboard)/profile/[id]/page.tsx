@@ -32,6 +32,7 @@ interface ProfileUser {
   isFounder: boolean;
   isPremium: boolean; badgeKind?: import("@/lib/account/identity").IdentityBadge | null;
   premiumPlan: string;
+  trialEndsAt?: string | null;
   xp: number;
   level: number;
   streak: number;
@@ -169,9 +170,10 @@ export default function ProfilePage() {
   const playerLevel = levelFromXp(user.xp || 0);
   const rank = rankFromLevel(playerLevel);
   const levelProgress = getLevelProgress(user.xp || 0);
+  const isActiveProTrial = isGuru && !!user.trialEndsAt && new Date(user.trialEndsAt).getTime() > Date.now();
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="w-full max-w-3xl mx-auto px-3 sm:px-4 pb-8">
       <button
         onClick={() => router.back()}
         className="w-9 h-9 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition-colors mb-4"
