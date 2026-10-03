@@ -57,9 +57,9 @@ export function VerifiedBadge({
         : "MURID_PREMIUM");
 
   const meta = {
-    FOUNDER: { label: "Founder BahasaCerdas", from: "#7C3AED", to: "#F59E0B" },
+    FOUNDER: { label: "Pendiri BahasaCerdas", from: "#6D28D9", to: "#F59E0B" },
     GURU_PRO: { label: "Guru Pro", from: "#2563EB", to: "#7C3AED" },
-    GURU_TRIAL: { label: "Guru Pro Trial", from: "#F97316", to: "#F59E0B" },
+    GURU_TRIAL: { label: "Guru Pro Percobaan", from: "#F97316", to: "#F59E0B" },
     MURID_PREMIUM: { label: "Murid Premium", from: "#06B6D4", to: "#FACC15" },
   }[type];
 
@@ -86,7 +86,12 @@ export function VerifiedBadge({
           {type === "MURID_PREMIUM" ? (
             <path d="M32 4 39.2 20.8 58 22.7 43.9 35 48.2 53.3 32 43.8 15.8 53.3 20.1 35 6 22.7 24.8 20.8Z" fill={`url(#${id}-bg)`} stroke={`url(#${id}-rim)`} strokeWidth="2" strokeLinejoin="round" />
           ) : type === "FOUNDER" ? (
-            <path d="M10 24 16 16 24 21 32 10 40 21 48 16 54 24 51 48Q32 58 13 48Z" fill={`url(#${id}-bg)`} stroke={`url(#${id}-rim)`} strokeWidth="2" strokeLinejoin="round" />
+            <>
+              <path d="M32 4 39 11 49 10 50 20 58 26 53 35 55 47 44 49 32 59 20 49 9 47 11 35 6 26 14 20 15 10 25 11Z" fill={`url(#${id}-bg)`} stroke={`url(#${id}-rim)`} strokeWidth="2" strokeLinejoin="round" />
+              <path d="M18 25 22 16 28 21 32 13 36 21 42 16 46 25 43 31Q32 37 21 31Z" fill="#FDE68A" stroke="#FFFFFF" strokeOpacity=".8" strokeWidth="1.5" strokeLinejoin="round" />
+              <circle cx="32" cy="40" r="11" fill="#4C1D95" fillOpacity=".9" stroke="#FDE68A" strokeWidth="1.5" />
+              <text x="32" y="44.5" textAnchor="middle" fontSize="10" fontWeight="900" fill="#FFFFFF" fontFamily="Arial, sans-serif">BC</text>
+            </>
           ) : (
             <path d="M8 20 32 8 56 20 32 32Z M14 23V38Q32 51 50 38V23L32 34Z" fill={`url(#${id}-bg)`} stroke={`url(#${id}-rim)`} strokeWidth="2" strokeLinejoin="round" />
           )}
@@ -143,7 +148,7 @@ export default function UserName({
 }: UserNameProps) {
   const style = nameColorStyle(color, onDark);
   const badgeStyle = getBadgeStyle(badge);
-  const showVerified = isFounder || isPremium || isTrial;
+  const showVerified = isFounder || isPremium || isTrial || !!verifiedType;
 
   const text = href ? (
     <Link href={href} className={className} style={style}>
