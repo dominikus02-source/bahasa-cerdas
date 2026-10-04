@@ -67,8 +67,22 @@ export async function updateSession(request: NextRequest, nonce?: string) {
   requestHeaders.set("x-pathname", pathname);
   const nextWithNonce = () => NextResponse.next({ request: { headers: requestHeaders } });
 
-  // Redirect non-primary domains to www.bahasacerdas.com for SEO consistency
-  if (host && !host.includes("bahasacerdas.com") && !host.includes("localhost") && !host.includes("vercel.app")) {
+  // Redirect unknown public hosts to the canonical production domain for SEO.
+  // Loopback and Vercel hosts are execution environments, not public aliases.
+  // They must stay on their own origin so staging/preview auth never jumps to production.
+  const requestHost = host.toLowerCase().replace(/:\d+$/, "");
+  const isLoopbackHost =
+    requestHost === "localhost" ||
+    requestHost === "127.0.0.1" ||
+    requestHost === "[::1]";
+  const isAllowedAppHost =
+    isLoopbackHost ||
+    requestHost === "bahasacerdas.com" ||
+    requestHost.endsWith(".bahasacerdas.com") ||
+    requestHost === "vercel.app" ||
+    requestHost.endsWith(".vercel.app");
+
+  if (host && !isAllowedAppHost) {
     const url = new URL(`https://www.bahasacerdas.com${pathname}${search}`);
     return NextResponse.redirect(url, { status: 301 });
   }
