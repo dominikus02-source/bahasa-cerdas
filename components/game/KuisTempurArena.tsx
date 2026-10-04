@@ -3,14 +3,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
-  Bot,
   Crosshair,
   Heart,
   Loader2,
-  Shield,
   Sparkles,
   Swords,
-  Target,
   Trophy,
   Zap,
 } from "lucide-react";
@@ -78,12 +75,10 @@ const BOT_AVATARS = ["/avatar/2.webp", "/avatar/3.webp", "/avatar/4.webp", "/ava
 export default function KuisTempurArena({
   code,
   userId,
-  userName,
   onExit,
 }: {
   code: string;
   userId: string;
-  userName: string;
   onExit: () => void;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -165,7 +160,6 @@ export default function KuisTempurArena({
 
   const me = useMemo(() => arena.entities.find((entity) => entity.id === userId), [arena, userId]);
   const humans = useMemo(() => arena.entities.filter((entity) => entity.kind === "human"), [arena]);
-  const bots = useMemo(() => arena.entities.filter((entity) => entity.kind === "bot"), [arena]);
 
   const getImage = useCallback((src: string) => {
     let image = imageCache.current.get(src);
