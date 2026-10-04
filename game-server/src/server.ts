@@ -388,6 +388,15 @@ io.on('connection', (socket) => {
         return;
       }
 
+      if (
+        room.category === 'KUIS_TEMPUR_ARENA' &&
+        room.players.size >= 2 &&
+        !room.players.has(data.userId)
+      ) {
+        socket.emit('error', { message: 'Arena sudah penuh.' });
+        return;
+      }
+
       if (room.players.has(data.userId)) {
         const existing = room.players.get(data.userId)!;
         existing.odiceId = socket.id;
@@ -617,20 +626,39 @@ io.on('connection', (socket) => {
     });
   });
 
+  const arenaIdentity = (code: string) => {
+    const room = rooms.get(code);
+    if (!room || room.category !== 'KUIS_TEMPUR_ARENA') return null;
+    return Array.from(room.players.values()).find((player) => player.odiceId === socket.id) || null;
+  };
+
   socket.on('arena-ready', (data: { code: string; userId: string }) => {
-    kuisTempurArena.ready(socket, data);
+    const player = arenaIdentity(data.code);
+    if (!player || player.id !== data.userId) return;
+    kuisTempurArena.ready(socket, { code: data.code, userId: player.id });
   });
 
   socket.on('arena-move', (data: { code: string; userId: string; x: number; y: number }) => {
-    kuisTempurArena.move(data);
+    const player = arenaIdentity(data.code);
+    if (!player || player.id !== data.userId) return;
+    kuisTempurArena.move({ code: data.code, userId: player.id, x: data.x, y: data.y });
   });
 
   socket.on('arena-shoot', (data: { code: string; userId: string; targetId: string }) => {
-    kuisTempurArena.shoot(data);
+    const player = arenaIdentity(data.code);
+    if (!player || player.id !== data.userId) return;
+    kuisTempurArena.shoot({ code: data.code, userId: player.id, targetId: data.targetId });
   });
 
   socket.on('arena-answer', (data: { code: string; userId: string; questionId: string; answerIndex: number }) => {
-    kuisTempurArena.answer(data);
+    const player = arenaIdentity(data.code);
+    if (!player || player.id !== data.userId) return;
+    kuisTempurArena.answer({
+      code: data.code,
+      userId: player.id,
+      questionId: data.questionId,
+      answerIndex: data.answerIndex,
+    });
   });
 
   socket.on('end-game', async (data: { code: string }) => {
