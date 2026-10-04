@@ -65,7 +65,10 @@ jobs:
           git show "$BASE_REF:prisma/schema.prisma" > /tmp/base-schema.prisma
           npx prisma db push --schema /tmp/base-schema.prisma --skip-generate --accept-data-loss
           while IFS= read -r migration; do
-            [ -n "$migration" ] && npx prisma migrate resolve --applied "$migration"
+            [ -z "$migration" ] && continue
+            if git cat-file -e "$BASE_REF:prisma/migrations/$migration/migration.sql" 2>/dev/null; then
+              npx prisma migrate resolve --applied "$migration"
+            fi
           done < <(git ls-tree -d --name-only "$BASE_REF:prisma/migrations")
           npx prisma migrate deploy
 
