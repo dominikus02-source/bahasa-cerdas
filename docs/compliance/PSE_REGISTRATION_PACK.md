@@ -6,18 +6,22 @@ Disiapkan 3 Oktober 2026. Status: BELUM TDPSE, berdasarkan pernyataan pengelola.
 
 | Isian | Nilai / bukti |
 |---|---|
-| Pengelola | CV Obah Mamah |
-| Nama dagang | Teras Kata |
+| Pelaku usaha pada Sertifikat Standar OSS yang diverifikasi | Dominikus Wahyu Heru Cahyadi |
+| Nama usaha pada OSS | Teras Kata |
+| Referensi internal yang perlu direkonsiliasi | CV Obah Mamah — jangan diperlakukan sebagai pemegang NIB sampai dokumen CV/NIB-nya diverifikasi |
 | Nama sistem | BahasaCerdas |
 | NIB | 1217000151443 |
-| Domisili | Tangerang, Banten; alamat lengkap perlu dicocokkan dengan NIB/akta |
+| Sertifikat Standar | 12170001514430001 |
+| KBLI | 62199 — Aktivitas Pemrograman Komputer Lainnya YTDL |
+| Alamat kantor OSS | JL. TUNTANG III NO.7, Bencongan, Kelapa Dua, Kabupaten Tangerang, Banten |
+| Lokasi kegiatan OSS | Jalan Klungkung No.13 RT/RW 004/020, Bencongan, Kelapa Dua, Kabupaten Tangerang, Banten 15810 |
 | Narahubung | Dominikus Wahyu Heru Cahyadi |
 | Email | halo@bahasacerdas.com |
 | Domain yang diaudit di repo | www.bahasacerdas.com / bahasacerdas.com |
 | Domain tambahan dalam proposal | bahasacerdas.site (BIGT); operasionalnya harus dikonfirmasi dan diaudit tersendiri jika berbeda sistem |
 | Nomor TDPSE | Belum ada; jangan isi NIB atau nomor permohonan hak cipta di kolom ini |
 
-Sumber identitas: Proposal_Kemitraan_BahasaCerdas.pdf, bagian Profil Badan Usaha & Legalitas; identitas badan usaha tidak dibuktikan ulang hanya dari proposal. Hak cipta EC002026106361 disebut masih dalam proses dan berbeda dari izin/pendaftaran PSE.
+Sumber identitas utama: dokumen resmi OSS **PERIZINAN BERUSAHA BERBASIS RISIKO Teras Kata.pdf** yang telah diverifikasi dari arsip internal. Proposal yang menyebut CV Obah Mamah tidak dipakai untuk mengubah identitas pemegang NIB tanpa dokumen CV/NIB yang sah. Lihat **LEGAL_IDENTITY_RECONCILIATION.md**. Hak cipta EC002026106361 disebut masih dalam proses dan berbeda dari izin/pendaftaran PSE.
 
 ## Draft gambaran pengoperasian
 
