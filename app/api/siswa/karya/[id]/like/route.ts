@@ -1,4 +1,4 @@
-import { canReadWork } from "@/lib/compliance/service";
+import { canReadWork, canInteractWithWork } from "@/lib/compliance/service";
 import { NextRequest, NextResponse, after } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
@@ -16,6 +16,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const { id } = await params;
     const target = await db.studentKarya.findUnique({ where: { id }, select: { userId: true } });
     if (!target || !await canReadWork(target.userId, user)) return NextResponse.json({ error: "Karya tidak ditemukan" }, { status: 404 });
+    if (!await canInteractWithWork(user, target.userId)) return NextResponse.json({ error: "Interaksi pada karya ini belum tersedia untuk akunmu." }, { status: 403 });
 
 
     const existing = await db.studentKaryaLike.findUnique({
