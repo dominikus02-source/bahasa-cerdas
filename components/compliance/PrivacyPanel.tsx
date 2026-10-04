@@ -13,6 +13,8 @@ export default function PrivacyPanel() {
  const [events,setEvents] = useState<Consent[]>([]);
  const [requests,setRequests] = useState<{id:string;childId:string;status:string}[]>([]);
  const [risk,setRisk] = useState(false);
+ const [requestType,setRequestType]=useState("ACCESS"); const [requestDetail,setRequestDetail]=useState("");
+ const [privacyRequests,setPrivacyRequests]=useState<{id:string;type:string;status:string;deadlineAt:string;createdAt:string}[]>([]);
  async function load() {
   try {
    const res=await fetch("/api/privacy/account",{cache:"no-store"}); const data=await res.json();
@@ -20,6 +22,7 @@ export default function PrivacyPanel() {
    setSettings(data.privacy);setEvents(data.events);setRisk(data.childRiskApproved);setReady(true);
    if(data.privacy) {setBirth(data.privacy.birthDate?.slice(0,10)||"");setChoices({publicProfile:data.privacy.publicProfile,publicWorks:data.privacy.publicWorks,analytics:data.privacy.analytics,aiAssistance:data.privacy.aiAssistance});}
    const r=await fetch("/api/privacy/guardian",{cache:"no-store"});if(r.ok) setRequests((await r.json()).requests);
+   const pr=await fetch("/api/privacy/requests",{cache:"no-store"});if(pr.ok) setPrivacyRequests((await pr.json()).requests||[]);
   } catch {setMessage("Pengaturan belum dapat dimuat. Coba lagi.");}
  }
  useEffect(()=>{void load();},[]);
@@ -54,6 +57,18 @@ export default function PrivacyPanel() {
   <Link className="underline" href="/arena">Lanjut ke beranda</Link>
   <h2 className="text-xl font-semibold">Riwayat pilihan</h2>
   <ul className="space-y-2 text-sm">{events.map((e,i)=><li key={i}>{purposeLabel(e.purpose)}: {statusLabel(e.action)} · versi {e.noticeVersion} · {new Date(e.createdAt).toLocaleString("id-ID")}</li>)}</ul>
-  <p className="text-sm text-muted-foreground">Hak akses, salinan, koreksi, pembatasan, keberatan, dan penghapusan: halo@bahasacerdas.com. Penghapusan akun tersedia di pengaturan akun.</p>
+  <section className="space-y-4 rounded-2xl border border-border bg-card p-5">
+   <h2 className="text-xl font-semibold">Permintaan terkait Data Pribadi</h2>
+   <p className="text-sm text-muted-foreground">Ajukan akses, salinan, koreksi, pembatasan, atau permintaan lain. Status dan batas waktu penanganan akan tercatat di sistem.</p>
+   <form className="space-y-3" onSubmit={e=>{e.preventDefault();void send("/api/privacy/requests",{type:requestType,detail:requestDetail||undefined});setRequestDetail("");}}>
+    <select aria-label="Jenis permintaan" value={requestType} onChange={e=>setRequestType(e.target.value)} className="w-full rounded-xl border border-input bg-background p-3">
+     <option value="ACCESS">Akses data</option><option value="COPY">Salinan data</option><option value="CORRECTION">Koreksi data</option><option value="RESTRICT">Pembatasan pemrosesan</option><option value="OTHER">Permintaan lain</option>
+    </select>
+    <textarea value={requestDetail} onChange={e=>setRequestDetail(e.target.value)} minLength={3} maxLength={2000} placeholder="Jelaskan permintaanmu bila diperlukan" className="min-h-24 w-full rounded-xl border border-input bg-background p-3"/>
+    <button disabled={busy} className="rounded-xl bg-primary px-5 py-3 text-primary-foreground">Ajukan permintaan</button>
+   </form>
+   {privacyRequests.length>0&&<div className="space-y-2 text-sm">{privacyRequests.map(p=><div key={p.id} className="rounded-xl border border-border p-3"><p className="font-medium">{p.type} · {statusLabel(p.status)}</p><p className="text-muted-foreground">Diajukan {new Date(p.createdAt).toLocaleString("id-ID")} · target penyelesaian {new Date(p.deadlineAt).toLocaleString("id-ID")}</p></div>)}</div>}
+  </section>
+  <p className="text-sm text-muted-foreground">Untuk bantuan tambahan: halo@bahasacerdas.com. Penghapusan akun tersedia di pengaturan akun.</p>
  </div>;
 }
