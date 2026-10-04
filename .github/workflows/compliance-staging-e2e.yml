@@ -25,13 +25,13 @@ jobs:
       STAGING_SUPABASE_ANON_KEY: ${{ secrets.STAGING_SUPABASE_ANON_KEY }}
       STAGING_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.STAGING_SUPABASE_SERVICE_ROLE_KEY }}
       STAGING_DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
-      STAGING_BASE_URL: "http://127.0.0.1:3000"
+      STAGING_BASE_URL: "http://localhost:3000"
       STAGING_TEST_PASSWORD: ${{ secrets.STAGING_TEST_PASSWORD }}
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.STAGING_SUPABASE_ANON_KEY }}
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.STAGING_SUPABASE_SERVICE_ROLE_KEY }}
       SUPABASE_SECRET_KEY: ${{ secrets.STAGING_SUPABASE_SERVICE_ROLE_KEY }}
-      NEXT_PUBLIC_SITE_URL: "http://127.0.0.1:3000"
+      NEXT_PUBLIC_SITE_URL: "http://localhost:3000"
     steps:
       - uses: actions/checkout@v4
 
@@ -92,10 +92,10 @@ jobs:
 
       - name: Start current-commit app against staging
         run: |
-          npm run dev -- --hostname 127.0.0.1 --port 3000 > /tmp/bc-staging-app.log 2>&1 &
+          npm run dev -- --hostname localhost --port 3000 > /tmp/bc-staging-app.log 2>&1 &
           echo $! > /tmp/bc-staging-app.pid
           for i in $(seq 1 60); do
-            if curl -fsS http://127.0.0.1:3000/api/health > /tmp/bc-staging-health.json; then
+            if curl -fsS http://localhost:3000/api/health > /tmp/bc-staging-health.json; then
               exit 0
             fi
             sleep 2
