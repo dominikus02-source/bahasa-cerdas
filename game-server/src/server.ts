@@ -1,6 +1,6 @@
 import { Server } from 'socket.io';
 import { createServer } from 'http';
-import { createHmac, timingSafeEqual } from 'crypto';
+import { createPublicKey, verify } from 'crypto';
 import { PrismaClient } from '@prisma/client';
 import { createKuisTempurArena } from './kuis-tempur-arena.js';
 
@@ -263,6 +263,10 @@ const kuisTempurArena = createKuisTempurArena({
   loadQuestions,
 });
 
+const GAME_SERVER_SIGNING_PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
+MCowBQYDK2VwAyEAuZK4nGPLOnLwDyobmsjOE18PT92P7KYfvEz6fR7mrJU=
+-----END PUBLIC KEY-----`;
+
 type SocketIdentity = {
   v: number;
   sub: string;
@@ -272,16 +276,20 @@ type SocketIdentity = {
 };
 
 function verifySocketToken(raw: unknown): SocketIdentity | null {
-  const secret = process.env.GAME_SERVER_SHARED_SECRET;
-  if (!secret || typeof raw !== 'string') return null;
+  if (typeof raw !== 'string') return null;
 
   const [payload, signature] = raw.split('.');
   if (!payload || !signature) return null;
 
   try {
-    const expected = createHmac('sha256', secret).update(payload).digest();
-    const received = Buffer.from(signature, 'base64url');
-    if (received.length !== expected.length || !timingSafeEqual(received, expected)) return null;
+    const publicKey = createPublicKey(GAME_SERVER_SIGNING_PUBLIC_KEY);
+    const valid = verify(
+      null,
+      Buffer.from(payload, 'utf8'),
+      publicKey,
+      Buffer.from(signature, 'base64url')
+    );
+    if (!valid) return null;
 
     const identity = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8')) as SocketIdentity;
     if (
@@ -300,14 +308,6 @@ function verifySocketToken(raw: unknown): SocketIdentity | null {
 }
 
 io.use((socket, next) => {
-  const secret = process.env.GAME_SERVER_SHARED_SECRET;
-  if (!secret) {
-    if (process.env.NODE_ENV === 'production') {
-      return next(new Error('Game server authentication is not configured'));
-    }
-    return next();
-  }
-
   const identity = verifySocketToken(socket.handshake.auth?.token);
   if (!identity) return next(new Error('Unauthorized game connection'));
   socket.data.identity = identity;
