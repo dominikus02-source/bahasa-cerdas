@@ -2,12 +2,15 @@
 Draf 3 Oktober 2026 · Status TDPSE: belum terdaftar
 
 ## Identitas untuk dicocokkan dengan OSS
-- Pengelola: **CV Obah Mamah**, nama dagang **Teras Kata**.
-- NIB: **1217000151443** (tercantum dalam proposal; cocokkan dengan NIB aktif).
+- Dokumen OSS yang diverifikasi mencantumkan Pelaku Usaha: **Dominikus Wahyu Heru Cahyadi**, nama usaha **Teras Kata**.
+- NIB: **1217000151443**; Sertifikat Standar: **12170001514430001**.
+- KBLI: **62199 — Aktivitas Pemrograman Komputer Lainnya YTDL**.
+- Alamat kantor OSS: **JL. TUNTANG III NO.7, Bencongan, Kelapa Dua, Kabupaten Tangerang, Banten**.
+- Lokasi kegiatan OSS: **Jalan Klungkung No.13 RT/RW 004/020, Bencongan, Kelapa Dua, Kabupaten Tangerang, Banten 15810**.
+- Dokumen internal/proposal yang menyebut **CV Obah Mamah** harus direkonsiliasi dengan akta/AHU dan NIB CV sebelum dipakai sebagai identitas pengajuan. Lihat **LEGAL_IDENTITY_RECONCILIATION.md**.
 - Kontak penanggung jawab: **Dominikus Wahyu Heru Cahyadi**.
 - Email operasional dan privasi: **halo@bahasacerdas.com**.
 - Telepon kontak terkini: **085117272283** (dikonfirmasi pengelola pada 3 Oktober 2026).
-- Domisili: **Tangerang, Banten**. Alamat lengkap harus diambil dari dokumen badan usaha/NIB.
 - Sistem: **BahasaCerdas**, situs **bahasacerdas.com**. Verifikasi domain tambahan **bahasacerdas.site** dan cakupan BIGT; jangan otomatis menggabungkan sistem berbeda ke satu isian.
 - Nomor TDPSE: **belum ada**. NIB dan pengajuan hak cipta tidak menggantikan TDPSE.
 
@@ -19,9 +22,9 @@ Data meliputi identitas/kontak akun, usia/kelompok usia, bukti wali dan consent,
 ## Lampiran yang perlu tersedia
 | Lampiran | Kesiapan saat ini |
 |---|---|
-| NIB aktif dan KBLI kegiatan yang tepat | Nomor ada dalam proposal; dokumen asli/KBLI perlu dicocokkan |
-| Dokumen badan usaha dan kewenangan penanggung jawab | Nama tersedia; akta/dokumen kewenangan perlu dilengkapi |
-| Alamat lengkap dan kontak bisnis | Email/telepon/domisi tersedia; alamat lengkap belum ada dalam proposal |
+| NIB aktif dan KBLI kegiatan yang tepat | Dokumen OSS diverifikasi: NIB 1217000151443, KBLI 62199, Sertifikat Standar 12170001514430001 |
+| Dokumen badan usaha dan kewenangan penanggung jawab | **BLOCKER:** OSS yang tersedia adalah atas Dominikus/Teras Kata; klaim CV Obah Mamah perlu akta/AHU + NIB CV atau keputusan memakai pelaku usaha OSS yang ada |
+| Alamat lengkap dan kontak bisnis | Alamat kantor dan lokasi kegiatan tersedia dari OSS; email/telepon tersedia |
 | Kepemilikan domain dan diagram sistem | Domain teridentifikasi; bukti kepemilikan dan lokasi actual perlu disiapkan |
 | Kebijakan privasi, ketentuan, pemberitahuan anak/wali, pedoman karya dan retensi | Draf halaman dan dokumen tersedia di perubahan repo; belum diterapkan di situs produksi |
 | Register vendor dan bukti transfer lintas negara | Inventaris tersedia; kontrak/region/retensi vendor perlu diverifikasi |
