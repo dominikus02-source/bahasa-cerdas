@@ -36,12 +36,33 @@ jobs:
           node-version: "20"
           cache: npm
 
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Account deletion security regression
+        run: npx tsx scripts/test-account-security.ts
+
+      - name: Main Bersama session regression
+        run: npx tsx scripts/test-main-bersama-session-engine.ts
+
+      - name: Payment integrity regression
+        run: npx tsx scripts/test-p4.1-payment-integrity.ts
+
       - name: Require isolated staging secrets
         shell: bash
         run: |
           set -eu
           missing=0
-          for name in             STAGING_SUPABASE_URL             STAGING_SUPABASE_ANON_KEY             STAGING_SUPABASE_SERVICE_ROLE_KEY             STAGING_DATABASE_URL             STAGING_DIRECT_URL             STAGING_REDIS_URL             STAGING_REDIS_TOKEN             STAGING_BASE_URL             STAGING_TEST_PASSWORD
+          for name in \
+            STAGING_SUPABASE_URL \
+            STAGING_SUPABASE_ANON_KEY \
+            STAGING_SUPABASE_SERVICE_ROLE_KEY \
+            STAGING_DATABASE_URL \
+            STAGING_DIRECT_URL \
+            STAGING_REDIS_URL \
+            STAGING_REDIS_TOKEN \
+            STAGING_BASE_URL \
+            STAGING_TEST_PASSWORD
           do
             eval "value=\${$name:-}"
             if [ -z "$value" ]; then
@@ -50,9 +71,6 @@ jobs:
             fi
           done
           test "$missing" -eq 0
-
-      - name: Install dependencies
-        run: npm ci
 
       - name: Verify staging isolation
         run: npx tsx scripts/verify-staging-environment.ts
