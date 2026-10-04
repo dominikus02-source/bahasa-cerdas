@@ -8,6 +8,7 @@ import { NOTICE_VERSION, TERMS_VERSION, CHILD_NOTICE_VERSION, GUARDIAN_NOTICE_VE
 const schema = z.discriminatedUnion("action", [
  z.object({ action: z.literal("guardian"), id: z.string(), approve: z.boolean(), evidenceRef: z.string().trim().min(10).max(300) }),
  z.object({ action: z.literal("age"), userId: z.string(), approve: z.boolean(), evidenceRef: z.string().trim().min(10).max(300) }),
+ z.object({ action: z.literal("privacyRequest"), id: z.string(), decision: z.enum(["PROCESSING","COMPLETED","REJECTED"]), reason: z.string().trim().min(10).max(1000), evidenceRef: z.string().trim().min(6).max(300).optional() }),
  z.object({ action: z.literal("classroom"), classId: z.string().min(1).max(128), evidenceRef: z.string().trim().min(10).max(300), approve: z.boolean(), expiresAt: z.string().datetime() }),
  z.object({ action: z.literal("moderate"), id: z.string(), decision: z.enum(["REMOVE", "DISMISS", "ESCALATE"]), reason: z.string().trim().min(10).max(1000) })
 ]);
@@ -15,17 +16,18 @@ async function admin() { const u = await getIdentityUser(); return u && (u.role 
 export async function GET() {
  try {
   const u = await admin(); if (!u) return NextResponse.json({ error: "Akses ditolak." }, { status: 403 });
-  const [reports, guardians, ageReviews, deletions, audits] = await Promise.all([
+  const [reports, guardians, ageReviews, privacyRequests, deletions, audits] = await Promise.all([
    Promise.all([
     db.safetyReport.findMany({where:{status:{in:["OPEN","ESCALATED"]},category:"CHILD_SAFETY"},orderBy:{createdAt:"asc"},take:100}),
     db.safetyReport.findMany({where:{status:{in:["OPEN","ESCALATED"]},category:{not:"CHILD_SAFETY"}},orderBy:{createdAt:"asc"},take:100})
    ]).then(([urgent,other])=>[...urgent,...other]),
    db.guardianRequest.findMany({ where: { status: "AWAITING_REVIEW" }, select: { id: true, childId: true, guardianId: true, agreedAt: true }, take: 100 }),
    db.privacyAccount.findMany({ where: { ageAssuranceLevel: "SELF_DECLARED", birthDate: { not: null } }, select: { userId: true, birthDate: true, ageAssuranceLevel: true, updatedAt: true }, orderBy: { updatedAt: "asc" }, take: 100 }),
+   db.privacyRequest.findMany({ where: { status: { in: ["RECEIVED","PROCESSING"] } }, orderBy: { deadlineAt: "asc" }, take: 100, select: { id: true, userId: true, guardianId: true, type: true, detail: true, status: true, deadlineAt: true, createdAt: true } }),
    db.deletionJob.findMany({ where: { status: { not: "COMPLETED" } }, select: { userId: true, status: true, attempts: true, lastErrorCode: true }, take: 100 }),
    db.complianceAudit.findMany({ orderBy: { createdAt: "desc" }, take: 50 })
   ]);
-  return NextResponse.json({ reports, guardians, ageReviews: ageReviews.map(a => ({ userId: a.userId, ageBand: a.birthDate ? ageBandFor(a.birthDate) : "UNKNOWN", updatedAt: a.updatedAt })), deletions, audits }, { headers: { "Cache-Control": "private, no-store" } });
+  return NextResponse.json({ reports, guardians, ageReviews: ageReviews.map(a => ({ userId: a.userId, ageBand: a.birthDate ? ageBandFor(a.birthDate) : "UNKNOWN", updatedAt: a.updatedAt })), privacyRequests, deletions, audits }, { headers: { "Cache-Control": "private, no-store" } });
  } catch(e) { return privacyFailure(e); }
 }
 export async function POST(req: Request) {
@@ -48,6 +50,12 @@ export async function POST(req: Request) {
     const band = ageBandFor(p.birthDate);
     await tx.privacyAccount.update({ where: { userId: b.userId }, data: { ageAssuranceLevel: b.approve ? "REVIEWED" : "NONE", ageVerifiedAt: b.approve ? new Date() : null, ageChangeLocked: true } });
     await tx.complianceAudit.create({ data: { subjectId: b.userId, actorId: u.id, action: b.approve ? `AGE_ASSURANCE_VERIFIED_${band}` : `AGE_ASSURANCE_REJECTED_${band}`, reference: b.evidenceRef } });
+   } else if (b.action === "privacyRequest") {
+    const pr = await tx.privacyRequest.findUniqueOrThrow({ where: { id: b.id } });
+    if (!["RECEIVED","PROCESSING"].includes(pr.status)) throw new Error("ORIGIN");
+    const completed = b.decision === "COMPLETED" || b.decision === "REJECTED";
+    await tx.privacyRequest.update({ where: { id: pr.id }, data: { status: b.decision, assignedTo: u.id, decision: b.reason, evidenceRef: b.evidenceRef || null, completedAt: completed ? new Date() : null } });
+    await tx.complianceAudit.create({ data: { subjectId: pr.userId, actorId: u.id, action: `PRIVACY_REQUEST_${b.decision}`, reference: pr.id } });
    } else if (b.action === "classroom") {
     const group = await tx.group.findUniqueOrThrow({where:{id:b.classId}});
     const expiry=new Date(b.expiresAt);
