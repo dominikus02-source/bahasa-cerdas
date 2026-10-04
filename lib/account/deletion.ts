@@ -102,7 +102,7 @@ export async function anonymizeAccount(userId: string, supabaseId: string, objec
     await tx.productEvent.deleteMany({ where: { actorId: userId } });
     await tx.mainPlayer.updateMany({ where: { userId: { in: [userId, supabaseId] } }, data: { userId: null, displayName: "Peserta", avatarUrl: null, connected: false } });
     await tx.taskShareToken.deleteMany({ where: { createdById: userId } });
-    await tx.safetyReport.updateMany({ where: { reporterId: userId }, data: { contact: null } });
+    await tx.safetyReport.updateMany({ where: { reporterId: userId }, data: { reporterId: null, contact: null } });
     await tx.subscription.updateMany({ where: { userId }, data: { status: "CANCELLED", willRenew: false, cancelledAt: new Date() } });
   }, { timeout: 20000, isolationLevel: "Serializable" });
   await Promise.all([cache.del(`user:me:id:${supabaseId}`), cache.del(`user:me:v2:id:${supabaseId}`), cache.del(`profile:public:${userId}`), cache.del(`profile:public:v2:${userId}`), cache.delPattern("feed:*"), cache.delPattern("bca:lb:*"), cache.delPattern("karya:*"), cache.delPattern("league:*")]);
