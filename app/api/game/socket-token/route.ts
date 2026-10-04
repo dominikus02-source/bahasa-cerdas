@@ -1,4 +1,4 @@
-import { createHmac } from "crypto";
+import { createPrivateKey, sign } from "crypto";
 import { NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
@@ -9,9 +9,9 @@ export async function GET() {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const secret = process.env.GAME_SERVER_SHARED_SECRET;
-  if (!secret) {
-    console.error("GAME_SERVER_SHARED_SECRET is not configured");
+  const signingKey = process.env.GAME_SERVER_SIGNING_PRIVATE_KEY;
+  if (!signingKey) {
+    console.error("GAME_SERVER_SIGNING_PRIVATE_KEY is not configured");
     return NextResponse.json({ error: "Server pertandingan belum dikonfigurasi." }, { status: 503 });
   }
 
@@ -32,7 +32,14 @@ export async function GET() {
     "utf8"
   ).toString("base64url");
 
-  const signature = createHmac("sha256", secret).update(payload).digest("base64url");
+  let signature: string;
+  try {
+    const key = createPrivateKey(signingKey.replace(/\\n/g, "\n"));
+    signature = sign(null, Buffer.from(payload, "utf8"), key).toString("base64url");
+  } catch (error) {
+    console.error("GAME_SERVER_SIGNING_PRIVATE_KEY is invalid", error);
+    return NextResponse.json({ error: "Server pertandingan belum dikonfigurasi." }, { status: 503 });
+  }
 
   return NextResponse.json(
     { token: `${payload}.${signature}` },
