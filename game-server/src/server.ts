@@ -1,5 +1,6 @@
 import { Server } from 'socket.io';
 import { createServer } from 'http';
+import { createHmac, timingSafeEqual } from 'crypto';
 import { PrismaClient } from '@prisma/client';
 import { createKuisTempurArena } from './kuis-tempur-arena.js';
 
@@ -262,6 +263,57 @@ const kuisTempurArena = createKuisTempurArena({
   loadQuestions,
 });
 
+type SocketIdentity = {
+  v: number;
+  sub: string;
+  name: string;
+  avatar?: string | null;
+  exp: number;
+};
+
+function verifySocketToken(raw: unknown): SocketIdentity | null {
+  const secret = process.env.GAME_SERVER_SHARED_SECRET;
+  if (!secret || typeof raw !== 'string') return null;
+
+  const [payload, signature] = raw.split('.');
+  if (!payload || !signature) return null;
+
+  try {
+    const expected = createHmac('sha256', secret).update(payload).digest();
+    const received = Buffer.from(signature, 'base64url');
+    if (received.length !== expected.length || !timingSafeEqual(received, expected)) return null;
+
+    const identity = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8')) as SocketIdentity;
+    if (
+      identity.v !== 1 ||
+      typeof identity.sub !== 'string' ||
+      typeof identity.name !== 'string' ||
+      typeof identity.exp !== 'number' ||
+      identity.exp <= Date.now()
+    ) {
+      return null;
+    }
+    return identity;
+  } catch {
+    return null;
+  }
+}
+
+io.use((socket, next) => {
+  const secret = process.env.GAME_SERVER_SHARED_SECRET;
+  if (!secret) {
+    if (process.env.NODE_ENV === 'production') {
+      return next(new Error('Game server authentication is not configured'));
+    }
+    return next();
+  }
+
+  const identity = verifySocketToken(socket.handshake.auth?.token);
+  if (!identity) return next(new Error('Unauthorized game connection'));
+  socket.data.identity = identity;
+  return next();
+});
+
 io.on('connection', (socket) => {
   console.log(`[Socket] Connected: ${socket.id}`);
 
@@ -277,6 +329,12 @@ io.on('connection', (socket) => {
     timePerQuestion?: number;
   }) => {
     try {
+      const identity = socket.data.identity as SocketIdentity | undefined;
+      if (identity) {
+        data.hostId = identity.sub;
+        data.hostName = identity.name;
+        data.hostAvatar = identity.avatar || undefined;
+      }
       let code = generateCode();
       while (rooms.has(code)) {
         code = generateCode();
@@ -354,6 +412,12 @@ io.on('connection', (socket) => {
     avatarUrl?: string;
   }) => {
     try {
+      const identity = socket.data.identity as SocketIdentity | undefined;
+      if (identity) {
+        data.userId = identity.sub;
+        data.playerName = identity.name;
+        data.avatarUrl = identity.avatar || undefined;
+      }
       const room = rooms.get(data.code);
       if (!room) {
         socket.emit('error', { message: 'Room tidak ditemukan' });
