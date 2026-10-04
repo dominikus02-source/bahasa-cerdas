@@ -1,6 +1,6 @@
 import { Server } from 'socket.io';
 import { createServer } from 'http';
-import { createPublicKey, verify } from 'crypto';
+import { createHmac, createPublicKey, verify } from 'crypto';
 import { PrismaClient } from '@prisma/client';
 import { createKuisTempurArena } from './kuis-tempur-arena.js';
 
@@ -256,16 +256,75 @@ const io = new Server(httpServer, {
   pingTimeout: 12000,
 });
 
+const GAME_SERVER_SIGNING_PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
+MCowBQYDK2VwAyEAdZGdsISldkKar6htuL4/B9JDw8/2RHEF7DSq/CFOMqI=
+-----END PUBLIC KEY-----`;
+
+async function callKuisTempurWebBridge(payload: Record<string, unknown>) {
+  const secret = process.env.KUIS_TEMPUR_SERVER_SECRET;
+  const baseUrl = (process.env.BAHASACERDAS_WEB_URL || 'https://www.bahasacerdas.com').replace(/\/$/, '');
+  if (!secret) throw new Error('KUIS_TEMPUR_SERVER_SECRET is not configured');
+
+  const raw = JSON.stringify(payload);
+  const timestamp = String(Date.now());
+  const signature = createHmac('sha256', secret)
+    .update(`${timestamp}.${raw}`)
+    .digest('base64url');
+
+  const response = await fetch(`${baseUrl}/api/game/kuis-tempur/server`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-game-timestamp': timestamp,
+      'x-game-signature': signature,
+    },
+    body: raw,
+  });
+
+  if (!response.ok) {
+    const body = await response.text().catch(() => '');
+    throw new Error(`Web bridge ${response.status}: ${body.slice(0, 180)}`);
+  }
+  return response.json() as Promise<any>;
+}
+
+async function loadArenaQuestions(_gameType: string, count: number): Promise<Question[]> {
+  try {
+    const data = await callKuisTempurWebBridge({ action: 'questions', count });
+    const questions = Array.isArray(data?.questions) ? data.questions : [];
+    if (questions.length > 0) {
+      return questions.map((q: any) => ({
+        id: String(q.id),
+        text: String(q.text),
+        type: String(q.type || 'PILIHAN_GANDA'),
+        options: Array.isArray(q.options) ? q.options.map(String) : [],
+        correctAnswer: String(q.correctAnswer),
+        difficulty: String(q.difficulty || 'MEDIUM'),
+      }));
+    }
+  } catch (error) {
+    console.error('[KuisTempurArena] question bridge failed, using defaults', error);
+  }
+  return getDefaultQuestions('KUIS_BATTLE', count);
+}
+
+async function persistArenaResults(payload: {
+  code: string;
+  roomName: string;
+  hostId: string;
+  startedAt: number;
+  endedAt: number;
+  results: any[];
+}) {
+  await callKuisTempurWebBridge({ action: 'results', ...payload });
+}
+
 const kuisTempurArena = createKuisTempurArena({
   io,
-  prisma,
   rooms,
-  loadQuestions,
+  loadQuestions: loadArenaQuestions,
+  persistResults: persistArenaResults,
 });
-
-const GAME_SERVER_SIGNING_PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
-MCowBQYDK2VwAyEAuZK4nGPLOnLwDyobmsjOE18PT92P7KYfvEz6fR7mrJU=
------END PUBLIC KEY-----`;
 
 type SocketIdentity = {
   v: number;
@@ -335,9 +394,58 @@ io.on('connection', (socket) => {
         data.hostName = identity.name;
         data.hostAvatar = identity.avatar || undefined;
       }
+
       let code = generateCode();
-      while (rooms.has(code)) {
-        code = generateCode();
+      while (rooms.has(code)) code = generateCode();
+
+      const hostPlayer: Player = {
+        id: data.hostId,
+        odiceId: socket.id,
+        playerName: data.hostName,
+        avatarUrl: data.hostAvatar,
+        score: 0,
+        correct: 0,
+        wrong: 0,
+        streak: 0,
+        maxStreak: 0,
+        answerTimes: [],
+        ready: true,
+      };
+
+      // Kuis Tempur 2.0 rooms are intentionally kept in memory on the realtime
+      // service. Production persistence is handled through the authenticated web
+      // bridge, so the game server never needs production database credentials.
+      if (data.category === 'KUIS_TEMPUR_ARENA') {
+        const room: Room = {
+          id: `arena-${code}`,
+          code,
+          name: data.name,
+          hostId: data.hostId,
+          gameType: 'KUIS_BATTLE',
+          category: 'KUIS_TEMPUR_ARENA',
+          difficulty: 'MEDIUM',
+          status: 'WAITING',
+          questionCount: Math.max(10, Math.min(30, data.questionCount || 20)),
+          timePerQuestion: Math.max(8, Math.min(30, data.timePerQuestion || 15)),
+          currentQuestion: 0,
+          questions: [],
+          players: new Map(),
+        };
+
+        room.players.set(data.hostId, hostPlayer);
+        rooms.set(code, room);
+        playerSockets.set(socket.id, code);
+        socket.join(code);
+        socket.emit('room-created', {
+          roomId: room.id,
+          code: room.code,
+          name: room.name,
+          isHost: true,
+          player: hostPlayer,
+        });
+        io.to(code).emit('player-list', getPlayersList(room));
+        console.log(`[ArenaRoom] Created: ${code} by host ${data.hostId}`);
+        return;
       }
 
       const dbRoom = await prisma.gameRoom.create({
@@ -353,20 +461,6 @@ io.on('connection', (socket) => {
           status: 'WAITING' as any,
         },
       });
-
-      const hostPlayer: Player = {
-        id: data.hostId,
-        odiceId: socket.id,
-        playerName: data.hostName,
-        avatarUrl: data.hostAvatar,
-        score: 0,
-        correct: 0,
-        wrong: 0,
-        streak: 0,
-        maxStreak: 0,
-        answerTimes: [],
-        ready: true,
-      };
 
       const room: Room = {
         id: dbRoom.id,
@@ -387,7 +481,6 @@ io.on('connection', (socket) => {
       room.players.set(data.hostId, hostPlayer);
       rooms.set(code, room);
       playerSockets.set(socket.id, code);
-
       socket.join(code);
       socket.emit('room-created', {
         roomId: dbRoom.id,
@@ -496,14 +589,16 @@ io.on('connection', (socket) => {
       playerSockets.set(socket.id, data.code);
       socket.join(data.code);
 
-      await prisma.gameSession.create({
-        data: {
-          roomId: room.id,
-          userId: data.userId,
-          playerName: data.playerName,
-          avatarUrl: data.avatarUrl,
-        },
-      });
+      if (room.category !== 'KUIS_TEMPUR_ARENA') {
+        await prisma.gameSession.create({
+          data: {
+            roomId: room.id,
+            userId: data.userId,
+            playerName: data.playerName,
+            avatarUrl: data.avatarUrl,
+          },
+        });
+      }
 
       socket.emit('room-joined', {
         roomId: room.id,
