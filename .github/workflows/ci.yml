@@ -56,7 +56,13 @@ jobs:
       - name: Apply non-breaking dependency security fixes
         if: steps.prod_audit.outcome == 'failure' && github.event_name == 'push' && github.ref == 'refs/heads/checkpoint/compliance-pdp-tunas-2026-10-04'
         run: |
+          # npm audit fix can return non-zero when only breaking-change findings remain.
+          # Preserve and commit every non-breaking lockfile remediation it was still able to apply.
+          set +e
           npm audit fix --package-lock-only
+          AUDIT_FIX_EXIT=$?
+          set -e
+          echo "npm audit fix exit code: $AUDIT_FIX_EXIT"
           if ! git diff --quiet -- package-lock.json package.json; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
