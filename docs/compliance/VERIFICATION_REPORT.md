@@ -56,3 +56,45 @@ Missing GitHub Actions secrets confirmed by the gate:
 `STAGING_SUPABASE_URL`, `STAGING_SUPABASE_ANON_KEY`, `STAGING_SUPABASE_SERVICE_ROLE_KEY`, `STAGING_DATABASE_URL`, `STAGING_DIRECT_URL`, `STAGING_REDIS_URL`, `STAGING_REDIS_TOKEN`, `STAGING_BASE_URL`, and `STAGING_TEST_PASSWORD`.
 
 Pre-main status remains BLOCKED pending (a) those isolated staging credentials plus a reachable staging application URL, (b) successful live authenticated staging E2E, and (c) a fresh production backup immediately before any production migration.
+
+
+### Live staging E2E — PASS
+
+Commit `97106dca40536c578f1c6e56a0cccdf9619cefea` has both core CI and live staging evidence:
+
+- Push CI run `37213519892`: PASS through dependency gate, Prisma generate, TypeScript, privacy migration/integration gates, diagnostics, TTS eligibility, lint, and production build.
+- PR CI run `37213522493`: PASS through the same release gates.
+- Compliance Staging E2E run `37213519853`: PASS.
+  - staging isolation gate: 12/12 PASS; derived Supabase ref `hvfkhaocukdzfvseqwdz`; production ref not detected.
+  - live Supabase Auth admin-key validation: PASS.
+  - disposable staging user password synchronization + password-grant login: PASS.
+  - Prisma mapping to staging DB: PASS.
+  - deployed staging app `user/me`: MURID PASS.
+  - UKBI package discovery: PASS.
+  - start session: HTTP 200.
+  - answer-key leakage checks on start, submit, and result: PASS.
+  - autosave: HTTP 200.
+  - submit: HTTP 200 with scored result.
+  - result fetch: HTTP 200.
+  - DB verification: TestSession COMPLETED, ProgresKompetensi present, 10 TestAnswer rows, one progress row per user+package.
+- The staging E2E was hardened for Supabase transaction-pooler port 6543 by using a Prisma PgBouncer-safe connection string, and disposable prior-attempt state is reset before each run so old COMPLETED sessions/usage do not create false failures.
+
+### Production legacy student-media rehearsal inventory
+
+Read-only production checks before any migration:
+
+- total legacy public references: 542.
+- unique owner/object pairs: 537.
+- unique source URLs: 537.
+- source URLs shared across different owners: 0.
+- multiply-referenced source URLs: 3.
+- all 537 unique source objects exist in `storage.objects`; unmatched source objects: 0.
+- unique objects by bucket: `avatars` 203 (58.45 MiB), `documents` 334 (160.20 MiB).
+- total source size: approximately 218.65 MiB.
+- largest individual object: 4.06 MiB; no object exceeds the 50 MiB private-bucket limit.
+
+This removes the ownership/source-existence ambiguity for the planned copy-first migration. Production data and storage remain unchanged.
+
+### Remaining hard blocker before main
+
+The latest verifiable application-level backup in the private `bahasacerdas-backups` bucket is still dated 29 June 2026. It is not acceptable as the rollback point for the October compliance migration. A fresh verified production backup/snapshot immediately before production migration remains mandatory. Do not merge/deploy the compliance migration until this rollback prerequisite exists.
