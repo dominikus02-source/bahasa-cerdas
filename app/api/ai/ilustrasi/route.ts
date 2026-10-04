@@ -1,3 +1,4 @@
+import { aiAllowed } from "@/lib/compliance/service";
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import crypto from "crypto"
@@ -11,6 +12,7 @@ export async function GET(req: NextRequest) {
 
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!await aiAllowed(user.id)) return NextResponse.json({ error: "Aktifkan bantuan AI di pengaturan privasi; untuk anak diperlukan pilihan wali.", code: "AI_CONSENT_REQUIRED" }, { status: 403 });
     const prompt = req.nextUrl.searchParams.get("prompt")
     if (!prompt || prompt.length < 3) {
       return NextResponse.json({ error: "Prompt minimal 3 karakter" }, { status: 400 })

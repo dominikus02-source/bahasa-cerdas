@@ -271,9 +271,12 @@ export default function MuridProfilePage() {
     try {
       const fileExt = file.name.split(".").pop();
       const fileName = `avatar-${Date.now()}.${fileExt}`;
-      const { error } = await supabase.storage.from("avatars").upload(fileName, file);
-      if (error) throw error;
-      const { data } = supabase.storage.from("avatars").getPublicUrl(fileName);
+      const form = new FormData(); form.set("file", file);
+      const response = await fetch("/api/upload/image", { method: "POST", body: form });
+      const uploaded = await response.json();
+      if (!response.ok) throw new Error(uploaded.error || "Upload belum berhasil");
+      const data = { publicUrl: uploaded.url };
+
       setAvatarSrc(data.publicUrl);
     } catch (error: any) {
       setSettingsMessage({ type: "error", text: error.message || "Gagal upload foto" });

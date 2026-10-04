@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     const query = searchParams.get("q");
 
     const users = await db.user.findMany({
-      where: query ? { fullName: { contains: query, mode: "insensitive" } } : undefined,
+      where: { privacy: { is: { ageBand: "ADULT", publicProfile: true } }, ...(query ? { fullName: { contains: query, mode: "insensitive" } } : {}) },
       select: { id: true, fullName: true, avatar: true, role: true, xp: true, level: true, streak: true, league: true },
       take: 20,
     });

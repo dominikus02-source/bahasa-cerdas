@@ -1,3 +1,4 @@
+import { visibleWorksWhere } from "@/lib/compliance/service";
 import { identitySelect, resolveIdentity, type IdentitySource } from "@/lib/account/identity";
 import { NextRequest, NextResponse } from "next/server";
 import { getUser, createClient } from "@/lib/supabase/server";
@@ -55,7 +56,7 @@ export async function GET(req: NextRequest) {
           // Verified badge — isFounder / isPremium
           ...identitySelect,
           playerProfile: { select: { currentRank: true } },
-          profile: { select: { school: true, city: true } },
+
         },
       },
       _count: { select: { likes: true, comments: true } },
@@ -67,6 +68,7 @@ export async function GET(req: NextRequest) {
     // oleh cache key. Detail semantik: lib/karya/feed-scope.ts.
     const scope = resolveKaryaFeedScope(searchParams.get("scope"), user?.role);
 
+    const visibility = visibleWorksWhere(user);
     let items: any[];
     let hasMore = false;
 
@@ -76,7 +78,7 @@ export async function GET(req: NextRequest) {
       // — the rest fills from the most-liked karya of the last 30 days, and
       // falls back to all-time best if recent activity is too thin.
       const pinned = await db.studentKarya.findMany({
-        where: { isFeatured: true },
+        where: { AND: [visibility, { isFeatured: true }] },
         include: karyaInclude,
         orderBy: { createdAt: "desc" },
         take: limit,
@@ -87,14 +89,14 @@ export async function GET(req: NextRequest) {
         const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
         const excludeIds = pinned.map((k) => k.id);
         auto = await db.studentKarya.findMany({
-          where: { id: { notIn: excludeIds }, createdAt: { gte: since } },
+          where: { AND: [visibility, { id: { notIn: excludeIds }, createdAt: { gte: since } }] },
           include: karyaInclude,
           orderBy: [{ likesCount: "desc" }, { viewsCount: "desc" }],
           take: remaining,
         });
         if (auto.length < remaining) {
           const more = await db.studentKarya.findMany({
-            where: { id: { notIn: [...excludeIds, ...auto.map((k) => k.id)] } },
+            where: { AND: [visibility, { id: { notIn: [...excludeIds, ...auto.map((k) => k.id)] } }] },
             include: karyaInclude,
             orderBy: [{ likesCount: "desc" }, { viewsCount: "desc" }],
             take: remaining - auto.length,
@@ -121,7 +123,7 @@ export async function GET(req: NextRequest) {
         if (!group) {
           return NextResponse.json({ error: "Kelas tidak ditemukan" }, { status: 404 });
         }
-        if (user && user.role === "GURU" && group.teacherId !== user.id) {
+        if (!user || (group.teacherId !== user.id && !user.isFounder && user.role !== "ADMIN")) {
           return NextResponse.json({ error: "Anda tidak berhak mengakses kelas ini" }, { status: 403 });
         }
         const members = await db.groupMember.findMany({
@@ -166,13 +168,10 @@ export async function GET(req: NextRequest) {
         if (scopeWhere) where = { ...where, ...scopeWhere };
       }
 
+      where = { AND: [where, visibility] };
       // Cache first page (no cursor) for 30s — absorbs feed bursts from a whole class
       // Skip cache when searching so results are always fresh
-      const cacheKey = cursor || q || groupId
-        ? null
-        : user && user.role === "GURU"
-          ? `feed:v2:guru:${user.id}:${scope}:${type || "all"}:${limit}`
-          : `feed:v2:${scope}:${type || "all"}:${limit}`;
+      const cacheKey: string | null = null;
       let karya: any[];
       if (cacheKey) {
         const cached = await cache.get<any[]>(cacheKey);

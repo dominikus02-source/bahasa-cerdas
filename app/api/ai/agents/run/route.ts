@@ -1,3 +1,4 @@
+import { aiAllowed } from "@/lib/compliance/service";
 /**
  * POST /api/ai/agents/run — Universal Agent Execution
  *
@@ -69,6 +70,8 @@ export async function POST(req: NextRequest) {
       console.log(`[AI Agents Run] No user session requestId=${requestId}`);
       return jsonError(AUTH_ERROR, "AUTH_REQUIRED", 401);
     }
+
+    if (!await aiAllowed(user.id)) return new Response(JSON.stringify({ error: "Aktifkan bantuan AI melalui pengaturan privasi.", code: "AI_CONSENT_REQUIRED" }), { status: 403, headers: { "Content-Type": "application/json" } });
 
     userId = user.id;
     userRole = user.role;

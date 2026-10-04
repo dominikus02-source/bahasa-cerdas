@@ -58,6 +58,7 @@ function isItem(e: NavEntry): e is NavItem {
  */
 const NAV: NavEntry[] = [
   // ── 1. Founder intelligence ──
+  { label: "Privasi & Keselamatan", href: "/admin/compliance", icon: ShieldCheck },
   { label: "Control Tower", href: "/admin/executive", icon: Target },
 
   // ── 2. Founder operations agent ──

@@ -1,0 +1,1141 @@
+{
+  "views": [],
+  "functions": [
+    {
+      "name": "handle_new_user",
+      "security_definer": true,
+      "config": [
+        "search_path=public"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": false
+    },
+    {
+      "name": "current_app_user_id",
+      "security_definer": true,
+      "config": [
+        "search_path=public"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    }
+  ],
+  "policies": [
+    {
+      "schemaname": "public",
+      "tablename": "Notifikasi",
+      "policyname": "notifikasi_select_own",
+      "roles": [
+        "authenticated"
+      ],
+      "cmd": "SELECT",
+      "qual": "(\"userId\" = current_app_user_id())",
+      "with_check": null
+    },
+    {
+      "schemaname": "storage",
+      "tablename": "objects",
+      "policyname": "Avatar User Upload",
+      "roles": [
+        "authenticated"
+      ],
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "(bucket_id = 'avatars'::text)"
+    },
+    {
+      "schemaname": "storage",
+      "tablename": "objects",
+      "policyname": "Users can delete own documents",
+      "roles": [
+        "public"
+      ],
+      "cmd": "DELETE",
+      "qual": "((bucket_id = 'documents'::text) AND ((storage.foldername(name))[1] = (auth.uid())::text))",
+      "with_check": null
+    },
+    {
+      "schemaname": "storage",
+      "tablename": "objects",
+      "policyname": "Users can read documents",
+      "roles": [
+        "public"
+      ],
+      "cmd": "SELECT",
+      "qual": "(bucket_id = 'documents'::text)",
+      "with_check": null
+    },
+    {
+      "schemaname": "storage",
+      "tablename": "objects",
+      "policyname": "Users can upload to documents",
+      "roles": [
+        "public"
+      ],
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "(bucket_id = 'documents'::text)"
+    },
+    {
+      "schemaname": "storage",
+      "tablename": "objects",
+      "policyname": "documents_insert",
+      "roles": [
+        "authenticated"
+      ],
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "(bucket_id = 'documents'::text)"
+    }
+  ],
+  "auditedAt": "2026-10-03T14:48:54.541Z",
+  "scope": "read-only infrastructure metadata; no application rows",
+  "tables": [
+    {
+      "table_name": "AIJob",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "AIUsage",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Achievement",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "AdaptivePracticeSession",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "AdminPaymentAuditLog",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "AdminQuotaAuditLog",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "AgentApproval",
+      "rls": false,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "AgentCommandDedupe",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "AgentTask",
+      "rls": false,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "AgentTelegramBinding",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "AgentWorker",
+      "rls": false,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "AiCreditLedger",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "AiSavedResult",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "ArenaJuniorAkun",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "ArenaJuniorLesson",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "ArenaJuniorProgress",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Artikel",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "ArtikelComment",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "ArtikelLike",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "BackupManifest",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Badge",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "BankSoal",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Certificate",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "ChatMessage",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "CoinTransaction",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Community",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "CommunityMember",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "CommunityPost",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "CoursePlaylist",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "DailyAction",
+      "rls": false,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "DailyBusinessSnapshot",
+      "rls": false,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "DailyQuest",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Entitlement",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Follow",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "GameQuestion",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "GameResult",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "GameRoom",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "GameSession",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "GeneratedRPP",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Group",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "GroupMember",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "GroupQuiz",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "GroupQuizResult",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "KamusEntry",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Karya",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "KoleksiKata",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "KompetensiCertificate",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Kupon",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "KuponPemakaian",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "LeaderboardPeriodResult",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "LearningEvidence",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "LearningInsight",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "LearningJourney",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "LearningLevel",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "LearningRecommendation",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "LearningSkill",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "LearningUnit",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Loker",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Lomba",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "LombaPeserta",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "MainAnswer",
+      "rls": false,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "MainAnswerSubmission",
+      "rls": false,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "MainGameRoundResult",
+      "rls": false,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "MainGameState",
+      "rls": false,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "MainPlayer",
+      "rls": false,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "MainQuestionSnapshot",
+      "rls": false,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "MainRound",
+      "rls": false,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "MainRoundEligiblePlayer",
+      "rls": false,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "MainSession",
+      "rls": false,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Materi",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "MateriDownload",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "MateriKirim",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "NicknameHistory",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Nilai",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "NilaiKategori",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Notifikasi",
+      "rls": true,
+      "policies": 1,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "PaketKompetensi",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Pembelian",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "PendekarBattleAction",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "PendekarBattleSession",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "PendekarInventoryItem",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "PendekarLearningSession",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "PendekarPlayer",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "PendekarQuestProgress",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "PendekarRewardReceipt",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "PendekarRpgXpEntry",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "PendekarWalletEntry",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Pengumuman",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "PengumumanSubmission",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Penugasan",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "PenugasanSubmission",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Plan",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "PlayerActivity",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "PlayerCTA",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "PlayerProfile",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "PremiumUsage",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "ProductEvent",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Profile",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "ProfileLike",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "ProgresKompetensi",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "PurchaseHistory",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "PushSubscription",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "QuestionMetadata",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Quiz",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "QuizAnswer",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "QuizAssignment",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "QuizQuestion",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "QuizSession",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "QuizSubmission",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "RPP",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "School",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "SchoolAlias",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "SellerEarning",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Siaran",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "SiteSetting",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Soal",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "SoalSet",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "StoreItem",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "StudentKarya",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "StudentKaryaComment",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "StudentKaryaLike",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Subscription",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "TKAQuestion",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "TaskAttempt",
+      "rls": false,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "TaskEvent",
+      "rls": false,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "TaskShareToken",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "TeacherAttribution",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "TeacherAttributionEvent",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "TeacherCommission",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "TeacherCommissionWithdrawal",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "TeacherPayout",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "TeacherPayoutEvent",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "TeacherPayoutProfile",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "TeacherRiskAction",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "TeacherRiskCase",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "TeacherRiskSignal",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "TeacherWallet",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "TestAnswer",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "TestSession",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "ToolEvidence",
+      "rls": false,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "ToolExecution",
+      "rls": false,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Transaksi",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "TtsSession",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "UKBIQuestion",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "User",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "UserAchievement",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "UserBadge",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "UserItem",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "UserUnitProgress",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Video",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "WeeklySeason",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "Withdrawal",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "XPTransaction",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "XpLedger",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "_prisma_migrations",
+      "rls": false,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "community_posts",
+      "rls": true,
+      "policies": 3,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "community_replies",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "contributions",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "dictionary_entries",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "lesson_plans",
+      "rls": true,
+      "policies": 4,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "lessons",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "literary_works",
+      "rls": true,
+      "policies": 1,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "profiles",
+      "rls": true,
+      "policies": 2,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "questions",
+      "rls": true,
+      "policies": 4,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "ukbi_attempts",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "ukbi_simulations",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "user_badges",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    },
+    {
+      "table_name": "user_progress",
+      "rls": true,
+      "policies": 0,
+      "anonymous_grant": true
+    }
+  ],
+  "storage": [
+    {
+      "id": "avatars",
+      "public": true,
+      "file_size_limit": null,
+      "allowed_mime_types": null
+    },
+    {
+      "id": "documents",
+      "public": true,
+      "file_size_limit": null,
+      "allowed_mime_types": null
+    },
+    {
+      "id": "videos",
+      "public": true,
+      "file_size_limit": null,
+      "allowed_mime_types": null
+    },
+    {
+      "id": "images",
+      "public": true,
+      "file_size_limit": null,
+      "allowed_mime_types": null
+    },
+    {
+      "id": "bahasacerdas-backups",
+      "public": false,
+      "file_size_limit": null,
+      "allowed_mime_types": null
+    },
+    {
+      "id": "audio",
+      "public": true,
+      "file_size_limit": null,
+      "allowed_mime_types": null
+    }
+  ]
+}

@@ -231,12 +231,38 @@ function generateCode(): string {
 
 const io = new Server(PORT, {
   cors: {
-    origin: '*',
+    origin: (process.env.GAME_ALLOWED_ORIGINS || 'https://bahasacerdas.com').split(','),
     methods: ['GET', 'POST'],
   },
 });
 
+async function verifyGameIdentity(token: unknown): Promise<{id:string;name:string}> {
+  if(typeof token!=="string"||token.length>8192)throw new Error("AUTH_REQUIRED");
+  const origin=process.env.BC_APP_ORIGIN||"https://bahasacerdas.com";
+  const response=await fetch(`${origin}/api/privacy/game-access`,{headers:{Authorization:`Bearer ${token}`},signal:AbortSignal.timeout(5000),redirect:"error"});
+  if(!response.ok)throw new Error("PRIVACY_REQUIRED");
+  const result=await response.json() as {id?:unknown;name?:unknown};
+  if(typeof result.id!=="string"||typeof result.name!=="string")throw new Error("AUTH_REQUIRED");
+  return {id:result.id,name:result.name};
+}
+io.use(async(socket,next)=>{try{socket.data.identity=await verifyGameIdentity(socket.handshake.auth.token);next();}catch{next(new Error("Periksa login dan persetujuan privasi."));}});
 io.on('connection', (socket) => {
+  // Recheck every mutation: consent withdrawal and deleted accounts stop live sockets.
+  socket.use(async(packet,next)=>{try{
+    const identity=await verifyGameIdentity(socket.handshake.auth.token);
+    const data=packet[1] as Record<string,unknown>|undefined;
+    if(data){
+      if((data.userId&&data.userId!==identity.id)||(data.hostId&&data.hostId!==identity.id))throw new Error("IDENTITY_MISMATCH");
+      if("playerName" in data)data.playerName=identity.name;
+      if("userName" in data)data.userName=identity.name;
+      if("hostName" in data)data.hostName=identity.name;
+      delete data.avatarUrl;delete data.hostAvatar;
+      const room=typeof data.code==="string"?rooms.get(data.code):null;
+      if(["start-game","end-game"].includes(packet[0])&&room?.hostId!==identity.id)throw new Error("HOST_REQUIRED");
+    }
+    next();
+  }catch{socket.emit("error",{message:"Akses permainan perlu diperbarui."});next(new Error("ACCESS_DENIED"));}});
+
   console.log(`[Socket] Connected: ${socket.id}`);
 
   socket.on('create-room', async (data: {

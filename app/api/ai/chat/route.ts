@@ -1,3 +1,4 @@
+import { aiAllowed } from "@/lib/compliance/service";
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { rateLimitRoute } from "@/lib/rate-limit";
@@ -59,6 +60,7 @@ export async function POST(req: NextRequest) {
 
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!await aiAllowed(user.id)) return NextResponse.json({ error: "Aktifkan bantuan AI di pengaturan privasi; untuk anak diperlukan pilihan wali.", code: "AI_CONSENT_REQUIRED" }, { status: 403 });
 
     const { message, messages, mode = "murid" } = await req.json();
 

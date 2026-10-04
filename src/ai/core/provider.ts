@@ -1,3 +1,4 @@
+import {minimiseAiText,reviewedAiProvider} from "@/lib/compliance/ai-data";
 /**
  * AI Provider abstraction layer.
  *
@@ -139,7 +140,7 @@ async function callDeepSeek(req: ProviderRequest, apiKey: string): Promise<Provi
   // bekerja). Tanpa json_object model tidak pernah 'terkunci' ke output kosong.
   const dsBody: Record<string, unknown> = {
     model: req.model,
-    messages: req.messages,
+    messages: req.messages.map(m=>({...m,content:minimiseAiText(m.content)})),
     temperature: req.temperature,
     max_tokens: req.maxTokens,
   };
@@ -185,7 +186,7 @@ async function callGroq(req: ProviderRequest, apiKey: string): Promise<ProviderR
   // penolakan pada fallback.
   const body: Record<string, unknown> = {
     model: req.model,
-    messages: req.messages,
+    messages: req.messages.map(m=>({...m,content:minimiseAiText(m.content)})),
     temperature: req.temperature,
     max_tokens: req.maxTokens,
   };
@@ -335,7 +336,7 @@ async function streamDeepSeek(
   const startTime = Date.now();
   const streamBody: Record<string, unknown> = {
     model: req.model,
-    messages: req.messages,
+    messages: req.messages.map(m=>({...m,content:minimiseAiText(m.content)})),
     temperature: req.temperature,
     max_tokens: req.maxTokens,
     stream: true,
@@ -561,7 +562,7 @@ async function streamGroq(
   const startTime = Date.now();
   const body: Record<string, unknown> = {
     model: req.model,
-    messages: req.messages,
+    messages: req.messages.map(m=>({...m,content:minimiseAiText(m.content)})),
     temperature: req.temperature,
     max_tokens: req.maxTokens,
     stream: true,
@@ -623,6 +624,7 @@ export async function streamProviderText(
   const errors: string[] = [];
 
   for (const providerName of priority) {
+    if (!reviewedAiProvider(providerName)) { errors.push(`${providerName}: compliance review required`); continue; }
     const streamer = PROVIDER_STREAMERS[providerName];
     if (!streamer) {
       errors.push(`${providerName}: No streamer available`);
@@ -740,6 +742,7 @@ export async function callProvider(req: ProviderRequest): Promise<ProviderRespon
   const caller = PROVIDER_CALLERS[provider];
   const keys = getApiKeys(PROVIDER_KEY_ENV[provider]);
   if (keys.length === 0) throw new Error(`${PROVIDER_KEY_ENV[provider]} not configured`);
+  if (!reviewedAiProvider(provider)) throw new Error("AI_PROVIDER_REVIEW_REQUIRED");
   return caller(req, nextKey(PROVIDER_KEY_ENV[provider], keys));
 }
 
@@ -769,6 +772,7 @@ export async function callWithFallback(req: ProviderRequest): Promise<ProviderRe
       for (let i = 0; i < keys.length; i++) {
         const apiKey = nextKey(keyEnv, keys);
         try {
+          if (!reviewedAiProvider(providerName)) continue;
           return await caller({ ...req, model }, apiKey);
         } catch (e) {
           const message = e instanceof ProviderHttpError

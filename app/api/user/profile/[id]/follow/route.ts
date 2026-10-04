@@ -1,3 +1,4 @@
+import { publicIdentityAllowed } from "@/lib/compliance/service";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
@@ -20,6 +21,7 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
+    if (!await publicIdentityAllowed(id, "publicProfile")) return NextResponse.json({ error: "Profil privat." }, { status: 404 });
     const me = await getUser();
     if (!me) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

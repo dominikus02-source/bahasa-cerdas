@@ -1,3 +1,4 @@
+import { uploadPrivate } from "@/lib/compliance/assets";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient, getUser } from "@/lib/supabase/server";
 import { validateUpload, IMAGE_MIMES } from "@/lib/upload-validation";
@@ -14,6 +15,7 @@ export async function POST(req: NextRequest) {
     // Images only — MIME + extension + size + magic-byte validation.
     const check = await validateUpload(file, IMAGE_MIMES);
     if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
+    if (user.role === "MURID") return NextResponse.json(await uploadPrivate(file, user.id, check.ext));
 
     const fileName = `toko/${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${check.ext}`;
 

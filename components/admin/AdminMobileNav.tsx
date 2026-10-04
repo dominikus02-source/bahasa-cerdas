@@ -34,6 +34,7 @@ interface FlatItem { label: string; href: string; icon: LucideIcon; group?: stri
 
 const ALL_ITEMS: FlatItem[] = [
   // Standalone
+  { label: "Privasi & Keselamatan", href: "/admin/compliance", icon: ShieldCheck },
   { label: "Control Tower", href: "/admin/executive", icon: Target },
   { label: "Pengguna", href: "/admin/users", icon: Users },
   // Premium & Revenue

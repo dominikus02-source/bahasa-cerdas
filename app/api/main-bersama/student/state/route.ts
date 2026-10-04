@@ -1,3 +1,4 @@
+import {classroomAllowed} from "@/lib/compliance/classroom";
 // ─── API: Student State (Tahap 6 §15/§24 + Hardening §11) ───
 // GET /api/main-bersama/student/state
 // Student-safe view personal — TANPA answer key sebelum discussion.
@@ -31,6 +32,7 @@ export async function GET(req: NextRequest) {
     return errorResponse(result.code, result.reason);
   }
 
+  if (!await classroomAllowed(result.value.engine.sessionId,{playerId:result.value.playerId})) return NextResponse.json({ error: "Izin kelas perlu diperbarui.", code: "CLASSROOM_PRIVACY_REQUIRED" }, { status: 403 });
   const { buildStudentView } = await import(
     '@/src/main-bersama/presentation/view-mappers'
   );

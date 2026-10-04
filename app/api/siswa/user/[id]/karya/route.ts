@@ -1,9 +1,12 @@
+import { canReadWork } from "@/lib/compliance/service";
+import { getUser } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
+    if (!await canReadWork(id, await getUser())) return NextResponse.json({ error: "Karya privat." }, { status: 404 });
     const { searchParams } = new URL(req.url);
     const type = searchParams.get("type");
     const page = parseInt(searchParams.get("page") || "1");

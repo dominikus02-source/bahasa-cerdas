@@ -65,7 +65,7 @@ const faqs = [
   },
   {
     q: "Apakah data saya aman?",
-    a: "Ya. BahasaCerdas menggunakan enkripsi SSL 256-bit dan server yang aman. Data pribadi dan karya Anda dilindungi dan tidak akan dibagikan ke pihak ketiga tanpa izin. Pembayaran diproses oleh Midtrans dengan standar PCI DSS.",
+    a: "Ya. BahasaCerdas menggunakan HTTPS/TLS dan pembatasan akses. Penyedia layanan yang diperlukan untuk hosting, autentikasi, AI opsional, dan pembayaran dapat memproses data sesuai Kebijakan Privasi. Pembayaran diproses oleh Midtrans dengan standar PCI DSS.",
   },
   {
     q: "Apa perbedaan Guru Pro dengan akun gratis?",

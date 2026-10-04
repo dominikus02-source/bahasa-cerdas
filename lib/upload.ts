@@ -122,7 +122,6 @@ export async function configureBucket(
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            public: true,
             file_size_limit: maxSizeBytes,
           }),
         }).catch(() => {});
@@ -138,7 +137,7 @@ export async function configureBucket(
         body: JSON.stringify({
           id: bucketName,
           name: bucketName,
-          public: true,
+          public: false,
           file_size_limit: maxSizeBytes,
         }),
       }).catch(() => {});

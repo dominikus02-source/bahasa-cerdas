@@ -1,5 +1,6 @@
 "use server";
 
+import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { registerSchema, sanitize } from "@/lib/validations";
 
@@ -21,6 +22,9 @@ export async function registerUser(formData: FormData) {
     }
 
     const { email, supabaseId, fullName, role, school, city, province } = parsed.data;
+    const auth = await createClient();
+    const { data } = await auth.auth.getClaims();
+    if (data?.claims?.sub !== supabaseId || data.claims.email?.toLowerCase() !== email.toLowerCase()) return { error: "Masuk terlebih dahulu untuk melengkapi profil." };
     const normalizedEmail = email.toLowerCase();
     const sanitizedName = sanitize(fullName);
 

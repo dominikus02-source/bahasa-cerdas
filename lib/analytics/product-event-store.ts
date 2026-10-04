@@ -54,6 +54,8 @@ export async function recordProductEvent(input: ProductEventInput): Promise<Prod
     if (!input.actorId || !input.event || !input.entityType || !input.entityId || !input.logicalKey) {
       return { recorded: false };
     }
+    const privacy = await db.privacyAccount.findUnique({ where: { userId: input.actorId } });
+    if (!privacy?.analytics || privacy.ageBand !== "ADULT") return { recorded: false };
     const row = await db.productEvent.create({
       data: {
         actorId: input.actorId,

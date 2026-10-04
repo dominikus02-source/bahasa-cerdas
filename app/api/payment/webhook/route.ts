@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import crypto from "crypto";
+import {verifiedMidtransSignature} from "@/lib/compliance/payment-signature";
 import { getMidtransConfig } from "@/lib/payments/midtrans-server";
 import { createCommissionFromTransaction, reverseCommissionForTransaction } from "@/lib/commission/engine";
 import { evaluateRapidPremiumSignal, evaluateRefundPatternSignal } from "@/lib/guru/risk/events";
@@ -12,15 +12,7 @@ function verifyMidtransNotification(
   grossAmount: string,
   signatureKey: string
 ): boolean {
-  // Formula resmi Midtrans: SHA512(order_id + status_code + gross_amount + ServerKey).
-  // ServerKey HARUS di posisi terakhir. Bug sebelumnya menaruh serverKey di awal
-  // sehingga hash tidak pernah cocok → 401 dan semua notifikasi gagal tersampaikan.
-  const serverKey = getMidtransConfig().serverKey;
-  const signature = crypto
-    .createHash("sha512")
-    .update(orderId + statusCode + grossAmount + serverKey)
-    .digest("hex");
-  return signature === signatureKey;
+  return verifiedMidtransSignature(orderId,statusCode,grossAmount,signatureKey,getMidtransConfig().serverKey);
 }
 
 function getPlanFromAmount(grossAmount: number): { durationDays: number; aiCreditsMonthly: number; planId: string } | null {
@@ -167,22 +159,7 @@ export async function POST(req: NextRequest) {
     // Verify signature
     const isValid = verifyMidtransNotification(order_id, status_code, gross_amount, signature_key);
     if (!isValid) {
-      // Log detail agar mudah didiagnosis jika tetap gagal setelah deploy
-      const cfg = getMidtransConfig();
-      const probe = crypto
-        .createHash("sha512")
-        .update(order_id + status_code + gross_amount + cfg.serverKey)
-        .digest("hex");
-      console.error("[Webhook] Signature mismatch", {
-        order_id,
-        status_code,
-        gross_amount,
-        mode: cfg.isProduction ? "production" : "sandbox",
-        serverKeySet: Boolean(cfg.serverKey),
-        serverKeyLength: cfg.serverKey.length,
-        expected: signature_key?.slice(0, 16),
-        computed: probe.slice(0, 16),
-      });
+      console.warn("[Webhook] Invalid notification signature");
       return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
     }
 

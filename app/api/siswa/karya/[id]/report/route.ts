@@ -1,12 +1,17 @@
+import { sameOrigin } from "@/lib/compliance/http";
+import { rateLimitRoute } from "@/lib/rate-limit";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { getUser } from "@/lib/supabase/server";
+import { getIdentityUser } from "@/lib/supabase/server";
 
 // POST /api/siswa/karya/[id]/report
 // Laporkan karya (additive — hanya membuat Notifikasi untuk founder/admin).
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const user = await getUser();
+    sameOrigin(req);
+    const limited = await rateLimitRoute(req, { maxRequests: 5, windowSeconds: 600, identifier: "karya-report" });
+    if (limited) return limited;
+    const user = await getIdentityUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { id } = await params;
@@ -19,6 +24,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     });
     if (!karya) return NextResponse.json({ error: "Karya tidak ditemukan" }, { status: 404 });
 
+    const report = await db.safetyReport.create({ data: { reporterId: user.id, targetType: "KARYA", targetId: id, category: "OTHER", detail: alasan || "Laporan melalui tombol karya" } });
+    await db.complianceAudit.create({ data: { actorId: user.id, action: "REPORT_RECEIVED", reference: report.id } });
     const founders = await db.user.findMany({
       where: { OR: [{ role: "ADMIN" }, { isFounder: true }] },
       select: { id: true },
@@ -37,7 +44,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       });
     }
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, reference: report.id });
   } catch (error) {
     console.error("POST /api/siswa/karya/[id]/report error:", error);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });

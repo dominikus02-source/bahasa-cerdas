@@ -1,3 +1,4 @@
+import { publicIdentityAllowed } from "@/lib/compliance/service";
 import { identitySelect, resolveIdentity, type IdentitySource } from "@/lib/account/identity";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
@@ -11,9 +12,10 @@ export async function GET(
   try {
     const { id } = await params;
 
+    if (!await publicIdentityAllowed(id, "publicProfile")) return NextResponse.json({ error: "Profil privat." }, { status: 404 });
     const cacheKey = `profile:public:v2:${id}`;
     const cached = await cache.get<Record<string, unknown>>(cacheKey);
-    if (cached) return NextResponse.json(cached, { headers: { "X-Cache": "HIT" } });
+    // Always read identities fresh so privacy withdrawal and deletion take effect.
 
     const user = await db.user.findUnique({
       where: { id },
@@ -37,8 +39,6 @@ export async function GET(
         profile: {
           select: {
             bio: true,
-            nip: true,
-            nuptk: true,
             school: true,
             subject: true,
           },
@@ -51,11 +51,11 @@ export async function GET(
     }
 
     const [karyaCount, totalLikes, totalViews, works] = await Promise.all([
-      db.studentKarya.count({ where: { userId: id } }),
-      db.studentKarya.aggregate({ where: { userId: id }, _sum: { likesCount: true } }),
-      db.studentKarya.aggregate({ where: { userId: id }, _sum: { viewsCount: true } }),
+      db.studentKarya.count({ where: { userId: id, user: { privacy: { is: { publicWorks: true } } } } }),
+      db.studentKarya.aggregate({ where: { userId: id, user: { privacy: { is: { publicWorks: true } } } }, _sum: { likesCount: true } }),
+      db.studentKarya.aggregate({ where: { userId: id, user: { privacy: { is: { publicWorks: true } } } }, _sum: { viewsCount: true } }),
       db.studentKarya.findMany({
-        where: { userId: id },
+        where: { userId: id, user: { privacy: { is: { publicWorks: true } } } },
         select: { id: true, title: true, type: true, likesCount: true, viewsCount: true, createdAt: true },
         orderBy: { createdAt: "desc" },
         take: 20,

@@ -19,6 +19,7 @@ const TONES = [
 ];
 
 export function GradingForm({ onSubmit, loading }: GradingFormProps) {
+  const [authority,setAuthority] = useState(false);
   const [studentAnswer, setStudentAnswer] = useState("");
   const [questionOrTask, setQuestionOrTask] = useState("");
   const [rubric, setRubric] = useState("");
@@ -30,6 +31,7 @@ export function GradingForm({ onSubmit, loading }: GradingFormProps) {
     if (!studentAnswer.trim()) return;
     const parsedMax = parseInt(maxScore, 10);
     onSubmit({
+      dataAuthorityConfirmed: authority,
       studentAnswer: studentAnswer.trim(),
       questionOrTask: questionOrTask.trim() || undefined,
       rubric: rubric.trim() || undefined,
@@ -102,9 +104,10 @@ export function GradingForm({ onSubmit, loading }: GradingFormProps) {
         </div>
       </div>
 
+      <label className="flex gap-3 text-sm text-foreground"><input type="checkbox" checked={authority} onChange={e=>setAuthority(e.target.checked)}/><span>Saya memiliki kewenangan/dasar pemrosesan jawaban ini, termasuk izin wali yang diperlukan, dan telah menghapus identitas yang tidak dibutuhkan. AI memberi saran; saya meninjau nilai akhir.</span></label>
       <Button
         onClick={handleSubmit}
-        disabled={loading || !studentAnswer.trim()}
+        disabled={loading || !studentAnswer.trim() || !authority}
         className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
       >
         {loading ? (

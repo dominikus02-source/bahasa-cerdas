@@ -135,7 +135,7 @@ export async function getLeaderboard(params: LeaderboardParams): Promise<Leaderb
   const cacheKey = `bca:lb:${CACHE_VERSION}:${params.scope}:${periodKeyFor(params.period)}:${params.userId ?? "x"}:${params.groupId ?? "x"}:${params.province ?? "x"}`;
 
   const cached = await cache.get<LeaderboardEntry[]>(cacheKey);
-  if (cached) return cached;
+  // Privacy revocation is authoritative; do not serve cached identities.
 
   const scopeIds = await resolveScopeUserIds(params);
 
@@ -155,7 +155,7 @@ export async function getLeaderboard(params: LeaderboardParams): Promise<Leaderb
         : {};
 
   const where = {
-    user: { role: "MURID" as const, email: { not: { endsWith: "@account.invalid" } } },
+    user: { role: "MURID" as const, email: { not: { endsWith: "@account.invalid" } }, privacy: { is: { ageBand: "ADULT", publicProfile: true } } },
     ...(scopeIds ? { userId: { in: scopeIds } } : {}),
     ...periodWhere,
   };

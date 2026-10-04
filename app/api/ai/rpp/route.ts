@@ -1,3 +1,4 @@
+import { aiAllowed } from "@/lib/compliance/service";
 // Deprecated: AI generation is centralized in /guru/ai-tools.
 // Tidak ada lagi halaman yang memanggil endpoint job-based ini (bekas /guru/rpp-modul).
 // Endpoint dipertahankan sementara untuk kompatibilitas; jangan tambahkan
@@ -164,6 +165,7 @@ export async function POST(req: NextRequest) {
 
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!await aiAllowed(user.id)) return NextResponse.json({ error: "Aktifkan bantuan AI di pengaturan privasi; untuk anak diperlukan pilihan wali.", code: "AI_CONSENT_REQUIRED" }, { status: 403 });
 
     const quota = await checkAIQuota(user, "rpp");
     if (!quota.allowed) {

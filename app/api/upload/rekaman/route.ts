@@ -1,45 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-import { getUser } from "@/lib/supabase/server";
-
-export async function POST(req: NextRequest) {
-  try {
-    const user = await getUser();
-    if (!user) return NextResponse.json({ error: "Silakan login" }, { status: 401 });
-
-    const formData = await req.formData();
-    const file = formData.get("file") as File;
-    if (!file) return NextResponse.json({ error: "File tidak ditemukan" }, { status: 400 });
-
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
-
-    const bucket = "audio";
-
-    const { data: buckets } = await supabase.storage.listBuckets();
-    const bucketExists = buckets?.some((b) => b.name === bucket);
-    if (!bucketExists) {
-      const { error: createErr } = await supabase.storage.createBucket(bucket, { public: true });
-      if (createErr) return NextResponse.json({ error: `Gagal buat bucket: ${createErr.message}` }, { status: 500 });
-    } else {
-      await supabase.storage.updateBucket(bucket, { public: true });
-    }
-
-    const fileName = `rekaman/${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.webm`;
-
-    const { error: upErr } = await supabase.storage.from(bucket).upload(fileName, file, {
-      cacheControl: "31536000",
-      upsert: true,
-      contentType: file.type,
-    });
-
-    if (upErr) return NextResponse.json({ error: `Upload gagal: ${upErr.message}` }, { status: 500 });
-
-    const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(fileName);
-    return NextResponse.json({ url: urlData.publicUrl });
-  } catch (e: any) {
-    return NextResponse.json({ error: e?.message || "Upload gagal" }, { status: 500 });
-  }
-}
+import {NextRequest,NextResponse} from "next/server";
+import {getUser} from "@/lib/supabase/server";
+import {validateUpload,AUDIO_MIMES} from "@/lib/upload-validation";
+import {uploadPrivate} from "@/lib/compliance/assets";
+export async function POST(req:NextRequest){try{
+ const u=await getUser();if(!u)return NextResponse.json({error:"Silakan masuk."},{status:401});
+ const f=(await req.formData()).get("file");if(!(f instanceof File))return NextResponse.json({error:"File tidak ditemukan."},{status:400});
+ const check=await validateUpload(f,AUDIO_MIMES);if(!check.ok)return NextResponse.json({error:check.error},{status:check.status});
+ return NextResponse.json(await uploadPrivate(f,u.id,check.ext));
+}catch{return NextResponse.json({error:"Rekaman belum dapat diunggah."},{status:503});}}

@@ -10,6 +10,7 @@ let uploadFails = false;
 let adminAllowed = true;
 let amrMethod = "oauth";
 let amrTime = Math.floor(Date.now()/1000);
+let job={userId:"app-owner",authId:"auth-owner",status:"REQUESTED",objectManifest:[{bucket_id:"avatars",name:"owned.png"}],attempts:0};
 let updatedData: Record<string, unknown> | undefined;
 const currentAuth = { auth: {
  getUser: async () => ({data:{user:{id:"auth-owner",email:"owner@example.test",factors:factors?[{status:"verified"}]:[]}},error:null}),
@@ -36,9 +37,12 @@ const tx: Record<string, unknown> = {
 };
 for (const model of ["profile","nicknameHistory","studentKaryaComment","studentKarya","aIJob","aiSavedResult","generatedRPP","chatMessage","communityPost","pushSubscription","notifikasi","teacherPayoutProfile","karya","subscription"]) tx[model]={deleteMany:async()=>({count:1}),updateMany:async()=>({count:1}),count:async()=>0};
 tx.karya={count:async()=>soldWorks,updateMany:async()=>({count:1})};
-const db = {user:{findUnique:async({where}:{where:{supabaseId:string}})=>{assert.equal(where.supabaseId,"auth-owner");return {id:"app-owner"};}},$queryRaw:async()=>[{bucket_id:"avatars",name:"owned.png"}],$transaction:async(fn:(p:unknown)=>unknown)=>fn(tx)};
+tx.group={count:async()=>0,findMany:async()=>[]};tx.privacyAccount={deleteMany:async()=>({count:1}),updateMany:async()=>({count:1})};tx.guardianRequest={updateMany:async()=>({count:1}),findMany:async()=>[]};tx.complianceAudit={create:async()=>({id:"audit"})};tx.deletionJob={upsert:async()=>job,update:async({data}:{data:Partial<typeof job>})=>{Object.assign(job,data);return job;}};
+for(const model of ["materiDownload","coinTransaction","lombaPeserta","aIUsage","premiumUsage","agentTelegramBinding","classroomPrivacyApproval","studentKaryaLike","follow","profileLike","testAnswer","testSession","quizSubmission","quizSession","penugasanSubmission","pengumumanSubmission","nilai","groupQuizResult","gameResult","gameSession","progresKompetensi","kompetensiCertificate","certificate","dailyAction","koleksiKata","ttsSession","userUnitProgress","adaptivePracticeSession","learningEvidence","learningRecommendation","learningInsight","learningSkill","learningJourney","playerCTA","playerActivity","xPTransaction","xpLedger","dailyQuest","userItem","userBadge","userAchievement","leaderboardPeriodResult","playerProfile","pendekarPlayer","arenaJuniorProgress","arenaJuniorAkun","groupMember","communityMember","artikelLike","artikelComment","productEvent","taskShareToken","mainPlayer","safetyReport"])tx[model]={deleteMany:async()=>({count:1}),updateMany:async()=>({count:1})};
+const db = {deletionJob:{findUniqueOrThrow:async()=>job,update:async({data}:{data:Partial<typeof job>})=>{Object.assign(job,data);return job;}},user:{findUnique:async({where}:{where:{supabaseId:string}})=>{assert.equal(where.supabaseId,"auth-owner");return {id:"app-owner"};}},$queryRaw:async()=>[{bucket_id:"avatars",name:"owned.png"}],$transaction:async(fn:(p:unknown)=>unknown)=>fn(tx)};
 const originalLoad = (Module as unknown as {_load:(name:string,parent:unknown,isMain:boolean)=>unknown})._load;
 (Module as unknown as {_load:typeof originalLoad})._load = function(name,parent,isMain) {
+ if(name==="server-only")return {};
  if(name==="@/lib/supabase/server")return {createClient:async()=>currentAuth,getUser:async()=>loggedIn?{id:"app-owner"}:null};
  if(name==="@/lib/security")return {checkRateLimit:async()=>({allowed})};
  if(name==="@supabase/supabase-js")return {createClient:()=>sdkAuth};
@@ -92,7 +96,7 @@ async function main() {
  events.length=0;assert.equal((await deletionRoute.DELETE(request(deleteBody,"DELETE"))).status,200);
  assert.equal(updatedData?.email,"deleted-app-owner@account.invalid");assert.equal(updatedData?.isPremium,false);
  assert.ok(events.indexOf("tombstone")<events.indexOf("storage-remove"));assert.ok(events.indexOf("revoke")<events.indexOf("delete-auth:auth-owner"));assert.ok(!events.includes("delete-auth:victim"));
- storageFails=true;events.length=0;const partial=await deletionRoute.DELETE(request(deleteBody,"DELETE"));assert.equal(partial.status,503);assert.match((await partial.json()).error,/dinonaktifkan/);assert.ok(events.includes("tombstone"));assert.ok(!events.includes("delete-auth:auth-owner"));
+ job.status="REQUESTED";job.objectManifest=[{bucket_id:"avatars",name:"owned.png"}];storageFails=true;events.length=0;const partial=await deletionRoute.DELETE(request(deleteBody,"DELETE"));assert.equal(partial.status,503);assert.match((await partial.json()).error,/dinonaktifkan/);assert.ok(events.includes("tombstone"));assert.ok(!events.includes("delete-auth:auth-owner"));
  console.log("PASS account routes: wrong password, mismatched owner, CSRF, validation, rate limit, MFA, provider failure, password/OTP/Google re-auth, expiry, confirmation, balance, deletion sequencing, attacker ID ignored, partial failure.");
 }
 main().catch(e=>{console.error(e);process.exitCode=1;}).finally(()=>{(Module as unknown as {_load:typeof originalLoad})._load=originalLoad;});

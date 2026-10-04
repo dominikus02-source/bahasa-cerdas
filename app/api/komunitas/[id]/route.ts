@@ -1,3 +1,5 @@
+import {NOTICE_VERSION} from "@/lib/compliance/policy";
+import {publicIdentityAllowed} from "@/lib/compliance/service";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
@@ -31,20 +33,24 @@ export async function GET(
       });
     }
 
+    const membership=dbUser?await db.communityMember.findFirst({where:{communityId:id,userId:dbUser.id}}):null;
+    if((!community.isPublic||community.status!=="APPROVED")&&dbUser?.id!==community.creatorId&&!membership)return NextResponse.json({error:"Akses ditolak."},{status:403});
+    if(!community.creatorId||!await publicIdentityAllowed(community.creatorId,"publicProfile"))community.creator={id:"private",fullName:"Pengelola komunitas",avatar:null};
+    const publicAuthor={privacy:{is:{ageBand:"ADULT",publicProfile:true,noticeVersion:NOTICE_VERSION}}};
     const [posts, members, totalPosts, isMember] = await Promise.all([
       db.communityPost.findMany({
-        where: { communityId: id },
+        where: { communityId: id, user: publicAuthor },
         include: { user: { select: { id: true, fullName: true, avatar: true } } },
         orderBy: { createdAt: "desc" },
         skip: (page - 1) * limit,
         take: limit,
       }),
       db.communityMember.findMany({
-        where: { communityId: id },
+        where: { communityId: id, user: publicAuthor },
         include: { user: { select: { id: true, fullName: true, avatar: true } } },
         take: 10,
       }),
-      db.communityPost.count({ where: { communityId: id } }),
+      db.communityPost.count({ where: { communityId: id, user: publicAuthor } }),
       dbUser
         ? db.communityMember
             .findFirst({ where: { communityId: id, userId: dbUser.id } })

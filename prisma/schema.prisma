@@ -172,6 +172,7 @@ model CommunityPost {
 
 model User {
   id                    String                  @id @default(cuid())
+  privacy               PrivacyAccount?
   supabaseId            String                  @unique
   email                 String                  @unique
   fullName              String
@@ -653,6 +654,7 @@ model TestAnswer {
   seksi        String?
   sectionIndex Int       @default(0)
   aiFeedback   Json? // Analysis: {ringkasan, nilai, rubrik[], kelebihan[], kelemahan[], kesalahanTerbesar[], kompetensiBelum[], rekomendasi[], komentarGuru, komentarMurid, dimensi}
+  aiSuggestedScore Float?
   aiConfidence Float? // 0-100 percaya diri AI
   aiReviewedAt DateTime?
   reviewStatus String? // PENDING / MENUNGGU_PERSETUJUAN / DISETUJUI / DIEDIT
@@ -4227,4 +4229,99 @@ model MainGameRoundResult {
 
   @@unique([sessionId, gameMode, roundId])
   @@index([sessionId])
+}
+
+// Private governance records: never exposed through the browser Data API.
+model PrivacyAccount {
+  userId String @id
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  birthDate DateTime? @db.Date
+  ageBand String @default("UNKNOWN")
+  ageMethod String @default("UNVERIFIED")
+  guardianStatus String @default("NONE")
+  guardianConsentVersion String?
+  publicProfile Boolean @default(false)
+  publicWorks Boolean @default(false)
+  analytics Boolean @default(false)
+  aiAssistance Boolean @default(false)
+  noticeVersion String?
+  updatedAt DateTime @updatedAt
+}
+
+model ConsentEvent {
+  id String @id @default(cuid())
+  subjectId String
+  actorId String
+  purpose String
+  action String
+  noticeVersion String
+  termsVersion String
+  method String
+  evidenceRef String?
+  createdAt DateTime @default(now())
+  @@index([subjectId, purpose, createdAt])
+}
+
+model GuardianRequest {
+  id String @id @default(cuid())
+  childId String
+  guardianEmail String
+  guardianId String?
+  status String @default("PENDING")
+  tokenHash String @unique
+  expiresAt DateTime
+  noticeVersion String
+  agreedAt DateTime?
+  reviewedAt DateTime?
+  reviewedBy String?
+  verificationRef String?
+  createdAt DateTime @default(now())
+  @@index([childId, status])
+}
+
+model SafetyReport {
+  id String @id @default(cuid())
+  reporterId String?
+  contact String?
+  targetType String
+  targetId String
+  category String
+  detail String
+  status String @default("OPEN")
+  decision String?
+  reviewedBy String?
+  reviewedAt DateTime?
+  createdAt DateTime @default(now())
+  @@index([status, createdAt])
+}
+
+model ComplianceAudit {
+  id String @id @default(cuid())
+  subjectId String?
+  actorId String?
+  action String
+  reference String?
+  createdAt DateTime @default(now())
+  @@index([subjectId, createdAt])
+}
+
+model DeletionJob {
+  userId String @id
+  authId String
+  status String @default("REQUESTED")
+  attempts Int @default(0)
+  objectManifest Json @default("[]")
+  lastErrorCode String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ClassroomPrivacyApproval {
+  classId String @id
+  teacherId String
+  evidenceRef String
+  noticeVersion String
+  expiresAt DateTime
+  reviewedBy String
+  createdAt DateTime @default(now())
 }

@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  turbopack: { root: process.cwd() },
   serverExternalPackages: ['pdf-parse-modern', 'mammoth', '@napi-rs/canvas'],
   outputFileTracingIncludes: {
     '/api/main-bersama/teacher/import-document': [
@@ -62,13 +63,14 @@ const nextConfig: NextConfig = {
           { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(self), geolocation=()" },
           { key: "X-DNS-Prefetch-Control", value: "on" },
-          // CSP is set dynamically in middleware.ts with nonce support
+          // CSP is set dynamically in proxy.ts with nonce support
           { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
           { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
           { key: "X-XSS-Protection", value: "1; mode=block" },
           { key: "X-Permitted-Cross-Domain-Policies", value: "none" },
         ],
       },
+      {source:"/persetujuan-wali",headers:[{key:"Referrer-Policy",value:"no-referrer"},{key:"Cache-Control",value:"private, no-store"},{key:"X-Robots-Tag",value:"noindex, nofollow"}]},
       {
         source: "/:path*",
         has: [{ type: "header", key: "x-vercel-id" }],

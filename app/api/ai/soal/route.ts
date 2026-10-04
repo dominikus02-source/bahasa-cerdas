@@ -1,3 +1,4 @@
+import {reviewedAiProvider} from "@/lib/compliance/ai-data";
 // Catatan konsolidasi AI: endpoint ini adalah backend fitur BANK SOAL
 // (generate-simpan ke bank), bukan tool mandiri. Tool "Buat Soal" di
 // /guru/ai-tools memakai agent 'soal' via /api/ai/agents/run.
@@ -86,7 +87,7 @@ Hanya output JSON array.`;
 
     const AI_TIMEOUT = 15000; // 15s per provider
 
-    if (DEEPSEEK_API_KEY) {
+    if (DEEPSEEK_API_KEY && reviewedAiProvider("deepseek")) {
       try {
         const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
           method: "POST",
@@ -111,7 +112,7 @@ Hanya output JSON array.`;
       errors.push("DeepSeek: No API key");
     }
 
-    if (!content && GROQ_API_KEY) {
+    if (!content && GROQ_API_KEY && reviewedAiProvider("groq")) {
       try {
         const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
           method: "POST",
@@ -136,7 +137,7 @@ Hanya output JSON array.`;
       errors.push("Groq: No API key");
     }
 
-    if (!content && GEMINI_API_KEY) {
+    if (!content && GEMINI_API_KEY && reviewedAiProvider("gemini")) {
       try {
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
           method: "POST",

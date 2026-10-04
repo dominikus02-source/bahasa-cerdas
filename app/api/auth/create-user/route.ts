@@ -57,16 +57,15 @@ export async function POST(req: Request) {
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
 
     let authUserId: string | null = null;
 
-    const { data, error } = await supabase.auth.admin.createUser({
+    const { data, error } = await supabase.auth.signUp({
       email: normalizedEmail,
       password,
-      email_confirm: true,
-      user_metadata: { role, full_name: fullName },
+      options: { data: { role, full_name: fullName }, emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.bahasacerdas.com"}/auth/callback` },
     });
 
     if (!error && data.user) {
@@ -84,44 +83,7 @@ export async function POST(req: Request) {
         normalized.includes("user_already_exists");
 
       if (alreadyExists) {
-        // Recover an orphaned Supabase Auth user created by an earlier
-        // registration attempt that failed before the application User row
-        // was persisted. This is safe because we only adopt Auth users that
-        // have no matching application User record.
-        let authUser = null;
-        let page = 1;
-
-        while (!authUser) {
-          const { data: listed, error: listError } =
-            await supabase.auth.admin.listUsers({ page, perPage: 1000 });
-
-          if (listError) break;
-
-          authUser =
-            listed.users.find(
-              (user) => user.email?.toLowerCase() === normalizedEmail
-            ) ?? null;
-
-          if (listed.users.length < 1000) break;
-          page += 1;
-        }
-
-        if (authUser) {
-          const { data: updatedAuth, error: updateError } =
-            await supabase.auth.admin.updateUserById(authUser.id, {
-              password,
-              email_confirm: true,
-              user_metadata: {
-                ...authUser.user_metadata,
-                role,
-                full_name: fullName,
-              },
-            });
-
-          if (!updateError && updatedAuth.user) {
-            authUserId = updatedAuth.user.id;
-          }
-        }
+        return NextResponse.json({ error: "Email sudah digunakan. Masuk atau gunakan pemulihan kata sandi.", code: "EMAIL_EXISTS" }, { status: 409 });
       }
 
       if (!authUserId) {
@@ -194,13 +156,9 @@ export async function POST(req: Request) {
       return NextResponse.json({
         userId: authUserId,
         applicationUserId: newUser.id,
+        requiresVerification: !data.session,
       });
     } catch (dbError) {
-      try {
-        await supabase.auth.admin.deleteUser(authUserId, false);
-      } catch {
-        // Best-effort rollback. The original DB error is still returned.
-      }
 
       console.error("[register/create-user] application user creation failed:", dbError);
       return NextResponse.json(

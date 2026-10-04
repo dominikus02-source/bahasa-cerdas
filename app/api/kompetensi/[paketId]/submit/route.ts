@@ -1,3 +1,4 @@
+import { canUseService, aiAllowed } from "@/lib/compliance/service";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
@@ -43,6 +44,7 @@ export async function GET(
       return err(ERR.NOT_FOUND.error, ERR.NOT_FOUND.code, ERR.NOT_FOUND.status);
     }
 
+    if (dbUser.email.endsWith("@account.invalid") || !await canUseService(dbUser.id)) return err("Lengkapi pengaturan privasi.", "PRIVACY_REQUIRED", 403);
     const latestResult = await getLatestProgres(dbUser.id, paketId);
 
     if (!latestResult) {
@@ -127,6 +129,7 @@ export async function POST(
     ]);
 
     if (!dbUser) return err(ERR.NOT_FOUND.error, ERR.NOT_FOUND.code, ERR.NOT_FOUND.status);
+    if (dbUser.email.endsWith("@account.invalid") || !await canUseService(dbUser.id)) return err("Lengkapi pengaturan privasi.", "PRIVACY_REQUIRED", 403);
     if (!paket) return err("Paket tidak ditemukan", "NOT_FOUND", 404);
 
     const lookupMs = Date.now() - t0;
@@ -285,6 +288,7 @@ export async function POST(
             q?.options && typeof q.options === "object" && !Array.isArray(q.options) ? q.options : {};
           const sk = String(r.seksi || q?.seksi || "MENULIS").toUpperCase();
 
+          if (!await aiAllowed(dbUser.id)) { r.score = 0; r.isCorrect = null; bumpSection(sk).pending += 1; return; }
           const slot = await acquireAiSlot({ pool: "grade-constructed" });
           if (!slot) {
             // Saturated past the wait window — leave it for manual marking
@@ -301,6 +305,7 @@ export async function POST(
               prompt: q?.text || "",
               rubric: (meta as any)?.rubric || null,
               answer: r.answer || "",
+              subjectUserId: dbUser.id,
             });
             if (!res.graded) {
               r.score = 0;
@@ -308,11 +313,14 @@ export async function POST(
               bumpSection(sk).pending += 1;
               return;
             }
-            r.score = res.score;
-            r.isCorrect = res.score >= 60;
+            r.score = 0;
+            r.aiSuggestedScore = res.score;
+            r.aiFeedback = { ringkasan: res.feedback, advisory: true };
+            r.reviewStatus = "MENUNGGU_PERSETUJUAN_GURU";
+            r.aiReviewedAt = new Date();
+            r.isCorrect = null; // AI is advisory; teacher approval is required.
             const a = bumpSection(sk);
-            a.sum += res.score;
-            a.n += 1;
+            a.pending += 1;
           } finally {
             await slot.release();
           }
@@ -343,6 +351,7 @@ export async function POST(
       }
     }
 
+    const requiresHumanReview = answerRows.some(r=>r.questionType && ["MENULIS","BERBICARA","ESAI","ESSAY","SPEAKING","WRITING"].includes(r.questionType.toUpperCase()) && r.reviewStatus!=="APPROVED") || Object.values(sectionScores).some(s=>(s.pendingReview??0)>0);
     const percentage = maxPossible > 0 ? (rawScore / maxPossible) * 100 : 0;
 
     // ── BATCH WRITE in transaction ──
@@ -392,7 +401,7 @@ export async function POST(
     let certificate = null;
     const passingThreshold = isUKBI ? 482 : (paket.passingScore || 55);
     const finalScore = isUKBI ? Math.round(percentage * 8) : Math.round(percentage);
-    if (isUKBI ? finalScore >= passingThreshold : percentage >= passingThreshold) {
+    if (!requiresHumanReview && (isUKBI ? finalScore >= passingThreshold : percentage >= passingThreshold)) {
       const prefix = isUKBI ? "BC-UKBI" : "BC-TKA";
       const certNo = `${prefix}-${new Date().getFullYear()}-${String(progres.id).slice(-8).toUpperCase()}`;
       certificate = await db.kompetensiCertificate.create({
@@ -435,7 +444,9 @@ export async function POST(
       total: totalQuestions,
       rawScore,
       seksiScores: buildSectionScores(sectionScores),
-      passed: finalScore >= passingThreshold,
+      passed: !requiresHumanReview && finalScore >= passingThreshold,
+      requiresHumanReview,
+      provisional: requiresHumanReview,
       xpEarned: xpGain,
       xpBoosted,
     };

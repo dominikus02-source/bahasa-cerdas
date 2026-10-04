@@ -1,3 +1,7 @@
+import {db} from "@/lib/db";
+import {getIdentityUser} from "@/lib/supabase/server";
+import {canUseService} from "@/lib/compliance/service";
+import {classroomAllowed} from "@/lib/compliance/classroom";
 // ─── API: Student Join (Tahap 6 §5/§6) ──────────────────────
 // POST /api/main-bersama/student/join
 // PIN → sesi aktif → player + credential + student-safe view.
@@ -40,16 +44,17 @@ export async function POST(req: NextRequest) {
     return errorResponse('SESSION_NOT_FOUND');
   }
 
-  // Authenticated student opsional — guest didukung penuh (§6).
+  const identity=await getIdentityUser();
+  if(identity&&!await canUseService(identity.id))return NextResponse.json({error:"Lengkapi persetujuan privasi.",code:"PRIVACY_REQUIRED"},{status:403});
   const user = await getAuthenticatedUser();
-
-
+  const session = await db.mainSession.findUnique({ where: { pin }, select: { id: true } });
+  if (!session || !await classroomAllowed(session.id,{userId:user?.id})) return NextResponse.json({ error: "Guru perlu memastikan izin wali dan kesiapan perlindungan kelas sebelum sesi dapat diikuti.", code: "CLASSROOM_PRIVACY_REQUIRED" }, { status: 403 });
+  // Authenticated student opsional — guest didukung penuh (§6).
   const deps = getOrchestratorDeps();
   const authenticatedDisplayName = user
     ? (() => {
         const nickname = user.nickname?.trim() ?? '';
-        const fullName = user.fullName?.trim() ?? '';
-        const preferred = nickname.length >= 2 ? nickname : fullName;
+        const preferred = nickname.length >= 2 ? nickname : `Peserta-${user.id.slice(-4)}`;
         return preferred.slice(0, 24).trim();
       })()
     : undefined;

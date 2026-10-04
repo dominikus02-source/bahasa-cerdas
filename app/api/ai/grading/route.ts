@@ -1,3 +1,5 @@
+import {reviewedAiProvider} from "@/lib/compliance/ai-data";
+import { aiAllowed } from "@/lib/compliance/service";
 // Deprecated: AI generation is centralized in /guru/ai-tools.
 // Bekas backend halaman lama /guru/ai-tools/grading yang kini redirect ke workspace utama.
 // Endpoint dipertahankan sementara untuk kompatibilitas; jangan tambahkan
@@ -19,6 +21,7 @@ export async function POST(req: NextRequest) {
 
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!await aiAllowed(user.id)) return NextResponse.json({ error: "Aktifkan bantuan AI di pengaturan privasi; untuk anak diperlukan pilihan wali.", code: "AI_CONSENT_REQUIRED" }, { status: 403 });
 
     // Phase 9D — gateway quota check
     await ensureMonthlyLedger(user);
@@ -113,7 +116,7 @@ Hanya output JSON, tanpa markdown.`;
     let usedProvider: string | null = null;
     let usedModel: string | null = null;
 
-    if (DEEPSEEK_API_KEY) {
+    if (DEEPSEEK_API_KEY && reviewedAiProvider("deepseek")) {
       try {
         const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
           method: "POST",
@@ -127,7 +130,7 @@ Hanya output JSON, tanpa markdown.`;
       } catch { errors.push("DeepSeek gagal"); }
     } else { errors.push("DeepSeek: No API key"); }
 
-    if (!content && GROQ_API_KEY) {
+    if (!content && GROQ_API_KEY && reviewedAiProvider("groq")) {
       try {
         const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
           method: "POST",
@@ -141,7 +144,7 @@ Hanya output JSON, tanpa markdown.`;
       } catch { errors.push("Groq gagal"); }
     } else if (!content) { errors.push("Groq: No API key"); }
 
-    if (!content && GEMINI_API_KEY) {
+    if (!content && GEMINI_API_KEY && reviewedAiProvider("gemini")) {
       try {
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
           method: "POST",
@@ -174,9 +177,9 @@ Hanya output JSON, tanpa markdown.`;
     logLegacyUsage({ userId: user.id, feature: "legacy:grading", provider: usedProvider, model: usedModel, tokens, costUSD, latencyMs, success: true, error: null }).catch(() => {});
 
     try {
-      return NextResponse.json({ result: JSON.parse(result) });
+      return NextResponse.json({ result: { ...JSON.parse(result), advisory: true, requiresHumanReview: true, status: "MENUNGGU_TINJAUAN_GURU" } });
     } catch {
-      return NextResponse.json({ result: { skor: 0, grade: "E", ringkasan: result } });
+      return NextResponse.json({ error: "Hasil AI tidak dapat divalidasi. Nilai belum ditetapkan; lakukan tinjauan manual." }, { status: 502 });
     }
   } catch (error) {
     console.error("AI Grading error:", error);
