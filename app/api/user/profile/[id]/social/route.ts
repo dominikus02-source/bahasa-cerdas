@@ -1,4 +1,4 @@
-import { publicIdentityAllowed } from "@/lib/compliance/service";
+import { publicIdentityAllowed, trustedAdultPublicProfileWhere } from "@/lib/compliance/service";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
@@ -35,7 +35,7 @@ export async function GET(
         db.follow.count({ where: { followerId: id } }),
         db.profileLike.count({ where: { targetId: id } }),
         db.follow.findMany({
-          where: { followingId: id, follower: { privacy: { is: { ageBand: "ADULT", publicProfile: true } } } },
+          where: { followingId: id, follower: { privacy: { is: trustedAdultPublicProfileWhere() } } },
           orderBy: { createdAt: "desc" },
           take: 6,
           select: {
@@ -51,7 +51,7 @@ export async function GET(
           },
         }),
         db.follow.findMany({
-          where: { followerId: id, following: { privacy: { is: { ageBand: "ADULT", publicProfile: true } } } },
+          where: { followerId: id, following: { privacy: { is: trustedAdultPublicProfileWhere() } } },
           orderBy: { createdAt: "desc" },
           take: 6,
           select: {
