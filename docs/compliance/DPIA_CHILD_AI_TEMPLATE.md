@@ -35,3 +35,34 @@ Catat konsultasi guru/wali/anak, mitigasi wajib, risiko sisa yang belum dapat di
 
 ## Age-assurance evidence still required before child release
 Test evasion by an actual child declaring an adult DOB or selecting teacher role. Self-declared adult DOB is not independently verified by this implementation; record residual risk, proportional additional assurance and applicable PLF requirements. Independently verify child DOB and guardian adulthood/authority against school or another suitable channel before reviewing consent. Do not treat email ownership as proof of adulthood or guardianship. Do not enable the child-readiness gate or describe age assurance as fully validated until this assessment is complete.
+
+
+## Addendum implementasi — 4 Oktober 2026
+
+### Age assurance
+Implementasi tidak lagi memperlakukan DOB self-declared sebagai bukti cukup untuk fitur berisiko lebih tinggi.
+
+- Core learning untuk akun yang menyatakan dewasa dapat berjalan sambil assurance proporsional ditinjau.
+- Public profile, public works, social interaction, transaksi sensitif, peer-play tertentu, dan AI memerlukan tingkat assurance tepercaya.
+- Akun anak memerlukan guardian consent yang versioned, email wali terverifikasi, dan independent admin review sebelum status `GUARDIAN_VERIFIED`.
+- Perubahan DOB dikunci setelah perekaman awal; perubahan child→adult tidak boleh mengubah privilege secara otomatis.
+- Keputusan authorization menghitung age band dari DOB/evidence yang tersimpan, bukan mengandalkan cached `ageBand`.
+
+Residual risk yang masih harus ditutup secara operasional:
+1. kualitas/proportionality bukti age assurance di lapangan;
+2. prosedur sekolah/wali untuk menangani salah deklarasi;
+3. review berkala ketika age band berubah karena ulang tahun;
+4. bukti training staf yang melakukan independent review.
+
+### Child social/publication controls
+Akun anak tidak boleh menjadi identitas publik global secara default. Public discovery dan interaksi sosial lintas pengguna dibatasi ke adult profiles dengan trusted assurance. Dalam konteks kelas, guru yang benar-benar mengajar pemilik karya dapat berinteraksi sesuai kebutuhan pendidikan.
+
+### AI controls
+AI assistance membutuhkan:
+- consent/setting yang berlaku;
+- age assurance sesuai profil;
+- review transfer/provider yang dibuktikan melalui environment gate;
+- provider allowlist;
+- human approval untuk nilai akhir.
+
+Environment gate yang masih kosong harus dianggap **closed**, bukan dilewati.
