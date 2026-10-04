@@ -108,37 +108,67 @@ async function main() {
   })
   console.log("[INFO] disposable staging attempt state reset")
 
-  // ── 2) LOGIN — password grant vs staging auth REST, lalu bangun cookie SSR
-  // (app pakai @supabase/ssr yang membaca cookie `sb-<ref>-auth-token`,
-  //  bukan header Authorization).
-  const host = new URL(ENV.supabaseUrl).host
-  const cookieName = `sb-${host.split(".")[0]}-auth-token`
-  const tokenRes = await fetch(`${ENV.supabaseUrl}/auth/v1/token?grant_type=password`, {
+  // ── 2) LOGIN THROUGH THE CURRENT APPLICATION ──
+  // Use the app's own login route so @supabase/ssr owns the cookie format,
+  // including chunking/version changes. Hand-building sb-* cookies made this
+  // test pass against an older deployment while failing on the current commit.
+  const loginRes = await fetch(`${ENV.baseUrl}/api/auth/login`, {
     method: "POST",
-    headers: { apikey: ENV.anonKey, "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Origin: ENV.baseUrl,
+    },
     body: JSON.stringify({ email: EMAIL, password: ENV.testPassword }),
+    redirect: "manual",
   })
-  const tokenBody: any = await tokenRes.json()
-  ok("login staging (password grant)", tokenRes.status === 200 && !!tokenBody?.access_token, `HTTP ${tokenRes.status}`)
-  if (!tokenBody?.access_token) process.exit(1)
-  // SSR cookie (@supabase/ssr base64url): name `supabase.auth.token`,
-  // value = "base64-" + base64url(JSON string session)
-  const cookieValue = "base64-" + Buffer.from(
-    JSON.stringify({
-      access_token: tokenBody.access_token,
-      refresh_token: tokenBody.refresh_token,
-      expires_at: tokenBody.expires_at,
-      expires_in: tokenBody.expires_in,
-      token_type: tokenBody.token_type,
-      user: tokenBody.user,
-    })
-  ).toString("base64url")
+  const loginBody = await loginRes.text()
+  ok(
+    "login staging lewat app HTTP 200",
+    loginRes.status === 200,
+    `HTTP ${loginRes.status}${loginRes.status === 200 ? "" : ` body=${loginBody.replace(/\s+/g, " ").slice(0, 220)}`}`
+  )
+  if (loginRes.status !== 200) process.exit(1)
+
+  const setCookies =
+    typeof (loginRes.headers as any).getSetCookie === "function"
+      ? (loginRes.headers as any).getSetCookie() as string[]
+      : [loginRes.headers.get("set-cookie") || ""].filter(Boolean)
+  const cookieHeader = setCookies
+    .map((value) => value.split(";")[0]?.trim())
+    .filter(Boolean)
+    .join("; ")
+  ok("login app menghasilkan SSR auth cookie", cookieHeader.includes("sb-"), `${setCookies.length} Set-Cookie`)
+  if (!cookieHeader) process.exit(1)
 
   const headers = {
-    Cookie: `${cookieName}=${cookieValue}`,
-    apikey: ENV.anonKey,
+    Cookie: cookieHeader,
+    Origin: ENV.baseUrl,
     "Content-Type": "application/json",
   }
+
+  // Establish the current privacy notice through the real current-commit API.
+  // The disposable MURID test identity is declared adult so this simulation E2E
+  // tests the core-learning path without fabricating guardian evidence.
+  const privacyRes = await fetch(`${ENV.baseUrl}/api/privacy/account`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      birthDate: "1990-01-01",
+      acceptedNotice: true,
+      publicProfile: false,
+      publicWorks: false,
+      analytics: false,
+      aiAssistance: false,
+    }),
+  })
+  const privacyBody = await privacyRes.text()
+  ok(
+    "privacy account/current notice HTTP 200",
+    privacyRes.status === 200,
+    `HTTP ${privacyRes.status}${privacyRes.status === 200 ? "" : ` body=${privacyBody.replace(/\s+/g, " ").slice(0, 220)}`}`
+  )
+  if (privacyRes.status !== 200) process.exit(1)
+
   const scan = (payload: string) => {
     const hits: string[] = []
     for (const needle of ["correctAnswer", "answerKey", '"rubric"', '"jawaban"']) {
@@ -148,9 +178,16 @@ async function main() {
   }
 
   // ── 3) /api/user/me ──
-  const me = await fetch(`${ENV.baseUrl}/api/user/me`, { headers }).then((r) => r.json().catch(() => ({})))
+  const meRes = await fetch(`${ENV.baseUrl}/api/user/me`, { headers })
+  const meText = await meRes.text()
+  let me: any = {}
+  try { me = JSON.parse(meText) } catch { /* diagnostics below */ }
   const meRole = me?.data?.user?.role ?? me?.user?.role
-  ok("user/me (app) role MURID", meRole === "MURID", `role=${meRole}`)
+  ok(
+    "user/me (app) role MURID",
+    meRes.status === 200 && meRole === "MURID",
+    `HTTP ${meRes.status} role=${meRole ?? "-"}${meRes.status === 200 && meRole === "MURID" ? "" : ` body=${meText.replace(/\s+/g, " ").slice(0, 220)}`}`
+  )
 
   // ── 4) daftar paket ──
   const list = await fetch(`${ENV.baseUrl}/api/kompetensi?limit=50`, { headers }).then((r) => r.json().catch(() => ({})))
