@@ -49,3 +49,29 @@ jobs:
 
       - name: Build
         run: npm run build
+
+
+  game-server-build:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: "postgresql://user:pass@localhost:5432/db"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: game-server/package-lock.json
+
+      - name: Install game server dependencies
+        working-directory: game-server
+        run: npm ci
+
+      - name: Generate game server Prisma client
+        working-directory: game-server
+        run: npx prisma generate
+
+      - name: Build game server
+        working-directory: game-server
+        run: npm run build
