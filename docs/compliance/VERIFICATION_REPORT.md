@@ -19,3 +19,16 @@ Belum diuji end-to-end dengan Supabase Auth/Storage/Realtime staging asli. Migra
 
 ## Insiden isolasi pengujian lokal
 Rangkaian perintah uji Main Bersama sempat tidak berhenti setelah menemukan database lokal lama bernama mbtest. Uji berikutnya membersihkan tabel Main Bersama uji pada database lokal tersebut lalu gagal karena schema usang. Produksi tidak tersentuh. Isi fixture lama sebelum pembersihan tidak diketahui dan belum dipulihkan. Pengujian berikutnya memakai PostgreSQL baru milik tugas di port 55439, hanya dengan data sintetis. Guard kini menyamakan DATABASE_URL, DATABASE_URL_POOLED dan DIRECT_URL dengan URL uji yang tervalidasi. Tidak ada klaim bahwa database lokal lama tetap utuh.
+
+
+## Verifikasi lanjutan — 4 Oktober 2026
+
+- GitHub Actions commit `539399aa48a1bc4d063d7192959f532c83801940`: PASS untuk production dependency security gate, Prisma generate, TypeScript, privacy migration gate, privacy compliance integration gate, diagnostic baseline V2, TTS eligibility, lint, dan production build.
+- Dependency gate kini gagal untuk setiap temuan HIGH/CRITICAL yang tidak termasuk exception sempit di `SECURITY_EXCEPTION_REGISTER.md`; exception yang tersisa memiliki review date dan removal trigger.
+- Supabase staging `bahasa-cerdas-staging`: migration privacy/compliance terpasang hingga security-function hardening. `student-private` terverifikasi private.
+- Attack check staging: role `anon` dan `authenticated` ditolak membaca `User` dan `ConsentEvent`; `Notifikasi` hanya tetap memiliki SELECT untuk role authenticated dengan owner policy, dan tanpa JWT owner hasilnya nol baris.
+- Preview Vercel untuk commit yang sama berstatus READY. Halaman legal publik utama merespons HTTP 200: Kebijakan Privasi, Privasi Anak, Persetujuan Wali, Laporkan, Retensi Data, dan Syarat & Ketentuan.
+- Audit read-only produksi menemukan 542 referensi media murid yang masih memakai URL bucket publik proyek produksi: 203 avatar, 134 cover karya, dan 205 foto karya. Bucket sumber yang terlibat pada referensi tersebut adalah `avatars` (203) dan `documents` (339). Tidak ada perubahan data produksi yang dilakukan.
+- Produksi belum memiliki tabel privacy/compliance baru; deployment/migration produksi tetap diblok sampai backup, dry-run legacy-media, staging E2E identitas, dan approval release selesai.
+
+Status: branch belum boleh merge/deploy ke production. CI inti sudah hijau; blocker berikutnya adalah staging E2E beridentitas dan migrasi legacy media terkontrol.
