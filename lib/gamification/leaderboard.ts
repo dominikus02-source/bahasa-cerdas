@@ -5,6 +5,7 @@ import cache from "@/lib/redis";
 import { weekKey, seasonPeriodKey } from "@/lib/gamification/season";
 import { RANK_META } from "@/lib/gamification/ranks";
 import { getRankAsset } from "@/lib/gamification/rank-assets";
+import { trustedAdultPublicProfileWhere } from "@/lib/compliance/service";
 
 /**
  * Leaderboard BC Arena.
@@ -155,7 +156,7 @@ export async function getLeaderboard(params: LeaderboardParams): Promise<Leaderb
         : {};
 
   const where = {
-    user: { role: "MURID" as const, email: { not: { endsWith: "@account.invalid" } }, privacy: { is: { ageBand: "ADULT", publicProfile: true } } },
+    user: { role: "MURID" as const, email: { not: { endsWith: "@account.invalid" } }, privacy: { is: trustedAdultPublicProfileWhere() } },
     ...(scopeIds ? { userId: { in: scopeIds } } : {}),
     ...periodWhere,
   };
