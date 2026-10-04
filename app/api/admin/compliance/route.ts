@@ -53,6 +53,7 @@ export async function POST(req: Request) {
    } else if (b.action === "privacyRequest") {
     const pr = await tx.privacyRequest.findUniqueOrThrow({ where: { id: b.id } });
     if (!["RECEIVED","PROCESSING"].includes(pr.status)) throw new Error("ORIGIN");
+    if (pr.type === "DELETE_ACCOUNT" && pr.guardianId && b.decision === "COMPLETED") throw new Error("ORIGIN");
     const completed = b.decision === "COMPLETED" || b.decision === "REJECTED";
     await tx.privacyRequest.update({ where: { id: pr.id }, data: { status: b.decision, assignedTo: u.id, decision: b.reason, evidenceRef: b.evidenceRef || null, completedAt: completed ? new Date() : null } });
     await tx.complianceAudit.create({ data: { subjectId: pr.userId, actorId: u.id, action: `PRIVACY_REQUEST_${b.decision}`, reference: pr.id } });
