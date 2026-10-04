@@ -133,12 +133,14 @@ export async function verifyStagingGate(
   const directRef = directUrl ? extractSupabaseRef(directUrl) : null
   const dbRef = dbUrl ? extractSupabaseRef(dbUrl) : null
   checks.push(
-    check(
-      2,
-      "DIRECT_URL is staging",
-      !!directUrl && directUrl.startsWith("postgres") && !directUrl.includes(PRODUCTION_REF) && !!directRef && (!dbRef || directRef === dbRef),
-      directUrl ? `${hostOf(directUrl)} (ref ${directRef || "?"})` : "(kosong)"
-    )
+    mode === "compliance" && !directUrl
+      ? check(2, "DIRECT_URL", true, "opsional untuk compliance E2E; DATABASE_URL dipakai")
+      : check(
+          2,
+          "DIRECT_URL is staging",
+          !!directUrl && directUrl.startsWith("postgres") && !directUrl.includes(PRODUCTION_REF) && !!directRef && (!dbRef || directRef === dbRef),
+          directUrl ? `${hostOf(directUrl)} (ref ${directRef || "?"})` : "(kosong)"
+        )
   )
 
   // 3. NEXT_PUBLIC_SUPABASE_URL is staging
@@ -303,7 +305,6 @@ export async function verifyStagingGate(
         ["STAGING_SUPABASE_ANON_KEY", anonKey],
         ["STAGING_SUPABASE_SERVICE_ROLE_KEY", serviceRole],
         ["STAGING_DATABASE_URL", dbUrl],
-        ["STAGING_DIRECT_URL", directUrl],
         ["STAGING_BASE_URL", baseUrl],
         ["STAGING_TEST_PASSWORD", testPassword],
       ]
