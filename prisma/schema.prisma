@@ -4238,8 +4238,16 @@ model PrivacyAccount {
   birthDate DateTime? @db.Date
   ageBand String @default("UNKNOWN")
   ageMethod String @default("UNVERIFIED")
+  ageAssuranceLevel String @default("NONE")
+  ageVerifiedAt DateTime?
+  ageChangeLocked Boolean @default(false)
   guardianStatus String @default("NONE")
   guardianConsentVersion String?
+  consentBundleVersion String?
+  privacyVersion String?
+  termsVersion String?
+  childNoticeVersion String?
+  guardianNoticeVersion String?
   publicProfile Boolean @default(false)
   publicWorks Boolean @default(false)
   analytics Boolean @default(false)
@@ -4256,6 +4264,9 @@ model ConsentEvent {
   action String
   noticeVersion String
   termsVersion String
+  childNoticeVersion String?
+  guardianNoticeVersion String?
+  consentBundleVersion String?
   method String
   evidenceRef String?
   createdAt DateTime @default(now())
@@ -4271,6 +4282,10 @@ model GuardianRequest {
   tokenHash String @unique
   expiresAt DateTime
   noticeVersion String
+  termsVersion String?
+  childNoticeVersion String?
+  guardianNoticeVersion String?
+  consentBundleVersion String?
   agreedAt DateTime?
   reviewedAt DateTime?
   reviewedBy String?
