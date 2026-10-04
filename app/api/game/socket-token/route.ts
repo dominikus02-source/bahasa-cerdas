@@ -9,9 +9,9 @@ export async function GET() {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const signingKey = process.env.GAME_SERVER_SIGNING_PRIVATE_KEY;
-  if (!signingKey) {
-    console.error("GAME_SERVER_SIGNING_PRIVATE_KEY is not configured");
+  const signingKeyB64 = process.env.GAME_SERVER_SIGNING_PRIVATE_KEY_B64;
+  if (!signingKeyB64) {
+    console.error("GAME_SERVER_SIGNING_PRIVATE_KEY_B64 is not configured");
     return NextResponse.json({ error: "Server pertandingan belum dikonfigurasi." }, { status: 503 });
   }
 
@@ -34,7 +34,8 @@ export async function GET() {
 
   let signature: string;
   try {
-    const key = createPrivateKey(signingKey.replace(/\\n/g, "\n"));
+    const pem = Buffer.from(signingKeyB64, "base64").toString("utf8");
+    const key = createPrivateKey(pem);
     signature = sign(null, Buffer.from(payload, "utf8"), key).toString("base64url");
   } catch (error) {
     console.error("GAME_SERVER_SIGNING_PRIVATE_KEY is invalid", error);
