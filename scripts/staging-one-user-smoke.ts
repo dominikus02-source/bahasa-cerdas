@@ -18,8 +18,6 @@
  */
 
 import { PrismaClient } from "@prisma/client"
-import { readFileSync, existsSync } from "node:fs"
-import { join } from "node:path"
 
 const env = process.env
 const REF_STAGING = "hvfkhaocukdzfvseqwdz"
