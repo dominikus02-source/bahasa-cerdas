@@ -1,4 +1,4 @@
-import { publicIdentityAllowed } from "@/lib/compliance/service";
+import { publicIdentityAllowed, socialInteractionAllowed } from "@/lib/compliance/service";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
@@ -24,6 +24,7 @@ export async function POST(
     if (!await publicIdentityAllowed(id, "publicProfile")) return NextResponse.json({ error: "Profil privat." }, { status: 404 });
     const me = await getUser();
     if (!me) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!await socialInteractionAllowed(me.id)) return NextResponse.json({ error: "Interaksi sosial memerlukan verifikasi usia." }, { status: 403 });
 
     const limited = await rateLimitRoute(req, { maxRequests: 30, windowSeconds: 60, identifier: "bca-social-follow" });
     if (limited) return limited;
