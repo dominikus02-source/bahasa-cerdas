@@ -98,3 +98,23 @@ This removes the ownership/source-existence ambiguity for the planned copy-first
 ### Remaining hard blocker before main
 
 The latest verifiable application-level backup in the private `bahasacerdas-backups` bucket is still dated 29 June 2026. It is not acceptable as the rollback point for the October compliance migration. A fresh verified production backup/snapshot immediately before production migration remains mandatory. Do not merge/deploy the compliance migration until this rollback prerequisite exists.
+
+
+### Current-commit authenticated staging gate — PASS
+
+Commit `ad2d9bb51547f3ae36695f415b644053f372dd1c` closes the final current-commit runtime gap:
+
+- Compliance Staging E2E run `37215060057`: PASS end-to-end.
+- Push CI run `37215060042`: PASS.
+- PR CI run `37215062527`: PASS.
+- The tested application was the exact branch commit started locally against isolated Supabase staging, not an older Vercel deployment.
+- Account deletion security, Main Bersama session regression, payment integrity, six-secret staging gate, 12/12 staging isolation, live Supabase Auth smoke, PgBouncer-safe DB connection, current-commit app start, and the complete authenticated application E2E all passed.
+- The canonical-host bug that redirected the loopback staging app to production was fixed; loopback and Vercel execution hosts remain on their own origin while unknown public aliases still redirect to the production canonical host.
+- Same-origin/CSRF test execution now uses one consistent localhost origin. The real privacy account/current notice flow passes, followed by user/me, package discovery, session start, answer load, autosave, submit, result fetch, and DB write verification.
+- Read-only production rehearsal inventory remains: 542 references / 537 unique owner objects, zero missing source objects, zero objects shared across owners. No production object or DB reference has been modified.
+
+### Backup prerequisite clarification
+
+The Supabase organization is on the Pro plan. Supabase documents automatic daily database backups for Pro projects with seven days of daily-backup retention. This platform backup is separate from the older application-level files in `bahasacerdas-backups` and does not include Storage object bytes. Before the production migration, the release operator must verify that a current scheduled database backup is visible in Supabase Dashboard and preserve the existing storage source objects during the copy/rewrite phase. The migration script already defaults to dry-run and, on execute, copies first and retains source objects unless `--delete-source` is explicitly supplied.
+
+Pre-main code/runtime status: READY. Production migration/deploy status: BLOCKED until the current platform backup restore point is verified immediately before release.
