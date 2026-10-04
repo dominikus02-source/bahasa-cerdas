@@ -70,6 +70,12 @@ jobs:
               npx prisma migrate resolve --applied "$migration"
             fi
           done < <(git ls-tree -d --name-only "$BASE_REF:prisma/migrations")
+          # Legacy one-off SQL files intentionally live under manual/ and are not
+          # Prisma migrations. Prisma treats every child directory as a migration,
+          # so keep that archive out of the deploy scan for this gate.
+          if [ -d prisma/migrations/manual ]; then
+            mv prisma/migrations/manual /tmp/prisma-manual
+          fi
           npx prisma migrate deploy
 
       - name: Privacy compliance integration gate
