@@ -10,7 +10,6 @@
  *
  * TIDAK ada k6/loadtest. TIDAK menyentuh production. TIDAK mencetak secret.
  */
-import { createClient } from "@supabase/supabase-js"
 import { PrismaClient } from "@prisma/client"
 import { randomUUID } from "crypto"
 import { assertStagingGate } from "./lib/staging-gate"
@@ -37,7 +36,6 @@ async function main() {
   await assertStagingGate(process.env, "compliance")
   console.log("⛩️  Compliance staging gate PASS — env staging terkonfirmasi\n")
 
-  const supabase = createClient(ENV.supabaseUrl, ENV.anonKey, { auth: { persistSession: false } })
   const db = new PrismaClient({ datasources: { db: { url: ENV.dbUrl } } })
   const userRow = await db.user.findUnique({ where: { email: EMAIL } })
 
