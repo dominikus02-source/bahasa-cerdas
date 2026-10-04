@@ -35,7 +35,9 @@ export function serviceAllowed(p: {
 } | null, childRiskApproved: boolean, now = new Date()) {
   if (!p?.birthDate || p.noticeVersion !== NOTICE_VERSION) return false;
   const band = ageBandFor(p.birthDate, now);
-  // Core learning remains available to a self-declared adult while proportional age assurance is reviewed.\n  // Public/social, AI and transaction features apply a stronger trusted-assurance gate separately.\n  if (band === "ADULT") return !!p.ageAssuranceLevel && p.ageAssuranceLevel !== "NONE";
+  // Core learning remains available to a self-declared adult while proportional age assurance is reviewed.
+  // Public/social, AI and transaction features apply a stronger trusted-assurance gate separately.
+  if (band === "ADULT") return !!p.ageAssuranceLevel && p.ageAssuranceLevel !== "NONE";
   return !["UNDER_3", "3_5"].includes(band)
     && childRiskApproved
     && p.guardianStatus === "VERIFIED"
