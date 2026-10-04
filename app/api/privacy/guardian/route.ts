@@ -3,7 +3,7 @@ import { createHash, randomBytes } from "node:crypto";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { getIdentityUser, createClient } from "@/lib/supabase/server";
-import { ageBandFor, NOTICE_VERSION } from "@/lib/compliance/policy";
+import { ageBandFor, NOTICE_VERSION, TERMS_VERSION, CHILD_NOTICE_VERSION, GUARDIAN_NOTICE_VERSION, CONSENT_BUNDLE_VERSION } from "@/lib/compliance/policy";
 import { privacyFor, recordConsent } from "@/lib/compliance/service";
 import { sameOrigin, jsonBody, privacyFailure } from "@/lib/compliance/http";
 import { rateLimitRoute } from "@/lib/rate-limit";
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
    const request = await db.$transaction(async tx => {
     await tx.guardianRequest.updateMany({ where: { childId: u.id, status: { in: ["PENDING", "AWAITING_REVIEW"] } }, data: { status: "SUPERSEDED" } });
     await tx.privacyAccount.update({ where: { userId: u.id }, data: { guardianStatus: "PENDING", publicProfile: false, publicWorks: false, analytics: false, aiAssistance: false } });
-    return tx.guardianRequest.create({ data: { childId: u.id, guardianEmail: b.guardianEmail.toLowerCase(), tokenHash: hash(token), expiresAt: new Date(Date.now()+7*86400000), noticeVersion: NOTICE_VERSION } });
+    return tx.guardianRequest.create({ data: { childId: u.id, guardianEmail: b.guardianEmail.toLowerCase(), tokenHash: hash(token), expiresAt: new Date(Date.now()+7*86400000), noticeVersion: NOTICE_VERSION, termsVersion: TERMS_VERSION, childNoticeVersion: CHILD_NOTICE_VERSION, guardianNoticeVersion: GUARDIAN_NOTICE_VERSION, consentBundleVersion: CONSENT_BUNDLE_VERSION } });
    }, { isolationLevel: "Serializable" });
    // Child may deliver the invitation; the link alone cannot grant consent.
    return NextResponse.json({ invitation: `${new URL(req.url).origin}/persetujuan-wali?token=${token}`, requestId: request.id });
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
    if (!data.user?.email_confirmed_at || data.user.id !== u.supabaseId || !p?.birthDate || ageBandFor(p.birthDate) !== "ADULT" || p.noticeVersion !== NOTICE_VERSION) return NextResponse.json({ error: "Wali harus masuk dengan email terverifikasi dan melengkapi data usia dewasa." }, { status: 403 });
    await db.$transaction(async tx => {
     const r = await tx.guardianRequest.findUnique({ where: { tokenHash: hash(b.token) } });
-    if (!r || r.status !== "PENDING" || r.expiresAt < new Date() || r.guardianEmail !== u.email.toLowerCase() || r.childId === u.id || r.noticeVersion !== NOTICE_VERSION) throw new Error("ORIGIN");
+    if (!r || r.status !== "PENDING" || r.expiresAt < new Date() || r.guardianEmail !== u.email.toLowerCase() || r.childId === u.id || r.noticeVersion !== NOTICE_VERSION || r.termsVersion !== TERMS_VERSION || r.childNoticeVersion !== CHILD_NOTICE_VERSION || r.guardianNoticeVersion !== GUARDIAN_NOTICE_VERSION || r.consentBundleVersion !== CONSENT_BUNDLE_VERSION) throw new Error("ORIGIN");
     const changed = await tx.guardianRequest.updateMany({ where: { id: r.id, status: "PENDING" }, data: { guardianId: u.id, status: "AWAITING_REVIEW", agreedAt: new Date() } });
     if (changed.count !== 1) throw new Error("ORIGIN");
     await tx.privacyAccount.update({ where: { userId: r.childId }, data: { guardianStatus: "AWAITING_REVIEW", aiAssistance: b.aiAssistance } });
@@ -70,8 +70,9 @@ export async function GET(req: Request) {
     if (!/^[a-f0-9]{64}$/.test(token)) throw new Error("ORIGIN");
     const r = await db.guardianRequest.findUnique({ where: { tokenHash: hash(token) } });
     if (!r || r.guardianEmail !== u.email.toLowerCase() || r.expiresAt < new Date() || r.status !== "PENDING") throw new Error("ORIGIN");
-    const child = await db.user.findUniqueOrThrow({ where: { id: r.childId }, select: { fullName: true, privacy: { select: { birthDate: true, ageBand: true } } } });
-    return NextResponse.json({ childName: child.fullName, birthDate: child.privacy?.birthDate, ageBand: child.privacy?.ageBand }, { headers: { "Cache-Control": "private, no-store" } });
+    const child = await db.user.findUniqueOrThrow({ where: { id: r.childId }, select: { fullName: true, nickname: true, privacy: { select: { birthDate: true } } } });
+    const derivedBand = child.privacy?.birthDate ? ageBandFor(child.privacy.birthDate) : "UNKNOWN";
+    return NextResponse.json({ childName: child.nickname || child.fullName, ageBand: derivedBand }, { headers: { "Cache-Control": "private, no-store" } });
   }
   const requests = await db.guardianRequest.findMany({ where: { OR: [{ childId: u.id }, { guardianId: u.id }] }, select: { id: true, childId: true, status: true, createdAt: true, expiresAt: true }, orderBy: { createdAt: "desc" }, take: 30 });
   return NextResponse.json({ requests }, { headers: { "Cache-Control": "private, no-store" } });
