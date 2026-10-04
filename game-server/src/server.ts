@@ -230,11 +230,29 @@ function generateCode(): string {
   return code;
 }
 
-const io = new Server(PORT, {
+const httpServer = createServer((req, res) => {
+  if (req.url === '/health' || req.url === '/') {
+    res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store' });
+    res.end(JSON.stringify({
+      ok: true,
+      service: 'bahasacerdas-game',
+      rooms: rooms.size,
+      uptime: Math.round(process.uptime()),
+    }));
+    return;
+  }
+  res.writeHead(404, { 'content-type': 'application/json' });
+  res.end(JSON.stringify({ ok: false, error: 'Not found' }));
+});
+
+const io = new Server(httpServer, {
   cors: {
     origin: '*',
     methods: ['GET', 'POST'],
   },
+  transports: ['websocket', 'polling'],
+  pingInterval: 10000,
+  pingTimeout: 12000,
 });
 
 const kuisTempurArena = createKuisTempurArena({
@@ -979,4 +997,6 @@ function handleLeave(socket: any, code: string, odiceId: string) {
   }
 }
 
-console.log(`[Game Server] Running on port ${PORT}`);
+httpServer.listen(PORT, '0.0.0.0', () => {
+  console.log(`[Game Server] Running on port ${PORT}`);
+});
