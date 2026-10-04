@@ -111,7 +111,7 @@ export async function verifyStagingGate(
   const redisToken = env.STAGING_REDIS_TOKEN || ""
   const baseUrl = env.STAGING_BASE_URL || ""
   const testPassword = env.STAGING_TEST_PASSWORD || ""
-  const allowLocal = env.UKBI_LOADTEST_ALLOW_LOCAL === "true"
+  const allowLocal = env.STAGING_ALLOW_LOCAL === "true" || env.UKBI_LOADTEST_ALLOW_LOCAL === "true"
 
   // Production Redis ambient (untuk BANDING host saja — tidak pernah dicetak).
   const ambientProdRedis = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || ""
