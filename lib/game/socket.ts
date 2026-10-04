@@ -3,6 +3,7 @@
 import { io, Socket } from 'socket.io-client';
 
 let socket: Socket | null = null;
+let authInFlight = false;
 
 // Keadaan "server gim tak terjangkau", dipisah dari socket itu sendiri supaya
 // halaman yang dibuka SETELAH kegagalan terjadi tetap bisa menanyakannya —
@@ -11,31 +12,38 @@ let gagalSambung = false;
 const pendengarGagal = new Set<() => void>();
 
 export const gameSocket = {
-  connect(userId?: string, userName?: string, avatarUrl?: string) {
-    if (socket?.connected) return socket;
+  connect(_userId?: string, _userName?: string, _avatarUrl?: string) {
+    if (socket?.connected || authInFlight) return socket;
 
-    const serverUrl = process.env.NEXT_PUBLIC_GAME_SERVER_URL || 'http://localhost:3001';
+    const configured = process.env.NEXT_PUBLIC_GAME_SERVER_URL?.trim();
+    const localFallback =
+      typeof window !== 'undefined' && ['localhost', '127.0.0.1'].includes(window.location.hostname)
+        ? 'http://localhost:3001'
+        : '';
+    const serverUrl = configured || localFallback;
+
+    if (!serverUrl) {
+      gagalSambung = true;
+      pendengarGagal.forEach((cb) => cb());
+      return socket;
+    }
+
     socket = io(serverUrl, {
       transports: ['websocket', 'polling'],
-      autoConnect: true,
-      // Batas eksplisit. Tanpa ini socket.io mencoba menyambung selamanya tanpa
-      // pernah memberi tahu siapa pun, sehingga layar gim menggantung di keadaan
-      // "menghubungkan" — murid membacanya sebagai gim yang tidak bisa dibuka.
-      // Lebih baik menyerah cepat lalu mengatakannya.
+      autoConnect: false,
       timeout: 8000,
       reconnectionAttempts: 3,
       reconnectionDelay: 1000,
     });
 
     socket.on('connect', () => {
+      authInFlight = false;
       gagalSambung = false;
       console.log('[Socket] Connected to game server');
     });
 
-    // Kegagalan menyambung HARUS bisa dilihat UI. Server gim berjalan di VPS
-    // terpisah dari situs ini; kalau ia mati, dua gim yang memakainya (adu-cepat
-    // dan kuis-tempur) tidak punya cara lain memberitahu murid.
     socket.on('connect_error', (err: Error) => {
+      authInFlight = false;
       gagalSambung = true;
       console.warn('[Socket] Gagal menyambung ke server gim:', err?.message);
       pendengarGagal.forEach((cb) => cb());
@@ -49,6 +57,27 @@ export const gameSocket = {
       console.error('[Socket] Error:', data.message);
     });
 
+    // Token berasal dari sesi web yang sudah terautentikasi. Identitas pemain
+    // tidak lagi dipercaya dari payload browser saat server production memakai
+    // GAME_SERVER_SHARED_SECRET.
+    authInFlight = true;
+    void fetch('/api/game/socket-token', { cache: 'no-store', credentials: 'same-origin' })
+      .then(async (response) => {
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok || !payload?.token) {
+          throw new Error(payload?.error || 'Token pertandingan tidak tersedia');
+        }
+        if (!socket) return;
+        socket.auth = { token: payload.token };
+        socket.connect();
+      })
+      .catch((error) => {
+        authInFlight = false;
+        gagalSambung = true;
+        console.warn('[Socket] Gagal menyiapkan autentikasi gim:', error?.message || error);
+        pendengarGagal.forEach((cb) => cb());
+      });
+
     return socket;
   },
 
@@ -56,6 +85,7 @@ export const gameSocket = {
     if (socket) {
       socket.disconnect();
       socket = null;
+      authInFlight = false;
     }
   },
 
