@@ -4,7 +4,7 @@ import Module from "node:module";
 import {PrismaClient,User} from "@prisma/client";
 import {verifiedMidtransSignature} from "../lib/compliance/payment-signature";
 import {randomUUID,createHash} from "node:crypto";
-import {ageBandFor,serviceAllowed,NOTICE_VERSION,childPurposeRestricted} from "../lib/compliance/policy";
+import {ageBandFor,serviceAllowed,NOTICE_VERSION,sensitivePurposeRestricted} from "../lib/compliance/policy";
 const url=process.env.COMPLIANCE_TEST_DATABASE_URL;
 if(!url || !['localhost','127.0.0.1'].includes(new URL(url).hostname)||!new URL(url).pathname.includes('bc_compliance_local'))throw new Error('Isolated LOCAL database required');
 const db=new PrismaClient({datasources:{db:{url}}});
@@ -38,7 +38,7 @@ async function main(){
  assert.equal(ageBandFor(new Date('2008-10-03'),new Date('2026-10-02T16:59:00Z')),'16_17');
  for(const [age,band] of [[2,'UNDER_3'],[3,'3_5'],[6,'6_9'],[10,'10_12'],[13,'13_15'],[16,'16_17'],[18,'ADULT']] as const)assert.equal(ageBandFor(new Date(`${2026-age}-10-03`),new Date('2026-10-03')) ,band);
  assert.equal(serviceAllowed(null,true),false);
- assert.equal(childPurposeRestricted("13_15","/api/billing/checkout"),true);assert.equal(childPurposeRestricted("ADULT","/api/billing/checkout"),false);assert.equal(childPurposeRestricted("13_15","/api/payment/webhook"),false);
+ assert.equal(sensitivePurposeRestricted("13_15","GUARDIAN_VERIFIED","/api/billing/checkout"),true);assert.equal(sensitivePurposeRestricted("ADULT","SELF_DECLARED","/api/billing/checkout"),true);assert.equal(sensitivePurposeRestricted("ADULT","REVIEWED","/api/billing/checkout"),false);assert.equal(sensitivePurposeRestricted("13_15","GUARDIAN_VERIFIED","/api/payment/webhook"),false);
  const signature=createHash('sha512').update('order-qa'+'200'+'10000.00'+'local-key').digest('hex');
  assert.equal(verifiedMidtransSignature('order-qa','200','10000.00',signature,'local-key'),true);
  assert.equal(verifiedMidtransSignature('order-qa','200','90000.00',signature,'local-key'),false);
