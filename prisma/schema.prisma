@@ -4331,6 +4331,25 @@ model DeletionJob {
   updatedAt DateTime @updatedAt
 }
 
+model PrivacyRequest {
+  id String @id @default(cuid())
+  userId String
+  guardianId String?
+  type String
+  detail String?
+  status String @default("RECEIVED")
+  deadlineAt DateTime
+  assignedTo String?
+  decision String?
+  evidenceRef String?
+  completedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([status, deadlineAt])
+}
+
 model ClassroomPrivacyApproval {
   classId String @id
   teacherId String
