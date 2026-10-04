@@ -333,7 +333,6 @@ export default function KuisTempurHub() {
       <KuisTempurArena
         code={room.code}
         userId={me.id}
-        userName={me.nickname || me.fullName}
         onExit={leaveLobby}
       />
     );
