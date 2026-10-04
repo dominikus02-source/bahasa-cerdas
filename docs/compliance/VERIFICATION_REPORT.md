@@ -42,3 +42,17 @@ Status: branch belum boleh merge/deploy ke production. CI inti sudah hijau; bloc
 - Vercel preview deployment for the compliance head is READY and showed no warning/error runtime logs in the inspected 24-hour window.
 - Production runtime observation still shows legacy refresh-token errors and one historical Prisma connection-pool timeout; these are production-baseline issues, not introduced by the compliance preview. They must be watched during production smoke testing.
 - A dedicated `.github/workflows/compliance-staging-e2e.yml` gate was added. It requires isolated `STAGING_*` secrets and executes staging isolation checks, real Supabase Auth one-user smoke, deployed staging app E2E, account-deletion security, Main Bersama session regression, and payment-integrity regression.
+
+
+### Dedicated staging gate — latest run
+
+GitHub Actions run `37196834112` against commit `89762b79a496ae773c4da99278d5909b6291bb17` produced:
+- Account deletion security regression: PASS.
+- Main Bersama session regression: PASS.
+- Payment integrity regression: PASS after replacing a stale source-text assertion with behavioral verification of the hardened `verifiedMidtransSignature` helper.
+- The run then stopped at the isolated-staging credential gate because the repository has no configured `STAGING_*` Actions secrets. The live Auth/app stages therefore did **not** run and must not be represented as passed.
+
+Missing GitHub Actions secrets confirmed by the gate:
+`STAGING_SUPABASE_URL`, `STAGING_SUPABASE_ANON_KEY`, `STAGING_SUPABASE_SERVICE_ROLE_KEY`, `STAGING_DATABASE_URL`, `STAGING_DIRECT_URL`, `STAGING_REDIS_URL`, `STAGING_REDIS_TOKEN`, `STAGING_BASE_URL`, and `STAGING_TEST_PASSWORD`.
+
+Pre-main status remains BLOCKED pending (a) those isolated staging credentials plus a reachable staging application URL, (b) successful live authenticated staging E2E, and (c) a fresh production backup immediately before any production migration.
