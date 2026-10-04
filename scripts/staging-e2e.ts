@@ -22,7 +22,6 @@ const EMAIL = "ukbi-loadtest-001@loaded-test.id"
 const ENV = {
   supabaseUrl: process.env.STAGING_SUPABASE_URL || "",
   anonKey: process.env.STAGING_SUPABASE_ANON_KEY || "",
-  serviceRole: process.env.STAGING_SUPABASE_SERVICE_ROLE_KEY || "",
   dbUrl: process.env.STAGING_DIRECT_URL || process.env.STAGING_DATABASE_URL || "",
   baseUrl: process.env.STAGING_BASE_URL || "",
   testPassword: process.env.STAGING_TEST_PASSWORD || "",
@@ -39,7 +38,6 @@ async function main() {
   console.log("⛩️  Compliance staging gate PASS — env staging terkonfirmasi\n")
 
   const supabase = createClient(ENV.supabaseUrl, ENV.anonKey, { auth: { persistSession: false } })
-  const admin = createClient(ENV.supabaseUrl, ENV.serviceRole, { auth: { persistSession: false } })
   const db = new PrismaClient({ datasources: { db: { url: ENV.dbUrl } } })
   const userRow = await db.user.findUnique({ where: { email: EMAIL } })
 
