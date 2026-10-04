@@ -31,9 +31,9 @@ export async function GET(
 
     const [followerCount, followingCount, profileLikeCount, followers, following, viewerFollow, viewerLike] =
       await Promise.all([
-        db.follow.count({ where: { followingId: id } }),
-        db.follow.count({ where: { followerId: id } }),
-        db.profileLike.count({ where: { targetId: id } }),
+        db.follow.count({ where: { followingId: id, follower: { privacy: { is: trustedAdultPublicProfileWhere() } } } }),
+        db.follow.count({ where: { followerId: id, following: { privacy: { is: trustedAdultPublicProfileWhere() } } } }),
+        db.profileLike.count({ where: { targetId: id, liker: { privacy: { is: trustedAdultPublicProfileWhere() } } } }),
         db.follow.findMany({
           where: { followingId: id, follower: { privacy: { is: trustedAdultPublicProfileWhere() } } },
           orderBy: { createdAt: "desc" },
