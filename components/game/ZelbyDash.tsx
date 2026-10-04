@@ -1,164 +1,205 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Heart, Volume2, VolumeX, Sparkles, RotateCcw, Star, Trophy, BookOpen, Flame, Check, ArrowRight } from "lucide-react";
-import GameBackButton from "@/components/game/GameBackButton";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { setQuiet } from "@/lib/notif-quiet";
+import GameBackButton from "@/components/game/GameBackButton";
+import {
+  Play,
+  Pause,
+  X,
+  Volume2,
+  VolumeX,
+  Heart,
+  Trophy,
+  Zap,
+  RotateCcw,
+  Clock,
+  Star,
+  ChevronRight,
+} from "lucide-react";
 
-type Mode = "susun" | "rumpang" | "pasangan" | "makna";
-type Difficulty = "mudah" | "seru" | "hebat";
-type Item = { word: string; image: string; category: "buah" | "hewan"; clue?: string };
-type Round = { item: Item; answer: string; options: string[]; matchItems?: Item[] };
-
-const DIFFICULTY: Record<Difficulty, { label: string; rounds: number; lives: number }> = {
-  mudah: { label: "Santai", rounds: 8, lives: 4 },
-  seru: { label: "Seru", rounds: 10, lives: 3 },
-  hebat: { label: "Hebat", rounds: 12, lives: 3 },
-};
-
-const ASSET = "https://raw.githubusercontent.com/dominikus02-source/kataplay-assets/main/images";
-const items: Item[] = [
-  { word: "MANGGA", image: `${ASSET}/Fruits/mangga.png`, category: "buah" },
-  { word: "STROBERI", image: `${ASSET}/Fruits/stroberi.png`, category: "buah" },
-  { word: "SEMANGKA", image: `${ASSET}/Fruits/semangka.png`, category: "buah" },
-  { word: "PEPAYA", image: `${ASSET}/Fruits/pepaya.png`, category: "buah" },
-  { word: "JERUK", image: `${ASSET}/Fruits/jeruk.png`, category: "buah" },
-  { word: "MELON", image: `${ASSET}/Fruits/melon.png`, category: "buah" },
-  { word: "KUCING", image: `${ASSET}/Binatang%20Kataplay/Kucing.png`, category: "hewan" },
-  { word: "GAJAH", image: `${ASSET}/Binatang%20Kataplay/Gajah.png`, category: "hewan" },
-  { word: "KELINCI", image: `${ASSET}/Binatang%20Kataplay/Kelinci.png`, category: "hewan" },
-  { word: "SINGA", image: `${ASSET}/Binatang%20Kataplay/Singa.png`, category: "hewan" },
-  { word: "MONYET", image: `${ASSET}/Binatang%20Kataplay/Monyet.png`, category: "hewan" },
-  { word: "ZEBRA", image: `${ASSET}/Binatang%20Kataplay/Zebra.png`, category: "hewan" },
+/* ---------- Bank Kata ---------- */
+const KATA_BENDA = [
+  "meja","buku","kursi","sepeda","pensil","pohon","burung","rumah",
+  "topi","roti","sepatu","jemari","kunci","lampu","piring","gelas","pintu",
+];
+const KATA_KERJA = [
+  "makan","minum","lari","tidur","tulis","baca","lompat","duduk",
+  "masak","cuci","main","tanam","gambar","nyanyi","renang","lukis",
+];
+const KATA_SIFAT = [
+  "besar","kecil","tinggi","rendah","cantik","rajin","cepat","panas",
+  "dingin","manis","bersih","kuat","cerah","lembut","ringan","berani",
 ];
 
-const meaningPairs = [
-  ["BESAR", "KECIL"],
-  ["PANAS", "DINGIN"],
-  ["TINGGI", "RENDAH"],
-  ["CEPAT", "LAMBAT"],
-  ["RAJIN", "MALAS"],
-  ["TERANG", "GELAP"],
-];
-
-const zelby = {
-  idle: "/junior/karakter/zelby_idle.webp",
-  happy: "/junior/karakter/zelby_happy.webp",
-  thinking: "/junior/karakter/zelby_thinking.webp",
-  celebrate: "/junior/karakter/zelby_celebrate.webp",
-  wave: "/junior/karakter/zelby_wave.webp",
+type RuleKey = "BENDA" | "KERJA" | "SIFAT";
+const RULES: Record<
+  RuleKey,
+  { label: string; color: string; valid: string[]; invalid: string[] }
+> = {
+  BENDA: {
+    label: "KATA BENDA",
+    color: "#38BDF8",
+    valid: KATA_BENDA,
+    invalid: [...KATA_KERJA, ...KATA_SIFAT],
+  },
+  KERJA: {
+    label: "KATA KERJA",
+    color: "#34D399",
+    valid: KATA_KERJA,
+    invalid: [...KATA_BENDA, ...KATA_SIFAT],
+  },
+  SIFAT: {
+    label: "KATA SIFAT",
+    color: "#F87171",
+    valid: KATA_SIFAT,
+    invalid: [...KATA_BENDA, ...KATA_KERJA],
+  },
 };
 
-function shuffle<T>(a: T[]) {
-  return [...a].sort(() => Math.random() - 0.5);
+/* ---------- Game Config ---------- */
+const GAME_CONFIG = {
+  canvas: { w: 480, h: 720 },
+  durationSec: 90,
+  lives: 3,
+  zelby: { w: 80, h: 80, yOffset: 85, yCatch: 100 },
+  banana: {
+    src: "/pisangzelby2.png",
+    /* pisangzelby2.png is 960x540 landscape. We draw a cropped region
+       centered on the banana body. Adjust crop to fit the actual banana sprite. */
+    crop: { sx: 0, sy: 0, sw: 960, sh: 540 },
+    naturalW: 960,
+    naturalH: 540,
+    /* Display size on canvas — landscape ratio preserved */
+    drawW: 90,
+    drawH: 50,
+  },
+  spawn: {
+    initialRate: 1550,
+    minRate: 650,
+    initialSpeed: 2.3,
+    maxSpeed: 5.0,
+    speedJitter: 1.2,
+    minSpawnGap: 110,
+    marginX: 60,
+    validRatio: 0.65,
+  },
+  collision: { halfW: 38, halfH: 22 },
+  /* Star thresholds */
+  stars: { two: 200, three: 400 },
+  /* Streak system */
+  streak: {
+    threshold: 5, // streak N activates level up
+    maxLevel: 5,
+    speedBonus: 0.15, // per level
+  },
+} as const;
+
+const W = GAME_CONFIG.canvas.w;
+const H = GAME_CONFIG.canvas.h;
+const DURASI_GAME = GAME_CONFIG.durationSec;
+
+/* ---------- Audio ---------- */
+let audioCtx: AudioContext | null = null;
+function ensureAudio() {
+  if (!audioCtx) {
+    try {
+      audioCtx = new (
+        window.AudioContext || (window as any).webkitAudioContext
+      )();
+    } catch {
+      /* noop */
+    }
+  }
+  if (audioCtx?.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+function playTone(
+  muted: boolean,
+  freq: number,
+  type: OscillatorType,
+  dur: number,
+  gain: number,
+  slideTo?: number
+) {
+  if (muted) return;
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  const t0 = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const g = ctx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t0);
+  if (slideTo)
+    osc.frequency.exponentialRampToValueAtTime(slideTo, t0 + dur);
+  g.gain.setValueAtTime(0, t0);
+  g.gain.linearRampToValueAtTime(gain, t0 + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  osc.connect(g);
+  g.connect(ctx.destination);
+  osc.start(t0);
+  osc.stop(t0 + dur + 0.02);
 }
 
-function playGameTone(muted: boolean, kind: "tap" | "good" | "great" | "bad" | "finish") {
-  if (muted || typeof window === "undefined") return;
-  try {
-    const AudioContextCtor =
-      window.AudioContext ||
-      (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!AudioContextCtor) return;
-    const notes: Record<typeof kind, number[]> = {
-      tap: [440], good: [523, 659], great: [523, 659, 784], bad: [220], finish: [523, 659, 784, 1047],
-    };
-    const ctx = new AudioContextCtor();
-    notes[kind].forEach((frequency, index) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      const at = ctx.currentTime + index * 0.06;
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(frequency, at);
-      gain.gain.setValueAtTime(0.0001, at);
-      gain.gain.exponentialRampToValueAtTime(kind === "bad" ? 0.035 : 0.05, at + 0.015);
-      gain.gain.exponentialRampToValueAtTime(0.0001, at + 0.13);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(at);
-      osc.stop(at + 0.15);
-    });
-    window.setTimeout(() => void ctx.close(), 500);
-  } catch {
-    // Audio is an enhancement only.
-  }
-}
+/* ---------- Types ---------- */
+type Item = {
+  id: number;
+  x: number;
+  y: number;
+  word: string;
+  valid: boolean;
+  speed: number;
+  age: number;
+  caught: boolean;
+  missed: boolean;
+  wobblePhase: number;
+};
+type Particle = {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  color: string;
+  life: number;
+  maxLife: number;
+  size: number;
+  shape: "circle" | "star" | "leaf";
+};
+type FloatText = {
+  x: number;
+  y: number;
+  text: string;
+  color: string;
+  life: number;
+  size: number;
+};
+/* ---------- Helpers ---------- */
 
-function difficultyPool(difficulty: Difficulty) {
-  if (difficulty === "mudah") return items.filter((item) => item.word.length <= 6);
-  if (difficulty === "seru") return items.filter((item) => item.word.length <= 8);
-  return items;
-}
-
-function makeRound(mode: Mode, difficulty: Difficulty = "seru"): Round {
-  const pool = difficultyPool(difficulty);
-  const item = pool[Math.floor(Math.random() * pool.length)];
-
-  if (mode === "rumpang") {
-    const missingCount = difficulty === "mudah" ? 1 : difficulty === "seru" ? 2 : 3;
-    const positions = shuffle([...Array(item.word.length).keys()])
-      .slice(0, Math.min(missingCount, item.word.length - 2))
-      .sort((a, b) => a - b);
-    const answer = positions.map((index) => item.word[index]).join("");
-    const shown = item.word.split("").map((letter, index) => positions.includes(index) ? "＿" : letter).join(" ");
-    return {
-      item: { ...item, clue: shown },
-      answer,
-      options: shuffle([
-        answer,
-        ...shuffle(pool.filter((x) => x.word !== item.word).map((x) => x.word.slice(0, answer.length))).slice(0, 3),
-      ]),
-    };
-  }
-
-  if (mode === "makna") {
-    const pair = meaningPairs[Math.floor(Math.random() * meaningPairs.length)];
-    const prompt = Math.random() > 0.5 ? pair[0] : pair[1];
-    const answer = prompt === pair[0] ? pair[1] : pair[0];
-    return {
-      item: { ...item, word: prompt, clue: prompt },
-      answer,
-      options: shuffle([answer, ...shuffle(meaningPairs.flat().filter((x) => x !== answer && x !== prompt)).slice(0, 3)]),
-    };
-  }
-
-  if (mode === "pasangan") {
-    const matchItems = shuffle([item, ...shuffle(pool.filter((x) => x.word !== item.word)).slice(0, 3)]);
-    return { item, answer: item.word, options: matchItems.map((x) => x.word), matchItems };
-  }
-
-  return {
-    item,
-    answer: item.word,
-    options: shuffle([item.word, ...shuffle(pool.filter((x) => x.word !== item.word).map((x) => x.word)).slice(0, 3)]),
-  };
-}
-
+/* ---------- Component ---------- */
 export default function ZelbyDash() {
-  const [mode, setMode] = useState<Mode>("susun");
-  const [difficulty, setDifficulty] = useState<Difficulty>("seru");
   const [screen, setScreen] = useState<"start" | "game" | "over">("start");
-  const [showGuide, setShowGuide] = useState(false);
-  const [round, setRound] = useState<Round>(() => makeRound("susun", "seru"));
-  const [letters, setLetters] = useState<string[]>([]);
-  const [selected, setSelected] = useState<string[]>([]);
-  const [selectedMatch, setSelectedMatch] = useState<string | null>(null);
-  const [score, setScore] = useState(0);
-  const [combo, setCombo] = useState(0);
-  const [maxCombo, setMaxCombo] = useState(0);
-  const [lives, setLives] = useState(3);
-  const [answered, setAnswered] = useState(0);
-  const [stars, setStars] = useState(0);
   const [muted, setMuted] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
-  const [collectedWords, setCollectedWords] = useState<string[]>([]);
-  const [bestScore, setBestScore] = useState(0);
-  const [gamesPlayed, setGamesPlayed] = useState(0);
-  const [message, setMessage] = useState("Ayo, bermain kata bersama Zelby!");
-  const [zelbyPose, setZelbyPose] = useState(zelby.wave);
-  const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
-  const [locked, setLocked] = useState(false);
-  const [bestCombo, setBestCombo] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [hud, setHud] = useState<{
+    score: number;
+    lives: number;
+    combo: number;
+    waktu: number;
+    level: number;
+  }>({ score: 0, lives: GAME_CONFIG.lives, combo: 0, waktu: DURASI_GAME, level: 1 });
+  const [finalScore, setFinalScore] = useState(0);
+  const [highScore, setHighScore] = useState(0);
+  const [finalStars, setFinalStars] = useState(0);
+  const [screenFlash, setScreenFlash] = useState<string | null>(null);
+
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const engineRef = useRef<Engine | null>(null);
+  const mutedRef = useRef(false);
+  const zelbyImgRef = useRef<HTMLImageElement | null>(null);
+  const zelbyCelebrateImgRef = useRef<HTMLImageElement | null>(null);
+  const bananaImgRef = useRef<HTMLImageElement | null>(null);
+  const bgImgRef = useRef<HTMLImageElement | null>(null);
+  const imagesLoaded = useRef(false);
 
   useEffect(() => {
     setQuiet(screen === "game");
@@ -166,374 +207,1052 @@ export default function ZelbyDash() {
   }, [screen]);
 
   useEffect(() => {
-    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setReducedMotion(query.matches);
-    update();
-    query.addEventListener?.("change", update);
-    return () => query.removeEventListener?.("change", update);
-  }, []);
+    mutedRef.current = muted;
+  }, [muted]);
 
   useEffect(() => {
     try {
-      setBestScore(Number(localStorage.getItem("bermain-kata-best") || 0));
-      setGamesPlayed(Number(localStorage.getItem("bermain-kata-played") || 0));
-      setBestCombo(Number(localStorage.getItem("bermain-kata-best-combo") || 0));
+      const saved = localStorage.getItem("zelby-highscore");
+      if (saved) setHighScore(parseInt(saved, 10));
     } catch {
-      // Local progress is optional.
+      /* noop */
     }
   }, []);
 
-  const next = (nextMode = mode, nextDifficulty = difficulty) => {
-    const r = makeRound(nextMode, nextDifficulty);
-    setRound(r);
-    setSelected([]);
-    setSelectedMatch(null);
-    setLetters(nextMode === "susun" ? shuffle(r.answer.split("")) : []);
-    setAnswered((n) => n + 1);
-    setFeedback(null);
-    setLocked(false);
-  };
-
-  const start = (m: Mode) => {
-    setMode(m);
-    setScore(0);
-    setCombo(0);
-    setMaxCombo(0);
-    setLives(DIFFICULTY[difficulty].lives);
-    setAnswered(1);
-    setStars(0);
-    setCollectedWords([]);
-    setMessage("Zelby siap! Yuk mulai!");
-    setZelbyPose(zelby.wave);
-    setFeedback(null);
-    setLocked(false);
-    setScreen("game");
-    const first = makeRound(m, difficulty);
-    setRound(first);
-    setSelected([]);
-    setSelectedMatch(null);
-    setLetters(m === "susun" ? shuffle(first.answer.split("")) : []);
-  };
-
-  const finish = (finalScore = score) => {
-    const finalStars = Math.max(1, Math.min(3, Math.floor(finalScore / 70) + 1));
-    const nextBest = Math.max(bestScore, finalScore);
-    const nextPlayed = gamesPlayed + 1;
-    const nextBestCombo = Math.max(bestCombo, maxCombo);
-    setStars(finalStars);
-    setBestScore(nextBest);
-    setGamesPlayed(nextPlayed);
-    setBestCombo(nextBestCombo);
-    setZelbyPose(zelby.celebrate);
-    playGameTone(muted, "finish");
+  useEffect(() => {
+    if (screen !== "start") return;
     try {
-      localStorage.setItem("bermain-kata-best", String(nextBest));
-      localStorage.setItem("bermain-kata-played", String(nextPlayed));
-      localStorage.setItem("bermain-kata-best-combo", String(nextBestCombo));
+      localStorage.setItem("zelby-highscore", String(highScore));
     } catch {
-      // Local progress is optional.
+      /* noop */
     }
-    setScreen("over");
-  };
+  }, [highScore, screen]);
 
-  const correct = () => {
-    if (locked) return;
-    setLocked(true);
-    setFeedback("correct");
-    const newCombo = combo + 1;
-    const gained = 10 * Math.min(3, 1 + Math.floor(combo / 3));
-    const newScore = score + gained;
-    setScore(newScore);
-    setCombo(newCombo);
-    setMaxCombo((value) => Math.max(value, newCombo));
-    setCollectedWords((words) => Array.from(new Set([...words, round.item.word])).slice(-8));
-    setStars(Math.min(3, Math.floor(newScore / 50)));
-    setZelbyPose(newCombo >= 3 ? zelby.celebrate : zelby.happy);
-    setMessage(newCombo >= 3 ? `${newCombo} kombo! Zelby ikut senang! ✨` : "Tepat! Kamu menemukan jawabannya! ⭐");
-    playGameTone(muted, newCombo >= 3 ? "great" : "good");
-    if (typeof navigator !== "undefined" && "vibrate" in navigator && !reducedMotion) navigator.vibrate?.(18);
+  /* Load Zelby idle + celebrate */
+  useEffect(() => {
+    const idle = new Image();
+    idle.src = "/junior/karakter/zelby_idle.webp";
+    const cele = new Image();
+    cele.src = "/junior/karakter/zelby_celebrate.webp";
+    let loaded = 0;
+    const onload = () => {
+      loaded++;
+      if (loaded >= 2) imagesLoaded.current = true;
+    };
+    idle.onload = onload;
+    cele.onload = onload;
+    zelbyImgRef.current = idle;
+    zelbyCelebrateImgRef.current = cele;
+  }, []);
 
-    if (answered >= DIFFICULTY[difficulty].rounds) {
-      window.setTimeout(() => finish(newScore), reducedMotion ? 80 : 550);
-      return;
+  /* Load pisangzelby2.png */
+  useEffect(() => {
+    const img = new Image();
+    img.src = GAME_CONFIG.banana.src;
+    img.onload = () => {
+      bananaImgRef.current = img;
+    };
+    bananaImgRef.current = img;
+  }, []);
+
+  /* Load Hutan Kata scene background (gameplay canvas only) */
+  useEffect(() => {
+    const img = new Image();
+    img.src = "/images/bg_petualangankata.png";
+    bgImgRef.current = img;
+  }, []);
+
+  /* Screen flash effect */
+  const flash = useCallback(
+    (color: string) => {
+      setScreenFlash(color);
+      setTimeout(() => setScreenFlash(null), 200);
+    },
+    []
+  );
+
+  /* ============= ENGINE ============= */
+  class Engine {
+    rule: RuleKey;
+    items: Item[] = [];
+    particles: Particle[] = [];
+    floatTexts: FloatText[] = [];
+    zelbyX: number = W / 2;
+    targetX: number = W / 2;
+    score: number = 0;
+    lives: number = GAME_CONFIG.lives;
+    combo: number = 0;
+    maxCombo: number = 0;
+    streak: number = 0;
+    level: number = 1;
+    spawnTimer: number = 0;
+    spawnRate: number = GAME_CONFIG.spawn.initialRate;
+    baseSpeed: number = GAME_CONFIG.spawn.initialSpeed;
+    lastSpawnX: number | null = null;
+    running: boolean = false;
+    paused: boolean = false;
+    lastFrame: number = 0;
+    itemId: number = 0;
+    shake: number = 0;
+    frenzy: number = 0;
+    bgHue: number = 140;
+    waktuSisa: number = DURASI_GAME;
+    lastTimerTick: number = 0;
+    lastHud: {
+      score: number;
+      lives: number;
+      combo: number;
+      waktu: number;
+      level: number;
+    } = {
+      score: 0,
+      lives: GAME_CONFIG.lives,
+      combo: 0,
+      waktu: DURASI_GAME,
+      level: 1,
+    };
+
+    /* Parallax offset (kept for future scene motion; no visual output) */
+    parallaxOffset: number = 0;
+
+    /* Mist particles */
+    mistParticles: {
+      x: number;
+      y: number;
+      w: number;
+      alpha: number;
+      speed: number;
+    }[] = [];
+    mistTimer: number = 0;
+
+    /* Light rays */
+    lightRays: {
+      x: number;
+      w: number;
+      alpha: number;
+      angle: number;
+    }[] = [];
+
+    constructor(rule: RuleKey) {
+      this.rule = rule;
+      // init light rays
+      for (let i = 0; i < 5; i++) {
+        this.lightRays.push({
+          x: 60 + Math.random() * (W - 120),
+          w: 20 + Math.random() * 30,
+          alpha: 0.03 + Math.random() * 0.04,
+          angle: -0.15 + Math.random() * 0.3,
+        });
+      }
     }
-    window.setTimeout(() => next(), reducedMotion ? 80 : 550);
-  };
 
-  const wrong = () => {
-    if (locked) return;
-    setLocked(true);
-    setFeedback("wrong");
-    const nextLives = lives - 1;
-    setLives(nextLives);
-    setCombo(0);
-    setZelbyPose(zelby.thinking);
-    setMessage("Belum tepat. Coba lihat petunjuknya lagi. 💪");
-    playGameTone(muted, "bad");
-    if (typeof navigator !== "undefined" && "vibrate" in navigator && !reducedMotion) navigator.vibrate?.([18, 35, 18]);
-    if (nextLives <= 0) window.setTimeout(() => finish(score), reducedMotion ? 80 : 500);
-  };
+    start() {
+      ensureAudio();
+      this.running = true;
+      this.lastFrame = performance.now();
+      this.lastTimerTick = this.lastFrame;
+      requestAnimationFrame((t) => this.loop(t));
+    }
 
-  const check = (answer: string) => {
-    if (locked) return;
-    if (answer === round.answer) correct();
-    else wrong();
-  };
+    stop() {
+      this.running = false;
+    }
 
-  const chooseLetter = (letter: string, index: number) => {
-    playGameTone(muted, "tap");
-    const nextSelected = [...selected, letter];
-    setSelected(nextSelected);
-    setLetters((ls) => ls.filter((_, i) => i !== index));
-    if (nextSelected.length === round.answer.length) check(nextSelected.join(""));
-  };
+    setPaused(p: boolean) {
+      this.paused = p;
+      if (!p) {
+        this.lastFrame = performance.now();
+        this.lastTimerTick = this.lastFrame;
+      }
+    }
 
-  const modeLabel: Record<Mode, string> = {
-    susun: "Susun Kata",
-    rumpang: "Kata Rumpang",
-    pasangan: "Cari Pasangan",
-    makna: "Lawan Kata",
-  };
-  const progress = Math.min(100, ((Math.max(1, answered) - 1) / DIFFICULTY[difficulty].rounds) * 100);
-  const comboProgress = Math.min(100, (combo / 5) * 100);
+    move(x: number) {
+      this.targetX = Math.max(40, Math.min(W - 40, x));
+    }
 
+    spawn() {
+      const { valid, invalid } = RULES[this.rule];
+      const isValid = Math.random() < GAME_CONFIG.spawn.validRatio;
+      const pool = isValid ? valid : invalid;
+      const word = pool[Math.floor(Math.random() * pool.length)];
+      const { marginX, minSpawnGap } = GAME_CONFIG.spawn;
+
+      let x = marginX + Math.random() * (W - marginX * 2);
+      if (this.lastSpawnX !== null && Math.abs(x - this.lastSpawnX) < minSpawnGap) {
+        x = x < this.lastSpawnX ? x - minSpawnGap : x + minSpawnGap;
+        if (x < marginX) x = this.lastSpawnX + minSpawnGap;
+        if (x > W - marginX) x = this.lastSpawnX - minSpawnGap;
+        x = Math.max(marginX, Math.min(W - marginX, x));
+      }
+      this.lastSpawnX = x;
+
+      this.items.push({
+        id: this.itemId++,
+        x,
+        y: -60,
+        word,
+        valid: isValid,
+        speed: this.baseSpeed + Math.random() * GAME_CONFIG.spawn.speedJitter,
+        age: 0,
+        caught: false,
+        missed: false,
+        wobblePhase: Math.random() * Math.PI * 2,
+      });
+    }
+
+    burst(
+      x: number,
+      y: number,
+      color: string,
+      count: number,
+      shape: Particle["shape"] = "circle"
+    ) {
+      for (let i = 0; i < count; i++) {
+        const ang = Math.random() * Math.PI * 2;
+        const sp = 2 + Math.random() * 5;
+        this.particles.push({
+          x,
+          y,
+          vx: Math.cos(ang) * sp,
+          vy: Math.sin(ang) * sp - 2,
+          color,
+          life: 30 + Math.random() * 20,
+          maxLife: 50,
+          size: 3 + Math.random() * 5,
+          shape,
+        });
+      }
+    }
+
+    float(x: number, y: number, text: string, color: string, size: number = 20) {
+      this.floatTexts.push({ x, y, text, color, life: 50, size });
+    }
+
+    applyDifficulty() {
+      const elapsed = DURASI_GAME - this.waktuSisa;
+      const p = Math.min(1, elapsed / DURASI_GAME);
+      const { spawn } = GAME_CONFIG;
+      this.spawnRate =
+        spawn.initialRate + (spawn.minRate - spawn.initialRate) * Math.pow(p, 1.5);
+      this.baseSpeed =
+        spawn.initialSpeed + (spawn.maxSpeed - spawn.initialSpeed) * Math.pow(p, 1.4);
+    }
+
+    loop(now: number) {
+      if (!this.running) return;
+      const dt = now - this.lastFrame;
+      this.lastFrame = now;
+
+      if (!this.paused) {
+        // Timer
+        if (now - this.lastTimerTick >= 1000) {
+          this.waktuSisa--;
+          this.lastTimerTick = now;
+          if (this.waktuSisa <= 0) {
+            this.gameOver();
+            return;
+          }
+        }
+
+        this.applyDifficulty();
+
+        // Spawn
+        this.spawnTimer += dt;
+        if (this.spawnTimer > this.spawnRate) {
+          this.spawn();
+          this.spawnTimer = 0;
+        }
+
+        // Zelby movement with lerp
+        this.zelbyX += (this.targetX - this.zelbyX) * 0.22;
+
+        // Frenzy
+        if (this.frenzy > 0) {
+          this.frenzy -= dt;
+          this.bgHue = (this.bgHue + 2) % 360;
+        } else {
+          this.bgHue = 140;
+        }
+
+        // Parallax scroll
+        this.parallaxOffset += 0.3 * (1 + this.level * 0.1);
+
+        // Mist spawn
+        this.mistTimer += dt;
+        if (this.mistTimer > 3000) {
+          this.mistTimer = 0;
+          this.mistParticles.push({
+            x: -40,
+            y: 100 + Math.random() * (H - 250),
+            w: 60 + Math.random() * 80,
+            alpha: 0.08 + Math.random() * 0.06,
+            speed: 0.15 + Math.random() * 0.2,
+          });
+        }
+
+        // Update mist
+        for (let i = this.mistParticles.length - 1; i >= 0; i--) {
+          const m = this.mistParticles[i];
+          m.x += m.speed;
+          m.alpha -= 0.0002;
+          if (m.x > W + 60 || m.alpha <= 0) this.mistParticles.splice(i, 1);
+        }
+
+        // Collision detection
+        const { collision } = GAME_CONFIG;
+        const zelbyY = H - GAME_CONFIG.zelby.yCatch;
+
+        for (let i = this.items.length - 1; i >= 0; i--) {
+          const it = this.items[i];
+          if (it.caught || it.missed) continue;
+          it.y += it.speed * (dt / 16);
+          it.age += dt;
+
+          if (
+            it.y > zelbyY - collision.halfH &&
+            it.y < zelbyY + collision.halfH &&
+            Math.abs(it.x - this.zelbyX) < collision.halfW
+          ) {
+            it.caught = true;
+            this.items.splice(i, 1);
+
+            if (it.valid) {
+              // Correct catch
+              this.combo++;
+              this.streak++;
+              this.maxCombo = Math.max(this.maxCombo, this.combo);
+
+              // Level up based on streak
+              if (
+                this.streak >= GAME_CONFIG.streak.threshold &&
+                this.level < GAME_CONFIG.streak.maxLevel
+              ) {
+                this.level++;
+                this.streak = 0;
+                this.baseSpeed += GAME_CONFIG.streak.speedBonus;
+                playTone(mutedRef.current, 523, "sine", 0.15, 0.2, 784);
+                this.float(W / 2, H / 2 - 60, `LEVEL ${this.level}!`, "#A78BFA", 28);
+                this.burst(W / 2, H / 2 - 60, "#A78BFA", 20, "star");
+                flash("#A78BFA");
+              }
+
+              const points =
+                (this.frenzy > 0 ? 20 : 10) + Math.floor(this.combo / 5) * 5;
+              this.score += points;
+
+              if (this.combo === 10 && this.frenzy <= 0) {
+                this.frenzy = 5000;
+                playTone(mutedRef.current, 800, "square", 0.5, 0.2, 1600);
+                flash("#FBBF24");
+              } else {
+                playTone(
+                  mutedRef.current,
+                  600 + this.combo * 20,
+                  "sine",
+                  0.1,
+                  0.15,
+                  900
+                );
+              }
+
+              this.burst(it.x, it.y, "#FBBF24", 10, "star");
+              this.float(it.x, it.y - 26, `+${points}`, "#FBBF24", 22);
+            } else {
+              // Wrong catch
+              this.combo = 0;
+              this.streak = 0;
+              this.lives--;
+              this.shake = 15;
+              playTone(mutedRef.current, 150, "sawtooth", 0.3, 0.2, 80);
+              this.burst(it.x, it.y, "#EF4444", 15, "circle");
+              flash("#EF4444");
+              if (this.lives <= 0) {
+                this.gameOver();
+                return;
+              }
+            }
+          } else if (it.y > H + 50) {
+            it.missed = true;
+            this.items.splice(i, 1);
+            if (it.valid) {
+              this.combo = 0;
+              this.streak = 0;
+              this.lives--;
+              this.shake = 10;
+              playTone(mutedRef.current, 200, "triangle", 0.2, 0.15, 100);
+              if (this.lives <= 0) {
+                this.gameOver();
+                return;
+              }
+            } else {
+              this.score += 5;
+              playTone(mutedRef.current, 400, "sine", 0.05, 0.1);
+              this.float(it.x, H - 60, "+5", "#4ADE80", 18);
+            }
+          }
+        }
+
+        // Update particles
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+          const p = this.particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.3;
+          p.life--;
+          if (p.life <= 0) this.particles.splice(i, 1);
+        }
+
+        // Update float texts
+        for (let i = this.floatTexts.length - 1; i >= 0; i--) {
+          const f = this.floatTexts[i];
+          f.y -= 0.7;
+          f.life--;
+          if (f.life <= 0) this.floatTexts.splice(i, 1);
+        }
+
+        this.shake *= 0.8;
+      }
+
+      this.render();
+      this.updateHud();
+      requestAnimationFrame((t) => this.loop(t));
+    }
+
+    gameOver() {
+      this.running = false;
+      setFinalScore(this.score);
+      setHighScore((prev) => Math.max(prev, this.score));
+      // Calculate stars
+      let stars = 1;
+      if (this.score >= GAME_CONFIG.stars.three) stars = 3;
+      else if (this.score >= GAME_CONFIG.stars.two) stars = 2;
+      setFinalStars(stars);
+      setTimeout(() => setScreen("over"), 400);
+    }
+
+    updateHud() {
+      const h = {
+        score: this.score,
+        lives: this.lives,
+        combo: this.combo,
+        waktu: this.waktuSisa,
+        level: this.level,
+      };
+      if (
+        h.score === this.lastHud.score &&
+        h.lives === this.lastHud.lives &&
+        h.combo === this.lastHud.combo &&
+        h.waktu === this.lastHud.waktu &&
+        h.level === this.lastHud.level
+      )
+        return;
+      this.lastHud = h;
+      setHud(h);
+    }
+
+    render() {
+      const c = canvasRef.current?.getContext("2d");
+      if (!c) return;
+
+      c.save();
+      if (this.shake > 0.5) {
+        c.translate(
+          (Math.random() - 0.5) * this.shake,
+          (Math.random() - 0.5) * this.shake
+        );
+      }
+
+      /* ========== BACKGROUND — HUTAN KATA SCENE ========== */
+      /* Artwork bg_petualangankata.png (1024x1536, 2:3) matches the canvas
+         aspect (480x720, 2:3): drawn 1:1, no stretch, no crop. The treehouse,
+         BC identity, waterfall, river and path stay fully visible. While the
+         image loads, a deep forest base fill keeps frames clean. */
+
+      // Base fill (visible only before the artwork finishes loading)
+      c.fillStyle = "#0E2417";
+      c.fillRect(0, 0, W, H);
+
+      // Scene artwork — layer 1, behind everything gameplay
+      const bgImg = bgImgRef.current;
+      if (bgImg && bgImg.complete && bgImg.naturalWidth > 0) {
+        c.drawImage(bgImg, 0, 0, W, H);
+      }
+
+      // Light rays from canopy gaps
+      c.save();
+      for (const ray of this.lightRays) {
+        c.save();
+        c.translate(ray.x, 0);
+        c.rotate(ray.angle);
+        const rayGrad = c.createLinearGradient(0, 0, 0, H * 0.7);
+        rayGrad.addColorStop(0, `rgba(200,220,160,${ray.alpha})`);
+        rayGrad.addColorStop(1, "rgba(200,220,160,0)");
+        c.fillStyle = rayGrad;
+        c.fillRect(-ray.w / 2, 0, ray.w, H * 0.7);
+        c.restore();
+      }
+      c.restore();
+
+      // Mist/fog
+      c.save();
+      for (const m of this.mistParticles) {
+        const mistGrad = c.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.w);
+        mistGrad.addColorStop(0, `rgba(180,200,180,${m.alpha})`);
+        mistGrad.addColorStop(1, "rgba(180,200,180,0)");
+        c.fillStyle = mistGrad;
+        c.fillRect(m.x - m.w, m.y - m.w * 0.4, m.w * 2, m.w * 0.8);
+      }
+      c.restore();
+
+      /* ========== RULE BANNER ========== */
+      c.fillStyle = "rgba(10, 20, 40, 0.85)";
+      c.beginPath();
+      if (c.roundRect) c.roundRect(30, 16, W - 60, 44, 12);
+      else c.rect(30, 16, W - 60, 44);
+      c.fill();
+      c.strokeStyle = RULES[this.rule].color;
+      c.lineWidth = 2;
+      c.stroke();
+      c.font = "800 16px system-ui, sans-serif";
+      c.fillStyle = RULES[this.rule].color;
+      c.textAlign = "center";
+      c.fillText(`TANGKAP: ${RULES[this.rule].label}`, W / 2, 44);
+
+      /* ========== ITEMS — pisangzelby2.png + WORD ON BANANA ========== */
+      const bananaImg = bananaImgRef.current;
+      const bananaReady =
+        !!bananaImg && bananaImg.complete && bananaImg.naturalWidth > 0;
+      const { crop, naturalW, naturalH, drawW, drawH } = GAME_CONFIG.banana;
+
+      for (const it of this.items) {
+        if (it.caught || it.missed) continue;
+        c.save();
+        c.translate(it.x, it.y);
+
+        // Spawn pop-in + gentle wobble
+        const pop = Math.min(1, 0.35 + it.age / 130);
+        c.scale(pop, pop);
+        const wobble = Math.sin(it.y * 0.025 + it.wobblePhase) * 0.12;
+        c.rotate(wobble);
+
+        if (bananaReady) {
+          const useCrop =
+            bananaImg.naturalWidth === naturalW &&
+            bananaImg.naturalHeight === naturalH;
+          if (useCrop) {
+            c.drawImage(
+              bananaImg,
+              crop.sx,
+              crop.sy,
+              crop.sw,
+              crop.sh,
+              -drawW / 2,
+              -drawH / 2,
+              drawW,
+              drawH
+            );
+          } else {
+            c.drawImage(
+              bananaImg,
+              -drawW / 2,
+              -drawH / 2,
+              drawW,
+              drawH
+            );
+          }
+        } else {
+          // Fallback banana shape
+          c.fillStyle = "#FBBF24";
+          c.beginPath();
+          c.ellipse(0, 0, drawW / 2, drawH / 2, 0, 0, Math.PI * 2);
+          c.fill();
+          c.strokeStyle = "#D4A017";
+          c.lineWidth = 2;
+          c.stroke();
+        }
+
+        /* WORD drawn ON the banana body — natural text placement */
+        const wordLen = it.word.length;
+        const fontSize = wordLen > 6 ? 11 : wordLen > 4 ? 13 : 15;
+
+        // Text background — subtle rounded rect that follows banana body
+        const pillW = wordLen * fontSize * 0.58 + 12;
+        const pillH = fontSize + 8;
+        c.fillStyle = "rgba(255,255,255,0.88)";
+        c.beginPath();
+        if (c.roundRect)
+          c.roundRect(-pillW / 2, -pillH / 2, pillW, pillH, pillH / 2);
+        else c.rect(-pillW / 2, -pillH / 2, pillW, pillH);
+        c.fill();
+
+        // Subtle border matching banana theme
+        c.strokeStyle = "rgba(200,160,30,0.35)";
+        c.lineWidth = 1;
+        c.stroke();
+
+        // Word text
+        c.fillStyle = "#1A1200";
+        c.font = `800 ${fontSize}px system-ui, sans-serif`;
+        c.textAlign = "center";
+        c.textBaseline = "middle";
+        c.fillText(it.word, 0, 1);
+
+        c.restore();
+      }
+
+      /* ========== ZELBY CHARACTER ========== */
+      const zX = this.zelbyX;
+      const zY = H - GAME_CONFIG.zelby.yOffset;
+      const zScale = this.frenzy > 0 ? 1.2 : 1;
+      const img =
+        this.frenzy > 0
+          ? zelbyCelebrateImgRef.current
+          : zelbyImgRef.current;
+
+      if (img && imagesLoaded.current) {
+        c.save();
+        c.translate(zX, zY);
+        c.scale(zScale, zScale);
+        const iw = GAME_CONFIG.zelby.w;
+        const ih = GAME_CONFIG.zelby.h;
+
+        // Shadow under Zelby
+        c.fillStyle = "rgba(0,0,0,0.2)";
+        c.beginPath();
+        c.ellipse(0, ih / 2 + 4, iw * 0.4, 4, 0, 0, Math.PI * 2);
+        c.fill();
+
+        // Zelby image
+        c.drawImage(img, -iw / 2, -ih / 2, iw, ih);
+
+        // Frenzy glow ring
+        if (this.frenzy > 0) {
+          c.shadowColor = "#FF6B6B";
+          c.shadowBlur = 20;
+          c.strokeStyle = "rgba(255,107,107,0.5)";
+          c.lineWidth = 3;
+          c.beginPath();
+          c.arc(0, 0, 44, 0, Math.PI * 2);
+          c.stroke();
+          c.shadowBlur = 0;
+        }
+
+        // Level indicator under Zelby
+        if (this.level > 1) {
+          c.font = "700 9px system-ui, sans-serif";
+          c.fillStyle = "#A78BFA";
+          c.textAlign = "center";
+          c.fillText(`LV.${this.level}`, 0, ih / 2 + 14);
+        }
+
+        c.restore();
+      } else {
+        // Fallback: simple tarsius
+        c.save();
+        c.translate(zX, zY);
+        c.scale(zScale, zScale);
+        c.fillStyle = "#8B5CF6";
+        c.beginPath();
+        c.arc(0, 0, 28, 0, Math.PI * 2);
+        c.fill();
+        c.fillStyle = "#E9C46A";
+        c.beginPath();
+        c.arc(0, -2, 18, 0, Math.PI * 2);
+        c.fill();
+        c.fillStyle = "#161B3A";
+        c.beginPath();
+        c.arc(-6, -6, 4, 0, Math.PI * 2);
+        c.fill();
+        c.beginPath();
+        c.arc(6, -6, 4, 0, Math.PI * 2);
+        c.fill();
+        c.strokeStyle = "#161B3A";
+        c.lineWidth = 2;
+        c.beginPath();
+        c.arc(0, 4, 5, 0, Math.PI);
+        c.stroke();
+        c.restore();
+      }
+
+      /* ========== PARTICLES ========== */
+      for (const p of this.particles) {
+        c.globalAlpha = Math.min(1, p.life / (p.maxLife * 0.4));
+        c.fillStyle = p.color;
+        if (p.shape === "star") {
+          // Star shape
+          c.save();
+          c.translate(p.x, p.y);
+          c.rotate(p.life * 0.1);
+          c.beginPath();
+          for (let j = 0; j < 5; j++) {
+            const angle = (j * 4 * Math.PI) / 5 - Math.PI / 2;
+            const r = j % 2 === 0 ? p.size : p.size * 0.45;
+            if (j === 0) c.moveTo(Math.cos(angle) * r, Math.sin(angle) * r);
+            else c.lineTo(Math.cos(angle) * r, Math.sin(angle) * r);
+          }
+          c.closePath();
+          c.fill();
+          c.restore();
+        } else {
+          c.beginPath();
+          c.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          c.fill();
+        }
+      }
+      c.globalAlpha = 1;
+
+      /* ========== FLOAT TEXTS ========== */
+      for (const f of this.floatTexts) {
+        c.globalAlpha = Math.min(1, f.life / 15);
+        c.font = `900 ${f.size}px system-ui, sans-serif`;
+        c.fillStyle = f.color;
+        c.textAlign = "center";
+        c.fillText(f.text, f.x, f.y);
+      }
+      c.globalAlpha = 1;
+
+      /* ========== FRENZY BANNER ========== */
+      if (this.frenzy > 0) {
+        c.save();
+        c.font = "900 28px system-ui, sans-serif";
+        c.fillStyle = "#FF6B6B";
+        c.textAlign = "center";
+        c.shadowColor = "#FF6B6B";
+        c.shadowBlur = 15;
+        c.fillText("FRENZY MODE! 2X SKOR!", W / 2, H - 140);
+        c.shadowBlur = 0;
+        c.restore();
+      }
+
+      /* ========== COMBO BANNER ========== */
+      if (this.combo >= 3) {
+        c.save();
+        c.font = "900 22px system-ui, sans-serif";
+        c.fillStyle = "#4ADE80";
+        c.textAlign = "center";
+        c.shadowColor = "#4ADE80";
+        c.shadowBlur = 10;
+        c.fillText(`${this.combo}x RENTETAN!`, W / 2, 95);
+        c.shadowBlur = 0;
+        c.restore();
+      }
+
+      c.restore(); // main save
+    }
+  }
+
+  /* ========== START GAME ========== */
+  const startGame = useCallback(
+    (rule: RuleKey) => {
+      ensureAudio();
+      setScreen("game");
+      setPaused(false);
+      setHud({
+        score: 0,
+        lives: GAME_CONFIG.lives,
+        combo: 0,
+        waktu: DURASI_GAME,
+        level: 1,
+      });
+      setFinalScore(0);
+      setFinalStars(0);
+      engineRef.current?.stop();
+      const eng = new Engine(rule);
+      engineRef.current = eng;
+      requestAnimationFrame(() => eng.start());
+    },
+    []
+  );
+
+  const togglePause = useCallback(() => {
+    const g = engineRef.current;
+    if (!g || !g.running) return;
+    const next = !g.paused;
+    g.setPaused(next);
+    setPaused(next);
+  }, []);
+
+  const quit = useCallback(() => {
+    engineRef.current?.stop();
+    setPaused(false);
+    setScreen("start");
+  }, []);
+
+  const handlePointer = useCallback(
+    (e: React.PointerEvent<HTMLCanvasElement>) => {
+      if (!engineRef.current || engineRef.current.paused) return;
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * W;
+      engineRef.current.move(x);
+    },
+    []
+  );
+
+  const chunky =
+    "border-4 border-[#161B3A] dark:border-white/25 shadow-[6px_6px_0_#0891B2]";
+  const btn = `inline-flex items-center justify-center gap-2 font-extrabold rounded-2xl ${chunky} transition-transform active:translate-x-1.5 active:translate-y-1.5 active:shadow-none hover:-translate-x-0.5 hover:-translate-y-0.5`;
 
   return (
-    <div className="fixed inset-0 z-[60] overflow-y-auto bg-[#FFF8EA] text-[#241B36]">
+    <div className="game-env game-env-zelby fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#061214] dark:to-[#0A1C20] text-[#161B3A] dark:text-[#F1EDFF]">
       <style>{`
-        @keyframes bk-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-        @keyframes bk-pop{0%{transform:scale(.75);opacity:0}60%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}
-        @keyframes bk-bounce{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-12px) rotate(-2deg)}}
-        @keyframes bk-shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-        @keyframes bk-star{0%{transform:scale(0) rotate(-25deg)}70%{transform:scale(1.15) rotate(8deg)}100%{transform:scale(1)}}
-        @keyframes bk-letter{0%{transform:translateY(16px) scale(.8);opacity:0}100%{transform:none;opacity:1}}
-        @keyframes bk-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
-        @keyframes bk-glow{0%{box-shadow:0 0 0 0 rgba(95,191,131,.4)}100%{box-shadow:0 0 0 18px rgba(95,191,131,0)}}
-        .bk-pop{animation:bk-pop .38s cubic-bezier(.2,.8,.2,1)}
-        .bk-float{animation:bk-float 2.6s ease-in-out infinite}
-        .bk-bounce{animation:bk-bounce 1.8s ease-in-out infinite}
-        .bk-star{animation:bk-star .5s cubic-bezier(.2,.8,.2,1) both}
-        .bk-letter{animation:bk-letter .25s cubic-bezier(.2,.8,.2,1) both}
-        .bk-shake{animation:bk-shake .32s ease-in-out}
-        .bk-glow{animation:bk-glow .7s ease-out}
-        @media (prefers-reduced-motion: reduce){.bk-pop,.bk-float,.bk-bounce,.bk-star,.bk-letter,.bk-shake,.bk-glow{animation:none!important;transition:none!important}}
+        @keyframes pk-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes pk-pop{0%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.3) rotate(8deg)}100%{transform:scale(1) rotate(0)}}
+        @keyframes pk-star1{0%{transform:scale(0) rotate(0)}50%{transform:scale(1.3) rotate(180deg)}100%{transform:scale(1) rotate(360deg)}}
+        @keyframes pk-star2{0%{transform:scale(0) rotate(0)}60%{transform:scale(1.2) rotate(200deg)}100%{transform:scale(1) rotate(360deg)}}
+        @keyframes pk-star3{0%{transform:scale(0) rotate(0)}70%{transform:scale(1.1) rotate(240deg)}100%{transform:scale(1) rotate(360deg)}}
+        .pk-screen{animation:pk-fade .35s ease}
+        .pk-pop{animation:pk-pop .5s ease}
+        .pk-star1{animation:pk-star1 .5s ease .1s both}
+        .pk-star2{animation:pk-star2 .5s ease .3s both}
+        .pk-star3{animation:pk-star3 .5s ease .5s both}
       `}</style>
 
-      <div className="min-h-screen relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none opacity-70" style={{ background: "radial-gradient(circle at 15% 15%, #FFE4B8 0 8%, transparent 25%), radial-gradient(circle at 85% 20%, #D8F6E5 0 9%, transparent 28%), linear-gradient(180deg,#FFF9EE,#E9F8EF)" }} />
-        <div className="relative max-w-5xl mx-auto px-4 py-4 md:py-7">
-          <header className="flex items-center justify-between gap-3 mb-5">
-            <div className="flex items-center gap-3">
-              <GameBackButton href="/arena/game" label="Kembali" title="Kembali ke Arena" />
-              <div className="w-12 h-12 rounded-2xl bg-white border-4 border-[#241B36] shadow-[4px_4px_0_#F5B82E] overflow-hidden">
-                <img src={zelby.happy} alt="Zelby" className="w-full h-full object-cover" />
+      {/* Screen flash overlay */}
+      {screenFlash && (
+        <div
+          className="fixed inset-0 z-[70] pointer-events-none transition-opacity duration-200"
+          style={{ backgroundColor: screenFlash, opacity: 0.25 }}
+        />
+      )}
+
+      <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col items-center">
+        {/* Header */}
+        <div className="w-full flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2.5">
+            <GameBackButton href="/arena/game" label="Kembali ke Arena" title="Kembali ke Arena" />
+            <div className="w-11 h-11 rounded-2xl overflow-hidden border-4 border-[#161B3A] dark:border-white/25 shadow-[4px_4px_0_#0891B2] shrink-0 bg-white dark:bg-[#0C2228] pk-pop">
+              <img
+                src="/junior/karakter/zelby_happy.webp"
+                alt="Zelby"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <div className="font-extrabold text-xl leading-none font-game-display">
+                Petualangan Hutan Kata
               </div>
-              <div>
-                <div className="font-black text-xl md:text-2xl tracking-tight">Bermain Kata</div>
-                <div className="text-xs md:text-sm font-bold text-[#6B6078]">Dunia kata bersama Zelby ✨</div>
+              <div className="text-[11px] font-semibold opacity-60 mt-0.5">
+                Tangkap kata yang benar!
               </div>
             </div>
-            <div className="flex items-center gap-2">
-            <button onClick={() => setShowGuide(true)} className="hidden sm:inline-flex rounded-2xl bg-white border-3 border-[#241B36] shadow-[3px_3px_0_#F5B82E] px-4 py-2 text-sm font-black">Cara bermain</button>
-            <button onClick={() => setMuted((v) => !v)} className="w-11 h-11 rounded-2xl bg-white border-3 border-[#241B36] shadow-[3px_3px_0_#F5B82E] flex items-center justify-center" aria-label={muted ? "Nyalakan suara" : "Matikan suara"}>
-              {muted ? <VolumeX size={19}/> : <Volume2 size={19}/>}
-            </button>
-            </div>
-          </header>
-
-          {screen === "start" && (
-            <main className="grid lg:grid-cols-[1.15fr_.85fr] gap-5 items-stretch bk-pop">
-              <section className="relative overflow-hidden rounded-[32px] bg-white border-4 border-[#241B36] shadow-[8px_8px_0_#241B36] p-6 md:p-9">
-                <div className="absolute -right-10 -top-10 w-44 h-44 rounded-full bg-[#FFE3A1]" />
-                <div className="relative z-10">
-                  <span className="inline-flex items-center gap-2 rounded-full bg-[#E8F7EE] border-2 border-[#3C9C69] px-3 py-1 text-xs font-black text-[#28744B]"><Sparkles size={14}/> PETUALANGAN KATA</span>
-                  <h1 className="mt-4 text-4xl md:text-6xl font-black tracking-tight leading-[.95]">Main kata.<br/><span className="text-[#F2A900]">Kumpulkan bintang.</span></h1>
-                  <p className="mt-4 max-w-xl text-base md:text-lg font-semibold text-[#675D70]">Bukan sekadar menjawab soal. Pilih tantangan, bangun kombo, temukan kata baru, dan lihat Zelby ikut bereaksi.</p>
-                  <div className="grid grid-cols-3 gap-2 mt-5 max-w-xl">
-                    <div className="rounded-2xl bg-[#FFF8E7] border-2 border-[#E8CC78] p-3"><Trophy size={17}/><div className="text-[10px] font-black text-[#89701A] mt-2">REKOR</div><div className="font-black text-lg">{bestScore}</div></div>
-                    <div className="rounded-2xl bg-[#EEF9F2] border-2 border-[#B9DCC6] p-3"><Flame size={17}/><div className="text-[10px] font-black text-[#4F8D68] mt-2">KOMBO</div><div className="font-black text-lg">{bestCombo}×</div></div>
-                    <div className="rounded-2xl bg-[#F3EEFF] border-2 border-[#D7C8F0] p-3"><BookOpen size={17}/><div className="text-[10px] font-black text-[#705B91] mt-2">MAIN</div><div className="font-black text-lg">{gamesPlayed}</div></div>
-                  </div>
-                  <div className="mt-7">
-                    <div className="flex items-end justify-between gap-3 mb-3">
-                      <div>
-                        <div className="text-[11px] font-black tracking-[.18em] text-[#6B6078]">PILIH ARENA</div>
-                        <div className="font-black text-lg">Kamu mau bermain yang mana?</div>
-                      </div>
-                      <div className="hidden sm:block text-xs font-bold text-[#8A7F90]">4 permainan</div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      {([
-                        ["susun","Susun Kata","🔤","Rangkai huruf menjadi kata.","#FFF1BA","#F5B82E"],
-                        ["rumpang","Kata Rumpang","🧩","Lengkapi huruf yang hilang.","#E8F7EE","#5FBF83"],
-                        ["pasangan","Cari Pasangan","🖼️","Cocokkan gambar dan kata.","#EAF3FF","#75A9E8"],
-                        ["makna","Lawan Kata","💡","Temukan kata yang berlawanan.","#F3ECFF","#A77BD8"],
-                      ] as const).map(([m,label,icon,desc,bg,accent]) => (
-                        <button key={m} onClick={() => setMode(m)} className="relative text-left rounded-[22px] border-3 border-[#241B36] p-4 transition-all hover:-translate-y-1" style={{ background: mode === m ? bg : "#FAFAF8", boxShadow: mode === m ? `4px 4px 0 ${accent}` : "3px 3px 0 #D9D2C6" }}>
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="w-11 h-11 rounded-2xl bg-white border-2 border-[#241B36] flex items-center justify-center text-2xl">{icon}</div>
-                            {mode === m && <span className="w-7 h-7 rounded-full bg-[#5FBF83] border-2 border-[#241B36] text-white flex items-center justify-center"><Check size={15} strokeWidth={4}/></span>}
-                          </div>
-                          <div className="font-black mt-3">{label}</div>
-                          <div className="text-xs font-semibold text-[#706678] mt-1 leading-snug">{desc}</div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="mt-4 rounded-2xl bg-[#F6FBF7] border-2 border-[#B9DCC6] p-4">
-                    <div className="text-xs font-black tracking-widest text-[#5E9F72]">PILIH TINGKAT PETUALANGAN</div>
-                    <div className="grid grid-cols-3 gap-2 mt-3">
-                      {(Object.keys(DIFFICULTY) as Difficulty[]).map((d) => (
-                        <button key={d} onClick={() => setDifficulty(d)} className={`rounded-xl border-2 border-[#241B36] py-2 px-2 text-sm font-black ${difficulty === d ? "bg-[#5FBF83] text-white shadow-[2px_2px_0_#241B36]" : "bg-white"}`}>{DIFFICULTY[d].label}</button>
-                      ))}
-                    </div>
-                    <div className="text-xs font-bold text-[#746A7B] mt-2">{DIFFICULTY[difficulty].rounds} tantangan · {DIFFICULTY[difficulty].lives} kesempatan</div>
-                  </div>
-                  <div className="flex gap-3 mt-4">
-                    <button onClick={() => start(mode)} className="flex-1 rounded-2xl bg-[#F5B82E] border-3 border-[#241B36] shadow-[4px_4px_0_#241B36] py-3 font-black">Mulai petualangan 🚀</button>
-                    <button onClick={() => setShowGuide(true)} className="rounded-2xl bg-white border-3 border-[#241B36] shadow-[3px_3px_0_#241B36] px-5 py-3 font-black">Cara bermain</button>
-                  </div>
-                </div>
-              </section>
-
-              <section className="relative rounded-[32px] bg-[#DFF4E8] border-4 border-[#241B36] shadow-[8px_8px_0_#241B36] overflow-hidden min-h-[360px]">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_24%,rgba(255,255,255,.95),transparent_20%),radial-gradient(circle_at_80%_16%,rgba(255,255,255,.7),transparent_18%),linear-gradient(160deg,#BCEAD1,#EAF9D8)]" />
-                <div className="absolute -left-8 bottom-8 w-28 h-28 rounded-full bg-[#A9DDBD]/70" />
-                <div className="absolute -right-8 bottom-0 w-40 h-40 rounded-full bg-[#C8E8A9]/80" />
-                <div className="absolute left-5 top-5 rounded-full bg-white/85 border-2 border-[#241B36] px-3 py-1 text-[10px] font-black tracking-widest">DUNIA ZELBY</div>
-                <div className="absolute right-5 top-5 flex gap-1"><span>⭐</span><span>🌱</span><span>🍃</span></div>
-                <img src={zelby.wave} alt="Zelby" className={`absolute z-10 left-1/2 -translate-x-1/2 bottom-12 w-64 md:w-72 ${reducedMotion ? "" : "bk-bounce"} drop-shadow-[0_18px_16px_rgba(36,27,54,.16)]`} />
-                <div className="absolute z-20 left-5 right-5 bottom-5 rounded-[22px] bg-white/95 border-3 border-[#241B36] p-4 shadow-[4px_4px_0_#F5B82E]">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[#FFF1BA] border-2 border-[#241B36] flex items-center justify-center text-xl">💬</div>
-                    <div><div className="font-black">“Ayo, kita main!”</div><div className="text-xs font-bold text-[#756B7D] mt-0.5">Pilih permainanmu. Zelby sudah siap.</div></div>
-                  </div>
-                </div>
-              </section>
-            </main>
-          )}
-
-          {showGuide && (
-            <div className="fixed inset-0 z-[80] bg-[#241B36]/55 backdrop-blur-sm flex items-center justify-center p-4" role="dialog" aria-modal="true">
-              <section className="w-full max-w-xl rounded-[32px] bg-white border-4 border-[#241B36] shadow-[10px_10px_0_#F5B82E] p-6 md:p-8 bk-pop">
-                <div className="flex items-center gap-4"><img src={zelby.happy} alt="Zelby" className="w-20 h-20 object-contain bk-bounce"/><div><div className="text-xs font-black text-[#5E9F72] tracking-widest">PANDUAN BERMAIN</div><h2 className="text-3xl font-black">Main bersama Zelby</h2></div></div>
-                <div className="grid md:grid-cols-3 gap-3 mt-6">
-                  {[["1","Pilih permainan","Mulai dari mode yang kamu suka."],["2","Lihat gambar","Gunakan gambar dan petunjuk untuk menemukan jawaban."],["3","Kumpulkan bintang","Jawab dengan tepat dan bangun kombo."]].map(([n,t,d]) => <div key={n} className="rounded-2xl bg-[#F7FBF8] border-2 border-[#B9DCC6] p-4"><div className="w-9 h-9 rounded-xl bg-[#F5B82E] border-2 border-[#241B36] flex items-center justify-center font-black">{n}</div><div className="font-black mt-3">{t}</div><div className="text-sm font-semibold text-[#716778] mt-1">{d}</div></div>)}
-                </div>
-                <div className="mt-5 rounded-2xl bg-[#FFF7D9] border-2 border-[#E7C76B] p-4 text-sm font-semibold"><b>Ingat:</b> kalau belum tepat, tidak apa-apa. Coba lagi dan pelajari petunjuknya. Di sini kita bermain sambil belajar.</div>
-                <button onClick={() => setShowGuide(false)} className="w-full mt-5 rounded-2xl bg-[#5FBF83] border-3 border-[#241B36] shadow-[4px_4px_0_#241B36] py-3 font-black text-white">Aku siap bermain!</button>
-              </section>
-            </div>
-          )}
-
-          {screen === "game" && (
-            <main className="max-w-3xl mx-auto bk-pop">
-              <div className="flex items-center justify-between gap-3 mb-3">
-                <div className="flex items-center gap-2">
-                  <span className="rounded-full bg-[#241B36] text-white px-3 py-1.5 text-[11px] font-black">{modeLabel[mode]}</span>
-                  <span className="text-xs font-bold text-[#756B7D]">{DIFFICULTY[difficulty].label} · {DIFFICULTY[difficulty].rounds} tantangan</span>
-                </div>
-                <div className="text-xs font-black text-[#8A7F90]">PETUALANGAN {Math.min(answered, DIFFICULTY[difficulty].rounds)}/{DIFFICULTY[difficulty].rounds}</div>
-              </div>
-              <div className="grid grid-cols-4 gap-2 mb-4">
-                {[["Skor",score],["Kombo",combo],["Nyawa",lives],["Petualangan",`${Math.min(answered, DIFFICULTY[difficulty].rounds)}/${DIFFICULTY[difficulty].rounds}`]].map(([label,value]) => (
-                  <div key={String(label)} className="rounded-2xl bg-white border-3 border-[#241B36] shadow-[3px_3px_0_#F5B82E] px-3 py-2">
-                    <div className="text-[10px] font-black text-[#7C7182]">{label}</div>
-                    <div className="font-black text-xl leading-none mt-1">{value}</div>
-                  </div>
-                ))}
-              </div>
-
-              <section className="relative overflow-hidden rounded-[32px] bg-white border-4 border-[#241B36] shadow-[8px_8px_0_#241B36]">
-                <div className="h-2 bg-[#F5B82E]">
-                  <div className="h-full bg-[#5FBF83] transition-all duration-500" style={{ width: `${progress}%` }} />
-                </div>
-                <div className="p-5 md:p-8">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <div className="text-xs font-black uppercase tracking-widest text-[#8A7F90]">{modeLabel[mode]} · {DIFFICULTY[difficulty].label}</div>
-                      <h2 className="text-2xl md:text-4xl font-black mt-1">Siap pecahkan kata ini?</h2>
-                      <p className="font-bold text-[#716778] mt-1 pr-24">{message}</p>
-                      <div className="mt-3 flex items-center gap-2 max-w-xs"><div className="flex-1 h-2 rounded-full bg-[#EEE8EF] overflow-hidden"><div className="h-full bg-[#F5B82E] transition-all duration-300" style={{ width: `${comboProgress}%` }} /></div><span className="text-[10px] font-black text-[#8A7F90]">KOMBO</span></div>
-                    </div>
-                    <img src={zelbyPose} alt="Zelby" className={`w-20 md:w-28 shrink-0 ${reducedMotion ? "" : "bk-bounce"}`} />
-                  </div>
-
-                  <div className="mt-6 grid md:grid-cols-[.8fr_1.2fr] gap-5 items-center">
-                    <div className={`rounded-[28px] bg-[#F2FAF5] border-3 p-4 min-h-52 flex items-center justify-center relative overflow-hidden ${feedback === "wrong" ? "border-[#E38A8A] bk-shake" : feedback === "correct" ? "border-[#5FBF83] bk-glow" : "border-[#B9DCC6]"}`}>
-                      <img src={round.item.image} alt={round.item.word} className={`max-h-44 max-w-full object-contain drop-shadow-[0_12px_10px_rgba(36,27,54,.13)] ${reducedMotion ? "" : "bk-float"}`} />
-                      {feedback && <div className={`absolute inset-0 flex items-center justify-center bg-white/55 ${reducedMotion ? "" : "bk-pop"}`}><div className={`rounded-full px-5 py-2.5 border-3 border-[#241B36] shadow-[4px_4px_0_#241B36] font-black text-lg ${feedback === "correct" ? "bg-[#8FE0A9]" : "bg-[#FFB3B3]"}`}>{feedback === "correct" ? "Benar! ✨" : "Coba lagi 💪"}</div></div>}
-                    </div>
-
-                    <div>
-                      {mode === "susun" && (
-                        <>
-                          <div className="text-center text-3xl md:text-5xl font-black tracking-[.18em] min-h-16 flex items-center justify-center rounded-2xl bg-[#FFF7D9] border-3 border-[#241B36]">
-                            {selected.length ? selected.join("") : "— — —"}
-                          </div>
-                          <div className="grid grid-cols-4 gap-2 mt-4">
-                            {letters.map((l,i) => <button key={`${l}-${i}`} onClick={() => chooseLetter(l,i)} disabled={locked} className="bk-letter aspect-square rounded-2xl bg-white border-3 border-[#241B36] shadow-[3px_3px_0_#F5B82E] font-black text-2xl hover:-translate-y-1 transition-transform">{l}</button>)}
-                          </div>
-                        </>
-                      )}
-
-                      {(mode === "rumpang" || mode === "makna") && (
-                        <>
-                          <div className="text-center rounded-2xl bg-[#FFF7D9] border-3 border-[#241B36] p-5 text-3xl md:text-5xl font-black tracking-[.16em]">{round.item.clue || round.item.word}</div>
-                          <div className="grid grid-cols-2 gap-3 mt-4">
-                            {round.options.map((o,i) => <button key={`${o}-${i}`} onClick={() => check(o)} disabled={locked} className="rounded-2xl bg-white border-3 border-[#241B36] shadow-[4px_4px_0_#F5B82E] py-4 px-3 font-black text-lg hover:-translate-y-1 transition-transform">{o}</button>)}
-                          </div>
-                        </>
-                      )}
-
-                      {mode === "pasangan" && (
-                        <>
-                          <div className="font-black text-center text-lg mb-3">Pilih gambar, lalu pilih pasangannya.</div>
-                          <div className="grid grid-cols-2 gap-3">
-                            {(round.matchItems ?? []).map((matchItem) => <button key={matchItem.word} onClick={() => setSelectedMatch(matchItem.word)} disabled={locked} className={`rounded-2xl bg-white border-3 border-[#241B36] p-2 transition-transform ${selectedMatch === matchItem.word ? "ring-4 ring-[#5FBF83] -translate-y-1" : "hover:-translate-y-1"}`}><img src={matchItem.image} alt={matchItem.word} className="h-20 w-full object-contain"/><span className="block text-xs font-black mt-1">Gambar</span></button>)}
-                          </div>
-                          <div className="grid grid-cols-2 gap-3 mt-3">
-                            {(round.matchItems ?? []).map((matchItem) => <button key={`word-${matchItem.word}`} disabled={!selectedMatch} onClick={() => { if (selectedMatch && !locked) { if (selectedMatch === round.answer && matchItem.word === round.answer) correct(); else wrong(); } }} className={`rounded-2xl border-3 border-[#241B36] py-3 font-black ${selectedMatch ? "bg-[#FFF7D9] shadow-[3px_3px_0_#F5B82E]" : "bg-[#F1EEF2] text-[#A69CAA]"}`}>{matchItem.word}</button>)}
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </section>
-            </main>
-          )}
-
-          {screen === "over" && (
-            <main className="max-w-lg mx-auto bk-pop">
-              <section className="rounded-[34px] bg-white border-4 border-[#241B36] shadow-[9px_9px_0_#241B36] p-7 md:p-10 text-center">
-                <img src={zelby.celebrate} alt="Zelby merayakan hasil" className={`w-44 mx-auto ${reducedMotion ? "" : "bk-bounce"}`} />
-                <div className="text-sm font-black text-[#6D6275] mt-3">Permainan selesai</div>
-                <h1 className="text-4xl md:text-5xl font-black mt-1">Kamu keren! 🎉</h1>
-                <div className="flex justify-center gap-2 my-6">
-                  {[1,2,3].map((s) => <Star key={s} size={48} className={`bk-star ${s <= stars ? "text-[#F5B82E] fill-[#F5B82E]" : "text-[#D9D4DD]"}`} />)}
-                </div>
-                <div className="rounded-3xl bg-[#241B36] text-white p-5 shadow-[5px_5px_0_#F5B82E]">
-                  <div className="text-xs font-black opacity-60">TOTAL SKOR</div>
-                  <div className="text-6xl font-black mt-1">{score}</div>
-                </div>
-                <p className="font-bold text-[#6E6475] mt-5">Zelby bangga karena kamu terus mencoba.</p>
-                <div className="mt-5 text-left rounded-2xl bg-[#F6FBF7] border-2 border-[#B9DCC6] p-4">
-                  <div className="text-xs font-black tracking-widest text-[#5E9F72]">KATA YANG KAMU TEMUKAN</div>
-                  <div className="flex flex-wrap gap-2 mt-3">{collectedWords.length ? collectedWords.map((word) => <span key={word} className="rounded-full bg-white border-2 border-[#B9DCC6] px-3 py-1.5 text-sm font-black">{word}</span>) : <span className="text-sm font-bold text-[#746A7B]">Coba lagi untuk mengumpulkan kata.</span>}</div>
-                </div>
-                <div className="grid grid-cols-2 gap-3 mt-4 text-left">
-                  <div className="rounded-2xl bg-[#FFF7D9] border-2 border-[#E7C76B] p-4"><div className="text-xs font-black text-[#8B761D]">REKOR</div><div className="text-2xl font-black mt-1">{bestScore}</div></div>
-                  <div className="rounded-2xl bg-[#EEF7FF] border-2 border-[#B7D9F4] p-4"><div className="text-xs font-black text-[#4D7394]">KOMBO TERBAIK</div><div className="text-2xl font-black mt-1">{maxCombo}×</div></div>
-                </div>
-                <div className="flex gap-3 justify-center mt-6">
-                  <button onClick={() => start(mode)} className="rounded-2xl border-3 border-[#241B36] bg-[#F5B82E] px-5 py-3 font-black shadow-[4px_4px_0_#241B36]"><RotateCcw size={17} className="inline mr-2"/>Main lagi</button>
-                  <button onClick={() => setScreen("start")} className="rounded-2xl border-3 border-[#241B36] bg-white px-5 py-3 font-black shadow-[4px_4px_0_#241B36]">Pilih permainan</button>
-                </div>
-              </section>
-            </main>
-          )}
+          </div>
+          <button
+            onClick={() => setMuted((m) => !m)}
+            className={`${btn} game-sound-btn w-11 h-11 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`}
+            aria-label={muted ? "Nyalakan suara" : "Matikan suara"}
+          >
+            {muted ? (
+              <VolumeX className="w-5 h-5" />
+            ) : (
+              <Volume2 className="w-5 h-5" />
+            )}
+          </button>
         </div>
+
+        {/* ========== START SCREEN ========== */}
+        {screen === "start" && (
+          <div className={`pk-screen game-env-card bg-white dark:bg-gradient-to-br dark:from-[#0C2228] dark:to-[#142E34] rounded-3xl ${chunky} p-6 text-center w-full max-w-md`}>
+            <div className="w-24 h-24 mx-auto mb-3 rounded-3xl overflow-hidden border-4 border-[#161B3A] dark:border-white/25 shadow-[6px_6px_0_#0891B2]">
+              <img
+                src="/junior/karakter/zelby_wave.webp"
+                alt="Zelby si Tarsius"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <h1 className="font-extrabold text-3xl mb-2 font-game-display">
+              Petualangan Hutan Kata
+            </h1>
+            <p className="opacity-70 text-sm mb-1">
+              Bantu Zelby menangkap <strong>kata yang benar</strong> dan
+              hindari yang salah!
+            </p>
+            <p className="opacity-60 text-xs mb-5">
+              <Clock className="w-3 h-3 inline mr-1" />
+              90 detik &middot;{" "}
+              <Heart className="w-3 h-3 inline mx-1" />3 nyawa &middot;{" "}
+              <Zap className="w-3 h-3 inline mx-1" />
+              rentetan = level naik
+            </p>
+
+            {highScore > 0 && (
+              <div className="mb-4 px-4 py-2 bg-amber-50 border-2 border-amber-200 rounded-xl text-sm font-bold text-amber-700 flex items-center justify-center gap-1.5">
+                <Trophy className="w-4 h-4" /> Skor Tertinggi: {highScore}
+              </div>
+            )}
+
+            <div className="space-y-3">
+              <button
+                onClick={() => startGame("BENDA")}
+                className={`${btn} w-full px-5 py-4 bg-sky-400 text-white text-lg`}
+              >
+                <Zap className="w-5 h-5" /> Kata Benda
+              </button>
+              <button
+                onClick={() => startGame("KERJA")}
+                className={`${btn} w-full px-5 py-4 bg-emerald-400 text-lg`}
+              >
+                <Zap className="w-5 h-5" /> Kata Kerja
+              </button>
+              <button
+                onClick={() => startGame("SIFAT")}
+                className={`${btn} w-full px-5 py-4 bg-red-400 text-white text-lg`}
+              >
+                <Star className="w-5 h-5" /> Kata Sifat
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ========== GAME SCREEN ========== */}
+        {screen === "game" && (
+          <div className="pk-screen w-full flex flex-col items-center">
+            {/* HUD — compact, themed */}
+            <div className="w-full max-w-[480px] grid grid-cols-5 gap-1.5 mb-3">
+              <div className="rounded-xl bg-[#161B3A] text-white px-2 py-1.5 shadow-[3px_3px_0_#0891B2] border-[3px] border-[#161B3A] dark:border-white/25">
+                <div className="text-[7px] font-extrabold uppercase opacity-70">Skor</div>
+                <div className="font-extrabold text-base leading-none">{hud.score}</div>
+              </div>
+              <div className="rounded-xl bg-[#FBBF24] px-2 py-1.5 shadow-[3px_3px_0_#0891B2] border-[3px] border-[#161B3A] dark:border-white/25">
+                <div className="text-[7px] font-extrabold uppercase opacity-70">Kombo</div>
+                <div className="font-extrabold text-base leading-none">{hud.combo}x</div>
+              </div>
+              <div className="rounded-xl bg-[#FF6B6B] text-white px-2 py-1.5 shadow-[3px_3px_0_#0891B2] border-[3px] border-[#161B3A] dark:border-white/25">
+                <div className="text-[7px] font-extrabold uppercase opacity-70">Nyawa</div>
+                <div className="flex gap-0.5 mt-0.5">
+                  {[0, 1, 2].map((i) => (
+                    <Heart
+                      key={i}
+                      size={12}
+                      fill={i < hud.lives ? "currentColor" : "none"}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div
+                className={`rounded-xl px-2 py-1.5 shadow-[3px_3px_0_#0891B2] border-[3px] border-[#161B3A] dark:border-white/25 ${
+                  hud.waktu <= 10
+                    ? "bg-red-500 text-white"
+                    : "bg-white dark:bg-[#0C2228]"
+                }`}
+              >
+                <div className="text-[7px] font-extrabold uppercase opacity-70">Waktu</div>
+                <div className="font-extrabold text-base leading-none">{hud.waktu}s</div>
+              </div>
+              <div className="rounded-xl bg-[#A78BFA] text-white px-2 py-1.5 shadow-[3px_3px_0_#0891B2] border-[3px] border-[#161B3A] dark:border-white/25">
+                <div className="text-[7px] font-extrabold uppercase opacity-70">Level</div>
+                <div className="font-extrabold text-base leading-none">{hud.level}</div>
+              </div>
+            </div>
+
+            {/* Canvas */}
+            <canvas
+              ref={canvasRef}
+              width={W}
+              height={H}
+              className="w-full max-w-[480px] rounded-2xl border-4 border-[#161B3A] dark:border-white/25 shadow-[6px_6px_0_#0891B2] touch-none"
+              onPointerDown={handlePointer}
+              onPointerMove={handlePointer}
+            />
+
+            {/* Controls */}
+            <div className="w-full max-w-[480px] flex justify-between mt-4">
+              <GameBackButton onClick={quit} label="Kembali ke Petualangan Hutan Kata" title="Kembali ke menu Petualangan Hutan Kata" />
+              <p className="text-xs font-bold opacity-60 self-center flex items-center gap-1">
+                <svg
+                  className="w-4 h-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M12 5v14" />
+                  <path d="M5 12h14" />
+                </svg>
+                Geser jari untuk mengendalikan Zelby
+              </p>
+              <button
+                onClick={togglePause}
+                className={`${btn} game-sound-btn w-12 h-12 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700 dark:text-white`}
+                aria-label={paused ? "Lanjutkan" : "Jeda"}
+              >
+                {paused ? (
+                  <Play className="w-5 h-5" />
+                ) : (
+                  <Pause className="w-5 h-5" />
+                )}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ========== GAME OVER SCREEN ========== */}
+        {screen === "over" && (
+          <div className={`pk-screen bg-white dark:bg-gradient-to-br dark:from-[#0C2228] dark:to-[#142E34] rounded-3xl ${chunky} p-6 text-center w-full max-w-md`}>
+            <div className="w-24 h-24 mx-auto mb-3 rounded-3xl overflow-hidden border-4 border-[#161B3A] dark:border-white/25 shadow-[6px_6px_0_#0891B2]">
+              <img
+                src="/junior/karakter/zelby_celebrate.webp"
+                alt="Zelby"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <h2 className="font-extrabold text-3xl mb-1 font-game-display">
+              Permainan Selesai!
+            </h2>
+            <p className="opacity-70 text-sm mb-4">
+              Zelby sangat senang belajar bareng kamu hari ini!
+            </p>
+
+            {/* Stars */}
+            <div className="flex justify-center gap-2 mb-3">
+              {[1, 2, 3].map((s) => (
+                <Star
+                  key={s}
+                  size={36}
+                  className={
+                    s <= finalStars
+                      ? s === 1
+                        ? "pk-star1 text-[#FBBF24] fill-[#FBBF24]"
+                        : s === 2
+                        ? "pk-star2 text-[#FBBF24] fill-[#FBBF24]"
+                        : "pk-star3 text-[#FBBF24] fill-[#FBBF24]"
+                      : "text-gray-200 fill-gray-200 dark:text-gray-600 dark:fill-gray-600"
+                  }
+                />
+              ))}
+            </div>
+
+            {/* Score card */}
+            <div className="bg-[#161B3A] text-white rounded-2xl px-6 py-4 mb-4 shadow-[5px_5px_0_#FBBF24]">
+              <div className="text-[10px] font-extrabold uppercase tracking-wider opacity-70">
+                Total Skor
+              </div>
+              <div className="font-extrabold text-5xl leading-none">{finalScore}</div>
+            </div>
+
+            {finalScore > 0 && finalScore >= highScore && (
+              <div className="mb-3 text-sm font-extrabold text-amber-600 bg-amber-50 border-2 border-amber-300 rounded-xl px-4 py-2 pk-pop flex items-center justify-center gap-1.5">
+                <Trophy className="w-4 h-4" /> Skor Tertinggi Baru!
+              </div>
+            )}
+
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={() => startGame("BENDA")}
+                className={`${btn} px-5 py-3 bg-white dark:bg-[#0C2228]`}
+              >
+                <RotateCcw className="w-4 h-4" /> Main Lagi
+              </button>
+              <button
+                onClick={() => setScreen("start")}
+                className={`${btn} px-5 py-3 bg-[#FBBF24] hover:brightness-110`}
+              >
+                Pilih Pelajaran
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
