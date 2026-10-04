@@ -4350,6 +4350,30 @@ model PrivacyRequest {
   @@index([status, deadlineAt])
 }
 
+model PrivacyIncident {
+  id String @id @default(cuid())
+  title String
+  severity String @default("ASSESS")
+  status String @default("DETECTED")
+  description String?
+  dataCategories String[] @default([])
+  affectedChildren Boolean @default(false)
+  detectedAt DateTime
+  confirmedAt DateTime?
+  notificationDeadlineAt DateTime?
+  notificationRequired Boolean?
+  notifiedAt DateTime?
+  containment String?
+  evidenceRef String?
+  ownerId String?
+  closedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, detectedAt])
+  @@index([notificationDeadlineAt])
+}
+
 model ClassroomPrivacyApproval {
   classId String @id
   teacherId String
