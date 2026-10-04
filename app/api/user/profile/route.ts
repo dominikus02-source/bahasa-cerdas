@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { isCatalogAvatar, findAvatar } from "@/lib/avatar/katalog";
+import { trustedAdultPublicProfileWhere } from "@/lib/compliance/service";
 
 export async function GET(req: NextRequest) {
   try {
@@ -12,7 +13,7 @@ export async function GET(req: NextRequest) {
     const query = searchParams.get("q");
 
     const users = await db.user.findMany({
-      where: { privacy: { is: { ageBand: "ADULT", publicProfile: true } }, ...(query ? { fullName: { contains: query, mode: "insensitive" } } : {}) },
+      where: { privacy: { is: trustedAdultPublicProfileWhere() }, ...(query ? { fullName: { contains: query, mode: "insensitive" } } : {}) },
       select: { id: true, fullName: true, avatar: true, role: true, xp: true, level: true, streak: true, league: true },
       take: 20,
     });
