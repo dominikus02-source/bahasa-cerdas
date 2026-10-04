@@ -1,6 +1,4 @@
 import type { Server, Socket } from "socket.io";
-import type { PrismaClient } from "@prisma/client";
-
 const WORLD_W = 1000;
 const WORLD_H = 600;
 const MATCH_SECONDS = 180;
@@ -100,11 +98,32 @@ type ArenaMatch = {
   finishing: boolean;
 };
 
+type PersistedArenaResult = {
+  playerId: string;
+  playerName: string;
+  avatarUrl?: string;
+  rank: number;
+  score: number;
+  kills: number;
+  deaths: number;
+  correct: number;
+  wrong: number;
+  maxStreak: number;
+  xpEarned: number;
+};
+
 type ArenaDeps = {
   io: Server;
-  prisma: PrismaClient;
   rooms: Map<string, RoomLike>;
   loadQuestions: (gameType: string, count: number) => Promise<QuestionLike[]>;
+  persistResults: (payload: {
+    code: string;
+    roomName: string;
+    hostId: string;
+    startedAt: number;
+    endedAt: number;
+    results: PersistedArenaResult[];
+  }) => Promise<void>;
 };
 
 const BOT_NAMES = ["Raka BOT", "Sari BOT", "Bima BOT"];
@@ -133,7 +152,7 @@ function moveToward(entity: ArenaEntity, tx: number, ty: number, speed: number, 
   entity.y = clamp(entity.y + (dy / len) * step, 48, WORLD_H - 38);
 }
 
-export function createKuisTempurArena({ io, prisma, rooms, loadQuestions }: ArenaDeps) {
+export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults }: ArenaDeps) {
   const matches = new Map<string, ArenaMatch>();
 
   function serialize(match: ArenaMatch) {
@@ -256,7 +275,7 @@ export function createKuisTempurArena({ io, prisma, rooms, loadQuestions }: Aren
       .filter((entity) => entity.kind === "human")
       .sort((a, b) => b.score - a.score || b.kills - a.kills || b.correct - a.correct);
 
-    const results = humans.map((entity, index) => {
+    const results: PersistedArenaResult[] = humans.map((entity, index) => {
       const xpEarned = Math.max(15, Math.min(140, Math.floor(entity.score / 12) + entity.correct * 2));
       return {
         playerId: entity.id,
@@ -277,76 +296,18 @@ export function createKuisTempurArena({ io, prisma, rooms, loadQuestions }: Aren
     match.room.status = "FINISHED";
 
     try {
-      for (const result of results) {
-        try {
-          const player = match.room.players.get(result.playerId);
-          const session = await prisma.gameSession.upsert({
-            where: { roomId_userId: { roomId: match.room.id, userId: result.playerId } },
-            create: {
-              roomId: match.room.id,
-              userId: result.playerId,
-              playerName: result.playerName,
-              avatarUrl: result.avatarUrl || undefined,
-              score: result.score,
-              correct: result.correct,
-              wrong: result.wrong,
-              streak: 0,
-              maxStreak: result.maxStreak,
-              answerTimes: player?.answerTimes || [],
-            },
-            update: {
-              score: result.score,
-              correct: result.correct,
-              wrong: result.wrong,
-              maxStreak: result.maxStreak,
-              answerTimes: player?.answerTimes || [],
-            },
-          });
-
-          await prisma.gameResult.upsert({
-            where: { sessionId: session.id },
-            create: {
-              roomId: match.room.id,
-              userId: result.playerId,
-              sessionId: session.id,
-              finalScore: result.score,
-              rank: result.rank,
-              correct: result.correct,
-              wrong: result.wrong,
-              maxStreak: result.maxStreak,
-              avgTime: player?.answerTimes?.length
-                ? player.answerTimes.reduce((a, b) => a + b, 0) / player.answerTimes.length
-                : 0,
-              xpEarned: result.xpEarned,
-            },
-            update: {
-              finalScore: result.score,
-              rank: result.rank,
-              correct: result.correct,
-              wrong: result.wrong,
-              maxStreak: result.maxStreak,
-              avgTime: player?.answerTimes?.length
-                ? player.answerTimes.reduce((a, b) => a + b, 0) / player.answerTimes.length
-                : 0,
-              xpEarned: result.xpEarned,
-            },
-          });
-
-          await prisma.user.update({
-            where: { id: result.playerId },
-            data: { xp: { increment: result.xpEarned } },
-          });
-        } catch (error) {
-          console.error("[KuisTempurArena] persist player failed", result.playerId, error);
-        }
-      }
-
-      await prisma.gameRoom.update({
-        where: { code: match.room.code },
-        data: { status: "FINISHED", endedAt: new Date() },
+      await persistResults({
+        code: match.room.code,
+        roomName: match.room.name,
+        hostId: match.room.hostId,
+        startedAt: match.startedAt,
+        endedAt: Date.now(),
+        results,
       });
     } catch (error) {
-      console.error("[KuisTempurArena] finish persistence failed", error);
+      // Persistence is deliberately decoupled from the authoritative match loop:
+      // players still receive their result even if the web API is temporarily slow.
+      console.error("[KuisTempurArena] result persistence failed", error);
     }
 
     setTimeout(() => {
@@ -543,29 +504,6 @@ export function createKuisTempurArena({ io, prisma, rooms, loadQuestions }: Aren
     };
     matches.set(room.code, match);
 
-    try {
-      await prisma.gameRoom.update({
-        where: { code: room.code },
-        data: { status: "IN_PROGRESS", startedAt: new Date() },
-      });
-      for (const player of humanPlayers) {
-        await prisma.gameSession.upsert({
-          where: { roomId_userId: { roomId: room.id, userId: player.id } },
-          create: {
-            roomId: room.id,
-            userId: player.id,
-            playerName: player.playerName,
-            avatarUrl: player.avatarUrl,
-          },
-          update: {
-            playerName: player.playerName,
-            avatarUrl: player.avatarUrl,
-          },
-        });
-      }
-    } catch (error) {
-      console.error("[KuisTempurArena] start persistence warning", error);
-    }
 
     io.to(room.code).emit("arena-start", {
       code: room.code,
