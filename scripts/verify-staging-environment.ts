@@ -6,11 +6,13 @@
  * Semua sumber kebenaran ada di scripts/lib/staging-gate.ts; file ini hanya
  * menampilkan hasil dan exit code.
  *
- *   STAGING_SUPABASE_URL STAGING_SUPABASE_SERVICE_ROLE_KEY STAGING_DATABASE_URL \
- *   STAGING_DIRECT_URL STAGING_REDIS_URL STAGING_REDIS_TOKEN STAGING_BASE_URL \
- *   npx tsx scripts/verify-staging-environment.ts
+ * Compliance mode minimum:
+ *   STAGING_GATE_MODE=compliance STAGING_SUPABASE_URL STAGING_SUPABASE_ANON_KEY \
+ *   STAGING_SUPABASE_SERVICE_ROLE_KEY STAGING_DATABASE_URL STAGING_BASE_URL \
+ *   STAGING_TEST_PASSWORD npx tsx scripts/verify-staging-environment.ts
  *
- * exit 0 = 12/12 PASS; exit 1 = ada FAIL (STOP, jangan seed/load test).
+ * Load-test mode keeps the stricter DIRECT_URL + Redis requirements.
+ * exit 0 = 12/12 PASS; exit 1 = ada FAIL (STOP).
  * Tidak pernah mencetak secret — hanya host & status.
  */
 
