@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { ageBandFor, trustedAgeAssurance } from "@/lib/compliance/policy";
 
 /**
  * Product event persistence — Operational Teacher Experiment P0 #7.
@@ -55,7 +56,7 @@ export async function recordProductEvent(input: ProductEventInput): Promise<Prod
       return { recorded: false };
     }
     const privacy = await db.privacyAccount.findUnique({ where: { userId: input.actorId } });
-    if (!privacy?.analytics || privacy.ageBand !== "ADULT") return { recorded: false };
+    if (!privacy?.analytics || !privacy.birthDate || ageBandFor(privacy.birthDate) !== "ADULT" || !trustedAgeAssurance(privacy.ageAssuranceLevel)) return { recorded: false };
     const row = await db.productEvent.create({
       data: {
         actorId: input.actorId,
