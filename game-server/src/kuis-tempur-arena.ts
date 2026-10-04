@@ -174,9 +174,16 @@ export function createKuisTempurArena({ io, prisma, rooms, loadQuestions }: Aren
     if (!player) return;
     const index = match.questionIndex.get(userId) || 0;
     const question = match.questions[index % match.questions.length];
-    const deadline = Date.now() + match.room.timePerQuestion * 1000;
+    const existingDeadline = match.questionDeadline.get(userId) || 0;
+    const alreadyAnswered = match.answeredQuestion.get(userId) === question.id;
+    const deadline =
+      !alreadyAnswered && existingDeadline > Date.now()
+        ? existingDeadline
+        : Date.now() + match.room.timePerQuestion * 1000;
     match.questionDeadline.set(userId, deadline);
-    match.answeredQuestion.set(userId, "");
+    if (alreadyAnswered || !match.answeredQuestion.has(userId)) {
+      match.answeredQuestion.set(userId, "");
+    }
     const targetSocket = socketId || player.odiceId;
     if (!targetSocket) return;
     io.to(targetSocket).emit("arena-question", {
@@ -665,7 +672,7 @@ export function createKuisTempurArena({ io, prisma, rooms, loadQuestions }: Aren
     if (!match) return;
     socket.join(code);
     socket.emit("arena-state", serialize(match));
-    questionFor(match, userId, socket.id);
+    if (Date.now() >= match.startedAt) questionFor(match, userId, socket.id);
   }
 
   function reconnect(socket: Socket, code: string, userId: string) {
@@ -682,9 +689,9 @@ export function createKuisTempurArena({ io, prisma, rooms, loadQuestions }: Aren
       duration: MATCH_SECONDS,
       reconnect: true,
     });
-    socket.emit("arena-countdown", { seconds: 0 });
+    socket.emit("arena-countdown", { seconds: Math.max(0, Math.ceil((match.startedAt - Date.now()) / 1000)) });
     socket.emit("arena-state", serialize(match));
-    questionFor(match, userId, socket.id);
+    if (Date.now() >= match.startedAt) questionFor(match, userId, socket.id);
     return true;
   }
 
