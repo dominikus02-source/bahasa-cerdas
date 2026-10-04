@@ -32,3 +32,13 @@ Rangkaian perintah uji Main Bersama sempat tidak berhenti setelah menemukan data
 - Produksi belum memiliki tabel privacy/compliance baru; deployment/migration produksi tetap diblok sampai backup, dry-run legacy-media, staging E2E identitas, dan approval release selesai.
 
 Status: branch belum boleh merge/deploy ke production. CI inti sudah hijau; blocker berikutnya adalah staging E2E beridentitas dan migrasi legacy media terkontrol.
+
+
+### Pre-main gate evidence — 4 Oktober 2026 (lanjutan)
+
+- Staging transactional rehearsal PASS (all rolled back): child privacy account with private defaults, verified guardian record, versioned consent bundle, append-only ConsentEvent enforcement, 72-hour PrivacyRequest deadline, child-safety report creation, and privacy incident notification deadline. No persistent staging rows were left by this rehearsal.
+- Staging legacy-media inventory: no staging URLs currently point to the staging project's public storage path and `student-private` remains the only configured staging bucket; therefore the 542 production legacy references cannot be meaningfully rehearsed by reusing staging data. Production inventory remains read-only until a controlled copy/rehearsal dataset is available.
+- Latest production application backup objects found in `bahasacerdas-backups` are dated 29 June 2026. This is too old to qualify as the pre-release rollback snapshot for an October production migration. A fresh backup is a hard release blocker.
+- Vercel preview deployment for the compliance head is READY and showed no warning/error runtime logs in the inspected 24-hour window.
+- Production runtime observation still shows legacy refresh-token errors and one historical Prisma connection-pool timeout; these are production-baseline issues, not introduced by the compliance preview. They must be watched during production smoke testing.
+- A dedicated `.github/workflows/compliance-staging-e2e.yml` gate was added. It requires isolated `STAGING_*` secrets and executes staging isolation checks, real Supabase Auth one-user smoke, deployed staging app E2E, account-deletion security, Main Bersama session regression, and payment-integrity regression.
