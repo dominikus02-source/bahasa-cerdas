@@ -1,5 +1,7 @@
 {
-  "regions": ["sin1"],
+  "regions": [
+    "sin1"
+  ],
   "crons": [
     {
       "path": "/api/cron/pengingat-tugas",
@@ -32,6 +34,10 @@
     {
       "path": "/api/cron/risk-review",
       "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/privacy-retention",
+      "schedule": "15 2 * * *"
     }
   ],
   "redirects": [
