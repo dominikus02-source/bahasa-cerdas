@@ -1,6 +1,6 @@
 import "server-only";
 import {db} from "@/lib/db";
-import {NOTICE_VERSION,ageBandFor} from "./policy";
+import {NOTICE_VERSION,ageBandFor,trustedAgeAssurance} from "./policy";
 import {childRiskApproved,privacyFor,canUseService} from "./service";
 export async function classroomAllowed(sessionId:string,subject:{userId?:string;playerId?:string}={}){
  const session=await db.mainSession.findUnique({where:{id:sessionId},select:{classId:true,teacherId:true}});
@@ -10,7 +10,7 @@ export async function classroomAllowed(sessionId:string,subject:{userId?:string;
  if(userId){
   if(!await canUseService(userId))return false;
   const privacy=await privacyFor(userId);
-  if(privacy?.birthDate&&ageBandFor(privacy.birthDate)==="ADULT")return true;
+  if(privacy?.birthDate&&ageBandFor(privacy.birthDate)==="ADULT"&&trustedAgeAssurance(privacy.ageAssuranceLevel))return true;
  }
  if(!childRiskApproved()||!session.classId)return false;
  const approval=await db.classroomPrivacyApproval.findUnique({where:{classId:session.classId}});
