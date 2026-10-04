@@ -13,6 +13,7 @@
 import { PrismaClient } from "@prisma/client"
 import { randomUUID } from "crypto"
 import { assertStagingGate, prismaPoolerSafeUrl } from "./lib/staging-gate"
+import { getPeriodKey } from "../lib/premium-economy/period"
 
 const PAKET_TITLE = "UKBI Load Test Staging"
 const PAKET_ID_PREFIX = "lt-ukbi-200"
@@ -92,6 +93,21 @@ async function main() {
   ok("paket " + PAKET_TITLE + " tersedia", !!paket, `id ${paket!.id}`)
   const paketId = paket!.id
 
+  // This user is disposable staging-only. Reset only this package's prior
+  // attempt plus the current simulation quota so every CI run starts from a
+  // deterministic state instead of inheriting an old COMPLETED session.
+  await db.testAnswer.deleteMany({ where: { userId: userRow!.id, paketId } })
+  await db.progresKompetensi.deleteMany({ where: { userId: userRow!.id, paketId } })
+  await db.testSession.deleteMany({ where: { userId: userRow!.id, paketId } })
+  await db.premiumUsage.deleteMany({
+    where: {
+      userId: userRow!.id,
+      featureCode: "SIMULATION",
+      periodKey: getPeriodKey("MONTH"),
+    },
+  })
+  console.log("[INFO] disposable staging attempt state reset")
+
   // ── 2) LOGIN — password grant vs staging auth REST, lalu bangun cookie SSR
   // (app pakai @supabase/ssr yang membaca cookie `sb-<ref>-auth-token`,
   //  bukan header Authorization).
@@ -144,7 +160,11 @@ async function main() {
   // ── 5) START — GET /api/kompetensi/[paketId] ──
   const startRes = await fetch(`${ENV.baseUrl}/api/kompetensi/${paketId}`, { headers })
   const startBody = await startRes.text()
-  ok("start session HTTP 200 (tanpa 429)", startRes.status === 200, `HTTP ${startRes.status}`)
+  ok(
+    "start session HTTP 200 (tanpa 429)",
+    startRes.status === 200,
+    `HTTP ${startRes.status}${startRes.status === 200 ? "" : ` body=${startBody.replace(/\s+/g, " ").slice(0, 220)}`}`
+  )
   const leakStart = scan(startBody)
   ok("no answer-key leakage (GET paket)", leakStart.length === 0, leakStart.length ? leakStart.join(",") : "bersih")
   let start: any = {}
@@ -164,7 +184,12 @@ async function main() {
   const patchRes = await fetch(`${ENV.baseUrl}/api/kompetensi/${paketId}`, {
     method: "PATCH", headers, body: JSON.stringify({ answers: answered, flagged: [] }),
   })
-  ok("autosave PATCH HTTP 200", patchRes.status === 200, `HTTP ${patchRes.status}`)
+  const patchBody = await patchRes.text()
+  ok(
+    "autosave PATCH HTTP 200",
+    patchRes.status === 200,
+    `HTTP ${patchRes.status}${patchRes.status === 200 ? "" : ` body=${patchBody.replace(/\s+/g, " ").slice(0, 220)}`}`
+  )
 
   // ── 7) SUBMIT — POST ──
   for (const q of questions.slice(5)) {
@@ -175,12 +200,16 @@ async function main() {
     method: "POST", headers, body: JSON.stringify({ answers: answered, timeSpent: 60 }),
   })
   const submitBody = await submitRes.text()
-  ok("submit POST HTTP 200", submitRes.status === 200, `HTTP ${submitRes.status}`)
+  ok(
+    "submit POST HTTP 200",
+    submitRes.status === 200,
+    `HTTP ${submitRes.status}${submitRes.status === 200 ? "" : ` body=${submitBody.replace(/\s+/g, " ").slice(0, 220)}`}`
+  )
   const leakSubmit = scan(submitBody)
   ok("no answer-key leakage (submit)", leakSubmit.length === 0, leakSubmit.length ? leakSubmit.join(",") : "bersih")
   const submitJson: any = JSON.parse(submitBody)
   const sres = submitJson?.data?.result ?? submitJson?.result ?? submitJson?.skor ?? submitJson?.session
-  ok("submit mengembalikan hasil", !!sres, JSON.stringify(sres).slice(0, 120))
+  ok("submit mengembalikan hasil", !!sres, sres ? JSON.stringify(sres).slice(0, 120) : "hasil tidak ada")
 
   // ── 8) RESULT ──
   const hasilRes = await fetch(`${ENV.baseUrl}/api/kompetensi/${paketId}/hasil`, { headers })
@@ -199,7 +228,7 @@ async function main() {
   ok("ProgresKompetensi tercatat di staging", !!progres)
   const answersCount = await db.testAnswer.count({ where: { userId: userRow!.id, paketId } })
   ok("TestAnswer tercatat di staging", answersCount > 0, `${answersCount} jawaban`)
-  const oneMore = await db.progresKompetensi.count({ where: { userId: userRow!.id } })
+  const oneMore = await db.progresKompetensi.count({ where: { userId: userRow!.id, paketId } })
   ok("hanya 1 progres per user+paket (no duplicate)", oneMore === 1, `count=${oneMore}`)
 
   await db.$disconnect()
