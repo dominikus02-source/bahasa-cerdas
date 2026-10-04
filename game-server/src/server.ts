@@ -1,6 +1,7 @@
 import { Server } from 'socket.io';
 import { createServer } from 'http';
 import { PrismaClient } from '@prisma/client';
+import { createKuisTempurArena } from './kuis-tempur-arena.js';
 
 const prisma = new PrismaClient();
 // Prefer PORT (injected by Render/Railway/Koyeb/etc.), fall back to GAME_PORT (Fly), then 3001.
@@ -236,6 +237,13 @@ const io = new Server(PORT, {
   },
 });
 
+const kuisTempurArena = createKuisTempurArena({
+  io,
+  prisma,
+  rooms,
+  loadQuestions,
+});
+
 io.on('connection', (socket) => {
   console.log(`[Socket] Connected: ${socket.id}`);
 
@@ -334,7 +342,31 @@ io.on('connection', (socket) => {
         return;
       }
       if (room.status !== 'WAITING') {
-        socket.emit('error', { message: 'Game sudah dimulai' });
+        const canReconnect =
+          room.category === 'KUIS_TEMPUR_ARENA' &&
+          kuisTempurArena.isActive(room.code) &&
+          room.players.has(data.userId);
+
+        if (!canReconnect) {
+          socket.emit('error', { message: 'Game sudah dimulai' });
+          return;
+        }
+
+        const existing = room.players.get(data.userId)!;
+        existing.odiceId = socket.id;
+        room.players.set(data.userId, existing);
+        playerSockets.set(socket.id, data.code);
+        socket.join(data.code);
+        socket.emit('room-joined', {
+          roomId: room.id,
+          code: room.code,
+          name: room.name,
+          isHost: data.userId === room.hostId,
+          player: existing,
+        });
+        io.to(data.code).emit('player-list', getPlayersList(room));
+        kuisTempurArena.reconnect(socket, data.code, data.userId);
+        console.log(`[Room] ${data.playerName} reconnected to arena ${data.code}`);
         return;
       }
 
@@ -420,6 +452,16 @@ io.on('connection', (socket) => {
     try {
       const room = rooms.get(data.code);
       if (!room) return;
+
+      if (room.category === 'KUIS_TEMPUR_ARENA') {
+        const caller = Array.from(room.players.values()).find((player) => player.odiceId === socket.id);
+        if (!caller || caller.id !== room.hostId) {
+          socket.emit('error', { message: 'Hanya host yang bisa memulai pertandingan.' });
+          return;
+        }
+        await kuisTempurArena.start(room);
+        return;
+      }
 
       const questions = await loadQuestions(room.gameType, room.questionCount);
       if (questions.length === 0) {
@@ -557,6 +599,22 @@ io.on('connection', (socket) => {
     });
   });
 
+  socket.on('arena-ready', (data: { code: string; userId: string }) => {
+    kuisTempurArena.ready(socket, data);
+  });
+
+  socket.on('arena-move', (data: { code: string; userId: string; x: number; y: number }) => {
+    kuisTempurArena.move(data);
+  });
+
+  socket.on('arena-shoot', (data: { code: string; userId: string; targetId: string }) => {
+    kuisTempurArena.shoot(data);
+  });
+
+  socket.on('arena-answer', (data: { code: string; userId: string; questionId: string; answerIndex: number }) => {
+    kuisTempurArena.answer(data);
+  });
+
   socket.on('end-game', async (data: { code: string }) => {
     const room = rooms.get(data.code);
     if (!room) return;
@@ -564,6 +622,9 @@ io.on('connection', (socket) => {
   });
 
   socket.on('leave-room', (data: { code: string; userId: string }) => {
+    if (kuisTempurArena.isActive(data.code)) {
+      kuisTempurArena.removePlayer(data.code, data.userId);
+    }
     handleLeave(socket, data.code, data.userId);
   });
 
@@ -627,9 +688,12 @@ io.on('connection', (socket) => {
     if (code) {
       const room = rooms.get(code);
       if (room) {
-        room.players.forEach((p, odiceId) => {
-          if (p.odiceId === socket.id) {
-            handleLeave(socket, code, odiceId);
+        room.players.forEach((p, userId) => {
+          if (p.odiceId !== socket.id) return;
+          if (kuisTempurArena.isActive(code)) {
+            kuisTempurArena.disconnect(code, userId);
+          } else {
+            handleLeave(socket, code, userId);
           }
         });
       }
