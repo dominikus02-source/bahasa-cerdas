@@ -5,6 +5,7 @@ import cache from "@/lib/redis";
 import { levelFromXp, cumulativeXpForLevel } from "@/lib/gamification/levels";
 import { rankFromLevel, minLevelForRank, nextRankOf, RANK_META } from "@/lib/gamification/ranks";
 import { getDisplayName } from "@/lib/nickname";
+import { trustedAdultPublicProfileWhere } from "@/lib/compliance/service";
 
 /**
  * Papan peringkat sesama rank.
@@ -36,7 +37,7 @@ export async function GET() {
         const maxXp = next ? cumulativeXpForLevel(minLevelForRank(next)) : null;
 
         const peersRaw = await db.user.findMany({
-          where: { privacy: { is: { ageBand: "ADULT", publicProfile: true } }, xp: maxXp === null ? { gte: minXp } : { gte: minXp, lt: maxXp } },
+          where: { privacy: { is: trustedAdultPublicProfileWhere() }, xp: maxXp === null ? { gte: minXp } : { gte: minXp, lt: maxXp } },
           select: { id: true, fullName: true, nickname: true, avatar: true, xp: true, level: true },
           orderBy: { xp: "desc" },
           take: 30,
