@@ -12,7 +12,7 @@
  */
 import { PrismaClient } from "@prisma/client"
 import { randomUUID } from "crypto"
-import { assertStagingGate } from "./lib/staging-gate"
+import { assertStagingGate, prismaPoolerSafeUrl } from "./lib/staging-gate"
 
 const PAKET_TITLE = "UKBI Load Test Staging"
 const PAKET_ID_PREFIX = "lt-ukbi-200"
@@ -36,7 +36,7 @@ async function main() {
   await assertStagingGate(process.env, "compliance")
   console.log("⛩️  Compliance staging gate PASS — env staging terkonfirmasi\n")
 
-  const db = new PrismaClient({ datasources: { db: { url: ENV.dbUrl } } })
+  const db = new PrismaClient({ datasources: { db: { url: prismaPoolerSafeUrl(ENV.dbUrl) } } })
   const userRow = await db.user.findUnique({ where: { email: EMAIL } })
 
   // ── 1) PAKET (idempotent, MCQ-only agar auto-scored; hapus paket lama yang
