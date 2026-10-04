@@ -9,6 +9,7 @@ import {
   CONSENT_BUNDLE_VERSION,
   ageBandFor,
   serviceAllowed,
+  trustedAgeAssurance,
 } from "./policy";
 import type { Prisma } from "@prisma/client";
 
@@ -44,7 +45,7 @@ export async function recordConsent(
 
 export async function publicIdentityAllowed(userId: string, kind: "publicProfile" | "publicWorks") {
   const p = await privacyFor(userId);
-  return !!p?.birthDate && ageBandFor(p.birthDate) === "ADULT" && p[kind] && serviceAllowed(p, childRiskApproved());
+  return !!p?.birthDate && ageBandFor(p.birthDate) === "ADULT" && trustedAgeAssurance(p.ageAssuranceLevel) && p[kind] && serviceAllowed(p, childRiskApproved());
 }
 
 export async function canReadWork(ownerId: string, viewer: { id: string; role: string; isFounder: boolean } | null) {
@@ -59,9 +60,7 @@ export async function aiAllowed(userId: string) {
   const p = await privacyFor(userId);
   if (!p?.birthDate || !p.aiAssistance || !serviceAllowed(p, childRiskApproved())) return false;
   const band = ageBandFor(p.birthDate);
-  const ageOk = band === "ADULT"
-    ? ["GUARDIAN_VERIFIED","SCHOOL_VERIFIED","AUTH_PROVIDER_VERIFIED","REVIEWED"].includes(p.ageAssuranceLevel)
-    : p.ageAssuranceLevel === "GUARDIAN_VERIFIED";
+  const ageOk = band === "ADULT" ? trustedAgeAssurance(p.ageAssuranceLevel) : p.ageAssuranceLevel === "GUARDIAN_VERIFIED";
   return ageOk && !!process.env.AI_TRANSFER_REVIEW_REF && !!process.env.AI_APPROVED_PROVIDERS;
 }
 
