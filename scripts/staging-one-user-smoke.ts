@@ -18,6 +18,7 @@
  */
 
 import { PrismaClient } from "@prisma/client"
+import { createClient } from "@supabase/supabase-js"
 
 const env = process.env
 const REF_STAGING = "hvfkhaocukdzfvseqwdz"
@@ -67,39 +68,39 @@ async function main(): Promise<void> {
 
   pass(`Auth URL staging: ${url}`)
 
-  const authHeaders = { apikey: serviceRole, Authorization: `Bearer ${serviceRole}`, "Content-Type": "application/json" }
+  const admin = createClient(url, serviceRole, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  })
 
-  const existing = await fetch(`${url}/auth/v1/admin/users?page=1&per_page=100`, { headers: authHeaders })
-    .then(async (r) => {
-      if (!r.ok) fail(`list users HTTP ${r.status}`)
-      return r.json()
-    })
-    .catch((e) => fail(`list users gagal: ${e instanceof Error ? e.message : "?"}`))
+  const { data: listed, error: listError } = await admin.auth.admin.listUsers({
+    page: 1,
+    perPage: 1000,
+  })
+  if (listError) fail(`list users gagal: ${listError.message}`)
+
   pass(claim ? `legacy service_role key valid untuk staging (ref ${claim.ref})` : "sb_secret admin key valid untuk staging")
-  const list = Array.isArray(existing) ? existing : (existing as { users?: Array<{ id: string; email: string }> }).users || []
-  const found = list.find((u) => u.email === EMAIL)
+
+  const found = listed.users.find((u) => u.email === EMAIL)
 
   let authId: string
   if (found) {
     authId = found.id
-    pass(`auth user ${EMAIL} sudah ada (idempotent reuse)`)
-  } else {
-    const created = await fetch(`${url}/auth/v1/admin/users`, {
-      method: "POST",
-      headers: authHeaders,
-      body: JSON.stringify({
-        email: EMAIL,
-        password,
-        email_confirm: true,
-        user_metadata: { full_name: NAME, role: "MURID" },
-      }),
+    const { error: resetError } = await admin.auth.admin.updateUserById(authId, {
+      password,
+      email_confirm: true,
+      user_metadata: { ...(found.user_metadata || {}), full_name: NAME, role: "MURID" },
     })
-      .then(async (r) => {
-        if (!r.ok) fail(`create user HTTP ${r.status}: ${await r.text()}`)
-        return r.json()
-      })
-      .catch((e) => fail(`create user gagal: ${e instanceof Error ? e.message : "?"}`))
-    authId = (created as { id: string }).id
+    if (resetError) fail(`reset test user gagal: ${resetError.message}`)
+    pass(`auth user ${EMAIL} sudah ada; password test disinkronkan (idempotent reuse)`)
+  } else {
+    const { data: created, error: createError } = await admin.auth.admin.createUser({
+      email: EMAIL,
+      password,
+      email_confirm: true,
+      user_metadata: { full_name: NAME, role: "MURID" },
+    })
+    if (createError || !created.user) fail(`create user gagal: ${createError?.message || "user kosong"}`)
+    authId = created.user.id
     pass(`auth user ${EMAIL} dibuat (id ${authId})`)
   }
 
