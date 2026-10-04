@@ -595,10 +595,10 @@ export default function KuisTempurArena({
 
               <div className="mt-5 grid grid-cols-2 gap-3">
                 <button
-                  onClick={() => gameSocket.arenaRematch({ code, userId })}
+                  onClick={onExit}
                   className="rounded-2xl border border-white/12 bg-white/8 py-3.5 text-sm font-black"
                 >
-                  <Swords size={16} className="mr-1.5 inline" /> Minta rematch
+                  <Swords size={16} className="mr-1.5 inline" /> Main lagi
                 </button>
                 <button
                   onClick={onExit}
