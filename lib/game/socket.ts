@@ -174,6 +174,46 @@ export const gameSocket = {
     return () => socket?.off('notification', callback);
   },
 
+  onError(callback: (data: { message?: string }) => void) {
+    socket?.on('error', callback);
+    return () => socket?.off('error', callback);
+  },
+
+  onArenaStart(callback: (data: any) => void) {
+    socket?.on('arena-start', callback);
+    return () => socket?.off('arena-start', callback);
+  },
+
+  onArenaCountdown(callback: (data: { seconds: number }) => void) {
+    socket?.on('arena-countdown', callback);
+    return () => socket?.off('arena-countdown', callback);
+  },
+
+  onArenaState(callback: (data: any) => void) {
+    socket?.on('arena-state', callback);
+    return () => socket?.off('arena-state', callback);
+  },
+
+  onArenaQuestion(callback: (data: any) => void) {
+    socket?.on('arena-question', callback);
+    return () => socket?.off('arena-question', callback);
+  },
+
+  onArenaFeedback(callback: (data: any) => void) {
+    socket?.on('arena-feedback', callback);
+    return () => socket?.off('arena-feedback', callback);
+  },
+
+  onArenaHit(callback: (data: { fromId: string; targetId: string; damage: number }) => void) {
+    socket?.on('arena-hit', callback);
+    return () => socket?.off('arena-hit', callback);
+  },
+
+  onArenaFinished(callback: (data: any) => void) {
+    socket?.on('arena-finished', callback);
+    return () => socket?.off('arena-finished', callback);
+  },
+
   onHostChanged(callback: (data: { newHostId: string }) => void) {
     socket?.on('host-changed', callback);
     return () => socket?.off('host-changed', callback);
@@ -254,5 +294,25 @@ export const gameSocket = {
 
   leaveRoom(data: { code: string; userId: string }) {
     socket?.emit('leave-room', data);
+  },
+
+  arenaReady(data: { code: string; userId: string }) {
+    socket?.emit('arena-ready', data);
+  },
+
+  arenaMove(data: { code: string; userId: string; x: number; y: number }) {
+    socket?.emit('arena-move', data);
+  },
+
+  arenaShoot(data: { code: string; userId: string; targetId: string }) {
+    socket?.emit('arena-shoot', data);
+  },
+
+  arenaAnswer(data: { code: string; userId: string; questionId: string; answerIndex: number }) {
+    socket?.emit('arena-answer', data);
+  },
+
+  arenaRematch(data: { code: string; userId: string }) {
+    socket?.emit('arena-rematch', data);
   },
 };
