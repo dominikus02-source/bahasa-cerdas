@@ -127,7 +127,7 @@ export const getUser = cache(async () => {
   const user = await getIdentityUser();
   if (!user) return null;
   const path = (await headers()).get("x-pathname") || "";
-  if (await canUseService(user.id)){const p=await privacyFor(user.id);if(p?.birthDate&&!childPurposeRestricted(ageBandFor(p.birthDate),path))return user;}
+  if (await canUseService(user.id)){const p=await privacyFor(user.id);if(p?.birthDate&&!sensitivePurposeRestricted(ageBandFor(p.birthDate),p.ageAssuranceLevel,path))return user;}
   if (path.startsWith("/api/")) return null;
   redirect("/privasi-akun");
 });
