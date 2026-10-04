@@ -6,7 +6,7 @@
  * session JWT milik staging (auth provider, bukan production).
  *
  * PENTING: Hanya membaca var STAGING_*. VERIFIKASI REF MANDATORY:
- *   - service role key JWT claim `ref` = staging ref
+ *   - admin key (legacy service_role JWT atau sb_secret_*) valid terhadap Auth staging
  *   - localStorage staging tidak mengandung ref production
  * Sesi dibuat SIAPA PUN di project staging TANPA menyentuh production.
  *
@@ -59,14 +59,14 @@ async function main(): Promise<void> {
     fail("URL/DB bukan ref staging " + REF_STAGING)
   }
 
-  const claim = decodeJwt(serviceRole) || fail("service role key bukan JWT")
-  if (claim.ref !== REF_STAGING) {
-    fail(`claim.ref service role = ${String(claim.ref)} (bukan staging)`)
+  const claim = decodeJwt(serviceRole)
+  if (claim) {
+    if (claim.ref !== REF_STAGING) fail(`claim.ref service role = ${String(claim.ref)} (bukan staging)`)
+    if (claim.role !== "service_role") fail(`claim.role = ${String(claim.role)} — bukan service_role`)
+  } else if (!serviceRole.startsWith("sb_secret_")) {
+    fail("admin key bukan legacy service_role JWT atau sb_secret_*")
   }
-  if (claim.role !== "service_role") {
-    fail(`claim.role = ${String(claim.role)} — bukan service_role`)
-  }
-  pass(`service role key milik staging (ref ${claim.ref}, role ${claim.role})`)
+
   pass(`Auth URL staging: ${url}`)
 
   const authHeaders = { apikey: serviceRole, Authorization: `Bearer ${serviceRole}`, "Content-Type": "application/json" }
@@ -77,6 +77,7 @@ async function main(): Promise<void> {
       return r.json()
     })
     .catch((e) => fail(`list users gagal: ${e instanceof Error ? e.message : "?"}`))
+  pass(claim ? `legacy service_role key valid untuk staging (ref ${claim.ref})` : "sb_secret admin key valid untuk staging")
   const list = Array.isArray(existing) ? existing : (existing as { users?: Array<{ id: string; email: string }> }).users || []
   const found = list.find((u) => u.email === EMAIL)
 
