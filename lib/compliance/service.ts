@@ -68,6 +68,15 @@ export async function publicIdentityAllowed(userId: string, kind: "publicProfile
   return !!p?.birthDate && ageBandFor(p.birthDate) === "ADULT" && trustedAgeAssurance(p.ageAssuranceLevel) && p[kind] && serviceAllowed(p, childRiskApproved());
 }
 
+export async function canInteractWithWork(actor: { id: string; role: string; isFounder: boolean }, ownerId: string) {
+  if (actor.id === ownerId || actor.isFounder || actor.role === "ADMIN") return true;
+  if (await socialInteractionAllowed(actor.id)) return true;
+  if (actor.role === "GURU") {
+    return (await db.group.count({ where: { teacherId: actor.id, isActive: true, members: { some: { userId: ownerId } } } })) > 0;
+  }
+  return false;
+}
+
 export async function canReadWork(ownerId: string, viewer: { id: string; role: string; isFounder: boolean } | null) {
   if (viewer?.id === ownerId || viewer?.isFounder || viewer?.role === "ADMIN") return true;
   if (await publicIdentityAllowed(ownerId, "publicWorks")) return true;
