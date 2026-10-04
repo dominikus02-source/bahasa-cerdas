@@ -6,7 +6,7 @@ import { jsonBody, sameOrigin, privacyFailure } from "@/lib/compliance/http";
 import { rateLimitRoute } from "@/lib/rate-limit";
 
 const schema = z.object({
-  type: z.enum(["ACCESS","COPY","CORRECTION","RESTRICT","OTHER"]),
+  type: z.enum(["ACCESS","COPY","CORRECTION","RESTRICT","DELETE_ACCOUNT","OTHER"]),
   detail: z.string().trim().min(3).max(2000).optional(),
   subjectId: z.string().max(100).optional(),
 }).strict();
@@ -54,6 +54,10 @@ export async function POST(req: Request) {
     const now = new Date();
     const deadlineAt = new Date(now.getTime() + 72 * 60 * 60 * 1000);
     const created = await db.$transaction(async tx => {
+      if (input.type === "RESTRICT") {
+        await tx.privacyAccount.updateMany({ where: { userId: subjectId }, data: { publicProfile: false, publicWorks: false, analytics: false, aiAssistance: false } });
+        await tx.complianceAudit.create({ data: { subjectId, actorId: u.id, action: "OPTIONAL_PROCESSING_RESTRICTED_PENDING_REVIEW" } });
+      }
       const request = await tx.privacyRequest.create({
         data: {
           userId: subjectId,
