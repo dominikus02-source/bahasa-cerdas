@@ -43,6 +43,26 @@ export async function recordConsent(
   });
 }
 
+
+export function trustedAdultPublicProfileWhere(): Prisma.PrivacyAccountWhereInput {
+  const cutoff = new Date();
+  cutoff.setUTCFullYear(cutoff.getUTCFullYear() - 18);
+  return {
+    birthDate: { lte: cutoff },
+    ageAssuranceLevel: { in: ["GUARDIAN_VERIFIED", "SCHOOL_VERIFIED", "AUTH_PROVIDER_VERIFIED", "REVIEWED"] },
+    publicProfile: true,
+    noticeVersion: NOTICE_VERSION,
+  };
+}
+
+export async function socialInteractionAllowed(userId: string) {
+  const p = await privacyFor(userId);
+  return !!p?.birthDate
+    && ageBandFor(p.birthDate) === "ADULT"
+    && trustedAgeAssurance(p.ageAssuranceLevel)
+    && serviceAllowed(p, childRiskApproved());
+}
+
 export async function publicIdentityAllowed(userId: string, kind: "publicProfile" | "publicWorks") {
   const p = await privacyFor(userId);
   return !!p?.birthDate && ageBandFor(p.birthDate) === "ADULT" && trustedAgeAssurance(p.ageAssuranceLevel) && p[kind] && serviceAllowed(p, childRiskApproved());
