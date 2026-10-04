@@ -15,7 +15,6 @@ import { PrismaClient } from "@prisma/client"
 import { randomUUID } from "crypto"
 import { assertStagingGate } from "./lib/staging-gate"
 
-const APP = "https://bahasa-cerdas-staging.vercel.app"
 const PAKET_TITLE = "UKBI Load Test Staging"
 const PAKET_ID_PREFIX = "lt-ukbi-200"
 const EMAIL = "ukbi-loadtest-001@loaded-test.id"
@@ -25,6 +24,7 @@ const ENV = {
   anonKey: process.env.STAGING_SUPABASE_ANON_KEY || "",
   serviceRole: process.env.STAGING_SUPABASE_SERVICE_ROLE_KEY || "",
   dbUrl: process.env.STAGING_DIRECT_URL || process.env.STAGING_DATABASE_URL || "",
+  baseUrl: process.env.STAGING_BASE_URL || "",
   testPassword: process.env.STAGING_TEST_PASSWORD || "",
 }
 
@@ -35,8 +35,8 @@ const ok = (name: string, cond: boolean, detail = "") => {
 }
 
 async function main() {
-  await assertStagingGate(process.env)
-  console.log("⛩️  Gate 12/12 PASS — env staging terkonfirmasi\n")
+  await assertStagingGate(process.env, "compliance")
+  console.log("⛩️  Compliance staging gate PASS — env staging terkonfirmasi\n")
 
   const supabase = createClient(ENV.supabaseUrl, ENV.anonKey, { auth: { persistSession: false } })
   const admin = createClient(ENV.supabaseUrl, ENV.serviceRole, { auth: { persistSession: false } })
@@ -136,17 +136,17 @@ async function main() {
   }
 
   // ── 3) /api/user/me ──
-  const me = await fetch(`${APP}/api/user/me`, { headers }).then((r) => r.json().catch(() => ({})))
+  const me = await fetch(`${ENV.baseUrl}/api/user/me`, { headers }).then((r) => r.json().catch(() => ({})))
   const meRole = me?.data?.user?.role ?? me?.user?.role
   ok("user/me (app) role MURID", meRole === "MURID", `role=${meRole}`)
 
   // ── 4) daftar paket ──
-  const list = await fetch(`${APP}/api/kompetensi?limit=50`, { headers }).then((r) => r.json().catch(() => ({})))
+  const list = await fetch(`${ENV.baseUrl}/api/kompetensi?limit=50`, { headers }).then((r) => r.json().catch(() => ({})))
   const found = (list?.data || []).find((p: any) => p?.title === PAKET_TITLE) || (list?.data || []).find((p: any) => p?.id === paketId)
   ok("paket tampil di GET /api/kompetensi", !!found, found ? found.title : "tidak ketemu")
 
   // ── 5) START — GET /api/kompetensi/[paketId] ──
-  const startRes = await fetch(`${APP}/api/kompetensi/${paketId}`, { headers })
+  const startRes = await fetch(`${ENV.baseUrl}/api/kompetensi/${paketId}`, { headers })
   const startBody = await startRes.text()
   ok("start session HTTP 200 (tanpa 429)", startRes.status === 200, `HTTP ${startRes.status}`)
   const leakStart = scan(startBody)
@@ -165,7 +165,7 @@ async function main() {
     const opt = Array.isArray(q?.options) && q.options.length > 0 ? q.options[0].id ?? q.options[0] : "dummy"
     if (q?.id) answered[q.id] = String(opt)
   }
-  const patchRes = await fetch(`${APP}/api/kompetensi/${paketId}`, {
+  const patchRes = await fetch(`${ENV.baseUrl}/api/kompetensi/${paketId}`, {
     method: "PATCH", headers, body: JSON.stringify({ answers: answered, flagged: [] }),
   })
   ok("autosave PATCH HTTP 200", patchRes.status === 200, `HTTP ${patchRes.status}`)
@@ -175,7 +175,7 @@ async function main() {
     const opt = Array.isArray(q?.options) && q.options.length > 0 ? q.options[0].id ?? q.options[0] : "dummy"
     if (q?.id) answered[q.id] = String(opt)
   }
-  const submitRes = await fetch(`${APP}/api/kompetensi/${paketId}/submit`, {
+  const submitRes = await fetch(`${ENV.baseUrl}/api/kompetensi/${paketId}/submit`, {
     method: "POST", headers, body: JSON.stringify({ answers: answered, timeSpent: 60 }),
   })
   const submitBody = await submitRes.text()
@@ -187,7 +187,7 @@ async function main() {
   ok("submit mengembalikan hasil", !!sres, JSON.stringify(sres).slice(0, 120))
 
   // ── 8) RESULT ──
-  const hasilRes = await fetch(`${APP}/api/kompetensi/${paketId}/hasil`, { headers })
+  const hasilRes = await fetch(`${ENV.baseUrl}/api/kompetensi/${paketId}/hasil`, { headers })
   const hasilBody = await hasilRes.text()
   ok("hasil GET HTTP 200", hasilRes.status === 200, `HTTP ${hasilRes.status}`)
   const leakHasil = scan(hasilBody)
