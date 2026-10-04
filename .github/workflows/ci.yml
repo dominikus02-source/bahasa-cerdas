@@ -55,7 +55,19 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/bc_compliance_local
           DIRECT_URL: postgresql://postgres:postgres@localhost:5432/bc_compliance_local
-        run: npx prisma migrate deploy
+        run: |
+          # This repository historically contains incremental migrations rather than
+          # a complete from-zero baseline. Recreate the pre-compliance production
+          # shape from the base branch, record its historical migrations as already
+          # applied, then verify that this branch's new migrations deploy cleanly.
+          git fetch origin "${{ github.base_ref || 'main' }}" --depth=1
+          BASE_REF="origin/${{ github.base_ref || 'main' }}"
+          git show "$BASE_REF:prisma/schema.prisma" > /tmp/base-schema.prisma
+          npx prisma db push --schema /tmp/base-schema.prisma --skip-generate --accept-data-loss
+          while IFS= read -r migration; do
+            [ -n "$migration" ] && npx prisma migrate resolve --applied "$migration"
+          done < <(git ls-tree -d --name-only "$BASE_REF:prisma/migrations")
+          npx prisma migrate deploy
 
       - name: Privacy compliance integration gate
         env:
