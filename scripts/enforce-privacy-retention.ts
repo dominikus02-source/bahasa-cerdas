@@ -15,7 +15,7 @@ async function main(){
  await db.$transaction(async tx=>{
   await tx.aIJob.deleteMany({where:expiredAi});await tx.aiSavedResult.deleteMany({where:expiredAi});await tx.productEvent.deleteMany({where:expiredEvents});
   await tx.guardianRequest.updateMany({where:expiredInvites,data:{status:'EXPIRED',guardianEmail:'expired@account.invalid',verificationRef:null}});
-  await tx.safetyReport.updateMany({where:reportPayload,data:{detail:'[retention-expired]',contact:null,targetId:'[retention-expired]'}});
+  await tx.safetyReport.updateMany({where:reportPayload,data:{detail:'[retention-expired]',contact:null,reporterId:null,targetId:'[retention-expired]'}});
   await tx.complianceAudit.create({data:{action:'RETENTION_SWEEP',reference:JSON.stringify(counts)}});
  },{timeout:20000});
 }
