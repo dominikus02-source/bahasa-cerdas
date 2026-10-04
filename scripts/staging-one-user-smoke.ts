@@ -18,6 +18,7 @@
  */
 
 import { PrismaClient } from "@prisma/client"
+import { prismaPoolerSafeUrl } from "./lib/staging-gate"
 
 const env = process.env
 const REF_STAGING = "hvfkhaocukdzfvseqwdz"
@@ -118,7 +119,7 @@ async function main(): Promise<void> {
     pass(`auth user ${EMAIL} dibuat (id ${authId})`)
   }
 
-  const prisma = new PrismaClient({ datasources: { db: { url: dbUrl } } })
+  const prisma = new PrismaClient({ datasources: { db: { url: prismaPoolerSafeUrl(dbUrl) } } })
   try {
     const user = await prisma.user.upsert({
       where: { supabaseId: authId },
