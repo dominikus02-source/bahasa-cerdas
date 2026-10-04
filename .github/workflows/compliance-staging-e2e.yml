@@ -1,0 +1,73 @@
+name: Compliance Staging E2E
+
+on:
+  push:
+    branches:
+      - checkpoint/compliance-pdp-tunas-2026-10-04
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: compliance-staging-e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  staging-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      STAGING_SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
+      STAGING_SUPABASE_ANON_KEY: ${{ secrets.STAGING_SUPABASE_ANON_KEY }}
+      STAGING_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.STAGING_SUPABASE_SERVICE_ROLE_KEY }}
+      STAGING_DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+      STAGING_DIRECT_URL: ${{ secrets.STAGING_DIRECT_URL }}
+      STAGING_REDIS_URL: ${{ secrets.STAGING_REDIS_URL }}
+      STAGING_REDIS_TOKEN: ${{ secrets.STAGING_REDIS_TOKEN }}
+      STAGING_BASE_URL: ${{ secrets.STAGING_BASE_URL }}
+      STAGING_TEST_PASSWORD: ${{ secrets.STAGING_TEST_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Require isolated staging secrets
+        shell: bash
+        run: |
+          set -eu
+          missing=0
+          for name in             STAGING_SUPABASE_URL             STAGING_SUPABASE_ANON_KEY             STAGING_SUPABASE_SERVICE_ROLE_KEY             STAGING_DATABASE_URL             STAGING_DIRECT_URL             STAGING_REDIS_URL             STAGING_REDIS_TOKEN             STAGING_BASE_URL             STAGING_TEST_PASSWORD
+          do
+            eval "value=\${$name:-}"
+            if [ -z "$value" ]; then
+              echo "::error::$name is not configured for staging E2E"
+              missing=1
+            fi
+          done
+          test "$missing" -eq 0
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify staging isolation
+        run: npx tsx scripts/verify-staging-environment.ts
+
+      - name: Supabase Auth one-user smoke
+        run: npx tsx scripts/staging-one-user-smoke.ts
+
+      - name: Deployed staging application E2E
+        run: npx tsx scripts/staging-e2e.ts
+
+      - name: Account deletion security regression
+        run: npx tsx scripts/test-account-security.ts
+
+      - name: Main Bersama session regression
+        run: npx tsx scripts/test-main-bersama-session-engine.ts
+
+      - name: Payment integrity regression
+        run: npx tsx scripts/test-p4.1-payment-integrity.ts
