@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 import { Role } from "@prisma/client";
 import { cache } from "react";
 import { redirect } from "next/navigation";
-import {ageBandFor,childPurposeRestricted} from "@/lib/compliance/policy";
+import {ageBandFor,sensitivePurposeRestricted} from "@/lib/compliance/policy";
 import { canUseService,privacyFor } from "@/lib/compliance/service";
 import { getForwardedIp } from "@/lib/security";
 import { isValidSupabaseUrl } from "@/lib/supabase/url-guard";
