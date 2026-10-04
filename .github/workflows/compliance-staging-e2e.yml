@@ -19,13 +19,12 @@ jobs:
     timeout-minutes: 30
     env:
       NEXT_TELEMETRY_DISABLED: "1"
+      STAGING_GATE_MODE: "compliance"
       STAGING_SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
       STAGING_SUPABASE_ANON_KEY: ${{ secrets.STAGING_SUPABASE_ANON_KEY }}
       STAGING_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.STAGING_SUPABASE_SERVICE_ROLE_KEY }}
       STAGING_DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
       STAGING_DIRECT_URL: ${{ secrets.STAGING_DIRECT_URL }}
-      STAGING_REDIS_URL: ${{ secrets.STAGING_REDIS_URL }}
-      STAGING_REDIS_TOKEN: ${{ secrets.STAGING_REDIS_TOKEN }}
       STAGING_BASE_URL: ${{ secrets.STAGING_BASE_URL }}
       STAGING_TEST_PASSWORD: ${{ secrets.STAGING_TEST_PASSWORD }}
     steps:
@@ -59,8 +58,6 @@ jobs:
             STAGING_SUPABASE_SERVICE_ROLE_KEY \
             STAGING_DATABASE_URL \
             STAGING_DIRECT_URL \
-            STAGING_REDIS_URL \
-            STAGING_REDIS_TOKEN \
             STAGING_BASE_URL \
             STAGING_TEST_PASSWORD
           do
