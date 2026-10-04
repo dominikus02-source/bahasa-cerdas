@@ -13,7 +13,8 @@ export async function GET() {
     if (!u) return NextResponse.json({ error: "Silakan masuk." }, { status: 401 });
     const p = await privacyFor(u.id);
     const events = await db.consentEvent.findMany({ where: { subjectId: u.id }, orderBy: { createdAt: "desc" }, take: 30, select: { purpose: true, action: true, noticeVersion: true, createdAt: true } });
-    return NextResponse.json({ privacy: p, events, noticeVersion: NOTICE_VERSION, consentBundleVersion: CONSENT_BUNDLE_VERSION, childRiskApproved: childRiskApproved() }, { headers: { "Cache-Control": "private, no-store" } });
+    const privacy = p ? { ...p, ageBand: p.birthDate ? ageBandFor(p.birthDate) : p.ageBand } : null;
+    return NextResponse.json({ privacy, events, noticeVersion: NOTICE_VERSION, consentBundleVersion: CONSENT_BUNDLE_VERSION, childRiskApproved: childRiskApproved() }, { headers: { "Cache-Control": "private, no-store" } });
   } catch(e) { return privacyFailure(e); }
 }
 export async function POST(req: Request) {
