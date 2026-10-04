@@ -35,7 +35,7 @@ export function serviceAllowed(p: {
 } | null, childRiskApproved: boolean, now = new Date()) {
   if (!p?.birthDate || p.noticeVersion !== NOTICE_VERSION) return false;
   const band = ageBandFor(p.birthDate, now);
-  if (band === "ADULT") return trustedAgeAssurance(p.ageAssuranceLevel);
+  // Core learning remains available to a self-declared adult while proportional age assurance is reviewed.\n  // Public/social, AI and transaction features apply a stronger trusted-assurance gate separately.\n  if (band === "ADULT") return !!p.ageAssuranceLevel && p.ageAssuranceLevel !== "NONE";
   return !["UNDER_3", "3_5"].includes(band)
     && childRiskApproved
     && p.guardianStatus === "VERIFIED"
@@ -52,6 +52,8 @@ export function safeSettings(isChild: boolean, input: { publicProfile: boolean; 
 }
 
 /** Child consent for learning does not authorize public social discovery or independent spending. */
-export function childPurposeRestricted(band:AgeBand,path:string){
- return band!=="ADULT" && (path.startsWith("/api/komunitas") || ["/api/billing/checkout","/api/payment/create-invoice","/api/marketplace/purchase","/api/guru/withdraw","/api/teacher/commissions/withdraw"].some(p=>path===p||path.startsWith(`${p}/`)));
+export function sensitivePurposeRestricted(band:AgeBand, assuranceLevel:string|null|undefined, path:string){
+ const sensitive = path.startsWith("/api/komunitas") || ["/api/billing/checkout","/api/payment/create-invoice","/api/marketplace/purchase","/api/guru/withdraw","/api/teacher/commissions/withdraw"].some(p=>path===p||path.startsWith(`${p}/`));
+ if(!sensitive) return false;
+ return band!=="ADULT" || !trustedAgeAssurance(assuranceLevel);
 }
