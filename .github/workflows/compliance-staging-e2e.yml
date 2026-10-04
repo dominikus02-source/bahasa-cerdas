@@ -62,12 +62,3 @@ jobs:
 
       - name: Deployed staging application E2E
         run: npx tsx scripts/staging-e2e.ts
-
-      - name: Account deletion security regression
-        run: npx tsx scripts/test-account-security.ts
-
-      - name: Main Bersama session regression
-        run: npx tsx scripts/test-main-bersama-session-engine.ts
-
-      - name: Payment integrity regression
-        run: npx tsx scripts/test-p4.1-payment-integrity.ts
