@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { serviceAllowed, ageBandFor, childPurposeRestricted } from "@/lib/compliance/policy";
+import { serviceAllowed, ageBandFor, sensitivePurposeRestricted } from "@/lib/compliance/policy";
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { checkRateLimit, getClientIdentity, rateLimitResponse, getForwardedIp, type RateLimitScope } from "@/lib/security";
@@ -285,7 +285,7 @@ export async function updateSession(request: NextRequest, nonce?: string) {
     try {
       const account = await db.user.findUnique({ where: { supabaseId: String(claims.sub) }, select: { email: true, privacy: true } });
       const riskApproved = process.env.CHILD_LOW_RISK_APPROVAL === "verified" && !!process.env.CHILD_RISK_EVIDENCE_REF;
-      if(account?.privacy?.birthDate && childPurposeRestricted(ageBandFor(account.privacy.birthDate),pathname))return NextResponse.json({error:"Fitur publik atau transaksi mandiri belum tersedia untuk akun anak. Gunakan kelas yang dikelola guru; pembayaran dikelola orang tua/wali.",code:"CHILD_PRIVACY_RESTRICTED"},{status:403});
+      if(account?.privacy?.birthDate && sensitivePurposeRestricted(ageBandFor(account.privacy.birthDate),account.privacy.ageAssuranceLevel,pathname))return NextResponse.json({error:"Fitur publik atau transaksi mandiri memerlukan perlindungan usia yang telah diverifikasi.",code:"AGE_ASSURANCE_REQUIRED"},{status:403});
       if (!account || account.email.endsWith("@account.invalid") || !serviceAllowed(account.privacy, riskApproved)) {
         return pathname.startsWith("/api/")
           ? NextResponse.json({ error: "Lengkapi pengaturan privasi dan perlindungan usia.", code: "PRIVACY_REQUIRED", redirect: "/privasi-akun" }, { status: 403 })
