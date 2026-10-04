@@ -52,7 +52,7 @@ export default function PrivacyPanel() {
    {invitation&&<p className="break-all">Bagikan tautan ini hanya kepada wali: <a className="underline" href={invitation}>{invitation}</a></p>}
    {!risk&&<p className="text-sm text-muted-foreground">Akses anak belum diaktifkan sampai pengelola menyelesaikan penilaian risiko layanan dan verifikasi wali. Status ini tidak dapat dilewati melalui pilihan pengguna.</p>}
   </form>}
-  {requests.map(r=><div key={r.id} className="rounded-xl border border-border p-4"><p>Permintaan {r.id}: {statusLabel(r.status)}</p>{["VERIFIED","AWAITING_REVIEW"].includes(r.status)&&<button disabled={busy} className="mt-2 underline" onClick={()=>void send("/api/privacy/guardian",{action:"withdraw",childId:r.childId})}>Cabut persetujuan</button>}</div>)}
+  {requests.map(r=><div key={r.id} className="rounded-xl border border-border p-4 space-y-2"><p>Permintaan {r.id}: {statusLabel(r.status)}</p>{["VERIFIED","AWAITING_REVIEW"].includes(r.status)&&<button disabled={busy} className="underline" onClick={()=>void send("/api/privacy/guardian",{action:"withdraw",childId:r.childId})}>Cabut persetujuan</button>}{r.status==="VERIFIED"&&<button disabled={busy} className="ml-4 underline" onClick={()=>void send("/api/privacy/requests",{type:"DELETE_ACCOUNT",subjectId:r.childId,detail:"Permintaan penghapusan akun anak oleh wali terverifikasi."})}>Ajukan penghapusan akun anak</button>}</div>)}
   <p role="status" aria-live="polite">{message}</p>
   <Link className="underline" href="/arena">Lanjut ke beranda</Link>
   <h2 className="text-xl font-semibold">Riwayat pilihan</h2>
@@ -62,7 +62,7 @@ export default function PrivacyPanel() {
    <p className="text-sm text-muted-foreground">Ajukan akses, salinan, koreksi, pembatasan, atau permintaan lain. Status dan batas waktu penanganan akan tercatat di sistem.</p>
    <form className="space-y-3" onSubmit={e=>{e.preventDefault();void send("/api/privacy/requests",{type:requestType,detail:requestDetail||undefined});setRequestDetail("");}}>
     <select aria-label="Jenis permintaan" value={requestType} onChange={e=>setRequestType(e.target.value)} className="w-full rounded-xl border border-input bg-background p-3">
-     <option value="ACCESS">Akses data</option><option value="COPY">Salinan data</option><option value="CORRECTION">Koreksi data</option><option value="RESTRICT">Pembatasan pemrosesan</option><option value="OTHER">Permintaan lain</option>
+     <option value="ACCESS">Akses data</option><option value="COPY">Salinan data</option><option value="CORRECTION">Koreksi data</option><option value="RESTRICT">Pembatasan pemrosesan opsional</option><option value="DELETE_ACCOUNT">Ajukan penghapusan akun</option><option value="OTHER">Permintaan lain</option>
     </select>
     <textarea value={requestDetail} onChange={e=>setRequestDetail(e.target.value)} minLength={3} maxLength={2000} placeholder="Jelaskan permintaanmu bila diperlukan" className="min-h-24 w-full rounded-xl border border-input bg-background p-3"/>
     <button disabled={busy} className="rounded-xl bg-primary px-5 py-3 text-primary-foreground">Ajukan permintaan</button>
