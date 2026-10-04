@@ -36,7 +36,8 @@ export async function GET(
     const membership=dbUser?await db.communityMember.findFirst({where:{communityId:id,userId:dbUser.id}}):null;
     if((!community.isPublic||community.status!=="APPROVED")&&dbUser?.id!==community.creatorId&&!membership)return NextResponse.json({error:"Akses ditolak."},{status:403});
     if(!community.creatorId||!await publicIdentityAllowed(community.creatorId,"publicProfile"))community.creator={id:"private",fullName:"Pengelola komunitas",avatar:null};
-    const publicAuthor={privacy:{is:{ageBand:"ADULT",publicProfile:true,noticeVersion:NOTICE_VERSION}}};
+    const adultCutoff=new Date();adultCutoff.setUTCFullYear(adultCutoff.getUTCFullYear()-18);
+    const publicAuthor={privacy:{is:{birthDate:{lte:adultCutoff},ageAssuranceLevel:{in:["GUARDIAN_VERIFIED","SCHOOL_VERIFIED","AUTH_PROVIDER_VERIFIED","REVIEWED"]},publicProfile:true,noticeVersion:NOTICE_VERSION}}};
     const [posts, members, totalPosts, isMember] = await Promise.all([
       db.communityPost.findMany({
         where: { communityId: id, user: publicAuthor },
