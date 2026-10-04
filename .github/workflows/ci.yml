@@ -11,6 +11,20 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: bc_compliance_local
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d bc_compliance_local"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     # Placeholder values — CI only type-checks/builds, it never connects to real
     # services. Real secrets live in Vercel, not in CI.
     env:
@@ -36,6 +50,20 @@ jobs:
 
       - name: Typecheck
         run: npm run typecheck
+
+      - name: Privacy migration gate
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/bc_compliance_local
+          DIRECT_URL: postgresql://postgres:postgres@localhost:5432/bc_compliance_local
+        run: npx prisma migrate deploy
+
+      - name: Privacy compliance integration gate
+        env:
+          COMPLIANCE_TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/bc_compliance_local
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/bc_compliance_local
+          DATABASE_URL_POOLED: postgresql://postgres:postgres@localhost:5432/bc_compliance_local
+          DIRECT_URL: postgresql://postgres:postgres@localhost:5432/bc_compliance_local
+        run: npx tsx scripts/test-privacy-compliance.ts
 
       - name: Baseline diagnostic V2 gate
         run: npm run test:diagnostic-baseline-v2
