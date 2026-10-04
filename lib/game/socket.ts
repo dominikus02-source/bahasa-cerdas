@@ -1,4 +1,5 @@
 'use client';
+import { createClient as privacyAuthClient } from "@/lib/supabase/client";
 
 import { io, Socket } from 'socket.io-client';
 
@@ -17,6 +18,7 @@ export const gameSocket = {
     const serverUrl = process.env.NEXT_PUBLIC_GAME_SERVER_URL || 'http://localhost:3001';
     socket = io(serverUrl, {
       transports: ['websocket', 'polling'],
+      auth: cb => { void privacyAuthClient().auth.getSession().then(({data})=>cb({token:data.session?.access_token})); },
       autoConnect: true,
       // Batas eksplisit. Tanpa ini socket.io mencoba menyambung selamanya tanpa
       // pernah memberi tahu siapa pun, sehingga layar gim menggantung di keadaan

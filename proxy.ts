@@ -10,7 +10,7 @@ import { getClientKey } from "@/lib/security";
 // 'strict-dynamic', which would nullify those allowlists).
 // style-src keeps 'unsafe-inline' — Tailwind/inline styles rely on it; removing it
 // causes broad breakage, so it is left in place by design.
-function buildCsp(nonce: string): string {
+function buildCsp(nonce: string, localDevelopment: boolean): string {
   const csp: Record<string, string[]> = {
     "default-src": ["'self'"],
     "script-src": [
@@ -36,12 +36,14 @@ function buildCsp(nonce: string): string {
     "report-uri": ["/api/csp-report"],
     "upgrade-insecure-requests": [],
   };
+  // Next/React's development debugger needs eval; production stays nonce-only.
+  if(localDevelopment){csp["script-src"].push("'unsafe-eval'");delete csp["upgrade-insecure-requests"];}
   return Object.entries(csp)
     .map(([key, values]) => (values.length ? `${key} ${values.join(" ")}` : key))
     .join("; ");
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Rate limit /api/ai/* routes in middleware (30 req/min blanket — per-route handlers enforce tighter limits).
@@ -84,7 +86,7 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  response.headers.set("Content-Security-Policy", buildCsp(nonce));
+  response.headers.set("Content-Security-Policy", buildCsp(nonce, process.env.NODE_ENV === "development" && ["localhost","127.0.0.1","[::1]"].includes(request.nextUrl.hostname)));
 
   return response;
 }

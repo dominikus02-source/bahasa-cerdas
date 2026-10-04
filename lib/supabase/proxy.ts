@@ -1,3 +1,5 @@
+import { db } from "@/lib/db";
+import { serviceAllowed, ageBandFor, sensitivePurposeRestricted } from "@/lib/compliance/policy";
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { checkRateLimit, getClientIdentity, rateLimitResponse, getForwardedIp, type RateLimitScope } from "@/lib/security";
@@ -36,7 +38,7 @@ const publicPaths = [
   "/main-bersama",
   "/verify-email", "/onboarding", "/tentang", "/fitur",
   "/marketplace", "/artikel", "/video-belajar", "/kamus", "/loker", "/komunitas", "/ai-bc", "/profile/",
-  "/kebijakan-privasi", "/syarat-ketentuan",
+  "/kebijakan-privasi", "/syarat-ketentuan", "/privasi-akun", "/persetujuan-wali", "/pemberitahuan-wali", "/privasi-anak", "/pedoman-komunitas", "/retensi-data", "/laporkan",
   "/faq", "/cart", "/checkout", "/orders", "/payment/", "/reset-password",
   // Parents install the APK before anyone has an account — gating this behind
   // login would put the download on the far side of the thing it unlocks.
@@ -65,8 +67,22 @@ export async function updateSession(request: NextRequest, nonce?: string) {
   requestHeaders.set("x-pathname", pathname);
   const nextWithNonce = () => NextResponse.next({ request: { headers: requestHeaders } });
 
-  // Redirect non-primary domains to www.bahasacerdas.com for SEO consistency
-  if (host && !host.includes("bahasacerdas.com") && !host.includes("localhost") && !host.includes("vercel.app")) {
+  // Redirect unknown public hosts to the canonical production domain for SEO.
+  // Loopback and Vercel hosts are execution environments, not public aliases.
+  // They must stay on their own origin so staging/preview auth never jumps to production.
+  const requestHost = host.toLowerCase().replace(/:\d+$/, "");
+  const isLoopbackHost =
+    requestHost === "localhost" ||
+    requestHost === "127.0.0.1" ||
+    requestHost === "[::1]";
+  const isAllowedAppHost =
+    isLoopbackHost ||
+    requestHost === "bahasacerdas.com" ||
+    requestHost.endsWith(".bahasacerdas.com") ||
+    requestHost === "vercel.app" ||
+    requestHost.endsWith(".vercel.app");
+
+  if (host && !isAllowedAppHost) {
     const url = new URL(`https://www.bahasacerdas.com${pathname}${search}`);
     return NextResponse.redirect(url, { status: 301 });
   }
@@ -275,6 +291,24 @@ export async function updateSession(request: NextRequest, nonce?: string) {
   // email-confirmation check from incomplete claims.
 
 
+
+  // Server-side backstop for legacy handlers using their own Supabase client.
+  // Privacy, reporting, recovery and deletion remain reachable when access is restricted.
+  const recoveryPath = pathname.startsWith("/api/privacy/") || pathname.startsWith("/api/safety/") || pathname.startsWith("/api/user/account") || pathname.startsWith("/api/user/password") || pathname === "/api/user/me";
+  if (!recoveryPath) {
+    try {
+      const account = await db.user.findUnique({ where: { supabaseId: String(claims.sub) }, select: { email: true, privacy: true } });
+      const riskApproved = process.env.CHILD_LOW_RISK_APPROVAL === "verified" && !!process.env.CHILD_RISK_EVIDENCE_REF;
+      if(account?.privacy?.birthDate && sensitivePurposeRestricted(ageBandFor(account.privacy.birthDate),account.privacy.ageAssuranceLevel,pathname))return NextResponse.json({error:"Fitur publik atau transaksi mandiri memerlukan perlindungan usia yang telah diverifikasi.",code:"AGE_ASSURANCE_REQUIRED"},{status:403});
+      if (!account || account.email.endsWith("@account.invalid") || !serviceAllowed(account.privacy, riskApproved)) {
+        return pathname.startsWith("/api/")
+          ? NextResponse.json({ error: "Lengkapi pengaturan privasi dan perlindungan usia.", code: "PRIVACY_REQUIRED", redirect: "/privasi-akun" }, { status: 403 })
+          : NextResponse.redirect(new URL("/privasi-akun", request.url));
+      }
+    } catch {
+      return NextResponse.json({ error: "Pemeriksaan privasi belum tersedia. Coba lagi." }, { status: 503 });
+    }
+  }
 
   supabaseResponse.headers.set("X-RateLimit-Remaining", String(limit.remaining));
   // Never let a response that may carry refreshed auth cookies be cached.

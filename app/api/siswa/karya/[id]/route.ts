@@ -1,3 +1,4 @@
+import { canReadWork } from "@/lib/compliance/service";
 import { identitySelect, resolveIdentity, type IdentitySource } from "@/lib/account/identity";
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
@@ -35,7 +36,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             equippedFrame: true, equippedNameColor: true, equippedBadge: true,
             ...identitySelect,
             playerProfile: { select: { currentRank: true } },
-            profile: { select: { school: true, city: true } },
+
           },
         },
         comments: {
@@ -54,7 +55,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       },
     });
 
-    if (!karya) {
+    if (!karya || !await canReadWork(karya.userId, await getUser())) {
       return NextResponse.json({ error: "Karya tidak ditemukan" }, { status: 404 });
     }
 

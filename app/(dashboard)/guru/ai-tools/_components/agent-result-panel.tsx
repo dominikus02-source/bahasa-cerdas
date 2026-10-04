@@ -811,7 +811,7 @@ export function AgentResultPanel({ agentId, result, loading, error, errorCode, r
           {agentId === "review" && <StructuredReview output={result.output} />}
           {agentId === "eyd" && <StructuredEYD output={result.output} />}
           {agentId === "feedback" && <StructuredFeedback output={result.output} />}
-          {agentId === "grading" && <StructuredGrading output={result.output} />}
+          {agentId === "grading" && <><p className="mb-4 rounded-xl border border-border bg-muted p-4 text-foreground">Saran AI, bukan nilai final. Periksa rubrik dan jawaban; guru menetapkan hasil akhir. Murid dapat meminta koreksi.</p><StructuredGrading output={result.output} /></>}
           {agentId === "text-analysis" && <StructuredTextAnalysis output={result.output} />}
           {agentId === "bc-assistant" && <StructuredBCAssistant output={result.output} onSuggestedAgent={onSuggestedAgent} />}
         </>

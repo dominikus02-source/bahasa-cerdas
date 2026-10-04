@@ -1,3 +1,5 @@
+import {classroomAllowed} from "@/lib/compliance/classroom";
+import {resolvePlayerCredential} from "@/src/main-bersama/infrastructure/repositories/player-credential";
 // ─── API: Submit Answer (Tahap 6 §15/§16) ───────────────────
 // POST /api/main-bersama/student/answers
 // credential → player → engine validate → persist → ACK.
@@ -53,6 +55,8 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const parsedCredential = resolvePlayerCredential(credential);
+  if (!parsedCredential.ok || !await classroomAllowed(parsedCredential.sessionId,{playerId:parsedCredential.playerId})) return NextResponse.json({ error: "Izin kelas perlu diperbarui.", code: "CLASSROOM_PRIVACY_REQUIRED" }, { status: 403 });
   const deps = getOrchestratorDeps();
   const result = await submitAnswer(deps, {
     credential,

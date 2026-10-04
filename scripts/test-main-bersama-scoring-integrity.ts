@@ -407,7 +407,7 @@ async function setupSession(
   await openLobby(deps, teacherA, sessionId as never);
   const credentials = new Map<string, string>();
   for (const name of opts.roster) {
-    const j = await joinSession(deps, { pin, displayName: name });
+    const j = await joinSession(deps, { pin, displayName: name, avatarId: '2' });
     if (!j.ok) throw new Error(`join ${name} gagal: ${JSON.stringify(j)}`);
     credentials.set(name, j.value.credential);
   }

@@ -4,6 +4,9 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: write
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -11,6 +14,20 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: bc_compliance_local
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d bc_compliance_local"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     # Placeholder values — CI only type-checks/builds, it never connects to real
     # services. Real secrets live in Vercel, not in CI.
     env:
@@ -31,11 +48,72 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Production dependency audit (pre-fix)
+        id: prod_audit
+        continue-on-error: true
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Apply non-breaking dependency security fixes
+        if: steps.prod_audit.outcome == 'failure' && github.event_name == 'push' && github.ref == 'refs/heads/checkpoint/compliance-pdp-tunas-2026-10-04'
+        run: |
+          # npm audit fix can return non-zero when only breaking-change findings remain.
+          # Preserve and commit every non-breaking lockfile remediation it was still able to apply.
+          set +e
+          npm audit fix --package-lock-only
+          AUDIT_FIX_EXIT=$?
+          set -e
+          echo "npm audit fix exit code: $AUDIT_FIX_EXIT"
+          if ! git diff --quiet -- package-lock.json package.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add package-lock.json package.json
+            git commit -m "chore(security): apply non-breaking npm audit fixes [skip ci]"
+            git push
+          fi
+
+      - name: Production dependency audit
+        run: node scripts/security-audit-gate.mjs
+
       - name: Prisma generate
         run: npx prisma generate
 
       - name: Typecheck
         run: npm run typecheck
+
+      - name: Privacy migration gate
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/bc_compliance_local
+          DIRECT_URL: postgresql://postgres:postgres@localhost:5432/bc_compliance_local
+        run: |
+          # This repository historically contains incremental migrations rather than
+          # a complete from-zero baseline. Recreate the pre-compliance production
+          # shape from the base branch, record its historical migrations as already
+          # applied, then verify that this branch's new migrations deploy cleanly.
+          git fetch origin "${{ github.base_ref || 'main' }}" --depth=1
+          BASE_REF="origin/${{ github.base_ref || 'main' }}"
+          git show "$BASE_REF:prisma/schema.prisma" > /tmp/base-schema.prisma
+          npx prisma db push --schema /tmp/base-schema.prisma --skip-generate --accept-data-loss
+          while IFS= read -r migration; do
+            [ -z "$migration" ] && continue
+            if git cat-file -e "$BASE_REF:prisma/migrations/$migration/migration.sql" 2>/dev/null; then
+              npx prisma migrate resolve --applied "$migration"
+            fi
+          done < <(git ls-tree -d --name-only "$BASE_REF:prisma/migrations")
+          # Legacy one-off SQL files intentionally live under manual/ and are not
+          # Prisma migrations. Prisma treats every child directory as a migration,
+          # so keep that archive out of the deploy scan for this gate.
+          if [ -d prisma/migrations/manual ]; then
+            mv prisma/migrations/manual /tmp/prisma-manual
+          fi
+          npx prisma migrate deploy
+
+      - name: Privacy compliance integration gate
+        env:
+          COMPLIANCE_TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/bc_compliance_local
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/bc_compliance_local
+          DATABASE_URL_POOLED: postgresql://postgres:postgres@localhost:5432/bc_compliance_local
+          DIRECT_URL: postgresql://postgres:postgres@localhost:5432/bc_compliance_local
+        run: npx tsx scripts/test-privacy-compliance.ts
 
       - name: Baseline diagnostic V2 gate
         run: npm run test:diagnostic-baseline-v2

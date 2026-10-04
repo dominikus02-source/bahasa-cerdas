@@ -176,6 +176,12 @@ export default function RegisterPage() {
         return;
       }
 
+      if (createData.requiresVerification) {
+        setRegistered(true);
+        setLoading(false);
+        return;
+      }
+
       const formData = new FormData();
       formData.set("email", normalizedEmail);
       formData.set("supabaseId", createData.userId);
@@ -184,13 +190,6 @@ export default function RegisterPage() {
       if (school) formData.set("school", school);
       if (city) formData.set("city", city);
       if (province) formData.set("province", province);
-
-      const result = await registerUser(formData);
-      if (result?.error) {
-        setError(result.error);
-        setLoading(false);
-        return;
-      }
 
       const loginResult = await loginWithBrowserPassword({
         email: normalizedEmail,
@@ -202,6 +201,8 @@ export default function RegisterPage() {
         return;
       }
 
+      const result = await registerUser(formData);
+      if (result?.error) { setError(result.error); setLoading(false); return; }
       const redirectUrl = role === "MURID" ? "/arena" : "/guru/beranda";
       window.location.href = redirectUrl;
     } catch (err: any) {

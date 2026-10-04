@@ -11,6 +11,8 @@
 
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { createHash } from "node:crypto";
+import { verifiedMidtransSignature } from "../lib/compliance/payment-signature";
 
 const ROOT = join(__dirname, "..");
 const read = (p: string) => readFileSync(join(ROOT, p), "utf8");
@@ -205,9 +207,19 @@ test("F3.5. Amount mismatch logs diagnostic context", () => {
 console.log("\n── Regression: Existing security preserved ──");
 
 test("R1. SHA512 signature verification still intact", () => {
+  const orderId = "order-p4-regression";
+  const statusCode = "200";
+  const grossAmount = "19000.00";
+  const serverKey = "test-server-key";
+  const signature = createHash("sha512")
+    .update(orderId + statusCode + grossAmount + serverKey)
+    .digest("hex");
+
   return (
-    webhook.includes('createHash("sha512")') &&
-    webhook.includes("update(orderId + statusCode + grossAmount + serverKey)")
+    webhook.includes("verifiedMidtransSignature(") &&
+    verifiedMidtransSignature(orderId, statusCode, grossAmount, signature, serverKey) &&
+    !verifiedMidtransSignature(orderId, statusCode, "99999.00", signature, serverKey) &&
+    !verifiedMidtransSignature(orderId, statusCode, grossAmount, "0".repeat(128), serverKey)
   );
 });
 

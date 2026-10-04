@@ -6,7 +6,7 @@
  * session JWT milik staging (auth provider, bukan production).
  *
  * PENTING: Hanya membaca var STAGING_*. VERIFIKASI REF MANDATORY:
- *   - service role key JWT claim `ref` = staging ref
+ *   - admin key (legacy service_role JWT atau sb_secret_*) valid terhadap Auth staging
  *   - localStorage staging tidak mengandung ref production
  * Sesi dibuat SIAPA PUN di project staging TANPA menyentuh production.
  *
@@ -18,8 +18,7 @@
  */
 
 import { PrismaClient } from "@prisma/client"
-import { readFileSync, existsSync } from "node:fs"
-import { join } from "node:path"
+import { prismaPoolerSafeUrl } from "./lib/staging-gate"
 
 const env = process.env
 const REF_STAGING = "hvfkhaocukdzfvseqwdz"
@@ -59,33 +58,51 @@ async function main(): Promise<void> {
     fail("URL/DB bukan ref staging " + REF_STAGING)
   }
 
-  const claim = decodeJwt(serviceRole) || fail("service role key bukan JWT")
-  if (claim.ref !== REF_STAGING) {
-    fail(`claim.ref service role = ${String(claim.ref)} (bukan staging)`)
+  const claim = decodeJwt(serviceRole)
+  if (claim) {
+    if (claim.ref !== REF_STAGING) fail(`claim.ref service role = ${String(claim.ref)} (bukan staging)`)
+    if (claim.role !== "service_role") fail(`claim.role = ${String(claim.role)} — bukan service_role`)
+  } else if (!serviceRole.startsWith("sb_secret_")) {
+    fail("admin key bukan legacy service_role JWT atau sb_secret_*")
   }
-  if (claim.role !== "service_role") {
-    fail(`claim.role = ${String(claim.role)} — bukan service_role`)
-  }
-  pass(`service role key milik staging (ref ${claim.ref}, role ${claim.role})`)
+
   pass(`Auth URL staging: ${url}`)
 
-  const authHeaders = { apikey: serviceRole, Authorization: `Bearer ${serviceRole}`, "Content-Type": "application/json" }
+  const authHeaders = {
+    apikey: serviceRole,
+    Authorization: `Bearer ${serviceRole}`,
+    "Content-Type": "application/json",
+  }
 
-  const existing = await fetch(`${url}/auth/v1/admin/users?page=1&per_page=100`, { headers: authHeaders })
-    .then(async (r) => {
-      if (!r.ok) fail(`list users HTTP ${r.status}`)
-      return r.json()
-    })
-    .catch((e) => fail(`list users gagal: ${e instanceof Error ? e.message : "?"}`))
-  const list = Array.isArray(existing) ? existing : (existing as { users?: Array<{ id: string; email: string }> }).users || []
-  const found = list.find((u) => u.email === EMAIL)
+  const existingResponse = await fetch(`${url}/auth/v1/admin/users?page=1&per_page=1000`, {
+    headers: authHeaders,
+  })
+  if (!existingResponse.ok) fail(`list users HTTP ${existingResponse.status}`)
+  const existingBody = await existingResponse.json() as
+    | Array<{ id: string; email?: string; user_metadata?: Record<string, unknown> }>
+    | { users?: Array<{ id: string; email?: string; user_metadata?: Record<string, unknown> }> }
+  const users = Array.isArray(existingBody) ? existingBody : existingBody.users || []
+
+  pass(claim ? `legacy service_role key valid untuk staging (ref ${claim.ref})` : "sb_secret admin key valid untuk staging")
+
+  const found = users.find((u) => u.email === EMAIL)
 
   let authId: string
   if (found) {
     authId = found.id
-    pass(`auth user ${EMAIL} sudah ada (idempotent reuse)`)
+    const reset = await fetch(`${url}/auth/v1/admin/users/${authId}`, {
+      method: "PUT",
+      headers: authHeaders,
+      body: JSON.stringify({
+        password,
+        email_confirm: true,
+        user_metadata: { ...(found.user_metadata || {}), full_name: NAME, role: "MURID" },
+      }),
+    })
+    if (!reset.ok) fail(`reset test user HTTP ${reset.status}: ${await reset.text()}`)
+    pass(`auth user ${EMAIL} sudah ada; password test disinkronkan (idempotent reuse)`)
   } else {
-    const created = await fetch(`${url}/auth/v1/admin/users`, {
+    const createdResponse = await fetch(`${url}/auth/v1/admin/users`, {
       method: "POST",
       headers: authHeaders,
       body: JSON.stringify({
@@ -95,16 +112,14 @@ async function main(): Promise<void> {
         user_metadata: { full_name: NAME, role: "MURID" },
       }),
     })
-      .then(async (r) => {
-        if (!r.ok) fail(`create user HTTP ${r.status}: ${await r.text()}`)
-        return r.json()
-      })
-      .catch((e) => fail(`create user gagal: ${e instanceof Error ? e.message : "?"}`))
-    authId = (created as { id: string }).id
+    if (!createdResponse.ok) fail(`create user HTTP ${createdResponse.status}: ${await createdResponse.text()}`)
+    const created = await createdResponse.json() as { id?: string }
+    if (!created.id) fail("create user berhasil tetapi id kosong")
+    authId = created.id
     pass(`auth user ${EMAIL} dibuat (id ${authId})`)
   }
 
-  const prisma = new PrismaClient({ datasources: { db: { url: dbUrl } } })
+  const prisma = new PrismaClient({ datasources: { db: { url: prismaPoolerSafeUrl(dbUrl) } } })
   try {
     const user = await prisma.user.upsert({
       where: { supabaseId: authId },

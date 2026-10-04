@@ -4,6 +4,7 @@ import { registerAgent } from "../core/agent-registry";
 import { runAgent } from "../core/agent-runner";
 
 const inputSchema = z.object({
+  dataAuthorityConfirmed: z.literal(true),
   studentAnswer: z.string().min(1, "Jawaban siswa wajib diisi"),
   questionOrTask: z.string().optional(),
   rubric: z.string().optional(),
@@ -30,7 +31,7 @@ const outputSchema = z.object({
 
 const agent: AgentDefinition<z.infer<typeof inputSchema>, z.infer<typeof outputSchema>> = {
   id: "grading",
-  name: "Penilaian Otomatis",
+  name: "Saran Penilaian AI",
   description: "Bantu nilai jawaban esai/tulisan siswa dengan rubrik jelas, skor, dan feedback untuk siswa.",
   role: "Asisten penilaian yang fair, transparan, dan konsisten dalam menilai jawaban siswa.",
   targetUser: "guru",

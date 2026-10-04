@@ -1,3 +1,4 @@
+import { aiAllowed } from "@/lib/compliance/service";
 /**
  * SimulationAnalyticsService — SINGLE SOURCE OF TRUTH (SSOT) untuk Pusat
  * Evaluasi Pembelajaran (UKBI/TKA).
@@ -819,7 +820,7 @@ export async function getReviewQueue(teacherId: string, filter: SimulationFilter
         answer: r.answer || "",
         transcript: null,
         isAudio,
-        score: r.score ?? 0,
+        score: r.reviewStatus === "APPROVED" ? (r.score ?? 0) : (r.aiSuggestedScore ?? r.score ?? 0),
         aiConfidence: r.aiConfidence,
         aiReviewedAt: r.aiReviewedAt?.toISOString() || null,
         reviewStatus: r.reviewStatus || null,
@@ -852,6 +853,7 @@ export async function aiReviewAnswer(answerId: string): Promise<{ ok: boolean; e
   const row = await db.testAnswer.findUnique({ where: { id: answerId } });
   if (!row) return { ok: false, error: "Jawaban tidak ditemukan" };
 
+  if (!await aiAllowed(row.userId)) return { ok: false, error: "Bantuan AI belum disetujui untuk data murid ini. Gunakan penilaian manual." };
   const q = row.questionId
     ? await db.uKBIQuestion.findUnique({ where: { id: row.questionId }, select: { id: true, text: true, seksi: true, options: true } })
     : null;
@@ -869,6 +871,7 @@ export async function aiReviewAnswer(answerId: string): Promise<{ ok: boolean; e
       prompt: q?.text || "",
       rubric,
       answer: row.answer || "",
+      subjectUserId: row.userId,
     });
 
     const score = res.graded ? res.score : row.score;
@@ -887,8 +890,8 @@ export async function aiReviewAnswer(answerId: string): Promise<{ ok: boolean; e
     await db.testAnswer.update({
       where: { id: answerId },
       data: {
-        score,
-        isCorrect: score >= 60,
+        aiSuggestedScore: score,
+        isCorrect: null,
         aiFeedback: feedbackJson as object,
         aiConfidence: confidence,
         aiReviewedAt: new Date(),
@@ -1005,7 +1008,7 @@ function serializeReviewItem(r: any, userId: string): ReviewItem {
     answer: r.answer || "",
     transcript: null,
     isAudio: seksi === "BERBICARA" && !!r.answer && /^https?:\/\//.test(r.answer),
-    score: r.score ?? 0,
+    score: r.reviewStatus === "APPROVED" ? (r.score ?? 0) : (r.aiSuggestedScore ?? r.score ?? 0),
     aiConfidence: r.aiConfidence,
     aiReviewedAt: r.aiReviewedAt?.toISOString() || null,
     reviewStatus: r.reviewStatus || null,
@@ -1026,6 +1029,8 @@ export async function approveAnswers(answerIds: string[], guruId: string, koment
       await db.testAnswer.update({
         where: { id },
         data: {
+          score: row.aiSuggestedScore ?? row.score,
+          isCorrect: (row.aiSuggestedScore ?? row.score) >= 60,
           reviewStatus: "APPROVED",
           reviewedBy: guruId,
           reviewedAt: new Date(),

@@ -1,3 +1,4 @@
+import { uploadPrivate } from "@/lib/compliance/assets";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { getUser } from "@/lib/supabase/server";
@@ -17,6 +18,7 @@ export async function POST(req: NextRequest) {
     // MIME + extension + size + magic-byte validation (server-side, trust nothing).
     const check = await validateUpload(file);
     if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
+    if (user.role === "MURID") return NextResponse.json(await uploadPrivate(file, user.id, check.ext));
 
     const bucket = BUCKET_BY_MIME[file.type] || "documents";
     const folder = formData.get("folder") as string || "umum";

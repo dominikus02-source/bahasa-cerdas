@@ -76,6 +76,7 @@ export default function AccountSecurityPanel() {
   }
   return <section id="akun-keamanan" className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900 sm:p-7">
     <div className="flex items-center gap-3"><span className="rounded-2xl bg-blue-50 p-3 text-blue-600 dark:bg-blue-500/15"><Shield size={23} /></span><div><h2 className="text-lg font-bold text-slate-900 dark:text-white">Akun & Keamanan</h2><p className="text-sm text-slate-500 dark:text-slate-400">Lindungi akses dan kelola akunmu.</p></div></div>
+    <a href="/privasi-akun" className="mt-4 inline-block rounded-xl border border-border bg-card px-4 py-3 text-foreground">Privasi & persetujuan wali</a>
     <fieldset disabled={busy} className="mt-6 space-y-4">
       <legend className="text-sm font-semibold text-slate-700 dark:text-slate-200">Verifikasi identitas</legend>
       <div className="mt-2 flex flex-wrap gap-2">{(["password", "email", ...(google ? ["google"] : [])] as VerificationMode[]).map(v => <button key={v} type="button" aria-pressed={mode === v} onClick={() => { setMode(v); setPassword(""); setCode(""); setEmailReauth(false); setError(""); }} className={`rounded-xl px-3 py-2 text-sm font-semibold ${mode === v ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"}`}>{v === "password" ? "Password lama" : v === "email" ? "Kode email" : "Google"}</button>)}</div>

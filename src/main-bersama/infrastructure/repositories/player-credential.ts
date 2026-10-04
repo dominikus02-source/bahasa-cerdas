@@ -5,7 +5,7 @@
 // Schema Tahap 4 TIDAK menyediakan kolom credential. Credential
 // STATELESS SIGNED:
 //
-//   credential = playerId "." sessionId "." HMAC-SHA256(secret, "player:" + playerId)
+//   credential = playerId "." sessionId "." HMAC-SHA256(secret, "player:" + playerId + ":session:" + sessionId)
 //
 //  - secret utama: env MAIN_BERSAMA_CREDENTIAL_SECRET (≥32 byte entropi);
 //  - production fallback: bila secret dedicated belum tersedia, derive
@@ -79,15 +79,15 @@ function getSecret(): string {
   return cachedDevSecret;
 }
 
-function hmacOf(playerId: string): string {
+function hmacOf(playerId: string, sessionId: string): string {
   return createHmac('sha256', getSecret())
-    .update(`player:${playerId}`)
+    .update(`player:${playerId}:session:${sessionId}`)
     .digest('base64url');
 }
 
 /** Credential opaque: `playerId.sessionId.signature`. */
 export function issuePlayerCredential(playerId: string, sessionId: string): string {
-  return `${playerId}.${sessionId}.${hmacOf(playerId)}`;
+  return `${playerId}.${sessionId}.${hmacOf(playerId, sessionId)}`;
 }
 
 function safeEqual(a: string, b: string): boolean {
@@ -121,7 +121,7 @@ export function resolvePlayerCredential(
   ) {
     return { ok: false, code: 'MALFORMED_CREDENTIAL' };
   }
-  if (!safeEqual(hmacOf(playerId), signature)) {
+  if (!safeEqual(hmacOf(playerId, sessionId), signature)) {
     return { ok: false, code: 'CREDENTIAL_MISMATCH' };
   }
   return { ok: true, playerId, sessionId };

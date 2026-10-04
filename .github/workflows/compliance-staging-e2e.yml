@@ -1,0 +1,115 @@
+name: Compliance Staging E2E
+
+on:
+  push:
+    branches:
+      - checkpoint/compliance-pdp-tunas-2026-10-04
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: compliance-staging-e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  staging-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      STAGING_GATE_MODE: "compliance"
+      STAGING_ALLOW_LOCAL: "true"
+      STAGING_SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
+      STAGING_SUPABASE_ANON_KEY: ${{ secrets.STAGING_SUPABASE_ANON_KEY }}
+      STAGING_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.STAGING_SUPABASE_SERVICE_ROLE_KEY }}
+      STAGING_DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+      STAGING_BASE_URL: "http://localhost:3000"
+      STAGING_TEST_PASSWORD: ${{ secrets.STAGING_TEST_PASSWORD }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.STAGING_SUPABASE_ANON_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.STAGING_SUPABASE_SERVICE_ROLE_KEY }}
+      SUPABASE_SECRET_KEY: ${{ secrets.STAGING_SUPABASE_SERVICE_ROLE_KEY }}
+      NEXT_PUBLIC_SITE_URL: "http://localhost:3000"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Account deletion security regression
+        run: npx tsx scripts/test-account-security.ts
+
+      - name: Main Bersama session regression
+        run: npx tsx scripts/test-main-bersama-session-engine.ts
+
+      - name: Payment integrity regression
+        run: npx tsx scripts/test-p4.1-payment-integrity.ts
+
+      - name: Require isolated staging secrets
+        shell: bash
+        run: |
+          set -eu
+          missing=0
+          for name in \
+            STAGING_SUPABASE_URL \
+            STAGING_SUPABASE_ANON_KEY \
+            STAGING_SUPABASE_SERVICE_ROLE_KEY \
+            STAGING_DATABASE_URL \
+            STAGING_TEST_PASSWORD
+          do
+            eval "value=\${$name:-}"
+            if [ -z "$value" ]; then
+              echo "::error::$name is not configured for staging E2E"
+              missing=1
+            fi
+          done
+          test "$missing" -eq 0
+
+      - name: Verify staging isolation
+        run: npx tsx scripts/verify-staging-environment.ts
+
+      - name: Supabase Auth one-user smoke
+        run: npx tsx scripts/staging-one-user-smoke.ts
+
+      - name: Prepare PgBouncer-safe app database URL
+        run: |
+          node <<'NODE'
+          const fs = require("node:fs");
+          const u = new URL(process.env.STAGING_DATABASE_URL);
+          if (u.hostname.endsWith(".pooler.supabase.com") && u.port === "6543") {
+            if (!u.searchParams.has("pgbouncer")) u.searchParams.set("pgbouncer", "true");
+            if (!u.searchParams.has("connection_limit")) u.searchParams.set("connection_limit", "1");
+          }
+          fs.appendFileSync(process.env.GITHUB_ENV, `DATABASE_URL=${u.toString()}\nDIRECT_URL=${u.toString()}\n`);
+          NODE
+
+      - name: Start current-commit app against staging
+        run: |
+          npm run dev -- --hostname localhost --port 3000 > /tmp/bc-staging-app.log 2>&1 &
+          echo $! > /tmp/bc-staging-app.pid
+          for i in $(seq 1 60); do
+            if curl -fsS http://localhost:3000/api/health > /tmp/bc-staging-health.json; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "::error::Current-commit staging app did not become healthy"
+          tail -n 200 /tmp/bc-staging-app.log || true
+          exit 1
+
+      - name: Current-commit staging application E2E
+        run: npx tsx scripts/staging-e2e.ts
+
+      - name: Stop current-commit staging app
+        if: always()
+        run: |
+          if [ -f /tmp/bc-staging-app.pid ]; then
+            kill "$(cat /tmp/bc-staging-app.pid)" || true
+          fi

@@ -1,4 +1,5 @@
 "use client";
+import { createClient as privacyAuthClient } from "@/lib/supabase/client";
 
 import { useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
@@ -13,6 +14,7 @@ export function useSocket() {
     if (!socket) {
       socket = io(process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001", {
         withCredentials: true,
+        auth: cb => { void privacyAuthClient().auth.getSession().then(({data})=>cb({token:data.session?.access_token})); },
         transports: ["websocket", "polling"],
       });
     }

@@ -5,6 +5,7 @@ import cache from "@/lib/redis";
 import { levelFromXp, cumulativeXpForLevel } from "@/lib/gamification/levels";
 import { rankFromLevel, minLevelForRank, nextRankOf, RANK_META } from "@/lib/gamification/ranks";
 import { getDisplayName } from "@/lib/nickname";
+import { trustedAdultPublicProfileWhere } from "@/lib/compliance/service";
 
 /**
  * Papan peringkat sesama rank.
@@ -22,8 +23,8 @@ export async function GET() {
 
     // v2: bentuk respons berubah (tier → rank resmi). Tanpa versi, entri lama
     // di Redis masih menyajikan label liga usang sampai TTL habis.
-    const data = await cache.getOrSet(
-      `league:peers:v2:${user.id}`,
+    const data = await (async (_key: string, fetch: () => Promise<unknown>, _ttl: number) => fetch())(
+      `league:peers:privacy:v3:${user.id}`,
       async () => {
         const myXp = user.xp || 0;
         const myLevel = levelFromXp(myXp);
@@ -36,7 +37,7 @@ export async function GET() {
         const maxXp = next ? cumulativeXpForLevel(minLevelForRank(next)) : null;
 
         const peersRaw = await db.user.findMany({
-          where: { xp: maxXp === null ? { gte: minXp } : { gte: minXp, lt: maxXp } },
+          where: { privacy: { is: trustedAdultPublicProfileWhere() }, xp: maxXp === null ? { gte: minXp } : { gte: minXp, lt: maxXp } },
           select: { id: true, fullName: true, nickname: true, avatar: true, xp: true, level: true },
           orderBy: { xp: "desc" },
           take: 30,

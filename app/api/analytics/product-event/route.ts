@@ -1,3 +1,4 @@
+import { privacyFor } from "@/lib/compliance/service";
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { rateLimitRoute } from "@/lib/rate-limit";
@@ -55,6 +56,7 @@ export async function POST(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!(await privacyFor(user.id))?.analytics) return NextResponse.json({ ok: true, collected: false });
 
     const limited = await rateLimitRoute(req, {
       maxRequests: 30,
@@ -75,14 +77,14 @@ export async function POST(req: NextRequest) {
     if (body.props && typeof body.props === "object") {
       for (const [k, v] of Object.entries(body.props as Record<string, unknown>)) {
         if (typeof v === "string" || typeof v === "number" || typeof v === "boolean") {
-          if (String(v).length <= 120) props[k] = v;
+          if (["source","surface","variant","count","entityId","category"].includes(k) && String(v).length <= 120) props[k] = v;
         }
       }
     }
 
     console.log(
       "[product-event]",
-      JSON.stringify({ name, role: user.role, userId: user.id, props, at: new Date().toISOString() })
+      JSON.stringify({ name, role: user.role, at: new Date().toISOString() })
     );
 
     // P0 #7 — persist idempotent (additive, best-effort). logicalKey default

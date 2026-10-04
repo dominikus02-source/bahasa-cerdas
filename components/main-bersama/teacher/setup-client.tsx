@@ -218,7 +218,7 @@ export function SetupClient({
             <span>Main</span> <strong>Bersama</strong>
           </h1>
           <p className="mb-setup-sub">
-            Pilih soal dan cara bermain, lalu bagikan PIN ke kelasmu.
+            Pilih soal dan cara bermain, lalu bagikan PIN ke kelasmu. Peserta anak/tamu membutuhkan izin kelas yang diverifikasi pengelola; peserta dewasa dapat masuk dengan akun sendiri.
           </p>
         </div>
       </header>
@@ -350,7 +350,7 @@ export function SetupClient({
           <div className="mb-guru-h">
             <span className="mb-step-badge mb-number" aria-hidden>{3}</span>
             <span className="mb-guru-h-text" id="mb-cls-h">Pilih Kelas</span>
-            <small>Opsional — untuk pencatatan kelas.</small>
+            <small>Untuk anak: pilih kelas dengan izin wali yang telah diverifikasi.</small>
           </div>
           <div className="mb-cls-row">
             <button
@@ -359,7 +359,7 @@ export function SetupClient({
               onClick={() => setClassId(null)}
               className={`mb-cls-chip ${classId === null ? 'mb-cls-selected' : ''}`}
             >
-              Tanpa kelas
+              Tanpa kelas (akun dewasa)
             </button>
             {classes.map((c) => (
               <button

@@ -1,3 +1,4 @@
+import { aiAllowed } from "@/lib/compliance/service";
 /**
  * POST /api/ai/bc/chat — AI BC 2.1 Chat (SSE streaming)
  *
@@ -58,6 +59,8 @@ export async function POST(req: NextRequest) {
     if (!user) {
       return new Response("Unauthorized", { status: 401 });
     }
+
+    if (!await aiAllowed(user.id)) return new Response(JSON.stringify({ error: "Aktifkan bantuan AI melalui pengaturan privasi.", code: "AI_CONSENT_REQUIRED" }), { status: 403, headers: { "Content-Type": "application/json" } });
 
     const body = (await req.json().catch(() => ({}))) as ChatBody;
     const history = buildChatHistory(body.messages);

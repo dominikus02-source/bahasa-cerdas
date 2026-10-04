@@ -1,3 +1,4 @@
+import { finishDeletion } from "@/lib/compliance/deletion-job";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { db } from "@/lib/db";
@@ -20,20 +21,10 @@ export async function DELETE(req: NextRequest) {
       if (adminError || verifiedAccount.user?.id !== user.id) throw new AccountError("Penghapusan akun belum tersedia. Hubungi pengelola.", 503);
       // Preflight the ownership query before changing application data. Storage
       // deletion must use its API, never DELETE directly from storage.objects.
-      const objects = await db.$queryRaw<{ bucket_id: string; name: string }[]>`SELECT bucket_id, name FROM storage.objects WHERE owner_id = ${user.id} OR owner = ${user.id}::uuid OR (COALESCE(owner_id, '') = '' AND owner IS NULL AND split_part(name, '/', 2) = ${account.id})`;
-      await anonymizeAccount(account.id, user.id);
+      const objects = await db.$queryRaw<{ bucket_id: string; name: string }[]>`SELECT bucket_id, name FROM storage.objects WHERE owner_id = ${user.id} OR owner = ${user.id}::uuid OR (COALESCE(owner_id, '') = '' AND owner IS NULL AND (split_part(name, '/', 2) = ${account.id} OR (bucket_id = 'student-private' AND split_part(name, '/', 1) = ${account.id})))`;
+      await anonymizeAccount(account.id, user.id, objects);
       try {
-        for (const bucket of new Set(objects.map(o => o.bucket_id))) {
-          const paths = objects.filter(o => o.bucket_id === bucket).map(o => o.name);
-          for (let start = 0; start < paths.length; start += 100) {
-            const { error } = await admin.storage.from(bucket).remove(paths.slice(start, start + 100));
-            if (error) throw error;
-          }
-        }
-        const { error: revokeError } = await admin.auth.admin.signOut(session.access_token, "global");
-        if (revokeError) throw revokeError;
-        const { error } = await admin.auth.admin.deleteUser(user.id);
-        if (error) throw error;
+        await finishDeletion(account.id, admin, session.access_token);
       } catch {
         // Tombstone already denies app access, even for unexpired JWTs. The
         // same endpoint can safely retry cleanup using the still-valid JWT.

@@ -5,6 +5,9 @@ import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { Role } from "@prisma/client";
 import { cache } from "react";
+import { redirect } from "next/navigation";
+import {ageBandFor,sensitivePurposeRestricted} from "@/lib/compliance/policy";
+import { canUseService,privacyFor } from "@/lib/compliance/service";
 import { getForwardedIp } from "@/lib/security";
 import { isValidSupabaseUrl } from "@/lib/supabase/url-guard";
 
@@ -82,7 +85,7 @@ export async function createClient() {
  * Wewenang sebenarnya tetap datang dari baris User di database (peran, status),
  * yang selalu dibaca segar di bawah — JWT hanya menetapkan "siapa".
  */
-export const getUser = cache(async () => {
+export const getIdentityUser = cache(async () => {
   const supabase = await createClient();
 
   // IMPORTANT: getClaims() is the server-side identity check. Do not fall
@@ -117,6 +120,16 @@ export const getUser = cache(async () => {
     });
     return null;
   }
+});
+
+// Identity remains available for privacy, reporting and deletion even after withdrawal.
+export const getUser = cache(async () => {
+  const user = await getIdentityUser();
+  if (!user) return null;
+  const path = (await headers()).get("x-pathname") || "";
+  if (await canUseService(user.id)){const p=await privacyFor(user.id);if(p?.birthDate&&!sensitivePurposeRestricted(ageBandFor(p.birthDate),p.ageAssuranceLevel,path))return user;}
+  if (path.startsWith("/api/")) return null;
+  redirect("/privasi-akun");
 });
 
 export async function requireAuth() {

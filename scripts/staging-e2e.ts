@@ -10,12 +10,11 @@
  *
  * TIDAK ada k6/loadtest. TIDAK menyentuh production. TIDAK mencetak secret.
  */
-import { createClient } from "@supabase/supabase-js"
 import { PrismaClient } from "@prisma/client"
 import { randomUUID } from "crypto"
-import { assertStagingGate } from "./lib/staging-gate"
+import { assertStagingGate, prismaPoolerSafeUrl } from "./lib/staging-gate"
+import { getPeriodKey } from "../lib/premium-economy/period"
 
-const APP = "https://bahasa-cerdas-staging.vercel.app"
 const PAKET_TITLE = "UKBI Load Test Staging"
 const PAKET_ID_PREFIX = "lt-ukbi-200"
 const EMAIL = "ukbi-loadtest-001@loaded-test.id"
@@ -23,8 +22,8 @@ const EMAIL = "ukbi-loadtest-001@loaded-test.id"
 const ENV = {
   supabaseUrl: process.env.STAGING_SUPABASE_URL || "",
   anonKey: process.env.STAGING_SUPABASE_ANON_KEY || "",
-  serviceRole: process.env.STAGING_SUPABASE_SERVICE_ROLE_KEY || "",
   dbUrl: process.env.STAGING_DIRECT_URL || process.env.STAGING_DATABASE_URL || "",
+  baseUrl: process.env.STAGING_BASE_URL || "",
   testPassword: process.env.STAGING_TEST_PASSWORD || "",
 }
 
@@ -35,12 +34,10 @@ const ok = (name: string, cond: boolean, detail = "") => {
 }
 
 async function main() {
-  await assertStagingGate(process.env)
-  console.log("⛩️  Gate 12/12 PASS — env staging terkonfirmasi\n")
+  await assertStagingGate(process.env, "compliance")
+  console.log("⛩️  Compliance staging gate PASS — env staging terkonfirmasi\n")
 
-  const supabase = createClient(ENV.supabaseUrl, ENV.anonKey, { auth: { persistSession: false } })
-  const admin = createClient(ENV.supabaseUrl, ENV.serviceRole, { auth: { persistSession: false } })
-  const db = new PrismaClient({ datasources: { db: { url: ENV.dbUrl } } })
+  const db = new PrismaClient({ datasources: { db: { url: prismaPoolerSafeUrl(ENV.dbUrl) } } })
   const userRow = await db.user.findUnique({ where: { email: EMAIL } })
 
   // ── 1) PAKET (idempotent, MCQ-only agar auto-scored; hapus paket lama yang
@@ -96,37 +93,82 @@ async function main() {
   ok("paket " + PAKET_TITLE + " tersedia", !!paket, `id ${paket!.id}`)
   const paketId = paket!.id
 
-  // ── 2) LOGIN — password grant vs staging auth REST, lalu bangun cookie SSR
-  // (app pakai @supabase/ssr yang membaca cookie `sb-<ref>-auth-token`,
-  //  bukan header Authorization).
-  const host = new URL(ENV.supabaseUrl).host
-  const cookieName = `sb-${host.split(".")[0]}-auth-token`
-  const tokenRes = await fetch(`${ENV.supabaseUrl}/auth/v1/token?grant_type=password`, {
-    method: "POST",
-    headers: { apikey: ENV.anonKey, "Content-Type": "application/json" },
-    body: JSON.stringify({ email: EMAIL, password: ENV.testPassword }),
+  // This user is disposable staging-only. Reset only this package's prior
+  // attempt plus the current simulation quota so every CI run starts from a
+  // deterministic state instead of inheriting an old COMPLETED session.
+  await db.testAnswer.deleteMany({ where: { userId: userRow!.id, paketId } })
+  await db.progresKompetensi.deleteMany({ where: { userId: userRow!.id, paketId } })
+  await db.testSession.deleteMany({ where: { userId: userRow!.id, paketId } })
+  await db.premiumUsage.deleteMany({
+    where: {
+      userId: userRow!.id,
+      featureCode: "SIMULATION",
+      periodKey: getPeriodKey("MONTH"),
+    },
   })
-  const tokenBody: any = await tokenRes.json()
-  ok("login staging (password grant)", tokenRes.status === 200 && !!tokenBody?.access_token, `HTTP ${tokenRes.status}`)
-  if (!tokenBody?.access_token) process.exit(1)
-  // SSR cookie (@supabase/ssr base64url): name `supabase.auth.token`,
-  // value = "base64-" + base64url(JSON string session)
-  const cookieValue = "base64-" + Buffer.from(
-    JSON.stringify({
-      access_token: tokenBody.access_token,
-      refresh_token: tokenBody.refresh_token,
-      expires_at: tokenBody.expires_at,
-      expires_in: tokenBody.expires_in,
-      token_type: tokenBody.token_type,
-      user: tokenBody.user,
-    })
-  ).toString("base64url")
+  console.log("[INFO] disposable staging attempt state reset")
+
+  // ── 2) LOGIN THROUGH THE CURRENT APPLICATION ──
+  // Use the app's own login route so @supabase/ssr owns the cookie format,
+  // including chunking/version changes. Hand-building sb-* cookies made this
+  // test pass against an older deployment while failing on the current commit.
+  const loginRes = await fetch(`${ENV.baseUrl}/api/auth/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Origin: ENV.baseUrl,
+    },
+    body: JSON.stringify({ email: EMAIL, password: ENV.testPassword }),
+    redirect: "manual",
+  })
+  const loginBody = await loginRes.text()
+  ok(
+    "login staging lewat app HTTP 200",
+    loginRes.status === 200,
+    `HTTP ${loginRes.status}${loginRes.status === 200 ? "" : ` body=${loginBody.replace(/\s+/g, " ").slice(0, 220)}`}`
+  )
+  if (loginRes.status !== 200) process.exit(1)
+
+  const setCookies =
+    typeof (loginRes.headers as any).getSetCookie === "function"
+      ? (loginRes.headers as any).getSetCookie() as string[]
+      : [loginRes.headers.get("set-cookie") || ""].filter(Boolean)
+  const cookieHeader = setCookies
+    .map((value) => value.split(";")[0]?.trim())
+    .filter(Boolean)
+    .join("; ")
+  ok("login app menghasilkan SSR auth cookie", cookieHeader.includes("sb-"), `${setCookies.length} Set-Cookie`)
+  if (!cookieHeader) process.exit(1)
 
   const headers = {
-    Cookie: `${cookieName}=${cookieValue}`,
-    apikey: ENV.anonKey,
+    Cookie: cookieHeader,
+    Origin: ENV.baseUrl,
     "Content-Type": "application/json",
   }
+
+  // Establish the current privacy notice through the real current-commit API.
+  // The disposable MURID test identity is declared adult so this simulation E2E
+  // tests the core-learning path without fabricating guardian evidence.
+  const privacyRes = await fetch(`${ENV.baseUrl}/api/privacy/account`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      birthDate: "1990-01-01",
+      acceptedNotice: true,
+      publicProfile: false,
+      publicWorks: false,
+      analytics: false,
+      aiAssistance: false,
+    }),
+  })
+  const privacyBody = await privacyRes.text()
+  ok(
+    "privacy account/current notice HTTP 200",
+    privacyRes.status === 200,
+    `HTTP ${privacyRes.status}${privacyRes.status === 200 ? "" : ` body=${privacyBody.replace(/\s+/g, " ").slice(0, 220)}`}`
+  )
+  if (privacyRes.status !== 200) process.exit(1)
+
   const scan = (payload: string) => {
     const hits: string[] = []
     for (const needle of ["correctAnswer", "answerKey", '"rubric"', '"jawaban"']) {
@@ -136,19 +178,30 @@ async function main() {
   }
 
   // ── 3) /api/user/me ──
-  const me = await fetch(`${APP}/api/user/me`, { headers }).then((r) => r.json().catch(() => ({})))
+  const meRes = await fetch(`${ENV.baseUrl}/api/user/me`, { headers })
+  const meText = await meRes.text()
+  let me: any = {}
+  try { me = JSON.parse(meText) } catch { /* diagnostics below */ }
   const meRole = me?.data?.user?.role ?? me?.user?.role
-  ok("user/me (app) role MURID", meRole === "MURID", `role=${meRole}`)
+  ok(
+    "user/me (app) role MURID",
+    meRes.status === 200 && meRole === "MURID",
+    `HTTP ${meRes.status} role=${meRole ?? "-"}${meRes.status === 200 && meRole === "MURID" ? "" : ` body=${meText.replace(/\s+/g, " ").slice(0, 220)}`}`
+  )
 
   // ── 4) daftar paket ──
-  const list = await fetch(`${APP}/api/kompetensi?limit=50`, { headers }).then((r) => r.json().catch(() => ({})))
+  const list = await fetch(`${ENV.baseUrl}/api/kompetensi?limit=50`, { headers }).then((r) => r.json().catch(() => ({})))
   const found = (list?.data || []).find((p: any) => p?.title === PAKET_TITLE) || (list?.data || []).find((p: any) => p?.id === paketId)
   ok("paket tampil di GET /api/kompetensi", !!found, found ? found.title : "tidak ketemu")
 
   // ── 5) START — GET /api/kompetensi/[paketId] ──
-  const startRes = await fetch(`${APP}/api/kompetensi/${paketId}`, { headers })
+  const startRes = await fetch(`${ENV.baseUrl}/api/kompetensi/${paketId}`, { headers })
   const startBody = await startRes.text()
-  ok("start session HTTP 200 (tanpa 429)", startRes.status === 200, `HTTP ${startRes.status}`)
+  ok(
+    "start session HTTP 200 (tanpa 429)",
+    startRes.status === 200,
+    `HTTP ${startRes.status}${startRes.status === 200 ? "" : ` body=${startBody.replace(/\s+/g, " ").slice(0, 220)}`}`
+  )
   const leakStart = scan(startBody)
   ok("no answer-key leakage (GET paket)", leakStart.length === 0, leakStart.length ? leakStart.join(",") : "bersih")
   let start: any = {}
@@ -165,29 +218,38 @@ async function main() {
     const opt = Array.isArray(q?.options) && q.options.length > 0 ? q.options[0].id ?? q.options[0] : "dummy"
     if (q?.id) answered[q.id] = String(opt)
   }
-  const patchRes = await fetch(`${APP}/api/kompetensi/${paketId}`, {
+  const patchRes = await fetch(`${ENV.baseUrl}/api/kompetensi/${paketId}`, {
     method: "PATCH", headers, body: JSON.stringify({ answers: answered, flagged: [] }),
   })
-  ok("autosave PATCH HTTP 200", patchRes.status === 200, `HTTP ${patchRes.status}`)
+  const patchBody = await patchRes.text()
+  ok(
+    "autosave PATCH HTTP 200",
+    patchRes.status === 200,
+    `HTTP ${patchRes.status}${patchRes.status === 200 ? "" : ` body=${patchBody.replace(/\s+/g, " ").slice(0, 220)}`}`
+  )
 
   // ── 7) SUBMIT — POST ──
   for (const q of questions.slice(5)) {
     const opt = Array.isArray(q?.options) && q.options.length > 0 ? q.options[0].id ?? q.options[0] : "dummy"
     if (q?.id) answered[q.id] = String(opt)
   }
-  const submitRes = await fetch(`${APP}/api/kompetensi/${paketId}/submit`, {
+  const submitRes = await fetch(`${ENV.baseUrl}/api/kompetensi/${paketId}/submit`, {
     method: "POST", headers, body: JSON.stringify({ answers: answered, timeSpent: 60 }),
   })
   const submitBody = await submitRes.text()
-  ok("submit POST HTTP 200", submitRes.status === 200, `HTTP ${submitRes.status}`)
+  ok(
+    "submit POST HTTP 200",
+    submitRes.status === 200,
+    `HTTP ${submitRes.status}${submitRes.status === 200 ? "" : ` body=${submitBody.replace(/\s+/g, " ").slice(0, 220)}`}`
+  )
   const leakSubmit = scan(submitBody)
   ok("no answer-key leakage (submit)", leakSubmit.length === 0, leakSubmit.length ? leakSubmit.join(",") : "bersih")
   const submitJson: any = JSON.parse(submitBody)
   const sres = submitJson?.data?.result ?? submitJson?.result ?? submitJson?.skor ?? submitJson?.session
-  ok("submit mengembalikan hasil", !!sres, JSON.stringify(sres).slice(0, 120))
+  ok("submit mengembalikan hasil", !!sres, sres ? JSON.stringify(sres).slice(0, 120) : "hasil tidak ada")
 
   // ── 8) RESULT ──
-  const hasilRes = await fetch(`${APP}/api/kompetensi/${paketId}/hasil`, { headers })
+  const hasilRes = await fetch(`${ENV.baseUrl}/api/kompetensi/${paketId}/hasil`, { headers })
   const hasilBody = await hasilRes.text()
   ok("hasil GET HTTP 200", hasilRes.status === 200, `HTTP ${hasilRes.status}`)
   const leakHasil = scan(hasilBody)
@@ -203,7 +265,7 @@ async function main() {
   ok("ProgresKompetensi tercatat di staging", !!progres)
   const answersCount = await db.testAnswer.count({ where: { userId: userRow!.id, paketId } })
   ok("TestAnswer tercatat di staging", answersCount > 0, `${answersCount} jawaban`)
-  const oneMore = await db.progresKompetensi.count({ where: { userId: userRow!.id } })
+  const oneMore = await db.progresKompetensi.count({ where: { userId: userRow!.id, paketId } })
   ok("hanya 1 progres per user+paket (no duplicate)", oneMore === 1, `count=${oneMore}`)
 
   await db.$disconnect()

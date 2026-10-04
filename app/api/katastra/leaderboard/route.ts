@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { trustedAdultPublicProfileWhere } from "@/lib/compliance/service";
 
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const limit = parseInt(searchParams.get("limit") || "20");
+    const limit = Math.min(100, Math.max(1, Number(searchParams.get("limit")) || 20));
     const type = searchParams.get("type") || "global";
 
     const users = await db.user.findMany({
-      where: { role: "MURID" },
+      where: { role: "MURID", privacy: { is: trustedAdultPublicProfileWhere() } },
       orderBy: { xp: "desc" },
       take: limit,
       select: {

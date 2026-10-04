@@ -124,6 +124,11 @@ export default function PageFooter() {
               Ketentuan
             </Link>
             <span aria-hidden="true">&bull;</span>
+            <Link href="/laporkan" className="hover:text-zinc-400">Laporkan</Link>
+            <Link href="/privasi-anak" className="hover:text-zinc-400">Privasi anak</Link>
+            <Link href="/pemberitahuan-wali" className="hover:text-zinc-400">Untuk wali</Link>
+            <Link href="/pedoman-komunitas" className="hover:text-zinc-400">Pedoman komunitas</Link>
+            <Link href="/retensi-data" className="hover:text-zinc-400">Retensi data</Link>
             <span>Dibuat dengan cinta di Indonesia</span>
           </div>
         </div>

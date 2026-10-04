@@ -1,3 +1,4 @@
+import { publicIdentityAllowed, trustedAdultPublicProfileWhere } from "@/lib/compliance/service";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
@@ -19,6 +20,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
+    if (!await publicIdentityAllowed(id, "publicProfile")) return NextResponse.json({ error: "Profil privat." }, { status: 404 });
     const me = await getUser().catch(() => null);
 
     const target = await db.user.findUnique({
@@ -29,11 +31,11 @@ export async function GET(
 
     const [followerCount, followingCount, profileLikeCount, followers, following, viewerFollow, viewerLike] =
       await Promise.all([
-        db.follow.count({ where: { followingId: id } }),
-        db.follow.count({ where: { followerId: id } }),
-        db.profileLike.count({ where: { targetId: id } }),
+        db.follow.count({ where: { followingId: id, follower: { privacy: { is: trustedAdultPublicProfileWhere() } } } }),
+        db.follow.count({ where: { followerId: id, following: { privacy: { is: trustedAdultPublicProfileWhere() } } } }),
+        db.profileLike.count({ where: { targetId: id, liker: { privacy: { is: trustedAdultPublicProfileWhere() } } } }),
         db.follow.findMany({
-          where: { followingId: id },
+          where: { followingId: id, follower: { privacy: { is: trustedAdultPublicProfileWhere() } } },
           orderBy: { createdAt: "desc" },
           take: 6,
           select: {
@@ -49,7 +51,7 @@ export async function GET(
           },
         }),
         db.follow.findMany({
-          where: { followerId: id },
+          where: { followerId: id, following: { privacy: { is: trustedAdultPublicProfileWhere() } } },
           orderBy: { createdAt: "desc" },
           take: 6,
           select: {

@@ -56,6 +56,10 @@ export interface AnswerRow {
   // evaluated and wrong. score stays 0 because the column is non-nullable.
   isCorrect: boolean | null;
   score: number;
+  aiSuggestedScore?: number;
+  aiFeedback?: {ringkasan: string; advisory: boolean};
+  reviewStatus?: string;
+  aiReviewedAt?: Date;
   seksi: string;
 }
 

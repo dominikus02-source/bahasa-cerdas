@@ -1,3 +1,5 @@
+import {reviewedAiProvider} from "@/lib/compliance/ai-data";
+import {signedPrivateAsset} from "@/lib/compliance/assets";
 /**
  * Penilaian OTOMATIS jawaban konstruktif UKBI (Menulis & Berbicara) tanpa guru.
  * - Menulis: teks langsung dinilai LLM terhadap rubrik.
@@ -22,11 +24,19 @@ function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
 }
 
 /** Transkrip audio Indonesia via Groq Whisper. Kembalikan "" bila gagal. */
-export async function transcribeSpeaking(audioUrl: string): Promise<string> {
+export async function transcribeSpeaking(audioUrl: string, subjectUserId?: string): Promise<string> {
   const key = process.env.GROQ_API_KEY;
-  if (!key || !audioUrl) return "";
+  if (!key || !audioUrl || !reviewedAiProvider("groq")) return "";
   try {
-    const audio = await withTimeout(fetch(audioUrl), 15000);
+    if (audioUrl.startsWith("/api/privacy/assets?")) {
+      const path = new URL(audioUrl, "https://www.bahasacerdas.com").searchParams.get("path") || "";
+      if (!subjectUserId || path.split("/")[0] !== subjectUserId) return "";
+      audioUrl = await signedPrivateAsset(path);
+    }
+    const allowedHost = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL || "https://invalid.local").hostname;
+    const target = new URL(audioUrl);
+    if (target.protocol !== "https:" || target.hostname !== allowedHost) return "";
+    const audio = await withTimeout(fetch(audioUrl, { redirect: "error", signal: AbortSignal.timeout(15000) }), 15000);
     if (!audio.ok) return "";
     const buf = await audio.arrayBuffer();
     const type = audio.headers.get("content-type") || "audio/webm";
@@ -71,6 +81,7 @@ async function gradeText(params: {
   prompt: string;
   rubric: any;
   answer: string;
+  subjectUserId?: string;
 }): Promise<{ score: number; feedback: string } | null> {
   const { seksi, prompt, rubric, answer } = params;
   if (!answer || !answer.trim()) return { score: 0, feedback: "Tidak ada jawaban." };
@@ -116,7 +127,8 @@ export async function gradeConstructed(params: {
   seksi: string;
   prompt: string;
   rubric: any;
-  answer: string; // teks (Menulis) atau URL rekaman (Berbicara)
+  answer: string;
+  subjectUserId?: string; // teks (Menulis) atau URL rekaman (Berbicara)
 }): Promise<GradeResult> {
   const seksi = params.seksi.toUpperCase() === "BERBICARA" ? "BERBICARA" : "MENULIS";
   let text = params.answer || "";
@@ -124,8 +136,8 @@ export async function gradeConstructed(params: {
 
   if (seksi === "BERBICARA") {
     // answer = URL rekaman → transkrip dulu.
-    if (/^https?:\/\//.test(text)) {
-      transcript = await transcribeSpeaking(text);
+    if (/^https?:\/\//.test(text) || text.startsWith("/api/privacy/assets?")) {
+      transcript = await transcribeSpeaking(text, params.subjectUserId);
       text = transcript;
     }
     if (!text) {

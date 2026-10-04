@@ -5,6 +5,7 @@ import cache from "@/lib/redis";
 import { weekKey, seasonPeriodKey } from "@/lib/gamification/season";
 import { RANK_META } from "@/lib/gamification/ranks";
 import { getRankAsset } from "@/lib/gamification/rank-assets";
+import { trustedAdultPublicProfileWhere } from "@/lib/compliance/service";
 
 /**
  * Leaderboard BC Arena.
@@ -135,7 +136,7 @@ export async function getLeaderboard(params: LeaderboardParams): Promise<Leaderb
   const cacheKey = `bca:lb:${CACHE_VERSION}:${params.scope}:${periodKeyFor(params.period)}:${params.userId ?? "x"}:${params.groupId ?? "x"}:${params.province ?? "x"}`;
 
   const cached = await cache.get<LeaderboardEntry[]>(cacheKey);
-  if (cached) return cached;
+  // Privacy revocation is authoritative; do not serve cached identities.
 
   const scopeIds = await resolveScopeUserIds(params);
 
@@ -155,7 +156,7 @@ export async function getLeaderboard(params: LeaderboardParams): Promise<Leaderb
         : {};
 
   const where = {
-    user: { role: "MURID" as const, email: { not: { endsWith: "@account.invalid" } } },
+    user: { role: "MURID" as const, email: { not: { endsWith: "@account.invalid" } }, privacy: { is: trustedAdultPublicProfileWhere() } },
     ...(scopeIds ? { userId: { in: scopeIds } } : {}),
     ...periodWhere,
   };

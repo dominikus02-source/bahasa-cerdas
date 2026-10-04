@@ -19,3 +19,6 @@ import { assertTestDatabaseUrl } from './test-db-guard';
 
 const validated = assertTestDatabaseUrl(process.env.TEST_DATABASE_URL);
 process.env.DATABASE_URL = validated;
+// Prisma uses the pooled URL first; never inherit a different connection.
+process.env.DATABASE_URL_POOLED = validated;
+process.env.DIRECT_URL = validated;
