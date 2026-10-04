@@ -57,7 +57,12 @@ export async function canReadWork(ownerId: string, viewer: { id: string; role: s
 
 export async function aiAllowed(userId: string) {
   const p = await privacyFor(userId);
-  return !!process.env.AI_TRANSFER_REVIEW_REF && !!process.env.AI_APPROVED_PROVIDERS && !!p?.aiAssistance && serviceAllowed(p, childRiskApproved());
+  if (!p?.birthDate || !p.aiAssistance || !serviceAllowed(p, childRiskApproved())) return false;
+  const band = ageBandFor(p.birthDate);
+  const ageOk = band === "ADULT"
+    ? ["GUARDIAN_VERIFIED","SCHOOL_VERIFIED","AUTH_PROVIDER_VERIFIED","REVIEWED"].includes(p.ageAssuranceLevel)
+    : p.ageAssuranceLevel === "GUARDIAN_VERIFIED";
+  return ageOk && !!process.env.AI_TRANSFER_REVIEW_REF && !!process.env.AI_APPROVED_PROVIDERS;
 }
 
 const adultCutoff = (() => {
