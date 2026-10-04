@@ -72,7 +72,7 @@ jobs:
           fi
 
       - name: Production dependency audit
-        run: npm audit --omit=dev --audit-level=high
+        run: node scripts/security-audit-gate.mjs
 
       - name: Prisma generate
         run: npx prisma generate
