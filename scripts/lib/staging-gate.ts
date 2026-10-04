@@ -65,6 +65,20 @@ export function hostnameOf(url: string): string {
   }
 }
 
+/** Prisma 5 + Supabase transaction pooler (6543) must not reuse prepared statements. */
+export function prismaPoolerSafeUrl(input: string): string {
+  try {
+    const u = new URL(input)
+    if (u.hostname.endsWith(".pooler.supabase.com") && u.port === "6543") {
+      if (!u.searchParams.has("pgbouncer")) u.searchParams.set("pgbouncer", "true")
+      if (!u.searchParams.has("connection_limit")) u.searchParams.set("connection_limit", "1")
+    }
+    return u.toString()
+  } catch {
+    return input
+  }
+}
+
 /** Ekstrak project-ref Supabase (20–22 karakter [a-z0-9]) dari URL/DSN/string. */
 export function extractSupabaseRef(input: string): string | null {
   const m = input.match(/(?:postgres\.|https?:\/\/|db\.)([a-z0-9]{20,22})(?:\.|\/|:)/)
