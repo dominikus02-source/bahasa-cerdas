@@ -1,0 +1,13 @@
+FROM alpine:3.20
+
+RUN apk add --no-cache curl tzdata \
+  && ln -snf /usr/share/zoneinfo/Asia/Jakarta /etc/localtime \
+  && echo "Asia/Jakarta" > /etc/timezone
+
+COPY ops/vps/cron/root.crontab /etc/crontabs/root
+COPY ops/vps/cron/call.sh /usr/local/bin/bc-cron-call
+
+RUN chmod 0600 /etc/crontabs/root \
+  && chmod 0755 /usr/local/bin/bc-cron-call
+
+CMD ["crond", "-f", "-l", "8"]
