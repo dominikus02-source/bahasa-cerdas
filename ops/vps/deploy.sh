@@ -26,8 +26,7 @@ git fetch --prune origin
 git checkout "$DEPLOY_BRANCH"
 git pull --ff-only origin "$DEPLOY_BRANCH"
 
-chmod +x ops/vps/prepare-runtime-envs.sh
-./ops/vps/prepare-runtime-envs.sh
+bash ./ops/vps/prepare-runtime-envs.sh
 
 cd ops/vps
 COMPOSE=(docker compose --env-file "$CONFIG_DIR/stack.env")
