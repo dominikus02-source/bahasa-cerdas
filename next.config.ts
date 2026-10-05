@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverActions: {
-      allowedOrigins: ["localhost:3000", "bahasacerdas.com", "www.bahasacerdas.com"],
+      allowedOrigins: ["localhost:3000", "bahasacerdas.com", "www.bahasacerdas.com", "vps.bahasacerdas.com"],
       // Server Actions carry small payloads only (forms/metadata). Large file
       // uploads go directly to Supabase Storage from the client, NOT through a
       // Server Action — so keep this tight to limit abuse.
