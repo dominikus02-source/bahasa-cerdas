@@ -68,11 +68,18 @@ services:
       PORT: "3001"
       GAME_PORT: "3001"
       BAHASACERDAS_WEB_URL: https://${WEB_DOMAIN}
+      GAME_ALLOWED_ORIGINS: ${GAME_ALLOWED_ORIGINS:-https://www.bahasacerdas.com,https://bahasacerdas.com}
     ports:
       - "127.0.0.1:3001:3001"
     networks:
       - edge
       - internal
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3001/health').then(r=>r.json()).then(j=>{if(j.status!=='ok'||j.db!=='up')process.exit(1)}).catch(()=>process.exit(1))\""]
+      interval: 15s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
 
   agent:
     profiles: ["agent"]
