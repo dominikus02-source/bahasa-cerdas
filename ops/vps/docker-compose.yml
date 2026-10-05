@@ -114,7 +114,7 @@ services:
     networks:
       - edge
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ${CADDYFILE_PATH:-./Caddyfile}:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
       - /opt/bahasacerdas/logs/caddy:/var/log/caddy
