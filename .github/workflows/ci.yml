@@ -71,3 +71,7 @@ jobs:
             --secret id=web_env,src=/tmp/bc-web-ci.env \
             -t bahasacerdas-web-ci .
           rm -f /tmp/bc-web-ci.env
+
+
+      - name: Verify VPS cron container build
+        run: docker build -f Dockerfile.cron -t bahasacerdas-cron-ci .
