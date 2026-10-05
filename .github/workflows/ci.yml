@@ -75,3 +75,22 @@ jobs:
 
       - name: Verify VPS cron container build
         run: docker build -f Dockerfile.cron -t bahasacerdas-cron-ci .
+
+      - name: Validate VPS compose
+        run: |
+          mkdir -p /tmp/bc-config
+          cat >/tmp/bc-config/stack.env <<'EOF'
+          REDIS_PASSWORD=ci-placeholder
+          ACME_EMAIL=ci@example.com
+          APEX_DOMAIN=example.com
+          WEB_DOMAIN=www.example.com
+          GAME_DOMAIN=game.example.com
+          CADDYFILE_PATH=./Caddyfile.cutover
+          EOF
+          cat >/tmp/bc-config/web.env <<'EOF'
+          DATABASE_URL=postgresql://user:pass@localhost:5432/db
+          EOF
+          BC_CONFIG_DIR=/tmp/bc-config docker compose \
+            --env-file /tmp/bc-config/stack.env \
+            -f ops/vps/docker-compose.yml \
+            config -q
