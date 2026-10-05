@@ -124,7 +124,6 @@ networks:
     driver: bridge
   internal:
     driver: bridge
-    internal: true
 
 volumes:
   redis_data:
