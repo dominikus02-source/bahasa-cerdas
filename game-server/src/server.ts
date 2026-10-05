@@ -5,8 +5,24 @@ import { PrismaClient } from '@prisma/client';
 import { createKuisTempurArena } from './kuis-tempur-arena.js';
 
 const prisma = new PrismaClient();
-// Prefer PORT (injected by Render/Railway/Koyeb/etc.), fall back to GAME_PORT (Fly), then 3001.
+// Prefer PORT (injected by container/platform), fall back to GAME_PORT, then 3001.
 const PORT = parseInt(process.env.PORT || process.env.GAME_PORT || '3001', 10);
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const DEFAULT_GAME_ORIGINS = [
+  'https://www.bahasacerdas.com',
+  'https://bahasacerdas.com',
+];
+const GAME_ALLOWED_ORIGINS = (process.env.GAME_ALLOWED_ORIGINS || DEFAULT_GAME_ORIGINS.join(','))
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+function isAllowedOrigin(origin?: string) {
+  if (!origin) return true;
+  if (GAME_ALLOWED_ORIGINS.includes(origin)) return true;
+  if (!IS_PRODUCTION && /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) return true;
+  return false;
+}
 
 interface Player {
   id: string;
@@ -249,8 +265,17 @@ const httpServer = createServer((req, res) => {
 
 const io = new Server(httpServer, {
   cors: {
-    origin: '*',
+    origin(origin, callback) {
+      if (isAllowedOrigin(origin)) return callback(null, true);
+      return callback(new Error('Origin not allowed'));
+    },
     methods: ['GET', 'POST'],
+    credentials: false,
+  },
+  // Enforce the same origin policy for WebSocket upgrades as defense-in-depth.
+  // Socket authentication remains the primary security boundary.
+  allowRequest(req, callback) {
+    callback(null, isAllowedOrigin(req.headers.origin));
   },
   transports: ['websocket', 'polling'],
   pingInterval: 10000,
@@ -1187,6 +1212,37 @@ function handleLeave(socket: any, code: string, odiceId: string) {
   }
 }
 
+let shuttingDown = false;
+
+async function shutdown(signal: string) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  console.log(`[Game Server] ${signal} received, closing gracefully...`);
+
+  const forceExit = setTimeout(() => {
+    console.error('[Game Server] Graceful shutdown timed out');
+    process.exit(1);
+  }, 10_000);
+  forceExit.unref();
+
+  io.close();
+  httpServer.close(async () => {
+    try {
+      await prisma.$disconnect();
+    } catch (error) {
+      console.error('[Game Server] Prisma disconnect failed', error);
+    } finally {
+      clearTimeout(forceExit);
+      console.log('[Game Server] Shutdown complete');
+      process.exit(0);
+    }
+  });
+}
+
+process.on('SIGTERM', () => void shutdown('SIGTERM'));
+process.on('SIGINT', () => void shutdown('SIGINT'));
+
 httpServer.listen(PORT, '0.0.0.0', () => {
   console.log(`[Game Server] Running on port ${PORT}`);
+  console.log(`[Game Server] Allowed origins: ${GAME_ALLOWED_ORIGINS.join(', ')}`);
 });
