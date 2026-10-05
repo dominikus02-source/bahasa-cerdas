@@ -43,6 +43,14 @@ type Props = {
 const WORLD_W = 1400;
 const WORLD_H = 840;
 
+const ARGA_SHEETS = {
+  down: "/game/rpg/characters/sheet-char-arga-walk-down.png",
+  side: "/game/rpg/characters/sheet-char-arga-walk-side.png",
+  up: "/game/rpg/characters/sheet-char-arga-walk-up.png",
+} as const;
+const ARGA_FRAME = 224;
+const ARGA_FRAME_COUNT = 8;
+
 const ASSETS = {
   base: [
     "/game/kuis-tempur/assets/world/base/arena_base_01.png",
@@ -158,6 +166,9 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
         root: any;
         body: any;
         weapon: any;
+        weaponCore: any;
+        weaponTip: any;
+        targetRing: any;
         hpFill: any;
         ammoGlow: any;
         name: any;
@@ -172,6 +183,8 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
         attackUntil: number;
         hitUntil: number;
         lastFacing: 1 | -1;
+        heroKind: "arga" | "mascot";
+        direction: "down" | "side" | "up";
       };
 
       class KuisTempurScene extends Phaser.Scene {
@@ -180,6 +193,7 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
         private rushOverlay: any;
         private rushLabel: any;
         private localFollowId = "";
+        private hoverTargetId = "";
         private hitUnsubscribe: (() => void) | null = null;
 
         constructor() {
@@ -190,10 +204,44 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
           Object.entries(ASSETS).forEach(([group, paths]) => {
             paths.forEach((path, index) => this.load.image(key(group, index), path));
           });
+          this.load.spritesheet("kt-arga-down", ARGA_SHEETS.down, {
+            frameWidth: ARGA_FRAME,
+            frameHeight: ARGA_FRAME,
+          });
+          this.load.spritesheet("kt-arga-side", ARGA_SHEETS.side, {
+            frameWidth: ARGA_FRAME,
+            frameHeight: ARGA_FRAME,
+          });
+          this.load.spritesheet("kt-arga-up", ARGA_SHEETS.up, {
+            frameWidth: ARGA_FRAME,
+            frameHeight: ARGA_FRAME,
+          });
+        }
+
+        private ensureHeroAnimations() {
+          const definitions = [
+            ["kt-arga-walk-down", "kt-arga-down"],
+            ["kt-arga-walk-side", "kt-arga-side"],
+            ["kt-arga-walk-up", "kt-arga-up"],
+          ] as const;
+
+          definitions.forEach(([animationKey, textureKey]) => {
+            if (this.anims.exists(animationKey)) return;
+            this.anims.create({
+              key: animationKey,
+              frames: this.anims.generateFrameNumbers(textureKey, {
+                start: 0,
+                end: ARGA_FRAME_COUNT - 1,
+              }),
+              frameRate: 12.5,
+              repeat: -1,
+            });
+          });
         }
 
         create() {
           sceneRef.current = this;
+          this.ensureHeroAnimations();
           this.cameras.main.setBackgroundColor("#173f32");
           this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H);
           this.buildTerrain();
@@ -217,25 +265,33 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
           this.scale.on("resize", this.onResize, this);
           this.onResize({ width: this.scale.width, height: this.scale.height });
 
+          this.input.on("pointermove", (pointer: any) => {
+            const current = arenaRef.current;
+            const me = current.entities.find((entity) => entity.id === userIdRef.current);
+            if (!me?.alive || me.ammo <= 0) {
+              this.hoverTargetId = "";
+              return;
+            }
+            this.hoverTargetId = this.pickTarget(pointer)?.id || "";
+          });
+
+          this.input.on("pointerout", () => {
+            this.hoverTargetId = "";
+          });
+
           this.input.on("pointerdown", (pointer: any) => {
             const current = arenaRef.current;
             const me = current.entities.find((entity) => entity.id === userIdRef.current);
             if (!me?.alive) return;
 
-            const worldPoint = pointer.positionToCamera(this.cameras.main) as { x: number; y: number };
-            const aliveTargets = current.entities
-              .filter((entity) => entity.id !== me.id && entity.alive && entity.connected !== false)
-              .map((entity) => ({
-                entity,
-                distance: Phaser.Math.Distance.Between(worldPoint.x, worldPoint.y, entity.x, entity.y),
-              }))
-              .sort((a, b) => a.distance - b.distance);
-
-            if (me.ammo > 0 && aliveTargets[0]?.distance < 62) {
-              gameSocket.arenaShoot({ code, userId: me.id, targetId: aliveTargets[0].entity.id });
+            const target = me.ammo > 0 ? this.pickTarget(pointer) : null;
+            if (target) {
+              gameSocket.arenaShoot({ code, userId: me.id, targetId: target.id });
+              this.hoverTargetId = target.id;
               return;
             }
 
+            const worldPoint = pointer.positionToCamera(this.cameras.main) as { x: number; y: number };
             gameSocket.arenaMove({
               code,
               userId: me.id,
@@ -247,6 +303,23 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
           this.hitUnsubscribe = gameSocket.onArenaHit((hit: { fromId: string; targetId: string; damage: number }) => {
             this.playHit(hit.fromId, hit.targetId, hit.damage);
           });
+        }
+
+        private pickTarget(pointer: any) {
+          const current = arenaRef.current;
+          const me = current.entities.find((entity) => entity.id === userIdRef.current);
+          if (!me?.alive) return null;
+
+          const worldPoint = pointer.positionToCamera(this.cameras.main) as { x: number; y: number };
+          const nearest = current.entities
+            .filter((entity) => entity.id !== me.id && entity.alive && entity.connected !== false)
+            .map((entity) => ({
+              entity,
+              distance: Phaser.Math.Distance.Between(worldPoint.x, worldPoint.y, entity.x, entity.y),
+            }))
+            .sort((a, b) => a.distance - b.distance)[0];
+
+          return nearest && nearest.distance < 68 ? nearest.entity : null;
         }
 
         private buildTerrain() {
@@ -410,21 +483,37 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
 
         private createHero(entity: PhaserArenaEntity): HeroVisual {
           const accent = Phaser.Display.Color.HexStringToColor(entity.color || "#22d3ee").color;
-          const family = Math.abs(Array.from(entity.id).reduce((acc, ch) => acc + ch.charCodeAt(0), 0)) % ASSETS.heroIdle.length;
+          const heroHash = Math.abs(Array.from(entity.id).reduce((acc, ch) => acc + ch.charCodeAt(0), 0));
+          const heroSlot = heroHash % 4;
+          const heroKind: HeroVisual["heroKind"] = heroSlot === 0 ? "arga" : "mascot";
+          const family = heroKind === "arga" ? 0 : (heroSlot - 1) % ASSETS.heroIdle.length;
 
-          const shadow = this.add.ellipse(0, 31, 54, 14, 0x020617, 0.34);
+          const shadow = this.add.ellipse(0, 31, heroKind === "arga" ? 48 : 54, 14, 0x020617, 0.34);
           const aura = this.add.circle(0, 3, entity.id === userIdRef.current ? 40 : 34, accent, entity.id === userIdRef.current ? 0.16 : 0.055);
           aura.setBlendMode(Phaser.BlendModes.ADD);
 
-          const body = this.add.image(0, 27, key("heroIdle", family))
-            .setOrigin(0.5, 1)
-            .setDisplaySize(84, 84);
+          const body = heroKind === "arga"
+            ? this.add.sprite(0, 31, "kt-arga-down", 0)
+                .setOrigin(0.5, 1)
+                .setDisplaySize(96, 96)
+            : this.add.image(0, 27, key("heroIdle", family))
+                .setOrigin(0.5, 1)
+                .setDisplaySize(84, 84);
 
-          const weapon = this.add.rectangle(27, 5, 33, 6, entity.ammo > 0 ? 0xfde047 : 0x64748b, 1)
-            .setAngle(-11)
-            .setStrokeStyle(2, 0xffffff, 0.55);
-          const ammoGlow = this.add.circle(43, 1, 8, entity.ammo > 0 ? 0xfef08a : 0x64748b, entity.ammo > 0 ? 0.92 : 0.28);
+          const weaponGrip = this.add.rectangle(14, 3, 10, 9, 0x172554, 1)
+            .setStrokeStyle(1.5, 0xf8fafc, 0.5);
+          const weaponCore = this.add.rectangle(29, 0, 32, 7, entity.ammo > 0 ? 0xf59e0b : 0x64748b, 1)
+            .setStrokeStyle(2, 0xffffff, 0.72);
+          const weaponTip = this.add.circle(47, 0, 5.5, entity.ammo > 0 ? 0xfef08a : 0x64748b, 1)
+            .setStrokeStyle(2, 0xffffff, 0.6);
+          const ammoGlow = this.add.circle(47, 0, 12, entity.ammo > 0 ? 0xfde047 : 0x64748b, entity.ammo > 0 ? 0.23 : 0.06);
           ammoGlow.setBlendMode(Phaser.BlendModes.ADD);
+          const weapon = this.add.container(0, 5, [ammoGlow, weaponGrip, weaponCore, weaponTip])
+            .setAngle(-11);
+
+          const targetRing = this.add.circle(0, 6, heroKind === "arga" ? 37 : 40, 0xfb7185, 0)
+            .setStrokeStyle(2.5, 0xfb7185, 0.9)
+            .setAlpha(0);
 
           const hpBg = this.add.rectangle(0, -55, 62, 7, 0x020617, 0.86).setOrigin(0.5);
           const hpFill = this.add.rectangle(-31, -55, 62, 7, 0x34d399, 1).setOrigin(0, 0.5);
@@ -455,12 +544,12 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
             strokeThickness: 5,
           }).setOrigin(0.5);
 
-          const root = this.add.container(entity.x, entity.y, [shadow, aura, body, weapon, ammoGlow, hpBg, hpFill, name, rankBadge, ko]);
+          const root = this.add.container(entity.x, entity.y, [shadow, targetRing, aura, body, weapon, hpBg, hpFill, name, rankBadge, ko]);
           root.setDepth(entity.y + 20);
           root.setSize(82, 106);
 
           this.tweens.add({
-            targets: [body, weapon, ammoGlow],
+            targets: heroKind === "arga" ? [weapon] : [body, weapon],
             y: "-=2",
             duration: 500 + (entity.id.charCodeAt(0) % 140),
             yoyo: true,
@@ -483,6 +572,9 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
             root,
             body,
             weapon,
+            weaponCore,
+            weaponTip,
+            targetRing,
             hpFill,
             ammoGlow,
             name,
@@ -497,6 +589,8 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
             attackUntil: 0,
             hitUntil: 0,
             lastFacing: 1,
+            heroKind,
+            direction: "down",
           };
         }
 
@@ -510,16 +604,61 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
         private setHeroMode(visual: HeroVisual, mode: HeroVisual["mode"]) {
           if (visual.mode === mode) return;
           visual.mode = mode;
-          visual.body.setTexture(this.heroTexture(mode, visual.family)).setDisplaySize(84, 84);
+
+          if (visual.heroKind === "arga") {
+            if (mode !== "run") {
+              visual.body.anims?.stop();
+              const texture =
+                visual.direction === "up"
+                  ? "kt-arga-up"
+                  : visual.direction === "side"
+                    ? "kt-arga-side"
+                    : "kt-arga-down";
+              visual.body.setTexture(texture, 0).setDisplaySize(96, 96);
+            }
+          } else {
+            visual.body.setTexture(this.heroTexture(mode, visual.family)).setDisplaySize(84, 84);
+          }
 
           if (mode === "run") {
-            visual.body.setAngle(visual.lastFacing > 0 ? 3 : -3);
+            visual.body.setAngle(0);
           } else if (mode === "attack") {
             visual.body.setAngle(visual.lastFacing > 0 ? 6 : -6);
           } else if (mode === "hit") {
             visual.body.setAngle(visual.lastFacing > 0 ? -8 : 8);
           } else {
             visual.body.setAngle(0);
+          }
+        }
+
+        private syncArgaMovement(visual: HeroVisual, dx: number, dy: number, moving: boolean) {
+          if (visual.heroKind !== "arga") return;
+
+          if (!moving || visual.mode !== "run") {
+            visual.body.anims?.stop();
+            return;
+          }
+
+          let direction: HeroVisual["direction"];
+          let animationKey: string;
+          if (Math.abs(dx) > Math.abs(dy)) {
+            direction = "side";
+            animationKey = "kt-arga-walk-side";
+            visual.lastFacing = dx >= 0 ? 1 : -1;
+            visual.body.setFlipX(visual.lastFacing < 0);
+          } else if (dy < 0) {
+            direction = "up";
+            animationKey = "kt-arga-walk-up";
+            visual.body.setFlipX(false);
+          } else {
+            direction = "down";
+            animationKey = "kt-arga-walk-down";
+            visual.body.setFlipX(false);
+          }
+
+          visual.direction = direction;
+          if (visual.body.anims?.currentAnim?.key !== animationKey || !visual.body.anims?.isPlaying) {
+            visual.body.play(animationKey, true);
           }
         }
 
@@ -550,12 +689,23 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
         }
 
         private playRespawn(visual: HeroVisual) {
-          visual.body
-            .setTexture(this.heroTexture("idle", visual.family))
-            .setDisplaySize(84, 84)
-            .setAngle(0)
-            .setAlpha(1)
-            .setY(27);
+          if (visual.heroKind === "arga") {
+            visual.body
+              .setTexture("kt-arga-down", 0)
+              .setDisplaySize(96, 96)
+              .setAngle(0)
+              .setAlpha(1)
+              .setY(31);
+            visual.direction = "down";
+            visual.body.anims?.stop();
+          } else {
+            visual.body
+              .setTexture(this.heroTexture("idle", visual.family))
+              .setDisplaySize(84, 84)
+              .setAngle(0)
+              .setAlpha(1)
+              .setY(27);
+          }
           this.setHeroMode(visual, "idle");
 
           const ringA = this.add.circle(visual.root.x, visual.root.y, 18, 0x67e8f9, 0.34).setDepth(8600);
@@ -619,8 +769,13 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
             visual.hpFill.setFillStyle(hpRatio > 0.45 ? 0x34d399 : hpRatio > 0.2 ? 0xfbbf24 : 0xfb7185);
 
             const hasAmmo = entity.ammo > 0;
-            visual.weapon.setFillStyle(hasAmmo ? 0xfde047 : 0x64748b, 1);
-            visual.ammoGlow.setFillStyle(hasAmmo ? 0xfef08a : 0x64748b, hasAmmo ? 0.95 : 0.3);
+            visual.weaponCore.setFillStyle(hasAmmo ? 0xf59e0b : 0x64748b, 1);
+            visual.weaponTip.setFillStyle(hasAmmo ? 0xfef08a : 0x64748b, 1);
+            visual.ammoGlow.setFillStyle(hasAmmo ? 0xfde047 : 0x64748b, hasAmmo ? 0.23 : 0.06);
+            const targeted = entity.id === this.hoverTargetId && entity.connected !== false && entity.alive;
+            visual.targetRing
+              .setAlpha(targeted ? 0.85 : 0)
+              .setScale(targeted ? 1 + Math.sin(this.time.now / 120) * 0.08 : 1);
             visual.ko.setText(
               entity.connected === false
                 ? "KONEKSI TERPUTUS"
@@ -667,13 +822,12 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
           target.body.setTint(0xffffff);
           this.tweens.add({
             targets: target.body,
-            x: { from: 0, to: 5 * from.lastFacing },
-            scaleX: { from: 1, to: 0.94 },
-            scaleY: { from: 1, to: 1.05 },
+            x: { from: 0, to: 6 * from.lastFacing },
+            alpha: { from: 1, to: 0.72 },
             duration: 90,
             yoyo: true,
             onComplete: () => {
-              target.body.setX(0).setScale(1).clearTint();
+              target.body.setX(0).setAlpha(1).clearTint();
             },
           });
 
@@ -818,7 +972,7 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
             const dy = visual.targetY - visual.root.y;
             const moving = visual.state.alive && visual.state.connected !== false && Math.hypot(dx, dy) > 8;
 
-            if (Math.abs(dx) > 2) {
+            if (visual.heroKind !== "arga" && Math.abs(dx) > 2) {
               visual.lastFacing = dx >= 0 ? 1 : -1;
               visual.body.setFlipX(visual.lastFacing < 0);
             }
@@ -839,12 +993,14 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
               this.setHeroMode(visual, "idle");
             }
 
-            if (moving && visual.mode === "run") {
+            this.syncArgaMovement(visual, dx, dy, moving);
+
+            if (moving && visual.mode === "run" && visual.heroKind !== "arga") {
               const stride = Math.sin(this.time.now / 85 + visual.root.x * 0.02);
               visual.body.setY(27 + stride * 1.8);
               visual.weapon.setY(5 + stride * 0.8);
             } else if (visual.mode !== "ko") {
-              visual.body.setY(27);
+              visual.body.setY(visual.heroKind === "arga" ? 31 : 27);
               visual.weapon.setY(5);
             }
           }

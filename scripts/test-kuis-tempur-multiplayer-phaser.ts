@@ -42,6 +42,11 @@ check("combat hit punya projectile + impact", phaser.includes("playHit(") && pha
 check("answer benar punya local hero pulse", phaser.includes("pulseLocalHero"));
 check("pointer arena bisa move atau shoot", phaser.includes("arenaShoot") && phaser.includes("arenaMove"));
 check("hero punya state idle/run/attack/hit/KO", phaser.includes("heroRun") && phaser.includes("heroAttack") && phaser.includes("heroHit") && phaser.includes("playKo") && phaser.includes("playRespawn"));
+check("Arga premium memakai 3 directional spritesheet", phaser.includes("sheet-char-arga-walk-down.png") && phaser.includes("sheet-char-arga-walk-side.png") && phaser.includes("sheet-char-arga-walk-up.png"));
+check("Arga walk animation memakai 8 frame", phaser.includes("ARGA_FRAME_COUNT = 8") && phaser.includes("generateFrameNumbers"));
+check("Arga direction mengikuti vektor gerak", phaser.includes("syncArgaMovement") && phaser.includes('direction = "side"') && phaser.includes('direction = "up"') && phaser.includes('direction = "down"'));
+check("weapon rig memakai core + tip + glow", phaser.includes("weaponCore") && phaser.includes("weaponTip") && phaser.includes("ammoGlow"));
+check("pointer hover memberi target reticle", phaser.includes("pointermove") && phaser.includes("pickTarget") && phaser.includes("targetRing"));
 check("top-3 rank tampil di arena", phaser.includes("rankBadge") && phaser.includes("rank <= 3"));
 check("jawaban benar memunculkan energy/combo feedback", phaser.includes("ENERGI +1") && phaser.includes("comboMatch"));
 check("server memblokir target disconnected", server.includes("!target.connected") && server.includes("!shooter.connected"));
