@@ -107,6 +107,8 @@ services:
       APEX_DOMAIN: ${APEX_DOMAIN}
       WEB_DOMAIN: ${WEB_DOMAIN}
       GAME_DOMAIN: ${GAME_DOMAIN}
+      TEST_WEB_DOMAIN: ${TEST_WEB_DOMAIN:-vps.bahasacerdas.com}
+      TEST_GAME_DOMAIN: ${TEST_GAME_DOMAIN:-game-vps.bahasacerdas.com}
     ports:
       - "80:80"
       - "443:443"
