@@ -46,6 +46,10 @@ check("top-3 rank tampil di arena", phaser.includes("rankBadge") && phaser.inclu
 check("jawaban benar memunculkan energy/combo feedback", phaser.includes("ENERGI +1") && phaser.includes("comboMatch"));
 check("server memblokir target disconnected", server.includes("!target.connected") && server.includes("!shooter.connected"));
 check("client tidak memilih target disconnected", phaser.includes("entity.connected !== false") && arena.includes("entity.connected !== false"));
+check("share link ?join= auto-join room", read("components/game/KuisTempurHub.tsx").includes('params.get("join")') && read("components/game/KuisTempurHub.tsx").includes("gameSocket.joinRoom"));
+check("Hub merespons host transfer", read("components/game/KuisTempurHub.tsx").includes("gameSocket.onHostChanged"));
+const leaveBlock = socketServer.slice(socketServer.indexOf("function handleLeave"), socketServer.indexOf("let shuttingDown"));
+check("server transfer host sebelum player-list", leaveBlock.indexOf("room.hostId = newHost.id") >= 0 && leaveBlock.indexOf("room.hostId = newHost.id") < leaveBlock.indexOf("emit('player-list'"));
 
 const spawnBlock = server.match(/const HUMAN_SPAWNS = \[([\s\S]*?)\n\];/)?.[1] || "";
 const spawns = [...spawnBlock.matchAll(/\{ x: (\d+), y: (\d+) \}/g)].map((m) => `${m[1]},${m[2]}`);

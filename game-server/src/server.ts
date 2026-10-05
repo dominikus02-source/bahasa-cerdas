@@ -282,9 +282,12 @@ const io = new Server(httpServer, {
   pingTimeout: 12000,
 });
 
-const GAME_SERVER_SIGNING_PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
+const DEFAULT_GAME_SERVER_SIGNING_PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
 MCowBQYDK2VwAyEAdZGdsISldkKar6htuL4/B9JDw8/2RHEF7DSq/CFOMqI=
 -----END PUBLIC KEY-----`;
+const GAME_SERVER_SIGNING_PUBLIC_KEY = process.env.GAME_SERVER_SIGNING_PUBLIC_KEY_B64
+  ? Buffer.from(process.env.GAME_SERVER_SIGNING_PUBLIC_KEY_B64, 'base64').toString('utf8')
+  : DEFAULT_GAME_SERVER_SIGNING_PUBLIC_KEY;
 
 async function callKuisTempurWebBridge(payload: Record<string, unknown>) {
   const secret = process.env.KUIS_TEMPUR_SERVER_SECRET;
@@ -855,10 +858,16 @@ io.on('connection', (socket) => {
   });
 
   socket.on('leave-room', (data: { code: string; userId: string }) => {
+    const identity = socket.data.identity as SocketIdentity | undefined;
+    const userId = identity?.sub || data.userId;
+    const room = rooms.get(data.code);
+    const player = room?.players.get(userId);
+    if (!room || !player || player.odiceId !== socket.id) return;
+
     if (kuisTempurArena.isActive(data.code)) {
-      kuisTempurArena.removePlayer(data.code, data.userId);
+      kuisTempurArena.removePlayer(data.code, userId);
     }
-    handleLeave(socket, data.code, data.userId);
+    handleLeave(socket, data.code, userId);
   });
 
   // Matchmaking
@@ -1192,19 +1201,21 @@ function handleLeave(socket: any, code: string, odiceId: string) {
   socket.leave(code);
   playerSockets.delete(socket.id);
 
-  io.to(code).emit('player-list', getPlayersList(room));
-  io.to(code).emit('notification', {
-    type: 'PLAYER_LEFT',
-    message: `${player.playerName} keluar`,
-    playerName: player.playerName,
-  });
-
   if (wasHost && room.players.size > 0) {
     const newHost = room.players.values().next().value;
     if (!newHost) return;
     room.hostId = newHost.id;
     io.to(code).emit('host-changed', { newHostId: newHost.id });
   }
+
+  // Emit the list only after a possible host transfer so every client's
+  // isHost flag is immediately coherent.
+  io.to(code).emit('player-list', getPlayersList(room));
+  io.to(code).emit('notification', {
+    type: 'PLAYER_LEFT',
+    message: `${player.playerName} keluar`,
+    playerName: player.playerName,
+  });
 
   if (room.players.size === 0) {
     rooms.delete(code);

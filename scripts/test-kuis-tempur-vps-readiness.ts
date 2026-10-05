@@ -7,6 +7,7 @@ const server = read("game-server/src/server.ts");
 const dockerfile = read("game-server/Dockerfile");
 const envExample = read("game-server/.env.example");
 const socketClient = read("lib/game/socket.ts");
+const socketTokenRoute = read("app/api/game/socket-token/route.ts");
 
 let passed = 0;
 let failed = 0;
@@ -42,6 +43,11 @@ check("env example memuat production origin", envExample.includes("GAME_ALLOWED_
 check("env example memuat bridge URL", envExample.includes("BAHASACERDAS_WEB_URL="));
 check("env example memuat bridge secret", envExample.includes("KUIS_TEMPUR_SERVER_SECRET="));
 check("frontend game server URL configurable", socketClient.includes("NEXT_PUBLIC_GAME_SERVER_URL"));
+check("signed token expiry memakai unit ms yang sama", socketTokenRoute.includes("Date.now() + 5 * 60 * 1000") && server.includes("identity.exp <= Date.now()"));
+check("client refresh token saat reconnect unauthorized", socketClient.includes("MAX_AUTH_REFRESH_ATTEMPTS") && socketClient.includes("authenticateCurrentSocket") && socketClient.includes("/unauthorized/i"));
+check("auth refresh dibatasi retry", socketClient.includes("authRefreshAttempts < MAX_AUTH_REFRESH_ATTEMPTS"));
+check("signing public key bisa dirotasi via env", server.includes("GAME_SERVER_SIGNING_PUBLIC_KEY_B64") && envExample.includes("GAME_SERVER_SIGNING_PUBLIC_KEY_B64="));
+check("leave-room terikat signed socket identity", server.includes("const userId = identity?.sub || data.userId") && server.includes("player.odiceId !== socket.id"));
 
 console.log(`\nHasil: ${passed} passed, ${failed} failed\n`);
 if (failed) process.exit(1);

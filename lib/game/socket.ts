@@ -4,6 +4,9 @@ import { io, Socket } from 'socket.io-client';
 
 let socket: Socket | null = null;
 let authInFlight = false;
+let authRefreshAttempts = 0;
+let authenticateCurrentSocket: ((refresh?: boolean) => Promise<void>) | null = null;
+const MAX_AUTH_REFRESH_ATTEMPTS = 2;
 
 // Keadaan "server gim tak terjangkau", dipisah dari socket itu sendiri supaya
 // halaman yang dibuka SETELAH kegagalan terjadi tetap bisa menanyakannya —
@@ -14,6 +17,11 @@ const pendengarGagal = new Set<() => void>();
 export const gameSocket = {
   connect(_userId?: string, _userName?: string, _avatarUrl?: string) {
     if (socket?.connected || authInFlight) return socket;
+
+    if (socket && authenticateCurrentSocket) {
+      void authenticateCurrentSocket(true);
+      return socket;
+    }
 
     const configured = process.env.NEXT_PUBLIC_GAME_SERVER_URL?.trim();
     const localFallback =
@@ -38,12 +46,20 @@ export const gameSocket = {
 
     socket.on('connect', () => {
       authInFlight = false;
+      authRefreshAttempts = 0;
       gagalSambung = false;
       console.log('[Socket] Connected to game server');
     });
 
     socket.on('connect_error', (err: Error) => {
       authInFlight = false;
+      const unauthorized = /unauthorized/i.test(err?.message || '');
+      if (unauthorized && authenticateCurrentSocket && authRefreshAttempts < MAX_AUTH_REFRESH_ATTEMPTS) {
+        console.warn('[Socket] Token pertandingan ditolak; memperbarui token...');
+        void authenticateCurrentSocket(true);
+        return;
+      }
+
       gagalSambung = true;
       console.warn('[Socket] Gagal menyambung ke server gim:', err?.message);
       pendengarGagal.forEach((cb) => cb());
@@ -58,11 +74,21 @@ export const gameSocket = {
     });
 
     // Token berasal dari sesi web yang sudah terautentikasi. Identitas pemain
-    // tidak lagi dipercaya dari payload browser saat server production memakai
-    // GAME_SERVER_SHARED_SECRET.
-    authInFlight = true;
-    void fetch('/api/game/socket-token', { cache: 'no-store', credentials: 'same-origin' })
-      .then(async (response) => {
+    // tidak pernah dipercaya dari payload browser. Token berumur pendek dan
+    // diperbarui otomatis bila reconnect terjadi setelah token lama kedaluwarsa.
+    authenticateCurrentSocket = async (refresh = false) => {
+      if (!socket || authInFlight) return;
+      if (refresh) {
+        if (authRefreshAttempts >= MAX_AUTH_REFRESH_ATTEMPTS) return;
+        authRefreshAttempts += 1;
+      }
+
+      authInFlight = true;
+      try {
+        const response = await fetch('/api/game/socket-token', {
+          cache: 'no-store',
+          credentials: 'same-origin',
+        });
         const payload = await response.json().catch(() => ({}));
         if (!response.ok || !payload?.token) {
           throw new Error(payload?.error || 'Token pertandingan tidak tersedia');
@@ -70,14 +96,15 @@ export const gameSocket = {
         if (!socket) return;
         socket.auth = { token: payload.token };
         socket.connect();
-      })
-      .catch((error) => {
+      } catch (error: any) {
         authInFlight = false;
         gagalSambung = true;
         console.warn('[Socket] Gagal menyiapkan autentikasi gim:', error?.message || error);
         pendengarGagal.forEach((cb) => cb());
-      });
+      }
+    };
 
+    void authenticateCurrentSocket(false);
     return socket;
   },
 
@@ -86,6 +113,8 @@ export const gameSocket = {
       socket.disconnect();
       socket = null;
       authInFlight = false;
+      authRefreshAttempts = 0;
+      authenticateCurrentSocket = null;
     }
   },
 

@@ -88,6 +88,9 @@ function Avatar({
     <div className={`relative ${dim} shrink-0 rounded-[28%] bg-gradient-to-br ${ring} p-[3px] shadow-[0_12px_28px_rgba(2,8,23,.28)]`}>
       <div className="h-full w-full overflow-hidden rounded-[25%] bg-slate-950/70 ring-1 ring-white/25">
         {src ? (
+          // Avatar URLs can come from multiple user/profile providers; keep native img
+          // here instead of forcing a brittle Next Image remote-host allowlist.
+          // eslint-disable-next-line @next/next/no-img-element
           <img src={src} alt={name} className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-white/10 text-xl font-black text-white">
@@ -252,6 +255,23 @@ export default function KuisTempurHub() {
     const stopPlayers = gameSocket.onPlayerList((list: PlayerLite[]) => {
       setPlayers(Array.isArray(list) ? list : []);
     });
+    const stopHostChanged = gameSocket.onHostChanged((data: { newHostId: string }) => {
+      setRoom((current) =>
+        current
+          ? {
+              ...current,
+              isHost: current.player?.id === data.newHostId,
+            }
+          : current
+      );
+      setPlayers((current) =>
+        current.map((player) => ({
+          ...player,
+          isHost: player.id === data.newHostId,
+        }))
+      );
+      setNotice((current) => current || "Host arena berpindah. Pertandingan tetap bisa dilanjutkan.");
+    });
     const stopArena = gameSocket.onArenaStart(() => setPhase("arena"));
     const stopError = gameSocket.onError((data: { message?: string }) => {
       setCreating(false);
@@ -262,6 +282,7 @@ export default function KuisTempurHub() {
       stopCreated();
       stopJoined();
       stopPlayers();
+      stopHostChanged();
       stopArena();
       stopError();
     };
