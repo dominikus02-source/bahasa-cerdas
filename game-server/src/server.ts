@@ -68,6 +68,7 @@ interface QueuePlayer {
 
 const matchmakingQueue: QueuePlayer[] = [];
 const MATCH_TIMEOUT_MS = 30000;
+const MAX_KUIS_TEMPUR_PLAYERS = 10;
 
 function tryMatchPlayers() {
   if (matchmakingQueue.length < 2) return;
@@ -547,10 +548,12 @@ io.on('connection', (socket) => {
 
       if (
         room.category === 'KUIS_TEMPUR_ARENA' &&
-        room.players.size >= 2 &&
+        room.players.size >= MAX_KUIS_TEMPUR_PLAYERS &&
         !room.players.has(data.userId)
       ) {
-        socket.emit('error', { message: 'Arena sudah penuh.' });
+        socket.emit('error', {
+          message: `Arena sudah penuh. Maksimal ${MAX_KUIS_TEMPUR_PLAYERS} pemain per room.`,
+        });
         return;
       }
 

@@ -290,7 +290,7 @@ export default function KuisTempurHub() {
         hostId: me.id,
         hostName: me.nickname || me.fullName,
         hostAvatar: me.avatar || undefined,
-        name: `Kuis Tempur: ${me.nickname || me.fullName} vs ${friend.fullName}`,
+        name: `Kuis Tempur · Room ${me.nickname || me.fullName}`,
         gameType: "KUIS_BATTLE",
         category: "KUIS_TEMPUR_ARENA",
         difficulty: "MEDIUM",
@@ -318,7 +318,8 @@ export default function KuisTempurHub() {
   const copyCode = useCallback(async () => {
     if (!room?.code) return;
     try {
-      await navigator.clipboard.writeText(room.code);
+      const joinUrl = `${window.location.origin}/arena/game/kuis-tempur?join=${room.code}`;
+      await navigator.clipboard.writeText(joinUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 1600);
     } catch {}
@@ -356,7 +357,7 @@ export default function KuisTempurHub() {
             </div>
             <h1 className="mt-3 text-3xl font-black tracking-tight sm:text-5xl">Pilih rivalmu.</h1>
             <p className="mt-2 max-w-xl text-sm font-semibold leading-6 text-slate-300">
-              Tantangan dikirim langsung ke notifikasi teman. Begitu diterima, kalian masuk ke arena yang sama bersama bot.
+              Undang satu teman untuk membuka room, lalu bagikan kode arena. Maksimal 10 murid dapat bertempur bersama secara realtime.
             </p>
           </div>
 
@@ -432,13 +433,14 @@ export default function KuisTempurHub() {
 
   if (phase === "lobby" && room) {
     const humanCount = players.length;
-    const opponent = players.find((p) => p.id !== me?.id);
     const host = players.find((p) => p.isHost);
     const canStart = Boolean(room.isHost && humanCount >= 2);
+    const slots = Array.from({ length: 10 }, (_, index) => players[index] || null);
+
     return (
       <main className="game-env game-env-kuis min-h-screen overflow-x-hidden bg-[#040914] text-white">
         <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_20%_12%,rgba(14,165,233,.22),transparent_28%),radial-gradient(circle_at_80%_12%,rgba(244,63,94,.22),transparent_28%),linear-gradient(180deg,#07152d,#040914_70%)]" />
-        <div className="relative mx-auto max-w-5xl px-4 pb-10 pt-5 sm:px-6">
+        <div className="relative mx-auto max-w-6xl px-4 pb-10 pt-5 sm:px-6">
           <div className="mb-5 flex items-center justify-between gap-3">
             <button
               onClick={leaveLobby}
@@ -447,40 +449,59 @@ export default function KuisTempurHub() {
               <ArrowLeft size={17} /> Keluar
             </button>
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1.5 text-xs font-black text-emerald-200">
-              <Wifi size={14} /> ARENA ONLINE
+              <Wifi size={14} /> ARENA ONLINE · {humanCount}/10
             </div>
           </div>
 
-          <div className="grid gap-5 lg:grid-cols-[1.3fr_.7fr]">
-            <section>
-              <div className="mb-4">
-                <div className="text-xs font-black tracking-[.22em] text-cyan-300">KUIS TEMPUR // LOBBY</div>
-                <h1 className="mt-1 text-3xl font-black tracking-tight sm:text-5xl">Bersiap untuk duel.</h1>
+          <div className="grid gap-5 lg:grid-cols-[1fr_360px]">
+            <section className="rounded-[32px] border border-white/12 bg-white/[.055] p-5 backdrop-blur">
+              <div className="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <div className="text-xs font-black tracking-[.22em] text-cyan-300">KUIS TEMPUR // MULTIPLAYER</div>
+                  <h1 className="mt-1 text-3xl font-black tracking-tight sm:text-5xl">Kumpulkan pasukanmu.</h1>
+                  <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-slate-400">
+                    Arena dirancang untuk 5-10 pemain agar tetap lega dan mudah dibaca. Pertandingan sudah bisa dimulai sejak 2 pemain.
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/[.07] px-4 py-3 text-right">
+                  <div className="text-[9px] font-black tracking-[.18em] text-cyan-200/70">KAPASITAS IDEAL</div>
+                  <div className="text-xl font-black text-cyan-100">5-10 pemain</div>
+                </div>
               </div>
 
-              <VsStage
-                me={me}
-                opponent={
-                  opponent
-                    ? {
-                        id: opponent.id,
-                        fullName: opponent.playerName,
-                        avatar: opponent.avatarUrl,
-                      }
-                    : selectedFriend
-                }
-              />
-
-              <div className="mt-4 grid grid-cols-3 gap-2">
-                {["Raka BOT", "Sari BOT", "Bima BOT"].map((name, index) => (
-                  <div key={name} className="rounded-2xl border border-white/10 bg-white/[.06] p-3 text-center">
-                    <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-slate-600 to-slate-900">
-                      <Bot size={18} />
+              <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-5">
+                {slots.map((p, slot) =>
+                  p ? (
+                    <div key={p.id} className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-950/45 p-3">
+                      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500" />
+                      <div className="flex items-center gap-3">
+                        <Avatar
+                          name={p.playerName}
+                          src={p.avatarUrl}
+                          side={p.id === me?.id ? "blue" : "neutral"}
+                          size="sm"
+                        />
+                        <div className="min-w-0">
+                          <div className="truncate text-sm font-black">{p.playerName}</div>
+                          <div className="mt-0.5 text-[9px] font-black tracking-wider text-emerald-300">
+                            {p.isHost ? "HOST" : p.id === me?.id ? "KAMU" : "TERHUBUNG"}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="mt-2 truncate text-xs font-black">{name}</div>
-                    <div className="mt-0.5 text-[9px] font-black tracking-widest text-amber-300">AI ARENA</div>
-                  </div>
-                ))}
+                  ) : (
+                    <div key={slot} className="flex min-h-[70px] items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[.025] text-center">
+                      <div>
+                        <Users size={16} className="mx-auto text-slate-600" />
+                        <div className="mt-1 text-[9px] font-black tracking-wider text-slate-600">SLOT {slot + 1}</div>
+                      </div>
+                    </div>
+                  )
+                )}
+              </div>
+
+              <div className="mt-5 rounded-2xl border border-amber-300/15 bg-amber-300/[.07] p-4 text-sm font-semibold leading-6 text-amber-50/80">
+                Jawab benar untuk mendapat amunisi. Semua target di arena adalah pemain manusia; bot tidak ikut dalam mode multiplayer utama.
               </div>
             </section>
 
@@ -492,44 +513,24 @@ export default function KuisTempurHub() {
                 <div className="text-[10px] font-black tracking-[.2em] text-cyan-200/70">KODE ARENA</div>
                 <div className="mt-1 text-4xl font-black tracking-[.2em] text-white">{room.code}</div>
                 <button onClick={copyCode} className="mt-3 inline-flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-xs font-black text-white/80">
-                  {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? "Tersalin" : "Salin kode"}
+                  {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? "Tautan tersalin" : "Salin tautan"}
                 </button>
               </div>
 
-              <div className="mt-5">
-                <div className="mb-2 flex items-center justify-between text-xs font-black">
+              <div className="mt-5 rounded-2xl border border-white/10 bg-black/15 p-4">
+                <div className="flex items-center justify-between text-xs font-black">
                   <span className="text-slate-400">PEMAIN</span>
-                  <span>{humanCount}/2 manusia</span>
+                  <span className="text-white">{humanCount}/10</span>
                 </div>
-                <div className="space-y-2">
-                  {[0, 1].map((slot) => {
-                    const p = players[slot];
-                    return p ? (
-                      <div key={p.id} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/15 p-3">
-                        <Avatar name={p.playerName} src={p.avatarUrl} side={slot === 0 ? "blue" : "red"} size="sm" />
-                        <div className="min-w-0 flex-1">
-                          <div className="truncate text-sm font-black">{p.playerName}</div>
-                          <div className="mt-0.5 text-[10px] font-bold text-emerald-300">{p.isHost ? "HOST · SIAP" : "TERHUBUNG · SIAP"}</div>
-                        </div>
-                        <Check size={17} className="text-emerald-300" />
-                      </div>
-                    ) : (
-                      <div key={slot} className="flex items-center gap-3 rounded-2xl border border-dashed border-white/12 bg-white/[.03] p-3 text-slate-500">
-                        <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-dashed border-white/15">
-                          <Users size={17} />
-                        </div>
-                        <div>
-                          <div className="text-sm font-black">Menunggu lawan...</div>
-                          <div className="text-[10px] font-bold">Tantangan sudah dikirim</div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/8">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-emerald-400 transition-[width]"
+                    style={{ width: `${Math.min(100, humanCount * 10)}%` }}
+                  />
                 </div>
-              </div>
-
-              <div className="mt-5 rounded-2xl border border-amber-300/15 bg-amber-300/[.07] p-3 text-xs font-semibold leading-5 text-amber-50/80">
-                Jawab benar untuk mendapatkan amunisi. Gunakan map untuk berlindung, incar lawan atau bot, dan rebut skor tertinggi sebelum waktu habis.
+                <div className="mt-2 text-[10px] font-semibold text-slate-500">
+                  {humanCount < 5 ? "Bisa mulai, tetapi 5-10 pemain akan terasa lebih seru." : humanCount < 10 ? "Komposisi arena ideal." : "Arena penuh dan siap tempur."}
+                </div>
               </div>
 
               {notice && <div className="mt-3 text-center text-xs font-bold text-cyan-200">{notice}</div>}
@@ -541,7 +542,7 @@ export default function KuisTempurHub() {
                   className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-300 via-orange-400 to-rose-500 py-4 text-base font-black text-[#2c0d00] shadow-[0_12px_35px_rgba(251,146,60,.32)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:grayscale disabled:opacity-40"
                 >
                   <Zap size={19} fill="currentColor" />
-                  {canStart ? "MULAI PERTEMPURAN" : "MENUNGGU TEMAN"}
+                  {canStart ? "MULAI PERTEMPURAN" : "BUTUH 1 PEMAIN LAGI"}
                 </button>
               ) : (
                 <div className="mt-5 rounded-2xl bg-white/8 p-4 text-center">
@@ -575,7 +576,7 @@ export default function KuisTempurHub() {
             Kuis <span className="bg-gradient-to-r from-amber-300 to-orange-500 bg-clip-text text-transparent">Tempur</span>
           </h1>
           <p className="mx-auto mt-2 max-w-2xl text-sm font-semibold leading-6 text-slate-300 sm:text-base">
-            Pengetahuan adalah senjatamu. Main sendiri melawan bot atau tantang teman sekelas masuk ke arena yang sama.
+            Pengetahuan adalah senjatamu. Main sendiri untuk latihan atau buka arena realtime untuk 2-10 teman sekelas.
           </p>
         </section>
 
@@ -620,7 +621,7 @@ export default function KuisTempurHub() {
               </div>
               <h2 className="mt-5 text-2xl font-black">Tantang Teman</h2>
               <p className="mt-1 text-sm font-semibold leading-6 text-rose-100/70">
-                Pilih teman sekelas, kirim tantangan, lalu bertarung bersama bot dalam arena yang sama.
+                Buka room bersama teman, bagikan kode arena, lalu bertempur realtime hingga 10 pemain.
               </p>
               <div className="mt-5 flex items-center gap-2 font-black text-orange-200">
                 PILIH TEMAN <ChevronRight size={18} className="transition group-hover:translate-x-1" />
@@ -632,7 +633,7 @@ export default function KuisTempurHub() {
         <section className="mx-auto mt-5 grid max-w-3xl grid-cols-3 gap-2 rounded-[26px] border border-white/10 bg-white/[.05] p-3 backdrop-blur">
           {[
             ["1", "Jawab", "Dapat amunisi"],
-            ["2", "Bertempur", "Bidik rival & bot"],
+            ["2", "Bertempur", "Bidik pemain lain"],
             ["3", "Menang", "Rebut skor tertinggi"],
           ].map(([n, title, desc]) => (
             <div key={n} className="rounded-2xl p-3 text-center">

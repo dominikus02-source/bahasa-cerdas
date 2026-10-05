@@ -6,7 +6,8 @@ const HUMAN_HP = 100;
 const BOT_HP = 82;
 const HUMAN_SPEED = 210;
 const BOT_SPEED = 118;
-const BOT_COUNT = 3;
+const BOT_COUNT = 0;
+const MAX_HUMAN_PLAYERS = 10;
 const HUMAN_DAMAGE_TO_HUMAN = 18;
 const HUMAN_DAMAGE_TO_BOT = 28;
 const BOT_DAMAGE = 8;
@@ -134,6 +135,32 @@ const BOT_SPAWNS = [
   { x: 650, y: 470 },
 ];
 
+const HUMAN_SPAWNS = [
+  { x: 130, y: 120 },
+  { x: 500, y: 90 },
+  { x: 870, y: 120 },
+  { x: 900, y: 300 },
+  { x: 870, y: 500 },
+  { x: 500, y: 510 },
+  { x: 130, y: 500 },
+  { x: 100, y: 300 },
+  { x: 320, y: 210 },
+  { x: 680, y: 390 },
+];
+
+const HUMAN_COLORS = [
+  "#22d3ee",
+  "#fb7185",
+  "#a78bfa",
+  "#fbbf24",
+  "#34d399",
+  "#60a5fa",
+  "#f472b6",
+  "#fb923c",
+  "#2dd4bf",
+  "#c084fc",
+];
+
 function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
 }
@@ -226,7 +253,7 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
 
   function respawn(entity: ArenaEntity, index: number) {
     if (entity.kind === "human") {
-      const humanSpawn = index % 2 === 0 ? { x: 180, y: 300 } : { x: 820, y: 300 };
+      const humanSpawn = HUMAN_SPAWNS[index % HUMAN_SPAWNS.length];
       entity.x = humanSpawn.x;
       entity.y = humanSpawn.y;
     } else {
@@ -404,7 +431,7 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
   async function start(room: RoomLike) {
     if (matches.has(room.code)) return;
     if (room.players.size < 2) {
-      io.to(room.code).emit("error", { message: "Butuh dua pemain manusia untuk memulai Tantang Teman." });
+      io.to(room.code).emit("error", { message: "Butuh minimal dua pemain untuk memulai Kuis Tempur." });
       return;
     }
 
@@ -419,9 +446,9 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
     room.startedAt = new Date();
 
     const entities = new Map<string, ArenaEntity>();
-    const humanPlayers = Array.from(room.players.values()).slice(0, 2);
+    const humanPlayers = Array.from(room.players.values()).slice(0, MAX_HUMAN_PLAYERS);
     humanPlayers.forEach((player, index) => {
-      const spawn = index === 0 ? { x: 180, y: 300 } : { x: 820, y: 300 };
+      const spawn = HUMAN_SPAWNS[index % HUMAN_SPAWNS.length];
       entities.set(player.id, {
         id: player.id,
         name: player.playerName,
@@ -442,7 +469,7 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
         maxCombo: 0,
         alive: true,
         avatarUrl: player.avatarUrl,
-        color: index === 0 ? "#22d3ee" : "#fb7185",
+        color: HUMAN_COLORS[index % HUMAN_COLORS.length],
         lastShotAt: 0,
         respawnAt: 0,
         connected: true,
@@ -508,7 +535,9 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
     io.to(room.code).emit("arena-start", {
       code: room.code,
       duration: MATCH_SECONDS,
-      botCount: BOT_COUNT,
+      botCount: 0,
+      humanCount: humanPlayers.length,
+      maxPlayers: MAX_HUMAN_PLAYERS,
     });
     broadcast(match);
 
