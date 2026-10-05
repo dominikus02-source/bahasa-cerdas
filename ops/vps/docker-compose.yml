@@ -4,7 +4,6 @@ services:
   redis:
     image: redis:7.4-alpine
     restart: unless-stopped
-    command:
     cpus: 1.0
     mem_limit: 1g
     pids_limit: 256
@@ -13,9 +12,10 @@ services:
       options:
         max-size: "25m"
         max-file: "4"
+    command:
       - sh
       - -c
-      - exec redis-server --appendonly yes --appendfsync everysec --requirepass "$$REDIS_PASSWORD"
+      - exec redis-server --appendonly yes --appendfsync everysec --requirepass "$REDIS_PASSWORD"
     environment:
       REDIS_PASSWORD: ${REDIS_PASSWORD}
     volumes:
