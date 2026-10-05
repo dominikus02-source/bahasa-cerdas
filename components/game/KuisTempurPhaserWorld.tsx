@@ -1,0 +1,670 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import { gameSocket } from "@/lib/game/socket";
+
+export type PhaserArenaEntity = {
+  id: string;
+  name: string;
+  kind: "human" | "bot";
+  x: number;
+  y: number;
+  hp: number;
+  hpMax: number;
+  ammo: number;
+  score: number;
+  kills: number;
+  deaths: number;
+  correct: number;
+  wrong: number;
+  combo: number;
+  alive: boolean;
+  avatarUrl?: string | null;
+  color?: string;
+  respawnIn?: number;
+};
+
+export type PhaserArenaState = {
+  seq: number;
+  timeLeft: number;
+  entities: PhaserArenaEntity[];
+};
+
+type Feedback = { correct: boolean; text: string } | null;
+
+type Props = {
+  code: string;
+  userId: string;
+  arena: PhaserArenaState;
+  feedback: Feedback;
+};
+
+const WORLD_W = 1400;
+const WORLD_H = 840;
+
+const ASSETS = {
+  base: [
+    "/game/kuis-tempur/assets/world/base/arena_base_01.png",
+  ],
+  heroes: [
+    "/junior/karakter/alby_idle.webp",
+    "/junior/karakter/hazel_idle.webp",
+    "/junior/karakter/alby_running.webp",
+    "/junior/karakter/hazel_encouraging.webp",
+  ],
+  terrain: [
+    "/game/kuis-tempur/assets/world/terrain/grass_01.png",
+    "/game/kuis-tempur/assets/world/terrain/grass_02.png",
+    "/game/kuis-tempur/assets/world/terrain/mixed_01.png",
+    "/game/kuis-tempur/assets/world/terrain/path_01.png",
+  ],
+  trees: [
+    "/game/kuis-tempur/assets/world/trees/tree_01.png",
+    "/game/kuis-tempur/assets/world/trees/tree_02.png",
+    "/game/kuis-tempur/assets/world/trees/tree_03.png",
+    "/game/kuis-tempur/assets/world/trees/tree_04.png",
+    "/game/kuis-tempur/assets/world/trees/tree_tall.png",
+    "/game/kuis-tempur/assets/world/trees/tree_wide.png",
+  ],
+  houses: [
+    "/game/kuis-tempur/assets/world/houses/house_01.png",
+    "/game/kuis-tempur/assets/world/houses/house_02.png",
+    "/game/kuis-tempur/assets/world/houses/house_03.png",
+    "/game/kuis-tempur/assets/world/houses/house_04.png",
+  ],
+  bushes: [
+    "/game/kuis-tempur/assets/world/bushes/bush_01.png",
+    "/game/kuis-tempur/assets/world/bushes/bush_02.png",
+    "/game/kuis-tempur/assets/world/bushes/bush_04.png",
+    "/game/kuis-tempur/assets/world/bushes/bush_flower.png",
+  ],
+  rocks: [
+    "/game/kuis-tempur/assets/world/rocks/rock_01.png",
+    "/game/kuis-tempur/assets/world/rocks/rock_03.png",
+    "/game/kuis-tempur/assets/world/rocks/rock_cluster.png",
+    "/game/kuis-tempur/assets/world/rocks/rock_moss.png",
+  ],
+  props: [
+    "/game/kuis-tempur/assets/world/props/well.png",
+    "/game/kuis-tempur/assets/world/props/cart.png",
+    "/game/kuis-tempur/assets/world/props/crate.png",
+    "/game/kuis-tempur/assets/world/props/lamp_post.png",
+    "/game/kuis-tempur/assets/world/props/sign_direction.png",
+    "/game/kuis-tempur/assets/world/props/log.png",
+  ],
+  fences: [
+    "/game/kuis-tempur/assets/world/fences/fence_01.png",
+    "/game/kuis-tempur/assets/world/fences/fence_02.png",
+    "/game/kuis-tempur/assets/world/fences/fence_gate.png",
+  ],
+  decals: [
+    "/game/kuis-tempur/assets/world/decals/grass_patch_01.png",
+    "/game/kuis-tempur/assets/world/decals/dirt_patch.png",
+    "/game/kuis-tempur/assets/world/decals/stone_patch.png",
+    "/game/kuis-tempur/assets/world/decals/leaves.png",
+    "/game/kuis-tempur/assets/world/decals/flowers_scatter.png",
+  ],
+} as const;
+
+function key(prefix: string, index: number) {
+  return `kt-${prefix}-${index}`;
+}
+
+export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }: Props) {
+  const mountRef = useRef<HTMLDivElement>(null);
+  const gameRef = useRef<any>(null);
+  const sceneRef = useRef<any>(null);
+  const arenaRef = useRef(arena);
+  const userIdRef = useRef(userId);
+  const feedbackSeqRef = useRef(0);
+
+  useEffect(() => {
+    arenaRef.current = arena;
+  }, [arena]);
+
+  useEffect(() => {
+    userIdRef.current = userId;
+  }, [userId]);
+
+  useEffect(() => {
+    let disposed = false;
+
+    async function boot() {
+      if (!mountRef.current || gameRef.current) return;
+      const Phaser = await import("phaser");
+      if (disposed || !mountRef.current) return;
+
+      type HeroVisual = {
+        root: any;
+        body: any;
+        weapon: any;
+        hpFill: any;
+        ammoGlow: any;
+        name: any;
+        ko: any;
+        targetX: number;
+        targetY: number;
+        state: PhaserArenaEntity;
+      };
+
+      class KuisTempurScene extends Phaser.Scene {
+        private heroes = new Map<string, HeroVisual>();
+        private coreGlow: any;
+        private rushOverlay: any;
+        private rushLabel: any;
+        private localFollowId = "";
+        private hitUnsubscribe: (() => void) | null = null;
+
+        constructor() {
+          super({ key: "KuisTempurWorld" });
+        }
+
+        preload() {
+          Object.entries(ASSETS).forEach(([group, paths]) => {
+            paths.forEach((path, index) => this.load.image(key(group, index), path));
+          });
+        }
+
+        create() {
+          sceneRef.current = this;
+          this.cameras.main.setBackgroundColor("#173f32");
+          this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H);
+          this.buildTerrain();
+          this.buildVillage();
+          this.buildArenaCore();
+          this.buildAtmosphere();
+
+          this.rushOverlay = this.add.rectangle(0, 0, 10, 10, 0x120516, 0)
+            .setOrigin(0)
+            .setScrollFactor(0)
+            .setDepth(9000);
+          this.rushLabel = this.add.text(0, 0, "FINAL RUSH", {
+            fontFamily: "system-ui, sans-serif",
+            fontSize: "28px",
+            fontStyle: "900",
+            color: "#fde68a",
+            stroke: "#4c0519",
+            strokeThickness: 8,
+          }).setOrigin(0.5).setScrollFactor(0).setDepth(9001).setAlpha(0);
+
+          this.scale.on("resize", this.onResize, this);
+          this.onResize({ width: this.scale.width, height: this.scale.height });
+
+          this.input.on("pointerdown", (pointer: any) => {
+            const current = arenaRef.current;
+            const me = current.entities.find((entity) => entity.id === userIdRef.current);
+            if (!me?.alive) return;
+
+            const worldPoint = pointer.positionToCamera(this.cameras.main) as { x: number; y: number };
+            const aliveTargets = current.entities
+              .filter((entity) => entity.id !== me.id && entity.alive)
+              .map((entity) => ({
+                entity,
+                distance: Phaser.Math.Distance.Between(worldPoint.x, worldPoint.y, entity.x, entity.y),
+              }))
+              .sort((a, b) => a.distance - b.distance);
+
+            if (me.ammo > 0 && aliveTargets[0]?.distance < 62) {
+              gameSocket.arenaShoot({ code, userId: me.id, targetId: aliveTargets[0].entity.id });
+              return;
+            }
+
+            gameSocket.arenaMove({
+              code,
+              userId: me.id,
+              x: Phaser.Math.Clamp(worldPoint.x, 46, WORLD_W - 46),
+              y: Phaser.Math.Clamp(worldPoint.y, 70, WORLD_H - 46),
+            });
+          });
+
+          this.hitUnsubscribe = gameSocket.onArenaHit((hit: { fromId: string; targetId: string; damage: number }) => {
+            this.playHit(hit.fromId, hit.targetId, hit.damage);
+          });
+        }
+
+        private buildTerrain() {
+          this.add.image(WORLD_W / 2, WORLD_H / 2, key("base", 0))
+            .setDisplaySize(WORLD_W, WORLD_H)
+            .setDepth(-1100)
+            .setTint(0xf6ffe9);
+
+          const detailPoints = [
+            [250, 330, 0], [1160, 330, 1], [330, 615, 2], [1040, 610, 3],
+            [530, 185, 4], [880, 190, 0], [165, 500, 3], [1230, 510, 4],
+          ];
+          detailPoints.forEach(([x, y, variant], index) => {
+            this.add.image(x, y, key("decals", variant))
+              .setScale(0.18 + (index % 3) * 0.025)
+              .setAlpha(0.52)
+              .setDepth(-780 + y * 0.001);
+          });
+        }
+
+        private addWorldSprite(texture: string, x: number, y: number, scale: number, sway = false) {
+          const sprite = this.add.image(x, y, texture)
+            .setOrigin(0.5, 1)
+            .setScale(scale)
+            .setDepth(y);
+          if (sway) {
+            this.tweens.add({
+              targets: sprite,
+              angle: { from: -1.2, to: 1.2 },
+              duration: 1500 + ((x + y) % 900),
+              yoyo: true,
+              repeat: -1,
+              ease: "Sine.inOut",
+            });
+          }
+          return sprite;
+        }
+
+        private buildVillage() {
+          const houses = [
+            [190, 155, 0], [435, 145, 1], [980, 150, 2], [1210, 175, 3],
+          ];
+          houses.forEach(([x, y, variant]) => {
+            this.addWorldSprite(key("houses", variant), x, y, 0.62);
+          });
+
+          const trees = [
+            [85, 270, 0], [280, 245, 2], [555, 170, 4], [845, 170, 1],
+            [1125, 250, 5], [1310, 300, 3], [1215, 740, 0], [940, 770, 4],
+            [465, 765, 5], [180, 710, 1], [75, 590, 3], [1320, 620, 2],
+          ];
+          trees.forEach(([x, y, variant]) => {
+            this.addWorldSprite(key("trees", variant), x, y, 0.68 + (variant % 3) * 0.035, true);
+          });
+
+          const bushes = [
+            [340, 225, 0], [690, 175, 2], [1060, 220, 1], [170, 580, 3],
+            [390, 700, 2], [1010, 690, 0], [1240, 560, 3],
+          ];
+          bushes.forEach(([x, y, variant]) => {
+            this.addWorldSprite(key("bushes", variant), x, y, 0.48, true);
+          });
+
+          const rocks = [
+            [365, 315, 2], [1040, 305, 3], [360, 600, 0], [1050, 590, 1],
+          ];
+          rocks.forEach(([x, y, variant]) => this.addWorldSprite(key("rocks", variant), x, y, 0.52));
+
+          const props = [
+            [620, 205, 0], [1140, 470, 1], [275, 460, 2], [505, 300, 3],
+            [895, 300, 3], [785, 650, 4], [595, 635, 5],
+          ];
+          props.forEach(([x, y, variant]) => {
+            const sprite = this.addWorldSprite(key("props", variant), x, y, variant == 3 ? 0.6 : 0.52);
+            if (variant === 3) {
+              const glow = this.add.circle(x, y - 44, 28, 0xfbbf24, 0.13).setDepth(y - 1);
+              glow.setBlendMode(Phaser.BlendModes.ADD);
+              this.tweens.add({
+                targets: glow,
+                alpha: { from: 0.07, to: 0.22 },
+                scale: { from: 0.82, to: 1.14 },
+                duration: 1200,
+                yoyo: true,
+                repeat: -1,
+              });
+              sprite.setDepth(y);
+            }
+          });
+
+          const fencePoints = [
+            [150, 355, 0], [225, 355, 1], [1170, 355, 0], [1245, 355, 1], [700, 745, 2],
+          ];
+          fencePoints.forEach(([x, y, variant]) => this.addWorldSprite(key("fences", variant), x, y, 0.62));
+        }
+
+        private buildArenaCore() {
+          const x = WORLD_W / 2;
+          const y = WORLD_H / 2;
+          const g = this.add.graphics().setDepth(y - 15);
+          g.fillStyle(0x0b1220, 0.86);
+          g.fillCircle(x, y, 92);
+          g.lineStyle(7, 0x22d3ee, 0.38);
+          g.strokeCircle(x, y, 92);
+          g.lineStyle(3, 0xfde68a, 0.72);
+          g.strokeCircle(x, y, 64);
+          g.lineStyle(2, 0x67e8f9, 0.5);
+          for (let i = 0; i < 8; i++) {
+            const a = (Math.PI * 2 * i) / 8;
+            const x1 = x + Math.cos(a) * 65;
+            const y1 = y + Math.sin(a) * 65;
+            const x2 = x + Math.cos(a) * 84;
+            const y2 = y + Math.sin(a) * 84;
+            g.lineBetween(x1, y1, x2, y2);
+          }
+
+          this.coreGlow = this.add.circle(x, y, 48, 0x38bdf8, 0.22).setDepth(y - 10);
+          this.coreGlow.setBlendMode(Phaser.BlendModes.ADD);
+          this.tweens.add({
+            targets: this.coreGlow,
+            scale: { from: 0.72, to: 1.35 },
+            alpha: { from: 0.10, to: 0.34 },
+            duration: 1350,
+            yoyo: true,
+            repeat: -1,
+            ease: "Sine.inOut",
+          });
+
+          const book = this.add.text(x, y - 5, "📖", { fontSize: "54px" }).setOrigin(0.5).setDepth(y + 2);
+          this.tweens.add({
+            targets: book,
+            y: y - 13,
+            duration: 1350,
+            yoyo: true,
+            repeat: -1,
+            ease: "Sine.inOut",
+          });
+        }
+
+        private buildAtmosphere() {
+          for (let i = 0; i < 36; i++) {
+            const mote = this.add.circle(
+              40 + ((i * 211) % 1320),
+              60 + ((i * 127) % 700),
+              1.4 + (i % 3) * 0.55,
+              i % 2 ? 0xbef264 : 0x67e8f9,
+              0.18 + (i % 5) * 0.035,
+            ).setDepth(8200);
+            mote.setBlendMode(Phaser.BlendModes.ADD);
+            this.tweens.add({
+              targets: mote,
+              x: mote.x + 35 + (i % 4) * 12,
+              y: mote.y - 25 - (i % 5) * 8,
+              alpha: { from: mote.alpha, to: 0.04 },
+              duration: 2600 + (i % 7) * 330,
+              yoyo: true,
+              repeat: -1,
+              ease: "Sine.inOut",
+            });
+          }
+        }
+
+        private createHero(entity: PhaserArenaEntity): HeroVisual {
+          const accent = Phaser.Display.Color.HexStringToColor(entity.color || "#22d3ee").color;
+          const variant = Math.abs(Array.from(entity.id).reduce((acc, ch) => acc + ch.charCodeAt(0), 0)) % ASSETS.heroes.length;
+
+          const shadow = this.add.ellipse(0, 31, 54, 14, 0x020617, 0.34);
+          const aura = this.add.circle(0, 3, entity.id === userIdRef.current ? 40 : 34, accent, entity.id === userIdRef.current ? 0.16 : 0.055);
+          aura.setBlendMode(Phaser.BlendModes.ADD);
+
+          const body = this.add.image(0, 27, key("heroes", variant))
+            .setOrigin(0.5, 1)
+            .setDisplaySize(84, 84);
+
+          const weapon = this.add.rectangle(27, 5, 33, 6, entity.ammo > 0 ? 0xfde047 : 0x64748b, 1)
+            .setAngle(-11)
+            .setStrokeStyle(2, 0xffffff, 0.55);
+          const ammoGlow = this.add.circle(43, 1, 8, entity.ammo > 0 ? 0xfef08a : 0x64748b, entity.ammo > 0 ? 0.92 : 0.28);
+          ammoGlow.setBlendMode(Phaser.BlendModes.ADD);
+
+          const hpBg = this.add.rectangle(0, -55, 62, 7, 0x020617, 0.86).setOrigin(0.5);
+          const hpFill = this.add.rectangle(-31, -55, 62, 7, 0x34d399, 1).setOrigin(0, 0.5);
+          const name = this.add.text(0, 42, entity.id === userIdRef.current ? `${entity.name} · KAMU` : entity.name, {
+            fontFamily: "system-ui, sans-serif",
+            fontSize: "12px",
+            fontStyle: "800",
+            color: entity.id === userIdRef.current ? "#a5f3fc" : "#ffffff",
+            stroke: "#020617",
+            strokeThickness: 5,
+          }).setOrigin(0.5);
+
+          const ko = this.add.text(0, 0, "", {
+            fontFamily: "system-ui, sans-serif",
+            fontSize: "11px",
+            fontStyle: "900",
+            color: "#fde68a",
+            stroke: "#450a0a",
+            strokeThickness: 5,
+          }).setOrigin(0.5);
+
+          const root = this.add.container(entity.x, entity.y, [shadow, aura, body, weapon, ammoGlow, hpBg, hpFill, name, ko]);
+          root.setDepth(entity.y + 20);
+          root.setSize(82, 106);
+
+          this.tweens.add({
+            targets: [body, weapon, ammoGlow],
+            y: "-=2",
+            duration: 500 + (entity.id.charCodeAt(0) % 140),
+            yoyo: true,
+            repeat: -1,
+            ease: "Sine.inOut",
+          });
+
+          if (entity.id === userIdRef.current) {
+            this.tweens.add({
+              targets: aura,
+              scale: { from: 0.84, to: 1.18 },
+              alpha: { from: 0.09, to: 0.24 },
+              duration: 920,
+              yoyo: true,
+              repeat: -1,
+            });
+          }
+
+          return {
+            root,
+            body,
+            weapon,
+            hpFill,
+            ammoGlow,
+            name,
+            ko,
+            targetX: entity.x,
+            targetY: entity.y,
+            state: entity,
+          };
+        }
+
+        private syncHeroes() {
+          const current = arenaRef.current;
+          const ids = new Set(current.entities.map((entity) => entity.id));
+
+          for (const [id, visual] of this.heroes) {
+            if (!ids.has(id)) {
+              visual.root.destroy(true);
+              this.heroes.delete(id);
+            }
+          }
+
+          current.entities.forEach((entity) => {
+            let visual = this.heroes.get(entity.id);
+            if (!visual) {
+              visual = this.createHero(entity);
+              this.heroes.set(entity.id, visual);
+            }
+
+            visual.state = entity;
+            visual.targetX = entity.x;
+            visual.targetY = entity.y;
+            visual.root.setDepth(entity.y + 20);
+            visual.root.setAlpha(entity.alive ? 1 : 0.35);
+
+            const hpRatio = Phaser.Math.Clamp(entity.hp / Math.max(1, entity.hpMax), 0, 1);
+            visual.hpFill.setDisplaySize(Math.max(0.1, 58 * hpRatio), 7);
+            visual.hpFill.setFillStyle(hpRatio > 0.45 ? 0x34d399 : hpRatio > 0.2 ? 0xfbbf24 : 0xfb7185);
+
+            const hasAmmo = entity.ammo > 0;
+            visual.weapon.setFillStyle(hasAmmo ? 0xfde047 : 0x64748b, 1);
+            visual.ammoGlow.setFillStyle(hasAmmo ? 0xfef08a : 0x64748b, hasAmmo ? 0.95 : 0.3);
+            visual.ko.setText(entity.alive ? "" : `RESPAWN ${Math.max(1, Math.ceil(entity.respawnIn || 1))}s`);
+
+            if (entity.id === userIdRef.current && this.localFollowId !== entity.id) {
+              this.localFollowId = entity.id;
+              this.cameras.main.startFollow(visual.root, true, 0.09, 0.09);
+            }
+          });
+        }
+
+        private playHit(fromId: string, targetId: string, damage: number) {
+          const from = this.heroes.get(fromId);
+          const target = this.heroes.get(targetId);
+          if (!from || !target) return;
+
+          const projectile = this.add.circle(from.root.x, from.root.y - 4, 7, 0xfef08a, 1).setDepth(8500);
+          projectile.setBlendMode(Phaser.BlendModes.ADD);
+          const trail = this.add.circle(from.root.x, from.root.y - 4, 14, 0x38bdf8, 0.24).setDepth(8499);
+          trail.setBlendMode(Phaser.BlendModes.ADD);
+
+          this.tweens.add({
+            targets: [projectile, trail],
+            x: target.root.x,
+            y: target.root.y - 6,
+            duration: 150,
+            ease: "Quad.easeIn",
+            onComplete: () => {
+              projectile.destroy();
+              trail.destroy();
+
+              const flash = this.add.circle(target.root.x, target.root.y - 4, 32, 0xffffff, 0.88).setDepth(8600);
+              flash.setBlendMode(Phaser.BlendModes.ADD);
+              this.tweens.add({
+                targets: flash,
+                scale: 1.9,
+                alpha: 0,
+                duration: 220,
+                onComplete: () => flash.destroy(),
+              });
+
+              for (let i = 0; i < 7; i++) {
+                const spark = this.add.circle(target.root.x, target.root.y - 4, 3 + (i % 2), i % 2 ? 0xfde047 : 0xfb7185, 0.9).setDepth(8601);
+                const angle = (Math.PI * 2 * i) / 7;
+                this.tweens.add({
+                  targets: spark,
+                  x: target.root.x + Math.cos(angle) * (34 + i * 3),
+                  y: target.root.y - 4 + Math.sin(angle) * (34 + i * 3),
+                  alpha: 0,
+                  scale: 0.2,
+                  duration: 260,
+                  onComplete: () => spark.destroy(),
+                });
+              }
+
+              const number = this.add.text(target.root.x, target.root.y - 54, `-${damage}`, {
+                fontFamily: "system-ui, sans-serif",
+                fontSize: "18px",
+                fontStyle: "900",
+                color: "#fecaca",
+                stroke: "#450a0a",
+                strokeThickness: 6,
+              }).setOrigin(0.5).setDepth(8700);
+              this.tweens.add({
+                targets: number,
+                y: number.y - 34,
+                alpha: 0,
+                duration: 650,
+                onComplete: () => number.destroy(),
+              });
+
+              if (targetId === userIdRef.current) this.cameras.main.shake(110, 0.0035);
+            },
+          });
+        }
+
+        pulseLocalHero() {
+          const hero = this.heroes.get(userIdRef.current);
+          if (!hero) return;
+          const pulse = this.add.circle(hero.root.x, hero.root.y, 24, 0x67e8f9, 0.24).setDepth(8550);
+          pulse.setBlendMode(Phaser.BlendModes.ADD);
+          this.tweens.add({
+            targets: pulse,
+            scale: 2.7,
+            alpha: 0,
+            duration: 430,
+            ease: "Quad.easeOut",
+            onComplete: () => pulse.destroy(),
+          });
+          this.tweens.add({
+            targets: hero.root,
+            scaleX: 1.08,
+            scaleY: 1.08,
+            duration: 120,
+            yoyo: true,
+          });
+        }
+
+        private onResize(gameSize: { width: number; height: number }) {
+          const width = gameSize.width;
+          const height = gameSize.height;
+          this.rushOverlay.setSize(width, height);
+          this.rushLabel.setPosition(width / 2, 112);
+          const compact = width < 760;
+          this.cameras.main.setZoom(compact ? 0.72 : width < 1100 ? 0.9 : 1.03);
+        }
+
+        update(_: number, delta: number) {
+          this.syncHeroes();
+          const lerp = 1 - Math.pow(0.001, Math.min(delta, 60) / 1000);
+
+          for (const visual of this.heroes.values()) {
+            visual.root.x = Phaser.Math.Linear(visual.root.x, visual.targetX, Math.min(0.34, lerp * 0.46));
+            visual.root.y = Phaser.Math.Linear(visual.root.y, visual.targetY, Math.min(0.34, lerp * 0.46));
+            visual.root.setDepth(visual.root.y + 20);
+          }
+
+          const rush = arenaRef.current.timeLeft <= 30 && arenaRef.current.timeLeft > 0;
+          if (rush) {
+            this.rushOverlay.setAlpha(0.055 + Math.sin(this.time.now / 230) * 0.025);
+            this.rushLabel.setAlpha(0.72 + Math.sin(this.time.now / 170) * 0.22);
+            this.coreGlow.setScale(1.0 + Math.sin(this.time.now / 140) * 0.18);
+          } else {
+            this.rushOverlay.setAlpha(0);
+            this.rushLabel.setAlpha(0);
+          }
+        }
+
+        shutdown() {
+          this.hitUnsubscribe?.();
+          this.hitUnsubscribe = null;
+          this.scale.off("resize", this.onResize, this);
+          if (sceneRef.current === this) sceneRef.current = null;
+        }
+      }
+
+      const game = new Phaser.Game({
+        type: Phaser.AUTO,
+        parent: mountRef.current,
+        transparent: false,
+        backgroundColor: "#173f32",
+        width: mountRef.current.clientWidth || window.innerWidth,
+        height: mountRef.current.clientHeight || window.innerHeight,
+        render: {
+          antialias: true,
+          roundPixels: false,
+        },
+        scale: {
+          mode: Phaser.Scale.RESIZE,
+          autoCenter: Phaser.Scale.CENTER_BOTH,
+        },
+        scene: [KuisTempurScene],
+      });
+
+      gameRef.current = game;
+    }
+
+    void boot();
+
+    return () => {
+      disposed = true;
+      const game = gameRef.current;
+      gameRef.current = null;
+      sceneRef.current = null;
+      if (game) game.destroy(true);
+    };
+  }, [code]);
+
+  useEffect(() => {
+    if (!feedback?.correct || !sceneRef.current) return;
+    feedbackSeqRef.current += 1;
+    sceneRef.current.pulseLocalHero?.();
+  }, [feedback]);
+
+  return (
+    <div
+      ref={mountRef}
+      className="absolute inset-0 h-full w-full overflow-hidden bg-[#173f32]"
+      aria-label="Dunia Kuis Tempur"
+    />
+  );
+}

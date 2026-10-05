@@ -1,17 +1,17 @@
 import type { Server, Socket } from "socket.io";
-const WORLD_W = 1000;
-const WORLD_H = 600;
+const WORLD_W = 1400;
+const WORLD_H = 840;
 const MATCH_SECONDS = 180;
 const HUMAN_HP = 100;
 const BOT_HP = 82;
-const HUMAN_SPEED = 210;
+const HUMAN_SPEED = 245;
 const BOT_SPEED = 118;
 const BOT_COUNT = 0;
 const MAX_HUMAN_PLAYERS = 10;
 const HUMAN_DAMAGE_TO_HUMAN = 18;
 const HUMAN_DAMAGE_TO_BOT = 28;
 const BOT_DAMAGE = 8;
-const HUMAN_RANGE = 430;
+const HUMAN_RANGE = 520;
 const BOT_RANGE = 330;
 const RESPAWN_MS = 3500;
 const HUMAN_SHOT_COOLDOWN = 360;
@@ -136,16 +136,16 @@ const BOT_SPAWNS = [
 ];
 
 const HUMAN_SPAWNS = [
-  { x: 130, y: 120 },
-  { x: 500, y: 90 },
-  { x: 870, y: 120 },
-  { x: 900, y: 300 },
-  { x: 870, y: 500 },
-  { x: 500, y: 510 },
-  { x: 130, y: 500 },
-  { x: 100, y: 300 },
-  { x: 320, y: 210 },
-  { x: 680, y: 390 },
+  { x: 180, y: 150 },
+  { x: 700, y: 120 },
+  { x: 1220, y: 150 },
+  { x: 1260, y: 420 },
+  { x: 1220, y: 690 },
+  { x: 700, y: 720 },
+  { x: 180, y: 690 },
+  { x: 140, y: 420 },
+  { x: 450, y: 260 },
+  { x: 950, y: 580 },
 ];
 
 const HUMAN_COLORS = [

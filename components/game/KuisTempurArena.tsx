@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { gameSocket } from "@/lib/game/socket";
 import { setQuiet } from "@/lib/notif-quiet";
+import KuisTempurPhaserWorld from "@/components/game/KuisTempurPhaserWorld";
 
 type ArenaEntity = {
   id: string;
@@ -66,10 +67,8 @@ type ArenaResult = {
   }>;
 };
 
-type HitFx = { fromId: string; targetId: string; expires: number; damage: number };
-
-const WORLD_W = 1000;
-const WORLD_H = 600;
+const WORLD_W = 1400;
+const WORLD_H = 840;
 
 export default function KuisTempurArena({
   code,
@@ -80,12 +79,7 @@ export default function KuisTempurArena({
   userId: string;
   onExit: () => void;
 }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const stateRef = useRef<ArenaState>({ seq: 0, timeLeft: 180, entities: [] });
-  const imageCache = useRef<Map<string, HTMLImageElement>>(new Map());
-  const bgRef = useRef<HTMLImageElement | null>(null);
-  const hitFxRef = useRef<HitFx[]>([]);
-  const rafRef = useRef<number>(0);
 
   const [arena, setArena] = useState<ArenaState>(stateRef.current);
   const [question, setQuestion] = useState<ArenaQuestion | null>(null);
@@ -99,12 +93,6 @@ export default function KuisTempurArena({
   useEffect(() => {
     setQuiet(true);
     return () => setQuiet(false);
-  }, []);
-
-  useEffect(() => {
-    const bg = new Image();
-    bg.src = "/game/kuis-tempur/assets/world/base/arena_base_01.png";
-    bgRef.current = bg;
   }, []);
 
   useEffect(() => {
@@ -129,9 +117,6 @@ export default function KuisTempurArena({
       });
       window.setTimeout(() => setFeedback(null), 1200);
     });
-    const stopHit = gameSocket.onArenaHit((data: { fromId: string; targetId: string; damage: number }) => {
-      hitFxRef.current.push({ ...data, expires: performance.now() + 220 });
-    });
     const stopCountdown = gameSocket.onArenaCountdown((data: { seconds: number }) => {
       setCountdown(data.seconds > 0 ? data.seconds : null);
     });
@@ -150,7 +135,6 @@ export default function KuisTempurArena({
       stopState();
       stopQuestion();
       stopFeedback();
-      stopHit();
       stopCountdown();
       stopFinished();
       stopError();
@@ -160,257 +144,10 @@ export default function KuisTempurArena({
   const me = useMemo(() => arena.entities.find((entity) => entity.id === userId), [arena, userId]);
   const humans = useMemo(() => arena.entities.filter((entity) => entity.kind === "human"), [arena]);
 
-  const getImage = useCallback((src: string) => {
-    let image = imageCache.current.get(src);
-    if (!image) {
-      image = new Image();
-      image.src = src;
-      imageCache.current.set(src, image);
-    }
-    return image;
-  }, []);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const draw = () => {
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-      const rect = canvas.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      if (canvas.width !== Math.round(rect.width * dpr) || canvas.height !== Math.round(rect.height * dpr)) {
-        canvas.width = Math.round(rect.width * dpr);
-        canvas.height = Math.round(rect.height * dpr);
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      }
-
-      const W = rect.width;
-      const H = rect.height;
-      const bg = bgRef.current;
-      ctx.clearRect(0, 0, W, H);
-
-      if (bg?.complete && bg.naturalWidth) {
-        const scale = Math.max(W / bg.naturalWidth, H / bg.naturalHeight);
-        const sw = W / scale;
-        const sh = H / scale;
-        const sx = (bg.naturalWidth - sw) / 2;
-        const sy = (bg.naturalHeight - sh) / 2;
-        ctx.drawImage(bg, sx, sy, sw, sh, 0, 0, W, H);
-      } else {
-        const grad = ctx.createLinearGradient(0, 0, W, H);
-        grad.addColorStop(0, "#0f5c3f");
-        grad.addColorStop(0.5, "#4a7b3d");
-        grad.addColorStop(1, "#174a34");
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, W, H);
-      }
-
-      // Living world layer: vignette, paths, ambient motes and arena core.
-      const nowMs = performance.now();
-      const worldGlow = ctx.createRadialGradient(W * 0.5, H * 0.48, 20, W * 0.5, H * 0.48, Math.max(W, H) * 0.55);
-      worldGlow.addColorStop(0, "rgba(34,211,238,.08)");
-      worldGlow.addColorStop(0.55, "rgba(15,23,42,.04)");
-      worldGlow.addColorStop(1, "rgba(2,6,23,.32)");
-      ctx.fillStyle = worldGlow;
-      ctx.fillRect(0, 0, W, H);
-
-      ctx.save();
-      ctx.globalAlpha = 0.16;
-      ctx.strokeStyle = "#d9f99d";
-      ctx.lineWidth = Math.max(2, W / 520);
-      ctx.setLineDash([12, 18]);
-      ctx.beginPath();
-      ctx.ellipse(W * 0.5, H * 0.52, W * 0.33, H * 0.28, 0, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.restore();
-
-      for (let i = 0; i < 24; i++) {
-        const px = ((i * 137 + nowMs * (0.008 + (i % 3) * 0.003)) % 1000) / 1000 * W;
-        const py = ((i * 83 + Math.sin(nowMs / 900 + i) * 55 + 900) % 600) / 600 * H;
-        const alpha = 0.16 + (i % 5) * 0.035;
-        ctx.fillStyle = `rgba(190,242,100,${alpha})`;
-        ctx.beginPath();
-        ctx.arc(px, py, 1.2 + (i % 3) * 0.45, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      const state = stateRef.current;
-      const byId = new Map(state.entities.map((entity) => [entity.id, entity]));
-
-      for (const fx of hitFxRef.current) {
-        const from = byId.get(fx.fromId);
-        const target = byId.get(fx.targetId);
-        if (!from || !target || performance.now() > fx.expires) continue;
-        const ax = (from.x / WORLD_W) * W;
-        const ay = (from.y / WORLD_H) * H;
-        const bx = (target.x / WORLD_W) * W;
-        const by = (target.y / WORLD_H) * H;
-        const alpha = Math.max(0, (fx.expires - performance.now()) / 220);
-        ctx.save();
-        ctx.globalAlpha = alpha;
-        ctx.strokeStyle = from.kind === "human" ? "#fbbf24" : "#fb7185";
-        ctx.lineWidth = 4;
-        ctx.shadowColor = ctx.strokeStyle;
-        ctx.shadowBlur = 12;
-        ctx.beginPath();
-        ctx.moveTo(ax, ay);
-        ctx.lineTo(bx, by);
-        ctx.stroke();
-        ctx.restore();
-      }
-      hitFxRef.current = hitFxRef.current.filter((fx) => performance.now() <= fx.expires);
-
-      state.entities.forEach((entity, index) => {
-        const x = (entity.x / WORLD_W) * W;
-        const y = (entity.y / WORLD_H) * H;
-        const isMe = entity.id === userId;
-        const accent = entity.color || (isMe ? "#22d3ee" : "#fb7185");
-        const scale = Math.max(0.78, Math.min(1.1, W / 1100));
-        const bob = entity.alive ? Math.sin(nowMs / 260 + index * 0.8) * 1.7 : 0;
-        const bodyY = y + bob;
-
-        ctx.save();
-        if (!entity.alive) ctx.globalAlpha = 0.38;
-
-        // Soft ground shadow.
-        ctx.fillStyle = "rgba(2,8,23,.34)";
-        ctx.beginPath();
-        ctx.ellipse(x, y + 31 * scale, 24 * scale, 7 * scale, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Player aura makes local identity readable in a crowded 10-player room.
-        if (isMe && entity.alive) {
-          const aura = ctx.createRadialGradient(x, bodyY, 5, x, bodyY, 42 * scale);
-          aura.addColorStop(0, "rgba(34,211,238,.20)");
-          aura.addColorStop(1, "rgba(34,211,238,0)");
-          ctx.fillStyle = aura;
-          ctx.beginPath();
-          ctx.arc(x, bodyY, 42 * scale, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        // Stylised hero body v1. Profile photo stays as identity badge, not the whole body.
-        ctx.fillStyle = accent;
-        ctx.beginPath();
-        ctx.roundRect(x - 15 * scale, bodyY - 5 * scale, 30 * scale, 31 * scale, 9 * scale);
-        ctx.fill();
-
-        ctx.fillStyle = "#0f172a";
-        ctx.beginPath();
-        ctx.roundRect(x - 11 * scale, bodyY + 1 * scale, 22 * scale, 19 * scale, 7 * scale);
-        ctx.fill();
-
-        ctx.fillStyle = accent;
-        ctx.beginPath();
-        ctx.arc(x, bodyY - 14 * scale, 13 * scale, 0, Math.PI * 2);
-        ctx.fill();
-
-        const portraitSize = 9.5 * scale;
-        if (entity.avatarUrl) {
-          const image = getImage(entity.avatarUrl);
-          if (image.complete && image.naturalWidth) {
-            ctx.save();
-            ctx.beginPath();
-            ctx.arc(x, bodyY - 14 * scale, portraitSize, 0, Math.PI * 2);
-            ctx.clip();
-            ctx.drawImage(image, x - portraitSize, bodyY - 14 * scale - portraitSize, portraitSize * 2, portraitSize * 2);
-            ctx.restore();
-          }
-        } else {
-          ctx.fillStyle = "#e2e8f0";
-          ctx.beginPath();
-          ctx.arc(x, bodyY - 14 * scale, 5 * scale, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        // Weapon / energy gauntlet.
-        ctx.strokeStyle = "#fef3c7";
-        ctx.lineWidth = 4 * scale;
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.moveTo(x + 10 * scale, bodyY + 4 * scale);
-        ctx.lineTo(x + 20 * scale, bodyY + 10 * scale);
-        ctx.stroke();
-        ctx.fillStyle = entity.ammo > 0 ? "#fde047" : "#64748b";
-        ctx.beginPath();
-        ctx.arc(x + 21 * scale, bodyY + 11 * scale, 4.5 * scale, 0, Math.PI * 2);
-        ctx.fill();
-
-        const hpRatio = Math.max(0, Math.min(1, entity.hp / Math.max(1, entity.hpMax)));
-        ctx.fillStyle = "rgba(2,8,23,.86)";
-        ctx.roundRect(x - 27, bodyY - 39 * scale, 54, 6, 3);
-        ctx.fill();
-        ctx.fillStyle = hpRatio > 0.45 ? "#34d399" : hpRatio > 0.2 ? "#fbbf24" : "#fb7185";
-        ctx.roundRect(x - 27, bodyY - 39 * scale, 54 * hpRatio, 6, 3);
-        ctx.fill();
-
-        ctx.font = "800 10px system-ui, sans-serif";
-        ctx.textAlign = "center";
-        ctx.fillStyle = isMe ? "#a5f3fc" : "white";
-        ctx.shadowColor = "rgba(0,0,0,.85)";
-        ctx.shadowBlur = 4;
-        ctx.fillText(isMe ? `${entity.name} · KAMU` : entity.name, x, bodyY + 43 * scale);
-        ctx.shadowBlur = 0;
-
-        if (!entity.alive) {
-          ctx.font = "900 9px system-ui, sans-serif";
-          ctx.fillStyle = "#fde68a";
-          ctx.fillText(`RESPAWN ${Math.max(1, Math.ceil(entity.respawnIn || 1))}s`, x, bodyY + 5);
-        }
-
-        ctx.restore();
-      });
-
-      rafRef.current = requestAnimationFrame(draw);
-    };
-
-    rafRef.current = requestAnimationFrame(draw);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [getImage, userId]);
-
-  const toWorldPoint = useCallback((clientX: number, clientY: number) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return null;
-    const rect = canvas.getBoundingClientRect();
-    return {
-      x: Math.max(0, Math.min(WORLD_W, ((clientX - rect.left) / rect.width) * WORLD_W)),
-      y: Math.max(0, Math.min(WORLD_H, ((clientY - rect.top) / rect.height) * WORLD_H)),
-      pxX: clientX - rect.left,
-      pxY: clientY - rect.top,
-      rect,
-    };
-  }, []);
-
-  const handlePointer = useCallback(
-    (clientX: number, clientY: number) => {
-      if (!me?.alive || result) return;
-      const point = toWorldPoint(clientX, clientY);
-      if (!point) return;
-
-      let closest: { entity: ArenaEntity; distance: number } | null = null;
-      for (const entity of arena.entities) {
-        if (!entity.alive || entity.id === userId) continue;
-        const ex = (entity.x / WORLD_W) * point.rect.width;
-        const ey = (entity.y / WORLD_H) * point.rect.height;
-        const dist = Math.hypot(ex - point.pxX, ey - point.pxY);
-        if (!closest || dist < closest.distance) closest = { entity, distance: dist };
-      }
-
-      if (closest && closest.distance < 48 && (me.ammo || 0) > 0) {
-        gameSocket.arenaShoot({ code, userId, targetId: closest.entity.id });
-      } else {
-        gameSocket.arenaMove({ code, userId, x: point.x, y: point.y });
-      }
-    },
-    [arena.entities, code, me, result, toWorldPoint, userId]
-  );
-
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (!me?.alive || result) return;
-      const step = 95;
+      const step = 110;
       const key = event.key.toLowerCase();
       let x = me.x;
       let y = me.y;
@@ -501,10 +238,11 @@ export default function KuisTempurArena({
         </div>
       </div>
 
-      <canvas
-        ref={canvasRef}
-        onPointerDown={(e) => handlePointer(e.clientX, e.clientY)}
-        className="absolute inset-0 h-full w-full touch-none"
+      <KuisTempurPhaserWorld
+        code={code}
+        userId={userId}
+        arena={arena}
+        feedback={feedback}
       />
 
       <div className="pointer-events-none absolute left-3 top-[74px] z-10 w-[150px] space-y-1.5 sm:left-4 sm:w-[190px]">
