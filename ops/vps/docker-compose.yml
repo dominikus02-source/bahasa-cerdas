@@ -101,6 +101,20 @@ services:
       redis:
         condition: service_healthy
 
+  cron:
+    build:
+      context: ../..
+      dockerfile: Dockerfile.cron
+    image: bahasacerdas/cron:${IMAGE_TAG:-local}
+    restart: unless-stopped
+    env_file:
+      - ${BC_CONFIG_DIR:-/opt/bahasacerdas/config}/cron.env
+    networks:
+      - internal
+    depends_on:
+      web:
+        condition: service_healthy
+
   caddy:
     image: caddy:2-alpine
     restart: unless-stopped
