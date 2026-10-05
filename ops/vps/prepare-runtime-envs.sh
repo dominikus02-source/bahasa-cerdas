@@ -23,12 +23,23 @@ def key_of(line: str) -> str:
         return ""
     return line.split("=", 1)[0].strip()
 
-game_keys = {"DATABASE_URL", "DIRECT_URL"}
+game_keys = {
+    "DATABASE_URL",
+    "DIRECT_URL",
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+}
 game = [line for line in lines if key_of(line) in game_keys]
 
-missing = game_keys - {key_of(line) for line in game}
-if missing:
-    raise SystemExit("Missing game database env: " + ", ".join(sorted(missing)))
+present = {key_of(line) for line in game}
+missing_db = {"DATABASE_URL", "DIRECT_URL"} - present
+if missing_db:
+    raise SystemExit("Missing game database env: " + ", ".join(sorted(missing_db)))
+if "NEXT_PUBLIC_SUPABASE_URL" not in present:
+    raise SystemExit("Missing NEXT_PUBLIC_SUPABASE_URL for game auth")
+if not ({"NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", "NEXT_PUBLIC_SUPABASE_ANON_KEY"} & present):
+    raise SystemExit("Missing Supabase publishable/anon key for game auth")
 
 game_path.write_text("\n".join(game) + "\n")
 
