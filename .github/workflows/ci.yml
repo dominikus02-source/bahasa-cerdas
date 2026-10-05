@@ -49,3 +49,18 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Verify VPS web container build
+        run: |
+          cat >/tmp/bc-web-ci.env <<'EOF'
+          DATABASE_URL=postgresql://user:pass@localhost:5432/db
+          DIRECT_URL=postgresql://user:pass@localhost:5432/db
+          NEXT_PUBLIC_SUPABASE_URL=https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY=placeholder-anon-key
+          NEXT_PUBLIC_SITE_URL=https://example.com
+          EOF
+          DOCKER_BUILDKIT=1 docker build \
+            -f Dockerfile.web \
+            --secret id=web_env,src=/tmp/bc-web-ci.env \
+            -t bahasacerdas-web-ci .
+          rm -f /tmp/bc-web-ci.env
