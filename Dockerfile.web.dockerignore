@@ -1,0 +1,15 @@
+node_modules
+.next
+.git
+.gitignore
+backups
+docs
+data
+assets-src
+game-server
+coverage
+*.log
+.DS_Store
+.env
+.env.*
+!.env.example
