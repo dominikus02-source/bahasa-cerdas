@@ -206,6 +206,7 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
         avatarUrl: entity.avatarUrl,
         color: entity.color,
         respawnIn: entity.alive ? 0 : Math.max(0, (entity.respawnAt - now) / 1000),
+        connected: entity.connected,
       })),
     };
   }
@@ -345,7 +346,7 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
 
   function handleQuestionTimeouts(match: ArenaMatch, now: number) {
     for (const entity of match.entities.values()) {
-      if (entity.kind !== "human") continue;
+      if (entity.kind !== "human" || !entity.connected) continue;
       const deadline = match.questionDeadline.get(entity.id) || 0;
       if (!deadline || now < deadline) continue;
       const index = match.questionIndex.get(entity.id) || 0;
@@ -396,6 +397,7 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
       }
 
       if (entity.kind === "human") {
+        if (!entity.connected) return;
         moveToward(entity, entity.targetX, entity.targetY, HUMAN_SPEED, dt);
         return;
       }
@@ -572,7 +574,14 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
     const shooter = match?.entities.get(userId);
     const target = match?.entities.get(targetId);
     if (!match || !shooter || !target || match.finishing) return;
-    if (shooter.kind !== "human" || !shooter.alive || !target.alive || shooter.ammo <= 0) return;
+    if (
+      shooter.kind !== "human" ||
+      !shooter.connected ||
+      !shooter.alive ||
+      !target.connected ||
+      !target.alive ||
+      shooter.ammo <= 0
+    ) return;
 
     const now = Date.now();
     if (now - shooter.lastShotAt < HUMAN_SHOT_COOLDOWN) return;

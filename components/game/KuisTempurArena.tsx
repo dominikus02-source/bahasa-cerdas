@@ -34,6 +34,7 @@ type ArenaEntity = {
   avatarUrl?: string | null;
   color?: string;
   respawnIn?: number;
+  connected?: boolean;
 };
 
 type ArenaState = {
@@ -185,7 +186,7 @@ export default function KuisTempurArena({
   const shootNearest = useCallback(() => {
     if (!me?.alive || !me.ammo) return;
     const targets = arena.entities
-      .filter((entity) => entity.alive && entity.id !== userId)
+      .filter((entity) => entity.alive && entity.connected !== false && entity.id !== userId)
       .sort((a, b) => Math.hypot(a.x - me.x, a.y - me.y) - Math.hypot(b.x - me.x, b.y - me.y));
     if (targets[0]) gameSocket.arenaShoot({ code, userId, targetId: targets[0].id });
   }, [arena.entities, code, me, userId]);

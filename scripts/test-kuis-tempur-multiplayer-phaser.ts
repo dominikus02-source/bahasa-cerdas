@@ -41,6 +41,11 @@ check("FINAL RUSH terikat timeLeft <= 30", phaser.includes("timeLeft <= 30"));
 check("combat hit punya projectile + impact", phaser.includes("playHit(") && phaser.includes("gameSocket.onArenaHit") && phaser.includes("cameras.main.shake"));
 check("answer benar punya local hero pulse", phaser.includes("pulseLocalHero"));
 check("pointer arena bisa move atau shoot", phaser.includes("arenaShoot") && phaser.includes("arenaMove"));
+check("hero punya state idle/run/attack/hit/KO", phaser.includes("heroRun") && phaser.includes("heroAttack") && phaser.includes("heroHit") && phaser.includes("playKo") && phaser.includes("playRespawn"));
+check("top-3 rank tampil di arena", phaser.includes("rankBadge") && phaser.includes("rank <= 3"));
+check("jawaban benar memunculkan energy/combo feedback", phaser.includes("ENERGI +1") && phaser.includes("comboMatch"));
+check("server memblokir target disconnected", server.includes("!target.connected") && server.includes("!shooter.connected"));
+check("client tidak memilih target disconnected", phaser.includes("entity.connected !== false") && arena.includes("entity.connected !== false"));
 
 const spawnBlock = server.match(/const HUMAN_SPAWNS = \[([\s\S]*?)\n\];/)?.[1] || "";
 const spawns = [...spawnBlock.matchAll(/\{ x: (\d+), y: (\d+) \}/g)].map((m) => `${m[1]},${m[2]}`);

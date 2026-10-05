@@ -22,6 +22,7 @@ export type PhaserArenaEntity = {
   avatarUrl?: string | null;
   color?: string;
   respawnIn?: number;
+  connected?: boolean;
 };
 
 export type PhaserArenaState = {
@@ -46,11 +47,30 @@ const ASSETS = {
   base: [
     "/game/kuis-tempur/assets/world/base/arena_base_01.png",
   ],
-  heroes: [
+  heroIdle: [
     "/junior/karakter/alby_idle.webp",
     "/junior/karakter/hazel_idle.webp",
+    "/junior/karakter/zelby_idle.webp",
+  ],
+  heroRun: [
     "/junior/karakter/alby_running.webp",
+    "/junior/karakter/hazel_happy.webp",
+    "/junior/karakter/zelby_happy.webp",
+  ],
+  heroAttack: [
+    "/junior/karakter/alby_celebrate.webp",
     "/junior/karakter/hazel_encouraging.webp",
+    "/junior/karakter/zelby_wave.webp",
+  ],
+  heroHit: [
+    "/junior/karakter/alby_surprised.webp",
+    "/junior/karakter/hazel_thinking.webp",
+    "/junior/karakter/zelby_thinking.webp",
+  ],
+  heroVictory: [
+    "/junior/karakter/alby_celebrate.webp",
+    "/junior/karakter/hazel_celebrate.webp",
+    "/junior/karakter/zelby_celebrate.webp",
   ],
   terrain: [
     "/game/kuis-tempur/assets/world/terrain/grass_01.png",
@@ -141,10 +161,17 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
         hpFill: any;
         ammoGlow: any;
         name: any;
+        rankBadge: any;
         ko: any;
         targetX: number;
         targetY: number;
         state: PhaserArenaEntity;
+        family: number;
+        mode: "idle" | "run" | "attack" | "hit" | "ko";
+        wasAlive: boolean;
+        attackUntil: number;
+        hitUntil: number;
+        lastFacing: 1 | -1;
       };
 
       class KuisTempurScene extends Phaser.Scene {
@@ -197,7 +224,7 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
 
             const worldPoint = pointer.positionToCamera(this.cameras.main) as { x: number; y: number };
             const aliveTargets = current.entities
-              .filter((entity) => entity.id !== me.id && entity.alive)
+              .filter((entity) => entity.id !== me.id && entity.alive && entity.connected !== false)
               .map((entity) => ({
                 entity,
                 distance: Phaser.Math.Distance.Between(worldPoint.x, worldPoint.y, entity.x, entity.y),
@@ -383,13 +410,13 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
 
         private createHero(entity: PhaserArenaEntity): HeroVisual {
           const accent = Phaser.Display.Color.HexStringToColor(entity.color || "#22d3ee").color;
-          const variant = Math.abs(Array.from(entity.id).reduce((acc, ch) => acc + ch.charCodeAt(0), 0)) % ASSETS.heroes.length;
+          const family = Math.abs(Array.from(entity.id).reduce((acc, ch) => acc + ch.charCodeAt(0), 0)) % ASSETS.heroIdle.length;
 
           const shadow = this.add.ellipse(0, 31, 54, 14, 0x020617, 0.34);
           const aura = this.add.circle(0, 3, entity.id === userIdRef.current ? 40 : 34, accent, entity.id === userIdRef.current ? 0.16 : 0.055);
           aura.setBlendMode(Phaser.BlendModes.ADD);
 
-          const body = this.add.image(0, 27, key("heroes", variant))
+          const body = this.add.image(0, 27, key("heroIdle", family))
             .setOrigin(0.5, 1)
             .setDisplaySize(84, 84);
 
@@ -410,6 +437,15 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
             strokeThickness: 5,
           }).setOrigin(0.5);
 
+          const rankBadge = this.add.text(-39, -40, "", {
+            fontFamily: "system-ui, sans-serif",
+            fontSize: "10px",
+            fontStyle: "900",
+            color: "#0f172a",
+            backgroundColor: "#fde68a",
+            padding: { x: 5, y: 3 },
+          }).setOrigin(0.5).setAlpha(0);
+
           const ko = this.add.text(0, 0, "", {
             fontFamily: "system-ui, sans-serif",
             fontSize: "11px",
@@ -419,7 +455,7 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
             strokeThickness: 5,
           }).setOrigin(0.5);
 
-          const root = this.add.container(entity.x, entity.y, [shadow, aura, body, weapon, ammoGlow, hpBg, hpFill, name, ko]);
+          const root = this.add.container(entity.x, entity.y, [shadow, aura, body, weapon, ammoGlow, hpBg, hpFill, name, rankBadge, ko]);
           root.setDepth(entity.y + 20);
           root.setSize(82, 106);
 
@@ -450,11 +486,97 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
             hpFill,
             ammoGlow,
             name,
+            rankBadge,
             ko,
             targetX: entity.x,
             targetY: entity.y,
             state: entity,
+            family,
+            mode: entity.alive ? "idle" : "ko",
+            wasAlive: entity.alive,
+            attackUntil: 0,
+            hitUntil: 0,
+            lastFacing: 1,
           };
+        }
+
+        private heroTexture(mode: HeroVisual["mode"], family: number) {
+          if (mode === "run") return key("heroRun", family);
+          if (mode === "attack") return key("heroAttack", family);
+          if (mode === "hit" || mode === "ko") return key("heroHit", family);
+          return key("heroIdle", family);
+        }
+
+        private setHeroMode(visual: HeroVisual, mode: HeroVisual["mode"]) {
+          if (visual.mode === mode) return;
+          visual.mode = mode;
+          visual.body.setTexture(this.heroTexture(mode, visual.family)).setDisplaySize(84, 84);
+
+          if (mode === "run") {
+            visual.body.setAngle(visual.lastFacing > 0 ? 3 : -3);
+          } else if (mode === "attack") {
+            visual.body.setAngle(visual.lastFacing > 0 ? 6 : -6);
+          } else if (mode === "hit") {
+            visual.body.setAngle(visual.lastFacing > 0 ? -8 : 8);
+          } else {
+            visual.body.setAngle(0);
+          }
+        }
+
+        private playKo(visual: HeroVisual) {
+          visual.attackUntil = 0;
+          visual.hitUntil = 0;
+          this.setHeroMode(visual, "ko");
+
+          const ring = this.add.circle(visual.root.x, visual.root.y, 30, 0xfb7185, 0.2).setDepth(8600);
+          ring.setBlendMode(Phaser.BlendModes.ADD);
+          this.tweens.add({
+            targets: ring,
+            scale: 2.4,
+            alpha: 0,
+            duration: 420,
+            ease: "Quad.easeOut",
+            onComplete: () => ring.destroy(),
+          });
+
+          this.tweens.add({
+            targets: visual.body,
+            angle: visual.lastFacing > 0 ? 18 : -18,
+            y: "+=12",
+            alpha: 0.42,
+            duration: 220,
+            ease: "Quad.easeOut",
+          });
+        }
+
+        private playRespawn(visual: HeroVisual) {
+          visual.body
+            .setTexture(this.heroTexture("idle", visual.family))
+            .setDisplaySize(84, 84)
+            .setAngle(0)
+            .setAlpha(1)
+            .setY(27);
+          this.setHeroMode(visual, "idle");
+
+          const ringA = this.add.circle(visual.root.x, visual.root.y, 18, 0x67e8f9, 0.34).setDepth(8600);
+          const ringB = this.add.circle(visual.root.x, visual.root.y, 30, 0xfde68a, 0.22).setDepth(8599);
+          ringA.setBlendMode(Phaser.BlendModes.ADD);
+          ringB.setBlendMode(Phaser.BlendModes.ADD);
+          this.tweens.add({
+            targets: [ringA, ringB],
+            scale: 3,
+            alpha: 0,
+            duration: 520,
+            ease: "Quad.easeOut",
+            onComplete: () => { ringA.destroy(); ringB.destroy(); },
+          });
+          this.tweens.add({
+            targets: visual.root,
+            scaleX: { from: 0.72, to: 1 },
+            scaleY: { from: 0.72, to: 1 },
+            duration: 300,
+            ease: "Back.easeOut",
+          });
         }
 
         private syncHeroes() {
@@ -468,6 +590,12 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
             }
           }
 
+          const ranking = current.entities
+            .filter((entity) => entity.kind === "human")
+            .slice()
+            .sort((a, b) => b.score - a.score || b.kills - a.kills || b.correct - a.correct);
+          const rankById = new Map(ranking.map((entity, index) => [entity.id, index + 1]));
+
           current.entities.forEach((entity) => {
             let visual = this.heroes.get(entity.id);
             if (!visual) {
@@ -475,11 +603,16 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
               this.heroes.set(entity.id, visual);
             }
 
+            const wasAlive = visual.wasAlive;
             visual.state = entity;
             visual.targetX = entity.x;
             visual.targetY = entity.y;
             visual.root.setDepth(entity.y + 20);
-            visual.root.setAlpha(entity.alive ? 1 : 0.35);
+            visual.root.setAlpha(entity.connected === false ? 0.22 : entity.alive ? 1 : 0.38);
+
+            if (wasAlive && !entity.alive) this.playKo(visual);
+            if (!wasAlive && entity.alive) this.playRespawn(visual);
+            visual.wasAlive = entity.alive;
 
             const hpRatio = Phaser.Math.Clamp(entity.hp / Math.max(1, entity.hpMax), 0, 1);
             visual.hpFill.setDisplaySize(Math.max(0.1, 58 * hpRatio), 7);
@@ -488,7 +621,19 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
             const hasAmmo = entity.ammo > 0;
             visual.weapon.setFillStyle(hasAmmo ? 0xfde047 : 0x64748b, 1);
             visual.ammoGlow.setFillStyle(hasAmmo ? 0xfef08a : 0x64748b, hasAmmo ? 0.95 : 0.3);
-            visual.ko.setText(entity.alive ? "" : `RESPAWN ${Math.max(1, Math.ceil(entity.respawnIn || 1))}s`);
+            visual.ko.setText(
+              entity.connected === false
+                ? "KONEKSI TERPUTUS"
+                : entity.alive
+                  ? ""
+                  : `RESPAWN ${Math.max(1, Math.ceil(entity.respawnIn || 1))}s`
+            );
+
+            const rank = rankById.get(entity.id) || 99;
+            visual.rankBadge
+              .setText(rank <= 3 ? `#${rank}` : "")
+              .setAlpha(rank <= 3 && entity.connected !== false ? 1 : 0)
+              .setBackgroundColor(rank === 1 ? "#fde047" : rank === 2 ? "#cbd5e1" : "#fdba74");
 
             if (entity.id === userIdRef.current && this.localFollowId !== entity.id) {
               this.localFollowId = entity.id;
@@ -501,6 +646,36 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
           const from = this.heroes.get(fromId);
           const target = this.heroes.get(targetId);
           if (!from || !target) return;
+
+          const now = this.time.now;
+          from.attackUntil = Math.max(from.attackUntil, now + 230);
+          target.hitUntil = Math.max(target.hitUntil, now + 280);
+          this.setHeroMode(from, "attack");
+          this.setHeroMode(target, "hit");
+
+          this.tweens.killTweensOf(from.weapon);
+          this.tweens.add({
+            targets: from.weapon,
+            angle: { from: -24 * from.lastFacing, to: 13 * from.lastFacing },
+            x: { from: 22 * from.lastFacing, to: 34 * from.lastFacing },
+            duration: 105,
+            yoyo: true,
+            ease: "Quad.easeOut",
+          });
+
+          this.tweens.killTweensOf(target.body);
+          target.body.setTint(0xffffff);
+          this.tweens.add({
+            targets: target.body,
+            x: { from: 0, to: 5 * from.lastFacing },
+            scaleX: { from: 1, to: 0.94 },
+            scaleY: { from: 1, to: 1.05 },
+            duration: 90,
+            yoyo: true,
+            onComplete: () => {
+              target.body.setX(0).setScale(1).clearTint();
+            },
+          });
 
           const projectile = this.add.circle(from.root.x, from.root.y - 4, 7, 0xfef08a, 1).setDepth(8500);
           projectile.setBlendMode(Phaser.BlendModes.ADD);
@@ -562,7 +737,7 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
           });
         }
 
-        pulseLocalHero() {
+        pulseLocalHero(message = "") {
           const hero = this.heroes.get(userIdRef.current);
           if (!hero) return;
           const pulse = this.add.circle(hero.root.x, hero.root.y, 24, 0x67e8f9, 0.24).setDepth(8550);
@@ -582,6 +757,47 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
             duration: 120,
             yoyo: true,
           });
+
+          for (let i = 0; i < 5; i++) {
+            const shard = this.add.circle(
+              hero.root.x + (i - 2) * 7,
+              hero.root.y - 18,
+              2.5 + (i % 2),
+              i % 2 ? 0xfde047 : 0x67e8f9,
+              0.95,
+            ).setDepth(8560);
+            shard.setBlendMode(Phaser.BlendModes.ADD);
+            this.tweens.add({
+              targets: shard,
+              x: shard.x + (i - 2) * 9,
+              y: shard.y - 32 - i * 3,
+              alpha: 0,
+              scale: 0.2,
+              duration: 420 + i * 35,
+              ease: "Quad.easeOut",
+              onComplete: () => shard.destroy(),
+            });
+          }
+
+          const comboMatch = message.match(/(\d+)×\s*kombo/i);
+          const label = comboMatch ? `ENERGI +1 · COMBO ×${comboMatch[1]}` : "ENERGI +1";
+          const energyText = this.add.text(hero.root.x, hero.root.y - 72, label, {
+            fontFamily: "system-ui, sans-serif",
+            fontSize: comboMatch ? "16px" : "14px",
+            fontStyle: "900",
+            color: comboMatch ? "#fde68a" : "#a5f3fc",
+            stroke: "#020617",
+            strokeThickness: 6,
+          }).setOrigin(0.5).setDepth(8750);
+          this.tweens.add({
+            targets: energyText,
+            y: energyText.y - 32,
+            alpha: 0,
+            scale: { from: 0.88, to: 1.08 },
+            duration: 720,
+            ease: "Quad.easeOut",
+            onComplete: () => energyText.destroy(),
+          });
         }
 
         private onResize(gameSize: { width: number; height: number }) {
@@ -598,9 +814,39 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
           const lerp = 1 - Math.pow(0.001, Math.min(delta, 60) / 1000);
 
           for (const visual of this.heroes.values()) {
+            const dx = visual.targetX - visual.root.x;
+            const dy = visual.targetY - visual.root.y;
+            const moving = visual.state.alive && visual.state.connected !== false && Math.hypot(dx, dy) > 8;
+
+            if (Math.abs(dx) > 2) {
+              visual.lastFacing = dx >= 0 ? 1 : -1;
+              visual.body.setFlipX(visual.lastFacing < 0);
+            }
+
             visual.root.x = Phaser.Math.Linear(visual.root.x, visual.targetX, Math.min(0.34, lerp * 0.46));
             visual.root.y = Phaser.Math.Linear(visual.root.y, visual.targetY, Math.min(0.34, lerp * 0.46));
             visual.root.setDepth(visual.root.y + 20);
+
+            if (!visual.state.alive) {
+              this.setHeroMode(visual, "ko");
+            } else if (this.time.now < visual.hitUntil) {
+              this.setHeroMode(visual, "hit");
+            } else if (this.time.now < visual.attackUntil) {
+              this.setHeroMode(visual, "attack");
+            } else if (moving) {
+              this.setHeroMode(visual, "run");
+            } else {
+              this.setHeroMode(visual, "idle");
+            }
+
+            if (moving && visual.mode === "run") {
+              const stride = Math.sin(this.time.now / 85 + visual.root.x * 0.02);
+              visual.body.setY(27 + stride * 1.8);
+              visual.weapon.setY(5 + stride * 0.8);
+            } else if (visual.mode !== "ko") {
+              visual.body.setY(27);
+              visual.weapon.setY(5);
+            }
           }
 
           const rush = arenaRef.current.timeLeft <= 30 && arenaRef.current.timeLeft > 0;
@@ -657,7 +903,7 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
   useEffect(() => {
     if (!feedback?.correct || !sceneRef.current) return;
     feedbackSeqRef.current += 1;
-    sceneRef.current.pulseLocalHero?.();
+    sceneRef.current.pulseLocalHero?.(feedback.text);
   }, [feedback]);
 
   return (

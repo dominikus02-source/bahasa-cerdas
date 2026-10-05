@@ -226,6 +226,7 @@
     "test:kuis-tempur-progression": "npx tsx scripts/test-kuis-tempur-progression.ts",
     "test:kuis-tempur-world": "npx tsx scripts/test-kuis-tempur-world.ts",
     "test:kuis-tempur-multiplayer-phaser": "npx tsx scripts/test-kuis-tempur-multiplayer-phaser.ts",
+    "test:kuis-tempur-10p-stress": "npx tsx scripts/test-kuis-tempur-10p-stress.ts",
     "test:social-proof": "npx tsx scripts/test-social-proof.ts",
     "seed:gamification:dry-run": "npx tsx scripts/seed-gamification-data.ts",
     "seed:gamification": "npx tsx scripts/seed-gamification-data.ts --execute",
