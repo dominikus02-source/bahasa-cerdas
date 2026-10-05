@@ -1,0 +1,8 @@
+# BahasaCerdas production schedules, Asia/Jakarta.
+# Migrated from vercel.json; keep these in sync with the route intent.
+0 15 * * * /usr/local/bin/bc-cron-call /api/cron/pengingat-tugas
+0 15,17,19 * * * /usr/local/bin/bc-cron-call /api/cron/ajakan-harian
+0 * * * * /usr/local/bin/bc-cron-call /api/cron/teacher-commissions-release
+0 7 * * * /usr/local/bin/bc-cron-call /api/cron/teacher-commissions-reconcile
+30 * * * * /usr/local/bin/bc-cron-call /api/cron/payout-reconciliation
+0 * * * * /usr/local/bin/bc-cron-call /api/cron/risk-review
