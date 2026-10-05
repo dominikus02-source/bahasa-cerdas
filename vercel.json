@@ -1,38 +1,6 @@
 {
-  "regions": ["sin1"],
-  "crons": [
-    {
-      "path": "/api/cron/pengingat-tugas",
-      "schedule": "0 8 * * *"
-    },
-    {
-      "path": "/api/cron/ajakan-harian",
-      "schedule": "0 8 * * *"
-    },
-    {
-      "path": "/api/cron/ajakan-harian",
-      "schedule": "0 10 * * *"
-    },
-    {
-      "path": "/api/cron/ajakan-harian",
-      "schedule": "0 12 * * *"
-    },
-    {
-      "path": "/api/cron/teacher-commissions-release",
-      "schedule": "0 * * * *"
-    },
-    {
-      "path": "/api/cron/teacher-commissions-reconcile",
-      "schedule": "0 0 * * *"
-    },
-    {
-      "path": "/api/cron/payout-reconciliation",
-      "schedule": "30 * * * *"
-    },
-    {
-      "path": "/api/cron/risk-review",
-      "schedule": "0 * * * *"
-    }
+  "regions": [
+    "sin1"
   ],
   "redirects": [
     {
