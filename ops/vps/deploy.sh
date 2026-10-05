@@ -26,11 +26,11 @@ chmod +x ops/vps/prepare-runtime-envs.sh
 cd ops/vps
 COMPOSE=(docker compose --env-file "$CONFIG_DIR/stack.env")
 
-echo "==> Building web + cron runner"
-"${COMPOSE[@]}" build web cron
+echo "==> Building web"
+"${COMPOSE[@]}" build web
 
-echo "==> Starting Redis + web + cron"
-"${COMPOSE[@]}" up -d redis web cron
+echo "==> Starting Redis + web"
+"${COMPOSE[@]}" up -d redis web
 
 echo "==> Waiting for application readiness"
 for i in {1..40}; do
@@ -46,6 +46,12 @@ for i in {1..40}; do
   fi
   sleep 3
 done
+
+if [[ "${ENABLE_CRON:-0}" == "1" ]]; then
+  echo "==> Building + starting VPS scheduler"
+  "${COMPOSE[@]}" --profile scheduler build cron
+  "${COMPOSE[@]}" --profile scheduler up -d cron
+fi
 
 if [[ "${ENABLE_REALTIME:-0}" == "1" ]]; then
   echo "==> Building + starting realtime game server"
@@ -79,4 +85,4 @@ if [[ "${ENABLE_EDGE:-0}" == "1" ]]; then
 fi
 
 echo "==> Runtime status"
-"${COMPOSE[@]}" --profile realtime --profile agent ps
+"${COMPOSE[@]}" --profile scheduler --profile realtime --profile agent ps
