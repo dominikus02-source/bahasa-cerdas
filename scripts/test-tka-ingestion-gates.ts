@@ -193,148 +193,110 @@ async function main(): Promise<void> {
   // executes it — the exact production aggregation algorithm, not a reimplementation.
   // What remains untested vs E2E: Supabase auth, rate limiting, snapshot fetch, DB writes.
   //
+  // Gate H — scoring integrity through the CANONICAL production module.
+  // Since PR #21 (test(assessment): formalize TKA and UKBI HTTP E2E), the route
+  // imports buildAnswerRows + tkaScoringFn from lib/assessment/answer-rows.ts —
+  // the single production implementation. This gate imports that same canonical
+  // module (never a copy), proves behavior on real DB rows, and statically
+  // verifies the route still wires the canonical implementation (drift guard).
+  const ANSWER_ROWS_PATH = path.join(__dirname, "..", "lib", "assessment", "answer-rows.ts");
   const ROUTE_PATH = path.join(__dirname, "..", "app", "api", "kompetensi", "[paketId]", "submit", "route.ts");
   const routeSrc = fs.readFileSync(ROUTE_PATH, "utf8");
+  const modSrc = fs.readFileSync(ANSWER_ROWS_PATH, "utf8");
 
-  // --- verbatim slices (all anchored on exact production source text) ---
-  const TYPES_START = "interface AnswerRow {";
-  const TYPES_END = "type AnswerMap = Record<string, string>;";
-  const FN_START = "function buildAnswerRows(";
-  const FN_END = "\nexport async function POST";
-  const LAMBDA_TK_ANCHOR = ': (q: any, ua: string) => {';
-  const LAMBDA_UK_ANCHOR = '? (q: any, ua: string) => {';
+  check(
+    "H0: route imports canonical buildAnswerRows/tkaScoringFn from lib/assessment/answer-rows.ts",
+    routeSrc.includes("lib/assessment/answer-rows") && routeSrc.includes("buildAnswerRows") && routeSrc.includes("tkaScoringFn"),
+    "route no longer wires the canonical assessment module"
+  );
+  // Strip comments first — the module's own doc-comment legitimately mentions
+  // "db" when explaining its purity, which must not trip the drift guard.
+  const modCode = modSrc.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+  check(
+    "H0b: canonical module is pure (no db/supabase/fetch deps in CODE)",
+    !/\bdb\b|supabase|NextRequest/.test(modCode) && !/fetch\(/.test(modCode),
+    "module body references an external dependency"
+  );
+  check(
+    "H0c: route contains no duplicate inline buildAnswerRows implementation",
+    !/function buildAnswerRows\(/.test(routeSrc),
+    "route still defines its own buildAnswerRows"
+  );
 
-  const typesStart = routeSrc.indexOf(TYPES_START);
-  const typesEnd = routeSrc.indexOf(TYPES_END) + TYPES_END.length;
-  const fnStart = routeSrc.indexOf(FN_START);
-  const fnEnd = routeSrc.indexOf(FN_END);
-  const lambdaAnchor = routeSrc.indexOf(LAMBDA_TK_ANCHOR, routeSrc.indexOf(LAMBDA_UK_ANCHOR));
-  check("H0: route source contains AnswerRow/AnswerMap types + buildAnswerRows + TKA lambda", typesStart > 0 && typesEnd > typesStart && fnStart > 0 && fnEnd > fnStart && lambdaAnchor > 0);
+  // Import the EXACT production scoring module — same code path the route uses.
+  const { buildAnswerRows, tkaScoringFn } = await import("../lib/assessment/answer-rows");
+  // --- scenario sample: 10 real DB rows, must include stimulus + imported-key anchors ---
+  const withPassage = activeRows.filter((r) => !!r.passage);
+  const picked: typeof activeRows = [];
+  const take = (r: (typeof activeRows)[number]) => {
+    if (r && picked.length < 10 && !picked.some((p) => p.id === r.id)) picked.push(r);
+  };
+  take(withPassage[0]); // scenario C requires dataset-sourced, stimulus-bearing coverage
+  const kompVals = [...new Set(activeRows.map((r) => r.kompetensi))];
+  for (const k of kompVals) take(activeRows.find((r) => r.kompetensi === k)!);
+  for (const r of activeRows) take(r);
 
-  if (typesStart > 0 && fnStart > 0 && fnEnd > fnStart && lambdaAnchor > 0) {
-    const typesBlock = routeSrc.slice(typesStart, typesEnd);
-    const fnBlock = routeSrc.slice(fnStart, fnEnd);
-    const lambdaRaw = routeSrc.slice(lambdaAnchor + 2, routeSrc.indexOf("},", lambdaAnchor) + 1);
-    const lambdaSrc = lambdaRaw.replace(/^\(q: any, ua: string\) =>/, "(q, ua) =>");
-
-    // drift fingerprints — the gate breaks loudly if production scoring semantics change
-    check(
-      "H0a: TKA scoring lambda still single-select equality (ua === q.correctAnswer)",
-      /isCorrect\s*=\s*ua\s*===\s*q\.correctAnswer/.test(lambdaRaw),
-      lambdaRaw.slice(0, 80)
-    );
-    check(
-      "H0b: buildAnswerRows is pure (no db/supabase/fetch deps in scoring function body)",
-      !/\bdb\b|supabase|fetch\(|NextRequest/.test(fnBlock),
-      "function body references an external dependency"
-    );
-
-    // materialize the verbatim production code as a module and import it
-    const harness =
-      typesBlock + "\n" + fnBlock + "\n" +
-      "export { buildAnswerRows };\n" +
-      "const tkaScoringFn = " + lambdaSrc + ";\n" +
-      "export { tkaScoringFn };\n";
-    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "tka-gateh-"));
-    const modPath = path.join(tmpDir, "prod-scoring.ts");
-    fs.writeFileSync(modPath, harness);
-    // eslint-disable-next-line -- intentional: executes the verbatim production scoring module
-    const prod = require(modPath) as {
-      buildAnswerRows: (
-        questions: any[],
-        answers: Record<string, string>,
-        sessionId: string,
-        userId: string,
-        paketId: string,
-        scoringFn: (q: any, ua: string) => { isCorrect: boolean; score: number; maxScore: number; seksi: string },
-        useCompetencyKey: boolean
-      ) => {
-        rows: { questionId: string; isCorrect: boolean | null; score: number; seksi: string }[];
-        userAnswerRecords: unknown[];
-        totalCorrect: number;
-        totalQuestions: number;
-        rawScore: number;
-        maxPossible: number;
-        sectionScores: Record<string, { correct: number; total: number; score: number }>;
-      };
-      tkaScoringFn: (q: any, ua: string) => { isCorrect: boolean; score: number; maxScore: number; seksi: string };
-    };
-    const { buildAnswerRows, tkaScoringFn } = prod;
-
-    // --- scenario sample: 10 real DB rows, must include stimulus + imported-key anchors ---
-    const withPassage = activeRows.filter((r) => !!r.passage);
-    const picked: typeof activeRows = [];
-    const take = (r: (typeof activeRows)[number]) => {
-      if (r && picked.length < 10 && !picked.some((p) => p.id === r.id)) picked.push(r);
-    };
-    take(withPassage[0]); // scenario C requires dataset-sourced, stimulus-bearing coverage
-    const kompVals = [...new Set(activeRows.map((r) => r.kompetensi))];
-    for (const k of kompVals) take(activeRows.find((r) => r.kompetensi === k)!);
-    for (const r of activeRows) take(r);
-
-    // Scenario A/B per row: known-correct answer and known-incorrect answer through the
-    // REAL path (buildAnswerRows + production lambda together, not the lambda alone).
-    let aOk = 0;
-    let bOk = 0;
-    let perRowAggOk = 0;
-    for (const r of picked) {
-      const opts = Array.isArray(r.options) ? (r.options as { id: string }[]) : [];
-      const wrong = (opts.find((o) => o.id !== r.correctAnswer) || { id: "" }).id;
-      const out = buildAnswerRows([r], { [r.id]: r.correctAnswer }, "sess", "user", "paket", tkaScoringFn, true);
-      const row = out.rows[0];
-      if (row && row.isCorrect === true && row.score > 0 && out.totalCorrect === 1 && out.rawScore === out.maxPossible) aOk++;
-      const outWrong = buildAnswerRows([r], { [r.id]: wrong }, "sess", "user", "paket", tkaScoringFn, true);
-      const rowWrong = outWrong.rows[0];
-      if (rowWrong && rowWrong.isCorrect === false && rowWrong.score === 0 && outWrong.totalCorrect === 0 && outWrong.rawScore === 0) bOk++;
-      // per-row aggregate invariants: totals consistent with rows
-      const manualMax = (r.weight || 1) * 10;
-      if (out.maxPossible === manualMax && outWrong.maxPossible === manualMax) perRowAggOk++;
-    }
-    check(`H1 (A): correct answer → isCorrect=true, score>0, aggregate consistent (${picked.length} rows)`, aOk === picked.length);
-    check(`H2 (B): incorrect answer → isCorrect=false, score=0, aggregate zeroed (${picked.length} rows)`, bOk === picked.length);
-    check("H3 (aggregation): maxPossible = (weight||1)*10 per row on both branches", perRowAggOk === picked.length);
-
-    // Scenario C: imported dataset anchor — first ingested SMP item from the committed JSON,
-    // scored by id from the DB row, result must match the imported key.
-    const firstImported = approved[0];
-    const dbRow = activeRows.find((r) => r.id === firstImported.id);
-    const cOut = dbRow
-      ? buildAnswerRows([dbRow], { [dbRow.id]: dbRow.correctAnswer }, "sess", "user", "paket", tkaScoringFn, true)
-      : null;
-    check(
-      `H4 (C): imported dataset question ${firstImported.id.slice(-8)} scores per its imported key`,
-      !!cOut && cOut.rows[0].isCorrect === true && cOut.totalCorrect === 1,
-      cOut ? "" : "DB row for imported item not found"
-    );
-
-    // Scenario D: mixed batch aggregation — all 10 rows, mixed correct/wrong answers.
-    const answers: Record<string, string> = {};
-    let expectCorrect = 0;
-    let expectRaw = 0;
-    let expectMax = 0;
-    for (const r of picked) {
-      const opts = Array.isArray(r.options) ? (r.options as { id: string }[]) : [];
-      const chooseCorrect = picked.indexOf(r) % 2 === 0; // alternate deterministic
-      answers[r.id] = chooseCorrect ? r.correctAnswer : (opts.find((o) => o.id !== r.correctAnswer) || { id: "" }).id;
-      const w = (r.weight || 1) * 10;
-      expectMax += w;
-      if (chooseCorrect) {
-        expectCorrect++;
-        expectRaw += w;
-      }
-    }
-    const batch = buildAnswerRows(picked, answers, "sess", "user", "paket", tkaScoringFn, true);
-    const sectionTotals = Object.values(batch.sectionScores).reduce((a, s) => a + s.total, 0);
-    check(
-      `H5 (D): mixed batch aggregation exact (totalCorrect=${batch.totalCorrect}/${expectCorrect}, raw=${batch.rawScore}/${expectRaw}, max=${batch.maxPossible}/${expectMax}, sectionTotals=${sectionTotals}/${picked.length})`,
-      batch.totalCorrect === expectCorrect && batch.rawScore === expectRaw && batch.maxPossible === expectMax && sectionTotals === picked.length && Object.keys(batch.sectionScores).length >= 2
-    );
-    check(
-      `H6: sample covers stimulus-bearing row (${picked.find((r) => !!r.passage)?.id.slice(-8) ?? "none"}) + all kompetensi (${kompVals.join(", ")})`,
-      !!picked.find((r) => !!r.passage) && new Set(picked.map((r) => r.kompetensi)).size === kompVals.length
-    );
-    fs.rmSync(tmpDir, { recursive: true, force: true });
+  // Scenario A/B per row: known-correct answer and known-incorrect answer through the
+  // REAL path (buildAnswerRows + production lambda together, not the lambda alone).
+  let aOk = 0;
+  let bOk = 0;
+  let perRowAggOk = 0;
+  for (const r of picked) {
+    const opts = Array.isArray(r.options) ? (r.options as { id: string }[]) : [];
+    const wrong = (opts.find((o) => o.id !== r.correctAnswer) || { id: "" }).id;
+    const out = buildAnswerRows([r], { [r.id]: r.correctAnswer }, "sess", "user", "paket", tkaScoringFn, true);
+    const row = out.rows[0];
+    if (row && row.isCorrect === true && row.score > 0 && out.totalCorrect === 1 && out.rawScore === out.maxPossible) aOk++;
+    const outWrong = buildAnswerRows([r], { [r.id]: wrong }, "sess", "user", "paket", tkaScoringFn, true);
+    const rowWrong = outWrong.rows[0];
+    if (rowWrong && rowWrong.isCorrect === false && rowWrong.score === 0 && outWrong.totalCorrect === 0 && outWrong.rawScore === 0) bOk++;
+    // per-row aggregate invariants: totals consistent with rows
+    const manualMax = (r.weight || 1) * 10;
+    if (out.maxPossible === manualMax && outWrong.maxPossible === manualMax) perRowAggOk++;
   }
+  check(`H1 (A): correct answer → isCorrect=true, score>0, aggregate consistent (${picked.length} rows)`, aOk === picked.length);
+  check(`H2 (B): incorrect answer → isCorrect=false, score=0, aggregate zeroed (${picked.length} rows)`, bOk === picked.length);
+  check("H3 (aggregation): maxPossible = (weight||1)*10 per row on both branches", perRowAggOk === picked.length);
+
+  // Scenario C: imported dataset anchor — first ingested SMP item from the committed JSON,
+  // scored by id from the DB row, result must match the imported key.
+  const firstImported = approved[0];
+  const dbRow = activeRows.find((r) => r.id === firstImported.id);
+  const cOut = dbRow
+    ? buildAnswerRows([dbRow], { [dbRow.id]: dbRow.correctAnswer }, "sess", "user", "paket", tkaScoringFn, true)
+    : null;
+  check(
+    `H4 (C): imported dataset question ${firstImported.id.slice(-8)} scores per its imported key`,
+    !!cOut && cOut.rows[0].isCorrect === true && cOut.totalCorrect === 1,
+    cOut ? "" : "DB row for imported item not found"
+  );
+
+  // Scenario D: mixed batch aggregation — all 10 rows, mixed correct/wrong answers.
+  const answers: Record<string, string> = {};
+  let expectCorrect = 0;
+  let expectRaw = 0;
+  let expectMax = 0;
+  for (const r of picked) {
+    const opts = Array.isArray(r.options) ? (r.options as { id: string }[]) : [];
+    const chooseCorrect = picked.indexOf(r) % 2 === 0; // alternate deterministic
+    answers[r.id] = chooseCorrect ? r.correctAnswer : (opts.find((o) => o.id !== r.correctAnswer) || { id: "" }).id;
+    const w = (r.weight || 1) * 10;
+    expectMax += w;
+    if (chooseCorrect) {
+      expectCorrect++;
+      expectRaw += w;
+    }
+  }
+  const batch = buildAnswerRows(picked, answers, "sess", "user", "paket", tkaScoringFn, true);
+  const sectionTotals = Object.values(batch.sectionScores).reduce((a, s) => a + s.total, 0);
+  check(
+    `H5 (D): mixed batch aggregation exact (totalCorrect=${batch.totalCorrect}/${expectCorrect}, raw=${batch.rawScore}/${expectRaw}, max=${batch.maxPossible}/${expectMax}, sectionTotals=${sectionTotals}/${picked.length})`,
+    batch.totalCorrect === expectCorrect && batch.rawScore === expectRaw && batch.maxPossible === expectMax && sectionTotals === picked.length && Object.keys(batch.sectionScores).length >= 2
+  );
+  check(
+    `H6: sample covers stimulus-bearing row (${picked.find((r) => !!r.passage)?.id.slice(-8) ?? "none"}) + all kompetensi (${kompVals.join(", ")})`,
+    !!picked.find((r) => !!r.passage) && new Set(picked.map((r) => r.kompetensi)).size === kompVals.length
+  );
 
   console.log("\n═══ GATE I — Randomization integrity ═══");
   // pool + seeded sample using the production helper semantics
