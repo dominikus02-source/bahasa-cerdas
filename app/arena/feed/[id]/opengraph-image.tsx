@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og"
 import { db } from "@/lib/db"
 import { getDisplayName } from "@/lib/nickname"
 
-export const runtime = "edge"
+export const runtime = "nodejs"
 export const contentType = "image/png"
 export const size = { width: 1200, height: 630 }
 
