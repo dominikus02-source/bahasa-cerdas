@@ -1,0 +1,132 @@
+name: bahasacerdas-prod
+
+services:
+  redis:
+    image: redis:7.4-alpine
+    restart: unless-stopped
+    command:
+      - sh
+      - -c
+      - exec redis-server --appendonly yes --appendfsync everysec --requirepass "$$REDIS_PASSWORD"
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" ping | grep -q PONG"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+  web:
+    build:
+      context: ../..
+      dockerfile: Dockerfile.web
+      secrets:
+        - web_env
+    image: bahasacerdas/web:${IMAGE_TAG:-local}
+    restart: unless-stopped
+    env_file:
+      - ${BC_CONFIG_DIR:-/opt/bahasacerdas/config}/web.env
+    environment:
+      NODE_ENV: production
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+    ports:
+      - "127.0.0.1:3000:3000"
+    networks:
+      - edge
+      - internal
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  game:
+    profiles: ["realtime"]
+    build:
+      context: ../../game-server
+      dockerfile: Dockerfile
+    image: bahasacerdas/game:${IMAGE_TAG:-local}
+    restart: unless-stopped
+    env_file:
+      - ${BC_CONFIG_DIR:-/opt/bahasacerdas/config}/game.env
+    environment:
+      NODE_ENV: production
+      PORT: "3001"
+      GAME_PORT: "3001"
+      BAHASACERDAS_WEB_URL: https://${WEB_DOMAIN}
+    ports:
+      - "127.0.0.1:3001:3001"
+    networks:
+      - edge
+      - internal
+
+  agent:
+    profiles: ["agent"]
+    build:
+      context: ../..
+      dockerfile: Dockerfile.worker
+    image: bahasacerdas/agent:${IMAGE_TAG:-local}
+    restart: unless-stopped
+    env_file:
+      - ${BC_CONFIG_DIR:-/opt/bahasacerdas/config}/worker.env
+    environment:
+      NODE_ENV: production
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+    networks:
+      - internal
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      ACME_EMAIL: ${ACME_EMAIL}
+      APEX_DOMAIN: ${APEX_DOMAIN}
+      WEB_DOMAIN: ${WEB_DOMAIN}
+      GAME_DOMAIN: ${GAME_DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    networks:
+      - edge
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+      - /opt/bahasacerdas/logs/caddy:/var/log/caddy
+    depends_on:
+      web:
+        condition: service_healthy
+
+secrets:
+  web_env:
+    file: ${BC_CONFIG_DIR:-/opt/bahasacerdas/config}/web.env
+
+networks:
+  edge:
+    driver: bridge
+  internal:
+    driver: bridge
+    internal: true
+
+volumes:
+  redis_data:
+  caddy_data:
+  caddy_config:
