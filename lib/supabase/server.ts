@@ -17,8 +17,23 @@ import { isValidSupabaseUrl } from "@/lib/supabase/url-guard";
 //      legacy tidak didukung.
 // Jika SUPABASE_SECRET_KEY belum diset, jatuh ke anon (perilaku lama, header
 // diabaikan Supabase) supaya tidak ada yang rusak di environment lain.
-const SUPABASE_SECRET_KEY =
-  process.env.SUPABASE_SECRET_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+function isUsableSupabaseServerKey(value: string | undefined): value is string {
+  if (!value) return false;
+  // Modern server key (recommended) or legacy JWT key. Reject placeholders
+  // such as "[SENSITIVE]" so a bad copied env cannot break every auth check.
+  return value.startsWith("sb_secret_") || value.split(".").length === 3;
+}
+
+const configuredServerKey = process.env.SUPABASE_SECRET_KEY;
+const SUPABASE_SECRET_KEY = isUsableSupabaseServerKey(configuredServerKey)
+  ? configuredServerKey
+  : process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    "";
+
+if (configuredServerKey && !isUsableSupabaseServerKey(configuredServerKey)) {
+  console.warn("SUPABASE_SECRET_KEY_INVALID_FORMAT_FALLING_BACK_TO_PUBLIC_KEY");
+}
 
 async function buildAuthHeaders(): Promise<Record<string, string>> {
   const h = await headers();
