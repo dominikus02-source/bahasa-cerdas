@@ -27,7 +27,7 @@ function buildCsp(nonce: string): string {
     // with an avatar had it blocked by CSP and rendered broken.
     "img-src": ["'self'", "blob:", "data:", "https://*.supabase.co", "https://images.unsplash.com", "https://api.dicebear.com", "https://www.gravatar.com", "https://secure.gravatar.com", "https://*.gstatic.com", "https://*.googleusercontent.com", "https://img.youtube.com", "https://i.ytimg.com"],
     "font-src": ["'self'", "https://fonts.gstatic.com"],
-    "connect-src": ["'self'", "https://*.supabase.co", "wss://*.supabase.co", "https://api.midtrans.com", "https://app.midtrans.com", "https://api.sandbox.midtrans.com", "https://app.sandbox.midtrans.com", "wss://game.bahasacerdas.com", "https://game.bahasacerdas.com", "https://api.unsplash.com"],
+    "connect-src": ["'self'", "https://*.supabase.co", "wss://*.supabase.co", "https://api.midtrans.com", "https://app.midtrans.com", "https://api.sandbox.midtrans.com", "https://app.sandbox.midtrans.com", "wss://game.bahasacerdas.com", "https://game.bahasacerdas.com", "wss://game-vps.bahasacerdas.com", "https://game-vps.bahasacerdas.com", "https://api.unsplash.com"],
     "frame-src": ["'self'", "https://app.midtrans.com", "https://app.sandbox.midtrans.com", "https://www.youtube.com", "https://*.supabase.co", "https://view.officeapps.live.com"],
     "worker-src": ["'self'", "blob:"],
     "object-src": ["'none'"],
