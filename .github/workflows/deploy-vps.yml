@@ -1,0 +1,54 @@
+name: Deploy VPS
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+
+concurrency:
+  group: deploy-vps-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Configure SSH
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          test -n "$VPS_HOST"
+          test -n "$VPS_USER"
+          test -n "$VPS_SSH_KEY"
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "$VPS_HOST" >> ~/.ssh/known_hosts
+
+      - name: Deploy production
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          ssh -i ~/.ssh/id_ed25519 "$VPS_USER@$VPS_HOST" '
+            set -euo pipefail
+            cd /opt/bahasacerdas/apps/bahasa-cerdas
+            DEPLOY_BRANCH=main \
+            ENABLE_REALTIME=1 \
+            ENABLE_AGENT=1 \
+            ENABLE_EDGE=1 \
+            ENABLE_CRON=1 \
+            bash ops/vps/deploy.sh
+          '
+
+      - name: Verify production
+        run: |
+          curl -fsS --retry 5 --retry-delay 3 https://www.bahasacerdas.com/api/health
+          curl -fsS --retry 5 --retry-delay 3 https://game.bahasacerdas.com/health
