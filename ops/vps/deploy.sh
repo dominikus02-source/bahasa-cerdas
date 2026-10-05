@@ -5,6 +5,12 @@ REPO_DIR="${REPO_DIR:-/opt/bahasacerdas/apps/bahasa-cerdas}"
 CONFIG_DIR="${BC_CONFIG_DIR:-/opt/bahasacerdas/config}"
 DEPLOY_BRANCH="${DEPLOY_BRANCH:-main}"
 
+exec 9>/tmp/bahasacerdas-deploy.lock
+if ! flock -n 9; then
+  echo "Another BahasaCerdas deploy is already running" >&2
+  exit 1
+fi
+
 if [[ ! -d "$REPO_DIR/.git" ]]; then
   echo "Repository not found: $REPO_DIR" >&2
   exit 1
@@ -86,3 +92,16 @@ fi
 
 echo "==> Runtime status"
 "${COMPOSE[@]}" --profile scheduler --profile realtime --profile agent ps
+
+echo "==> Production smoke"
+curl -fsS --max-time 15 https://www.bahasacerdas.com/api/health \
+  | jq -e '.status == "ok" and .db == "up"' >/dev/null
+if [[ "${ENABLE_REALTIME:-0}" == "1" ]]; then
+  curl -fsS --max-time 15 https://game.bahasacerdas.com/health \
+    | jq -e '.status == "ok" and .db == "up"' >/dev/null
+fi
+
+echo "==> Trim build cache older than 7 days"
+docker builder prune -af --filter until=168h >/dev/null || true
+
+echo "==> Deploy complete"
