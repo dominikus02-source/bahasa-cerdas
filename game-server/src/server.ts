@@ -229,9 +229,34 @@ function generateCode(): string {
   return code;
 }
 
-const io = new Server(PORT, {
+const allowedOrigins = (
+  process.env.GAME_ALLOWED_ORIGINS ||
+  'https://www.bahasacerdas.com,https://bahasacerdas.com,http://localhost:3000,http://127.0.0.1:3000'
+)
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const httpServer = createServer(async (req, res) => {
+  if (req.url === '/health') {
+    try {
+      await prisma.$queryRaw`SELECT 1`;
+      res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store' });
+      res.end(JSON.stringify({ status: 'ok', db: 'up', rooms: rooms.size, queue: matchmakingQueue.length }));
+    } catch {
+      res.writeHead(503, { 'content-type': 'application/json', 'cache-control': 'no-store' });
+      res.end(JSON.stringify({ status: 'degraded', db: 'down' }));
+    }
+    return;
+  }
+
+  res.writeHead(404, { 'content-type': 'application/json' });
+  res.end(JSON.stringify({ error: 'Not found' }));
+});
+
+const io = new Server(httpServer, {
   cors: {
-    origin: '*',
+    origin: allowedOrigins,
     methods: ['GET', 'POST'],
   },
 });
@@ -915,4 +940,26 @@ function handleLeave(socket: any, code: string, odiceId: string) {
   }
 }
 
-console.log(`[Game Server] Running on port ${PORT}`);
+httpServer.listen(PORT, '0.0.0.0', () => {
+  console.log(`[Game Server] Running on port ${PORT}`);
+  console.log(`[Game Server] Allowed origins: ${allowedOrigins.join(', ')}`);
+});
+
+let shuttingDown = false;
+async function shutdown(signal: string) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  console.log(`[Game Server] ${signal} received, shutting down...`);
+
+  io.close(() => {
+    httpServer.close(async () => {
+      await prisma.$disconnect();
+      process.exit(0);
+    });
+  });
+
+  setTimeout(() => process.exit(1), 10_000).unref();
+}
+
+process.on('SIGTERM', () => void shutdown('SIGTERM'));
+process.on('SIGINT', () => void shutdown('SIGINT'));
