@@ -701,7 +701,7 @@ io.on('connection', (socket) => {
 
     const qp: QueuePlayer = {
       userId: authUser.id,
-      userName: data.userName,
+      userName: authUser.name,
       avatarUrl: authUser.avatarUrl,
       socketId: socket.id,
       gameType: data.gameType || 'KUIS_BATTLE',
@@ -710,7 +710,7 @@ io.on('connection', (socket) => {
 
     matchmakingQueue.push(qp);
     socket.emit('queue-status', { inQueue: true, position: matchmakingQueue.length, message: 'Mencari lawan sepadan...' });
-    console.log(`[Matchmaking] ${data.userName} joined queue (${matchmakingQueue.length} waiting)`);
+    console.log(`[Matchmaking] ${authUser.name} joined queue (${matchmakingQueue.length} waiting)`);
 
     tryMatchPlayers();
 
@@ -720,7 +720,7 @@ io.on('connection', (socket) => {
       if (stillIn) {
         removeFromQueue(authUser.id);
         socket.emit('queue-timeout', { message: 'Tidak ada lawan ditemukan. Coba lagi!' });
-        console.log(`[Matchmaking] ${data.userName} queue timeout`);
+        console.log(`[Matchmaking] ${authUser.name} queue timeout`);
       }
     }, MATCH_TIMEOUT_MS);
   });
@@ -738,7 +738,7 @@ io.on('connection', (socket) => {
     if (!authUser) return;
     const qp: QueuePlayer = {
       userId: authUser.id,
-      userName: data.userName,
+      userName: authUser.name,
       avatarUrl: authUser.avatarUrl,
       socketId: socket.id,
       gameType: data.gameType || 'KUIS_BATTLE',
