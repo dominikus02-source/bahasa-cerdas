@@ -24,6 +24,8 @@ services:
     build:
       context: ../..
       dockerfile: Dockerfile.web
+      args:
+        WEB_BUILD_FINGERPRINT: ${WEB_BUILD_FINGERPRINT:-manual}
       secrets:
         - web_env
     image: bahasacerdas/web:${IMAGE_TAG:-local}
