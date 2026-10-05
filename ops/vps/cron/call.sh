@@ -12,7 +12,10 @@ body_file="/tmp/bc-cron-$$.json"
 trap 'rm -f "$body_file"' EXIT
 
 code="$(
-  curl -sS     --max-time 90     -o "$body_file"     -w '%{http_code}'     -H "Authorization: Bearer ${CRON_SECRET}"     "http://web:3000${path}"   || true
+  curl -sS     --max-time 90     -o "$body_file"     -w '%{http_code}'     -H "Authorization: Bearer ${CRON_SECRET}" \
+    -H "Host: www.bahasacerdas.com" \
+    "http://web:3000${path}" \
+  || true
 )"
 
 body="$(cat "$body_file" 2>/dev/null || true)"
