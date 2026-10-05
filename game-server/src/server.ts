@@ -6,6 +6,12 @@ const prisma = new PrismaClient();
 // Prefer PORT (injected by Render/Railway/Koyeb/etc.), fall back to GAME_PORT (Fly), then 3001.
 const PORT = parseInt(process.env.PORT || process.env.GAME_PORT || '3001', 10);
 
+const SUPABASE_URL = (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '').replace(/\/$/, '');
+const SUPABASE_PUBLISHABLE_KEY =
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  '';
+
 interface Player {
   id: string;
   odiceId: string;
@@ -20,7 +26,15 @@ interface Player {
   ready: boolean;
   hearts?: number;
   eliminated?: boolean;
+  lastAnsweredQuestion?: number;
 }
+
+type AuthenticatedSocketUser = {
+  id: string;
+  supabaseId: string;
+  name: string;
+  avatarUrl?: string;
+};
 
 interface Room {
   id: string;
@@ -37,6 +51,7 @@ interface Room {
   questions: Question[];
   players: Map<string, Player>;
   startedAt?: Date;
+  questionStartedAt?: number;
 }
 
 interface Question {
@@ -155,6 +170,14 @@ async function createMatchRoom(p1: QueuePlayer, p2: QueuePlayer, gameType: strin
     room.players.set(p2.userId, pl2);
     rooms.set(code, room);
 
+    await prisma.gameSession.createMany({
+      data: [
+        { roomId: room.id, userId: p1.userId, playerName: p1.userName, avatarUrl: p1.avatarUrl },
+        { roomId: room.id, userId: p2.userId, playerName: p2.userName, avatarUrl: p2.avatarUrl },
+      ],
+      skipDuplicates: true,
+    });
+
     const s1 = io.sockets.sockets.get(p1.socketId);
     const s2 = io.sockets.sockets.get(p2.socketId);
     if (s1) { s1.join(code); playerSockets.set(p1.socketId, code); }
@@ -199,7 +222,7 @@ async function createMatchRoom(p1: QueuePlayer, p2: QueuePlayer, gameType: strin
 
     room.players.forEach((p) => {
       p.score = 0; p.correct = 0; p.wrong = 0; p.streak = 0;
-      p.maxStreak = 0; p.answerTimes = []; p.ready = false;
+      p.maxStreak = 0; p.answerTimes = []; p.ready = false; p.lastAnsweredQuestion = -1;
     });
 
     await prisma.gameRoom.update({
@@ -229,19 +252,89 @@ function generateCode(): string {
   return code;
 }
 
-const io = new Server(PORT, {
+const allowedOrigins = (
+  process.env.GAME_ALLOWED_ORIGINS ||
+  'https://www.bahasacerdas.com,https://bahasacerdas.com,http://localhost:3000,http://127.0.0.1:3000'
+)
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const httpServer = createServer(async (req, res) => {
+  if (req.url === '/health') {
+    try {
+      await prisma.$queryRaw`SELECT 1`;
+      res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store' });
+      res.end(JSON.stringify({ status: 'ok', db: 'up', rooms: rooms.size, queue: matchmakingQueue.length }));
+    } catch {
+      res.writeHead(503, { 'content-type': 'application/json', 'cache-control': 'no-store' });
+      res.end(JSON.stringify({ status: 'degraded', db: 'down' }));
+    }
+    return;
+  }
+
+  res.writeHead(404, { 'content-type': 'application/json' });
+  res.end(JSON.stringify({ error: 'Not found' }));
+});
+
+const io = new Server(httpServer, {
   cors: {
-    origin: '*',
+    origin: allowedOrigins,
     methods: ['GET', 'POST'],
   },
+});
+
+io.use(async (socket, next) => {
+  try {
+    const accessToken =
+      typeof socket.handshake.auth?.accessToken === 'string'
+        ? socket.handshake.auth.accessToken.trim()
+        : '';
+
+    if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY || !accessToken) {
+      return next(new Error('unauthorized'));
+    }
+
+    const authResponse = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+      headers: {
+        apikey: SUPABASE_PUBLISHABLE_KEY,
+        Authorization: `Bearer ${accessToken}`,
+      },
+      signal: AbortSignal.timeout(5000),
+    });
+
+    if (!authResponse.ok) return next(new Error('unauthorized'));
+
+    const authUser = (await authResponse.json()) as { id?: string };
+    if (!authUser.id) return next(new Error('unauthorized'));
+
+    const appUser = await prisma.user.findUnique({
+      where: { supabaseId: authUser.id },
+      select: { id: true, supabaseId: true, fullName: true, avatar: true },
+    });
+
+    if (!appUser) return next(new Error('user_not_found'));
+
+    socket.data.user = {
+      id: appUser.id,
+      supabaseId: appUser.supabaseId,
+      name: appUser.fullName,
+      avatarUrl: appUser.avatar || undefined,
+    } satisfies AuthenticatedSocketUser;
+
+    next();
+  } catch (error) {
+    console.warn('[Socket] Authentication failed:', error instanceof Error ? error.message : String(error));
+    next(new Error('unauthorized'));
+  }
 });
 
 io.on('connection', (socket) => {
   console.log(`[Socket] Connected: ${socket.id}`);
 
   socket.on('create-room', async (data: {
-    hostId: string;
-    hostName: string;
+    hostId?: string;
+    hostName?: string;
     hostAvatar?: string;
     name: string;
     gameType: string;
@@ -251,6 +344,9 @@ io.on('connection', (socket) => {
     timePerQuestion?: number;
   }) => {
     try {
+      const authUser = socket.data.user as AuthenticatedSocketUser | undefined;
+      if (!authUser) return socket.emit('error', { message: 'Sesi tidak valid' });
+
       let code = generateCode();
       while (rooms.has(code)) {
         code = generateCode();
@@ -261,7 +357,7 @@ io.on('connection', (socket) => {
           code,
           name: data.name,
           gameType: data.gameType as any,
-          hostId: data.hostId,
+          hostId: authUser.id,
           category: data.category,
           difficulty: data.difficulty as any || 'MEDIUM',
           questionCount: data.questionCount || 10,
@@ -271,10 +367,10 @@ io.on('connection', (socket) => {
       });
 
       const hostPlayer: Player = {
-        id: data.hostId,
+        id: authUser.id,
         odiceId: socket.id,
-        playerName: data.hostName,
-        avatarUrl: data.hostAvatar,
+        playerName: authUser.name,
+        avatarUrl: authUser.avatarUrl,
         score: 0,
         correct: 0,
         wrong: 0,
@@ -300,9 +396,18 @@ io.on('connection', (socket) => {
         players: new Map(),
       };
 
-      room.players.set(data.hostId, hostPlayer);
+      room.players.set(authUser.id, hostPlayer);
       rooms.set(code, room);
       playerSockets.set(socket.id, code);
+
+      await prisma.gameSession.create({
+        data: {
+          roomId: room.id,
+          userId: authUser.id,
+          playerName: authUser.name,
+          avatarUrl: authUser.avatarUrl,
+        },
+      });
 
       socket.join(code);
       socket.emit('room-created', {
@@ -314,7 +419,7 @@ io.on('connection', (socket) => {
       });
 
       io.to(code).emit('player-list', getPlayersList(room));
-      console.log(`[Room] Created: ${code} by host ${data.hostId}`);
+      console.log(`[Room] Created: ${code} by host ${authUser.id}`);
     } catch (err) {
       console.error('[Error] create-room:', err);
       socket.emit('error', { message: 'Gagal membuat room' });
@@ -323,11 +428,14 @@ io.on('connection', (socket) => {
 
   socket.on('join-room', async (data: {
     code: string;
-    userId: string;
-    playerName: string;
+    userId?: string;
+    playerName?: string;
     avatarUrl?: string;
   }) => {
     try {
+      const authUser = socket.data.user as AuthenticatedSocketUser | undefined;
+      if (!authUser) return socket.emit('error', { message: 'Sesi tidak valid' });
+
       const room = rooms.get(data.code);
       if (!room) {
         socket.emit('error', { message: 'Room tidak ditemukan' });
@@ -338,28 +446,28 @@ io.on('connection', (socket) => {
         return;
       }
 
-      if (room.players.has(data.userId)) {
-        const existing = room.players.get(data.userId)!;
+      if (room.players.has(authUser.id)) {
+        const existing = room.players.get(authUser.id)!;
         existing.odiceId = socket.id;
-        room.players.set(data.userId, existing);
+        room.players.set(authUser.id, existing);
         playerSockets.set(socket.id, data.code);
         socket.join(data.code);
         socket.emit('room-joined', {
           roomId: room.id,
           code: room.code,
           name: room.name,
-          isHost: data.userId === room.hostId,
-          player: room.players.get(data.userId),
+          isHost: authUser.id === room.hostId,
+          player: room.players.get(authUser.id),
         });
         io.to(data.code).emit('player-list', getPlayersList(room));
         return;
       }
 
       const player: Player = {
-        id: data.userId,
+        id: authUser.id,
         odiceId: socket.id,
-        playerName: data.playerName,
-        avatarUrl: data.avatarUrl,
+        playerName: authUser.name,
+        avatarUrl: authUser.avatarUrl,
         score: 0,
         correct: 0,
         wrong: 0,
@@ -369,16 +477,16 @@ io.on('connection', (socket) => {
         ready: false,
       };
 
-      room.players.set(data.userId, player);
+      room.players.set(authUser.id, player);
       playerSockets.set(socket.id, data.code);
       socket.join(data.code);
 
       await prisma.gameSession.create({
         data: {
           roomId: room.id,
-          userId: data.userId,
-          playerName: data.playerName,
-          avatarUrl: data.avatarUrl,
+          userId: authUser.id,
+          playerName: authUser.name,
+          avatarUrl: authUser.avatarUrl,
         },
       });
 
@@ -386,40 +494,44 @@ io.on('connection', (socket) => {
         roomId: room.id,
         code: room.code,
         name: room.name,
-        isHost: data.userId === room.hostId,
+        isHost: authUser.id === room.hostId,
         player,
       });
 
       io.to(data.code).emit('player-list', getPlayersList(room));
       socket.to(data.code).emit('notification', {
         type: 'PLAYER_JOINED',
-        message: `${data.playerName} bergabung`,
-        playerName: data.playerName,
+        message: `${authUser.name} bergabung`,
+        playerName: authUser.name,
       });
 
-      console.log(`[Room] ${data.playerName} joined room ${data.code}`);
+      console.log(`[Room] ${authUser.name} joined room ${data.code}`);
     } catch (err) {
       console.error('[Error] join-room:', err);
       socket.emit('error', { message: 'Gagal bergabung ke room' });
     }
   });
 
-  socket.on('toggle-ready', (data: { code: string; userId: string }) => {
+  socket.on('toggle-ready', (data: { code: string; userId?: string }) => {
+    const authUser = socket.data.user as AuthenticatedSocketUser | undefined;
+    if (!authUser) return;
     const room = rooms.get(data.code);
     if (!room) return;
 
-    const player = room.players.get(data.userId);
+    const player = room.players.get(authUser.id);
     if (!player || player.id === room.hostId) return;
 
     player.ready = !player.ready;
-    room.players.set(data.userId, player);
+    room.players.set(authUser.id, player);
     io.to(data.code).emit('player-list', getPlayersList(room));
   });
 
   socket.on('start-game', async (data: { code: string }) => {
     try {
+      const authUser = socket.data.user as AuthenticatedSocketUser | undefined;
+      if (!authUser) return;
       const room = rooms.get(data.code);
-      if (!room) return;
+      if (!room || room.hostId !== authUser.id) return;
 
       const questions = await loadQuestions(room.gameType, room.questionCount);
       if (questions.length === 0) {
@@ -440,6 +552,7 @@ io.on('connection', (socket) => {
         p.maxStreak = 0;
         p.answerTimes = [];
         p.ready = false;
+        p.lastAnsweredQuestion = -1;
         p.hearts = room.gameType === 'SURVIVAL' ? 3 : undefined;
         p.eliminated = false;
       });
@@ -468,39 +581,47 @@ io.on('connection', (socket) => {
 
   socket.on('submit-answer', async (data: {
     code: string;
-    userId: string;
+    userId?: string;
     questionIndex: number;
     answerIndex: number;
     timeSpent: number;
   }) => {
+    const authUser = socket.data.user as AuthenticatedSocketUser | undefined;
+    if (!authUser) return;
+
     const room = rooms.get(data.code);
     if (!room || room.status !== 'IN_PROGRESS') return;
     if (data.questionIndex !== room.currentQuestion) return;
 
-    const player = room.players.get(data.userId);
-    if (!player) return;
+    const player = room.players.get(authUser.id);
+    if (!player || player.lastAnsweredQuestion === data.questionIndex) return;
 
     const question = room.questions[data.questionIndex];
     const isCorrect = data.answerIndex === parseInt(question.correctAnswer);
+    const elapsed = Math.min(
+      room.timePerQuestion,
+      Math.max(0, ((Date.now() - (room.questionStartedAt || Date.now())) / 1000))
+    );
 
-    player.answerTimes.push(data.timeSpent);
+    player.lastAnsweredQuestion = data.questionIndex;
+    player.answerTimes.push(elapsed);
 
     if (isCorrect) {
       player.streak++;
       player.correct++;
       const bonusStreak = Math.min(player.streak - 1, 5) * 10;
-      const timeBonus = Math.floor((data.timeSpent / room.timePerQuestion) * 50);
+      const timeBonus = Math.floor((elapsed / room.timePerQuestion) * 50);
 
       if (room.gameType === 'GOLD_RUSH') {
         const goldEarned = 50 + bonusStreak + Math.floor(Math.random() * 50);
         player.score += goldEarned;
       } else if (room.gameType === 'SPEED_BATTLE') {
-        const speedBonus = Math.max(0, Math.floor((1 - data.timeSpent / room.timePerQuestion) * 150));
+        const speedBonus = Math.max(0, Math.floor((1 - elapsed / room.timePerQuestion) * 150));
         player.score += 50 + speedBonus + bonusStreak;
       } else if (room.gameType === 'SURVIVAL') {
         player.score += 100 + bonusStreak;
       } else if (room.gameType === 'TIMED_TRIAL') {
-        const timeBonus = Math.floor((1 - data.timeSpent / room.timePerQuestion) * 100);
+        const timeBonus = Math.floor((1 - elapsed / room.timePerQuestion) * 100);
         player.score += 50 + timeBonus;
       } else {
         player.score += 100 + bonusStreak;
@@ -536,9 +657,9 @@ io.on('connection', (socket) => {
       }
     }
 
-    room.players.set(data.userId, player);
+    room.players.set(authUser.id, player);
     io.to(data.code).emit('score-update', {
-      playerId: data.userId,
+      playerId: authUser.id,
       playerName: player.playerName,
       score: player.score,
       correct: player.correct,
@@ -548,36 +669,40 @@ io.on('connection', (socket) => {
       eliminated: player.eliminated,
     });
 
-    io.to(data.code).emit('answer-result', {
-      playerId: data.userId,
+    socket.emit('answer-result', {
+      playerId: authUser.id,
       playerName: player.playerName,
       isCorrect,
-      correctAnswer: question.correctAnswer,
       score: player.score,
     });
   });
 
   socket.on('end-game', async (data: { code: string }) => {
+    const authUser = socket.data.user as AuthenticatedSocketUser | undefined;
     const room = rooms.get(data.code);
-    if (!room) return;
+    if (!authUser || !room || room.hostId !== authUser.id) return;
     await finishGame(room);
   });
 
-  socket.on('leave-room', (data: { code: string; userId: string }) => {
-    handleLeave(socket, data.code, data.userId);
+  socket.on('leave-room', (data: { code: string; userId?: string }) => {
+    const authUser = socket.data.user as AuthenticatedSocketUser | undefined;
+    if (!authUser) return;
+    handleLeave(socket, data.code, authUser.id);
   });
 
   // Matchmaking
-  socket.on('join-queue', (data: { userId: string; userName: string; avatarUrl?: string; gameType?: string }) => {
-    if (matchmakingQueue.some(p => p.userId === data.userId)) {
+  socket.on('join-queue', (data: { userId?: string; userName?: string; avatarUrl?: string; gameType?: string }) => {
+    const authUser = socket.data.user as AuthenticatedSocketUser | undefined;
+    if (!authUser) return;
+    if (matchmakingQueue.some(p => p.userId === authUser.id)) {
       socket.emit('queue-status', { inQueue: true, message: 'Sudah dalam antrean' });
       return;
     }
 
     const qp: QueuePlayer = {
-      userId: data.userId,
-      userName: data.userName,
-      avatarUrl: data.avatarUrl,
+      userId: authUser.id,
+      userName: authUser.name,
+      avatarUrl: authUser.avatarUrl,
       socketId: socket.id,
       gameType: data.gameType || 'KUIS_BATTLE',
       joinedAt: new Date(),
@@ -585,32 +710,36 @@ io.on('connection', (socket) => {
 
     matchmakingQueue.push(qp);
     socket.emit('queue-status', { inQueue: true, position: matchmakingQueue.length, message: 'Mencari lawan sepadan...' });
-    console.log(`[Matchmaking] ${data.userName} joined queue (${matchmakingQueue.length} waiting)`);
+    console.log(`[Matchmaking] ${authUser.name} joined queue (${matchmakingQueue.length} waiting)`);
 
     tryMatchPlayers();
 
     // Auto-remove after timeout
     setTimeout(() => {
-      const stillIn = matchmakingQueue.find(p => p.userId === data.userId);
+      const stillIn = matchmakingQueue.find(p => p.userId === authUser.id);
       if (stillIn) {
-        removeFromQueue(data.userId);
+        removeFromQueue(authUser.id);
         socket.emit('queue-timeout', { message: 'Tidak ada lawan ditemukan. Coba lagi!' });
-        console.log(`[Matchmaking] ${data.userName} queue timeout`);
+        console.log(`[Matchmaking] ${authUser.name} queue timeout`);
       }
     }, MATCH_TIMEOUT_MS);
   });
 
-  socket.on('leave-queue', (data: { userId: string }) => {
-    removeFromQueue(data.userId);
+  socket.on('leave-queue', (data: { userId?: string }) => {
+    const authUser = socket.data.user as AuthenticatedSocketUser | undefined;
+    if (!authUser) return;
+    removeFromQueue(authUser.id);
     socket.emit('queue-status', { inQueue: false, message: 'Keluar dari antrean' });
-    console.log(`[Matchmaking] ${data.userId} left queue`);
+    console.log(`[Matchmaking] ${authUser.id} left queue`);
   });
 
-  socket.on('rematch', (data: { userId: string; userName: string; avatarUrl?: string; gameType?: string }) => {
+  socket.on('rematch', (data: { userId?: string; userName?: string; avatarUrl?: string; gameType?: string }) => {
+    const authUser = socket.data.user as AuthenticatedSocketUser | undefined;
+    if (!authUser) return;
     const qp: QueuePlayer = {
-      userId: data.userId,
-      userName: data.userName,
-      avatarUrl: data.avatarUrl,
+      userId: authUser.id,
+      userName: authUser.name,
+      avatarUrl: authUser.avatarUrl,
       socketId: socket.id,
       gameType: data.gameType || 'KUIS_BATTLE',
       joinedAt: new Date(),
@@ -769,6 +898,7 @@ function emitQuestion(room: Room) {
   }
 
   const question = room.questions[room.currentQuestion];
+  room.questionStartedAt = Date.now();
   io.to(room.code).emit('show-question', {
     index: room.currentQuestion,
     total: room.questions.length,
@@ -780,7 +910,6 @@ function emitQuestion(room: Room) {
     passage: question.passage,
     type: question.type,
     options: question.options,
-    correctAnswer: question.correctAnswer,
     difficulty: question.difficulty,
     timePerQuestion: room.timePerQuestion,
   });
@@ -792,7 +921,7 @@ function emitQuestion(room: Room) {
     });
 
     room.players.forEach((p) => {
-      if (p.answerTimes.length <= room.currentQuestion) {
+      if (p.lastAnsweredQuestion !== room.currentQuestion) {
         p.streak = 0;
         p.wrong++;
         p.answerTimes.push(room.timePerQuestion);
@@ -915,4 +1044,26 @@ function handleLeave(socket: any, code: string, odiceId: string) {
   }
 }
 
-console.log(`[Game Server] Running on port ${PORT}`);
+httpServer.listen(PORT, '0.0.0.0', () => {
+  console.log(`[Game Server] Running on port ${PORT}`);
+  console.log(`[Game Server] Allowed origins: ${allowedOrigins.join(', ')}`);
+});
+
+let shuttingDown = false;
+async function shutdown(signal: string) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  console.log(`[Game Server] ${signal} received, shutting down...`);
+
+  io.close(() => {
+    httpServer.close(async () => {
+      await prisma.$disconnect();
+      process.exit(0);
+    });
+  });
+
+  setTimeout(() => process.exit(1), 10_000).unref();
+}
+
+process.on('SIGTERM', () => void shutdown('SIGTERM'));
+process.on('SIGINT', () => void shutdown('SIGINT'));

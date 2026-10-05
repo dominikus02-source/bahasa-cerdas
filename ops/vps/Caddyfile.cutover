@@ -1,0 +1,38 @@
+{
+  email {$ACME_EMAIL}
+  servers {
+    protocols h1 h2 h3
+  }
+}
+
+{$APEX_DOMAIN} {
+  redir https://{$WEB_DOMAIN}{uri} permanent
+}
+
+{$WEB_DOMAIN}, {$TEST_WEB_DOMAIN} {
+  encode zstd gzip
+
+  reverse_proxy web:3000
+
+  log {
+    output file /var/log/caddy/web-access.log {
+      roll_size 50MiB
+      roll_keep 5
+      roll_keep_for 168h
+    }
+  }
+}
+
+{$GAME_DOMAIN}, {$TEST_GAME_DOMAIN} {
+  encode zstd gzip
+
+  reverse_proxy game:3001
+
+  log {
+    output file /var/log/caddy/game-access.log {
+      roll_size 50MiB
+      roll_keep 5
+      roll_keep_for 168h
+    }
+  }
+}
