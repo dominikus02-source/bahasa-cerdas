@@ -45,6 +45,8 @@ check("hero punya state idle/run/attack/hit/KO", phaser.includes("heroRun") && p
 check("Arga premium memakai 3 directional spritesheet", phaser.includes("sheet-char-arga-walk-down.png") && phaser.includes("sheet-char-arga-walk-side.png") && phaser.includes("sheet-char-arga-walk-up.png"));
 check("Arga walk animation memakai 8 frame", phaser.includes("ARGA_FRAME_COUNT = 8") && phaser.includes("generateFrameNumbers"));
 check("Arga direction mengikuti vektor gerak", phaser.includes("syncArgaMovement") && phaser.includes('direction = "side"') && phaser.includes('direction = "up"') && phaser.includes('direction = "down"'));
+check("semua human multiplayer memakai art direction Arga premium", phaser.includes('entity.kind === "human" ? "arga" : "mascot"'));
+check("hasil match punya winner spotlight + podium + hasil pribadi", arena.includes("Juara Arena") && arena.includes("podiumRows") && arena.includes("HASIL KAMU") && arena.includes("MAIN LAGI"));
 check("weapon rig memakai core + tip + glow", phaser.includes("weaponCore") && phaser.includes("weaponTip") && phaser.includes("ammoGlow"));
 check("pointer hover memberi target reticle", phaser.includes("pointermove") && phaser.includes("pickTarget") && phaser.includes("targetRing"));
 check("top-3 rank tampil di arena", phaser.includes("rankBadge") && phaser.includes("rank <= 3"));

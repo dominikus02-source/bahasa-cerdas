@@ -484,9 +484,11 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
         private createHero(entity: PhaserArenaEntity): HeroVisual {
           const accent = Phaser.Display.Color.HexStringToColor(entity.color || "#22d3ee").color;
           const heroHash = Math.abs(Array.from(entity.id).reduce((acc, ch) => acc + ch.charCodeAt(0), 0));
-          const heroSlot = heroHash % 4;
-          const heroKind: HeroVisual["heroKind"] = heroSlot === 0 ? "arga" : "mascot";
-          const family = heroKind === "arga" ? 0 : (heroSlot - 1) % ASSETS.heroIdle.length;
+          // Multiplayer human visuals stay in one coherent art direction until
+          // the remaining premium hero sheets are ready. Mascots remain only
+          // as a safe fallback path for non-human entities / asset recovery.
+          const heroKind: HeroVisual["heroKind"] = entity.kind === "human" ? "arga" : "mascot";
+          const family = heroHash % ASSETS.heroIdle.length;
 
           const shadow = this.add.ellipse(0, 31, heroKind === "arga" ? 48 : 54, 14, 0x020617, 0.34);
           const aura = this.add.circle(0, 3, entity.id === userIdRef.current ? 40 : 34, accent, entity.id === userIdRef.current ? 0.16 : 0.055);

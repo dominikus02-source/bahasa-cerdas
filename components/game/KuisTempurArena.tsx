@@ -71,6 +71,41 @@ type ArenaResult = {
 const WORLD_W = 1400;
 const WORLD_H = 840;
 
+function initials(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase() || "?";
+}
+
+function ResultAvatar({
+  name,
+  src,
+  size = "md",
+}: {
+  name: string;
+  src?: string | null;
+  size?: "sm" | "md" | "lg";
+}) {
+  const dim = size === "lg" ? "h-20 w-20" : size === "sm" ? "h-10 w-10" : "h-14 w-14";
+  return (
+    <div className={`${dim} overflow-hidden rounded-[30%] border-2 border-white/20 bg-gradient-to-br from-cyan-300/30 to-violet-500/30 shadow-[0_12px_32px_rgba(0,0,0,.3)]`}>
+      {src ? (
+        // Avatar dapat berasal dari provider/profile berbeda.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={src} alt={name} className="h-full w-full object-cover" />
+      ) : (
+        <div className="flex h-full w-full items-center justify-center bg-slate-950/60 text-sm font-black text-white">
+          {initials(name)}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function KuisTempurArena({
   code,
   userId,
@@ -193,6 +228,13 @@ export default function KuisTempurArena({
 
   const secondsForQuestion = question ? Math.max(0, (question.deadline - now) / 1000) : 0;
   const questionProgress = question ? Math.max(0, Math.min(1, secondsForQuestion / Math.max(1, question.timeLimit))) : 0;
+  const rankedResults = useMemo(
+    () => (result ? result.results.slice().sort((a, b) => a.rank - b.rank) : []),
+    [result]
+  );
+  const winner = rankedResults[0];
+  const podiumRows = [rankedResults[1], rankedResults[0], rankedResults[2]].filter(Boolean);
+  const myResult = rankedResults.find((row) => row.playerId === userId);
 
   return (
     <main className="fixed inset-0 z-[80] overflow-hidden bg-[#030712] text-white">
@@ -356,48 +398,143 @@ export default function KuisTempurArena({
       )}
 
       {result && (
-        <div className="absolute inset-0 z-50 overflow-y-auto bg-[#030712]/94 p-4 backdrop-blur-md">
-          <div className="mx-auto flex min-h-full max-w-xl items-center justify-center py-6">
-            <section className="w-full rounded-[32px] border border-white/12 bg-gradient-to-b from-[#101b35] to-[#07101f] p-5 shadow-[0_28px_90px_rgba(0,0,0,.6)] sm:p-7">
+        <div className="absolute inset-0 z-50 overflow-y-auto bg-[#020617]/96 p-4 backdrop-blur-xl">
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            <div className="absolute left-1/2 top-[-180px] h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-amber-300/10 blur-[90px]" />
+            <div className="absolute bottom-[-180px] left-[-120px] h-[420px] w-[420px] rounded-full bg-cyan-400/10 blur-[90px]" />
+            <div className="absolute bottom-[-200px] right-[-80px] h-[460px] w-[460px] rounded-full bg-violet-500/10 blur-[100px]" />
+            {Array.from({ length: 18 }, (_, index) => (
+              <span
+                key={index}
+                className="absolute h-1.5 w-1.5 rounded-full bg-amber-200/70"
+                style={{
+                  left: `${8 + ((index * 17) % 86)}%`,
+                  top: `${6 + ((index * 23) % 72)}%`,
+                  transform: `rotate(${index * 29}deg) scale(${0.7 + (index % 4) * 0.18})`,
+                }}
+              />
+            ))}
+          </div>
+
+          <div className="relative mx-auto flex min-h-full max-w-3xl items-center justify-center py-6">
+            <section className="w-full">
               <div className="text-center">
-                <Trophy className="mx-auto text-amber-300" size={46} fill="currentColor" />
-                <div className="mt-2 text-xs font-black tracking-[.25em] text-amber-200">HASIL PERTEMPURAN</div>
-                <h1 className="mt-1 text-3xl font-black">Arena selesai!</h1>
+                <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-amber-200/20 bg-amber-300/10 px-4 py-1.5 text-[10px] font-black tracking-[.22em] text-amber-200">
+                  <Sparkles size={13} /> PERTEMPURAN SELESAI
+                </div>
+                <h1 className="mt-3 text-3xl font-black tracking-tight sm:text-5xl">Juara Arena</h1>
+                <p className="mx-auto mt-2 max-w-md text-xs font-semibold leading-5 text-slate-400 sm:text-sm">
+                  Jawaban benar mengisi energimu. KO, kombo, dan akurasi menentukan siapa yang berdiri paling atas.
+                </p>
               </div>
 
-              <div className="mt-5 space-y-2">
-                {result.results.map((row) => (
-                  <div
-                    key={row.playerId}
-                    className={`grid grid-cols-[42px_1fr_auto] items-center gap-3 rounded-2xl border p-3 ${row.playerId === userId ? "border-cyan-300/30 bg-cyan-300/10" : "border-white/10 bg-white/[.05]"}`}
-                  >
-                    <div className={`flex h-10 w-10 items-center justify-center rounded-xl font-black ${row.rank === 1 ? "bg-amber-300 text-amber-950" : "bg-white/10"}`}>
-                      #{row.rank}
+              {winner && (
+                <div className="kt-arena-pop relative mx-auto mt-6 max-w-md overflow-hidden rounded-[30px] border border-amber-200/25 bg-gradient-to-b from-amber-300/15 via-[#172033] to-[#09101f] p-5 text-center shadow-[0_30px_90px_rgba(0,0,0,.5)]">
+                  <div className="absolute inset-x-8 top-0 h-24 rounded-full bg-amber-300/10 blur-3xl" />
+                  <div className="relative">
+                    <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-300 text-amber-950 shadow-[0_0_32px_rgba(253,224,71,.35)]">
+                      <Trophy size={22} fill="currentColor" />
                     </div>
-                    <div className="min-w-0">
-                      <div className="truncate font-black">{row.playerId === userId ? `${row.playerName} (Kamu)` : row.playerName}</div>
-                      <div className="mt-0.5 text-[10px] font-bold text-slate-400">
-                        {row.kills} KO · {row.correct} benar · kombo {row.maxStreak}×
+                    <div className="mt-3 flex justify-center">
+                      <div className="relative">
+                        <ResultAvatar name={winner.playerName} src={winner.avatarUrl} size="lg" />
+                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-amber-300 px-2.5 py-0.5 text-[9px] font-black tracking-wider text-amber-950">
+                          #1
+                        </div>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-xl font-black text-cyan-200">{row.score}</div>
-                      <div className="text-[9px] font-black text-emerald-300">+{row.xpEarned} XP</div>
+                    <div className="mt-4 text-2xl font-black">{winner.playerName}</div>
+                    <div className="mt-1 text-4xl font-black tracking-tight text-amber-200">{winner.score}</div>
+                    <div className="mt-1 text-[10px] font-black tracking-[.18em] text-slate-400">SKOR ARENA</div>
+                    <div className="mt-4 flex justify-center gap-2 text-[10px] font-black">
+                      <span className="rounded-full bg-rose-400/10 px-3 py-1.5 text-rose-200">{winner.kills} KO</span>
+                      <span className="rounded-full bg-emerald-400/10 px-3 py-1.5 text-emerald-200">{winner.correct} BENAR</span>
+                      <span className="rounded-full bg-violet-400/10 px-3 py-1.5 text-violet-200">×{winner.maxStreak} KOMBO</span>
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              )}
 
-              <div className="mt-5 grid grid-cols-2 gap-3">
+              {podiumRows.length > 1 && (
+                <div className="mx-auto mt-4 grid max-w-xl grid-cols-3 items-end gap-2 sm:gap-3">
+                  {podiumRows.map((row) => {
+                    const isWinner = row.rank === 1;
+                    return (
+                      <div
+                        key={row.playerId}
+                        className={`rounded-[22px] border px-2 py-3 text-center sm:px-3 ${
+                          isWinner
+                            ? "min-h-[142px] border-amber-200/25 bg-amber-300/10"
+                            : "min-h-[116px] border-white/10 bg-white/[.05]"
+                        }`}
+                      >
+                        <div className="flex justify-center">
+                          <ResultAvatar name={row.playerName} src={row.avatarUrl} size={isWinner ? "md" : "sm"} />
+                        </div>
+                        <div className={`mt-2 text-xs font-black ${isWinner ? "text-amber-200" : "text-slate-300"}`}>#{row.rank}</div>
+                        <div className="mt-0.5 truncate text-xs font-black">{row.playerId === userId ? "Kamu" : row.playerName}</div>
+                        <div className="mt-1 text-sm font-black text-cyan-200">{row.score}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {myResult && (
+                <div className="mx-auto mt-5 max-w-xl rounded-[26px] border border-cyan-300/20 bg-cyan-300/[.07] p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <div className="text-[9px] font-black tracking-[.2em] text-cyan-200/70">HASIL KAMU</div>
+                      <div className="mt-0.5 text-xl font-black">Peringkat #{myResult.rank}</div>
+                    </div>
+                    <div className="rounded-2xl bg-emerald-300/10 px-3 py-2 text-right">
+                      <div className="text-[9px] font-black tracking-widest text-emerald-300/70">XP</div>
+                      <div className="text-lg font-black text-emerald-200">+{myResult.xpEarned}</div>
+                    </div>
+                  </div>
+                  <div className="mt-3 grid grid-cols-4 gap-2">
+                    {[
+                      ["KO", myResult.kills],
+                      ["BENAR", myResult.correct],
+                      ["SALAH", myResult.wrong],
+                      ["KOMBO", `×${myResult.maxStreak}`],
+                    ].map(([label, value]) => (
+                      <div key={label} className="rounded-xl bg-slate-950/35 px-2 py-2.5 text-center">
+                        <div className="text-base font-black">{value}</div>
+                        <div className="mt-0.5 text-[8px] font-black tracking-wider text-slate-500">{label}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {rankedResults.length > 3 && (
+                <div className="mx-auto mt-4 max-w-xl space-y-1.5">
+                  {rankedResults.slice(3).map((row) => (
+                    <div
+                      key={row.playerId}
+                      className={`grid grid-cols-[34px_1fr_auto] items-center gap-3 rounded-xl border px-3 py-2 ${
+                        row.playerId === userId ? "border-cyan-300/25 bg-cyan-300/[.07]" : "border-white/8 bg-white/[.035]"
+                      }`}
+                    >
+                      <div className="text-center text-xs font-black text-slate-500">#{row.rank}</div>
+                      <div className="min-w-0 truncate text-xs font-black">{row.playerId === userId ? `${row.playerName} · Kamu` : row.playerName}</div>
+                      <div className="text-xs font-black text-cyan-200">{row.score}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="mx-auto mt-5 grid max-w-xl grid-cols-[1.2fr_.8fr] gap-3">
                 <button
                   onClick={onExit}
-                  className="rounded-2xl border border-white/12 bg-white/8 py-3.5 text-sm font-black"
+                  className="rounded-2xl bg-gradient-to-r from-amber-300 via-orange-400 to-rose-500 py-4 text-sm font-black text-[#2d0b00] shadow-[0_16px_40px_rgba(251,146,60,.25)] transition hover:-translate-y-0.5 active:translate-y-0"
                 >
-                  <Swords size={16} className="mr-1.5 inline" /> Main lagi
+                  <Swords size={17} className="mr-1.5 inline" /> MAIN LAGI
                 </button>
                 <button
                   onClick={onExit}
-                  className="rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-600 py-3.5 text-sm font-black shadow-lg shadow-blue-950/30"
+                  className="rounded-2xl border border-white/12 bg-white/[.06] py-4 text-sm font-black text-slate-200"
                 >
                   <ArrowLeft size={16} className="mr-1.5 inline" /> Kembali
                 </button>
