@@ -4,7 +4,6 @@ node_modules
 .gitignore
 backups
 docs
-data
 assets-src
 game-server
 coverage
