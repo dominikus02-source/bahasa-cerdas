@@ -60,7 +60,11 @@ check("audio punya classroom mute control", arena.includes("toggleSound") && are
 check("landscape phone punya compact question layout", arena.includes("max-height:620px") && arena.includes("orientation:landscape") && arena.includes("kt-question-panel"));
 check("canvas touch tidak scroll halaman", phaser.includes("touch-none"));
 check("roster punya Arga + 8 NPC authored", ["arga","ki-jaka","bu-ratmi","bu-sari","eyang-kartala","bagas","pak-warsa","pendaki","pak-empu"].every((id) => kuisTempurCharacters.includes(`id: "${id}"`)));
-check("lobby punya character picker cosmetic", hub.includes("PILIH KARAKTER") && hub.includes("COSMETIC · STAT SAMA") && hub.includes("arenaSelectCharacter"));
+check("lobby character select terasa seperti game", hub.includes("PILIH PETARUNGMU") && hub.includes("KARAKTER TERPILIH") && hub.includes("ROSTER KARAKTER") && hub.includes("arenaSelectCharacter"));
+check("lobby character select punya carousel + arrow cycling", hub.includes("cycleCharacter") && hub.includes("ChevronLeft") && hub.includes("ChevronRight") && hub.includes("overflow-x-auto"));
+check("lobby menegaskan semua karakter stat setara", hub.includes("SEMUA STAT SETARA") && hub.includes("HP SETARA") && hub.includes("DAMAGE SETARA") && hub.includes("SPEED SETARA"));
+check("lobby punya compact player strip", hub.includes("PEMAIN DI ROOM") && hub.includes("MENUNGGU") && hub.includes("min-w-[170px]"));
+check("lobby phone landscape punya compact game layout", hub.includes("max-height: 520px") && hub.includes("orientation: landscape") && hub.includes("kt-lobby-stage") && hub.includes("kt-room-panel"));
 check("server whitelist character selection", socketServer.includes("KUIS_TEMPUR_CHARACTER_IDS") && socketServer.includes("normalizeKuisTempurCharacterId") && socketServer.includes("arena-character-select"));
 check("arena snapshot membawa characterId", server.includes("characterId: entity.characterId") && phaser.includes("entity.characterId"));
 check("result bridge menerima sampai 10 pemain", bridgeRoute.includes("results.length > 10") && !bridgeRoute.includes("results.length > 2"));

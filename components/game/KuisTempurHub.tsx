@@ -5,6 +5,7 @@ import {
   ArrowLeft,
   Bot,
   Check,
+  ChevronLeft,
   ChevronRight,
   Copy,
   Crown,
@@ -113,22 +114,35 @@ function Avatar({
 function CharacterPortrait({
   characterId,
   compact = false,
+  hero = false,
 }: {
   characterId?: string | null;
   compact?: boolean;
+  hero?: boolean;
 }) {
   const character = getKuisTempurCharacter(characterId);
-  const sizeClass = compact ? "h-12 w-12" : "h-16 w-16";
+  const sizeClass = hero
+    ? "h-[230px] w-[230px] sm:h-[270px] sm:w-[270px]"
+    : compact
+      ? "h-12 w-12"
+      : "h-16 w-16";
 
   if (character.source === "arga") {
     return (
-      <div className={`${sizeClass} overflow-hidden rounded-2xl border border-white/15 bg-slate-950/55`}>
-        {/* Local authored asset; native img keeps the crop simple for the picker. */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={character.previewUrl}
-          alt={character.name}
-          className="h-full w-full object-cover object-top"
+      <div
+        className={`${sizeClass} flex items-center justify-center overflow-hidden ${
+          hero ? "rounded-[36%] border-0 bg-transparent" : "rounded-2xl border border-white/15 bg-slate-950/55"
+        }`}
+      >
+        <div
+          aria-label={character.name}
+          className={hero ? "h-[142%] w-[142%] drop-shadow-[0_28px_32px_rgba(0,0,0,.45)]" : "h-full w-full"}
+          style={{
+            backgroundImage: "url(/game/rpg/characters/sheet-char-arga-walk-down.png)",
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "800% 100%",
+            backgroundPosition: "0% 0%",
+          }}
         />
       </div>
     );
@@ -140,10 +154,20 @@ function CharacterPortrait({
   const backgroundPositionX = `${(column / 3) * 100}%`;
 
   return (
-    <div className={`${sizeClass} flex items-center justify-center overflow-hidden rounded-2xl border border-white/15 bg-white/[.06]`}>
+    <div
+      className={`${sizeClass} flex items-center justify-center overflow-hidden ${
+        hero ? "rounded-[36%] border-0 bg-transparent" : "rounded-2xl border border-white/15 bg-white/[.06]"
+      }`}
+    >
       <div
         aria-label={character.name}
-        className={isRuntime ? "w-full aspect-[3/2]" : "w-full aspect-square"}
+        className={`${isRuntime ? "aspect-[3/2]" : "aspect-square"} ${
+          hero
+            ? isRuntime
+              ? "w-[310%] max-w-none drop-shadow-[0_28px_32px_rgba(0,0,0,.45)]"
+              : "w-[250%] max-w-none drop-shadow-[0_28px_32px_rgba(0,0,0,.45)]"
+            : "w-full"
+        }`}
         style={{
           backgroundImage: `url(${character.atlasUrl})`,
           backgroundRepeat: "no-repeat",
@@ -540,6 +564,16 @@ export default function KuisTempurHub() {
     const humanCount = players.length;
     const host = players.find((p) => p.isHost);
     const canStart = Boolean(room.isHost && humanCount >= 2);
+    const selectedCharacter = getKuisTempurCharacter(selectedCharacterId);
+    const selectedIndex = KUIS_TEMPUR_CHARACTERS.findIndex(
+      (character) => character.id === selectedCharacterId
+    );
+    const cycleCharacter = (direction: -1 | 1) => {
+      const nextIndex =
+        (selectedIndex + direction + KUIS_TEMPUR_CHARACTERS.length) %
+        KUIS_TEMPUR_CHARACTERS.length;
+      selectCharacter(KUIS_TEMPUR_CHARACTERS[nextIndex].id);
+    };
     const slots = Array.from({ length: 10 }, (_, index) => players[index] || null);
 
     return (
@@ -558,53 +592,160 @@ export default function KuisTempurHub() {
             </div>
           </div>
 
-          <div className="grid gap-5 lg:grid-cols-[1fr_360px]">
-            <section className="rounded-[32px] border border-white/12 bg-white/[.055] p-5 backdrop-blur">
-              <div className="flex flex-wrap items-end justify-between gap-3">
-                <div>
-                  <div className="text-xs font-black tracking-[.22em] text-cyan-300">KUIS TEMPUR // MULTIPLAYER</div>
-                  <h1 className="mt-1 text-3xl font-black tracking-tight sm:text-5xl">Kumpulkan pasukanmu.</h1>
-                  <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-slate-400">
-                    Arena dirancang untuk 5-10 pemain agar tetap lega dan mudah dibaca. Pertandingan sudah bisa dimulai sejak 2 pemain.
-                  </p>
-                </div>
-                <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/[.07] px-4 py-3 text-right">
-                  <div className="text-[9px] font-black tracking-[.18em] text-cyan-200/70">KAPASITAS IDEAL</div>
-                  <div className="text-xl font-black text-cyan-100">5-10 pemain</div>
-                </div>
-              </div>
+          <div className="kt-lobby-layout grid gap-5 lg:grid-cols-[1fr_360px]">
+            <section className="overflow-hidden rounded-[32px] border border-white/12 bg-white/[.045] backdrop-blur">
+              <style jsx>{`
+                @keyframes ktCharacterIn {
+                  0% { opacity: 0; transform: translateY(18px) scale(.94); filter: blur(6px); }
+                  70% { opacity: 1; transform: translateY(-4px) scale(1.02); filter: blur(0); }
+                  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+                }
+                @keyframes ktStagePulse {
+                  0%,100% { opacity:.3; transform:scale(.96); }
+                  50% { opacity:.62; transform:scale(1.06); }
+                }
+                .kt-character-enter { animation: ktCharacterIn .28s cubic-bezier(.2,.8,.2,1); }
+                .kt-stage-pulse { animation: ktStagePulse 2.4s ease-in-out infinite; }
+                .kt-roster-scroll { scrollbar-width:none; }
+                .kt-roster-scroll::-webkit-scrollbar { display:none; }
+                @media (max-height: 520px) and (orientation: landscape) {
+                  .kt-lobby-layout {
+                    grid-template-columns: minmax(0,1fr) 250px !important;
+                    gap: .75rem !important;
+                  }
+                  .kt-lobby-stage {
+                    min-height: 228px !important;
+                    padding-top: .65rem !important;
+                    padding-bottom: .35rem !important;
+                  }
+                  .kt-lobby-title {
+                    font-size: 1.15rem !important;
+                    line-height: 1.25rem !important;
+                    white-space: nowrap;
+                  }
+                  .kt-lobby-equal {
+                    padding: .35rem .55rem !important;
+                    font-size: .45rem !important;
+                    white-space: nowrap;
+                  }
+                  .kt-lobby-stage-inner {
+                    min-height: 158px !important;
+                  }
+                  .kt-lobby-hero-wrap {
+                    transform: scale(.58);
+                    transform-origin: center center;
+                    margin-top: -36px;
+                    margin-bottom: -78px;
+                  }
+                  .kt-selected-pill {
+                    margin-top: -1.7rem !important;
+                  }
+                  .kt-lobby-stats {
+                    display: none !important;
+                  }
+                  .kt-room-panel {
+                    padding: .8rem !important;
+                    border-radius: 22px !important;
+                  }
+                }
+                @media (prefers-reduced-motion: reduce) {
+                  .kt-character-enter,.kt-stage-pulse { animation:none!important; }
+                }
+              `}</style>
 
-              <div className="mt-5 rounded-[24px] border border-white/10 bg-slate-950/35 p-3 sm:p-4">
-                <div className="flex items-center justify-between gap-3">
+              <div className="kt-lobby-stage relative min-h-[420px] overflow-hidden border-b border-white/8 bg-[radial-gradient(circle_at_50%_30%,rgba(34,211,238,.18),transparent_30%),radial-gradient(circle_at_20%_20%,rgba(99,102,241,.16),transparent_25%),linear-gradient(180deg,#0a1730_0%,#071120_55%,#040914_100%)] px-4 pb-5 pt-5 sm:px-6">
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-[radial-gradient(ellipse_at_center,rgba(103,232,249,.22),transparent_62%)]" />
+                <div className="kt-stage-pulse pointer-events-none absolute bottom-[70px] left-1/2 h-28 w-80 -translate-x-1/2 rounded-[50%] border border-cyan-200/25 bg-cyan-300/10 blur-[1px]" />
+                <div className="pointer-events-none absolute bottom-[90px] left-1/2 h-16 w-56 -translate-x-1/2 rounded-[50%] bg-cyan-200/10 blur-xl" />
+
+                <div className="relative z-10 flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <div className="text-[9px] font-black tracking-[.2em] text-slate-500">PILIH KARAKTER</div>
-                    <div className="mt-0.5 text-sm font-black text-white">
-                      {getKuisTempurCharacter(selectedCharacterId).name}
-                      <span className="ml-2 text-[10px] font-bold text-slate-500">
-                        {getKuisTempurCharacter(selectedCharacterId).role}
+                    <div className="text-[10px] font-black tracking-[.22em] text-cyan-300">PILIH PETARUNGMU</div>
+                    <h1 className="kt-lobby-title mt-1 text-2xl font-black tracking-tight sm:text-4xl">
+                      Siapa yang masuk arena?
+                    </h1>
+                  </div>
+                  <div className="kt-lobby-equal rounded-full border border-emerald-300/15 bg-emerald-300/10 px-3 py-1.5 text-[9px] font-black tracking-[.16em] text-emerald-200">
+                    SEMUA STAT SETARA
+                  </div>
+                </div>
+
+                <div className="kt-lobby-stage-inner relative z-10 mt-0 flex min-h-[290px] items-center justify-center">
+                  <button
+                    onClick={() => cycleCharacter(-1)}
+                    className="absolute left-0 z-20 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/12 bg-slate-950/65 text-white/80 shadow-lg backdrop-blur transition hover:scale-105 hover:border-cyan-200/35 hover:text-white sm:left-4"
+                    aria-label="Karakter sebelumnya"
+                  >
+                    <ChevronLeft size={24} />
+                  </button>
+
+                  <div className="kt-lobby-hero-wrap relative flex flex-col items-center text-center">
+                    <div key={selectedCharacter.id} className="kt-character-enter relative">
+                      <div
+                        className="pointer-events-none absolute inset-x-[-40px] bottom-2 top-20 rounded-full opacity-50 blur-3xl"
+                        style={{ backgroundColor: selectedCharacter.accent }}
+                      />
+                      <CharacterPortrait characterId={selectedCharacter.id} hero />
+                    </div>
+
+                    <div className="kt-selected-pill -mt-3 rounded-full border border-white/10 bg-slate-950/70 px-4 py-1.5 text-[9px] font-black tracking-[.18em] text-cyan-200 backdrop-blur">
+                      KARAKTER TERPILIH
+                    </div>
+                    <div className="mt-1.5 text-3xl font-black tracking-[-.03em] text-white sm:text-4xl">
+                      {selectedCharacter.name}
+                    </div>
+                    <div className="mt-1 text-xs font-black tracking-[.16em] text-slate-400">
+                      {selectedCharacter.role.toUpperCase()}
+                    </div>
+                    <div className="kt-lobby-stats mt-2.5 flex flex-wrap justify-center gap-2 text-[9px] font-black tracking-wider">
+                      <span className="rounded-full border border-cyan-200/15 bg-cyan-300/10 px-3 py-1.5 text-cyan-100">
+                        HP SETARA
+                      </span>
+                      <span className="rounded-full border border-amber-200/15 bg-amber-300/10 px-3 py-1.5 text-amber-100">
+                        DAMAGE SETARA
+                      </span>
+                      <span className="rounded-full border border-violet-200/15 bg-violet-300/10 px-3 py-1.5 text-violet-100">
+                        SPEED SETARA
                       </span>
                     </div>
                   </div>
-                  <div className="rounded-full bg-emerald-300/10 px-2.5 py-1 text-[9px] font-black tracking-wider text-emerald-200">
-                    COSMETIC · STAT SAMA
-                  </div>
+
+                  <button
+                    onClick={() => cycleCharacter(1)}
+                    className="absolute right-0 z-20 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/12 bg-slate-950/65 text-white/80 shadow-lg backdrop-blur transition hover:scale-105 hover:border-cyan-200/35 hover:text-white sm:right-4"
+                    aria-label="Karakter berikutnya"
+                  >
+                    <ChevronRight size={24} />
+                  </button>
+                </div>
+              </div>
+
+              <div className="bg-[#050b16]/92 px-3 pb-4 pt-3 sm:px-5">
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <div className="text-[9px] font-black tracking-[.2em] text-slate-500">ROSTER KARAKTER</div>
+                  <div className="text-[9px] font-bold text-slate-600">Klik atau swipe untuk ganti</div>
                 </div>
 
-                <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-5 xl:grid-cols-9">
+                <div className="kt-roster-scroll flex snap-x gap-2 overflow-x-auto pb-1">
                   {KUIS_TEMPUR_CHARACTERS.map((character) => {
                     const active = character.id === selectedCharacterId;
                     return (
                       <button
                         key={character.id}
                         onClick={() => selectCharacter(character.id)}
-                        className={`group rounded-2xl border p-2 text-center transition ${
+                        className={`group relative min-w-[82px] snap-center rounded-[18px] border px-2 py-2 text-center transition-all duration-200 sm:min-w-[92px] ${
                           active
-                            ? "border-cyan-300/60 bg-cyan-300/12 shadow-[0_0_0_1px_rgba(103,232,249,.16)]"
-                            : "border-white/8 bg-white/[.035] hover:border-white/20 hover:bg-white/[.06]"
+                            ? "border-cyan-200/60 bg-cyan-300/12 shadow-[0_0_24px_rgba(34,211,238,.14)]"
+                            : "border-white/8 bg-white/[.035] opacity-70 hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[.065] hover:opacity-100"
                         }`}
                         title={`${character.name} · ${character.role}`}
                       >
-                        <div className="flex justify-center">
+                        {active && (
+                          <div className="absolute right-1.5 top-1.5 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-cyan-300 text-cyan-950 shadow">
+                            <Check size={12} strokeWidth={3} />
+                          </div>
+                        )}
+                        <div className="flex justify-center transition group-hover:scale-105">
                           <CharacterPortrait characterId={character.id} compact />
                         </div>
                         <div className={`mt-1.5 truncate text-[9px] font-black ${active ? "text-cyan-100" : "text-slate-400"}`}>
@@ -614,43 +755,66 @@ export default function KuisTempurHub() {
                     );
                   })}
                 </div>
-              </div>
 
-              <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-5">
-                {slots.map((p, slot) =>
-                  p ? (
-                    <div key={p.id} className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-950/45 p-3">
-                      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500" />
-                      <div className="flex items-center gap-3">
-                        <CharacterPortrait characterId={p.characterId} compact />
+                <div className="mt-4 flex items-center justify-between gap-3">
+                  <div>
+                    <div className="text-[9px] font-black tracking-[.2em] text-slate-500">PEMAIN DI ROOM</div>
+                    <div className="mt-0.5 text-xs font-bold text-slate-400">
+                      {humanCount}/10 bergabung · {humanCount >= 5 ? "komposisi ideal" : "5-10 paling seru"}
+                    </div>
+                  </div>
+                  <div className="rounded-full border border-white/10 bg-white/[.05] px-3 py-1.5 text-[9px] font-black text-slate-300">
+                    ROOM {room.code}
+                  </div>
+                </div>
+
+                <div className="kt-roster-scroll mt-3 flex gap-2 overflow-x-auto pb-1">
+                  {slots.map((player, slot) =>
+                    player ? (
+                      <div
+                        key={player.id}
+                        className={`flex min-w-[170px] snap-start items-center gap-2.5 rounded-2xl border px-3 py-2.5 ${
+                          player.id === me?.id
+                            ? "border-cyan-300/30 bg-cyan-300/[.08]"
+                            : "border-white/8 bg-white/[.035]"
+                        }`}
+                      >
+                        <CharacterPortrait characterId={player.characterId} compact />
                         <div className="min-w-0">
-                          <div className="truncate text-sm font-black">{p.playerName}</div>
-                          <div className="mt-0.5 text-[9px] font-black tracking-wider text-emerald-300">
-                            {p.isHost ? "HOST" : p.id === me?.id ? "KAMU" : "TERHUBUNG"}
+                          <div className="truncate text-xs font-black text-white">
+                            {player.id === me?.id ? `${player.playerName} · Kamu` : player.playerName}
                           </div>
-                          <div className="mt-0.5 truncate text-[8px] font-bold text-slate-500">
-                            {getKuisTempurCharacter(p.characterId).name}
+                          <div className="mt-0.5 truncate text-[9px] font-bold text-slate-500">
+                            {getKuisTempurCharacter(player.characterId).name}
+                          </div>
+                          <div className={`mt-0.5 text-[8px] font-black tracking-wider ${
+                            player.isHost ? "text-amber-300" : "text-emerald-300"
+                          }`}>
+                            {player.isHost ? "HOST" : "SIAP"}
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div key={slot} className="flex min-h-[70px] items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[.025] text-center">
-                      <div>
-                        <Users size={16} className="mx-auto text-slate-600" />
-                        <div className="mt-1 text-[9px] font-black tracking-wider text-slate-600">SLOT {slot + 1}</div>
+                    ) : (
+                      <div
+                        key={slot}
+                        className="flex min-w-[118px] items-center justify-center rounded-2xl border border-dashed border-white/8 bg-white/[.02] px-3 py-3"
+                      >
+                        <div className="text-center">
+                          <Users size={14} className="mx-auto text-slate-700" />
+                          <div className="mt-1 text-[8px] font-black tracking-wider text-slate-700">MENUNGGU</div>
+                        </div>
                       </div>
-                    </div>
-                  )
-                )}
-              </div>
+                    )
+                  )}
+                </div>
 
-              <div className="mt-5 rounded-2xl border border-amber-300/15 bg-amber-300/[.07] p-4 text-sm font-semibold leading-6 text-amber-50/80">
-                Jawab benar untuk mendapat amunisi. Semua target di arena adalah pemain manusia; bot tidak ikut dalam mode multiplayer utama.
+                <div className="mt-4 rounded-2xl border border-amber-300/12 bg-amber-300/[.055] px-4 py-3 text-xs font-semibold leading-5 text-amber-50/75">
+                  Jawab benar untuk mengisi amunisi. Pilihan karakter hanya mengubah penampilan—semua pemain tetap bertarung dengan kemampuan yang sama.
+                </div>
               </div>
             </section>
 
-            <aside className="rounded-[30px] border border-white/12 bg-white/[.07] p-5 shadow-[0_20px_55px_rgba(0,0,0,.25)] backdrop-blur">
+            <aside className="kt-room-panel self-start rounded-[30px] border border-white/12 bg-white/[.07] p-5 shadow-[0_20px_55px_rgba(0,0,0,.25)] backdrop-blur">
               <div className="flex items-center gap-2 text-xs font-black tracking-[.2em] text-slate-400">
                 <Gamepad2 size={15} /> MATCH ROOM
               </div>
