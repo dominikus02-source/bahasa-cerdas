@@ -541,6 +541,152 @@ export default function KuisTempurHub() {
     } catch {}
   }, [room]);
 
+  if (phase === "setup" && entryMode) {
+    const selectedCharacter = getKuisTempurCharacter(selectedCharacterId);
+    const selectedIndex = KUIS_TEMPUR_CHARACTERS.findIndex(
+      (character) => character.id === selectedCharacterId
+    );
+    const cycleCharacter = (direction: -1 | 1) => {
+      const nextIndex =
+        (selectedIndex + direction + KUIS_TEMPUR_CHARACTERS.length) %
+        KUIS_TEMPUR_CHARACTERS.length;
+      selectCharacter(KUIS_TEMPUR_CHARACTERS[nextIndex].id);
+    };
+    const modeTitle = entryMode === "quick" ? "MAIN CEPAT" : "ROOM PRIVAT";
+    const modeHint =
+      entryMode === "quick"
+        ? "Sesudah memilih tampilan, server langsung mencarikan arena publik 2–10 pemain."
+        : "Sesudah memilih tampilan, room berkode akan dibuat untuk teman atau kelas.";
+
+    return (
+      <main className="game-env game-env-kuis min-h-screen overflow-x-hidden bg-[#040914] text-white">
+        <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_18%_12%,rgba(14,165,233,.24),transparent_28%),radial-gradient(circle_at_82%_12%,rgba(245,158,11,.19),transparent_28%),linear-gradient(180deg,#08162f,#040914_72%)]" />
+        <div className="relative mx-auto flex min-h-screen max-w-5xl flex-col px-4 pb-8 pt-4 sm:px-6">
+          <div className="flex items-center justify-between gap-3">
+            <button
+              onClick={() => {
+                if (creating) return;
+                setEntryMode(null);
+                setDisplayChoiceOpen(false);
+                displayReadyRef.current = false;
+                setPhase("menu");
+              }}
+              disabled={creating}
+              className="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/8 px-4 py-2.5 text-sm font-black text-white/80 disabled:opacity-40"
+            >
+              <ArrowLeft size={17} /> Kembali
+            </button>
+            <div className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1.5 text-[10px] font-black tracking-[.18em] text-cyan-200">
+              {modeTitle}
+            </div>
+          </div>
+
+          <section className="mx-auto mt-5 grid w-full max-w-4xl flex-1 items-center gap-5 lg:grid-cols-[1.05fr_.95fr]">
+            <div className="relative overflow-hidden rounded-[34px] border border-white/12 bg-[radial-gradient(circle_at_50%_30%,rgba(34,211,238,.22),transparent_31%),linear-gradient(180deg,#0b2347,#071126)] p-5 shadow-[0_28px_80px_rgba(0,0,0,.34)]">
+              <div className="text-center">
+                <div className="text-[10px] font-black tracking-[.22em] text-cyan-300">PILIH PETARUNG</div>
+                <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">Siapa yang turun ke Kampung Kata?</h1>
+                <p className="mx-auto mt-2 max-w-lg text-sm font-semibold leading-6 text-slate-400">
+                  Semua karakter punya statistik yang setara. Pilih gaya yang paling kamu suka.
+                </p>
+              </div>
+
+              <div className="relative mt-4 flex min-h-[285px] items-center justify-center">
+                <button
+                  type="button"
+                  onClick={() => cycleCharacter(-1)}
+                  className="absolute left-1 z-10 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/15 bg-slate-950/55 text-white backdrop-blur transition hover:bg-white/10"
+                  aria-label="Karakter sebelumnya"
+                >
+                  <ChevronLeft size={22} />
+                </button>
+                <div className="flex flex-col items-center">
+                  <CharacterPortrait characterId={selectedCharacterId} hero />
+                  <div className="-mt-3 rounded-2xl border border-cyan-200/20 bg-slate-950/70 px-5 py-2 text-center shadow-xl backdrop-blur">
+                    <div className="text-xl font-black">{selectedCharacter.name}</div>
+                    <div className="mt-0.5 text-[9px] font-black tracking-[.18em] text-cyan-300">STAT SETARA · COSMETIC</div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => cycleCharacter(1)}
+                  className="absolute right-1 z-10 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/15 bg-slate-950/55 text-white backdrop-blur transition hover:bg-white/10"
+                  aria-label="Karakter berikutnya"
+                >
+                  <ChevronRight size={22} />
+                </button>
+              </div>
+            </div>
+
+            <div className="flex h-full flex-col rounded-[34px] border border-white/12 bg-white/[.055] p-5 shadow-[0_28px_80px_rgba(0,0,0,.24)] backdrop-blur">
+              <div>
+                <div className="text-[10px] font-black tracking-[.22em] text-slate-500">ROSTER 9 PETARUNG</div>
+                <div className="mt-3 grid grid-cols-3 gap-2">
+                  {KUIS_TEMPUR_CHARACTERS.map((character) => {
+                    const active = character.id === selectedCharacterId;
+                    return (
+                      <button
+                        key={character.id}
+                        type="button"
+                        onClick={() => selectCharacter(character.id)}
+                        className={`rounded-2xl border p-2 transition ${
+                          active
+                            ? "border-cyan-300/55 bg-cyan-300/12 shadow-[0_0_0_1px_rgba(103,232,249,.15)]"
+                            : "border-white/10 bg-white/[.035] hover:border-white/25 hover:bg-white/[.07]"
+                        }`}
+                      >
+                        <div className="flex justify-center">
+                          <CharacterPortrait characterId={character.id} compact />
+                        </div>
+                        <div className={`mt-1 truncate text-[9px] font-black ${active ? "text-cyan-100" : "text-slate-500"}`}>
+                          {character.name}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="mt-5 rounded-2xl border border-white/10 bg-black/15 p-4">
+                <div className="flex items-center gap-2 text-xs font-black text-white">
+                  {entryMode === "quick" ? <Zap size={15} className="text-amber-300" /> : <Shield size={15} className="text-violet-300" />}
+                  {modeTitle}
+                </div>
+                <p className="mt-1 text-[11px] font-semibold leading-5 text-slate-400">{modeHint}</p>
+              </div>
+
+              {notice && (
+                <div className="mt-3 rounded-2xl border border-amber-300/20 bg-amber-300/[.07] px-4 py-3 text-center text-xs font-bold text-amber-100">
+                  {notice}
+                </div>
+              )}
+
+              <button
+                onClick={() => setDisplayChoiceOpen(true)}
+                disabled={creating || serverOffline}
+                className="mt-auto flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-300 via-orange-400 to-rose-500 px-5 py-4 text-base font-black text-[#2c0d00] shadow-[0_16px_38px_rgba(244,63,94,.18)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:grayscale disabled:opacity-45"
+              >
+                {creating ? <Loader2 size={19} className="animate-spin" /> : <Gamepad2 size={19} />}
+                {creating
+                  ? entryMode === "quick"
+                    ? "MENCARI ARENA..."
+                    : "MEMBUAT ROOM..."
+                  : "LANJUT PILIH TAMPILAN"}
+              </button>
+            </div>
+          </section>
+        </div>
+
+        {displayChoiceOpen && (
+          <KuisTempurDisplayChoice
+            title="Pilih tampilan sebelum bertempur"
+            onChoose={chooseMultiplayerDisplay}
+          />
+        )}
+      </main>
+    );
+  }
+
   if (phase === "solo") {
     return <KuisTempurSolo backHref="/arena/game/kuis-tempur" />;
   }
@@ -651,7 +797,7 @@ export default function KuisTempurHub() {
   if (phase === "lobby" && room) {
     const humanCount = players.length;
     const host = players.find((p) => p.isHost);
-    const isPublicRoom = room.name.startsWith("Main Cepat ·");
+    const isPublicRoom = room.matchmaking === "PUBLIC";
     const canStart = Boolean(!isPublicRoom && room.isHost && humanCount >= 2);
     const selectedCharacter = getKuisTempurCharacter(selectedCharacterId);
     const selectedIndex = KUIS_TEMPUR_CHARACTERS.findIndex(
@@ -1037,7 +1183,7 @@ export default function KuisTempurHub() {
 
         <section className="mx-auto mt-7 max-w-3xl">
           <button
-            onClick={quickMatch}
+            onClick={() => openMultiplayerSetup("quick")}
             disabled={creating || serverOffline}
             className="group relative w-full overflow-hidden rounded-[30px] border border-amber-200/25 bg-[radial-gradient(circle_at_82%_20%,rgba(251,191,36,.28),transparent_24%),linear-gradient(135deg,#5b1709,#b93813_52%,#f59e0b)] p-6 text-left shadow-[0_24px_70px_rgba(245,158,11,.24)] transition hover:-translate-y-1 disabled:cursor-not-allowed disabled:grayscale disabled:opacity-50"
           >
@@ -1061,7 +1207,7 @@ export default function KuisTempurHub() {
 
         <section className="mx-auto mt-4 grid max-w-3xl gap-4 sm:grid-cols-2">
           <button
-            onClick={createPrivateRoom}
+            onClick={() => openMultiplayerSetup("private")}
             disabled={creating || serverOffline}
             className="group relative overflow-hidden rounded-[28px] border border-violet-300/20 bg-gradient-to-br from-[#4c1d95] to-[#1e1b4b] p-5 text-left transition hover:-translate-y-1 disabled:cursor-not-allowed disabled:grayscale disabled:opacity-50"
           >

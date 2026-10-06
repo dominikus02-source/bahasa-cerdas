@@ -84,6 +84,7 @@ check("share link ?join= auto-join room", read("components/game/KuisTempurHub.ts
 check("Hub merespons host transfer", read("components/game/KuisTempurHub.tsx").includes("gameSocket.onHostChanged"));
 const displayShell = read("components/game/KuisTempurDisplayShell.tsx");
 check("landing punya Main Cepat sebagai mode utama", hub.includes("MAIN CEPAT") && hub.includes("CARI LAWAN OTOMATIS") && hub.includes("MODE UTAMA"));
+check("multiplayer setup mengikuti mode → karakter → tampilan", hub.includes('phase === "setup"') && hub.includes("PILIH PETARUNG") && hub.includes("LANJUT PILIH TAMPILAN") && hub.includes("openMultiplayerSetup"));
 check("landing punya Room Privat tanpa wajib pilih teman", hub.includes("ROOM PRIVAT") && hub.includes("createPrivateRoom"));
 check("Main Cepat memakai queue arena publik", hub.includes('gameType: "KUIS_TEMPUR_ARENA"') && socketServer.includes("matchmaking === 'PUBLIC'"));
 check("public arena 2-9 memakai auto countdown 12 detik", socketServer.includes("room.autoStartDeadline = Date.now() + 12_000") && socketServer.includes("room.players.size < 2"));
