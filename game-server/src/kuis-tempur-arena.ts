@@ -728,6 +728,13 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
       if (!connectedIds.has(playerId)) match.room.players.delete(playerId);
     }
 
+    if (!match.room.players.has(match.room.hostId)) {
+      const nextHost = match.room.players.values().next().value;
+      if (!nextHost) return false;
+      match.room.hostId = nextHost.id;
+      io.to(code).emit("host-changed", { newHostId: nextHost.id });
+    }
+
     matches.delete(code);
     match.room.status = "WAITING";
     match.room.currentQuestion = 0;
