@@ -23,6 +23,13 @@ import KuisTempurSolo from "@/components/game/KuisTempurSolo";
 import KuisTempurArena from "@/components/game/KuisTempurArena";
 import GameBackButton from "@/components/game/GameBackButton";
 import { gameSocket } from "@/lib/game/socket";
+import {
+  DEFAULT_KUIS_TEMPUR_CHARACTER_ID,
+  KUIS_TEMPUR_CHARACTERS,
+  getKuisTempurCharacter,
+  normalizeKuisTempurCharacterId,
+  type KuisTempurCharacterId,
+} from "@/lib/game/kuis-tempur-characters";
 
 type AppUser = {
   id: string;
@@ -51,6 +58,7 @@ type PlayerLite = {
   id: string;
   playerName: string;
   avatarUrl?: string | null;
+  characterId?: KuisTempurCharacterId | string;
   ready?: boolean;
   isHost?: boolean;
 };
@@ -98,6 +106,51 @@ function Avatar({
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function CharacterPortrait({
+  characterId,
+  compact = false,
+}: {
+  characterId?: string | null;
+  compact?: boolean;
+}) {
+  const character = getKuisTempurCharacter(characterId);
+  const sizeClass = compact ? "h-12 w-12" : "h-16 w-16";
+
+  if (character.source === "arga") {
+    return (
+      <div className={`${sizeClass} overflow-hidden rounded-2xl border border-white/15 bg-slate-950/55`}>
+        {/* Local authored asset; native img keeps the crop simple for the picker. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={character.previewUrl}
+          alt={character.name}
+          className="h-full w-full object-cover object-top"
+        />
+      </div>
+    );
+  }
+
+  const frame = character.frame!;
+  const isRuntime = character.source === "runtime-atlas";
+  const column = frame.x / frame.width;
+  const backgroundPositionX = `${(column / 3) * 100}%`;
+
+  return (
+    <div className={`${sizeClass} flex items-center justify-center overflow-hidden rounded-2xl border border-white/15 bg-white/[.06]`}>
+      <div
+        aria-label={character.name}
+        className={isRuntime ? "w-full aspect-[3/2]" : "w-full aspect-square"}
+        style={{
+          backgroundImage: `url(${character.atlasUrl})`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: isRuntime ? "400% 500%" : "400% 100%",
+          backgroundPosition: `${backgroundPositionX} 0%`,
+        }}
+      />
     </div>
   );
 }
@@ -161,6 +214,9 @@ export default function KuisTempurHub() {
   const [serverOffline, setServerOffline] = useState(false);
   const [notice, setNotice] = useState("");
   const [copied, setCopied] = useState(false);
+  const [selectedCharacterId, setSelectedCharacterId] = useState<KuisTempurCharacterId>(
+    DEFAULT_KUIS_TEMPUR_CHARACTER_ID
+  );
   const pendingInviteRef = useRef<Friend | null>(null);
   const autoJoinRef = useRef(false);
 
@@ -199,6 +255,10 @@ export default function KuisTempurHub() {
     loadMe().then((user) => {
       if (!user || disposed) return;
       gameSocket.connect(user.id, user.nickname || user.fullName, user.avatar || undefined);
+      const rememberedCharacterId = normalizeKuisTempurCharacterId(
+        window.localStorage.getItem("kuis-tempur-character")
+      );
+      setSelectedCharacterId(rememberedCharacterId);
       const params = new URLSearchParams(window.location.search);
       const joinCode = String(params.get("join") || "").toUpperCase();
       if (/^[A-HJ-NP-Z2-9]{6}$/.test(joinCode) && !autoJoinRef.current) {
@@ -209,6 +269,7 @@ export default function KuisTempurHub() {
           userId: user.id,
           playerName: user.nickname || user.fullName,
           avatarUrl: user.avatar || undefined,
+          characterId: rememberedCharacterId,
         });
       }
     });
@@ -226,6 +287,9 @@ export default function KuisTempurHub() {
       setCreating(false);
       setRoom(data);
       setPlayers(data.player ? [data.player] : []);
+      const serverCharacterId = normalizeKuisTempurCharacterId(data.player?.characterId);
+      setSelectedCharacterId(serverCharacterId);
+      window.localStorage.setItem("kuis-tempur-character", serverCharacterId);
       setPhase("lobby");
 
       const friend = pendingInviteRef.current;
@@ -249,12 +313,16 @@ export default function KuisTempurHub() {
       setCreating(false);
       setRoom(data);
       setPlayers(data.player ? [data.player] : []);
+      const serverCharacterId = normalizeKuisTempurCharacterId(data.player?.characterId);
+      setSelectedCharacterId(serverCharacterId);
+      window.localStorage.setItem("kuis-tempur-character", serverCharacterId);
       setPhase("lobby");
       setNotice("Berhasil masuk ke arena. Bersiap untuk tempur!");
     });
     const stopPlayers = gameSocket.onPlayerList((list: PlayerLite[]) => {
-      setPlayers(Array.isArray(list) ? list : []);
-    });
+      const nextPlayers = Array.isArray(list) ? list : [];
+      setPlayers(nextPlayers);
+     });
     const stopHostChanged = gameSocket.onHostChanged((data: { newHostId: string }) => {
       setRoom((current) =>
         current
@@ -317,9 +385,25 @@ export default function KuisTempurHub() {
         difficulty: "MEDIUM",
         questionCount: 20,
         timePerQuestion: 15,
+        characterId: selectedCharacterId,
       });
     },
-    [me, serverOffline]
+    [me, selectedCharacterId, serverOffline]
+  );
+
+  const selectCharacter = useCallback(
+    (characterId: KuisTempurCharacterId) => {
+      setSelectedCharacterId(characterId);
+      window.localStorage.setItem("kuis-tempur-character", characterId);
+      if (phase === "lobby" && room?.code && me?.id) {
+        gameSocket.arenaSelectCharacter({
+          code: room.code,
+          userId: me.id,
+          characterId,
+        });
+      }
+    },
+    [me?.id, phase, room?.code]
   );
 
   const leaveLobby = useCallback(() => {
@@ -490,22 +574,62 @@ export default function KuisTempurHub() {
                 </div>
               </div>
 
+              <div className="mt-5 rounded-[24px] border border-white/10 bg-slate-950/35 p-3 sm:p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <div className="text-[9px] font-black tracking-[.2em] text-slate-500">PILIH KARAKTER</div>
+                    <div className="mt-0.5 text-sm font-black text-white">
+                      {getKuisTempurCharacter(selectedCharacterId).name}
+                      <span className="ml-2 text-[10px] font-bold text-slate-500">
+                        {getKuisTempurCharacter(selectedCharacterId).role}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="rounded-full bg-emerald-300/10 px-2.5 py-1 text-[9px] font-black tracking-wider text-emerald-200">
+                    COSMETIC · STAT SAMA
+                  </div>
+                </div>
+
+                <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-5 xl:grid-cols-9">
+                  {KUIS_TEMPUR_CHARACTERS.map((character) => {
+                    const active = character.id === selectedCharacterId;
+                    return (
+                      <button
+                        key={character.id}
+                        onClick={() => selectCharacter(character.id)}
+                        className={`group rounded-2xl border p-2 text-center transition ${
+                          active
+                            ? "border-cyan-300/60 bg-cyan-300/12 shadow-[0_0_0_1px_rgba(103,232,249,.16)]"
+                            : "border-white/8 bg-white/[.035] hover:border-white/20 hover:bg-white/[.06]"
+                        }`}
+                        title={`${character.name} · ${character.role}`}
+                      >
+                        <div className="flex justify-center">
+                          <CharacterPortrait characterId={character.id} compact />
+                        </div>
+                        <div className={`mt-1.5 truncate text-[9px] font-black ${active ? "text-cyan-100" : "text-slate-400"}`}>
+                          {character.name}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-5">
                 {slots.map((p, slot) =>
                   p ? (
                     <div key={p.id} className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-950/45 p-3">
                       <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500" />
                       <div className="flex items-center gap-3">
-                        <Avatar
-                          name={p.playerName}
-                          src={p.avatarUrl}
-                          side={p.id === me?.id ? "blue" : "neutral"}
-                          size="sm"
-                        />
+                        <CharacterPortrait characterId={p.characterId} compact />
                         <div className="min-w-0">
                           <div className="truncate text-sm font-black">{p.playerName}</div>
                           <div className="mt-0.5 text-[9px] font-black tracking-wider text-emerald-300">
                             {p.isHost ? "HOST" : p.id === me?.id ? "KAMU" : "TERHUBUNG"}
+                          </div>
+                          <div className="mt-0.5 truncate text-[8px] font-bold text-slate-500">
+                            {getKuisTempurCharacter(p.characterId).name}
                           </div>
                         </div>
                       </div>

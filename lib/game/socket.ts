@@ -343,11 +343,12 @@ export const gameSocket = {
     difficulty?: string;
     questionCount?: number;
     timePerQuestion?: number;
+    characterId?: string;
   }) {
     socket?.emit('create-room', data);
   },
 
-  joinRoom(data: { code: string; userId: string; playerName: string; avatarUrl?: string }) {
+  joinRoom(data: { code: string; userId: string; playerName: string; avatarUrl?: string; characterId?: string }) {
     socket?.emit('join-room', data);
   },
 
@@ -379,6 +380,10 @@ export const gameSocket = {
 
   arenaReady(data: { code: string; userId: string }) {
     socket?.emit('arena-ready', data);
+  },
+
+  arenaSelectCharacter(data: { code: string; userId: string; characterId: string }) {
+    socket?.emit('arena-character-select', data);
   },
 
   arenaMove(data: { code: string; userId: string; x: number; y: number }) {

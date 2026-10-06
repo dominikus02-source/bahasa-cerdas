@@ -3,6 +3,10 @@
 import { useEffect, useRef } from "react";
 import { gameSocket } from "@/lib/game/socket";
 import { kuisTempurAudio } from "@/lib/game/kuis-tempur-audio";
+import {
+  KUIS_TEMPUR_CHARACTERS,
+  getKuisTempurCharacter,
+} from "@/lib/game/kuis-tempur-characters";
 
 export type PhaserArenaEntity = {
   id: string;
@@ -21,6 +25,7 @@ export type PhaserArenaEntity = {
   combo: number;
   alive: boolean;
   avatarUrl?: string | null;
+  characterId?: string;
   color?: string;
   respawnIn?: number;
   connected?: boolean;
@@ -184,7 +189,8 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
         attackUntil: number;
         hitUntil: number;
         lastFacing: 1 | -1;
-        heroKind: "arga" | "mascot";
+        heroKind: "arga" | "npc" | "mascot";
+        characterId: string;
         direction: "down" | "side" | "up";
       };
 
@@ -217,6 +223,30 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
             frameWidth: ARGA_FRAME,
             frameHeight: ARGA_FRAME,
           });
+          this.load.svg("kt-rpg-runtime-atlas", "/game/rpg/visual/rpg_runtime_atlas.svg", {
+            width: 960,
+            height: 800,
+          });
+          this.load.svg("kt-rpg-npc-atlas", "/game/rpg/visual/rpg_npc_atlas.svg", {
+            width: 960,
+            height: 240,
+          });
+        }
+
+        private ensureNpcFrames() {
+          KUIS_TEMPUR_CHARACTERS
+            .filter((character) => character.source !== "arga" && character.frame)
+            .forEach((character) => {
+              const textureKey =
+                character.source === "runtime-atlas"
+                  ? "kt-rpg-runtime-atlas"
+                  : "kt-rpg-npc-atlas";
+              const texture = this.textures.get(textureKey);
+              const frameKey = `kt-char-${character.id}`;
+              if (texture.has(frameKey)) return;
+              const frame = character.frame!;
+              texture.add(frameKey, 0, frame.x, frame.y, frame.width, frame.height);
+            });
         }
 
         private ensureHeroAnimations() {
@@ -242,6 +272,7 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
 
         create() {
           sceneRef.current = this;
+          this.ensureNpcFrames();
           this.ensureHeroAnimations();
           this.cameras.main.setBackgroundColor("#173f32");
           this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H);
@@ -485,23 +516,38 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
         private createHero(entity: PhaserArenaEntity): HeroVisual {
           const accent = Phaser.Display.Color.HexStringToColor(entity.color || "#22d3ee").color;
           const heroHash = Math.abs(Array.from(entity.id).reduce((acc, ch) => acc + ch.charCodeAt(0), 0));
-          // Multiplayer human visuals stay in one coherent art direction until
-          // the remaining premium hero sheets are ready. Mascots remain only
-          // as a safe fallback path for non-human entities / asset recovery.
-          const heroKind: HeroVisual["heroKind"] = entity.kind === "human" ? "arga" : "mascot";
+          const character = getKuisTempurCharacter(entity.characterId);
+          const heroKind: HeroVisual["heroKind"] =
+            entity.kind !== "human"
+              ? "mascot"
+              : character.source === "arga"
+                ? "arga"
+                : "npc";
           const family = heroHash % ASSETS.heroIdle.length;
 
           const shadow = this.add.ellipse(0, 31, heroKind === "arga" ? 48 : 54, 14, 0x020617, 0.34);
           const aura = this.add.circle(0, 3, entity.id === userIdRef.current ? 40 : 34, accent, entity.id === userIdRef.current ? 0.16 : 0.055);
           aura.setBlendMode(Phaser.BlendModes.ADD);
 
-          const body = heroKind === "arga"
-            ? this.add.sprite(0, 31, "kt-arga-down", 0)
-                .setOrigin(0.5, 1)
-                .setDisplaySize(96, 96)
-            : this.add.image(0, 27, key("heroIdle", family))
-                .setOrigin(0.5, 1)
-                .setDisplaySize(84, 84);
+          const body =
+            heroKind === "arga"
+              ? this.add.sprite(0, 31, "kt-arga-down", 0)
+                  .setOrigin(0.5, 1)
+                  .setDisplaySize(96, 96)
+              : heroKind === "npc"
+                ? this.add.image(
+                    0,
+                    27,
+                    character.source === "runtime-atlas"
+                      ? "kt-rpg-runtime-atlas"
+                      : "kt-rpg-npc-atlas",
+                    `kt-char-${character.id}`
+                  )
+                    .setOrigin(0.5, 1)
+                    .setDisplaySize(92, 92)
+                : this.add.image(0, 27, key("heroIdle", family))
+                    .setOrigin(0.5, 1)
+                    .setDisplaySize(84, 84);
 
           const weaponGrip = this.add.rectangle(14, 3, 10, 9, 0x172554, 1)
             .setStrokeStyle(1.5, 0xf8fafc, 0.5);
@@ -593,6 +639,7 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
             hitUntil: 0,
             lastFacing: 1,
             heroKind,
+            characterId: character.id,
             direction: "down",
           };
         }
@@ -619,7 +666,7 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
                     : "kt-arga-down";
               visual.body.setTexture(texture, 0).setDisplaySize(96, 96);
             }
-          } else {
+          } else if (visual.heroKind === "mascot") {
             visual.body.setTexture(this.heroTexture(mode, visual.family)).setDisplaySize(84, 84);
           }
 
@@ -703,6 +750,12 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
               .setY(31);
             visual.direction = "down";
             visual.body.anims?.stop();
+          } else if (visual.heroKind === "npc") {
+            visual.body
+              .setAngle(0)
+              .setAlpha(1)
+              .setY(27)
+              .setDisplaySize(92, 92);
           } else {
             visual.body
               .setTexture(this.heroTexture("idle", visual.family))

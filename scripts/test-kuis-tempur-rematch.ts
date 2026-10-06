@@ -7,6 +7,7 @@ async function main() {
 
   const events: EventRow[] = [];
   let persisted = 0;
+  const persistenceCodes: string[] = [];
   const io: any = {
     to(room: string) {
       return {
@@ -63,7 +64,8 @@ async function main() {
     io,
     rooms,
     loadQuestions: async () => questions,
-    persistResults: async () => {
+    persistResults: async (payload) => {
+      persistenceCodes.push(payload.code);
       await new Promise((resolve) => setTimeout(resolve, 650));
       persisted += 1;
     },
@@ -99,7 +101,17 @@ async function main() {
   assert("stale cleanup cannot delete the new rematch", rooms.has(room.code) && arena.isActive(room.code));
   assert("round 1 persistence still completes exactly once", persisted === 1);
 
-  console.log("\nPASS: true rematch reuses room and resets authoritative state\n");
+  await new Promise((resolve) => setTimeout(resolve, 1050));
+  assert("round 2 also finishes", events.filter((row) => row.event === "arena-finished").length >= 2);
+  await new Promise((resolve) => setTimeout(resolve, 700));
+  assert("two rounds persist independently", persisted === 2 && persistenceCodes.length === 2);
+  assert(
+    "each round gets a distinct persistence code",
+    persistenceCodes[0] !== persistenceCodes[1] &&
+      persistenceCodes.every((code) => /^REMATCH-[A-Z0-9]{6,10}$/.test(code))
+  );
+
+  console.log("\nPASS: true rematch reuses room and persists rounds independently\n");
   process.exit(0);
 }
 

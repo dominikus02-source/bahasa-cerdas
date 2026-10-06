@@ -9,6 +9,9 @@ const socketServer = read("game-server/src/server.ts");
 const arena = read("components/game/KuisTempurArena.tsx");
 const phaser = read("components/game/KuisTempurPhaserWorld.tsx");
 const audio = read("lib/game/kuis-tempur-audio.ts");
+const kuisTempurCharacters = read("lib/game/kuis-tempur-characters.ts");
+const hub = read("components/game/KuisTempurHub.tsx");
+const bridgeRoute = read("app/api/game/kuis-tempur/server/route.ts");
 
 let passed = 0;
 let failed = 0;
@@ -46,7 +49,7 @@ check("hero punya state idle/run/attack/hit/KO", phaser.includes("heroRun") && p
 check("Arga premium memakai 3 directional spritesheet", phaser.includes("sheet-char-arga-walk-down.png") && phaser.includes("sheet-char-arga-walk-side.png") && phaser.includes("sheet-char-arga-walk-up.png"));
 check("Arga walk animation memakai 8 frame", phaser.includes("ARGA_FRAME_COUNT = 8") && phaser.includes("generateFrameNumbers"));
 check("Arga direction mengikuti vektor gerak", phaser.includes("syncArgaMovement") && phaser.includes('direction = "side"') && phaser.includes('direction = "up"') && phaser.includes('direction = "down"'));
-check("semua human multiplayer memakai art direction Arga premium", phaser.includes('entity.kind === "human" ? "arga" : "mascot"'));
+check("human multiplayer memakai characterId roster", phaser.includes("getKuisTempurCharacter(entity.characterId)") && server.includes('characterId: player.characterId || "arga"'));
 check("hasil match punya winner spotlight + podium + hasil pribadi", arena.includes("Juara Arena") && arena.includes("podiumRows") && arena.includes("HASIL KAMU") && arena.includes("MAIN LAGI"));
 check("MAIN LAGI memakai true arena rematch, bukan keluar room", arena.includes("requestRematch") && arena.includes("gameSocket.arenaRematch") && arena.includes("onArenaRematchStatus"));
 check("server rematch vote threshold 60% dengan minimum 2", server.includes("Math.ceil(totalCount * 0.6)") && server.includes("requiredCount"));
@@ -56,6 +59,13 @@ check("custom SFX mencakup core combat loop", ["correct", "wrong", "shot", "hit"
 check("audio punya classroom mute control", arena.includes("toggleSound") && arena.includes("VolumeX") && audio.includes("setMuted"));
 check("landscape phone punya compact question layout", arena.includes("max-height:620px") && arena.includes("orientation:landscape") && arena.includes("kt-question-panel"));
 check("canvas touch tidak scroll halaman", phaser.includes("touch-none"));
+check("roster punya Arga + 8 NPC authored", ["arga","ki-jaka","bu-ratmi","bu-sari","eyang-kartala","bagas","pak-warsa","pendaki","pak-empu"].every((id) => kuisTempurCharacters.includes(`id: "${id}"`)));
+check("lobby punya character picker cosmetic", hub.includes("PILIH KARAKTER") && hub.includes("COSMETIC · STAT SAMA") && hub.includes("arenaSelectCharacter"));
+check("server whitelist character selection", socketServer.includes("KUIS_TEMPUR_CHARACTER_IDS") && socketServer.includes("normalizeKuisTempurCharacterId") && socketServer.includes("arena-character-select"));
+check("arena snapshot membawa characterId", server.includes("characterId: entity.characterId") && phaser.includes("entity.characterId"));
+check("result bridge menerima sampai 10 pemain", bridgeRoute.includes("results.length > 10") && !bridgeRoute.includes("results.length > 2"));
+check("persistence code mendukung id per ronde", bridgeRoute.includes("validPersistenceCode") && server.includes("persistenceCode"));
+check("Phaser memuat dua authored NPC atlas", phaser.includes("rpg_runtime_atlas.svg") && phaser.includes("rpg_npc_atlas.svg") && phaser.includes("ensureNpcFrames"));
 check("weapon rig memakai core + tip + glow", phaser.includes("weaponCore") && phaser.includes("weaponTip") && phaser.includes("ammoGlow"));
 check("pointer hover memberi target reticle", phaser.includes("pointermove") && phaser.includes("pickTarget") && phaser.includes("targetRing"));
 check("top-3 rank tampil di arena", phaser.includes("rankBadge") && phaser.includes("rank <= 3"));

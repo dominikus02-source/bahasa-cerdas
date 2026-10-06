@@ -29,6 +29,7 @@ interface Player {
   odiceId: string;
   playerName: string;
   avatarUrl?: string;
+  characterId?: string;
   score: number;
   correct: number;
   wrong: number;
@@ -85,6 +86,24 @@ interface QueuePlayer {
 const matchmakingQueue: QueuePlayer[] = [];
 const MATCH_TIMEOUT_MS = 30000;
 const MAX_KUIS_TEMPUR_PLAYERS = 10;
+const KUIS_TEMPUR_CHARACTER_IDS = new Set([
+  'arga',
+  'ki-jaka',
+  'bu-ratmi',
+  'bu-sari',
+  'eyang-kartala',
+  'bagas',
+  'pak-warsa',
+  'pendaki',
+  'pak-empu',
+]);
+const DEFAULT_KUIS_TEMPUR_CHARACTER_ID = 'arga';
+
+function normalizeKuisTempurCharacterId(value?: string) {
+  return value && KUIS_TEMPUR_CHARACTER_IDS.has(value)
+    ? value
+    : DEFAULT_KUIS_TEMPUR_CHARACTER_ID;
+}
 
 function tryMatchPlayers() {
   if (matchmakingQueue.length < 2) return;
@@ -415,6 +434,7 @@ io.on('connection', (socket) => {
     difficulty?: string;
     questionCount?: number;
     timePerQuestion?: number;
+    characterId?: string;
   }) => {
     try {
       const identity = socket.data.identity as SocketIdentity | undefined;
@@ -432,6 +452,7 @@ io.on('connection', (socket) => {
         odiceId: socket.id,
         playerName: data.hostName,
         avatarUrl: data.hostAvatar,
+        characterId: normalizeKuisTempurCharacterId(data.characterId),
         score: 0,
         correct: 0,
         wrong: 0,
@@ -532,6 +553,7 @@ io.on('connection', (socket) => {
     userId: string;
     playerName: string;
     avatarUrl?: string;
+    characterId?: string;
   }) => {
     try {
       const identity = socket.data.identity as SocketIdentity | undefined;
@@ -588,6 +610,9 @@ io.on('connection', (socket) => {
       if (room.players.has(data.userId)) {
         const existing = room.players.get(data.userId)!;
         existing.odiceId = socket.id;
+        if (room.category === 'KUIS_TEMPUR_ARENA') {
+          existing.characterId = normalizeKuisTempurCharacterId(data.characterId || existing.characterId);
+        }
         room.players.set(data.userId, existing);
         playerSockets.set(socket.id, data.code);
         socket.join(data.code);
@@ -607,6 +632,10 @@ io.on('connection', (socket) => {
         odiceId: socket.id,
         playerName: data.playerName,
         avatarUrl: data.avatarUrl,
+        characterId:
+          room.category === 'KUIS_TEMPUR_ARENA'
+            ? normalizeKuisTempurCharacterId(data.characterId)
+            : undefined,
         score: 0,
         correct: 0,
         wrong: 0,
@@ -663,6 +692,27 @@ io.on('connection', (socket) => {
     player.ready = !player.ready;
     room.players.set(data.userId, player);
     io.to(data.code).emit('player-list', getPlayersList(room));
+  });
+
+  socket.on('arena-character-select', (data: { code: string; userId: string; characterId: string }) => {
+    const identity = socket.data.identity as SocketIdentity | undefined;
+    const userId = identity?.sub || data.userId;
+    const room = rooms.get(data.code);
+    const player = room?.players.get(userId);
+    if (
+      !room ||
+      room.category !== 'KUIS_TEMPUR_ARENA' ||
+      room.status !== 'WAITING' ||
+      !player ||
+      player.odiceId !== socket.id
+    ) {
+      return;
+    }
+
+    player.characterId = normalizeKuisTempurCharacterId(data.characterId);
+    room.players.set(userId, player);
+    io.to(data.code).emit('player-list', getPlayersList(room));
+    socket.emit('arena-character-selected', { characterId: player.characterId });
   });
 
   socket.on('start-game', async (data: { code: string }) => {
@@ -955,6 +1005,7 @@ function getPlayersList(room: Room) {
     id: p.id,
     playerName: p.playerName,
     avatarUrl: p.avatarUrl,
+    characterId: p.characterId || DEFAULT_KUIS_TEMPUR_CHARACTER_ID,
     score: p.score,
     correct: p.correct,
     wrong: p.wrong,

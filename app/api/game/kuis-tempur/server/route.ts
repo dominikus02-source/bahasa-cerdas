@@ -8,6 +8,7 @@ type ArenaResult = {
   playerId: string;
   playerName: string;
   avatarUrl?: string | null;
+  characterId?: string | null;
   rank: number;
   score: number;
   kills: number;
@@ -84,7 +85,8 @@ export async function POST(req: NextRequest) {
     const roomName = String(body.roomName || "Kuis Tempur");
     const results = Array.isArray(body.results) ? (body.results as ArenaResult[]) : [];
 
-    if (!/^[A-HJ-NP-Z2-9]{6}$/.test(code) || !hostId || results.length < 1 || results.length > 2) {
+    const validPersistenceCode = /^[A-HJ-NP-Z2-9]{6}(?:-[A-Z0-9]{6,10})?$/.test(code);
+    if (!validPersistenceCode || !hostId || results.length < 1 || results.length > 10) {
       return NextResponse.json({ error: "Invalid match payload" }, { status: 400 });
     }
 

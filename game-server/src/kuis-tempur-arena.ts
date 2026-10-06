@@ -43,6 +43,7 @@ type PlayerLike = {
   odiceId: string;
   playerName: string;
   avatarUrl?: string;
+  characterId?: string;
   score: number;
   correct: number;
   wrong: number;
@@ -80,6 +81,7 @@ type ArenaEntity = {
   maxCombo: number;
   alive: boolean;
   avatarUrl?: string;
+  characterId: string;
   color: string;
   lastShotAt: number;
   respawnAt: number;
@@ -99,6 +101,7 @@ type ArenaMatch = {
   lastTickAt: number;
   lastSnapshotAt: number;
   seq: number;
+  persistenceCode: string;
   interval: ReturnType<typeof setInterval> | null;
   cleanupTimer: ReturnType<typeof setTimeout> | null;
   rematchVotes: Set<string>;
@@ -110,6 +113,7 @@ type PersistedArenaResult = {
   playerId: string;
   playerName: string;
   avatarUrl?: string;
+  characterId?: string;
   rank: number;
   score: number;
   kills: number;
@@ -211,6 +215,7 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
         combo: entity.combo,
         alive: entity.alive,
         avatarUrl: entity.avatarUrl,
+        characterId: entity.characterId,
         color: entity.color,
         respawnIn: entity.alive ? 0 : Math.max(0, (entity.respawnAt - now) / 1000),
         connected: entity.connected,
@@ -323,6 +328,7 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
         playerId: entity.id,
         playerName: entity.name,
         avatarUrl: entity.avatarUrl,
+        characterId: entity.characterId,
         rank: index + 1,
         score: entity.score,
         kills: entity.kills,
@@ -348,7 +354,7 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
 
     try {
       await persistResults({
-        code: match.room.code,
+        code: match.persistenceCode,
         roomName: match.room.name,
         hostId: match.room.hostId,
         startedAt: match.startedAt,
@@ -489,6 +495,7 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
         maxCombo: 0,
         alive: true,
         avatarUrl: player.avatarUrl,
+        characterId: player.characterId || "arga",
         color: HUMAN_COLORS[index % HUMAN_COLORS.length],
         lastShotAt: 0,
         respawnAt: 0,
@@ -525,6 +532,7 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
         combo: 0,
         maxCombo: 0,
         alive: true,
+        characterId: "arga",
         color: BOT_COLORS[index],
         lastShotAt: 0,
         respawnAt: 0,
@@ -534,6 +542,7 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
     }
 
     const now = Date.now();
+    const persistenceCode = `${room.code}-${now.toString(36).slice(-8).toUpperCase()}`;
     const match: ArenaMatch = {
       room,
       entities,
@@ -546,6 +555,7 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
       lastTickAt: now + 3000,
       lastSnapshotAt: 0,
       seq: 0,
+      persistenceCode,
       interval: null,
       cleanupTimer: null,
       rematchVotes: new Set(),

@@ -14,6 +14,11 @@ const io: any = {
   },
 };
 
+const characterIds = [
+  "arga", "ki-jaka", "bu-ratmi", "bu-sari", "eyang-kartala",
+  "bagas", "pak-warsa", "pendaki", "pak-empu", "arga",
+];
+
 const players = new Map(
   Array.from({ length: 10 }, (_, i) => {
     const id = `p${i + 1}`;
@@ -23,6 +28,7 @@ const players = new Map(
         id,
         odiceId: `socket-${id}`,
         playerName: `Pemain ${i + 1}`,
+        characterId: characterIds[i],
         score: 0,
         correct: 0,
         wrong: 0,
@@ -82,6 +88,7 @@ async function main() {
   const initial = latestState();
   assert("match starts with 10 humans", initial?.entities?.filter((e: any) => e.kind === "human").length === 10);
   assert("main multiplayer has zero bots", initial?.entities?.filter((e: any) => e.kind === "bot").length === 0);
+  assert("character choices survive into authoritative state", initial?.entities?.filter((e: any) => e.kind === "human").every((e: any, index: number) => e.characterId === characterIds[index]));
 
   for (let i = 1; i <= 10; i++) {
     arena.answer({ code: room.code, userId: `p${i}`, questionId: "q0", answerIndex: 0 });

@@ -17,6 +17,7 @@ import { gameSocket } from "@/lib/game/socket";
 import { setQuiet } from "@/lib/notif-quiet";
 import KuisTempurPhaserWorld from "@/components/game/KuisTempurPhaserWorld";
 import { kuisTempurAudio } from "@/lib/game/kuis-tempur-audio";
+import { getKuisTempurCharacter } from "@/lib/game/kuis-tempur-characters";
 
 type ArenaEntity = {
   id: string;
@@ -35,6 +36,7 @@ type ArenaEntity = {
   combo: number;
   alive: boolean;
   avatarUrl?: string | null;
+  characterId?: string;
   color?: string;
   respawnIn?: number;
   connected?: boolean;
@@ -76,6 +78,7 @@ type ArenaResult = {
     playerId: string;
     playerName: string;
     avatarUrl?: string | null;
+    characterId?: string;
     rank: number;
     score: number;
     kills: number;
@@ -90,37 +93,49 @@ type ArenaResult = {
 const WORLD_W = 1400;
 const WORLD_H = 840;
 
-function initials(name: string) {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join("")
-    .toUpperCase() || "?";
-}
-
-function ResultAvatar({
+function ResultCharacterPortrait({
+  characterId,
   name,
-  src,
   size = "md",
 }: {
+  characterId?: string | null;
   name: string;
-  src?: string | null;
   size?: "sm" | "md" | "lg";
 }) {
-  const dim = size === "lg" ? "h-20 w-20" : size === "sm" ? "h-10 w-10" : "h-14 w-14";
+  const character = getKuisTempurCharacter(characterId);
+  const dim = size === "lg" ? "h-24 w-24" : size === "sm" ? "h-11 w-11" : "h-16 w-16";
+
+  if (character.source === "arga") {
+    return (
+      <div className={`${dim} overflow-hidden rounded-[28%] border-2 border-white/20 bg-slate-950/60 shadow-[0_12px_32px_rgba(0,0,0,.3)]`}>
+        {/* Local authored asset; native img keeps this result crop predictable. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={character.previewUrl}
+          alt={`${name} sebagai ${character.name}`}
+          className="h-full w-full object-cover object-top"
+        />
+      </div>
+    );
+  }
+
+  const frame = character.frame!;
+  const isRuntime = character.source === "runtime-atlas";
+  const column = frame.x / frame.width;
+  const backgroundPositionX = `${(column / 3) * 100}%`;
+
   return (
-    <div className={`${dim} overflow-hidden rounded-[30%] border-2 border-white/20 bg-gradient-to-br from-cyan-300/30 to-violet-500/30 shadow-[0_12px_32px_rgba(0,0,0,.3)]`}>
-      {src ? (
-        // Avatar dapat berasal dari provider/profile berbeda.
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={src} alt={name} className="h-full w-full object-cover" />
-      ) : (
-        <div className="flex h-full w-full items-center justify-center bg-slate-950/60 text-sm font-black text-white">
-          {initials(name)}
-        </div>
-      )}
+    <div className={`${dim} flex items-center justify-center overflow-hidden rounded-[28%] border-2 border-white/20 bg-white/[.06] shadow-[0_12px_32px_rgba(0,0,0,.3)]`}>
+      <div
+        aria-label={`${name} sebagai ${character.name}`}
+        className={isRuntime ? "w-full aspect-[3/2]" : "w-full aspect-square"}
+        style={{
+          backgroundImage: `url(${character.atlasUrl})`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: isRuntime ? "400% 500%" : "400% 100%",
+          backgroundPosition: `${backgroundPositionX} 0%`,
+        }}
+      />
     </div>
   );
 }
@@ -559,7 +574,11 @@ export default function KuisTempurArena({
                     </div>
                     <div className="mt-3 flex justify-center">
                       <div className="relative">
-                        <ResultAvatar name={winner.playerName} src={winner.avatarUrl} size="lg" />
+                        <ResultCharacterPortrait
+                          characterId={winner.characterId}
+                          name={winner.playerName}
+                          size="lg"
+                        />
                         <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-amber-300 px-2.5 py-0.5 text-[9px] font-black tracking-wider text-amber-950">
                           #1
                         </div>
@@ -591,7 +610,11 @@ export default function KuisTempurArena({
                         }`}
                       >
                         <div className="flex justify-center">
-                          <ResultAvatar name={row.playerName} src={row.avatarUrl} size={isWinner ? "md" : "sm"} />
+                          <ResultCharacterPortrait
+                            characterId={row.characterId}
+                            name={row.playerName}
+                            size={isWinner ? "md" : "sm"}
+                          />
                         </div>
                         <div className={`mt-2 text-xs font-black ${isWinner ? "text-amber-200" : "text-slate-300"}`}>#{row.rank}</div>
                         <div className="mt-0.5 truncate text-xs font-black">{row.playerId === userId ? "Kamu" : row.playerName}</div>
