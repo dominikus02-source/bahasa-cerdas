@@ -180,7 +180,6 @@ services:
       TEST_GAME_DOMAIN: ${TEST_GAME_DOMAIN:-game-vps.bahasacerdas.com}
       NOVELIFY_DOMAIN: ${NOVELIFY_DOMAIN:-novelify.online}
       NOVELIFY_WWW_DOMAIN: ${NOVELIFY_WWW_DOMAIN:-www.novelify.online}
-      NOVELIFY_TEST_DOMAIN: ${NOVELIFY_TEST_DOMAIN:-vps.bahasacerdas.com}
     ports:
       - "80:80"
       - "443:443"
