@@ -9,7 +9,7 @@
   redir https://{$WEB_DOMAIN}{uri} permanent
 }
 
-{$WEB_DOMAIN}, {$TEST_WEB_DOMAIN} {
+{$WEB_DOMAIN} {
   encode zstd gzip
 
   reverse_proxy web:3000
@@ -23,7 +23,7 @@
   }
 }
 
-{$GAME_DOMAIN}, {$TEST_GAME_DOMAIN} {
+{$GAME_DOMAIN} {
   encode zstd gzip
 
   reverse_proxy game:3001
@@ -33,6 +33,34 @@
       roll_size 50MiB
       roll_keep 5
       roll_keep_for 168h
+    }
+  }
+}
+
+{$TEST_WEB_DOMAIN} {
+  encode zstd gzip
+
+  reverse_proxy bahasacerdas-kuis-tempur-staging-web:3000
+
+  log {
+    output file /var/log/caddy/staging-web-access.log {
+      roll_size 25MiB
+      roll_keep 3
+      roll_keep_for 72h
+    }
+  }
+}
+
+{$TEST_GAME_DOMAIN} {
+  encode zstd gzip
+
+  reverse_proxy bahasacerdas-kuis-tempur-staging-game:3001
+
+  log {
+    output file /var/log/caddy/staging-game-access.log {
+      roll_size 25MiB
+      roll_keep 3
+      roll_keep_for 72h
     }
   }
 }
