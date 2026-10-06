@@ -1,6 +1,9 @@
 name: supabase-bc-prod
 
 services:
+  auth:
+    image: supabase/gotrue:v2.197.0
+
   api-gw:
     ports: !override
       - "127.0.0.1:54380:8000"
