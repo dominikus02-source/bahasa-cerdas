@@ -1,0 +1,31 @@
+services:
+  api-gw:
+    ports: !override
+      - "127.0.0.1:8000:8000/tcp"
+
+  studio:
+    environment:
+      SUPABASE_PUBLIC_URL: https://supabase.bahasacerdas.com
+      DEFAULT_ORGANIZATION_NAME: BahasaCerdas
+      DEFAULT_PROJECT_NAME: BahasaCerdas-PROD
+
+  auth:
+    environment:
+      API_EXTERNAL_URL: https://supabase.bahasacerdas.com/auth/v1
+      GOTRUE_SITE_URL: https://www.bahasacerdas.com
+      GOTRUE_URI_ALLOW_LIST: https://www.bahasacerdas.com/**,https://bahasacerdas.com/**,https://game.bahasacerdas.com/**
+      GOTRUE_MAILER_AUTOCONFIRM: "true"
+      GOTRUE_EXTERNAL_PHONE_ENABLED: "false"
+
+  storage:
+    environment:
+      STORAGE_PUBLIC_URL: https://supabase.bahasacerdas.com
+
+  functions:
+    environment:
+      SUPABASE_PUBLIC_URL: https://supabase.bahasacerdas.com
+
+  supavisor:
+    ports: !override
+      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:6543:6543"
