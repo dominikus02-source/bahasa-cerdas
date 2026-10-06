@@ -50,28 +50,47 @@ jobs:
       - name: Build
         run: npm run build
 
-
-  game-server-build:
-    runs-on: ubuntu-latest
-    env:
-      DATABASE_URL: "postgresql://user:pass@localhost:5432/db"
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-          cache-dependency-path: game-server/package-lock.json
-
-      - name: Install game server dependencies
+      - name: Build realtime game server
         working-directory: game-server
-        run: npm ci
+        run: |
+          npm ci
+          npx prisma generate
+          npm run build
 
-      - name: Generate game server Prisma client
-        working-directory: game-server
-        run: npx prisma generate
+      - name: Verify VPS web container build
+        run: |
+          cat >/tmp/bc-web-ci.env <<'EOF'
+          DATABASE_URL=postgresql://user:pass@localhost:5432/db
+          DIRECT_URL=postgresql://user:pass@localhost:5432/db
+          NEXT_PUBLIC_SUPABASE_URL=https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY=placeholder-anon-key
+          NEXT_PUBLIC_SITE_URL=https://example.com
+          EOF
+          DOCKER_BUILDKIT=1 docker build \
+            -f Dockerfile.web \
+            --secret id=web_env,src=/tmp/bc-web-ci.env \
+            -t bahasacerdas-web-ci .
+          rm -f /tmp/bc-web-ci.env
 
-      - name: Build game server
-        working-directory: game-server
-        run: npm run build
+
+      - name: Verify VPS cron container build
+        run: docker build -f Dockerfile.cron -t bahasacerdas-cron-ci .
+
+      - name: Validate VPS compose
+        run: |
+          mkdir -p /tmp/bc-config
+          cat >/tmp/bc-config/stack.env <<'EOF'
+          REDIS_PASSWORD=ci-placeholder
+          ACME_EMAIL=ci@example.com
+          APEX_DOMAIN=example.com
+          WEB_DOMAIN=www.example.com
+          GAME_DOMAIN=game.example.com
+          CADDYFILE_PATH=./Caddyfile.cutover
+          EOF
+          cat >/tmp/bc-config/web.env <<'EOF'
+          DATABASE_URL=postgresql://user:pass@localhost:5432/db
+          EOF
+          BC_CONFIG_DIR=/tmp/bc-config docker compose \
+            --env-file /tmp/bc-config/stack.env \
+            -f ops/vps/docker-compose.yml \
+            config -q

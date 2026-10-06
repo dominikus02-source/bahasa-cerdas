@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Production VPS containers use Next.js standalone output. Vercel ignores
+  // this packaging detail, so the migration can be tested before cutover.
+  output: "standalone",
   serverExternalPackages: ['pdf-parse-modern', 'mammoth', '@napi-rs/canvas'],
   outputFileTracingIncludes: {
     '/api/main-bersama/teacher/import-document': [
@@ -11,7 +14,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverActions: {
-      allowedOrigins: ["localhost:3000", "bahasacerdas.com", "www.bahasacerdas.com"],
+      allowedOrigins: ["localhost:3000", "bahasacerdas.com", "www.bahasacerdas.com", "vps.bahasacerdas.com"],
       // Server Actions carry small payloads only (forms/metadata). Large file
       // uploads go directly to Supabase Storage from the client, NOT through a
       // Server Action — so keep this tight to limit abuse.

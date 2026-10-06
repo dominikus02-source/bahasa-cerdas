@@ -39,6 +39,7 @@ interface Player {
   ready: boolean;
   hearts?: number;
   eliminated?: boolean;
+  lastAnsweredQuestion?: number;
 }
 
 interface Room {
@@ -56,6 +57,7 @@ interface Room {
   questions: Question[];
   players: Map<string, Player>;
   startedAt?: Date;
+  questionStartedAt?: number;
 }
 
 interface Question {
@@ -193,6 +195,14 @@ async function createMatchRoom(p1: QueuePlayer, p2: QueuePlayer, gameType: strin
     room.players.set(p2.userId, pl2);
     rooms.set(code, room);
 
+    await prisma.gameSession.createMany({
+      data: [
+        { roomId: room.id, userId: p1.userId, playerName: p1.userName, avatarUrl: p1.avatarUrl },
+        { roomId: room.id, userId: p2.userId, playerName: p2.userName, avatarUrl: p2.avatarUrl },
+      ],
+      skipDuplicates: true,
+    });
+
     const s1 = io.sockets.sockets.get(p1.socketId);
     const s2 = io.sockets.sockets.get(p2.socketId);
     if (s1) { s1.join(code); playerSockets.set(p1.socketId, code); }
@@ -237,7 +247,7 @@ async function createMatchRoom(p1: QueuePlayer, p2: QueuePlayer, gameType: strin
 
     room.players.forEach((p) => {
       p.score = 0; p.correct = 0; p.wrong = 0; p.streak = 0;
-      p.maxStreak = 0; p.answerTimes = []; p.ready = false;
+      p.maxStreak = 0; p.answerTimes = []; p.ready = false; p.lastAnsweredQuestion = -1;
     });
 
     await prisma.gameRoom.update({
@@ -267,19 +277,29 @@ function generateCode(): string {
   return code;
 }
 
-const httpServer = createServer((req, res) => {
+const httpServer = createServer(async (req, res) => {
   if (req.url === '/health' || req.url === '/') {
-    res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store' });
-    res.end(JSON.stringify({
-      ok: true,
-      // Keep the legacy fields during the VPS migration so the existing
-      // Compose/Caddy health gates can promote the new realtime server safely.
-      status: 'ok',
-      db: 'up',
-      service: 'bahasacerdas-game',
-      rooms: rooms.size,
-      uptime: Math.round(process.uptime()),
-    }));
+    try {
+      await prisma.$queryRaw`SELECT 1`;
+      res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store' });
+      res.end(JSON.stringify({
+        ok: true,
+        status: 'ok',
+        db: 'up',
+        service: 'bahasacerdas-game',
+        rooms: rooms.size,
+        queue: matchmakingQueue.length,
+        uptime: Math.round(process.uptime()),
+      }));
+    } catch {
+      res.writeHead(503, { 'content-type': 'application/json', 'cache-control': 'no-store' });
+      res.end(JSON.stringify({
+        ok: false,
+        status: 'degraded',
+        db: 'down',
+        service: 'bahasacerdas-game',
+      }));
+    }
     return;
   }
   res.writeHead(404, { 'content-type': 'application/json' });
@@ -422,6 +442,11 @@ io.use((socket, next) => {
   const identity = verifySocketToken(socket.handshake.auth?.token);
   if (!identity) return next(new Error('Unauthorized game connection'));
   socket.data.identity = identity;
+  socket.data.user = {
+    id: identity.sub,
+    name: identity.name,
+    avatarUrl: identity.avatar || undefined,
+  };
   return next();
 });
 
@@ -442,11 +467,10 @@ io.on('connection', (socket) => {
   }) => {
     try {
       const identity = socket.data.identity as SocketIdentity | undefined;
-      if (identity) {
-        data.hostId = identity.sub;
-        data.hostName = identity.name;
-        data.hostAvatar = identity.avatar || undefined;
-      }
+      if (!identity) return socket.emit('error', { message: 'Sesi tidak valid' });
+      data.hostId = identity.sub;
+      data.hostName = identity.name;
+      data.hostAvatar = identity.avatar || undefined;
 
       let code = generateCode();
       while (rooms.has(code)) code = generateCode();
@@ -535,6 +559,16 @@ io.on('connection', (socket) => {
       room.players.set(data.hostId, hostPlayer);
       rooms.set(code, room);
       playerSockets.set(socket.id, code);
+
+      await prisma.gameSession.create({
+        data: {
+          roomId: room.id,
+          userId: data.hostId,
+          playerName: data.hostName,
+          avatarUrl: data.hostAvatar,
+        },
+      });
+
       socket.join(code);
       socket.emit('room-created', {
         roomId: dbRoom.id,
@@ -561,11 +595,10 @@ io.on('connection', (socket) => {
   }) => {
     try {
       const identity = socket.data.identity as SocketIdentity | undefined;
-      if (identity) {
-        data.userId = identity.sub;
-        data.playerName = identity.name;
-        data.avatarUrl = identity.avatar || undefined;
-      }
+      if (!identity) return socket.emit('error', { message: 'Sesi tidak valid' });
+      data.userId = identity.sub;
+      data.playerName = identity.name;
+      data.avatarUrl = identity.avatar || undefined;
       const room = rooms.get(data.code);
       if (!room) {
         socket.emit('error', { message: 'Room tidak ditemukan' });
@@ -686,15 +719,17 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('toggle-ready', (data: { code: string; userId: string }) => {
+  socket.on('toggle-ready', (data: { code: string; userId?: string }) => {
+    const identity = socket.data.identity as SocketIdentity | undefined;
+    if (!identity) return;
     const room = rooms.get(data.code);
     if (!room) return;
 
-    const player = room.players.get(data.userId);
-    if (!player || player.id === room.hostId) return;
+    const player = room.players.get(identity.sub);
+    if (!player || player.id === room.hostId || player.odiceId !== socket.id) return;
 
     player.ready = !player.ready;
-    room.players.set(data.userId, player);
+    room.players.set(identity.sub, player);
     io.to(data.code).emit('player-list', getPlayersList(room));
   });
 
@@ -721,8 +756,10 @@ io.on('connection', (socket) => {
 
   socket.on('start-game', async (data: { code: string }) => {
     try {
+      const identity = socket.data.identity as SocketIdentity | undefined;
+      if (!identity) return;
       const room = rooms.get(data.code);
-      if (!room) return;
+      if (!room || room.hostId !== identity.sub) return;
 
       if (room.category === 'KUIS_TEMPUR_ARENA') {
         const caller = Array.from(room.players.values()).find((player) => player.odiceId === socket.id);
@@ -753,6 +790,7 @@ io.on('connection', (socket) => {
         p.maxStreak = 0;
         p.answerTimes = [];
         p.ready = false;
+        p.lastAnsweredQuestion = -1;
         p.hearts = room.gameType === 'SURVIVAL' ? 3 : undefined;
         p.eliminated = false;
       });
@@ -781,39 +819,46 @@ io.on('connection', (socket) => {
 
   socket.on('submit-answer', async (data: {
     code: string;
-    userId: string;
+    userId?: string;
     questionIndex: number;
     answerIndex: number;
     timeSpent: number;
   }) => {
+    const identity = socket.data.identity as SocketIdentity | undefined;
+    if (!identity) return;
+
     const room = rooms.get(data.code);
     if (!room || room.status !== 'IN_PROGRESS') return;
     if (data.questionIndex !== room.currentQuestion) return;
 
-    const player = room.players.get(data.userId);
-    if (!player) return;
+    const player = room.players.get(identity.sub);
+    if (!player || player.odiceId !== socket.id || player.lastAnsweredQuestion === data.questionIndex) return;
 
     const question = room.questions[data.questionIndex];
     const isCorrect = data.answerIndex === parseInt(question.correctAnswer);
+    const elapsed = Math.min(
+      room.timePerQuestion,
+      Math.max(0, (Date.now() - (room.questionStartedAt || Date.now())) / 1000)
+    );
 
-    player.answerTimes.push(data.timeSpent);
+    player.lastAnsweredQuestion = data.questionIndex;
+    player.answerTimes.push(elapsed);
 
     if (isCorrect) {
       player.streak++;
       player.correct++;
       const bonusStreak = Math.min(player.streak - 1, 5) * 10;
-      const timeBonus = Math.floor((data.timeSpent / room.timePerQuestion) * 50);
 
       if (room.gameType === 'GOLD_RUSH') {
         const goldEarned = 50 + bonusStreak + Math.floor(Math.random() * 50);
         player.score += goldEarned;
       } else if (room.gameType === 'SPEED_BATTLE') {
-        const speedBonus = Math.max(0, Math.floor((1 - data.timeSpent / room.timePerQuestion) * 150));
+        const speedBonus = Math.max(0, Math.floor((1 - elapsed / room.timePerQuestion) * 150));
         player.score += 50 + speedBonus + bonusStreak;
       } else if (room.gameType === 'SURVIVAL') {
         player.score += 100 + bonusStreak;
       } else if (room.gameType === 'TIMED_TRIAL') {
-        const timeBonus = Math.floor((1 - data.timeSpent / room.timePerQuestion) * 100);
+        const timeBonus = Math.floor((1 - elapsed / room.timePerQuestion) * 100);
         player.score += 50 + timeBonus;
       } else {
         player.score += 100 + bonusStreak;
@@ -824,14 +869,18 @@ io.on('connection', (socket) => {
       }
 
       if (room.gameType === 'GOLD_RUSH') {
-        const otherPlayers = Array.from(room.players.values()).filter(p => p.id !== player.id && p.score > 0);
+        const otherPlayers = Array.from(room.players.values()).filter(
+          (candidate) => candidate.id !== player.id && candidate.score > 0
+        );
         if (otherPlayers.length > 0 && Math.random() < 0.3) {
           const target = otherPlayers[Math.floor(Math.random() * otherPlayers.length)];
           const stolen = Math.min(30, target.score);
           target.score = Math.max(0, target.score - stolen);
           player.score += stolen;
           room.players.set(target.id, target);
-          io.to(data.code).emit('notification', { message: `${player.playerName} mencuri ${stolen} emas dari ${target.playerName}!` });
+          io.to(data.code).emit('notification', {
+            message: `${player.playerName} mencuri ${stolen} emas dari ${target.playerName}!`,
+          });
         }
       }
     } else {
@@ -843,15 +892,13 @@ io.on('connection', (socket) => {
       }
       if (room.gameType === 'SURVIVAL') {
         player.hearts = (player.hearts || 3) - 1;
-        if (player.hearts <= 0) {
-          player.eliminated = true;
-        }
+        if (player.hearts <= 0) player.eliminated = true;
       }
     }
 
-    room.players.set(data.userId, player);
+    room.players.set(identity.sub, player);
     io.to(data.code).emit('score-update', {
-      playerId: data.userId,
+      playerId: identity.sub,
       playerName: player.playerName,
       score: player.score,
       correct: player.correct,
@@ -861,11 +908,10 @@ io.on('connection', (socket) => {
       eliminated: player.eliminated,
     });
 
-    io.to(data.code).emit('answer-result', {
-      playerId: data.userId,
+    socket.emit('answer-result', {
+      playerId: identity.sub,
       playerName: player.playerName,
       isCorrect,
-      correctAnswer: question.correctAnswer,
       score: player.score,
     });
   });
@@ -912,14 +958,16 @@ io.on('connection', (socket) => {
   });
 
   socket.on('end-game', async (data: { code: string }) => {
+    const identity = socket.data.identity as SocketIdentity | undefined;
     const room = rooms.get(data.code);
-    if (!room) return;
+    if (!identity || !room || room.hostId !== identity.sub) return;
     await finishGame(room);
   });
 
-  socket.on('leave-room', (data: { code: string; userId: string }) => {
+  socket.on('leave-room', (data: { code: string; userId?: string }) => {
     const identity = socket.data.identity as SocketIdentity | undefined;
-    const userId = identity?.sub || data.userId;
+    if (!identity) return;
+    const userId = identity.sub;
     const room = rooms.get(data.code);
     const player = room?.players.get(userId);
     if (!room || !player || player.odiceId !== socket.id) return;
@@ -931,54 +979,63 @@ io.on('connection', (socket) => {
   });
 
   // Matchmaking
-  socket.on('join-queue', (data: { userId: string; userName: string; avatarUrl?: string; gameType?: string }) => {
-    if (matchmakingQueue.some(p => p.userId === data.userId)) {
+  socket.on('join-queue', (data: { userId?: string; userName?: string; avatarUrl?: string; gameType?: string }) => {
+    const identity = socket.data.identity as SocketIdentity | undefined;
+    if (!identity) return;
+    if (matchmakingQueue.some((player) => player.userId === identity.sub)) {
       socket.emit('queue-status', { inQueue: true, message: 'Sudah dalam antrean' });
       return;
     }
 
-    const qp: QueuePlayer = {
-      userId: data.userId,
-      userName: data.userName,
-      avatarUrl: data.avatarUrl,
+    const queued: QueuePlayer = {
+      userId: identity.sub,
+      userName: identity.name,
+      avatarUrl: identity.avatar || undefined,
       socketId: socket.id,
       gameType: data.gameType || 'KUIS_BATTLE',
       joinedAt: new Date(),
     };
 
-    matchmakingQueue.push(qp);
-    socket.emit('queue-status', { inQueue: true, position: matchmakingQueue.length, message: 'Mencari lawan sepadan...' });
-    console.log(`[Matchmaking] ${data.userName} joined queue (${matchmakingQueue.length} waiting)`);
+    matchmakingQueue.push(queued);
+    socket.emit('queue-status', {
+      inQueue: true,
+      position: matchmakingQueue.length,
+      message: 'Mencari lawan sepadan...',
+    });
+    console.log(`[Matchmaking] ${identity.name} joined queue (${matchmakingQueue.length} waiting)`);
 
     tryMatchPlayers();
 
-    // Auto-remove after timeout
     setTimeout(() => {
-      const stillIn = matchmakingQueue.find(p => p.userId === data.userId);
+      const stillIn = matchmakingQueue.find((player) => player.userId === identity.sub);
       if (stillIn) {
-        removeFromQueue(data.userId);
+        removeFromQueue(identity.sub);
         socket.emit('queue-timeout', { message: 'Tidak ada lawan ditemukan. Coba lagi!' });
-        console.log(`[Matchmaking] ${data.userName} queue timeout`);
+        console.log(`[Matchmaking] ${identity.name} queue timeout`);
       }
     }, MATCH_TIMEOUT_MS);
   });
 
-  socket.on('leave-queue', (data: { userId: string }) => {
-    removeFromQueue(data.userId);
+  socket.on('leave-queue', (_data: { userId?: string }) => {
+    const identity = socket.data.identity as SocketIdentity | undefined;
+    if (!identity) return;
+    removeFromQueue(identity.sub);
     socket.emit('queue-status', { inQueue: false, message: 'Keluar dari antrean' });
-    console.log(`[Matchmaking] ${data.userId} left queue`);
+    console.log(`[Matchmaking] ${identity.sub} left queue`);
   });
 
-  socket.on('rematch', (data: { userId: string; userName: string; avatarUrl?: string; gameType?: string }) => {
-    const qp: QueuePlayer = {
-      userId: data.userId,
-      userName: data.userName,
-      avatarUrl: data.avatarUrl,
+  socket.on('rematch', (data: { userId?: string; userName?: string; avatarUrl?: string; gameType?: string }) => {
+    const identity = socket.data.identity as SocketIdentity | undefined;
+    if (!identity) return;
+    const queued: QueuePlayer = {
+      userId: identity.sub,
+      userName: identity.name,
+      avatarUrl: identity.avatar || undefined,
       socketId: socket.id,
       gameType: data.gameType || 'KUIS_BATTLE',
       joinedAt: new Date(),
     };
-    matchmakingQueue.push(qp);
+    matchmakingQueue.push(queued);
     socket.emit('queue-status', { inQueue: true, message: 'Mencari lawan sepadan...' });
     tryMatchPlayers();
   });
@@ -1136,6 +1193,7 @@ function emitQuestion(room: Room) {
   }
 
   const question = room.questions[room.currentQuestion];
+  room.questionStartedAt = Date.now();
   io.to(room.code).emit('show-question', {
     index: room.currentQuestion,
     total: room.questions.length,
@@ -1147,7 +1205,6 @@ function emitQuestion(room: Room) {
     passage: question.passage,
     type: question.type,
     options: question.options,
-    correctAnswer: question.correctAnswer,
     difficulty: question.difficulty,
     timePerQuestion: room.timePerQuestion,
   });
@@ -1159,7 +1216,7 @@ function emitQuestion(room: Room) {
     });
 
     room.players.forEach((p) => {
-      if (p.answerTimes.length <= room.currentQuestion) {
+      if (p.lastAnsweredQuestion !== room.currentQuestion) {
         p.streak = 0;
         p.wrong++;
         p.answerTimes.push(room.timePerQuestion);

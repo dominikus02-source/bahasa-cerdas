@@ -1,0 +1,209 @@
+name: bahasacerdas-prod
+
+services:
+  redis:
+    image: redis:7.4-alpine
+    restart: unless-stopped
+    cpus: 1.0
+    mem_limit: 1g
+    pids_limit: 256
+    logging:
+      driver: json-file
+      options:
+        max-size: "25m"
+        max-file: "4"
+    command:
+      - sh
+      - -c
+      - exec redis-server --appendonly yes --appendfsync everysec --requirepass "$REDIS_PASSWORD"
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" ping | grep -q PONG"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+  web:
+    build:
+      context: ../..
+      dockerfile: Dockerfile.web
+      args:
+        WEB_BUILD_FINGERPRINT: ${WEB_BUILD_FINGERPRINT:-manual}
+      secrets:
+        - web_env
+    image: bahasacerdas/web:${IMAGE_TAG:-local}
+    restart: unless-stopped
+    cpus: 6.0
+    mem_limit: 4g
+    pids_limit: 1024
+    stop_grace_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: "25m"
+        max-file: "4"
+    env_file:
+      - ${BC_CONFIG_DIR:-/opt/bahasacerdas/config}/web.env
+    environment:
+      NODE_ENV: production
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+    ports:
+      - "127.0.0.1:3000:3000"
+    networks:
+      - edge
+      - internal
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  game:
+    profiles: ["realtime"]
+    build:
+      context: ../../game-server
+      dockerfile: Dockerfile
+    image: bahasacerdas/game:${IMAGE_TAG:-local}
+    restart: unless-stopped
+    cpus: 4.0
+    mem_limit: 2g
+    pids_limit: 512
+    stop_grace_period: 15s
+    logging:
+      driver: json-file
+      options:
+        max-size: "25m"
+        max-file: "4"
+    env_file:
+      - ${BC_CONFIG_DIR:-/opt/bahasacerdas/config}/game.env
+    environment:
+      NODE_ENV: production
+      PORT: "3001"
+      GAME_PORT: "3001"
+      BAHASACERDAS_WEB_URL: https://${WEB_DOMAIN}
+      GAME_ALLOWED_ORIGINS: ${GAME_ALLOWED_ORIGINS:-https://www.bahasacerdas.com,https://bahasacerdas.com}
+    ports:
+      - "127.0.0.1:3001:3001"
+    networks:
+      - edge
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3001/health').then(r=>r.json()).then(j=>{if(j.status!=='ok'||j.db!=='up')process.exit(1)}).catch(()=>process.exit(1))\""]
+      interval: 15s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  agent:
+    profiles: ["agent"]
+    build:
+      context: ../..
+      dockerfile: Dockerfile.worker
+    image: bahasacerdas/agent:${IMAGE_TAG:-local}
+    restart: unless-stopped
+    cpus: 2.0
+    mem_limit: 2g
+    pids_limit: 512
+    stop_grace_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: "25m"
+        max-file: "4"
+    env_file:
+      - ${BC_CONFIG_DIR:-/opt/bahasacerdas/config}/worker.env
+    environment:
+      NODE_ENV: production
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+    networks:
+      - internal
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  cron:
+    profiles: ["scheduler"]
+    build:
+      context: ../..
+      dockerfile: Dockerfile.cron
+    image: bahasacerdas/cron:${IMAGE_TAG:-local}
+    restart: unless-stopped
+    cpus: 0.5
+    mem_limit: 512m
+    pids_limit: 128
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "4"
+    env_file:
+      - ${BC_CONFIG_DIR:-/opt/bahasacerdas/config}/cron.env
+    networks:
+      - internal
+    depends_on:
+      web:
+        condition: service_healthy
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    cpus: 1.0
+    mem_limit: 512m
+    pids_limit: 256
+    stop_grace_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "25m"
+        max-file: "4"
+    environment:
+      ACME_EMAIL: ${ACME_EMAIL}
+      APEX_DOMAIN: ${APEX_DOMAIN}
+      WEB_DOMAIN: ${WEB_DOMAIN}
+      GAME_DOMAIN: ${GAME_DOMAIN}
+      TEST_WEB_DOMAIN: ${TEST_WEB_DOMAIN:-vps.bahasacerdas.com}
+      TEST_GAME_DOMAIN: ${TEST_GAME_DOMAIN:-game-vps.bahasacerdas.com}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    networks:
+      - edge
+    volumes:
+      - ${CADDYFILE_PATH:-./Caddyfile}:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+      - /opt/bahasacerdas/logs/caddy:/var/log/caddy
+    depends_on:
+      web:
+        condition: service_healthy
+
+secrets:
+  web_env:
+    file: ${BC_CONFIG_DIR:-/opt/bahasacerdas/config}/web.env
+
+networks:
+  edge:
+    driver: bridge
+  internal:
+    driver: bridge
+
+volumes:
+  redis_data:
+  caddy_data:
+  caddy_config:
