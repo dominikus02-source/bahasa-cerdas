@@ -321,7 +321,7 @@ export const gameSocket = {
     return () => socket?.off('queue-timeout', callback);
   },
 
-  joinQueue(data: { userId: string; userName: string; avatarUrl?: string; gameType?: string }) {
+  joinQueue(data: { userId: string; userName: string; avatarUrl?: string; gameType?: string; characterId?: string }) {
     socket?.emit('join-queue', data);
   },
 

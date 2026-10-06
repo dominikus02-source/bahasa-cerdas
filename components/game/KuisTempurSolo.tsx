@@ -18,6 +18,10 @@ import KuisTempurPhaserWorld, {
   type PhaserArenaEntity,
   type PhaserArenaState,
 } from "@/components/game/KuisTempurPhaserWorld";
+import KuisTempurDisplayShell, {
+  KuisTempurDisplayChoice,
+  type KuisTempurDisplayMode,
+} from "@/components/game/KuisTempurDisplayShell";
 import { QUESTION_BANK_EXPANDED, type BankQuestion } from "@/lib/game/question-bank";
 import {
   KUIS_TEMPUR_CHARACTERS,
@@ -177,6 +181,8 @@ export default function KuisTempurSolo({ backHref = "/arena/game/kuis-tempur" }:
   const [xpEarned, setXpEarned] = useState<number | null>(null);
   const [finalStats, setFinalStats] = useState({ score: 0, kills: 0, correct: 0, wrong: 0, combo: 0 });
   const [resultReason, setResultReason] = useState<"survive" | "ko">("survive");
+  const [displayChoiceOpen, setDisplayChoiceOpen] = useState(false);
+  const [preferredDisplayMode, setPreferredDisplayMode] = useState<KuisTempurDisplayMode>("normal");
 
   const arenaRef = useRef(arena);
   const questionDeckRef = useRef<BankQuestion[]>([]);
@@ -294,6 +300,12 @@ export default function KuisTempurSolo({ backHref = "/arena/game/kuis-tempur" }:
     nextQuestion();
     kuisTempurAudio.play("countdown");
   }, [nextQuestion, selectedCharacterId]);
+
+  const chooseDisplayAndStart = useCallback((mode: KuisTempurDisplayMode) => {
+    setPreferredDisplayMode(mode);
+    setDisplayChoiceOpen(false);
+    startGame();
+  }, [startGame]);
 
   const updatePlayer = useCallback((updater: (entity: PhaserArenaEntity) => PhaserArenaEntity) => {
     setArena((current) => ({
@@ -634,7 +646,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game/kuis-tempur" }:
                 </div>
 
                 <button
-                  onClick={startGame}
+                  onClick={() => setDisplayChoiceOpen(true)}
                   className="mt-auto flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-300 via-orange-400 to-rose-500 px-5 py-4 text-base font-black text-[#2c0d00] shadow-[0_16px_38px_rgba(244,63,94,.18)] transition hover:-translate-y-0.5"
                 >
                   <Zap size={19} /> MASUK KAMPUNG KATA
@@ -643,6 +655,12 @@ export default function KuisTempurSolo({ backHref = "/arena/game/kuis-tempur" }:
             </div>
           </section>
         </div>
+        {displayChoiceOpen && (
+          <KuisTempurDisplayChoice
+            title="Siap masuk Kampung Kata?"
+            onChoose={chooseDisplayAndStart}
+          />
+        )}
       </main>
     );
   }
@@ -708,6 +726,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game/kuis-tempur" }:
   }
 
   return (
+    <KuisTempurDisplayShell preferredMode={preferredDisplayMode}>
     <main className="fixed inset-0 z-[70] overflow-hidden bg-[#030712] text-white">
       <div className="absolute inset-0">
         <KuisTempurPhaserWorld
@@ -843,5 +862,6 @@ export default function KuisTempurSolo({ backHref = "/arena/game/kuis-tempur" }:
         </section>
       </div>
     </main>
+    </KuisTempurDisplayShell>
   );
 }

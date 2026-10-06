@@ -16,6 +16,7 @@ import {
 import { gameSocket } from "@/lib/game/socket";
 import { setQuiet } from "@/lib/notif-quiet";
 import KuisTempurPhaserWorld from "@/components/game/KuisTempurPhaserWorld";
+import KuisTempurDisplayShell, { type KuisTempurDisplayMode } from "@/components/game/KuisTempurDisplayShell";
 import { kuisTempurAudio } from "@/lib/game/kuis-tempur-audio";
 import { getKuisTempurCharacter } from "@/lib/game/kuis-tempur-characters";
 
@@ -144,10 +145,12 @@ export default function KuisTempurArena({
   code,
   userId,
   onExit,
+  preferredDisplayMode = "normal",
 }: {
   code: string;
   userId: string;
   onExit: () => void;
+  preferredDisplayMode?: KuisTempurDisplayMode;
 }) {
   const stateRef = useRef<ArenaState>({ seq: 0, timeLeft: 180, entities: [] });
 
@@ -328,6 +331,7 @@ export default function KuisTempurArena({
   const myResult = rankedResults.find((row) => row.playerId === userId);
 
   return (
+    <KuisTempurDisplayShell preferredMode={preferredDisplayMode}>
     <main
       className="fixed inset-0 z-[80] overflow-hidden bg-[#030712] text-white"
       onPointerDownCapture={() => void kuisTempurAudio.unlock()}
@@ -737,5 +741,6 @@ export default function KuisTempurArena({
         WASD / panah untuk bergerak
       </div>
     </main>
+    </KuisTempurDisplayShell>
   );
 }

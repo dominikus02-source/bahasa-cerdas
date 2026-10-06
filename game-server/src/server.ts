@@ -59,6 +59,9 @@ interface Room {
   players: Map<string, Player>;
   startedAt?: Date;
   questionStartedAt?: number;
+  matchmaking?: 'PUBLIC' | 'PRIVATE';
+  autoStartDeadline?: number;
+  autoStartInterval?: ReturnType<typeof setInterval>;
 }
 
 interface Question {
@@ -106,6 +109,49 @@ function normalizeKuisTempurCharacterId(value?: string) {
   return value && KUIS_TEMPUR_CHARACTER_IDS.has(value)
     ? value
     : DEFAULT_KUIS_TEMPUR_CHARACTER_ID;
+}
+
+function clearPublicArenaCountdown(room: Room) {
+  if (room.autoStartInterval) clearInterval(room.autoStartInterval);
+  room.autoStartInterval = undefined;
+  room.autoStartDeadline = undefined;
+}
+
+async function startPublicArena(room: Room) {
+  if (room.status !== 'WAITING' || room.matchmaking !== 'PUBLIC' || room.players.size < 2) return;
+  clearPublicArenaCountdown(room);
+  io.to(room.code).emit('match-countdown', { seconds: 0 });
+  await kuisTempurArena.start(room);
+}
+
+function schedulePublicArenaStart(room: Room) {
+  if (room.status !== 'WAITING' || room.matchmaking !== 'PUBLIC') return;
+  if (room.players.size >= MAX_KUIS_TEMPUR_PLAYERS) {
+    void startPublicArena(room);
+    return;
+  }
+  if (room.players.size < 2 || room.autoStartInterval) return;
+
+  room.autoStartDeadline = Date.now() + 12_000;
+  io.to(room.code).emit('match-countdown', { seconds: 12 });
+  room.autoStartInterval = setInterval(() => {
+    if (room.status !== 'WAITING') {
+      clearPublicArenaCountdown(room);
+      return;
+    }
+    if (room.players.size < 2) {
+      clearPublicArenaCountdown(room);
+      io.to(room.code).emit('match-countdown', { seconds: -1 });
+      return;
+    }
+    if (room.players.size >= MAX_KUIS_TEMPUR_PLAYERS) {
+      void startPublicArena(room);
+      return;
+    }
+    const seconds = Math.max(0, Math.ceil(((room.autoStartDeadline || Date.now()) - Date.now()) / 1000));
+    io.to(room.code).emit('match-countdown', { seconds });
+    if (seconds <= 0) void startPublicArena(room);
+  }, 1000);
 }
 
 function tryMatchPlayers() {
@@ -994,9 +1040,88 @@ io.on('connection', (socket) => {
   });
 
   // Matchmaking
-  socket.on('join-queue', (data: { userId?: string; userName?: string; avatarUrl?: string; gameType?: string }) => {
+  socket.on('join-queue', (data: { userId?: string; userName?: string; avatarUrl?: string; gameType?: string; characterId?: string }) => {
     const identity = socket.data.identity as SocketIdentity | undefined;
     if (!identity) return;
+
+    if (data.gameType === 'KUIS_TEMPUR_ARENA') {
+      const existingRoom = Array.from(rooms.values()).find((candidate) =>
+        candidate.category === 'KUIS_TEMPUR_ARENA' &&
+        candidate.matchmaking === 'PUBLIC' &&
+        candidate.status === 'WAITING' &&
+        candidate.players.size < MAX_KUIS_TEMPUR_PLAYERS
+      );
+
+      const player: Player = {
+        id: identity.sub,
+        odiceId: socket.id,
+        playerName: identity.name,
+        avatarUrl: identity.avatar || undefined,
+        characterId: normalizeKuisTempurCharacterId(data.characterId),
+        score: 0,
+        correct: 0,
+        wrong: 0,
+        streak: 0,
+        maxStreak: 0,
+        answerTimes: [],
+        ready: true,
+      };
+
+      if (existingRoom) {
+        existingRoom.players.set(identity.sub, player);
+        playerSockets.set(socket.id, existingRoom.code);
+        socket.join(existingRoom.code);
+        socket.emit('room-joined', {
+          roomId: existingRoom.id,
+          code: existingRoom.code,
+          name: existingRoom.name,
+          isHost: identity.sub === existingRoom.hostId,
+          player,
+        });
+        io.to(existingRoom.code).emit('player-list', getPlayersList(existingRoom));
+        io.to(existingRoom.code).emit('queue-status', {
+          inQueue: true,
+          message: `${existingRoom.players.size}/10 pemain siap di arena publik`,
+        });
+        schedulePublicArenaStart(existingRoom);
+        console.log(`[QuickMatch] ${identity.name} joined public arena ${existingRoom.code} (${existingRoom.players.size}/10)`);
+        return;
+      }
+
+      let code = generateCode();
+      while (rooms.has(code)) code = generateCode();
+      const room: Room = {
+        id: `public-arena-${code}`,
+        code,
+        name: `Main Cepat · Arena ${code}`,
+        hostId: identity.sub,
+        gameType: 'KUIS_BATTLE',
+        category: 'KUIS_TEMPUR_ARENA',
+        difficulty: 'MEDIUM',
+        status: 'WAITING',
+        questionCount: 20,
+        timePerQuestion: 15,
+        currentQuestion: 0,
+        questions: [],
+        players: new Map([[identity.sub, player]]),
+        matchmaking: 'PUBLIC',
+      };
+      rooms.set(code, room);
+      playerSockets.set(socket.id, code);
+      socket.join(code);
+      socket.emit('room-created', {
+        roomId: room.id,
+        code: room.code,
+        name: room.name,
+        isHost: true,
+        player,
+      });
+      io.to(code).emit('player-list', getPlayersList(room));
+      socket.emit('queue-status', { inQueue: true, position: 1, message: 'Menunggu pemain lain...' });
+      console.log(`[QuickMatch] ${identity.name} created public arena ${code}`);
+      return;
+    }
+
     if (matchmakingQueue.some((player) => player.userId === identity.sub)) {
       socket.emit('queue-status', { inQueue: true, message: 'Sudah dalam antrean' });
       return;
@@ -1350,7 +1475,13 @@ function handleLeave(socket: any, code: string, odiceId: string) {
     playerName: player.playerName,
   });
 
+  if (room.matchmaking === 'PUBLIC' && room.players.size < 2) {
+    clearPublicArenaCountdown(room);
+    io.to(code).emit('match-countdown', { seconds: -1 });
+  }
+
   if (room.players.size === 0) {
+    clearPublicArenaCountdown(room);
     rooms.delete(code);
     console.log(`[Room] Deleted empty room: ${code}`);
   }

@@ -82,6 +82,17 @@ check("server memblokir target disconnected", server.includes("!target.connected
 check("client tidak memilih target disconnected", phaser.includes("entity.connected !== false") && arena.includes("entity.connected !== false"));
 check("share link ?join= auto-join room", read("components/game/KuisTempurHub.tsx").includes('params.get("join")') && read("components/game/KuisTempurHub.tsx").includes("gameSocket.joinRoom"));
 check("Hub merespons host transfer", read("components/game/KuisTempurHub.tsx").includes("gameSocket.onHostChanged"));
+const displayShell = read("components/game/KuisTempurDisplayShell.tsx");
+check("landing punya Main Cepat sebagai mode utama", hub.includes("MAIN CEPAT") && hub.includes("CARI LAWAN OTOMATIS") && hub.includes("MODE UTAMA"));
+check("landing punya Room Privat tanpa wajib pilih teman", hub.includes("ROOM PRIVAT") && hub.includes("createPrivateRoom"));
+check("Main Cepat memakai queue arena publik", hub.includes('gameType: "KUIS_TEMPUR_ARENA"') && socketServer.includes("matchmaking === 'PUBLIC'"));
+check("public arena 2-9 memakai auto countdown 12 detik", socketServer.includes("room.autoStartDeadline = Date.now() + 12_000") && socketServer.includes("room.players.size < 2"));
+check("public arena 10/10 langsung mulai", socketServer.includes("room.players.size >= MAX_KUIS_TEMPUR_PLAYERS") && socketServer.includes("void startPublicArena(room)"));
+check("public arena tidak memakai database room", socketServer.includes("id: `public-arena-${code}`") && socketServer.includes("players: new Map([[identity.sub, player]])"));
+check("shared fullscreen shell dipakai Solo + multiplayer", arena.includes("KuisTempurDisplayShell") && read("components/game/KuisTempurSolo.tsx").includes("KuisTempurDisplayShell"));
+check("fullscreen opsional punya dua pilihan", displayShell.includes("FULL SCREEN") && displayShell.includes("MAIN BIASA"));
+check("portrait hanya memberi overlay ringan", displayShell.includes("Putar HP ke samping untuk bertempur") && displayShell.includes("pointer-events-none"));
+check("fullscreen toggle bisa keluar tanpa reset game", displayShell.includes("document.exitFullscreen") && displayShell.includes("fullscreenchange"));
 const leaveBlock = socketServer.slice(socketServer.indexOf("function handleLeave"), socketServer.indexOf("let shuttingDown"));
 check("server transfer host sebelum player-list", leaveBlock.indexOf("room.hostId = newHost.id") >= 0 && leaveBlock.indexOf("room.hostId = newHost.id") < leaveBlock.indexOf("emit('player-list'"));
 

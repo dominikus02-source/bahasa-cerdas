@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import KuisTempurSolo from "@/components/game/KuisTempurSolo";
 import KuisTempurArena from "@/components/game/KuisTempurArena";
+import { KuisTempurDisplayChoice, type KuisTempurDisplayMode } from "@/components/game/KuisTempurDisplayShell";
 import GameBackButton from "@/components/game/GameBackButton";
 import { gameSocket } from "@/lib/game/socket";
 import {
@@ -52,6 +53,7 @@ type RoomData = {
   code: string;
   name: string;
   isHost: boolean;
+  matchmaking?: "PUBLIC" | "PRIVATE";
   player?: any;
 };
 
@@ -64,7 +66,8 @@ type PlayerLite = {
   isHost?: boolean;
 };
 
-type Phase = "menu" | "friends" | "lobby" | "arena" | "solo";
+type EntryMode = "quick" | "private";
+type Phase = "menu" | "setup" | "friends" | "lobby" | "arena" | "solo";
 
 const initials = (name: string) =>
   name
@@ -227,6 +230,7 @@ function VsStage({ me, opponent }: { me: AppUser | null; opponent?: Friend | nul
 
 export default function KuisTempurHub() {
   const [phase, setPhase] = useState<Phase>("menu");
+  const [entryMode, setEntryMode] = useState<EntryMode | null>(null);
   const [me, setMe] = useState<AppUser | null>(null);
   const [friends, setFriends] = useState<Friend[]>([]);
   const [players, setPlayers] = useState<PlayerLite[]>([]);
@@ -238,11 +242,16 @@ export default function KuisTempurHub() {
   const [serverOffline, setServerOffline] = useState(false);
   const [notice, setNotice] = useState("");
   const [copied, setCopied] = useState(false);
+  const [matchCountdown, setMatchCountdown] = useState<number | null>(null);
+  const [displayChoiceOpen, setDisplayChoiceOpen] = useState(false);
+  const [pendingArenaStart, setPendingArenaStart] = useState(false);
+  const [preferredDisplayMode, setPreferredDisplayMode] = useState<KuisTempurDisplayMode>("normal");
   const [selectedCharacterId, setSelectedCharacterId] = useState<KuisTempurCharacterId>(
     DEFAULT_KUIS_TEMPUR_CHARACTER_ID
   );
   const pendingInviteRef = useRef<Friend | null>(null);
   const autoJoinRef = useRef(false);
+  const displayReadyRef = useRef(false);
 
   const loadMe = useCallback(async () => {
     const res = await fetch("/api/user/me", { cache: "no-store" });
@@ -314,6 +323,8 @@ export default function KuisTempurHub() {
       const serverCharacterId = normalizeKuisTempurCharacterId(data.player?.characterId);
       setSelectedCharacterId(serverCharacterId);
       window.localStorage.setItem("kuis-tempur-character", serverCharacterId);
+      setMatchCountdown(null);
+      if (!displayReadyRef.current) setDisplayChoiceOpen(true);
       setPhase("lobby");
 
       const friend = pendingInviteRef.current;
@@ -340,6 +351,8 @@ export default function KuisTempurHub() {
       const serverCharacterId = normalizeKuisTempurCharacterId(data.player?.characterId);
       setSelectedCharacterId(serverCharacterId);
       window.localStorage.setItem("kuis-tempur-character", serverCharacterId);
+      setMatchCountdown(null);
+      if (!displayReadyRef.current) setDisplayChoiceOpen(true);
       setPhase("lobby");
       setNotice("Berhasil masuk ke arena. Bersiap untuk tempur!");
     });
@@ -364,7 +377,17 @@ export default function KuisTempurHub() {
       );
       setNotice((current) => current || "Host arena berpindah. Pertandingan tetap bisa dilanjutkan.");
     });
-    const stopArena = gameSocket.onArenaStart(() => setPhase("arena"));
+    const stopCountdown = gameSocket.onMatchCountdown(({ seconds }) => {
+      setMatchCountdown(seconds >= 0 ? seconds : null);
+    });
+    const stopArena = gameSocket.onArenaStart(() => {
+      if (displayReadyRef.current) {
+        setPhase("arena");
+        return;
+      }
+      setPendingArenaStart(true);
+      setDisplayChoiceOpen(true);
+    });
     const stopError = gameSocket.onError((data: { message?: string }) => {
       setCreating(false);
       setNotice(data?.message || "Terjadi masalah pada arena.");
@@ -375,6 +398,7 @@ export default function KuisTempurHub() {
       stopJoined();
       stopPlayers();
       stopHostChanged();
+      stopCountdown();
       stopArena();
       stopError();
     };
@@ -415,6 +439,64 @@ export default function KuisTempurHub() {
     [me, selectedCharacterId, serverOffline]
   );
 
+  const quickMatch = useCallback(() => {
+    if (!me || serverOffline || creating) return;
+    setCreating(true);
+    setNotice("Mencari arena publik...");
+    gameSocket.joinQueue({
+      userId: me.id,
+      userName: me.nickname || me.fullName,
+      avatarUrl: me.avatar || undefined,
+      gameType: "KUIS_TEMPUR_ARENA",
+      characterId: selectedCharacterId,
+    });
+  }, [creating, me, selectedCharacterId, serverOffline]);
+
+  const createPrivateRoom = useCallback(() => {
+    if (!me || serverOffline || creating) return;
+    setCreating(true);
+    setNotice("");
+    gameSocket.createRoom({
+      hostId: me.id,
+      hostName: me.nickname || me.fullName,
+      hostAvatar: me.avatar || undefined,
+      name: `Room Privat · ${me.nickname || me.fullName}`,
+      gameType: "KUIS_BATTLE",
+      category: "KUIS_TEMPUR_ARENA",
+      difficulty: "MEDIUM",
+      questionCount: 20,
+      timePerQuestion: 15,
+      characterId: selectedCharacterId,
+    });
+  }, [creating, me, selectedCharacterId, serverOffline]);
+
+  const openMultiplayerSetup = useCallback((mode: EntryMode) => {
+    if (!me || serverOffline || creating) return;
+    displayReadyRef.current = false;
+    setDisplayChoiceOpen(false);
+    setPendingArenaStart(false);
+    setEntryMode(mode);
+    setNotice("");
+    setPhase("setup");
+  }, [creating, me, serverOffline]);
+
+  const chooseMultiplayerDisplay = useCallback((mode: KuisTempurDisplayMode) => {
+    displayReadyRef.current = true;
+    setPreferredDisplayMode(mode);
+    setDisplayChoiceOpen(false);
+
+    if (phase === "setup" && entryMode) {
+      if (entryMode === "quick") quickMatch();
+      else createPrivateRoom();
+      return;
+    }
+
+    if (pendingArenaStart) {
+      setPendingArenaStart(false);
+      setPhase("arena");
+    }
+  }, [createPrivateRoom, entryMode, pendingArenaStart, phase, quickMatch]);
+
   const selectCharacter = useCallback(
     (characterId: KuisTempurCharacterId) => {
       setSelectedCharacterId(characterId);
@@ -436,6 +518,11 @@ export default function KuisTempurHub() {
     setPlayers([]);
     setSelectedFriend(null);
     setNotice("");
+    setMatchCountdown(null);
+    setPendingArenaStart(false);
+    setDisplayChoiceOpen(false);
+    setEntryMode(null);
+    displayReadyRef.current = false;
     setPhase("menu");
   }, [room, me]);
 
@@ -464,6 +551,7 @@ export default function KuisTempurHub() {
         code={room.code}
         userId={me.id}
         onExit={leaveLobby}
+        preferredDisplayMode={preferredDisplayMode}
       />
     );
   }
@@ -563,7 +651,8 @@ export default function KuisTempurHub() {
   if (phase === "lobby" && room) {
     const humanCount = players.length;
     const host = players.find((p) => p.isHost);
-    const canStart = Boolean(room.isHost && humanCount >= 2);
+    const isPublicRoom = room.name.startsWith("Main Cepat ·");
+    const canStart = Boolean(!isPublicRoom && room.isHost && humanCount >= 2);
     const selectedCharacter = getKuisTempurCharacter(selectedCharacterId);
     const selectedIndex = KUIS_TEMPUR_CHARACTERS.findIndex(
       (character) => character.id === selectedCharacterId
@@ -588,7 +677,7 @@ export default function KuisTempurHub() {
               <ArrowLeft size={17} /> Keluar
             </button>
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1.5 text-xs font-black text-emerald-200">
-              <Wifi size={14} /> ARENA ONLINE · {humanCount}/10
+              <Wifi size={14} /> {isPublicRoom ? "MAIN CEPAT" : "ROOM PRIVAT"} · {humanCount}/10
             </div>
           </div>
 
@@ -760,11 +849,19 @@ export default function KuisTempurHub() {
                   <div>
                     <div className="text-[9px] font-black tracking-[.2em] text-slate-500">PEMAIN DI ROOM</div>
                     <div className="mt-0.5 text-xs font-bold text-slate-400">
-                      {humanCount}/10 bergabung · {humanCount >= 5 ? "komposisi ideal" : "5-10 paling seru"}
+                      {isPublicRoom
+                        ? humanCount < 2
+                          ? "Menunggu pemain lain..."
+                          : matchCountdown !== null && matchCountdown > 0
+                            ? `Mulai otomatis dalam ${matchCountdown} detik`
+                            : humanCount >= 10
+                              ? "Arena penuh · mulai sekarang"
+                              : "Mencari pemain tambahan..."
+                        : `${humanCount}/10 bergabung · ${humanCount >= 5 ? "komposisi ideal" : "5-10 paling seru"}`}
                     </div>
                   </div>
                   <div className="rounded-full border border-white/10 bg-white/[.05] px-3 py-1.5 text-[9px] font-black text-slate-300">
-                    ROOM {room.code}
+                    {isPublicRoom ? "ARENA PUBLIK" : `ROOM ${room.code}`}
                   </div>
                 </div>
 
@@ -818,13 +915,32 @@ export default function KuisTempurHub() {
               <div className="flex items-center gap-2 text-xs font-black tracking-[.2em] text-slate-400">
                 <Gamepad2 size={15} /> MATCH ROOM
               </div>
-              <div className="mt-3 rounded-2xl border border-cyan-300/20 bg-cyan-300/8 p-4 text-center">
-                <div className="text-[10px] font-black tracking-[.2em] text-cyan-200/70">KODE ARENA</div>
-                <div className="mt-1 text-4xl font-black tracking-[.2em] text-white">{room.code}</div>
-                <button onClick={copyCode} className="mt-3 inline-flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-xs font-black text-white/80">
-                  {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? "Tautan tersalin" : "Salin tautan"}
-                </button>
-              </div>
+              {isPublicRoom ? (
+                <div className="mt-3 rounded-2xl border border-cyan-300/20 bg-cyan-300/8 p-4 text-center">
+                  <Zap className="mx-auto text-amber-300" size={28} fill="currentColor" />
+                  <div className="mt-2 text-[10px] font-black tracking-[.2em] text-cyan-200/70">MATCHMAKING PUBLIK</div>
+                  <div className="mt-1 text-xl font-black text-white">
+                    {humanCount < 2
+                      ? "Menunggu lawan..."
+                      : matchCountdown !== null && matchCountdown > 0
+                        ? `${matchCountdown} detik`
+                        : humanCount >= 10
+                          ? "Arena penuh!"
+                          : "Pemain ditemukan"}
+                  </div>
+                  <div className="mt-1 text-[10px] font-semibold leading-4 text-slate-400">
+                    Siapa saja bisa bergabung sampai 10 pemain. Tidak perlu kode atau undangan.
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-3 rounded-2xl border border-cyan-300/20 bg-cyan-300/8 p-4 text-center">
+                  <div className="text-[10px] font-black tracking-[.2em] text-cyan-200/70">KODE ARENA</div>
+                  <div className="mt-1 text-4xl font-black tracking-[.2em] text-white">{room.code}</div>
+                  <button onClick={copyCode} className="mt-3 inline-flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-xs font-black text-white/80">
+                    {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? "Tautan tersalin" : "Salin tautan"}
+                  </button>
+                </div>
+              )}
 
               <div className="mt-5 rounded-2xl border border-white/10 bg-black/15 p-4">
                 <div className="flex items-center justify-between text-xs font-black">
@@ -838,13 +954,37 @@ export default function KuisTempurHub() {
                   />
                 </div>
                 <div className="mt-2 text-[10px] font-semibold text-slate-500">
-                  {humanCount < 5 ? "Bisa mulai, tetapi 5-10 pemain akan terasa lebih seru." : humanCount < 10 ? "Komposisi arena ideal." : "Arena penuh dan siap tempur."}
+                  {isPublicRoom
+                    ? humanCount < 2
+                      ? "Begitu pemain kedua masuk, countdown otomatis dimulai."
+                      : matchCountdown !== null && matchCountdown > 0
+                        ? `Pertempuran dimulai otomatis dalam ${matchCountdown} detik.`
+                        : humanCount >= 10
+                          ? "10/10 · arena ditutup untuk pemain baru."
+                          : "Masih menerima pemain sampai arena penuh."
+                    : humanCount < 5
+                      ? "Bisa mulai dari 2 pemain; 5-10 pemain akan terasa lebih seru."
+                      : humanCount < 10
+                        ? "Komposisi arena ideal."
+                        : "Arena penuh dan siap tempur."}
                 </div>
               </div>
 
               {notice && <div className="mt-3 text-center text-xs font-bold text-cyan-200">{notice}</div>}
 
-              {room.isHost ? (
+              {isPublicRoom ? (
+                <div className="mt-5 rounded-2xl border border-amber-300/15 bg-amber-300/[.06] p-4 text-center">
+                  <Loader2 className="mx-auto animate-spin text-amber-300" size={21} />
+                  <div className="mt-2 text-sm font-black">
+                    {humanCount < 2
+                      ? "Mencari pemain..."
+                      : matchCountdown !== null && matchCountdown > 0
+                        ? `Mulai dalam ${matchCountdown} detik`
+                        : "Menyiapkan pertempuran..."}
+                  </div>
+                  <div className="mt-1 text-[10px] font-semibold text-slate-500">Tidak ada host. Arena mulai otomatis.</div>
+                </div>
+              ) : room.isHost ? (
                 <button
                   onClick={startArena}
                   disabled={!canStart}
@@ -862,6 +1002,12 @@ export default function KuisTempurHub() {
             </aside>
           </div>
         </div>
+        {displayChoiceOpen && (
+          <KuisTempurDisplayChoice
+            title="Arena siap. Pilih tampilan bertempur."
+            onChoose={chooseMultiplayerDisplay}
+          />
+        )}
       </main>
     );
   }
@@ -885,56 +1031,61 @@ export default function KuisTempurHub() {
             Kuis <span className="bg-gradient-to-r from-amber-300 to-orange-500 bg-clip-text text-transparent">Tempur</span>
           </h1>
           <p className="mx-auto mt-2 max-w-2xl text-sm font-semibold leading-6 text-slate-300 sm:text-base">
-            Pengetahuan adalah senjatamu. Main sendiri untuk latihan atau buka arena realtime untuk 2-10 teman sekelas.
+            Pengetahuan adalah senjatamu. Cari lawan publik otomatis, buat room privat, atau latihan melawan bot di arena 2–10 pemain.
           </p>
         </section>
 
-        <div className="mx-auto mt-7 max-w-3xl">
-          <VsStage me={me} opponent={null} />
-        </div>
-
-        <section className="mx-auto mt-6 grid max-w-3xl gap-4 sm:grid-cols-2">
+        <section className="mx-auto mt-7 max-w-3xl">
           <button
-            onClick={() => setPhase("solo")}
-            className="group relative overflow-hidden rounded-[28px] border border-cyan-300/20 bg-gradient-to-br from-[#0c3f86] to-[#071c45] p-5 text-left shadow-[0_18px_45px_rgba(0,116,255,.18)] transition hover:-translate-y-1"
+            onClick={quickMatch}
+            disabled={creating || serverOffline}
+            className="group relative w-full overflow-hidden rounded-[30px] border border-amber-200/25 bg-[radial-gradient(circle_at_82%_20%,rgba(251,191,36,.28),transparent_24%),linear-gradient(135deg,#5b1709,#b93813_52%,#f59e0b)] p-6 text-left shadow-[0_24px_70px_rgba(245,158,11,.24)] transition hover:-translate-y-1 disabled:cursor-not-allowed disabled:grayscale disabled:opacity-50"
           >
-            <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-cyan-300/15 blur-2xl" />
-            <div className="relative">
-              <div className="flex items-start justify-between">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/20 bg-white/10 shadow-lg">
-                  <Bot size={28} className="text-cyan-200" />
+            <div className="relative flex items-center justify-between gap-5">
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full bg-amber-100/15 px-3 py-1 text-[10px] font-black tracking-[.2em] text-amber-100">
+                  <Zap size={14} fill="currentColor" /> MODE UTAMA
                 </div>
-                <span className="rounded-full bg-emerald-300/15 px-2.5 py-1 text-[9px] font-black tracking-widest text-emerald-200">LANGSUNG MAIN</span>
+                <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">MAIN CEPAT</h2>
+                <p className="mt-1 max-w-lg text-sm font-semibold leading-6 text-orange-50/80">
+                  Cari lawan otomatis. Arena publik 2–10 pemain, tanpa undangan dan tidak harus satu kelas.
+                </p>
+                <div className="mt-4 flex items-center gap-2 font-black text-amber-100">
+                  {creating ? "MENCARI ARENA..." : "CARI LAWAN OTOMATIS"} <ChevronRight size={19} className="transition group-hover:translate-x-1" />
+                </div>
               </div>
-              <h2 className="mt-5 text-2xl font-black">Lawan Bot</h2>
-              <p className="mt-1 text-sm font-semibold leading-6 text-blue-100/70">
-                Masuk ke Kampung Kata, jawab soal, kumpulkan peluru, dan kalahkan gelombang bot.
-              </p>
-              <div className="mt-5 flex items-center gap-2 font-black text-cyan-200">
-                MAIN SEKARANG <ChevronRight size={18} className="transition group-hover:translate-x-1" />
-              </div>
+              <Swords className="hidden shrink-0 text-amber-100/75 sm:block" size={72} />
+            </div>
+          </button>
+        </section>
+
+        <section className="mx-auto mt-4 grid max-w-3xl gap-4 sm:grid-cols-2">
+          <button
+            onClick={createPrivateRoom}
+            disabled={creating || serverOffline}
+            className="group relative overflow-hidden rounded-[28px] border border-violet-300/20 bg-gradient-to-br from-[#4c1d95] to-[#1e1b4b] p-5 text-left transition hover:-translate-y-1 disabled:cursor-not-allowed disabled:grayscale disabled:opacity-50"
+          >
+            <Shield size={28} className="text-violet-200" />
+            <h2 className="mt-4 text-2xl font-black">ROOM PRIVAT</h2>
+            <p className="mt-1 text-sm font-semibold leading-6 text-violet-100/70">
+              Buat room berkode untuk teman atau kelas. Host memutuskan kapan pertandingan dimulai.
+            </p>
+            <div className="mt-5 flex items-center gap-2 font-black text-violet-200">
+              BUAT ROOM <ChevronRight size={18} className="transition group-hover:translate-x-1" />
             </div>
           </button>
 
           <button
-            onClick={openFriends}
-            className="group relative overflow-hidden rounded-[28px] border border-rose-300/20 bg-gradient-to-br from-[#89172d] to-[#430a17] p-5 text-left shadow-[0_18px_45px_rgba(244,63,94,.18)] transition hover:-translate-y-1"
+            onClick={() => setPhase("solo")}
+            className="group relative overflow-hidden rounded-[28px] border border-cyan-300/20 bg-gradient-to-br from-[#0c3f86] to-[#071c45] p-5 text-left transition hover:-translate-y-1"
           >
-            <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-orange-300/15 blur-2xl" />
-            <div className="relative">
-              <div className="flex items-start justify-between">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/20 bg-white/10 shadow-lg">
-                  <Swords size={28} className="text-orange-200" />
-                </div>
-                <span className="rounded-full bg-amber-300/15 px-2.5 py-1 text-[9px] font-black tracking-widest text-amber-200">REALTIME</span>
-              </div>
-              <h2 className="mt-5 text-2xl font-black">Tantang Teman</h2>
-              <p className="mt-1 text-sm font-semibold leading-6 text-rose-100/70">
-                Buka room bersama teman, bagikan kode arena, lalu bertempur realtime hingga 10 pemain.
-              </p>
-              <div className="mt-5 flex items-center gap-2 font-black text-orange-200">
-                PILIH TEMAN <ChevronRight size={18} className="transition group-hover:translate-x-1" />
-              </div>
+            <Bot size={28} className="text-cyan-200" />
+            <h2 className="mt-4 text-2xl font-black">LAWAN BOT</h2>
+            <p className="mt-1 text-sm font-semibold leading-6 text-blue-100/70">
+              Latihan sendiri di Kampung Kata dengan world, roster, HUD, dan sistem tempur yang sama.
+            </p>
+            <div className="mt-5 flex items-center gap-2 font-black text-cyan-200">
+              LATIHAN SEKARANG <ChevronRight size={18} className="transition group-hover:translate-x-1" />
             </div>
           </button>
         </section>
@@ -957,7 +1108,7 @@ export default function KuisTempurHub() {
           <div className="mx-auto mt-4 flex max-w-3xl items-start gap-3 rounded-2xl border border-rose-300/20 bg-rose-400/[.08] p-4">
             <WifiOff className="mt-0.5 shrink-0 text-rose-300" size={18} />
             <div className="text-xs font-semibold leading-5 text-rose-50/70">
-              Server realtime sedang tidak terjangkau. <b className="text-rose-100">Lawan Bot tetap aktif</b>; Tantang Teman akan tersedia setelah koneksi kembali.
+              Server realtime sedang tidak terjangkau. <b className="text-rose-100">Lawan Bot tetap aktif</b>; Main Cepat dan Room Privat tersedia setelah koneksi kembali.
             </div>
           </div>
         )}
