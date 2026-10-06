@@ -132,7 +132,7 @@ interface SiswaRow {
 const TARGET_MINGGUAN_XP = 500;
 
 const SOLO_GAMES = [
-  { id: "kuis-tempur", title: "Kuis Tempur", desc: "Bertahan di arena melawan bot! Jawab benar untuk menyerang, salah kamu yang terluka.", href: "/guru/game/kuis-tempur", gradient: "from-red-500 via-rose-600 to-red-800", icon: Swords },
+  { id: "kuis-tempur", title: "Kuis Tempur", desc: "Pilih petarung, jawab soal untuk mengisi amunisi, lalu bertempur realtime hingga 10 pemain.", href: "/arena/game/kuis-tempur", gradient: "from-red-500 via-rose-600 to-red-800", icon: Swords },
   { id: "lari-kata", title: "Lari Kata", desc: "Jawab 20 soal dalam 60 detik! Makin cepat dan rentetan tinggi, makin banyak XP.", href: "/guru/game/lari-kata", gradient: "from-violet-500 via-purple-600 to-violet-800", icon: Zap },
   { id: "benar-salah", title: "Benar atau Salah", desc: "Kuis kilat 60 detik! Tentukan pernyataan yang muncul benar atau salah.", href: "/guru/game/benar-salah", gradient: "from-emerald-400 via-teal-500 to-cyan-600", icon: Scale },
   { id: "susun-kata", title: "Susun Kata", desc: "Huruf-huruf acak! Susun menjadi kata yang benar. Uji kosakata Anda!", href: "/guru/game/susun-kata", gradient: "from-emerald-500 via-emerald-600 to-teal-700", icon: Puzzle },
