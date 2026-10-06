@@ -2,6 +2,11 @@ services:
   api-gw:
     ports: !override
       - "127.0.0.1:8000:8000/tcp"
+    networks:
+      default:
+      bc-edge:
+        aliases:
+          - supabase-api
 
   studio:
     environment:
@@ -34,3 +39,8 @@ services:
       - "127.0.0.1:6543:6543"
     environment:
       POOLER_TENANT_ID: bahasacerdasprod
+
+networks:
+  bc-edge:
+    external: true
+    name: bahasacerdas-prod_edge
