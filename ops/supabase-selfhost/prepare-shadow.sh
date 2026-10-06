@@ -38,6 +38,8 @@ set_env() {
 }
 
 set_env DASHBOARD_USERNAME bcstudio
+dashboard_password="$(grep -m1 '^DASHBOARD_PASSWORD=' .env | cut -d= -f2-)"
+set_env DASHBOARD_PASSWORD "Bc${dashboard_password}"
 set_env SUPABASE_PUBLIC_URL http://127.0.0.1:54380
 set_env API_EXTERNAL_URL http://127.0.0.1:54380/auth/v1
 set_env SITE_URL https://www.bahasacerdas.com
