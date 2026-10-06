@@ -569,6 +569,7 @@ io.on('connection', (socket) => {
           currentQuestion: 0,
           questions: [],
           players: new Map(),
+          matchmaking: 'PRIVATE',
         };
 
         room.players.set(data.hostId, hostPlayer);
@@ -580,6 +581,7 @@ io.on('connection', (socket) => {
           code: room.code,
           name: room.name,
           isHost: true,
+          matchmaking: room.matchmaking,
           player: hostPlayer,
         });
         io.to(code).emit('player-list', getPlayersList(room));
@@ -686,6 +688,7 @@ io.on('connection', (socket) => {
           code: room.code,
           name: room.name,
           isHost: data.userId === room.hostId,
+          matchmaking: room.matchmaking,
           player: existing,
         });
         io.to(data.code).emit('player-list', getPlayersList(room));
@@ -719,6 +722,7 @@ io.on('connection', (socket) => {
           code: room.code,
           name: room.name,
           isHost: data.userId === room.hostId,
+          matchmaking: room.matchmaking,
           player: room.players.get(data.userId),
         });
         io.to(data.code).emit('player-list', getPlayersList(room));
@@ -763,6 +767,7 @@ io.on('connection', (socket) => {
         code: room.code,
         name: room.name,
         isHost: data.userId === room.hostId,
+        matchmaking: room.matchmaking,
         player,
       });
 
@@ -1076,6 +1081,7 @@ io.on('connection', (socket) => {
           code: existingRoom.code,
           name: existingRoom.name,
           isHost: identity.sub === existingRoom.hostId,
+          matchmaking: existingRoom.matchmaking,
           player,
         });
         io.to(existingRoom.code).emit('player-list', getPlayersList(existingRoom));
@@ -1114,6 +1120,7 @@ io.on('connection', (socket) => {
         code: room.code,
         name: room.name,
         isHost: true,
+        matchmaking: room.matchmaking,
         player,
       });
       io.to(code).emit('player-list', getPlayersList(room));

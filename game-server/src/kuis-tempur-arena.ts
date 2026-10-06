@@ -467,6 +467,11 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
       return;
     }
 
+    if (room.players.size < 2) {
+      io.to(room.code).emit("error", { message: "Butuh minimal dua pemain untuk memulai Kuis Tempur." });
+      return;
+    }
+
     room.questions = questions;
     room.status = "IN_PROGRESS";
     room.startedAt = new Date();

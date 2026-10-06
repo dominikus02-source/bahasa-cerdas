@@ -154,12 +154,12 @@ export const gameSocket = {
     socket?.emit(event, data);
   },
 
-  onRoomCreated(callback: (data: { roomId: string; code: string; name: string; isHost: boolean; player: any }) => void) {
+  onRoomCreated(callback: (data: { roomId: string; code: string; name: string; isHost: boolean; matchmaking?: 'PUBLIC' | 'PRIVATE'; player: any }) => void) {
     socket?.on('room-created', callback);
     return () => socket?.off('room-created', callback);
   },
 
-  onRoomJoined(callback: (data: { roomId: string; code: string; name: string; isHost: boolean; player: any }) => void) {
+  onRoomJoined(callback: (data: { roomId: string; code: string; name: string; isHost: boolean; matchmaking?: 'PUBLIC' | 'PRIVATE'; player: any }) => void) {
     socket?.on('room-joined', callback);
     return () => socket?.off('room-joined', callback);
   },
