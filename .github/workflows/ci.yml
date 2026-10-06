@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     # Placeholder values — CI only type-checks/builds, it never connects to real
-    # services. Real secrets live in Vercel, not in CI.
+    # services. Production secrets live in the VPS runtime config, not in CI.
     env:
       NEXT_TELEMETRY_DISABLED: "1"
       DATABASE_URL: "postgresql://user:pass@localhost:5432/db"
