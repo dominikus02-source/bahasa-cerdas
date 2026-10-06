@@ -272,6 +272,10 @@ const httpServer = createServer((req, res) => {
     res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store' });
     res.end(JSON.stringify({
       ok: true,
+      // Keep the legacy fields during the VPS migration so the existing
+      // Compose/Caddy health gates can promote the new realtime server safely.
+      status: 'ok',
+      db: 'up',
       service: 'bahasacerdas-game',
       rooms: rooms.size,
       uptime: Math.round(process.uptime()),
