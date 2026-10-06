@@ -1,1204 +1,847 @@
-"use client"
+"use client";
 
-import { useEffect, useRef, useState, useCallback } from "react"
-import Link from "next/link"
-import { Heart, Volume2, VolumeX, Loader2, RotateCcw } from "lucide-react"
-import { QUESTION_BANK_EXPANDED, type BankQuestion } from "@/lib/game/question-bank"
-import { gambarKarakter, KARAKTER, PROFIL, type Karakter } from "@/lib/arena-junior/karakter"
-import { bacaKarakter, simpanKarakter } from "@/lib/arena-junior/karakter-simpan"
-import { sfx, startBGM, stopBGM, isSoundOn, toggleSound, haptic } from "@/lib/game/sound"
-import { rankFromLevel, RANK_META } from "@/lib/gamification/ranks"
-import { RankIcon } from "@/components/gamification/RankIcon"
-import { levelFromXp } from "@/lib/gamification/xp-engine"
-import { setQuiet } from "@/lib/notif-quiet"
-import GameBackButton from "@/components/game/GameBackButton"
+import Link from "next/link";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  kurvaPemain,
-  lawanBot,
-  statDasarBot,
-  komposisiBot,
-  LABEL_TIPE,
-  WARNA_TIPE,
-  type StatBot,
-} from "@/lib/game/kuis-tempur-progression"
+  ArrowLeft,
+  Crosshair,
+  Heart,
+  RotateCcw,
+  Shield,
+  Sparkles,
+  Trophy,
+  Volume2,
+  VolumeX,
+  Zap,
+} from "lucide-react";
+import KuisTempurPhaserWorld, {
+  type PhaserArenaEntity,
+  type PhaserArenaState,
+} from "@/components/game/KuisTempurPhaserWorld";
+import { QUESTION_BANK_EXPANDED, type BankQuestion } from "@/lib/game/question-bank";
 import {
-  buildWorld,
-  worldColliders,
-  collidersToPixels,
-  preloadWorldImages,
-  drawWorldBackdrop,
-  drawWorldLayer,
-  getWorldImage,
-  isWorldImageReady,
-  SHADOW_SOFT_URL,
-  type WorldState,
-} from "@/lib/game/kuis-tempur-world"
+  KUIS_TEMPUR_CHARACTERS,
+  getKuisTempurCharacter,
+  normalizeKuisTempurCharacterId,
+  type KuisTempurCharacterId,
+} from "@/lib/game/kuis-tempur-characters";
+import { kuisTempurAudio } from "@/lib/game/kuis-tempur-audio";
+import { setQuiet } from "@/lib/notif-quiet";
 
-// Gaya "chunky cream" yang dipakai seluruh ekosistem gim solo BahasaCerdas
-// (ZelbyDash, LariKata, BenarSalah, dll). Keyframes unik per gim supaya tidak
-// bentrok saat beberapa gim ter-mount bersamaan.
-const KT_STYLE = `
-@keyframes kt-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-@keyframes kt-pop{0%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.3) rotate(8deg)}100%{transform:scale(1) rotate(0)}}
-.kt-screen{animation:kt-fade .35s ease}
-.kt-pop{animation:kt-pop .5s ease}
-@media (prefers-reduced-motion: reduce){.kt-screen,.kt-pop{animation:none}}
-`
+const SOLO_DURATION = 180;
+const QUESTION_SECONDS = 15;
+const MAX_AMMO = 6;
+const PLAYER_ID = "solo-player";
+const BOT_NAMES = ["Raka", "Sari", "Bima", "Nisa"];
+const BOT_CHARACTER_IDS: KuisTempurCharacterId[] = ["bagas", "bu-ratmi", "pak-empu", "pendaki"];
+const BOT_SPAWNS = [
+  { x: 1020, y: 270 },
+  { x: 1080, y: 610 },
+  { x: 360, y: 590 },
+  { x: 330, y: 260 },
+];
 
-// Kuis Tempur (mode solo) — bertahan di kampung kata melawan bot.
-//
-// Gelung intinya: BERLINDUNG → JAWAB BENAR → DAPAT PELURU → KELUAR → TEMBAK.
-// Peluru hanya bisa diperoleh dengan menjawab benar, dan itulah yang membuat
-// soal menjadi sumber daya alih-alih gangguan. Versi sebelumnya menembak otomatis
-// ke musuh terdekat setiap jawaban benar; akibatnya anak menekan asal supaya
-// cepat kembali menghindar, dan gimnya berhenti mengajar.
-//
-// Berjalan SEPENUHNYA di perangkat — tidak ada server pertandingan yang bisa
-// mematikannya, seperti yang terjadi pada gim multiplayer lain.
+type Phase = "select" | "play" | "result";
+type QuestionView = {
+  id: string;
+  prompt: string;
+  options: { text: string; correct: boolean }[];
+};
 
-const GAME_TYPE = "RIMBA_KATA"
-const HP_AWAL = 100
-const DMG_SALAH = 10
-const R = 22
-const KUNCI_LEVEL = "bc-kuis-tempur-level"
-// Batas waktu menjawab. Tekanan waktu menggantikan tekanan menghindar yang terus
-// menerus: murid boleh berlindung dengan tenang, tapi tidak boleh berdiam
-// selamanya tanpa menjawab.
-const DETIK_SOAL = 15
-// Durasi satu sesi bertahan (5 menit). Dulu gim berakhir begitu 4 bot awal
-// tersingkir — terlalu cepat untuk sebuah "pertempuran". Sekarang bot terus
-// berdatangan dan pemenangnya adalah yang sanggup bertahan sampai waktu nol.
-const DURASI = 300
-
-// Wajah musuh berasal dari aset avatar bernomor di public/avatar/ (1–10).
-// Catatan: berkas 1.webp belum ada, jadi daftar ini memakai 2–10 yang ada.
-// Tambahkan 1.webp dan daftar di bawah untuk memakainya kembali.
-const AVATAR_BOT = ["2", "3", "4", "5", "6", "7", "8", "9", "10"].map((n) => `/avatar/${n}.webp`)
-
-// Jumlah musuh, statistik arena, kurva pemain, dan komposisi arketipe bot
-// dihitung di lib/game/kuis-tempur-progression.ts (murni & teruji).
-
-type Rintangan =
-  | { jenis: "rumah"; x: number; y: number; w: number; h: number; warna: string }
-  | { jenis: "pohon"; x: number; y: number; r: number }
-  | { jenis: "batu"; x: number; y: number; r: number }
-
-type Pemain = {
-  nama: string
-  gambar: HTMLImageElement | null
-  warna: string
-  x: number; y: number; tx: number; ty: number
-  hp: number
-  hpMax: number
-  hidup: boolean
-  kamu: boolean
-  kedip: number
-  langkah: number   // fase ayunan jalan
-  hadap: number     // -1 kiri, 1 kanan
-  tinggi?: number   // denyut skala visual (kosmetik; tidak memengaruhi tabrakan)
-  stat?: StatBot    // statistik arketipe bot (pemain tidak memakai ini)
+function clamp(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, value));
 }
-type Peluru = { x: number; y: number; vx: number; vy: number; dari: number; umur: number; dmg: number }
-type Partikel = { x: number; y: number; vx: number; vy: number; umur: number; warna: string }
-type Angka = { x: number; y: number; teks: string; umur: number; warna: string }
 
-const NAMA_BOT = ["Raka", "Sari", "Bima", "Lia", "Dewi", "Andi", "Nisa", "Fajar", "Gilang", "Putri"]
+function CharacterPortrait({
+  characterId,
+  hero = false,
+}: {
+  characterId: string;
+  hero?: boolean;
+}) {
+  const character = getKuisTempurCharacter(characterId);
+  const size = hero
+    ? "h-[230px] w-[230px] sm:h-[300px] sm:w-[300px]"
+    : "h-14 w-14";
 
-function kocok<T>(arr: T[]): T[] {
-  const a = [...arr]
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[a[i], a[j]] = [a[j], a[i]]
+  if (character.source === "arga") {
+    return (
+      <div className={`${size} flex items-center justify-center overflow-hidden rounded-[30%]`}>
+        <div
+          aria-label={character.name}
+          className={hero ? "h-[142%] w-[142%] drop-shadow-[0_30px_40px_rgba(0,0,0,.45)]" : "h-full w-full"}
+          style={{
+            backgroundImage: "url(/game/rpg/characters/sheet-char-arga-walk-down.png)",
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "800% 100%",
+            backgroundPosition: "0% 0%",
+          }}
+        />
+      </div>
+    );
   }
-  return a
+
+  const frame = character.frame!;
+  const runtime = character.source === "runtime-atlas";
+  const column = frame.x / frame.width;
+
+  return (
+    <div className={`${size} flex items-center justify-center overflow-hidden rounded-[30%]`}>
+      <div
+        aria-label={character.name}
+        className={`${runtime ? "aspect-[3/2]" : "aspect-square"} ${
+          hero ? (runtime ? "w-[300%]" : "w-[245%]") : "w-full"
+        } max-w-none drop-shadow-[0_30px_40px_rgba(0,0,0,.45)]`}
+        style={{
+          backgroundImage: `url(${character.atlasUrl})`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: runtime ? "400% 500%" : "400% 100%",
+          backgroundPosition: `${(column / 3) * 100}% 0%`,
+        }}
+      />
+    </div>
+  );
 }
 
-function kenaRintangan(x: number, y: number, r: Rintangan): boolean {
-  if (r.jenis === "rumah") return x > r.x && x < r.x + r.w && y > r.y && y < r.y + r.h
-  return Math.hypot(x - r.x, y - r.y) < r.r
+function makeQuestion(question: BankQuestion): QuestionView {
+  return {
+    id: question.soal,
+    prompt: question.soal,
+    options: question.opsi.map((text, index) => ({
+      text,
+      correct: index === question.jawaban,
+    })),
+  };
 }
 
-export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?: string }) {
-  const [fase, setFase] = useState<"pilih" | "main" | "selesai">("pilih")
-  // Karakter terpilih dibaca dari penyimpanan bersama (bc-karakter) supaya
-  // pilihan bertahan antar sesi dan dipakai konsisten di arena/junior.
-  const [karakterku, setKarakterku] = useState<Karakter>(() => bacaKarakter())
-  const [namaku, setNamaku] = useState("Kamu")
-  const [suara, setSuara] = useState(true)
+function initialEntities(characterId: KuisTempurCharacterId): PhaserArenaEntity[] {
+  const player: PhaserArenaEntity = {
+    id: PLAYER_ID,
+    name: "Kamu",
+    kind: "human",
+    characterId,
+    x: 700,
+    y: 470,
+    hp: 100,
+    hpMax: 100,
+    ammo: 0,
+    score: 0,
+    kills: 0,
+    deaths: 0,
+    correct: 0,
+    wrong: 0,
+    combo: 0,
+    alive: true,
+    connected: true,
+    color: "#22d3ee",
+  };
 
-  const [hp, setHp] = useState(HP_AWAL)
-  const [combo, setCombo] = useState(0)
-  const [level, setLevel] = useState(1)
-  const [peluru, setPeluru] = useState(0)
-  const [dipilih, setDipilih] = useState<number | null>(null)
-  const [soal, setSoal] = useState<{ q: BankQuestion; opsi: { teks: string; benar: boolean }[] } | null>(null)
-  const [kunci, setKunci] = useState(false)
-  const [feed, setFeed] = useState<{ id: number; teks: string }[]>([])
-  const [hasil, setHasil] = useState<{ menang: boolean; peringkat: number; xp: number } | null>(null)
-  const [mengirim, setMengirim] = useState(false)
-  // Rank & koin diambil dari data asli murid — bukan hiasan. Menampilkan angka
-  // karangan di HUD membuat seluruh papan terasa tidak bisa dipercaya.
-  const [profil, setProfil] = useState<{ rank: string; rankKey: string; warna: string; levelXp: number; koin: number } | null>(null)
-  const [waktu, setWaktu] = useState(DETIK_SOAL)
-  const [sisaWaktu, setSisaWaktu] = useState(DURASI)
-  const [kalahkan, setKalahkan] = useState(0)
-  // KUIS TEMPUR 3.0 — progresi level DARI PERFORMANCE (bukan timer): tiap level
-  // punya target musuh (lawanBot(level)); tercapai → overlay LEVEL SELESAI →
-  // naik level (musuh/escalation bertambah). Timer 5 menit hanya batas sesi.
-  const [levelSelesai, setLevelSelesai] = useState(false)
-  const [sisaMusuh, setSisaMusuh] = useState(0)
-  const [kalahHp, setKalahHp] = useState(false)
-  const [waktuAkhir, setWaktuAkhir] = useState(DURASI)
-  const levelRef = useRef(1)
-  const dibunuhLevelRef = useRef(0)
+  const bots = BOT_NAMES.map<PhaserArenaEntity>((name, index) => ({
+    id: `solo-bot-${index + 1}`,
+    name,
+    kind: "bot",
+    characterId: BOT_CHARACTER_IDS[index],
+    x: BOT_SPAWNS[index].x,
+    y: BOT_SPAWNS[index].y,
+    hp: 70,
+    hpMax: 70,
+    ammo: 99,
+    score: 0,
+    kills: 0,
+    deaths: 0,
+    correct: 0,
+    wrong: 0,
+    combo: 0,
+    alive: true,
+    connected: true,
+    color: ["#fb7185", "#f59e0b", "#a78bfa", "#34d399"][index],
+  }));
 
-  const cvRef = useRef<HTMLCanvasElement>(null)
-  const pRef = useRef<Pemain[]>([])
-  const bRef = useRef<Peluru[]>([])
-  const partRef = useRef<Partikel[]>([])
-  const angkaRef = useRef<Angka[]>([])
-  const rintRef = useRef<Rintangan[]>([])
-  // WORLD DATA (normalisasi 0..1) — divisualkan oleh lib/game/kuis-tempur-world.
-  // rintRef di atas adalah proyeksi piksel tabrakannya (lihat collidersToPixels),
-  // dihitung ulang saat resize supaya komposisi tetap valid.
-  const worldRef = useRef<WorldState | null>(null)
-  const zonaRef = useRef({ x: 0, y: 0, r: 0 })
-  const rafRef = useRef(0)
-  const jalanRef = useRef(false)
-  const benarRef = useRef(0)
-  const gameSessionIdRef = useRef("")
-  const salahRef = useRef(0)
-  const comboRef = useRef(0)
-  const maxComboRef = useRef(0)
-  const tembakRef = useRef(0)
-  const peluruRef = useRef(0)
-  const sisaWaktuRef = useRef(DURASI)
-  const feedIdRef = useRef(0)
-  const kantongRef = useRef<BankQuestion[]>([])
-  const aturanRef = useRef(statDasarBot(1))
-  // Statistik pemain ronde ini (nyawa maks & kerusakan peluru dari kurva).
-  const statkuRef = useRef(kurvaPemain(1))
-  // Berapa bot yang sudah dikalahkan (bot terus berdatangan sampai waktu habis).
-  const dibunuhRef = useRef(0)
-  const giliranBotRef = useRef(0)
-  // Mencegah soal yang sama dijawab/habis dua kali: diisi saat jawab atau waktu
-  // habis, dikosongkan lagi oleh soalBaru().
-  const teratasiRef = useRef(false)
-  // Untuk membedakan ketukan (menembak) dari seretan (berjalan).
-  const tekanRef = useRef<{ x: number; y: number; t: number } | null>(null)
-  const naikTimerRef = useRef<number>(0)
-  // Keyboard movement state: direction booleans consumed by game loop.
-  const keyRef = useRef({ up: false, down: false, left: false, right: false })
+  return [player, ...bots];
+}
 
-  useEffect(() => {
-    levelRef.current = level
-  }, [level])
+export default function KuisTempurSolo({ backHref = "/arena/game/kuis-tempur" }: { backHref?: string }) {
+  const [phase, setPhase] = useState<Phase>("select");
+  const [selectedCharacterId, setSelectedCharacterId] = useState<KuisTempurCharacterId>("arga");
+  const [arena, setArena] = useState<PhaserArenaState>({
+    seq: 1,
+    timeLeft: SOLO_DURATION,
+    entities: initialEntities("arga"),
+  });
+  const [question, setQuestion] = useState<QuestionView | null>(null);
+  const [questionTime, setQuestionTime] = useState(QUESTION_SECONDS);
+  const [lockedAnswer, setLockedAnswer] = useState<number | null>(null);
+  const [feedback, setFeedback] = useState<{ correct: boolean; text: string } | null>(null);
+  const [hitEvent, setHitEvent] = useState<{ seq: number; fromId: string; targetId: string; damage: number } | null>(null);
+  const [muted, setMuted] = useState(false);
+  const [xpEarned, setXpEarned] = useState<number | null>(null);
+  const [finalStats, setFinalStats] = useState({ score: 0, kills: 0, correct: 0, wrong: 0, combo: 0 });
+  const [resultReason, setResultReason] = useState<"survive" | "ko">("survive");
 
-  // NOTIFICATION 1.0 — game quiet mode: reward global TIDAK menutupi gameplay
-  // (soal/HUD/timer); reward tetap di-queue & muncul setelah sesi selesai.
-  useEffect(() => {
-    setQuiet(fase === "main")
-    return () => setQuiet(false)
-  }, [fase])
+  const arenaRef = useRef(arena);
+  const questionDeckRef = useRef<BankQuestion[]>([]);
+  const hitSeqRef = useRef(0);
+  const gameSessionIdRef = useRef("");
+  const endingRef = useRef(false);
+  const finalRushPlayedRef = useRef(false);
+  const botAttackTickRef = useRef(0);
+
+  const player = arena.entities.find((entity) => entity.id === PLAYER_ID) || arena.entities[0];
+  const level = Math.max(1, 1 + Math.floor((player?.kills || 0) / 3));
+  const selectedCharacter = getKuisTempurCharacter(selectedCharacterId);
 
   useEffect(() => {
-    return () => { if (naikTimerRef.current) clearTimeout(naikTimerRef.current) }
-  }, [])
+    arenaRef.current = arena;
+  }, [arena]);
 
   useEffect(() => {
-    setSuara(isSoundOn())
-    const l = Number(localStorage.getItem(KUNCI_LEVEL) || "1")
-    if (Number.isFinite(l) && l >= 1) setLevel(Math.min(l, 99))
-    fetch("/api/user/me")
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d) => {
-        const u = d?.user ?? d
-        if (u?.nickname || u?.fullName) setNamaku(String(u.nickname || u.fullName).split(" ")[0])
-        if (typeof u?.xp === "number") {
-          const lv = levelFromXp(u.xp)
-          const rk = rankFromLevel(lv)
-          setProfil({ rank: RANK_META[rk].label, rankKey: rk, warna: RANK_META[rk].color, levelXp: lv, koin: u.coins ?? 0 })
-        }
-      })
-      .catch(() => {})
-    return () => stopBGM()
-  }, [])
+    const saved = typeof window !== "undefined"
+      ? normalizeKuisTempurCharacterId(window.localStorage.getItem("kuis-tempur-character"))
+      : "arga";
+    setSelectedCharacterId(saved);
+    setArena((current) => ({
+      ...current,
+      entities: initialEntities(saved),
+    }));
+    setMuted(kuisTempurAudio.isMuted());
+  }, []);
 
-  const tulisFeed = useCallback((teks: string) => {
-    const id = ++feedIdRef.current
-    setFeed((f) => [...f.slice(-2), { id, teks }])
-    setTimeout(() => setFeed((f) => f.filter((x) => x.id !== id)), 3000)
-  }, [])
+  useEffect(() => {
+    setQuiet(phase === "play");
+    return () => setQuiet(false);
+  }, [phase]);
 
-  const soalBaru = useCallback(() => {
-    teratasiRef.current = false
-    if (kantongRef.current.length === 0) kantongRef.current = kocok(QUESTION_BANK_EXPANDED)
-    const q = kantongRef.current.pop()!
-    // Dua pilihan, bukan empat. Di tengah permainan, membaca empat opsi di layar
-    // ponsel memakan waktu yang seharusnya dipakai berpikir — dan menebak tetap
-    // mahal karena salah berarti kehilangan combo dan tidak dapat peluru.
-    const pengecoh = kocok(q.opsi.filter((_, i) => i !== q.jawaban))[0]
-    const opsi = kocok([
-      { teks: q.opsi[q.jawaban], benar: true },
-      { teks: pengecoh, benar: false },
-    ])
-    setSoal({ q, opsi })
-    setKunci(false)
-    setWaktu(DETIK_SOAL)
-  }, [])
-
-  const kirimXp = useCallback(async (menang: boolean, peringkat: number) => {
-    const skor =
-      benarRef.current * 10 +
-      maxComboRef.current * 3 +
-      tembakRef.current * 5 +
-      dibunuhRef.current * 10 +
-      (menang ? 40 : 0)
-    setMengirim(true)
+  const chooseCharacter = useCallback((id: KuisTempurCharacterId) => {
+    setSelectedCharacterId(id);
     try {
-      const res = await fetch("/api/game/xp", {
+      window.localStorage.setItem("kuis-tempur-character", id);
+    } catch {}
+    void kuisTempurAudio.unlock();
+    kuisTempurAudio.play("countdown");
+  }, []);
+
+  const nextQuestion = useCallback(() => {
+    if (questionDeckRef.current.length === 0) {
+      questionDeckRef.current = [...QUESTION_BANK_EXPANDED].sort(() => Math.random() - 0.5);
+    }
+    const next = questionDeckRef.current.pop();
+    if (!next) return;
+    setQuestion(makeQuestion(next));
+    setQuestionTime(QUESTION_SECONDS);
+    setLockedAnswer(null);
+    setFeedback(null);
+  }, []);
+
+  const persistXp = useCallback(async (stats: typeof finalStats, survived: boolean) => {
+    const score = stats.score + stats.kills * 30 + stats.correct * 8 + (survived ? 80 : 0);
+    try {
+      const response = await fetch("/api/game/xp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          score: skor, correct: benarRef.current, wrong: salahRef.current,
-          maxStreak: maxComboRef.current, gameType: GAME_TYPE,
+          score,
+          correct: stats.correct,
+          wrong: stats.wrong,
+          maxStreak: stats.combo,
+          gameType: "RIMBA_KATA",
           gameSessionId: gameSessionIdRef.current,
         }),
-      })
-      const d = await res.json().catch(() => ({}))
-      setHasil({ menang, peringkat, xp: d?.xpEarned ?? d?.xp ?? skor })
+      });
+      const data = await response.json().catch(() => ({}));
+      setXpEarned(data?.xpEarned ?? data?.xp ?? score);
     } catch {
-      setHasil({ menang, peringkat, xp: 0 })
-    } finally {
-      setMengirim(false)
+      setXpEarned(0);
     }
-  }, [])
+  }, []);
 
-  const selesaikan = useCallback((menang: boolean, peringkat: number) => {
-    if (!jalanRef.current) return
-    jalanRef.current = false
-    cancelAnimationFrame(rafRef.current)
-    stopBGM()
-    setWaktuAkhir(Math.max(0, DURASI - sisaWaktuRef.current))
-    if (!menang) setKalahHp(true)
-    if (menang) {
-      sfx.win()
-      setLevel((l) => {
-        const baru = Math.min(l + 1, 99)
-        try { localStorage.setItem(KUNCI_LEVEL, String(baru)) } catch {}
-        return baru
-      })
-    } else sfx.gameover()
-    setFase("selesai")
-    kirimXp(menang, peringkat)
-  }, [kirimXp])
+  const finishGame = useCallback((reason: "survive" | "ko") => {
+    if (endingRef.current) return;
+    endingRef.current = true;
+    const current = arenaRef.current;
+    const me = current.entities.find((entity) => entity.id === PLAYER_ID);
+    const stats = {
+      score: me?.score || 0,
+      kills: me?.kills || 0,
+      correct: me?.correct || 0,
+      wrong: me?.wrong || 0,
+      combo: me?.combo || 0,
+    };
+    setFinalStats(stats);
+    setResultReason(reason);
+    setPhase("result");
+    kuisTempurAudio.play(reason === "survive" ? "victory" : "ko");
+    void persistXp(stats, reason === "survive");
+  }, [persistXp]);
 
-  // KUIS TEMPUR 3.0 — naik level di TENGAH sesi: arena di-reset untuk level
-  // baru (lebih banyak musuh, arketipe & statistik meningkat), HP pemain diisi
-  // ke kurva level baru, timer 5 menit TETAP berjalan (level bukan dari timer).
-  const naikLevel = useCallback(() => {
-    const baru = Math.min(levelRef.current + 1, 99)
-    aturanRef.current = statDasarBot(baru)
-    statkuRef.current = kurvaPemain(baru)
-    const cv = cvRef.current
-    const W = cv?.clientWidth || window.innerWidth
-    const H = cv?.clientHeight || window.innerHeight
-    const z = zonaRef.current
-    const lawan = lawanBot(baru)
-    const botWajah = kocok(AVATAR_BOT)
-    const botNama = kocok(NAMA_BOT).slice(0, lawan)
-    const img = (src: string) => { const i = new Image(); i.src = src; return i }
-    const aku = pRef.current[0]
-    if (aku) {
-      aku.hp = statkuRef.current.hpMax
-      aku.hpMax = statkuRef.current.hpMax
-      aku.hidup = true
-      aku.kedip = 0
-    }
-    const bot = Array.from({ length: lawan }, (_, i) => {
-      const sudut = ((Math.PI * 2) / (lawan + 1)) * (i + 1) - Math.PI / 2
-      const jarak = Math.min(W, H) * 0.32
-      const x = W / 2 + Math.cos(sudut) * jarak
-      const y = H / 2 + Math.sin(sudut) * jarak
-      const stat = komposisiBot(baru, giliranBotRef.current++)
-      return {
-        nama: botNama[i], gambar: img(botWajah[i % botWajah.length]),
-        warna: WARNA_TIPE[stat.tipe],
-        x, y, tx: x, ty: y,
-        hp: stat.hpMax, hpMax: stat.hpMax,
-        hidup: true, kamu: false, kedip: 0, langkah: 0, hadap: 1, stat,
-      }
-    })
-    pRef.current = [pRef.current[0], ...bot]
-    bRef.current = []
-    peluruRef.current = 0
-    dibunuhLevelRef.current = 0
-    setPeluru(0)
-    setHp(statkuRef.current.hpMax)
-    setSisaMusuh(lawan)
-    setLevel(baru)
-    setLevelSelesai(false)
-    jalanRef.current = true
-    tulisFeed(`Level ${baru} — ${lawan} musuh baru!`)
-    sfx.levelup()
-  }, [tulisFeed])
-
-  const mulai = useCallback(() => {
+  const startGame = useCallback(() => {
+    void kuisTempurAudio.unlock();
+    endingRef.current = false;
+    finalRushPlayedRef.current = false;
+    botAttackTickRef.current = 0;
     gameSessionIdRef.current = crypto.randomUUID();
-    const cv = cvRef.current
-    const W = cv?.clientWidth || window.innerWidth
-    const H = cv?.clientHeight || window.innerHeight
-    const aturan = statDasarBot(level)
-    aturanRef.current = aturan
-    const statku = kurvaPemain(level)
-    statkuRef.current = statku
+    questionDeckRef.current = [...QUESTION_BANK_EXPANDED].sort(() => Math.random() - 0.5);
+    setArena({
+      seq: 1,
+      timeLeft: SOLO_DURATION,
+      entities: initialEntities(selectedCharacterId),
+    });
+    setFeedback(null);
+    setHitEvent(null);
+    setXpEarned(null);
+    setFinalStats({ score: 0, kills: 0, correct: 0, wrong: 0, combo: 0 });
+    setResultReason("survive");
+    setPhase("play");
+    nextQuestion();
+    kuisTempurAudio.play("countdown");
+  }, [nextQuestion, selectedCharacterId]);
 
-    // Peta kampung dibangun oleh world engine (posisi normalisasi 0..1):
-    // rumah/pohon/batu menahan gerakan & peluru (tabrakan), sisanya dekorasi.
-    // Rintangan menahan peluru, jadi peta inilah yang memberi murid pilihan —
-    // berlindung dulu, baru berpikir.
-    const world = buildWorld(W, H)
-    worldRef.current = world
-    rintRef.current = collidersToPixels(worldColliders(world), W, H)
-    preloadWorldImages(world)
-    // Hangatkan cache bayangan karakter sejak awal (fallback elips menutup).
-    getWorldImage(SHADOW_SOFT_URL)
+  const updatePlayer = useCallback((updater: (entity: PhaserArenaEntity) => PhaserArenaEntity) => {
+    setArena((current) => ({
+      ...current,
+      seq: current.seq + 1,
+      entities: current.entities.map((entity) => entity.id === PLAYER_ID ? updater(entity) : entity),
+    }));
+  }, []);
 
-    // Jumlah musuh mengikuti ronde. Wajah mereka memakai aset avatar bernomor
-    // (public/avatar/1–10) — bukan karakter pemain, supaya kawan vs lawan jelas.
-    const lawan = lawanBot(level)
-    const botWajah = kocok(AVATAR_BOT)
-    const botNama = kocok(NAMA_BOT).slice(0, lawan)
-    const img = (src: string) => { const i = new Image(); i.src = src; return i }
+  const registerHit = useCallback((fromId: string, targetId: string, damage: number) => {
+    setHitEvent({ seq: ++hitSeqRef.current, fromId, targetId, damage });
+  }, []);
 
-    // Tiap bot lahir dengan arketipe acak (ringan/sedang/berat/penembak) yang
-    // bobotnya mengikuti ronde — ronde tinggi berarti musuh lebih kuat & rajin
-    // menembak. Pemain memakai kurva ronde sendiri (nyawa & peluru).
-    const lahirStat = () => komposisiBot(level, giliranBotRef.current)
+  const handleMove = useCallback((position: { x: number; y: number }) => {
+    updatePlayer((me) => ({
+      ...me,
+      x: clamp(position.x, 54, 1346),
+      y: clamp(position.y, 76, 794),
+    }));
+  }, [updatePlayer]);
 
-    pRef.current = Array.from({ length: lawan + 1 }, (_, i) => {
-      const sudut = ((Math.PI * 2) / (lawan + 1)) * i - Math.PI / 2
-      const jarak = Math.min(W, H) * 0.32
-      const kamu = i === 0
-      const src = kamu
-        ? gambarKarakter(karakterku, "happy")
-        : botWajah[(i - 1) % botWajah.length]
-      const x = W / 2 + Math.cos(sudut) * jarak
-      const y = H / 2 + Math.sin(sudut) * jarak
-      const stat = kamu ? undefined : lahirStat()
-      return {
-        nama: kamu ? namaku : botNama[i - 1], gambar: img(src),
-        warna: stat ? WARNA_TIPE[stat.tipe] : "#34D399",
-        x, y, tx: x, ty: y,
-        hp: stat?.hpMax ?? statku.hpMax,
-        hpMax: stat?.hpMax ?? statku.hpMax,
-        hidup: true, kamu, kedip: 0, langkah: 0, hadap: 1, stat,
-        tinggi: 1,
-      }
-    })
+  const respawnBot = useCallback((botId: string) => {
+    window.setTimeout(() => {
+      if (endingRef.current) return;
+      setArena((current) => {
+        const me = current.entities.find((entity) => entity.id === PLAYER_ID);
+        const currentLevel = Math.max(1, 1 + Math.floor((me?.kills || 0) / 3));
+        const index = Math.max(0, Number(botId.split("-").at(-1) || 1) - 1);
+        const hp = 70 + (currentLevel - 1) * 8;
+        return {
+          ...current,
+          seq: current.seq + 1,
+          entities: current.entities.map((entity) =>
+            entity.id === botId
+              ? {
+                  ...entity,
+                  x: BOT_SPAWNS[index % BOT_SPAWNS.length].x,
+                  y: BOT_SPAWNS[index % BOT_SPAWNS.length].y,
+                  hp,
+                  hpMax: hp,
+                  alive: true,
+                  respawnIn: undefined,
+                }
+              : entity
+          ),
+        };
+      });
+      kuisTempurAudio.play("respawn");
+    }, 1500);
+  }, []);
 
-    bRef.current = []; partRef.current = []; angkaRef.current = []
-    zonaRef.current = { x: W / 2, y: H / 2, r: Math.max(W, H) * 0.66 }
-    benarRef.current = 0; salahRef.current = 0; tembakRef.current = 0
-    comboRef.current = 0; maxComboRef.current = 0; peluruRef.current = 0
-    dibunuhRef.current = 0; giliranBotRef.current = 0
-    kantongRef.current = kocok(QUESTION_BANK_EXPANDED)
-    jalanRef.current = true
+  const handleShoot = useCallback((targetId: string) => {
+    const current = arenaRef.current;
+    const me = current.entities.find((entity) => entity.id === PLAYER_ID);
+    const target = current.entities.find((entity) => entity.id === targetId);
+    if (!me?.alive || !target?.alive || me.ammo <= 0) return;
 
-    setHp(statku.hpMax); setCombo(0); setPeluru(0)
-    setSisaWaktu(DURASI); setKalahkan(0)
-    setFeed([]); setHasil(null); setDipilih(null)
-    sisaWaktuRef.current = DURASI
-    dibunuhLevelRef.current = 0
-    setSisaMusuh(lawan)
-    setLevelSelesai(false)
-    setKalahHp(false)
-    setFase("main")
-    soalBaru()
-    sfx.start()
-    startBGM()
-  }, [karakterku, namaku, soalBaru, level])
-
-  useEffect(() => {
-    const cv = cvRef.current
-    if (!cv || fase !== "main") return
-    const atur = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2)
-      cv.width = cv.clientWidth * dpr
-      cv.height = cv.clientHeight * dpr
-      cv.getContext("2d")?.setTransform(dpr, 0, 0, dpr, 0, 0)
-      // Dunia memakai koordinat normalisasi, jadi komposisi tetap valid saat
-      // resize/rotasi — cukup petakan ulang tabrakan ke piksel baru. Entitas
-      // (pemain/musuh) sengaja tidak dipindah (perilaku lama dipertahankan).
-      const world = worldRef.current
-      if (world) {
-        rintRef.current = collidersToPixels(worldColliders(world), cv.clientWidth, cv.clientHeight)
-      }
-    }
-    atur()
-    window.addEventListener("resize", atur)
-    return () => window.removeEventListener("resize", atur)
-  }, [fase])
-
-  // Ketukan = menembak musuh yang diketuk. Seretan = berjalan. Keduanya di
-  // kanvas yang sama, jadi dibedakan dari jarak dan lama sentuhan — bukan dari
-  // tombol terpisah yang memakan ruang layar dan menambah hal untuk dipelajari.
-  useEffect(() => {
-    const cv = cvRef.current
-    if (!cv || fase !== "main") return
-
-    const titik = (e: TouchEvent | MouseEvent) => {
-      const r = cv.getBoundingClientRect()
-      const cx = "touches" in e ? (e.touches[0] ?? e.changedTouches[0])?.clientX : e.clientX
-      const cy = "touches" in e ? (e.touches[0] ?? e.changedTouches[0])?.clientY : e.clientY
-      return cx == null || cy == null ? null : { x: cx - r.left, y: cy - r.top }
+    const distance = Math.hypot(target.x - me.x, target.y - me.y);
+    if (distance > 560) {
+      setFeedback({ correct: false, text: "Dekati musuh agar tembakan masuk." });
+      return;
     }
 
-    const mulaiTekan = (e: TouchEvent | MouseEvent) => {
-      e.preventDefault()
-      const t = titik(e)
-      if (t) tekanRef.current = { ...t, t: Date.now() }
-    }
-    const gerak = (e: TouchEvent | MouseEvent) => {
-      const aku = pRef.current[0]
-      if (!aku?.hidup) return
-      if ("buttons" in e && e.buttons !== 1) return
-      e.preventDefault()
-      const t = titik(e)
-      if (!t) return
-      const awal = tekanRef.current
-      if (awal && Math.hypot(t.x - awal.x, t.y - awal.y) > 12) {
-        aku.tx = t.x; aku.ty = t.y
-      }
-    }
-    const lepas = (e: TouchEvent | MouseEvent) => {
-      const awal = tekanRef.current
-      tekanRef.current = null
-      const aku = pRef.current[0]
-      if (!awal || !aku?.hidup) return
-      const t = titik(e) ?? awal
-      const jauh = Math.hypot(t.x - awal.x, t.y - awal.y)
-      const lama = Date.now() - awal.t
-      if (jauh > 12 || lama > 400) return // itu seretan, bukan ketukan
+    const damage = 28 + Math.min(12, level * 2);
+    const remaining = Math.max(0, target.hp - damage);
+    const ko = remaining <= 0;
 
-      // Ketukan: cari musuh di titik itu. Radius sentuh dilonggarkan jadi R+14
-      // supaya jempol anak tidak perlu presisi.
-      const sasaran = pRef.current.findIndex(
-        (p, i) => i !== 0 && p.hidup && Math.hypot(t.x - p.x, t.y - p.y) < R + 14
-      )
-      if (sasaran === -1) return
-      if (peluruRef.current <= 0) {
-        tulisFeed("Peluru habis — jawab benar dulu!")
-        sfx.wrong()
-        return
-      }
-      peluruRef.current--
-      setPeluru(peluruRef.current)
-      tembakRef.current++
-      const o = pRef.current[sasaran]
-      const a = Math.atan2(o.y - aku.y, o.x - aku.x)
-      aku.hadap = Math.cos(a) >= 0 ? 1 : -1
-      bRef.current.push({
-        x: aku.x, y: aku.y,
-        vx: Math.cos(a) * 10, vy: Math.sin(a) * 10,
-        dari: 0, umur: 110, dmg: statkuRef.current.dmgTembak,
-      })
-      sfx.tap(); haptic(15)
-    }
-
-    cv.addEventListener("touchstart", mulaiTekan, { passive: false })
-    cv.addEventListener("touchmove", gerak, { passive: false })
-    cv.addEventListener("touchend", lepas)
-    cv.addEventListener("mousedown", mulaiTekan)
-    cv.addEventListener("mousemove", gerak)
-    cv.addEventListener("mouseup", lepas)
-    return () => {
-      cv.removeEventListener("touchstart", mulaiTekan)
-      cv.removeEventListener("touchmove", gerak)
-      cv.removeEventListener("touchend", lepas)
-      cv.removeEventListener("mousedown", mulaiTekan)
-      cv.removeEventListener("mousemove", gerak)
-      cv.removeEventListener("mouseup", lepas)
-    }
-  }, [fase, tulisFeed])
-
-  // ── KEYBOARD MOVEMENT ────────────────────────────────────────────────
-  // Arrow keys + WASD. Direction state consumed by game loop for smooth
-  // continuous movement while held. Prevents browser scroll on arrow keys.
-  useEffect(() => {
-    if (fase !== "main") return
-    const k = keyRef.current
-    const down = (e: KeyboardEvent) => {
-      switch (e.code) {
-        case "ArrowUp": case "KeyW": k.up = true; e.preventDefault(); break
-        case "ArrowDown": case "KeyS": k.down = true; e.preventDefault(); break
-        case "ArrowLeft": case "KeyA": k.left = true; e.preventDefault(); break
-        case "ArrowRight": case "KeyD": k.right = true; e.preventDefault(); break
-      }
-    }
-    const up = (e: KeyboardEvent) => {
-      switch (e.code) {
-        case "ArrowUp": case "KeyW": k.up = false; break
-        case "ArrowDown": case "KeyS": k.down = false; break
-        case "ArrowLeft": case "KeyA": k.left = false; break
-        case "ArrowRight": case "KeyD": k.right = false; break
-      }
-    }
-    window.addEventListener("keydown", down)
-    window.addEventListener("keyup", up)
-    return () => {
-      k.up = k.down = k.left = k.right = false
-      window.removeEventListener("keydown", down)
-      window.removeEventListener("keyup", up)
-    }
-  }, [fase])
-
-  useEffect(() => {
-    if (fase !== "main") return
-    const cv = cvRef.current
-    const ctx = cv?.getContext("2d")
-    if (!cv || !ctx) return
-
-    const ledak = (x: number, y: number, warna: string, n = 10) => {
-      for (let i = 0; i < n; i++) {
-        const a = Math.random() * Math.PI * 2
-        const s = 1 + Math.random() * 3
-        partRef.current.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, umur: 26, warna })
-      }
-    }
-
-    const bunuh = (i: number, oleh: string) => {
-      const p = pRef.current[i]
-      if (!p.hidup) return
-      p.hidup = false; p.hp = 0
-      ledak(p.x, p.y, p.warna, 20)
-      tulisFeed(`${oleh} menumbangkan ${p.nama} ${p.stat ? LABEL_TIPE[p.stat.tipe] : ""}`)
-      const s = pRef.current.filter((x) => x.hidup).length
-      if (p.kamu) selesaikan(false, s + 1)
-      else {
-        sfx.levelup()
-        dibunuhRef.current++
-        dibunuhLevelRef.current++
-        setKalahkan(dibunuhRef.current)
-        const sisa = Math.max(0, lawanBot(levelRef.current) - dibunuhLevelRef.current)
-        setSisaMusuh(sisa)
-        // KUIS TEMPUR 3.0 — target level tercapai → pause sebentar → naik level.
-        if (dibunuhLevelRef.current >= lawanBot(levelRef.current)) {
-          jalanRef.current = false
-          setLevelSelesai(true)
-          naikTimerRef.current = window.setTimeout(() => naikLevel(), 1600)
-          return
+    setArena((snapshot) => ({
+      ...snapshot,
+      seq: snapshot.seq + 1,
+      entities: snapshot.entities.map((entity) => {
+        if (entity.id === PLAYER_ID) {
+          return {
+            ...entity,
+            ammo: Math.max(0, entity.ammo - 1),
+            score: entity.score + (ko ? 240 : 25),
+            kills: entity.kills + (ko ? 1 : 0),
+          };
         }
-      }
+        if (entity.id === targetId) {
+          return {
+            ...entity,
+            hp: remaining,
+            alive: !ko,
+            deaths: entity.deaths + (ko ? 1 : 0),
+            respawnIn: ko ? 1.5 : undefined,
+          };
+        }
+        return entity;
+      }),
+    }));
+
+    registerHit(PLAYER_ID, targetId, damage);
+    kuisTempurAudio.play("shot");
+    if (ko) {
+      kuisTempurAudio.play("ko");
+      respawnBot(targetId);
     }
+  }, [level, registerHit, respawnBot]);
 
-    // Dorong keluar kalau menembus rintangan — karakter tidak boleh berjalan
-    // menembus rumah atau pohon, kalau tidak "berlindung" kehilangan artinya.
-    const dorongKeluar = (p: Pemain) => {
-      for (const r of rintRef.current) {
-        // Pohon DAN batu sama-sama lingkaran; hanya rumah yang persegi.
-        if (r.jenis === "pohon" || r.jenis === "batu") {
-          const d = Math.hypot(p.x - r.x, p.y - r.y)
-          const min = r.r + R * 0.55
-          if (d < min && d > 0.01) {
-            p.x = r.x + ((p.x - r.x) / d) * min
-            p.y = r.y + ((p.y - r.y) / d) * min
-          }
-        } else {
-          const m = R * 0.5
-          if (p.x > r.x - m && p.x < r.x + r.w + m && p.y > r.y - m && p.y < r.y + r.h + m) {
-            const kiri = p.x - (r.x - m), kanan = r.x + r.w + m - p.x
-            const atas = p.y - (r.y - m), bawah = r.y + r.h + m - p.y
-            const min = Math.min(kiri, kanan, atas, bawah)
-            if (min === kiri) p.x = r.x - m
-            else if (min === kanan) p.x = r.x + r.w + m
-            else if (min === atas) p.y = r.y - m
-            else p.y = r.y + r.h + m
-          }
-        }
-      }
-    }
+  const damagePlayer = useCallback((damage: number, fromId: string) => {
+    let shouldFinish = false;
+    setArena((current) => ({
+      ...current,
+      seq: current.seq + 1,
+      entities: current.entities.map((entity) => {
+        if (entity.id !== PLAYER_ID || !entity.alive) return entity;
+        const hp = Math.max(0, entity.hp - damage);
+        if (hp <= 0) shouldFinish = true;
+        return {
+          ...entity,
+          hp,
+          alive: hp > 0,
+          deaths: entity.deaths + (hp <= 0 ? 1 : 0),
+          combo: hp <= 0 ? 0 : entity.combo,
+        };
+      }),
+    }));
+    registerHit(fromId, PLAYER_ID, damage);
+    if (shouldFinish) window.setTimeout(() => finishGame("ko"), 260);
+  }, [finishGame, registerHit]);
 
-    const gelung = () => {
-      if (!jalanRef.current) return
-      const W = cv.clientWidth, H = cv.clientHeight
-      const z = zonaRef.current
-      const at = aturanRef.current
+  const answerQuestion = useCallback((index: number) => {
+    if (!question || lockedAnswer !== null || phase !== "play") return;
+    const option = question.options[index];
+    if (!option) return;
+    setLockedAnswer(index);
 
-      // ── WORLD ──────────────────────────────────────────────────────────
-      // Urutan lapisan: back → mid ── entitas (di bawah) ── front.
-      // Tabrakan (rintRef) dipetakan dari WORLD DATA yang sama melalui
-      // collidersToPixels, sehingga visual & logika tidak bisa meleset.
-      const world = worldRef.current
-      if (world) {
-        drawWorldBackdrop(ctx, world, W, H)
-        drawWorldLayer(ctx, world, "back", W, H)
-        drawWorldLayer(ctx, world, "mid", W, H)
-      } else {
-        ctx.fillStyle = "#5E9337"
-        ctx.fillRect(0, 0, W, H)
-      }
-
-      pRef.current.forEach((p, i) => {
-        if (!p.hidup) return
-        // ── Keyboard movement: override tx/ty for continuous movement ──
-        if (p.kamu) {
-          const k = keyRef.current
-          const kmx = (k.left ? -1 : 0) + (k.right ? 1 : 0)
-          const kmy = (k.up ? -1 : 0) + (k.down ? 1 : 0)
-          if (kmx !== 0 || kmy !== 0) {
-            const laju = 2.6
-            const len = Math.hypot(kmx, kmy)
-            p.tx = p.x + (kmx / len) * laju
-            p.ty = p.y + (kmy / len) * laju
-            // Update facing direction for sprite flip
-            if (kmx !== 0) p.hadap = kmx > 0 ? 1 : -1
-          }
-        }
-        const dx = p.tx - p.x, dy = p.ty - p.y
-        const jarak = Math.hypot(dx, dy)
-        const bergerak = jarak > 2
-        if (bergerak) {
-          const laju = p.kamu ? 2.6 : (p.stat?.laju ?? at.lajuBot) * 3
-          p.x += (dx / jarak) * Math.min(laju, jarak)
-          p.y += (dy / jarak) * Math.min(laju, jarak)
-          p.langkah += 0.28
-          if (Math.abs(dx) > 1) p.hadap = dx > 0 ? 1 : -1
-        } else {
-          p.langkah += 0.06
-        }
-        dorongKeluar(p)
-        if (p.kedip > 0) p.kedip--
-        // nilai zona perlindungan karakter utama sesuatukan dengan luas canvas
-        if (p.kamu && p.tinggi !== undefined && p.tinggi < 1) p.tinggi += 2 * 0.01
-
-        if (Math.hypot(p.x - z.x, p.y - z.y) > z.r) {
-          p.hp -= 0.12
-          if (p.kamu) setHp(Math.max(0, Math.round(p.hp)))
-          if (p.hp <= 0) bunuh(i, "Kabut")
-        } else {
-          if (p.kamu) p.tinggi = Math.min((p.tinggi ?? 1) + 0.008, 1.5)
-          else          p.tinggi = Math.min((p.tinggi ?? 1) + 0.005, 1.5)
-        }
-
-        if (!p.kamu && p.kedip === 0) {
-          p.tinggi = Math.min((p.tinggi ?? 1) + Math.random() * 0.1, 1.5)
-        }
-
-        if (!p.kamu) {
-          if (jarak < 12) {
-            const aku = pRef.current[0]
-            for (let c = 0; c < 12; c++) {
-              let nx: number, ny: number
-              // Bot mendekati pemain lebih sering supaya arena terasa hidup dan
-              // peluru pemain selalu punya sasaran terdekat.
-              if (aku?.hidup && Math.random() < 0.55) {
-                const a = Math.random() * Math.PI * 2
-                const d = 60 + Math.random() * 100
-                nx = aku.x + Math.cos(a) * d
-                ny = aku.y + Math.sin(a) * d
-              } else {
-                const a = Math.random() * Math.PI * 2
-                const rr = Math.random() * z.r * 0.75
-                nx = z.x + Math.cos(a) * rr
-                ny = z.y + Math.sin(a) * rr
-              }
-              if (nx < 24 || nx > W - 24 || ny < 56 || ny > H - 64) continue
-              if (!rintRef.current.some((o) => kenaRintangan(nx, ny, o))) { p.tx = nx; p.ty = ny; break }
-            }
-          }
-          if (Math.random() < (p.stat?.peluangTembak ?? at.peluangTembak)) {
-            const t = pRef.current.findIndex((x, j) => j !== i && x.hidup)
-            if (t !== -1) {
-              const o = pRef.current[t]
-              const a = Math.atan2(o.y - p.y, o.x - p.x) + (Math.random() - 0.5) * (p.stat?.sebaran ?? at.sebaran)
-              bRef.current.push({
-                x: p.x, y: p.y, vx: Math.cos(a) * at.lajuPeluru, vy: Math.sin(a) * at.lajuPeluru,
-                dari: i, umur: 120, dmg: p.stat?.dmg ?? at.dmgBot,
-              })
-            }
-          }
-        }
-
-        // Rasa berjalan tanpa lembar sprite: badan naik-turun mengikuti langkah,
-        // condong sedikit ke arah gerak, dan bayangan memipih saat kaki menapak.
-        // Hanya Alby yang punya pose "running", jadi animasi dibuat prosedural
-        // agar ketiga karakter dan foto profil murid ikut terasa hidup.
-        const ayun = bergerak ? Math.sin(p.langkah) * 3.2 : Math.sin(p.langkah) * 0.8
-        const py = p.y + ayun
-        const condong = bergerak ? Math.sin(p.langkah) * 0.07 * p.hadap : 0
-
-        // Bayangan kontak = sprite shadow_soft.png (QT-WORLD-02 §11).
-        // Elips prosedural hanya fallback saat gambar belum termuat — tidak
-        // ada lingkaran/halo/ring target di sini (dihapus QT-WORLD-01).
-        const bayang = getWorldImage(SHADOW_SOFT_URL)
-        if (isWorldImageReady(bayang)) {
-          const bw = R * 3.4
-          const bh = bw * 0.32
-          ctx.drawImage(bayang, p.x - bw / 2, p.y + R * 0.82 - bh / 2, bw, bh)
-        } else {
-          ctx.fillStyle = "rgba(0,0,0,0.28)"
-          ctx.beginPath()
-          ctx.ellipse(p.x, p.y + R * 0.82, R * (0.62 - ayun * 0.02), R * 0.22, 0, 0, Math.PI * 2)
-          ctx.fill()
-        }
-
-        // Grounding karakter = bayangan kontak lembut di atas (tanpa lingkaran
-        // target/seleksi — lingkaran besar dihapus QT-WORLD-01).
-        ctx.save()
-        ctx.translate(p.x, py)
-        ctx.rotate(condong)
-        ctx.beginPath(); ctx.arc(0, 0, R, 0, Math.PI * 2); ctx.clip()
-        if (p.gambar?.complete && p.gambar.naturalWidth > 0) {
-          ctx.drawImage(p.gambar, -R, -R, R * 2, R * 2)          } else {
-          ctx.fillStyle = p.warna; ctx.fillRect(-R, -R, R * 2, R * 2)
-        }
-        ctx.restore()
-
-        // Nama & bilah nyawa tetap di atas karakter (tidak diubah).
-
-        ctx.fillStyle = "#fff"; ctx.font = "bold 11px system-ui, sans-serif"; ctx.textAlign = "center"
-        ctx.fillText(p.nama, p.x, py - R - 13)
-        ctx.fillStyle = "rgba(0,0,0,0.45)"; ctx.fillRect(p.x - 21, py - R - 9, 42, 4)
-        ctx.fillStyle = p.hp > 35 ? "#34D399" : "#F87171"
-        ctx.fillRect(p.x - 21, py - R - 9, 42 * Math.max(0, p.hp / Math.max(1, p.hpMax)), 4)
-      })
-
-      // Lapisan depan (foreground jarang, tidak menutupi gameplay) — selalu di
-      // bawah peluru/partikel/UI supaya keterbacaan tempur terjaga.
-      if (world) drawWorldLayer(ctx, world, "front", W, H)
-
-      for (let i = bRef.current.length - 1; i >= 0; i--) {
-        const b = bRef.current[i]
-        b.x += b.vx; b.y += b.vy; b.umur--
-
-        if (rintRef.current.some((r) => kenaRintangan(b.x, b.y, r))) {
-          for (let n = 0; n < 5; n++) {
-            const a = Math.random() * Math.PI * 2
-            partRef.current.push({ x: b.x, y: b.y, vx: Math.cos(a) * 1.6, vy: Math.sin(a) * 1.6, umur: 14, warna: "#E2E8F0" })
-          }
-          bRef.current.splice(i, 1); continue
-        }
-
-        let kena = false
-        pRef.current.forEach((t, j) => {
-          if (kena || j === b.dari || !t.hidup) return
-          if (Math.hypot(b.x - t.x, b.y - t.y) < R) {
-            t.hp -= b.dmg; t.kedip = 6
-            angkaRef.current.push({ x: t.x, y: t.y - R, teks: `-${b.dmg}`, umur: 32, warna: b.dari === 0 ? "#34D399" : "#F87171" })
-            ledak(t.x, t.y, b.dari === 0 ? "#34D399" : "#F87171", 7)
-            if (t.kamu) { setHp(Math.max(0, Math.round(t.hp))); haptic(30) }
-            if (t.hp <= 0) bunuh(j, pRef.current[b.dari].nama)
-            kena = true
-          }
-        })
-        if (kena || b.umur <= 0) bRef.current.splice(i, 1)
-        else {
-          ctx.beginPath(); ctx.arc(b.x, b.y, 5, 0, Math.PI * 2)
-          ctx.fillStyle = b.dari === 0 ? "#34D399" : "#F87171"
-          ctx.shadowBlur = 10; ctx.shadowColor = ctx.fillStyle as string
-          ctx.fill(); ctx.shadowBlur = 0
-        }
-      }
-
-      for (let i = partRef.current.length - 1; i >= 0; i--) {
-        const q = partRef.current[i]
-        q.x += q.vx; q.y += q.vy; q.vx *= 0.94; q.vy *= 0.94; q.umur--
-        if (q.umur <= 0) { partRef.current.splice(i, 1); continue }
-        ctx.globalAlpha = q.umur / 26; ctx.fillStyle = q.warna
-        ctx.fillRect(q.x - 2, q.y - 2, 4, 4); ctx.globalAlpha = 1
-      }
-
-      for (let i = angkaRef.current.length - 1; i >= 0; i--) {
-        const a = angkaRef.current[i]
-        a.y -= 0.8; a.umur--
-        if (a.umur <= 0) { angkaRef.current.splice(i, 1); continue }
-        ctx.globalAlpha = Math.min(1, a.umur / 20)
-        ctx.fillStyle = a.warna;          ctx.font = "900 15px system-ui, sans-serif"; ctx.textAlign = "center"
-        ctx.fillText(a.teks, a.x, a.y); ctx.globalAlpha = 1
-      }
-
-      // Bingkai dalam krem tipis — menautkan arena gelap ke chrome krem gim.
-      ctx.strokeStyle = "rgba(253, 230, 138, 0.15)"
-      ctx.lineWidth = 2
-      ctx.strokeRect(1.5, 1.5, W - 3, H - 3)
-
-      rafRef.current = requestAnimationFrame(gelung)
-    }
-    rafRef.current = requestAnimationFrame(gelung)
-    return () => cancelAnimationFrame(rafRef.current)
-  }, [fase, selesaikan, tulisFeed, level, naikLevel])
-
-  const jawab = (idx: number, benar: boolean) => {
-    if (kunci || teratasiRef.current || fase !== "main") return
-    teratasiRef.current = true
-    setKunci(true); setDipilih(idx)
-    const aku = pRef.current[0]
-
-    if (benar) {
-      benarRef.current++
-      comboRef.current++
-      maxComboRef.current = Math.max(maxComboRef.current, comboRef.current)
-      setCombo(comboRef.current)
-      comboRef.current > 1 ? sfx.combo(comboRef.current) : sfx.correct()
-      // Combo memberi peluru tambahan: benar berturut-turut membuka lebih banyak
-      // tembakan, jadi ketelitian berbuah kekuatan — bukan sekadar poin di akhir.
-      const dapat = 1 + (comboRef.current >= 3 ? 1 : 0)
-      peluruRef.current += dapat
-      setPeluru(peluruRef.current)
-      angkaRef.current.push({ x: aku.x, y: aku.y - R, teks: `+${dapat} peluru`, umur: 40, warna: "#FBBF24" })
+    if (option.correct) {
+      updatePlayer((me) => ({
+        ...me,
+        ammo: Math.min(MAX_AMMO, me.ammo + 1),
+        score: me.score + 100 + me.combo * 15,
+        correct: me.correct + 1,
+        combo: me.combo + 1,
+      }));
+      setFeedback({ correct: true, text: "Benar! Energi +1" });
+      kuisTempurAudio.play("correct");
     } else {
-      salahRef.current++
-      comboRef.current = 0
-      setCombo(0)
-      sfx.wrong(); haptic([20, 40, 20])
-      aku.hp -= DMG_SALAH; aku.kedip = 8
-      angkaRef.current.push({ x: aku.x, y: aku.y - R, teks: `-${DMG_SALAH}`, umur: 32, warna: "#F87171" })
-      setHp(Math.max(0, Math.round(aku.hp)))
-      if (aku.hp <= 0) {
-        const s = pRef.current.filter((x) => x.hidup).length
-        aku.hidup = false; selesaikan(false, s); return
+      updatePlayer((me) => ({
+        ...me,
+        wrong: me.wrong + 1,
+        combo: 0,
+      }));
+      setFeedback({ correct: false, text: "Belum tepat. Tetap bergerak!" });
+      kuisTempurAudio.play("wrong");
+      const bot = arenaRef.current.entities.find((entity) => entity.kind === "bot" && entity.alive);
+      if (bot) damagePlayer(8, bot.id);
+    }
+
+    window.setTimeout(nextQuestion, 650);
+  }, [damagePlayer, lockedAnswer, nextQuestion, phase, question, updatePlayer]);
+
+  useEffect(() => {
+    if (phase !== "play") return;
+    const timer = window.setInterval(() => {
+      setArena((current) => {
+        const next = Math.max(0, current.timeLeft - 1);
+        if (next === 30 && !finalRushPlayedRef.current) {
+          finalRushPlayedRef.current = true;
+          kuisTempurAudio.play("finalRush");
+        }
+        if (next <= 0) window.setTimeout(() => finishGame("survive"), 0);
+        return { ...current, seq: current.seq + 1, timeLeft: next };
+      });
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [finishGame, phase]);
+
+  useEffect(() => {
+    if (phase !== "play" || lockedAnswer !== null) return;
+    if (questionTime <= 0) {
+      setLockedAnswer(-1);
+      setFeedback({ correct: false, text: "Waktu habis. Soal berikutnya!" });
+      updatePlayer((me) => ({ ...me, wrong: me.wrong + 1, combo: 0 }));
+      kuisTempurAudio.play("wrong");
+      const bot = arenaRef.current.entities.find((entity) => entity.kind === "bot" && entity.alive);
+      if (bot) damagePlayer(8, bot.id);
+      window.setTimeout(() => {
+        if (!endingRef.current) nextQuestion();
+      }, 650);
+      return;
+    }
+    const timeout = window.setTimeout(() => setQuestionTime((value) => value - 1), 1000);
+    return () => window.clearTimeout(timeout);
+  }, [damagePlayer, lockedAnswer, nextQuestion, phase, questionTime, updatePlayer]);
+
+  useEffect(() => {
+    if (phase !== "play") return;
+    const ai = window.setInterval(() => {
+      const current = arenaRef.current;
+      const me = current.entities.find((entity) => entity.id === PLAYER_ID);
+      if (!me?.alive) return;
+
+      botAttackTickRef.current += 1;
+      const attacker = current.entities
+        .filter((entity) => entity.kind === "bot" && entity.alive)
+        .reduce<PhaserArenaEntity | null>((nearest, entity) => {
+          if (!nearest) return entity;
+          const nearestDistance = Math.hypot(nearest.x - me.x, nearest.y - me.y);
+          const entityDistance = Math.hypot(entity.x - me.x, entity.y - me.y);
+          return entityDistance < nearestDistance ? entity : nearest;
+        }, null);
+
+      setArena((snapshot) => ({
+        ...snapshot,
+        seq: snapshot.seq + 1,
+        entities: snapshot.entities.map((entity) => {
+          if (entity.kind !== "bot" || !entity.alive) return entity;
+          const dx = me.x - entity.x;
+          const dy = me.y - entity.y;
+          const distance = Math.max(1, Math.hypot(dx, dy));
+          const step = distance > 190 ? 28 : 8;
+          const jitter = (Math.random() - 0.5) * 22;
+          return {
+            ...entity,
+            x: clamp(entity.x + (dx / distance) * step + jitter, 70, 1330),
+            y: clamp(entity.y + (dy / distance) * step + jitter * 0.35, 90, 770),
+          };
+        }),
+      }));
+
+      if (botAttackTickRef.current % 2 === 0 && attacker) {
+        const distance = Math.hypot(attacker.x - me.x, attacker.y - me.y);
+        if (distance < 470) damagePlayer(6 + Math.min(8, level), attacker.id);
       }
-    }
-    setTimeout(() => { setDipilih(null); soalBaru() }, 750)
-  }
+    }, 850);
+    return () => window.clearInterval(ai);
+  }, [damagePlayer, level, phase]);
 
-  // Hitung mundur waktu menjawab. Habis waktu = kehilangan combo dan tidak dapat
-  // peluru, TETAPI tidak mengurangi HP: berlindung sambil berpikir tidak boleh
-  // dihukum seperti menjawab salah. Yang dihukum adalah diam saja.
-  //
-  // Penting: efek ini TIDAK boleh berhenti karena kunci berubah menjadi true —
-  // dulu `kunci` ikut dalam dependency sehingga begitu waktu habis lalu setKunci
-  // memicu render ulang, cleanup membatalkan timeout yang seharusnya mengganti
-  // soal. Akibatnya soal membeku sampai sesi berakhir. Kini "sudah teratasi"
-  // dijaga lewat ref, jadi timeout penggantian soal selalu sempat berjalan.
-  useEffect(() => {
-    if (fase !== "main" || teratasiRef.current || !soal) return
-    if (waktu <= 0) {
-      teratasiRef.current = true
-      setKunci(true)
-      comboRef.current = 0
-      setCombo(0)
-      salahRef.current++
-      sfx.wrong()
-      tulisFeed("Waktu habis!")
-      const t = setTimeout(() => { setDipilih(null); soalBaru() }, 600)
-      return () => clearTimeout(t)
-    }
-    const t = setTimeout(() => setWaktu((w) => w - 1), 1000)
-    return () => clearTimeout(t)
-  }, [waktu, fase, soal, soalBaru, tulisFeed])
+  const accuracy = useMemo(() => {
+    const total = finalStats.correct + finalStats.wrong;
+    return total ? Math.round((finalStats.correct / total) * 100) : 0;
+  }, [finalStats]);
 
-  // Timer 5 menit seluruh sesi. Bertahan sampai nol = menang. Dulu sesi
-  // berakhir cepat karena cukup menyingkirkan 4 bot awal; sekarang selama
-  // masih hidup kamu terus menghadapi bot yang berdatangan.
-  useEffect(() => {
-    if (fase !== "main") return
-    sisaWaktuRef.current = sisaWaktu
-    if (sisaWaktu <= 0) {
-      const aku = pRef.current[0]
-      if (aku?.hidup) selesaikan(true, 1)
-      return
-    }
-    const t = setTimeout(() => setSisaWaktu((w) => w - 1), 1000)
-    return () => clearTimeout(t)
-  }, [sisaWaktu, fase, selesaikan])
+  const toggleMute = useCallback(() => {
+    const next = !muted;
+    setMuted(next);
+    kuisTempurAudio.setMuted(next);
+    if (!next) void kuisTempurAudio.unlock();
+  }, [muted]);
 
-  const gantiSuara = () => {
-    const on = toggleSound()
-    setSuara(on)
-    if (fase === "main") on ? startBGM() : stopBGM()
-  }
-
-  // ── Rangka visual chunky cream yang sama dengan gim solo lain ─────────────
-  const chunky = "border-4 border-[#161B3A] dark:border-white/25 shadow-[6px_6px_0_#DC2626]"
-  const btn = `inline-flex items-center justify-center gap-2 font-extrabold rounded-2xl ${chunky} transition-transform active:translate-x-1.5 active:translate-y-1.5 active:shadow-none`
-  const avatarHasil = gambarKarakter(karakterku, hasil?.menang ? "celebrate" : "idle")
-  const avatarHdr = gambarKarakter(karakterku, "happy")
-
-  const Hdr = (
-    <div className="mb-3 flex w-full items-center justify-between">
-      <div className="flex items-center gap-2">
-        <GameBackButton href={backHref} label="Kembali ke Arena" title="Kembali ke Arena" />
-        <div className="kt-pop h-11 w-11 shrink-0 overflow-hidden rounded-2xl border-4 border-[#161B3A] dark:border-white/25 bg-white dark:bg-[#241218] shadow-[4px_4px_0_#DC2626]">
-          <img src={avatarHdr} alt="" className="h-full w-full object-cover" />
-        </div>
-        <div>
-          <div className="text-lg font-extrabold leading-none">Kuis Tempur</div>
-          <div className="mt-0.5 text-[10px] font-semibold opacity-60">Bertahan di kampung kata!</div>
-        </div>
-      </div>
-      <button
-        onClick={gantiSuara}
-        aria-label={suara ? "Matikan suara" : "Nyalakan suara"}
-        className={`${btn} h-11 w-11 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`}
-      >
-        {suara ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}
-      </button>
-    </div>
-  )
-
-  if (fase === "pilih") {
-    const pilihan = KARAKTER.map((k) => ({ id: k, nama: PROFIL[k].nama, src: gambarKarakter(k, "happy") }))
+  if (phase === "select") {
     return (
-      <div className="game-env game-env-kuis fixed inset-0 z-[60] overflow-y-auto game-env-bg bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150A0A] dark:to-[#200E0E] text-[#161B3A] dark:text-[#F1EDFF]">
-        <style>{KT_STYLE}</style>
-        <div className="relative mx-auto flex min-h-full max-w-xl flex-col items-center px-4 py-5">
-          {Hdr}
-          <div className={`kt-screen w-full max-w-md rounded-3xl game-env-card bg-white dark:bg-gradient-to-br dark:from-[#241218] dark:to-[#301C24] p-6 text-center ${chunky}`}>
-            <div className="kt-pop mx-auto mb-3 h-24 w-24 overflow-hidden rounded-3xl border-4 border-[#161B3A] dark:border-white/25 shadow-[6px_6px_0_#DC2626]">
-              <img src={avatarHdr} alt="" className="h-full w-full object-cover" />
+      <main className="fixed inset-0 z-[70] overflow-y-auto bg-[#040914] text-white">
+        <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_50%_22%,rgba(34,211,238,.18),transparent_28%),radial-gradient(circle_at_15%_10%,rgba(99,102,241,.18),transparent_24%),radial-gradient(circle_at_85%_14%,rgba(244,63,94,.18),transparent_24%),linear-gradient(180deg,#07142d,#040914_72%)]" />
+        <div className="relative mx-auto min-h-full max-w-6xl px-4 py-5 sm:px-6">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <button
+              onClick={() => window.location.assign(backHref)}
+              className="inline-flex items-center gap-2 rounded-2xl border border-white/12 bg-white/[.06] px-4 py-2.5 text-sm font-black text-white/85 backdrop-blur transition hover:bg-white/10"
+            >
+              <ArrowLeft size={17} /> Kembali
+            </button>
+            <div className="rounded-full border border-emerald-300/15 bg-emerald-300/10 px-3 py-1.5 text-[10px] font-black tracking-[.16em] text-emerald-200">
+              MODE LATIHAN · LAWAN BOT
             </div>
-            <h1 className="font-game-display mb-2 text-3xl font-extrabold">Kuis Tempur</h1>
-            <p className="mb-5 text-sm opacity-70">Jawab benar untuk menembak, salah kamu yang terluka. Kalahkan semua musuh untuk naik level — sejauh mana kamu bisa dalam 5 menit?</p>
+          </div>
 
-            <div className="mb-5 space-y-1.5 rounded-xl border-2 border-amber-200 bg-amber-50 px-4 py-3 text-left text-xs font-semibold text-amber-800">
-              <p><b className="text-amber-900">1.</b> Sembunyi di balik rumah atau pohon — peluru tertahan di situ.</p>
-              <p><b className="text-amber-900">2.</b> Jawab benar untuk mendapat <b>peluru</b>.</p>
-              <p><b className="text-amber-900">3.</b> Ketuk musuh untuk menembaknya. Seret untuk berjalan.</p>
-              <p><b className="text-amber-900">4.</b> Kalahkan <b>semua musuh</b> untuk naik level — musuh makin banyak dan makin kuat.</p>
-              <p><b className="text-amber-900">5.</b> Jawab sebelum <b>15 detik</b> — waktu habis, soal diganti otomatis.</p>
-            </div>
+          <section className="overflow-hidden rounded-[34px] border border-white/10 bg-white/[.045] shadow-[0_30px_90px_rgba(0,0,0,.34)] backdrop-blur">
+            <div className="grid min-h-[540px] lg:grid-cols-2">
+              <div className="relative flex min-h-[500px] flex-col items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_50%_44%,rgba(34,211,238,.19),transparent_32%),linear-gradient(180deg,#0a1730,#06101d)] p-6 text-center">
+                <div className="absolute inset-x-12 bottom-20 h-24 rounded-[50%] bg-cyan-300/10 blur-2xl" />
+                <div className="relative z-10 w-full text-left">
+                  <div className="text-[10px] font-black tracking-[.22em] text-cyan-300">LAWAN BOT</div>
+                  <h1 className="mt-1 text-3xl font-black tracking-tight sm:text-5xl">Pilih petarungmu.</h1>
+                </div>
 
-            <h2 className="mb-2 text-left text-xs font-extrabold uppercase tracking-wider opacity-60">Pilih karaktermu</h2>
-            <div className="mb-4 grid grid-cols-2 gap-3">
-              {pilihan.map((p) => (
+                <div className="relative mt-3 flex flex-1 items-center justify-center">
+                  <div
+                    className="absolute inset-10 rounded-full opacity-40 blur-3xl"
+                    style={{ backgroundColor: selectedCharacter.accent }}
+                  />
+                  <CharacterPortrait characterId={selectedCharacterId} hero />
+                </div>
+                <div className="-mt-4 rounded-full border border-white/10 bg-slate-950/70 px-4 py-1.5 text-[9px] font-black tracking-[.18em] text-cyan-200">
+                  PETARUNG TERPILIH
+                </div>
+                <div className="mt-2 text-4xl font-black tracking-[-.03em]">{selectedCharacter.name}</div>
+                <div className="mt-1 text-xs font-black tracking-[.15em] text-slate-400">
+                  {selectedCharacter.role.toUpperCase()}
+                </div>
+              </div>
+
+              <div className="flex flex-col bg-[#050b16]/95 p-5 sm:p-6">
+                <div>
+                  <div className="text-[10px] font-black tracking-[.2em] text-slate-500">KAMPUNG KATA · SOLO</div>
+                  <h2 className="mt-2 text-2xl font-black">Jawab. Isi energi. Tempur.</h2>
+                  <p className="mt-2 text-sm font-semibold leading-6 text-slate-400">
+                    Bergerak di arena, jawab soal untuk mendapatkan amunisi, lalu dekati dan tembak bot. Tidak ada stat berbayar—semua karakter setara.
+                  </p>
+                </div>
+
+                <div className="mt-5 grid grid-cols-3 gap-2 text-center">
+                  <div className="rounded-2xl border border-white/8 bg-white/[.04] p-3">
+                    <Shield className="mx-auto text-emerald-300" size={20} />
+                    <div className="mt-2 text-[9px] font-black text-slate-500">HP</div>
+                    <div className="text-sm font-black">100</div>
+                  </div>
+                  <div className="rounded-2xl border border-white/8 bg-white/[.04] p-3">
+                    <Zap className="mx-auto text-amber-300" size={20} />
+                    <div className="mt-2 text-[9px] font-black text-slate-500">AMUNISI</div>
+                    <div className="text-sm font-black">DARI SOAL</div>
+                  </div>
+                  <div className="rounded-2xl border border-white/8 bg-white/[.04] p-3">
+                    <Crosshair className="mx-auto text-rose-300" size={20} />
+                    <div className="mt-2 text-[9px] font-black text-slate-500">WAKTU</div>
+                    <div className="text-sm font-black">3 MENIT</div>
+                  </div>
+                </div>
+
+                <div className="mt-5">
+                  <div className="mb-2 flex items-center justify-between text-[9px] font-black tracking-[.16em] text-slate-500">
+                    <span>ROSTER KARAKTER</span>
+                    <span>9 PILIHAN</span>
+                  </div>
+                  <div className="flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                    {KUIS_TEMPUR_CHARACTERS.map((character) => {
+                      const active = character.id === selectedCharacterId;
+                      return (
+                        <button
+                          key={character.id}
+                          onClick={() => chooseCharacter(character.id)}
+                          className={`min-w-[86px] rounded-2xl border p-2 text-center transition ${
+                            active
+                              ? "border-cyan-300/55 bg-cyan-300/12 shadow-[0_0_22px_rgba(34,211,238,.14)]"
+                              : "border-white/8 bg-white/[.035] opacity-70 hover:opacity-100"
+                          }`}
+                        >
+                          <div className="flex justify-center"><CharacterPortrait characterId={character.id} /></div>
+                          <div className={`mt-1 truncate text-[9px] font-black ${active ? "text-cyan-100" : "text-slate-500"}`}>
+                            {character.name}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 <button
-                  key={p.id}
-                  onClick={() => { setKarakterku(p.id); simpanKarakter(p.id); sfx.tap() }}
-                  className={`rounded-2xl border-[3px] p-3 text-center transition-all active:scale-95 ${
-                    karakterku === p.id ? "border-emerald-600 bg-emerald-50 dark:bg-emerald-500/15" : "border-[#161B3A] dark:border-white/25/20 bg-white dark:bg-[#241218] shadow-[4px_4px_0_#DC2626]"
-                  }`}
+                  onClick={startGame}
+                  className="mt-auto flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-300 via-orange-400 to-rose-500 px-5 py-4 text-base font-black text-[#2c0d00] shadow-[0_16px_38px_rgba(244,63,94,.18)] transition hover:-translate-y-0.5"
                 >
-                  <img src={p.src} alt="" className="mx-auto h-16 w-16 rounded-full object-cover" />
-                  <span className="mt-2 block truncate text-xs font-extrabold">{p.nama}</span>
+                  <Zap size={19} /> MASUK KAMPUNG KATA
                 </button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    );
+  }
+
+  if (phase === "result") {
+    return (
+      <main className="fixed inset-0 z-[70] overflow-y-auto bg-[#040914] text-white">
+        <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_50%_26%,rgba(245,158,11,.17),transparent_30%),linear-gradient(180deg,#09132a,#040914_70%)]" />
+        <div className="relative mx-auto flex min-h-full max-w-3xl items-center justify-center px-4 py-8">
+          <section className="w-full rounded-[34px] border border-white/10 bg-white/[.055] p-6 text-center shadow-[0_28px_90px_rgba(0,0,0,.38)] backdrop-blur sm:p-8">
+            <div className="mx-auto flex w-fit items-center justify-center rounded-[32px] border border-amber-300/15 bg-amber-300/8 p-2">
+              <CharacterPortrait characterId={selectedCharacterId} hero />
+            </div>
+            <div className="-mt-8 text-[10px] font-black tracking-[.2em] text-amber-300">
+              {resultReason === "survive" ? "MISI SELESAI" : "PERTEMPURAN SELESAI"}
+            </div>
+            <h1 className="mt-2 text-4xl font-black tracking-tight sm:text-5xl">
+              {resultReason === "survive" ? "Kamu bertahan sampai akhir!" : "Bangkit dan coba lagi."}
+            </h1>
+            <p className="mx-auto mt-3 max-w-xl text-sm font-semibold leading-6 text-slate-400">
+              {selectedCharacter.name} mencatat {finalStats.kills} KO dengan akurasi {accuracy}%.
+            </p>
+
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-5">
+              {[
+                ["SKOR", finalStats.score],
+                ["KO", finalStats.kills],
+                ["BENAR", finalStats.correct],
+                ["SALAH", finalStats.wrong],
+                ["XP", xpEarned == null ? "…" : `+${xpEarned}`],
+              ].map(([label, value]) => (
+                <div key={String(label)} className="rounded-2xl border border-white/8 bg-white/[.04] p-4">
+                  <div className="text-[9px] font-black tracking-[.15em] text-slate-500">{label}</div>
+                  <div className="mt-1 text-2xl font-black">{value}</div>
+                </div>
               ))}
             </div>
 
-            <div className="mb-4 flex items-center justify-center gap-3 text-xs font-bold opacity-70">
-              <span className="flex items-center gap-1"><Heart className="h-3.5 w-3.5 text-rose-500" /> Level {level}</span>
-              <span>·</span>
-              <span>⏱ 5 menit</span>
-              <span>·</span>
-              <span>{lawanBot(level)} lawan</span>
-              {profil && (
-                <span className="flex items-center gap-1" style={{ color: profil.warna }}>
-                  <RankIcon rank={profil.rankKey} size={14} /> Lv {profil.levelXp}
-                </span>
-              )}
-            </div>
-
-            <button onClick={mulai} className={`${btn} w-full bg-emerald-400 px-5 py-4 text-lg`}>
-              Masuk Kampung
-            </button>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (fase === "selesai") {
-    return (
-      <div className="game-env game-env-kuis fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150A0A] dark:to-[#200E0E] text-[#161B3A] dark:text-[#F1EDFF]">
-        <style>{KT_STYLE}</style>
-        <div className="relative mx-auto flex min-h-full max-w-xl flex-col items-center justify-center px-4 py-5">
-          {Hdr}
-          <div className={`kt-screen w-full max-w-md rounded-3xl bg-white dark:bg-gradient-to-br dark:from-[#241218] dark:to-[#301C24] p-6 text-center ${chunky}`}>
-            <div
-              className={`kt-pop relative mx-auto mb-3 h-24 w-24 overflow-hidden rounded-3xl border-4 border-[#161B3A] dark:border-white/25 shadow-[6px_6px_0_#DC2626] ${hasil?.menang ? "" : "opacity-70 grayscale"}`}
-              style={{ boxShadow: profil && hasil?.menang ? `0 0 32px ${profil.warna}66` : undefined }}
-            >
-              <img src={avatarHasil} alt="" className="h-full w-full object-cover" />
-              {hasil?.menang && <span className="absolute -bottom-1 -right-1 text-2xl">🏆</span>}
-            </div>
-            <h2 className="font-game-display mb-1 text-3xl font-extrabold">
-              {hasil?.menang ? "Waktu Habis!" : "Pertempuran Selesai!"}
-            </h2>
-            <p className="mb-1 text-sm font-semibold opacity-70">
-              {hasil?.menang
-                ? "Kamu bertahan sampai akhir sesi."
-                : "HP kamu habis."}
-            </p>
-            <p className="mb-4 inline-flex items-center gap-1.5 rounded-xl bg-[#161B3A] px-3 py-1.5 text-xs font-extrabold text-amber-300 shadow-[3px_3px_0_#FBBF24]">
-              Level tertinggi: LEVEL {level}
-            </p>
-            {profil && (
-              <p className="mb-4 flex items-center justify-center gap-1.5 text-xs font-extrabold" style={{ color: profil.warna }}>
-                <RankIcon rank={profil.rankKey} size={20} /> {profil.rank} · Lv {profil.levelXp}
-              </p>
-            )}
-            <div className="mb-2 grid grid-cols-2 gap-2 text-[11px] font-bold">
-              <div className="rounded-xl border-[3px] border-[#161B3A] dark:border-white/25 bg-white dark:bg-[#241218] px-2 py-1.5 shadow-[3px_3px_0_#DC2626]">
-                <span className="opacity-60">Musuh dikalahkan</span> · {kalahkan}
-              </div>
-              <div className="rounded-xl border-[3px] border-[#161B3A] dark:border-white/25 bg-white dark:bg-[#241218] px-2 py-1.5 shadow-[3px_3px_0_#DC2626]">
-                <span className="opacity-60">Waktu bertahan</span> · {Math.floor(waktuAkhir / 60)}:{String(waktuAkhir % 60).padStart(2, "0")}
-              </div>
-              <div className="rounded-xl border-[3px] border-[#161B3A] dark:border-white/25 bg-white dark:bg-[#241218] px-2 py-1.5 shadow-[3px_3px_0_#DC2626]">
-                <span className="opacity-60">Soal dijawab</span> · {benarRef.current + salahRef.current}
-              </div>
-              <div className="rounded-xl border-[3px] border-[#161B3A] dark:border-white/25 bg-white dark:bg-[#241218] px-2 py-1.5 shadow-[3px_3px_0_#DC2626]">
-                <span className="opacity-60">Akurasi</span> · {benarRef.current + salahRef.current > 0 ? Math.round((benarRef.current / (benarRef.current + salahRef.current)) * 100) : 0}%
-              </div>
-            </div>
-            <div className="mb-4 grid grid-cols-3 gap-2">
-              <div className="rounded-xl border-[3px] border-[#161B3A] dark:border-white/25 bg-[#161B3A] px-2 py-2 text-white shadow-[3px_3px_0_#DC2626]">
-                <div className="text-[9px] font-extrabold uppercase opacity-70">Benar</div>
-                <div className="text-lg font-extrabold leading-none">{benarRef.current}</div>
-              </div>
-              <div className="rounded-xl border-[3px] border-[#161B3A] dark:border-white/25 bg-rose-500 px-2 py-2 text-white shadow-[3px_3px_0_#DC2626]">
-                <div className="text-[9px] font-extrabold uppercase opacity-80">Salah</div>
-                <div className="text-lg font-extrabold leading-none">{salahRef.current}</div>
-              </div>
-              <div className="rounded-xl border-[3px] border-[#161B3A] dark:border-white/25 bg-amber-300 px-2 py-2 text-[#161B3A] dark:text-[#F1EDFF] shadow-[3px_3px_0_#DC2626]">
-                <div className="text-[9px] font-extrabold uppercase opacity-70">Rentetan</div>
-                <div className="text-lg font-extrabold leading-none">{maxComboRef.current}x</div>
-              </div>
-            </div>
-            <div className="mb-4 rounded-2xl bg-[#161B3A] px-6 py-4 text-white shadow-[5px_5px_0_#FBBF24]">
-              <div className="text-[10px] font-extrabold uppercase tracking-wider opacity-70">XP Didapat</div>
-              <div className="text-4xl font-extrabold leading-none">
-                {mengirim ? <Loader2 className="mx-auto h-6 w-6 animate-spin" /> : `+${hasil?.xp ?? 0}`}
-              </div>
-            </div>
-            <div className="flex justify-center gap-3">
-              <button onClick={mulai} className={`${btn} bg-emerald-400 px-5 py-3`}>
-                <RotateCcw className="h-4 w-4" /> Main Lagi
+            <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
+              <button
+                onClick={startGame}
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-300 to-orange-400 px-6 py-4 font-black text-[#2c0d00]"
+              >
+                <RotateCcw size={18} /> MAIN LAGI
               </button>
-              <Link href={backHref} className={`${btn} bg-[#FBBF24] hover:brightness-110 px-5 py-3`}>Daftar Gim</Link>
+              <button
+                onClick={() => setPhase("select")}
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/12 bg-white/[.06] px-6 py-4 font-black text-white"
+              >
+                <Trophy size={18} /> GANTI PETARUNG
+              </button>
+              <Link
+                href={backHref}
+                className="inline-flex items-center justify-center rounded-2xl border border-white/12 bg-white/[.04] px-6 py-4 font-black text-slate-300"
+              >
+                KEMBALI
+              </Link>
             </div>
-          </div>
+          </section>
         </div>
-      </div>
-    )
+      </main>
+    );
   }
 
   return (
-    <div className="game-env game-env-kuis fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] dark:from-[#150A0A] dark:to-[#200E0E] text-[#161B3A] dark:text-[#F1EDFF]">
-      <style>{KT_STYLE}</style>
-      <div className="relative mx-auto flex min-h-full w-full max-w-[1280px] flex-col items-center px-4 py-3">
-        {Hdr}
+    <main className="fixed inset-0 z-[70] overflow-hidden bg-[#030712] text-white">
+      <div className="absolute inset-0">
+        <KuisTempurPhaserWorld
+          code="SOLO"
+          userId={PLAYER_ID}
+          arena={arena}
+          feedback={feedback}
+          hitEvent={hitEvent}
+          onMove={handleMove}
+          onShoot={handleShoot}
+        />
+      </div>
 
-        <div className="kt-screen flex w-full flex-col items-center">
-          <div className="mb-2 grid w-full grid-cols-5 gap-2">
-            <div className="rounded-xl border-[3px] border-[#161B3A] dark:border-white/25 bg-[#161B3A] px-2 py-2 text-white shadow-[3px_3px_0_#DC2626]">
-              <div className="text-[8px] font-extrabold uppercase opacity-70">Nyawa</div>
-              <div className="flex items-center gap-1 text-lg font-extrabold leading-none">
-                <span className="text-rose-400">❤️</span> {hp}/{kurvaPemain(level).hpMax}
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-20 p-3 sm:p-4">
+        <div className="mx-auto flex max-w-6xl items-start justify-between gap-3">
+          <div className="pointer-events-auto flex items-center gap-2">
+            <button
+              onClick={() => setPhase("select")}
+              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/12 bg-slate-950/72 text-white shadow-lg backdrop-blur"
+              aria-label="Keluar dari latihan"
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <button
+              onClick={toggleMute}
+              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/12 bg-slate-950/72 text-white shadow-lg backdrop-blur"
+              aria-label={muted ? "Nyalakan suara" : "Matikan suara"}
+            >
+              {muted ? <VolumeX size={19} /> : <Volume2 size={19} />}
+            </button>
+          </div>
+
+          <div className="grid grid-cols-4 gap-2">
+            <div className="rounded-2xl border border-emerald-300/15 bg-slate-950/76 px-3 py-2 shadow-xl backdrop-blur">
+              <div className="text-[8px] font-black tracking-[.15em] text-slate-500">HP</div>
+              <div className="mt-0.5 flex items-center gap-1 text-sm font-black text-emerald-200">
+                <Heart size={13} className="fill-emerald-300" /> {player?.hp || 0}
               </div>
             </div>
-            <div className={`rounded-xl border-[3px] border-[#161B3A] dark:border-white/25 px-2 py-2 shadow-[3px_3px_0_#DC2626] ${peluru > 0 ? "bg-amber-300" : "bg-white dark:bg-[#241218] opacity-70"}`}>
-              <div className="text-[8px] font-extrabold uppercase opacity-70">Peluru</div>
-              <div className="text-lg font-extrabold leading-none">{peluru}</div>
+            <div className="rounded-2xl border border-amber-300/15 bg-slate-950/76 px-3 py-2 shadow-xl backdrop-blur">
+              <div className="text-[8px] font-black tracking-[.15em] text-slate-500">AMUNISI</div>
+              <div className="mt-0.5 text-sm font-black text-amber-200">{player?.ammo || 0}/{MAX_AMMO}</div>
             </div>
-            <div className={`rounded-xl border-[3px] border-[#161B3A] dark:border-white/25 px-2 py-2 shadow-[3px_3px_0_#DC2626] ${combo > 1 ? "bg-orange-300" : "bg-white dark:bg-[#241218] opacity-70"}`}>
-              <div className="text-[8px] font-extrabold uppercase opacity-70">Rentetan</div>
-              <div className="text-lg font-extrabold leading-none">{combo}x</div>
+            <div className="rounded-2xl border border-cyan-300/15 bg-slate-950/76 px-3 py-2 shadow-xl backdrop-blur">
+              <div className="text-[8px] font-black tracking-[.15em] text-slate-500">SKOR</div>
+              <div className="mt-0.5 text-sm font-black text-cyan-200">{player?.score || 0}</div>
             </div>
-            <div className="rounded-xl border-[3px] border-[#161B3A] dark:border-white/25 bg-white dark:bg-[#241218] px-2 py-2 shadow-[3px_3px_0_#DC2626]">
-              <div className="text-[8px] font-extrabold uppercase opacity-70">Level</div>
-              <div className="text-lg font-extrabold leading-none">{level}</div>
-            </div>
-            <div className="rounded-xl border-[3px] border-[#161B3A] dark:border-white/25 bg-violet-500 px-2 py-2 text-white shadow-[3px_3px_0_#DC2626]">
-              <div className="text-[8px] font-extrabold uppercase opacity-80">Kalahkan</div>
-              <div className="text-lg font-extrabold leading-none">{kalahkan}</div>
-            </div>
-          </div>
-
-          {/* Sisa waktu bertahan — batas sesi 5 menit. Level naik dari performa
-              (kalahkan semua musuh), BUKAN dari waktu. */}
-          <div className="mb-2 w-full">
-            <div className={`mb-1 flex items-center justify-between text-[11px] font-extrabold ${sisaWaktu <= 60 ? "text-rose-600" : "text-[#161B3A] dark:text-[#F1EDFF]/70"}`}>
-              <span>⏱ Bertahan</span>
-              <span>{Math.floor(sisaWaktu / 60)}:{String(sisaWaktu % 60).padStart(2, "0")}</span>
-            </div>
-            <div className="h-2 overflow-hidden rounded-full border border-[#161B3A] dark:border-white/25/20 bg-[#161B3A]/10">
-              <span
-                className={`block h-full rounded-full transition-all duration-1000 ease-linear ${sisaWaktu <= 60 ? "bg-rose-500" : "bg-violet-400"}`}
-                style={{ width: `${(sisaWaktu / DURASI) * 100}%` }}
-              />
-            </div>
-            <p className="mt-1 text-[11px] font-bold text-[#161B3A] dark:text-[#F1EDFF]/70">
-              {sisaMusuh > 0
-                ? `Kalahkan ${sisaMusuh} musuh lagi untuk naik ke Level ${Math.min(level + 1, 99)}!`
-                : "Semua musuh tumbang!"}
-            </p>
-          </div>
-
-          {/* Baris rank & koin dari data murid yang sebenarnya. Kalau belum
-              termuat, tidak menampilkan angka karangan sama sekali. */}
-          {profil && (
-            <div className="mb-2 flex w-full items-center justify-between text-[11px] font-extrabold">
-              <span className="flex items-center gap-1.5" style={{ color: profil.warna }}>
-                <RankIcon rank={profil.rankKey} size={16} /> {profil.rank} · Lv {profil.levelXp}
-              </span>
-              <span className="flex items-center gap-1 text-amber-600">
-                <span aria-hidden>🪙</span> {profil.koin.toLocaleString("id-ID")}
-              </span>
-            </div>
-          )}
-
-          <div className="relative w-full">
-            {/* LEVEL COMPLETE — jeda singkat lalu naik level otomatis */}
-            {levelSelesai && (
-              <div className="kt-pop absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 rounded-2xl border-4 border-[#161B3A] dark:border-white/25 bg-[#161B3A]/90 p-6 text-center text-white">
-                <p className="text-3xl font-black tracking-wide text-amber-300">LEVEL {level} SELESAI!</p>
-                <p className="text-sm font-semibold text-white/85">Hebat! Musuh bertambah dan tantangan meningkat.</p>
-                <p className="mt-2 rounded-xl bg-amber-300 px-4 py-2 text-sm font-extrabold text-[#161B3A] dark:text-[#F1EDFF]">
-                  LANJUT KE LEVEL {Math.min(level + 1, 99)}…
-                </p>
+            <div className="rounded-2xl border border-violet-300/15 bg-slate-950/76 px-3 py-2 shadow-xl backdrop-blur">
+              <div className="text-[8px] font-black tracking-[.15em] text-slate-500">WAKTU</div>
+              <div className="mt-0.5 text-sm font-black text-violet-200">
+                {Math.floor(arena.timeLeft / 60)}:{String(arena.timeLeft % 60).padStart(2, "0")}
               </div>
-            )}
-            <div className="pointer-events-none absolute right-2 top-2 z-10 flex flex-col items-end gap-1">
-              {feed.map((f) => (
-                <span key={f.id} className="rounded-lg bg-[#161B3A]/90 px-2 py-1 text-[10px] font-semibold text-white">{f.teks}</span>
-              ))}
-            </div>
-            <canvas ref={cvRef} className="h-[60dvh] max-h-[620px] min-h-[380px] w-full touch-none rounded-2xl border-4 border-[#161B3A] dark:border-white/25 shadow-[6px_6px_0_#DC2626]" />
-          </div>
-
-          <div className="mt-2 w-full max-w-[900px]">
-            <div className="mb-2 rounded-2xl border-4 border-[#161B3A] dark:border-white/25 bg-white dark:bg-[#241218] px-4 py-3 text-center shadow-[4px_4px_0_#DC2626]">
-              <p className="text-[15px] font-bold leading-snug text-[#161B3A] dark:text-[#F1EDFF]">{soal?.q.soal}</p>
-            </div>
-            <div className="grid grid-cols-2 gap-2.5">
-              {soal?.opsi.map((o, i) => {
-                const terbuka = dipilih !== null
-                let gaya = "bg-white dark:bg-[#2E1A20] border-[#161B3A] dark:border-white/25 text-[#161B3A] dark:text-[#F1EDFF]"
-                if (terbuka && o.benar) gaya = "bg-emerald-200 dark:bg-emerald-500/25 border-emerald-700 dark:border-emerald-400 text-emerald-900 dark:text-emerald-200"
-                else if (terbuka && dipilih === i) gaya = "bg-rose-200 dark:bg-rose-500/25 border-rose-700 dark:border-rose-400 text-rose-900 dark:text-rose-200"
-                else if (terbuka) gaya = "bg-white/60 dark:bg-white/5 border-[#161B3A] dark:border-white/25 text-[#161B3A]/50 dark:text-[#F1EDFF]/40"
-                return (
-                  <button
-                    key={i}
-                    onClick={() => jawab(i, o.benar)}
-                    disabled={kunci}
-                    className={`flex items-center gap-2 rounded-2xl border-[3px] px-3 py-3.5 text-left text-sm font-bold shadow-[3px_3px_0_#DC2626] transition-all active:scale-[0.97] ${gaya}`}
-                  >
-                    <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg border-2 border-current text-[11px] font-black">
-                      {i === 0 ? "A" : "B"}
-                    </span>
-                    <span className="leading-tight">{o.teks}</span>
-                  </button>
-                )
-              })}
-            </div>
-
-            {/* Sisa waktu. Bilah menipis lebih cepat terbaca daripada angka saat
-                mata sedang tertuju ke arena. */}
-            <div className="mt-2.5 flex items-center gap-2">
-              <span className="shrink-0 text-[11px] font-bold text-[#161B3A] dark:text-[#F1EDFF]/60">⏱ Waktu jawab {waktu} dtk</span>
-              <span className="h-2 flex-1 overflow-hidden rounded-full border border-[#161B3A] dark:border-white/25/20 bg-[#161B3A]/10">
-                <span
-                  className={`block h-full rounded-full transition-all duration-1000 ease-linear ${waktu <= 5 ? "bg-rose-500" : "bg-emerald-400"}`}
-                  style={{ width: `${(waktu / DETIK_SOAL) * 100}%` }}
-                />
-              </span>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  )
+
+      <div className="pointer-events-none absolute left-1/2 top-[76px] z-20 -translate-x-1/2">
+        <div className="rounded-full border border-white/10 bg-slate-950/68 px-4 py-2 text-center shadow-lg backdrop-blur">
+          <div className="text-[8px] font-black tracking-[.18em] text-cyan-300">LEVEL {level}</div>
+          <div className="text-[10px] font-bold text-slate-300">
+            {player?.kills || 0} KO · {player?.combo || 0}× combo
+          </div>
+        </div>
+      </div>
+
+      <style jsx>{`
+        @media (max-height: 520px) and (orientation: landscape) {
+          .solo-question-wrap { padding: .35rem .55rem !important; }
+          .solo-question-panel { border-radius: 18px !important; padding: .55rem !important; }
+          .solo-question-head { margin-bottom: .35rem !important; }
+          .solo-question-prompt { font-size: .72rem !important; line-height: 1rem !important; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+          .solo-question-option { min-height: 38px !important; padding: .35rem .55rem !important; font-size: .68rem !important; }
+          .solo-question-option-badge { height: 1.35rem !important; width: 1.35rem !important; border-radius: .45rem !important; font-size: .52rem !important; }
+          .solo-question-progress { margin-top: .4rem !important; }
+          .solo-question-feedback { margin-top: .25rem !important; font-size: .58rem !important; }
+        }
+      `}</style>
+      <div className="solo-question-wrap pointer-events-none absolute inset-x-0 bottom-0 z-30 p-2 sm:p-4">
+        <section className="solo-question-panel pointer-events-auto mx-auto max-w-5xl rounded-[26px] border border-white/12 bg-[#07111f]/94 p-3 shadow-[0_-18px_55px_rgba(0,0,0,.34)] backdrop-blur-xl sm:p-4">
+          <div className="solo-question-head mb-3 flex items-center justify-between gap-3">
+            <div>
+              <div className="text-[9px] font-black tracking-[.18em] text-amber-300">SOAL AMUNISI</div>
+              <div className="solo-question-prompt mt-1 text-sm font-black leading-snug text-white sm:text-base">{question?.prompt}</div>
+            </div>
+            <div className="shrink-0 text-right">
+              <div className={`text-xl font-black ${questionTime <= 5 ? "text-rose-300" : "text-cyan-200"}`}>{questionTime}s</div>
+              <div className="text-[8px] font-black tracking-wider text-slate-500">JAWAB CEPAT</div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            {question?.options.map((option, index) => {
+              const revealed = lockedAnswer !== null;
+              const chosen = lockedAnswer === index;
+              const stateClass = revealed
+                ? option.correct
+                  ? "border-emerald-300/50 bg-emerald-300/14 text-emerald-50"
+                  : chosen
+                    ? "border-rose-300/50 bg-rose-300/12 text-rose-50"
+                    : "border-white/6 bg-white/[.025] text-slate-500"
+                : "border-white/10 bg-white/[.055] text-white hover:border-cyan-300/35 hover:bg-cyan-300/[.07]";
+              return (
+                <button
+                  key={`${question.id}-${index}`}
+                  disabled={lockedAnswer !== null}
+                  onClick={() => answerQuestion(index)}
+                  className={`solo-question-option flex min-h-[52px] items-center gap-2 rounded-2xl border px-3 py-2 text-left text-xs font-black transition active:scale-[.985] sm:text-sm ${stateClass}`}
+                >
+                  <span className="solo-question-option-badge grid h-7 w-7 shrink-0 place-items-center rounded-xl border border-current/25 bg-black/10 text-[10px]">
+                    {String.fromCharCode(65 + index)}
+                  </span>
+                  <span className="line-clamp-2">{option.text}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="solo-question-progress mt-3 h-1.5 overflow-hidden rounded-full bg-white/[.07]">
+            <div
+              className={`h-full rounded-full transition-all duration-1000 ${questionTime <= 5 ? "bg-rose-400" : "bg-cyan-300"}`}
+              style={{ width: `${(questionTime / QUESTION_SECONDS) * 100}%` }}
+            />
+          </div>
+
+          {feedback && (
+            <div className={`solo-question-feedback mt-2 flex items-center justify-center gap-2 text-[10px] font-black tracking-wide ${
+              feedback.correct ? "text-emerald-300" : "text-rose-300"
+            }`}>
+              <Sparkles size={13} /> {feedback.text}
+            </div>
+          )}
+        </section>
+      </div>
+    </main>
+  );
 }

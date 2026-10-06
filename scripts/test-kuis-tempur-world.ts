@@ -133,37 +133,32 @@ console.log("\n7. Determinisme dunia penuh");
   ok(JSON.stringify(a) !== JSON.stringify(c), "seed beda → dunia beda");
 }
 
-console.log("\n8. Renderer memakai world engine (statis)");
+console.log("\n8. Solo runtime memakai Phaser Kampung Kata yang sama dengan multiplayer");
 {
-  const src = fs.readFileSync(path.join(__dirname, "..", "components", "game", "KuisTempurSolo.tsx"), "utf8");
-  ok(src.includes("buildWorld") && src.includes("collidersToPixels"), "impor world engine");
-  ok(src.includes('drawWorldLayer(ctx, world, "back"') && src.includes('drawWorldLayer(ctx, world, "front"'), "lapisan back/mid/front");
-  ok(!src.includes("bangunDunia") && !src.includes("latarDepan") && !src.includes("renderLatar"), "simbol WIP rusak hilang");
-  ok(!src.includes("batikRef"), "overlay batik dihapus");
-  ok(!src.includes("R + 7") && !src.includes("setLineDash"), "lingkaran target/seleksi dihapus");
-  ok(src.includes("drawWorldBackdrop"), "latar terrain via engine");
-  // Arena base — engine draws base image as primary visual foundation.
+  const solo = fs.readFileSync(path.join(__dirname, "..", "components", "game", "KuisTempurSolo.tsx"), "utf8");
+  const phaser = fs.readFileSync(path.join(__dirname, "..", "components", "game", "KuisTempurPhaserWorld.tsx"), "utf8");
+  ok(solo.includes("KuisTempurPhaserWorld"), "solo memakai renderer Phaser shared");
+  ok(solo.includes("KUIS_TEMPUR_CHARACTERS") && solo.includes("getKuisTempurCharacter"), "solo memakai roster karakter baru");
+  ok(solo.includes("SOAL AMUNISI") && solo.includes("MASUK KAMPUNG KATA"), "solo memakai flow game baru");
+  ok(!solo.includes("gambarKarakter") && !solo.includes("Master Zelby") && !solo.includes("chunky cream"), "solo tidak memakai visual legacy");
+  ok(phaser.includes("/game/kuis-tempur/assets/world/base/arena_base_01.png"), "Phaser memakai base Kampung Kata");
+  ok(phaser.includes("buildVillage") && phaser.includes("buildAtmosphere"), "Phaser membangun village + atmosphere");
+  // World engine lama tetap teruji untuk asset/layout utilities yang masih dipakai fitur lain.
   const engineSrc = fs.readFileSync(path.join(__dirname, "..", "lib", "game", "kuis-tempur-world.ts"), "utf8");
   ok(engineSrc.includes("ARENA_BASE_URL"), "ARENA_BASE_URL exported");
   ok(engineSrc.includes("getArenaBaseImage"), "getArenaBaseImage exported");
   ok(engineSrc.includes("drawWorldBackdrop") && engineSrc.includes("drawImage"), "drawWorldBackdrop draws base image");
 }
 
-console.log("\n8b. Keyboard movement (QT-ARENA-04)");
+console.log("\n8b. Solo interaction bridge memakai renderer shared tanpa socket movement");
 {
-  const src = fs.readFileSync(path.join(__dirname, "..", "components", "game", "KuisTempurSolo.tsx"), "utf8");
-  ok(src.includes("keyRef"), "keyRef direction state exists");
-  ok(src.includes("ArrowUp") && src.includes("ArrowDown") && src.includes("ArrowLeft") && src.includes("ArrowRight"), "Arrow key bindings");
-  ok(src.includes("KeyW") && src.includes("KeyS") && src.includes("KeyA") && src.includes("KeyD"), "WASD key bindings");
-  ok(src.includes("e.preventDefault()"), "keyboard events prevent default (no scroll)");
-  ok(src.includes("keydown") && src.includes("keyup"), "keydown + keyup listeners");
-  ok(src.includes("removeEventListener(\"keydown\""), "keydown listener cleanup on unmount");
-  ok(src.includes("removeEventListener(\"keyup\""), "keyup listener cleanup on unmount");
-  // Direction state model: keys set booleans, game loop consumes
-  ok(src.includes("keyRef.current.up") || src.includes("k.up"), "direction state: up");
-  ok(src.includes("keyRef.current.down") || src.includes("k.down"), "direction state: down");
-  ok(src.includes("keyRef.current.left") || src.includes("k.left"), "direction state: left");
-  ok(src.includes("keyRef.current.right") || src.includes("k.right"), "direction state: right");
+  const solo = fs.readFileSync(path.join(__dirname, "..", "components", "game", "KuisTempurSolo.tsx"), "utf8");
+  const phaser = fs.readFileSync(path.join(__dirname, "..", "components", "game", "KuisTempurPhaserWorld.tsx"), "utf8");
+  ok(solo.includes("onMove={handleMove}") && solo.includes("onShoot={handleShoot}"), "solo memberi callback move + shoot lokal");
+  ok(solo.includes("hitEvent={hitEvent}"), "solo mengirim authoritative-like hit stream lokal");
+  ok(phaser.includes("onMoveRef") && phaser.includes("onShootRef"), "Phaser mendukung callback interaksi lokal");
+  ok(phaser.includes("if (onShootRef.current)") && phaser.includes("if (onMoveRef.current)"), "callback lokal menang atas socket emit");
+  ok(phaser.includes("hitEvent") && phaser.includes("sceneRef.current.playHit"), "Phaser merender hit lokal dengan FX shared");
 }
 
 console.log("\n9. Karantina DICABUT (QT-WORLD-02 §0) — 2 file bersih aktif");

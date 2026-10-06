@@ -44,6 +44,9 @@ type Props = {
   userId: string;
   arena: PhaserArenaState;
   feedback: Feedback;
+  onMove?: (position: { x: number; y: number }) => void;
+  onShoot?: (targetId: string) => void;
+  hitEvent?: { seq: number; fromId: string; targetId: string; damage: number } | null;
 };
 
 const WORLD_W = 1400;
@@ -144,17 +147,35 @@ function key(prefix: string, index: number) {
   return `kt-${prefix}-${index}`;
 }
 
-export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }: Props) {
+export default function KuisTempurPhaserWorld({
+  code,
+  userId,
+  arena,
+  feedback,
+  onMove,
+  onShoot,
+  hitEvent,
+}: Props) {
   const mountRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<any>(null);
   const sceneRef = useRef<any>(null);
   const arenaRef = useRef(arena);
   const userIdRef = useRef(userId);
   const feedbackSeqRef = useRef(0);
+  const onMoveRef = useRef(onMove);
+  const onShootRef = useRef(onShoot);
 
   useEffect(() => {
     arenaRef.current = arena;
   }, [arena]);
+
+  useEffect(() => {
+    onMoveRef.current = onMove;
+  }, [onMove]);
+
+  useEffect(() => {
+    onShootRef.current = onShoot;
+  }, [onShoot]);
 
   useEffect(() => {
     userIdRef.current = userId;
@@ -318,23 +339,32 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
 
             const target = me.ammo > 0 ? this.pickTarget(pointer) : null;
             if (target) {
-              gameSocket.arenaShoot({ code, userId: me.id, targetId: target.id });
+              if (onShootRef.current) onShootRef.current(target.id);
+              else gameSocket.arenaShoot({ code, userId: me.id, targetId: target.id });
               this.hoverTargetId = target.id;
               return;
             }
 
             const worldPoint = pointer.positionToCamera(this.cameras.main) as { x: number; y: number };
-            gameSocket.arenaMove({
-              code,
-              userId: me.id,
+            const nextPosition = {
               x: Phaser.Math.Clamp(worldPoint.x, 46, WORLD_W - 46),
               y: Phaser.Math.Clamp(worldPoint.y, 70, WORLD_H - 46),
-            });
+            };
+            if (onMoveRef.current) onMoveRef.current(nextPosition);
+            else {
+              gameSocket.arenaMove({
+                code,
+                userId: me.id,
+                ...nextPosition,
+              });
+            }
           });
 
-          this.hitUnsubscribe = gameSocket.onArenaHit((hit: { fromId: string; targetId: string; damage: number }) => {
-            this.playHit(hit.fromId, hit.targetId, hit.damage);
-          });
+          if (!onShootRef.current && !onMoveRef.current) {
+            this.hitUnsubscribe = gameSocket.onArenaHit((hit: { fromId: string; targetId: string; damage: number }) => {
+              this.playHit(hit.fromId, hit.targetId, hit.damage);
+            });
+          }
         }
 
         private pickTarget(pointer: any) {
@@ -518,7 +548,7 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
           const heroHash = Math.abs(Array.from(entity.id).reduce((acc, ch) => acc + ch.charCodeAt(0), 0));
           const character = getKuisTempurCharacter(entity.characterId);
           const heroKind: HeroVisual["heroKind"] =
-            entity.kind !== "human"
+            entity.kind === "bot" && !entity.characterId
               ? "mascot"
               : character.source === "arga"
                 ? "arga"
@@ -1123,6 +1153,11 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
     feedbackSeqRef.current += 1;
     sceneRef.current.pulseLocalHero?.(feedback.text);
   }, [feedback]);
+
+  useEffect(() => {
+    if (!hitEvent || !sceneRef.current) return;
+    sceneRef.current.playHit?.(hitEvent.fromId, hitEvent.targetId, hitEvent.damage);
+  }, [hitEvent]);
 
   return (
     <div

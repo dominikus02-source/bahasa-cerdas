@@ -134,15 +134,15 @@ const AKAR = path.resolve(__dirname, "..")
   cek(normalkanKarakter("ZELBY") === "zelby" && normalkanKarakter("hazel") === "hazel", "nama asli karakter dikenali (case-insensitive)")
   cek(normalkanKarakter(null) === "zelby" && normalkanKarakter("") === "zelby", "hint kosong/rusak jatuh ke zelby")
 
-  // ── 14. Wiring komponen ──────────────────────────────────────────────────
+  // ── 14. Wiring komponen Solo 4.0 ──────────────────────────────────────────
   const komponen = fs.readFileSync(path.join(AKAR, "components/game/KuisTempurSolo.tsx"), "utf8")
-  cek(komponen.includes('simpanKarakter(p.id)'), "pilihan karakter ditulis ke penyimpanan saat dipilih")
-  cek(komponen.includes("bacaKarakter()"), "karakter dibaca ulang dari penyimpanan saat halaman dibuka")
-  cek(komponen.includes("komposisiBot(level,"), "gelombang bot memakai arketipe dinamis")
-  cek(komponen.includes("kurvaPemain("), "pemain memakai kurva ronde (nyawa & peluru)")
-  cek(komponen.includes("WARNA_TIPE") && komponen.includes("LABEL_TIPE"), "warna & label arketipe dipakai di arena")
-  cek(komponen.includes("p.hp / Math.max(1, p.hpMax)"), "bar nyawa bot mengikuti HP maksimum arketipe")
-  cek(komponen.includes("GAME_TYPE = \"RIMBA_KATA\"") && komponen.includes("bc-kuis-tempur-level"), "identitas gim & kunci ronde tidak berubah")
+  cek(komponen.includes('localStorage.setItem("kuis-tempur-character"'), "pilihan roster baru disimpan saat dipilih")
+  cek(komponen.includes('localStorage.getItem("kuis-tempur-character"'), "pilihan roster baru dibaca saat halaman dibuka")
+  cek(komponen.includes("KuisTempurPhaserWorld"), "solo memakai renderer Phaser shared")
+  cek(komponen.includes("BOT_CHARACTER_IDS") && komponen.includes("respawnBot"), "bot authored + respawn lokal terhubung")
+  cek(komponen.includes("70 + (currentLevel - 1) * 8"), "HP bot meningkat mengikuti level performa")
+  cek(komponen.includes("hp: 100") && komponen.includes("MAX_AMMO = 6"), "baseline pemain eksplisit & terkontrol")
+  cek(komponen.includes('gameType: "RIMBA_KATA"') && komponen.includes('"/api/game/xp"'), "identitas XP solo tetap kompatibel")
 
   // ── 15. Anti-cheat XP (server tidak percaya klien) ───────────────────────
   const xpRoute = fs.readFileSync(path.join(AKAR, "app/api/game/xp/route.ts"), "utf8")
