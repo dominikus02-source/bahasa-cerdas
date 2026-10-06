@@ -1,0 +1,11 @@
+name: supabase-bc-prod
+
+services:
+  api-gw:
+    ports: !override
+      - "127.0.0.1:54380:8000"
+
+  supavisor:
+    ports: !override
+      - "127.0.0.1:54382:5432"
+      - "127.0.0.1:54383:6543"
