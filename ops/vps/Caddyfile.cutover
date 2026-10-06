@@ -41,7 +41,7 @@
   redir https://{$NOVELIFY_DOMAIN}{uri} permanent
 }
 
-{$NOVELIFY_DOMAIN}, {$NOVELIFY_TEST_DOMAIN} {
+{$NOVELIFY_DOMAIN} {
   encode zstd gzip
 
   reverse_proxy novelify-web:3000
