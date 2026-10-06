@@ -10,6 +10,7 @@ DUMP_DIR="$1"
 SUPABASE_ROOT="${SUPABASE_ROOT:-/opt/bahasacerdas/apps/supabase-bc-prod}"
 BC_REPO="${BC_REPO:-/opt/bahasacerdas/apps/bahasa-cerdas}"
 OVERRIDE_FILE="$BC_REPO/ops/supabase-selfhost/docker-compose.shadow.yml"
+RESTORE_DB_USER="${RESTORE_DB_USER:-supabase_admin}"
 
 for f in roles.sql schema.sql data.sql SHA256SUMS; do
   [[ -f "$DUMP_DIR/$f" ]] || { echo "Missing $DUMP_DIR/$f" >&2; exit 1; }
@@ -27,7 +28,7 @@ for f in roles.sql schema.sql data.sql; do
   docker cp "$DUMP_DIR/$f" "supabase-db:/tmp/bc-platform-restore/$f"
 done
 
-docker exec supabase-db psql -U postgres -d postgres \
+docker exec supabase-db psql -U "$RESTORE_DB_USER" -d postgres \
   --single-transaction \
   --variable ON_ERROR_STOP=1 \
   --file /tmp/bc-platform-restore/roles.sql \
@@ -35,5 +36,5 @@ docker exec supabase-db psql -U postgres -d postgres \
   --command 'SET session_replication_role = replica' \
   --file /tmp/bc-platform-restore/data.sql
 
-docker exec supabase-db psql -U postgres -d postgres -v ON_ERROR_STOP=1 -c 'VACUUM ANALYZE;'
+docker exec supabase-db psql -U "$RESTORE_DB_USER" -d postgres -v ON_ERROR_STOP=1 -c 'VACUUM ANALYZE;'
 echo "Shadow database restore completed."
