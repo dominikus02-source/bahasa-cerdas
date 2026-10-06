@@ -20,6 +20,9 @@ services:
   storage:
     environment:
       STORAGE_PUBLIC_URL: https://supabase.bahasacerdas.com
+      GLOBAL_S3_BUCKET: bahasacerdas-prod
+      TENANT_ID: bahasacerdasprod
+      REGION: ap-southeast-1
 
   functions:
     environment:
@@ -29,3 +32,5 @@ services:
     ports: !override
       - "127.0.0.1:5432:5432"
       - "127.0.0.1:6543:6543"
+    environment:
+      POOLER_TENANT_ID: bahasacerdasprod
