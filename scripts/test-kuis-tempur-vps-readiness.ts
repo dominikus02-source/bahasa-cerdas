@@ -47,7 +47,8 @@ check("signed token expiry memakai unit ms yang sama", socketTokenRoute.includes
 check("client refresh token saat reconnect unauthorized", socketClient.includes("MAX_AUTH_REFRESH_ATTEMPTS") && socketClient.includes("authenticateCurrentSocket") && socketClient.includes("/unauthorized/i"));
 check("auth refresh dibatasi retry", socketClient.includes("authRefreshAttempts < MAX_AUTH_REFRESH_ATTEMPTS"));
 check("signing public key bisa dirotasi via env", server.includes("GAME_SERVER_SIGNING_PUBLIC_KEY_B64") && envExample.includes("GAME_SERVER_SIGNING_PUBLIC_KEY_B64="));
-check("leave-room terikat signed socket identity", server.includes("const userId = identity?.sub || data.userId") && server.includes("player.odiceId !== socket.id"));
+check("leave-room terikat signed socket identity", server.includes("if (!identity) return;") && server.includes("const userId = identity.sub") && server.includes("player.odiceId !== socket.id"));
+check("DB health wajib default dan bisa di-skip khusus staging", server.includes("GAME_DB_REQUIRED") && server.includes("db: 'skipped'") && envExample.includes("GAME_DB_REQUIRED=true"));
 
 console.log(`\nHasil: ${passed} passed, ${failed} failed\n`);
 if (failed) process.exit(1);

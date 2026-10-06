@@ -16,6 +16,7 @@ const GAME_ALLOWED_ORIGINS = (process.env.GAME_ALLOWED_ORIGINS || DEFAULT_GAME_O
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);
+const GAME_DB_REQUIRED = process.env.GAME_DB_REQUIRED !== 'false';
 
 function isAllowedOrigin(origin?: string) {
   if (!origin) return true;
@@ -279,6 +280,20 @@ function generateCode(): string {
 
 const httpServer = createServer(async (req, res) => {
   if (req.url === '/health' || req.url === '/') {
+    if (!GAME_DB_REQUIRED) {
+      res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store' });
+      res.end(JSON.stringify({
+        ok: true,
+        status: 'ok',
+        db: 'skipped',
+        service: 'bahasacerdas-game',
+        rooms: rooms.size,
+        queue: matchmakingQueue.length,
+        uptime: Math.round(process.uptime()),
+      }));
+      return;
+    }
+
     try {
       await prisma.$queryRaw`SELECT 1`;
       res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store' });
