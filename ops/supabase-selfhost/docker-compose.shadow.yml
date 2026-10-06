@@ -1,0 +1,26 @@
+name: supabase-bc-prod
+
+services:
+  api-gw:
+    ports: !override
+      - "127.0.0.1:54380:8000"
+    networks:
+      default: {}
+      bc_edge:
+        aliases:
+          - supabase-bc-api
+
+  supavisor:
+    ports: !override
+      - "127.0.0.1:54382:5432"
+      - "127.0.0.1:54383:6543"
+    networks:
+      default: {}
+      bc_edge:
+        aliases:
+          - supabase-bc-pooler
+
+networks:
+  bc_edge:
+    external: true
+    name: bahasacerdas-prod_edge
