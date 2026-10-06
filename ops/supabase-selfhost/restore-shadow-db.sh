@@ -27,14 +27,13 @@ for f in roles.sql schema.sql data.sql; do
   docker cp "$DUMP_DIR/$f" "supabase-db:/tmp/bc-platform-restore/$f"
 done
 
-docker exec supabase-db psql \
+docker exec supabase-db psql -U postgres -d postgres \
   --single-transaction \
   --variable ON_ERROR_STOP=1 \
   --file /tmp/bc-platform-restore/roles.sql \
   --file /tmp/bc-platform-restore/schema.sql \
   --command 'SET session_replication_role = replica' \
-  --file /tmp/bc-platform-restore/data.sql \
-  --dbname postgres
+  --file /tmp/bc-platform-restore/data.sql
 
 docker exec supabase-db psql -U postgres -d postgres -v ON_ERROR_STOP=1 -c 'VACUUM ANALYZE;'
 echo "Shadow database restore completed."
