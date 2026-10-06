@@ -86,8 +86,8 @@ if [[ "${ENABLE_AGENT:-0}" == "1" ]]; then
 fi
 
 if [[ "${ENABLE_EDGE:-0}" == "1" ]]; then
-  echo "==> Starting Caddy"
-  "${COMPOSE[@]}" up -d caddy
+  echo "==> Recreating Caddy with current edge config"
+  "${COMPOSE[@]}" up -d --force-recreate caddy
 fi
 
 echo "==> Runtime status"

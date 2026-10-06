@@ -8,6 +8,9 @@ const dockerfile = read("game-server/Dockerfile");
 const envExample = read("game-server/.env.example");
 const socketClient = read("lib/game/socket.ts");
 const socketTokenRoute = read("app/api/game/socket-token/route.ts");
+const prepareRuntime = read("ops/vps/prepare-runtime-envs.sh");
+const caddyCutover = read("ops/vps/Caddyfile.cutover");
+const deployScript = read("ops/vps/deploy.sh");
 
 let passed = 0;
 let failed = 0;
@@ -49,6 +52,10 @@ check("auth refresh dibatasi retry", socketClient.includes("authRefreshAttempts 
 check("signing public key bisa dirotasi via env", server.includes("GAME_SERVER_SIGNING_PUBLIC_KEY_B64") && envExample.includes("GAME_SERVER_SIGNING_PUBLIC_KEY_B64="));
 check("leave-room terikat signed socket identity", server.includes("if (!identity) return;") && server.includes("const userId = identity.sub") && server.includes("player.odiceId !== socket.id"));
 check("DB health wajib default dan bisa di-skip khusus staging", server.includes("GAME_DB_REQUIRED") && server.includes("db: 'skipped'") && envExample.includes("GAME_DB_REQUIRED=true"));
+check("runtime game env mempertahankan signing public key", prepareRuntime.includes('"GAME_SERVER_SIGNING_PUBLIC_KEY_B64"') && prepareRuntime.includes("Missing GAME_SERVER_SIGNING_PUBLIC_KEY_B64"));
+check("runtime game env mempertahankan bridge secret", prepareRuntime.includes('"KUIS_TEMPUR_SERVER_SECRET"') && prepareRuntime.includes("Missing KUIS_TEMPUR_SERVER_SECRET"));
+check("Caddy memisahkan domain live dan staging", caddyCutover.includes("{$WEB_DOMAIN} {") && caddyCutover.includes("{$TEST_WEB_DOMAIN} {") && caddyCutover.includes("bahasacerdas-kuis-tempur-staging-web:3000") && caddyCutover.includes("bahasacerdas-kuis-tempur-staging-game:3001"));
+check("deploy force-recreate Caddy agar bind mount tidak stale", deployScript.includes("up -d --force-recreate caddy"));
 
 console.log(`\nHasil: ${passed} passed, ${failed} failed\n`);
 if (failed) process.exit(1);

@@ -31,6 +31,8 @@ game_keys = {
     "NEXT_PUBLIC_SUPABASE_URL",
     "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "GAME_SERVER_SIGNING_PUBLIC_KEY_B64",
+    "KUIS_TEMPUR_SERVER_SECRET",
 }
 game = [line for line in lines if key_of(line) in game_keys]
 
@@ -42,6 +44,10 @@ if "NEXT_PUBLIC_SUPABASE_URL" not in present:
     raise SystemExit("Missing NEXT_PUBLIC_SUPABASE_URL for game auth")
 if not ({"NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", "NEXT_PUBLIC_SUPABASE_ANON_KEY"} & present):
     raise SystemExit("Missing Supabase publishable/anon key for game auth")
+if "GAME_SERVER_SIGNING_PUBLIC_KEY_B64" not in present:
+    raise SystemExit("Missing GAME_SERVER_SIGNING_PUBLIC_KEY_B64 for signed game auth")
+if "KUIS_TEMPUR_SERVER_SECRET" not in present:
+    raise SystemExit("Missing KUIS_TEMPUR_SERVER_SECRET for Kuis Tempur bridge")
 
 game_path.write_text("\n".join(game) + "\n")
 
