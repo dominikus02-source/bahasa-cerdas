@@ -268,9 +268,31 @@ export const gameSocket = {
     return () => socket?.off('arena-hit', callback);
   },
 
+  onArenaKo(callback: (data: {
+    attackerId: string;
+    attackerName: string;
+    targetId: string;
+    targetName: string;
+    attackerKills: number;
+  }) => void) {
+    socket?.on('arena-ko', callback);
+    return () => socket?.off('arena-ko', callback);
+  },
+
   onArenaFinished(callback: (data: any) => void) {
     socket?.on('arena-finished', callback);
     return () => socket?.off('arena-finished', callback);
+  },
+
+  onArenaRematchStatus(callback: (data: {
+    readyIds: string[];
+    readyCount: number;
+    totalCount: number;
+    requiredCount: number;
+    starting: boolean;
+  }) => void) {
+    socket?.on('arena-rematch-status', callback);
+    return () => socket?.off('arena-rematch-status', callback);
   },
 
   onHostChanged(callback: (data: { newHostId: string }) => void) {

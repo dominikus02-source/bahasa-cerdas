@@ -9,11 +9,14 @@ import {
   Sparkles,
   Swords,
   Trophy,
+  Volume2,
+  VolumeX,
   Zap,
 } from "lucide-react";
 import { gameSocket } from "@/lib/game/socket";
 import { setQuiet } from "@/lib/notif-quiet";
 import KuisTempurPhaserWorld from "@/components/game/KuisTempurPhaserWorld";
+import { kuisTempurAudio } from "@/lib/game/kuis-tempur-audio";
 
 type ArenaEntity = {
   id: string;
@@ -50,6 +53,22 @@ type ArenaQuestion = {
   options: string[];
   timeLimit: number;
   deadline: number;
+};
+
+type KillFeedEntry = {
+  id: string;
+  attackerId: string;
+  attackerName: string;
+  targetId: string;
+  targetName: string;
+};
+
+type ArenaRematchStatus = {
+  readyIds: string[];
+  readyCount: number;
+  totalCount: number;
+  requiredCount: number;
+  starting: boolean;
 };
 
 type ArenaResult = {
@@ -125,6 +144,10 @@ export default function KuisTempurArena({
   const [countdown, setCountdown] = useState<number | null>(3);
   const [now, setNow] = useState(Date.now());
   const [serverMessage, setServerMessage] = useState("");
+  const [rematchStatus, setRematchStatus] = useState<ArenaRematchStatus | null>(null);
+  const [soundMuted, setSoundMuted] = useState(false);
+  const [killFeed, setKillFeed] = useState<KillFeedEntry[]>([]);
+  const finalRushPlayedRef = useRef(false);
 
   useEffect(() => {
     setQuiet(true);
@@ -137,6 +160,15 @@ export default function KuisTempurArena({
   }, []);
 
   useEffect(() => {
+    const stopStart = gameSocket.onArenaStart(() => {
+      setResult(null);
+      setQuestion(null);
+      setFeedback(null);
+      setLockedAnswer(false);
+      setServerMessage("");
+      setRematchStatus(null);
+      setCountdown(3);
+    });
     const stopState = gameSocket.onArenaState((next: ArenaState) => {
       stateRef.current = next;
       setArena(next);
@@ -147,6 +179,7 @@ export default function KuisTempurArena({
       setFeedback(null);
     });
     const stopFeedback = gameSocket.onArenaFeedback((data: { correct: boolean; ammo: number; combo: number; message?: string }) => {
+      kuisTempurAudio.play(data.correct ? "correct" : "wrong");
       setFeedback({
         correct: Boolean(data.correct),
         text: data.message || (data.correct ? `Benar! +1 amunisi · Kombo ${data.combo}×` : "Belum tepat. Cari jawaban berikutnya!"),
@@ -154,12 +187,29 @@ export default function KuisTempurArena({
       window.setTimeout(() => setFeedback(null), 1200);
     });
     const stopCountdown = gameSocket.onArenaCountdown((data: { seconds: number }) => {
+      if (data.seconds > 0) kuisTempurAudio.play("countdown");
       setCountdown(data.seconds > 0 ? data.seconds : null);
     });
+    const stopKo = gameSocket.onArenaKo((data) => {
+      const id = `${Date.now()}-${data.attackerId}-${data.targetId}`;
+      setKillFeed((current) => [
+        { id, ...data },
+        ...current,
+      ].slice(0, 3));
+      window.setTimeout(() => {
+        setKillFeed((current) => current.filter((entry) => entry.id !== id));
+      }, 2600);
+    });
     const stopFinished = gameSocket.onArenaFinished((data: ArenaResult) => {
+      kuisTempurAudio.play("victory");
       setResult(data);
       setQuestion(null);
       setCountdown(null);
+      setRematchStatus(null);
+      setKillFeed([]);
+    });
+    const stopRematch = gameSocket.onArenaRematchStatus((data: ArenaRematchStatus) => {
+      setRematchStatus(data);
     });
     const stopError = gameSocket.onError((data: { message?: string }) => {
       setServerMessage(data?.message || "Koneksi arena bermasalah.");
@@ -168,17 +218,38 @@ export default function KuisTempurArena({
     gameSocket.arenaReady({ code, userId });
 
     return () => {
+      stopStart();
       stopState();
       stopQuestion();
       stopFeedback();
       stopCountdown();
+      stopKo();
       stopFinished();
+      stopRematch();
       stopError();
     };
   }, [code, userId]);
 
   const me = useMemo(() => arena.entities.find((entity) => entity.id === userId), [arena, userId]);
   const humans = useMemo(() => arena.entities.filter((entity) => entity.kind === "human"), [arena]);
+
+  useEffect(() => {
+    if (arena.timeLeft > 30) {
+      finalRushPlayedRef.current = false;
+      return;
+    }
+    if (arena.timeLeft > 0 && !finalRushPlayedRef.current) {
+      finalRushPlayedRef.current = true;
+      kuisTempurAudio.play("finalRush");
+    }
+  }, [arena.timeLeft]);
+
+  const toggleSound = useCallback(() => {
+    void kuisTempurAudio.unlock();
+    const next = !soundMuted;
+    kuisTempurAudio.setMuted(next);
+    setSoundMuted(next);
+  }, [soundMuted]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -218,6 +289,11 @@ export default function KuisTempurArena({
     [code, lockedAnswer, question, result, userId]
   );
 
+  const requestRematch = useCallback(() => {
+    if (!result || rematchStatus?.starting || rematchStatus?.readyIds.includes(userId)) return;
+    gameSocket.arenaRematch({ code, userId });
+  }, [code, rematchStatus, result, userId]);
+
   const shootNearest = useCallback(() => {
     if (!me?.alive || !me.ammo) return;
     const targets = arena.entities
@@ -237,22 +313,49 @@ export default function KuisTempurArena({
   const myResult = rankedResults.find((row) => row.playerId === userId);
 
   return (
-    <main className="fixed inset-0 z-[80] overflow-hidden bg-[#030712] text-white">
+    <main
+      className="fixed inset-0 z-[80] overflow-hidden bg-[#030712] text-white"
+      onPointerDownCapture={() => void kuisTempurAudio.unlock()}
+    >
       <style>{`
         @keyframes ktArenaPulse{0%,100%{transform:scale(1);opacity:.75}50%{transform:scale(1.05);opacity:1}}
         @keyframes ktArenaPop{0%{transform:translateY(18px) scale(.97);opacity:0}100%{transform:none;opacity:1}}
         .kt-arena-pop{animation:ktArenaPop .25s ease-out}
         .kt-arena-pulse{animation:ktArenaPulse 1.1s ease-in-out infinite}
+        .kt-topbar{padding-top:max(.5rem,env(safe-area-inset-top))}
+        .kt-question-panel{bottom:max(.5rem,env(safe-area-inset-bottom))}
+        @media (max-height:620px) and (orientation:landscape){
+          .kt-question-panel{
+            left:auto!important;
+            right:max(.45rem,env(safe-area-inset-right))!important;
+            width:min(62vw,520px)!important;
+            padding:.55rem .65rem!important;
+            border-radius:18px!important;
+          }
+          .kt-question-meta{margin-bottom:.3rem!important}
+          .kt-question-title{margin-top:.42rem!important;font-size:.73rem!important;line-height:1rem!important}
+          .kt-answer-grid{margin-top:.45rem!important;gap:.35rem!important}
+          .kt-answer{padding:.48rem .55rem!important;font-size:.68rem!important;line-height:.9rem!important;border-radius:12px!important}
+          .kt-answer-key{height:1.25rem!important;width:1.25rem!important;font-size:.55rem!important}
+          .kt-question-feedback{margin-top:.35rem!important;padding:.35rem .55rem!important}
+        }
         @media (prefers-reduced-motion:reduce){.kt-arena-pop,.kt-arena-pulse{animation:none!important}}
       `}</style>
 
-      <div className="absolute inset-x-0 top-0 z-20 flex items-center gap-2 px-3 py-2 sm:px-4">
+      <div className="kt-topbar absolute inset-x-0 top-0 z-20 flex items-center gap-2 px-3 pb-2 sm:px-4">
         <button
           onClick={onExit}
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-slate-950/65 backdrop-blur"
           aria-label="Keluar dari arena"
         >
           <ArrowLeft size={18} />
+        </button>
+        <button
+          onClick={toggleSound}
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-slate-950/65 text-white/75 backdrop-blur"
+          aria-label={soundMuted ? "Nyalakan suara Kuis Tempur" : "Matikan suara Kuis Tempur"}
+        >
+          {soundMuted ? <VolumeX size={17} /> : <Volume2 size={17} />}
         </button>
         <div className="grid min-w-0 flex-1 grid-cols-4 gap-1.5 sm:gap-2">
           <div className="rounded-xl border border-white/12 bg-slate-950/65 px-2 py-2 backdrop-blur">
@@ -312,6 +415,25 @@ export default function KuisTempurArena({
           ))}
       </div>
 
+      {killFeed.length > 0 && !result && (
+        <div className="pointer-events-none absolute left-1/2 top-[78px] z-20 flex w-[min(92vw,360px)] -translate-x-1/2 flex-col items-center gap-1.5">
+          {killFeed.map((entry) => (
+            <div
+              key={entry.id}
+              className="kt-arena-pop max-w-full truncate rounded-full border border-white/12 bg-slate-950/75 px-3 py-1.5 text-[10px] font-black shadow-lg backdrop-blur"
+            >
+              <span className={entry.attackerId === userId ? "text-cyan-200" : "text-amber-200"}>
+                {entry.attackerId === userId ? "Kamu" : entry.attackerName}
+              </span>
+              <span className="mx-1.5 text-slate-500">KO</span>
+              <span className={entry.targetId === userId ? "text-rose-200" : "text-slate-200"}>
+                {entry.targetId === userId ? "Kamu" : entry.targetName}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
       <button
         onClick={shootNearest}
         disabled={!me?.alive || !me?.ammo || Boolean(result)}
@@ -326,8 +448,8 @@ export default function KuisTempurArena({
       </div>
 
       {question && !result && (
-        <section className="kt-arena-pop absolute inset-x-2 bottom-2 z-30 mx-auto max-w-3xl rounded-[26px] border border-white/15 bg-[#071020]/95 p-3 shadow-[0_22px_65px_rgba(0,0,0,.55)] backdrop-blur-xl sm:inset-x-4 sm:bottom-4 sm:p-4">
-          <div className="mb-2 flex items-center justify-between gap-3">
+        <section className="kt-question-panel kt-arena-pop absolute inset-x-2 z-30 mx-auto max-w-3xl rounded-[26px] border border-white/15 bg-[#071020]/95 p-3 shadow-[0_22px_65px_rgba(0,0,0,.55)] backdrop-blur-xl sm:inset-x-4 sm:p-4">
+          <div className="kt-question-meta mb-2 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600">
                 <Sparkles size={17} />
@@ -347,16 +469,16 @@ export default function KuisTempurArena({
               style={{ width: `${questionProgress * 100}%` }}
             />
           </div>
-          <h2 className="mt-3 text-sm font-black leading-5 sm:text-base">{question.text}</h2>
-          <div className="mt-3 grid grid-cols-2 gap-2">
+          <h2 className="kt-question-title mt-3 text-sm font-black leading-5 sm:text-base">{question.text}</h2>
+          <div className="kt-answer-grid mt-3 grid grid-cols-2 gap-2">
             {question.options.map((option, index) => (
               <button
                 key={`${question.id}-${index}`}
                 onClick={() => answer(index)}
                 disabled={lockedAnswer}
-                className="rounded-2xl border border-white/12 bg-white/[.07] px-3 py-3 text-left text-xs font-black leading-4 transition hover:border-cyan-300/40 hover:bg-cyan-300/10 active:scale-[.99] disabled:opacity-50 sm:text-sm"
+                className="kt-answer rounded-2xl border border-white/12 bg-white/[.07] px-3 py-3 text-left text-xs font-black leading-4 transition hover:border-cyan-300/40 hover:bg-cyan-300/10 active:scale-[.99] disabled:opacity-50 sm:text-sm"
               >
-                <span className="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-lg bg-white/10 text-[10px] text-cyan-200">
+                <span className="kt-answer-key mr-2 inline-flex h-6 w-6 items-center justify-center rounded-lg bg-white/10 text-[10px] text-cyan-200">
                   {String.fromCharCode(65 + index)}
                 </span>
                 {option}
@@ -364,7 +486,7 @@ export default function KuisTempurArena({
             ))}
           </div>
           {feedback && (
-            <div className={`mt-2 rounded-xl px-3 py-2 text-center text-xs font-black ${feedback.correct ? "bg-emerald-400/15 text-emerald-200" : "bg-rose-400/15 text-rose-200"}`}>
+            <div className={`kt-question-feedback mt-2 rounded-xl px-3 py-2 text-center text-xs font-black ${feedback.correct ? "bg-emerald-400/15 text-emerald-200" : "bg-rose-400/15 text-rose-200"}`}>
               {feedback.text}
             </div>
           )}
@@ -525,12 +647,46 @@ export default function KuisTempurArena({
                 </div>
               )}
 
-              <div className="mx-auto mt-5 grid max-w-xl grid-cols-[1.2fr_.8fr] gap-3">
+              <div className="mx-auto mt-5 max-w-xl">
+                {rematchStatus && (
+                  <div className="mb-3 rounded-2xl border border-white/10 bg-white/[.045] px-4 py-3">
+                    <div className="flex items-center justify-between gap-3 text-xs font-black">
+                      <span className="text-slate-400">REMATCH</span>
+                      <span className={rematchStatus.starting ? "text-emerald-200" : "text-cyan-200"}>
+                        {rematchStatus.starting
+                          ? "Memulai ronde baru..."
+                          : `${rematchStatus.readyCount}/${rematchStatus.totalCount} siap · butuh ${rematchStatus.requiredCount}`}
+                      </span>
+                    </div>
+                    <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/8">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-emerald-400 transition-[width]"
+                        style={{
+                          width: `${Math.min(
+                            100,
+                            (rematchStatus.readyCount / Math.max(1, rematchStatus.requiredCount)) * 100
+                          )}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-[1.2fr_.8fr] gap-3">
                 <button
-                  onClick={onExit}
-                  className="rounded-2xl bg-gradient-to-r from-amber-300 via-orange-400 to-rose-500 py-4 text-sm font-black text-[#2d0b00] shadow-[0_16px_40px_rgba(251,146,60,.25)] transition hover:-translate-y-0.5 active:translate-y-0"
+                  onClick={requestRematch}
+                  disabled={
+                    Boolean(rematchStatus?.starting) ||
+                    Boolean(rematchStatus?.readyIds.includes(userId))
+                  }
+                  className="rounded-2xl bg-gradient-to-r from-amber-300 via-orange-400 to-rose-500 py-4 text-sm font-black text-[#2d0b00] shadow-[0_16px_40px_rgba(251,146,60,.25)] transition hover:-translate-y-0.5 active:translate-y-0 disabled:cursor-wait disabled:grayscale disabled:opacity-60"
                 >
-                  <Swords size={17} className="mr-1.5 inline" /> MAIN LAGI
+                  <Swords size={17} className="mr-1.5 inline" />
+                  {rematchStatus?.starting
+                    ? "MENYIAPKAN..."
+                    : rematchStatus?.readyIds.includes(userId)
+                      ? "MENUNGGU PEMAIN..."
+                      : "MAIN LAGI"}
                 </button>
                 <button
                   onClick={onExit}
@@ -538,6 +694,7 @@ export default function KuisTempurArena({
                 >
                   <ArrowLeft size={16} className="mr-1.5 inline" /> Kembali
                 </button>
+                </div>
               </div>
             </section>
           </div>

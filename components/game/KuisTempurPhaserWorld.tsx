@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { gameSocket } from "@/lib/game/socket";
+import { kuisTempurAudio } from "@/lib/game/kuis-tempur-audio";
 
 export type PhaserArenaEntity = {
   id: string;
@@ -665,6 +666,7 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
         }
 
         private playKo(visual: HeroVisual) {
+          if (visual.state.id === userIdRef.current) kuisTempurAudio.play("ko");
           visual.attackUntil = 0;
           visual.hitUntil = 0;
           this.setHeroMode(visual, "ko");
@@ -691,6 +693,7 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
         }
 
         private playRespawn(visual: HeroVisual) {
+          if (visual.state.id === userIdRef.current) kuisTempurAudio.play("respawn");
           if (visual.heroKind === "arga") {
             visual.body
               .setTexture("kt-arga-down", 0)
@@ -805,6 +808,7 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
           if (!from || !target) return;
 
           const now = this.time.now;
+          if (fromId === userIdRef.current) kuisTempurAudio.play("shot");
           from.attackUntil = Math.max(from.attackUntil, now + 230);
           target.hitUntil = Math.max(target.hitUntil, now + 280);
           this.setHeroMode(from, "attack");
@@ -847,6 +851,9 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
             onComplete: () => {
               projectile.destroy();
               trail.destroy();
+              if (fromId === userIdRef.current || targetId === userIdRef.current) {
+                kuisTempurAudio.play("hit");
+              }
 
               const flash = this.add.circle(target.root.x, target.root.y - 4, 32, 0xffffff, 0.88).setDepth(8600);
               flash.setBlendMode(Phaser.BlendModes.ADD);
@@ -1067,7 +1074,7 @@ export default function KuisTempurPhaserWorld({ code, userId, arena, feedback }:
   return (
     <div
       ref={mountRef}
-      className="absolute inset-0 h-full w-full overflow-hidden bg-[#173f32]"
+      className="absolute inset-0 h-full w-full touch-none overflow-hidden bg-[#173f32]"
       aria-label="Dunia Kuis Tempur"
     />
   );

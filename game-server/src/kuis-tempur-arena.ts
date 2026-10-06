@@ -1,7 +1,11 @@
 import type { Server, Socket } from "socket.io";
 const WORLD_W = 1400;
 const WORLD_H = 840;
-const MATCH_SECONDS = 180;
+const MATCH_SECONDS = Math.max(1, Number(process.env.KUIS_TEMPUR_MATCH_SECONDS || 180));
+const FINISHED_CLEANUP_MS = Math.max(
+  100,
+  Number(process.env.KUIS_TEMPUR_FINISHED_CLEANUP_MS || 60_000)
+);
 const HUMAN_HP = 100;
 const BOT_HP = 82;
 const HUMAN_SPEED = 245;
@@ -96,6 +100,9 @@ type ArenaMatch = {
   lastSnapshotAt: number;
   seq: number;
   interval: ReturnType<typeof setInterval> | null;
+  cleanupTimer: ReturnType<typeof setTimeout> | null;
+  rematchVotes: Set<string>;
+  rematchStarting: boolean;
   finishing: boolean;
 };
 
@@ -279,6 +286,13 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
     if (attacker && attacker.id !== target.id) {
       attacker.kills += 1;
       attacker.score += target.kind === "human" ? 150 : 85;
+      io.to(match.room.code).emit("arena-ko", {
+        attackerId: attacker.id,
+        attackerName: attacker.name,
+        targetId: target.id,
+        targetName: target.name,
+        attackerKills: attacker.kills,
+      });
     }
   }
 
@@ -323,6 +337,15 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
     io.to(match.room.code).emit("arena-finished", { results, roomCode: match.room.code });
     match.room.status = "FINISHED";
 
+    // Arm cleanup before persistence. A rematch can happen while persistence
+    // is still in flight, so the timer must already exist and be cancellable.
+    match.cleanupTimer = setTimeout(() => {
+      // Never let a stale finished match delete a newer rematch using the same code.
+      if (matches.get(match.room.code) !== match) return;
+      matches.delete(match.room.code);
+      rooms.delete(match.room.code);
+    }, FINISHED_CLEANUP_MS);
+
     try {
       await persistResults({
         code: match.room.code,
@@ -337,11 +360,6 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
       // players still receive their result even if the web API is temporarily slow.
       console.error("[KuisTempurArena] result persistence failed", error);
     }
-
-    setTimeout(() => {
-      matches.delete(match.room.code);
-      rooms.delete(match.room.code);
-    }, 60_000);
   }
 
   function handleQuestionTimeouts(match: ArenaMatch, now: number) {
@@ -529,6 +547,9 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
       lastSnapshotAt: 0,
       seq: 0,
       interval: null,
+      cleanupTimer: null,
+      rematchVotes: new Set(),
+      rematchStarting: false,
       finishing: false,
     };
     matches.set(room.code, match);
@@ -643,6 +664,69 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
     broadcast(match);
   }
 
+  async function requestRematch(code: string, userId: string) {
+    const match = matches.get(code);
+    const entity = match?.entities.get(userId);
+    const player = match?.room.players.get(userId);
+    if (!match || !entity || !player || !match.finishing || match.rematchStarting) return false;
+    if (entity.kind !== "human" || !entity.connected) return false;
+
+    match.rematchVotes.add(userId);
+
+    const connectedHumans = Array.from(match.entities.values()).filter(
+      (candidate) => candidate.kind === "human" && candidate.connected
+    );
+    const eligibleIds = new Set(connectedHumans.map((candidate) => candidate.id));
+    for (const votedId of Array.from(match.rematchVotes)) {
+      if (!eligibleIds.has(votedId)) match.rematchVotes.delete(votedId);
+    }
+
+    const totalCount = connectedHumans.length;
+    const requiredCount = totalCount <= 2 ? 2 : Math.max(2, Math.ceil(totalCount * 0.6));
+    const readyIds = Array.from(match.rematchVotes);
+    const readyCount = readyIds.length;
+
+    io.to(code).emit("arena-rematch-status", {
+      readyIds,
+      readyCount,
+      totalCount,
+      requiredCount,
+      starting: readyCount >= requiredCount && totalCount >= 2,
+    });
+
+    if (totalCount < 2 || readyCount < requiredCount) return true;
+
+    match.rematchStarting = true;
+    if (match.cleanupTimer) {
+      clearTimeout(match.cleanupTimer);
+      match.cleanupTimer = null;
+    }
+
+    io.to(code).emit("arena-rematch-status", {
+      readyIds,
+      readyCount,
+      totalCount,
+      requiredCount,
+      starting: true,
+    });
+
+    // Replace the finished authoritative match but keep the room and the
+    // authenticated players that are still connected. Offline ghosts are
+    // removed so they cannot respawn as connected in the next round.
+    const connectedIds = new Set(connectedHumans.map((candidate) => candidate.id));
+    for (const playerId of Array.from(match.room.players.keys())) {
+      if (!connectedIds.has(playerId)) match.room.players.delete(playerId);
+    }
+
+    matches.delete(code);
+    match.room.status = "WAITING";
+    match.room.currentQuestion = 0;
+    match.room.questions = [];
+
+    await start(match.room);
+    return true;
+  }
+
   function ready(socket: Socket, code: string, userId: string) {
     const match = matches.get(code);
     if (!match) return;
@@ -711,6 +795,9 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
     },
     answer(data: { code: string; userId: string; questionId: string; answerIndex: number }) {
       answer(data.code, data.userId, data.questionId, data.answerIndex);
+    },
+    requestRematch(data: { code: string; userId: string }) {
+      return requestRematch(data.code, data.userId);
     },
     reconnect,
     disconnect,

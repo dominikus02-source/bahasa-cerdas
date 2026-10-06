@@ -851,6 +851,12 @@ io.on('connection', (socket) => {
     });
   });
 
+  socket.on('arena-rematch', (data: { code: string; userId: string }) => {
+    const player = arenaIdentity(data.code);
+    if (!player || player.id !== data.userId) return;
+    void kuisTempurArena.requestRematch({ code: data.code, userId: player.id });
+  });
+
   socket.on('end-game', async (data: { code: string }) => {
     const room = rooms.get(data.code);
     if (!room) return;

@@ -8,6 +8,7 @@ const server = read("game-server/src/kuis-tempur-arena.ts");
 const socketServer = read("game-server/src/server.ts");
 const arena = read("components/game/KuisTempurArena.tsx");
 const phaser = read("components/game/KuisTempurPhaserWorld.tsx");
+const audio = read("lib/game/kuis-tempur-audio.ts");
 
 let passed = 0;
 let failed = 0;
@@ -47,6 +48,14 @@ check("Arga walk animation memakai 8 frame", phaser.includes("ARGA_FRAME_COUNT =
 check("Arga direction mengikuti vektor gerak", phaser.includes("syncArgaMovement") && phaser.includes('direction = "side"') && phaser.includes('direction = "up"') && phaser.includes('direction = "down"'));
 check("semua human multiplayer memakai art direction Arga premium", phaser.includes('entity.kind === "human" ? "arga" : "mascot"'));
 check("hasil match punya winner spotlight + podium + hasil pribadi", arena.includes("Juara Arena") && arena.includes("podiumRows") && arena.includes("HASIL KAMU") && arena.includes("MAIN LAGI"));
+check("MAIN LAGI memakai true arena rematch, bukan keluar room", arena.includes("requestRematch") && arena.includes("gameSocket.arenaRematch") && arena.includes("onArenaRematchStatus"));
+check("server rematch vote threshold 60% dengan minimum 2", server.includes("Math.ceil(totalCount * 0.6)") && server.includes("requiredCount"));
+check("server membatalkan stale cleanup sebelum rematch", server.includes("clearTimeout(match.cleanupTimer)") && server.includes("matches.get(match.room.code) !== match"));
+check("KO feed berasal dari authoritative arena-ko", server.includes('emit("arena-ko"') && arena.includes("onArenaKo") && arena.includes("killFeed"));
+check("custom SFX mencakup core combat loop", ["correct", "wrong", "shot", "hit", "ko", "respawn", "countdown", "finalRush", "victory"].every((name) => audio.includes(`"${name}"`)));
+check("audio punya classroom mute control", arena.includes("toggleSound") && arena.includes("VolumeX") && audio.includes("setMuted"));
+check("landscape phone punya compact question layout", arena.includes("max-height:620px") && arena.includes("orientation:landscape") && arena.includes("kt-question-panel"));
+check("canvas touch tidak scroll halaman", phaser.includes("touch-none"));
 check("weapon rig memakai core + tip + glow", phaser.includes("weaponCore") && phaser.includes("weaponTip") && phaser.includes("ammoGlow"));
 check("pointer hover memberi target reticle", phaser.includes("pointermove") && phaser.includes("pickTarget") && phaser.includes("targetRing"));
 check("top-3 rank tampil di arena", phaser.includes("rankBadge") && phaser.includes("rank <= 3"));
