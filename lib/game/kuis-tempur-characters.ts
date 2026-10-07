@@ -4,9 +4,6 @@ export type KuisTempurCharacterId =
   | "bu-ratmi"
   | "bu-sari"
   | "eyang-kartala"
-  | "bagas"
-  | "pak-warsa"
-  | "pendaki"
   | "pak-empu";
 
 export type KuisTempurCharacter = {
@@ -84,11 +81,6 @@ export const KUIS_TEMPUR_CHARACTERS: KuisTempurCharacter[] = [
     accent: "#facc15",
     selectable: true,
   },
-  // Legacy IDs stay recognizable for old persisted rooms, but are no longer
-  // selectable until authored runtime art exists at the same quality bar.
-  { id: "bagas", name: "Bagas", role: "Penjelajah", source: "legacy", accent: "#22d3ee", selectable: false },
-  { id: "pak-warsa", name: "Pak Warsa", role: "Petani", source: "legacy", accent: "#84cc16", selectable: false },
-  { id: "pendaki", name: "Pendaki", role: "Penjelajah Gunung", source: "legacy", accent: "#fb923c", selectable: false },
 ];
 
 export const KUIS_TEMPUR_PLAYABLE_CHARACTERS = KUIS_TEMPUR_CHARACTERS.filter(
