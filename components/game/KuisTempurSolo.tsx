@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
+  Clock3,
   Crosshair,
   Heart,
   RotateCcw,
@@ -14,6 +15,7 @@ import {
   VolumeX,
   Zap,
 } from "lucide-react";
+import KuisTempurCharacterPortrait from "@/components/game/KuisTempurCharacterPortrait";
 import KuisTempurPhaserWorld, {
   type PhaserArenaEntity,
   type PhaserArenaState,
@@ -24,11 +26,12 @@ import KuisTempurDisplayShell, {
 } from "@/components/game/KuisTempurDisplayShell";
 import { QUESTION_BANK_EXPANDED, type BankQuestion } from "@/lib/game/question-bank";
 import {
-  KUIS_TEMPUR_CHARACTERS,
+  KUIS_TEMPUR_PLAYABLE_CHARACTERS,
   getKuisTempurCharacter,
   normalizeKuisTempurCharacterId,
   type KuisTempurCharacterId,
 } from "@/lib/game/kuis-tempur-characters";
+import { KUIS_TEMPUR_MONSTERS, type KuisTempurMonsterId } from "@/lib/game/kuis-tempur-monsters";
 import { kuisTempurAudio } from "@/lib/game/kuis-tempur-audio";
 import { setQuiet } from "@/lib/notif-quiet";
 
@@ -36,14 +39,22 @@ const SOLO_DURATION = 180;
 const QUESTION_SECONDS = 15;
 const MAX_AMMO = 6;
 const PLAYER_ID = "solo-player";
-const BOT_NAMES = ["Raka", "Sari", "Bima", "Nisa"];
-const BOT_CHARACTER_IDS: KuisTempurCharacterId[] = ["bagas", "bu-ratmi", "pak-empu", "pendaki"];
+const BOT_MONSTER_IDS: KuisTempurMonsterId[] = ["korog", "korog-perang", "golem-batu", "korog-bayangan"];
 const BOT_SPAWNS = [
-  { x: 1020, y: 270 },
-  { x: 1080, y: 610 },
-  { x: 360, y: 590 },
-  { x: 330, y: 260 },
+  { x: 900, y: 245 },
+  { x: 1130, y: 285 },
+  { x: 930, y: 465 },
+  { x: 1180, y: 485 },
 ];
+
+const CHARACTER_COPY: Partial<Record<KuisTempurCharacterId, { quote: string; traitA: string; traitB: string }>> = {
+  arga: { quote: "Berani, pantang menyerah, selalu siap belajar.", traitA: "Pantang menyerah", traitB: "Suka tantangan" },
+  "ki-jaka": { quote: "Ilmu membuka jalan, kerendahan hati menjaga arah.", traitA: "Bijaksana", traitB: "Tenang di arena" },
+  "bu-ratmi": { quote: "Hal kecil yang baik bisa membawa perubahan besar.", traitA: "Penuh semangat", traitB: "Selalu mendukung" },
+  "bu-sari": { quote: "Bahasa yang baik melahirkan masa depan yang baik.", traitA: "Cermat", traitB: "Cinta pengetahuan" },
+  "eyang-kartala": { quote: "Setiap tempat punya cerita, setiap cerita punya makna.", traitA: "Penuh pengalaman", traitB: "Pemandu cerita" },
+  "pak-empu": { quote: "Ketekunan menempa bukan hanya besi, tapi juga diri.", traitA: "Teguh", traitB: "Disiplin" },
+};
 
 type Phase = "select" | "play" | "result";
 type QuestionView = {
@@ -54,57 +65,6 @@ type QuestionView = {
 
 function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
-}
-
-function CharacterPortrait({
-  characterId,
-  hero = false,
-}: {
-  characterId: string;
-  hero?: boolean;
-}) {
-  const character = getKuisTempurCharacter(characterId);
-  const size = hero
-    ? "h-[230px] w-[230px] sm:h-[300px] sm:w-[300px]"
-    : "h-14 w-14";
-
-  if (character.source === "arga") {
-    return (
-      <div className={`${size} flex items-center justify-center overflow-hidden rounded-[30%]`}>
-        <div
-          aria-label={character.name}
-          className={hero ? "h-[142%] w-[142%] drop-shadow-[0_30px_40px_rgba(0,0,0,.45)]" : "h-full w-full"}
-          style={{
-            backgroundImage: "url(/game/rpg/characters/sheet-char-arga-walk-down.png)",
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "800% 100%",
-            backgroundPosition: "0% 0%",
-          }}
-        />
-      </div>
-    );
-  }
-
-  const frame = character.frame!;
-  const runtime = character.source === "runtime-atlas";
-  const column = frame.x / frame.width;
-
-  return (
-    <div className={`${size} flex items-center justify-center overflow-hidden rounded-[30%]`}>
-      <div
-        aria-label={character.name}
-        className={`${runtime ? "aspect-[3/2]" : "aspect-square"} ${
-          hero ? (runtime ? "w-[300%]" : "w-[245%]") : "w-full"
-        } max-w-none drop-shadow-[0_30px_40px_rgba(0,0,0,.45)]`}
-        style={{
-          backgroundImage: `url(${character.atlasUrl})`,
-          backgroundRepeat: "no-repeat",
-          backgroundSize: runtime ? "400% 500%" : "400% 100%",
-          backgroundPosition: `${(column / 3) * 100}% 0%`,
-        }}
-      />
-    </div>
-  );
 }
 
 function makeQuestion(question: BankQuestion): QuestionView {
@@ -124,7 +84,7 @@ function initialEntities(characterId: KuisTempurCharacterId): PhaserArenaEntity[
     name: "Kamu",
     kind: "human",
     characterId,
-    x: 700,
+    x: 520,
     y: 470,
     hp: 100,
     hpMax: 100,
@@ -140,11 +100,13 @@ function initialEntities(characterId: KuisTempurCharacterId): PhaserArenaEntity[
     color: "#22d3ee",
   };
 
-  const bots = BOT_NAMES.map<PhaserArenaEntity>((name, index) => ({
+  const bots = BOT_MONSTER_IDS.map<PhaserArenaEntity>((monsterId, index) => {
+    const monster = KUIS_TEMPUR_MONSTERS.find((entry) => entry.id === monsterId)!;
+    return {
     id: `solo-bot-${index + 1}`,
-    name,
+    name: monster.name,
     kind: "bot",
-    characterId: BOT_CHARACTER_IDS[index],
+    monsterId,
     x: BOT_SPAWNS[index].x,
     y: BOT_SPAWNS[index].y,
     hp: 70,
@@ -158,8 +120,9 @@ function initialEntities(characterId: KuisTempurCharacterId): PhaserArenaEntity[
     combo: 0,
     alive: true,
     connected: true,
-    color: ["#fb7185", "#f59e0b", "#a78bfa", "#34d399"][index],
-  }));
+    color: monster.accent,
+  };
+  });
 
   return [player, ...bots];
 }
@@ -442,7 +405,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game/kuis-tempur" }:
         correct: me.correct + 1,
         combo: me.combo + 1,
       }));
-      setFeedback({ correct: true, text: "Benar! Energi +1" });
+      setFeedback({ correct: true, text: "Benar! Peluru +1" });
       kuisTempurAudio.play("correct");
     } else {
       updatePlayer((me) => ({
@@ -450,10 +413,8 @@ export default function KuisTempurSolo({ backHref = "/arena/game/kuis-tempur" }:
         wrong: me.wrong + 1,
         combo: 0,
       }));
-      setFeedback({ correct: false, text: "Belum tepat. Tetap bergerak!" });
+      setFeedback({ correct: false, text: "Belum tepat. Tidak mendapat peluru." });
       kuisTempurAudio.play("wrong");
-      const bot = arenaRef.current.entities.find((entity) => entity.kind === "bot" && entity.alive);
-      if (bot) damagePlayer(8, bot.id);
     }
 
     window.setTimeout(nextQuestion, 650);
@@ -479,11 +440,9 @@ export default function KuisTempurSolo({ backHref = "/arena/game/kuis-tempur" }:
     if (phase !== "play" || lockedAnswer !== null) return;
     if (questionTime <= 0) {
       setLockedAnswer(-1);
-      setFeedback({ correct: false, text: "Waktu habis. Soal berikutnya!" });
+      setFeedback({ correct: false, text: "Waktu habis. Tidak mendapat peluru." });
       updatePlayer((me) => ({ ...me, wrong: me.wrong + 1, combo: 0 }));
       kuisTempurAudio.play("wrong");
-      const bot = arenaRef.current.entities.find((entity) => entity.kind === "bot" && entity.alive);
-      if (bot) damagePlayer(8, bot.id);
       window.setTimeout(() => {
         if (!endingRef.current) nextQuestion();
       }, 650);
@@ -515,22 +474,27 @@ export default function KuisTempurSolo({ backHref = "/arena/game/kuis-tempur" }:
         seq: snapshot.seq + 1,
         entities: snapshot.entities.map((entity) => {
           if (entity.kind !== "bot" || !entity.alive) return entity;
-          const dx = me.x - entity.x;
-          const dy = me.y - entity.y;
+          const botIndex = Math.max(0, Number(entity.id.split("-").at(-1) || 1) - 1);
+          const ringAngles = [-1.0, -0.35, 0.35, 1.0];
+          const angle = ringAngles[botIndex % ringAngles.length];
+          const radius = entity.id === attacker?.id ? 190 : 265;
+          const desiredX = clamp(me.x + Math.cos(angle) * radius, 90, 1310);
+          const desiredY = clamp(me.y + Math.sin(angle) * radius, 110, 745);
+          const dx = desiredX - entity.x;
+          const dy = desiredY - entity.y;
           const distance = Math.max(1, Math.hypot(dx, dy));
-          const step = distance > 190 ? 28 : 8;
-          const jitter = (Math.random() - 0.5) * 22;
+          const step = Math.min(distance, entity.id === attacker?.id ? 22 : 16);
           return {
             ...entity,
-            x: clamp(entity.x + (dx / distance) * step + jitter, 70, 1330),
-            y: clamp(entity.y + (dy / distance) * step + jitter * 0.35, 90, 770),
+            x: clamp(entity.x + (dx / distance) * step, 70, 1330),
+            y: clamp(entity.y + (dy / distance) * step, 90, 770),
           };
         }),
       }));
 
       if (botAttackTickRef.current % 2 === 0 && attacker) {
         const distance = Math.hypot(attacker.x - me.x, attacker.y - me.y);
-        if (distance < 470) damagePlayer(6 + Math.min(8, level), attacker.id);
+        if (distance < 300) damagePlayer(6 + Math.min(8, level), attacker.id);
       }
     }, 850);
     return () => window.clearInterval(ai);
@@ -549,115 +513,135 @@ export default function KuisTempurSolo({ backHref = "/arena/game/kuis-tempur" }:
   }, [muted]);
 
   if (phase === "select") {
+    const copy = CHARACTER_COPY[selectedCharacterId] || CHARACTER_COPY.arga!;
     return (
-      <main className="fixed inset-0 z-[70] overflow-y-auto bg-[#040914] text-white">
-        <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_50%_22%,rgba(34,211,238,.18),transparent_28%),radial-gradient(circle_at_15%_10%,rgba(99,102,241,.18),transparent_24%),radial-gradient(circle_at_85%_14%,rgba(244,63,94,.18),transparent_24%),linear-gradient(180deg,#07142d,#040914_72%)]" />
-        <div className="relative mx-auto min-h-full max-w-6xl px-4 py-5 sm:px-6">
-          <div className="mb-4 flex items-center justify-between gap-3">
+      <main className="fixed inset-0 z-[70] overflow-y-auto bg-[#031020] text-white">
+        <div
+          className="pointer-events-none fixed inset-0 bg-cover bg-center opacity-35"
+          style={{ backgroundImage: "url('/game/kuis-tempur/assets/world/base/arena_base_01.png')" }}
+        />
+        <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(90deg,rgba(2,12,27,.96)_0%,rgba(3,14,29,.86)_44%,rgba(4,10,22,.97)_100%),radial-gradient(circle_at_22%_35%,rgba(14,165,233,.16),transparent_30%),radial-gradient(circle_at_83%_18%,rgba(245,158,11,.14),transparent_28%)]" />
+
+        <div className="relative mx-auto min-h-full max-w-[1480px] px-4 py-4 sm:px-6 sm:py-5">
+          <div className="mb-3 flex items-center justify-between gap-3">
             <button
               onClick={() => window.location.assign(backHref)}
-              className="inline-flex items-center gap-2 rounded-2xl border border-white/12 bg-white/[.06] px-4 py-2.5 text-sm font-black text-white/85 backdrop-blur transition hover:bg-white/10"
+              className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-slate-950/45 px-5 py-2.5 text-sm font-black text-white shadow-lg backdrop-blur-xl transition hover:bg-white/10"
             >
-              <ArrowLeft size={17} /> Kembali
+              <ArrowLeft size={18} /> Kembali
             </button>
-            <div className="rounded-full border border-emerald-300/15 bg-emerald-300/10 px-3 py-1.5 text-[10px] font-black tracking-[.16em] text-emerald-200">
+            <div className="rounded-full border border-cyan-200/30 bg-cyan-300/[.09] px-4 py-2 text-[10px] font-black tracking-[.2em] text-cyan-100 backdrop-blur-xl">
               MODE LATIHAN · LAWAN BOT
             </div>
           </div>
 
-          <section className="overflow-hidden rounded-[34px] border border-white/10 bg-white/[.045] shadow-[0_30px_90px_rgba(0,0,0,.34)] backdrop-blur">
-            <div className="grid min-h-[540px] lg:grid-cols-2">
-              <div className="relative flex min-h-[500px] flex-col items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_50%_44%,rgba(34,211,238,.19),transparent_32%),linear-gradient(180deg,#0a1730,#06101d)] p-6 text-center">
-                <div className="absolute inset-x-12 bottom-20 h-24 rounded-[50%] bg-cyan-300/10 blur-2xl" />
-                <div className="relative z-10 w-full text-left">
-                  <div className="text-[10px] font-black tracking-[.22em] text-cyan-300">LAWAN BOT</div>
-                  <h1 className="mt-1 text-3xl font-black tracking-tight sm:text-5xl">Pilih petarungmu.</h1>
-                </div>
-
-                <div className="relative mt-3 flex flex-1 items-center justify-center">
-                  <div
-                    className="absolute inset-10 rounded-full opacity-40 blur-3xl"
-                    style={{ backgroundColor: selectedCharacter.accent }}
-                  />
-                  <CharacterPortrait characterId={selectedCharacterId} hero />
-                </div>
-                <div className="-mt-4 rounded-full border border-white/10 bg-slate-950/70 px-4 py-1.5 text-[9px] font-black tracking-[.18em] text-cyan-200">
-                  PETARUNG TERPILIH
-                </div>
-                <div className="mt-2 text-4xl font-black tracking-[-.03em]">{selectedCharacter.name}</div>
-                <div className="mt-1 text-xs font-black tracking-[.15em] text-slate-400">
-                  {selectedCharacter.role.toUpperCase()}
-                </div>
-              </div>
-
-              <div className="flex flex-col bg-[#050b16]/95 p-5 sm:p-6">
-                <div>
-                  <div className="text-[10px] font-black tracking-[.2em] text-slate-500">KAMPUNG KATA · SOLO</div>
-                  <h2 className="mt-2 text-2xl font-black">Jawab. Isi energi. Tempur.</h2>
-                  <p className="mt-2 text-sm font-semibold leading-6 text-slate-400">
-                    Bergerak di arena, jawab soal untuk mendapatkan amunisi, lalu dekati dan tembak bot. Tidak ada stat berbayar—semua karakter setara.
+          <section className="overflow-hidden rounded-[34px] border border-cyan-100/15 bg-[#061325]/88 shadow-[0_34px_100px_rgba(0,0,0,.48)] backdrop-blur-xl">
+            <div className="grid min-h-[600px] lg:grid-cols-[.95fr_1.15fr]">
+              <div className="relative flex min-h-[560px] flex-col overflow-hidden border-b border-white/10 px-6 pb-4 pt-5 lg:border-b-0 lg:border-r lg:px-8">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_34%_40%,rgba(14,165,233,.18),transparent_30%),linear-gradient(180deg,rgba(5,35,67,.64),rgba(3,13,27,.9))]" />
+                <div className="relative z-10 max-w-xl">
+                  <div className="text-[11px] font-black tracking-[.26em] text-cyan-300">LAWAN BOT</div>
+                  <h1 className="mt-2 text-4xl font-black tracking-[-.04em] sm:text-5xl lg:text-6xl">
+                    Pilih <span className="bg-gradient-to-r from-amber-300 to-orange-400 bg-clip-text text-transparent">Petarungmu</span>
+                  </h1>
+                  <p className="mt-3 max-w-lg text-sm font-semibold leading-6 text-slate-300 sm:text-base">
+                    Setiap petarung punya cerita dan gaya sendiri. Semua kekuatan setara—pilih karakter yang paling kamu suka.
                   </p>
                 </div>
 
-                <div className="mt-5 grid grid-cols-3 gap-2 text-center">
-                  <div className="rounded-2xl border border-white/8 bg-white/[.04] p-3">
-                    <Shield className="mx-auto text-emerald-300" size={20} />
-                    <div className="mt-2 text-[9px] font-black text-slate-500">HP</div>
-                    <div className="text-sm font-black">100</div>
+                <div className="relative z-10 mt-3 flex flex-1 items-end justify-center lg:justify-start">
+                  <div
+                    className="absolute bottom-14 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full opacity-25 blur-[70px] lg:left-[32%]"
+                    style={{ backgroundColor: selectedCharacter.accent }}
+                  />
+                  <KuisTempurCharacterPortrait
+                    characterId={selectedCharacterId}
+                    hero
+                    className="relative z-10 lg:ml-10 lg:scale-[.96]"
+                  />
+
+                  <div className="absolute bottom-5 left-1/2 z-20 w-[min(92%,430px)] -translate-x-1/2 rounded-[26px] border border-white/12 bg-[#06101d]/82 p-4 shadow-2xl backdrop-blur-xl lg:left-auto lg:right-2 lg:w-[280px] lg:translate-x-0">
+                    <div className="text-3xl font-black tracking-tight">{selectedCharacter.name}</div>
+                    <div className="mt-0.5 text-sm font-black text-amber-300">{selectedCharacter.role}</div>
+                    <p className="mt-2 text-xs font-semibold italic leading-5 text-slate-300">“{copy.quote}”</p>
+                    <div className="mt-3 grid grid-cols-2 gap-2">
+                      <div className="rounded-xl border border-amber-300/15 bg-amber-300/[.06] px-3 py-2 text-[10px] font-black text-amber-100">{copy.traitA}</div>
+                      <div className="rounded-xl border border-cyan-300/15 bg-cyan-300/[.06] px-3 py-2 text-[10px] font-black text-cyan-100">{copy.traitB}</div>
+                    </div>
                   </div>
-                  <div className="rounded-2xl border border-white/8 bg-white/[.04] p-3">
-                    <Zap className="mx-auto text-amber-300" size={20} />
-                    <div className="mt-2 text-[9px] font-black text-slate-500">AMUNISI</div>
-                    <div className="text-sm font-black">DARI SOAL</div>
-                  </div>
-                  <div className="rounded-2xl border border-white/8 bg-white/[.04] p-3">
-                    <Crosshair className="mx-auto text-rose-300" size={20} />
-                    <div className="mt-2 text-[9px] font-black text-slate-500">WAKTU</div>
-                    <div className="text-sm font-black">3 MENIT</div>
+                </div>
+              </div>
+
+              <div className="flex flex-col bg-[#040b16]/94 p-5 sm:p-6 lg:p-7">
+                <div className="rounded-[26px] border border-white/10 bg-white/[.035] p-5">
+                  <div className="text-[10px] font-black tracking-[.2em] text-slate-500">KAMPUNG KATA · SOLO</div>
+                  <h2 className="mt-1.5 text-2xl font-black tracking-tight sm:text-3xl">Jawab. Dapat amunisi. Tempur.</h2>
+                  <p className="mt-2 text-sm font-semibold leading-6 text-slate-400">
+                    Jawaban benar memberi peluru. Bergerak di arena, pilih monster, lalu serang. Tidak ada stat berbayar—semua petarung setara.
+                  </p>
+
+                  <div className="mt-4 grid grid-cols-3 gap-2">
+                    <div className="rounded-2xl border border-emerald-300/20 bg-slate-950/45 p-3 text-center">
+                      <Heart className="mx-auto text-emerald-300" size={24} fill="currentColor" />
+                      <div className="mt-2 text-[9px] font-black tracking-[.16em] text-slate-500">HP</div>
+                      <div className="text-lg font-black">100</div>
+                    </div>
+                    <div className="rounded-2xl border border-amber-300/20 bg-slate-950/45 p-3 text-center">
+                      <Zap className="mx-auto text-amber-300" size={24} fill="currentColor" />
+                      <div className="mt-2 text-[9px] font-black tracking-[.16em] text-slate-500">AMUNISI</div>
+                      <div className="text-sm font-black">DARI SOAL</div>
+                    </div>
+                    <div className="rounded-2xl border border-rose-300/20 bg-slate-950/45 p-3 text-center">
+                      <Clock3 className="mx-auto text-rose-300" size={24} />
+                      <div className="mt-2 text-[9px] font-black tracking-[.16em] text-slate-500">WAKTU</div>
+                      <div className="text-sm font-black">3 MENIT</div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="mt-5">
-                  <div className="mb-2 flex items-center justify-between text-[9px] font-black tracking-[.16em] text-slate-500">
-                    <span>ROSTER KARAKTER</span>
-                    <span>9 PILIHAN</span>
-                  </div>
-                  <div className="flex gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                    {KUIS_TEMPUR_CHARACTERS.map((character) => {
-                      const active = character.id === selectedCharacterId;
-                      return (
-                        <button
-                          key={character.id}
-                          onClick={() => chooseCharacter(character.id)}
-                          className={`min-w-[86px] rounded-2xl border p-2 text-center transition ${
-                            active
-                              ? "border-cyan-300/55 bg-cyan-300/12 shadow-[0_0_22px_rgba(34,211,238,.14)]"
-                              : "border-white/8 bg-white/[.035] opacity-70 hover:opacity-100"
-                          }`}
-                        >
-                          <div className="flex justify-center"><CharacterPortrait characterId={character.id} /></div>
-                          <div className={`mt-1 truncate text-[9px] font-black ${active ? "text-cyan-100" : "text-slate-500"}`}>
-                            {character.name}
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
+                <div className="mt-5 flex items-center justify-between">
+                  <div className="text-[10px] font-black tracking-[.2em] text-slate-500">PILIH KARAKTER</div>
+                  <div className="text-[10px] font-black tracking-[.16em] text-cyan-300">{KUIS_TEMPUR_PLAYABLE_CHARACTERS.length} KARAKTER</div>
+                </div>
+
+                <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-6 lg:grid-cols-3 xl:grid-cols-6">
+                  {KUIS_TEMPUR_PLAYABLE_CHARACTERS.map((character) => {
+                    const active = character.id === selectedCharacterId;
+                    return (
+                      <button
+                        key={character.id}
+                        type="button"
+                        onClick={() => chooseCharacter(character.id)}
+                        className={`group overflow-hidden rounded-2xl border p-1.5 text-center transition ${
+                          active
+                            ? "border-amber-300/80 bg-amber-300/[.12] shadow-[0_0_0_2px_rgba(251,191,36,.12),0_12px_28px_rgba(245,158,11,.14)]"
+                            : "border-white/10 bg-white/[.035] hover:border-cyan-200/30 hover:bg-white/[.07]"
+                        }`}
+                      >
+                        <div className="relative flex h-[92px] items-end justify-center overflow-hidden rounded-xl bg-[radial-gradient(circle_at_50%_70%,rgba(56,189,248,.16),transparent_45%),linear-gradient(180deg,rgba(30,41,59,.6),rgba(2,6,23,.45))]">
+                          <KuisTempurCharacterPortrait characterId={character.id} compact className="scale-[1.28] origin-bottom" />
+                        </div>
+                        <div className="mt-1.5 truncate text-[10px] font-black text-white">{character.name}</div>
+                        <div className={`truncate text-[8px] font-bold ${active ? "text-amber-300" : "text-slate-500"}`}>{character.role}</div>
+                      </button>
+                    );
+                  })}
                 </div>
 
                 <button
                   onClick={() => setDisplayChoiceOpen(true)}
-                  className="mt-auto flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-300 via-orange-400 to-rose-500 px-5 py-4 text-base font-black text-[#2c0d00] shadow-[0_16px_38px_rgba(244,63,94,.18)] transition hover:-translate-y-0.5"
+                  className="mt-auto flex w-full items-center justify-center gap-3 rounded-[22px] bg-gradient-to-r from-amber-300 via-orange-400 to-rose-500 px-5 py-4 text-base font-black text-[#2d1000] shadow-[0_18px_44px_rgba(244,63,94,.22)] transition hover:-translate-y-0.5 sm:text-lg"
                 >
-                  <Zap size={19} /> MASUK KAMPUNG KATA
+                  <Crosshair size={21} /> MASUK KAMPUNG KATA
                 </button>
               </div>
             </div>
           </section>
         </div>
+
         {displayChoiceOpen && (
           <KuisTempurDisplayChoice
-            title="Siap masuk Kampung Kata?"
+            title="Pilih tampilan sebelum bertempur"
             onChoose={chooseDisplayAndStart}
           />
         )}
@@ -672,7 +656,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game/kuis-tempur" }:
         <div className="relative mx-auto flex min-h-full max-w-3xl items-center justify-center px-4 py-8">
           <section className="w-full rounded-[34px] border border-white/10 bg-white/[.055] p-6 text-center shadow-[0_28px_90px_rgba(0,0,0,.38)] backdrop-blur sm:p-8">
             <div className="mx-auto flex w-fit items-center justify-center rounded-[32px] border border-amber-300/15 bg-amber-300/8 p-2">
-              <CharacterPortrait characterId={selectedCharacterId} hero />
+              <KuisTempurCharacterPortrait characterId={selectedCharacterId} hero />
             </div>
             <div className="-mt-8 text-[10px] font-black tracking-[.2em] text-amber-300">
               {resultReason === "survive" ? "MISI SELESAI" : "PERTEMPURAN SELESAI"}
@@ -741,18 +725,18 @@ export default function KuisTempurSolo({ backHref = "/arena/game/kuis-tempur" }:
       </div>
 
       <div className="pointer-events-none absolute inset-x-0 top-0 z-20 p-3 sm:p-4">
-        <div className="mx-auto flex max-w-6xl items-start justify-between gap-3">
+        <div className="mx-auto flex max-w-[1500px] items-start justify-between gap-3">
           <div className="pointer-events-auto flex items-center gap-2">
             <button
               onClick={() => setPhase("select")}
-              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/12 bg-slate-950/72 text-white shadow-lg backdrop-blur"
-              aria-label="Keluar dari latihan"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-white/20 bg-slate-950/72 px-4 text-sm font-black text-white shadow-lg backdrop-blur-xl"
+              aria-label="Kembali ke pemilihan petarung"
             >
-              <ArrowLeft size={20} />
+              <ArrowLeft size={18} /> <span className="hidden sm:inline">Kembali</span>
             </button>
             <button
               onClick={toggleMute}
-              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/12 bg-slate-950/72 text-white shadow-lg backdrop-blur"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-slate-950/72 text-white shadow-lg backdrop-blur-xl"
               aria-label={muted ? "Nyalakan suara" : "Matikan suara"}
             >
               {muted ? <VolumeX size={19} /> : <Volume2 size={19} />}
@@ -760,36 +744,55 @@ export default function KuisTempurSolo({ backHref = "/arena/game/kuis-tempur" }:
           </div>
 
           <div className="grid grid-cols-4 gap-2">
-            <div className="rounded-2xl border border-emerald-300/15 bg-slate-950/76 px-3 py-2 shadow-xl backdrop-blur">
-              <div className="text-[8px] font-black tracking-[.15em] text-slate-500">HP</div>
-              <div className="mt-0.5 flex items-center gap-1 text-sm font-black text-emerald-200">
-                <Heart size={13} className="fill-emerald-300" /> {player?.hp || 0}
+            <div className="rounded-2xl border border-emerald-300/20 bg-slate-950/78 px-3 py-2 shadow-xl backdrop-blur-xl">
+              <div className="flex items-center gap-1.5">
+                <Heart size={15} className="fill-emerald-300 text-emerald-300" />
+                <div>
+                  <div className="text-[7px] font-black tracking-[.16em] text-slate-500">HP</div>
+                  <div className="text-sm font-black text-white">{player?.hp || 0}</div>
+                </div>
               </div>
             </div>
-            <div className="rounded-2xl border border-amber-300/15 bg-slate-950/76 px-3 py-2 shadow-xl backdrop-blur">
-              <div className="text-[8px] font-black tracking-[.15em] text-slate-500">AMUNISI</div>
-              <div className="mt-0.5 text-sm font-black text-amber-200">{player?.ammo || 0}/{MAX_AMMO}</div>
+            <div className="rounded-2xl border border-amber-300/20 bg-slate-950/78 px-3 py-2 shadow-xl backdrop-blur-xl">
+              <div className="flex items-center gap-1.5">
+                <Zap size={15} className="fill-amber-300 text-amber-300" />
+                <div>
+                  <div className="text-[7px] font-black tracking-[.16em] text-slate-500">AMUNISI</div>
+                  <div className="text-sm font-black text-white">{player?.ammo || 0}/{MAX_AMMO}</div>
+                </div>
+              </div>
             </div>
-            <div className="rounded-2xl border border-cyan-300/15 bg-slate-950/76 px-3 py-2 shadow-xl backdrop-blur">
-              <div className="text-[8px] font-black tracking-[.15em] text-slate-500">SKOR</div>
-              <div className="mt-0.5 text-sm font-black text-cyan-200">{player?.score || 0}</div>
+            <div className="rounded-2xl border border-cyan-300/20 bg-slate-950/78 px-3 py-2 shadow-xl backdrop-blur-xl">
+              <div className="flex items-center gap-1.5">
+                <Sparkles size={15} className="text-amber-300" />
+                <div>
+                  <div className="text-[7px] font-black tracking-[.16em] text-slate-500">SKOR</div>
+                  <div className="text-sm font-black text-white">{player?.score || 0}</div>
+                </div>
+              </div>
             </div>
-            <div className="rounded-2xl border border-violet-300/15 bg-slate-950/76 px-3 py-2 shadow-xl backdrop-blur">
-              <div className="text-[8px] font-black tracking-[.15em] text-slate-500">WAKTU</div>
-              <div className="mt-0.5 text-sm font-black text-violet-200">
-                {Math.floor(arena.timeLeft / 60)}:{String(arena.timeLeft % 60).padStart(2, "0")}
+            <div className="rounded-2xl border border-rose-300/20 bg-slate-950/78 px-3 py-2 shadow-xl backdrop-blur-xl">
+              <div className="flex items-center gap-1.5">
+                <Clock3 size={15} className="text-rose-300" />
+                <div>
+                  <div className="text-[7px] font-black tracking-[.16em] text-slate-500">WAKTU</div>
+                  <div className="text-sm font-black text-white">
+                    {Math.floor(arena.timeLeft / 60)}:{String(arena.timeLeft % 60).padStart(2, "0")}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="pointer-events-none absolute left-1/2 top-[76px] z-20 -translate-x-1/2">
-        <div className="rounded-full border border-white/10 bg-slate-950/68 px-4 py-2 text-center shadow-lg backdrop-blur">
-          <div className="text-[8px] font-black tracking-[.18em] text-cyan-300">LEVEL {level}</div>
-          <div className="text-[10px] font-bold text-slate-300">
-            {player?.kills || 0} KO · {player?.combo || 0}× combo
-          </div>
+      <div className="pointer-events-none absolute left-1/2 top-3 z-20 flex -translate-x-1/2 flex-col items-center gap-2 sm:top-4">
+        <div className="rounded-[18px] border border-amber-300/30 bg-slate-950/78 px-7 py-2 text-center shadow-xl backdrop-blur-xl">
+          <div className="text-[9px] font-black tracking-[.22em] text-amber-300">LEVEL {level}</div>
+          <div className="text-[10px] font-bold text-slate-300">{player?.kills || 0} KO · {player?.combo || 0}× combo</div>
+        </div>
+        <div className="rounded-full border border-white/12 bg-slate-950/70 px-4 py-1.5 text-[10px] font-black text-white shadow-lg backdrop-blur-xl">
+          💡 Jawab untuk dapat amunisi!
         </div>
       </div>
 
@@ -806,15 +809,17 @@ export default function KuisTempurSolo({ backHref = "/arena/game/kuis-tempur" }:
         }
       `}</style>
       <div className="solo-question-wrap pointer-events-none absolute inset-x-0 bottom-0 z-30 p-2 sm:p-4">
-        <section className="solo-question-panel pointer-events-auto mx-auto max-w-5xl rounded-[26px] border border-white/12 bg-[#07111f]/94 p-3 shadow-[0_-18px_55px_rgba(0,0,0,.34)] backdrop-blur-xl sm:p-4">
+        <section className="solo-question-panel pointer-events-auto mx-auto max-w-[1280px] rounded-[28px] border border-cyan-100/30 bg-[linear-gradient(115deg,rgba(8,68,79,.88),rgba(144,102,16,.76),rgba(8,35,50,.9))] p-3 shadow-[0_-18px_55px_rgba(0,0,0,.34)] backdrop-blur-xl sm:p-4">
           <div className="solo-question-head mb-3 flex items-center justify-between gap-3">
             <div>
               <div className="text-[9px] font-black tracking-[.18em] text-amber-300">SOAL AMUNISI</div>
               <div className="solo-question-prompt mt-1 text-sm font-black leading-snug text-white sm:text-base">{question?.prompt}</div>
             </div>
             <div className="shrink-0 text-right">
-              <div className={`text-xl font-black ${questionTime <= 5 ? "text-rose-300" : "text-cyan-200"}`}>{questionTime}s</div>
-              <div className="text-[8px] font-black tracking-wider text-slate-500">JAWAB CEPAT</div>
+              <div className={`flex items-center justify-end gap-1 text-xl font-black ${questionTime <= 5 ? "text-rose-300" : "text-amber-200"}`}>
+                <Clock3 size={17} /> {questionTime}s
+              </div>
+              <div className="text-[8px] font-black tracking-wider text-white/50">JAWAB CEPAT</div>
             </div>
           </div>
 

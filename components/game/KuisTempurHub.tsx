@@ -20,6 +20,7 @@ import {
   WifiOff,
   Zap,
 } from "lucide-react";
+import KuisTempurCharacterPortrait from "@/components/game/KuisTempurCharacterPortrait";
 import KuisTempurSolo from "@/components/game/KuisTempurSolo";
 import KuisTempurArena from "@/components/game/KuisTempurArena";
 import { KuisTempurDisplayChoice, type KuisTempurDisplayMode } from "@/components/game/KuisTempurDisplayShell";
@@ -27,7 +28,7 @@ import GameBackButton from "@/components/game/GameBackButton";
 import { gameSocket } from "@/lib/game/socket";
 import {
   DEFAULT_KUIS_TEMPUR_CHARACTER_ID,
-  KUIS_TEMPUR_CHARACTERS,
+  KUIS_TEMPUR_PLAYABLE_CHARACTERS,
   getKuisTempurCharacter,
   normalizeKuisTempurCharacterId,
   type KuisTempurCharacterId,
@@ -110,74 +111,6 @@ function Avatar({
           </div>
         )}
       </div>
-    </div>
-  );
-}
-
-function CharacterPortrait({
-  characterId,
-  compact = false,
-  hero = false,
-}: {
-  characterId?: string | null;
-  compact?: boolean;
-  hero?: boolean;
-}) {
-  const character = getKuisTempurCharacter(characterId);
-  const sizeClass = hero
-    ? "h-[230px] w-[230px] sm:h-[270px] sm:w-[270px]"
-    : compact
-      ? "h-12 w-12"
-      : "h-16 w-16";
-
-  if (character.source === "arga") {
-    return (
-      <div
-        className={`${sizeClass} flex items-center justify-center overflow-hidden ${
-          hero ? "rounded-[36%] border-0 bg-transparent" : "rounded-2xl border border-white/15 bg-slate-950/55"
-        }`}
-      >
-        <div
-          aria-label={character.name}
-          className={hero ? "h-[142%] w-[142%] drop-shadow-[0_28px_32px_rgba(0,0,0,.45)]" : "h-full w-full"}
-          style={{
-            backgroundImage: "url(/game/rpg/characters/sheet-char-arga-walk-down.png)",
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "800% 100%",
-            backgroundPosition: "0% 0%",
-          }}
-        />
-      </div>
-    );
-  }
-
-  const frame = character.frame!;
-  const isRuntime = character.source === "runtime-atlas";
-  const column = frame.x / frame.width;
-  const backgroundPositionX = `${(column / 3) * 100}%`;
-
-  return (
-    <div
-      className={`${sizeClass} flex items-center justify-center overflow-hidden ${
-        hero ? "rounded-[36%] border-0 bg-transparent" : "rounded-2xl border border-white/15 bg-white/[.06]"
-      }`}
-    >
-      <div
-        aria-label={character.name}
-        className={`${isRuntime ? "aspect-[3/2]" : "aspect-square"} ${
-          hero
-            ? isRuntime
-              ? "w-[310%] max-w-none drop-shadow-[0_28px_32px_rgba(0,0,0,.45)]"
-              : "w-[250%] max-w-none drop-shadow-[0_28px_32px_rgba(0,0,0,.45)]"
-            : "w-full"
-        }`}
-        style={{
-          backgroundImage: `url(${character.atlasUrl})`,
-          backgroundRepeat: "no-repeat",
-          backgroundSize: isRuntime ? "400% 500%" : "400% 100%",
-          backgroundPosition: `${backgroundPositionX} 0%`,
-        }}
-      />
     </div>
   );
 }
@@ -543,14 +476,14 @@ export default function KuisTempurHub() {
 
   if (phase === "setup" && entryMode) {
     const selectedCharacter = getKuisTempurCharacter(selectedCharacterId);
-    const selectedIndex = KUIS_TEMPUR_CHARACTERS.findIndex(
+    const selectedIndex = KUIS_TEMPUR_PLAYABLE_CHARACTERS.findIndex(
       (character) => character.id === selectedCharacterId
     );
     const cycleCharacter = (direction: -1 | 1) => {
       const nextIndex =
-        (selectedIndex + direction + KUIS_TEMPUR_CHARACTERS.length) %
-        KUIS_TEMPUR_CHARACTERS.length;
-      selectCharacter(KUIS_TEMPUR_CHARACTERS[nextIndex].id);
+        (selectedIndex + direction + KUIS_TEMPUR_PLAYABLE_CHARACTERS.length) %
+        KUIS_TEMPUR_PLAYABLE_CHARACTERS.length;
+      selectCharacter(KUIS_TEMPUR_PLAYABLE_CHARACTERS[nextIndex].id);
     };
     const modeTitle = entryMode === "quick" ? "MAIN CEPAT" : "ROOM PRIVAT";
     const modeHint =
@@ -601,7 +534,7 @@ export default function KuisTempurHub() {
                   <ChevronLeft size={22} />
                 </button>
                 <div className="flex flex-col items-center">
-                  <CharacterPortrait characterId={selectedCharacterId} hero />
+                  <KuisTempurCharacterPortrait characterId={selectedCharacterId} hero />
                   <div className="-mt-3 rounded-2xl border border-cyan-200/20 bg-slate-950/70 px-5 py-2 text-center shadow-xl backdrop-blur">
                     <div className="text-xl font-black">{selectedCharacter.name}</div>
                     <div className="mt-0.5 text-[9px] font-black tracking-[.18em] text-cyan-300">STAT SETARA · COSMETIC</div>
@@ -620,9 +553,9 @@ export default function KuisTempurHub() {
 
             <div className="flex h-full flex-col rounded-[34px] border border-white/12 bg-white/[.055] p-5 shadow-[0_28px_80px_rgba(0,0,0,.24)] backdrop-blur">
               <div>
-                <div className="text-[10px] font-black tracking-[.22em] text-slate-500">ROSTER 9 PETARUNG</div>
+                <div className="text-[10px] font-black tracking-[.22em] text-slate-500">{KUIS_TEMPUR_PLAYABLE_CHARACTERS.length} HERO AUTHORED</div>
                 <div className="mt-3 grid grid-cols-3 gap-2">
-                  {KUIS_TEMPUR_CHARACTERS.map((character) => {
+                  {KUIS_TEMPUR_PLAYABLE_CHARACTERS.map((character) => {
                     const active = character.id === selectedCharacterId;
                     return (
                       <button
@@ -636,7 +569,7 @@ export default function KuisTempurHub() {
                         }`}
                       >
                         <div className="flex justify-center">
-                          <CharacterPortrait characterId={character.id} compact />
+                          <KuisTempurCharacterPortrait characterId={character.id} compact />
                         </div>
                         <div className={`mt-1 truncate text-[9px] font-black ${active ? "text-cyan-100" : "text-slate-500"}`}>
                           {character.name}
@@ -800,14 +733,14 @@ export default function KuisTempurHub() {
     const isPublicRoom = room.matchmaking === "PUBLIC";
     const canStart = Boolean(!isPublicRoom && room.isHost && humanCount >= 2);
     const selectedCharacter = getKuisTempurCharacter(selectedCharacterId);
-    const selectedIndex = KUIS_TEMPUR_CHARACTERS.findIndex(
+    const selectedIndex = KUIS_TEMPUR_PLAYABLE_CHARACTERS.findIndex(
       (character) => character.id === selectedCharacterId
     );
     const cycleCharacter = (direction: -1 | 1) => {
       const nextIndex =
-        (selectedIndex + direction + KUIS_TEMPUR_CHARACTERS.length) %
-        KUIS_TEMPUR_CHARACTERS.length;
-      selectCharacter(KUIS_TEMPUR_CHARACTERS[nextIndex].id);
+        (selectedIndex + direction + KUIS_TEMPUR_PLAYABLE_CHARACTERS.length) %
+        KUIS_TEMPUR_PLAYABLE_CHARACTERS.length;
+      selectCharacter(KUIS_TEMPUR_PLAYABLE_CHARACTERS[nextIndex].id);
     };
     const slots = Array.from({ length: 10 }, (_, index) => players[index] || null);
 
@@ -920,7 +853,7 @@ export default function KuisTempurHub() {
                         className="pointer-events-none absolute inset-x-[-40px] bottom-2 top-20 rounded-full opacity-50 blur-3xl"
                         style={{ backgroundColor: selectedCharacter.accent }}
                       />
-                      <CharacterPortrait characterId={selectedCharacter.id} hero />
+                      <KuisTempurCharacterPortrait characterId={selectedCharacter.id} hero />
                     </div>
 
                     <div className="kt-selected-pill -mt-3 rounded-full border border-white/10 bg-slate-950/70 px-4 py-1.5 text-[9px] font-black tracking-[.18em] text-cyan-200 backdrop-blur">
@@ -962,7 +895,7 @@ export default function KuisTempurHub() {
                 </div>
 
                 <div className="kt-roster-scroll flex snap-x gap-2 overflow-x-auto pb-1">
-                  {KUIS_TEMPUR_CHARACTERS.map((character) => {
+                  {KUIS_TEMPUR_PLAYABLE_CHARACTERS.map((character) => {
                     const active = character.id === selectedCharacterId;
                     return (
                       <button
@@ -981,7 +914,7 @@ export default function KuisTempurHub() {
                           </div>
                         )}
                         <div className="flex justify-center transition group-hover:scale-105">
-                          <CharacterPortrait characterId={character.id} compact />
+                          <KuisTempurCharacterPortrait characterId={character.id} compact />
                         </div>
                         <div className={`mt-1.5 truncate text-[9px] font-black ${active ? "text-cyan-100" : "text-slate-400"}`}>
                           {character.name}
@@ -1022,7 +955,7 @@ export default function KuisTempurHub() {
                             : "border-white/8 bg-white/[.035]"
                         }`}
                       >
-                        <CharacterPortrait characterId={player.characterId} compact />
+                        <KuisTempurCharacterPortrait characterId={player.characterId} compact />
                         <div className="min-w-0">
                           <div className="truncate text-xs font-black text-white">
                             {player.id === me?.id ? `${player.playerName} · Kamu` : player.playerName}

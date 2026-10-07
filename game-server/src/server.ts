@@ -98,9 +98,6 @@ const KUIS_TEMPUR_CHARACTER_IDS = new Set([
   'bu-ratmi',
   'bu-sari',
   'eyang-kartala',
-  'bagas',
-  'pak-warsa',
-  'pendaki',
   'pak-empu',
 ]);
 const DEFAULT_KUIS_TEMPUR_CHARACTER_ID = 'arga';

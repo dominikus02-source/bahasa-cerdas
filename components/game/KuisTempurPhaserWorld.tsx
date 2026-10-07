@@ -4,9 +4,10 @@ import { useEffect, useRef } from "react";
 import { gameSocket } from "@/lib/game/socket";
 import { kuisTempurAudio } from "@/lib/game/kuis-tempur-audio";
 import {
-  KUIS_TEMPUR_CHARACTERS,
+  KUIS_TEMPUR_PLAYABLE_CHARACTERS,
   getKuisTempurCharacter,
 } from "@/lib/game/kuis-tempur-characters";
+import { KUIS_TEMPUR_MONSTERS, getKuisTempurMonster } from "@/lib/game/kuis-tempur-monsters";
 
 export type PhaserArenaEntity = {
   id: string;
@@ -26,6 +27,7 @@ export type PhaserArenaEntity = {
   alive: boolean;
   avatarUrl?: string | null;
   characterId?: string;
+  monsterId?: string;
   color?: string;
   respawnIn?: number;
   connected?: boolean;
@@ -59,6 +61,8 @@ const ARGA_SHEETS = {
 } as const;
 const ARGA_FRAME = 224;
 const ARGA_FRAME_COUNT = 8;
+const NPC_FRAME = 224;
+const NPC_RUNTIME_BASE = "/game/kuis-tempur/characters/heroes/npc-runtime";
 
 const ASSETS = {
   base: [
@@ -210,7 +214,7 @@ export default function KuisTempurPhaserWorld({
         attackUntil: number;
         hitUntil: number;
         lastFacing: 1 | -1;
-        heroKind: "arga" | "npc" | "mascot";
+        heroKind: "arga" | "npc" | "monster" | "mascot";
         characterId: string;
         direction: "down" | "side" | "up";
       };
@@ -244,30 +248,17 @@ export default function KuisTempurPhaserWorld({
             frameWidth: ARGA_FRAME,
             frameHeight: ARGA_FRAME,
           });
-          this.load.svg("kt-rpg-runtime-atlas", "/game/rpg/visual/rpg_runtime_atlas.svg", {
-            width: 960,
-            height: 800,
-          });
-          this.load.svg("kt-rpg-npc-atlas", "/game/rpg/visual/rpg_npc_atlas.svg", {
-            width: 960,
-            height: 240,
-          });
-        }
-
-        private ensureNpcFrames() {
-          KUIS_TEMPUR_CHARACTERS
-            .filter((character) => character.source !== "arga" && character.frame)
+          KUIS_TEMPUR_PLAYABLE_CHARACTERS
+            .filter((character) => character.source === "authored")
             .forEach((character) => {
-              const textureKey =
-                character.source === "runtime-atlas"
-                  ? "kt-rpg-runtime-atlas"
-                  : "kt-rpg-npc-atlas";
-              const texture = this.textures.get(textureKey);
-              const frameKey = `kt-char-${character.id}`;
-              if (texture.has(frameKey)) return;
-              const frame = character.frame!;
-              texture.add(frameKey, 0, frame.x, frame.y, frame.width, frame.height);
+              this.load.spritesheet(`kt-char-${character.id}-idle`, `${NPC_RUNTIME_BASE}/${character.id}-idle.png`, { frameWidth: NPC_FRAME, frameHeight: NPC_FRAME });
+              this.load.spritesheet(`kt-char-${character.id}-walk`, `${NPC_RUNTIME_BASE}/${character.id}-walk.png`, { frameWidth: NPC_FRAME, frameHeight: NPC_FRAME });
+              this.load.spritesheet(`kt-char-${character.id}-talk`, `${NPC_RUNTIME_BASE}/${character.id}-talk.png`, { frameWidth: NPC_FRAME, frameHeight: NPC_FRAME });
+              this.load.spritesheet(`kt-char-${character.id}-interact`, `${NPC_RUNTIME_BASE}/${character.id}-interact.png`, { frameWidth: NPC_FRAME, frameHeight: NPC_FRAME });
             });
+          KUIS_TEMPUR_MONSTERS.forEach((monster) => {
+            this.load.image(`kt-monster-${monster.id}`, monster.runtimeUrl);
+          });
         }
 
         private ensureHeroAnimations() {
@@ -289,11 +280,28 @@ export default function KuisTempurPhaserWorld({
               repeat: -1,
             });
           });
+
+          KUIS_TEMPUR_PLAYABLE_CHARACTERS.filter((character) => character.source === "authored").forEach((character) => {
+            const definitions = [
+              [`kt-npc-${character.id}-idle`, `kt-char-${character.id}-idle`, 4, 6],
+              [`kt-npc-${character.id}-walk`, `kt-char-${character.id}-walk`, 6, 10],
+              [`kt-npc-${character.id}-talk`, `kt-char-${character.id}-talk`, 4, 8],
+              [`kt-npc-${character.id}-interact`, `kt-char-${character.id}-interact`, 4, 8],
+            ] as const;
+            definitions.forEach(([animationKey, textureKey, frameCount, frameRate]) => {
+              if (this.anims.exists(animationKey)) return;
+              this.anims.create({
+                key: animationKey,
+                frames: this.anims.generateFrameNumbers(textureKey, { start: 0, end: frameCount - 1 }),
+                frameRate,
+                repeat: -1,
+              });
+            });
+          });
         }
 
         create() {
           sceneRef.current = this;
-          this.ensureNpcFrames();
           this.ensureHeroAnimations();
           this.cameras.main.setBackgroundColor("#173f32");
           this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H);
@@ -547,15 +555,18 @@ export default function KuisTempurPhaserWorld({
           const accent = Phaser.Display.Color.HexStringToColor(entity.color || "#22d3ee").color;
           const heroHash = Math.abs(Array.from(entity.id).reduce((acc, ch) => acc + ch.charCodeAt(0), 0));
           const character = getKuisTempurCharacter(entity.characterId);
+          const monster = entity.monsterId ? getKuisTempurMonster(entity.monsterId) : null;
           const heroKind: HeroVisual["heroKind"] =
-            entity.kind === "bot" && !entity.characterId
-              ? "mascot"
-              : character.source === "arga"
-                ? "arga"
-                : "npc";
+            monster
+              ? "monster"
+              : entity.kind === "bot" && !entity.characterId
+                ? "mascot"
+                : character.source === "arga"
+                  ? "arga"
+                  : "npc";
           const family = heroHash % ASSETS.heroIdle.length;
 
-          const shadow = this.add.ellipse(0, 31, heroKind === "arga" ? 48 : 54, 14, 0x020617, 0.34);
+          const shadow = this.add.ellipse(0, 31, heroKind === "monster" ? 72 : heroKind === "arga" ? 48 : 54, 14, 0x020617, 0.34);
           const aura = this.add.circle(0, 3, entity.id === userIdRef.current ? 40 : 34, accent, entity.id === userIdRef.current ? 0.16 : 0.055);
           aura.setBlendMode(Phaser.BlendModes.ADD);
 
@@ -565,19 +576,16 @@ export default function KuisTempurPhaserWorld({
                   .setOrigin(0.5, 1)
                   .setDisplaySize(96, 96)
               : heroKind === "npc"
-                ? this.add.image(
-                    0,
-                    27,
-                    character.source === "runtime-atlas"
-                      ? "kt-rpg-runtime-atlas"
-                      : "kt-rpg-npc-atlas",
-                    `kt-char-${character.id}`
-                  )
-                    .setOrigin(0.5, 1)
-                    .setDisplaySize(92, 92)
-                : this.add.image(0, 27, key("heroIdle", family))
-                    .setOrigin(0.5, 1)
-                    .setDisplaySize(84, 84);
+                ? this.add.sprite(0, 27, `kt-char-${character.id}-idle`, 0).setOrigin(0.5, 1).setDisplaySize(110, 110)
+                : heroKind === "monster"
+                  ? this.add.image(0, 27, `kt-monster-${monster!.id}`).setOrigin(0.5, 1)
+                  : this.add.image(0, 27, key("heroIdle", family)).setOrigin(0.5, 1).setDisplaySize(84, 84);
+
+          if (heroKind === "monster") {
+            const targetHeight = 118;
+            const ratio = Math.max(0.45, Math.min(1.8, body.width / Math.max(1, body.height)));
+            body.setDisplaySize(targetHeight * ratio, targetHeight);
+          }
 
           const weaponGrip = this.add.rectangle(14, 3, 10, 9, 0x172554, 1)
             .setStrokeStyle(1.5, 0xf8fafc, 0.5);
@@ -588,9 +596,10 @@ export default function KuisTempurPhaserWorld({
           const ammoGlow = this.add.circle(47, 0, 12, entity.ammo > 0 ? 0xfde047 : 0x64748b, entity.ammo > 0 ? 0.23 : 0.06);
           ammoGlow.setBlendMode(Phaser.BlendModes.ADD);
           const weapon = this.add.container(0, 5, [ammoGlow, weaponGrip, weaponCore, weaponTip])
-            .setAngle(-11);
+            .setAngle(-11)
+            .setVisible(heroKind !== "monster");
 
-          const targetRing = this.add.circle(0, 6, heroKind === "arga" ? 37 : 40, 0xfb7185, 0)
+          const targetRing = this.add.circle(0, 6, heroKind === "monster" ? 50 : heroKind === "arga" ? 37 : 40, 0xfb7185, 0)
             .setStrokeStyle(2.5, 0xfb7185, 0.9)
             .setAlpha(0);
 
@@ -627,14 +636,16 @@ export default function KuisTempurPhaserWorld({
           root.setDepth(entity.y + 20);
           root.setSize(82, 106);
 
-          this.tweens.add({
-            targets: heroKind === "arga" ? [weapon] : [body, weapon],
-            y: "-=2",
-            duration: 500 + (entity.id.charCodeAt(0) % 140),
-            yoyo: true,
-            repeat: -1,
-            ease: "Sine.inOut",
-          });
+          if (heroKind === "arga") {
+            this.tweens.add({
+              targets: [weapon],
+              y: "-=2",
+              duration: 500 + (entity.id.charCodeAt(0) % 140),
+              yoyo: true,
+              repeat: -1,
+              ease: "Sine.inOut",
+            });
+          }
 
           if (entity.id === userIdRef.current) {
             this.tweens.add({
@@ -695,6 +706,16 @@ export default function KuisTempurPhaserWorld({
                     ? "kt-arga-side"
                     : "kt-arga-down";
               visual.body.setTexture(texture, 0).setDisplaySize(96, 96);
+            }
+          } else if (visual.heroKind === "npc") {
+            const prefix = `kt-npc-${visual.characterId}-`;
+            const animationKey =
+              mode === "run" ? `${prefix}walk` :
+              mode === "attack" ? `${prefix}interact` :
+              mode === "hit" ? `${prefix}talk` :
+              `${prefix}idle`;
+            if (visual.body.anims?.currentAnim?.key !== animationKey || !visual.body.anims?.isPlaying) {
+              visual.body.play(animationKey, true);
             }
           } else if (visual.heroKind === "mascot") {
             visual.body.setTexture(this.heroTexture(mode, visual.family)).setDisplaySize(84, 84);
@@ -782,10 +803,17 @@ export default function KuisTempurPhaserWorld({
             visual.body.anims?.stop();
           } else if (visual.heroKind === "npc") {
             visual.body
+              .setTexture(`kt-char-${visual.characterId}-idle`, 0)
               .setAngle(0)
               .setAlpha(1)
               .setY(27)
-              .setDisplaySize(92, 92);
+              .setDisplaySize(110, 110);
+            visual.body.anims?.play(`kt-npc-${visual.characterId}-idle`, true);
+          } else if (visual.heroKind === "monster") {
+            visual.body
+              .setAngle(0)
+              .setAlpha(1)
+              .setY(27);
           } else {
             visual.body
               .setTexture(this.heroTexture("idle", visual.family))
@@ -1087,7 +1115,26 @@ export default function KuisTempurPhaserWorld({
 
             this.syncArgaMovement(visual, dx, dy, moving);
 
-            if (moving && visual.mode === "run" && visual.heroKind !== "arga") {
+            if (visual.heroKind === "npc") {
+              const phase = this.time.now / (visual.mode === "run" ? 95 : 520) + visual.root.x * 0.015;
+              const bob = Math.sin(phase);
+              const pulse = Math.sin(phase + Math.PI / 2);
+              if (visual.mode === "run") {
+                visual.body.setY(27 + bob * 2.4);
+                visual.body.setScale(1 + pulse * 0.018, 1 - pulse * 0.018);
+                visual.weapon.setY(5 + bob * 0.9);
+              } else if (visual.mode === "idle") {
+                visual.body.setY(27 + bob * 1.2);
+                visual.body.setScale(1 + pulse * 0.012, 1 - pulse * 0.012);
+                visual.weapon.setY(5 + bob * 0.35);
+              } else if (visual.mode === "hit") {
+                visual.body.setY(27);
+                visual.body.setScale(1, 1);
+                visual.weapon.setY(5);
+              } else if (visual.mode === "ko") {
+                visual.body.setScale(1, 1);
+              }
+            } else if (moving && visual.mode === "run" && visual.heroKind !== "arga") {
               const stride = Math.sin(this.time.now / 85 + visual.root.x * 0.02);
               visual.body.setY(27 + stride * 1.8);
               visual.weapon.setY(5 + stride * 0.8);

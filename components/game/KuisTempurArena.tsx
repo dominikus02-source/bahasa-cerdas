@@ -15,10 +15,10 @@ import {
 } from "lucide-react";
 import { gameSocket } from "@/lib/game/socket";
 import { setQuiet } from "@/lib/notif-quiet";
+import KuisTempurCharacterPortrait from "@/components/game/KuisTempurCharacterPortrait";
 import KuisTempurPhaserWorld from "@/components/game/KuisTempurPhaserWorld";
 import KuisTempurDisplayShell, { type KuisTempurDisplayMode } from "@/components/game/KuisTempurDisplayShell";
 import { kuisTempurAudio } from "@/lib/game/kuis-tempur-audio";
-import { getKuisTempurCharacter } from "@/lib/game/kuis-tempur-characters";
 
 type ArenaEntity = {
   id: string;
@@ -103,44 +103,16 @@ function ResultCharacterPortrait({
   name: string;
   size?: "sm" | "md" | "lg";
 }) {
-  const character = getKuisTempurCharacter(characterId);
-  const dim = size === "lg" ? "h-24 w-24" : size === "sm" ? "h-11 w-11" : "h-16 w-16";
-
-  if (character.source === "arga") {
-    return (
-      <div className={`${dim} overflow-hidden rounded-[28%] border-2 border-white/20 bg-slate-950/60 shadow-[0_12px_32px_rgba(0,0,0,.3)]`}>
-        {/* Local authored asset; native img keeps this result crop predictable. */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={character.previewUrl}
-          alt={`${name} sebagai ${character.name}`}
-          className="h-full w-full object-cover object-top"
-        />
-      </div>
-    );
-  }
-
-  const frame = character.frame!;
-  const isRuntime = character.source === "runtime-atlas";
-  const column = frame.x / frame.width;
-  const backgroundPositionX = `${(column / 3) * 100}%`;
-
+  const dim = size === "lg" ? "h-24 w-20" : size === "sm" ? "h-11 w-10" : "h-16 w-14";
   return (
-    <div className={`${dim} flex items-center justify-center overflow-hidden rounded-[28%] border-2 border-white/20 bg-white/[.06] shadow-[0_12px_32px_rgba(0,0,0,.3)]`}>
-      <div
-        aria-label={`${name} sebagai ${character.name}`}
-        className={isRuntime ? "w-full aspect-[3/2]" : "w-full aspect-square"}
-        style={{
-          backgroundImage: `url(${character.atlasUrl})`,
-          backgroundRepeat: "no-repeat",
-          backgroundSize: isRuntime ? "400% 500%" : "400% 100%",
-          backgroundPosition: `${backgroundPositionX} 0%`,
-        }}
-      />
+    <div
+      className={`${dim} flex items-end justify-center overflow-hidden rounded-[28%] border-2 border-white/20 bg-slate-950/60 shadow-[0_12px_32px_rgba(0,0,0,.3)]`}
+      aria-label={name}
+    >
+      <KuisTempurCharacterPortrait characterId={characterId} compact className={`${dim} max-h-full max-w-full`} />
     </div>
   );
 }
-
 export default function KuisTempurArena({
   code,
   userId,

@@ -138,7 +138,7 @@ console.log("\n8. Solo runtime memakai Phaser Kampung Kata yang sama dengan mult
   const solo = fs.readFileSync(path.join(__dirname, "..", "components", "game", "KuisTempurSolo.tsx"), "utf8");
   const phaser = fs.readFileSync(path.join(__dirname, "..", "components", "game", "KuisTempurPhaserWorld.tsx"), "utf8");
   ok(solo.includes("KuisTempurPhaserWorld"), "solo memakai renderer Phaser shared");
-  ok(solo.includes("KUIS_TEMPUR_CHARACTERS") && solo.includes("getKuisTempurCharacter"), "solo memakai roster karakter baru");
+  ok(solo.includes("KUIS_TEMPUR_PLAYABLE_CHARACTERS") && solo.includes("getKuisTempurCharacter"), "solo memakai roster karakter baru");
   ok(solo.includes("SOAL AMUNISI") && solo.includes("MASUK KAMPUNG KATA"), "solo memakai flow game baru");
   ok(!solo.includes("gambarKarakter") && !solo.includes("Master Zelby") && !solo.includes("chunky cream"), "solo tidak memakai visual legacy");
   ok(phaser.includes("/game/kuis-tempur/assets/world/base/arena_base_01.png"), "Phaser memakai base Kampung Kata");

@@ -61,7 +61,9 @@ check("custom SFX mencakup core combat loop", ["correct", "wrong", "shot", "hit"
 check("audio punya classroom mute control", arena.includes("toggleSound") && arena.includes("VolumeX") && audio.includes("setMuted"));
 check("landscape phone punya compact question layout", arena.includes("max-height:620px") && arena.includes("orientation:landscape") && arena.includes("kt-question-panel"));
 check("canvas touch tidak scroll halaman", phaser.includes("touch-none"));
-check("roster punya Arga + 8 NPC authored", ["arga","ki-jaka","bu-ratmi","bu-sari","eyang-kartala","bagas","pak-warsa","pendaki","pak-empu"].every((id) => kuisTempurCharacters.includes(`id: "${id}"`)));
+check("roster selectable hanya hero authored", ["arga","ki-jaka","bu-ratmi","bu-sari","eyang-kartala","pak-empu"].every((id) => kuisTempurCharacters.includes(`id: "${id}"`)) && kuisTempurCharacters.includes("KUIS_TEMPUR_PLAYABLE_CHARACTERS"));
+check("5 NPC authored dimuat sebagai runtime character", ["ki-jaka","bu-ratmi","bu-sari","eyang-kartala","pak-empu"].every((id) => kuisTempurCharacters.includes(id)) && phaser.includes('source === "authored"') && phaser.includes("NPC_RUNTIME_BASE") && phaser.includes("this.load.spritesheet") && phaser.includes("kt-char-${character.id}-idle"));
+check("NPC punya animasi runtime idle/run/hit/KO", phaser.includes('visual.heroKind === "npc"') && phaser.includes("kt-npc-${visual.characterId}-") && phaser.includes("interact") && phaser.includes("talk") && phaser.includes("walk"));
 check("lobby character select terasa seperti game", hub.includes("PILIH PETARUNGMU") && hub.includes("KARAKTER TERPILIH") && hub.includes("ROSTER KARAKTER") && hub.includes("arenaSelectCharacter"));
 check("lobby character select punya carousel + arrow cycling", hub.includes("cycleCharacter") && hub.includes("ChevronLeft") && hub.includes("ChevronRight") && hub.includes("overflow-x-auto"));
 check("lobby menegaskan semua karakter stat setara", hub.includes("SEMUA STAT SETARA") && hub.includes("HP SETARA") && hub.includes("DAMAGE SETARA") && hub.includes("SPEED SETARA"));
@@ -73,7 +75,7 @@ check("server whitelist character selection", socketServer.includes("KUIS_TEMPUR
 check("arena snapshot membawa characterId", server.includes("characterId: entity.characterId") && phaser.includes("entity.characterId"));
 check("result bridge menerima sampai 10 pemain", bridgeRoute.includes("results.length > 10") && !bridgeRoute.includes("results.length > 2"));
 check("persistence code mendukung id per ronde", bridgeRoute.includes("validPersistenceCode") && server.includes("persistenceCode"));
-check("Phaser memuat dua authored NPC atlas", phaser.includes("rpg_runtime_atlas.svg") && phaser.includes("rpg_npc_atlas.svg") && phaser.includes("ensureNpcFrames"));
+check("Phaser memakai authored hero PNG + monster PNG", phaser.includes("KUIS_TEMPUR_PLAYABLE_CHARACTERS") && phaser.includes("KUIS_TEMPUR_MONSTERS") && phaser.includes("kt-monster-${monster.id}") && !phaser.includes("rpg_runtime_atlas.svg"));
 check("weapon rig memakai core + tip + glow", phaser.includes("weaponCore") && phaser.includes("weaponTip") && phaser.includes("ammoGlow"));
 check("pointer hover memberi target reticle", phaser.includes("pointermove") && phaser.includes("pickTarget") && phaser.includes("targetRing"));
 check("top-3 rank tampil di arena", phaser.includes("rankBadge") && phaser.includes("rank <= 3"));

@@ -16,7 +16,7 @@ const io: any = {
 
 const characterIds = [
   "arga", "ki-jaka", "bu-ratmi", "bu-sari", "eyang-kartala",
-  "bagas", "pak-warsa", "pendaki", "pak-empu", "arga",
+  "pak-empu", "arga", "ki-jaka", "bu-ratmi", "bu-sari",
 ];
 
 const players = new Map(
