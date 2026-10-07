@@ -1,0 +1,72 @@
+name: Deploy Production VPS
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: production-vps
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to production VPS
+    if: >-
+      ${{ github.event_name == 'workflow_dispatch' ||
+          (github.event.workflow_run.conclusion == 'success' &&
+           github.event.workflow_run.head_branch == 'main') }}
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://www.bahasacerdas.com
+    permissions:
+      contents: read
+
+    steps:
+      - name: Prepare SSH
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$VPS_HOST"
+          test -n "$VPS_USER"
+          test -n "$VPS_SSH_KEY"
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "$VPS_HOST" >> ~/.ssh/known_hosts
+
+      - name: Deploy
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes "$VPS_USER@$VPS_HOST" '
+            set -e
+            cd /opt/bahasacerdas/apps/bahasa-cerdas
+            git fetch --prune origin
+            git checkout main
+            git pull --ff-only origin main
+            bash ops/vps/deploy.sh
+          '
+
+      - name: Verify production
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes "$VPS_USER@$VPS_HOST" '
+            set -e
+            cd /opt/bahasacerdas/apps/bahasa-cerdas
+            printf "Production commit: "
+            git rev-parse --short HEAD
+          '
+          curl --fail --silent --show-error --retry 5 --retry-delay 3 https://www.bahasacerdas.com/api/health
+          printf '\nProduction health: OK\n'
