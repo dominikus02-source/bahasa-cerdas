@@ -63,6 +63,10 @@ const ARGA_FRAME = 224;
 const ARGA_FRAME_COUNT = 8;
 const NPC_FRAME = 224;
 const NPC_RUNTIME_BASE = "/game/kuis-tempur/characters/heroes/npc-runtime";
+const HERO_SIZE_ARGA = 82;
+const HERO_SIZE_NPC = 86;
+const HERO_SIZE_MASCOT = 78;
+const HERO_HEIGHT_MONSTER = 98;
 
 const ASSETS = {
   base: [
@@ -221,7 +225,6 @@ export default function KuisTempurPhaserWorld({
 
       class KuisTempurScene extends Phaser.Scene {
         private heroes = new Map<string, HeroVisual>();
-        private coreGlow: any;
         private rushOverlay: any;
         private rushLabel: any;
         private localFollowId = "";
@@ -307,7 +310,6 @@ export default function KuisTempurPhaserWorld({
           this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H);
           this.buildTerrain();
           this.buildVillage();
-          this.buildArenaCore();
           this.buildAtmosphere();
 
           this.rushOverlay = this.add.rectangle(0, 0, 10, 10, 0x120516, 0)
@@ -485,49 +487,6 @@ export default function KuisTempurPhaserWorld({
           fencePoints.forEach(([x, y, variant]) => this.addWorldSprite(key("fences", variant), x, y, 0.62));
         }
 
-        private buildArenaCore() {
-          const x = WORLD_W / 2;
-          const y = WORLD_H / 2;
-          const g = this.add.graphics().setDepth(y - 15);
-          g.fillStyle(0x0b1220, 0.86);
-          g.fillCircle(x, y, 92);
-          g.lineStyle(7, 0x22d3ee, 0.38);
-          g.strokeCircle(x, y, 92);
-          g.lineStyle(3, 0xfde68a, 0.72);
-          g.strokeCircle(x, y, 64);
-          g.lineStyle(2, 0x67e8f9, 0.5);
-          for (let i = 0; i < 8; i++) {
-            const a = (Math.PI * 2 * i) / 8;
-            const x1 = x + Math.cos(a) * 65;
-            const y1 = y + Math.sin(a) * 65;
-            const x2 = x + Math.cos(a) * 84;
-            const y2 = y + Math.sin(a) * 84;
-            g.lineBetween(x1, y1, x2, y2);
-          }
-
-          this.coreGlow = this.add.circle(x, y, 48, 0x38bdf8, 0.22).setDepth(y - 10);
-          this.coreGlow.setBlendMode(Phaser.BlendModes.ADD);
-          this.tweens.add({
-            targets: this.coreGlow,
-            scale: { from: 0.72, to: 1.35 },
-            alpha: { from: 0.10, to: 0.34 },
-            duration: 1350,
-            yoyo: true,
-            repeat: -1,
-            ease: "Sine.inOut",
-          });
-
-          const book = this.add.text(x, y - 5, "📖", { fontSize: "54px" }).setOrigin(0.5).setDepth(y + 2);
-          this.tweens.add({
-            targets: book,
-            y: y - 13,
-            duration: 1350,
-            yoyo: true,
-            repeat: -1,
-            ease: "Sine.inOut",
-          });
-        }
-
         private buildAtmosphere() {
           for (let i = 0; i < 36; i++) {
             const mote = this.add.circle(
@@ -566,23 +525,23 @@ export default function KuisTempurPhaserWorld({
                   : "npc";
           const family = heroHash % ASSETS.heroIdle.length;
 
-          const shadow = this.add.ellipse(0, 31, heroKind === "monster" ? 72 : heroKind === "arga" ? 48 : 54, 14, 0x020617, 0.34);
-          const aura = this.add.circle(0, 3, entity.id === userIdRef.current ? 40 : 34, accent, entity.id === userIdRef.current ? 0.16 : 0.055);
+          const shadow = this.add.ellipse(0, 31, heroKind === "monster" ? 60 : heroKind === "arga" ? 40 : 42, 12, 0x020617, 0.34);
+          const aura = this.add.circle(0, 3, entity.id === userIdRef.current ? 32 : 28, accent, entity.id === userIdRef.current ? 0.16 : 0.055);
           aura.setBlendMode(Phaser.BlendModes.ADD);
 
           const body =
             heroKind === "arga"
               ? this.add.sprite(0, 31, "kt-arga-down", 0)
                   .setOrigin(0.5, 1)
-                  .setDisplaySize(96, 96)
+                  .setDisplaySize(HERO_SIZE_ARGA, HERO_SIZE_ARGA)
               : heroKind === "npc"
-                ? this.add.sprite(0, 27, `kt-char-${character.id}-idle`, 0).setOrigin(0.5, 1).setDisplaySize(110, 110)
+                ? this.add.sprite(0, 27, `kt-char-${character.id}-idle`, 0).setOrigin(0.5, 1).setDisplaySize(HERO_SIZE_NPC, HERO_SIZE_NPC)
                 : heroKind === "monster"
                   ? this.add.image(0, 27, `kt-monster-${monster!.id}`).setOrigin(0.5, 1)
-                  : this.add.image(0, 27, key("heroIdle", family)).setOrigin(0.5, 1).setDisplaySize(84, 84);
+                  : this.add.image(0, 27, key("heroIdle", family)).setOrigin(0.5, 1).setDisplaySize(HERO_SIZE_MASCOT, HERO_SIZE_MASCOT);
 
           if (heroKind === "monster") {
-            const targetHeight = 118;
+            const targetHeight = HERO_HEIGHT_MONSTER;
             const ratio = Math.max(0.45, Math.min(1.8, body.width / Math.max(1, body.height)));
             body.setDisplaySize(targetHeight * ratio, targetHeight);
           }
@@ -599,13 +558,13 @@ export default function KuisTempurPhaserWorld({
             .setAngle(-11)
             .setVisible(heroKind !== "monster");
 
-          const targetRing = this.add.circle(0, 6, heroKind === "monster" ? 50 : heroKind === "arga" ? 37 : 40, 0xfb7185, 0)
+          const targetRing = this.add.circle(0, 6, heroKind === "monster" ? 42 : heroKind === "arga" ? 31 : 34, 0xfb7185, 0)
             .setStrokeStyle(2.5, 0xfb7185, 0.9)
             .setAlpha(0);
 
-          const hpBg = this.add.rectangle(0, -55, 62, 7, 0x020617, 0.86).setOrigin(0.5);
-          const hpFill = this.add.rectangle(-31, -55, 62, 7, 0x34d399, 1).setOrigin(0, 0.5);
-          const name = this.add.text(0, 42, entity.id === userIdRef.current ? `${entity.name} · KAMU` : entity.name, {
+          const hpBg = this.add.rectangle(0, -47, 58, 6, 0x020617, 0.86).setOrigin(0.5);
+          const hpFill = this.add.rectangle(-29, -47, 58, 6, 0x34d399, 1).setOrigin(0, 0.5);
+          const name = this.add.text(0, 36, entity.id === userIdRef.current ? `${entity.name} · KAMU` : entity.name, {
             fontFamily: "system-ui, sans-serif",
             fontSize: "12px",
             fontStyle: "800",
@@ -614,7 +573,7 @@ export default function KuisTempurPhaserWorld({
             strokeThickness: 5,
           }).setOrigin(0.5);
 
-          const rankBadge = this.add.text(-39, -40, "", {
+          const rankBadge = this.add.text(-35, -34, "", {
             fontFamily: "system-ui, sans-serif",
             fontSize: "10px",
             fontStyle: "900",
@@ -634,7 +593,7 @@ export default function KuisTempurPhaserWorld({
 
           const root = this.add.container(entity.x, entity.y, [shadow, targetRing, aura, body, weapon, hpBg, hpFill, name, rankBadge, ko]);
           root.setDepth(entity.y + 20);
-          root.setSize(82, 106);
+          root.setSize(72, 94);
 
           if (heroKind === "arga") {
             this.tweens.add({
@@ -1148,7 +1107,6 @@ export default function KuisTempurPhaserWorld({
           if (rush) {
             this.rushOverlay.setAlpha(0.055 + Math.sin(this.time.now / 230) * 0.025);
             this.rushLabel.setAlpha(0.72 + Math.sin(this.time.now / 170) * 0.22);
-            this.coreGlow.setScale(1.0 + Math.sin(this.time.now / 140) * 0.18);
           } else {
             this.rushOverlay.setAlpha(0);
             this.rushLabel.setAlpha(0);
