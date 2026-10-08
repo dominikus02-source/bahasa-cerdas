@@ -33,8 +33,10 @@ jobs:
           set -euo pipefail
           test -n "$VPS_SSH_KEY"
           install -m 700 -d ~/.ssh
-          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/id_ed25519
+          printf '%s\n' "$VPS_SSH_KEY" | tr -d '\r' > ~/.ssh/id_ed25519
+          printf '\n' >> ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
+          ssh-keygen -y -f ~/.ssh/id_ed25519 >/dev/null
           ssh-keyscan -H 103.242.10.81 >> ~/.ssh/known_hosts
 
       - name: Deploy
