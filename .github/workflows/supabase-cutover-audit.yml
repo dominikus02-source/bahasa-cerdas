@@ -2,66 +2,33 @@ name: Supabase Cutover Audit
 
 on:
   push:
-    branches: ["ops/supabase-cutover-audit-20261008"]
+    branches:
+      - ops/supabase-cutover-audit-20261008
   workflow_dispatch:
 
 jobs:
   audit:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
       - name: Prepare SSH
         env:
           VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
         run: |
           set -euo pipefail
-          test -n "$VPS_SSH_KEY"
-          install -m 700 -d ~/.ssh
-          printf '%s\n' "$VPS_SSH_KEY" | tr -d '\r' > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keygen -y -f ~/.ssh/id_ed25519 >/dev/null
-          ssh-keyscan -H 103.242.10.81 >> ~/.ssh/known_hosts
-      - name: Audit production DB wiring
+          printf '%s\n' "$VPS_SSH_KEY" > "$HOME/.ssh/id_ed25519"
+          chmod 600 "$HOME/.ssh/id_ed25519"
+          ssh-keyscan -H 103.242.10.81 >> "$HOME/.ssh/known_hosts"
+      - name: Inspect VPS
         run: |
           set -euo pipefail
-          ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes bcadmin@103.242.10.81 'bash -s' <<'REMOTE'
-          set -euo pipefail
-          CONFIG=/opt/bahasacerdas/config
-          WEB="$CONFIG/web.env"
-          STACK="$CONFIG/stack.env"
-          echo "=== ENV PRESENCE ==="
-          for f in "$WEB" "$STACK"; do
-            echo "FILE=$f"
-            for k in DATABASE_URL DIRECT_URL NEXT_PUBLIC_SUPABASE_URL SUPABASE_URL SUPABASE_DB_PASSWORD SUPABASE_DATABASE_URL; do
-              if grep -q "^$k=" "$f" 2>/dev/null; then echo "$k=present"; else echo "$k=absent"; fi
+          ssh -i "$HOME/.ssh/id_ed25519" -o IdentitiesOnly=yes bcadmin@103.242.10.81 '
+            set -e
+            echo "=== FILES ==="
+            ls -l /opt/bahasacerdas/config/web.env /opt/bahasacerdas/config/stack.env
+            echo "=== DB HOSTS ==="
+            for f in /opt/bahasacerdas/config/web.env /opt/bahasacerdas/config/stack.env; do
+              grep -E "^(DATABASE_URL|DIRECT_URL)=" "$f" 2>/dev/null | sed -E "s#^[^=]+=([^:]+://)?[^@]*@([^:/?]+).*#DB_HOST=\\2#"
             done
-          done
-          echo "=== DATABASE HOSTS ==="
-          python3 -c 'import sys; from pathlib import Path; from urllib.parse import urlparse; 
-for p in sys.argv[1:]:
-  print("FILE="+p)
-  if not Path(p).exists(): continue
-  for line in Path(p).read_text().splitlines():
-    if "=" not in line or line.lstrip().startswith("#"): continue
-    k,v=line.split("=",1)
-    if k in {"DATABASE_URL","DIRECT_URL"}:
-      v=v.strip().strip(""").strip("'")
-      try:
-        u=urlparse(v); print(f"{k}_HOST={u.hostname or ''}"); print(f"{k}_PORT={u.port or ''}"); print(f"{k}_DB={u.path.lstrip('/')}")
-      except Exception:
-        print(f"{k}_PARSE=failed")' "$WEB" "$STACK"
-          echo "=== SUPABASE CONTAINERS ==="
-          docker ps --format '{{.Names}}|{{.Image}}|{{.Status}}' | grep -Ei 'supabase|postgres' || true
-          echo "=== LOCAL POSTGRES COUNTS ==="
-          DBCTR="$(docker ps --format '{{.Names}} {{.Image}}' | awk '$2 ~ /supabase\/postgres/ {print $1; exit}')"
-          if [ -n "$DBCTR" ]; then
-            echo "DB_CONTAINER=$DBCTR"
-            for t in User Profile TKAQuestion UKBIQuestion StudentKarya CoinTransaction DailyQuest PlayerProfile XPTransaction UserBadge LearningEvidence; do
-              printf '%s=' "$t"
-              docker exec "$DBCTR" psql -U postgres -d postgres -Atc "select count(*) from public.\"$t\";" 2>/dev/null || true
-            done
-          else
-            echo "No supabase/postgres container detected"
-          fi
-          REMOTE
+            echo "=== CONTAINERS ==="
+            docker ps --format "table {{.Names}}\\t{{.Image}}\\t{{.Status}}" | grep -Ei "supabase|postgres|bahasacerdas-prod-web" || true
+          '
