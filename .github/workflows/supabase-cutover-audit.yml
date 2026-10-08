@@ -1,11 +1,11 @@
-name: Supabase Cutover Audit
+name: Cleanup Local Supabase
 
 on:
-  push:
   workflow_dispatch:
+  push:
 
 jobs:
-  audit:
+  cleanup:
     runs-on: ubuntu-latest
     steps:
       - name: Prepare SSH
@@ -19,22 +19,22 @@ jobs:
           chmod 600 "$HOME/.ssh/id_ed25519"
           ssh-keygen -y -f "$HOME/.ssh/id_ed25519" >/dev/null
           ssh-keyscan -H 103.242.10.81 >> "$HOME/.ssh/known_hosts"
-      - name: Audit VPS
+      - name: Stop and remove local Supabase
         run: |
           set -euo pipefail
           ssh -i "$HOME/.ssh/id_ed25519" -o IdentitiesOnly=yes bcadmin@103.242.10.81 'set -e
-          CONFIG=/opt/bahasacerdas/config
-          for f in "$CONFIG/web.env" "$CONFIG/stack.env"; do
-            echo "FILE=$f"
-            for k in DATABASE_URL DIRECT_URL NEXT_PUBLIC_SUPABASE_URL SUPABASE_URL SUPABASE_DB_PASSWORD SUPABASE_DATABASE_URL; do
-              grep -q "^$k=" "$f" 2>/dev/null && echo "$k=present" || echo "$k=absent"
-            done
-          done
-          echo "=== SUPABASE URL HOST ==="
-          grep -E "^(NEXT_PUBLIC_SUPABASE_URL|SUPABASE_URL)=" "$CONFIG/web.env" 2>/dev/null | sed -E "s#^[^=]+=https?://([^/:]+).*#SUPABASE_HOST=\\1#"
-          echo "=== DB HOSTS ==="
-          for f in "$CONFIG/web.env" "$CONFIG/stack.env"; do
-            grep -E "^(DATABASE_URL|DIRECT_URL)=" "$f" 2>/dev/null | sed -E "s#^[^=]+=[^@]*@([^:/?]+).*#HOST=\1#"
-          done
-          echo "=== POSTGRES CONTAINERS ==="
-          docker ps --format "{{.Names}}|{{.Image}}|{{.Status}}" | grep -Ei "supabase|postgres" || true'
+            echo "=== BEFORE ==="
+            docker ps --format "{{.Names}}|{{.Image}}|{{.Status}}" | grep -Ei "supabase|postgresql|postgrest|postgrest|realtime-dev" || true
+            names=$(docker ps -aq --filter name="supabase-" ; docker ps -aq --filter name="realtime-dev.supabase-realtime" )
+            names=$(printf "%s\n" "$names" | sed "/^$/d" | sort -u)
+            if [ -n "$names" ]; then
+              echo "Stopping:"
+              docker ps --format "{{.Names}}" | grep -E "^(supabase-|realtime-dev\.supabase-realtime)" || true
+              docker stop $names >/dev/null
+              docker rm $names >/dev/null
+            fi
+            echo "=== AFTER ==="
+            docker ps --format "{{.Names}}|{{.Image}}|{{.Status}}" | grep -Ei "supabase|postgresql|postgrest|realtime-dev" || true
+            echo "=== NOTE ==="
+            echo "Docker volumes were intentionally kept. No local Supabase container remains running."
+          '
