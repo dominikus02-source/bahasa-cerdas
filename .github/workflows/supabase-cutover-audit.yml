@@ -30,6 +30,8 @@ jobs:
               grep -q "^$k=" "$f" 2>/dev/null && echo "$k=present" || echo "$k=absent"
             done
           done
+          echo "=== SUPABASE URL HOST ==="
+          grep -E "^(NEXT_PUBLIC_SUPABASE_URL|SUPABASE_URL)=" "$CONFIG/web.env" 2>/dev/null | sed -E "s#^[^=]+=https?://([^/:]+).*#SUPABASE_HOST=\\1#"
           echo "=== DB HOSTS ==="
           for f in "$CONFIG/web.env" "$CONFIG/stack.env"; do
             grep -E "^(DATABASE_URL|DIRECT_URL)=" "$f" 2>/dev/null | sed -E "s#^[^=]+=[^@]*@([^:/?]+).*#HOST=\1#"
