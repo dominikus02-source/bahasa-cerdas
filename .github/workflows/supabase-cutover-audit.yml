@@ -19,22 +19,19 @@ jobs:
           chmod 600 "$HOME/.ssh/id_ed25519"
           ssh-keygen -y -f "$HOME/.ssh/id_ed25519" >/dev/null
           ssh-keyscan -H 103.242.10.81 >> "$HOME/.ssh/known_hosts"
-      - name: Stop and remove local Supabase
+      - name: Remove local Supabase containers
+        timeout-minutes: 5
         run: |
           set -euo pipefail
           ssh -i "$HOME/.ssh/id_ed25519" -o IdentitiesOnly=yes bcadmin@103.242.10.81 'set -e
             echo "=== BEFORE ==="
-            docker ps --format "{{.Names}}|{{.Image}}|{{.Status}}" | grep -Ei "supabase|postgresql|postgrest|postgrest|realtime-dev" || true
-            names=$(docker ps -aq --filter name="supabase-" ; docker ps -aq --filter name="realtime-dev.supabase-realtime" )
+            docker ps --format "{{.Names}}|{{.Image}}|{{.Status}}" | grep -Ei "^(supabase-|realtime-dev\.supabase-realtime)" || true
+            names=$(docker ps -aq --filter name="^supabase-" ; docker ps -aq --filter name="^realtime-dev\.supabase-realtime$")
             names=$(printf "%s\n" "$names" | sed "/^$/d" | sort -u)
             if [ -n "$names" ]; then
-              echo "Stopping:"
-              docker ps --format "{{.Names}}" | grep -E "^(supabase-|realtime-dev\.supabase-realtime)" || true
-              docker stop $names >/dev/null
-              docker rm $names >/dev/null
+              docker rm -f $names >/dev/null
             fi
             echo "=== AFTER ==="
-            docker ps --format "{{.Names}}|{{.Image}}|{{.Status}}" | grep -Ei "supabase|postgresql|postgrest|realtime-dev" || true
-            echo "=== NOTE ==="
-            echo "Docker volumes were intentionally kept. No local Supabase container remains running."
+            docker ps --format "{{.Names}}|{{.Image}}|{{.Status}}" | grep -Ei "^(supabase-|realtime-dev\.supabase-realtime)" || true
+            echo "Local Supabase containers removed. Docker volumes intentionally preserved."
           '
