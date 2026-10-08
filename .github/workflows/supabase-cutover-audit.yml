@@ -22,4 +22,17 @@ jobs:
       - name: Audit VPS
         run: |
           set -euo pipefail
-          ssh -i "$HOME/.ssh/id_ed25519" -o IdentitiesOnly=yes bcadmin@103.242.10.81 'bash -lc '''CONFIG=/opt/bahasacerdas/config; for f in "$CONFIG/web.env" "$CONFIG/stack.env"; do echo "FILE=$f"; for k in DATABASE_URL DIRECT_URL NEXT_PUBLIC_SUPABASE_URL SUPABASE_URL SUPABASE_DB_PASSWORD SUPABASE_DATABASE_URL; do grep -q "^$k=" "$f" 2>/dev/null && echo "$k=present" || echo "$k=absent"; done; done; echo "DB_HOSTS"; for f in "$CONFIG/web.env" "$CONFIG/stack.env"; do grep -E "^(DATABASE_URL|DIRECT_URL)=" "$f" 2>/dev/null | sed -E "s#^[^=]+=([^:]+://)?[^@]*@([^:/?]+).*#DB_HOST=\\2#"; done; echo "POSTGRES_CONTAINERS"; docker ps --format "{{.Names}}|{{.Image}}|{{.Status}}" | grep -Ei "supabase|postgres" || true'''';
+          ssh -i "$HOME/.ssh/id_ed25519" -o IdentitiesOnly=yes bcadmin@103.242.10.81 'set -e
+          CONFIG=/opt/bahasacerdas/config
+          for f in "$CONFIG/web.env" "$CONFIG/stack.env"; do
+            echo "FILE=$f"
+            for k in DATABASE_URL DIRECT_URL NEXT_PUBLIC_SUPABASE_URL SUPABASE_URL SUPABASE_DB_PASSWORD SUPABASE_DATABASE_URL; do
+              grep -q "^$k=" "$f" 2>/dev/null && echo "$k=present" || echo "$k=absent"
+            done
+          done
+          echo "=== DB HOSTS ==="
+          for f in "$CONFIG/web.env" "$CONFIG/stack.env"; do
+            grep -E "^(DATABASE_URL|DIRECT_URL)=" "$f" 2>/dev/null | sed -E "s#^[^=]+=[^@]*@([^:/?]+).*#HOST=\1#"
+          done
+          echo "=== POSTGRES CONTAINERS ==="
+          docker ps --format "{{.Names}}|{{.Image}}|{{.Status}}" | grep -Ei "supabase|postgres" || true'
