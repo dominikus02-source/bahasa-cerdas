@@ -12,6 +12,7 @@ jobs:
         timeout-minutes: 20
         run: |
           set -euo pipefail
+          install -m 700 -d "$HOME/.ssh"
           ssh-keyscan -H 103.242.10.81 >> "$HOME/.ssh/known_hosts"
           printf '%s\n' "${{ secrets.VPS_SSH_KEY }}" > "$HOME/.ssh/id_ed25519"
           chmod 600 "$HOME/.ssh/id_ed25519"
