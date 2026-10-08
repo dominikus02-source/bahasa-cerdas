@@ -1,0 +1,123 @@
+name: Supabase Storage Cleanup 3
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clean safe unreferenced storage
+        timeout-minutes: 20
+        run: |
+          set -euo pipefail
+          install -m 700 -d "$HOME/.ssh"
+          ssh-keyscan -H 103.242.10.81 >> "$HOME/.ssh/known_hosts"
+          printf '%s\n' "${{ secrets.VPS_SSH_KEY }}" > "$HOME/.ssh/id_ed25519"
+          chmod 600 "$HOME/.ssh/id_ed25519"
+          ssh -i "$HOME/.ssh/id_ed25519" -o IdentitiesOnly=yes bcadmin@103.242.10.81 'docker exec -i bahasacerdas-prod-web-1 node' <<'NODE'
+          const { PrismaClient } = require("@prisma/client");
+          const prisma = new PrismaClient();
+          const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+          const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+          if (!url || !key) throw new Error("Production web container is missing Supabase URL or service-role key.");
+
+          const norm = (v,b) => {
+            if (!v) return null;
+            let s=String(v).split("?")[0];
+            const marker="/storage/v1/object/public/"+b+"/";
+            const i=s.indexOf(marker);
+            if(i>=0) return s.slice(i+marker.length).replace(/^\/+/, "");
+            const p=b+"/";
+            if(s.startsWith(p)) return s.slice(p.length);
+            return /^https?:\/\//.test(s)?null:s.replace(/^\/+/, "");
+          };
+
+          async function refs(sql,b){
+            const rows=await prisma.$queryRawUnsafe(sql);
+            return new Set(rows.map(r=>norm(r.path,b)).filter(Boolean));
+          }
+
+          async function removeBatch(bucket, paths){
+            for(let i=0;i<paths.length;i+=1000){
+              const batch=paths.slice(i,i+1000);
+              const res=await fetch(url.replace(/\/$/,"")+"/storage/v1/object/"+encodeURIComponent(bucket),{
+                method:"DELETE",
+                headers:{
+                  "apikey":key,
+                  "Authorization":"Bearer "+key,
+                  "Content-Type":"application/json"
+                },
+                body:JSON.stringify({prefixes:batch})
+              });
+              const body=await res.text();
+              if(!res.ok) throw new Error("remove "+bucket+" HTTP "+res.status+": "+body.slice(0,500));
+              console.log("removed "+bucket+" "+Math.min(i+batch.length,paths.length)+"/"+paths.length);
+            }
+          }
+
+          (async()=>{
+            const avatarRefs=await refs(`
+              select "avatar" path from public."User" where "avatar" is not null
+              union all select "avatarUrl" from public."GameSession" where "avatarUrl" is not null
+              union all select "avatarUrl" from public."Community" where "avatarUrl" is not null
+              union all select "bannerUrl" from public."Community" where "bannerUrl" is not null
+              union all select "avatarUrl" from public."MainPlayer" where "avatarUrl" is not null
+              union all select "avatar_url" from public.profiles where "avatar_url" is not null
+            `,"avatars");
+            const documentRefs=await refs(`
+              select "fileUrl" path from public."Materi" where "fileUrl" is not null
+              union all select "fileKey" from public."Materi" where "fileKey" is not null
+              union all select "praktikUrl" from public."PenugasanSubmission" where "praktikUrl" is not null
+              union all select "fileUrl" from public."Karya" where "fileUrl" is not null
+              union all select "fileKey" from public."Karya" where "fileKey" is not null
+              union all select "fileUrl" from public."RPP" where "fileUrl" is not null
+              union all select "fileKey" from public."RPP" where "fileKey" is not null
+              union all select "fileUrl" from public."PurchaseHistory" where "fileUrl" is not null
+              union all select "fileKey" from public."PurchaseHistory" where "fileKey" is not null
+              union all select "fileUrl" from public."BankSoal" where "fileUrl" is not null
+              union all select "fileKey" from public."BankSoal" where "fileKey" is not null
+              union all select "pdfUrl" from public."Certificate" where "pdfUrl" is not null
+              union all select "pdfUrl" from public."KompetensiCertificate" where "pdfUrl" is not null
+              union all select "fileUrl" from public."CommunityPost" where "fileUrl" is not null
+              union all select "karyaUrl" from public."PengumumanSubmission" where "karyaUrl" is not null
+            `,"documents");
+            const imageRefs=await refs(`
+              select "imageUrl" path from public."GameQuestion" where "imageUrl" is not null
+              union all select "imageUrl" from public."UKBIQuestion" where "imageUrl" is not null
+              union all select "coverImageUrl" from public."Artikel" where "coverImageUrl" is not null
+              union all select "cover_image_url" from public.literary_works where "cover_image_url" is not null
+              union all select "thumbnailUrl" from public."Video" where "thumbnailUrl" is not null
+              union all select "thumbnailUrl" from public."PaketKompetensi" where "thumbnailUrl" is not null
+              union all select "posterUrl" from public."Lomba" where "posterUrl" is not null
+              union all select "thumbnailUrl" from public."CoursePlaylist" where "thumbnailUrl" is not null
+              union all select "thumbnailUrl" from public."Quiz" where "thumbnailUrl" is not null
+              union all select "avatarUrl" from public."Community" where "avatarUrl" is not null
+              union all select "bannerUrl" from public."Community" where "bannerUrl" is not null
+              union all select "avatar_url" from public.profiles where "avatar_url" is not null
+            `,"images");
+            const audioRefs=await refs(`
+              select "audioUrl" path from public."GameQuestion" where "audioUrl" is not null
+              union all select "audioUrl" from public."UKBIQuestion" where "audioUrl" is not null
+            `,"audio");
+
+            const rows=await prisma.$queryRawUnsafe("select bucket_id as bucket, name, (metadata->>'size')::bigint as bytes from storage.objects where bucket_id in ('avatars','documents','images','audio')");
+            const candidates={avatars:[],documents:[],images:[],audio:[]};
+            for(const r of rows){
+              const b=r.bucket;
+              if(b==="audio"){
+                if((r.name.startsWith("rekaman/")||r.name.startsWith("ukbi/"))&&!audioRefs.has(r.name)) candidates.audio.push(r);
+              } else if(b==="avatars"&&!avatarRefs.has(r.name)) candidates.avatars.push(r);
+              else if(b==="documents"&&!documentRefs.has(r.name)) candidates.documents.push(r);
+              else if(b==="images"&&!imageRefs.has(r.name)) candidates.images.push(r);
+            }
+            const summary={};
+            for(const [b,arr] of Object.entries(candidates)) summary[b]={objects:arr.length,bytes:arr.reduce((n,x)=>n+Number(x.bytes||0),0)};
+            summary.totalBytes=Object.values(summary).reduce((n,x)=>n+x.bytes,0);
+            summary.beforeBytes=Number((await prisma.$queryRawUnsafe("select coalesce(sum((metadata->>'size')::bigint),0) bytes from storage.objects"))[0].bytes);
+            console.log("CLEANUP_PLAN="+JSON.stringify(summary));
+            if(summary.totalBytes<1900000000) throw new Error("Safety guard blocked cleanup; expected >=1.9GB of audited unreferenced objects, got "+summary.totalBytes);
+            for(const [b,arr] of Object.entries(candidates)) if(arr.length) await removeBatch(b,arr.map(x=>x.name));
+            const after=await prisma.$queryRawUnsafe("select coalesce(sum((metadata->>'size')::bigint),0) bytes, count(*) objects from storage.objects");
+            console.log("CLEANUP_AFTER="+JSON.stringify(after[0]));
+          })().catch(e=>{console.error(e);process.exit(1)}).finally(()=>prisma.$disconnect());
+          NODE
