@@ -1,0 +1,120 @@
+name: Supabase Storage Cleanup 2
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clean unreferenced Supabase Storage
+        timeout-minutes: 20
+        run: |
+          set -euo pipefail
+          install -m 700 -d "$HOME/.ssh"
+          ssh-keyscan -H 103.242.10.81 >> "$HOME/.ssh/known_hosts"
+          printf '%s\n' "${{ secrets.VPS_SSH_KEY }}" > "$HOME/.ssh/id_ed25519"
+          chmod 600 "$HOME/.ssh/id_ed25519"
+          ssh -i "$HOME/.ssh/id_ed25519" -o IdentitiesOnly=yes bcadmin@103.242.10.81 'docker exec -i bahasacerdas-prod-web-1 node' <<'NODE'
+          const { PrismaClient } = require("@prisma/client");
+          const { createClient } = require("@supabase/supabase-js");
+          const prisma = new PrismaClient();
+          const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+          const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+          if (!url || !key) throw new Error("Missing production Supabase credentials.");
+          const supabase = createClient(url, key, {auth:{persistSession:false,autoRefreshToken:false}});
+          const norm = (v,b) => {
+            if (!v) return null;
+            let s=String(v).split("?")[0];
+            const m="/storage/v1/object/public/"+b+"/";
+            const i=s.indexOf(m);
+            if(i>=0) return s.slice(i+m.length).replace(/^\/+/, "");
+            const p=b+"/";
+            if(s.startsWith(p)) return s.slice(p.length);
+            return /^https?:\/\//.test(s)?null:s.replace(/^\/+/, "");
+          };
+          async function refs(sql,b){ return new Set((await prisma.$queryRawUnsafe(sql)).map(r=>norm(r.path,b)).filter(Boolean)); }
+          async function listAll(b,p="",out=[]){
+            let off=0;
+            while(true){
+              const {data,error}=await supabase.storage.from(b).list(p,{limit:1000,offset:off,sortBy:{column:"name",order:"asc"}});
+              if(error) throw new Error("list "+b+"/"+p+": "+error.message);
+              if(!data?.length) break;
+              for(const x of data){const full=p?p+"/"+x.name:x.name;if(x.id)out.push(full);else await listAll(b,full,out);}
+              if(data.length<1000) break; off+=data.length;
+            }
+            return out;
+          }
+          async function size(b,paths){
+            let total=0;
+            for(let i=0;i<paths.length;i+=500){
+              const batch=paths.slice(i,i+500);
+              const rows=await prisma.$queryRawUnsafe('select coalesce(sum((metadata->>\'size\')::bigint),0) bytes from storage.objects where bucket_id=$1 and name=any($2::text[])',b,batch);
+              total+=Number(rows[0]?.bytes||0);
+            }
+            return total;
+          }
+          async function rm(b,paths){
+            for(let i=0;i<paths.length;i+=1000){
+              const batch=paths.slice(i,i+1000);
+              const {error}=await supabase.storage.from(b).remove(batch);
+              if(error) throw new Error("remove "+b+" batch "+(i/1000+1)+": "+error.message);
+              console.log("removed "+b+" "+Math.min(i+batch.length,paths.length)+"/"+paths.length);
+            }
+          }
+          (async()=>{
+            const a=await refs(`
+              select "avatar" path from public."User" where "avatar" is not null
+              union all select "avatarUrl" from public."GameSession" where "avatarUrl" is not null
+              union all select "avatarUrl" from public."Community" where "avatarUrl" is not null
+              union all select "bannerUrl" from public."Community" where "bannerUrl" is not null
+              union all select "avatarUrl" from public."MainPlayer" where "avatarUrl" is not null
+              union all select "avatar_url" from public.profiles where "avatar_url" is not null`,"avatars");
+            const d=await refs(`
+              select "fileUrl" path from public."Materi" where "fileUrl" is not null
+              union all select "fileKey" from public."Materi" where "fileKey" is not null
+              union all select "praktikUrl" from public."PenugasanSubmission" where "praktikUrl" is not null
+              union all select "fileUrl" from public."Karya" where "fileUrl" is not null
+              union all select "fileKey" from public."Karya" where "fileKey" is not null
+              union all select "fileUrl" from public."RPP" where "fileUrl" is not null
+              union all select "fileKey" from public."RPP" where "fileKey" is not null
+              union all select "fileUrl" from public."PurchaseHistory" where "fileUrl" is not null
+              union all select "fileKey" from public."PurchaseHistory" where "fileKey" is not null
+              union all select "fileUrl" from public."BankSoal" where "fileUrl" is not null
+              union all select "fileKey" from public."BankSoal" where "fileKey" is not null
+              union all select "pdfUrl" from public."Certificate" where "pdfUrl" is not null
+              union all select "pdfUrl" from public."KompetensiCertificate" where "pdfUrl" is not null
+              union all select "fileUrl" from public."CommunityPost" where "fileUrl" is not null
+              union all select "karyaUrl" from public."PengumumanSubmission" where "karyaUrl" is not null`,"documents");
+            const im=await refs(`
+              select "imageUrl" path from public."GameQuestion" where "imageUrl" is not null
+              union all select "imageUrl" from public."UKBIQuestion" where "imageUrl" is not null
+              union all select "coverImageUrl" from public."Artikel" where "coverImageUrl" is not null
+              union all select "cover_image_url" from public.literary_works where "cover_image_url" is not null
+              union all select "thumbnailUrl" from public."Video" where "thumbnailUrl" is not null
+              union all select "thumbnailUrl" from public."PaketKompetensi" where "thumbnailUrl" is not null
+              union all select "posterUrl" from public."Lomba" where "posterUrl" is not null
+              union all select "thumbnailUrl" from public."CoursePlaylist" where "thumbnailUrl" is not null
+              union all select "thumbnailUrl" from public."Quiz" where "thumbnailUrl" is not null
+              union all select "avatarUrl" from public."Community" where "avatarUrl" is not null
+              union all select "bannerUrl" from public."Community" where "bannerUrl" is not null
+              union all select "avatar_url" from public.profiles where "avatar_url" is not null`,"images");
+            const au=await refs(`
+              select "audioUrl" path from public."GameQuestion" where "audioUrl" is not null
+              union all select "audioUrl" from public."UKBIQuestion" where "audioUrl" is not null`,"audio");
+            const [av,dc,ii,ad]=await Promise.all([listAll("avatars"),listAll("documents"),listAll("images"),listAll("audio")]);
+            const c={
+              avatars:av.filter(x=>!a.has(x)),
+              documents:dc.filter(x=>!d.has(x)),
+              images:ii.filter(x=>!im.has(x)),
+              audio:ad.filter(x=>(x.startsWith("rekaman/")||x.startsWith("ukbi/"))&&!au.has(x))
+            };
+            const sizes={}; for(const [b,p] of Object.entries(c)) sizes[b]=await size(b,p);
+            const total=Object.values(sizes).reduce((x,y)=>x+y,0);
+            const before=Number((await prisma.$queryRawUnsafe("select coalesce(sum((metadata->>'size')::bigint),0) bytes from storage.objects"))[0].bytes);
+            console.log("CLEANUP_PLAN="+JSON.stringify({beforeBytes:before,totalCandidateBytes:total,sizes,objects:Object.fromEntries(Object.entries(c).map(([k,v])=>[k,v.length]))}));
+            if(total<1900000000) throw new Error("Safety guard blocked cleanup; candidate set unexpectedly small: "+total);
+            for(const [b,p] of Object.entries(c)) if(p.length) await rm(b,p);
+            const after=await prisma.$queryRawUnsafe("select coalesce(sum((metadata->>'size')::bigint),0) bytes, count(*) objects from storage.objects");
+            console.log("CLEANUP_AFTER="+JSON.stringify(after[0]));
+          })().catch(e=>{console.error(e);process.exit(1)}).finally(()=>prisma.$disconnect());
+          NODE
