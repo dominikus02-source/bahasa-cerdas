@@ -36,8 +36,6 @@ supabase.bahasacerdas.com {
     reverse_proxy web:3000
   }
 
-  encode zstd gzip
-
   log {
     output file /var/log/caddy/web-access.log {
       roll_size 50MiB
