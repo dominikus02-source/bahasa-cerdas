@@ -26,7 +26,17 @@ supabase.bahasacerdas.com {
 {$WEB_DOMAIN} {
   encode zstd gzip
 
-  reverse_proxy web:3000
+  @supabase_api path /auth/v1/* /rest/v1/* /storage/v1/* /realtime/v1/* /functions/v1/* /graphql/v1/* /platform/* /pg/*
+
+  handle @supabase_api {
+    reverse_proxy supabase-envoy:8000
+  }
+
+  handle {
+    reverse_proxy web:3000
+  }
+
+  encode zstd gzip
 
   log {
     output file /var/log/caddy/web-access.log {
