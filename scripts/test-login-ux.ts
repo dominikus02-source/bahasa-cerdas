@@ -72,7 +72,9 @@ test("13. forgot-password ada (route existing dipertahankan)", () =>
 test("14. CTA utama 'Masuk Sekarang'", () => page.includes("Masuk Sekarang"));
 test("15. OAuth Google preserved (provider existing)", () =>
   page.includes("signInWithOAuth") && page.includes('provider: "google"'));
-test("16. register route preserved", () => page.includes('href="/register"') && page.includes("Daftar sekarang"));
+test("16. register route preserved for web and Arena scope", () =>
+  page.includes('const registerHref = isArenaEntry ? "/arena/register" : "/register"') &&
+  page.includes("href={registerHref}") && page.includes("Daftar sekarang"));
 
 console.log("\n── Preservasi logic auth ──");
 test("17. password login memakai Supabase browser client (IP pengguna, bukan egress Vercel)", () =>
@@ -110,6 +112,29 @@ test("28. SATU brand block di hero (ICON BC + teks BahasaCerdas + tagline)", () 
 });
 test("29. nuansa batik subtle ada (BatikAccent, aria-hidden, opacity rendah)", () =>
   page.includes("BatikAccent") && read("components/decorations/BatikAccent.tsx").includes("aria-hidden=\"true\""));
+
+console.log("\n── Satu sumber login + kompatibilitas aplikasi ──");
+test("30. page mengenali konteks /arena/login tanpa komponen UI terpisah", () =>
+  page.includes('const isArenaEntry = pathname === "/arena/login"') &&
+  page.includes('from "next/navigation"'));
+test("31. sesi murid dari Arena kembali ke /arena dan pengguna non-murid ditolak di gerbang Arena", () =>
+  page.includes('next || (isArenaEntry ? "/arena" : "")') &&
+  page.includes('isArenaEntry && result.user.role !== "MURID"'));
+test("32. Google OAuth menggunakan callback bersama dan mempertahankan tujuan Arena", () =>
+  page.includes("/api/auth/callback") &&
+  page.includes('const authNext = next || (isArenaEntry ? "/arena" : "")'));
+test("33. /arena/login hanya menggunakan komponen login kanonis", () =>
+  read("app/arena/login/page.tsx").includes('@/app/(auth)/login/page') &&
+  !read("app/arena/login/page.tsx").includes('@/app/auth/arena-login/page'));
+test("34. rute login Arena lama mengalihkan ke rute bersama, bukan merender formulir kedua", () =>
+  read("app/auth/arena-login/page.tsx").includes('redirect("/arena/login?') &&
+  !read("app/auth/arena-login/page.tsx").includes("useState"));
+test("35. pendaftaran service worker dan panduan pemasangan APK tetap tersedia", () =>
+  page.includes('{isArenaEntry && <SwRegister />}') &&
+  page.includes('{isArenaEntry && guideOpen && <InstallGuide'));
+test("36. rute pendaftaran dan pengalihan tujuan web tidak mengubah resolver role yang sudah ada", () =>
+  page.includes("resolvePostAuthDestinationForUser") &&
+  page.includes('const registerHref = isArenaEntry ? "/arena/register" : "/register"'));
 
 /* ── Summary ── */
 console.log("\n════════════════════════════════════════════");
