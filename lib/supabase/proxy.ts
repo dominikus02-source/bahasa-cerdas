@@ -30,7 +30,7 @@ function isTransientRefreshError(message: string | null): boolean {
 
 // Routes that NEVER need getUser() in middleware — public pages or SSG
 const publicPaths = [
-  "/", "/login", "/auth/arena-login", "/auth/callback", "/register", "/confirm",
+  "/", "/login", "/arena/login", "/auth/arena-login", "/auth/callback", "/register", "/confirm",
   // Main Bersama: siswa (guest, PIN-gated) & proyektor (read-only) —
   // auth student = credential per-sesi, bukan sesi Supabase.
   "/main-bersama",
@@ -111,7 +111,7 @@ export async function updateSession(request: NextRequest, nonce?: string) {
   // another request has just established, turning a recoverable race into a
   // real logout. Stale cookies are harmless because the successful login route
   // overwrites them through the SSR cookie adapter.
-  if (pathname === "/login" || pathname === "/auth/arena-login") {
+  if (pathname === "/login" || pathname === "/arena/login" || pathname === "/auth/arena-login") {
     const response = nextWithNonce();
     response.headers.set("X-RateLimit-Remaining", String(limit.remaining));
     response.headers.set("Cache-Control", "private, no-store");

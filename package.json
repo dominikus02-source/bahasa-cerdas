@@ -413,7 +413,8 @@
     "test:live-pulse": "npx tsx scripts/test-live-pulse.ts",
     "test:rpg-p2-6h5-network-resilience": "npx tsx scripts/test-rpg-p2-6h5-network-resilience.ts",
     "test:tts-eligibility": "npx tsx scripts/test-tts-eligibility.ts",
-    "test:diagnostic-baseline-v2": "npx tsx scripts/test-diagnostic-baseline-v2.ts"
+    "test:diagnostic-baseline-v2": "npx tsx scripts/test-diagnostic-baseline-v2.ts",
+    "test:login-unified": "npx tsx scripts/test-unified-login-routing.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

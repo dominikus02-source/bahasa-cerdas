@@ -37,6 +37,15 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Login UX regression
+        run: npm run test:login-ux
+
+      - name: Unified login routing regression
+        run: npm run test:login-unified
+
+      - name: Auth routing regression
+        run: npx tsx scripts/test-auth-routing.ts
+
       - name: Baseline diagnostic V2 gate
         run: npm run test:diagnostic-baseline-v2
 
