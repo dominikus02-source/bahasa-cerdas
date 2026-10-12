@@ -106,7 +106,8 @@ test("26. tidak ada referensi logo lama (BC-logo/red brand)", () =>
 test("27. background dekoratif ringan tanpa maskot/manusia", () =>
   page.includes("blur-3xl") && !page.includes("avatar"));
 test("28. SATU brand block di hero (ICON BC + teks BahasaCerdas + tagline)", () => {
-  const brandHeader = page.slice(page.indexOf('aria-label="Beranda BahasaCerdas"'), page.indexOf('aria-label="Beranda BahasaCerdas"') + 900);
+  const brandStart = page.indexOf('aria-label="BahasaCerdas"');
+  const brandHeader = page.slice(brandStart, brandStart + 900);
   return brandHeader.includes("BRAND_ICON_DARK") && brandHeader.includes("BRAND_ICON") &&
     brandHeader.includes(">BahasaCerdas<") && brandHeader.includes("BRAND_TAGLINE");
 });
