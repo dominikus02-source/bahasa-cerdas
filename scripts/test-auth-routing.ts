@@ -53,8 +53,8 @@ assert(
   "1. New Google GURU → /guru/beranda"
 );
 assert(
-  resolvePostAuthDestination("MURID", undefined) === "/arena",
-  "2. New Google MURID → /arena"
+  resolvePostAuthDestination("MURID", undefined) === "/murid/beranda",
+  "2. New Google MURID → /murid/beranda"
 );
 
 // 3–4. Existing Google users without next → dashboards, NOT "/".
@@ -64,8 +64,8 @@ assert(
   "3. Existing Google GURU (no next) → /guru/beranda"
 );
 assert(
-  resolvePostAuthDestination("MURID", undefined) === "/arena",
-  "4. Existing Google MURID (no next) → /arena"
+  resolvePostAuthDestination("MURID", undefined) === "/murid/beranda",
+  "4. Existing Google MURID (no next) → /murid/beranda"
 );
 
 // 5–6. Password login converges on the same resolver.
@@ -74,8 +74,8 @@ assert(
   "5. Existing password GURU → /guru/beranda"
 );
 assert(
-  resolvePostAuthDestination("MURID", undefined) === "/arena",
-  "6. Existing password MURID → /arena"
+  resolvePostAuthDestination("MURID", undefined) === "/murid/beranda",
+  "6. Existing password MURID → /murid/beranda"
 );
 assert(
   src("../app/(auth)/login/page.tsx").includes("resolvePostAuthDestination"),
@@ -88,8 +88,8 @@ assert(
   "7. Authenticated GURU at '/' → /guru/beranda"
 );
 assert(
-  resolvePostAuthDestination("MURID", "/") === "/arena",
-  "8. Authenticated MURID at '/' → /arena"
+  resolvePostAuthDestination("MURID", "/") === "/murid/beranda",
+  "8. Authenticated MURID at '/' → /murid/beranda"
 );
 
 // 9. Anonymous landing stays public (static page + client-only redirect).
