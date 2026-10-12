@@ -205,9 +205,9 @@ assert(
 );
 assert(
   src("../app/api/auth/callback/route.ts").includes(
-    "resolvePostAuthDestination(existing.role, next)"
+    "resolvePostAuthDestinationForUser(existing.role, Boolean(existing.isFounder), next)"
   ),
-  "Existing-user branch resolves role-aware, no landing default (api callback)"
+  "Existing-user branch uses founder-aware resolver, no landing default (api callback)"
 );
 assert(
   src("../app/api/auth/callback/route.ts").includes("resolvePostAuthDestination") &&
