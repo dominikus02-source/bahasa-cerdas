@@ -27,7 +27,7 @@ const manifest = JSON.parse(read("public/manifest.json")) as { start_url?: strin
 const twa = JSON.parse(read("twa/twa-manifest.json")) as { startUrl?: string; fullScopeUrl?: string };
 
 check("single shared login component is the canonical UI", arenaLogin.includes('@/app/(auth)/login/page'));
-check("legacy Arena login redirects to the shared Arena entry", legacyArenaLogin.includes('redirect("/arena/login?'));
+check("legacy Arena login redirects to the shared Arena entry", legacyArenaLogin.includes("redirect(`/arena/login?"));
 check("Arena login keeps its auth-layout exemption", arenaLayout.includes('const RUTE_TANPA_GERBANG = "/arena/login"'));
 check("anonymous Arena navigation still selects the in-scope entry", proxy.includes('pathname.startsWith("/arena") ? "/arena/login" : "/login"'));
 check("Arena login preserves default next=/arena", login.includes('params.get("next") || (isArenaEntry ? "/arena" : "")'));
