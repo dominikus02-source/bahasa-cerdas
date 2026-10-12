@@ -51,6 +51,7 @@ services:
       - ${BC_CONFIG_DIR:-/opt/bahasacerdas/config}/web.env
     environment:
       NODE_ENV: production
+      NODE_OPTIONS: "--max-http-header-size=32768"
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
     ports:
       - "127.0.0.1:3000:3000"
@@ -93,6 +94,7 @@ services:
       - ${BC_CONFIG_DIR:-/opt/bahasacerdas/config}/game.env
     environment:
       NODE_ENV: production
+      NODE_OPTIONS: "--max-http-header-size=32768"
       PORT: "3001"
       GAME_PORT: "3001"
       BAHASACERDAS_WEB_URL: https://${WEB_DOMAIN}
@@ -160,7 +162,7 @@ services:
         condition: service_healthy
 
   caddy:
-    image: caddy:2-alpine
+    image: caddy:2.11.7-alpine
     restart: unless-stopped
     cpus: 1.0
     mem_limit: 512m
