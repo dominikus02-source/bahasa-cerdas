@@ -1,14 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { LogIn, Eye, EyeOff, ShieldCheck, GraduationCap, BookOpen } from "lucide-react";
+import { LogIn, Eye, EyeOff, ShieldCheck, GraduationCap, BookOpen, Smartphone } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { loginWithBrowserPassword } from "@/lib/auth/browser-password-login";
 import { resolvePostAuthDestinationForUser } from "@/lib/auth/redirect";
 import { BRAND_ICON, BRAND_ICON_DARK, BRAND_TAGLINE } from "@/lib/brand";
 import BatikAccent from "@/components/decorations/BatikAccent";
+import { SwRegister } from "@/components/SwRegister";
+import { InstallGuide } from "@/components/InstallGuide";
 
 /**
  * LOGIN 3.0 — gerbang utama ekosistem BahasaCerdas (netral guru & murid).
@@ -20,6 +23,13 @@ import BatikAccent from "@/components/decorations/BatikAccent";
  */
 
 export default function LoginPage() {
+  // /login adalah sumber tunggal UI dan logika autentikasi. /arena/login
+  // hanya memberi konteks navigasi agar aplikasi Android tetap di dalam scope.
+  const pathname = usePathname() ?? "/login";
+  const isArenaEntry = pathname === "/arena/login";
+  const [guideOpen, setGuideOpen] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(true);
+  const registerHref = isArenaEntry ? "/arena/register" : "/register";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -37,20 +47,25 @@ export default function LoginPage() {
   }, [cooldownSeconds]);
 
   useEffect(() => {
-    // /login can be the destination of a transient auth failure. Never call
-    // signOut() here: a parallel request may already have refreshed a valid
-    // session, and signing it out would turn a recoverable race into a real
-    // logout.
+    // /arena/login harus kembali ke Arena setelah login tanpa membuat UI kedua.
+    // Parameter next tetap divalidasi lagi oleh resolver bersama.
     const params = new URLSearchParams(window.location.search);
-    const nextParam = params.get("next") || "";
-    if (nextParam) {
-      setNext(nextParam);
+    const nextParam = params.get("next") || (isArenaEntry ? "/arena" : "");
+    if (nextParam) setNext(nextParam);
+
+    const authError = params.get("error");
+    if (authError) {
+      setError(authError);
+      params.delete("error");
+      const query = params.toString();
+      window.history.replaceState({}, "", `${window.location.pathname}${query ? `?${query}` : ""}`);
     }
-    if (params.get("error")) {
-      setError(params.get("error") || "");
-      window.history.replaceState({}, "", "/login" + (nextParam ? `?next=${nextParam}` : ""));
-    }
-  }, []);
+  }, [isArenaEntry]);
+
+  useEffect(() => {
+    if (!isArenaEntry) return;
+    setIsInstalled(window.matchMedia("(display-mode: standalone)").matches);
+  }, [isArenaEntry]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,14 +82,20 @@ export default function LoginPage() {
         return;
       }
 
-      // Redirect back to previous page if coming from marketplace or other public page.
-      // Safe specific `next` honored (open-redirect protected); "/" resolves
-      // to the role dashboard so an authenticated user never lands on the
-      // public landing page after login.
+      // Pertahankan aturan Arena: halaman ini hanya menerima akun murid (Founder
+      // tetap diizinkan untuk QA). Halaman web umum mengikuti peran akun.
+      if (isArenaEntry && result.user.role !== "MURID" && !result.user.isFounder) {
+        setError("Halaman ini khusus untuk akun murid. Akun guru dapat masuk melalui halaman utama.");
+        setLoading(false);
+        return;
+      }
+
+      // Resolver bersama memvalidasi next dan menggunakan dasbor peran sebagai
+      // tujuan aman. Entri APK/Arena default ke /arena.
       const target = resolvePostAuthDestinationForUser(
         result.user.role,
         result.user.isFounder,
-        next
+        next || (isArenaEntry ? "/arena" : "")
       );
       window.location.href = target;
     } catch (err: any) {
@@ -95,8 +116,9 @@ export default function LoginPage() {
     try {
       const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin || "https://www.bahasacerdas.com";
       const supabase = createClient();
-      const redirectTo = next
-        ? `${baseUrl}/api/auth/callback?next=${encodeURIComponent(next)}`
+      const authNext = next || (isArenaEntry ? "/arena" : "");
+      const redirectTo = authNext
+        ? `${baseUrl}/api/auth/callback?next=${encodeURIComponent(authNext)}`
         : `${baseUrl}/api/auth/callback`;
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
@@ -127,14 +149,15 @@ export default function LoginPage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-indigo-50/60 to-violet-50 px-4 py-8 dark:from-slate-950 dark:via-[#0b1220] dark:to-[#1e1b4b]">
+      {isArenaEntry && <SwRegister />}
       {/* Dekorasi edukatif ringan — tidak mengganggu form */}
       <div aria-hidden className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-violet-200/40 blur-3xl dark:bg-violet-900/20" />
       <div aria-hidden className="pointer-events-none absolute -bottom-32 -right-24 h-96 w-96 rounded-full bg-teal-100/50 blur-3xl dark:bg-teal-900/10" />
       {/* Nuansa batik BahasaCerdas — subtle cultural accent, memudar ke kanan */}
       <BatikAccent />
 
-            {/* Tombol kembali ke Beranda */}
-      <div className="relative mx-auto mb-6 flex w-full max-w-6xl">
+            {/* Tautan kembali hanya di web umum; tautan keluar scope membuka browser eksternal di APK. */}
+      {!isArenaEntry && <div className="relative mx-auto mb-6 flex w-full max-w-6xl">
         <Link
           href="/"
           className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white/70 px-4 text-sm font-semibold text-slate-600 transition-colors hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:border-violet-700 dark:hover:bg-violet-500/10 dark:hover:text-violet-300"
@@ -146,12 +169,12 @@ export default function LoginPage() {
           </svg>
           Beranda
         </Link>
-      </div>
+      </div>}
 
 <div className="relative mx-auto grid w-full max-w-6xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
         {/* ── BRAND HERO ── */}
         <div className="order-2 lg:order-1">
-                    <Link href="/" className="inline-flex items-center gap-4" aria-label="Beranda BahasaCerdas">
+                    <Link href={isArenaEntry ? "/arena/login" : "/"} className="inline-flex items-center gap-4" aria-label="BahasaCerdas">
             <Image src={BRAND_ICON_DARK} alt="Logo BahasaCerdas" width={72} height={72} className="h-16 w-16 object-contain dark:hidden md:h-20 md:w-20" />
             <Image src={BRAND_ICON} alt="Logo BahasaCerdas" width={72} height={72} className="hidden h-16 w-16 object-contain dark:inline md:h-20 md:w-20" />
             <span className="flex flex-col">
@@ -321,7 +344,7 @@ export default function LoginPage() {
             <div className="mt-6 border-t border-slate-100 pt-5 text-center dark:border-slate-800">
               <p className="text-sm text-slate-500 dark:text-slate-400">
                 Belum punya akun?{" "}
-                <Link href="/register" className="font-semibold text-violet-600 hover:text-violet-700 hover:underline dark:text-violet-400">
+                <Link href={registerHref} className="font-semibold text-violet-600 hover:text-violet-700 hover:underline dark:text-violet-400">
                   Daftar sekarang
                 </Link>
               </p>
@@ -344,6 +367,20 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
+
+      {isArenaEntry && !isInstalled && (
+        <div className="relative mx-auto mt-6 max-w-md rounded-2xl border border-slate-200/70 bg-white/70 p-4 dark:border-slate-800 dark:bg-slate-900/50">
+          <div className="flex items-center gap-3">
+            <Smartphone className="h-6 w-6 shrink-0 text-violet-600 dark:text-violet-300" />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-slate-900 dark:text-white">Pasang Arena di HP-mu</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Buka melalui Chrome, lalu pilih menu pasang ke layar utama.</p>
+            </div>
+            <button type="button" onClick={() => setGuideOpen(true)} className="rounded-xl bg-violet-600 px-3 py-2 text-xs font-semibold text-white hover:bg-violet-700">Panduan</button>
+          </div>
+        </div>
+      )}
+      {isArenaEntry && guideOpen && <InstallGuide onClose={() => setGuideOpen(false)} />}
 
       {/* ── ECOSYSTEM STRIP (desktop) ── */}
       <div className="relative mx-auto mt-10 hidden max-w-6xl grid-cols-4 gap-3 lg:grid">
