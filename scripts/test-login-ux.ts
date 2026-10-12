@@ -127,7 +127,7 @@ test("33. /arena/login hanya menggunakan komponen login kanonis", () =>
   read("app/arena/login/page.tsx").includes('@/app/(auth)/login/page') &&
   !read("app/arena/login/page.tsx").includes('@/app/auth/arena-login/page'));
 test("34. rute login Arena lama mengalihkan ke rute bersama, bukan merender formulir kedua", () =>
-  read("app/auth/arena-login/page.tsx").includes('redirect("/arena/login?') &&
+  read("app/auth/arena-login/page.tsx").includes("redirect(`/arena/login?") &&
   !read("app/auth/arena-login/page.tsx").includes("useState"));
 test("35. pendaftaran service worker dan panduan pemasangan APK tetap tersedia", () =>
   page.includes('{isArenaEntry && <SwRegister />}') &&
