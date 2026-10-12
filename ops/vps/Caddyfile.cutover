@@ -2,6 +2,8 @@
   email {$ACME_EMAIL}
   servers {
     protocols h1 h2 h3
+    # Caddy 2.11+ defaults to 16 KiB; keep headers bounded at 32 KiB.
+    max_header_size 32KiB
   }
 }
 

@@ -2,6 +2,9 @@
   email {$ACME_EMAIL}
   servers {
     protocols h1 h2 h3
+    # Caddy 2.11+ defaults to 16 KiB; keep auth/session headers bounded but large enough.
+    # Keep aligned with Node's --max-http-header-size in docker-compose.yml.
+    max_header_size 32KiB
   }
 }
 
