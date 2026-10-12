@@ -7,9 +7,9 @@ type SearchParams = Record<string, string | string[] | undefined>;
 export default async function LegacyArenaLoginRedirect({
   searchParams,
 }: {
-  searchParams?: Promise<SearchParams> | SearchParams;
+  searchParams: Promise<SearchParams>;
 }) {
-  const params = (await searchParams) ?? {};
+  const params = await searchParams;
   const redirectParams = new URLSearchParams();
   const error = params.error;
   if (typeof error === "string" && error) redirectParams.set("error", error);
