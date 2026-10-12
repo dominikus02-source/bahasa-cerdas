@@ -103,3 +103,22 @@ jobs:
             --env-file /tmp/bc-config/stack.env \
             -f ops/vps/docker-compose.yml \
             config -q
+
+      - name: Validate HTTP 431 header limits and Caddy config
+        run: |
+          set -euo pipefail
+          bash scripts/test-vps-http-header-limits.sh
+          for config in Caddyfile Caddyfile.test Caddyfile.cutover; do
+            docker run --rm \
+              --tmpfs /var/log/caddy:rw,size=10m \
+              -v "$PWD/ops/vps/$config:/etc/caddy/Caddyfile:ro" \
+              -e ACME_EMAIL=ci@example.com \
+              -e APEX_DOMAIN=example.com \
+              -e WEB_DOMAIN=www.example.com \
+              -e GAME_DOMAIN=game.example.com \
+              -e TEST_WEB_DOMAIN=vps.example.com \
+              -e TEST_GAME_DOMAIN=game-vps.example.com \
+              -e NOVELIFY_WWW_DOMAIN=www.novelify.example \
+              -e NOVELIFY_DOMAIN=novelify.example \
+              caddy:2.11.7-alpine \
+              caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
