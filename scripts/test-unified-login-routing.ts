@@ -30,6 +30,10 @@ check("single shared login component is the canonical UI", arenaLogin.includes('
 check("legacy Arena login redirects to the shared Arena entry", legacyArenaLogin.includes("redirect(`/arena/login?"));
 check("Arena login keeps its auth-layout exemption", arenaLayout.includes('const RUTE_TANPA_GERBANG = "/arena/login"'));
 check("anonymous Arena navigation still selects the in-scope entry", proxy.includes('pathname.startsWith("/arena") ? "/arena/login" : "/login"'));
+check("Arena login is public/no-store to prevent stale-cookie redirect loops",
+  proxy.includes('"/arena/login"') &&
+  proxy.includes('pathname === "/login" || pathname === "/arena/login" || pathname === "/auth/arena-login"') &&
+  proxy.includes('response.headers.set("Cache-Control", "private, no-store")'));
 check("Arena login preserves default next=/arena", login.includes('params.get("next") || (isArenaEntry ? "/arena" : "")'));
 check("Arena password login preserves student-only policy", login.includes('isArenaEntry && result.user.role !== "MURID"'));
 check("web role redirects use canonical resolver", login.includes("resolvePostAuthDestinationForUser"));
