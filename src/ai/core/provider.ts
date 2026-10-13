@@ -14,7 +14,7 @@
  *   AI_DEFAULT_MODEL        — Default model for agents (default: deepseek-chat)
  *   AI_FAST_MODEL           — Fast model for quick responses (default: openai/gpt-oss-120b)
  *   AI_REASONING_MODEL      — Reasoning model for complex tasks (default: deepseek-chat)
- *   AI_PROVIDER_PRIORITY    — Comma-separated priority override (default: deepseek,groq,gemini)
+ *   AI_PROVIDER_PRIORITY    — Prioritas provider (default: groq,deepseek,gemini)
  */
 
 export interface ProviderRequest {
@@ -22,7 +22,10 @@ export interface ProviderRequest {
   messages: { role: "system" | "user" | "assistant"; content: string }[];
   temperature: number;
   maxTokens: number;
+  /** Batas waktu total seluruh rantai provider. */
   timeoutMs: number;
+  /** Batas waktu maksimal per percobaan provider; berguna untuk chat interaktif. */
+  attemptTimeoutMs?: number;
   responseFormat?: "text" | "json";
 }
 
@@ -71,18 +74,20 @@ const PROVIDER_KEY_ENV: Record<ProviderName, string> = {
 
 // ─── Provider routing ─────────────────────────────────────
 
+const DEFAULT_PROVIDER_PRIORITY: ProviderName[] = ["groq", "deepseek", "gemini"];
+
 function loadPriority(): ProviderName[] {
   const env = process.env.AI_PROVIDER_PRIORITY;
   if (env) {
-    const parsed = env.split(",").map((s) => s.trim()) as ProviderName[];
-    if (parsed.every((p) => ["deepseek", "groq", "gemini"].includes(p))) {
-      return parsed;
-    }
+    const parsed = env
+      .split(",")
+      .map((s) => s.trim())
+      .filter((p): p is ProviderName => DEFAULT_PROVIDER_PRIORITY.includes(p as ProviderName));
+    // Env menentukan urutan utama, bukan menonaktifkan semua cadangan.
+    // Provider tanpa kunci akan dilewati oleh streamProviderText.
+    if (parsed.length > 0) return Array.from(new Set([...parsed, ...DEFAULT_PROVIDER_PRIORITY]));
   }
-  // STEP 5.1.3 — keputusan founder: HANYA Groq yang dipakai (gpt-oss-120b →
-  // gpt-oss-20b, cepat, murah, max output 65K). DeepSeek & Gemini
-  // dinonaktifkan dari chain (implementasi tetap ada sebagai kode dorman).
-  return ["groq"];
+  return [...DEFAULT_PROVIDER_PRIORITY];
 }
 
 const MODEL_MAP: Record<string, ProviderName> = {
@@ -307,9 +312,11 @@ export class ProviderStreamInterruptedError extends Error {
  * bukan durasi total — AbortSignal.timeout() lama memutus RPP panjang
  * di tengah walau stream masih sehat.
  */
-function createStreamWatchdog(connectMs = 30000, idleMs = 60000, totalMs = 280000) {
+function createStreamWatchdog(totalMs = 280000) {
   const controller = new AbortController();
   const start = Date.now();
+  const connectMs = Math.min(30000, totalMs);
+  const idleMs = Math.min(60000, totalMs);
   let timer: ReturnType<typeof setTimeout> = setTimeout(() => controller.abort(), connectMs);
   return {
     signal: controller.signal,
@@ -326,10 +333,11 @@ function createStreamWatchdog(connectMs = 30000, idleMs = 60000, totalMs = 28000
 
 async function streamDeepSeek(
   req: ProviderRequest,
-  onDelta: (text: string) => void
+  onDelta: (text: string) => void,
+  apiKeyOverride?: string
 ): Promise<ProviderStreamResult> {
   const keys = getApiKeys("DEEPSEEK_API_KEY");
-  const apiKey = nextKey("DEEPSEEK_API_KEY", keys);
+  const apiKey = apiKeyOverride || nextKey("DEEPSEEK_API_KEY", keys);
   if (!apiKey) throw new Error("DEEPSEEK_API_KEY not configured");
 
   const startTime = Date.now();
@@ -342,7 +350,7 @@ async function streamDeepSeek(
   };
   // STEP 5.1 — tanpa response_format json_object (lihat callDeepSeek): mode
   // json_object DeepSeek terdokumentasi bisa mengembalikan konten kosong.
-  const watchdog = createStreamWatchdog();
+  const watchdog = createStreamWatchdog(req.timeoutMs);
   let acc = "";
   try {
     const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
@@ -439,13 +447,14 @@ async function collectStreamTextAndParseOpenAI(
  */
 async function streamGemini(
   req: ProviderRequest,
-  onDelta: (text: string) => void
+  onDelta: (text: string) => void,
+  apiKeyOverride?: string
 ): Promise<ProviderStreamResult> {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = apiKeyOverride || getApiKeys("GEMINI_API_KEY")[0];
   if (!apiKey) throw new Error("GEMINI_API_KEY not configured");
 
   const startTime = Date.now();
-  const watchdog = createStreamWatchdog();
+  const watchdog = createStreamWatchdog(req.timeoutMs);
   let acc = "";
   try {
   const response = await fetch(
@@ -545,7 +554,13 @@ async function collectStreamTextAndParseGemini(
   return fullText;
 }
 
-const PROVIDER_STREAMERS: Record<string, (req: ProviderRequest, onDelta: (text: string) => void) => Promise<ProviderStreamResult>> = {
+type ProviderStreamer = (
+  req: ProviderRequest,
+  onDelta: (text: string) => void,
+  apiKey: string
+) => Promise<ProviderStreamResult>;
+
+const PROVIDER_STREAMERS: Record<ProviderName, ProviderStreamer> = {
   deepseek: streamDeepSeek,
   groq: streamGroq,
   gemini: streamGemini,
@@ -553,9 +568,10 @@ const PROVIDER_STREAMERS: Record<string, (req: ProviderRequest, onDelta: (text: 
 
 async function streamGroq(
   req: ProviderRequest,
-  onDelta: (text: string) => void
+  onDelta: (text: string) => void,
+  apiKeyOverride?: string
 ): Promise<ProviderStreamResult> {
-  const apiKey = process.env.GROQ_API_KEY;
+  const apiKey = apiKeyOverride || getApiKeys("GROQ_API_KEY")[0];
   if (!apiKey) throw new Error("GROQ_API_KEY not configured");
 
   const startTime = Date.now();
@@ -569,7 +585,7 @@ async function streamGroq(
     // Groq menolak kombinasi itu (HTTP 400); prompt sudah memaksa JSON.
   };
 
-  const watchdog = createStreamWatchdog();
+  const watchdog = createStreamWatchdog(req.timeoutMs);
   let acc = "";
   try {
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -621,8 +637,9 @@ export async function streamProviderText(
 ): Promise<ProviderStreamResult> {
   const priority = loadPriority();
   const errors: string[] = [];
+  const deadline = Date.now() + Math.max(1000, req.timeoutMs);
 
-  for (const providerName of priority) {
+  providerLoop: for (const providerName of priority) {
     const streamer = PROVIDER_STREAMERS[providerName];
     if (!streamer) {
       errors.push(`${providerName}: No streamer available`);
@@ -633,22 +650,40 @@ export async function streamProviderText(
       providerName === "deepseek" ? "DEEPSEEK_API_KEY" :
       providerName === "groq" ? "GROQ_API_KEY" :
       "GEMINI_API_KEY";
+    const keys = getApiKeys(apiKeyVar);
 
-    if (!process.env[apiKeyVar]) {
+    if (keys.length === 0) {
       errors.push(`${providerName}: No API key configured`);
       continue;
     }
 
-    try {
-      // STEP 5.1.1 — coba rantai model dalam satu provider (Groq: 120b→20b)
-      const models = providerModels(providerName, req.model);
-      for (const model of models) {
+    // Mulai dari kunci round-robin, lalu coba kunci lain jika kuota/kunci pertama gagal.
+    const firstKey = nextKey(apiKeyVar, keys);
+    const startIndex = Math.max(0, keys.indexOf(firstKey));
+    const orderedKeys = [...keys.slice(startIndex), ...keys.slice(0, startIndex)];
+    const models = providerModels(providerName, req.model);
+
+    for (const model of models) {
+      for (const apiKey of orderedKeys) {
+        const remainingMs = deadline - Date.now();
+        if (remainingMs <= 0) {
+          errors.push(`overall timeout reached after ${req.timeoutMs}ms`);
+          break providerLoop;
+        }
+
+        const attemptTimeoutMs = Math.max(
+          1000,
+          Math.min(remainingMs, req.attemptTimeoutMs ?? remainingMs)
+        );
+
         try {
-          return await streamer({ ...req, model }, onDelta);
+          return await streamer(
+            { ...req, model, timeoutMs: attemptTimeoutMs },
+            onDelta,
+            apiKey
+          );
         } catch (e) {
-          // Teks sudah mengalir ke client — berpindah provider akan menyambung
-          // dua respons berbeda jadi satu teks rusak. Lempar ke pemanggil agar
-          // teks parsial diselamatkan.
+          // Jika token sudah dikirim, jangan pindah provider dan mencampur dua jawaban.
           if (e instanceof ProviderStreamInterruptedError) throw e;
           const message = e instanceof ProviderHttpError
             ? `HTTP ${e.status}`
@@ -658,20 +693,13 @@ export async function streamProviderText(
           errors.push(`${providerName}/${model}: ${message}`);
         }
       }
-    } catch (e) {
-      if (e instanceof ProviderStreamInterruptedError) throw e;
-      const message = e instanceof ProviderHttpError
-        ? `HTTP ${e.status}`
-        : e instanceof Error
-        ? e.message.slice(0, 100)
-        : "unknown error";
-      errors.push(`${providerName}: ${message}`);
     }
   }
 
-  // STEP 5.1.2 — log ringkas detail kegagalan chain (tanpa secret) supaya
-  // produksi bisa langsung melihat penyebab per provider di server logs.
-  console.error(`[AI Provider] stream chain failed (${req.model}):`, errors.slice(0, 12).join(" | "));
+  console.error(
+    `[AI Provider] stream chain failed (${req.model}):`,
+    errors.slice(0, 12).join(" | ")
+  );
   throw new ProviderChainFailedError(errors);
 }
 
