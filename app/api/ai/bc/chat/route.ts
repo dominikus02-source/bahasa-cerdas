@@ -30,6 +30,7 @@ import { getUser } from "@/lib/supabase/server";
 import { checkInput } from "@/src/ai/core/guardrails";
 import { checkAgentRateLimit } from "@/src/ai/core/rate-limit";
 import { streamProviderText } from "@/src/ai/core/provider";
+import type { ProviderName } from "@/src/ai/core/provider";
 import { logUsage } from "@/src/ai/core/usage-logger";
 import {
   buildChatHistory,
@@ -118,6 +119,10 @@ export async function POST(req: NextRequest) {
               maxTokens: 1024,
               timeoutMs: 45000,
               attemptTimeoutMs: 12000,
+              providerPriority: (process.env.AI_BC_PROVIDER_PRIORITY || "groq,deepseek,gemini")
+                .split(",")
+                .map((name) => name.trim())
+                .filter((name): name is ProviderName => ["groq", "deepseek", "gemini"].includes(name)),
               responseFormat: "text",
             },
             (delta) => {
