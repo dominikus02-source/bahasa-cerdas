@@ -15,8 +15,8 @@
  * - Pengetahuan resmi (buildBcKnowledgeBlock): identitas SSOT + peta produk.
  * - Konteks ringkas best-effort per pengguna (lib/ai-bc/context.ts),
  *   terisolasi per peran: murid hanya data belajar, guru hanya data kelas.
- * - Provider chain yang sama dengan agent lain (deepseek → groq → gemini,
- *   multi-key, fallback) via streamProviderText.
+ * - Groq sebagai provider utama, DeepSeek lalu Gemini sebagai cadangan;
+ *   multi-key, fallback, dan batas waktu percobaan via streamProviderText.
  * - Guardrails input (PII/profanitas) + rate limit 30/menit (bc-assistant).
  * - Usage tercatat ke AIUsage (fire-and-forget, feature `agent:bc-assistant`).
  * - TIDAK ada pemotongan kredit/quota — chat tetap gratis, konsisten dengan
@@ -117,6 +117,7 @@ export async function POST(req: NextRequest) {
               temperature: 0.6,
               maxTokens: 1024,
               timeoutMs: 45000,
+              attemptTimeoutMs: 12000,
               responseFormat: "text",
             },
             (delta) => {
