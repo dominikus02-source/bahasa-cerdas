@@ -26,6 +26,8 @@ export interface ProviderRequest {
   timeoutMs: number;
   /** Batas waktu maksimal per percobaan provider; berguna untuk chat interaktif. */
   attemptTimeoutMs?: number;
+  /** Override urutan provider untuk endpoint tertentu, tanpa mengubah agent lain. */
+  providerPriority?: ProviderName[];
   responseFormat?: "text" | "json";
 }
 
@@ -74,20 +76,17 @@ const PROVIDER_KEY_ENV: Record<ProviderName, string> = {
 
 // ─── Provider routing ─────────────────────────────────────
 
-const DEFAULT_PROVIDER_PRIORITY: ProviderName[] = ["groq", "deepseek", "gemini"];
-
 function loadPriority(): ProviderName[] {
   const env = process.env.AI_PROVIDER_PRIORITY;
   if (env) {
-    const parsed = env
-      .split(",")
-      .map((s) => s.trim())
-      .filter((p): p is ProviderName => DEFAULT_PROVIDER_PRIORITY.includes(p as ProviderName));
-    // Env menentukan urutan utama, bukan menonaktifkan semua cadangan.
-    // Provider tanpa kunci akan dilewati oleh streamProviderText.
-    if (parsed.length > 0) return Array.from(new Set([...parsed, ...DEFAULT_PROVIDER_PRIORITY]));
+    const parsed = env.split(",").map((s) => s.trim()) as ProviderName[];
+    if (parsed.length > 0 && parsed.every((p) => ["deepseek", "groq", "gemini"].includes(p))) {
+      return parsed;
+    }
   }
-  return [...DEFAULT_PROVIDER_PRIORITY];
+  // Pertahankan keputusan konfigurasi global: provider umum hanya memakai Groq.
+  // Endpoint khusus dapat meminta rantai cadangan dengan providerPriority.
+  return ["groq"];
 }
 
 const MODEL_MAP: Record<string, ProviderName> = {
@@ -635,7 +634,7 @@ export async function streamProviderText(
   req: ProviderRequest,
   onDelta: (text: string) => void
 ): Promise<ProviderStreamResult> {
-  const priority = loadPriority();
+  const priority = req.providerPriority?.length ? req.providerPriority : loadPriority();
   const errors: string[] = [];
   const deadline = Date.now() + Math.max(1000, req.timeoutMs);
 
