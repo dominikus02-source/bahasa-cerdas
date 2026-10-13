@@ -66,9 +66,12 @@ test("route memakai streamProviderText", () => route.includes("streamProviderTex
 test("route memakai AI_DEFAULT_MODEL / deepseek-chat", () => route.includes("AI_DEFAULT_MODEL") || route.includes("deepseek-chat"));
 test("default provider global tetap Groq saja", () =>
   provider.includes('return ["groq"]'));
-test("AI BC memiliki rantai fallback yang terisolasi dari agent lain", () =>
-  route.includes('AI_BC_PROVIDER_PRIORITY || "groq,deepseek,gemini"') &&
+test("AI BC memiliki rantai fallback terisolasi dari agent lain", () =>
+  route.includes('DEFAULT_AI_BC_PROVIDER_PRIORITY: ProviderName[] = ["groq", "deepseek", "gemini"]') &&
   provider.includes("req.providerPriority?.length ? req.providerPriority : loadPriority()"));
+test("AI BC memakai model DeepSeek aktif pada jalur cadangan", () =>
+  provider.includes('provider === "deepseek" && requestedModel === "deepseek-chat"') &&
+  provider.includes('return "deepseek-flash"'));
 test("streaming mencoba kunci API lain setelah kegagalan", () =>
   provider.includes("const keys = getApiKeys(apiKeyVar)") &&
   provider.includes("const orderedKeys = [...keys.slice(startIndex), ...keys.slice(0, startIndex)]") &&
