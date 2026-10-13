@@ -36,6 +36,7 @@ console.log("AI BC 2.0 — ARSITEKTUR");
 const personas = read("src/ai/bc/personas.ts");
 const contextLib = read("lib/ai-bc/context.ts");
 const route = read("app/api/ai/bc/chat/route.ts");
+const provider = read("src/ai/core/provider.ts");
 const oldRoute = read("app/api/ai/chat/route.ts");
 const moduleC = read("components/ai-bc/AiBcModule.tsx");
 const arenaAi = read("app/arena/ai/page.tsx");
@@ -63,6 +64,22 @@ test("guru/ai-bc redirect ke /arena/ai untuk non-guru", () => guruAiBc.includes(
 // 3. Provider chain + streaming dipertahankan.
 test("route memakai streamProviderText", () => route.includes("streamProviderText"));
 test("route memakai AI_DEFAULT_MODEL / deepseek-chat", () => route.includes("AI_DEFAULT_MODEL") || route.includes("deepseek-chat"));
+test("default provider global tetap Groq saja", () =>
+  provider.includes('return ["groq"]'));
+test("AI BC memiliki rantai fallback terisolasi dari agent lain", () =>
+  route.includes('DEFAULT_AI_BC_PROVIDER_PRIORITY: ProviderName[] = ["groq", "deepseek", "gemini"]') &&
+  provider.includes("req.providerPriority?.length ? req.providerPriority : loadPriority()"));
+test("AI BC memakai model DeepSeek aktif pada jalur cadangan", () =>
+  provider.includes('provider === "deepseek" && requestedModel === "deepseek-chat"') &&
+  provider.includes('return "deepseek-flash"'));
+test("streaming mencoba kunci API lain setelah kegagalan", () =>
+  provider.includes("const keys = getApiKeys(apiKeyVar)") &&
+  provider.includes("const orderedKeys = [...keys.slice(startIndex), ...keys.slice(0, startIndex)]") &&
+  provider.includes("onDelta,\n            apiKey"));
+test("watchdog streaming mengikuti batas waktu percobaan", () =>
+  (provider.match(/createStreamWatchdog\(req\.timeoutMs\)/g) || []).length === 3);
+test("chat membatasi percobaan provider dan total waktu", () =>
+  route.includes("timeoutMs: 45000") && route.includes("attemptTimeoutMs: 12000"));
 test("route memakai guardrails checkInput", () => route.includes("checkInput"));
 test("route memakai rate limit bc-assistant", () => route.includes('checkAgentRateLimit(req, "bc-assistant"'));
 test("route mencatat usage ke logUsage", () => route.includes("logUsage") && route.includes('agentId: "bc-assistant"'));

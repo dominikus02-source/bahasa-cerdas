@@ -15,8 +15,8 @@
  * - Pengetahuan resmi (buildBcKnowledgeBlock): identitas SSOT + peta produk.
  * - Konteks ringkas best-effort per pengguna (lib/ai-bc/context.ts),
  *   terisolasi per peran: murid hanya data belajar, guru hanya data kelas.
- * - Provider chain yang sama dengan agent lain (deepseek → groq → gemini,
- *   multi-key, fallback) via streamProviderText.
+ * - Groq sebagai provider utama, DeepSeek lalu Gemini sebagai cadangan;
+ *   multi-key, fallback, dan batas waktu percobaan via streamProviderText.
  * - Guardrails input (PII/profanitas) + rate limit 30/menit (bc-assistant).
  * - Usage tercatat ke AIUsage (fire-and-forget, feature `agent:bc-assistant`).
  * - TIDAK ada pemotongan kredit/quota — chat tetap gratis, konsisten dengan
@@ -29,7 +29,7 @@ import { NextRequest } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { checkInput } from "@/src/ai/core/guardrails";
 import { checkAgentRateLimit } from "@/src/ai/core/rate-limit";
-import { streamProviderText } from "@/src/ai/core/provider";
+import { streamProviderText, type ProviderName } from "@/src/ai/core/provider";
 import { logUsage } from "@/src/ai/core/usage-logger";
 import {
   buildChatHistory,
@@ -50,6 +50,18 @@ function sse(data: Record<string, unknown>): string {
 
 interface ChatBody {
   messages?: unknown;
+}
+
+const DEFAULT_AI_BC_PROVIDER_PRIORITY: ProviderName[] = ["groq", "deepseek", "gemini"];
+
+function getAiBcProviderPriority(): ProviderName[] {
+  const configured = (process.env.AI_BC_PROVIDER_PRIORITY || "")
+    .split(",")
+    .map((name) => name.trim())
+    .filter((name): name is ProviderName =>
+      DEFAULT_AI_BC_PROVIDER_PRIORITY.includes(name as ProviderName)
+    );
+  return configured.length > 0 ? Array.from(new Set(configured)) : [...DEFAULT_AI_BC_PROVIDER_PRIORITY];
 }
 
 export async function POST(req: NextRequest) {
@@ -117,6 +129,8 @@ export async function POST(req: NextRequest) {
               temperature: 0.6,
               maxTokens: 1024,
               timeoutMs: 45000,
+              attemptTimeoutMs: 12000,
+              providerPriority: getAiBcProviderPriority(),
               responseFormat: "text",
             },
             (delta) => {
