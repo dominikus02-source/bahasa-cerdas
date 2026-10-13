@@ -14,7 +14,7 @@
  *   AI_DEFAULT_MODEL        — Default model for agents (default: deepseek-chat)
  *   AI_FAST_MODEL           — Fast model for quick responses (default: openai/gpt-oss-120b)
  *   AI_REASONING_MODEL      — Reasoning model for complex tasks (default: deepseek-chat)
- *   AI_PROVIDER_PRIORITY    — Prioritas provider (default: groq,deepseek,gemini)
+ *   AI_PROVIDER_PRIORITY    — Prioritas global (default: groq saja; cadangan perlu diaktifkan eksplisit)
  */
 
 export interface ProviderRequest {
@@ -706,8 +706,9 @@ export async function streamProviderText(
  * Map a generic model to a provider-specific model.
  */
 function getModelForProvider(provider: string, requestedModel: string): string {
-  // llama-3.3-70b-versatile dihentikan Groq 16 Agustus 2026; gemini-2.0-flash
-  // sudah dimatikan Google 1 Juni 2026 — dua-duanya diganti model aktif.
+  // deepseek-chat adalah nama model lama; DeepSeek kini menggunakan deepseek-flash.
+  if (provider === "deepseek" && requestedModel === "deepseek-chat") return "deepseek-flash";
+  // Model DeepSeek dipetakan ke model yang tersedia pada provider cadangan.
   if (provider === "groq" && requestedModel.includes("deepseek")) return "openai/gpt-oss-120b";
   if (provider === "gemini" && requestedModel.includes("deepseek")) return "gemini-2.5-flash";
   return requestedModel;
