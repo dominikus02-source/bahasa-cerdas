@@ -64,10 +64,11 @@ test("guru/ai-bc redirect ke /arena/ai untuk non-guru", () => guruAiBc.includes(
 // 3. Provider chain + streaming dipertahankan.
 test("route memakai streamProviderText", () => route.includes("streamProviderText"));
 test("route memakai AI_DEFAULT_MODEL / deepseek-chat", () => route.includes("AI_DEFAULT_MODEL") || route.includes("deepseek-chat"));
-test("fallback provider aktif dengan Groq sebagai prioritas pertama", () =>
-  provider.includes('const DEFAULT_PROVIDER_PRIORITY: ProviderName[] = ["groq", "deepseek", "gemini"]'));
-test("AI_PROVIDER_PRIORITY mengatur urutan tanpa menonaktifkan cadangan", () =>
-  provider.includes("Array.from(new Set([...parsed, ...DEFAULT_PROVIDER_PRIORITY]))"));
+test("default provider global tetap Groq saja", () =>
+  provider.includes('return ["groq"]'));
+test("AI BC memiliki rantai fallback yang terisolasi dari agent lain", () =>
+  route.includes('AI_BC_PROVIDER_PRIORITY || "groq,deepseek,gemini"') &&
+  provider.includes("req.providerPriority?.length ? req.providerPriority : loadPriority()"));
 test("streaming mencoba kunci API lain setelah kegagalan", () =>
   provider.includes("const keys = getApiKeys(apiKeyVar)") &&
   provider.includes("const orderedKeys = [...keys.slice(startIndex), ...keys.slice(0, startIndex)]") &&
