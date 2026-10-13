@@ -29,8 +29,7 @@ import { NextRequest } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { checkInput } from "@/src/ai/core/guardrails";
 import { checkAgentRateLimit } from "@/src/ai/core/rate-limit";
-import { streamProviderText } from "@/src/ai/core/provider";
-import type { ProviderName } from "@/src/ai/core/provider";
+import { streamProviderText, type ProviderName } from "@/src/ai/core/provider";
 import { logUsage } from "@/src/ai/core/usage-logger";
 import {
   buildChatHistory,
@@ -51,6 +50,18 @@ function sse(data: Record<string, unknown>): string {
 
 interface ChatBody {
   messages?: unknown;
+}
+
+const DEFAULT_AI_BC_PROVIDER_PRIORITY: ProviderName[] = ["groq", "deepseek", "gemini"];
+
+function getAiBcProviderPriority(): ProviderName[] {
+  const configured = (process.env.AI_BC_PROVIDER_PRIORITY || "")
+    .split(",")
+    .map((name) => name.trim())
+    .filter((name): name is ProviderName =>
+      DEFAULT_AI_BC_PROVIDER_PRIORITY.includes(name as ProviderName)
+    );
+  return configured.length > 0 ? Array.from(new Set(configured)) : [...DEFAULT_AI_BC_PROVIDER_PRIORITY];
 }
 
 export async function POST(req: NextRequest) {
@@ -119,10 +130,7 @@ export async function POST(req: NextRequest) {
               maxTokens: 1024,
               timeoutMs: 45000,
               attemptTimeoutMs: 12000,
-              providerPriority: (process.env.AI_BC_PROVIDER_PRIORITY || "groq,deepseek,gemini")
-                .split(",")
-                .map((name) => name.trim())
-                .filter((name): name is ProviderName => ["groq", "deepseek", "gemini"].includes(name)),
+              providerPriority: getAiBcProviderPriority(),
               responseFormat: "text",
             },
             (delta) => {
