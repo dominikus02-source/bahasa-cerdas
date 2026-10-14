@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Check, Copy, MessageSquarePlus, RefreshCw, Send } from "lucide-react";
+import { Check, Copy, MessageSquarePlus, RefreshCw, Send, BookOpen, ClipboardList, Pencil } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import AICompanionCharacter from "./AICompanionCharacter";
@@ -19,7 +19,7 @@ import type { BcClientMessage, BcHint } from "./ai-bc-types";
  * - Tinggi viewport-anchored (h-[calc(100dvh-*)]), mengikuti preseden
  *   app/arena/chat/chat-client.tsx; tanpa double scrollbar.
  * - Keadaan awal: komposer SUDAH terlihat (tanpa gerbang "mulai percakapan",
- *   tanpa blank state) — "Mau tanya apa?" + saran pertanyaan murid.
+ *   tanpa blank state) — "Ada yang ingin kamu pelajari?" + 3 saran ringkas.
  * - Zelby memakai registry resmi gambarKarakter("zelby", pose) lewat
  *   AICompanionCharacter — TIDAK ada path aset yang di-hardcode.
  * - Streaming SSE via streamBcChat (route /api/ai/bc/chat TIDAK berubah).
@@ -27,22 +27,19 @@ import type { BcClientMessage, BcHint } from "./ai-bc-types";
  *   ada CTA guru di permukaan ini.
  */
 
-// Saran awal murid (student-safe ONLY) — tanpa alur kerja guru.
-export const ARENA_AI_SUGGESTED_PROMPTS: string[] = [
-  "Jelaskan materi ini dengan sederhana",
-  "Bantu aku memahami soal ini",
-  "Ajari aku cara menemukan ide pokok",
-  "Aku ingin latihan Bahasa Indonesia",
-  "Kenapa jawaban ini salah?",
-  "Jelaskan seperti aku masih pemula",
+// Saran awal murid (student-safe ONLY) — maksimal 3 pilihan ringkas.
+export const ARENA_AI_SUGGESTIONS = [
+  { label: "Pahami materi", prompt: "Jelaskan materi ini dengan sederhana agar mudah dipahami.", icon: BookOpen },
+  { label: "Bahas soal", prompt: "Bantu aku memahami dan membahas soal ini.", icon: ClipboardList },
+  { label: "Latihan Bahasa Indonesia", prompt: "Aku ingin latihan Bahasa Indonesia. Buatkan soal latihan ya.", icon: Pencil },
 ];
 
 const AI_LABEL = "AI BC";
 const THINKING_LABEL = "Sebentar, aku pikirkan…";
 const ERROR_COPY = "Maaf, aku belum bisa menjawab sekarang. Coba kirim pertanyaanmu lagi.";
-const WELCOME_HEADLINE = "Mau tanya apa?";
-const WELCOME_LINE = "Aku siap membantu kamu memahami pelajaran dan belajar lebih seru.";
-const PLACEHOLDER = "Tanyakan sesuatu tentang pelajaranmu...";
+const WELCOME_HEADLINE = "Ada yang ingin kamu pelajari?";
+const WELCOME_LINE = "Tanya apa saja tentang pelajaranmu.";
+const PLACEHOLDER = "Tulis pertanyaanmu...";
 const SCROLL_NEAR_BOTTOM_PX = 140;
 const COMPOSER_MAX_HEIGHT_PX = 128;
 
@@ -248,38 +245,22 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
               <p className="text-sm text-slate-500 dark:text-slate-400">{WELCOME_LINE}</p>
             </div>
 
-            <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-              {ARENA_AI_SUGGESTED_PROMPTS.map((prompt) => (
-                <button
-                  key={prompt}
-                  type="button"
-                  onClick={() => handleSuggested(prompt)}
- className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-left text-xs text-slate-600 shadow-sm transition-all hover:border-violet-300 hover:bg-violet-50 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300 :border-violet-800 dark:hover:bg-violet-950/40"
-                >
-                  {prompt}
-                </button>
-              ))}
+            <div className="flex w-full max-w-md flex-wrap items-center justify-center gap-2 px-2">
+              {ARENA_AI_SUGGESTIONS.map((sug) => {
+                const Icon = sug.icon;
+                return (
+                  <button
+                    key={sug.label}
+                    type="button"
+                    onClick={() => handleSuggested(sug.prompt)}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-violet-100 bg-violet-50/80 px-3 py-1.5 text-xs font-medium text-violet-700 shadow-sm transition-all hover:border-violet-300 hover:bg-violet-100 dark:border-violet-900/50 dark:bg-violet-950/40 dark:text-violet-300 dark:hover:bg-violet-900/60"
+                  >
+                    <Icon size={14} className="shrink-0" />
+                    {sug.label}
+                  </button>
+                );
+              })}
             </div>
-
-            {hints.length > 0 && (
-              <div className="w-full">
-                <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
-                  Saran untukmu
-                </p>
-                <div className="flex flex-wrap justify-center gap-2">
-                  {hints.map((hint) => (
-                    <button
-                      key={hint.label}
-                      type="button"
-                      onClick={() => handleSuggested(hint.prompt)}
- className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-600 transition-colors hover:border-violet-300 hover:bg-violet-50 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300 dark:hover:bg-violet-950/50"
-                    >
-                      {hint.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       ) : (
