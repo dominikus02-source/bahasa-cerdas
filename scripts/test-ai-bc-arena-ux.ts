@@ -98,7 +98,7 @@ test("workspace: container konten 900px", () => workspace.includes("max-w-[900px
 test("workspace: TANPA gerbang 'mulai percakapan' (komposer selalu terlihat)", () =>
   !workspace.includes('"landing"') && !workspace.includes('"chat"'));
 test("workspace: placeholder komposer murid", () =>
-  workspace.includes('placeholder={PLACEHOLDER}') && workspace.includes("Tanyakan sesuatu tentang pelajaranmu..."));
+  workspace.includes('placeholder={PLACEHOLDER}') && workspace.includes("Tulis pertanyaanmu..."));
 test("workspace: Enter kirim / Shift+Enter baris baru", () =>
   workspace.includes('e.key === "Enter"') && workspace.includes("Shift"));
 test("workspace: kirim nonaktif saat streaming", () =>
@@ -123,15 +123,15 @@ test("workspace: Zelby via registry resmi (tanpa path hardcoded)", () =>
   workspace.includes("<AICompanionCharacter") &&
   !workspace.includes("public/junior/karakter") &&
   !workspace.includes("zelby_reading.webp"));
-test("workspace: 6 saran awal murid didefinisikan", () =>
-  (workspace.match(/"([^"]+)"/g) || []).filter((s) => s.length > 20).length >= 6 &&
-  workspace.includes("ARENA_AI_SUGGESTED_PROMPTS"));
+test("workspace: 3 saran awal ringkas didefinisikan", () =>
+  workspace.includes("ARENA_AI_SUGGESTIONS") &&
+  (workspace.match(/label: "/g) || []).length >= 3);
 const promptBlock =
-  workspace.match(/export const ARENA_AI_SUGGESTED_PROMPTS[\s\S]*?\];/)?.[0] ?? "";
+  workspace.match(/export const ARENA_AI_SUGGESTIONS[\s\S]*?\];/)?.[0] ?? "";
 test("workspace: saran awal murid-only (tanpa alur kerja guru)", () =>
   !/rpp|materi ajar|kisi-kisi|buat soal/i.test(promptBlock));
-test("workspace: chips saran hanya bila hints tersedia", () =>
-  workspace.includes("hints.length > 0"));
+test("workspace: tidak ada daftar saran redundan di lobi", () =>
+  !workspace.includes("Saran untukmu"));
 test("workspace: komposer memakai safe-area-bottom", () =>
   workspace.includes("safe-area-bottom"));
 test("workspace: tanpa navigasi kedua (header/theme/bell/logout)", () =>
