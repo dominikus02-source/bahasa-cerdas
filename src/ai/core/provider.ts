@@ -316,7 +316,11 @@ function createStreamWatchdog(connectMs = 30000, idleMs = 60000, totalMs = 28000
     touch() {
       clearTimeout(timer);
       const sisaTotal = totalMs - (Date.now() - start);
-      timer = setTimeout(() => controller.abort(), Math.max(1000, Math.min(idleMs, sisaTotal)));
+      if (sisaTotal <= 0) {
+        controller.abort();
+        return;
+      }
+      timer = setTimeout(() => controller.abort(), Math.min(idleMs, sisaTotal));
     },
     clear() {
       clearTimeout(timer);
