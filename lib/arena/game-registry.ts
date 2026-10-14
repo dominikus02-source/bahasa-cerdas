@@ -178,7 +178,7 @@ export const GAME_REGISTRY: GameDefinition[] = [
     badge: { text: "Baru", type: "new" },
     featured: true,
     // Kanonik: artwork ORIGINAL "Bermain Kata.png" (1536x1024) — SINGLE SOURCE.
-    artwork: "/images/bermain-kata/bermain-kata.png",
+    artwork: "/images/bermain-kata/bermain-kata.webp",
   },
   {
     id: "tebak-kata",
@@ -293,15 +293,15 @@ export function featuredGame(): GameDefinition {
  */
 export const GAME_CARD_ARTWORK: Record<string, string> = {
   "rpg": "/images/GIM%20Card/RPG-card.png",
-  "kuis-tempur": "/images/GIM%20Card/Kuis%20Tempur-card.png",
-  "teka-teki-silang": "/images/GIM%20Card/TTS-card.png",
-  "tebak-kata": "/images/GIM%20Card/tebak%20kata-card2.png",
-  "lari-kata": "/images/GIM%20Card/lari%20kata-card2.png",
-  "irama-kata": "/images/GIM%20Card/Irama%20Kata-card.png",
-  "benar-salah": "/images/GIM%20Card/benar-salah-card.png",
-  "petualangan-kata": "/images/GIM%20Card/petualangan%20kata-card.png",
-  "bermain-kata": "/images/bermain-kata/bermain-kata.png",
-  "menara": "/images/GIM%20Card/menara%20kata-card.png",
-  "susun-kata": "/images/GIM%20Card/Susun%20kata-card.png",
-  "tantang": "/images/GIM%20Card/Tantang%20teman%20card.png",
+  "kuis-tempur": "/images/GIM%20Card/Kuis%20Tempur-card.webp",
+  "teka-teki-silang": "/images/GIM%20Card/TTS-card.webp",
+  "tebak-kata": "/images/GIM%20Card/tebak%20kata-card2.webp",
+  "lari-kata": "/images/GIM%20Card/lari%20kata-card2.webp",
+  "irama-kata": "/images/GIM%20Card/Irama%20Kata-card.webp",
+  "benar-salah": "/images/GIM%20Card/benar-salah-card.webp",
+  "petualangan-kata": "/images/GIM%20Card/petualangan%20kata-card.webp",
+  "bermain-kata": "/images/bermain-kata/bermain-kata.webp",
+  "menara": "/images/GIM%20Card/menara%20kata-card.webp",
+  "susun-kata": "/images/GIM%20Card/Susun%20kata-card.webp",
+  "tantang": "/images/GIM%20Card/Tantang%20teman%20card.webp",
 };

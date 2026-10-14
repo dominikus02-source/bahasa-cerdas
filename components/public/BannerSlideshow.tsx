@@ -47,7 +47,11 @@ export default function BannerSlideshow({
 
   useEffect(() => {
     if (paused || slides.length < 2) return;
-    const id = window.setInterval(() => setIndex((i) => (i + 1) % slides.length), AUTOPLAY_MS);
+    const id = window.setInterval(() => {
+      if (document.visibilityState !== "visible") return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      setIndex((i) => (i + 1) % slides.length);
+    }, AUTOPLAY_MS);
     return () => window.clearInterval(id);
   }, [paused, slides.length]);
 

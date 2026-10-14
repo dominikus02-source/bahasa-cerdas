@@ -107,13 +107,6 @@ export default function AnnouncementSlider({ items }: { items: LandingAnnounceme
 
       <AnnouncementIndicator count={items.length} current={index} onChange={goTo} />
 
-      {/* Preload semua banner supaya tidak flicker saat berganti */}
-      <div className="hidden" aria-hidden="true">
-        {items.map((b) => (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img key={b.id} src={b.image} alt="" />
-        ))}
-      </div>
     </div>
   );
 }

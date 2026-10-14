@@ -5,8 +5,6 @@ import { createClient } from "@/lib/supabase/client";
 import { useUserStore } from "@/store";
 
 export function useUser() {
-  const store = useUserStore();
-
   useEffect(() => {
     const supabase = createClient();
     let disposed = false;
@@ -29,7 +27,7 @@ export function useUser() {
 
         const { user: dbUser } = await res.json();
         if (dbUser && !disposed) {
-          store.setUser({
+          useUserStore.getState().setUser({
             id: dbUser.id,
             supabaseId: dbUser.supabaseId,
             email: dbUser.email,
@@ -62,7 +60,7 @@ export function useUser() {
           void syncApplicationUser();
         }
       } else if (event === "SIGNED_OUT") {
-        store.clearUser();
+        useUserStore.getState().clearUser();
       }
     });
 
@@ -72,5 +70,6 @@ export function useUser() {
     };
   }, []);
 
-  return store;
+  // No Zustand subscription in the root provider: gameplay updates must not
+  // cause the entire application tree to re-render.
 }

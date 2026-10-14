@@ -78,7 +78,7 @@ export function JelajahTrail({
             }}
           >
             <image
-              href="/main-bersama/jelajah/backgrounds/jk-1.png"
+              href="/main-bersama/jelajah/backgrounds/jk-1.webp"
               x="0"
               y="0"
               width="1460"

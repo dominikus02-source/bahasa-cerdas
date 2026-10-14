@@ -2,7 +2,9 @@
 // Strategy: never cache HTML or API (avoids stale app shell / stale auth).
 // Static assets → stale-while-revalidate. Navigations → network-first with an
 // offline fallback page. Cross-origin (Supabase/Midtrans/etc.) is never touched.
-const STATIC_CACHE = "bc-static-v4"
+const STATIC_CACHE = "bc-static-v5"
+const MAX_STATIC_ENTRIES = 90
+const MAX_CACHEABLE_BYTES = 2 * 1024 * 1024
 const OFFLINE_URL = "/offline.html"
 const PRECACHE = ["/offline.html", "/offline-retry.js", "/manifest.json", "/icon-192.png"]
 
@@ -22,7 +24,7 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => k !== STATIC_CACHE).map((k) => caches.delete(k))))
+      .then((keys) => Promise.all(keys.filter((k) => k.startsWith("bc-static-") && k !== STATIC_CACHE).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
   )
 })
@@ -47,20 +49,41 @@ self.addEventListener("fetch", (event) => {
   // Connectivity probes must never succeed from a cached response.
   if (req.cache === "no-store") return
 
-  const isStatic = /\.(png|jpg|jpeg|gif|svg|ico|webp|woff2?|css|js|json)$/i.test(url.pathname)
+  // Never cache app/API JSON, authenticated responses, or navigations.
+  // JavaScript/CSS under _next/static are content-hashed and safe to cache first.
+  const immutable = url.pathname.startsWith("/_next/static/")
+  const isStatic = /\.(png|jpg|jpeg|gif|svg|ico|webp|avif|woff2?|css|js)$/i.test(url.pathname)
+    && !url.pathname.startsWith("/api/")
+    && req.mode !== "navigate"
+
+  async function cacheStatic(response) {
+    if (!response.ok || response.type === "opaque") return
+    if (response.headers.get("cache-control")?.includes("no-store")) return
+    const size = Number(response.headers.get("content-length") || 0)
+    if (size > MAX_CACHEABLE_BYTES) return
+    const cache = await caches.open(STATIC_CACHE)
+    await cache.put(req, response)
+    const keys = await cache.keys()
+    if (keys.length > MAX_STATIC_ENTRIES) {
+      await Promise.all(keys.slice(0, keys.length - MAX_STATIC_ENTRIES).map((key) => cache.delete(key)))
+    }
+  }
 
   if (isStatic) {
     event.respondWith(
       caches.match(req).then((cached) => {
+        // Skip redundant network fetches for immutable content-hashed bundles.
+        if (cached && immutable) return cached
         const fetched = fetch(req)
           .then((res) => {
             if (res.ok) {
-              const clone = res.clone()
-              caches.open(STATIC_CACHE).then((cache) => cache.put(req, clone))
+              // Extend the service worker lifetime while storing the clone;
+              // don't delay image rendering on disk writes.
+              event.waitUntil(cacheStatic(res.clone()).catch(() => {}))
             }
             return res
           })
-          .catch(() => cached)
+          .catch(() => cached || Response.error())
         return cached || fetched
       })
     )

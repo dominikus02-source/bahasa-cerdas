@@ -258,7 +258,7 @@ export default function ZelbyDash() {
   /* Load Hutan Kata scene background (gameplay canvas only) */
   useEffect(() => {
     const img = new Image();
-    img.src = "/images/bg_petualangankata.png";
+    img.src = "/images/bg_petualangankata.webp";
     bgImgRef.current = img;
   }, []);
 

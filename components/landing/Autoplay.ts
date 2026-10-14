@@ -16,7 +16,11 @@ export function useAutoplay(
 
   useEffect(() => {
     if (paused || count < 2) return;
-    const id = window.setInterval(() => onAdvanceRef.current(), interval);
+    const id = window.setInterval(() => {
+      if (document.visibilityState !== "visible") return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      onAdvanceRef.current();
+    }, interval);
     return () => window.clearInterval(id);
   }, [paused, count, interval]);
 }
