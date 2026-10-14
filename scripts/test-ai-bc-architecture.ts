@@ -67,7 +67,9 @@ test("guru/ai-bc redirect ke /arena/ai untuk non-guru", () => guruAiBc.includes(
 test("route memakai streamProviderText", () => route.includes("streamProviderText"));
 test("AI BC memilih model Groq secara eksplisit", () => route.includes('AI_BC_MODEL || "openai/gpt-oss-120b"'));
 test("AI BC mengunci provider ke Groq", () => route.includes('providerPriority: ["groq"]'));
+test("AI BC mempertahankan jawaban parsial jika stream terputus", () => route.includes("if (streamedText.trim())") && route.includes('type: "done", provider: usedProvider || "groq"'));
 test("stream Groq memakai batas waktu dari request", () => provider.includes("Math.min(8000, req.timeoutMs)") && provider.includes("Math.min(10000, req.timeoutMs)"));
+test("watchdog menegakkan batas total meski stream terus mengirim chunk", () => provider.includes("if (sisaTotal <= 0)") && provider.includes("controller.abort();"));
 test("stream Groq mendukung rotasi beberapa API key", () => provider.includes('nextKey("GROQ_API_KEY", keys)'));
 test("route memakai guardrails checkInput", () => route.includes("checkInput"));
 test("route memakai rate limit bc-assistant", () => route.includes('checkAgentRateLimit(req, "bc-assistant"'));
