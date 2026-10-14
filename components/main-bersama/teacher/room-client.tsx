@@ -11,6 +11,10 @@
 // Logic/Tahap 6 TIDAK berubah — hanya presentation.
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { ArrowRight, BarChart3, Maximize2, Monitor, Pause, Play, Square, Trophy, Users } from 'lucide-react';
+import { getJelajahTeams } from '@/lib/main-bersama/jelajah-layout';
+import styles from './play-screen.module.css';
+import EndSessionDialog from '@/components/main-bersama/shared/EndSessionDialog';
 import type { TeacherSessionView } from '@/src/main-bersama/contracts/views/teacher';
 import {
   MbApiError,
@@ -182,7 +186,7 @@ export function TeacherRoomClient({
       loading={busy}
       variant="light"
     >
-      {primaryAction.command === 'start' ? <span className="mb-start-play-icon" aria-hidden>▶</span> : null}
+      {primaryAction.command === 'start' || primaryAction.command === 'resume' ? <Play size={17} fill="currentColor" aria-hidden /> : primaryAction.command === 'end' ? <Square size={16} aria-hidden /> : <ArrowRight size={17} aria-hidden />}
       {primaryAction.label}
     </PrimaryGameButton>
   ) : null;
@@ -193,31 +197,17 @@ export function TeacherRoomClient({
       : null;
 
   return (
-    <main className={`mb-room game-fullscreen${fullscreen.isFullscreen ? " mb-room-fullscreen-active" : ""}`}>
+    <main className={`${styles.room} mb-room game-fullscreen${fullscreen.isFullscreen ? " mb-room-fullscreen-active" : ""}`}>
       <ConnectionBanner visible={connection === 'offline'} />
-      {confirmEnd ? (
-        <div className="fixed inset-0 z-[1200] flex items-center justify-center bg-slate-950/80 p-4">
-          <section role="alertdialog" aria-modal="true" aria-labelledby="mb-end-title"
-            aria-describedby="mb-end-description"
-            className="w-full max-w-md rounded-2xl bg-white p-6 text-slate-900 shadow-2xl">
-            <h2 id="mb-end-title" className="text-xl font-extrabold">Akhiri sesi Jelajah Kata?</h2>
-            <p id="mb-end-description" className="mt-3 text-base leading-relaxed">
-              {everyoneFinished
-                ? 'Semua regu sudah menyelesaikan soal. Setelah sesi ditutup, podium dan hasil akhir akan ditampilkan.'
-                : 'Masih ada regu atau siswa yang belum menyelesaikan soal. Jawaban yang sudah masuk akan dihitung, tetapi soal yang belum dikerjakan akan ditutup. Podium akan ditampilkan.'}
-            </p>
-            <div className="mt-6 flex flex-wrap justify-end gap-3">
-              <button type="button" onClick={() => setConfirmEnd(false)} disabled={busy}
-                className="min-h-12 rounded-xl border border-slate-300 px-5 font-bold">Lanjut bermain</button>
-              <button type="button" disabled={busy} onClick={() => { setConfirmEnd(false); void run('end'); }}
-                className="min-h-12 rounded-xl bg-rose-700 px-5 font-bold text-white disabled:opacity-50">
-                Akhiri &amp; Lihat Podium
-              </button>
-            </div>
-          </section>
-        </div>
-      ) : null}
-      <div className="mb-room-toolbar">
+      {confirmEnd ? <EndSessionDialog
+        title="Akhiri sesi Jelajah Kata?"
+        description={everyoneFinished
+          ? 'Semua regu sudah menyelesaikan soal. Setelah sesi ditutup, podium dan hasil akhir akan ditampilkan.'
+          : 'Masih ada regu atau siswa yang belum menyelesaikan soal. Jawaban yang sudah masuk akan dihitung, tetapi soal yang belum dikerjakan akan ditutup. Podium akan ditampilkan.'}
+        busy={busy} onCancel={() => setConfirmEnd(false)}
+        onConfirm={() => { setConfirmEnd(false); void run('end'); }}
+      /> : null}
+      <div className={`${styles.toolbar} mb-room-toolbar`}>
       <SessionHeader
         mode={view.gameMode}
         packageName={view.contentTitle}
@@ -237,7 +227,7 @@ export function TeacherRoomClient({
                 aria-label="Masuk layar penuh"
                 title="Tampilkan Main Bersama layar penuh"
               >
-                <span aria-hidden>⛶</span>
+                <Maximize2 size={17} aria-hidden />
                 <span>Layar Penuh</span>
                 <kbd>F</kbd>
               </button>
@@ -247,31 +237,34 @@ export function TeacherRoomClient({
             enabled={teacherSound.enabled}
             unlocked={teacherSound.unlocked}
             onToggle={() => void teacherSound.toggle()}
-            compact={teacherSound.unlocked}
+            compact
           />
           </>
         }
       />
 
       <nav className="mb-host-tabs" aria-label="Panel Main Bersama">
-        <button type="button" aria-pressed={activeTab === 'layar'} className={`mb-host-tab ${activeTab === 'layar' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('layar')}>Tampilan Kelas</button>
-        <button type="button" aria-pressed={activeTab === 'kontrol'} className={`mb-host-tab ${activeTab === 'kontrol' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('kontrol')}>Kontrol Guru</button>
-        <button type="button" aria-pressed={activeTab === 'analisis'} className={`mb-host-tab ${activeTab === 'analisis' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('analisis')}>Analisis</button>
+        <button type="button" aria-pressed={activeTab === 'layar'} className={`mb-host-tab ${activeTab === 'layar' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('layar')}><Monitor size={16} aria-hidden /><span>Tampilan Kelas</span></button>
+        <button type="button" aria-pressed={activeTab === 'kontrol'} className={`mb-host-tab ${activeTab === 'kontrol' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('kontrol')}><Users size={16} aria-hidden /><span>Peserta & Kontrol</span></button>
+        <button type="button" aria-pressed={activeTab === 'analisis'} className={`mb-host-tab ${activeTab === 'analisis' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('analisis')}><BarChart3 size={16} aria-hidden /><span>Analisis</span></button>
       </nav>
-      {activeTab === 'layar' && (primaryAction || canManuallyEndJelajah) ? (
-        <div className="mb-classroom-actions" aria-label="Kendali permainan kelas">
+      {primaryAction || canManuallyEndJelajah || view.allowedActions.canPause ? (
+        <div className={`${styles.controlBar} mb-classroom-actions`} aria-label="Kendali permainan kelas">
           <div className="mb-classroom-action-context">
-            <strong>{everyoneFinished ? 'Semua regu sudah selesai!' : view.phase === 'lobby' ? 'Kelas siap bermain?' : view.phase === 'summary' ? 'Hasil permainan' : view.phase === 'paused' ? 'Permainan dijeda' : `Soal ${roundLabel ?? '—'}`}</strong>
-            <span>{view.phase === 'lobby' ? (view.participants.length === 0 ? 'Tunggu minimal satu siswa bergabung untuk mulai.' : `${view.participants.length} siswa sudah masuk · mulai saat kelas sudah siap.`) : view.phase === 'question' ? `${answered} dari ${eligible} siswa sudah menjawab` : view.phase === 'closed' ? 'Jawaban terkunci · lanjutkan ke pembahasan' : view.phase === 'discussion' ? 'Selesai membahas? Lanjutkan dari sini.' : 'Kendalikan permainan dari layar ini.'}</span>
+            <strong>{everyoneFinished ? 'Semua regu sudah selesai!' : view.phase === 'lobby' ? 'Siap memulai?' : view.phase === 'summary' ? 'Hasil permainan' : view.phase === 'paused' ? 'Permainan dijeda' : view.automaticTeams ? 'Regu sedang berpetualang' : `Soal ${roundLabel ?? '—'}`}</strong>
+            <span>{view.phase === 'lobby' ? (view.participants.length === 0 ? 'Tunggu minimal satu siswa bergabung.' : `${view.participants.length} siswa sudah masuk.`) : view.automaticTeams ? `${view.teams.length} regu · soal berganti otomatis` : view.phase === 'question' ? `${answered} dari ${eligible} siswa sudah menjawab` : view.phase === 'closed' ? 'Jawaban terkunci · lanjutkan pembahasan' : view.phase === 'discussion' ? 'Lanjutkan saat kelas sudah siap.' : 'Kendalikan permainan dari sini.'}</span>
           </div>
           <div className="mb-classroom-action-buttons">
-            {view.allowedActions.canPause && view.phase !== 'lobby' ? <button type="button" className="mb-secondary-btn" onClick={() => void run('pause')} disabled={busy}>Jeda</button> : null}
+            {view.allowedActions.canPause && view.phase !== 'lobby' ? <button type="button" className="mb-secondary-btn" onClick={() => void run('pause')} disabled={busy}><Pause size={15} aria-hidden />Jeda</button> : null}
             {primaryControl}
             {canManuallyEndJelajah ? (
-              <button type="button" className="mb-secondary-btn mb-danger-btn"
+              <button type="button" className={`mb-secondary-btn ${everyoneFinished ? styles.finishedButton : styles.endButton}`}
                 onClick={askToEnd} disabled={busy}>
-                {everyoneFinished ? '🏆 Akhiri Sesi & Lihat Podium' : 'Akhiri Sesi'}
+                {everyoneFinished ? <Trophy size={16} aria-hidden /> : <Square size={14} aria-hidden />}
+                {everyoneFinished ? 'Lihat Podium' : 'Akhiri Sesi'}
               </button>
+            ) : view.allowedActions.canEndSession && view.phase !== 'summary' && view.phase !== 'lobby' ? (
+              <button type="button" className={`mb-secondary-btn ${styles.endButton}`} onClick={() => void run('end')} disabled={busy}><Square size={14} aria-hidden />Akhiri Sesi</button>
             ) : null}
           </div>
         </div>
@@ -298,18 +291,7 @@ export function TeacherRoomClient({
             <div><strong>{view.currentRoundIndex === null ? '—' : view.currentRoundIndex + 1}</strong><span>Soal aktif</span></div>
             <div><strong>{answered}/{eligible}</strong><span>Sudah menjawab</span></div>
           </div>
-          <div className="mb-host-actions">
-            {primaryControl}
-            {view.allowedActions.canPause ? <button type="button" className="mb-secondary-btn" onClick={() => run('pause')} disabled={busy}>Jeda</button> : null}
-             {view.allowedActions.canEndSession && view.phase !== 'summary' && !canManuallyEndJelajah
-              ? <button type="button" className="mb-secondary-btn mb-danger-btn"
-                  onClick={() => void run('end')} disabled={busy}>Akhiri Sesi</button> : null}
-            {canManuallyEndJelajah ? <button type="button" className="mb-secondary-btn mb-danger-btn"
-              onClick={askToEnd} disabled={busy}>
-              {everyoneFinished ? '🏆 Akhiri Sesi & Lihat Podium' : 'Akhiri Sesi'}
-            </button> : null}
-          </div>
-          <p className="mb-host-tip">Gunakan <strong>Tampilan Kelas</strong> untuk proyektor. Kendali utama juga tersedia langsung di Tampilan Kelas.</p>
+          <p className="mb-host-tip">Kendali permainan tetap tersedia di atas. Pantau jawaban siswa tanpa berpindah layar.</p>
 
           <div className="mb-teacher-monitor">
             <div className="mb-teacher-monitor-head">
@@ -562,7 +544,7 @@ export function TeacherRoomClient({
 
               <div className="mb-jelajah-host-footer">
                 <div className="mb-jelajah-host-team-status">
-                  {view.teams.slice(0, 4).map((team) => {
+                  {getJelajahTeams(view.teams).map((team) => {
                     const progress = Math.round(jelajahTeamProgress[team.id] ?? 0);
                     return (
                       <div className="mb-jelajah-host-team" key={team.id}>

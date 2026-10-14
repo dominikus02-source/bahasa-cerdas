@@ -15,6 +15,9 @@ import type { GameMode } from '@/src/main-bersama/domain/types/session';
 import { ModeCard } from '@/components/main-bersama/shared/ModeCard';
 import { PrimaryGameButton } from '@/components/main-bersama/shared/PrimaryGameButton';
 import { MbApiError, postTeacherCommand } from '@/lib/main-bersama/api-client';
+import { ArrowRight, BookOpen, Check, ChevronRight, Eye, Gamepad2, Info, Monitor, Sparkles, Users } from 'lucide-react';
+import { TeamMascot } from '@/components/main-bersama/art/registry';
+import styles from './setup.module.css';
 
 export interface SetupPackage {
   id: string;
@@ -229,701 +232,275 @@ export function SetupClient({
     }
   }
 
+  // Presentation-only recap of the existing selections.
+  const selectedPackage = packages.find((p) => p.id === packageId);
+  const selectedClass = classes.find((c) => c.id === classId);
+  const selectedTitle = themeSel?.topic ?? selectedPackage?.title;
+  const questionCount = selectedCompat?.supported ?? themeSel?.count ?? selectedPackage?.questionCount;
+  const modeName = mode === 'jelajah-kata' ? 'Jelajah Kata' : mode === 'kota-cahaya' ? 'Kota Cahaya' : null;
+
   const bankSoalButton = (
-    <button
-      type="button"
-      className="mb-btn-ghost mb-package-bank-button"
-      onClick={() => router.push('/guru/bank-soal?untuk=main-bersama')}
-    >
+    <button type="button" className={styles.bankButton}
+      onClick={() => router.push('/guru/bank-soal?untuk=main-bersama')}>
+      <BookOpen size={15} aria-hidden />
       {themeSel ? 'Ganti dari Bank Soal' : 'Pilih dari Bank Soal'}
+      <ArrowRight size={14} aria-hidden />
     </button>
   );
 
   return (
-    <main className="mb-setup mb-fade-in">
-      {previewData ? <QuestionPreview title={previewData.title} questions={previewData.questions} onClose={() => setPreviewData(null)}/> : null}
-      {/* ── Header hero (§5) ── */}
-      <header className="mb-setup-head">
-        <div className="mb-setup-hero-copy">
-          <span className="mb-eyebrow">Kuis kelas langsung</span>
-          <h1 className="mb-display">
-            <span>Main</span> <strong>Bersama</strong>
-          </h1>
-          <p className="mb-setup-sub">
-            Pilih soal dan cara bermain, lalu bagikan PIN ke kelasmu.
-          </p>
+    <main className={`${styles.setup} mb-fade-in`}>
+      {previewData ? <QuestionPreview title={previewData.title} questions={previewData.questions} onClose={() => setPreviewData(null)} /> : null}
+
+      <nav className={styles.breadcrumb} aria-label="Jejak navigasi">
+        <a href="/guru/game">Ruang Gim & Tanding</a>
+        <ChevronRight size={12} aria-hidden />
+        <span aria-current="page">Main Bersama</span>
+      </nav>
+
+      <header className={styles.hero}>
+        <div className={styles.heroCopy}>
+          <span className={styles.eyebrow}><Gamepad2 size={14} aria-hidden /> Kuis kelas langsung</span>
+          <h1>Main <strong>Bersama</strong></h1>
+          <p>Satu kelas, banyak cerita seru. Pilih soal dan cara bermain, lalu ajak kelasmu berpetualang.</p>
+          <div className={styles.heroFeatures}>
+            <span><Users size={14} aria-hidden /> Bermain sekelas</span>
+            <span><Monitor size={14} aria-hidden /> Tampilkan di proyektor</span>
+          </div>
         </div>
       </header>
 
-      {/* ── Langkah 1: sumber soal (§7) ── */}
-      <section aria-labelledby="mb-pkg-h" className="mb-setup-section">
-        <div className="mb-guru-h">
-          <span className="mb-step-badge mb-number" aria-hidden>1</span>
-          <span className="mb-guru-h-text" id="mb-pkg-h">Pilih Paket Soal</span>
-          <small>Pilih soal yang akan dimainkan.</small>
+      <div className={styles.steps} aria-label="Langkah persiapan permainan">
+        <div className={`${styles.stepItem} ${selectedKey ? styles.stepDone : ''}`}>
+          <span>{selectedKey ? <Check size={13} aria-hidden /> : '01'}</span> Pilih soal
         </div>
-
-        {/* Tema Bank Soal hasil "Gunakan untuk Main Bersama" — sudah terpilih,
-            guru tidak memilih ulang; tombol Ganti kembali ke Bank Soal. */}
-        {themeSel ? (
-          <div className={`mb-pkg-item mb-pkg-selected mb-theme-pick`}>
-            <span className="mb-pkg-icon" aria-hidden>
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
-              </svg>
-            </span>
-            <span className="mb-pkg-body">
-              <span className="mb-pkg-title">{themeSel.topic}</span>
-              <span className="mb-pkg-meta">
-                Tema Bank Soal · <strong className="mb-number">{themeSel.count}</strong> soal ·{' '}
-                {themeSel.difficulty ? DIFFICULTY_LABEL[themeSel.difficulty] ?? themeSel.difficulty : 'Semua tingkat'}
-                {selectedCompat && selectedCompat.supported === 0 ? (
-                  <> · <span className="mb-pkg-incompat">belum ada soal yang cocok dimainkan</span></>
-                ) : selectedCompat && selectedCompat.supported < themeSel.count ? (
-                  <> · <span className="mb-pkg-compat">{selectedCompat.supported} dari {themeSel.count} soal dapat dimainkan</span></>
-                ) : null}
-              </span>
-            </span>
-            {bankSoalButton}
-            <span className="mb-pkg-check" aria-hidden>
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 6 9 17l-5-5" />
-              </svg>
-            </span>
-          </div>
-        ) : null}
-
-
-
-        {packages.length === 0 ? (
-          themeSel ? null : (
-            <div className="mb-setup-empty">
-              <div className="mb-setup-empty-art" aria-hidden />
-              <div className="mb-setup-empty-copy">
-                <p className="mb-setup-empty-title">Belum ada paket soal</p>
-                <p className="mb-setup-empty-sub">Pilih tema untuk mulai bermain.</p>
-                {bankSoalButton}
-              </div>
-            </div>
-          )
-        ) : (
-          <div className="mb-package-source-card">
-          {!themeSel ? bankSoalButton : null}
-          <details className="mb-package-picker" open={!themeSel}>
-            <summary>Paket soal milikmu <span>{packages.length} paket</span></summary>
-            <ul className="mb-pkg-list">
-            {packages.map((p) => {
-              const info = compat[p.id];
-              const isSel = !themeSel && packageId === p.id;
-              return (
-                <li key={p.id}>
-                  <button
-                    type="button"
-                    onClick={() => selectPackage(p.id)}
-                    aria-pressed={isSel}
-                    className={`mb-pkg-item ${isSel ? 'mb-pkg-selected' : ''}`}
-                  >
-                    <span className="mb-pkg-icon" aria-hidden>
-                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
-                      </svg>
-                    </span>
-                    <span className="mb-pkg-body">
-                      <span className="mb-pkg-title">{p.title}</span>
-                      <span className="mb-pkg-meta">
-                        Kelas {p.kelas} · <strong className="mb-number">{p.questionCount}</strong> soal
-                        {isSel && info && info.total > 0 && info.supported < info.total
-                          ? <> · <span className="mb-pkg-compat">{info.supported} dari {info.total} soal dapat dimainkan</span></>
-                          : null}
-                      </span>
-                    </span>
-                    {isSel ? (
-                      <span className="mb-pkg-check" aria-hidden>
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M20 6 9 17l-5-5" />
-                        </svg>
-                      </span>
-                    ) : null}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-          </details>
-          </div>
-        )}
-      {selectedKey ? <button type="button" onClick={() => void previewSelected()} disabled={previewLoading}
-        className="mb-author-secondary" style={{ marginTop: 12, minHeight: 46, padding: '10px 16px', border: '2px solid #7c3aed', borderRadius: 12, fontWeight: 800, color: '#5b21b6', background: '#f5f3ff' }}>
-        {previewLoading ? 'Memuat pratinjau…' : '👁 Pratinjau paket terpilih sebelum bermain'}
-      </button> : null}
-      <QuestionPackageEditor onSaved={(p) => {
-        setPackages(prev => [p, ...prev]);
-        setCompat(prev => ({ ...prev, [p.id]: { total: p.questionCount, supported: p.questionCount } }));
-        setThemeSel(null); setPackageId(p.id); setError(null);
-      }} />
-      </section>
-
-      {/* ── Langkah 2: cara bermain (§8-§10) ── */}
-      <section className="mb-setup-section" role="radiogroup" aria-labelledby="mb-mode-h">
-        <div className="mb-guru-h">
-          <span className="mb-step-badge mb-number" aria-hidden>2</span>
-          <span className="mb-guru-h-text" id="mb-mode-h">Pilih Cara Bermain</span>
-          <small>Dua cara bermain, sama-sama seru.</small>
+        <span className={styles.stepLine} aria-hidden />
+        <div className={`${styles.stepItem} ${mode ? styles.stepDone : ''}`}>
+          <span>{mode ? <Check size={13} aria-hidden /> : '02'}</span> Cara bermain
         </div>
-        <div className="mb-mode-list">
-          <ModeCard mode="jelajah-kata" selected={mode === 'jelajah-kata'} onSelect={() => setMode('jelajah-kata')} />
-          <ModeCard mode="kota-cahaya" selected={mode === 'kota-cahaya'} onSelect={() => setMode('kota-cahaya')} />
-        </div>
-      </section>
-
-      {mode === 'jelajah-kata' ? (
-        <section className="mb-auto-mode-note" aria-label="Pengaturan regu Jelajah Kata">
-          <strong style={{ display: 'block', marginBottom: 12 }}>Atur kelompok Jelajah Kata</strong>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }} role="group" aria-label="Jumlah kelompok">
-            {[2, 3, 4, 5, 6].map((count) => <button key={count} type="button"
-              aria-pressed={teamCount === count} onClick={() => setTeamCount(count)}
-              style={{ minWidth: 48, minHeight: 48, padding: '8px 12px', borderRadius: 12, fontWeight: 800,
-                border: teamCount === count ? '2px solid #6d28d9' : '1px solid #94a3b8',
-                background: teamCount === count ? '#ede9fe' : '#fff', color: '#1e1b4b' }}>
-              {count} regu
-            </button>)}
+        {classes.length > 0 ? <>
+          <span className={styles.stepLine} aria-hidden />
+          <div className={`${styles.stepItem} ${classId ? styles.stepDone : ''}`}>
+            <span>{classId ? <Check size={13} aria-hidden /> : '03'}</span> Pilih kelas
           </div>
-          <p style={{ marginTop: 10 }}>Maskot: {JELAJAH_TEAM_KEYS.slice(0, teamCount).map((id) => JELAJAH_DEFAULT_TEAMS[id].name).join(' · ')}</p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, marginTop: 12 }}>
-            <label style={{ display: 'grid', gap: 5 }}>Maksimal siswa per regu
-              <input type="number" inputMode="numeric" min={1} max={50} value={maxMembersPerTeam}
-                onChange={(e) => setMaxMembersPerTeam(Math.max(1, Math.min(50, Number(e.target.value) || 1)))}
-                style={{ width: 114, minHeight: 44, border: '1px solid #94a3b8', borderRadius: 8, padding: 8 }}/>
-            </label>
-            <label style={{ display: 'grid', gap: 5 }}>Perkiraan siswa (opsional)
-              <input type="number" inputMode="numeric" min={0} max={300} value={estimatedStudents || ''}
-                placeholder="Mis. 36" onChange={(e) => setEstimatedStudents(Math.max(0, Math.min(300, Number(e.target.value) || 0)))}
-                style={{ width: 150, minHeight: 44, border: '1px solid #94a3b8', borderRadius: 8, padding: 8 }}/>
-            </label>
-          </div>
-          <p style={{ marginTop: 12 }}>Kapasitas ruang: <strong>{teamCount * maxMembersPerTeam} siswa</strong>. Siswa baru ditempatkan otomatis ke regu dengan anggota paling sedikit.</p>
-          {estimatedStudents > 0 ? <p role="status" style={{ fontWeight: capacityShort ? 800 : 500, color: capacityShort ? '#b91c1c' : '#166534' }}>
-            {capacityShort ? `Kapasitas belum cukup untuk ${estimatedStudents} siswa.` : `Perkiraan ${estimatedStudents} siswa: sekitar ${Math.floor(estimatedStudents/teamCount)}–${Math.ceil(estimatedStudents/teamCount)} siswa per regu.`}
-            {suggestedTeams <= 6 && suggestedTeams >= 2 && suggestedTeams !== teamCount
-              ? <button type="button" className="mb-author-secondary" style={{ marginLeft: 10 }} onClick={() => setTeamCount(suggestedTeams)}>Gunakan saran {suggestedTeams} regu</button> : null}
-          </p> : null}
-          <p>Setiap regu maju sesuai progresnya. Soal berganti otomatis setelah seluruh anggota regu menjawab. Pastikan siswa masuk sebelum mulai.</p>
-        </section>
-      ) : null}
-
-      {/* ── Langkah 3: kelas (§11) ── */}
-      {classes.length > 0 ? (
-        <section aria-labelledby="mb-cls-h" className="mb-setup-section">
-          <div className="mb-guru-h">
-            <span className="mb-step-badge mb-number" aria-hidden>{3}</span>
-            <span className="mb-guru-h-text" id="mb-cls-h">Pilih Kelas</span>
-            <small>Opsional — untuk pencatatan kelas.</small>
-          </div>
-          <div className="mb-cls-row">
-            <button
-              type="button"
-              aria-pressed={classId === null}
-              onClick={() => setClassId(null)}
-              className={`mb-cls-chip ${classId === null ? 'mb-cls-selected' : ''}`}
-            >
-              Tanpa kelas
-            </button>
-            {classes.map((c) => (
-              <button
-                key={c.id}
-                type="button"
-                aria-pressed={classId === c.id}
-                onClick={() => setClassId(c.id)}
-                className={`mb-cls-chip ${classId === c.id ? 'mb-cls-selected' : ''}`}
-              >
-                {c.name}
-              </button>
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      {error ? (
-        <p role="alert" className="mb-setup-error">{error}</p>
-      ) : null}
-
-      {/* ── Aksi final (§12) ── */}
-      <div className="mb-setup-cta">
-        <div className={`mb-setup-cta-box ${canOpen ? 'mb-setup-cta-ready' : ''}`}>
-          <div className="mb-setup-cta-content">
-          <p className="mb-setup-cta-title">Siap bermain?</p>
-          <p className="mb-setup-cta-sub">Buka ruang dan bagikan PIN kepada siswa.</p>
-          <PrimaryGameButton
-            onClick={openRoom}
-            disabled={!canOpen}
-            loading={opening || checking}
-            variant="light"
-          >
-            {partial && selectedCompat && !zero ? `Gunakan ${selectedCompat.supported} soal` : 'Buka Ruang'}
-          </PrimaryGameButton>
-          {!canOpen && !opening && !checking && disabledReason ? (
-            <p role="status" className="mb-setup-cta-reason">
-              {packageId && checking
-                ? 'Memeriksa paket soal…'
-                : disabledReason}
-            </p>
-          ) : null}
-          </div>
-        </div>
+        </> : null}
       </div>
 
-      <style jsx global>{`
-        .mb-setup {
-          width: min(100%, 1120px);
-          margin: 0 auto;
-          padding: clamp(20px, 3vw, 34px) clamp(16px, 2.4vw, 28px) 56px;
-        }
+      <div className={styles.workspace}>
+        <div className={styles.sections}>
+          <section aria-labelledby="mb-pkg-h" className={styles.section}>
+            <div className={styles.sectionHead}>
+              <span className={styles.stepBadge} aria-hidden>01</span>
+              <div><h2 id="mb-pkg-h">Pilih paket soal</h2><p>Gunakan Bank Soal atau siapkan soal milikmu.</p></div>
+            </div>
 
-        /* Hero — classroom game-show stage, art asset tetap dekoratif. */
-        .mb-setup-head {
-          position: relative;
-          min-height: 276px;
-          display: flex;
-          align-items: center;
-          overflow: hidden;
-          padding: clamp(28px, 4vw, 46px);
-          border-radius: 30px;
-          color: #ffffff;
-          background:
-            linear-gradient(90deg, rgba(4, 20, 51, .92) 0%, rgba(5, 38, 86, .68) 46%, rgba(5, 38, 86, .08) 72%),
-            url('/images/main-bersama/hero-main-bersama.webp') center / cover no-repeat;
-          border: 1px solid rgba(255, 255, 255, .16);
-          box-shadow: 0 22px 56px rgba(21, 48, 74, .22);
-          isolation: isolate;
-        }
-        .mb-setup-head::after {
-          content: "";
-          position: absolute;
-          inset: auto 0 0;
-          height: 40%;
-          z-index: -1;
-          background: linear-gradient(to top, rgba(3, 18, 42, .32), transparent);
-          pointer-events: none;
-        }
-        .mb-setup-hero-copy {
-          width: min(55%, 570px);
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 10px;
-          position: relative;
-          z-index: 1;
-        }
-        .mb-setup-head .mb-eyebrow {
-          color: #78eee0;
-          text-shadow: 0 2px 12px rgba(0, 0, 0, .24);
-        }
-        .mb-setup-head h1 {
-          margin: 0;
-          color: #ffffff !important;
-          font-size: clamp(2.55rem, 5vw, 4.25rem);
-          line-height: .94;
-          letter-spacing: .025em;
-          text-transform: uppercase;
-          text-shadow: 0 10px 28px rgba(0, 0, 0, .28);
-        }
-        .mb-setup-head h1 strong {
-          color: #ffd651;
-          font: inherit;
-        }
-        .mb-setup-sub {
-          margin: 2px 0 0;
-          max-width: 50ch;
-          color: rgba(240, 248, 255, .9);
-          line-height: 1.58;
-          font-size: .97rem;
-        }
-        .mb-setup-hero-pills {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 8px;
-          margin-top: 10px;
-        }
-        .mb-setup-hero-pills span {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          min-height: 34px;
-          padding: 6px 12px;
-          border-radius: 999px;
-          background: rgba(3, 22, 50, .45);
-          border: 1px solid rgba(255, 255, 255, .14);
-          color: rgba(247, 251, 255, .92);
-          font-size: .76rem;
-          font-weight: 750;
-          backdrop-filter: blur(7px);
-        }
-        .mb-setup-hero-pills i {
-          width: 7px;
-          height: 7px;
-          border-radius: 50%;
-          background: #ffd651;
-          box-shadow: 0 0 14px rgba(255, 214, 81, .75);
-        }
+            {themeSel ? (
+              <div className={`${styles.packageItem} ${styles.packageSelected} ${styles.themePick}`}>
+                <span className={styles.packageIcon}><BookOpen size={18} aria-hidden /></span>
+                <span className={styles.packageBody}>
+                  <span className={styles.packageTitle}>{themeSel.topic}</span>
+                  <span className={styles.packageMeta}>
+                    Tema Bank Soal · <strong>{themeSel.count}</strong> soal ·{' '}
+                    {themeSel.difficulty ? DIFFICULTY_LABEL[themeSel.difficulty] ?? themeSel.difficulty : 'Semua tingkat'}
+                    {selectedCompat && selectedCompat.supported === 0 ? (
+                      <> · <span className={styles.packageIncompat}>belum ada soal yang cocok dimainkan</span></>
+                    ) : selectedCompat && selectedCompat.supported < themeSel.count ? (
+                      <> · <span className={styles.packageCompat}>{selectedCompat.supported} dari {themeSel.count} soal dapat dimainkan</span></>
+                    ) : null}
+                  </span>
+                </span>
+                <span className={styles.check}><Check size={13} aria-hidden /></span>
+                {bankSoalButton}
+              </div>
+            ) : null}
 
-        /* Steps — lebih rapat dan terasa sebagai guided flow. */
-        .mb-setup-section {
-          margin-top: 36px;
-          padding: 0 4px;
-        }
-        .mb-guru-h {
-          margin-bottom: 14px;
-        }
-        .mb-step-badge {
-          border-radius: 12px;
-          box-shadow: 0 8px 18px rgba(13, 148, 136, .22);
-        }
-        .mb-guru-h .mb-guru-h-text {
-          font-size: 1.18rem;
-        }
+            {packages.length === 0 ? (
+              themeSel ? null : (
+                <div className={styles.empty}>
+                  <div className={styles.emptyArt} aria-hidden />
+                  <div>
+                    <h3>Petualangan dimulai dari soal</h3>
+                    <p>Belum ada paket? Pilih tema di Bank Soal.</p>
+                    {bankSoalButton}
+                  </div>
+                </div>
+              )
+            ) : (
+              <div>
+                {!themeSel ? bankSoalButton : null}
+                <details className={styles.packagePicker} open={!themeSel}>
+                  <summary>Paket soal milikmu <span>{packages.length} paket</span></summary>
+                  <ul className={styles.packageList}>
+                    {packages.map((p) => {
+                      const info = compat[p.id];
+                      const isSel = !themeSel && packageId === p.id;
+                      return (
+                        <li key={p.id}>
+                          <button type="button" onClick={() => selectPackage(p.id)} aria-pressed={isSel}
+                            className={`${styles.packageItem} ${isSel ? styles.packageSelected : ''}`}>
+                            <span className={styles.packageIcon}><BookOpen size={18} aria-hidden /></span>
+                            <span className={styles.packageBody}>
+                              <span className={styles.packageTitle}>{p.title}</span>
+                              <span className={styles.packageMeta}>
+                                Kelas {p.kelas} · <strong>{p.questionCount}</strong> soal
+                                {isSel && info && info.total > 0 && info.supported < info.total
+                                  ? <> · <span className={styles.packageCompat}>{info.supported} dari {info.total} soal dapat dimainkan</span></>
+                                  : null}
+                              </span>
+                            </span>
+                            {isSel ? <span className={styles.check}><Check size={13} aria-hidden /></span> : null}
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </details>
+              </div>
+            )}
 
-        /* Tema Bank Soal terpilih (handoff). */
-        .mb-theme-pick {
-          margin-bottom: var(--mb-space-3);
-          cursor: default;
-        }
-        .mb-setup-pick-row {
-          display: flex;
-          align-items: center;
-          flex-wrap: wrap;
-          gap: 12px;
-          margin-bottom: 12px;
-        }
-        .mb-setup-pick-hint {
-          color: var(--mb-text-guru-secondary);
-          font-size: .88rem;
-        }
-        .mb-pkg-list-head {
-          font-size: .78rem;
-          font-weight: 850;
-          letter-spacing: .06em;
-          text-transform: uppercase;
-          color: var(--mb-text-guru-secondary);
-          padding: 2px 4px 4px;
-        }
+            {selectedKey ? (
+              <button type="button" onClick={() => void previewSelected()} disabled={previewLoading}
+                className={styles.previewButton} aria-busy={previewLoading || undefined}>
+                <Eye size={15} aria-hidden />
+                {previewLoading ? 'Memuat pratinjau…' : 'Pratinjau paket terpilih sebelum bermain'}
+              </button>
+            ) : null}
+            <QuestionPackageEditor onSaved={(p) => {
+              setPackages(prev => [p, ...prev]);
+              setCompat(prev => ({ ...prev, [p.id]: { total: p.questionCount, supported: p.questionCount } }));
+              setThemeSel(null); setPackageId(p.id); setError(null);
+            }} />
+          </section>
 
-        /* Package list. */
-        .mb-pkg-list {
-          list-style: none;
-          margin: 0;
-          padding: 2px;
-          display: flex;
-          flex-direction: column;
-          gap: 9px;
-          max-height: 320px;
-          overflow-y: auto;
-        }
-        .mb-pkg-item {
-          position: relative;
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          width: 100%;
-          text-align: left;
-          padding: 13px 15px;
-          background: rgba(255, 255, 255, .92);
-          border: 2px solid rgba(28, 43, 58, .1);
-          border-radius: 17px;
-          color: var(--mb-text-guru);
-          cursor: pointer;
-          box-shadow: 0 5px 18px rgba(28, 43, 58, .04);
-          transition:
-            border-color var(--mb-motion-fast),
-            background var(--mb-motion-fast),
-            transform var(--mb-motion-fast),
-            box-shadow var(--mb-motion-fast);
-        }
-        .mb-pkg-item:hover {
-          transform: translateY(-1px);
-          border-color: rgba(20, 184, 166, .5);
-          box-shadow: 0 10px 24px rgba(28, 43, 58, .08);
-        }
-        .mb-pkg-selected {
-          border-color: var(--mb-primary-strong);
-          background: linear-gradient(90deg, rgba(20, 184, 166, .13), rgba(255, 255, 255, .95));
-          box-shadow: 0 10px 26px rgba(20, 184, 166, .1);
-        }
-        .mb-pkg-icon {
-          display: grid;
-          place-items: center;
-          width: 42px;
-          height: 42px;
-          flex: none;
-          border-radius: 13px;
-          background: var(--mb-primary-soft);
-          color: var(--mb-primary-strong);
-        }
-        .mb-pkg-body {
-          display: flex;
-          flex-direction: column;
-          gap: 3px;
-          min-width: 0;
-        }
-        .mb-pkg-title { font-weight: 820; }
-        .mb-pkg-meta {
-          color: var(--mb-text-guru-secondary);
-          font-size: .84rem;
-        }
-        .mb-pkg-compat {
-          color: var(--mb-primary-strong);
-          font-weight: 700;
-        }
-        .mb-pkg-incompat {
-          color: var(--mb-danger);
-          font-weight: 700;
-        }
-        .mb-pkg-check {
-          display: grid;
-          place-items: center;
-          width: 27px;
-          height: 27px;
-          flex: none;
-          margin-left: auto;
-          border-radius: 50%;
-          background: var(--mb-primary-strong);
-          color: #ffffff;
-          box-shadow: 0 5px 12px rgba(13, 148, 136, .25);
-        }
+          <section className={styles.section} aria-labelledby="mb-mode-h">
+            <div className={styles.sectionHead}>
+              <span className={styles.stepBadge} aria-hidden>02</span>
+              <div><h2 id="mb-mode-h">Pilih cara bermain</h2><p>Serunya berkompetisi atau hebatnya berkolaborasi?</p></div>
+            </div>
+            <div className={styles.modeList} role="group" aria-labelledby="mb-mode-h">
+              <ModeCard mode="jelajah-kata" selected={mode === 'jelajah-kata'} onSelect={() => setMode('jelajah-kata')} />
+              <ModeCard mode="kota-cahaya" selected={mode === 'kota-cahaya'} onSelect={() => setMode('kota-cahaya')} />
+            </div>
 
-        /* Empty state: illustration + copy, bukan kotak kosong. */
-        .mb-setup-empty {
-          min-height: 138px;
-          display: grid;
-          grid-template-columns: minmax(180px, 32%) 1fr;
-          align-items: center;
-          gap: clamp(12px, 3vw, 32px);
-          padding: 9px clamp(20px, 3.5vw, 34px);
-          border-radius: 24px;
-          border: 2px dashed rgba(28, 43, 58, .13);
-          background:
-            radial-gradient(circle at 88% 18%, rgba(56, 189, 248, .08), transparent 30%),
-            linear-gradient(135deg, #ffffff, #fbfcff);
-          box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9);
-        }
-        .mb-setup-empty-art {
-          width: 100%;
-          height: 112px;
-          background: url('/images/main-bersama/empty-bank-soal.webp') center / contain no-repeat;
-          filter: drop-shadow(0 10px 14px rgba(75, 68, 160, .12));
-        }
-        .mb-setup-empty-copy {
-          display: flex;
-          flex-direction: column;
-          gap: 5px;
-        }
-        .mb-setup-empty-title {
-          margin: 0;
-          font-weight: 850;
-          font-size: 1.06rem;
-          color: var(--mb-text-guru);
-        }
-        .mb-setup-empty-sub {
-          margin: 0;
-          color: var(--mb-text-guru-secondary);
-          line-height: 1.5;
-        }
-        .mb-btn-ghost {
-          min-height: 44px;
-          padding: 9px 20px;
-          border-radius: 999px;
-          border: 2px solid var(--mb-primary-strong);
-          background: rgba(255, 255, 255, .9);
-          color: var(--mb-primary-strong);
-          font-weight: 820;
-          cursor: pointer;
-          box-shadow: 0 6px 15px rgba(13, 148, 136, .06);
-          transition:
-            background var(--mb-motion-fast),
-            color var(--mb-motion-fast),
-            transform var(--mb-motion-fast),
-            box-shadow var(--mb-motion-fast);
-        }
-        .mb-btn-ghost:hover {
-          background: var(--mb-primary-strong);
-          color: #ffffff;
-          transform: translateY(-1px);
-          box-shadow: 0 10px 22px rgba(13, 148, 136, .2);
-        }
+            {mode === 'jelajah-kata' ? (
+              <div className={styles.teamPanel} role="group" aria-label="Pengaturan regu Jelajah Kata">
+                <div className={styles.teamHead}>
+                  <h3><Users size={16} aria-hidden /> Atur regu petualangmu</h3>
+                  <span className={styles.autoBadge}>Pembagian otomatis</span>
+                </div>
+                <div className={styles.teamGrid}>
+                  <div>
+                    <p className={styles.fieldLabel} id="mb-team-count-h">Jumlah regu</p>
+                    <div className={styles.teamOptions} role="group" aria-labelledby="mb-team-count-h">
+                      {[2, 3, 4, 5, 6].map((count) => (
+                        <button key={count} type="button" aria-pressed={teamCount === count}
+                          onClick={() => setTeamCount(count)} className={styles.teamOption}>
+                          <strong>{count}</strong><span>regu</span>
+                        </button>
+                      ))}
+                    </div>
+                    <div className={styles.mascots} aria-label="Maskot regu terpilih">
+                      {JELAJAH_TEAM_KEYS.slice(0, teamCount).map((id) => (
+                        <div key={id} className={styles.mascot}>
+                          <TeamMascot teamId={id} size={38} />
+                          <span>{JELAJAH_DEFAULT_TEAMS[id].name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <div className={styles.teamInputs}>
+                      <label className={styles.inputLabel}><span>Maksimal siswa per regu</span>
+                        <input type="number" inputMode="numeric" min={1} max={50} value={maxMembersPerTeam}
+                          onChange={(e) => setMaxMembersPerTeam(Math.max(1, Math.min(50, Number(e.target.value) || 1)))} />
+                      </label>
+                      <label className={styles.inputLabel}><span>Perkiraan siswa <small>(opsional)</small></span>
+                        <input type="number" inputMode="numeric" min={0} max={300} value={estimatedStudents || ''}
+                          placeholder="Mis. 36" onChange={(e) => setEstimatedStudents(Math.max(0, Math.min(300, Number(e.target.value) || 0)))} />
+                      </label>
+                    </div>
+                    <div className={`${styles.capacity} ${capacityShort ? styles.capacityShort : ''}`}>
+                      <Users size={20} aria-hidden />
+                      <div><strong>{teamCount * maxMembersPerTeam} siswa</strong><span>Kapasitas ruang permainan</span></div>
+                    </div>
+                  </div>
+                </div>
+                {estimatedStudents > 0 ? (
+                  <p role="status" className={styles.capacityStatus} data-error={capacityShort}>
+                    {capacityShort ? `Kapasitas belum cukup untuk ${estimatedStudents} siswa.` : `Perkiraan ${estimatedStudents} siswa: sekitar ${Math.floor(estimatedStudents/teamCount)}–${Math.ceil(estimatedStudents/teamCount)} siswa per regu.`}
+                    {suggestedTeams <= 6 && suggestedTeams >= 2 && suggestedTeams !== teamCount
+                      ? <button type="button" className={styles.suggestion} onClick={() => setTeamCount(suggestedTeams)}>Gunakan saran {suggestedTeams} regu <ArrowRight size={12} aria-hidden /></button> : null}
+                  </p>
+                ) : null}
+                <p className={styles.modeNote}><Info size={14} aria-hidden /><span>Siswa dibagi otomatis ke regu dengan anggota paling sedikit. Soal berganti setelah seluruh anggota regu menjawab. Pastikan semua siswa masuk sebelum mulai.</span></p>
+              </div>
+            ) : null}
+          </section>
 
-        /* Mode grid. */
-        .mb-mode-list {
-          display: grid;
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-          gap: 16px;
-        }
+          {classes.length > 0 ? (
+            <section aria-labelledby="mb-cls-h" className={styles.section}>
+              <div className={styles.sectionHead}>
+                <span className={styles.stepBadge} aria-hidden>03</span>
+                <div><h2 id="mb-cls-h">Pilih kelas</h2><p>Opsional — agar permainan tercatat untuk kelasmu.</p></div>
+              </div>
+              <div className={styles.classList}>
+                <button type="button" aria-pressed={classId === null} onClick={() => setClassId(null)} className={styles.classChip}>
+                  {classId === null ? <Check size={13} aria-hidden /> : null} Tanpa kelas
+                </button>
+                {classes.map((c) => (
+                  <button key={c.id} type="button" aria-pressed={classId === c.id} onClick={() => setClassId(c.id)} className={styles.classChip}>
+                    {classId === c.id ? <Check size={13} aria-hidden /> : <Users size={13} aria-hidden />} {c.name}
+                  </button>
+                ))}
+              </div>
+            </section>
+          ) : null}
+          {error ? <p role="alert" className={styles.error}><Info size={15} aria-hidden />{error}</p> : null}
+        </div>
 
-        .mb-time-options { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-top:12px; }
-        .mb-time-option { min-height:72px; padding:12px; border:1px solid #e5ecef; border-radius:16px; background:#fff; color:#294456; text-align:left; cursor:pointer; }
-        .mb-time-option strong,.mb-time-option span { display:block; }
-        .mb-time-option strong { font-size:.88rem; }
-        .mb-time-option span { margin-top:5px; color:#81919b; font-size:.68rem; font-weight:700; }
-        .mb-time-selected { border-color:#0f766e; background:#effaf7; box-shadow:0 5px 18px rgba(15,118,110,.08); }
-
-        /* Class chips. */
-        .mb-cls-row {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 9px;
-        }
-        .mb-cls-chip {
-          position: relative;
-          min-height: 44px;
-          padding: 9px 20px;
-          border-radius: 999px;
-          background: rgba(255, 255, 255, .94);
-          border: 2px solid rgba(28, 43, 58, .11);
-          color: var(--mb-text-guru);
-          font-weight: 720;
-          cursor: pointer;
-          box-shadow: 0 4px 13px rgba(28, 43, 58, .04);
-          transition:
-            border-color var(--mb-motion-fast),
-            background var(--mb-motion-fast),
-            transform var(--mb-motion-fast);
-        }
-        .mb-cls-chip:hover {
-          transform: translateY(-1px);
-          border-color: rgba(20, 184, 166, .5);
-        }
-        .mb-cls-selected {
-          border-color: var(--mb-primary-strong);
-          background: linear-gradient(180deg, #e7faf6, #dff6f1);
-          font-weight: 820;
-        }
-        .mb-cls-selected::after {
-          content: "";
-          position: absolute;
-          top: 6px;
-          right: 7px;
-          width: 7px;
-          height: 7px;
-          border-radius: 50%;
-          background: var(--mb-primary-strong);
-        }
-
-        /* Final CTA — stage art memberi sense of occasion. */
-        .mb-setup-cta {
-          margin-top: 38px;
-        }
-        .mb-setup-cta-box {
-          position: relative;
-          min-height: 238px;
-          display: grid;
-          place-items: center;
-          overflow: hidden;
-          padding: 24px;
-          border-radius: 30px;
-          background:
-            linear-gradient(90deg, rgba(3, 20, 45, .08), rgba(255, 255, 255, .02) 36%, rgba(255, 255, 255, .02) 64%, rgba(3, 20, 45, .08)),
-            url('/images/main-bersama/cta-siap-bermain.webp') center / cover no-repeat;
-          border: 1px solid rgba(28, 43, 58, .1);
-          box-shadow: 0 20px 48px rgba(25, 49, 74, .14);
-        }
-        .mb-setup-cta-content {
-          width: min(100%, 430px);
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 5px;
-          padding: 19px 28px 17px;
-          border-radius: 24px;
-          background: rgba(255, 255, 255, .82);
-          border: 1px solid rgba(255, 255, 255, .76);
-          box-shadow: 0 14px 36px rgba(47, 59, 72, .12);
-          backdrop-filter: blur(9px);
-          text-align: center;
-        }
-        .mb-setup-cta-ready .mb-setup-cta-content {
-          box-shadow:
-            0 16px 40px rgba(47, 59, 72, .14),
-            0 0 0 4px rgba(20, 184, 166, .08);
-        }
-        .mb-setup-cta-title {
-          margin: 0;
-          font-size: 1.28rem;
-          font-weight: 860;
-          color: var(--mb-text-guru);
-        }
-        .mb-setup-cta-sub {
-          margin: 0 0 11px;
-          color: var(--mb-text-guru-secondary);
-        }
-        .mb-setup-cta-box .mb-primary-game-btn {
-          min-width: 210px;
-          box-shadow: 0 10px 24px rgba(13, 148, 136, .22);
-        }
-        .mb-setup-cta-reason {
-          margin: 10px 0 0;
-          color: var(--mb-text-guru-secondary);
-          font-size: .86rem;
-          font-weight: 650;
-        }
-        .mb-setup-error {
-          color: var(--mb-danger);
-          font-weight: 600;
-          text-align: center;
-          margin-top: var(--mb-space-3);
-        }
-
-        @media (max-width: 820px) {
-          .mb-setup-head {
-            min-height: 300px;
-            background:
-              linear-gradient(90deg, rgba(4, 20, 51, .95) 0%, rgba(5, 38, 86, .82) 58%, rgba(5, 38, 86, .35) 100%),
-              url('/images/main-bersama/hero-main-bersama.webp') 62% center / cover no-repeat;
-          }
-          .mb-setup-hero-copy { width: min(76%, 540px); }
-          .mb-mode-list { grid-template-columns: 1fr; }
-        }
-
-        @media (max-width: 600px) {
-          .mb-setup { padding: 12px 0 calc(44px + env(safe-area-inset-bottom)); }
-          .mb-setup-head {
-            min-height: 248px;
-            border-radius: 22px;
-            padding: 22px 18px;
-          }
-          .mb-setup-hero-copy { width: 100%; }
-          .mb-setup-head h1 { font-size: clamp(2.1rem, 11.5vw, 2.9rem); }
-          .mb-setup-hero-pills span:nth-child(3) { display: none; }
-          .mb-setup-section { margin-top: 24px; padding-inline: 0; }
-          .mb-setup-pick-row .mb-btn-ghost { width: 100%; justify-content: center; }
-          .mb-cls-row { flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; padding-bottom: 4px; }
-          .mb-cls-chip { flex: none; }
-          .mb-guru-h {
-            align-items: flex-start;
-            flex-wrap: wrap;
-          }
-          .mb-guru-h small {
-            width: calc(100% - 46px);
-            margin-left: 46px;
-            margin-top: -8px;
-          }
-          .mb-setup-empty {
-            grid-template-columns: 1fr;
-            text-align: center;
-            padding: 14px 20px 22px;
-          }
-          .mb-setup-empty-art { height: 104px; }
-          .mb-setup-pick-row { align-items: flex-start; }
-          .mb-setup-cta-box {
-            min-height: 210px;
-            border-radius: 22px;
-            padding: 14px;
-            background-position: center;
-          }
-          .mb-setup-cta-content {
-            width: 100%;
-            padding: 16px 14px 14px;
-          }
-          .mb-setup-cta-box .mb-primary-game-btn { width: 100%; min-width: 0; min-height: 48px; }
-        }
-      `}</style>
+        <aside className={styles.summary} aria-labelledby="mb-summary-h">
+          <div className={styles.summaryArt} aria-hidden><span><Gamepad2 size={14} />Petualangan kelasmu</span></div>
+          <div className={styles.summaryContent}>
+            <div className={styles.summaryHeading}>
+              <div><h2 id="mb-summary-h">Siap bermain?</h2><p>Ini rencana permainan kelasmu.</p></div>
+              <Sparkles size={20} aria-hidden />
+            </div>
+            <dl className={styles.summaryList}>
+              <div className={styles.summaryRow}>
+                <BookOpen size={16} aria-hidden />
+                <div><dt>Paket soal</dt><dd data-empty={!selectedTitle}>{selectedTitle ?? 'Belum dipilih'}
+                  {checking ? <small role="status">Memeriksa paket soal…</small> : questionCount !== undefined ? <small>{questionCount} soal dapat dimainkan</small> : null}
+                </dd></div>
+              </div>
+              <div className={styles.summaryRow}>
+                <Gamepad2 size={16} aria-hidden />
+                <div><dt>Cara bermain</dt><dd data-empty={!modeName}>{modeName ?? 'Belum dipilih'}
+                  {mode === 'jelajah-kata' ? <small>{teamCount} regu · Berlomba</small> : mode === 'kota-cahaya' ? <small>Satu kelas · Berkolaborasi</small> : null}
+                </dd></div>
+              </div>
+              <div className={styles.summaryRow}>
+                <Users size={16} aria-hidden />
+                <div><dt>Kelas</dt><dd>{selectedClass?.name ?? 'Tanpa kelas'}<small>{selectedClass ? 'Hasil tercatat untuk kelas ini' : 'Pilihan kelas bersifat opsional'}</small></dd></div>
+              </div>
+            </dl>
+            {mode === 'jelajah-kata' ? (
+              <div className={styles.summaryStats}>
+                <div><strong>{teamCount}</strong><span>Regu petualang</span></div>
+                <div><strong>{teamCount * maxMembersPerTeam}</strong><span>Kapasitas siswa</span></div>
+              </div>
+            ) : null}
+            <PrimaryGameButton onClick={openRoom} disabled={!canOpen} loading={opening || checking}
+              variant="light" className={styles.openButton}>
+              {partial && selectedCompat && !zero ? `Gunakan ${selectedCompat.supported} soal` : 'Buka Ruang'}
+              <ArrowRight size={16} aria-hidden />
+            </PrimaryGameButton>
+            {!canOpen && !opening && !checking && disabledReason ? (
+              <p role="status" className={styles.ctaReason}>{disabledReason}</p>
+            ) : <p className={styles.ctaReason}>Buka ruang, lalu bagikan PIN ke siswa.</p>}
+            <p className={styles.summaryTip}><Monitor size={14} aria-hidden /><span>Siapkan layar atau proyektor supaya seluruh kelas bisa mengikuti petualangan.</span></p>
+          </div>
+        </aside>
+      </div>
     </main>
   );
 }

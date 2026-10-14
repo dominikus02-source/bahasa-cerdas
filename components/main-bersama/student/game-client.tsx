@@ -30,6 +30,8 @@ import { ParticipantCount } from '@/components/main-bersama/shared/ParticipantCo
 import { PrimaryGameButton } from '@/components/main-bersama/shared/PrimaryGameButton';
 import { RoundCountdown } from '@/components/main-bersama/shared/RoundCountdown';
 import { StudentLandscapeControl } from '@/components/main-bersama/student/StudentLandscapeControl';
+import StudentQuestProgress from './StudentQuestProgress';
+import questStyles from './student-quest-progress.module.css';
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E'];
 
@@ -607,36 +609,20 @@ function StudentQuestion({
   }
 
   return (
-    <section className="mb-sq mb-fade-in">
-      <div className="mb-sq-progress">
-        {view.team ? (
-          <span className="mb-sq-team" title={`Regu ${view.team.name}`}>
-            <TeamMascot teamId={view.team.id} pose="ready" size={64} eager />
-          </span>
-        ) : null}
-        <span className="mb-number">
-          Soal {view.roundIndex + 1} dari {view.totalRounds}
-        </span>
-        {!view.automaticTeams ? <RoundCountdown
+    <section className={`${questStyles.question} mb-sq mb-fade-in`}>
+      <StudentQuestProgress
+        team={view.team ?? null}
+        currentRound={view.roundIndex + 1}
+        totalRounds={view.totalRounds}
+        gameMode={view.gameMode}
+        status={!view.automaticTeams ? <RoundCountdown
           closesAt={view.closesAt}
           serverTime={view.serverTime}
           compact
           light
           complete={saved || view.ownAnswerStatus === 'saved'}
-        /> : <span className="mb-sq-auto-label">Regu mandiri</span>}
-        <div
-          className="mb-sq-bar"
-          role="progressbar"
-          aria-valuenow={view.roundIndex + 1}
-          aria-valuemin={1}
-          aria-valuemax={view.totalRounds}
-        >
-          <div
-            className="mb-sq-bar-fill mb-progress-transition"
-            style={{ width: `${((view.roundIndex + 1) / view.totalRounds) * 100}%` }}
-          />
-        </div>
-      </div>
+        /> : <span>Regu mandiri</span>}
+      />
 
       <div className="mb-sq-cardwrap">
         <QuestionCard question={view.question} />
@@ -683,46 +669,6 @@ function StudentQuestion({
           width: min(100%, 720px);
           margin: 0 auto;
         }
-        .mb-sq-progress {
-          display: grid;
-          grid-template-columns: auto auto 1fr;
-          align-items: center;
-          gap: 9px 10px;
-          padding: 12px 14px;
-          border-radius: 18px;
-          border: 1px solid rgba(255,255,255,.09);
-          background: rgba(12, 33, 49, .72);
-          box-shadow: 0 10px 26px rgba(0,0,0,.12);
-          color: #abc0cf;
-          font-weight: 760;
-          font-size: .82rem;
-          backdrop-filter: blur(9px);
-        }
-        .mb-sq-progress :global(.mb-round-countdown) {
-          justify-self: end;
-        }
-        .mb-sq-team {
-          display: grid;
-          place-items: center;
-          width: 34px;
-          height: 34px;
-          border-radius: 11px;
-          background: rgba(255,255,255,.07);
-          border: 1px solid rgba(255,255,255,.08);
-        }
-        .mb-sq-bar {
-          grid-column: 1 / -1;
-          height: 7px;
-          background: rgba(255,255,255,.09);
-          border-radius: 999px;
-          overflow: hidden;
-        }
-        .mb-sq-bar-fill {
-          height: 100%;
-          background: linear-gradient(90deg, #1fb9a8, #69e0d4);
-          border-radius: 999px;
-          box-shadow: 0 0 16px rgba(54, 211, 194, .34);
-        }
         .mb-sq-cardwrap {
           border-radius: 25px;
           box-shadow: 0 18px 42px rgba(0,0,0,.16);
@@ -768,9 +714,6 @@ function StudentQuestion({
             grid-template-rows: auto minmax(0, 1fr);
             gap: 10px 16px;
             padding: 10px 18px 18px;
-          }
-          .mb-sq-progress {
-            grid-column: 1 / -1;
           }
           .mb-sq-cardwrap {
             grid-column: 1;

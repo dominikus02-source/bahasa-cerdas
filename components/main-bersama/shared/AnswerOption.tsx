@@ -1,5 +1,7 @@
 "use client";
 
+import styles from './answer-option.module.css';
+
 interface AnswerOptionProps {
   letter: string;
   text: string;
@@ -20,7 +22,7 @@ export function AnswerOption({ letter, text, selected, disabled, onSelect }: Ans
       onClick={onSelect}
       disabled={disabled}
       aria-pressed={selected}
-      className={`mb-answer ${selected ? 'mb-answer-selected' : ''}`}
+      className={`${styles.option} mb-answer ${selected ? 'mb-answer-selected' : ''}`}
     >
       <span className="mb-answer-letter mb-number" aria-hidden>{letter}</span>
       <span className="mb-answer-text">{text}</span>

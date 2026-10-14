@@ -41,8 +41,8 @@ function test(name: string, fn: () => boolean) {
       console.log(`  ❌ ${name}`)
       failed++
     }
-  } catch (e: any) {
-    console.log(`  ❌ ${name} — ${e.message}`)
+  } catch (e: unknown) {
+    console.log(`  ❌ ${name} — ${e instanceof Error ? e.message : String(e)}`)
     failed++
   }
 }
@@ -177,11 +177,12 @@ function pathCaseMatches(urlPath: string): { ok: boolean; bad?: string } {
 }
 
 function expected(team: string, pose: (typeof POSES)[number] = "ready") {
-  return `/main-bersama/jelajah/mascots/jelajah-${team}-${pose}.webp`
+  return `/main-bersama/jelajah/mascots/${['gajah', 'beruang'].includes(team) ? 'v2/' : ''}jelajah-${team}-${pose}.webp`
 }
 
 /** Arsip master lossless PNG per pose. */
 function masterPath(team: string, pose: (typeof POSES)[number]) {
+  if (["gajah", "beruang"].includes(team)) return path.join(ART_SOURCE_DIR, "v2", pose, `jelajah-${team}-${pose}.png`)
   const dir =
     pose === "ready"
       ? MASTER_DIR
@@ -196,7 +197,7 @@ function masterPath(team: string, pose: (typeof POSES)[number]) {
 /** Semua pose punya runtime art; TeamBadge tetap defensive fallback. */
 const FILLED_POSES = POSES
 const LEGACY_TEAM_IDS = TEAM_IDS.slice(0, 4) // Original art locked, with PNG masters
-const NEW_TEAM_IDS = TEAM_IDS.slice(4) // Original lightweight SVG masters added in this release
+const NEW_TEAM_IDS = TEAM_IDS.slice(4) // Generated PNG masters matching the original cartoon family
 
 async function main() {
   console.log("\n── A. Registry: READY/MOVE/CELEBRATE locked + PODIUM candidate ──")
@@ -275,10 +276,6 @@ async function main() {
       test(`${team}/${pose}: dimensi 1024×1024`, () => w.width === 1024 && w.height === 1024)
       test(`${team}/${pose}: ukuran ≤ ${MAX_WEBP_BYTES / 1024} KB`, () => buf.length <= MAX_WEBP_BYTES)
       test(`${team}/${pose}: ≥70% lebih kecil dari master PNG`, () => {
-        if (NEW_TEAM_IDS.includes(team)) {
-          return fs.existsSync(path.join(PUBLIC_DIR, "main-bersama", "jelajah", "mascots", `jelajah-${team}-${pose}.svg`))
-            && buf.length < 70 * 1024
-        }
         const master = masterPath(team, pose)
         if (!fs.existsSync(master)) return false
         return buf.length <= fs.statSync(master).size * 0.3
@@ -311,8 +308,11 @@ async function main() {
   }
 
   for (const team of NEW_TEAM_IDS) for (const pose of FILLED_POSES) {
-    test(`${team}/${pose}: editable SVG source included`, () =>
-      fs.existsSync(path.join(PUBLIC_DIR, "main-bersama", "jelajah", "mascots", `jelajah-${team}-${pose}.svg`)))
+    const master = masterPath(team, pose)
+    test(`${team}/${pose}: original generated PNG preserved`, () => fs.existsSync(master))
+    const info = decodePng(fs.readFileSync(master))
+    test(`${team}/${pose}: PNG master is 1254×1254 RGBA`, () => info.validSignature && info.width === 1254 && info.height === 1254 && info.colorType === 6)
+    test(`${team}/${pose}: real transparency, no opaque background`, () => info.sampledPixels > 0 && info.transparentSamples / info.sampledPixels > 0.05)
   }
 
   console.log("\n── D2. READY/MOVE/CELEBRATE LOCKED tidak berubah (bukti vs commit terakhir) ──")
@@ -434,9 +434,9 @@ async function main() {
           const bytes = (await res.arrayBuffer()).byteLength
           test(`${team}/${pose}: HTTP 200 + image/webp + ${bytes} byte`, () =>
             res.status === 200 && type.includes("image/webp") && bytes > 50_000)
-        } catch (e: any) {
+        } catch (e: unknown) {
           test(`${team}/${pose}: HTTP 200`, () => {
-            throw new Error(`fetch gagal: ${e.message}`)
+            throw new Error(`fetch gagal: ${e instanceof Error ? e.message : String(e)}`)
           })
         }
       }

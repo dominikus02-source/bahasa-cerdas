@@ -8,6 +8,10 @@
 // pause/resume/end) via postTeacherCommand yang sama dengan ruang guru.
 
 import { useCallback, useState } from 'react';
+import { ArrowLeft, ArrowRight, CheckCircle2, Maximize2, Minimize2, MoreHorizontal, Pause, Play, Square } from 'lucide-react';
+import EndSessionDialog from '@/components/main-bersama/shared/EndSessionDialog';
+import JelajahRaceStage from '@/components/main-bersama/shared/JelajahRaceStage';
+import playStyles from '@/components/main-bersama/shared/play-controls.module.css';
 import { useRouter } from 'next/navigation';
 import type { ProjectorSessionView } from '@/src/main-bersama/contracts/views/projector';
 import {
@@ -33,7 +37,6 @@ import { Podium } from '@/components/main-bersama/art/jelajah/Podium';
 import { useTrailMotion } from '@/components/main-bersama/art/jelajah-motion/useTrailMotion';
 import { useKotaMotion } from '@/components/main-bersama/art/kota-motion/useKotaMotion';
 import { useFullscreenControl } from '@/components/main-bersama/shared/useFullscreenControl';
-import { FullscreenExitControl } from '@/components/main-bersama/shared/FullscreenExitControl';
 
 const MODE_LABEL = {
   'jelajah-kata': 'Jelajah Kata',
@@ -66,6 +69,7 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [confirmEnd, setConfirmEnd] = useState(false);
   const fullscreen = useFullscreenControl({
     onError: (message) => setError(message),
     keyboard: true,
@@ -167,21 +171,19 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
   const primary: { label: string; action: DockCommand } | null =
     phase === 'lobby'
       ? { label: 'Mulai', action: 'start' }
+      : view.automaticTeams && !['summary', 'ended'].includes(phase)
+        ? null
       : phase === 'question'
         ? { label: 'Tutup Jawaban', action: 'close-round' }
         : phase === 'closed'
           ? { label: 'Bahas Jawaban', action: 'discuss' }
           : phase === 'discussion'
             ? { label: 'Lanjut', action: 'next-round' }
-            : null;
+            : phase === 'paused' ? { label: 'Lanjutkan', action: 'resume' } : null;
 
   return (
-    <main className="mb-pj">
+    <main className={`${playStyles.presentation} mb-pj`}>
       <ConnectionBanner visible={connection === 'offline'} />
-      <FullscreenExitControl
-        active={fullscreen.isFullscreen}
-        onExit={fullscreen.exit}
-      />
       <header className="mb-pj-head">
         <div className="mb-pj-brand">
           <h1 className="mb-display mb-pj-title">MAIN BERSAMA</h1>
@@ -243,7 +245,12 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
         </section>
       )}
 
-      {phase === 'question' && (
+      {phase === 'question' && view.automaticTeams && view.gameProgress.gameMode === 'jelajah-kata' ? (
+        <JelajahRaceStage teams={view.teams} progress={view.gameProgress.teamProgress}
+          playerCount={view.participation.playerCount}
+          poses={Object.fromEntries(view.teams.map(team => [team.id, getPose(team.id)]))} />
+      ) : null}
+      {phase === 'question' && !view.automaticTeams && (
         <section className="mb-pj-phase mb-pj-phase-question mb-fade-in">
           {view.currentQuestion ? (
             <div className="mb-pj-q">
@@ -370,8 +377,13 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
         <p role="alert" className="mb-pj-dock-error">{error}</p>
       ) : null}
 
-      {/* ── Teacher control dock (8B.1): kecil, di bawah, public-safe ── */}
-      <nav className="mb-dock" aria-label="Kontrol Layar Kelas">
+      {confirmEnd ? <EndSessionDialog title={`Akhiri sesi ${MODE_LABEL[view.gameMode]}?`}
+        description="Permainan akan ditutup dan hasil akhir ditampilkan. Siswa yang masih bermain tidak dapat melanjutkan soal setelah sesi berakhir."
+        busy={busy} onCancel={() => setConfirmEnd(false)}
+        onConfirm={() => { setConfirmEnd(false); void run('end'); }} /> : null}
+
+      {/* One classroom command dock; automatic teams keep their own round flow. */}
+      <nav className={`${playStyles.dock} mb-dock`} aria-label="Kontrol Layar Kelas">
         {phase === 'preparing' ? (
           <button type="button" className="mb-dock-primary" disabled>
             Menyiapkan lobby…
@@ -386,18 +398,21 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
             }}
             disabled={busy}
           >
+            {primary.action === 'start' || primary.action === 'resume' ? <Play size={16} fill="currentColor" aria-hidden /> : <ArrowRight size={16} aria-hidden />}
             {busy ? 'Memproses…' : primary.label}
           </button>
+        ) : view.automaticTeams && phase === 'question' ? (
+          <span className={playStyles.autoStatus}><CheckCircle2 size={15} aria-hidden />Regu bermain otomatis</span>
         ) : (
           <button type="button" className="mb-dock-primary" onClick={() => void returnToRoom()} disabled={busy}>
-            {phase === 'summary' || phase === 'ended' ? 'Kembali ke Ruang Guru' : 'Selesai'}
+            <ArrowLeft size={16} aria-hidden />Kembali ke Ruang Guru
           </button>
         )}
         <SoundToggle
           enabled={gameSound.enabled}
           unlocked={gameSound.unlocked}
           onToggle={() => void gameSound.toggle()}
-          compact={gameSound.unlocked}
+          compact
         />
         <button
           type="button"
@@ -406,15 +421,16 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
           aria-pressed={fullscreen.isFullscreen}
           title={fullscreen.isFullscreen ? 'Keluar layar penuh (F)' : 'Layar penuh (F)'}
         >
+          {fullscreen.isFullscreen ? <Minimize2 size={16} aria-hidden /> : <Maximize2 size={16} aria-hidden />}
           {fullscreen.isFullscreen ? 'Keluar Layar Penuh' : 'Layar Penuh'}
         </button>
-        <details className="mb-dock-more">
-          <summary aria-label="Kontrol lain">•••</summary>
-          <div className="mb-dock-menu" role="menu">
-            <button type="button" role="menuitem" onClick={() => void run('pause')} disabled={busy}>Jeda</button>
-            <button type="button" role="menuitem" onClick={() => void run('resume')} disabled={busy}>Lanjutkan</button>
-            <button type="button" role="menuitem" onClick={() => void run('end')} disabled={busy}>Akhiri</button>
-            <button type="button" role="menuitem" onClick={() => void returnToRoom()}>Keluar dari Layar Kelas</button>
+        <details className={`${playStyles.more} mb-dock-more`}>
+          <summary aria-label="Kontrol lain"><MoreHorizontal size={18} aria-hidden /></summary>
+          <div className="mb-dock-menu">
+            {!view.automaticTeams && (phase === 'question' || phase === 'closed' || phase === 'discussion') ? <button type="button" onClick={() => void run('pause')} disabled={busy}><Pause size={15} aria-hidden />Jeda permainan</button> : null}
+            {!view.automaticTeams && phase === 'paused' ? <button type="button" onClick={() => void run('resume')} disabled={busy}><Play size={15} aria-hidden />Lanjutkan permainan</button> : null}
+            {phase !== 'summary' && phase !== 'ended' && phase !== 'preparing' ? <button type="button" onClick={() => setConfirmEnd(true)} disabled={busy}><Square size={14} aria-hidden />Akhiri & lihat podium</button> : null}
+            <button type="button" onClick={() => void returnToRoom()}><ArrowLeft size={15} aria-hidden />Kembali ke Ruang Guru</button>
           </div>
         </details>
       </nav>

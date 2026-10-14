@@ -33,6 +33,7 @@ export type MascotPose = 'ready' | 'move' | 'celebrate' | 'podium';
  * 2026-09-22 — PODIUM batch reviewed and locked by owner (4/4).
  * Semua runtime memakai WebP 1024px (alpha utuh, ~88% lebih kecil) hasil
  * turunan dari PNG master 1254px yang tetap lossless di docs/.
+ * 2026-10-14 — gajah/beruang v2: same cartoon styling + triangular BC neckerchief; PNG masters in mascots/v2/.
  * TeamBadge tetap menjadi fallback defensif bila source pose gagal dimuat.
  */
 export const TEAM_MASCOTS: Record<TeamId, Record<MascotPose, { src: string | null; brief: string }>> = {
@@ -61,16 +62,16 @@ export const TEAM_MASCOTS: Record<TeamId, Record<MascotPose, { src: string | nul
     podium: { src: '/main-bersama/jelajah/mascots/jelajah-badak-podium.webp', brief: 'jelajah-badak-podium: strong friendly stance, rank-neutral blue scarf' },
   },
   gajah: {
-    ready: { src: '/main-bersama/jelajah/mascots/jelajah-gajah-ready.webp', brief: 'friendly elephant, turquoise scarf, ready' },
-    move: { src: '/main-bersama/jelajah/mascots/jelajah-gajah-move.webp', brief: 'elephant striding forward' },
-    celebrate: { src: '/main-bersama/jelajah/mascots/jelajah-gajah-celebrate.webp', brief: 'elephant joyful raised trunk' },
-    podium: { src: '/main-bersama/jelajah/mascots/jelajah-gajah-podium.webp', brief: 'elephant proud podium' },
+    ready: { src: '/main-bersama/jelajah/mascots/v2/jelajah-gajah-ready.webp', brief: '2D blue-gray elephant, teal triangular BC neckerchief, ready' },
+    move: { src: '/main-bersama/jelajah/mascots/v2/jelajah-gajah-move.webp', brief: 'elephant striding forward' },
+    celebrate: { src: '/main-bersama/jelajah/mascots/v2/jelajah-gajah-celebrate.webp', brief: 'elephant joyful raised trunk' },
+    podium: { src: '/main-bersama/jelajah/mascots/v2/jelajah-gajah-podium.webp', brief: 'elephant proud podium' },
   },
   beruang: {
-    ready: { src: '/main-bersama/jelajah/mascots/jelajah-beruang-ready.webp', brief: 'friendly bear, purple scarf, ready' },
-    move: { src: '/main-bersama/jelajah/mascots/jelajah-beruang-move.webp', brief: 'bear in playful stride' },
-    celebrate: { src: '/main-bersama/jelajah/mascots/jelajah-beruang-celebrate.webp', brief: 'bear cheering with both paws' },
-    podium: { src: '/main-bersama/jelajah/mascots/jelajah-beruang-podium.webp', brief: 'bear proud podium' },
+    ready: { src: '/main-bersama/jelajah/mascots/v2/jelajah-beruang-ready.webp', brief: '2D brown bear, purple triangular BC neckerchief, ready' },
+    move: { src: '/main-bersama/jelajah/mascots/v2/jelajah-beruang-move.webp', brief: 'bear in playful stride' },
+    celebrate: { src: '/main-bersama/jelajah/mascots/v2/jelajah-beruang-celebrate.webp', brief: 'bear cheering with both paws' },
+    podium: { src: '/main-bersama/jelajah/mascots/v2/jelajah-beruang-podium.webp', brief: 'bear proud podium' },
   },
 };
 

@@ -1,52 +1,46 @@
 import assert from 'node:assert/strict';
 import { getJelajahLayout, getJelajahTeams, JELAJAH_MASCOT_SIZE } from '../lib/main-bersama/jelajah-layout';
-const teams = ['elang', 'harimau', 'rusa', 'badak'].map((id) => ({ id }));
+const ids = ['elang', 'harimau', 'rusa', 'badak', 'gajah', 'beruang'];
+const teams = ids.slice(0, 4).map(id => ({ id }));
 const start = getJelajahLayout(teams, {}).positions;
 let count = 0;
 for (let a = 0; a <= 100; a += 10) for (let b = 0; b <= 100; b += 10)
   for (let c = 0; c <= 100; c += 10) for (let d = 0; d <= 100; d += 10) {
     const progress = { elang: a, harimau: b, rusa: c, badak: d };
-    const { positions } = getJelajahLayout(teams, progress);
+    const { positions, height } = getJelajahLayout(teams, progress);
     assert.equal(positions.size, 4);
     for (const team of teams) {
       const point = positions.get(team.id)!;
       const origin = start.get(team.id)!;
-      assert(point.x - JELAJAH_MASCOT_SIZE / 2 >= 28);
-      assert(point.x + JELAJAH_MASCOT_SIZE / 2 <= 1172);
-      assert(point.y - JELAJAH_MASCOT_SIZE >= 90);
-      assert(point.y + 32 <= 530, 'The fourth mascot must never be clipped.');
-      assert(point.y + 30 >= 423 && point.y + 30 <= 495);
-      assert.equal(point.x - origin.x, point.distance, 'Only progress moves a team forward.');
-      assert.equal(point.y, origin.y, 'Road depth never depends on leaderboard order.');
+      assert(point.x - JELAJAH_MASCOT_SIZE / 2 >= 190, 'Mascots cannot cover team names.');
+      assert(point.x + JELAJAH_MASCOT_SIZE / 2 < 1104, 'Mascots cannot cover progress badges.');
+      assert(point.y - JELAJAH_MASCOT_SIZE >= 50);
+      assert(point.y + 32 <= height, 'Every team must stay within the stage.');
+      assert.equal(point.x - origin.x, point.distance, 'Only authoritative progress moves a team forward.');
+      assert.equal(point.y, origin.y, 'Each team keeps its own lane regardless of rank.');
     }
-    count += 1;
+    count++;
   }
-for (const percent of [0, 33, 50, 100]) {
-  const points = [...getJelajahLayout(teams, Object.fromEntries(teams.map((team) => [team.id, percent]))).positions.values()];
-  assert.equal(new Set(points.map((point) => point.distance)).size, 1, 'Tied teams share the same forward distance.');
+for (const teamCount of [2, 3, 4, 5, 6]) {
+  const active = ids.slice(0, teamCount).map(id => ({ id, name: `Regu ${id}` }));
+  assert.deepEqual(getJelajahTeams([...active].reverse()).map(team => team.id), ids.slice(0, teamCount));
+  const origin = getJelajahLayout(active, {}).positions;
+  for (const percent of [0, 33, 50, 100]) {
+    const { positions, height } = getJelajahLayout(active, Object.fromEntries(active.map(team => [team.id, percent])));
+    const points = [...positions.values()];
+    assert.equal(positions.size, teamCount);
+    assert.equal(new Set(points.map(point => point.x)).size, 1, 'Tied progress must have the exact same horizontal position.');
+    assert.equal(new Set(points.map(point => point.y)).size, teamCount, 'Every mascot has a separate lane.');
+    points.forEach((point, i) => {
+      assert(point.y + 32 < height);
+      if (i > 0) assert(point.y - points[i - 1].y > JELAJAH_MASCOT_SIZE + 3, 'No vertical overlap, even during the stride animation.');
+      assert.equal(point.y, origin.get(active[i].id)!.y);
+    });
+  }
 }
-const points = [...start.values()];
-assert(points[3].x - points[0].x < JELAJAH_MASCOT_SIZE, 'Starting avatars intentionally overlap in perspective.');
-const lead = getJelajahLayout(teams, { elang: 33 }).positions;
-assert(lead.get('elang')!.distance > lead.get('badak')!.distance);
-assert(lead.get('elang')!.x > start.get('elang')!.x);
 for (const value of [NaN, Infinity, -30, 200]) {
   for (const point of getJelajahLayout(teams, { elang: value }).positions.values()) assert(Number.isFinite(point.x) && Number.isFinite(point.y));
 }
-assert.deepEqual(getJelajahTeams(teams.slice(0, 3)).map((team) => team.id), teams.slice(0, 3).map((team) => team.id));
-assert.equal(getJelajahLayout([], {}).positions.size, 4, 'All four regu are present even with incomplete view data.');
-console.log(`${count} perspective layouts passed: four regu, overlapping start, progress-only advancement, road depth and clipping bounds.`);
-
-const extended = ['elang', 'harimau', 'rusa', 'badak', 'gajah', 'beruang'].map((id) => ({id}));
-const six = getJelajahLayout(extended, {});
-assert.equal(six.positions.size, 6);
-for (const point of six.positions.values()) {
-  assert(point.x - 136 / 2 >= 28);
-  assert(point.x + 136 / 2 <= 1172);
-  assert(point.y + 32 <= 530);
-}
-assert.equal(getJelajahLayout(extended.slice(0,2),{}).positions.size, 2);
-
-const sixPoints = [...six.positions.values()];
-assert.equal(new Set(sixPoints.map(point => point.y)).size,3,'Five/six mascot mode has three road rows.');
-assert.equal(new Set(sixPoints.map(point => point.x)).size,2,'Five/six mascot mode has two staggered columns.');
+assert.equal(getJelajahLayout([], {}).positions.size, 4, 'The existing four-team fallback is preserved.');
+assert.deepEqual(getJelajahTeams([{id:'beruang',name:'Beruang Kelas A'},{id:'gajah'}]).map(t=>[t.id,t.name]), [['gajah','Gajah'],['beruang','Beruang Kelas A']]);
+console.log(`${count} progress combinations + 2–6 team lane checks passed: canonical order, equal starts, no overlap and no clipping.`);

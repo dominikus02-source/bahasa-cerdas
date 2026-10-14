@@ -1,0 +1,66 @@
+.world:global(.mb-jelajah-world) { position: relative; isolation: isolate; width: 100%; overflow: hidden; border: 1px solid #a8d8ac50; border-radius: 24px; background: #173e32; box-shadow: inset 0 1px 0 #e6ffda25, 0 12px 32px #12372515; font-family: var(--mb-font-ui); }
+.scenery { position: absolute; z-index: -2; inset: 0; width: 100%; height: 100%; opacity: .85; pointer-events: none; }
+.world::before { content: ''; position: absolute; z-index: -1; inset: 0; background: linear-gradient(180deg, #0b302bea, #153f2d55 45%, #092e29dc); pointer-events: none; }
+.heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 20px 12px; color: #d9ebcb; font-size: 10px; }
+.heading > span:first-child { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 8px; color: #f3f8dc; font-size: 14px; font-weight: 800; }
+.heading small { margin-left: 5px; padding: 5px 7px; border: 1px solid #d7e9af30; border-radius: 5px; color: #d5e8b8; font-size: 8px; letter-spacing: 1.1px; }
+.lanes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 8px 16px 16px; list-style: none; }
+.lane { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0 12px; min-width: 0; padding: 12px 16px 10px; border: 1px solid #d9efc335; border-radius: 16px; background: linear-gradient(145deg, #143d2de8, #0a2c25d9); box-shadow: inset 0 1px 0 #edffd90c, 0 4px 10px #07241c15; }
+.teamName { display: flex; align-items: center; gap: 9px; min-width: 0; color: #f5f8e7; font-size: 14px; }
+.teamName i { display: grid; place-items: center; width: 25px; height: 25px; flex: none; border: 1px solid color-mix(in srgb, var(--lane-color) 40%, transparent); border-radius: 8px; background: color-mix(in srgb, var(--lane-color) 12%, transparent); color: var(--lane-color); font-size: 11px; font-weight: 800; font-style: normal; }
+.teamName strong { font-weight: 800; overflow-wrap: anywhere; }
+.teamName > span { margin-left: auto; color: #bbd1bc; font-size: 8px; letter-spacing: 1.5px; }
+.course { position: relative; grid-row: 2; grid-column: 1 / -1; min-width: 0; height: calc(var(--sprite-display-size, var(--mascot-size)) + 12px); margin-inline: calc(var(--sprite-display-size, var(--mascot-size)) / 2); }
+.rail { position: absolute; inset: auto 0 12px; height: 9px; border: 1px solid #d6d2a541; border-radius: 9px; background: #071f1bad; box-shadow: 0 2px 0 #041e1b40; }
+.fill { position: absolute; inset: 0 auto 0 0; border-radius: inherit; background: linear-gradient(90deg, color-mix(in srgb, var(--lane-color) 50%, #203b26), var(--lane-color)); box-shadow: 0 0 14px color-mix(in srgb, var(--lane-color) 20%, transparent); transition: width 600ms cubic-bezier(.22,.9,.3,1); }
+.checkpoint { position: absolute; top: 50%; width: 9px; height: 9px; transform: translate(-50%, -50%) rotate(45deg); border: 1px solid #829b7c; border-radius: 2px; background: #173c2c; }
+.checkpoint[data-reached='true'] { border-color: var(--lane-color); background: var(--lane-color); box-shadow: 0 0 7px color-mix(in srgb, var(--lane-color) 40%, transparent); }
+.marker { position: absolute; bottom: 5px; transform: translateX(-50%); transition: left 600ms cubic-bezier(.22,.9,.3,1); }
+.marker::after { content: ''; position: absolute; bottom: -3px; left: 20%; right: 20%; height: 6px; border-radius: 50%; background: #021b19a6; filter: blur(2px); }
+.sprite { position: relative; z-index: 1; display: block; width: var(--sprite-display-size, var(--mascot-size)); height: var(--sprite-display-size, var(--mascot-size)); filter: drop-shadow(0 5px 3px #01171045); }
+.world .sprite :global(.mb-mascot), .world .sprite :global(.mb-mascot img) { display: block; width: 100%; height: 100%; object-fit: contain; }
+.moving .sprite { animation: lane-stride 300ms ease-in-out infinite alternate; }
+.start, .finish { position: absolute; bottom: 0; color: #c0d5bc; font-size: 7px; font-weight: 800; letter-spacing: .8px; }
+.start { left: 0; transform: translateX(-50%); }
+.finish { right: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; transform: translateX(50%); color: #f3dd99; }
+.percentage { grid-row: 1; grid-column: 2; color: var(--lane-color); font-size: 20px; line-height: 1; font-weight: 800; font-variant-numeric: tabular-nums; text-shadow: 0 0 16px color-mix(in srgb, var(--lane-color) 18%, transparent); }
+.caption:global(.mb-jelajah-world-caption) { display: flex; justify-content: space-between; gap: 10px; padding: 11px 20px; border-top: 1px solid #d5e6bb20; background: #092c2499; color: #c4d8bc; font-size: 10px; }
+.caption strong { color: #e5edc8; font-weight: 700; }
+@keyframes lane-stride { from { margin-bottom: 0; } to { margin-bottom: 3px; } }
+@media (min-width: 761px) {
+  .world[data-compact='true'] .lane { padding-block: 6px 4px; }
+  .world[data-compact='true'] .course { height: calc(var(--sprite-display-size, var(--mascot-size)) + 5px); }
+  .world[data-compact='true'] .heading { padding-block: 12px 8px; }
+  .world[data-compact='true'] .lanes { gap: 9px; padding-bottom: 10px; }
+  .world[data-compact='true'] .caption { display: none; }
+}
+@media (min-width: 1100px) {
+  .world[data-compact='true'][data-teams='5'] .lanes,
+  .world[data-compact='true'][data-teams='6'] .lanes { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 761px) and (max-width: 1099px) {
+  .world[data-compact='true'] { --sprite-display-size: 100px; }
+  .world[data-compact='true'] .teamName > span { display: none; }
+}
+@media (min-width: 900px) {
+  :global(.mb-room-fullscreen-active) .world { --sprite-display-size: 112px; }
+  :global(.mb-room-fullscreen-active) .course { height: 117px; }
+  :global(.mb-room-fullscreen-active) .lane { padding-block: 6px 4px; }
+  :global(.mb-room-fullscreen-active) .lanes { gap: 9px; padding-bottom: 10px; }
+  :global(.mb-room-fullscreen-active) .heading { padding-block: 12px 8px; }
+}
+@media (max-width: 760px) {
+  .world { --sprite-display-size: 112px; border-radius: 18px; }
+  .heading { align-items: flex-start; flex-direction: column; gap: 8px; padding: 16px 16px 10px; }
+  .heading small { margin-left: 0; }
+  .lanes { grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 8px 12px 12px; }
+  .lane { padding: 12px 14px 8px; }
+  .teamName { font-size: 14px; }
+  .teamName > span { display: none; }
+  .percentage { font-size: 20px; }
+  .caption:global(.mb-jelajah-world-caption) { flex-direction: column; padding: 12px 16px; gap: 5px; font-size: 9px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marker, .fill { transition: none; }
+  .moving .sprite { animation: none; }
+}

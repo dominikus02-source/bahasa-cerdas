@@ -7,6 +7,9 @@
 // Logic Tahap 6/7 TIDAK berubah — hanya presentation.
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Maximize2, Minimize2 } from "lucide-react";
+import playStyles from "@/components/main-bersama/shared/play-controls.module.css";
+import JelajahRaceStage from "@/components/main-bersama/shared/JelajahRaceStage";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { ProjectorSessionView } from "@/src/main-bersama/contracts/views/projector";
 import { fetchProjectorState } from "@/lib/main-bersama/api-client";
@@ -32,7 +35,6 @@ import {
   type KotaMotion,
 } from "@/components/main-bersama/art/kota-motion/useKotaMotion";
 import { useFullscreenControl } from "@/components/main-bersama/shared/useFullscreenControl";
-import { FullscreenExitControl } from "@/components/main-bersama/shared/FullscreenExitControl";
 
 const MODE_LABEL = {
   "jelajah-kata": "Jelajah Kata",
@@ -184,21 +186,9 @@ export function ProjectorClient() {
   }
 
   return (
-    <main className={`mb-pj mb-pj-mode-${view.gameMode}`}>
+    <main className={`${playStyles.presentation} mb-pj mb-pj-mode-${view.gameMode}`}>
       <ConnectionBanner visible={connection === "offline"} />
 
-      <div className="mb-pj-persistent-pin" role="status" aria-label={`PIN masuk Main Bersama: ${view.joinInfo.pin}`}>
-        <span className="mb-pj-persistent-pin-label">PIN MASUK</span>
-        <strong className="mb-number">
-          {view.joinInfo.pin.slice(0, 3)} {view.joinInfo.pin.slice(3, 6)}
-        </strong>
-        <span className="mb-pj-persistent-pin-hint">Keluar? Masuk lagi dengan PIN ini</span>
-      </div>
-
-      <FullscreenExitControl
-        active={fullscreen.isFullscreen}
-        onExit={fullscreen.exit}
-      />
       <header className="mb-pj-head">
         <div className="mb-pj-brand">
           <h1 className="mb-display mb-pj-title">MAIN BERSAMA</h1>
@@ -225,20 +215,21 @@ export function ProjectorClient() {
               {view.joinInfo.pin.slice(0, 3)} {view.joinInfo.pin.slice(3, 6)}
             </strong>
           </div>
-          <div className="mb-pj-utility-controls">
+          <div className={`${playStyles.utilityBar} mb-pj-utility-controls`}>
             <SoundToggle
               enabled={gameSound.enabled}
               unlocked={gameSound.unlocked}
               onToggle={() => void gameSound.toggle()}
-              compact={gameSound.unlocked}
+              compact
             />
             <button
               type="button"
-              className="mb-pj-fullscreen"
+              className={`${playStyles.fullscreenButton} mb-pj-fullscreen`}
               onClick={() => void fullscreen.toggle()}
               aria-pressed={fullscreen.isFullscreen}
+              aria-label={fullscreen.isFullscreen ? "Keluar Layar Penuh" : "Layar Penuh"}
             >
-              {fullscreen.isFullscreen ? "Keluar Layar Penuh" : "Layar Penuh"}
+              {fullscreen.isFullscreen ? <Minimize2 size={17} aria-hidden /> : <Maximize2 size={17} aria-hidden />}<span>{fullscreen.isFullscreen ? "Keluar Layar Penuh" : "Layar Penuh"}</span>
             </button>
           </div>
         </div>
@@ -246,6 +237,10 @@ export function ProjectorClient() {
 
       {view.phase === "lobby" || view.phase === "preparing" ? (
         <ProjectorLobby view={view} getPose={getPose} kotaMotion={kotaMotion} />
+      ) : view.phase === "question" && view.automaticTeams && view.gameProgress.gameMode === "jelajah-kata" ? (
+        <JelajahRaceStage teams={view.teams} progress={view.gameProgress.teamProgress}
+          playerCount={view.participation.playerCount}
+          poses={Object.fromEntries(view.teams.map(team => [team.id, getPose(team.id)]))} />
       ) : view.phase === "question" ? (
         <ProjectorQuestion view={view} kotaMotion={kotaMotion} />
       ) : view.phase === "closed" || view.phase === "paused" ? (
