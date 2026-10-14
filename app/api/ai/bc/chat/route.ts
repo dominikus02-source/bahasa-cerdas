@@ -133,8 +133,14 @@ export async function POST(req: NextRequest) {
         } catch (e) {
           const message = e instanceof Error ? e.message : "unknown";
           console.error(`[ai-bc] stream failed: ${message}`);
-          controller.enqueue(encoder.encode(sse({ type: "error", message: AI_BC_ERROR })));
-          controller.enqueue(encoder.encode(sse({ type: "done", provider: usedProvider || null, model: usedModel || null })));
+          // Jika Groq sudah mengirim sebagian jawaban, pertahankan teks itu di UI.
+          // Jangan mengubahnya menjadi error yang membuat klien membuang seluruh draf.
+          if (streamedText.trim()) {
+            controller.enqueue(encoder.encode(sse({ type: "done", provider: usedProvider || "groq", model: usedModel || null })));
+          } else {
+            controller.enqueue(encoder.encode(sse({ type: "error", message: AI_BC_ERROR })));
+            controller.enqueue(encoder.encode(sse({ type: "done", provider: usedProvider || null, model: usedModel || null })));
+          }
           controller.close();
         } finally {
           void logUsage({
