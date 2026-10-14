@@ -8,6 +8,8 @@ const TEAM_COLOR_VAR: Record<string, string> = {
   harimau: 'var(--mb-team-harimau)',
   rusa: 'var(--mb-team-rusa)',
   badak: 'var(--mb-team-badak)',
+  gajah: 'var(--mb-team-gajah)',
+  beruang: 'var(--mb-team-beruang)',
 };
 
 function TeamMark({ teamId }: { teamId: string }) {
@@ -38,6 +40,10 @@ function TeamMark({ teamId }: { teamId: string }) {
           <path d="M24 32 L31 26" />
         </g>
       );
+    case 'gajah':
+      return <g {...s}><path d="M12 20 Q24 5 36 20 L34 31 Q24 42 14 31 Z"/><path d="M24 22 L24 37 Q31 43 34 32"/><path d="M12 22 L5 30 M36 22 L43 30"/></g>;
+    case 'beruang':
+      return <g {...s}><circle cx="14" cy="14" r="6"/><circle cx="34" cy="14" r="6"/><path d="M11 35 Q5 20 24 16 Q43 20 37 35 Q24 43 11 35 Z"/><circle cx="24" cy="30" r="3"/></g>;
     case 'badak': // hexagon + horn — kuat, steady
     default:
       return (

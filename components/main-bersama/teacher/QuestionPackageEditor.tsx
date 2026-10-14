@@ -11,6 +11,7 @@ import {
   Plus,
   Trash2,
   UploadCloud,
+  Eye,
   X,
 } from "lucide-react";
 import {
@@ -19,6 +20,7 @@ import {
   packageDraftSchema,
   type DraftQuestion,
 } from "@/lib/main-bersama/question-authoring";
+import QuestionPreview from "./QuestionPreview";
 import type { SetupPackage } from "./setup-client";
 import "./question-authoring.css";
 
@@ -68,6 +70,7 @@ export default function QuestionPackageEditor({
   onSaved: (value: SetupPackage) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const [stage, setStage] = useState<Stage>("source");
   const [source, setSource] = useState<Source>("manual");
   const [title, setTitle] = useState("");
@@ -254,6 +257,15 @@ export default function QuestionPackageEditor({
   }
   return (
     <div className="mb-author">
+      {previewOpen ? <QuestionPreview
+        title={title || "Draft soal"}
+        questions={questions.map((item) => ({
+          prompt: item.prompt, options: item.options, correctIndex: item.correctIndex,
+          answerText: item.answerText, explanation: item.explanation,
+          ...(!questionReady(item) ? { unsupportedReason: "Soal belum lengkap; periksa sebelum menyimpan." } : {}),
+        }))}
+        onClose={() => setPreviewOpen(false)}
+      /> : null}
       {!open ? (
         <button
           className="mb-author-launch"
@@ -778,6 +790,9 @@ export default function QuestionPackageEditor({
                   </details>
                 )}
                 <footer className="mb-author-footer">
+                  <button type="button" className="mb-author-secondary" onClick={() => setPreviewOpen(true)}>
+                    <Eye size={18} /> Pratinjau siswa
+                  </button>
                   <button
                     type="button"
                     className="mb-author-text-button"
@@ -817,6 +832,9 @@ export default function QuestionPackageEditor({
                     <LockKeyhole size={14} /> Privat
                   </span>
                 </div>
+                <button type="button" className="mb-author-secondary" onClick={() => setPreviewOpen(true)}>
+                  <Eye size={18} /> Pratinjau semua soal sebelum digunakan
+                </button>
                 <p className="mb-author-review-intro">
                   Klik soal untuk mengedit. Setelah disimpan, paket langsung
                   terpilih untuk Main Bersama.

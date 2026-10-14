@@ -33,6 +33,20 @@ assert(lead.get('elang')!.x > start.get('elang')!.x);
 for (const value of [NaN, Infinity, -30, 200]) {
   for (const point of getJelajahLayout(teams, { elang: value }).positions.values()) assert(Number.isFinite(point.x) && Number.isFinite(point.y));
 }
-assert.deepEqual(getJelajahTeams(teams.slice(0, 3)).map((team) => team.id), teams.map((team) => team.id));
+assert.deepEqual(getJelajahTeams(teams.slice(0, 3)).map((team) => team.id), teams.slice(0, 3).map((team) => team.id));
 assert.equal(getJelajahLayout([], {}).positions.size, 4, 'All four regu are present even with incomplete view data.');
 console.log(`${count} perspective layouts passed: four regu, overlapping start, progress-only advancement, road depth and clipping bounds.`);
+
+const extended = ['elang', 'harimau', 'rusa', 'badak', 'gajah', 'beruang'].map((id) => ({id}));
+const six = getJelajahLayout(extended, {});
+assert.equal(six.positions.size, 6);
+for (const point of six.positions.values()) {
+  assert(point.x - 136 / 2 >= 28);
+  assert(point.x + 136 / 2 <= 1172);
+  assert(point.y + 32 <= 530);
+}
+assert.equal(getJelajahLayout(extended.slice(0,2),{}).positions.size, 2);
+
+const sixPoints = [...six.positions.values()];
+assert.equal(new Set(sixPoints.map(point => point.y)).size,3,'Five/six mascot mode has three road rows.');
+assert.equal(new Set(sixPoints.map(point => point.x)).size,2,'Five/six mascot mode has two staggered columns.');

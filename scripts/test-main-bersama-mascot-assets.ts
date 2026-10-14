@@ -195,6 +195,8 @@ function masterPath(team: string, pose: (typeof POSES)[number]) {
 
 /** Semua pose punya runtime art; TeamBadge tetap defensive fallback. */
 const FILLED_POSES = POSES
+const LEGACY_TEAM_IDS = TEAM_IDS.slice(0, 4) // Original art locked, with PNG masters
+const NEW_TEAM_IDS = TEAM_IDS.slice(4) // Original lightweight SVG masters added in this release
 
 async function main() {
   console.log("\n── A. Registry: READY/MOVE/CELEBRATE locked + PODIUM candidate ──")
@@ -216,8 +218,8 @@ async function main() {
       (n, t) => n + POSES.filter((p) => TEAM_MASCOTS[t][p].src === null).length,
       0
     ) === 0)
-  test("tepat 16 slot src terisi (4 pose × 4 regu)", () =>
-    TEAM_IDS.reduce((n, t) => n + POSES.filter((p) => TEAM_MASCOTS[t][p].src !== null).length, 0) === 16)
+  test("tepat 24 slot src terisi (4 pose × 6 regu)", () =>
+    TEAM_IDS.reduce((n, t) => n + POSES.filter((p) => TEAM_MASCOTS[t][p].src !== null).length, 0) === 24)
   test("semua src lowercase (aman di Linux)", () =>
     TEAM_IDS.every((t) =>
       FILLED_POSES.every((p) => {
@@ -273,6 +275,10 @@ async function main() {
       test(`${team}/${pose}: dimensi 1024×1024`, () => w.width === 1024 && w.height === 1024)
       test(`${team}/${pose}: ukuran ≤ ${MAX_WEBP_BYTES / 1024} KB`, () => buf.length <= MAX_WEBP_BYTES)
       test(`${team}/${pose}: ≥70% lebih kecil dari master PNG`, () => {
+        if (NEW_TEAM_IDS.includes(team)) {
+          return fs.existsSync(path.join(PUBLIC_DIR, "main-bersama", "jelajah", "mascots", `jelajah-${team}-${pose}.svg`))
+            && buf.length < 70 * 1024
+        }
         const master = masterPath(team, pose)
         if (!fs.existsSync(master)) return false
         return buf.length <= fs.statSync(master).size * 0.3
@@ -281,7 +287,7 @@ async function main() {
   }
   test("16 runtime WebP ukurannya berbeda (16 artwork distinct)", () =>
     new Set(
-      TEAM_IDS.flatMap((t) =>
+      LEGACY_TEAM_IDS.flatMap((t) =>
         FILLED_POSES.map((p) =>
           fs.statSync(path.join(PUBLIC_DIR, (TEAM_MASCOTS[t][p].src as string).slice(1))).size
         )
@@ -289,7 +295,7 @@ async function main() {
     ).size === 16)
 
   console.log("\n── D. Master lossless PNG semua pose tetap utuh di docs/ (bukan runtime) ──")
-  for (const team of TEAM_IDS) {
+  for (const team of LEGACY_TEAM_IDS) {
     for (const pose of FILLED_POSES) {
       const master = masterPath(team, pose)
       test(`${team}/${pose}: master PNG ada di docs/`, () => fs.existsSync(master))
@@ -304,13 +310,18 @@ async function main() {
     }
   }
 
+  for (const team of NEW_TEAM_IDS) for (const pose of FILLED_POSES) {
+    test(`${team}/${pose}: editable SVG source included`, () =>
+      fs.existsSync(path.join(PUBLIC_DIR, "main-bersama", "jelajah", "mascots", `jelajah-${team}-${pose}.svg`)))
+  }
+
   console.log("\n── D2. READY/MOVE/CELEBRATE LOCKED tidak berubah (bukti vs commit terakhir) ──")
   try {
     const { execSync } = require("child_process")
     const changedIn = (args: string) =>
       execSync(`git diff --name-only HEAD -- ${args}`, { cwd: REPO, encoding: "utf8" }).trim()
 
-    const readyRuntime = TEAM_IDS.map(
+    const readyRuntime = LEGACY_TEAM_IDS.map(
       (t) => `public/main-bersama/jelajah/mascots/jelajah-${t}-ready.webp`
     )
     const changedReady = changedIn(readyRuntime.join(" "))
@@ -320,7 +331,7 @@ async function main() {
     test("master READY di docs/ tidak tersentuh", () =>
       changedIn("docs/main-bersama/art-source/mascots/ready") === "")
 
-    const moveRuntime = TEAM_IDS.map(
+    const moveRuntime = LEGACY_TEAM_IDS.map(
       (t) => `public/main-bersama/jelajah/mascots/jelajah-${t}-move.webp`
     )
     const changedMove = changedIn(moveRuntime.join(" "))
@@ -330,7 +341,7 @@ async function main() {
     test("master MOVE di docs/ tidak tersentuh", () =>
       changedIn("docs/main-bersama/art-source/mascots/move") === "")
 
-    const celebrateRuntime = TEAM_IDS.map(
+    const celebrateRuntime = LEGACY_TEAM_IDS.map(
       (t) => `public/main-bersama/jelajah/mascots/jelajah-${t}-celebrate.webp`
     )
     const changedCelebrate = changedIn(celebrateRuntime.join(" "))

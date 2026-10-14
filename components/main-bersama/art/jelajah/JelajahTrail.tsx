@@ -13,6 +13,8 @@ const TEAM_COLORS: Record<string, string> = {
   harimau: "#f06a4d",
   rusa: "#d58b57",
   badak: "#718a9a",
+  gajah: "#14b8a6",
+  beruang: "#a78bfa",
 };
 
 // Optical ground anchors from the alpha bounds of the 1024px mascot assets.
@@ -21,6 +23,8 @@ const MASCOT_GROUND: Record<string, Record<"ready" | "move" | "celebrate", numbe
   harimau: { ready: 983, move: 982, celebrate: 980 },
   rusa: { ready: 1000, move: 1011, celebrate: 993 },
   badak: { ready: 983, move: 963, celebrate: 986 },
+  gajah: { ready: 1000, move: 1000, celebrate: 1000 },
+  beruang: { ready: 1000, move: 1000, celebrate: 1000 },
 };
 
 /**
@@ -42,7 +46,7 @@ export function JelajahTrail({
 }) {
   const shown = getJelajahTeams(teams);
   const { positions, backgroundOffset } = getJelajahLayout(shown, progress);
-  const mascotSize = compact ? JELAJAH_COMPACT_MASCOT_SIZE : JELAJAH_MASCOT_SIZE;
+  const mascotSize = shown.length > 4 ? (compact ? 108 : 136) : (compact ? JELAJAH_COMPACT_MASCOT_SIZE : JELAJAH_MASCOT_SIZE);
   const frameWidth = mascotSize + 24;
   const viewBox = compact ? "0 90 1200 440" : "0 70 1200 480";
 
@@ -55,7 +59,7 @@ export function JelajahTrail({
         viewBox={viewBox}
         className="mb-jelajah-world-svg"
         role="img"
-        aria-label="Empat regu sejajar dalam kedalaman jalan, berjalan ke depan sesuai progres"
+        aria-label={`${shown.length} regu berjalan sejajar sesuai progres perjalanan`}
         preserveAspectRatio="xMidYMid meet"
       >
         <defs>

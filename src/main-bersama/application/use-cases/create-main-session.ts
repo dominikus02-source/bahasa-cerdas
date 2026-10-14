@@ -44,7 +44,7 @@ export interface CreateMainSessionInput {
   /** Kelas KelasKu opsional (demo/acara tanpa kelas tetap valid). */
   classId?: string;
   /** Default diisi bila tidak diberikan (lihat session-defaults.ts). */
-  config?: { roundDurationMs?: number; kotaTargetCorrect?: number };
+  config?: { roundDurationMs?: number; kotaTargetCorrect?: number; teamCount?: number; maxMembersPerTeam?: number };
   /**
    * Pilihan EKSPLISIT caller (fix review Tahap 5 §1): pakai hanya
    * soal kompatibel dari paket campuran (mis. 30 → 27 + 3
@@ -185,7 +185,7 @@ export async function createMainSession(
   let initialState: GameEngineState | undefined;
   let kotaPending = false;
   if (resolved.config.gameMode === 'jelajah-kata') {
-    const stateResult = createGameState({ gameMode: 'jelajah-kata', totalRounds });
+    const stateResult = createGameState({ gameMode: 'jelajah-kata', totalRounds, teamCount: resolved.config.teamCount, maxMembersPerTeam: resolved.config.maxMembersPerTeam });
     if (!stateResult.ok) {
       return {
         ok: false,

@@ -8,15 +8,17 @@
 import { useState } from 'react';
 import { TeamBadge } from './shared/TeamBadge';
 
-export type TeamId = 'elang' | 'harimau' | 'rusa' | 'badak';
+export type TeamId = 'elang' | 'harimau' | 'rusa' | 'badak' | 'gajah' | 'beruang';
 
-export const TEAM_IDS: TeamId[] = ['elang', 'harimau', 'rusa', 'badak'];
+export const TEAM_IDS: TeamId[] = ['elang', 'harimau', 'rusa', 'badak', 'gajah', 'beruang'];
 
 export const TEAM_META: Record<TeamId, { name: string; colorVar: string; trait: string }> = {
   elang: { name: 'Elang', colorVar: 'var(--mb-team-elang)', trait: 'cepat, observatif, optimistis' },
   harimau: { name: 'Harimau', colorVar: 'var(--mb-team-harimau)', trait: 'percaya diri, energetic, berani' },
   rusa: { name: 'Rusa', colorVar: 'var(--mb-team-rusa)', trait: 'cerdas, lincah, tenang' },
   badak: { name: 'Badak', colorVar: 'var(--mb-team-badak)', trait: 'kuat, steady, persistent' },
+  gajah: { name: 'Gajah', colorVar: 'var(--mb-team-gajah)', trait: 'bijaksana, ramah, tangguh' },
+  beruang: { name: 'Beruang', colorVar: 'var(--mb-team-beruang)', trait: 'solid, tekun, bersahabat' },
 };
 
 export type MascotPose = 'ready' | 'move' | 'celebrate' | 'podium';
@@ -57,6 +59,18 @@ export const TEAM_MASCOTS: Record<TeamId, Record<MascotPose, { src: string | nul
     move: { src: '/main-bersama/jelajah/mascots/jelajah-badak-move.webp', brief: 'jelajah-badak-move: steady charge, ground lines' },
     celebrate: { src: '/main-bersama/jelajah/mascots/jelajah-badak-celebrate.webp', brief: 'jelajah-badak-celebrate: head raised, warm smile' },
     podium: { src: '/main-bersama/jelajah/mascots/jelajah-badak-podium.webp', brief: 'jelajah-badak-podium: strong friendly stance, rank-neutral blue scarf' },
+  },
+  gajah: {
+    ready: { src: '/main-bersama/jelajah/mascots/jelajah-gajah-ready.webp', brief: 'friendly elephant, turquoise scarf, ready' },
+    move: { src: '/main-bersama/jelajah/mascots/jelajah-gajah-move.webp', brief: 'elephant striding forward' },
+    celebrate: { src: '/main-bersama/jelajah/mascots/jelajah-gajah-celebrate.webp', brief: 'elephant joyful raised trunk' },
+    podium: { src: '/main-bersama/jelajah/mascots/jelajah-gajah-podium.webp', brief: 'elephant proud podium' },
+  },
+  beruang: {
+    ready: { src: '/main-bersama/jelajah/mascots/jelajah-beruang-ready.webp', brief: 'friendly bear, purple scarf, ready' },
+    move: { src: '/main-bersama/jelajah/mascots/jelajah-beruang-move.webp', brief: 'bear in playful stride' },
+    celebrate: { src: '/main-bersama/jelajah/mascots/jelajah-beruang-celebrate.webp', brief: 'bear cheering with both paws' },
+    podium: { src: '/main-bersama/jelajah/mascots/jelajah-beruang-podium.webp', brief: 'bear proud podium' },
   },
 };
 

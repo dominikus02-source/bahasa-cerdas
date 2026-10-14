@@ -38,7 +38,7 @@ import type {
 } from '../contracts/views/teacher';
 import type { ProjectorSessionView } from '../contracts/views/projector';
 import type { TeamPublicInfo } from '../contracts/views/common';
-import { JELAJAH_DEFAULT_TEAMS } from '../domain/entities/team';
+import { JELAJAH_DEFAULT_TEAMS, activeJelajahTeamKeys } from '../domain/entities/team';
 import { getKotaPodium } from '@/lib/main-bersama/kota-podium';
 
 // ─── Shared helpers ─────────────────────────────────────────
@@ -75,14 +75,14 @@ function revisionOf(engine: SessionEngine): number {
   );
 }
 
-function teamsPublic(): TeamPublicInfo[] {
-  return Object.values(JELAJAH_DEFAULT_TEAMS).map((t) => ({ ...t }));
+function teamsPublic(state: JelajahKataState | null): TeamPublicInfo[] {
+  return Object.keys(state?.teams ?? Object.fromEntries(activeJelajahTeamKeys().map((id) => [id, JELAJAH_DEFAULT_TEAMS[id]]))).map((key) => ({ ...JELAJAH_DEFAULT_TEAMS[key as keyof typeof JELAJAH_DEFAULT_TEAMS] }));
 }
 
 /** Progress per regu dari game state jelajah (0..100). */
 function jelajahTeamProgress(state: JelajahKataState | null): Record<string, number> {
   const out: Record<string, number> = {};
-  for (const key of Object.keys(JELAJAH_DEFAULT_TEAMS)) {
+  for (const key of Object.keys(state?.teams ?? Object.fromEntries(activeJelajahTeamKeys().map((id) => [id, JELAJAH_DEFAULT_TEAMS[id]])))) {
     out[key] = state?.teams[key]?.progress ?? 0;
   }
   return out;
@@ -416,7 +416,7 @@ export function buildTeacherView(
     currentRoundId: activeRound?.id ?? null,
     currentRoundClosesAt: activeRound?.closesAt?.toISOString() ?? null,
     currentQuestion: activeRound ? { ...activeRound.question } : null,
-    teams: teamsPublic(),
+    teams: teamsPublic(jelajah),
     participants: teacherParticipants(engine),
     answerSummary,
     roundAnalytics,
@@ -519,7 +519,7 @@ export function buildProjectorView(
         ? engine.state.answersByRound.get(activeRound.id)?.size ?? 0
         : submittedCount,
     },
-    teams: teamsPublic(),
+    teams: teamsPublic(jelajah),
     gameProgress:
       session.gameMode === 'jelajah-kata'
         ? { gameMode: 'jelajah-kata' as const, teamProgress: jelajahTeamProgress(jelajah) }

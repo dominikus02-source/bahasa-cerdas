@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState, useCallback } from "react";
 
-type TeamId = "elang" | "harimau" | "rusa" | "badak";
+type TeamId = string;
 type Pose = "ready" | "move" | "celebrate";
 
 interface TrailPose {
@@ -46,7 +46,7 @@ export function useTrailMotion(
     if (isInitial) isFirstRef.current = false;
 
     const motionAllowed = !REDUCED && MOTION_PHASES.has(phase);
-    const TEAMS: TeamId[] = ["elang", "harimau", "rusa", "badak"];
+    const TEAMS: TeamId[] = Object.keys(progress);
 
     for (const team of TEAMS) {
       const prevP = prev[team] ?? 0;

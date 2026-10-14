@@ -45,12 +45,16 @@ const TEAM_LABEL: Record<string, string> = {
   harimau: "Harimau",
   rusa: "Rusa",
   badak: "Badak",
+  gajah: "Gajah",
+  beruang: "Beruang",
 };
 const TEAM_COLOR_VAR: Record<string, string> = {
   elang: "var(--mb-team-elang)",
   harimau: "var(--mb-team-harimau)",
   rusa: "var(--mb-team-rusa)",
   badak: "var(--mb-team-badak)",
+  gajah: "var(--mb-team-gajah)",
+  beruang: "var(--mb-team-beruang)",
 };
 
 /**
@@ -289,7 +293,7 @@ export function ProjectorClient() {
                   compact
                   poses={(
                     view.teams.map((t) => t.id) as Array<
-                      "elang" | "harimau" | "rusa" | "badak"
+                      "elang" | "harimau" | "rusa" | "badak" | "gajah" | "beruang"
                     >
                   ).reduce<Record<string, "ready" | "move" | "celebrate">>(
                     (acc, id) => ({ ...acc, [id]: getPose(id) }),
@@ -405,7 +409,7 @@ function ProjectorLobby({
               compact
               poses={(
                 view.teams.map((t) => t.id) as Array<
-                  "elang" | "harimau" | "rusa" | "badak"
+                  "elang" | "harimau" | "rusa" | "badak" | "gajah" | "beruang"
                 >
               ).reduce<Record<string, "ready" | "move" | "celebrate">>(
                 (acc, id) => ({ ...acc, [id]: getPose(id) }),
@@ -566,7 +570,7 @@ function ProjectorDiscussion({
                 compact
                 poses={(
                   view.teams.map((t) => t.id) as Array<
-                    "elang" | "harimau" | "rusa" | "badak"
+                    "elang" | "harimau" | "rusa" | "badak" | "gajah" | "beruang"
                   >
                 ).reduce<Record<string, "ready" | "move" | "celebrate">>(
                   (acc, id) => ({ ...acc, [id]: getPose(id) }),

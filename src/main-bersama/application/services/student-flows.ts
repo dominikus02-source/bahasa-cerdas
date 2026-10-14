@@ -42,6 +42,7 @@ export type StudentErrorCode =
   | 'NAME_TOO_LONG'
   | 'NAME_CONTROL_CHARS'
   | 'AVATAR_INVALID'
+  | 'TEAM_FULL'
   | 'ROUND_NOT_OPEN'
   | 'PLAYER_NOT_ELIGIBLE'
   | 'INVALID_OPTION'
@@ -148,10 +149,21 @@ export async function joinSession(
 
   // Team balance: hanya join BARU yang mengubah komposisi; rejoin
   // mempertahankan regu (round historis tidak boleh terdistorsi).
-  const teamId =
-    session.gameMode === 'jelajah-kata'
-      ? (existing?.teamId ?? pickBalancedTeam(players))
-      : undefined;
+  const storedGame = session.gameMode === 'jelajah-kata'
+    ? await deps.gameStates.loadGameState(session.id)
+    : null;
+  const restoredGame = storedGame?.state as GameEngineState | undefined;
+  const jelajahState = restoredGame?.gameMode === 'jelajah-kata' ? restoredGame.jelajah : null;
+  const teamId = session.gameMode === 'jelajah-kata'
+    ? (existing?.teamId ?? pickBalancedTeam(
+        players,
+        jelajahState ? Object.keys(jelajahState.teams) : undefined,
+        jelajahState?.maxMembersPerTeam,
+      ))
+    : undefined;
+  if (session.gameMode === 'jelajah-kata' && !teamId) {
+    return { ok: false, code: 'TEAM_FULL', reason: 'Semua regu sudah mencapai batas peserta. Hubungi guru.' };
+  }
 
   const join = engine.joinPlayer({
     playerId: (existing?.id ?? randomUUID()) as PlayerId,

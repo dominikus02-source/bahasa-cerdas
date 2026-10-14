@@ -13,6 +13,8 @@ const TEAM_CHIPS = [
   { name: 'Harimau', varName: 'var(--mb-team-harimau)' },
   { name: 'Rusa', varName: 'var(--mb-team-rusa)' },
   { name: 'Badak', varName: 'var(--mb-team-badak)' },
+  { name: 'Gajah', varName: 'var(--mb-team-gajah)' },
+  { name: 'Beruang', varName: 'var(--mb-team-beruang)' },
 ] as const;
 
 const MILESTONE_PREVIEW = ['Taman', 'Perpustakaan', 'Rumah', 'Pusat Kota'] as const;

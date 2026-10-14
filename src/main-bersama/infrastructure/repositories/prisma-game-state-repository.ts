@@ -19,6 +19,7 @@ export interface JelajahStateJson {
   appliedRoundIds: string[];
   nextRoundIndex: number;
   totalRounds: number;
+  maxMembersPerTeam?: number;
 }
 
 export interface KotaStateJson {
@@ -36,6 +37,7 @@ export function jelajahStateToJson(state: {
   appliedRoundIds: string[];
   nextRoundIndex: number;
   totalRounds: number;
+  maxMembersPerTeam?: number;
 }): JelajahStateJson {
   const teams: JelajahStateJson['teams'] = {};
   for (const [teamId, team] of Object.entries(state.teams)) {
@@ -46,6 +48,7 @@ export function jelajahStateToJson(state: {
     appliedRoundIds: [...state.appliedRoundIds],
     nextRoundIndex: state.nextRoundIndex,
     totalRounds: state.totalRounds,
+    ...(state.maxMembersPerTeam !== undefined ? { maxMembersPerTeam: state.maxMembersPerTeam } : {}),
   };
 }
 
@@ -68,6 +71,7 @@ export function jelajahStateFromJson(json: unknown): JelajahStateJson {
     appliedRoundIds: obj.appliedRoundIds as string[],
     nextRoundIndex: obj.nextRoundIndex,
     totalRounds: obj.totalRounds,
+    ...(typeof obj.maxMembersPerTeam === 'number' ? { maxMembersPerTeam: obj.maxMembersPerTeam } : {}),
   };
 }
 

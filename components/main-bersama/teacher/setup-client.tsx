@@ -8,6 +8,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import QuestionPackageEditor from './QuestionPackageEditor';
+import QuestionPreview, { type PreviewQuestion } from './QuestionPreview';
+import { JELAJAH_TEAM_KEYS, JELAJAH_DEFAULT_TEAMS } from '@/src/main-bersama/domain/entities/team';
 import { useRouter } from 'next/navigation';
 import type { GameMode } from '@/src/main-bersama/domain/types/session';
 import { ModeCard } from '@/components/main-bersama/shared/ModeCard';
@@ -77,6 +79,11 @@ export function SetupClient({
   const [compat, setCompat] = useState<Record<string, CompatibilityInfo>>({});
   const [checking, setChecking] = useState(false);
   const [opening, setOpening] = useState(false);
+  const [teamCount, setTeamCount] = useState(4);
+  const [maxMembersPerTeam, setMaxMembersPerTeam] = useState(8);
+  const [estimatedStudents, setEstimatedStudents] = useState(0);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [previewData, setPreviewData] = useState<{ title: string; questions: PreviewQuestion[] } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const themeKey = themeSel ? themeCacheKey(themeSel) : null;
@@ -89,9 +96,11 @@ export function SetupClient({
     selectedCompat !== null && requestedCount !== null && selectedCompat.supported < requestedCount;
   const zero = selectedCompat !== null && selectedCompat.supported === 0;
 
+  const capacityShort = mode === 'jelajah-kata' && estimatedStudents > teamCount * maxMembersPerTeam;
+  const suggestedTeams = Math.ceil(estimatedStudents / maxMembersPerTeam);
   const canOpen = useMemo(
-    () => Boolean(selectedKey && mode && !checking && !opening && !zero),
-    [selectedKey, mode, checking, opening, zero],
+    () => Boolean(selectedKey && mode && !checking && !opening && !zero && !capacityShort),
+    [selectedKey, mode, checking, opening, zero, capacityShort],
   );
 
   /** Alasan CTA mati — disabled harus menjelaskan (§12). */
@@ -101,8 +110,9 @@ export function SetupClient({
     // "pilih cara bermain": mengganti mode tidak akan menolongnya.
     if (zero) return 'Belum ada soal yang bisa dimainkan dari paket ini. Pilih tema atau paket lain.';
     if (!mode) return 'Pilih cara bermain.';
+    if (capacityShort) return 'Kapasitas regu kurang untuk perkiraan siswa. Tambah regu atau tingkatkan kapasitas.';
     return null;
-  }, [selectedKey, mode, zero]);
+  }, [selectedKey, mode, zero, capacityShort]);
 
   /**
    * Cek kompatibilitas sumber terpilih (read-only, sumber Tahap 5).
@@ -150,6 +160,25 @@ export function SetupClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [preselectedTheme?.topic, preselectedTheme?.count, preselectedTheme?.difficulty, preselectedTheme?.seed]);
 
+  async function previewSelected() {
+    if (!selectedKey) return;
+    setPreviewLoading(true); setError(null);
+    try {
+      const packageRef = themeSel
+        ? { kind: 'BANK_THEME', topic: themeSel.topic, count: themeSel.count, difficulty: themeSel.difficulty, ...(themeSel.seed ? { seed: themeSel.seed } : {}) }
+        : { kind: 'SOAL_SET', soalSetId: packageId };
+      const response = await fetch('/api/main-bersama/teacher/question-preview', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ packageRef }),
+      });
+      const body = await response.json() as { title?: string; questions?: PreviewQuestion[]; error?: string };
+      if (!response.ok) throw new Error(body.error ?? 'Pratinjau gagal dimuat.');
+      setPreviewData({ title: body.title ?? 'Paket soal', questions: body.questions ?? [] });
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Pratinjau gagal dimuat.');
+    } finally { setPreviewLoading(false); }
+  }
+
   async function openRoom() {
     if (!selectedKey || !mode) return;
     setOpening(true);
@@ -173,7 +202,9 @@ export function SetupClient({
         gameMode: mode,
         packageRef,
         ...(classId ? { classId } : {}),
-        config: { roundDurationMs: 60 * 1000 },
+        config: { roundDurationMs: 60 * 1000,
+          ...(mode === 'jelajah-kata' ? { teamCount, maxMembersPerTeam } : {}),
+        },
         ...(partial ? { useSupportedQuestions: true } : {}),
       });
       const created = result.session as { id?: unknown } | undefined;
@@ -210,6 +241,7 @@ export function SetupClient({
 
   return (
     <main className="mb-setup mb-fade-in">
+      {previewData ? <QuestionPreview title={previewData.title} questions={previewData.questions} onClose={() => setPreviewData(null)}/> : null}
       {/* ── Header hero (§5) ── */}
       <header className="mb-setup-head">
         <div className="mb-setup-hero-copy">
@@ -320,6 +352,10 @@ export function SetupClient({
           </details>
           </div>
         )}
+      {selectedKey ? <button type="button" onClick={() => void previewSelected()} disabled={previewLoading}
+        className="mb-author-secondary" style={{ marginTop: 12, minHeight: 46, padding: '10px 16px', border: '2px solid #7c3aed', borderRadius: 12, fontWeight: 800, color: '#5b21b6', background: '#f5f3ff' }}>
+        {previewLoading ? 'Memuat pratinjau…' : '👁 Pratinjau paket terpilih sebelum bermain'}
+      </button> : null}
       <QuestionPackageEditor onSaved={(p) => {
         setPackages(prev => [p, ...prev]);
         setCompat(prev => ({ ...prev, [p.id]: { total: p.questionCount, supported: p.questionCount } }));
@@ -341,7 +377,38 @@ export function SetupClient({
       </section>
 
       {mode === 'jelajah-kata' ? (
-        <p className="mb-auto-mode-note">Empat regu berjalan bersama, masing-masing maju sesuai progresnya. Soal berganti setelah semua anggota regu menjawab, dan hasil akhir tampil otomatis. Pastikan seluruh siswa sudah masuk sebelum memulai.</p>
+        <section className="mb-auto-mode-note" aria-label="Pengaturan regu Jelajah Kata">
+          <strong style={{ display: 'block', marginBottom: 12 }}>Atur kelompok Jelajah Kata</strong>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }} role="group" aria-label="Jumlah kelompok">
+            {[2, 3, 4, 5, 6].map((count) => <button key={count} type="button"
+              aria-pressed={teamCount === count} onClick={() => setTeamCount(count)}
+              style={{ minWidth: 48, minHeight: 48, padding: '8px 12px', borderRadius: 12, fontWeight: 800,
+                border: teamCount === count ? '2px solid #6d28d9' : '1px solid #94a3b8',
+                background: teamCount === count ? '#ede9fe' : '#fff', color: '#1e1b4b' }}>
+              {count} regu
+            </button>)}
+          </div>
+          <p style={{ marginTop: 10 }}>Maskot: {JELAJAH_TEAM_KEYS.slice(0, teamCount).map((id) => JELAJAH_DEFAULT_TEAMS[id].name).join(' · ')}</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, marginTop: 12 }}>
+            <label style={{ display: 'grid', gap: 5 }}>Maksimal siswa per regu
+              <input type="number" inputMode="numeric" min={1} max={50} value={maxMembersPerTeam}
+                onChange={(e) => setMaxMembersPerTeam(Math.max(1, Math.min(50, Number(e.target.value) || 1)))}
+                style={{ width: 114, minHeight: 44, border: '1px solid #94a3b8', borderRadius: 8, padding: 8 }}/>
+            </label>
+            <label style={{ display: 'grid', gap: 5 }}>Perkiraan siswa (opsional)
+              <input type="number" inputMode="numeric" min={0} max={300} value={estimatedStudents || ''}
+                placeholder="Mis. 36" onChange={(e) => setEstimatedStudents(Math.max(0, Math.min(300, Number(e.target.value) || 0)))}
+                style={{ width: 150, minHeight: 44, border: '1px solid #94a3b8', borderRadius: 8, padding: 8 }}/>
+            </label>
+          </div>
+          <p style={{ marginTop: 12 }}>Kapasitas ruang: <strong>{teamCount * maxMembersPerTeam} siswa</strong>. Siswa baru ditempatkan otomatis ke regu dengan anggota paling sedikit.</p>
+          {estimatedStudents > 0 ? <p role="status" style={{ fontWeight: capacityShort ? 800 : 500, color: capacityShort ? '#b91c1c' : '#166534' }}>
+            {capacityShort ? `Kapasitas belum cukup untuk ${estimatedStudents} siswa.` : `Perkiraan ${estimatedStudents} siswa: sekitar ${Math.floor(estimatedStudents/teamCount)}–${Math.ceil(estimatedStudents/teamCount)} siswa per regu.`}
+            {suggestedTeams <= 6 && suggestedTeams >= 2 && suggestedTeams !== teamCount
+              ? <button type="button" className="mb-author-secondary" style={{ marginLeft: 10 }} onClick={() => setTeamCount(suggestedTeams)}>Gunakan saran {suggestedTeams} regu</button> : null}
+          </p> : null}
+          <p>Setiap regu maju sesuai progresnya. Soal berganti otomatis setelah seluruh anggota regu menjawab. Pastikan siswa masuk sebelum mulai.</p>
+        </section>
       ) : null}
 
       {/* ── Langkah 3: kelas (§11) ── */}

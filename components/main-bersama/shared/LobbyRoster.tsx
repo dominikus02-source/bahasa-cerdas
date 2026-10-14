@@ -19,6 +19,8 @@ const TEAM_LABEL: Record<string, string> = {
   harimau: "Harimau",
   rusa: "Rusa",
   badak: "Badak",
+  gajah: "Gajah",
+  beruang: "Beruang",
 };
 
 const TEAM_COLOR: Record<string, string> = {
@@ -26,6 +28,8 @@ const TEAM_COLOR: Record<string, string> = {
   harimau: "var(--mb-team-harimau)",
   rusa: "var(--mb-team-rusa)",
   badak: "var(--mb-team-badak)",
+  gajah: "var(--mb-team-gajah)",
+  beruang: "var(--mb-team-beruang)",
 };
 
 const AVATAR_PALETTES = [
