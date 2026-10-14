@@ -446,6 +446,9 @@ export async function autoAdvanceJelajahIfRoundComplete(
   deps.resolver.discard?.(sessionId);
   const initial = await loadEngineWithGameState(deps, sessionId);
   if (!initial || initial.engine.state.session.gameMode !== 'jelajah-kata') return;
+  // Independent sessions pre-create every round; the shared-round advance
+  // must not close them or promote the session to SUMMARY.
+  if (isIndependentJelajah(initial.engine.state)) return;
   if (initial.engine.state.session.phase !== 'question') return;
 
   const activeRound = initial.engine.activeRound();
@@ -546,8 +549,17 @@ export async function endSession(
 ): Promise<TeacherCommandResult<{ phase: 'ended' }>> {
   const guard = await requireOwnedEngine(deps, actor, sessionId);
   if (!guard.ok) return guard;
-  if (isIndependentJelajah(guard.engine.state) && !['summary', 'ended'].includes(guard.engine.state.session.phase)) return { ok: false, code: 'INVALID_PHASE', reason: 'Tunggu semua regu menyelesaikan permainan.' };
   const { engine, gameState } = guard;
+  const independentActive = isIndependentJelajah(engine.state) && engine.state.session.phase === 'question';
+  if (independentActive && !deps.rounds.finishIndependentJelajah) {
+    return { ok: false, code: 'INTERNAL', reason: 'Penutupan Jelajah belum tersedia.' };
+  }
+  // Satu transaksi menutup semua soal dan mengakhiri sesi, hanya setelah
+  // guru menekan tombol dengan konfirmasi. Cegah submit-vs-end race.
+  if (independentActive) {
+    await deps.rounds.finishIndependentJelajah!(sessionId, deps.clock.now());
+    deps.resolver.discard?.(sessionId);
+  }
   const result = engine.endSession();
   if (!result.ok) {
     return {
@@ -555,7 +567,7 @@ export async function endSession(
       code: result.code === 'SESSION_ENDED' ? 'SESSION_ENDED' : 'INVALID_PHASE',
     };
   }
-  await persistSession(deps, engine);
+  if (!independentActive) await persistSession(deps, engine);
   // Final summary game state (jelajah ranking / kota mission) —
   // satu row 'summary' per sesi untuk report/audit (§20).
   if (gameState) {

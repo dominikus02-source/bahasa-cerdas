@@ -362,7 +362,9 @@ export async function submitAnswer(
   // Best-effort terhadap ACK siswa: jawaban yang sudah durable tetap sukses
   // bila auto-advance mengalami gangguan sementara; retry idempotent akan
   // mencoba lagi tanpa membocorkan correctness.
-  if (engine.state.session.gameMode === 'jelajah-kata') {
+  // Independent Jelajah saves all per-team progress transactionally; NEVER run
+  // the legacy shared-round auto-advance or it can prematurely end the session.
+  if (engine.state.session.gameMode === 'jelajah-kata' && !isIndependentJelajah(engine.state)) {
     try {
       await autoAdvanceJelajahIfRoundComplete(
         deps,

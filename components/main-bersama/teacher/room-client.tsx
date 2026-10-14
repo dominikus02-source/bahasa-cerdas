@@ -65,6 +65,7 @@ export function TeacherRoomClient({
   className?: string | null;
 }) {
   const [busy, setBusy] = useState(false);
+  const [confirmEnd, setConfirmEnd] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'layar' | 'kontrol' | 'analisis'>('layar');
   const [savingResults, setSavingResults] = useState(false);
@@ -111,6 +112,12 @@ export function TeacherRoomClient({
       setError(null);
       try {
         await postTeacherCommand({ action, sessionId });
+        // Setelah guru menutup kelas, tampilkan podium tanpa harus
+        // mencari kembali tab Tampilan Kelas.
+        if (action === 'end') {
+          setActiveTab('layar');
+          setJelajahPodiumView('regu');
+        }
         // Command sukses harus langsung terlihat di layar pengendali.
         // Jangan menunggu Broadcast/poll untuk mengubah CTA/fase.
         await refresh();
@@ -154,6 +161,14 @@ export function TeacherRoomClient({
     );
   }
 
+  const canManuallyEndJelajah =
+    view.gameMode === 'jelajah-kata' && view.automaticTeams &&
+    view.allowedActions.canEndSession && view.phase === 'question';
+  const rosterTeams = Object.values(view.teamRounds ?? {});
+  const everyoneFinished = canManuallyEndJelajah &&
+    rosterTeams.length > 0 && rosterTeams.every((team) => team.finished);
+  const askToEnd = () => setConfirmEnd(true);
+
   const answered = view.answerSummary.submittedCount;
   const eligible = view.answerSummary.eligibleCount;
   const primaryAction = getTeacherPrimaryAction(view);
@@ -180,6 +195,28 @@ export function TeacherRoomClient({
   return (
     <main className={`mb-room game-fullscreen${fullscreen.isFullscreen ? " mb-room-fullscreen-active" : ""}`}>
       <ConnectionBanner visible={connection === 'offline'} />
+      {confirmEnd ? (
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center bg-slate-950/80 p-4">
+          <section role="alertdialog" aria-modal="true" aria-labelledby="mb-end-title"
+            aria-describedby="mb-end-description"
+            className="w-full max-w-md rounded-2xl bg-white p-6 text-slate-900 shadow-2xl">
+            <h2 id="mb-end-title" className="text-xl font-extrabold">Akhiri sesi Jelajah Kata?</h2>
+            <p id="mb-end-description" className="mt-3 text-base leading-relaxed">
+              {everyoneFinished
+                ? 'Semua regu sudah menyelesaikan soal. Setelah sesi ditutup, podium dan hasil akhir akan ditampilkan.'
+                : 'Masih ada regu atau siswa yang belum menyelesaikan soal. Jawaban yang sudah masuk akan dihitung, tetapi soal yang belum dikerjakan akan ditutup. Podium akan ditampilkan.'}
+            </p>
+            <div className="mt-6 flex flex-wrap justify-end gap-3">
+              <button type="button" onClick={() => setConfirmEnd(false)} disabled={busy}
+                className="min-h-12 rounded-xl border border-slate-300 px-5 font-bold">Lanjut bermain</button>
+              <button type="button" disabled={busy} onClick={() => { setConfirmEnd(false); void run('end'); }}
+                className="min-h-12 rounded-xl bg-rose-700 px-5 font-bold text-white disabled:opacity-50">
+                Akhiri &amp; Lihat Podium
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
       <div className="mb-room-toolbar">
       <SessionHeader
         mode={view.gameMode}
@@ -221,15 +258,21 @@ export function TeacherRoomClient({
         <button type="button" aria-pressed={activeTab === 'kontrol'} className={`mb-host-tab ${activeTab === 'kontrol' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('kontrol')}>Kontrol Guru</button>
         <button type="button" aria-pressed={activeTab === 'analisis'} className={`mb-host-tab ${activeTab === 'analisis' ? 'mb-host-tab-active' : ''}`} onClick={() => setActiveTab('analisis')}>Analisis</button>
       </nav>
-      {activeTab === 'layar' && primaryAction ? (
+      {activeTab === 'layar' && (primaryAction || canManuallyEndJelajah) ? (
         <div className="mb-classroom-actions" aria-label="Kendali permainan kelas">
           <div className="mb-classroom-action-context">
-            <strong>{view.phase === 'lobby' ? 'Kelas siap bermain?' : view.phase === 'summary' ? 'Hasil permainan' : view.phase === 'paused' ? 'Permainan dijeda' : `Soal ${roundLabel ?? '—'}`}</strong>
+            <strong>{everyoneFinished ? 'Semua regu sudah selesai!' : view.phase === 'lobby' ? 'Kelas siap bermain?' : view.phase === 'summary' ? 'Hasil permainan' : view.phase === 'paused' ? 'Permainan dijeda' : `Soal ${roundLabel ?? '—'}`}</strong>
             <span>{view.phase === 'lobby' ? (view.participants.length === 0 ? 'Tunggu minimal satu siswa bergabung untuk mulai.' : `${view.participants.length} siswa sudah masuk · mulai saat kelas sudah siap.`) : view.phase === 'question' ? `${answered} dari ${eligible} siswa sudah menjawab` : view.phase === 'closed' ? 'Jawaban terkunci · lanjutkan ke pembahasan' : view.phase === 'discussion' ? 'Selesai membahas? Lanjutkan dari sini.' : 'Kendalikan permainan dari layar ini.'}</span>
           </div>
           <div className="mb-classroom-action-buttons">
             {view.allowedActions.canPause && view.phase !== 'lobby' ? <button type="button" className="mb-secondary-btn" onClick={() => void run('pause')} disabled={busy}>Jeda</button> : null}
             {primaryControl}
+            {canManuallyEndJelajah ? (
+              <button type="button" className="mb-secondary-btn mb-danger-btn"
+                onClick={askToEnd} disabled={busy}>
+                {everyoneFinished ? '🏆 Akhiri Sesi & Lihat Podium' : 'Akhiri Sesi'}
+              </button>
+            ) : null}
           </div>
         </div>
       ) : null}
@@ -258,7 +301,13 @@ export function TeacherRoomClient({
           <div className="mb-host-actions">
             {primaryControl}
             {view.allowedActions.canPause ? <button type="button" className="mb-secondary-btn" onClick={() => run('pause')} disabled={busy}>Jeda</button> : null}
-            {view.allowedActions.canEndSession && view.phase !== 'summary' ? <button type="button" className="mb-secondary-btn mb-danger-btn" onClick={() => run('end')} disabled={busy}>Akhiri</button> : null}
+             {view.allowedActions.canEndSession && view.phase !== 'summary' && !canManuallyEndJelajah
+              ? <button type="button" className="mb-secondary-btn mb-danger-btn"
+                  onClick={() => void run('end')} disabled={busy}>Akhiri Sesi</button> : null}
+            {canManuallyEndJelajah ? <button type="button" className="mb-secondary-btn mb-danger-btn"
+              onClick={askToEnd} disabled={busy}>
+              {everyoneFinished ? '🏆 Akhiri Sesi & Lihat Podium' : 'Akhiri Sesi'}
+            </button> : null}
           </div>
           <p className="mb-host-tip">Gunakan <strong>Tampilan Kelas</strong> untuk proyektor. Kendali utama juga tersedia langsung di Tampilan Kelas.</p>
 
@@ -665,7 +714,6 @@ export function TeacherRoomClient({
                 <div className="mb-final-team-podium">
                   {[2, 1, 3].flatMap((rank) => {
                     const rankedTeams = [...view.teams]
-                      .slice(0, 4)
                       .sort((a, b) => {
                         const ap = view.gameState?.gameMode === 'jelajah-kata'
                           ? (view.gameState.jelajahKata.teamProgress[a.id] ?? 0)
@@ -699,6 +747,19 @@ export function TeacherRoomClient({
                       </div>
                     )];
                   })}
+                  {view.teams.length > 3 ? <div className="mb-team-other-results" role="list"
+                    aria-label="Peringkat regu lainnya"
+                    style={{ gridColumn: '1 / -1', display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center', marginTop: 14 }}>
+                    {[...view.teams].sort((a,b) => (
+                      (view.gameState?.gameMode === 'jelajah-kata' ? view.gameState.jelajahKata.teamProgress[b.id] ?? 0 : 0)
+                      - (view.gameState?.gameMode === 'jelajah-kata' ? view.gameState.jelajahKata.teamProgress[a.id] ?? 0 : 0)
+                      || a.name.localeCompare(b.name, 'id')
+                    )).slice(3).map((team, index) => <div role="listitem" key={team.id}
+                      style={{ display:'flex', alignItems:'center', gap:8, border:'1px solid #cbd5e1', borderRadius:12, padding:'9px 12px', background:'#f8fafc' }}>
+                      <strong>#{index + 4}</strong><TeamMascot teamId={team.id} pose="podium" size={48}/>
+                      <span>{team.name} · {Math.round(view.gameState?.gameMode === 'jelajah-kata' ? view.gameState.jelajahKata.teamProgress[team.id] ?? 0 : 0)}%</span>
+                    </div>)}
+                  </div> : null}
                 </div>
               ) : (
                 <div className="mb-final-podium" data-count={getStudentPodium(view.participants).length}>

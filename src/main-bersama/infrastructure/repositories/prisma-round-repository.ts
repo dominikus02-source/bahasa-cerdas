@@ -204,6 +204,32 @@ export class PrismaRoundRepository implements RoundRepository {
   }
 
   /**
+   * Guru mengakhiri Jelajah Kata secara atomik. Lock semua round terlebih
+   * dahulu, menggunakan urutan lock sama dengan submit jawaban, sehingga
+   * jawaban yang sudah diterima tetap dihitung dan submit baru tertolak.
+   * Jangan akhiri otomatis ketika semua regu menjawab.
+   */
+  async finishIndependentJelajah(sessionId: string, now: Date): Promise<boolean> {
+    return db.$transaction(async (tx) => {
+      // Submit jawaban juga mengambil MainSession FOR UPDATE sebelum round.
+      // Urutan lock yang sama mencegah deadlock dan late writes.
+      await tx.$queryRaw`SELECT id FROM "MainSession" WHERE id = ${sessionId} FOR UPDATE`;
+      const changed = await tx.mainSession.updateMany({
+        where: { id: sessionId, gameMode: 'JELAJAH_KATA', phase: 'QUESTION' },
+        data: { phase: 'ENDED', endedAt: now },
+      });
+      if (changed.count !== 1) {
+        throw new Error('Jelajah Kata sudah berubah fase sebelum diakhiri');
+      }
+      await tx.mainRound.updateMany({
+        where: { sessionId, status: 'OPEN' },
+        data: { status: 'CLOSED', closedAt: now },
+      });
+      return true;
+    }, { timeout: 20000 });
+  }
+
+  /**
    * Satu-satunya request yang berhasil mengubah round OPEN menjadi CLOSED
    * menjadi pemilik auto-advance Jelajah. Session dipindah ke DISCUSSION di
    * transaksi yang sama agar engine yang direhidrasi bisa membuka soal baru

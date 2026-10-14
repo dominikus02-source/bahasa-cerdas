@@ -157,6 +157,9 @@ const roundsStore = {
   async startIndependentJelajah(sessionId: string, now: Date) {
     return roundRepo.startIndependentJelajah(sessionId, now);
   },
+  async finishIndependentJelajah(sessionId: string, now: Date) {
+    return roundRepo.finishIndependentJelajah(sessionId, now);
+  },
   async save(round: MainRoundPort): Promise<void> {
     await roundRepo.save({
       id: round.id,

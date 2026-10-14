@@ -438,7 +438,7 @@ export function buildTeacherView(
             }
           : null,
     allowedActions: { ...allowedActionsFor(phase, session.totalRounds, session.currentRoundIndex),
-      ...(isIndependentJelajah(engine.state) ? { canCloseRound: false, canStartDiscussion: false, canGoToNextRound: false, canPause: false, canEndSession: phase === 'summary' || phase === 'ended' } : {}),
+      ...(isIndependentJelajah(engine.state) ? { canCloseRound: false, canStartDiscussion: false, canGoToNextRound: false, canPause: false, canEndSession: phase !== 'ended' } : {}),
     },
   };
 }

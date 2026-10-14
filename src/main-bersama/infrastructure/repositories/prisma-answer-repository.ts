@@ -241,23 +241,26 @@ export class PrismaAnswerRepository implements AnswerRepository {
           runtime.engine.applySubmission(input, checked.value);
           const state = runtime.engine.state;
           const statuses = Object.values(getIndependentTeamStatus(state));
-          const completed = statuses.length > 0 && statuses.every((team) => team.finished);
-          const currentRoundIndex = completed ? state.session.totalRounds - 1 : Math.min(...statuses.map((team) => team.roundIndex));
+          // Siswa boleh menyelesaikan semua soal, tetapi sesi kelas hanya
+          // boleh diakhiri oleh perintah guru. Jangan otomatis SUMMARY/FINAL:
+          // itu membuat kelas lain tiba-tiba dilempar ke podium.
+          const nextIndex = statuses.length > 0
+            ? Math.min(...statuses.map((team) => team.roundIndex))
+            : 0;
+          const currentRoundIndex = Math.min(state.session.totalRounds - 1, nextIndex);
           await tx.mainSession.update({ where: { id: input.sessionId }, data: {
-            phase: completed ? 'SUMMARY' : 'QUESTION', currentRoundIndex,
-            ...(completed ? { endedAt: input.submittedAt } : {}),
+            phase: 'QUESTION', currentRoundIndex,
           } });
           const persisted = await tx.mainGameState.findUnique({ where: { sessionId: input.sessionId } });
           if (persisted) {
             const game = jelajahStateFromJson(persisted.state);
             const progress = getIndependentTeamProgress(state);
             for (const [id, team] of Object.entries(game.teams)) team.progress = progress[id] ?? 0;
-            game.nextRoundIndex = completed ? state.session.totalRounds : currentRoundIndex;
+            game.nextRoundIndex = nextIndex;
             await tx.mainGameState.update({ where: { sessionId: input.sessionId }, data: {
-              state: game as unknown as Prisma.InputJsonValue, status: completed ? 'FINAL' : 'ACTIVE',
+              state: game as unknown as Prisma.InputJsonValue, status: 'ACTIVE',
             } });
           }
-          if (completed) await tx.mainRound.updateMany({ where: { sessionId: input.sessionId }, data: { status: 'CLOSED', closedAt: input.submittedAt } });
         }
         return { status: 'saved' as const, row: created };
       }, { timeout: 20000 });

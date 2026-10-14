@@ -57,16 +57,20 @@ async function main() {
     assert((await answerRepo.submitAnswer(input(2, 0))).ok);
     assert((await answerRepo.submitAnswer(input(2, 1))).ok);
     loaded = await runtime();
-    assert.equal(loaded.state.session.phase, 'summary', 'Final answer automatically ends the game.');
+    assert.equal(loaded.state.session.phase, 'question', 'Jawaban terakhir tidak boleh menutup sesi guru.');
     assert.equal(getIndependentTeamProgress(loaded.state).elang, 75);
     assert.equal(getIndependentTeamProgress(loaded.state).harimau, 100);
     const game = await db.mainGameState.findUniqueOrThrow({ where: { sessionId } });
-    assert.equal(game.status, 'FINAL');
+    assert.equal(game.status, 'ACTIVE', 'Sesi masih aktif sampai ditutup guru.');
     assert.equal(await db.mainAnswer.count({ where: { sessionId } }), 6);
+    assert((await roundRepo.findBySession(sessionId)).every((r) => r.phase === 'open'));
+    assert(await roundRepo.finishIndependentJelajah(sessionId, now));
+    loaded = await runtime();
+    assert.equal(loaded.state.session.phase, 'ended', 'Hanya aksi guru menutup sesi.');
     assert((await roundRepo.findBySession(sessionId)).every((r) => r.phase === 'closed'));
     const finalRetry = await answerRepo.submitAnswer(input(2, 1));
     assert(finalRetry.ok && finalRetry.status === 'already-saved', 'Retry survives finalization and reload.');
-    console.log('✅ PostgreSQL: concurrent start/answers, independent progress, frozen roster, reconnect, idempotency, automatic finalization and restart recovery.');
+    console.log('✅ PostgreSQL: concurrent start/answers, independent progress, frozen roster, reconnect, idempotency, teacher-controlled finalization and restart recovery.');
   } finally {
     await db.mainSession.deleteMany({ where: { id: sessionId } });
     await db.$disconnect();

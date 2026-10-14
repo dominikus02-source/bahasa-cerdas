@@ -602,7 +602,7 @@ function StudentQuestion({
     return <section className="mb-team-finished" role="status">
       {view.team ? <TeamMascot teamId={view.team.id} pose="celebrate" size={176} eager /> : null}
       <h2>Regumu sudah selesai!</h2>
-      <p>Semua soal sudah dijawab. Tunggu regu lain menyelesaikan perjalanan; hasil akhir akan tampil otomatis.</p>
+      <p>Semua soal regumu sudah dijawab. Tunggu regu lain dan Pak/Bu Guru mengakhiri sesi. Setelah itu, podium kelas akan tampil.</p>
     </section>;
   }
 

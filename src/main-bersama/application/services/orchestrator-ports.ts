@@ -59,6 +59,8 @@ export type MainPauseStatePort =
 /** Persist round + eligible snapshot (transaksional di infrastruktur). */
 export interface RoundStore {
   startIndependentJelajah?(sessionId: string, now: Date): Promise<{ roundId: string }>;
+  /** Atomically closes all independent rounds and ends the session on teacher request. */
+  finishIndependentJelajah?(sessionId: string, now: Date): Promise<boolean>;
   save(round: MainRoundPort): Promise<void>;
   /**
    * Klaim penutupan otomatis untuk Jelajah Kata. Implementasi produksi
