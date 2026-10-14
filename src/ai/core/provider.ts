@@ -555,7 +555,8 @@ async function streamGroq(
   req: ProviderRequest,
   onDelta: (text: string) => void
 ): Promise<ProviderStreamResult> {
-  const apiKey = process.env.GROQ_API_KEY;
+  const keys = getApiKeys("GROQ_API_KEY");
+  const apiKey = nextKey("GROQ_API_KEY", keys);
   if (!apiKey) throw new Error("GROQ_API_KEY not configured");
 
   const startTime = Date.now();
@@ -569,7 +570,11 @@ async function streamGroq(
     // Groq menolak kombinasi itu (HTTP 400); prompt sudah memaksa JSON.
   };
 
-  const watchdog = createStreamWatchdog();
+  const watchdog = createStreamWatchdog(
+    Math.min(8000, req.timeoutMs),
+    Math.min(10000, req.timeoutMs),
+    req.timeoutMs
+  );
   let acc = "";
   try {
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -617,9 +622,10 @@ async function streamGroq(
  */
 export async function streamProviderText(
   req: ProviderRequest,
-  onDelta: (text: string) => void
+  onDelta: (text: string) => void,
+  options?: { providerPriority?: ProviderName[] }
 ): Promise<ProviderStreamResult> {
-  const priority = loadPriority();
+  const priority = options?.providerPriority?.length ? options.providerPriority : loadPriority();
   const errors: string[] = [];
 
   for (const providerName of priority) {
