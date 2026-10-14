@@ -30,10 +30,10 @@ export async function rateLimit(ip: string, identifier: string, maxRequests = 10
 // For API route handler use — returns NextResponse if rate limited, null otherwise
 export async function rateLimitRoute(
   req: Request,
-  config: { maxRequests: number; windowSeconds: number; identifier: string }
+  config: { maxRequests: number; windowSeconds: number; identifier: string; subject?: string }
 ): Promise<NextResponse | null> {
   // Per session, not per IP — a whole class submits from one school NAT address.
-  const result = await rateLimit(getClientKey(req), config.identifier, config.maxRequests, config.windowSeconds)
+  const result = await rateLimit(config.subject ?? getClientKey(req), config.identifier, config.maxRequests, config.windowSeconds)
   if (!result.success) {
     return NextResponse.json(
       { error: "Terlalu banyak permintaan. Silakan coba lagi nanti." },
