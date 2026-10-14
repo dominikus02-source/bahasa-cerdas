@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Rate limit (30/menit, premium 2x).
-    const rl = await checkAgentRateLimit(req, "bc-assistant", user.isPremium);
+    const rl = await checkAgentRateLimit(req, "bc-assistant", user.isPremium, user.id);
     if (rl) return rl;
 
     // Konteks best-effort — tidak pernah menggagalkan chat.
@@ -99,7 +99,8 @@ export async function POST(req: NextRequest) {
     // kapabilitas guru (buildPersonaPrompt menjalankan assertRoleSafePrompt).
     const systemPrompt = buildPersonaPrompt({ role: user.role, isFounder: user.isFounder, contextText, intentMode, knowledgeBlock });
 
-    const model = process.env.AI_DEFAULT_MODEL || "deepseek-chat";
+    // AI BC uses Groq only; independent from provider defaults used by other agents.
+    const model = process.env.AI_BC_MODEL || "openai/gpt-oss-120b";
     const encoder = new TextEncoder();
     const startedAt = Date.now();
 
@@ -116,13 +117,14 @@ export async function POST(req: NextRequest) {
               messages: [{ role: "system", content: systemPrompt }, ...history],
               temperature: 0.6,
               maxTokens: 1024,
-              timeoutMs: 45000,
+              timeoutMs: 12000,
               responseFormat: "text",
             },
             (delta) => {
               streamedText += delta;
               controller.enqueue(encoder.encode(sse({ type: "delta", text: delta })));
-            }
+            },
+            { providerPriority: ["groq"] }
           );
           usedProvider = result.provider;
           usedModel = result.model;
