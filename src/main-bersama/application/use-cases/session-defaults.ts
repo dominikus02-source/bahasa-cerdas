@@ -15,6 +15,7 @@
 // Tahap 4) dan tanpa baris initial game state.
 
 import type { GameMode } from '../../domain/types/session';
+import { DEFAULT_TEAM_COUNT, MIN_TEAM_COUNT, MAX_TEAM_COUNT } from '../../domain/entities/team';
 
 /** Durasi default per round (ms). 60 detik — cukup baca + jawab. */
 export const DEFAULT_ROUND_DURATION_MS = 60_000;
@@ -64,14 +65,14 @@ export function resolveKotaTarget(input: {
 
 /** Konfigurasi efektif per mode setelah default diisi. */
 export type ResolvedGameConfig =
-  | { gameMode: 'jelajah-kata'; roundDurationMs: number }
+  | { gameMode: 'jelajah-kata'; roundDurationMs: number; teamCount: number; maxMembersPerTeam?: number }
   | { gameMode: 'kota-cahaya'; roundDurationMs: number; kotaTarget: KotaTargetResolution };
 
 /** Isi default untuk input minimal guru. Deterministik. */
 export function resolveGameConfig(
   gameMode: GameMode,
   totalRounds: number,
-  input: { roundDurationMs?: number; kotaTargetCorrect?: number } = {},
+  input: { roundDurationMs?: number; kotaTargetCorrect?: number; teamCount?: number; maxMembersPerTeam?: number } = {},
 ): { ok: true; config: ResolvedGameConfig } | { ok: false; code: 'INVALID_GAME_CONFIG'; reason: string } {
   if (!Number.isInteger(totalRounds) || totalRounds <= 0) {
     return { ok: false, code: 'INVALID_GAME_CONFIG', reason: 'totalRounds harus integer > 0' };
@@ -83,8 +84,15 @@ export function resolveGameConfig(
   }
 
   if (gameMode === 'jelajah-kata') {
-    // Jelajah: tidak ada config tambahan (4 regu tetap dari domain).
-    return { ok: true, config: { gameMode: 'jelajah-kata', roundDurationMs } };
+    const teamCount = input.teamCount ?? DEFAULT_TEAM_COUNT;
+    if (!Number.isInteger(teamCount) || teamCount < MIN_TEAM_COUNT || teamCount > MAX_TEAM_COUNT) {
+      return { ok: false, code: 'INVALID_GAME_CONFIG', reason: 'Jumlah regu harus 2–6.' };
+    }
+    const cap = input.maxMembersPerTeam;
+    if (cap !== undefined && (!Number.isInteger(cap) || cap < 1 || cap > 50)) {
+      return { ok: false, code: 'INVALID_GAME_CONFIG', reason: 'Maksimal peserta per regu harus 1–50.' };
+    }
+    return { ok: true, config: { gameMode: 'jelajah-kata', roundDurationMs, teamCount, ...(cap !== undefined ? { maxMembersPerTeam: cap } : {}) } };
   }
 
   // Kota Cahaya: target eksplisit divalidasi; tanpa target → pending

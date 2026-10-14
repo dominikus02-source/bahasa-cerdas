@@ -44,6 +44,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   PACKAGE_INCOMPATIBLE: 'Paket soal berisi tipe soal yang belum didukung.',
   NO_SUPPORTED_QUESTIONS: 'Tidak ada soal yang bisa dimainkan dari paket ini.',
   INVALID_GAME_CONFIG: 'Konfigurasi permainan tidak valid.',
+  TEAM_FULL: 'Semua regu sudah penuh. Hubungi guru untuk bergabung.',
   CLASS_NOT_FOUND: 'Kelas tidak ditemukan. Pilih kelas lain atau tanpa kelas.',
   CLASS_FORBIDDEN: 'Kelas ini bukan milikmu.',
   PIN_TAKEN: 'PIN bentrok. Coba buka ruang lagi.',
@@ -131,6 +132,8 @@ export async function postTeacherCommand(payload: {
   config?: {
     roundDurationMs?: number;
     kotaTargetCorrect?: number;
+    teamCount?: number;
+    maxMembersPerTeam?: number;
   };
   useSupportedQuestions?: boolean;
 }): Promise<Record<string, unknown>> {

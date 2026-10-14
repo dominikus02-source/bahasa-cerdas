@@ -39,6 +39,8 @@ const TEAM_COLOR_VAR: Record<string, string> = {
   harimau: 'var(--mb-team-harimau)',
   rusa: 'var(--mb-team-rusa)',
   badak: 'var(--mb-team-badak)',
+  gajah: 'var(--mb-team-gajah)',
+  beruang: 'var(--mb-team-beruang)',
 };
 
 // ── Type predicates: fase union PreRound tidak bisa di-narrow

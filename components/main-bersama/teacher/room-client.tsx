@@ -652,12 +652,12 @@ export function TeacherRoomClient({
                   <h3>{jelajahPodiumView === 'regu' ? 'Hasil Akhir Regu' : 'Hasil Akhir Siswa'}</h3>
                   <p className="mb-final-podium-caption">
                     {jelajahPodiumView === 'regu'
-                      ? 'Lihat hasil perjalanan empat regu sebelum melihat pencapaian siswa.'
+                      ? `Lihat hasil perjalanan ${view.teams.length} regu sebelum melihat pencapaian siswa.`
                       : 'Pencapaian siswa pada tiga peringkat teratas. Nilai seri berbagi peringkat.'}
                   </p>
                 </div>
                 <span className="mb-final-total">
-                  {jelajahPodiumView === 'regu' ? '4 regu' : `${view.participants.length} siswa`}
+                  {jelajahPodiumView === 'regu' ? `${view.teams.length} regu` : `${view.participants.length} siswa`}
                 </span>
               </div>
 
@@ -843,7 +843,7 @@ export function TeacherRoomClient({
         .mb-jelajah-host-footer { margin-top:12px; }
         .mb-jelajah-host-team-status {
           display:grid;
-          grid-template-columns:repeat(4,minmax(0,1fr));
+          grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
           gap:8px;
         }
         .mb-jelajah-host-team {

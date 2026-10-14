@@ -105,12 +105,14 @@ function main() {
     !isMainGameState({ gameMode: "kota-cahaya", kotaCahaya: { correctContribution: 1, target: 10, progressPercent: 10 } }))
 
   console.log("\n── Team Constants ──")
-  test("4 regu Jelajah Kata: Elang/Harimau/Rusa/Badak", () =>
-    JELAJAH_TEAM_KEYS.length === 4 &&
+  test("6 regu tersedia, 4 lama tetap urutan awal", () =>
+    JELAJAH_TEAM_KEYS.length === 6 &&
     JELAJAH_DEFAULT_TEAMS.elang.name === "Elang" &&
     JELAJAH_DEFAULT_TEAMS.harimau.name === "Harimau" &&
     JELAJAH_DEFAULT_TEAMS.rusa.name === "Rusa" &&
-    JELAJAH_DEFAULT_TEAMS.badak.name === "Badak")
+    JELAJAH_DEFAULT_TEAMS.badak.name === "Badak" &&
+    JELAJAH_DEFAULT_TEAMS.gajah.name === "Gajah" &&
+    JELAJAH_DEFAULT_TEAMS.beruang.name === "Beruang")
   test("team id === team key (stabil, bukan warna)", () =>
     JELAJAH_TEAM_KEYS.every((k) => JELAJAH_DEFAULT_TEAMS[k].id === k))
 

@@ -30,6 +30,7 @@ const STATUS_BY_CODE: Record<string, number> = {
   PLAYER_NOT_FOUND: 404,
   ROUND_NOT_FOUND: 404,
   // 409 — konflik state
+  TEAM_FULL: 409,
   INVALID_PHASE: 409,
   ROUND_NOT_OPEN: 409,
   PLAYER_NOT_ELIGIBLE: 409,
@@ -73,6 +74,7 @@ const MESSAGE_BY_CODE: Record<string, string> = {
   PACKAGE_INCOMPATIBLE: 'Paket soal berisi tipe soal yang belum didukung.',
   NO_SUPPORTED_QUESTIONS: 'Tidak ada soal yang didukung di paket ini.',
   INVALID_PHASE: 'Aksi tidak valid pada fase sesi sekarang.',
+  TEAM_FULL: 'Seluruh kelompok sudah penuh. Hubungi guru.',
   ROUND_NOT_OPEN: 'Round tidak sedang dibuka.',
   PLAYER_NOT_ELIGIBLE: 'Anda belum ikut pada round ini.',
   ANSWER_ALREADY_EXISTS: 'Jawaban untuk round ini sudah tersimpan.',

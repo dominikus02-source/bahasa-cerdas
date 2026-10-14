@@ -54,6 +54,8 @@
   --mb-team-harimau: #ef5350; /* merah */
   --mb-team-rusa: #34d399; /* hijau */
   --mb-team-badak: #38bdf8; /* biru langit */
+  --mb-team-gajah: #14b8a6; /* toska */
+  --mb-team-beruang: #a78bfa; /* ungu */
 
   /* ── World tokens 8B — Jelajah (cerah, siang) & Kota (malam, lampu).
      Hidup di scope token bersama agar guru/siswa/proyektor konsisten. */
@@ -1260,7 +1262,7 @@
   }
   /* 4 regu dalam SATU baris — identitas regu tidak lagi memakan dua baris. */
   .mb-pj-teams {
-    grid-template-columns: repeat(4, minmax(130px, 190px));
+    grid-template-columns: repeat(auto-fit, minmax(108px, 1fr));
   }
 
   /* ── Fase QUESTION/DISCUSSION: rangkaian soal → bahasan → leader →
@@ -1372,7 +1374,7 @@
     gap: var(--mb-space-4);
   }
   .mb-pj-phase:has(.mb-pin-projector) .mb-pj-teams {
-    grid-template-columns: repeat(4, minmax(130px, 190px));
+    grid-template-columns: repeat(auto-fit, minmax(108px, 1fr));
   }
 
   /* DISCUSSION: soal, jawaban, dan maskot celebrate dipertahankan;

@@ -25,8 +25,8 @@ import type { RoundId, TeamId } from '../../domain/types/ids';
 import type { GameRoundFacts } from '../../contracts/GameRoundFacts';
 import { validateRoundFacts } from '../../contracts/GameRoundFacts';
 import {
-  JELAJAH_TEAM_KEYS,
   JELAJAH_DEFAULT_TEAMS,
+  activeJelajahTeamKeys,
 } from '../../domain/entities/team';
 import type { MainTeam } from '../../domain/entities/team';
 
@@ -40,6 +40,7 @@ export interface JelajahKataState {
   /** Index round berikutnya yang boleh diaplikasikan (urutan ketat). */
   nextRoundIndex: number;
   totalRounds: number;
+  maxMembersPerTeam?: number;
 }
 
 export interface JelajahTeamProgress {
@@ -77,9 +78,9 @@ export interface JelajahKataSummary {
 
 // ─── State ──────────────────────────────────────────────────
 
-export function createJelajahKataState(totalRounds: number): JelajahKataState {
+export function createJelajahKataState(totalRounds: number, teamCount = 4, maxMembersPerTeam?: number): JelajahKataState {
   const teams: Record<TeamId, JelajahTeamProgress> = {};
-  for (const key of JELAJAH_TEAM_KEYS) {
+  for (const key of activeJelajahTeamKeys(teamCount)) {
     const team: MainTeam = JELAJAH_DEFAULT_TEAMS[key];
     teams[team.id] = {
       teamId: team.id,
@@ -88,7 +89,7 @@ export function createJelajahKataState(totalRounds: number): JelajahKataState {
       progress: 0,
     };
   }
-  return { teams, appliedRoundIds: [], nextRoundIndex: 0, totalRounds };
+  return { teams, appliedRoundIds: [], nextRoundIndex: 0, totalRounds, ...(maxMembersPerTeam ? { maxMembersPerTeam } : {}) };
 }
 
 // ─── Apply Round ────────────────────────────────────────────
@@ -112,7 +113,7 @@ export function applyJelajahKataRound(
   }
   const validation = validateRoundFacts(facts, {
     requireTeamForAll: true,
-    validTeamIds: JELAJAH_TEAM_KEYS,
+    validTeamIds: Object.keys(state.teams),
   });
   if (!validation.valid) {
     return { ok: false, code: 'INVALID_ROUND_FACTS' };
@@ -139,7 +140,7 @@ export function applyJelajahKataRound(
   }
 
   const roundResults: JelajahRoundResultEntry[] = [];
-  for (const key of JELAJAH_TEAM_KEYS) {
+  for (const key of Object.keys(state.teams)) {
     const teamId = key as TeamId;
     const team = state.teams[teamId];
     const teamEligible = eligibleCount.get(teamId) ?? 0;

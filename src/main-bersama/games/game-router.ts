@@ -22,7 +22,7 @@ import {
 
 /** Konfigurasi per mode (jelajah tidak butuh config saat ini). */
 export type GameModeConfig =
-  | { gameMode: 'jelajah-kata'; totalRounds: number }
+  | { gameMode: 'jelajah-kata'; totalRounds: number; teamCount?: number; maxMembersPerTeam?: number }
   | { gameMode: 'kota-cahaya'; kota: KotaCahayaConfig };
 
 export type GameEngineState =
@@ -38,7 +38,7 @@ export function createGameState(config: GameModeConfig): GameEngineResult<GameEn
       ok: true,
       value: {
         gameMode: 'jelajah-kata',
-        jelajah: createJelajahKataState(config.totalRounds),
+        jelajah: createJelajahKataState(config.totalRounds, config.teamCount, config.maxMembersPerTeam),
       },
     };
   }

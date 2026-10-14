@@ -45,6 +45,8 @@ const TEAM_LABEL: Record<string, string> = {
   harimau: 'Harimau',
   rusa: 'Rusa',
   badak: 'Badak',
+  gajah: 'Gajah',
+  beruang: 'Beruang',
 };
 
 const TEAM_COLOR_VAR: Record<string, string> = {
@@ -52,6 +54,8 @@ const TEAM_COLOR_VAR: Record<string, string> = {
   harimau: 'var(--mb-team-harimau)',
   rusa: 'var(--mb-team-rusa)',
   badak: 'var(--mb-team-badak)',
+  gajah: 'var(--mb-team-gajah)',
+  beruang: 'var(--mb-team-beruang)',
 };
 
 type DockCommand = 'start' | 'close-round' | 'discuss' | 'next-round' | 'pause' | 'resume' | 'end';
@@ -221,7 +225,7 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
                 teams={view.teams.map((t) => ({ id: t.id, name: t.name }))}
                 progress={view.gameProgress.teamProgress}
                 poses={(
-                  view.teams.map((t) => t.id) as Array<'elang' | 'harimau' | 'rusa' | 'badak'>
+                  view.teams.map((t) => t.id) as Array<'elang' | 'harimau' | 'rusa' | 'badak' | 'gajah' | 'beruang'>
                 ).reduce<Record<string, 'ready' | 'move' | 'celebrate'>>(
                   (acc, id) => ({ ...acc, [id]: getPose(id) }),
                   {},
@@ -271,7 +275,7 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
                   progress={view.gameProgress.teamProgress}
                   compact
                   poses={(
-                    view.teams.map((t) => t.id) as Array<'elang' | 'harimau' | 'rusa' | 'badak'>
+                    view.teams.map((t) => t.id) as Array<'elang' | 'harimau' | 'rusa' | 'badak' | 'gajah' | 'beruang'>
                   ).reduce<Record<string, 'ready' | 'move' | 'celebrate'>>(
                     (acc, id) => ({ ...acc, [id]: getPose(id) }),
                     {},
@@ -331,7 +335,7 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
                   progress={view.gameProgress.teamProgress}
                   compact
                   poses={(
-                    view.teams.map((t) => t.id) as Array<'elang' | 'harimau' | 'rusa' | 'badak'>
+                    view.teams.map((t) => t.id) as Array<'elang' | 'harimau' | 'rusa' | 'badak' | 'gajah' | 'beruang'>
                   ).reduce<Record<string, 'ready' | 'move' | 'celebrate'>>(
                     (acc, id) => ({ ...acc, [id]: getPose(id) }),
                     {},

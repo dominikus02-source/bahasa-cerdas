@@ -60,7 +60,7 @@ export function deserializeGameStateFromStore(
   if (gameMode === 'jelajah-kata') {
     const json = jelajahStateFromJson(raw);
     const teams: Record<string, { teamId: TeamId; name: string; symbol: string; progress: number }> = {};
-    for (const key of JELAJAH_TEAM_KEYS) {
+    for (const key of JELAJAH_TEAM_KEYS.filter((id) => json.teams[id])) {
       const t = json.teams[key];
       const fallback = JELAJAH_DEFAULT_TEAMS[key];
       teams[key] = {
@@ -77,6 +77,7 @@ export function deserializeGameStateFromStore(
         appliedRoundIds: json.appliedRoundIds as never,
         nextRoundIndex: json.nextRoundIndex,
         totalRounds: json.totalRounds,
+        ...(json.maxMembersPerTeam !== undefined ? { maxMembersPerTeam: json.maxMembersPerTeam } : {}),
       },
     };
   }
