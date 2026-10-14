@@ -45,7 +45,8 @@ export function getAgentRateLimit(agentId: string): AgentRateLimitConfig {
 export async function checkAgentRateLimit(
   req: Request,
   agentId: string,
-  isPremium: boolean
+  isPremium: boolean,
+  userId?: string
 ): Promise<Response | null> {
   const base = getAgentRateLimit(agentId);
   const maxRequests = isPremium ? base.maxRequests * 2 : base.maxRequests;
@@ -54,5 +55,6 @@ export async function checkAgentRateLimit(
     maxRequests,
     windowSeconds: base.windowSeconds,
     identifier: `agent:${agentId}`,
+    ...(userId ? { subject: userId } : {}),
   });
 }

@@ -36,6 +36,9 @@ console.log("AI BC 2.0 — ARSITEKTUR");
 const personas = read("src/ai/bc/personas.ts");
 const contextLib = read("lib/ai-bc/context.ts");
 const route = read("app/api/ai/bc/chat/route.ts");
+const agentRateLimit = read("src/ai/core/rate-limit.ts");
+const rateLimitLib = read("lib/rate-limit.ts");
+const provider = read("src/ai/core/provider.ts");
 const oldRoute = read("app/api/ai/chat/route.ts");
 const moduleC = read("components/ai-bc/AiBcModule.tsx");
 const arenaAi = read("app/arena/ai/page.tsx");
@@ -62,9 +65,15 @@ test("guru/ai-bc redirect ke /arena/ai untuk non-guru", () => guruAiBc.includes(
 
 // 3. Provider chain + streaming dipertahankan.
 test("route memakai streamProviderText", () => route.includes("streamProviderText"));
-test("route memakai AI_DEFAULT_MODEL / deepseek-chat", () => route.includes("AI_DEFAULT_MODEL") || route.includes("deepseek-chat"));
+test("AI BC memilih model Groq secara eksplisit", () => route.includes('AI_BC_MODEL || "openai/gpt-oss-120b"'));
+test("AI BC mengunci provider ke Groq", () => route.includes('providerPriority: ["groq"]'));
+test("AI BC mempertahankan jawaban parsial jika stream terputus", () => route.includes("if (streamedText.trim())") && route.includes('type: "done", provider: usedProvider || "groq"'));
+test("stream Groq memakai batas waktu dari request", () => provider.includes("Math.min(8000, req.timeoutMs)") && provider.includes("Math.min(10000, req.timeoutMs)"));
+test("watchdog menegakkan batas total meski stream terus mengirim chunk", () => provider.includes("if (sisaTotal <= 0)") && provider.includes("controller.abort();"));
+test("stream Groq mendukung rotasi beberapa API key", () => provider.includes('nextKey("GROQ_API_KEY", keys)'));
 test("route memakai guardrails checkInput", () => route.includes("checkInput"));
 test("route memakai rate limit bc-assistant", () => route.includes('checkAgentRateLimit(req, "bc-assistant"'));
+test("rate limit AI BC dibatasi per akun murid, bukan IP kelas", () => route.includes('user.isPremium, user.id') && agentRateLimit.includes("subject: userId") && rateLimitLib.includes("config.subject ?? getClientKey(req)"));
 test("route mencatat usage ke logUsage", () => route.includes("logUsage") && route.includes('agentId: "bc-assistant"'));
 
 // 4. TIDAK ada pemotongan kredit di chat (konsisten dengan legacy /api/ai/chat).
