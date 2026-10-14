@@ -109,3 +109,13 @@ Status saat audit awal, sebelum instruksi pengguna untuk commit/push:
 - Sembilan suite AI BC pada integrasi rilis: **430 pemeriksaan lulus** (suite arsitektur main berisi 34 pemeriksaan). QA browser diulang: **42 skenario, 32 request SSE lulus**.
 - `npm run lint` dan `npm run build` pada integrasi rilis: **exit 0**. Build mencakup TypeScript, 454 halaman dan finalisasi. Menggunakan environment placeholder seperti CI, tanpa credential produksi. Log: `/tmp/bc-ai-release-lint.log`, `/tmp/bc-ai-release-main-build.log`.
 - Deployment akhir harus dibuktikan oleh workflow untuk commit rilis dan pemeriksaan health publik; hasil push sendiri tidak dianggap bukti deployment.
+
+### Pelestarian perbaikan lokal VPS
+
+Deployment pertama tertahan sebelum build karena perubahan lokal `AiBcGuruWorkspace.tsx` akan tertimpa oleh pull. Pemeriksaan read-only menemukan perbaikan retry (pertanyaan terakhir tidak dikirim dua kali), normalisasi `<br>` pada Markdown, gaya tabel dan hover gelap.
+
+- Retry guru dan normalisasi `<br>` dipertahankan dalam rilis. Renderer baru sudah menangani tabel dan hover dengan token semantik.
+- File asli dan patch dicadangkan privat di VPS: `/var/tmp/bc-ai-ui-release-20261014-iyfPbh`; patch juga tersimpan dalam Git stash bernama `AI BC UI release 20261014: preserve production guru fixes`.
+- Hanya file workspace guru yang dikeluarkan dari perubahan lokal sebelum pull. Perbandingan byte diff sebelum/sesudah memastikan seluruh perubahan tracked lainnya tetap sama, termasuk parser SSE lokal produksi. Tidak mengubah auth, profile, Compose, Caddy, environment, schema atau provider.
+- QA browser menambahkan pemeriksaan payload retry guru dan hasil normalisasi `<br>` sebelum deployment ulang.
+- Setelah pelestarian patch VPS: lint file terkait, 84 pemeriksaan UX guru, build produksi lokal (termasuk TypeScript), dan 42 skenario browser dengan 33 request SSE **lulus**. Log: `/tmp/bc-ai-release-preservation-{lint,guru,build,browser}.log`.

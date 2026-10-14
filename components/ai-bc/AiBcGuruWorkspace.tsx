@@ -180,8 +180,11 @@ export default function AiBcGuruWorkspace({
   const handleRetry = () => {
     const text = lastUserTextRef.current;
     if (!text || streaming) return;
+    const prior = messages.filter((message) => !message.isError);
+    const lastUserIndex = prior.map((message) => message.role).lastIndexOf("user");
+    if (lastUserIndex >= 0) prior.splice(lastUserIndex, 1);
     const next: BcClientMessage[] = [
-      ...messages.filter((m) => !m.isError),
+      ...prior,
       { role: "user", content: text },
     ];
     setMessages(next);

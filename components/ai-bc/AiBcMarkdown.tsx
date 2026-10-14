@@ -20,7 +20,7 @@ export default function AiBcMarkdown({ content }: { content: string }) {
           ),
         }}
       >
-        {content}
+        {content.replace(/<br\s*\/?>/gi, "\n")}
       </ReactMarkdown>
     </div>
   );

@@ -92,7 +92,7 @@ function holdNextStream() {
   return release;
 }
 const requests = [];
-const richText = "## Memahami ide pokok\n\nIde pokok adalah gagasan utama.\n\n1. Baca teks.\n2. Temukan inti pembahasan.\n\n**Contoh** dan [tautan](https://example.com/" + "a".repeat(160) + ")\n\n```ts\nconst kalimat = '" + "b".repeat(220) + "';\n```\n\n| Materi | Contoh yang panjang | Pembahasan |\n| --- | --- | --- |\n| Kosakata | " + "c".repeat(180) + " | Pelajari maknanya |\n\nSelesai memahami materi.";
+const richText = "## Memahami ide pokok\n\nIde pokok adalah gagasan utama.\n\nContoh baris pertama<br />Contoh baris kedua\n\n1. Baca teks.\n2. Temukan inti pembahasan.\n\n**Contoh** dan [tautan](https://example.com/" + "a".repeat(160) + ")\n\n```ts\nconst kalimat = '" + "b".repeat(220) + "';\n```\n\n| Materi | Contoh yang panjang | Pembahasan |\n| --- | --- | --- |\n| Kosakata | " + "c".repeat(180) + " | Pelajari maknanya |\n\nSelesai memahami materi.";
 const html = `<!doctype html><html lang="id"><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/globals.css"><link rel="stylesheet" href="/classroom.css"><link rel="stylesheet" href="/bundle.css"></head><body><div id="root"></div><script type="module" src="/bundle.js"></script></body></html>`;
 
 const server = http.createServer(async (req, res) => {
@@ -203,6 +203,7 @@ try {
         release();
         await page.getByText("Selesai memahami materi.", { exact: true }).waitFor({ state: "attached" });
         await page.locator('[role="status"]').waitFor({ state: "detached" });
+        assert.ok((await page.locator(".prose").last().textContent()).includes("Contoh baris pertama\nContoh baris kedua"), "preserve production br normalization");
         results.push(`${role}/${theme}/${width}: lobby, suggestion, SSE, Markdown`);
         await checkBounds(`${role}/${theme}/${width} chat`);
         await page.screenshot({ path: path.join(outputDir, `${role}-${theme}-${width}-chat.png`) });
@@ -229,6 +230,12 @@ try {
     mode = "ok";
     await page.getByRole("button", { name: "Coba Lagi", exact: true }).click();
     await page.getByText("Selesai memahami materi.", { exact: true }).waitFor();
+    if (role === "teacher") {
+      assert.equal(requests.at(-1).messages.filter(message => message.role === "user" && message.content === "Bahas teks ini").length, 1, "teacher retry sends one copy of the latest question");
+      await page.getByRole("button", { name: "Tanya ulang", exact: true }).last().click();
+      await page.locator('[role="status"]').waitFor({ state: "detached" });
+      assert.equal(requests.at(-1).messages.filter(message => message.role === "user" && message.content === "Bahas teks ini").length, 1, "teacher regenerate sends one copy of the latest question");
+    }
     await page.getByRole("button", { name: "Salin", exact: true }).last().click();
     await page.getByRole("button", { name: "Tersalin", exact: true }).waitFor();
     await page.getByRole("button", { name: "Mulai percakapan baru" }).click();
