@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Sparkles, Bot } from "lucide-react";
+import { Loader2, Send } from "lucide-react";
+import AICompanionCharacter from "@/components/ai-bc/AICompanionCharacter";
+import styles from "@/components/ai-bc/ai-bc-workspace.module.css";
 
 interface BCAssistantFormProps {
   onSubmit: (input: Record<string, unknown>) => void;
@@ -25,44 +27,70 @@ export function BCAssistantForm({ onSubmit, loading }: BCAssistantFormProps) {
 
   return (
     <div className="space-y-4">
-      <div className="p-3 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl border border-emerald-100">
+      <div className="rounded-xl border border-border bg-card p-3">
         <div className="flex items-center gap-2 mb-1">
-          <Bot className="w-4 h-4 text-emerald-600" />
-          <p className="text-sm font-medium text-emerald-800">AI BC Assistant</p>
+          <AICompanionCharacter state="idle" size="sm" />
+          <div>
+            <p className="text-sm font-semibold text-foreground">AI BC</p>
+            <p className="text-xs text-muted-foreground">Teman Guru</p>
+          </div>
         </div>
-        <p className="text-xs text-emerald-600">
-          Tanya apa pun tentang Bahasa Indonesia. Saya bisa mengarahkan Anda ke agent khusus jika diperlukan.
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          Diskusikan materi, soal, dan aktivitas pembelajaran Bahasa Indonesia.
         </p>
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">Pesan</label>
+        <label
+          htmlFor="bc-assistant-message"
+          className="mb-1 block text-sm font-medium text-foreground"
+        >
+          Pesan
+        </label>
         <Textarea
+          id="bc-assistant-message"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Tanyakan tentang materi, Rencana Pembelajaran, soal, atau apa pun seputar Bahasa Indonesia..."
-          className="min-h-[120px] resize-none"
+          className="min-h-[120px] resize-none text-base sm:text-sm"
         />
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">
-          Konteks Tambahan <span className="text-gray-400">(opsional)</span>
+        <label
+          htmlFor="bc-assistant-context"
+          className="mb-1 block text-sm font-medium text-foreground"
+        >
+          Konteks tambahan{" "}
+          <span className="text-muted-foreground">(opsional)</span>
         </label>
-        <input type="text" value={context} onChange={(e) => setContext(e.target.value)}
+        <input
+          id="bc-assistant-context"
+          type="text"
+          value={context}
+          onChange={(e) => setContext(e.target.value)}
           placeholder="Contoh: Kelas X, materi teks negosiasi"
-          className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
+          className="min-h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-base text-foreground placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:text-sm"
+        />
       </div>
 
       <Button
         onClick={handleSubmit}
         disabled={loading || !message.trim()}
-        className="w-full bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700"
+        className={`${styles.sendButton} min-h-11 w-full`}
       >
         {loading ? (
-          <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> AI BC sedang menjawab...</>
+          <>
+            <Loader2
+              className="mr-2 h-4 w-4 animate-spin motion-reduce:animate-none"
+              aria-hidden="true"
+            />{" "}
+            AI BC sedang menjawab...
+          </>
         ) : (
-          <><Sparkles className="w-4 h-4 mr-2" /> Tanya AI BC</>
+          <>
+            <Send className="mr-2 h-4 w-4" aria-hidden="true" /> Tanya AI BC
+          </>
         )}
       </Button>
     </div>

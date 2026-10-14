@@ -53,6 +53,9 @@ console.log("AI BC 2.1 — ARENA AI FULLSCREEN WORKSPACE");
 
 const page = read("app/arena/ai/page.tsx");
 const workspace = read("components/ai-bc/AiBcArenaWorkspace.tsx");
+const sharedStyles = read("components/ai-bc/ai-bc-workspace.module.css");
+const viewport = read("components/ai-bc/useAiBcViewport.ts");
+const welcome = read("components/ai-bc/AiBcWelcome.tsx");
 const layout = read("app/arena/layout.tsx");
 const guruPage = read("app/(dashboard)/guru/ai-bc/page.tsx");
 const moduleFile = read("components/ai-bc/AiBcModule.tsx");
@@ -91,14 +94,14 @@ test("workspace: full-width (w-full, tanpa pembatas kartu max-w-lg/md/2xl)", () 
   !workspace.includes("max-w-2xl") &&
   !workspace.includes("min-w-[1200px]"));
 test("workspace: tinggi viewport-anchored web (preseden Obrolan)", () =>
-  workspace.includes("h-[calc(100dvh-3.5rem)]"));
+  workspace.includes("useAiBcViewport(workspaceRef)") && sharedStyles.includes("calc(100dvh - 3.5rem)"));
 test("workspace: tinggi viewport-anchored APK (header + BottomNav)", () =>
-  workspace.includes("h-[calc(100dvh-7.5rem)]"));
+  viewport.includes(".bc-mobile-nav, .arena-bottom-nav") && viewport.includes("navRect.top"));
 test("workspace: container konten 900px", () => workspace.includes("max-w-[900px]"));
 test("workspace: TANPA gerbang 'mulai percakapan' (komposer selalu terlihat)", () =>
   !workspace.includes('"landing"') && !workspace.includes('"chat"'));
 test("workspace: placeholder komposer murid", () =>
-  workspace.includes('placeholder={PLACEHOLDER}') && workspace.includes("Tulis pertanyaanmu..."));
+  workspace.includes('placeholder={PLACEHOLDER}') && workspace.includes("Tulis pertanyaanmu…"));
 test("workspace: Enter kirim / Shift+Enter baris baru", () =>
   workspace.includes('e.key === "Enter"') && workspace.includes("Shift"));
 test("workspace: kirim nonaktif saat streaming", () =>
@@ -123,17 +126,16 @@ test("workspace: Zelby via registry resmi (tanpa path hardcoded)", () =>
   workspace.includes("<AICompanionCharacter") &&
   !workspace.includes("public/junior/karakter") &&
   !workspace.includes("zelby_reading.webp"));
-test("workspace: 3 saran awal ringkas didefinisikan", () =>
-  workspace.includes("ARENA_AI_SUGGESTIONS") &&
-  (workspace.match(/label: "/g) || []).length >= 3);
+test("workspace: tepat 3 saran awal murid", () =>
+  (workspace.match(/export const ARENA_AI_SUGGESTED_PROMPTS[\s\S]*?\];/)?.[0].match(/^  "/gm) || []).length === 3);
 const promptBlock =
-  workspace.match(/export const ARENA_AI_SUGGESTIONS[\s\S]*?\];/)?.[0] ?? "";
+  workspace.match(/export const ARENA_AI_SUGGESTED_PROMPTS[\s\S]*?\];/)?.[0] ?? "";
 test("workspace: saran awal murid-only (tanpa alur kerja guru)", () =>
   !/rpp|materi ajar|kisi-kisi|buat soal/i.test(promptBlock));
-test("workspace: tidak ada daftar saran redundan di lobi", () =>
-  !workspace.includes("Saran untukmu"));
+test("workspace: chips saran hanya bila hints tersedia", () =>
+  welcome.includes("contextualHints.length > 0") && welcome.includes("<details") && workspace.includes("hints={hints}"));
 test("workspace: komposer memakai safe-area-bottom", () =>
-  workspace.includes("safe-area-bottom"));
+  sharedStyles.includes("env(safe-area-inset-bottom") && sharedStyles.includes(".composer"));
 test("workspace: tanpa navigasi kedua (header/theme/bell/logout)", () =>
   !workspace.includes("<header") &&
   !workspace.includes("BackHome") &&
@@ -141,10 +143,10 @@ test("workspace: tanpa navigasi kedua (header/theme/bell/logout)", () =>
   !workspace.includes("NotificationBell") &&
   !workspace.includes("LogOut"));
 test("workspace: tanpa emoji", () => !/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/u.test(workspace));
-test("workspace: dark mode tersedia", () => workspace.includes("dark:"));
-test("workspace: tema murid violet", () => workspace.includes("violet-"));
+test("workspace: dark mode tersedia", () => workspace.includes("bg-background") && workspace.includes("text-foreground") && sharedStyles.includes("hsl(var(--background))"));
+test("workspace: tema murid violet", () => sharedStyles.includes("var(--clr-violet)") && workspace.includes("styles.sendButton"));
 test("workspace: karakter thinking saat streaming", () =>
-  workspace.includes('<AICompanionCharacter state="thinking"'));
+  /<AICompanionCharacter\s+state="thinking"/.test(workspace));
 test("workspace: a11y komposer ber-aria-label", () =>
   workspace.includes('aria-label="Pertanyaan untuk AI BC"'));
 test("workspace: tidak mengimpor modul lama", () => !workspace.includes("AiBcModule"));

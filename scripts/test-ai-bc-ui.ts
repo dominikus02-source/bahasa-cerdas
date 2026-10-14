@@ -106,7 +106,7 @@ test("landing memuat aksi cepat + saran konteks", () =>
   landing.includes("quickActions.map") && landing.includes("hints.map"));
 test("landing menampilkan tagline", () => landing.includes("AI_BC_TAGLINE"));
 test("landing memuat catatan kejujuran (bukan pengganti guru)", () =>
-  landing.includes("bukan pengganti guru") || read("app/ai-bc/page.tsx").includes("bukan pengganti guru"));
+  /bukan\s+pengganti\s+guru/.test(landing + read("app/ai-bc/page.tsx")));
 
 // 9. Karakter AI BC (Zelby) — integrasi karakter resmi
 const character = read("components/ai-bc/AICompanionCharacter.tsx");
@@ -147,7 +147,8 @@ test("FAB tidak memakai kata Chat", () =>
 test("kartu beranda murid memakai karakter zelby_reading", () =>
   read("components/student-home/AIBCHomeCard.tsx").includes('gambarKarakter("zelby", "reading")'));
 test("halaman publik hero memakai karakter zelby_reading", () =>
-  publicPage.includes('gambarKarakter("zelby", "reading")'));
+  publicPage.includes("<AICompanionCharacter") &&
+  /state="idle"/.test(publicPage) && character.includes('"thinking" ? "thinking" : "reading"'));
 
 console.log(`\nHASIL: ${passed} passed, ${failed} failed (${passed + failed} total)`);
 if (failed > 0) process.exit(1);

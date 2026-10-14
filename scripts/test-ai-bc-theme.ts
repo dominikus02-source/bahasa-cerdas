@@ -66,7 +66,10 @@ test("lama: tanpa 'AI Cerdik' di halaman baru", () => !combined.includes("AI Cer
 test("landing menyediakan dark:", () => read("components/ai-bc/AiBcLanding.tsx").includes("dark:"));
 test("chat menyediakan dark:", () => read("components/ai-bc/AiBcChatView.tsx").includes("dark:"));
 test("module menyediakan dark:", () => read("components/ai-bc/AiBcModule.tsx").includes("dark:"));
-test("halaman publik menyediakan dark:", () => read("app/ai-bc/page.tsx").includes("bg-white/80"));
+test("halaman publik mengikuti token terang/gelap", () => {
+  const page = read("app/ai-bc/page.tsx");
+  return page.includes("bg-background") && page.includes("bg-card") && page.includes("text-foreground");
+});
 
 // 3. Ikon lucide di aksi cepat (bukan emoji)
 test("aksi cepat memakai ikon lucide", () =>

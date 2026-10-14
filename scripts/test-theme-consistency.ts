@@ -211,7 +211,12 @@ const interactive = [
 ];
 for (const f of interactive) {
   if (f.includes("player/")) continue; // player pakai sistem --px-* (navy premium di kedua mode, by design)
-  test(`${f} punya dark variant`, () => read(f).includes("dark:"));
+  test(`${f} punya tema terang/gelap`, () => {
+    const source = read(f);
+    return f.startsWith("components/ai-bc/")
+      ? source.includes("bg-background") && source.includes("bg-card") && source.includes("text-foreground")
+      : source.includes("dark:");
+  });
 }
 test("player components memakai sistem token --px (theme-agnostic by design)", () => {
   const rc = read("components/arena/player/rank-card.tsx");
@@ -238,7 +243,12 @@ const inputs = [
   "components/ai-bc/AiBcGuruWorkspace.tsx",
 ];
 for (const f of inputs) {
-  test(`${f} punya dark variant`, () => read(f).includes("dark:"));
+  test(`${f} punya tema terang/gelap`, () => {
+    const source = read(f);
+    return f.startsWith("components/ai-bc/")
+      ? source.includes("bg-background") && source.includes("bg-card") && source.includes("text-foreground")
+      : source.includes("dark:");
+  });
 }
 
 /* ------------------------------------------------------------------ */
@@ -261,9 +271,9 @@ console.log("\n8. AI BC theme handling");
 const arenaWs = read("components/ai-bc/AiBcArenaWorkspace.tsx");
 const guruWs = read("components/ai-bc/AiBcGuruWorkspace.tsx");
 test("AI BC murid: komposer/bubbles/zona dark", () =>
-  arenaWs.includes("dark:bg-slate-900/70") && arenaWs.includes("dark:bg-slate-900/80") && arenaWs.includes("dark:text-slate-100"));
+  arenaWs.includes("bg-background") && arenaWs.includes("bg-card") && arenaWs.includes("text-foreground"));
 test("AI BC guru: komposer/bubbles/zona dark", () =>
-  guruWs.includes("dark:bg-slate-900/70") && guruWs.includes("dark:bg-slate-900/80") && guruWs.includes("dark:text-slate-100"));
+  guruWs.includes("bg-background") && guruWs.includes("bg-card") && guruWs.includes("text-foreground"));
 test("AI BC karakter object-contain (tanpa white box)", () =>
   read("components/ai-bc/AICompanionCharacter.tsx").includes("object-contain"));
 

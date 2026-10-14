@@ -1,0 +1,142 @@
+.workspace {
+  height: var(--ai-bc-available-height, calc(100dvh - 3.5rem));
+  min-height: 0;
+  color: hsl(var(--foreground));
+  background: hsl(var(--background));
+}
+
+/* Specificity keeps the full canvas width independent of utility CSS order. */
+.workspace.guruWorkspace {
+  width: calc(100% + 1.75rem);
+}
+@media (min-width: 640px) {
+  .workspace.guruWorkspace {
+    width: calc(100% + 3rem);
+  }
+}
+@media (min-width: 1024px) {
+  .workspace.guruWorkspace {
+    width: calc(100% + 4rem);
+  }
+}
+
+.welcome {
+  overscroll-behavior: contain;
+}
+
+.suggestion,
+.secondaryAction,
+.sendButton {
+  transition:
+    background-color 150ms,
+    border-color 150ms;
+}
+.suggestion:hover {
+  border-color: var(--clr-violet);
+  background: var(--clr-violet-soft);
+}
+.suggestion svg {
+  color: var(--clr-violet);
+}
+.secondaryAction:hover {
+  background: hsl(var(--muted));
+  color: hsl(var(--foreground));
+}
+.suggestion:focus-visible,
+.secondaryAction:focus-visible,
+.sendButton:focus-visible,
+.tableScroll:focus-visible {
+  outline: 2px solid var(--clr-violet);
+  outline-offset: 3px;
+}
+.sendButton.sendButton {
+  background: var(--clr-violet);
+  color: hsl(var(--background));
+}
+.sendButton:hover:not(:disabled) {
+  filter: brightness(0.95);
+}
+.sendButton:disabled,
+.secondaryAction:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+.composerField:focus-within {
+  border-color: var(--clr-violet);
+  outline: 2px solid var(--clr-violet-soft);
+}
+.composer {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+}
+.userBubble {
+  background: var(--clr-violet-soft);
+  color: hsl(var(--foreground));
+  overflow-wrap: anywhere;
+}
+.reply {
+  min-width: 0;
+  width: min(100%, 48rem);
+  overflow-wrap: anywhere;
+}
+.markdown {
+  --tw-prose-body: hsl(var(--foreground));
+  --tw-prose-headings: hsl(var(--foreground));
+  --tw-prose-links: var(--clr-violet);
+  --tw-prose-bold: hsl(var(--foreground));
+  --tw-prose-counters: hsl(var(--muted-foreground));
+  --tw-prose-bullets: hsl(var(--muted-foreground));
+  --tw-prose-hr: hsl(var(--border));
+  --tw-prose-quotes: hsl(var(--foreground));
+  --tw-prose-quote-borders: hsl(var(--border));
+  --tw-prose-code: hsl(var(--foreground));
+  --tw-prose-pre-code: hsl(var(--foreground));
+  --tw-prose-pre-bg: hsl(var(--muted));
+  --tw-prose-th-borders: hsl(var(--border));
+  --tw-prose-td-borders: hsl(var(--border));
+  overflow-wrap: anywhere;
+  line-height: 1.75;
+}
+.markdown :is(p, ul, ol) {
+  margin-block: 0.75em;
+}
+.markdown > :first-child {
+  margin-top: 0;
+}
+.markdown > :last-child {
+  margin-bottom: 0;
+}
+.markdown pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.markdown pre code {
+  color: inherit;
+  overflow-wrap: normal;
+}
+.markdown a {
+  text-underline-offset: 3px;
+}
+.tableScroll {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.tableScroll table {
+  width: max-content;
+  min-width: 100%;
+}
+
+@media (max-width: 767px) {
+  .workspace {
+    height: var(
+      --ai-bc-available-height,
+      calc(100dvh - 7.75rem - env(safe-area-inset-bottom, 0px))
+    );
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .suggestion,
+  .secondaryAction,
+  .sendButton {
+    transition: none;
+  }
+}

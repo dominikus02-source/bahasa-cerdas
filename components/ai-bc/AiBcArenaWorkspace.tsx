@@ -1,9 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Check, Copy, MessageSquarePlus, RefreshCw, Send, BookOpen, ClipboardList, Pencil } from "lucide-react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { Check, Copy, MessageSquarePlus, RefreshCw, Send } from "lucide-react";
+import AiBcMarkdown from "./AiBcMarkdown";
+import AiBcWelcome from "./AiBcWelcome";
+import useAiBcViewport from "./useAiBcViewport";
+import styles from "./ai-bc-workspace.module.css";
 import AICompanionCharacter from "./AICompanionCharacter";
 import { streamBcChat } from "./ai-bc-stream";
 import type { BcClientMessage, BcHint } from "./ai-bc-types";
@@ -19,7 +21,7 @@ import type { BcClientMessage, BcHint } from "./ai-bc-types";
  * - Tinggi viewport-anchored (h-[calc(100dvh-*)]), mengikuti preseden
  *   app/arena/chat/chat-client.tsx; tanpa double scrollbar.
  * - Keadaan awal: komposer SUDAH terlihat (tanpa gerbang "mulai percakapan",
- *   tanpa blank state) — "Ada yang ingin kamu pelajari?" + 3 saran ringkas.
+ *   tanpa blank state) — welcome ringkas + tiga saran utama murid.
  * - Zelby memakai registry resmi gambarKarakter("zelby", pose) lewat
  *   AICompanionCharacter — TIDAK ada path aset yang di-hardcode.
  * - Streaming SSE via streamBcChat (route /api/ai/bc/chat TIDAK berubah).
@@ -27,38 +29,22 @@ import type { BcClientMessage, BcHint } from "./ai-bc-types";
  *   ada CTA guru di permukaan ini.
  */
 
-// Saran awal murid (student-safe ONLY) — maksimal 3 pilihan ringkas.
-export const ARENA_AI_SUGGESTIONS = [
-  { label: "Pahami materi", prompt: "Jelaskan materi ini dengan sederhana agar mudah dipahami.", icon: BookOpen },
-  { label: "Bahas soal", prompt: "Bantu aku memahami dan membahas soal ini.", icon: ClipboardList },
-  { label: "Latihan Bahasa Indonesia", prompt: "Aku ingin latihan Bahasa Indonesia. Buatkan soal latihan ya.", icon: Pencil },
+// Saran awal murid (student-safe ONLY) — tanpa alur kerja guru.
+export const ARENA_AI_SUGGESTED_PROMPTS: string[] = [
+  "Jelaskan materi ini dengan sederhana",
+  "Bantu aku memahami soal ini",
+  "Aku ingin latihan Bahasa Indonesia",
 ];
 
 const AI_LABEL = "AI BC";
 const THINKING_LABEL = "Sebentar, aku pikirkan…";
-const ERROR_COPY = "Maaf, aku belum bisa menjawab sekarang. Coba kirim pertanyaanmu lagi.";
+const ERROR_COPY =
+  "Maaf, aku belum bisa menjawab sekarang. Coba kirim pertanyaanmu lagi.";
 const WELCOME_HEADLINE = "Ada yang ingin kamu pelajari?";
 const WELCOME_LINE = "Tanya apa saja tentang pelajaranmu.";
-const PLACEHOLDER = "Tulis pertanyaanmu...";
+const PLACEHOLDER = "Tulis pertanyaanmu…";
 const SCROLL_NEAR_BOTTOM_PX = 140;
 const COMPOSER_MAX_HEIGHT_PX = 128;
-
-/** Deteksi APK (TWA) via cookie bc_apk — sama dengan chat-client.tsx. */
-function useIsApkClient() {
-  const [isApk, setIsApk] = useState(false);
-  useEffect(() => {
-    setIsApk(typeof document !== "undefined" && document.cookie.includes("bc_apk=1"));
-  }, []);
-  return isApk;
-}
-
-function MarkdownContent({ content }: { content: string }) {
-  return (
- <div className="prose prose-sm max-w-none prose-headings:text-slate-800 prose-a:text-violet-600 prose-strong:text-slate-800 prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-pre:bg-slate-900 prose-code:text-slate-800 dark:prose-headings:text-slate-100 dark:prose-a:text-violet-400 dark:prose-strong:text-slate-100 dark:prose-p:text-slate-300 dark:prose-li:text-slate-300 dark:prose-code:text-slate-100">
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
-    </div>
-  );
-}
 
 interface AiBcArenaWorkspaceProps {
   userName: string;
@@ -67,20 +53,26 @@ interface AiBcArenaWorkspaceProps {
   hints?: BcHint[];
 }
 
-export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, hints = [] }: AiBcArenaWorkspaceProps) {
-  const isApk = useIsApkClient();
-
+export default function AiBcArenaWorkspace({
+  personaTitle,
+  greeting,
+  hints = [],
+}: AiBcArenaWorkspaceProps) {
   const [messages, setMessages] = useState<BcClientMessage[]>([]);
   const [streaming, setStreaming] = useState(false);
   const [draftText, setDraftText] = useState("");
   const [input, setInput] = useState("");
   const [copiedId, setCopiedId] = useState<number | null>(null);
 
+  const workspaceRef = useRef<HTMLDivElement>(null);
+  useAiBcViewport(workspaceRef);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const abortRef = useRef<AbortController | null>(null);
   const nearBottomRef = useRef(true);
   const lastUserTextRef = useRef("");
+
+  useEffect(() => () => abortRef.current?.abort(), []);
 
   const hasConversation = messages.length > 0;
 
@@ -91,7 +83,10 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
       typeof window !== "undefined" &&
       typeof window.matchMedia === "function" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    el.scrollTo({ top: el.scrollHeight, behavior: smooth && !reduceMotion ? "smooth" : "auto" });
+    el.scrollTo({
+      top: el.scrollHeight,
+      behavior: smooth && !reduceMotion ? "smooth" : "auto",
+    });
   };
 
   // Auto-scroll HANYA bila pengguna berada di dekat dasar — jika pengguna
@@ -105,7 +100,8 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
   const handleScroll = () => {
     const el = scrollRef.current;
     if (!el) return;
-    nearBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < SCROLL_NEAR_BOTTOM_PX;
+    nearBottomRef.current =
+      el.scrollHeight - el.scrollTop - el.clientHeight < SCROLL_NEAR_BOTTOM_PX;
   };
 
   const send = useCallback(async (text: string, history: BcClientMessage[]) => {
@@ -116,23 +112,36 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
     try {
       const result = await streamBcChat({
         messages: history.map((m) => ({ role: m.role, content: m.content })),
-        onDelta: (delta) => setDraftText((prev) => prev + delta),
+        onDelta: (delta) => {
+          if (!controller.signal.aborted) setDraftText((prev) => prev + delta);
+        },
         signal: controller.signal,
       });
+      if (controller.signal.aborted) return;
       setDraftText("");
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: result.text || "Maaf, aku belum bisa menjawab kali ini. Coba lagi ya." },
+        {
+          role: "assistant",
+          content:
+            result.text ||
+            "Maaf, aku belum bisa menjawab kali ini. Coba lagi ya.",
+        },
       ]);
     } catch (e) {
       const isAbort = e instanceof Error && e.name === "AbortError";
-      if (!isAbort) {
+      if (!isAbort && !controller.signal.aborted) {
         setDraftText("");
-        setMessages((prev) => [...prev, { role: "assistant", content: ERROR_COPY, isError: true }]);
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: ERROR_COPY, isError: true },
+        ]);
       }
     } finally {
-      setStreaming(false);
-      abortRef.current = null;
+      if (abortRef.current === controller) {
+        setStreaming(false);
+        abortRef.current = null;
+      }
     }
   }, []);
 
@@ -142,10 +151,14 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
     lastUserTextRef.current = text;
     const next: BcClientMessage[] =
       messages.length === 0
-        ? [{ role: "assistant", content: greeting }, { role: "user", content: text }]
+        ? [
+            { role: "assistant", content: greeting },
+            { role: "user", content: text },
+          ]
         : [...messages, { role: "user", content: text }];
     setMessages(next);
     setInput("");
+    if (inputRef.current) inputRef.current.style.height = "auto";
     void send(text, next);
   };
 
@@ -155,7 +168,10 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
     lastUserTextRef.current = text;
     const next: BcClientMessage[] =
       messages.length === 0
-        ? [{ role: "assistant", content: greeting }, { role: "user", content: text }]
+        ? [
+            { role: "assistant", content: greeting },
+            { role: "user", content: text },
+          ]
         : [...messages, { role: "user", content: text }];
     setMessages(next);
     void send(text, next);
@@ -164,13 +180,20 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
   const handleRetry = () => {
     const text = lastUserTextRef.current;
     if (!text || streaming) return;
-    const next: BcClientMessage[] = [...messages.filter((m) => !m.isError), { role: "user", content: text }];
+    const next: BcClientMessage[] = [
+      ...messages.filter((m) => !m.isError),
+      { role: "user", content: text },
+    ];
     setMessages(next);
     void send(text, next);
   };
 
   const handleReset = () => {
     abortRef.current?.abort();
+    abortRef.current = null;
+    setStreaming(false);
+    nearBottomRef.current = true;
+    if (inputRef.current) inputRef.current.style.height = "auto";
     setMessages([]);
     setDraftText("");
     setInput("");
@@ -185,7 +208,7 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
       e.preventDefault();
       handleSend();
     }
@@ -197,23 +220,26 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  // Tinggi workspace mengikuti preseden Obrolan (chat-client.tsx):
-  // WEB = chrome header global (h-14 = 3.5rem), APK = header + BottomNav (4rem).
-  const workspaceHeight = isApk
-    ? "h-[calc(100dvh-7.5rem)]"
-    : "h-[calc(100dvh-3.5rem)]";
-
   return (
-    <div className={`ai-bc-workspace flex w-full flex-col ${workspaceHeight} min-h-[420px]`}>
+    <div
+      ref={workspaceRef}
+      className={`ai-bc-workspace flex w-full flex-col ${styles.workspace}`}
+    >
       {/* Baris identitas produk dalam konten (BUKAN navigasi kedua — tidak ada
           link nav/sidebar; hanya judul + aksi percakapan). */}
- <div className="shrink-0 border-b border-slate-200/70 bg-white/70 px-3 py-2 backdrop-blur dark:border-slate-800 dark:bg-slate-900/50">
+      <div className="shrink-0 border-b border-border bg-background px-3 py-2">
         <div className="mx-auto flex w-full max-w-[900px] items-center justify-between gap-2">
           <div className="flex min-w-0 items-center gap-2.5">
             <AICompanionCharacter state="idle" size="sm" />
             <div className="min-w-0">
-              <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{AI_LABEL}</p>
-              <p className="truncate text-[11px] text-violet-500 dark:text-violet-400">{personaTitle}</p>
+              <p className="text-sm font-semibold text-foreground">
+                {AI_LABEL}
+              </p>
+              <p className="truncate text-xs text-muted-foreground">
+                {personaTitle === "Teman Belajarmu"
+                  ? "Teman Belajar"
+                  : personaTitle}
+              </p>
             </div>
           </div>
           {hasConversation && (
@@ -221,7 +247,7 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
               type="button"
               onClick={handleReset}
               aria-label="Mulai percakapan baru"
- className="flex shrink-0 items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+              className={`${styles.secondaryAction} flex min-h-11 shrink-0 items-center gap-1.5 rounded-xl border border-border px-3 text-sm font-medium text-muted-foreground`}
             >
               <MessageSquarePlus size={14} /> Mulai baru
             </button>
@@ -231,87 +257,93 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
 
       {/* Area percakapan — sapaan awal ATAU riwayat + streaming */}
       {!hasConversation && !streaming ? (
-        <div ref={scrollRef} onScroll={handleScroll} className="ai-bc-welcome min-h-0 flex-1 overflow-y-auto">
-          <div className="mx-auto flex h-full w-full max-w-[900px] flex-col items-center justify-center gap-4 px-4 py-6 text-center">
-            <AICompanionCharacter state="idle" size="lg" priority />
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-center gap-2">
-                <span className="text-lg font-extrabold text-slate-800 dark:text-slate-100">{AI_LABEL}</span>
- <span className="rounded-full border border-violet-100 bg-violet-50 px-2 py-0.5 text-[11px] font-semibold text-violet-700 dark:border-violet-900 dark:bg-violet-950/60 dark:text-violet-300">
-                  {personaTitle}
-                </span>
-              </div>
-              <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">{WELCOME_HEADLINE}</h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400">{WELCOME_LINE}</p>
-            </div>
-
-            <div className="flex w-full max-w-md flex-wrap items-center justify-center gap-2 px-2">
-              {ARENA_AI_SUGGESTIONS.map((sug) => {
-                const Icon = sug.icon;
-                return (
-                  <button
-                    key={sug.label}
-                    type="button"
-                    onClick={() => handleSuggested(sug.prompt)}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-violet-100 bg-violet-50/80 px-3 py-1.5 text-xs font-medium text-violet-700 shadow-sm transition-all hover:border-violet-300 hover:bg-violet-100 dark:border-violet-900/50 dark:bg-violet-950/40 dark:text-violet-300 dark:hover:bg-violet-900/60"
-                  >
-                    <Icon size={14} className="shrink-0" />
-                    {sug.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+        <div
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className={`ai-bc-welcome min-h-0 flex-1 overflow-y-auto ${styles.welcome}`}
+        >
+          <AiBcWelcome
+            role="student"
+            personaTitle={personaTitle}
+            headline={WELCOME_HEADLINE}
+            description={WELCOME_LINE}
+            prompts={ARENA_AI_SUGGESTED_PROMPTS}
+            hints={hints}
+            onPick={handleSuggested}
+          />
         </div>
       ) : (
-        <div ref={scrollRef} onScroll={handleScroll} aria-live="polite" className="ai-bc-messages min-h-0 flex-1 overflow-y-auto px-3 md:px-6">
+        <div
+          ref={scrollRef}
+          onScroll={handleScroll}
+          aria-live="polite"
+          className="ai-bc-messages min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 md:px-6"
+        >
           <div className="mx-auto flex w-full max-w-[900px] flex-col gap-4 py-4">
             {messages.map((msg, i) =>
               msg.role === "user" ? (
-                <div key={i} className="flex justify-end gap-3">
-                  <div className="max-w-[85%] rounded-2xl rounded-br-md bg-gradient-to-r from-violet-600 to-purple-600 p-3.5 text-sm leading-relaxed text-white shadow-md sm:max-w-[75%]">
+                <div key={i} className="flex min-w-0 justify-end gap-3">
+                  <div
+                    className={`${styles.userBubble} min-w-0 max-w-[90%] rounded-2xl rounded-br-md px-4 py-3 text-sm leading-relaxed sm:max-w-[75%]`}
+                  >
                     <p className="whitespace-pre-wrap">{msg.content}</p>
                   </div>
                 </div>
               ) : (
-                <div key={i} className="flex gap-3">
-                  <AICompanionCharacter state="idle" size="sm" className="mt-0.5" />
+                <div key={i} className="flex min-w-0 gap-2 sm:gap-3">
+                  <AICompanionCharacter
+                    state="idle"
+                    size="sm"
+                    className="mt-0.5"
+                  />
                   <div
-                    className={`max-w-[85%] rounded-2xl rounded-bl-md border bg-white p-3.5 shadow-sm sm:max-w-[78%] dark:bg-slate-900/80 ${
- msg.isError ? "border-rose-200 dark:border-rose-900" : "border-slate-200 dark:border-slate-700/70"
+                    className={`${styles.reply} rounded-2xl rounded-bl-md border bg-card p-3.5 sm:p-4 ${
+                      msg.isError ? "border-destructive/40" : "border-border"
                     }`}
                   >
-                    <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-slate-400">{AI_LABEL}</p>
+                    <p className="mb-1 text-xs font-semibold text-muted-foreground">
+                      {AI_LABEL}
+                    </p>
                     {msg.isError ? (
                       <div>
-                        <p className="text-sm text-rose-600 dark:text-rose-400">{msg.content}</p>
+                        <p className="text-sm text-destructive">
+                          {msg.content}
+                        </p>
                         <button
                           type="button"
                           onClick={handleRetry}
- className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                          disabled={streaming}
+                          className={`${styles.secondaryAction} mt-3 inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-border px-3 text-sm font-medium text-muted-foreground`}
                         >
                           <RefreshCw size={13} /> Coba Lagi
                         </button>
                       </div>
                     ) : (
                       <>
-                        <MarkdownContent content={msg.content} />
-                        <div className="mt-3 flex items-center gap-1 border-t border-slate-100 pt-2 dark:border-slate-800">
+                        <AiBcMarkdown content={msg.content} />
+                        <div className="mt-3 flex flex-wrap items-center gap-1 border-t border-border pt-1">
                           <button
                             type="button"
                             onClick={() => handleCopy(msg.content, i)}
-                            className={`flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] transition-colors ${
-                              copiedId === i ? "text-emerald-500" : "text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
+                            className={`${styles.secondaryAction} flex min-h-11 items-center gap-1.5 rounded-lg px-2 text-xs ${
+                              copiedId === i
+                                ? "text-foreground"
+                                : "text-muted-foreground"
                             }`}
                           >
-                            {copiedId === i ? <Check size={12} /> : <Copy size={12} />}
+                            {copiedId === i ? (
+                              <Check size={12} />
+                            ) : (
+                              <Copy size={12} />
+                            )}
                             {copiedId === i ? "Tersalin" : "Salin"}
                           </button>
                           <button
                             type="button"
                             onClick={handleRetry}
                             title="Ulangi pertanyaan terakhir"
-                            className="flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] text-slate-400 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
+                            disabled={streaming}
+                            className={`${styles.secondaryAction} flex min-h-11 items-center gap-1.5 rounded-lg px-2 text-xs text-muted-foreground`}
                           >
                             <RefreshCw size={12} /> Tanya ulang
                           </button>
@@ -320,25 +352,42 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
                     )}
                   </div>
                 </div>
-              )
+              ),
             )}
 
             {streaming && (
-              <div className="flex gap-3" role="status" aria-live="polite">
-                <AICompanionCharacter state="thinking" size="sm" className="mt-0.5" />
- <div className="max-w-[85%] rounded-2xl rounded-bl-md border border-slate-200 bg-white p-3.5 shadow-sm sm:max-w-[78%] dark:border-slate-700/70 dark:bg-slate-900/80">
+              <div
+                className="flex min-w-0 gap-2 sm:gap-3"
+                role="status"
+                aria-live="polite"
+              >
+                <AICompanionCharacter
+                  state="thinking"
+                  size="sm"
+                  className="mt-0.5"
+                />
+                <div
+                  className={`${styles.reply} rounded-2xl rounded-bl-md border border-border bg-card p-3.5 sm:p-4`}
+                >
                   {draftText ? (
                     <>
-                      <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-slate-400">{THINKING_LABEL}</p>
-                      <MarkdownContent content={draftText} />
+                      <p className="mb-1 text-xs font-semibold text-muted-foreground">
+                        {THINKING_LABEL}
+                      </p>
+                      <AiBcMarkdown content={draftText} />
                     </>
                   ) : (
                     <div className="flex items-center gap-2 py-1.5">
-                      <span className="text-xs text-slate-400">{THINKING_LABEL}</span>
-                      <span className="flex items-center gap-1" aria-hidden="true">
-                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-violet-400 motion-reduce:animate-none" />
-                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-violet-400 motion-reduce:animate-none [animation-delay:150ms]" />
-                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-violet-400 motion-reduce:animate-none [animation-delay:300ms]" />
+                      <span className="text-sm text-muted-foreground">
+                        {THINKING_LABEL}
+                      </span>
+                      <span
+                        className="flex items-center gap-1"
+                        aria-hidden="true"
+                      >
+                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-current text-muted-foreground motion-reduce:animate-none" />
+                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-current text-muted-foreground motion-reduce:animate-none [animation-delay:150ms]" />
+                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-current text-muted-foreground motion-reduce:animate-none [animation-delay:300ms]" />
                       </span>
                     </div>
                   )}
@@ -350,9 +399,13 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
       )}
 
       {/* Komposer — SELALU tampil (tanpa gerbang), melekat di dasar workspace */}
- <div className="ai-bc-composer shrink-0 border-t border-slate-200/70 bg-white/80 px-3 pb-2 pt-3 backdrop-blur dark:border-slate-800 dark:bg-slate-900/70 safe-area-bottom">
+      <div
+        className={`ai-bc-composer ${styles.composer} shrink-0 border-t border-border bg-background px-3 pt-3`}
+      >
         <div className="mx-auto w-full max-w-[900px]">
- <div className="flex items-end gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm transition-all focus-within:border-violet-400 focus-within:ring-2 focus-within:ring-violet-100 dark:border-slate-700 dark:bg-slate-900 dark:focus-within:ring-violet-500/20">
+          <div
+            className={`${styles.composerField} flex min-w-0 items-end gap-2 rounded-2xl border border-input bg-card px-3 py-2`}
+          >
             <textarea
               ref={inputRef}
               value={input}
@@ -361,7 +414,7 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
               rows={1}
               placeholder={PLACEHOLDER}
               aria-label="Pertanyaan untuk AI BC"
- className="max-h-32 flex-1 resize-none bg-transparent py-2 text-sm text-slate-800 placeholder-slate-400 outline-none dark:text-slate-100 dark:placeholder-slate-500"
+              className="max-h-32 min-w-0 flex-1 resize-none bg-transparent py-2 text-base text-foreground placeholder:text-muted-foreground focus-visible:outline-none"
             />
             <button
               type="button"
@@ -369,16 +422,19 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
               disabled={!input.trim() || streaming}
               aria-label="Kirim pertanyaan"
               title="Kirim pertanyaan"
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-md transition-all hover:brightness-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
+              className={`${styles.sendButton} flex h-11 w-11 shrink-0 items-center justify-center rounded-xl`}
             >
               {streaming ? (
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" aria-hidden="true" />
+                <span
+                  className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent motion-reduce:animate-none"
+                  aria-hidden="true"
+                />
               ) : (
                 <Send size={18} aria-hidden="true" />
               )}
             </button>
           </div>
-          <p className="mt-1.5 text-center text-[10px] text-slate-400 dark:text-slate-600">
+          <p className="mt-2 hidden text-center text-xs text-muted-foreground sm:block">
             Enter untuk kirim · Shift+Enter untuk baris baru
           </p>
         </div>

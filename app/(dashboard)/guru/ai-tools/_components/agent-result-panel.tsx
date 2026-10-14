@@ -5,6 +5,8 @@ import { Loader2, Sparkles, CheckCircle2, AlertTriangle, RotateCw, X, ArrowRight
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { normalizeExportText, stripLeadingRppHeader } from "@/src/ai/export/shared/markdown";
+import AiBcMarkdown from "@/components/ai-bc/AiBcMarkdown";
+import aiBcStyles from "@/components/ai-bc/ai-bc-workspace.module.css";
 
 // Petakan kode error ke fase pipeline supaya guru/support tahu di mana gagalnya
 function phaseFromCode(code?: string | null): string | null {
@@ -571,20 +573,20 @@ function StructuredTextAnalysis({ output }: { output: Record<string, unknown> })
 
 function StructuredBCAssistant({ output, onSuggestedAgent }: { output: Record<string, unknown>; onSuggestedAgent?: (agentId: string) => void }) {
   return (
-    <div className="space-y-3 text-sm">
-      <div className="p-4 bg-white border border-gray-100 rounded-xl">
-        <p className="text-gray-800 whitespace-pre-wrap">{(output.reply as string) ?? ""}</p>
+    <div className="min-w-0 space-y-3 text-sm">
+      <div className="min-w-0 rounded-xl border border-border bg-card p-4">
+        <AiBcMarkdown content={(output.reply as string) ?? ""} />
       </div>
       {(output.suggestedAgent as string) && onSuggestedAgent && (
-        <div className="p-3 bg-emerald-50 border border-emerald-100 rounded-xl">
-          <p className="text-xs font-medium text-emerald-700 mb-2">
-            AI menyarankan untuk menggunakan agent berikut:
+        <div className="rounded-xl border border-border bg-muted p-3">
+          <p className="mb-2 text-sm font-medium text-foreground">
+            Lanjutkan dengan alat AI yang disarankan:
           </p>
           <button
             onClick={() => onSuggestedAgent(output.suggestedAgent as string)}
-            className="text-xs px-3 py-1.5 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors font-medium"
+            className={`${aiBcStyles.secondaryAction} min-h-11 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-foreground`}
           >
-            Beralih ke {output.suggestedAgent as string}
+            Buka alat yang disarankan
           </button>
         </div>
       )}
@@ -789,7 +791,7 @@ export function AgentResultPanel({ agentId, result, loading, error, errorCode, r
       <div className="flex items-center justify-between flex-wrap gap-2 p-3 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl border border-emerald-100">
         <div className="flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-          <span className="text-sm font-medium text-emerald-700">Dokumen berhasil dibuat</span>
+          <span className="text-sm font-medium text-emerald-700">{agentId === "bc-assistant" ? "Jawaban AI BC siap" : "Dokumen berhasil dibuat"}</span>
         </div>
         <div className="flex items-center gap-2">
           {resultSource === "history" && (
@@ -832,7 +834,7 @@ export function AgentResultPanel({ agentId, result, loading, error, errorCode, r
       <div className="flex items-center gap-2 pt-2">
         <Button variant="outline" size="sm" onClick={onRegenerate}>
           <RotateCw className="w-3.5 h-3.5 mr-1" />
-          Generate Ulang
+          {agentId === "bc-assistant" ? "Tanya ulang" : "Generate Ulang"}
         </Button>
         {canSave ? (
           <Button

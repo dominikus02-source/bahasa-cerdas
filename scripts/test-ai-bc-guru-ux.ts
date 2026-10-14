@@ -55,6 +55,8 @@ console.log("AI BC 2.2 — GURU FULLSCREEN CONVERSATION WORKSPACE");
 
 const guruPage = read("app/(dashboard)/guru/ai-bc/page.tsx");
 const ws = read("components/ai-bc/AiBcGuruWorkspace.tsx");
+const sharedStyles = read("components/ai-bc/ai-bc-workspace.module.css");
+const viewport = read("components/ai-bc/useAiBcViewport.ts");
 const arenaWs = read("components/ai-bc/AiBcArenaWorkspace.tsx");
 const personas = read("src/ai/bc/personas.ts");
 const types = read("components/ai-bc/ai-bc-types.ts");
@@ -91,16 +93,16 @@ test("B2. workspace: fullscreen (w-full, tanpa pembatas kartu max-w-lg/md/2xl/4x
   !ws.includes("max-w-4xl") &&
   !ws.includes("min-w-[1200px]"));
 test("B3. workspace: tinggi viewport-anchored desktop (preseden arena-AI)", () =>
-  ws.includes("lg:h-[calc(100dvh-3.5rem)]"));
+  ws.includes("useAiBcViewport(workspaceRef)") && sharedStyles.includes("calc(100dvh - 3.5rem)"));
 test("B4. workspace: tinggi mobile memperhitungkan bottom nav (GuruMobileNav)", () =>
-  ws.includes("h-[calc(100dvh-7.5rem)]"));
+  viewport.includes(".bc-mobile-nav, .arena-bottom-nav") && viewport.includes("navRect.top"));
 test("B5. workspace: bleeding melewati padding kanvas guru (tanpa double scrollbar)", () =>
-  ws.includes("-mx-4 sm:-mx-6 lg:-mx-8") && ws.includes("-mt-4 sm:-mt-6 lg:-mt-8") && ws.includes("-mb-24 lg:-mb-8"));
+  ws.includes("-mx-3.5 sm:-mx-6 lg:-mx-8") && ws.includes("-mt-3.5 sm:-mt-6 lg:-mt-8") && ws.includes("-mb-24 md:-mb-8") && ws.includes("styles.guruWorkspace") && sharedStyles.includes("width: calc(100% + 1.75rem)"));
 test("B6. workspace: container konten 900px", () => ws.includes("max-w-[900px]"));
 test("B7. workspace: TANPA gerbang 'mulai percakapan' (komposer selalu terlihat)", () =>
   !ws.includes('"landing"') && !ws.includes('"chat"'));
 test("B8. workspace: placeholder guru", () =>
-  ws.includes("placeholder={PLACEHOLDER}") && ws.includes("Tanyakan sesuatu tentang pembelajaran..."));
+  ws.includes("placeholder={PLACEHOLDER}") && ws.includes("Tulis pertanyaan Anda…"));
 test("B9. workspace: Enter kirim / Shift+Enter baris baru", () =>
   ws.includes('e.key === "Enter"') && ws.includes("Shift"));
 test("B10. workspace: kirim nonaktif saat kosong/streaming", () =>
@@ -129,7 +131,7 @@ test("B19. workspace: Zelby via registry resmi (tanpa path hardcoded)", () =>
   !ws.includes("public/junior/karakter") &&
   !ws.includes("zelby_reading.webp"));
 test("B20. workspace: karakter thinking saat streaming", () =>
-  ws.includes('<AICompanionCharacter state="thinking"'));
+  /<AICompanionCharacter\s+state="thinking"/.test(ws));
 test("B21. workspace: karakter dekoratif aria-hidden (via AICompanionCharacter)", () =>
   ws.includes("AICompanionCharacter"));
 test("B22. workspace: a11y komposer ber-aria-label", () =>
@@ -139,7 +141,7 @@ test("B23. workspace: auto-scroll hanya saat dekat bawah", () =>
 test("B24. workspace: motion-reduce dihormati (animasi pulse dimatikan)", () =>
   ws.includes("motion-reduce:animate-none"));
 test("B25. workspace: safe-area-bottom (komposer tidak tertutup)", () =>
-  ws.includes("safe-area-bottom"));
+  sharedStyles.includes("env(safe-area-inset-bottom") && sharedStyles.includes(".composer"));
 test("B26. workspace: tanpa navigasi kedua (header/theme/bell/logout)", () =>
   !ws.includes("<header") &&
   !ws.includes("BackHome") &&
@@ -147,9 +149,9 @@ test("B26. workspace: tanpa navigasi kedua (header/theme/bell/logout)", () =>
   !ws.includes("NotificationBell") &&
   !ws.includes("LogOut"));
 test("B27. workspace: tanpa emoji", () => !/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/u.test(ws));
-test("B28. workspace: dark mode tersedia", () => ws.includes("dark:"));
-test("B29. workspace: tema guru emerald (bukan violet murid)", () =>
-  ws.includes("emerald-") && !ws.includes("violet-"));
+test("B28. workspace: dark mode tersedia", () => ws.includes("bg-background") && ws.includes("text-foreground") && sharedStyles.includes("hsl(var(--background))"));
+test("B29. workspace: aksen violet terukur dari token bersama", () =>
+  ws.includes("styles.sendButton") && sharedStyles.includes("var(--clr-violet)"));
 test("B30. workspace: tidak mengimpor modul lama", () => !ws.includes("AiBcModule"));
 
 /* ------------------------------------------------------------------ */
@@ -160,23 +162,22 @@ console.log("\nC. Persona & language");
 test("C1. guru persona = Teman Guru", () => personas.includes('title: "Teman Guru"'));
 test("C2. persona murid TIDAK dipakai di workspace guru", () =>
   !ws.includes("STUDENT_PERSONA") && !ws.includes("Teman Belajarmu"));
-test("C3. 6 saran prompt guru didefinisikan", () => {
+test("C3. tepat 3 saran prompt guru didefinisikan", () => {
   const block = ws.match(/export const GURU_AI_BC_SUGGESTED_PROMPTS[\s\S]*?\];/)?.[0] ?? "";
   return block.includes('"Bantu saya menyusun rencana pembelajaran Bahasa Indonesia."') &&
-    (block.match(/^  "/gm) || []).length >= 6;
+    (block.match(/^  "/gm) || []).length === 3;
 });
-test("C4. saran prompt guru-spesifik (aktivitas/literasi/asesmen/diskusi)", () =>
-  ws.includes("pembelajaran cerpen lebih menarik") &&
+test("C4. saran prompt guru-spesifik (materi/asesmen/aktivitas)", () =>
+  ws.includes("rencana pembelajaran") &&
   ws.includes("melatih literasi siswa") &&
-  ws.includes("membuat asesmen") &&
-  ws.includes("diskusi kelas lebih aktif"));
+  ws.includes("membuat asesmen"));
 test("C5. 'RPP' TIDAK jadi copy default workspace guru", () =>
   !ws.includes("RPP") && !/buat(kan)? rpp/i.test(ws));
 test("C6. 'Rencana Pembelajaran' dipakai di saran prompt", () =>
   ws.includes("rencana pembelajaran"));
 test("C7. welcome state: headline + line guru", () =>
-  ws.includes("Mau kita pikirkan apa hari ini?") &&
-  ws.includes("Teman berdiskusi untuk mengembangkan pembelajaranmu."));
+  ws.includes("Apa yang ingin Anda siapkan?") &&
+  ws.includes("Diskusikan materi, soal, dan aktivitas pembelajaran."));
 test("C8. quick action guru: sub tanpa 'RPP' (Rencana pembelajaran)", () =>
   types.includes("sub: \"Rencana pembelajaran & modul ajar\"") && !types.includes("sub: \"RPP"));
 test("C9. knowledge engine tetap tersambung (persona + system prompt utuh)", () =>
@@ -193,8 +194,8 @@ test("C12. context engine tetap tersambung (getBcHints guru)", () =>
 /* ------------------------------------------------------------------ */
 
 console.log("\nD. Satu produk, dua persona");
-test("D1. murid memakai violet, guru emerald (dua persona satu produk)", () =>
-  arenaWs.includes("violet-") && ws.includes("emerald-"));
+test("D1. kedua peran memakai gaya bersama dengan aksen violet", () =>
+  arenaWs.includes("styles.sendButton") && ws.includes("styles.sendButton") && sharedStyles.includes("var(--clr-violet)"));
 test("D2. keduanya memakai streamBcChat (satu pipeline SSE)", () =>
   ws.includes("streamBcChat") && arenaWs.includes("streamBcChat"));
 test("D3. keduanya memakai AICompanionCharacter (Zelby kanonik)", () =>
@@ -247,7 +248,7 @@ const studentPrompts =
   arenaWs.match(/export const ARENA_AI_SUGGESTED_PROMPTS[\s\S]*?\];/)?.[0] ?? "";
 test("F1. murid: fullscreen workspace (w-full + viewport-anchored + 900px, tanpa kartu sempit)", () =>
   arenaWs.includes("flex w-full") &&
-  arenaWs.includes("h-[calc(100dvh-3.5rem)]") &&
+  arenaWs.includes("useAiBcViewport(workspaceRef)") && sharedStyles.includes("calc(100dvh - 3.5rem)") &&
   arenaWs.includes("max-w-[900px]") &&
   !arenaWs.includes("max-w-lg") &&
   !arenaWs.includes("max-w-2xl") &&
@@ -255,9 +256,9 @@ test("F1. murid: fullscreen workspace (w-full + viewport-anchored + 900px, tanpa
 test("F2. murid: composer initial state (tanpa gerbang landing/chat)", () =>
   !arenaWs.includes('"landing"') && !arenaWs.includes('"chat"') &&
   arenaWs.includes("placeholder={PLACEHOLDER}"));
-test("F3. murid: welcome 'Mau tanya apa?' + placeholder pelajaran", () =>
-  arenaWs.includes("Mau tanya apa?") &&
-  arenaWs.includes("Tanyakan sesuatu tentang pelajaranmu..."));
+test("F3. murid: welcome ringkas + placeholder pelajaran", () =>
+  arenaWs.includes("Ada yang ingin kamu pelajari?") && arenaWs.includes("Tanya apa saja tentang pelajaranmu.") &&
+  arenaWs.includes("Tulis pertanyaanmu…"));
 test("F4. murid: persona Teman Belajar (STUDENT_PERSONA dari sesi, bukan TEACHER)", () =>
   arenaPage.includes("STUDENT_PERSONA") && !arenaPage.includes("TEACHER_PERSONA") &&
   personas.includes('title: "Teman Belajarmu"'));
@@ -271,10 +272,10 @@ test("F7. murid: page tanpa CTA guru (tanpa persona/route guru)", () =>
   !arenaPage.includes("TEACHER_PERSONA") && !arenaPage.includes('"/guru/ai-bc"'));
 test("F8. murid: saran prompt student-safe (tanpa alur kerja guru)", () =>
   !/rpp|rencana pembelajaran|asesmen|modul ajar|kisi-kisi|buat soal/i.test(studentPrompts) &&
-  (studentPrompts.match(/^  "/gm) || []).length >= 6);
+  (studentPrompts.match(/^  "/gm) || []).length === 3);
 test("F9. murid: Zelby reading/thinking via registry resmi", () =>
-  arenaWs.includes('<AICompanionCharacter state="idle"') &&
-  arenaWs.includes('<AICompanionCharacter state="thinking"'));
+  /<AICompanionCharacter\s+state="idle"/.test(arenaWs) &&
+  /<AICompanionCharacter\s+state="thinking"/.test(arenaWs));
 
 /* ------------------------------------------------------------------ */
 /* G. LANGUAGE AUDIT (user-facing copy)                                */

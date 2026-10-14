@@ -45,7 +45,7 @@ const AGENTS: AgentConfig[] = [
   { id: "text-analysis", name: "Analisis Teks", description: "Analisis teks dari struktur, gagasan, diksi, dan gaya bahasa.", useCase: "Guru yang ingin analisis mendalam teks", icon: <BookOpen className="w-5 h-5" />, category: "evaluasi" },
   // Bahasa & Asisten
   { id: "eyd", name: "Korektor EYD", description: "Perbaiki ejaan, tanda baca, dan tata bahasa sesuai EYD/PUEBI.", useCase: "Guru yang butuh koreksi ejaan cepat", icon: <SpellCheck className="w-5 h-5" />, category: "bahasa" },
-  { id: "bc-assistant", name: "AI BC Assistant", description: "Tanya apa pun tentang Bahasa Indonesia dan dapatkan arahan ke agent tepat.", useCase: "Butuh bantuan cepat atau bingung mulai dari mana", icon: <Bot className="w-5 h-5" />, category: "bahasa" },
+  { id: "bc-assistant", name: "AI BC", description: "Diskusikan materi, soal, dan aktivitas pembelajaran Bahasa Indonesia.", useCase: "Butuh bantuan cepat atau bingung mulai dari mana", icon: <Bot className="w-5 h-5" />, category: "bahasa" },
 ];
 
 const CATEGORY_LABELS: Record<AgentCategory, string> = {
