@@ -99,8 +99,9 @@ export async function POST(req: NextRequest) {
     // kapabilitas guru (buildPersonaPrompt menjalankan assertRoleSafePrompt).
     const systemPrompt = buildPersonaPrompt({ role: user.role, isFounder: user.isFounder, contextText, intentMode, knowledgeBlock });
 
-    // AI BC uses Groq only; independent from provider defaults used by other agents.
-    const model = process.env.AI_BC_MODEL || "openai/gpt-oss-120b";
+    // AI BC menggunakan DeepSeek sebagai satu-satunya penyedia aktif.
+    // Pakai DEEPSEEK_MODEL agar nilai AI_BC_MODEL lama (model Groq) tidak salah terkirim ke DeepSeek.
+    const model = process.env.DEEPSEEK_MODEL || "deepseek-flash";
     const encoder = new TextEncoder();
     const startedAt = Date.now();
 
@@ -124,7 +125,7 @@ export async function POST(req: NextRequest) {
               streamedText += delta;
               controller.enqueue(encoder.encode(sse({ type: "delta", text: delta })));
             },
-            { providerPriority: ["groq"] }
+            { providerPriority: ["deepseek"] }
           );
           usedProvider = result.provider;
           usedModel = result.model;
