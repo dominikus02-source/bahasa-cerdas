@@ -135,6 +135,7 @@ export default function KuisTempurArena({
   const [countdown, setCountdown] = useState<number | null>(3);
   const [now, setNow] = useState(Date.now());
   const [serverMessage, setServerMessage] = useState("");
+  const [isOnline, setIsOnline] = useState(() => gameSocket.isConnected());
   const [rematchStatus, setRematchStatus] = useState<ArenaRematchStatus | null>(null);
   const [soundMuted, setSoundMuted] = useState(false);
   const [killFeed, setKillFeed] = useState<KillFeedEntry[]>([]);
@@ -213,6 +214,17 @@ export default function KuisTempurArena({
     const stopError = gameSocket.onError((data: { message?: string }) => {
       setServerMessage(data?.message || "Koneksi arena bermasalah.");
     });
+    const stopDisconnected = gameSocket.onDisconnected(() => {
+      setIsOnline(false);
+      setServerMessage("Koneksi terputus. Sedang menyambungkan kembali...");
+    });
+    const stopConnected = gameSocket.onConnected(() => {
+      setIsOnline(true);
+      setServerMessage("");
+    });
+    const stopRejoined = gameSocket.onRoomJoined((room: { code: string }) => {
+      if (room.code === code) gameSocket.arenaReady({ code, userId });
+    });
 
     gameSocket.arenaReady({ code, userId });
 
@@ -226,6 +238,9 @@ export default function KuisTempurArena({
       stopFinished();
       stopRematch();
       stopError();
+      stopConnected();
+      stopDisconnected();
+      stopRejoined();
     };
   }, [code, userId]);
 
@@ -292,6 +307,20 @@ export default function KuisTempurArena({
     if (!result || rematchStatus?.starting || rematchStatus?.readyIds.includes(userId)) return;
     gameSocket.arenaRematch({ code, userId });
   }, [code, rematchStatus, result, userId]);
+
+  // Reliable alternative for touch screens: arrows do not depend on the Phaser canvas
+  // receiving a pointer event underneath the question and scoreboard overlays.
+  const moveDirection = useCallback((dx: number, dy: number) => {
+    const player = stateRef.current.entities.find((entity) => entity.id === userId);
+    if (!player?.alive || player.connected === false || result || !isOnline) return;
+    const stride = 110;
+    gameSocket.arenaMove({
+      code,
+      userId,
+      x: Math.max(36, Math.min(WORLD_W - 36, player.x + dx * stride)),
+      y: Math.max(48, Math.min(WORLD_H - 38, player.y + dy * stride)),
+    });
+  }, [code, isOnline, result, userId]);
 
   const shootNearest = useCallback(() => {
     if (!me?.alive || !me.ammo) return;
@@ -434,6 +463,33 @@ export default function KuisTempurArena({
         </div>
       )}
 
+      {!result && (
+        <div className="absolute left-2 top-[45%] z-[35] -translate-y-1/2 rounded-2xl border border-cyan-300/25 bg-slate-950/70 p-2 shadow-xl backdrop-blur lg:hidden">
+          <div className="mb-1 text-center text-[9px] font-black tracking-wide text-cyan-100">GERAK</div>
+          <div className="grid grid-cols-3 gap-1">
+            {[
+              { label: "Kiri", x: -1, y: 0, col: 1, row: 2, arrow: "←" },
+              { label: "Atas", x: 0, y: -1, col: 2, row: 1, arrow: "↑" },
+              { label: "Bawah", x: 0, y: 1, col: 2, row: 3, arrow: "↓" },
+              { label: "Kanan", x: 1, y: 0, col: 3, row: 2, arrow: "→" },
+            ].map(({ label, x, y, col, row, arrow }) => (
+              <button
+                key={label}
+                type="button"
+                aria-label={"Bergerak ke " + label.toLowerCase()}
+                title={"Gerak " + label.toLowerCase()}
+                onClick={() => moveDirection(x, y)}
+                disabled={!me?.alive || me.connected === false || !isOnline}
+                className="flex h-10 w-10 select-none items-center justify-center rounded-xl border border-white/20 bg-cyan-300/15 text-2xl font-bold text-cyan-100 active:bg-cyan-300/40 disabled:opacity-30"
+                style={{ gridColumn: col, gridRow: row, touchAction: "manipulation" }}
+              >
+                {arrow}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <button
         onClick={shootNearest}
         disabled={!me?.alive || !me?.ammo || Boolean(result)}
@@ -514,7 +570,7 @@ export default function KuisTempurArena({
       )}
 
       {serverMessage && (
-        <div className="absolute left-1/2 top-24 z-50 -translate-x-1/2 rounded-xl border border-rose-300/20 bg-rose-950/90 px-4 py-2 text-xs font-black text-rose-100">
+        <div role="status" className="absolute left-1/2 top-24 z-50 w-[min(90vw,460px)] -translate-x-1/2 rounded-xl border border-rose-300/30 bg-rose-950/95 px-4 py-3 text-center text-xs font-black text-rose-100 shadow-xl">
           {serverMessage}
         </div>
       )}

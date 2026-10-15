@@ -125,6 +125,8 @@ check("fullscreen opsional punya dua pilihan", displayShell.includes("LAYAR PENU
 check("portrait hanya memberi overlay ringan", displayShell.includes("Putar HP ke samping untuk bertempur") && displayShell.includes("pointer-events-none"));
 check("fullscreen toggle bisa keluar tanpa reset game", displayShell.includes("document.exitFullscreen") && displayShell.includes("fullscreenchange"));
 const leaveBlock = socketServer.slice(socketServer.indexOf("function handleLeave"), socketServer.indexOf("let shuttingDown"));
+check("kontrol gerak tambahan tersedia di layar sentuh", arena.includes("const moveDirection = useCallback") && arena.includes('aria-label={"Bergerak ke " + label.toLowerCase()}'));
+check("ruang memulihkan gerakan saat koneksi pulih", arena.includes("stopRejoined") && arena.includes("gameSocket.arenaReady({ code, userId })") && arena.includes("stopConnected"));
 check("kamera tidak mengguncang layar murid", !phaser.includes("cameras.main.shake") && phaser.includes("lastSyncedSeq"));
 check("room command ditahan sampai Socket.IO siap", read("lib/game/socket.ts").includes("pendingRoomCommands") && read("lib/game/socket.ts").includes("emitWhenConnected") && read("lib/game/socket.ts").includes("activeRoom"));
 check("socket otomatis memulihkan room saat reconnect", read("lib/game/socket.ts").includes("if (activeRoom) socket?.emit('join-room', activeRoom)") && read("lib/game/socket.ts").includes("reconnectionAttempts: Infinity"));

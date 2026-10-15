@@ -91,6 +91,13 @@ async function main() {
   check("public arena fills with three monster bots", publicStart?.botCount === 3 && publicState?.entities.filter((p) => p.kind === "bot").length === 3);
   check("monster bots have individual artwork", publicState?.entities.filter((p) => p.kind === "bot").every((p) => Boolean(p.monsterId)) === true);
 
+  const initialPosition = publicState?.entities.find((entity) => entity.id === "p1") as { x: number; y: number } | undefined;
+  if (!initialPosition) throw new Error("Public player position is missing");
+  arena.move({ code: publicRoom.code, userId: "p1", x: initialPosition.x + 240, y: initialPosition.y });
+  await new Promise((resolve) => setTimeout(resolve, 280));
+  const latestPublicState = events.filter((e) => e.room === "PUBLIC1" && e.event === "arena-state").at(-1)?.payload as { entities: Array<{ id: string; x: number }> } | undefined;
+  check("human movement is reflected in real-time authoritative snapshots", Number(latestPublicState?.entities.find((entity) => entity.id === "p1")?.x || 0) > initialPosition.x + 10);
+
   await arena.start(privateRoom);
   const privateStart = events.find((row) => row.room === "PRIVATE2" && row.event === "arena-start")?.payload as { humanCount: number; botCount: number } | undefined;
   check("private room remains human only", privateStart?.humanCount === 2 && privateStart?.botCount === 0);
