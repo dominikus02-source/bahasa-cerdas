@@ -200,12 +200,8 @@ export default function KuisTempurPhaserWorld({
       type HeroVisual = {
         root: any;
         body: any;
-        weapon: any;
-        weaponCore: any;
-        weaponTip: any;
         targetRing: any;
         hpFill: any;
-        ammoGlow: any;
         name: any;
         rankBadge: any;
         ko: any;
@@ -546,18 +542,6 @@ export default function KuisTempurPhaserWorld({
             body.setDisplaySize(targetHeight * ratio, targetHeight);
           }
 
-          const weaponGrip = this.add.rectangle(14, 3, 10, 9, 0x172554, 1)
-            .setStrokeStyle(1.5, 0xf8fafc, 0.5);
-          const weaponCore = this.add.rectangle(29, 0, 32, 7, entity.ammo > 0 ? 0xf59e0b : 0x64748b, 1)
-            .setStrokeStyle(2, 0xffffff, 0.72);
-          const weaponTip = this.add.circle(47, 0, 5.5, entity.ammo > 0 ? 0xfef08a : 0x64748b, 1)
-            .setStrokeStyle(2, 0xffffff, 0.6);
-          const ammoGlow = this.add.circle(47, 0, 12, entity.ammo > 0 ? 0xfde047 : 0x64748b, entity.ammo > 0 ? 0.23 : 0.06);
-          ammoGlow.setBlendMode(Phaser.BlendModes.ADD);
-          const weapon = this.add.container(0, 5, [ammoGlow, weaponGrip, weaponCore, weaponTip])
-            .setAngle(-11)
-            .setVisible(heroKind !== "monster");
-
           const targetRing = this.add.circle(0, 6, heroKind === "monster" ? 42 : heroKind === "arga" ? 31 : 34, 0xfb7185, 0)
             .setStrokeStyle(2.5, 0xfb7185, 0.9)
             .setAlpha(0);
@@ -591,20 +575,9 @@ export default function KuisTempurPhaserWorld({
             strokeThickness: 5,
           }).setOrigin(0.5);
 
-          const root = this.add.container(entity.x, entity.y, [shadow, targetRing, aura, body, weapon, hpBg, hpFill, name, rankBadge, ko]);
+          const root = this.add.container(entity.x, entity.y, [shadow, targetRing, aura, body, hpBg, hpFill, name, rankBadge, ko]);
           root.setDepth(entity.y + 20);
           root.setSize(72, 94);
-
-          if (heroKind === "arga") {
-            this.tweens.add({
-              targets: [weapon],
-              y: "-=2",
-              duration: 500 + (entity.id.charCodeAt(0) % 140),
-              yoyo: true,
-              repeat: -1,
-              ease: "Sine.inOut",
-            });
-          }
 
           if (entity.id === userIdRef.current) {
             this.tweens.add({
@@ -620,12 +593,8 @@ export default function KuisTempurPhaserWorld({
           return {
             root,
             body,
-            weapon,
-            weaponCore,
-            weaponTip,
             targetRing,
             hpFill,
-            ammoGlow,
             name,
             rankBadge,
             ko,
@@ -843,10 +812,6 @@ export default function KuisTempurPhaserWorld({
             visual.hpFill.setDisplaySize(Math.max(0.1, 58 * hpRatio), 7);
             visual.hpFill.setFillStyle(hpRatio > 0.45 ? 0x34d399 : hpRatio > 0.2 ? 0xfbbf24 : 0xfb7185);
 
-            const hasAmmo = entity.ammo > 0;
-            visual.weaponCore.setFillStyle(hasAmmo ? 0xf59e0b : 0x64748b, 1);
-            visual.weaponTip.setFillStyle(hasAmmo ? 0xfef08a : 0x64748b, 1);
-            visual.ammoGlow.setFillStyle(hasAmmo ? 0xfde047 : 0x64748b, hasAmmo ? 0.23 : 0.06);
             const targeted = entity.id === this.hoverTargetId && entity.connected !== false && entity.alive;
             visual.targetRing
               .setAlpha(targeted ? 0.85 : 0)
@@ -883,16 +848,6 @@ export default function KuisTempurPhaserWorld({
           target.hitUntil = Math.max(target.hitUntil, now + 280);
           this.setHeroMode(from, "attack");
           this.setHeroMode(target, "hit");
-
-          this.tweens.killTweensOf(from.weapon);
-          this.tweens.add({
-            targets: from.weapon,
-            angle: { from: -24 * from.lastFacing, to: 13 * from.lastFacing },
-            x: { from: 22 * from.lastFacing, to: 34 * from.lastFacing },
-            duration: 105,
-            yoyo: true,
-            ease: "Quad.easeOut",
-          });
 
           this.tweens.killTweensOf(target.body);
           target.body.setTint(0xffffff);
@@ -1080,26 +1035,21 @@ export default function KuisTempurPhaserWorld({
               const pulse = Math.sin(phase + Math.PI / 2);
               if (visual.mode === "run") {
                 visual.body.setY(27 + bob * 2.4);
-                visual.body.setScale(1 + pulse * 0.018, 1 - pulse * 0.018);
-                visual.weapon.setY(5 + bob * 0.9);
+                visual.body.setScale((HERO_SIZE_NPC / NPC_FRAME) * (1 + pulse * 0.018), (HERO_SIZE_NPC / NPC_FRAME) * (1 - pulse * 0.018));
               } else if (visual.mode === "idle") {
                 visual.body.setY(27 + bob * 1.2);
-                visual.body.setScale(1 + pulse * 0.012, 1 - pulse * 0.012);
-                visual.weapon.setY(5 + bob * 0.35);
+                visual.body.setScale((HERO_SIZE_NPC / NPC_FRAME) * (1 + pulse * 0.012), (HERO_SIZE_NPC / NPC_FRAME) * (1 - pulse * 0.012));
               } else if (visual.mode === "hit") {
                 visual.body.setY(27);
-                visual.body.setScale(1, 1);
-                visual.weapon.setY(5);
+                visual.body.setScale(HERO_SIZE_NPC / NPC_FRAME);
               } else if (visual.mode === "ko") {
-                visual.body.setScale(1, 1);
+                visual.body.setScale(HERO_SIZE_NPC / NPC_FRAME);
               }
             } else if (moving && visual.mode === "run" && visual.heroKind !== "arga") {
               const stride = Math.sin(this.time.now / 85 + visual.root.x * 0.02);
               visual.body.setY(27 + stride * 1.8);
-              visual.weapon.setY(5 + stride * 0.8);
             } else if (visual.mode !== "ko") {
               visual.body.setY(visual.heroKind === "arga" ? 31 : 27);
-              visual.weapon.setY(5);
             }
           }
 
@@ -1129,8 +1079,8 @@ export default function KuisTempurPhaserWorld({
         width: mountRef.current.clientWidth || window.innerWidth,
         height: mountRef.current.clientHeight || window.innerHeight,
         render: {
-          antialias: true,
-          roundPixels: false,
+          antialias: false,
+          roundPixels: true,
         },
         scale: {
           mode: Phaser.Scale.RESIZE,

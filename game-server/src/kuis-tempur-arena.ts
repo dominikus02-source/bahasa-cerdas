@@ -10,7 +10,7 @@ const HUMAN_HP = 100;
 const BOT_HP = 82;
 const HUMAN_SPEED = 245;
 const BOT_SPEED = 118;
-const BOT_COUNT = 0;
+const MAX_BOTS = 4;
 const MAX_HUMAN_PLAYERS = 10;
 const HUMAN_DAMAGE_TO_HUMAN = 18;
 const HUMAN_DAMAGE_TO_BOT = 28;
@@ -515,7 +515,8 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
       player.answerTimes = [];
     });
 
-    for (let index = 0; index < BOT_COUNT; index++) {
+    const botCount = room.category === "KUIS_TEMPUR_ARENA" ? Math.min(MAX_BOTS, Math.max(0, MAX_HUMAN_PLAYERS - humanPlayers.length)) : 0;
+    for (let index = 0; index < botCount; index++) {
       const spawn = BOT_SPAWNS[index];
       const id = `bot-${index + 1}`;
       entities.set(id, {
@@ -573,7 +574,7 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
     io.to(room.code).emit("arena-start", {
       code: room.code,
       duration: MATCH_SECONDS,
-      botCount: 0,
+      botCount,
       humanCount: humanPlayers.length,
       maxPlayers: MAX_HUMAN_PLAYERS,
     });

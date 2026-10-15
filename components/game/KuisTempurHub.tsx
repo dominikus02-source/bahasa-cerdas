@@ -175,6 +175,7 @@ export default function KuisTempurHub() {
   const [serverOffline, setServerOffline] = useState(false);
   const [notice, setNotice] = useState("");
   const [copied, setCopied] = useState(false);
+  const [joinCodeInput, setJoinCodeInput] = useState("");
   const [matchCountdown, setMatchCountdown] = useState<number | null>(null);
   const [displayChoiceOpen, setDisplayChoiceOpen] = useState(false);
   const [pendingArenaStart, setPendingArenaStart] = useState(false);
@@ -372,6 +373,24 @@ export default function KuisTempurHub() {
     [me, selectedCharacterId, serverOffline]
   );
 
+  const joinPrivateRoom = useCallback(() => {
+    if (!me || serverOffline || creating) return;
+    const code = joinCodeInput.trim().toUpperCase().replace(/[^A-HJ-NP-Z2-9]/g, "");
+    if (!/^[A-HJ-NP-Z2-9]{6}$/.test(code)) {
+      setNotice("Masukkan kode room 6 karakter yang valid.");
+      return;
+    }
+    setCreating(true);
+    setNotice("Menghubungkan ke room " + code + "...");
+    gameSocket.joinRoom({
+      code,
+      userId: me.id,
+      playerName: me.nickname || me.fullName,
+      avatarUrl: me.avatar || undefined,
+      characterId: selectedCharacterId,
+    });
+  }, [me, serverOffline, creating, joinCodeInput, selectedCharacterId]);
+
   const quickMatch = useCallback(() => {
     if (!me || serverOffline || creating) return;
     setCreating(true);
@@ -464,11 +483,11 @@ export default function KuisTempurHub() {
     gameSocket.startGame({ code: room.code });
   }, [room]);
 
-  const copyCode = useCallback(async () => {
+  const copyCode = useCallback(async (asLink = true) => {
     if (!room?.code) return;
     try {
       const joinUrl = `${window.location.origin}/arena/game/kuis-tempur?join=${room.code}`;
-      await navigator.clipboard.writeText(joinUrl);
+      await navigator.clipboard.writeText(asLink ? joinUrl : room.code);
       setCopied(true);
       setTimeout(() => setCopied(false), 1600);
     } catch {}
@@ -930,7 +949,7 @@ export default function KuisTempurHub() {
                     <div className="mt-0.5 text-xs font-bold text-slate-400">
                       {isPublicRoom
                         ? humanCount < 2
-                          ? "Menunggu pemain lain..."
+                          ? "Menyiapkan arena dan lawan bot..."
                           : matchCountdown !== null && matchCountdown > 0
                             ? `Mulai otomatis dalam ${matchCountdown} detik`
                             : humanCount >= 10
@@ -1008,14 +1027,15 @@ export default function KuisTempurHub() {
                           : "Pemain ditemukan"}
                   </div>
                   <div className="mt-1 text-[10px] font-semibold leading-4 text-slate-400">
-                    Siapa saja bisa bergabung sampai 10 pemain. Tidak perlu kode atau undangan.
+                    Maksimal 10 pemain. Bot menjaga arena tetap seru saat murid masih sedikit.
                   </div>
                 </div>
               ) : (
                 <div className="mt-3 rounded-2xl border border-cyan-300/20 bg-cyan-300/8 p-4 text-center">
                   <div className="text-[10px] font-black tracking-[.2em] text-cyan-200/70">KODE ARENA</div>
                   <div className="mt-1 text-4xl font-black tracking-[.2em] text-white">{room.code}</div>
-                  <button onClick={copyCode} className="mt-3 inline-flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-xs font-black text-white/80">
+                  <button onClick={() => void copyCode(false)} className="mt-3 mr-2 inline-flex items-center gap-2 rounded-xl bg-amber-300 px-3 py-2 text-xs font-black text-slate-950"><Copy size={14} /> Salin kode</button>
+                  <button onClick={() => void copyCode(true)} className="mt-3 inline-flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-xs font-black text-white/80">
                     {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? "Tautan tersalin" : "Salin tautan"}
                   </button>
                 </div>
@@ -1035,7 +1055,7 @@ export default function KuisTempurHub() {
                 <div className="mt-2 text-[10px] font-semibold text-slate-500">
                   {isPublicRoom
                     ? humanCount < 2
-                      ? "Begitu pemain kedua masuk, countdown otomatis dimulai."
+                      ? "Arena otomatis dimulai setelah hitung mundur, bahkan saat kamu bermain sendiri melawan bot."
                       : matchCountdown !== null && matchCountdown > 0
                         ? `Pertempuran dimulai otomatis dalam ${matchCountdown} detik.`
                         : humanCount >= 10
@@ -1056,7 +1076,7 @@ export default function KuisTempurHub() {
                   <Loader2 className="mx-auto animate-spin text-amber-300" size={21} />
                   <div className="mt-2 text-sm font-black">
                     {humanCount < 2
-                      ? "Mencari pemain..."
+                      ? "Menyiapkan arena..."
                       : matchCountdown !== null && matchCountdown > 0
                         ? `Mulai dalam ${matchCountdown} detik`
                         : "Menyiapkan pertempuran..."}
@@ -1127,7 +1147,7 @@ export default function KuisTempurHub() {
                 </div>
                 <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">MAIN CEPAT</h2>
                 <p className="mt-1 max-w-lg text-sm font-semibold leading-6 text-orange-50/80">
-                  Cari lawan otomatis. Arena publik 2–10 pemain, tanpa undangan dan tidak harus satu kelas.
+                  Masuk otomatis ke arena hingga 10 murid, ditemani bot saat pemain masih sedikit.
                 </p>
                 <div className="mt-4 flex items-center gap-2 font-black text-amber-100">
                   {creating ? "MENCARI ARENA..." : "CARI LAWAN OTOMATIS"} <ChevronRight size={19} className="transition group-hover:translate-x-1" />
@@ -1167,6 +1187,25 @@ export default function KuisTempurHub() {
               LATIHAN SEKARANG <ChevronRight size={18} className="transition group-hover:translate-x-1" />
             </div>
           </button>
+        </section>
+
+        <section className="mx-auto mt-4 max-w-3xl rounded-[26px] border border-cyan-200/20 bg-[#0b1c35]/85 p-4 sm:p-5">
+          <div className="flex items-center gap-2 text-sm font-black text-cyan-100"><Users size={18} /> PUNYA KODE ROOM?</div>
+          <p className="mt-1 text-xs font-semibold text-slate-400">Masukkan kode undangan dari teman untuk bergabung ke arena privat.</p>
+          <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+            <input
+              aria-label="Kode room privat"
+              maxLength={6}
+              autoCapitalize="characters"
+              value={joinCodeInput}
+              onChange={(event) => setJoinCodeInput(event.target.value.toUpperCase().replace(/[^A-HJ-NP-Z2-9]/g, ""))}
+              onKeyDown={(event) => { if (event.key === "Enter") joinPrivateRoom(); }}
+              placeholder="KODE 6 KARAKTER"
+              className="min-w-0 flex-1 rounded-xl border border-white/20 bg-slate-950/75 px-4 py-3 text-center text-lg font-black tracking-[.2em] text-white outline-none focus:border-cyan-300"
+            />
+            <button onClick={joinPrivateRoom} disabled={creating || serverOffline || joinCodeInput.length !== 6} className="rounded-xl bg-cyan-300 px-6 py-3 text-sm font-black text-slate-950 transition hover:bg-cyan-200 disabled:cursor-not-allowed disabled:opacity-40">GABUNG ROOM</button>
+          </div>
+          {notice && <p role="status" className="mt-2 text-xs font-semibold text-amber-200">{notice}</p>}
         </section>
 
         <section className="mx-auto mt-5 grid max-w-3xl grid-cols-3 gap-2 rounded-[26px] border border-white/10 bg-white/[.05] p-3 backdrop-blur">

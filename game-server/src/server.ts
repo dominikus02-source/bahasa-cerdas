@@ -115,7 +115,7 @@ function clearPublicArenaCountdown(room: Room) {
 }
 
 async function startPublicArena(room: Room) {
-  if (room.status !== 'WAITING' || room.matchmaking !== 'PUBLIC' || room.players.size < 2) return;
+  if (room.status !== 'WAITING' || room.matchmaking !== 'PUBLIC' || room.players.size < 1) return;
   clearPublicArenaCountdown(room);
   io.to(room.code).emit('match-countdown', { seconds: 0 });
   await kuisTempurArena.start(room);
@@ -127,7 +127,7 @@ function schedulePublicArenaStart(room: Room) {
     void startPublicArena(room);
     return;
   }
-  if (room.players.size < 2 || room.autoStartInterval) return;
+  if (room.players.size < 1 || room.autoStartInterval) return;
 
   room.autoStartDeadline = Date.now() + 12_000;
   io.to(room.code).emit('match-countdown', { seconds: 12 });
@@ -136,7 +136,7 @@ function schedulePublicArenaStart(room: Room) {
       clearPublicArenaCountdown(room);
       return;
     }
-    if (room.players.size < 2) {
+    if (room.players.size < 1) {
       clearPublicArenaCountdown(room);
       io.to(room.code).emit('match-countdown', { seconds: -1 });
       return;
@@ -1122,6 +1122,7 @@ io.on('connection', (socket) => {
       });
       io.to(code).emit('player-list', getPlayersList(room));
       socket.emit('queue-status', { inQueue: true, position: 1, message: 'Menunggu pemain lain...' });
+      schedulePublicArenaStart(room);
       console.log(`[QuickMatch] ${identity.name} created public arena ${code}`);
       return;
     }
