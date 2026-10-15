@@ -8,7 +8,7 @@ export type KuisTempurMonster = {
   accent: string;
 };
 
-const MONSTER_BASE = "/game/kuis-tempur/characters/monsters";
+const MONSTER_BASE = "/game/kuis-tempur/characters/monsters/v2";
 
 export const KUIS_TEMPUR_MONSTERS: KuisTempurMonster[] = [
   { id: "korog", name: "Korog", role: "Monster Hutan", runtimeUrl: `${MONSTER_BASE}/korog.png`, accent: "#84cc16" },

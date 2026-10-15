@@ -10,6 +10,7 @@ const arena = read("components/game/KuisTempurArena.tsx");
 const phaser = read("components/game/KuisTempurPhaserWorld.tsx");
 const audio = read("lib/game/kuis-tempur-audio.ts");
 const kuisTempurCharacters = read("lib/game/kuis-tempur-characters.ts");
+const kuisTempurMonsters = read("lib/game/kuis-tempur-monsters.ts");
 const hub = read("components/game/KuisTempurHub.tsx");
 const bridgeRoute = read("app/api/game/kuis-tempur/server/route.ts");
 const guruKuisTempurRoute = read("app/(dashboard)/guru/game/kuis-tempur/page.tsx");
@@ -63,6 +64,30 @@ check("landscape phone punya compact question layout", arena.includes("max-heigh
 check("canvas touch tidak scroll halaman", phaser.includes("touch-none"));
 check("roster selectable hanya hero authored", ["arga","ki-jaka","bu-ratmi","bu-sari","eyang-kartala","pak-empu"].every((id) => kuisTempurCharacters.includes(`id: "${id}"`)) && kuisTempurCharacters.includes("KUIS_TEMPUR_PLAYABLE_CHARACTERS"));
 check("5 NPC authored dimuat sebagai runtime character", ["ki-jaka","bu-ratmi","bu-sari","eyang-kartala","pak-empu"].every((id) => kuisTempurCharacters.includes(id)) && phaser.includes('source === "authored"') && phaser.includes("NPC_RUNTIME_BASE") && phaser.includes("this.load.spritesheet") && phaser.includes("kt-char-${character.id}-idle"));
+check("seluruh karakter memakai jalur portrait V2 tanpa cache lama",
+  kuisTempurCharacters.includes('const HERO_BASE = "/game/kuis-tempur/characters/heroes/v2"') &&
+  fs.existsSync(path.join(root, "public/game/kuis-tempur/characters/heroes/v2/arga.png")) &&
+  ["ki-jaka","bu-ratmi","bu-sari","eyang-kartala","pak-empu"].every((id) =>
+    fs.existsSync(path.join(root, "public/game/kuis-tempur/characters/heroes/v2", id + ".png"))
+  )
+);
+check("Phaser memuat 20 sprite animasi baru dari artwork NPC asli",
+  phaser.includes('NPC_RUNTIME_BASE = "/game/kuis-tempur/characters/heroes/npc-runtime/v2"') &&
+  ["ki-jaka","bu-ratmi","bu-sari","eyang-kartala","pak-empu"].every((id) =>
+    ["idle","walk","talk","interact"].every((mode) => {
+      const p = path.join(root, "public/game/kuis-tempur/characters/heroes/npc-runtime/v2", id + "-" + mode + ".png");
+      if (!fs.existsSync(p)) return false;
+      const png = fs.readFileSync(p);
+      return png.readUInt32BE(16) === (mode === "walk" ? 6 : 4) * 224 && png.readUInt32BE(20) === 224;
+    })
+  )
+);
+check("empat monster baru dipakai di solo dan multiplayer",
+  kuisTempurMonsters.includes('const MONSTER_BASE = "/game/kuis-tempur/characters/monsters/v2"') &&
+  ["korog","korog-perang","golem-batu","korog-bayangan"].every((id) =>
+    fs.existsSync(path.join(root, "public/game/kuis-tempur/characters/monsters/v2", id + ".png"))
+  )
+);
 check("NPC punya animasi runtime idle/run/hit/KO", phaser.includes('visual.heroKind === "npc"') && phaser.includes("kt-npc-${visual.characterId}-") && phaser.includes("interact") && phaser.includes("talk") && phaser.includes("walk"));
 check("lobby character select terasa seperti game", hub.includes("PILIH PETARUNGMU") && hub.includes("KARAKTER TERPILIH") && hub.includes("ROSTER KARAKTER") && hub.includes("arenaSelectCharacter"));
 check("lobby character select punya carousel + arrow cycling", hub.includes("cycleCharacter") && hub.includes("ChevronLeft") && hub.includes("ChevronRight") && hub.includes("overflow-x-auto"));

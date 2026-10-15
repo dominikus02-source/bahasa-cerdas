@@ -62,7 +62,7 @@ const ARGA_SHEETS = {
 const ARGA_FRAME = 224;
 const ARGA_FRAME_COUNT = 8;
 const NPC_FRAME = 224;
-const NPC_RUNTIME_BASE = "/game/kuis-tempur/characters/heroes/npc-runtime";
+const NPC_RUNTIME_BASE = "/game/kuis-tempur/characters/heroes/npc-runtime/v2";
 const HERO_SIZE_ARGA = 82;
 const HERO_SIZE_NPC = 86;
 const HERO_SIZE_MASCOT = 78;
@@ -735,7 +735,7 @@ export default function KuisTempurPhaserWorld({
               .setAngle(0)
               .setAlpha(1)
               .setY(27)
-              .setDisplaySize(110, 110);
+              .setDisplaySize(HERO_SIZE_NPC, HERO_SIZE_NPC);
             visual.body.anims?.play(`kt-npc-${visual.characterId}-idle`, true);
           } else if (visual.heroKind === "monster") {
             visual.body

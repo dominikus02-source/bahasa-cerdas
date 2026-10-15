@@ -28,7 +28,7 @@ export default function KuisTempurCharacterPortrait({
       aria-label={character.name}
     >
       <img
-        src={character.previewUrl || "/game/kuis-tempur/characters/heroes/arga.png"}
+        src={character.previewUrl || "/game/kuis-tempur/characters/heroes/v2/arga.png"}
         alt={character.name}
         draggable={false}
         className={`h-full w-full select-none object-contain object-bottom ${

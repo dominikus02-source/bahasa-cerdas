@@ -19,7 +19,8 @@ export type KuisTempurCharacter = {
 
 export const DEFAULT_KUIS_TEMPUR_CHARACTER_ID: KuisTempurCharacterId = "arga";
 
-const HERO_BASE = "/game/kuis-tempur/characters/heroes";
+// V2 path busts browser and CDN caches of old portraits.
+const HERO_BASE = "/game/kuis-tempur/characters/heroes/v2";
 
 export const KUIS_TEMPUR_CHARACTERS: KuisTempurCharacter[] = [
   {
