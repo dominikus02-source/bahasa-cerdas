@@ -920,7 +920,7 @@ export default function KuisTempurPhaserWorld({
                 onComplete: () => number.destroy(),
               });
 
-              if (targetId === userIdRef.current) this.cameras.main.shake(110, 0.0035);
+              // Avoid camera shake: on classroom phones it resembles a display glitch.
             },
           });
         }
@@ -993,12 +993,22 @@ export default function KuisTempurPhaserWorld({
           const height = gameSize.height;
           this.rushOverlay.setSize(width, height);
           this.rushLabel.setPosition(width / 2, 112);
-          const compact = width < 760;
-          this.cameras.main.setZoom(compact ? 0.72 : width < 1100 ? 0.9 : 1.03);
+          // Continuous zoom avoids abrupt jumping as mobile browser chrome resizes.
+          const zoom = width < 760
+            ? 0.72
+            : width < 1100
+              ? 0.72 + ((width - 760) / 340) * 0.18
+              : 0.90 + ((Math.min(width, 1300) - 1100) / 200) * 0.13;
+          this.cameras.main.setZoom(zoom);
         }
 
+        private lastSyncedSeq = -1;
         update(_: number, delta: number) {
-          this.syncHeroes();
+          // Keep movement smooth without updating every health bar and label at 60 fps.
+          if (arenaRef.current.seq !== this.lastSyncedSeq) {
+            this.lastSyncedSeq = arenaRef.current.seq;
+            this.syncHeroes();
+          }
           const lerp = 1 - Math.pow(0.001, Math.min(delta, 60) / 1000);
 
           for (const visual of this.heroes.values()) {

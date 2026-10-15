@@ -12,6 +12,7 @@ type TestPlayer = {
   maxStreak: number;
   answerTimes: number[];
   ready: boolean;
+  connected?: boolean;
 };
 
 const events: Array<{ room: string; event: string; payload: unknown }> = [];
@@ -69,9 +70,12 @@ function check(message: string, condition: boolean) {
 async function main() {
   const publicRoom = makeRoom("PUBLIC1", "PUBLIC", 1);
   const privateRoom = makeRoom("PRIVATE2", "PRIVATE", 2);
+  const reconnectRoom = makeRoom("RECOVER1", "PUBLIC", 2);
+  reconnectRoom.players.get("p2")!.connected = false;
   const rooms = new Map<string, ReturnType<typeof makeRoom>>([
     [publicRoom.code, publicRoom],
     [privateRoom.code, privateRoom],
+    [reconnectRoom.code, reconnectRoom],
   ]);
   const arena = createKuisTempurArena({
     io: io as never,
@@ -90,7 +94,20 @@ async function main() {
   await arena.start(privateRoom);
   const privateStart = events.find((row) => row.room === "PRIVATE2" && row.event === "arena-start")?.payload as { humanCount: number; botCount: number } | undefined;
   check("private room remains human only", privateStart?.humanCount === 2 && privateStart?.botCount === 0);
-  console.log("PASS: public bots and private multiplayer separation");
+  await arena.start(reconnectRoom);
+  const pendingState = events.find((row) => row.room === "RECOVER1" && row.event === "arena-state")?.payload as { entities: Array<{ id: string; connected: boolean }> } | undefined;
+  check("temporarily disconnected pupils keep a reserved arena character", pendingState?.entities.find((p) => p.id === "p2")?.connected === false);
+  const restored: Array<{ name: string; payload: unknown }> = [];
+  const socket = {
+    id: "socket-restored-p2",
+    join: () => {},
+    emit: (name: string, payload: unknown) => { restored.push({ name, payload }); },
+  };
+  const recovered = arena.reconnect(socket as never, "RECOVER1", "p2");
+  check("pupil can re-enter a match that started during a brief network loss", recovered === true && restored.some((e) => e.name === "arena-start"));
+  const recoveredState = restored.find((event) => event.name === "arena-state")?.payload as { entities: Array<{ id: string; connected: boolean }> } | undefined;
+  check("reconnected pupil is marked connected in authoritative state", recoveredState?.entities.find((p) => p.id === "p2")?.connected === true);
+  console.log("PASS: public bots, private arena, and mid-match reconnect");
   process.exit(0);
 }
 main().catch((error) => { console.error(error); process.exit(1); });

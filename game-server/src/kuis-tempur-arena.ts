@@ -52,6 +52,7 @@ type PlayerLike = {
   maxStreak: number;
   answerTimes: number[];
   ready: boolean;
+  connected?: boolean;
 };
 
 type QuestionLike = {
@@ -429,7 +430,7 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
         return;
       }
 
-      const aliveHumans = humans.filter((human) => human.alive);
+      const aliveHumans = humans.filter((human) => human.alive && human.connected);
       if (!aliveHumans.length) return;
       aliveHumans.sort((a, b) => distance(entity, a) - distance(entity, b));
       const target = aliveHumans[0];
@@ -479,7 +480,15 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
     room.status = "IN_PROGRESS";
     room.startedAt = new Date();
 
+    const onlineCount = Array.from(room.players.values()).filter((player) => player.connected !== false).length;
+    if (onlineCount < (room.matchmaking === "PUBLIC" ? 1 : 2)) {
+      room.status = "WAITING";
+      io.to(room.code).emit("error", { message: "Menunggu murid tersambung kembali sebelum pertandingan dimulai." });
+      return;
+    }
     const entities = new Map<string, ArenaEntity>();
+    // Reserve a fighter for pupils temporarily disconnected during countdown.
+    // They can rejoin the live match instead of being stuck on the lobby screen.
     const humanPlayers = Array.from(room.players.values()).slice(0, MAX_HUMAN_PLAYERS);
     humanPlayers.forEach((player, index) => {
       const spawn = HUMAN_SPAWNS[index % HUMAN_SPAWNS.length];
@@ -507,8 +516,8 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
         color: HUMAN_COLORS[index % HUMAN_COLORS.length],
         lastShotAt: 0,
         respawnAt: 0,
-        connected: true,
-        disconnectedAt: 0,
+        connected: player.connected !== false,
+        disconnectedAt: player.connected === false ? Date.now() : 0,
       });
       player.score = 0;
       player.correct = 0;
@@ -760,6 +769,7 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
     if (!match) return;
     socket.join(code);
     socket.emit("arena-state", serialize(match));
+    socket.emit("arena-countdown", { seconds: Math.max(0, Math.ceil((match.startedAt - Date.now()) / 1000)) });
     if (Date.now() >= match.startedAt) questionFor(match, userId, socket.id);
   }
 

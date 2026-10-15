@@ -531,7 +531,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game/kuis-tempur" }:
               <ArrowLeft size={18} /> Kembali
             </button>
             <div className="rounded-full border border-cyan-200/30 bg-cyan-300/[.09] px-4 py-2 text-[10px] font-black tracking-[.2em] text-cyan-100 backdrop-blur-xl">
-              MODE LATIHAN · LAWAN BOT
+              MODE LATIHAN · LAWAN KOMPUTER
             </div>
           </div>
 
@@ -540,7 +540,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game/kuis-tempur" }:
               <div className="relative flex min-h-[560px] flex-col overflow-hidden border-b border-white/10 px-6 pb-4 pt-5 lg:border-b-0 lg:border-r lg:px-8">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_34%_40%,rgba(14,165,233,.18),transparent_30%),linear-gradient(180deg,rgba(5,35,67,.64),rgba(3,13,27,.9))]" />
                 <div className="relative z-10 max-w-xl">
-                  <div className="text-[11px] font-black tracking-[.26em] text-cyan-300">LAWAN BOT</div>
+                  <div className="text-[11px] font-black tracking-[.26em] text-cyan-300">LAWAN KOMPUTER</div>
                   <h1 className="mt-2 text-4xl font-black tracking-[-.04em] sm:text-5xl lg:text-6xl">
                     Pilih <span className="bg-gradient-to-r from-amber-300 to-orange-400 bg-clip-text text-transparent">Petarungmu</span>
                   </h1>
@@ -574,7 +574,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game/kuis-tempur" }:
 
               <div className="flex flex-col bg-[#040b16]/94 p-5 sm:p-6 lg:p-7">
                 <div className="rounded-[26px] border border-white/10 bg-white/[.035] p-5">
-                  <div className="text-[10px] font-black tracking-[.2em] text-slate-500">KAMPUNG KATA · SOLO</div>
+                  <div className="text-[10px] font-black tracking-[.2em] text-slate-500">KAMPUNG KATA · MAIN SENDIRI</div>
                   <h2 className="mt-1.5 text-2xl font-black tracking-tight sm:text-3xl">Jawab. Dapat amunisi. Tempur.</h2>
                   <p className="mt-2 text-sm font-semibold leading-6 text-slate-400">
                     Jawaban benar memberi peluru. Bergerak di arena, pilih monster, lalu serang. Tidak ada stat berbayar—semua petarung setara.
@@ -583,7 +583,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game/kuis-tempur" }:
                   <div className="mt-4 grid grid-cols-3 gap-2">
                     <div className="rounded-2xl border border-emerald-300/20 bg-slate-950/45 p-3 text-center">
                       <Heart className="mx-auto text-emerald-300" size={24} fill="currentColor" />
-                      <div className="mt-2 text-[9px] font-black tracking-[.16em] text-slate-500">HP</div>
+                      <div className="mt-2 text-[9px] font-black tracking-[.16em] text-slate-500">NYAWA</div>
                       <div className="text-lg font-black">100</div>
                     </div>
                     <div className="rounded-2xl border border-amber-300/20 bg-slate-950/45 p-3 text-center">
@@ -748,7 +748,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game/kuis-tempur" }:
               <div className="flex items-center gap-1.5">
                 <Heart size={15} className="fill-emerald-300 text-emerald-300" />
                 <div>
-                  <div className="text-[7px] font-black tracking-[.16em] text-slate-500">HP</div>
+                  <div className="text-[7px] font-black tracking-[.16em] text-slate-500">NYAWA</div>
                   <div className="text-sm font-black text-white">{player?.hp || 0}</div>
                 </div>
               </div>
@@ -788,7 +788,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game/kuis-tempur" }:
 
       <div className="pointer-events-none absolute left-1/2 top-3 z-20 flex -translate-x-1/2 flex-col items-center gap-2 sm:top-4">
         <div className="rounded-[18px] border border-amber-300/30 bg-slate-950/78 px-7 py-2 text-center shadow-xl backdrop-blur-xl">
-          <div className="text-[9px] font-black tracking-[.22em] text-amber-300">LEVEL {level}</div>
+          <div className="text-[9px] font-black tracking-[.22em] text-amber-300">TINGKAT {level}</div>
           <div className="text-[10px] font-bold text-slate-300">{player?.kills || 0} KO · {player?.combo || 0}× combo</div>
         </div>
         <div className="rounded-full border border-white/12 bg-slate-950/70 px-4 py-1.5 text-[10px] font-black text-white shadow-lg backdrop-blur-xl">

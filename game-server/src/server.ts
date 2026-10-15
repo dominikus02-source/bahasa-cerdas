@@ -38,6 +38,7 @@ interface Player {
   maxStreak: number;
   answerTimes: number[];
   ready: boolean;
+  connected?: boolean;
   hearts?: number;
   eliminated?: boolean;
   lastAnsweredQuestion?: number;
@@ -78,6 +79,15 @@ interface Question {
 
 const rooms = new Map<string, Room>();
 const playerSockets = new Map<string, string>();
+// Preserve room membership briefly during Wi-Fi handovers in a classroom.
+const lobbyReconnectTimers = new Map<string, ReturnType<typeof setTimeout>>();
+const LOBBY_RECONNECT_GRACE_MS = 45_000;
+function cancelLobbyReconnect(code: string, userId: string) {
+  const key = code + ':' + userId;
+  const timer = lobbyReconnectTimers.get(key);
+  if (timer) clearTimeout(timer);
+  lobbyReconnectTimers.delete(key);
+}
 
 // Matchmaking queue
 interface QueuePlayer {
@@ -116,6 +126,7 @@ function clearPublicArenaCountdown(room: Room) {
 
 async function startPublicArena(room: Room) {
   if (room.status !== 'WAITING' || room.matchmaking !== 'PUBLIC' || room.players.size < 1) return;
+  if (!Array.from(room.players.values()).some((player) => player.connected !== false)) return;
   clearPublicArenaCountdown(room);
   io.to(room.code).emit('match-countdown', { seconds: 0 });
   await kuisTempurArena.start(room);
@@ -136,7 +147,7 @@ function schedulePublicArenaStart(room: Room) {
       clearPublicArenaCountdown(room);
       return;
     }
-    if (room.players.size < 1) {
+    if (room.players.size < 1 || !Array.from(room.players.values()).some((player) => player.connected !== false)) {
       clearPublicArenaCountdown(room);
       io.to(room.code).emit('match-countdown', { seconds: -1 });
       return;
@@ -546,6 +557,7 @@ io.on('connection', (socket) => {
         maxStreak: 0,
         answerTimes: [],
         ready: true,
+        connected: true,
       };
 
       // Kuis Tempur 2.0 rooms are intentionally kept in memory on the realtime
@@ -642,7 +654,7 @@ io.on('connection', (socket) => {
       console.log(`[Room] Created: ${code} by host ${data.hostId}`);
     } catch (err) {
       console.error('[Error] create-room:', err);
-      socket.emit('error', { message: 'Gagal membuat room' });
+      socket.emit('error', { message: 'Gagal membuat ruang bermain' });
     }
   });
 
@@ -661,7 +673,7 @@ io.on('connection', (socket) => {
       data.avatarUrl = identity.avatar || undefined;
       const room = rooms.get(data.code);
       if (!room) {
-        socket.emit('error', { message: 'Room tidak ditemukan' });
+        socket.emit('error', { message: 'Ruang bermain tidak ditemukan' });
         return;
       }
       if (room.status !== 'WAITING') {
@@ -671,12 +683,15 @@ io.on('connection', (socket) => {
           room.players.has(data.userId);
 
         if (!canReconnect) {
-          socket.emit('error', { message: 'Game sudah dimulai' });
+          socket.emit('error', { message: 'Pertandingan sudah dimulai' });
           return;
         }
 
         const existing = room.players.get(data.userId)!;
+        cancelLobbyReconnect(data.code, data.userId);
+        playerSockets.delete(existing.odiceId);
         existing.odiceId = socket.id;
+        existing.connected = true;
         room.players.set(data.userId, existing);
         playerSockets.set(socket.id, data.code);
         socket.join(data.code);
@@ -707,7 +722,10 @@ io.on('connection', (socket) => {
 
       if (room.players.has(data.userId)) {
         const existing = room.players.get(data.userId)!;
+        cancelLobbyReconnect(data.code, data.userId);
+        playerSockets.delete(existing.odiceId);
         existing.odiceId = socket.id;
+        existing.connected = true;
         if (room.category === 'KUIS_TEMPUR_ARENA') {
           existing.characterId = normalizeKuisTempurCharacterId(data.characterId || existing.characterId);
         }
@@ -723,6 +741,7 @@ io.on('connection', (socket) => {
           player: room.players.get(data.userId),
         });
         io.to(data.code).emit('player-list', getPlayersList(room));
+        if (room.matchmaking === 'PUBLIC') schedulePublicArenaStart(room);
         return;
       }
 
@@ -742,6 +761,7 @@ io.on('connection', (socket) => {
         maxStreak: 0,
         answerTimes: [],
         ready: false,
+        connected: true,
       };
 
       room.players.set(data.userId, player);
@@ -778,7 +798,7 @@ io.on('connection', (socket) => {
       console.log(`[Room] ${data.playerName} joined room ${data.code}`);
     } catch (err) {
       console.error('[Error] join-room:', err);
-      socket.emit('error', { message: 'Gagal bergabung ke room' });
+      socket.emit('error', { message: 'Gagal bergabung ke ruang bermain' });
     }
   });
 
@@ -1067,6 +1087,7 @@ io.on('connection', (socket) => {
         maxStreak: 0,
         answerTimes: [],
         ready: true,
+        connected: true,
       };
 
       if (existingRoom) {
@@ -1194,8 +1215,22 @@ io.on('connection', (socket) => {
       if (room) {
         room.players.forEach((p, userId) => {
           if (p.odiceId !== socket.id) return;
+          p.connected = false;
           if (kuisTempurArena.isActive(code)) {
             kuisTempurArena.disconnect(code, userId);
+            io.to(code).emit('player-list', getPlayersList(room));
+          } else if (room.category === 'KUIS_TEMPUR_ARENA') {
+            // Do not remove a pupil just because their phone briefly changed networks.
+            cancelLobbyReconnect(code, userId);
+            const key = code + ':' + userId;
+            lobbyReconnectTimers.set(key, setTimeout(() => {
+              lobbyReconnectTimers.delete(key);
+              if (room.players.get(userId)?.odiceId === socket.id) {
+                if (kuisTempurArena.isActive(code)) kuisTempurArena.removePlayer(code, userId);
+                handleLeave(socket, code, userId);
+              }
+            }, LOBBY_RECONNECT_GRACE_MS));
+            io.to(code).emit('player-list', getPlayersList(room));
           } else {
             handleLeave(socket, code, userId);
           }
@@ -1218,6 +1253,7 @@ function getPlayersList(room: Room) {
     streak: p.streak,
     maxStreak: p.maxStreak,
     ready: p.ready,
+    connected: p.connected !== false && Boolean(io.sockets.sockets.get(p.odiceId)?.connected),
     isHost: p.id === room.hostId,
   }));
 }
@@ -1460,6 +1496,7 @@ function handleLeave(socket: any, code: string, odiceId: string) {
   if (!player) return;
 
   const wasHost = odiceId === room.hostId;
+  cancelLobbyReconnect(code, odiceId);
   room.players.delete(odiceId);
   socket.leave(code);
   playerSockets.delete(socket.id);
@@ -1480,7 +1517,7 @@ function handleLeave(socket: any, code: string, odiceId: string) {
     playerName: player.playerName,
   });
 
-  if (room.matchmaking === 'PUBLIC' && room.players.size < 2) {
+  if (room.matchmaking === 'PUBLIC' && room.players.size < 1) {
     clearPublicArenaCountdown(room);
     io.to(code).emit('match-countdown', { seconds: -1 });
   }

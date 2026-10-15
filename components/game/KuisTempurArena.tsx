@@ -127,6 +127,7 @@ export default function KuisTempurArena({
   const stateRef = useRef<ArenaState>({ seq: 0, timeLeft: 180, entities: [] });
 
   const [arena, setArena] = useState<ArenaState>(stateRef.current);
+  const lastHudUpdateRef = useRef(0);
   const [question, setQuestion] = useState<ArenaQuestion | null>(null);
   const [lockedAnswer, setLockedAnswer] = useState(false);
   const [feedback, setFeedback] = useState<{ correct: boolean; text: string } | null>(null);
@@ -145,12 +146,14 @@ export default function KuisTempurArena({
   }, []);
 
   useEffect(() => {
-    const id = window.setInterval(() => setNow(Date.now()), 200);
+    const id = window.setInterval(() => setNow(Date.now()), 300);
     return () => window.clearInterval(id);
   }, []);
 
   useEffect(() => {
     const stopStart = gameSocket.onArenaStart(() => {
+      stateRef.current = { seq: 0, timeLeft: 180, entities: [] };
+      lastHudUpdateRef.current = 0;
       setResult(null);
       setQuestion(null);
       setFeedback(null);
@@ -160,8 +163,14 @@ export default function KuisTempurArena({
       setCountdown(3);
     });
     const stopState = gameSocket.onArenaState((next: ArenaState) => {
+      if (!next || !Array.isArray(next.entities) || next.seq <= stateRef.current.seq) return;
       stateRef.current = next;
-      setArena(next);
+      const now = Date.now();
+      // Reduce costly React renders while Phaser keeps interpolating the arena.
+      if (now - lastHudUpdateRef.current >= 180) {
+        lastHudUpdateRef.current = now;
+        setArena(next);
+      }
     });
     const stopQuestion = gameSocket.onArenaQuestion((next: ArenaQuestion) => {
       setQuestion(next);
@@ -350,14 +359,14 @@ export default function KuisTempurArena({
         </button>
         <div className="grid min-w-0 flex-1 grid-cols-4 gap-1.5 sm:gap-2">
           <div className="rounded-xl border border-white/12 bg-slate-950/65 px-2 py-2 backdrop-blur">
-            <div className="text-[8px] font-black tracking-widest text-slate-400">HP</div>
+            <div className="text-[8px] font-black tracking-widest text-slate-400">NYAWA</div>
             <div className="mt-0.5 flex items-center gap-1 text-sm font-black">
               <Heart size={13} className="text-rose-400" fill="currentColor" />
               {Math.max(0, Math.round(me?.hp || 0))}
             </div>
           </div>
           <div className="rounded-xl border border-white/12 bg-slate-950/65 px-2 py-2 backdrop-blur">
-            <div className="text-[8px] font-black tracking-widest text-slate-400">AMUNISI</div>
+            <div className="text-[8px] font-black tracking-widest text-slate-400">PELURU</div>
             <div className="mt-0.5 flex items-center gap-1 text-sm font-black text-amber-300">
               <Zap size={13} fill="currentColor" /> {me?.ammo || 0}
             </div>
@@ -650,7 +659,7 @@ export default function KuisTempurArena({
                 {rematchStatus && (
                   <div className="mb-3 rounded-2xl border border-white/10 bg-white/[.045] px-4 py-3">
                     <div className="flex items-center justify-between gap-3 text-xs font-black">
-                      <span className="text-slate-400">REMATCH</span>
+                      <span className="text-slate-400">MAIN LAGI</span>
                       <span className={rematchStatus.starting ? "text-emerald-200" : "text-cyan-200"}>
                         {rematchStatus.starting
                           ? "Memulai ronde baru..."

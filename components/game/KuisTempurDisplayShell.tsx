@@ -50,7 +50,7 @@ export function KuisTempurDisplayChoice({
         </div>
         <h2 className="mt-4 text-center text-2xl font-black tracking-tight">{title}</h2>
         <p className="mx-auto mt-2 max-w-sm text-center text-sm font-semibold leading-6 text-slate-400">
-          Full screen paling imersif. Main biasa tetap tersedia kapan saja.
+          Mode layar penuh membuat permainan lebih jelas. Mode biasa tetap tersedia kapan saja.
         </p>
 
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
@@ -59,10 +59,10 @@ export function KuisTempurDisplayChoice({
             className="rounded-2xl border border-cyan-300/25 bg-cyan-300/10 p-4 text-left transition hover:border-cyan-200/45 hover:bg-cyan-300/15"
           >
             <div className="flex items-center gap-2 text-sm font-black text-cyan-100">
-              <Maximize2 size={18} /> FULL SCREEN
+              <Maximize2 size={18} /> LAYAR PENUH
             </div>
             <div className="mt-1 text-xs font-semibold leading-5 text-slate-400">
-              Arena memenuhi layar. Di HP, landscape sangat dianjurkan.
+              Arena memenuhi layar. Di HP, posisi mendatar sangat dianjurkan.
             </div>
             {saved === "fullscreen" && (
               <div className="mt-3 text-[10px] font-black tracking-widest text-cyan-300">PILIHAN TERAKHIR</div>
@@ -77,7 +77,7 @@ export function KuisTempurDisplayChoice({
               <Minimize2 size={18} /> MAIN BIASA
             </div>
             <div className="mt-1 text-xs font-semibold leading-5 text-slate-400">
-              Tetap bermain di halaman normal dan bisa beralih ke fullscreen saat match.
+              Tetap bermain di halaman normal dan bisa beralih ke layar penuh saat pertandingan.
             </div>
             {saved === "normal" && (
               <div className="mt-3 text-[10px] font-black tracking-widest text-slate-400">PILIHAN TERAKHIR</div>
@@ -156,10 +156,10 @@ export default function KuisTempurDisplayShell({
           type="button"
           onClick={toggleFullscreen}
           className="fixed right-3 top-3 z-[110] inline-flex items-center gap-2 rounded-xl border border-white/15 bg-slate-950/75 px-3 py-2 text-[10px] font-black tracking-wide text-white shadow-lg backdrop-blur hover:bg-slate-900/90"
-          aria-label={isFullscreen ? "Keluar fullscreen" : "Masuk fullscreen"}
+          aria-label={isFullscreen ? "Keluar layar penuh" : "Masuk layar penuh"}
         >
           {isFullscreen ? <Minimize2 size={15} /> : <Maximize2 size={15} />}
-          <span className="hidden sm:inline">{isFullscreen ? "KELUAR FULLSCREEN" : "FULL SCREEN"}</span>
+          <span className="hidden sm:inline">{isFullscreen ? "KELUAR LAYAR PENUH" : "LAYAR PENUH"}</span>
         </button>
       )}
 

@@ -7,6 +7,11 @@ let authInFlight = false;
 let authRefreshAttempts = 0;
 let authenticateCurrentSocket: ((refresh?: boolean) => Promise<void>) | null = null;
 const MAX_AUTH_REFRESH_ATTEMPTS = 2;
+// Classroom Wi-Fi can be slow: hold room commands until Socket.IO has authenticated.
+const pendingRoomCommands: Array<{ event: string; data: unknown }> = [];
+let activeRoom: { code: string; userId: string; playerName: string; avatarUrl?: string; characterId?: string } | null = null;
+const connectedListeners = new Set<() => void>();
+const disconnectedListeners = new Set<() => void>();
 
 // Keadaan "server gim tak terjangkau", dipisah dari socket itu sendiri supaya
 // halaman yang dibuka SETELAH kegagalan terjadi tetap bisa menanyakannya —
@@ -40,8 +45,9 @@ export const gameSocket = {
       transports: ['websocket', 'polling'],
       autoConnect: false,
       timeout: 8000,
-      reconnectionAttempts: 3,
+      reconnectionAttempts: Infinity,
       reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
     });
 
     socket.on('connect', () => {
@@ -49,6 +55,12 @@ export const gameSocket = {
       authRefreshAttempts = 0;
       gagalSambung = false;
       console.log('[Socket] Connected to game server');
+      // A new Socket.IO id loses its old room membership. Restore it first.
+      if (activeRoom) socket?.emit('join-room', activeRoom);
+      for (const { event, data } of pendingRoomCommands.splice(0)) {
+        socket?.emit(event, data);
+      }
+      connectedListeners.forEach((cb) => cb());
     });
 
     socket.on('connect_error', (err: Error) => {
@@ -67,9 +79,21 @@ export const gameSocket = {
 
     socket.on('disconnect', () => {
       console.log('[Socket] Disconnected from game server');
+      disconnectedListeners.forEach((cb) => cb());
+    });
+    socket.on('room-created', (data: { code: string; player?: { id: string; playerName: string; avatarUrl?: string; characterId?: string } }) => {
+      if (data?.code && data.player) {
+        activeRoom = { code: data.code, userId: data.player.id, playerName: data.player.playerName, avatarUrl: data.player.avatarUrl, characterId: data.player.characterId };
+      }
+    });
+    socket.on('room-joined', (data: { code: string; player?: { id: string; playerName: string; avatarUrl?: string; characterId?: string } }) => {
+      if (data?.code && data.player) {
+        activeRoom = { code: data.code, userId: data.player.id, playerName: data.player.playerName, avatarUrl: data.player.avatarUrl, characterId: data.player.characterId };
+      }
     });
 
     socket.on('error', (data: { message: string }) => {
+      if (data.message === 'Ruang bermain tidak ditemukan') activeRoom = null;
       console.error('[Socket] Error:', data.message);
     });
 
@@ -115,6 +139,8 @@ export const gameSocket = {
       authInFlight = false;
       authRefreshAttempts = 0;
       authenticateCurrentSocket = null;
+      activeRoom = null;
+      pendingRoomCommands.length = 0;
     }
   },
 
@@ -128,6 +154,34 @@ export const gameSocket = {
   },
 
   /** Berlangganan kabar gagal-sambung. Mengembalikan fungsi untuk berhenti. */
+  onConnected(callback: () => void) {
+    connectedListeners.add(callback);
+    if (socket?.connected) callback();
+    return () => { connectedListeners.delete(callback); };
+  },
+
+  onDisconnected(callback: () => void) {
+    disconnectedListeners.add(callback);
+    return () => { disconnectedListeners.delete(callback); };
+  },
+
+  isConnected() {
+    return Boolean(socket?.connected);
+  },
+
+  emitWhenConnected(event: string, data?: unknown) {
+    if (socket?.connected) {
+      socket.emit(event, data);
+      return;
+    }
+    // Only the latest intentional navigation command matters during a reconnect.
+    if (['join-room', 'create-room', 'join-queue'].includes(event)) {
+      pendingRoomCommands.length = 0;
+      pendingRoomCommands.push({ event, data });
+      if (!socket || !authInFlight) this.connect();
+    }
+  },
+
   onGagalSambung(callback: () => void) {
     pendengarGagal.add(callback);
     // Dipanggil langsung kalau kegagalannya sudah terjadi sebelum komponen ini
@@ -322,10 +376,11 @@ export const gameSocket = {
   },
 
   joinQueue(data: { userId: string; userName: string; avatarUrl?: string; gameType?: string; characterId?: string }) {
-    socket?.emit('join-queue', data);
+    this.emitWhenConnected('join-queue', data);
   },
 
   leaveQueue(data: { userId: string }) {
+    pendingRoomCommands.length = 0;
     socket?.emit('leave-queue', data);
   },
 
@@ -345,11 +400,11 @@ export const gameSocket = {
     timePerQuestion?: number;
     characterId?: string;
   }) {
-    socket?.emit('create-room', data);
+    this.emitWhenConnected('create-room', data);
   },
 
   joinRoom(data: { code: string; userId: string; playerName: string; avatarUrl?: string; characterId?: string }) {
-    socket?.emit('join-room', data);
+    this.emitWhenConnected('join-room', data);
   },
 
   toggleReady(data: { code: string; userId: string }) {
@@ -375,11 +430,13 @@ export const gameSocket = {
   },
 
   leaveRoom(data: { code: string; userId: string }) {
+    if (activeRoom?.code === data.code) activeRoom = null;
+    pendingRoomCommands.length = 0;
     socket?.emit('leave-room', data);
   },
 
   arenaReady(data: { code: string; userId: string }) {
-    socket?.emit('arena-ready', data);
+    this.emitWhenConnected('arena-ready', data);
   },
 
   arenaSelectCharacter(data: { code: string; userId: string; characterId: string }) {
