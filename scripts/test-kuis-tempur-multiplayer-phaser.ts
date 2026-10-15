@@ -92,7 +92,7 @@ check("Main Cepat memakai queue arena publik", hub.includes('gameType: "KUIS_TEM
 check("public arena 1-9 memakai auto countdown 12 detik", socketServer.includes("room.autoStartDeadline = Date.now() + 12_000") && socketServer.includes("room.players.size < 1"));
 check("bot publik menjadi monster pixel art", server.includes('monsterId: ["korog", "korog-perang", "golem-batu"][index]') && server.includes("monsterId: entity.monsterId"));
 check("room privat minimal dua murid", server.includes('room.matchmaking === "PUBLIC" ? 1 : 2'));
-check("gabung room memakai kode undangan", hub.includes("PUNYA KODE ROOM?") && hub.includes("joinPrivateRoom") && hub.includes("Salin kode"));
+check("gabung room memakai kode undangan", hub.includes("GABUNG ROOM TEMAN") && hub.includes("joinPrivateRoom") && hub.includes("Salin kode"));
 check("public arena 10/10 langsung mulai", socketServer.includes("room.players.size >= MAX_KUIS_TEMPUR_PLAYERS") && socketServer.includes("void startPublicArena(room)"));
 check("public arena tidak memakai database room", socketServer.includes("id: `public-arena-${code}`") && socketServer.includes("players: new Map([[identity.sub, player]])"));
 check("shared fullscreen shell dipakai Solo + multiplayer", arena.includes("KuisTempurDisplayShell") && read("components/game/KuisTempurSolo.tsx").includes("KuisTempurDisplayShell"));

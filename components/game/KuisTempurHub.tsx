@@ -1164,122 +1164,173 @@ export default function KuisTempurHub() {
   }
 
   return (
-    <main className="game-env game-env-kuis min-h-screen overflow-x-hidden bg-[#050914] text-white">
-      <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_17%_9%,rgba(14,165,233,.26),transparent_26%),radial-gradient(circle_at_84%_12%,rgba(244,63,94,.22),transparent_27%),linear-gradient(180deg,#071630,#050914_68%)]" />
-      <div className="relative mx-auto max-w-5xl px-4 pb-12 pt-4 sm:px-6">
-        <div className="mb-4 flex items-center justify-between">
+    <main className="game-env game-env-kuis relative isolate min-h-screen overflow-x-hidden bg-[#040918] text-white">
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_17%_15%,rgba(249,115,22,.16),transparent_34%),radial-gradient(circle_at_84%_30%,rgba(34,211,238,.16),transparent_36%),linear-gradient(180deg,#06152c_0%,#040918_75%)]" />
+      <div className="relative mx-auto max-w-6xl px-4 pb-12 pt-4 sm:px-6 lg:pt-6">
+        <header className="flex flex-wrap items-center justify-between gap-3">
           <GameBackButton href="/arena/game" label="Arena" title="Kembali ke Arena" />
-          <div className="rounded-full border border-white/10 bg-white/[.06] px-3 py-1.5 text-[10px] font-black tracking-[.18em] text-slate-300">
-            KUIS TEMPUR 2.0
+          <div className="flex items-center gap-2">
+            <div className="rounded-full border border-amber-300/25 bg-amber-300/10 px-3 py-2 text-[10px] font-black tracking-[.15em] text-amber-100">
+              <Swords size={13} className="mr-1 inline-block" /> KUIS TEMPUR 2.0
+            </div>
+            <div className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-2 text-[10px] font-black tracking-wide ${serverOffline ? "border-rose-300/30 bg-rose-300/10 text-rose-200" : "border-emerald-300/25 bg-emerald-300/10 text-emerald-200"}`}>
+              <span className={`h-2 w-2 rounded-full ${serverOffline ? "bg-rose-400" : "bg-emerald-300 shadow-[0_0_9px_rgba(110,231,183,.7)]"}`} />
+              {serverOffline ? "OFFLINE" : "REALTIME"}
+            </div>
           </div>
+        </header>
+
+        <section className="mt-5 grid overflow-hidden rounded-[34px] border border-amber-200/20 bg-[#071428] shadow-[0_28px_80px_rgba(0,0,0,.45)] lg:grid-cols-[1.03fr_.97fr]">
+          <div className="relative z-10 flex flex-col justify-center bg-[radial-gradient(circle_at_5%_70%,rgba(251,191,36,.12),transparent_45%),linear-gradient(145deg,#102847_0%,#061326_85%)] p-6 sm:p-9 lg:p-10">
+            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-amber-200/30 bg-amber-300/10 px-3.5 py-2 text-[10px] font-black tracking-[.17em] text-amber-200">
+              <Sparkles size={14} /> PETUALANGAN RPG EDUKASI
+            </div>
+            <h1 className="mt-5 text-[clamp(2.8rem,6vw,5.5rem)] font-black leading-[.96] tracking-[-.055em]">
+              KUIS<br />
+              <span className="bg-gradient-to-r from-amber-200 via-orange-400 to-rose-400 bg-clip-text text-transparent">TEMPUR</span>
+            </h1>
+            <p className="mt-4 max-w-md text-sm font-semibold leading-6 text-slate-300 sm:text-base">
+              Jawab soal, kumpulkan energi, lalu bertarung di Kampung Kata. Pilih jagoanmu dan rebut puncak podium!
+            </p>
+
+            <div className="mt-5 flex flex-wrap gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-white/[.06] px-3 py-2 text-[10px] font-black text-white/90">
+                <Users size={13} className="text-cyan-300" /> HINGGA 10 PEMAIN
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-white/[.06] px-3 py-2 text-[10px] font-black text-white/90">
+                <Bot size={13} className="text-amber-300" /> MONSTER BOT
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-white/[.06] px-3 py-2 text-[10px] font-black text-white/90">
+                <Shield size={13} className="text-emerald-300" /> STAT SETARA
+              </span>
+            </div>
+
+            <div className="mt-6 text-[10px] font-black tracking-[.18em] text-amber-100/75">MODE UTAMA · CARI LAWAN OTOMATIS</div>
+            <button
+              onClick={() => openMultiplayerSetup("quick")}
+              disabled={creating || serverOffline}
+              className="group mt-2 flex min-h-[62px] w-full items-center justify-between rounded-2xl bg-gradient-to-r from-amber-300 via-orange-400 to-orange-500 px-5 py-3 text-left text-slate-950 shadow-[0_12px_34px_rgba(249,115,22,.24)] transition hover:-translate-y-0.5 hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:grayscale disabled:opacity-50 sm:max-w-[420px]"
+            >
+              <span className="flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-950/15"><Zap size={24} fill="currentColor" /></span>
+                <span>
+                  <span className="block text-lg font-black leading-tight">MAIN CEPAT</span>
+                  <span className="block text-[10px] font-bold tracking-wide opacity-75">Cari lawan otomatis · mulai dengan bot</span>
+                </span>
+              </span>
+              <ChevronRight size={25} className="transition group-hover:translate-x-1" />
+            </button>
+            <p className="mt-2 text-[11px] font-semibold text-amber-100/65">Tidak perlu kode room. Arena mulai otomatis.</p>
+          </div>
+
+          <div className="relative min-h-[350px] overflow-hidden border-t border-amber-200/10 bg-[#11283c] sm:min-h-[420px] lg:min-h-[480px] lg:border-l lg:border-t-0">
+            <div
+              className="absolute inset-0 opacity-75"
+              style={{
+                backgroundImage: 'url("/game/kuis-tempur/assets/world/base/arena_base_01.png")',
+                backgroundPosition: "center center",
+                backgroundSize: "cover",
+                imageRendering: "pixelated",
+              }}
+              aria-hidden="true"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,15,31,.30)_0%,rgba(3,14,30,.28)_45%,rgba(4,12,24,.94)_100%)]" />
+            <div className="pointer-events-none absolute left-1/2 top-6 -translate-x-1/2 rounded-full border border-amber-200/30 bg-slate-950/75 px-4 py-2 text-[10px] font-black tracking-[.2em] text-amber-100 backdrop-blur">
+              <Crown size={13} className="mr-1 inline-block text-amber-300" /> PARA PENJAGA KAMPUNG KATA
+            </div>
+            <div className="pointer-events-none absolute bottom-[44px] left-1/2 h-16 w-[75%] -translate-x-1/2 rounded-[50%] bg-amber-200/20 blur-2xl" />
+            <div className="pointer-events-none absolute bottom-[73px] left-1/2 h-10 w-[75%] -translate-x-1/2 rounded-[50%] border border-amber-200/25 bg-amber-300/10" />
+            <div className="pointer-events-none absolute bottom-[72px] left-[2%] scale-[.7] origin-bottom sm:left-[6%] sm:scale-[.82]">
+              <KuisTempurCharacterPortrait characterId="ki-jaka" hero />
+            </div>
+            <div className="pointer-events-none absolute bottom-[56px] right-[1%] scale-[.69] origin-bottom sm:right-[4%] sm:scale-[.8]">
+              <KuisTempurCharacterPortrait characterId="bu-sari" hero />
+            </div>
+            <div className="pointer-events-none absolute bottom-[42px] left-1/2 z-10 -translate-x-1/2 scale-[.88] origin-bottom sm:scale-100">
+              <KuisTempurCharacterPortrait characterId="arga" hero />
+            </div>
+            <div className="absolute inset-x-4 bottom-3 z-20 flex items-center justify-center gap-2 rounded-2xl border border-amber-200/20 bg-slate-950/85 px-4 py-3 text-center backdrop-blur">
+              <Sparkles size={15} className="shrink-0 text-amber-300" />
+              <span className="text-[11px] font-black tracking-wider text-white sm:text-xs">6 PETARUNG · SATU ARENA · JADILAH JUARA</span>
+            </div>
+          </div>
+        </section>
+
+        <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_.94fr]">
+          <section className="grid gap-4 sm:grid-cols-2">
+            <button
+              onClick={() => openMultiplayerSetup("private")}
+              disabled={creating || serverOffline}
+              className="group flex min-h-[183px] flex-col justify-between rounded-[26px] border border-violet-300/25 bg-[radial-gradient(circle_at_90%_0%,rgba(192,132,252,.22),transparent_58%),linear-gradient(135deg,#29195b,#111738)] p-5 text-left shadow-[0_14px_35px_rgba(0,0,0,.24)] transition hover:-translate-y-1 hover:border-violet-200/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-300 disabled:cursor-not-allowed disabled:opacity-45"
+            >
+              <div className="flex items-center justify-between"><Shield size={30} className="text-violet-200" /><span className="text-[9px] font-black tracking-[.13em] text-violet-200/75">MAINKAN BERSAMA</span></div>
+              <div>
+                <h2 className="text-xl font-black">ROOM PRIVAT</h2>
+                <p className="mt-1 text-xs font-semibold leading-5 text-violet-100/75">Buat kode undangan, ajak teman, lalu bertempur bersama.</p>
+                <div className="mt-3 flex items-center gap-1 text-xs font-black text-violet-200">BUAT ROOM <ChevronRight size={16} className="transition group-hover:translate-x-1" /></div>
+              </div>
+            </button>
+            <button
+              onClick={() => setPhase("solo")}
+              className="group flex min-h-[183px] flex-col justify-between rounded-[26px] border border-cyan-300/25 bg-[radial-gradient(circle_at_90%_0%,rgba(34,211,238,.2),transparent_58%),linear-gradient(135deg,#113969,#0b1b37)] p-5 text-left shadow-[0_14px_35px_rgba(0,0,0,.24)] transition hover:-translate-y-1 hover:border-cyan-200/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300"
+            >
+              <div className="flex items-center justify-between"><Bot size={30} className="text-cyan-200" /><span className="text-[9px] font-black tracking-[.13em] text-cyan-200/75">LATIHAN MANDIRI</span></div>
+              <div>
+                <h2 className="text-xl font-black">LAWAN BOT</h2>
+                <p className="mt-1 text-xs font-semibold leading-5 text-cyan-100/75">Kuasai soal, coba jurus, dan asah kemampuanmu.</p>
+                <div className="mt-3 flex items-center gap-1 text-xs font-black text-cyan-200">MULAI LATIHAN <ChevronRight size={16} className="transition group-hover:translate-x-1" /></div>
+              </div>
+            </button>
+          </section>
+
+          <section className="rounded-[26px] border border-amber-200/20 bg-[linear-gradient(135deg,#102441,#08152c)] p-5 shadow-[0_14px_35px_rgba(0,0,0,.22)] sm:p-6">
+            <div className="flex items-center gap-2 text-sm font-black text-amber-100"><Users size={18} className="text-amber-300" /> GABUNG ROOM TEMAN</div>
+            <p className="mt-2 text-xs font-semibold leading-5 text-slate-400">Punya undangan? Masukkan 6 karakter kode dari temanmu.</p>
+            <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+              <input
+                aria-label="Kode room privat"
+                maxLength={6}
+                autoCapitalize="characters"
+                value={joinCodeInput}
+                onChange={(event) => setJoinCodeInput(event.target.value.toUpperCase().replace(/[^A-HJ-NP-Z2-9]/g, ""))}
+                onKeyDown={(event) => { if (event.key === "Enter") joinPrivateRoom(); }}
+                placeholder="KODE ROOM"
+                className="min-w-0 flex-1 rounded-xl border border-amber-100/20 bg-slate-950/75 px-3 py-3 text-center font-mono text-base font-black tracking-[.18em] text-white outline-none placeholder:tracking-[.08em] placeholder:text-slate-500 focus:border-amber-300"
+              />
+              <button
+                onClick={joinPrivateRoom}
+                disabled={creating || serverOffline || joinCodeInput.length !== 6}
+                className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-amber-300 px-5 py-3 text-xs font-black text-slate-950 transition hover:bg-amber-200 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                GABUNG <ChevronRight size={17} />
+              </button>
+            </div>
+            {notice && <p role="status" className="mt-3 text-xs font-semibold text-amber-200">{notice}</p>}
+            <div className="mt-4 flex items-center gap-2 border-t border-white/10 pt-4 text-[10px] font-semibold text-slate-400">
+              <Shield size={14} className="shrink-0 text-emerald-300" /> Room privat hanya bisa dimasuki dengan kode undangan.
+            </div>
+          </section>
         </div>
 
-        <section className="text-center">
-          <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-amber-300/20 bg-amber-300/10 px-4 py-1.5 text-xs font-black tracking-[.16em] text-amber-200">
-            <Sparkles size={14} /> JAWAB · DAPAT AMUNISI · BERTAHAN
-          </div>
-          <h1 className="mt-3 text-4xl font-black tracking-[-.04em] sm:text-6xl">
-            Kuis <span className="bg-gradient-to-r from-amber-300 to-orange-500 bg-clip-text text-transparent">Tempur</span>
-          </h1>
-          <p className="mx-auto mt-2 max-w-2xl text-sm font-semibold leading-6 text-slate-300 sm:text-base">
-            Pengetahuan adalah senjatamu. Cari lawan publik otomatis, buat room privat, atau latihan melawan bot di arena 2–10 pemain.
-          </p>
-        </section>
-
-        <section className="mx-auto mt-7 max-w-3xl">
-          <button
-            onClick={() => openMultiplayerSetup("quick")}
-            disabled={creating || serverOffline}
-            className="group relative w-full overflow-hidden rounded-[30px] border border-amber-200/25 bg-[radial-gradient(circle_at_82%_20%,rgba(251,191,36,.28),transparent_24%),linear-gradient(135deg,#5b1709,#b93813_52%,#f59e0b)] p-6 text-left shadow-[0_24px_70px_rgba(245,158,11,.24)] transition hover:-translate-y-1 disabled:cursor-not-allowed disabled:grayscale disabled:opacity-50"
-          >
-            <div className="relative flex items-center justify-between gap-5">
-              <div>
-                <div className="inline-flex items-center gap-2 rounded-full bg-amber-100/15 px-3 py-1 text-[10px] font-black tracking-[.2em] text-amber-100">
-                  <Zap size={14} fill="currentColor" /> MODE UTAMA
-                </div>
-                <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">MAIN CEPAT</h2>
-                <p className="mt-1 max-w-lg text-sm font-semibold leading-6 text-orange-50/80">
-                  Masuk otomatis ke arena hingga 10 murid, ditemani bot saat pemain masih sedikit.
-                </p>
-                <div className="mt-4 flex items-center gap-2 font-black text-amber-100">
-                  {creating ? "MENCARI ARENA..." : "CARI LAWAN OTOMATIS"} <ChevronRight size={19} className="transition group-hover:translate-x-1" />
-                </div>
-              </div>
-              <Swords className="hidden shrink-0 text-amber-100/75 sm:block" size={72} />
-            </div>
-          </button>
-        </section>
-
-        <section className="mx-auto mt-4 grid max-w-3xl gap-4 sm:grid-cols-2">
-          <button
-            onClick={() => openMultiplayerSetup("private")}
-            disabled={creating || serverOffline}
-            className="group relative overflow-hidden rounded-[28px] border border-violet-300/20 bg-gradient-to-br from-[#4c1d95] to-[#1e1b4b] p-5 text-left transition hover:-translate-y-1 disabled:cursor-not-allowed disabled:grayscale disabled:opacity-50"
-          >
-            <Shield size={28} className="text-violet-200" />
-            <h2 className="mt-4 text-2xl font-black">ROOM PRIVAT</h2>
-            <p className="mt-1 text-sm font-semibold leading-6 text-violet-100/70">
-              Buat room berkode untuk teman atau kelas. Host memutuskan kapan pertandingan dimulai.
-            </p>
-            <div className="mt-5 flex items-center gap-2 font-black text-violet-200">
-              BUAT ROOM <ChevronRight size={18} className="transition group-hover:translate-x-1" />
-            </div>
-          </button>
-
-          <button
-            onClick={() => setPhase("solo")}
-            className="group relative overflow-hidden rounded-[28px] border border-cyan-300/20 bg-gradient-to-br from-[#0c3f86] to-[#071c45] p-5 text-left transition hover:-translate-y-1"
-          >
-            <Bot size={28} className="text-cyan-200" />
-            <h2 className="mt-4 text-2xl font-black">LAWAN BOT</h2>
-            <p className="mt-1 text-sm font-semibold leading-6 text-blue-100/70">
-              Latihan sendiri di Kampung Kata dengan world, roster, HUD, dan sistem tempur yang sama.
-            </p>
-            <div className="mt-5 flex items-center gap-2 font-black text-cyan-200">
-              LATIHAN SEKARANG <ChevronRight size={18} className="transition group-hover:translate-x-1" />
-            </div>
-          </button>
-        </section>
-
-        <section className="mx-auto mt-4 max-w-3xl rounded-[26px] border border-cyan-200/20 bg-[#0b1c35]/85 p-4 sm:p-5">
-          <div className="flex items-center gap-2 text-sm font-black text-cyan-100"><Users size={18} /> PUNYA KODE ROOM?</div>
-          <p className="mt-1 text-xs font-semibold text-slate-400">Masukkan kode undangan dari teman untuk bergabung ke arena privat.</p>
-          <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-            <input
-              aria-label="Kode room privat"
-              maxLength={6}
-              autoCapitalize="characters"
-              value={joinCodeInput}
-              onChange={(event) => setJoinCodeInput(event.target.value.toUpperCase().replace(/[^A-HJ-NP-Z2-9]/g, ""))}
-              onKeyDown={(event) => { if (event.key === "Enter") joinPrivateRoom(); }}
-              placeholder="KODE 6 KARAKTER"
-              className="min-w-0 flex-1 rounded-xl border border-white/20 bg-slate-950/75 px-4 py-3 text-center text-lg font-black tracking-[.2em] text-white outline-none focus:border-cyan-300"
-            />
-            <button onClick={joinPrivateRoom} disabled={creating || serverOffline || joinCodeInput.length !== 6} className="rounded-xl bg-cyan-300 px-6 py-3 text-sm font-black text-slate-950 transition hover:bg-cyan-200 disabled:cursor-not-allowed disabled:opacity-40">GABUNG ROOM</button>
-          </div>
-          {notice && <p role="status" className="mt-2 text-xs font-semibold text-amber-200">{notice}</p>}
-        </section>
-
-        <section className="mx-auto mt-5 grid max-w-3xl grid-cols-3 gap-2 rounded-[26px] border border-white/10 bg-white/[.05] p-3 backdrop-blur">
+        <section className="mt-5 grid gap-3 rounded-[26px] border border-white/10 bg-white/[.04] p-3 sm:grid-cols-3 sm:p-4">
           {[
-            ["1", "Jawab", "Dapat amunisi"],
-            ["2", "Bertempur", "Bidik pemain lain"],
-            ["3", "Menang", "Rebut skor tertinggi"],
-          ].map(([n, title, desc]) => (
-            <div key={n} className="rounded-2xl p-3 text-center">
-              <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 text-xs font-black text-amber-200">{n}</div>
-              <div className="mt-2 text-xs font-black sm:text-sm">{title}</div>
-              <div className="mt-0.5 text-[9px] font-semibold leading-4 text-slate-500 sm:text-[10px]">{desc}</div>
+            { n: "01", title: "JAWAB SOAL", caption: "Kumpulkan energi dari jawaban benar", icon: <Sparkles size={19} /> },
+            { n: "02", title: "BERTEMPUR", caption: "Hadapi monster dan pemain lain", icon: <Swords size={19} /> },
+            { n: "03", title: "REBUT PODIUM", caption: "Kumpulkan skor dan raih kemenangan", icon: <Crown size={19} /> },
+          ].map(({ n, title, caption, icon }) => (
+            <div key={n} className="flex items-center gap-3 rounded-2xl border border-white/[.07] bg-[#0d1b32] px-4 py-3">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-300/10 text-amber-200">{icon}</div>
+              <div><div className="text-[10px] font-black tracking-[.12em] text-white">{n} · {title}</div><p className="mt-1 text-[10px] font-semibold leading-4 text-slate-400">{caption}</p></div>
             </div>
           ))}
         </section>
 
         {serverOffline && (
-          <div className="mx-auto mt-4 flex max-w-3xl items-start gap-3 rounded-2xl border border-rose-300/20 bg-rose-400/[.08] p-4">
+          <div role="status" className="mt-4 flex items-start gap-3 rounded-2xl border border-rose-300/20 bg-rose-400/[.08] p-4">
             <WifiOff className="mt-0.5 shrink-0 text-rose-300" size={18} />
-            <div className="text-xs font-semibold leading-5 text-rose-50/70">
-              Server realtime sedang tidak terjangkau. <b className="text-rose-100">Lawan Bot tetap aktif</b>; Main Cepat dan Room Privat tersedia setelah koneksi kembali.
-            </div>
+            <p className="text-xs font-semibold leading-5 text-rose-100/80">
+              Server realtime belum tersambung. <strong>Mode Lawan Bot tetap bisa dimainkan</strong> selama Main Cepat dan Room Privat belum tersedia.
+            </p>
           </div>
         )}
       </div>
