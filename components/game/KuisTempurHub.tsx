@@ -174,7 +174,7 @@ export default function KuisTempurHub() {
   const [creating, setCreating] = useState(false);
   const [serverOffline, setServerOffline] = useState(false);
   const [notice, setNotice] = useState("");
-  const [copied, setCopied] = useState(false);
+  const [copiedKind, setCopiedKind] = useState<"code" | "link" | null>(null);
   const [joinCodeInput, setJoinCodeInput] = useState("");
   const [matchCountdown, setMatchCountdown] = useState<number | null>(null);
   const [displayChoiceOpen, setDisplayChoiceOpen] = useState(false);
@@ -488,9 +488,11 @@ export default function KuisTempurHub() {
     try {
       const joinUrl = `${window.location.origin}/arena/game/kuis-tempur?join=${room.code}`;
       await navigator.clipboard.writeText(asLink ? joinUrl : room.code);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1600);
-    } catch {}
+      setCopiedKind(asLink ? "link" : "code");
+      setTimeout(() => setCopiedKind(null), 1600);
+    } catch {
+      setNotice("Gagal menyalin. Salin kode room secara manual.");
+    }
   }, [room]);
 
   if (phase === "setup" && entryMode) {
@@ -767,20 +769,52 @@ export default function KuisTempurHub() {
       <main className="game-env game-env-kuis min-h-screen overflow-x-hidden bg-[#040914] text-white">
         <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_20%_12%,rgba(14,165,233,.22),transparent_28%),radial-gradient(circle_at_80%_12%,rgba(244,63,94,.22),transparent_28%),linear-gradient(180deg,#07152d,#040914_70%)]" />
         <div className="relative mx-auto max-w-6xl px-4 pb-10 pt-5 sm:px-6">
-          <div className="mb-5 flex items-center justify-between gap-3">
-            <button
-              onClick={leaveLobby}
-              className="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/8 px-4 py-2.5 text-sm font-black text-white/80"
-            >
-              <ArrowLeft size={17} /> Keluar
-            </button>
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1.5 text-xs font-black text-emerald-200">
-              <Wifi size={14} /> {isPublicRoom ? "MAIN CEPAT" : "ROOM PRIVAT"} · {humanCount}/10
+          <header className="mb-5 rounded-[26px] border border-white/10 bg-[#0b1932]/90 p-3 shadow-[0_18px_48px_rgba(0,0,0,.23)] sm:p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={leaveLobby}
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-slate-100 transition hover:border-cyan-300/50 hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300"
+                  aria-label="Keluar dari lobi"
+                >
+                  <ArrowLeft size={20} />
+                </button>
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-amber-200/30 bg-gradient-to-br from-amber-400/25 to-orange-600/20 text-amber-200">
+                  <Swords size={22} />
+                </div>
+                <div>
+                  <div className="text-[9px] font-black tracking-[.24em] text-amber-200/80">KUIS TEMPUR · KAMPUNG KATA</div>
+                  <h1 className="mt-0.5 text-lg font-black leading-none tracking-tight sm:text-2xl">Markas Persiapan</h1>
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="flex items-center gap-2 rounded-full border border-emerald-300/25 bg-emerald-300/10 px-3 py-2 text-[10px] font-black tracking-wider text-emerald-200">
+                  <span className="h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_12px_rgba(110,231,183,.75)]" />
+                  <Wifi size={13} /> TERHUBUNG
+                </div>
+                <div className="rounded-full border border-white/15 bg-white/10 px-3 py-2 text-[10px] font-black tracking-wider text-white">
+                  {isPublicRoom ? "MAIN CEPAT" : "ROOM PRIVAT"} · {humanCount}/10
+                </div>
+              </div>
             </div>
-          </div>
+            <div className="mt-3 grid grid-cols-3 gap-1.5 border-t border-white/10 pt-3 sm:gap-3">
+              {[
+                { step: "01", title: "Pilih Petarung", complete: true },
+                { step: "02", title: isPublicRoom ? "Cari Lawan" : "Undang Teman", complete: humanCount >= (isPublicRoom ? 1 : 2) },
+                { step: "03", title: "Masuk Arena", complete: false },
+              ].map(({ step, title, complete }) => (
+                <div key={step} className={`flex items-center gap-2 rounded-xl border px-2 py-2 sm:px-3 ${complete ? "border-cyan-300/20 bg-cyan-300/10 text-cyan-100" : "border-white/10 bg-white/[.035] text-slate-400"}`}>
+                  <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-[10px] font-black ${complete ? "bg-cyan-300 text-slate-950" : "bg-slate-800 text-slate-400"}`}>
+                    {complete ? <Check size={13} strokeWidth={3} /> : step}
+                  </span>
+                  <span className="truncate text-[9px] font-black uppercase tracking-wider sm:text-xs">{title}</span>
+                </div>
+              ))}
+            </div>
+          </header>
 
           <div className="kt-lobby-layout grid gap-5 lg:grid-cols-[1fr_360px]">
-            <section className="overflow-hidden rounded-[32px] border border-white/12 bg-white/[.045] backdrop-blur">
+            <section className="overflow-hidden rounded-[30px] border border-cyan-100/15 bg-[#061225] shadow-[0_25px_65px_rgba(0,0,0,.4)]">
               <style jsx>{`
                 @keyframes ktCharacterIn {
                   0% { opacity: 0; transform: translateY(18px) scale(.94); filter: blur(6px); }
@@ -840,33 +874,46 @@ export default function KuisTempurHub() {
                 }
               `}</style>
 
-              <div className="kt-lobby-stage relative min-h-[420px] overflow-hidden border-b border-white/8 bg-[radial-gradient(circle_at_50%_30%,rgba(34,211,238,.18),transparent_30%),radial-gradient(circle_at_20%_20%,rgba(99,102,241,.16),transparent_25%),linear-gradient(180deg,#0a1730_0%,#071120_55%,#040914_100%)] px-4 pb-5 pt-5 sm:px-6">
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-[radial-gradient(ellipse_at_center,rgba(103,232,249,.22),transparent_62%)]" />
-                <div className="kt-stage-pulse pointer-events-none absolute bottom-[70px] left-1/2 h-28 w-80 -translate-x-1/2 rounded-[50%] border border-cyan-200/25 bg-cyan-300/10 blur-[1px]" />
-                <div className="pointer-events-none absolute bottom-[90px] left-1/2 h-16 w-56 -translate-x-1/2 rounded-[50%] bg-cyan-200/10 blur-xl" />
+              <div className="kt-lobby-stage relative min-h-[420px] overflow-hidden border-b border-amber-200/15 bg-[#08172b] px-4 pb-5 pt-5 sm:px-6">
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 opacity-30"
+                  style={{
+                    backgroundImage: 'url("/game/kuis-tempur/assets/world/base/arena_base_01.png")',
+                    backgroundPosition: "center 57%",
+                    backgroundSize: "cover",
+                    imageRendering: "pixelated",
+                  }}
+                />
+                <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(4,13,31,.92)_0%,rgba(7,19,38,.6)_39%,rgba(6,13,30,.75)_100%)]" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-[radial-gradient(ellipse_at_center,rgba(251,191,36,.24),transparent_65%)]" />
+                <div className="kt-stage-pulse pointer-events-none absolute bottom-[70px] left-1/2 h-28 w-80 -translate-x-1/2 rounded-[50%] border border-amber-200/30 bg-amber-300/10 blur-[1px]" />
+                <div className="pointer-events-none absolute bottom-[90px] left-1/2 h-16 w-56 -translate-x-1/2 rounded-[50%] bg-amber-200/15 blur-xl" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-amber-300/45 to-transparent" />
 
                 <div className="relative z-10 flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <div className="text-[10px] font-black tracking-[.22em] text-cyan-300">PILIH PETARUNGMU</div>
+                    <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/25 bg-amber-200/10 px-3 py-1.5 text-[10px] font-black tracking-[.22em] text-amber-200"><Sparkles size={12} /> PILIH PETARUNGMU</div>
                     <h1 className="kt-lobby-title mt-1 text-2xl font-black tracking-tight sm:text-4xl">
-                      Siapa yang masuk arena?
+                      Pilih jagoanmu!
                     </h1>
                   </div>
                   <div className="kt-lobby-equal rounded-full border border-emerald-300/15 bg-emerald-300/10 px-3 py-1.5 text-[9px] font-black tracking-[.16em] text-emerald-200">
-                    SEMUA STAT SETARA
+                    <Shield size={12} className="inline-block -mt-0.5 mr-1" /> SEMUA STAT SETARA
                   </div>
                 </div>
 
                 <div className="kt-lobby-stage-inner relative z-10 mt-0 flex min-h-[290px] items-center justify-center">
                   <button
                     onClick={() => cycleCharacter(-1)}
-                    className="absolute left-0 z-20 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/12 bg-slate-950/65 text-white/80 shadow-lg backdrop-blur transition hover:scale-105 hover:border-cyan-200/35 hover:text-white sm:left-4"
+                    className="absolute left-0 z-20 flex h-12 w-12 items-center justify-center rounded-2xl border border-amber-100/25 bg-slate-950/75 text-amber-100 shadow-lg backdrop-blur transition hover:scale-105 hover:border-amber-200/55 hover:bg-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-300 sm:left-4"
                     aria-label="Karakter sebelumnya"
                   >
                     <ChevronLeft size={24} />
                   </button>
 
                   <div className="kt-lobby-hero-wrap relative flex flex-col items-center text-center">
+                    <div className="pointer-events-none absolute left-1/2 top-[37%] h-56 w-56 -translate-x-1/2 rounded-full border border-amber-300/20 bg-[radial-gradient(circle,rgba(251,191,36,.1),transparent_70%)] shadow-[0_0_55px_rgba(245,158,11,.12)] sm:h-64 sm:w-64" />
                     <div key={selectedCharacter.id} className="kt-character-enter relative">
                       <div
                         className="pointer-events-none absolute inset-x-[-40px] bottom-2 top-20 rounded-full opacity-50 blur-3xl"
@@ -875,8 +922,8 @@ export default function KuisTempurHub() {
                       <KuisTempurCharacterPortrait characterId={selectedCharacter.id} hero />
                     </div>
 
-                    <div className="kt-selected-pill -mt-3 rounded-full border border-white/10 bg-slate-950/70 px-4 py-1.5 text-[9px] font-black tracking-[.18em] text-cyan-200 backdrop-blur">
-                      KARAKTER TERPILIH
+                    <div className="kt-selected-pill -mt-3 inline-flex items-center gap-2 rounded-full border border-amber-200/30 bg-slate-950/85 px-4 py-1.5 text-[9px] font-black tracking-[.18em] text-amber-200 backdrop-blur">
+                      <Check size={12} /> KARAKTER TERPILIH
                     </div>
                     <div className="mt-1.5 text-3xl font-black tracking-[-.03em] text-white sm:text-4xl">
                       {selectedCharacter.name}
@@ -899,7 +946,7 @@ export default function KuisTempurHub() {
 
                   <button
                     onClick={() => cycleCharacter(1)}
-                    className="absolute right-0 z-20 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/12 bg-slate-950/65 text-white/80 shadow-lg backdrop-blur transition hover:scale-105 hover:border-cyan-200/35 hover:text-white sm:right-4"
+                    className="absolute right-0 z-20 flex h-12 w-12 items-center justify-center rounded-2xl border border-amber-100/25 bg-slate-950/75 text-amber-100 shadow-lg backdrop-blur transition hover:scale-105 hover:border-amber-200/55 hover:bg-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-300 sm:right-4"
                     aria-label="Karakter berikutnya"
                   >
                     <ChevronRight size={24} />
@@ -907,9 +954,9 @@ export default function KuisTempurHub() {
                 </div>
               </div>
 
-              <div className="bg-[#050b16]/92 px-3 pb-4 pt-3 sm:px-5">
+              <div className="bg-[linear-gradient(180deg,#0c1b35,#06101f)] px-3 pb-4 pt-4 sm:px-5">
                 <div className="mb-2 flex items-center justify-between gap-3">
-                  <div className="text-[9px] font-black tracking-[.2em] text-slate-500">ROSTER KARAKTER</div>
+                  <div className="inline-flex items-center gap-2 text-[10px] font-black tracking-[.2em] text-amber-200"><Crown size={13} /> ROSTER KARAKTER</div>
                   <div className="text-[9px] font-bold text-slate-600">Klik atau swipe untuk ganti</div>
                 </div>
 
@@ -922,13 +969,14 @@ export default function KuisTempurHub() {
                         onClick={() => selectCharacter(character.id)}
                         className={`group relative min-w-[82px] snap-center rounded-[18px] border px-2 py-2 text-center transition-all duration-200 sm:min-w-[92px] ${
                           active
-                            ? "border-cyan-200/60 bg-cyan-300/12 shadow-[0_0_24px_rgba(34,211,238,.14)]"
-                            : "border-white/8 bg-white/[.035] opacity-70 hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[.065] hover:opacity-100"
+                            ? "border-amber-300/65 bg-amber-300/15 shadow-[0_0_0_1px_rgba(251,191,36,.24),0_9px_24px_rgba(0,0,0,.2)]"
+                            : "border-white/10 bg-white/[.035] opacity-80 hover:-translate-y-0.5 hover:border-amber-200/30 hover:bg-white/[.08] hover:opacity-100"
                         }`}
                         title={`${character.name} · ${character.role}`}
+                        aria-pressed={active}
                       >
                         {active && (
-                          <div className="absolute right-1.5 top-1.5 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-cyan-300 text-cyan-950 shadow">
+                          <div className="absolute right-1.5 top-1.5 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-amber-300 text-amber-950 shadow">
                             <Check size={12} strokeWidth={3} />
                           </div>
                         )}
@@ -943,13 +991,13 @@ export default function KuisTempurHub() {
                   })}
                 </div>
 
-                <div className="mt-4 flex items-center justify-between gap-3">
+                <div className="mt-5 flex items-center justify-between gap-3 border-t border-white/10 pt-4">
                   <div>
-                    <div className="text-[9px] font-black tracking-[.2em] text-slate-500">PEMAIN DI ROOM</div>
+                    <div className="inline-flex items-center gap-2 text-[10px] font-black tracking-[.16em] text-cyan-200"><Users size={14} /> PEMAIN DI ROOM</div>
                     <div className="mt-0.5 text-xs font-bold text-slate-400">
                       {isPublicRoom
                         ? humanCount < 2
-                          ? "Menyiapkan arena dan lawan bot..."
+                          ? matchCountdown !== null && matchCountdown > 0 ? `Mulai dalam ${matchCountdown} detik + bot` : "Menyiapkan arena dan lawan bot..."
                           : matchCountdown !== null && matchCountdown > 0
                             ? `Mulai otomatis dalam ${matchCountdown} detik`
                             : humanCount >= 10
@@ -963,12 +1011,12 @@ export default function KuisTempurHub() {
                   </div>
                 </div>
 
-                <div className="kt-roster-scroll mt-3 flex gap-2 overflow-x-auto pb-1">
+                <div className="kt-roster-scroll mt-3 flex snap-x gap-2 overflow-x-auto pb-2">
                   {slots.map((player, slot) =>
                     player ? (
                       <div
                         key={player.id}
-                        className={`flex min-w-[170px] snap-start items-center gap-2.5 rounded-2xl border px-3 py-2.5 ${
+                        className={`flex min-w-[170px] snap-start items-center gap-2.5 rounded-2xl border px-3 py-2.5 shadow-[0_8px_20px_rgba(0,0,0,.16)] ${
                           player.id === me?.id
                             ? "border-cyan-300/30 bg-cyan-300/[.08]"
                             : "border-white/8 bg-white/[.035]"
@@ -992,7 +1040,7 @@ export default function KuisTempurHub() {
                     ) : (
                       <div
                         key={slot}
-                        className="flex min-w-[118px] items-center justify-center rounded-2xl border border-dashed border-white/8 bg-white/[.02] px-3 py-3"
+                        className="flex min-w-[118px] snap-start items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[.02] px-3 py-3"
                       >
                         <div className="text-center">
                           <Users size={14} className="mx-auto text-slate-700" />
@@ -1009,23 +1057,22 @@ export default function KuisTempurHub() {
               </div>
             </section>
 
-            <aside className="kt-room-panel self-start rounded-[30px] border border-white/12 bg-white/[.07] p-5 shadow-[0_20px_55px_rgba(0,0,0,.25)] backdrop-blur">
+            <aside className="kt-room-panel self-start rounded-[30px] border border-cyan-200/20 bg-[linear-gradient(155deg,#102644_0%,#071329_72%)] p-5 shadow-[0_20px_55px_rgba(0,0,0,.4)]">
               <div className="flex items-center gap-2 text-xs font-black tracking-[.2em] text-slate-400">
-                <Gamepad2 size={15} /> MATCH ROOM
+                <Gamepad2 size={15} className="text-amber-300" /> PUSAT PERTEMPURAN
               </div>
               {isPublicRoom ? (
                 <div className="mt-3 rounded-2xl border border-cyan-300/20 bg-cyan-300/8 p-4 text-center">
                   <Zap className="mx-auto text-amber-300" size={28} fill="currentColor" />
                   <div className="mt-2 text-[10px] font-black tracking-[.2em] text-cyan-200/70">MATCHMAKING PUBLIK</div>
-                  <div className="mt-1 text-xl font-black text-white">
-                    {humanCount < 2
-                      ? "Menunggu lawan..."
-                      : matchCountdown !== null && matchCountdown > 0
-                        ? `${matchCountdown} detik`
-                        : humanCount >= 10
-                          ? "Arena penuh!"
-                          : "Pemain ditemukan"}
+                  <div aria-live="polite" className="mt-2 text-3xl font-black text-white">
+                    {matchCountdown !== null && matchCountdown > 0
+                      ? `${matchCountdown}s`
+                      : humanCount >= 10
+                        ? "ARENA PENUH!"
+                        : "MENCARI LAWAN"}
                   </div>
+                  <div className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-amber-300/15 px-2.5 py-1 text-[9px] font-black tracking-widest text-amber-200"><Bot size={12} /> BOT SIAP BERTEMPUR</div>
                   <div className="mt-1 text-[10px] font-semibold leading-4 text-slate-400">
                     Maksimal 10 pemain. Bot menjaga arena tetap seru saat murid masih sedikit.
                   </div>
@@ -1033,11 +1080,16 @@ export default function KuisTempurHub() {
               ) : (
                 <div className="mt-3 rounded-2xl border border-cyan-300/20 bg-cyan-300/8 p-4 text-center">
                   <div className="text-[10px] font-black tracking-[.2em] text-cyan-200/70">KODE ARENA</div>
-                  <div className="mt-1 text-4xl font-black tracking-[.2em] text-white">{room.code}</div>
-                  <button onClick={() => void copyCode(false)} className="mt-3 mr-2 inline-flex items-center gap-2 rounded-xl bg-amber-300 px-3 py-2 text-xs font-black text-slate-950"><Copy size={14} /> Salin kode</button>
-                  <button onClick={() => void copyCode(true)} className="mt-3 inline-flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-xs font-black text-white/80">
-                    {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? "Tautan tersalin" : "Salin tautan"}
-                  </button>
+                  <div aria-label={`Kode room ${room.code}`} className="mt-3 rounded-xl border border-dashed border-cyan-200/30 bg-slate-950/60 px-2 py-3 text-center font-mono text-2xl font-black tracking-[.24em] text-amber-200 sm:text-3xl">{room.code}</div>
+                  <div className="mt-2 text-[10px] font-semibold text-slate-400">Bagikan kode atau tautan ke temanmu</div>
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    <button onClick={() => void copyCode(false)} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-amber-300 px-2 py-2 text-xs font-black text-slate-950 transition hover:bg-amber-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white">
+                      {copiedKind === "code" ? <Check size={14} /> : <Copy size={14} />} {copiedKind === "code" ? "Tersalin!" : "Salin kode"}
+                    </button>
+                    <button onClick={() => void copyCode(true)} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/10 px-2 py-2 text-xs font-black text-white transition hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300">
+                      {copiedKind === "link" ? <Check size={14} /> : <Copy size={14} />} {copiedKind === "link" ? "Tersalin!" : "Salin tautan"}
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -1072,11 +1124,11 @@ export default function KuisTempurHub() {
               {notice && <div className="mt-3 text-center text-xs font-bold text-cyan-200">{notice}</div>}
 
               {isPublicRoom ? (
-                <div className="mt-5 rounded-2xl border border-amber-300/15 bg-amber-300/[.06] p-4 text-center">
+                <div role="status" className="mt-5 rounded-2xl border border-amber-300/25 bg-amber-300/[.09] p-4 text-center">
                   <Loader2 className="mx-auto animate-spin text-amber-300" size={21} />
                   <div className="mt-2 text-sm font-black">
                     {humanCount < 2
-                      ? "Menyiapkan arena..."
+                      ? matchCountdown !== null && matchCountdown > 0 ? `Mulai dalam ${matchCountdown} detik` : "Menyiapkan arena..."
                       : matchCountdown !== null && matchCountdown > 0
                         ? `Mulai dalam ${matchCountdown} detik`
                         : "Menyiapkan pertempuran..."}

@@ -37,7 +37,7 @@ check("client world = 1400x840", phaser.includes("const WORLD_W = 1400;") && pha
 check("server world = 1400x840", server.includes("const WORLD_W = 1400;") && server.includes("const WORLD_H = 840;"));
 check("server max player = 10", socketServer.includes("const MAX_KUIS_TEMPUR_PLAYERS = 10;"));
 check("arena engine cap human = 10", server.includes("const MAX_HUMAN_PLAYERS = 10;"));
-check("multiplayer utama tidak spawn bot", server.includes("const BOT_COUNT = 0;"));
+check("bot hanya disediakan di arena publik", server.includes('room.matchmaking === "PUBLIC"') && server.includes("const MAX_BOTS = 3;"));
 check("server menolak pemain ke-11", socketServer.includes("room.players.size >= MAX_KUIS_TEMPUR_PLAYERS"));
 check("camera mengikuti local hero", phaser.includes("this.cameras.main.startFollow"));
 check("visual state diinterpolasi", phaser.includes("Phaser.Math.Linear"));
@@ -76,7 +76,7 @@ check("arena snapshot membawa characterId", server.includes("characterId: entity
 check("result bridge menerima sampai 10 pemain", bridgeRoute.includes("results.length > 10") && !bridgeRoute.includes("results.length > 2"));
 check("persistence code mendukung id per ronde", bridgeRoute.includes("validPersistenceCode") && server.includes("persistenceCode"));
 check("Phaser memakai authored hero PNG + monster PNG", phaser.includes("KUIS_TEMPUR_PLAYABLE_CHARACTERS") && phaser.includes("KUIS_TEMPUR_MONSTERS") && phaser.includes("kt-monster-${monster.id}") && !phaser.includes("rpg_runtime_atlas.svg"));
-check("weapon rig memakai core + tip + glow", phaser.includes("weaponCore") && phaser.includes("weaponTip") && phaser.includes("ammoGlow"));
+check("overlay senjata NPC dihapus", !phaser.includes("weaponCore") && !phaser.includes("weaponTip") && !phaser.includes("ammoGlow"));
 check("pointer hover memberi target reticle", phaser.includes("pointermove") && phaser.includes("pickTarget") && phaser.includes("targetRing"));
 check("top-3 rank tampil di arena", phaser.includes("rankBadge") && phaser.includes("rank <= 3"));
 check("jawaban benar memunculkan energy/combo feedback", phaser.includes("ENERGI +1") && phaser.includes("comboMatch"));
@@ -89,7 +89,10 @@ check("landing punya Main Cepat sebagai mode utama", hub.includes("MAIN CEPAT") 
 check("multiplayer setup mengikuti mode → karakter → tampilan", hub.includes('phase === "setup"') && hub.includes("PILIH PETARUNG") && hub.includes("LANJUT PILIH TAMPILAN") && hub.includes("openMultiplayerSetup"));
 check("landing punya Room Privat tanpa wajib pilih teman", hub.includes("ROOM PRIVAT") && hub.includes("createPrivateRoom"));
 check("Main Cepat memakai queue arena publik", hub.includes('gameType: "KUIS_TEMPUR_ARENA"') && socketServer.includes("matchmaking === 'PUBLIC'"));
-check("public arena 2-9 memakai auto countdown 12 detik", socketServer.includes("room.autoStartDeadline = Date.now() + 12_000") && socketServer.includes("room.players.size < 2"));
+check("public arena 1-9 memakai auto countdown 12 detik", socketServer.includes("room.autoStartDeadline = Date.now() + 12_000") && socketServer.includes("room.players.size < 1"));
+check("bot publik menjadi monster pixel art", server.includes('monsterId: ["korog", "korog-perang", "golem-batu"][index]') && server.includes("monsterId: entity.monsterId"));
+check("room privat minimal dua murid", server.includes('room.matchmaking === "PUBLIC" ? 1 : 2'));
+check("gabung room memakai kode undangan", hub.includes("PUNYA KODE ROOM?") && hub.includes("joinPrivateRoom") && hub.includes("Salin kode"));
 check("public arena 10/10 langsung mulai", socketServer.includes("room.players.size >= MAX_KUIS_TEMPUR_PLAYERS") && socketServer.includes("void startPublicArena(room)"));
 check("public arena tidak memakai database room", socketServer.includes("id: `public-arena-${code}`") && socketServer.includes("players: new Map([[identity.sub, player]])"));
 check("shared fullscreen shell dipakai Solo + multiplayer", arena.includes("KuisTempurDisplayShell") && read("components/game/KuisTempurSolo.tsx").includes("KuisTempurDisplayShell"));

@@ -10,7 +10,7 @@ const HUMAN_HP = 100;
 const BOT_HP = 82;
 const HUMAN_SPEED = 245;
 const BOT_SPEED = 118;
-const MAX_BOTS = 4;
+const MAX_BOTS = 3;
 const MAX_HUMAN_PLAYERS = 10;
 const HUMAN_DAMAGE_TO_HUMAN = 18;
 const HUMAN_DAMAGE_TO_BOT = 28;
@@ -28,6 +28,7 @@ type RoomLike = {
   hostId: string;
   gameType: string;
   category?: string;
+  matchmaking?: "PUBLIC" | "PRIVATE";
   difficulty: string;
   status: string;
   questionCount: number;
@@ -82,6 +83,7 @@ type ArenaEntity = {
   alive: boolean;
   avatarUrl?: string;
   characterId: string;
+  monsterId?: string;
   color: string;
   lastShotAt: number;
   respawnAt: number;
@@ -216,6 +218,7 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
         alive: entity.alive,
         avatarUrl: entity.avatarUrl,
         characterId: entity.characterId,
+        monsterId: entity.monsterId,
         color: entity.color,
         respawnIn: entity.alive ? 0 : Math.max(0, (entity.respawnAt - now) / 1000),
         connected: entity.connected,
@@ -456,8 +459,8 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
 
   async function start(room: RoomLike) {
     if (matches.has(room.code)) return;
-    if (room.players.size < 2) {
-      io.to(room.code).emit("error", { message: "Butuh minimal dua pemain untuk memulai Kuis Tempur." });
+    if (room.players.size < (room.matchmaking === "PUBLIC" ? 1 : 2)) {
+      io.to(room.code).emit("error", { message: "Butuh minimal dua pemain untuk room privat Kuis Tempur." });
       return;
     }
 
@@ -467,8 +470,8 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
       return;
     }
 
-    if (room.players.size < 2) {
-      io.to(room.code).emit("error", { message: "Butuh minimal dua pemain untuk memulai Kuis Tempur." });
+    if (room.players.size < (room.matchmaking === "PUBLIC" ? 1 : 2)) {
+      io.to(room.code).emit("error", { message: "Butuh minimal dua pemain untuk room privat Kuis Tempur." });
       return;
     }
 
@@ -515,7 +518,7 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
       player.answerTimes = [];
     });
 
-    const botCount = room.category === "KUIS_TEMPUR_ARENA" ? Math.min(MAX_BOTS, Math.max(0, MAX_HUMAN_PLAYERS - humanPlayers.length)) : 0;
+    const botCount = room.matchmaking === "PUBLIC" ? Math.min(MAX_BOTS, Math.max(0, MAX_HUMAN_PLAYERS - humanPlayers.length)) : 0;
     for (let index = 0; index < botCount; index++) {
       const spawn = BOT_SPAWNS[index];
       const id = `bot-${index + 1}`;
@@ -539,6 +542,7 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
         maxCombo: 0,
         alive: true,
         characterId: "arga",
+        monsterId: ["korog", "korog-perang", "golem-batu"][index],
         color: BOT_COLORS[index],
         lastShotAt: 0,
         respawnAt: 0,
@@ -698,7 +702,8 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
     }
 
     const totalCount = connectedHumans.length;
-    const requiredCount = totalCount <= 2 ? 2 : Math.max(2, Math.ceil(totalCount * 0.6));
+    const minimumForRematch = match.room.matchmaking === "PUBLIC" ? 1 : 2;
+    const requiredCount = totalCount <= 2 ? minimumForRematch : Math.max(2, Math.ceil(totalCount * 0.6));
     const readyIds = Array.from(match.rematchVotes);
     const readyCount = readyIds.length;
 
@@ -707,10 +712,10 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
       readyCount,
       totalCount,
       requiredCount,
-      starting: readyCount >= requiredCount && totalCount >= 2,
+      starting: readyCount >= requiredCount && totalCount >= minimumForRematch,
     });
 
-    if (totalCount < 2 || readyCount < requiredCount) return true;
+    if (totalCount < minimumForRematch || readyCount < requiredCount) return true;
 
     match.rematchStarting = true;
     if (match.cleanupTimer) {
@@ -797,7 +802,7 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
     match.answeredQuestion.delete(userId);
     match.questionIndex.delete(userId);
     const humansLeft = Array.from(match.entities.values()).filter((entity) => entity.kind === "human");
-    if (humansLeft.length < 2 && !match.finishing) {
+    if (humansLeft.length < (match.room.matchmaking === "PUBLIC" ? 1 : 2) && !match.finishing) {
       void persistAndFinish(match);
     }
   }
