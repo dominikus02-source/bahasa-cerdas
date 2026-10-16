@@ -589,6 +589,15 @@
   display: grid;
   gap: 10px;
 }
+.mb-author-visibility { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0; margin: 20px 0; border: 0; }
+.mb-author-visibility legend { margin-bottom: 10px; color: #224d3d; font-size: 14px; font-weight: 700; }
+.mb-author-visibility label { display: flex; align-items: center; gap: 9px; padding: 14px; border: 1px solid #dce8e0; border-radius: 13px; background: white; cursor: pointer; color: #2b6851; }
+.mb-author-visibility label:has(input:checked) { border-color: #059669; background: #effaf4; }
+.mb-author-visibility input { accent-color: #059669; flex-shrink: 0; }
+.mb-author-visibility span { display: grid; gap: 4px; }
+.mb-author-visibility strong { font-size: 13px; }
+.mb-author-visibility small { color: #60786c; line-height: 1.5; font-size: 12px; }
+@media (max-width: 560px) { .mb-author-visibility { grid-template-columns: 1fr; } }
 .mb-author-review-list > button {
   display: flex;
   align-items: center;

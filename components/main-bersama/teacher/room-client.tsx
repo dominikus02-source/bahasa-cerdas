@@ -10,6 +10,7 @@
 // GET authoritative (useSessionView); command POST lalu refresh.
 // Logic/Tahap 6 TIDAK berubah — hanya presentation.
 
+import TeacherResultsPanel from './TeacherResultsPanel';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowRight, BarChart3, Maximize2, Monitor, Pause, Play, Square, Trophy, Users } from 'lucide-react';
 import { getJelajahTeams } from '@/lib/main-bersama/jelajah-layout';
@@ -20,7 +21,6 @@ import {
   MbApiError,
   fetchTeacherState,
   postTeacherCommand,
-  saveTeacherResultsToKelasku,
 } from '@/lib/main-bersama/api-client';
 import { useSessionView } from '@/lib/main-bersama/use-session-view';
 import { SessionHeader } from '@/components/main-bersama/shared/SessionHeader';
@@ -72,8 +72,6 @@ export function TeacherRoomClient({
   const [confirmEnd, setConfirmEnd] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'layar' | 'kontrol' | 'analisis'>('layar');
-  const [savingResults, setSavingResults] = useState(false);
-  const [resultsSaved, setResultsSaved] = useState(false);
   const [jelajahPodiumView, setJelajahPodiumView] = useState<'regu' | 'siswa'>('regu');
   const autoLobbyRef = useRef(false);
   const fullscreen = useFullscreenControl({
@@ -802,10 +800,7 @@ export function TeacherRoomClient({
               />}
             />
           )}
-          <div className="mb-final-actions">
-            <button type="button" className="mb-final-share-btn" disabled={savingResults || resultsSaved || !className} onClick={async () => { setSavingResults(true); try { await saveTeacherResultsToKelasku(sessionId); setResultsSaved(true); } catch (e) { setError(e instanceof MbApiError ? e.message : 'Hasil gagal disimpan.'); } finally { setSavingResults(false); } }}>{resultsSaved ? '✓ Tersimpan di Kelasku' : savingResults ? 'Menyimpan…' : 'Masukkan Nilai ke Kelasku'}</button>
-            <button type="button" className="mb-final-share-btn mb-final-share-secondary" onClick={() => { const rows = [...view.participants].sort((a,b)=>a.displayName.localeCompare(b.displayName,'id')).map(p=>p.displayName + ': ' + p.progressPercent + '% (' + p.correctAnswers + '/' + p.eligibleRounds + ')').join('\n'); const subject=encodeURIComponent('Hasil Main Bersama — ' + view.contentTitle); const body=encodeURIComponent('Hasil Main Bersama\n\n' + rows); window.location.href='mailto:?subject=' + subject + '&body=' + body; }}>Kirim Hasil melalui Email</button>
-          </div>
+          <TeacherResultsPanel view={view} className={className} />
 
           <div className="mb-final-bottom">
             <div>

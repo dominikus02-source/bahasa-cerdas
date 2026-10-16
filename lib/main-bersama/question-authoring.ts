@@ -12,6 +12,7 @@ export const packageDraftSchema = z.object({
   title: z.string().trim().min(1, "Isi judul paket.").max(120),
   kelas: z.string().trim().min(1, "Isi kelas.").max(30),
   reviewed: z.literal(true),
+  isPublic: z.boolean().default(false),
   questions: z
     .array(
       z

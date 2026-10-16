@@ -8,6 +8,7 @@ import {
   FileText,
   Keyboard,
   LockKeyhole,
+  Globe2,
   Plus,
   Trash2,
   UploadCloud,
@@ -83,6 +84,7 @@ export default function QuestionPackageEditor({
   const [warnings, setWarnings] = useState<string[]>([]);
   const [fileName, setFileName] = useState("");
   const [reviewed, setReviewed] = useState(false);
+  const [isPublic, setIsPublic] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [deletePending, setDeletePending] = useState(false);
@@ -190,6 +192,7 @@ export default function QuestionPackageEditor({
       kelas,
       questions,
       reviewed: true,
+      isPublic,
     });
     if (!valid.success) {
       setStage("edit");
@@ -215,7 +218,7 @@ export default function QuestionPackageEditor({
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title, kelas, questions, reviewed }),
+          body: JSON.stringify({ title, kelas, questions, reviewed, isPublic }),
         },
       );
       const result = (await response.json()) as {
@@ -230,6 +233,7 @@ export default function QuestionPackageEditor({
       setSource("manual");
       setTitle("");
       setKelas("Umum");
+      setIsPublic(false);
       setText("");
       setQuestions([blankQuestion()]);
       setActive(0);
@@ -385,7 +389,7 @@ export default function QuestionPackageEditor({
                     <p>
                       <strong>Mulai dengan satu pertanyaan.</strong>
                       <br />
-                      Tambahkan soal kapan saja. Paket tersimpan privat untukmu.
+                      Tambahkan soal kapan saja. Akses paket bisa diatur sebelum disimpan.
                     </p>
                     <button
                       type="button"
@@ -829,9 +833,14 @@ export default function QuestionPackageEditor({
                     </p>
                   </div>
                   <span className="mb-author-private">
-                    <LockKeyhole size={14} /> Privat
+                    {isPublic ? <Globe2 size={14} /> : <LockKeyhole size={14} />} {isPublic ? "Publik" : "Privat"}
                   </span>
                 </div>
+                <fieldset className="mb-author-visibility">
+                  <legend>Siapa yang dapat memainkan paket ini?</legend>
+                  <label><input type="radio" name="package-access" checked={!isPublic} onChange={() => setIsPublic(false)} /><LockKeyhole size={18} /><span><strong>Privat</strong><small>Hanya kamu yang dapat memainkannya.</small></span></label>
+                  <label><input type="radio" name="package-access" checked={isPublic} onChange={() => setIsPublic(true)} /><Globe2 size={18} /><span><strong>Publik</strong><small>Guru lain dapat menemukan dan memainkan soalmu.</small></span></label>
+                </fieldset>
                 <button type="button" className="mb-author-secondary" onClick={() => setPreviewOpen(true)}>
                   <Eye size={18} /> Pratinjau semua soal sebelum digunakan
                 </button>

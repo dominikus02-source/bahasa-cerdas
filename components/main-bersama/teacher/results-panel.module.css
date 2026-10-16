@@ -1,0 +1,29 @@
+.panel { margin: 24px 0; padding: 24px; text-align: left; color: #203c35; background: #fff; border: 1px solid #dce9e3; border-radius: 24px; box-shadow: 0 6px 24px #173e2a06; }
+.header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.icon { display: grid; place-items: center; width: 45px; height: 45px; border-radius: 14px; background: #e9f5ed; color: #17805c; }
+.header h2 { font-size: 20px; font-weight: 850; letter-spacing: -.02em; margin: 0 0 4px; }
+.header p, .columns p { color: #697c73; font-size: 13px; line-height: 1.65; }
+.columns { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.columns > div { min-width: 0; padding: 20px; border: 1px solid #e1ebe5; border-radius: 18px; background: #f9fcfa; }
+.columns h3 { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 800; margin: 0 0 8px; }
+.destination > label { display: block; margin: 16px 0 7px; font-size: 12px; font-weight: 750; }
+.destination select { display: block; width: 100%; padding: 11px 12px; border: 1px solid #c6d9cc; border-radius: 12px; background: white; font-size: 13px; color: #244c3a; }
+.primary { display: flex; justify-content: center; align-items: center; gap: 8px; width: 100%; padding: 12px 15px; margin-top: 12px; border: 0; border-radius: 12px; background: #177c56; color: white; font-size: 13px; font-weight: 800; cursor: pointer; }
+.primary:disabled { cursor: default; opacity: .5; }
+.gradebookLink { display: block; margin-top: 12px; color: #177c56; font-size: 12px; font-weight: 750; }
+.loading, .savedCount { display: flex; align-items: center; gap: 7px; }
+.columns .success, .columns .savedCount { color: #147445; margin-top: 12px; }
+.columns .error { color: #b33434; font-size: 12px; margin-top: 12px; }
+.error button, .destination p a { text-decoration: underline; font-weight: 750; }
+.includeStudents { display: flex; align-items: center; gap: 8px; margin-top: 14px; color: #3b5949; font-size: 12px; }
+.includeStudents input { accent-color: #17805c; width: 16px; height: 16px; }
+.preview { margin: 14px 0; padding: 10px 12px; border: 1px solid #dfebe3; border-radius: 12px; background: white; font-size: 12px; color: #466354; }
+.preview summary { cursor: pointer; font-weight: 750; }
+.preview pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; line-height: 1.65; max-height: 220px; overflow-y: auto; margin: 12px 0 0; }
+.shareButtons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.shareButtons a, .shareButtons button { display: flex; align-items: center; gap: 7px; padding: 11px 10px; border: 1px solid #cdded2; border-radius: 11px; background: white; font-size: 12px; font-weight: 750; color: #2b6045; cursor: pointer; text-decoration: none; }
+.shareButtons a:hover, .shareButtons button:hover { background: #eaf4ed; }
+.share small { display: block; margin-top: 12px; color: #7c8d81; font-size: 11px; line-height: 1.7; }
+.panel :is(button,a,input,select):focus-visible { outline: 3px solid #2d9969; outline-offset: 3px; }
+@media (max-width: 760px) { .panel { padding: 18px; } .columns { grid-template-columns: 1fr; gap: 14px; } .columns > div { padding: 16px; } }
+@media (max-width: 380px) { .shareButtons { grid-template-columns: 1fr; } }

@@ -255,6 +255,8 @@
     "test:main-bersama-jelajah-motion": "npx tsx scripts/test-main-bersama-jelajah-motion.ts",
     "test:main-bersama-kota-motion": "npx tsx scripts/test-main-bersama-kota-motion.ts",
     "test:main-bersama-handoff-phase2": "npx tsx scripts/test-main-bersama-handoff-phase2.ts",
+    "test:main-bersama-results-sharing": "npx tsx scripts/test-main-bersama-results-sharing.ts",
+    "test:main-bersama-results-db": "npx tsx scripts/test-main-bersama-results-db.ts",
     "test:main-bersama-scoring-integrity": "npx tsx scripts/test-main-bersama-scoring-integrity.ts",
     "test:main-bersama-cache-coherence": "npx tsx scripts/test-main-bersama-cache-coherence.ts",
     "test:main-bersama-submit-close-race": "npx tsx scripts/test-main-bersama-submit-close-race.ts",

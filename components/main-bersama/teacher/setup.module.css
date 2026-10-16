@@ -105,6 +105,22 @@
 .packageSelected { border-color: #047857; background: #f0faf4; box-shadow: inset 0 0 0 1px #047857; }
 .packageIcon { display: grid; place-items: center; width: 36px; height: 40px; flex: none; border: 1px solid #dbece2; border-radius: 9px; background: #edf7f1; color: #047857; }
 .packageBody { display: grid; gap: 5px; min-width: 0; }
+.library { display: grid; gap: 10px; margin-top: 14px; }
+.libraryTabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 5px; border-radius: 13px; background: #eff6f2; }
+.libraryTabs button { display: flex; align-items: center; justify-content: center; gap: 7px; flex: 1; min-height: 42px; padding: 9px 12px; border: 0; border-radius: 10px; color: #527464; background: transparent; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.libraryTabs button[aria-pressed="true"] { color: #065f46; background: white; box-shadow: 0 2px 6px #123b2510; }
+.librarySearch { display: flex; align-items: center; gap: 8px; padding: 0 12px; border: 1px solid var(--setup-border); border-radius: 11px; color: #678675; background: white; }
+.librarySearch input { width: 100%; min-width: 0; min-height: 44px; border: 0; outline: none; font: inherit; font-size: 13px; color: var(--setup-ink); background: transparent; }
+.librarySearch:focus-within { outline: 2px solid #10b981; outline-offset: 2px; }
+.libraryHint { margin: 0; color: #60786c; font-size: 12px; line-height: 1.6; }
+.libraryMessage { margin: 0; padding: 11px 13px; border-radius: 10px; color: #285f49; background: #eaf7ef; font-size: 12px; line-height: 1.6; }
+.libraryMessage button { border: 0; background: transparent; color: #047857; text-decoration: underline; cursor: pointer; font: inherit; }
+.libraryRow { border: 1px solid var(--setup-border); border-radius: 13px; overflow: hidden; }
+.libraryRow .packageItem { border: 0; border-radius: 0; }
+.libraryRow .packageItem[aria-pressed="true"] { box-shadow: inset 3px 0 #059669; }
+.libraryAccess { padding: 0 13px 10px; }
+.libraryAccess label, .libraryAccess > span { display: inline-flex; align-items: center; gap: 6px; color: #527464; font-size: 11px; }
+.libraryAccess select { min-height: 34px; padding: 5px 9px; border: 1px solid #d8e8df; border-radius: 8px; background: #f7fbf8; color: #286347; font: inherit; cursor: pointer; }
 .packageTitle { font-size: 13px; font-weight: 800; overflow-wrap: anywhere; }
 .packageMeta { color: var(--setup-muted); font-size: 11px; line-height: 1.6; }
 .packageCompat { color: #047857; font-weight: 700; }

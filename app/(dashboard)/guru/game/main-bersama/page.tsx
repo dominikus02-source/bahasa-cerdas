@@ -4,6 +4,7 @@ import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { SetupClient } from "@/components/main-bersama/teacher/setup-client";
 import { normalizePackageRef } from "@/src/main-bersama/adapters/bank-soal/package-ref";
+import { questionPackageSummarySelect, questionPackageSummary } from "@/lib/main-bersama/question-package-library";
 import "@/components/main-bersama/main-bersama.css";
 import "@/components/main-bersama/premium-layout.css";
 
@@ -70,7 +71,7 @@ export default async function MainBersamaSetupPage({
       where: { creatorId: user.id },
       orderBy: { updatedAt: "desc" },
       take: 30,
-      select: { id: true, title: true, kelas: true, _count: { select: { questions: true } } },
+      select: questionPackageSummarySelect,
     }),
     db.group.findMany({
       where: { teacherId: user.id, isActive: true },
@@ -85,12 +86,7 @@ export default async function MainBersamaSetupPage({
       <SetupClient
         teacherName={user.fullName ?? "Guru"}
         preselectedTheme={preselectedTheme}
-        packages={packages.map((p) => ({
-          id: p.id,
-          title: p.title,
-          kelas: p.kelas,
-          questionCount: p._count.questions,
-        }))}
+        packages={packages.map(p => questionPackageSummary(p, user.id))}
         classes={classes.map((c) => ({ id: c.id, name: c.name }))}
       />
     </div>

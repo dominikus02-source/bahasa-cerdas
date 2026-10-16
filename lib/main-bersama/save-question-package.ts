@@ -2,13 +2,13 @@ import { db } from "@/lib/db";
 import { packageDraftSchema } from "./question-authoring";
 
 export async function saveQuestionPackage(teacherId: string, input: unknown) {
-  const { title, kelas, questions } = packageDraftSchema.parse(input);
+  const { title, kelas, questions, isPublic } = packageDraftSchema.parse(input);
   const set = await db.soalSet.create({
     data: {
       title,
       kelas,
       creatorId: teacherId,
-      isPublic: false,
+      isPublic,
       coverColor: "from-emerald-500 to-teal-600",
       maxQuestions: 50,
       questions: {
@@ -31,6 +31,7 @@ export async function saveQuestionPackage(teacherId: string, input: unknown) {
       id: true,
       title: true,
       kelas: true,
+      isPublic: true,
       _count: { select: { questions: true } },
     },
   });
@@ -39,5 +40,7 @@ export async function saveQuestionPackage(teacherId: string, input: unknown) {
     title: set.title,
     kelas: set.kelas,
     questionCount: set._count.questions,
+    isPublic: set.isPublic,
+    isOwner: true,
   };
 }

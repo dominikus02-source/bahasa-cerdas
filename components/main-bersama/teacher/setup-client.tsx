@@ -6,8 +6,9 @@
 // soal tak didukung. Sesi dibuat via POST commands — logic backend
 // TIDAK berubah (§34).
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import QuestionPackageEditor from './QuestionPackageEditor';
+import QuestionPackageLibrary from './QuestionPackageLibrary';
 import QuestionPreview, { type PreviewQuestion } from './QuestionPreview';
 import { JELAJAH_TEAM_KEYS, JELAJAH_DEFAULT_TEAMS } from '@/src/main-bersama/domain/entities/team';
 import { useRouter } from 'next/navigation';
@@ -24,6 +25,9 @@ export interface SetupPackage {
   title: string;
   kelas: string;
   questionCount: number;
+  isPublic?: boolean;
+  isOwner?: boolean;
+  creatorName?: string;
 }
 export interface SetupClass {
   id: string;
@@ -72,6 +76,10 @@ export function SetupClient({
 }) {
   const router = useRouter();
   const [packages, setPackages] = useState(initialPackages);
+  const [libraryRevision, setLibraryRevision] = useState(0);
+  const mergePackages = useCallback((loaded: SetupPackage[]) => {
+    setPackages(current => [...new Map([...current, ...loaded].map(item => [item.id, item])).values()]);
+  }, []);
   const [packageId, setPackageId] = useState<string | null>(null);
   // Tema Bank Soal hasil handoff "Gunakan untuk Main Bersama" (boleh null).
   const [themeSel, setThemeSel] = useState<SetupThemeSelection | null>(
@@ -314,49 +322,14 @@ export function SetupClient({
               </div>
             ) : null}
 
-            {packages.length === 0 ? (
-              themeSel ? null : (
-                <div className={styles.empty}>
-                  <div className={styles.emptyArt} aria-hidden />
-                  <div>
-                    <h3>Petualangan dimulai dari soal</h3>
-                    <p>Belum ada paket? Pilih tema di Bank Soal.</p>
-                    {bankSoalButton}
-                  </div>
-                </div>
-              )
-            ) : (
-              <div>
-                {!themeSel ? bankSoalButton : null}
-                <details className={styles.packagePicker} open={!themeSel}>
-                  <summary>Paket soal milikmu <span>{packages.length} paket</span></summary>
-                  <ul className={styles.packageList}>
-                    {packages.map((p) => {
-                      const info = compat[p.id];
-                      const isSel = !themeSel && packageId === p.id;
-                      return (
-                        <li key={p.id}>
-                          <button type="button" onClick={() => selectPackage(p.id)} aria-pressed={isSel}
-                            className={`${styles.packageItem} ${isSel ? styles.packageSelected : ''}`}>
-                            <span className={styles.packageIcon}><BookOpen size={18} aria-hidden /></span>
-                            <span className={styles.packageBody}>
-                              <span className={styles.packageTitle}>{p.title}</span>
-                              <span className={styles.packageMeta}>
-                                Kelas {p.kelas} · <strong>{p.questionCount}</strong> soal
-                                {isSel && info && info.total > 0 && info.supported < info.total
-                                  ? <> · <span className={styles.packageCompat}>{info.supported} dari {info.total} soal dapat dimainkan</span></>
-                                  : null}
-                              </span>
-                            </span>
-                            {isSel ? <span className={styles.check}><Check size={13} aria-hidden /></span> : null}
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </details>
-              </div>
-            )}
+            {!themeSel ? bankSoalButton : null}
+            <QuestionPackageLibrary
+              key={libraryRevision}
+              initialPackages={packages.filter(item => item.isOwner !== false)}
+              selectedId={!themeSel ? packageId : null}
+              onSelect={selectPackage}
+              onLoaded={mergePackages}
+            />
 
             {selectedKey ? (
               <button type="button" onClick={() => void previewSelected()} disabled={previewLoading}
@@ -366,7 +339,8 @@ export function SetupClient({
               </button>
             ) : null}
             <QuestionPackageEditor onSaved={(p) => {
-              setPackages(prev => [p, ...prev]);
+              setPackages(current => [p, ...current.filter(item => item.id !== p.id)]);
+              setLibraryRevision(value => value + 1);
               setCompat(prev => ({ ...prev, [p.id]: { total: p.questionCount, supported: p.questionCount } }));
               setThemeSel(null); setPackageId(p.id); setError(null);
             }} />

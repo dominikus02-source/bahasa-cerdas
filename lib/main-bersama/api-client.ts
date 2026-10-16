@@ -47,6 +47,8 @@ const ERROR_MESSAGES: Record<string, string> = {
   TEAM_FULL: 'Semua regu sudah penuh. Hubungi guru untuk bergabung.',
   CLASS_NOT_FOUND: 'Kelas tidak ditemukan. Pilih kelas lain atau tanpa kelas.',
   CLASS_FORBIDDEN: 'Kelas ini bukan milikmu.',
+  CLASS_NOT_LINKED: 'Pilih kelas tujuan untuk menyimpan hasil.',
+  NO_CLASS_RESULTS: 'Belum ada hasil akun siswa yang cocok dengan anggota kelas ini. Peserta tamu tetap dapat dilihat di unduhan hasil.',
   PIN_TAKEN: 'PIN bentrok. Coba buka ruang lagi.',
   SESSION_CREATION_FAILED: 'Ruang gagal dibuat. Coba lagi sebentar.',
   SESSION_STORE_UNAVAILABLE: 'Main Bersama belum tersedia saat ini. Coba lagi sebentar.',
@@ -82,11 +84,20 @@ export interface TeacherStateResponse {
   view: import('@/src/main-bersama/contracts/views/teacher').TeacherSessionView;
 }
 
-export async function saveTeacherResultsToKelasku(sessionId: string): Promise<{ saved: number }> {
-  const res = await fetch('/api/main-bersama/teacher/commands', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId }) });
-  const body = await res.json().catch(() => null) as { ok?: boolean; saved?: number; code?: string } | null;
+export type SaveClassResultsResponse = { saved: number; className: string; classId: string; skipped: { guests: number; outsideClass: number; noQuestions: number } };
+
+export async function saveTeacherResultsToKelasku(sessionId: string, classId?: string): Promise<SaveClassResultsResponse> {
+  const res = await fetch('/api/main-bersama/teacher/commands', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId, classId }) });
+  const body = await res.json().catch(() => null) as ({ ok?: boolean; code?: string } & Partial<SaveClassResultsResponse>) | null;
   if (!res.ok || !body?.ok) throw new MbApiError(body?.code ?? 'INTERNAL', friendlyError(body?.code ?? 'INTERNAL'), res.status);
-  return { saved: body.saved ?? 0 };
+  return { saved: body.saved ?? 0, className: body.className ?? '', classId: body.classId ?? '', skipped: body.skipped ?? { guests: 0, outsideClass: 0, noQuestions: 0 } };
+}
+
+export type ResultDestination = { id: string; name: string; memberCount: number; savedCount: number };
+export async function fetchResultDestinations(sessionId: string): Promise<{ classes: ResultDestination[]; classId: string | null }> {
+  const res = await fetch(`/api/main-bersama/teacher/results?sessionId=${encodeURIComponent(sessionId)}`, { cache: 'no-store' });
+  if (!res.ok) throw await parseError(res);
+  return res.json();
 }
 
 export async function fetchTeacherState(sessionId: string): Promise<TeacherStateResponse> {
