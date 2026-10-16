@@ -9,11 +9,8 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
-    const user = await getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+    const dbUser = await getUser();
+    if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     // P1-B: hanya GURU/ADMIN/founder yang boleh memakai set soal.
     if (!isTeacherOrStudent(dbUser)) {

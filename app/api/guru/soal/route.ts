@@ -1,5 +1,7 @@
+import { z } from "zod";
+import type { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { isTeacherOrStudent } from "@/lib/teacher/students";
 
@@ -7,23 +9,14 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
 
-    let dbUser: any = null
-    try {
-      const supabase = await createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) dbUser = await db.user.findUnique({ where: { supabaseId: user.id } })
-    } catch {}
-    if (!dbUser) {
-      const sid = searchParams.get("supabaseId")
-      if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
-    }
+    const dbUser = await getUser();
     if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const kelas = searchParams.get("kelas");
     const topik = searchParams.get("topik");
     const source = searchParams.get("source");
 
-    const where: any = { uploaderId: dbUser.id };
+    const where: Prisma.SoalWhereInput = { uploaderId: dbUser.id };
     if (kelas) where.kelas = kelas;
     if (topik) where.topik = topik;
     if (source) where.source = source;
@@ -60,16 +53,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    let dbUser: any = null
-    try {
-      const supabase = await createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) dbUser = await db.user.findUnique({ where: { supabaseId: user.id } })
-    } catch {}
-    if (!dbUser) {
-      const sid = body.supabaseId as string | undefined
-      if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
-    }
+    const dbUser = await getUser();
     if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { text, type, difficulty, options, correctAnswer, explanation, isHOTS, kelas, topik, kd, subject, source } = body;
 
@@ -102,24 +86,29 @@ export async function POST(req: NextRequest) {
   }
 }
 
+const questionEditSchema = z.object({
+  id: z.string().min(1), text: z.string().min(1).optional(),
+  type: z.string().optional(), difficulty: z.string().optional(),
+  options: z.array(z.string()).optional(), correctAnswer: z.string().optional(),
+  explanation: z.string().nullable().optional(), isHOTS: z.boolean().optional(),
+  kelas: z.string().min(1).optional(), topik: z.string().nullable().optional(),
+  KD: z.string().nullable().optional(), subject: z.string().optional(),
+  source: z.string().optional(), judul: z.string().nullable().optional(),
+  semester: z.number().int().nullable().optional(), kompetensi: z.string().nullable().optional(),
+  indikator: z.string().nullable().optional(), levelBerpikir: z.number().int().nullable().optional(),
+  kataKunci: z.string().nullable().optional(), estimasiWaktu: z.number().int().nullable().optional(),
+});
+
 export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
 
-    let dbUser: any = null
-    try {
-      const supabase = await createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) dbUser = await db.user.findUnique({ where: { supabaseId: user.id } })
-    } catch {}
-    if (!dbUser) {
-      const sid = body.supabaseId as string | undefined
-      if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
-    }
+    const dbUser = await getUser();
     if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { id, ...data } = body;
-    if (!id) return NextResponse.json({ error: "ID required" }, { status: 400 });
+    const parsed = questionEditSchema.safeParse(body);
+    if (!parsed.success) return NextResponse.json({ error: "Periksa data soal yang ingin diubah." }, { status: 400 });
+    const { id, ...data } = parsed.data;
 
     const existing = await db.soal.findUnique({ where: { id } });
     if (!existing || existing.uploaderId !== dbUser.id) {
@@ -138,16 +127,7 @@ export async function DELETE(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
 
-    let dbUser: any = null
-    try {
-      const supabase = await createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) dbUser = await db.user.findUnique({ where: { supabaseId: user.id } })
-    } catch {}
-    if (!dbUser) {
-      const sid = searchParams.get("supabaseId")
-      if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
-    }
+    const dbUser = await getUser();
     if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const id = searchParams.get("id");

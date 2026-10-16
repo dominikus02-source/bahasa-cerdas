@@ -3,26 +3,13 @@ import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { isTeacherOrStudent } from "@/lib/teacher/students";
 
-async function getDbUser(req: NextRequest) {
-  let dbUser: any = null
-  try {
-    const user = await getUser();
-    if (user) dbUser = await db.user.findUnique({ where: { supabaseId: user.id } })
-  } catch {}
-  if (!dbUser) {
-    const sid = req.nextUrl.searchParams.get("supabaseId")
-    if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
-  }
-  return dbUser
-}
-
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
-    const dbUser = await getDbUser(req);
+    const dbUser = await getUser();
     if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     if (!isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -53,7 +40,7 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
-    const dbUser = await getDbUser(req);
+    const dbUser = await getUser();
     if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
@@ -90,7 +77,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const dbUser = await getDbUser(req);
+    const dbUser = await getUser();
     if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const set = await db.soalSet.findUnique({ where: { id } });

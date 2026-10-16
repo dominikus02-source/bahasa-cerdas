@@ -20,3 +20,13 @@ npm run build
 ```
 
 Tes database wajib memakai database lokal `mbtest`. Guard menolak URL produksi. Cakupan: kepemilikan sesi/kelas, fase ringkasan/selesai, siswa terlambat bergabung, anggota kelas, identitas lama, penyimpanan serentak tanpa duplikasi, bobot kategori, penelusuran/pemakaian paket publik, serta pencabutan akses publik.
+
+## Akses paket lama
+
+API Bank Soal dan paket lama menggunakan identitas dari sesi login yang sama, tanpa fallback identitas dari URL/body. Operasi menambah/melepas soal tetap dibatasi pada kepemilikan soal/paket; penyuntingan konten tidak dapat mengganti pemilik atau memindahkan soal ke paket guru lain.
+
+```sh
+TEST_DATABASE_URL='postgresql://user@localhost:5432/mbtest' npx tsx scripts/test-main-bersama-private-routes.ts
+```
+
+Tes ini menjalankan handler lama yang sebenarnya dengan auth fixture dan database lokal. Cakupannya meliputi identitas kiriman yang diabaikan, penolakan akses privat milik guru lain, penggunaan paket oleh pemilik, pemindahan soal lintas pemilik yang ditolak, dan penyuntingan soal tanpa perubahan kepemilikan.

@@ -11,20 +11,12 @@ export async function POST(
     const { id } = await params;
     const body = await req.json();
 
-    let dbUser: any = null
-    try {
-      const user = await getUser();
-      if (user) dbUser = await db.user.findUnique({ where: { supabaseId: user.id } })
-    } catch {}
-    if (!dbUser) {
-      const sid = body.supabaseId as string | undefined
-      if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
-    }
+    const dbUser = await getUser();
     if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { questionIds } = body;
 
-    if (!questionIds || !Array.isArray(questionIds)) {
+    if (!questionIds || !Array.isArray(questionIds) || questionIds.some(value => typeof value !== "string")) {
       return NextResponse.json({ error: "questionIds array required" }, { status: 400 });
     }
 
@@ -32,6 +24,9 @@ export async function POST(
     if (!set || set.creatorId !== dbUser.id) {
       return NextResponse.json({ error: "Set not found" }, { status: 404 });
     }
+
+    const ownCount = await db.soal.count({ where: { id: { in: questionIds }, uploaderId: dbUser.id } });
+    if (ownCount !== new Set(questionIds).size) return NextResponse.json({ error: "Pilih soal milikmu sendiri." }, { status: 404 });
 
     const currentCount = await db.soal.count({ where: { soalSetId: id } });
     const availableSlots = set.maxQuestions - currentCount;
@@ -44,7 +39,7 @@ export async function POST(
     }
 
     await db.soal.updateMany({
-      where: { id: { in: questionIds } },
+      where: { id: { in: questionIds }, uploaderId: dbUser.id },
       data: { soalSetId: id },
     });
 
@@ -69,15 +64,7 @@ export async function DELETE(
     const { id } = await params;
     const searchParams = req.nextUrl.searchParams;
 
-    let dbUser: any = null
-    try {
-      const user = await getUser();
-      if (user) dbUser = await db.user.findUnique({ where: { supabaseId: user.id } })
-    } catch {}
-    if (!dbUser) {
-      const sid = searchParams.get("supabaseId")
-      if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
-    }
+    const dbUser = await getUser();
     if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const questionIds = searchParams.getAll("questionId");
@@ -92,7 +79,7 @@ export async function DELETE(
     }
 
     await db.soal.updateMany({
-      where: { id: { in: questionIds } },
+      where: { id: { in: questionIds }, soalSetId: id },
       data: { soalSetId: null },
     });
 

@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
@@ -18,22 +19,14 @@ export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
 
-    let dbUser: any = null
-    try {
-      const user = await getUser();
-      if (user) dbUser = await db.user.findUnique({ where: { supabaseId: user.id } })
-    } catch {}
-    if (!dbUser) {
-      const sid = searchParams.get("supabaseId")
-      if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
-    }
+    const dbUser = await getUser();
     if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     if (!isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const kelas = searchParams.get("kelas");
     const topik = searchParams.get("topik");
     const search = searchParams.get("search");
 
-    const where: any = { creatorId: dbUser.id };
+    const where: Prisma.SoalSetWhereInput = { creatorId: dbUser.id };
     if (kelas) where.kelas = kelas;
     if (topik) where.topik = topik;
     if (search) {
@@ -63,20 +56,18 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    let dbUser: any = null
-    try {
-      const user = await getUser();
-      if (user) dbUser = await db.user.findUnique({ where: { supabaseId: user.id } })
-    } catch {}
-    if (!dbUser) {
-      const sid = body.supabaseId as string | undefined
-      if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
-    }
+    const dbUser = await getUser();
     if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { title, description, kelas, topik, subject, maxQuestions, questionIds } = body;
 
     if (!title || !kelas) {
       return NextResponse.json({ error: "Title and kelas required" }, { status: 400 });
+    }
+
+    if (questionIds !== undefined && (!Array.isArray(questionIds) || questionIds.some(value => typeof value !== "string"))) return NextResponse.json({ error: "Daftar soal tidak valid." }, { status: 400 });
+    if (questionIds?.length) {
+      const ownCount = await db.soal.count({ where: { id: { in: questionIds }, uploaderId: dbUser.id } });
+      if (ownCount !== new Set(questionIds).size) return NextResponse.json({ error: "Pilih soal milikmu sendiri." }, { status: 404 });
     }
 
     const randomColor = COVER_COLORS[Math.floor(Math.random() * COVER_COLORS.length)];
@@ -96,7 +87,7 @@ export async function POST(req: NextRequest) {
 
     if (questionIds && questionIds.length > 0) {
       await db.soal.updateMany({
-        where: { id: { in: questionIds } },
+        where: { id: { in: questionIds }, uploaderId: dbUser.id },
         data: { soalSetId: set.id },
       });
     }
