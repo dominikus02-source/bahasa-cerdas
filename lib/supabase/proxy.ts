@@ -46,7 +46,9 @@ const publicPaths = [
 
 // Routes that handle their own auth — skip middleware getUser() to avoid rate limit
 // /t/ handles auth in Server Component so ?next= parameter is preserved through login redirect
-const selfAuthPaths = ["/api/", "/arena/", "/guru/", "/admin/", "/murid/", "/game/", "/auth/", "/kompetisi/", "/junior/", "/t/"];
+// /jumpa/ (ruang video) menggerbangi sendiri di Server Component dengan ?next= agar
+// tautan undangan kembali ke ruang yang sama setelah login.
+const selfAuthPaths = ["/api/", "/arena/", "/guru/", "/admin/", "/murid/", "/game/", "/auth/", "/kompetisi/", "/junior/", "/t/", "/jumpa/"];
 
 // Dashboard routes that require onboarding
 const dashboardPaths = ["/guru/", "/admin/", "/murid/"];

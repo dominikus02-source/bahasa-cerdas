@@ -9,6 +9,7 @@ import { ClassroomComposer, readLastClassIds } from "@/components/kelas/Classroo
 import { SubmissionReview } from "@/components/kelas/SubmissionReview";
 import { ClassShareCard } from "@/components/guru/gcs/ClassShareCard";
 import ShareTaskButton from "@/components/kelas/ShareTaskButton";
+import StartJumpaButton from "@/components/jumpa/StartJumpaButton";
 
 interface Group {
   id: string;
@@ -528,6 +529,8 @@ export default function KelasKuPage() {
                   <RotateCw size={15} />
                 </button>
               </div>
+              {/* JUMPA — ruang video kelas (tersembunyi bila NEXT_PUBLIC_JUMPA_ENABLED mati) */}
+              <StartJumpaButton groupId={activeGroup.id} className="w-full sm:w-auto" />
               <button type="button" onClick={() => openComposer(activeGroup ? [activeGroup.id] : undefined)} className="bc-btn-primary min-h-11 w-full justify-center text-sm shrink-0 sm:w-auto">
                 <Plus size={18} /> Tambahkan
               </button>

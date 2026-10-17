@@ -1,0 +1,274 @@
+/* ════════════════════════════════════════════════════════════════════
+   JUMPA — dark glass, aksen hijau BC.
+   THEME RULE (AGENTS.md): tidak ada hex di sini. Semua warna dari token
+   global --clr-* / hsl(var(--…)). Root JUMPA memakai class `dark`, jadi
+   token yang terbaca selalu versi gelap dari :root/.dark (app/globals.css).
+   Scope: hanya di dalam .jumpa-scope.
+   ════════════════════════════════════════════════════════════════════ */
+
+.jumpa-scope {
+  --jp-bg: var(--clr-bg);
+  --jp-glass: color-mix(in srgb, var(--clr-surface) 62%, transparent);
+  --jp-glass-strong: color-mix(in srgb, var(--clr-surface-2) 82%, transparent);
+  --jp-line: color-mix(in srgb, var(--clr-text) 10%, transparent);
+  --jp-line-strong: color-mix(in srgb, var(--clr-text) 18%, transparent);
+  --jp-accent: var(--clr-accent);
+  --jp-accent-strong: var(--clr-accent-strong);
+  --jp-accent-glow: color-mix(in srgb, var(--clr-accent) 38%, transparent);
+  --jp-danger: var(--clr-danger);
+  --jp-text: var(--clr-text);
+  --jp-text-2: var(--clr-text-2);
+  --jp-text-3: var(--clr-text-3);
+  --jp-radius: 22px;
+  --jp-ease: cubic-bezier(.22, .8, .24, 1);
+
+  position: relative;
+  min-height: 100dvh;
+  color: var(--jp-text);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, color-mix(in srgb, var(--clr-accent) 16%, transparent), transparent 60%),
+    radial-gradient(900px 500px at 110% 110%, color-mix(in srgb, var(--clr-violet) 12%, transparent), transparent 60%),
+    var(--jp-bg);
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.jumpa-glass {
+  background: var(--jp-glass);
+  border: 1px solid var(--jp-line);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  box-shadow: 0 20px 60px -24px color-mix(in srgb, var(--clr-bg) 85%, transparent);
+}
+
+.jumpa-scope :is(button, a, input):focus-visible {
+  outline: 3px solid var(--jp-accent);
+  outline-offset: 3px;
+}
+
+/* ── Tombol bulat (control bar & lobby) — target sentuh ≥ 56px ── */
+.jumpa-round {
+  display: inline-grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  color: var(--jp-text);
+  background: var(--jp-glass-strong);
+  border: 1px solid var(--jp-line-strong);
+  transition: transform .18s var(--jp-ease), background-color .18s var(--jp-ease), box-shadow .18s var(--jp-ease);
+}
+.jumpa-round:hover { transform: translateY(-1px); background: color-mix(in srgb, var(--clr-surface-2) 95%, var(--clr-text) 5%); }
+.jumpa-round:active { transform: scale(.94); }
+.jumpa-round[data-off="true"] {
+  background: color-mix(in srgb, var(--clr-danger) 22%, var(--clr-surface));
+  border-color: color-mix(in srgb, var(--clr-danger) 45%, transparent);
+  color: var(--jp-danger);
+}
+.jumpa-round[data-variant="leave"] {
+  width: 64px;
+  background: color-mix(in srgb, var(--clr-danger) 78%, var(--clr-bg));
+  border-color: transparent;
+  color: var(--clr-text);
+}
+.jumpa-round[data-variant="leave"]:hover { background: var(--clr-danger); color: var(--clr-bg); }
+
+.jumpa-ctl {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 64px;
+}
+.jumpa-ctl-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .01em;
+  color: var(--jp-text-2);
+}
+
+/* ── Tombol utama ── */
+.jumpa-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 56px;
+  padding: 0 28px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--clr-bg);
+  background: linear-gradient(135deg, var(--jp-accent), var(--jp-accent-strong));
+  box-shadow: 0 10px 30px -8px var(--jp-accent-glow);
+  transition: transform .18s var(--jp-ease), box-shadow .18s var(--jp-ease), filter .18s var(--jp-ease);
+}
+.jumpa-primary:hover { transform: translateY(-1px); box-shadow: 0 14px 36px -8px var(--jp-accent-glow); }
+.jumpa-primary:active { transform: scale(.97); }
+.jumpa-primary:disabled { filter: grayscale(.6); opacity: .6; cursor: not-allowed; transform: none; }
+
+.jumpa-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: 999px;
+  font-weight: 600;
+  color: var(--jp-text);
+  border: 1px solid var(--jp-line-strong);
+  background: transparent;
+  transition: background-color .18s var(--jp-ease);
+}
+.jumpa-ghost:hover { background: var(--jp-glass); }
+
+/* ── Tile video ── */
+.jumpa-tile {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--jp-radius);
+  background: var(--clr-surface);
+  border: 1px solid var(--jp-line);
+  min-height: 0;
+  isolation: isolate;
+}
+.jumpa-tile video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.jumpa-tile[data-local="true"] video { transform: scaleX(-1); }
+.jumpa-tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 0 transparent;
+  transition: box-shadow .2s var(--jp-ease);
+}
+.jumpa-tile[data-speaking="true"]::after {
+  box-shadow: inset 0 0 0 3px var(--jp-accent), 0 0 0 4px var(--jp-accent-glow);
+  animation: jumpa-pulse 1.6s var(--jp-ease) infinite;
+}
+.jumpa-avatar {
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  font-weight: 800;
+  color: var(--clr-bg);
+  background: linear-gradient(135deg, var(--jp-accent), var(--clr-info));
+}
+.jumpa-nameplate {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: calc(100% - 20px);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.jumpa-badge {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+.jumpa-badge[data-role="GURU"] { color: var(--clr-accent); background: var(--clr-accent-soft); }
+.jumpa-badge[data-role="MURID"] { color: var(--clr-violet); background: var(--clr-violet-soft); }
+.jumpa-badge[data-role="HOST"] { color: var(--clr-warning); background: var(--clr-warning-soft); }
+
+/* ── Grid adaptif ── */
+.jumpa-grid {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: repeat(var(--jp-cols, 1), minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+}
+.jumpa-strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 2px;
+}
+.jumpa-strip > * {
+  flex: 0 0 112px;
+  height: 80px;
+  scroll-snap-align: start;
+}
+@media (min-width: 768px) {
+  .jumpa-strip > * { flex-basis: 168px; height: 110px; }
+}
+
+.jumpa-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 52px;
+  padding: 0 16px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--jp-text);
+  text-align: left;
+  transition: background-color .15s var(--jp-ease);
+}
+.jumpa-menu-item:hover { background: color-mix(in srgb, var(--clr-text) 7%, transparent); }
+.jumpa-menu-item[aria-checked="true"] { color: var(--jp-accent); }
+
+.jumpa-preview {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 28px;
+  background: var(--clr-surface);
+}
+@media (min-width: 640px) { .jumpa-preview { aspect-ratio: 16 / 10; } }
+.jumpa-preview video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.jumpa-meter {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 18px;
+}
+.jumpa-meter > span {
+  width: 4px;
+  border-radius: 2px;
+  background: var(--jp-accent);
+  transition: height .08s linear;
+}
+
+@keyframes jumpa-pulse {
+  0%, 100% { box-shadow: inset 0 0 0 3px var(--jp-accent), 0 0 0 2px var(--jp-accent-glow); }
+  50% { box-shadow: inset 0 0 0 3px var(--jp-accent), 0 0 0 7px transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jumpa-scope *, .jumpa-scope *::before, .jumpa-scope *::after {
+    animation-duration: .001ms !important;
+    transition-duration: .001ms !important;
+  }
+}
