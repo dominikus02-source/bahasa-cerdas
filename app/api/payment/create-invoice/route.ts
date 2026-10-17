@@ -1,48 +1,17 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getUser } from "@/lib/supabase/server";
-import { createTransaction } from "@/lib/midtrans";
-import { db } from "@/lib/db";
-import { withTimeout } from "@/lib/db-timeout";
+import { NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
-  try {
-    const user = await getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const body = await req.json();
-    const { plan } = body;
-
-    if (!["monthly", "yearly"].includes(plan)) {
-      return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
-    }
-
-    const { transactionToken, orderId } = await createTransaction({
-      userId: user.id,
-      email: user.email,
-      fullName: user.fullName,
-      plan,
-    });
-
-    try {
-      await withTimeout(
-        db.transaksi.create({
-          data: {
-            userId: user.id,
-            type: "PREMIUM_UPGRADE",
-            amount: plan === "monthly" ? 49000 : 399000,
-            status: "PENDING",
-            reference: `premium_${plan}`,
-            orderId,
-          },
-        })
-      );
-    } catch {
-      console.warn("DB write timeout for transaksi, continuing anyway");
-    }
-
-    return NextResponse.json({ token: transactionToken, orderId });
-  } catch (error) {
-    console.error("Create transaction error:", error);
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Gagal membuat invoice" }, { status: 500 });
-  }
+/**
+ * Endpoint legacy ditutup; seluruh transaksi Guru PRO dan Murid Premium
+ * wajib memakai /api/billing/checkout (validasi role, kupon, DB-first).
+ * HTTP 410 mencegah invoice tercecer lewat klien lama.
+ */
+export async function POST() {
+  return NextResponse.json(
+    {
+      ok: false,
+      error: "LEGACY_CHECKOUT_CLOSED",
+      message: "Alur pembayaran diperbarui. Buka halaman Berlangganan dan coba lagi.",
+    },
+    { status: 410 }
+  );
 }

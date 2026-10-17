@@ -88,7 +88,15 @@ export function validateMidtransConfig(): void {
   const serverIsProduction = (process.env.MIDTRANS_IS_PRODUCTION || "").trim() === "true";
   const clientIsProduction = (process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION || "").trim() === "true";
 
-  if (serverIsProduction !== clientIsProduction) {
+  // Prevent sandbox keys from being sent to production and vice versa.
+  // Compare prefixes only: never log or return secret key material.
+  const serverKeyIsSandbox = config.serverKey.startsWith("SB-");
+  const clientKeyIsSandbox = config.clientKey.startsWith("SB-");
+  if (
+    serverIsProduction !== clientIsProduction ||
+    serverKeyIsSandbox !== !config.isProduction ||
+    clientKeyIsSandbox !== !config.isProduction
+  ) {
     throw new MidtransError(
       "MIDTRANS_MODE_MISMATCH",
       "Mode production/sandbox tidak konsisten antara server dan client env",

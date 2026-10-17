@@ -3,7 +3,7 @@ import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { rateLimitRoute } from "@/lib/rate-limit";
 import { requestWithdrawal } from "@/lib/commission/withdrawals";
-import { teacherCommissionMinimumWithdrawal } from "@/lib/commission/config";
+import { teacherCommissionMinimumWithdrawal, GCS_PROGRAM_PAUSED, GCS_PROGRAM_NOTICE } from "@/lib/commission/config";
 import { getPayoutProfileRaw } from "@/lib/commission/payout/profile";
 import { submitPayoutForWithdrawal } from "@/lib/commission/payout/orchestrator";
 import { evaluatePayoutGate, checkPayoutLimits } from "@/lib/commission/payout/safety";
@@ -31,6 +31,10 @@ export async function POST(req: NextRequest) {
     const user = await getUser();
     if (!user || (user.role !== "GURU" && !user.isFounder)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (GCS_PROGRAM_PAUSED) {
+      return NextResponse.json({ error: GCS_PROGRAM_NOTICE, code: "GCS_UNDER_DEVELOPMENT" }, { status: 503 });
     }
 
     const limited = await rateLimitRoute(req, {

@@ -27,6 +27,7 @@ import {
   COMMISSION_ELIGIBLE_PLAN_IDS,
   COMMISSION_ELIGIBLE_TRANSACTION_TYPES,
   isEligibleForCommission,
+  GCS_PROGRAM_PAUSED,
 } from "./config";
 import { auditCommission } from "./audit";
 import { emitCommissionEvent } from "./events";
@@ -123,6 +124,7 @@ export async function upsertWalletTx(
 export async function createCommissionFromTransaction(
   transaksiId: string,
 ): Promise<CommissionCreateResult> {
+  if (GCS_PROGRAM_PAUSED) return { created: false, reason: "PROGRAM_PAUSED" };
   const transaksi = await db.transaksi.findUnique({
     where: { id: transaksiId },
     select: {
@@ -171,6 +173,7 @@ export async function createCommissionFromTransaction(
 export async function createCommission(
   ctx: CommissionContext & { settledAt: Date },
 ): Promise<CommissionCreateResult> {
+  if (GCS_PROGRAM_PAUSED) return { created: false, reason: "PROGRAM_PAUSED" };
   const evaluated = await evaluateCommission(ctx);
   if (!evaluated.eligible) return { created: false, reason: evaluated.reason };
 

@@ -5,6 +5,15 @@
  * Source of truth: P7B/P7C founder-approved spec.
  */
 
+/**
+ * Founder decision (2026-10-17): program ditutup sementara.
+ * Tidak boleh membuat atribusi/komisi atau pengajuan pencairan baru.
+ * Riwayat, transaksi premium, dan refund/reversal lama tetap dipertahankan.
+ */
+export const GCS_PROGRAM_PAUSED = true;
+export const GCS_PROGRAM_NOTICE =
+  "Program Guru Cerdas Sejahtera sedang dalam pengembangan dan untuk sementara belum dibuka. Pendaftaran, pencatatan komisi baru, pengaturan pencairan, dan pengajuan penarikan belum tersedia. Mohon tidak mencoba mendaftar atau mengajukan transaksi melalui program ini sampai ada pengumuman resmi dari BahasaCerdas.";
+
 /** Default commission rate (10%) — applied to settled transaction amount. */
 export const DEFAULT_COMMISSION_RATE = 0.10;
 

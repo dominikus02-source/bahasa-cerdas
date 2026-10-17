@@ -5,7 +5,6 @@ import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Crown, Zap, Check, AlertCircle, Loader2 } from "lucide-react";
-import { getSnapScriptUrl } from "@/lib/midtrans";
 
 interface UpgradeModalProps {
   isOpen: boolean;
@@ -13,14 +12,6 @@ interface UpgradeModalProps {
   feature?: string;
   used?: number;
   limit?: number;
-}
-
-declare global {
-  interface Window {
-    snap?: {
-      pay: (token: string, options?: { onSuccess: Function; onPending: Function; onError: Function; onClose: Function }) => void;
-    };
-  }
 }
 
 export function UpgradeModal({ isOpen, onClose, feature, used, limit }: UpgradeModalProps) {
@@ -32,49 +23,11 @@ export function UpgradeModal({ isOpen, onClose, feature, used, limit }: UpgradeM
     setLoading(false);
   }, [isOpen]);
 
-  useEffect(() => {
-    const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
-    if (!clientKey) return;
-    const script = document.createElement("script");
-    script.src = getSnapScriptUrl();
-    script.setAttribute("data-client-key", clientKey);
-    script.async = true;
-    document.body.appendChild(script);
-    return () => { document.body.removeChild(script); };
-  }, []);
-
-  const handleUpgrade = async (plan: "monthly" | "yearly") => {
+  // Semua pembayaran Guru PRO menggunakan checkout Midtrans terpadu.
+  // Jangan membuat invoice via endpoint legacy yang tidak mendukung kupon.
+  const handleUpgrade = (plan: "monthly" | "yearly") => {
     setLoading(true);
-    setErrorMsg("");
-    try {
-      const res = await fetch("/api/payment/create-invoice", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan }),
-      });
-      const data = await res.json();
-
-      if (!res.ok) {
-        setErrorMsg(data.error || "Gagal membuat invoice.");
-        setLoading(false);
-        return;
-      }
-
-      if (data.token && window.snap) {
-        window.snap.pay(data.token, {
-          onSuccess: () => { onClose(); window.location.reload(); },
-          onPending: () => setLoading(false),
-          onError: () => { setErrorMsg("Pembayaran gagal. Silakan coba lagi."); setLoading(false); },
-          onClose: () => { if (!errorMsg) setLoading(false); },
-        });
-      } else {
-        setErrorMsg("Gagal memuat Midtrans. Refresh halaman.");
-        setLoading(false);
-      }
-    } catch {
-      setErrorMsg("Terjadi kesalahan. Silakan coba lagi.");
-      setLoading(false);
-    }
+    window.location.assign(`/guru/berlangganan?plan=${plan}`);
   };
 
   return (

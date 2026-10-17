@@ -112,7 +112,7 @@ export const GURU_NAV: NavGroup[] = [
   },
   {
     id: "penghasilan",
-    label: "Penghasilan",
+    label: "Guru Cerdas Sejahtera",
     icon: Wallet,
     href: "/guru/komisi",
   },

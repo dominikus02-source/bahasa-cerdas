@@ -6,6 +6,7 @@ import {
 } from "@/lib/commission/payout/profile";
 import { evaluateDestinationChangeSignal } from "@/lib/guru/risk/events";
 import type { DestinationType } from "@prisma/client";
+import { GCS_PROGRAM_PAUSED, GCS_PROGRAM_NOTICE } from "@/lib/commission/config";
 
 /**
  * GET/PUT /api/teacher/commissions/payout-profile
@@ -34,6 +35,10 @@ export async function PUT(req: NextRequest) {
     const user = await getUser();
     if (!user || (user.role !== "GURU" && !user.isFounder)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (GCS_PROGRAM_PAUSED) {
+      return NextResponse.json({ error: GCS_PROGRAM_NOTICE, code: "GCS_UNDER_DEVELOPMENT" }, { status: 503 });
     }
 
     const body = await req.json().catch(() => ({}));

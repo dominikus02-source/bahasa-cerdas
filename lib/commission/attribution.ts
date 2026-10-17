@@ -13,7 +13,7 @@
  */
 
 import { db } from "@/lib/db";
-import { teacherCommissionLaunchDate, isEligibleForCommission } from "./config";
+import { teacherCommissionLaunchDate, isEligibleForCommission, GCS_PROGRAM_PAUSED } from "./config";
 import type { AttributionUpsertResult } from "./types";
 
 function isP2002(err: unknown): boolean {
@@ -33,6 +33,17 @@ export async function ensureAttributionOnClassJoin(
   groupId: string,
   eligibleFromOverride?: Date,
 ): Promise<AttributionUpsertResult> {
+  if (GCS_PROGRAM_PAUSED) {
+    return {
+      attributionId: "",
+      teacherId: "",
+      source: "CLASS_ENROLLMENT",
+      eligibleFrom: new Date(0),
+      created: false,
+      skipped: true,
+      skipReason: "PROGRAM_PAUSED",
+    };
+  }
   // ── Existing attribution always wins (§2: first valid attribution wins) ──
   const existing = await db.teacherAttribution.findUnique({
     where: { studentId },

@@ -25,7 +25,8 @@ export type CommissionSkipReason =
   | "SELF_REFERRAL"        // murid == guru (tidak mungkin, tetap dijaga)
   | "BEFORE_ELIGIBLE_FROM" // transaksi settle < eligibleFrom → NO COMMISSION
   | "ZERO_COMMISSION"      // floor(amount × rate) = 0
-  | "WALLET_SUSPENDED";    // wallet guru SUSPENDED/CLOSED
+  | "WALLET_SUSPENDED"     // wallet guru SUSPENDED/CLOSED
+  | "PROGRAM_PAUSED";     // program Guru Cerdas Sejahtera ditutup sementara
 
 export type CommissionCreateResult =
   | {
@@ -127,7 +128,7 @@ export interface AttributionUpsertResult {
   eligibleFrom: Date;
   created: boolean;
   skipped: boolean;
-  skipReason?: "TEACHER_EXCLUDED" | "SELF_REFERRAL" | "GROUP_NOT_FOUND" | "ATTRIBUTION_EXISTS";
+  skipReason?: "TEACHER_EXCLUDED" | "SELF_REFERRAL" | "GROUP_NOT_FOUND" | "ATTRIBUTION_EXISTS" | "PROGRAM_PAUSED";
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
