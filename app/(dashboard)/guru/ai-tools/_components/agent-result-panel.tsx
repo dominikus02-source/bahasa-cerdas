@@ -721,7 +721,7 @@ export function AgentResultPanel({ agentId, result, loading, error, errorCode, r
               <RotateCw className="w-3.5 h-3.5 mr-1" />
               Coba Lagi
             </Button>
-            <Button variant="ghost" size="sm" onClick={onClear}>
+            <Button variant="legacy-ghost" size="sm" onClick={onClear}>
               <X className="w-3.5 h-3.5 mr-1" />
               Hapus
             </Button>
@@ -744,7 +744,7 @@ export function AgentResultPanel({ agentId, result, loading, error, errorCode, r
                 <RotateCw className="w-3.5 h-3.5 mr-1" />
                 Coba Lagi
               </Button>
-              <Button variant="ghost" size="sm" onClick={onClear}>
+              <Button variant="legacy-ghost" size="sm" onClick={onClear}>
                 <X className="w-3.5 h-3.5 mr-1" />
                 Hapus
               </Button>

@@ -206,6 +206,7 @@
     "test:guru-dashboard-theme-consistency": "npx tsx scripts/test-guru-dashboard-theme-consistency.ts",
     "test:guru-beranda-theme": "npx tsx scripts/test-guru-beranda-theme.ts",
     "audit:theme-hardcoded": "npx tsx scripts/audit-theme-hardcoded.ts",
+    "guard:warna": "npx tsx scripts/guard-warna-baru.ts",
     "test:bc-classroom-simple-flow": "npx tsx scripts/test-bc-classroom-simple-flow.ts",
     "test:bc-classroom-student-flow": "npx tsx scripts/test-bc-classroom-student-flow.ts",
     "test:bc-classroom-learning-loop": "npx tsx scripts/test-bc-classroom-learning-loop.ts",

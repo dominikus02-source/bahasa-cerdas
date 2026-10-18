@@ -1,3 +1,8 @@
+/* Token global + primitif .ui-* — HARUS sebelum @tailwind agar utility
+   Tailwind (className) tetap bisa menimpa primitif. */
+@import "./theme/tokens.css";
+@import "./theme/ui.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -355,54 +360,8 @@
    SCOPE: hanya dalam .bc-guru — murid/arena/admin tidak terpengaruh.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── Bagian 1: Token canonical (nilai identik dgn classroom.css) ── */
-:root {
-  --clr-bg: #f4f5f7;
-  --clr-surface: #ffffff;
-  --clr-surface-2: #f8f9fb;
-  --clr-border: #e6e8ee;
-  --clr-border-strong: #d4d7e0;
-  --clr-text: #16181d;
-  --clr-text-2: #5b6270;
-  --clr-text-3: #64748b;
-  --clr-accent: #059669;
-  --clr-accent-strong: #047857;
-  --clr-accent-soft: #ecfdf5;
-  --clr-success: #059669;
-  --clr-warning: #d97706;
-  --clr-warning-strong: #b45309;
-  --clr-warning-soft: #fffbeb;
-  --clr-danger: #b91c1c;
-  --clr-danger-soft: #fef2f2;
-  --clr-violet: #7c3aed;
-  --clr-violet-soft: #f5f3ff;
-  --clr-info: #2563eb;
-  --clr-info-soft: #eff6ff;
-}
-
-.dark {
-  --clr-bg: #0f1117;
-  --clr-surface: #171a22;
-  --clr-surface-2: #1d212b;
-  --clr-border: #262b38;
-  --clr-border-strong: #333a4b;
-  --clr-text: #f1f2f6;
-  --clr-text-2: #a6adbb;
-  --clr-text-3: #8b93a1;
-  --clr-accent: #34d399;
-  --clr-accent-strong: #10b981;
-  --clr-accent-soft: #0d2b22;
-  --clr-success: #34d399;
-  --clr-warning: #fbbf24;
-  --clr-warning-strong: #fbbf24;
-  --clr-warning-soft: #2b220d;
-  --clr-danger: #f87171;
-  --clr-danger-soft: #2b1517;
-  --clr-violet: #a78bfa;
-  --clr-violet-soft: #1e1835;
-  --clr-info: #93c5fd;
-  --clr-info-soft: #15233f;
-}
+/* ── Bagian 1: Token canonical --clr-* dipindah ke app/theme/tokens.css
+   (satu-satunya file yang boleh berisi hex). Nilai tidak berubah. ── */
 
 /* ── Bagian 2: Scope guru — primitif semantic tersedia untuk semua halaman ── */
 .bc-guru {

@@ -47,7 +47,7 @@ console.log("DARK/LIGHT MODE 2.0 — THEME CONSISTENCY");
 
 console.log("\n1. Design system foundation");
 test("globals.css punya blok .dark dengan token surface", () => {
-  const g = read("app/globals.css");
+  const g = (read("app/theme/tokens.css") + read("app/globals.css"));
   return g.includes(".dark {") && g.includes("--surface") && g.includes("--surface-elevated") && g.includes("--surface-muted");
 });
 test("darkMode class (bukan media) di tailwind config", () =>
@@ -318,7 +318,7 @@ test("player-theme.css punya .px-theme-app (light) + .dark .px-theme-app (navy)"
   return css.includes(".px-theme-app") && css.includes(".dark .px-theme-app");
 });
 test("globals.css punya .bc-card-premium + .bc-hero-card + .dark .bc-card-premium", () => {
-  const g = read("app/globals.css");
+  const g = (read("app/theme/tokens.css") + read("app/globals.css"));
   return g.includes(".bc-card-premium") && g.includes(".bc-hero-card") && g.includes(".dark .bc-card-premium");
 });
 test("ProfileHero memakai bc-hero-card + darkText foreground", () => {

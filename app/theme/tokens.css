@@ -1,0 +1,154 @@
+/* ════════════════════════════════════════════════════════════════════
+   BahasaCerdas — TOKEN DESAIN GLOBAL (satu sumber kebenaran)
+
+   Satu-satunya file di aplikasi yang boleh berisi nilai warna mentah
+   (hex/rgb). Semua fitur memakai var(--clr-*) / var(--bc-*), lewat CSS
+   atau lewat Tailwind (bg-bc-surface, text-bc-text-2, rounded-card, …).
+   Referensi lengkap: docs/PANDUAN_DESAIN_BC.md §0.
+
+   Tema: :root = terang, .dark = gelap (next-themes, attribute="class").
+   Guard CI: npm run guard:warna menolak hex/rgb baru di luar file ini.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Warna dasar (nilai identik dengan sebelumnya) ─────────────── */
+:root {
+  --clr-bg: #f4f5f7;
+  --clr-surface: #ffffff;
+  --clr-surface-2: #f8f9fb;
+  --clr-border: #e6e8ee;
+  --clr-border-strong: #d4d7e0;
+  --clr-text: #16181d;
+  --clr-text-2: #5b6270;
+  --clr-text-3: #64748b;
+  --clr-accent: #059669;
+  --clr-accent-strong: #047857;
+  --clr-accent-soft: #ecfdf5;
+  --clr-success: #059669;
+  --clr-success-soft: #ecfdf5;
+  --clr-warning: #d97706;
+  --clr-warning-strong: #b45309;
+  --clr-warning-soft: #fffbeb;
+  --clr-danger: #b91c1c;
+  --clr-danger-soft: #fef2f2;
+  --clr-violet: #7c3aed;
+  --clr-violet-soft: #f5f3ff;
+  --clr-info: #2563eb;
+  --clr-info-soft: #eff6ff;
+
+  --clr-on-brand: #ffffff;   /* teks/ikon di atas gradien merek (terang: putih) */
+  --clr-focus: var(--clr-accent-strong);
+  --clr-scrim: color-mix(in srgb, #0b0d12 55%, transparent);
+}
+
+.dark {
+  --clr-bg: #0f1117;
+  --clr-surface: #171a22;
+  --clr-surface-2: #1d212b;
+  --clr-border: #262b38;
+  --clr-border-strong: #333a4b;
+  --clr-text: #f1f2f6;
+  --clr-text-2: #a6adbb;
+  --clr-text-3: #8b93a1;
+  --clr-accent: #34d399;
+  --clr-accent-strong: #10b981;
+  --clr-accent-soft: #0d2b22;
+  --clr-success: #34d399;
+  --clr-success-soft: #0d2b22;
+  --clr-warning: #fbbf24;
+  --clr-warning-strong: #fbbf24;
+  --clr-warning-soft: #2b220d;
+  --clr-danger: #f87171;
+  --clr-danger-soft: #2b1517;
+  --clr-violet: #a78bfa;
+  --clr-violet-soft: #1e1835;
+  --clr-info: #93c5fd;
+  --clr-info-soft: #15233f;
+
+  --clr-on-brand: var(--clr-bg);         /* gelap: ikon/teks gelap di atas gradien terang */
+  --clr-focus: var(--clr-accent);
+  --clr-scrim: color-mix(in srgb, #000000 62%, transparent);
+}
+
+/* ── 2. Turunan + gradien, radius, bayangan, jarak, tipografi, gerak ─
+   Dideklarasikan di :root DAN .dark supaya bagian yang dipaksa gelap
+   (mis. banner JUMPA class="dark") menghitung ulang dari token gelap. */
+:root, .dark {
+  /* Turunan — selalu dari token di atas */
+  --clr-line: color-mix(in srgb, var(--clr-text) 10%, transparent);
+  --clr-line-strong: color-mix(in srgb, var(--clr-text) 18%, transparent);
+  --clr-field: color-mix(in srgb, var(--clr-bg) 55%, var(--clr-surface));
+
+  /* Gradien merek teal → biru → violet (gelap: #34d399 → #93c5fd → #a78bfa).
+     Terang memakai ujung "strong" agar teks putih ≥ 4.5:1. */
+  --bc-grad-brand: linear-gradient(120deg, var(--clr-accent-strong), var(--clr-info) 55%, var(--clr-violet));
+  --bc-grad-murid: linear-gradient(120deg, var(--clr-violet), var(--clr-info) 55%, var(--clr-accent-strong));
+  --bc-grad-premium: linear-gradient(120deg, var(--clr-warning), var(--clr-accent) 60%, var(--clr-violet));
+  --bc-grad-danger: linear-gradient(140deg, var(--clr-danger), color-mix(in srgb, var(--clr-danger) 82%, var(--clr-violet)));
+  --bc-grad-surface: linear-gradient(180deg, var(--clr-surface-2), var(--clr-surface));
+  --bc-grad-tint: linear-gradient(160deg, color-mix(in srgb, var(--clr-accent) 13%, var(--clr-surface-2)), color-mix(in srgb, var(--clr-violet) 16%, var(--clr-surface)));
+
+  /* Radius */
+  --bc-r-xs: 8px;
+  --bc-r-sm: 12px;
+  --bc-r-icon: 14px;
+  --bc-r-ctl: 16px;
+  --bc-r-tile: 20px;
+  --bc-r-card: 24px;
+  --bc-r-hero: 28px;
+  --bc-r-pill: 999px;
+
+  /* Bayangan / elevasi */
+  --bc-depth: 0 1px 0 color-mix(in srgb, var(--clr-text) 6%, transparent) inset,
+    0 14px 32px -22px color-mix(in srgb, var(--clr-text) 28%, transparent);
+  --bc-shadow-1: 0 1px 2px color-mix(in srgb, var(--clr-text) 8%, transparent);
+  --bc-shadow-2: 0 10px 28px -12px color-mix(in srgb, var(--clr-text) 22%, transparent);
+  --bc-shadow-3: 0 24px 60px -20px color-mix(in srgb, var(--clr-text) 32%, transparent);
+  --bc-glow-brand: 0 8px 22px -10px color-mix(in srgb, var(--clr-violet) 70%, transparent);
+  --bc-ring: 0 0 0 3px color-mix(in srgb, var(--clr-accent) 18%, transparent);
+
+  /* Jarak (skala 4px) */
+  --bc-space-1: 4px;
+  --bc-space-2: 8px;
+  --bc-space-3: 12px;
+  --bc-space-4: 16px;
+  --bc-space-5: 20px;
+  --bc-space-6: 24px;
+  --bc-space-8: 32px;
+  --bc-space-10: 40px;
+
+  /* Tipografi */
+  --bc-font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --bc-fs-hero: clamp(28px, 7.4vw, 40px);
+  --bc-fs-h1: clamp(24px, 6.4vw, 30px);
+  --bc-fs-h2: 18px;
+  --bc-fs-h3: 16px;
+  --bc-fs-body: 14px;
+  --bc-fs-input: 16px;
+  --bc-fs-small: 12px;
+  --bc-fs-eyebrow: 11px;
+
+  /* Gerak */
+  --bc-ease: cubic-bezier(.22, .8, .24, 1);
+  --bc-spring: cubic-bezier(.34, 1.56, .64, 1);
+  --bc-dur-fast: .12s;
+  --bc-dur: .18s;
+  --bc-dur-slow: .32s;
+
+  /* Lapisan */
+  --bc-z-sheet: 60;
+  --bc-z-toast: 70;
+}
+
+.dark {
+  --bc-grad-brand: linear-gradient(120deg, var(--clr-accent), var(--clr-info) 55%, var(--clr-violet));
+  --bc-grad-murid: linear-gradient(120deg, var(--clr-violet), var(--clr-info) 55%, var(--clr-accent));
+  --bc-depth: 0 1px 0 color-mix(in srgb, var(--clr-text) 6%, transparent) inset,
+    0 14px 32px -22px color-mix(in srgb, var(--clr-bg) 95%, transparent);
+  --bc-shadow-1: 0 1px 2px color-mix(in srgb, var(--clr-bg) 60%, transparent);
+  --bc-shadow-2: 0 12px 30px -12px color-mix(in srgb, var(--clr-bg) 90%, transparent);
+  --bc-shadow-3: 0 24px 60px -18px color-mix(in srgb, var(--clr-bg) 95%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --bc-dur-fast: 0s; --bc-dur: 0s; --bc-dur-slow: 0s; }
+}
