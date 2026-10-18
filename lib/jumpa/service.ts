@@ -5,7 +5,9 @@
  */
 import { Prisma, type JumpaRoom } from "@prisma/client";
 import { db } from "@/lib/db";
-import { capsFor, JUMPA_MURID_MAX_ACTIVE_ROOMS, roomEndsAt, type JumpaKind } from "./caps";
+import { JUMPA_MURID_MAX_ACTIVE_ROOMS, roomEndsAt, type JumpaKind } from "./caps";
+import { resolveJumpaTier } from "./entitlement";
+import { checkDailyQuota, limitsFor, startOfJakartaDay, tierFromCreatedMetadata, JUMPA_TIERS, JUMPA_UPGRADE_URL, type JumpaTier } from "./tiers";
 import { generateLivekitRoomName, generateRoomCode, hashInviteToken, INVITE_TOKEN_RE } from "./code";
 import {
   canCreateRoom,
@@ -34,8 +36,8 @@ export async function loadActor(user: JumpaUserLike): Promise<JumpaActor> {
 }
 
 export type CreateRoomResult =
-  | { ok: true; room: Pick<JumpaRoom, "id" | "code" | "title">; reused: boolean }
-  | { ok: false; status: number; code: string; message: string };
+  | { ok: true; room: Pick<JumpaRoom, "id" | "code" | "title">; reused: boolean; tier?: JumpaTier }
+  | { ok: false; status: number; code: string; message: string; extra?: Record<string, unknown> };
 
 /** @deprecated Fase 1 — pakai createRoom({ kind: "KELAS", groupId }). */
 export type CreateKelasRoomResult = CreateRoomResult;
@@ -89,6 +91,10 @@ export async function createRoom(user: JumpaUserLike, req: CreateRoomRequest): P
   }
 
   const now = Date.now();
+  // Fase 3: paket dari pembuat ruang (langganan/trial BC yang sudah ada).
+  // Ruang MURID tidak bergantung paket siapa pun.
+  const tier: JumpaTier = req.kind === "MURID" ? "FREE" : (await resolveJumpaTier(user.id)).tier;
+  const caps = limitsFor(tier, req.kind);
   // Klik ganda / buka ulang: pakai lagi ruang aktif yang sama milik pembuat.
   const existing = await db.jumpaRoom.findFirst({
     where: {
@@ -102,7 +108,8 @@ export async function createRoom(user: JumpaUserLike, req: CreateRoomRequest): P
     orderBy: { createdAt: "desc" },
     select: { id: true, code: true, title: true, startedAt: true, maxDurationMin: true },
   });
-  if (existing) {
+  // Baru upgrade ke Premium? Ruang Gratis lama tidak dipakai ulang.
+  if (existing && existing.maxDurationMin >= caps.maxDurationMin) {
     const endsAt = roomEndsAt(existing.startedAt, existing.maxDurationMin);
     if (!endsAt || endsAt.getTime() > now + 5 * 60_000) {
       return { ok: true, room: { id: existing.id, code: existing.code, title: existing.title }, reused: true };
@@ -116,7 +123,16 @@ export async function createRoom(user: JumpaUserLike, req: CreateRoomRequest): P
     }
   }
 
-  const caps = capsFor(req.kind);
+  if (req.kind !== "MURID") {
+    const createdToday = await db.jumpaRoom.count({
+      where: { createdById: user.id, kind: { in: ["KELAS", "GURU"] }, createdAt: { gte: startOfJakartaDay(new Date(now)) } },
+    });
+    const quota = checkDailyQuota(tier, req.kind, createdToday);
+    if (!quota.ok) {
+      return { ok: false, status: 429, code: quota.code, message: quota.message, extra: { limit: quota.limit, upgradeUrl: JUMPA_UPGRADE_URL } };
+    }
+  }
+
   const custom = cleanTitle(req.title);
   const title = (
     req.kind === "KELAS"
@@ -142,12 +158,12 @@ export async function createRoom(user: JumpaUserLike, req: CreateRoomRequest): P
           maxParticipants: caps.maxParticipants,
           maxDurationMin: caps.maxDurationMin,
           events: {
-            create: { actorId: user.id, action: "ROOM_CREATED", metadata: { kind: req.kind, groupId: group?.id ?? null, communityId: community?.id ?? null } },
+            create: { actorId: user.id, action: "ROOM_CREATED", metadata: { kind: req.kind, groupId: group?.id ?? null, communityId: community?.id ?? null, tier } },
           },
         },
         select: { id: true, code: true, title: true },
       });
-      return { ok: true, room, reused: false };
+      return { ok: true, room, reused: false, tier };
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") continue;
       throw error;
@@ -176,6 +192,8 @@ export interface RoomView {
   maxParticipants: number;
   maxDurationMin: number;
   endsAt: string | null;
+  /** Fase 3: paket ruang (dari pembuat, saat dibuat). */
+  tier: JumpaTier;
 }
 
 export interface RoomContext {
@@ -199,7 +217,7 @@ export async function loadRoomContext(
   const room = await db.jumpaRoom.findUnique({ where: { code } });
   if (!room) return null;
 
-  const [actor, group, member, participant, host, invites, community] = await Promise.all([
+  const [actor, group, member, participant, host, invites, community, created] = await Promise.all([
     loadActor(user),
     room.groupId
       ? db.group.findUnique({ where: { id: room.groupId }, select: { name: true, teacherId: true, isActive: true } })
@@ -218,6 +236,7 @@ export async function loadRoomContext(
       take: 200,
     }),
     room.communityId ? db.community.findUnique({ where: { id: room.communityId }, select: { name: true } }) : Promise.resolve(null),
+    db.jumpaEvent.findFirst({ where: { roomId: room.id, action: "ROOM_CREATED" }, orderBy: { createdAt: "asc" }, select: { metadata: true } }),
   ]);
 
   const invitedGroupIds = invites.filter((i) => i.kind === "GROUP" && i.groupId).map((i) => i.groupId!);
@@ -290,6 +309,7 @@ export async function loadRoomContext(
       maxParticipants: room.maxParticipants,
       maxDurationMin: room.maxDurationMin,
       endsAt: endsAt ? endsAt.toISOString() : null,
+      tier: tierFromCreatedMetadata(created?.metadata),
     },
   };
 }
@@ -355,6 +375,8 @@ export interface RoomListItem {
   place: string | null;
   mine: boolean;
   startedAt: string | null;
+  /** Fase 3: yang sedang tersambung — hanya inisial (maks 4, tanpa nama lengkap) + jumlah. */
+  present: { count: number; initials: string[] };
 }
 
 export interface JumpaHomeData {
@@ -364,6 +386,16 @@ export interface JumpaHomeData {
   groups: Array<{ id: string; name: string }>;
   communities: Array<{ id: string; name: string }>;
   canSeePanel: boolean;
+  /** Fase 3: paket guru + kuota ruang hari ini (null untuk murid). */
+  plan: {
+    tier: JumpaTier;
+    trialing: boolean;
+    roomsToday: number;
+    roomsPerDay: number | null;
+    kelas: { maxParticipants: number; maxDurationMin: number };
+    guru: { maxParticipants: number; maxDurationMin: number };
+    upgradeUrl: string;
+  } | null;
 }
 
 /** Ruang aktif yang relevan untuk user + pilihan untuk membuat ruang. */
@@ -405,9 +437,46 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
         },
         orderBy: [{ status: "asc" }, { createdAt: "desc" }],
         take: 30,
-        select: { code: true, title: true, kind: true, status: true, createdById: true, startedAt: true, groupId: true, communityId: true },
+        select: {
+          code: true, title: true, kind: true, status: true, createdById: true, startedAt: true, groupId: true, communityId: true,
+          participants: {
+            where: { removedAt: null, lastJoinedAt: { not: null } },
+            orderBy: { lastJoinedAt: "desc" },
+            take: 60,
+            select: { userId: true, lastJoinedAt: true, lastLeftAt: true },
+          },
+        },
       })
     : [];
+
+  // Kehadiran dari webhook: tersambung = join terakhir setelah leave terakhir.
+  const presentIds = new Map<string, string[]>();
+  for (const r of rooms) {
+    presentIds.set(r.code, r.participants.filter((p) => p.lastJoinedAt && (!p.lastLeftAt || p.lastLeftAt < p.lastJoinedAt)).map((p) => p.userId));
+  }
+  const firstIds = [...new Set([...presentIds.values()].flatMap((ids) => ids.slice(0, 4)))];
+  const people = firstIds.length
+    ? await db.user.findMany({ where: { id: { in: firstIds } }, select: { id: true, fullName: true, nickname: true } })
+    : [];
+  const toInitials = (n: string) => n.trim().split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("") || "P";
+  const personInitials = new Map(people.map((u) => [u.id, toInitials(u.nickname || u.fullName || "Peserta")]));
+
+  let plan: JumpaHomeData["plan"] = null;
+  if (effective === "GURU") {
+    const [t, roomsToday] = await Promise.all([
+      resolveJumpaTier(user.id),
+      db.jumpaRoom.count({ where: { createdById: user.id, kind: { in: ["KELAS", "GURU"] }, createdAt: { gte: startOfJakartaDay(new Date()) } } }),
+    ]);
+    plan = {
+      tier: t.tier,
+      trialing: t.trialing,
+      roomsToday,
+      roomsPerDay: JUMPA_TIERS[t.tier].roomsPerDay,
+      kelas: limitsFor(t.tier, "KELAS"),
+      guru: limitsFor(t.tier, "GURU"),
+      upgradeUrl: JUMPA_UPGRADE_URL,
+    };
+  }
 
   const groupName = new Map([...ownedGroups, ...memberGroups.map((m) => m.group)].map((g) => [g.id, g.name]));
   const commName = new Map(communities.map((c) => [c.community.id, c.community.name]));
@@ -423,9 +492,14 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
       place: (r.groupId && groupName.get(r.groupId)) || (r.communityId && commName.get(r.communityId)) || null,
       mine: r.createdById === user.id,
       startedAt: r.startedAt ? r.startedAt.toISOString() : null,
+      present: (() => {
+        const ids = presentIds.get(r.code) ?? [];
+        return { count: ids.length, initials: ids.slice(0, 4).map((id) => personInitials.get(id) ?? "P") };
+      })(),
     })),
     groups: effective === "GURU" ? ownedGroups : actor.isJunior ? [] : memberGroups.map((m) => m.group),
     communities: communities.map((c) => c.community),
     canSeePanel: user.role === "ADMIN" || user.isFounder || effective === "GURU",
+    plan,
   };
 }

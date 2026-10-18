@@ -1,10 +1,18 @@
 "use client";
 
+/**
+ * Lobby JUMPA ("ruang tunggu"): pratinjau kamera, mik, pengaturan, paket.
+ * Fase 3: tanpa framer-motion & tanpa LiveKit (bundle awal kecil);
+ * pratinjau memakai resolusi kebijakan perangkat (HP lebih ringan).
+ */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
-import { Loader2, Mic, MicOff, ShieldCheck, Users, Video, VideoOff } from "lucide-react";
+import { Camera, Loader2, Mic, MicOff, Settings2, ShieldCheck, Users, Video, VideoOff, X } from "lucide-react";
+import type { JumpaTierView } from "@/lib/jumpa/tiers";
 import { readMediaPrefs, writeMediaPrefs, type JumpaMediaPrefs } from "./media-prefs";
+import { detectDevice, publishPolicy, QUALITY_LABEL } from "./media-policy";
 import { initials } from "./format";
+import SettingsPanel from "./SettingsPanel";
+import { TierBadge, tierLimitsText } from "./TierUi";
 
 interface Props {
   title: string;
@@ -16,6 +24,7 @@ interface Props {
   joining: boolean;
   joinError: string | null;
   onJoin: (prefs: JumpaMediaPrefs) => void;
+  tier: JumpaTierView;
 }
 
 type PermissionNote = null | "camera" | "mic" | "both";
@@ -24,14 +33,20 @@ function stopStream(stream: MediaStream | null) {
   stream?.getTracks().forEach((t) => t.stop());
 }
 
+/** Nama perangkat ringkas: buang kode vendor "(046d:0825)" & awalan "Default - ". */
+function deviceName(track: MediaStreamTrack | undefined, fallback: string): string {
+  const raw = track?.label?.replace(/\s*\([0-9a-f]{4}:[0-9a-f]{4}\)\s*$/i, "").replace(/^(default|bawaan)\s*-\s*/i, "").trim();
+  return raw || fallback;
+}
+
 function permissionMessage(note: PermissionNote): string | null {
-  if (note === "camera") return "Kamera belum diizinkan. Ketuk ikon gembok di bilah alamat untuk mengizinkan.";
-  if (note === "mic") return "Mikrofon belum diizinkan. Ketuk ikon gembok di bilah alamat untuk mengizinkan.";
-  if (note === "both") return "Kamera dan mikrofon belum diizinkan. Ketuk ikon gembok di bilah alamat.";
+  if (note === "camera") return "Kamera belum diizinkan. Izinkan lewat ikon gembok di bilah alamat.";
+  if (note === "mic") return "Mikrofon belum diizinkan. Izinkan lewat ikon gembok di bilah alamat.";
+  if (note === "both") return "Kamera & mikrofon belum diizinkan. Izinkan lewat ikon gembok di bilah alamat.";
   return null;
 }
 
-/** Bar level mikrofon sederhana (5 batang). */
+/** Bar level mikrofon sederhana (5 batang), ~15 fps supaya ringan. */
 function useMicLevel(stream: MediaStream | null): number {
   const [level, setLevel] = useState(0);
   useEffect(() => {
@@ -47,17 +62,14 @@ function useMicLevel(stream: MediaStream | null): number {
     analyser.fftSize = 256;
     source.connect(analyser);
     const data = new Uint8Array(analyser.frequencyBinCount);
-    let raf = 0;
-    const tick = () => {
+    const id = setInterval(() => {
       analyser.getByteFrequencyData(data);
       let sum = 0;
       for (let i = 0; i < data.length; i++) sum += data[i];
       setLevel(Math.min(1, sum / data.length / 90));
-      raf = requestAnimationFrame(tick);
-    };
-    tick();
+    }, 66);
     return () => {
-      cancelAnimationFrame(raf);
+      clearInterval(id);
       source.disconnect();
       void ctx.close();
     };
@@ -66,14 +78,15 @@ function useMicLevel(stream: MediaStream | null): number {
 }
 
 export default function JumpaLobby(props: Props) {
-  const reduceMotion = useReducedMotion();
   const [prefs, setPrefs] = useState<JumpaMediaPrefs | null>(null);
   const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
   const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
   const [starting, setStarting] = useState(false);
   const [note, setNote] = useState<PermissionNote>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [deviceRefresh, setDeviceRefresh] = useState(0);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const streamsRef = useRef<{ v: MediaStream | null; a: MediaStream | null }>({ v: null, a: null });
+  const streamsRef = useRef<{ v: MediaStream | null; a: MediaStream | null; vId?: string; aKey?: string }>({ v: null, a: null });
   const micLevel = useMicLevel(audioStream);
 
   // Baca pilihan terakhir setelah mount (localStorage hanya ada di browser).
@@ -81,28 +94,45 @@ export default function JumpaLobby(props: Props) {
     setPrefs(readMediaPrefs());
   }, []);
 
-  // Preview kamera mengikuti toggle.
+  const camWanted = Boolean(prefs?.camera && !prefs.audioOnly);
+  const camDevice = prefs?.devices.videoinput;
+  const quality = prefs?.quality ?? "auto";
+
+  // Pratinjau kamera mengikuti toggle + perangkat + kualitas.
   useEffect(() => {
     if (!prefs) return;
     let cancelled = false;
-    if (!prefs.camera) {
+    const key = `${camDevice ?? ""}|${quality}`;
+    if (!camWanted) {
       stopStream(streamsRef.current.v);
       streamsRef.current.v = null;
       setVideoStream(null);
       return;
     }
-    if (streamsRef.current.v) return;
+    if (streamsRef.current.v && streamsRef.current.vId === key) return;
+    stopStream(streamsRef.current.v);
+    streamsRef.current.v = null;
     if (!navigator.mediaDevices?.getUserMedia) {
       setNote("camera");
       return;
     }
+    const cap = publishPolicy(quality, detectDevice(), props.tier.maxCameraHeight).capture;
     setStarting(true);
     navigator.mediaDevices
-      .getUserMedia({ video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "user" } })
+      .getUserMedia({
+        video: {
+          width: { ideal: cap.width },
+          height: { ideal: cap.height },
+          frameRate: { ideal: cap.fps },
+          ...(camDevice ? { deviceId: { exact: camDevice } } : { facingMode: "user" }),
+        },
+      })
       .then((stream) => {
         if (cancelled) return stopStream(stream);
         streamsRef.current.v = stream;
+        streamsRef.current.vId = key;
         setVideoStream(stream);
+        setDeviceRefresh((n) => n + 1);
         setNote((n) => (n === "camera" ? null : n === "both" ? "mic" : n));
       })
       .catch(() => {
@@ -114,29 +144,38 @@ export default function JumpaLobby(props: Props) {
     return () => {
       cancelled = true;
     };
-  }, [prefs]);
+  }, [prefs, camWanted, camDevice, quality, props.tier.maxCameraHeight]);
 
-  // Mikrofon (untuk meter level) mengikuti toggle.
+  const micWanted = Boolean(prefs?.mic);
+  const micDevice = prefs?.devices.audioinput;
+  const ns = prefs?.noiseSuppression ?? true;
+
+  // Mikrofon (untuk meter level) mengikuti toggle + perangkat.
   useEffect(() => {
     if (!prefs) return;
     let cancelled = false;
-    if (!prefs.mic) {
+    const key = `${micDevice ?? ""}|${ns}`;
+    if (!micWanted) {
       stopStream(streamsRef.current.a);
       streamsRef.current.a = null;
       setAudioStream(null);
       return;
     }
-    if (streamsRef.current.a) return;
+    if (streamsRef.current.a && streamsRef.current.aKey === key) return;
+    stopStream(streamsRef.current.a);
+    streamsRef.current.a = null;
     if (!navigator.mediaDevices?.getUserMedia) {
       setNote("mic");
       return;
     }
     navigator.mediaDevices
-      .getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } })
+      .getUserMedia({ audio: { echoCancellation: true, noiseSuppression: ns, ...(micDevice ? { deviceId: { exact: micDevice } } : {}) } })
       .then((stream) => {
         if (cancelled) return stopStream(stream);
         streamsRef.current.a = stream;
+        streamsRef.current.aKey = key;
         setAudioStream(stream);
+        setDeviceRefresh((n) => n + 1);
         setNote((n) => (n === "mic" ? null : n === "both" ? "camera" : n));
       })
       .catch(() => {
@@ -147,7 +186,7 @@ export default function JumpaLobby(props: Props) {
     return () => {
       cancelled = true;
     };
-  }, [prefs]);
+  }, [prefs, micWanted, micDevice, ns]);
 
   useEffect(() => {
     if (videoRef.current) videoRef.current.srcObject = videoStream;
@@ -162,14 +201,20 @@ export default function JumpaLobby(props: Props) {
     };
   }, []);
 
-  const toggle = useCallback((key: keyof JumpaMediaPrefs) => {
+  const change = useCallback((patch: Partial<JumpaMediaPrefs>) => {
     setPrefs((p) => {
       if (!p) return p;
-      const next = { ...p, [key]: !p[key] };
+      const next = { ...p, ...patch, devices: { ...p.devices, ...(patch.devices ?? {}) } };
       writeMediaPrefs(next);
       return next;
     });
   }, []);
+
+  const toggle = (key: "camera" | "mic") => {
+    if (!prefs) return;
+    if (key === "camera" && prefs.audioOnly) return change({ audioOnly: false, camera: true });
+    change({ [key]: !prefs[key] });
+  };
 
   const handleJoin = () => {
     if (!prefs || !props.canJoin || props.joining) return;
@@ -180,19 +225,23 @@ export default function JumpaLobby(props: Props) {
     props.onJoin(prefs);
   };
 
-  const camOn = Boolean(prefs?.camera);
-  const micOn = Boolean(prefs?.mic);
+  const camOn = camWanted;
+  const micOn = micWanted;
   const bars = [0.35, 0.6, 1, 0.6, 0.35];
 
   return (
-    <main className="mx-auto flex min-h-[100dvh] w-full max-w-5xl flex-col justify-center gap-6 px-4 py-6 sm:px-6 md:flex-row md:items-center md:gap-10">
-      <motion.section
-        initial={reduceMotion ? false : { opacity: 0, y: 16, scale: 0.98 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.35, ease: [0.22, 0.8, 0.24, 1] }}
-        className="w-full md:flex-[1.4]"
-      >
-        <div className="jumpa-preview jumpa-glass">
+    <main className="mx-auto flex min-h-[100dvh] w-full max-w-5xl flex-col gap-5 px-4 pb-6 pt-[max(14px,env(safe-area-inset-top))] sm:px-6">
+      <header className="jumpa-lobby-head">
+        <span className="jumpa-brand whitespace-nowrap">
+          <span className="jumpa-mark jumpa-mark-sm" aria-hidden>J</span>
+          JUMPA <span className="jumpa-brand-by">dari BahasaCerdas</span>
+        </span>
+        <span className="jumpa-badge shrink-0 whitespace-nowrap" data-role={props.roleLabel}>Sebagai {props.roleLabel === "GURU" ? "guru" : "murid"}</span>
+      </header>
+      <div className="flex flex-1 flex-col justify-center gap-5 md:flex-row md:items-center md:gap-8">
+      <section className="jumpa-in-up w-full md:flex-[1.4]">
+        <div className="jumpa-card jumpa-lobby-preview">
+        <div className="jumpa-preview">
           {camOn && videoStream ? (
             <video ref={videoRef} autoPlay playsInline muted aria-label="Pratinjau kamera kamu" />
           ) : (
@@ -202,16 +251,16 @@ export default function JumpaLobby(props: Props) {
               ) : (
                 <div className="flex flex-col items-center gap-3">
                   <span className="jumpa-avatar h-24 w-24 text-3xl">{initials(props.displayName)}</span>
-                  <span className="text-sm text-[var(--jp-text-2)]">Kamera mati</span>
+                  <span className="text-sm text-[var(--jp-text-2)]">{prefs?.audioOnly ? "Mode audio saja" : "Kamera mati"}</span>
                 </div>
               )}
             </div>
           )}
 
           <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4">
-            <span className="jumpa-glass rounded-full px-3 py-1.5 text-sm font-semibold">{props.displayName}</span>
+            <span className="jumpa-nameplate !static">{props.displayName}</span>
             {micOn && (
-              <span className="jumpa-glass jumpa-meter rounded-full px-3 py-2" aria-hidden>
+              <span className="jumpa-nameplate jumpa-meter !static" aria-hidden>
                 {bars.map((w, i) => (
                   <span key={i} style={{ height: `${Math.max(3, micLevel * w * 18)}px` }} />
                 ))}
@@ -219,58 +268,53 @@ export default function JumpaLobby(props: Props) {
             )}
           </div>
         </div>
+        <div className="jumpa-device-row" aria-label="Perangkat dipakai">
+          <span className="jumpa-device" data-off={!micOn}>
+            <Mic size={14} aria-hidden /> <span className="truncate">{micOn ? deviceName(audioStream?.getAudioTracks()[0], "Mikrofon") : "Mikrofon mati"}</span>
+          </span>
+          <span className="jumpa-device" data-off={!camOn}>
+            <Camera size={14} aria-hidden /> <span className="truncate">{camOn ? deviceName(videoStream?.getVideoTracks()[0], "Kamera") : prefs?.audioOnly ? "Audio saja" : "Kamera mati"}</span>
+          </span>
+        </div>
+        </div>
 
-        <div className="mt-4 flex items-center justify-center gap-5">
+        <div className="mt-4 flex items-start justify-center gap-4">
           <div className="jumpa-ctl">
-            <button
-              type="button"
-              className="jumpa-round"
-              data-off={!micOn}
-              aria-pressed={micOn}
-              aria-label={micOn ? "Matikan mikrofon" : "Nyalakan mikrofon"}
-              onClick={() => toggle("mic")}
-              disabled={!prefs}
-            >
-              {micOn ? <Mic size={24} /> : <MicOff size={24} />}
+            <button type="button" className="jumpa-key" data-off={!micOn} aria-pressed={micOn} aria-label={micOn ? "Matikan mikrofon" : "Nyalakan mikrofon"} onClick={() => toggle("mic")} disabled={!prefs}>
+              {micOn ? <Mic size={22} /> : <MicOff size={22} />}
             </button>
-            <span className="jumpa-ctl-label">{micOn ? "Mikrofon" : "Mik mati"}</span>
+            <span className="jumpa-ctl-label">{micOn ? "Mik" : "Mik mati"}</span>
           </div>
           <div className="jumpa-ctl">
-            <button
-              type="button"
-              className="jumpa-round"
-              data-off={!camOn}
-              aria-pressed={camOn}
-              aria-label={camOn ? "Matikan kamera" : "Nyalakan kamera"}
-              onClick={() => toggle("camera")}
-              disabled={!prefs}
-            >
-              {camOn ? <Video size={24} /> : <VideoOff size={24} />}
+            <button type="button" className="jumpa-key" data-off={!camOn} aria-pressed={camOn} aria-label={camOn ? "Matikan kamera" : "Nyalakan kamera"} onClick={() => toggle("camera")} disabled={!prefs}>
+              {camOn ? <Video size={22} /> : <VideoOff size={22} />}
             </button>
             <span className="jumpa-ctl-label">{camOn ? "Kamera" : "Kamera mati"}</span>
+          </div>
+          <div className="jumpa-ctl">
+            <button type="button" className="jumpa-key" data-on={settingsOpen} aria-haspopup="dialog" aria-expanded={settingsOpen} aria-label="Pengaturan" onClick={() => setSettingsOpen(true)} disabled={!prefs}>
+              <Settings2 size={22} />
+            </button>
+            <span className="jumpa-ctl-label">{prefs ? QUALITY_LABEL[prefs.quality].title : "Pengaturan"}</span>
           </div>
         </div>
         {permissionMessage(note) && (
           <p role="status" className="mt-3 text-center text-sm text-[var(--clr-warning)]">{permissionMessage(note)}</p>
         )}
-      </motion.section>
+      </section>
 
-      <motion.section
-        initial={reduceMotion ? false : { opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, delay: 0.08, ease: [0.22, 0.8, 0.24, 1] }}
-        className="flex w-full flex-col items-center gap-5 text-center md:flex-1 md:items-start md:text-left"
-      >
-        <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[.14em] text-[var(--jp-accent)] jumpa-glass">
-          JUMPA · BahasaCerdas
-        </span>
+      <section className="jumpa-card jumpa-lobby-info jumpa-in-up flex w-full flex-col items-center gap-5 text-center [animation-delay:60ms] md:flex-1 md:items-start md:text-left">
         <div>
+          <p className="jumpa-section-title !m-0 !mb-2 justify-center md:justify-start">Siap masuk?</p>
           <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{props.title}</h1>
           {props.subtitle && (
             <p className="mt-2 flex items-center justify-center gap-2 text-[var(--jp-text-2)] md:justify-start">
               <Users size={16} /> {props.subtitle}
             </p>
           )}
+          <p className="mt-3 flex flex-wrap items-center justify-center gap-2 text-sm text-[var(--jp-text-3)] md:justify-start">
+            <TierBadge tier={props.tier} /> {tierLimitsText(props.tier)}
+          </p>
         </div>
 
         {props.canJoin ? (
@@ -281,16 +325,31 @@ export default function JumpaLobby(props: Props) {
             </button>
             {props.joinError && <p role="alert" className="text-sm text-[var(--jp-danger)]">{props.joinError}</p>}
             <p className="flex items-center gap-2 text-xs text-[var(--jp-text-3)]">
-              <ShieldCheck size={14} /> Hanya akun BahasaCerdas yang terdaftar di kelas ini yang bisa masuk.
+              <ShieldCheck size={14} className="shrink-0" /> Hanya anggota terdaftar yang bisa masuk.
             </p>
           </>
         ) : (
-          <div role="alert" className="jumpa-glass w-full rounded-2xl p-4 text-sm text-[var(--jp-text-2)]">
+          <div role="alert" className="jumpa-card w-full p-4 text-sm text-[var(--jp-text-2)]">
             {props.denyMessage ?? "Kamu belum bisa masuk ke ruang ini."}
           </div>
         )}
-        <span className="jumpa-badge" data-role={props.roleLabel}>Masuk sebagai {props.roleLabel === "GURU" ? "Guru" : "Murid"}</span>
-      </motion.section>
+      </section>
+      </div>
+
+      {settingsOpen && prefs && (
+        <>
+          <button type="button" aria-label="Tutup pengaturan" className="jumpa-scrim jumpa-in-fade fixed inset-0 z-40" onClick={() => setSettingsOpen(false)} />
+          <div role="dialog" aria-modal="true" aria-label="Pengaturan" className="jumpa-sheet jumpa-in-sheet jumpa-lobby-sheet">
+            <div className="flex items-center justify-between gap-2 px-4 pb-2 pt-3">
+              <h2 className="text-base font-bold">Pengaturan</h2>
+              <button type="button" className="jumpa-icon-btn" aria-label="Tutup pengaturan" onClick={() => setSettingsOpen(false)}>
+                <X size={20} />
+              </button>
+            </div>
+            <SettingsPanel prefs={prefs} onChange={change} tier={props.tier} refreshKey={deviceRefresh} />
+          </div>
+        </>
+      )}
     </main>
   );
 }

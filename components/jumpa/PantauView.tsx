@@ -8,8 +8,8 @@ import { AlertTriangle, ArrowLeft, Check, ChevronRight, Clock, Flag, Loader2, Me
 import type { PantauDetail, PantauReport, PantauRoomRow } from "@/lib/jumpa/pantau";
 
 const KIND = { KELAS: "Kelas", GURU: "Guru", MURID: "Belajar bareng" } as Record<string, string>;
-const STATUS = { SCHEDULED: "Belum mulai", LIVE: "Live", ENDED: "Selesai" } as Record<string, string>;
-const END = { HOST: "diakhiri host", TIME_LIMIT: "waktu habis", EMPTY: "kosong", STALE: "tidak dipakai" } as Record<string, string>;
+const STATUS = { SCHEDULED: "Belum mulai", LIVE: "Berlangsung", ENDED: "Selesai" } as Record<string, string>;
+const END = { HOST: "diakhiri pemandu", TIME_LIMIT: "waktu habis", EMPTY: "kosong", STALE: "tidak dipakai" } as Record<string, string>;
 
 function fmt(iso: string | null): string {
   if (!iso) return "—";
@@ -119,7 +119,7 @@ export function PantauOverview({ rooms, reports, backHref }: { rooms: PantauRoom
                   </span>
                   <span className="hidden items-center gap-1 text-xs text-[var(--jp-text-2)] sm:inline-flex"><Users size={14} /> {r.participants}</span>
                   {r.openReports > 0 && <span className="jumpa-badge" data-role="HOST">{r.openReports} laporan</span>}
-                  {r.status === "LIVE" ? <span className="jumpa-live">Live</span> : <span className="text-xs text-[var(--jp-text-3)]">{STATUS[r.status]}</span>}
+                  {r.status === "LIVE" ? <span className="jumpa-live">Berlangsung</span> : <span className="text-xs text-[var(--jp-text-3)]">{STATUS[r.status]}</span>}
                   <ChevronRight size={18} className="text-[var(--jp-text-3)]" />
                 </Link>
               </li>

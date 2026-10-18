@@ -99,3 +99,7 @@ api.bahasacerdas.com {
   encode zstd gzip
   reverse_proxy supabase-envoy:8000
 }
+
+# Situs opsional (mis. JUMPA). Glob kosong = tidak ada situs tambahan.
+# Caddyfile INI yang dipakai produksi (CADDYFILE_PATH di stack.env).
+import /etc/caddy/conf.d/*.caddy

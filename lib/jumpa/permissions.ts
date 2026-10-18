@@ -215,7 +215,7 @@ export function evaluateJoin(
 
   const isHost = access.roomRole === "HOST" || access.roomRole === "COHOST";
   if (room.isLocked && !isHost && !relation.isExistingParticipant) {
-    return deny("ROOM_LOCKED", "Ruang sedang dikunci oleh host.");
+    return deny("ROOM_LOCKED", "Ruang sedang dikunci oleh pemandu.");
   }
   if (!isHost && input.activeOthers >= room.maxParticipants) {
     return deny("ROOM_FULL", "Ruang sudah penuh.");
@@ -327,16 +327,16 @@ export function canModerate(input: {
   if (TARGETED_ACTIONS.includes(action)) {
     if (!target) return deny("BAD_TARGET", "Peserta tidak ditemukan.");
     if (target.userId === actor.userId) return deny("BAD_TARGET", "Tidak bisa diterapkan ke diri sendiri.");
-    if (target.roomRole === "HOST") return deny("BAD_TARGET", "Host tidak bisa dikenai tindakan ini.");
+    if (target.roomRole === "HOST") return deny("BAD_TARGET", "Pemandu tidak bisa dikenai tindakan ini.");
     if (actor.roomRole === "COHOST" && target.roomRole === "COHOST") {
-      return deny("BAD_TARGET", "Co-host tidak bisa menindak co-host lain.");
+      return deny("BAD_TARGET", "Wakil pemandu tidak bisa menindak wakil pemandu lain.");
     }
     if (action === "SET_COHOST") {
-      if (target.effective !== "GURU") return deny("BAD_TARGET", "Hanya guru yang bisa dijadikan co-host.");
-      if (target.roomRole === "COHOST") return deny("BAD_TARGET", "Peserta ini sudah co-host.");
+      if (target.effective !== "GURU") return deny("BAD_TARGET", "Hanya guru yang bisa dijadikan wakil pemandu.");
+      if (target.roomRole === "COHOST") return deny("BAD_TARGET", "Peserta ini sudah wakil pemandu.");
     }
     if (action === "UNSET_COHOST" && target.roomRole !== "COHOST") {
-      return deny("BAD_TARGET", "Peserta ini bukan co-host.");
+      return deny("BAD_TARGET", "Peserta ini bukan wakil pemandu.");
     }
   }
   return { ok: true };
@@ -377,7 +377,7 @@ export function canInvite(input: {
 }): Decision<Record<never, never>> {
   const { actor, roomKind, invite } = input;
   if (actor.effective !== "GURU" || actor.roomRole === "MEMBER") {
-    return deny("NOT_ALLOWED", "Hanya guru host atau co-host yang bisa mengundang.");
+    return deny("NOT_ALLOWED", "Hanya guru pemandu atau wakil pemandu yang bisa mengundang.");
   }
   if (roomKind === "MURID") return deny("NOT_ALLOWED", "Ruang murid hanya untuk teman sekelas.");
 

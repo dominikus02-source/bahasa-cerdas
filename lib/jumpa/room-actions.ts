@@ -258,7 +258,7 @@ export async function sendChat(user: JumpaUserLike, code: string, rawContent: un
   const me = await actorInRoom(user, room);
   if (!me) return NOT_IN_ROOM;
   const isGuruHost = me.actor.effective === "GURU" && me.actor.roomRole !== "MEMBER";
-  if (!room.chatEnabled && !isGuruHost) return fail(423, "CHAT_DISABLED", "Obrolan sedang dimatikan oleh host.");
+  if (!room.chatEnabled && !isGuruHost) return fail(423, "CHAT_DISABLED", "Obrolan sedang dimatikan oleh pemandu.");
 
   const v = sanitizeChatContent(rawContent);
   if (!v.ok) return fail(400, v.code, v.message);

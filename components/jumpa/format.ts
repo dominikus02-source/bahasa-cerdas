@@ -65,3 +65,35 @@ export function avatarTone(id: string): number {
   for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
   return h % 4;
 }
+
+/**
+ * Nama pendek untuk tile kecil (strip pembicara): "Dewi Permata Sari" →
+ * "Dewi P.", nama satu kata dipotong 10 huruf. Mencegah "Dewi Per…".
+ */
+export function shortName(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "Peserta";
+  const first = parts[0].length > 10 ? `${parts[0].slice(0, 9)}.` : parts[0];
+  if (parts.length === 1) return first;
+  const last = parts[parts.length - 1][0]?.toUpperCase() ?? "";
+  return last ? `${first} ${last}.` : first;
+}
+
+/** Kode ruang (abc-defg-hij) dari ketikan bebas atau tautan /jumpa/<kode>. */
+export function parseRoomInput(text: string): string | null {
+  const t = text.trim().toLowerCase();
+  const fromUrl = t.match(/\/jumpa\/([a-z2-9-]{10,12})(?:[/?#]|$)/);
+  const raw = (fromUrl ? fromUrl[1] : t).replace(/[\s-]/g, "");
+  if (!/^[a-z2-9]{10}$/.test(raw)) return null;
+  return `${raw.slice(0, 3)}-${raw.slice(3, 7)}-${raw.slice(7)}`;
+}
+
+/** Lama berjalan, ringkas: "baru mulai", "12 mnt", "1 j 5 mnt". */
+export function elapsedLabel(startedAt: string | null, now = Date.now()): string | null {
+  if (!startedAt) return null;
+  const min = Math.max(0, Math.floor((now - new Date(startedAt).getTime()) / 60_000));
+  if (min < 1) return "baru mulai";
+  if (min < 60) return `${min} mnt`;
+  const h = Math.floor(min / 60);
+  return min % 60 ? `${h} jam ${min % 60} mnt` : `${h} jam`;
+}

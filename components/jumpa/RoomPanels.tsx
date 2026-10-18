@@ -5,7 +5,6 @@
  * kontrol host), Undang, Laporkan. Desktop: panel samping. Mobile: sheet.
  */
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useParticipants } from "@livekit/components-react";
 import type { Participant } from "livekit-client";
 import {
@@ -41,13 +40,20 @@ import { handQueue } from "@/lib/jumpa/signals";
 import { initials, parseParticipantMeta } from "./format";
 import { useJumpa } from "./room-controller";
 
-export type PanelName = "chat" | "people" | "invite" | "report";
+export type PanelName = "chat" | "people" | "invite" | "report" | "settings";
 
-const EASE = [0.22, 0.8, 0.24, 1] as const;
-const TITLES: Record<PanelName, string> = { chat: "Obrolan", people: "Peserta", invite: "Undang", report: "Laporkan masalah" };
+const TITLES: Record<PanelName, string> = { chat: "Obrolan", people: "Peserta", invite: "Undang", report: "Laporkan masalah", settings: "Pengaturan" };
 
+/**
+ * Fase 3: tanpa framer-motion — animasi masuk murni CSS (transform/opacity,
+ * dikompositkan GPU), tanpa animasi keluar. Hemat JS dan ringan di HP.
+ */
 export function PanelFrame({ name, wide, onClose, children }: { name: PanelName; wide: boolean; onClose: () => void; children: ReactNode }) {
-  const reduce = useReducedMotion();
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
   const head = (
     <div className="flex items-center justify-between gap-2 px-4 pb-2 pt-3">
       <h2 className="text-base font-bold">{TITLES[name]}</h2>
@@ -58,44 +64,33 @@ export function PanelFrame({ name, wide, onClose, children }: { name: PanelName;
   );
   if (wide) {
     return (
-      <motion.aside
+      <aside
         aria-label={TITLES[name]}
-        initial={reduce ? false : { opacity: 0, x: 24 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: 24 }}
-        transition={{ duration: 0.22, ease: EASE }}
-        className="jumpa-glass jumpa-panel flex w-[360px] shrink-0 flex-col overflow-hidden rounded-[var(--jp-radius)]"
+        className="jumpa-glass jumpa-panel jumpa-in-side flex w-[360px] shrink-0 flex-col overflow-hidden rounded-[var(--jp-radius)]"
       >
         {head}
         <div className="flex min-h-0 flex-1 flex-col">{children}</div>
-      </motion.aside>
+      </aside>
     );
   }
   return (
     <>
-      <motion.button
+      <button
         type="button"
         aria-label="Tutup panel"
-        className="jumpa-scrim fixed inset-0 z-40"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+        className="jumpa-scrim jumpa-in-fade fixed inset-0 z-40"
         onClick={onClose}
       />
-      <motion.div
+      <div
         role="dialog"
         aria-modal="true"
         aria-label={TITLES[name]}
-        initial={reduce ? false : { y: "100%" }}
-        animate={{ y: 0 }}
-        exit={{ y: "100%" }}
-        transition={{ duration: 0.28, ease: EASE }}
-        className="jumpa-glass jumpa-sheet fixed inset-x-0 bottom-0 z-50 flex max-h-[82dvh] flex-col rounded-t-[28px] pb-[env(safe-area-inset-bottom)]"
+        className="jumpa-glass jumpa-sheet jumpa-in-sheet fixed inset-x-0 bottom-0 z-50 flex max-h-[82dvh] flex-col rounded-t-[28px] pb-[env(safe-area-inset-bottom)]"
       >
         <span className="mx-auto mt-2 h-1.5 w-10 rounded-full bg-[var(--jp-line-strong)]" aria-hidden />
         {head}
         <div className="flex min-h-0 flex-1 flex-col">{children}</div>
-      </motion.div>
+      </div>
     </>
   );
 }
@@ -145,7 +140,7 @@ export function ChatPanel() {
       <div ref={listRef} className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 pb-3" aria-live="polite">
         {!chatLoaded && <Loader2 className="mx-auto mt-6 animate-spin text-[var(--jp-accent)]" aria-label="Memuat obrolan" />}
         {chatLoaded && messages.length === 0 && (
-          <p className="mt-8 text-center text-sm text-[var(--jp-text-3)]">Belum ada pesan. Sapa teman-temanmu!</p>
+          <p className="mt-8 text-center text-sm text-[var(--jp-text-3)]">Belum ada pesan.</p>
         )}
         {messages.map((m) => {
           const mine = m.userId === self.userId;
@@ -184,7 +179,7 @@ export function ChatPanel() {
           }}
           rows={1}
           disabled={!canWrite}
-          placeholder={canWrite ? "Tulis pesan…" : "Obrolan dimatikan host"}
+          placeholder={canWrite ? "Tulis pesan…" : "Obrolan dimatikan pemandu"}
           aria-label="Tulis pesan"
           className="jumpa-input max-h-28 min-h-[48px] flex-1 resize-none"
         />
@@ -220,8 +215,8 @@ function personActions(p: Participant): ActionItem[] {
   if (p.isMicrophoneEnabled) items.push({ action: "MUTE_AUDIO", label: "Matikan mikrofon", icon: <MicOff size={18} /> });
   if (p.isCameraEnabled) items.push({ action: "MUTE_VIDEO", label: "Matikan kamera", icon: <VideoOff size={18} /> });
   if (p.isScreenShareEnabled) items.push({ action: "STOP_SCREEN", label: "Hentikan berbagi layar", icon: <MonitorX size={18} /> });
-  if (meta.roomRole === "COHOST") items.push({ action: "UNSET_COHOST", label: "Cabut co-host", icon: <Crown size={18} /> });
-  else items.push({ action: "SET_COHOST", label: "Jadikan co-host", icon: <Crown size={18} /> });
+  if (meta.roomRole === "COHOST") items.push({ action: "UNSET_COHOST", label: "Cabut wakil pemandu", icon: <Crown size={18} /> });
+  else items.push({ action: "SET_COHOST", label: "Jadikan wakil pemandu", icon: <Crown size={18} /> });
   items.push({ action: "REMOVE", label: "Keluarkan dari ruang", icon: <UserMinus size={18} />, danger: true, confirm: `Keluarkan ${p.name || "peserta"}? Ia tidak bisa masuk lagi ke ruang ini.` });
   return items;
 }
@@ -335,8 +330,8 @@ export function PeoplePanel({ onInvite }: { onInvite: () => void }) {
                     {hands.has(p.identity) && <Hand size={14} className="ml-1 inline align-[-2px] text-[var(--clr-warning)]" aria-label="Angkat tangan" />}
                   </span>
                   <span className="mt-0.5 flex gap-1">
-                    {meta.roomRole === "HOST" && <span className="jumpa-badge" data-role="HOST">Host</span>}
-                    {meta.roomRole === "COHOST" && <span className="jumpa-badge" data-role="HOST">Co-host</span>}
+                    {meta.roomRole === "HOST" && <span className="jumpa-badge" data-role="HOST">Pemandu</span>}
+                    {meta.roomRole === "COHOST" && <span className="jumpa-badge" data-role="HOST">Wakil pemandu</span>}
                     {meta.bcRole && <span className="jumpa-badge" data-role={meta.bcRole}>{meta.bcRole === "GURU" ? "Guru" : "Murid"}</span>}
                   </span>
                 </span>
@@ -354,16 +349,8 @@ export function PeoplePanel({ onInvite }: { onInvite: () => void }) {
                   </button>
                 )}
               </div>
-              <AnimatePresence>
-                {openFor === p.identity && (
-                  <motion.div
-                    role="menu"
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.18, ease: EASE }}
-                    className="overflow-hidden rounded-2xl bg-[var(--jp-glass-strong)]"
-                  >
+              {openFor === p.identity && (
+                  <div role="menu" className="jumpa-in-fade overflow-hidden rounded-2xl bg-[var(--jp-glass-strong)]">
                     {actions.map((a) => (
                       <button
                         key={a.action}
@@ -377,9 +364,8 @@ export function PeoplePanel({ onInvite }: { onInvite: () => void }) {
                         {busy === `${a.action}:${p.identity}` ? <Loader2 size={18} className="animate-spin" /> : a.icon} {a.label}
                       </button>
                     ))}
-                  </motion.div>
+                  </div>
                 )}
-              </AnimatePresence>
             </li>
           );
         })}

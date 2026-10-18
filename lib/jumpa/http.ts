@@ -10,9 +10,9 @@ export function jumpaJson(body: unknown, status = 200): NextResponse {
 /** 404 polos saat flag mati — fitur tidak terlihat sama sekali. */
 export function jumpaDisabledResponse(): NextResponse | null {
   if (JUMPA_ENABLED) return null;
-  return jumpaJson({ error: "Not found" }, 404);
+  return jumpaJson({ error: "Tidak ditemukan" }, 404);
 }
 
-export function jumpaError(status: number, code: string, message: string): NextResponse {
-  return jumpaJson({ error: message, code }, status);
+export function jumpaError(status: number, code: string, message: string, extra?: Record<string, unknown>): NextResponse {
+  return jumpaJson({ ...(extra ?? {}), error: message, code }, status);
 }
