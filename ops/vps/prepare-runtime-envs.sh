@@ -6,18 +6,19 @@ WEB_ENV="$CONFIG_DIR/web.env"
 GAME_ENV="$CONFIG_DIR/game.env"
 WORKER_ENV="$CONFIG_DIR/worker.env"
 CRON_ENV="$CONFIG_DIR/cron.env"
+LIVEKIT_ENV="$CONFIG_DIR/livekit.env"
 
 if [[ ! -f "$WEB_ENV" ]]; then
   echo "Missing $WEB_ENV" >&2
   exit 1
 fi
 
-python3 - "$WEB_ENV" "$GAME_ENV" "$WORKER_ENV" "$CRON_ENV" <<'PY'
+python3 - "$WEB_ENV" "$GAME_ENV" "$WORKER_ENV" "$CRON_ENV" "$LIVEKIT_ENV" <<'PY'
 from pathlib import Path
 import secrets
 import sys
 
-web_path, game_path, worker_path, cron_path = map(Path, sys.argv[1:5])
+web_path, game_path, worker_path, cron_path, livekit_path = map(Path, sys.argv[1:6])
 lines = web_path.read_text().splitlines()
 
 def key_of(line: str) -> str:
@@ -67,14 +68,35 @@ if not cron_secret:
 
 cron_path.write_text(f"CRON_SECRET={cron_secret}\n")
 
+# JUMPA (LiveKit): server media hanya butuh pasangan kunci API, format
+# LIVEKIT_KEYS="<key>: <secret>". Opsional — tanpa kunci file tetap dibuat
+# (compose butuh env_file ada) dan JUMPA tetap mati.
+def value_of(name: str) -> str:
+    for line in lines:
+        if key_of(line) == name:
+            return line.split("=", 1)[1].strip().strip('"').strip("'")
+    return ""
+
+lk_key, lk_secret = value_of("LIVEKIT_API_KEY"), value_of("LIVEKIT_API_SECRET")
+if lk_key and lk_secret:
+    livekit_path.write_text(f'LIVEKIT_KEYS="{lk_key}: {lk_secret}"\n')
+else:
+    livekit_path.write_text("# LIVEKIT_API_KEY/LIVEKIT_API_SECRET belum ada di web.env — JUMPA mati.\n")
+
 # The worker uses the same DB and BC AI provider configuration as the web tier.
 # Keep a separate file so it can be narrowed later without changing web runtime.
 worker_path.write_text("\n".join(lines) + "\n")
 PY
 
-chmod 600 "$WEB_ENV" "$GAME_ENV" "$WORKER_ENV" "$CRON_ENV"
+chmod 600 "$WEB_ENV" "$GAME_ENV" "$WORKER_ENV" "$CRON_ENV" "$LIVEKIT_ENV"
+
+# JUMPA Fase 2: render ${CONFIG_DIR}/livekit.yaml (webhook + TURN opsional).
+# Selalu dibuat agar bind mount livekit tidak pernah menjadi direktori kosong.
+BC_CONFIG_DIR="$CONFIG_DIR" bash "$(dirname "${BASH_SOURCE[0]}")/render-livekit-config.sh"
 
 echo "Prepared:"
 echo "  $GAME_ENV"
 echo "  $WORKER_ENV"
 echo "  $CRON_ENV"
+echo "  $LIVEKIT_ENV"
+echo "  $CONFIG_DIR/livekit.yaml"

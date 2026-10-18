@@ -46,7 +46,9 @@ const publicPaths = [
 
 // Routes that handle their own auth — skip middleware getUser() to avoid rate limit
 // /t/ handles auth in Server Component so ?next= parameter is preserved through login redirect
-const selfAuthPaths = ["/api/", "/arena/", "/guru/", "/admin/", "/murid/", "/game/", "/auth/", "/kompetisi/", "/junior/", "/t/"];
+// /jumpa/ (ruang video) menggerbangi sendiri di Server Component dengan ?next= agar
+// tautan undangan kembali ke ruang yang sama setelah login.
+const selfAuthPaths = ["/api/", "/arena/", "/guru/", "/admin/", "/murid/", "/game/", "/auth/", "/kompetisi/", "/junior/", "/t/", "/jumpa/"];
 
 // Dashboard routes that require onboarding
 const dashboardPaths = ["/guru/", "/admin/", "/murid/"];
@@ -72,9 +74,16 @@ export async function updateSession(request: NextRequest, nonce?: string) {
     /^127\.0\.0\.1(?::\d+)?$/.test(host) ||
     /^\[::1\](?::\d+)?$/.test(host);
 
+  // JUMPA Fase 2: LiveKit memanggil webhook lewat jaringan internal Docker
+  // (http://web:3000) — Host bukan domain publik. Endpoint ini diautentikasi
+  // tanda tangan LiveKit (WebhookReceiver), jadi aman dikecualikan dari
+  // redirect domain.
+  const isJumpaWebhook = pathname === "/api/jumpa/webhook";
+
   if (
     host &&
     !isLoopbackHost &&
+    !isJumpaWebhook &&
     !host.includes("bahasacerdas.com") &&
     !host.includes("localhost") &&
     !host.includes("vercel.app")

@@ -6,3 +6,4 @@
 0 7 * * * /usr/local/bin/bc-cron-call /api/cron/teacher-commissions-reconcile
 30 * * * * /usr/local/bin/bc-cron-call /api/cron/payout-reconciliation
 0 * * * * /usr/local/bin/bc-cron-call /api/cron/risk-review
+*/5 * * * * /usr/local/bin/bc-cron-call /api/cron/jumpa-sweep

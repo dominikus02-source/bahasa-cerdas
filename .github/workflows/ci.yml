@@ -53,6 +53,16 @@ jobs:
         continue-on-error: true
         run: npm run test:tts-eligibility
 
+      - name: JUMPA permission + token gates
+        run: |
+          npm run test:jumpa-permissions
+          npm run test:jumpa-token
+          npm run test:jumpa-room-types
+          npm run test:jumpa-host-actions
+          npm run test:jumpa-chat-moderation
+          npm run test:jumpa-tiers
+          npm run test:jumpa-no-english
+
       - name: Lint
         run: npm run lint
 

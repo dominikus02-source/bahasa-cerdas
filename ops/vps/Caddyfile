@@ -58,3 +58,6 @@ supabase.bahasacerdas.com {
     }
   }
 }
+
+# Situs opsional (mis. JUMPA). Glob kosong = tidak ada situs tambahan.
+import /etc/caddy/conf.d/*.caddy

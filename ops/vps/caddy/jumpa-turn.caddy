@@ -1,0 +1,8 @@
+# JUMPA Fase 2 — Caddy HANYA mengelola sertifikat TLS untuk domain TURN
+# (ACME HTTP-01 lewat port 80/443 yang sudah dipegang Caddy). Trafik TURN
+# sendiri langsung ke LiveKit di 5349/tcp; sertifikatnya disalin oleh
+# ops/vps/jumpa-turn-cert-sync.sh. DNS domain ini WAJIB "DNS only"
+# (bukan proxy Cloudflare) — TURN bukan HTTP.
+{$JUMPA_TURN_DOMAIN:turn.bahasacerdas.com} {
+  respond "JUMPA TURN" 200
+}

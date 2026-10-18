@@ -4228,3 +4228,190 @@ model MainGameRoundResult {
   @@unique([sessionId, gameMode, roundId])
   @@index([sessionId])
 }
+
+// ════════════════════════════════════════════════════════════════════
+// JUMPA — ruang video meeting BC (Fase 1)
+// Media lewat LiveKit self-hosted; tabel ini hanya metadata ruang,
+// keanggotaan dan audit log. Mengikuti konvensi Main Bersama: id user /
+// kelas disimpan sebagai plain string (tanpa FK lintas modul).
+// Rencana: docs/JUMPA_TECHNICAL_PLAN.md
+// ════════════════════════════════════════════════════════════════════
+
+/// KELAS = guru + murid, GURU = khusus guru, MURID = khusus murid.
+enum JumpaRoomKind {
+  KELAS
+  GURU
+  MURID
+}
+
+/// Mode pakai dari sistem ruang yang SAMA (bukan sistem berbeda).
+enum JumpaRoomMode {
+  MEETING
+  CLASS
+  WEBINAR
+}
+
+enum JumpaRoomStatus {
+  SCHEDULED
+  LIVE
+  ENDED
+}
+
+enum JumpaRoomRole {
+  HOST
+  COHOST
+  MEMBER
+}
+
+model JumpaRoom {
+  id              String          @id @default(cuid())
+  /// Slug pendek untuk URL (/jumpa/<code>). BUKAN credential — akses
+  /// selalu dicek ulang di server (lib/jumpa/permissions.ts).
+  code            String          @unique
+  /// Nama ruang di LiveKit (acak, tidak menebak dari code).
+  livekitRoomName String          @unique
+  title           String
+  kind            JumpaRoomKind
+  mode            JumpaRoomMode   @default(CLASS)
+  status          JumpaRoomStatus @default(SCHEDULED)
+  /// User.id pembuat (plain string, konvensi MainSession.teacherId).
+  createdById     String
+  /// Snapshot peran pembuat saat ruang dibuat.
+  creatorRole     Role
+  /// KelasKu (Group.id) bila ruang terikat kelas. Plain string.
+  groupId         String?
+  scheduledAt     DateTime?
+  startedAt       DateTime?
+  endedAt         DateTime?
+  maxParticipants Int
+  maxDurationMin  Int
+  isLocked        Boolean         @default(false)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // ── Fase 2 ──
+  /// Komunitas MGMP (Community.id) untuk ruang GURU. Plain string.
+  communityId           String?
+  chatEnabled           Boolean   @default(true)
+  /// Murid boleh berbagi layar (ruang KELAS; diatur guru host).
+  allowMuridScreenShare Boolean   @default(false)
+  /// "HOST" | "TIME_LIMIT" | "EMPTY" | "STALE" — alasan ruang berakhir.
+  endReason             String?
+  endedById             String?
+  /// Peringatan "waktu hampir habis" sudah dikirim cron sweep.
+  warnedAt              DateTime?
+
+  participants JumpaParticipant[]
+  events       JumpaEvent[]
+  invites      JumpaInvite[]
+  messages     JumpaChatMessage[]
+  reports      JumpaReport[]
+
+  @@index([createdById])
+  @@index([groupId])
+  @@index([status])
+}
+
+model JumpaParticipant {
+  id            String        @id @default(cuid())
+  roomId        String
+  /// User.id peserta (plain string).
+  userId        String
+  roomRole      JumpaRoomRole @default(MEMBER)
+  /// Jalur akses yang meloloskan peserta: "CREATOR" | "GROUP_OWNER" | "GROUP_MEMBER".
+  accessVia     String
+  firstJoinedAt DateTime      @default(now())
+  lastTokenAt   DateTime      @default(now())
+  removedAt     DateTime?
+  removedById   String?
+  // ── Fase 2: kehadiran dari webhook LiveKit ──
+  lastJoinedAt  DateTime?
+  lastLeftAt    DateTime?
+  /// Total detik tersambung (akumulasi join→leave).
+  totalSeconds  Int           @default(0)
+  joinCount     Int           @default(0)
+
+  room JumpaRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, userId])
+  @@index([userId])
+}
+
+/// Audit log ruang (join diberikan/ditolak, moderasi di fase berikut).
+model JumpaEvent {
+  id           String   @id @default(cuid())
+  roomId       String
+  actorId      String?
+  targetUserId String?
+  action       String
+  metadata     Json?
+  createdAt    DateTime @default(now())
+  /// Fase 2: kunci idempotensi (mis. "wh:<id webhook LiveKit>").
+  dedupeKey    String?  @unique
+
+  room JumpaRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@index([roomId, createdAt])
+}
+
+/// Undangan ruang (Fase 2). kind: "GROUP" | "COMMUNITY" | "USER" | "LINK".
+/// LINK hanya untuk ruang GURU; yang disimpan hanya hash token.
+model JumpaInvite {
+  id          String    @id @default(cuid())
+  roomId      String
+  kind        String
+  groupId     String?
+  communityId String?
+  userId      String?
+  tokenHash   String?   @unique
+  createdById String
+  expiresAt   DateTime?
+  revokedAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  room JumpaRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@index([roomId])
+  @@index([userId])
+}
+
+/// Obrolan ruang (Fase 2). Pola OBROLAN ChatMessage: disimpan SEBELUM
+/// disiarkan; moderasi = soft-delete (deletedAt/deletedById), konten
+/// tetap untuk audit. Dihapus permanen oleh cron sweep setelah retensi.
+model JumpaChatMessage {
+  id          String    @id @default(cuid())
+  roomId      String
+  userId      String
+  content     String
+  deletedAt   DateTime?
+  deletedById String?
+  createdAt   DateTime  @default(now())
+
+  room JumpaRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@index([roomId, createdAt])
+  @@index([createdAt])
+}
+
+/// Laporan peserta (Fase 2). Diterima guru kelas + admin.
+/// status: "OPEN" | "REVIEWED" | "DISMISSED".
+model JumpaReport {
+  id             String    @id @default(cuid())
+  roomId         String
+  reporterId     String
+  reportedUserId String?
+  category       String
+  description    String?
+  /// Salinan 50 pesan terakhir saat laporan dibuat (tetap ada walau
+  /// obrolan asli sudah melewati retensi).
+  chatSnapshot   Json?
+  status         String    @default("OPEN")
+  reviewedById   String?
+  reviewedAt     DateTime?
+  createdAt      DateTime  @default(now())
+
+  room JumpaRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@index([roomId])
+  @@index([status, createdAt])
+}
