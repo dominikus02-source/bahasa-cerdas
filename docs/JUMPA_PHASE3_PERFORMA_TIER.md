@@ -66,8 +66,8 @@ berbayar.
 - Pembicara dari halaman lain naik ke halaman 1 tanpa membuat tile lain melompat.
 
 **Turun kualitas otomatis:** di mode Otomatis, kalau koneksi sendiri `Poor`/`Lost` selama 6 detik,
-JUMPA menerima lapisan rendah dan mengecilkan strip. Ada toast "Koneksi lemah. Kualitas video
-diturunkan otomatis." Kualitas dipulihkan setelah 20 detik `Good`. Indikator sinyal 3 batang kecil di
+JUMPA menerima lapisan rendah dan mengecilkan strip. Ada toast "Koneksi lemah, kualitas video
+diturunkan." Kualitas dipulihkan setelah 20 detik `Good`. Indikator sinyal 3 batang kecil di
 header; di layar ≤ 400px indikator hanya muncul saat koneksi lemah. Ikon "sinyal lemah" juga
 tampil per tile peserta.
 
@@ -157,8 +157,15 @@ menampilkan "N dari 3 ruang tersisa hari ini". **Hitung mundur** selalu tampil d
 (ruang lain hanya di 10 menit terakhir), berwarna kuning di ≤ 10 menit. Lembar
 **"Ruang hampir selesai"** muncul sekali di ≤ 5 menit, hanya untuk guru pembuat ruang Gratis
 (murid tidak pernah melihatnya). Lembar **"Kuota ruang hari ini habis"** muncul saat batas harian
-tercapai. Tombol **"Lihat Premium"** membuka `/guru/berlangganan` di tab baru, dan kelas tetap
-berjalan. Layar "ruang berakhir karena batas waktu" juga punya tombol ke Premium.
+tercapai. Tombol **"Lihat Premium"** membuka `/guru/berlangganan` di tab baru, jadi kelas tetap
+berjalan.
+
+**Copy UI singkat, tanpa pengulangan** (permintaan CEO): setiap lembar punya satu judul plus
+daftar manfaat ("Dengan Premium": Kelas 120 menit · 50 peserta / Ruang guru 25 peserta / Ruang
+tanpa batas per hari / Video hingga 1080p). Tidak ada paragraf yang mengulang angka. Saat kuota
+habis, hanya lembar upgrade yang tampil (banner error tidak lagi mengulang pesannya). Teks bantuan
+pengaturan, lencana ("Premium (coba)"), kartu paket ("40 orang · 45 menit · 720p"), beranda,
+layar keluar, empty state, dan toast dipadatkan. Ada tesnya di `test:jumpa-tiers`. Layar "ruang berakhir karena batas waktu" juga punya tombol ke Premium.
 
 ---
 
