@@ -95,7 +95,7 @@ export function PriceSummary({
   );
 }
 
-export function PayMethods() {
+export function PayMethods({ note = "Tanpa perpanjangan otomatis." }: { note?: string | null }) {
   return (
     <>
       <div className="bp-methods" aria-label="Metode pembayaran">
@@ -104,7 +104,7 @@ export function PayMethods() {
         <span className="bp-method"><Landmark size={14} aria-hidden="true" /> Transfer bank</span>
         <span className="bp-method"><CreditCard size={14} aria-hidden="true" /> Kartu</span>
       </div>
-      <p className="bp-secure"><ShieldCheck size={14} aria-hidden="true" /> Dibayar aman lewat Midtrans. Tanpa perpanjangan otomatis.</p>
+      <p className="bp-secure"><ShieldCheck size={14} aria-hidden="true" /> Dibayar aman lewat Midtrans.{note ? ` ${note}` : ""}</p>
     </>
   );
 }

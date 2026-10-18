@@ -155,7 +155,7 @@ export default function CheckoutPage() {
                   {loading ? "Membuka pembayaran…" : hasPaid ? `Bayar ${formatCurrency(total)}` : "Unduh gratis"}
                 </button>
               </div>
-              {hasPaid && <PayMethods />}
+              {hasPaid && <PayMethods note={null} />}
             </section>
           </>
         )}
