@@ -37,7 +37,8 @@ function main() {
   console.log("\n📋 UNIFIED HEADER TEST — SATU Header Global Student Shell (Murid/Arena/Obrolan)");
   console.log("=".repeat(64));
 
-  const muridLayout = read("app/(dashboard)/murid/layout.tsx");
+  // Chrome murid dipindah ke MuridShellFrame (layout hanya auth + redirect).
+  const muridLayout = read("app/(dashboard)/murid/layout.tsx") + read("components/shell/MuridShellFrame.tsx");
   const arenaLayout = read("app/arena/layout.tsx");
   const chatClient = read("app/arena/chat/chat-client.tsx");
   const arenaHome = read("app/arena/page.tsx");
@@ -56,8 +57,8 @@ function main() {
     () => arenaLayout.includes(HEADER_MARK));
   test("arena header = [BackHome] + [UserAvatar + NotificationBell + ThemeToggle] (struktur kanonik)",
     () => arenaLayout.includes("<BackHome />") && arenaLayout.includes("UserAvatar") && arenaLayout.includes("<NotificationBell />") && arenaLayout.includes("<ThemeToggle />"));
-  test("header kanonik netral (tokens §13: putih/light + slate, tanpa ungu Arena / merah Admin / emerald Guru)",
-    () => arenaLayout.includes("bg-white/80 backdrop-blur-xl border-b border-gray-100/50"));
+  test("header kanonik netral (token global: surface + garis, tanpa blur berat, tanpa ungu Arena / merah Admin / emerald Guru)",
+    () => arenaLayout.includes("bg-bc-surface/95 border-b border-bc-line") && muridLayout.includes("bg-bc-surface/95 border-b border-bc-line"));
 
   // ── 2. ARENA TIDAK MEMBUAT HEADER GLOBAL KEDUA ──
   console.log("\n── 2. Arena tidak membuat header global kedua ──");

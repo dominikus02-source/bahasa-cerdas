@@ -26,10 +26,10 @@ export function LogoutButton() {
   return (
     <button
       onClick={handleLogout}
- className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors group dark:text-slate-400 :bg-slate-800 dark:hover:text-red-400"
+      className="w-full flex items-center gap-2 px-3 py-2.5 rounded-bc-sm text-sm text-bc-text-2 hover:bg-bc-danger-soft hover:text-bc-danger transition-colors group"
     >
       <LogOut className={`${ACTION_ICON_CLASS}`} strokeWidth={2} />
-      <span className="shell-label font-medium group-hover:text-red-600 dark:group-hover:text-red-400">Keluar</span>
+      <span className="shell-label font-medium">Keluar</span>
     </button>
   );
 }

@@ -27,7 +27,7 @@ function test(name: string, fn: () => boolean) {
   }
 }
 
-const muridLayout = read("app/(dashboard)/murid/layout.tsx");
+const muridLayout = read("app/(dashboard)/murid/layout.tsx") + read("components/shell/MuridShellFrame.tsx");
 const guruLayout = read("app/(dashboard)/guru/layout.tsx");
 const adminLayout = read("app/(dashboard)/admin/layout.tsx");
 const arenaLayout = read("app/arena/layout.tsx");

@@ -34,7 +34,7 @@ export function ShellLayout({
   return (
     <div className={`flex min-h-screen ${rootClassName}`}>
       {sidebar && (
-        <aside className="shell-aside fixed inset-y-0 left-0 z-40 hidden md:flex w-64 flex-col bg-white/90 backdrop-blur-xl border-r border-gray-100 dark:bg-slate-900/80 dark:border-slate-800 shadow-sm">
+        <aside className="shell-aside fixed inset-y-0 left-0 z-40 hidden md:flex w-64 flex-col bg-bc-surface border-r border-bc-line shadow-bc-1">
           {sidebar}
         </aside>
       )}

@@ -59,12 +59,13 @@ function main() {
       const files = [
         "app/arena/layout.tsx",
         "app/(dashboard)/murid/layout.tsx",
+        "components/shell/MuridShellFrame.tsx",
         "components/dashboard/MuridMobileNav.tsx",
         "components/shared/BackHome.tsx",
       ];
       return files.every(f => !stripComments(read(f)).includes("router.back"));
     });
-  const muridLayout = read("app/(dashboard)/murid/layout.tsx");
+  const muridLayout = read("app/(dashboard)/murid/layout.tsx") + read("components/shell/MuridShellFrame.tsx");
   const arenaLayout = read("app/arena/layout.tsx");
   const mobileNav = read("components/dashboard/MuridMobileNav.tsx");
   const roleSections = read("components/shell/RoleSections.tsx");

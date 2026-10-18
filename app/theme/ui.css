@@ -362,3 +362,12 @@
   .ui-overlay, .ui-modal, .ui-toast { animation: none; }
   .ui-skeleton, .ui-badge__dot, .ui-spin { animation: none; }
 }
+
+/* ── Latar aplikasi (shell murid/arena) ─────────────────────────────
+   Gradien radial tipis dari token — tanpa gambar, tanpa blur. */
+.ui-app-bg {
+  background:
+    radial-gradient(900px 480px at 100% -10%, color-mix(in srgb, var(--clr-violet) 9%, transparent), transparent 60%),
+    radial-gradient(760px 420px at -10% 0%, color-mix(in srgb, var(--clr-accent) 7%, transparent), transparent 60%),
+    var(--clr-bg);
+}

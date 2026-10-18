@@ -24,18 +24,17 @@ export default function MuridMobileNav(_props: LegacyProps) {
   const isActive = (href: string) => pathname === href || pathname?.startsWith(href + "/");
 
   return (
-    <nav className="bc-mobile-nav md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-gray-100/80 bg-white/94 backdrop-blur-xl safe-area-bottom dark:bg-slate-900/94 dark:border-slate-800" aria-label="Navigasi utama murid">
+    <nav className="bc-mobile-nav md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-bc-line bg-bc-surface/[.97] shadow-[0_-10px_28px_-18px_var(--clr-line-strong)] safe-area-bottom" aria-label="Navigasi utama murid">
       <div className="grid grid-cols-5 items-end px-1.5 pt-1.5 pb-2">
         {PRIMARY.map(({ href, label, icon: Icon }) => {
           const active = isActive(href);
           return (
             <Link key={href} href={href} aria-current={active ? "page" : undefined} aria-label={label}
-              className={`relative min-w-0 min-h-[52px] flex flex-col items-center justify-center gap-1 rounded-xl transition-colors duration-150 ${
-                active ? "text-violet-600 dark:text-violet-300" : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+              className={`relative min-w-0 min-h-[52px] flex flex-col items-center justify-center gap-1 rounded-bc-sm transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-bc-focus ${
+                active ? "text-bc-violet" : "text-bc-text-3 hover:text-bc-text"
               }`}>
-              <span className="grid place-items-center shrink-0 w-7 h-7"><Icon size={20} strokeWidth={2} /></span>
-              <span className="h-5 max-w-full px-0.5 flex items-center justify-center text-[9.5px] leading-[1.05] font-semibold text-center">{label}</span>
-              {active ? <span className="absolute bottom-0 w-1 h-1 rounded-full bg-current" aria-hidden /> : null}
+              <span className={`grid place-items-center shrink-0 w-12 h-7 rounded-full transition-colors duration-150 ${active ? "bg-bc-violet-soft" : ""}`}><Icon size={20} strokeWidth={active ? 2.4 : 2} /></span>
+              <span className={`h-5 max-w-full px-0.5 flex items-center justify-center text-[10.5px] leading-[1.05] text-center ${active ? "font-bold" : "font-semibold"}`}>{label}</span>
             </Link>
           );
         })}

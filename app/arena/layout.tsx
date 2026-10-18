@@ -88,26 +88,26 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
 
   return (
     <ShellLayout
- rootClassName="arena-theme min-h-screen bg-gray-50 pb-20 md:pb-0 dark:bg-slate-950 bg-gradient-to-br from-violet-50 via-slate-50 to-purple-50 dark:from-slate-950 dark:via-[#0b1220] dark:to-[#1e1b4b]"
+ rootClassName="arena-theme min-h-screen pb-20 md:pb-0 ui-app-bg"
       sidebar={
         apk ? undefined : (
           <>
- <div className="p-5 border-b border-gray-100 dark:border-slate-800/50 bg-gradient-to-r from-violet-600 to-purple-600">
+ <div className="p-5 bg-bc-murid">
               <Link href="/murid/beranda" className="flex items-center gap-3 min-w-0">
                 <img src="/brand/bc2026-icon.png" alt="" className="h-12 w-12 shrink-0 object-contain drop-shadow-md" />
                 <div className="min-w-0">
-                  <span className="shell-label font-bold text-white text-sm block truncate">BahasaCerdas</span>
-                  <p className="shell-label text-[10px] text-violet-200">Dasbor Murid</p>
+                  <span className="shell-label font-extrabold text-bc-on-brand text-sm block truncate">BahasaCerdas</span>
+                  <p className="shell-label text-[11px] font-semibold text-bc-on-brand/80">Dasbor Murid</p>
                 </div>
               </Link>
             </div>
 
- <div className="shell-user px-4 py-4 border-b border-gray-100/50 bg-gradient-to-br from-violet-50/50 to-purple-50/50 dark:border-slate-800 dark:from-slate-800/60 dark:to-slate-800/40">
+ <div className="shell-user px-4 py-4 border-b border-bc-line bg-bc-tint">
               <div className="flex items-center gap-3">
                 <div className="flex-1 min-w-0">
-                  <p className="shell-label text-sm font-bold text-gray-900 truncate dark:text-slate-200">{user.fullName}</p>
+                  <p className="shell-label text-sm font-bold text-bc-text truncate">{user.fullName}</p>
                   <div className="flex items-center gap-1.5 mt-0.5">
-                    <IconTarget size={16} className="text-violet-500 dark:text-violet-400 shrink-0" />
+                    <IconTarget size={16} className="text-bc-violet shrink-0" />
                     <RankChip rank={rank} size={14} showTitle={false} compact />
                   </div>
                 </div>
@@ -131,7 +131,7 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
               navigasi tetap via sidebar global; akses guru/founder via
               RoleSections; logout via sidebar footer dan Pemain tab. APK
               menurunkan tombol kembali (escape hatch keluar scope). */}
- <header className="shrink-0 sticky top-0 z-30 flex items-center justify-between gap-2 px-4 md:px-6 h-14 bg-white/80 backdrop-blur-xl border-b border-gray-100/50 dark:bg-slate-900/80 dark:border-slate-800">
+ <header className="shrink-0 sticky top-0 z-30 flex items-center justify-between gap-2 px-4 md:px-6 h-14 bg-bc-surface/95 border-b border-bc-line">
             {!apk && <ArenaBackButton />}
             <div className="flex items-center gap-1 md:gap-2">
               <UserAvatar

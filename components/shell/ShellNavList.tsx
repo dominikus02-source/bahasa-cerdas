@@ -37,7 +37,7 @@ export function ShellNavList() {
           className={`${NAV_ICON_CLASS} ${active ? NAV_ICON_ACTIVE : NAV_ICON_INACTIVE}`}
           strokeWidth={NAV_ICON_STROKE}
         />
-        <span className="shell-label font-medium group-hover:text-violet-700 dark:group-hover:text-white">
+        <span className="shell-label font-medium">
           {item.label}
         </span>
       </Link>
@@ -50,10 +50,10 @@ export function ShellNavList() {
         {STUDENT_NAV.map(renderItem)}
       </div>
 
-      <div className="mt-4 pt-3 border-t border-gray-100 dark:border-slate-800 space-y-3">
+      <div className="mt-4 pt-3 border-t border-bc-line space-y-3">
         {STUDENT_NAV_GROUPS.map((group) => (
           <section key={group.title} aria-label={group.title}>
-            <p className="shell-label px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">
+            <p className="shell-label px-3 mb-1.5 text-bc-eyebrow uppercase text-bc-text-3">
               {group.title}
             </p>
             <div className="space-y-1">

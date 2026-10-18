@@ -44,7 +44,7 @@ export function ArenaBackButton({ iconOnly = false, className = "" }: { iconOnly
       onClick={goBack}
       aria-label="Kembali"
       title="Kembali"
-      className={`inline-flex items-center gap-1.5 text-sm font-semibold text-gray-500 transition-colors hover:rounded-lg hover:bg-violet-50 hover:text-violet-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-violet-300 ${
+      className={`inline-flex items-center gap-1.5 rounded-bc-sm text-sm font-semibold text-bc-text-2 transition-colors hover:bg-bc-violet-soft hover:text-bc-violet ${
         iconOnly ? "p-2" : "px-2.5 py-2"
       } ${className}`}
     >
