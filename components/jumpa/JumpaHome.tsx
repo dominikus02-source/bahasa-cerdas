@@ -1,21 +1,134 @@
 "use client";
 
 /**
- * JUMPA — beranda /jumpa: ruang aktif + mulai ruang baru (guru↔guru,
- * belajar bareng murid). Ruang kelas tetap dimulai dari KelasKu.
+ * JUMPA — beranda /jumpa: hero + gabung pakai kode, paket, mulai ruang
+ * (guru↔guru, belajar bareng murid), dan ruang aktif.
+ * Ruang kelas tetap dimulai dari KelasKu.
  */
-import { useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, BookOpen, Crown, Loader2, Plus, Radio, ShieldCheck, Users, Video } from "lucide-react";
-import type { JumpaHomeData } from "@/lib/jumpa/service";
+import { ArrowRight, BookOpen, Crown, GraduationCap, KeyRound, Loader2, Plus, Radio, ShieldCheck, Users, Video } from "lucide-react";
+import type { JumpaHomeData, RoomListItem } from "@/lib/jumpa/service";
 import { JUMPA_MURID_ROOM } from "@/lib/jumpa/tiers";
 import { UpgradeSheet } from "./TierUi";
+import { avatarTone, elapsedLabel, parseRoomInput } from "./format";
 
-const KIND_LABEL = { KELAS: "Kelas", GURU: "Guru", MURID: "Belajar bareng" } as const;
+const KIND_LABEL = { KELAS: "Kelas", GURU: "Ruang guru", MURID: "Belajar bareng" } as const;
+
+function useMinuteTick(): number {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 60_000);
+    return () => window.clearInterval(id);
+  }, []);
+  return now;
+}
+
+function QuickJoin() {
+  const router = useRouter();
+  const [value, setValue] = useState("");
+  const [bad, setBad] = useState(false);
+  const submit = (e: FormEvent) => {
+    e.preventDefault();
+    const code = parseRoomInput(value);
+    if (!code) return setBad(true);
+    router.push(`/jumpa/${code}`);
+  };
+  return (
+    <form onSubmit={submit} className="jumpa-join" noValidate>
+      <label htmlFor="jumpa-code" className="sr-only">Kode ruang</label>
+      <KeyRound size={18} className="jumpa-join-icon" aria-hidden />
+      <input
+        id="jumpa-code"
+        value={value}
+        onChange={(e) => { setValue(e.target.value.slice(0, 120)); setBad(false); }}
+        placeholder="Kode ruang, mis. abc-defg-hij"
+        autoComplete="off"
+        autoCapitalize="none"
+        spellCheck={false}
+        inputMode="text"
+        aria-invalid={bad}
+        aria-describedby={bad ? "jumpa-code-err" : undefined}
+        className="jumpa-join-input"
+      />
+      <button type="submit" className="jumpa-join-btn">Gabung <ArrowRight size={16} aria-hidden /></button>
+      {bad && <p id="jumpa-code-err" role="alert" className="jumpa-join-err">Kode tidak dikenali.</p>}
+    </form>
+  );
+}
+
+function PlanCard({ plan }: { plan: NonNullable<JumpaHomeData["plan"]> }) {
+  const premium = plan.tier === "PREMIUM";
+  const left = plan.roomsPerDay === null ? null : Math.max(0, plan.roomsPerDay - plan.roomsToday);
+  return (
+    <section className="jumpa-card jumpa-plan jumpa-in-up" data-tier={plan.tier} aria-label="Paket JUMPA kamu">
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="jumpa-tier" data-tier={plan.tier}>{premium && <Crown size={12} aria-hidden />}{premium ? (plan.trialing ? "Premium (coba)" : "Premium") : "Gratis"}</span>
+          <span className="text-sm text-[var(--jp-text-2)]">Kelas {plan.kelas.maxParticipants} orang · {plan.kelas.maxDurationMin} menit</span>
+        </div>
+        {plan.roomsPerDay !== null && left !== null ? (
+          <div className="mt-2.5 flex items-center gap-2.5">
+            <span className="jumpa-dots" role="img" aria-label={`${left} dari ${plan.roomsPerDay} ruang tersisa hari ini`}>
+              {Array.from({ length: plan.roomsPerDay }, (_, i) => <i key={i} data-used={i < plan.roomsToday} />)}
+            </span>
+            <span className="text-xs font-semibold text-[var(--jp-text-2)]">{left} ruang tersisa hari ini</span>
+          </div>
+        ) : (
+          <p className="mt-2 text-xs font-semibold text-[var(--jp-text-2)]">Ruang tanpa batas</p>
+        )}
+      </div>
+      {!premium && (
+        <a href={plan.upgradeUrl} className="jumpa-cta-premium">
+          <Crown size={15} aria-hidden /> Lihat Premium
+        </a>
+      )}
+    </section>
+  );
+}
+
+function Avatars({ room }: { room: RoomListItem }) {
+  const { count, initials } = room.present;
+  if (count === 0) return null;
+  const more = count - initials.length;
+  return (
+    <span className="jumpa-stack" role="img" aria-label={`${count} orang di dalam`}>
+      {initials.map((ini, i) => (
+        <span key={i} className="jumpa-stack-ava" data-tone={avatarTone(`${room.code}${i}${ini}`)}>{ini}</span>
+      ))}
+      {more > 0 && <span className="jumpa-stack-ava jumpa-stack-more">+{more}</span>}
+    </span>
+  );
+}
+
+function RoomCard({ room, now }: { room: RoomListItem; now: number }) {
+  const live = room.status === "LIVE";
+  const elapsed = live ? elapsedLabel(room.startedAt, now) : null;
+  const Icon = room.kind === "GURU" ? Users : room.kind === "MURID" ? BookOpen : GraduationCap;
+  return (
+    <Link href={`/jumpa/${room.code}`} className="jumpa-card jumpa-room-card">
+      <span className="jumpa-icon-chip" data-kind={room.kind} aria-hidden><Icon size={20} /></span>
+      <span className="min-w-0 flex-1">
+        <span className="jumpa-room-title">{room.title}</span>
+        <span className="jumpa-room-sub">
+          {KIND_LABEL[room.kind]}{room.place ? ` · ${room.place}` : ""}
+          {room.mine && <span className="jumpa-mine">Ruangmu</span>}
+        </span>
+        <span className="mt-2 flex flex-wrap items-center gap-2">
+          {live ? <span className="jumpa-live">Berlangsung</span> : <span className="jumpa-soon">Belum mulai</span>}
+          {elapsed && <span className="text-xs text-[var(--jp-text-3)]">{elapsed}</span>}
+          <Avatars room={room} />
+        </span>
+      </span>
+      <ArrowRight size={18} className="shrink-0 self-center text-[var(--jp-text-3)]" aria-hidden />
+    </Link>
+  );
+}
 
 export default function JumpaHome({ data, displayName, dashboardHref }: { data: JumpaHomeData; displayName: string; dashboardHref: string }) {
   const router = useRouter();
+  const now = useMinuteTick();
   const [limitHit, setLimitHit] = useState(false);
   const plan = data.plan;
   const [busy, setBusy] = useState<string | null>(null);
@@ -24,6 +137,7 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
   const [communityId, setCommunityId] = useState("");
   const [groupId, setGroupId] = useState(data.groups[0]?.id ?? "");
   const isGuru = data.effective === "GURU";
+  const firstName = displayName.split(" ")[0] || displayName;
 
   const create = async (body: Record<string, string | undefined>, key: string) => {
     setBusy(key);
@@ -48,61 +162,64 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
   const fade = (i: number) => ({ style: { animationDelay: `${i * 50}ms` } });
 
   return (
-    <main className="mx-auto flex min-h-[100dvh] w-full max-w-3xl flex-col gap-5 px-4 pb-10 pt-[max(20px,env(safe-area-inset-top))] sm:px-6">
+    <main className="jumpa-home mx-auto flex min-h-[100dvh] w-full max-w-3xl flex-col gap-4 px-4 pb-10 pt-[max(16px,env(safe-area-inset-top))] sm:gap-5 sm:px-6">
       <header className="flex items-center justify-between gap-3">
-        <div>
-          <p className="jumpa-brand !text-[11px]"><span className="jumpa-mark jumpa-mark-sm" aria-hidden>J</span>JUMPA <span className="jumpa-brand-by">dari BahasaCerdas</span></p>
-          <h1 className="text-2xl font-extrabold">Halo, {displayName.split(" ")[0]}</h1>
-        </div>
-        <Link href={dashboardHref} className="jumpa-ghost !min-h-[44px]">Dasbor</Link>
+        <p className="jumpa-brand"><span className="jumpa-mark jumpa-mark-sm" aria-hidden>J</span>JUMPA <span className="jumpa-brand-by">dari BahasaCerdas</span></p>
+        <Link href={dashboardHref} className="jumpa-ghost !min-h-[40px] !px-4 text-sm">Dasbor</Link>
       </header>
 
-      {error && (
-        <p role="alert" className="jumpa-card px-4 py-3 text-sm text-[var(--clr-warning)]">{error}</p>
-      )}
+      <section className="jumpa-hero jumpa-in-up" aria-labelledby="jumpa-hello">
+        <h1 id="jumpa-hello" className="jumpa-hero-title">Halo, {firstName}</h1>
+        <p className="jumpa-hero-sub">Belajar tatap muka, ringan di HP.</p>
+        <QuickJoin />
+      </section>
 
-      {plan && (
-        <section {...fade(0)} className="jumpa-card jumpa-in-up jumpa-plan-strip p-4" aria-label="Paket JUMPA kamu">
-          <span className="jumpa-tier" data-tier={plan.tier}>{plan.tier === "PREMIUM" && <Crown size={12} aria-hidden />}{plan.tier === "PREMIUM" ? (plan.trialing ? "Premium (coba)" : "Premium") : "Gratis"}</span>
-          <p className="min-w-[12rem] flex-1 text-sm text-[var(--jp-text-2)]">
-            Kelas {plan.kelas.maxParticipants} orang · {plan.kelas.maxDurationMin} menit
-            {plan.roomsPerDay !== null ? ` · sisa ${Math.max(0, plan.roomsPerDay - plan.roomsToday)}/${plan.roomsPerDay} ruang hari ini` : " · ruang tanpa batas"}
-          </p>
-          {plan.tier === "FREE" && (
-            <a href={plan.upgradeUrl} className="jumpa-chip">
-              <Crown size={14} /> Lihat Premium
-            </a>
-          )}
-        </section>
-      )}
+      {error && <p role="alert" className="jumpa-card px-4 py-3 text-sm text-[var(--clr-warning)]">{error}</p>}
+
+      {plan && <PlanCard plan={plan} />}
 
       {isGuru && (
-        <section {...fade(1)} className="jumpa-card jumpa-in-up p-5">
-          <h2 className="flex items-center gap-2 text-lg font-bold"><Users size={20} className="text-[var(--jp-accent)]" /> Ruang guru</h2>
-          <p className="mt-1 text-sm text-[var(--jp-text-2)]">Rapat MGMP & diskusi guru · {plan?.guru.maxParticipants ?? 25} orang · {plan?.guru.maxDurationMin ?? 120} menit</p>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <input value={title} onChange={(e) => setTitle(e.target.value.slice(0, 80))} placeholder="Topik (opsional)" aria-label="Topik ruang" className="jumpa-input w-full" />
-            <select value={communityId} onChange={(e) => setCommunityId(e.target.value)} aria-label="Komunitas" className="jumpa-input w-full">
-              <option value="">Tanpa komunitas (undang manual)</option>
-              {data.communities.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
-          </div>
-          <button type="button" className="jumpa-primary mt-4 w-full sm:w-auto" disabled={busy !== null} onClick={() => void create({ kind: "GURU", title: title || undefined, communityId: communityId || undefined }, "guru")}>
-            {busy === "guru" ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />} Mulai ruang guru
-          </button>
-          <p className="mt-3 text-xs text-[var(--jp-text-3)]">
-            Ruang kelas dimulai dari <Link href="/guru/kelasku" className="font-semibold text-[var(--jp-accent)] underline-offset-2 hover:underline">KelasKu</Link>.
-          </p>
-        </section>
+        <div {...fade(1)} className="jumpa-in-up grid gap-4 sm:grid-cols-[1.4fr_1fr]">
+          <section className="jumpa-card jumpa-action-card">
+            <div className="flex items-center gap-3">
+              <span className="jumpa-icon-chip" data-kind="GURU" aria-hidden><Users size={20} /></span>
+              <div className="min-w-0">
+                <h2 className="text-base font-bold">Ruang guru</h2>
+                <p className="text-xs text-[var(--jp-text-3)]">MGMP & diskusi · {plan?.guru.maxParticipants ?? 25} orang · {plan?.guru.maxDurationMin ?? 120} menit</p>
+              </div>
+            </div>
+            <div className="mt-4 grid gap-2.5">
+              <input value={title} onChange={(e) => setTitle(e.target.value.slice(0, 80))} placeholder="Topik (opsional)" aria-label="Topik ruang" className="jumpa-input w-full" />
+              <select value={communityId} onChange={(e) => setCommunityId(e.target.value)} aria-label="Komunitas" className="jumpa-input w-full">
+                <option value="">Tanpa komunitas</option>
+                {data.communities.map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+            </div>
+            <button type="button" className="jumpa-primary mt-4 w-full" disabled={busy !== null} onClick={() => void create({ kind: "GURU", title: title || undefined, communityId: communityId || undefined }, "guru")}>
+              {busy === "guru" ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />} Mulai ruang guru
+            </button>
+          </section>
+          <Link href="/guru/kelasku" className="jumpa-card jumpa-action-card jumpa-action-link">
+            <span className="jumpa-icon-chip" data-kind="KELAS" aria-hidden><GraduationCap size={20} /></span>
+            <span className="mt-3 block text-base font-bold">Ruang kelas</span>
+            <span className="mt-0.5 block text-xs text-[var(--jp-text-3)]">Mulai dari KelasKu, murid langsung bisa masuk.</span>
+            <span className="jumpa-action-go">Buka KelasKu <ArrowRight size={16} aria-hidden /></span>
+          </Link>
+        </div>
       )}
 
       {data.effective === "MURID" && !data.isJunior && data.groups.length > 0 && (
-        <section {...fade(1)} className="jumpa-card jumpa-in-up p-5">
-          <h2 className="flex items-center gap-2 text-lg font-bold"><BookOpen size={20} className="text-[var(--jp-accent)]" /> Belajar bareng</h2>
-          <p className="mt-1 text-sm text-[var(--jp-text-2)]">Bersama teman sekelas · gratis · {JUMPA_MURID_ROOM.maxParticipants} orang · {JUMPA_MURID_ROOM.maxDurationMin} menit. Obrolan bisa dilihat guru kelas.</p>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <section {...fade(1)} className="jumpa-card jumpa-action-card jumpa-in-up">
+          <div className="flex items-center gap-3">
+            <span className="jumpa-icon-chip" data-kind="MURID" aria-hidden><BookOpen size={20} /></span>
+            <div className="min-w-0">
+              <h2 className="text-base font-bold">Belajar bareng</h2>
+              <p className="text-xs text-[var(--jp-text-3)]">Gratis · {JUMPA_MURID_ROOM.maxParticipants} orang · {JUMPA_MURID_ROOM.maxDurationMin} menit · obrolan terlihat guru</p>
+            </div>
+          </div>
+          <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
             <select value={groupId} onChange={(e) => setGroupId(e.target.value)} aria-label="Kelas" className="jumpa-input w-full">
               {data.groups.map((g) => (
                 <option key={g.id} value={g.id}>{g.name}</option>
@@ -117,31 +234,17 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
       )}
 
       <section {...fade(2)} className="jumpa-in-up">
-        <h2 className="mb-2 flex items-center gap-2 px-1 text-sm font-bold uppercase tracking-[.12em] text-[var(--jp-text-3)]">
-          <Radio size={16} /> Ruang aktif
-        </h2>
+        <h2 className="jumpa-section-title"><Radio size={16} aria-hidden /> Ruang aktif</h2>
         {data.rooms.length === 0 ? (
-          <p className="jumpa-card px-5 py-8 text-center text-sm text-[var(--jp-text-2)]">Belum ada ruang aktif.</p>
+          <div className="jumpa-card jumpa-empty">
+            <span className="jumpa-empty-icon" aria-hidden><Video size={26} /></span>
+            <p className="text-sm font-semibold">Belum ada ruang aktif</p>
+            <p className="text-xs text-[var(--jp-text-3)]">Ruang yang bisa kamu masuki muncul di sini.</p>
+          </div>
         ) : (
-          <ul className="grid grid-cols-1 gap-2">
+          <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
             {data.rooms.map((r) => (
-              <li key={r.code} className="min-w-0">
-                <Link href={`/jumpa/${r.code}`} className="jumpa-card jumpa-room-row flex items-center gap-3 rounded-2xl px-4 py-3">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-[var(--clr-accent-soft)] text-[var(--jp-accent)]">
-                    <Video size={20} />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate font-semibold">{r.title}</span>
-                    <span className="block truncate text-xs text-[var(--jp-text-3)]">
-                      {KIND_LABEL[r.kind]}
-                      {r.place ? ` · ${r.place}` : ""}
-                      {r.mine ? " · Ruangmu" : ""}
-                    </span>
-                  </span>
-                  {r.status === "LIVE" && <span className="jumpa-live">Berlangsung</span>}
-                  <ArrowRight size={18} className="shrink-0 text-[var(--jp-text-3)]" />
-                </Link>
-              </li>
+              <li key={r.code} className="min-w-0"><RoomCard room={r} now={now} /></li>
             ))}
           </ul>
         )}

@@ -375,6 +375,8 @@ export interface RoomListItem {
   place: string | null;
   mine: boolean;
   startedAt: string | null;
+  /** Fase 3: yang sedang tersambung — hanya inisial (maks 4, tanpa nama lengkap) + jumlah. */
+  present: { count: number; initials: string[] };
 }
 
 export interface JumpaHomeData {
@@ -435,9 +437,29 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
         },
         orderBy: [{ status: "asc" }, { createdAt: "desc" }],
         take: 30,
-        select: { code: true, title: true, kind: true, status: true, createdById: true, startedAt: true, groupId: true, communityId: true },
+        select: {
+          code: true, title: true, kind: true, status: true, createdById: true, startedAt: true, groupId: true, communityId: true,
+          participants: {
+            where: { removedAt: null, lastJoinedAt: { not: null } },
+            orderBy: { lastJoinedAt: "desc" },
+            take: 60,
+            select: { userId: true, lastJoinedAt: true, lastLeftAt: true },
+          },
+        },
       })
     : [];
+
+  // Kehadiran dari webhook: tersambung = join terakhir setelah leave terakhir.
+  const presentIds = new Map<string, string[]>();
+  for (const r of rooms) {
+    presentIds.set(r.code, r.participants.filter((p) => p.lastJoinedAt && (!p.lastLeftAt || p.lastLeftAt < p.lastJoinedAt)).map((p) => p.userId));
+  }
+  const firstIds = [...new Set([...presentIds.values()].flatMap((ids) => ids.slice(0, 4)))];
+  const people = firstIds.length
+    ? await db.user.findMany({ where: { id: { in: firstIds } }, select: { id: true, fullName: true, nickname: true } })
+    : [];
+  const toInitials = (n: string) => n.trim().split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("") || "P";
+  const personInitials = new Map(people.map((u) => [u.id, toInitials(u.nickname || u.fullName || "Peserta")]));
 
   let plan: JumpaHomeData["plan"] = null;
   if (effective === "GURU") {
@@ -470,6 +492,10 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
       place: (r.groupId && groupName.get(r.groupId)) || (r.communityId && commName.get(r.communityId)) || null,
       mine: r.createdById === user.id,
       startedAt: r.startedAt ? r.startedAt.toISOString() : null,
+      present: (() => {
+        const ids = presentIds.get(r.code) ?? [];
+        return { count: ids.length, initials: ids.slice(0, 4).map((id) => personInitials.get(id) ?? "P") };
+      })(),
     })),
     groups: effective === "GURU" ? ownedGroups : actor.isJunior ? [] : memberGroups.map((m) => m.group),
     communities: communities.map((c) => c.community),

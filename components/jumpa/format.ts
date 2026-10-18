@@ -78,3 +78,22 @@ export function shortName(name: string): string {
   const last = parts[parts.length - 1][0]?.toUpperCase() ?? "";
   return last ? `${first} ${last}.` : first;
 }
+
+/** Kode ruang (abc-defg-hij) dari ketikan bebas atau tautan /jumpa/<kode>. */
+export function parseRoomInput(text: string): string | null {
+  const t = text.trim().toLowerCase();
+  const fromUrl = t.match(/\/jumpa\/([a-z2-9-]{10,12})(?:[/?#]|$)/);
+  const raw = (fromUrl ? fromUrl[1] : t).replace(/[\s-]/g, "");
+  if (!/^[a-z2-9]{10}$/.test(raw)) return null;
+  return `${raw.slice(0, 3)}-${raw.slice(3, 7)}-${raw.slice(7)}`;
+}
+
+/** Lama berjalan, ringkas: "baru mulai", "12 mnt", "1 j 5 mnt". */
+export function elapsedLabel(startedAt: string | null, now = Date.now()): string | null {
+  if (!startedAt) return null;
+  const min = Math.max(0, Math.floor((now - new Date(startedAt).getTime()) / 60_000));
+  if (min < 1) return "baru mulai";
+  if (min < 60) return `${min} mnt`;
+  const h = Math.floor(min / 60);
+  return min % 60 ? `${h} j ${min % 60} mnt` : `${h} j`;
+}
