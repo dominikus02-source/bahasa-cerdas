@@ -657,3 +657,52 @@
   color: #fff;
   box-shadow: 0 8px 20px -6px rgba(43, 75, 255, 0.5);
 }
+
+/* ---- Tema global (Fase B · beranda murid) ----
+   .px-theme-app kini mengambil nilai dari token global (app/theme/tokens.css)
+   supaya beranda murid satu bahasa visual dengan shell, JUMPA & halaman
+   transaksi: latar --clr-bg, kartu --clr-surface padat (tanpa blur berat di
+   HP), garis --clr-line. Zona player Arena (.px-theme / .px-theme-adaptive)
+   tidak disentuh. Hanya variabel & permukaan — komponen tidak berubah. */
+.px-theme-app,
+.dark .px-theme-app {
+  background:
+    radial-gradient(900px 480px at 100% -10%, color-mix(in srgb, var(--clr-violet) 9%, transparent), transparent 60%),
+    radial-gradient(760px 420px at -10% 0%, color-mix(in srgb, var(--clr-accent) 7%, transparent), transparent 60%),
+    var(--clr-bg);
+  color: var(--clr-text);
+  --px-text: var(--clr-text);
+  --px-text-dim: var(--clr-text-2);
+  --px-text-faint: var(--clr-text-3);
+  --px-glass: var(--clr-surface);
+  --px-glass-strong: var(--clr-surface-2);
+  --px-border: var(--clr-line);
+  --px-track: color-mix(in srgb, var(--clr-text) 8%, transparent);
+  --px-gold: var(--clr-warning-strong);
+  --px-gold-2: var(--clr-warning);
+  --px-royal: var(--clr-violet);
+  --px-royal-2: var(--clr-info);
+  --px-mint: var(--clr-accent);
+}
+
+.px-theme-app .px-card,
+.dark .px-theme-app .px-card {
+  background: var(--clr-surface);
+  border-color: var(--clr-line);
+  border-radius: var(--bc-r-card);
+  box-shadow: var(--bc-shadow-1);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.px-theme-app .px-chip,
+.dark .px-theme-app .px-chip {
+  background: var(--clr-surface-2);
+  border-color: var(--clr-line);
+}
+
+.px-theme-app .px-btn-ghost,
+.dark .px-theme-app .px-btn-ghost {
+  border-color: var(--clr-line-strong);
+  color: var(--clr-text);
+}
