@@ -1,0 +1,15 @@
+# JUMPA — sinyal LiveKit (WebSocket) dengan TLS di Caddy.
+# Dipasang ke ${BC_CONFIG_DIR}/caddy.d/ oleh `ENABLE_JUMPA=1 ops/vps/deploy.sh`
+# dan di-import oleh Caddyfile (`import conf.d/*.caddy`). Tanpa file ini Caddy
+# tidak meminta sertifikat untuk domain JUMPA.
+{$JUMPA_DOMAIN:jumpa.bahasacerdas.com} {
+  reverse_proxy livekit:7880
+
+  log {
+    output file /var/log/caddy/jumpa-access.log {
+      roll_size 25MiB
+      roll_keep 5
+      roll_keep_for 168h
+    }
+  }
+}

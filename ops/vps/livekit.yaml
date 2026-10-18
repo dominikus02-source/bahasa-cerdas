@@ -1,0 +1,39 @@
+# LiveKit (JUMPA) — konfigurasi server media.
+# Kunci API TIDAK di sini: dibaca dari env LIVEKIT_KEYS ("<key>: <secret>")
+# di ${BC_CONFIG_DIR}/livekit.env (dibuat ops/vps/prepare-runtime-envs.sh dari
+# LIVEKIT_API_KEY/LIVEKIT_API_SECRET di web.env).
+#
+# Port (buka di firewall VPS):
+#   7881/tcp  ICE/TCP  — fallback saat UDP diblokir jaringan sekolah
+#   7882/udp  ICE/UDP  — semua media UDP lewat SATU port (mux)
+# 7880 (API + WebSocket sinyal) TIDAK dibuka publik: Caddy meneruskan
+# wss://jumpa.bahasacerdas.com → livekit:7880 (TLS di Caddy).
+#
+# Pindah ke VPS terpisah: salin file ini + service `livekit` dari
+# docker-compose.yml, lalu set LIVEKIT_URL / NEXT_PUBLIC_LIVEKIT_WS_URL di web.env.
+port: 7880
+log_level: info
+
+rtc:
+  tcp_port: 7881
+  udp_port: 7882
+  # Cari IP publik via STUN — wajib di balik NAT docker.
+  use_external_ip: true
+
+# TURN bawaan sengaja MATI di Fase 1. Dengan IP publik, ICE/UDP (7882) +
+# ICE/TCP (7881) sudah cukup untuk sebagian besar jaringan. Jaringan yang hanya
+# mengizinkan TLS/443 butuh TURN/TLS dengan sertifikat sendiri — Fase 2,
+# lihat docs/JUMPA_PHASE1.md § Jaringan sekolah.
+turn:
+  enabled: false
+
+room:
+  # Ditutup bila kosong 10 menit; batas peserta per ruang diatur juga per
+  # ruang oleh web (lib/jumpa/caps.ts).
+  empty_timeout: 600
+  departure_timeout: 60
+  max_participants: 50
+
+limit:
+  # Pagar kasar jumlah track per node (≈ 4 kelas × 50 peserta × 2 track).
+  num_tracks: 400

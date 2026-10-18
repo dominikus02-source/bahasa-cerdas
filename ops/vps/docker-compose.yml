@@ -111,6 +111,35 @@ services:
       retries: 12
       start_period: 20s
 
+  # JUMPA — server media LiveKit (SFU). Mati sampai `ENABLE_JUMPA=1 deploy.sh`.
+  # Batas awal sengaja kecil (2 CPU / 1.5 GB) karena berbagi VPS dengan web +
+  # Supabase. Pindah ke VPS lain: bawa service ini + livekit.yaml, lalu ganti
+  # LIVEKIT_URL & NEXT_PUBLIC_LIVEKIT_WS_URL di web.env (lib/jumpa/config.ts).
+  livekit:
+    profiles: ["jumpa"]
+    image: livekit/livekit-server:v1.13.10
+    command: ["--config", "/etc/livekit.yaml"]
+    restart: unless-stopped
+    cpus: 2.0
+    mem_limit: 1536m
+    pids_limit: 512
+    stop_grace_period: 15s
+    logging:
+      driver: json-file
+      options:
+        max-size: "25m"
+        max-file: "4"
+    env_file:
+      - ${BC_CONFIG_DIR:-/opt/bahasacerdas/config}/livekit.env
+    volumes:
+      - ./livekit.yaml:/etc/livekit.yaml:ro
+    ports:
+      - "127.0.0.1:7880:7880"   # API/WS — publik hanya lewat Caddy
+      - "7881:7881/tcp"         # ICE/TCP
+      - "7882:7882/udp"         # ICE/UDP mux
+    networks:
+      - edge
+
   agent:
     profiles: ["agent"]
     build:
@@ -182,6 +211,7 @@ services:
       TEST_GAME_DOMAIN: ${TEST_GAME_DOMAIN:-game-vps.bahasacerdas.com}
       NOVELIFY_DOMAIN: ${NOVELIFY_DOMAIN:-novelify.online}
       NOVELIFY_WWW_DOMAIN: ${NOVELIFY_WWW_DOMAIN:-www.novelify.online}
+      JUMPA_DOMAIN: ${JUMPA_DOMAIN:-jumpa.bahasacerdas.com}
     ports:
       - "80:80"
       - "443:443"
@@ -193,6 +223,7 @@ services:
       - caddy_data:/data
       - caddy_config:/config
       - /opt/bahasacerdas/logs/caddy:/var/log/caddy
+      - ${BC_CONFIG_DIR:-/opt/bahasacerdas/config}/caddy.d:/etc/caddy/conf.d:ro
     depends_on:
       web:
         condition: service_healthy

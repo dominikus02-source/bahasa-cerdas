@@ -63,7 +63,9 @@ const nextConfig: NextConfig = {
           // NOTE: game.bahasacerdas.com TLS active since Jun 22, 2026 (Let's Encrypt via Certbot)
           // Do NOT add preload flag unless game subdomain is confirmed stable.
           { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
-          { key: "Permissions-Policy", value: "camera=(), microphone=(self), geolocation=()" },
+          // camera=(self): dibutuhkan JUMPA (ruang video, docs/JUMPA_PHASE1.md). Hanya
+          // origin sendiri; iframe pihak ketiga tetap tidak bisa memakai kamera/mic.
+          { key: "Permissions-Policy", value: "camera=(self), microphone=(self), display-capture=(self), geolocation=()" },
           { key: "X-DNS-Prefetch-Control", value: "on" },
           // CSP is set dynamically in middleware.ts with nonce support
           { key: "Cross-Origin-Resource-Policy", value: "same-origin" },

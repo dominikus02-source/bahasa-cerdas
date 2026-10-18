@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/proxy";
 import { rateLimit } from "@/lib/rate-limit";
 import { getClientKey } from "@/lib/security";
+import { livekitCspOrigins } from "@/lib/jumpa/config";
 
 // Content-Security-Policy with a per-request nonce for inline scripts.
 // script-src uses 'nonce-<value>' (NO 'unsafe-inline') so injected inline scripts
@@ -27,7 +28,9 @@ function buildCsp(nonce: string): string {
     // with an avatar had it blocked by CSP and rendered broken.
     "img-src": ["'self'", "blob:", "data:", "https://*.supabase.co", "https://images.unsplash.com", "https://api.dicebear.com", "https://www.gravatar.com", "https://secure.gravatar.com", "https://*.gstatic.com", "https://*.googleusercontent.com", "https://img.youtube.com", "https://i.ytimg.com"],
     "font-src": ["'self'", "https://fonts.gstatic.com"],
-    "connect-src": ["'self'", "https://*.supabase.co", "wss://*.supabase.co", "https://api.midtrans.com", "https://app.midtrans.com", "https://api.sandbox.midtrans.com", "https://app.sandbox.midtrans.com", "wss://game.bahasacerdas.com", "https://game.bahasacerdas.com", "wss://game-vps.bahasacerdas.com", "https://game-vps.bahasacerdas.com", "https://api.unsplash.com"],
+    // JUMPA: origin server media (wss + https) dari NEXT_PUBLIC_LIVEKIT_WS_URL,
+    // default wss://jumpa.bahasacerdas.com — lib/jumpa/config.ts.
+    "connect-src": ["'self'", ...livekitCspOrigins(), "https://*.supabase.co", "wss://*.supabase.co", "https://api.midtrans.com", "https://app.midtrans.com", "https://api.sandbox.midtrans.com", "https://app.sandbox.midtrans.com", "wss://game.bahasacerdas.com", "https://game.bahasacerdas.com", "wss://game-vps.bahasacerdas.com", "https://game-vps.bahasacerdas.com", "https://api.unsplash.com"],
     "frame-src": ["'self'", "https://app.midtrans.com", "https://app.sandbox.midtrans.com", "https://www.youtube.com", "https://*.supabase.co", "https://view.officeapps.live.com"],
     "worker-src": ["'self'", "blob:"],
     "object-src": ["'none'"],
