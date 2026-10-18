@@ -421,7 +421,9 @@
     "test:jumpa-token": "npx tsx scripts/test-jumpa-token.ts",
     "test:jumpa-room-types": "npx tsx scripts/test-jumpa-room-types.ts",
     "test:jumpa-host-actions": "npx tsx scripts/test-jumpa-host-actions.ts",
-    "test:jumpa-chat-moderation": "npx tsx scripts/test-jumpa-chat-moderation.ts"
+    "test:jumpa-chat-moderation": "npx tsx scripts/test-jumpa-chat-moderation.ts",
+    "test:jumpa-tiers": "npx tsx scripts/test-jumpa-tiers.ts",
+    "jumpa:bundle-report": "node scripts/jumpa-bundle-report.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

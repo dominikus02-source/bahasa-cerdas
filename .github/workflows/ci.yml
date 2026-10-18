@@ -60,6 +60,7 @@ jobs:
           npm run test:jumpa-room-types
           npm run test:jumpa-host-actions
           npm run test:jumpa-chat-moderation
+          npm run test:jumpa-tiers
 
       - name: Lint
         run: npm run lint
