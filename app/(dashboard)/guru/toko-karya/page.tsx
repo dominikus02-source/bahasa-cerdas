@@ -807,7 +807,7 @@ export default function TokoKaryaPage() {
                   <Button
                     onClick={() => { setWithdrawError(""); setShowWithdrawModal(true); }}
                     disabled={saldo < MINIMAL_PENARIKAN || !rekeningLengkap || adaPenarikanBerjalan}
-                    variant="secondary"
+                    variant="legacy-secondary"
                     className="bg-white/20 border-0 text-white hover:bg-white/30 disabled:opacity-50 shrink-0"
                   >
                     <ArrowUpRight className="h-4 w-4" /> Cairkan Saldo

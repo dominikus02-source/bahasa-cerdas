@@ -112,7 +112,7 @@ function main() {
 
   // ── 5. COLLAPSE / EXPAND ──
   console.log("\n── 5. Collapse/Expand sidebar ──");
-  const css = read("app/globals.css");
+  const css = (read("app/theme/tokens.css") + read("app/globals.css"));
   const toggle = read("components/dashboard/ShellSidebarToggle.tsx");
   test("collapsed = width 4rem (CSS md+)",
     () => css.includes('[data-shell-collapsed="1"] .shell-aside') && css.includes("4rem"));

@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
 interface TabsContextType {
   value: string
   onValueChange: (value: string) => void
+  variant: "legacy" | "bc"
 }
 
 const TabsContext = React.createContext<TabsContextType | null>(null)
@@ -18,15 +19,20 @@ function useTabs() {
   return context
 }
 
+/**
+ * Tabs global. `variant="bc"` = segmen pil desain baru (bisa digeser di
+ * 360px, tanpa teks terpotong). Tanpa variant = tampilan lama.
+ */
 interface TabsProps extends React.HTMLAttributes<HTMLDivElement> {
   value: string
   onValueChange: (value: string) => void
+  variant?: "legacy" | "bc"
 }
 
 const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
-  ({ className, value, onValueChange, children, ...props }, ref) => {
+  ({ className, value, onValueChange, variant = "legacy", children, ...props }, ref) => {
     return (
-      <TabsContext.Provider value={{ value, onValueChange }}>
+      <TabsContext.Provider value={{ value, onValueChange, variant }}>
         <div ref={ref} className={cn("w-full", className)} {...props}>
           {children}
         </div>
@@ -36,10 +42,18 @@ const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
 )
 Tabs.displayName = "Tabs"
 
-interface TabsListProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface TabsListProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Desain bc: pemicu dibagi rata selebar wadah. */
+  block?: boolean
+}
 
 const TabsList = React.forwardRef<HTMLDivElement, TabsListProps>(
-  ({ className, ...props }, ref) => (
+  ({ className, block, ...props }, ref) => {
+    const ctx = React.useContext(TabsContext)
+    if (ctx?.variant === "bc") {
+      return <div ref={ref} role="tablist" className={cn("ui-tabs__list", block && "ui-tabs__list--block", className)} {...props} />
+    }
+    return (
     <div
       ref={ref}
       className={cn(
@@ -48,7 +62,8 @@ const TabsList = React.forwardRef<HTMLDivElement, TabsListProps>(
       )}
       {...props}
     />
-  )
+    )
+  }
 )
 TabsList.displayName = "TabsList"
 
@@ -58,8 +73,23 @@ interface TabsTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement>
 
 const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
   ({ className, value, ...props }, ref) => {
-    const { value: selectedValue, onValueChange } = useTabs()
+    const { value: selectedValue, onValueChange, variant } = useTabs()
     const isSelected = selectedValue === value
+
+    if (variant === "bc") {
+      return (
+        <button
+          ref={ref}
+          type="button"
+          role="tab"
+          aria-selected={isSelected}
+          tabIndex={isSelected ? 0 : -1}
+          className={cn("ui-tabs__trigger", className)}
+          onClick={() => onValueChange(value)}
+          {...props}
+        />
+      )
+    }
 
     return (
       <button

@@ -137,7 +137,7 @@ export default function ResetPasswordPage() {
                 <Button
                   onClick={() => router.push("/login")}
                   className="w-full h-10 rounded-xl"
-                  variant="ghost"
+                  variant="legacy-ghost"
                 >
                   <ArrowLeft size={16} className="mr-2" />
                   Kembali ke Login

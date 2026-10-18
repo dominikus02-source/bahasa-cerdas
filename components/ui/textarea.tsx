@@ -1,10 +1,16 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
-export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
+/** Textarea global. `variant="bc"` = desain baru; tanpa variant = tampilan lama. */
+export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+  variant?: "legacy" | "bc"
+}
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, ...props }, ref) => {
+  ({ className, variant = "legacy", ...props }, ref) => {
+    if (variant === "bc") {
+      return <textarea className={cn("ui-textarea", className)} ref={ref} {...props} />
+    }
     return (
       <textarea
         className={cn(

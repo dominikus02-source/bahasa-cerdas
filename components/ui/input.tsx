@@ -1,8 +1,19 @@
 import * as React from "react";
+import { cn } from "@/lib/utils";
 
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
+/**
+ * Input global. `variant="bc"` = desain baru (radius 16px, 48px, font 16px
+ * agar iOS tidak zoom, fokus teal). Tanpa variant = tampilan lama.
+ * Bungkus dengan <Field> untuk label, petunjuk, dan pesan galat.
+ */
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  variant?: "legacy" | "bc";
+}
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className = "", type, ...props }, ref) => {
+const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className = "", type, variant = "legacy", ...props }, ref) => {
+  if (variant === "bc") {
+    return <input type={type} className={cn("ui-input", className)} ref={ref} {...props} />;
+  }
   return (
     <input
       type={type}

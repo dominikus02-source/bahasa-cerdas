@@ -128,7 +128,7 @@ function main() {
     () => muridLayout.includes("<ShellSidebarToggle />") && muridLayout.includes("<LogoutButton />"));
   test("CSS collapse di globals.css (4rem, label ter-hidden, link terpusat)",
     () => {
-      const css = read("app/globals.css");
+      const css = (read("app/theme/tokens.css") + read("app/globals.css"));
       return css.includes('[data-shell-collapsed="1"] .shell-aside') &&
         css.includes('[data-shell-collapsed="1"] .shell-label { display: none; }') &&
         css.includes('[data-shell-collapsed="1"] .shell-link') &&

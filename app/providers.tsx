@@ -4,6 +4,7 @@ import { useUser } from "@/hooks/useUser";
 import { SwRegister } from "@/components/SwRegister";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { HeartbeatProvider } from "@/components/providers/HeartbeatProvider";
+import { ToastProvider } from "@/components/ui/toast";
 
 export function Providers({ children, nonce }: { children: React.ReactNode; nonce?: string }) {
   useUser();
@@ -11,7 +12,7 @@ export function Providers({ children, nonce }: { children: React.ReactNode; nonc
     <ThemeProvider nonce={nonce}>
       <SwRegister />
       <HeartbeatProvider />
-      {children}
+      <ToastProvider>{children}</ToastProvider>
     </ThemeProvider>
   );
 }
