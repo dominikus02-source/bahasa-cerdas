@@ -1,20 +1,56 @@
 import { cn } from "@/lib/utils";
 
+/**
+ * Kartu global (docs/PANDUAN_DESAIN_BC.md §0.3).
+ *
+ * Desain: variant "surface" (gradien halus + garis tipis + kedalaman),
+ * "flat" (permukaan polos), "tint" (tint merek). Opsi: `accent` (garis
+ * gradien 3px di atas), `interactive` (angkat saat hover mouse), `pad`
+ * (isi 16–22px).
+ * Tanpa `variant` = tampilan lama (shadcn) — tetap bekerja.
+ */
+type CardVariant = "legacy" | "surface" | "flat" | "tint";
+
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
+  variant?: CardVariant;
+  accent?: boolean;
+  interactive?: boolean;
+  pad?: boolean;
+  as?: "div" | "section" | "article";
 }
 
-export function Card({ className, children, ...props }: CardProps) {
+export function cardClass({
+  variant = "surface",
+  accent,
+  interactive,
+  pad = true,
+  className,
+}: { variant?: Exclude<CardVariant, "legacy">; accent?: boolean; interactive?: boolean; pad?: boolean; className?: string } = {}) {
+  return cn(
+    "ui-card",
+    variant === "flat" && "ui-card--flat",
+    variant === "tint" && "ui-card--tint",
+    accent && "ui-card--accent",
+    interactive && "ui-card--interactive",
+    pad && "ui-card--pad",
+    className
+  );
+}
+
+export function Card({ className, children, variant = "legacy", accent, interactive, pad, as = "div", ...props }: CardProps) {
+  const Tag = as as "div";
+  if (variant !== "legacy") {
+    return (
+      <Tag className={cardClass({ variant, accent, interactive, pad: pad ?? true, className })} {...props}>
+        {children}
+      </Tag>
+    );
+  }
   return (
-    <div
-      className={cn(
-        "rounded-xl border bg-card text-card-foreground shadow-sm",
-        className
-      )}
-      {...props}
-    >
+    <Tag className={cn("rounded-xl border bg-card text-card-foreground shadow-sm", className)} {...props}>
       {children}
-    </div>
+    </Tag>
   );
 }
 

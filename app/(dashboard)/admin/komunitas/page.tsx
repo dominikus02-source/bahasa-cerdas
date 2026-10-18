@@ -190,7 +190,7 @@ export default function AdminKomunitasPage() {
                       </Button>
                     </>
                   )}
-                  <Button size="sm" variant="ghost" onClick={() => handleArchive(c.id)} disabled={actionLoading === c.id} className="text-amber-500 dark:text-amber-400 hover:text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:bg-amber-950/40">
+                  <Button size="sm" variant="legacy-ghost" onClick={() => handleArchive(c.id)} disabled={actionLoading === c.id} className="text-amber-500 dark:text-amber-400 hover:text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:bg-amber-950/40">
                     {actionLoading === c.id ? <Loader2 size={14} className="animate-spin" /> : <Archive size={14} />}
                     Arsipkan
                   </Button>

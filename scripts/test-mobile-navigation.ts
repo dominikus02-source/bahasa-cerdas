@@ -38,7 +38,7 @@ const arenaBottomNav = read("app/arena/bottom-nav.tsx");
 const shellLayout = read("components/shell/ShellLayout.tsx");
 const navConfig = read("components/shell/nav-config.ts");
 const arenaCss = read("app/arena/arena.css");
-const globalsCss = read("app/globals.css");
+const globalsCss = (read("app/theme/tokens.css") + read("app/globals.css"));
 
 function main() {
   console.log("\n📋 STEP 5.0 — MOBILE NAVIGATION TEST");

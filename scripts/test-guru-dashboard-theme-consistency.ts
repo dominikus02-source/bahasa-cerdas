@@ -152,7 +152,7 @@ for (const m of MANDATORY) {
 
 /* ═══════════ B. Theme architecture ═══════════ */
 section("B. Theme architecture (satu engine, satu token set)");
-const globals = read(GLOBALS_CSS);
+const globals = read(join(ROOT, "app", "theme", "tokens.css")) + "\n" + read(GLOBALS_CSS);
 const classroom = read(CLASSROOM_CSS);
 const guruLayout = read(GURU_LAYOUT);
 const tailwind = read(TAILWIND_CONFIG);

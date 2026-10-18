@@ -3,12 +3,69 @@
 Berlaku untuk **semua UI Bahasa Cerdas mulai sekarang** — fitur baru dan setiap halaman yang disentuh.
 Wajib diikuti oleh tim (termasuk Sugeng) dan alat AI (Grok Build, Claude, Cursor, dll.).
 
-Sumber kebenaran: kode JUMPA v4 di `components/jumpa/jumpa.css` dan komponen `components/jumpa/*.tsx`
-(PR #133, cabang `feat/jumpa-phase3`), serta token global di `app/globals.css`.
-Jika panduan ini dan kode berbeda, **kode JUMPA v4 yang menang** — lalu perbarui dokumen ini.
+Sumber kebenaran: **token global `app/theme/tokens.css`** dan **primitif `components/ui/*`** (gaya di `app/theme/ui.css`),
+yang diturunkan dari JUMPA v4 (`components/jumpa/*`) dan halaman transaksi (`components/billing/*`, PR #144).
+Jika panduan ini dan kode berbeda, kode yang menang — lalu perbarui dokumen ini. Audit kondisi awal: [`AUDIT_DESAIN_GLOBAL.md`](AUDIT_DESAIN_GLOBAL.md).
 
 > Singkatnya: gelap & bersih, aksen gradien teal→violet, kedalaman dari bayangan dan garis tipis (bukan blur),
 > radius lega, teks Indonesia yang pendek, ringan di HP 360px.
+
+---
+
+## 0. Referensi cepat: token & komponen global
+
+**Aturan:** UI baru dan setiap halaman yang disentuh memakai primitif `components/ui/*` dan token di bawah.
+Hex/rgb hanya boleh ada di `app/theme/tokens.css` — `npm run guard:warna` (CI) menolak warna mentah baru.
+Lihat semua primitif di `/pratinjau/ui` (lokal, `BC_UI_PREVIEW=1`).
+
+### 0.1 Token (CSS) dan padanan Tailwind
+
+| Kelompok | CSS | Tailwind |
+|---|---|---|
+| Warna dasar | `--clr-bg`, `--clr-surface`, `--clr-surface-2`, `--clr-border(-strong)`, `--clr-line(-strong)`, `--clr-field` | `bg-bc-bg`, `bg-bc-surface`, `bg-bc-surface-2`, `border-bc-line`, `border-bc-line-strong`, `bg-bc-field` |
+| Teks | `--clr-text`, `--clr-text-2`, `--clr-text-3`, `--clr-on-brand` (di atas gradien) | `text-bc-text`, `text-bc-text-2`, `text-bc-text-3`, `text-bc-on-brand` |
+| Merek | `--clr-accent(-strong/-soft)` teal, `--clr-info(-soft)` biru, `--clr-violet(-soft)` | `bg-bc-accent`, `text-bc-accent-strong`, `bg-bc-violet-soft`, … (opasitas: `bg-bc-accent/20`) |
+| Status | `--clr-success(-soft)`, `--clr-warning(-strong/-soft)`, `--clr-danger(-soft)`, `--clr-info(-soft)` | `text-bc-danger`, `bg-bc-warning-soft`, … |
+| Fokus & scrim | `--clr-focus`, `--clr-scrim`, `--bc-ring` | `outline-bc-focus` |
+| Gradien | `--bc-grad-brand` (teal→biru→violet), `--bc-grad-murid` (violet di depan), `--bc-grad-premium`, `--bc-grad-danger`, `--bc-grad-surface`, `--bc-grad-tint` | `bg-bc-brand`, `bg-bc-murid`, `bg-bc-premium`, `bg-bc-surface`, `bg-bc-tint` |
+| Radius | `--bc-r-xs` 8 · `-sm` 12 · `-icon` 14 · `-ctl` 16 · `-tile` 20 · `-card` 24 · `-hero` 28 · `-pill` 999 | `rounded-bc-xs` … `rounded-bc-hero`, `rounded-full` |
+| Bayangan | `--bc-depth` (kartu), `--bc-shadow-1` (halus), `-2` (terangkat), `-3` (modal), `--bc-glow-brand` (hover mouse saja) | `shadow-bc-depth`, `shadow-bc-1..3`, `shadow-bc-glow` |
+| Jarak | `--bc-space-1..10` (4, 8, 12, 16, 20, 24, 32, 40 px) | skala bawaan Tailwind (`gap-4`, `p-5`, …) |
+| Tipografi | `--bc-fs-hero`, `-h1`, `-h2`, `-h3`, `-body`, `-input` (16), `-small`, `-eyebrow`; `--bc-font-sans` | `text-bc-hero`, `text-bc-h1`, `text-bc-h2`, `text-bc-h3`, `text-bc-body`, `text-bc-small`, `text-bc-eyebrow` |
+| Gerak | `--bc-ease`, `--bc-spring`, `--bc-dur-fast/-/-slow` (.12/.18/.32 s; 0 saat reduced-motion) | `ease-bc`, `ease-bc-spring` |
+| Lapisan | `--bc-z-sheet` 60, `--bc-z-toast` 70 | — |
+
+Gradien merek: gelap `#34d399 → #93c5fd → #a78bfa` dengan teks `--clr-on-brand` gelap; terang `#047857 → #2563eb → #7c3aed`
+dengan teks putih (semua titik ≥ 4.5:1). Token turunan dideklarasikan di `:root` **dan** `.dark`, jadi bagian yang dipaksa gelap
+(`class="dark"`, mis. banner JUMPA) ikut benar.
+
+### 0.2 Komponen (`components/ui/*`)
+
+| Komponen | Pakai | Catatan |
+|---|---|---|
+| `Button` | `variant`: `primary` (gradien, satu per layar) · `murid` · `secondary` · `ghost` · `quiet` · `soft` · `danger` · `premium`; `size`: `sm` 36 · `md` 44 · `lg` 52 · `icon`; `block`, `loading` | `buttonClass({...})` untuk `<Link>`. Varian lama (`default`, `outline`, `destructive`, `link`, `gold`, `success`, `legacy-secondary`, `legacy-ghost`) tetap sama. `type` tidak diberi bawaan |
+| `Card` | `variant="surface" \| "flat" \| "tint"`, `accent`, `interactive`, `pad`, `as` | Tanpa `variant` = kartu lama. `cardClass()` untuk elemen lain. Isi: `.ui-card__title`, `.ui-card__desc`, `.ui-icon-box` |
+| `Badge` | `tone`: `neutral` · `accent` · `info` · `violet` · `success` · `warning` · `danger` · `premium` · `live` · `brand`; `icon` | `PremiumBadge` (mahkota, label "Premium"/"Pro"), `LiveBadge` ("Berlangsung" + titik). Tanpa `tone` = badge lama |
+| `Input`, `Textarea` | `variant="bc"` | 48px, font 16px, fokus teal, `aria-invalid` merah |
+| `Select` | select bawaan peramban bergaya | Opsi pendek |
+| `Field` | `label`, `hint`, `error`, `hideLabel`; anak = fungsi `(p) => <Input variant="bc" {...p} />` | Menyambung `id`, `aria-describedby`, `aria-invalid`; galat `role="alert"` |
+| `Tabs` | `<Tabs variant="bc">` + `TabsList` (`block`) + `TabsTrigger` + `TabsContent` | Segmen pil, bisa digeser di 360px |
+| `Modal`, `Sheet` | `<Modal variant="bc" title description actions wide>`; `<Sheet>` = panel samping di laptop | Lembar bawah di HP, Escape menutup, `role="dialog"`, tombol "Tutup", tanpa blur |
+| `Alert` | `tone`: `info` · `success` · `warning` · `danger`; `title`, `action` | `role="alert"` untuk galat/peringatan |
+| `Toast` | `const { toast } = useToast(); toast({ tone: "success", title: "Tersimpan." })` | Provider sudah di `app/providers.tsx`; offset di atas nav bawah: `--ui-toast-offset` |
+| `EmptyState` | `icon`, `title`, `description`, `action`, `card` | Satu kalimat + maks. satu tombol |
+| `PageHeader` | `title`, `eyebrow`, `description`, `icon`, `tone` (`brand`/`murid`/`soft`), `actions`, `as` | Judul boleh dua baris; aksi turun bila sempit |
+| `Skeleton`, `SkeletonCard` | `className` untuk ukuran, `rounded` | Denyut opasitas (ringan), mati saat reduced-motion |
+
+Kelas CSS bisa dipakai langsung bila komponen tidak cocok: `.ui-btn .ui-btn--primary`, `.ui-card`, `.ui-badge .ui-badge--premium`,
+`.ui-input`, `.ui-eyebrow`, `.ui-icon-box`, dll. (`app/theme/ui.css`). `className` Tailwind selalu bisa menimpa primitif.
+
+### 0.3 Migrasi
+
+- Halaman lama: ganti tombol/kartu/badge lokal dengan primitif; ganti `bg-white`/`text-gray-*`/`emerald-*` dengan `bg-bc-surface`/`text-bc-text-*`/`bc-accent`.
+- Peran: **guru = `primary`/`--bc-grad-brand`**, **murid = `murid`/`--bc-grad-murid`**. (Identitas biru guru lama menunggu keputusan CEO — lihat audit §6.)
+- Token lokal (`--jp-*`, `--bp-*`, salinan `.bc-classroom`) boleh tetap; arahkan ke token global saat area itu disentuh.
+- Jangan ubah perilaku/logika saat migrasi tampilan.
 
 ---
 
@@ -17,7 +74,7 @@ Jika panduan ini dan kode berbeda, **kode JUMPA v4 yang menang** — lalu perbar
 **Aturan utama: jangan menulis hex di CSS/TSX.** Selalu `var(--clr-*)` (atau `color-mix()` dari token).
 `npm run audit:theme-hardcoded` dan test tema akan menandai hex baru.
 
-### 1.1 Token dasar (`app/globals.css`)
+### 1.1 Token dasar (`app/theme/tokens.css`)
 
 | Token | Terang (`:root`) | Gelap (`.dark`) | Dipakai untuk |
 |---|---|---|---|
@@ -305,7 +362,8 @@ Aturan lain:
 Salin ke deskripsi PR:
 
 ```
-- [ ] Tanpa hex/rgb baru; semua warna dari --clr-* (audit:theme-hardcoded tidak bertambah)
+- [ ] Tanpa hex/rgb baru; semua warna dari --clr-* / bc-* (guard:warna lulus, audit:theme-hardcoded tidak bertambah)
+- [ ] Memakai primitif components/ui (Button, Card, Badge, Field, Modal, …) alih-alih versi lokal
 - [ ] Radius, bayangan, jarak sesuai Panduan Desain §2
 - [ ] State tombol lengkap: idle, hover, tekan, aktif/mati, fokus, nonaktif
 - [ ] Berfungsi di 360px tanpa scroll horizontal & tanpa teks terpotong
