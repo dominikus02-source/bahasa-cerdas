@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Check, Gift, Loader2, Tag, X } from "lucide-react";
+import { Gift, Loader2, Tag, X } from "lucide-react";
 import { formatCurrency } from "@/lib/format";
+import "./billing.css";
 
 export interface AppliedCoupon {
   kode: string;
@@ -20,111 +19,111 @@ interface CouponInputProps {
   price: number;
   value: AppliedCoupon | null;
   onChange: (coupon: AppliedCoupon | null) => void;
+  /** Kode yang bisa dipakai dengan satu ketukan (mis. Program Guru Cerdas). */
+  suggestedCode?: string;
+  suggestedLabel?: string;
 }
 
-export default function CouponInput({ planId, price, value, onChange }: CouponInputProps) {
+export async function validateCoupon(kode: string, planId: string): Promise<{ coupon?: AppliedCoupon; error?: string }> {
+  try {
+    const res = await fetch("/api/billing/kupon/validate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ kode: kode.trim(), planId }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.ok === false) return { error: data.error || "Kode promo tidak dikenali." };
+    return {
+      coupon: {
+        kode: data.kupon.kode,
+        nama: data.kupon.nama || null,
+        diskonPersen: data.diskonPersen ?? null,
+        hargaAsli: data.hargaAsli,
+        hargaDiskon: data.hargaDiskon,
+        hemat: data.hemat,
+      },
+    };
+  } catch {
+    return { error: "Tidak tersambung. Periksa internet lalu coba lagi." };
+  }
+}
+
+export default function CouponInput({ planId, price, value, onChange, suggestedCode, suggestedLabel }: CouponInputProps) {
   const [kode, setKode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const apply = async () => {
-    if (!kode.trim() || loading) return;
+  const apply = async (input: string) => {
+    if (!input.trim() || loading) return;
     setLoading(true);
     setError("");
-    try {
-      const res = await fetch("/api/billing/kupon/validate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ kode: kode.trim(), planId }),
-      });
-      const data = await res.json();
-      if (!res.ok || data.ok === false) {
-        setError(data.error || "Kode kupon tidak valid.");
-        return;
-      }
-      onChange({
-        kode: data.kupon.kode,
-        nama: data.kupon.nama || null,
-        diskonPersen: data.diskonPersen,
-        hargaAsli: data.hargaAsli,
-        hargaDiskon: data.hargaDiskon,
-        hemat: data.hemat,
-      });
-      setKode("");
-    } catch {
-      setError("Tidak bisa memvalidasi kupon. Periksa koneksi Anda.");
-    } finally {
-      setLoading(false);
+    const r = await validateCoupon(input, planId);
+    setLoading(false);
+    if (r.error || !r.coupon) {
+      setError(r.error || "Kode promo tidak dikenali.");
+      return;
     }
+    onChange(r.coupon);
+    setKode("");
   };
 
   if (value) {
-    const isFixed = value.diskonPersen == null;
     return (
-      <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 flex items-start gap-3">
-        <div className="h-9 w-9 rounded-lg bg-emerald-500 flex items-center justify-center shrink-0 mt-0.5">
-          {isFixed ? <Gift className="w-4 h-4 text-white" /> : <Check className="w-4 h-4 text-white" />}
+      <div className="bp-promo" style={{ background: "var(--clr-accent-soft)", borderColor: "color-mix(in srgb, var(--clr-accent) 35%, transparent)" }}>
+        <span className="bp-icon bp-icon--soft" aria-hidden="true"><Gift size={18} /></span>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p className="bp-h3" style={{ fontSize: 14 }}>Promo {value.kode} terpasang</p>
+          <p className="bp-text" style={{ marginTop: 2 }}>
+            Jadi <b className="bp-strong">{formatCurrency(value.hargaDiskon)}</b>{" "}
+            <span className="bp-strike">{formatCurrency(value.hargaAsli || price)}</span>
+          </p>
         </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <p className="text-sm font-semibold text-emerald-900 uppercase">{value.kode}</p>
-            {value.nama && <span className="text-xs text-emerald-700">{value.nama}</span>}
-            {!isFixed && <Badge variant="warning" className="text-[10px] py-0">Diskon {value.diskonPersen}%</Badge>}
-          </div>
-          {isFixed ? (
-            <p className="text-xs text-emerald-700 mt-1">
-              Harga khusus <strong>{formatCurrency(value.hargaDiskon)}</strong>
-              <span className="line-through ml-1 text-emerald-400">{formatCurrency(value.hargaAsli)}</span>
-              {value.hemat > 0 && <span> · hemat {formatCurrency(value.hemat)}</span>}
-            </p>
-          ) : (
-            <p className="text-xs text-emerald-700 mt-1">
-              {formatCurrency(value.hargaAsli)} → <strong>{formatCurrency(value.hargaDiskon)}</strong>
-              {value.hemat > 0 && <span> (hemat {formatCurrency(value.hemat)})</span>}
-            </p>
-          )}
-        </div>
-        <button
-          onClick={() => onChange(null)}
-          className="text-emerald-500 hover:text-emerald-700 shrink-0"
-          aria-label="Hapus kupon"
-        >
-          <X className="w-4 h-4" />
+        <button type="button" className="bp-ghost" style={{ minHeight: 44, width: 44, padding: 0 }} onClick={() => onChange(null)} aria-label="Lepas kode promo">
+          <X size={18} aria-hidden="true" />
         </button>
       </div>
     );
   }
 
   return (
-    <div>
-      <div className="flex gap-2">
-        <div className="relative flex-1">
-          <Tag className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-          <input
-            value={kode}
-            onChange={(e) => setKode(e.target.value.toUpperCase())}
-            onKeyDown={(e) => e.key === "Enter" && apply()}
-            placeholder="Kode kupon (mis. bcgurucerdas1000)"
-            className="w-full rounded-xl border border-gray-200 bg-white pl-9 pr-3 py-2.5 text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 placeholder:text-gray-400"
-            disabled={loading}
-          />
+    <div style={{ display: "grid", gap: 10 }}>
+      {suggestedCode && (
+        <div className="bp-promo">
+          <span className="bp-icon bp-icon--warn" aria-hidden="true"><Gift size={18} /></span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p className="bp-h3" style={{ fontSize: 14 }}>{suggestedLabel || "Ada promo untukmu"}</p>
+            <p className="bp-text">Kode <span className="bp-mono bp-strong">{suggestedCode.toUpperCase()}</span></p>
+          </div>
+          <button type="button" className="bp-chip" onClick={() => apply(suggestedCode)} disabled={loading}>
+            {loading ? <Loader2 size={16} className="bp-spin" aria-hidden="true" /> : null}
+            Pakai
+          </button>
         </div>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={apply}
-          disabled={!kode.trim() || loading}
-          className="shrink-0"
-        >
-          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Pakai"}
-        </Button>
-      </div>
-      {error && <p className="text-xs text-red-600 mt-1.5">{error}</p>}
-      {value && (
-        <p className="text-xs text-emerald-600 mt-1.5">
-          Kupon berlaku — total akan dikurangi otomatis.
-        </p>
       )}
+      <div>
+        <label htmlFor="bp-kode" className="bp-sr">Kode promo</label>
+        <div className="bp-field">
+          <Tag size={16} aria-hidden="true" style={{ color: "var(--clr-text-3)", flex: "0 0 auto" }} />
+          <input
+            id="bp-kode"
+            className="bp-input"
+            value={kode}
+            onChange={(e) => setKode(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && apply(kode)}
+            placeholder="Punya kode promo?"
+            autoComplete="off"
+            autoCapitalize="characters"
+            disabled={loading}
+            aria-invalid={Boolean(error)}
+            aria-describedby={error ? "bp-kode-err" : undefined}
+          />
+          <button type="button" className="bp-chip" onClick={() => apply(kode)} disabled={!kode.trim() || loading}>
+            {loading ? <Loader2 size={16} className="bp-spin" aria-hidden="true" /> : null}
+            Pakai
+          </button>
+        </div>
+        {error && <p id="bp-kode-err" role="alert" className="bp-small" style={{ color: "var(--clr-danger)", margin: "6px 4px 0" }}>{error}</p>}
+      </div>
     </div>
   );
 }

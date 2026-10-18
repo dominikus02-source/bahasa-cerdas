@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
       return err("MIDTRANS_CONFIG_MISSING", "Konfigurasi pembayaran belum lengkap. Hubungi admin.", 500);
     }
 
-    // Step 4 — Founder/Admin bypass
+    // Step 4 — Founder/Admin bypass (akun uji internal; tanpa pembayaran).
     if (user.isFounder || user.role === "ADMIN") {
       const premiumUntil = new Date();
       premiumUntil.setDate(premiumUntil.getDate() + plan.durationDays);
@@ -121,10 +121,16 @@ export async function POST(req: NextRequest) {
           where: { id: user.id },
           data: { isPremium: true, premiumPlan: "PRO", premiumUntil },
         });
-      } catch {}
+      } catch (bypassError: any) {
+        console.error(`[Checkout:${requestId}] Founder/admin bypass update failed`, {
+          userId: user.id,
+          message: bypassError?.message,
+        });
+        return err("CHECKOUT_DB_FAILED", "Gagal mengaktifkan akun uji. Coba lagi.", 500);
+      }
       return ok({
         bypass: true,
-        message: "Akun Founder/Admin — premium diaktifkan tanpa pembayaran",
+        message: "Akun pendiri/admin — Premium aktif tanpa pembayaran.",
         premiumUntil: premiumUntil.toISOString(),
       });
     }
@@ -132,26 +138,35 @@ export async function POST(req: NextRequest) {
     // Determine transaction type based on plan targetRole
     const transaksiType = plan.targetRole === "MURID" ? "MURID_PREMIUM" : "PREMIUM_UPGRADE";
 
-    // Step 5 — Stale pending cleanup
+    const orderId = generateOrderId(user.id);
+
+    // Step 5 — Pesanan lama yang masih menunggu diganti pesanan baru.
+    // Statusnya "REPLACED" (bukan "EXPIRED") agar riwayat menampilkan
+    // "Diganti pesanan baru". Jika pesanan lama ternyata tetap dibayar,
+    // webhook/reconcile masih mengaktifkan (klaim hanya menolak SUCCESS).
     try {
-      const stalePending = await db.transaksi.findFirst({
+      const stalePending = await db.transaksi.findMany({
         where: {
           userId: user.id,
           type: transaksiType,
           status: "PENDING",
           createdAt: { lt: new Date(Date.now() - 2 * 60 * 1000) },
         },
-        orderBy: { createdAt: "desc" },
+        select: { id: true, metadata: true },
+        take: 10,
       });
-      if (stalePending) {
-        await db.transaksi.update({
-          where: { id: stalePending.id },
-          data: { status: "EXPIRED" },
+      for (const stale of stalePending) {
+        await db.transaksi.updateMany({
+          where: { id: stale.id, status: "PENDING" },
+          data: {
+            status: "REPLACED",
+            metadata: { ...((stale.metadata as Record<string, unknown>) || {}), replacedByOrderId: orderId },
+          },
         });
       }
-    } catch {}
-
-    const orderId = generateOrderId(user.id);
+    } catch (cleanupError: any) {
+      console.warn(`[Checkout:${requestId}] Stale pending cleanup failed`, { message: cleanupError?.message });
+    }
 
     // ────────────────────────────────────────────────────────────────
     // Step 6 — Create local Transaksi record FIRST (payment-critical)
@@ -195,29 +210,9 @@ export async function POST(req: NextRequest) {
       return err("CHECKOUT_DB_FAILED", "Gagal menyimpan data transaksi. Silakan coba lagi.", 500);
     }
 
-    // Step 6b — Catat pemakaian kupon (best-effort, setelah Transaksi dibuat).
-    // Non-critical: coupon usage tracking is important but not payment-blocking.
-    if (kuponInfo && transaksiId) {
-      try {
-        await db.$transaction([
-          db.kuponPemakaian.create({
-            data: {
-              kuponId: kuponInfo.id,
-              userId: user.id,
-              transaksiId,
-              hargaAsli,
-              hargaDiskon,
-            },
-          }),
-          db.kupon.update({
-            where: { id: kuponInfo.id },
-            data: { jumlahTerpakai: { increment: 1 } },
-          }),
-        ]);
-      } catch {
-        console.warn(`[Checkout:${requestId}] Kupon usage write failed, continuing`);
-      }
-    }
+    // Step 6b — Pemakaian kupon dicatat saat pembayaran LUNAS (settlement),
+    // bukan di sini: lihat lib/payments/midtrans-notification.ts. Checkout
+    // yang batal tidak lagi menghabiskan kuota kupon.
 
     // ────────────────────────────────────────────────────────────────
     // Step 7 — Create Midtrans Snap transaction (AFTER local record)

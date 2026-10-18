@@ -90,7 +90,7 @@ async function syncPremiumCreditLedger(userId: string, planId: string, aiCredits
 }
 
 
-type TransaksiStatus = "PENDING" | "SUCCESS" | "FAILED" | "CANCELLED" | "EXPIRED";
+type TransaksiStatus = "PENDING" | "SUCCESS" | "FAILED" | "CANCELLED" | "EXPIRED" | "REPLACED";
 
 const STATUS_MAP: Record<string, { status: TransaksiStatus; activatePremium: boolean }> = {
   settlement: { status: "SUCCESS", activatePremium: true },
@@ -260,6 +260,31 @@ export async function processVerifiedMidtransNotification(
             where: { id: transaksi.userId },
             data: { isPremium: true, premiumPlan, premiumUntil },
           });
+
+          // Pemakaian kupon dihitung saat LUNAS (di dalam transaksi klaim →
+          // tepat sekali). Pesanan lama yang sudah tercatat saat checkout
+          // (sebelum perubahan ini) tidak dihitung ulang.
+          if (typeof meta.kuponId === "string" && meta.kuponId) {
+            const already = await tx.kuponPemakaian.findFirst({
+              where: { transaksiId: transaksi.id },
+              select: { id: true },
+            });
+            if (!already) {
+              await tx.kuponPemakaian.create({
+                data: {
+                  kuponId: meta.kuponId,
+                  userId: transaksi.userId,
+                  transaksiId: transaksi.id,
+                  hargaAsli: typeof meta.hargaAsli === "number" ? meta.hargaAsli : transaksi.amount,
+                  hargaDiskon: typeof meta.hargaDiskon === "number" ? meta.hargaDiskon : transaksi.amount,
+                },
+              });
+              await tx.kupon.updateMany({
+                where: { id: meta.kuponId },
+                data: { jumlahTerpakai: { increment: 1 } },
+              });
+            }
+          }
           await tx.notifikasi.create({
             data: {
               userId: transaksi.userId,

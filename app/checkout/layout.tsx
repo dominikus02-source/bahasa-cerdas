@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Checkout — BahasaCerdas",
+  title: "Pembayaran karya — BahasaCerdas",
   description: "Selesaikan pembelian karya digital di Toko Karya BahasaCerdas.",
   robots: { index: false, follow: false },
 };
