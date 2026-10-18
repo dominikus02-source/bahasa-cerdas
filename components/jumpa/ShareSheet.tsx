@@ -114,13 +114,13 @@ export default function ShareSheet({ target, onClose }: { target: ShareTarget; o
 
         <div className="jps-grid mt-4">
           {canNative && (
-            <button type="button" className="jps-opt" onClick={() => void native()}><Share2 size={20} /> Bagikan</button>
+            <button type="button" className="jps-opt jps-wide" onClick={() => void native()}><Share2 size={20} /> Bagikan</button>
           )}
           <a className="jps-opt" href={whatsappHref(text)} target="_blank" rel="noopener noreferrer"><MessageCircle size={20} /> WhatsApp</a>
           <button type="button" className="jps-opt" onClick={() => void copy(url, "url")}>
             {done === "url" ? <Check size={20} /> : <Link2 size={20} />} {done === "url" ? "Tersalin" : "Salin tautan"}
           </button>
-          <button type="button" className="jps-opt" onClick={() => void copy(target.code, "code")} aria-label={`Salin kode ${target.code}`}>
+          <button type="button" className="jps-opt jps-wide" onClick={() => void copy(target.code, "code")} aria-label={`Salin kode ${target.code}`}>
             {done === "code" ? <Check size={20} /> : <Hash size={20} />}
             <span className="min-w-0"><span className="block text-xs font-semibold text-[var(--clr-text-3)]">{done === "code" ? "Tersalin" : "Kode"}</span><span className="jps-code block truncate">{target.code}</span></span>
           </button>

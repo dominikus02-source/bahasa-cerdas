@@ -79,7 +79,8 @@ export default function PostMeeting({ code, heading, note, fallbackHref, extra }
     return () => { alive = false; window.clearTimeout(t); };
   }, [code]);
 
-  if (s && s !== "error") return <MeetingSummaryView s={s} heading={heading} note={note} extra={extra} />;
+  // Ringkasan server punya alasan selesai sendiri (END_TEXT); `note` hanya untuk cadangan.
+  if (s && s !== "error") return <MeetingSummaryView s={s} heading={heading} extra={extra} />;
   return (
     <section className="jumpa-card jumpa-lobby-info jumpa-in-up text-center" aria-live="polite">
       <span className="jumpa-empty-icon mx-auto" aria-hidden>{s === null ? <Loader2 size={26} className="animate-spin" /> : <CheckCircle2 size={26} />}</span>

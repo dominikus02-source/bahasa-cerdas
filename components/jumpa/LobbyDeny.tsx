@@ -17,7 +17,7 @@ function view(code: string | null, message: string | null, scheduledAt: string |
   switch (code) {
     case "NOT_STARTED": {
       const open = scheduledAt ? new Date(new Date(scheduledAt).getTime() - JUMPA_EARLY_JOIN_MIN * 60_000) : null;
-      return { icon: Clock, title: "JUMPA belum dibuka", body: open ? `Dibuka pukul ${formatWibTime(open)} WIB. Halaman ini akan terbuka sendiri.` : "Tunggu pemandu memulai." };
+      return { icon: Clock, title: "JUMPA belum dibuka", body: open ? `Dibuka pukul ${formatWibTime(open)}. Halaman ini akan terbuka sendiri.` : "Tunggu pemandu memulai." };
     }
     case "ROOM_CANCELLED":
       return { icon: CalendarX2, title: "JUMPA dibatalkan", body: "Cek jadwal terbaru di riwayat.", history: true };

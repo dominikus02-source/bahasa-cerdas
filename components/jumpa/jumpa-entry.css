@@ -177,6 +177,7 @@
 .dark .jps-opt > svg { color: var(--clr-accent); }
 .jps-opt:active { transform: scale(.97); }
 @media (hover: hover) and (pointer: fine) { .jps-opt:hover { border-color: color-mix(in srgb, var(--clr-accent) 45%, transparent); } }
+.jps-wide { grid-column: 1 / -1; }
 .jps-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 15px; font-weight: 800; letter-spacing: .04em; }
 .jps-qr { display: none; }
 @media (min-width: 768px) and (pointer: fine) {

@@ -130,6 +130,7 @@ check("Dijadwalkan: judul + waktu WIB", s.title === "JUMPA dijadwalkan" && s.bod
 check("Pengingat 10 menit", buildNotice("REMINDER", room).title === "JUMPA 10 menit lagi" && buildNotice("REMINDER", room).body.includes("14.30 WIB"))
 const live = buildNotice("LIVE", room)
 check("Berlangsung: 'Kelas 7A sedang JUMPA' + 'Gabung sekarang.'", live.title === "Kelas 7A sedang JUMPA" && live.body === "Gabung sekarang.")
+check("Nama kelas berawalan 'Kelas' tidak diulang", buildNotice("LIVE", { ...room, groupName: "Kelas 7A" }).title === "Kelas 7A sedang JUMPA")
 check("Berlangsung ruang guru: judul umum", buildNotice("LIVE", { ...room, kind: "GURU", groupName: null }).title === "JUMPA sedang berlangsung")
 check("Dibatalkan → riwayat, peringatan", buildNotice("CANCELLED", room).link === "/jumpa/riwayat" && buildNotice("CANCELLED", room).type === "warning")
 check("Jadwal berubah", buildNotice("RESCHEDULED", room, { now: NOW }).title === "Jadwal JUMPA berubah")
@@ -216,7 +217,7 @@ check("Guru: 'Mulai JUMPA' di panel kelas", read("components/jumpa/StartJumpaBut
 check("Halaman kelas guru memakai panel", read("app/(dashboard)/guru/kelasku/page.tsx").includes('<KelasJumpaPanel groupId={activeGroup.id} role="GURU"'))
 check("Halaman kelas murid memakai panel", read("app/(dashboard)/murid/kelasku/[id]/page.tsx").includes('role="MURID"'))
 check("Beranda guru: banner + kartu", /JumpaLaunchBanner[\s\S]*JumpaBerandaCard role="GURU"/.test(read("components/guru/TeacherHomeV3.tsx")))
-check("Beranda murid: kartu + banner", /JumpaBerandaCard role="MURID"[\s\S]*JumpaLaunchBanner/.test(read("app/(dashboard)/murid/beranda/page.tsx")))
+check("Beranda murid: Gabung di atas hero, kartu + banner di bawah", /JumpaBerandaCard role="MURID" show="live"[\s\S]*StudentHomeHero[\s\S]*JumpaBerandaCard role="MURID" show="idle"[\s\S]*JumpaLaunchBanner/.test(read("app/(dashboard)/murid/beranda/page.tsx")))
 const share = read("components/jumpa/ShareSheet.tsx")
 for (const t of ["wa.me", "Salin tautan", "navigator.share", "qrcode"]) check(`Bagikan: ${t}`, share.includes(t))
 

@@ -32,6 +32,8 @@ export interface JumpaNotice {
 }
 
 const clip = (s: string, n: number) => (s.length > n ? `${s.slice(0, n - 1)}…` : s);
+/** "7A" → "Kelas 7A"; nama yang sudah diawali "Kelas" tidak diulang. */
+const kelasName = (name: string) => (/^kelas\b/i.test(name.trim()) ? clip(name.trim(), 46) : `Kelas ${clip(name.trim(), 40)}`);
 
 /** Satu sumber teks notifikasi JUMPA (pendek, Indonesia, tanpa emoji). */
 export function buildNotice(kind: JumpaNoticeKind, room: NoticeRoom, extra?: { now?: Date; category?: string }): JumpaNotice {
@@ -52,7 +54,7 @@ export function buildNotice(kind: JumpaNoticeKind, room: NoticeRoom, extra?: { n
       };
     case "LIVE":
       return room.kind === "KELAS" && room.groupName
-        ? { title: `Kelas ${clip(room.groupName, 40)} sedang JUMPA`, body: "Gabung sekarang.", link, type: "info", tag }
+        ? { title: `${kelasName(room.groupName)} sedang JUMPA`, body: "Gabung sekarang.", link, type: "info", tag }
         : { title: "JUMPA sedang berlangsung", body: `${title} · gabung sekarang.`, link, type: "info", tag };
     case "CANCELLED":
       return { title: "JUMPA dibatalkan", body: when ? `${title} · ${when}` : title, link: "/jumpa/riwayat", type: "warning", tag };

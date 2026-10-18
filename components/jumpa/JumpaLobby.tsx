@@ -316,7 +316,7 @@ export default function JumpaLobby(props: Props) {
 
       <section className="jumpa-card jumpa-lobby-info jumpa-in-up flex w-full flex-col items-center gap-5 text-center [animation-delay:60ms] md:flex-1 md:items-start md:text-left">
         <div>
-          <p className="jumpa-section-title !m-0 !mb-2 justify-center md:justify-start">Siap masuk?</p>
+          <p className="jumpa-section-title !m-0 !mb-2 justify-center md:justify-start">{props.canJoin || props.denyCode === "NOT_STARTED" ? "Siap masuk?" : "Ruang JUMPA"}</p>
           <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{props.title}</h1>
           {props.subtitle && (
             <p className="mt-2 flex items-center justify-center gap-2 text-[var(--jp-text-2)] md:justify-start">

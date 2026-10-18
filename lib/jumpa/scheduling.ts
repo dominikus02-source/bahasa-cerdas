@@ -87,7 +87,11 @@ export async function scheduleRoom(user: JumpaUserLike, req: ScheduleRequest, no
     startsAt: v.startsAt,
     durationMin: v.durationMin,
   });
-  if (!created.ok) return fail(created.status, created.code, created.message, created.extra);
+  if (!created.ok) {
+    // Kuota dihitung per hari jadwal, bukan "hari ini".
+    const message = created.code === "TIER_DAILY_LIMIT" && typeof created.extra?.limit === "number" ? `Kuota ${created.extra.limit} ruang di hari itu sudah habis. Pilih hari lain.` : created.message;
+    return fail(created.status, created.code, message, created.extra);
+  }
 
   const room = await db.jumpaRoom.findUniqueOrThrow({ where: { id: created.room.id }, select: NOTICE_ROOM_SELECT });
   const inviteRows = [
@@ -115,7 +119,7 @@ export async function rescheduleRoom(user: JumpaUserLike, code: string, input: {
   const sameDay = room.scheduledAt && startOfJakartaDay(room.scheduledAt).getTime() === startOfJakartaDay(v.startsAt).getTime();
   const perDay = JUMPA_TIERS[tier].roomsPerDay;
   if (!sameDay && perDay !== null && (await countRoomsOnDay(user.id, startOfJakartaDay(v.startsAt))) >= perDay) {
-    return fail(429, "TIER_DAILY_LIMIT", `Kuota ${perDay} ruang di hari itu sudah habis.`);
+    return fail(429, "TIER_DAILY_LIMIT", `Kuota ${perDay} ruang di hari itu sudah habis. Pilih hari lain.`);
   }
   const updated = await db.jumpaRoom.update({
     where: { id: room.id },

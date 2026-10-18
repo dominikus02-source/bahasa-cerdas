@@ -9,7 +9,7 @@ import Link from "next/link";
 import { ArrowLeft, CalendarClock, CalendarPlus, CheckCircle2, ChevronRight, Pencil, Share2, Video } from "lucide-react";
 import type { HistoryData, HistoryItem } from "@/lib/jumpa/scheduling";
 import ShareSheet, { type ShareTarget } from "./ShareSheet";
-import { minutesLabel, whenLabel } from "./entry-format";
+import { minutesLabel, placeLabel, whenLabel } from "./entry-format";
 
 type Tab = "upcoming" | "live" | "past";
 const TABS: Array<{ id: Tab; label: string }> = [
@@ -24,9 +24,9 @@ const EMPTY: Record<Tab, string> = {
 };
 
 function pastLine(i: HistoryItem): string {
-  if (i.endReason === "CANCELLED") return [i.place, whenLabel(i.scheduledAt)].filter(Boolean).join(" · ");
+  if (i.endReason === "CANCELLED") return [placeLabel(i.title, i.place), whenLabel(i.scheduledAt)].filter(Boolean).join(" · ");
   const mins = i.startedAt && i.endedAt ? (new Date(i.endedAt).getTime() - new Date(i.startedAt).getTime()) / 60_000 : 0;
-  return [i.place, whenLabel(i.startedAt ?? i.scheduledAt), i.startedAt ? minutesLabel(mins) : null, i.startedAt ? `${i.attended} hadir` : null].filter(Boolean).join(" · ");
+  return [placeLabel(i.title, i.place), whenLabel(i.startedAt ?? i.scheduledAt), i.startedAt ? minutesLabel(mins) : null, i.startedAt ? `${i.attended} hadir` : null].filter(Boolean).join(" · ");
 }
 
 export default function RoomHistory({ data, canSchedule, backHref }: { data: HistoryData; canSchedule: boolean; backHref: string }) {
@@ -70,15 +70,15 @@ export default function RoomHistory({ data, canSchedule, backHref }: { data: His
                   {tab === "live" ? <Video size={20} /> : tab === "upcoming" ? <CalendarClock size={20} /> : <CheckCircle2 size={20} />}
                 </span>
                 <Link href={tab === "past" ? `/jumpa/riwayat/${i.code}` : `/jumpa/${i.code}`} className="min-w-0 flex-1">
-                  <span className="flex min-w-0 items-center gap-2">
-                    <span className="truncate text-sm font-bold">{i.title}</span>
-                    {i.mine && <span className="jumpa-mine !ml-0 shrink-0">Buatanmu</span>}
+                  <span className="line-clamp-2 text-sm font-bold">
+                    {i.title}
+                    {i.mine && tab !== "upcoming" && <span className="jumpa-mine">Buatanmu</span>}
                   </span>
-                  <span className="mt-0.5 block truncate text-xs text-[var(--jp-text-3)]">
+                  <span className="mt-0.5 block text-xs text-[var(--jp-text-3)]">
                     {tab === "live"
-                      ? [i.place, i.present > 0 ? `${i.present} di dalam` : null].filter(Boolean).join(" · ")
+                      ? [placeLabel(i.title, i.place), i.present > 0 ? `${i.present} di dalam` : null].filter(Boolean).join(" · ")
                       : tab === "upcoming"
-                        ? [i.place, i.scheduledAt ? whenLabel(i.scheduledAt) : "Belum dimulai", i.scheduledAt ? minutesLabel(i.durationMin) : null].filter(Boolean).join(" · ")
+                        ? [placeLabel(i.title, i.place), i.scheduledAt ? whenLabel(i.scheduledAt) : "Belum dimulai", i.scheduledAt ? minutesLabel(i.durationMin) : null].filter(Boolean).join(" · ")
                         : pastLine(i)}
                   </span>
                   {i.endReason === "CANCELLED" && <span className="jumpa-cancelled">Dibatalkan</span>}

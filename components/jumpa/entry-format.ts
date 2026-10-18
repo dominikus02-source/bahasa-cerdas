@@ -13,3 +13,9 @@ export function minutesLabel(totalMin: number): string {
 export function whenLabel(iso: string | null | undefined, now = new Date()): string {
   return iso ? formatWib(new Date(iso), now) : "";
 }
+
+/** Tempat (kelas/komunitas) hanya bila belum tertulis di judul — hindari "JUMPA Kelas 7A · Kelas 7A". */
+export function placeLabel(title: string, place: string | null | undefined): string | null {
+  if (!place) return null;
+  return title.toLowerCase().includes(place.toLowerCase()) ? null : place;
+}

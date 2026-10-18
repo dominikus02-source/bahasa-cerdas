@@ -50,9 +50,10 @@ export default function HomeFeedPage() {
 function HomeContent() {
   return (
     <>
+      {/* JUMPA: "Gabung JUMPA" di paling atas saat kelas berlangsung; kartu tetap + banner di bawah hero. Tersembunyi bila flag mati. */}
+      <JumpaBerandaCard role="MURID" show="live" />
       <StudentHomeHero />
-      {/* JUMPA: kartu tetap (Gabung saat kelas berlangsung) + banner peluncuran; tersembunyi bila flag mati */}
-      <JumpaBerandaCard role="MURID" />
+      <JumpaBerandaCard role="MURID" show="idle" />
       <JumpaLaunchBanner />
       <MentorHomeCard />
       <JalurCerdasHomeCard />
