@@ -109,6 +109,12 @@ Sekitar 900 KB dari JS awal adalah layout root situs (dipakai semua halaman), bu
   dikelompokkan (Mik · Kamera | Layar · Tangan · Pengaturan · Lainnya | Keluar). Pita
   gradien tipis di atas dock. Tombol Keluar berbentuk pil merah berlabel. Indikator bicara
   berdenyut di tombol Mik.
+- **Warna tombol "kekinian":** tombol diam pakai kaca berwarna tipis (gradien teal→violet di atas
+  surface, tanpa `backdrop-filter`). Tombol aktif pakai gradien merek teal→biru→violet dengan ikon
+  gelap. Mik/kamera mati pakai coral lembut. Angkat tangan pakai gradien kuning→coral. Keluar tetap
+  merah. Di laptop, tombol terangkat 2px saat hover dengan glow `box-shadow` ringan; saat ditekan
+  mengecil ke 0,92 dengan efek pegas. Kontras (token gelap): ikon diam 9,4:1, ikon aktif ≥ 6,9:1,
+  ikon mati 4,96:1, Keluar 6,7:1. Semua lolos WCAG AA.
 - **Panel Pengaturan** (dipakai di lobby dan ruang): pemilih kamera, mikrofon, dan speaker (speaker
   hanya bila browser mendukung `setSinkId`); kualitas video **Otomatis / Hemat Data / HD**
   (HD menunjukkan batas paket, mis. "maks 720p"); **Mode audio saja**; **Peredam bising**

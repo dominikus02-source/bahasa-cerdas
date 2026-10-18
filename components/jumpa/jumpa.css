@@ -1115,8 +1115,8 @@
   color: var(--jp-text);
   background:
     linear-gradient(160deg,
-      color-mix(in srgb, var(--clr-accent) 9%, var(--clr-surface-2)),
-      color-mix(in srgb, var(--clr-violet) 11%, var(--clr-surface)));
+      color-mix(in srgb, var(--clr-accent) 13%, var(--clr-surface-2)),
+      color-mix(in srgb, var(--clr-violet) 16%, var(--clr-surface)));
   border: 1px solid var(--jk-ring);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--clr-text) 9%, transparent);
   transition:
@@ -1129,8 +1129,8 @@
 .jumpa-key:hover {
   background:
     linear-gradient(160deg,
-      color-mix(in srgb, var(--clr-accent) 16%, var(--clr-surface-2)),
-      color-mix(in srgb, var(--clr-violet) 18%, var(--clr-surface)));
+      color-mix(in srgb, var(--clr-accent) 20%, var(--clr-surface-2)),
+      color-mix(in srgb, var(--clr-violet) 24%, var(--clr-surface)));
   --jk-ring: color-mix(in srgb, var(--clr-accent) 45%, transparent);
 }
 .jumpa-key:active { transform: scale(.92); transition-duration: .08s; }
@@ -1164,15 +1164,16 @@
 /* Keluar: merah pekat (ikon/teks gelap di atas merah ≈ 7:1). */
 .jumpa-key[data-variant="leave"] {
   color: var(--clr-bg);
-  background: linear-gradient(140deg, color-mix(in srgb, var(--clr-danger) 80%, var(--clr-text)), var(--clr-danger));
+  background: linear-gradient(140deg, var(--clr-danger), color-mix(in srgb, var(--clr-danger) 82%, var(--clr-violet)));
   border-color: transparent;
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--clr-text) 30%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--clr-text) 22%, transparent);
 }
 .jumpa-key[data-variant="leave"]:hover { background: var(--clr-danger); }
 .jumpa-key:disabled { opacity: .55; transform: none; }
 
 /* Label: warna mengikuti state. */
 .jumpa-ctl:has(.jumpa-key[data-on="true"]) .jumpa-ctl-label { color: var(--clr-accent); }
+.jumpa-ctl:has(.jumpa-key[data-tone="hand"][data-on="true"]) .jumpa-ctl-label { color: var(--clr-warning); }
 .jumpa-ctl:has(.jumpa-key[data-off="true"]) .jumpa-ctl-label { color: color-mix(in srgb, var(--clr-danger) 85%, var(--clr-text)); }
 
 /* Laptop/mouse saja: angkat + glow ringan (box-shadow, bukan filter). */
