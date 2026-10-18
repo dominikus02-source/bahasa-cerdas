@@ -128,7 +128,7 @@ function main() {
   test("SATU ThemeProvider (next-themes) di app/providers.tsx",
     () => read("app/providers.tsx").includes("ThemeProvider") && read("components/theme/theme-provider.tsx").includes("NextThemesProvider"));
   test("ThemeToggle reusable dipakai di murid + arena + guru + admin",
-    () => read("app/(dashboard)/murid/layout.tsx").includes("<ThemeToggle />") &&
+    () => (read("app/(dashboard)/murid/layout.tsx") + read("components/shell/MuridShellFrame.tsx")).includes("<ThemeToggle />") &&
          arenaLayout.includes("<ThemeToggle />") &&
          guruLayout.includes("<ThemeToggle />") && adminLayout.includes("<ThemeToggle />"));
   test("theme toggle tidak ada duplikat (ThemeSegmented tidak ada)",
@@ -142,7 +142,7 @@ function main() {
       return !src.includes("router.back") && read("components/shared/BackHome.tsx").includes("Link");
     });
   test("TIDAK ada router.back() di 4 layout utama",
-    () => [arenaLayout, guruLayout, adminLayout, read("app/(dashboard)/murid/layout.tsx")].every(c => !c.includes("router.back")));
+    () => [arenaLayout, guruLayout, adminLayout, read("app/(dashboard)/murid/layout.tsx"), read("components/shell/MuridShellFrame.tsx")].every(c => !c.includes("router.back")));
 
   // ── 8. PROTECTED ZONES ──
   console.log("\n── 8. Protected zones ──");

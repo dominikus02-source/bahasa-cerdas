@@ -34,6 +34,8 @@ function test(name: string, fn: () => boolean) {
 }
 
 const ROOT = join(__dirname, "..");
+// Token global (bc-* / ui-*) otomatis ikut .dark — setara dengan varian dark: manual.
+const themeAware = (src: string) => src.includes("dark:") || /\b(?:bg|text|border)-bc-|\bui-[a-z]/.test(src);
 const read = (p: string) => {
   const full = join(ROOT, p);
   return existsSync(full) ? readFileSync(full, "utf-8") : "";
@@ -215,7 +217,7 @@ for (const f of interactive) {
     const source = read(f);
     return f.startsWith("components/ai-bc/")
       ? source.includes("bg-background") && source.includes("bg-card") && source.includes("text-foreground")
-      : source.includes("dark:");
+      : themeAware(source);
   });
 }
 test("player components memakai sistem token --px (theme-agnostic by design)", () => {
@@ -247,7 +249,7 @@ for (const f of inputs) {
     const source = read(f);
     return f.startsWith("components/ai-bc/")
       ? source.includes("bg-background") && source.includes("bg-card") && source.includes("text-foreground")
-      : source.includes("dark:");
+      : themeAware(source);
   });
 }
 
@@ -256,11 +258,11 @@ for (const f of inputs) {
 /* ------------------------------------------------------------------ */
 
 console.log("\n7. Sidebar, header & mobile nav have theme handling");
-test("shell aside dark variant", () => read("components/shell/ShellLayout.tsx").includes("dark:bg-slate-900/80"));
-test("murid layout root dark gradient", () => read("app/(dashboard)/murid/layout.tsx").includes("dark:from-slate-950"));
-test("murid header dark", () => read("app/(dashboard)/murid/layout.tsx").includes("dark:bg-slate-900/80"));
-test("MuridMobileNav dark", () => read("components/dashboard/MuridMobileNav.tsx").includes("dark:"));
-test("arena layout root dark", () => read("app/arena/layout.tsx").includes("dark:"));
+test("shell aside pakai token surface (otomatis gelap)", () => read("components/shell/ShellLayout.tsx").includes("bg-bc-surface border-r border-bc-line"));
+test("murid shell root latar token (ui-app-bg)", () => read("components/shell/MuridShellFrame.tsx").includes("ui-app-bg"));
+test("murid header pakai token surface", () => read("components/shell/MuridShellFrame.tsx").includes("bg-bc-surface/95"));
+test("MuridMobileNav dark", () => themeAware(read("components/dashboard/MuridMobileNav.tsx")));
+test("arena layout root dark", () => themeAware(read("app/arena/layout.tsx")));
 test("guru layout root dark", () => read("app/(dashboard)/guru/layout.tsx").includes("dark:from-slate-950"));
 
 /* ------------------------------------------------------------------ */
