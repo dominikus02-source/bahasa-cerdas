@@ -88,18 +88,30 @@ export function validateMidtransConfig(): void {
   const serverIsProduction = (process.env.MIDTRANS_IS_PRODUCTION || "").trim() === "true";
   const clientIsProduction = (process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION || "").trim() === "true";
 
-  // Prevent sandbox keys from being sent to production and vice versa.
-  // Compare prefixes only: never log or return secret key material.
   const serverKeyIsSandbox = config.serverKey.startsWith("SB-");
   const clientKeyIsSandbox = config.clientKey.startsWith("SB-");
-  if (
-    serverIsProduction !== clientIsProduction ||
-    serverKeyIsSandbox !== !config.isProduction ||
-    clientKeyIsSandbox !== !config.isProduction
-  ) {
+
+  const problems: string[] = [];
+  if (serverIsProduction !== clientIsProduction) {
+    problems.push(
+      `flag mismatch: MIDTRANS_IS_PRODUCTION=${serverIsProduction} vs NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION=${clientIsProduction}`
+    );
+  }
+  if (serverKeyIsSandbox !== !config.isProduction) {
+    problems.push(
+      `server key prefix mismatch: key ${serverKeyIsSandbox ? "starts with SB-" : "does not start with SB-"} but mode is ${config.isProduction ? "production" : "sandbox"}`
+    );
+  }
+  if (clientKeyIsSandbox !== !config.isProduction) {
+    problems.push(
+      `client key prefix mismatch: key ${clientKeyIsSandbox ? "starts with SB-" : "does not start with SB-"} but mode is ${config.isProduction ? "production" : "sandbox"}`
+    );
+  }
+
+  if (problems.length > 0) {
     throw new MidtransError(
       "MIDTRANS_MODE_MISMATCH",
-      "Mode production/sandbox tidak konsisten antara server dan client env",
+      `Mode pembayaran tidak konsisten. Detail: ${problems.join(" | ")}`,
       500
     );
   }
