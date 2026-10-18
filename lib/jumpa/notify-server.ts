@@ -18,10 +18,12 @@ export interface NoticeRoomRow {
   communityId: string | null;
   createdById: string;
   scheduledAt: Date | null;
+  /** "Beri tahu kelas". false = tidak ada penerima kelas/komunitas. */
+  notifyClass: boolean;
 }
 
 export const NOTICE_ROOM_SELECT = {
-  id: true, code: true, title: true, kind: true, groupId: true, communityId: true, createdById: true, scheduledAt: true,
+  id: true, code: true, title: true, kind: true, groupId: true, communityId: true, createdById: true, scheduledAt: true, notifyClass: true,
 } as const;
 
 /** Kumpulkan penerima ruang (kelas terikat + kelas/komunitas/orang yang diundang). */
@@ -35,10 +37,10 @@ export async function roomAudience(room: NoticeRoomRow, opts?: { includeCreator?
   const groupIds = [...new Set([...(room.groupId ? [room.groupId] : []), ...invites.filter((i) => i.kind === "GROUP" && i.groupId).map((i) => i.groupId!)])];
   const communityIds = [...new Set([...(room.communityId ? [room.communityId] : []), ...invites.filter((i) => i.kind === "COMMUNITY" && i.communityId).map((i) => i.communityId!)])];
   const [gm, cm] = await Promise.all([
-    groupIds.length && room.kind === "KELAS"
+    room.notifyClass && groupIds.length && room.kind === "KELAS"
       ? db.groupMember.findMany({ where: { groupId: { in: groupIds }, group: { isActive: true } }, select: { userId: true }, take: 600 })
       : Promise.resolve([]),
-    communityIds.length && room.kind === "GURU"
+    room.notifyClass && communityIds.length && room.kind === "GURU"
       ? db.communityMember.findMany({ where: { communityId: { in: communityIds }, user: { role: "GURU" } }, select: { userId: true }, take: 600 })
       : Promise.resolve([]),
   ]);
@@ -54,6 +56,7 @@ export async function roomAudience(room: NoticeRoomRow, opts?: { includeCreator?
     communityMemberIds: cm.map((m) => m.userId),
     invitedUserIds,
     juniorIds: juniors.map((j) => j.userId),
+    notifyClass: room.notifyClass,
   });
   if (opts?.includeCreator && !ids.includes(room.createdById)) ids.push(room.createdById);
   return ids;
@@ -123,5 +126,7 @@ export async function deliverRoomNotice(
 export async function notifyRoomLive(roomId: string): Promise<DeliverResult> {
   const room = await db.jumpaRoom.findUnique({ where: { id: roomId }, select: NOTICE_ROOM_SELECT });
   if (!room || room.kind === "MURID") return { status: "empty", recipients: 0, pushed: 0 };
+  // "Beri tahu kelas" mati → roomAudience tidak menyertakan kelas/komunitas
+  // (rapat instan = tanpa penerima sama sekali).
   return deliverRoomNotice(room, "LIVE");
 }

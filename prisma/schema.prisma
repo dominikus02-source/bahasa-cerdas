@@ -4301,6 +4301,11 @@ model JumpaRoom {
   /// Peringatan "waktu hampir habis" sudah dikirim cron sweep.
   warnedAt              DateTime?
 
+  // ── Alur penuh ──
+  /// "Beri tahu kelas": false = tanpa notifikasi ke kelas/komunitas
+  /// (LIVE, dijadwalkan, pengingat, diubah, dibatalkan) untuk ruang ini.
+  notifyClass           Boolean   @default(true)
+
   participants JumpaParticipant[]
   events       JumpaEvent[]
   invites      JumpaInvite[]

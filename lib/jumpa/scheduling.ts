@@ -30,6 +30,8 @@ export interface ScheduleRequest {
   extraGroupIds?: string[];
   /** Orang tertentu (guru rekan, atau murid dari kelas guru). */
   userIds?: string[];
+  /** "Beri tahu kelas" (default true). false = tanpa notifikasi kelas/komunitas. */
+  notifyClass?: boolean;
 }
 
 export type ScheduleResult =
@@ -86,6 +88,7 @@ export async function scheduleRoom(user: JumpaUserLike, req: ScheduleRequest, no
     title: cleanTitle(req.title),
     startsAt: v.startsAt,
     durationMin: v.durationMin,
+    notifyClass: req.notifyClass !== false,
   });
   if (!created.ok) {
     // Kuota dihitung per hari jadwal, bukan "hari ini".

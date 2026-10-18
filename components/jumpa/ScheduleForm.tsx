@@ -13,6 +13,7 @@ import type { ScheduleFormData } from "@/lib/jumpa/scheduling";
 import { formatWib, toWibParts } from "@/lib/jumpa/schedule";
 import ShareSheet, { type ShareTarget } from "./ShareSheet";
 import { minutesLabel } from "./entry-format";
+import NotifyClassToggle from "./NotifyClassToggle";
 
 type Kind = "KELAS" | "GURU";
 
@@ -42,6 +43,8 @@ export default function ScheduleForm({ data, initialGroupId, editing, backHref }
   const durations = data.durations[kind];
   const [duration, setDuration] = useState(editing?.durationMin ?? Math.min(45, data.limits[kind]));
   const [extraGroups, setExtraGroups] = useState<string[]>([]);
+  // "Beri tahu kelas" (nyala bawaan). Mati = tanpa notifikasi kelas/komunitas.
+  const [notify, setNotify] = useState(true);
   const [people, setPeople] = useState<Array<{ id: string; name: string; role: "GURU" | "MURID" }>>([]);
   const [q, setQ] = useState("");
   const [found, setFound] = useState<Array<{ id: string; name: string; role: "GURU" | "MURID" }>>([]);
@@ -88,6 +91,7 @@ export default function ScheduleForm({ data, initialGroupId, editing, backHref }
               durationMin: duration,
               extraGroupIds: kind === "KELAS" ? extraGroups : undefined,
               userIds: people.map((p) => p.id),
+              notifyClass: notify,
             }),
           });
       const body = (await res.json().catch(() => null)) as { code?: string; title?: string; scheduledAt?: string; invited?: number; error?: string } | null;
@@ -216,6 +220,17 @@ export default function ScheduleForm({ data, initialGroupId, editing, backHref }
                 })}
               </div>
             </fieldset>
+          )}
+
+          {(kind === "KELAS" || communityId) && (
+            <NotifyClassToggle
+              tone="room"
+              on={notify}
+              onChange={setNotify}
+              label={kind === "KELAS" ? "Beri tahu kelas" : "Beri tahu komunitas"}
+              hintOn={kind === "KELAS" ? "Murid dapat notifikasi jadwal & pengingat." : "Anggota dapat notifikasi jadwal & pengingat."}
+              hintOff={people.length ? "Hanya orang yang diundang." : kind === "KELAS" ? "Tanpa notifikasi ke murid." : "Tanpa notifikasi ke anggota."}
+            />
           )}
 
           <div className="jumpa-field">

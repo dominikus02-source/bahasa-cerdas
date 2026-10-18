@@ -51,6 +51,8 @@ export interface CreateRoomRequest {
   startsAt?: Date | null;
   /** Durasi pilihan guru (≤ batas paket). */
   durationMin?: number | null;
+  /** "Beri tahu kelas" (default true). false = tanpa notifikasi kelas/komunitas. */
+  notifyClass?: boolean | null;
 }
 
 /**
@@ -188,8 +190,9 @@ export async function createRoom(user: JumpaUserLike, req: CreateRoomRequest): P
           maxParticipants: caps.maxParticipants,
           maxDurationMin: scheduled && req.durationMin ? Math.min(req.durationMin, caps.maxDurationMin) : caps.maxDurationMin,
           scheduledAt: scheduled,
+          notifyClass: req.kind === "MURID" ? false : req.notifyClass !== false,
           events: {
-            create: { actorId: user.id, action: "ROOM_CREATED", metadata: { kind: req.kind, groupId: group?.id ?? null, communityId: community?.id ?? null, scheduledAt: scheduled ? scheduled.toISOString() : null, tier } },
+            create: { actorId: user.id, action: "ROOM_CREATED", metadata: { kind: req.kind, groupId: group?.id ?? null, communityId: community?.id ?? null, scheduledAt: scheduled ? scheduled.toISOString() : null, notifyClass: req.kind === "MURID" ? false : req.notifyClass !== false, tier } },
           },
         },
         select: { id: true, code: true, title: true },

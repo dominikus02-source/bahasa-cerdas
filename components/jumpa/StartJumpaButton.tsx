@@ -8,10 +8,11 @@ import { JUMPA_ENABLED } from "@/lib/features";
 /**
  * Tombol "Mulai JUMPA" untuk kelas guru. Klik 1 = buat ruang (atau buka
  * jadwal hari ini yang ≤ 15 menit lagi) & buka lobby; klik 2 (di lobby) =
- * Gabung. Tidak tampil bila flag mati.
+ * Gabung. Tidak tampil bila flag mati. `notifyClass` = sakelar "Beri tahu
+ * kelas" di panel (mati → tidak ada notifikasi "sedang JUMPA" ke murid).
  * variant "grad" = tombol utama panel JUMPA (Panduan Desain: gradien merek).
  */
-export default function StartJumpaButton({ groupId, className = "", variant = "secondary", label = "Mulai JUMPA" }: { groupId: string; className?: string; variant?: "secondary" | "grad"; label?: string }) {
+export default function StartJumpaButton({ groupId, className = "", variant = "secondary", label = "Mulai JUMPA", notifyClass = true }: { groupId: string; className?: string; variant?: "secondary" | "grad"; label?: string; /** "Beri tahu kelas" (disimpan di ruang; server yang menegakkan). */ notifyClass?: boolean }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,7 +27,7 @@ export default function StartJumpaButton({ groupId, className = "", variant = "s
       const res = await fetch("/api/jumpa/rooms", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ groupId }),
+        body: JSON.stringify({ groupId, notifyClass }),
       });
       const body = (await res.json().catch(() => null)) as { url?: string; error?: string; code?: string; upgradeUrl?: string } | null;
       if (!res.ok || !body?.url) {

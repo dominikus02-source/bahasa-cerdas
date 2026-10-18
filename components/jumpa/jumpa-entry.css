@@ -84,6 +84,27 @@
 .jpe-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 @media (max-width: 479px) { .jpe-actions > * { flex: 1 1 100%; } }
 
+/* ── Sakelar "Beri tahu kelas" ── */
+.jpe-switch-row {
+  display: flex; width: 100%; align-items: center; gap: 12px;
+  min-height: 52px; padding: 8px 12px; border-radius: 16px;
+  border: 1px solid var(--jp-line); background: color-mix(in srgb, var(--clr-text) 3%, transparent);
+  transition: border-color .18s var(--jp-ease);
+}
+.jpe-switch-row[aria-checked="true"] { border-color: color-mix(in srgb, var(--clr-accent) 40%, transparent); }
+.jpe-switch {
+  position: relative; width: 40px; height: 24px; flex-shrink: 0; border-radius: 999px;
+  background: var(--jp-line-strong); transition: background .18s var(--jp-ease);
+}
+.jpe-switch::after {
+  content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 999px;
+  background: var(--clr-bg); box-shadow: 0 1px 2px color-mix(in srgb, var(--clr-text) 30%, transparent);
+  transition: transform .18s var(--jp-ease);
+}
+.jpe-switch[data-on="true"] { background: var(--jp-grad); }
+.jpe-switch[data-on="true"]::after { transform: translateX(16px); }
+@media (prefers-reduced-motion: reduce) { .jpe-switch, .jpe-switch::after { transition: none; } }
+
 /* ── Banner peluncuran (selalu gelap) ── */
 .jpb {
   position: relative; overflow: hidden; isolation: isolate;

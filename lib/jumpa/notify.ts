@@ -88,11 +88,17 @@ export function noticeAudience(input: {
   juniorIds?: string[];
   /** Penerima tambahan khusus (mis. tidak ada). */
   exclude?: string[];
+  /**
+   * "Beri tahu kelas" (default true). false = tanpa siaran ke kelas/komunitas;
+   * hanya orang yang diundang satu per satu (dipilih guru) yang diberi tahu.
+   */
+  notifyClass?: boolean;
 }): string[] {
   if (input.roomKind === "MURID") return [];
   const ids = new Set<string>(input.invitedUserIds);
-  if (input.roomKind === "KELAS") input.groupMemberIds.forEach((id) => ids.add(id));
-  if (input.roomKind === "GURU") input.communityMemberIds.forEach((id) => ids.add(id));
+  const broadcast = input.notifyClass !== false;
+  if (broadcast && input.roomKind === "KELAS") input.groupMemberIds.forEach((id) => ids.add(id));
+  if (broadcast && input.roomKind === "GURU") input.communityMemberIds.forEach((id) => ids.add(id));
   ids.delete(input.creatorId);
   for (const id of input.juniorIds ?? []) ids.delete(id);
   for (const id of input.exclude ?? []) ids.delete(id);

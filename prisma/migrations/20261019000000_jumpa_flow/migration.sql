@@ -1,6 +1,7 @@
 -- =============================================================================
 -- JUMPA Alur penuh — jadwal + log notifikasi
--- ADDITIVE: 1 tabel baru (JumpaNotice) + 1 index di JumpaRoom.
+-- ADDITIVE: 1 tabel baru (JumpaNotice) + 1 index + 1 kolom (notifyClass,
+-- DEFAULT true) di JumpaRoom.
 -- Tidak ada DROP/RENAME, tidak mengubah kolom, tidak menyentuh modul lain.
 -- Jadwal memakai kolom yang SUDAH ADA sejak fase 1: JumpaRoom.scheduledAt
 -- (status SCHEDULED) dan maxDurationMin (durasi pilihan guru).
@@ -16,7 +17,11 @@
 -- Rollback:
 --   DROP TABLE "JumpaNotice";
 --   DROP INDEX "JumpaRoom_status_scheduledAt_idx";
+--   ALTER TABLE "JumpaRoom" DROP COLUMN "notifyClass";
 -- =============================================================================
+
+-- AlterTable ("Beri tahu kelas"; ruang lama tetap memberi tahu = perilaku lama)
+ALTER TABLE "JumpaRoom" ADD COLUMN "notifyClass" BOOLEAN NOT NULL DEFAULT true;
 
 -- CreateTable
 CREATE TABLE "JumpaNotice" (

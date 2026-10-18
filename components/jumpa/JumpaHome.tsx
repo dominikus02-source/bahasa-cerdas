@@ -13,6 +13,7 @@ import type { JumpaHomeData, RoomListItem } from "@/lib/jumpa/service";
 import { formatWib } from "@/lib/jumpa/schedule";
 import { JUMPA_MURID_ROOM } from "@/lib/jumpa/tiers";
 import { UpgradeSheet } from "./TierUi";
+import NotifyClassToggle from "./NotifyClassToggle";
 import { avatarTone, elapsedLabel, parseRoomInput } from "./format";
 
 const KIND_LABEL = { KELAS: "Kelas", GURU: "Ruang guru", MURID: "Belajar bareng" } as const;
@@ -140,11 +141,13 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
   const [error, setError] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [communityId, setCommunityId] = useState("");
+  // "Beri tahu komunitas" untuk ruang guru yang terikat komunitas (nyala bawaan).
+  const [notifyCommunity, setNotifyCommunity] = useState(true);
   const [groupId, setGroupId] = useState(data.groups[0]?.id ?? "");
   const isGuru = data.effective === "GURU";
   const firstName = displayName.split(" ")[0] || displayName;
 
-  const create = async (body: Record<string, string | undefined>, key: string) => {
+  const create = async (body: Record<string, string | boolean | undefined>, key: string) => {
     setBusy(key);
     setError(null);
     try {
@@ -201,8 +204,11 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </select>
+              {communityId && (
+                <NotifyClassToggle tone="room" on={notifyCommunity} onChange={setNotifyCommunity} label="Beri tahu komunitas" hintOn="Anggota dapat notifikasi." hintOff="Tanpa notifikasi ke anggota." />
+              )}
             </div>
-            <button type="button" className="jumpa-primary mt-4 w-full" disabled={busy !== null} onClick={() => void create({ kind: "GURU", title: title || undefined, communityId: communityId || undefined }, "guru")}>
+            <button type="button" className="jumpa-primary mt-4 w-full" disabled={busy !== null} onClick={() => void create({ kind: "GURU", title: title || undefined, communityId: communityId || undefined, notifyClass: communityId ? notifyCommunity : undefined }, "guru")}>
               {busy === "guru" ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />} Mulai ruang guru
             </button>
           </section>

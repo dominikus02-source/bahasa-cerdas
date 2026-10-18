@@ -64,8 +64,8 @@ flowchart TD
 ### 3.1 Guru — JUMPA instan
 
 1. Buka **Kelasku → pilih kelas**. Panel **JUMPA** (lencana **Baru**) ada tepat di bawah kartu kelas, terlihat tanpa menggulir di HP 360px.
-2. Ketuk **Mulai JUMPA** → lobby → **Gabung sekarang**.
-3. Saat guru (pemandu) pertama kali masuk, ruang menjadi **Berlangsung** dan murid kelas itu menerima notifikasi **"Kelas X sedang JUMPA · Gabung sekarang."**.
+2. Sakelar **Beri tahu kelas** di bawah tombol (nyala bawaan). Ketuk **Mulai JUMPA** → lobby → **Gabung sekarang**.
+3. Saat guru (pemandu) pertama kali masuk, ruang menjadi **Berlangsung**. Bila **Beri tahu kelas** nyala, murid kelas itu menerima notifikasi **"Kelas X sedang JUMPA · Gabung sekarang."**. Bila mati, tidak ada notifikasi (cocok untuk mencoba kamera dulu).
 4. Murid melihat **Gabung JUMPA** berdenyut di halaman kelas dan di paling atas beranda.
 5. Di dalam ruang: **Lainnya → Bagikan ruang** membuka lembar bagikan.
 6. Selesai: **Lainnya → Akhiri untuk semua** (atau batas waktu paket / ruang kosong). Guru melihat **layar selesai** dengan durasi, jumlah hadir, dan daftar kehadiran.
@@ -167,6 +167,7 @@ Setiap notifikasi dicatat di `JumpaNotice` dengan `dedupeKey` unik, sehingga tid
 
 Aturan:
 
+- **Beri tahu kelas** (`JumpaRoom.notifyClass`, nyala bawaan): sakelar di panel kelas (rapat instan), form jadwal, dan ruang guru ber-komunitas di `/jumpa`. Bila mati, kelas/komunitas (termasuk kelas tambahan) tidak menerima notifikasi apa pun untuk rapat itu: berlangsung, dijadwalkan, pengingat 10 menit, diubah, dibatalkan. Yang tetap menerima: orang yang diundang satu per satu dan pengingat untuk pembuat. Server yang menegakkan (`noticeAudience`), bukan hanya UI.
 - **Ruang belajar bareng (MURID) tidak pernah menyiarkan notifikasi.**
 - Pembuat tidak menerima "dijadwalkan" / "berlangsung" untuk ruangnya sendiri.
 - Akun Junior tidak menerima siaran.
@@ -180,6 +181,8 @@ Aturan:
 - **Migrasi** `20261019000000_jumpa_flow`:
   - Tabel `JumpaNotice` dengan RLS **aktif tanpa policy** (akses hanya lewat Prisma/BYPASSRLS).
   - Indeks `JumpaRoom(status, scheduledAt)`.
+  - Kolom `JumpaRoom.notifyClass BOOLEAN NOT NULL DEFAULT true` ("Beri tahu kelas"; ruang lama tetap memberi tahu seperti sebelumnya).
+  - **Kode baru membaca kolom ini**, jadi terapkan migrasi **sebelum** kode ini aktif (aditif, aman untuk kode lama).
   - Jadwal memakai kolom yang sudah ada: `JumpaRoom.status = SCHEDULED`, `scheduledAt`, dan `maxDurationMin` (durasi pilihan, dibatasi paket). Pembatalan: `status = ENDED`, `endReason = CANCELLED`.
   - Terapkan lewat `ops/vps/jumpa-setup.sh` (sudah memuat migrasi ini) atau `psql -f` lalu `prisma migrate resolve --applied 20261019000000_jumpa_flow`. **Jangan** `migrate deploy`.
 - **Cron**: `* * * * * /usr/local/bin/bc-cron-call /api/cron/jumpa-reminders`.
@@ -222,7 +225,7 @@ Keterangan: [x] sudah ditangani dan diuji · [ ] belum / keputusan.
 
 **Keputusan & batasan**
 
-- [ ] **Notifikasi "sedang JUMPA" untuk ruang instan** juga terkirim ke seluruh kelas saat guru masuk, termasuk bila guru hanya mencoba. *Keputusan CEO*: pertahankan, batasi ke jadwal saja, atau beri pilihan "Beri tahu kelas" di tombol Mulai.
+- [x] **Notifikasi "sedang JUMPA" untuk ruang instan**: keputusan CEO, sakelar **Beri tahu kelas** (nyala bawaan) di panel kelas dan form jadwal. Mati = tanpa notifikasi kelas untuk rapat itu.
 - [ ] **Kehadiran bergantung webhook LiveKit** (`/api/jumpa/webhook`, sudah ada sejak Fase 2). Bila webhook tidak sampai, "Hadir" = 0. Token yang diterbitkan tidak dihitung sebagai hadir.
 - [ ] **Tidak ada notifikasi email.** BC belum punya sistem email notifikasi. Preferensi yang dihormati hanya izin push per perangkat.
 - [ ] **Tautan 24 jam hanya untuk ruang guru** (perilaku Fase 2). Ruang kelas cukup tautan biasa, karena hanya anggota yang bisa masuk.

@@ -608,10 +608,11 @@ mig_objects_sql() {
                  + (select count(*) from information_schema.columns where table_schema='public' and ((table_name='JumpaRoom' and column_name='chatEnabled') or (table_name='JumpaParticipant' and column_name='totalSeconds') or (table_name='JumpaEvent' and column_name='dedupeKey')))" ;;
     *_jumpa_flow)
       echo "select (select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind='r' and c.relname='JumpaNotice')
-                 + (select count(*) from pg_indexes where schemaname='public' and indexname='JumpaRoom_status_scheduledAt_idx')" ;;
+                 + (select count(*) from pg_indexes where schemaname='public' and indexname='JumpaRoom_status_scheduledAt_idx')
+                 + (select count(*) from information_schema.columns where table_schema='public' and table_name='JumpaRoom' and column_name='notifyClass')" ;;
   esac
 }
-mig_expected() { case "$1" in *_jumpa_phase1) echo 7 ;; *_jumpa_phase2) echo 6 ;; *_jumpa_flow) echo 2 ;; esac; }
+mig_expected() { case "$1" in *_jumpa_phase1) echo 7 ;; *_jumpa_phase2) echo 6 ;; *_jumpa_flow) echo 3 ;; esac; }
 mig_rls_tables() { case "$1" in *_jumpa_phase1) echo "'JumpaRoom','JumpaParticipant','JumpaEvent'" ;; *_jumpa_phase2) echo "'JumpaInvite','JumpaChatMessage','JumpaReport'" ;; *_jumpa_flow) echo "'JumpaNotice'" ;; esac; }
 
 PREV_PLANNED=0

@@ -14,6 +14,7 @@ import { JUMPA_ENABLED } from "@/lib/features";
 import type { GroupJumpaData, HistoryItem } from "@/lib/jumpa/scheduling";
 import ShareSheet from "./ShareSheet";
 import StartJumpaButton from "./StartJumpaButton";
+import NotifyClassToggle from "./NotifyClassToggle";
 import { minutesLabel, whenLabel } from "./entry-format";
 import "./jumpa-entry.css";
 
@@ -25,6 +26,8 @@ function lastLine(last: HistoryItem): string {
 export default function KelasJumpaPanel({ groupId, role, className = "" }: { groupId: string; role: "GURU" | "MURID"; className?: string }) {
   const [data, setData] = useState<GroupJumpaData | null>(null);
   const [share, setShare] = useState<HistoryItem | null>(null);
+  // "Beri tahu kelas": nyala bawaan untuk rapat instan dari panel kelas.
+  const [notify, setNotify] = useState(true);
 
   const load = useCallback(() => {
     fetch(`/api/jumpa/kelas/${encodeURIComponent(groupId)}`, { cache: "no-store" })
@@ -82,13 +85,14 @@ export default function KelasJumpaPanel({ groupId, role, className = "" }: { gro
         {live ? (
           <Link href={`/jumpa/${live.code}`} className="jpe-btn" data-tone="grad"><Video size={18} aria-hidden /> Masuk lagi</Link>
         ) : (
-          <StartJumpaButton groupId={groupId} variant="grad" className="max-[479px]:w-full" />
+          <StartJumpaButton groupId={groupId} variant="grad" className="max-[479px]:w-full" notifyClass={notify} />
         )}
         <Link href={`/jumpa/jadwal?kelas=${encodeURIComponent(groupId)}`} className="jpe-ghost"><CalendarPlus size={16} aria-hidden /> Jadwalkan</Link>
         {live && (
           <button type="button" className="jpe-ghost" onClick={() => setShare(live)}><Share2 size={16} aria-hidden /> Bagikan</button>
         )}
       </div>
+      {!live && <NotifyClassToggle on={notify} onChange={setNotify} className="mt-3" />}
 
       {upcoming.length > 0 && (
         <div className="mt-4 grid gap-2">

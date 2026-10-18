@@ -358,8 +358,8 @@ export async function createReport(
     if (recipients.length) {
       // In-app + Web Push lewat sistem notifikasi platform (sekali per laporan).
       await deliverRoomNotice(
-        { id: room.id, code: room.code, title: room.title, kind: room.kind, groupId: room.groupId, communityId: room.communityId, createdById: room.createdById, scheduledAt: room.scheduledAt },
-        "REPORT",
+        { id: room.id, code: room.code, title: room.title, kind: room.kind, groupId: room.groupId, communityId: room.communityId, createdById: room.createdById, scheduledAt: room.scheduledAt, notifyClass: true },
+        "REPORT", // penerima eksplisit (guru/admin) — tidak terpengaruh "Beri tahu kelas"
         { variant: report.id, recipients, category: JUMPA_REPORT_CATEGORIES[category] },
       );
     }

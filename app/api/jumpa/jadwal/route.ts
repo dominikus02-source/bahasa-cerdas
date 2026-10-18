@@ -1,7 +1,7 @@
 /**
  * POST /api/jumpa/jadwal — jadwalkan JUMPA (guru saja).
  * Body: { kind: "KELAS"|"GURU", groupId?, communityId?, title?, date: "YYYY-MM-DD",
- *         time: "HH:MM" (WIB), durationMin, extraGroupIds?, userIds? }.
+ *         time: "HH:MM" (WIB), durationMin, extraGroupIds?, userIds?, notifyClass? }.
  * Validasi: lib/jumpa/schedule.ts. Notifikasi "JUMPA dijadwalkan" ke penerima.
  */
 import { z } from "zod";
@@ -24,6 +24,7 @@ const bodySchema = z.object({
   durationMin: z.number().int().min(1).max(600),
   extraGroupIds: z.array(id).max(10).optional(),
   userIds: z.array(id).max(30).optional(),
+  notifyClass: z.boolean().optional(),
 });
 
 export async function POST(request: Request) {
