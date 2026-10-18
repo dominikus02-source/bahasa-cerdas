@@ -79,8 +79,8 @@ check("12. Cabang diag coming-soon jujur: 'Sambil menunggu, mulai belajar di Jal
 check("13. Bar akurasi skill TIDAK diduplikasi di hero (permukaan skill = SkillRadar)",
   !hero.includes('role="progressbar"') && read("components/arena/player/SkillRadar.tsx").includes("skills"));
 check("14. Reason tetap eksplisit di hero (supporting = myDay.reasonText)", hero.includes("myDay.reasonText"));
-check("15. Hero tetap CTA utama gold gradient (diagnostik sah — bukan px-btn-gold duplikat)",
-  hero.includes("from-[#ffd24a]") && hero.includes("Mulai Tes"));
+check("15. Hero tetap CTA utama (gradien merek) (diagnostik sah — bukan px-btn-gold duplikat)",
+  hero.includes("buttonClass({ variant: \"primary\"") && hero.includes("Mulai Tes"));
 check("16. Guard literal targetSkill tidak dilanggar (test:my-day-home #15)",
   !hero.includes("targetSkill"));
 
