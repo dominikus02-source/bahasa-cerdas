@@ -1,5 +1,7 @@
 /**
- * JUMPA Fase 1 — uji matriks izin & batas (murni, tanpa DB/jaringan).
+ * JUMPA Fase 1+2 — uji matriks izin & batas (murni, tanpa DB/jaringan).
+ * Fase 2 lanjutan: test-jumpa-room-types.ts, test-jumpa-host-actions.ts,
+ * test-jumpa-chat-moderation.ts.
  * Jalankan: npm run test:jumpa-permissions
  */
 import { readFileSync } from "fs"
@@ -18,7 +20,7 @@ import { JUMPA_CAPS, capsFor, isPastDuration } from "../lib/jumpa/caps"
 import { generateRoomCode, isValidRoomCode, generateLivekitRoomName } from "../lib/jumpa/code"
 import { livekitCspOrigins } from "../lib/jumpa/config"
 import { parseMediaPrefs, DEFAULT_MEDIA_PREFS } from "../components/jumpa/media-prefs"
-import { gridColumns, initials, parseParticipantMeta } from "../components/jumpa/format"
+import { avatarTone, fitGrid, gridColumns, initials, parseParticipantMeta } from "../components/jumpa/format"
 
 let passed = 0
 let failed = 0
@@ -47,7 +49,7 @@ check("MURID → MURID", effectiveRole(murid) === "MURID")
 check("Founder → GURU", effectiveRole(founder) === "GURU")
 check("ADMIN non-founder → ditolak (null)", effectiveRole(admin) === null)
 
-console.log("\n2. Buat ruang (Fase 1)")
+console.log("\n2. Buat ruang (Fase 1 + Fase 2)")
 const ownGroup = { ownedByActor: true, isActive: true }
 check("Fase 1 hanya KELAS", PHASE1_CREATABLE_KINDS.length === 1 && PHASE1_CREATABLE_KINDS[0] === "KELAS")
 check("Guru pemilik kelas boleh buat KELAS", canCreateRoom({ actor: guru, kind: "KELAS", group: ownGroup }).ok)
@@ -59,14 +61,17 @@ check("Kelas nonaktif ditolak", !inactive.ok && inactive.code === "GROUP_INACTIV
 check("Tanpa kelas ditolak", !canCreateRoom({ actor: guru, kind: "KELAS", group: null }).ok)
 const muridCreate = canCreateRoom({ actor: murid, kind: "KELAS", group: ownGroup })
 check("Murid tidak bisa buat KELAS", !muridCreate.ok && muridCreate.code === "ROLE_NOT_ALLOWED")
-const guruKind = canCreateRoom({ actor: guru, kind: "GURU", group: null })
-check("Ruang GURU belum tersedia di Fase 1", !guruKind.ok && guruKind.code === "KIND_NOT_AVAILABLE")
-const muridKind = canCreateRoom({ actor: murid, kind: "MURID", group: null })
-check("Ruang MURID belum tersedia di Fase 1", !muridKind.ok && muridKind.code === "KIND_NOT_AVAILABLE")
+const guruKindP1 = canCreateRoom({ actor: guru, kind: "GURU", group: null, allowedKinds: PHASE1_CREATABLE_KINDS })
+check("Mode Fase 1 (allowedKinds) tetap menolak GURU", !guruKindP1.ok && guruKindP1.code === "KIND_NOT_AVAILABLE")
+const muridKindP1 = canCreateRoom({ actor: murid, kind: "MURID", group: { ownedByActor: false, isActive: true, actorIsMember: true }, allowedKinds: PHASE1_CREATABLE_KINDS })
+check("Mode Fase 1 (allowedKinds) tetap menolak MURID", !muridKindP1.ok && muridKindP1.code === "KIND_NOT_AVAILABLE")
+check("Fase 2 default: guru boleh buat ruang GURU", canCreateRoom({ actor: guru, kind: "GURU", group: null }).ok)
 check("Admin tidak bisa buat ruang", !canCreateRoom({ actor: admin, kind: "KELAS", group: ownGroup }).ok)
 // Matriks Fase 2 (sudah ditegakkan bila kind dibuka)
 const all = ["KELAS", "GURU", "MURID"] as const
-check("[Fase 2] Murid boleh buat MURID", canCreateRoom({ actor: murid, kind: "MURID", group: null, allowedKinds: all }).ok)
+const classmateGroup = { ownedByActor: false, isActive: true, actorIsMember: true }
+check("[Fase 2] Murid anggota kelas boleh buat MURID", canCreateRoom({ actor: murid, kind: "MURID", group: classmateGroup, allowedKinds: all }).ok)
+check("[Fase 2] Murid tanpa kelas tidak boleh buat MURID", !canCreateRoom({ actor: murid, kind: "MURID", group: null, allowedKinds: all }).ok)
 check("[Fase 2] Junior tidak boleh buat MURID", !canCreateRoom({ actor: junior, kind: "MURID", group: null, allowedKinds: all }).ok)
 check("[Fase 2] Guru tidak boleh buat MURID", !canCreateRoom({ actor: guru, kind: "MURID", group: null, allowedKinds: all }).ok)
 check("[Fase 2] Murid tidak boleh buat GURU", !canCreateRoom({ actor: murid, kind: "GURU", group: null, allowedKinds: all }).ok)
@@ -118,8 +123,8 @@ const groom = { ...room, kind: "GURU" as const }
 check("Murid tidak masuk ruang GURU", !join({ actor: murid, room: groom, relation: { isGroupMember: true } }).ok)
 
 console.log("\n6. Sumber publish & caps")
-check("Fase 1 publish = kamera + mikrofon saja", JSON.stringify(publishSourcesFor("MEMBER", "MURID")) === '["camera","microphone"]')
-check("Host pun belum dapat screen share di Fase 1", !publishSourcesFor("HOST", "GURU").includes("screen_share" as never))
+check("Tanpa konteks (pemanggil Fase 1) publish = kamera + mikrofon saja", JSON.stringify(publishSourcesFor("MEMBER", "MURID")) === '["camera","microphone"]')
+check("Tanpa konteks, host pun tanpa screen share", !publishSourcesFor("HOST", "GURU").includes("screen_share" as never))
 check("Caps MURID 8 org / 60 mnt", JUMPA_CAPS.MURID.maxParticipants === 8 && JUMPA_CAPS.MURID.maxDurationMin === 60)
 check("Caps KELAS 50 org / 120 mnt", capsFor("KELAS").maxParticipants === 50 && capsFor("KELAS").maxDurationMin === 120)
 check("isPastDuration tepat di batas = belum lewat", !isPastDuration(new Date(NOW.getTime() - 60 * 60_000), 60, NOW))
@@ -148,6 +153,15 @@ check("Metadata palsu diabaikan", parseParticipantMeta('{"bcRole":"ADMIN","roomR
 check("Metadata valid terbaca", parseParticipantMeta('{"bcRole":"GURU","roomRole":"HOST"}').roomRole === "HOST")
 check("Grid mobile maks 2 kolom", gridColumns(12, false) === 2 && gridColumns(2, false) === 1)
 check("Grid desktop 3x3 untuk 9", gridColumns(9, true) === 3 && gridColumns(1, true) === 1)
+const g6 = fitGrid(6, 1376, 720, 16, 16 / 9)
+check("fitGrid desktop 6 peserta → 3 kolom, rasio 16:9", !!g6 && g6.cols === 3 && Math.abs(g6.tileW / g6.tileH - 16 / 9) < 0.02)
+check("fitGrid: total grid muat di area", !!g6 && g6.cols * g6.tileW + 2 * 16 <= 1376 && Math.ceil(6 / g6.cols) * g6.tileH + 16 <= 720)
+for (const w of [360, 390, 430]) {
+  const m = fitGrid(6, w - 24, 600, 8, 4 / 5, 2)
+  check(`fitGrid mobile ${w}px: maks 2 kolom, muat lebar`, !!m && m.cols <= 2 && m.cols * m.tileW + (m.cols - 1) * 8 <= w - 24)
+}
+check("fitGrid area kosong → null (fallback kolom)", fitGrid(4, 0, 0, 8, 1) === null && fitGrid(0, 100, 100, 8, 1) === null)
+check("avatarTone stabil & 0–3", avatarTone("u-ani") === avatarTone("u-ani") && [..."abcdefgh"].every((c) => avatarTone(c) >= 0 && avatarTone(c) <= 3))
 
 console.log("\n10. Struktur & guard")
 const ROOT = pathJoin(import.meta.dirname, "..")
@@ -168,6 +182,14 @@ const migration = read("prisma/migrations/20261018000000_jumpa_phase1/migration.
 check("Migration: 3 tabel + RLS enable", ["JumpaRoom", "JumpaParticipant", "JumpaEvent"].every((t) => migration.includes(`CREATE TABLE "${t}"`) && migration.includes(`ALTER TABLE "${t}" ENABLE ROW LEVEL SECURITY`)))
 check("Migration add-only (tanpa DROP/ALTER COLUMN tabel lama)", !/^\s*DROP\s/im.test(migration) && !/ALTER TABLE "(?!Jumpa)/.test(migration))
 const css = read("components/jumpa/jumpa.css")
+const roomView = read("components/jumpa/JumpaRoomView.tsx")
+check("Mobile: tombol Layar hanya di bar saat lebar, di Lainnya saat sempit", roomView.includes("{canScreen && wide && (") && roomView.includes("{canScreen && !wide && ("))
+check("Bar kontrol & area video memakai safe-area kiri/kanan", (roomView.match(/env\(safe-area-inset-left\)/g) ?? []).length >= 3)
+check("Area video min-w-0 (tidak melebar keluar layar)", roomView.includes('className="relative min-h-0 min-w-0 flex-1" aria-label="Video peserta"'))
+check("Tombol bulat menyusut di layar sempit (clamp)", css.includes("width: clamp(46px, 12.8vw, 56px)"))
+check("Tile sempit: nama depan + badge 1 huruf (container query)", css.includes("@container jumpa-tile (max-width: 230px)") && read("components/jumpa/ParticipantTile.tsx").includes("jumpa-badge-mini"))
+check("Indikator pembicara: tile data-speaking bercincin aksen", /\.jumpa-tile\[data-speaking="true"\] \{[^}]*var\(--jp-accent\)/.test(css))
+check("Reduced motion: indikator pembicara tanpa animasi tapi tetap terlihat", /prefers-reduced-motion[\s\S]*data-speaking="true"\]::after \{ animation: none/.test(css))
 check("jumpa.css tanpa hex hardcode (THEME RULE)", !/#[0-9a-fA-F]{3,8}\b/.test(css))
 const ui = ["components/jumpa/JumpaLobby.tsx", "components/jumpa/JumpaRoomView.tsx", "components/jumpa/ParticipantTile.tsx", "components/jumpa/JumpaApp.tsx"].map(read).join("\n")
 check("UI JUMPA tanpa bg-white/text-slate-900/hex", !/bg-white|text-slate-900|bg-\[#/.test(ui))

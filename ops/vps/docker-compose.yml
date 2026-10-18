@@ -132,7 +132,9 @@ services:
     env_file:
       - ${BC_CONFIG_DIR:-/opt/bahasacerdas/config}/livekit.env
     volumes:
-      - ./livekit.yaml:/etc/livekit.yaml:ro
+      # Fase 2: dirender dari ./livekit.yaml oleh render-livekit-config.sh
+      # (prepare-runtime-envs.sh) — menambah webhook & TURN opsional.
+      - ${BC_CONFIG_DIR:-/opt/bahasacerdas/config}/livekit.yaml:/etc/livekit.yaml:ro
     ports:
       - "127.0.0.1:7880:7880"   # API/WS — publik hanya lewat Caddy
       - "7881:7881/tcp"         # ICE/TCP
@@ -212,6 +214,7 @@ services:
       NOVELIFY_DOMAIN: ${NOVELIFY_DOMAIN:-novelify.online}
       NOVELIFY_WWW_DOMAIN: ${NOVELIFY_WWW_DOMAIN:-www.novelify.online}
       JUMPA_DOMAIN: ${JUMPA_DOMAIN:-jumpa.bahasacerdas.com}
+      JUMPA_TURN_DOMAIN: ${JUMPA_TURN_DOMAIN:-turn.bahasacerdas.com}
     ports:
       - "80:80"
       - "443:443"

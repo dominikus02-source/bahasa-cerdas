@@ -4,11 +4,14 @@
  * Urutan: sesi Supabase → ruang → izin (lib/jumpa/permissions.ts) →
  * kapasitas → buat ruang LiveKit (idempotent) → token 10 menit tanpa
  * izin admin. Pola sama dengan app/api/game/socket-token/route.ts.
+ *
+ * Fase 2: body opsional { invite?: string } — token tautan undangan guru
+ * (?u= di URL). Sumber media memakai konteks ruang (berbagi layar).
  */
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { rateLimitRoute } from "@/lib/rate-limit";
-import { isValidRoomCode } from "@/lib/jumpa/code";
+import { INVITE_TOKEN_RE, isValidRoomCode } from "@/lib/jumpa/code";
 import { getLivekitPublicWsUrl, getLivekitServerConfig } from "@/lib/jumpa/config";
 import { countActiveOthers, ensureLivekitRoom } from "@/lib/jumpa/livekit";
 import { publishSourcesFor } from "@/lib/jumpa/permissions";
@@ -26,6 +29,9 @@ const DENY_STATUS: Record<string, number> = {
   ROOM_FULL: 409,
   ROOM_ENDED: 410,
   ROOM_EXPIRED: 410,
+  JUNIOR_NOT_ALLOWED: 403,
+  NOT_GROUP_MEMBER: 403,
+  NOT_COMMUNITY_MEMBER: 403,
 };
 
 export async function POST(request: Request, { params }: { params: Promise<{ code: string }> }) {
@@ -41,6 +47,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ cod
   const { code } = await params;
   if (!isValidRoomCode(code)) return jumpaError(404, "NOT_FOUND", "Ruang tidak ditemukan.");
 
+  const body = (await request.json().catch(() => null)) as { invite?: unknown } | null;
+  const linkToken = typeof body?.invite === "string" && INVITE_TOKEN_RE.test(body.invite) ? body.invite : null;
+
   const config = getLivekitServerConfig();
   if (!config) {
     console.error("JUMPA_LIVEKIT_NOT_CONFIGURED");
@@ -52,7 +61,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ cod
     if (!base) return jumpaError(404, "NOT_FOUND", "Ruang tidak ditemukan.");
 
     const activeOthers = await countActiveOthers(base.livekitRoomName, user.id, config);
-    const ctx = await loadRoomContext(code, user, activeOthers);
+    const ctx = await loadRoomContext(code, user, activeOthers, new Date(), linkToken);
     if (!ctx) return jumpaError(404, "NOT_FOUND", "Ruang tidak ditemukan.");
 
     if (!ctx.decision.ok) {
@@ -79,12 +88,22 @@ export async function POST(request: Request, { params }: { params: Promise<{ cod
       identity: user.id,
       name: (profile?.nickname || profile?.fullName || "Pengguna BC").slice(0, 60),
       metadata: { v: 1, bcRole: effective, roomRole, avatar: profile?.avatar ?? null },
-      grant: buildJoinGrant(ctx.room.livekitRoomName, publishSourcesFor(roomRole, effective)),
+      grant: buildJoinGrant(
+        ctx.room.livekitRoomName,
+        publishSourcesFor(roomRole, effective, { kind: ctx.room.kind, allowMuridScreenShare: ctx.room.allowMuridScreenShare }),
+      ),
     });
 
-    await recordJoinGranted({ room: ctx.room, userId: user.id, roomRole, accessVia });
+    const { startedAt } = await recordJoinGranted({ room: ctx.room, userId: user.id, roomRole, accessVia });
+    const endsAt = startedAt ? new Date(startedAt.getTime() + ctx.room.maxDurationMin * 60_000).toISOString() : ctx.view.endsAt;
 
-    return jumpaJson({ token, serverUrl: getLivekitPublicWsUrl(), roomRole });
+    return jumpaJson({
+      token,
+      serverUrl: getLivekitPublicWsUrl(),
+      roomRole,
+      self: { userId: user.id, bcRole: effective },
+      room: { ...ctx.view, status: "LIVE", endsAt },
+    });
   } catch (error) {
     console.error("JUMPA_TOKEN_FAILED", { error: error instanceof Error ? error.message : String(error) });
     return jumpaError(503, "STORAGE_UNAVAILABLE", "JUMPA belum tersedia saat ini. Coba lagi sebentar.");

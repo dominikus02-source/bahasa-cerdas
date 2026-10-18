@@ -14,6 +14,15 @@
 #   --skip-deploy Lakukan semua langkah kecuali deploy (untuk debug).
 #   --disable     Rollback: NEXT_PUBLIC_JUMPA_ENABLED=false, deploy ulang web,
 #                 hentikan livekit, cabut situs Caddy jumpa. Tabel DB dibiarkan.
+#   --enable-turn  (Fase 2) Nyalakan TURN/TLS bawaan LiveKit di 5349/tcp untuk
+#                 jaringan sekolah yang memblokir UDP. Butuh DNS
+#                 turn.bahasacerdas.com (atau TURN_DOMAIN=...) → IP server,
+#                 "DNS only". Default: TURN MATI.
+#   --disable-turn Matikan lagi TURN (tanpa menyentuh bagian lain).
+#
+# Fase 2: migrasi DB diterapkan berurutan (fase 1 lalu fase 2); yang sudah
+# ada dilewati. Konfigurasi LiveKit dirender ke $BC_CONFIG_DIR/livekit.yaml
+# (webhook kehadiran otomatis).
 #
 # Idempoten: aman dijalankan berulang. Kunci LiveKit yang sudah ada TIDAK
 # pernah ditimpa; migrasi yang sudah ada dilewati.
@@ -35,7 +44,10 @@ JUMPA_DOMAIN="${JUMPA_DOMAIN:-jumpa.bahasacerdas.com}"
 WEB_URL="${WEB_URL:-https://www.bahasacerdas.com}"
 EXPECTED_IP="${EXPECTED_IP:-103.242.10.81}"
 SYSCTL_FILE="${JUMPA_SYSCTL_FILE:-/etc/sysctl.d/99-livekit.conf}"
-MIGRATION_NAME="20261018000000_jumpa_phase1"
+MIGRATION_NAME="20261018000000_jumpa_phase1"   # rollback DB: lihat header file ini
+MIGRATIONS=("20261018000000_jumpa_phase1" "20261018120000_jumpa_phase2")
+TURN_DOMAIN="${TURN_DOMAIN:-turn.bahasacerdas.com}"
+TURN_CRON_FILE="${JUMPA_TURN_CRON_FILE:-/etc/cron.d/bahasacerdas-jumpa-turn}"
 PRISMA_VERSION="5.22.0"
 PG_CLIENT_IMAGE="${PG_CLIENT_IMAGE:-postgres:17-alpine}"
 NODE_IMAGE="${NODE_IMAGE:-node:22-bookworm}"
@@ -46,6 +58,7 @@ DRY_RUN=0
 ASSUME_YES=0
 SKIP_DEPLOY=0
 MODE="enable"
+TURN_MODE="keep"
 
 for arg in "$@"; do
   case "$arg" in
@@ -53,14 +66,15 @@ for arg in "$@"; do
     --yes|-y) ASSUME_YES=1 ;;
     --skip-deploy) SKIP_DEPLOY=1 ;;
     --disable) MODE="disable" ;;
-    -h|--help) sed -n '2,32p' "$0"; exit 0 ;;
+    --enable-turn) TURN_MODE="enable" ;;
+    --disable-turn) TURN_MODE="disable" ;;
+    -h|--help) sed -n '2,42p' "$0"; exit 0 ;;
     *) echo "Opsi tidak dikenal: $arg (lihat --help)" >&2; exit 2 ;;
   esac
 done
 
 WEB_ENV="$CONFIG_DIR/web.env"
 STACK_ENV="$CONFIG_DIR/stack.env"
-MIGRATION_SQL="$REPO_DIR/prisma/migrations/$MIGRATION_NAME/migration.sql"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 
 # ── Tampilan ────────────────────────────────────────────────────────────────
@@ -223,7 +237,10 @@ if [[ "$branch" != "main" ]]; then
   warn "Repo sedang di branch '$branch' (deploy.sh akan pindah ke main)."
   confirm "Branch bukan main."
 fi
-for f in ops/vps/deploy.sh ops/vps/livekit.yaml ops/vps/caddy/jumpa.caddy "prisma/migrations/$MIGRATION_NAME/migration.sql"; do
+REQUIRED_FILES=(ops/vps/deploy.sh ops/vps/livekit.yaml ops/vps/render-livekit-config.sh ops/vps/caddy/jumpa.caddy
+                ops/vps/caddy/jumpa-turn.caddy ops/vps/docker-compose.jumpa-turn.yml ops/vps/jumpa-turn-cert-sync.sh)
+for m in "${MIGRATIONS[@]}"; do REQUIRED_FILES+=("prisma/migrations/$m/migration.sql"); done
+for f in "${REQUIRED_FILES[@]}"; do
   [[ -f "$REPO_DIR/$f" ]] || die "File $f tidak ada — PR JUMPA belum di-merge / belum git pull?" "cd $REPO_DIR && git checkout main && git pull --ff-only origin main"
 done
 grep -q 'ENABLE_JUMPA' "$REPO_DIR/ops/vps/deploy.sh" || die "deploy.sh belum mendukung ENABLE_JUMPA — git pull dulu."
@@ -296,6 +313,13 @@ if [[ "$MODE" == "disable" ]]; then
   else
     ok "Snippet tidak terpasang"
   fi
+  if [[ -f "$CONFIG_DIR/caddy.d/jumpa-turn.caddy" ]]; then
+    run mv "$CONFIG_DIR/caddy.d/jumpa-turn.caddy" "$CONFIG_DIR/jumpa-turn.caddy.disabled-$STAMP"
+    chg "Snippet TURN dipindah"
+  fi
+  if [[ -f "$TURN_CRON_FILE" ]]; then
+    run rm -f "$TURN_CRON_FILE"; chg "Cron sinkron sertifikat TURN dihapus"
+  fi
 
   if (( SKIP_DEPLOY )); then
     warn "--skip-deploy: deploy dilewati"; record SKIP "Deploy"
@@ -318,7 +342,7 @@ if [[ "$MODE" == "disable" ]]; then
     ok "livekit tidak berjalan"
   fi
   record_chg "LiveKit berhenti"
-  info "Tabel Jumpa* di DB sengaja dibiarkan (tidak berbahaya). Rollback DB: lihat header $MIGRATION_SQL"
+  info "Tabel Jumpa* di DB sengaja dibiarkan (tidak berbahaya). Rollback DB: lihat header migration.sql fase 2 lalu fase 1 (prisma/migrations/2026101812*_jumpa_phase2, ${MIGRATION_NAME})"
   print_summary "$( ((DRY_RUN)) && echo DRYRUN || echo SUKSES)"
   exit 0
 fi
@@ -415,15 +439,75 @@ warn "INGAT: firewall di panel IDCloudHost juga harus mengizinkan 7881/tcp dan 7
 record WARN "Panel IDCloudHost: pastikan 7881/tcp + 7882/udp terbuka (manual)"
 
 # =============================================================================
+# 4b. TURN/TLS (Fase 2, opsional)
+# =============================================================================
+step "TURN/TLS (opsional, Fase 2)"
+cur_turn="$(env_get "$STACK_ENV" JUMPA_TURN_ENABLED)"
+TURN_ON=0
+case "$TURN_MODE" in
+  enable)
+    TURN_ON=1
+    turn_ips="$(getent ahostsv4 "$TURN_DOMAIN" 2>/dev/null | awk '{print $1}' | sort -u | tr '\n' ' ' || true)"
+    turn_ips="${turn_ips% }"
+    if [[ -z "$turn_ips" ]]; then
+      warn "DNS $TURN_DOMAIN belum ada. Buat A record → ${public_ip:-$EXPECTED_IP} (DNS only)."
+      record WARN "DNS $TURN_DOMAIN belum resolve"
+      confirm "DNS TURN belum siap (sertifikat TURN baru dibuat setelah DNS benar)."
+    elif [[ " $turn_ips " == *" ${public_ip:-$EXPECTED_IP} "* ]]; then
+      ok "DNS $TURN_DOMAIN → $turn_ips (cocok)"
+    else
+      warn "DNS $TURN_DOMAIN → $turn_ips, BUKAN ${public_ip:-$EXPECTED_IP}. TURN tidak bisa lewat proxy Cloudflare — set 'DNS only'."
+      record WARN "DNS $TURN_DOMAIN → $turn_ips"
+      confirm "DNS TURN tidak menunjuk ke server ini."
+    fi
+    if [[ "$cur_turn" == "1" ]]; then ok "JUMPA_TURN_ENABLED sudah 1"; else env_set "$STACK_ENV" JUMPA_TURN_ENABLED 1; chg "JUMPA_TURN_ENABLED=1 (stack.env)"; fi
+    if [[ "$(env_get "$STACK_ENV" JUMPA_TURN_DOMAIN)" == "$TURN_DOMAIN" ]]; then ok "JUMPA_TURN_DOMAIN sudah $TURN_DOMAIN"; else env_set "$STACK_ENV" JUMPA_TURN_DOMAIN "$TURN_DOMAIN"; chg "JUMPA_TURN_DOMAIN=$TURN_DOMAIN"; fi
+    if command -v ufw >/dev/null && ufw status 2>/dev/null | grep -q '^Status: active'; then
+      run ufw allow 5349/tcp comment 'JUMPA TURN/TLS'
+      run ufw allow 3478/udp comment 'JUMPA TURN/UDP'
+      run ufw allow 30000:30100/udp comment 'JUMPA TURN relay'
+      chg "ufw: 5349/tcp, 3478/udp, 30000-30100/udp diizinkan"
+    fi
+    CRON_LINE="17 4 * * * root BC_CONFIG_DIR=$CONFIG_DIR bash $REPO_DIR/ops/vps/jumpa-turn-cert-sync.sh >> /var/log/bahasacerdas-jumpa-turn.log 2>&1"
+    if [[ -f "$TURN_CRON_FILE" && "$(cat "$TURN_CRON_FILE")" == "$CRON_LINE" ]]; then
+      ok "Cron sinkron sertifikat TURN sudah terpasang"
+    elif (( DRY_RUN )); then
+      info "[dry-run] akan menulis $TURN_CRON_FILE (sinkron sertifikat harian 04:17)"
+    else
+      printf '%s\n' "$CRON_LINE" > "$TURN_CRON_FILE"; chmod 644 "$TURN_CRON_FILE"
+      ok "Cron sinkron sertifikat TURN: $TURN_CRON_FILE"
+    fi
+    warn "INGAT: panel IDCloudHost juga harus mengizinkan 5349/tcp, 3478/udp, 30000-30100/udp."
+    record_chg "TURN/TLS aktif ($TURN_DOMAIN:5349)"
+    ;;
+  disable)
+    if [[ "$cur_turn" == "1" ]]; then env_set "$STACK_ENV" JUMPA_TURN_ENABLED 0; chg "JUMPA_TURN_ENABLED=0"; else ok "TURN sudah mati"; fi
+    if [[ -f "$TURN_CRON_FILE" ]]; then run rm -f "$TURN_CRON_FILE"; chg "Cron sertifikat TURN dihapus"; fi
+    record_chg "TURN/TLS dimatikan"
+    ;;
+  *)
+    if [[ "$cur_turn" == "1" ]]; then
+      TURN_ON=1; ok "TURN aktif (tidak diubah). Matikan: --disable-turn"
+      record OK "TURN aktif (tidak diubah)"
+    else
+      ok "TURN mati (default). Nyalakan bila perlu: --enable-turn"
+      record SKIP "TURN mati (default)"
+    fi
+    ;;
+esac
+
+# =============================================================================
 # 5. Migrasi DB
 # =============================================================================
-step "Migrasi database ($MIGRATION_NAME)"
+step "Migrasi database (${#MIGRATIONS[@]} migrasi JUMPA)"
 MANUAL_DB_HELP="Langkah manual (dari $REPO_DIR, sebagai root):
   getv() { grep -m1 \"^\$1=\" $WEB_ENV | cut -d= -f2- | sed 's/^[\"'\'']//; s/[\"'\'']\$//'; }
   export DIRECT_URL=\"\$(getv DIRECT_URL)\" DATABASE_URL=\"\$(getv DATABASE_URL)\"
-  psql \"\$DIRECT_URL\" -v ON_ERROR_STOP=1 --single-transaction -f prisma/migrations/$MIGRATION_NAME/migration.sql
-  docker run --rm --network host -e DATABASE_URL -e DIRECT_URL -v \"\$PWD/prisma:/work/prisma:ro\" -w /work $NODE_IMAGE \\
-    npx -y prisma@$PRISMA_VERSION migrate resolve --applied $MIGRATION_NAME --schema prisma/schema.prisma
+  for m in ${MIGRATIONS[*]}; do   # urut: fase 1 lalu fase 2 (lewati yang sudah ada)
+    psql \"\$DIRECT_URL\" -v ON_ERROR_STOP=1 --single-transaction -f prisma/migrations/\$m/migration.sql
+    docker run --rm --network host -e DATABASE_URL -e DIRECT_URL -v \"\$PWD/prisma:/work/prisma:ro\" -w /work $NODE_IMAGE \\
+      npx -y prisma@$PRISMA_VERSION migrate resolve --applied \$m --schema prisma/schema.prisma
+  done
 (atau tempel migration.sql di Supabase SQL Editor, lalu jalankan perintah resolve di atas)
 Lalu ulangi script ini — langkah migrasi akan otomatis dilewati."
 
@@ -496,56 +580,72 @@ app_ok="$(sql_val "select (to_regclass('public._prisma_migrations') is not null 
 [[ "$app_ok" == "true" ]] || die "DB terhubung tapi bukan DB aplikasi BC (tabel User/_prisma_migrations tidak ada)." "$MANUAL_DB_HELP"
 ok "Terhubung ke DB aplikasi (tabel User & _prisma_migrations ada)"
 
-n_tables="$(sql_val "select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind='r' and c.relname in ('JumpaRoom','JumpaParticipant','JumpaEvent')")" \
-  || die "Query status tabel gagal." "$MANUAL_DB_HELP"
-n_enums="$(sql_val "select count(*) from pg_type where typtype='e' and typname in ('JumpaRoomKind','JumpaRoomMode','JumpaRoomStatus','JumpaRoomRole')")" \
-  || die "Query status enum gagal." "$MANUAL_DB_HELP"
-resolved="$(sql_val "select count(*) from public._prisma_migrations where migration_name='$MIGRATION_NAME' and finished_at is not null and rolled_back_at is null")" \
-  || die "Query _prisma_migrations gagal." "$MANUAL_DB_HELP"
-info "Status: tabel Jumpa*=$n_tables/3, enum Jumpa*=$n_enums/4, tercatat di Prisma=$resolved"
+# Objek per migrasi: "<jumlah ditemukan> <jumlah diharapkan>" + tabel ber-RLS.
+mig_objects_sql() {
+  case "$1" in
+    *_jumpa_phase1)
+      echo "select (select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind='r' and c.relname in ('JumpaRoom','JumpaParticipant','JumpaEvent'))
+                 + (select count(*) from pg_type where typtype='e' and typname in ('JumpaRoomKind','JumpaRoomMode','JumpaRoomStatus','JumpaRoomRole'))" ;;
+    *_jumpa_phase2)
+      echo "select (select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind='r' and c.relname in ('JumpaInvite','JumpaChatMessage','JumpaReport'))
+                 + (select count(*) from information_schema.columns where table_schema='public' and ((table_name='JumpaRoom' and column_name='chatEnabled') or (table_name='JumpaParticipant' and column_name='totalSeconds') or (table_name='JumpaEvent' and column_name='dedupeKey')))" ;;
+  esac
+}
+mig_expected() { case "$1" in *_jumpa_phase1) echo 7 ;; *_jumpa_phase2) echo 6 ;; esac; }
+mig_rls_tables() { case "$1" in *_jumpa_phase1) echo "'JumpaRoom','JumpaParticipant','JumpaEvent'" ;; *_jumpa_phase2) echo "'JumpaInvite','JumpaChatMessage','JumpaReport'" ;; esac; }
 
-if [[ "$n_tables" == "0" && "$n_enums" == "0" ]]; then
-  if (( DRY_RUN )); then
-    info "[dry-run] akan menerapkan $MIGRATION_SQL (single-transaction)"
-    record PLAN "Migrasi akan diterapkan"
-  else
-    psql_cmd --single-transaction -f - < "$MIGRATION_SQL" || die "Migrasi gagal (transaksi dibatalkan, DB tidak berubah)." "$MANUAL_DB_HELP"
-    ok "Migrasi diterapkan"
-  fi
-elif [[ "$n_tables" == "3" && "$n_enums" == "4" ]]; then
-  ok "Tabel & enum JUMPA sudah ada — apply dilewati"
-else
-  die "Objek JUMPA hanya sebagian ada (tabel $n_tables/3, enum $n_enums/4). Butuh pemeriksaan manual." "$MANUAL_DB_HELP"
-fi
+PREV_PLANNED=0
+for MIG in "${MIGRATIONS[@]}"; do
+  MIG_SQL="$REPO_DIR/prisma/migrations/$MIG/migration.sql"
+  expected="$(mig_expected "$MIG")"
+  found="$(sql_val "$(mig_objects_sql "$MIG")")" || die "Query status objek $MIG gagal." "$MANUAL_DB_HELP"
+  resolved="$(sql_val "select count(*) from public._prisma_migrations where migration_name='$MIG' and finished_at is not null and rolled_back_at is null")" \
+    || die "Query _prisma_migrations gagal." "$MANUAL_DB_HELP"
+  info "$MIG: objek $found/$expected, tercatat di Prisma=$resolved"
+  (( PREV_PLANNED )) && info "(dry-run: dinilai terhadap DB saat ini — migrasi sebelumnya belum diterapkan)"
 
-if (( ! DRY_RUN )); then
-  rls="$(sql_val "select count(*) from pg_class where relname in ('JumpaRoom','JumpaParticipant','JumpaEvent') and relrowsecurity")"
-  if [[ "$rls" == "3" ]]; then
-    ok "Verifikasi: 3 tabel, 4 enum, RLS aktif"
+  if [[ "$found" == "0" ]]; then
+    if (( DRY_RUN )); then
+      info "[dry-run] akan menerapkan $MIG_SQL (single-transaction)"
+      record PLAN "Migrasi $MIG akan diterapkan"
+      PREV_PLANNED=1
+    else
+      psql_cmd --single-transaction -f - < "$MIG_SQL" || die "Migrasi $MIG gagal (transaksi dibatalkan, DB tidak berubah)." "$MANUAL_DB_HELP"
+      ok "Migrasi $MIG diterapkan"
+    fi
+  elif [[ "$found" == "$expected" ]]; then
+    ok "$MIG sudah ada — apply dilewati"
   else
-    die "Verifikasi gagal: RLS aktif di $rls/3 tabel."
+    die "Objek $MIG hanya sebagian ada ($found/$expected). Butuh pemeriksaan manual." "$MANUAL_DB_HELP"
   fi
-fi
 
-if [[ "$resolved" != "0" ]]; then
-  ok "Prisma sudah mencatat migrasi (resolve dilewati)"
-else
-  RESOLVE=(docker run --rm --network "$PG_NET" -e DATABASE_URL -e DIRECT_URL
-           -v "$REPO_DIR/prisma:/work/prisma:ro" -w /work "$NODE_IMAGE"
-           npx -y "prisma@$PRISMA_VERSION" migrate resolve --applied "$MIGRATION_NAME" --schema prisma/schema.prisma)
-  DATABASE_URL="$(env_get "$WEB_ENV" DATABASE_URL)"; DIRECT_URL="$DB_URL"
-  [[ -n "$DATABASE_URL" ]] || DATABASE_URL="$DB_URL"
-  export DATABASE_URL DIRECT_URL
-  if (( DRY_RUN )); then
-    info "[dry-run] akan menjalankan: prisma migrate resolve --applied $MIGRATION_NAME (via $NODE_IMAGE)"
-  else
-    "${RESOLVE[@]}" || die "prisma migrate resolve gagal (tabel sudah ada; ulangi script ini)." "$MANUAL_DB_HELP"
-    ok "prisma migrate resolve --applied $MIGRATION_NAME"
+  if (( ! DRY_RUN )); then
+    n_rls="$(mig_rls_tables "$MIG" | tr ',' '\n' | wc -l | tr -d ' ')"
+    rls="$(sql_val "select count(*) from pg_class where relname in ($(mig_rls_tables "$MIG")) and relrowsecurity")"
+    [[ "$rls" == "$n_rls" ]] || die "Verifikasi $MIG gagal: RLS aktif di $rls/$n_rls tabel."
+    ok "Verifikasi $MIG: objek lengkap, RLS aktif ($rls tabel)"
   fi
-  unset DATABASE_URL DIRECT_URL
-fi
+
+  if [[ "$resolved" != "0" ]]; then
+    ok "Prisma sudah mencatat $MIG (resolve dilewati)"
+  else
+    RESOLVE=(docker run --rm --network "$PG_NET" -e DATABASE_URL -e DIRECT_URL
+             -v "$REPO_DIR/prisma:/work/prisma:ro" -w /work "$NODE_IMAGE"
+             npx -y "prisma@$PRISMA_VERSION" migrate resolve --applied "$MIG" --schema prisma/schema.prisma)
+    DATABASE_URL="$(env_get "$WEB_ENV" DATABASE_URL)"; DIRECT_URL="$DB_URL"
+    [[ -n "$DATABASE_URL" ]] || DATABASE_URL="$DB_URL"
+    export DATABASE_URL DIRECT_URL
+    if (( DRY_RUN )); then
+      info "[dry-run] akan menjalankan: prisma migrate resolve --applied $MIG (via $NODE_IMAGE)"
+    else
+      "${RESOLVE[@]}" || die "prisma migrate resolve $MIG gagal (objek sudah ada; ulangi script ini)." "$MANUAL_DB_HELP"
+      ok "prisma migrate resolve --applied $MIG"
+    fi
+    unset DATABASE_URL DIRECT_URL
+  fi
+done
 unset PGPASSWORD
-record "$( ((DRY_RUN)) && echo PLAN || echo OK)" "Migrasi DB + prisma resolve"
+record "$( ((DRY_RUN)) && echo PLAN || echo OK)" "Migrasi DB (${#MIGRATIONS[@]}) + prisma resolve"
 
 # =============================================================================
 # 6. Deploy
@@ -605,6 +705,15 @@ else
   record FAIL "Health endpoint"; FINAL_OK=0
 fi
 
+if (( TURN_ON )); then
+  if [[ -s "$CONFIG_DIR/livekit-turn/tls.crt" ]] && timeout 5 bash -c "exec 3<>/dev/tcp/$TURN_DOMAIN/5349" 2>/dev/null; then
+    ok "TURN/TLS $TURN_DOMAIN:5349 menjawab"; record OK "TURN/TLS $TURN_DOMAIN:5349"
+  else
+    warn "TURN/TLS belum menjawab (sertifikat belum terbit / port panel tertutup). Video tetap jalan lewat UDP/TCP."
+    info "Ulangi nanti: bash ops/vps/jumpa-turn-cert-sync.sh --wait 120"
+    record WARN "TURN/TLS belum aktif"
+  fi
+fi
 for s in "${SUMMARY[@]}"; do [[ "${s%%|*}" == "FAIL" ]] && FINAL_OK=0; done
 if (( FINAL_OK )); then
   print_summary SUKSES

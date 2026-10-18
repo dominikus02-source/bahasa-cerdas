@@ -88,8 +88,34 @@ if [[ "${ENABLE_JUMPA:-0}" == "1" ]]; then
     echo "LIVEKIT_API_KEY/LIVEKIT_API_SECRET missing in web.env — cannot start JUMPA" >&2
     exit 1
   fi
-  "${COMPOSE[@]}" --profile jumpa pull livekit
-  "${COMPOSE[@]}" --profile jumpa up -d livekit
+  # Fase 2 — TURN/TLS opsional (JUMPA_TURN_ENABLED=1 di stack.env).
+  JUMPA_TURN="$(grep -m1 '^JUMPA_TURN_ENABLED=' "$CONFIG_DIR/stack.env" 2>/dev/null | cut -d= -f2- | tr -d "\"' " || true)"
+  LK_COMPOSE=("${COMPOSE[@]}")
+  if [[ "$JUMPA_TURN" == "1" || "$JUMPA_TURN" == "true" ]]; then
+    echo "==> JUMPA TURN enabled — ensuring certificate"
+    install -d -m 755 "$CONFIG_DIR/caddy.d"
+    install -m 644 ./caddy/jumpa.caddy "$CONFIG_DIR/caddy.d/jumpa.caddy"
+    install -m 644 ./caddy/jumpa-turn.caddy "$CONFIG_DIR/caddy.d/jumpa-turn.caddy"
+    "${COMPOSE[@]}" up -d --force-recreate caddy
+    if bash ./jumpa-turn-cert-sync.sh --wait 90 --no-restart; then
+      BC_CONFIG_DIR="$CONFIG_DIR" bash ./render-livekit-config.sh
+      LK_COMPOSE=("${COMPOSE[@]}" -f docker-compose.yml -f docker-compose.jumpa-turn.yml)
+    else
+      echo "WARNING: TURN certificate not ready — LiveKit starts WITHOUT TURN (cron cert sync will retry)" >&2
+    fi
+  else
+    rm -f "$CONFIG_DIR/caddy.d/jumpa-turn.caddy"
+  fi
+  "${LK_COMPOSE[@]}" --profile jumpa pull livekit
+  # Konfigurasi hasil render berubah → recreate (bind mount file tidak memicu
+  # recreate otomatis). Tidak berubah → container berjalan tidak diganggu.
+  LK_HASH="$(sha256sum "$CONFIG_DIR/livekit.yaml" | cut -d' ' -f1)-$JUMPA_TURN"
+  if [[ "$(cat "$CONFIG_DIR/.livekit-applied" 2>/dev/null || true)" != "$LK_HASH" ]]; then
+    "${LK_COMPOSE[@]}" --profile jumpa up -d --force-recreate livekit
+    echo "$LK_HASH" > "$CONFIG_DIR/.livekit-applied"
+  else
+    "${LK_COMPOSE[@]}" --profile jumpa up -d livekit
+  fi
 
   for i in {1..30}; do
     if curl -fsS --max-time 5 http://127.0.0.1:7880/ >/dev/null; then

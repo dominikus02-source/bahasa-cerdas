@@ -1,16 +1,25 @@
 /**
- * POST /api/jumpa/rooms — guru membuat ruang JUMPA untuk kelasnya.
- * Body: { groupId: string }. Fase 1: hanya jenis KELAS.
+ * POST /api/jumpa/rooms — buat ruang JUMPA.
+ * Body: { kind?: "KELAS"|"GURU"|"MURID", groupId?, communityId?, title? }.
+ * Tanpa `kind` = KELAS (kompatibel Fase 1: { groupId }).
+ * Izin di lib/jumpa/permissions.ts → canCreateRoom.
  */
 import { z } from "zod";
 import { getUser } from "@/lib/supabase/server";
 import { rateLimitRoute } from "@/lib/rate-limit";
-import { createKelasRoom } from "@/lib/jumpa/service";
+import { createRoom } from "@/lib/jumpa/service";
 import { jumpaDisabledResponse, jumpaError, jumpaJson } from "@/lib/jumpa/http";
 
 export const dynamic = "force-dynamic";
 
-const bodySchema = z.object({ groupId: z.string().min(1).max(64) });
+const bodySchema = z
+  .object({
+    kind: z.enum(["KELAS", "GURU", "MURID"]).default("KELAS"),
+    groupId: z.string().min(1).max(64).optional(),
+    communityId: z.string().min(1).max(64).optional(),
+    title: z.string().max(200).optional(),
+  })
+  .refine((b) => b.kind === "GURU" || Boolean(b.groupId), { message: "groupId wajib" });
 
 export async function POST(request: Request) {
   const disabled = jumpaDisabledResponse();
@@ -23,12 +32,12 @@ export async function POST(request: Request) {
   if (limited) return limited;
 
   const parsed = bodySchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return jumpaError(400, "BAD_REQUEST", "Kelas tidak valid.");
+  if (!parsed.success) return jumpaError(400, "BAD_REQUEST", "Data ruang tidak valid. Pilih kelas terlebih dahulu.");
 
   try {
-    const result = await createKelasRoom(user, parsed.data.groupId);
+    const result = await createRoom(user, parsed.data);
     if (!result.ok) return jumpaError(result.status, result.code, result.message);
-    return jumpaJson({ code: result.room.code, title: result.room.title, url: `/jumpa/${result.room.code}` }, 201);
+    return jumpaJson({ code: result.room.code, title: result.room.title, url: `/jumpa/${result.room.code}`, reused: result.reused }, result.reused ? 200 : 201);
   } catch (error) {
     console.error("JUMPA_CREATE_FAILED", { error: error instanceof Error ? error.message : String(error) });
     return jumpaError(503, "STORAGE_UNAVAILABLE", "JUMPA belum tersedia saat ini. Coba lagi sebentar.");

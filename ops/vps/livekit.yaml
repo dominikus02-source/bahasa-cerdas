@@ -1,7 +1,14 @@
-# LiveKit (JUMPA) — konfigurasi server media.
-# Kunci API TIDAK di sini: dibaca dari env LIVEKIT_KEYS ("<key>: <secret>")
-# di ${BC_CONFIG_DIR}/livekit.env (dibuat ops/vps/prepare-runtime-envs.sh dari
-# LIVEKIT_API_KEY/LIVEKIT_API_SECRET di web.env).
+# LiveKit (JUMPA) — TEMPLATE konfigurasi server media.
+#
+# Fase 2: file ini TIDAK di-mount langsung. ops/vps/render-livekit-config.sh
+# (dipanggil prepare-runtime-envs.sh di setiap deploy) menyalinnya ke
+# ${BC_CONFIG_DIR}/livekit.yaml lalu menambahkan:
+#   - blok `webhook:` (api_key = LIVEKIT_API_KEY; URL default
+#     http://web:3000/api/jumpa/webhook) — untuk kehadiran
+#   - blok `turn:` lengkap bila JUMPA_TURN_ENABLED=1 di stack.env DAN
+#     sertifikat TURN sudah ada (lihat docs/JUMPA_PHASE2.md § TURN)
+# Kunci rahasia TIDAK pernah ditulis ke yaml: dibaca dari env LIVEKIT_KEYS
+# ("<key>: <secret>") di ${BC_CONFIG_DIR}/livekit.env.
 #
 # Port (buka di firewall VPS):
 #   7881/tcp  ICE/TCP  — fallback saat UDP diblokir jaringan sekolah
@@ -20,10 +27,10 @@ rtc:
   # Cari IP publik via STUN — wajib di balik NAT docker.
   use_external_ip: true
 
-# TURN bawaan sengaja MATI di Fase 1. Dengan IP publik, ICE/UDP (7882) +
-# ICE/TCP (7881) sudah cukup untuk sebagian besar jaringan. Jaringan yang hanya
-# mengizinkan TLS/443 butuh TURN/TLS dengan sertifikat sendiri — Fase 2,
-# lihat docs/JUMPA_PHASE1.md § Jaringan sekolah.
+# TURN bawaan default MATI. Dengan IP publik, ICE/UDP (7882) + ICE/TCP (7881)
+# cukup untuk sebagian besar jaringan. Untuk jaringan sekolah yang hanya
+# mengizinkan TLS, nyalakan TURN/TLS (Fase 2): `jumpa-setup.sh --enable-turn`.
+# Blok di bawah DIGANTI oleh render-livekit-config.sh saat TURN aktif.
 turn:
   enabled: false
 

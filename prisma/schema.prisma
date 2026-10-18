@@ -4289,8 +4289,23 @@ model JumpaRoom {
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 
+  // ── Fase 2 ──
+  /// Komunitas MGMP (Community.id) untuk ruang GURU. Plain string.
+  communityId           String?
+  chatEnabled           Boolean   @default(true)
+  /// Murid boleh berbagi layar (ruang KELAS; diatur guru host).
+  allowMuridScreenShare Boolean   @default(false)
+  /// "HOST" | "TIME_LIMIT" | "EMPTY" | "STALE" — alasan ruang berakhir.
+  endReason             String?
+  endedById             String?
+  /// Peringatan "waktu hampir habis" sudah dikirim cron sweep.
+  warnedAt              DateTime?
+
   participants JumpaParticipant[]
   events       JumpaEvent[]
+  invites      JumpaInvite[]
+  messages     JumpaChatMessage[]
+  reports      JumpaReport[]
 
   @@index([createdById])
   @@index([groupId])
@@ -4309,6 +4324,12 @@ model JumpaParticipant {
   lastTokenAt   DateTime      @default(now())
   removedAt     DateTime?
   removedById   String?
+  // ── Fase 2: kehadiran dari webhook LiveKit ──
+  lastJoinedAt  DateTime?
+  lastLeftAt    DateTime?
+  /// Total detik tersambung (akumulasi join→leave).
+  totalSeconds  Int           @default(0)
+  joinCount     Int           @default(0)
 
   room JumpaRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
@@ -4325,8 +4346,72 @@ model JumpaEvent {
   action       String
   metadata     Json?
   createdAt    DateTime @default(now())
+  /// Fase 2: kunci idempotensi (mis. "wh:<id webhook LiveKit>").
+  dedupeKey    String?  @unique
 
   room JumpaRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
   @@index([roomId, createdAt])
+}
+
+/// Undangan ruang (Fase 2). kind: "GROUP" | "COMMUNITY" | "USER" | "LINK".
+/// LINK hanya untuk ruang GURU; yang disimpan hanya hash token.
+model JumpaInvite {
+  id          String    @id @default(cuid())
+  roomId      String
+  kind        String
+  groupId     String?
+  communityId String?
+  userId      String?
+  tokenHash   String?   @unique
+  createdById String
+  expiresAt   DateTime?
+  revokedAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  room JumpaRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@index([roomId])
+  @@index([userId])
+}
+
+/// Obrolan ruang (Fase 2). Pola OBROLAN ChatMessage: disimpan SEBELUM
+/// disiarkan; moderasi = soft-delete (deletedAt/deletedById), konten
+/// tetap untuk audit. Dihapus permanen oleh cron sweep setelah retensi.
+model JumpaChatMessage {
+  id          String    @id @default(cuid())
+  roomId      String
+  userId      String
+  content     String
+  deletedAt   DateTime?
+  deletedById String?
+  createdAt   DateTime  @default(now())
+
+  room JumpaRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@index([roomId, createdAt])
+  @@index([createdAt])
+}
+
+/// Laporan peserta (Fase 2). Diterima guru kelas + admin.
+/// status: "OPEN" | "REVIEWED" | "DISMISSED".
+model JumpaReport {
+  id             String    @id @default(cuid())
+  roomId         String
+  reporterId     String
+  reportedUserId String?
+  category       String
+  description    String?
+  /// Salinan 50 pesan terakhir saat laporan dibuat (tetap ada walau
+  /// obrolan asli sudah melewati retensi).
+  chatSnapshot   Json?
+  status         String    @default("OPEN")
+  reviewedById   String?
+  reviewedAt     DateTime?
+  createdAt      DateTime  @default(now())
+
+  room JumpaRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@index([roomId])
+  @@index([status, createdAt])
 }

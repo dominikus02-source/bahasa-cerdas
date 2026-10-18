@@ -90,8 +90,13 @@ PY
 
 chmod 600 "$WEB_ENV" "$GAME_ENV" "$WORKER_ENV" "$CRON_ENV" "$LIVEKIT_ENV"
 
+# JUMPA Fase 2: render ${CONFIG_DIR}/livekit.yaml (webhook + TURN opsional).
+# Selalu dibuat agar bind mount livekit tidak pernah menjadi direktori kosong.
+BC_CONFIG_DIR="$CONFIG_DIR" bash "$(dirname "${BASH_SOURCE[0]}")/render-livekit-config.sh"
+
 echo "Prepared:"
 echo "  $GAME_ENV"
 echo "  $WORKER_ENV"
 echo "  $CRON_ENV"
 echo "  $LIVEKIT_ENV"
+echo "  $CONFIG_DIR/livekit.yaml"

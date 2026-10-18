@@ -4,17 +4,21 @@
  * roomAdmin/roomCreate/roomRecord, dan tidak bisa mengubah metadata
  * sendiri (peran tidak bisa dipalsukan).
  */
-import { AccessToken, TrackSource, type VideoGrant } from "livekit-server-sdk";
+import { AccessToken, TrackSource, type ParticipantPermission, type VideoGrant } from "livekit-server-sdk";
 import { JUMPA_TOKEN_TTL_SEC } from "./caps";
 
 const SOURCE_MAP = {
   camera: TrackSource.CAMERA,
   microphone: TrackSource.MICROPHONE,
+  screen_share: TrackSource.SCREEN_SHARE,
+  screen_share_audio: TrackSource.SCREEN_SHARE_AUDIO,
 } as const;
+
+export type GrantSource = keyof typeof SOURCE_MAP;
 
 export function buildJoinGrant(
   roomName: string,
-  sources: Array<keyof typeof SOURCE_MAP>,
+  sources: GrantSource[],
 ): VideoGrant {
   return {
     roomJoin: true,
@@ -57,4 +61,21 @@ export async function mintJoinToken(params: {
   });
   at.addGrant(params.grant);
   return at.toJwt();
+}
+
+/**
+ * Izin peserta untuk RoomServiceClient.updateParticipant (mis. saat host
+ * mengizinkan/mencabut berbagi layar murid). Sama ketatnya dengan token:
+ * tanpa admin, tanpa ubah metadata sendiri.
+ */
+export function buildParticipantPermission(sources: GrantSource[]): Partial<ParticipantPermission> {
+  return {
+    canSubscribe: true,
+    canPublish: sources.length > 0,
+    canPublishSources: sources.map((s) => SOURCE_MAP[s]),
+    canPublishData: true,
+    canUpdateMetadata: false,
+    hidden: false,
+    recorder: false,
+  };
 }

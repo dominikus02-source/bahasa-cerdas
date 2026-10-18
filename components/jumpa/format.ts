@@ -33,3 +33,35 @@ export function gridColumns(n: number, wide: boolean): number {
   if (n <= 16) return 4;
   return 5;
 }
+
+export interface GridFit {
+  cols: number;
+  tileW: number;
+  tileH: number;
+}
+
+/**
+ * Ukuran tile grid yang muat di area w×h dengan rasio tetap (`aspect` =
+ * lebar/tinggi): coba setiap jumlah kolom, pilih yang tile-nya terbesar.
+ * Mobile dibatasi maks 2 kolom agar wajah tetap terbaca.
+ */
+export function fitGrid(n: number, w: number, h: number, gap: number, aspect: number, maxCols = 6): GridFit | null {
+  if (n <= 0 || w <= 0 || h <= 0 || aspect <= 0) return null;
+  let best: GridFit | null = null;
+  for (let cols = 1; cols <= Math.min(n, maxCols); cols++) {
+    const rows = Math.ceil(n / cols);
+    const byW = (w - gap * (cols - 1)) / cols;
+    const byH = ((h - gap * (rows - 1)) / rows) * aspect;
+    const tileW = Math.floor(Math.min(byW, byH));
+    if (tileW <= 0) continue;
+    if (!best || tileW > best.tileW) best = { cols, tileW, tileH: Math.floor(tileW / aspect) };
+  }
+  return best;
+}
+
+/** Nada gradien avatar (0–3) yang stabil per peserta. */
+export function avatarTone(id: string): number {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+  return h % 4;
+}

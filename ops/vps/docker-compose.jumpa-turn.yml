@@ -1,0 +1,16 @@
+# JUMPA Fase 2 — override TURN/TLS untuk service livekit.
+# Dipakai deploy.sh HANYA bila JUMPA_TURN_ENABLED=1 di stack.env:
+#   docker compose -f docker-compose.yml -f docker-compose.jumpa-turn.yml ...
+# Port TURN (buka juga di firewall panel penyedia VPS):
+#   5349/tcp            TURN/TLS — untuk jaringan yang hanya mengizinkan TLS
+#   3478/udp            TURN/UDP
+#   30000-30100/udp     rentang relay (samakan dengan JUMPA_TURN_RELAY_*)
+# 443 sengaja tidak dipakai: sudah dipegang Caddy (HTTPS situs).
+services:
+  livekit:
+    volumes:
+      - ${BC_CONFIG_DIR:-/opt/bahasacerdas/config}/livekit-turn:/etc/livekit-turn:ro
+    ports:
+      - "${JUMPA_TURN_TLS_PORT:-5349}:${JUMPA_TURN_TLS_PORT:-5349}/tcp"
+      - "${JUMPA_TURN_UDP_PORT:-3478}:${JUMPA_TURN_UDP_PORT:-3478}/udp"
+      - "${JUMPA_TURN_RELAY_START:-30000}-${JUMPA_TURN_RELAY_END:-30100}:${JUMPA_TURN_RELAY_START:-30000}-${JUMPA_TURN_RELAY_END:-30100}/udp"
