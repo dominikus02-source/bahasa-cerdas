@@ -179,7 +179,7 @@ for (const r of ["app/api/jumpa/rooms/route.ts", "app/api/jumpa/rooms/[code]/rou
   check(`${r}: flag guard + auth`, src.includes("jumpaDisabledResponse()") && src.includes("getUser()"))
 }
 check("Tombol KelasKu tersembunyi saat flag mati", read("components/jumpa/StartJumpaButton.tsx").includes("if (!JUMPA_ENABLED) return null"))
-check("KelasKu memasang StartJumpaButton", read("app/(dashboard)/guru/kelasku/page.tsx").includes("<StartJumpaButton groupId={activeGroup.id}"))
+check("KelasKu memasang StartJumpaButton (lewat panel JUMPA kelas)", read("app/(dashboard)/guru/kelasku/page.tsx").includes("<KelasJumpaPanel groupId={activeGroup.id}") && read("components/jumpa/KelasJumpaPanel.tsx").includes("<StartJumpaButton groupId={groupId}"))
 const migration = read("prisma/migrations/20261018000000_jumpa_phase1/migration.sql")
 check("Migration: 3 tabel + RLS enable", ["JumpaRoom", "JumpaParticipant", "JumpaEvent"].every((t) => migration.includes(`CREATE TABLE "${t}"`) && migration.includes(`ALTER TABLE "${t}" ENABLE ROW LEVEL SECURITY`)))
 check("Migration add-only (tanpa DROP/ALTER COLUMN tabel lama)", !/^\s*DROP\s/im.test(migration) && !/ALTER TABLE "(?!Jumpa)/.test(migration))

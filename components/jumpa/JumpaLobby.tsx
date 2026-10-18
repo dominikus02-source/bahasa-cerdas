@@ -6,7 +6,10 @@
  * pratinjau memakai resolusi kebijakan perangkat (HP lebih ringan).
  */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Camera, Loader2, Mic, MicOff, Settings2, ShieldCheck, Users, Video, VideoOff, X } from "lucide-react";
+import { CalendarClock, Camera, Loader2, Mic, MicOff, Settings2, Share2, ShieldCheck, Users, Video, VideoOff, X } from "lucide-react";
+import { formatWib } from "@/lib/jumpa/schedule";
+import ShareSheet, { type ShareTarget } from "./ShareSheet";
+import LobbyDeny from "./LobbyDeny";
 import type { JumpaTierView } from "@/lib/jumpa/tiers";
 import { readMediaPrefs, writeMediaPrefs, type JumpaMediaPrefs } from "./media-prefs";
 import { detectDevice, publishPolicy, QUALITY_LABEL } from "./media-policy";
@@ -21,6 +24,12 @@ interface Props {
   roleLabel: "GURU" | "MURID";
   canJoin: boolean;
   denyMessage: string | null;
+  /** Kode penolakan server (mis. NOT_STARTED) untuk layar status yang jelas. */
+  denyCode?: string | null;
+  /** Waktu mulai terjadwal (ISO) bila ada. */
+  scheduledAt?: string | null;
+  /** Data bagikan (kode, judul, tautan 24 jam bila boleh). */
+  share?: ShareTarget | null;
   joining: boolean;
   joinError: string | null;
   onJoin: (prefs: JumpaMediaPrefs) => void;
@@ -78,6 +87,8 @@ function useMicLevel(stream: MediaStream | null): number {
 }
 
 export default function JumpaLobby(props: Props) {
+  const [shareOpen, setShareOpen] = useState(false);
+  const upcoming = !!props.scheduledAt && new Date(props.scheduledAt).getTime() > Date.now() - 60_000;
   const [prefs, setPrefs] = useState<JumpaMediaPrefs | null>(null);
   const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
   const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
@@ -305,11 +316,16 @@ export default function JumpaLobby(props: Props) {
 
       <section className="jumpa-card jumpa-lobby-info jumpa-in-up flex w-full flex-col items-center gap-5 text-center [animation-delay:60ms] md:flex-1 md:items-start md:text-left">
         <div>
-          <p className="jumpa-section-title !m-0 !mb-2 justify-center md:justify-start">Siap masuk?</p>
+          <p className="jumpa-section-title !m-0 !mb-2 justify-center md:justify-start">{props.canJoin || props.denyCode === "NOT_STARTED" ? "Siap masuk?" : "Ruang JUMPA"}</p>
           <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{props.title}</h1>
           {props.subtitle && (
             <p className="mt-2 flex items-center justify-center gap-2 text-[var(--jp-text-2)] md:justify-start">
               <Users size={16} /> {props.subtitle}
+            </p>
+          )}
+          {upcoming && (
+            <p className="mt-2 flex items-center justify-center gap-2 text-sm font-semibold md:justify-start">
+              <CalendarClock size={16} /> {formatWib(new Date(props.scheduledAt!), new Date())}
             </p>
           )}
           <p className="mt-3 flex flex-wrap items-center justify-center gap-2 text-sm text-[var(--jp-text-3)] md:justify-start">
@@ -329,11 +345,15 @@ export default function JumpaLobby(props: Props) {
             </p>
           </>
         ) : (
-          <div role="alert" className="jumpa-card w-full p-4 text-sm text-[var(--jp-text-2)]">
-            {props.denyMessage ?? "Kamu belum bisa masuk ke ruang ini."}
-          </div>
+          <LobbyDeny code={props.denyCode ?? null} message={props.denyMessage} scheduledAt={props.scheduledAt ?? null} maxParticipants={props.tier.maxParticipants} />
+        )}
+        {props.share && (props.canJoin || props.denyCode === "NOT_STARTED") && (
+          <button type="button" className="jumpa-ghost w-full sm:w-auto" onClick={() => setShareOpen(true)}>
+            <Share2 size={16} /> Bagikan
+          </button>
         )}
       </section>
+      {shareOpen && props.share && <ShareSheet target={props.share} onClose={() => setShareOpen(false)} />}
       </div>
 
       {settingsOpen && prefs && (

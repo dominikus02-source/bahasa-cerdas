@@ -47,6 +47,32 @@ export interface CreateRoomRequest {
   groupId?: string | null;
   communityId?: string | null;
   title?: string | null;
+  /** Alur jadwal: jam mulai (sudah divalidasi lib/jumpa/schedule.ts). */
+  startsAt?: Date | null;
+  /** Durasi pilihan guru (≤ batas paket). */
+  durationMin?: number | null;
+  /** "Beri tahu kelas" (default true). false = tanpa notifikasi kelas/komunitas. */
+  notifyClass?: boolean | null;
+}
+
+/**
+ * Ruang KELAS+GURU yang dihitung untuk kuota hari WIB `dayStart`: ruang instan
+ * menurut createdAt, ruang terjadwal menurut hari rapatnya. Jadwal yang
+ * dibatalkan tidak dihitung.
+ */
+export function countRoomsOnDay(userId: string, dayStart: Date): Promise<number> {
+  const dayEnd = new Date(dayStart.getTime() + 86_400_000);
+  return db.jumpaRoom.count({
+    where: {
+      createdById: userId,
+      kind: { in: ["KELAS", "GURU"] },
+      // NOT {endReason} di Prisma ikut membuang NULL — tulis eksplisit.
+      AND: [
+        { OR: [{ endReason: null }, { endReason: { not: "CANCELLED" } }] },
+        { OR: [{ scheduledAt: null, createdAt: { gte: dayStart, lt: dayEnd } }, { scheduledAt: { gte: dayStart, lt: dayEnd } }] },
+      ],
+    },
+  });
 }
 
 /** Judul bebas dari pengguna: satu baris, tanpa tag, maks 80 karakter. */
@@ -95,21 +121,29 @@ export async function createRoom(user: JumpaUserLike, req: CreateRoomRequest): P
   // Ruang MURID tidak bergantung paket siapa pun.
   const tier: JumpaTier = req.kind === "MURID" ? "FREE" : (await resolveJumpaTier(user.id)).tier;
   const caps = limitsFor(tier, req.kind);
+  const scheduled = req.startsAt && req.kind !== "MURID" ? req.startsAt : null;
   // Klik ganda / buka ulang: pakai lagi ruang aktif yang sama milik pembuat.
-  const existing = await db.jumpaRoom.findFirst({
+  // Ruang terjadwal ikut dipakai bila jam mulainya ≤ 15 menit lagi (guru
+  // menekan "Mulai JUMPA" di kelas = membuka jadwal hari itu). Jadwal baru
+  // tidak pernah memakai ulang ruang.
+  const existing = scheduled ? null : await db.jumpaRoom.findFirst({
     where: {
       createdById: user.id,
       kind: req.kind,
       status: { in: ["SCHEDULED", "LIVE"] },
       groupId: req.kind === "GURU" ? null : (group?.id ?? null),
       communityId: req.kind === "GURU" ? (community?.id ?? null) : null,
-      createdAt: { gt: new Date(now - REUSE_WINDOW_MS) },
+      OR: [
+        { scheduledAt: null, createdAt: { gt: new Date(now - REUSE_WINDOW_MS) } },
+        { scheduledAt: { gt: new Date(now - REUSE_WINDOW_MS), lte: new Date(now + 15 * 60_000) } },
+      ],
     },
     orderBy: { createdAt: "desc" },
-    select: { id: true, code: true, title: true, startedAt: true, maxDurationMin: true },
+    select: { id: true, code: true, title: true, startedAt: true, maxDurationMin: true, scheduledAt: true },
   });
   // Baru upgrade ke Premium? Ruang Gratis lama tidak dipakai ulang.
-  if (existing && existing.maxDurationMin >= caps.maxDurationMin) {
+  // (Ruang terjadwal dengan durasi pilihan guru tetap dipakai.)
+  if (existing && (existing.maxDurationMin >= caps.maxDurationMin || existing.scheduledAt)) {
     const endsAt = roomEndsAt(existing.startedAt, existing.maxDurationMin);
     if (!endsAt || endsAt.getTime() > now + 5 * 60_000) {
       return { ok: true, room: { id: existing.id, code: existing.code, title: existing.title }, reused: true };
@@ -124,9 +158,7 @@ export async function createRoom(user: JumpaUserLike, req: CreateRoomRequest): P
   }
 
   if (req.kind !== "MURID") {
-    const createdToday = await db.jumpaRoom.count({
-      where: { createdById: user.id, kind: { in: ["KELAS", "GURU"] }, createdAt: { gte: startOfJakartaDay(new Date(now)) } },
-    });
+    const createdToday = await countRoomsOnDay(user.id, startOfJakartaDay(scheduled ?? new Date(now)));
     const quota = checkDailyQuota(tier, req.kind, createdToday);
     if (!quota.ok) {
       return { ok: false, status: 429, code: quota.code, message: quota.message, extra: { limit: quota.limit, upgradeUrl: JUMPA_UPGRADE_URL } };
@@ -156,9 +188,11 @@ export async function createRoom(user: JumpaUserLike, req: CreateRoomRequest): P
           groupId: req.kind === "GURU" ? null : group!.id,
           communityId: req.kind === "GURU" ? (community?.id ?? null) : null,
           maxParticipants: caps.maxParticipants,
-          maxDurationMin: caps.maxDurationMin,
+          maxDurationMin: scheduled && req.durationMin ? Math.min(req.durationMin, caps.maxDurationMin) : caps.maxDurationMin,
+          scheduledAt: scheduled,
+          notifyClass: req.kind === "MURID" ? false : req.notifyClass !== false,
           events: {
-            create: { actorId: user.id, action: "ROOM_CREATED", metadata: { kind: req.kind, groupId: group?.id ?? null, communityId: community?.id ?? null, tier } },
+            create: { actorId: user.id, action: "ROOM_CREATED", metadata: { kind: req.kind, groupId: group?.id ?? null, communityId: community?.id ?? null, scheduledAt: scheduled ? scheduled.toISOString() : null, notifyClass: req.kind === "MURID" ? false : req.notifyClass !== false, tier } },
           },
         },
         select: { id: true, code: true, title: true },
@@ -194,6 +228,10 @@ export interface RoomView {
   endsAt: string | null;
   /** Fase 3: paket ruang (dari pembuat, saat dibuat). */
   tier: JumpaTier;
+  /** Alur jadwal: jam mulai (ISO) bila terjadwal. */
+  scheduledAt: string | null;
+  endReason: string | null;
+  groupId: string | null;
 }
 
 export interface RoomContext {
@@ -280,6 +318,8 @@ export async function loadRoomContext(
       startedAt: room.startedAt,
       maxDurationMin: room.maxDurationMin,
       maxParticipants: room.maxParticipants,
+      scheduledAt: room.scheduledAt,
+      endReason: room.endReason,
     },
     relation,
     activeOthers,
@@ -310,6 +350,9 @@ export async function loadRoomContext(
       maxDurationMin: room.maxDurationMin,
       endsAt: endsAt ? endsAt.toISOString() : null,
       tier: tierFromCreatedMetadata(created?.metadata),
+      scheduledAt: room.scheduledAt ? room.scheduledAt.toISOString() : null,
+      endReason: room.endReason,
+      groupId: room.groupId,
     },
   };
 }
@@ -321,9 +364,9 @@ export async function recordJoinGranted(params: {
   roomRole: JumpaRoomRole;
   accessVia: JumpaAccessVia;
   now?: Date;
-}): Promise<{ startedAt: Date | null }> {
+}): Promise<{ startedAt: Date | null; wentLive: boolean }> {
   const now = params.now ?? new Date();
-  await db.$transaction([
+  const [, live] = await db.$transaction([
     db.jumpaParticipant.upsert({
       where: { roomId_userId: { roomId: params.room.id, userId: params.userId } },
       create: { roomId: params.room.id, userId: params.userId, roomRole: params.roomRole, accessVia: params.accessVia },
@@ -338,7 +381,7 @@ export async function recordJoinGranted(params: {
     }),
   ]);
   const fresh = await db.jumpaRoom.findUnique({ where: { id: params.room.id }, select: { startedAt: true } });
-  return { startedAt: fresh?.startedAt ?? null };
+  return { startedAt: fresh?.startedAt ?? null, wentLive: live.count > 0 };
 }
 
 export async function recordJoinDenied(roomId: string, userId: string, code: string): Promise<void> {
@@ -375,6 +418,8 @@ export interface RoomListItem {
   place: string | null;
   mine: boolean;
   startedAt: string | null;
+  /** Alur jadwal: jam mulai (ISO) bila terjadwal. */
+  scheduledAt: string | null;
   /** Fase 3: yang sedang tersambung — hanya inisial (maks 4, tanpa nama lengkap) + jumlah. */
   present: { count: number; initials: string[] };
 }
@@ -423,7 +468,8 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
     ? await db.jumpaRoom.findMany({
         where: {
           status: { in: ["SCHEDULED", "LIVE"] },
-          createdAt: { gt: since },
+          // Instan: dibuat ≤ 24 jam lalu. Terjadwal: jam mulai ≤ 24 jam lalu s.d. 7 hari ke depan.
+          AND: [{ OR: [{ scheduledAt: null, createdAt: { gt: since } }, { scheduledAt: { gt: since, lt: new Date(Date.now() + 7 * 86_400_000) } }] }],
           kind: { in: visibleKinds },
           OR: [
             { createdById: user.id },
@@ -438,7 +484,7 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
         orderBy: [{ status: "asc" }, { createdAt: "desc" }],
         take: 30,
         select: {
-          code: true, title: true, kind: true, status: true, createdById: true, startedAt: true, groupId: true, communityId: true,
+          code: true, title: true, kind: true, status: true, createdById: true, startedAt: true, scheduledAt: true, groupId: true, communityId: true,
           participants: {
             where: { removedAt: null, lastJoinedAt: { not: null } },
             orderBy: { lastJoinedAt: "desc" },
@@ -465,7 +511,7 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
   if (effective === "GURU") {
     const [t, roomsToday] = await Promise.all([
       resolveJumpaTier(user.id),
-      db.jumpaRoom.count({ where: { createdById: user.id, kind: { in: ["KELAS", "GURU"] }, createdAt: { gte: startOfJakartaDay(new Date()) } } }),
+      countRoomsOnDay(user.id, startOfJakartaDay(new Date())),
     ]);
     plan = {
       tier: t.tier,
@@ -492,6 +538,7 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
       place: (r.groupId && groupName.get(r.groupId)) || (r.communityId && commName.get(r.communityId)) || null,
       mine: r.createdById === user.id,
       startedAt: r.startedAt ? r.startedAt.toISOString() : null,
+      scheduledAt: r.scheduledAt ? r.scheduledAt.toISOString() : null,
       present: (() => {
         const ids = presentIds.get(r.code) ?? [];
         return { count: ids.length, initials: ids.slice(0, 4).map((id) => personInitials.get(id) ?? "P") };

@@ -1,12 +1,29 @@
-import { notFound, redirect } from "next/navigation";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { getUser } from "@/lib/supabase/server";
 import { dashboardForUser } from "@/lib/auth/redirect";
 import { INVITE_TOKEN_RE, isValidRoomCode } from "@/lib/jumpa/code";
 import { loadRoomContext } from "@/lib/jumpa/service";
 import { tierView } from "@/lib/jumpa/tiers";
 import JumpaApp from "@/components/jumpa/JumpaApp";
+import JumpaLoginGate from "@/components/jumpa/JumpaLoginGate";
 
 export const dynamic = "force-dynamic";
+
+// Pratinjau tautan generik: tanpa judul/nama ruang (keamanan anak), tetap noindex.
+const OG_IMAGE = { url: "/jumpa/og-jumpa-1200x630.jpg", width: 1200, height: 630, alt: "JUMPA — ruang video kelas BahasaCerdas" };
+export async function generateMetadata({ params }: { params: Promise<{ code: string }> }): Promise<Metadata> {
+  const { code } = await params;
+  const title = "Gabung JUMPA — BahasaCerdas";
+  const description = "Ruang video kelas, langsung di BahasaCerdas.";
+  return {
+    title,
+    description,
+    robots: { index: false, follow: false },
+    openGraph: { title, description, type: "website", url: `/jumpa/${isValidRoomCode(code) ? code : ""}`, siteName: "BahasaCerdas", locale: "id_ID", images: [OG_IMAGE] },
+    twitter: { card: "summary_large_image", title, description, images: [OG_IMAGE.url] },
+  };
+}
 
 const KIND_LABEL = { KELAS: "Kelas", GURU: "Ruang guru", MURID: "Belajar bareng" } as const;
 
@@ -26,7 +43,7 @@ export default async function JumpaRoomPage({
   const user = await getUser();
   if (!user) {
     const next = `/jumpa/${code}${inviteToken ? `?u=${inviteToken}` : ""}`;
-    redirect(`/login?next=${encodeURIComponent(next)}`);
+    return <JumpaLoginGate loginHref={`/login?next=${encodeURIComponent(next)}`} />;
   }
 
   const ctx = await loadRoomContext(code, user, 0, new Date(), inviteToken);
@@ -45,6 +62,20 @@ export default async function JumpaRoomPage({
       bcRole={role}
       canJoin={ctx.decision.ok}
       denyMessage={ctx.decision.ok ? null : ctx.decision.message}
+      denyCode={ctx.decision.ok ? null : ctx.decision.code}
+      scheduledAt={ctx.view.scheduledAt}
+      share={
+        ctx.room.kind === "MURID" && !ctx.decision.ok
+          ? null
+          : {
+              code: ctx.view.code,
+              title: ctx.view.title,
+              kind: ctx.room.kind,
+              scheduledAt: ctx.view.scheduledAt,
+              // Tautan 24 jam: hanya ruang guru, oleh pembuat/pemandu.
+              canLink: ctx.room.kind === "GURU" && ctx.decision.ok && ctx.decision.roomRole !== "MEMBER",
+            }
+      }
       dashboardHref={dashboardForUser(user.role, user.isFounder)}
       inviteToken={inviteToken}
       tier={tierView({

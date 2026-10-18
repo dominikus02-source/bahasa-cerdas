@@ -14,6 +14,8 @@ import { RuangBelajarSection } from "@/components/student-home/RuangBelajarSecti
 import { SimulasiUjianSection } from "@/components/student-home/SimulasiUjianSection";
 import { RecentWorksSection } from "@/components/student-home/RecentWorksSection";
 import { StudentDailyInspiration } from "@/components/student-home/StudentDailyInspiration";
+import JumpaLaunchBanner from "@/components/jumpa/JumpaLaunchBanner";
+import JumpaBerandaCard from "@/components/jumpa/JumpaBerandaCard";
 
 // Beranda ringkas: mulai belajar → Arena/AI → kelas dan tugas → ujian → karya.
 export default function HomeFeedPage() {
@@ -48,7 +50,11 @@ export default function HomeFeedPage() {
 function HomeContent() {
   return (
     <>
+      {/* JUMPA: "Gabung JUMPA" di paling atas saat kelas berlangsung; kartu tetap + banner di bawah hero. Tersembunyi bila flag mati. */}
+      <JumpaBerandaCard role="MURID" show="live" />
       <StudentHomeHero />
+      <JumpaBerandaCard role="MURID" show="idle" />
+      <JumpaLaunchBanner />
       <MentorHomeCard />
       <JalurCerdasHomeCard />
       <StudentDailyInspiration />

@@ -12,13 +12,16 @@ export interface SweepRoom {
   createdAt: Date;
   maxDurationMin: number;
   warnedAt: Date | null;
+  /** Alur jadwal: ruang terjadwal basi dihitung dari jam mulai, bukan saat dibuat. */
+  scheduledAt?: Date | null;
 }
 
 export function sweepActionFor(room: SweepRoom, now: Date): SweepAction {
   if (room.status === "ENDED") return null;
   if (room.status === "SCHEDULED") {
     const staleMs = JUMPA_STALE_SCHEDULED_HOURS * 3_600_000;
-    return now.getTime() - room.createdAt.getTime() > staleMs ? "END_STALE" : null;
+    const since = room.scheduledAt ?? room.createdAt;
+    return now.getTime() - since.getTime() > staleMs ? "END_STALE" : null;
   }
   const endsAt = roomEndsAt(room.startedAt, room.maxDurationMin);
   if (!endsAt) return null;

@@ -8,10 +8,12 @@
 import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, BookOpen, Crown, GraduationCap, KeyRound, Loader2, Plus, Radio, ShieldCheck, Users, Video } from "lucide-react";
+import { ArrowRight, BookOpen, CalendarPlus, Crown, History, GraduationCap, KeyRound, Loader2, Plus, Radio, ShieldCheck, Users, Video } from "lucide-react";
 import type { JumpaHomeData, RoomListItem } from "@/lib/jumpa/service";
+import { formatWib } from "@/lib/jumpa/schedule";
 import { JUMPA_MURID_ROOM } from "@/lib/jumpa/tiers";
 import { UpgradeSheet } from "./TierUi";
+import NotifyClassToggle from "./NotifyClassToggle";
 import { avatarTone, elapsedLabel, parseRoomInput } from "./format";
 
 const KIND_LABEL = { KELAS: "Kelas", GURU: "Ruang guru", MURID: "Belajar bareng" } as const;
@@ -116,7 +118,11 @@ function RoomCard({ room, now }: { room: RoomListItem; now: number }) {
           {room.mine && <span className="jumpa-mine">Ruangmu</span>}
         </span>
         <span className="mt-2 flex flex-wrap items-center gap-2">
-          {live ? <span className="jumpa-live">Berlangsung</span> : <span className="jumpa-soon">Belum mulai</span>}
+          {live ? (
+            <span className="jumpa-live">Berlangsung</span>
+          ) : (
+            <span className="jumpa-soon">{room.scheduledAt && new Date(room.scheduledAt).getTime() > now ? formatWib(new Date(room.scheduledAt), new Date(now)) : "Belum mulai"}</span>
+          )}
           {elapsed && <span className="text-xs text-[var(--jp-text-3)]">{elapsed}</span>}
           <Avatars room={room} />
         </span>
@@ -135,11 +141,13 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
   const [error, setError] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [communityId, setCommunityId] = useState("");
+  // "Beri tahu komunitas" untuk ruang guru yang terikat komunitas (nyala bawaan).
+  const [notifyCommunity, setNotifyCommunity] = useState(true);
   const [groupId, setGroupId] = useState(data.groups[0]?.id ?? "");
   const isGuru = data.effective === "GURU";
   const firstName = displayName.split(" ")[0] || displayName;
 
-  const create = async (body: Record<string, string | undefined>, key: string) => {
+  const create = async (body: Record<string, string | boolean | undefined>, key: string) => {
     setBusy(key);
     setError(null);
     try {
@@ -196,8 +204,11 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </select>
+              {communityId && (
+                <NotifyClassToggle tone="room" on={notifyCommunity} onChange={setNotifyCommunity} label="Beri tahu komunitas" hintOn="Anggota dapat notifikasi." hintOff="Tanpa notifikasi ke anggota." />
+              )}
             </div>
-            <button type="button" className="jumpa-primary mt-4 w-full" disabled={busy !== null} onClick={() => void create({ kind: "GURU", title: title || undefined, communityId: communityId || undefined }, "guru")}>
+            <button type="button" className="jumpa-primary mt-4 w-full" disabled={busy !== null} onClick={() => void create({ kind: "GURU", title: title || undefined, communityId: communityId || undefined, notifyClass: communityId ? notifyCommunity : undefined }, "guru")}>
               {busy === "guru" ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />} Mulai ruang guru
             </button>
           </section>
@@ -250,13 +261,21 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
         )}
       </section>
 
-      {data.canSeePanel && (
-        <div {...fade(3)} className="jumpa-in-up">
-          <Link href="/jumpa/pantau" className="jumpa-ghost w-full">
+      <div {...fade(3)} className="jumpa-in-up grid gap-2.5 sm:grid-cols-2">
+        <Link href="/jumpa/riwayat" className="jumpa-ghost w-full">
+          <History size={18} /> Riwayat & jadwal
+        </Link>
+        {isGuru && (
+          <Link href="/jumpa/jadwal" className="jumpa-ghost w-full">
+            <CalendarPlus size={18} /> Jadwalkan
+          </Link>
+        )}
+        {data.canSeePanel && (
+          <Link href="/jumpa/pantau" className="jumpa-ghost w-full sm:col-span-2">
             <ShieldCheck size={18} /> Pantau ruang & laporan
           </Link>
-        </div>
-      )}
+        )}
+      </div>
       {limitHit && plan && (
         <UpgradeSheet reason="daily" tier={{ maxDurationMin: plan.kelas.maxDurationMin, upgradeUrl: plan.upgradeUrl }} onClose={() => setLimitHit(false)} />
       )}

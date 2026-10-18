@@ -1418,3 +1418,19 @@ select.jumpa-input { text-overflow: ellipsis; padding-right: 36px; }
   .jumpa-alone { top: 12px; bottom: auto; gap: 10px; padding: 10px; }
   .jumpa-alone-icon { display: none; }
 }
+
+/* ══ Alur penuh: jadwal, riwayat, ringkasan ══════════════════════════ */
+.jumpa-date { color-scheme: dark; min-width: 0; }
+.jumpa-dur { min-height: 44px; padding: 0 14px; color: var(--jp-text-2); background: var(--jp-glass-strong); border: 1px solid var(--jp-line); }
+.jumpa-dur[aria-checked="true"], .jumpa-dur[aria-pressed="true"] { color: var(--clr-bg); background: var(--jp-grad); border-color: transparent; }
+.jumpa-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 18px; background: var(--jp-glass-strong); border: 1px solid var(--jp-line); }
+.jumpa-tab { display: inline-flex; align-items: center; justify-content: center; gap: 4px; min-width: 0; padding: 0 4px; white-space: nowrap; min-height: 44px; border-radius: 14px; font-size: 13px; font-weight: 800; color: var(--jp-text-2); }
+.jumpa-tab[aria-selected="true"] { color: var(--clr-bg); background: var(--jp-accent); }
+.jumpa-tab b { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; font-size: 10px; line-height: 18px; color: inherit; background: color-mix(in srgb, currentColor 16%, transparent); }
+.jumpa-hist { display: flex; align-items: center; gap: 12px; min-width: 0; padding: 14px; }
+.jumpa-stat { display: grid; gap: 2px; padding: 14px 10px; border-radius: 18px; text-align: center; background: var(--jp-glass-strong); border: 1px solid var(--jp-line); }
+.jumpa-stat strong { font-size: 22px; font-weight: 900; line-height: 1.1; }
+.jumpa-stat span { font-size: 12px; color: var(--jp-text-3); }
+.jumpa-att { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 12px; border-radius: 14px; }
+.jumpa-att:nth-child(odd) { background: color-mix(in srgb, var(--clr-surface-2) 60%, transparent); }
+.jumpa-cancelled { display: inline-block; margin-top: 4px; padding: 0 7px; border-radius: 999px; font-size: 10px; font-weight: 800; color: var(--clr-warning); background: color-mix(in srgb, var(--clr-warning) 14%, transparent); }

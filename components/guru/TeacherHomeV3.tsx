@@ -1,5 +1,7 @@
 "use client";
 
+import JumpaLaunchBanner from "@/components/jumpa/JumpaLaunchBanner";
+import JumpaBerandaCard from "@/components/jumpa/JumpaBerandaCard";
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -441,10 +443,13 @@ export default function TeacherHomeV3({
   greeting,
   fullName,
   misiStatus,
+  userKey = null,
 }: {
   greeting: string;
   fullName: string;
   misiStatus: MisiGuruStatus | null;
+  /** Kunci per pengguna untuk mengingat banner JUMPA yang ditutup. */
+  userKey?: string | null;
 }) {
   return (
     <div className="mx-auto w-full max-w-[1320px] space-y-4 sm:space-y-5">
@@ -452,6 +457,10 @@ export default function TeacherHomeV3({
         <TeacherHero greeting={greeting} fullName={fullName} />
         <DailyMissionCard status={misiStatus} />
       </div>
+
+      {/* JUMPA: banner peluncuran (bisa ditutup) + kartu tetap; tersembunyi bila flag mati */}
+      <JumpaLaunchBanner userKey={userKey} />
+      <JumpaBerandaCard role="GURU" />
 
       <QuickActions />
 

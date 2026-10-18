@@ -22,7 +22,7 @@ export interface SweepResult {
 export async function runJumpaSweep(now = new Date()): Promise<SweepResult> {
   const rooms = await db.jumpaRoom.findMany({
     where: { status: { in: ["SCHEDULED", "LIVE"] } },
-    select: { id: true, livekitRoomName: true, status: true, startedAt: true, createdAt: true, maxDurationMin: true, warnedAt: true },
+    select: { id: true, livekitRoomName: true, status: true, startedAt: true, createdAt: true, scheduledAt: true, maxDurationMin: true, warnedAt: true },
     orderBy: { createdAt: "asc" },
     take: 500,
   });

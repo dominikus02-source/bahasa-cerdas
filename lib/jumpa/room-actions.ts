@@ -38,6 +38,7 @@ import {
 import { displayNames, effectiveRoleOf, loadActor, type JumpaUserLike } from "./service";
 import { JUMPA_TOPICS } from "./signals";
 import { buildParticipantPermission } from "./token";
+import { deliverRoomNotice } from "./notify-server";
 
 export type ActionResult<T = Record<string, unknown>> =
   | ({ ok: true } & T)
@@ -67,7 +68,11 @@ async function actorInRoom(user: JumpaUserLike, room: JumpaRoom): Promise<ActorI
     db.jumpaParticipant.findUnique({ where: { roomId_userId: { roomId: room.id, userId: user.id } }, select: { roomRole: true, removedAt: true } }),
   ]);
   const effective = effectiveRole(actor);
-  if (!participant || participant.removedAt || !effective) return null;
+  if (!effective) return null;
+  // Alur jadwal: pembuat ruang terjadwal boleh mengundang/membagikan sebelum
+  // pernah masuk (belum ada baris peserta) — tetap sebagai HOST.
+  if (!participant && room.createdById === user.id) return { room, actor: { userId: user.id, roomRole: "HOST", effective } };
+  if (!participant || participant.removedAt) return null;
   return { room, actor: { userId: user.id, roomRole: participant.roomRole, effective } };
 }
 
@@ -348,16 +353,15 @@ export async function createReport(
       adminIds: admins.map((a) => a.id),
       reporterId: user.id,
     });
+    // Pemandu guru ruang ini selalu ikut diberi tahu (selain guru kelas & admin).
+    if (creator?.effective === "GURU" && room.createdById !== user.id && !recipients.includes(room.createdById)) recipients.push(room.createdById);
     if (recipients.length) {
-      await db.notifikasi.createMany({
-        data: recipients.map((userId) => ({
-          userId,
-          title: "Laporan JUMPA baru",
-          body: `${JUMPA_REPORT_CATEGORIES[category]} — ruang "${room.title}".`,
-          type: "warning",
-          data: { link: `/jumpa/pantau?ruang=${room.code}` },
-        })),
-      });
+      // In-app + Web Push lewat sistem notifikasi platform (sekali per laporan).
+      await deliverRoomNotice(
+        { id: room.id, code: room.code, title: room.title, kind: room.kind, groupId: room.groupId, communityId: room.communityId, createdById: room.createdById, scheduledAt: room.scheduledAt, notifyClass: true },
+        "REPORT", // penerima eksplisit (guru/admin) — tidak terpengaruh "Beri tahu kelas"
+        { variant: report.id, recipients, category: JUMPA_REPORT_CATEGORIES[category] },
+      );
     }
   } catch (error) {
     // Laporan sudah tersimpan & terlihat di panel; notifikasi best-effort.

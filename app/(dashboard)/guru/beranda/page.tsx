@@ -14,5 +14,5 @@ function resolveGreetingName(user: Awaited<ReturnType<typeof getUser>>): string 
 export default async function GuruBerandaPage() {
   const user = await getUser();
 
-  return <GuruBerandaClient displayName={resolveGreetingName(user)} />;
+  return <GuruBerandaClient displayName={resolveGreetingName(user)} userKey={user?.id ?? null} />;
 }

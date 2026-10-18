@@ -425,6 +425,7 @@
     "test:jumpa-chat-moderation": "npx tsx scripts/test-jumpa-chat-moderation.ts",
     "test:jumpa-tiers": "npx tsx scripts/test-jumpa-tiers.ts",
     "test:jumpa-no-english": "npx tsx scripts/test-jumpa-no-english.ts",
+    "test:jumpa-flow": "npx tsx scripts/test-jumpa-flow.ts",
     "jumpa:bundle-report": "node scripts/jumpa-bundle-report.mjs"
   },
   "dependencies": {

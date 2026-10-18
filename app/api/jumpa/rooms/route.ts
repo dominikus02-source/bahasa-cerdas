@@ -1,6 +1,6 @@
 /**
  * POST /api/jumpa/rooms — buat ruang JUMPA.
- * Body: { kind?: "KELAS"|"GURU"|"MURID", groupId?, communityId?, title? }.
+ * Body: { kind?: "KELAS"|"GURU"|"MURID", groupId?, communityId?, title?, notifyClass? }.
  * Tanpa `kind` = KELAS (kompatibel Fase 1: { groupId }).
  * Izin di lib/jumpa/permissions.ts → canCreateRoom.
  */
@@ -18,6 +18,8 @@ const bodySchema = z
     groupId: z.string().min(1).max(64).optional(),
     communityId: z.string().min(1).max(64).optional(),
     title: z.string().max(200).optional(),
+    /** "Beri tahu kelas" (default true). Disimpan di JumpaRoom.notifyClass. */
+    notifyClass: z.boolean().optional(),
   })
   .refine((b) => b.kind === "GURU" || Boolean(b.groupId), { message: "groupId wajib" });
 

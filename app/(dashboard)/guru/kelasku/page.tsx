@@ -9,7 +9,7 @@ import { ClassroomComposer, readLastClassIds } from "@/components/kelas/Classroo
 import { SubmissionReview } from "@/components/kelas/SubmissionReview";
 import { ClassShareCard } from "@/components/guru/gcs/ClassShareCard";
 import ShareTaskButton from "@/components/kelas/ShareTaskButton";
-import StartJumpaButton from "@/components/jumpa/StartJumpaButton";
+import KelasJumpaPanel from "@/components/jumpa/KelasJumpaPanel";
 
 interface Group {
   id: string;
@@ -147,6 +147,16 @@ export default function KelasKuPage() {
   }, []);
 
   useEffect(() => { fetchGroups(); }, [fetchGroups]);
+
+  // Tautan langsung ke satu kelas (?kelas=<id>), mis. dari layar setelah JUMPA.
+  const deepLinked = useRef(false);
+  useEffect(() => {
+    if (deepLinked.current || groups.length === 0) return;
+    deepLinked.current = true;
+    const want = new URLSearchParams(window.location.search).get("kelas");
+    const g = want ? groups.find((x) => x.id === want) : null;
+    if (g) { setActiveGroup(g); setTab("aktivitas"); }
+  }, [groups]);
 
   const loadDetail = useCallback(async (groupId: string) => {
     setDetailLoading(true);
@@ -529,8 +539,6 @@ export default function KelasKuPage() {
                   <RotateCw size={15} />
                 </button>
               </div>
-              {/* JUMPA — ruang video kelas (tersembunyi bila NEXT_PUBLIC_JUMPA_ENABLED mati) */}
-              <StartJumpaButton groupId={activeGroup.id} className="w-full sm:w-auto" />
               <button type="button" onClick={() => openComposer(activeGroup ? [activeGroup.id] : undefined)} className="bc-btn-primary min-h-11 w-full justify-center text-sm shrink-0 sm:w-auto">
                 <Plus size={18} /> Tambahkan
               </button>
@@ -546,6 +554,9 @@ export default function KelasKuPage() {
             ))}
           </div>
         </div>
+
+        {/* JUMPA — Mulai/Jadwalkan, ruang berlangsung, jadwal, kehadiran (tersembunyi bila NEXT_PUBLIC_JUMPA_ENABLED mati) */}
+        <KelasJumpaPanel groupId={activeGroup.id} role="GURU" />
 
         {detail && <TodayView detail={detail} lastClassIds={lastClassIds} groupId={activeGroup.id} onKirimLagi={(ids) => openComposer(ids)} onReview={setReviewPenugasan} />}
 

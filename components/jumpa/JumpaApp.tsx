@@ -8,6 +8,8 @@ import { JUMPA_TIERS, type JumpaTierView } from "@/lib/jumpa/tiers";
 import type { EndedReason, JumpaRoomInfo, JumpaSelf } from "./room-controller";
 import type { LeaveReason } from "./JumpaRoomView";
 import JumpaLobby from "./JumpaLobby";
+import type { ShareTarget } from "./ShareSheet";
+import PostMeeting from "./MeetingSummary";
 import type { JumpaMediaPrefs } from "./media-prefs";
 
 // LiveKit hanya jalan di browser; jangan ikut SSR. Chunk ini (~170 KB gzip)
@@ -31,6 +33,9 @@ export interface JumpaAppProps {
   bcRole: "GURU" | "MURID";
   canJoin: boolean;
   denyMessage: string | null;
+  denyCode?: string | null;
+  scheduledAt?: string | null;
+  share?: ShareTarget | null;
   dashboardHref: string;
   /** Token tautan undangan guru (?u=), diteruskan ke API token. */
   inviteToken?: string | null;
@@ -132,6 +137,35 @@ export default function JumpaApp(props: JumpaAppProps) {
     );
   }
 
+  if (phase.name === "left" && (phase.reason === "left" || phase.reason === "ended")) {
+    const timeUp = phase.reason === "ended" && phase.ended === "TIME_LIMIT";
+    const upsell = timeUp && props.tier.canUpgrade && props.tier.upgradeUrl;
+    return (
+      <main className="mx-auto grid min-h-[100dvh] w-full max-w-md place-items-center px-4 py-8">
+        <PostMeeting
+          code={props.code}
+          heading={phase.reason === "ended" ? "JUMPA selesai" : "Kamu sudah keluar"}
+          note={phase.reason === "ended" ? ENDED_TEXT[phase.ended ?? "HOST"].replace(/\.$/, "") : null}
+          fallbackHref={props.dashboardHref}
+          extra={
+            <>
+              {upsell && (
+                <a href={props.tier.upgradeUrl!} className="jumpa-primary jumpa-primary-premium w-full">
+                  <Crown size={18} /> Premium: {JUMPA_TIERS.PREMIUM.rooms.KELAS.maxDurationMin} menit
+                </a>
+              )}
+              {phase.reason === "left" && (
+                <button type="button" className="jumpa-ghost w-full" onClick={() => { phaseRef.current = "lobby"; setPhase({ name: "lobby" }); }}>
+                  <RotateCcw size={16} /> Gabung lagi
+                </button>
+              )}
+            </>
+          }
+        />
+      </main>
+    );
+  }
+
   if (phase.name === "left") {
     const timeUp = phase.reason === "ended" && phase.ended === "TIME_LIMIT";
     const upsell = timeUp && props.tier.canUpgrade && props.tier.upgradeUrl;
@@ -181,6 +215,9 @@ export default function JumpaApp(props: JumpaAppProps) {
       roleLabel={props.bcRole}
       canJoin={props.canJoin}
       denyMessage={props.denyMessage}
+      denyCode={props.denyCode}
+      scheduledAt={props.scheduledAt}
+      share={props.share}
       joining={joining}
       joinError={joinError}
       onJoin={join}
