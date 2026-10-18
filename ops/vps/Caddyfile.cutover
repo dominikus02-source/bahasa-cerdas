@@ -2,6 +2,7 @@
   email {$ACME_EMAIL}
   servers {
     protocols h1 h2 h3
+    max_header_size 64KiB
   }
 }
 
@@ -19,7 +20,10 @@
   }
 
   handle {
-    reverse_proxy web:3000
+    reverse_proxy web:3000 {
+      # Canonicalize internal standalone-server redirect origins.
+      header_down Location "^https?://0[.]0[.]0[.]0:3000/" "https://www.bahasacerdas.com/"
+    }
   }
 
   log {
