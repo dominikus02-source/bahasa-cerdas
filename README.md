@@ -2,7 +2,7 @@
 
 Platform edukasi Bahasa Indonesia berbasis AI untuk guru dan murid: latihan menulis harian, portofolio karya, kelas digital, gamifikasi, arena kuis realtime, serta modul UKBI/TKA sebagai fitur pendukung.
 
-Produksi: <a href="https://www.bahasacerdas.com" target="_blank" rel="noopener noreferrer">www.bahasacerdas.com</a> · Health check: <a href="https://www.bahasacerdas.com/api/health" target="_blank" rel="noopener noreferrer">/api/health</a>
+Produksi: <https://www.bahasacerdas.com> · Health check: <https://www.bahasacerdas.com/api/health>
 
 ## Tech Stack
 
