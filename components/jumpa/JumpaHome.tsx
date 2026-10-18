@@ -105,9 +105,9 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
         {data.rooms.length === 0 ? (
           <p className="jumpa-glass rounded-3xl px-5 py-8 text-center text-sm text-[var(--jp-text-2)]">Belum ada ruang aktif untukmu saat ini.</p>
         ) : (
-          <ul className="grid gap-2">
+          <ul className="grid grid-cols-1 gap-2">
             {data.rooms.map((r) => (
-              <li key={r.code}>
+              <li key={r.code} className="min-w-0">
                 <Link href={`/jumpa/${r.code}`} className="jumpa-glass jumpa-room-row flex items-center gap-3 rounded-2xl px-4 py-3">
                   <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-[var(--clr-accent-soft)] text-[var(--jp-accent)]">
                     <Video size={20} />
@@ -121,7 +121,7 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
                     </span>
                   </span>
                   {r.status === "LIVE" && <span className="jumpa-live">Live</span>}
-                  <ArrowRight size={18} className="text-[var(--jp-text-3)]" />
+                  <ArrowRight size={18} className="shrink-0 text-[var(--jp-text-3)]" />
                 </Link>
               </li>
             ))}

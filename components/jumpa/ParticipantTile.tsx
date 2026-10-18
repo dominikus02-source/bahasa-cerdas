@@ -2,14 +2,20 @@
 
 import { VideoTrack, isTrackReference, useIsMuted, useIsSpeaking, type TrackReferenceOrPlaceholder } from "@livekit/components-react";
 import { Track } from "livekit-client";
-import { MicOff, MonitorUp } from "lucide-react";
-import { initials, parseParticipantMeta } from "./format";
+import { AudioLines, MicOff, MonitorUp } from "lucide-react";
+import { avatarTone, initials, parseParticipantMeta } from "./format";
 
 interface Props {
   trackRef: TrackReferenceOrPlaceholder;
   compact?: boolean;
   /** Track berbagi layar: tampil utuh (contain), tanpa cermin. */
   screen?: boolean;
+}
+
+const ROLE_LABEL = { HOST: "Host", GURU: "Guru", MURID: "Murid" } as const;
+
+function firstName(name: string): string {
+  return name.trim().split(/\s+/)[0] || name;
 }
 
 export default function ParticipantTile({ trackRef, compact = false, screen = false }: Props) {
@@ -33,32 +39,49 @@ export default function ParticipantTile({ trackRef, compact = false, screen = fa
     );
   }
 
+  const talking = speaking && !micMuted;
+  const role: keyof typeof ROLE_LABEL | null = meta.roomRole === "HOST" ? "HOST" : meta.bcRole;
+
   return (
     <div
       className="jumpa-tile h-full w-full"
-      data-speaking={speaking && !micMuted}
+      data-speaking={talking}
       data-local={participant.isLocal}
+      data-compact={compact}
     >
       {showVideo ? (
         <VideoTrack trackRef={trackRef} />
       ) : (
-        <div className="absolute inset-0 grid place-items-center">
-          <span className={`jumpa-avatar ${compact ? "h-10 w-10 text-sm" : "h-20 w-20 text-2xl sm:h-24 sm:w-24"}`}>{initials(name)}</span>
+        <div className="jumpa-tile-empty" data-tone={avatarTone(participant.identity)}>
+          <span className="jumpa-avatar-wrap" data-speaking={talking}>
+            <span className={`jumpa-avatar ${compact ? "h-11 w-11 text-[15px]" : "h-20 w-20 text-[28px] sm:h-24 sm:w-24 sm:text-[32px]"}`}>{initials(name)}</span>
+          </span>
         </div>
       )}
       {!compact ? (
         <span className="jumpa-nameplate jumpa-glass">
-          {micMuted && <MicOff size={14} className="shrink-0 text-[var(--jp-danger)]" aria-label="Mikrofon mati" />}
-          <span className="truncate">{participant.isLocal ? `${name} (Kamu)` : name}</span>
-          {meta.roomRole === "HOST" ? (
-            <span className="jumpa-badge" data-role="HOST">Host</span>
-          ) : meta.bcRole ? (
-            <span className="jumpa-badge" data-role={meta.bcRole}>{meta.bcRole === "GURU" ? "Guru" : "Murid"}</span>
+          {talking ? (
+            <AudioLines size={14} className="jumpa-speaking-icon shrink-0" aria-label="Sedang berbicara" />
+          ) : micMuted ? (
+            <MicOff size={14} className="shrink-0 text-[var(--jp-danger)]" aria-label="Mikrofon mati" />
           ) : null}
+          {/* Tile sempit: nama depan saja + peran 1 huruf (container query di CSS). */}
+          <span className="jumpa-name-full truncate">{participant.isLocal ? `${name} (Kamu)` : name}</span>
+          <span className="jumpa-name-short truncate">{participant.isLocal ? "Kamu" : firstName(name)}</span>
+          {role && (
+            <>
+              <span className="jumpa-badge jumpa-badge-full" data-role={role}>{ROLE_LABEL[role]}</span>
+              <span className="jumpa-badge jumpa-badge-mini" data-role={role} title={ROLE_LABEL[role]} aria-label={ROLE_LABEL[role]}>{ROLE_LABEL[role][0]}</span>
+            </>
+          )}
         </span>
       ) : (
         <span className="jumpa-nameplate jumpa-glass !bottom-1.5 !left-1.5 !px-2 !py-0.5 !text-[11px]">
-          {micMuted && <MicOff size={11} className="shrink-0 text-[var(--jp-danger)]" aria-label="Mikrofon mati" />}
+          {talking ? (
+            <AudioLines size={11} className="jumpa-speaking-icon shrink-0" aria-label="Sedang berbicara" />
+          ) : micMuted ? (
+            <MicOff size={11} className="shrink-0 text-[var(--jp-danger)]" aria-label="Mikrofon mati" />
+          ) : null}
           <span className="truncate">{participant.isLocal ? "Kamu" : name}</span>
         </span>
       )}

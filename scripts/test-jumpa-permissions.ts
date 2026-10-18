@@ -20,7 +20,7 @@ import { JUMPA_CAPS, capsFor, isPastDuration } from "../lib/jumpa/caps"
 import { generateRoomCode, isValidRoomCode, generateLivekitRoomName } from "../lib/jumpa/code"
 import { livekitCspOrigins } from "../lib/jumpa/config"
 import { parseMediaPrefs, DEFAULT_MEDIA_PREFS } from "../components/jumpa/media-prefs"
-import { gridColumns, initials, parseParticipantMeta } from "../components/jumpa/format"
+import { avatarTone, fitGrid, gridColumns, initials, parseParticipantMeta } from "../components/jumpa/format"
 
 let passed = 0
 let failed = 0
@@ -153,6 +153,15 @@ check("Metadata palsu diabaikan", parseParticipantMeta('{"bcRole":"ADMIN","roomR
 check("Metadata valid terbaca", parseParticipantMeta('{"bcRole":"GURU","roomRole":"HOST"}').roomRole === "HOST")
 check("Grid mobile maks 2 kolom", gridColumns(12, false) === 2 && gridColumns(2, false) === 1)
 check("Grid desktop 3x3 untuk 9", gridColumns(9, true) === 3 && gridColumns(1, true) === 1)
+const g6 = fitGrid(6, 1376, 720, 16, 16 / 9)
+check("fitGrid desktop 6 peserta → 3 kolom, rasio 16:9", !!g6 && g6.cols === 3 && Math.abs(g6.tileW / g6.tileH - 16 / 9) < 0.02)
+check("fitGrid: total grid muat di area", !!g6 && g6.cols * g6.tileW + 2 * 16 <= 1376 && Math.ceil(6 / g6.cols) * g6.tileH + 16 <= 720)
+for (const w of [360, 390, 430]) {
+  const m = fitGrid(6, w - 24, 600, 8, 4 / 5, 2)
+  check(`fitGrid mobile ${w}px: maks 2 kolom, muat lebar`, !!m && m.cols <= 2 && m.cols * m.tileW + (m.cols - 1) * 8 <= w - 24)
+}
+check("fitGrid area kosong → null (fallback kolom)", fitGrid(4, 0, 0, 8, 1) === null && fitGrid(0, 100, 100, 8, 1) === null)
+check("avatarTone stabil & 0–3", avatarTone("u-ani") === avatarTone("u-ani") && [..."abcdefgh"].every((c) => avatarTone(c) >= 0 && avatarTone(c) <= 3))
 
 console.log("\n10. Struktur & guard")
 const ROOT = pathJoin(import.meta.dirname, "..")
@@ -173,6 +182,14 @@ const migration = read("prisma/migrations/20261018000000_jumpa_phase1/migration.
 check("Migration: 3 tabel + RLS enable", ["JumpaRoom", "JumpaParticipant", "JumpaEvent"].every((t) => migration.includes(`CREATE TABLE "${t}"`) && migration.includes(`ALTER TABLE "${t}" ENABLE ROW LEVEL SECURITY`)))
 check("Migration add-only (tanpa DROP/ALTER COLUMN tabel lama)", !/^\s*DROP\s/im.test(migration) && !/ALTER TABLE "(?!Jumpa)/.test(migration))
 const css = read("components/jumpa/jumpa.css")
+const roomView = read("components/jumpa/JumpaRoomView.tsx")
+check("Mobile: tombol Layar hanya di bar saat lebar, di Lainnya saat sempit", roomView.includes("{canScreen && wide && (") && roomView.includes("{canScreen && !wide && ("))
+check("Bar kontrol & area video memakai safe-area kiri/kanan", (roomView.match(/env\(safe-area-inset-left\)/g) ?? []).length >= 3)
+check("Area video min-w-0 (tidak melebar keluar layar)", roomView.includes('className="relative min-h-0 min-w-0 flex-1" aria-label="Video peserta"'))
+check("Tombol bulat menyusut di layar sempit (clamp)", css.includes("width: clamp(46px, 12.8vw, 56px)"))
+check("Tile sempit: nama depan + badge 1 huruf (container query)", css.includes("@container jumpa-tile (max-width: 230px)") && read("components/jumpa/ParticipantTile.tsx").includes("jumpa-badge-mini"))
+check("Indikator pembicara: tile data-speaking bercincin aksen", /\.jumpa-tile\[data-speaking="true"\] \{[^}]*var\(--jp-accent\)/.test(css))
+check("Reduced motion: indikator pembicara tanpa animasi tapi tetap terlihat", /prefers-reduced-motion[\s\S]*data-speaking="true"\]::after \{ animation: none/.test(css))
 check("jumpa.css tanpa hex hardcode (THEME RULE)", !/#[0-9a-fA-F]{3,8}\b/.test(css))
 const ui = ["components/jumpa/JumpaLobby.tsx", "components/jumpa/JumpaRoomView.tsx", "components/jumpa/ParticipantTile.tsx", "components/jumpa/JumpaApp.tsx"].map(read).join("\n")
 check("UI JUMPA tanpa bg-white/text-slate-900/hex", !/bg-white|text-slate-900|bg-\[#/.test(ui))

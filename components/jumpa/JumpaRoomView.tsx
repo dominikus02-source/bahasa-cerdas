@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   LiveKitRoom,
@@ -44,7 +44,7 @@ import {
 } from "lucide-react";
 import type { JumpaReaction } from "@/lib/jumpa/signals";
 import ParticipantTile from "./ParticipantTile";
-import { gridColumns, parseParticipantMeta } from "./format";
+import { fitGrid, gridColumns, parseParticipantMeta } from "./format";
 import { writeMediaPrefs, type JumpaMediaPrefs } from "./media-prefs";
 import { JumpaRoomProvider, useJumpa, type EndedReason, type JumpaRoomInfo, type JumpaSelf } from "./room-controller";
 import { ChatPanel, InvitePanel, PanelFrame, PeoplePanel, ReportPanel, type PanelName } from "./RoomPanels";
@@ -75,6 +75,28 @@ const ROOM_OPTIONS: RoomOptions = {
 };
 
 const EASE = [0.22, 0.8, 0.24, 1] as const;
+
+const GRID_GAP_WIDE = 16;
+const GRID_GAP_NARROW = 8;
+
+/** Ukuran elemen (ResizeObserver) untuk menghitung grid yang pas. */
+function useElementSize<T extends HTMLElement>(): [(el: T | null) => void, { w: number; h: number }] {
+  const [size, setSize] = useState({ w: 0, h: 0 });
+  const obs = useRef<ResizeObserver | null>(null);
+  const ref = useCallback((el: T | null) => {
+    obs.current?.disconnect();
+    obs.current = null;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect;
+      setSize((cur) => (Math.abs(cur.w - width) < 1 && Math.abs(cur.h - height) < 1 ? cur : { w: Math.floor(width), h: Math.floor(height) }));
+    });
+    ro.observe(el);
+    obs.current = ro;
+  }, []);
+  useEffect(() => () => obs.current?.disconnect(), []);
+  return [ref, size];
+}
 
 function useIsWide(): boolean {
   const [wide, setWide] = useState(false);
@@ -120,7 +142,7 @@ export default function JumpaRoomView(props: ViewProps) {
         else props.onLeave("disconnected");
       }}
       onMediaDeviceFailure={() => setDeviceNote("Kamera atau mikrofon tidak bisa dipakai. Periksa izin browser.")}
-      className="flex h-[100dvh] flex-col"
+      className="flex h-[100dvh] w-full min-w-0 flex-col overflow-hidden"
     >
       <JumpaRoomProvider initial={props.info} self={props.self}>
         <EndedBridge onRef={setEndedRef} />
@@ -181,7 +203,7 @@ function RoomShell(props: ViewProps & { deviceNote: string | null; clearDeviceNo
 
   return (
     <>
-      <header className="flex items-center justify-between gap-3 px-4 pb-2 pt-[max(12px,env(safe-area-inset-top))] sm:px-6">
+      <header className="flex min-w-0 items-center justify-between gap-3 pb-2 pl-[max(16px,env(safe-area-inset-left))] pr-[max(16px,env(safe-area-inset-right))] pt-[max(12px,env(safe-area-inset-top))] sm:px-6 lg:px-8">
         <div className="min-w-0">
           <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[.14em] text-[var(--jp-accent)]">
             JUMPA
@@ -249,8 +271,8 @@ function RoomShell(props: ViewProps & { deviceNote: string | null; clearDeviceNo
         )}
       </AnimatePresence>
 
-      <div className="flex min-h-0 flex-1 gap-3 px-3 sm:px-6">
-        <section className="relative min-h-0 flex-1" aria-label="Video peserta">
+      <div className="flex min-h-0 min-w-0 flex-1 gap-3 pl-[max(12px,env(safe-area-inset-left))] pr-[max(12px,env(safe-area-inset-right))] sm:px-6 lg:gap-4 lg:px-8 lg:pt-1">
+        <section className="relative min-h-0 min-w-0 flex-1" aria-label="Video peserta">
           <Stage layout={layout} wide={wide} />
           <ReactionsLayer />
         </section>
@@ -270,7 +292,7 @@ function RoomShell(props: ViewProps & { deviceNote: string | null; clearDeviceNo
         )}
       </AnimatePresence>
 
-      <ControlBar layout={layout} onLayout={setLayoutChoice} onLeave={() => props.onLeave("left")} openPanel={setPanel} />
+      <ControlBar wide={wide} layout={layout} onLayout={setLayoutChoice} onLeave={() => props.onLeave("left")} openPanel={setPanel} />
     </>
   );
 }
@@ -321,6 +343,7 @@ function Stage({ layout, wide }: { layout: Layout; wide: boolean }) {
   const tracks = allTracks.filter((t) => t.source !== Track.Source.ScreenShare);
   const speakers = useSpeakingParticipants();
   const [focusId, setFocusId] = useState<string | null>(null);
+  const [gridRef, gridSize] = useElementSize<HTMLDivElement>();
 
   // Pembicara terakhir (selain diri sendiri) menjadi fokus layout Pembicara.
   useEffect(() => {
@@ -349,8 +372,8 @@ function Stage({ layout, wide }: { layout: Layout; wide: boolean }) {
   const screen = screens[screens.length - 1];
   if (screen) {
     return (
-      <div className="flex h-full flex-col gap-2">
-        <motion.div key={`screen-${screen.participant.identity}`} className="min-h-0 flex-1" {...motionProps}>
+      <div className="flex h-full min-w-0 flex-col gap-2">
+        <motion.div key={`screen-${screen.participant.identity}`} className="min-h-0 min-w-0 flex-1" {...motionProps}>
           <ParticipantTile trackRef={screen} screen />
         </motion.div>
         <div className="jumpa-strip">
@@ -367,8 +390,8 @@ function Stage({ layout, wide }: { layout: Layout; wide: boolean }) {
   if (layout === "speaker" && focus) {
     const others = tracks.filter((t) => t !== focus);
     return (
-      <div className="flex h-full flex-col gap-2">
-        <motion.div key={focus.participant.identity} className="min-h-0 flex-1" {...motionProps}>
+      <div className="flex h-full min-w-0 flex-col gap-2">
+        <motion.div key={focus.participant.identity} className="min-h-0 min-w-0 flex-1" {...motionProps}>
           <ParticipantTile trackRef={focus} />
         </motion.div>
         {others.length > 0 && (
@@ -392,9 +415,14 @@ function Stage({ layout, wide }: { layout: Layout; wide: boolean }) {
     );
   }
 
-  const cols = gridColumns(tracks.length, wide);
+  // Grid: tile berasio tetap (16:9 desktop, 4:5 mobile) yang muat di area.
+  const gap = wide ? GRID_GAP_WIDE : GRID_GAP_NARROW;
+  const fit = fitGrid(tracks.length, gridSize.w, gridSize.h, gap, wide ? 16 / 9 : 4 / 5, wide ? 6 : 2);
+  const gridStyle: CSSProperties = fit
+    ? { gap, gridTemplateColumns: `repeat(${fit.cols}, ${fit.tileW}px)`, gridAutoRows: `${fit.tileH}px` }
+    : { gap, ["--jp-cols" as string]: gridColumns(tracks.length, wide) };
   return (
-    <div className="jumpa-grid" style={{ ["--jp-cols" as string]: cols }}>
+    <div ref={gridRef} className="jumpa-grid" data-fit={Boolean(fit)} style={gridStyle}>
       <AnimatePresence initial={false}>
         {tracks.map((t) => (
           <motion.div key={t.participant.identity} className="min-h-0" {...motionProps}>
@@ -407,11 +435,13 @@ function Stage({ layout, wide }: { layout: Layout; wide: boolean }) {
 }
 
 function ControlBar({
+  wide,
   layout,
   onLayout,
   onLeave,
   openPanel,
 }: {
+  wide: boolean;
   layout: Layout;
   onLayout: (l: Layout) => void;
   onLeave: () => void;
@@ -480,7 +510,7 @@ function ControlBar({
   const leave = () => onLeave();
 
   return (
-    <div className="relative px-3 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 sm:px-6">
+    <div className="relative pb-[max(12px,env(safe-area-inset-bottom))] pl-[max(12px,env(safe-area-inset-left))] pr-[max(12px,env(safe-area-inset-right))] pt-3 sm:px-6">
       <AnimatePresence>
         {menuOpen && (
           <>
@@ -510,6 +540,12 @@ function ControlBar({
                 ))}
               </div>
               <div className="my-1 h-px bg-[var(--jp-line)]" />
+              {canScreen && !wide && (
+                <button type="button" role="menuitem" className="jumpa-menu-item" disabled={busy === "screen"} onClick={() => { close(); void toggleScreen(); }}>
+                  <MonitorUp size={20} className={isScreenShareEnabled ? "text-[var(--jp-accent)]" : undefined} />
+                  {isScreenShareEnabled ? "Hentikan berbagi layar" : "Bagikan layar"}
+                </button>
+              )}
               {canInvite && (
                 <button type="button" role="menuitem" className="jumpa-menu-item" onClick={() => { openPanel("invite"); close(); }}>
                   <UserPlus size={20} /> Undang peserta
@@ -571,7 +607,7 @@ function ControlBar({
         initial={reduceMotion ? false : { opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, ease: EASE }}
-        className="jumpa-glass mx-auto flex w-full max-w-lg items-start justify-around gap-0.5 rounded-[28px] px-1 py-3"
+        className="jumpa-glass jumpa-bar mx-auto flex w-full min-w-0 max-w-lg items-start justify-around rounded-[28px] px-1.5 py-2.5 sm:py-3"
       >
         <div className="jumpa-ctl">
           <button type="button" className="jumpa-round" data-off={!isMicrophoneEnabled} aria-pressed={isMicrophoneEnabled} aria-label={isMicrophoneEnabled ? "Matikan mikrofon" : "Nyalakan mikrofon"} onClick={toggleMic} disabled={busy === "mic"}>
@@ -585,7 +621,7 @@ function ControlBar({
           </button>
           <span className="jumpa-ctl-label">Kamera</span>
         </div>
-        {canScreen && (
+        {canScreen && wide && (
           <div className="jumpa-ctl">
             <button type="button" className="jumpa-round" data-on={isScreenShareEnabled} aria-pressed={isScreenShareEnabled} aria-label={isScreenShareEnabled ? "Hentikan berbagi layar" : "Bagikan layar"} onClick={toggleScreen} disabled={busy === "screen"}>
               <MonitorUp size={24} />
