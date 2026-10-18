@@ -17,7 +17,7 @@ Produksi: <https://www.bahasacerdas.com> · Health check: <https://www.bahasacer
 | Realtime | Socket.IO game server di `game-server/` (Kuis Tempur) |
 | Runtime | Node.js 22 pada image produksi, Node.js 20 pada CI; npm + `package-lock.json` |
 
-Skala kode saat ini: 374 route handler API, 159 halaman dashboard, 515 script operasional di `scripts/`, 324 dokumen di `docs/`.
+Skala kode saat ini: 374 route handler API, 159 halaman di `app/(dashboard)`, 669 file di `scripts/` (649 di antaranya TypeScript), 324 dokumen di `docs/`, dan 154 model di `prisma/schema.prisma`.
 
 ## Struktur Repositori
 
@@ -35,6 +35,77 @@ Skala kode saat ini: 374 route handler API, 159 halaman dashboard, 515 script op
 | `twa/` | Konfigurasi Android TWA untuk APK Arena |
 | `docs/` | Dokumen arsitektur, audit, dan status pekerjaan |
 | `middleware.ts` | CSP dengan nonce per-request, rate limit `/api/ai/*`, sesi Supabase |
+
+## Peran dan Hak Akses (RBAC)
+
+Otorisasi berlapis: Supabase membuktikan **siapa** yang memanggil, dan baris `User` di database menentukan **boleh apa**. Peran tidak pernah diambil dari body request, query string, atau cookie buatan klien.
+
+### Peran dan flag
+
+`enum Role` di `prisma/schema.prisma` hanya punya tiga nilai. `User.role` default `MURID`, dan `User.isFounder` adalah flag terpisah dengan default `false`.
+
+| Peran / flag | Dasbor utama | Cakupan |
+|--------------|--------------|---------|
+| `MURID` | `/murid/*` | Latihan, portofolio, kelas, arena, gamifikasi |
+| `GURU` | `/guru/*` | Kelas, materi, penilaian, komisi guru, dan boleh membuka shell murid sebagai pratinjau |
+| `ADMIN` | `/admin/*` | Panel admin operasional (pengguna, AI quota, materi, storage) |
+| `isFounder = true` | `/guru/beranda` (default) | Lintas peran: dianggap admin di semua gerbang, tapi tetap punya identitas guru |
+
+**Founder adalah flag, bukan peran.** Migrasi `prisma/migrations/manual/2026-09-01_founder_role_separation.sql` memindahkan tiga akun founder dari `ADMIN` ke `GURU` dengan `isFounder = true` dipertahankan; `ADMIN` yang tersisa adalah admin operasional. Konsekuensi yang mudah menjebak: **cek `role === "ADMIN"` saja akan menolak founder**. Gerbang yang benar adalah `user.isFounder || user.role === "ADMIN"`.
+
+Dua efek samping yang perlu diketahui: founder dikecualikan dari komisi guru (`lib/commission/config.ts`), dan `dashboardForUser()` di `lib/auth/redirect.ts` mengarahkan founder ke `/guru/beranda`, bukan `/admin`.
+
+### Helper otorisasi — `lib/supabase/server.ts`
+
+| Fungsi | Perilaku |
+|--------|----------|
+| `getUser()` | Mengembalikan identitas + baris `User` (role, isFounder, onboarded, premium), atau `null`. Dibungkus `cache()` agar satu request hanya sekali menyentuh auth dan database |
+| `requireAuth()` | Melempar `Unauthorized` bila belum login |
+| `requireRole(...roles)` | Melempar `Forbidden` bila `user.role` tidak ada di daftar |
+| `requireFounder()` | Lolos bila `isFounder` atau `role === "ADMIN"` |
+| `unauthorizedResponse()` / `forbiddenResponse()` | Helper respons JSON untuk status 401 dan 403 |
+
+`getUser()` memakai `supabase.auth.getClaims()` — verifikasi JWT secara lokal lewat JWKS, bukan panggilan jaringan ke Supabase Auth — lalu membaca ulang baris `User` dari database. Karena wewenang selalu dibaca segar, perubahan peran berlaku pada request berikutnya tanpa menunggu token kedaluwarsa. Fungsi ini **bukan** `getUser()` milik Supabase; jangan tertukar.
+
+### Penjaga per segmen halaman
+
+| Segmen | Aturan di layout | Bila gagal |
+|--------|------------------|------------|
+| `app/(dashboard)/admin` | `role === "ADMIN" \|\| isFounder` | `redirect("/login")` |
+| `app/(dashboard)/guru` | `role === "GURU" \|\| isFounder`, lalu wajib `onboarded` | `/murid/beranda`, atau `/guru/onboarding` |
+| `app/(dashboard)/murid` | `MURID`, `GURU`, atau founder | `/guru/beranda` |
+
+`/guru/onboarding` sengaja melewati guard layout karena mengurus bootstrap auth-nya sendiri (alasannya ada sebagai komentar di `app/(dashboard)/guru/layout.tsx`).
+
+**`middleware.ts` tidak memeriksa peran.** Isinya hanya refresh sesi Supabase, CSP nonce per-request, dan rate limit `/api/ai/*`. Jadi otorisasi harus ada di layout, route handler, atau server action — jangan pernah mengandalkan middleware sebagai satu-satunya gerbang.
+
+### Penjaga route API
+
+Dari 374 route handler di `app/api`, 117 menyebut `isFounder`. `app/api/admin` berisi 61 route; 59 di antaranya memakai `getUser()` + `isFounder` sebagai gerbang, dan 7 juga menerima `role === "ADMIN"`. Pola yang dominan:
+
+```ts
+const user = await getUser();
+if (!user || !user.isFounder) {
+  return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
+}
+```
+
+Baru 3 route memakai helper `requireFounder()` (`app/api/admin/configure-storage`, `app/api/debug`, `app/api/debug/midtrans`). Untuk kode baru, pakai helper-nya: ia memetakan penolakan ke `unauthorizedResponse()`/`forbiddenResponse()` sehingga 401 dan 403 konsisten.
+
+### Gerbang lain
+
+- **Endpoint cron** (`app/api/cron/*`) memakai header `Authorization: Bearer $CRON_SECRET`. Kalau `CRON_SECRET` kosong, pemeriksaan itu dilewati dan endpoint menjadi terbuka — di produksi variabel ini wajib diisi.
+- **Agent control** (`src/agent/control/auth.ts`): `authorizeFounder()` mengembalikan `{ ok: false, reason: "UNAUTHENTICATED" | "NOT_FOUNDER" }`; identitas selalu dari sesi, tidak pernah dari body request.
+- **Halaman/API guru**: `isTeacherOrStudent()` di `lib/teacher/students.ts` menerima `GURU`, `ADMIN`, dan founder.
+- **Storage**: kebijakan RLS bucket diterapkan manual lewat `scripts/apply-storage-rls.ts` dan `scripts/fix-storage-rls.sql`. `SUPABASE_SERVICE_ROLE_KEY` hanya boleh dipakai di server, tidak pernah di komponen klien.
+- **Game server**: memakai `KUIS_TEMPUR_SERVER_SECRET` dan signing key, terpisah dari sesi web (lihat `game-server/.env.example`).
+
+### Aturan saat menambah fitur
+
+1. Ambil identitas hanya lewat `getUser()` dari `lib/supabase/server.ts`; jangan `decode` JWT sendiri dan jangan menerima `userId`/`role` dari klien.
+2. Gerbang admin: `user.isFounder || user.role === "ADMIN"`. Gerbang guru: `requireRole("GURU")` atau `isTeacherOrStudent()`.
+3. Batasi query per pemilik (`where: { userId: user.id }`), bukan berdasarkan id yang dikirim klien.
+4. Bedakan 401 (belum login) dan 403 (login tapi tidak berhak) — jangan mengembalikan 200 dengan data kosong.
 
 ## Prasyarat
 
@@ -159,6 +230,7 @@ Aturan kerja agen dan konvensi kode ada di [`AGENTS.md`](AGENTS.md) (`CLAUDE.md`
 - Mobile-first dan konsisten dengan tema per peran (guru emerald, murid violet)
 - Format commit: `feat:`, `fix:`, `refactor:`, `chore:`, `docs:`
 - Sebelum push: `npm run typecheck` dan `npm run lint` harus bersih
+- Setiap route/halaman baru wajib punya gerbang otorisasi eksplisit (lihat [Peran dan Hak Akses](#peran-dan-hak-akses-rbac)); jangan mengandalkan `middleware.ts`
 
 ## Dokumentasi
 
@@ -167,6 +239,8 @@ Aturan kerja agen dan konvensi kode ada di [`AGENTS.md`](AGENTS.md) (`CLAUDE.md`
 - [`docs/BAHASACERDAS_RANDOMIZED_EXAM_ENGINE.md`](docs/BAHASACERDAS_RANDOMIZED_EXAM_ENGINE.md) — randomisasi & snapshot ujian
 - [`docs/BAHASACERDAS_SEED_DATA_POLICY.md`](docs/BAHASACERDAS_SEED_DATA_POLICY.md) — kebijakan seed data
 - [`docs/BAHASACERDAS_BACKUP_AND_RESTORE_POLICY.md`](docs/BAHASACERDAS_BACKUP_AND_RESTORE_POLICY.md) — backup & restore
+- [`docs/FOUNDER_IDENTITY_ROLE_AUDIT_SEPTEMBER_2026.md`](docs/FOUNDER_IDENTITY_ROLE_AUDIT_SEPTEMBER_2026.md) — audit identitas & peran founder
+- [`docs/FOUNDER_ROLE_MIGRATION_FINAL_REPORT_SEPTEMBER_2026.md`](docs/FOUNDER_ROLE_MIGRATION_FINAL_REPORT_SEPTEMBER_2026.md) — laporan pemisahan peran founder
 - [`ops/supabase-selfhost/README.md`](ops/supabase-selfhost/README.md) — prosedur shadow database
 - [`tests/load/README.md`](tests/load/README.md) — load test k6
 
