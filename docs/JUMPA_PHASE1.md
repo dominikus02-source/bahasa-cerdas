@@ -27,15 +27,24 @@ echo "LIVEKIT_API_KEY=bcjumpa$(openssl rand -hex 4)"
 echo "LIVEKIT_API_SECRET=$(openssl rand -base64 36 | tr -d '\n/+=')"
 ```
 
-## Langkah deploy (sekali)
-1. **DNS:** A record `jumpa.bahasacerdas.com` → IP publik VPS (sama dengan www). Tunggu propagasi (`dig +short jumpa.bahasacerdas.com`).
+## Cara cepat: script setup (disarankan)
+Setelah PR di-merge, di VPS sebagai root:
+```bash
+cd /opt/bahasacerdas/apps/bahasa-cerdas && git checkout main && git pull --ff-only origin main
+bash ops/vps/jumpa-setup.sh --dry-run   # lihat rencana, tidak mengubah apa pun
+bash ops/vps/jumpa-setup.sh             # eksekusi
+```
+Script `ops/vps/jumpa-setup.sh` (idempoten) melakukan langkah 3–7 di bawah secara otomatis: backup `web.env`/`stack.env`, membuat kunci LiveKit bila belum ada (tidak pernah menimpa, secret tidak pernah dicetak utuh), set flag + URL LiveKit, menaikkan `WEB_BUILD_FINGERPRINT`, sysctl, ufw (bila aktif), migrasi DB self-hosted + `prisma migrate resolve`, `ENABLE_JUMPA=1 deploy.sh`, lalu cek health. DNS (langkah 1) dan firewall panel IDCloudHost (langkah 2) tetap manual. Bila DB di `web.env` bukan DB self-hosted di server ini, script berhenti dan mencetak perintah manual.
+
+## Langkah deploy manual (sekali)
+1. **DNS (Cloudflare):** A record `jumpa` → `103.242.10.81`, **Proxy status: DNS only** (awan abu-abu, sama seperti `game`). Proxy Cloudflare tidak boleh dipakai untuk media. Cek: `dig +short jumpa.bahasacerdas.com` harus `103.242.10.81`.
 2. **Firewall VPS / panel IDCloudHost:** buka **7881/tcp** dan **7882/udp** (masuk). Port 7880 TIDAK perlu dibuka (hanya localhost; publik lewat Caddy 443).
 3. **Opsional tapi disarankan** (peringatan LiveKit soal buffer UDP):
    `sysctl -w net.core.rmem_max=5000000 net.core.wmem_max=5000000` (simpan di `/etc/sysctl.d/99-livekit.conf`).
 4. **Migrasi DB** (konvensi repo — JANGAN `prisma migrate deploy`): jalankan isi `prisma/migrations/20261018000000_jumpa_phase1/migration.sql` di SQL editor Supabase, lalu
    `npx prisma migrate resolve --applied 20261018000000_jumpa_phase1`.
    Migrasi hanya menambah 4 enum + 3 tabel baru (RLS aktif, deny-all). Rollback ada di header file.
-5. **Env:** tambahkan ke `/opt/bahasacerdas/config/web.env`:
+5. **Env:** tambahkan ke `/opt/bahasacerdas/config/web.env` (dan ganti `WEB_BUILD_FINGERPRINT` di `stack.env` agar web pasti di-rebuild dengan flag baru):
    ```
    NEXT_PUBLIC_JUMPA_ENABLED=true
    LIVEKIT_API_KEY=...
@@ -45,7 +54,7 @@ echo "LIVEKIT_API_SECRET=$(openssl rand -base64 36 | tr -d '\n/+=')"
    Deploy otomatis berikutnya (push ke main) tanpa `ENABLE_JUMPA` tidak mematikan LiveKit dan tidak menyentuh Caddy.
 7. **Cek:** `curl https://www.bahasacerdas.com/api/jumpa/health` → `{"ok":true,"enabled":true,"livekitConfigured":true,"storage":"ready"}`.
 
-**Matikan cepat:** set `NEXT_PUBLIC_JUMPA_ENABLED=false` + deploy (UI/API hilang). Untuk menghentikan media: `docker compose --env-file /opt/bahasacerdas/config/stack.env --profile jumpa stop livekit` dan hapus `config/caddy.d/jumpa.caddy`, lalu recreate caddy.
+**Matikan cepat:** `bash ops/vps/jumpa-setup.sh --disable` (flag → false, deploy ulang, cabut situs Caddy, stop livekit; tabel DB dibiarkan). Manual: set `NEXT_PUBLIC_JUMPA_ENABLED=false` di `web.env` **dan** ganti `WEB_BUILD_FINGERPRINT` di `stack.env` (mis. `$(date +%s)`) — tanpa fingerprint baru Docker bisa memakai cache build lama yang flag-nya masih on — lalu `bash ops/vps/deploy.sh`. Untuk menghentikan media: `docker compose --env-file /opt/bahasacerdas/config/stack.env --profile jumpa stop livekit` (dari `ops/vps`) dan pindahkan `config/caddy.d/jumpa.caddy`, lalu recreate caddy.
 
 ## Pindah LiveKit ke VPS terpisah
 Jalankan `livekit` + Caddy (snippet `jumpa.caddy`, `reverse_proxy localhost:7880`) di VPS media, arahkan DNS `jumpa.` ke sana, buka 7881/tcp + 7882/udp di sana, lalu di `web.env` VPS utama set `LIVEKIT_URL=https://jumpa.bahasacerdas.com` dengan kunci yang sama. Tidak ada perubahan kode.
