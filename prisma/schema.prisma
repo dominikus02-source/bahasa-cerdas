@@ -4306,10 +4306,12 @@ model JumpaRoom {
   invites      JumpaInvite[]
   messages     JumpaChatMessage[]
   reports      JumpaReport[]
+  notices      JumpaNotice[]
 
   @@index([createdById])
   @@index([groupId])
   @@index([status])
+  @@index([status, scheduledAt])
 }
 
 model JumpaParticipant {
@@ -4414,4 +4416,24 @@ model JumpaReport {
 
   @@index([roomId])
   @@index([status, createdAt])
+}
+
+/// Alur JUMPA: log notifikasi per ruang (dijadwalkan, pengingat 10 menit,
+/// mulai, dibatalkan, jadwal berubah, laporan). dedupeKey unik = idempotensi
+/// cron & klik ganda (lib/jumpa/notify.ts → noticeKey). Ubah jadwal memberi
+/// kunci pengingat baru, jadi pengingat dikirim ulang untuk jam baru.
+model JumpaNotice {
+  id         String   @id @default(cuid())
+  roomId     String
+  /// "SCHEDULED" | "REMINDER" | "LIVE" | "CANCELLED" | "RESCHEDULED" | "REPORT"
+  kind       String
+  dedupeKey  String   @unique
+  /// Jumlah penerima in-app & perangkat push yang berhasil.
+  recipients Int      @default(0)
+  pushed     Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  room JumpaRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@index([roomId, createdAt])
 }
