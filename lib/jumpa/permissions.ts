@@ -14,7 +14,7 @@
  *   mengunci & mengakhiri ruangnya sendiri; selebihnya pakai "Laporkan".
  * - Akun Arena Junior (TK–SD) tidak bisa membuat maupun ikut ruang MURID.
  */
-import { isPastDuration, type JumpaKind } from "./caps";
+import { isPastDuration, JUMPA_EARLY_JOIN_MIN, type JumpaKind } from "./caps";
 
 export type BcRole = "GURU" | "MURID" | "ADMIN";
 export type JumpaEffectiveRole = "GURU" | "MURID";
@@ -62,6 +62,8 @@ export type JumpaDenyCode =
   | "JUNIOR_NOT_ALLOWED"
   | "NOT_INVITED"
   | "ROOM_ENDED"
+  | "ROOM_CANCELLED"
+  | "NOT_STARTED"
   | "ROOM_EXPIRED"
   | "ROOM_LOCKED"
   | "ROOM_FULL"
@@ -128,6 +130,10 @@ export interface JoinRoomState {
   startedAt: Date | null;
   maxDurationMin: number;
   maxParticipants: number;
+  /** Alur jadwal: jam mulai (WIB di UI). null = ruang instan. */
+  scheduledAt?: Date | null;
+  /** "CANCELLED" = jadwal dibatalkan pembuat. */
+  endReason?: string | null;
 }
 
 export interface JoinRelation {
@@ -171,6 +177,7 @@ export function evaluateJoin(
   const role = effectiveRole(actor);
   if (!role) return deny("ROLE_NOT_ALLOWED", "Akun ini belum bisa memakai JUMPA.");
 
+  if (room.status === "ENDED" && room.endReason === "CANCELLED") return deny("ROOM_CANCELLED", "JUMPA ini dibatalkan.");
   if (room.status === "ENDED") return deny("ROOM_ENDED", "Ruang ini sudah selesai.");
   if (isPastDuration(room.startedAt, room.maxDurationMin, input.now)) {
     return deny("ROOM_EXPIRED", "Waktu ruang ini sudah habis.");
@@ -216,6 +223,11 @@ export function evaluateJoin(
   const isHost = access.roomRole === "HOST" || access.roomRole === "COHOST";
   if (room.isLocked && !isHost && !relation.isExistingParticipant) {
     return deny("ROOM_LOCKED", "Ruang sedang dikunci oleh pemandu.");
+  }
+  // Ruang terjadwal: peserta masuk mulai 10 menit sebelum jam mulai, atau
+  // begitu pemandu memulai (status LIVE). Pemandu boleh membuka lebih awal.
+  if (!isHost && room.status === "SCHEDULED" && room.scheduledAt && input.now.getTime() < room.scheduledAt.getTime() - JUMPA_EARLY_JOIN_MIN * 60_000) {
+    return deny("NOT_STARTED", "JUMPA belum dibuka.");
   }
   if (!isHost && input.activeOthers >= room.maxParticipants) {
     return deny("ROOM_FULL", "Ruang sudah penuh.");

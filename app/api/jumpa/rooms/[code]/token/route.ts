@@ -12,6 +12,7 @@
  * paket ruang (disalin ke JumpaRoom saat dibuat, lib/jumpa/tiers.ts).
  * Respons menyertakan `tier` (paket + batas kualitas) untuk UI.
  */
+import { after } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { rateLimitRoute } from "@/lib/rate-limit";
@@ -20,6 +21,7 @@ import { getLivekitPublicWsUrl, getLivekitServerConfig } from "@/lib/jumpa/confi
 import { countActiveOthers, ensureLivekitRoom } from "@/lib/jumpa/livekit";
 import { publishSourcesFor } from "@/lib/jumpa/permissions";
 import { loadRoomContext, recordJoinDenied, recordJoinGranted } from "@/lib/jumpa/service";
+import { notifyRoomLive } from "@/lib/jumpa/notify-server";
 import { buildJoinGrant, mintJoinToken } from "@/lib/jumpa/token";
 import { tierView } from "@/lib/jumpa/tiers";
 import { jumpaDisabledResponse, jumpaError, jumpaJson } from "@/lib/jumpa/http";
@@ -34,6 +36,8 @@ const DENY_STATUS: Record<string, number> = {
   ROOM_FULL: 409,
   ROOM_ENDED: 410,
   ROOM_EXPIRED: 410,
+  ROOM_CANCELLED: 410,
+  NOT_STARTED: 425,
   JUNIOR_NOT_ALLOWED: 403,
   NOT_GROUP_MEMBER: 403,
   NOT_COMMUNITY_MEMBER: 403,
@@ -100,6 +104,11 @@ export async function POST(request: Request, { params }: { params: Promise<{ cod
     });
 
     const { startedAt } = await recordJoinGranted({ room: ctx.room, userId: user.id, roomRole, accessVia });
+    // Alur: pemandu masuk = rapat dimulai → "Kelas X sedang JUMPA" ke kelas/undangan
+    // (sekali per ruang, lib/jumpa/notify-server.ts). Setelah respons, tidak menahan token.
+    if (roomRole === "HOST" && ctx.room.kind !== "MURID") {
+      after(() => notifyRoomLive(ctx.room.id).then(() => undefined).catch(() => undefined));
+    }
     const endsAt = startedAt ? new Date(startedAt.getTime() + ctx.room.maxDurationMin * 60_000).toISOString() : ctx.view.endsAt;
 
     return jumpaJson({
