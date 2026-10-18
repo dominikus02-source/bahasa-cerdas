@@ -117,7 +117,7 @@ function main() {
   check("18. Light tokens semantic (background/surface/border/text/accent)",
     () => ["--clr-bg", "--clr-surface", "--clr-border", "--clr-text", "--clr-accent"].every((t) => css.includes(t)));
   check("19. Dark mode first-class (.dark .bc-classroom override lengkap)",
-    () => css.includes(".dark .bc-classroom") && css.includes("--clr-surface: #171a22") && css.includes("color-scheme: dark"));
+    () => css.includes(".dark .bc-classroom") && (css + read("app/theme/tokens.css")).includes("--clr-surface: #171a22") && css.includes("color-scheme: dark"));
 
   // 20-21. Accessibility & touch
   console.log("\n── 20-21. Aksesibilitas ──");

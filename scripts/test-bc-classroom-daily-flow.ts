@@ -121,7 +121,7 @@ function main() {
   check("21. dark mode token (bc-student dark violet)",
     () => read("components/kelas/classroom.css").includes(".dark .bc-classroom.bc-student"));
   check("22. light mode token (--clr-bg #f4f5f7)",
-    () => read("components/kelas/classroom.css").includes("--clr-bg: #f4f5f7"));
+    () => (read("components/kelas/classroom.css") + read("app/theme/tokens.css")).includes("--clr-bg: #f4f5f7"));
 
   // 23-24. No duplicate engine/endpoint
   console.log("\n── 23-24. Tanpa duplikasi ──");

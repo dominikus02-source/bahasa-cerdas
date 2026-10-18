@@ -126,7 +126,7 @@ export default function MuridKelaskuDetailPage({ params }: { params: Promise<{ i
               <span className="text-[11px] font-bold uppercase tracking-wide text-[var(--clr-accent-strong)] bg-[var(--clr-accent-soft)] px-2.5 py-1 rounded-full">
                 Kelas {data.group.grade}
               </span>
-              <h1 className="text-2xl md:text-[28px] font-bold text-[var(--clr-text)] mt-2 truncate">{data.group.name}</h1>
+              <h1 className="text-2xl md:text-[28px] font-bold text-[var(--clr-text)] mt-2 break-words">{data.group.name}</h1>
               <p className="text-sm text-[var(--clr-text-2)] mt-1">
                 {data.group.teacher ? `Guru: ${data.group.teacher.fullName}` : "Guru"}
                 <span className="mx-2 text-[var(--clr-text-3)]">·</span>
@@ -257,7 +257,7 @@ function StreamItem({ item }: { item: { kind: "materi" | "tugas" | "latihan" | "
           <span className="w-10 h-10 rounded-xl bg-[var(--clr-accent-soft)] text-[var(--clr-accent-strong)] flex items-center justify-center shrink-0"><BookOpen size={18} /></span>
           <div className="flex-1 min-w-0">
             <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--clr-text-3)]">Materi</p>
-            <p className="text-[15px] font-bold text-[var(--clr-text)] truncate">{m.title}</p>
+            <p className="text-[15px] font-bold text-[var(--clr-text)] break-words">{m.title}</p>
             {m.description && <p className="text-sm text-[var(--clr-text-2)] mt-0.5 line-clamp-2">{m.description}</p>}
             <p className="text-xs text-[var(--clr-text-3)] mt-1.5">{m.guru} · {date}</p>
           </div>
@@ -277,19 +277,21 @@ function StreamItem({ item }: { item: { kind: "materi" | "tugas" | "latihan" | "
         <div className="flex items-start gap-3">
           <span className="w-10 h-10 rounded-xl bg-[var(--clr-violet-soft)] text-[var(--clr-violet)] flex items-center justify-center shrink-0"><FileText size={18} /></span>
           <div className="flex-1 min-w-0">
-            <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--clr-text-3)]">Tugas</p>
-            <p className="text-[15px] font-bold text-[var(--clr-text)] truncate">{t.judul}</p>
+            <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+              <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--clr-text-3)]">Tugas</p>
+              <StatusBadge status={t.status} nilai={t.nilai} />
+            </div>
+            <p className="text-[15px] font-bold text-[var(--clr-text)] break-words">{t.judul}</p>
             {t.deskripsi && <p className="text-sm text-[var(--clr-text-2)] mt-0.5 line-clamp-2">{t.deskripsi}</p>}
             <p className="text-xs text-[var(--clr-text-3)] mt-1.5">
-              {t.tenggat ? `Deadline: ${dl.label}` : "Tanpa batas waktu"} · {date}
+              {t.tenggat ? `Tenggat: ${dl.label}` : "Tanpa batas waktu"} · {date}
             </p>
             {t.status === "DINILAI" && t.feedback && (
               <p className="text-xs text-[var(--clr-text-2)] mt-2 bg-[var(--clr-surface-2)] border border-[var(--clr-border)] rounded-xl px-3 py-2 whitespace-pre-line">
-                <strong className="text-[var(--clr-text)]">Feedback guru: </strong>{t.feedback}
+                <strong className="text-[var(--clr-text)]">Catatan guru: </strong>{t.feedback}
               </p>
             )}
           </div>
-          <StatusBadge status={t.status} nilai={t.nilai} />
         </div>
         <Link href={`/arena/tugas/${t.id}/kerjakan`} className="bc-btn-primary mt-3 w-full text-sm">
           {t.status === "SUDAH_DIKUMPULKAN" || t.status === "DINILAI" ? "Lihat Pengumpulan" : "Kerjakan Tugas"} <span aria-hidden>→</span>
@@ -306,11 +308,13 @@ function StreamItem({ item }: { item: { kind: "materi" | "tugas" | "latihan" | "
         <div className="flex items-start gap-3">
           <span className="w-10 h-10 rounded-xl bg-[var(--clr-violet-soft)] text-[var(--clr-violet)] flex items-center justify-center shrink-0"><GraduationCap size={18} /></span>
           <div className="flex-1 min-w-0">
-            <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--clr-text-3)]">Latihan</p>
-            <p className="text-[15px] font-bold text-[var(--clr-text)] truncate">{l.title}</p>
+            <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+              <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--clr-text-3)]">Latihan</p>
+              <StatusBadge status={l.status} nilai={l.nilai} />
+            </div>
+            <p className="text-[15px] font-bold text-[var(--clr-text)] break-words">{l.title}</p>
             <p className="text-xs text-[var(--clr-text-3)] mt-0.5">{l.jumlahSoal} soal{l.tenggat ? ` · ${dl.label}` : ""}</p>
           </div>
-          <StatusBadge status={l.status} nilai={l.nilai} />
         </div>
         <Link href={`/murid/tugasku/${l.id}/take`} className="bc-btn-primary mt-3 w-full text-sm">
           {l.status === "SUDAH_DIKUMPULKAN" || l.status === "DINILAI" ? "Lihat Hasil" : "Mulai Latihan"} <span aria-hidden>→</span>

@@ -103,7 +103,7 @@ function main() {
   check("18. touch target >= 44px (bc-btn-primary 48px, bc-row 56px)",
     () => read("components/kelas/classroom.css").includes("min-height: 48px") && read("components/kelas/classroom.css").includes("min-height: 56px"));
   check("19. dark mode token", () => read("components/kelas/classroom.css").includes(".dark .bc-classroom.bc-student"));
-  check("20. light mode token", () => read("components/kelas/classroom.css").includes("--clr-bg: #f4f5f7"));
+  check("20. light mode token", () => (read("components/kelas/classroom.css") + read("app/theme/tokens.css")).includes("--clr-bg: #f4f5f7"));
 
   // 21. Direct-send + last action
   console.log("\n── 21-22. One-click ──");

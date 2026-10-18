@@ -87,7 +87,7 @@ export default function GabungKelasPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen bg-bc-surface-2">
       <div className="bg-gradient-to-r from-violet-600 to-purple-600 text-white py-10 px-4">
         <div className="max-w-2xl mx-auto">
           <Link href={berandaHref} className="inline-flex items-center gap-2 text-white/70 hover:text-white mb-4 text-sm">
@@ -111,7 +111,7 @@ export default function GabungKelasPage() {
               <input
                 value={code}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
-                className="w-full h-14 px-5 rounded-xl border-2 border-border bg-white dark:bg-slate-900 focus:border-violet-500 dark:focus:border-violet-400 focus:outline-none text-center font-mono text-xl font-bold tracking-widest uppercase"
+                className="w-full h-14 px-5 rounded-xl border-2 border-border bg-bc-surface focus:border-bc-violet focus:outline-none text-center font-mono text-xl font-bold tracking-widest uppercase"
                 placeholder="XXXXXXXX"
                 maxLength={8}
                 required
@@ -122,26 +122,26 @@ export default function GabungKelasPage() {
             </div>
 
             {error && (
-              <div className="p-3 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900 rounded-xl text-sm text-red-600 dark:text-red-400 text-center">
+              <div className="p-3 bg-bc-danger-soft border border-bc-danger/25 rounded-xl text-sm text-bc-danger text-center">
                 {error}
               </div>
             )}
 
             {success && (
-              <div className="p-4 bg-green-50 dark:bg-green-950/50 border-2 border-green-200 dark:border-green-900 rounded-xl">
+              <div className="p-4 bg-bc-success-soft border-2 border-bc-success/25 rounded-xl">
                 <div className="flex items-center gap-2 mb-2">
-                  <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
-                  <span className="font-bold text-green-700 dark:text-green-400">Berhasil bergabung!</span>
+                  <CheckCircle className="w-5 h-5 text-bc-success" />
+                  <span className="font-bold text-bc-success">Berhasil bergabung!</span>
                 </div>
-                <p className="text-sm text-green-700 dark:text-green-400">
+                <p className="text-sm text-bc-success">
                   Anda bergabung dengan kelas {success.name} - Kelas {success.grade}
                 </p>
                 {success.guruNama && (
-                  <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                  <p className="text-xs text-bc-success mt-1">
                     Guru: {success.guruNama}
                   </p>
                 )}
-                <p className="text-xs text-green-600 dark:text-green-400 mt-1">Mengalihkan ke beranda...</p>
+                <p className="text-xs text-bc-success mt-1">Mengalihkan ke beranda...</p>
               </div>
             )}
 
@@ -168,16 +168,16 @@ export default function GabungKelasPage() {
             <div className="space-y-2">
               {myGroups.map((m) => (
                 <Link key={m.id} href={`/murid/kelasku/${m.group.id}`}>
-                  <Card className="p-4 border border-border hover:border-violet-200 dark:hover:border-violet-500/60 hover:shadow-md transition-all cursor-pointer">
+                  <Card className="p-4 border border-border hover:border-bc-violet/25 hover:shadow-md transition-all cursor-pointer">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center text-violet-600 dark:text-violet-300 font-bold shrink-0">
+                      <div className="w-10 h-10 rounded-xl bg-bc-violet-soft flex items-center justify-center text-bc-violet font-bold shrink-0">
                         {m.group.name.charAt(0)}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-foreground text-sm">{m.group.name}</p>
                         <p className="text-xs text-muted-foreground">Kelas {m.group.grade} · Bergabung {new Date(m.joinedAt).toLocaleDateString("id-ID")}</p>
                         {m.role === "ketua" && (
-                          <span className="inline-flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 font-medium mt-0.5">
+                          <span className="inline-flex items-center gap-1 text-xs text-bc-warning font-medium mt-0.5">
                             <Crown className="w-3 h-3" /> Ketua Kelas
                           </span>
                         )}
@@ -195,7 +195,7 @@ export default function GabungKelasPage() {
           </div>
         )}
 
-        <Card className="p-5 bg-violet-50 dark:bg-violet-500/10 border-2 border-violet-100 dark:border-violet-500/20">
+        <Card className="p-5 bg-bc-violet-soft border-2 border-bc-violet/25">
           <h3 className="font-bold text-violet-900 dark:text-violet-300 text-sm mb-2 flex items-center gap-2">
             <GraduationCap className="w-4 h-4" />
             Cara Bergabung

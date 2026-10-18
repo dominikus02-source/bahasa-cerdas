@@ -126,7 +126,7 @@ function main() {
   check("18. CTA full-width mobile + touch >= 44px",
     () => css.includes("min-height: 48px") && guruPage.includes("w-full"));
   check("19. dark mode token", () => css.includes(".dark .bc-classroom"));
-  check("20. light mode token", () => css.includes("--clr-bg: #f4f5f7"));
+  check("20. light mode token (diwarisi dari tokens.css)", () => (css + read("app/theme/tokens.css")).includes("--clr-bg: #f4f5f7"));
 
   // 21. Senior teacher flows (step contracts dari kode)
   console.log("\n── 21. Senior teacher flow ──");

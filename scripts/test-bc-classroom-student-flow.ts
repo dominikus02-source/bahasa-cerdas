@@ -51,8 +51,8 @@ function main() {
 
   // 4-5. Assignment + deadline
   console.log("\n── 4-5. Tugas & deadline ──");
-  check("4. kartu tugas menampilkan judul + deskripsi + status", () => page.includes("Kerjakan Tugas") && page.includes("Deadline:"));
-  check("5. deadline ditampilkan (Deadline: / Tanpa tenggat)", () => page.includes("Tanpa batas waktu") && page.includes("Deadline:"));
+  check("4. kartu tugas menampilkan judul + deskripsi + status", () => page.includes("Kerjakan Tugas") && page.includes("Tenggat:"));
+  check("5. deadline ditampilkan (Tenggat: / Tanpa batas waktu)", () => page.includes("Tanpa batas waktu") && page.includes("Tenggat:"));
 
   // 6. Submission status
   console.log("\n── 6. Status submission ──");
@@ -105,8 +105,8 @@ function main() {
   console.log("\n── 15-17. Mobile & theme ──");
   check("15. CTA penuh lebar di mobile (w-full) — satu aksi per kartu",
     () => page.includes("w-full text-sm") && page.includes("bc-btn-primary mt-3 w-full"));
-  check("16. token student light (violet accent)", () => css.includes(".bc-classroom.bc-student") && css.includes("--clr-accent: #7c3aed"));
-  check("17. token student dark", () => css.includes(".dark .bc-classroom.bc-student") && css.includes("--clr-accent: #a78bfa"));
+  check("16. token student light (violet accent)", () => css.includes(".bc-classroom.bc-student") && css.includes("--clr-accent: var(--clr-violet)") && read("app/theme/tokens.css").includes("--clr-violet: #7c3aed"));
+  check("17. token student dark", () => css.includes(".dark .bc-classroom.bc-student") && read("app/theme/tokens.css").includes("--clr-violet: #a78bfa"));
 
   // 18-19. Empty & error states
   console.log("\n── 18-19. States ──");
