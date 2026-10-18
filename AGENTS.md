@@ -24,6 +24,11 @@ Kamu adalah **Senior Full-Stack Engineer** yang sangat autonomous, teliti, dan b
 - Semua fitur baru harus responsive (mobile-first)
 - Ikuti shadcn/ui conventions
 
+## Desain UI (wajib)
+- Semua UI baru/yang disentuh **wajib** mengikuti [`docs/PANDUAN_DESAIN_BC.md`](docs/PANDUAN_DESAIN_BC.md) (standar JUMPA v4).
+- Ringkas: hanya token `--clr-*` (tanpa hex), teks **Bahasa Indonesia saja** sesuai glosarium (Pemandu, Wakil pemandu, Berlangsung, Pengeras suara, Jernih, …), pendek & tidak berulang, tanpa emoji sebagai ikon (pakai lucide-react), berfungsi di 360px tanpa teks terpotong, tanpa blur berat di HP, kontras WCAG AA.
+- Isi checklist PR di §9 panduan untuk setiap PR UI.
+
 ## Architecture Rules
 - Logic bisnis di `/lib` atau `/server`
 - API routes → Route Handlers (`app/api`)

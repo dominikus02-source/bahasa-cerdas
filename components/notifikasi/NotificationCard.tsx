@@ -65,7 +65,7 @@ export function NotificationCard({
         <div className="flex min-w-0 items-start gap-2">
           <p
             className={`min-w-0 flex-1 break-words font-semibold text-slate-900 dark:text-slate-100 ${
-              dense ? "line-clamp-1 text-[13px]" : "text-sm"
+              dense ? "line-clamp-2 text-[13px]" : "text-sm"
             }`}
             style={{ overflowWrap: "anywhere" }}
           >

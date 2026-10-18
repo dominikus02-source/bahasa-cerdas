@@ -164,7 +164,9 @@ if [[ "${ENABLE_REALTIME:-0}" == "1" ]]; then
 fi
 
 if [[ "${ENABLE_JUMPA:-0}" == "1" ]]; then
-  curl -fsS --max-time 15 "https://${JUMPA_DOMAIN:-jumpa.bahasacerdas.com}/" >/dev/null
+  # Retry: pada enable pertama, Caddy baru menerbitkan sertifikat jumpa.* (ACME)
+  # beberapa detik setelah recreate → TLS alert sesaat (go-live 18 Okt 2026).
+  curl -4 -fsS --retry 6 --retry-all-errors --retry-delay 5 --max-time 15 "https://${JUMPA_DOMAIN:-jumpa.bahasacerdas.com}/" >/dev/null
 fi
 
 echo "==> Trim build cache older than 7 days"
