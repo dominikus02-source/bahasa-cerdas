@@ -46,6 +46,7 @@ import {
   PhoneOff,
   Presentation,
   Settings2,
+  Share2,
   Sparkles,
   ThumbsUp,
   UserPlus,
@@ -65,6 +66,7 @@ import { buildRoomOptions, MediaProvider, useMedia } from "./media-controller";
 import { JumpaRoomProvider, useJumpa, type EndedReason, type JumpaRoomInfo, type JumpaSelf } from "./room-controller";
 import { ChatPanel, InvitePanel, PanelFrame, PeoplePanel, ReportPanel, type PanelName } from "./RoomPanels";
 import SettingsPanel from "./SettingsPanel";
+import ShareSheet, { type ShareTarget } from "./ShareSheet";
 import { CountdownChip, TierBadge, TimeLimitWatcher } from "./TierUi";
 
 export const REACTION_ICONS: Record<JumpaReaction, { icon: (size: number) => ReactNode; label: string }> = {
@@ -419,17 +421,8 @@ const CAMERA_AND_SCREEN = [
 
 /** Kartu "menunggu peserta" saat kamu masih sendirian di ruang. */
 function AloneCard() {
-  const { info } = useJumpa();
-  const [copied, setCopied] = useState(false);
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(`${window.location.origin}/jumpa/${info.code}`);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
-    } catch {
-      setCopied(false);
-    }
-  };
+  const { info, self } = useJumpa();
+  const [open, setOpen] = useState(false);
   return (
     <div className="jumpa-alone jumpa-in-up" role="status">
       <span className="jumpa-empty-icon jumpa-alone-icon !mb-0" aria-hidden><Users size={22} /></span>
@@ -437,11 +430,17 @@ function AloneCard() {
         <p className="text-sm font-bold">Menunggu peserta lain</p>
         <p className="whitespace-nowrap text-xs text-[var(--jp-text-3)]">Kode <span className="font-mono font-semibold text-[var(--jp-text-2)]">{info.code}</span></p>
       </div>
-      <button type="button" className="jumpa-alone-btn" onClick={() => void copy()}>
-        {copied ? <Check size={16} /> : <Link2 size={16} />} {copied ? "Tersalin" : "Salin"}
+      <button type="button" className="jumpa-alone-btn" onClick={() => setOpen(true)}>
+        <Share2 size={16} /> Bagikan
       </button>
+      {open && <ShareSheet target={shareTargetOf(info, self)} onClose={() => setOpen(false)} />}
     </div>
   );
+}
+
+/** Data bagikan dari ruang; tautan 24 jam hanya untuk pemandu ruang guru. */
+function shareTargetOf(info: JumpaRoomInfo, self: JumpaSelf & { roomRole: "HOST" | "COHOST" | "MEMBER" }): ShareTarget {
+  return { code: info.code, title: info.title, kind: info.kind, canLink: info.kind === "GURU" && self.bcRole === "GURU" && self.roomRole !== "MEMBER" };
 }
 
 const Stage = memo(function Stage({ layout, wide, pageSize, stripMax, onShowPeople }: { layout: Layout; wide: boolean; pageSize: number; stripMax: number; onShowPeople: () => void }) {
@@ -573,7 +572,7 @@ function ControlBar({
   const { prefs, update, device, tier } = useMedia();
   const [busy, setBusy] = useState<"mic" | "camera" | "screen" | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const [screenSupported, setScreenSupported] = useState(false);
   useEffect(() => setScreenSupported(supportsScreenShare()), []);
   const canScreen = screenSupported && Boolean(permissions?.canPublishSources?.some((s) => Number(s) === PROTO_SCREEN_SHARE));
@@ -624,19 +623,11 @@ function ControlBar({
       setBusy(null);
     }
   };
-  const copyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(`${window.location.origin}/jumpa/${info.code}`);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
-    } catch {
-      setCopied(false);
-    }
-  };
   const close = () => setMenuOpen(false);
 
   return (
     <div className="jumpa-dock-wrap">
+      {shareOpen && <ShareSheet target={shareTargetOf(info, self)} onClose={() => setShareOpen(false)} />}
       {menuOpen && (
         <>
           <button type="button" aria-label="Tutup menu" className="fixed inset-0 z-20 cursor-default" onClick={close} />
@@ -669,9 +660,8 @@ function ControlBar({
                 <UserPlus size={20} /> Undang peserta
               </button>
             )}
-            <button type="button" role="menuitem" className="jumpa-menu-item" onClick={copyLink}>
-              {copied ? <Check size={20} className="text-[var(--jp-accent)]" /> : <Link2 size={20} />}
-              {copied ? "Tautan tersalin" : "Salin tautan ruang"}
+            <button type="button" role="menuitem" className="jumpa-menu-item" onClick={() => { setShareOpen(true); close(); }}>
+              <Share2 size={20} /> Bagikan ruang
             </button>
             {canLock && (
               <button type="button" role="menuitem" className="jumpa-menu-item" onClick={() => { void moderate(info.isLocked ? "UNLOCK" : "LOCK"); close(); }}>
