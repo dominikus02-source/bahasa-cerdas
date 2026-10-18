@@ -99,7 +99,8 @@ export function NotificationBell({
     const gutter = 12;
     const width = Math.min(384, Math.max(280, window.innerWidth - gutter * 2));
     const top = Math.min(rect.bottom + 8, window.innerHeight - 260);
-    const right = Math.max(gutter, window.innerWidth - rect.right);
+    // Jaga panel tetap di dalam layar (HP 360px: lonceng tidak di pojok kanan).
+    const right = Math.min(Math.max(gutter, window.innerWidth - rect.right), Math.max(gutter, window.innerWidth - width - gutter));
     const maxHeight = Math.max(220, window.innerHeight - top - gutter);
 
     setPanelPosition({ top, right, width, maxHeight });
