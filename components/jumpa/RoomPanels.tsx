@@ -140,7 +140,7 @@ export function ChatPanel() {
       <div ref={listRef} className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 pb-3" aria-live="polite">
         {!chatLoaded && <Loader2 className="mx-auto mt-6 animate-spin text-[var(--jp-accent)]" aria-label="Memuat obrolan" />}
         {chatLoaded && messages.length === 0 && (
-          <p className="mt-8 text-center text-sm text-[var(--jp-text-3)]">Belum ada pesan. Sapa teman-temanmu!</p>
+          <p className="mt-8 text-center text-sm text-[var(--jp-text-3)]">Belum ada pesan.</p>
         )}
         {messages.map((m) => {
           const mine = m.userId === self.userId;

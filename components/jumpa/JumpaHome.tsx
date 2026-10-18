@@ -32,7 +32,8 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
       const res = await fetch("/api/jumpa/rooms", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const json = (await res.json().catch(() => null)) as { url?: string; error?: string; code?: string } | null;
       if (!res.ok || !json?.url) {
-        if (json?.code === "TIER_DAILY_LIMIT") setLimitHit(true);
+        // Kuota habis: lembar upgrade sudah menjelaskan — jangan ulangi di banner.
+        if (json?.code === "TIER_DAILY_LIMIT") { setLimitHit(true); return; }
         setError(json?.error ?? "Gagal membuat ruang. Coba lagi.");
         return;
       }
@@ -62,10 +63,10 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
 
       {plan && (
         <section {...fade(0)} className="jumpa-card jumpa-in-up jumpa-plan-strip p-4" aria-label="Paket JUMPA kamu">
-          <span className="jumpa-tier" data-tier={plan.tier}>{plan.tier === "PREMIUM" && <Crown size={12} aria-hidden />}{plan.tier === "PREMIUM" ? (plan.trialing ? "Premium · masa coba" : "Premium") : "Gratis"}</span>
+          <span className="jumpa-tier" data-tier={plan.tier}>{plan.tier === "PREMIUM" && <Crown size={12} aria-hidden />}{plan.tier === "PREMIUM" ? (plan.trialing ? "Premium (coba)" : "Premium") : "Gratis"}</span>
           <p className="min-w-[12rem] flex-1 text-sm text-[var(--jp-text-2)]">
-            Kelas maks {plan.kelas.maxParticipants} orang · {plan.kelas.maxDurationMin} menit
-            {plan.roomsPerDay !== null ? ` · ${Math.max(0, plan.roomsPerDay - plan.roomsToday)} dari ${plan.roomsPerDay} ruang tersisa hari ini` : " · ruang tanpa batas"}
+            Kelas {plan.kelas.maxParticipants} orang · {plan.kelas.maxDurationMin} menit
+            {plan.roomsPerDay !== null ? ` · sisa ${Math.max(0, plan.roomsPerDay - plan.roomsToday)}/${plan.roomsPerDay} ruang hari ini` : " · ruang tanpa batas"}
           </p>
           {plan.tier === "FREE" && (
             <a href={plan.upgradeUrl} className="jumpa-chip">
@@ -78,7 +79,7 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
       {isGuru && (
         <section {...fade(1)} className="jumpa-card jumpa-in-up p-5">
           <h2 className="flex items-center gap-2 text-lg font-bold"><Users size={20} className="text-[var(--jp-accent)]" /> Ruang guru</h2>
-          <p className="mt-1 text-sm text-[var(--jp-text-2)]">Diskusi sesama guru, rapat MGMP, berbagi praktik baik. Maks {plan?.guru.maxParticipants ?? 25} orang, {plan?.guru.maxDurationMin ?? 120} menit.</p>
+          <p className="mt-1 text-sm text-[var(--jp-text-2)]">Rapat MGMP & diskusi guru · {plan?.guru.maxParticipants ?? 25} orang · {plan?.guru.maxDurationMin ?? 120} menit</p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <input value={title} onChange={(e) => setTitle(e.target.value.slice(0, 80))} placeholder="Topik (opsional)" aria-label="Topik ruang" className="jumpa-input w-full" />
             <select value={communityId} onChange={(e) => setCommunityId(e.target.value)} aria-label="Komunitas" className="jumpa-input w-full">
@@ -100,7 +101,7 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
       {data.effective === "MURID" && !data.isJunior && data.groups.length > 0 && (
         <section {...fade(1)} className="jumpa-card jumpa-in-up p-5">
           <h2 className="flex items-center gap-2 text-lg font-bold"><BookOpen size={20} className="text-[var(--jp-accent)]" /> Belajar bareng</h2>
-          <p className="mt-1 text-sm text-[var(--jp-text-2)]">Ruang belajar dengan teman sekelas. Gratis, maks {JUMPA_MURID_ROOM.maxParticipants} orang, {JUMPA_MURID_ROOM.maxDurationMin} menit. Obrolan disimpan dan bisa dilihat guru kelas.</p>
+          <p className="mt-1 text-sm text-[var(--jp-text-2)]">Bersama teman sekelas · gratis · {JUMPA_MURID_ROOM.maxParticipants} orang · {JUMPA_MURID_ROOM.maxDurationMin} menit. Obrolan bisa dilihat guru kelas.</p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <select value={groupId} onChange={(e) => setGroupId(e.target.value)} aria-label="Kelas" className="jumpa-input w-full">
               {data.groups.map((g) => (
@@ -120,7 +121,7 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
           <Radio size={16} /> Ruang aktif
         </h2>
         {data.rooms.length === 0 ? (
-          <p className="jumpa-card px-5 py-8 text-center text-sm text-[var(--jp-text-2)]">Belum ada ruang aktif untukmu saat ini.</p>
+          <p className="jumpa-card px-5 py-8 text-center text-sm text-[var(--jp-text-2)]">Belum ada ruang aktif.</p>
         ) : (
           <ul className="grid grid-cols-1 gap-2">
             {data.rooms.map((r) => (

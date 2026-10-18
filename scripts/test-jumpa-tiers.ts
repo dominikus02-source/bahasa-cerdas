@@ -159,5 +159,13 @@ check("Tanpa hex di jumpa.css (token tema)", !/#[0-9a-fA-F]{3,8}\b/.test(css))
 const ui = all.filter(([f]) => f.endsWith(".tsx")).map(([, s]) => s).join("\n")
 check("Teks UI kunci berbahasa Indonesia", ["Pengaturan", "Hemat Data", "Mode audio saja", "Peredam bising", "Lihat Premium", "Kualitas video"].every((t) => ui.includes(t)))
 
+console.log("\n11. Copy singkat, tanpa pengulangan")
+const tierUi = read("components/jumpa/TierUi.tsx")
+const sheet = tierUi.slice(tierUi.indexOf("export function UpgradeSheet"))
+check("Lembar upgrade: angka Premium kelas hanya sekali", (sheet.match(/P\.rooms\.KELAS\.maxDurationMin/g) ?? []).length === 1)
+check("Lembar upgrade: tanpa paragraf penjelasan ganda", !sheet.includes("{body}"))
+const home = read("components/jumpa/JumpaHome.tsx")
+check("Kuota habis tidak diulang di banner error", /TIER_DAILY_LIMIT"\) \{ setLimitHit\(true\); return; \}/.test(home))
+
 console.log(`\n${passed} lulus, ${failed} gagal\n`)
 if (failed > 0) process.exit(1)

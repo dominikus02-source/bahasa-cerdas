@@ -34,9 +34,9 @@ function stopStream(stream: MediaStream | null) {
 }
 
 function permissionMessage(note: PermissionNote): string | null {
-  if (note === "camera") return "Kamera belum diizinkan. Ketuk ikon gembok di bilah alamat untuk mengizinkan.";
-  if (note === "mic") return "Mikrofon belum diizinkan. Ketuk ikon gembok di bilah alamat untuk mengizinkan.";
-  if (note === "both") return "Kamera dan mikrofon belum diizinkan. Ketuk ikon gembok di bilah alamat.";
+  if (note === "camera") return "Kamera belum diizinkan. Izinkan lewat ikon gembok di bilah alamat.";
+  if (note === "mic") return "Mikrofon belum diizinkan. Izinkan lewat ikon gembok di bilah alamat.";
+  if (note === "both") return "Kamera & mikrofon belum diizinkan. Izinkan lewat ikon gembok di bilah alamat.";
   return null;
 }
 

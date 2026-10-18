@@ -129,7 +129,7 @@ export function checkDailyQuota(tier: JumpaTier, kind: JumpaKind, createdToday: 
       ok: false,
       code: "TIER_DAILY_LIMIT",
       limit,
-      message: `Paket Gratis bisa membuat ${limit} ruang JUMPA per hari. Kuota hari ini sudah habis — coba lagi besok atau aktifkan Premium.`,
+      message: `Kuota ${limit} ruang per hari sudah habis. Coba lagi besok.`,
     };
   }
   return { ok: true, remaining: limit - createdToday - 1 };

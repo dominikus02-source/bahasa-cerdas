@@ -100,7 +100,7 @@ export default function SettingsPanel({ prefs, onChange, tier, refreshKey = 0, d
           {speakerOk ? (
             <DeviceSelect kind="audiooutput" label="Speaker" icon={<Headphones size={15} />} value={prefs.devices.audiooutput} onChange={(id) => setDevice("audiooutput", id)} refreshKey={refreshKey} />
           ) : (
-            <p className="jumpa-field-note"><Headphones size={14} /> Speaker mengikuti pengaturan perangkat.</p>
+            <p className="jumpa-field-note"><Headphones size={14} /> Speaker: ikuti perangkat.</p>
           )}
         </div>
       </section>
@@ -116,7 +116,7 @@ export default function SettingsPanel({ prefs, onChange, tier, refreshKey = 0, d
           ))}
         </div>
         <p className="jumpa-field-note mt-2">
-          {prefs.quality === "hd" ? `Maks ${hdLabel} di ruang ini. ${QUALITY_LABEL.hd.hint}.` : QUALITY_LABEL[prefs.quality].hint}
+          {prefs.quality === "hd" ? `Maks ${hdLabel} · ${QUALITY_LABEL.hd.hint}` : QUALITY_LABEL[prefs.quality].hint}
           {degraded && prefs.quality === "auto" ? " Koneksi sedang lemah, kualitas diturunkan sementara." : ""}
         </p>
       </section>
@@ -127,14 +127,14 @@ export default function SettingsPanel({ prefs, onChange, tier, refreshKey = 0, d
           on={prefs.audioOnly}
           onToggle={() => onChange({ audioOnly: !prefs.audioOnly })}
           label="Mode audio saja"
-          hint="Kamera dan video peserta dimatikan. Layar yang dibagikan tetap tampil."
+          hint="Tanpa video kamera; layar bersama tetap tampil."
           icon={<AudioWaveform size={18} />}
         />
         <Switch
           on={prefs.noiseSuppression}
           onToggle={() => onChange({ noiseSuppression: !prefs.noiseSuppression })}
           label="Peredam bising"
-          hint="Kurangi suara kipas, motor, dan kelas yang ramai."
+          hint="Redam kipas, motor, dan kelas ramai."
           icon={<Mic size={18} />}
         />
         <div className="jumpa-setting-row" aria-disabled={!blurAvailable}>
@@ -143,7 +143,7 @@ export default function SettingsPanel({ prefs, onChange, tier, refreshKey = 0, d
             <span className="flex items-center gap-2 text-sm font-semibold">
               Latar blur <span className="jumpa-tier" data-tier="PREMIUM"><Crown size={11} aria-hidden /> Premium</span>
             </span>
-            <span className="block text-xs text-[var(--jp-text-3)]">{blurAvailable ? "Samarkan latar belakang kamera." : "Segera hadir. Hanya di laptop, karena berat untuk HP."}</span>
+            <span className="block text-xs text-[var(--jp-text-3)]">{blurAvailable ? "Samarkan latar kamera." : "Segera hadir, khusus laptop."}</span>
           </span>
           <Lock size={16} className="text-[var(--jp-text-3)]" aria-label="Belum tersedia" />
         </div>
@@ -154,9 +154,8 @@ export default function SettingsPanel({ prefs, onChange, tier, refreshKey = 0, d
         <div className="jumpa-plan-card">
           <div className="flex items-center justify-between gap-2">
             <TierBadge tier={tier} />
-            <span className="text-xs text-[var(--jp-text-3)]">Video maks {hdLabel}</span>
+            <span className="text-sm text-[var(--jp-text-2)]">{tierLimitsText(tier)} · {hdLabel}</span>
           </div>
-          <p className="mt-2 text-sm text-[var(--jp-text-2)]">{tierLimitsText(tier)}</p>
           {tier.canUpgrade && tier.upgradeUrl && (
             <a href={tier.upgradeUrl} target="_blank" rel="noopener" className="jumpa-chip mt-3">
               <Crown size={14} /> Lihat Premium

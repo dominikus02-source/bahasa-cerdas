@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Crown, Loader2, RotateCcw } from "lucide-react";
-import type { JumpaTierView } from "@/lib/jumpa/tiers";
+import { JUMPA_TIERS, type JumpaTierView } from "@/lib/jumpa/tiers";
 import type { EndedReason, JumpaRoomInfo, JumpaSelf } from "./room-controller";
 import type { LeaveReason } from "./JumpaRoomView";
 import JumpaLobby from "./JumpaLobby";
@@ -40,7 +40,7 @@ export interface JumpaAppProps {
 
 const ENDED_TEXT: Record<EndedReason, string> = {
   HOST: "Host mengakhiri ruang ini.",
-  TIME_LIMIT: "Waktu ruang sudah habis.",
+  TIME_LIMIT: "Batas waktu ruang tercapai.",
   EMPTY: "Ruang ditutup karena kosong.",
   STALE: "Ruang ditutup otomatis.",
 };
@@ -141,12 +141,11 @@ export default function JumpaApp(props: JumpaAppProps) {
           <span className="jumpa-mark mx-auto mb-4" aria-hidden>J</span>
           <h1 className="text-xl font-extrabold">{LEFT_TITLE[phase.reason]}</h1>
           <p className="mt-2 text-sm text-[var(--jp-text-2)]">
-            {phase.reason === "ended" ? ENDED_TEXT[phase.ended ?? "HOST"] : phase.reason === "removed" ? "Host mengeluarkanmu dari ruang ini." : props.title}
+            {phase.reason === "ended" ? ENDED_TEXT[phase.ended ?? "HOST"] : props.title}
           </p>
           {upsell && (
             <div className="jumpa-plan-card mt-4 text-left">
-              <p className="text-sm font-semibold">Ruang paket Gratis maksimal {props.tier.maxDurationMin} menit.</p>
-              <p className="mt-1 text-xs text-[var(--jp-text-3)]">Dengan Premium, kelas bisa lebih lama dan lebih banyak peserta. Mulai ruang baru dari KelasKu untuk melanjutkan.</p>
+              <p className="text-sm">Premium: kelas {JUMPA_TIERS.PREMIUM.rooms.KELAS.maxDurationMin} menit · {JUMPA_TIERS.PREMIUM.rooms.KELAS.maxParticipants} peserta.</p>
             </div>
           )}
           <div className="mt-6 flex flex-col gap-3">

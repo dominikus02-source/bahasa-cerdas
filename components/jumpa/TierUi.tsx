@@ -14,7 +14,7 @@ const P = JUMPA_TIERS.PREMIUM;
 export function TierBadge({ tier, compact = false }: { tier: JumpaTierView; compact?: boolean }) {
   const premium = tier.tier === "PREMIUM" && tier.kind !== "MURID";
   return (
-    <span className="jumpa-tier" data-tier={tier.kind === "MURID" ? "MURID" : tier.tier} title={`Paket ruang: ${tier.label}`}>
+    <span className="jumpa-tier" data-tier={tier.kind === "MURID" ? "MURID" : tier.tier} title={`Paket ${tier.label}`}>
       {premium && <Crown size={compact ? 11 : 12} aria-hidden />}
       {tier.label}
     </span>
@@ -23,7 +23,7 @@ export function TierBadge({ tier, compact = false }: { tier: JumpaTierView; comp
 
 /** Ringkasan batas ruang, mis. "Maks 40 orang · 45 menit". */
 export function tierLimitsText(tier: JumpaTierView): string {
-  return `Maks ${tier.maxParticipants} orang · ${tier.maxDurationMin} menit`;
+  return `${tier.maxParticipants} orang · ${tier.maxDurationMin} menit`;
 }
 
 function fmt(sec: number): string {
@@ -103,12 +103,13 @@ export function UpgradeSheet({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
+  // Satu judul + daftar manfaat; angka hanya muncul sekali.
   const title =
-    reason === "daily" ? "Kuota ruang hari ini habis" : reason === "ended" ? "Waktu ruang Gratis habis" : "Ruang hampir selesai";
-  const body =
     reason === "daily"
-      ? `Paket Gratis bisa membuat ${JUMPA_TIERS.FREE.roomsPerDay ?? "beberapa"} ruang per hari. Dengan Premium, buat ruang sebanyak yang kamu perlu.`
-      : `Ruang paket Gratis berlangsung maksimal ${tier.maxDurationMin} menit. Dengan Premium, kelas bisa sampai ${P.rooms.KELAS.maxDurationMin} menit dengan ${P.rooms.KELAS.maxParticipants} peserta.`;
+      ? JUMPA_TIERS.FREE.roomsPerDay === null ? "Kuota ruang hari ini habis" : `Kuota ${JUMPA_TIERS.FREE.roomsPerDay} ruang hari ini habis`
+      : reason === "ended"
+        ? `Batas ${tier.maxDurationMin} menit tercapai`
+        : "Ruang Gratis hampir habis";
   return (
     <div className="jumpa-upgrade-wrap" role="presentation">
       <button type="button" className="jumpa-scrim jumpa-in-fade fixed inset-0 z-[70]" aria-label="Tutup" onClick={onClose} />
@@ -125,11 +126,12 @@ export function UpgradeSheet({
           </p>
         )}
         <h2 id="jumpa-upgrade-title" className="text-lg font-extrabold">{title}</h2>
-        <p className="mt-1.5 text-sm text-[var(--jp-text-2)]">{body}</p>
-        <ul className="jumpa-upgrade-list">
-          <li>Kelas hingga {P.rooms.KELAS.maxDurationMin} menit, {P.rooms.KELAS.maxParticipants} peserta</li>
-          <li>Ruang guru {P.rooms.GURU.maxParticipants} orang{P.roomsPerDay === null ? ", tanpa batas ruang per hari" : ""}</li>
-          <li>Video hingga {P.maxCameraHeight}p dan berbagi layar lebih tajam</li>
+        <p className="jumpa-section-label mt-3">Dengan Premium</p>
+        <ul className="jumpa-upgrade-list !mt-1.5">
+          <li>Kelas {P.rooms.KELAS.maxDurationMin} menit · {P.rooms.KELAS.maxParticipants} peserta</li>
+          <li>Ruang guru {P.rooms.GURU.maxParticipants} peserta</li>
+          {P.roomsPerDay === null && <li>Ruang tanpa batas per hari</li>}
+          <li>Video hingga {P.maxCameraHeight}p</li>
         </ul>
         <div className="mt-5 flex flex-col gap-2">
           {tier.upgradeUrl && (
@@ -141,7 +143,6 @@ export function UpgradeSheet({
             {reason === "time" ? "Lanjutkan kelas" : "Nanti saja"}
           </button>
         </div>
-        {reason === "time" && <p className="mt-3 text-center text-xs text-[var(--jp-text-3)]">Halaman Premium dibuka di tab baru — kelas tetap berjalan.</p>}
       </div>
     </div>
   );

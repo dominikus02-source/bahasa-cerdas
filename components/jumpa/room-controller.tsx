@@ -194,11 +194,11 @@ export function JumpaRoomProvider({ initial, self, children }: { initial: JumpaR
             break;
           case "room.locked":
             setInfo((i) => ({ ...i, isLocked: server.locked }));
-            toast(server.locked ? "Ruang dikunci — peserta baru tidak bisa masuk." : "Kunci ruang dibuka.");
+            toast(server.locked ? "Ruang dikunci untuk peserta baru." : "Kunci ruang dibuka.");
             break;
           case "room.warning":
             setInfo((i) => ({ ...i, endsAt: server.endsAt }));
-            toast("Ruang akan berakhir otomatis dalam 10 menit.", "warn");
+            toast("Ruang berakhir dalam 10 menit.", "warn");
             break;
           case "room.screen":
             setInfo((i) => ({ ...i, allowMuridScreenShare: server.allowMurid }));

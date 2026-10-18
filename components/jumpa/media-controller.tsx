@@ -137,14 +137,14 @@ export function MediaProvider({ initial, device, tier, children }: { initial: Ju
     if (poor && !degraded) {
       const t = setTimeout(() => {
         setDegraded(true);
-        toast("Koneksi lemah. Kualitas video diturunkan otomatis.", "warn");
+        toast("Koneksi lemah, kualitas video diturunkan.", "warn");
       }, 6000);
       return () => clearTimeout(t);
     }
     if (good && degraded) {
       const t = setTimeout(() => {
         setDegraded(false);
-        toast("Koneksi membaik. Kualitas video dipulihkan.", "ok");
+        toast("Koneksi pulih, kualitas video normal.", "ok");
       }, 20000);
       return () => clearTimeout(t);
     }
@@ -194,7 +194,7 @@ export function MediaProvider({ initial, device, tier, children }: { initial: Ju
             if (next.audioOnly) {
               cameraBeforeAudioOnly.current = lp.isCameraEnabled;
               if (lp.isCameraEnabled) await lp.setCameraEnabled(false);
-              toast("Mode audio saja aktif. Video peserta disembunyikan.", "ok");
+              toast("Mode audio saja aktif.", "ok");
             } else if (cameraBeforeAudioOnly.current) {
               await lp.setCameraEnabled(true);
             }
@@ -203,7 +203,7 @@ export function MediaProvider({ initial, device, tier, children }: { initial: Ju
             await republishCamera(room, next, publishPolicy(next.quality, device, tier.maxCameraHeight, tier.maxScreenHeight));
           }
         } catch {
-          toast("Pengaturan belum bisa diterapkan. Coba lagi.", "warn");
+          toast("Gagal menerapkan pengaturan. Coba lagi.", "warn");
         }
       })();
     },
