@@ -99,6 +99,9 @@ export async function streamBcChat(req: BcStreamRequest): Promise<BcStreamResult
       }
     }
 
+    // Selesaikan decoding karakter UTF-8 yang mungkin terbelah antar-chunk.
+    buffer += decoder.decode();
+
     // Sisa buffer (frame terakhir tanpa penutup ganda).
     if (buffer.trim()) {
       try {
@@ -106,6 +109,10 @@ export async function streamBcChat(req: BcStreamRequest): Promise<BcStreamResult
       } catch {
         // frame tak lengkap — abaikan
       }
+    }
+
+    if (!text.trim()) {
+      throw new BcStreamError("AI BC belum mengirim jawaban. Silakan coba lagi.");
     }
 
     return { text, provider, model };
