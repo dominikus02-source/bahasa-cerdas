@@ -178,7 +178,7 @@ export default function ScheduleForm({ data, initialGroupId, editing, backHref }
 
           <label className="jumpa-field">
             <span className="jumpa-field-label">Judul</span>
-            <input className="jumpa-input w-full" value={title} onChange={(e) => setTitle(e.target.value.slice(0, 80))} placeholder={kind === "KELAS" ? "Mis. Teks eksposisi" : "Mis. Rapat MGMP"} />
+            <input className="jumpa-input w-full" value={title} maxLength={80} autoComplete="off" onChange={(e) => setTitle(e.target.value)} placeholder={kind === "KELAS" ? "Mis. Teks eksposisi" : "Mis. Rapat MGMP"} />
           </label>
         </>
       )}
@@ -237,7 +237,7 @@ export default function ScheduleForm({ data, initialGroupId, editing, backHref }
             <label htmlFor="jumpa-people" className="jumpa-field-label">Undang orang tertentu (opsional)</label>
             <div className="relative">
               <Search size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--jp-text-3)]" aria-hidden />
-              <input id="jumpa-people" className="jumpa-input w-full !pl-10" value={q} onChange={(e) => setQ(e.target.value.slice(0, 60))} placeholder={kind === "KELAS" ? "Cari guru atau murid kelasmu" : "Cari guru"} autoComplete="off" />
+              <input id="jumpa-people" className="jumpa-input w-full !pl-10" value={q} maxLength={60} onChange={(e) => setQ(e.target.value)} placeholder={kind === "KELAS" ? "Cari guru atau murid kelasmu" : "Cari guru"} autoComplete="off" />
             </div>
             {found.length > 0 && (
               <ul className="grid gap-1.5">
