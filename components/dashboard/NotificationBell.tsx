@@ -6,16 +6,10 @@ import { Bell, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { subscribeNotifications } from "@/lib/supabase/realtime";
 import { NotificationCard, type NotifikasiItem } from "@/components/notifikasi/NotificationCard";
+import { bacaViewport, hitungPosisiPanel, type PanelPosition } from "@/lib/notifikasi/posisi-panel";
 
 interface Notification extends NotifikasiItem {
   data: any;
-}
-
-interface PanelPosition {
-  top: number;
-  right: number;
-  width: number;
-  maxHeight: number;
 }
 
 export function NotificationBell({
@@ -95,15 +89,7 @@ export function NotificationBell({
     const button = triggerRef.current;
     if (!button || typeof window === "undefined") return;
 
-    const rect = button.getBoundingClientRect();
-    const gutter = 12;
-    const width = Math.min(384, Math.max(280, window.innerWidth - gutter * 2));
-    const top = Math.min(rect.bottom + 8, window.innerHeight - 260);
-    // Jaga panel tetap di dalam layar (HP 360px: lonceng tidak di pojok kanan).
-    const right = Math.min(Math.max(gutter, window.innerWidth - rect.right), Math.max(gutter, window.innerWidth - width - gutter));
-    const maxHeight = Math.max(220, window.innerHeight - top - gutter);
-
-    setPanelPosition({ top, right, width, maxHeight });
+    setPanelPosition(hitungPosisiPanel(button.getBoundingClientRect(), bacaViewport()));
   }, []);
 
   useEffect(() => {
@@ -173,21 +159,21 @@ export function NotificationBell({
     return createPortal(
       <div
         ref={panelRef}
-        className="fixed z-[120] flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white/98 shadow-[0_24px_70px_rgba(15,23,42,.22)] backdrop-blur-xl dark:border-slate-700/90 dark:bg-slate-900/98 dark:shadow-[0_24px_70px_rgba(0,0,0,.5)]"
+        className="fixed z-[120] flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[0_24px_70px_rgba(15,23,42,.22)] dark:border-slate-700/90 dark:bg-slate-900 dark:shadow-[0_24px_70px_rgba(0,0,0,.5)]"
         style={{
           top: panelPosition.top,
-          right: panelPosition.right,
+          left: panelPosition.left,
           width: panelPosition.width,
           maxHeight: panelPosition.maxHeight,
         }}
         role="dialog"
         aria-label="Notifikasi terbaru"
       >
-        <div className="shrink-0 flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-3.5 dark:border-slate-800">
-          <div className="min-w-0">
+        <div className="shrink-0 flex items-start justify-between gap-3 border-b border-slate-100 px-4 py-3.5 dark:border-slate-800">
+          <div className="min-w-0 flex-1">
             <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100">Notifikasi</h3>
             <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
-              Update terbaru dari BahasaCerdas
+              Kabar terbaru dari BahasaCerdas
             </p>
           </div>
           {notifications.length > 0 && (

@@ -37,6 +37,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Notification panel position regression
+        run: npm run test:notif-panel
+
       - name: Login UX regression
         run: npm run test:login-ux
 
