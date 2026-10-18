@@ -7,7 +7,7 @@
 import { readFileSync, readdirSync, statSync } from "fs"
 import { join } from "path"
 
-const ROOTS = ["components/jumpa", "app/jumpa", "app/api/jumpa", "app/api/cron/jumpa-sweep", "lib/jumpa"]
+const ROOTS = ["components/jumpa", "app/jumpa", "app/api/jumpa", "app/api/cron/jumpa-sweep", "app/api/cron/jumpa-reminders", "lib/jumpa"]
 // Kata Inggris yang sering bocor ke UI. Pakai batas kata, tidak peka huruf besar.
 const WORDS = [
   "live", "by", "host", "co-host", "cohost", "speaker", "speakers", "auto", "low", "medium", "high",
