@@ -51,6 +51,8 @@ services:
       - ${BC_CONFIG_DIR:-/opt/bahasacerdas/config}/web.env
     environment:
       NODE_ENV: production
+      # Bound headers while allowing migrated browser sessions to reach cleanup.
+      NODE_OPTIONS: ${BC_WEB_NODE_OPTIONS:---max-http-header-size=65536}
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
     ports:
       - "127.0.0.1:3000:3000"
