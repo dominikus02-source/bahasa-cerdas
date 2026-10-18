@@ -182,10 +182,14 @@ for line in lines:
     out.append(line)
 if not seen:
     out.append(f"{key}={value}")
+st = os.stat(path)
 tmp = path + ".tmp-jumpa"
 with open(tmp, "w") as f:
     f.write("\n".join(out) + "\n")
 os.chmod(tmp, 0o600)
+# Pertahankan pemilik asli (mis. bcadmin): script jalan sebagai root, tetapi
+# deploy GitHub (bcadmin) harus tetap bisa membaca web.env/stack.env.
+os.chown(tmp, st.st_uid, st.st_gid)
 os.replace(tmp, path)
 PY
 }
@@ -211,6 +215,19 @@ backup_file() {
   cp -p "$f" "$dest"
   chmod 600 "$dest"
   ok "Backup: $dest"
+}
+
+# deploy.sh dijalankan sebagai PEMILIK repo (bcadmin), sama seperti deploy
+# GitHub: file lock /tmp/bahasacerdas-deploy.lock milik bcadmin tidak bisa
+# dibuka root (fs.protected_regular=2), dan file hasil deploy (livekit.env,
+# livekit.yaml, caddy.d) tidak boleh menjadi milik root.
+REPO_OWNER="$(stat -c %U "$REPO_DIR" 2>/dev/null || echo root)"
+as_owner() {
+  if [[ "$(id -un)" != "$REPO_OWNER" && "$REPO_OWNER" != "root" ]]; then
+    sudo -u "$REPO_OWNER" -H env "$@"
+  else
+    env "$@"
+  fi
 }
 
 COMPOSE=(docker compose --env-file "$STACK_ENV")
@@ -325,7 +342,7 @@ if [[ "$MODE" == "disable" ]]; then
     warn "--skip-deploy: deploy dilewati"; record SKIP "Deploy"
   else
     step "Deploy ulang web (tanpa JUMPA)"
-    if run bash -c "cd '$REPO_DIR' && bash ops/vps/deploy.sh"; then
+    if run as_owner bash -c "cd '$REPO_DIR' && bash ops/vps/deploy.sh"; then
       chg "deploy.sh selesai"; record_chg "Deploy web"
     else
       die "deploy.sh gagal."
@@ -655,9 +672,9 @@ if (( SKIP_DEPLOY )); then
 else
   step "Deploy (ENABLE_JUMPA=1 bash ops/vps/deploy.sh) — beberapa menit"
   if (( DRY_RUN )); then
-    info "[dry-run] akan menjalankan: cd $REPO_DIR && ENABLE_JUMPA=1 bash ops/vps/deploy.sh"
+    info "[dry-run] akan menjalankan (sebagai $REPO_OWNER): cd $REPO_DIR && ENABLE_JUMPA=1 bash ops/vps/deploy.sh"
     record PLAN "Deploy dengan ENABLE_JUMPA=1"
-  elif (cd "$REPO_DIR" && ENABLE_JUMPA=1 bash ops/vps/deploy.sh); then
+  elif as_owner ENABLE_JUMPA=1 bash -c "cd '$REPO_DIR' && bash ops/vps/deploy.sh"; then
     ok "deploy.sh selesai"; record OK "Deploy (web + LiveKit + Caddy)"
   else
     err "deploy.sh gagal — lihat log di atas."
