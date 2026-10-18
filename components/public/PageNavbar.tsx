@@ -87,7 +87,7 @@ export default function PageNavbar() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-white/80 backdrop-blur-xl border-b border-zinc-100 shadow-sm"
+          ? "bg-bc-surface/95 border-b border-bc-line shadow-sm"
           : "bg-transparent"
       }`}
     >
@@ -105,10 +105,10 @@ export default function PageNavbar() {
               />
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-base lg:text-lg text-zinc-900 leading-tight">
+              <span className="font-bold text-base lg:text-lg text-bc-text leading-tight">
                 Bahasa<span className="text-primary">Cerdas</span>
               </span>
-              <span className="text-[10px] lg:text-[11px] text-zinc-500 font-medium leading-tight -mt-0.5 hidden sm:block">
+              <span className="text-[10px] lg:text-[11px] text-bc-text-3 font-medium leading-tight -mt-0.5 hidden sm:block">
                 Ekosistem Belajar Bahasa Indonesia
               </span>
             </div>
@@ -133,14 +133,14 @@ export default function PageNavbar() {
               <>
                 <Link
                   href="/orders"
-                  className="relative ml-1 px-3 py-2 text-zinc-600 hover:text-primary transition-colors rounded-xl hover:bg-primary-light/50"
+                  className="relative ml-1 px-3 py-2 text-bc-text-2 hover:text-primary transition-colors rounded-xl hover:bg-primary-light/50"
                   aria-label="Pesanan Saya"
                 >
                   <Package size={20} />
                 </Link>
                 <Link
                   href="/cart"
-                  className="relative ml-1 px-3 py-2 text-zinc-600 hover:text-primary transition-colors rounded-xl hover:bg-primary-light/50"
+                  className="relative ml-1 px-3 py-2 text-bc-text-2 hover:text-primary transition-colors rounded-xl hover:bg-primary-light/50"
                   aria-label={`Keranjang, ${cartCount} item`}
                 >
                   <ShoppingCart size={20} />
@@ -159,7 +159,7 @@ export default function PageNavbar() {
             {userLoading ? null : user ? (
               <Link
                 href={getDashboardHref(user.role)}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-zinc-700 bg-zinc-50 hover:bg-primary-light/50 rounded-xl transition-colors border border-zinc-200"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-bc-text-2 bg-bc-surface-2 hover:bg-primary-light/50 rounded-xl transition-colors border border-bc-line"
               >
                 <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-[10px] font-bold">
                   {user.fullName.charAt(0).toUpperCase()}
@@ -170,7 +170,7 @@ export default function PageNavbar() {
               <>
                 <Link
                   href={`/login?next=${encodeURIComponent(pathname)}`}
-                  className="px-5 py-2.5 text-sm font-semibold text-zinc-700 hover:text-primary transition-colors focus-ring rounded-lg"
+                  className="px-5 py-2.5 text-sm font-semibold text-bc-text-2 hover:text-primary transition-colors focus-ring rounded-lg"
                 >
                   Masuk
                 </Link>
@@ -188,15 +188,15 @@ export default function PageNavbar() {
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             onKeyDown={handleKeyDown}
-            className="lg:hidden relative z-50 p-2.5 rounded-xl hover:bg-zinc-100 transition-colors focus-ring"
+            className="lg:hidden relative z-50 p-2.5 rounded-xl hover:bg-bc-surface-2 transition-colors focus-ring"
             aria-controls="mobile-menu"
             aria-expanded={mobileOpen}
             aria-label={mobileOpen ? "Tutup menu navigasi" : "Buka menu navigasi"}
           >
             {mobileOpen ? (
-              <X size={20} className="text-zinc-700" aria-hidden="true" />
+              <X size={20} className="text-bc-text-2" aria-hidden="true" />
             ) : (
-              <Menu size={20} className="text-zinc-700" aria-hidden="true" />
+              <Menu size={20} className="text-bc-text-2" aria-hidden="true" />
             )}
           </button>
         </div>
@@ -206,7 +206,7 @@ export default function PageNavbar() {
       {mobileOpen && (
         <div
           id="mobile-menu"
-          className="lg:hidden fixed inset-0 top-0 z-40 bg-white animate-fade-in"
+          className="lg:hidden fixed inset-0 top-0 z-40 bg-bc-surface animate-fade-in"
           role="dialog"
           aria-modal="true"
           aria-label="Menu navigasi"
@@ -233,14 +233,14 @@ export default function PageNavbar() {
                   <Link
                     href="/orders"
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-between px-4 py-3.5 text-base font-medium text-zinc-700 hover:text-primary hover:bg-primary-light/50 rounded-xl transition-all focus-ring"
+                    className="flex items-center justify-between px-4 py-3.5 text-base font-medium text-bc-text-2 hover:text-primary hover:bg-primary-light/50 rounded-xl transition-all focus-ring"
                   >
                     <span className="flex items-center gap-2"><Package size={18} /> Pesanan Saya</span>
                   </Link>
                   <Link
                     href="/cart"
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-between px-4 py-3.5 text-base font-medium text-zinc-700 hover:text-primary hover:bg-primary-light/50 rounded-xl transition-all focus-ring"
+                    className="flex items-center justify-between px-4 py-3.5 text-base font-medium text-bc-text-2 hover:text-primary hover:bg-primary-light/50 rounded-xl transition-all focus-ring"
                   >
                     <span className="flex items-center gap-2"><ShoppingCart size={18} /> Keranjang</span>
                     {cartCount > 0 && (
@@ -252,13 +252,13 @@ export default function PageNavbar() {
                 </>
               )}
             </nav>
-            <div className="space-y-3 pt-6 border-t border-zinc-100">
+            <div className="space-y-3 pt-6 border-t border-bc-line">
               {user ? (
                 <>
                   <Link
                     href={getDashboardHref(user.role)}
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-zinc-700 bg-zinc-50 rounded-xl hover:bg-primary-light/50 transition-colors"
+                    className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-bc-text-2 bg-bc-surface-2 rounded-xl hover:bg-primary-light/50 transition-colors"
                   >
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-xs font-bold">
                       {user.fullName.charAt(0).toUpperCase()}
@@ -271,7 +271,7 @@ export default function PageNavbar() {
                   <Link
                     href={`/login?next=${encodeURIComponent(pathname)}`}
                     onClick={() => setMobileOpen(false)}
-                    className="block w-full text-center px-4 py-3 text-sm font-semibold text-zinc-700 border border-zinc-200 rounded-xl hover:bg-zinc-50 transition-colors focus-ring"
+                    className="block w-full text-center px-4 py-3 text-sm font-semibold text-bc-text-2 border border-bc-line rounded-xl hover:bg-bc-surface-2 transition-colors focus-ring"
                   >
                     Masuk
                   </Link>
