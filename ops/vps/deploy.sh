@@ -94,7 +94,9 @@ echo "==> Runtime status"
 "${COMPOSE[@]}" --profile scheduler --profile realtime --profile agent ps
 
 echo "==> Production smoke"
-curl -fsS --max-time 15 https://www.bahasacerdas.com/api/health \
+# IPv4 + retry: dari VPS, sebagian rute IPv6 ke Cloudflare lambat (9–15 dtk),
+# membuat smoke gagal padahal situs sehat (deploy 18 Okt 2026).
+curl -4 -fsS --retry 3 --retry-all-errors --retry-delay 3 --max-time 15 https://www.bahasacerdas.com/api/health \
   | jq -e '.status == "ok" and .db == "up"' >/dev/null
 if [[ "${ENABLE_REALTIME:-0}" == "1" ]]; then
   curl -fsS --max-time 15 https://game.bahasacerdas.com/health \
