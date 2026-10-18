@@ -11,6 +11,7 @@ import {
   verifyRoleIntent,
 } from "@/lib/auth/role-intent";
 import { findApplicationUser, provisionGoogleUser } from "@/lib/auth/google-provision";
+import { resolvePublicAuthOrigin } from "@/lib/auth/public-origin";
 
 /**
  * GET /auth/callback — Google (dan pemulihan) OAuth callback.
@@ -26,6 +27,11 @@ import { findApplicationUser, provisionGoogleUser } from "@/lib/auth/google-prov
  */
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
+  const origin = resolvePublicAuthOrigin({
+    requestUrl,
+    siteUrl: process.env.NEXT_PUBLIC_SITE_URL,
+    isProduction: process.env.NODE_ENV === "production",
+  });
   const code = requestUrl.searchParams.get("code");
   const token_hash = requestUrl.searchParams.get("token_hash");
   const type = requestUrl.searchParams.get("type");
@@ -36,7 +42,7 @@ export async function GET(request: Request) {
     res.headers.append("Set-Cookie", clearIntent);
     return res;
   };
-  const roleSelectionUrl = `${requestUrl.origin}/auth/pilih-peran${
+  const roleSelectionUrl = `${origin}/auth/pilih-peran${
     typeof next === "string" && next !== "/" && isSafeNext(next)
       ? `?next=${encodeURIComponent(next)}`
       : ""
@@ -75,7 +81,7 @@ export async function GET(request: Request) {
         // landing page — "/" (or absent/unsafe next) resolves to dashboard.
         return withClearedIntent(
           NextResponse.redirect(
-            `${requestUrl.origin}${resolvePostAuthDestination(existing.role, next)}`
+            `${origin}${resolvePostAuthDestination(existing.role, next)}`
           )
         );
       }
@@ -91,7 +97,7 @@ export async function GET(request: Request) {
           role: decision.role,
         });
         return withClearedIntent(
-          NextResponse.redirect(`${requestUrl.origin}${dashboardForRole(decision.role)}`)
+          NextResponse.redirect(`${origin}${dashboardForRole(decision.role)}`)
         );
       }
 
@@ -101,8 +107,11 @@ export async function GET(request: Request) {
   }
 
   if (token_hash && type) {
-    return NextResponse.redirect(`${requestUrl.origin}/confirm?token_hash=${token_hash}&type=${type}`);
+    const confirmation = new URL("/confirm", origin);
+    confirmation.searchParams.set("token_hash", token_hash);
+    confirmation.searchParams.set("type", type);
+    return NextResponse.redirect(confirmation);
   }
 
-  return NextResponse.redirect(`${requestUrl.origin}${next}`);
+  return NextResponse.redirect(`${origin}${isSafeNext(next) ? next : "/"}`);
 }

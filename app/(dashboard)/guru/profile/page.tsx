@@ -21,7 +21,6 @@ import {
   BookOpen,
   Pencil,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 import { useUserStore } from "@/store";
 import UserName from "@/components/arena/UserName";
 
@@ -132,9 +131,9 @@ export default function GuruProfilePage() {
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [rekening, setRekening] = useState<RekeningFormState>(EMPTY_REKENING);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [avatarLoadFailed, setAvatarLoadFailed] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const supabase = createClient();
   const setUser = useUserStore((s) => s.setUser);
 
   /* --- fetchers --------------------------------------------------- */
@@ -247,13 +246,17 @@ export default function GuruProfilePage() {
     setMessage(null);
 
     try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `avatar-${Date.now()}.${fileExt}`;
-      const { error: uploadError } = await supabase.storage.from("avatars").upload(fileName, file);
-      if (uploadError) throw uploadError;
-
-      const { data: urlData } = supabase.storage.from("avatars").getPublicUrl(fileName);
-      const newAvatarUrl = urlData.publicUrl;
+      const uploadData = new FormData();
+      uploadData.append("file", file);
+      const uploadResponse = await fetch("/api/upload/avatar", {
+        method: "POST",
+        body: uploadData,
+      });
+      const uploadResult = await uploadResponse.json().catch(() => ({}));
+      if (!uploadResponse.ok || typeof uploadResult.url !== "string") {
+        throw new Error(uploadResult.error || "Foto gagal diunggah. Silakan coba lagi.");
+      }
+      const newAvatarUrl: string = uploadResult.url;
 
       const res = await fetch("/api/user/profile", {
         method: "PATCH",
@@ -422,6 +425,11 @@ export default function GuruProfilePage() {
 
   const initial = (profile?.fullName || "G").charAt(0).toUpperCase();
   const displayAvatar = avatarPreview || profile?.avatar;
+  const hasDisplayAvatar = Boolean(displayAvatar && !avatarLoadFailed);
+
+  useEffect(() => {
+    setAvatarLoadFailed(false);
+  }, [displayAvatar]);
   const isActiveProTrial = !!profile?.trialEndsAt && new Date(profile.trialEndsAt).getTime() > Date.now();
 
   const profFields = useMemo(() => {
@@ -478,9 +486,9 @@ export default function GuruProfilePage() {
           } focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2`}
           aria-label="Ganti foto profil"
         >
-          {displayAvatar ? (
+          {hasDisplayAvatar ? (
             /* eslint-disable-next-line @next/next/no-img-element */
-            <img src={displayAvatar} alt="" className="w-full h-full object-cover" />
+            <img src={displayAvatar!} alt="" className="w-full h-full object-cover" onError={() => setAvatarLoadFailed(true)} />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-blue-700 to-sky-500 flex items-center justify-center">
               <span className={`${textSize} font-bold text-white`}>{initial}</span>
@@ -566,7 +574,7 @@ export default function GuruProfilePage() {
                     <p className="text-sm font-semibold text-gray-900 dark:text-slate-100">Foto Profil</p>
                     <p className="text-xs text-gray-400 dark:text-slate-500 mt-0.5">JPG, PNG, atau WebP. Maks 5MB.</p>
                     <button type="button" onClick={handleAvatarClick} className="mt-2 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">
-                      {displayAvatar ? "Ganti Foto" : "Upload Foto"}
+                      {hasDisplayAvatar ? "Ganti Foto" : "Upload Foto"}
                     </button>
                   </div>
                 </div>
