@@ -2,6 +2,8 @@
   email {$ACME_EMAIL}
   servers {
     protocols h1 h2 h3
+    # Keep staging aligned with production and Node's 32 KiB request-header cap.
+    max_header_size 32KiB
   }
 }
 
