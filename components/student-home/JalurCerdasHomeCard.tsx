@@ -1,5 +1,6 @@
 "use client";
 
+import { buttonClass } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight, BookOpenCheck, CheckCircle2, Sparkles, Target, Zap } from "lucide-react";
 
@@ -30,10 +31,10 @@ export function JalurCerdasHomeCard() {
 
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-full bg-white/10 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.18em] text-cyan-200 ring-1 ring-white/10">
+                <span className="rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.18em] text-cyan-200 ring-1 ring-white/10">
                   Jalur belajar utama
                 </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400/15 px-2.5 py-1 text-[9px] font-extrabold text-emerald-200 ring-1 ring-emerald-300/15">
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400/15 px-2.5 py-1 text-[10px] font-extrabold text-emerald-200 ring-1 ring-emerald-300/15">
                   <CheckCircle2 size={11} />
                   Bertahap
                 </span>
@@ -65,7 +66,7 @@ export function JalurCerdasHomeCard() {
           </div>
 
           <div className="shrink-0">
-            <span className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#ffd24a] to-[#ffb020] px-5 py-3 text-sm font-extrabold text-[#1b1205] shadow-lg shadow-amber-500/20 transition-transform group-hover:translate-x-0.5 sm:w-auto">
+            <span className={buttonClass({ variant: "primary", size: "lg", className: "w-full px-5 font-extrabold transition-transform group-hover:translate-x-0.5 sm:w-auto" })}>
               Lanjutkan
               <ArrowRight size={17} strokeWidth={2.5} />
             </span>
@@ -77,7 +78,7 @@ export function JalurCerdasHomeCard() {
           <div className="h-1.5 rounded-full bg-white/15" />
           <div className="h-1.5 rounded-full bg-white/15" />
         </div>
-        <p className="relative mt-2 text-[10px] font-semibold text-blue-100/55">
+        <p className="relative mt-2 text-[11px] font-semibold text-blue-100/75">
           Jalur Cerdas selalu tersedia dari Beranda saat kamu ingin belajar.
         </p>
       </Link>

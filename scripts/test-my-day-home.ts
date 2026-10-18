@@ -58,10 +58,10 @@ check("5. Insufficient data tidak mengklaim adaptive", adaptiveApi.includes('mod
 // 7 — One dominant CTA: HERO owns the gold gradient. ContinueLearningCard telah
 // dihapus dari beranda (aksi/state diambil alih hero), sehingga tidak ada lagi
 // kartu yang bisa bersaing dengan aksi utama hero.
-check("7. Satu CTA utama di student-home — hero gold, tanpa px-btn-gold lain",
+check("7. Satu CTA utama di student-home — hero gradien merek, tanpa px-btn-gold lain",
   !["StudentHomeHero", "AIBCHomeCard", "LearningJourneySection", "RuangBelajarSection", "SimulasiUjianSection", "RecentWorksSection", "ArenaHomeSection", "PremiumValueCard", "SecondaryLearningInfo"]
     .some((f) => read(`components/student-home/${f}.tsx`).includes("px-btn-gold")) &&
-  read("components/student-home/StudentHomeHero.tsx").includes("from-[#ffd24a]"));
+  read("components/student-home/StudentHomeHero.tsx").includes("buttonClass({ variant: \"primary\""));
 check("7. AI BC CTA sekunder (ghost)", read("components/student-home/AIBCHomeCard.tsx").includes("px-btn-ghost"));
 check("7. Arena CTA sekunder (ghost)", arena.includes("px-btn-ghost"));
 

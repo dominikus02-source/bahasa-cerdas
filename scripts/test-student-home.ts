@@ -120,8 +120,8 @@ const goldFiles = [
 ].filter((f) => read(`components/student-home/${f}`).includes("px-btn-gold"));
 const heroGold = read("components/student-home/StudentHomeHero.tsx");
 check(
-  "Satu CTA utama: hero (gold gradient), tanpa px-btn-gold lain di student-home",
-  goldFiles.length === 0 && heroGold.includes("from-[#ffd24a]")
+  "Satu CTA utama: hero (gradien merek), tanpa px-btn-gold lain di student-home",
+  goldFiles.length === 0 && heroGold.includes("buttonClass({ variant: \"primary\"")
 );
 const aiCard = read("components/student-home/AIBCHomeCard.tsx");
 check("AI BC → /arena/ai", aiCard.includes('href="/arena/ai"'));
@@ -169,7 +169,7 @@ const hero3 = read("components/student-home/StudentHomeHero.tsx");
 check("3.0 Hero = satu-satunya CTA utama di home (tanpa px-btn-gold lain)",
   ["AIBCHomeCard.tsx", "ArenaHomeSection.tsx", "LearningJourneySection.tsx", "StudentHomeHero.tsx"]
     .every((f) => !read(`components/student-home/${f}`).includes("px-btn-gold")) &&
-  hero3.includes("from-[#ffd24a]"));
+  hero3.includes("buttonClass({ variant: \"primary\""));
 check("3.0 State machine di hero (resolveHeroContent) — tidak ada duplikat kartu",
   hero3.includes("resolveHeroContent") &&
   hero3.includes("assessmentState") &&
