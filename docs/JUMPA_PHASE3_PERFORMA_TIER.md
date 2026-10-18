@@ -129,18 +129,19 @@ Sekitar 900 KB dari JS awal adalah layout root situs (dipakai semua halaman), bu
 
 | | **Gratis** | **Premium** (PRO / masa coba guru / FOUNDER) |
 |---|---|---|
-| Ruang Kelas | **40 peserta · 45 menit** | 50 peserta · 120 menit |
+| Ruang Kelas | **30 peserta · 45 menit** | 50 peserta · 120 menit |
 | Ruang Guru | **10 peserta · 45 menit** | 25 peserta · 120 menit |
 | Ruang baru per hari (Kelas + Guru, hitungan WIB) | **3** | tanpa batas |
 | Kamera maks | 720p | 1080p (laptop) |
 | Berbagi layar maks | 720p / 5 fps | 1080p / 5 fps |
-| Rekaman | tidak | Fase 4 (belum dibangun) |
-| Latar blur | tidak | Fase 4 (belum dibangun) |
+| Rekaman | tidak | **Segera** (Premium, Fase 4; belum dibangun) |
+| Latar blur | tidak | **Segera** (Premium, Fase 4, khusus laptop; di Pengaturan tampil terkunci "Segera hadir") |
 | Ruang **MURID** (belajar bareng) | **8 peserta · 60 menit, selalu gratis, sama di kedua paket, tidak pernah ada ajakan upgrade** | sama |
 
 Alasan angka Gratis: 45 menit = 1 JP SMA (SMP 40, SD 35), jadi satu jam pelajaran muat utuh.
-40 peserta = satu rombel penuh (maks 36 murid + guru). Sedikit lebih longgar dari Zoom
-(40 menit), lebih ketat dari Meet (60 menit).
+30 peserta (keputusan CEO, 18-10-2026): cukup untuk kelas kecil/menengah; rombel penuh
+(hingga 36 murid + guru) perlu Premium. Durasi sedikit lebih longgar dari Zoom (40 menit),
+lebih ketat dari Meet (60 menit).
 
 **Hak paket:** `resolveJumpaTier(userId)` memakai `resolvePlan()` yang sudah ada
 (`lib/premium-economy/plans.ts`): PRO (termasuk trial guru) dan FOUNDER → Premium;
@@ -159,8 +160,8 @@ FREE/MURID_PREMIUM → Gratis. Kalau DB gagal dibaca, hasilnya Gratis (fail-clos
 - Ruang lama (tanpa `tier` di metadata) dianggap Premium, jadi perilaku Fase 2 tidak berubah.
 
 **UI:** lencana Gratis/Premium di header ruang, lobby, dan beranda. Strip paket di beranda guru
-menampilkan "N dari 3 ruang tersisa hari ini". **Hitung mundur** selalu tampil di ruang Gratis
-(ruang lain hanya di 10 menit terakhir), berwarna kuning di ≤ 10 menit. Lembar
+menampilkan "N dari 3 ruang tersisa hari ini". **Hitung mundur** hanya tampil di 10 menit
+terakhir (semua paket, keputusan CEO), berwarna kuning. Lembar
 **"Ruang hampir selesai"** muncul sekali di ≤ 5 menit, hanya untuk guru pembuat ruang Gratis
 (murid tidak pernah melihatnya). Lembar **"Kuota ruang hari ini habis"** muncul saat batas harian
 tercapai. Tombol **"Lihat Premium"** membuka `/guru/berlangganan` di tab baru, jadi kelas tetap
@@ -170,14 +171,14 @@ berjalan.
 daftar manfaat ("Dengan Premium": Kelas 120 menit · 50 peserta / Ruang guru 25 peserta / Ruang
 tanpa batas per hari / Video hingga 1080p). Tidak ada paragraf yang mengulang angka. Saat kuota
 habis, hanya lembar upgrade yang tampil (banner error tidak lagi mengulang pesannya). Teks bantuan
-pengaturan, lencana ("Premium (coba)"), kartu paket ("40 orang · 45 menit · 720p"), beranda,
+pengaturan, lencana ("Premium (coba)"), kartu paket ("30 orang · 45 menit · 720p"), beranda,
 layar keluar, empty state, dan toast dipadatkan. Ada tesnya di `test:jumpa-tiers`. Layar "ruang berakhir karena batas waktu" juga punya tombol ke Premium.
 
 ---
 
 ## 3. Pengujian
 
-- `npm run test:jumpa-tiers` (baru, 80 cek): tabel paket, MURID selalu tetap, pemetaan plan,
+- `npm run test:jumpa-tiers` (baru, 86 cek): tabel paket, MURID selalu tetap, pemetaan plan,
   kuota harian dan batas hari WIB, ajakan upgrade, penegakan di service/route, kebijakan media
   (HP lebih rendah, H.264 iOS, Hemat Data, batas 720p Gratis), preferensi lama tetap terbaca,
   `shortName`, tanpa framer-motion, lazy-load LiveKit, tanpa emoji, tanpa hex di CSS. Sudah
@@ -195,15 +196,12 @@ layar keluar, empty state, dan toast dipadatkan. Ada tesnya di `test:jumpa-tiers
 
 ---
 
-## 4. Keputusan untuk CEO
+## 4. Keputusan CEO (18-10-2026)
 
-1. **Angka final paket Gratis:** Kelas 40 orang / 45 menit, Guru 10 / 45, 3 ruang per hari?
-   (Satu baris di `lib/jumpa/tiers.ts`.)
-2. **Upgrade di tengah panggilan:** saat ini upgrade berlaku untuk ruang **berikutnya**
-   (`maxParticipants` di LiveKit tidak bisa diubah setelah ruang dibuat; ruang lama tidak
-   dipakai ulang setelah upgrade). Perlu "perpanjang ruang yang sedang berjalan"?
-3. **Rekaman dan latar blur** sebagai fitur Premium di Fase 4? (Blur MediaPipe berat untuk HP
-   dan butuh penyesuaian CSP, jadi diusulkan hanya untuk laptop.)
-4. **Hitung mundur sejak awal** di ruang Gratis (sekarang ya), atau hanya 10 menit terakhir?
-5. **Masa coba guru dihitung Premium** (sekarang ya, mengikuti `resolvePlan`)?
-6. **720p untuk Gratis** dan 1080p untuk Premium. Tetap begitu, atau Gratis cukup 540p supaya lebih hemat server?
+1. **Paket Gratis:** Kelas **30 peserta · 45 menit**; Ruang Guru tetap 10 · 45; tetap 3 ruang per hari.
+2. **Hitung mundur** hanya di 10 menit terakhir (sebelumnya selalu tampil di ruang Gratis).
+3. **Masa coba guru** tetap dihitung Premium (tidak berubah).
+4. **Rekaman & latar blur** direncanakan sebagai fitur Premium di Fase 4 ("segera"); belum dibangun.
+
+Masih terbuka: perpanjang ruang yang sedang berjalan saat guru upgrade di tengah panggilan
+(sekarang berlaku untuk ruang berikutnya), dan 720p vs 540p untuk Gratis.

@@ -262,7 +262,7 @@ function RoomShell(props: ViewProps & { deviceNote: string | null; clearDeviceNo
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-          <CountdownChip endsAt={info.endsAt} alwaysShow={tier.tier === "FREE" && tier.kind !== "MURID"} />
+          <CountdownChip endsAt={info.endsAt} />
           <ConnectionBars />
           <HeaderBtn label="Obrolan" onClick={() => toggle("chat")} active={panel === "chat"} badge={unread}>
             <MessageSquare size={18} />

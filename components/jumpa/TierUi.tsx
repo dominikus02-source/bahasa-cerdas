@@ -21,7 +21,7 @@ export function TierBadge({ tier, compact = false }: { tier: JumpaTierView; comp
   );
 }
 
-/** Ringkasan batas ruang, mis. "Maks 40 orang · 45 menit". */
+/** Ringkasan batas ruang, mis. "30 orang · 45 menit". */
 export function tierLimitsText(tier: JumpaTierView): string {
   return `${tier.maxParticipants} orang · ${tier.maxDurationMin} menit`;
 }
@@ -46,17 +46,17 @@ export function useRemaining(endsAt: string | null): number | null {
 }
 
 /**
- * Chip sisa waktu. Ruang Gratis: selalu tampil (batasnya jelas sejak awal).
- * Ruang lain: tampil 10 menit terakhir. Komponen sendiri supaya detak per
- * detik tidak me-render ulang seluruh ruang.
+ * Chip sisa waktu: hanya tampil di 10 menit terakhir (semua paket).
+ * Komponen sendiri supaya detak per detik tidak me-render ulang ruang.
  */
-export const CountdownChip = memo(function CountdownChip({ endsAt, alwaysShow }: { endsAt: string | null; alwaysShow: boolean }) {
+export const COUNTDOWN_SHOW_SEC = 10 * 60;
+
+export const CountdownChip = memo(function CountdownChip({ endsAt }: { endsAt: string | null }) {
   const remaining = useRemaining(endsAt);
-  if (remaining === null) return null;
-  const warn = remaining <= 10 * 60;
-  if (!alwaysShow && !warn) return null;
+  // Semua paket: tampil hanya di 10 menit terakhir (keputusan CEO).
+  if (remaining === null || remaining > COUNTDOWN_SHOW_SEC) return null;
   return (
-    <span className="jumpa-countdown" data-warn={warn} role="timer" aria-label={`Sisa waktu ruang ${fmt(remaining)}`}>
+    <span className="jumpa-countdown" data-warn="true" role="timer" aria-label={`Sisa waktu ruang ${fmt(remaining)}`}>
       <Timer size={14} aria-hidden /> {fmt(remaining)}
     </span>
   );

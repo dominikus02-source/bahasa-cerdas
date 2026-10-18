@@ -54,8 +54,9 @@ export const JUMPA_TIERS: Record<JumpaTier, JumpaTierDef> = {
     label: "Gratis",
     rooms: {
       // 45 menit = 1 JP SMA (SMP 40, SD 35): satu jam pelajaran utuh muat.
-      // 40 orang: satu rombel penuh (maks 36 murid + guru) tetap muat.
-      KELAS: { maxParticipants: 40, maxDurationMin: 45 },
+      // 30 orang (keputusan CEO, 18-10-2026): kelas kecil/menengah muat;
+      // rombel penuh (hingga 36 murid + guru) perlu Premium.
+      KELAS: { maxParticipants: 30, maxDurationMin: 45 },
       GURU: { maxParticipants: 10, maxDurationMin: 45 },
     },
     roomsPerDay: 3,
