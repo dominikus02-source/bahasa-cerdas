@@ -40,25 +40,27 @@ export function InstallBanner() {
 
   return (
     <>
-      <div className="fixed top-0 left-0 right-0 z-50 p-4 pt-6 bg-gradient-to-r from-violet-600 to-purple-600 shadow-lg md:hidden">
-        <button onClick={() => { setShow(false); localStorage.setItem("install-banner-shown", "true") }} className="absolute top-2 right-2 text-white/70">
-          <X className="w-4 h-4" />
-        </button>
-        <div className="flex items-center gap-3">
-          <Smartphone className="w-8 h-8 text-violet-200 shrink-0" />
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-white">Install Arena di HP-mu</p>
-            <p className="text-xs text-violet-200 truncate">Main kapan aja, di mana aja!</p>
+      <div className="fixed top-0 left-0 right-0 z-50 px-4 pb-3 pt-[calc(12px+env(safe-area-inset-top,0px))] bg-bc-murid text-bc-on-brand shadow-bc-2 md:hidden" role="region" aria-label="Pasang aplikasi">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <div className="flex min-w-[200px] flex-1 items-center gap-3 pr-7">
+            <Smartphone className="w-7 h-7 shrink-0 opacity-90" aria-hidden="true" />
+            <div className="min-w-0">
+              <p className="text-sm font-bold leading-tight">Pasang di HP-mu</p>
+              <p className="mt-0.5 text-xs leading-snug opacity-85">Buka lebih cepat dari layar utama.</p>
+            </div>
           </div>
-          <div className="flex gap-2 shrink-0">
-            <button onClick={() => setGuideOpen(true)} className="px-3 py-2 rounded-xl bg-white/15 text-white text-xs font-medium flex items-center gap-1">
-              <BookOpen className="w-3.5 h-3.5" /> Panduan
+          <div className="ml-auto flex gap-2 shrink-0">
+            <button type="button" onClick={() => setGuideOpen(true)} className="min-h-9 px-3 rounded-full bg-bc-on-brand/15 text-xs font-semibold flex items-center gap-1">
+              <BookOpen className="w-3.5 h-3.5" aria-hidden="true" /> Panduan
             </button>
-            <button onClick={handleInstall} className="px-4 py-2 rounded-xl bg-white text-violet-700 text-xs font-bold">
-              Install
+            <button type="button" onClick={handleInstall} className="min-h-9 px-4 rounded-full bg-bc-surface text-bc-violet text-xs font-bold">
+              Pasang
             </button>
           </div>
         </div>
+        <button type="button" aria-label="Tutup" onClick={() => { setShow(false); localStorage.setItem("install-banner-shown", "true") }} className="absolute right-1.5 top-[calc(4px+env(safe-area-inset-top,0px))] grid h-8 w-8 place-items-center rounded-full opacity-75 hover:opacity-100">
+          <X className="w-4 h-4" aria-hidden="true" />
+        </button>
       </div>
 
       {guideOpen && <InstallGuide onClose={() => setGuideOpen(false)} />}

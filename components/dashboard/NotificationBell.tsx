@@ -159,7 +159,7 @@ export function NotificationBell({
     return createPortal(
       <div
         ref={panelRef}
-        className="fixed z-[120] flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[0_24px_70px_rgba(15,23,42,.22)] dark:border-slate-700/90 dark:bg-slate-900 dark:shadow-[0_24px_70px_rgba(0,0,0,.5)]"
+        className="fixed z-[120] flex flex-col overflow-hidden rounded-bc-tile border border-bc-line bg-bc-surface text-bc-text shadow-bc-3"
         style={{
           top: panelPosition.top,
           left: panelPosition.left,
@@ -169,10 +169,10 @@ export function NotificationBell({
         role="dialog"
         aria-label="Notifikasi terbaru"
       >
-        <div className="shrink-0 flex items-start justify-between gap-3 border-b border-slate-100 px-4 py-3.5 dark:border-slate-800">
+        <div className="shrink-0 flex items-start justify-between gap-3 border-b border-bc-line px-4 py-3.5">
           <div className="min-w-0 flex-1">
-            <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100">Notifikasi</h3>
-            <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
+            <h3 className="font-bold text-sm text-bc-text">Notifikasi</h3>
+            <p className="mt-0.5 text-[11px] text-bc-text-3">
               Kabar terbaru dari BahasaCerdas
             </p>
           </div>
@@ -180,23 +180,23 @@ export function NotificationBell({
             <button
               type="button"
               onClick={handleDeleteAll}
-              className="shrink-0 rounded-lg px-2.5 py-1.5 text-[11px] font-semibold text-red-600 transition-colors hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-950/40 dark:hover:text-red-300"
+              className="shrink-0 rounded-full px-3 py-1.5 text-[11px] font-bold text-bc-danger transition-colors hover:bg-bc-danger-soft"
             >
-              Hapus Semua
+              Hapus semua
             </button>
           )}
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
           {loading && notifications.length === 0 ? (
-            <div className="p-8 text-center text-sm text-slate-400 dark:text-slate-500">Memuat...</div>
+            <div className="p-8 text-center text-sm text-bc-text-3">Memuat…</div>
           ) : notifications.length === 0 ? (
             <div className="p-9 text-center">
-              <span className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-2xl bg-slate-100 dark:bg-slate-800">
-                <Bell className="h-6 w-6 text-slate-400 dark:text-slate-500" />
+              <span className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-bc-icon bg-bc-violet-soft">
+                <Bell className="h-6 w-6 text-bc-violet" />
               </span>
-              <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">Tidak ada notifikasi</p>
-              <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">Kalau ada kabar baru, akan muncul di sini.</p>
+              <p className="text-sm font-bold text-bc-text">Tidak ada notifikasi</p>
+              <p className="mt-1 text-xs text-bc-text-3">Kabar baru muncul di sini.</p>
             </div>
           ) : (
             <div className="space-y-2 p-2.5">
@@ -208,13 +208,13 @@ export function NotificationBell({
         </div>
 
         {notifications.length > 0 && (
-          <div className="shrink-0 border-t border-slate-100 bg-slate-50/80 p-2.5 dark:border-slate-800 dark:bg-slate-900">
+          <div className="shrink-0 border-t border-bc-line bg-bc-surface-2 p-2.5">
             <Link
               href={allHref}
-              className="flex min-h-10 items-center justify-center gap-1.5 rounded-xl text-xs font-bold text-emerald-700 transition-colors hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-950/30"
+              className="flex min-h-10 items-center justify-center gap-1.5 rounded-full text-xs font-bold text-bc-accent-strong transition-colors hover:bg-bc-accent-soft dark:text-bc-accent"
               onClick={() => setOpen(false)}
             >
-              Lihat Semua <ExternalLink className="h-3.5 w-3.5" />
+              Lihat semua <ExternalLink className="h-3.5 w-3.5" />
             </Link>
           </div>
         )}
@@ -230,14 +230,14 @@ export function NotificationBell({
           ref={triggerRef}
           type="button"
           onClick={handleOpen}
-          className="relative grid h-10 w-10 place-items-center rounded-xl text-slate-600 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 dark:text-slate-300 dark:hover:bg-slate-800"
+          className="relative grid h-10 w-10 place-items-center rounded-bc-sm text-bc-text-2 transition-colors hover:bg-bc-text/5 hover:text-bc-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bc-focus"
           title="Notifikasi"
           aria-label={unreadCount > 0 ? `Notifikasi, ${unreadCount} belum dibaca` : "Notifikasi"}
           aria-expanded={open}
         >
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
-            <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-0.5 text-[9px] font-bold leading-none text-white ring-2 ring-white dark:ring-slate-900">
+            <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-bc-danger px-0.5 text-[9px] font-bold leading-none text-bc-on-brand ring-2 ring-bc-surface">
               {unreadCount > 9 ? "9+" : unreadCount}
             </span>
           )}

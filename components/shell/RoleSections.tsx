@@ -47,10 +47,10 @@ export function RoleSections({
   }
 
   return (
-    <div className="border-t border-gray-100 dark:border-slate-800 pt-2 px-3 pb-1 space-y-1">
+    <div className="border-t border-bc-line pt-2 px-3 pb-1 space-y-1">
       {groups.map(({ section, items: groupItems }) => (
         <div key={section}>
-          <div className="shell-label text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2 dark:text-slate-500">
+          <div className="shell-label text-bc-eyebrow uppercase text-bc-text-3 px-3 mb-2">
             {SECTION_META[section].header}
           </div>
           {groupItems.map((item) => {
@@ -65,7 +65,7 @@ export function RoleSections({
                 className={`${NAV_LINK_BASE} ${NAV_LINK_INACTIVE}`}
               >
                 <Icon className={`${NAV_ICON_CLASS} ${NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
-                <span className="shell-label font-medium group-hover:text-violet-700 dark:group-hover:text-white">
+                <span className="shell-label font-medium">
                   {item.label}
                 </span>
               </Link>

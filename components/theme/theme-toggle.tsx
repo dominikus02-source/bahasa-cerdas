@@ -11,8 +11,8 @@ export function ThemeToggle() {
       type="button"
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
       aria-label="Ubah tema"
-      title="Ubah tema terang/gelap"
-      className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 transition-colors dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+      title="Tema terang/gelap"
+      className="inline-flex h-10 w-10 items-center justify-center rounded-bc-sm border border-bc-line bg-bc-surface text-bc-text-2 hover:bg-bc-surface-2 hover:text-bc-text transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bc-focus"
     >
       {resolvedTheme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
     </button>
