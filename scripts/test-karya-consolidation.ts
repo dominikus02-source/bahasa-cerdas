@@ -123,8 +123,9 @@ function main() {
 
   // ── 12. THEME AWARE ──
   console.log("\n── 12. Theme aware ──");
-  test("kartu feed punya dark: variant",
-    () => feedImpl.includes('dark:bg-slate-900') && feedImpl.includes('dark:border-slate-800'));
+  // Token global (bg-bc-surface / border-bc-line) otomatis ikut .dark.
+  test("kartu feed sadar tema (token global)",
+    () => feedImpl.includes('bg-bc-surface') && feedImpl.includes('border-bc-line'));
   test("badge jenis punya dark: variant",
     () => feedImpl.includes('dark:bg-fuchsia-500/15') && feedImpl.includes('dark:text-fuchsia-300'));
 
@@ -159,7 +160,7 @@ function main() {
   test("empty state stage: 'Panggungmu masih kosong.'",
     () => feedImpl.includes("Panggungmu masih kosong."));
   test("dark mode: kartu stage, Karya Saya, featured punya dark: variant",
-    () => karyaSaya.includes('dark:') && feedImpl.includes('dark:bg-slate-900') && featured.includes('dark:'));
+    () => [karyaSaya, feedImpl, featured].every(src => src.includes('dark:') || src.includes('bg-bc-surface')));
   test("mirror /arena/feed tetap compact (tanpa stage)",
     () => !arenaFeed.includes('variant="stage"'));
   test("KaryaFeed default variant compact (backward compatible)",

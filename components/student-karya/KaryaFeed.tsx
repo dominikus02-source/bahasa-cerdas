@@ -273,13 +273,13 @@ function FeedContent({
 
   const searchControl = (
     <form onSubmit={submitSearch} role="search" className="relative">
-      <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500" aria-hidden />
+      <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-bc-text-3" aria-hidden />
       <input
         value={searchInput}
         onChange={(e) => setSearchInput(e.target.value)}
         placeholder="Cari karya..."
         aria-label="Cari karya"
-        className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm text-gray-900 dark:text-slate-100 placeholder:text-gray-400 dark:placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-violet-500/40 focus:border-violet-400 dark:focus:border-violet-500 transition-all"
+        className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-bc-line bg-bc-surface text-sm text-bc-text placeholder:text-bc-text-3 outline-none focus:ring-2 focus:ring-violet-500/40 focus:border-violet-400 dark:focus:border-violet-500 transition-all"
       />
     </form>
   )
@@ -289,7 +289,7 @@ function FeedContent({
       {["SEMUA", "PUISI", "CERPEN", "ARTIKEL", "ANEKDOT", "PANTUN", "OPINI"].map(t => (
         <button key={t} onClick={() => setFilter(t)} role="tab" aria-selected={filter === t}
           className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
-            filter === t ? "bg-violet-600 text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+            filter === t ? "bg-violet-600 text-white shadow-sm" : "bg-bc-surface-2 text-bc-text-2 hover:bg-gray-200 dark:hover:bg-slate-700"
           }`}
         >
           {t === "SEMUA" ? "Semua" : typeColors[t]?.label || t}
@@ -304,12 +304,12 @@ function FeedContent({
       className="block mb-5 rounded-2xl bg-gradient-to-br from-violet-600 via-purple-600 to-fuchsia-600 p-5 text-white shadow-lg shadow-violet-500/25 hover:shadow-xl hover:shadow-violet-500/30 active:scale-[0.99] transition-all"
     >
       <div className="flex items-start gap-4">
-        <div className="w-12 h-12 rounded-2xl bg-white/20 dark:bg-slate-900/20 flex items-center justify-center shrink-0">
+        <div className="w-12 h-12 rounded-2xl bg-bc-surface/20 flex items-center justify-center shrink-0">
           <Sparkles size={24} className="text-yellow-300" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider bg-white/20 dark:bg-slate-900/20 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-bold uppercase tracking-wider bg-bc-surface/20 px-2 py-0.5 rounded-full">
               Tantangan Minggu Ini
             </span>
           </div>
@@ -320,10 +320,10 @@ function FeedContent({
             <span className="inline-flex items-center gap-1.5 bg-yellow-400 text-yellow-950 text-xs font-extrabold px-3 py-1.5 rounded-full">
               <Trophy size={13} /> +{challenge.bonusCoins} koin
             </span>
-            <span className="inline-flex items-center gap-1.5 bg-white/15 dark:bg-slate-900/15 text-white text-xs font-semibold px-3 py-1.5 rounded-full">
+            <span className="inline-flex items-center gap-1.5 bg-bc-surface/15 text-white text-xs font-semibold px-3 py-1.5 rounded-full">
               {challengeCount} karya masuk
             </span>
-            <span className="ml-auto inline-flex items-center gap-1.5 bg-white dark:bg-slate-800/90 text-violet-700 dark:text-violet-300 text-sm font-extrabold px-4 py-2 rounded-xl">
+            <span className="ml-auto inline-flex items-center gap-1.5 bg-bc-surface text-violet-700 dark:text-violet-300 text-sm font-extrabold px-4 py-2 rounded-xl">
               <PenLine size={14} /> Ikut Tantangan
             </span>
           </div>
@@ -338,8 +338,8 @@ function FeedContent({
         <Sparkles size={18} />
       </div>
       <div className="flex-1 min-w-[200px]">
-        <p className="text-sm font-bold text-gray-900 dark:text-slate-100">Butuh ide?</p>
-        <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5 leading-relaxed">
+        <p className="text-sm font-bold text-bc-text">Butuh ide?</p>
+        <p className="text-xs text-bc-text-3 mt-0.5 leading-relaxed">
           Bingung mau menulis apa? AI BC bisa membantumu menemukan tema dan mengembangkan idemu.
         </p>
       </div>
@@ -355,8 +355,8 @@ function FeedContent({
       <div className="mx-auto w-14 h-14 rounded-2xl bg-violet-50 dark:bg-violet-500/10 flex items-center justify-center mb-4">
         <PenLine size={26} className="text-violet-500 dark:text-violet-300" />
       </div>
-      <h3 className="text-base font-extrabold text-gray-900 dark:text-slate-100">Panggungmu masih kosong.</h3>
-      <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">Tulis sesuatu yang ingin kamu bagikan kepada dunia.</p>
+      <h3 className="text-base font-extrabold text-bc-text">Panggungmu masih kosong.</h3>
+      <p className="text-sm text-bc-text-3 mt-1">Tulis sesuatu yang ingin kamu bagikan kepada dunia.</p>
       <Link href={tulisHref} className="inline-flex items-center gap-1.5 mt-4 px-5 py-2.5 bg-violet-600 text-white rounded-xl text-sm font-bold hover:bg-violet-700 transition-all">
         <PenLine size={15} /> Buat Karya
       </Link>
@@ -371,7 +371,7 @@ function FeedContent({
     const primaryMedia = k.coverImage || k.photos?.find((url) => typeof url === "string" && url.trim().length > 0) || null
     if (stage) {
       return (
-        <article key={k.id} className="group flex flex-col bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 overflow-hidden hover:border-violet-200 dark:hover:border-violet-500/30 hover:shadow-lg hover:shadow-violet-500/[0.06] hover:-translate-y-0.5 transition-all duration-200">
+        <article key={k.id} className="group flex flex-col bg-bc-surface rounded-2xl border border-bc-line overflow-hidden hover:border-violet-200 dark:hover:border-violet-500/30 hover:shadow-lg hover:shadow-violet-500/[0.06] hover:-translate-y-0.5 transition-all duration-200">
           <div className="flex items-center gap-2.5 px-4 pt-4 pb-2">
             <Link href={`${profileBase}/${k.user.id}`} className="shrink-0">
               <UserAvatar
@@ -388,21 +388,21 @@ function FeedContent({
                 href={`${profileBase}/${k.user.id}`}
                 color={k.user.equippedNameColor}
                 badge={k.user.equippedBadge}
-                className="text-[13px] font-semibold text-gray-900 dark:text-slate-100 hover:text-violet-600 dark:hover:text-violet-300"
+                className="text-[13px] font-semibold text-bc-text hover:text-violet-600 dark:hover:text-violet-300"
                 badgeSize={14}
                 isFounder={k.user.isFounder}
                 isPremium={k.user.isPremium} badgeKind={k.user.badgeKind}
               />
-              <p className="text-[11px] text-gray-400 dark:text-slate-500 truncate">{k.user.profile?.school || ""}</p>
+              <p className="text-[11px] text-bc-text-3 truncate">{k.user.profile?.school || ""}</p>
             </div>
-            <span className="flex items-center gap-1 text-[11px] text-gray-400 dark:text-slate-500 shrink-0">
+            <span className="flex items-center gap-1 text-[11px] text-bc-text-3 shrink-0">
               <Clock size={11} /> {waktuLalu(k.createdAt)}
             </span>
           </div>
 
           {primaryMedia && (
             <Link href={`${detailBase}/${k.id}`} className="block px-4 pt-1">
-              <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-gray-100 dark:bg-slate-800">
+              <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-bc-surface-2">
                 <SafeMediaImage
                   src={primaryMedia}
                   alt={`Foto untuk ${k.title}`}
@@ -417,26 +417,26 @@ function FeedContent({
             <div className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold tracking-[0.14em] uppercase ${tc.bg} ${tc.text} mb-2`}>
               {tc.label}
             </div>
-            <h3 className="text-[15px] font-extrabold text-gray-900 dark:text-slate-100 mb-1.5 leading-snug line-clamp-2">{k.title}</h3>
-            <p className="text-[13px] text-gray-500 dark:text-slate-400 line-clamp-3 leading-relaxed">{k.content?.slice(0, 250)}</p>
+            <h3 className="text-[15px] font-extrabold text-bc-text mb-1.5 leading-snug line-clamp-2">{k.title}</h3>
+            <p className="text-[13px] text-bc-text-3 line-clamp-3 leading-relaxed">{k.content?.slice(0, 250)}</p>
           </Link>
 
-          <div className="flex items-center gap-3.5 px-4 py-3 border-t border-gray-50 dark:border-slate-800/80 mt-2">
+          <div className="flex items-center gap-3.5 px-4 py-3 border-t border-bc-line mt-2">
             <button onClick={() => handleLike(k.id)} disabled={likePending[k.id]} aria-label={isLiked ? "Batal suka" : "Suka karya ini"}
-              className={`flex items-center gap-1 text-[13px] font-medium transition-all min-h-[44px] ${isLiked ? "text-red-500" : "text-gray-400 hover:text-red-500 dark:text-slate-400"}`}>
+              className={`flex items-center gap-1 text-[13px] font-medium transition-all min-h-[44px] ${isLiked ? "text-red-500" : "text-bc-text-3 hover:text-red-500"}`}>
               {isLiked ? <Heart size={15} fill="currentColor" /> : <Heart size={15} />}
               {likeCount}
             </button>
-            <Link href={`${detailBase}/${k.id}`} className="flex items-center gap-1 text-[13px] text-gray-400 hover:text-violet-500 transition-all dark:text-slate-400 dark:hover:text-violet-300 min-h-[44px]">
+            <Link href={`${detailBase}/${k.id}`} className="flex items-center gap-1 text-[13px] text-bc-text-3 hover:text-violet-500 transition-all dark:hover:text-violet-300 min-h-[44px]">
               <MessageCircle size={15} /> {k._count?.comments ?? 0}
             </Link>
-            <ShareKaryaButton karyaId={k.id} title={k.title} className="text-gray-400 hover:text-violet-500 dark:text-slate-400 dark:hover:text-violet-300" />
-            <span className="flex items-center gap-1 text-[13px] text-gray-400 ml-auto dark:text-slate-500">
+            <ShareKaryaButton karyaId={k.id} title={k.title} className="text-bc-text-3 hover:text-violet-500 dark:hover:text-violet-300" />
+            <span className="flex items-center gap-1 text-[13px] text-bc-text-3 ml-auto">
               <Eye size={15} /> {k.viewsCount || 0}
             </span>
             {isOwner(k.user.id) && (
               <button onClick={() => handleDelete(k.id)} disabled={isDeleting} aria-label="Hapus karya"
-                className="text-gray-300 hover:text-red-500 transition-all min-h-[44px] dark:text-slate-600">
+                className="text-bc-text-3 hover:text-red-500 transition-all min-h-[44px]">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 1 2 2 2v2" /></svg>
               </button>
             )}
@@ -445,7 +445,7 @@ function FeedContent({
       )
     }
     return (
-      <div key={k.id} className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 overflow-hidden hover:shadow-md transition-all">
+      <div key={k.id} className="bg-bc-surface rounded-2xl border border-bc-line overflow-hidden hover:shadow-md transition-all">
         {/* Header */}
         <div className="flex items-center gap-3 px-5 pt-4 pb-2">
           <Link href={`${profileBase}/${k.user.id}`} className="shrink-0">
@@ -463,21 +463,21 @@ function FeedContent({
               href={`${profileBase}/${k.user.id}`}
               color={k.user.equippedNameColor}
               badge={k.user.equippedBadge}
-              className="text-sm font-semibold text-gray-900 dark:text-slate-100 hover:text-violet-600 dark:hover:text-violet-300"
+              className="text-sm font-semibold text-bc-text hover:text-violet-600 dark:hover:text-violet-300"
               badgeSize={15}
               isFounder={k.user.isFounder}
               isPremium={k.user.isPremium} badgeKind={k.user.badgeKind}
             />
-            <p className="text-xs text-gray-400 dark:text-slate-500">{k.user.profile?.school || ""}</p>
+            <p className="text-xs text-bc-text-3">{k.user.profile?.school || ""}</p>
           </div>
-          <div className="flex items-center gap-1 text-xs text-gray-400 dark:text-slate-500">
+          <div className="flex items-center gap-1 text-xs text-bc-text-3">
             <Clock size={12} /> {waktuLalu(k.createdAt)}
           </div>
         </div>
 
         {primaryMedia && (
           <Link href={`${detailBase}/${k.id}`} className="block px-5 pt-1">
-            <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-gray-100 dark:bg-slate-800">
+            <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-bc-surface-2">
               <SafeMediaImage
                 src={primaryMedia}
                 alt={`Foto untuk ${k.title}`}
@@ -493,25 +493,25 @@ function FeedContent({
           <div className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold ${tc.bg} ${tc.text} mb-2`}>
             <span>{tc.label}</span>
           </div>
-          <h3 className="font-bold text-gray-900 dark:text-slate-100 mb-1">{k.title}</h3>
-          <p className="text-sm text-gray-600 dark:text-slate-300 line-clamp-3 leading-relaxed">{k.content?.slice(0, 250)}</p>
+          <h3 className="font-bold text-bc-text mb-1">{k.title}</h3>
+          <p className="text-sm text-bc-text-2 line-clamp-3 leading-relaxed">{k.content?.slice(0, 250)}</p>
         </Link>
 
         {/* Actions */}
-        <div className="flex items-center gap-4 px-5 py-3 border-t border-gray-50 dark:border-slate-800">
-          <button onClick={() => handleLike(k.id)} disabled={likePending[k.id]} aria-label={isLiked ? "Batal suka" : "Suka karya ini"} className={`flex items-center gap-1.5 text-sm font-medium transition-all min-h-[44px] ${isLiked ? "text-red-500" : "text-gray-400 hover:text-red-500 dark:text-slate-400"}`}>
+        <div className="flex items-center gap-4 px-5 py-3 border-t border-bc-line">
+          <button onClick={() => handleLike(k.id)} disabled={likePending[k.id]} aria-label={isLiked ? "Batal suka" : "Suka karya ini"} className={`flex items-center gap-1.5 text-sm font-medium transition-all min-h-[44px] ${isLiked ? "text-red-500" : "text-bc-text-3 hover:text-red-500"}`}>
             {isLiked ? <Heart size={16} fill="currentColor" /> : <Heart size={16} />}
             {likeCount}
           </button>
-          <Link href={`${detailBase}/${k.id}`} className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-violet-500 transition-all dark:text-slate-400 dark:hover:text-violet-300 min-h-[44px]">
+          <Link href={`${detailBase}/${k.id}`} className="flex items-center gap-1.5 text-sm text-bc-text-3 hover:text-violet-500 transition-all dark:hover:text-violet-300 min-h-[44px]">
             <MessageCircle size={16} /> {k._count?.comments ?? 0}
           </Link>
-          <ShareKaryaButton karyaId={k.id} title={k.title} className="text-gray-400 hover:text-violet-500 dark:text-slate-400 dark:hover:text-violet-300" />
-          <span className="flex items-center gap-1.5 text-sm text-gray-400 ml-auto dark:text-slate-500">
+          <ShareKaryaButton karyaId={k.id} title={k.title} className="text-bc-text-3 hover:text-violet-500 dark:hover:text-violet-300" />
+          <span className="flex items-center gap-1.5 text-sm text-bc-text-3 ml-auto">
             <Eye size={16} /> {k.viewsCount || 0}
           </span>
           {isOwner(k.user.id) && (
-            <button onClick={() => handleDelete(k.id)} disabled={isDeleting} aria-label="Hapus karya" className="text-gray-300 hover:text-red-500 transition-all min-h-[44px] dark:text-slate-600">
+            <button onClick={() => handleDelete(k.id)} disabled={isDeleting} aria-label="Hapus karya" className="text-bc-text-3 hover:text-red-500 transition-all min-h-[44px]">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 1 2 2 2v2" /></svg>
             </button>
           )}
@@ -530,8 +530,8 @@ function FeedContent({
         <div className="mb-5">
           <div className="flex flex-wrap items-end justify-between gap-3 mb-3">
             <div>
-              <h2 className="text-lg font-extrabold text-gray-900 dark:text-white">Jelajahi Karya</h2>
-              <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">Temukan dan beri apresiasi karya murid dari seluruh Indonesia.</p>
+              <h2 className="text-lg font-extrabold text-bc-text">Jelajahi Karya</h2>
+              <p className="text-xs text-bc-text-3 mt-0.5">Temukan dan beri apresiasi karya murid dari seluruh Indonesia.</p>
             </div>
             <div className="hidden md:block w-72">{searchControl}</div>
           </div>
@@ -562,7 +562,7 @@ function FeedContent({
             ] as const).map(s => (
               <button key={s.v} onClick={() => setScope(s.v)}
                 className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
-                  scope === s.v ? "bg-violet-600 text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                  scope === s.v ? "bg-violet-600 text-white shadow-sm" : "bg-bc-surface-2 text-bc-text-2 hover:bg-gray-200 dark:hover:bg-slate-700"
                 }`}
               >
                 {s.label}
@@ -615,7 +615,7 @@ function FeedContent({
             ] as const).map(s => (
               <button key={s.v} onClick={() => setScope(s.v)}
                 className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
-                  scope === s.v ? "bg-violet-600 text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                  scope === s.v ? "bg-violet-600 text-white shadow-sm" : "bg-bc-surface-2 text-bc-text-2 hover:bg-gray-200 dark:hover:bg-slate-700"
                 }`}
               >
                 {s.label}
@@ -629,7 +629,7 @@ function FeedContent({
           {["SEMUA", "PUISI", "CERPEN", "ARTIKEL", "ANEKDOT", "PANTUN", "OPINI"].map(t => (
             <button key={t} onClick={() => setFilter(t)}
               className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
-                filter === t ? "bg-violet-600 text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                filter === t ? "bg-violet-600 text-white shadow-sm" : "bg-bc-surface-2 text-bc-text-2 hover:bg-gray-200 dark:hover:bg-slate-700"
               }`}
             >
               {t === "SEMUA" ? "Semua" : typeColors[t]?.label || t}
@@ -641,7 +641,7 @@ function FeedContent({
         {loading ? (
           <div className="flex justify-center py-16"><Loader2 size={32} className="animate-spin text-violet-500 dark:text-violet-400" /></div>
         ) : karyaList.length === 0 ? (
-          <div className="text-center py-16 text-gray-400 dark:text-slate-500">
+          <div className="text-center py-16 text-bc-text-3">
             <FileText size={48} className="mx-auto mb-3 opacity-50" />
             {isGuruViewer && scope === "students" ? (
               <>
@@ -705,8 +705,8 @@ export default function KaryaFeed({
         header={header === null ? (
           <div className="flex items-center justify-between mb-5">
             <div>
-              <h1 className="text-xl font-extrabold text-gray-900 dark:text-white">Jelajah Karya</h1>
-              <p className="text-sm text-gray-500 dark:text-slate-400">Temukan karya murid dari seluruh Indonesia</p>
+              <h1 className="text-xl font-extrabold text-bc-text">Jelajah Karya</h1>
+              <p className="text-sm text-bc-text-3">Temukan karya murid dari seluruh Indonesia</p>
             </div>
             <Link href={tulisHref} className="flex items-center gap-1.5 px-4 py-2.5 bg-violet-600 text-white rounded-xl text-sm font-bold hover:bg-violet-700 transition-all shadow-sm">
               <PenLine size={16} /> Tulis

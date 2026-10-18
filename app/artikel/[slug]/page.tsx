@@ -64,8 +64,8 @@ export default async function ArtikelDetailPage({ params }: Props) {
         <PageNavbar />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-slate-900">Artikel tidak ditemukan</h1>
-            <Link href="/artikel" className="mt-4 inline-block text-red-600 font-semibold hover:underline">Lihat semua artikel →</Link>
+            <h1 className="text-2xl font-bold text-bc-text">Artikel tidak ditemukan</h1>
+            <Link href="/artikel" className="mt-4 inline-block text-red-600 dark:text-red-400 font-semibold hover:underline">Lihat semua artikel →</Link>
           </div>
         </div>
       </div>
@@ -82,7 +82,7 @@ export default async function ArtikelDetailPage({ params }: Props) {
           be clicked, and the cover image sat cramped against it. Matches the
           spacing the other public pages already use. */}
       <div className="max-w-3xl mx-auto px-4 pt-28 pb-12">
-        <Link href="/artikel" className="inline-flex items-center gap-1 text-sm text-slate-400 hover:text-red-600 mb-8 transition-colors">
+        <Link href="/artikel" className="inline-flex items-center gap-1 text-sm text-bc-text-3 hover:text-red-600 mb-8 transition-colors">
           <ArrowLeft size={16} /> Kembali ke Artikel
         </Link>
 
@@ -92,12 +92,12 @@ export default async function ArtikelDetailPage({ params }: Props) {
             title={artikel.title}
           />
           {artikel.coverImageCredit && (
-            <p className="text-xs text-slate-400 mt-1 mb-8">Foto: {artikel.coverImageCredit}</p>
+            <p className="text-xs text-bc-text-3 mt-1 mb-8">Foto: {artikel.coverImageCredit}</p>
           )}
 
-          <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400 mb-4">
+          <div className="flex flex-wrap items-center gap-3 text-xs text-bc-text-3 mb-4">
             {artikel.author?.fullName && (
-              <Link href={`/profile/${artikel.author.id}`} className="flex items-center gap-1.5 bg-slate-100 px-3 py-1 rounded-full hover:bg-slate-200 transition-colors">
+              <Link href={`/profile/${artikel.author.id}`} className="flex items-center gap-1.5 bg-bc-surface-2 px-3 py-1 rounded-full hover:bg-bc-line-strong transition-colors">
                 <User size={12} /> {artikel.author.fullName}
               </Link>
             )}
@@ -105,27 +105,27 @@ export default async function ArtikelDetailPage({ params }: Props) {
             <span className="flex items-center gap-1"><Clock size={12} /> {artikel.readCount} dibaca</span>
           </div>
 
-          <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight mb-6">{artikel.title}</h1>
+          <h1 className="text-3xl md:text-4xl font-extrabold text-bc-text leading-tight mb-6">{artikel.title}</h1>
 
           {artikel.tags?.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-8">
               {artikel.tags.map((t: string) => (
-                <span key={t} className="text-xs px-3 py-1 bg-red-50 text-red-600 rounded-full font-medium">{t}</span>
+                <span key={t} className="text-xs px-3 py-1 bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-300 rounded-full font-medium">{t}</span>
               ))}
             </div>
           )}
 
-          <div className="bg-white rounded-2xl p-6 md:p-8 border border-slate-100 shadow-sm artikel-content">
+          <div className="bg-bc-surface rounded-2xl p-6 md:p-8 border border-bc-line shadow-sm artikel-content">
             <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{artikel.content}</ReactMarkdown>
           </div>
 
-          <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between">
-            <Link href="/artikel" className="text-sm text-red-600 font-semibold hover:underline flex items-center gap-1">
+          <div className="mt-8 pt-6 border-t border-bc-line flex items-center justify-between">
+            <Link href="/artikel" className="text-sm text-red-600 dark:text-red-400 font-semibold hover:underline flex items-center gap-1">
               <ArrowLeft size={14} /> Artikel Lainnya
             </Link>
             <div className="flex items-center gap-4">
               <ShareButton url={`/artikel/${artikel.slug}`} title={artikel.title} />
-              <span className="text-xs text-slate-400">{artikel.readCount} kali dibaca</span>
+              <span className="text-xs text-bc-text-3">{artikel.readCount} kali dibaca</span>
             </div>
           </div>
         </article>

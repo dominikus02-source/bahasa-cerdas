@@ -69,32 +69,32 @@ export default function ArtikelPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-bc-surface-2">
       <PageNavbar />
       <div className="max-w-5xl mx-auto px-4 py-16">
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-red-100 rounded-full text-red-700 text-sm font-medium mb-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-red-100 dark:bg-red-500/15 rounded-full text-red-700 dark:text-red-300 text-sm font-medium mb-4">
             <BookOpen size={14} /> Artikel & Wawasan
           </div>
-          <h1 className="text-4xl font-extrabold text-slate-900">Artikel dan Wawasan BahasaCerdas</h1>
-          <p className="mt-2 text-slate-500 text-lg max-w-2xl mx-auto">
+          <h1 className="text-4xl font-extrabold text-bc-text">Artikel dan Wawasan BahasaCerdas</h1>
+          <p className="mt-2 text-bc-text-3 text-lg max-w-2xl mx-auto">
             Baca gagasan, panduan, dan catatan founder tentang literasi, pembelajaran, komunitas guru, dan masa depan Bahasa Indonesia.
           </p>
         </div>
 
         {/* Search by author */}
         <div className="max-w-xl mx-auto mb-10">
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <label className="block text-sm font-medium text-bc-text-2 mb-2">
             Cari berdasarkan penulis
           </label>
           <form onSubmit={handleSearch} className="flex gap-2">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-bc-text-3" size={18} />
               <input
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Ketik nama penulis, misalnya Washadi, Alexander, atau Dominikus"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-100 bg-white"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-bc-line text-sm focus:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-100 bg-bc-surface"
               />
             </div>
             <button
@@ -106,12 +106,12 @@ export default function ArtikelPage() {
           </form>
           {submittedQuery && (
             <div className="flex items-center gap-2 mt-3">
-              <span className="text-sm text-slate-500">
+              <span className="text-sm text-bc-text-3">
                 Menampilkan hasil untuk: <strong>{submittedQuery}</strong>
               </span>
               <button
                 onClick={handleReset}
-                className="text-xs text-red-600 font-semibold hover:underline flex items-center gap-1"
+                className="text-xs text-red-600 dark:text-red-400 font-semibold hover:underline flex items-center gap-1"
               >
                 <X size={14} /> Tampilkan Semua
               </button>
@@ -125,13 +125,13 @@ export default function ArtikelPage() {
             <div className="animate-spin w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full" />
           </div>
         ) : articles.length === 0 ? (
-          <div className="text-center py-20 text-slate-400">
+          <div className="text-center py-20 text-bc-text-3">
             <BookOpen size={48} className="mx-auto mb-3 text-slate-200" />
             <p>Belum ada artikel dari penulis tersebut.</p>
           </div>
         ) : (
           <>
-            <p className="text-sm text-slate-400 mb-6">{total} artikel ditemukan</p>
+            <p className="text-sm text-bc-text-3 mb-6">{total} artikel ditemukan</p>
             <div className="flex flex-col gap-10">
               {articles.map((a, idx) => {
                 const thumbnail = a.coverImageUrl || a.coverImage;
@@ -139,9 +139,9 @@ export default function ArtikelPage() {
                 const authorRoleStr = a.authorRole || "";
                 return (
                   <Link key={a.id} href={`/artikel/${a.slug}`} className="block">
-                    <article className={`bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:border-red-200 transition-all ${idx === 0 ? "md:grid md:grid-cols-2" : ""}`}>
+                    <article className={`bg-bc-surface rounded-2xl shadow-sm border border-bc-line hover:shadow-xl hover:border-red-200 transition-all ${idx === 0 ? "md:grid md:grid-cols-2" : ""}`}>
                       {thumbnail ? (
-                        <div className={`${idx === 0 ? "h-full min-h-[280px]" : "aspect-video"} bg-slate-100 overflow-hidden`}>
+                        <div className={`${idx === 0 ? "aspect-video md:aspect-auto md:h-full md:min-h-[280px]" : "aspect-video"} bg-bc-surface-2 overflow-hidden`}>
                           <SafeMediaImage
                             src={thumbnail}
                             alt={a.title}
@@ -151,7 +151,7 @@ export default function ArtikelPage() {
                           />
                         </div>
                       ) : (
-                        <div className={`${idx === 0 ? "h-full min-h-[280px]" : "aspect-video"} overflow-hidden`}>
+                        <div className={`${idx === 0 ? "aspect-video md:aspect-auto md:h-full md:min-h-[280px]" : "aspect-video"} overflow-hidden`}>
                           <SafeMediaImage
                             src={null}
                             alt={a.title}
@@ -161,25 +161,25 @@ export default function ArtikelPage() {
                         </div>
                       )}
                       <div className="p-7 flex flex-col justify-center">
-                        <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400 mb-3">
+                        <div className="flex flex-wrap items-center gap-2 text-xs text-bc-text-3 mb-3">
                           {a.tags?.slice(0, 2).map(t => (
-                            <span key={t} className="px-2 py-0.5 bg-red-50 text-red-600 rounded-full font-medium">{t}</span>
+                            <span key={t} className="px-2 py-0.5 bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-300 rounded-full font-medium">{t}</span>
                           ))}
                           <span className="flex items-center gap-1"><Calendar size={12} /> {new Date(a.publishedAt ?? a.createdAt).toLocaleDateString("id")}</span>
                           <span className="flex items-center gap-1">{a.readCount} dibaca</span>
                         </div>
-                        <h2 className={`font-bold text-slate-900 hover:text-red-600 transition-colors ${idx === 0 ? "text-2xl" : "text-lg"} line-clamp-2`}>
+                        <h2 className={`font-bold text-bc-text hover:text-red-600 transition-colors ${idx === 0 ? "text-2xl" : "text-lg"} line-clamp-2`}>
                           {a.title}
                         </h2>
-                        {a.excerpt && <p className="text-sm text-slate-500 mt-2 line-clamp-2">{a.excerpt}</p>}
-                        <div className="flex items-center gap-2 mt-4 text-sm text-slate-400">
+                        {a.excerpt && <p className="text-sm text-bc-text-3 mt-2 line-clamp-2">{a.excerpt}</p>}
+                        <div className="flex items-center gap-2 mt-4 text-sm text-bc-text-3">
                           {authorName && (
                             <span className="flex items-center gap-1.5"><User size={14} /> {authorName}</span>
                           )}
                           {authorRoleStr && (
-                            <span className="text-xs text-slate-400">{authorRoleStr}</span>
+                            <span className="text-xs text-bc-text-3">{authorRoleStr}</span>
                           )}
-                          <span className="ml-auto text-red-600 font-semibold text-xs flex items-center gap-1">
+                          <span className="ml-auto shrink-0 whitespace-nowrap text-red-600 dark:text-red-400 font-semibold text-xs flex items-center gap-1">
                             Baca Artikel <ArrowRight size={12} />
                           </span>
                         </div>
@@ -198,8 +198,8 @@ export default function ArtikelPage() {
                   disabled={page === 1}
                   className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                     page === 1
-                      ? "bg-slate-100 text-slate-400 cursor-not-allowed"
-                      : "bg-white border border-slate-200 text-slate-600 hover:border-red-300"
+                      ? "bg-bc-surface-2 text-bc-text-3 cursor-not-allowed"
+                      : "bg-bc-surface border border-bc-line text-bc-text-2 hover:border-red-300"
                   }`}
                 >
                   Sebelumnya
@@ -211,7 +211,7 @@ export default function ArtikelPage() {
                     className={`w-10 h-10 rounded-xl text-sm font-medium transition-all ${
                       page === p
                         ? "bg-red-600 text-white"
-                        : "bg-white border border-slate-200 text-slate-600 hover:border-red-300"
+                        : "bg-bc-surface border border-bc-line text-bc-text-2 hover:border-red-300"
                     }`}
                   >
                     {p}
@@ -222,8 +222,8 @@ export default function ArtikelPage() {
                   disabled={page === totalPages}
                   className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                     page === totalPages
-                      ? "bg-slate-100 text-slate-400 cursor-not-allowed"
-                      : "bg-white border border-slate-200 text-slate-600 hover:border-red-300"
+                      ? "bg-bc-surface-2 text-bc-text-3 cursor-not-allowed"
+                      : "bg-bc-surface border border-bc-line text-bc-text-2 hover:border-red-300"
                   }`}
                 >
                   Berikutnya

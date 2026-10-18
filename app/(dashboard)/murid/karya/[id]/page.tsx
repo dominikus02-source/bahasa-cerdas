@@ -80,11 +80,11 @@ export default function DetailKaryaPage() {
   };
 
   if (loading) return <div className="flex justify-center py-20"><div className="animate-spin w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full" /></div>;
-  if (!karya) return <div className="text-center py-20 text-gray-500 dark:text-slate-400">Karya tidak ditemukan</div>;
+  if (!karya) return <div className="text-center py-20 text-bc-text-3">Karya tidak ditemukan</div>;
 
   return (
     <div className="max-w-2xl mx-auto">
-      <button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 dark:text-slate-100 mb-4 transition-colors">
+      <button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-bc-text-3 hover:text-bc-text mb-4 transition-colors">
         <ArrowLeft size={16} /> Kembali
       </button>
 
@@ -105,17 +105,17 @@ export default function DetailKaryaPage() {
             href={`/profile/${karya.user.id}`}
             color={karya.user.equippedNameColor}
             badge={karya.user.equippedBadge}
-            className="text-sm font-semibold text-gray-900 dark:text-slate-100 hover:text-violet-600"
+            className="text-sm font-semibold text-bc-text hover:text-violet-600"
             badgeSize={15}
             isFounder={karya.user.isFounder}
             isPremium={karya.user.isPremium} badgeKind={karya.user.badgeKind}
           />
           {karya.user.rank && <RankChip rank={karya.user.rank} size={16} showTitle={false} compact className="mt-1" />}
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-bc-text-3">
             {karya.user.profile?.school && `${karya.user.profile.school}${karya.user.profile.city ? ` · ${karya.user.profile.city}` : ""}`}
           </p>
         </div>
-        <div className="flex items-center gap-1 text-xs text-gray-400">
+        <div className="flex items-center gap-1 text-xs text-bc-text-3">
           <Clock size={12} />
           {new Date(karya.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
         </div>
@@ -158,7 +158,7 @@ export default function DetailKaryaPage() {
                 {supporting.map((url, index) => (
                   <div
                     key={url}
-                    className="relative aspect-[4/3] overflow-hidden rounded-xl border border-gray-100 bg-gray-50 dark:border-slate-800 dark:bg-slate-900"
+                    className="relative aspect-[4/3] overflow-hidden rounded-xl border border-bc-line bg-bc-surface-2"
                   >
                     <SafeMediaImage
                       src={url}
@@ -174,23 +174,23 @@ export default function DetailKaryaPage() {
         );
       })()}
 
-      <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-slate-100 mb-6 leading-snug">{karya.title}</h1>
+      <h1 className="text-2xl md:text-3xl font-bold text-bc-text mb-6 leading-snug">{karya.title}</h1>
 
-      <div className="prose prose-gray max-w-none mb-8 whitespace-pre-wrap leading-relaxed text-gray-700 dark:text-slate-300">
+      <div className="prose prose-gray max-w-none mb-8 whitespace-pre-wrap leading-relaxed text-bc-text-2">
         {karya.content}
       </div>
 
-      <div className="flex items-center gap-4 mb-8 pb-8 border-b border-gray-100 dark:border-slate-800">
+      <div className="flex items-center gap-4 mb-8 pb-8 border-b border-bc-line">
         <button onClick={handleLike} className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-          liked ? "bg-red-50 text-red-500" : "bg-gray-50 dark:bg-slate-800/60 text-gray-500 hover:bg-red-50 hover:text-red-500"
+          liked ? "bg-red-50 text-red-500" : "bg-bc-surface-2 text-bc-text-3 hover:bg-red-50 hover:text-red-500"
         }`}>
           <Heart size={18} fill={liked ? "currentColor" : "none"} />
           {karya.likesCount} Suka
         </button>
-        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-50 dark:bg-slate-800/60 text-gray-500 text-sm">
+        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-bc-surface-2 text-bc-text-3 text-sm">
           <Eye size={18} /> {karya.viewsCount} Dilihat
         </div>
-        <ShareKaryaButton karyaId={karya.id} title={karya.title} className="gap-2 px-4 py-2 rounded-xl bg-gray-50 dark:bg-slate-800/60 text-gray-500 hover:bg-blue-50 hover:text-blue-500 ml-auto" />
+        <ShareKaryaButton karyaId={karya.id} title={karya.title} className="gap-2 px-4 py-2 rounded-xl bg-bc-surface-2 text-bc-text-3 hover:bg-blue-50 hover:text-blue-500 ml-auto" />
         {isOwner && (
           <button onClick={handleDelete} disabled={deleting}
             className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-500 dark:text-red-400 hover:bg-red-100 text-sm font-medium transition-all disabled:opacity-50"
