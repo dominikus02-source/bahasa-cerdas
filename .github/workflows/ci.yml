@@ -22,6 +22,8 @@ jobs:
       NEXT_PUBLIC_SITE_URL: "https://example.com"
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -36,6 +38,11 @@ jobs:
 
       - name: Typecheck
         run: npm run typecheck
+
+      - name: Guard warna baru (hex/rgb hanya di app/theme/tokens.css)
+        env:
+          GUARD_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: npm run guard:warna
 
       - name: Notification panel position regression
         run: npm run test:notif-panel
