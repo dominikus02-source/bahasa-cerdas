@@ -170,8 +170,12 @@ export function ChatPanel() {
       >
         <textarea
           value={text}
-          onChange={(e) => setText(e.target.value.slice(0, JUMPA_CHAT_MAX_LEN))}
+          maxLength={JUMPA_CHAT_MAX_LEN}
+          onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
+            // Android/IME: Enter saat menyusun kata (Gboard, Samsung) hanya
+            // menyelesaikan kata — jangan kirim setengah kata.
+            if (e.nativeEvent.isComposing || e.keyCode === 229) return;
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
               void submit();
@@ -586,7 +590,7 @@ export function ReportPanel({ onDone }: { onDone: () => void }) {
       )}
       <label className="block">
         <span className="jumpa-section-label">Ceritakan singkat (opsional)</span>
-        <textarea value={desc} onChange={(e) => setDesc(e.target.value.slice(0, 1000))} rows={3} className="jumpa-input w-full resize-none" />
+        <textarea value={desc} maxLength={1000} onChange={(e) => setDesc(e.target.value)} rows={3} className="jumpa-input w-full resize-none" />
       </label>
       <button type="submit" className="jumpa-primary w-full" disabled={!category || sending}>
         {sending ? <Loader2 size={18} className="animate-spin" /> : <Flag size={18} />} Kirim laporan
