@@ -180,7 +180,7 @@ assert(historyApi.includes("listCommissions(user.id"), "F9 guru hanya membaca le
 // ═══════════════════════════════════════════════════════════════════════════════
 section("G. Wiring — webhook, cron, join, admin, audit");
 
-const webhookSrc = read("app/api/payment/webhook/route.ts");
+const webhookSrc = read("app/api/payment/webhook/route.ts") + "\n" + read("lib/payments/midtrans-notification.ts") + "\n" + read("lib/payments/midtrans-server.ts");
 assert(webhookSrc.includes("createCommissionFromTransaction"), "G1 webhook memanggil commission engine");
 assert(webhookSrc.includes('"isMurid" in processed && processed.isMurid === true'), "G2 komisi hanya untuk settlement premium MURID");
 assert(webhookSrc.includes("transaksi.type === \"MURID_PREMIUM\""), "G3 gate type MURID_PREMIUM di webhook");

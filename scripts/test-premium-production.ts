@@ -79,7 +79,7 @@ test("B3. periodKey DAY konsisten lintas zona server", () => {
 
 /* ── C. Webhook security & idempotency (statik) ── */
 console.log("\n── C. Webhook ──");
-const wh = read("app/api/payment/webhook/route.ts");
+const wh = read("app/api/payment/webhook/route.ts") + "\n" + read("lib/payments/midtrans-notification.ts") + "\n" + read("lib/payments/midtrans-server.ts");
 test("C1. signature SHA512 resmi (serverKey posisi terakhir)", () =>
   wh.includes('update(orderId + statusCode + grossAmount + serverKey)') &&
   wh.includes('createHash("sha512")'));

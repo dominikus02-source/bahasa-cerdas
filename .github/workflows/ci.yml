@@ -67,6 +67,9 @@ jobs:
           npm run test:jumpa-no-english
           npm run test:jumpa-flow
 
+      - name: Midtrans payment activation gate
+        run: npm run test:midtrans-activation
+
       - name: Lint
         run: npm run lint
 

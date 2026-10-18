@@ -6,7 +6,16 @@
 }
 
 {$APEX_DOMAIN} {
-  redir https://{$WEB_DOMAIN}{uri} permanent
+  # Midtrans HTTP notifications do not follow 301/302/303. Serve the payment
+  # webhook on the apex directly (legacy dashboard setting) and use 308 for
+  # everything else so POST bodies survive any other redirect.
+  handle /api/payment/webhook {
+    reverse_proxy web:3000
+  }
+
+  handle {
+    redir https://{$WEB_DOMAIN}{uri} 308
+  }
 }
 
 supabase.bahasacerdas.com {

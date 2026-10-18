@@ -92,6 +92,7 @@
     "test:p8b-gcs": "npx tsx scripts/test-p8b-gcs.ts",
     "test:p8c-risk": "npx tsx scripts/test-p8c-risk.ts",
     "test:p8d-midtrans": "npx tsx scripts/test-p8d-midtrans.ts",
+    "test:midtrans-activation": "npx tsx scripts/test-midtrans-payment-activation.ts",
     "test:p8e-money-gate": "npx tsx scripts/test-p8e-money-gate.ts",
     "test:p8f-pre-canary": "npx tsx scripts/test-p8f-pre-canary.ts",
     "test:p8g-canary": "npx tsx scripts/test-p8g-canary.ts",

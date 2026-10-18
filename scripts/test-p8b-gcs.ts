@@ -166,7 +166,7 @@ assert(distSrc.includes("totals"), "G7 total agregat server-side");
 section("H. Notifications");
 
 assert(joinApiSrc.includes("Murid baru bergabung ke kelasmu"), "H1 notif join ke guru (faktual)");
-const webhookSrc = read("app/api/payment/webhook/route.ts");
+const webhookSrc = read("app/api/payment/webhook/route.ts") + "\n" + read("lib/payments/midtrans-notification.ts") + "\n" + read("lib/payments/midtrans-server.ts");
 assert(webhookSrc.includes("Penghasilan baru tercatat"), "H2 notif komisi tercatat (faktual)");
 assert(webhookSrc.includes("commission.created && !commission.idempotent"), "H3 notif hanya untuk komisi baru (bukan retry)");
 assert(!webhookSrc.includes("body: `Rp"), "H4 notif tanpa nominal (anti spam keuangan)");

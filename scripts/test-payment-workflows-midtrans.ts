@@ -295,7 +295,7 @@ test("/kebijakan-privasi page exists and has content", () => {
 console.log("\n📡 Webhook Tests");
 
 test("webhook has SHA512 signature verification", () => {
-  const content = fs.readFileSync("app/api/payment/webhook/route.ts", "utf-8");
+  const content = ["app/api/payment/webhook/route.ts", "lib/payments/midtrans-notification.ts", "lib/payments/midtrans-server.ts"].map((p) => fs.readFileSync(p, "utf-8")).join("\n");
   assert.ok(
     content.includes("sha512") || content.includes("SHA512") || content.includes("createHash"),
     "webhook must verify signature with SHA512"
@@ -305,7 +305,7 @@ test("webhook has SHA512 signature verification", () => {
     "webhook must read signature_key from Midtrans notification"
   );
   assert.ok(
-    content.includes("verifyMidtransNotification"),
+    content.includes("verifyMidtransNotification") || content.includes("verifyMidtransSignature("),
     "webhook should call verify function"
   );
   assert.ok(
@@ -315,7 +315,7 @@ test("webhook has SHA512 signature verification", () => {
 });
 
 test("webhook is idempotent for already SUCCESS transactions", () => {
-  const content = fs.readFileSync("app/api/payment/webhook/route.ts", "utf-8");
+  const content = ["app/api/payment/webhook/route.ts", "lib/payments/midtrans-notification.ts", "lib/payments/midtrans-server.ts"].map((p) => fs.readFileSync(p, "utf-8")).join("\n");
   assert.ok(
     content.includes("idempotent") || content.includes("already_success"),
     "webhook should handle idempotent SUCCESS transactions"
@@ -323,7 +323,7 @@ test("webhook is idempotent for already SUCCESS transactions", () => {
 });
 
 test("webhook does not expose secrets", () => {
-  const content = fs.readFileSync("app/api/payment/webhook/route.ts", "utf-8");
+  const content = ["app/api/payment/webhook/route.ts", "lib/payments/midtrans-notification.ts", "lib/payments/midtrans-server.ts"].map((p) => fs.readFileSync(p, "utf-8")).join("\n");
   assert.ok(
     !content.includes("console.log") || !content.includes("error_messages") || true,
     "webhook should not log secrets"
@@ -340,9 +340,9 @@ test("webhook does not expose secrets", () => {
 });
 
 test("webhook returns 200 to Midtrans", () => {
-  const content = fs.readFileSync("app/api/payment/webhook/route.ts", "utf-8");
+  const content = ["app/api/payment/webhook/route.ts", "lib/payments/midtrans-notification.ts", "lib/payments/midtrans-server.ts"].map((p) => fs.readFileSync(p, "utf-8")).join("\n");
   assert.ok(
-    content.includes("NextResponse.json({ ok: true") || content.includes('"ok": true'),
+    content.includes("NextResponse.json({ ok: true") || content.includes("respond({ ok: true") || content.includes('"ok": true'),
     "webhook returns success JSON with ok: true"
   );
 });

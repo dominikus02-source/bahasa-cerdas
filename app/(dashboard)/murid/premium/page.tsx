@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { Crown, Gem, Check, X, Loader2, ArrowRight, BookOpen, Target, Sparkles, BarChart3, Brain, Shield, Clock, ChevronRight } from "lucide-react";
 import { loadMidtransSnap } from "@/lib/midtrans-client";
+import { reconcilePaymentUntilFinal } from "@/lib/billing/reconcile-client";
 
 interface UserInfo {
   isPremium: boolean;
@@ -98,8 +99,11 @@ export default function MuridPremiumPage() {
         try { await loadMidtransSnap(clientKey); } catch {}
         if (typeof window !== "undefined" && window.snap) {
           window.snap.pay(result.token, {
-            onSuccess: () => { setStatus("success"); setLoading(false); },
-            onPending: () => { setStatus("pending"); setLoading(false); },
+            onSuccess: () => { setStatus("success"); setLoading(false); void reconcilePaymentUntilFinal(result.orderId); },
+            onPending: async () => {
+              setStatus("pending"); setLoading(false);
+              if ((await reconcilePaymentUntilFinal(result.orderId)) === "SUCCESS") setStatus("success");
+            },
             onError: () => { setErrorMsg("Pembayaran gagal. Coba lagi."); setLoading(false); },
             onClose: () => { setLoading(false); },
           });

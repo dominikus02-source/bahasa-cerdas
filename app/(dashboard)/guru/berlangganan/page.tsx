@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, Crown, Zap, AlertCircle, Loader2, X, Shield, CreditCard, Calendar, Clock, Info, Landmark, Smartphone, Gift, Sparkles } from "lucide-react";
 import { loadMidtransSnap } from "@/lib/midtrans-client";
+import { reconcilePayment, reconcilePaymentUntilFinal } from "@/lib/billing/reconcile-client";
 import CouponInput, { AppliedCoupon } from "@/components/billing/CouponInput";
 import { formatCurrency } from "@/lib/format";
 
@@ -77,6 +78,10 @@ export default function BerlanggananPage() {
     }
   }, []);
 
+  // Order id of the Snap session in progress — used to verify the payment
+  // server-side (Midtrans status API) instead of relying only on the webhook.
+  const lastOrderId = useRef<string | null>(null);
+
   const refreshUserInfo = useCallback(async () => {
     try {
       const res = await fetch("/api/user/me?fresh=1", {
@@ -114,6 +119,7 @@ export default function BerlanggananPage() {
 
     const confirm = async () => {
       attempts += 1;
+      if (lastOrderId.current) await reconcilePayment(lastOrderId.current);
       const latest = await refreshUserInfo();
       if (latest?.isPremium || attempts >= maxAttempts) {
         if (paymentConfirmTimer.current) clearInterval(paymentConfirmTimer.current);
@@ -186,6 +192,7 @@ export default function BerlanggananPage() {
       }
 
       const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
+      lastOrderId.current = typeof result.orderId === "string" ? result.orderId : null;
 
       if (result.token && clientKey) {
         try {
@@ -197,11 +204,18 @@ export default function BerlanggananPage() {
             onSuccess: async () => {
               setStatus("success");
               setLoading(false);
+              await reconcilePayment(lastOrderId.current);
               await refreshUserInfo();
             },
-            onPending: () => {
+            onPending: async () => {
               setStatus("pending");
               setLoading(false);
+              // e-wallets (GoPay/QRIS) often settle seconds after "pending".
+              const final = await reconcilePaymentUntilFinal(lastOrderId.current);
+              if (final === "SUCCESS") {
+                setStatus("success");
+                await refreshUserInfo();
+              }
             },
             onError: () => {
               if (result.redirectUrl) {
