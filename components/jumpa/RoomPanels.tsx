@@ -179,7 +179,7 @@ export function ChatPanel() {
           }}
           rows={1}
           disabled={!canWrite}
-          placeholder={canWrite ? "Tulis pesan…" : "Obrolan dimatikan host"}
+          placeholder={canWrite ? "Tulis pesan…" : "Obrolan dimatikan pemandu"}
           aria-label="Tulis pesan"
           className="jumpa-input max-h-28 min-h-[48px] flex-1 resize-none"
         />
@@ -215,8 +215,8 @@ function personActions(p: Participant): ActionItem[] {
   if (p.isMicrophoneEnabled) items.push({ action: "MUTE_AUDIO", label: "Matikan mikrofon", icon: <MicOff size={18} /> });
   if (p.isCameraEnabled) items.push({ action: "MUTE_VIDEO", label: "Matikan kamera", icon: <VideoOff size={18} /> });
   if (p.isScreenShareEnabled) items.push({ action: "STOP_SCREEN", label: "Hentikan berbagi layar", icon: <MonitorX size={18} /> });
-  if (meta.roomRole === "COHOST") items.push({ action: "UNSET_COHOST", label: "Cabut co-host", icon: <Crown size={18} /> });
-  else items.push({ action: "SET_COHOST", label: "Jadikan co-host", icon: <Crown size={18} /> });
+  if (meta.roomRole === "COHOST") items.push({ action: "UNSET_COHOST", label: "Cabut wakil pemandu", icon: <Crown size={18} /> });
+  else items.push({ action: "SET_COHOST", label: "Jadikan wakil pemandu", icon: <Crown size={18} /> });
   items.push({ action: "REMOVE", label: "Keluarkan dari ruang", icon: <UserMinus size={18} />, danger: true, confirm: `Keluarkan ${p.name || "peserta"}? Ia tidak bisa masuk lagi ke ruang ini.` });
   return items;
 }
@@ -330,8 +330,8 @@ export function PeoplePanel({ onInvite }: { onInvite: () => void }) {
                     {hands.has(p.identity) && <Hand size={14} className="ml-1 inline align-[-2px] text-[var(--clr-warning)]" aria-label="Angkat tangan" />}
                   </span>
                   <span className="mt-0.5 flex gap-1">
-                    {meta.roomRole === "HOST" && <span className="jumpa-badge" data-role="HOST">Host</span>}
-                    {meta.roomRole === "COHOST" && <span className="jumpa-badge" data-role="HOST">Co-host</span>}
+                    {meta.roomRole === "HOST" && <span className="jumpa-badge" data-role="HOST">Pemandu</span>}
+                    {meta.roomRole === "COHOST" && <span className="jumpa-badge" data-role="HOST">Wakil pemandu</span>}
                     {meta.bcRole && <span className="jumpa-badge" data-role={meta.bcRole}>{meta.bcRole === "GURU" ? "Guru" : "Murid"}</span>}
                   </span>
                 </span>

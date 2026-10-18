@@ -282,7 +282,7 @@ export default function JumpaLobby(props: Props) {
       <section className="jumpa-in-up flex w-full flex-col items-center gap-5 text-center [animation-delay:60ms] md:flex-1 md:items-start md:text-left">
         <span className="jumpa-brand">
           <span className="jumpa-mark jumpa-mark-sm" aria-hidden>J</span>
-          JUMPA <span className="jumpa-brand-by">by BahasaCerdas</span>
+          JUMPA <span className="jumpa-brand-by">dari BahasaCerdas</span>
         </span>
         <div>
           <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{props.title}</h1>

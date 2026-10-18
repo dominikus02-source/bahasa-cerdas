@@ -39,7 +39,7 @@ export interface JumpaAppProps {
 }
 
 const ENDED_TEXT: Record<EndedReason, string> = {
-  HOST: "Host mengakhiri ruang ini.",
+  HOST: "Pemandu mengakhiri ruang ini.",
   TIME_LIMIT: "Batas waktu ruang tercapai.",
   EMPTY: "Ruang ditutup karena kosong.",
   STALE: "Ruang ditutup otomatis.",

@@ -34,7 +34,7 @@ export default async function JumpaRoomPage({
 
   const role = ctx.effective ?? "MURID";
   const place = ctx.view.groupName ?? ctx.view.communityName ?? KIND_LABEL[ctx.view.kind];
-  const subtitle = [place, ctx.view.hostName ? `Host: ${ctx.view.hostName}` : null].filter(Boolean).join(" · ") || null;
+  const subtitle = [place, ctx.view.hostName ? `Pemandu: ${ctx.view.hostName}` : null].filter(Boolean).join(" · ") || null;
 
   return (
     <JumpaApp

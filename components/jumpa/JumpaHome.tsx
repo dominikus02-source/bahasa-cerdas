@@ -51,7 +51,7 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
     <main className="mx-auto flex min-h-[100dvh] w-full max-w-3xl flex-col gap-5 px-4 pb-10 pt-[max(20px,env(safe-area-inset-top))] sm:px-6">
       <header className="flex items-center justify-between gap-3">
         <div>
-          <p className="jumpa-brand !text-[11px]"><span className="jumpa-mark jumpa-mark-sm" aria-hidden>J</span>JUMPA <span className="jumpa-brand-by">by BahasaCerdas</span></p>
+          <p className="jumpa-brand !text-[11px]"><span className="jumpa-mark jumpa-mark-sm" aria-hidden>J</span>JUMPA <span className="jumpa-brand-by">dari BahasaCerdas</span></p>
           <h1 className="text-2xl font-extrabold">Halo, {displayName.split(" ")[0]}</h1>
         </div>
         <Link href={dashboardHref} className="jumpa-ghost !min-h-[44px]">Dasbor</Link>
@@ -138,7 +138,7 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
                       {r.mine ? " · Ruangmu" : ""}
                     </span>
                   </span>
-                  {r.status === "LIVE" && <span className="jumpa-live">Live</span>}
+                  {r.status === "LIVE" && <span className="jumpa-live">Berlangsung</span>}
                   <ArrowRight size={18} className="shrink-0 text-[var(--jp-text-3)]" />
                 </Link>
               </li>

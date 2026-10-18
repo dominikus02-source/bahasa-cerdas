@@ -143,5 +143,5 @@ export function estimateMbPerMin(policy: PublishPolicy): number {
 export const QUALITY_LABEL: Record<JumpaQuality, { title: string; hint: string }> = {
   auto: { title: "Otomatis", hint: "Ikuti jaringan & perangkat" },
   hemat: { title: "Hemat Data", hint: "360p, hemat kuota" },
-  hd: { title: "HD", hint: "Paling tajam, butuh internet kencang" },
+  hd: { title: "Jernih", hint: "Paling tajam (HD), butuh internet kencang" },
 };

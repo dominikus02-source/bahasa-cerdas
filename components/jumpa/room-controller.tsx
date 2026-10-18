@@ -81,9 +81,9 @@ export function useJumpa(): Ctl {
 }
 
 const MUTE_TEXT = {
-  microphone: "Host mematikan mikrofonmu.",
-  camera: "Host mematikan kameramu.",
-  screen_share: "Host menghentikan berbagi layarmu.",
+  microphone: "Pemandu mematikan mikrofonmu.",
+  camera: "Pemandu mematikan kameramu.",
+  screen_share: "Pemandu menghentikan berbagi layarmu.",
 } as const;
 
 async function callApi(path: string, init?: RequestInit): Promise<ApiResult> {
@@ -209,12 +209,12 @@ export function JumpaRoomProvider({ initial, self, children }: { initial: JumpaR
             break;
           case "room.chat":
             setInfo((i) => ({ ...i, chatEnabled: server.enabled }));
-            toast(server.enabled ? "Obrolan dibuka kembali." : "Obrolan dimatikan host.");
+            toast(server.enabled ? "Obrolan dibuka kembali." : "Obrolan dimatikan pemandu.");
             break;
           case "room.role":
             if (server.userId === self.userId) {
               setRoomRole(server.roomRole);
-              toast(server.roomRole === "COHOST" ? "Kamu sekarang co-host." : "Kamu bukan co-host lagi.", "ok");
+              toast(server.roomRole === "COHOST" ? "Kamu sekarang wakil pemandu." : "Kamu bukan wakil pemandu lagi.", "ok");
             }
             break;
         }
@@ -239,7 +239,7 @@ export function JumpaRoomProvider({ initial, self, children }: { initial: JumpaR
         if (peer.userId === self.userId) {
           setMyHand(false);
           myHandAt.current = null;
-          toast("Host menurunkan tanganmu.");
+          toast("Pemandu menurunkan tanganmu.");
         }
       } else if (peer.t === "react") {
         showReaction(peer.r, participant.name || "Peserta");

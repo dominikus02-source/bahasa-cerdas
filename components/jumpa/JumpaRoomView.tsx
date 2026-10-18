@@ -252,7 +252,7 @@ function RoomShell(props: ViewProps & { deviceNote: string | null; clearDeviceNo
           <div className="min-w-0">
             <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[.16em] text-[var(--jp-accent)]">
               JUMPA
-              <span className="hidden font-semibold normal-case tracking-normal text-[var(--jp-text-3)] sm:inline">by BahasaCerdas</span>
+              <span className="hidden font-semibold normal-case tracking-normal text-[var(--jp-text-3)] sm:inline">dari BahasaCerdas</span>
               {info.isLocked && <Lock size={12} aria-label="Ruang terkunci" className="text-[var(--clr-warning)]" />}
             </p>
             <h1 className="flex min-w-0 items-center gap-2 text-[15px] font-bold sm:text-lg">

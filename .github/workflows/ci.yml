@@ -61,6 +61,7 @@ jobs:
           npm run test:jumpa-host-actions
           npm run test:jumpa-chat-moderation
           npm run test:jumpa-tiers
+          npm run test:jumpa-no-english
 
       - name: Lint
         run: npm run lint

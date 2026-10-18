@@ -40,7 +40,7 @@ export function supportsSpeakerSelect(): boolean {
   return typeof HTMLMediaElement !== "undefined" && "setSinkId" in HTMLMediaElement.prototype;
 }
 
-const DEVICE_FALLBACK: Record<Kind, string> = { videoinput: "Kamera", audioinput: "Mikrofon", audiooutput: "Speaker" };
+const DEVICE_FALLBACK: Record<Kind, string> = { videoinput: "Kamera", audioinput: "Mikrofon", audiooutput: "Pengeras suara" };
 
 function DeviceSelect({ kind, value, onChange, icon, label, refreshKey }: { kind: Kind; value?: string; onChange: (id: string) => void; icon: React.ReactNode; label: string; refreshKey: number }) {
   const devices = useDeviceList(kind, refreshKey);
@@ -98,9 +98,9 @@ export default function SettingsPanel({ prefs, onChange, tier, refreshKey = 0, d
           <DeviceSelect kind="videoinput" label="Kamera" icon={<Camera size={15} />} value={prefs.devices.videoinput} onChange={(id) => setDevice("videoinput", id)} refreshKey={refreshKey} />
           <DeviceSelect kind="audioinput" label="Mikrofon" icon={<Mic size={15} />} value={prefs.devices.audioinput} onChange={(id) => setDevice("audioinput", id)} refreshKey={refreshKey} />
           {speakerOk ? (
-            <DeviceSelect kind="audiooutput" label="Speaker" icon={<Headphones size={15} />} value={prefs.devices.audiooutput} onChange={(id) => setDevice("audiooutput", id)} refreshKey={refreshKey} />
+            <DeviceSelect kind="audiooutput" label="Pengeras suara" icon={<Headphones size={15} />} value={prefs.devices.audiooutput} onChange={(id) => setDevice("audiooutput", id)} refreshKey={refreshKey} />
           ) : (
-            <p className="jumpa-field-note"><Headphones size={14} /> Speaker: ikuti perangkat.</p>
+            <p className="jumpa-field-note"><Headphones size={14} /> Pengeras suara: ikuti perangkat.</p>
           )}
         </div>
       </section>
