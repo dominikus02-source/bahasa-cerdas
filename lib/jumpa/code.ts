@@ -1,4 +1,4 @@
-import { randomBytes, randomUUID } from "crypto";
+import { createHash, randomBytes, randomUUID } from "crypto";
 
 // Tanpa huruf/angka yang mirip (0/o, 1/l/i) agar mudah dibacakan di kelas.
 const ALPHABET = "abcdefghjkmnpqrstuvwxyz23456789";
@@ -24,4 +24,16 @@ export function isValidRoomCode(code: string): boolean {
 /** Nama ruang di LiveKit — acak, terpisah dari kode URL. */
 export function generateLivekitRoomName(): string {
   return `bc-${randomUUID()}`;
+}
+
+// ── Fase 2: tautan undangan guru (ruang GURU) ──
+/** Token undangan acak (dikirim di URL ?u=). Hanya hash-nya yang disimpan. */
+export function generateInviteToken(): string {
+  return randomBytes(24).toString("base64url");
+}
+
+export const INVITE_TOKEN_RE = /^[A-Za-z0-9_-]{32}$/;
+
+export function hashInviteToken(token: string): string {
+  return createHash("sha256").update(token, "utf8").digest("hex");
 }

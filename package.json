@@ -418,7 +418,10 @@
     "test:diagnostic-baseline-v2": "npx tsx scripts/test-diagnostic-baseline-v2.ts",
     "test:login-unified": "npx tsx scripts/test-unified-login-routing.ts",
     "test:jumpa-permissions": "npx tsx scripts/test-jumpa-permissions.ts",
-    "test:jumpa-token": "npx tsx scripts/test-jumpa-token.ts"
+    "test:jumpa-token": "npx tsx scripts/test-jumpa-token.ts",
+    "test:jumpa-room-types": "npx tsx scripts/test-jumpa-room-types.ts",
+    "test:jumpa-host-actions": "npx tsx scripts/test-jumpa-host-actions.ts",
+    "test:jumpa-chat-moderation": "npx tsx scripts/test-jumpa-chat-moderation.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

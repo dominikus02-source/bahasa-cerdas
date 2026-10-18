@@ -1,5 +1,7 @@
 /**
- * JUMPA Fase 1 — uji matriks izin & batas (murni, tanpa DB/jaringan).
+ * JUMPA Fase 1+2 — uji matriks izin & batas (murni, tanpa DB/jaringan).
+ * Fase 2 lanjutan: test-jumpa-room-types.ts, test-jumpa-host-actions.ts,
+ * test-jumpa-chat-moderation.ts.
  * Jalankan: npm run test:jumpa-permissions
  */
 import { readFileSync } from "fs"
@@ -47,7 +49,7 @@ check("MURID → MURID", effectiveRole(murid) === "MURID")
 check("Founder → GURU", effectiveRole(founder) === "GURU")
 check("ADMIN non-founder → ditolak (null)", effectiveRole(admin) === null)
 
-console.log("\n2. Buat ruang (Fase 1)")
+console.log("\n2. Buat ruang (Fase 1 + Fase 2)")
 const ownGroup = { ownedByActor: true, isActive: true }
 check("Fase 1 hanya KELAS", PHASE1_CREATABLE_KINDS.length === 1 && PHASE1_CREATABLE_KINDS[0] === "KELAS")
 check("Guru pemilik kelas boleh buat KELAS", canCreateRoom({ actor: guru, kind: "KELAS", group: ownGroup }).ok)
@@ -59,14 +61,17 @@ check("Kelas nonaktif ditolak", !inactive.ok && inactive.code === "GROUP_INACTIV
 check("Tanpa kelas ditolak", !canCreateRoom({ actor: guru, kind: "KELAS", group: null }).ok)
 const muridCreate = canCreateRoom({ actor: murid, kind: "KELAS", group: ownGroup })
 check("Murid tidak bisa buat KELAS", !muridCreate.ok && muridCreate.code === "ROLE_NOT_ALLOWED")
-const guruKind = canCreateRoom({ actor: guru, kind: "GURU", group: null })
-check("Ruang GURU belum tersedia di Fase 1", !guruKind.ok && guruKind.code === "KIND_NOT_AVAILABLE")
-const muridKind = canCreateRoom({ actor: murid, kind: "MURID", group: null })
-check("Ruang MURID belum tersedia di Fase 1", !muridKind.ok && muridKind.code === "KIND_NOT_AVAILABLE")
+const guruKindP1 = canCreateRoom({ actor: guru, kind: "GURU", group: null, allowedKinds: PHASE1_CREATABLE_KINDS })
+check("Mode Fase 1 (allowedKinds) tetap menolak GURU", !guruKindP1.ok && guruKindP1.code === "KIND_NOT_AVAILABLE")
+const muridKindP1 = canCreateRoom({ actor: murid, kind: "MURID", group: { ownedByActor: false, isActive: true, actorIsMember: true }, allowedKinds: PHASE1_CREATABLE_KINDS })
+check("Mode Fase 1 (allowedKinds) tetap menolak MURID", !muridKindP1.ok && muridKindP1.code === "KIND_NOT_AVAILABLE")
+check("Fase 2 default: guru boleh buat ruang GURU", canCreateRoom({ actor: guru, kind: "GURU", group: null }).ok)
 check("Admin tidak bisa buat ruang", !canCreateRoom({ actor: admin, kind: "KELAS", group: ownGroup }).ok)
 // Matriks Fase 2 (sudah ditegakkan bila kind dibuka)
 const all = ["KELAS", "GURU", "MURID"] as const
-check("[Fase 2] Murid boleh buat MURID", canCreateRoom({ actor: murid, kind: "MURID", group: null, allowedKinds: all }).ok)
+const classmateGroup = { ownedByActor: false, isActive: true, actorIsMember: true }
+check("[Fase 2] Murid anggota kelas boleh buat MURID", canCreateRoom({ actor: murid, kind: "MURID", group: classmateGroup, allowedKinds: all }).ok)
+check("[Fase 2] Murid tanpa kelas tidak boleh buat MURID", !canCreateRoom({ actor: murid, kind: "MURID", group: null, allowedKinds: all }).ok)
 check("[Fase 2] Junior tidak boleh buat MURID", !canCreateRoom({ actor: junior, kind: "MURID", group: null, allowedKinds: all }).ok)
 check("[Fase 2] Guru tidak boleh buat MURID", !canCreateRoom({ actor: guru, kind: "MURID", group: null, allowedKinds: all }).ok)
 check("[Fase 2] Murid tidak boleh buat GURU", !canCreateRoom({ actor: murid, kind: "GURU", group: null, allowedKinds: all }).ok)
@@ -118,8 +123,8 @@ const groom = { ...room, kind: "GURU" as const }
 check("Murid tidak masuk ruang GURU", !join({ actor: murid, room: groom, relation: { isGroupMember: true } }).ok)
 
 console.log("\n6. Sumber publish & caps")
-check("Fase 1 publish = kamera + mikrofon saja", JSON.stringify(publishSourcesFor("MEMBER", "MURID")) === '["camera","microphone"]')
-check("Host pun belum dapat screen share di Fase 1", !publishSourcesFor("HOST", "GURU").includes("screen_share" as never))
+check("Tanpa konteks (pemanggil Fase 1) publish = kamera + mikrofon saja", JSON.stringify(publishSourcesFor("MEMBER", "MURID")) === '["camera","microphone"]')
+check("Tanpa konteks, host pun tanpa screen share", !publishSourcesFor("HOST", "GURU").includes("screen_share" as never))
 check("Caps MURID 8 org / 60 mnt", JUMPA_CAPS.MURID.maxParticipants === 8 && JUMPA_CAPS.MURID.maxDurationMin === 60)
 check("Caps KELAS 50 org / 120 mnt", capsFor("KELAS").maxParticipants === 50 && capsFor("KELAS").maxDurationMin === 120)
 check("isPastDuration tepat di batas = belum lewat", !isPastDuration(new Date(NOW.getTime() - 60 * 60_000), 60, NOW))

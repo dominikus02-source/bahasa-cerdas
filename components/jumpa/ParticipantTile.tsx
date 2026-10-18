@@ -2,15 +2,17 @@
 
 import { VideoTrack, isTrackReference, useIsMuted, useIsSpeaking, type TrackReferenceOrPlaceholder } from "@livekit/components-react";
 import { Track } from "livekit-client";
-import { MicOff } from "lucide-react";
+import { MicOff, MonitorUp } from "lucide-react";
 import { initials, parseParticipantMeta } from "./format";
 
 interface Props {
   trackRef: TrackReferenceOrPlaceholder;
   compact?: boolean;
+  /** Track berbagi layar: tampil utuh (contain), tanpa cermin. */
+  screen?: boolean;
 }
 
-export default function ParticipantTile({ trackRef, compact = false }: Props) {
+export default function ParticipantTile({ trackRef, compact = false, screen = false }: Props) {
   const participant = trackRef.participant;
   const speaking = useIsSpeaking(participant);
   const cameraMuted = useIsMuted(trackRef);
@@ -18,6 +20,18 @@ export default function ParticipantTile({ trackRef, compact = false }: Props) {
   const meta = parseParticipantMeta(participant.metadata);
   const name = participant.name || "Peserta";
   const showVideo = isTrackReference(trackRef) && !cameraMuted;
+
+  if (screen) {
+    return (
+      <div className="jumpa-tile h-full w-full" data-screen="true">
+        {isTrackReference(trackRef) && <VideoTrack trackRef={trackRef} />}
+        <span className="jumpa-nameplate jumpa-glass">
+          <MonitorUp size={14} className="shrink-0 text-[var(--jp-accent)]" />
+          <span className="truncate">{participant.isLocal ? "Layarmu sedang dibagikan" : `Layar ${name}`}</span>
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div

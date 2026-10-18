@@ -1,4 +1,4 @@
-# JUMPA — Rencana Teknis (v0.2 — disetujui founder; Fase 1 diimplementasikan di branch `feat/jumpa-phase1`)
+# JUMPA — Rencana Teknis (v0.3 — disetujui founder; Fase 1 di `feat/jumpa-phase1`, Fase 2 di `feat/jumpa-phase2`)
 
 Disusun 18 Okt 2026 (WIB) dari `main` @ `0904b9a`. v0.2: keputusan founder — domain `jumpa.bahasacerdas.com`; spesifikasi VPS 16 vCPU/16 GB (±11,9 GB terpakai)/120 GB; kamera NYALA default di lobby seperti Zoom/Meet; LiveKit dibatasi 2 CPU/1,5 GB & mudah dipindah ke VPS terpisah; TURN ditunda ke Fase 2. Semua klaim soal kode di bawah merujuk file nyata; yang **estimasi** atau **belum terverifikasi** ditandai jelas.
 
@@ -199,6 +199,8 @@ Scope: fondasi + "panggilan jalan" guru↔murid untuk ruang KELAS.
 Kriteria terima: guru buat ruang dari kelas dalam ≤ 2 klik; 2 guru + 5 murid tersambung stabil 30 menit di staging; murid di luar kelas mendapat 403; kamera/mic jalan di Chrome Android, Chrome/Edge desktop, Safari iOS; `typecheck`, `lint`, `build`, test baru lulus; flag off = tidak ada perubahan perilaku produksi.
 
 ### Fase 2 — fitur V1 lengkap
+> **Status v0.3:** diimplementasikan di `feat/jumpa-phase2` (bertumpuk di atas PR #130). Detail, default yang dipilih, dan langkah TURN: `docs/JUMPA_PHASE2.md`. Load test dan uji jaringan sekolah nyata masih harus dilakukan di staging.
+
 Screen share, chat persisten via API, angkat tangan, reaksi, kontrol host (mute, keluarkan, kunci, akhiri, cohost), undangan link (token hash + expiry) & dari daftar kelas/komunitas, ruang GURU dan MURID dengan batas + tombol Laporkan + log, webhook absensi, cron sweep, panel laporan di admin, uji jaringan sekolah + TURN.
 Kriteria terima: semua aksi host tercatat di `JumpaEvent`; murid yang dimute permanen tidak bisa unmute; ruang MURID otomatis berakhir di 60 menit; laporan muncul di admin dengan snapshot chat; load test 3 ruang × 30 peserta tanpa degradasi parah; tersambung dari minimal 3 jaringan sekolah nyata.
 

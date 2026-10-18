@@ -76,8 +76,5 @@ Fase 1 memakai UDP 7882 lalu fallback TCP 7881. **TURN/TLS belum aktif** (butuh 
 - [ ] Chrome Android, Safari iOS, Chrome/Edge desktop.
 - [ ] `docker stats` livekit tetap di bawah batas saat 1 kelas ±10–30 orang.
 
-## Keterbatasan diketahui (Fase 2)
-- Tidak ada auto-akhir saat durasi maksimum tercapai (cek hanya saat token dicetak; belum ada cron/webhook). LiveKit menutup ruang kosong setelah 10 menit.
-- Belum ada screen share, chat, angkat tangan, reaksi, kontrol host (mute/keluarkan/kunci/akhiri), ruang GURU & MURID, laporan, rekaman, TURN.
-- Halaman `/jumpa` (daftar ruang) masih redirect ke dasbor; murid masuk lewat tautan (belum ada kartu "Kelas live").
-- APK (TWA) belum diuji untuk izin kamera/mik.
+## Keterbatasan diketahui
+Sebagian besar keterbatasan Fase 1 (auto-akhir, screen share, chat, angkat tangan, reaksi, kontrol host, ruang GURU/MURID, laporan, TURN, halaman `/jumpa`) sudah ditangani di **Fase 2**. Lihat `docs/JUMPA_PHASE2.md`. Yang tersisa: rekaman, dan uji izin kamera/mik di APK (TWA).
