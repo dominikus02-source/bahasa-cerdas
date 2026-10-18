@@ -32,15 +32,15 @@ const TYPE_GUIDES: Record<string, { intro: string; points: string[]; example: st
 };
 
 const TYPE_STYLES: Record<string, { border: string; bg: string; text: string; gradient: string }> = {
-  PUISI: { border: "border-rose-500", bg: "bg-rose-50 dark:bg-rose-950/40", text: "text-rose-600 dark:text-rose-400", gradient: "from-rose-500 to-pink-600" },
+  PUISI: { border: "border-bc-danger", bg: "bg-bc-danger-soft", text: "text-bc-danger", gradient: "from-rose-500 to-pink-600" },
   PANTUN: { border: "border-teal-500", bg: "bg-teal-50 dark:bg-teal-950/40", text: "text-teal-600 dark:text-teal-400", gradient: "from-teal-500 to-emerald-600" },
   SYAIR: { border: "border-cyan-500", bg: "bg-cyan-50 dark:bg-cyan-950/40", text: "text-cyan-600 dark:text-cyan-400", gradient: "from-cyan-500 to-blue-600" },
-  GURINDAM: { border: "border-amber-500", bg: "bg-amber-50 dark:bg-amber-950/40", text: "text-amber-600 dark:text-amber-400", gradient: "from-amber-500 to-orange-600" },
-  CERPEN: { border: "border-blue-500", bg: "bg-blue-50 dark:bg-blue-950/40", text: "text-blue-600 dark:text-blue-400", gradient: "from-blue-500 to-indigo-600" },
+  GURINDAM: { border: "border-bc-warning", bg: "bg-bc-warning-soft", text: "text-bc-warning", gradient: "from-amber-500 to-orange-600" },
+  CERPEN: { border: "border-bc-info", bg: "bg-bc-info-soft", text: "text-bc-info", gradient: "from-blue-500 to-indigo-600" },
   ANEKDOT: { border: "border-orange-500", bg: "bg-orange-50 dark:bg-orange-950/40", text: "text-orange-600 dark:text-orange-400", gradient: "from-orange-500 to-red-600" },
   SLOGAN: { border: "border-pink-500", bg: "bg-pink-50 dark:bg-pink-950/40", text: "text-pink-600 dark:text-pink-400", gradient: "from-pink-500 to-fuchsia-600" },
-  OPINI: { border: "border-violet-500", bg: "bg-violet-50 dark:bg-violet-950/40", text: "text-violet-600 dark:text-violet-400", gradient: "from-violet-500 to-purple-600" },
-  ARTIKEL: { border: "border-sky-500", bg: "bg-sky-50 dark:bg-sky-950/40", text: "text-sky-600 dark:text-sky-400", gradient: "from-sky-500 to-blue-600" },
+  OPINI: { border: "border-bc-violet", bg: "bg-bc-violet-soft", text: "text-bc-violet", gradient: "from-violet-500 to-purple-600" },
+  ARTIKEL: { border: "border-bc-info", bg: "bg-bc-info-soft", text: "text-bc-info", gradient: "from-sky-500 to-blue-600" },
   KARYA_BEBAS: { border: "border-fuchsia-500", bg: "bg-fuchsia-50 dark:bg-fuchsia-950/40", text: "text-fuchsia-600 dark:text-fuchsia-400", gradient: "from-fuchsia-500 to-purple-600" },
 };
 
@@ -162,7 +162,7 @@ function TulisKaryaForm() {
       <section className="mb-5 rounded-3xl border border-bc-line/80 bg-gradient-to-br from-sky-50 via-white to-violet-50 p-5 shadow-sm dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/40 md:p-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl">
-            <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-bc-surface/80 px-3 py-1.5 text-xs font-bold text-violet-700 shadow-sm dark:text-violet-300">
+            <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-bc-surface/80 px-3 py-1.5 text-xs font-bold text-bc-violet shadow-sm">
               <Sparkles size={14} /> Studio Berkarya
             </div>
             <h2 className="text-xl font-extrabold text-bc-text">Mau menulis apa hari ini?</h2>
@@ -178,7 +178,7 @@ function TulisKaryaForm() {
               onClick={() => setOpenTypeMenu((value) => !value)}
               className={`flex w-full items-center gap-3 rounded-2xl border-2 bg-bc-surface px-4 py-3.5 text-left shadow-sm transition-all ${openTypeMenu ? `${TYPE_STYLES[type]?.border || "border-violet-500"} ring-4 ring-violet-100 dark:ring-violet-950/40` : "border-bc-line"}`}
             >
-              <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${TYPE_STYLES[type]?.bg || "bg-violet-50"} ${TYPE_STYLES[type]?.text || "text-violet-600"}`}>
+              <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${TYPE_STYLES[type]?.bg || "bg-bc-violet-soft"} ${TYPE_STYLES[type]?.text || "text-violet-600"}`}>
                 <selected.icon size={20} />
               </span>
               <span className="min-w-0 flex-1">
@@ -260,7 +260,7 @@ function TulisKaryaForm() {
               </div>
 
               <div className="rounded-2xl border border-bc-line bg-bc-surface p-4">
-                <div className="mb-2 flex items-center gap-2"><Lightbulb size={16} className="text-amber-500" /><p className="text-sm font-extrabold text-bc-text">Contoh singkat</p></div>
+                <div className="mb-2 flex items-center gap-2"><Lightbulb size={16} className="text-bc-warning" /><p className="text-sm font-extrabold text-bc-text">Contoh singkat</p></div>
                 <p className="whitespace-pre-line text-sm italic leading-7 text-bc-text-2">“{guide.example}”</p>
               </div>
             </div>
@@ -273,7 +273,7 @@ function TulisKaryaForm() {
         <input
           value={title} onChange={e => setTitle(e.target.value)}
           placeholder="Judul karyamu..."
-          className="w-full px-5 py-4 bg-bc-surface rounded-2xl border border-bc-line text-lg font-bold text-bc-text placeholder:text-bc-text-3 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition-all"
+          className="w-full px-5 py-4 bg-bc-surface rounded-2xl border border-bc-line text-lg font-bold text-bc-text placeholder:text-bc-text-3 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-bc-violet transition-all"
         />
       </div>
 
@@ -283,7 +283,7 @@ function TulisKaryaForm() {
           value={content} onChange={e => setContent(e.target.value)}
           placeholder={type === "PUISI" ? "Tulis puisimu di sini...\n\nSetiap bait,\npenuh makna..." : type === "PANTUN" ? "Tulis pantunmu di sini...\n\nBaris 1: sampiran\nBaris 2: sampiran\nBaris 3: isi\nBaris 4: isi" : "Tulis karyamu di sini..."}
           rows={15}
-          className="w-full px-5 py-4 bg-bc-surface rounded-2xl border border-bc-line text-bc-text-2 placeholder:text-bc-text-3 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition-all resize-y font-[inherit] leading-relaxed"
+          className="w-full px-5 py-4 bg-bc-surface rounded-2xl border border-bc-line text-bc-text-2 placeholder:text-bc-text-3 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-bc-violet transition-all resize-y font-[inherit] leading-relaxed"
         />
       </div>
 
@@ -326,7 +326,7 @@ function TulisKaryaForm() {
                 type="button"
                 onClick={() => fileRef.current?.click()}
                 disabled={uploading}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-bc-line text-bc-text-3 hover:border-violet-300 hover:text-violet-600 transition-colors disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-bc-line text-bc-text-3 hover:border-bc-violet/40 hover:text-bc-violet transition-colors disabled:opacity-50"
               >
                 {uploading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
                 {uploading ? "Mengunggah foto..." : "Unggah Foto Sampul (opsional)"}
@@ -337,7 +337,7 @@ function TulisKaryaForm() {
                   value={coverLinkUrl}
                   onChange={e => setCoverLinkUrl(e.target.value)}
                   placeholder="https://example.com/gambar.jpg"
-                  className="flex-1 px-4 py-2.5 bg-bc-surface rounded-xl border border-bc-line text-sm text-bc-text-2 placeholder:text-bc-text-3 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition-all"
+                  className="flex-1 px-4 py-2.5 bg-bc-surface rounded-xl border border-bc-line text-sm text-bc-text-2 placeholder:text-bc-text-3 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-bc-violet transition-all"
                   onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); setCoverFromLink(); } }}
                 />
                 <button type="button" onClick={setCoverFromLink} disabled={!coverLinkUrl.trim()}
@@ -397,7 +397,7 @@ function TulisKaryaForm() {
                 type="button"
                 onClick={() => photosRef.current?.click()}
                 disabled={uploadingPhotos}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-bc-line text-bc-text-3 hover:border-violet-300 hover:text-violet-600 transition-colors disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-bc-line text-bc-text-3 hover:border-bc-violet/40 hover:text-bc-violet transition-colors disabled:opacity-50"
               >
                 {uploadingPhotos ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
                 {uploadingPhotos ? "Mengunggah foto..." : `Tambah Foto (${photos.length}/6)`}
@@ -408,7 +408,7 @@ function TulisKaryaForm() {
                   value={photoLinkUrl}
                   onChange={e => setPhotoLinkUrl(e.target.value)}
                   placeholder="https://example.com/gambar.jpg"
-                  className="flex-1 px-4 py-2.5 bg-bc-surface rounded-xl border border-bc-line text-sm text-bc-text-2 placeholder:text-bc-text-3 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition-all"
+                  className="flex-1 px-4 py-2.5 bg-bc-surface rounded-xl border border-bc-line text-sm text-bc-text-2 placeholder:text-bc-text-3 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-bc-violet transition-all"
                   onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); addPhotoLink(); } }}
                 />
                 <button type="button" onClick={addPhotoLink} disabled={!photoLinkUrl.trim() || photos.length >= 6}
@@ -423,7 +423,7 @@ function TulisKaryaForm() {
 
       {/* Error */}
       {error && (
-        <div className="mb-4 px-4 py-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-xl text-sm text-red-600 dark:text-red-400">
+        <div className="mb-4 px-4 py-3 bg-bc-danger-soft border border-bc-danger/25 rounded-xl text-sm text-bc-danger">
           {error}
         </div>
       )}

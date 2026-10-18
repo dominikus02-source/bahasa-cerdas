@@ -16,12 +16,12 @@ export interface GalleryKarya {
 }
 
 const TYPE_BADGE: Record<string, { label: string; badge: string }> = {
-  PUISI: { label: "Puisi", badge: "bg-rose-400/10 text-rose-600 dark:text-rose-300 ring-rose-300/20" },
-  CERPEN: { label: "Cerpen", badge: "bg-sky-400/10 text-sky-600 dark:text-sky-300 ring-sky-300/20" },
-  ARTIKEL: { label: "Artikel", badge: "bg-amber-400/10 text-amber-600 dark:text-amber-300 ring-amber-300/20" },
+  PUISI: { label: "Puisi", badge: "bg-rose-400/10 text-bc-danger ring-rose-300/20" },
+  CERPEN: { label: "Cerpen", badge: "bg-sky-400/10 text-bc-info ring-sky-300/20" },
+  ARTIKEL: { label: "Artikel", badge: "bg-amber-400/10 text-bc-warning ring-amber-300/20" },
   ANEKDOT: { label: "Anekdot", badge: "bg-orange-400/10 text-orange-600 dark:text-orange-300 ring-orange-300/20" },
   PANTUN: { label: "Pantun", badge: "bg-teal-400/10 text-teal-600 dark:text-teal-300 ring-teal-300/20" },
-  OPINI: { label: "Opini", badge: "bg-violet-400/10 text-violet-600 dark:text-violet-300 ring-violet-300/20" },
+  OPINI: { label: "Opini", badge: "bg-violet-400/10 text-bc-violet ring-violet-300/20" },
 };
 
 function waktuLalu(d: string) {
@@ -60,10 +60,10 @@ export default function FeaturedWorksGallery({
 
   return (
     <div
-      className="rounded-2xl p-5 text-slate-900 dark:text-white ring-1 ring-slate-900/10 dark:ring-white/10 bc-card-premium"
+      className="rounded-2xl p-5 text-bc-text ring-1 ring-slate-900/10 dark:ring-white/10 bc-card-premium"
     >
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-sm font-bold text-slate-900 dark:text-white/90">Galeri Karya Unggulan</h3>
+        <h3 className="text-sm font-bold text-bc-text">Galeri Karya Unggulan</h3>
         <Link
           href={tulisHref}
           className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-violet-500 to-purple-600 px-3.5 py-2 text-[11px] font-bold text-white hover:shadow-lg transition-all"
@@ -92,12 +92,12 @@ export default function FeaturedWorksGallery({
 
       {filtered.length === 0 ? (
         <div className="mt-5 rounded-xl border border-dashed border-slate-900/10 dark:border-white/10 px-4 py-8 text-center">
-          <p className="text-sm text-slate-700 dark:text-white/45">{emptyText}</p>
+          <p className="text-sm text-bc-text-2">{emptyText}</p>
         </div>
       ) : (
         <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((k) => {
-            const meta = TYPE_BADGE[k.type] ?? { label: k.type, badge: "bg-slate-900/5 dark:bg-slate-900/5 text-slate-700 dark:text-white/60 ring-slate-900/10 dark:ring-white/10" };
+            const meta = TYPE_BADGE[k.type] ?? { label: k.type, badge: "bg-slate-900/5 dark:bg-slate-900/5 text-bc-text-2 ring-slate-900/10 dark:ring-white/10" };
             return (
               <div
                 key={k.id}
@@ -108,7 +108,7 @@ export default function FeaturedWorksGallery({
                     {meta.label}
                   </span>
                   {k.isFeatured && (
-                    <span className="text-[10px] font-semibold text-amber-700 dark:text-amber-300 bg-amber-400/10 px-1.5 py-0.5 rounded-full ring-1 ring-amber-300/20">
+                    <span className="text-[10px] font-semibold text-bc-warning bg-amber-400/10 px-1.5 py-0.5 rounded-full ring-1 ring-amber-300/20">
                       Pilihan
                     </span>
                   )}
@@ -116,23 +116,23 @@ export default function FeaturedWorksGallery({
                     <button
                       onClick={() => onDelete(k.id)}
                       aria-label={`Hapus karya ${k.title}`}
-                      className="ml-auto text-slate-700 dark:text-white/45 hover:text-rose-500 dark:hover:text-rose-400 p-1 transition-colors"
+                      className="ml-auto text-bc-text-2 hover:text-rose-500 dark:hover:text-rose-400 p-1 transition-colors"
                     >
                       <X size={14} />
                     </button>
                   )}
                 </div>
                 <Link href={`${titleHref}/${k.id}`} className="flex-1 min-w-0">
-                  <h4 className="font-semibold text-slate-900 dark:text-white text-sm leading-snug line-clamp-1 group-hover:text-violet-600 dark:group-hover:text-violet-200 transition-colors">
+                  <h4 className="font-semibold text-bc-text text-sm leading-snug line-clamp-1 group-hover:text-bc-violet transition-colors">
                     {k.title}
                   </h4>
-                  <p className="text-xs text-slate-700 dark:text-white/45 mt-1 line-clamp-2">
+                  <p className="text-xs text-bc-text-2 mt-1 line-clamp-2">
                     {k.excerpt || k.content?.slice(0, 100)}
                   </p>
                 </Link>
-                <div className="flex items-center gap-3 mt-3 text-xs text-slate-700 dark:text-white/40">
+                <div className="flex items-center gap-3 mt-3 text-xs text-bc-text-2">
                   <span className="flex items-center gap-1">
-                    <Heart size={11} className="text-rose-600 dark:text-rose-400" /> {k.likesCount || 0}
+                    <Heart size={11} className="text-bc-danger" /> {k.likesCount || 0}
                   </span>
                   <span className="flex items-center gap-1">
                     <Eye size={11} /> {k.viewsCount || 0}

@@ -36,13 +36,13 @@ export default function BadgeShowcasePanel({ lencana, nextBadge }: BadgeShowcase
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-bold text-slate-900 dark:text-white/90 flex items-center gap-2">
+        <h3 className="text-sm font-bold text-bc-text flex items-center gap-2">
           <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-sm">
-            <Award size={13} className="text-slate-900 dark:text-white" />
+            <Award size={13} className="text-bc-text" />
           </span>
           Perkembangan Lencana
         </h3>
-        <span className="text-[11px] font-semibold text-slate-700 dark:text-white/45">
+        <span className="text-[11px] font-semibold text-bc-text-2">
           {totalUnlocked}/{lencana.length}
         </span>
       </div>
@@ -81,7 +81,7 @@ export default function BadgeShowcasePanel({ lencana, nextBadge }: BadgeShowcase
           type="button"
           onClick={() => setExpanded((v) => !v)}
           aria-expanded={expanded}
-          className="mt-3 w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-900/[0.05] dark:bg-white/[0.05] ring-1 ring-slate-900/10 dark:ring-white/10 px-3 py-2 text-[11px] font-bold text-slate-700 dark:text-white/60 transition-colors hover:bg-slate-900/[0.1] dark:bg-white/[0.1] hover:text-slate-900 dark:text-white"
+          className="mt-3 w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-900/[0.05] dark:bg-white/[0.05] ring-1 ring-slate-900/10 dark:ring-white/10 px-3 py-2 text-[11px] font-bold text-bc-text-2 transition-colors hover:bg-slate-900/[0.1] dark:bg-white/[0.1] hover:text-bc-text dark:text-white"
         >
           {expanded ? (
             <>
@@ -96,7 +96,7 @@ export default function BadgeShowcasePanel({ lencana, nextBadge }: BadgeShowcase
       )}
 
       {nextBadge && (
-        <p className="text-[11px] text-violet-700 dark:text-violet-300 font-semibold mt-3 flex items-center gap-1 bg-violet-500/10 rounded-lg px-2.5 py-2 ring-1 ring-violet-400/20">
+        <p className="text-[11px] text-bc-violet font-semibold mt-3 flex items-center gap-1 bg-violet-500/10 rounded-lg px-2.5 py-2 ring-1 ring-violet-400/20">
           <Award size={12} /> {Math.max(0, nextBadge.target - nextBadge.progress)} lagi untuk buka &ldquo;{nextBadge.name}&rdquo;!
         </p>
       )}

@@ -63,7 +63,7 @@ export default function KaryaSayaCard() {
                 <Eye size={12} /> {views} dilihat
               </span>
               {featured > 0 && (
-                <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400">
+                <span className="inline-flex items-center gap-1 text-bc-warning">
                   <Star size={12} fill="currentColor" /> {featured} unggulan
                 </span>
               )}

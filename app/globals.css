@@ -318,15 +318,13 @@
    Dark: navy gradient semula. Dipakai ProfileHero (bc-hero-card) dan
    kartu sidebar profil (bc-card-premium) agar light mode tidak terlihat
    seperti "dark card di halaman terang". */
-.bc-card-premium {
-  background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%);
-  color: #1e293b;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
-}
+/* Kartu profil murid — token global (permukaan + rona violet tipis). */
+.bc-card-premium,
 .dark .bc-card-premium {
-  background: linear-gradient(135deg, #17163F 0%, #21174F 100%);
-  color: #f3f7ff;
-  box-shadow: none;
+  background: linear-gradient(135deg, var(--clr-surface) 0%, color-mix(in srgb, var(--clr-violet) 7%, var(--clr-surface)) 100%);
+  color: var(--clr-text);
+  box-shadow: var(--bc-shadow-1);
+  border: 1px solid var(--clr-line);
 }
 .bc-hero-card {
   background: linear-gradient(140deg, #eef2ff 0%, #fdf4ff 40%, #fff7ed 100%);

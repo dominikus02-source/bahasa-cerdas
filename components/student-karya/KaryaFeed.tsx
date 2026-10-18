@@ -17,11 +17,11 @@ import SafeMediaImage from "@/components/shared/safe-media-image"
 
 export const typeColors: Record<string, { label: string; bg: string; text: string; border: string }> = {
   PUISI: { label: "Puisi", bg: "bg-fuchsia-100 dark:bg-fuchsia-500/15", text: "text-fuchsia-700 dark:text-fuchsia-300", border: "border-fuchsia-200 dark:border-fuchsia-500/20" },
-  CERPEN: { label: "Cerpen", bg: "bg-blue-100 dark:bg-blue-500/15", text: "text-blue-700 dark:text-blue-300", border: "border-blue-200 dark:border-blue-500/20" },
-  ARTIKEL: { label: "Artikel", bg: "bg-emerald-100 dark:bg-emerald-500/15", text: "text-emerald-700 dark:text-emerald-300", border: "border-emerald-200 dark:border-emerald-500/20" },
-  ANEKDOT: { label: "Anekdot", bg: "bg-amber-100 dark:bg-amber-500/15", text: "text-amber-700 dark:text-amber-300", border: "border-amber-200 dark:border-amber-500/20" },
-  PANTUN: { label: "Pantun", bg: "bg-violet-100 dark:bg-violet-500/15", text: "text-violet-700 dark:text-violet-300", border: "border-violet-200 dark:border-violet-500/20" },
-  OPINI: { label: "Opini", bg: "bg-rose-100 dark:bg-rose-500/15", text: "text-rose-700 dark:text-rose-300", border: "border-rose-200 dark:border-rose-500/20" },
+  CERPEN: { label: "Cerpen", bg: "bg-bc-info-soft", text: "text-bc-info", border: "border-bc-info/25" },
+  ARTIKEL: { label: "Artikel", bg: "bg-bc-success-soft", text: "text-bc-success", border: "border-bc-success/25" },
+  ANEKDOT: { label: "Anekdot", bg: "bg-bc-warning-soft", text: "text-bc-warning", border: "border-bc-warning/25" },
+  PANTUN: { label: "Pantun", bg: "bg-bc-violet-soft", text: "text-bc-violet", border: "border-bc-violet/25" },
+  OPINI: { label: "Opini", bg: "bg-bc-danger-soft", text: "text-bc-danger", border: "border-bc-danger/25" },
 }
 
 const INITIALS_COLORS = [
@@ -279,7 +279,7 @@ function FeedContent({
         onChange={(e) => setSearchInput(e.target.value)}
         placeholder="Cari karya..."
         aria-label="Cari karya"
-        className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-bc-line bg-bc-surface text-sm text-bc-text placeholder:text-bc-text-3 outline-none focus:ring-2 focus:ring-violet-500/40 focus:border-violet-400 dark:focus:border-violet-500 transition-all"
+        className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-bc-line bg-bc-surface text-sm text-bc-text placeholder:text-bc-text-3 outline-none focus:ring-2 focus:ring-violet-500/40 focus:border-bc-violet transition-all"
       />
     </form>
   )
@@ -323,7 +323,7 @@ function FeedContent({
             <span className="inline-flex items-center gap-1.5 bg-bc-surface/15 text-white text-xs font-semibold px-3 py-1.5 rounded-full">
               {challengeCount} karya masuk
             </span>
-            <span className="ml-auto inline-flex items-center gap-1.5 bg-bc-surface text-violet-700 dark:text-violet-300 text-sm font-extrabold px-4 py-2 rounded-xl">
+            <span className="ml-auto inline-flex items-center gap-1.5 bg-bc-surface text-bc-violet text-sm font-extrabold px-4 py-2 rounded-xl">
               <PenLine size={14} /> Ikut Tantangan
             </span>
           </div>
@@ -333,8 +333,8 @@ function FeedContent({
   )
 
   const aiBcCard = (
-    <div className="mb-5 rounded-2xl border border-violet-100 dark:border-violet-500/20 bg-violet-50/60 dark:bg-violet-500/[0.07] p-4 flex flex-wrap items-center gap-3">
-      <div className="w-10 h-10 rounded-xl bg-violet-600/10 dark:bg-violet-500/20 text-violet-600 dark:text-violet-300 flex items-center justify-center shrink-0">
+    <div className="mb-5 rounded-2xl border border-bc-violet/25 bg-violet-50/60 dark:bg-violet-500/[0.07] p-4 flex flex-wrap items-center gap-3">
+      <div className="w-10 h-10 rounded-xl bg-violet-600/10 dark:bg-violet-500/20 text-bc-violet flex items-center justify-center shrink-0">
         <Sparkles size={18} />
       </div>
       <div className="flex-1 min-w-[200px]">
@@ -352,7 +352,7 @@ function FeedContent({
 
   const stageEmpty = (
     <div className="text-center py-16">
-      <div className="mx-auto w-14 h-14 rounded-2xl bg-violet-50 dark:bg-violet-500/10 flex items-center justify-center mb-4">
+      <div className="mx-auto w-14 h-14 rounded-2xl bg-bc-violet-soft flex items-center justify-center mb-4">
         <PenLine size={26} className="text-violet-500 dark:text-violet-300" />
       </div>
       <h3 className="text-base font-extrabold text-bc-text">Panggungmu masih kosong.</h3>
@@ -371,7 +371,7 @@ function FeedContent({
     const primaryMedia = k.coverImage || k.photos?.find((url) => typeof url === "string" && url.trim().length > 0) || null
     if (stage) {
       return (
-        <article key={k.id} className="group flex flex-col bg-bc-surface rounded-2xl border border-bc-line overflow-hidden hover:border-violet-200 dark:hover:border-violet-500/30 hover:shadow-lg hover:shadow-violet-500/[0.06] hover:-translate-y-0.5 transition-all duration-200">
+        <article key={k.id} className="group flex flex-col bg-bc-surface rounded-2xl border border-bc-line overflow-hidden hover:border-bc-violet/25 hover:shadow-lg hover:shadow-violet-500/[0.06] hover:-translate-y-0.5 transition-all duration-200">
           <div className="flex items-center gap-2.5 px-4 pt-4 pb-2">
             <Link href={`${profileBase}/${k.user.id}`} className="shrink-0">
               <UserAvatar
@@ -388,7 +388,7 @@ function FeedContent({
                 href={`${profileBase}/${k.user.id}`}
                 color={k.user.equippedNameColor}
                 badge={k.user.equippedBadge}
-                className="text-[13px] font-semibold text-bc-text hover:text-violet-600 dark:hover:text-violet-300"
+                className="text-[13px] font-semibold text-bc-text hover:text-bc-violet"
                 badgeSize={14}
                 isFounder={k.user.isFounder}
                 isPremium={k.user.isPremium} badgeKind={k.user.badgeKind}
@@ -423,7 +423,7 @@ function FeedContent({
 
           <div className="flex items-center gap-3.5 px-4 py-3 border-t border-bc-line mt-2">
             <button onClick={() => handleLike(k.id)} disabled={likePending[k.id]} aria-label={isLiked ? "Batal suka" : "Suka karya ini"}
-              className={`flex items-center gap-1 text-[13px] font-medium transition-all min-h-[44px] ${isLiked ? "text-red-500" : "text-bc-text-3 hover:text-red-500"}`}>
+              className={`flex items-center gap-1 text-[13px] font-medium transition-all min-h-[44px] ${isLiked ? "text-bc-danger" : "text-bc-text-3 hover:text-bc-danger"}`}>
               {isLiked ? <Heart size={15} fill="currentColor" /> : <Heart size={15} />}
               {likeCount}
             </button>
@@ -436,7 +436,7 @@ function FeedContent({
             </span>
             {isOwner(k.user.id) && (
               <button onClick={() => handleDelete(k.id)} disabled={isDeleting} aria-label="Hapus karya"
-                className="text-bc-text-3 hover:text-red-500 transition-all min-h-[44px]">
+                className="text-bc-text-3 hover:text-bc-danger transition-all min-h-[44px]">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 1 2 2 2v2" /></svg>
               </button>
             )}
@@ -463,7 +463,7 @@ function FeedContent({
               href={`${profileBase}/${k.user.id}`}
               color={k.user.equippedNameColor}
               badge={k.user.equippedBadge}
-              className="text-sm font-semibold text-bc-text hover:text-violet-600 dark:hover:text-violet-300"
+              className="text-sm font-semibold text-bc-text hover:text-bc-violet"
               badgeSize={15}
               isFounder={k.user.isFounder}
               isPremium={k.user.isPremium} badgeKind={k.user.badgeKind}
@@ -499,7 +499,7 @@ function FeedContent({
 
         {/* Actions */}
         <div className="flex items-center gap-4 px-5 py-3 border-t border-bc-line">
-          <button onClick={() => handleLike(k.id)} disabled={likePending[k.id]} aria-label={isLiked ? "Batal suka" : "Suka karya ini"} className={`flex items-center gap-1.5 text-sm font-medium transition-all min-h-[44px] ${isLiked ? "text-red-500" : "text-bc-text-3 hover:text-red-500"}`}>
+          <button onClick={() => handleLike(k.id)} disabled={likePending[k.id]} aria-label={isLiked ? "Batal suka" : "Suka karya ini"} className={`flex items-center gap-1.5 text-sm font-medium transition-all min-h-[44px] ${isLiked ? "text-bc-danger" : "text-bc-text-3 hover:text-bc-danger"}`}>
             {isLiked ? <Heart size={16} fill="currentColor" /> : <Heart size={16} />}
             {likeCount}
           </button>
@@ -511,7 +511,7 @@ function FeedContent({
             <Eye size={16} /> {k.viewsCount || 0}
           </span>
           {isOwner(k.user.id) && (
-            <button onClick={() => handleDelete(k.id)} disabled={isDeleting} aria-label="Hapus karya" className="text-bc-text-3 hover:text-red-500 transition-all min-h-[44px]">
+            <button onClick={() => handleDelete(k.id)} disabled={isDeleting} aria-label="Hapus karya" className="text-bc-text-3 hover:text-bc-danger transition-all min-h-[44px]">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 1 2 2 2v2" /></svg>
             </button>
           )}
@@ -541,12 +541,12 @@ function FeedContent({
 
         {/* Search context */}
         {searchQuery && (
-          <div className="mb-4 flex items-center gap-2 px-4 py-2.5 bg-violet-50 dark:bg-violet-500/10 rounded-xl border border-violet-200 dark:border-violet-500/20">
-            <span className="text-sm text-violet-700 dark:text-violet-300">
+          <div className="mb-4 flex items-center gap-2 px-4 py-2.5 bg-bc-violet-soft rounded-xl border border-bc-violet/25">
+            <span className="text-sm text-bc-violet">
               Hasil untuk: "<span className="font-bold">{searchQuery}</span>"
               {karyaList.length > 0 && <> &mdash; {karyaList.length} ditemukan</>}
             </span>
-            <button onClick={() => router.push(clearHref)} className="ml-auto text-xs font-semibold text-violet-600 hover:text-violet-800 dark:text-violet-300">
+            <button onClick={() => router.push(clearHref)} className="ml-auto text-xs font-semibold text-bc-violet hover:text-violet-800">
               Hapus Filter
             </button>
           </div>
@@ -593,12 +593,12 @@ function FeedContent({
 
         {/* Search context */}
         {searchQuery && (
-          <div className="mb-4 flex items-center gap-2 px-4 py-2.5 bg-violet-50 dark:bg-violet-500/10 rounded-xl border border-violet-200 dark:border-violet-500/20">
-            <span className="text-sm text-violet-700 dark:text-violet-300">
+          <div className="mb-4 flex items-center gap-2 px-4 py-2.5 bg-bc-violet-soft rounded-xl border border-bc-violet/25">
+            <span className="text-sm text-bc-violet">
               Hasil untuk: "<span className="font-bold">{searchQuery}</span>"
               {karyaList.length > 0 && <> &mdash; {karyaList.length} ditemukan</>}
             </span>
-            <button onClick={() => router.push(clearHref)} className="ml-auto text-xs font-semibold text-violet-600 hover:text-violet-800 dark:text-violet-300">
+            <button onClick={() => router.push(clearHref)} className="ml-auto text-xs font-semibold text-bc-violet hover:text-violet-800">
               Hapus Filter
             </button>
           </div>
