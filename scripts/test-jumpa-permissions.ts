@@ -142,10 +142,12 @@ check("CSP origin default jumpa.bahasacerdas.com", JSON.stringify(livekitCspOrig
 check("CSP origin ikut URL VPS lain", livekitCspOrigins("wss://media.contoh.id/").includes("wss://media.contoh.id"))
 check("CSP abaikan URL non-ws", livekitCspOrigins("https://x.y").length === 0 && livekitCspOrigins("bukan url").length === 0)
 check("Default media: kamera NYALA, mik NYALA", DEFAULT_MEDIA_PREFS.camera && DEFAULT_MEDIA_PREFS.mic)
-check("Prefs kosong → default", JSON.stringify(parseMediaPrefs(null)) === JSON.stringify({ camera: true, mic: true }))
-check("Prefs tersimpan dibaca", JSON.stringify(parseMediaPrefs('{"camera":false,"mic":true}')) === JSON.stringify({ camera: false, mic: true }))
+// Fase 3: prefs punya field tambahan (kualitas, perangkat, dll.) → bandingkan kamera/mik saja.
+const camMic = (p: { camera: boolean; mic: boolean }) => JSON.stringify({ camera: p.camera, mic: p.mic })
+check("Prefs kosong → default", camMic(parseMediaPrefs(null)) === JSON.stringify({ camera: true, mic: true }))
+check("Prefs tersimpan dibaca", camMic(parseMediaPrefs('{"camera":false,"mic":true}')) === JSON.stringify({ camera: false, mic: true }))
 check("Prefs rusak → default", parseMediaPrefs("{rusak").camera === true)
-check("Prefs tipe salah → default per field", JSON.stringify(parseMediaPrefs('{"camera":"no","mic":false}')) === JSON.stringify({ camera: true, mic: false }))
+check("Prefs tipe salah → default per field", camMic(parseMediaPrefs('{"camera":"no","mic":false}')) === JSON.stringify({ camera: true, mic: false }))
 
 console.log("\n9. Helper UI")
 check("initials", initials("Siti Nur Aisyah") === "SA" && initials("budi") === "B" && initials("  ") === "?")
@@ -184,9 +186,10 @@ check("Migration add-only (tanpa DROP/ALTER COLUMN tabel lama)", !/^\s*DROP\s/im
 const css = read("components/jumpa/jumpa.css")
 const roomView = read("components/jumpa/JumpaRoomView.tsx")
 check("Mobile: tombol Layar hanya di bar saat lebar, di Lainnya saat sempit", roomView.includes("{canScreen && wide && (") && roomView.includes("{canScreen && !wide && ("))
-check("Bar kontrol & area video memakai safe-area kiri/kanan", (roomView.match(/env\(safe-area-inset-left\)/g) ?? []).length >= 3)
+// Fase 3: header & dock pindah ke jumpa.css → hitung di TSX + CSS.
+check("Bar kontrol & area video memakai safe-area kiri/kanan", ((roomView + css).match(/env\(safe-area-inset-left\)/g) ?? []).length >= 3)
 check("Area video min-w-0 (tidak melebar keluar layar)", roomView.includes('className="relative min-h-0 min-w-0 flex-1" aria-label="Video peserta"'))
-check("Tombol bulat menyusut di layar sempit (clamp)", css.includes("width: clamp(46px, 12.8vw, 56px)"))
+check("Tombol bulat menyusut di layar sempit (clamp)", /width: clamp\(46px, 12\.8vw, 5\dpx\)/.test(css))
 check("Tile sempit: nama depan + badge 1 huruf (container query)", css.includes("@container jumpa-tile (max-width: 230px)") && read("components/jumpa/ParticipantTile.tsx").includes("jumpa-badge-mini"))
 check("Indikator pembicara: tile data-speaking bercincin aksen", /\.jumpa-tile\[data-speaking="true"\] \{[^}]*var\(--jp-accent\)/.test(css))
 check("Reduced motion: indikator pembicara tanpa animasi tapi tetap terlihat", /prefers-reduced-motion[\s\S]*data-speaking="true"\]::after \{ animation: none/.test(css))

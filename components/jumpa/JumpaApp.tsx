@@ -1,17 +1,20 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { Loader2, RotateCcw } from "lucide-react";
+import { Crown, Loader2, RotateCcw } from "lucide-react";
+import type { JumpaTierView } from "@/lib/jumpa/tiers";
 import type { EndedReason, JumpaRoomInfo, JumpaSelf } from "./room-controller";
 import type { LeaveReason } from "./JumpaRoomView";
 import JumpaLobby from "./JumpaLobby";
 import type { JumpaMediaPrefs } from "./media-prefs";
 
-// LiveKit hanya jalan di browser; jangan ikut SSR.
-const JumpaRoomView = dynamic(() => import("./JumpaRoomView"), {
+// LiveKit hanya jalan di browser; jangan ikut SSR. Chunk ini (~170 KB gzip)
+// TIDAK ikut halaman lain: hanya diunduh di /jumpa/[code], dan dipanaskan
+// saat lobby sudah tenang (requestIdleCallback) supaya "Gabung" instan.
+const loadRoomView = () => import("./JumpaRoomView");
+const JumpaRoomView = dynamic(loadRoomView, {
   ssr: false,
   loading: () => (
     <div className="grid h-[100dvh] place-items-center">
@@ -31,6 +34,8 @@ export interface JumpaAppProps {
   dashboardHref: string;
   /** Token tautan undangan guru (?u=), diteruskan ke API token. */
   inviteToken?: string | null;
+  /** Fase 3: paket ruang (dihitung server). */
+  tier: JumpaTierView;
 }
 
 const ENDED_TEXT: Record<EndedReason, string> = {
@@ -50,7 +55,7 @@ const LEFT_TITLE: Record<LeaveReason, string> = {
 
 type Phase =
   | { name: "lobby" }
-  | { name: "room"; token: string; serverUrl: string; prefs: JumpaMediaPrefs; info: JumpaRoomInfo; self: JumpaSelf }
+  | { name: "room"; token: string; serverUrl: string; prefs: JumpaMediaPrefs; info: JumpaRoomInfo; self: JumpaSelf; tier: JumpaTierView }
   | { name: "left"; reason: LeaveReason; ended?: EndedReason | null };
 
 export default function JumpaApp(props: JumpaAppProps) {
@@ -58,6 +63,18 @@ export default function JumpaApp(props: JumpaAppProps) {
   const [joining, setJoining] = useState(false);
   const [joinError, setJoinError] = useState<string | null>(null);
   const phaseRef = useRef<Phase["name"]>("lobby");
+
+  // Panaskan chunk ruang setelah lobby tampil (tidak menghambat render awal).
+  useEffect(() => {
+    if (!props.canJoin) return;
+    const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number; cancelIdleCallback?: (id: number) => void };
+    if (w.requestIdleCallback) {
+      const id = w.requestIdleCallback(() => void loadRoomView().catch(() => undefined), { timeout: 4000 });
+      return () => w.cancelIdleCallback?.(id);
+    }
+    const t = setTimeout(() => void loadRoomView().catch(() => undefined), 2500);
+    return () => clearTimeout(t);
+  }, [props.canJoin]);
 
   const join = useCallback(
     async (prefs: JumpaMediaPrefs) => {
@@ -75,20 +92,21 @@ export default function JumpaApp(props: JumpaAppProps) {
           error?: string;
           self?: JumpaSelf;
           room?: JumpaRoomInfo;
+          tier?: JumpaTierView;
         } | null;
         if (!res.ok || !body?.token || !body.serverUrl || !body.self || !body.room) {
           setJoinError(body?.error ?? "Gagal masuk ke ruang. Coba lagi.");
           return;
         }
         phaseRef.current = "room";
-        setPhase({ name: "room", token: body.token, serverUrl: body.serverUrl, prefs, info: body.room, self: body.self });
+        setPhase({ name: "room", token: body.token, serverUrl: body.serverUrl, prefs, info: body.room, self: body.self, tier: body.tier ?? props.tier });
       } catch {
         setJoinError("Koneksi bermasalah. Periksa internet lalu coba lagi.");
       } finally {
         setJoining(false);
       }
     },
-    [props.code, props.inviteToken],
+    [props.code, props.inviteToken, props.tier],
   );
 
   const handleLeave = useCallback((reason: LeaveReason, ended?: EndedReason | null) => {
@@ -108,40 +126,50 @@ export default function JumpaApp(props: JumpaAppProps) {
         prefs={phase.prefs}
         info={phase.info}
         self={phase.self}
+        tier={phase.tier}
         onLeave={handleLeave}
       />
     );
   }
 
   if (phase.name === "left") {
+    const timeUp = phase.reason === "ended" && phase.ended === "TIME_LIMIT";
+    const upsell = timeUp && props.tier.canUpgrade && props.tier.upgradeUrl;
     return (
       <main className="grid min-h-[100dvh] place-items-center px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="jumpa-glass w-full max-w-sm rounded-3xl p-6 text-center"
-        >
+        <div className="jumpa-card jumpa-in-up w-full max-w-sm p-6 text-center">
+          <span className="jumpa-mark mx-auto mb-4" aria-hidden>J</span>
           <h1 className="text-xl font-extrabold">{LEFT_TITLE[phase.reason]}</h1>
           <p className="mt-2 text-sm text-[var(--jp-text-2)]">
             {phase.reason === "ended" ? ENDED_TEXT[phase.ended ?? "HOST"] : phase.reason === "removed" ? "Host mengeluarkanmu dari ruang ini." : props.title}
           </p>
+          {upsell && (
+            <div className="jumpa-plan-card mt-4 text-left">
+              <p className="text-sm font-semibold">Ruang paket Gratis maksimal {props.tier.maxDurationMin} menit.</p>
+              <p className="mt-1 text-xs text-[var(--jp-text-3)]">Dengan Premium, kelas bisa lebih lama dan lebih banyak peserta. Mulai ruang baru dari KelasKu untuk melanjutkan.</p>
+            </div>
+          )}
           <div className="mt-6 flex flex-col gap-3">
+            {upsell && (
+              <a href={props.tier.upgradeUrl!} className="jumpa-primary jumpa-primary-premium">
+                <Crown size={18} /> Lihat Premium
+              </a>
+            )}
             {phase.reason !== "removed" && phase.reason !== "ended" && (
-            <button
-              type="button"
-              className="jumpa-primary"
-              onClick={() => {
-                phaseRef.current = "lobby";
-                setPhase({ name: "lobby" });
-              }}
-            >
-              <RotateCcw size={18} /> Gabung lagi
-            </button>
+              <button
+                type="button"
+                className="jumpa-primary"
+                onClick={() => {
+                  phaseRef.current = "lobby";
+                  setPhase({ name: "lobby" });
+                }}
+              >
+                <RotateCcw size={18} /> Gabung lagi
+              </button>
             )}
             <Link href={props.dashboardHref} className="jumpa-ghost">Kembali ke dasbor</Link>
           </div>
-        </motion.div>
+        </div>
       </main>
     );
   }
@@ -157,6 +185,7 @@ export default function JumpaApp(props: JumpaAppProps) {
       joining={joining}
       joinError={joinError}
       onJoin={join}
+      tier={props.tier}
     />
   );
 }

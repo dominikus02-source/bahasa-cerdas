@@ -65,3 +65,16 @@ export function avatarTone(id: string): number {
   for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
   return h % 4;
 }
+
+/**
+ * Nama pendek untuk tile kecil (strip pembicara): "Dewi Permata Sari" →
+ * "Dewi P.", nama satu kata dipotong 10 huruf. Mencegah "Dewi Per…".
+ */
+export function shortName(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "Peserta";
+  const first = parts[0].length > 10 ? `${parts[0].slice(0, 9)}.` : parts[0];
+  if (parts.length === 1) return first;
+  const last = parts[parts.length - 1][0]?.toUpperCase() ?? "";
+  return last ? `${first} ${last}.` : first;
+}

@@ -46,34 +46,6 @@
   outline-offset: 3px;
 }
 
-/* ── Tombol bulat (control bar & lobby) — target sentuh ≥ 56px ── */
-.jumpa-round {
-  display: inline-grid;
-  place-items: center;
-  /* 360px → 46px, 430px+ → 56px: 5 tombol selalu muat tanpa terpotong. */
-  width: clamp(46px, 12.8vw, 56px);
-  height: clamp(46px, 12.8vw, 56px);
-  border-radius: 999px;
-  color: var(--jp-text);
-  background: var(--jp-glass-strong);
-  border: 1px solid var(--jp-line-strong);
-  transition: transform .18s var(--jp-ease), background-color .18s var(--jp-ease), box-shadow .18s var(--jp-ease);
-}
-.jumpa-round:hover { transform: translateY(-1px); background: color-mix(in srgb, var(--clr-surface-2) 95%, var(--clr-text) 5%); }
-.jumpa-round:active { transform: scale(.94); }
-.jumpa-round[data-off="true"] {
-  background: color-mix(in srgb, var(--clr-danger) 22%, var(--clr-surface));
-  border-color: color-mix(in srgb, var(--clr-danger) 45%, transparent);
-  color: var(--jp-danger);
-}
-.jumpa-round[data-variant="leave"] {
-  width: clamp(52px, 14.6vw, 64px);
-  background: color-mix(in srgb, var(--clr-danger) 78%, var(--clr-bg));
-  border-color: transparent;
-  color: var(--clr-text);
-}
-.jumpa-round[data-variant="leave"]:hover { background: var(--clr-danger); color: var(--clr-bg); }
-
 .jumpa-ctl {
   display: flex;
   flex: 1 1 0;
@@ -234,6 +206,10 @@
   border-radius: 999px;
   font-size: 13px;
   font-weight: 600;
+  /* Fase 3: latar solid, BUKAN backdrop-filter — blur di atas video memaksa
+     komposisi ulang tiap frame dan berat di HP. */
+  background: color-mix(in srgb, var(--clr-bg) 72%, transparent);
+  border: 1px solid var(--jp-line);
 }
 .jumpa-badge {
   font-size: 10px;
@@ -292,13 +268,35 @@
 }
 .jumpa-strip::-webkit-scrollbar { display: none; }
 .jumpa-strip > * {
-  flex: 0 0 112px;
-  height: 80px;
+  flex: 0 0 116px;
+  height: 84px;
   scroll-snap-align: start;
 }
 @media (min-width: 768px) {
   .jumpa-strip > * { flex-basis: 168px; height: 110px; }
 }
+/* Nama di strip: "Dewi P." utuh, tidak terpotong jadi "Dewi Per…". */
+.jumpa-nameplate-mini {
+  left: 6px;
+  bottom: 6px;
+  max-width: calc(100% - 12px);
+  gap: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+}
+.jumpa-mini-name { white-space: nowrap; overflow: hidden; text-overflow: clip; min-width: 0; }
+.jumpa-strip-more {
+  display: grid;
+  place-content: center;
+  gap: 2px;
+  border-radius: var(--jp-radius);
+  border: 1px dashed var(--jp-line-strong);
+  background: var(--clr-surface);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--jp-text);
+}
+.jumpa-strip-more > span { font-size: 11px; font-weight: 600; color: var(--jp-text-3); }
 
 .jumpa-menu-item {
   display: flex;
@@ -319,6 +317,7 @@
 
 .jumpa-preview {
   position: relative;
+  border: 1px solid var(--jp-line);
   aspect-ratio: 4 / 3;
   width: 100%;
   overflow: hidden;
@@ -359,17 +358,6 @@
 
 /* ════════════════════════════ Fase 2 ════════════════════════════════ */
 
-.jumpa-round[data-on="true"] {
-  background: color-mix(in srgb, var(--clr-accent) 24%, var(--clr-surface));
-  border-color: color-mix(in srgb, var(--clr-accent) 55%, transparent);
-  color: var(--jp-accent);
-}
-.jumpa-round[data-tone="hand"][data-on="true"] {
-  background: color-mix(in srgb, var(--clr-warning) 26%, var(--clr-surface));
-  border-color: color-mix(in srgb, var(--clr-warning) 55%, transparent);
-  color: var(--clr-warning);
-}
-.jumpa-round:disabled { opacity: .6; }
 
 .jumpa-icon-btn {
   display: inline-grid;
@@ -605,6 +593,512 @@
   }
   /* Indikator pembicara tetap terlihat, hanya tanpa denyut. */
   .jumpa-tile[data-speaking="true"]::after { animation: none !important; opacity: 1; }
+  .jumpa-reaction { animation: jumpa-in-fade 2.6s ease-out both !important; }
   .jumpa-avatar-wrap[data-speaking="true"]::before { animation: none !important; transform: none; opacity: 1; }
   .jumpa-avatar-wrap[data-speaking="true"]::after { animation: none !important; opacity: 0; }
 }
+
+/* ════════════════════════════ Fase 3 ════════════════════════════════
+   Tampilan khas "JUMPA by BahasaCerdas" + performa:
+   - Dock kontrol berbentuk kapsul dengan pita gradien hijau→ungu di atas
+     (tanda tangan JUMPA), tombol "squircle" (bukan lingkaran ala Meet).
+   - Animasi hanya transform/opacity (GPU), tanpa framer-motion.
+   - HP / layar sentuh: TANPA backdrop-filter & bayangan blur besar.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Animasi masuk (CSS saja) ── */
+@keyframes jumpa-in-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes jumpa-in-down { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+@keyframes jumpa-in-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes jumpa-in-pop { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: none; } }
+@keyframes jumpa-in-side { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: none; } }
+@keyframes jumpa-in-sheet { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes jumpa-float {
+  0% { opacity: 0; transform: translateY(10px) scale(.6); }
+  15% { opacity: 1; transform: translateY(-30px) scale(1.12); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-220px) scale(.92); }
+}
+@keyframes jumpa-wave { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-14deg); } 60% { transform: rotate(10deg); } }
+@keyframes jumpa-mic { 0%, 100% { box-shadow: 0 0 0 0 var(--jp-accent-glow); } 50% { box-shadow: 0 0 0 5px var(--jp-accent-glow); } }
+
+.jumpa-in-up { animation: jumpa-in-up .32s var(--jp-ease) both; }
+.jumpa-in-down { animation: jumpa-in-down .24s var(--jp-ease) both; }
+.jumpa-in-fade { animation: jumpa-in-fade .22s var(--jp-ease) both; }
+.jumpa-in-pop { animation: jumpa-in-pop .22s var(--jp-ease) both; }
+.jumpa-in-side { animation: jumpa-in-side .24s var(--jp-ease) both; }
+.jumpa-in-sheet { animation: jumpa-in-sheet .28s var(--jp-ease) both; }
+.jumpa-reaction { animation: jumpa-float 2.6s ease-out both; will-change: transform, opacity; }
+[data-wave="true"] { animation: jumpa-wave .6s var(--jp-ease); }
+
+/* ── Kartu solid (pengganti glass di halaman non-video) ── */
+.jumpa-card {
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--clr-surface) 88%, transparent);
+  border: 1px solid var(--jp-line);
+}
+
+/* ── Merek ── */
+.jumpa-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  font-weight: 900;
+  font-size: 19px;
+  letter-spacing: -.02em;
+  color: var(--clr-bg);
+  background: linear-gradient(140deg, var(--clr-accent), var(--clr-info) 70%, var(--clr-violet));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--clr-text) 35%, transparent);
+}
+.jumpa-mark-sm { width: 22px; height: 22px; border-radius: 7px; font-size: 12px; }
+.jumpa-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .16em;
+  color: var(--jp-accent);
+}
+.jumpa-brand-by { font-weight: 600; letter-spacing: 0; color: var(--jp-text-3); text-transform: none; }
+
+/* ── Header ruang ── */
+.jumpa-header {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: max(10px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) 8px max(14px, env(safe-area-inset-left));
+}
+@media (min-width: 640px) { .jumpa-header { padding-left: 24px; padding-right: 24px; } }
+@media (min-width: 1024px) { .jumpa-header { padding-left: 32px; padding-right: 32px; } }
+.jumpa-head-btn {
+  background: var(--jp-glass-strong);
+  border: 1px solid var(--jp-line);
+}
+
+/* ── Lencana paket ── */
+.jumpa-tier {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  color: var(--jp-text-2);
+  border: 1px solid var(--jp-line-strong);
+  background: transparent;
+}
+.jumpa-tier[data-tier="PREMIUM"] {
+  color: var(--clr-warning);
+  border-color: color-mix(in srgb, var(--clr-warning) 45%, transparent);
+  background: var(--clr-warning-soft);
+}
+.jumpa-tier[data-tier="MURID"] { color: var(--clr-violet); border-color: color-mix(in srgb, var(--clr-violet) 40%, transparent); background: var(--clr-violet-soft); }
+
+/* ── Hitung mundur ── */
+.jumpa-countdown {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 34px;
+  padding: 0 11px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--jp-text-2);
+  background: var(--jp-glass-strong);
+  border: 1px solid var(--jp-line);
+}
+.jumpa-countdown[data-warn="true"] {
+  color: var(--clr-warning);
+  border-color: color-mix(in srgb, var(--clr-warning) 50%, transparent);
+  background: var(--clr-warning-soft);
+}
+
+/* ── Sinyal (kualitas koneksi) ── */
+.jumpa-signal {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 34px;
+  padding: 0 9px 11px;
+  border-radius: 999px;
+  background: var(--jp-glass-strong);
+  border: 1px solid var(--jp-line);
+}
+.jumpa-signal > span:not(.jumpa-signal-dot) { width: 3px; border-radius: 2px; background: var(--jp-line-strong); }
+.jumpa-signal > span:nth-child(1) { height: 5px; }
+.jumpa-signal > span:nth-child(2) { height: 8px; }
+.jumpa-signal > span:nth-child(3) { height: 11px; }
+.jumpa-signal[data-level="3"] > span:nth-child(-n+3),
+.jumpa-signal[data-level="2"] > span:nth-child(-n+2) { background: var(--jp-accent); }
+.jumpa-signal[data-level="1"] > span:nth-child(1) { background: var(--clr-warning); }
+.jumpa-signal[data-level="0"] > span:nth-child(1) { background: var(--jp-danger); }
+.jumpa-signal-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--clr-warning);
+}
+
+/* ── Status & toast ── */
+.jumpa-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: center;
+  margin: 0 auto 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  background: var(--jp-glass-strong);
+  border: 1px solid var(--jp-line);
+}
+.jumpa-toast {
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--jp-glass-strong);
+  border: 1px solid var(--jp-line-strong);
+}
+.jumpa-reaction-name {
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  background: color-mix(in srgb, var(--clr-bg) 72%, transparent);
+}
+
+/* ── Pager grid ── */
+.jumpa-pager {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  background: color-mix(in srgb, var(--clr-bg) 80%, transparent);
+  border: 1px solid var(--jp-line-strong);
+}
+.jumpa-pager > span { min-width: 40px; text-align: center; }
+.jumpa-pager > button { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 999px; }
+.jumpa-pager > button:hover:not(:disabled) { background: color-mix(in srgb, var(--clr-text) 8%, transparent); }
+.jumpa-pager > button:disabled { opacity: .35; }
+
+/* ── Dock kontrol (tanda tangan JUMPA) ── */
+.jumpa-dock-wrap {
+  position: relative;
+  padding: 10px max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+}
+@media (min-width: 640px) { .jumpa-dock-wrap { padding-left: 24px; padding-right: 24px; } }
+.jumpa-dock {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2px;
+  width: 100%;
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: 10px 6px 8px;
+  border-radius: 26px;
+  background: color-mix(in srgb, var(--clr-surface-2) 94%, transparent);
+  border: 1px solid var(--jp-line);
+}
+/* Pita gradien di tepi atas dock. */
+.jumpa-dock::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 22%;
+  right: 22%;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--clr-accent), var(--clr-violet), transparent);
+}
+.jumpa-dock-group { display: contents; }
+.jumpa-dock-sep { display: none; }
+@media (min-width: 768px) {
+  .jumpa-dock { width: auto; max-width: none; justify-content: center; gap: 6px; padding: 10px 14px 8px; }
+  .jumpa-dock-group { display: flex; gap: 6px; }
+  .jumpa-dock-sep { display: block; width: 1px; align-self: stretch; margin: 4px 6px 18px; background: var(--jp-line-strong); }
+  .jumpa-dock .jumpa-ctl { flex: 0 0 auto; width: 64px; max-width: none; }
+  .jumpa-dock .jumpa-ctl-leave { width: auto; }
+}
+
+/* Tombol squircle (lobby + dock). Target sentuh ≥ 46px. */
+.jumpa-key {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: clamp(46px, 12.8vw, 54px);
+  height: clamp(46px, 12.8vw, 54px);
+  border-radius: 18px;
+  color: var(--jp-text);
+  background: color-mix(in srgb, var(--clr-text) 7%, var(--clr-surface));
+  border: 1px solid var(--jp-line-strong);
+  transition: transform .15s var(--jp-ease), background-color .15s var(--jp-ease), color .15s var(--jp-ease), border-color .15s var(--jp-ease);
+}
+.jumpa-key:hover { background: color-mix(in srgb, var(--clr-text) 12%, var(--clr-surface)); }
+.jumpa-key:active { transform: scale(.94); }
+.jumpa-key:disabled { opacity: .6; }
+.jumpa-key[data-off="true"] {
+  color: var(--jp-danger);
+  background: var(--clr-danger-soft);
+  border-color: color-mix(in srgb, var(--clr-danger) 45%, transparent);
+}
+.jumpa-key[data-on="true"] {
+  color: var(--jp-accent);
+  background: var(--clr-accent-soft);
+  border-color: color-mix(in srgb, var(--clr-accent) 55%, transparent);
+}
+.jumpa-key[data-tone="hand"][data-on="true"] {
+  color: var(--clr-warning);
+  background: var(--clr-warning-soft);
+  border-color: color-mix(in srgb, var(--clr-warning) 55%, transparent);
+}
+/* Mik menyala & kamu bicara: denyut cincin hijau (box-shadow kecil). */
+.jumpa-key[data-speaking="true"] {
+  border-color: var(--jp-accent);
+  color: var(--jp-accent);
+  animation: jumpa-mic 1.2s ease-in-out infinite;
+}
+.jumpa-key[data-variant="leave"] {
+  width: clamp(52px, 14.6vw, 60px);
+  color: var(--clr-bg);
+  background: var(--clr-danger);
+  border-color: transparent;
+}
+.jumpa-key[data-variant="leave"]:hover { background: color-mix(in srgb, var(--clr-danger) 85%, var(--clr-text)); }
+.jumpa-leave-text { font-size: 14px; font-weight: 800; }
+@media (min-width: 768px) {
+  .jumpa-key[data-variant="leave"] { width: auto; padding: 0 18px; }
+  .jumpa-ctl-leave .jumpa-ctl-label { visibility: hidden; }
+}
+
+/* ── Menu "Lainnya" ── */
+.jumpa-menu {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 100%;
+  z-index: 30;
+  max-height: 70dvh;
+  overflow-y: auto;
+  padding: 8px;
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--clr-surface-2) 97%, transparent);
+  border: 1px solid var(--jp-line-strong);
+  box-shadow: 0 18px 40px -18px color-mix(in srgb, var(--clr-bg) 90%, transparent);
+}
+@media (min-width: 640px) { .jumpa-menu { left: auto; right: 24px; width: 20rem; } }
+
+/* ── Lembar (sheet) mobile & lobby ── */
+.jumpa-sheet {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  max-height: 86dvh;
+  padding-bottom: env(safe-area-inset-bottom);
+  border-radius: 28px 28px 0 0;
+  background: color-mix(in srgb, var(--clr-surface-2) 97%, transparent);
+  border: 1px solid var(--jp-line);
+}
+@media (min-width: 768px) {
+  .jumpa-lobby-sheet {
+    inset: 50% auto auto 50%;
+    width: 26rem;
+    max-height: 86dvh;
+    border-radius: 26px;
+    transform: translate(-50%, -50%);
+    animation: jumpa-in-fade .2s var(--jp-ease) both;
+  }
+}
+
+/* ── Pengaturan ── */
+.jumpa-field { display: grid; gap: 6px; }
+.jumpa-field-label { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--jp-text-2); }
+.jumpa-field-note { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--jp-text-3); }
+.jumpa-seg {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+  border-radius: 16px;
+  background: var(--jp-glass-strong);
+  border: 1px solid var(--jp-line);
+}
+.jumpa-seg-btn {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--jp-text-2);
+  transition: background-color .15s var(--jp-ease), color .15s var(--jp-ease);
+}
+.jumpa-seg-btn[aria-checked="true"] { color: var(--clr-bg); background: var(--jp-accent); }
+.jumpa-setting-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: var(--jp-glass-strong);
+  border: 1px solid var(--jp-line);
+}
+.jumpa-setting-row[aria-disabled="true"] { opacity: .78; }
+.jumpa-setting-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  color: var(--jp-accent);
+  background: var(--clr-accent-soft);
+}
+.jumpa-plan-card {
+  padding: 14px;
+  border-radius: 18px;
+  background: var(--jp-glass-strong);
+  border: 1px solid var(--jp-line);
+}
+.jumpa-plan-strip { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; }
+
+/* ── Ajakan upgrade (khusus host guru paket Gratis) ── */
+.jumpa-upgrade {
+  position: fixed;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 71;
+  width: min(92vw, 25rem);
+  padding: 24px 22px 20px;
+  transform: translateX(-50%);
+  border-radius: 28px;
+  background: color-mix(in srgb, var(--clr-surface-2) 98%, transparent);
+  border: 1px solid color-mix(in srgb, var(--clr-warning) 35%, var(--jp-line));
+  box-shadow: 0 24px 60px -24px color-mix(in srgb, var(--clr-bg) 92%, transparent);
+}
+/* transform dipakai untuk posisi → animasi sendiri yang mempertahankannya. */
+@keyframes jumpa-upgrade-in { from { opacity: 0; transform: translate(-50%, 16px); } to { opacity: 1; transform: translate(-50%, 0); } }
+.jumpa-upgrade.jumpa-in-pop { animation: jumpa-upgrade-in .26s var(--jp-ease) both; }
+@media (min-width: 768px) {
+  .jumpa-upgrade { top: 50%; bottom: auto; transform: translate(-50%, -50%); }
+  .jumpa-upgrade.jumpa-in-pop { animation: jumpa-in-fade .2s var(--jp-ease) both; }
+}
+.jumpa-upgrade::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 18%;
+  right: 18%;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--clr-warning), var(--clr-accent), transparent);
+}
+.jumpa-upgrade-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 12px;
+  border-radius: 16px;
+  color: var(--clr-warning);
+  background: var(--clr-warning-soft);
+}
+.jumpa-upgrade-timer {
+  position: absolute;
+  top: 26px;
+  right: 56px;
+  font-size: 22px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  color: var(--clr-warning);
+}
+.jumpa-upgrade-list { display: grid; gap: 6px; margin-top: 14px; font-size: 13px; color: var(--jp-text-2); }
+.jumpa-upgrade-list > li { position: relative; padding-left: 18px; }
+.jumpa-upgrade-list > li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: .5em;
+  width: 8px;
+  height: 8px;
+  border-radius: 3px;
+  background: var(--jp-accent);
+}
+.jumpa-primary-premium {
+  white-space: nowrap;
+  color: var(--clr-bg);
+  background: linear-gradient(135deg, var(--clr-warning), var(--clr-accent));
+  box-shadow: none;
+}
+
+/* ════ Performa di HP / layar sentuh ════
+   backdrop-filter dan bayangan blur besar mahal di GPU HP murah (terutama
+   di atas video yang berubah tiap frame). Matikan, ganti latar padat. */
+@media (max-width: 767px), (pointer: coarse) {
+  .jumpa-glass {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: color-mix(in srgb, var(--clr-surface-2) 96%, transparent);
+    box-shadow: none;
+  }
+  .jumpa-scope {
+    background:
+      radial-gradient(600px 300px at 0% -10%, color-mix(in srgb, var(--clr-accent) 12%, transparent), transparent 60%),
+      var(--jp-bg);
+  }
+  .jumpa-tile[data-speaking="true"] { box-shadow: 0 0 0 2px var(--jp-accent); }
+  .jumpa-tile[data-speaking="true"]::after { animation: none; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--clr-accent) 55%, transparent); }
+  .jumpa-avatar { box-shadow: none; }
+  .jumpa-reaction-bubble { box-shadow: none; }
+  .jumpa-primary { box-shadow: none; }
+}
+
+/* ── Layar sempit (≤ 400px): judul ruang tetap terbaca ──
+   Sinyal baik disembunyikan (ikon muncul lagi saat koneksi lemah),
+   hitung mundur tanpa ikon, tanda J lebih kecil. */
+@media (max-width: 400px) {
+  .jumpa-header { gap: 8px; }
+  .jumpa-header .jumpa-mark { width: 32px; height: 32px; border-radius: 10px; font-size: 16px; }
+  .jumpa-header .jumpa-signal[data-level="3"],
+  .jumpa-header .jumpa-signal[data-level="2"] { display: none; }
+  .jumpa-countdown { padding: 0 9px; gap: 0; }
+  .jumpa-header .jumpa-head-btn { padding: 0 10px; }
+  .jumpa-countdown svg { display: none; }
+}
+
+.jumpa-upgrade .jumpa-ghost,
+.jumpa-upgrade .jumpa-primary { white-space: nowrap; }

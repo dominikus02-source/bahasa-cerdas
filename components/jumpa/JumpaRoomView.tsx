@@ -1,20 +1,33 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+/**
+ * JUMPA — ruang panggilan (dimuat lazy oleh JumpaApp; satu-satunya modul
+ * yang menarik livekit-client).
+ *
+ * Fase 3 (performa): tanpa framer-motion; detak hitung mundur, toast, dan
+ * reaksi terisolasi di komponen kecil; Stage & tile di-memo; grid
+ * berhalaman (HP 4, desktop 16) dan strip dibatasi sehingga jumlah <video>
+ * yang dirender tetap kecil; adaptiveStream menjeda video yang tak terlihat.
+ */
+import { memo, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import {
   LiveKitRoom,
   RoomAudioRenderer,
   useConnectionState,
+  useIsSpeaking,
   useLocalParticipant,
   useLocalParticipantPermissions,
   useParticipants,
   useSpeakingParticipants,
+  useSwipe,
   useTracks,
 } from "@livekit/components-react";
-import { ConnectionState, DisconnectReason, Track, VideoPresets, type RoomOptions } from "livekit-client";
+import { ConnectionQuality, ConnectionState, DisconnectReason, RoomEvent, Track } from "livekit-client";
 import {
+  AudioWaveform,
   Check,
+  ChevronLeft,
+  ChevronRight,
   Flag,
   Hand,
   Heart,
@@ -32,9 +45,9 @@ import {
   PartyPopper,
   PhoneOff,
   Presentation,
+  Settings2,
   Sparkles,
   ThumbsUp,
-  Timer,
   UserPlus,
   Users,
   Video,
@@ -43,11 +56,16 @@ import {
   X,
 } from "lucide-react";
 import type { JumpaReaction } from "@/lib/jumpa/signals";
+import { JUMPA_UPGRADE_PROMPT_BEFORE_END_MIN, type JumpaTierView } from "@/lib/jumpa/tiers";
 import ParticipantTile from "./ParticipantTile";
 import { fitGrid, gridColumns, parseParticipantMeta } from "./format";
+import { detectDevice, publishPolicy, type DeviceClass } from "./media-policy";
 import { writeMediaPrefs, type JumpaMediaPrefs } from "./media-prefs";
+import { buildRoomOptions, MediaProvider, useMedia } from "./media-controller";
 import { JumpaRoomProvider, useJumpa, type EndedReason, type JumpaRoomInfo, type JumpaSelf } from "./room-controller";
 import { ChatPanel, InvitePanel, PanelFrame, PeoplePanel, ReportPanel, type PanelName } from "./RoomPanels";
+import SettingsPanel from "./SettingsPanel";
+import { CountdownChip, TierBadge, TimeLimitWatcher } from "./TierUi";
 
 export const REACTION_ICONS: Record<JumpaReaction, { icon: (size: number) => ReactNode; label: string }> = {
   like: { icon: (n) => <ThumbsUp size={n} />, label: "Suka" },
@@ -67,16 +85,7 @@ function supportsScreenShare(): boolean {
 
 type Layout = "grid" | "speaker";
 
-const ROOM_OPTIONS: RoomOptions = {
-  adaptiveStream: true,
-  dynacast: true,
-  videoCaptureDefaults: { resolution: VideoPresets.h720.resolution },
-  publishDefaults: { simulcast: true },
-};
-
-const EASE = [0.22, 0.8, 0.24, 1] as const;
-
-const GRID_GAP_WIDE = 16;
+const GRID_GAP_WIDE = 14;
 const GRID_GAP_NARROW = 8;
 
 /** Ukuran elemen (ResizeObserver) untuk menghitung grid yang pas. */
@@ -99,7 +108,7 @@ function useElementSize<T extends HTMLElement>(): [(el: T | null) => void, { w: 
 }
 
 function useIsWide(): boolean {
-  const [wide, setWide] = useState(false);
+  const [wide, setWide] = useState(() => typeof window !== "undefined" && window.matchMedia("(min-width: 768px)").matches);
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 768px)");
     const update = () => setWide(mq.matches);
@@ -120,20 +129,25 @@ interface ViewProps {
   prefs: JumpaMediaPrefs;
   info: JumpaRoomInfo;
   self: JumpaSelf;
+  tier: JumpaTierView;
   onLeave: (reason: LeaveReason, ended?: EndedReason | null) => void;
 }
 
 export default function JumpaRoomView(props: ViewProps) {
   const [deviceNote, setDeviceNote] = useState<string | null>(null);
   const [endedRef, setEndedRef] = useState<{ current: EndedReason | null } | null>(null);
+  // Sekali per sesi: identitas opsi harus stabil (LiveKitRoom membuat Room baru bila berubah).
+  const [device] = useState<DeviceClass>(() => detectDevice());
+  const [options] = useState(() => buildRoomOptions(props.prefs, device, props.tier));
+  const camOn = props.prefs.camera && !props.prefs.audioOnly;
   return (
     <LiveKitRoom
       serverUrl={props.serverUrl}
       token={props.token}
       connect
-      video={props.prefs.camera}
+      video={camOn}
       audio={props.prefs.mic}
-      options={ROOM_OPTIONS}
+      options={options}
       onDisconnected={(reason) => {
         const ended = endedRef?.current ?? null;
         if (reason === DisconnectReason.PARTICIPANT_REMOVED) props.onLeave("removed");
@@ -145,8 +159,10 @@ export default function JumpaRoomView(props: ViewProps) {
       className="flex h-[100dvh] w-full min-w-0 flex-col overflow-hidden"
     >
       <JumpaRoomProvider initial={props.info} self={props.self}>
-        <EndedBridge onRef={setEndedRef} />
-        <RoomShell {...props} deviceNote={deviceNote} clearDeviceNote={() => setDeviceNote(null)} />
+        <MediaProvider initial={props.prefs} device={device} tier={props.tier}>
+          <EndedBridge onRef={setEndedRef} />
+          <RoomShell {...props} deviceNote={deviceNote} clearDeviceNote={() => setDeviceNote(null)} />
+        </MediaProvider>
       </JumpaRoomProvider>
       <RoomAudioRenderer />
     </LiveKitRoom>
@@ -160,195 +176,260 @@ function EndedBridge({ onRef }: { onRef: (r: { current: EndedReason | null }) =>
   return null;
 }
 
-function useCountdown(endsAt: string | null): number | null {
-  const [now, setNow] = useState(() => Date.now());
-  useEffect(() => {
-    if (!endsAt) return;
-    const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
-  }, [endsAt]);
-  if (!endsAt) return null;
-  return Math.max(0, Math.floor((new Date(endsAt).getTime() - now) / 1000));
-}
-
 function HeaderBtn({ label, onClick, active, badge, children }: { label: string; onClick: () => void; active: boolean; badge?: number; children: ReactNode }) {
   return (
-    <button type="button" className="jumpa-head-btn jumpa-glass" data-active={active} aria-label={label} aria-pressed={active} onClick={onClick}>
+    <button type="button" className="jumpa-head-btn" data-active={active} aria-label={label} aria-pressed={active} onClick={onClick}>
       {children}
-      <AnimatePresence>
-        {badge ? (
-          <motion.span key={badge} className="jumpa-count" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.4, opacity: 0 }}>
-            {badge > 9 ? "9+" : badge}
-          </motion.span>
-        ) : null}
-      </AnimatePresence>
+      {badge ? <span key={badge} className="jumpa-count jumpa-in-pop">{badge > 9 ? "9+" : badge}</span> : null}
     </button>
   );
+}
+
+const QUALITY_TEXT: Record<ConnectionQuality, string> = {
+  [ConnectionQuality.Excellent]: "Koneksi sangat baik",
+  [ConnectionQuality.Good]: "Koneksi baik",
+  [ConnectionQuality.Poor]: "Koneksi lemah",
+  [ConnectionQuality.Lost]: "Koneksi terputus",
+  [ConnectionQuality.Unknown]: "Mengukur koneksi",
+};
+
+/** Indikator kualitas koneksi sendiri (3 batang). */
+function ConnectionBars() {
+  const { quality, degraded, prefs } = useMedia();
+  const level = quality === ConnectionQuality.Excellent ? 3 : quality === ConnectionQuality.Good ? 2 : quality === ConnectionQuality.Poor ? 1 : quality === ConnectionQuality.Lost ? 0 : 3;
+  const text = `${QUALITY_TEXT[quality]}${degraded ? " · kualitas diturunkan" : ""}${prefs.audioOnly ? " · audio saja" : prefs.quality === "hemat" ? " · hemat data" : ""}`;
+  return (
+    <span className="jumpa-signal" data-level={level} role="img" aria-label={text} title={text}>
+      <span /><span /><span />
+      {(prefs.audioOnly || prefs.quality === "hemat" || degraded) && <span className="jumpa-signal-dot" aria-hidden />}
+    </span>
+  );
+}
+
+/** Toast terisolasi: perubahan toast tidak me-render ulang ruang. */
+function Toasts() {
+  const { toasts } = useJumpa();
+  return (
+    <div className="pointer-events-none fixed inset-x-0 top-[max(64px,calc(env(safe-area-inset-top)+56px))] z-[60] flex flex-col items-center gap-2 px-4" aria-live="polite">
+      {toasts.map((t) => (
+        <div key={t.id} className="jumpa-toast jumpa-in-down" data-tone={t.tone}>
+          {t.text}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Jumlah peserta: hanya berubah saat orang masuk/keluar. */
+const COUNT_EVENTS = [RoomEvent.ParticipantConnected, RoomEvent.ParticipantDisconnected, RoomEvent.ConnectionStateChanged];
+function useParticipantCount(): number {
+  return useParticipants({ updateOnlyOn: COUNT_EVENTS }).length;
 }
 
 function RoomShell(props: ViewProps & { deviceNote: string | null; clearDeviceNote: () => void }) {
   const wide = useIsWide();
   const [layoutChoice, setLayoutChoice] = useState<Layout | null>(null);
   const layout: Layout = layoutChoice ?? (wide ? "grid" : "speaker");
-  const participants = useParticipants();
+  const count = useParticipantCount();
   const state = useConnectionState();
-  const { info, unread, hands, setChatVisible, toasts, self } = useJumpa();
+  const { info, unread, hands, setChatVisible, self } = useJumpa();
+  const { recv, tier } = useMedia();
   const [panel, setPanel] = useState<PanelName | null>(null);
-  const remaining = useCountdown(info.endsAt);
-  const showCountdown = remaining !== null && remaining <= 10 * 60;
   const handsCount = self.roomRole !== "MEMBER" ? hands.size : 0;
+  const { onLeave } = props;
 
   useEffect(() => setChatVisible(panel === "chat"), [panel, setChatVisible]);
   const toggle = (p: PanelName) => setPanel((cur) => (cur === p ? null : p));
+  const closePanel = useCallback(() => setPanel(null), []);
+  const showPeople = useCallback(() => setPanel("people"), []);
+  const timeUp = useCallback(() => onLeave("ended", "TIME_LIMIT"), [onLeave]);
 
   return (
     <>
-      <header className="flex min-w-0 items-center justify-between gap-3 pb-2 pl-[max(16px,env(safe-area-inset-left))] pr-[max(16px,env(safe-area-inset-right))] pt-[max(12px,env(safe-area-inset-top))] sm:px-6 lg:px-8">
-        <div className="min-w-0">
-          <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[.14em] text-[var(--jp-accent)]">
-            JUMPA
-            {info.isLocked && <Lock size={12} aria-label="Ruang terkunci" className="text-[var(--clr-warning)]" />}
-          </p>
-          <h1 className="truncate text-base font-bold sm:text-lg">{props.title}</h1>
+      <header className="jumpa-header">
+        <div className="flex min-w-0 items-center gap-3">
+          <span className="jumpa-mark" aria-hidden>J</span>
+          <div className="min-w-0">
+            <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[.16em] text-[var(--jp-accent)]">
+              JUMPA
+              <span className="hidden font-semibold normal-case tracking-normal text-[var(--jp-text-3)] sm:inline">by BahasaCerdas</span>
+              {info.isLocked && <Lock size={12} aria-label="Ruang terkunci" className="text-[var(--clr-warning)]" />}
+            </p>
+            <h1 className="flex min-w-0 items-center gap-2 text-[15px] font-bold sm:text-lg">
+              <span className="truncate">{props.title}</span>
+              <span className="hidden sm:inline-flex"><TierBadge tier={tier} compact /></span>
+            </h1>
+          </div>
         </div>
-        <div className="flex shrink-0 items-center gap-2">
-          {showCountdown && (
-            <span className="jumpa-glass jumpa-countdown inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold" role="timer" aria-label="Sisa waktu ruang">
-              <Timer size={15} /> {Math.floor(remaining / 60)}:{String(remaining % 60).padStart(2, "0")}
-            </span>
-          )}
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+          <CountdownChip endsAt={info.endsAt} alwaysShow={tier.tier === "FREE" && tier.kind !== "MURID"} />
+          <ConnectionBars />
           <HeaderBtn label="Obrolan" onClick={() => toggle("chat")} active={panel === "chat"} badge={unread}>
             <MessageSquare size={18} />
           </HeaderBtn>
-          <HeaderBtn label={`Peserta (${participants.length})`} onClick={() => toggle("people")} active={panel === "people"} badge={handsCount}>
+          <HeaderBtn label={`Peserta (${count})`} onClick={() => toggle("people")} active={panel === "people"} badge={handsCount}>
             <Users size={18} />
-            <span className="text-sm font-semibold">{participants.length}</span>
+            <span className="text-sm font-semibold">{count}</span>
           </HeaderBtn>
         </div>
       </header>
 
-      <div className="pointer-events-none fixed inset-x-0 top-[max(64px,calc(env(safe-area-inset-top)+56px))] z-[60] flex flex-col items-center gap-2 px-4" aria-live="polite">
-        <AnimatePresence>
-          {toasts.map((t) => (
-            <motion.div
-              key={t.id}
-              initial={{ opacity: 0, y: -10, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="jumpa-glass jumpa-toast rounded-full px-4 py-2 text-sm font-semibold"
-              data-tone={t.tone}
-            >
-              {t.text}
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
+      <Toasts />
 
-      <AnimatePresence>
-        {(state === ConnectionState.Reconnecting || state === ConnectionState.Connecting) && (
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            role="status"
-            className="jumpa-glass mx-auto mb-2 inline-flex items-center gap-2 self-center rounded-full px-4 py-2 text-sm"
-          >
-            {state === ConnectionState.Reconnecting ? <WifiOff size={16} className="text-[var(--clr-warning)]" /> : <Loader2 size={16} className="animate-spin" />}
-            {state === ConnectionState.Reconnecting ? "Jaringan terputus — menyambung ulang…" : "Menyambungkan ke ruang…"}
-          </motion.div>
-        )}
-        {props.deviceNote && (
-          <motion.button
-            type="button"
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            onClick={props.clearDeviceNote}
-            className="jumpa-glass mx-auto mb-2 inline-flex items-center gap-2 self-center rounded-full px-4 py-2 text-sm text-[var(--clr-warning)]"
-          >
-            {props.deviceNote} <X size={14} />
-          </motion.button>
-        )}
-      </AnimatePresence>
+      {(state === ConnectionState.Reconnecting || state === ConnectionState.Connecting) && (
+        <div role="status" className="jumpa-status jumpa-in-down">
+          {state === ConnectionState.Reconnecting ? <WifiOff size={16} className="text-[var(--clr-warning)]" /> : <Loader2 size={16} className="animate-spin" />}
+          {state === ConnectionState.Reconnecting ? "Jaringan terputus, menyambung ulang…" : "Menyambungkan ke ruang…"}
+        </div>
+      )}
+      {props.deviceNote && (
+        <button type="button" onClick={props.clearDeviceNote} className="jumpa-status jumpa-in-down text-[var(--clr-warning)]">
+          {props.deviceNote} <X size={14} />
+        </button>
+      )}
 
       <div className="flex min-h-0 min-w-0 flex-1 gap-3 pl-[max(12px,env(safe-area-inset-left))] pr-[max(12px,env(safe-area-inset-right))] sm:px-6 lg:gap-4 lg:px-8 lg:pt-1">
         <section className="relative min-h-0 min-w-0 flex-1" aria-label="Video peserta">
-          <Stage layout={layout} wide={wide} />
+          <Stage layout={layout} wide={wide} pageSize={recv.pageSize} stripMax={recv.stripMax} onShowPeople={showPeople} />
           <ReactionsLayer />
         </section>
-        <AnimatePresence>
-          {panel && wide && (
-            <PanelFrame key={panel} name={panel} wide onClose={() => setPanel(null)}>
-              <PanelBody panel={panel} setPanel={setPanel} />
-            </PanelFrame>
-          )}
-        </AnimatePresence>
-      </div>
-      <AnimatePresence>
-        {panel && !wide && (
-          <PanelFrame key={panel} name={panel} wide={false} onClose={() => setPanel(null)}>
+        {panel && wide && (
+          <PanelFrame key={panel} name={panel} wide onClose={closePanel}>
             <PanelBody panel={panel} setPanel={setPanel} />
           </PanelFrame>
         )}
-      </AnimatePresence>
+      </div>
+      {panel && !wide && (
+        <PanelFrame key={panel} name={panel} wide={false} onClose={closePanel}>
+          <PanelBody panel={panel} setPanel={setPanel} />
+        </PanelFrame>
+      )}
 
-      <ControlBar wide={wide} layout={layout} onLayout={setLayoutChoice} onLeave={() => props.onLeave("left")} openPanel={setPanel} />
+      <ControlBar wide={wide} layout={layout} onLayout={setLayoutChoice} onLeave={() => onLeave("left")} openPanel={setPanel} panel={panel} />
+      <TimeLimitWatcher endsAt={info.endsAt} tier={tier} promptBeforeMin={JUMPA_UPGRADE_PROMPT_BEFORE_END_MIN} onTimeUp={timeUp} />
     </>
   );
+}
+
+function RoomSettings() {
+  const { prefs, update, tier, degraded } = useMedia();
+  return <SettingsPanel prefs={prefs} onChange={update} tier={tier} degraded={degraded} />;
 }
 
 function PanelBody({ panel, setPanel }: { panel: PanelName; setPanel: (p: PanelName | null) => void }) {
   if (panel === "chat") return <ChatPanel />;
   if (panel === "people") return <PeoplePanel onInvite={() => setPanel("invite")} />;
   if (panel === "invite") return <InvitePanel />;
+  if (panel === "settings") return <RoomSettings />;
   return <ReportPanel onDone={() => setPanel(null)} />;
 }
 
 function ReactionsLayer() {
   const { reactions } = useJumpa();
-  const reduce = useReducedMotion();
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-      <AnimatePresence>
-        {reactions.map((r) => (
-          <motion.div
-            key={r.id}
-            className="jumpa-reaction absolute bottom-4 flex flex-col items-center gap-1"
-            style={{ left: `${r.x}%` }}
-            initial={{ opacity: 0, y: 10, scale: 0.6 }}
-            animate={reduce ? { opacity: [0, 1, 0] } : { opacity: [0, 1, 1, 0], y: -220, scale: [0.6, 1.15, 1, 0.9], x: [0, 10, -8, 4] }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 2.6, ease: "easeOut" }}
-          >
-            <span className="jumpa-reaction-bubble" data-r={r.r}>{REACTION_ICONS[r.r].icon(26)}</span>
-            <span className="jumpa-glass rounded-full px-2 py-0.5 text-[11px] font-semibold">{r.name}</span>
-          </motion.div>
-        ))}
-      </AnimatePresence>
+      {reactions.map((r) => (
+        <div key={r.id} className="jumpa-reaction absolute bottom-4 flex flex-col items-center gap-1" style={{ left: `${r.x}%` }}>
+          <span className="jumpa-reaction-bubble" data-r={r.r}>{REACTION_ICONS[r.r].icon(26)}</span>
+          <span className="jumpa-reaction-name">{r.name}</span>
+        </div>
+      ))}
     </div>
   );
 }
 
-function Stage({ layout, wide }: { layout: Layout; wide: boolean }) {
-  const reduceMotion = useReducedMotion();
-  const allTracks = useTracks(
-    [
-      { source: Track.Source.Camera, withPlaceholder: true },
-      { source: Track.Source.ScreenShare, withPlaceholder: false },
-    ],
-    { onlySubscribed: false },
+type TrackList = ReturnType<typeof useTracks>;
+
+/**
+ * Urutan strip yang stabil: peserta lama tetap di tempatnya, yang baru di
+ * belakang; pembicara di luar jendela terlihat menggantikan slot terakhir
+ * yang sedang diam. (Pengganti useVisualStableUpdate, yang melempar error
+ * saat daftar berubah karena fokus berpindah.)
+ */
+function useStableStrip(tracks: TrackList, max: number, speakingKey: string): TrackList {
+  const order = useRef<string[]>([]);
+  return useMemo(() => {
+    const byId = new Map(tracks.map((t) => [t.participant.identity, t]));
+    const next = order.current.filter((id) => byId.has(id));
+    for (const t of tracks) if (!next.includes(t.participant.identity)) next.push(t.participant.identity);
+    for (let i = max; i < next.length; i++) {
+      if (!byId.get(next[i])?.participant.isSpeaking) continue;
+      let slot = -1;
+      for (let j = max - 1; j >= 0; j--) if (!byId.get(next[j])?.participant.isSpeaking) { slot = j; break; }
+      if (slot < 0) break;
+      [next[slot], next[i]] = [next[i], next[slot]];
+    }
+    order.current = next;
+    return next.map((id) => byId.get(id)!).filter(Boolean);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- speakingKey memicu urut ulang saat pembicara berganti
+  }, [tracks, max, speakingKey]);
+}
+
+/**
+ * Grid berhalaman: urutan stabil (useStableStrip) dipotong per halaman.
+ * Pembicara dari halaman lain naik ke halaman 1, seperti Meet/Zoom.
+ * Tile di luar halaman tidak di-attach → adaptiveStream menjeda videonya.
+ */
+function usePager(pageSize: number, tracks: TrackList, speakingKey: string) {
+  const ordered = useStableStrip(tracks, pageSize, speakingKey);
+  const total = Math.max(1, Math.ceil(ordered.length / pageSize));
+  const [want, setWant] = useState(1);
+  const current = Math.min(want, total);
+  const start = (current - 1) * pageSize;
+  const visible = useMemo(() => ordered.slice(start, start + pageSize), [ordered, start, pageSize]);
+  const nextPage = useCallback(() => setWant((p) => Math.min(p + 1, total)), [total]);
+  const prevPage = useCallback(() => setWant((p) => Math.max(1, Math.min(p, total) - 1)), [total]);
+  return { tracks: visible, currentPage: current, totalPageCount: total, nextPage, prevPage };
+}
+
+/** Strip terbatas + chip "+N" (sisanya di panel Peserta). */
+function Strip({ tracks, max, speakingKey, onPick, onMore }: { tracks: TrackList; max: number; speakingKey: string; onPick?: (id: string) => void; onMore: () => void }) {
+  // Pembicara aktif naik ke depan tanpa membuat tile lain melompat.
+  const stable = useStableStrip(tracks, max, speakingKey);
+  const shown = stable.slice(0, max);
+  const hidden = tracks.length - shown.length;
+  return (
+    <div className="jumpa-strip" role="list">
+      {shown.map((t) =>
+        onPick ? (
+          <button type="button" role="listitem" key={t.participant.identity} onClick={() => onPick(t.participant.identity)} aria-label={`Fokus ke ${t.participant.name || "peserta"}`}>
+            <ParticipantTile trackRef={t} compact />
+          </button>
+        ) : (
+          <div role="listitem" key={t.participant.identity}>
+            <ParticipantTile trackRef={t} compact />
+          </div>
+        ),
+      )}
+      {hidden > 0 && (
+        <button type="button" className="jumpa-strip-more" onClick={onMore} aria-label={`${hidden} peserta lain, buka daftar peserta`}>
+          +{hidden}
+          <span>lainnya</span>
+        </button>
+      )}
+    </div>
   );
+}
+
+const CAMERA_AND_SCREEN = [
+  { source: Track.Source.Camera, withPlaceholder: true },
+  { source: Track.Source.ScreenShare, withPlaceholder: false },
+] as const;
+
+const Stage = memo(function Stage({ layout, wide, pageSize, stripMax, onShowPeople }: { layout: Layout; wide: boolean; pageSize: number; stripMax: number; onShowPeople: () => void }) {
+  const allTracks = useTracks([...CAMERA_AND_SCREEN], { onlySubscribed: false });
   // Layar yang dibagikan selalu jadi fokus (paling baru), kamera di strip.
-  const screens = allTracks.filter((t) => t.source === Track.Source.ScreenShare);
-  const tracks = allTracks.filter((t) => t.source !== Track.Source.ScreenShare);
+  const screens = useMemo(() => allTracks.filter((t) => t.source === Track.Source.ScreenShare), [allTracks]);
+  const tracks = useMemo(() => allTracks.filter((t) => t.source !== Track.Source.ScreenShare), [allTracks]);
   const speakers = useSpeakingParticipants();
+  const speakingKey = speakers.map((p) => p.identity).join("|");
   const [focusId, setFocusId] = useState<string | null>(null);
   const [gridRef, gridSize] = useElementSize<HTMLDivElement>();
 
   // Pembicara terakhir (selain diri sendiri) menjadi fokus layout Pembicara.
   useEffect(() => {
     const remote = speakers.find((p) => !p.isLocal);
-    if (remote) setFocusId(remote.identity);
+    if (remote) setFocusId((cur) => (cur === remote.identity ? cur : remote.identity));
   }, [speakers]);
 
   const focus = useMemo(() => {
@@ -359,77 +440,77 @@ function Stage({ layout, wide }: { layout: Layout; wide: boolean }) {
     return host ?? tracks.find((t) => !t.participant.isLocal) ?? tracks[0];
   }, [tracks, focusId]);
 
-  const motionProps = reduceMotion
-    ? {}
-    : {
-        layout: true as const,
-        initial: { opacity: 0, scale: 0.96 },
-        animate: { opacity: 1, scale: 1 },
-        exit: { opacity: 0, scale: 0.96 },
-        transition: { duration: 0.22, ease: EASE },
-      };
+  const others = useMemo(() => (focus ? tracks.filter((t) => t !== focus) : tracks), [tracks, focus]);
+  const page = usePager(pageSize, tracks, speakingKey);
+  const swipeRef = useRef<HTMLDivElement | null>(null);
+  useSwipe(swipeRef, { onLeftSwipe: page.nextPage, onRightSwipe: page.prevPage });
 
   const screen = screens[screens.length - 1];
   if (screen) {
     return (
       <div className="flex h-full min-w-0 flex-col gap-2">
-        <motion.div key={`screen-${screen.participant.identity}`} className="min-h-0 min-w-0 flex-1" {...motionProps}>
+        <div key={`screen-${screen.participant.identity}`} className="jumpa-in-fade min-h-0 min-w-0 flex-1">
           <ParticipantTile trackRef={screen} screen />
-        </motion.div>
-        <div className="jumpa-strip">
-          {tracks.map((t) => (
-            <div key={t.participant.identity}>
-              <ParticipantTile trackRef={t} compact />
-            </div>
-          ))}
         </div>
+        <Strip speakingKey={speakingKey} tracks={tracks} max={stripMax} onMore={onShowPeople} />
       </div>
     );
   }
 
   if (layout === "speaker" && focus) {
-    const others = tracks.filter((t) => t !== focus);
     return (
       <div className="flex h-full min-w-0 flex-col gap-2">
-        <motion.div key={focus.participant.identity} className="min-h-0 min-w-0 flex-1" {...motionProps}>
+        <div key={focus.participant.identity} className="jumpa-in-fade min-h-0 min-w-0 flex-1">
           <ParticipantTile trackRef={focus} />
-        </motion.div>
-        {others.length > 0 && (
-          <div className="jumpa-strip">
-            <AnimatePresence initial={false}>
-              {others.map((t) => (
-                <motion.button
-                  type="button"
-                  key={t.participant.identity}
-                  onClick={() => setFocusId(t.participant.identity)}
-                  aria-label={`Fokus ke ${t.participant.name || "peserta"}`}
-                  {...motionProps}
-                >
-                  <ParticipantTile trackRef={t} compact />
-                </motion.button>
-              ))}
-            </AnimatePresence>
-          </div>
-        )}
+        </div>
+        {others.length > 0 && <Strip speakingKey={speakingKey} tracks={others} max={stripMax} onPick={setFocusId} onMore={onShowPeople} />}
       </div>
     );
   }
 
-  // Grid: tile berasio tetap (16:9 desktop, 4:5 mobile) yang muat di area.
+  // Grid berhalaman: tile berasio tetap (16:9 desktop, 4:5 mobile) yang muat di area.
+  const visible = page.tracks;
   const gap = wide ? GRID_GAP_WIDE : GRID_GAP_NARROW;
-  const fit = fitGrid(tracks.length, gridSize.w, gridSize.h, gap, wide ? 16 / 9 : 4 / 5, wide ? 6 : 2);
+  const fit = fitGrid(visible.length, gridSize.w, gridSize.h, gap, wide ? 16 / 9 : 4 / 5, wide ? 6 : 2);
   const gridStyle: CSSProperties = fit
     ? { gap, gridTemplateColumns: `repeat(${fit.cols}, ${fit.tileW}px)`, gridAutoRows: `${fit.tileH}px` }
-    : { gap, ["--jp-cols" as string]: gridColumns(tracks.length, wide) };
+    : { gap, ["--jp-cols" as string]: gridColumns(visible.length, wide) };
   return (
-    <div ref={gridRef} className="jumpa-grid" data-fit={Boolean(fit)} style={gridStyle}>
-      <AnimatePresence initial={false}>
-        {tracks.map((t) => (
-          <motion.div key={t.participant.identity} className="min-h-0" {...motionProps}>
+    <div ref={swipeRef} className="relative flex h-full min-w-0 flex-col">
+      <div ref={gridRef} className="jumpa-grid min-h-0 flex-1" data-fit={Boolean(fit)} style={gridStyle}>
+        {visible.map((t) => (
+          <div key={t.participant.identity} className="min-h-0">
             <ParticipantTile trackRef={t} />
-          </motion.div>
+          </div>
         ))}
-      </AnimatePresence>
+      </div>
+      {page.totalPageCount > 1 && (
+        <nav className="jumpa-pager" aria-label="Halaman peserta">
+          <button type="button" onClick={page.prevPage} disabled={page.currentPage <= 1} aria-label="Halaman sebelumnya">
+            <ChevronLeft size={18} />
+          </button>
+          <span aria-live="polite">
+            {page.currentPage}/{page.totalPageCount}
+          </span>
+          <button type="button" onClick={page.nextPage} disabled={page.currentPage >= page.totalPageCount} aria-label="Halaman berikutnya">
+            <ChevronRight size={18} />
+          </button>
+        </nav>
+      )}
+    </div>
+  );
+});
+
+/** Tombol mikrofon: cincin hijau saat kamu bicara (komponen sendiri supaya bar tidak ikut render). */
+function MicKey({ on, busy, onToggle }: { on: boolean; busy: boolean; onToggle: () => void }) {
+  const { localParticipant } = useLocalParticipant();
+  const speaking = useIsSpeaking(localParticipant);
+  return (
+    <div className="jumpa-ctl">
+      <button type="button" className="jumpa-key" data-off={!on} data-speaking={on && speaking} aria-pressed={on} aria-label={on ? "Matikan mikrofon" : "Nyalakan mikrofon"} onClick={onToggle} disabled={busy}>
+        {on ? <Mic size={22} /> : <MicOff size={22} />}
+      </button>
+      <span className="jumpa-ctl-label">{on ? "Mik" : "Mik mati"}</span>
     </div>
   );
 }
@@ -440,20 +521,22 @@ function ControlBar({
   onLayout,
   onLeave,
   openPanel,
+  panel,
 }: {
   wide: boolean;
   layout: Layout;
   onLayout: (l: Layout) => void;
   onLeave: () => void;
-  openPanel: (p: PanelName) => void;
+  openPanel: (p: PanelName | null) => void;
+  panel: PanelName | null;
 }) {
   const { localParticipant, isMicrophoneEnabled, isCameraEnabled, isScreenShareEnabled } = useLocalParticipant();
   const permissions = useLocalParticipantPermissions();
   const { info, self, myHand, toggleHand, react, moderate, toast } = useJumpa();
+  const { prefs, update, device, tier } = useMedia();
   const [busy, setBusy] = useState<"mic" | "camera" | "screen" | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const reduceMotion = useReducedMotion();
   const [screenSupported, setScreenSupported] = useState(false);
   useEffect(() => setScreenSupported(supportsScreenShare()), []);
   const canScreen = screenSupported && Boolean(permissions?.canPublishSources?.some((s) => Number(s) === PROTO_SCREEN_SHARE));
@@ -467,7 +550,7 @@ function ControlBar({
     try {
       const next = !isMicrophoneEnabled;
       await localParticipant.setMicrophoneEnabled(next);
-      writeMediaPrefs({ mic: next, camera: isCameraEnabled });
+      writeMediaPrefs({ mic: next });
     } catch {
       // Error perangkat ditangani onMediaDeviceFailure di LiveKitRoom.
     } finally {
@@ -478,8 +561,10 @@ function ControlBar({
     setBusy("camera");
     try {
       const next = !isCameraEnabled;
+      // Menyalakan kamera = keluar dari mode audio saja.
+      if (next && prefs.audioOnly) update({ audioOnly: false });
       await localParticipant.setCameraEnabled(next);
-      writeMediaPrefs({ mic: isMicrophoneEnabled, camera: next });
+      writeMediaPrefs({ camera: next });
     } catch {
       // idem
     } finally {
@@ -489,7 +574,13 @@ function ControlBar({
   const toggleScreen = async () => {
     setBusy("screen");
     try {
-      await localParticipant.setScreenShareEnabled(!isScreenShareEnabled, { audio: true, selfBrowserSurface: "exclude" });
+      const s = publishPolicy(prefs.quality, device, tier.maxCameraHeight, tier.maxScreenHeight).screen;
+      await localParticipant.setScreenShareEnabled(!isScreenShareEnabled, {
+        audio: true,
+        selfBrowserSurface: "exclude",
+        resolution: { width: s.width, height: s.height, frameRate: s.fps },
+        contentHint: "detail",
+      });
     } catch {
       // Pengguna membatalkan dialog pilih layar — bukan error.
     } finally {
@@ -506,150 +597,135 @@ function ControlBar({
     }
   };
   const close = () => setMenuOpen(false);
-  // Unmount LiveKitRoom (di JumpaApp) memutus koneksi & melepas kamera/mic.
-  const leave = () => onLeave();
 
   return (
-    <div className="relative pb-[max(12px,env(safe-area-inset-bottom))] pl-[max(12px,env(safe-area-inset-left))] pr-[max(12px,env(safe-area-inset-right))] pt-3 sm:px-6">
-      <AnimatePresence>
-        {menuOpen && (
-          <>
-            <motion.button
-              type="button"
-              aria-label="Tutup menu"
-              className="fixed inset-0 z-20 cursor-default"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={close}
-            />
-            <motion.div
-              role="menu"
-              aria-label="Menu lainnya"
-              initial={reduceMotion ? false : { opacity: 0, y: 16, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 16, scale: 0.98 }}
-              transition={{ duration: 0.2, ease: EASE }}
-              className="jumpa-glass absolute inset-x-3 bottom-full z-30 mb-2 max-h-[70dvh] overflow-y-auto rounded-3xl p-2 sm:left-auto sm:right-6 sm:w-80"
-            >
-              <div className="flex justify-between gap-1 px-2 pb-2 pt-1" role="group" aria-label="Kirim reaksi">
-                {(Object.keys(REACTION_ICONS) as JumpaReaction[]).map((r) => (
-                  <button key={r} type="button" className="jumpa-react-btn" data-r={r} aria-label={`Reaksi ${REACTION_ICONS[r].label}`} onClick={() => react(r)}>
-                    {REACTION_ICONS[r].icon(22)}
-                  </button>
-                ))}
-              </div>
-              <div className="my-1 h-px bg-[var(--jp-line)]" />
-              {canScreen && !wide && (
-                <button type="button" role="menuitem" className="jumpa-menu-item" disabled={busy === "screen"} onClick={() => { close(); void toggleScreen(); }}>
-                  <MonitorUp size={20} className={isScreenShareEnabled ? "text-[var(--jp-accent)]" : undefined} />
-                  {isScreenShareEnabled ? "Hentikan berbagi layar" : "Bagikan layar"}
+    <div className="jumpa-dock-wrap">
+      {menuOpen && (
+        <>
+          <button type="button" aria-label="Tutup menu" className="fixed inset-0 z-20 cursor-default" onClick={close} />
+          <div role="menu" aria-label="Menu lainnya" className="jumpa-menu jumpa-in-up">
+            <div className="flex justify-between gap-1 px-2 pb-2 pt-1" role="group" aria-label="Kirim reaksi">
+              {(Object.keys(REACTION_ICONS) as JumpaReaction[]).map((r) => (
+                <button key={r} type="button" className="jumpa-react-btn" data-r={r} aria-label={`Reaksi ${REACTION_ICONS[r].label}`} onClick={() => react(r)}>
+                  {REACTION_ICONS[r].icon(22)}
                 </button>
-              )}
-              {canInvite && (
-                <button type="button" role="menuitem" className="jumpa-menu-item" onClick={() => { openPanel("invite"); close(); }}>
-                  <UserPlus size={20} /> Undang peserta
-                </button>
-              )}
-              <button type="button" role="menuitem" className="jumpa-menu-item" onClick={copyLink}>
-                {copied ? <Check size={20} className="text-[var(--jp-accent)]" /> : <Link2 size={20} />}
-                {copied ? "Tautan tersalin" : "Salin tautan ruang"}
+              ))}
+            </div>
+            <div className="my-1 h-px bg-[var(--jp-line)]" />
+            {!wide && (
+              <button type="button" role="menuitem" className="jumpa-menu-item" onClick={() => { openPanel("settings"); close(); }}>
+                <Settings2 size={20} /> Pengaturan
               </button>
-              {canLock && (
-                <button
-                  type="button"
-                  role="menuitem"
-                  className="jumpa-menu-item"
-                  onClick={() => {
-                    void moderate(info.isLocked ? "UNLOCK" : "LOCK");
-                    close();
-                  }}
-                >
-                  <Lock size={20} /> {info.isLocked ? "Buka kunci ruang" : "Kunci ruang"}
-                </button>
-              )}
-              <p className="px-4 pb-1 pt-2 text-[11px] font-bold uppercase tracking-[.14em] text-[var(--jp-text-3)]">Tata letak</p>
-              <button type="button" role="menuitemradio" aria-checked={layout === "grid"} className="jumpa-menu-item" onClick={() => { onLayout("grid"); close(); }}>
-                <LayoutGrid size={20} /> Grid — semua sama besar
-                {layout === "grid" && <Check size={18} className="ml-auto" />}
-              </button>
-              <button type="button" role="menuitemradio" aria-checked={layout === "speaker"} className="jumpa-menu-item" onClick={() => { onLayout("speaker"); close(); }}>
-                <Presentation size={20} /> Pembicara — fokus yang bicara
-                {layout === "speaker" && <Check size={18} className="ml-auto" />}
-              </button>
-              <div className="my-1 h-px bg-[var(--jp-line)]" />
-              <button type="button" role="menuitem" className="jumpa-menu-item" onClick={() => { openPanel("report"); close(); }}>
-                <Flag size={20} /> Laporkan masalah
-              </button>
-              {canEnd && (
-                <button
-                  type="button"
-                  role="menuitem"
-                  className="jumpa-menu-item"
-                  data-danger="true"
-                  onClick={async () => {
-                    close();
-                    if (!window.confirm("Akhiri ruang untuk semua peserta?")) return;
-                    const r = await moderate("END");
-                    if (r.ok) toast("Ruang diakhiri.", "ok");
-                  }}
-                >
-                  <PhoneOff size={20} /> Akhiri untuk semua
-                </button>
-              )}
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-
-      <motion.nav
-        aria-label="Kontrol ruang"
-        initial={reduceMotion ? false : { opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, ease: EASE }}
-        className="jumpa-glass jumpa-bar mx-auto flex w-full min-w-0 max-w-lg items-start justify-around rounded-[28px] px-1.5 py-2.5 sm:py-3"
-      >
-        <div className="jumpa-ctl">
-          <button type="button" className="jumpa-round" data-off={!isMicrophoneEnabled} aria-pressed={isMicrophoneEnabled} aria-label={isMicrophoneEnabled ? "Matikan mikrofon" : "Nyalakan mikrofon"} onClick={toggleMic} disabled={busy === "mic"}>
-            {isMicrophoneEnabled ? <Mic size={24} /> : <MicOff size={24} />}
-          </button>
-          <span className="jumpa-ctl-label">Mikrofon</span>
-        </div>
-        <div className="jumpa-ctl">
-          <button type="button" className="jumpa-round" data-off={!isCameraEnabled} aria-pressed={isCameraEnabled} aria-label={isCameraEnabled ? "Matikan kamera" : "Nyalakan kamera"} onClick={toggleCamera} disabled={busy === "camera"}>
-            {isCameraEnabled ? <Video size={24} /> : <VideoOff size={24} />}
-          </button>
-          <span className="jumpa-ctl-label">Kamera</span>
-        </div>
-        {canScreen && wide && (
-          <div className="jumpa-ctl">
-            <button type="button" className="jumpa-round" data-on={isScreenShareEnabled} aria-pressed={isScreenShareEnabled} aria-label={isScreenShareEnabled ? "Hentikan berbagi layar" : "Bagikan layar"} onClick={toggleScreen} disabled={busy === "screen"}>
-              <MonitorUp size={24} />
+            )}
+            <button type="button" role="menuitemcheckbox" aria-checked={prefs.audioOnly} className="jumpa-menu-item" onClick={() => { update({ audioOnly: !prefs.audioOnly }); close(); }}>
+              <AudioWaveform size={20} /> Mode audio saja
+              {prefs.audioOnly && <Check size={18} className="ml-auto" />}
             </button>
-            <span className="jumpa-ctl-label">{isScreenShareEnabled ? "Berhenti" : "Layar"}</span>
+            {canScreen && !wide && (
+              <button type="button" role="menuitem" className="jumpa-menu-item" disabled={busy === "screen"} onClick={() => { close(); void toggleScreen(); }}>
+                <MonitorUp size={20} className={isScreenShareEnabled ? "text-[var(--jp-accent)]" : undefined} />
+                {isScreenShareEnabled ? "Hentikan berbagi layar" : "Bagikan layar"}
+              </button>
+            )}
+            {canInvite && (
+              <button type="button" role="menuitem" className="jumpa-menu-item" onClick={() => { openPanel("invite"); close(); }}>
+                <UserPlus size={20} /> Undang peserta
+              </button>
+            )}
+            <button type="button" role="menuitem" className="jumpa-menu-item" onClick={copyLink}>
+              {copied ? <Check size={20} className="text-[var(--jp-accent)]" /> : <Link2 size={20} />}
+              {copied ? "Tautan tersalin" : "Salin tautan ruang"}
+            </button>
+            {canLock && (
+              <button type="button" role="menuitem" className="jumpa-menu-item" onClick={() => { void moderate(info.isLocked ? "UNLOCK" : "LOCK"); close(); }}>
+                <Lock size={20} /> {info.isLocked ? "Buka kunci ruang" : "Kunci ruang"}
+              </button>
+            )}
+            <p className="px-4 pb-1 pt-2 text-[11px] font-bold uppercase tracking-[.14em] text-[var(--jp-text-3)]">Tata letak</p>
+            <button type="button" role="menuitemradio" aria-checked={layout === "grid"} className="jumpa-menu-item" onClick={() => { onLayout("grid"); close(); }}>
+              <LayoutGrid size={20} /> Grid, semua sama besar
+              {layout === "grid" && <Check size={18} className="ml-auto" />}
+            </button>
+            <button type="button" role="menuitemradio" aria-checked={layout === "speaker"} className="jumpa-menu-item" onClick={() => { onLayout("speaker"); close(); }}>
+              <Presentation size={20} /> Pembicara, fokus yang bicara
+              {layout === "speaker" && <Check size={18} className="ml-auto" />}
+            </button>
+            <div className="my-1 h-px bg-[var(--jp-line)]" />
+            <button type="button" role="menuitem" className="jumpa-menu-item" onClick={() => { openPanel("report"); close(); }}>
+              <Flag size={20} /> Laporkan masalah
+            </button>
+            {canEnd && (
+              <button
+                type="button"
+                role="menuitem"
+                className="jumpa-menu-item"
+                data-danger="true"
+                onClick={async () => {
+                  close();
+                  if (!window.confirm("Akhiri ruang untuk semua peserta?")) return;
+                  const r = await moderate("END");
+                  if (r.ok) toast("Ruang diakhiri.", "ok");
+                }}
+              >
+                <PhoneOff size={20} /> Akhiri untuk semua
+              </button>
+            )}
           </div>
-        )}
-        <div className="jumpa-ctl">
-          <button type="button" className="jumpa-round" data-on={myHand} data-tone="hand" aria-pressed={myHand} aria-label={myHand ? "Turunkan tangan" : "Angkat tangan"} onClick={toggleHand}>
-            <motion.span animate={myHand && !reduceMotion ? { rotate: [0, -14, 10, -6, 0] } : { rotate: 0 }} transition={{ duration: 0.6 }} className="grid place-items-center">
-              <Hand size={24} />
-            </motion.span>
-          </button>
-          <span className="jumpa-ctl-label">Tangan</span>
+        </>
+      )}
+
+      <nav aria-label="Kontrol ruang" className="jumpa-dock jumpa-in-up">
+        <div className="jumpa-dock-group">
+          <MicKey on={isMicrophoneEnabled} busy={busy === "mic"} onToggle={toggleMic} />
+          <div className="jumpa-ctl">
+            <button type="button" className="jumpa-key" data-off={!isCameraEnabled} aria-pressed={isCameraEnabled} aria-label={isCameraEnabled ? "Matikan kamera" : "Nyalakan kamera"} onClick={toggleCamera} disabled={busy === "camera"}>
+              {isCameraEnabled ? <Video size={22} /> : <VideoOff size={22} />}
+            </button>
+            <span className="jumpa-ctl-label">{isCameraEnabled ? "Kamera" : prefs.audioOnly ? "Audio saja" : "Kamera mati"}</span>
+          </div>
         </div>
-        <div className="jumpa-ctl">
-          <button type="button" className="jumpa-round" aria-haspopup="menu" aria-expanded={menuOpen} aria-label="Lainnya" onClick={() => setMenuOpen((v) => !v)}>
-            <MoreHorizontal size={24} />
-          </button>
-          <span className="jumpa-ctl-label">Lainnya</span>
+        {wide && <span className="jumpa-dock-sep" aria-hidden />}
+        <div className="jumpa-dock-group">
+          {canScreen && wide && (
+            <div className="jumpa-ctl">
+              <button type="button" className="jumpa-key" data-on={isScreenShareEnabled} aria-pressed={isScreenShareEnabled} aria-label={isScreenShareEnabled ? "Hentikan berbagi layar" : "Bagikan layar"} onClick={toggleScreen} disabled={busy === "screen"}>
+                <MonitorUp size={22} />
+              </button>
+              <span className="jumpa-ctl-label">{isScreenShareEnabled ? "Berhenti" : "Layar"}</span>
+            </div>
+          )}
+          <div className="jumpa-ctl">
+            <button type="button" className="jumpa-key" data-on={myHand} data-tone="hand" aria-pressed={myHand} aria-label={myHand ? "Turunkan tangan" : "Angkat tangan"} onClick={toggleHand}>
+              <span className="grid place-items-center" data-wave={myHand}>
+                <Hand size={22} />
+              </span>
+            </button>
+            <span className="jumpa-ctl-label">Tangan</span>
+          </div>
+          {wide && (
+            <div className="jumpa-ctl">
+              <button type="button" className="jumpa-key" data-on={panel === "settings"} aria-pressed={panel === "settings"} aria-label="Pengaturan" onClick={() => openPanel(panel === "settings" ? null : "settings")}>
+                <Settings2 size={22} />
+              </button>
+              <span className="jumpa-ctl-label">Pengaturan</span>
+            </div>
+          )}
+          <div className="jumpa-ctl">
+            <button type="button" className="jumpa-key" aria-haspopup="menu" aria-expanded={menuOpen} aria-label="Lainnya" onClick={() => setMenuOpen((v) => !v)}>
+              <MoreHorizontal size={22} />
+            </button>
+            <span className="jumpa-ctl-label">Lainnya</span>
+          </div>
         </div>
-        <div className="jumpa-ctl">
-          <button type="button" className="jumpa-round" data-variant="leave" aria-label="Keluar dari ruang" onClick={leave}>
-            <PhoneOff size={24} />
+        {wide && <span className="jumpa-dock-sep" aria-hidden />}
+        <div className="jumpa-ctl jumpa-ctl-leave">
+          <button type="button" className="jumpa-key" data-variant="leave" aria-label="Keluar dari ruang" onClick={onLeave}>
+            <PhoneOff size={22} />
+            {wide && <span className="jumpa-leave-text">Keluar</span>}
           </button>
           <span className="jumpa-ctl-label">Keluar</span>
         </div>
-      </motion.nav>
+      </nav>
     </div>
   );
 }
