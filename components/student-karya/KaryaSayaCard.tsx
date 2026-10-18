@@ -39,21 +39,21 @@ export default function KaryaSayaCard() {
   return (
     <section
       id="karya-saya"
-      className="scroll-mt-24 rounded-2xl border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 md:p-6"
+      className="scroll-mt-24 rounded-2xl border border-bc-line bg-bc-surface p-5 md:p-6"
     >
       <div className="flex flex-wrap items-center gap-4">
         <div className="flex-1 min-w-[220px]">
-          <h2 className="flex items-center gap-2 text-base font-extrabold text-gray-900 dark:text-white">
+          <h2 className="flex items-center gap-2 text-base font-extrabold text-bc-text">
             <FileText size={17} className="text-violet-500 dark:text-violet-300" />
             Karya Saya
           </h2>
           {karya === null ? (
-            <p className="mt-1.5 flex items-center gap-1.5 text-xs text-gray-400 dark:text-slate-500">
+            <p className="mt-1.5 flex items-center gap-1.5 text-xs text-bc-text-3">
               <Loader2 size={12} className="animate-spin" /> Memuat karya...
             </p>
           ) : (
-            <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-gray-500 dark:text-slate-400">
-              <span className="inline-flex items-center gap-1 font-semibold text-gray-700 dark:text-slate-200">
+            <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-bc-text-3">
+              <span className="inline-flex items-center gap-1 font-semibold text-bc-text-2">
                 <FileText size={12} /> {total} karya
               </span>
               <span className="inline-flex items-center gap-1">
@@ -73,7 +73,7 @@ export default function KaryaSayaCard() {
         <div className="flex items-center gap-2.5">
           <a
             href="#jelajahi-karya"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-bold text-gray-700 transition-all hover:bg-gray-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-bc-line px-4 py-2.5 text-sm font-bold text-bc-text-2 transition-all hover:bg-bc-surface-2"
           >
             Lihat Karya Saya
           </a>

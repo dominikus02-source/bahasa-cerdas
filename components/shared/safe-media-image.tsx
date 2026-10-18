@@ -22,11 +22,11 @@ const FALLBACK_CONFIG: Record<FallbackType, {
   labelClass: string;
 }> = {
   article: {
-    bg: "bg-gradient-to-br from-indigo-50 to-indigo-100",
-    icon: <FileText className="w-6 h-6 text-indigo-400" />,
+    bg: "bg-bc-tint",
+    icon: <FileText className="w-6 h-6 text-bc-violet" />,
     label: "Artikel",
-    iconBg: "bg-indigo-100",
-    labelClass: "text-indigo-400/70",
+    iconBg: "bg-bc-violet-soft",
+    labelClass: "text-bc-text-3",
   },
   video: {
     bg: "bg-gradient-to-br from-indigo-950 to-indigo-900",
@@ -36,11 +36,11 @@ const FALLBACK_CONFIG: Record<FallbackType, {
     labelClass: "text-indigo-400/70",
   },
   default: {
-    bg: "bg-gradient-to-br from-slate-100 to-slate-200",
-    icon: <ImageIcon className="w-6 h-6 text-slate-400" />,
+    bg: "bg-bc-surface-2",
+    icon: <ImageIcon className="w-6 h-6 text-bc-text-3" />,
     label: "Gambar",
-    iconBg: "bg-slate-300/50",
-    labelClass: "text-slate-400",
+    iconBg: "bg-bc-line",
+    labelClass: "text-bc-text-3",
   },
 };
 

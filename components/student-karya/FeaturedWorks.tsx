@@ -60,8 +60,8 @@ export default function FeaturedWorks() {
           <Star size={15} />
         </span>
         <div>
-          <h2 className="text-base font-extrabold text-gray-900 dark:text-white">Karya Unggulan</h2>
-          <p className="text-xs text-gray-500 dark:text-slate-400">Karya yang paling banyak diapresiasi.</p>
+          <h2 className="text-base font-extrabold text-bc-text">Karya Unggulan</h2>
+          <p className="text-xs text-bc-text-3">Karya yang paling banyak diapresiasi.</p>
         </div>
       </div>
 
@@ -70,12 +70,12 @@ export default function FeaturedWorks() {
           {[0, 1].map((i) => (
             <div
               key={i}
-              className="animate-pulse rounded-2xl border border-gray-100 bg-white p-5 dark:border-slate-800 dark:bg-slate-900"
+              className="animate-pulse rounded-2xl border border-bc-line bg-bc-surface p-5"
             >
-              <div className="mb-3 h-4 w-24 rounded-full bg-gray-100 dark:bg-slate-800" />
-              <div className="mb-2 h-5 w-3/4 rounded-lg bg-gray-100 dark:bg-slate-800" />
-              <div className="mb-1.5 h-3 w-full rounded bg-gray-100 dark:bg-slate-800" />
-              <div className="h-3 w-2/3 rounded bg-gray-100 dark:bg-slate-800" />
+              <div className="mb-3 h-4 w-24 rounded-full bg-bc-surface-2" />
+              <div className="mb-2 h-5 w-3/4 rounded-lg bg-bc-surface-2" />
+              <div className="mb-1.5 h-3 w-full rounded bg-bc-surface-2" />
+              <div className="h-3 w-2/3 rounded bg-bc-surface-2" />
             </div>
           ))}
         </div>
@@ -113,10 +113,10 @@ export default function FeaturedWorks() {
                       <Star size={10} fill="currentColor" /> Unggulan
                     </span>
                   </div>
-                  <h3 className="text-[17px] font-extrabold leading-snug text-gray-900 transition-colors line-clamp-2 group-hover:text-violet-700 dark:text-slate-100 dark:group-hover:text-violet-300">
+                  <h3 className="text-[17px] font-extrabold leading-snug text-bc-text transition-colors line-clamp-2 group-hover:text-violet-700 dark:group-hover:text-violet-300">
                     {k.title}
                   </h3>
-                  <p className="mt-1.5 text-[13px] leading-relaxed text-gray-500 line-clamp-2 dark:text-slate-400">
+                  <p className="mt-1.5 text-[13px] leading-relaxed text-bc-text-3 line-clamp-2">
                     {k.excerpt || k.content?.slice(0, 160) || ""}
                   </p>
                 </Link>
@@ -127,14 +127,14 @@ export default function FeaturedWorks() {
                     </span>
                     <UserName
                       name={k.user.displayName || k.user.fullName}
-                      className="truncate text-xs font-semibold text-gray-700 dark:text-slate-200"
+                      className="truncate text-xs font-semibold text-bc-text-2"
                       isFounder={k.user.isFounder}
                       isPremium={k.user.isPremium}
                       badgeKind={k.user.badgeKind}
                       verifiedSize={13}
                     />
                   </Link>
-                  <span className="ml-auto flex items-center gap-2.5 text-[12px] text-gray-400 dark:text-slate-500">
+                  <span className="ml-auto flex items-center gap-2.5 text-[12px] text-bc-text-3">
                     <span className="flex items-center gap-1">
                       <Heart size={12} className="text-rose-400" /> {k._count?.likes ?? k.likesCount ?? 0}
                     </span>

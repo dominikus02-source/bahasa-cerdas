@@ -149,47 +149,47 @@ function TulisKaryaForm() {
     <div className="max-w-3xl mx-auto">
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/murid/beranda" className="p-2 hover:bg-gray-100 dark:bg-slate-800/80 rounded-xl transition-colors">
-          <ArrowLeft size={20} className="text-gray-600 dark:text-slate-300" />
+        <Link href="/murid/beranda" className="p-2 hover:bg-bc-surface-2 dark:bg-slate-800/80 rounded-xl transition-colors">
+          <ArrowLeft size={20} className="text-bc-text-2" />
         </Link>
         <div>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-slate-100">Tulis Karya</h1>
-          <p className="text-sm text-gray-500 dark:text-slate-400">Bagikan karyamu dengan seluruh Indonesia</p>
+          <h1 className="text-xl font-bold text-bc-text">Tulis Karya</h1>
+          <p className="text-sm text-bc-text-3">Bagikan karyamu dengan seluruh Indonesia</p>
         </div>
       </div>
 
       {/* Pilih jenis karya */}
-      <section className="mb-5 rounded-3xl border border-slate-200/80 bg-gradient-to-br from-sky-50 via-white to-violet-50 p-5 shadow-sm dark:border-slate-800 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/40 md:p-6">
+      <section className="mb-5 rounded-3xl border border-bc-line/80 bg-gradient-to-br from-sky-50 via-white to-violet-50 p-5 shadow-sm dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/40 md:p-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl">
-            <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1.5 text-xs font-bold text-violet-700 shadow-sm dark:bg-slate-800 dark:text-violet-300">
+            <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-bc-surface/80 px-3 py-1.5 text-xs font-bold text-violet-700 shadow-sm dark:text-violet-300">
               <Sparkles size={14} /> Studio Berkarya
             </div>
-            <h2 className="text-xl font-extrabold text-slate-900 dark:text-slate-100">Mau menulis apa hari ini?</h2>
-            <p className="mt-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300">Pilih jenis karya. Setelah dipilih, kamu langsung mendapat materi singkat dan contoh sebelum mulai menulis.</p>
+            <h2 className="text-xl font-extrabold text-bc-text">Mau menulis apa hari ini?</h2>
+            <p className="mt-1 text-sm leading-relaxed text-bc-text-2">Pilih jenis karya. Setelah dipilih, kamu langsung mendapat materi singkat dan contoh sebelum mulai menulis.</p>
           </div>
 
           <div className="relative w-full md:w-[380px]">
-            <p className="mb-2 text-xs font-bold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">Jenis karya</p>
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.14em] text-bc-text-3">Jenis karya</p>
             <button
               type="button"
               aria-haspopup="listbox"
               aria-expanded={openTypeMenu}
               onClick={() => setOpenTypeMenu((value) => !value)}
-              className={`flex w-full items-center gap-3 rounded-2xl border-2 bg-white px-4 py-3.5 text-left shadow-sm transition-all dark:bg-slate-800 ${openTypeMenu ? `${TYPE_STYLES[type]?.border || "border-violet-500"} ring-4 ring-violet-100 dark:ring-violet-950/40` : "border-slate-200 dark:border-slate-700"}`}
+              className={`flex w-full items-center gap-3 rounded-2xl border-2 bg-bc-surface px-4 py-3.5 text-left shadow-sm transition-all ${openTypeMenu ? `${TYPE_STYLES[type]?.border || "border-violet-500"} ring-4 ring-violet-100 dark:ring-violet-950/40` : "border-bc-line"}`}
             >
               <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${TYPE_STYLES[type]?.bg || "bg-violet-50"} ${TYPE_STYLES[type]?.text || "text-violet-600"}`}>
                 <selected.icon size={20} />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block text-sm font-extrabold text-slate-900 dark:text-slate-100">{TYPES.find((t) => t.value === type)?.label}</span>
-                <span className="block truncate text-xs text-slate-500 dark:text-slate-400">{TYPES.find((t) => t.value === type)?.desc}</span>
+                <span className="block text-sm font-extrabold text-bc-text">{TYPES.find((t) => t.value === type)?.label}</span>
+                <span className="block truncate text-xs text-bc-text-3">{TYPES.find((t) => t.value === type)?.desc}</span>
               </span>
-              <ChevronDown size={18} className={`shrink-0 text-slate-400 transition-transform ${openTypeMenu ? "rotate-180" : ""}`} />
+              <ChevronDown size={18} className={`shrink-0 text-bc-text-3 transition-transform ${openTypeMenu ? "rotate-180" : ""}`} />
             </button>
 
             {openTypeMenu && (
-              <div className="absolute left-0 right-0 z-30 mt-2 max-h-[min(420px,65vh)] overflow-y-auto rounded-2xl border border-slate-200 bg-white p-2 shadow-2xl dark:border-slate-700 dark:bg-slate-900">
+              <div className="absolute left-0 right-0 z-30 mt-2 max-h-[min(420px,65vh)] overflow-y-auto rounded-2xl border border-bc-line bg-bc-surface p-2 shadow-2xl">
                 {TYPES.map((item) => {
                   const itemStyle = TYPE_STYLES[item.value];
                   const Icon = item.icon;
@@ -200,14 +200,14 @@ function TulisKaryaForm() {
                       role="option"
                       aria-selected={item.value === type}
                       onClick={() => { setType(item.value); setOpenTypeMenu(false); setError(""); }}
-                      className={`flex w-full items-center gap-3 rounded-xl p-3 text-left transition-colors ${item.value === type ? itemStyle.bg : "hover:bg-slate-50 dark:hover:bg-slate-800"}`}
+                      className={`flex w-full items-center gap-3 rounded-xl p-3 text-left transition-colors ${item.value === type ? itemStyle.bg : "hover:bg-bc-surface-2"}`}
                     >
                       <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${itemStyle.bg} ${itemStyle.text}`}>
                         <Icon size={18} />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block text-sm font-bold text-slate-900 dark:text-slate-100">{item.label}</span>
-                        <span className="block text-xs text-slate-500 dark:text-slate-400">{item.desc}</span>
+                        <span className="block text-sm font-bold text-bc-text">{item.label}</span>
+                        <span className="block text-xs text-bc-text-3">{item.desc}</span>
                       </span>
                       {item.value === type && <span className={`text-xs font-bold ${itemStyle.text}`}>Dipilih</span>}
                     </button>
@@ -224,31 +224,31 @@ function TulisKaryaForm() {
         const guide = TYPE_GUIDES[type];
         const guideStyle = TYPE_STYLES[type] || TYPE_STYLES.PUISI;
         return (
-          <section className={`mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900`}>
-            <div className={`border-b border-slate-200/70 p-5 dark:border-slate-800 md:p-6 ${guideStyle.bg}`}>
+          <section className={`mb-6 overflow-hidden rounded-3xl border border-bc-line bg-bc-surface shadow-sm`}>
+            <div className={`border-b border-bc-line/70 p-5 md:p-6 ${guideStyle.bg}`}>
               <div className="flex items-start gap-3">
                 <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${guideStyle.gradient} text-white shadow-lg`}>
                   <selected.icon size={22} />
                 </div>
                 <div>
-                  <div className="mb-1 inline-flex items-center gap-2 rounded-full bg-white/80 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-600 dark:bg-slate-800/80 dark:text-slate-300">
+                  <div className="mb-1 inline-flex items-center gap-2 rounded-full bg-bc-surface/80 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.14em] text-bc-text-2">
                     <Sparkles size={11} /> Belajar 60 detik
                   </div>
-                  <h2 className="text-xl font-extrabold text-slate-900 dark:text-slate-100">{TYPES.find((t) => t.value === type)?.label}</h2>
-                  <p className="mt-1 max-w-3xl text-sm leading-relaxed text-slate-600 dark:text-slate-300">{guide.intro}</p>
+                  <h2 className="text-xl font-extrabold text-bc-text">{TYPES.find((t) => t.value === type)?.label}</h2>
+                  <p className="mt-1 max-w-3xl text-sm leading-relaxed text-bc-text-2">{guide.intro}</p>
                 </div>
               </div>
             </div>
 
             <div className="grid gap-4 p-5 md:grid-cols-[1.1fr_.9fr] md:p-6">
               <div>
-                <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.14em] text-slate-400">Yang perlu kamu ingat</p>
+                <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.14em] text-bc-text-3">Yang perlu kamu ingat</p>
                 <div className="grid gap-2 sm:grid-cols-2">
                   {guide.points.map((point) => (
-                    <div key={point} className="rounded-2xl border border-slate-100 bg-slate-50/80 p-3 dark:border-slate-800 dark:bg-slate-800/60">
+                    <div key={point} className="rounded-2xl border border-bc-line bg-bc-surface-2/80 p-3">
                       <div className="flex gap-2">
                         <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${guideStyle.bg} ${guideStyle.text}`}><Sparkles size={10} /></span>
-                        <p className="text-xs font-medium leading-relaxed text-slate-700 dark:text-slate-300">{point}</p>
+                        <p className="text-xs font-medium leading-relaxed text-bc-text-2">{point}</p>
                       </div>
                     </div>
                   ))}
@@ -259,9 +259,9 @@ function TulisKaryaForm() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800/60">
-                <div className="mb-2 flex items-center gap-2"><Lightbulb size={16} className="text-amber-500" /><p className="text-sm font-extrabold text-slate-900 dark:text-slate-100">Contoh singkat</p></div>
-                <p className="whitespace-pre-line text-sm italic leading-7 text-slate-600 dark:text-slate-300">“{guide.example}”</p>
+              <div className="rounded-2xl border border-bc-line bg-bc-surface p-4">
+                <div className="mb-2 flex items-center gap-2"><Lightbulb size={16} className="text-amber-500" /><p className="text-sm font-extrabold text-bc-text">Contoh singkat</p></div>
+                <p className="whitespace-pre-line text-sm italic leading-7 text-bc-text-2">“{guide.example}”</p>
               </div>
             </div>
           </section>
@@ -273,7 +273,7 @@ function TulisKaryaForm() {
         <input
           value={title} onChange={e => setTitle(e.target.value)}
           placeholder="Judul karyamu..."
-          className="w-full px-5 py-4 bg-white dark:bg-slate-800/90 rounded-2xl border border-gray-200 dark:border-slate-700 text-lg font-bold text-gray-900 dark:text-slate-100 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition-all"
+          className="w-full px-5 py-4 bg-bc-surface rounded-2xl border border-bc-line text-lg font-bold text-bc-text placeholder:text-bc-text-3 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition-all"
         />
       </div>
 
@@ -283,7 +283,7 @@ function TulisKaryaForm() {
           value={content} onChange={e => setContent(e.target.value)}
           placeholder={type === "PUISI" ? "Tulis puisimu di sini...\n\nSetiap bait,\npenuh makna..." : type === "PANTUN" ? "Tulis pantunmu di sini...\n\nBaris 1: sampiran\nBaris 2: sampiran\nBaris 3: isi\nBaris 4: isi" : "Tulis karyamu di sini..."}
           rows={15}
-          className="w-full px-5 py-4 bg-white dark:bg-slate-800/90 rounded-2xl border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-300 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition-all resize-y font-[inherit] leading-relaxed"
+          className="w-full px-5 py-4 bg-bc-surface rounded-2xl border border-bc-line text-bc-text-2 placeholder:text-bc-text-3 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition-all resize-y font-[inherit] leading-relaxed"
         />
       </div>
 
@@ -297,7 +297,7 @@ function TulisKaryaForm() {
           onChange={e => { const f = e.target.files?.[0]; if (f) handleUploadCover(f); e.target.value = ""; }}
         />
         {coverImage ? (
-          <div className="relative rounded-xl overflow-hidden border border-gray-200 dark:border-slate-700 max-w-xs">
+          <div className="relative rounded-xl overflow-hidden border border-bc-line max-w-xs">
             <img src={coverImage} alt="Foto sampul" className="w-full aspect-video object-cover" />
             <button
               type="button"
@@ -312,12 +312,12 @@ function TulisKaryaForm() {
             <div className="flex gap-2 mb-2">
               <button type="button" onClick={() => setCoverMode("upload")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  coverMode === "upload" ? "bg-violet-600 text-white" : "bg-gray-100 dark:bg-slate-800/80 text-gray-500 hover:bg-gray-200"
+                  coverMode === "upload" ? "bg-violet-600 text-white" : "bg-bc-surface-2 text-bc-text-3 hover:bg-gray-200"
                 }`}
               ><Upload size={12} className="inline mr-1" />Upload</button>
               <button type="button" onClick={() => setCoverMode("link")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  coverMode === "link" ? "bg-violet-600 text-white" : "bg-gray-100 dark:bg-slate-800/80 text-gray-500 hover:bg-gray-200"
+                  coverMode === "link" ? "bg-violet-600 text-white" : "bg-bc-surface-2 text-bc-text-3 hover:bg-gray-200"
                 }`}
               ><Link2 size={12} className="inline mr-1" />Link</button>
             </div>
@@ -326,7 +326,7 @@ function TulisKaryaForm() {
                 type="button"
                 onClick={() => fileRef.current?.click()}
                 disabled={uploading}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-gray-200 dark:border-slate-700 text-gray-500 hover:border-violet-300 hover:text-violet-600 transition-colors disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-bc-line text-bc-text-3 hover:border-violet-300 hover:text-violet-600 transition-colors disabled:opacity-50"
               >
                 {uploading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
                 {uploading ? "Mengunggah foto..." : "Unggah Foto Sampul (opsional)"}
@@ -337,7 +337,7 @@ function TulisKaryaForm() {
                   value={coverLinkUrl}
                   onChange={e => setCoverLinkUrl(e.target.value)}
                   placeholder="https://example.com/gambar.jpg"
-                  className="flex-1 px-4 py-2.5 bg-white dark:bg-slate-800/90 rounded-xl border border-gray-200 dark:border-slate-700 text-sm text-gray-700 dark:text-slate-300 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition-all"
+                  className="flex-1 px-4 py-2.5 bg-bc-surface rounded-xl border border-bc-line text-sm text-bc-text-2 placeholder:text-bc-text-3 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition-all"
                   onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); setCoverFromLink(); } }}
                 />
                 <button type="button" onClick={setCoverFromLink} disabled={!coverLinkUrl.trim()}
@@ -351,7 +351,7 @@ function TulisKaryaForm() {
 
       {/* Foto Pendukung (mis. foto wawancara, opsional, maks 6) */}
       <div className="mb-6">
-        <p className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wide mb-2">
+        <p className="text-xs font-semibold text-bc-text-3 uppercase tracking-wide mb-2">
           Foto Pendukung (opsional)
         </p>
         <input
@@ -365,7 +365,7 @@ function TulisKaryaForm() {
         {photos.length > 0 && (
           <div className="grid grid-cols-3 gap-2 mb-2">
             {photos.map(url => (
-              <div key={url} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 dark:border-slate-700 group">
+              <div key={url} className="relative aspect-square rounded-lg overflow-hidden border border-bc-line group">
                 <img src={url} alt="Foto pendukung" className="w-full h-full object-cover" />
                 <button
                   type="button"
@@ -383,12 +383,12 @@ function TulisKaryaForm() {
             <div className="flex gap-2 mb-2">
               <button type="button" onClick={() => setPhotoMode("upload")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  photoMode === "upload" ? "bg-violet-600 text-white" : "bg-gray-100 dark:bg-slate-800/80 text-gray-500 hover:bg-gray-200"
+                  photoMode === "upload" ? "bg-violet-600 text-white" : "bg-bc-surface-2 text-bc-text-3 hover:bg-gray-200"
                 }`}
               ><Upload size={12} className="inline mr-1" />Upload</button>
               <button type="button" onClick={() => setPhotoMode("link")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  photoMode === "link" ? "bg-violet-600 text-white" : "bg-gray-100 dark:bg-slate-800/80 text-gray-500 hover:bg-gray-200"
+                  photoMode === "link" ? "bg-violet-600 text-white" : "bg-bc-surface-2 text-bc-text-3 hover:bg-gray-200"
                 }`}
               ><Link2 size={12} className="inline mr-1" />Link</button>
             </div>
@@ -397,7 +397,7 @@ function TulisKaryaForm() {
                 type="button"
                 onClick={() => photosRef.current?.click()}
                 disabled={uploadingPhotos}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-gray-200 dark:border-slate-700 text-gray-500 hover:border-violet-300 hover:text-violet-600 transition-colors disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-bc-line text-bc-text-3 hover:border-violet-300 hover:text-violet-600 transition-colors disabled:opacity-50"
               >
                 {uploadingPhotos ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
                 {uploadingPhotos ? "Mengunggah foto..." : `Tambah Foto (${photos.length}/6)`}
@@ -408,7 +408,7 @@ function TulisKaryaForm() {
                   value={photoLinkUrl}
                   onChange={e => setPhotoLinkUrl(e.target.value)}
                   placeholder="https://example.com/gambar.jpg"
-                  className="flex-1 px-4 py-2.5 bg-white dark:bg-slate-800/90 rounded-xl border border-gray-200 dark:border-slate-700 text-sm text-gray-700 dark:text-slate-300 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition-all"
+                  className="flex-1 px-4 py-2.5 bg-bc-surface rounded-xl border border-bc-line text-sm text-bc-text-2 placeholder:text-bc-text-3 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition-all"
                   onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); addPhotoLink(); } }}
                 />
                 <button type="button" onClick={addPhotoLink} disabled={!photoLinkUrl.trim() || photos.length >= 6}
@@ -418,7 +418,7 @@ function TulisKaryaForm() {
             )}
           </>
         )}
-        <p className="text-xs text-gray-400 mt-2">Upload atau tempel link gambar (mis. dari wawancara untuk artikelmu).</p>
+        <p className="text-xs text-bc-text-3 mt-2">Upload atau tempel link gambar (mis. dari wawancara untuk artikelmu).</p>
       </div>
 
       {/* Error */}
@@ -438,7 +438,7 @@ function TulisKaryaForm() {
         {submitting ? "Menyimpan..." : "Terbitkan Karya"}
       </button>
 
-      <p className="text-center text-xs text-gray-400 mt-3">
+      <p className="text-center text-xs text-bc-text-3 mt-3">
         Dengan menerbitkan, kamu setuju karyamu tampil di feed BahasaCerdas
       </p>
     </div>
@@ -449,7 +449,7 @@ export default function TulisKaryaPage() {
   return (
     <Suspense
       fallback={
-        <div className="py-16 text-center text-gray-400 flex justify-center">
+        <div className="py-16 text-center text-bc-text-3 flex justify-center">
           <Loader2 size={24} className="animate-spin" />
         </div>
       }
