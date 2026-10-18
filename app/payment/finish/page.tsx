@@ -1,19 +1,42 @@
 import { CheckCircle, XCircle, ShoppingBag, ArrowLeft, Crown } from "lucide-react"
 import Link from "next/link"
+import { getUser } from "@/lib/supabase/server"
+import { reconcileMidtransOrder } from "@/lib/payments/midtrans-reconcile"
 
+export const dynamic = "force-dynamic"
+
+const ORDER_ID_RE = /^[A-Za-z0-9._~-]{4,64}$/
+
+/**
+ * Snap redirect target (callbacks.finish). The query string is NOT trusted:
+ * we ask Midtrans for the real status server-side and activate idempotently
+ * via the same processor as the webhook, then render the verified result.
+ */
 export default async function PaymentFinishPage({
   searchParams,
 }: {
   searchParams: Promise<{ order_id?: string; transaction_status?: string; status_code?: string }>
 }) {
-  const { order_id, transaction_status } = await searchParams
+  const { order_id } = await searchParams
 
-  const isSuccess = transaction_status === "settlement" || transaction_status === "capture"
-  const isPending = transaction_status === "pending"
-  const isFailed =
-    transaction_status === "deny" ||
-    transaction_status === "cancel" ||
-    transaction_status === "expire"
+  let verified: string = "PENDING"
+  if (order_id && ORDER_ID_RE.test(order_id)) {
+    try {
+      const user: any = await getUser().catch(() => null)
+      if (user) {
+        const outcome = await reconcileMidtransOrder(order_id, {
+          userId: user.id,
+          allowAnyOwner: user.role === "ADMIN" || user.isFounder === true,
+        })
+        verified = outcome.ok ? outcome.status : "PENDING"
+      }
+    } catch (err) {
+      console.error("[PaymentFinish] reconcile failed", { order_id, message: (err as Error)?.message })
+    }
+  }
+
+  const isSuccess = verified === "SUCCESS"
+  const isPending = verified === "PENDING" || verified === "NOT_FOUND"
 
   // Determine context from order_id prefix
   const isGuruPro = order_id?.startsWith("PM-")

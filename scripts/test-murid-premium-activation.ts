@@ -55,7 +55,8 @@ function assertNotContains(filePath: string, pattern: string, label: string) {
 async function main() {
   console.log(`\n${YELLOW}=== Student Premium Activation — Regression Tests ===${RESET}\n`);
 
-  const webhookPath = "app/api/payment/webhook/route.ts";
+  // Activation logic lives in the shared processor (webhook + reconcile).
+  const webhookPath = "lib/payments/midtrans-notification.ts";
   const manualPath = "app/api/admin/payments/manual-activate/route.ts";
   const checkoutPath = "app/api/billing/checkout/route.ts";
   const plansPath = "lib/billing/plans.ts";
@@ -154,9 +155,10 @@ async function main() {
 
   // ── 9. Signature Verification ──
   console.log(`\n${YELLOW}--- 9. Security ---${RESET}`);
-  assertContains(webhookPath, "verifyMidtransNotification", "Webhook verifies Midtrans signature");
-  assertContains(webhookPath, "sha512", "Webhook uses SHA512 for signature");
-  assertContains(webhookPath, "serverKey", "Webhook uses server key for verification");
+  // Signature check lives in the route; the formula in lib/payments/midtrans-server.ts.
+  assertContains("app/api/payment/webhook/route.ts", "verifyMidtransSignature(", "Webhook verifies Midtrans signature");
+  assertContains("lib/payments/midtrans-server.ts", "sha512", "Webhook uses SHA512 for signature");
+  assertContains("lib/payments/midtrans-server.ts", "serverKey", "Webhook uses server key for verification");
   assertContains(webhookPath, 'grossAmount !== transaksi.amount', "Webhook validates amount");
 
   // ── 10. Plan Resolution ──

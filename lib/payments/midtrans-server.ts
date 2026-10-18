@@ -1,3 +1,5 @@
+import crypto from "crypto";
+
 export interface MidtransConfig {
   serverKey: string;
   clientKey: string;
@@ -66,6 +68,128 @@ export function getMidtransConfig(): MidtransConfig {
       ? "https://app.midtrans.com/snap/snap.js"
       : "https://app.sandbox.midtrans.com/snap/snap.js",
   };
+}
+
+/**
+ * Canonical public origin for Midtrans callbacks.
+ *
+ * The apex domain (bahasacerdas.com) answers with a 301 redirect to www.
+ * Midtrans refuses to follow 301/302/303 for HTTP notifications, so every
+ * callback URL MUST use the canonical www host. Explicit env overrides are
+ * honoured but still normalised away from the apex.
+ */
+const CANONICAL_PUBLIC_ORIGIN = "https://www.bahasacerdas.com";
+
+export function getMidtransPublicOrigin(): string {
+  const raw = (
+    process.env.MIDTRANS_PUBLIC_BASE_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.NEXT_PUBLIC_APP_URL ||
+    CANONICAL_PUBLIC_ORIGIN
+  ).trim();
+  try {
+    const url = new URL(raw);
+    if (url.hostname === "bahasacerdas.com") url.hostname = "www.bahasacerdas.com";
+    // Midtrans only delivers to public HTTPS endpoints.
+    if (url.protocol !== "https:" || url.hostname === "localhost" || url.hostname === "0.0.0.0") {
+      return CANONICAL_PUBLIC_ORIGIN;
+    }
+    return url.origin;
+  } catch {
+    return CANONICAL_PUBLIC_ORIGIN;
+  }
+}
+
+export const MIDTRANS_WEBHOOK_PATH = "/api/payment/webhook";
+export const MIDTRANS_FINISH_PATH = "/payment/finish";
+
+export function getMidtransNotificationUrl(): string {
+  const explicit = (process.env.MIDTRANS_NOTIFICATION_URL || "").trim();
+  if (explicit) {
+    try {
+      const url = new URL(explicit);
+      if (url.hostname === "bahasacerdas.com") url.hostname = "www.bahasacerdas.com";
+      if (url.protocol === "https:") return url.toString();
+    } catch {}
+  }
+  return `${getMidtransPublicOrigin()}${MIDTRANS_WEBHOOK_PATH}`;
+}
+
+export function getMidtransFinishUrl(): string {
+  return `${getMidtransPublicOrigin()}${MIDTRANS_FINISH_PATH}`;
+}
+
+/**
+ * Official Midtrans signature: SHA512(order_id + status_code + gross_amount + ServerKey).
+ * Constant-time comparison. Never logs or returns key material.
+ */
+export function computeMidtransSignature(
+  orderId: string,
+  statusCode: string,
+  grossAmount: string,
+  serverKey: string
+): string {
+  return crypto
+    .createHash("sha512")
+    .update(orderId + statusCode + grossAmount + serverKey)
+    .digest("hex");
+}
+
+export function verifyMidtransSignature(
+  orderId: unknown,
+  statusCode: unknown,
+  grossAmount: unknown,
+  signatureKey: unknown,
+  serverKey: string = getMidtransConfig().serverKey
+): boolean {
+  if (
+    !serverKey ||
+    typeof orderId !== "string" ||
+    typeof statusCode !== "string" ||
+    typeof grossAmount !== "string" ||
+    typeof signatureKey !== "string" ||
+    !orderId ||
+    !/^[0-9a-f]{128}$/i.test(signatureKey)
+  ) {
+    return false;
+  }
+  const expected = Buffer.from(computeMidtransSignature(orderId, statusCode, grossAmount, serverKey), "hex");
+  const given = Buffer.from(signatureKey, "hex");
+  return expected.length === given.length && crypto.timingSafeEqual(expected, given);
+}
+
+/** Midtrans sends gross_amount as "1000.00"; Transaksi.amount is integer rupiah. */
+export function parseMidtransAmount(grossAmount: unknown): number {
+  const n = Number(typeof grossAmount === "string" ? grossAmount.trim() : grossAmount);
+  return Number.isFinite(n) ? Math.round(n) : NaN;
+}
+
+export function getMidtransCoreApiBaseUrl(): string {
+  return getMidtransConfig().isProduction ? "https://api.midtrans.com" : "https://api.sandbox.midtrans.com";
+}
+
+/**
+ * Server-side status lookup (GET /v2/{order_id}/status). The response is
+ * authoritative because it is fetched with the server key over TLS; it also
+ * carries a signature_key that we verify before trusting it.
+ */
+export async function fetchMidtransTransactionStatus(
+  orderId: string
+): Promise<Record<string, any> | null> {
+  const config = getMidtransConfig();
+  if (!config.serverKey) throw new MidtransError("MIDTRANS_CONFIG_MISSING", "MIDTRANS_SERVER_KEY tidak dikonfigurasi", 500);
+  const auth = Buffer.from(`${config.serverKey}:`).toString("base64");
+  const res = await fetch(`${getMidtransCoreApiBaseUrl()}/v2/${encodeURIComponent(orderId)}/status`, {
+    method: "GET",
+    headers: { Accept: "application/json", Authorization: `Basic ${auth}` },
+    cache: "no-store",
+    signal: AbortSignal.timeout(10_000),
+  });
+  const json = await res.json().catch(() => null);
+  if (!json || typeof json !== "object") return null;
+  // Midtrans returns HTTP 200 with status_code "404" for unknown orders.
+  if (String(json.status_code) === "404") return null;
+  return json;
 }
 
 export function validateMidtransConfig(): void {
@@ -143,12 +267,20 @@ export async function createMidtransSnapTransaction(params: {
     body.customer_details.phone = params.phone;
   }
 
+  // Return the buyer to a page that verifies the payment server-side
+  // (redirect flow). The Snap popup flow calls /api/billing/reconcile itself.
+  body.callbacks = { finish: getMidtransFinishUrl() };
+
   const res = await fetch(`${config.apiBaseUrl}/snap/v1/transactions`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Basic ${auth}`,
       Accept: "application/json",
+      // Force the HTTP notification URL per transaction so activation does not
+      // depend on the dashboard setting (which pointed at the 301-redirecting
+      // apex domain and was rejected by Midtrans).
+      "X-Override-Notification": getMidtransNotificationUrl(),
     },
     body: JSON.stringify(body),
   });

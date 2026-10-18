@@ -16,7 +16,7 @@ const ROOT = join(__dirname, "..");
 const read = (p: string) => readFileSync(join(ROOT, p), "utf8");
 
 const checkout = read("app/api/billing/checkout/route.ts");
-const webhook = read("app/api/payment/webhook/route.ts");
+const webhook = read("app/api/payment/webhook/route.ts") + "\n" + read("lib/payments/midtrans-notification.ts") + "\n" + read("lib/payments/midtrans-server.ts");
 
 let passed = 0;
 let failed = 0;
