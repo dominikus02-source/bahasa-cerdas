@@ -251,6 +251,7 @@ function RoomShell(props: ViewProps & { deviceNote: string | null; clearDeviceNo
           <span className="jumpa-mark" aria-hidden>J</span>
           <div className="min-w-0">
             <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[.16em] text-[var(--jp-accent)]">
+              <span className="jumpa-live-dot" role="img" aria-label="Berlangsung" />
               JUMPA
               <span className="hidden font-semibold normal-case tracking-normal text-[var(--jp-text-3)] sm:inline">dari BahasaCerdas</span>
               {info.isLocked && <Lock size={12} aria-label="Ruang terkunci" className="text-[var(--clr-warning)]" />}
@@ -416,6 +417,33 @@ const CAMERA_AND_SCREEN = [
   { source: Track.Source.ScreenShare, withPlaceholder: false },
 ] as const;
 
+/** Kartu "menunggu peserta" saat kamu masih sendirian di ruang. */
+function AloneCard() {
+  const { info } = useJumpa();
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}/jumpa/${info.code}`);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setCopied(false);
+    }
+  };
+  return (
+    <div className="jumpa-alone jumpa-in-up" role="status">
+      <span className="jumpa-empty-icon jumpa-alone-icon !mb-0" aria-hidden><Users size={22} /></span>
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-bold">Menunggu peserta lain</p>
+        <p className="whitespace-nowrap text-xs text-[var(--jp-text-3)]">Kode <span className="font-mono font-semibold text-[var(--jp-text-2)]">{info.code}</span></p>
+      </div>
+      <button type="button" className="jumpa-alone-btn" onClick={() => void copy()}>
+        {copied ? <Check size={16} /> : <Link2 size={16} />} {copied ? "Tersalin" : "Salin"}
+      </button>
+    </div>
+  );
+}
+
 const Stage = memo(function Stage({ layout, wide, pageSize, stripMax, onShowPeople }: { layout: Layout; wide: boolean; pageSize: number; stripMax: number; onShowPeople: () => void }) {
   const allTracks = useTracks([...CAMERA_AND_SCREEN], { onlySubscribed: false });
   // Layar yang dibagikan selalu jadi fokus (paling baru), kamera di strip.
@@ -445,7 +473,16 @@ const Stage = memo(function Stage({ layout, wide, pageSize, stripMax, onShowPeop
   const swipeRef = useRef<HTMLDivElement | null>(null);
   useSwipe(swipeRef, { onLeftSwipe: page.nextPage, onRightSwipe: page.prevPage });
 
+  const alone = tracks.length > 0 && tracks.every((t) => t.participant.isLocal);
   const screen = screens[screens.length - 1];
+  if (alone && !screen) {
+    return (
+      <div className="relative h-full min-w-0">
+        <ParticipantTile trackRef={tracks[0]} />
+        <AloneCard />
+      </div>
+    );
+  }
   if (screen) {
     return (
       <div className="flex h-full min-w-0 flex-col gap-2">

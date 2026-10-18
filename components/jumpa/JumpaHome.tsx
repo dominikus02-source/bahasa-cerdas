@@ -43,7 +43,7 @@ function QuickJoin() {
         id="jumpa-code"
         value={value}
         onChange={(e) => { setValue(e.target.value.slice(0, 120)); setBad(false); }}
-        placeholder="Kode ruang, mis. abc-defg-hij"
+        placeholder="Kode ruang"
         autoComplete="off"
         autoCapitalize="none"
         spellCheck={false}
@@ -73,7 +73,7 @@ function PlanCard({ plan }: { plan: NonNullable<JumpaHomeData["plan"]> }) {
             <span className="jumpa-dots" role="img" aria-label={`${left} dari ${plan.roomsPerDay} ruang tersisa hari ini`}>
               {Array.from({ length: plan.roomsPerDay }, (_, i) => <i key={i} data-used={i < plan.roomsToday} />)}
             </span>
-            <span className="text-xs font-semibold text-[var(--jp-text-2)]">{left} ruang tersisa hari ini</span>
+            <span className="whitespace-nowrap text-xs font-semibold text-[var(--jp-text-2)]">Sisa {left} ruang hari ini</span>
           </div>
         ) : (
           <p className="mt-2 text-xs font-semibold text-[var(--jp-text-2)]">Ruang tanpa batas</p>

@@ -6,7 +6,7 @@
  * pratinjau memakai resolusi kebijakan perangkat (HP lebih ringan).
  */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Loader2, Mic, MicOff, Settings2, ShieldCheck, Users, Video, VideoOff, X } from "lucide-react";
+import { Camera, Loader2, Mic, MicOff, Settings2, ShieldCheck, Users, Video, VideoOff, X } from "lucide-react";
 import type { JumpaTierView } from "@/lib/jumpa/tiers";
 import { readMediaPrefs, writeMediaPrefs, type JumpaMediaPrefs } from "./media-prefs";
 import { detectDevice, publishPolicy, QUALITY_LABEL } from "./media-policy";
@@ -31,6 +31,12 @@ type PermissionNote = null | "camera" | "mic" | "both";
 
 function stopStream(stream: MediaStream | null) {
   stream?.getTracks().forEach((t) => t.stop());
+}
+
+/** Nama perangkat ringkas: buang kode vendor "(046d:0825)" & awalan "Default - ". */
+function deviceName(track: MediaStreamTrack | undefined, fallback: string): string {
+  const raw = track?.label?.replace(/\s*\([0-9a-f]{4}:[0-9a-f]{4}\)\s*$/i, "").replace(/^(default|bawaan)\s*-\s*/i, "").trim();
+  return raw || fallback;
 }
 
 function permissionMessage(note: PermissionNote): string | null {
@@ -224,8 +230,17 @@ export default function JumpaLobby(props: Props) {
   const bars = [0.35, 0.6, 1, 0.6, 0.35];
 
   return (
-    <main className="mx-auto flex min-h-[100dvh] w-full max-w-5xl flex-col justify-center gap-6 px-4 py-6 sm:px-6 md:flex-row md:items-center md:gap-10">
+    <main className="mx-auto flex min-h-[100dvh] w-full max-w-5xl flex-col gap-5 px-4 pb-6 pt-[max(14px,env(safe-area-inset-top))] sm:px-6">
+      <header className="jumpa-lobby-head">
+        <span className="jumpa-brand whitespace-nowrap">
+          <span className="jumpa-mark jumpa-mark-sm" aria-hidden>J</span>
+          JUMPA <span className="jumpa-brand-by">dari BahasaCerdas</span>
+        </span>
+        <span className="jumpa-badge shrink-0 whitespace-nowrap" data-role={props.roleLabel}>Sebagai {props.roleLabel === "GURU" ? "guru" : "murid"}</span>
+      </header>
+      <div className="flex flex-1 flex-col justify-center gap-5 md:flex-row md:items-center md:gap-8">
       <section className="jumpa-in-up w-full md:flex-[1.4]">
+        <div className="jumpa-card jumpa-lobby-preview">
         <div className="jumpa-preview">
           {camOn && videoStream ? (
             <video ref={videoRef} autoPlay playsInline muted aria-label="Pratinjau kamera kamu" />
@@ -253,6 +268,15 @@ export default function JumpaLobby(props: Props) {
             )}
           </div>
         </div>
+        <div className="jumpa-device-row" aria-label="Perangkat dipakai">
+          <span className="jumpa-device" data-off={!micOn}>
+            <Mic size={14} aria-hidden /> <span className="truncate">{micOn ? deviceName(audioStream?.getAudioTracks()[0], "Mikrofon") : "Mikrofon mati"}</span>
+          </span>
+          <span className="jumpa-device" data-off={!camOn}>
+            <Camera size={14} aria-hidden /> <span className="truncate">{camOn ? deviceName(videoStream?.getVideoTracks()[0], "Kamera") : prefs?.audioOnly ? "Audio saja" : "Kamera mati"}</span>
+          </span>
+        </div>
+        </div>
 
         <div className="mt-4 flex items-start justify-center gap-4">
           <div className="jumpa-ctl">
@@ -279,12 +303,9 @@ export default function JumpaLobby(props: Props) {
         )}
       </section>
 
-      <section className="jumpa-in-up flex w-full flex-col items-center gap-5 text-center [animation-delay:60ms] md:flex-1 md:items-start md:text-left">
-        <span className="jumpa-brand">
-          <span className="jumpa-mark jumpa-mark-sm" aria-hidden>J</span>
-          JUMPA <span className="jumpa-brand-by">dari BahasaCerdas</span>
-        </span>
+      <section className="jumpa-card jumpa-lobby-info jumpa-in-up flex w-full flex-col items-center gap-5 text-center [animation-delay:60ms] md:flex-1 md:items-start md:text-left">
         <div>
+          <p className="jumpa-section-title !m-0 !mb-2 justify-center md:justify-start">Siap masuk?</p>
           <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{props.title}</h1>
           {props.subtitle && (
             <p className="mt-2 flex items-center justify-center gap-2 text-[var(--jp-text-2)] md:justify-start">
@@ -304,7 +325,7 @@ export default function JumpaLobby(props: Props) {
             </button>
             {props.joinError && <p role="alert" className="text-sm text-[var(--jp-danger)]">{props.joinError}</p>}
             <p className="flex items-center gap-2 text-xs text-[var(--jp-text-3)]">
-              <ShieldCheck size={14} /> Hanya akun BahasaCerdas yang terdaftar di kelas ini yang bisa masuk.
+              <ShieldCheck size={14} className="shrink-0" /> Hanya anggota terdaftar yang bisa masuk.
             </p>
           </>
         ) : (
@@ -312,8 +333,8 @@ export default function JumpaLobby(props: Props) {
             {props.denyMessage ?? "Kamu belum bisa masuk ke ruang ini."}
           </div>
         )}
-        <span className="jumpa-badge" data-role={props.roleLabel}>Masuk sebagai {props.roleLabel === "GURU" ? "Guru" : "Murid"}</span>
       </section>
+      </div>
 
       {settingsOpen && prefs && (
         <>

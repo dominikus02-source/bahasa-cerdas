@@ -95,5 +95,5 @@ export function elapsedLabel(startedAt: string | null, now = Date.now()): string
   if (min < 1) return "baru mulai";
   if (min < 60) return `${min} mnt`;
   const h = Math.floor(min / 60);
-  return min % 60 ? `${h} j ${min % 60} mnt` : `${h} j`;
+  return min % 60 ? `${h} jam ${min % 60} mnt` : `${h} jam`;
 }

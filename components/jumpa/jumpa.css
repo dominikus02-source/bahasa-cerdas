@@ -1244,7 +1244,7 @@ select.jumpa-input { text-overflow: ellipsis; padding-right: 36px; }
 .jumpa-join:focus-within { border-color: color-mix(in srgb, var(--clr-accent) 70%, transparent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--clr-accent) 16%, transparent); }
 .jumpa-join-icon { margin-left: 10px; color: var(--jp-text-3); flex-shrink: 0; }
 .jumpa-join-input {
-  flex: 1 1 8rem;
+  flex: 1 1 5rem;
   min-width: 0;
   min-height: 46px;
   background: transparent;
@@ -1352,4 +1352,69 @@ select.jumpa-input { text-overflow: ellipsis; padding-right: 36px; }
 
 @media (max-width: 767px), (pointer: coarse) {
   .jumpa-room-card:hover, .jumpa-action-link:hover, .jumpa-cta-premium:hover { transform: none; }
+}
+
+/* Lobby: kepala, kartu pratinjau berbingkai, chip perangkat, kartu info. */
+.jumpa-lobby-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.jumpa-lobby-preview { padding: 8px; border-radius: 30px; }
+.jumpa-lobby-preview .jumpa-preview {
+  border-radius: 22px;
+  border: 0;
+  background:
+    radial-gradient(90% 80% at 50% 35%, color-mix(in srgb, var(--clr-accent) 14%, transparent), transparent 65%),
+    var(--clr-bg);
+}
+.jumpa-device-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 8px 2px 2px; }
+.jumpa-device {
+  display: flex; align-items: center; gap: 6px; min-width: 0;
+  min-height: 34px; padding: 0 12px; border-radius: 999px;
+  font-size: 12px; font-weight: 600; color: var(--jp-text-2);
+  background: color-mix(in srgb, var(--clr-accent) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--clr-accent) 22%, transparent);
+}
+.jumpa-device > svg { flex-shrink: 0; color: var(--clr-accent); }
+.jumpa-device[data-off="true"] { color: var(--jp-text-3); background: var(--jp-glass-strong); border-color: var(--jp-line); }
+.jumpa-device[data-off="true"] > svg { color: var(--jp-danger); }
+.jumpa-lobby-info { position: relative; overflow: hidden; padding: 22px 20px; }
+.jumpa-lobby-info::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: var(--jp-grad); opacity: .85; }
+
+/* Panggilan: titik hidup berdenyut, kepala dengan garis bawah halus, tile berkedalaman. */
+.jumpa-live-dot {
+  position: relative; width: 8px; height: 8px; border-radius: 999px; flex-shrink: 0;
+  background: var(--jp-danger);
+}
+
+.jumpa-live-dot::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  border: 2px solid var(--jp-danger);
+  animation: jumpa-pulse 1.8s ease-out infinite;
+}
+.jumpa-live { position: relative; }
+@keyframes jumpa-pulse { from { transform: scale(1); opacity: .8; } to { transform: scale(2.6); opacity: 0; } }
+.jumpa-header { border-bottom: 1px solid var(--jp-line); background: linear-gradient(180deg, color-mix(in srgb, var(--clr-surface) 70%, transparent), transparent); margin-bottom: 8px; }
+.jumpa-tile { border-radius: 20px; box-shadow: var(--jp-depth); background: linear-gradient(180deg, var(--clr-surface-2), var(--clr-surface)); }
+
+/* Sendirian di ruang: kartu kecil mengambang di bawah tile. */
+.jumpa-alone {
+  position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 12px;
+  width: min(440px, calc(100% - 24px));
+  padding: 12px; border-radius: 20px;
+  background: color-mix(in srgb, var(--clr-surface-2) 94%, transparent);
+  border: 1px solid var(--jp-line-strong);
+  box-shadow: 0 18px 40px -20px color-mix(in srgb, var(--clr-bg) 95%, transparent);
+  z-index: 3;
+}
+.jumpa-alone.jumpa-in-up { animation-name: jumpa-alone-in; }
+@keyframes jumpa-alone-in { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
+.jumpa-alone-btn {
+  display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;
+  min-height: 40px; padding: 0 14px; border-radius: 14px;
+  font-size: 13px; font-weight: 800; color: var(--clr-bg); background: var(--jp-grad);
+}
+@media (prefers-reduced-motion: reduce) { .jumpa-live-dot::after { animation: none; } }
+@media (max-width: 479px) {
+  .jumpa-plan .jumpa-cta-premium { flex-basis: 100%; justify-content: center; }
+  .jumpa-alone { top: 12px; bottom: auto; gap: 10px; padding: 10px; }
+  .jumpa-alone-icon { display: none; }
 }

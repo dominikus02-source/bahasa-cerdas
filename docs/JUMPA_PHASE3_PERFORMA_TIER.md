@@ -205,3 +205,19 @@ layar keluar, empty state, dan toast dipadatkan. Ada tesnya di `test:jumpa-tiers
 
 Masih terbuka: perpanjang ruang yang sedang berjalan saat guru upgrade di tengah panggilan
 (sekarang berlaku untuk ruang berikutnya), dan 720p vs 540p untuk Gratis.
+
+## Lokalisasi penuh & tampilan premium (v4)
+
+- **Tanpa bahasa Inggris di UI.** Host → **Pemandu**, co-host → **Wakil pemandu**, Live → **Berlangsung**,
+  Speaker → **Pengeras suara**, HD → **Jernih** (petunjuk "Paling tajam (HD)"), "by BahasaCerdas" → "dari BahasaCerdas",
+  pesan API/izin ikut diganti. Nama merek JUMPA, BahasaCerdas, dan kata Premium dipertahankan.
+- **`npm run test:jumpa-no-english`** (juga di CI) memindai string UI di components/jumpa, app/jumpa, app/api/jumpa, lib/jumpa
+  dan menandai kata Inggris umum (live, host, speaker, auto, low, HD, …).
+- **Beranda:** hero sapaan + "Gabung pakai kode" (kode atau tautan /jumpa/…), kartu paket dengan titik kuota harian
+  dan CTA Premium berbingkai gradien, kartu Ruang guru / Ruang kelas dengan chip ikon & aksen gradien, kartu ruang aktif
+  dengan titik berdenyut, durasi berjalan, dan tumpukan avatar (hanya inisial, maks 4 + jumlah — tanpa nama lengkap).
+  Teks yang terpotong diperbaiki ("Tanpa komunitas", subjudul dua baris).
+- **Lobby:** kepala merek + peran, kartu pratinjau berbingkai dengan chip perangkat (mik/kamera), kartu "Siap masuk?".
+- **Panggilan:** titik "Berlangsung" berdenyut di kepala, garis bawah halus, tile berkedalaman (bayangan & gradien, tanpa blur),
+  kartu "Menunggu peserta lain" + Salin tautan saat masih sendirian.
+- Warna tombol dari putaran sebelumnya tidak berubah. Semua warna lewat token `--clr-*`.
