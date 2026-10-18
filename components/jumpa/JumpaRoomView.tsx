@@ -232,6 +232,9 @@ function RoomShell(props: ViewProps & { deviceNote: string | null; clearDeviceNo
   const layout: Layout = layoutChoice ?? (wide ? "grid" : "speaker");
   const count = useParticipantCount();
   const state = useConnectionState();
+  // Putus singkat biasanya hanya memicu SignalReconnecting (resume), bukan
+  // Reconnecting penuh — keduanya harus menampilkan banner (uji go-live 18 Okt).
+  const reconnecting = state === ConnectionState.Reconnecting || state === ConnectionState.SignalReconnecting;
   const { info, unread, hands, setChatVisible, self } = useJumpa();
   const { recv, tier } = useMedia();
   const [panel, setPanel] = useState<PanelName | null>(null);
@@ -277,10 +280,10 @@ function RoomShell(props: ViewProps & { deviceNote: string | null; clearDeviceNo
 
       <Toasts />
 
-      {(state === ConnectionState.Reconnecting || state === ConnectionState.Connecting) && (
+      {(reconnecting || state === ConnectionState.Connecting) && (
         <div role="status" className="jumpa-status jumpa-in-down">
-          {state === ConnectionState.Reconnecting ? <WifiOff size={16} className="text-[var(--clr-warning)]" /> : <Loader2 size={16} className="animate-spin" />}
-          {state === ConnectionState.Reconnecting ? "Jaringan terputus, menyambung ulang…" : "Menyambungkan ke ruang…"}
+          {reconnecting ? <WifiOff size={16} className="text-[var(--clr-warning)]" /> : <Loader2 size={16} className="animate-spin" />}
+          {reconnecting ? "Jaringan terputus, menyambung ulang…" : "Menyambungkan ke ruang…"}
         </div>
       )}
       {props.deviceNote && (
