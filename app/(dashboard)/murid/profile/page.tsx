@@ -108,7 +108,7 @@ function isStreakLive(kebunKata: { date: string; level: 0 | 1 | 2 | 3 | 4 }[] | 
 }
 
 const KEBUN_LEVELS = [
-  { level: 0, label: "Tidak menulis", color: "bg-emerald-100" },
+  { level: 0, label: "Tidak menulis", color: "bg-bc-success-soft" },
   { level: 1, label: "1 kata", color: "bg-emerald-200" },
   { level: 2, label: "2 kata", color: "bg-emerald-300" },
   { level: 3, label: "3-4 kata", color: "bg-emerald-500" },
@@ -340,11 +340,11 @@ export default function MuridProfilePage() {
   };
 
   if (loading) {
-    return <div className="flex justify-center py-20"><div className="animate-spin w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full" /></div>;
+    return <div className="flex justify-center py-20"><div className="animate-spin w-8 h-8 border-4 border-bc-violet border-t-transparent rounded-full" /></div>;
   }
 
   if (!user) {
-    return <div className="text-center py-20 text-gray-500 dark:text-slate-400">Gagal memuat profil. Silakan refresh.</div>;
+    return <div className="text-center py-20 text-bc-text-3">Gagal memuat profil. Silakan refresh.</div>;
   }
 
   const displayNickname = user.nickname || user.fullName;
@@ -428,33 +428,33 @@ export default function MuridProfilePage() {
             {user.avatar ? (
               <img src={user.avatar} alt="" className="h-20 w-20 md:h-24 md:w-24 rounded-full object-cover ring-4 ring-violet-500/15" />
             ) : (
-              <div className="h-20 w-20 md:h-24 md:w-24 rounded-full bg-violet-500/10 ring-4 ring-violet-500/15 flex items-center justify-center text-2xl md:text-3xl font-black text-violet-700 dark:text-violet-300">
+              <div className="h-20 w-20 md:h-24 md:w-24 rounded-full bg-violet-500/10 ring-4 ring-violet-500/15 flex items-center justify-center text-2xl md:text-3xl font-black text-bc-violet">
                 {displayNickname.slice(0, 1).toUpperCase()}
               </div>
             )}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500 dark:text-white/40 mb-1">Profil</p>
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white truncate">{displayNickname}</h1>
-            {user.nickname && user.fullName && user.nickname !== user.fullName && <p className="text-sm text-slate-500 dark:text-white/50 truncate">{user.fullName}</p>}
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-bc-text-3 mb-1">Profil</p>
+            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-bc-text break-words">{displayNickname}</h1>
+            {user.nickname && user.fullName && user.nickname !== user.fullName && <p className="text-sm text-bc-text-3 break-words">{user.fullName}</p>}
             <div className="flex flex-wrap items-center gap-2 mt-2.5">
-              {user.school && <span className="rounded-full bg-slate-900/5 dark:bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-slate-600 dark:text-white/55">{user.school}</span>}
-              {user.grade && <span className="rounded-full bg-slate-900/5 dark:bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-slate-600 dark:text-white/55">{user.grade}</span>}
+              {user.school && <span className="rounded-full bg-slate-900/5 dark:bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-bc-text-2">{user.school}</span>}
+              {user.grade && <span className="rounded-full bg-slate-900/5 dark:bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-bc-text-2">{user.grade}</span>}
               <VerifiedBadge badgeKind={user.badgeKind} isFounder={user.isFounder} size={24} />
             </div>
           </div>
-          <button onClick={openSettings} className="shrink-0 inline-flex items-center gap-1.5 rounded-xl border border-slate-900/10 dark:border-white/10 px-3 py-2 text-xs font-bold text-slate-700 dark:text-white/70 hover:bg-slate-900/5 dark:hover:bg-white/5 transition-colors">
+          <button onClick={openSettings} className="shrink-0 inline-flex items-center gap-1.5 rounded-xl border border-slate-900/10 dark:border-white/10 px-3 py-2 text-xs font-bold text-bc-text-2 hover:bg-slate-900/5 dark:hover:bg-white/5 transition-colors">
             <Settings size={15} /><span className="hidden sm:inline">Edit Profil</span>
           </button>
         </div>
-        {user.bio && <p className="mt-4 max-w-3xl text-sm leading-relaxed text-slate-600 dark:text-white/60">{user.bio}</p>}
+        {user.bio && <p className="mt-4 max-w-3xl text-sm leading-relaxed text-bc-text-2">{user.bio}</p>}
       </section>
 
       {/* PERKEMBANGANMU — skill bahasa + perjalanan belajar (data nyata) */}
       <section aria-label="Perkembanganmu" className="mb-6">
         <div className="flex items-center gap-2 mb-3">
-          <TrendingUp size={15} className="text-violet-600 dark:text-violet-300" />
-          <h2 className="text-sm font-bold text-slate-900 dark:text-white/90">Perkembanganmu</h2>
+          <TrendingUp size={15} className="text-bc-violet" />
+          <h2 className="text-sm font-bold text-bc-text">Perkembanganmu</h2>
         </div>
         <div className="grid gap-4 lg:grid-cols-2">
           {/* Kemampuan bahasa — dari /api/player/skills (reuse SkillRadar beranda) */}
@@ -462,11 +462,11 @@ export default function MuridProfilePage() {
             <div className="border-b border-slate-900/[0.06] px-5 py-4 dark:border-white/[0.06]">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <h3 className="text-base font-extrabold text-slate-900 dark:text-white">Kemampuan Bahasamu</h3>
-                  <p className="mt-1 text-xs text-slate-500 dark:text-white/45">Gambaran dari bukti belajar yang sudah terkumpul.</p>
+                  <h3 className="text-base font-extrabold text-bc-text">Kemampuan Bahasamu</h3>
+                  <p className="mt-1 text-xs text-bc-text-3">Gambaran dari bukti belajar yang sudah terkumpul.</p>
                 </div>
                 {baselineSummary?.status === "DONE" && (
-                  <span className="shrink-0 rounded-full bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-300">Tes awal selesai</span>
+                  <span className="shrink-0 rounded-full bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold text-bc-success">Tes awal selesai</span>
                 )}
               </div>
             </div>
@@ -474,7 +474,7 @@ export default function MuridProfilePage() {
             {baselineSummary?.result?.writing?.level && (
               <div className="mx-5 mb-5 rounded-xl bg-fuchsia-500/[0.06] px-4 py-3">
                 <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-fuchsia-700 dark:text-fuchsia-300">Menulis dari tes awal</p>
-                <p className="mt-1 text-sm font-semibold text-slate-800 dark:text-white">Tingkat awal: {baselineSummary.result.writing.level === "KUAT" ? "Kuat" : baselineSummary.result.writing.level === "BERKEMBANG" ? "Berkembang" : "Awal"}</p>
+                <p className="mt-1 text-sm font-semibold text-bc-text">Tingkat awal: {baselineSummary.result.writing.level === "KUAT" ? "Kuat" : baselineSummary.result.writing.level === "BERKEMBANG" ? "Berkembang" : "Awal"}</p>
               </div>
             )}
           </div>
@@ -482,13 +482,13 @@ export default function MuridProfilePage() {
           {/* Jalur Cerdas — aktivitas belajar terbaru dari journey + CTA */}
           <div className="bc-card-premium flex flex-col rounded-2xl p-5 ring-1 ring-slate-900/10 dark:ring-white/10">
             <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white/90 inline-flex items-center gap-2">
+              <h3 className="text-sm font-bold text-bc-text inline-flex items-center gap-2">
                 <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shadow-sm">
                   <BookOpen size={13} className="text-white" />
                 </span>
                 Jalur Cerdas
               </h3>
-              <Link href="/arena/jalur-cerdas" className="text-[11px] font-semibold text-slate-900/55 dark:text-white/55 hover:text-slate-900 dark:text-white transition-colors">
+              <Link href="/arena/jalur-cerdas" className="text-[11px] font-semibold text-bc-text/55 hover:text-bc-text dark:text-white transition-colors">
                 Buka →
               </Link>
             </div>
@@ -497,17 +497,17 @@ export default function MuridProfilePage() {
                 {jalurEntries.map((e) => (
                   <li key={e.id} className="flex items-center gap-2.5 py-1.5">
                     <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full bg-violet-500/60" />
-                    <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-slate-900/85 dark:text-white/85">
+                    <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-bc-text/85">
                       {e.title || "Belajar"}
                     </span>
-                    <time className="shrink-0 text-[10px] text-slate-900/50 dark:text-white/40">
+                    <time className="shrink-0 text-[10px] text-bc-text/50">
                       {waktuLaluLite(e.createdAt)}
                     </time>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="flex-1 text-xs leading-relaxed text-slate-900/60 dark:text-white/45">
+              <p className="flex-1 text-xs leading-relaxed text-bc-text/60">
                 Mulai belajar di Jalur Cerdas agar langkah belajarmu tercatat di sini.
               </p>
             )}
@@ -528,20 +528,20 @@ export default function MuridProfilePage() {
 
         >
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white/90 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-bc-text flex items-center gap-2">
               <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-sm">
-                <Award size={13} className="text-slate-900 dark:text-white" />
+                <Award size={13} className="text-bc-text" />
               </span>
               Pencapaian Terkini
             </h3>
-            <Link href="/arena/player/badges" className="text-[11px] font-semibold text-slate-900/55 dark:text-white/55 hover:text-slate-900 dark:text-white transition-colors">
+            <Link href="/arena/player/badges" className="text-[11px] font-semibold text-bc-text/55 hover:text-bc-text dark:text-white transition-colors">
               Lihat Semua →
             </Link>
           </div>
           {showcaseBadges.some((b) => b.unlocked) ? (
             <AchievementShowcase badges={showcaseBadges} max={6} />
           ) : (
-            <p className="text-[13px] text-slate-900/60 dark:text-white/55 leading-relaxed">
+            <p className="text-[13px] text-bc-text/60 leading-relaxed">
               Belum ada lencana. Selesaikan latihan di Jalur Cerdas, ikuti tantangan di Arena,
               dan kumpulkan karya untuk membuka lencana pertamamu.
             </p>
@@ -561,7 +561,7 @@ export default function MuridProfilePage() {
               // SocialConnections. Fallback legacy `user.totalLikes` (like
               // karya) hanya dipakai saat request sosial gagal; kegagalan
               // sudah di-log di load() sehingga tidak disamarkan sebagai 0.
-              { key: "like", label: "Like", value: social ? social.profileLikeCount : user.totalLikes || 0, icon: "heart", href: "/murid/karya" },
+              { key: "like", label: "Suka", value: social ? social.profileLikeCount : user.totalLikes || 0, icon: "heart", href: "/murid/karya" },
               { key: "follower", label: "Pengikut", value: social?.followerCount ?? 0, icon: "users" },
               { key: "following", label: "Mengikuti", value: social?.followingCount ?? 0, icon: "user" },
             ]}
@@ -603,9 +603,9 @@ export default function MuridProfilePage() {
 
             >
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-bold text-slate-900 dark:text-white/90 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-bc-text flex items-center gap-2">
                   <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
-                    <IconPen size={12} className="text-slate-900 dark:text-white" />
+                    <IconPen size={12} className="text-bc-text" />
                   </span>
                   Kebun Kata
                 </h3>
@@ -624,7 +624,7 @@ export default function MuridProfilePage() {
                   />
                 ))}
               </div>
-              <div className="flex items-center gap-2 mt-3 text-[10px] text-slate-900/55 dark:text-white/40">
+              <div className="flex items-center gap-2 mt-3 text-[10px] text-bc-text/55">
                 <span>Sedikit</span>
                 {KEBUN_LEVELS.map(k => (
                   <span key={k.level} className={`w-2.5 h-2.5 rounded-[2px] ${k.color} inline-block`} />
@@ -653,8 +653,8 @@ export default function MuridProfilePage() {
               className="bc-card-premium rounded-2xl p-5 ring-1 ring-slate-900/10 dark:ring-white/10"
 
             >
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white/90 mb-1.5">Komunitas</h3>
-              <p className="text-xs text-slate-900/60 dark:text-white/45 leading-relaxed">
+              <h3 className="text-sm font-bold text-bc-text mb-1.5">Komunitas</h3>
+              <p className="text-xs text-bc-text/60 leading-relaxed">
                 Ikuti murid lain dan temukan teman menulis. Fitur aktif setelah
                 migrasi tabel Follow dijalankan.
               </p>
@@ -676,13 +676,13 @@ export default function MuridProfilePage() {
       {/* Settings Modal */}
       {showSettings && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-start justify-center pt-12 md:pt-20 px-4 overflow-y-auto" onClick={() => setShowSettings(false)}>
-          <div className="bg-white dark:bg-slate-800/90 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-slate-800">
-              <h2 className="font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
-                <Settings size={18} className="text-violet-600 dark:text-violet-400" />
+          <div className="bg-bc-surface rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-5 border-b border-bc-line">
+              <h2 className="font-bold text-bc-text flex items-center gap-2">
+                <Settings size={18} className="text-bc-violet" />
                 Pengaturan Profil
               </h2>
-              <button onClick={() => setShowSettings(false)} className="text-gray-400 hover:text-gray-600 dark:text-slate-300 p-1">
+              <button onClick={() => setShowSettings(false)} className="text-bc-text-3 hover:text-bc-text-2 p-1">
                 <X size={20} />
               </button>
             </div>
@@ -704,7 +704,7 @@ export default function MuridProfilePage() {
                   type="button"
                   onClick={() => avatarFileRef.current?.click()}
                   disabled={uploadingAvatar}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-dashed border-violet-200 text-violet-700 dark:text-violet-300 hover:border-violet-400 hover:bg-violet-50 transition-all text-sm font-medium disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-dashed border-bc-violet/25 text-bc-violet hover:border-bc-violet hover:bg-bc-violet-soft transition-all text-sm font-medium disabled:opacity-50"
                 >
                   {uploadingAvatar ? <Loader2 size={16} className="animate-spin" /> : <Camera size={16} />}
                   {uploadingAvatar ? "Mengupload..." : "Upload Foto Sendiri"}
@@ -720,16 +720,16 @@ export default function MuridProfilePage() {
                   <button
                     type="button"
                     onClick={() => setAvatarSrc(null)}
-                    className="text-xs text-red-500 dark:text-red-400 hover:text-red-700 dark:text-red-300"
+                    className="text-xs text-red-500 dark:text-red-400 hover:text-bc-danger dark:text-red-300"
                   >
                     Hapus
                   </button>
                 )}
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 -mt-1">Klik untuk upload dari galeri HP atau file laptop</p>
+              <p className="text-xs text-bc-text-3 -mt-1">Klik untuk upload dari galeri HP atau file laptop</p>
 
-              <div className="bg-violet-50 dark:bg-violet-950/60 border border-violet-100 dark:border-violet-900 rounded-xl p-3.5">
-                <label className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-1 flex items-center gap-1.5">
+              <div className="bg-bc-violet-soft border border-bc-violet/25 rounded-xl p-3.5">
+                <label className="text-sm font-medium text-bc-text-2 mb-1 flex items-center gap-1.5">
                   <Pencil size={14} className="text-violet-500 dark:text-violet-400" /> Nama Panggilan
                 </label>
                 <div className="flex items-center gap-2 mt-1">
@@ -738,7 +738,7 @@ export default function MuridProfilePage() {
                     onChange={e => setNicknameDraft(e.target.value)}
                     placeholder={defaultNicknameFromFullName(user.fullName)}
                     maxLength={NICKNAME_MAX_LENGTH}
-                    className="h-10 text-sm rounded-xl bg-white dark:bg-slate-800/90"
+                    className="h-10 text-sm rounded-xl bg-bc-surface"
                   />
                   <button
                     onClick={handleSaveNickname}
@@ -750,50 +750,50 @@ export default function MuridProfilePage() {
                 </div>
                 {nicknameError && <p className="text-xs text-red-500 dark:text-red-400 mt-1">{nicknameError}</p>}
                 {meta && meta.nickname.daysLeftForChange > 0 && (
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Ganti lagi dalam {meta.nickname.daysLeftForChange} hari</p>
+                  <p className="text-xs text-bc-text-3 mt-1">Ganti lagi dalam {meta.nickname.daysLeftForChange} hari</p>
                 )}
                 {user.nickname && (
-                  <button onClick={loadNicknameHistory} className="text-xs text-violet-600 hover:text-violet-700 dark:text-violet-300 mt-2 flex items-center gap-1">
+                  <button onClick={loadNicknameHistory} className="text-xs text-bc-violet hover:text-bc-violet mt-2 flex items-center gap-1">
                     <History size={12} /> Riwayat perubahan
                   </button>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Nama Lengkap</label>
+                <label className="block text-sm font-medium text-bc-text-2 mb-1">Nama Lengkap</label>
                 <Input value={settingsForm.fullName} onChange={e => setSettingsForm(p => ({ ...p, fullName: e.target.value }))} className="h-11 rounded-xl" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Sekolah</label>
+                  <label className="block text-sm font-medium text-bc-text-2 mb-1">Sekolah</label>
                   <Input value={settingsForm.school} onChange={e => setSettingsForm(p => ({ ...p, school: e.target.value }))} className="h-11 rounded-xl" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Kelas</label>
+                  <label className="block text-sm font-medium text-bc-text-2 mb-1">Kelas</label>
                   <Input value={settingsForm.grade} onChange={e => setSettingsForm(p => ({ ...p, grade: e.target.value }))} className="h-11 rounded-xl" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">No. Absensi</label>
+                  <label className="block text-sm font-medium text-bc-text-2 mb-1">No. Absensi</label>
                   <Input value={settingsForm.noAbsen} onChange={e => setSettingsForm(p => ({ ...p, noAbsen: e.target.value }))} placeholder="cth: 17" className="h-11 rounded-xl" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Provinsi</label>
+                  <label className="block text-sm font-medium text-bc-text-2 mb-1">Provinsi</label>
                   <Input value={settingsForm.province} onChange={e => setSettingsForm(p => ({ ...p, province: e.target.value }))} className="h-11 rounded-xl" />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Bio</label>
-                <textarea value={settingsForm.bio} onChange={e => setSettingsForm(p => ({ ...p, bio: e.target.value }))} rows={3} className="w-full border border-gray-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none" />
+                <label className="block text-sm font-medium text-bc-text-2 mb-1">Bio</label>
+                <textarea value={settingsForm.bio} onChange={e => setSettingsForm(p => ({ ...p, bio: e.target.value }))} rows={3} className="w-full border border-bc-line rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none" />
               </div>
               <Button onClick={handleSettingsSave} disabled={savingSettings} className="w-full bg-violet-600 hover:bg-violet-700 text-white h-11 rounded-xl font-bold">
                 {savingSettings ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                 Simpan Perubahan
               </Button>
             </div>
-            <div className="border-t border-gray-100 dark:border-slate-800 p-5 space-y-2">
-              <button onClick={handleLogout} className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:text-red-300 font-medium">
+            <div className="border-t border-bc-line p-5 space-y-2">
+              <button onClick={handleLogout} className="flex items-center gap-2 text-sm text-bc-danger hover:text-bc-danger dark:text-red-300 font-medium">
                 <LogOut size={16} /> Keluar
               </button>
             </div>
@@ -804,29 +804,29 @@ export default function MuridProfilePage() {
       {/* Nickname History Modal */}
       {showNicknameHistory && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-start justify-center pt-12 md:pt-20 px-4 overflow-y-auto" onClick={() => setShowNicknameHistory(false)}>
-          <div className="bg-white dark:bg-slate-800/90 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-slate-800">
-              <h2 className="font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
-                <History size={18} className="text-violet-600 dark:text-violet-400" />
+          <div className="bg-bc-surface rounded-2xl w-full max-w-md shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-5 border-b border-bc-line">
+              <h2 className="font-bold text-bc-text flex items-center gap-2">
+                <History size={18} className="text-bc-violet" />
                 Riwayat Nama Panggilan
               </h2>
-              <button onClick={() => setShowNicknameHistory(false)} className="text-gray-400 hover:text-gray-600 dark:text-slate-300 p-1">
+              <button onClick={() => setShowNicknameHistory(false)} className="text-bc-text-3 hover:text-bc-text-2 p-1">
                 <X size={20} />
               </button>
             </div>
             <div className="p-5 max-h-80 overflow-y-auto">
               {nicknameHistory.length === 0 ? (
-                <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">Belum ada riwayat perubahan.</p>
+                <p className="text-sm text-bc-text-3 text-center py-4">Belum ada riwayat perubahan.</p>
               ) : (
                 <div className="space-y-3">
                   {nicknameHistory.map(r => (
                     <div key={r.id} className="flex items-center justify-between text-sm">
                       <div>
-                        <span className="text-gray-500 dark:text-gray-400 line-through">{r.oldNickname || "(kosong)"}</span>
-                        <span className="mx-2 text-gray-300">→</span>
-                        <span className="font-semibold text-gray-900 dark:text-slate-100">{r.newNickname || "(direset)"}</span>
+                        <span className="text-bc-text-3 line-through">{r.oldNickname || "(kosong)"}</span>
+                        <span className="mx-2 text-bc-text-3">→</span>
+                        <span className="font-semibold text-bc-text">{r.newNickname || "(direset)"}</span>
                       </div>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">{new Date(r.changedAt).toLocaleDateString("id-ID")}</span>
+                      <span className="text-xs text-bc-text-3">{new Date(r.changedAt).toLocaleDateString("id-ID")}</span>
                     </div>
                   ))}
                 </div>

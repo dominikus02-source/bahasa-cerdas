@@ -34,7 +34,7 @@ export default function MuridKaryaPage() {
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Link
               href="/murid/karya/tulis"
- className="inline-flex items-center gap-2 rounded-xl bg-bc-surface px-5 py-2.5 text-sm font-extrabold text-violet-700 dark:text-violet-300 shadow-sm transition-all hover:bg-violet-50"
+ className="inline-flex items-center gap-2 rounded-xl bg-bc-surface px-5 py-2.5 text-sm font-extrabold text-bc-violet shadow-sm transition-all hover:bg-bc-violet-soft"
             >
               <PenLine size={15} /> Buat Karya
             </Link>

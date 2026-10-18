@@ -56,7 +56,7 @@ export default function FeaturedWorks() {
   return (
     <section className="mt-6" aria-label="Karya Unggulan">
       <div className="mb-3 flex items-center gap-2.5">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-bc-warning-soft text-bc-warning">
           <Star size={15} />
         </span>
         <div>
@@ -90,11 +90,11 @@ export default function FeaturedWorks() {
             return (
               <article
                 key={k.id}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-violet-100 bg-gradient-to-br from-white to-violet-50/40 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-violet-500/[0.08] dark:border-violet-500/20 dark:from-slate-900 dark:to-violet-950/30"
+                className="group flex flex-col overflow-hidden rounded-2xl border border-bc-violet/25 bg-gradient-to-br from-white to-violet-50/40 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-violet-500/[0.08] dark:from-slate-900 dark:to-violet-950/30"
               >
                 {primaryMedia && (
                   <Link href={`/murid/karya/${k.id}`} className="block px-4 pt-4">
-                    <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-violet-50 dark:bg-slate-800">
+                    <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-bc-violet-soft dark:bg-slate-800">
                       <SafeMediaImage
                         src={primaryMedia}
                         alt={`Foto untuk ${k.title}`}
@@ -109,11 +109,11 @@ export default function FeaturedWorks() {
                     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold tracking-[0.14em] uppercase ${tc.bg} ${tc.text}`}>
                       {tc.label}
                     </span>
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-600 dark:text-amber-400">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-bc-warning">
                       <Star size={10} fill="currentColor" /> Unggulan
                     </span>
                   </div>
-                  <h3 className="text-[17px] font-extrabold leading-snug text-bc-text transition-colors line-clamp-2 group-hover:text-violet-700 dark:group-hover:text-violet-300">
+                  <h3 className="text-[17px] font-extrabold leading-snug text-bc-text transition-colors line-clamp-2 group-hover:text-bc-violet">
                     {k.title}
                   </h3>
                   <p className="mt-1.5 text-[13px] leading-relaxed text-bc-text-3 line-clamp-2">

@@ -79,7 +79,7 @@ export default function DetailKaryaPage() {
     }
   };
 
-  if (loading) return <div className="flex justify-center py-20"><div className="animate-spin w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full" /></div>;
+  if (loading) return <div className="flex justify-center py-20"><div className="animate-spin w-8 h-8 border-4 border-bc-violet border-t-transparent rounded-full" /></div>;
   if (!karya) return <div className="text-center py-20 text-bc-text-3">Karya tidak ditemukan</div>;
 
   return (
@@ -105,7 +105,7 @@ export default function DetailKaryaPage() {
             href={`/profile/${karya.user.id}`}
             color={karya.user.equippedNameColor}
             badge={karya.user.equippedBadge}
-            className="text-sm font-semibold text-bc-text hover:text-violet-600"
+            className="text-sm font-semibold text-bc-text hover:text-bc-violet"
             badgeSize={15}
             isFounder={karya.user.isFounder}
             isPremium={karya.user.isPremium} badgeKind={karya.user.badgeKind}
@@ -182,7 +182,7 @@ export default function DetailKaryaPage() {
 
       <div className="flex items-center gap-4 mb-8 pb-8 border-b border-bc-line">
         <button onClick={handleLike} className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-          liked ? "bg-red-50 text-red-500" : "bg-bc-surface-2 text-bc-text-3 hover:bg-red-50 hover:text-red-500"
+          liked ? "bg-bc-danger-soft text-bc-danger" : "bg-bc-surface-2 text-bc-text-3 hover:bg-bc-danger-soft hover:text-bc-danger"
         }`}>
           <Heart size={18} fill={liked ? "currentColor" : "none"} />
           {karya.likesCount} Suka
@@ -190,13 +190,13 @@ export default function DetailKaryaPage() {
         <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-bc-surface-2 text-bc-text-3 text-sm">
           <Eye size={18} /> {karya.viewsCount} Dilihat
         </div>
-        <ShareKaryaButton karyaId={karya.id} title={karya.title} className="gap-2 px-4 py-2 rounded-xl bg-bc-surface-2 text-bc-text-3 hover:bg-blue-50 hover:text-blue-500 ml-auto" />
+        <ShareKaryaButton karyaId={karya.id} title={karya.title} className="gap-2 px-4 py-2 rounded-xl bg-bc-surface-2 text-bc-text-3 hover:bg-bc-info-soft hover:text-bc-info ml-auto" />
         {isOwner && (
           <button onClick={handleDelete} disabled={deleting}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-500 dark:text-red-400 hover:bg-red-100 text-sm font-medium transition-all disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-bc-danger-soft text-bc-danger dark:text-red-400 hover:bg-bc-danger-soft text-sm font-medium transition-all disabled:opacity-50"
           >
             {deleting ? (
-              <div className="animate-spin w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full" />
+              <div className="animate-spin w-4 h-4 border-2 border-bc-danger border-t-transparent rounded-full" />
             ) : (
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
