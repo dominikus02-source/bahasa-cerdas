@@ -6,10 +6,12 @@ import { Loader2, Video } from "lucide-react";
 import { JUMPA_ENABLED } from "@/lib/features";
 
 /**
- * Tombol "Mulai JUMPA" di halaman kelas guru. Klik 1 = buat ruang & buka
- * lobby; klik 2 (di lobby) = Gabung. Tidak tampil bila flag mati.
+ * Tombol "Mulai JUMPA" untuk kelas guru. Klik 1 = buat ruang (atau buka
+ * jadwal hari ini yang ≤ 15 menit lagi) & buka lobby; klik 2 (di lobby) =
+ * Gabung. Tidak tampil bila flag mati.
+ * variant "grad" = tombol utama panel JUMPA (Panduan Desain: gradien merek).
  */
-export default function StartJumpaButton({ groupId, className = "" }: { groupId: string; className?: string }) {
+export default function StartJumpaButton({ groupId, className = "", variant = "secondary", label = "Mulai JUMPA" }: { groupId: string; className?: string; variant?: "secondary" | "grad"; label?: string }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,14 +43,15 @@ export default function StartJumpaButton({ groupId, className = "" }: { groupId:
     }
   };
 
+  const cls = variant === "grad" ? "jpe-btn w-full sm:w-auto" : "bc-btn-secondary min-h-11 w-full justify-center text-sm shrink-0 sm:w-auto";
   return (
     <div className={`flex flex-col gap-1 ${className}`}>
-      <button type="button" onClick={start} disabled={busy} className="bc-btn-secondary min-h-11 w-full justify-center text-sm shrink-0 sm:w-auto" aria-label="Mulai JUMPA, ruang video untuk kelas ini">
-        {busy ? <Loader2 size={18} className="animate-spin" /> : <Video size={18} />} Mulai JUMPA
+      <button type="button" onClick={start} disabled={busy} className={cls} data-tone={variant === "grad" ? "grad" : undefined} aria-label={`${label}, ruang video untuk kelas ini`}>
+        {busy ? <Loader2 size={18} className="animate-spin" /> : <Video size={18} />} {label}
       </button>
       {error && <p role="alert" className="text-xs text-[var(--clr-danger)]">{error}</p>}
       {upgradeUrl && (
-        <a href={upgradeUrl} className="text-xs font-semibold text-[var(--clr-accent)] underline-offset-2 hover:underline">
+        <a href={upgradeUrl} className="text-xs font-semibold text-[var(--clr-accent-strong)] underline-offset-2 hover:underline">
           Lihat paket Premium
         </a>
       )}

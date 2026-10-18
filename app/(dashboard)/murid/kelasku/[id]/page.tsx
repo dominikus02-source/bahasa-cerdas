@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, BookOpen, CheckCircle2, Crown, FileText, GraduationCap, Megaphone, Pin, RotateCw, Users } from "lucide-react";
 import "@/components/kelas/classroom.css";
 import { humanDeadline } from "@/lib/classroom/deadline";
+import KelasJumpaPanel from "@/components/jumpa/KelasJumpaPanel";
 
 interface StudentClassData {
   group: {
@@ -151,6 +152,9 @@ export default function MuridKelaskuDetailPage({ params }: { params: Promise<{ i
             </button>
           </div>
         </div>
+
+        {/* JUMPA — "Gabung JUMPA" saat kelas berlangsung + jadwal berikutnya (tersembunyi bila flag mati) */}
+        <KelasJumpaPanel groupId={data.group.id} role="MURID" />
 
         {tab === "aktivitas" && (
           <div className="space-y-3">

@@ -21,7 +21,7 @@ function greetingForHour(hour: number): string {
   return "Selamat malam";
 }
 
-export default function GuruBerandaClient({ displayName }: { displayName: string }) {
+export default function GuruBerandaClient({ displayName, userKey = null }: { displayName: string; userKey?: string | null }) {
   const [misiStatus, setMisiStatus] = useState<MisiGuruStatus | null>(null);
   const [greeting, setGreeting] = useState(() => greetingForHour(jakartaHour()));
 
@@ -49,6 +49,7 @@ export default function GuruBerandaClient({ displayName }: { displayName: string
       greeting={greeting}
       fullName={displayName}
       misiStatus={misiStatus}
+      userKey={userKey}
     />
   );
 }
