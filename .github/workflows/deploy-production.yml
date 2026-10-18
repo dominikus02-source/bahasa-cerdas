@@ -37,21 +37,54 @@ jobs:
           ssh-keyscan -H 103.242.10.81 >> ~/.ssh/known_hosts
 
       - name: Deploy
+        # deploy.sh runs detached on the VPS (nohup + setsid) so a dropped
+        # runner SSH session can no longer kill a build midway. The runner
+        # then polls for the exit code with short keepalive SSH calls.
+        env:
+          RUN_TAG: gh-${{ github.run_id }}-${{ github.run_attempt }}
         run: |
           set -euo pipefail
-          ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes bcadmin@103.242.10.81 '
-            set -e
+          SSH=(ssh -i "$HOME/.ssh/id_ed25519" -o IdentitiesOnly=yes -o ServerAliveInterval=15 -o ServerAliveCountMax=8 -o ConnectTimeout=20 bcadmin@103.242.10.81)
+          LOG="/tmp/bc-deploy-$RUN_TAG.log"
+          EXIT="/tmp/bc-deploy-$RUN_TAG.exit"
+
+          "${SSH[@]}" "LOG=$LOG EXIT=$EXIT bash -s" <<'REMOTE'
+          set -euo pipefail
+          rm -f "$EXIT"
+          # Waits up to 40 min for another deploy holding the flock, then runs.
+          nohup setsid bash -c '
+            flock -w 2400 /tmp/bahasacerdas-deploy.lock true || { echo "lock wait timeout"; echo 75 > "$1"; exit 0; }
             cd /opt/bahasacerdas/apps/bahasa-cerdas
-            git fetch --prune origin
-            git checkout main
-            git pull --ff-only origin main
-            bash ops/vps/deploy.sh
-          '
+            rc=0
+            { git fetch --prune origin && git checkout main && git pull --ff-only origin main && bash ops/vps/deploy.sh; } || rc=$?
+            echo "$rc" > "$1"
+          ' _ "$EXIT" > "$LOG" 2>&1 < /dev/null &
+          echo "Detached deploy started; log: $LOG"
+          REMOTE
+
+          deadline=$(( $(date +%s) + 3600 ))
+          while :; do
+            sleep 30
+            if code=$("${SSH[@]}" "cat '$EXIT' 2>/dev/null || true; tail -n 3 '$LOG' >&2" ); then
+              if [[ -n "${code//[[:space:]]/}" ]]; then
+                echo "==== deploy log (tail) ===="
+                "${SSH[@]}" "tail -n 200 '$LOG'" || true
+                echo "deploy.sh exit code: $code"
+                exit "${code//[[:space:]]/}"
+              fi
+            else
+              echo "SSH poll failed; retrying"
+            fi
+            if (( $(date +%s) > deadline )); then
+              echo "Timed out waiting for deploy" >&2
+              exit 1
+            fi
+          done
 
       - name: Verify production
         run: |
           set -euo pipefail
-          ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes bcadmin@103.242.10.81 '
+          ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes -o ServerAliveInterval=15 -o ConnectTimeout=20 bcadmin@103.242.10.81 '
             set -e
             cd /opt/bahasacerdas/apps/bahasa-cerdas
             printf "Production commit: "
