@@ -48,6 +48,8 @@
 
 .ui-btn--primary { background: var(--bc-grad-brand); color: var(--clr-on-brand); }
 .ui-btn--murid { background: var(--bc-grad-murid); color: var(--clr-on-brand); }
+/* Aksi utama sesuai audiens: murid = gradien merek, guru = gradien biru (tokens.css §3). */
+.ui-btn--accent { background: var(--bc-grad-aud); color: var(--clr-on-aud); }
 .ui-btn--secondary {
   background: var(--clr-surface-2);
   color: var(--clr-text);
@@ -67,6 +69,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .ui-btn--primary:hover:not(:disabled), .ui-btn--murid:hover:not(:disabled) { box-shadow: var(--bc-glow-brand); transform: translateY(-1px); }
+  .ui-btn--accent:hover:not(:disabled) { box-shadow: var(--bc-glow-aud); transform: translateY(-1px); }
   .ui-btn--secondary:hover:not(:disabled) { border-color: color-mix(in srgb, var(--clr-accent) 45%, transparent); background: var(--bc-grad-tint); }
   .ui-btn--ghost:hover:not(:disabled), .ui-btn--quiet:hover:not(:disabled) { color: var(--clr-text); background: color-mix(in srgb, var(--clr-text) 6%, transparent); }
   .ui-btn--soft:hover:not(:disabled) { border-color: color-mix(in srgb, var(--clr-accent) 55%, transparent); }
@@ -119,6 +122,8 @@
   color: var(--clr-on-brand);
 }
 .ui-icon-box--murid { background: var(--bc-grad-murid); }
+.ui-icon-box--accent { background: var(--bc-grad-aud); color: var(--clr-on-aud); }
+.ui-icon-box--aud-soft { background: var(--clr-aud-soft); color: var(--clr-aud); }
 .ui-icon-box--soft { background: var(--clr-accent-soft); color: var(--clr-accent-strong); }
 .dark .ui-icon-box--soft { color: var(--clr-accent); }
 .ui-icon-box--lg { width: 56px; height: 56px; border-radius: 18px; }
@@ -148,6 +153,7 @@
 .ui-badge--warning, .ui-badge--premium { color: var(--clr-warning-strong); background: var(--clr-warning-soft); border-color: color-mix(in srgb, var(--clr-warning) 45%, transparent); }
 .ui-badge--danger, .ui-badge--live { color: var(--clr-danger); background: var(--clr-danger-soft); border-color: color-mix(in srgb, var(--clr-danger) 30%, transparent); }
 .ui-badge--brand { color: var(--clr-on-brand); background: var(--bc-grad-brand); }
+.ui-badge--aud { color: var(--clr-aud); background: var(--clr-aud-soft); border-color: color-mix(in srgb, var(--clr-aud) 35%, transparent); }
 .ui-badge__dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: ui-pulse 1.6s ease-in-out infinite; }
 @keyframes ui-pulse { 50% { opacity: .35; } }
 

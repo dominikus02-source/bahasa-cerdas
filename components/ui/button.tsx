@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
  * Catatan: atribut `type` tidak diberi bawaan (perilaku <button> asli tetap:
  * di dalam <form> = submit). Tulis type="button" bila bukan submit.
  */
-export type ButtonDesignVariant = "primary" | "murid" | "secondary" | "ghost" | "quiet" | "soft" | "danger" | "premium";
+export type ButtonDesignVariant = "primary" | "murid" | "accent" | "secondary" | "ghost" | "quiet" | "soft" | "danger" | "premium";
 type LegacyVariant = "default" | "destructive" | "outline" | "link" | "gold" | "success" | "legacy-secondary" | "legacy-ghost";
 export type ButtonSize = "sm" | "md" | "lg" | "icon" | "default";
 
@@ -36,7 +36,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   loading?: boolean;
 }
 
-const DESIGN = new Set<string>(["primary", "murid", "secondary", "ghost", "quiet", "soft", "danger", "premium"]);
+const DESIGN = new Set<string>(["primary", "murid", "accent", "secondary", "ghost", "quiet", "soft", "danger", "premium"]);
 
 /** Kelas tombol desain, untuk dipasang di <Link>/<a> yang tampil seperti tombol. */
 export function buttonClass({
