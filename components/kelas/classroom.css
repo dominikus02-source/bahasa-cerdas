@@ -1,27 +1,7 @@
 /* BC CLASSROOM — iOS Edu Design Tokens (semantic, light + dark first-class).
    Scope: .bc-classroom — tidak menyentuh theme engine existing (next-themes). */
 .bc-classroom {
-  --clr-bg: #f4f5f7;
-  --clr-surface: #ffffff;
-  --clr-surface-2: #f8f9fb;
-  --clr-border: #e6e8ee;
-  --clr-border-strong: #d4d7e0;
-  --clr-text: #16181d;
-  --clr-text-2: #5b6270;
-  --clr-text-3: #64748b;
-  --clr-accent: #059669;
-  --clr-accent-strong: #047857;
-  --clr-accent-soft: #ecfdf5;
-  --clr-success: #059669;
-  --clr-warning: #d97706;
-  --clr-warning-strong: #b45309;
-  --clr-warning-soft: #fffbeb;
-  --clr-danger: #b91c1c;
-  --clr-danger-soft: #fef2f2;
-  --clr-violet: #7c3aed;
-  --clr-violet-soft: #f5f3ff;
-  --clr-info: #2563eb;
-  --clr-info-soft: #eff6ff;
+  /* Warna --clr-* diwarisi dari app/theme/tokens.css (dulu salinan identik). */
   --shadow-card: 0 1px 3px rgba(16, 24, 40, 0.05), 0 1px 2px rgba(16, 24, 40, 0.04);
   --shadow-sheet: 0 -12px 40px rgba(16, 24, 40, 0.18);
   --radius-lg: 20px;
@@ -31,27 +11,7 @@
 }
 
 .dark .bc-classroom {
-  --clr-bg: #0f1117;
-  --clr-surface: #171a22;
-  --clr-surface-2: #1d212b;
-  --clr-border: #262b38;
-  --clr-border-strong: #333a4b;
-  --clr-text: #f1f2f6;
-  --clr-text-2: #a6adbb;
-  --clr-text-3: #8b93a1;
-  --clr-accent: #34d399;
-  --clr-accent-strong: #10b981;
-  --clr-accent-soft: #0d2b22;
-  --clr-success: #34d399;
-  --clr-warning: #fbbf24;
-  --clr-warning-strong: #fbbf24;
-  --clr-warning-soft: #2b220d;
-  --clr-danger: #f87171;
-  --clr-danger-soft: #2b1517;
-  --clr-violet: #a78bfa;
-  --clr-violet-soft: #1e1835;
-  --clr-info: #93c5fd;
-  --clr-info-soft: #15233f;
+  /* Warna --clr-* diwarisi dari app/theme/tokens.css (dulu salinan identik). */
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4);
   --shadow-sheet: 0 -12px 40px rgba(0, 0, 0, 0.6);
   color-scheme: dark;
@@ -73,8 +33,8 @@
 
 /* Primary CTA */
 .bc-btn-primary {
-  background: var(--clr-accent);
-  color: #ffffff;
+  background: var(--bc-grad-brand);
+  color: var(--clr-on-brand);
   border-radius: var(--radius-md);
   font-weight: 700;
   min-height: 48px;
@@ -85,7 +45,12 @@
   gap: 8px;
   transition: background 0.15s ease, transform 0.05s ease;
 }
-.bc-btn-primary:hover { background: var(--clr-accent-strong); }
+.bc-btn-primary:hover { filter: brightness(1.06) saturate(1.05); }
+.bc-student .bc-btn-primary { background: var(--bc-grad-murid); }
+/* Ruang guru tetap biru solid sampai CEO memutuskan identitas guru
+   (docs/AUDIT_DESAIN_GLOBAL.md §6). */
+.bc-guru-shell .bc-classroom:not(.bc-student) .bc-btn-primary { background: var(--clr-accent); }
+.bc-guru-shell .bc-classroom:not(.bc-student) .bc-btn-primary:hover { background: var(--clr-accent-strong); filter: none; }
 .bc-btn-primary:active { transform: scale(0.98); }
 .bc-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
@@ -139,7 +104,7 @@
   position: fixed;
   inset: 0;
   z-index: 60;
-  background: rgba(16, 24, 40, 0.45);
+  background: var(--clr-scrim);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -187,7 +152,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: #fff;
+  color: var(--clr-on-brand);
 }
 .bc-check-on { background: var(--clr-accent); border-color: var(--clr-accent); }
 
@@ -217,18 +182,13 @@
 /* STEP 6.1 — Student classroom: accent violet (identitas murid), token lain
    tetap semantik dan konsisten dengan light/dark di atas. */
 .bc-classroom.bc-student {
-  --clr-accent: #7c3aed;
-  --clr-accent-strong: #6d28d9;
-  --clr-accent-soft: #f5f3ff;
-  --clr-violet: #7c3aed;
-  --clr-violet-soft: #f5f3ff;
+  --clr-accent: var(--clr-violet);
+  --clr-accent-strong: color-mix(in srgb, var(--clr-violet) 82%, var(--clr-text));
+  --clr-accent-soft: var(--clr-violet-soft);
 }
 .dark .bc-classroom.bc-student {
-  --clr-accent: #a78bfa;
-  --clr-accent-strong: #8b5cf6;
-  --clr-accent-soft: #1e1835;
-  --clr-violet: #a78bfa;
-  --clr-violet-soft: #1e1835;
+  /* Gelap: violet lebih terang tetap jadi aksen; varian "strong" sedikit diredam. */
+  --clr-accent-strong: color-mix(in srgb, var(--clr-violet) 85%, var(--clr-bg));
 }
 
 /* Status badge submission */
@@ -242,7 +202,7 @@
   padding: 5px 12px;
 }
 .bc-status-belum { background: var(--clr-surface-2); color: var(--clr-text-2); border: 1px solid var(--clr-border); }
-.bc-status-sedang { background: var(--clr-warning) / 15; color: var(--clr-warning); }
+.bc-status-sedang { background: var(--clr-warning-soft); color: var(--clr-warning); }
 .bc-status-kumpul { background: var(--clr-violet-soft); color: var(--clr-violet); }
 .bc-status-nilai { background: var(--clr-accent-soft); color: var(--clr-accent-strong); }
 

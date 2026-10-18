@@ -45,7 +45,7 @@ function main() {
   check("1. guru kelasku menampilkan ringkasan submission per aktivitas",
     () => guruPage.includes("RingkasanChips") && guruPage.includes("sudah mengumpulkan"));
   check("2. murid kelas menampilkan stream prioritas (rank) + feedback",
-    () => muridPage.includes("rank") && muridPage.includes("Feedback guru"));
+    () => muridPage.includes("rank") && muridPage.includes("Catatan guru"));
 
   // 3. Assignment status is server-derived
   console.log("\n── 3. Status server-derived ──");
@@ -72,8 +72,8 @@ function main() {
   console.log("\n── 7-8. Hasil & feedback murid ──");
   check("7. murid API mengirim nilai saat DINILAI", () => muridApi.includes('status = "DINILAI"') && muridApi.includes("nilai"));
   check("8. murid API mengirim feedback (praktikCatatan)", () => muridApi.includes("praktikCatatan") && muridApi.includes("feedback"));
-  check("8. halaman murid menampilkan 'Feedback guru' + nilai badge",
-    () => muridPage.includes("Feedback guru") && muridPage.includes("Sudah dinilai"));
+  check("8. halaman murid menampilkan 'Catatan guru' + nilai badge",
+    () => muridPage.includes("Catatan guru") && muridPage.includes("Sudah dinilai"));
 
   // 9. Multi-class consistency
   console.log("\n── 9-11. Multi-class & delivery ──");

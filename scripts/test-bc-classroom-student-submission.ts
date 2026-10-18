@@ -59,14 +59,14 @@ function main() {
   check("6. SUDAH_DIKUMPULKAN di API + UI",
     () => muridApi.includes("SUDAH_DIKUMPULKAN") && muridPage.includes("Sudah dikumpulkan"));
   check("7. DINILAI + nilai tampil", () => muridApi.includes('status = "DINILAI"') && muridPage.includes("Sudah dinilai"));
-  check("8. feedback tampil di UI murid ('Feedback guru')",
-    () => muridPage.includes("Feedback guru") && muridApi.includes("feedback"));
+  check("8. feedback tampil di UI murid ('Catatan guru')",
+    () => muridPage.includes("Catatan guru") && muridApi.includes("feedback"));
 
   // 9-10. Deadline
   console.log("\n── 9-10. Deadline ──");
   check("9. deadline manusiawi (humanDeadline + label Terlambat)",
     () => muridPage.includes("humanDeadline") && read("lib/classroom/deadline.ts").includes("Terlambat"));
-  check("10. 'Deadline: Besok' pattern", () => muridPage.includes("Deadline: ${dl.label}"));
+  check("10. 'Tenggat: Besok' pattern", () => muridPage.includes("Tenggat: ${dl.label}"));
 
   // 11-12. Link karya valid / javascript ditolak
   console.log("\n── 11-12. Link karya ──");

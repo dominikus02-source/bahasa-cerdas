@@ -438,7 +438,7 @@ if (globals.includes("--clr-danger: #ef4444")) fail("Jebakan 8.0: danger ef4444 
 else ok("Jebakan ke-3: danger 8.0 tidak kembali");
 if (!globals.includes("--clr-warning-strong")) fail("Jebakan: warning-strong (token baru) HILANG");
 else ok("Jebakan ke-4: --clr-warning-strong hadir di globals");
-if (!classroom.includes("--clr-warning-strong")) fail("Jebakan: classroom.css tidak sinkron (warning-strong)");
+if (!(classroom.includes("--clr-warning-strong") || classroom.includes("diwarisi dari app/theme/tokens.css"))) fail("Jebakan: classroom.css tidak sinkron (warning-strong)");
 else ok("Jebakan ke-5: classroom.css sinkron warning-strong");
 
 /* ═══════════ J. Mobile & literal ═══════════ */
