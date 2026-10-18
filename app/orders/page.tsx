@@ -1,102 +1,123 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { ShoppingBag, Download, Clock, CheckCircle, XCircle, ArrowLeft, Store } from "lucide-react";
+import { Download, LogIn, RefreshCw, ShoppingBag, Store } from "lucide-react";
+import { formatCurrency } from "@/lib/format";
+import { reconcilePayment } from "@/lib/billing/reconcile-client";
+import { StatusBadge, formatTanggal } from "@/components/billing/parts";
+import PaymentHistory from "@/components/billing/PaymentHistory";
+import "@/components/billing/billing.css";
+
+interface Order {
+  id: string;
+  karya?: { title?: string; fileUrl?: string | null } | null;
+  amount?: number;
+  status: string;
+  midtransOrderId?: string | null;
+  createdAt: string;
+}
+
+const STATUS: Record<string, string> = { PAID: "SUCCESS", COMPLETED: "SUCCESS", PENDING: "PENDING", EXPIRED: "EXPIRED", CANCELLED: "CANCELLED", REFUNDED: "REFUNDED" };
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [orders, setOrders] = useState<Order[] | null>(null);
+  const [needLogin, setNeedLogin] = useState(false);
+  const [busy, setBusy] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetch("/api/user/me")
-      .then(r => r.ok ? setIsLoggedIn(true) : setIsLoggedIn(false))
-      .catch(() => {});
-    
-    fetch("/api/marketplace/order")
-      .then(r => r.json())
-      .then(d => { setOrders(d.orders || []); setLoading(false); })
-      .catch(() => setLoading(false));
+  const load = useCallback(async () => {
+    try {
+      const res = await fetch("/api/marketplace/order", { cache: "no-store" });
+      if (res.status === 401) {
+        setNeedLogin(true);
+        setOrders([]);
+        return;
+      }
+      const d = await res.json().catch(() => ({}));
+      setOrders(Array.isArray(d.orders) ? d.orders : []);
+    } catch {
+      setOrders([]);
+    }
   }, []);
 
-  if (!isLoggedIn) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-white">
-        <div className="text-center">
-          <ShoppingBag size={48} className="mx-auto text-slate-200 mb-3" />
-          <p className="text-slate-500 font-medium">Login untuk lihat pesanan</p>
-          <Link href="/login" className="mt-4 inline-block text-red-600 font-semibold hover:underline">Login →</Link>
-        </div>
-      </div>
-    );
-  }
+  useEffect(() => { void load(); }, [load]);
+
+  const recheck = async (orderId: string) => {
+    setBusy(orderId);
+    await reconcilePayment(orderId);
+    await load();
+    setBusy(null);
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
-      <div className="max-w-3xl mx-auto px-4 py-8">
-        <div className="flex items-center gap-3 mb-6">
-          <ShoppingBag size={28} className="text-red-600" />
-          <h1 className="text-2xl font-bold text-slate-900">Pesanan Saya</h1>
-        </div>
-
-        <div className="flex items-center gap-3 mb-6">
-          <Link
-            href="/marketplace"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-xl hover:bg-red-700 transition-colors"
-          >
-            <Store size={16} /> Toko Karya
-          </Link>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 px-4 py-2 border border-slate-300 text-slate-700 text-sm font-semibold rounded-xl hover:bg-slate-50 transition-colors"
-          >
-            <ArrowLeft size={16} /> Beranda
-          </Link>
-        </div>
-
-        {loading ? (
-          <div className="text-center py-20 text-slate-400">Memuat...</div>
-        ) : orders.length === 0 ? (
-          <div className="text-center py-20">
-            <ShoppingBag size={48} className="mx-auto text-slate-200 mb-3" />
-            <p className="text-slate-500 font-medium">Belum ada pesanan</p>
-            <Link href="/marketplace" className="mt-4 inline-block text-red-600 font-semibold hover:underline">Jelajahi Toko Karya →</Link>
+    <main style={{ minHeight: "100dvh", background: "var(--clr-bg)", color: "var(--clr-text)", padding: "16px 16px 40px" }}>
+      <div className="bp" style={{ maxWidth: "48rem" }}>
+        <section className="bp-card bp-card--accent bp-in">
+          <div className="bp-head">
+            <span className="bp-icon" aria-hidden="true"><ShoppingBag size={22} /></span>
+            <div style={{ minWidth: 0 }}>
+              <p className="bp-eyebrow">Riwayat transaksi</p>
+              <h1 className="bp-h1">Pesanan saya</h1>
+              <p className="bp-text">Karya yang kamu beli dan statusnya.</p>
+            </div>
           </div>
+          <div className="bp-actions bp-actions--row">
+            <Link href="/marketplace" className="bp-ghost"><Store size={18} aria-hidden="true" /> Toko Karya</Link>
+            <Link href="/" className="bp-ghost">Beranda</Link>
+          </div>
+        </section>
+
+        {needLogin ? (
+          <section className="bp-card">
+            <div className="bp-empty">
+              <span className="bp-empty__icon" aria-hidden="true"><LogIn size={24} /></span>
+              <p className="bp-h3">Masuk untuk melihat pesanan</p>
+              <Link href="/login?next=/orders" className="bp-btn" style={{ marginTop: 8 }}>Masuk</Link>
+            </div>
+          </section>
         ) : (
-          <div className="space-y-4">
-            {orders.map((order: any) => (
-              <div key={order.id} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h3 className="font-semibold text-slate-900">{order.karya?.title || order.itemTitle}</h3>
-                    <p className="text-xs text-slate-400 mt-0.5">
-                      {new Date(order.createdAt || order.soldAt).toLocaleDateString("id", { day: "numeric", month: "long", year: "numeric" })}
-                    </p>
-                  </div>
-                  <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-                    order.status === "PAID" || order.status === "COMPLETED" ? "bg-emerald-50 text-emerald-700" :
-                    order.status === "PENDING" ? "bg-amber-50 text-amber-700" :
-                    "bg-red-50 text-red-700"
-                  }`}>
-                    {order.status === "PAID" || order.status === "COMPLETED" ? "Lunas" :
-                     order.status === "PENDING" ? "Menunggu Pembayaran" : "Gagal"}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-red-600">Rp {(order.amount || order.price || 0).toLocaleString("id")}</span>
-                  {(order.status === "PAID" || order.status === "COMPLETED") && (
-                    <a href={order.karya?.fileUrl || order.fileUrl} download
-                      className="inline-flex items-center gap-1.5 text-sm text-emerald-600 font-semibold hover:underline">
-                      <Download size={14} /> Unduh
-                    </a>
-                  )}
-                </div>
+          <section className="bp-card" aria-labelledby="daftar-pesanan">
+            <h2 id="daftar-pesanan" className="bp-h2">Karya</h2>
+            {orders === null ? (
+              <p className="bp-small" style={{ marginTop: 12 }}>Memuat…</p>
+            ) : orders.length === 0 ? (
+              <div className="bp-empty">
+                <span className="bp-empty__icon" aria-hidden="true"><ShoppingBag size={24} /></span>
+                <p className="bp-h3">Belum ada pesanan</p>
+                <Link href="/marketplace" className="bp-link" style={{ fontSize: 14 }}>Jelajahi Toko Karya</Link>
               </div>
-            ))}
-          </div>
+            ) : (
+              <ul className="bp-history">
+                {orders.map((o) => {
+                  const status = STATUS[o.status] || "FAILED";
+                  return (
+                    <li key={o.id}>
+                      <span className="bp-history__title" style={{ overflowWrap: "anywhere" }}>{o.karya?.title || "Karya"}</span>
+                      <span className="bp-history__amount">{formatCurrency(o.amount || 0)}</span>
+                      <span className="bp-history__meta">
+                        <StatusBadge status={status} />
+                        <span>{formatTanggal(o.createdAt, { short: true })}</span>
+                        {status === "SUCCESS" && o.karya?.fileUrl && (
+                          <a href={o.karya.fileUrl} download className="bp-chip" style={{ minHeight: 36, textDecoration: "none" }}>
+                            <Download size={14} aria-hidden="true" /> Unduh
+                          </a>
+                        )}
+                        {status === "PENDING" && o.midtransOrderId && (
+                          <button type="button" className="bp-chip" style={{ minHeight: 36 }} onClick={() => recheck(o.midtransOrderId!)} disabled={busy === o.midtransOrderId}>
+                            <RefreshCw size={14} aria-hidden="true" className={busy === o.midtransOrderId ? "bp-spin" : undefined} /> Cek lagi
+                          </button>
+                        )}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </section>
         )}
+
+        {!needLogin && orders !== null && <PaymentHistory />}
       </div>
-    </div>
+    </main>
   );
 }

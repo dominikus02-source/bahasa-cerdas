@@ -111,9 +111,9 @@ async function main() {
   assert(rec.includes("verifyMidtransSignature(status.order_id"), "reconcile verifies Midtrans status signature");
   assert(rec.includes("fetchMidtransTransactionStatus("), "reconcile reads status from Midtrans server-side");
   const finish = read("app/payment/finish/page.tsx");
-  assert(finish.includes("reconcileMidtransOrder(") && !finish.includes('transaction_status === "settlement"'), "finish page verifies server-side, ignores query status");
+  assert(finish.includes("getPublicPaymentStatus(") && !finish.includes("transaction_status ==="), "finish page verifies server-side, ignores query status");
   const guru = read("app/(dashboard)/guru/berlangganan/page.tsx");
-  assert(guru.includes("reconcilePayment(lastOrderId.current)"), "guru Snap callbacks reconcile");
+  assert(guru.includes("await reconcilePayment(orderId)") && guru.includes("onSuccess: () => { if (orderId) void showOrder("), "guru Snap callbacks reconcile");
 
   console.log(`\n${passed} passed, ${failed} failed`);
   if (failed > 0) process.exit(1);

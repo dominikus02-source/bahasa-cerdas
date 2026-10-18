@@ -18,7 +18,12 @@ export function resolveIdentity(user: IdentitySource, now = new Date()) {
   const future = (value: Date | string | null | undefined) => Boolean(value && new Date(value).getTime() > now.getTime());
   const founder = user.isFounder === true;
   const subscription = user.subscriptions?.some(s => s.status === "ACTIVE" && future(s.currentPeriodEnd) && (!s.currentPeriodStart || new Date(s.currentPeriodStart) <= now));
-  const paid = (role === "GURU" || role === "MURID") && Boolean(subscription || (!user.subscriptions?.length && user.isPremium && user.premiumPlan !== "FREE" && future(user.premiumUntil)));
+  // A non-ACTIVE subscription whose period still covers "now" (cancelled /
+  // refunded mid-period) revokes the legacy flag. Old subscription rows whose
+  // period already ended must NOT hide a newer paid premiumUntil (Midtrans
+  // one-off payments only write the user flags).
+  const revoked = user.subscriptions?.some(s => s.status !== "ACTIVE" && future(s.currentPeriodEnd)) ?? false;
+  const paid = (role === "GURU" || role === "MURID") && Boolean(subscription || (!revoked && user.isPremium && user.premiumPlan !== "FREE" && future(user.premiumUntil)));
   const trial = role === "GURU" && !paid && future(user.trialEndsAt);
   const badgeKind: IdentityBadge | null = founder ? "founder" : paid ? role === "GURU" ? "teacher" : "student" : trial ? "trial" : null;
   return { badgeKind, isPremium: paid, plan: founder || role === "ADMIN" ? "FOUNDER" : paid ? role === "MURID" ? "MURID_PREMIUM" : "PRO" : trial ? "PRO" : "FREE", subscriptionStatus: founder || role === "ADMIN" ? "FOUNDER" : paid ? "ACTIVE" : trial ? "TRIALING" : null } as const;

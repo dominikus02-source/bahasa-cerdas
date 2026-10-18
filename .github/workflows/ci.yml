@@ -69,6 +69,8 @@ jobs:
 
       - name: Midtrans payment activation gate
         run: npm run test:midtrans-activation
+      - name: Payment pages gate
+        run: npm run test:payment-pages
 
       - name: Lint
         run: npm run lint

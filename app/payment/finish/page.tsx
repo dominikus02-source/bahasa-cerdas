@@ -1,114 +1,37 @@
-import { CheckCircle, XCircle, ShoppingBag, ArrowLeft, Crown } from "lucide-react"
-import Link from "next/link"
+import type { Metadata } from "next"
 import { getUser } from "@/lib/supabase/server"
-import { reconcileMidtransOrder } from "@/lib/payments/midtrans-reconcile"
+import { getPublicPaymentStatus } from "@/lib/payments/midtrans-reconcile"
+import type { PanelView } from "@/components/billing/PaymentStatusPanel"
+import PaymentFinishView from "@/components/billing/PaymentFinishView"
 
 export const dynamic = "force-dynamic"
+export const metadata: Metadata = { title: "Hasil pembayaran · BahasaCerdas", robots: { index: false } }
 
 const ORDER_ID_RE = /^[A-Za-z0-9._~-]{4,64}$/
 
 /**
- * Snap redirect target (callbacks.finish). The query string is NOT trusted:
- * we ask Midtrans for the real status server-side and activate idempotently
- * via the same processor as the webhook, then render the verified result.
+ * Tujuan redirect Snap (callbacks.finish). Query string TIDAK dipercaya:
+ * status diambil dari database + Midtrans di server. Halaman ini publik
+ * agar tetap berguna saat sesi habis; rincian akun hanya untuk pemilik.
  */
 export default async function PaymentFinishPage({
   searchParams,
 }: {
-  searchParams: Promise<{ order_id?: string; transaction_status?: string; status_code?: string }>
+  searchParams: Promise<{ order_id?: string }>
 }) {
   const { order_id } = await searchParams
+  const orderId = order_id && ORDER_ID_RE.test(order_id) ? order_id : null
+  const user = (await getUser().catch(() => null)) as { id: string } | null
 
-  let verified: string = "PENDING"
-  if (order_id && ORDER_ID_RE.test(order_id)) {
+  let view: PanelView = { orderId: orderId ?? "-", status: "NOT_FOUND", kind: "LAIN", planLabel: null, owner: null }
+  if (orderId) {
     try {
-      const user: any = await getUser().catch(() => null)
-      if (user) {
-        const outcome = await reconcileMidtransOrder(order_id, {
-          userId: user.id,
-          allowAnyOwner: user.role === "ADMIN" || user.isFounder === true,
-        })
-        verified = outcome.ok ? outcome.status : "PENDING"
-      }
+      view = await getPublicPaymentStatus(orderId, user ? { id: user.id } : null)
     } catch (err) {
-      console.error("[PaymentFinish] reconcile failed", { order_id, message: (err as Error)?.message })
+      console.error("[PaymentFinish] status failed", { orderId, message: (err as Error)?.message })
+      view = { ...view, status: "PENDING" }
     }
   }
 
-  const isSuccess = verified === "SUCCESS"
-  const isPending = verified === "PENDING" || verified === "NOT_FOUND"
-
-  // Determine context from order_id prefix
-  const isGuruPro = order_id?.startsWith("PM-")
-  const successLink = isGuruPro ? "/guru/berlangganan" : "/orders"
-  const successLabel = isGuruPro ? "Ke Halaman Berlangganan" : "Lihat Pesanan Saya"
-  const failLink = isGuruPro ? "/guru/berlangganan" : "/marketplace"
-  const failLabel = isGuruPro ? "Coba Lagi" : "Kembali ke Marketplace"
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
-      <div className="max-w-md w-full text-center">
-        {isSuccess ? (
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              {isGuruPro ? <Crown className="w-10 h-10 text-green-600" /> : <CheckCircle className="w-10 h-10 text-green-600" />}
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Pembayaran Berhasil!</h1>
-            <p className="text-gray-500 mb-6">
-              {isGuruPro ? "Akun Guru Pro kamu sudah aktif. Nikmati 500 kredit AI setiap bulan!" : "Terima kasih, pembayaran kamu sudah dikonfirmasi."}
-            </p>
-            {order_id && (
-              <p className="text-xs text-gray-400 mb-6 bg-gray-50 rounded-lg px-4 py-2">
-                Order ID: {order_id}
-              </p>
-            )}
-            <div className="flex flex-col gap-3">
-              <Link
-                href={successLink}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition"
-              >
-                {isGuruPro ? <Crown className="w-4 h-4" /> : <ShoppingBag className="w-4 h-4" />}
-                {successLabel}
-              </Link>
-              <Link
-                href="/"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 border border-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Ke Beranda
-              </Link>
-            </div>
-          </div>
-        ) : isPending ? (
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <div className="animate-spin w-6 h-6 border-[3px] border-amber-500 border-t-transparent rounded-full" />
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Menunggu Konfirmasi</h1>
-            <p className="text-gray-500 mb-6">Pembayaran sedang diproses. Cek status di halaman terkait.</p>
-            <Link
-              href={successLink}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-violet-600 text-white rounded-xl font-semibold hover:bg-violet-700 transition"
-            >
-              Kembali
-            </Link>
-          </div>
-        ) : (
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <XCircle className="w-10 h-10 text-red-600" />
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Pembayaran Gagal</h1>
-            <p className="text-gray-500 mb-6">Silakan coba lagi atau gunakan metode pembayaran lain.</p>
-            <Link
-              href={failLink}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-violet-600 text-white rounded-xl font-semibold hover:bg-violet-700 transition"
-            >
-              {failLabel}
-            </Link>
-          </div>
-        )}
-      </div>
-    </div>
-  )
+  return <PaymentFinishView view={view} loggedIn={Boolean(user)} />
 }

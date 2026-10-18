@@ -1,7 +1,8 @@
 "use client";
 
-import { Crown, Sparkles, Clock, Zap } from "lucide-react";
+import { Crown, Sparkles, Zap } from "lucide-react";
 import Link from "next/link";
+import "@/components/billing/billing.css";
 
 interface SidebarPremiumBadgeProps {
   plan: string;
@@ -12,6 +13,8 @@ interface SidebarPremiumBadgeProps {
   premiumUntil: Date | null;
 }
 
+const kredit = (sisa: number | null, total?: number) => (sisa !== null && total ? `${sisa}/${total} kredit` : null);
+
 export function SidebarPremiumBadge({
   plan,
   isTrialActive,
@@ -20,81 +23,36 @@ export function SidebarPremiumBadge({
   creditsTotal,
   premiumUntil,
 }: SidebarPremiumBadgeProps) {
-  // Founder — show founder badge
+  if (plan === "MURID_FREE") return null;
+
+  let tone: "pro" | "coba" | "gratis" = "gratis";
+  let title = "Guru Gratis";
+  let meta: string | null = kredit(remainingCredits, creditsTotal);
+  let cta: string | null = "Jadi Pro";
+  let Icon = Zap;
+
   if (plan === "FOUNDER") {
-    return (
-      <div className="shell-premium-badge mt-3 pt-3 border-t border-blue-100/70 dark:border-blue-950/70">
-        <Link href="/guru/ai-tools" className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200/60 hover:bg-amber-100 transition-all">
-          <Crown size={14} className="text-amber-600 shrink-0" />
-          <div className="min-w-0">
-            <p className="text-[11px] font-semibold text-amber-700">Akses Founder</p>
-            <p className="text-[9px] text-amber-500">500 kredit AI/bulan</p>
-          </div>
-        </Link>
-      </div>
-    );
+    tone = "pro"; title = "Akses Pendiri"; meta = "Semua fitur Pro"; cta = null; Icon = Crown;
+  } else if (plan === "GURU_PRO") {
+    tone = "pro"; title = "Guru Pro"; Icon = Crown; cta = null;
+    meta = premiumUntil
+      ? `Sampai ${new Date(premiumUntil).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Jakarta" })}`
+      : "Aktif";
+  } else if (isTrialActive && plan === "GURU_PRO_TRIAL") {
+    tone = "coba"; title = "Guru Pro (coba)"; Icon = Sparkles;
+    meta = [`${daysRemaining} hari lagi`, kredit(remainingCredits, creditsTotal)].filter(Boolean).join(" · ");
   }
 
-  // Murid — no badge
-  if (plan === "MURID_FREE") {
-    return null;
-  }
-
-  // Active trial
-  if (isTrialActive && plan === "GURU_PRO_TRIAL") {
-    return (
-      <div className="shell-premium-badge mt-3 pt-3 border-t border-blue-100/70 dark:border-blue-950/70">
-        <Link href="/guru/ai-tools" className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-violet-50 to-indigo-50 border border-violet-200/60 hover:from-violet-100 hover:to-indigo-100 transition-all">
-          <Sparkles size={14} className="text-violet-600 shrink-0" />
-          <div className="min-w-0">
-            <p className="text-[11px] font-semibold text-violet-700">Guru Pro Trial</p>
-            <div className="flex items-center gap-2 text-[9px] text-violet-500">
-              <span className="flex items-center gap-0.5">
-                <Clock size={9} /> {daysRemaining} hari
-              </span>
-              {remainingCredits !== null && creditsTotal && (
-                <span className="flex items-center gap-0.5">
-                  <Zap size={9} /> {remainingCredits}/{creditsTotal}
-                </span>
-              )}
-            </div>
-          </div>
-        </Link>
-      </div>
-    );
-  }
-
-  // Active premium
-  if (plan === "GURU_PRO") {
-    return (
-      <div className="shell-premium-badge mt-3 pt-3 border-t border-blue-100/70 dark:border-blue-950/70">
-        <Link href="/guru/pengaturan/premium" className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200/60 hover:from-amber-100 hover:to-yellow-100 transition-all">
-          <Crown size={14} className="text-amber-600 shrink-0" />
-          <div className="min-w-0">
-            <p className="text-[11px] font-semibold text-amber-700">Guru Pro Aktif</p>
-            {premiumUntil && (
-              <p className="text-[9px] text-amber-500">
-                Sampai {new Date(premiumUntil).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
-              </p>
-            )}
-          </div>
-        </Link>
-      </div>
-    );
-  }
-
-  // Free guru (no trial, not premium)
   return (
-    <div className="mt-3 pt-3 border-t border-blue-100/70 dark:border-blue-950/70">
-      <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200/60">
-        <Zap size={14} className="text-gray-400 shrink-0" />
-        <div className="min-w-0">
-          <p className="text-[11px] font-semibold text-gray-600">Guru Free</p>
-          {remainingCredits !== null && creditsTotal && (
-            <p className="text-[9px] text-gray-400">{remainingCredits}/{creditsTotal} credit</p>
-          )}
-        </div>
-      </div>
+    <div className="shell-premium-badge bp-side">
+      <Link href="/guru/berlangganan" className="bp-side__card" data-tone={tone} aria-label={`${title}${meta ? `, ${meta}` : ""}. Buka paket.`}>
+        <Icon size={18} aria-hidden="true" />
+        <span style={{ minWidth: 0 }}>
+          <span className="bp-side__title">{title}</span>
+          {meta && <span className="bp-side__meta">{meta}</span>}
+        </span>
+        {cta && <span className="bp-side__cta" aria-hidden="true">{cta}</span>}
+      </Link>
     </div>
   );
 }

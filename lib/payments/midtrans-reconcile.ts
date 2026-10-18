@@ -7,7 +7,7 @@ import { processVerifiedMidtransNotification } from "@/lib/payments/midtrans-not
 
 export type ReconcileOutcome =
   | { ok: true; status: "SUCCESS"; activated: boolean; orderId: string }
-  | { ok: true; status: "PENDING" | "FAILED" | "EXPIRED" | "CANCELLED" | "NOT_FOUND" | "REFUNDED"; orderId: string; midtransStatus?: string }
+  | { ok: true; status: "PENDING" | "FAILED" | "EXPIRED" | "CANCELLED" | "NOT_FOUND" | "REFUNDED" | "REPLACED"; orderId: string; midtransStatus?: string }
   | { ok: false; error: "FORBIDDEN" | "UNKNOWN_ORDER" | "MIDTRANS_UNVERIFIED" | "MIDTRANS_UNAVAILABLE" | "PROCESSING_FAILED"; orderId: string };
 
 /**
@@ -68,8 +68,112 @@ export async function reconcileMidtransOrder(
   if (finalStatus === "SUCCESS") return { ok: true, status: "SUCCESS", activated: true, orderId };
   return {
     ok: true,
-    status: (["PENDING", "FAILED", "EXPIRED", "CANCELLED", "REFUNDED"].includes(finalStatus) ? finalStatus : "PENDING") as any,
+    status: (["PENDING", "FAILED", "EXPIRED", "CANCELLED", "REFUNDED", "REPLACED"].includes(finalStatus) ? finalStatus : "PENDING") as "PENDING",
     orderId,
     midtransStatus: String(status.transaction_status || ""),
+  };
+}
+
+// ── Status publik (halaman /payment/finish, tanpa sesi) ────────────────
+
+export type PublicPaymentStatus =
+  | "SUCCESS"
+  | "PENDING"
+  | "FAILED"
+  | "EXPIRED"
+  | "CANCELLED"
+  | "REFUNDED"
+  | "REPLACED"
+  | "NOT_FOUND";
+
+export interface PublicPaymentView {
+  orderId: string;
+  status: PublicPaymentStatus;
+  /** "PREMIUM_UPGRADE" | "MURID_PREMIUM" | "KARYA_PURCHASE" | lainnya */
+  kind: "GURU_PRO" | "MURID_PREMIUM" | "KARYA" | "LAIN";
+  planLabel: string | null;
+  /** Hanya diisi bila penonton adalah pemilik pesanan. */
+  owner: null | {
+    amount: number;
+    hargaAsli: number | null;
+    kuponKode: string | null;
+    premiumUntil: string | null;
+    isPremium: boolean;
+  };
+}
+
+const PLAN_LABELS: Record<string, string> = {
+  GURU_PRO_MONTHLY: "Guru Pro Bulanan",
+  GURU_PRO_YEARLY: "Guru Pro Tahunan",
+  MURID_PREMIUM_MONTHLY: "Premium Bulanan",
+  MURID_PREMIUM_YEARLY: "Premium Tahunan",
+};
+
+const KNOWN: PublicPaymentStatus[] = ["SUCCESS", "PENDING", "FAILED", "EXPIRED", "CANCELLED", "REFUNDED", "REPLACED"];
+
+/** Satu panggilan Midtrans per pesanan per 15 detik (per proses). */
+const lastPull = new Map<string, number>();
+const PULL_INTERVAL_MS = 15_000;
+const PULL_WINDOW_MS = 72 * 60 * 60 * 1000;
+
+/**
+ * Status pesanan untuk halaman hasil pembayaran. Aman dibuka tanpa login:
+ * pengunjung anonim/bukan pemilik hanya melihat status + nama paket —
+ * nominal, kupon, dan masa aktif hanya untuk pemilik.
+ *
+ * Bila pesanan masih menunggu, status ditarik dari Midtrans (diverifikasi
+ * tanda tangannya) dan diaktifkan idempoten lewat prosesor webhook.
+ */
+export async function getPublicPaymentStatus(
+  orderId: string,
+  viewer: { id: string } | null
+): Promise<PublicPaymentView> {
+  const find = () =>
+    db.transaksi.findFirst({
+      where: { orderId },
+      select: { id: true, userId: true, type: true, status: true, amount: true, metadata: true, createdAt: true },
+    });
+  let trx = await find();
+  if (!trx) return { orderId, status: "NOT_FOUND", kind: "LAIN", planLabel: null, owner: null };
+
+  const waiting = trx.status === "PENDING" || trx.status === "REPLACED" || trx.status === "EXPIRED";
+  const recent = Date.now() - new Date(trx.createdAt).getTime() < PULL_WINDOW_MS;
+  const last = lastPull.get(orderId) ?? 0;
+  if (waiting && recent && Date.now() - last > PULL_INTERVAL_MS) {
+    lastPull.set(orderId, Date.now());
+    if (lastPull.size > 5000) lastPull.clear();
+    await reconcileMidtransOrder(orderId, { allowAnyOwner: true }).catch((err) => {
+      console.error("[PaymentStatus] reconcile failed", { orderId, message: (err as Error)?.message });
+    });
+    trx = (await find()) ?? trx;
+  }
+
+  const meta = (trx.metadata || {}) as Record<string, unknown>;
+  const planId = typeof meta.planId === "string" ? meta.planId : null;
+  const kind: PublicPaymentView["kind"] =
+    trx.type === "PREMIUM_UPGRADE" ? "GURU_PRO" : trx.type === "MURID_PREMIUM" ? "MURID_PREMIUM" : trx.type === "KARYA_PURCHASE" ? "KARYA" : "LAIN";
+  const status = (KNOWN.includes(trx.status as PublicPaymentStatus) ? trx.status : "PENDING") as PublicPaymentStatus;
+
+  let owner: PublicPaymentView["owner"] = null;
+  if (viewer && viewer.id === trx.userId) {
+    const user = await db.user.findUnique({
+      where: { id: trx.userId },
+      select: { isPremium: true, premiumUntil: true },
+    });
+    owner = {
+      amount: trx.amount,
+      hargaAsli: typeof meta.hargaAsli === "number" ? meta.hargaAsli : null,
+      kuponKode: typeof meta.kuponKode === "string" ? meta.kuponKode : null,
+      premiumUntil: user?.premiumUntil ? user.premiumUntil.toISOString() : null,
+      isPremium: Boolean(user?.isPremium),
+    };
+  }
+
+  return {
+    orderId,
+    status,
+    kind,
+    planLabel: planId ? PLAN_LABELS[planId] ?? null : kind === "KARYA" ? "Karya" : null,
+    owner,
   };
 }
