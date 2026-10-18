@@ -428,6 +428,9 @@
 .jumpa-input::placeholder { color: var(--jp-text-3); }
 .jumpa-input:focus { outline: none; border-color: var(--jp-accent); }
 .jumpa-input:disabled { opacity: .55; }
+/* Layar sentuh: ≥16px agar Safari iOS tidak memperbesar halaman saat input
+   difokuskan. */
+@media (pointer: coarse) { .jumpa-input { font-size: 16px; } }
 .jumpa-scope select.jumpa-input { appearance: auto; }
 
 .jumpa-send {

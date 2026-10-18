@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, BookOpen, CalendarPlus, Crown, History, GraduationCap, KeyRound, Loader2, Plus, Radio, ShieldCheck, Users, Video } from "lucide-react";
 import type { JumpaHomeData, RoomListItem } from "@/lib/jumpa/service";
-import { formatWib } from "@/lib/jumpa/schedule";
+import { formatWib, formatWibTime } from "@/lib/jumpa/schedule";
 import { JUMPA_MURID_ROOM } from "@/lib/jumpa/tiers";
 import { UpgradeSheet } from "./TierUi";
 import NotifyClassToggle from "./NotifyClassToggle";
@@ -18,9 +18,19 @@ import { avatarTone, elapsedLabel, parseRoomInput } from "./format";
 
 const KIND_LABEL = { KELAS: "Kelas", GURU: "Ruang guru", MURID: "Belajar bareng" } as const;
 
-function useMinuteTick(): number {
-  const [now, setNow] = useState(() => Date.now());
+/**
+ * Jam untuk label "x mnt" / "Hari ini · 14.30". `null` saat render server &
+ * hidrasi pertama: label yang bergantung jam baru tampil setelah mount.
+ * Dulu `Date.now()` dipakai langsung → teks server ≠ klien (jam HP beda,
+ * atau hidrasi lambat melewati pergantian menit) → React #418 → seluruh DOM
+ * dibuang & dibuat ulang → input yang sedang difokus (Topik ruang) hilang
+ * beserta ketikannya; di Android keyboard tetap terbuka tapi tidak mengetik
+ * ke mana-mana.
+ */
+function useMinuteTick(): number | null {
+  const [now, setNow] = useState<number | null>(null);
   useEffect(() => {
+    setNow(Date.now());
     const id = window.setInterval(() => setNow(Date.now()), 60_000);
     return () => window.clearInterval(id);
   }, []);
@@ -44,7 +54,8 @@ function QuickJoin() {
       <input
         id="jumpa-code"
         value={value}
-        onChange={(e) => { setValue(e.target.value.slice(0, 120)); setBad(false); }}
+        maxLength={120}
+        onChange={(e) => { setValue(e.target.value); setBad(false); }}
         placeholder="Kode ruang"
         autoComplete="off"
         autoCapitalize="none"
@@ -104,9 +115,17 @@ function Avatars({ room }: { room: RoomListItem }) {
   );
 }
 
-function RoomCard({ room, now }: { room: RoomListItem; now: number }) {
+/** Label jadwal; sebelum mount hanya jam (deterministik, sama di server & klien). */
+function scheduledLabel(scheduledAt: string | null, now: number | null): string {
+  if (!scheduledAt) return "Belum mulai";
+  const at = new Date(scheduledAt);
+  if (now === null) return formatWibTime(at);
+  return at.getTime() > now ? formatWib(at, new Date(now)) : "Belum mulai";
+}
+
+function RoomCard({ room, now }: { room: RoomListItem; now: number | null }) {
   const live = room.status === "LIVE";
-  const elapsed = live ? elapsedLabel(room.startedAt, now) : null;
+  const elapsed = live && now !== null ? elapsedLabel(room.startedAt, now) : null;
   const Icon = room.kind === "GURU" ? Users : room.kind === "MURID" ? BookOpen : GraduationCap;
   return (
     <Link href={`/jumpa/${room.code}`} className="jumpa-card jumpa-room-card">
@@ -121,7 +140,7 @@ function RoomCard({ room, now }: { room: RoomListItem; now: number }) {
           {live ? (
             <span className="jumpa-live">Berlangsung</span>
           ) : (
-            <span className="jumpa-soon">{room.scheduledAt && new Date(room.scheduledAt).getTime() > now ? formatWib(new Date(room.scheduledAt), new Date(now)) : "Belum mulai"}</span>
+            <span className="jumpa-soon">{scheduledLabel(room.scheduledAt, now)}</span>
           )}
           {elapsed && <span className="text-xs text-[var(--jp-text-3)]">{elapsed}</span>}
           <Avatars room={room} />
@@ -197,7 +216,7 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
               </div>
             </div>
             <div className="mt-4 grid gap-2.5">
-              <input value={title} onChange={(e) => setTitle(e.target.value.slice(0, 80))} placeholder="Topik (opsional)" aria-label="Topik ruang" className="jumpa-input w-full" />
+              <input value={title} maxLength={80} onChange={(e) => setTitle(e.target.value)} placeholder="Topik (opsional)" aria-label="Topik ruang" autoComplete="off" enterKeyHint="done" className="jumpa-input w-full" />
               <select value={communityId} onChange={(e) => setCommunityId(e.target.value)} aria-label="Komunitas" className="jumpa-input w-full">
                 <option value="">Tanpa komunitas</option>
                 {data.communities.map((c) => (
@@ -236,7 +255,7 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
                 <option key={g.id} value={g.id}>{g.name}</option>
               ))}
             </select>
-            <input value={title} onChange={(e) => setTitle(e.target.value.slice(0, 60))} placeholder="Mau belajar apa? (opsional)" aria-label="Topik belajar" className="jumpa-input w-full" />
+            <input value={title} maxLength={60} onChange={(e) => setTitle(e.target.value)} placeholder="Mau belajar apa? (opsional)" aria-label="Topik belajar" autoComplete="off" enterKeyHint="done" className="jumpa-input w-full" />
           </div>
           <button type="button" className="jumpa-primary mt-4 w-full sm:w-auto" disabled={busy !== null || !groupId} onClick={() => void create({ kind: "MURID", groupId, title: title || undefined }, "murid")}>
             {busy === "murid" ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />} Buat ruang belajar
