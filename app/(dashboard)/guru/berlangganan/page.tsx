@@ -288,10 +288,10 @@ export default function BerlanggananPage() {
             <details className="bp-details">
               <summary>Ketentuan dan bantuan <ChevronDown size={18} aria-hidden="true" /></summary>
               <ul>
-                <li>Sekali bayar, tanpa perpanjangan otomatis.</li>
-                <li>Masa aktif dihitung sejak lunas. Bayar saat Pro aktif menambah masa aktif.</li>
+                <li>Sekali bayar, tidak diperpanjang otomatis.</li>
+                <li>Masa aktif dihitung sejak lunas. Bayar saat Pro aktif akan memperpanjang masa aktif.</li>
                 <li>Setelah masa aktif habis, akun kembali ke paket Gratis.</li>
-                <li>Pro belum aktif 5 menit setelah lunas? Tekan <b>Cek lagi</b> di riwayat, lalu buka <a href="/guru/bantuan/pembayaran" className="bp-link">bantuan pembayaran</a>.</li>
+                <li>Pro belum aktif 5 menit setelah lunas? Tekan <b>Cek lagi</b> di riwayat, lalu hubungi admin lewat <a href="/guru/bantuan/pembayaran" className="bp-link">bantuan pembayaran</a>.</li>
               </ul>
             </details>
           </section>

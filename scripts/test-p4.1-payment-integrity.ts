@@ -136,24 +136,19 @@ test("F2.3. Transaksi create error returns HTTP error response", () => {
   return checkout.includes('return err("CHECKOUT_DB_FAILED"');
 });
 
-// Coupon usage write failure should still be best-effort (non-critical).
-// This is correct behavior — coupon tracking is non-payment-critical.
-test("F2.4. Coupon usage write is still best-effort (non-payment-critical)", () => {
-  return (
-    checkout.includes("Kupon usage write failed, continuing") &&
-    checkout.includes("best-effort")
-  );
+// Oct 2026: coupon usage is recorded at settlement (processor), not at
+// checkout, so abandoned checkouts no longer burn a coupon.
+test("F2.4. Coupon usage is not written at checkout (recorded at settlement)", () => {
+  return !checkout.includes("kuponPemakaian.create") && checkout.includes("Pemakaian kupon dicatat saat pembayaran");
 });
 
-// Founder/Admin user update failure is also acceptable to swallow
-// (not payment-critical — bypass path, no Midtrans involved).
-test("F2.5. Founder/Admin bypass user update is non-critical (acceptable)", () => {
-  // The founder bypass has a try-catch around user.update that swallows errors
+// Oct 2026: founder/admin bypass failures are logged and surfaced, not swallowed.
+test("F2.5. Founder/Admin bypass failure is logged and returned", () => {
   const founderBlock = checkout.substring(
     checkout.indexOf("Founder/Admin bypass"),
     checkout.indexOf("Determine transaction type")
   );
-  return founderBlock.includes("} catch {}");
+  return !founderBlock.includes("} catch {}") && founderBlock.includes("console.error") && founderBlock.includes('err("CHECKOUT_DB_FAILED"');
 });
 
 // ──────────────────────────────────────────────────

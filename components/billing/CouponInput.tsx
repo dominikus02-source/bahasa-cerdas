@@ -86,7 +86,7 @@ export default function CouponInput({ planId, price, value, onChange, suggestedC
   }
 
   return (
-    <div style={{ display: "grid", gap: 10 }}>
+    <div style={{ display: "grid", gap: 10, gridTemplateColumns: "minmax(0, 1fr)" }}>
       {suggestedCode && (
         <div className="bp-promo">
           <span className="bp-icon bp-icon--warn" aria-hidden="true"><Gift size={18} /></span>

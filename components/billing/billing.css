@@ -176,7 +176,7 @@
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--clr-accent) 18%, transparent);
 }
 .bp-input {
-  flex: 1 1 5rem; min-width: 0;
+  flex: 1 1 5rem; min-width: 0; width: 100%;
   background: transparent; border: 0; outline: none;
   font-size: 16px; color: var(--clr-text);
   padding: 8px 0;
