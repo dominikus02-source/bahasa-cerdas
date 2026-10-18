@@ -269,12 +269,20 @@ export default function MuridProfilePage() {
     if (!file) return;
     setUploadingAvatar(true);
     try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `avatar-${Date.now()}.${fileExt}`;
-      const { error } = await supabase.storage.from("avatars").upload(fileName, file);
-      if (error) throw error;
-      const { data } = supabase.storage.from("avatars").getPublicUrl(fileName);
-      setAvatarSrc(data.publicUrl);
+      if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+        throw new Error("Format foto harus JPG, PNG, atau WebP.");
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        throw new Error("Ukuran foto maksimal 5 MB.");
+      }
+      const uploadData = new FormData();
+      uploadData.append("file", file);
+      const response = await fetch("/api/upload/avatar", { method: "POST", body: uploadData });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || typeof result.url !== "string") {
+        throw new Error(result.error || "Foto gagal diunggah. Silakan coba lagi.");
+      }
+      setAvatarSrc(result.url);
     } catch (error: any) {
       setSettingsMessage({ type: "error", text: error.message || "Gagal upload foto" });
     } finally {
