@@ -13,6 +13,6 @@ export function jumpaDisabledResponse(): NextResponse | null {
   return jumpaJson({ error: "Not found" }, 404);
 }
 
-export function jumpaError(status: number, code: string, message: string): NextResponse {
-  return jumpaJson({ error: message, code }, status);
+export function jumpaError(status: number, code: string, message: string, extra?: Record<string, unknown>): NextResponse {
+  return jumpaJson({ ...(extra ?? {}), error: message, code }, status);
 }

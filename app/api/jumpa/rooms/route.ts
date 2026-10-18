@@ -36,8 +36,8 @@ export async function POST(request: Request) {
 
   try {
     const result = await createRoom(user, parsed.data);
-    if (!result.ok) return jumpaError(result.status, result.code, result.message);
-    return jumpaJson({ code: result.room.code, title: result.room.title, url: `/jumpa/${result.room.code}`, reused: result.reused }, result.reused ? 200 : 201);
+    if (!result.ok) return jumpaError(result.status, result.code, result.message, result.extra);
+    return jumpaJson({ code: result.room.code, title: result.room.title, url: `/jumpa/${result.room.code}`, reused: result.reused, tier: result.tier ?? null }, result.reused ? 200 : 201);
   } catch (error) {
     console.error("JUMPA_CREATE_FAILED", { error: error instanceof Error ? error.message : String(error) });
     return jumpaError(503, "STORAGE_UNAVAILABLE", "JUMPA belum tersedia saat ini. Coba lagi sebentar.");

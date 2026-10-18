@@ -7,6 +7,10 @@
  *
  * Fase 2: body opsional { invite?: string } — token tautan undangan guru
  * (?u= di URL). Sumber media memakai konteks ruang (berbagi layar).
+ *
+ * Fase 3: kapasitas & durasi yang ditegakkan di sini sudah memakai batas
+ * paket ruang (disalin ke JumpaRoom saat dibuat, lib/jumpa/tiers.ts).
+ * Respons menyertakan `tier` (paket + batas kualitas) untuk UI.
  */
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
@@ -17,6 +21,7 @@ import { countActiveOthers, ensureLivekitRoom } from "@/lib/jumpa/livekit";
 import { publishSourcesFor } from "@/lib/jumpa/permissions";
 import { loadRoomContext, recordJoinDenied, recordJoinGranted } from "@/lib/jumpa/service";
 import { buildJoinGrant, mintJoinToken } from "@/lib/jumpa/token";
+import { tierView } from "@/lib/jumpa/tiers";
 import { jumpaDisabledResponse, jumpaError, jumpaJson } from "@/lib/jumpa/http";
 
 export const dynamic = "force-dynamic";
@@ -103,6 +108,13 @@ export async function POST(request: Request, { params }: { params: Promise<{ cod
       roomRole,
       self: { userId: user.id, bcRole: effective },
       room: { ...ctx.view, status: "LIVE", endsAt },
+      tier: tierView({
+        tier: ctx.view.tier,
+        kind: ctx.room.kind,
+        maxParticipants: ctx.room.maxParticipants,
+        maxDurationMin: ctx.room.maxDurationMin,
+        viewerIsGuruCreator: ctx.room.createdById === user.id && effective === "GURU",
+      }),
     });
   } catch (error) {
     console.error("JUMPA_TOKEN_FAILED", { error: error instanceof Error ? error.message : String(error) });

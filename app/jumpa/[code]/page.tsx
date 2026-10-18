@@ -3,6 +3,7 @@ import { getUser } from "@/lib/supabase/server";
 import { dashboardForUser } from "@/lib/auth/redirect";
 import { INVITE_TOKEN_RE, isValidRoomCode } from "@/lib/jumpa/code";
 import { loadRoomContext } from "@/lib/jumpa/service";
+import { tierView } from "@/lib/jumpa/tiers";
 import JumpaApp from "@/components/jumpa/JumpaApp";
 
 export const dynamic = "force-dynamic";
@@ -46,6 +47,13 @@ export default async function JumpaRoomPage({
       denyMessage={ctx.decision.ok ? null : ctx.decision.message}
       dashboardHref={dashboardForUser(user.role, user.isFounder)}
       inviteToken={inviteToken}
+      tier={tierView({
+        tier: ctx.view.tier,
+        kind: ctx.room.kind,
+        maxParticipants: ctx.room.maxParticipants,
+        maxDurationMin: ctx.room.maxDurationMin,
+        viewerIsGuruCreator: ctx.room.createdById === user.id && ctx.effective === "GURU",
+      })}
     />
   );
 }

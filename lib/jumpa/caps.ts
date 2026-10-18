@@ -2,6 +2,8 @@
  * Batas default ruang JUMPA per jenis ruang (murni, tanpa I/O).
  * Lihat docs/JUMPA_TECHNICAL_PLAN.md §2.5. Ubah angka di sini saja.
  */
+import { JUMPA_MURID_ROOM, JUMPA_TIERS } from "./tiers";
+
 export type JumpaKind = "KELAS" | "GURU" | "MURID";
 
 export interface JumpaCaps {
@@ -9,10 +11,15 @@ export interface JumpaCaps {
   maxDurationMin: number;
 }
 
+/**
+ * Batas PENUH per jenis ruang (= paket Premium; MURID selalu sama).
+ * Fase 3: angka hidup di lib/jumpa/tiers.ts — paket Gratis memakai
+ * limitsFor("FREE", kind). Jangan menulis angka di sini.
+ */
 export const JUMPA_CAPS: Record<JumpaKind, JumpaCaps> = {
-  KELAS: { maxParticipants: 50, maxDurationMin: 120 },
-  GURU: { maxParticipants: 25, maxDurationMin: 120 },
-  MURID: { maxParticipants: 8, maxDurationMin: 60 },
+  KELAS: { ...JUMPA_TIERS.PREMIUM.rooms.KELAS },
+  GURU: { ...JUMPA_TIERS.PREMIUM.rooms.GURU },
+  MURID: { ...JUMPA_MURID_ROOM },
 };
 
 /** Ruang LiveKit ditutup bila kosong selama ini (detik). */
