@@ -7,7 +7,7 @@ import { readFileSync, readdirSync } from "fs"
 import { join as pathJoin } from "path"
 import {
   JUMPA_TIERS,
-  JUMPA_MURID_ROOM,
+  JUMPA_MURID_FREE,
   JUMPA_UPGRADE_URL,
   cameraCapFor,
   checkDailyQuota,
@@ -42,8 +42,8 @@ check("Gratis: maks 720p, Premium 1080p", F.maxCameraHeight === 720 && P.maxCame
 check("Gratis: kuota ruang per hari, Premium tanpa batas", typeof F.roomsPerDay === "number" && F.roomsPerDay > 0 && P.roomsPerDay === null)
 check("Gratis: tanpa rekaman", F.features.recording === false)
 check("Premium = batas penuh Fase 2 (KELAS 50/120, GURU 25/120)", P.rooms.KELAS.maxParticipants === 50 && P.rooms.KELAS.maxDurationMin === 120 && P.rooms.GURU.maxParticipants === 25 && P.rooms.GURU.maxDurationMin === 120)
-check("JUMPA_CAPS diturunkan dari tabel paket (satu sumber)", JUMPA_CAPS.KELAS.maxParticipants === P.rooms.KELAS.maxParticipants && JUMPA_CAPS.MURID.maxDurationMin === JUMPA_MURID_ROOM.maxDurationMin)
-check("Ruang MURID sama di kedua paket (8/60)", JSON.stringify(limitsFor("FREE", "MURID")) === JSON.stringify(limitsFor("PREMIUM", "MURID")) && limitsFor("FREE", "MURID").maxParticipants === 8 && limitsFor("FREE", "MURID").maxDurationMin === 60)
+check("JUMPA_CAPS diturunkan dari tabel paket (satu sumber)", JUMPA_CAPS.KELAS.maxParticipants === P.rooms.KELAS.maxParticipants && JUMPA_CAPS.MURID.maxDurationMin === JUMPA_MURID_FREE.maxDurationMin)
+check("Ruang MURID: gratis 8, premium 15", limitsFor("FREE", "MURID").maxParticipants === 8 && limitsFor("PREMIUM", "MURID").maxParticipants === 15 && limitsFor("FREE", "MURID").maxDurationMin === 60)
 check("limitsFor mengembalikan salinan (tabel tidak bisa diubah pemanggil)", (() => { const l = limitsFor("FREE", "KELAS"); l.maxDurationMin = 999; return F.rooms.KELAS.maxDurationMin !== 999 })())
 check("Kamera ruang MURID maks 720p", cameraCapFor("PREMIUM", "MURID") === 720)
 
