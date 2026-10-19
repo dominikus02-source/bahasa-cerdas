@@ -422,7 +422,7 @@ export async function GET(
     }
 
     const sections = (paket.sectionsData as any[]) || (paket.sections as any[]) || [];
-    const sessionSeed = createSessionSeed(dbUser.id, paket.id, session.createdAt?.getTime());
+    const sessionSeed = createSessionSeed(dbUser.id, paket.id, session.startedAt?.getTime() ?? Date.now());
     const ukbi = isUKBI(paket.type);
 
     // ── ANTI-REPEAT ──
