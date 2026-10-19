@@ -60,7 +60,7 @@ export const JUMPA_TIERS: Record<JumpaTier, JumpaTierDef> = {
     roomsPerDay: 3,
     maxCameraHeight: 720,
     maxScreenHeight: 720,
-    features: { recording: false, backgroundBlur: true },
+    features: { recording: false, backgroundBlur: false },
   },
   PREMIUM: {
     label: "Premium",
@@ -71,9 +71,7 @@ export const JUMPA_TIERS: Record<JumpaTier, JumpaTierDef> = {
     roomsPerDay: null,
     maxCameraHeight: 1080,
     maxScreenHeight: 1080,
-    // Rekaman & latar blur belum dibangun (Fase 4). Saat siap, cukup ubah
-    // ke true di sini — UI membaca flag ini.
-    features: { recording: false, backgroundBlur: false },
+    features: { recording: false, backgroundBlur: true },
   },
 };
 
