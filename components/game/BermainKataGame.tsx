@@ -127,7 +127,15 @@ export default function BermainKataGame() {
   const activeMode = mode ? MODE_META[mode] : MODE_META.susun
   const ModeIcon = activeMode.icon
   const categoryEmoji: Record<string,string> = { Alam:"🌿", Hewan:"🐾", Makanan:"🍎", Sekolah:"📚", Benda:"🧸", Tubuh:"👀", Waktu:"☀️", Perasaan:"💛", Sifat:"✨", Kendaraan:"🚲", Sosial:"🤝", Tempat:"🏡", Kegiatan:"🎮", Orang:"🧭", Pakaian:"🎒", Kesehatan:"🩹" }
-  const categoryIcon = current ? (categoryEmoji[current.category] || "✨") : "✨"
+  const wordEmoji: Record<string,string> = {
+    API:"🔥", AIR:"💧", AYAM:"🐔", BOLA:"⚽", BUKU:"📖", BURUNG:"🐦", DAUN:"🍃", GULA:"🍬", HUJAN:"🌧️", IKAN:"🐟",
+    JAM:"⏰", KAKI:"🦶", KAPAL:"🚢", KUCING:"🐱", LAPAR:"🍽️", LILIN:"🕯️", MATA:"👁️", MEJA:"🪑", NASI:"🍚", OBAT:"💊",
+    PAGI:"🌅", PENA:"✏️", PISANG:"🍌", ROTI:"🍞", SAPU:"🧹", SEPATU:"👟", SENANG:"😊", SIANG:"☀️", SUSU:"🥛", TAS:"🎒",
+    TELUR:"🥚", TOPI:"🧢", ULAT:"🐛", BUNGA:"🌸", CERI:"🍒", DURIAN:"🍈", GAJAH:"🐘", HUTAN:"🌲", JERUK:"🍊", KELINCI:"🐰",
+    MELATI:"🌼", MOBIL:"🚗", MOTOR:"🏍️", PAYUNG:"☂️", PELANGI:"🌈", PERAHU:"🛶", SEKOLAH:"🏫", SEPEDA:"🚲", TEMAN:"🤝", TAMAN:"🌳",
+    BINTANG:"⭐", BULAN:"🌙", MATAHARI:"☀️", "KUPU-KUPU":"🦋", LAPANGAN:"🏟️", PERPUSTAKAAN:"📚"
+  }
+  const categoryIcon = current ? (wordEmoji[current.word] || categoryEmoji[current.category] || "✨") : "✨"
   const progress = Math.min(100,(round/maxRounds)*100)
 
   useEffect(()=>{
