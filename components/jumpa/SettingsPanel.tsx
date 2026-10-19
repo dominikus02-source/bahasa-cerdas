@@ -138,21 +138,27 @@ export default function SettingsPanel({ prefs, onChange, tier, refreshKey = 0, d
           hint="Redam kipas, motor, dan kelas ramai."
           icon={<Mic size={18} />}
         />
-        <div className="jumpa-setting-row">
+        <div className="jumpa-setting-row" aria-disabled={!blurAvailable}>
           <span className="jumpa-setting-icon" aria-hidden><Sparkles size={18} /></span>
           <span className="min-w-0 flex-1 text-left">
-            <span className="text-sm font-semibold">Latar blur</span>
-            <span className="block text-xs text-[var(--jp-text-3)]">Samarkan latar kamera.</span>
+            <span className="flex items-center gap-2 text-sm font-semibold">
+              Latar blur <span className="jumpa-tier" data-tier="PREMIUM"><Crown size={11} aria-hidden /> Premium</span>
+            </span>
+            <span className="block text-xs text-[var(--jp-text-3)]">{blurAvailable ? "Samarkan latar kamera." : "Khusus pengguna Premium."}</span>
           </span>
-          <button
-            type="button"
-            onClick={() => onChange({ background: prefs.background === "blur" ? "none" : "blur" as any })}
-            className="jumpa-switch"
-            data-on={prefs.background === "blur"}
-            aria-pressed={prefs.background === "blur"}
-          >
-            <span className="jumpa-switch-knob" />
-          </button>
+          {blurAvailable ? (
+            <button
+              type="button"
+              onClick={() => onChange({ background: prefs.background === "blur" ? "none" : "blur" as any })}
+              className="jumpa-switch"
+              data-on={prefs.background === "blur"}
+              aria-pressed={prefs.background === "blur"}
+            >
+              <span className="jumpa-switch-knob" />
+            </button>
+          ) : (
+            <Lock size={16} className="text-[var(--jp-text-3)]" aria-label="Premium" />
+          )}
         </div>
       </section>
 
