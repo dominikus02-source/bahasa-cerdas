@@ -1502,3 +1502,19 @@ select.jumpa-input { text-overflow: ellipsis; padding-right: 36px; }
 .jumpa-seg-btn:active {
   transform: scale(.96);
 }
+
+/* Light mode — uses existing theme variables */
+.jumpa-root[data-theme="light"] {
+  --jp-bg: var(--clr-surface);
+  --jp-text: var(--clr-text);
+  --jp-text-2: var(--clr-text-2);
+  --jp-text-3: var(--clr-text-3);
+  --jp-line: color-mix(in srgb, var(--clr-text) 12%, transparent);
+  --jp-line-strong: color-mix(in srgb, var(--clr-text) 20%, transparent);
+  --jp-glass: color-mix(in srgb, var(--clr-surface) 90%, transparent);
+  --jp-glass-strong: color-mix(in srgb, var(--clr-surface-2) 95%, transparent);
+}
+.jumpa-root[data-theme="light"] .jumpa-card {
+  background: var(--jp-glass-strong);
+  border-color: var(--jp-line);
+}
