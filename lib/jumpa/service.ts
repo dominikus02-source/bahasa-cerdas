@@ -487,17 +487,107 @@ export interface JumpaHomeData {
 export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData> {
   const actor = await loadActor(user);
   const effective = effectiveRole(actor);
-  const canSeePanel = effective === "GURU" || effective === "MURID";
+  const since = new Date(Date.now() - 24 * 3_600_000);
 
-  // ... (rest of the original loadJumpaHome implementation would go here;
-  // truncated for this update — the createRoom path above is the critical change)
+  const [ownedGroups, memberGroups, communities] = await Promise.all([
+    effective === "GURU"
+      ? db.group.findMany({ where: { teacherId: user.id, isActive: true }, select: { id: true, name: true }, orderBy: { name: "asc" }, take: 100 })
+      : Promise.resolve([]),
+    db.groupMember.findMany({ where: { userId: user.id, group: { isActive: true } }, select: { group: { select: { id: true, name: true } } }, take: 100 }),
+    effective === "GURU"
+      ? db.communityMember.findMany({ where: { userId: user.id, community: { status: "APPROVED" } }, select: { community: { select: { id: true, name: true } } }, take: 100 })
+      : Promise.resolve([]),
+  ]);
+  const groupIds = [...ownedGroups.map((g) => g.id), ...memberGroups.map((m) => m.group.id)];
+  const communityIds = communities.map((c) => c.community.id);
+
+  const visibleKinds: Array<JumpaRoom["kind"]> =
+    effective === "GURU" ? ["KELAS", "GURU", "MURID"] : actor.isJunior ? ["KELAS"] : ["KELAS", "MURID"];
+
+  const rooms = effective
+    ? await db.jumpaRoom.findMany({
+        where: {
+          status: { in: ["SCHEDULED", "LIVE"] },
+          // Instan: dibuat ≤ 24 jam lalu. Terjadwal: jam mulai ≤ 24 jam lalu s.d. 7 hari ke depan.
+          AND: [{ OR: [{ scheduledAt: null, createdAt: { gt: since } }, { scheduledAt: { gt: since, lt: new Date(Date.now() + 7 * 86_400_000) } }] }],
+          kind: { in: visibleKinds },
+          OR: [
+            { createdById: user.id },
+            ...(groupIds.length ? [{ groupId: { in: groupIds }, kind: { in: ["KELAS", "MURID"] as Array<JumpaRoom["kind"]> } }] : []),
+            ...(effective === "GURU" && communityIds.length ? [{ communityId: { in: communityIds } }] : []),
+            { invites: { some: { kind: "USER", userId: user.id, revokedAt: null } } },
+            ...(groupIds.length ? [{ invites: { some: { kind: "GROUP", groupId: { in: groupIds }, revokedAt: null } } }] : []),
+          ],
+          // Guru tidak perlu melihat ruang MURID kelas lain; hanya kelas miliknya.
+          ...(effective === "GURU" ? { NOT: { kind: "MURID", groupId: { notIn: ownedGroups.map((g) => g.id) } } } : {}),
+        },
+        orderBy: [{ status: "asc" }, { createdAt: "desc" }],
+        take: 30,
+        select: {
+          code: true, title: true, kind: true, status: true, createdById: true, startedAt: true, scheduledAt: true, groupId: true, communityId: true,
+          participants: {
+            where: { removedAt: null, lastJoinedAt: { not: null } },
+            orderBy: { lastJoinedAt: "desc" },
+            take: 60,
+            select: { userId: true, lastJoinedAt: true, lastLeftAt: true },
+          },
+        },
+      })
+    : [];
+
+  // Kehadiran dari webhook: tersambung = join terakhir setelah leave terakhir.
+  const presentIds = new Map<string, string[]>();
+  for (const r of rooms) {
+    presentIds.set(r.code, r.participants.filter((p) => p.lastJoinedAt && (!p.lastLeftAt || p.lastLeftAt < p.lastJoinedAt)).map((p) => p.userId));
+  }
+  const firstIds = [...new Set([...presentIds.values()].flatMap((ids) => ids.slice(0, 4)))];
+  const people = firstIds.length
+    ? await db.user.findMany({ where: { id: { in: firstIds } }, select: { id: true, fullName: true, nickname: true } })
+    : [];
+  const toInitials = (n: string) => n.trim().split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("") || "P";
+  const personInitials = new Map(people.map((u) => [u.id, toInitials(u.nickname || u.fullName || "Peserta")]));
+
+  let plan: JumpaHomeData["plan"] = null;
+  if (effective === "GURU") {
+    const [t, roomsToday] = await Promise.all([
+      resolveJumpaTier(user.id),
+      countRoomsOnDay(user.id, startOfJakartaDay(new Date())),
+    ]);
+    plan = {
+      tier: t.tier,
+      trialing: t.trialing,
+      roomsToday,
+      roomsPerDay: JUMPA_TIERS[t.tier].roomsPerDay,
+      kelas: limitsFor(t.tier, "KELAS"),
+      guru: limitsFor(t.tier, "GURU"),
+      upgradeUrl: JUMPA_UPGRADE_URL,
+    };
+  }
+
+  const groupName = new Map([...ownedGroups, ...memberGroups.map((m) => m.group)].map((g) => [g.id, g.name]));
+  const commName = new Map(communities.map((c) => [c.community.id, c.community.name]));
+
   return {
     effective,
     isJunior: actor.isJunior,
-    rooms: [],
-    groups: [],
-    communities: [],
-    canSeePanel,
-    plan: null,
+    rooms: rooms.map((r) => ({
+      code: r.code,
+      title: r.title,
+      kind: r.kind,
+      status: r.status,
+      place: (r.groupId && groupName.get(r.groupId)) || (r.communityId && commName.get(r.communityId)) || null,
+      mine: r.createdById === user.id,
+      startedAt: r.startedAt ? r.startedAt.toISOString() : null,
+      scheduledAt: r.scheduledAt ? r.scheduledAt.toISOString() : null,
+      present: (() => {
+        const ids = presentIds.get(r.code) ?? [];
+        return { count: ids.length, initials: ids.slice(0, 4).map((id) => personInitials.get(id) ?? "P") };
+      })(),
+    })),
+    groups: effective === "GURU" ? ownedGroups : actor.isJunior ? [] : memberGroups.map((m) => m.group),
+    communities: communities.map((c) => c.community),
+    canSeePanel: user.role === "ADMIN" || user.isFounder || effective === "GURU",
+    plan,
   };
 }
+
