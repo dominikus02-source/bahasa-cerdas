@@ -62,6 +62,7 @@ import ParticipantTile from "./ParticipantTile";
 import { fitGrid, gridColumns, parseParticipantMeta } from "./format";
 import { detectDevice, publishPolicy, type DeviceClass } from "./media-policy";
 import { writeMediaPrefs, type JumpaMediaPrefs } from "./media-prefs";
+import { backgroundById } from "./backgrounds";
 import { buildRoomOptions, MediaProvider, useMedia } from "./media-controller";
 import { JumpaRoomProvider, useJumpa, type EndedReason, type JumpaRoomInfo, type JumpaSelf } from "./room-controller";
 import { ChatPanel, InvitePanel, PanelFrame, PeoplePanel, ReportPanel, type PanelName } from "./RoomPanels";
@@ -159,6 +160,7 @@ export default function JumpaRoomView(props: ViewProps) {
       }}
       onMediaDeviceFailure={() => setDeviceNote("Kamera atau mikrofon tidak bisa dipakai. Periksa izin browser.")}
       className="flex h-[100dvh] w-full min-w-0 flex-col overflow-hidden"
+      style={{ background: backgroundById(props.prefs.background).css }}
     >
       <JumpaRoomProvider initial={props.info} self={props.self}>
         <MediaProvider initial={props.prefs} device={device} tier={props.tier}>
