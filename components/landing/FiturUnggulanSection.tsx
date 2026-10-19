@@ -11,7 +11,7 @@ const features = [
     title: "Main Bersama",
     desc: "Belajar bareng teman sekelas.",
     href: "/main-bersama",
-    image: "/landing/fitur/gim-sm-xs.jpg",
+    image: "/landing/fitur/main-bersama-sm.jpg",
     color: "from-violet-500 to-purple-600",
   },
   {
