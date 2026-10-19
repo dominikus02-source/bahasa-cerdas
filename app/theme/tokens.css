@@ -215,3 +215,12 @@
 @media (prefers-reduced-motion: reduce) {
   :root { --bc-dur-fast: 0s; --bc-dur: 0s; --bc-dur-slow: 0s; }
 }
+
+/* JUMPA light mode tokens */
+:root {
+  --jp-light-bg: #f4f5f7;
+  --jp-light-text: #16181d;
+  --jp-light-text-2: #5b6270;
+  --jp-light-text-3: #64748b;
+  --jp-light-surface: #ffffff;
+}
