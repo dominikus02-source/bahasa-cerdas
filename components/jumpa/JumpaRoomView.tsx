@@ -62,7 +62,8 @@ import ParticipantTile from "./ParticipantTile";
 import { fitGrid, gridColumns, parseParticipantMeta } from "./format";
 import { detectDevice, publishPolicy, type DeviceClass } from "./media-policy";
 import { writeMediaPrefs, type JumpaMediaPrefs } from "./media-prefs";
-import { backgroundById, BC_LOGO_WATERMARK } from "./backgrounds";
+import { backgroundById } from "./backgrounds";
+import { BackgroundProcessor } from "@livekit/track-processors";
 import { buildRoomOptions, MediaProvider, useMedia } from "./media-controller";
 import { JumpaRoomProvider, useJumpa, type EndedReason, type JumpaRoomInfo, type JumpaSelf } from "./room-controller";
 import { ChatPanel, InvitePanel, PanelFrame, PeoplePanel, ReportPanel, type PanelName } from "./RoomPanels";
@@ -636,6 +637,25 @@ function ControlBar({
     }
   };
   const close = () => setMenuOpen(false);
+
+  // Terapkan virtual background ke track kamera lokal.
+  useEffect(() => {
+    const bg = backgroundById(prefs.background);
+    const imageUrl = prefs.background === "custom" ? prefs.customBackgroundUrl : bg.image;
+    if (!imageUrl || !isCameraEnabled) return;
+    let processor: BackgroundProcessor | null = null;
+    (async () => {
+      try {
+        const track = localParticipant.getTrackPublication("camera")?.track;
+        if (!track || track.kind !== "video") return;
+        processor = new BackgroundProcessor({ imagePath: imageUrl });
+        await track.setProcessor(processor);
+      } catch {
+        // Prosesor tidak tersedia di perangkat ini — abaikan.
+      }
+    })();
+    return () => { processor?.destroy?.(); };
+  }, [prefs.background, prefs.customBackgroundUrl, isCameraEnabled, localParticipant]);
 
   return (
     <div className="jumpa-dock-wrap">
