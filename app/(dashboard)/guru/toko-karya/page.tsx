@@ -665,31 +665,29 @@ export default function TokoKaryaPage() {
                 {/* ── Step 3: Pratinjau & Publish ────────────────── */}
                 {wizardStep === 3 && (
                   <div className="space-y-5">
-                    <p className="text-sm text-gray-500">Pratinjau karya Anda sebelum dipublikasikan:</p>
-                    {/* Preview card */}
-                    <div className="max-w-sm rounded-xl border border-gray-200 overflow-hidden">
-                      <div className="bg-blue-50/70 dark:bg-blue-950/25 p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <Badge className="text-[10px] bg-amber-50 text-amber-700">{formData.price > 0 ? "Berbayar" : "Gratis"}</Badge>
-                          <Badge variant="secondary" className="text-[10px]">{typeLabel(formData.type)}</Badge>
-                        </div>
-                        <h3 className="font-bold text-gray-900 line-clamp-1">{formData.title || "Judul Karya"}</h3>
-                        <p className="mt-1 text-xs text-gray-500 line-clamp-2">{formData.description || "Tidak ada deskripsi"}</p>
-                        {formData.grade && <span className="text-[10px] text-gray-400 mt-1 block">Kelas {formData.grade}</span>}
-                      </div>
-                      <div className="p-4 flex items-center justify-between border-t border-gray-100">
-                        <span className="font-semibold text-emerald-600 text-sm">
-                          {formData.price > 0 ? rupiah(formData.price) : "Gratis"}
-                        </span>
-                        {formData.images.filter(Boolean).length > 0 && (
-                          <div className="flex -space-x-2">
-                            {formData.images.filter(Boolean).slice(0, 3).map((img, i) => (
-                              <img key={i} src={img} alt="" className="w-6 h-6 rounded-md border-2 border-white object-cover" />
-                            ))}
-                          </div>
+                    <p className="text-sm text-gray-500">Ini tampilan karya di Toko Karya. Pastikan sudah benar sebelum terbit:</p>
+                    <div className="max-w-xs rounded-2xl border border-zinc-200 bg-white overflow-hidden shadow-sm">
+                      <div className="h-28 bg-zinc-100 flex items-center justify-center overflow-hidden">
+                        {formData.images.filter(Boolean)[0] ? (
+                          <img src={formData.images.filter(Boolean)[0]} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <Package size={28} className="text-zinc-300" />
                         )}
                       </div>
+                      <div className="p-3">
+                        <span className="text-[10px] px-2 py-0.5 bg-primary/10 text-primary rounded-full font-medium">{typeLabel(formData.type)}</span>
+                        <h3 className="font-semibold text-zinc-900 text-sm mt-1.5 line-clamp-2">{formData.title || "Judul Karya"}</h3>
+                        <p className="text-xs text-zinc-400 mt-1 line-clamp-2">{formData.description || "Belum ada deskripsi"}</p>
+                        {formData.grade && <p className="text-[10px] text-zinc-400 mt-1">Kelas {formData.grade}</p>}
+                        <div className="mt-2 pt-2 border-t border-zinc-100 flex items-center justify-between">
+                          <span className="font-bold text-zinc-900 text-sm">{formData.price > 0 ? rupiah(formData.price) : "Gratis"}</span>
+                          <span className="text-[10px] text-zinc-400">0 unduhan</span>
+                        </div>
+                      </div>
                     </div>
+                    {formData.price > 0 && (
+                      <p className="text-xs text-zinc-500">Pembeli membayar via Midtrans. Anda menerima 85% setelah pembayaran berhasil.</p>
+                    )}
 
                     {formData.price > 0 && !isPro && (
                       <div className="flex items-center gap-3 p-3 rounded-xl bg-amber-50 border border-amber-200">
