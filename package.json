@@ -436,6 +436,7 @@
     "@anthropic-ai/sdk": "^0.39.0",
     "@doedja/kbbi-js": "^1.0.3",
     "@livekit/components-react": "^2.9.24",
+    "@livekit/track-processors": "^0.8.2",
     "@napi-rs/canvas": "^0.1.80",
     "@prisma/client": "^5.22.0",
     "@supabase/ssr": "^0.5.2",
