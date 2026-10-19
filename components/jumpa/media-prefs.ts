@@ -11,6 +11,8 @@ export interface JumpaDevicePrefs {
   audiooutput?: string;
 }
 
+export type JumpaBackgroundId = "none" | "hijau" | "batik" | "langit" | "hutan" | "senja" | "malam";
+
 export interface JumpaMediaPrefs {
   camera: boolean;
   mic: boolean;
@@ -20,6 +22,8 @@ export interface JumpaMediaPrefs {
   audioOnly: boolean;
   /** Fase 3: peredam bising bawaan browser (gratis, tanpa WASM). */
   noiseSuppression: boolean;
+  /** Latar ruang: salah satu dari 6 pilihan bergaya BahasaCerdas. */
+  background: JumpaBackgroundId;
   devices: JumpaDevicePrefs;
 }
 
@@ -30,10 +34,12 @@ export const DEFAULT_MEDIA_PREFS: JumpaMediaPrefs = {
   quality: "auto",
   audioOnly: false,
   noiseSuppression: true,
+  background: "none",
   devices: {},
 };
 
 const QUALITIES: readonly JumpaQuality[] = ["auto", "hemat", "hd"];
+const BACKGROUNDS: readonly JumpaBackgroundId[] = ["none", "hijau", "batik", "langit", "hutan", "senja", "malam"];
 const DEVICE_ID_RE = /^[A-Za-z0-9+/=_-]{1,200}$/;
 
 function cleanDevices(v: unknown): JumpaDevicePrefs {
@@ -57,6 +63,7 @@ export function parseMediaPrefs(raw: string | null | undefined): JumpaMediaPrefs
       quality: QUALITIES.includes(v.quality as JumpaQuality) ? (v.quality as JumpaQuality) : d.quality,
       audioOnly: typeof v.audioOnly === "boolean" ? v.audioOnly : d.audioOnly,
       noiseSuppression: typeof v.noiseSuppression === "boolean" ? v.noiseSuppression : d.noiseSuppression,
+      background: BACKGROUNDS.includes(v.background as JumpaBackgroundId) ? (v.background as JumpaBackgroundId) : d.background,
       devices: cleanDevices(v.devices),
     };
   } catch {
