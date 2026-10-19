@@ -15,19 +15,19 @@ const experiences = [
   {
     icon: Compass,
     title: "Jalur Cerdas",
-    description: "Belajar Bahasa Indonesia dari dasar hingga mahir, langkah demi langkah dengan misi harian.",
+    description: "Belajar dari dasar hingga mahir.",
     color: "bg-red-50 text-primary",
   },
   {
     icon: Gamepad2,
     title: "Arena & Gim",
-    description: "Latihan, gim kata, dan liga mingguan — bermain sambil mengasah kemampuan.",
+    description: "Latihan dan gim.",
     color: "bg-violet-50 text-violet-600",
   },
   {
     icon: PenLine,
     title: "Menulis & Berkarya",
-    description: "Tulis puisi, cerpen, atau pantun dan tampilkan di portofoliomu.",
+    description: "Tulis dan tampilkan karya.",
     color: "bg-amber-50 text-amber-600",
   },
 ];
