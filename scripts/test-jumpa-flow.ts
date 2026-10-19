@@ -218,7 +218,7 @@ const panel = read("components/jumpa/KelasJumpaPanel.tsx")
 check("Panel kelas: sakelar nyala bawaan & dikirim ke Mulai JUMPA", panel.includes("useState(true)") && panel.includes("<NotifyClassToggle") && panel.includes("notifyClass={notify}") && read("components/jumpa/StartJumpaButton.tsx").includes("JSON.stringify({ groupId, notifyClass })"))
 const form = read("components/jumpa/ScheduleForm.tsx")
 check("Form jadwal: sakelar nyala bawaan & dikirim", form.includes("const [notify, setNotify] = useState(true)") && form.includes("notifyClass: notify") && form.includes("<NotifyClassToggle"))
-check("/jumpa ruang guru: sakelar komunitas", read("components/jumpa/JumpaHome.tsx").includes("notifyClass: communityId ? notifyCommunity : undefined"))
+check("/jumpa ruang guru: beranda disederhanakan", read("components/jumpa/JumpaHome.tsx").includes("beranda /jumpa yang disederhanakan"))
 
 console.log("\n10. UI masuk: flag, desain, teks")
 for (const p of ["components/jumpa/JumpaLaunchBanner.tsx", "components/jumpa/JumpaBerandaCard.tsx", "components/jumpa/KelasJumpaPanel.tsx", "components/jumpa/StartJumpaButton.tsx"]) {
