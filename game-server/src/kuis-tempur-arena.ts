@@ -574,6 +574,7 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
       questionIndex: new Map(humanPlayers.map((player) => [player.id, 0])),
       questionDeadline: new Map(),
       answeredQuestion: new Map(),
+    lastQuestionAdvance: new Map(),
       startedAt: now + 3000,
       endsAt: now + 3000 + MATCH_SECONDS * 1000,
       lastTickAt: now + 3000,
