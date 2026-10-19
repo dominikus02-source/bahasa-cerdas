@@ -1249,8 +1249,9 @@ select.jumpa-input { text-overflow: ellipsis; padding-right: 36px; }
 .jumpa-join:focus-within { border-color: color-mix(in srgb, var(--clr-accent) 70%, transparent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--clr-accent) 16%, transparent); }
 .jumpa-join-icon { margin-left: 10px; color: var(--jp-text-3); flex-shrink: 0; }
 .jumpa-join-input {
-  flex: 1 1 8rem;
-  min-width: 120px;
+  flex: 1 1 0;
+  min-width: 0;
+  width: 100%;
   min-height: 46px;
   background: transparent;
   border: 0;
@@ -1263,7 +1264,8 @@ select.jumpa-input { text-overflow: ellipsis; padding-right: 36px; }
 .jumpa-join-input::placeholder { color: var(--jp-text-3); font-weight: 500; letter-spacing: 0; }
 .jumpa-join-btn {
   display: inline-flex; align-items: center; gap: 6px;
-  min-height: 46px; padding: 0 18px; border-radius: 15px;
+  min-height: 46px; padding: 0 14px; border-radius: 15px;
+  flex-shrink: 0;
   font-weight: 800; color: var(--clr-bg);
   background: var(--jp-grad);
   transition: transform .2s cubic-bezier(.34, 1.56, .64, 1);
@@ -1503,18 +1505,21 @@ select.jumpa-input { text-overflow: ellipsis; padding-right: 36px; }
   transform: scale(.96);
 }
 
-/* Light mode — uses existing theme variables */
+/* Light mode */
 .jumpa-root[data-theme="light"] {
-  --jp-bg: var(--clr-surface);
-  --jp-text: var(--clr-text);
-  --jp-text-2: var(--clr-text-2);
-  --jp-text-3: var(--clr-text-3);
-  --jp-line: color-mix(in srgb, var(--clr-text) 12%, transparent);
-  --jp-line-strong: color-mix(in srgb, var(--clr-text) 20%, transparent);
-  --jp-glass: color-mix(in srgb, var(--clr-surface) 90%, transparent);
-  --jp-glass-strong: color-mix(in srgb, var(--clr-surface-2) 95%, transparent);
+  --jp-bg: var(--jp-light-bg);
+  --jp-text: var(--jp-light-text);
+  --jp-text-2: var(--jp-light-text-2);
+  --jp-text-3: var(--jp-light-text-3);
+  --jp-line: color-mix(in srgb, var(--jp-light-text) 12%, transparent);
+  --jp-line-strong: color-mix(in srgb, var(--jp-light-text) 20%, transparent);
+  --jp-glass: color-mix(in srgb, var(--jp-light-surface) 90%, transparent);
+  --jp-glass-strong: color-mix(in srgb, var(--jp-light-surface) 98%, transparent);
 }
 .jumpa-root[data-theme="light"] .jumpa-card {
-  background: var(--jp-glass-strong);
+  background: var(--jp-light-surface);
   border-color: var(--jp-line);
+}
+.jumpa-root[data-theme="light"] .jumpa-hero {
+  background: linear-gradient(135deg, var(--jp-light-surface) 0%, var(--jp-light-bg) 100%);
 }
