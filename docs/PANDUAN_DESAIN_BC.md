@@ -147,7 +147,7 @@ Primitif: `.ui-btn--accent`, `.ui-icon-box--accent`, `.ui-icon-box--aud-soft`, `
 
 | Token | Tailwind | Terang | Gelap | Guru (terang / gelap) |
 |---|---|---|---|---|
-| `--clr-primary` | `text-primary`, `border-primary` | `#047857` (putih 5.5:1, di bg 5.1:1) | `#34d399` (9.5:1 di surface) | `#1d4ed8` / `#60a5fa` |
+| `--clr-primary` | `text-primary`, `border-primary` | `#047857` (putih 5.5:1, di bg 5.1:1) | `#34d399` (9.0:1 di surface) | `#1d4ed8` / `#60a5fa` |
 | `--clr-primary-strong` | `primary-dark` (hover) | `#065f46` | `#6ee7b7` | `#1e40af` / `#93c5fd` |
 | `--clr-primary-soft` | `primary-light` | `= --clr-accent-soft` | `= --clr-accent-soft` | `= --clr-aud-soft` |
 | `--clr-on-primary` | `text-primary-foreground` | `#fff` | `--clr-bg` | `#fff` / `#0f1117` |
@@ -155,6 +155,8 @@ Primitif: `.ui-btn--accent`, `.ui-icon-box--accent`, `.ui-icon-box--aud-soft`, `
 
 - Teks di atas `bg-primary` **selalu** `text-primary-foreground` (bukan `text-white` — di gelap gradiennya terang).
 - `ring` Tailwind = `--clr-focus`. Meta `theme-color` & manifest: `app/theme/meta-colors.ts` (terang #047857, gelap #0f1117).
+- Halaman publik yang belum punya mode gelap (landing, tentang, FAQ, keranjang, video) diberi kelas **`bc-light`** di akarnya
+  (dan pembungkus `PageNavbar` bila di luar `<main>`): token terang dipaksa di dalamnya walau `html.dark`.
 - **Merah hanya untuk bahaya/galat**: `destructive`, `bc-danger`, Keluar, hapus, pesan error. Merah-merek lama
   (`from-red-600 to-red-700`, `text-red-600` sebagai aksen) → `bg-primary` / `text-primary` saat area disentuh.
 

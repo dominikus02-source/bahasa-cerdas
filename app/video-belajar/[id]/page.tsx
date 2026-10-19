@@ -46,16 +46,16 @@ export default function VideoDetailPage() {
   const canAccess = !video?.isPremium || currentUser?.isPremium || currentUser?.isFounder;
 
   if (loading) return (
-    <div className="min-h-screen bg-white">
+    <div className="bc-light min-h-screen bg-white">
       <PageNavbar />
       <div className="flex items-center justify-center pt-32">
-        <div className="w-10 h-10 border-[3px] border-red-500/30 border-t-red-500 rounded-full animate-spin" />
+        <div className="w-10 h-10 border-[3px] border-primary/30 border-t-primary rounded-full animate-spin" />
       </div>
     </div>
   );
 
   if (!video) return (
-    <div className="min-h-screen bg-white">
+    <div className="bc-light min-h-screen bg-white">
       <PageNavbar />
       <div className="max-w-5xl mx-auto px-4 pt-24 text-center">
         <Film className="w-16 h-16 text-gray-200 mx-auto mb-4" />
@@ -67,7 +67,7 @@ export default function VideoDetailPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#F9F9FB]">
+    <div className="bc-light min-h-screen bg-[#F9F9FB]">
       <PageNavbar />
 
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6">

@@ -97,7 +97,7 @@ const features = [
 
 export default function FiturPage() {
   return (
-    <main className="min-h-screen">
+    <main className="bc-light min-h-screen">
       <PageNavbar />
 
       <section className="relative pt-28 pb-16 lg:pb-20 bg-gradient-to-b from-white via-white to-zinc-50 overflow-hidden">

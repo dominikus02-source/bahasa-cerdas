@@ -58,7 +58,7 @@ const organizationLd = {
 
 export default function TentangPage() {
   return (
-    <main className="min-h-screen">
+    <main className="bc-light min-h-screen">
       <JsonLd
         data={breadcrumbLd([
           { position: 1, name: "Beranda", item: "https://www.bahasacerdas.com" },

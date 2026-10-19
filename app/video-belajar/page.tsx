@@ -40,7 +40,7 @@ export default async function VideoBelajarPage() {
 
   return (
     <>
-      <PageNavbar />
+      <div className="bc-light"><PageNavbar /></div>
       <VideoClient initialVideos={videos as any} />
       <PageFooter />
     </>

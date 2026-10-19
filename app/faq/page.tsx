@@ -81,7 +81,7 @@ export default function FAQPage() {
   return (
     <>
       <JsonLd data={faqPageLd(faqs)} />
-      <main className="min-h-screen">
+      <main className="bc-light min-h-screen">
         <PageNavbar />
         <div className="section-container py-16 lg:py-20 max-w-3xl mx-auto">
           <div className="text-center mb-12">

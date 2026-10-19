@@ -22,7 +22,7 @@
 }
 
 @layer base {
-  :root {
+  :root, .bc-light {
     --font-junior-heading: "Elegant Bloom", sans-serif;
     --font-junior-body: "Elegant Bloom", sans-serif;
     --font-game-display: "Newscrash", sans-serif;
@@ -1301,6 +1301,8 @@
 .dark .bc-guru-shell .bc-guru .bg-white.rounded-xl {
   border-color: color-mix(in srgb, #2563eb 30%, var(--clr-border));
 }
+
+.bc-light { color-scheme: light; }
 
 /* Primary = gradien merek (keputusan CEO 2026-10-19). `bg-primary` solid → gradien
    teal→biru→violet (guru: gradien biru). Warna dasar tetap --clr-primary sebagai fallback. */
