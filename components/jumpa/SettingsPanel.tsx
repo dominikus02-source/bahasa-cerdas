@@ -10,6 +10,7 @@ import { Camera, Crown, Headphones, Lock, Mic, Sparkles, AudioWaveform, Leaf, Ga
 import { JUMPA_TIERS, type JumpaTierView } from "@/lib/jumpa/tiers";
 import { QUALITY_LABEL } from "./media-policy";
 import type { JumpaMediaPrefs, JumpaQuality } from "./media-prefs";
+import { JUMPA_BACKGROUNDS } from "./backgrounds";
 import { TierBadge, tierLimitsText } from "./TierUi";
 
 type Kind = "videoinput" | "audioinput" | "audiooutput";
@@ -146,6 +147,26 @@ export default function SettingsPanel({ prefs, onChange, tier, refreshKey = 0, d
             <span className="block text-xs text-[var(--jp-text-3)]">{blurAvailable ? "Samarkan latar kamera." : "Segera hadir, khusus laptop."}</span>
           </span>
           <Lock size={16} className="text-[var(--jp-text-3)]" aria-label="Belum tersedia" />
+        </div>
+      </section>
+
+
+      <section aria-labelledby="jp-set-bg">
+        <h3 id="jp-set-bg" className="jumpa-section-label">Latar ruang</h3>
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+          {JUMPA_BACKGROUNDS.map((bg) => (
+            <button
+              key={bg.id}
+              type="button"
+              onClick={() => onChange({ background: bg.id })}
+              className="jumpa-bg-option"
+              data-selected={prefs.background === bg.id}
+              aria-pressed={prefs.background === bg.id}
+            >
+              <span className="jumpa-bg-preview" style={{ background: bg.preview }} aria-hidden />
+              <span className="jumpa-bg-label">{bg.label}</span>
+            </button>
+          ))}
         </div>
       </section>
 
