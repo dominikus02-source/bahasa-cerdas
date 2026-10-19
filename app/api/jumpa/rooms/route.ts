@@ -1,7 +1,8 @@
 /**
  * POST /api/jumpa/rooms — buat ruang JUMPA.
- * Body: { kind?: "KELAS"|"GURU"|"MURID", groupId?, communityId?, title?, notifyClass? }.
+ * Body: { kind?: "KELAS"|"GURU"|"MURID", groupId?, communityId?, title?, notifyClass?, isWebinar? }.
  * Tanpa `kind` = KELAS (kompatibel Fase 1: { groupId }).
+ * isWebinar: hanya Premium, 1x per minggu, 200 peserta.
  * Izin di lib/jumpa/permissions.ts → canCreateRoom.
  */
 import { z } from "zod";
@@ -20,6 +21,8 @@ const bodySchema = z
     title: z.string().max(200).optional(),
     /** "Beri tahu kelas" (default true). Disimpan di JumpaRoom.notifyClass. */
     notifyClass: z.boolean().optional(),
+    /** Webinar: hanya guru Premium, 1x per minggu, 200 peserta. */
+    isWebinar: z.boolean().optional(),
   })
   .refine((b) => b.kind === "GURU" || Boolean(b.groupId), { message: "groupId wajib" });
 
