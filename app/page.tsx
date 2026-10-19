@@ -142,8 +142,8 @@ export default async function HomePage() {
         <SocialProof initial={socialProof} />
 
         {/* 4 · EKOSISTEM — pilar BELAJAR/MENGAJAR/BERLATIH & BERMAIN/BERKARYA & BERTUMBUH */}
-        <EcosystemSection />
         <FiturUnggulanSection />
+        <EcosystemSection />
 
         {/* 5 · GURU — ruang untuk mengajar */}
         <TeacherSection />
