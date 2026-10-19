@@ -1,30 +1,23 @@
 "use client";
 
 /**
- * JUMPA — beranda /jumpa: hero + gabung pakai kode, paket, mulai ruang
- * (guru↔guru, belajar bareng murid), dan ruang aktif.
- * Ruang kelas tetap dimulai dari KelasKu.
+ * JUMPA — beranda /jumpa yang disederhanakan.
+ * Guru: mulai ruang guru atau buka KelasKu.
+ * Murid: gabung ruang aktif atau buat belajar bareng.
+ * Ruang uji (judul mengandung "Uji" / "Test") disembunyikan.
  */
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, BookOpen, CalendarPlus, Crown, History, GraduationCap, KeyRound, Loader2, Plus, Radio, ShieldCheck, Users, Video } from "lucide-react";
+import { ArrowRight, BookOpen, CalendarPlus, Crown, History, GraduationCap, KeyRound, Loader2, Plus, Users, Video } from "lucide-react";
 import type { JumpaHomeData, RoomListItem } from "@/lib/jumpa/service";
 import { formatWib, formatWibTime } from "@/lib/jumpa/schedule";
 import { JUMPA_MURID_FREE, JUMPA_MURID_PREMIUM } from "@/lib/jumpa/tiers";
 import { UpgradeSheet } from "./TierUi";
-import NotifyClassToggle from "./NotifyClassToggle";
 import { avatarTone, elapsedLabel, parseRoomInput } from "./format";
 
 const KIND_LABEL = { KELAS: "Kelas", GURU: "Ruang guru", MURID: "Belajar bareng" } as const;
 
-/**
- * Jam untuk label "x mnt" / "Hari ini · 14.30". `null` saat render server &
- * hidrasi pertama: label yang bergantung jam baru tampil setelah mount.
- * Dulu `Date.now()` dipakai langsung → teks server ≠ klien → React #418 →
- * seluruh DOM dibuang & dibuat ulang → input Topik hilang beserta ketikannya
- * di Android.
- */
 function useMinuteTick(): number | null {
   const [now, setNow] = useState<number | null>(null);
   useEffect(() => {
@@ -54,67 +47,41 @@ function QuickJoin() {
         value={value}
         maxLength={120}
         onChange={(e) => { setValue(e.target.value); setBad(false); }}
-        placeholder="Kode ruang"
+        placeholder="Masukkan kode ruang"
         autoComplete="off"
         autoCapitalize="none"
         autoCorrect="off"
         spellCheck={false}
         inputMode="text"
         aria-invalid={bad}
-        aria-describedby={bad ? "jumpa-code-err" : undefined}
         className="jumpa-join-input"
       />
       <button type="submit" className="jumpa-join-btn">Gabung <ArrowRight size={16} aria-hidden /></button>
-      {bad && <p id="jumpa-code-err" role="alert" className="jumpa-join-err">Kode tidak dikenali.</p>}
+      {bad && <p role="alert" className="jumpa-join-err">Kode tidak dikenali.</p>}
     </form>
   );
 }
 
 function PlanCard({ plan }: { plan: NonNullable<JumpaHomeData["plan"]> }) {
   const premium = plan.tier === "PREMIUM";
-  const left = plan.roomsPerDay === null ? null : Math.max(0, plan.roomsPerDay - plan.roomsToday);
   return (
-    <section className="jumpa-card jumpa-plan jumpa-in-up" data-tier={plan.tier} aria-label="Paket JUMPA kamu">
+    <section className="jumpa-card jumpa-plan jumpa-in-up" data-tier={plan.tier}>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="jumpa-tier" data-tier={plan.tier}>{premium && <Crown size={12} aria-hidden />}{premium ? (plan.trialing ? "Premium (coba)" : "Premium") : "Gratis"}</span>
+          <span className="jumpa-tier" data-tier={plan.tier}>{premium && <Crown size={12} aria-hidden />}{premium ? "Premium" : "Gratis"}</span>
           <span className="text-sm text-[var(--jp-text-2)]">Kelas {plan.kelas.maxParticipants} orang · {plan.kelas.maxDurationMin} menit</span>
         </div>
-        {plan.roomsPerDay !== null && left !== null ? (
-          <div className="mt-2.5 flex items-center gap-2.5">
-            <span className="jumpa-dots" role="img" aria-label={`${left} dari ${plan.roomsPerDay} ruang tersisa hari ini`}>
-              {Array.from({ length: plan.roomsPerDay }, (_, i) => <i key={i} data-used={i < plan.roomsToday} />)}
-            </span>
-            <span className="whitespace-nowrap text-xs font-semibold text-[var(--jp-text-2)]">Sisa {left} ruang hari ini</span>
-          </div>
-        ) : (
+        {plan.roomsPerDay === null ? (
           <p className="mt-2 text-xs font-semibold text-[var(--jp-text-2)]">Ruang tanpa batas</p>
+        ) : (
+          <p className="mt-2 text-xs font-semibold text-[var(--jp-text-2)]">Sisa {Math.max(0, plan.roomsPerDay - plan.roomsToday)} ruang hari ini</p>
         )}
       </div>
-      {!premium && (
-        <a href={plan.upgradeUrl} className="jumpa-cta-premium">
-          <Crown size={15} aria-hidden /> Lihat Premium
-        </a>
-      )}
+      {!premium && <a href={plan.upgradeUrl} className="jumpa-cta-premium"><Crown size={15} aria-hidden /> Premium</a>}
     </section>
   );
 }
 
-function Avatars({ room }: { room: RoomListItem }) {
-  const { count, initials } = room.present;
-  if (count === 0) return null;
-  const more = count - initials.length;
-  return (
-    <span className="jumpa-stack" role="img" aria-label={`${count} orang di dalam`}>
-      {initials.map((ini, i) => (
-        <span key={i} className="jumpa-stack-ava" data-tone={avatarTone(`${room.code}${i}${ini}`)}>{ini}</span>
-      ))}
-      {more > 0 && <span className="jumpa-stack-ava jumpa-stack-more">+{more}</span>}
-    </span>
-  );
-}
-
-/** Label jadwal; sebelum mount hanya jam (deterministik, sama di server & klien). */
 function scheduledLabel(scheduledAt: string | null, now: number | null): string {
   if (!scheduledAt) return "Belum mulai";
   const at = new Date(scheduledAt);
@@ -124,30 +91,25 @@ function scheduledLabel(scheduledAt: string | null, now: number | null): string 
 
 function RoomCard({ room, now }: { room: RoomListItem; now: number | null }) {
   const live = room.status === "LIVE";
-  const elapsed = live && now !== null ? elapsedLabel(room.startedAt, now) : null;
   const Icon = room.kind === "GURU" ? Users : room.kind === "MURID" ? BookOpen : GraduationCap;
   return (
     <Link href={`/jumpa/${room.code}`} className="jumpa-card jumpa-room-card">
       <span className="jumpa-icon-chip" data-kind={room.kind} aria-hidden><Icon size={20} /></span>
       <span className="min-w-0 flex-1">
         <span className="jumpa-room-title">{room.title}</span>
-        <span className="jumpa-room-sub">
-          {KIND_LABEL[room.kind]}{room.place ? ` · ${room.place}` : ""}
-          {room.mine && <span className="jumpa-mine">Ruangmu</span>}
-        </span>
-        <span className="mt-2 flex flex-wrap items-center gap-2">
-          {live ? (
-            <span className="jumpa-live">Berlangsung</span>
-          ) : (
-            <span className="jumpa-soon">{scheduledLabel(room.scheduledAt, now)}</span>
-          )}
-          {elapsed && <span className="text-xs text-[var(--jp-text-3)]">{elapsed}</span>}
-          <Avatars room={room} />
+        <span className="jumpa-room-sub">{KIND_LABEL[room.kind]}{room.mine && <span className="jumpa-mine">Ruangmu</span>}</span>
+        <span className="mt-1.5 flex items-center gap-2 text-xs">
+          {live ? <span className="jumpa-live">Berlangsung</span> : <span className="jumpa-soon">{scheduledLabel(room.scheduledAt, now)}</span>}
         </span>
       </span>
-      <ArrowRight size={18} className="shrink-0 self-center text-[var(--jp-text-3)]" aria-hidden />
+      <ArrowRight size={18} className="shrink-0 text-[var(--jp-text-3)]" aria-hidden />
     </Link>
   );
+}
+
+function isTestRoom(title: string): boolean {
+  const t = title.toLowerCase();
+  return t.includes("uji") || t.includes("test") || t.includes("demo");
 }
 
 export default function JumpaHome({ data, displayName, dashboardHref }: { data: JumpaHomeData; displayName: string; dashboardHref: string }) {
@@ -155,25 +117,22 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
   const now = useMinuteTick();
   const [limitHit, setLimitHit] = useState(false);
   const plan = data.plan;
-  const [busy, setBusy] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const titleRef = useRef<HTMLInputElement>(null);
-  const [communityId, setCommunityId] = useState("");
-  // "Beri tahu komunitas" untuk ruang guru yang terikat komunitas (nyala bawaan).
-  const [notifyCommunity, setNotifyCommunity] = useState(true);
   const [groupId, setGroupId] = useState(data.groups[0]?.id ?? "");
   const isGuru = data.effective === "GURU";
   const firstName = displayName.split(" ")[0] || displayName;
+  const rooms = data.rooms.filter((r) => !isTestRoom(r.title));
 
-  const create = async (body: Record<string, string | boolean | undefined>, key: string) => {
-    setBusy(key);
+  const create = async (body: Record<string, string | boolean | undefined>) => {
+    setBusy(true);
     setError(null);
     const title = titleRef.current?.value.trim() || undefined;
     try {
       const res = await fetch("/api/jumpa/rooms", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...body, title }) });
       const json = (await res.json().catch(() => null)) as { url?: string; error?: string; code?: string } | null;
       if (!res.ok || !json?.url) {
-        // Kuota habis: lembar upgrade sudah menjelaskan — jangan ulangi di banner.
         if (json?.code === "TIER_DAILY_LIMIT") { setLimitHit(true); return; }
         setError(json?.error ?? "Gagal membuat ruang. Coba lagi.");
         return;
@@ -182,22 +141,20 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
     } catch {
       setError("Koneksi bermasalah. Coba lagi.");
     } finally {
-      setBusy(null);
+      setBusy(false);
     }
   };
 
-  const fade = (i: number) => ({ style: { animationDelay: `${i * 50}ms` } });
-
   return (
-    <main className="jumpa-home mx-auto flex min-h-[100dvh] w-full max-w-3xl flex-col gap-4 px-4 pb-10 pt-[max(16px,env(safe-area-inset-top))] sm:gap-5 sm:px-6">
+    <main className="jumpa-home mx-auto flex min-h-[100dvh] w-full max-w-3xl flex-col gap-5 px-4 pb-10 pt-[max(16px,env(safe-area-inset-top))] sm:px-6">
       <header className="flex items-center justify-between gap-3">
-        <p className="jumpa-brand"><span className="jumpa-mark jumpa-mark-sm" aria-hidden>J</span>JUMPA <span className="jumpa-brand-by">dari BahasaCerdas</span></p>
+        <p className="jumpa-brand"><span className="jumpa-mark jumpa-mark-sm" aria-hidden>J</span>JUMPA</p>
         <Link href={dashboardHref} className="jumpa-ghost !min-h-[40px] !px-4 text-sm">Dasbor</Link>
       </header>
 
-      <section className="jumpa-hero jumpa-in-up" aria-labelledby="jumpa-hello">
-        <h1 id="jumpa-hello" className="jumpa-hero-title">Halo, {firstName}</h1>
-        <p className="jumpa-hero-sub">Belajar tatap muka, ringan di HP.</p>
+      <section className="jumpa-hero jumpa-in-up">
+        <h1 className="jumpa-hero-title">Halo, {firstName}</h1>
+        <p className="jumpa-hero-sub">Masuk ke ruang dengan kode atau mulai ruang baru.</p>
         <QuickJoin />
       </section>
 
@@ -205,66 +162,45 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
 
       {plan && <PlanCard plan={plan} />}
 
-      {isGuru && (
-        <div {...fade(1)} className="jumpa-in-up grid gap-4 sm:grid-cols-[1.4fr_1fr]">
-          <section className="jumpa-card jumpa-action-card">
-            <div className="flex items-center gap-3">
-              <span className="jumpa-icon-chip" data-kind="GURU" aria-hidden><Users size={20} /></span>
-              <div className="min-w-0">
-                <h2 className="text-base font-bold">Ruang guru</h2>
-                <p className="text-xs text-[var(--jp-text-3)]">MGMP & diskusi · {plan?.guru.maxParticipants ?? 25} orang · {plan?.guru.maxDurationMin ?? 120} menit</p>
-              </div>
-            </div>
-            <div className="mt-4 grid gap-2.5">
-              <input
-                ref={titleRef}
-                maxLength={80}
-                placeholder="Topik (opsional)"
-                aria-label="Topik ruang"
-                autoComplete="off"
-                autoCapitalize="none"
-                autoCorrect="off"
-                spellCheck={false}
-                enterKeyHint="done"
-                className="jumpa-input w-full"
-              />
-              <select value={communityId} onChange={(e) => setCommunityId(e.target.value)} aria-label="Komunitas" className="jumpa-input w-full">
-                <option value="">Tanpa komunitas</option>
-                {data.communities.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
-              {communityId && (
-                <NotifyClassToggle tone="room" on={notifyCommunity} onChange={setNotifyCommunity} label="Beri tahu komunitas" hintOn="Anggota dapat notifikasi." hintOff="Tanpa notifikasi ke anggota." />
-              )}
-            </div>
-            <button type="button" className="jumpa-primary mt-4 w-full" disabled={busy !== null} onClick={() => void create({ kind: "GURU", communityId: communityId || undefined, notifyClass: communityId ? notifyCommunity : undefined }, "guru")}>
-              {busy === "guru" ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />} Mulai ruang guru
-            </button>
-          </section>
-          <Link href="/guru/kelasku" className="jumpa-card jumpa-action-card jumpa-action-link">
-            <span className="jumpa-icon-chip" data-kind="KELAS" aria-hidden><GraduationCap size={20} /></span>
-            <span className="mt-3 block text-base font-bold">Ruang kelas</span>
-            <span className="mt-0.5 block text-xs text-[var(--jp-text-3)]">Mulai dari KelasKu, murid langsung bisa masuk.</span>
-            <span className="jumpa-action-go">Buka KelasKu <ArrowRight size={16} aria-hidden /></span>
-          </Link>
-        </div>
-      )}
-
-      {data.effective === "MURID" && !data.isJunior && data.groups.length > 0 && (
-        <section {...fade(1)} className="jumpa-card jumpa-action-card jumpa-in-up">
+      {isGuru ? (
+        <section className="jumpa-card jumpa-action-card jumpa-in-up">
           <div className="flex items-center gap-3">
-            <span className="jumpa-icon-chip" data-kind="MURID" aria-hidden><BookOpen size={20} /></span>
-            <div className="min-w-0">
-              <h2 className="text-base font-bold">Belajar bareng</h2>
-              <p className="text-xs text-[var(--jp-text-3)]">Gratis {JUMPA_MURID_FREE.maxParticipants} orang · Premium {JUMPA_MURID_PREMIUM.maxParticipants} orang · {JUMPA_MURID_FREE.maxDurationMin} menit · obrolan terlihat guru</p>
+            <span className="jumpa-icon-chip" data-kind="GURU" aria-hidden><Users size={20} /></span>
+            <div>
+              <h2 className="text-base font-bold">Mulai ruang guru</h2>
+              <p className="text-xs text-[var(--jp-text-3)]">{plan?.guru.maxParticipants ?? 25} orang · {plan?.guru.maxDurationMin ?? 120} menit</p>
             </div>
           </div>
-          <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
+          <input
+            ref={titleRef}
+            maxLength={80}
+            placeholder="Topik (opsional)"
+            aria-label="Topik ruang"
+            autoComplete="off"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
+            className="jumpa-input mt-4 w-full"
+          />
+          <button type="button" className="jumpa-primary mt-3 w-full" disabled={busy} onClick={() => void create({ kind: "GURU" })}>
+            {busy ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />} Mulai sekarang
+          </button>
+          <Link href="/guru/kelasku" className="jumpa-ghost mt-2 w-full">
+            <GraduationCap size={18} /> Mulai dari KelasKu
+          </Link>
+        </section>
+      ) : data.effective === "MURID" && !data.isJunior && data.groups.length > 0 ? (
+        <section className="jumpa-card jumpa-action-card jumpa-in-up">
+          <div className="flex items-center gap-3">
+            <span className="jumpa-icon-chip" data-kind="MURID" aria-hidden><BookOpen size={20} /></span>
+            <div>
+              <h2 className="text-base font-bold">Belajar bareng</h2>
+              <p className="text-xs text-[var(--jp-text-3)]">Gratis {JUMPA_MURID_FREE.maxParticipants} · Premium {JUMPA_MURID_PREMIUM.maxParticipants} orang</p>
+            </div>
+          </div>
+          <div className="mt-4 grid gap-2.5">
             <select value={groupId} onChange={(e) => setGroupId(e.target.value)} aria-label="Kelas" className="jumpa-input w-full">
-              {data.groups.map((g) => (
-                <option key={g.id} value={g.id}>{g.name}</option>
-              ))}
+              {data.groups.map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
             </select>
             <input
               ref={titleRef}
@@ -275,48 +211,29 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
               autoCapitalize="none"
               autoCorrect="off"
               spellCheck={false}
-              enterKeyHint="done"
               className="jumpa-input w-full"
             />
           </div>
-          <button type="button" className="jumpa-primary mt-4 w-full sm:w-auto" disabled={busy !== null || !groupId} onClick={() => void create({ kind: "MURID", groupId }, "murid")}>
-            {busy === "murid" ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />} Buat ruang belajar
+          <button type="button" className="jumpa-primary mt-3 w-full" disabled={busy || !groupId} onClick={() => void create({ kind: "MURID", groupId })}>
+            {busy ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />} Buat ruang
           </button>
+        </section>
+      ) : null}
+
+      {rooms.length > 0 && (
+        <section className="jumpa-in-up">
+          <h2 className="jumpa-section-title">Ruang aktif</h2>
+          <ul className="grid gap-2.5">
+            {rooms.map((r) => <li key={r.code}><RoomCard room={r} now={now} /></li>)}
+          </ul>
         </section>
       )}
 
-      <section {...fade(2)} className="jumpa-in-up">
-        <h2 className="jumpa-section-title"><Radio size={16} aria-hidden /> Ruang aktif</h2>
-        {data.rooms.length === 0 ? (
-          <div className="jumpa-card jumpa-empty">
-            <span className="jumpa-empty-icon" aria-hidden><Video size={26} /></span>
-            <p className="text-sm font-semibold">Belum ada ruang aktif</p>
-            <p className="text-xs text-[var(--jp-text-3)]">Ruang yang bisa kamu masuki muncul di sini.</p>
-          </div>
-        ) : (
-          <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-            {data.rooms.map((r) => (
-              <li key={r.code} className="min-w-0"><RoomCard room={r} now={now} /></li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <div {...fade(3)} className="jumpa-in-up grid gap-2.5 sm:grid-cols-2">
-        <Link href="/jumpa/riwayat" className="jumpa-ghost w-full">
-          <History size={18} /> Riwayat & jadwal
-        </Link>
-        {isGuru && (
-          <Link href="/jumpa/jadwal" className="jumpa-ghost w-full">
-            <CalendarPlus size={18} /> Jadwalkan
-          </Link>
-        )}
-        {data.canSeePanel && (
-          <Link href="/jumpa/pantau" className="jumpa-ghost w-full sm:col-span-2">
-            <ShieldCheck size={18} /> Pantau ruang & laporan
-          </Link>
-        )}
+      <div className="jumpa-in-up grid gap-2.5 sm:grid-cols-2">
+        <Link href="/jumpa/riwayat" className="jumpa-ghost w-full"><History size={18} /> Riwayat</Link>
+        {isGuru && <Link href="/jumpa/jadwal" className="jumpa-ghost w-full"><CalendarPlus size={18} /> Jadwalkan</Link>}
       </div>
+
       {limitHit && plan && (
         <UpgradeSheet reason="daily" tier={{ maxDurationMin: plan.kelas.maxDurationMin, upgradeUrl: plan.upgradeUrl }} onClose={() => setLimitHit(false)} />
       )}
