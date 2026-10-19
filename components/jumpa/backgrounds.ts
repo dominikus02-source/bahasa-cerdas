@@ -13,7 +13,7 @@ export interface JumpaBackground {
 
 export const JUMPA_BACKGROUNDS: readonly JumpaBackground[] = [
   { id: "none", label: "Tanpa latar" },
-  { id: "kelas", label: "Ruang kelas", image: "/jumpa/backgrounds/328084.png" },
+  { id: "kelas", label: "Ruang kelas", image: "/jumpa/backgrounds/kelas.jpg" },
   { id: "kantor", label: "Kantor", image: "/jumpa/backgrounds/323707.jpg" },
   { id: "ekosistem", label: "Ekosistem", image: "/jumpa/backgrounds/323707.jpg" },
   { id: "logo-light", label: "Logo terang", image: "/jumpa/backgrounds/286031.jpg" },
