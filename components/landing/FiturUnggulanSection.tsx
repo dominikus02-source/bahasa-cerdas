@@ -11,7 +11,7 @@ const features = [
     title: "Main Bersama",
     desc: "Belajar bareng teman sekelas.",
     href: "/main-bersama",
-    image: "/landing/fitur/gim.jpg",
+    image: "/landing/fitur/gim-sm-xs.jpg",
     color: "from-violet-500 to-purple-600",
   },
   {
@@ -19,7 +19,7 @@ const features = [
     title: "JUMPA",
     desc: "Video kelas & webinar.",
     href: "/jumpa",
-    image: "/landing/fitur/jumpa.jpg",
+    image: "/landing/fitur/jumpa-sm.jpg",
     color: "from-emerald-500 to-teal-600",
   },
   {
@@ -27,7 +27,7 @@ const features = [
     title: "Gim Edukasi",
     desc: "Kuis Tempur & arena.",
     href: "/arena/game",
-    image: "/landing/fitur/gim.jpg",
+    image: "/landing/fitur/gim-sm-xs.jpg",
     color: "from-rose-500 to-pink-600",
   },
   {
@@ -35,7 +35,7 @@ const features = [
     title: "Jalur Cerdas",
     desc: "Belajar langkah demi langkah.",
     href: "/arena/jalur-cerdas",
-    image: "/landing/fitur/jalur.jpg",
+    image: "/landing/fitur/jalur-sm.jpg",
     color: "from-sky-500 to-blue-600",
   },
   {
@@ -43,7 +43,7 @@ const features = [
     title: "Mentor AI",
     desc: "Pendamping belajar.",
     href: "/arena/ai",
-    image: "/landing/fitur/mentor.jpg",
+    image: "/landing/fitur/mentor-sm.jpg",
     color: "from-amber-500 to-orange-600",
   },
   {
@@ -51,7 +51,7 @@ const features = [
     title: "AI BC",
     desc: "Asisten untuk guru.",
     href: "/ai-bc",
-    image: "/landing/fitur/ai-bc.jpg",
+    image: "/landing/fitur/ai-bc-sm-xs.jpg",
     color: "from-indigo-500 to-violet-600",
   },
 ];
