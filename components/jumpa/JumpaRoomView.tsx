@@ -636,12 +636,12 @@ function ControlBar({
     const bg = backgroundById(prefs.background);
     const imageUrl = prefs.background === "custom" ? prefs.customBackgroundUrl : bg.image;
     if (!imageUrl || !isCameraEnabled) return;
-    let processor: InstanceType<typeof BackgroundProcessor> | null = null;
+    let processor: any = null;
     (async () => {
       try {
         const track = localParticipant.getTrackPublication("camera" as any)?.track;
         if (!track || track.kind !== "video") return;
-        processor = new BackgroundProcessor({ imagePath: imageUrl });
+        processor = BackgroundProcessor({ imagePath: imageUrl });
         await track.setProcessor(processor);
       } catch {
         // Prosesor tidak tersedia di perangkat ini — abaikan.
