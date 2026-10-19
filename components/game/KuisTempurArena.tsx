@@ -289,9 +289,13 @@ export default function KuisTempurArena({
     return () => window.removeEventListener("keydown", onKey);
   }, [code, me, result, userId]);
 
+  const lastAnswerRef = useRef(0);
   const answer = useCallback(
     (answerIndex: number) => {
       if (!question || lockedAnswer || result) return;
+      const now = Date.now();
+      if (now - lastAnswerRef.current < 600) return; // prevent rapid answers
+      lastAnswerRef.current = now;
       setLockedAnswer(true);
       gameSocket.arenaAnswer({
         code,
