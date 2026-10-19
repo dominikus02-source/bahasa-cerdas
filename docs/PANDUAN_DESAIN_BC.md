@@ -141,6 +141,23 @@ supaya fokus & lapisan kompatibilitas `.bc-guru` konsisten. Hijau tetap hanya un
 
 Primitif: `.ui-btn--accent`, `.ui-icon-box--accent`, `.ui-icon-box--aud-soft`, `.ui-badge--aud`, `.bc-btn-primary` (kelas).
 
+### 1.5 Primary global (keputusan CEO 2026-10-19)
+
+`primary` (Tailwind `bg-primary`, `text-primary`, shadcn `--primary`) **bukan merah lagi**: teal + gradien merek.
+
+| Token | Tailwind | Terang | Gelap | Guru (terang / gelap) |
+|---|---|---|---|---|
+| `--clr-primary` | `text-primary`, `border-primary` | `#047857` (putih 5.5:1, di bg 5.1:1) | `#34d399` (9.5:1 di surface) | `#1d4ed8` / `#60a5fa` |
+| `--clr-primary-strong` | `primary-dark` (hover) | `#065f46` | `#6ee7b7` | `#1e40af` / `#93c5fd` |
+| `--clr-primary-soft` | `primary-light` | `= --clr-accent-soft` | `= --clr-accent-soft` | `= --clr-aud-soft` |
+| `--clr-on-primary` | `text-primary-foreground` | `#fff` | `--clr-bg` | `#fff` / `#0f1117` |
+| `--bc-grad-primary` | `bg-primary` (otomatis gradien) | `--bc-grad-brand` (#047857→#2563eb→#7c3aed) | #34d399→#93c5fd→#a78bfa | `--bc-grad-aud` |
+
+- Teks di atas `bg-primary` **selalu** `text-primary-foreground` (bukan `text-white` — di gelap gradiennya terang).
+- `ring` Tailwind = `--clr-focus`. Meta `theme-color` & manifest: `app/theme/meta-colors.ts` (terang #047857, gelap #0f1117).
+- **Merah hanya untuk bahaya/galat**: `destructive`, `bc-danger`, Keluar, hapus, pesan error. Merah-merek lama
+  (`from-red-600 to-red-700`, `text-red-600` sebagai aksen) → `bg-primary` / `text-primary` saat area disentuh.
+
 ---
 
 ## 2. Radius, bayangan, jarak, tipografi

@@ -32,7 +32,7 @@
     --card-foreground: 0 0% 11%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 11%;
-    --primary: 0 73% 41%;
+    --primary: 163 94% 24%; /* teal (keputusan CEO 2026-10-19) — sumber: --clr-primary */
     --primary-foreground: 0 0% 100%;
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
@@ -44,7 +44,7 @@
     --destructive-foreground: 0 0% 100%;
     --border: 240 6% 90%;
     --input: 240 6% 90%;
-    --ring: 0 73% 41%;
+    --ring: 163 94% 24%;
     --radius: 0.75rem;
     --surface: 0 0% 100%;
     --surface-elevated: 0 0% 100%;
@@ -61,8 +61,8 @@
     --card-foreground: 210 40% 96%;
     --popover: 224 35% 11%;
     --popover-foreground: 210 40% 96%;
-    --primary: 0 73% 41%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 158 64% 52%;
+    --primary-foreground: 225 21% 7%;
     --secondary: 217 33% 18%;
     --secondary-foreground: 210 40% 96%;
     --muted: 217 25% 15%;
@@ -73,7 +73,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 217 25% 18%;
     --input: 217 25% 18%;
-    --ring: 0 73% 51%;
+    --ring: 158 64% 52%;
     --surface: 224 35% 11%;
     --surface-elevated: 224 40% 15%;
     --surface-muted: 217 25% 14%;
@@ -1300,4 +1300,13 @@
 .dark .bc-guru-shell .bc-guru .bg-white.rounded-2xl,
 .dark .bc-guru-shell .bc-guru .bg-white.rounded-xl {
   border-color: color-mix(in srgb, #2563eb 30%, var(--clr-border));
+}
+
+/* Primary = gradien merek (keputusan CEO 2026-10-19). `bg-primary` solid → gradien
+   teal→biru→violet (guru: gradien biru). Warna dasar tetap --clr-primary sebagai fallback. */
+@layer utilities {
+  .bg-primary { background-image: var(--bc-grad-primary); }
+}
+@layer utilities {
+  .hover\:bg-primary-dark:hover { background-image: none; }
 }

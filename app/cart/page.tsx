@@ -59,7 +59,7 @@ export default function CartPage() {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
         <div className="max-w-3xl mx-auto px-4 py-8">
           <div className="flex items-center gap-3 mb-8">
-            <ShoppingCart size={28} className="text-red-600" />
+            <ShoppingCart size={28} className="text-primary" />
             <h1 className="text-2xl font-bold text-slate-900">Keranjang</h1>
           </div>
           <div className="text-center py-20">
@@ -68,7 +68,7 @@ export default function CartPage() {
             </div>
             <p className="text-slate-500 font-medium">Keranjang kosong</p>
             <p className="text-sm text-slate-400 mt-1">Tambahkan karya dari Toko Karya</p>
-            <Link href="/marketplace" className="mt-4 inline-flex items-center gap-1 text-red-600 font-semibold hover:underline">
+            <Link href="/marketplace" className="mt-4 inline-flex items-center gap-1 text-primary font-semibold hover:underline">
               Jelajahi Toko Karya <ArrowLeft size={14} className="rotate-180" />
             </Link>
           </div>
@@ -82,7 +82,7 @@ export default function CartPage() {
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
-            <ShoppingCart size={28} className="text-red-600" />
+            <ShoppingCart size={28} className="text-primary" />
             <h1 className="text-2xl font-bold text-slate-900">Keranjang</h1>
             <span className="text-sm text-slate-400 bg-slate-100 px-2.5 py-0.5 rounded-full">{totalItems} item</span>
           </div>
@@ -94,18 +94,18 @@ export default function CartPage() {
         <div className="space-y-3 mb-6">
           {items.map((item) => (
             <div key={item.id} className="bg-white rounded-2xl border border-slate-200 p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-red-50 to-pink-50 flex items-center justify-center shrink-0">
-                <ShoppingBag size={22} className="text-red-400" />
+              <div className="w-14 h-14 rounded-xl bg-primary-light flex items-center justify-center shrink-0">
+                <ShoppingBag size={22} className="text-primary" />
               </div>
               <div className="flex-1 min-w-0">
-                <Link href={`/marketplace/${item.id}`} className="font-semibold text-slate-900 hover:text-red-600 line-clamp-1">
+                <Link href={`/marketplace/${item.id}`} className="font-semibold text-slate-900 hover:text-primary line-clamp-1">
                   {item.title}
                 </Link>
                 <div className="flex items-center gap-2 mt-0.5">
                   <span className="text-xs text-slate-400">{TYPES[item.type] || item.type}</span>
                   {item.seller && <span className="text-xs text-slate-400">• {item.seller}</span>}
                 </div>
-                <p className="text-sm font-bold text-red-600 mt-1">
+                <p className="text-sm font-bold text-primary mt-1">
                   Rp {(item.price * (item.qty || 1)).toLocaleString("id")}
                 </p>
               </div>
@@ -155,7 +155,7 @@ export default function CartPage() {
           <div className="border-t border-slate-100 pt-4">
             <div className="flex items-center justify-between mb-1">
               <span className="text-slate-600">Total</span>
-              <span className="text-2xl font-bold text-red-600">Rp {total.toLocaleString("id")}</span>
+              <span className="text-2xl font-bold text-primary">Rp {total.toLocaleString("id")}</span>
             </div>
             <p className="text-xs text-slate-400">Harga sudah termasuk PPN</p>
           </div>
@@ -172,7 +172,7 @@ export default function CartPage() {
               router.push("/checkout");
             }}
             disabled={items.length === 0}
-            className="mt-4 w-full bg-gradient-to-r from-red-600 to-red-700 text-white font-bold py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition-all disabled:opacity-40 flex items-center justify-center gap-2"
+            className="mt-4 w-full bg-primary text-primary-foreground font-bold py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition-all disabled:opacity-40 flex items-center justify-center gap-2"
           >
             <ShoppingBag size={18} />
             {hasPaidItem ? `Bayar Rp ${total.toLocaleString("id")}` : `Unduh Gratis (${totalItems} item)`}

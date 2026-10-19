@@ -17,7 +17,7 @@ import { execFileSync } from "node:child_process";
 const TOKEN_FILE = "app/theme/tokens.css";
 const EXT = /\.(?:tsx?|jsx?|mjs|css)$/;
 const ALLOW: RegExp[] = [
-  /^app\/theme\/tokens\.css$/,
+  /^app\/theme\/tokens\.css$/, /^app\/theme\/meta-colors\.ts$/, // meta theme-color wajib literal
   /^scripts\//, /^tests?\//, /^public\//, /^prisma\//, /^game-server\//, /^loadtest\//, /^supabase\//, /^twa\//, /^ops\//,
   /^src\/game\//, /^lib\/game\//, /^lib\/gamification\//, /^lib\/arena-junior\//, /^lib\/arena\/game-registry\.ts$/, /^lib\/cosmetics\.ts$/,
   /^app\/api\//, /opengraph-image\.tsx$/, /(?:^|\/)icon\.tsx$/, /apple-icon\.tsx$/, /\.test\.tsx?$/, /\.d\.ts$/,

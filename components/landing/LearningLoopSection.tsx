@@ -69,7 +69,7 @@ export default function LearningLoopSection() {
                     : "bg-zinc-50 border-zinc-100 hover:border-primary/30 hover:shadow-md"
                 }`}>
                   <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-3 ${
-                    isLast ? "bg-primary text-white" : "bg-primary-light text-primary"
+                    isLast ? "bg-primary text-primary-foreground" : "bg-primary-light text-primary"
                   }`}>
                     <Icon size={20} aria-hidden="true" />
                   </div>

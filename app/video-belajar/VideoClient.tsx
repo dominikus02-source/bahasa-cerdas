@@ -96,7 +96,7 @@ export default function VideoClient({ initialVideos }: { initialVideos: Video[] 
               onClick={() => setCategory(c.value)}
               className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 category === c.value
-                  ? "bg-primary text-white shadow-md shadow-primary/20"
+                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
                   : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
               }`}
             >

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import "./globals.css";
+import { META_THEME_COLOR_DARK, META_THEME_COLOR_LIGHT } from "./theme/meta-colors";
 import { Providers } from "./providers";
 
 const SITE_URL = "https://www.bahasacerdas.com";
@@ -11,8 +12,8 @@ const OG_DESC = "Belajar Bahasa Indonesia makin seru! AI bikin Rencana Pembelaja
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#B91C1C" },
-    { media: "(prefers-color-scheme: dark)", color: "#B91C1C" },
+    { media: "(prefers-color-scheme: light)", color: META_THEME_COLOR_LIGHT },
+    { media: "(prefers-color-scheme: dark)", color: META_THEME_COLOR_DARK },
   ],
   width: "device-width",
   initialScale: 1,

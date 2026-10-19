@@ -79,7 +79,7 @@ export default function HeroSection() {
             >
               <Link
                 href="/register"
-                className="group relative inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-primary hover:bg-primary-dark rounded-xl transition-all duration-200 shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/30 hover:-translate-y-0.5 focus-ring"
+                className="group relative inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-primary-foreground bg-primary hover:bg-primary-dark rounded-xl transition-all duration-200 shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/30 hover:-translate-y-0.5 focus-ring"
                 aria-label="Mulai gratis, daftar sekarang"
               >
                 Mulai Gratis

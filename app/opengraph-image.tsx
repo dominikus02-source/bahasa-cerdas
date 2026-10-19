@@ -20,7 +20,7 @@ export default async function OGImage() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          background: "#B91C1C",
+          background: "#047857",
           color: "white",
           fontFamily: "sans-serif",
         }}
@@ -46,7 +46,7 @@ export default async function OGImage() {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(135deg, #B91C1C 0%, #991b1b 100%)",
+        background: "linear-gradient(135deg, #047857 0%, #2563eb 55%, #7c3aed 100%)",
         color: "white",
         fontFamily: "Inter",
         position: "relative",

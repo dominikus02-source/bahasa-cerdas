@@ -65,7 +65,7 @@ export default async function ArtikelDetailPage({ params }: Props) {
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-bc-text">Artikel tidak ditemukan</h1>
-            <Link href="/artikel" className="mt-4 inline-block text-red-600 dark:text-red-400 font-semibold hover:underline">Lihat semua artikel →</Link>
+            <Link href="/artikel" className="mt-4 inline-block text-primary font-semibold hover:underline">Lihat semua artikel →</Link>
           </div>
         </div>
       </div>
@@ -82,7 +82,7 @@ export default async function ArtikelDetailPage({ params }: Props) {
           be clicked, and the cover image sat cramped against it. Matches the
           spacing the other public pages already use. */}
       <div className="max-w-3xl mx-auto px-4 pt-28 pb-12">
-        <Link href="/artikel" className="inline-flex items-center gap-1 text-sm text-bc-text-3 hover:text-red-600 mb-8 transition-colors">
+        <Link href="/artikel" className="inline-flex items-center gap-1 text-sm text-bc-text-3 hover:text-primary mb-8 transition-colors">
           <ArrowLeft size={16} /> Kembali ke Artikel
         </Link>
 
@@ -110,7 +110,7 @@ export default async function ArtikelDetailPage({ params }: Props) {
           {artikel.tags?.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-8">
               {artikel.tags.map((t: string) => (
-                <span key={t} className="text-xs px-3 py-1 bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-300 rounded-full font-medium">{t}</span>
+                <span key={t} className="text-xs px-3 py-1 bg-primary-light text-primary rounded-full font-medium">{t}</span>
               ))}
             </div>
           )}
@@ -120,7 +120,7 @@ export default async function ArtikelDetailPage({ params }: Props) {
           </div>
 
           <div className="mt-8 pt-6 border-t border-bc-line flex items-center justify-between">
-            <Link href="/artikel" className="text-sm text-red-600 dark:text-red-400 font-semibold hover:underline flex items-center gap-1">
+            <Link href="/artikel" className="text-sm text-primary font-semibold hover:underline flex items-center gap-1">
               <ArrowLeft size={14} /> Artikel Lainnya
             </Link>
             <div className="flex items-center gap-4">

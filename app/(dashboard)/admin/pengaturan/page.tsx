@@ -95,7 +95,7 @@ function PromoVideoCard() {
             </div>
           )}
 
-          <Button onClick={handleSave} disabled={saving} className="bg-primary hover:bg-primary-dark text-white">
+          <Button onClick={handleSave} disabled={saving} className="bg-primary hover:bg-primary-dark text-primary-foreground">
             {saving ? <Loader2 size={16} className="animate-spin mr-2" /> : <Save size={16} className="mr-2" />}
             Simpan
           </Button>
@@ -285,7 +285,7 @@ function MgmpMediaCard() {
             </div>
           )}
 
-          <Button onClick={handleSave} disabled={saving || uploading} className="bg-primary hover:bg-primary-dark text-white">
+          <Button onClick={handleSave} disabled={saving || uploading} className="bg-primary hover:bg-primary-dark text-primary-foreground">
             {saving ? <Loader2 size={16} className="animate-spin mr-2" /> : <Save size={16} className="mr-2" />}
             Simpan
           </Button>

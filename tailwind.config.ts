@@ -42,14 +42,16 @@ const config: Config = {
         bc: bcColors,
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
+        ring: tok("focus"),
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        // Primary = teal + gradien merek (tokens.css; guru = biru). Bukan merah lagi —
+        // merah hanya `destructive` / `bc-danger`.
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-          light: "#FEF2F2",
-          dark: "#991B1B",
+          DEFAULT: tok("primary"),
+          foreground: tok("on-primary"),
+          light: tok("primary-soft"),
+          dark: tok("primary-strong"),
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",

@@ -15,7 +15,7 @@ export default function AboutFinalCta() {
         </p>
         <Link
           href="/register"
-          className="group inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-primary hover:bg-primary-dark rounded-xl transition-all duration-200 shadow-xl hover:shadow-2xl focus-ring"
+          className="group inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-primary-foreground bg-primary hover:bg-primary-dark rounded-xl transition-all duration-200 shadow-xl hover:shadow-2xl focus-ring"
         >
           Mulai Gratis Sekarang
           <ArrowRight size={18} className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
