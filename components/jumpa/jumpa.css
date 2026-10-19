@@ -1497,3 +1497,23 @@ select.jumpa-input { text-overflow: ellipsis; padding-right: 36px; }
   background: #ffffff;
   border-color: #e2e8f0;
 }
+
+/* Smooth transitions */
+.jumpa-setting-row,
+.jumpa-bg-option,
+.jumpa-seg-btn,
+.jumpa-switch {
+  transition: all .2s cubic-bezier(.4, 0, .2, 1);
+}
+.jumpa-bg-preview img {
+  transition: transform .25s ease, opacity .2s ease;
+}
+.jumpa-bg-option:hover .jumpa-bg-preview img {
+  transform: scale(1.05);
+}
+.jumpa-setting-row:active {
+  transform: scale(.98);
+}
+.jumpa-seg-btn:active {
+  transform: scale(.96);
+}
