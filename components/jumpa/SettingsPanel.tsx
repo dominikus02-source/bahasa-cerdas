@@ -10,7 +10,7 @@ import { Camera, Crown, Headphones, Lock, Mic, Sparkles, AudioWaveform, Leaf, Ga
 import { JUMPA_TIERS, type JumpaTierView } from "@/lib/jumpa/tiers";
 import { QUALITY_LABEL } from "./media-policy";
 import type { JumpaMediaPrefs, JumpaQuality } from "./media-prefs";
-import { JUMPA_BACKGROUNDS, BC_LOGO_WATERMARK } from "./backgrounds";
+import { JUMPA_BACKGROUNDS } from "./backgrounds";
 import { TierBadge, tierLimitsText } from "./TierUi";
 
 type Kind = "videoinput" | "audioinput" | "audiooutput";
@@ -163,8 +163,8 @@ export default function SettingsPanel({ prefs, onChange, tier, refreshKey = 0, d
               data-selected={prefs.background === bg.id}
               aria-pressed={prefs.background === bg.id}
             >
-              <span className="jumpa-bg-preview" style={{ background: bg.preview }} aria-hidden>
-                {bg.showLogo && <img src={BC_LOGO_WATERMARK} alt="" className="jumpa-bg-logo" />}
+              <span className="jumpa-bg-preview" aria-hidden>
+                {bg.image ? <img src={bg.image} alt="" className="h-full w-full object-cover" /> : <span className="block h-full w-full bg-[var(--jp-surface-2)]" />}
               </span>
               <span className="jumpa-bg-label">{bg.label}</span>
             </button>
