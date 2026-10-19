@@ -30,8 +30,9 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Inter", "ui-sans-serif", "system-ui", "-apple-system", "BlinkMacSystemFont", "\"Segoe UI\"", "sans-serif"],
-        display: ["Georgia", "Cambria", "\"Times New Roman\"", "serif"],
+        sans: ["var(--font-inter)", "Inter", "ui-sans-serif", "system-ui", "-apple-system", "BlinkMacSystemFont", "\"Segoe UI\"", "sans-serif"],
+        // Judul memakai Inter juga (keputusan CEO 2026-10-19: tanpa Georgia).
+        display: ["var(--font-inter)", "Inter", "ui-sans-serif", "system-ui", "-apple-system", "BlinkMacSystemFont", "\"Segoe UI\"", "sans-serif"],
         "junior-heading": ["Elegant Bloom", "sans-serif"],
         "junior-body": ["Elegant Bloom", "sans-serif"],
         "game-display": ["Newscrash", "sans-serif"],

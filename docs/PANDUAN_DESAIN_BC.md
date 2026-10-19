@@ -158,6 +158,10 @@ Kelas CSS bisa dipakai langsung bila komponen tidak cocok: `.ui-btn .ui-btn--pri
 
 ### Tipografi (font: Inter, `font-sans`)
 
+Inter variabel (subset latin, `display: swap`) dimuat lewat `next/font/local` di `app/layout.tsx` (berkas `app/fonts/`, tanpa
+akses Google Fonts saat build) → `--font-inter`. Judul (`font-display`, `h1–h3`) **juga Inter** — Georgia/serif tidak dipakai
+lagi untuk judul (keputusan CEO 2026-10-19). `font-serif` hanya untuk isi karya (puisi) / pratinjau dokumen.
+
 | Peran | Ukuran / tebal |
 |---|---|
 | Judul hero | `clamp(28px, 7.4vw, 40px)`, `900`, `letter-spacing -.02em`, `line-height 1.05` |
