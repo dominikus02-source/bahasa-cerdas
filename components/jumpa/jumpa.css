@@ -1437,3 +1437,34 @@ select.jumpa-input { text-overflow: ellipsis; padding-right: 36px; }
 .jumpa-att { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 12px; border-radius: 14px; }
 .jumpa-att:nth-child(odd) { background: color-mix(in srgb, var(--clr-surface-2) 60%, transparent); }
 .jumpa-cancelled { display: inline-block; margin-top: 4px; padding: 0 7px; border-radius: 999px; font-size: 10px; font-weight: 800; color: var(--clr-warning); background: color-mix(in srgb, var(--clr-warning) 14%, transparent); }
+
+/* Latar ruang pilihan */
+.jumpa-bg-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 6px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background: var(--jp-surface);
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.1s;
+}
+.jumpa-bg-option[data-selected="true"] {
+  border-color: var(--clr-accent);
+}
+.jumpa-bg-option:active { transform: scale(0.97); }
+.jumpa-bg-preview {
+  width: 100%;
+  aspect-ratio: 16/10;
+  border-radius: 8px;
+  border: 1px solid var(--jp-border);
+}
+.jumpa-bg-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--jp-text-2);
+  text-align: center;
+}
+
