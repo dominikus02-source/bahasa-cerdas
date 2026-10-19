@@ -94,22 +94,43 @@ function PackageRules({ tier }: { tier: JumpaTierView }) {
       <summary className="flex cursor-pointer items-center gap-2 text-[var(--jp-text-2)] hover:text-[var(--jp-text-1)]">
         <Info size={14} /> Aturan paket ruang ini
       </summary>
-      <ul className="mt-2 space-y-1.5 pl-5 text-[var(--jp-text-2)]">
+      <div className="mt-2 space-y-2 text-xs text-[var(--jp-text-2)]">
         {isGuru ? (
           <>
-            <li>Ruang kelas: Gratis {JUMPA_TIERS.FREE.rooms.KELAS.maxParticipants} orang · {JUMPA_TIERS.FREE.rooms.KELAS.maxDurationMin} menit · Premium {JUMPA_TIERS.PREMIUM.rooms.KELAS.maxParticipants} orang · {JUMPA_TIERS.PREMIUM.rooms.KELAS.maxDurationMin} menit</li>
-            <li>Ruang guru: Gratis {JUMPA_TIERS.FREE.rooms.GURU.maxParticipants} orang · Premium {JUMPA_TIERS.PREMIUM.rooms.GURU.maxParticipants} orang</li>
-            <li>Webinar: hanya Premium · {JUMPA_WEBINAR.maxParticipants} orang · {JUMPA_WEBINAR.maxDurationMin} menit · maksimal {JUMPA_WEBINAR_PER_WEEK} kali per minggu</li>
-            <li>Kuota harian ruang biasa: Gratis {JUMPA_TIERS.FREE.roomsPerDay} ruang/hari · Premium tanpa batas</li>
+            <div className="rounded-lg bg-[var(--jp-surface-2)] p-2">
+              <div className="font-semibold text-[var(--jp-text-1)]">Ruang kelas</div>
+              <div>Gratis: {JUMPA_TIERS.FREE.rooms.KELAS.maxParticipants} orang · {JUMPA_TIERS.FREE.rooms.KELAS.maxDurationMin} menit</div>
+              <div>Premium: {JUMPA_TIERS.PREMIUM.rooms.KELAS.maxParticipants} orang · {JUMPA_TIERS.PREMIUM.rooms.KELAS.maxDurationMin} menit</div>
+            </div>
+            <div className="rounded-lg bg-[var(--jp-surface-2)] p-2">
+              <div className="font-semibold text-[var(--jp-text-1)]">Ruang guru</div>
+              <div>Gratis: {JUMPA_TIERS.FREE.rooms.GURU.maxParticipants} orang</div>
+              <div>Premium: {JUMPA_TIERS.PREMIUM.rooms.GURU.maxParticipants} orang</div>
+            </div>
+            <div className="rounded-lg bg-[var(--jp-surface-2)] p-2">
+              <div className="font-semibold text-[var(--jp-text-1)]">Webinar <span className="text-[var(--clr-accent)]">Premium</span></div>
+              <div>{JUMPA_WEBINAR.maxParticipants} orang · {JUMPA_WEBINAR.maxDurationMin} menit</div>
+              <div>Maksimal {JUMPA_WEBINAR_PER_WEEK}× per minggu</div>
+            </div>
+            <div className="rounded-lg bg-[var(--jp-surface-2)] p-2">
+              <div className="font-semibold text-[var(--jp-text-1)]">Kuota harian</div>
+              <div>Gratis: {JUMPA_TIERS.FREE.roomsPerDay} ruang/hari</div>
+              <div>Premium: tanpa batas</div>
+            </div>
           </>
         ) : (
-          <>
-            <li>Belajar bareng: Gratis {JUMPA_MURID_FREE.maxParticipants} orang · Premium {JUMPA_MURID_PREMIUM.maxParticipants} orang · {JUMPA_MURID_FREE.maxDurationMin} menit</li>
-            <li>Hanya teman sekelas yang bisa masuk</li>
-          </>
+          <div className="rounded-lg bg-[var(--jp-surface-2)] p-2">
+            <div className="font-semibold text-[var(--jp-text-1)]">Belajar bareng</div>
+            <div>Gratis: {JUMPA_MURID_FREE.maxParticipants} orang · {JUMPA_MURID_FREE.maxDurationMin} menit</div>
+            <div>Premium: {JUMPA_MURID_PREMIUM.maxParticipants} orang</div>
+            <div className="mt-1 text-[var(--jp-text-3)]">Hanya teman sekelas yang bisa masuk</div>
+          </div>
         )}
-        <li>Ruang ini: {tierLimitsText(tier)}</li>
-      </ul>
+        <div className="rounded-lg border border-[var(--clr-accent)] p-2">
+          <div className="font-semibold text-[var(--jp-text-1)]">Ruang ini</div>
+          <div>{tierLimitsText(tier)}</div>
+        </div>
+      </div>
     </details>
   );
 }
