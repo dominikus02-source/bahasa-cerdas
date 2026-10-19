@@ -9,7 +9,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, BookOpen, CalendarPlus, Crown, History, GraduationCap, KeyRound, Loader2, Plus, Users, Video } from "lucide-react";
+import { ArrowRight, BookOpen, CalendarPlus, Crown, History, GraduationCap, KeyRound, Loader2, Moon, Plus, Sun, Users, Video } from "lucide-react";
 import type { JumpaHomeData, RoomListItem } from "@/lib/jumpa/service";
 import { formatWib, formatWibTime } from "@/lib/jumpa/schedule";
 import { JUMPA_MURID_FREE, JUMPA_MURID_PREMIUM } from "@/lib/jumpa/tiers";
@@ -115,6 +115,7 @@ function isTestRoom(title: string): boolean {
 export default function JumpaHome({ data, displayName, dashboardHref }: { data: JumpaHomeData; displayName: string; dashboardHref: string }) {
   const router = useRouter();
   const now = useMinuteTick();
+  const [light, setLight] = useState(false);
   const [limitHit, setLimitHit] = useState(false);
   const plan = data.plan;
   const [busy, setBusy] = useState(false);
@@ -146,10 +147,15 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
   };
 
   return (
-    <main className="jumpa-home mx-auto flex min-h-[100dvh] w-full max-w-3xl flex-col gap-5 px-4 pb-10 pt-[max(16px,env(safe-area-inset-top))] sm:px-6">
+    <main className="jumpa-home jumpa-root mx-auto flex min-h-[100dvh] w-full max-w-3xl flex-col gap-5 px-4 pb-10 pt-[max(16px,env(safe-area-inset-top))] sm:px-6" data-theme={light ? "light" : "dark"}>
       <header className="flex items-center justify-between gap-3">
         <p className="jumpa-brand"><span className="jumpa-mark jumpa-mark-sm" aria-hidden>J</span>JUMPA</p>
-        <Link href={dashboardHref} className="jumpa-ghost !min-h-[40px] !px-4 text-sm">Dasbor</Link>
+        <div className="flex items-center gap-2">
+          <button type="button" onClick={() => setLight(!light)} className="jumpa-icon-btn" aria-label={light ? "Mode gelap" : "Mode terang"}>
+            {light ? <Moon size={18} /> : <Sun size={18} />}
+          </button>
+          <Link href={dashboardHref} className="jumpa-ghost !min-h-[40px] !px-4 text-sm">Dasbor</Link>
+        </div>
       </header>
 
       <section className="jumpa-hero jumpa-in-up">
