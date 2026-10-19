@@ -260,12 +260,16 @@ export default function LoginPage() {
                 </label>
                 <input
                   id="email"
-                  type="email"
+                  type="text"
+                  inputMode="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className={inputCls}
                   placeholder="nama@sekolah.sch.id atau username"
-                  autoComplete="email"
+                  autoComplete="username"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
                   required
                 />
               </div>
@@ -355,12 +359,12 @@ export default function LoginPage() {
           <div className="mt-5 grid gap-2 lg:hidden">
             {valueCards.map((v) => (
               <div key={v.title} className="flex items-center gap-3 rounded-xl border border-slate-200/70 bg-white/70 px-3 py-2.5 dark:border-slate-800 dark:bg-slate-900/50">
-                <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${v.tint}`}>
-                  <v.icon size={15} />
+                <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${v.tint}`}>
+                  <v.icon size={17} />
                 </span>
                 <div>
-                  <p className="text-xs font-bold text-slate-900 dark:text-slate-100">{v.title}</p>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400">{v.copy}</p>
+                  <p className="text-sm font-bold text-slate-900 dark:text-slate-100">{v.title}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{v.copy}</p>
                 </div>
               </div>
             ))}
@@ -369,32 +373,17 @@ export default function LoginPage() {
       </div>
 
       {isArenaEntry && !isInstalled && (
-        <div className="relative mx-auto mt-6 max-w-md rounded-2xl border border-slate-200/70 bg-white/70 p-4 dark:border-slate-800 dark:bg-slate-900/50">
-          <div className="flex items-center gap-3">
-            <Smartphone className="h-6 w-6 shrink-0 text-violet-600 dark:text-violet-300" />
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-slate-900 dark:text-white">Pasang Arena di HP-mu</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Buka melalui Chrome, lalu pilih menu pasang ke layar utama.</p>
-            </div>
-            <button type="button" onClick={() => setGuideOpen(true)} className="rounded-xl bg-violet-600 px-3 py-2 text-xs font-semibold text-white hover:bg-violet-700">Panduan</button>
-          </div>
+        <div className="relative mx-auto mt-8 w-full max-w-md">
+          <button
+            type="button"
+            onClick={() => setGuideOpen(true)}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm font-semibold text-slate-700 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-200"
+          >
+            <Smartphone size={18} /> Pasang aplikasi Arena
+          </button>
+          {guideOpen && <InstallGuide onClose={() => setGuideOpen(false)} />}
         </div>
       )}
-      {isArenaEntry && guideOpen && <InstallGuide onClose={() => setGuideOpen(false)} />}
-
-      {/* ── ECOSYSTEM STRIP (desktop) ── */}
-      <div className="relative mx-auto mt-10 hidden max-w-6xl grid-cols-4 gap-3 lg:grid">
-        {ecosystem.map((e) => (
-          <div key={e.title} className="rounded-2xl border border-slate-200/60 bg-white/60 px-4 py-3 text-center dark:border-slate-800 dark:bg-slate-900/40">
-            <p className="text-xs font-bold text-slate-800 dark:text-slate-100">{e.title}</p>
-            <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">{e.copy}</p>
-          </div>
-        ))}
-      </div>
-
-      <p className="relative mt-8 text-center text-xs text-slate-400 dark:text-slate-600">
-        BahasaCerdas — {BRAND_TAGLINE}
-      </p>
     </div>
   );
 }
