@@ -11,7 +11,7 @@ export interface JumpaDevicePrefs {
   audiooutput?: string;
 }
 
-export type JumpaBackgroundId = "none" | "hijau" | "batik" | "langit" | "hutan" | "senja" | "malam" | "custom";
+export type JumpaBackgroundId = "none" | "blur" | "kelas" | "kelas-bc" | "kelas-biru" | "kantor" | "logo-wall" | "ekosistem" | "custom";
 
 export interface JumpaMediaPrefs {
   camera: boolean;
@@ -42,7 +42,7 @@ export const DEFAULT_MEDIA_PREFS: JumpaMediaPrefs = {
 };
 
 const QUALITIES: readonly JumpaQuality[] = ["auto", "hemat", "hd"];
-const BACKGROUNDS: readonly JumpaBackgroundId[] = ["none", "hijau", "batik", "langit", "hutan", "senja", "malam", "custom"];
+const BACKGROUNDS: readonly JumpaBackgroundId[] = ["none", "blur", "kelas", "kelas-bc", "kelas-biru", "kantor", "logo-wall", "ekosistem", "custom"];
 const DEVICE_ID_RE = /^[A-Za-z0-9+/=_-]{1,200}$/;
 
 function cleanDevices(v: unknown): JumpaDevicePrefs {
