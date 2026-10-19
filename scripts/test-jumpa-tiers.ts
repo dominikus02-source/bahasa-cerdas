@@ -147,7 +147,7 @@ check("Grid berhalaman (usePagination)", room.includes("usePager(pageSize, track
 check("Hitung mundur di komponen sendiri (tidak me-render ulang ruang)", !room.includes("useCountdown(") && room.includes("<CountdownChip"))
 const tierUiSrc = read("components/jumpa/TierUi.tsx")
 check("Hitung mundur hanya di 10 menit terakhir (semua paket)", tierUiSrc.includes("COUNTDOWN_SHOW_SEC = 10 * 60") && !room.includes("alwaysShow"))
-check("Rekaman & latar blur = Premium segera (belum aktif)", JUMPA_TIERS.PREMIUM.features.recording === false && JUMPA_TIERS.PREMIUM.features.backgroundBlur === false && read("components/jumpa/SettingsPanel.tsx").includes("Segera hadir"))
+check("Rekaman = Premium segera, blur aktif untuk premium", JUMPA_TIERS.PREMIUM.features.recording === false && JUMPA_TIERS.PREMIUM.features.backgroundBlur === true)
 const ctl = read("components/jumpa/media-controller.tsx")
 check("adaptiveStream + dynacast + simulcast", ctl.includes("adaptiveStream:") && ctl.includes("dynacast: true") && ctl.includes("simulcast: true"))
 check("Mode audio saja berhenti berlangganan video kamera", ctl.includes("pub.setSubscribed(false)"))
