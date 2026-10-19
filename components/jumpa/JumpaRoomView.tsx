@@ -631,20 +631,26 @@ function ControlBar({
   };
   const close = () => setMenuOpen(false);
 
-  // Terapkan virtual background ke track kamera lokal.
+  // Terapkan virtual background atau blur ke track kamera lokal.
   useEffect(() => {
-    const bg = backgroundById(prefs.background);
-    const imageUrl = prefs.background === "custom" ? prefs.customBackgroundUrl : bg.image;
-    if (!imageUrl || !isCameraEnabled) return;
+    if (!isCameraEnabled) return;
     let processor: any = null;
     (async () => {
       try {
         const track = localParticipant.getTrackPublication("camera" as any)?.track;
         if (!track || track.kind !== "video") return;
-        processor = BackgroundProcessor({ imagePath: imageUrl });
+        const bg = backgroundById(prefs.background);
+        const imageUrl = prefs.background === "custom" ? prefs.customBackgroundUrl : bg.image;
+        if (prefs.background === "blur") {
+          processor = BackgroundProcessor({ mode: "background-blur", blurRadius: 15 });
+        } else if (imageUrl) {
+          processor = BackgroundProcessor({ mode: "virtual-background", imagePath: imageUrl });
+        } else {
+          processor = BackgroundProcessor({ mode: "disabled" });
+        }
         await track.setProcessor(processor);
-      } catch {
-        // Prosesor tidak tersedia di perangkat ini — abaikan.
+      } catch (e) {
+        console.warn("Background processor failed", e);
       }
     })();
     return () => { processor?.destroy?.(); };
