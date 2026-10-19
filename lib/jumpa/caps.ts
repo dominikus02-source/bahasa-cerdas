@@ -2,7 +2,7 @@
  * Batas default ruang JUMPA per jenis ruang (murni, tanpa I/O).
  * Lihat docs/JUMPA_TECHNICAL_PLAN.md §2.5. Ubah angka di sini saja.
  */
-import { JUMPA_MURID_ROOM, JUMPA_TIERS } from "./tiers";
+import { JUMPA_MURID_FREE, JUMPA_TIERS } from "./tiers";
 
 export type JumpaKind = "KELAS" | "GURU" | "MURID";
 
@@ -12,14 +12,14 @@ export interface JumpaCaps {
 }
 
 /**
- * Batas PENUH per jenis ruang (= paket Premium; MURID selalu sama).
+ * Batas PENUH per jenis ruang (= paket Premium; MURID gratis sebagai default).
  * Fase 3: angka hidup di lib/jumpa/tiers.ts — paket Gratis memakai
  * limitsFor("FREE", kind). Jangan menulis angka di sini.
  */
 export const JUMPA_CAPS: Record<JumpaKind, JumpaCaps> = {
   KELAS: { ...JUMPA_TIERS.PREMIUM.rooms.KELAS },
   GURU: { ...JUMPA_TIERS.PREMIUM.rooms.GURU },
-  MURID: { ...JUMPA_MURID_ROOM },
+  MURID: { ...JUMPA_MURID_FREE },
 };
 
 /** Ruang LiveKit ditutup bila kosong selama ini (detik). */
@@ -43,7 +43,7 @@ export function isPastDuration(
   return now.getTime() > startedAt.getTime() + maxDurationMin * 60_000;
 }
 
-// ── Fase 2 ─────────────────────────────────────────────────────────────
+// ── Fase 2 ───────────────────────────────────────────────────────────────
 /** Obrolan ruang dihapus permanen setelah N hari (cron sweep). */
 export const JUMPA_CHAT_RETENTION_DAYS = 90;
 /** Panjang maksimum satu pesan obrolan. */
