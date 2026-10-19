@@ -158,7 +158,7 @@ export default function SettingsPanel({ prefs, onChange, tier, refreshKey = 0, d
             <button
               key={bg.id}
               type="button"
-              onClick={() => onChange({ background: bg.id })}
+              onClick={() => onChange({ background: bg.id as any })}
               className="jumpa-bg-option"
               data-selected={prefs.background === bg.id}
               aria-pressed={prefs.background === bg.id}
