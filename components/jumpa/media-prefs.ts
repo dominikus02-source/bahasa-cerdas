@@ -11,7 +11,7 @@ export interface JumpaDevicePrefs {
   audiooutput?: string;
 }
 
-export type JumpaBackgroundId = "none" | "hijau" | "batik" | "langit" | "hutan" | "senja" | "malam";
+export type JumpaBackgroundId = "none" | "hijau" | "batik" | "langit" | "hutan" | "senja" | "malam" | "custom";
 
 export interface JumpaMediaPrefs {
   camera: boolean;
@@ -22,8 +22,10 @@ export interface JumpaMediaPrefs {
   audioOnly: boolean;
   /** Fase 3: peredam bising bawaan browser (gratis, tanpa WASM). */
   noiseSuppression: boolean;
-  /** Latar ruang: salah satu dari 6 pilihan bergaya BahasaCerdas. */
+  /** Latar ruang: pilihan bergaya BahasaCerdas atau custom. */
   background: JumpaBackgroundId;
+  /** URL gambar custom (data URL atau object URL) bila background = "custom". */
+  customBackgroundUrl?: string;
   devices: JumpaDevicePrefs;
 }
 
@@ -35,11 +37,12 @@ export const DEFAULT_MEDIA_PREFS: JumpaMediaPrefs = {
   audioOnly: false,
   noiseSuppression: true,
   background: "none",
+  customBackgroundUrl: undefined,
   devices: {},
 };
 
 const QUALITIES: readonly JumpaQuality[] = ["auto", "hemat", "hd"];
-const BACKGROUNDS: readonly JumpaBackgroundId[] = ["none", "hijau", "batik", "langit", "hutan", "senja", "malam"];
+const BACKGROUNDS: readonly JumpaBackgroundId[] = ["none", "hijau", "batik", "langit", "hutan", "senja", "malam", "custom"];
 const DEVICE_ID_RE = /^[A-Za-z0-9+/=_-]{1,200}$/;
 
 function cleanDevices(v: unknown): JumpaDevicePrefs {
@@ -64,6 +67,7 @@ export function parseMediaPrefs(raw: string | null | undefined): JumpaMediaPrefs
       audioOnly: typeof v.audioOnly === "boolean" ? v.audioOnly : d.audioOnly,
       noiseSuppression: typeof v.noiseSuppression === "boolean" ? v.noiseSuppression : d.noiseSuppression,
       background: BACKGROUNDS.includes(v.background as JumpaBackgroundId) ? (v.background as JumpaBackgroundId) : d.background,
+      customBackgroundUrl: typeof v.customBackgroundUrl === "string" && v.customBackgroundUrl.startsWith("data:image/") ? v.customBackgroundUrl : undefined,
       devices: cleanDevices(v.devices),
     };
   } catch {
