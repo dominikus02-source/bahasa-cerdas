@@ -60,7 +60,7 @@ export const JUMPA_TIERS: Record<JumpaTier, JumpaTierDef> = {
     roomsPerDay: 3,
     maxCameraHeight: 720,
     maxScreenHeight: 720,
-    features: { recording: false, backgroundBlur: false },
+    features: { recording: false, backgroundBlur: true },
   },
   PREMIUM: {
     label: "Premium",
@@ -87,7 +87,7 @@ export const JUMPA_WEBINAR: JumpaRoomLimits = { maxParticipants: 200, maxDuratio
 export const JUMPA_WEBINAR_PER_WEEK = 1;
 
 /** Fitur premium yang sudah dijanjikan di UI tetapi belum tersedia. */
-export const JUMPA_PREMIUM_SOON = ["recording", "backgroundBlur"] as const;
+export const JUMPA_PREMIUM_SOON = ["recording"] as const;
 
 /** Ke mana tombol "Lihat Premium" membawa guru (halaman langganan yang ada). */
 export const JUMPA_UPGRADE_URL = "/guru/berlangganan";
