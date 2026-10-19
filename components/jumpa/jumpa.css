@@ -1247,8 +1247,8 @@ select.jumpa-input { text-overflow: ellipsis; padding-right: 36px; }
 .jumpa-join:focus-within { border-color: color-mix(in srgb, var(--clr-accent) 70%, transparent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--clr-accent) 16%, transparent); }
 .jumpa-join-icon { margin-left: 10px; color: var(--jp-text-3); flex-shrink: 0; }
 .jumpa-join-input {
-  flex: 1 1 5rem;
-  min-width: 0;
+  flex: 1 1 8rem;
+  min-width: 120px;
   min-height: 46px;
   background: transparent;
   border: 0;
@@ -1479,3 +1479,19 @@ select.jumpa-input { text-overflow: ellipsis; padding-right: 36px; }
   opacity: 0.7;
 }
 
+
+/* Light mode */
+.jumpa-root[data-theme="light"] {
+  --jp-bg: #f8fafc;
+  --jp-surface: #ffffff;
+  --jp-surface-2: #f1f5f9;
+  --jp-text: #0f172a;
+  --jp-text-2: #334155;
+  --jp-text-3: #64748b;
+  --jp-line: #e2e8f0;
+  --jp-line-strong: #cbd5e1;
+}
+.jumpa-root[data-theme="light"] .jumpa-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
