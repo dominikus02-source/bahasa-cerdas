@@ -58,6 +58,29 @@ export default function UiGallery() {
         </Card>
 
         <Card variant="surface">
+          <p className="ui-eyebrow">Aksen audiens</p>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            {([["murid", "Murid"], ["guru", "Guru"]] as const).map(([aud, label]) => (
+              <div key={aud} data-audience={aud} className="grid min-w-0 gap-3 rounded-bc-md border border-bc-line bg-bc-surface-2 p-3">
+                <div className="flex min-w-0 items-center gap-3">
+                  <span className="ui-icon-box ui-icon-box--accent"><Users size={20} aria-hidden="true" /></span>
+                  <div className="min-w-0">
+                    <p className="font-semibold text-bc-text">{label}</p>
+                    <p className="text-sm text-bc-aud">Aksen {label.toLowerCase()}</p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button variant="accent" size="sm"><Plus size={16} aria-hidden="true" /> Buat</Button>
+                  <Badge tone="aud">Aktif</Badge>
+                  <span className="ui-icon-box ui-icon-box--aud-soft"><BookOpen size={18} aria-hidden="true" /></span>
+                </div>
+                <div className="h-2 rounded-full bg-bc-aud-soft"><div className="h-2 w-2/3 rounded-full bg-bc-aud-grad" /></div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card variant="surface">
           <p className="ui-eyebrow">Badge</p>
           <div className="mt-3 flex flex-wrap gap-2">
             <Badge tone="neutral">Gratis</Badge>

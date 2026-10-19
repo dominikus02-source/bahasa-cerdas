@@ -63,7 +63,7 @@ Kelas CSS bisa dipakai langsung bila komponen tidak cocok: `.ui-btn .ui-btn--pri
 ### 0.3 Migrasi
 
 - Halaman lama: ganti tombol/kartu/badge lokal dengan primitif; ganti `bg-white`/`text-gray-*`/`emerald-*` dengan `bg-bc-surface`/`text-bc-text-*`/`bc-accent`.
-- Peran: **guru = `primary`/`--bc-grad-brand`**, **murid = `murid`/`--bc-grad-murid`**. (Identitas biru guru lama menunggu keputusan CEO — lihat audit §6.)
+- Peran (keputusan CEO 2026-10-19): **guru = biru**, **murid = gradien merek teal→violet**. Untuk aksi utama yang mengikuti audiens pakai token aksen audiens (§1.4): `Button variant="accent"`, `bg-bc-aud-grad`, `text-bc-aud`, `bg-bc-aud-soft`, `Badge tone="aud"`. Di area guru, legacy `emerald-*`/`green-*` (non-status) dipetakan ke `bc-aud`, bukan `bc-success`.
 - Token lokal (`--jp-*`, `--bp-*`, salinan `.bc-classroom`) boleh tetap; arahkan ke token global saat area itu disentuh.
 - Jangan ubah perilaku/logika saat migrasi tampilan.
 
@@ -120,6 +120,26 @@ Kelas CSS bisa dipakai langsung bila komponen tidak cocok: `.ui-btn .ui-btn--pri
 | **Idle (tint kaca)** | `linear-gradient(160deg, color-mix(accent 13%, surface-2), color-mix(violet 16%, surface))`; garis `color-mix(text 14%, transparent)`; garis sorot `inset 0 1px 0 color-mix(text 9%, transparent)` | **Tanpa** `backdrop-filter`. Hover: 20% / 24%, garis `color-mix(accent 45%, transparent)`. |
 | **Premium** | teks `var(--clr-warning)`, latar `var(--clr-warning-soft)`, garis `color-mix(warning 45%, transparent)`; CTA berbingkai `linear-gradient(120deg, warning, accent 60%, violet)` | Kata "Premium" tetap. Jangan ubah harga. |
 | **Berlangsung** | teks `var(--clr-danger)`, latar `var(--clr-danger-soft)`, titik berkedip/berdenyut | Status ruang/sesi hidup. |
+
+### 1.4 Aksen per audiens (keputusan CEO 2026-10-19)
+
+Satu nama token, nilainya mengikuti audiens. Didefinisikan di `app/theme/tokens.css` §3.
+Scope guru: `.bc-guru-shell` (layout `/guru/*`) atau `[data-audience="guru"]`; selain itu = murid.
+
+| Token | Tailwind | Murid (default) | Guru terang | Guru gelap |
+|---|---|---|---|---|
+| `--clr-aud` (`--bc-accent`) | `bc-aud` | `var(--clr-violet)` | `#2563eb` | `#60a5fa` |
+| `--clr-aud-strong` | `bc-aud-strong` | violet + teks 18% | `#1d4ed8` | `#93c5fd` |
+| `--clr-aud-soft` | `bc-aud-soft` | `var(--clr-violet-soft)` | `#eff6ff` | `#10264a` |
+| `--clr-on-aud` | `bc-on-aud` | `var(--clr-on-brand)` | `#ffffff` | `#0f1117` |
+| `--bc-grad-aud` (`--bc-grad-accent`) | `bg-bc-aud-grad` | `var(--bc-grad-brand)` (teal→biru→violet) | `#1d4ed8 → #2563eb → #4f46e5` | `#38bdf8 → #60a5fa → #818cf8` |
+| `--bc-glow-aud` | — | `var(--bc-glow-brand)` | glow biru | glow biru |
+
+Kontras (WCAG AA ≥ 4.5:1): teks putih di gradien guru terang ≥ 5.2:1; teks `#0f1117` di gradien guru gelap ≥ 6.1:1;
+`#2563eb` di putih 5.2:1; `#60a5fa` di `#171a22` 6.4:1. Di scope guru `--clr-accent`/`--clr-focus` juga biru
+supaya fokus & lapisan kompatibilitas `.bc-guru` konsisten. Hijau tetap hanya untuk status sukses.
+
+Primitif: `.ui-btn--accent`, `.ui-icon-box--accent`, `.ui-icon-box--aud-soft`, `.ui-badge--aud`, `.bc-btn-primary` (kelas).
 
 ---
 

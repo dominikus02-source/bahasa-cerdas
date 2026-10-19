@@ -1077,39 +1077,8 @@
    Scope is .bc-guru-shell so Murid/Admin/Arena are untouched.
    Success stays green semantically; blue is the interaction/brand accent.
    ═══════════════════════════════════════════════════════════════════════════ */
-.bc-guru-shell {
-  --clr-accent: #2563eb;
-  --clr-accent-strong: #1d4ed8;
-  --clr-accent-soft: #eff6ff;
-  --clr-info: #0284c7;
-  --clr-info-soft: #f0f9ff;
-}
-
-.dark .bc-guru-shell {
-  --clr-accent: #60a5fa;
-  --clr-accent-strong: #93c5fd;
-  --clr-accent-soft: #10264a;
-  --clr-info: #7dd3fc;
-  --clr-info-soft: #0c2940;
-}
-
-/* Kelasku memakai token lokal .bc-classroom; override dengan specificity
-   lebih tinggi agar seluruh pengalaman GURU tetap biru, tetapi bc-student
-   (pratinjau/ruang murid) tetap violet. */
-.bc-guru-shell .bc-classroom:not(.bc-student) {
-  --clr-accent: #2563eb;
-  --clr-accent-strong: #1d4ed8;
-  --clr-accent-soft: #eff6ff;
-  --clr-info: #0284c7;
-  --clr-info-soft: #f0f9ff;
-}
-.dark .bc-guru-shell .bc-classroom:not(.bc-student) {
-  --clr-accent: #60a5fa;
-  --clr-accent-strong: #93c5fd;
-  --clr-accent-soft: #10264a;
-  --clr-info: #7dd3fc;
-  --clr-info-soft: #0c2940;
-}
+/* Token biru guru (.bc-guru-shell) kini resmi di app/theme/tokens.css §3
+   "Aksen per audiens" — nilai sama, ditambah --clr-aud / --bc-grad-aud. */
 
 /* Gradient compatibility: legacy guru surfaces that were emerald/green/teal
    now inherit the teacher blue family without touching semantic success UI. */

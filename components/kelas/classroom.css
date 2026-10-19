@@ -33,8 +33,8 @@
 
 /* Primary CTA */
 .bc-btn-primary {
-  background: var(--bc-grad-brand);
-  color: var(--clr-on-brand);
+  background: var(--bc-grad-aud);
+  color: var(--clr-on-aud);
   border-radius: var(--radius-md);
   font-weight: 700;
   min-height: 48px;
@@ -47,10 +47,6 @@
 }
 .bc-btn-primary:hover { filter: brightness(1.06) saturate(1.05); }
 .bc-student .bc-btn-primary { background: var(--bc-grad-murid); }
-/* Ruang guru tetap biru solid sampai CEO memutuskan identitas guru
-   (docs/AUDIT_DESAIN_GLOBAL.md §6). */
-.bc-guru-shell .bc-classroom:not(.bc-student) .bc-btn-primary { background: var(--clr-accent); }
-.bc-guru-shell .bc-classroom:not(.bc-student) .bc-btn-primary:hover { background: var(--clr-accent-strong); filter: none; }
 .bc-btn-primary:active { transform: scale(0.98); }
 .bc-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
