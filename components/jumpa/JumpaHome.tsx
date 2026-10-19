@@ -47,7 +47,7 @@ function QuickJoin() {
         value={value}
         maxLength={120}
         onChange={(e) => { setValue(e.target.value); setBad(false); }}
-        placeholder="Masukkan kode ruang"
+        placeholder="Kode ruang"
         autoComplete="off"
         autoCapitalize="none"
         autoCorrect="off"
