@@ -18,8 +18,7 @@ const pillars = [
     icon: BookOpen,
     label: "BELAJAR",
     title: "Pengalaman belajar terstruktur",
-    description:
-      "Jalur Cerdas, materi ajar, dan buku panduan — dari dasar hingga mahir, langkah demi langkah.",
+    description: "Jalur Cerdas, materi, dan buku panduan.",
     href: "/arena/jalur-cerdas",
     color: "bg-red-50 text-primary",
     chip: "Jalur Cerdas · Materi · Buku Panduan",
@@ -28,8 +27,7 @@ const pillars = [
     icon: GraduationCap,
     label: "MENGAJAR",
     title: "Ruang untuk mengajar",
-    description:
-      "Kelasku, bank soal, latihan harian, dan penilaian — semua terpusat untuk guru.",
+    description: "Kelasku, bank soal, dan penilaian.",
     href: "/guru/beranda",
     color: "bg-emerald-50 text-emerald-600",
     chip: "Kelasku · Bank Soal · Buku Nilai",
@@ -38,8 +36,7 @@ const pillars = [
     icon: Gamepad2,
     label: "BERLATIH & BERMAIN",
     title: "Latihan yang terasa seperti bermain",
-    description:
-      "Latihan soal, gim edukasi, liga mingguan, dan simulasi UKBI/TKA dalam satu arena.",
+    description: "Latihan, gim, dan simulasi.",
     href: "/arena",
     color: "bg-violet-50 text-violet-600",
     chip: "Arena · Gim · Simulasi · Liga",
@@ -48,8 +45,7 @@ const pillars = [
     icon: PenLine,
     label: "BERKARYA & BERTUMBUH",
     title: "Bahasa Indonesia untuk mencipta",
-    description:
-      "Karya siswa, Toko Karya untuk guru, komunitas, dan perkembangan kemampuan yang terus diakui.",
+    description: "Karya, Toko Karya, dan komunitas.",
     href: "/marketplace",
     color: "bg-amber-50 text-amber-600",
     chip: "Karya Siswa · Toko Karya · Komunitas",
@@ -76,11 +72,8 @@ export default function EcosystemSection() {
             Satu ekosistem.{" "}
             <span className="text-primary">Banyak cara untuk berkembang.</span>
           </h2>
-          <p className="text-base lg:text-lg text-zinc-500 leading-relaxed">
-            BahasaCerdas adalah ekosistem belajar Bahasa Indonesia yang menghubungkan guru,
-            murid, kelas, materi, latihan, permainan, karya, komunitas, dan asesmen dalam
-            satu platform. Belajar, berlatih, bermain, berkarya, dan bertumbuh — di satu
-            tempat.
+          <p className="text-base text-zinc-500">
+            Belajar, berlatih, bermain, berkarya — di satu tempat.
           </p>
         </motion.div>
 
