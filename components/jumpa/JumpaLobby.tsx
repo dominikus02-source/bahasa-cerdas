@@ -6,11 +6,12 @@
  * pratinjau memakai resolusi kebijakan perangkat (HP lebih ringan).
  */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CalendarClock, Camera, Loader2, Mic, MicOff, Settings2, Share2, ShieldCheck, Users, Video, VideoOff, X } from "lucide-react";
+import { CalendarClock, Camera, Loader2, Mic, MicOff, Settings2, Share2, ShieldCheck, Users, Video, VideoOff, X, Info } from "lucide-react";
 import { formatWib } from "@/lib/jumpa/schedule";
 import ShareSheet, { type ShareTarget } from "./ShareSheet";
 import LobbyDeny from "./LobbyDeny";
 import type { JumpaTierView } from "@/lib/jumpa/tiers";
+import { JUMPA_TIERS, JUMPA_MURID_FREE, JUMPA_MURID_PREMIUM, JUMPA_WEBINAR, JUMPA_WEBINAR_PER_WEEK } from "@/lib/jumpa/tiers";
 import { readMediaPrefs, writeMediaPrefs, type JumpaMediaPrefs } from "./media-prefs";
 import { detectDevice, publishPolicy, QUALITY_LABEL } from "./media-policy";
 import { initials } from "./format";
@@ -84,6 +85,33 @@ function useMicLevel(stream: MediaStream | null): number {
     };
   }, [stream]);
   return level;
+}
+
+function PackageRules({ tier }: { tier: JumpaTierView }) {
+  const isGuru = tier.kind !== "MURID";
+  return (
+    <details className="jumpa-rules mt-3 w-full text-left text-sm">
+      <summary className="flex cursor-pointer items-center gap-2 text-[var(--jp-text-2)] hover:text-[var(--jp-text-1)]">
+        <Info size={14} /> Aturan paket ruang ini
+      </summary>
+      <ul className="mt-2 space-y-1.5 pl-5 text-[var(--jp-text-2)]">
+        {isGuru ? (
+          <>
+            <li>Ruang kelas: Gratis {JUMPA_TIERS.FREE.rooms.KELAS.maxParticipants} orang · {JUMPA_TIERS.FREE.rooms.KELAS.maxDurationMin} menit · Premium {JUMPA_TIERS.PREMIUM.rooms.KELAS.maxParticipants} orang · {JUMPA_TIERS.PREMIUM.rooms.KELAS.maxDurationMin} menit</li>
+            <li>Ruang guru: Gratis {JUMPA_TIERS.FREE.rooms.GURU.maxParticipants} orang · Premium {JUMPA_TIERS.PREMIUM.rooms.GURU.maxParticipants} orang</li>
+            <li>Webinar: hanya Premium · {JUMPA_WEBINAR.maxParticipants} orang · {JUMPA_WEBINAR.maxDurationMin} menit · maksimal {JUMPA_WEBINAR_PER_WEEK} kali per minggu</li>
+            <li>Kuota harian ruang biasa: Gratis {JUMPA_TIERS.FREE.roomsPerDay} ruang/hari · Premium tanpa batas</li>
+          </>
+        ) : (
+          <>
+            <li>Belajar bareng: Gratis {JUMPA_MURID_FREE.maxParticipants} orang · Premium {JUMPA_MURID_PREMIUM.maxParticipants} orang · {JUMPA_MURID_FREE.maxDurationMin} menit</li>
+            <li>Hanya teman sekelas yang bisa masuk</li>
+          </>
+        )}
+        <li>Ruang ini: {tierLimitsText(tier)}</li>
+      </ul>
+    </details>
+  );
 }
 
 export default function JumpaLobby(props: Props) {
@@ -331,6 +359,7 @@ export default function JumpaLobby(props: Props) {
           <p className="mt-3 flex flex-wrap items-center justify-center gap-2 text-sm text-[var(--jp-text-3)] md:justify-start">
             <TierBadge tier={props.tier} /> {tierLimitsText(props.tier)}
           </p>
+          <PackageRules tier={props.tier} />
         </div>
 
         {props.canJoin ? (
