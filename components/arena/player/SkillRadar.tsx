@@ -117,14 +117,14 @@ export default function SkillRadar({
           const isFocus = weakestSkill?.skill === skill.skill;
           return (
             <div key={skill.skill}>
-              <div className="mb-1 flex items-center justify-between gap-2 text-xs">
+              <div className="mb-1 flex flex-col gap-0.5 text-xs sm:flex-row sm:items-center sm:justify-between sm:gap-2">
                 <span className={`font-medium ${isFocus ? "text-[var(--px-royal-2)]" : "text-[var(--px-text)]"}`}>
                   {label}
                   {isFocus && <span className="ml-1 text-[10px] text-[var(--px-gold)]">← Fokus</span>}
                 </span>
-                <span className="flex shrink-0 items-center gap-2 text-[var(--px-text-faint)]">
-                  <span>{isWriting && skill.attemptCount > 0 ? "Terukur" : trend}</span>
-                  <span className="font-semibold text-[var(--px-text-dim)]">
+                <span className="flex items-center gap-2 text-[var(--px-text-faint)]">
+                  <span className="truncate">{isWriting && skill.attemptCount > 0 ? "Terukur" : trend}</span>
+                  <span className="shrink-0 font-semibold text-[var(--px-text-dim)]">
                     {isWriting ? (skill.attemptCount > 0 ? "Ada bukti" : "—") : accuracy === null ? "—" : `${accuracy}%`}
                   </span>
                 </span>
