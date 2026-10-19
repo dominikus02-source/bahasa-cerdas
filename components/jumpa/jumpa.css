@@ -1482,21 +1482,6 @@ select.jumpa-input { text-overflow: ellipsis; padding-right: 36px; }
 }
 
 
-/* Light mode */
-.jumpa-root[data-theme="light"] {
-  --jp-bg: #f8fafc;
-  --jp-surface: #ffffff;
-  --jp-surface-2: #f1f5f9;
-  --jp-text: #0f172a;
-  --jp-text-2: #334155;
-  --jp-text-3: #64748b;
-  --jp-line: #e2e8f0;
-  --jp-line-strong: #cbd5e1;
-}
-.jumpa-root[data-theme="light"] .jumpa-card {
-  background: #ffffff;
-  border-color: #e2e8f0;
-}
 
 /* Smooth transitions */
 .jumpa-setting-row,
