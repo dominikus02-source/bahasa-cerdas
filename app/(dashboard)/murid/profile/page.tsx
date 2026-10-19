@@ -456,7 +456,7 @@ export default function MuridProfilePage() {
           <TrendingUp size={15} className="text-bc-violet" />
           <h2 className="text-sm font-bold text-bc-text">Perkembanganmu</h2>
         </div>
-        <div className="grid gap-4 lg:grid-cols-2">
+        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
           {/* Kemampuan bahasa — dari /api/player/skills (reuse SkillRadar beranda) */}
           <div className="bc-card-premium overflow-hidden rounded-2xl ring-1 ring-slate-900/10 dark:ring-white/10">
             <div className="border-b border-slate-900/[0.06] px-5 py-4 dark:border-white/[0.06]">
