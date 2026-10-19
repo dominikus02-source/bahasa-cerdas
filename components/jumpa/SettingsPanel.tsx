@@ -10,7 +10,7 @@ import { Camera, Crown, Headphones, Lock, Mic, Sparkles, AudioWaveform, Leaf, Ga
 import { JUMPA_TIERS, type JumpaTierView } from "@/lib/jumpa/tiers";
 import { QUALITY_LABEL } from "./media-policy";
 import type { JumpaMediaPrefs, JumpaQuality } from "./media-prefs";
-import { JUMPA_BACKGROUNDS } from "./backgrounds";
+import { JUMPA_BACKGROUNDS, BC_LOGO_WATERMARK } from "./backgrounds";
 import { TierBadge, tierLimitsText } from "./TierUi";
 
 type Kind = "videoinput" | "audioinput" | "audiooutput";
@@ -163,11 +163,31 @@ export default function SettingsPanel({ prefs, onChange, tier, refreshKey = 0, d
               data-selected={prefs.background === bg.id}
               aria-pressed={prefs.background === bg.id}
             >
-              <span className="jumpa-bg-preview" style={{ background: bg.preview }} aria-hidden />
+              <span className="jumpa-bg-preview" style={{ background: bg.preview }} aria-hidden>
+                {bg.showLogo && <img src={BC_LOGO_WATERMARK} alt="" className="jumpa-bg-logo" />}
+              </span>
               <span className="jumpa-bg-label">{bg.label}</span>
             </button>
           ))}
         </div>
+        {prefs.background === "custom" && (
+          <label className="jumpa-field mt-3 block">
+            <span className="jumpa-field-label">Unggah gambar sendiri</span>
+            <input
+              type="file"
+              accept="image/*"
+              className="jumpa-input w-full text-xs"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = () => onChange({ customBackgroundUrl: reader.result as string });
+                reader.readAsDataURL(file);
+              }}
+            />
+            {prefs.customBackgroundUrl && <img src={prefs.customBackgroundUrl} alt="Preview" className="mt-2 h-16 w-full rounded object-cover" />}
+          </label>
+        )}
       </section>
 
       <section aria-labelledby="jp-set-t">
