@@ -149,6 +149,69 @@
   --bc-shadow-3: 0 24px 60px -18px color-mix(in srgb, var(--clr-bg) 95%, transparent);
 }
 
+/* ── 3. Aksen per audiens (keputusan CEO 2026-10-19) ─────────────────
+   Satu nama token, nilai berbeda per audiens:
+     · MURID (default, semua permukaan non-guru) = gradien merek teal→violet;
+       warna solid aksen = violet (identitas murid).
+     · GURU (.bc-guru-shell / [data-audience="guru"]) = skala biru modern.
+   Pakai lewat Tailwind `bg-bc-aud`, `text-bc-aud`, `bg-bc-aud-soft`,
+   `text-bc-on-aud`, `bg-bc-aud-grad`, atau primitif `ui-btn--accent`.
+   Kontras (WCAG AA, teks normal):
+     guru terang  #1d4ed8→#2563eb→#4f46e5 dengan teks putih ≥ 5.2:1
+     guru gelap   #38bdf8→#60a5fa→#818cf8 dengan teks #0f1117 ≥ 6.1:1
+     aksen solid  #2563eb di atas putih 5.2:1 · #60a5fa di atas #171a22 6.4:1 */
+:root, .dark {
+  --clr-aud: var(--clr-violet);
+  --clr-aud-strong: color-mix(in srgb, var(--clr-violet) 82%, var(--clr-text));
+  --clr-aud-soft: var(--clr-violet-soft);
+  --clr-on-aud: var(--clr-on-brand);
+  --bc-grad-aud: var(--bc-grad-brand);
+  /* Alias nama pendek sesuai keputusan CEO */
+  --bc-accent: var(--clr-aud);
+  --bc-grad-accent: var(--bc-grad-aud);
+  --bc-glow-aud: var(--bc-glow-brand);
+}
+
+/* Guru: biru. --clr-accent/--clr-info ikut biru agar lapisan kompatibilitas
+   lama (.bc-guru .bg-emerald-* → --clr-accent) tetap konsisten. */
+.bc-guru-shell,
+[data-audience="guru"] {
+  --clr-accent: #2563eb;
+  --clr-accent-strong: #1d4ed8;
+  --clr-accent-soft: #eff6ff;
+  --clr-info: #0284c7;
+  --clr-info-soft: #f0f9ff;
+  --clr-aud: #2563eb;
+  --clr-aud-strong: #1d4ed8;
+  --clr-aud-soft: #eff6ff;
+  --clr-on-aud: #ffffff;
+  --bc-grad-aud: linear-gradient(120deg, #1d4ed8 0%, #2563eb 50%, #4f46e5 100%);
+  --bc-accent: var(--clr-aud);
+  --bc-grad-accent: var(--bc-grad-aud);
+  --bc-glow-aud: 0 8px 22px -10px color-mix(in srgb, #2563eb 65%, transparent);
+  --bc-ring: 0 0 0 3px color-mix(in srgb, #2563eb 20%, transparent);
+  --clr-focus: #2563eb;
+}
+.dark .bc-guru-shell,
+.dark [data-audience="guru"],
+.dark.bc-guru-shell {
+  --clr-accent: #60a5fa;
+  --clr-accent-strong: #93c5fd;
+  --clr-accent-soft: #10264a;
+  --clr-info: #7dd3fc;
+  --clr-info-soft: #0c2940;
+  --clr-aud: #60a5fa;
+  --clr-aud-strong: #93c5fd;
+  --clr-aud-soft: #10264a;
+  --clr-on-aud: #0f1117;
+  --bc-grad-aud: linear-gradient(120deg, #38bdf8 0%, #60a5fa 50%, #818cf8 100%);
+  --bc-accent: var(--clr-aud);
+  --bc-grad-accent: var(--bc-grad-aud);
+  --bc-glow-aud: 0 8px 22px -10px color-mix(in srgb, #60a5fa 55%, transparent);
+  --bc-ring: 0 0 0 3px color-mix(in srgb, #60a5fa 24%, transparent);
+  --clr-focus: #93c5fd;
+}
+
 @media (prefers-reduced-motion: reduce) {
   :root { --bc-dur-fast: 0s; --bc-dur: 0s; --bc-dur-slow: 0s; }
 }

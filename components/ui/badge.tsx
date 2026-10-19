@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
  * berdenyut ("Berlangsung"). Untuk paket berbayar pakai <PremiumBadge />.
  * Tanpa `tone` = varian lama (`variant`) — tetap bekerja.
  */
-export type BadgeTone = "neutral" | "accent" | "info" | "violet" | "success" | "warning" | "danger" | "premium" | "live" | "brand";
+export type BadgeTone = "neutral" | "accent" | "info" | "violet" | "success" | "warning" | "danger" | "premium" | "live" | "brand" | "aud";
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: "default" | "secondary" | "destructive" | "outline" | "success" | "warning" | "gold";

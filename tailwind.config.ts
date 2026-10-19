@@ -13,6 +13,8 @@ const BC_COLORS = [
   "accent", "accent-strong", "accent-soft",
   "success", "success-soft", "warning", "warning-strong", "warning-soft",
   "danger", "danger-soft", "violet", "violet-soft", "info", "info-soft",
+  // Aksen per audiens (murid = violet/gradien merek, guru = biru) — tokens.css §3
+  "aud", "aud-strong", "aud-soft", "on-aud",
 ] as const;
 const bcColors = Object.fromEntries(BC_COLORS.map((n) => [n, tok(n)]));
 
@@ -128,6 +130,7 @@ const config: Config = {
       backgroundImage: {
         "bc-brand": "var(--bc-grad-brand)",
         "bc-murid": "var(--bc-grad-murid)",
+        "bc-aud-grad": "var(--bc-grad-aud)",
         "bc-premium": "var(--bc-grad-premium)",
         "bc-surface": "var(--bc-grad-surface)",
         "bc-tint": "var(--bc-grad-tint)",
