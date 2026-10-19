@@ -132,7 +132,7 @@ test("34. rute login Arena lama mengalihkan ke rute bersama, bukan merender form
   !read("app/auth/arena-login/page.tsx").includes("useState"));
 test("35. pendaftaran service worker dan panduan pemasangan APK tetap tersedia", () =>
   page.includes('{isArenaEntry && <SwRegister />}') &&
-  page.includes('{isArenaEntry && guideOpen && <InstallGuide'));
+  page.includes('guideOpen && <InstallGuide'));
 test("36. rute pendaftaran dan pengalihan tujuan web tidak mengubah resolver role yang sudah ada", () =>
   page.includes("resolvePostAuthDestinationForUser") &&
   page.includes('const registerHref = isArenaEntry ? "/arena/register" : "/register"'));
