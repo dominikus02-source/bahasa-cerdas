@@ -507,7 +507,7 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
 
   return (
     <ErrorBoundary>
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100/50">
+    <div className="min-h-screen bg-gradient-to-br from-zinc-50 via-white to-zinc-100">
       <TestHeader
         title={data?.paket?.title || "Latihan"}
         type={data?.paket?.type || ""}
@@ -668,7 +668,7 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
               <button
                 onClick={goPrev}
                 disabled={currentSection === 0 && currentQuestion === 0}
-                className="flex items-center gap-1.5 px-3.5 sm:px-5 py-2.5 sm:py-3 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs sm:text-sm font-medium hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors shadow-sm"
+                className="flex items-center gap-1.5 px-4 py-3 bg-white border border-zinc-200 text-zinc-600 rounded-2xl text-sm font-medium hover:bg-zinc-50 hover:border-zinc-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
               >
                 <ChevronLeft className="w-4 h-4" />
                 <span className="hidden sm:inline">Sebelumnya</span>
@@ -693,7 +693,7 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
               <button
                 onClick={goNext}
                 disabled={currentQuestion === questions.length - 1 && currentSection === sections.length - 1}
-                className="flex items-center gap-1.5 px-3.5 sm:px-5 py-2.5 sm:py-3 bg-emerald-600 text-white rounded-xl text-xs sm:text-sm font-bold hover:bg-emerald-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors shadow-sm"
+                className="flex items-center gap-1.5 px-5 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-2xl text-sm font-bold hover:from-emerald-700 hover:to-teal-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md"
               >
                 <span className="hidden sm:inline">Selanjutnya</span>
                 <span className="sm:hidden">Lanjut</span>
