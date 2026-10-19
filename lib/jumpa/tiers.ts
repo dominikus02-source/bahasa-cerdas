@@ -11,9 +11,7 @@
  *   - cron /api/cron/jumpa-sweep         → mengakhiri ruang yang lewat waktu
  *   - LiveKit maxParticipants            → pagar terakhir di server media
  *
- * Ruang MURID (belajar bareng) SELALU memakai baris MURID: gratis, aman,
- * tidak bergantung paket siapa pun, dan murid tidak pernah melihat ajakan
- * upgrade.
+ * Ruang MURID: gratis 8, premium 15. Webinar hanya Premium, 1x per minggu.
  *
  * Mengubah angka: ubah tabel di bawah, jalankan `npm run test:jumpa-tiers`,
  * dan perbarui tabel di docs/JUMPA_PHASE3_PERFORMA_TIER.md. Ruang yang
@@ -79,9 +77,14 @@ export const JUMPA_TIERS: Record<JumpaTier, JumpaTierDef> = {
   },
 };
 
-/** Ruang belajar bareng murid: selalu sama, gratis, terlepas dari paket. */
-export const JUMPA_MURID_ROOM: JumpaRoomLimits = { maxParticipants: 8, maxDurationMin: 60 };
+/** Ruang belajar bareng murid: gratis 8, premium 15. */
+export const JUMPA_MURID_FREE: JumpaRoomLimits = { maxParticipants: 8, maxDurationMin: 60 };
+export const JUMPA_MURID_PREMIUM: JumpaRoomLimits = { maxParticipants: 15, maxDurationMin: 60 };
 export const JUMPA_MURID_MAX_CAMERA_HEIGHT: JumpaVideoCap = 720;
+
+/** Webinar: hanya Premium, 1x per minggu, kapasitas lebih tinggi. */
+export const JUMPA_WEBINAR: JumpaRoomLimits = { maxParticipants: 200, maxDurationMin: 180 };
+export const JUMPA_WEBINAR_PER_WEEK = 1;
 
 /** Fitur premium yang sudah dijanjikan di UI tetapi belum tersedia. */
 export const JUMPA_PREMIUM_SOON = ["recording", "backgroundBlur"] as const;
@@ -93,8 +96,14 @@ export const JUMPA_UPGRADE_URL = "/guru/berlangganan";
 export const JUMPA_UPGRADE_PROMPT_BEFORE_END_MIN = 5;
 
 /** Batas ruang (peserta, durasi) untuk paket & jenis ruang. */
-export function limitsFor(tier: JumpaTier, kind: JumpaKind): JumpaRoomLimits {
-  if (kind === "MURID") return { ...JUMPA_MURID_ROOM };
+export function limitsFor(tier: JumpaTier, kind: JumpaKind, isWebinar = false): JumpaRoomLimits {
+  if (isWebinar) {
+    if (tier !== "PREMIUM") return { maxParticipants: 0, maxDurationMin: 0 };
+    return { ...JUMPA_WEBINAR };
+  }
+  if (kind === "MURID") {
+    return tier === "PREMIUM" ? { ...JUMPA_MURID_PREMIUM } : { ...JUMPA_MURID_FREE };
+  }
   return { ...JUMPA_TIERS[tier].rooms[kind] };
 }
 
@@ -117,6 +126,13 @@ export function startOfJakartaDay(now: Date): Date {
   return new Date(local.getTime() - WIB_MS);
 }
 
+/** Awal minggu (Senin 00:00 WIB) untuk kuota webinar. */
+export function startOfJakartaWeek(now: Date): Date {
+  const day = startOfJakartaDay(now);
+  const dayOfWeek = (day.getUTCDay() + 6) % 7; // Senin = 0
+  return new Date(day.getTime() - dayOfWeek * 86_400_000);
+}
+
 export type DailyQuotaDecision =
   | { ok: true; remaining: number | null }
   | { ok: false; code: "TIER_DAILY_LIMIT"; message: string; limit: number };
@@ -134,6 +150,31 @@ export function checkDailyQuota(tier: JumpaTier, kind: JumpaKind, createdToday: 
     };
   }
   return { ok: true, remaining: limit - createdToday - 1 };
+}
+
+export type WeeklyQuotaDecision =
+  | { ok: true; remaining: number }
+  | { ok: false; code: "WEBINAR_WEEKLY_LIMIT"; message: string; limit: number };
+
+/** Boleh membuat webinar minggu ini? Hanya Premium. */
+export function checkWebinarWeeklyQuota(tier: JumpaTier, webinarsThisWeek: number): WeeklyQuotaDecision {
+  if (tier !== "PREMIUM") {
+    return {
+      ok: false,
+      code: "WEBINAR_WEEKLY_LIMIT",
+      limit: 0,
+      message: "Webinar hanya untuk guru Premium.",
+    };
+  }
+  if (webinarsThisWeek >= JUMPA_WEBINAR_PER_WEEK) {
+    return {
+      ok: false,
+      code: "WEBINAR_WEEKLY_LIMIT",
+      limit: JUMPA_WEBINAR_PER_WEEK,
+      message: "Kuota webinar minggu ini sudah habis (maksimal 1 kali). Coba lagi minggu depan.",
+    };
+  }
+  return { ok: true, remaining: JUMPA_WEBINAR_PER_WEEK - webinarsThisWeek - 1 };
 }
 
 /** Ringkasan paket untuk UI (dikirim server ke klien, tanpa rahasia). */
