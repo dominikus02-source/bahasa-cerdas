@@ -13,6 +13,7 @@ import LearningLoopSection from "@/components/landing/LearningLoopSection";
 import TeacherSection from "@/components/landing/TeacherSection";
 import StudentSection from "@/components/landing/StudentSection";
 import AIToolsSection from "@/components/landing/AIToolsSection";
+import FiturUnggulanSection from "@/components/landing/FiturUnggulanSection";
 import KaryaPopulerSection from "@/components/landing/KaryaPopulerSection";
 import BigtSection from "@/components/landing/BigtSection";
 import KomunitasSection from "@/components/landing/KomunitasSection";
@@ -142,6 +143,7 @@ export default async function HomePage() {
 
         {/* 4 · EKOSISTEM — pilar BELAJAR/MENGAJAR/BERLATIH & BERMAIN/BERKARYA & BERTUMBUH */}
         <EcosystemSection />
+        <FiturUnggulanSection />
 
         {/* 5 · GURU — ruang untuk mengajar */}
         <TeacherSection />
