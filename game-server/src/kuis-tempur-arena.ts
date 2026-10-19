@@ -99,6 +99,7 @@ type ArenaMatch = {
   questionIndex: Map<string, number>;
   questionDeadline: Map<string, number>;
   answeredQuestion: Map<string, string>;
+  lastQuestionAdvance: Map<string, number>;
   startedAt: number;
   endsAt: number;
   lastTickAt: number;
@@ -260,6 +261,10 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
   }
 
   function nextQuestion(match: ArenaMatch, userId: string, delay = 550) {
+    const lastAdvance = match.lastQuestionAdvance?.get(userId) || 0;
+    if (Date.now() - lastAdvance < 400) return; // prevent double-advance
+    if (!match.lastQuestionAdvance) match.lastQuestionAdvance = new Map();
+    match.lastQuestionAdvance.set(userId, Date.now());
     match.questionIndex.set(userId, (match.questionIndex.get(userId) || 0) + 1);
     setTimeout(() => {
       const current = matches.get(match.room.code);
@@ -425,7 +430,7 @@ export function createKuisTempurArena({ io, rooms, loadQuestions, persistResults
       }
 
       if (entity.kind === "human") {
-        if (!entity.connected) return;
+        if (!entity.connected && Date.now() - entity.disconnectedAt > 3000) return;
         moveToward(entity, entity.targetX, entity.targetY, HUMAN_SPEED, dt);
         return;
       }
