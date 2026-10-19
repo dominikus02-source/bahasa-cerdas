@@ -5,13 +5,13 @@
  * (guru↔guru, belajar bareng murid), dan ruang aktif.
  * Ruang kelas tetap dimulai dari KelasKu.
  */
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, BookOpen, CalendarPlus, Crown, History, GraduationCap, KeyRound, Loader2, Plus, Radio, ShieldCheck, Users, Video } from "lucide-react";
 import type { JumpaHomeData, RoomListItem } from "@/lib/jumpa/service";
 import { formatWib, formatWibTime } from "@/lib/jumpa/schedule";
-import { JUMPA_MURID_ROOM } from "@/lib/jumpa/tiers";
+import { JUMPA_MURID_FREE, JUMPA_MURID_PREMIUM } from "@/lib/jumpa/tiers";
 import { UpgradeSheet } from "./TierUi";
 import NotifyClassToggle from "./NotifyClassToggle";
 import { avatarTone, elapsedLabel, parseRoomInput } from "./format";
@@ -21,11 +21,9 @@ const KIND_LABEL = { KELAS: "Kelas", GURU: "Ruang guru", MURID: "Belajar bareng"
 /**
  * Jam untuk label "x mnt" / "Hari ini · 14.30". `null` saat render server &
  * hidrasi pertama: label yang bergantung jam baru tampil setelah mount.
- * Dulu `Date.now()` dipakai langsung → teks server ≠ klien (jam HP beda,
- * atau hidrasi lambat melewati pergantian menit) → React #418 → seluruh DOM
- * dibuang & dibuat ulang → input yang sedang difokus (Topik ruang) hilang
- * beserta ketikannya; di Android keyboard tetap terbuka tapi tidak mengetik
- * ke mana-mana.
+ * Dulu `Date.now()` dipakai langsung → teks server ≠ klien → React #418 →
+ * seluruh DOM dibuang & dibuat ulang → input Topik hilang beserta ketikannya
+ * di Android.
  */
 function useMinuteTick(): number | null {
   const [now, setNow] = useState<number | null>(null);
@@ -59,6 +57,7 @@ function QuickJoin() {
         placeholder="Kode ruang"
         autoComplete="off"
         autoCapitalize="none"
+        autoCorrect="off"
         spellCheck={false}
         inputMode="text"
         aria-invalid={bad}
@@ -158,7 +157,7 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
   const plan = data.plan;
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [title, setTitle] = useState("");
+  const titleRef = useRef<HTMLInputElement>(null);
   const [communityId, setCommunityId] = useState("");
   // "Beri tahu komunitas" untuk ruang guru yang terikat komunitas (nyala bawaan).
   const [notifyCommunity, setNotifyCommunity] = useState(true);
@@ -169,8 +168,9 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
   const create = async (body: Record<string, string | boolean | undefined>, key: string) => {
     setBusy(key);
     setError(null);
+    const title = titleRef.current?.value.trim() || undefined;
     try {
-      const res = await fetch("/api/jumpa/rooms", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      const res = await fetch("/api/jumpa/rooms", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...body, title }) });
       const json = (await res.json().catch(() => null)) as { url?: string; error?: string; code?: string } | null;
       if (!res.ok || !json?.url) {
         // Kuota habis: lembar upgrade sudah menjelaskan — jangan ulangi di banner.
@@ -216,7 +216,18 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
               </div>
             </div>
             <div className="mt-4 grid gap-2.5">
-              <input value={title} maxLength={80} onChange={(e) => setTitle(e.target.value)} placeholder="Topik (opsional)" aria-label="Topik ruang" autoComplete="off" enterKeyHint="done" className="jumpa-input w-full" />
+              <input
+                ref={titleRef}
+                maxLength={80}
+                placeholder="Topik (opsional)"
+                aria-label="Topik ruang"
+                autoComplete="off"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                enterKeyHint="done"
+                className="jumpa-input w-full"
+              />
               <select value={communityId} onChange={(e) => setCommunityId(e.target.value)} aria-label="Komunitas" className="jumpa-input w-full">
                 <option value="">Tanpa komunitas</option>
                 {data.communities.map((c) => (
@@ -227,7 +238,7 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
                 <NotifyClassToggle tone="room" on={notifyCommunity} onChange={setNotifyCommunity} label="Beri tahu komunitas" hintOn="Anggota dapat notifikasi." hintOff="Tanpa notifikasi ke anggota." />
               )}
             </div>
-            <button type="button" className="jumpa-primary mt-4 w-full" disabled={busy !== null} onClick={() => void create({ kind: "GURU", title: title || undefined, communityId: communityId || undefined, notifyClass: communityId ? notifyCommunity : undefined }, "guru")}>
+            <button type="button" className="jumpa-primary mt-4 w-full" disabled={busy !== null} onClick={() => void create({ kind: "GURU", communityId: communityId || undefined, notifyClass: communityId ? notifyCommunity : undefined }, "guru")}>
               {busy === "guru" ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />} Mulai ruang guru
             </button>
           </section>
@@ -246,7 +257,7 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
             <span className="jumpa-icon-chip" data-kind="MURID" aria-hidden><BookOpen size={20} /></span>
             <div className="min-w-0">
               <h2 className="text-base font-bold">Belajar bareng</h2>
-              <p className="text-xs text-[var(--jp-text-3)]">Gratis · {JUMPA_MURID_ROOM.maxParticipants} orang · {JUMPA_MURID_ROOM.maxDurationMin} menit · obrolan terlihat guru</p>
+              <p className="text-xs text-[var(--jp-text-3)]">Gratis {JUMPA_MURID_FREE.maxParticipants} orang · Premium {JUMPA_MURID_PREMIUM.maxParticipants} orang · {JUMPA_MURID_FREE.maxDurationMin} menit · obrolan terlihat guru</p>
             </div>
           </div>
           <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
@@ -255,9 +266,20 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
                 <option key={g.id} value={g.id}>{g.name}</option>
               ))}
             </select>
-            <input value={title} maxLength={60} onChange={(e) => setTitle(e.target.value)} placeholder="Mau belajar apa? (opsional)" aria-label="Topik belajar" autoComplete="off" enterKeyHint="done" className="jumpa-input w-full" />
+            <input
+              ref={titleRef}
+              maxLength={60}
+              placeholder="Mau belajar apa? (opsional)"
+              aria-label="Topik belajar"
+              autoComplete="off"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
+              enterKeyHint="done"
+              className="jumpa-input w-full"
+            />
           </div>
-          <button type="button" className="jumpa-primary mt-4 w-full sm:w-auto" disabled={busy !== null || !groupId} onClick={() => void create({ kind: "MURID", groupId, title: title || undefined }, "murid")}>
+          <button type="button" className="jumpa-primary mt-4 w-full sm:w-auto" disabled={busy !== null || !groupId} onClick={() => void create({ kind: "MURID", groupId }, "murid")}>
             {busy === "murid" ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />} Buat ruang belajar
           </button>
         </section>
