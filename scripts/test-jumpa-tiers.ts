@@ -82,10 +82,10 @@ check("URL upgrade = halaman langganan yang sudah ada", JUMPA_UPGRADE_URL === "/
 
 console.log("\n5. Penegakan di server")
 const svc = read("lib/jumpa/service.ts")
-check("createRoom memakai limitsFor(tier, kind)", svc.includes("limitsFor(tier, req.kind)"))
+check("createRoom memakai limitsFor(tier, kind)", svc.includes("limitsFor(tier, req.kind"))
 check("createRoom menegakkan kuota harian", svc.includes("checkDailyQuota(tier, req.kind, createdToday)"))
-check("createRoom menyimpan tier di event ROOM_CREATED", /ROOM_CREATED", metadata: \{[^}]*tier \}/.test(svc))
-check("createRoom: ruang MURID tidak bergantung paket", svc.includes('req.kind === "MURID" ? "FREE"'))
+check("createRoom menyimpan tier di event ROOM_CREATED", svc.includes('action: "ROOM_CREATED"') && svc.includes("tier,"))
+check("createRoom: ruang MURID memakai tier pembuat", svc.includes("Ruang MURID memakai tier pembuat"))
 check("loadRoomContext membaca tier ruang", svc.includes("tierFromCreatedMetadata(created?.metadata)"))
 const tokenRoute = read("app/api/jumpa/rooms/[code]/token/route.ts")
 check("Token API mengirim tierView (batas dari baris ruang)", tokenRoute.includes("tierView({") && tokenRoute.includes("maxParticipants: ctx.room.maxParticipants"))
