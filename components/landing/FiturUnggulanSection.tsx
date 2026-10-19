@@ -11,57 +11,51 @@ const features = [
     title: "Main Bersama",
     desc: "Belajar bareng teman sekelas.",
     href: "/main-bersama",
-    image: "/landing/fitur/main-bersama-sm.jpg",
-    color: "from-violet-500 to-purple-600",
+    color: "bg-violet-100 text-violet-600",
   },
   {
     icon: Video,
     title: "JUMPA",
     desc: "Video kelas & webinar.",
     href: "/jumpa",
-    image: "/landing/fitur/jumpa-sm.jpg",
-    color: "from-emerald-500 to-teal-600",
+    color: "bg-emerald-100 text-emerald-600",
   },
   {
     icon: Gamepad2,
     title: "Gim Edukasi",
     desc: "Kuis Tempur & arena.",
     href: "/arena/game",
-    image: "/landing/fitur/gim-sm-xs.jpg",
-    color: "from-rose-500 to-pink-600",
+    color: "bg-rose-100 text-rose-600",
   },
   {
     icon: Map,
     title: "Jalur Cerdas",
     desc: "Belajar langkah demi langkah.",
     href: "/arena/jalur-cerdas",
-    image: "/landing/fitur/jalur-sm.jpg",
-    color: "from-sky-500 to-blue-600",
+    color: "bg-sky-100 text-sky-600",
   },
   {
     icon: Bot,
     title: "Mentor AI",
     desc: "Pendamping belajar.",
     href: "/arena/ai",
-    image: "/landing/fitur/mentor-sm.jpg",
-    color: "from-amber-500 to-orange-600",
+    color: "bg-amber-100 text-amber-600",
   },
   {
     icon: Sparkles,
     title: "AI BC",
     desc: "Asisten untuk guru.",
     href: "/ai-bc",
-    image: "/landing/fitur/ai-bc-sm-xs.jpg",
-    color: "from-indigo-500 to-violet-600",
+    color: "bg-indigo-100 text-indigo-600",
   },
 ];
 
 export default function FiturUnggulanSection() {
   return (
-    <section className="py-14 lg:py-20 bg-white" aria-labelledby="fitur-heading">
+    <section className="py-12 lg:py-16 bg-white" aria-labelledby="fitur-heading">
       <div className="section-container">
         <motion.div
-          className="text-center mb-10"
+          className="text-center mb-8"
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -72,7 +66,7 @@ export default function FiturUnggulanSection() {
         </motion.div>
 
         <motion.div
-          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"
+          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3"
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
@@ -82,20 +76,20 @@ export default function FiturUnggulanSection() {
             const Icon = f.icon;
             return (
               <motion.div key={f.title} variants={fadeInUp}>
-                <Link href={f.href} className="group block rounded-2xl overflow-hidden border border-zinc-100 hover:shadow-lg transition-all bg-white">
-                  <div className="relative h-36 bg-zinc-100 overflow-hidden">
-                    <img src={f.image} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                    <div className={`absolute top-3 left-3 p-2 rounded-lg bg-gradient-to-br ${f.color} text-white`}>
-                      <Icon size={16} />
-                    </div>
+                <Link
+                  href={f.href}
+                  className="group flex items-center gap-4 rounded-xl border border-zinc-100 bg-white p-4 hover:border-zinc-200 hover:shadow-md transition-all"
+                >
+                  <div className={`flex-shrink-0 p-3 rounded-xl ${f.color}`}>
+                    <Icon size={22} />
                   </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-zinc-900 group-hover:text-primary transition-colors flex items-center justify-between">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-zinc-900 group-hover:text-primary transition-colors">
                       {f.title}
-                      <ArrowRight size={14} className="text-zinc-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
                     </h3>
-                    <p className="text-sm text-zinc-500 mt-1">{f.desc}</p>
+                    <p className="text-sm text-zinc-500 truncate">{f.desc}</p>
                   </div>
+                  <ArrowRight size={16} className="text-zinc-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all flex-shrink-0" />
                 </Link>
               </motion.div>
             );
