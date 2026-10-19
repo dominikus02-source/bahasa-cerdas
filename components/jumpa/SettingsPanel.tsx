@@ -185,7 +185,7 @@ export default function SettingsPanel({ prefs, onChange, tier, refreshKey = 0, d
                 reader.readAsDataURL(file);
               }}
             />
-            {prefs.customBackgroundUrl && <img src={prefs.customBackgroundUrl} alt="Preview" className="mt-2 h-16 w-full rounded object-cover" />}
+            {prefs.customBackgroundUrl && <img src={prefs.customBackgroundUrl} alt="Pratinjau" className="mt-2 h-16 w-full rounded object-cover" />}
           </label>
         )}
       </section>
