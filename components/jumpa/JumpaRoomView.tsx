@@ -161,15 +161,8 @@ export default function JumpaRoomView(props: ViewProps) {
       }}
       onMediaDeviceFailure={() => setDeviceNote("Kamera atau mikrofon tidak bisa dipakai. Periksa izin browser.")}
       className="flex h-[100dvh] w-full min-w-0 flex-col overflow-hidden relative"
-      style={{
-        background: props.prefs.background === "custom" && props.prefs.customBackgroundUrl
-          ? `url(${props.prefs.customBackgroundUrl}) center/cover no-repeat`
-          : backgroundById(props.prefs.background).css
-      }}
+
     >
-      {backgroundById(props.prefs.background).showLogo && (
-        <img src={BC_LOGO_WATERMARK} alt="" className="pointer-events-none absolute bottom-4 right-4 h-12 w-12 opacity-20" />
-      )}
       <JumpaRoomProvider initial={props.info} self={props.self}>
         <MediaProvider initial={props.prefs} device={device} tier={props.tier}>
           <EndedBridge onRef={setEndedRef} />
@@ -643,10 +636,10 @@ function ControlBar({
     const bg = backgroundById(prefs.background);
     const imageUrl = prefs.background === "custom" ? prefs.customBackgroundUrl : bg.image;
     if (!imageUrl || !isCameraEnabled) return;
-    let processor: BackgroundProcessor | null = null;
+    let processor: InstanceType<typeof BackgroundProcessor> | null = null;
     (async () => {
       try {
-        const track = localParticipant.getTrackPublication("camera")?.track;
+        const track = localParticipant.getTrackPublication("camera" as any)?.track;
         if (!track || track.kind !== "video") return;
         processor = new BackgroundProcessor({ imagePath: imageUrl });
         await track.setProcessor(processor);
