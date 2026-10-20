@@ -9,7 +9,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, BookOpen, CalendarPlus, Crown, History, GraduationCap, KeyRound, Loader2, Plus, Users, Video } from "lucide-react";
+import { ArrowRight, BookOpen, CalendarPlus, Crown, History, GraduationCap, Info, KeyRound, Loader2, Plus, Users, Video } from "lucide-react";
 import type { JumpaHomeData, RoomListItem } from "@/lib/jumpa/service";
 import { formatWib, formatWibTime } from "@/lib/jumpa/schedule";
 import { JUMPA_MURID_FREE, JUMPA_MURID_PREMIUM } from "@/lib/jumpa/tiers";
@@ -237,6 +237,20 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
       {limitHit && plan && (
         <UpgradeSheet reason="daily" tier={{ maxDurationMin: plan.kelas.maxDurationMin, upgradeUrl: plan.upgradeUrl }} onClose={() => setLimitHit(false)} />
       )}
+
+      <section className="jumpa-card jumpa-in-up" style={{ padding: "16px 18px" }}>
+        <div className="flex items-center gap-2 mb-3">
+          <Info size={18} className="text-[var(--jp-accent)]" />
+          <h2 className="text-sm font-bold">Ketentuan JUMPA</h2>
+        </div>
+        <ul className="text-xs text-[var(--jp-text-2)] space-y-2">
+          <li><strong>Gratis:</strong> Kelas 30 orang · 45 menit · 3 ruang/hari</li>
+          <li><strong>Premium:</strong> Kelas 50 orang · 120 menit · ruang tanpa batas</li>
+          <li><strong>Murid:</strong> Gratis 8 orang · Premium 15 orang · 60 menit</li>
+          <li><strong>Webinar:</strong> Hanya Premium · 200 orang · 180 menit · 1x/minggu</li>
+          <li><strong>Blur latar:</strong> Khusus Premium</li>
+        </ul>
+      </section>
     </main>
   );
 }
