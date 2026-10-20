@@ -13,8 +13,6 @@ export interface JumpaDevicePrefs {
 
 export type JumpaBackgroundId = "none" | "blur" | "kelas" | "kelas-bc" | "kelas-biru" | "kantor" | "logo-wall" | "ekosistem" | "custom";
 
-export type JumpaTheme = "dark" | "light";
-
 export interface JumpaMediaPrefs {
   camera: boolean;
   mic: boolean;
@@ -28,8 +26,6 @@ export interface JumpaMediaPrefs {
   background: JumpaBackgroundId;
   /** URL gambar custom (data URL atau object URL) bila background = "custom". */
   customBackgroundUrl?: string;
-  /** Tema tampilan: gelap atau terang. */
-  theme: JumpaTheme;
   devices: JumpaDevicePrefs;
 }
 
@@ -42,7 +38,6 @@ export const DEFAULT_MEDIA_PREFS: JumpaMediaPrefs = {
   noiseSuppression: true,
   background: "none",
   customBackgroundUrl: undefined,
-  theme: "dark",
   devices: {},
 };
 
@@ -73,7 +68,6 @@ export function parseMediaPrefs(raw: string | null | undefined): JumpaMediaPrefs
       noiseSuppression: typeof v.noiseSuppression === "boolean" ? v.noiseSuppression : d.noiseSuppression,
       background: BACKGROUNDS.includes(v.background as JumpaBackgroundId) ? (v.background as JumpaBackgroundId) : d.background,
       customBackgroundUrl: typeof v.customBackgroundUrl === "string" && v.customBackgroundUrl.startsWith("data:image/") ? v.customBackgroundUrl : undefined,
-      theme: v.theme === "light" || v.theme === "dark" ? v.theme : d.theme,
       devices: cleanDevices(v.devices),
     };
   } catch {
