@@ -1515,11 +1515,36 @@ select.jumpa-input { text-overflow: ellipsis; padding-right: 36px; }
   --jp-line-strong: color-mix(in srgb, var(--jp-light-text) 20%, transparent);
   --jp-glass: color-mix(in srgb, var(--jp-light-surface) 90%, transparent);
   --jp-glass-strong: color-mix(in srgb, var(--jp-light-surface) 98%, transparent);
+  background: var(--jp-bg);
+  color: var(--jp-text);
 }
-.jumpa-root[data-theme="light"] .jumpa-card {
+.jumpa-root[data-theme="light"] .jumpa-card,
+.jumpa-root[data-theme="light"] .jumpa-hero,
+.jumpa-root[data-theme="light"] .jumpa-plan {
   background: var(--jp-light-surface);
   border-color: var(--jp-line);
+  color: var(--jp-text);
 }
-.jumpa-root[data-theme="light"] .jumpa-hero {
-  background: linear-gradient(135deg, var(--jp-light-surface) 0%, var(--jp-light-bg) 100%);
+.jumpa-root[data-theme="light"] .jumpa-hero-title,
+.jumpa-root[data-theme="light"] .jumpa-hero-sub,
+.jumpa-root[data-theme="light"] h1,
+.jumpa-root[data-theme="light"] h2,
+.jumpa-root[data-theme="light"] p,
+.jumpa-root[data-theme="light"] span {
+  color: var(--jp-text);
+}
+.jumpa-root[data-theme="light"] .jumpa-hero-sub,
+.jumpa-root[data-theme="light"] .text-\[var\(--jp-text-2\)\],
+.jumpa-root[data-theme="light"] .text-\[var\(--jp-text-3\)\] {
+  color: var(--jp-text-2);
+}
+.jumpa-root[data-theme="light"] .jumpa-join {
+  background: var(--jp-light-bg);
+  border-color: var(--jp-line);
+}
+.jumpa-root[data-theme="light"] .jumpa-join-input {
+  color: var(--jp-text);
+}
+.jumpa-root[data-theme="light"] .jumpa-join-input::placeholder {
+  color: var(--jp-text-3);
 }
