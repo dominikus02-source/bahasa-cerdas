@@ -250,7 +250,7 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
           </div>
           <div className="flex items-start gap-3">
             <span className="jumpa-tier" data-tier="PREMIUM" style={{ flexShrink: 0 }}><Crown size={11} /> Premium</span>
-            <span className="text-xs text-[var(--jp-text-2)]">Kelas 50 orang · 120 menit · ruang tanpa batas · blur latar</span>
+            <span className="text-xs text-[var(--jp-text-2)]">Kelas 50 orang · 120 menit · ruang tanpa batas · samar latar</span>
           </div>
           <div className="flex items-start gap-3">
             <span className="text-xs font-bold text-[var(--jp-text)]" style={{ flexShrink: 0, width: 52 }}>Murid</span>
