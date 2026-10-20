@@ -65,7 +65,7 @@ export function BackgroundMusic({ playing }: BackgroundMusicProps) {
   return (
     <button
       type="button"
-      className="mb-music-toggle"
+      style={{ position: "fixed", bottom: 16, right: 16, zIndex: 50, width: 40, height: 40, borderRadius: "50%", background: "var(--clr-surface)", border: "1px solid var(--clr-border)", color: "var(--clr-text)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
       onClick={() => setMuted(!muted)}
       aria-label={muted ? "Nyalakan musik" : "Matikan musik"}
     >
