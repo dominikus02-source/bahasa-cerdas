@@ -57,13 +57,13 @@ export function SessionTimer({ sessionId, durationMin, phase, onTimeUp, onFinalC
 
   return (
     <>
-      <div className={`mb-session-timer ${urgent ? "mb-session-timer-urgent" : ""}`} aria-live="polite">
-        <span className="mb-session-timer-label">Waktu</span>
-        <span className="mb-session-timer-value">{mins}:{secs.toString().padStart(2, "0")}</span>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 14px", borderRadius: 12, background: "var(--clr-surface)", border: "1px solid var(--clr-border)" }} aria-live="polite">
+        <span style={{ fontSize: 12, fontWeight: 600, color: "var(--clr-text-2)" }}>Waktu</span>
+        <span style={{ fontSize: 18, fontWeight: 800, fontVariantNumeric: "tabular-nums", color: urgent ? "var(--clr-danger)" : "var(--clr-text)" }}>{mins}:{secs.toString().padStart(2, "0")}</span>
       </div>
       {showFinal && (
-        <div className="mb-final-countdown" aria-live="assertive">
-          <span className="mb-final-countdown-number">{finalCount}</span>
+        <div style={{ position: "fixed", inset: 0, zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.85)" /* warna-izin: overlay countdown */, pointerEvents: "none" }} aria-live="assertive">
+          <span style={{ fontSize: "clamp(120px, 30vw, 280px)", fontWeight: 900, color: "var(--clr-on-brand)", textShadow: "0 0 40px var(--clr-on-brand)" }}>{finalCount}</span>
         </div>
       )}
     </>
