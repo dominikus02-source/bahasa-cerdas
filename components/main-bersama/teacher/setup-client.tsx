@@ -90,6 +90,7 @@ export function SetupClient({
   const [compat, setCompat] = useState<Record<string, CompatibilityInfo>>({});
   const [checking, setChecking] = useState(false);
   const [opening, setOpening] = useState(false);
+  const [durationMin, setDurationMin] = useState(10);
   const [teamCount, setTeamCount] = useState(4);
   const [maxMembersPerTeam, setMaxMembersPerTeam] = useState(8);
   const [estimatedStudents, setEstimatedStudents] = useState(0);
@@ -220,6 +221,7 @@ export function SetupClient({
       });
       const created = result.session as { id?: unknown } | undefined;
       const sessionId = created && typeof created.id === 'string' ? created.id : '';
+      if (sessionId) localStorage.setItem(`mb-session-duration-${sessionId}`, String(durationMin));
       if (!sessionId) throw new MbApiError('INTERNAL', 'Sesi gagal dibuat.', 500);
 
       // UX lobby satu langkah: setelah sesi durable dibuat, langsung buka
@@ -274,6 +276,14 @@ export function SetupClient({
           <div className={styles.heroFeatures}>
             <span><Users size={14} aria-hidden /> Bermain sekelas</span>
             <span><Monitor size={14} aria-hidden /> Tampilkan di proyektor</span>
+          </div>
+          <div className={styles.durationPicker}>
+            <label>Durasi permainan</label>
+            <div className={styles.durationOptions}>
+              {[5, 10, 15, 20, 30].map((m) => (
+                <button key={m} type="button" className={durationMin === m ? styles.durationActive : ""} onClick={() => setDurationMin(m)}>{m} menit</button>
+              ))}
+            </div>
           </div>
         </div>
       </header>
