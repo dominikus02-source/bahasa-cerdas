@@ -30,10 +30,12 @@ import { QuestionCard } from '@/components/main-bersama/shared/QuestionCard';
 import { TeamProgress } from '@/components/main-bersama/shared/TeamProgress';
 import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBanner';
 import { RoundCountdown } from '@/components/main-bersama/shared/RoundCountdown';
+import { SessionTimer, loadSessionDuration } from '@/components/main-bersama/shared/SessionTimer';
 import { RoomQRCode } from '@/components/main-bersama/shared/RoomQRCode';
 import { LobbyRoster } from '@/components/main-bersama/shared/LobbyRoster';
 import { useMainBersamaSound } from '@/components/main-bersama/sound/useMainBersamaSound';
 import { SoundToggle } from '@/components/main-bersama/sound/SoundToggle';
+import { BackgroundMusic } from '@/components/main-bersama/sound/BackgroundMusic';
 import { useFullscreenControl } from '@/components/main-bersama/shared/useFullscreenControl';
 import { FullscreenExitControl } from '@/components/main-bersama/shared/FullscreenExitControl';
 import { CityCahayaStage } from '@/components/main-bersama/shared/CityCahayaStage';
@@ -206,6 +208,7 @@ export function TeacherRoomClient({
         onConfirm={() => { setConfirmEnd(false); void run('end'); }}
       /> : null}
       <div className={`${styles.toolbar} mb-room-toolbar`}>
+      <BackgroundMusic playing={view.phase === 'question' || view.phase === 'closed' || view.phase === 'discussion'} />
       <SessionHeader
         mode={view.gameMode}
         packageName={view.contentTitle}
@@ -248,7 +251,13 @@ export function TeacherRoomClient({
       </nav>
       {primaryAction || canManuallyEndJelajah || view.allowedActions.canPause ? (
         <div className={`${styles.controlBar} mb-classroom-actions`} aria-label="Kendali permainan kelas">
-          <div className="mb-classroom-action-context">
+          <SessionTimer
+              sessionId={view.sessionId}
+              durationMin={loadSessionDuration(view.sessionId)}
+              phase={view.phase}
+              onTimeUp={() => void run('end')}
+            />
+            <div className="mb-classroom-action-context">
             <strong>{everyoneFinished ? 'Semua regu sudah selesai!' : view.phase === 'lobby' ? 'Siap memulai?' : view.phase === 'summary' ? 'Hasil permainan' : view.phase === 'paused' ? 'Permainan dijeda' : view.automaticTeams ? 'Regu sedang berpetualang' : `Soal ${roundLabel ?? '—'}`}</strong>
             <span>{view.phase === 'lobby' ? (view.participants.length === 0 ? 'Tunggu minimal satu siswa bergabung.' : `${view.participants.length} siswa sudah masuk.`) : view.automaticTeams ? `${view.teams.length} regu · soal berganti otomatis` : view.phase === 'question' ? `${answered} dari ${eligible} siswa sudah menjawab` : view.phase === 'closed' ? 'Jawaban terkunci · lanjutkan pembahasan' : view.phase === 'discussion' ? 'Lanjutkan saat kelas sudah siap.' : 'Kendalikan permainan dari sini.'}</span>
           </div>
