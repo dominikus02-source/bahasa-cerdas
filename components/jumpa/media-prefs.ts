@@ -73,6 +73,7 @@ export function parseMediaPrefs(raw: string | null | undefined): JumpaMediaPrefs
       noiseSuppression: typeof v.noiseSuppression === "boolean" ? v.noiseSuppression : d.noiseSuppression,
       background: BACKGROUNDS.includes(v.background as JumpaBackgroundId) ? (v.background as JumpaBackgroundId) : d.background,
       customBackgroundUrl: typeof v.customBackgroundUrl === "string" && v.customBackgroundUrl.startsWith("data:image/") ? v.customBackgroundUrl : undefined,
+      theme: v.theme === "light" || v.theme === "dark" ? v.theme : d.theme,
       devices: cleanDevices(v.devices),
     };
   } catch {
