@@ -238,18 +238,29 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
         <UpgradeSheet reason="daily" tier={{ maxDurationMin: plan.kelas.maxDurationMin, upgradeUrl: plan.upgradeUrl }} onClose={() => setLimitHit(false)} />
       )}
 
-      <section className="jumpa-card jumpa-in-up" style={{ padding: "16px 18px" }}>
-        <div className="flex items-center gap-2 mb-3">
-          <Info size={18} className="text-[var(--jp-accent)]" />
-          <h2 className="text-sm font-bold">Ketentuan JUMPA</h2>
+      <section className="jumpa-card jumpa-in-up overflow-hidden">
+        <div className="flex items-center gap-3 px-4 py-3" style={{ background: "linear-gradient(135deg, var(--jp-accent) 0%, var(--jp-accent-strong) 100%)" }}>
+          <span className="jumpa-mark jumpa-mark-sm" aria-hidden>J</span>
+          <h2 className="text-sm font-bold text-white">Ketentuan JUMPA</h2>
         </div>
-        <ul className="text-xs text-[var(--jp-text-2)] space-y-2">
-          <li><strong>Gratis:</strong> Kelas 30 orang · 45 menit · 3 ruang/hari</li>
-          <li><strong>Premium:</strong> Kelas 50 orang · 120 menit · ruang tanpa batas</li>
-          <li><strong>Murid:</strong> Gratis 8 orang · Premium 15 orang · 60 menit</li>
-          <li><strong>Webinar:</strong> Hanya Premium · 200 orang · 180 menit · 1x/minggu</li>
-          <li><strong>Blur latar:</strong> Khusus Premium</li>
-        </ul>
+        <div className="p-4 space-y-3">
+          <div className="flex items-start gap-3">
+            <span className="jumpa-tier" data-tier="FREE" style={{ flexShrink: 0 }}>Gratis</span>
+            <span className="text-xs text-[var(--jp-text-2)]">Kelas 30 orang · 45 menit · 3 ruang/hari</span>
+          </div>
+          <div className="flex items-start gap-3">
+            <span className="jumpa-tier" data-tier="PREMIUM" style={{ flexShrink: 0 }}><Crown size={11} /> Premium</span>
+            <span className="text-xs text-[var(--jp-text-2)]">Kelas 50 orang · 120 menit · ruang tanpa batas · blur latar</span>
+          </div>
+          <div className="flex items-start gap-3">
+            <span className="text-xs font-bold text-[var(--jp-text)]" style={{ flexShrink: 0, width: 52 }}>Murid</span>
+            <span className="text-xs text-[var(--jp-text-2)]">Gratis 8 · Premium 15 orang · 60 menit</span>
+          </div>
+          <div className="flex items-start gap-3">
+            <span className="text-xs font-bold text-[var(--jp-text)]" style={{ flexShrink: 0, width: 52 }}>Webinar</span>
+            <span className="text-xs text-[var(--jp-text-2)]">Premium · 200 orang · 180 menit · 1x/minggu</span>
+          </div>
+        </div>
       </section>
     </main>
   );
