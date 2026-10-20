@@ -56,3 +56,111 @@
   .presentation:global(.mb-pj) :global(.mb-pj-head-meta) { width: 100%; flex-wrap: wrap; }
   .presentation:global(.mb-pj) :global(.mb-pj-pkg) { max-width: 100%; white-space: normal; overflow-wrap: anywhere; font-size: 12px; }
 }
+
+/* Session timer */
+.mb-session-timer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: var(--jp-glass, rgba(0,0,0,0.6));
+  border: 1px solid var(--jp-line, rgba(255,255,255,0.1));
+}
+.mb-session-timer-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--jp-text-2, #a6adbb);
+}
+.mb-session-timer-value {
+  font-size: 18px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--jp-text, #fff);
+}
+.mb-session-timer-urgent .mb-session-timer-value {
+  color: #ef4444;
+  animation: pulse 1s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Final countdown overlay */
+.mb-final-countdown {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.85);
+  pointer-events: none;
+}
+.mb-final-countdown-number {
+  font-size: clamp(120px, 30vw, 280px);
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 0 40px rgba(255,255,255,0.5);
+  animation: countdown-pop 1s ease-out;
+}
+@keyframes countdown-pop {
+  0% { transform: scale(1.5); opacity: 0; }
+  30% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 1; }
+}
+
+/* Music toggle */
+.mb-music-toggle {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 50;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--jp-glass, rgba(0,0,0,0.6));
+  border: 1px solid var(--jp-line, rgba(255,255,255,0.1));
+  color: var(--jp-text, #fff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.mb-music-toggle:hover {
+  background: var(--jp-glass-strong, rgba(0,0,0,0.8));
+}
+
+/* Duration picker */
+.durationPicker {
+  margin-top: 16px;
+}
+.durationPicker label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--jp-text-2, #a6adbb);
+}
+.durationOptions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.durationOptions button {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--jp-line, rgba(255,255,255,0.1));
+  background: transparent;
+  color: var(--jp-text, #fff);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.durationOptions button.durationActive,
+.durationOptions button:hover {
+  background: var(--jp-accent, #059669);
+  border-color: var(--jp-accent, #059669);
+  color: #fff;
+}
