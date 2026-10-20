@@ -6,7 +6,7 @@
  * menerapkan perubahan lewat onChange (switchActiveDevice, terbitkan ulang).
  */
 import { useEffect, useState } from "react";
-import { Camera, Crown, Headphones, Lock, Mic, Sparkles, AudioWaveform, Leaf, Gauge, MonitorPlay, Sun, Moon } from "lucide-react";
+import { Camera, Crown, Headphones, Lock, Mic, Sparkles, AudioWaveform, Leaf, Gauge, MonitorPlay } from "lucide-react";
 import { JUMPA_TIERS, type JumpaTierView } from "@/lib/jumpa/tiers";
 import { QUALITY_LABEL } from "./media-policy";
 import type { JumpaMediaPrefs, JumpaQuality } from "./media-prefs";
@@ -93,18 +93,6 @@ export default function SettingsPanel({ prefs, onChange, tier, refreshKey = 0, d
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-4 pb-5 pt-1">
-      <section aria-labelledby="jp-set-theme">
-        <h3 id="jp-set-theme" className="jumpa-section-label">Tampilan</h3>
-        <div className="jumpa-seg" role="radiogroup" aria-label="Tema">
-          <button type="button" role="radio" aria-checked={prefs.theme !== "light"} className="jumpa-seg-btn" onClick={() => onChange({ theme: "dark" })}>
-            <Moon size={16} /> <span>Gelap</span>
-          </button>
-          <button type="button" role="radio" aria-checked={prefs.theme === "light"} className="jumpa-seg-btn" onClick={() => onChange({ theme: "light" })}>
-            <Sun size={16} /> <span>Terang</span>
-          </button>
-        </div>
-      </section>
-
       <section aria-labelledby="jp-set-dev">
         <h3 id="jp-set-dev" className="jumpa-section-label">Perangkat</h3>
         <div className="grid gap-3">
