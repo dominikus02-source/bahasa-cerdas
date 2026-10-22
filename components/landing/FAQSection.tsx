@@ -115,7 +115,7 @@ export default function FAQSection() {
                     </span>
                     <div
                       className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 ${
-                        isOpen ? "bg-primary text-white rotate-45" : "bg-zinc-100 text-zinc-400"
+                        isOpen ? "bg-primary text-primary-foreground rotate-45" : "bg-zinc-100 text-zinc-400"
                       }`}
                       aria-hidden="true"
                     >

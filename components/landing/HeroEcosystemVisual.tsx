@@ -62,20 +62,20 @@ export default function HeroEcosystemVisual() {
         {/* Guru — Platform — Murid */}
         <div className="relative flex items-center justify-between gap-2 py-6">
           <svg
-            className="absolute left-0 right-0 top-1/2 w-full h-8 -translate-y-1/2 pointer-events-none"
+            className="absolute left-0 right-0 top-1/2 w-full h-8 -translate-y-1/2 pointer-events-none text-primary"
             viewBox="0 0 400 32"
             fill="none"
             preserveAspectRatio="none"
           >
             <path
               d="M60 16 H 120 M 280 16 H 340"
-              stroke="#dc2626"
+              stroke="currentColor"
               strokeOpacity="0.25"
               strokeWidth="2"
               strokeDasharray="4 6"
             />
-            <path d="M 130 8 C 170 8 170 24 200 16" stroke="#dc2626" strokeOpacity="0.25" strokeWidth="2" strokeDasharray="4 6" />
-            <path d="M 270 8 C 230 8 230 24 200 16" stroke="#dc2626" strokeOpacity="0.25" strokeWidth="2" strokeDasharray="4 6" />
+            <path d="M 130 8 C 170 8 170 24 200 16" stroke="currentColor" strokeOpacity="0.25" strokeWidth="2" strokeDasharray="4 6" />
+            <path d="M 270 8 C 230 8 230 24 200 16" stroke="currentColor" strokeOpacity="0.25" strokeWidth="2" strokeDasharray="4 6" />
           </svg>
 
           <motion.div {...nodeMotion} transition={{ ...nodeMotion.transition, delay: 0.45 }} className="relative">
@@ -137,7 +137,7 @@ export default function HeroEcosystemVisual() {
 
       {/* Floating accent */}
       <motion.div
-        className="absolute -top-4 -left-3 z-10 rounded-full bg-primary px-3.5 py-1.5 text-[11px] font-bold text-white shadow-lg shadow-primary/30"
+        className="absolute -top-4 -left-3 z-10 rounded-full bg-primary px-3.5 py-1.5 text-[11px] font-bold text-primary-foreground shadow-lg shadow-primary/30"
         animate={{ y: [0, -6, 0] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
       >

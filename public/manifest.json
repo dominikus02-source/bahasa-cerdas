@@ -6,7 +6,7 @@
   "start_url": "/arena?utm_source=pwa",
   "display": "standalone",
   "background_color": "#f8fafc",
-  "theme_color": "#7c3aed",
+  "theme_color": "#047857",
   "orientation": "portrait",
   "scope": "/",
   "categories": ["education", "games"],

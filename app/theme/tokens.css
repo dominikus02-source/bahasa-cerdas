@@ -11,7 +11,10 @@
    ════════════════════════════════════════════════════════════════════ */
 
 /* ── 1. Warna dasar (nilai identik dengan sebelumnya) ─────────────── */
-:root {
+/* `.bc-light` = paksa token terang di dalam html.dark — untuk halaman publik yang
+   (belum) punya mode gelap (landing, tentang, FAQ, keranjang, …) supaya warna
+   primary/aksen gelap (#34d399) tidak jatuh di latar putih. */
+:root, .bc-light {
   --clr-bg: #f4f5f7;
   --clr-surface: #ffffff;
   --clr-surface-2: #f8f9fb;
@@ -36,6 +39,12 @@
   --clr-info-soft: #eff6ff;
 
   --clr-on-brand: #ffffff;   /* teks/ikon di atas gradien merek (terang: putih) */
+  /* Primary global (keputusan CEO 2026-10-19: teal + gradien merek, bukan merah).
+     Tailwind `primary` / shadcn memakai ini. Merah hanya untuk --clr-danger. */
+  --clr-primary: var(--clr-accent-strong);        /* #047857 — putih 5.5:1 */
+  --clr-primary-strong: #065f46;                  /* hover/aktif — putih 7.6:1 */
+  --clr-primary-soft: var(--clr-accent-soft);
+  --clr-on-primary: #ffffff;
   --clr-focus: var(--clr-accent-strong);
   --clr-scrim: color-mix(in srgb, #0b0d12 55%, transparent);
 }
@@ -65,6 +74,10 @@
   --clr-info-soft: #15233f;
 
   --clr-on-brand: var(--clr-bg);         /* gelap: ikon/teks gelap di atas gradien terang */
+  --clr-primary: var(--clr-accent);              /* #34d399 — 9.0:1 di --clr-surface */
+  --clr-primary-strong: #6ee7b7;
+  --clr-primary-soft: var(--clr-accent-soft);
+  --clr-on-primary: var(--clr-bg);
   --clr-focus: var(--clr-accent);
   --clr-scrim: color-mix(in srgb, #000000 62%, transparent);
 }
@@ -72,7 +85,8 @@
 /* ── 2. Turunan + gradien, radius, bayangan, jarak, tipografi, gerak ─
    Dideklarasikan di :root DAN .dark supaya bagian yang dipaksa gelap
    (mis. banner JUMPA class="dark") menghitung ulang dari token gelap. */
-:root, .dark {
+:root, .dark, .bc-light {
+  --bc-grad-primary: var(--bc-grad-brand);   /* bg-primary = gradien merek */
   /* Turunan — selalu dari token di atas */
   --clr-line: color-mix(in srgb, var(--clr-text) 10%, transparent);
   --clr-line-strong: color-mix(in srgb, var(--clr-text) 18%, transparent);
@@ -160,7 +174,7 @@
      guru terang  #1d4ed8→#2563eb→#4f46e5 dengan teks putih ≥ 5.2:1
      guru gelap   #38bdf8→#60a5fa→#818cf8 dengan teks #0f1117 ≥ 6.1:1
      aksen solid  #2563eb di atas putih 5.2:1 · #60a5fa di atas #171a22 6.4:1 */
-:root, .dark {
+:root, .dark, .bc-light {
   --clr-aud: var(--clr-violet);
   --clr-aud-strong: color-mix(in srgb, var(--clr-violet) 82%, var(--clr-text));
   --clr-aud-soft: var(--clr-violet-soft);
@@ -191,6 +205,11 @@
   --bc-glow-aud: 0 8px 22px -10px color-mix(in srgb, #2563eb 65%, transparent);
   --bc-ring: 0 0 0 3px color-mix(in srgb, #2563eb 20%, transparent);
   --clr-focus: #2563eb;
+  --clr-primary: var(--clr-aud-strong);
+  --clr-primary-strong: #1e40af;
+  --clr-primary-soft: var(--clr-aud-soft);
+  --clr-on-primary: #ffffff;
+  --bc-grad-primary: var(--bc-grad-aud);
 }
 .dark .bc-guru-shell,
 .dark [data-audience="guru"],
@@ -210,6 +229,11 @@
   --bc-glow-aud: 0 8px 22px -10px color-mix(in srgb, #60a5fa 55%, transparent);
   --bc-ring: 0 0 0 3px color-mix(in srgb, #60a5fa 24%, transparent);
   --clr-focus: #93c5fd;
+  --clr-primary: var(--clr-aud);
+  --clr-primary-strong: #93c5fd;
+  --clr-primary-soft: var(--clr-aud-soft);
+  --clr-on-primary: #0f1117;
+  --bc-grad-primary: var(--bc-grad-aud);
 }
 
 @media (prefers-reduced-motion: reduce) {

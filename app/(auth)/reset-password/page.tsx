@@ -110,7 +110,7 @@ export default function ResetPasswordPage() {
     const isExchangeFailed = params?.get("error") === "exchange_failed";
 
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-600 via-red-700 to-blue-900 relative overflow-hidden px-4">
+      <div className="min-h-screen flex items-center justify-center bg-primary relative overflow-hidden px-4">
         <BatikDecoration />
         <div className="relative z-10 w-full max-w-md">
           <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl border border-white/20">
@@ -130,7 +130,7 @@ export default function ResetPasswordPage() {
               <div className="space-y-2">
                 <Button
                   onClick={() => router.push("/login")}
-                  className="w-full h-12 rounded-xl font-bold bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 transition-all"
+                  className="w-full h-12 rounded-xl font-bold bg-primary hover:bg-primary-dark transition-all"
                 >
                   Minta Link Reset Baru
                 </Button>
@@ -153,7 +153,7 @@ export default function ResetPasswordPage() {
   // ── LOADING RECOVERY SESSION ──
   if (!recoveryReady && !recoveryFailed) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-600 via-red-700 to-blue-900 relative overflow-hidden px-4">
+      <div className="min-h-screen flex items-center justify-center bg-primary relative overflow-hidden px-4">
         <BatikDecoration />
         <div className="relative z-10 w-full max-w-md">
           <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl border border-white/20">
@@ -173,7 +173,7 @@ export default function ResetPasswordPage() {
   // ── SUCCESS STATE ──
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-600 via-red-700 to-blue-900 relative overflow-hidden px-4">
+      <div className="min-h-screen flex items-center justify-center bg-primary relative overflow-hidden px-4">
         <BatikDecoration />
         <div className="relative z-10 w-full max-w-md">
           <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl border border-white/20">
@@ -187,7 +187,7 @@ export default function ResetPasswordPage() {
               </p>
               <Button
                 onClick={() => router.push("/login")}
-                className="w-full h-12 rounded-xl font-bold bg-gradient-to-r from-red-600 to-red-700"
+                className="w-full h-12 rounded-xl font-bold bg-primary"
               >
                 Masuk ke BahasaCerdas
               </Button>
@@ -200,7 +200,7 @@ export default function ResetPasswordPage() {
 
   // ── PASSWORD RESET FORM ──
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-600 via-red-700 to-blue-900 relative overflow-hidden px-4">
+    <div className="min-h-screen flex items-center justify-center bg-primary relative overflow-hidden px-4">
       <BatikDecoration />
       <div className="relative z-10 w-full max-w-md">
         <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl border border-white/20">
@@ -266,7 +266,7 @@ export default function ResetPasswordPage() {
             <Button
               type="submit"
               disabled={loading || !password || !confirm}
-              className="w-full h-12 rounded-xl font-bold bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 transition-all"
+              className="w-full h-12 rounded-xl font-bold bg-primary hover:bg-primary-dark transition-all"
             >
               {loading ? "Menyimpan..." : "Ubah Password"}
             </Button>

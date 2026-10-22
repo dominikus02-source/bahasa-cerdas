@@ -46,34 +46,34 @@ export default function VideoDetailPage() {
   const canAccess = !video?.isPremium || currentUser?.isPremium || currentUser?.isFounder;
 
   if (loading) return (
-    <div className="min-h-screen bg-white">
+    <div className="bc-light min-h-screen bg-white">
       <PageNavbar />
       <div className="flex items-center justify-center pt-32">
-        <div className="w-10 h-10 border-[3px] border-red-500/30 border-t-red-500 rounded-full animate-spin" />
+        <div className="w-10 h-10 border-[3px] border-primary/30 border-t-primary rounded-full animate-spin" />
       </div>
     </div>
   );
 
   if (!video) return (
-    <div className="min-h-screen bg-white">
+    <div className="bc-light min-h-screen bg-white">
       <PageNavbar />
       <div className="max-w-5xl mx-auto px-4 pt-24 text-center">
         <Film className="w-16 h-16 text-gray-200 mx-auto mb-4" />
         <h2 className="font-bold text-xl text-gray-800 mb-2">Video tidak ditemukan</h2>
-        <Link href="/video-belajar" className="text-red-500 hover:underline text-sm">Kembali ke daftar video</Link>
+        <Link href="/video-belajar" className="text-primary hover:underline text-sm">Kembali ke daftar video</Link>
       </div>
       <PageFooter />
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-[#F9F9FB]">
+    <div className="bc-light min-h-screen bg-[#F9F9FB]">
       <PageNavbar />
 
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6">
         {/* Back + Share */}
         <div className="flex items-center justify-between mb-4">
-          <Link href="/video-belajar" className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-red-500 transition-colors">
+          <Link href="/video-belajar" className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-primary transition-colors">
             <ArrowLeft size={16} /> Kembali
           </Link>
           <div className="flex items-center gap-2">
@@ -124,7 +124,7 @@ export default function VideoDetailPage() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                       {/* Play button */}
                       <div className="relative z-10 w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center shadow-2xl group-hover:scale-110 group-hover:bg-white transition-all duration-200">
-                        <Play size={32} className="text-red-500 ml-1" />
+                        <Play size={32} className="text-primary ml-1" />
                       </div>
                       {/* Duration badge */}
                       {video.duration && (
@@ -142,7 +142,7 @@ export default function VideoDetailPage() {
                   <Lock size={48} className="text-gray-300 mx-auto mb-3" />
                   <p className="text-gray-600 text-lg font-semibold">Video Premium</p>
                   <p className="text-gray-400 text-sm mt-1">{currentUser ? "Upgrade ke PRO untuk mengakses video ini" : "Login untuk mengakses video ini"}</p>
-                  <Link href={currentUser ? "/guru/pengaturan/premium" : "/login"} className="mt-4 inline-block px-6 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-semibold shadow-md">
+                  <Link href={currentUser ? "/guru/pengaturan/premium" : "/login"} className="mt-4 inline-block px-6 py-2.5 bg-primary text-primary-foreground rounded-xl font-semibold shadow-md">
                     {currentUser ? "Upgrade PRO" : "Masuk"}
                   </Link>
                 </div>
@@ -178,7 +178,7 @@ export default function VideoDetailPage() {
                     {video.creator.fullName.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <p className="font-semibold text-sm text-gray-900 group-hover:text-red-500 transition-colors">{video.creator.fullName}</p>
+                    <p className="font-semibold text-sm text-gray-900 group-hover:text-primary transition-colors">{video.creator.fullName}</p>
                     <p className="text-xs text-gray-400">Guru Bahasa Indonesia</p>
                   </div>
                 </Link>

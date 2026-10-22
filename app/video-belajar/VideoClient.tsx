@@ -57,7 +57,7 @@ export default function VideoClient({ initialVideos }: { initialVideos: Video[] 
   }, [videos, search, category]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="bc-light min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 py-8 pt-24">
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary-light rounded-full border border-primary/10 mb-4">
@@ -96,7 +96,7 @@ export default function VideoClient({ initialVideos }: { initialVideos: Video[] 
               onClick={() => setCategory(c.value)}
               className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 category === c.value
-                  ? "bg-primary text-white shadow-md shadow-primary/20"
+                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
                   : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
               }`}
             >

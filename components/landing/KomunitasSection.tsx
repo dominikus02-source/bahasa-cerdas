@@ -142,7 +142,7 @@ export default function KomunitasSection({ mgmpMedia }: { mgmpMedia: MgmpMedia }
 
             <Link
               href="/guru/komunitas"
-              className="group inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-primary hover:bg-primary-dark rounded-xl transition-all duration-200 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30"
+              className="group inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-primary-foreground bg-primary hover:bg-primary-dark rounded-xl transition-all duration-200 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30"
             >
               Bergabung dengan Komunitas
               <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />

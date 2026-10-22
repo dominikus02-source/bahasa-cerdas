@@ -83,7 +83,7 @@ export default function TeacherSection() {
             <div className="flex flex-wrap gap-4">
               <Link
                 href="/guru/beranda"
-                className="group inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-primary hover:bg-primary-dark rounded-xl transition-all duration-200 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 focus-ring"
+                className="group inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-primary-foreground bg-primary hover:bg-primary-dark rounded-xl transition-all duration-200 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 focus-ring"
                 aria-label="Buka dasbor guru BahasaCerdas"
               >
                 Masuk Dasbor Guru

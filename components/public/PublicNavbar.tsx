@@ -11,26 +11,26 @@ export default function PublicNavbar() {
         </Link>
 
         <nav className="flex items-center gap-1">
-          <Link href="/marketplace" className="px-3 py-2 text-sm text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium">
+          <Link href="/marketplace" className="px-3 py-2 text-sm text-slate-600 hover:text-primary hover:bg-primary-light rounded-xl transition-colors font-medium">
             Toko Karya
           </Link>
-          <Link href="/video-belajar" className="px-3 py-2 text-sm text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium">
+          <Link href="/video-belajar" className="px-3 py-2 text-sm text-slate-600 hover:text-primary hover:bg-primary-light rounded-xl transition-colors font-medium">
             Video
           </Link>
-          <Link href="/artikel" className="px-3 py-2 text-sm text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium">
+          <Link href="/artikel" className="px-3 py-2 text-sm text-slate-600 hover:text-primary hover:bg-primary-light rounded-xl transition-colors font-medium">
             Artikel
           </Link>
-          <Link href="/kamus" className="px-3 py-2 text-sm text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium">
+          <Link href="/kamus" className="px-3 py-2 text-sm text-slate-600 hover:text-primary hover:bg-primary-light rounded-xl transition-colors font-medium">
             Kamus
           </Link>
-          <Link href="/loker" className="px-3 py-2 text-sm text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium">
+          <Link href="/loker" className="px-3 py-2 text-sm text-slate-600 hover:text-primary hover:bg-primary-light rounded-xl transition-colors font-medium">
             Lowongan
           </Link>
           <div className="h-5 w-px bg-slate-200 mx-2" />
-          <Link href="/login" className="px-4 py-2 text-sm font-semibold text-slate-700 hover:text-red-600 transition-colors">
+          <Link href="/login" className="px-4 py-2 text-sm font-semibold text-slate-700 hover:text-primary transition-colors">
             Masuk
           </Link>
-          <Link href="/register" className="px-4 py-2 text-sm font-semibold bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:shadow-lg transition-all">
+          <Link href="/register" className="px-4 py-2 text-sm font-semibold bg-primary text-primary-foreground rounded-xl hover:shadow-lg transition-all">
             Daftar
           </Link>
         </nav>

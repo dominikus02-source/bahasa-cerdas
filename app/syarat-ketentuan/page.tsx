@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function SyaratKetentuanPage() {
   return (
-    <main className="min-h-screen">
+    <main className="bc-light min-h-screen">
       <PageNavbar />
       <div className="section-container py-16 lg:py-20 max-w-3xl mx-auto">
         <h1 className="text-3xl font-bold text-zinc-900 mb-8">Syarat & Ketentuan</h1>

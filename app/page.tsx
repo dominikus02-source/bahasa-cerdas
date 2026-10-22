@@ -129,9 +129,9 @@ export default async function HomePage() {
         <a href="#main-content" className="skip-link">Langsung ke konten utama</a>
       </nav>
 
-      <PageNavbar />
+      <div className="bc-light"><PageNavbar /></div>
 
-      <main id="main-content" className="min-h-screen">
+      <main id="main-content" className="bc-light min-h-screen">
         {/* 1 · HERO — positioning: satu ekosistem untuk semua */}
         <HeroSection />
 

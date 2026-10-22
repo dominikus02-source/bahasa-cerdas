@@ -73,7 +73,7 @@ export default function ArtikelPage() {
       <PageNavbar />
       <div className="max-w-5xl mx-auto px-4 py-16">
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-red-100 dark:bg-red-500/15 rounded-full text-red-700 dark:text-red-300 text-sm font-medium mb-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary-light rounded-full text-primary text-sm font-medium mb-4">
             <BookOpen size={14} /> Artikel & Wawasan
           </div>
           <h1 className="text-4xl font-extrabold text-bc-text">Artikel dan Wawasan BahasaCerdas</h1>
@@ -94,12 +94,12 @@ export default function ArtikelPage() {
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Ketik nama penulis, misalnya Washadi, Alexander, atau Dominikus"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-bc-line text-sm focus:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-100 bg-bc-surface"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-bc-line text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 bg-bc-surface"
               />
             </div>
             <button
               type="submit"
-              className="px-5 py-2.5 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition-colors"
+              className="px-5 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:bg-primary-dark transition-colors"
             >
               Cari Artikel
             </button>
@@ -111,7 +111,7 @@ export default function ArtikelPage() {
               </span>
               <button
                 onClick={handleReset}
-                className="text-xs text-red-600 dark:text-red-400 font-semibold hover:underline flex items-center gap-1"
+                className="text-xs text-primary font-semibold hover:underline flex items-center gap-1"
               >
                 <X size={14} /> Tampilkan Semua
               </button>
@@ -122,7 +122,7 @@ export default function ArtikelPage() {
         {/* Articles */}
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="animate-spin w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full" />
+            <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" />
           </div>
         ) : articles.length === 0 ? (
           <div className="text-center py-20 text-bc-text-3">
@@ -139,7 +139,7 @@ export default function ArtikelPage() {
                 const authorRoleStr = a.authorRole || "";
                 return (
                   <Link key={a.id} href={`/artikel/${a.slug}`} className="block">
-                    <article className={`bg-bc-surface rounded-2xl shadow-sm border border-bc-line hover:shadow-xl hover:border-red-200 transition-all ${idx === 0 ? "md:grid md:grid-cols-2" : ""}`}>
+                    <article className={`bg-bc-surface rounded-2xl shadow-sm border border-bc-line hover:shadow-xl hover:border-primary/40 transition-all ${idx === 0 ? "md:grid md:grid-cols-2" : ""}`}>
                       {thumbnail ? (
                         <div className={`${idx === 0 ? "aspect-video md:aspect-auto md:h-full md:min-h-[280px]" : "aspect-video"} bg-bc-surface-2 overflow-hidden`}>
                           <SafeMediaImage
@@ -163,12 +163,12 @@ export default function ArtikelPage() {
                       <div className="p-7 flex flex-col justify-center">
                         <div className="flex flex-wrap items-center gap-2 text-xs text-bc-text-3 mb-3">
                           {a.tags?.slice(0, 2).map(t => (
-                            <span key={t} className="px-2 py-0.5 bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-300 rounded-full font-medium">{t}</span>
+                            <span key={t} className="px-2 py-0.5 bg-primary-light text-primary rounded-full font-medium">{t}</span>
                           ))}
                           <span className="flex items-center gap-1"><Calendar size={12} /> {new Date(a.publishedAt ?? a.createdAt).toLocaleDateString("id")}</span>
                           <span className="flex items-center gap-1">{a.readCount} dibaca</span>
                         </div>
-                        <h2 className={`font-bold text-bc-text hover:text-red-600 transition-colors ${idx === 0 ? "text-2xl" : "text-lg"} line-clamp-2`}>
+                        <h2 className={`font-bold text-bc-text hover:text-primary transition-colors ${idx === 0 ? "text-2xl" : "text-lg"} line-clamp-2`}>
                           {a.title}
                         </h2>
                         {a.excerpt && <p className="text-sm text-bc-text-3 mt-2 line-clamp-2">{a.excerpt}</p>}
@@ -179,7 +179,7 @@ export default function ArtikelPage() {
                           {authorRoleStr && (
                             <span className="text-xs text-bc-text-3">{authorRoleStr}</span>
                           )}
-                          <span className="ml-auto shrink-0 whitespace-nowrap text-red-600 dark:text-red-400 font-semibold text-xs flex items-center gap-1">
+                          <span className="ml-auto shrink-0 whitespace-nowrap text-primary font-semibold text-xs flex items-center gap-1">
                             Baca Artikel <ArrowRight size={12} />
                           </span>
                         </div>
@@ -199,7 +199,7 @@ export default function ArtikelPage() {
                   className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                     page === 1
                       ? "bg-bc-surface-2 text-bc-text-3 cursor-not-allowed"
-                      : "bg-bc-surface border border-bc-line text-bc-text-2 hover:border-red-300"
+                      : "bg-bc-surface border border-bc-line text-bc-text-2 hover:border-primary/40"
                   }`}
                 >
                   Sebelumnya
@@ -210,8 +210,8 @@ export default function ArtikelPage() {
                     onClick={() => setPage(p)}
                     className={`w-10 h-10 rounded-xl text-sm font-medium transition-all ${
                       page === p
-                        ? "bg-red-600 text-white"
-                        : "bg-bc-surface border border-bc-line text-bc-text-2 hover:border-red-300"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-bc-surface border border-bc-line text-bc-text-2 hover:border-primary/40"
                     }`}
                   >
                     {p}
@@ -223,7 +223,7 @@ export default function ArtikelPage() {
                   className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                     page === totalPages
                       ? "bg-bc-surface-2 text-bc-text-3 cursor-not-allowed"
-                      : "bg-bc-surface border border-bc-line text-bc-text-2 hover:border-red-300"
+                      : "bg-bc-surface border border-bc-line text-bc-text-2 hover:border-primary/40"
                   }`}
                 >
                   Berikutnya

@@ -176,7 +176,7 @@ export default function PageNavbar() {
                 </Link>
                 <Link
                   href="/register"
-                  className="relative px-6 py-2.5 text-sm font-semibold text-white bg-primary hover:bg-primary-dark rounded-xl transition-all duration-200 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 focus-ring"
+                  className="relative px-6 py-2.5 text-sm font-semibold text-primary-foreground bg-primary hover:bg-primary-dark rounded-xl transition-all duration-200 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 focus-ring"
                 >
                   Mulai Gratis
                 </Link>
@@ -278,7 +278,7 @@ export default function PageNavbar() {
                   <Link
                     href="/register"
                     onClick={() => setMobileOpen(false)}
-                    className="block w-full text-center px-4 py-3 text-sm font-semibold text-white bg-primary rounded-xl hover:bg-primary-dark transition-colors shadow-lg shadow-primary/25 focus-ring"
+                    className="block w-full text-center px-4 py-3 text-sm font-semibold text-primary-foreground bg-primary rounded-xl hover:bg-primary-dark transition-colors shadow-lg shadow-primary/25 focus-ring"
                   >
                     Mulai Gratis
                   </Link>
