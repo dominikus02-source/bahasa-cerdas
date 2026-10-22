@@ -1,7 +1,22 @@
 import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
+import localFont from "next/font/local";
 import "./globals.css";
 import { Providers } from "./providers";
+
+/**
+ * Inter (variabel, subset latin, display swap) — di-host sendiri lewat next/font
+ * supaya build Docker di VPS tidak bergantung pada akses Google Fonts.
+ * Sumber: @fontsource-variable/inter 5.3.0 (OFL-1.1, lihat app/fonts/Inter-OFL.txt).
+ */
+const inter = localFont({
+  src: "./fonts/inter-latin-wght.woff2",
+  weight: "100 900",
+  style: "normal",
+  display: "swap",
+  variable: "--font-inter",
+  fallback: ["ui-sans-serif", "system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+});
 
 const SITE_URL = "https://www.bahasacerdas.com";
 const SITE_NAME = "BahasaCerdas";
@@ -125,7 +140,7 @@ export default async function RootLayout({
     supabaseHost = null;
   }
   return (
-    <html lang="id" suppressHydrationWarning>
+    <html lang="id" className={inter.variable} suppressHydrationWarning>
       <head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
