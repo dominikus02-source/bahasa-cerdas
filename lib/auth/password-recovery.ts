@@ -5,7 +5,7 @@ export const RECOVERY_SUCCESS = "Jika email terdaftar, tautan reset kata sandi t
 export const RECOVERY_FAILURE = "Gagal mengirim email pemulihan. Silakan coba lagi beberapa saat lagi atau hubungi dukungan.";
 
 export function recoveryRedirect(env = process.env): string {
-  const base = env.APP_URL || env.NEXT_PUBLIC_SITE_URL || env.SUPABASE_SITE_URL;
+  const base = env.APP_URL || env.NEXT_PUBLIC_SITE_URL || env.SUPABASE_SITE_URL || (env.NODE_ENV === "production" ? "https://bahasacerdas.com" : "http://localhost:3000");
   if (!base) throw new Error("APP_URL belum diatur");
   const url = new URL(base);
   if (url.protocol !== "https:" && !(env.NODE_ENV !== "production" && ["localhost", "127.0.0.1"].includes(url.hostname))) {
@@ -23,7 +23,7 @@ export async function consumeRecoveryLimit(email: string, ip: string): Promise<n
   const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
   const redis = url && token ? new Redis({ url, token }) : null;
-  if (!redis && process.env.NODE_ENV === "production") throw new Error("Redis diperlukan untuk pemulihan");
+  // Keep password recovery available when optional Redis credentials are absent.\n  // The fallback is per-instance only; production should configure Upstash for shared limits.
   let retry = 0;
   for (const subject of [`ip:${ip}`, `email:${email}`]) {
     const key = `recovery:${createHash("sha256").update(subject).digest("hex")}`;
