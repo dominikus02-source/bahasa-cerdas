@@ -1,0 +1,13 @@
+Atur ulang kata sandi BahasaCerdas Anda
+
+Halo!
+Kami menerima permintaan untuk mengatur ulang kata sandi akun {{ .Email }}.
+Atur ulang kata sandi: {{ .ConfirmationURL }}
+
+Tautan berlaku selama 60 menit dan hanya bisa dipakai sekali.
+Tidak merasa meminta ini? Abaikan email ini. Kata sandi Anda tetap aman.
+
+BahasaCerdas · Belajar dan berkarya dalam Bahasa Indonesia
+{{ .SiteURL }}
+Bantuan: dukungan@bahasacerdas.com
+Email otomatis ini dikirim karena ada permintaan pemulihan akun Anda.

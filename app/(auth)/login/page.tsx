@@ -1,5 +1,7 @@
 "use client";
 
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -30,6 +32,16 @@ export default function LoginPage() {
   const [guideOpen, setGuideOpen] = useState(false);
   const [isInstalled, setIsInstalled] = useState(true);
   const registerHref = isArenaEntry ? "/arena/register" : "/register";
+  const [recoveryMessage, setRecoveryMessage] = useState("");
+  const [recoveryLoading, setRecoveryLoading] = useState(false);
+  const [recoveryCooldown, setRecoveryCooldown] = useState(0);
+
+  useEffect(() => {
+    if (recoveryCooldown <= 0) return;
+    const timer = window.setTimeout(() => setRecoveryCooldown(recoveryCooldown - 1), 1000);
+    return () => window.clearTimeout(timer);
+  }, [recoveryCooldown]);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -53,6 +65,7 @@ export default function LoginPage() {
     const nextParam = params.get("next") || (isArenaEntry ? "/arena" : "");
     if (nextParam) setNext(nextParam);
 
+    if (params.get("reset") === "success") setRecoveryMessage("Kata sandi berhasil diubah. Silakan masuk.");
     const authError = params.get("error");
     if (authError) {
       setError(authError);
@@ -219,6 +232,7 @@ export default function LoginPage() {
               </p>
             </div>
 
+            {recoveryMessage && <Alert tone="success" className="mb-4">{recoveryMessage}</Alert>}
             {error && (
               <div className="mb-4 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">
                 <span className="h-2 w-2 shrink-0 rounded-full bg-red-500" />
@@ -279,10 +293,12 @@ export default function LoginPage() {
                   <label htmlFor="password" className="block text-sm font-semibold text-slate-700 dark:text-slate-200">
                     Kata Sandi
                   </label>
-                  <button type="button" onClick={async () => {
+                  <Button type="button" variant="quiet" size="sm" disabled={recoveryLoading || recoveryCooldown > 0 || loading} onClick={async () => {
                     const emailVal = email.trim();
-                    if (!emailVal) { setError("Masukkan email dulu"); return; }
-                    setLoading(true);
+                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) { setError("Masukkan alamat email yang valid terlebih dahulu."); return; }
+                    setRecoveryLoading(true);
+                    setError("");
+                    setRecoveryMessage("");
                     try {
                       const res = await fetch("/api/auth/forgot-password", {
                         method: "POST",
@@ -290,12 +306,18 @@ export default function LoginPage() {
                         body: JSON.stringify({ email: emailVal.toLowerCase() }),
                       });
                       const data = await res.json();
-                      setError(data.message || data.error || "Terjadi kesalahan");
-                    } catch { setError("Gagal mengirim email"); }
-                    setLoading(false);
-                  }} className="text-xs font-medium text-violet-600 hover:text-violet-700 hover:underline dark:text-violet-400">
-                    Lupa kata sandi?
-                  </button>
+                      if (res.ok) {
+                        setRecoveryMessage(data.message);
+                        setRecoveryCooldown(60);
+                      } else {
+                        setError(data.error || "Gagal mengirim email pemulihan.");
+                        if (res.status === 429) setRecoveryCooldown(Math.max(60, Number(res.headers.get("Retry-After")) || 60));
+                      }
+                    } catch { setError("Gagal mengirim email pemulihan. Silakan coba lagi."); }
+                    finally { setRecoveryLoading(false); }
+                  }}>
+                    {recoveryLoading ? "Mengirim…" : recoveryCooldown > 0 ? `Kirim ulang (${recoveryCooldown} dtk)` : "Lupa kata sandi?"}
+                  </Button>
                 </div>
                 <div className="relative">
                   <input

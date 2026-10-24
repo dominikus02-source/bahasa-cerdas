@@ -94,3 +94,5 @@ twa/*.idsig
 credentials/
 data/alat-ajar-import/scan-log.txt
 .freebuff/
+
+!.env.example

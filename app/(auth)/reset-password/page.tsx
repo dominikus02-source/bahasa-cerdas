@@ -4,11 +4,12 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import BatikDecoration from "@/components/shared/BatikDecoration";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Eye, EyeOff, KeyRound, CheckCircle, AlertCircle, ArrowLeft } from "lucide-react";
 
 /**
- * Reset Password Page
+ * Reset Kata Sandi Page
  *
  * Reached via recovery link: /reset-password#access_token=...&type=recovery
  *
@@ -39,12 +40,31 @@ export default function ResetPasswordPage() {
   useEffect(() => {
     // Check for exchange failure from callback
     const params = new URLSearchParams(window.location.search);
-    if (params.get("error") === "exchange_failed") {
+    if (params.has("error") || new URLSearchParams(window.location.hash.slice(1)).has("error")) {
       setRecoveryFailed(true);
       return;
     }
 
+    // The server's resetPasswordForEmail uses implicit recovery, while the
+    // shared SSR browser client uses PKCE for Google/password login. Import the
+    // recovery session explicitly so the SDK does not reject a flow mismatch.
+    const fragment = new URLSearchParams(window.location.hash.slice(1));
+    const accessToken = fragment.get("access_token");
+    const refreshToken = fragment.get("refresh_token");
+    const hasRecoveryTokens = fragment.get("type") === "recovery" && !!accessToken && !!refreshToken;
+    if (fragment.has("access_token") || fragment.has("refresh_token")) {
+      window.history.replaceState(window.history.state, "", window.location.pathname + window.location.search);
+      if (!hasRecoveryTokens) { setRecoveryFailed(true); return; }
+    }
     const supabase = createClient();
+    let cancelled = false;
+    if (hasRecoveryTokens) {
+      void supabase.auth.setSession({ access_token: accessToken!, refresh_token: refreshToken! }).then(({ error }) => {
+        if (cancelled) return;
+        if (error) setRecoveryFailed(true);
+        else setRecoveryReady(true);
+      }).catch(() => { if (!cancelled) setRecoveryFailed(true); });
+    }
 
     // Listen for auth state changes — the recovery link triggers
     // PASSWORD_RECOVERY event after PKCE exchange completes.
@@ -58,7 +78,7 @@ export default function ResetPasswordPage() {
 
     // Also check if session already exists (e.g., page refresh after successful recovery)
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) {
+      if (!cancelled && !hasRecoveryTokens && data.session) {
         setRecoveryReady(true);
       }
     });
@@ -69,6 +89,7 @@ export default function ResetPasswordPage() {
     }, 15_000);
 
     return () => {
+      cancelled = true;
       subscription.unsubscribe();
       clearTimeout(timeout);
     };
@@ -77,11 +98,11 @@ export default function ResetPasswordPage() {
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password.length < 8) {
-      setError("Password minimal 8 karakter");
+      setError("Kata Sandi minimal 8 karakter");
       return;
     }
     if (password !== confirm) {
-      setError("Password tidak cocok");
+      setError("Kata Sandi tidak cocok");
       return;
     }
 
@@ -92,11 +113,12 @@ export default function ResetPasswordPage() {
       const supabase = createClient();
       const { error } = await supabase.auth.updateUser({ password });
       if (error) {
-        setError(error.message);
+        setError("Gagal mengubah kata sandi. Minta tautan baru atau coba lagi.");
       } else {
+        await supabase.auth.signOut({ scope: "global" });
         setSuccess(true);
         // Redirect to login after 2s success state
-        setTimeout(() => router.push("/login"), 2000);
+        setTimeout(() => router.push("/login?reset=success"), 2000);
       }
     } catch {
       setError("Terjadi kesalahan. Coba lagi.");
@@ -110,29 +132,29 @@ export default function ResetPasswordPage() {
     const isExchangeFailed = params?.get("error") === "exchange_failed";
 
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-600 via-red-700 to-blue-900 relative overflow-hidden px-4">
-        <BatikDecoration />
+      <div className="min-h-screen flex items-center justify-center bg-bc-bg text-bc-text relative overflow-hidden px-4">
+
         <div className="relative z-10 w-full max-w-md">
-          <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl border border-white/20">
+          <Card variant="surface" className="p-6 md:p-8">
             <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-                <AlertCircle size={32} className="text-red-600" />
+              <div className="w-16 h-16 rounded-full bg-bc-danger-soft flex items-center justify-center mx-auto mb-4">
+                <AlertCircle size={32} className="text-bc-danger" />
               </div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">Link Tidak Valid</h1>
-              <p className="text-sm text-gray-500 mb-2">
+              <h1 className="text-2xl font-bold text-bc-text mb-2">Tautan Tidak Valid</h1>
+              <p className="text-sm text-bc-text-2 mb-2">
                 {isExchangeFailed
-                  ? "Gagal memverifikasi link reset. Link mungkin sudah kedaluwarsa."
-                  : "Link reset password sudah tidak valid atau sudah kedaluwarsa."}
+                  ? "Gagal memverifikasi link reset. Tautan mungkin sudah kedaluwarsa."
+                  : "Tautan reset password sudah tidak valid atau sudah kedaluwarsa."}
               </p>
-              <p className="text-xs text-gray-400 mb-6">
-                Silakan minta link reset password baru dari halaman login.
+              <p className="text-xs text-bc-text-3 mb-6">
+                Silakan minta tautan pemulihan kata sandi baru dari halaman login.
               </p>
               <div className="space-y-2">
                 <Button
                   onClick={() => router.push("/login")}
-                  className="w-full h-12 rounded-xl font-bold bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 transition-all"
+                  variant="primary" className="w-full h-12"
                 >
-                  Minta Link Reset Baru
+                  Minta Tautan Reset Baru
                 </Button>
                 <Button
                   onClick={() => router.push("/login")}
@@ -140,11 +162,11 @@ export default function ResetPasswordPage() {
                   variant="legacy-ghost"
                 >
                   <ArrowLeft size={16} className="mr-2" />
-                  Kembali ke Login
+                  Kembali ke halaman masuk
                 </Button>
               </div>
             </div>
-          </div>
+          </Card>
         </div>
       </div>
     );
@@ -153,18 +175,18 @@ export default function ResetPasswordPage() {
   // ── LOADING RECOVERY SESSION ──
   if (!recoveryReady && !recoveryFailed) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-600 via-red-700 to-blue-900 relative overflow-hidden px-4">
-        <BatikDecoration />
+      <div className="min-h-screen flex items-center justify-center bg-bc-bg text-bc-text relative overflow-hidden px-4">
+
         <div className="relative z-10 w-full max-w-md">
-          <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl border border-white/20">
+          <Card variant="surface" className="p-6 md:p-8">
             <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-violet-100 flex items-center justify-center mx-auto mb-4 animate-pulse">
-                <KeyRound size={32} className="text-violet-600" />
+              <div className="w-16 h-16 rounded-full bg-bc-violet-soft flex items-center justify-center mx-auto mb-4 animate-pulse">
+                <KeyRound size={32} className="text-bc-violet" />
               </div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">Memverifikasi Link...</h1>
-              <p className="text-sm text-gray-500">Mohon tunggu sebentar.</p>
+              <h1 className="text-2xl font-bold text-bc-text mb-2">Memverifikasi Tautan...</h1>
+              <p className="text-sm text-bc-text-2">Mohon tunggu sebentar.</p>
             </div>
-          </div>
+          </Card>
         </div>
       </div>
     );
@@ -173,26 +195,26 @@ export default function ResetPasswordPage() {
   // ── SUCCESS STATE ──
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-600 via-red-700 to-blue-900 relative overflow-hidden px-4">
-        <BatikDecoration />
+      <div className="min-h-screen flex items-center justify-center bg-bc-bg text-bc-text relative overflow-hidden px-4">
+
         <div className="relative z-10 w-full max-w-md">
-          <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl border border-white/20">
+          <Card variant="surface" className="p-6 md:p-8">
             <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
-                <CheckCircle size={32} className="text-emerald-600" />
+              <div className="w-16 h-16 rounded-full bg-bc-success-soft flex items-center justify-center mx-auto mb-4">
+                <CheckCircle size={32} className="text-bc-success" />
               </div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">Password Berhasil Diubah!</h1>
-              <p className="text-sm text-gray-500 mb-6">
-                Silakan login kembali dengan password baru.
+              <h1 className="text-2xl font-bold text-bc-text mb-2">Kata Sandi Berhasil Diubah!</h1>
+              <p className="text-sm text-bc-text-2 mb-6">
+                Silakan login kembali dengan kata sandi baru.
               </p>
               <Button
                 onClick={() => router.push("/login")}
-                className="w-full h-12 rounded-xl font-bold bg-gradient-to-r from-red-600 to-red-700"
+                variant="primary" className="w-full h-12"
               >
                 Masuk ke BahasaCerdas
               </Button>
             </div>
-          </div>
+          </Card>
         </div>
       </div>
     );
@@ -200,78 +222,81 @@ export default function ResetPasswordPage() {
 
   // ── PASSWORD RESET FORM ──
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-600 via-red-700 to-blue-900 relative overflow-hidden px-4">
-      <BatikDecoration />
+    <div className="min-h-screen flex items-center justify-center bg-bc-bg text-bc-text relative overflow-hidden px-4">
+
       <div className="relative z-10 w-full max-w-md">
-        <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl border border-white/20">
+        <Card variant="surface" className="p-6 md:p-8">
           <div className="text-center mb-6">
-            <div className="w-16 h-16 rounded-full bg-violet-100 flex items-center justify-center mx-auto mb-4">
-              <KeyRound size={32} className="text-violet-600" />
+            <div className="w-16 h-16 rounded-full bg-bc-violet-soft flex items-center justify-center mx-auto mb-4">
+              <KeyRound size={32} className="text-bc-violet" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">Atur Password Baru</h1>
-            <p className="text-sm text-gray-500">Masukkan password baru untuk akun kamu</p>
+            <h1 className="text-2xl font-bold text-bc-text mb-1">Atur Kata Sandi Baru</h1>
+            <p className="text-sm text-bc-text-2">Masukkan kata sandi baru untuk akun kamu</p>
           </div>
 
           <form onSubmit={handleReset} className="space-y-4">
             {error && (
-              <div className="rounded-xl bg-red-50 border border-red-200 p-3 text-sm text-red-700 flex items-start gap-2">
+              <div className="rounded-xl bg-bc-danger-soft border border-bc-danger p-3 text-sm text-bc-danger flex items-start gap-2">
                 <AlertCircle size={16} className="mt-0.5 shrink-0" />
                 {error}
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                Password Baru
+              <label className="block text-sm font-semibold text-bc-text mb-1.5">
+                Kata Sandi Baru
               </label>
               <div className="relative">
-                <input
+                <Input variant="bc"
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 pr-11 text-sm focus:border-violet-500 focus:outline-none transition-colors"
+                  className="w-full rounded-xl border border-bc-line px-4 py-3 pr-11 text-sm focus:border-bc-focus focus:outline-none transition-colors"
                   placeholder="Minimal 8 karakter"
+                  aria-describedby="password-hint"
                   minLength={8}
                   required
                   autoComplete="new-password"
                 />
                 <button
                   type="button"
+                  aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-bc-text-3 hover:text-bc-text transition-colors"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
 
+            <p id="password-hint" className="text-sm text-bc-text-2">Gunakan minimal 8 karakter. Gabungkan kata, angka, dan simbol agar lebih kuat.</p>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                Konfirmasi Password
+              <label className="block text-sm font-semibold text-bc-text mb-1.5">
+                Konfirmasi Kata Sandi
               </label>
-              <input
+              <Input variant="bc"
                 type={showPassword ? "text" : "password"}
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
-                className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm focus:border-violet-500 focus:outline-none transition-colors"
+                className="w-full rounded-xl border border-bc-line px-4 py-3 text-sm focus:border-bc-focus focus:outline-none transition-colors"
                 placeholder="Ketik ulang password"
                 required
                 autoComplete="new-password"
               />
               {confirm && password !== confirm && (
-                <p className="text-xs text-red-500 mt-1">Password tidak cocok</p>
+                <p className="text-xs text-bc-danger mt-1">Kata Sandi tidak cocok</p>
               )}
             </div>
 
             <Button
               type="submit"
               disabled={loading || !password || !confirm}
-              className="w-full h-12 rounded-xl font-bold bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 transition-all"
+              variant="primary" className="w-full h-12"
             >
-              {loading ? "Menyimpan..." : "Ubah Password"}
+              {loading ? "Menyimpan..." : "Ubah Kata Sandi"}
             </Button>
           </form>
-        </div>
+        </Card>
       </div>
     </div>
   );

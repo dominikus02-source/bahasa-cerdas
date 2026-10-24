@@ -220,7 +220,7 @@ enable_confirmations = false
 # If enabled, users will need to reauthenticate or have logged in recently to change their password.
 secure_password_change = false
 # Controls the minimum amount of time that must pass before sending another signup confirmation or password reset email.
-max_frequency = "1s"
+max_frequency = "60s"
 # Number of characters used in the email OTP.
 otp_length = 6
 # Number of seconds before the email OTP expires (defaults to 1 hour).
@@ -404,3 +404,19 @@ s3_secret_key = "env(S3_SECRET_KEY)"
 # declarative_schema_path = "./database"
 # JSON string passed through to pg-delta SQL formatting.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":80,\"commaStyle\":\"trailing\"}"
+
+# Local template only. Configure hosted SMTP/templates in the Dashboard; this
+# file is not automatically applied to the hosted project's Auth configuration.
+[auth.email.template.recovery]
+subject = "Atur ulang kata sandi BahasaCerdas Anda"
+content_path = "./supabase/templates/recovery.html"
+
+# Production example (Resend); enable only after domain verification.
+# [auth.email.smtp]
+# enabled = true
+# host = "smtp.resend.com"
+# port = 465
+# user = "resend"
+# pass = "env(SMTP_PASS)"
+# admin_email = "noreply@bahasacerdas.com"
+# sender_name = "BahasaCerdas"
