@@ -23,7 +23,7 @@ export async function consumeRecoveryLimit(email: string, ip: string): Promise<n
   const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
   const redis = url && token ? new Redis({ url, token }) : null;
-  // Keep password recovery available when optional Redis credentials are absent.\n  // The fallback is per-instance only; production should configure Upstash for shared limits.
+  // If Redis is not configured, use a per-instance fallback.\n  // Configure shared Redis limits in production to prevent cross-instance bypass.
   let retry = 0;
   for (const subject of [`ip:${ip}`, `email:${email}`]) {
     const key = `recovery:${createHash("sha256").update(subject).digest("hex")}`;
