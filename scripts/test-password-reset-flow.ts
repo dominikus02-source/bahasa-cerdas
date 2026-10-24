@@ -188,6 +188,7 @@ async function main() {
     fileContains("app/(auth)/login/page.tsx", "/api/auth/forgot-password"));
 
   assert("Login page shows feedback after forgot password request",
+    fileContains("app/(auth)/login/page.tsx", "setRecoveryMessage(data.message") ||
     fileContains("app/(auth)/login/page.tsx", "setError(data.message"));
 
   // ═══════════════════════════════════════════════════════════
