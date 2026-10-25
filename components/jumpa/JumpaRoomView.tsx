@@ -64,6 +64,7 @@ import { detectDevice, publishPolicy, type DeviceClass } from "./media-policy";
 import { writeMediaPrefs, type JumpaMediaPrefs } from "./media-prefs";
 import { backgroundById } from "./backgrounds";
 import { BackgroundProcessor } from "@livekit/track-processors";
+import { BACKGROUND_ASSET_PATHS } from "./media-assets";
 import { buildRoomOptions, MediaProvider, useMedia } from "./media-controller";
 import { JumpaRoomProvider, useJumpa, type EndedReason, type JumpaRoomInfo, type JumpaSelf } from "./room-controller";
 import { ChatPanel, InvitePanel, PanelFrame, PeoplePanel, ReportPanel, type PanelName } from "./RoomPanels";
@@ -642,11 +643,11 @@ function ControlBar({
         const bg = backgroundById(prefs.background);
         const imageUrl = prefs.background === "custom" ? prefs.customBackgroundUrl : bg.image;
         if (prefs.background === "blur") {
-          processor = BackgroundProcessor({ mode: "background-blur", blurRadius: 15 });
+          processor = BackgroundProcessor({ mode: "background-blur", blurRadius: 15, assetPaths: BACKGROUND_ASSET_PATHS });
         } else if (imageUrl) {
-          processor = BackgroundProcessor({ mode: "virtual-background", imagePath: imageUrl });
+          processor = BackgroundProcessor({ mode: "virtual-background", imagePath: imageUrl, assetPaths: BACKGROUND_ASSET_PATHS });
         } else {
-          processor = BackgroundProcessor({ mode: "disabled" });
+          processor = BackgroundProcessor({ mode: "disabled", assetPaths: BACKGROUND_ASSET_PATHS });
         }
         await track.setProcessor(processor);
       } catch (e) {
