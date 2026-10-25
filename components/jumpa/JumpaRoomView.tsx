@@ -69,6 +69,7 @@ import { buildRoomOptions, MediaProvider, useMedia } from "./media-controller";
 import { JumpaRoomProvider, useJumpa, type EndedReason, type JumpaRoomInfo, type JumpaSelf } from "./room-controller";
 import { ChatPanel, InvitePanel, PanelFrame, PeoplePanel, ReportPanel, type PanelName } from "./RoomPanels";
 import SettingsPanel from "./SettingsPanel";
+import ConfirmDialog from "./ConfirmDialog";
 import ShareSheet, { type ShareTarget } from "./ShareSheet";
 import { CountdownChip, TierBadge, TimeLimitWatcher } from "./TierUi";
 
@@ -595,6 +596,16 @@ function ControlBar({
   const [busy, setBusy] = useState<"mic" | "camera" | "screen" | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const [endAsk, setEndAsk] = useState(false);
+  const [ending, setEnding] = useState(false);
+  const cancelEnd = useCallback(() => setEndAsk(false), []);
+  const confirmEnd = async () => {
+    setEnding(true);
+    const r = await moderate("END");
+    setEnding(false);
+    setEndAsk(false);
+    if (r.ok) toast("Ruang diakhiri.", "ok");
+  };
   const [screenSupported, setScreenSupported] = useState(false);
   useEffect(() => setScreenSupported(supportsScreenShare()), []);
   const canScreen = screenSupported && Boolean(permissions?.canPublishSources?.some((s) => Number(s) === PROTO_SCREEN_SHARE));
@@ -675,6 +686,17 @@ function ControlBar({
   return (
     <div className="jumpa-dock-wrap">
       {shareOpen && <ShareSheet target={shareTargetOf(info, self)} onClose={() => setShareOpen(false)} />}
+      {endAsk && (
+        <ConfirmDialog
+          title="Akhiri ruang untuk semua?"
+          body="Semua peserta akan keluar dari ruang."
+          confirmLabel="Akhiri"
+          icon={<PhoneOff size={22} />}
+          busy={ending}
+          onConfirm={() => void confirmEnd()}
+          onCancel={cancelEnd}
+        />
+      )}
       {menuOpen && (
         <>
           <button type="button" aria-label="Tutup menu" className="fixed inset-0 z-20 cursor-default" onClick={close} />
@@ -734,11 +756,9 @@ function ControlBar({
                 role="menuitem"
                 className="jumpa-menu-item"
                 data-danger="true"
-                onClick={async () => {
+                onClick={() => {
                   close();
-                  if (!window.confirm("Akhiri ruang untuk semua peserta?")) return;
-                  const r = await moderate("END");
-                  if (r.ok) toast("Ruang diakhiri.", "ok");
+                  setEndAsk(true);
                 }}
               >
                 <PhoneOff size={20} /> Akhiri untuk semua
@@ -800,11 +820,7 @@ function ControlBar({
               className="jumpa-key"
               data-variant="leave"
               aria-label="Akhiri ruang untuk semua"
-              onClick={async () => {
-                if (!window.confirm("Akhiri ruang untuk semua peserta?")) return;
-                const r = await moderate("END");
-                if (r.ok) toast("Ruang diakhiri.", "ok");
-              }}
+              onClick={() => setEndAsk(true)}
             >
               <PhoneOff size={22} />
               {wide && <span className="jumpa-leave-text">Akhiri</span>}

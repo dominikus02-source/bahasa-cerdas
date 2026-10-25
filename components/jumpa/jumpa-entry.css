@@ -1,8 +1,8 @@
 /* ════════════════════════════════════════════════════════════════════
    JUMPA — titik masuk di luar /jumpa: banner peluncuran, kartu beranda,
    panel kelas, lembar bagikan. Panduan Desain BC (docs/PANDUAN_DESAIN_BC.md).
-   Tanpa hex: semua warna dari --clr-*. Banner selalu gelap (class `dark`
-   memberi token gelap). Kartu & panel mengikuti tema dasbor (terang/gelap).
+   Tanpa hex: semua warna dari --clr-*. Banner, kartu & panel mengikuti
+   tema dasbor (terang/gelap).
    ════════════════════════════════════════════════════════════════════ */
 .jpe {
   --jp-line: color-mix(in srgb, var(--clr-text) 10%, transparent);
@@ -105,7 +105,7 @@
 .jpe-switch[data-on="true"]::after { transform: translateX(16px); }
 @media (prefers-reduced-motion: reduce) { .jpe-switch, .jpe-switch::after { transition: none; } }
 
-/* ── Banner peluncuran (selalu gelap) ── */
+/* ── Banner peluncuran (mengikuti tema terang/gelap) ── */
 .jpb {
   position: relative; overflow: hidden; isolation: isolate;
   display: grid; gap: 18px; padding: 22px 18px 18px; border-radius: 28px;
@@ -117,6 +117,7 @@
     linear-gradient(160deg, var(--clr-bg), var(--clr-surface));
   box-shadow: 0 24px 50px -32px color-mix(in srgb, var(--clr-bg) 95%, transparent);
 }
+html:not(.dark) .jpb, html:not(.dark) .jpb-screen { box-shadow: 0 24px 50px -32px color-mix(in srgb, var(--clr-text) 35%, transparent); }
 @media (min-width: 900px) { .jpb { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); align-items: center; gap: 28px; padding: 30px 30px 30px 34px; } }
 .jpb-close { position: absolute; top: 10px; right: 10px; z-index: 2; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 999px; color: var(--clr-text-2); }
 .jpb-close:hover { color: var(--clr-text); background: color-mix(in srgb, var(--clr-text) 8%, transparent); }
@@ -138,6 +139,8 @@
   font-size: 16px; font-weight: 800; color: var(--clr-bg); background: linear-gradient(90deg, var(--clr-accent), var(--clr-info) 55%, var(--clr-violet));
   transition: transform .2s cubic-bezier(.34, 1.56, .64, 1);
 }
+/* Terang: awal gradien lebih gelap agar teks CTA kontras ≥4.5:1. */
+html:not(.dark) .jpb-cta { background: linear-gradient(90deg, var(--clr-accent-strong), var(--clr-info) 55%, var(--clr-violet)); }
 .jpb-cta span { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 999px; color: var(--clr-accent); background: var(--clr-bg); }
 .jpb-cta:active { transform: scale(.95); }
 @media (hover: hover) and (pointer: fine) { .jpb-cta:hover { transform: translateY(-2px); box-shadow: 0 12px 30px -12px color-mix(in srgb, var(--clr-info) 70%, transparent); } }

@@ -54,7 +54,7 @@ export default function JumpaLaunchBanner({ userKey, className = "" }: { userKey
   };
 
   return (
-    <section className={`dark jpe jpb ${className}`} aria-labelledby="jumpa-banner-title">
+    <section className={`jpe jpb ${className}`} aria-labelledby="jumpa-banner-title">
       <button type="button" className="jpb-close" onClick={dismiss} aria-label="Tutup banner JUMPA">
         <X size={20} aria-hidden />
       </button>

@@ -167,7 +167,7 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
       {plan && <PlanCard plan={plan} />}
 
       {isGuru ? (
-        <section className="jumpa-card jumpa-action-card jumpa-in-up">
+        <section className="jumpa-card jumpa-action-card jumpa-guru jumpa-in-up">
           <div className="flex items-center gap-3">
             <span className="jumpa-icon-chip" data-kind="GURU" aria-hidden><Users size={20} /></span>
             <div>
