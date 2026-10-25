@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function KamusPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-red-50 flex flex-col">
+    <div className="min-h-screen bg-bc-bg text-bc-text flex flex-col">
       {/* Header */}
       <header className="bg-gradient-to-r from-red-600 to-red-700 text-white px-4 py-6 shadow-lg">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
@@ -32,8 +32,8 @@ export default function KamusPage() {
             <Search size={48} className="text-white" />
           </div>
 
-          <h2 className="text-3xl font-extrabold text-gray-900 mb-3 tracking-tight">Kamus KBBI</h2>
-          <p className="text-gray-500 mb-8 leading-relaxed">
+          <h2 className="text-3xl font-extrabold text-bc-text mb-3 tracking-tight">Kamus KBBI</h2>
+          <p className="text-bc-text-2 mb-8 leading-relaxed">
             Cari arti kata, sinonim, antonim, dan definisi lengkap di Kamus Besar Bahasa Indonesia Online
           </p>
 
@@ -47,16 +47,16 @@ export default function KamusPage() {
             <ExternalLink size={20} /> Buka KBBI Online
           </a>
 
-          <p className="text-xs text-gray-400 mt-4">Akan dibuka di tab baru</p>
+          <p className="text-xs text-bc-text-3 mt-4">Akan dibuka di tab baru</p>
 
           {/* Saran NARA */}
-          <div className="mt-10 bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <div className="mt-10 bg-bc-surface rounded-2xl p-6 border border-bc-line shadow-sm">
             <div className="flex items-center gap-2 mb-3 justify-center">
-              <Sparkles size={18} className="text-red-500" />
-              <span className="text-sm font-semibold text-gray-900">Butuh bantuan?</span>
+              <Sparkles size={18} className="text-bc-danger" />
+              <span className="text-sm font-semibold text-bc-text">Butuh bantuan?</span>
             </div>
-            <p className="text-xs text-gray-500 mb-4">Tanya Nara tentang arti kata, sinonim, atau contoh kalimat</p>
-            <Link href="/ai-bc" className="inline-flex items-center gap-2 text-sm text-red-600 font-semibold hover:text-red-700 transition-colors">
+            <p className="text-xs text-bc-text-2 mb-4">Tanya Nara tentang arti kata, sinonim, atau contoh kalimat</p>
+            <Link href="/ai-bc" className="inline-flex items-center gap-2 text-sm text-bc-danger font-semibold hover:opacity-80 transition-opacity">
               Ngobrol dengan Nara <ArrowRight size={14} />
             </Link>
           </div>
