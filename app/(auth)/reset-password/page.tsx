@@ -62,7 +62,11 @@ export default function ResetPasswordPage() {
       void supabase.auth.setSession({ access_token: accessToken!, refresh_token: refreshToken! }).then(({ error }) => {
         if (cancelled) return;
         if (error) setRecoveryFailed(true);
-        else setRecoveryReady(true);
+        else void supabase.auth.getUser().then(({ data, error: verifyError }) => {
+          if (cancelled) return;
+          if (verifyError || !data.user) setRecoveryFailed(true);
+          else setRecoveryReady(true);
+        }).catch(() => { if (!cancelled) setRecoveryFailed(true); });
       }).catch(() => { if (!cancelled) setRecoveryFailed(true); });
     }
 
@@ -107,9 +111,20 @@ export default function ResetPasswordPage() {
 
     try {
       const supabase = createClient();
+      const { data: verified, error: verifyError } = await supabase.auth.getUser();
+      if (verifyError || !verified.user) {
+        setRecoveryReady(false);
+        setRecoveryFailed(true);
+        return;
+      }
       const { error } = await supabase.auth.updateUser({ password });
       if (error) {
-        setError("Gagal mengubah kata sandi. Minta tautan baru atau coba lagi.");
+        if (error.code === "session_not_found" || error.status === 403) {
+          setRecoveryReady(false);
+          setRecoveryFailed(true);
+        } else {
+          setError("Gagal mengubah kata sandi. Silakan coba lagi atau minta tautan baru.");
+        }
       } else {
         await supabase.auth.signOut({ scope: "global" });
         setSuccess(true);
