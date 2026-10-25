@@ -599,6 +599,8 @@ function ControlBar({
   const [endAsk, setEndAsk] = useState(false);
   const [ending, setEnding] = useState(false);
   const cancelEnd = useCallback(() => setEndAsk(false), []);
+  const moreRef = useRef<HTMLButtonElement>(null);
+  const endFocus = useCallback(() => moreRef.current, []);
   const confirmEnd = async () => {
     setEnding(true);
     const r = await moderate("END");
@@ -695,6 +697,7 @@ function ControlBar({
           busy={ending}
           onConfirm={() => void confirmEnd()}
           onCancel={cancelEnd}
+          returnFocus={endFocus}
         />
       )}
       {menuOpen && (
@@ -805,7 +808,7 @@ function ControlBar({
             </div>
           )}
           <div className="jumpa-ctl">
-            <button type="button" className="jumpa-key" aria-haspopup="menu" aria-expanded={menuOpen} aria-label="Lainnya" onClick={() => setMenuOpen((v) => !v)}>
+            <button ref={moreRef} type="button" className="jumpa-key" aria-haspopup="menu" aria-expanded={menuOpen} aria-label="Lainnya" onClick={() => setMenuOpen((v) => !v)}>
               <MoreHorizontal size={22} />
             </button>
             <span className="jumpa-ctl-label">Lainnya</span>

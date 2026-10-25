@@ -17,6 +17,7 @@ export default function ConfirmDialog({
   busy = false,
   onConfirm,
   onCancel,
+  returnFocus,
 }: {
   title: string;
   body?: string;
@@ -25,6 +26,8 @@ export default function ConfirmDialog({
   busy?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
+  /** Tujuan fokus saat ditutup bila pemicu sudah hilang (mis. item menu). */
+  returnFocus?: () => HTMLElement | null;
 }) {
   const id = useId();
   const cancelRef = useRef<HTMLButtonElement>(null);
@@ -45,9 +48,10 @@ export default function ConfirmDialog({
     window.addEventListener("keydown", onKey);
     return () => {
       window.removeEventListener("keydown", onKey);
-      prev?.focus?.();
+      const back = prev?.isConnected ? prev : returnFocus?.();
+      back?.focus?.();
     };
-  }, [onCancel]);
+  }, [onCancel, returnFocus]);
 
   const host = (typeof document !== "undefined" && document.querySelector(".jumpa-scope")) || document.body;
   return createPortal(
